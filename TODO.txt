@@ -1,0 +1,9 @@
+TODO-Liste
+==========
+
+Dem Nutzer die Wahl geben, ob Parameter der Reaktion oder dem Modell
+zugeordnet werden sollen.
+
+Hier wird an vielen Stellen, z.B. in der ConvenienceIndependent Zeile
+105, von einer Stöchiometrie ausgegangen. Es können aber auch komplexe
+Ausdrücke vorkommen. Diesen muss Rechnung getragen werden.
