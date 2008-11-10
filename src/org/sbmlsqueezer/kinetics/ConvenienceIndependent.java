@@ -232,8 +232,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				// for each product
 				for (int productNum = 0; productNum < reaction.getNumProducts(); productNum++) {
 					String exp = "";
-					PluginSpeciesReference specref = (PluginSpeciesReference) reaction
-					    .getListOfProducts().get(productNum);
+					PluginSpeciesReference specref = reaction.getProduct(productNum);
 
 					kM = "kM_" + reactionNum;
 					kMTeX = "k^\\text{M}_{" + reactionNum;
