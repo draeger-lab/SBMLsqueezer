@@ -69,9 +69,9 @@ public class OrderedMechanism extends BasicKineticLaw {
     boolean exception = false, biuni = false;
     switch (reaction.getNumProducts()) {
     case 1:
-      if (specRefP1.getStoichiometry() == 1.0)
+      if (specRefP1.getStoichiometry() == 1d)
         biuni = true;
-      else if (specRefP1.getStoichiometry() == 2.0)
+      else if (specRefP1.getStoichiometry() == 2d)
         specRefP2 = specRefP1;
       else exception = true;
       break;

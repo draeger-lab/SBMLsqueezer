@@ -2,9 +2,6 @@ package org.sbmlsqueezer.kinetics;
 
 import java.util.List;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbmlsqueezer.io.LaTeXExport;
-
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
@@ -62,14 +59,9 @@ public class Convenience extends BasicKineticLaw {
 		String formelTxt = "";
 		formelTeX = "";
 		reactionNum++;
-		int numOfEnzymes = modE.size();
 		PluginReaction parentReaction = getParentReaction();
-		ASTNode ast = null;
-		ASTNode temp;
-		ASTNode temp2;
 		int enzymeNum = 0;
 		do {
-
 			String denominator = "", denominatorTeX = "", kM, kMTeX;
 
 			numerator = "kcatp_" + reactionNum;
@@ -89,8 +81,7 @@ public class Convenience extends BasicKineticLaw {
 			// sums for each educt
 			for (int eductNum = 0; eductNum < parentReaction.getNumReactants(); eductNum++) {
 				String exp = "";
-				PluginSpeciesReference specref = (PluginSpeciesReference) parentReaction
-				    .getListOfReactants().get(eductNum);
+				PluginSpeciesReference specref = parentReaction.getReactant(eductNum);
 
 				// build denominator
 				kM = "kM_" + reactionNum;

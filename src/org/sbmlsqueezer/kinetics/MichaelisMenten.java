@@ -504,13 +504,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 		ASTNode act = new ASTNode(AST_TIMES);
 		for (int i = 0; i < modActi.size(); i++) {
 
-			String kAa, kAaTeX, kAbTeX;
+			String kAa, kAaTeX; //, kAbTeX;
 
 			kAa = "kA_" + reactionNum;
 			// ????
 			/* "\\cdot\\left(1+\\frac{" */
 			kAaTeX = "k^\\text{A}_{" + reactionNum;
-			kAbTeX = "\\cdot\\left(1+\\frac{k^\\text{Ab}_{" + reactionNum;
+			//kAbTeX = "\\cdot\\left(1+\\frac{k^\\text{Ab}_{" + reactionNum;
 
 			if (!paraList.contains(kAa))
 				paraList.add(new String(kAa));
