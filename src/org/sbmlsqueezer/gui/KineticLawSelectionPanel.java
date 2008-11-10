@@ -265,8 +265,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 					throw new RuntimeException(exc.getMessage(), exc);
 				}
 			else {
-				int i = 0, width = eqnPrev.getWidth(), height = eqnPrev
-						.getHeight();
+				int i = 0; /*, width = eqnPrev.getWidth(), height = eqnPrev
+						.getHeight();*/
 				while ((i < rButtonsKineticEquations.length)
 						&& (!rbutton.equals(rButtonsKineticEquations[i])))
 					i++;

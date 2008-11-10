@@ -11,7 +11,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -77,9 +76,9 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		setColumnWidthAppropriately();
 		setDefaultRenderer(Object.class, new KineticLawCellRenderer(maxEducts));
 		getTableHeader()
-		    .setToolTipText(
-		        "<html>Double click on the kinetic law to apply another formalism.<br>"
-		            + "Single click on any other column to get a formatted equation preview.</html>");
+				.setToolTipText(
+						"<html>Double click on the kinetic law to apply another formalism.<br>"
+								+ "Single click on any other column to get a formatted equation preview.</html>");
 		setCellSelectionEnabled(true);
 		setEnabled(true);
 		addMouseListener(this);
@@ -108,30 +107,31 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		this.reversibility = reversibility;
 	}
 
-	/**
-	 * Counts the number of new line symbols in each row of this table and sets
-	 * the row hight accordingly to a greater value, if necessary.
-	 */
-	private void setRowHeightAppropriately() {
-		int newLines = 0;
-		for (int row = 0; row < dataModel.getRowCount(); row++) {
-			int maxNewLines = 0; // reset length
-			for (int column = 0; column < dataModel.getColumnCount(); column++) {
-				if (dataModel.getValueAt(row, column) != null) {
-					String value = dataModel.getValueAt(row, column).toString();
-					// max length update
-					StringTokenizer st = new StringTokenizer(value, "\n");
-					newLines = st.countTokens();
-					if (maxNewLines <= newLines)
-						maxNewLines = newLines;
-					newLines = 0;
-				}
-			}
-			// hier wird die groesste variable als zeilenhoehe gesetz bei der
-			// aktuellen Spalte
-			setRowHeight(row, maxNewLines * 18 + 18);
-		}
-	}
+	// /**
+	// * Counts the number of new line symbols in each row of this table and
+	// sets
+	// * the row hight accordingly to a greater value, if necessary.
+	// */
+	// private void setRowHeightAppropriately() {
+	// int newLines = 0;
+	// for (int row = 0; row < dataModel.getRowCount(); row++) {
+	// int maxNewLines = 0; // reset length
+	// for (int column = 0; column < dataModel.getColumnCount(); column++) {
+	// if (dataModel.getValueAt(row, column) != null) {
+	// String value = dataModel.getValueAt(row, column).toString();
+	// // max length update
+	// StringTokenizer st = new StringTokenizer(value, "\n");
+	// newLines = st.countTokens();
+	// if (maxNewLines <= newLines)
+	// maxNewLines = newLines;
+	// newLines = 0;
+	// }
+	// }
+	// // hier wird die groesste variable als zeilenhoehe gesetz bei der
+	// // aktuellen Spalte
+	// setRowHeight(row, maxNewLines * 18 + 18);
+	// }
+	// }
 
 	/**
 	 * Sets up a combo box, which allows to select an appropriate value for a
@@ -190,12 +190,12 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 			for (i = kineticLaw.getParameters().size() - 2; i > 0; i--)
 				params = kineticLaw.getParameters().get(i) + ", " + params;
 			dataModel.setValueAt(kineticLaw, getSelectedRow(), 1);
-			dataModel
-			    .setValueAt(new String(kineticLaw.getSBO()), getSelectedRow(), 2);
-			dataModel.setValueAt(params, getSelectedRow(),
-			    dataModel.getColumnCount() - 2);
+			dataModel.setValueAt(new String(kineticLaw.getSBO()),
+					getSelectedRow(), 2);
+			dataModel.setValueAt(params, getSelectedRow(), dataModel
+					.getColumnCount() - 2);
 			dataModel.setValueAt(new String(kineticLaw.getFormula()),
-			    getSelectedRow(), dataModel.getColumnCount() - 1);
+					getSelectedRow(), dataModel.getColumnCount() - 1);
 			i = 0;
 			while ((i < klg.getModel().getNumReactions())
 					&& (!klg.getModel().getReaction(i).getId().equals(
@@ -233,20 +233,22 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		int colIndex = convertColumnIndexToModel(columnAtPoint(p));
 		if (colIndex != 1) {
 			BasicKineticLaw kinetic = (BasicKineticLaw) dataModel.getValueAt(
-			    rowIndex, 1);
+					rowIndex, 1);
 			String LaTeX = kinetic.getKineticTeX().replaceAll("text", "mbox")
-			    .replaceAll("mathrm", "mbox");
+					.replaceAll("mathrm", "mbox");
 			JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
-			    + "\\end{equation}");
+					+ "\\end{equation}");
 			JPanel panel = new JPanel(new BorderLayout());
 			component.setBackground(Color.WHITE);
 			panel.setBackground(Color.WHITE);
 			panel.add(component, BorderLayout.CENTER);
-			panel.setLocation(((int) MouseInfo.getPointerInfo().getLocation().getX())
-			    - this.getTopLevelAncestor().getX(), this.getY() + 10);
+			panel.setLocation(((int) MouseInfo.getPointerInfo().getLocation()
+					.getX())
+					- this.getTopLevelAncestor().getX(), this.getY() + 10);
 			panel.setBorder(BorderFactory.createLoweredBevelBorder());
-			JOptionPane.showMessageDialog(getParent(), panel, "Rate Law of Reaction "
-			    + kinetic.getParentReactionID(), JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(getParent(), panel,
+					"Rate Law of Reaction " + kinetic.getParentReactionID(),
+					JOptionPane.INFORMATION_MESSAGE);
 			// JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
 			// JLayeredPane.POPUP_LAYER);
 			validate();
@@ -262,7 +264,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		// Point p = e.getPoint();
 		// int rowIndex = rowAtPoint(p);
 		// int colIndex = convertColumnIndexToModel(columnAtPoint(p));
-		// // System.out.println("Mouse entered, Zeile: " + rowIndex + "\tSpalte: "
+		// // System.out.println("Mouse entered, Zeile: " + rowIndex +
+		// "\tSpalte: "
 		// // + colIndex);
 		// if (colIndex == dataModel.getColumnCount() - 1) {
 		// JComponent component = new sHotEqn("\\begin{equation}"
@@ -312,7 +315,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 * @see
+	 * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	public void mouseReleased(MouseEvent e) {
 		// Point p = e.getPoint();
@@ -326,7 +330,9 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+	 * @see
+	 * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
+	 * )
 	 */
 	public void mouseDragged(MouseEvent e) {
 		// Point p = e.getPoint();
