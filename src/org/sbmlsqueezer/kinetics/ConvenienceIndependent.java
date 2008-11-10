@@ -75,8 +75,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 			 * Construct thermodynamically independent parameters
 			 */
 			for (int productNum = 0; productNum < reaction.getNumProducts(); productNum++) {
-				PluginSpeciesReference currentSpecRef = (PluginSpeciesReference) reaction
-				    .getListOfReactants().get(productNum);
+				PluginSpeciesReference currentSpecRef = reaction.getProduct(productNum);
 				kiG = "kG_" + reaction.getProduct(productNum).getSpecies();
 				kiGTeX = "k^\\text{G}_\\text{"
 				    + reaction.getProduct(productNum).getSpecies() + "}";
@@ -124,13 +123,12 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 			 */
 			for (int eductNum = 0; eductNum < reaction.getNumReactants(); eductNum++) {
 				String exp = "";
-				PluginSpeciesReference currentSpecRef = (PluginSpeciesReference) reaction
-				    .getListOfReactants().get(eductNum);
+				PluginSpeciesReference currentSpecRef = reaction.getReactant(eductNum);
 
 				// thermodynamically independent constants:
-				kiG = "kG_" + reaction.getReactant(eductNum).getSpecies();
+				kiG = "kG_" + currentSpecRef.getSpecies();
 				kiGTeX = "k^\\text{G}_\\text{"
-				    + reaction.getReactant(eductNum).getSpecies() + "}";
+				    + currentSpecRef.getSpecies() + "}";
 				/*
 				 * kiG may only be included one time for each species in the whole
 				 * model!
