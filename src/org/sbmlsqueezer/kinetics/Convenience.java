@@ -72,7 +72,7 @@ public class Convenience extends BasicKineticLaw {
 			}
 			numeratorTeX += "}";
 
-			if (!paraList.contains(numerator)) paraList.add(new String(numerator));
+			if (!listOfLocalParameters.contains(numerator)) listOfLocalParameters.add(new String(numerator));
 			/*
 			 * ASTNode numerator_n = new ASTNode(AST_NAME);
 			 * numerator_n.setName(numerator); ASTNode denominator_n = null; ASTNode
@@ -94,7 +94,7 @@ public class Convenience extends BasicKineticLaw {
 				kM += "_" + specref.getSpecies();
 				kMTeX += ",{" + Species.idToTeX(specref.getSpecies()) + "}}";
 
-				if (!paraList.contains(kM)) paraList.add(kM);
+				if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(kM);
 
 				// we can save the brakets if there is just one educt.
 				if (parentReaction.getNumReactants() > 1) {
@@ -206,7 +206,7 @@ public class Convenience extends BasicKineticLaw {
 				numerator += kcat;
 				numeratorTeX += kcatTeX;
 
-				if (!paraList.contains(kcat)) paraList.add(kcat);
+				if (!listOfLocalParameters.contains(kcat)) listOfLocalParameters.add(kcat);
 
 				// Sums for each product
 				for (int productNum = 0; productNum < parentReaction.getNumProducts(); productNum++) {
@@ -224,7 +224,7 @@ public class Convenience extends BasicKineticLaw {
 					    + Species.idToTeX(parentReaction.getProduct(productNum)
 					        .getSpecies()) + "}}";
 
-					if (!paraList.contains(kM)) paraList.add(kM);
+					if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(kM);
 
 					String exp = "";
 					PluginSpeciesReference specRefP = parentReaction
@@ -363,7 +363,7 @@ public class Convenience extends BasicKineticLaw {
 				String kATeX = "k^\\text{A}_{" + reactionNum;
 				kA += "_" + modActi.get(activatorNum);
 				kATeX += ",\\text{" + modActi.get(activatorNum) + "}}";
-				if (!paraList.contains(kA)) paraList.add(kA);
+				if (!listOfLocalParameters.contains(kA)) listOfLocalParameters.add(kA);
 				/*
 				 * temp2 = new ASTNode(AST_DIVIDE); temp = new ASTNode(AST_NAME);
 				 * temp.setName(modActi.get(activatorNum)); temp2.addChild(temp); temp =
@@ -394,7 +394,7 @@ public class Convenience extends BasicKineticLaw {
 				String kI = "kI_" + reactionNum, kITeX = "k^\\text{I}_{" + reactionNum;
 				kI += "_" + modInhib.get(inhibitorNum);
 				kITeX += ",\\text{" + modInhib.get(inhibitorNum) + "}}";
-				if (!paraList.contains(kI)) paraList.add(kI);
+				if (!listOfLocalParameters.contains(kI)) listOfLocalParameters.add(kI);
 				/*
 				 * temp = new ASTNode(AST_PLUS); temp2 = new ASTNode(AST_NAME);
 				 * temp2.setName(kI); temp.addChild(temp2); temp.addChild(new

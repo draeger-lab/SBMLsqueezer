@@ -106,8 +106,8 @@ public class HillEquation extends BasicKineticLaw {
           + modTActi.get(activatorNum) + "^" + hillcoeff + " + " + kS + "^"
           + hillcoeff + ")";
 
-      if (!paraList.contains(hillcoeff)) paraList.add(hillcoeff);
-      if (!paraList.contains(kS)) paraList.add(kS);
+      if (!listOfLocalParameters.contains(hillcoeff)) listOfLocalParameters.add(hillcoeff);
+      if (!listOfLocalParameters.contains(kS)) listOfLocalParameters.add(kS);
 
       kS = "k^\\text{S}_{+" + reactionNum + ",{"
           + Species.idToTeX(modTActi.get(activatorNum)) + "}}";
@@ -130,8 +130,8 @@ public class HillEquation extends BasicKineticLaw {
           + modTInhib.get(inhibitorNum) + "^" + hillcoeff + " + " + kS + "^"
           + hillcoeff + "))";
 
-      if (!paraList.contains(hillcoeff)) paraList.add(hillcoeff);
-      if (!paraList.contains(kS)) paraList.add(kS);
+      if (!listOfLocalParameters.contains(hillcoeff)) listOfLocalParameters.add(hillcoeff);
+      if (!listOfLocalParameters.contains(kS)) listOfLocalParameters.add(kS);
 
       kS = "k^\\text{S}_{-" + reactionNum + ",{"
           + Species.idToTeX(modTInhib.get(inhibitorNum)) + "}}";
@@ -151,7 +151,7 @@ public class HillEquation extends BasicKineticLaw {
 
     formelTeX = "k^\\text{g}_" + reactionNum;
     String formelTxt = "kg_" + reactionNum;
-    if (!paraList.contains(formelTxt)) paraList.add(formelTxt);
+    if (!listOfLocalParameters.contains(formelTxt)) listOfLocalParameters.add(formelTxt);
     if ((actiTeX.length() > 0) && (inhibTeX.length() > 0)) {
       formelTeX += "\\cdot " + actiTeX + "\\cdot " + inhibTeX;
       formelTxt += " * " + acti + " * " + inhib;

@@ -30,7 +30,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 	protected String formelTeX;
 
-	protected List<String> paraList;
+	protected List<String> listOfLocalParameters, listOfGlobalParameters;
 
 	protected String sboTerm;
 
@@ -49,7 +49,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 				parentReaction.getId()))
 			reactionNum++;
 		idAndName = new HashMap<String, String>();
-		paraList = new ArrayList<String>();
+		listOfLocalParameters = new ArrayList<String>();
+		listOfGlobalParameters = new ArrayList<String>();
 		List<String> modActi = new ArrayList<String>();
 		List<String> modCat = new ArrayList<String>();
 		List<String> modInhib = new ArrayList<String>();
@@ -177,12 +178,23 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			throws RateLawNotApplicableException;
 
 	/**
-	 * Returns a list of the names of all parameters used by this law.
+	 * Returns a list of the names of all parameters used by this law. This
+	 * list contains parameters, which can be either stored locally, i.e., 
+	 * assigned to the specific kinetic law or globally for the whole model.
 	 * 
 	 * @return
 	 */
-	public List<String> getParameters() {
-		return paraList;
+	public List<String> getLocalParameters() {
+		return listOfLocalParameters;
+	}
+	
+	/**
+	 * Returns a list of names of all parameters, which are only allowed to
+	 * be stored globally.
+	 * @return
+	 */
+	public List<String> getGlobalParameters() {
+		return listOfGlobalParameters;
 	}
 
 	/**

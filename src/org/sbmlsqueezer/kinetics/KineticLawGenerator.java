@@ -106,6 +106,14 @@ public class KineticLawGenerator {
 	private String[] reactionNumAndKinetictexName;
 
 	/**
+	 * If true all parameters are stored globally for the whole model (default)
+	 * else parameters are stored locally for the respective kinetic equation
+	 * they belong to.
+	 */
+	private boolean addAllParametersGlobally = true;
+
+
+	/**
 	 * @param plugin
 	 *            An instance of the CellDesigner's plugin interface. *
 	 * @param generateKineticForAllReaction
@@ -834,10 +842,37 @@ public class KineticLawGenerator {
 	 */
 	public void storeParamters(PluginModel model, PluginReaction reaction) {
 		setInitialConcentrationTo(model, reaction, 1.0);
-		List<String> paramList = ((BasicKineticLaw) reaction.getKineticLaw())
-				.getParameters();
-		for (int paramNumber = 0; paramNumber < paramList.size(); paramNumber++) {
-			PluginParameter para = new PluginParameter(paramList
+		BasicKineticLaw kineticLaw = (BasicKineticLaw) reaction.getKineticLaw();
+		List<String> paramListLocal = kineticLaw.getLocalParameters();
+		List<String> paramListGlobal = kineticLaw.getGlobalParameters();
+		int paramNumber, i;
+		for (paramNumber = 0; paramNumber < paramListLocal.size(); paramNumber++) {
+			PluginParameter para;
+			if (addAllParametersGlobally) {
+				para = new PluginParameter(paramListLocal
+						.get(paramNumber), model);
+				para.setValue(1.0);
+				if (model.getParameter(para.getId()) == null) {
+					model.addParameter(para);
+					plugin.notifySBaseAdded((PluginSBase) para);
+				}
+			} else {
+				int contains = -1;
+				para = new PluginParameter(paramListLocal
+						.get(paramNumber), kineticLaw);
+				para.setValue(1.0);
+				for (i = 0; (i < kineticLaw.getNumParameters())
+						&& (contains < 0); i++)
+					if (kineticLaw.getParameter(i).getId().equals(para.getId()))
+						contains = i;
+				if (contains < 0) {
+					kineticLaw.addParameter(para);
+					plugin.notifySBaseAdded(para);
+				}
+			}
+		}
+		for (paramNumber = 0; paramNumber < paramListGlobal.size(); paramNumber++) {
+			PluginParameter para = new PluginParameter(paramListGlobal
 					.get(paramNumber), model);
 			para.setValue(1.0);
 			if (model.getParameter(para.getId()) == null) {
@@ -1096,6 +1131,24 @@ public class KineticLawGenerator {
 		}
 	}
 
+
+	/**
+	 * If true parameters are always stored globally, otherwise locally.
+	 * @param addAllParametersGlobally
+	 */
+	public void setAddAllParametersGlobally(boolean addAllParametersGlobally) {
+		this.addAllParametersGlobally = addAllParametersGlobally;
+	}
+
+	/**
+	 * If true parameters are always stored globally.
+	 * @return
+	 */
+	public boolean isAddAllParametersGlobally() {
+		return addAllParametersGlobally;
+	}
+
+	
 	/*
 	 * --------------------------------------------------------------------------
 	 * ------- Getter

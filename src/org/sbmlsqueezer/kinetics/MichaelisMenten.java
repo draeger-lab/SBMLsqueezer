@@ -111,10 +111,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 			kMe += "_" + specRefR.getSpecies();
 			kMeTeX += ",{" + Species.idToTeX(specRefR.getSpecies()) + "}}";
 
-			if (!paraList.contains(kcatp))
-				paraList.add(new String(kcatp));
-			if (!paraList.contains(kMe))
-				paraList.add(new String(kMe));
+			if (!listOfLocalParameters.contains(kcatp))
+				listOfLocalParameters.add(new String(kcatp));
+			if (!listOfLocalParameters.contains(kMe))
+				listOfLocalParameters.add(new String(kMe));
 			ASTNode numerator_n;
 			ASTNode denominator_n;
 			ASTNode temp;
@@ -175,10 +175,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 				kMp += "_" + specRefP.getSpecies();
 				kMpTeX += ",{" + Species.idToTeX(specRefP.getSpecies()) + "}}";
 
-				if (!paraList.contains(kcatn))
-					paraList.add(new String(kcatn));
-				if (!paraList.contains(kMp))
-					paraList.add(new String(kMp));
+				if (!listOfLocalParameters.contains(kcatn))
+					listOfLocalParameters.add(new String(kcatn));
+				if (!listOfLocalParameters.contains(kMp))
+					listOfLocalParameters.add(new String(kMp));
 
 				temp2 = numerator_n;
 				numerator_n = new ASTNode(AST_MINUS);
@@ -244,10 +244,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 					kIbTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
 				}
 
-				if (!paraList.contains(kIa))
-					paraList.add(new String(kIa));
-				if (!paraList.contains(kIb))
-					paraList.add(new String(kIb));
+				if (!listOfLocalParameters.contains(kIa))
+					listOfLocalParameters.add(new String(kIa));
+				if (!listOfLocalParameters.contains(kIb))
+					listOfLocalParameters.add(new String(kIb));
 				ASTNode inh = new ASTNode(AST_PLUS);
 				temp = new ASTNode(AST_INTEGER);
 				temp.setValue(1);
@@ -353,10 +353,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 					kIai = "kIa" + kIai;
 					String kIbiTeX = "K^\\text{Ib" + kIaiTeX;
 					kIaiTeX = "K^\\text{Ia" + kIaiTeX;
-					if (!paraList.contains(kIai))
-						paraList.add(new String(kIai));
-					if (!paraList.contains(kIbi))
-						paraList.add(new String(kIbi));
+					if (!listOfLocalParameters.contains(kIai))
+						listOfLocalParameters.add(new String(kIai));
+					if (!listOfLocalParameters.contains(kIbi))
+						listOfLocalParameters.add(new String(kIbi));
 
 					inh = new ASTNode(AST_DIVIDE);
 					temp = new ASTNode(AST_NAME);
@@ -411,8 +411,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 							+ reactionNum;
 					kI += "_" + modInhib.get(inhibitorNum);
 					kITeX += ",\\text{" + modInhib.get(inhibitorNum) + "}}";
-					if (!paraList.contains(kI))
-						paraList.add(new String(kI));
+					if (!listOfLocalParameters.contains(kI))
+						listOfLocalParameters.add(new String(kI));
 
 					temp = new ASTNode(AST_PLUS);
 					temp2 = new ASTNode(AST_NAME);
@@ -512,8 +512,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 			kAaTeX = "k^\\text{A}_{" + reactionNum;
 			//kAbTeX = "\\cdot\\left(1+\\frac{k^\\text{Ab}_{" + reactionNum;
 
-			if (!paraList.contains(kAa))
-				paraList.add(new String(kAa));
+			if (!listOfLocalParameters.contains(kAa))
+				listOfLocalParameters.add(new String(kAa));
 
 			kAaTeX += "}";
 			temp = new ASTNode(AST_NAME);

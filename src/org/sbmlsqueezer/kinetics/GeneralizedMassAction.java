@@ -86,7 +86,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		PluginReaction reaction = getParentReaction();
 
 		kass = "kass_" + reactionNum;
-		paraList.add(kass);
+		listOfLocalParameters.add(kass);
 		String formelTxt = kass;
 		formelTeX = "k_{+" + reactionNum + "}";
 		if (!zeroReact)
@@ -113,7 +113,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		// nur das wird hinzugefuegt, wenn Reaction reversibel
 		if (reaction.getReversible()) {
 			kdiss = "kdiss_" + reactionNum;
-			paraList.add(kdiss);
+			listOfLocalParameters.add(kdiss);
 			formelTxt = formelTxt + " - " + kdiss;
 			formelTeX = formelTeX + " - k_{-" + reactionNum + "}";
 			if (!zeroProd)
@@ -148,8 +148,8 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 						+ modActi.get(activatorNum);
 				String kATeX = "k^\\text{A}_{" + reactionNum + ",\\text{"
 						+ modActi.get(activatorNum) + "}}";
-				if (!paraList.contains(kA))
-					paraList.add(kA);
+				if (!listOfLocalParameters.contains(kA))
+					listOfLocalParameters.add(kA);
 				acti += modActi.get(activatorNum) + "/(" + kA + " + "
 						+ modActi.get(activatorNum) + ") * ";
 				actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum))
@@ -164,8 +164,8 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 						+ modInhib.get(inhibitorNum), kITeX = "k^\\text{I}_{"
 						+ reactionNum + ",\\text{" + modInhib.get(inhibitorNum)
 						+ "}}";
-				if (!paraList.contains(kI))
-					paraList.add(kI);
+				if (!listOfLocalParameters.contains(kI))
+					listOfLocalParameters.add(kI);
 				inhib += kI + "/(" + kI + " + " + modInhib.get(inhibitorNum)
 						+ ") * ";
 				inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + "+"
