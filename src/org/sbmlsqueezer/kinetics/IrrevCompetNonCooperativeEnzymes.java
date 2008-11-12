@@ -90,8 +90,8 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 				if (modE.size() > 1)
 					kcat += "_" + modE.get(enzymeNum);
 			}
-			if (!paraList.contains(kcat))
-				paraList.add(new String(kcat));
+			if (!listOfLocalParameters.contains(kcat))
+				listOfLocalParameters.add(new String(kcat));
 
 			ASTNode currEnzyme = new ASTNode(AST_DIVIDE);
 			ASTNode numerator = new ASTNode(AST_TIMES);
@@ -120,8 +120,8 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 			if (numOfEnzymes > 1)
 				kM += "_" + modE.get(enzymeNum);
 			kM += "_" + reaction.getReactant(0).getSpecies();
-			if (!paraList.contains(kM))
-				paraList.add(new String(kM));
+			if (!listOfLocalParameters.contains(kM))
+				listOfLocalParameters.add(new String(kM));
 			tmp = new ASTNode(AST_NAME);
 			tmp.setName(kM);
 			if (modInhib.size() == 0)
@@ -143,10 +143,10 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 					}
 					kIi += "_" + modInhib.get(i);
 					exponent += "_" + modInhib.get(i);
-					if (!paraList.contains(kIi))
-						paraList.add(new String(kIi));
-					if (!paraList.contains(exponent))
-						paraList.add(new String(exponent));
+					if (!listOfLocalParameters.contains(kIi))
+						listOfLocalParameters.add(new String(kIi));
+					if (!listOfLocalParameters.contains(exponent))
+						listOfLocalParameters.add(new String(exponent));
 					tmp.setName(kIi);
 					frac.addChild(tmp);
 
@@ -184,8 +184,8 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 				tmp.getRightChild().addChild(new ASTNode(AST_NAME));
 				tmp.getRightChild().addChild(new ASTNode(AST_NAME));
 				String kAi = "KA_" + reactionNum + "_" + modActi.get(actiNum);
-				if (!paraList.contains(kAi))
-					paraList.add(new String(kAi));
+				if (!listOfLocalParameters.contains(kAi))
+					listOfLocalParameters.add(new String(kAi));
 				tmp.getRightChild().getLeftChild().setName(kAi);
 				tmp.getRightChild().getRightChild().setName(
 						modActi.get(actiNum++));

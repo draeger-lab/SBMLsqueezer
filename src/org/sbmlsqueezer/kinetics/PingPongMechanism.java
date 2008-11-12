@@ -127,9 +127,9 @@ public class PingPongMechanism extends BasicKineticLaw {
       kMr2TeX += ",{" + Species.idToTeX(specRefE2.getSpecies())
           + "}}";
 
-      if (!paraList.contains(kcatp)) paraList.add(kcatp);
-      if (!paraList.contains(kMr2)) paraList.add(kMr2);
-      if (!paraList.contains(kMr1)) paraList.add(kMr1);
+      if (!listOfLocalParameters.contains(kcatp)) listOfLocalParameters.add(kcatp);
+      if (!listOfLocalParameters.contains(kMr2)) listOfLocalParameters.add(kMr2);
+      if (!listOfLocalParameters.contains(kMr1)) listOfLocalParameters.add(kMr1);
 
       /*
        * Irreversible Reaction
@@ -227,12 +227,12 @@ public class PingPongMechanism extends BasicKineticLaw {
         kIr1TeX += ",{"
             + Species.idToTeX(specRefE1.getSpecies()) + "}}";
 
-        if (!paraList.contains(kcatn)) paraList.add(kcatn);
-        if (!paraList.contains(kMp2)) paraList.add(kMp2);
-        if (!paraList.contains(kMp1)) paraList.add(kMp1);
-        if (!paraList.contains(kIp1)) paraList.add(kIp1);
-        if (!paraList.contains(kIp2)) paraList.add(kIp2);
-        if (!paraList.contains(kIr1)) paraList.add(kIr1);
+        if (!listOfLocalParameters.contains(kcatn)) listOfLocalParameters.add(kcatn);
+        if (!listOfLocalParameters.contains(kMp2)) listOfLocalParameters.add(kMp2);
+        if (!listOfLocalParameters.contains(kMp1)) listOfLocalParameters.add(kMp1);
+        if (!listOfLocalParameters.contains(kIp1)) listOfLocalParameters.add(kIp1);
+        if (!listOfLocalParameters.contains(kIp2)) listOfLocalParameters.add(kIp2);
+        if (!listOfLocalParameters.contains(kIr1)) listOfLocalParameters.add(kIr1);
 
         numerator = kcatp + "/(" + kIr1 + " * " + kMr2 + ") * ";
         numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kIr1TeX + kMr2TeX + "}";
@@ -333,7 +333,7 @@ public class PingPongMechanism extends BasicKineticLaw {
             + ",{"
             + Species.idToTeX(modActi.get(activatorNum))
             + "}}";
-        if (!paraList.contains(kA)) paraList.add(kA);
+        if (!listOfLocalParameters.contains(kA)) listOfLocalParameters.add(kA);
         acti += "(" + modActi.get(activatorNum) + "/(" + kA + " + "
             + modActi.get(activatorNum) + ")) * ";
         actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum)) + "}{"
@@ -349,7 +349,7 @@ public class PingPongMechanism extends BasicKineticLaw {
         String kI = "kI_" + reactionNum + "_" + modInhib.get(inhibitorNum);
         String kItex = "k^\\text{I}_{" + reactionNum + ",{"
             + Species.idToTeX(modInhib.get(inhibitorNum)) + "}}";
-        paraList.add(kI);
+        listOfLocalParameters.add(kI);
         inhib += "(" + kI + "/(" + kI + " + " + modInhib.get(inhibitorNum)
             + ")) * ";
         inhibTeX += "\\frac{" + kItex + "}{" + kItex + " + "

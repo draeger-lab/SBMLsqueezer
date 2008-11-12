@@ -197,15 +197,15 @@ public class OrderedMechanism extends BasicKineticLaw {
       kMp1TeX += ",{" + Species.idToTeX(specRefP1.getSpecies())
           + "}}";
 
-      if (!paraList.contains(kcatp)) paraList.add(kcatp);
+      if (!listOfLocalParameters.contains(kcatp)) listOfLocalParameters.add(kcatp);
 
       /*
        * Irreversible reaction
        */
       if (!reaction.getReversible()) {
-        if (!paraList.contains(kMr2)) paraList.add(kMr2);
-        if (!paraList.contains(kMr1)) paraList.add(kMr1);
-        if (!paraList.contains(kIr1)) paraList.add(kIr1);
+        if (!listOfLocalParameters.contains(kMr2)) listOfLocalParameters.add(kMr2);
+        if (!listOfLocalParameters.contains(kMr1)) listOfLocalParameters.add(kMr1);
+        if (!listOfLocalParameters.contains(kIr1)) listOfLocalParameters.add(kIr1);
 
         numerator = kcatp + " * ";
         numeratorTeX = kcatpTeX;
@@ -244,15 +244,15 @@ public class OrderedMechanism extends BasicKineticLaw {
         /*
          * Reversible Bi-Bi reaction.
          */
-        if (!paraList.contains(kIr2)) paraList.add(kIr2);
-        if (!paraList.contains(kcatn)) paraList.add(kcatn);
-        if (!paraList.contains(kMr1)) paraList.add(kMr1);
-        if (!paraList.contains(kMr2)) paraList.add(kMr2);
-        if (!paraList.contains(kMp1)) paraList.add(kMp1);
-        if (!paraList.contains(kMp2)) paraList.add(kMp2);
-        if (!paraList.contains(kIr1)) paraList.add(kIr1);
-        if (!paraList.contains(kIp1)) paraList.add(kIp1);
-        if (!paraList.contains(kIp2)) paraList.add(kIp2);
+        if (!listOfLocalParameters.contains(kIr2)) listOfLocalParameters.add(kIr2);
+        if (!listOfLocalParameters.contains(kcatn)) listOfLocalParameters.add(kcatn);
+        if (!listOfLocalParameters.contains(kMr1)) listOfLocalParameters.add(kMr1);
+        if (!listOfLocalParameters.contains(kMr2)) listOfLocalParameters.add(kMr2);
+        if (!listOfLocalParameters.contains(kMp1)) listOfLocalParameters.add(kMp1);
+        if (!listOfLocalParameters.contains(kMp2)) listOfLocalParameters.add(kMp2);
+        if (!listOfLocalParameters.contains(kIr1)) listOfLocalParameters.add(kIr1);
+        if (!listOfLocalParameters.contains(kIp1)) listOfLocalParameters.add(kIp1);
+        if (!listOfLocalParameters.contains(kIp2)) listOfLocalParameters.add(kIp2);
 
         numerator = "(" + kcatp + " * ";
         numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kIr1TeX + kMr2TeX + "}";
@@ -369,12 +369,12 @@ public class OrderedMechanism extends BasicKineticLaw {
         /*
          * Reversible bi-uni reaction
          */
-        if (!paraList.contains(kcatn)) paraList.add(kcatn);
-        if (!paraList.contains(kMr1)) paraList.add(kMr1);
-        if (!paraList.contains(kMr2)) paraList.add(kMr2);
-        if (!paraList.contains(kMp1)) paraList.add(kMp1);
-        if (!paraList.contains(kIr1)) paraList.add(kIr1);
-        if (!paraList.contains(kIp1)) paraList.add(kIp1);
+        if (!listOfLocalParameters.contains(kcatn)) listOfLocalParameters.add(kcatn);
+        if (!listOfLocalParameters.contains(kMr1)) listOfLocalParameters.add(kMr1);
+        if (!listOfLocalParameters.contains(kMr2)) listOfLocalParameters.add(kMr2);
+        if (!listOfLocalParameters.contains(kMp1)) listOfLocalParameters.add(kMp1);
+        if (!listOfLocalParameters.contains(kIr1)) listOfLocalParameters.add(kIr1);
+        if (!listOfLocalParameters.contains(kIp1)) listOfLocalParameters.add(kIp1);
 
         numerator = "(" + kcatp + " * ";
         numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kIr1TeX + kMr2TeX + "}";
@@ -450,7 +450,7 @@ public class OrderedMechanism extends BasicKineticLaw {
         kA += "_" + modActi.get(activatorNum);
         kATeX += ",{" + Species.idToTeX(modActi.get(activatorNum)) + "}}";
 
-        if (!paraList.contains(kA)) paraList.add(kA);
+        if (!listOfLocalParameters.contains(kA)) listOfLocalParameters.add(kA);
         acti += "(" + modActi.get(activatorNum) + "/(" + kA + " + "
             + modActi.get(activatorNum) + ")) * ";
         actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum)) + "}{"
@@ -467,7 +467,7 @@ public class OrderedMechanism extends BasicKineticLaw {
         String kI = "kI_" + reactionNum, kITeX = "k^\\text{I}_{" + reactionNum;
         kI += "_" + modInhib.get(inhibitorNum);
         kITeX += ",{" + Species.idToTeX(modInhib.get(inhibitorNum)) + "}}";
-        if (!paraList.contains(kI)) paraList.add(kI);
+        if (!listOfLocalParameters.contains(kI)) listOfLocalParameters.add(kI);
         inhib += "(" + kI + "/(" + kI + " + " + modInhib.get(inhibitorNum)
             + ")) * ";
         inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + " + "

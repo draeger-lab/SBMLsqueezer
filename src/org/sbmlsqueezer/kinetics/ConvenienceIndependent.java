@@ -68,7 +68,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				klVTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
 			}
 			klVTeX += "}";
-			if (!paraList.contains(klV)) paraList.add(klV);
+			if (!listOfLocalParameters.contains(klV)) listOfLocalParameters.add(klV);
 
 			/*
 			 * ==============================================================================
@@ -85,7 +85,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				 * parameter we don't want to add it again since this parameter can only
 				 * occur once for each reacting species!
 				 */
-				if (!paraList.contains(kiG)) paraList.add(kiG);
+				if (!listOfGlobalParameters.contains(kiG)) listOfGlobalParameters.add(kiG);
 
 				kM = "kM_" + reactionNum;
 				kMTeX = "k^\\text{M}_{" + reactionNum;
@@ -97,7 +97,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				kMTeX += ",{"
 				    + Species.idToTeX(reaction.getProduct(productNum).getSpecies())
 				    + "}}";
-				if (!paraList.contains(kM)) paraList.add(kM);
+				if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(kM);
 
 				kiG += " * " + kM;
 				kiGTeX += kMTeX;
@@ -133,7 +133,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				 * kiG may only be included one time for each species in the whole
 				 * model!
 				 */
-				if (!paraList.contains(kiG)) paraList.add(kiG);
+				if (!listOfGlobalParameters.contains(kiG)) listOfGlobalParameters.add(kiG);
 
 				kM = "kM_" + reactionNum;
 				kMTeX = "k^\\text{M}_{" + reactionNum;
@@ -143,7 +143,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				}
 				kM += "_" + currentSpecRef.getSpecies();
 				kMTeX += ",{" + Species.idToTeX(currentSpecRef.getSpecies()) + "}}";
-				if (!paraList.contains(kM)) paraList.add(kM);
+				if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(kM);
 
 				kiG += " * " + kM;
 				kiGTeX += kMTeX;
@@ -244,7 +244,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					kMTeX += ",{"
 					    + Species.idToTeX(reaction.getProduct(productNum).getSpecies())
 					    + "}}";
-					if (!paraList.contains(kM)) paraList.add(kM);
+					if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(kM);
 
 					if (reaction.getNumProducts() > 1) {
 						denominator += "(1 + ";
@@ -329,7 +329,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				String kATeX = "k^\\text{A}_{" + reactionNum;
 				kA += "_" + modActi.get(activatorNum);
 				kATeX += ",\\text{" + modActi.get(activatorNum) + "}}";
-				if (!paraList.contains(kA)) paraList.add(kA);
+				if (!listOfLocalParameters.contains(kA)) listOfLocalParameters.add(kA);
 				acti += modActi.get(activatorNum) + "/(" + kA + " + "
 				    + modActi.get(activatorNum) + ") * ";
 				actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum)) + "}{"
@@ -345,7 +345,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				String kI = "kI_" + reactionNum, kITeX = "k^\\text{I}_{" + reactionNum;
 				kI += "_" + modInhib.get(inhibitorNum);
 				kITeX += ",\\text{" + modInhib.get(inhibitorNum) + "}}";
-				if (!paraList.contains(kI)) paraList.add(kI);
+				if (!listOfLocalParameters.contains(kI)) listOfLocalParameters.add(kI);
 				inhib += kI + "/(" + kI + " + " + modInhib.get(inhibitorNum) + ") * ";
 				inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + "+"
 				    + Species.toTeX(modInhib.get(inhibitorNum)) + "}\\cdot ";

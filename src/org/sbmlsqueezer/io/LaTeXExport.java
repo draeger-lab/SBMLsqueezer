@@ -714,8 +714,7 @@ public class LaTeXExport implements libsbmlConstants {
 			species = model.getSpecies(speciesIndex);
 			for (int k = 0; k < reactants.size(); k++) {
 				if (species.getId().equals(reactants.get(k).getId())) {
-					stoch = reactantsStochiometric.get(k)
-							.getStoichiometryMath();
+					stoch = reactantsStochiometric.get(k).getStoichiometryMath().getMath();
 					if (stoch != null) {
 						sEquation += (stoch.getType() == AST_PLUS || stoch
 								.getType() == AST_MINUS) ? sEquation += "-\\left("
@@ -744,7 +743,7 @@ public class LaTeXExport implements libsbmlConstants {
 			}
 			for (int k = 0; k < products.size(); k++) {
 				if (species.getId().equals(products.get(k).getId())) {
-					stoch = productsStochiometric.get(k).getStoichiometryMath();
+					stoch = productsStochiometric.get(k).getStoichiometryMath().getMath();
 					if (sEquation == "") {
 
 						if (stoch != null) {
@@ -880,7 +879,7 @@ public class LaTeXExport implements libsbmlConstants {
 			for (i = 0; i < model.getNumEvents(); i++) {
 				ev = model.getEvent(i);
 				LinkedList<String> assignments = new LinkedList<String>();
-				assignments.add(toLaTeX(model, ev.getTrigger()));
+				assignments.add(toLaTeX(model, ev.getTrigger().getMath()));
 				for (int j = 0; j < ev.getNumEventAssignments(); j++)
 					assignments.add(toLaTeX(model, ev.getEventAssignment(j)
 							.getMath()));
@@ -905,7 +904,7 @@ public class LaTeXExport implements libsbmlConstants {
 					else {
 						latex += newLine
 								+ "\\texttt{and assigns after a delay of "
-								+ toLaTeX(model, ev.getDelay());
+								+ toLaTeX(model, ev.getDelay().getMath());
 						if (!ev.getTimeUnits().equals(null))
 							latex += ev.getTimeUnits()
 									+ " the following rules: }" + newLine;
@@ -923,7 +922,7 @@ public class LaTeXExport implements libsbmlConstants {
 					else {
 						latex += newLine
 								+ "\\texttt{and assigns after a delay of "
-								+ toLaTeX(model, ev.getDelay());
+								+ toLaTeX(model, ev.getDelay().getMath());
 						if (!ev.getTimeUnits().equals(null))
 							latex += ev.getTimeUnits()
 									+ " the following rule: }" + newLine;

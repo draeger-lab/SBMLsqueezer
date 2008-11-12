@@ -100,8 +100,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				}
 				kcatTeX += "}";
 			}
-			if (!paraList.contains(kcat))
-				paraList.add(new String(kcat));
+			if (!listOfLocalParameters.contains(kcat))
+				listOfLocalParameters.add(new String(kcat));
 
 			ASTNode currEnzyme = new ASTNode(AST_DIVIDE);
 			ASTNode numerator = new ASTNode(AST_TIMES);
@@ -138,8 +138,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				}
 				kM += "_" + si.getSpecies();
 				kMeTeX += ",{" + Species.idToTeX(si.getSpecies()) + "}}";
-				if (!paraList.contains(kM))
-					paraList.add(new String(kM));
+				if (!listOfLocalParameters.contains(kM))
+					listOfLocalParameters.add(new String(kM));
 
 				ASTNode frac = new ASTNode(AST_DIVIDE);
 				tmp = new ASTNode(AST_NAME);
