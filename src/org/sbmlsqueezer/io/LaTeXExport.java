@@ -548,7 +548,8 @@ public class LaTeXExport implements libsbmlConstants {
 			speciesTeX = replaceAll("_", speciesTeX, "\\_");
 		else if ((numUnderscore == 0) && (0 < speciesTeX.length())) {
 			int index = -1;
-			while (!Character.isDigit(name.charAt(index + 1)))
+			while (index != (name.length() - 1)
+					&& !Character.isDigit(name.charAt(index + 1)))
 				index++;
 			if ((-1 < index) && (index < name.length())) {
 				String num = name.substring(++index);
@@ -714,7 +715,8 @@ public class LaTeXExport implements libsbmlConstants {
 			species = model.getSpecies(speciesIndex);
 			for (int k = 0; k < reactants.size(); k++) {
 				if (species.getId().equals(reactants.get(k).getId())) {
-					stoch = reactantsStochiometric.get(k).getStoichiometryMath().getMath();
+					stoch = reactantsStochiometric.get(k)
+							.getStoichiometryMath().getMath();
 					if (stoch != null) {
 						sEquation += (stoch.getType() == AST_PLUS || stoch
 								.getType() == AST_MINUS) ? sEquation += "-\\left("
@@ -743,7 +745,8 @@ public class LaTeXExport implements libsbmlConstants {
 			}
 			for (int k = 0; k < products.size(); k++) {
 				if (species.getId().equals(products.get(k).getId())) {
-					stoch = productsStochiometric.get(k).getStoichiometryMath().getMath();
+					stoch = productsStochiometric.get(k).getStoichiometryMath()
+							.getMath();
 					if (sEquation == "") {
 
 						if (stoch != null) {

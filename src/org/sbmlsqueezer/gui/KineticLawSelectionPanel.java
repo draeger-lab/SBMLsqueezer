@@ -6,6 +6,8 @@ package org.sbmlsqueezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Window;
@@ -17,6 +19,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -26,6 +29,7 @@ import javax.swing.JSeparator;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
+import org.sbmlsqueezer.io.LaTeXExport;
 import org.sbmlsqueezer.kinetics.BasicKineticLaw;
 import org.sbmlsqueezer.kinetics.KineticLawGenerator;
 import org.sbmlsqueezer.kinetics.RateLawNotApplicableException;
@@ -51,9 +55,17 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private short possibleTypes[];
 
+	private JPanel optionsPanel;
+
 	private JRadioButton rButtonsKineticEquations[];
 
 	private JRadioButton rButtonReversible;
+
+	private JRadioButton rButtonIrreversible;
+
+	private JRadioButton rButtonGlobalParameters;
+
+	private JRadioButton rButtonLocalParameters;
 
 	private PluginModel model;
 
@@ -120,37 +132,53 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		 * set to reversible or irreversible. The default is taken from the
 		 * current setting of the given reaction.
 		 */
-		JPanel reversibilityPanel = new JPanel(new GridBagLayout());
-		rButtonReversible = new JRadioButton("reversible", reaction
+		optionsPanel = new JPanel(new GridBagLayout());
+		optionsPanel.setBorder(BorderFactory
+				.createTitledBorder("Reaction options"));
+
+		rButtonReversible = new JRadioButton("Reversible", reaction
 				.getReversible());
-		JRadioButton rButtonIrreversible = new JRadioButton("irreversible",
+		rButtonIrreversible = new JRadioButton("Irreversible",
 				!reaction.getReversible());
-		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(rButtonReversible);
-		buttonGroup.add(rButtonIrreversible);
-		LayoutHelper.addComponent(reversibilityPanel,
-				(GridBagLayout) reversibilityPanel.getLayout(),
-				rButtonReversible, 0, 0, 1, 1, 1, 1);
-		LayoutHelper.addComponent(reversibilityPanel,
-				(GridBagLayout) reversibilityPanel.getLayout(),
-				rButtonIrreversible, 1, 0, 1, 1, 1, 1);
+		ButtonGroup revGroup = new ButtonGroup();
+		revGroup.add(rButtonReversible);
+		revGroup.add(rButtonIrreversible);
+		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
+				.getLayout(), rButtonReversible, 0, 0, 1, 1, 1, 1);
+		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
+				.getLayout(), rButtonIrreversible, 1, 0, 1, 1, 1, 1);
 		rButtonIrreversible.addActionListener(this);
 		rButtonReversible.addActionListener(this);
 
+		rButtonGlobalParameters = new JRadioButton(
+				"Add all parameters globally", klg.isAddAllParametersGlobally());
+		rButtonLocalParameters = new JRadioButton(
+				"Keep parameters local", !klg.isAddAllParametersGlobally());
+		ButtonGroup paramGroup = new ButtonGroup();
+		paramGroup.add(rButtonGlobalParameters);
+		paramGroup.add(rButtonLocalParameters);
+		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
+				.getLayout(), rButtonGlobalParameters, 0, 1, 1, 1, 1, 1);
+		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
+				.getLayout(), rButtonLocalParameters, 1, 1, 1, 0, 1, 1);
+		rButtonGlobalParameters.addActionListener(this);
+		rButtonLocalParameters.addActionListener(this);
+
 		kineticsPanel = initKineticsPanel();
+
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 				kineticsPanel, 0, 1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 				new JSeparator(), 0, 2, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
-				reversibilityPanel, 0, 3, 1, 1, 1, 1);
+				optionsPanel, 0, 3, 1, 1, 1, 1);
 	}
 
 	private Box initKineticsPanel() throws RateLawNotApplicableException {
 		possibleTypes = klg.identifyPossibleReactionTypes(model, reaction);
 		String[] kineticEquations = new String[possibleTypes.length];
 		String[] toolTips = new String[possibleTypes.length];
-		laTeXpreview = new String[possibleTypes.length];
+		laTeXpreview = new String[possibleTypes.length + 1];
 		int i;
 		for (i = 0; i < possibleTypes.length; i++) {
 			BasicKineticLaw kinetic = klg.createKineticLaw(model, reaction,
@@ -161,20 +189,28 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 					40);
 		}
 
+		laTeXpreview[laTeXpreview.length - 1] = LaTeXExport.toLaTeX(model,
+				reaction.getKineticLaw().getMath());
+
 		JPanel kineticsPanel = new JPanel(new GridBagLayout());
-		rButtonsKineticEquations = new JRadioButton[kineticEquations.length];
+		rButtonsKineticEquations = new JRadioButton[kineticEquations.length + 1];
 		ButtonGroup buttonGroup = new ButtonGroup();
 
 		for (i = 0; i < rButtonsKineticEquations.length; i++) {
-			rButtonsKineticEquations[i] = (i != 0) ? new JRadioButton(
-					kineticEquations[i], false) : new JRadioButton(
-					kineticEquations[i], true);
+			if (i < rButtonsKineticEquations.length - 1) {
+				rButtonsKineticEquations[i] = (i != 0) ? new JRadioButton(
+						kineticEquations[i], false) : new JRadioButton(
+						kineticEquations[i], true);
+				rButtonsKineticEquations[i].setToolTipText(toolTips[i]);
+			} else {
+				rButtonsKineticEquations[i] = new JRadioButton(
+						"View existing equation", false);
+			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
 			rButtonsKineticEquations[i].addActionListener(this);
 			LayoutHelper.addComponent(kineticsPanel,
 					(GridBagLayout) kineticsPanel.getLayout(),
 					rButtonsKineticEquations[i], 0, i, 1, 1, 1, 1);
-			rButtonsKineticEquations[i].setToolTipText(toolTips[i]);
 		}
 
 		kineticsPanel.setBorder(BorderFactory
@@ -204,6 +240,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		eqnPrev = new JPanel();
 		eqnPrev.setBorder(BorderFactory
 				.createTitledBorder(" Equation Preview "));
+		eqnPrev.setLayout(new BorderLayout());
 		Dimension dim = new Dimension(width, height);
 		/*
 		 * new Dimension((int) Math.min(width, preview
@@ -216,7 +253,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
 		scroll.setBackground(Color.WHITE);
 		scroll.setPreferredSize(dim);
-		eqnPrev.add(scroll);
+		eqnPrev.add(scroll, BorderLayout.CENTER);
 	}
 
 	/**
@@ -248,39 +285,45 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() instanceof JRadioButton) {
-			JRadioButton rbutton = (JRadioButton) e.getSource();
-			if (rbutton.getText().endsWith("reversible"))
-				try {
-					// reversible property was changed.
-					reaction.setReversible(getReversible());
-					remove(kineticsPanel);
-					kineticsPanel = initKineticsPanel();
-					LayoutHelper.addComponent(this, (GridBagLayout) this
-							.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
-				} catch (RateLawNotApplicableException exc) {
-					throw new RuntimeException(exc.getMessage(), exc);
-				}
-			else {
-				int i = 0; /*, width = eqnPrev.getWidth(), height = eqnPrev
-						.getHeight();*/
-				while ((i < rButtonsKineticEquations.length)
-						&& (!rbutton.equals(rButtonsKineticEquations[i])))
-					i++;
-				kineticsPanel.remove(eqnPrev);
-				setPreviewPanel(i);
-				kineticsPanel.add(eqnPrev);
+		JRadioButton rbutton = (JRadioButton) e.getSource();
+		if (rbutton.getParent().equals(optionsPanel)) {
+			try {
+				// reversible property was changed.
+				reaction.setReversible(getReversible());
+				remove(kineticsPanel);
+				kineticsPanel = initKineticsPanel();
+				LayoutHelper.addComponent(this, (GridBagLayout) this
+						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+			} catch (RateLawNotApplicableException exc) {
+				throw new RuntimeException(exc.getMessage(), exc);
 			}
-			validate();
-			getTopLevelAncestor().validate();
-			Window w = (Window) getTopLevelAncestor();
-			int width = w.getWidth();
-			w.pack();
-			w.setSize(width, w.getHeight());
+			klg.setAddAllParametersGlobally(getGlobal());
+		} else {
+			int i = 0; /*
+						 * , width = eqnPrev.getWidth(), height = eqnPrev
+						 * .getHeight();
+						 */
+			while ((i < rButtonsKineticEquations.length)
+					&& (!rbutton.equals(rButtonsKineticEquations[i])))
+				i++;
+			kineticsPanel.remove(eqnPrev);
+			setPreviewPanel(i);
+			kineticsPanel.add(eqnPrev);
+
+			setAllEnabled(optionsPanel,
+					i != rButtonsKineticEquations.length - 1);
 		}
+
+		validate();
+		getTopLevelAncestor().validate();
+		Window w = (Window) getTopLevelAncestor();
+		int width = w.getWidth();
+		w.pack();
+		w.setSize(width, w.getHeight());
 	}
 
 	/**
@@ -303,5 +346,37 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 */
 	public boolean getReversible() {
 		return rButtonReversible.isSelected();
+	}
+
+	/**
+	 * Returns true if all parameters are set to be global.
+	 * 
+	 * @return
+	 */
+
+	public boolean getGlobal() {
+		return rButtonGlobalParameters.isSelected();
+	}
+
+	/**
+	 * Recursively enables or disables a Java Swing Container and all contained
+	 * components.
+	 * 
+	 * @param c
+	 * @param enabled
+	 */
+
+	public void setAllEnabled(Container c, boolean enabled) {
+		Component children[] = c.getComponents();
+		for (int i = 0; i < children.length; i++) {
+			if (!(children[i] instanceof JScrollPane)) {
+				if (children[i] instanceof Container) {
+					setAllEnabled((Container) children[i], enabled);
+				}
+				if (!(children[i] instanceof JButton)) {
+					children[i].setEnabled(enabled);
+				}
+			}
+		}
 	}
 }

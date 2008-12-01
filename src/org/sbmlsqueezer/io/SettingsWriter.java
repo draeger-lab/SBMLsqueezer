@@ -54,7 +54,7 @@ public class SettingsWriter {
       boolean possibleEnzymeUnknown, boolean possibleEnzymeReceptor,
       boolean possibleEnzymeSimpleMolecule, boolean possibleEnzymeAsRNA,
       boolean possibleEnzymeAllNotChecked,
-      boolean forceAllReactionsAsEnzymeReaction) {
+      boolean forceAllReactionsAsEnzymeReaction, boolean addAllParametersGlobally) {
     try {
       out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file
           .getPath())));
@@ -83,6 +83,7 @@ public class SettingsWriter {
     append("possibleEnzymeAllNotChecked:" + possibleEnzymeAllNotChecked);
     append("forceAllReactionsAsEnzymeReaction:"
         + forceAllReactionsAsEnzymeReaction);
+    append("addAllParametersGlobally:" + addAllParametersGlobally);
     append("END");
     close();
   }
