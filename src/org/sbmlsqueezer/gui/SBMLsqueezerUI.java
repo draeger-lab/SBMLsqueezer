@@ -230,12 +230,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			Image image = ImageIO.read(/*
 										 * new
 										 * File(System.getProperty("user.dir") +
-										 * System.getProperty("file.separator") +
-										 * "resources" +
-										 * System.getProperty("file.separator") +
-										 * "images" +
-										 * System.getProperty("file.separator") +
-										 */getClass().getResource("title_small.jpg"));
+										 * System.getProperty("file.separator")
+										 * + "resources" +
+										 * System.getProperty("file.separator")
+										 * + "images" +
+										 * System.getProperty("file.separator")
+										 * +
+										 */getClass().getResource(
+					"title_small.jpg"));
 			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(image));
 			label.setBackground(Color.WHITE);
@@ -441,6 +443,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 								plugin,
 								settingsPanel
 										.isSetAllReactionsAreEnzymeCatalyzed(),
+								settingsPanel
+										.isSetAllParametersAreAddedGlobally(),
 								settingsPanel
 										.isSetGenerateKineticsForAllReactions(),
 								settingsPanel.getUniUniType(), settingsPanel
@@ -650,7 +654,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
 	 */
 	public void windowActivated(WindowEvent e) {
 	}
@@ -658,7 +663,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 	 */
 	public void windowClosed(WindowEvent e) {
 	}
@@ -666,7 +672,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
 	 */
 	public void windowClosing(WindowEvent e) {
 		if (e.getSource() instanceof JHelpBrowser)
@@ -676,7 +683,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
+	 * )
 	 */
 	public void windowDeactivated(WindowEvent e) {
 	}
@@ -684,7 +693,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
+	 * )
 	 */
 	public void windowDeiconified(WindowEvent e) {
 	}
@@ -692,7 +703,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
 	 */
 	public void windowIconified(WindowEvent e) {
 	}
@@ -700,7 +712,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
 	 */
 	public void windowOpened(WindowEvent e) {
 	}

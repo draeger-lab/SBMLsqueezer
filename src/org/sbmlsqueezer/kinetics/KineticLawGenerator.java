@@ -93,6 +93,8 @@ public class KineticLawGenerator {
 
 	private boolean considerEachReactionEnzymeCatalysed;
 
+	private boolean considerAllParametersAsGlobal;
+
 	private boolean generateKineticLawForEachReaction;
 
 	private List<PluginReaction> listOfFastReactions;
@@ -111,7 +113,6 @@ public class KineticLawGenerator {
 	 * they belong to.
 	 */
 	private boolean addAllParametersGlobally = true;
-
 
 	/**
 	 * @param plugin
@@ -174,6 +175,7 @@ public class KineticLawGenerator {
 	 */
 	public KineticLawGenerator(CellDesignerPlugin plugin,
 			boolean forceAllReactionsAsEnzymeReaction,
+			boolean addAllParametersGlobally,
 			boolean generateKineticForAllReaction, short uniUniType,
 			short biUniType, short biBiType, List<String> listOfPossibleEnzymes)
 			throws IllegalFormatException, ModificationException,
@@ -187,6 +189,7 @@ public class KineticLawGenerator {
 		this.listOfPossibleEnzymes.retainAll(listOfPossibleEnzymes);
 		considerEachReactionEnzymeCatalysed = forceAllReactionsAsEnzymeReaction;
 		generateKineticLawForEachReaction = generateKineticForAllReaction;
+		setAddAllParametersGlobally(addAllParametersGlobally);
 		init();
 	}
 
@@ -849,8 +852,8 @@ public class KineticLawGenerator {
 		for (paramNumber = 0; paramNumber < paramListLocal.size(); paramNumber++) {
 			PluginParameter para;
 			if (addAllParametersGlobally) {
-				para = new PluginParameter(paramListLocal
-						.get(paramNumber), model);
+				para = new PluginParameter(paramListLocal.get(paramNumber),
+						model);
 				para.setValue(1.0);
 				if (model.getParameter(para.getId()) == null) {
 					model.addParameter(para);
@@ -858,8 +861,8 @@ public class KineticLawGenerator {
 				}
 			} else {
 				int contains = -1;
-				para = new PluginParameter(paramListLocal
-						.get(paramNumber), kineticLaw);
+				para = new PluginParameter(paramListLocal.get(paramNumber),
+						kineticLaw);
 				para.setValue(1.0);
 				for (i = 0; (i < kineticLaw.getNumParameters())
 						&& (contains < 0); i++)
@@ -1131,9 +1134,9 @@ public class KineticLawGenerator {
 		}
 	}
 
-
 	/**
 	 * If true parameters are always stored globally, otherwise locally.
+	 * 
 	 * @param addAllParametersGlobally
 	 */
 	public void setAddAllParametersGlobally(boolean addAllParametersGlobally) {
@@ -1142,13 +1145,13 @@ public class KineticLawGenerator {
 
 	/**
 	 * If true parameters are always stored globally.
+	 * 
 	 * @return
 	 */
 	public boolean isAddAllParametersGlobally() {
 		return addAllParametersGlobally;
 	}
 
-	
 	/*
 	 * --------------------------------------------------------------------------
 	 * ------- Getter
