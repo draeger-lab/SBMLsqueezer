@@ -2,9 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/libsbml/sbmlj.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/celldesigner.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/HotEqn.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/sbmlj.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/libsbml/libsbmlj.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/celldesigner.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

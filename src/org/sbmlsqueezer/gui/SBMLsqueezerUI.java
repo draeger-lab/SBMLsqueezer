@@ -9,8 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -32,6 +35,7 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 
 import org.sbmlsqueezer.gui.table.KineticLawJTable;
 import org.sbmlsqueezer.gui.table.KineticLawTableModel;
+import org.sbmlsqueezer.gui.LaTeXExportDialogPanel;
 import org.sbmlsqueezer.io.LaTeXExport;
 import org.sbmlsqueezer.io.MyFileFilter;
 import org.sbmlsqueezer.io.ODEwriter;
@@ -130,6 +134,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						reaction, equationType, messagePanel.getReversible()),
 						messagePanel.getReversible());
 				klg.removeUnnecessaryParameters(plugin);
+
 			}
 		} catch (RateLawNotApplicableException exc) {
 			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
@@ -151,22 +156,36 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	public SBMLsqueezerUI(PluginModel model) {
 		this();
-		MyFileFilter filter = new MyFileFilter(false, true);
-		JFileChooser chooser = new JFileChooser();
-		chooser.setFileFilter(filter);
-		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+		ImageIcon icon = null;
+		try {
+			Image image = ImageIO.read(getClass()
+					.getResource("Lemon_small.png"));
+			icon = new ImageIcon(image);
+			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+		} catch (IOException exc) {
+			JOptionPane.showMessageDialog(null, "<html>" + exc.getMessage()
+					+ "</html>", exc.getClass().getName(),
+					JOptionPane.ERROR_MESSAGE);
+			exc.printStackTrace();
+		}
+		LaTeXExportDialogPanel panel = new LaTeXExportDialogPanel();
+		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+				icon) == JOptionPane.OK_OPTION) {
 			try {
-				File f = chooser.getSelectedFile();
-				if (filter.isTeXFile(f))
-					LaTeXExport.toLaTeX(model, f);
-				if (filter.isTextFile(f)) {
-					// TODO.
-				}
-			} catch (IOException exc) {
-				JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-						+ "</html>", exc.getClass().getName(),
-						JOptionPane.ERROR_MESSAGE);
+				BufferedWriter buffer = new BufferedWriter(new FileWriter(panel
+						.getTeXFile()));
+				LaTeXExport exporter = new LaTeXExport(panel.isLandscape(),
+						panel.isIDsInTWFont(), panel.getFontSize(), panel
+								.getPaperSize(), panel.isImplicitUnit(), panel
+								.isTitlePage(), panel.isNameInEquations());
+				buffer.write(exporter.toLaTeX(model));
+				buffer.close();
+				dispose();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
+		}
 	}
 
 	/**
@@ -240,15 +259,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					"title_small.jpg"));
 			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(image));
-			label.setBackground(Color.WHITE);
+			// label.setBackground(Color.WHITE);
 			JPanel p = new JPanel();
 			p.add(label);
-			p.setBackground(Color.WHITE);
+			// p.setBackground(Color.WHITE);
 			JScrollPane scroll = new JScrollPane(p,
 					JScrollPane.VERTICAL_SCROLLBAR_NEVER,
 					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			scroll.setBackground(Color.WHITE);
+			// scroll.setBackground(Color.WHITE);
 			getContentPane().add(scroll, BorderLayout.NORTH);
+			ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
 					+ "</html>", exc.getClass().getName(),
@@ -716,6 +736,18 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
 	 */
 	public void windowOpened(WindowEvent e) {
+	}
+
+	public static void listLoadedLibraries() throws Exception {
+		Field loadedLibraryNamesField = ClassLoader.class
+				.getDeclaredField("loadedLibraryNames");
+		loadedLibraryNamesField.setAccessible(true);
+		@SuppressWarnings("unchecked")
+		Vector<String> loadedLibraryNames = (Vector<String>) loadedLibraryNamesField
+				.get(null);
+		for (String string : loadedLibraryNames) {
+			System.out.println(string);
+		}
 	}
 
 	/**

@@ -4,6 +4,7 @@
  */
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.sbml.libsbml.ASTNode;
@@ -57,9 +58,10 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#createKineticEquation(jp.sbi.celldesigner.plugin.PluginModel,
-	 *      int, java.util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbmlsqueezer.kinetics.BasicKineticLaw#createKineticEquation(jp.sbi
+	 * .celldesigner.plugin.PluginModel, int, java.util.List, java.util.List,
+	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	@Override
 	protected String createKineticEquation(PluginModel model, int reactionNum,
@@ -154,7 +156,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 					tmp.addChild(new ASTNode(AST_INTEGER));
 					tmp.getChild(1).setValue(si.getStoichiometry());
 					numerator.addChild(tmp);
-				} else 
+				} else
 					numerator.addChild(frac);
 				if (reaction.getNumReactants() > 1) {
 					if (denominator == null)
@@ -191,12 +193,17 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 		} while (enzymeNum <= modE.size() - 1);
 
 		if (enzymeNum > 1)
-			formelTeX += "\\end{multline}";		
-		//setMath(ast);
-		//formelTxt = getFormula();
-		formelTeX = LaTeXExport.toLaTeX(model, ast);		
+			formelTeX += "\\end{multline}";
+		// setMath(ast);
+		// formelTxt = getFormula();
+		try {
+			formelTeX = (new LaTeXExport()).toLaTeX(model, ast).toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		formelTxt = TextExport.toText(model, ast);
-		
+
 		return formelTxt;
 	}
 

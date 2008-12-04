@@ -6,20 +6,18 @@ package org.sbmlsqueezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -138,8 +136,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 		rButtonReversible = new JRadioButton("Reversible", reaction
 				.getReversible());
-		rButtonIrreversible = new JRadioButton("Irreversible",
-				!reaction.getReversible());
+		rButtonIrreversible = new JRadioButton("Irreversible", !reaction
+				.getReversible());
 		ButtonGroup revGroup = new ButtonGroup();
 		revGroup.add(rButtonReversible);
 		revGroup.add(rButtonIrreversible);
@@ -152,8 +150,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 		rButtonGlobalParameters = new JRadioButton(
 				"Add all parameters globally", klg.isAddAllParametersGlobally());
-		rButtonLocalParameters = new JRadioButton(
-				"Keep parameters local", !klg.isAddAllParametersGlobally());
+		rButtonLocalParameters = new JRadioButton("Keep parameters local", !klg
+				.isAddAllParametersGlobally());
 		ButtonGroup paramGroup = new ButtonGroup();
 		paramGroup.add(rButtonGlobalParameters);
 		paramGroup.add(rButtonLocalParameters);
@@ -172,6 +170,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				new JSeparator(), 0, 2, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 				optionsPanel, 0, 3, 1, 1, 1, 1);
+
+		ContainerHandler.setAllBackground(this, Color.WHITE);
 	}
 
 	private Box initKineticsPanel() throws RateLawNotApplicableException {
@@ -189,8 +189,15 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 					40);
 		}
 
-		laTeXpreview[laTeXpreview.length - 1] = LaTeXExport.toLaTeX(model,
-				reaction.getKineticLaw().getMath());
+		try {
+			laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
+					.toLaTeX(model, reaction.getKineticLaw().getMath())
+					.toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Error: Unhandled IOException");
+		}
 
 		JPanel kineticsPanel = new JPanel(new GridBagLayout());
 		rButtonsKineticEquations = new JRadioButton[kineticEquations.length + 1];
@@ -236,7 +243,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				+ laTeXpreview[kinNum].replaceAll("mathrm", "mbox").replaceAll(
 						"text", "mbox") + "\\end{equation}"),
 				BorderLayout.CENTER);
-		preview.setBackground(Color.WHITE);
+		// preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel();
 		eqnPrev.setBorder(BorderFactory
 				.createTitledBorder(" Equation Preview "));
@@ -251,8 +258,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
-		scroll.setBackground(Color.WHITE);
+		// scroll.setBackground(Color.WHITE);
 		scroll.setPreferredSize(dim);
+		ContainerHandler.setAllBackground(scroll, Color.WHITE);
 		eqnPrev.add(scroll, BorderLayout.CENTER);
 	}
 
@@ -313,8 +321,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			kineticsPanel.remove(eqnPrev);
 			setPreviewPanel(i);
 			kineticsPanel.add(eqnPrev);
-
-			setAllEnabled(optionsPanel,
+			ContainerHandler.setAllEnabled(optionsPanel,
 					i != rButtonsKineticEquations.length - 1);
 		}
 
@@ -365,18 +372,4 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 * @param c
 	 * @param enabled
 	 */
-
-	public void setAllEnabled(Container c, boolean enabled) {
-		Component children[] = c.getComponents();
-		for (int i = 0; i < children.length; i++) {
-			if (!(children[i] instanceof JScrollPane)) {
-				if (children[i] instanceof Container) {
-					setAllEnabled((Container) children[i], enabled);
-				}
-				if (!(children[i] instanceof JButton)) {
-					children[i].setEnabled(enabled);
-				}
-			}
-		}
-	}
 }

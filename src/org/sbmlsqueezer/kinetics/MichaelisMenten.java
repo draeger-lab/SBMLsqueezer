@@ -1,5 +1,6 @@
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.sbml.libsbml.ASTNode;
@@ -504,13 +505,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 		ASTNode act = new ASTNode(AST_TIMES);
 		for (int i = 0; i < modActi.size(); i++) {
 
-			String kAa, kAaTeX; //, kAbTeX;
+			String kAa, kAaTeX; // , kAbTeX;
 
 			kAa = "kA_" + reactionNum;
 			// ????
 			/* "\\cdot\\left(1+\\frac{" */
 			kAaTeX = "k^\\text{A}_{" + reactionNum;
-			//kAbTeX = "\\cdot\\left(1+\\frac{k^\\text{Ab}_{" + reactionNum;
+			// kAbTeX = "\\cdot\\left(1+\\frac{k^\\text{Ab}_{" + reactionNum;
 
 			if (!listOfLocalParameters.contains(kAa))
 				listOfLocalParameters.add(new String(kAa));
@@ -536,8 +537,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 			// ????
 			/*
-			 * kAa = " * (1 + " + kAa + "/" + modActi.get(0) + ")"; kAb = " * (1 + " +
-			 * kAb + "/" + modActi.get(0) + ")"; kAaTeX += "}}{" +
+			 * kAa = " * (1 + " + kAa + "/" + modActi.get(0) + ")"; kAb =
+			 * " * (1 + " + kAb + "/" + modActi.get(0) + ")"; kAaTeX += "}}{" +
 			 * Species.toTeX(modActi.get(0)) + "}\\right)"; kAbTeX += "}}{" +
 			 * Species.toTeX(modActi.get(0)) + "}\\right)";
 			 */
@@ -558,8 +559,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 		// setMath(ast);
 		// formelTxt = getFormula();
 		formelTxt = TextExport.toText(model, ast);
-		formelTeX = LaTeXExport.toLaTeX(model, ast);
-		
+		try {
+			formelTeX = (new LaTeXExport()).toLaTeX(model, ast).toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return formelTxt;
 	}
 

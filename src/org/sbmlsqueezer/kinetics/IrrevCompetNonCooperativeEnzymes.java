@@ -3,6 +3,7 @@
  */
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.List;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
@@ -205,7 +206,12 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 
 		// setMath(ast);
 		// formelTxt = getFormula();
-		formelTeX = LaTeXExport.toLaTeX(model, ast);
+		try {
+			formelTeX = (new LaTeXExport()).toLaTeX(model, ast).toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		formelTxt = TextExport.toText(model, ast);
 
 		return formelTxt;
