@@ -9,7 +9,7 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 
 /**
  * TODO: comment missing
- *
+ * 
  * @since 2.0
  * @version
  * @author Nadine Hassis
@@ -21,12 +21,12 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 	/**
 	 * A serial version number.
 	 */
-	private static final long	 serialVersionUID	= 4134514954192751545L;
+	private static final long serialVersionUID = 4134514954192751545L;
 
 	/**
 	 * The CellDesigner plugin to which this action belongs.
 	 */
-	private SBMLsqueezerPlugin	plugin;
+	private SBMLsqueezerPlugin plugin;
 
 	/**
 	 * @param plugin
@@ -37,8 +37,10 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see jp.sbi.celldesigner.plugin.PluginActionListener#myActionPerformed(java.awt.event.ActionEvent)
+	 * 
+	 * @see
+	 * jp.sbi.celldesigner.plugin.PluginActionListener#myActionPerformed(java
+	 * .awt.event.ActionEvent)
 	 */
 	public void myActionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JMenuItem) {
@@ -47,12 +49,13 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 				(new SBMLsqueezerUI(plugin)).setVisible(true);
 			else if (item.equals(plugin.getContextMenuItemText()))
 				new SBMLsqueezerUI(plugin, (PluginReaction) plugin
-				    .getSelectedReactionNode().get(0));
+						.getSelectedReactionNode().get(0));
 			else if (item.equals(plugin.getExporterItemText()))
-			  if (plugin.getSelectedModel() != null)
-			    new SBMLsqueezerUI(plugin.getSelectedModel());
-		} else System.err.println("Unsupported source of action "
-		    + e.getSource().getClass().getName());
+				if (plugin.getSelectedModel() != null)
+					new SBMLsqueezerUI(plugin.getSelectedModel());
+		} else
+			System.err.println("Unsupported source of action "
+					+ e.getSource().getClass().getName());
 	}
 
 }

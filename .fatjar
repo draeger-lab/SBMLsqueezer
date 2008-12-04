@@ -1,5 +1,5 @@
 #Fat Jar Configuration File
-#Mon Dec 01 10:21:02 CET 2008
+#Thu Dec 04 16:11:42 CET 2008
 onejar.license.required=true
 manifest.classpath=
 manifest.removesigners=true
@@ -10,5 +10,5 @@ manifest.mainclass=
 manifest.file=<createnew>
 jarname.isextern=true
 onejar.expand=
-excludes=<jar|sbmlj.jar>;<jar|celldesigner.jar>
+excludes=<jar|libsbmlj.jar>;<jar|celldesigner.jar>
 includes=

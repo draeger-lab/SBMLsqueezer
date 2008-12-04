@@ -146,7 +146,7 @@ public class ODEwriter {
 
     for (i = 0; i < klg.getModel().getNumSpecies(); i++) {
       String toWriteSpecies = "Species: \\texttt{"
-          + LaTeXExport.replaceAll("_", klg.getModel().getSpecies(i).getName(), "\\_") + "} (\\texttt{"
+          + klg.getModel().getSpecies(i).getName().replaceAll("_", "\\_") + "} (\\texttt{"
           + klg.getAllSpeciesNumAndIDs().get(i) + "})";
       String toWriteODE = "\\frac{\\mathrm d ["
           + klg.getAllSpeciesNumAndIDs().get(i)
