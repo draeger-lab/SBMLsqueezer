@@ -22,7 +22,7 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	 */
 	public SBMLsqueezerPlugin() {
 		SBMLsqueezerPluginAction action = new SBMLsqueezerPluginAction(this);
-		String title = "SBMLsqueezer.Changed";
+		String title = "SBMLsqueezer";
 		PluginMenu menu = new PluginMenu(title);
 		PluginMenuItem menuItem = new PluginMenuItem(getMainPluginItemText(),
 		    action);

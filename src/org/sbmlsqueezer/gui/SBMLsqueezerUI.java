@@ -178,7 +178,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				LaTeXExport exporter = new LaTeXExport(panel.isLandscape(),
 						panel.isIDsInTWFont(), panel.getFontSize(), panel
 								.getPaperSize(), panel.isImplicitUnit(), panel
-								.isTitlePage(), panel.isNameInEquations());
+								.isTitlePage(), panel.isNameInEquations()/*
+																		 * ,
+																		 * panel
+																		 * .
+																		 * isNumberEquations
+																		 * ()
+																		 */);
 				buffer.write(exporter.toLaTeX(model));
 				buffer.close();
 				dispose();
