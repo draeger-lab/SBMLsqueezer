@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -226,7 +227,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		Box info = new Box(BoxLayout.Y_AXIS);
 		info.add(kineticsPanel);
 		info.add(eqnPrev);
-
+		ContainerHandler.setAllBackground(info, Color.WHITE);
+		
 		return info; // kineticsPanel;
 	}
 

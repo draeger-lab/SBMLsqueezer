@@ -42,13 +42,16 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 
 	private JCheckBox jCheckBoxIDsInTWFont = new JCheckBox(
 			"IDs in typewriter font", true);
-	private JCheckBox jCheckBoxLandscape = new JCheckBox("landscape", false);
+	private JCheckBox jCheckBoxLandscape = new JCheckBox("Landscape", false);
 	private JCheckBox jCheckBoxImplicitUnit = new JCheckBox(
 			"Show implicit unit declarations", true);
 	private JCheckBox jCheckBoxTitlePage = new JCheckBox("Create title page",
 			false);
 	private JCheckBox jCheckBoxNameInEquations = new JCheckBox(
 			"Set name in equations", false);
+
+	// private JCheckBox jCheckBoxNumberEquations = new JCheckBox
+	// ("Number equations consecutively", true);
 
 	public LaTeXExportDialogPanel() {
 		super(new BorderLayout());
@@ -72,7 +75,8 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 		LayoutHelper.addComponent(filePanel, (GridBagLayout) filePanel
 				.getLayout(), jButtonTeXFile, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(filePanel, (GridBagLayout) filePanel
-				.getLayout(), new JSeparator(SwingConstants.VERTICAL), 1, 0, 1, 1, 1, 1);
+				.getLayout(), new JSeparator(SwingConstants.VERTICAL), 1, 0, 1,
+				1, 1, 1);
 		LayoutHelper.addComponent(filePanel, (GridBagLayout) filePanel
 				.getLayout(), fileField, 2, 0, 4, 1, 1, 1);
 
@@ -107,11 +111,15 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 				.getLayout(), jCheckBoxTitlePage, 0, 3, 1, 1, 1, 1);
 		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
 				.getLayout(), jCheckBoxNameInEquations, 0, 4, 1, 1, 1, 1);
+		/*
+		 * LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
+		 * .getLayout(), jCheckBoxNumberEquations, 0, 5, 1, 1, 1, 1);
+		 */
 
 		add(filePanel, BorderLayout.PAGE_START);
 		add(formatPanel, BorderLayout.CENTER);
 		add(optionsPanel, BorderLayout.PAGE_END);
-		
+
 		ContainerHandler.setAllBackground(this, Color.WHITE);
 	}
 
@@ -134,6 +142,11 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 	public boolean isNameInEquations() {
 		return jCheckBoxNameInEquations.isSelected();
 	}
+
+	/*
+	 * public boolean isNumberEquations () { return
+	 * jCheckBoxNumberEquations.isSelected(); }
+	 */
 
 	public String getPaperSize() {
 		return jComboBoxPaperSize.getSelectedItem().toString();
