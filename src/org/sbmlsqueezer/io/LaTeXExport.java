@@ -1740,10 +1740,10 @@ public class LaTeXExport implements libsbmlConstants {
 		StringBuffer masked = new StringBuffer();
 		for (int i = 0; i < string.length(); i++) {
 			char atI = string.charAt(i);
-			if ((atI == '_') || (atI == '\\') || (atI == '[') || (atI == ']')
-					|| (atI == '$') || (atI == '&') || (atI == '#')
-					|| (atI == '{') || (atI == '}') || (atI == '%')
-					|| (atI == '~')) {
+			if ((atI == '_') || (atI == '\\') || (atI == '[')
+					|| (atI == ']') || (atI == '$') || (atI == '&')
+					|| (atI == '#') || (atI == '{') || (atI == '}')
+					|| (atI == '%') || (atI == '~')) {
 				if (i == 0)
 					masked.append('\\');
 				else if (string.charAt(i - 1) != '\\')
