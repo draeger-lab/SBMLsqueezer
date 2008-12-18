@@ -115,10 +115,11 @@ public class JSettingsPanel extends JPanel {
 		jCheckBoxTreatAllReactionsAsEnzyeReaction
 				.setToolTipText("<html>If checked, all reactions are considered to be enzyme-catalyzed.</html>");
 		jCheckBoxTreatAllReactionsAsEnzyeReaction.setBackground(Color.WHITE);
-		jCheckBoxAddAllParametersGlobally = new JCheckBox(
-				"Add all parameters globally");
+		jCheckBoxAddAllParametersGlobally = new JCheckBox("Local parameters");
 		jCheckBoxAddAllParametersGlobally
-				.setToolTipText("<html>If checked, all parameters are treated as global ones.</html>");
+				.setToolTipText("<html>If selected, newly created parameters will be stored <br>"
+						+ "globally in the model. Otherwise they will be stored <br>"
+						+ "locally in each respective reaction.</html>");
 		jCheckBoxAddAllParametersGlobally.setBackground(Color.WHITE);
 		jCheckBoxAddAllParametersGlobally.setSelected(true);
 		jCheckBoxWarnings = new JCheckBox("Warnings for too many reactants");
@@ -134,13 +135,13 @@ public class JSettingsPanel extends JPanel {
 		jSpinnerMaxRealisticNumOfReactants.setBackground(Color.WHITE);
 		jPanelGeneralOptions.setBackground(Color.WHITE);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxTreatAllReactionsAsEnzyeReaction, 0, 0, 2, 1, 1, 0);
+				jCheckBoxTreatAllReactionsAsEnzyeReaction, 0, 1, 2, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxWarnings, 0, 1, 1, 1, 1, 0);
+				jCheckBoxWarnings, 0, 2, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jSpinnerMaxRealisticNumOfReactants, 1, 1, 1, 1, 1, 0);
+				jSpinnerMaxRealisticNumOfReactants, 1, 2, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxAddAllParametersGlobally, 0, 2, 1, 1, 1, 0);
+				jCheckBoxAddAllParametersGlobally, 0, 0, 1, 1, 1, 0);
 
 		// Second Panel
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(

@@ -52,6 +52,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = -3145019506487267364L;
 
+	private boolean isReactionReversible;
+
 	private short possibleTypes[];
 
 	private JPanel optionsPanel;
@@ -92,6 +94,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		this.klg = klg;
 		this.model = model;
 		this.reaction = reaction;
+		this.isReactionReversible = reaction.getReversible();
 
 		JLabel label = new JLabel("<html><body>", JLabel.LEFT);
 
@@ -149,10 +152,16 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		rButtonIrreversible.addActionListener(this);
 		rButtonReversible.addActionListener(this);
 
-		rButtonGlobalParameters = new JRadioButton(
-				"Add all parameters globally", klg.isAddAllParametersGlobally());
-		rButtonLocalParameters = new JRadioButton("Keep parameters local", !klg
+		rButtonGlobalParameters = new JRadioButton("Global parameters", klg
 				.isAddAllParametersGlobally());
+		rButtonGlobalParameters
+				.setToolTipText("<html> If selected, newly created parameters will <br>"
+						+ "be stored globally in the model. </html>");
+		rButtonLocalParameters = new JRadioButton("Local parameters", !klg
+				.isAddAllParametersGlobally());
+		rButtonLocalParameters
+				.setToolTipText("<html> If selected, newly created parameters <br>"
+						+ "will be stored locally in each respective reaction. </html>");
 		ButtonGroup paramGroup = new ButtonGroup();
 		paramGroup.add(rButtonGlobalParameters);
 		paramGroup.add(rButtonLocalParameters);
@@ -172,7 +181,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 				optionsPanel, 0, 3, 1, 1, 1, 1);
 
-		ContainerHandler.setAllBackground(this, Color.WHITE);
+		// ContainerHandler.setAllBackground(this, Color.WHITE);
 	}
 
 	private Box initKineticsPanel() throws RateLawNotApplicableException {
@@ -194,6 +203,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
 					.toLaTeX(model, reaction.getKineticLaw().getMath())
 					.toString();
+			// System.out.println(laTeXpreview[laTeXpreview.length - 1]);
+			laTeXpreview[laTeXpreview.length - 1].replaceAll("_", "underline");
+			// System.out.println(laTeXpreview[laTeXpreview.length - 1]);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -212,7 +224,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				rButtonsKineticEquations[i].setToolTipText(toolTips[i]);
 			} else {
 				rButtonsKineticEquations[i] = new JRadioButton(
-						"View existing equation", false);
+						"Existing rate law", false);
 			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
 			rButtonsKineticEquations[i].addActionListener(this);
@@ -227,8 +239,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		Box info = new Box(BoxLayout.Y_AXIS);
 		info.add(kineticsPanel);
 		info.add(eqnPrev);
-		ContainerHandler.setAllBackground(info, Color.WHITE);
-		
+		// ContainerHandler.setAllBackground(info, Color.WHITE);
+
 		return info; // kineticsPanel;
 	}
 
@@ -243,9 +255,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				+ reaction.getId()
 				+ "}="
 				+ laTeXpreview[kinNum].replaceAll("mathrm", "mbox").replaceAll(
-						"text", "mbox") + "\\end{equation}"),
-				BorderLayout.CENTER);
-		// preview.setBackground(Color.WHITE);
+						"text", "mbox").replaceAll("mathtt", "mbox")
+				+ "\\end{equation}"), BorderLayout.CENTER);
+		preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel();
 		eqnPrev.setBorder(BorderFactory
 				.createTitledBorder(" Equation Preview "));
@@ -260,9 +272,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
-		// scroll.setBackground(Color.WHITE);
+		scroll.setBackground(Color.WHITE);
 		scroll.setPreferredSize(dim);
-		ContainerHandler.setAllBackground(scroll, Color.WHITE);
+		// ContainerHandler.setAllBackground(scroll, Color.WHITE);
 		eqnPrev.add(scroll, BorderLayout.CENTER);
 	}
 
@@ -323,6 +335,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			kineticsPanel.remove(eqnPrev);
 			setPreviewPanel(i);
 			kineticsPanel.add(eqnPrev);
+			if (i == rButtonsKineticEquations.length - 1)
+				rButtonReversible.setSelected(isReactionReversible);
 			ContainerHandler.setAllEnabled(optionsPanel,
 					i != rButtonsKineticEquations.length - 1);
 		}

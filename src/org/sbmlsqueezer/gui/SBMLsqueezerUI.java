@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -148,6 +149,25 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
+	public SBMLsqueezerUI(PluginModel model, PluginReaction reaction) {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileFilter(new MyFileFilter(false, true));
+		File file = null;
+		int state = chooser.showOpenDialog(null);
+		if (state == JFileChooser.APPROVE_OPTION) {
+			file = chooser.getSelectedFile();
+		}
+		try {
+			BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
+			buffer.write(new LaTeXExport().toLaTeX(model, reaction));
+			buffer.close();
+		} catch (IOException exc) {
+			JOptionPane.showMessageDialog(null, "<html>" + exc.getMessage()
+					+ "</html>", exc.getClass().getName(),
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
 	/**
 	 * This constructor allows to store the given model in a text file. This can
 	 * be a LaTeX or another format.
@@ -265,16 +285,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					"title_small.jpg"));
 			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(image));
-			// label.setBackground(Color.WHITE);
+			label.setBackground(Color.WHITE);
 			JPanel p = new JPanel();
 			p.add(label);
-			// p.setBackground(Color.WHITE);
+			p.setBackground(Color.WHITE);
 			JScrollPane scroll = new JScrollPane(p,
 					JScrollPane.VERTICAL_SCROLLBAR_NEVER,
 					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			// scroll.setBackground(Color.WHITE);
+			scroll.setBackground(Color.WHITE);
 			getContentPane().add(scroll, BorderLayout.NORTH);
-			ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
+			// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
 					+ "</html>", exc.getClass().getName(),

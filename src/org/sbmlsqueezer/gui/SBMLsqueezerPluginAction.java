@@ -47,9 +47,13 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 			String item = ((JMenuItem) e.getSource()).getText();
 			if (item.equals(plugin.getMainPluginItemText()))
 				(new SBMLsqueezerUI(plugin)).setVisible(true);
-			else if (item.equals(plugin.getContextMenuItemText()))
+			else if (item.equals(plugin.getSqueezeContextMenuItemText()))
 				new SBMLsqueezerUI(plugin, (PluginReaction) plugin
 						.getSelectedReactionNode().get(0));
+			else if (item.equals(plugin.getExportContextMenuItemText()))
+				new SBMLsqueezerUI(plugin.getSelectedModel(),
+						(PluginReaction) plugin.getSelectedReactionNode()
+								.get(0));
 			else if (item.equals(plugin.getExporterItemText()))
 				if (plugin.getSelectedModel() != null)
 					new SBMLsqueezerUI(plugin.getSelectedModel());

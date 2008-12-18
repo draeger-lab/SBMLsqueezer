@@ -559,12 +559,11 @@ public class MichaelisMenten extends BasicKineticLaw {
 		// setMath(ast);
 		// formelTxt = getFormula();
 		formelTxt = TextExport.toText(model, ast);
-		try {
-			formelTeX = (new LaTeXExport()).toLaTeX(model, ast).toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		/*
+		 * try { formelTeX = (new LaTeXExport()).toLaTeX(model, ast).toString();
+		 * } catch (IOException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
 
 		return formelTxt;
 	}
