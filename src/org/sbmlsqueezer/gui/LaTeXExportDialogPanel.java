@@ -120,7 +120,7 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 		add(formatPanel, BorderLayout.CENTER);
 		add(optionsPanel, BorderLayout.PAGE_END);
 
-		ContainerHandler.setAllBackground(this, Color.WHITE);
+		// ContainerHandler.setAllBackground(this, Color.WHITE);
 	}
 
 	public boolean isIDsInTWFont() {
