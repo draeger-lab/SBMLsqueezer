@@ -180,34 +180,7 @@ public class LaTeXExport implements libsbmlConstants {
 		String newLine = System.getProperty("line.separator");
 		String title = model.getName().length() > 0 ? model.getName()
 				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
-		String head = "\\documentclass[" + fontSize;
-		if (titlepage) {
-			head += ",titlepage";
-		}
-		if (landscape) {
-			head += ",landscape";
-		}
-		head += "," + paperSize + "paper]{scrartcl}";
-		head += newLine + "\\usepackage[scaled=.9]{helvet}" + newLine
-				+ "\\usepackage{amsmath}" + newLine + "\\usepackage{courier}"
-				+ newLine + "\\usepackage{times}" + newLine
-				+ "\\usepackage[english]{babel}" + newLine
-				+ "\\usepackage{a4wide}" + newLine + "\\usepackage{longtable}"
-				+ newLine + "\\usepackage{booktabs}" + newLine;
-		if (landscape) {
-			head += "\\usepackage[landscape]{geometry}" + newLine;
-		}
-		head += "\\title{\\textsc{SBMLsqeezer}: Differential Equation System ``"
-				+ title
-				+ "\"}"
-				+ newLine
-				+ "\\date{\\today}"
-				+ newLine
-				+ "\\begin{document}"
-				+ newLine
-				+ "\\author{}"
-				+ newLine
-				+ "\\maketitle" + newLine;
+		String head = getDocumentHead(title);
 
 		String rateHead = newLine + "\\section{Rate Laws}" + newLine;
 		String speciesHead = newLine + "\\section{Equations}";
@@ -292,37 +265,137 @@ public class LaTeXExport implements libsbmlConstants {
 			species = model.getSpecies(speciesIndex);
 			for (int k = 0; k < reactants.size(); k++) {
 				if (species.getId().equals(reactants.get(k).getId())) {
-					stochMath = reactantsStochiometric.get(k)
-							.getStoichiometryMath();
-					if (stochMath != null) {
-						if (stochMath.isSetMath()) {
-							stoch = stochMath.getMath();
-							sEquation += (stoch.getType() == AST_PLUS || stoch
-									.getType() == AST_MINUS) ? sEquation += "-\\left("
-									+ toLaTeX(model, stoch)
-									+ "\\right)v_{"
-									+ reactantsReaction.get(k) + "}"
-									: "-" + toLaTeX(model, stoch) + "v_{"
-											+ reactantsReaction.get(k) + "}";
-						} else if (!stochMath.isSetMath()) {
-							double doubleStoch = reactantsStochiometric.get(k)
-									.getStoichiometry();
-							if (doubleStoch == 1.0) {
-								sEquation += "-v_{" + reactantsReaction.get(k)
-										+ "}";
+					// <<<<<<< .mine
+					PluginSpeciesReference ref = reactantsStochiometric.get(k);
+					if (ref != null) {
+						stochMath = ref.getStoichiometryMath();
+						if (stochMath != null) {
+							if (stochMath.isSetMath()) {
+								stoch = stochMath.getMath();
+								sEquation += (stoch.getType() == AST_PLUS || stoch
+										.getType() == AST_MINUS) ? sEquation += "-\\left("
+										+ toLaTeX(model, stoch)
+										+ "\\right)v_{"
+										+ reactantsReaction.get(k) + "}"
+										: "-" + toLaTeX(model, stoch) + "v_{"
+												+ reactantsReaction.get(k)
+												+ "}";
 							} else {
-								int intStoch = (int) doubleStoch;
-								if ((doubleStoch - intStoch) == 0.0)
-									sEquation += "-" + intStoch + "v_{"
+								double doubleStoch = reactantsStochiometric
+										.get(k).getStoichiometry();
+								if (doubleStoch == 1.0) {
+									sEquation += "-v_{"
 											+ reactantsReaction.get(k) + "}";
-								else
-									sEquation += "-" + doubleStoch + "v_{"
-											+ reactantsReaction.get(k) + "}";
+								} else {
+									int intStoch = (int) doubleStoch;
+									if ((doubleStoch - intStoch) == 0.0)
+										sEquation += "-" + intStoch + "v_{"
+												+ reactantsReaction.get(k)
+												+ "}";
+									else
+										sEquation += "-" + doubleStoch + "v_{"
+												+ reactantsReaction.get(k)
+												+ "}";
+								}
 							}
 						}
 					}
 				}
 			}
+			System.out.println("Running first loop");
+			for (int k = 0; k < products.size(); k++) {
+				if (species.getId().equals(products.get(k).getId())) {
+					PluginSpeciesReference ref = productsStochiometric.get(k);
+					if (ref != null) { // =======
+						stochMath = reactantsStochiometric.get(k)
+								.getStoichiometryMath();
+						if (stochMath != null) {
+							if (stochMath.isSetMath()) {
+								stoch = stochMath.getMath();
+								if (sEquation == "") {
+									if (stoch != null) {
+										// >>>>>>> .r7
+										sEquation += (stoch.getType() == AST_PLUS || stoch
+												.getType() == AST_MINUS) ? sEquation += "-\\left("
+												+ toLaTeX(model, stoch)
+												+ "\\right)v_{"
+												+ reactantsReaction.get(k)
+												+ "}"
+												: "-"
+														+ toLaTeX(model, stoch)
+														+ "v_{"
+														+ reactantsReaction
+																.get(k) + "}";
+									} else if (!stochMath.isSetMath()) {
+										double doubleStoch = reactantsStochiometric
+												.get(k).getStoichiometry();
+										if (doubleStoch == 1.0) {
+											sEquation += "-v_{"
+													+ reactantsReaction.get(k)
+													+ "}";
+										} else {
+											int intStoch = (int) doubleStoch;
+											if ((doubleStoch - intStoch) == 0.0)
+												sEquation += "-"
+														+ intStoch
+														+ "v_{"
+														+ reactantsReaction
+																.get(k) + "}";
+											else
+												sEquation += "-"
+														+ doubleStoch
+														+ "v_{"
+														+ reactantsReaction
+																.get(k) + "}";
+										}
+									}
+									// <<<<<<< .mine
+
+								} else {
+
+									if (stoch != null) {
+										;
+										sEquation += (stoch.getType() == AST_PLUS || stoch
+												.getType() == AST_MINUS) ? sEquation += "+\\left("
+												+ toLaTeX(model, stoch)
+												+ "\\right)v_{"
+												+ productsReaction.get(k) + "}"
+												: "+"
+														+ toLaTeX(model, stoch)
+														+ "v_{"
+														+ productsReaction
+																.get(k) + "}";
+									} else {
+										double doubleStoch = productsStochiometric
+												.get(k).getStoichiometry();
+										if (doubleStoch == 1.0)
+											sEquation += "+v_{"
+													+ productsReaction.get(k)
+													+ "}";
+										else {
+											int intStoch = (int) doubleStoch;
+											if ((doubleStoch - intStoch) == 0.0)
+												sEquation += "+"
+														+ intStoch
+														+ "v_{"
+														+ productsReaction
+																.get(k) + "}";
+											else
+												sEquation += "+"
+														+ doubleStoch
+														+ "v_{"
+														+ productsReaction
+																.get(k) + "}";
+										}
+									}
+									// =======
+								}
+							}
+						}
+					}
+				}
+			}
+			System.out.println("Running second loop");
 			for (int k = 0; k < products.size(); k++) {
 				if (species.getId().equals(products.get(k).getId())) {
 					stochMath = productsStochiometric.get(k)
@@ -390,6 +463,7 @@ public class LaTeXExport implements libsbmlConstants {
 													+ "}";
 									}
 								}
+								// >>>>>>> .r7
 							}
 						}
 					}
@@ -610,7 +684,25 @@ public class LaTeXExport implements libsbmlConstants {
 			}
 			laTeX += "\\bottomrule " + newLine + "\\end{longtable}";
 		}
+		System.out.println("Finished");
 		laTeX += newLine + tail;
+		return laTeX;
+	}
+
+	public String toLaTeX(PluginModel model, PluginReaction reaction)
+			throws IOException {
+		String title = model.getName().length() > 0 ? model.getName()
+				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
+		String laTeX = getDocumentHead(title);
+		laTeX += (!reaction.getName().equals("") && !reaction.getName().equals(
+				reaction.getId())) ? "Reaction: \\texttt{"
+				+ replaceAll("_", reaction.getId(), "\\_") + "}" + " ("
+				+ replaceAll("_", reaction.getName(), "\\_") + ")" + newLine
+				+ "\\begin{equation}" + newLine + "v=" : "Reaction: \\texttt{"
+				+ replaceAll("_", reaction.getId(), "\\_") + "}" + newLine
+				+ "\\begin{equation}" + newLine + "v=";
+		laTeX += toLaTeX(model, reaction.getKineticLaw().getMath());
+		laTeX += newLine + "\\end{equation}" + newLine + "\\end{document}";
 		return laTeX;
 	}
 
@@ -845,7 +937,6 @@ public class LaTeXExport implements libsbmlConstants {
 			 * Names of identifiers: parameters, functions, species etc.
 			 */
 		case AST_NAME:
-
 			if (model.getSpecies(astnode.getName()) != null) {
 				// Species.
 				PluginSpecies species = model.getSpecies(astnode.getName());
@@ -1594,6 +1685,38 @@ public class LaTeXExport implements libsbmlConstants {
 		return tex + s;
 	}
 
+	private String getDocumentHead(String title) {
+		String head = "\\documentclass[" + fontSize + "pt";
+		if (titlepage) {
+			head += ",titlepage";
+		}
+		if (landscape) {
+			head += ",landscape";
+		}
+		head += "," + paperSize + "paper]{scrartcl}";
+		head += newLine + "\\usepackage[scaled=.9]{helvet}" + newLine
+				+ "\\usepackage{amsmath}" + newLine + "\\usepackage{courier}"
+				+ newLine + "\\usepackage{times}" + newLine
+				+ "\\usepackage[english]{babel}" + newLine
+				+ "\\usepackage{a4wide}" + newLine + "\\usepackage{longtable}"
+				+ newLine + "\\usepackage{booktabs}" + newLine;
+		if (landscape) {
+			head += "\\usepackage[landscape]{geometry}" + newLine;
+		}
+		head += "\\title{\\textsc{SBMLsqueezer}: Differential Equation System ``"
+				+ title
+				+ "\"}"
+				+ newLine
+				+ "\\date{\\today}"
+				+ newLine
+				+ "\\begin{document}"
+				+ newLine
+				+ "\\author{}"
+				+ newLine
+				+ "\\maketitle" + newLine;
+		return head;
+	}
+
 	/**
 	 * If the field printNameIfAvailable is false this method returns a the id
 	 * of the given SBase. If printNameIfAvailable is true this method looks for
@@ -1717,14 +1840,15 @@ public class LaTeXExport implements libsbmlConstants {
 		StringBuffer masked = new StringBuffer();
 		for (int i = 0; i < string.length(); i++) {
 			char atI = string.charAt(i);
-			if ((atI == '_') || (atI == '\\') || (atI == '[') || (atI == ']')
-					|| (atI == '$') || (atI == '&') || (atI == '#')
-					|| (atI == '{') || (atI == '}') || (atI == '%')
-					|| (atI == '~')) {
+			if ((atI == '_') || (atI == '\\') || (atI == '[')
+					|| (atI == ']') || (atI == '$') || (atI == '&')
+					|| (atI == '#') || (atI == '{') || (atI == '}')
+					|| (atI == '%') || (atI == '~')) {
 				if (i == 0)
 					masked.append('\\');
 				else if (string.charAt(i - 1) != '\\')
-					masked.append("\\-\\"); // masked.append('\\');
+					// masked.append("\\-\\");
+					masked.append('\\');
 			}
 			masked.append(atI);
 		}
