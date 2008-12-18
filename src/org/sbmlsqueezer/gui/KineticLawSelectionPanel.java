@@ -204,7 +204,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 					.toLaTeX(model, reaction.getKineticLaw().getMath())
 					.toString();
 			// System.out.println(laTeXpreview[laTeXpreview.length - 1]);
-			laTeXpreview[laTeXpreview.length - 1].replaceAll("_", "underline");
+			// laTeXpreview[laTeXpreview.length - 1].replace("_", "underline");
 			// System.out.println(laTeXpreview[laTeXpreview.length - 1]);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
