@@ -10,7 +10,6 @@ import jp.sbi.celldesigner.plugin.PluginModel;
 
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.ListOfEvents;
-import org.sbml.libsbml.Model;
 import org.sbml.libsbml.SBMLDocument;
 
 /**

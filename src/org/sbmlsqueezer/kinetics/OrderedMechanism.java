@@ -490,7 +490,8 @@ public class OrderedMechanism extends BasicKineticLaw {
     return formelTxt;
   }
 
-  @Override
+  @SuppressWarnings("deprecation")
+@Override
   public String getName() {
     // according to Cornish-Bowden: Fundamentals of Enzyme kinetics
     double stoichiometryRight = 0;

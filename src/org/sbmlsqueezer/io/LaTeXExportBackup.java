@@ -608,6 +608,7 @@ public class LaTeXExportBackup implements libsbmlConstants {
 	 * @throws IOException
 	 */
 
+	@SuppressWarnings("unchecked")
 	public static String toLaTeX(PluginModel model) {
 		String latex;
 		String newLine = System.getProperty("line.separator");
@@ -857,9 +858,9 @@ public class LaTeXExportBackup implements libsbmlConstants {
 								+ idToTeX(species) + "]}}{\\mathrm {dt}}= 0";
 			}
 		}
-		String rulesHead = newLine + "\\section{Rules}" + newLine;
+		// String rulesHead = newLine + "\\section{Rules}" + newLine;
 		String eventsHead = newLine + "\\section{Events}";
-		String constraintsHead = newLine + "\\section{Constraints}";
+		// String constraintsHead = newLine + "\\section{Constraints}";
 		LinkedList events[] = new LinkedList[(int) model.getNumEvents()];
 		int i;
 		// writing latex

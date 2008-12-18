@@ -93,6 +93,7 @@ public class KineticLawGenerator {
 
 	private boolean considerEachReactionEnzymeCatalysed;
 
+	@SuppressWarnings("unused")
 	private boolean considerAllParametersAsGlobal;
 
 	private boolean generateKineticLawForEachReaction;
@@ -323,6 +324,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @param reactionNum
 	 */
+	@SuppressWarnings("deprecation")
 	public short identifyReactionType(PluginModel model, int reactionNum,
 			boolean reversibility) throws RateLawNotApplicableException {
 
@@ -1027,6 +1029,7 @@ public class KineticLawGenerator {
 	 *            A string with the formula to be assigned to the given
 	 *            reaction.
 	 */
+	@SuppressWarnings("deprecation")
 	public PluginReaction storeLaw(CellDesignerPlugin plugin,
 			PluginKineticLaw kineticLaw, boolean reversibility) {
 		int i;
