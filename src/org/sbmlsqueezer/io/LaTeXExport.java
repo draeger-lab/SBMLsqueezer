@@ -175,6 +175,7 @@ public class LaTeXExport implements libsbmlConstants {
 	 * @throws IOException
 	 */
 
+	@SuppressWarnings("unchecked")
 	public String toLaTeX(PluginModel model) throws IOException {
 		String laTeX;
 		String newLine = System.getProperty("line.separator");
@@ -598,11 +599,11 @@ public class LaTeXExport implements libsbmlConstants {
 				reaction.getId())) ? "Reaction: \\texttt{"
 				+ replaceAll("_", reaction.getId(), "\\_") + "}" + " ("
 				+ replaceAll("_", reaction.getName(), "\\_") + ")" + newLine
-				+ "\\begin{equation}" + newLine + "v=" : "Reaction: \\texttt{"
+				+ "\\begin{equation*}" + newLine + "v=" : "Reaction: \\texttt{"
 				+ replaceAll("_", reaction.getId(), "\\_") + "}" + newLine
-				+ "\\begin{equation}" + newLine + "v=";
+				+ "\\begin{equation*}" + newLine + "v=";
 		laTeX += toLaTeX(model, reaction.getKineticLaw().getMath());
-		laTeX += newLine + "\\end{equation}" + newLine + "\\end{document}";
+		laTeX += newLine + "\\end{equation*}" + newLine + "\\end{document}";
 		return laTeX;
 	}
 

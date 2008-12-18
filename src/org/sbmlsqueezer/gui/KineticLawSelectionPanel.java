@@ -18,7 +18,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -160,8 +159,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		rButtonLocalParameters = new JRadioButton("Local parameters", !klg
 				.isAddAllParametersGlobally());
 		rButtonLocalParameters
-				.setToolTipText("<html> If selected, newly created parameters <br>"
-						+ "will be stored locally in each respective reaction. </html>");
+				.setToolTipText("<html> If selected, newly created parameters will <br>"
+						+ "be stored locally in this reaction. </html>");
 		ButtonGroup paramGroup = new ButtonGroup();
 		paramGroup.add(rButtonGlobalParameters);
 		paramGroup.add(rButtonLocalParameters);
@@ -222,6 +221,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			} else {
 				rButtonsKineticEquations[i] = new JRadioButton(
 						"Existing rate law", false);
+				rButtonsKineticEquations[i]
+						.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");
 			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
 			rButtonsKineticEquations[i].addActionListener(this);

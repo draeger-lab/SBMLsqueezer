@@ -1,10 +1,8 @@
 package org.sbmlsqueezer.kinetics;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.sbml.libsbml.ASTNode;
-import org.sbmlsqueezer.io.LaTeXExport;
 import org.sbmlsqueezer.io.TextExport;
 
 import jp.sbi.celldesigner.plugin.PluginModel;

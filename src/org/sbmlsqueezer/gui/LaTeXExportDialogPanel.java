@@ -1,7 +1,6 @@
 package org.sbmlsqueezer.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -73,12 +72,9 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 		jButtonTeXFile.addActionListener(this);
 
 		LayoutHelper.addComponent(filePanel, (GridBagLayout) filePanel
-				.getLayout(), jButtonTeXFile, 0, 0, 1, 1, 1, 1);
+				.getLayout(), jButtonTeXFile, 5, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(filePanel, (GridBagLayout) filePanel
-				.getLayout(), new JSeparator(SwingConstants.VERTICAL), 1, 0, 1,
-				1, 1, 1);
-		LayoutHelper.addComponent(filePanel, (GridBagLayout) filePanel
-				.getLayout(), fileField, 2, 0, 4, 1, 1, 1);
+				.getLayout(), fileField, 0, 0, 5, 1, 1, 1);
 
 		formatPanel = new JPanel(new GridBagLayout());
 		formatPanel.setBorder(BorderFactory

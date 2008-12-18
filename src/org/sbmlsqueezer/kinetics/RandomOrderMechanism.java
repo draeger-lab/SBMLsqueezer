@@ -598,6 +598,7 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 		return formelTxt;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics

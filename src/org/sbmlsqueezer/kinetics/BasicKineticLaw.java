@@ -39,6 +39,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param parent
 	 * @throws RateLawNotApplicableException
 	 */
+	@SuppressWarnings("deprecation")
 	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException {

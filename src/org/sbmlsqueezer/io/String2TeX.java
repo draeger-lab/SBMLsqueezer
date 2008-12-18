@@ -48,7 +48,7 @@ public class String2TeX {
 						reaction.getId())))
 			reactionNum++;
 
-		return null;
+		return equation;
 	}
 
 	private String hoch(String equation) {

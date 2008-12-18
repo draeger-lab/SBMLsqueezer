@@ -95,6 +95,7 @@ public class JSettingsPanel extends JPanel {
 
 	private JRadioButton jRadioButtonBiUniORD;
 
+	@SuppressWarnings("unused")
 	private boolean possibleEnzymeAllNotChecked;
 
 	public JSettingsPanel() {
@@ -115,11 +116,11 @@ public class JSettingsPanel extends JPanel {
 		jCheckBoxTreatAllReactionsAsEnzyeReaction
 				.setToolTipText("<html>If checked, all reactions are considered to be enzyme-catalyzed.</html>");
 		jCheckBoxTreatAllReactionsAsEnzyeReaction.setBackground(Color.WHITE);
-		jCheckBoxAddAllParametersGlobally = new JCheckBox("Local parameters");
+		jCheckBoxAddAllParametersGlobally = new JCheckBox("Global parameters");
 		jCheckBoxAddAllParametersGlobally
-				.setToolTipText("<html>If selected, newly created parameters will be stored <br>"
-						+ "globally in the model. Otherwise they will be stored <br>"
-						+ "locally in each respective reaction.</html>");
+				.setToolTipText("<html>If selected, all newly created parameters are stored <br>"
+						+ "globally in the model. Otherwise SBMLsqueezer only stores most <br>"
+						+ "parameters locally in the respective rate law.</html>");
 		jCheckBoxAddAllParametersGlobally.setBackground(Color.WHITE);
 		jCheckBoxAddAllParametersGlobally.setSelected(true);
 		jCheckBoxWarnings = new JCheckBox("Warnings for too many reactants");
