@@ -10,7 +10,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * This is the thermodynamically independent form of the convenience kinetics.
  * In cases that the stochiometric matrix has full column rank the less
  * complicated {@see Convenience} can bee invoked.
- *
+ * 
  * @since 2.0
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
@@ -26,8 +26,8 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 */
-	public ConvenienceIndependent(PluginReaction parentReaction, PluginModel model)
-	    throws RateLawNotApplicableException {
+	public ConvenienceIndependent(PluginReaction parentReaction,
+			PluginModel model) throws RateLawNotApplicableException {
 		super(parentReaction, model);
 	}
 
@@ -39,16 +39,16 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 	 * @throws RateLawNotApplicableException
 	 */
 	public ConvenienceIndependent(PluginReaction parentReaction,
-	    PluginModel model, List<String> listOfPossibleEnzymes)
-	    throws RateLawNotApplicableException {
+			PluginModel model, List<String> listOfPossibleEnzymes)
+			throws RateLawNotApplicableException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
 	@Override
 	protected String createKineticEquation(PluginModel model, int reactionNum,
-	    List<String> modE, List<String> modActi, List<String> modTActi,
-	    List<String> modInhib, List<String> modTInhib, List<String> modCat)
-	    throws RateLawNotApplicableException {
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+			throws RateLawNotApplicableException {
 		String formelTxt = formelTeX = "";
 		PluginReaction reaction = getParentReaction();
 
@@ -68,24 +68,27 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				klVTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
 			}
 			klVTeX += "}";
-			if (!listOfLocalParameters.contains(klV)) listOfLocalParameters.add(klV);
+			if (!listOfLocalParameters.contains(klV))
+				listOfLocalParameters.add(klV);
 
 			/*
-			 * ==============================================================================
-			 * Construct thermodynamically independent parameters
+			 * ==================================================================
+			 * ============ Construct thermodynamically independent parameters
 			 */
 			for (int productNum = 0; productNum < reaction.getNumProducts(); productNum++) {
-				PluginSpeciesReference currentSpecRef = reaction.getProduct(productNum);
+				PluginSpeciesReference currentSpecRef = reaction
+						.getProduct(productNum);
 				kiG = "kG_" + reaction.getProduct(productNum).getSpecies();
 				kiGTeX = "k^\\text{G}_\\text{"
-				    + reaction.getProduct(productNum).getSpecies() + "}";
+						+ reaction.getProduct(productNum).getSpecies() + "}";
 
 				/*
-				 * extremely important: if the parameter list already contains this
-				 * parameter we don't want to add it again since this parameter can only
-				 * occur once for each reacting species!
+				 * extremely important: if the parameter list already contains
+				 * this parameter we don't want to add it again since this
+				 * parameter can only occur once for each reacting species!
 				 */
-				if (!listOfGlobalParameters.contains(kiG)) listOfGlobalParameters.add(kiG);
+				if (!listOfGlobalParameters.contains(kiG))
+					listOfGlobalParameters.add(kiG);
 
 				kM = "kM_" + reactionNum;
 				kMTeX = "k^\\text{M}_{" + reactionNum;
@@ -95,45 +98,60 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				}
 				kM += "_" + reaction.getProduct(productNum).getSpecies();
 				kMTeX += ",{"
-				    + Species.idToTeX(reaction.getProduct(productNum).getSpecies())
-				    + "}}";
-				if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(kM);
+						+ Species.idToTeX(reaction.getProduct(productNum)
+								.getSpecies()) + "}}";
+				if (!listOfLocalParameters.contains(kM))
+					listOfLocalParameters.add(kM);
 
 				kiG += " * " + kM;
 				kiGTeX += kMTeX;
+				if ((0 < independenceN.length())
+						&& (!independenceN.endsWith(" * "))) {
+					independenceN += " * ";
+					independenceNTeX += "\\cdot ";
+				}
 				if (currentSpecRef.getStoichiometry() == 1.0) {
 					independenceN += kiG;
 					independenceNTeX += kiGTeX;
 				} else {
 					independenceN += "power(" + kiG + ", "
-					    + currentSpecRef.getStoichiometry() + ")";
-					independenceNTeX += "\\left(" + kiGTeX + "\\right)^{\\frac{";
+							+ currentSpecRef.getStoichiometry() + ")";
+					independenceNTeX += "\\left(" + kiGTeX
+							+ "\\right)^{\\frac{";
 					if (currentSpecRef.getStoichiometry()
-					    - ((int) currentSpecRef.getStoichiometry()) == 0)
-						independenceNTeX += ((int) currentSpecRef.getStoichiometry());
-					else independenceNTeX += currentSpecRef.getStoichiometry();
+							- ((int) currentSpecRef.getStoichiometry()) == 0)
+						independenceNTeX += ((int) currentSpecRef
+								.getStoichiometry());
+					else
+						independenceNTeX += currentSpecRef.getStoichiometry();
 					independenceNTeX += "}{2}}";
 				}
-				if (productNum < reaction.getNumProducts() - 1) independenceN += " * ";
+				if (productNum < reaction.getNumProducts() - 1)
+					independenceN += " * ";
 			}
-			/* =============================================================================== */
+			/*
+			 * ==================================================================
+			 * =============
+			 */
 
 			/*
 			 * Construct equation Iteration over all educts
 			 */
 			for (int eductNum = 0; eductNum < reaction.getNumReactants(); eductNum++) {
 				String exp = "";
-				PluginSpeciesReference currentSpecRef = reaction.getReactant(eductNum);
+				PluginSpeciesReference currentSpecRef = reaction
+						.getReactant(eductNum);
 
 				// thermodynamically independent constants:
 				kiG = "kG_" + currentSpecRef.getSpecies();
-				kiGTeX = "k^\\text{G}_\\text{"
-				    + currentSpecRef.getSpecies() + "}";
+				kiGTeX = "k^\\text{G}_\\text{" + currentSpecRef.getSpecies()
+						+ "}";
 				/*
-				 * kiG may only be included one time for each species in the whole
-				 * model!
+				 * kiG may only be included one time for each species in the
+				 * whole model!
 				 */
-				if (!listOfGlobalParameters.contains(kiG)) listOfGlobalParameters.add(kiG);
+				if (!listOfGlobalParameters.contains(kiG))
+					listOfGlobalParameters.add(kiG);
 
 				kM = "kM_" + reactionNum;
 				kMTeX = "k^\\text{M}_{" + reactionNum;
@@ -142,22 +160,31 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					kMTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
 				}
 				kM += "_" + currentSpecRef.getSpecies();
-				kMTeX += ",{" + Species.idToTeX(currentSpecRef.getSpecies()) + "}}";
-				if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(kM);
+				kMTeX += ",{" + Species.idToTeX(currentSpecRef.getSpecies())
+						+ "}}";
+				if (!listOfLocalParameters.contains(kM))
+					listOfLocalParameters.add(kM);
 
 				kiG += " * " + kM;
 				kiGTeX += kMTeX;
+				if ((0 < independenceP.length())
+						&& (!independenceP.endsWith(" * "))) {
+					independenceP += " * ";
+					independencePTeX += "\\cdot ";
+				}
 				if (currentSpecRef.getStoichiometry() == 1.0) {
 					independenceP += kiG;
 					independencePTeX += kiGTeX;
 				} else {
 					independenceP += "power(" + kiG + ", "
-					    + currentSpecRef.getStoichiometry() + ")";
+							+ currentSpecRef.getStoichiometry() + ")";
 					independencePTeX += "\\left(" + kiGTeX + "\\right)^{";
 					if (currentSpecRef.getStoichiometry()
-					    - ((int) currentSpecRef.getStoichiometry()) == 0)
-						independencePTeX += (int) currentSpecRef.getStoichiometry();
-					else independencePTeX += currentSpecRef.getStoichiometry();
+							- ((int) currentSpecRef.getStoichiometry()) == 0)
+						independencePTeX += (int) currentSpecRef
+								.getStoichiometry();
+					else
+						independencePTeX += currentSpecRef.getStoichiometry();
 					independencePTeX += "}";
 				}
 
@@ -167,24 +194,27 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					denominatorTeX += "\\left(";
 				}
 				if (!reaction.getReversible()
-				    || ((reaction.getNumReactants() != 1) || (reaction.getNumProducts() == 1))) {
+						|| ((reaction.getNumReactants() != 1) || (reaction
+								.getNumProducts() == 1))) {
 					denominator += " 1 + ";
 					denominatorTeX += "1 + ";
 				}
 				denominator += currentSpecRef.getSpecies() + "/" + kM;
 				denominatorTeX += "\\frac{"
-				    + Species.toTeX(currentSpecRef.getSpecies()) + "}{" + kMTeX + "}";
+						+ Species.toTeX(currentSpecRef.getSpecies()) + "}{"
+						+ kMTeX + "}";
 
 				/*
 				 * for each stoichiometry (see Liebermeister et al.)
 				 */
 				for (int m = 1; m < (int) currentSpecRef.getStoichiometry(); m++) {
 					exp = "^(" + (m + 1) + ")";
-					denominator += " + (" + currentSpecRef.getSpecies() + "/" + kM + ")"
-					    + exp;
+					denominator += " + (" + currentSpecRef.getSpecies() + "/"
+							+ kM + ")" + exp;
 					denominatorTeX += " + \\left(\\frac{"
-					    + Species.toTeX(currentSpecRef.getSpecies()) + "}{" + kMTeX
-					    + "}\\right)" + exp.replace("(", "{").replace(")", "}");
+							+ Species.toTeX(currentSpecRef.getSpecies()) + "}{"
+							+ kMTeX + "}\\right)"
+							+ exp.replace("(", "{").replace(")", "}");
 				}
 
 				// we can save the brakets if there is just one educt.
@@ -201,14 +231,17 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				 * build numerator.
 				 */
 				if (exp.length() > 0) {
-					numerator += "(" + currentSpecRef.getSpecies() + "/" + kM + ")" + exp;
+					numerator += "(" + currentSpecRef.getSpecies() + "/" + kM
+							+ ")" + exp;
 					numeratorTeX += "\\left(\\frac{"
-					    + Species.toTeX(currentSpecRef.getSpecies()) + "}{" + kMTeX
-					    + "}\\right)" + exp.replace("(", "{").replace(")", "}");
+							+ Species.toTeX(currentSpecRef.getSpecies()) + "}{"
+							+ kMTeX + "}\\right)"
+							+ exp.replace("(", "{").replace(")", "}");
 				} else {
 					numerator += currentSpecRef.getSpecies() + "/" + kM;
 					numeratorTeX += "\\frac{"
-					    + Species.toTeX(currentSpecRef.getSpecies()) + "}{" + kMTeX + "}";
+							+ Species.toTeX(currentSpecRef.getSpecies()) + "}{"
+							+ kMTeX + "}";
 				}
 
 				if (eductNum < (reaction.getNumReactants() - 1)) {
@@ -216,12 +249,14 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					numeratorTeX += "\\cdot ";
 				}
 			}
-			numerator += " * root((" + independenceP + ")/(" + independenceN + "))";
+			numerator += " * root((" + independenceP + ")/(" + independenceN
+					+ "), 2)";
 			numeratorTeX += "\\sqrt{\\frac{" + independencePTeX + "}{"
-			    + independenceNTeX + "}}";
+					+ independenceNTeX + "}}";
 
 			/*
-			 * Reverse Reaction. Only if reaction is reversible or we want it to be.
+			 * Reverse Reaction. Only if reaction is reversible or we want it to
+			 * be.
 			 */
 			if (reaction.getReversible()) {
 				numerator += " - ";
@@ -232,35 +267,41 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				// for each product
 				for (int productNum = 0; productNum < reaction.getNumProducts(); productNum++) {
 					String exp = "";
-					PluginSpeciesReference specref = reaction.getProduct(productNum);
+					PluginSpeciesReference specref = reaction
+							.getProduct(productNum);
 
 					kM = "kM_" + reactionNum;
 					kMTeX = "k^\\text{M}_{" + reactionNum;
 					if (modE.size() > 1) {
 						kM += "_" + modE.get(enzymeNum);
-						kMTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
+						kMTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
+								+ "}";
 					}
 					kM += "_" + reaction.getProduct(productNum).getSpecies();
 					kMTeX += ",{"
-					    + Species.idToTeX(reaction.getProduct(productNum).getSpecies())
-					    + "}}";
-					if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(kM);
+							+ Species.idToTeX(reaction.getProduct(productNum)
+									.getSpecies()) + "}}";
+					if (!listOfLocalParameters.contains(kM))
+						listOfLocalParameters.add(kM);
 
 					if (reaction.getNumProducts() > 1) {
 						denominator += "(1 + ";
 						denominatorTeX += "\\left(1 + ";
 					}
 					denominator += specref.getSpecies() + "/" + kM;
-					denominatorTeX += "\\frac{" + Species.toTeX(specref.getSpecies())
-					    + "}{" + kMTeX + "}";
+					denominatorTeX += "\\frac{"
+							+ Species.toTeX(specref.getSpecies()) + "}{"
+							+ kMTeX + "}";
 
 					// for each stoichiometry (see Liebermeister et al.)
 					for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
 						exp = "^(" + (m + 1) + ")";
-						denominator += " + (" + specref.getSpecies() + "/" + kM + ")" + exp;
+						denominator += " + (" + specref.getSpecies() + "/" + kM
+								+ ")" + exp;
 						denominatorTeX += " + \\left(\\frac{"
-						    + Species.toTeX(specref.getSpecies()) + "}{" + kMTeX
-						    + "}\\right)" + exp.replace("(", "{").replace(")", "}");
+								+ Species.toTeX(specref.getSpecies()) + "}{"
+								+ kMTeX + "}\\right)"
+								+ exp.replace("(", "{").replace(")", "}");
 					}
 
 					if (reaction.getNumProducts() > 1) {
@@ -275,14 +316,17 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 
 					// build numerator
 					if (exp.length() > 0) {
-						numerator += "(" + specref.getSpecies() + "/" + kM + ")" + exp;
+						numerator += "(" + specref.getSpecies() + "/" + kM
+								+ ")" + exp;
 						numeratorTeX += "\\left(\\frac{"
-						    + Species.toTeX(specref.getSpecies()) + "}{" + kMTeX
-						    + "}\\right)" + exp.replace("(", "{").replace(")", "}");
+								+ Species.toTeX(specref.getSpecies()) + "}{"
+								+ kMTeX + "}\\right)"
+								+ exp.replace("(", "{").replace(")", "}");
 					} else {
 						numerator += specref.getSpecies() + "/" + kM;
-						numeratorTeX += "\\frac{" + Species.toTeX(specref.getSpecies())
-						    + "}{" + kMTeX + "}";
+						numeratorTeX += "\\frac{"
+								+ Species.toTeX(specref.getSpecies()) + "}{"
+								+ kMTeX + "}";
 					}
 
 					if (productNum < (reaction.getNumProducts() - 1)) {
@@ -291,11 +335,13 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					}
 				}
 
-				numerator += " * root((" + independenceN + ")/(" + independenceP + "))";
+				numerator += " * root((" + independenceN + ")/("
+						+ independenceP + "), 2)";
 				numeratorTeX += "\\sqrt{\\frac{" + independenceNTeX + "}{"
-				    + independencePTeX + "}}";
+						+ independencePTeX + "}}";
 
-				if ((reaction.getNumProducts() > 1) && (reaction.getNumReactants() > 1)) {
+				if ((reaction.getNumProducts() > 1)
+						&& (reaction.getNumReactants() > 1)) {
 					denominator += " -1";
 					denominatorTeX += " -1";
 				}
@@ -304,10 +350,10 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				formelTxt += modE.get(enzymeNum) + " * ";
 				formelTeX += Species.toTeX(modE.get(enzymeNum)) + "\\cdot ";
 			}
-			formelTxt += klV + " * " + "(" + numerator + ")" + "/(" + denominator
-			    + ")";
+			formelTxt += klV + " * " + "(" + numerator + ")" + "/("
+					+ denominator + ")";
 			formelTeX += klVTeX + "\\cdot\\frac{" + numeratorTeX + "}{"
-			    + denominatorTeX + "}";
+					+ denominatorTeX + "}";
 			if (enzymeNum < (modE.size()) - 1) {
 				formelTxt += " + ";
 				formelTeX += "\\\\+";
@@ -329,12 +375,13 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				String kATeX = "k^\\text{A}_{" + reactionNum;
 				kA += "_" + modActi.get(activatorNum);
 				kATeX += ",\\text{" + modActi.get(activatorNum) + "}}";
-				if (!listOfLocalParameters.contains(kA)) listOfLocalParameters.add(kA);
+				if (!listOfLocalParameters.contains(kA))
+					listOfLocalParameters.add(kA);
 				acti += modActi.get(activatorNum) + "/(" + kA + " + "
-				    + modActi.get(activatorNum) + ") * ";
-				actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum)) + "}{"
-				    + kATeX + "+" + Species.toTeX(modActi.get(activatorNum))
-				    + "}\\cdot ";
+						+ modActi.get(activatorNum) + ") * ";
+				actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum))
+						+ "}{" + kATeX + "+"
+						+ Species.toTeX(modActi.get(activatorNum)) + "}\\cdot ";
 			}
 		}
 		/*
@@ -342,34 +389,40 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 		 */
 		if (!modInhib.isEmpty()) {
 			for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-				String kI = "kI_" + reactionNum, kITeX = "k^\\text{I}_{" + reactionNum;
+				String kI = "kI_" + reactionNum, kITeX = "k^\\text{I}_{"
+						+ reactionNum;
 				kI += "_" + modInhib.get(inhibitorNum);
 				kITeX += ",\\text{" + modInhib.get(inhibitorNum) + "}}";
-				if (!listOfLocalParameters.contains(kI)) listOfLocalParameters.add(kI);
-				inhib += kI + "/(" + kI + " + " + modInhib.get(inhibitorNum) + ") * ";
+				if (!listOfLocalParameters.contains(kI))
+					listOfLocalParameters.add(kI);
+				inhib += kI + "/(" + kI + " + " + modInhib.get(inhibitorNum)
+						+ ") * ";
 				inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + "+"
-				    + Species.toTeX(modInhib.get(inhibitorNum)) + "}\\cdot ";
+						+ Species.toTeX(modInhib.get(inhibitorNum))
+						+ "}\\cdot ";
 			}
 		}
 		if ((acti.length() + inhib.length() > 0) && (modE.size() > 1)) {
 			inhib += "(";
 			formelTxt += ")";
 			inhibTeX += inhibTeX.substring(0, inhibTeX.length() - 6)
-			    + "\\\\\\cdot\\left(";
-			formelTeX = formelTeX.replaceAll("\\\\\\+", "\\right.\\\\\\\\+\\\\left.")
-			    + "\\right)";
+					+ "\\\\\\cdot\\left(";
+			formelTeX = formelTeX.replaceAll("\\\\\\+",
+					"\\right.\\\\\\\\+\\\\left.")
+					+ "\\right)";
 		}
 		formelTxt = acti + inhib + formelTxt;
 		formelTeX = actiTeX + inhibTeX + formelTeX;
 
-		if (enzymeNum > 1) formelTeX += "\\end{multline}";
+		if (enzymeNum > 1)
+			formelTeX += "\\end{multline}";
 		return formelTxt;
 	}
 
 	@Override
 	public String getName() {
 		if (this.getParentReaction().getReversible())
-		  return "reversible thermodynamically independent convenience kinetics";
+			return "reversible thermodynamically independent convenience kinetics";
 		return "irreversible thermodynamically independent convenience kinetics";
 	}
 
@@ -379,8 +432,8 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 	}
 
 	@Override
-  public String getSBO() {
-	  return "none";
-  }
+	public String getSBO() {
+		return "none";
+	}
 
 }
