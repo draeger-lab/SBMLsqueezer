@@ -116,7 +116,7 @@ public class LaTeXExport implements libsbmlConstants {
 	 * (A4 paper, 11pt, portrait, fancy headings, no titlepage).
 	 */
 	public LaTeXExport() {
-		this(false, true, (short) 11, "a4", true, false, false/* , true */);
+		this(false, true, (short) 11, "a4", /* true, */false, false/* , true */);
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class LaTeXExport implements libsbmlConstants {
 	 */
 
 	public LaTeXExport(boolean landscape, boolean typeWriter, short fontSize,
-			String paperSize, boolean addMissingUnitDeclarations,
+			String paperSize, /* boolean addMissingUnitDeclarations, */
 			boolean titlepage, boolean printNameIfAvailable/*
 															 * , boolean
 															 * numberEquations
@@ -190,7 +190,9 @@ public class LaTeXExport implements libsbmlConstants {
 		String end = /* (numberEquations) ? */newLine + "\\end{equation}"
 				+ newLine
 		/* : newLine + "\\end{equation*}" + newLine */;
-		String tail = newLine + "\\end{document}" + newLine + newLine;
+		String tail = newLine
+				+ "For a more comprehensive \\LaTeX{} export, see http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX"
+				+ newLine + "\\end{document}" + newLine + newLine;
 
 		String rateLaws[] = new String[(int) model.getNumReactions()];
 		String sp[] = new String[(int) model.getNumSpecies()];
@@ -1741,10 +1743,10 @@ public class LaTeXExport implements libsbmlConstants {
 		StringBuffer masked = new StringBuffer();
 		for (int i = 0; i < string.length(); i++) {
 			char atI = string.charAt(i);
-			if ((atI == '_') || (atI == '\\') || (atI == '[')
-					|| (atI == ']') || (atI == '$') || (atI == '&')
-					|| (atI == '#') || (atI == '{') || (atI == '}')
-					|| (atI == '%') || (atI == '~')) {
+			if ((atI == '_') || (atI == '\\') || (atI == '[') || (atI == ']')
+					|| (atI == '$') || (atI == '&') || (atI == '#')
+					|| (atI == '{') || (atI == '}') || (atI == '%')
+					|| (atI == '~')) {
 				if (i == 0)
 					masked.append('\\');
 				else if (string.charAt(i - 1) != '\\')
