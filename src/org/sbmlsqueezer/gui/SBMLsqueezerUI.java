@@ -128,14 +128,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			if (JOptionPane.showConfirmDialog(this, messagePanel,
 					"SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.OK_OPTION) {
-				short equationType = messagePanel.getSelectedKinetic();
-				reaction.setReversible(messagePanel.getReversible());
-				plugin.notifySBaseChanged(reaction);
-				reaction = klg.storeLaw(plugin, klg.createKineticLaw(model,
-						reaction, equationType, messagePanel.getReversible()),
-						messagePanel.getReversible());
-				klg.removeUnnecessaryParameters(plugin);
-
+				if (!messagePanel.isExistingRateLawSelected) {
+					short equationType = messagePanel.getSelectedKinetic();
+					reaction.setReversible(messagePanel.getReversible());
+					plugin.notifySBaseChanged(reaction);
+					reaction = klg.storeLaw(plugin, klg.createKineticLaw(model,
+							reaction, equationType, messagePanel
+									.getReversible()), messagePanel
+							.getReversible());
+					klg.removeUnnecessaryParameters(plugin);
+				}
 			}
 		} catch (RateLawNotApplicableException exc) {
 			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
@@ -197,14 +199,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						.getTeXFile()));
 				LaTeXExport exporter = new LaTeXExport(panel.isLandscape(),
 						panel.isIDsInTWFont(), panel.getFontSize(), panel
-								.getPaperSize(), panel.isImplicitUnit(), panel
-								.isTitlePage(), panel.isNameInEquations()/*
-																		 * ,
-																		 * panel
-																		 * .
-																		 * isNumberEquations
-																		 * ()
-																		 */);
+								.getPaperSize(), panel.isTitlePage(), panel
+								.isNameInEquations()/*
+													 * , panel .
+													 * isNumberEquations ()
+													 */);
 				buffer.write(exporter.toLaTeX(model));
 				buffer.close();
 				dispose();

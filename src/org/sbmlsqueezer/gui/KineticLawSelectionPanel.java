@@ -53,6 +53,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private boolean isReactionReversible;
 
+	public boolean isExistingRateLawSelected;
+
 	private short possibleTypes[];
 
 	private JPanel optionsPanel;
@@ -150,7 +152,6 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				.getLayout(), rButtonIrreversible, 1, 0, 1, 1, 1, 1);
 		rButtonIrreversible.addActionListener(this);
 		rButtonReversible.addActionListener(this);
-
 		rButtonGlobalParameters = new JRadioButton("Global parameters", klg
 				.isAddAllParametersGlobally());
 		rButtonGlobalParameters
@@ -201,7 +202,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		try {
 			laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
 					.toLaTeX(model, reaction.getKineticLaw().getMath())
-					.toString().replace("\\_", "_");
+					.toString().replace("\\_", "");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -239,6 +240,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		info.add(eqnPrev);
 		// ContainerHandler.setAllBackground(info, Color.WHITE);
 
+		isExistingRateLawSelected = false;
 		return info; // kineticsPanel;
 	}
 
@@ -333,8 +335,11 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			kineticsPanel.remove(eqnPrev);
 			setPreviewPanel(i);
 			kineticsPanel.add(eqnPrev);
-			if (i == rButtonsKineticEquations.length - 1)
+			if (i == rButtonsKineticEquations.length - 1) {
 				rButtonReversible.setSelected(isReactionReversible);
+				isExistingRateLawSelected = true;
+			} else
+				isExistingRateLawSelected = false;
 			ContainerHandler.setAllEnabled(optionsPanel,
 					i != rButtonsKineticEquations.length - 1);
 		}

@@ -72,7 +72,7 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	}
 
 	public String getExportContextMenuItemText() {
-		return "Export Reaction to ohter Format";
+		return "Export Reaction to other Format";
 	}
 
 	/*

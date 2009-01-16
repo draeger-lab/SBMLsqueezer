@@ -40,8 +40,8 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 	private JCheckBox jCheckBoxIDsInTWFont = new JCheckBox(
 			"IDs in typewriter font", true);
 	private JCheckBox jCheckBoxLandscape = new JCheckBox("Landscape", false);
-	private JCheckBox jCheckBoxImplicitUnit = new JCheckBox(
-			"Show implicit unit declarations", true);
+	// private JCheckBox jCheckBoxImplicitUnit = new JCheckBox(
+	// "Show implicit unit declarations", true);
 	private JCheckBox jCheckBoxTitlePage = new JCheckBox("Create title page",
 			false);
 	private JCheckBox jCheckBoxNameInEquations = new JCheckBox(
@@ -99,8 +99,8 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 				.getLayout(), jCheckBoxIDsInTWFont, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
 				.getLayout(), jCheckBoxLandscape, 0, 1, 1, 1, 1, 1);
-		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
-				.getLayout(), jCheckBoxImplicitUnit, 0, 2, 1, 1, 1, 1);
+		// LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
+		// .getLayout(), jCheckBoxImplicitUnit, 0, 2, 1, 1, 1, 1);
 		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
 				.getLayout(), jCheckBoxTitlePage, 0, 3, 1, 1, 1, 1);
 		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
@@ -125,9 +125,10 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 		return jCheckBoxLandscape.isSelected();
 	}
 
-	public boolean isImplicitUnit() {
-		return jCheckBoxImplicitUnit.isSelected();
-	}
+	/*
+	 * public boolean isImplicitUnit() { return
+	 * jCheckBoxImplicitUnit.isSelected(); }
+	 */
 
 	public boolean isTitlePage() {
 		return jCheckBoxTitlePage.isSelected();
