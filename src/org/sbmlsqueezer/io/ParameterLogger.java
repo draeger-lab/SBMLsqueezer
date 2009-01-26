@@ -14,8 +14,6 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 
 public class ParameterLogger {
 
-	private int numberOfModel;
-
 	private File file;
 
 	private String line;
@@ -95,7 +93,7 @@ public class ParameterLogger {
 	}
 
 	private int getNumOfModel(PluginModel model) {
-		numberOfModel = 0;
+		int numberOfModel = 0;
 		StringTokenizer modelToken = new StringTokenizer(modelList.toString());
 		while (!modelToken.nextToken().equals(model.getId()))
 			numberOfModel++;

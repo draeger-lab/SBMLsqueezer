@@ -102,7 +102,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		this.reaction = reaction;
 		this.isReactionReversible = reaction.getReversible();
 
-		File file = new File("paramLog");
+		File file = new File("Parameters.log");
 		log = new ParameterLogger(file);
 		JLabel label = new JLabel("<html><body>", JLabel.LEFT);
 
