@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
@@ -28,6 +29,7 @@ import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
 import org.sbmlsqueezer.io.LaTeXExport;
+import org.sbmlsqueezer.io.ParameterLogger;
 import org.sbmlsqueezer.kinetics.BasicKineticLaw;
 import org.sbmlsqueezer.kinetics.KineticLawGenerator;
 import org.sbmlsqueezer.kinetics.RateLawNotApplicableException;
@@ -53,7 +55,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private boolean isReactionReversible;
 
-	public boolean isExistingRateLawSelected;
+	private boolean isExistingRateLawSelected;
 
 	private short possibleTypes[];
 
@@ -81,6 +83,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private String[] laTeXpreview;
 
+	private ParameterLogger log;
+
 	private static final int width = 310, height = 175;
 
 	/**
@@ -88,15 +92,18 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 * @param model
 	 * @param reaction
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException 
 	 */
 	public KineticLawSelectionPanel(KineticLawGenerator klg, PluginModel model,
-			PluginReaction reaction) throws RateLawNotApplicableException {
+			PluginReaction reaction) throws RateLawNotApplicableException, IOException {
 		super(new GridBagLayout());
 		this.klg = klg;
 		this.model = model;
 		this.reaction = reaction;
 		this.isReactionReversible = reaction.getReversible();
 
+		File file = new File("paramLog");
+		log = new ParameterLogger(file);
 		JLabel label = new JLabel("<html><body>", JLabel.LEFT);
 
 		double stoichiometry = 0;
@@ -152,13 +159,12 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				.getLayout(), rButtonIrreversible, 1, 0, 1, 1, 1, 1);
 		rButtonIrreversible.addActionListener(this);
 		rButtonReversible.addActionListener(this);
-		rButtonGlobalParameters = new JRadioButton("Global parameters", klg
-				.isAddAllParametersGlobally());
+		rButtonGlobalParameters = new JRadioButton("Global parameters", log.isSetGlobal(model, reaction));
 		rButtonGlobalParameters
 				.setToolTipText("<html> If selected, newly created parameters will <br>"
 						+ "be stored globally in the model. </html>");
-		rButtonLocalParameters = new JRadioButton("Local parameters", !klg
-				.isAddAllParametersGlobally());
+		rButtonLocalParameters = new JRadioButton("Local parameters", !log
+				.isSetGlobal(model, reaction));
 		rButtonLocalParameters
 				.setToolTipText("<html> If selected, newly created parameters will <br>"
 						+ "be stored locally in this reaction. </html>");
@@ -313,17 +319,29 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		JRadioButton rbutton = (JRadioButton) e.getSource();
 		if (rbutton.getParent().equals(optionsPanel)) {
-			try {
-				// reversible property was changed.
-				reaction.setReversible(getReversible());
-				remove(kineticsPanel);
-				kineticsPanel = initKineticsPanel();
-				LayoutHelper.addComponent(this, (GridBagLayout) this
-						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
-			} catch (RateLawNotApplicableException exc) {
-				throw new RuntimeException(exc.getMessage(), exc);
+			if (rbutton.getText().contains("eversible"))
+				try {
+					// reversible property was changed.
+					reaction.setReversible(getReversible());
+					remove(kineticsPanel);
+					kineticsPanel = initKineticsPanel();
+					LayoutHelper.addComponent(this, (GridBagLayout) this
+							.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+				} catch (RateLawNotApplicableException exc) {
+					throw new RuntimeException(exc.getMessage(), exc);
+				}
+			else {
+				klg.setAddAllParametersGlobally(getGlobal());
+				try {
+					if (!getGlobal())
+						log.addReaction(model, reaction);
+					else
+						log.removeReaction(model, reaction);
+					log.writeLogFile();
+				} catch (IOException exc) {
+					exc.printStackTrace();
+				}
 			}
-			klg.setAddAllParametersGlobally(getGlobal());
 		} else {
 			int i = 0; /*
 						 * , width = eqnPrev.getWidth(), height = eqnPrev
@@ -384,11 +402,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		return rButtonGlobalParameters.isSelected();
 	}
 
-	/**
-	 * Recursively enables or disables a Java Swing Container and all contained
-	 * components.
-	 * 
-	 * @param c
-	 * @param enabled
-	 */
+	public boolean getExistingRateLawSelected() {
+		return isExistingRateLawSelected;
+	}
 }

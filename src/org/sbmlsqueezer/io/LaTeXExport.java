@@ -191,8 +191,11 @@ public class LaTeXExport implements libsbmlConstants {
 				+ newLine
 		/* : newLine + "\\end{equation*}" + newLine */;
 		String tail = newLine
-				+ "For a more comprehensive \\LaTeX{} export, see http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX"
-				+ newLine + "\\end{document}" + newLine + newLine;
+				+ "For a more comprehensive \\LaTeX{} export, see" + newLine
+				+ "\\begin{center}" + newLine
+				+ "http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX"
+				+ newLine + "\\end{center}" + newLine + "\\end{document}"
+				+ newLine + newLine;
 
 		String rateLaws[] = new String[(int) model.getNumReactions()];
 		String sp[] = new String[(int) model.getNumSpecies()];
@@ -605,7 +608,12 @@ public class LaTeXExport implements libsbmlConstants {
 				+ replaceAll("_", reaction.getId(), "\\_") + "}" + newLine
 				+ "\\begin{equation*}" + newLine + "v=";
 		laTeX += toLaTeX(model, reaction.getKineticLaw().getMath());
-		laTeX += newLine + "\\end{equation*}" + newLine + "\\end{document}";
+		laTeX += newLine + "\\end{equation*}";
+		laTeX += newLine + "For a more comprehensive \\LaTeX{} export, see"
+				+ newLine + "\\begin{center}" + newLine
+				+ "http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX"
+				+ newLine + "\\end{center}";
+		laTeX += newLine + "\\end{document}";
 		return laTeX;
 	}
 
