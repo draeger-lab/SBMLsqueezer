@@ -170,6 +170,11 @@ public class ODEwriter {
 		}
 
 		append("\\end{description}", out);
+		append("\\newline",out);
+		append("For a more comprehensive \\LaTeX{} export, see", out);
+		append("\\begin{center}", out);
+		append("http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX", out);
+		append("\\end{center}", out);
 		append("\\end{document}", out);
 		out.close();
 	}

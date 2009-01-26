@@ -128,7 +128,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			if (JOptionPane.showConfirmDialog(this, messagePanel,
 					"SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.OK_OPTION) {
-				if (!messagePanel.isExistingRateLawSelected) {
+				if (!messagePanel.getExistingRateLawSelected()) {
 					short equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
 					plugin.notifySBaseChanged(reaction);
@@ -145,6 +145,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		} catch (RuntimeException exc) {
+			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
+					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
+			exc.printStackTrace();
+		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
 					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
