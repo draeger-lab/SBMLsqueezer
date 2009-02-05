@@ -243,7 +243,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 						"Existing rate law", false);
 				if (isKineticLawDefined) {
 					if (reaction.getNotesString().length() > 0)
-						rButtonsKineticEquations[i].setToolTipText("<html>"
+						rButtonsKineticEquations[i].setToolTipText("<html> Notes: "
 								+ reaction.getNotesString() + "</html>");
 					else
 						rButtonsKineticEquations[i]
