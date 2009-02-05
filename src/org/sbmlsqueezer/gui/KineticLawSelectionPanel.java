@@ -221,7 +221,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			try {
 				laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
 						.toLaTeX(model, reaction.getKineticLaw().getMath())
-						.toString().replace("\\_", "");
+						.toString();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -241,24 +241,20 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			} else {
 				rButtonsKineticEquations[i] = new JRadioButton(
 						"Existing rate law", false);
-				if (isKineticLawDefined) {
-					if (reaction.getNotesString().length() > 0)
-						rButtonsKineticEquations[i].setToolTipText("<html> Notes: "
-								+ reaction.getNotesString() + "</html>");
-					else
-						rButtonsKineticEquations[i]
-								.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");
-				} else {
+
+				if (reaction.getNotesString().length() > 0)
+					rButtonsKineticEquations[i].setToolTipText("<html>"
+							+ reaction.getNotesString() + "</html>");
+				else
 					rButtonsKineticEquations[i]
-							.setToolTipText("<html> No rate law has been assigned to this reaction yet.</html>");
-					rButtonsKineticEquations[i].setEnabled(false);
-				}
+							.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");
 			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
 			rButtonsKineticEquations[i].addActionListener(this);
-			LayoutHelper.addComponent(kineticsPanel,
-					(GridBagLayout) kineticsPanel.getLayout(),
-					rButtonsKineticEquations[i], 0, i, 1, 1, 1, 1);
+			if (i < rButtonsKineticEquations.length - 1 || isKineticLawDefined)
+				LayoutHelper.addComponent(kineticsPanel,
+						(GridBagLayout) kineticsPanel.getLayout(),
+						rButtonsKineticEquations[i], 0, i, 1, 1, 1, 1);
 		}
 
 		kineticsPanel.setBorder(BorderFactory
