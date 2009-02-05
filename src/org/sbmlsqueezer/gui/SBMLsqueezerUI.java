@@ -129,6 +129,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					"SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
+					messagePanel.writeLogFile();
 					short equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
 					plugin.notifySBaseChanged(reaction);
