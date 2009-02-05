@@ -59,7 +59,11 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private boolean isReversibleSelected;
 
+	private boolean isParametersGlobal;
+
 	private boolean isGlobalSelected;
+
+	private boolean isKineticLawDefined;
 
 	private short possibleTypes[];
 
@@ -87,8 +91,6 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private String[] laTeXpreview;
 
-	private ParameterLogger log;
-
 	private static final int width = 310, height = 175;
 
 	/**
@@ -106,10 +108,14 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		this.model = model;
 		this.reaction = reaction;
 		this.isReactionReversible = reaction.getReversible();
-
-		log = new ParameterLogger(new File("Parameters.log"));
+		this.isKineticLawDefined = reaction.getKineticLaw() != null;
+		if (isKineticLawDefined)
+			this.isParametersGlobal = reaction.getKineticLaw()
+					.getListOfParameters().size() == 0;
+		else
+			this.isParametersGlobal = true;
+		isGlobalSelected = isParametersGlobal;
 		JLabel label = new JLabel("<html><body>", JLabel.LEFT);
-
 		double stoichiometry = 0;
 		for (int i = 0; i < reaction.getNumReactants(); i++)
 			stoichiometry += reaction.getReactant(i).getStoichiometry();
@@ -164,13 +170,13 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		rButtonIrreversible.addActionListener(this);
 		rButtonReversible.addActionListener(this);
 		isReversibleSelected = reaction.getReversible();
-		rButtonGlobalParameters = new JRadioButton("Global parameters", log
-				.isSetGlobal(model, reaction));
+		rButtonGlobalParameters = new JRadioButton("Global parameters",
+				isParametersGlobal);
 		rButtonGlobalParameters
 				.setToolTipText("<html> If selected, newly created parameters will <br>"
 						+ "be stored globally in the model. </html>");
-		rButtonLocalParameters = new JRadioButton("Local parameters", !log
-				.isSetGlobal(model, reaction));
+		rButtonLocalParameters = new JRadioButton("Local parameters",
+				!isParametersGlobal);
 		rButtonLocalParameters
 				.setToolTipText("<html> If selected, newly created parameters will <br>"
 						+ "be stored locally in this reaction. </html>");
@@ -183,7 +189,6 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				.getLayout(), rButtonLocalParameters, 1, 1, 1, 0, 1, 1);
 		rButtonGlobalParameters.addActionListener(this);
 		rButtonLocalParameters.addActionListener(this);
-		isGlobalSelected = log.isSetGlobal(model, reaction);
 
 		kineticsPanel = initKineticsPanel();
 
@@ -212,15 +217,16 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 					40);
 		}
 
-		try {
-			laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
-					.toLaTeX(model, reaction.getKineticLaw().getMath())
-					.toString().replace("\\_", "");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.err.println("Error: Unhandled IOException");
-		}
+		if (isKineticLawDefined)
+			try {
+				laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
+						.toLaTeX(model, reaction.getKineticLaw().getMath())
+						.toString().replace("\\_", "");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.err.println("Error: Unhandled IOException");
+			}
 
 		JPanel kineticsPanel = new JPanel(new GridBagLayout());
 		rButtonsKineticEquations = new JRadioButton[kineticEquations.length + 1];
@@ -235,8 +241,18 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			} else {
 				rButtonsKineticEquations[i] = new JRadioButton(
 						"Existing rate law", false);
-				rButtonsKineticEquations[i]
-						.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");
+				if (isKineticLawDefined) {
+					if (reaction.getNotesString().length() > 0)
+						rButtonsKineticEquations[i].setToolTipText("<html>"
+								+ reaction.getNotesString() + "</html>");
+					else
+						rButtonsKineticEquations[i]
+								.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");
+				} else {
+					rButtonsKineticEquations[i]
+							.setToolTipText("<html> No rate law has been assigned to this reaction yet.</html>");
+					rButtonsKineticEquations[i].setEnabled(false);
+				}
 			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
 			rButtonsKineticEquations[i].addActionListener(this);
@@ -354,16 +370,10 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			setPreviewPanel(i);
 			kineticsPanel.add(eqnPrev);
 			if (i == rButtonsKineticEquations.length - 1) {
-				isGlobalSelected = rButtonGlobalParameters.isSelected();
 				rButtonReversible.setSelected(isReactionReversible);
 				rButtonIrreversible.setSelected(!isReactionReversible);
-				System.out.println("isReversible: " + isReactionReversible);
-				rButtonGlobalParameters.setSelected(log.isSetGlobal(model,
-						reaction));
-				rButtonLocalParameters.setSelected(!log.isSetGlobal(model,
-						reaction));
-				System.out.println("isGlobal: "
-						+ log.isSetGlobal(model, reaction));
+				rButtonGlobalParameters.setSelected(isParametersGlobal);
+				rButtonLocalParameters.setSelected(!isParametersGlobal);
 				isExistingRateLawSelected = true;
 			} else {
 				isExistingRateLawSelected = false;
@@ -417,13 +427,5 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	public boolean getExistingRateLawSelected() {
 		return isExistingRateLawSelected;
-	}
-
-	public void writeLogFile() throws IOException {
-		if (!getGlobal())
-			log.addReaction(model, reaction);
-		else
-			log.removeReaction(model, reaction);
-		log.writeLogFile();
 	}
 }

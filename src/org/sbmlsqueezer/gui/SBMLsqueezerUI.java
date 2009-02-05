@@ -44,6 +44,7 @@ import org.sbmlsqueezer.kinetics.IllegalFormatException;
 import org.sbmlsqueezer.kinetics.KineticLawGenerator;
 import org.sbmlsqueezer.kinetics.ModificationException;
 import org.sbmlsqueezer.kinetics.RateLawNotApplicableException;
+import org.sbmlsqueezer.resources.Resource;
 
 /**
  * This is the main GUI class.
@@ -111,8 +112,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		PluginModel model = plugin.getSelectedModel();
 		ImageIcon icon = null;
 		try {
-			Image image = ImageIO.read(getClass()
-					.getResource("Lemon_small.png"));
+			Image image = ImageIO.read(Resource.class
+					.getResource("img/Lemon_small.png"));
 			icon = new ImageIcon(image);
 			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
 		} catch (IOException exc) {
@@ -129,7 +130,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					"SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
-					messagePanel.writeLogFile();
 					short equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
 					plugin.notifySBaseChanged(reaction);
@@ -185,8 +185,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		this();
 		ImageIcon icon = null;
 		try {
-			Image image = ImageIO.read(getClass()
-					.getResource("Lemon_small.png"));
+			Image image = ImageIO.read(Resource.class
+					.getResource("img/Lemon_small.png"));
 			icon = new ImageIcon(image);
 			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
 		} catch (IOException exc) {
@@ -250,7 +250,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		setTitle("SBMLsqueezer");
 		setAlwaysOnTop(true);
 		try {
-			Image image = ImageIO.read(getClass().getResource("icon.png")
+			Image image = ImageIO.read(Resource.class
+					.getResource("img/icon.png")
 			/*
 			 * new File(System.getProperty("user.dir") +
 			 * System.getProperty("file.separator") + "resources" +
@@ -285,8 +286,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 										 * + "images" +
 										 * System.getProperty("file.separator")
 										 * +
-										 */getClass().getResource(
-					"title_small.jpg"));
+										 */Resource.class
+					.getResource("img/title_small.jpg"));
 			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(image));
 			label.setBackground(Color.WHITE);
@@ -390,13 +391,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 		options = new JButton("show options");
 		try {
-			Image image = ImageIO.read(getClass().getResource(
+			Image image = ImageIO.read(Resource.class.getResource(
 			/*
 			 * new File(System.getProperty("user.dir") +
 			 * System.getProperty("file.separator") + "resources" +
 			 * System.getProperty("file.separator") + "images" +
 			 * System.getProperty("file.separator") +
-			 */"rightarrow.png"));
+			 */"img/rightarrow.png"));
 			image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
 			options.setIcon(new ImageIcon(image));
 			options.setIconTextGap(5);
@@ -439,13 +440,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				showSettingsPanel();
 			} else if (text.equals("hide options")) {
 				try {
-					Image image = ImageIO.read(getClass().getResource(
+					Image image = ImageIO.read(Resource.class.getResource(
 					/*
 					 * new File(System.getProperty("user.dir") +
 					 * System.getProperty("file.separator") + "resources" +
 					 * System.getProperty("file.separator") + "images" +
 					 * System.getProperty("file.separator") +
-					 */"rightarrow.png"));
+					 */"img/rightarrow.png"));
 					image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
 					options.setIcon(new ImageIcon(image));
 					options.setIconTextGap(5);
@@ -646,13 +647,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 	private void showSettingsPanel() {
 		try {
-			Image image = ImageIO.read(getClass().getResource(
+			Image image = ImageIO.read(Resource.class.getResource(
 			/*
 			 * new File(System.getProperty("user.dir") +
 			 * System.getProperty("file.separator") + "resources" +
 			 * System.getProperty("file.separator") + "images" +
 			 * System.getProperty("file.separator") +
-			 */"downarrow.png"));
+			 */"img/downarrow.png"));
 			image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
 			options.setIcon(new ImageIcon(image));
 			options.setIconTextGap(5);
