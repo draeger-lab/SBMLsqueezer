@@ -26,6 +26,9 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Species;
 import org.sbml.libsbml.StoichiometryMath;
 import org.sbml.libsbml.libsbmlConstants;
 
@@ -40,7 +43,7 @@ import org.sbml.libsbml.libsbmlConstants;
  *         JDK 1.6.0
  * @date Dec 4, 2007
  */
-public class LaTeXExport implements libsbmlConstants {
+public class LaTeXExport extends LaTeX implements libsbmlConstants {
 
 	/**
 	 * New line separator of this operating system
@@ -627,222 +630,122 @@ public class LaTeXExport implements libsbmlConstants {
 
 	public StringBuffer toLaTeX(PluginModel model, ASTNode astnode)
 			throws IOException {
-		StringBuffer value = new StringBuffer();
+		if (astnode == null)
+			return mathrm("undefined");
 
-		if (astnode == null) {
-			value.append("\\mathrm{undefined}");
-			return value;
-		}
-
+		ASTNode ast;
+		StringBuffer value;
 		if (astnode.isUMinus()) {
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value.append("- \\left(");
+			value = new StringBuffer('-');
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)");
-
-				return value;
-			} else {
-				value.append("-");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				return value;
-
-			}
-		} else if (astnode.isSqrt()) {
-			value.append("\\sqrt{");
-			value.append(toLaTeX(model, astnode.getLeftChild()));
-			value.append("}");
 			return value;
-		} else if (astnode.isInfinity()) {
-			return new StringBuffer("\\infty");
-		} else if (astnode.isNegInfinity()) {
-			return new StringBuffer("-\\infty");
-		} else if (astnode.getType() == 293) { // log to different base as 2
-			// and 10.
+		} else if (astnode.isSqrt())
+			return sqrt(toLaTeX(model, astnode.getLeftChild()));
+		else if (astnode.isInfinity())
+			return POSITIVE_INFINITY;
+		else if (astnode.isNegInfinity())
+			return NEGATIVE_ININITY;
 
-			if (astnode.getRightChild().getLeftChild() != null) {
-				value.append("\\log_{");
-				value.append(toLaTeX(model, astnode.getRightChild()));
-				value.append("} {\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-
-				return value;
-			} else {
-				value.append("\\log_{");
-				value.append(toLaTeX(model, astnode.getRightChild()));
-				value.append("} {");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		}
+		switch (astnode.getType()) {
 		/*
 		 * Numbers
 		 */
-		value = new StringBuffer();
-		switch (astnode.getType()) {
 		case AST_REAL:
-			double d = astnode.getReal();
-			return (((int) d) - d == 0) ? new StringBuffer(Integer
-					.toString((int) d)) : new StringBuffer(Double.toString(d));
+			return format(astnode.getReal());
+
 		case AST_INTEGER:
-			return new StringBuffer(Integer.toString(astnode.getInteger()));
+			return value = new StringBuffer(Integer.toString(astnode
+					.getInteger()));
 			/*
 			 * Basic Functions
 			 */
 		case AST_FUNCTION_LOG: {
-			if (astnode.getRightChild().getLeftChild() != null) {
-				value.append("\\log {\\left(");
-				value.append(toLaTeX(model, astnode.getRightChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value.append("\\log_{");
-				value.append(toLaTeX(model, astnode.getRightChild()));
-				value.append("}");
-				return value;
+			value = new StringBuffer("\\log");
+			if (astnode.getNumChildren() == 2) {
+				value.append("_{");
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+				value.append('}');
 			}
+			value.append('{');
+			if (astnode.getChild(astnode.getNumChildren() - 1).getNumChildren() > 0)
+				value.append(brackets(toLaTeX(model, astnode.getChild(astnode
+						.getNumChildren() - 1))));
+			else
+				value.append(toLaTeX(model, astnode.getChild(astnode
+						.getNumChildren() - 1)));
+			value.append('}');
+			return value;
 		}
 			/*
 			 * Operators
 			 */
 		case AST_POWER:
-			if (toLaTeX(model, astnode.getRightChild()).equals("1")) {
-
-				if (astnode.getRightChild().getLeftChild() != null) {
-					value.append("\\left(");
-					value.append(toLaTeX(model, astnode.getLeftChild()));
-					value.append("\\right)");
-					return value;
-				} else {
-					new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
-				}
-
-			} else {
-
-				if (astnode.getRightChild().getLeftChild() != null) {
-					value.append("\\left(");
-					value.append(toLaTeX(model, astnode.getLeftChild()));
-					value.append("\\right)^{");
-					value.append(toLaTeX(model, astnode.getRightChild()));
-					value.append("}");
-					return value;
-				} else {
-					value.append(toLaTeX(model, astnode.getLeftChild()));
-					value.append("^{");
-					value.append(toLaTeX(model, astnode.getRightChild()));
-					value.append("}");
-					return value;
-				}
-			}
-		case AST_PLUS:
-			if (astnode.getNumChildren() > 0) {
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				ASTNode ast;
-				for (int i = 1; i < astnode.getNumChildren(); i++) {
-					ast = astnode.getChild(i);
-					switch (ast.getType()) {
-					case AST_MINUS:
-						value.append("+ \\left(");
-						value.append(toLaTeX(model, ast));
-						value.append("\\right)");
-						break;
-					default:
-						value.append(" + ");
-						value.append(toLaTeX(model, ast));
-						break;
-					}
-				}
-				return value;
-			}
-		case AST_MINUS:
-			if (astnode.getNumChildren() > 0) {
-				value = toLaTeX(model, astnode.getLeftChild());
-				ASTNode ast;
-				for (int i = 1; i < astnode.getNumChildren(); i++) {
-					ast = astnode.getChild(i);
-					switch (ast.getType()) {
-					case AST_PLUS:
-						value.append(" -  \\left(");
-						value.append(toLaTeX(model, ast));
-						value.append("\\right)");
-						break;
-					default:
-						value.append(" - ");
-						value.append(toLaTeX(model, ast));
-						break;
-					}
-				}
-				return value;
-			}
-		case AST_TIMES:
-			if (astnode.getNumChildren() > 0) {
-				value = toLaTeX(model, astnode.getLeftChild());
-				if (astnode.getLeftChild().getNumChildren() > 1
-						&& (astnode.getLeftChild().getType() == AST_MINUS || astnode
-								.getLeftChild().getType() == AST_PLUS)) {
-					StringBuffer sb = new StringBuffer("\\left(");
-					sb.append(value);
-					sb.append("\\right)");
-					value = new StringBuffer(sb);
-				}
-				ASTNode ast;
-				for (int i = 1; i < astnode.getNumChildren(); i++) {
-					ast = astnode.getChild(i);
-					switch (ast.getType()) {
-					case AST_MINUS: {
-						value.append("\\cdot\\left(");
-						value.append(toLaTeX(model, ast));
-						value.append("\\right)");
-					}
-						break;
-					case AST_PLUS: {
-						value.append("\\cdot\\left(");
-						value.append(toLaTeX(model, ast));
-						value.append("\\right)");
-					}
-						break;
-					default: {
-						value.append("\\cdot ");
-						value.append(toLaTeX(model, ast));
-					}
-						break;
-					}
-				}
-				return value;
-			}
-
-		case AST_DIVIDE:
-			value = new StringBuffer("\\frac{");
-			value.append(toLaTeX(model, astnode.getLeftChild()));
-			value.append("}{");
+			value = toLaTeX(model, astnode.getLeftChild());
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value = brackets(value);
+			value.append("^{");
 			value.append(toLaTeX(model, astnode.getRightChild()));
 			value.append("}");
 			return value;
-		case AST_RATIONAL:
-			if (Double.toString(astnode.getDenominator()).toString()
-					.equals("1"))
-				return new StringBuffer(Double.toString(astnode.getNumerator()));
-			else {
-				value = new StringBuffer("\\frac{");
-				value.append(Double.toString(astnode.getNumerator()));
-				value.append("}{");
-				value.append(Double.toString(astnode.getDenominator()));
-				value.append("}");
-				return value;
+
+		case AST_PLUS:
+			value = toLaTeX(model, astnode.getLeftChild());
+			for (int i = 1; i < astnode.getNumChildren(); i++) {
+				ast = astnode.getChild(i);
+				value.append(" + ");
+				if (ast.getType() == AST_MINUS)
+					value.append(brackets(toLaTeX(model, ast)));
+				else
+					value.append(toLaTeX(model, ast));
 			}
+			return value;
+
+		case AST_MINUS:
+			value = toLaTeX(model, astnode.getLeftChild());
+			for (int i = 1; i < astnode.getNumChildren(); i++) {
+				ast = astnode.getChild(i);
+				value.append(" - ");
+				if (ast.getType() == AST_PLUS)
+					value.append(brackets(toLaTeX(model, ast)));
+				else
+					value.append(toLaTeX(model, ast));
+			}
+			return value;
+
+		case AST_TIMES:
+			value = toLaTeX(model, astnode.getLeftChild());
+			if (astnode.getLeftChild().getNumChildren() > 1
+					&& (astnode.getLeftChild().getType() == AST_MINUS || astnode
+							.getLeftChild().getType() == AST_PLUS))
+				value = brackets(value);
+			for (int i = 1; i < astnode.getNumChildren(); i++) {
+				ast = astnode.getChild(i);
+				value.append("\\cdot");
+				if ((ast.getType() == AST_MINUS) || (ast.getType() == AST_PLUS))
+					value.append(brackets(toLaTeX(model, ast)));
+				else {
+					value.append(' ');
+					value.append(toLaTeX(model, ast));
+				}
+			}
+			return value;
+
+		case AST_DIVIDE:
+			return frac(toLaTeX(model, astnode.getLeftChild()), toLaTeX(model,
+					astnode.getRightChild()));
+
+		case AST_RATIONAL:
+			return frac(Double.toString(astnode.getNumerator()), Double
+					.toString(astnode.getDenominator()));
 
 		case AST_NAME_TIME:
-			value = new StringBuffer("\\mathrm{");
-			value.append(astnode.getName());
-			value.append('}');
-			return value;
+			return mathrm(astnode.getName());
 
 		case AST_FUNCTION_DELAY:
-			value = new StringBuffer("\\mathrm{");
-			value.append(astnode.getName());
-			value.append('}');
-			return value;
+			return mathrm(astnode.getName());
 
 			/*
 			 * Names of identifiers: parameters, functions, species etc.
@@ -851,18 +754,15 @@ public class LaTeXExport implements libsbmlConstants {
 			if (model.getSpecies(astnode.getName()) != null) {
 				// Species.
 				PluginSpecies species = model.getSpecies(astnode.getName());
-				PluginCompartment c = model.getCompartment(species
-						.getCompartment());
+				PluginCompartment c = model.getCompartment(species.getCompartment());
 				boolean concentration = !species.getHasOnlySubstanceUnits()
 						&& (0 < c.getSpatialDimensions());
 				value = new StringBuffer();
 				if (concentration)
 					value.append('[');
 				value.append(getNameOrID(species));
-				if (concentration) {
-					value.append("]"); // \\cdot
-					// value.append(getSize(c));
-				}
+				if (concentration)
+					value.append(']');
 				return value;
 
 			} else if (model.getCompartment(astnode.getName()) != null) {
@@ -870,418 +770,311 @@ public class LaTeXExport implements libsbmlConstants {
 				PluginCompartment c = model.getCompartment(astnode.getName());
 				return getSize(c);
 			}
-
 			// TODO: weitere spezialfälle von Namen!!!
-			return new StringBuffer(mathtt(maskLaTeXspecialSymbols(astnode
+			return value = new StringBuffer(mathtt(maskSpecialChars(astnode
 					.getName())));
 			/*
 			 * Constants: pi, e, true, false
 			 */
 		case AST_CONSTANT_PI:
-			return new StringBuffer("\\pi");
+			return CONSTANT_PI;
 		case AST_CONSTANT_E:
-			return new StringBuffer("\\mathrm{e}");
+			return CONSTANT_E;
 		case AST_CONSTANT_TRUE:
-			return new StringBuffer("\\mathbf{true}");
+			return CONSTANT_TRUE;
 		case AST_CONSTANT_FALSE:
-			return new StringBuffer("\\mathbf{false}");
+			return CONSTANT_FALSE;
 		case AST_REAL_E:
 			return new StringBuffer(Double.toString(astnode.getReal()));
 			/*
 			 * More complicated functions
 			 */
 		case AST_FUNCTION_ABS:
-			value = new StringBuffer("\\left\\lvert");
-			value.append(toLaTeX(model, astnode.getRightChild()));
-			value.append("\\right\\rvert");
-			return value;
+			return abs(toLaTeX(model, astnode
+					.getChild(astnode.getNumChildren() - 1)));
 
 		case AST_FUNCTION_ARCCOS:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\arrcos{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\arccos{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				return arccos(brackets(toLaTeX(model, astnode.getLeftChild())));
+			return arccos(toLaTeX(model, astnode.getLeftChild()));
+
 		case AST_FUNCTION_ARCCOSH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\mathrm{arccosh}{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\mathrm{arccosh}{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				return arccosh(brackets(toLaTeX(model, astnode.getLeftChild())));
+			return arccosh(toLaTeX(model, astnode.getLeftChild()));
+
 		case AST_FUNCTION_ARCCOT:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\arcot{\\left(");
+			value = new StringBuffer("\\arcot{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\arcot{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			value.append('}');
+			return value;
+
 		case AST_FUNCTION_ARCCOTH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\mathrm{arccoth}{\\left(");
+			value = mathrm("arccoth");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\mathrm{arccoth}{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			return value;
+
 		case AST_FUNCTION_ARCCSC:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\arccsc{\\left(");
+			value = new StringBuffer("\\arccsc{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\arccsc{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			value.append('}');
+			return value;
+
 		case AST_FUNCTION_ARCCSCH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\mathrm{arccsh}\\left(");
+			value = mathrm("arccsh");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\mathrm{arccsh}");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			return value;
+
 		case AST_FUNCTION_ARCSEC:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\arcsec{\\left(");
+			value = new StringBuffer("\\arcsec{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\arcsec{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			value.append('}');
+			return value;
+
 		case AST_FUNCTION_ARCSECH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\mathrm{arcsech}{\\left(");
+			value = mathrm("arcsech");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\mathrm{arcsech}{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			return value;
+
 		case AST_FUNCTION_ARCSIN:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\arcsin{\\left(");
+			value = new StringBuffer("\\arcsin{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\arcsin{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			value.append('}');
+			return value;
+
 		case AST_FUNCTION_ARCSINH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\mathrm{arcsinh}{\\left(");
+			value = mathrm("arcsinh");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\mathrm{arcsinh}{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			return value;
+
 		case AST_FUNCTION_ARCTAN:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\arctan{\\left(");
+			value = new StringBuffer("\\arctan{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\arctan{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			value.append('}');
+			return value;
+
 		case AST_FUNCTION_ARCTANH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\arctanh{\\left(");
+			value = new StringBuffer("\\arctanh{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\arctanh{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
+			value.append('}');
+			return value;
+
 		case AST_FUNCTION_CEILING:
-			value = new StringBuffer("\\left\\lceil ");
-			value.append(toLaTeX(model, astnode.getLeftChild()));
-			value.append("\\right\\rceil ");
-			return value;
+			return ceiling(toLaTeX(model, astnode.getLeftChild()));
+
 		case AST_FUNCTION_COS:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\cos{\\left(");
+			value = new StringBuffer("\\cos{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\cos{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_COSH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\cosh{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\cosh{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_COT:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\cot{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\cot{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_COTH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\coth{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\coth{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_CSC:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\csc{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\csc{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_CSCH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\mathrm{csch}{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\mathrm{csch}{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_EXP:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\exp{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\exp{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_FACTORIAL:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)!");
-				return value;
-			} else {
-				value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
-				value.append("!");
-				return value;
-			}
-		case AST_FUNCTION_FLOOR:
-			value = new StringBuffer("\\left\\lfloor ");
-			value.append(toLaTeX(model, astnode.getLeftChild()));
-			value.append("\\right\\rfloor ");
+			value.append('}');
 			return value;
-		case AST_FUNCTION_LN:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\ln{\\left(");
+
+		case AST_FUNCTION_COSH:
+			value = new StringBuffer("\\cosh{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\ln{");
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_COT:
+			value = new StringBuffer("\\cot{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_POWER:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\left(");
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_COTH:
+			value = new StringBuffer("\\coth{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)^{");
-				value.append(toLaTeX(model, astnode.getRightChild()));
-				value.append("}");
-				return value;
-			} else {
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_CSC:
+			value = new StringBuffer("\\csc{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_CSCH:
+			value = mathrm("csch");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			return value;
+
+		case AST_FUNCTION_EXP:
+			value = new StringBuffer("\\exp{");
+			if (0 < astnode.getLeftChild().getNumChildren())
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_FACTORIAL:
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value = brackets(toLaTeX(model, astnode.getLeftChild()));
+			else
 				value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
-				value.append("^{");
-				value.append(toLaTeX(model, astnode.getRightChild()));
-				value.append("}");
-				return value;
-			}
+			value.append('!');
+			return value;
+
+		case AST_FUNCTION_FLOOR:
+			return floor(toLaTeX(model, astnode.getLeftChild()));
+
+		case AST_FUNCTION_LN:
+			value = new StringBuffer("\\ln{");
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value = brackets(toLaTeX(model, astnode.getLeftChild()));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_POWER:
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value = brackets(toLaTeX(model, astnode.getLeftChild()));
+			else
+				value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
+			value.append("^{");
+			value.append(toLaTeX(model, astnode.getChild(astnode
+					.getNumChildren() - 1)));
+			value.append('}');
+			return value;
+
 		case AST_FUNCTION_ROOT:
-			value = new StringBuffer("\\sqrt");
 			ASTNode left = astnode.getLeftChild();
 			if ((astnode.getNumChildren() > 1)
 					&& ((left.isInteger() && (left.getInteger() != 2)) || (left
-							.isReal() && (left.getReal() != 2d)))) {
-				value.append('[');
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append(']');
-			}
-			value.append('{');
-			value.append(toLaTeX(model, astnode.getChild(astnode
+							.isReal() && (left.getReal() != 2d))))
+				return root(toLaTeX(model, astnode.getLeftChild()), toLaTeX(
+						model, astnode.getRightChild()));
+			return sqrt(toLaTeX(model, astnode.getChild(astnode
 					.getNumChildren() - 1)));
-			value.append("}");
-			return value;
+
 		case AST_FUNCTION_SEC:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\sec{\\left(");
+			value = new StringBuffer("\\sec{");
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
 				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\sec{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_SECH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\mathrm{sech}{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\mathrm{sech}{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_SIN:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\sin{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\sin{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_SINH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\sinh{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\sinh{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_TAN:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\tan{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\tan{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION_TANH:
-			if (astnode.getLeftChild().getLeftChild() != null) {
-				value = new StringBuffer("\\tanh{\\left(");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("\\right)}");
-				return value;
-			} else {
-				value = new StringBuffer("\\tanh{");
-				value.append(toLaTeX(model, astnode.getLeftChild()));
-				value.append("}");
-				return value;
-			}
-		case AST_FUNCTION:
-			value = new StringBuffer(mathtt(maskLaTeXspecialSymbols(astnode
-					.getName())));
-			value.append('(');
-			for (int i = 0; i < astnode.getNumChildren(); i++) {
-				if (i > 0)
-					value.append(", ");
-				value.append(toLaTeX(model, astnode.getChild(i)));
-			}
-			value.append(")");
+			value.append('}');
 			return value;
+
+		case AST_FUNCTION_SECH:
+			value = mathrm("sech");
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_SIN:
+			value = new StringBuffer("\\sin{");
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_SINH:
+			value = new StringBuffer("\\sinh{");
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_TAN:
+			value = new StringBuffer("\\tan{");
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_TANH:
+			value = new StringBuffer("\\tanh{");
+			if (astnode.getLeftChild().getNumChildren() > 0)
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION:
+			value = new StringBuffer(
+					mathtt(maskSpecialChars(astnode.getName())));
+			StringBuffer args = new StringBuffer(toLaTeX(model, astnode
+					.getLeftChild()));
+			for (int i = 1; i < astnode.getNumChildren(); i++) {
+				args.append(", ");
+				args.append(toLaTeX(model, astnode.getChild(i)));
+			}
+			args = brackets(args);
+			value.append(args);
+			return value;
+
 		case AST_LAMBDA:
-			value = new StringBuffer(mathtt(maskLaTeXspecialSymbols(astnode
-					.getName())));
-			value.append('(');
-			for (int i = 0; i < astnode.getNumChildren() - 1; i++) {
-				if (i > 0)
-					value.append(", ");
+			value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
+			// mathtt(maskLaTeXspecialSymbols(astnode.getName())) == LAMBDA!!!
+			// value.append('(');
+			for (int i = 1; i < astnode.getNumChildren() - 1; i++) {
+				value.append(", ");
 				value.append(toLaTeX(model, astnode.getChild(i)));
 			}
-			value.append(") = ");
+			value = brackets(value);
+			value.append(" = ");
 			value.append(toLaTeX(model, astnode.getRightChild()));
 			return value;
+
 		case AST_LOGICAL_AND:
 			return mathematicalOperation(astnode, model, "\\wedge ");
 		case AST_LOGICAL_XOR:
@@ -1291,64 +1084,69 @@ public class LaTeXExport implements libsbmlConstants {
 		case AST_LOGICAL_NOT:
 			value = new StringBuffer("\\neg ");
 			if (0 < astnode.getLeftChild().getNumChildren())
-				value.append("\\left(");
-			value.append(toLaTeX(model, astnode.getLeftChild()));
-			if (0 < astnode.getLeftChild().getNumChildren())
-				value.append("\\right)");
+				value.append(brackets(toLaTeX(model, astnode.getLeftChild())));
+			else
+				value.append(toLaTeX(model, astnode.getLeftChild()));
 			return value;
+
 		case AST_FUNCTION_PIECEWISE:
 			value = new StringBuffer("\\begin{dcases}");
 			value.append(newLine);
-			for (long i = 0; i < astnode.getNumChildren() - 1; i++) {
+			for (int i = 0; i < astnode.getNumChildren() - 1; i++) {
 				value.append(toLaTeX(model, astnode.getChild(i)));
-				if ((i % 2) == 0)
-					value.append(" & \\text{if\\ } ");
-				else
-					value.append(lineBreak);
+				value.append(((i % 2) == 0) ? " & \\text{if\\ } " : lineBreak);
 			}
-			value.append(toLaTeX(model, astnode.getRightChild()));
+			value.append(toLaTeX(model, astnode.getChild(astnode
+					.getNumChildren() - 1)));
 			if ((astnode.getNumChildren() % 2) == 1) {
 				value.append(" & \\text{otherwise}");
 				value.append(newLine);
 			}
 			value.append("\\end{dcases}");
 			return value;
+
 		case AST_RELATIONAL_EQ:
 			value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
-			value.append(" \\eq ");
+			value.append(" = ");
 			value.append(toLaTeX(model, astnode.getRightChild()));
 			return value;
+
 		case AST_RELATIONAL_GEQ:
 			value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
 			value.append(" \\geq ");
 			value.append(toLaTeX(model, astnode.getRightChild()));
 			return value;
+
 		case AST_RELATIONAL_GT:
 			value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
 			value.append(" > ");
 			value.append(toLaTeX(model, astnode.getRightChild()));
 			return value;
+
 		case AST_RELATIONAL_NEQ:
 			value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
 			value.append(" \\neq ");
 			value.append(toLaTeX(model, astnode.getRightChild()));
 			return value;
+
 		case AST_RELATIONAL_LEQ:
 			value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
 			value.append(" \\leq ");
 			value.append(toLaTeX(model, astnode.getRightChild()));
 			return value;
+
 		case AST_RELATIONAL_LT:
 			value = new StringBuffer(toLaTeX(model, astnode.getLeftChild()));
 			value.append(" < ");
 			value.append(toLaTeX(model, astnode.getRightChild()));
 			return value;
+
 		case AST_UNKNOWN:
-			return new StringBuffer("\\text{ unknown }");
+			return mathtext(" unknown ");
+
 		default:
-			break;
+			return value = new StringBuffer();
 		}
-		return new StringBuffer("\\text{ unknown }");
 	}
 
 	/**
@@ -1656,7 +1454,7 @@ public class LaTeXExport implements libsbmlConstants {
 		} else {
 			name = "Undefinded";
 		}
-		name = maskLaTeXspecialSymbols(name);
+		name = maskSpecialChars(name);
 		if (printNameIfAvailable) {
 			return new StringBuffer("\\text{" + name + "}");
 		} else {
@@ -1692,21 +1490,6 @@ public class LaTeXExport implements libsbmlConstants {
 	}
 
 	/**
-	 * Returns the LaTeX code to set the given String in type writer font within
-	 * a math environment.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	private StringBuffer mathtt(String id) {
-		StringBuffer sb = new StringBuffer(typeWriter ? "\\mathtt{"
-				: "\\mathrm{");
-		sb.append(id);
-		sb.append('}');
-		return sb;
-	}
-
-	/**
 	 * This method decides if brakets are to be set. The symbol is a
 	 * mathematical operator, e.g., plus, minus, multiplication etc. in LaTeX
 	 * syntax (for instance
@@ -1739,31 +1522,6 @@ public class LaTeXExport implements libsbmlConstants {
 		if (1 < astnode.getRightChild().getNumChildren())
 			value.append("\\right)");
 		return value;
-	}
-
-	/**
-	 * Masks all special characters used by LaTeX with a backslash.
-	 * 
-	 * @param string
-	 * @return
-	 */
-	private String maskLaTeXspecialSymbols(String string) {
-		StringBuffer masked = new StringBuffer();
-		for (int i = 0; i < string.length(); i++) {
-			char atI = string.charAt(i);
-			if ((atI == '_') || (atI == '\\') || (atI == '[') || (atI == ']')
-					|| (atI == '$') || (atI == '&') || (atI == '#')
-					|| (atI == '{') || (atI == '}') || (atI == '%')
-					|| (atI == '~')) {
-				if (i == 0)
-					masked.append('\\');
-				else if (string.charAt(i - 1) != '\\')
-					// masked.append("\\-\\");
-					masked.append('\\');
-			}
-			masked.append(atI);
-		}
-		return masked.toString().trim();
 	}
 
 	private String name_idToLaTex(String s) {
