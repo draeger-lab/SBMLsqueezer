@@ -55,7 +55,7 @@ public class ParameterLogger {
 			modelList.append(model.getId() + " ");
 			reactionsList.add(new StringBuffer[] {
 					new StringBuffer(model.getId()),
-					new StringBuffer(reaction.getId()) });
+					new StringBuffer(reaction.getId() + " ") });
 		} else {
 			reactionsList.get(getNumOfModel(model))[1].append(reaction.getId()
 					+ " ");
@@ -76,8 +76,13 @@ public class ParameterLogger {
 	public void removeReaction(PluginModel model, PluginReaction reaction) {
 		int index = reactionsList.get(getNumOfModel(model))[1].indexOf(reaction
 				.getId());
+		/*
+		 * System.out.println("Removing from " + index + " to " + (index +
+		 * reaction.getId().length()));
+		 */
 		reactionsList.get(getNumOfModel(model))[1].delete(index, reaction
 				.getId().length() + 1);
+		// System.out.println(reactionsList.get(getNumOfModel(model))[1]);
 	}
 
 	public void writeLogFile() throws IOException {
