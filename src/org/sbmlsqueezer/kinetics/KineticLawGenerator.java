@@ -854,16 +854,11 @@ public class KineticLawGenerator {
 		int paramNumber, i;
 		for (paramNumber = 0; paramNumber < paramListLocal.size(); paramNumber++) {
 			PluginParameter para;
-			PluginListOf list = kineticLaw.getListOfParameters();
 			if (addAllParametersGlobally) {
 				para = new PluginParameter(paramListLocal.get(paramNumber),
 						model);
 				para.setValue(1.0);
 				if (model.getParameter(para.getId()) == null) {
-					kineticLaw.removeParameter((PluginParameter) list
-							.get(paramNumber));
-					plugin.notifySBaseDeleted((PluginSBase) list
-							.get(paramNumber));
 					model.addParameter(para);
 					plugin.notifySBaseAdded((PluginSBase) para);
 				}

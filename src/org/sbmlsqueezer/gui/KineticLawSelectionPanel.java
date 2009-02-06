@@ -89,6 +89,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private JPanel eqnPrev;
 
+	private String notes;
+
 	private String[] laTeXpreview;
 
 	private static final int width = 310, height = 175;
@@ -243,8 +245,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 						"Existing rate law", false);
 
 				if (reaction.getNotesString().length() > 0)
-					rButtonsKineticEquations[i].setToolTipText("<html>"
-							+ reaction.getNotesString() + "</html>");
+					rButtonsKineticEquations[i].setToolTipText(toHTML(reaction
+							.getNotesString(), 40));
 				else
 					rButtonsKineticEquations[i]
 							.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");
@@ -288,6 +290,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				.createTitledBorder(" Equation Preview "));
 		eqnPrev.setLayout(new BorderLayout());
 		Dimension dim = new Dimension(width, height);
+		notes = rButtonsKineticEquations[kinNum].getToolTipText().replace(
+				"<html>", "").replace("</html>", "").replace("<body>", "")
+				.replace("</body>", "").replace("<br>", "");
 		/*
 		 * new Dimension((int) Math.min(width, preview
 		 * .getPreferredSize().getWidth()), (int) Math.min(height, preview
@@ -423,5 +428,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	public boolean getExistingRateLawSelected() {
 		return isExistingRateLawSelected;
+	}
+
+	public String getReactionNotes() {
+		return notes;
 	}
 }
