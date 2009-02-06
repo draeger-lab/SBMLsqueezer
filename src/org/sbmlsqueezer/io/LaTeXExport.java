@@ -26,9 +26,6 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Species;
 import org.sbml.libsbml.StoichiometryMath;
 import org.sbml.libsbml.libsbmlConstants;
 
@@ -643,7 +640,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 				value.append(toLaTeX(model, astnode.getLeftChild()));
 			return value;
 		} else if (astnode.isSqrt())
-			return sqrt(toLaTeX(model, astnode.getLeftChild()));
+			return sqrt(toLaTeX(model, astnode.getChild(astnode.getNumChildren() - 1)));
 		else if (astnode.isInfinity())
 			return POSITIVE_INFINITY;
 		else if (astnode.isNegInfinity())
@@ -990,10 +987,11 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 			if ((astnode.getNumChildren() > 1)
 					&& ((left.isInteger() && (left.getInteger() != 2)) || (left
 							.isReal() && (left.getReal() != 2d))))
-				return root(toLaTeX(model, astnode.getLeftChild()), toLaTeX(
+				value= root(toLaTeX(model, astnode.getLeftChild()), toLaTeX(
 						model, astnode.getRightChild()));
-			return sqrt(toLaTeX(model, astnode.getChild(astnode
+			value = sqrt(toLaTeX(model, astnode.getChild(astnode
 					.getNumChildren() - 1)));
+			return value;
 
 		case AST_FUNCTION_SEC:
 			value = new StringBuffer("\\sec{");

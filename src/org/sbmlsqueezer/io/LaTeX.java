@@ -235,16 +235,16 @@ public class LaTeX extends StringOperations {
 
 	/**
 	 * 
-	 * @param root
+	 * @param degree
 	 * @param value
 	 * @return
 	 */
-	public static StringBuffer root(Object root, Object value) {
-		if (root.toString().equals("2"))
+	public static StringBuffer root(Object degree, Object value) {
+		if (degree.toString().equals("2"))
 			return sqrt(value);
 		StringBuffer sqrt = new StringBuffer("\\sqrt");
 		sqrt.append('[');
-		sqrt.append(root);
+		sqrt.append(degree);
 		sqrt.append("]{");
 		sqrt.append(value);
 		sqrt.append('}');

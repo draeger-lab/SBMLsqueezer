@@ -312,7 +312,7 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 					if (!listOfLocalParameters.contains(kIr1))
 						listOfLocalParameters.add(kIr1);
 
-					numerator = "(" + kcatp + " * ";
+					numerator = "((" + kcatp + " * ";
 					numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kIr1TeX
 							+ kMr2TeX + "}";
 					if (modE.size() > 0) {
@@ -320,11 +320,11 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						numeratorTeX += Species.toTeX(modE.get(enzymeNum));
 					}
 
-					denominator = "1 + " + specRefE1.getSpecies() + "/" + kIr1
-							+ " + " + specRefE2.getSpecies() + "/" + kIr2
-							+ " + " + specRefP1.getSpecies() + "/" + kIp1
-							+ " + " + specRefP2.getSpecies() + "/" + kIp2
-							+ " + ";
+					denominator = "1 + (" + specRefE1.getSpecies() + "/" + kIr1
+							+ ") + (" + specRefE2.getSpecies() + "/" + kIr2
+							+ ") + (" + specRefP1.getSpecies() + "/" + kIp1
+							+ ") + (" + specRefP2.getSpecies() + "/" + kIp2
+							+ ") + (";
 					denominatorTeX = "1 + " + "\\frac{"
 							+ Species.toTeX(specRefE1.getSpecies()) + "}{"
 							+ kIr1TeX + "}" + " + \\frac{"
@@ -345,7 +345,7 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						denominatorTeX += Species.toTeX(specRefP2
 								.getSpeciesInstance().getId());
 					}
-					denominator += "/(" + kIp2 + " * " + kMp1 + ")" + " + ";
+					denominator += "/(" + kIp2 + " * " + kMp1 + ")) + (";
 					denominatorTeX += "}{" + kIp2TeX + kMp1TeX + "}"
 							+ " + \\frac{"
 							+ Species.toTeX(specRefE1.getSpecies());
@@ -368,11 +368,11 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						denominatorTeX += Species.toTeX(specRefE2
 								.getSpeciesInstance().getId());
 					}
-					numerator += ")/(" + kIr1 + " * " + kMr2 + ")" + " - ("
+					numerator += ")/(" + kIr1 + " * " + kMr2 + ")) - (("
 							+ kcatn;
 					numeratorTeX += "-\\frac{" + kcatnTeX + "}{" + kIp2TeX
 							+ kMp1TeX + "}";
-					denominator += "/(" + kIr1 + " * " + kMr2 + ")";
+					denominator += "/(" + kIr1 + " * " + kMr2 + "))";
 					denominatorTeX += "}{" + kIr1TeX + kMr2TeX + "}";
 
 					if (modE.size() != 0) {
@@ -389,7 +389,7 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						numeratorTeX += Species.toTeX(specRefP2
 								.getSpeciesInstance().getId());
 					}
-					numerator += ")/(" + kIp2 + " * " + kMp1 + ")";
+					numerator += ")/(" + kIp2 + " * " + kMp1 + "))";
 
 				} else {
 					/*
@@ -476,7 +476,7 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 					if (!listOfLocalParameters.contains(kIr1))
 						listOfLocalParameters.add(kIr1);
 
-					numerator = "(" + kcatp + " * ";
+					numerator = "((" + kcatp + " * ";
 					numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kIr1TeX
 							+ kMr2TeX + "}";
 					if (modE.size() != 0) {
@@ -484,8 +484,8 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						numeratorTeX += Species.toTeX(modE.get(enzymeNum));
 					}
 
-					denominator = "1 + " + specRefE1.getSpecies() + "/" + kIr1
-							+ " + " + specRefE2.getSpecies() + "/" + kIr2;
+					denominator = "1 + (" + specRefE1.getSpecies() + "/" + kIr1
+							+ ") + (" + specRefE2.getSpecies() + "/" + kIr2 + ") + (";
 					denominatorTeX = "1 + " + "\\frac{"
 							+ Species.toTeX(specRefE1.getSpecies()) + "}{"
 							+ kIr1TeX + "}" + " + \\frac{"
@@ -511,7 +511,7 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						denominatorTeX += Species.toTeX(specRefE2
 								.getSpeciesInstance().getId());
 					}
-					numerator += ")/(" + kIr1 + " * " + kMr2 + ")" + " - ("
+					numerator += ")/(" + kIr1 + " * " + kMr2 + ")) - (("
 							+ kcatn;
 					numeratorTeX += "-\\frac{" + kcatnTeX + "}{" + kMp1TeX
 							+ "}";
@@ -520,10 +520,10 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						numerator += " * " + modE.get(enzymeNum);
 						numeratorTeX += Species.toTeX(modE.get(enzymeNum));
 					}
-					numerator += " * " + specRefP1.getSpecies() + ")/" + kMp1;
+					numerator += " * " + specRefP1.getSpecies() + ")/" + kMp1 + ")";
 					numeratorTeX += Species.toTeX(specRefP1.getSpecies());
 
-					denominator += "/(" + kIr1 + " * " + kMr2 + ")" + " + "
+					denominator += "/(" + kIr1 + " * " + kMr2 + ")) + "
 							+ specRefP1.getSpecies() + "/" + kMp1;
 					denominatorTeX += "}{" + kIr1TeX + kMr2TeX + "}"
 							+ " + \\frac{"
@@ -535,7 +535,7 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 			/*
 			 * Construct formula
 			 */
-			formelTxt += "(" + numerator + ")/(" + denominator + ")";
+			formelTxt += "((" + numerator + ")/(" + denominator + "))";
 			formelTeX += "\\frac{" + numeratorTeX + "}{" + denominatorTeX + "}";
 			if (enzymeNum < modE.size() - 1) {
 				formelTxt += " + ";

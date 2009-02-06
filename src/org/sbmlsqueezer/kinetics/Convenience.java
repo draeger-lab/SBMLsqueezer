@@ -98,7 +98,7 @@ public class Convenience extends BasicKineticLaw {
 
 				// we can save the brakets if there is just one educt.
 				if (parentReaction.getNumReactants() > 1) {
-					denominator += "(";
+					denominator += '(';
 					denominatorTeX += "\\left(";
 				}
 				if (!parentReaction.getReversible()
@@ -119,7 +119,7 @@ public class Convenience extends BasicKineticLaw {
 				 * (denominator_n == null) { denominator_n = temp; } else {
 				 * denominator_n.addChild(temp); }
 				 */
-				denominator += specref.getSpecies() + "/" + kM;
+				denominator += '(' + specref.getSpecies() + '/' + kM + ')';
 				denominatorTeX += "\\frac{" + Species.toTeX(specref.getSpecies())
 				    + "}{" + kMTeX + "}";
 				// ASTNode pow = new ASTNode(AST_POWER);
@@ -136,7 +136,7 @@ public class Convenience extends BasicKineticLaw {
 					 * denominator_n = new ASTNode(AST_PLUS);
 					 * denominator_n.addChild(temp); denominator_n.addChild(pow);
 					 */
-					denominator += " + (" + specref.getSpecies() + "/" + kM + ")" + exp;
+					denominator += " + (" + specref.getSpecies() + '/' + kM + ')' + exp;
 					denominatorTeX += " + \\left(\\frac{"
 					    + Species.toTeX(specref.getSpecies()) + "}{" + kMTeX
 					    + "}\\right)" + exp.replace("(", "{").replace(")", "}");
@@ -145,7 +145,7 @@ public class Convenience extends BasicKineticLaw {
 				// we can save the brakets if there is just one educt
 				if (parentReaction.getNumReactants() > 1) {
 					denominatorTeX += "\\right)";
-					denominator += ")";
+					denominator += ')';
 				}
 				if ((eductNum + 1) < parentReaction.getNumReactants())
 				  denominator += " * ";
@@ -160,8 +160,8 @@ public class Convenience extends BasicKineticLaw {
 					 * numerator_n.addChild(temp2); numerator_n.addChild(temp);
 					 */
 
-					numerator += " * " + specref.getSpecies() + "/" + kM;
-					numeratorTeX += "\\cdot \\frac{"
+					numerator += " * (" + specref.getSpecies() + '/' + kM + ')';
+					numeratorTeX += "\\cdot\\frac{"
 					    + Species.toTeX(specref.getSpecies()) + "}{" + kMTeX + "}";
 				} else {
 					/*
@@ -174,8 +174,8 @@ public class Convenience extends BasicKineticLaw {
 					 * ASTNode(AST_TIMES); numerator_n.addChild(temp);
 					 * numerator_n.addChild(temp2);
 					 */
-					numerator += " * (" + specref.getSpecies() + "/" + kM + ")" + exp;
-					numeratorTeX += "\\cdot \\left(\\frac{"
+					numerator += " * (" + specref.getSpecies() + '/' + kM + ')' + exp;
+					numeratorTeX += "\\cdot\\left(\\frac{"
 					    + Species.toTeX(specref.getSpecies()) + "}{" + kMTeX
 					    + "}\\right)" + exp.replace("(", "{").replace(")", "}");
 				}
@@ -251,7 +251,7 @@ public class Convenience extends BasicKineticLaw {
 					 * new ASTNode(AST_NAME); temp.setName(kM); temp2.addChild(temp);
 					 * part.addChild(temp2); }
 					 */
-					denominator += specRefP.getSpecies() + "/" + kM;
+					denominator += '(' + specRefP.getSpecies() + '/' + kM + ')';
 					denominatorTeX += "\\frac{" + Species.toTeX(specRefP.getSpecies())
 					    + "}{" + kMTeX + "}";
 
@@ -269,7 +269,7 @@ public class Convenience extends BasicKineticLaw {
 						 * temp.setValue(m + 1); basis.addChild(temp); temp = part; part =
 						 * new ASTNode(AST_PLUS); part.addChild(temp); part.addChild(basis);
 						 */
-						denominator += " + (" + specRefP.getSpecies() + "/" + kM + ")"
+						denominator += " + (" + specRefP.getSpecies() + '/' + kM + ')'
 						    + exp;
 						denominatorTeX += " + \\left(\\frac{"
 						    + Species.toTeX(specRefP.getSpecies()) + "}{" + kMTeX
@@ -278,7 +278,7 @@ public class Convenience extends BasicKineticLaw {
 					if (parentReaction.getNumProducts() > 1) {
 						// denominator_n.addChild(part);
 						denominatorTeX += "\\right)";
-						denominator += ")";
+						denominator += ')';
 					}
 					if ((productNum + 1) < parentReaction.getNumProducts())
 					  denominator += " * ";
@@ -299,8 +299,8 @@ public class Convenience extends BasicKineticLaw {
 						 * numerator_n.addChild(temp2);
 						 */
 
-						numerator += " * (" + specRefP.getSpecies() + "/" + kM + ")" + exp;
-						numeratorTeX += "\\cdot \\left(\\frac{"
+						numerator += " * (" + specRefP.getSpecies() + '/' + kM + ')' + exp;
+						numeratorTeX += "\\cdot\\left(\\frac{"
 						    + Species.toTeX(specRefP.getSpecies()) + "}{" + kMTeX
 						    + "}\\right)" + exp;
 					} else {
@@ -311,8 +311,8 @@ public class Convenience extends BasicKineticLaw {
 						 * numerator_n.addChild(temp);
 						 */
 
-						numerator += " * " + specRefP.getSpecies() + "/" + kM;
-						numeratorTeX += "\\cdot \\frac{"
+						numerator += " * (" + specRefP.getSpecies() + '/' + kM + ')';
+						numeratorTeX += "\\cdot\\frac{"
 						    + Species.toTeX(specRefP.getSpecies()) + "}{" + kMTeX + "}";
 					}
 				}
@@ -340,7 +340,7 @@ public class Convenience extends BasicKineticLaw {
 			 * ASTNode(AST_NAME); temp2.setName(modE.get(enzymeNum));
 			 * currEnzyme.addChild(temp2); currEnzyme.addChild(temp); }
 			 */
-			formelTxt += "(" + numerator + ")" + "/(" + denominator + ")";
+			formelTxt += '(' + numerator + ')' + "/(" + denominator + ')';
 			formelTeX += "\\frac{" + numeratorTeX + "}{" + denominatorTeX + "}";
 			/*
 			 * if (numOfEnzymes <= 1) ast = currEnzyme; else { if (ast == null) ast =
@@ -414,8 +414,8 @@ public class Convenience extends BasicKineticLaw {
 		}
 		// TODO here incomplete:
 		if ((acti.length() + inhib.length() > 0) && (modE.size() > 1)) {
-			inhib += "(";
-			formelTxt += ")";
+			inhib += '(';
+			formelTxt += ')';
 			inhibTeX += inhibTeX.substring(0, inhibTeX.length() - 6)
 			    + "\\\\\\cdot\\left(";
 			formelTeX = formelTeX.replaceAll("\\\\\\+", "\\right.\\\\\\\\+\\\\left.")

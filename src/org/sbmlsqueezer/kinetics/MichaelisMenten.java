@@ -85,8 +85,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 			if (modE.size() == 0) {
 				kcatp = "Vp_" + reactionNum;
 				kcatn = "Vn_" + reactionNum;
-				kcatpTeX = "V^\\text{m}_{+" + reactionNum + "}";
-				kcatnTeX = "V^\\text{m}_{-" + reactionNum + "}";
+				kcatpTeX = "V^\\text{m}_{+" + reactionNum + '}';
+				kcatnTeX = "V^\\text{m}_{-" + reactionNum + '}';
 			} else {
 				kcatp = "kcatp_" + reactionNum;
 				kcatn = "kcatn_" + reactionNum;
@@ -96,16 +96,16 @@ public class MichaelisMenten extends BasicKineticLaw {
 					kcatp += "_" + modE.get(enzymeNum);
 					kcatn += "_" + modE.get(enzymeNum);
 					kcatpTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-							+ "}";
+							+ '}';
 					kcatnTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-							+ "}";
+							+ '}';
 					kMe += "_" + modE.get(enzymeNum);
 					kMp += "_" + modE.get(enzymeNum);
-					kMeTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
-					kMpTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
+					kMeTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
+					kMpTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
 				}
-				kcatpTeX += "}";
-				kcatnTeX += "}";
+				kcatpTeX += '}';
+				kcatnTeX += '}';
 			}
 			kMe += "_" + specRefR.getSpecies();
 			kMeTeX += ",{" + Species.idToTeX(specRefR.getSpecies()) + "}}";
@@ -156,8 +156,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp.setName(specRefR.getSpecies());
 				numerator_n.addChild(temp);
 
-				numerator = kcatp + "/" + kMe + " * " + specRefR.getSpecies();
-				numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kMeTeX + "}"
+				numerator = '(' + kcatp + '/' + kMe + ") * " + specRefR.getSpecies();
+				numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kMeTeX + '}'
 						+ Species.toTeX(specRefR.getSpecies());
 				denominator_n = new ASTNode(AST_DIVIDE);
 				temp = new ASTNode(AST_NAME);
@@ -166,10 +166,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp = new ASTNode(AST_NAME);
 				temp.setName(kMe);
 				denominator_n.addChild(temp);
-				denominator = specRefR.getSpecies() + "/" + kMe;
+				denominator = "(" + specRefR.getSpecies() + '/' + kMe + ')';
 				denominatorTeX = "\\frac{"
 						+ Species.toTeX(specRefR.getSpecies()) + "}{" + kMeTeX
-						+ "}";
+						+ '}';
 
 				kMp += "_" + specRefP.getSpecies();
 				kMpTeX += ",{" + Species.idToTeX(specRefP.getSpecies()) + "}}";
@@ -196,9 +196,9 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp.addChild(temp2);
 				numerator_n.addChild(temp);
 
-				numerator += " - " + kcatn + "/" + kMp + " * "
+				numerator += " - (" + kcatn + '/' + kMp + ") * "
 						+ specRefP.getSpecies();
-				numeratorTeX += "-\\frac{" + kcatnTeX + "}{" + kMpTeX + "}"
+				numeratorTeX += "-\\frac{" + kcatnTeX + "}{" + kMpTeX + '}'
 						+ Species.toTeX(specRefP.getSpecies());
 
 				temp = denominator_n;
@@ -213,10 +213,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp2.addChild(temp);
 				denominator_n.addChild(temp2);
 
-				denominator += " + " + specRefP.getSpecies() + "/" + kMp;
+				denominator += " + (" + specRefP.getSpecies() + '/' + kMp + ')';
 				denominatorTeX += " + \\frac{"
 						+ Species.toTeX(specRefP.getSpecies()) + "}{" + kMpTeX
-						+ "}";
+						+ '}';
 			}
 
 			/*
@@ -239,8 +239,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 				if (modE.size() > 1) {
 					kIa += "_" + modE.get(enzymeNum);
 					kIb += "_" + modE.get(enzymeNum);
-					kIaTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
-					kIbTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
+					kIaTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
+					kIbTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
 				}
 
 				if (!listOfLocalParameters.contains(kIa))
@@ -259,7 +259,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp.setName(kIb);
 				temp2.addChild(temp);
 				inh.addChild(temp2);
-				kIb = "(1 + " + modInhib.get(0) + "/" + kIb + ")";
+				kIb = "(1 + (" + modInhib.get(0) + '/' + kIb + "))";
 				if (reaction.getReversible()) {
 					kIbTeX += "}}\\right)";
 					kIaTeX += "}}";
@@ -279,7 +279,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 					temp.addChild(inh);
 					denominator_n.addChild(temp);
 
-					denominator = modInhib.get(0) + "/" + kIa + " + ("
+					denominator = modInhib.get(0) + '/' + kIa + " + ("
 							+ denominator + ") * " + kIb;
 					denominatorTeX = kIaTeX + " + \\left(" + denominatorTeX
 							+ "\\right)" + kIbTeX;
@@ -308,7 +308,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 					temp.addChild(inh);
 					denominator_n.addChild(temp);
 
-					denominator = "(" + kMe + " * " + modInhib.get(0) + ")/"
+					denominator = '(' + kMe + " * " + modInhib.get(0) + ")/"
 							+ kIa + " + " + denominator + " * " + kIb;
 					denominatorTeX = kIaTeX + " + " + denominatorTeX + kIbTeX;
 				}
@@ -345,9 +345,9 @@ public class MichaelisMenten extends BasicKineticLaw {
 					if (modE.size() > 1) {
 						kIai += "_" + modE.get(enzymeNum);
 						kIaiTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-								+ "}";
+								+ '}';
 					}
-					kIaiTeX += "}";
+					kIaiTeX += '}';
 					String kIbi = "kIb" + kIai;
 					kIai = "kIa" + kIai;
 					String kIbiTeX = "K^\\text{Ib" + kIaiTeX;
@@ -365,9 +365,9 @@ public class MichaelisMenten extends BasicKineticLaw {
 					temp.setName(kIai);
 					inh.addChild(temp);
 					temp2.addChild(inh);
-					denominator += inhib + "/" + kIai;
+					denominator += '(' + inhib + '/' + kIai + ')';
 					denominatorTeX += "\\frac{" + Species.idToTeX(inhib) + "}{"
-							+ kIaiTeX + "}";
+							+ kIaiTeX + '}';
 
 					inh = new ASTNode(AST_DIVIDE);
 					temp = new ASTNode(AST_NAME);
@@ -377,9 +377,9 @@ public class MichaelisMenten extends BasicKineticLaw {
 					temp.setName(kIbi);
 					inh.addChild(temp);
 					kMeN.addChild(inh);
-					// kMe += inhib + "/" + kIbi; // Km
+					// kMe += inhib + '/' + kIbi; // Km
 					kMeTeX += "\\frac{" + Species.idToTeX(inhib) + "}{"
-							+ kIbiTeX + "}";
+							+ kIbiTeX + '}';
 					if (i < modInhib.size() - 1) {
 						denominator += " + ";
 						denominatorTeX += "+";
@@ -388,7 +388,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 					}
 				}
 				kMeTeX += "\\right)";
-				// kMe += ")";
+				// kMe += ')';
 				temp = kMeN;
 				kMeN = new ASTNode(AST_TIMES);
 				inh = new ASTNode(AST_NAME);
@@ -398,7 +398,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 				denominator_n.addChild(temp2);
 
 				denominatorTeX += "\\right)";
-				denominator += ")";
+				denominator += ')';
 
 			} else if (modInhib.size() > 1) {
 				// the formalism from the convenience kinetics as a default.
@@ -427,8 +427,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 					faktor.addChild(temp);
 					inh.addChild(faktor);
 
-					inhib += kI + "/(" + kI + " + "
-							+ modInhib.get(inhibitorNum) + ") * ";
+					inhib += '(' + kI + "/(" + kI + " + "
+							+ modInhib.get(inhibitorNum) + ")) * ";
 					inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + "+"
 							+ Species.toTeX(modInhib.get(inhibitorNum))
 							+ "}\\cdot ";
@@ -465,8 +465,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 			if (currEnzyme.getNumChildren() <= 1)
 				currEnzyme = temp;
 
-			formelTxt += "(" + numerator + ")/(" + denominator + ")";
-			formelTeX += "\\frac{" + numeratorTeX + "}{" + denominatorTeX + "}";
+			formelTxt += "((" + numerator + ")/(" + denominator + "))";
+			formelTeX += "\\frac{" + numeratorTeX + "}{" + denominatorTeX + '}';
 			if (modE.size() > 0) {
 				// TODO - ERROR
 				temp = currEnzyme;
@@ -514,7 +514,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 			if (!listOfLocalParameters.contains(kAa))
 				listOfLocalParameters.add(new String(kAa));
 
-			kAaTeX += "}";
+			kAaTeX += '}';
 			temp = new ASTNode(AST_NAME);
 			temp.setName(kAa);
 			temp2 = new ASTNode(AST_PLUS);
@@ -528,15 +528,15 @@ public class MichaelisMenten extends BasicKineticLaw {
 			temp.addChild(temp2);
 			act.addChild(temp);
 
-			formelTxt += modActi.get(i) + "/(" + kAa + " + " + modActi.get(i)
-					+ ") * ";
+			formelTxt += '(' + modActi.get(i) + "/(" + kAa + " + " + modActi.get(i)
+					+ ")) * ";
 			formelTeX += "\\frac{" + Species.toTeX(modActi.get(i)) + "}{"
 					+ kAaTeX + "+" + Species.toTeX(modActi.get(i)) + "}\\cdot ";
 
 			// ????
 			/*
-			 * kAa = " * (1 + " + kAa + "/" + modActi.get(0) + ")"; kAb =
-			 * " * (1 + " + kAb + "/" + modActi.get(0) + ")"; kAaTeX += "}}{" +
+			 * kAa = " * (1 + " + kAa + '/' + modActi.get(0) + ')'; kAb =
+			 * " * (1 + " + kAb + '/' + modActi.get(0) + ')'; kAaTeX += "}}{" +
 			 * Species.toTeX(modActi.get(0)) + "}\\right)"; kAbTeX += "}}{" +
 			 * Species.toTeX(modActi.get(0)) + "}\\right)";
 			 */

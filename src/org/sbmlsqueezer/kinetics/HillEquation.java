@@ -104,7 +104,7 @@ public class HillEquation extends BasicKineticLaw {
           + reactionNum + "_" + modTActi.get(activatorNum);
       acti += " * " + modTActi.get(activatorNum) + "^" + hillcoeff + "/("
           + modTActi.get(activatorNum) + "^" + hillcoeff + " + " + kS + "^"
-          + hillcoeff + ")";
+          + hillcoeff + ')';
 
       if (!listOfLocalParameters.contains(hillcoeff)) listOfLocalParameters.add(hillcoeff);
       if (!listOfLocalParameters.contains(kS)) listOfLocalParameters.add(kS);
