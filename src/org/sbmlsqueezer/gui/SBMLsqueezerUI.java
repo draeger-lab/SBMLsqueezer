@@ -132,6 +132,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				if (!messagePanel.getExistingRateLawSelected()) {
 					short equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
+					reaction.setNotes(messagePanel.getReactionNotes());
 					plugin.notifySBaseChanged(reaction);
 					reaction = klg.storeLaw(plugin, klg.createKineticLaw(model,
 							reaction, equationType, messagePanel
