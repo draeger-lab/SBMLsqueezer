@@ -110,12 +110,12 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					independenceN += " * ";
 					independenceNTeX += "\\cdot ";
 				}
-				if (currentSpecRef.getStoichiometry() == 1.0) {
+				if (currentSpecRef.getStoichiometry() == 1d) {
 					independenceN += kiG;
 					independenceNTeX += kiGTeX;
 				} else {
 					independenceN += "power(" + kiG + ", "
-							+ currentSpecRef.getStoichiometry() + ")";
+							+ currentSpecRef.getStoichiometry() + "/2)";
 					independenceNTeX += "\\left(" + kiGTeX
 							+ "\\right)^{\\frac{";
 					if (currentSpecRef.getStoichiometry()
@@ -177,7 +177,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					independencePTeX += kiGTeX;
 				} else {
 					independenceP += "power(" + kiG + ", "
-							+ currentSpecRef.getStoichiometry() + ")";
+							+ currentSpecRef.getStoichiometry() + ')';
 					independencePTeX += "\\left(" + kiGTeX + "\\right)^{";
 					if (currentSpecRef.getStoichiometry()
 							- ((int) currentSpecRef.getStoichiometry()) == 0)
@@ -199,7 +199,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					denominator += " 1 + ";
 					denominatorTeX += "1 + ";
 				}
-				denominator += currentSpecRef.getSpecies() + "/" + kM;
+				denominator += '(' + currentSpecRef.getSpecies() + '/' + kM + ')';
 				denominatorTeX += "\\frac{"
 						+ Species.toTeX(currentSpecRef.getSpecies()) + "}{"
 						+ kMTeX + "}";
@@ -208,9 +208,9 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				 * for each stoichiometry (see Liebermeister et al.)
 				 */
 				for (int m = 1; m < (int) currentSpecRef.getStoichiometry(); m++) {
-					exp = "^(" + (m + 1) + ")";
-					denominator += " + (" + currentSpecRef.getSpecies() + "/"
-							+ kM + ")" + exp;
+					exp = "^(" + (m + 1) + ')';
+					denominator += " + (" + currentSpecRef.getSpecies() + '/'
+							+ kM + ')' + exp;
 					denominatorTeX += " + \\left(\\frac{"
 							+ Species.toTeX(currentSpecRef.getSpecies()) + "}{"
 							+ kMTeX + "}\\right)"
@@ -220,7 +220,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				// we can save the brakets if there is just one educt.
 				if (reaction.getNumReactants() > 1) {
 					denominatorTeX += "\\right)";
-					denominator += ")";
+					denominator += ')';
 				}
 				if ((eductNum + 1) < reaction.getNumReactants()) {
 					denominator += " * ";
@@ -231,14 +231,14 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				 * build numerator.
 				 */
 				if (exp.length() > 0) {
-					numerator += "(" + currentSpecRef.getSpecies() + "/" + kM
-							+ ")" + exp;
+					numerator += '(' + currentSpecRef.getSpecies() + '/' + kM
+							+ ')' + exp;
 					numeratorTeX += "\\left(\\frac{"
 							+ Species.toTeX(currentSpecRef.getSpecies()) + "}{"
 							+ kMTeX + "}\\right)"
 							+ exp.replace("(", "{").replace(")", "}");
 				} else {
-					numerator += currentSpecRef.getSpecies() + "/" + kM;
+					numerator += '(' + currentSpecRef.getSpecies() + '/' + kM + ')';
 					numeratorTeX += "\\frac{"
 							+ Species.toTeX(currentSpecRef.getSpecies()) + "}{"
 							+ kMTeX + "}";
@@ -249,8 +249,8 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					numeratorTeX += "\\cdot ";
 				}
 			}
-			numerator += " * root((" + independenceP + ")/(" + independenceN
-					+ "), 2)";
+			numerator += " * root(2, (" + independenceP + ")/(" + independenceN
+					+ "))";
 			numeratorTeX += "\\sqrt{\\frac{" + independencePTeX + "}{"
 					+ independenceNTeX + "}}";
 
@@ -288,16 +288,16 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 						denominator += "(1 + ";
 						denominatorTeX += "\\left(1 + ";
 					}
-					denominator += specref.getSpecies() + "/" + kM;
+					denominator += '(' + specref.getSpecies() + '/' + kM + ')';
 					denominatorTeX += "\\frac{"
 							+ Species.toTeX(specref.getSpecies()) + "}{"
 							+ kMTeX + "}";
 
 					// for each stoichiometry (see Liebermeister et al.)
 					for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
-						exp = "^(" + (m + 1) + ")";
-						denominator += " + (" + specref.getSpecies() + "/" + kM
-								+ ")" + exp;
+						exp = "^(" + (m + 1) + ')';
+						denominator += " + (" + specref.getSpecies() + '/' + kM
+								+ ')' + exp;
 						denominatorTeX += " + \\left(\\frac{"
 								+ Species.toTeX(specref.getSpecies()) + "}{"
 								+ kMTeX + "}\\right)"
@@ -306,7 +306,7 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 
 					if (reaction.getNumProducts() > 1) {
 						denominatorTeX += "\\right)";
-						denominator += ")";
+						denominator += ')';
 					}
 
 					if ((productNum + 1) < reaction.getNumProducts()) {
@@ -316,14 +316,14 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 
 					// build numerator
 					if (exp.length() > 0) {
-						numerator += "(" + specref.getSpecies() + "/" + kM
-								+ ")" + exp;
+						numerator += '(' + specref.getSpecies() + '/' + kM
+								+ ')' + exp;
 						numeratorTeX += "\\left(\\frac{"
 								+ Species.toTeX(specref.getSpecies()) + "}{"
 								+ kMTeX + "}\\right)"
 								+ exp.replace("(", "{").replace(")", "}");
 					} else {
-						numerator += specref.getSpecies() + "/" + kM;
+						numerator += '(' + specref.getSpecies() + '/' + kM + ')';
 						numeratorTeX += "\\frac{"
 								+ Species.toTeX(specref.getSpecies()) + "}{"
 								+ kMTeX + "}";
@@ -335,8 +335,8 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					}
 				}
 
-				numerator += " * root((" + independenceN + ")/("
-						+ independenceP + "), 2)";
+				numerator += " * root(2, (" + independenceN + ")/("
+						+ independenceP + "))";
 				numeratorTeX += "\\sqrt{\\frac{" + independenceNTeX + "}{"
 						+ independencePTeX + "}}";
 
@@ -350,8 +350,8 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				formelTxt += modE.get(enzymeNum) + " * ";
 				formelTeX += Species.toTeX(modE.get(enzymeNum)) + "\\cdot ";
 			}
-			formelTxt += klV + " * " + "(" + numerator + ")" + "/("
-					+ denominator + ")";
+			formelTxt += klV + " * ((" + numerator + ")/("
+					+ denominator + "))";
 			formelTeX += klVTeX + "\\cdot\\frac{" + numeratorTeX + "}{"
 					+ denominatorTeX + "}";
 			if (enzymeNum < (modE.size()) - 1) {
@@ -377,8 +377,8 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				kATeX += ",\\text{" + modActi.get(activatorNum) + "}}";
 				if (!listOfLocalParameters.contains(kA))
 					listOfLocalParameters.add(kA);
-				acti += modActi.get(activatorNum) + "/(" + kA + " + "
-						+ modActi.get(activatorNum) + ") * ";
+				acti += '(' + modActi.get(activatorNum) + "/(" + kA + " + "
+						+ modActi.get(activatorNum) + ")) * ";
 				actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum))
 						+ "}{" + kATeX + "+"
 						+ Species.toTeX(modActi.get(activatorNum)) + "}\\cdot ";
@@ -395,16 +395,16 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 				kITeX += ",\\text{" + modInhib.get(inhibitorNum) + "}}";
 				if (!listOfLocalParameters.contains(kI))
 					listOfLocalParameters.add(kI);
-				inhib += kI + "/(" + kI + " + " + modInhib.get(inhibitorNum)
-						+ ") * ";
+				inhib += '(' + kI + "/(" + kI + " + " + modInhib.get(inhibitorNum)
+						+ ")) * ";
 				inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + "+"
 						+ Species.toTeX(modInhib.get(inhibitorNum))
 						+ "}\\cdot ";
 			}
 		}
 		if ((acti.length() + inhib.length() > 0) && (modE.size() > 1)) {
-			inhib += "(";
-			formelTxt += ")";
+			inhib += '(';
+			formelTxt += ')';
 			inhibTeX += inhibTeX.substring(0, inhibTeX.length() - 6)
 					+ "\\\\\\cdot\\left(";
 			formelTeX = formelTeX.replaceAll("\\\\\\+",

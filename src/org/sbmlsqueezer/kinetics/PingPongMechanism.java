@@ -234,7 +234,7 @@ public class PingPongMechanism extends BasicKineticLaw {
         if (!listOfLocalParameters.contains(kIp2)) listOfLocalParameters.add(kIp2);
         if (!listOfLocalParameters.contains(kIr1)) listOfLocalParameters.add(kIr1);
 
-        numerator = kcatp + "/(" + kIr1 + " * " + kMr2 + ") * ";
+        numerator = "(" + kcatp + "/(" + kIr1 + " * " + kMr2 + ")) * ";
         numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kIr1TeX + kMr2TeX + "}";
         if (modE.size() > 0) {
           numerator += modE.get(enzymeNum) + " * ";
@@ -242,12 +242,12 @@ public class PingPongMechanism extends BasicKineticLaw {
         }
         numerator += specRefE1.getSpecies();
         numeratorTeX += Species.toTeX(specRefE1.getSpecies());
-        denominator = specRefE1.getSpecies() + "/" + kIr1
-            + " + (" + kMr1 + " * " + specRefE2.getSpecies()
-            + ")/(" + kIr1 + " * " + kMr2 + ") + "
-            + specRefP1.getSpecies() + "/" + kIp1 + " + ("
+        denominator = "(" + specRefE1.getSpecies() + "/" + kIr1
+            + ") + ((" + kMr1 + " * " + specRefE2.getSpecies()
+            + ")/(" + kIr1 + " * " + kMr2 + ")) + ("
+            + specRefP1.getSpecies() + "/" + kIp1 + ") + (("
             + kMp1 + " * " + specRefP2.getSpecies() + ")/("
-            + kIp1 + " * " + kMp2 + ") + ";
+            + kIp1 + " * " + kMp2 + ")) + (";
         denominatorTeX = "\\frac{"
             + Species.toTeX(specRefE1.getSpecies()) + "}{"
             + kIr1TeX + "}+\\frac{" + kMr1TeX
@@ -271,15 +271,15 @@ public class PingPongMechanism extends BasicKineticLaw {
           denominatorTeX += Species.toTeX(specRefE2.getSpeciesInstance()
               .getId());
         }
-        numerator += " - " + kcatn + "/(" + kIp1 + " * " + kMp2 + ") * ";
+        numerator += " - (" + kcatn + "/(" + kIp1 + " * " + kMp2 + ")) * ";
         numeratorTeX += "-\\frac{" + kcatnTeX + "}{" + kIp1TeX + kMp2TeX + "}";
-        denominator += "/(" + kIr1 + " * " + kMr2 + ") + ("
+        denominator += "/(" + kIr1 + " * " + kMr2 + ")) + (("
             + specRefE1.getSpecies() + " * "
-            + specRefP1.getSpecies() + "/" + kIr1 + " * "
-            + kIp1 + ") + (" + kMr1 + " * "
+            + specRefP1.getSpecies() + ")/(" + kIr1 + " * "
+            + kIp1 + ")) + ((" + kMr1 + " * "
             + specRefE2.getSpecies() + " * "
             + specRefP2.getSpecies() + ")/(" + kIr1 + " * "
-            + kMr2 + " * " + kIp2 + ") + ";
+            + kMr2 + " * " + kIp2 + ")) + (";
         denominatorTeX += "}{" + kIr1TeX + kMr2TeX + "}+\\frac{"
             + Species.toTeX(specRefE1.getSpecies())
             + Species.toTeX(specRefP1.getSpecies()) + "}{"
@@ -307,14 +307,14 @@ public class PingPongMechanism extends BasicKineticLaw {
           denominatorTeX += Species.toTeX(specRefP2.getSpeciesInstance()
               .getId());
         }
-        denominator += "/(" + kIp1 + " * " + kMp2 + ")";
+        denominator += "/(" + kIp1 + " * " + kMp2 + "))";
         denominatorTeX += "}{" + kIp1TeX + kMp2TeX + "}";
       }
 
       /*
        * Construct formula.
        */
-      formelTxt += "(" + numerator + ")/(" + denominator + ")";
+      formelTxt += "((" + numerator + ")/(" + denominator + "))";
       formelTeX += "\\frac{" + numeratorTeX + "}{" + denominatorTeX + "}";
       if (enzymeNum < (modE.size() - 1)) {
         formelTxt += " + ";

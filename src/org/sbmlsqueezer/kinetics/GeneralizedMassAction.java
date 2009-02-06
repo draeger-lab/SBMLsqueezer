@@ -97,9 +97,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 				if (1.0 != specref.getStoichiometry()) {
 					double val = specref.getStoichiometry();
 					if (((int) val) - val == 0)
-						exp = "^(" + ((int) val) + ")";
+						exp = "^(" + ((int) val) + ')';
 					else
-						exp = "^(" + val + ")";
+						exp = "^(" + val + ')';
 				}
 				formelTxt += " * " + specref.getSpecies() + exp;
 				formelTeX += Species.toTeX(specref.getSpecies())
@@ -123,9 +123,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					if (1.0 != specref.getStoichiometry()) {
 						double val = specref.getStoichiometry();
 						if (((int) val) - val == 0)
-							exp = "^(" + ((int) val) + ")";
+							exp = "^(" + ((int) val) + ')';
 						else
-							exp = "^(" + val + ")";
+							exp = "^(" + val + ')';
 					}
 					formelTxt += " * " + specref.getSpecies() + exp;
 					formelTeX += Species.toTeX(specref.getSpecies())
@@ -176,10 +176,10 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		}
 		if (((acti.length() > 0) || (inhib.length() > 0))
 				&& (reaction.getReversible())) {
-			inhib += "(";
+			inhib += '(';
 			inhibTeX += "\\left(";
 			formelTeX += "\\right)";
-			formelTxt += ")";
+			formelTxt += ')';
 		}
 
 		formelTxt = acti + inhib + formelTxt;
