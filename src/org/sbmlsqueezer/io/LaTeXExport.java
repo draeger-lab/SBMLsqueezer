@@ -175,7 +175,6 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * @throws IOException
 	 */
 
-	@SuppressWarnings("unchecked")
 	public String toLaTeX(PluginModel model) throws IOException {
 		String laTeX;
 		String newLine = System.getProperty("line.separator");
@@ -191,9 +190,10 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 				+ newLine
 		/* : newLine + "\\end{equation*}" + newLine */;
 		String tail = newLine
-				+ "For a more comprehensive \\LaTeX{} export, see" + newLine
-				+ "\\begin{center}" + newLine
-				+ "http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX"
+				+ "\\begin{center}"
+				+ newLine
+				+ "For a more comprehensive \\LaTeX{} export, see "
+				+ "\\url{http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX}"
 				+ newLine + "\\end{center}" + newLine + "\\end{document}"
 				+ newLine + newLine;
 
@@ -609,10 +609,10 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 				+ "\\begin{equation*}" + newLine + "v=";
 		laTeX += toLaTeX(model, reaction.getKineticLaw().getMath());
 		laTeX += newLine + "\\end{equation*}";
-		laTeX += newLine + "For a more comprehensive \\LaTeX{} export, see"
-				+ newLine + "\\begin{center}" + newLine
-				+ "http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX"
-				+ newLine + "\\end{center}";
+		laTeX += newLine
+				+ "\\begin{center} For a more comprehensive \\LaTeX{} "
+				+ "export, see \\url{http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX}"
+				+ "\\end{center}";
 		laTeX += newLine + "\\end{document}";
 		return laTeX;
 	}
@@ -640,7 +640,8 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 				value.append(toLaTeX(model, astnode.getLeftChild()));
 			return value;
 		} else if (astnode.isSqrt())
-			return sqrt(toLaTeX(model, astnode.getChild(astnode.getNumChildren() - 1)));
+			return sqrt(toLaTeX(model, astnode.getChild(astnode
+					.getNumChildren() - 1)));
 		else if (astnode.isInfinity())
 			return POSITIVE_INFINITY;
 		else if (astnode.isNegInfinity())
@@ -751,7 +752,8 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 			if (model.getSpecies(astnode.getName()) != null) {
 				// Species.
 				PluginSpecies species = model.getSpecies(astnode.getName());
-				PluginCompartment c = model.getCompartment(species.getCompartment());
+				PluginCompartment c = model.getCompartment(species
+						.getCompartment());
 				boolean concentration = !species.getHasOnlySubstanceUnits()
 						&& (0 < c.getSpatialDimensions());
 				value = new StringBuffer();
@@ -987,7 +989,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 			if ((astnode.getNumChildren() > 1)
 					&& ((left.isInteger() && (left.getInteger() != 2)) || (left
 							.isReal() && (left.getReal() != 2d))))
-				value= root(toLaTeX(model, astnode.getLeftChild()), toLaTeX(
+				value = root(toLaTeX(model, astnode.getLeftChild()), toLaTeX(
 						model, astnode.getRightChild()));
 			value = sqrt(toLaTeX(model, astnode.getChild(astnode
 					.getNumChildren() - 1)));
@@ -1407,6 +1409,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 				+ "\\usepackage[english]{babel}" + newLine
 				+ "\\usepackage{a4wide}" + newLine + "\\usepackage{longtable}"
 				+ newLine + "\\usepackage{booktabs}" + newLine;
+		head += "\\usepackage{url}" + newLine;
 		if (landscape) {
 			head += "\\usepackage[landscape]{geometry}" + newLine;
 		}
