@@ -172,12 +172,12 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 					independenceP += " * ";
 					independencePTeX += "\\cdot ";
 				}
-				if (currentSpecRef.getStoichiometry() == 1.0) {
+				if (currentSpecRef.getStoichiometry() == 1d) {
 					independenceP += kiG;
 					independencePTeX += kiGTeX;
 				} else {
 					independenceP += "power(" + kiG + ", "
-							+ currentSpecRef.getStoichiometry() + ')';
+							+ currentSpecRef.getStoichiometry() + "/2)";
 					independencePTeX += "\\left(" + kiGTeX + "\\right)^{";
 					if (currentSpecRef.getStoichiometry()
 							- ((int) currentSpecRef.getStoichiometry()) == 0)
