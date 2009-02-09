@@ -1142,21 +1142,33 @@ public class KineticLawGenerator {
 	 * @param reversibility
 	 */
 	public void storeKineticsAndParameters(CellDesignerPlugin plugin,
-			boolean reversibility) {
-		storeLaws(plugin, reversibility);
+			boolean reversibility, LawListener l) {
+		l.totalNumber(reactionNumOfNotExistKinetics.size() + 11);
+		storeLaws(plugin, reversibility, l);
 		ODE ode = new ODE(plugin.getSelectedModel(), numAndSpeciesID,
 				speciesAndODE, speciesAndODETeX, reactionNumOfNotExistKinetics,
 				reacNumOfExistKinetics, reactionNumAndKineticLaw);
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 1);
 		speciesAndODETeX.clear();
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 2);
 		speciesAndODE.clear();
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 3);
 		speciesAndODE.clear();
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 4);
 		speciesAndODETeX.clear();
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 5);
 		speciesAndODE.putAll(ode.getAllODEs());
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 6);
 		speciesAndODETeX.putAll(ode.getAllODETeX());
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 7);
 		speciesAndSimpleODE.putAll(ode.getSpecieAndSimpleODE());
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 8);
 		speciesAndSimpleODETeX.putAll(ode.getSpeciesAndSimpleODETeX());
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 9);
 		reactionNumAndKineticTeX = ode.getReactionNumAndKinetictexId();
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 10);
 		reactionNumAndKinetictexName = ode.getKineticLawNames();
+		l.currentNumber(reactionNumOfNotExistKinetics.size() + 11);
 	}
 
 	/**
@@ -1191,6 +1203,11 @@ public class KineticLawGenerator {
 			reaction.setKineticLaw(kineticLaw);
 			plugin.notifySBaseChanged(kineticLaw);
 		}
+		if ((kineticLaw instanceof BasicKineticLaw)
+				&& (reaction.getNotesString().length() == 0)) {
+			reaction.setNotes(((BasicKineticLaw) kineticLaw).getName());
+			plugin.notifySBaseChanged(reaction);
+		}
 		// if (kineticLaw.getMath() == null) {
 		// reaction.getKineticLaw().setMathFromFormula();
 		// plugin.notifySBaseChanged(reaction.getKineticLaw());
@@ -1222,11 +1239,11 @@ public class KineticLawGenerator {
 	/**
 	 * store the generated Kinetics in SBML-File as MathML.
 	 */
-	public void storeLaws(CellDesignerPlugin plugin, boolean reversibility) {
-		int i = 0;
-		while (i < reactionNumOfNotExistKinetics.size()) {
+	public void storeLaws(CellDesignerPlugin plugin, boolean reversibility, LawListener l) {
+		for (int i = 0; i < reactionNumOfNotExistKinetics.size(); i++) {
 			storeLaw(plugin, reactionNumAndKineticLaw
-					.get(reactionNumOfNotExistKinetics.get(i++)), reversibility);
+					.get(reactionNumOfNotExistKinetics.get(i)), reversibility);
+			l.currentNumber(i);
 		}
 		removeUnnecessaryParameters(plugin);
 	}

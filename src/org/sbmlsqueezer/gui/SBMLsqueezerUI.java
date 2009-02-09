@@ -20,11 +20,13 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -36,12 +38,12 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 
 import org.sbmlsqueezer.gui.table.KineticLawJTable;
 import org.sbmlsqueezer.gui.table.KineticLawTableModel;
-import org.sbmlsqueezer.gui.LaTeXExportDialogPanel;
 import org.sbmlsqueezer.io.LaTeXExport;
 import org.sbmlsqueezer.io.MyFileFilter;
 import org.sbmlsqueezer.io.ODEwriter;
 import org.sbmlsqueezer.kinetics.IllegalFormatException;
 import org.sbmlsqueezer.kinetics.KineticLawGenerator;
+import org.sbmlsqueezer.kinetics.LawListener;
 import org.sbmlsqueezer.kinetics.ModificationException;
 import org.sbmlsqueezer.kinetics.RateLawNotApplicableException;
 import org.sbmlsqueezer.resources.Resource;
@@ -58,7 +60,7 @@ import org.sbmlsqueezer.resources.Resource;
  * @date Aug 3, 2007
  */
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
-		WindowListener {
+		WindowListener, LawListener {
 
 	/**
 	 * Generated serial version id.
@@ -86,6 +88,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private KineticLawGenerator klg;
 
 	private JPanel footPanel;
+
+	private JProgressBar progressBar;
+
+	private JDialog progressDialog;
 
 	/**
 	 * DEFAULT Constructor
@@ -132,7 +138,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				if (!messagePanel.getExistingRateLawSelected()) {
 					short equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
-					reaction.setNotes(messagePanel.getReactionNotes());
 					plugin.notifySBaseChanged(reaction);
 					reaction = klg.storeLaw(plugin, klg.createKineticLaw(model,
 							reaction, equationType, messagePanel
@@ -617,7 +622,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					KineticsAndParametersStoredInSBML = true;
 					if (plugin != null)
 						klg.storeKineticsAndParameters(plugin, settingsPanel
-								.isSetTreatAllReactionsReversible());
+								.isSetTreatAllReactionsReversible(), this);
 				}
 
 			} else if (text.equals("Save")) {
@@ -687,7 +692,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		if (!KineticsAndParametersStoredInSBML) {
 			if (plugin != null)
 				klg.storeKineticsAndParameters(plugin, settingsPanel
-						.isSetTreatAllReactionsReversible());
+						.isSetTreatAllReactionsReversible(), this);
 			KineticsAndParametersStoredInSBML = true;
 		}
 		JFileChooser chooser = new JFileChooser();
@@ -789,6 +794,37 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	public static void main(String[] args) {
 		(new SBMLsqueezerUI()).setVisible(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.LawListener#currentNumber(int)
+	 */
+	public void currentNumber(int num) {
+		progressBar.setValue(num);
+		if (num >= progressBar.getMaximum())
+			progressDialog.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.LawListener#totalNumber(int)
+	 */
+	public void totalNumber(int count) {
+		progressBar = new JProgressBar(0, count);
+		progressBar.setToolTipText("Storing kinetic laws");
+		progressBar.setValue(0);
+		progressDialog = new JDialog(this);
+		GridBagLayout layout = new GridBagLayout();
+		progressDialog.setLayout(layout);
+		LayoutHelper.addComponent(progressDialog.getContentPane(), layout,
+				progressBar, 0, 0, 1, 1, 1, 1);
+		progressDialog.pack();
+		progressDialog.setAlwaysOnTop(true);
+		progressDialog.setLocationRelativeTo(null);
+		progressDialog.setVisible(false);
 	}
 
 }
