@@ -643,9 +643,9 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 			return sqrt(toLaTeX(model, astnode.getChild(astnode
 					.getNumChildren() - 1)));
 		else if (astnode.isInfinity())
-			return POSITIVE_INFINITY;
+			return new StringBuffer(POSITIVE_INFINITY);
 		else if (astnode.isNegInfinity())
-			return NEGATIVE_ININITY;
+			return new StringBuffer(NEGATIVE_ININITY);
 
 		switch (astnode.getType()) {
 		/*
@@ -776,13 +776,13 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 			 * Constants: pi, e, true, false
 			 */
 		case AST_CONSTANT_PI:
-			return CONSTANT_PI;
+			return new StringBuffer(CONSTANT_PI);
 		case AST_CONSTANT_E:
-			return CONSTANT_E;
+			return new StringBuffer(CONSTANT_E);
 		case AST_CONSTANT_TRUE:
-			return CONSTANT_TRUE;
+			return new StringBuffer(CONSTANT_TRUE);
 		case AST_CONSTANT_FALSE:
-			return CONSTANT_FALSE;
+			return new StringBuffer(CONSTANT_FALSE);
 		case AST_REAL_E:
 			return new StringBuffer(Double.toString(astnode.getReal()));
 			/*

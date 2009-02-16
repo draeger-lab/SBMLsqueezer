@@ -42,19 +42,17 @@ public class LaTeX extends StringOperations {
 	/**
 	 * The constant pi
 	 */
-	protected static final StringBuffer CONSTANT_PI = new StringBuffer("\\pi");
+	protected static final String CONSTANT_PI = "\\pi";
 
-	protected static final StringBuffer CONSTANT_E = mathrm("e");
+	protected static final String CONSTANT_E = mathrm("e").toString();
 
-	protected static final StringBuffer CONSTANT_TRUE = mathrm("true");
+	protected static final String CONSTANT_TRUE = mathrm("true").toString();
 
-	protected static final StringBuffer CONSTANT_FALSE = mathrm("false");
+	protected static final String CONSTANT_FALSE = mathrm("false").toString();
 
-	protected static final StringBuffer POSITIVE_INFINITY = new StringBuffer(
-			"\\infty");
+	protected static final String POSITIVE_INFINITY = "\\infty";
 
-	protected static final StringBuffer NEGATIVE_ININITY = new StringBuffer(
-			"-\\infty");
+	protected static final String NEGATIVE_ININITY = "-\\infty";
 
 	/**
 	 * 
