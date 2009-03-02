@@ -793,7 +793,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		(new SBMLsqueezerUI()).setVisible(true);
+		SBMLsqueezerUI ui = new SBMLsqueezerUI();
+		ui.init();
+		ui.setVisible(true);
 	}
 
 	/*
