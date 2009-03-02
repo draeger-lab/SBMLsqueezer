@@ -376,8 +376,8 @@ public class Convenience extends BasicKineticLaw {
 				 * act.addChild(temp2); }
 				 */
 
-				acti += modActi.get(activatorNum) + "/(" + kA + " + "
-				    + modActi.get(activatorNum) + ") * ";
+				acti += '(' + modActi.get(activatorNum) + "/(" + kA + " + "
+				    + modActi.get(activatorNum) + ")) * ";
 				actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum)) + "}{"
 				    + kATeX + "+" + Species.toTeX(modActi.get(activatorNum))
 				    + "}\\cdot ";

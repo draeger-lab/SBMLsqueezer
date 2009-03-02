@@ -250,6 +250,8 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 		if (name
 				.equals("competitive inhibition of irreversible unireactant enzymes by one inhibitor"))
 			return "0000267";
+		if (name.equals("henri-michaelis menten equation"))
+			return "0000029";
 		return "none";
 	}
 
