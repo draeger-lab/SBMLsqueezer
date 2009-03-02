@@ -251,7 +251,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			sbo = "0000152";
 		else if (name.equals("normalised kinetics of unireactant enzymes"))
 			sbo = "0000199";
-		else if (name.equals("Henri-Michaelis Menten equation"))
+		else if (name.equals("henri-michaelis menten equation"))
 			sbo = "0000029";
 		return sbo;
 	}
