@@ -6,14 +6,7 @@
     <h2>New features</h2>
     <p>
     </p>
-    <h2>Bugs that were fixed</h2>
-    <p>
-      local parameters could not be removed completely if not necessary
-    </p>
-    <p>
-      preview of Michaelis-Menten kinetics: activators were multiplied
-      incorectly (only in the preview, not in the equation itselve)
-    </p>
+    <h2>Adaptation of SBMLsqueezer to CellDesigner 4.0.1</h2>
     <p> 
       Due to the changes in CellDesigner SBMLsqueezer only showed
       zeroth order mass action kinetics as available option to model
@@ -29,6 +22,16 @@
       The same holds true for the &ldquo;batch&rdquo; mode of SBMLsqueezer:
       besides transcriptional/translational activators also all kinds of
       catalysts and activators/inhibitors are accepted for the Hill equation. 
+    </p>
+    <h2>Bugs that were fixed</h2>
+    <p>
+      Local parameters could not be removed completely if not necessary
+      (this happened only in SBMLsqueezer version 1.1 because SBMLsqueezer
+      version 1.0 did not create or delete local parameters at all).
+    </p>
+    <p>
+      preview of Michaelis-Menten kinetics: activators were multiplied
+      incorectly (only in the preview, not in the equation itselve)
     </p>
     <p>
       In some cases the &ldquo;batch mode&rdquo; of SBMLsqueezer did not
