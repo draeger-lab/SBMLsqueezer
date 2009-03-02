@@ -112,18 +112,18 @@ public class JSettingsPanel extends JPanel {
 				" General Options ", TitledBorder.CENTER,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 		jCheckBoxTreatAllReactionsAsEnzyeReaction = new JCheckBox(
-				"Consider all reactions to be enzyme-catalyzed");
+				"<html>Consider all reactions to be<br>enzyme-catalyzed</html>");
 		jCheckBoxTreatAllReactionsAsEnzyeReaction
 				.setToolTipText("<html>If checked, all reactions are considered to be enzyme-catalyzed.</html>");
 		jCheckBoxTreatAllReactionsAsEnzyeReaction.setBackground(Color.WHITE);
-		jCheckBoxAddAllParametersGlobally = new JCheckBox("Global parameters");
+		jCheckBoxAddAllParametersGlobally = new JCheckBox("Add all new parameters globally");
 		jCheckBoxAddAllParametersGlobally
 				.setToolTipText("<html>If selected, all newly created parameters are stored <br>"
 						+ "globally in the model. Otherwise SBMLsqueezer only stores most <br>"
 						+ "parameters locally in the respective rate law.</html>");
 		jCheckBoxAddAllParametersGlobally.setBackground(Color.WHITE);
 		jCheckBoxAddAllParametersGlobally.setSelected(true);
-		jCheckBoxWarnings = new JCheckBox("Warnings for too many reactants");
+		jCheckBoxWarnings = new JCheckBox("Warnings for too many reactants:");
 		jCheckBoxWarnings.setSelected(true);
 		jCheckBoxWarnings
 				.setToolTipText("<html>If checked, warnings will be shown for reactions<br>"
@@ -136,14 +136,14 @@ public class JSettingsPanel extends JPanel {
 		jSpinnerMaxRealisticNumOfReactants.setBackground(Color.WHITE);
 		jPanelGeneralOptions.setBackground(Color.WHITE);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxTreatAllReactionsAsEnzyeReaction, 0, 1, 2, 1, 1, 0);
+				jCheckBoxTreatAllReactionsAsEnzyeReaction, 0, 0, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxWarnings, 0, 2, 1, 1, 1, 0);
+				jCheckBoxAddAllParametersGlobally, 1, 0, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jSpinnerMaxRealisticNumOfReactants, 1, 2, 1, 1, 1, 0);
+				jCheckBoxWarnings, 0, 1, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxAddAllParametersGlobally, 0, 0, 1, 1, 1, 0);
-
+				jSpinnerMaxRealisticNumOfReactants, 1, 1, 1, 1, 1, 0);
+		
 		// Second Panel
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
 				"Only when missing");
