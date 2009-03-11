@@ -6,3 +6,11 @@ Hier wird an vielen Stellen, z.B. in der ConvenienceIndependent Zeile
 Ausdrücke vorkommen. Diesen muss Rechnung getragen werden.
 
 Einheiten sollten auch gleich für die Parameter erstellt werden.
+
+Da kinetische Gleichungen in SBML immer in Substanz pro Zeit ablaufen
+sollen, muss die Größe des Kompartiments jeweils mit den Spezies in
+der kinetischen Gleichung multipliziert werden. Ansonsten erhält man 
+immer falsche Modelle. Dazu muss aber überprüft werden, ob die Spezies
+jeweils mit Substanz-Einheiten interpretiert werden soll.
+
+Problem mit logischen UND, ODER etc.
