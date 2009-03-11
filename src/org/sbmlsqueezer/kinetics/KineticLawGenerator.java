@@ -715,7 +715,13 @@ public class KineticLawGenerator {
 				// Uni-Uni: MMK/ConvenienceIndependent (1E/1P)
 				PluginSpecies species = reaction.getReactant(0)
 						.getSpeciesInstance();
-				if (species.getSpeciesAlias(0).getType().equals("GENE")) {
+				if (species.getSpeciesAlias(0).getType().equals("GENE")
+						|| (species.getSpeciesAlias(0).getType().equals(
+								"DEGRADED") && (reaction.getProduct(0)
+								.getSpeciesInstance().getSpeciesAlias(0)
+								.getType().equals("RNA") || reaction
+								.getProduct(0).getSpeciesInstance()
+								.getSpeciesAlias(0).getType().equals("PROTEIN")))) {
 					setBoundaryCondition(species.getId(), true);
 					types.add(Short.valueOf(HILL_EQUATION));
 
@@ -896,7 +902,17 @@ public class KineticLawGenerator {
 								.getSpeciesAlias(0).getType().equalsIgnoreCase(
 										"DEGRADED"))
 							whichkin = GENERALIZED_MASS_ACTION;
-						else {
+						else if (reaction.getReactant(0).getSpeciesInstance()
+								.getSpeciesAlias(0).getType().equalsIgnoreCase(
+										"DEGRADED")
+								&& (reaction.getProduct(0).getSpeciesInstance()
+										.getSpeciesAlias(0).getType()
+										.equalsIgnoreCase("PROTEIN") || reaction
+										.getProduct(0).getSpeciesInstance()
+										.getSpeciesAlias(0).getType()
+										.equalsIgnoreCase("RNA"))) {
+							whichkin = HILL_EQUATION;
+						} else {
 							int k;
 							for (k = 0; (k < model.getNumSpecies())
 									&& !model.getSpecies(k).getId().equals(
