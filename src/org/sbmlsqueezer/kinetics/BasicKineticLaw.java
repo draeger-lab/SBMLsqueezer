@@ -1,17 +1,19 @@
 package org.sbmlsqueezer.kinetics;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.libsbmlConstants;
-
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
+
+import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.libsbmlConstants;
 
 /**
  * An abstract super class of specialized kinetic laws.
@@ -177,6 +179,21 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException;
+	
+	/**
+	 * 
+	 * @param numerator
+	 * @param denomiator
+	 * @param bw
+	 * @throws IOException
+	 */
+	protected void frac(StringBuffer numerator, StringBuffer denomiator, BufferedWriter bw) throws IOException {
+		bw.append("((");
+		bw.append(numerator);
+		bw.append(")/(");
+		bw.append(denomiator);
+		bw.append("))");
+	}
 
 	/**
 	 * Returns a list of the names of all parameters used by this law. This
