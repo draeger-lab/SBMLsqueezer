@@ -37,6 +37,16 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	protected String sboTerm;
 
 	/**
+	 * @param parentReaction
+	 * @param model
+	 * @throws RateLawNotApplicableException
+	 */
+	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model)
+			throws RateLawNotApplicableException {
+		this(parentReaction, model, getDefaultListOfPossibleEnzymes());
+	}
+
+	/**
 	 * @param listOfPossibleEnzymes
 	 * @param parent
 	 * @throws RateLawNotApplicableException
@@ -71,13 +81,22 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	}
 
 	/**
-	 * @param parentReaction
-	 * @param model
-	 * @throws RateLawNotApplicableException
+	 * Clones an abstract syntax tree.
+	 * 
+	 * @param ast
+	 * @return
 	 */
-	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException {
-		this(parentReaction, model, getDefaultListOfPossibleEnzymes());
+	public static final ASTNode clone(ASTNode ast) {
+		ASTNode copy = new ASTNode();
+		copy.setType(ast.getType());
+		if (ast.isConstant() || ast.isInteger() || ast.isNumber()
+				|| ast.isReal())
+			copy.setValue(ast.getReal());
+		else if (ast.isName())
+			copy.setName(new String(ast.getName()));
+		for (long i = 0; i < ast.getNumChildren(); i++)
+			copy.addChild(clone(ast.getChild(i)));
+		return copy;
 	}
 
 	/**
@@ -160,6 +179,73 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			}
 		}
 	}
+	
+	/**
+	 * This method returns true if and only if the kinetic law can be assigned
+	 * to the given reaction. If the structure of the reaction, i.e. the number
+	 * of reactants or products, the number and type of modifiers does not allow
+	 * to assign this type of kinetic law to this reaction, false will be
+	 * returned. This method must be implemented by more specialized instances
+	 * of this class.
+	 * 
+	 * @param reaction
+	 * @return
+	 */
+	public static boolean isApplicable(PluginReaction reaction) {
+		return false;
+	}
+
+	/**
+	 * Returns a list of names of all parameters, which are only allowed to
+	 * be stored globally.
+	 * @return
+	 */
+	public List<String> getGlobalParameters() {
+		return listOfGlobalParameters;
+	}
+	
+	/**
+	 * Returns the LaTeX expression of the generated formual of this kinetic
+	 * law.
+	 * 
+	 * @return
+	 */
+	public String getKineticTeX() {
+		return formelTeX;
+	}
+
+	/**
+	 * Returns a list of the names of all parameters used by this law. This
+	 * list contains parameters, which can be either stored locally, i.e., 
+	 * assigned to the specific kinetic law or globally for the whole model.
+	 * 
+	 * @return
+	 */
+	public List<String> getLocalParameters() {
+		return listOfLocalParameters;
+	}
+
+	/**
+	 * Returns the name of the kinetic formula of this object.
+	 * 
+	 * @return
+	 */
+	public abstract String getName();
+
+	/**
+	 * Returns the SBO identifier of the respective kinetic law if there is one
+	 * or an empty String otherwise.
+	 * 
+	 * @return
+	 */
+	public abstract String getSBO();
+
+	@Override
+	public String toString() {
+		if (sboTerm == null)
+			sboTerm = getName();
+		return sboTerm;
+	}
 
 	/**
 	 * TODO: comment missing
@@ -179,7 +265,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException;
-	
+
 	/**
 	 * 
 	 * @param numerator
@@ -193,92 +279,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		bw.append(")/(");
 		bw.append(denomiator);
 		bw.append("))");
-	}
-
-	/**
-	 * Returns a list of the names of all parameters used by this law. This
-	 * list contains parameters, which can be either stored locally, i.e., 
-	 * assigned to the specific kinetic law or globally for the whole model.
-	 * 
-	 * @return
-	 */
-	public List<String> getLocalParameters() {
-		return listOfLocalParameters;
-	}
-	
-	/**
-	 * Returns a list of names of all parameters, which are only allowed to
-	 * be stored globally.
-	 * @return
-	 */
-	public List<String> getGlobalParameters() {
-		return listOfGlobalParameters;
-	}
-
-	/**
-	 * Returns the LaTeX expression of the generated formual of this kinetic
-	 * law.
-	 * 
-	 * @return
-	 */
-	public String getKineticTeX() {
-		return formelTeX;
-	}
-
-	/**
-	 * Returns the name of the kinetic formula of this object.
-	 * 
-	 * @return
-	 */
-	public abstract String getName();
-
-	@Override
-	public String toString() {
-		if (sboTerm == null)
-			sboTerm = getName();
-		return sboTerm;
-	}
-
-	/**
-	 * Returns the SBO identifier of the respective kinetic law if there is one
-	 * or an empty String otherwise.
-	 * 
-	 * @return
-	 */
-	public abstract String getSBO();
-
-	/**
-	 * This method returns true if and only if the kinetic law can be assigned
-	 * to the given reaction. If the structure of the reaction, i.e. the number
-	 * of reactants or products, the number and type of modifiers does not allow
-	 * to assign this type of kinetic law to this reaction, false will be
-	 * returned. This method must be implemented by more specialized instances
-	 * of this class.
-	 * 
-	 * @param reaction
-	 * @return
-	 */
-	public static boolean isApplicable(PluginReaction reaction) {
-		return false;
-	}
-
-	/**
-	 * Clones an abstract syntax tree.
-	 * 
-	 * @param ast
-	 * @return
-	 */
-	public static final ASTNode clone(ASTNode ast) {
-		ASTNode copy = new ASTNode();
-		copy.setType(ast.getType());
-		if (ast.isConstant() || ast.isInteger() || ast.isNumber()
-				|| ast.isReal())
-			copy.setValue(ast.getReal());
-		else if (ast.isName())
-			copy.setName(new String(ast.getName()));
-		for (long i = 0; i < ast.getNumChildren(); i++)
-			copy.addChild(clone(ast.getChild(i)));
-		return copy;
 	}
 
 }

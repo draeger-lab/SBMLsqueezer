@@ -29,6 +29,17 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 public class HillEquation extends BasicKineticLaw {
 
 	/**
+	 * @param parentReaction
+	 * @param model
+	 * @param reversibility
+	 * @throws RateLawNotApplicableException
+	 */
+	public HillEquation(PluginReaction parentReaction, PluginModel model)
+			throws RateLawNotApplicableException {
+		super(parentReaction, model);
+	}
+
+	/**
 	 * TODO Add comment
 	 * 
 	 * @param mod
@@ -46,15 +57,34 @@ public class HillEquation extends BasicKineticLaw {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
-	 * @throws RateLawNotApplicableException
-	 */
-	public HillEquation(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException {
-		super(parentReaction, model);
+	public static boolean isApplicable(PluginReaction reaction) {
+		// TODO
+		return true;
+	}
+
+	@Override
+	public String getName() {
+		String name;
+		if (getParentReaction().getNumModifiers() > 0)
+			name = "Hill equation, microscopic form";
+		else
+			name = "zeroth order irreversible mass action kinetics, continuous scheme";
+		return name;
+	}
+
+	@Override
+	public String getSBO() {
+		String name = getName().toLowerCase(), sbo = "none";
+		if (name.equals("hill equation"))
+			sbo = "0000192";
+		else if (name.equals("hill equation, microscopic form"))
+			sbo = "0000195";
+		else if (name.equals("hill equation, reduced form"))
+			sbo = "0000198";
+		else if (name
+				.equals("zeroth order irreversible mass action kinetics, continuous scheme"))
+			sbo = "0000047";
+		return sbo;
 	}
 
 	@Override
@@ -216,36 +246,6 @@ public class HillEquation extends BasicKineticLaw {
 			}
 		}
 		return formelTxt;
-	}
-
-	@Override
-	public String getName() {
-		String name;
-		if (getParentReaction().getNumModifiers() > 0)
-			name = "Hill equation, microscopic form";
-		else
-			name = "zeroth order irreversible mass action kinetics, continuous scheme";
-		return name;
-	}
-
-	public static boolean isApplicable(PluginReaction reaction) {
-		// TODO
-		return true;
-	}
-
-	@Override
-	public String getSBO() {
-		String name = getName().toLowerCase(), sbo = "none";
-		if (name.equals("hill equation"))
-			sbo = "0000192";
-		else if (name.equals("hill equation, microscopic form"))
-			sbo = "0000195";
-		else if (name.equals("hill equation, reduced form"))
-			sbo = "0000198";
-		else if (name
-				.equals("zeroth order irreversible mass action kinetics, continuous scheme"))
-			sbo = "0000047";
-		return sbo;
 	}
 
 }

@@ -8,6 +8,21 @@ import java.util.HashMap;
 
 
 /**
+ *  Class representing HTML end element.
+*/
+class ElementEnd extends MyElement {
+
+    /**
+     * Cstr.
+     * @param element element's name
+     */
+    ElementEnd(String element) {
+        _element = element;
+    }
+}
+
+
+/**
  *  Class representing HTML start element.
 */
 class ElementStart extends MyElement {
@@ -31,21 +46,6 @@ class ElementStart extends MyElement {
      */
     HashMap<String, String> getAttributes() { return _attributes; }
 
-}
-
-
-/**
- *  Class representing HTML end element.
-*/
-class ElementEnd extends MyElement {
-
-    /**
-     * Cstr.
-     * @param element element's name
-     */
-    ElementEnd(String element) {
-        _element = element;
-    }
 }
 
 

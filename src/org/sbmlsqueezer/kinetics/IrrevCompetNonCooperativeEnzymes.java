@@ -25,6 +25,16 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 	/**
 	 * @param parentReaction
 	 * @param model
+	 * @throws RateLawNotApplicableException
+	 */
+	public IrrevCompetNonCooperativeEnzymes(PluginReaction parentReaction,
+			PluginModel model) throws RateLawNotApplicableException {
+		super(parentReaction, model);
+	}
+
+	/**
+	 * @param parentReaction
+	 * @param model
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 */
@@ -34,14 +44,42 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @throws RateLawNotApplicableException
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getName()
 	 */
-	public IrrevCompetNonCooperativeEnzymes(PluginReaction parentReaction,
-			PluginModel model) throws RateLawNotApplicableException {
-		super(parentReaction, model);
+	@Override
+	public String getName() {
+		switch (numInhib) {
+		case 0:
+			if (numOfEnzymes == 0)
+				return "normalised kinetics of unireactant enzymes";
+			return "Henri-Michaelis Menten equation";
+		case 1:
+			return "competitive inhibition of irreversible unireactant enzymes by one inhibitor";
+		default:
+			return "competitive inhibition of irreversible unireactant enzymes by non-exclusive non-cooperative inhibitors";
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getSBO()
+	 */
+	@Override
+	public String getSBO() {
+		String name = getName().toLowerCase();
+		if (name
+				.equals("competitive inhibition of irreversible unireactant enzymes by non-exclusive non-cooperative inhibitors"))
+			return "0000273";
+		if (name
+				.equals("competitive inhibition of irreversible unireactant enzymes by one inhibitor"))
+			return "0000267";
+		if (name.equals("henri-michaelis menten equation"))
+			return "0000029";
+		return "none";
 	}
 
 	/*
@@ -215,44 +253,6 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 		formelTxt = TextExport.toText(model, ast);
 
 		return formelTxt;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getName()
-	 */
-	@Override
-	public String getName() {
-		switch (numInhib) {
-		case 0:
-			if (numOfEnzymes == 0)
-				return "normalised kinetics of unireactant enzymes";
-			return "Henri-Michaelis Menten equation";
-		case 1:
-			return "competitive inhibition of irreversible unireactant enzymes by one inhibitor";
-		default:
-			return "competitive inhibition of irreversible unireactant enzymes by non-exclusive non-cooperative inhibitors";
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getSBO()
-	 */
-	@Override
-	public String getSBO() {
-		String name = getName().toLowerCase();
-		if (name
-				.equals("competitive inhibition of irreversible unireactant enzymes by non-exclusive non-cooperative inhibitors"))
-			return "0000273";
-		if (name
-				.equals("competitive inhibition of irreversible unireactant enzymes by one inhibitor"))
-			return "0000267";
-		if (name.equals("henri-michaelis menten equation"))
-			return "0000029";
-		return "none";
 	}
 
 }

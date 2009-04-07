@@ -20,34 +20,6 @@ public class SBOParser {
 	                                  + "SBO_OBO.obo");
 
 	/**
-	 * This method returns by a giving SBO term id the corresponding SBO term name
-	 *
-	 * @param SBOTermID
-	 * @return SBOTermName
-	 * @throws IOException
-	 */
-	public static String getSBOTermName(int SBOTermID) throws IOException {
-		String name = "Unknown SBO id " + SBOTermID;
-
-		BufferedReader input = new BufferedReader(new FileReader(obo));
-		String line = null;
-		while ((line = input.readLine()) != null) {
-			if (line.equals("") || !line.startsWith("id: SBO:"))
-				continue;
-			else if (line.startsWith("id: SBO:")) {
-				if (Integer.parseInt((line.substring(8, line.length()))) == SBOTermID) {
-					line = input.readLine();
-					name = line.substring(6, line.length());
-					break;
-				}
-			}
-		}
-
-		return name;
-
-	}
-
-	/**
 	 * This method returns by a giving SBO term id the corresponding SBO term
 	 * definition
 	 *
@@ -77,5 +49,33 @@ public class SBOParser {
 		}
 
 		return def;
+	}
+
+	/**
+	 * This method returns by a giving SBO term id the corresponding SBO term name
+	 *
+	 * @param SBOTermID
+	 * @return SBOTermName
+	 * @throws IOException
+	 */
+	public static String getSBOTermName(int SBOTermID) throws IOException {
+		String name = "Unknown SBO id " + SBOTermID;
+
+		BufferedReader input = new BufferedReader(new FileReader(obo));
+		String line = null;
+		while ((line = input.readLine()) != null) {
+			if (line.equals("") || !line.startsWith("id: SBO:"))
+				continue;
+			else if (line.startsWith("id: SBO:")) {
+				if (Integer.parseInt((line.substring(8, line.length()))) == SBOTermID) {
+					line = input.readLine();
+					name = line.substring(6, line.length());
+					break;
+				}
+			}
+		}
+
+		return name;
+
 	}
 }

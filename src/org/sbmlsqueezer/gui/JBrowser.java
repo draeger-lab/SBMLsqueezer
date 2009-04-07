@@ -71,6 +71,18 @@ public class JBrowser extends JEditorPane implements HyperlinkListener {
     }
   }
 
+  /**
+   * Goes one page back in history.
+   * @return Returns false if we reached the first visited page. True otherwise. 
+   */
+  public boolean back() {
+    if (currentPosition > 0) 
+      visitPage(history.get(--currentPosition));
+    if (currentPosition == 0)
+      return false;
+    return true;
+  }
+  
   /*
    * (non-Javadoc)
    * 
@@ -83,6 +95,18 @@ public class JBrowser extends JEditorPane implements HyperlinkListener {
       URL url = event.getURL();
       visitPage(url);
     }
+  }
+
+  /**
+   * Goes one page forward in history
+   * @return Returns false if we reached the last visited page. True otherwise.
+   */
+  public boolean next() {
+    if (currentPosition < history.size() - 1)
+      visitPage(history.get(++currentPosition));
+    if (currentPosition == history.size() - 1)
+      return false;
+    return true;
   }
   
   /**
@@ -101,30 +125,6 @@ public class JBrowser extends JEditorPane implements HyperlinkListener {
           + url.toExternalForm(), exc.getClass().getName(),
           JOptionPane.ERROR_MESSAGE);
     }    
-  }
-
-  /**
-   * Goes one page back in history.
-   * @return Returns false if we reached the first visited page. True otherwise. 
-   */
-  public boolean back() {
-    if (currentPosition > 0) 
-      visitPage(history.get(--currentPosition));
-    if (currentPosition == 0)
-      return false;
-    return true;
-  }
-  
-  /**
-   * Goes one page forward in history
-   * @return Returns false if we reached the last visited page. True otherwise.
-   */
-  public boolean next() {
-    if (currentPosition < history.size() - 1)
-      visitPage(history.get(++currentPosition));
-    if (currentPosition == history.size() - 1)
-      return false;
-    return true;
   }
 
 }

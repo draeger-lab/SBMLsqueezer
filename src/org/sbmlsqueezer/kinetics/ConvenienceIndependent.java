@@ -44,6 +44,23 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
+	public static boolean isApplicable(PluginReaction reaction) {
+		// TODO
+		return true;
+	}
+
+	@Override
+	public String getName() {
+		if (this.getParentReaction().getReversible())
+			return "reversible thermodynamically independent convenience kinetics";
+		return "irreversible thermodynamically independent convenience kinetics";
+	}
+
+	@Override
+	public String getSBO() {
+		return "none";
+	}
+
 	@Override
 	protected String createKineticEquation(PluginModel model, int reactionNum,
 			List<String> modE, List<String> modActi, List<String> modTActi,
@@ -417,23 +434,6 @@ public class ConvenienceIndependent extends BasicKineticLaw {
 		if (enzymeNum > 1)
 			formelTeX += "\\end{multline}";
 		return formelTxt;
-	}
-
-	@Override
-	public String getName() {
-		if (this.getParentReaction().getReversible())
-			return "reversible thermodynamically independent convenience kinetics";
-		return "irreversible thermodynamically independent convenience kinetics";
-	}
-
-	public static boolean isApplicable(PluginReaction reaction) {
-		// TODO
-		return true;
-	}
-
-	@Override
-	public String getSBO() {
-		return "none";
 	}
 
 }

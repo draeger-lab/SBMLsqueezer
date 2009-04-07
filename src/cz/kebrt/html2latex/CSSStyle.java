@@ -36,13 +36,76 @@ class CSSStyle {
 
 
     /**
-     * Sets the style properties.
-     * @param prop style properties
+     *  Converts &quot;font-family&quot; property.
+     *  Tries to find first generic font family (ie. monospace)
+     *  used in the definition and converts it using the configuration.
+     *  @param conf program configuration
     */
-    public void setProperties(HashMap<String, String> prop) {
-        _properties.putAll(prop);
+    public void fontFamilyProperty(Configuration conf) {
+        String family = _properties.get("font-family");
+        if (family == null) return;
+
+        // find first generic family (ie. monospace) used in the definition
+        String[] fonts = family.split(",");
+        for (int i = 0; i < fonts.length; ++i) {
+            try {
+                CSSPropertyConfigItem item = conf.getPropertyConf(
+                        "font-family" + "-" + fonts[i].trim());
+                _start += item.getStart();
+                _end = item.getEnd() + _end;
+                break;
+            } catch (NoItemException e) {
+                //System.out.println(e.getMessage());
+            }
+        }
     }
 
+
+    /**
+     * Returns mapping between the style and LaTeX (end command).
+     * @return mapping between the style and LaTeX (end command)
+     */
+    public String getEnd() { return _end; }
+
+    /*
+    public void inheritProperties(Configuration conf) {
+        String elementName;
+        if (_name.contains("#"))
+            elementName = _name.substring(0, _name.indexOf('#'));
+        else if (_name.contains("."))
+            elementName = _name.substring(0, _name.indexOf('.'));
+        else return;
+
+        CSSStyle style = conf.getStyle(elementName);
+        if (style == null) return;
+
+        HashMap<String, String> temp = new HashMap<String, String>(_properties);
+
+        _properties.putAll(style.getProperties());
+        _properties.putAll(temp);
+
+    }
+     */
+
+
+    /**
+     * Returns style name.
+     * @return style name
+     */
+    public String getName() { return _name; }
+
+
+    /**
+     * Returns style properties.
+     * @return style properties
+     */
+    public HashMap<String, String> getProperties() { return _properties; }
+
+    /**
+     * Returns name of the file with configuration.
+     * @return mapping between the style and LaTeX (start command)
+     */
+    public String getStart() { return _start; }
 
     /**
      * Sets {@link CSSStyle#_start start} and {@link CSSStyle#_end end}
@@ -70,25 +133,13 @@ class CSSStyle {
         }
     }
 
-    /*
-    public void inheritProperties(Configuration conf) {
-        String elementName;
-        if (_name.contains("#"))
-            elementName = _name.substring(0, _name.indexOf('#'));
-        else if (_name.contains("."))
-            elementName = _name.substring(0, _name.indexOf('.'));
-        else return;
-
-        CSSStyle style = conf.getStyle(elementName);
-        if (style == null) return;
-
-        HashMap<String, String> temp = new HashMap<String, String>(_properties);
-
-        _properties.putAll(style.getProperties());
-        _properties.putAll(temp);
-
+    /**
+     * Sets the style properties.
+     * @param prop style properties
+    */
+    public void setProperties(HashMap<String, String> prop) {
+        _properties.putAll(prop);
     }
-     */
 
 
     /**
@@ -144,56 +195,5 @@ class CSSStyle {
             _end = "}" + _end;
         }
     }
-
-
-    /**
-     *  Converts &quot;font-family&quot; property.
-     *  Tries to find first generic font family (ie. monospace)
-     *  used in the definition and converts it using the configuration.
-     *  @param conf program configuration
-    */
-    public void fontFamilyProperty(Configuration conf) {
-        String family = _properties.get("font-family");
-        if (family == null) return;
-
-        // find first generic family (ie. monospace) used in the definition
-        String[] fonts = family.split(",");
-        for (int i = 0; i < fonts.length; ++i) {
-            try {
-                CSSPropertyConfigItem item = conf.getPropertyConf(
-                        "font-family" + "-" + fonts[i].trim());
-                _start += item.getStart();
-                _end = item.getEnd() + _end;
-                break;
-            } catch (NoItemException e) {
-                //System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Returns name of the file with configuration.
-     * @return mapping between the style and LaTeX (start command)
-     */
-    public String getStart() { return _start; }
-
-    /**
-     * Returns mapping between the style and LaTeX (end command).
-     * @return mapping between the style and LaTeX (end command)
-     */
-    public String getEnd() { return _end; }
-
-    /**
-     * Returns style name.
-     * @return style name
-     */
-    public String getName() { return _name; }
-
-
-    /**
-     * Returns style properties.
-     * @return style properties
-     */
-    public HashMap<String, String> getProperties() { return _properties; }
 
 }

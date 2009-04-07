@@ -24,6 +24,38 @@ public class HTML2LaTeX {
 	/** File with CSS. */
 	private static String _cssFile = "";
 
+	public static void convert(BufferedReader br, BufferedWriter bw)
+			throws FatalErrorException {
+		convert(br, bw, "", _configFile);
+	}
+
+	public static void convert(BufferedReader br, BufferedWriter bw,
+			String pathToCSSFile, String pathToConfigFile)
+			throws FatalErrorException {
+		_cssFile = pathToCSSFile;
+		_configFile = pathToConfigFile;
+		Parser parser = new Parser();
+		parser.parse(br, new ParserHandler(bw));
+	}
+
+	/**
+	 * Returns name of the file with configuration.
+	 *
+	 * @return name of the file with configuration
+	 */
+	public static String getConfigFile() {
+		return _configFile;
+	}
+
+	/**
+	 * Returns name of the file with CSS.
+	 *
+	 * @return name of the file with CSS
+	 */
+	public static String getCSSFile() {
+		return _cssFile;
+	}
+
 	/**
 	 * Creates {@link Parser Parser} instance and runs its
 	 * {@link Parser#parse(File, ParserHandler) parse()} method.
@@ -51,20 +83,6 @@ public class HTML2LaTeX {
 			e.getMessage();
 			e.printStackTrace();
 		}
-	}
-
-	public static void convert(BufferedReader br, BufferedWriter bw)
-			throws FatalErrorException {
-		convert(br, bw, "", _configFile);
-	}
-
-	public static void convert(BufferedReader br, BufferedWriter bw,
-			String pathToCSSFile, String pathToConfigFile)
-			throws FatalErrorException {
-		_cssFile = pathToCSSFile;
-		_configFile = pathToConfigFile;
-		Parser parser = new Parser();
-		parser.parse(br, new ParserHandler(bw));
 	}
 
 	/**
@@ -109,24 +127,6 @@ public class HTML2LaTeX {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns name of the file with CSS.
-	 *
-	 * @return name of the file with CSS
-	 */
-	public static String getCSSFile() {
-		return _cssFile;
-	}
-
-	/**
-	 * Returns name of the file with configuration.
-	 *
-	 * @return name of the file with configuration
-	 */
-	public static String getConfigFile() {
-		return _configFile;
 	}
 
 }

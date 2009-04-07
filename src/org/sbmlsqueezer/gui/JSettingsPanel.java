@@ -518,45 +518,6 @@ public class JSettingsPanel extends JPanel {
 	 * <ul>
 	 * <li>1 = generalized mass-action kinetics</li>
 	 * <li>2 = Convenience kinetics</li>
-	 * <li>3 = Michaelis-Menten kinetics</li>
-	 * </ul>
-	 * 
-	 * @return
-	 */
-	public short getUniUniType() {
-		if (jRadioButtonUniUniMMK.isSelected())
-			return (short) 3;
-		if (jRadioButtonUniUniCONV.isSelected())
-			return (short) 2;
-		return (short) 1; // GMAK.
-	}
-
-	/**
-	 * Possible values are:
-	 * <ul>
-	 * <li>1 = generalized mass-action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
-	 * <li>4 = Random Order Michealis Menten kinetics</li>
-	 * <li>6 = Ordered</li>
-	 * </ul>
-	 * 
-	 * @return
-	 */
-	public short getBiUniType() {
-		if (jRadioButtonBiUniORD.isSelected())
-			return (short) 6;
-		if (jRadioButtonBiUniRND.isSelected())
-			return (short) 4;
-		if (jRadioButtonBiUniCONV.isSelected())
-			return (short) 2;
-		return (short) 1; // GMAK.
-	}
-
-	/**
-	 * Possible values are:
-	 * <ul>
-	 * <li>1 = generalized mass-action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
 	 * <li>4 = Random Order Michealis Menten kinetics</li>
 	 * <li>5 = Ping-Pong</li>
 	 * <li>6 = Ordered</li>
@@ -583,217 +544,16 @@ public class JSettingsPanel extends JPanel {
 	 * <li>6 = Ordered</li>
 	 * </ul>
 	 * 
-	 * @param type
+	 * @return
 	 */
-	public void setBiUniType(short type) {
-		switch (type) {
-		case 6:
-			jRadioButtonBiUniORD.setSelected(true);
-			break;
-		case 4:
-			jRadioButtonBiUniRND.setSelected(true);
-			break;
-		case 2:
-			jRadioButtonBiUniCONV.setSelected(true);
-			break;
-		default:
-			jRadioButtonGMAK.setSelected(true);
-			break;
-		}
-	}
-
-	/**
-	 * Possible values are:
-	 * <ul>
-	 * <li>1 = generalized mass-action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
-	 * <li>3 = Michaelis-Menten kinetics</li>
-	 * </ul>
-	 * 
-	 * @param type
-	 */
-	public void setUniUniType(short type) {
-		switch (type) {
-		case 3:
-			jRadioButtonUniUniMMK.setSelected(true);
-			break;
-		case 2:
-			jRadioButtonUniUniCONV.setSelected(true);
-			break;
-		default:
-			jRadioButtonGMAK.setSelected(true);
-			break;
-		}
-	}
-
-	/**
-	 * Possible values are:
-	 * <ul>
-	 * <li>1 = generalized mass-action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
-	 * <li>4 = Random Order Michealis Menten kinetics</li>
-	 * <li>5 = Ping-Pong</li>
-	 * <li>6 = Ordered</li>
-	 * </ul>
-	 * 
-	 * @param type
-	 */
-	public void setBiBiType(short type) {
-		switch (type) {
-		case 6:
-			jRadioButtonBiBiORD.setSelected(true);
-			break;
-		case 5:
-			jRadioButtonBiBiPP.setSelected(true);
-			break;
-		case 4:
-			jRadioButtonBiBiRND.setSelected(true);
-			break;
-		case 2:
-			jRadioButtonBiBiCONV.setSelected(true);
-			break;
-		default:
-			jRadioButtonGMAK.setSelected(true);
-			break;
-		}
-	}
-
-	/**
-	 * This method checks, if there is any possible Enzyme checked or not
-	 * 
-	 * @return: void
-	 */
-	public boolean possibleEnzymeTestAllNotChecked() {
-		boolean possibleEnzymeAllNotChecked;
-		if (!jCheckBoxPossibleEnzymeRNA.isSelected()
-				&& !jCheckBoxPossibleEnzymeAsRNA.isSelected()
-				&& !jCheckBoxPossibleEnzymeGenericProtein.isSelected()
-				&& !jCheckBoxPossibleEnzymeTruncatedProtein.isSelected()
-				&& !jCheckBoxPossibleEnzymeSimpleMolecule.isSelected()
-				&& !jCheckBoxPossibleEnzymeComplex.isSelected()
-				&& !jCheckBoxPossibleEnzymeReceptor.isSelected()
-				&& !jCheckBoxPossibleEnzymeUnknown.isSelected()
-				&& !jCheckBoxTreatAllReactionsAsEnzyeReaction.isSelected()) {
-			possibleEnzymeAllNotChecked = true;
-			jRadioButtonUniUniMMK.setSelected(false);
-			jRadioButtonUniUniCONV.setSelected(false);
-			jRadioButtonBiUniORD.setSelected(false);
-			jRadioButtonBiUniCONV.setSelected(false);
-			jRadioButtonBiUniRND.setSelected(false);
-			jRadioButtonBiBiPP.setSelected(false);
-			jRadioButtonBiBiORD.setSelected(false);
-			jRadioButtonBiBiCONV.setSelected(false);
-			jRadioButtonBiBiRND.setSelected(false);
-			jRadioButtonOtherEnzymCONV.setSelected(false);
-
-			jRadioButtonUniUniMMK.setEnabled(false);
-			jRadioButtonUniUniCONV.setEnabled(false);
-			jRadioButtonBiUniORD.setEnabled(false);
-			jRadioButtonBiUniCONV.setEnabled(false);
-			jRadioButtonBiUniRND.setEnabled(false);
-			jRadioButtonBiBiPP.setEnabled(false);
-			jRadioButtonBiBiORD.setEnabled(false);
-			jRadioButtonBiBiCONV.setEnabled(false);
-			jRadioButtonBiBiRND.setEnabled(false);
-			jRadioButtonOtherEnzymCONV.setEnabled(false);
-		} else {
-			possibleEnzymeAllNotChecked = false;
-
-			if (getUniUniType() == 3)// .equals("MMK"))
-				jRadioButtonUniUniMMK.setSelected(true);
-			else
-				jRadioButtonUniUniMMK.setSelected(false);
-
-			if (getUniUniType() == 2)// .equals("CONV"))
-				jRadioButtonUniUniCONV.setSelected(true);
-			else
-				jRadioButtonUniUniCONV.setSelected(false);
-
-			if (getBiUniType() == 6)// .equals("ORD"))
-				jRadioButtonBiUniORD.setSelected(true);
-			else
-				jRadioButtonBiUniORD.setSelected(false);
-
-			if (getBiUniType() == 2)// .equals("CONV"))
-				jRadioButtonBiUniCONV.setSelected(true);
-			else
-				jRadioButtonBiUniCONV.setSelected(false);
-
-			if (getBiUniType() == 4)// .equals("RND"))
-				jRadioButtonBiUniRND.setSelected(true);
-			else
-				jRadioButtonBiUniRND.setSelected(false);
-
-			if (getBiBiType() == 5)// .equals("PP"))
-				jRadioButtonBiBiPP.setSelected(true);
-			else
-				jRadioButtonBiBiPP.setSelected(false);
-
-			if (getBiBiType() == 6)// .equals("ORD"))
-				jRadioButtonBiBiORD.setSelected(true);
-			else
-				jRadioButtonBiBiORD.setSelected(false);
-
-			if (getBiBiType() == 2)// .equals("CONV"))
-				jRadioButtonBiBiCONV.setSelected(true);
-			else
-				jRadioButtonBiBiCONV.setSelected(false);
-
-			if (getBiBiType() == 4)// .equals("RND"))
-				jRadioButtonBiBiRND.setSelected(true);
-			else
-				jRadioButtonBiBiRND.setSelected(false);
-
-			jRadioButtonOtherEnzymCONV.setSelected(true);
-
-			jRadioButtonUniUniMMK.setEnabled(true);
-			jRadioButtonUniUniCONV.setEnabled(true);
-			jRadioButtonBiUniORD.setEnabled(true);
-			jRadioButtonBiUniCONV.setEnabled(true);
-			jRadioButtonBiUniRND.setEnabled(true);
-			jRadioButtonBiBiPP.setEnabled(true);
-			jRadioButtonBiBiORD.setEnabled(true);
-			jRadioButtonBiBiCONV.setEnabled(true);
-			jRadioButtonBiBiRND.setEnabled(true);
-			jRadioButtonOtherEnzymCONV.setEnabled(true);
-		}
-		return possibleEnzymeAllNotChecked;
-	}
-
-	public void restoreDefaults() {
-		setUniUniType((short) 3);// "MMK";
-		setBiUniType((short) 4);// "RND";
-		setBiBiType((short) 4);// "RND";
-		jCheckBoxWarnings.setSelected(true);
-		jSpinnerMaxRealisticNumOfReactants.setModel(new SpinnerNumberModel(3,
-				2, 10, 1));
-		jRadioButtonGMAK.setSelected(true);
-
-		jCheckBoxPossibleEnzymeRNA.setSelected(true);
-		jCheckBoxPossibleEnzymeGenericProtein.setSelected(true);
-		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(true);
-		jCheckBoxPossibleEnzymeComplex.setSelected(true);
-		jCheckBoxPossibleEnzymeUnknown.setSelected(false);
-		jCheckBoxPossibleEnzymeReceptor.setSelected(false);
-		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(false);
-		jCheckBoxPossibleEnzymeAsRNA.setSelected(false);
-		jCheckBoxTreatAllReactionsAsEnzyeReaction.setSelected(false);
-
-		jRadioButtonUniUniMMK.setEnabled(true);
-		jRadioButtonUniUniCONV.setEnabled(true);
-		jRadioButtonBiUniORD.setEnabled(true);
-		jRadioButtonBiUniCONV.setEnabled(true);
-		jRadioButtonBiUniRND.setEnabled(true);
-		jRadioButtonBiBiPP.setEnabled(true);
-		jRadioButtonBiBiORD.setEnabled(true);
-		jRadioButtonBiBiCONV.setEnabled(true);
-		jRadioButtonBiBiRND.setEnabled(true);
-
-		jRadioButtonGenerateForAllReactions.setSelected(false);
-		jRadioButtonGenerateForAllReactions.setSelected(false);
-		jRadioButtonForceReacRev.setSelected(true);
-
-		possibleEnzymeAllNotChecked = possibleEnzymeTestAllNotChecked();
+	public short getBiUniType() {
+		if (jRadioButtonBiUniORD.isSelected())
+			return (short) 6;
+		if (jRadioButtonBiUniRND.isSelected())
+			return (short) 4;
+		if (jRadioButtonBiUniCONV.isSelected())
+			return (short) 2;
+		return (short) 1; // GMAK.
 	}
 
 	public Vector<String> getListOfPossibleEnzymes() {
@@ -817,8 +577,72 @@ public class JSettingsPanel extends JPanel {
 		return listOfPossibleEnzymes;
 	}
 
-	public void setGenerateKineticsForAllReactions(boolean b) {
-		jCheckBoxTreatAllReactionsAsEnzyeReaction.setSelected(true);
+	public int getMaxRealisticNumberOfReactants() {
+		return ((Integer) jSpinnerMaxRealisticNumOfReactants.getValue())
+				.intValue();
+	}
+
+	public short getNonEnzymeReactionsType() {
+		// if (jRadioButtonGMAK.isSelected())
+		return (short) 1;
+	}
+
+	/**
+	 * Possible values are:
+	 * <ul>
+	 * <li>1 = generalized mass-action kinetics</li>
+	 * <li>2 = Convenience kinetics</li>
+	 * <li>3 = Michaelis-Menten kinetics</li>
+	 * </ul>
+	 * 
+	 * @return
+	 */
+	public short getUniUniType() {
+		if (jRadioButtonUniUniMMK.isSelected())
+			return (short) 3;
+		if (jRadioButtonUniUniCONV.isSelected())
+			return (short) 2;
+		return (short) 1; // GMAK.
+	}
+
+	public boolean isPossibleEnzymeAsRNA() {
+		return jCheckBoxPossibleEnzymeAsRNA.isSelected();
+	}
+
+	public boolean isPossibleEnzymeEnzymeComplex() {
+		return jCheckBoxPossibleEnzymeComplex.isSelected();
+	}
+
+	public boolean isPossibleEnzymeGenericProtein() {
+		return jCheckBoxPossibleEnzymeGenericProtein.isSelected();
+	}
+
+	public boolean isPossibleEnzymeReceptor() {
+		return jCheckBoxPossibleEnzymeReceptor.isSelected();
+	}
+
+	public boolean isPossibleEnzymeRNA() {
+		return jCheckBoxPossibleEnzymeRNA.isSelected();
+	}
+
+	public boolean isPossibleEnzymeSimpleMolecule() {
+		return jCheckBoxPossibleEnzymeSimpleMolecule.isSelected();
+	}
+
+	public boolean isPossibleEnzymeTruncatedProtein() {
+		return jCheckBoxPossibleEnzymeTruncatedProtein.isSelected();
+	}
+
+	public boolean isPossibleEnzymeUnknownMolecule() {
+		return jCheckBoxPossibleEnzymeUnknown.isSelected();
+	}
+
+	public boolean isSetAllParametersAreAddedGlobally() {
+		return jCheckBoxAddAllParametersGlobally.isSelected();
+	}
+
+	public boolean isSetAllReactionsAreEnzymeCatalyzed() {
+		return jCheckBoxTreatAllReactionsAsEnzyeReaction.isSelected();
 	}
 
 	public boolean isSetGenerateKineticsForAllReactions() {
@@ -829,139 +653,8 @@ public class JSettingsPanel extends JPanel {
 		return jRadioButtonForceReacRev.isSelected();
 	}
 
-	public boolean isSetAllReactionsAreEnzymeCatalyzed() {
-		return jCheckBoxTreatAllReactionsAsEnzyeReaction.isSelected();
-	}
-
-	public int getMaxRealisticNumberOfReactants() {
-		return ((Integer) jSpinnerMaxRealisticNumOfReactants.getValue())
-				.intValue();
-	}
-
-	public void setMaxRealisticNumberOfReactants(int value) {
-		jSpinnerMaxRealisticNumOfReactants.setValue(Integer.valueOf(value));
-	}
-
-	public void setWarningsForUnrealisticReactions(boolean b) {
-		jCheckBoxWarnings.setSelected(b);
-	}
-
 	public boolean isSetWarningsForUnrealisticReactions() {
 		return jCheckBoxWarnings.isSelected();
-	}
-
-	public void setNonEnzymeReactionsType(short type) {
-		switch (type) {
-		// TODO: other types
-		default: // type = 1
-			jRadioButtonGMAK.setSelected(true);
-			break;
-		}
-	}
-
-	public short getNonEnzymeReactionsType() {
-		// if (jRadioButtonGMAK.isSelected())
-		return (short) 1;
-	}
-
-	public void setAllReactionsAreEnzymeCatalyzed(boolean b) {
-		jCheckBoxTreatAllReactionsAsEnzyeReaction.setSelected(b);
-	}
-
-	public void setAllParametersAreGlobal(boolean b) {
-		jCheckBoxAddAllParametersGlobally.setSelected(b);
-	}
-
-	public void setPossibleEnzymeRNA(boolean b) {
-		jCheckBoxPossibleEnzymeRNA.setSelected(b);
-	}
-
-	public void setPossibleEnzymeGenericProtein(boolean b) {
-		jCheckBoxPossibleEnzymeGenericProtein.setSelected(b);
-	}
-
-	public void setPossibleEnzymeTruncatedProtein(boolean b) {
-		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(b);
-	}
-
-	public void setTreatAllReactionsReversible(boolean b) {
-		jRadioButtonForceReacRev.setSelected(b);
-	}
-
-	public void setPossibleEnzymeEnzymeComplex(boolean b) {
-		jCheckBoxPossibleEnzymeComplex.setSelected(b);
-	}
-
-	public void setPossibleEnzymeUnknownMolecule(boolean b) {
-		jCheckBoxPossibleEnzymeUnknown.setSelected(b);
-	}
-
-	public void setPossibleEnzymeReceptor(boolean b) {
-		jCheckBoxPossibleEnzymeReceptor.setSelected(b);
-	}
-
-	public void setPossibleEnzymeSimpleMolecule(boolean b) {
-		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(b);
-	}
-
-	public void setPossibleEnzymeAsRNA(boolean b) {
-		jCheckBoxPossibleEnzymeAsRNA.setSelected(b);
-	}
-
-	public boolean isPossibleEnzymeGenericProtein() {
-		return jCheckBoxPossibleEnzymeGenericProtein.isSelected();
-	}
-
-	public boolean isPossibleEnzymeTruncatedProtein() {
-		return jCheckBoxPossibleEnzymeTruncatedProtein.isSelected();
-	}
-
-	public boolean isPossibleEnzymeEnzymeComplex() {
-		return jCheckBoxPossibleEnzymeComplex.isSelected();
-	}
-
-	public boolean isPossibleEnzymeUnknownMolecule() {
-		return jCheckBoxPossibleEnzymeUnknown.isSelected();
-	}
-
-	public boolean isPossibleEnzymeReceptor() {
-		return jCheckBoxPossibleEnzymeReceptor.isSelected();
-	}
-
-	public boolean isPossibleEnzymeSimpleMolecule() {
-		return jCheckBoxPossibleEnzymeSimpleMolecule.isSelected();
-	}
-
-	public boolean isPossibleEnzymeAsRNA() {
-		return jCheckBoxPossibleEnzymeAsRNA.isSelected();
-	}
-
-	public boolean isPossibleEnzymeRNA() {
-		return jCheckBoxPossibleEnzymeRNA.isSelected();
-	}
-
-	public boolean isSetAllParametersAreAddedGlobally() {
-		return jCheckBoxAddAllParametersGlobally.isSelected();
-	}
-
-	/**
-	 * Saves the current settings of the SBMLsqueezer in an ASCII file.
-	 */
-	public void save(File file) {
-		new SettingsWriter(file, getMaxRealisticNumberOfReactants(),
-				getUniUniType(), getBiUniType(), getBiBiType(),
-				isSetWarningsForUnrealisticReactions(),
-				(getNonEnzymeReactionsType() == 1) ? true : false,
-				isPossibleEnzymeRNA(), isSetGenerateKineticsForAllReactions(),
-				isSetTreatAllReactionsReversible(),
-				isPossibleEnzymeGenericProtein(),
-				isPossibleEnzymeTruncatedProtein(),
-				isPossibleEnzymeEnzymeComplex(),
-				isPossibleEnzymeUnknownMolecule(), isPossibleEnzymeReceptor(),
-				isPossibleEnzymeSimpleMolecule(), isPossibleEnzymeAsRNA(),
-				possibleEnzymeTestAllNotChecked(),
-				isSetAllReactionsAreEnzymeCatalyzed(),
-				isSetAllParametersAreAddedGlobally());
 	}
 
 	/**
@@ -1130,6 +823,313 @@ public class JSettingsPanel extends JPanel {
 			setTreatAllReactionsReversible(true);
 			possibleEnzymeTestAllNotChecked();
 		}
+	}
+
+	/**
+	 * This method checks, if there is any possible Enzyme checked or not
+	 * 
+	 * @return: void
+	 */
+	public boolean possibleEnzymeTestAllNotChecked() {
+		boolean possibleEnzymeAllNotChecked;
+		if (!jCheckBoxPossibleEnzymeRNA.isSelected()
+				&& !jCheckBoxPossibleEnzymeAsRNA.isSelected()
+				&& !jCheckBoxPossibleEnzymeGenericProtein.isSelected()
+				&& !jCheckBoxPossibleEnzymeTruncatedProtein.isSelected()
+				&& !jCheckBoxPossibleEnzymeSimpleMolecule.isSelected()
+				&& !jCheckBoxPossibleEnzymeComplex.isSelected()
+				&& !jCheckBoxPossibleEnzymeReceptor.isSelected()
+				&& !jCheckBoxPossibleEnzymeUnknown.isSelected()
+				&& !jCheckBoxTreatAllReactionsAsEnzyeReaction.isSelected()) {
+			possibleEnzymeAllNotChecked = true;
+			jRadioButtonUniUniMMK.setSelected(false);
+			jRadioButtonUniUniCONV.setSelected(false);
+			jRadioButtonBiUniORD.setSelected(false);
+			jRadioButtonBiUniCONV.setSelected(false);
+			jRadioButtonBiUniRND.setSelected(false);
+			jRadioButtonBiBiPP.setSelected(false);
+			jRadioButtonBiBiORD.setSelected(false);
+			jRadioButtonBiBiCONV.setSelected(false);
+			jRadioButtonBiBiRND.setSelected(false);
+			jRadioButtonOtherEnzymCONV.setSelected(false);
+
+			jRadioButtonUniUniMMK.setEnabled(false);
+			jRadioButtonUniUniCONV.setEnabled(false);
+			jRadioButtonBiUniORD.setEnabled(false);
+			jRadioButtonBiUniCONV.setEnabled(false);
+			jRadioButtonBiUniRND.setEnabled(false);
+			jRadioButtonBiBiPP.setEnabled(false);
+			jRadioButtonBiBiORD.setEnabled(false);
+			jRadioButtonBiBiCONV.setEnabled(false);
+			jRadioButtonBiBiRND.setEnabled(false);
+			jRadioButtonOtherEnzymCONV.setEnabled(false);
+		} else {
+			possibleEnzymeAllNotChecked = false;
+
+			if (getUniUniType() == 3)// .equals("MMK"))
+				jRadioButtonUniUniMMK.setSelected(true);
+			else
+				jRadioButtonUniUniMMK.setSelected(false);
+
+			if (getUniUniType() == 2)// .equals("CONV"))
+				jRadioButtonUniUniCONV.setSelected(true);
+			else
+				jRadioButtonUniUniCONV.setSelected(false);
+
+			if (getBiUniType() == 6)// .equals("ORD"))
+				jRadioButtonBiUniORD.setSelected(true);
+			else
+				jRadioButtonBiUniORD.setSelected(false);
+
+			if (getBiUniType() == 2)// .equals("CONV"))
+				jRadioButtonBiUniCONV.setSelected(true);
+			else
+				jRadioButtonBiUniCONV.setSelected(false);
+
+			if (getBiUniType() == 4)// .equals("RND"))
+				jRadioButtonBiUniRND.setSelected(true);
+			else
+				jRadioButtonBiUniRND.setSelected(false);
+
+			if (getBiBiType() == 5)// .equals("PP"))
+				jRadioButtonBiBiPP.setSelected(true);
+			else
+				jRadioButtonBiBiPP.setSelected(false);
+
+			if (getBiBiType() == 6)// .equals("ORD"))
+				jRadioButtonBiBiORD.setSelected(true);
+			else
+				jRadioButtonBiBiORD.setSelected(false);
+
+			if (getBiBiType() == 2)// .equals("CONV"))
+				jRadioButtonBiBiCONV.setSelected(true);
+			else
+				jRadioButtonBiBiCONV.setSelected(false);
+
+			if (getBiBiType() == 4)// .equals("RND"))
+				jRadioButtonBiBiRND.setSelected(true);
+			else
+				jRadioButtonBiBiRND.setSelected(false);
+
+			jRadioButtonOtherEnzymCONV.setSelected(true);
+
+			jRadioButtonUniUniMMK.setEnabled(true);
+			jRadioButtonUniUniCONV.setEnabled(true);
+			jRadioButtonBiUniORD.setEnabled(true);
+			jRadioButtonBiUniCONV.setEnabled(true);
+			jRadioButtonBiUniRND.setEnabled(true);
+			jRadioButtonBiBiPP.setEnabled(true);
+			jRadioButtonBiBiORD.setEnabled(true);
+			jRadioButtonBiBiCONV.setEnabled(true);
+			jRadioButtonBiBiRND.setEnabled(true);
+			jRadioButtonOtherEnzymCONV.setEnabled(true);
+		}
+		return possibleEnzymeAllNotChecked;
+	}
+
+	public void restoreDefaults() {
+		setUniUniType((short) 3);// "MMK";
+		setBiUniType((short) 4);// "RND";
+		setBiBiType((short) 4);// "RND";
+		jCheckBoxWarnings.setSelected(true);
+		jSpinnerMaxRealisticNumOfReactants.setModel(new SpinnerNumberModel(3,
+				2, 10, 1));
+		jRadioButtonGMAK.setSelected(true);
+
+		jCheckBoxPossibleEnzymeRNA.setSelected(true);
+		jCheckBoxPossibleEnzymeGenericProtein.setSelected(true);
+		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(true);
+		jCheckBoxPossibleEnzymeComplex.setSelected(true);
+		jCheckBoxPossibleEnzymeUnknown.setSelected(false);
+		jCheckBoxPossibleEnzymeReceptor.setSelected(false);
+		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(false);
+		jCheckBoxPossibleEnzymeAsRNA.setSelected(false);
+		jCheckBoxTreatAllReactionsAsEnzyeReaction.setSelected(false);
+
+		jRadioButtonUniUniMMK.setEnabled(true);
+		jRadioButtonUniUniCONV.setEnabled(true);
+		jRadioButtonBiUniORD.setEnabled(true);
+		jRadioButtonBiUniCONV.setEnabled(true);
+		jRadioButtonBiUniRND.setEnabled(true);
+		jRadioButtonBiBiPP.setEnabled(true);
+		jRadioButtonBiBiORD.setEnabled(true);
+		jRadioButtonBiBiCONV.setEnabled(true);
+		jRadioButtonBiBiRND.setEnabled(true);
+
+		jRadioButtonGenerateForAllReactions.setSelected(false);
+		jRadioButtonGenerateForAllReactions.setSelected(false);
+		jRadioButtonForceReacRev.setSelected(true);
+
+		possibleEnzymeAllNotChecked = possibleEnzymeTestAllNotChecked();
+	}
+
+	/**
+	 * Saves the current settings of the SBMLsqueezer in an ASCII file.
+	 */
+	public void save(File file) {
+		new SettingsWriter(file, getMaxRealisticNumberOfReactants(),
+				getUniUniType(), getBiUniType(), getBiBiType(),
+				isSetWarningsForUnrealisticReactions(),
+				(getNonEnzymeReactionsType() == 1) ? true : false,
+				isPossibleEnzymeRNA(), isSetGenerateKineticsForAllReactions(),
+				isSetTreatAllReactionsReversible(),
+				isPossibleEnzymeGenericProtein(),
+				isPossibleEnzymeTruncatedProtein(),
+				isPossibleEnzymeEnzymeComplex(),
+				isPossibleEnzymeUnknownMolecule(), isPossibleEnzymeReceptor(),
+				isPossibleEnzymeSimpleMolecule(), isPossibleEnzymeAsRNA(),
+				possibleEnzymeTestAllNotChecked(),
+				isSetAllReactionsAreEnzymeCatalyzed(),
+				isSetAllParametersAreAddedGlobally());
+	}
+
+	public void setAllParametersAreGlobal(boolean b) {
+		jCheckBoxAddAllParametersGlobally.setSelected(b);
+	}
+
+	public void setAllReactionsAreEnzymeCatalyzed(boolean b) {
+		jCheckBoxTreatAllReactionsAsEnzyeReaction.setSelected(b);
+	}
+
+	/**
+	 * Possible values are:
+	 * <ul>
+	 * <li>1 = generalized mass-action kinetics</li>
+	 * <li>2 = Convenience kinetics</li>
+	 * <li>4 = Random Order Michealis Menten kinetics</li>
+	 * <li>5 = Ping-Pong</li>
+	 * <li>6 = Ordered</li>
+	 * </ul>
+	 * 
+	 * @param type
+	 */
+	public void setBiBiType(short type) {
+		switch (type) {
+		case 6:
+			jRadioButtonBiBiORD.setSelected(true);
+			break;
+		case 5:
+			jRadioButtonBiBiPP.setSelected(true);
+			break;
+		case 4:
+			jRadioButtonBiBiRND.setSelected(true);
+			break;
+		case 2:
+			jRadioButtonBiBiCONV.setSelected(true);
+			break;
+		default:
+			jRadioButtonGMAK.setSelected(true);
+			break;
+		}
+	}
+
+	/**
+	 * Possible values are:
+	 * <ul>
+	 * <li>1 = generalized mass-action kinetics</li>
+	 * <li>2 = Convenience kinetics</li>
+	 * <li>4 = Random Order Michealis Menten kinetics</li>
+	 * <li>6 = Ordered</li>
+	 * </ul>
+	 * 
+	 * @param type
+	 */
+	public void setBiUniType(short type) {
+		switch (type) {
+		case 6:
+			jRadioButtonBiUniORD.setSelected(true);
+			break;
+		case 4:
+			jRadioButtonBiUniRND.setSelected(true);
+			break;
+		case 2:
+			jRadioButtonBiUniCONV.setSelected(true);
+			break;
+		default:
+			jRadioButtonGMAK.setSelected(true);
+			break;
+		}
+	}
+
+	public void setGenerateKineticsForAllReactions(boolean b) {
+		jCheckBoxTreatAllReactionsAsEnzyeReaction.setSelected(true);
+	}
+
+	public void setMaxRealisticNumberOfReactants(int value) {
+		jSpinnerMaxRealisticNumOfReactants.setValue(Integer.valueOf(value));
+	}
+
+	public void setNonEnzymeReactionsType(short type) {
+		switch (type) {
+		// TODO: other types
+		default: // type = 1
+			jRadioButtonGMAK.setSelected(true);
+			break;
+		}
+	}
+
+	public void setPossibleEnzymeAsRNA(boolean b) {
+		jCheckBoxPossibleEnzymeAsRNA.setSelected(b);
+	}
+
+	public void setPossibleEnzymeEnzymeComplex(boolean b) {
+		jCheckBoxPossibleEnzymeComplex.setSelected(b);
+	}
+
+	public void setPossibleEnzymeGenericProtein(boolean b) {
+		jCheckBoxPossibleEnzymeGenericProtein.setSelected(b);
+	}
+
+	public void setPossibleEnzymeReceptor(boolean b) {
+		jCheckBoxPossibleEnzymeReceptor.setSelected(b);
+	}
+
+	public void setPossibleEnzymeRNA(boolean b) {
+		jCheckBoxPossibleEnzymeRNA.setSelected(b);
+	}
+
+	public void setPossibleEnzymeSimpleMolecule(boolean b) {
+		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(b);
+	}
+
+	public void setPossibleEnzymeTruncatedProtein(boolean b) {
+		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(b);
+	}
+
+	public void setPossibleEnzymeUnknownMolecule(boolean b) {
+		jCheckBoxPossibleEnzymeUnknown.setSelected(b);
+	}
+
+	public void setTreatAllReactionsReversible(boolean b) {
+		jRadioButtonForceReacRev.setSelected(b);
+	}
+
+	/**
+	 * Possible values are:
+	 * <ul>
+	 * <li>1 = generalized mass-action kinetics</li>
+	 * <li>2 = Convenience kinetics</li>
+	 * <li>3 = Michaelis-Menten kinetics</li>
+	 * </ul>
+	 * 
+	 * @param type
+	 */
+	public void setUniUniType(short type) {
+		switch (type) {
+		case 3:
+			jRadioButtonUniUniMMK.setSelected(true);
+			break;
+		case 2:
+			jRadioButtonUniUniCONV.setSelected(true);
+			break;
+		default:
+			jRadioButtonGMAK.setSelected(true);
+			break;
+		}
+	}
+
+	public void setWarningsForUnrealisticReactions(boolean b) {
+		jCheckBoxWarnings.setSelected(b);
 	}
 
 }

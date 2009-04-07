@@ -21,11 +21,22 @@ public interface DisplaySBML {
 
 	/**
 	 *
-	 * @param doc
+	 * @param list
+	 * @param name
+	 * @param buffer
+	 * @param section
+	 * @throws IOException
+	 */
+	public void format(ListOf list, BufferedWriter buffer, boolean section) throws IOException;
+
+	/**
+	 *
+	 * @param events
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void format(SBMLDocument doc, BufferedWriter buffer) throws IOException;
+	public void format(ListOfEvents events, BufferedWriter buffer) throws IOException;
+
 
 	/**
 	 *
@@ -38,20 +49,9 @@ public interface DisplaySBML {
 
 	/**
 	 *
-	 * @param list
-	 * @param name
-	 * @param buffer
-	 * @param section
-	 * @throws IOException
-	 */
-	public void format(ListOf list, BufferedWriter buffer, boolean section) throws IOException;
-
-
-	/**
-	 *
-	 * @param events
+	 * @param doc
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void format(ListOfEvents events, BufferedWriter buffer) throws IOException;
+	public void format(SBMLDocument doc, BufferedWriter buffer) throws IOException;
 }

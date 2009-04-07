@@ -85,98 +85,6 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		editing = false;
 	}
 
-	private void setColumnWidthAppropriately() {
-		for (int col = 0; col < getColumnCount(); col++) {
-			int maxLength = getColumnModel().getColumn(col).getHeaderValue()
-					.toString().length();
-			for (int row = 0; row < getRowCount(); row++)
-				if (maxLength < getValueAt(row, col).toString().length())
-					maxLength = getValueAt(row, col).toString().length();
-			getColumnModel().getColumn(col).setPreferredWidth(
-					3 * getFont().getSize() / 5 * maxLength);
-		}
-	}
-
-	/**
-	 * Specifies weather or not all reactions will be modeled in a reversible
-	 * manner or as specified by the SBML model.
-	 * 
-	 * @param reversibility
-	 */
-	public void setReversibility(boolean reversibility) {
-		this.reversibility = reversibility;
-	}
-
-	// /**
-	// * Counts the number of new line symbols in each row of this table and
-	// sets
-	// * the row hight accordingly to a greater value, if necessary.
-	// */
-	// private void setRowHeightAppropriately() {
-	// int newLines = 0;
-	// for (int row = 0; row < dataModel.getRowCount(); row++) {
-	// int maxNewLines = 0; // reset length
-	// for (int column = 0; column < dataModel.getColumnCount(); column++) {
-	// if (dataModel.getValueAt(row, column) != null) {
-	// String value = dataModel.getValueAt(row, column).toString();
-	// // max length update
-	// StringTokenizer st = new StringTokenizer(value, "\n");
-	// newLines = st.countTokens();
-	// if (maxNewLines <= newLines)
-	// maxNewLines = newLines;
-	// newLines = 0;
-	// }
-	// }
-	// // hier wird die groesste variable als zeilenhoehe gesetz bei der
-	// // aktuellen Spalte
-	// setRowHeight(row, maxNewLines * 18 + 18);
-	// }
-	// }
-
-	/**
-	 * Sets up a combo box, which allows to select an appropriate value for a
-	 * kinetic law in the given row.
-	 * 
-	 * @param rowIndex
-	 */
-	private void setCellEditor(int rowIndex) {
-		if ((dataModel.getRowCount() > 0) && (dataModel.getColumnCount() > 0)) {
-			PluginModel model = klg.getModel();
-			PluginReaction reaction = model.getReaction(dataModel.getValueAt(
-					rowIndex, 0).toString());
-			try {
-				short[] possibleTypes = this.klg.identifyPossibleReactionTypes(
-						model, reaction);
-
-				Vector<BasicKineticLaw> possibleLaws = new Vector<BasicKineticLaw>();
-				for (int i = 0; i < possibleTypes.length; i++)
-					try {
-						possibleLaws.add(klg.createKineticLaw(model, reaction,
-								possibleTypes[i], reversibility));
-					} catch (ModificationException exc) {
-						exc.printStackTrace();
-					} catch (RateLawNotApplicableException exc) {
-						exc.printStackTrace();
-					}
-				JComboBox kineticLawComboBox = new JComboBox(possibleLaws);
-				kineticLawComboBox.addActionListener(this);
-				kineticLawComboBox.setEditable(false);
-				kineticLawComboBox.setBackground(Color.WHITE);
-				cellEditor = new DefaultCellEditor(kineticLawComboBox);
-				((DefaultCellEditor) cellEditor).setClickCountToStart(2);
-				getColumnModel().getColumn(convertColumnIndexToView(1))
-						.setCellEditor(cellEditor);
-			} catch (RateLawNotApplicableException e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), e
-						.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-			}
-		}
-	}
-
-	/*
-	 * ====================== Action Event Handler =====================
-	 */
-
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComboBox) {
 			int i;
@@ -207,10 +115,6 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 			editing = false;
 		}
 	}
-
-	/*
-	 * ====================== Mouse Event Handler =====================
-	 */
 
 	/*
 	 * (non-Javadoc)
@@ -255,6 +159,51 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		}
 	}
 
+	// /**
+	// * Counts the number of new line symbols in each row of this table and
+	// sets
+	// * the row hight accordingly to a greater value, if necessary.
+	// */
+	// private void setRowHeightAppropriately() {
+	// int newLines = 0;
+	// for (int row = 0; row < dataModel.getRowCount(); row++) {
+	// int maxNewLines = 0; // reset length
+	// for (int column = 0; column < dataModel.getColumnCount(); column++) {
+	// if (dataModel.getValueAt(row, column) != null) {
+	// String value = dataModel.getValueAt(row, column).toString();
+	// // max length update
+	// StringTokenizer st = new StringTokenizer(value, "\n");
+	// newLines = st.countTokens();
+	// if (maxNewLines <= newLines)
+	// maxNewLines = newLines;
+	// newLines = 0;
+	// }
+	// }
+	// // hier wird die groesste variable als zeilenhoehe gesetz bei der
+	// // aktuellen Spalte
+	// setRowHeight(row, maxNewLines * 18 + 18);
+	// }
+	// }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
+	 * )
+	 */
+	public void mouseDragged(MouseEvent e) {
+		// Point p = e.getPoint();
+		// int rowIndex = rowAtPoint(p);
+		// int colIndex = columnAtPoint(p);
+		// System.out.println("Mouse draged, Zeile: " + rowIndex + "\tSpalte: "
+		// + colIndex);
+	}
+
+	/*
+	 * ====================== Action Event Handler =====================
+	 */
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -284,6 +233,10 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 	}
 
 	/*
+	 * ====================== Mouse Event Handler =====================
+	 */
+
+	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
@@ -293,6 +246,14 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		// int rowIndex = rowAtPoint(p);
 		// int colIndex = columnAtPoint(p);
 		// System.out.println("Mouse exited, Zeile: " + rowIndex + "\tSpalte: "
+		// + colIndex);
+	}
+
+	public void mouseMoved(MouseEvent e) {
+		// Point p = e.getPoint();
+		// int rowIndex = rowAtPoint(p);
+		// int colIndex = columnAtPoint(p);
+		// System.out.println("Mouse moved, Zeile: " + rowIndex + "\tSpalte: "
 		// + colIndex);
 	}
 
@@ -327,32 +288,71 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		// + colIndex);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Specifies weather or not all reactions will be modeled in a reversible
+	 * manner or as specified by the SBML model.
 	 * 
-	 * @see
-	 * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
-	 * )
+	 * @param reversibility
 	 */
-	public void mouseDragged(MouseEvent e) {
-		// Point p = e.getPoint();
-		// int rowIndex = rowAtPoint(p);
-		// int colIndex = columnAtPoint(p);
-		// System.out.println("Mouse draged, Zeile: " + rowIndex + "\tSpalte: "
-		// + colIndex);
-	}
-
-	public void mouseMoved(MouseEvent e) {
-		// Point p = e.getPoint();
-		// int rowIndex = rowAtPoint(p);
-		// int colIndex = columnAtPoint(p);
-		// System.out.println("Mouse moved, Zeile: " + rowIndex + "\tSpalte: "
-		// + colIndex);
+	public void setReversibility(boolean reversibility) {
+		this.reversibility = reversibility;
 	}
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		super.tableChanged(e);
+	}
+
+	/**
+	 * Sets up a combo box, which allows to select an appropriate value for a
+	 * kinetic law in the given row.
+	 * 
+	 * @param rowIndex
+	 */
+	private void setCellEditor(int rowIndex) {
+		if ((dataModel.getRowCount() > 0) && (dataModel.getColumnCount() > 0)) {
+			PluginModel model = klg.getModel();
+			PluginReaction reaction = model.getReaction(dataModel.getValueAt(
+					rowIndex, 0).toString());
+			try {
+				short[] possibleTypes = this.klg.identifyPossibleReactionTypes(
+						model, reaction);
+
+				Vector<BasicKineticLaw> possibleLaws = new Vector<BasicKineticLaw>();
+				for (int i = 0; i < possibleTypes.length; i++)
+					try {
+						possibleLaws.add(klg.createKineticLaw(model, reaction,
+								possibleTypes[i], reversibility));
+					} catch (ModificationException exc) {
+						exc.printStackTrace();
+					} catch (RateLawNotApplicableException exc) {
+						exc.printStackTrace();
+					}
+				JComboBox kineticLawComboBox = new JComboBox(possibleLaws);
+				kineticLawComboBox.addActionListener(this);
+				kineticLawComboBox.setEditable(false);
+				kineticLawComboBox.setBackground(Color.WHITE);
+				cellEditor = new DefaultCellEditor(kineticLawComboBox);
+				((DefaultCellEditor) cellEditor).setClickCountToStart(2);
+				getColumnModel().getColumn(convertColumnIndexToView(1))
+						.setCellEditor(cellEditor);
+			} catch (RateLawNotApplicableException e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), e
+						.getClass().getName(), JOptionPane.WARNING_MESSAGE);
+			}
+		}
+	}
+
+	private void setColumnWidthAppropriately() {
+		for (int col = 0; col < getColumnCount(); col++) {
+			int maxLength = getColumnModel().getColumn(col).getHeaderValue()
+					.toString().length();
+			for (int row = 0; row < getRowCount(); row++)
+				if (maxLength < getValueAt(row, col).toString().length())
+					maxLength = getValueAt(row, col).toString().length();
+			getColumnModel().getColumn(col).setPreferredWidth(
+					3 * getFont().getSize() / 5 * maxLength);
+		}
 	}
 
 }

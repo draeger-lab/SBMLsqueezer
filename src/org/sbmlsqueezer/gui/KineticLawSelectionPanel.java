@@ -204,6 +204,106 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		// ContainerHandler.setAllBackground(this, Color.WHITE);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		JRadioButton rbutton = (JRadioButton) e.getSource();
+		if (rbutton.getParent().equals(optionsPanel)) {
+			if (rbutton.getText().contains("eversible")) {
+				isReversibleSelected = getReversible();
+				try {
+					// reversible property was changed.
+					reaction.setReversible(getReversible());
+					remove(kineticsPanel);
+					kineticsPanel = initKineticsPanel();
+					LayoutHelper.addComponent(this, (GridBagLayout) this
+							.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+				} catch (RateLawNotApplicableException exc) {
+					throw new RuntimeException(exc.getMessage(), exc);
+				}
+			} else {
+				klg.setAddAllParametersGlobally(getGlobal());
+				isGlobalSelected = getGlobal();
+			}
+		} else {
+			int i = 0; /*
+						 * , width = eqnPrev.getWidth(), height = eqnPrev
+						 * .getHeight();
+						 */
+			while ((i < rButtonsKineticEquations.length)
+					&& (!rbutton.equals(rButtonsKineticEquations[i])))
+				i++;
+			kineticsPanel.remove(eqnPrev);
+			setPreviewPanel(i);
+			kineticsPanel.add(eqnPrev);
+			if (i == rButtonsKineticEquations.length - 1) {
+				rButtonReversible.setSelected(isReactionReversible);
+				rButtonIrreversible.setSelected(!isReactionReversible);
+				rButtonGlobalParameters.setSelected(isParametersGlobal);
+				rButtonLocalParameters.setSelected(!isParametersGlobal);
+				isExistingRateLawSelected = true;
+			} else {
+				isExistingRateLawSelected = false;
+				rButtonReversible.setSelected(isReversibleSelected);
+				rButtonIrreversible.setSelected(!isReversibleSelected);
+				rButtonGlobalParameters.setSelected(isGlobalSelected);
+				rButtonLocalParameters.setSelected(!isGlobalSelected);
+			}
+			ContainerHandler.setAllEnabled(optionsPanel,
+					i != rButtonsKineticEquations.length - 1);
+		}
+		validate();
+		getTopLevelAncestor().validate();
+		Window w = (Window) getTopLevelAncestor();
+		int width = w.getWidth();
+		w.pack();
+		w.setSize(width, w.getHeight());
+	}
+
+	public boolean getExistingRateLawSelected() {
+		return isExistingRateLawSelected;
+	}
+
+	/**
+	 * Returns true if all parameters are set to be global.
+	 * 
+	 * @return
+	 */
+
+	public boolean getGlobal() {
+		return rButtonGlobalParameters.isSelected();
+	}
+
+	public String getReactionNotes() {
+		return notes;
+	}
+
+	/**
+	 * Returns true if the reaction was set to reversible.
+	 * 
+	 * @return
+	 */
+	public boolean getReversible() {
+		return rButtonReversible.isSelected();
+	}
+
+	/**
+	 * Returns the selected kinetic law from the list of possible kinetic laws.
+	 * 
+	 * @return
+	 */
+	public short getSelectedKinetic() {
+		int i = 0;
+		while ((i < rButtonsKineticEquations.length)
+				&& (!rButtonsKineticEquations[i].isSelected()))
+			i++;
+		return possibleTypes[i];
+	}
+
 	private Box initKineticsPanel() throws RateLawNotApplicableException {
 		possibleTypes = klg.identifyPossibleReactionTypes(model, reaction);
 		String[] kineticEquations = new String[possibleTypes.length];
@@ -332,105 +432,5 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		}
 		string = "<html><body>" + string + "</body></html>";
 		return string;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		JRadioButton rbutton = (JRadioButton) e.getSource();
-		if (rbutton.getParent().equals(optionsPanel)) {
-			if (rbutton.getText().contains("eversible")) {
-				isReversibleSelected = getReversible();
-				try {
-					// reversible property was changed.
-					reaction.setReversible(getReversible());
-					remove(kineticsPanel);
-					kineticsPanel = initKineticsPanel();
-					LayoutHelper.addComponent(this, (GridBagLayout) this
-							.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
-				} catch (RateLawNotApplicableException exc) {
-					throw new RuntimeException(exc.getMessage(), exc);
-				}
-			} else {
-				klg.setAddAllParametersGlobally(getGlobal());
-				isGlobalSelected = getGlobal();
-			}
-		} else {
-			int i = 0; /*
-						 * , width = eqnPrev.getWidth(), height = eqnPrev
-						 * .getHeight();
-						 */
-			while ((i < rButtonsKineticEquations.length)
-					&& (!rbutton.equals(rButtonsKineticEquations[i])))
-				i++;
-			kineticsPanel.remove(eqnPrev);
-			setPreviewPanel(i);
-			kineticsPanel.add(eqnPrev);
-			if (i == rButtonsKineticEquations.length - 1) {
-				rButtonReversible.setSelected(isReactionReversible);
-				rButtonIrreversible.setSelected(!isReactionReversible);
-				rButtonGlobalParameters.setSelected(isParametersGlobal);
-				rButtonLocalParameters.setSelected(!isParametersGlobal);
-				isExistingRateLawSelected = true;
-			} else {
-				isExistingRateLawSelected = false;
-				rButtonReversible.setSelected(isReversibleSelected);
-				rButtonIrreversible.setSelected(!isReversibleSelected);
-				rButtonGlobalParameters.setSelected(isGlobalSelected);
-				rButtonLocalParameters.setSelected(!isGlobalSelected);
-			}
-			ContainerHandler.setAllEnabled(optionsPanel,
-					i != rButtonsKineticEquations.length - 1);
-		}
-		validate();
-		getTopLevelAncestor().validate();
-		Window w = (Window) getTopLevelAncestor();
-		int width = w.getWidth();
-		w.pack();
-		w.setSize(width, w.getHeight());
-	}
-
-	/**
-	 * Returns the selected kinetic law from the list of possible kinetic laws.
-	 * 
-	 * @return
-	 */
-	public short getSelectedKinetic() {
-		int i = 0;
-		while ((i < rButtonsKineticEquations.length)
-				&& (!rButtonsKineticEquations[i].isSelected()))
-			i++;
-		return possibleTypes[i];
-	}
-
-	/**
-	 * Returns true if the reaction was set to reversible.
-	 * 
-	 * @return
-	 */
-	public boolean getReversible() {
-		return rButtonReversible.isSelected();
-	}
-
-	/**
-	 * Returns true if all parameters are set to be global.
-	 * 
-	 * @return
-	 */
-
-	public boolean getGlobal() {
-		return rButtonGlobalParameters.isSelected();
-	}
-
-	public boolean getExistingRateLawSelected() {
-		return isExistingRateLawSelected;
-	}
-
-	public String getReactionNotes() {
-		return notes;
 	}
 }

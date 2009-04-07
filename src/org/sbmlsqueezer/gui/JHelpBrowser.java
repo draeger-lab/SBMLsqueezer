@@ -65,6 +65,24 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		init();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() instanceof JButton) {
+			String name = ((JButton) e.getSource()).getName();
+			if (name.equals("back") && (browser != null)) {
+				browser.back();
+
+			} else if (name.equals("next") && (browser != null)) {
+				browser.next();
+			}
+		}
+	}
+
 	/**
 	 * Initialize this Window.
 	 * 
@@ -127,23 +145,5 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		}
 		setDefaultLookAndFeelDecorated(true);
 		setLocationByPlatform(true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() instanceof JButton) {
-			String name = ((JButton) e.getSource()).getName();
-			if (name.equals("back") && (browser != null)) {
-				browser.back();
-
-			} else if (name.equals("next") && (browser != null)) {
-				browser.next();
-			}
-		}
 	}
 }

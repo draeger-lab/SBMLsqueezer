@@ -37,20 +37,29 @@ public class StringOperations {
 	protected static final String newLine = System.getProperty("line.separator");
 	
 	/**
-	 * Returns a String who's first letter is now in upper case.
+	 * This method introduces left and right quotation marks where we normally
+	 * have straight quotation marks.
 	 * 
-	 * @param name
+	 * @param text
+	 * @param leftQuotationMark
+	 * @param rightQuotationMark
 	 * @return
 	 */
-	public static String firstLetterUpperCase(String name) {
-		char c = name.charAt(0);
-		if (Character.isLetter(c))
-			c = Character.toUpperCase(c);
-		if (name.length() > 1)
-			name = Character.toString(c) + name.substring(1);
-		else
-			return Character.toString(c);
-		return name;
+	public static String correctQuotationMarks(String text, String leftQuotationMark,
+			String rightQuotationMark) {
+		boolean opening = true;
+		for (int i = 0; i < text.length(); i++)
+			if (text.charAt(i) == '"')
+				if (opening) {
+					text = text.substring(0, i - 1) + leftQuotationMark
+							+ text.substring(i + 1);
+					opening = false;
+				} else {
+					text = text.substring(0, i - 1) + rightQuotationMark
+							+ text.substring(i + 1);
+					opening = true;
+				}
+		return text;
 	}
 
 	/**
@@ -71,46 +80,20 @@ public class StringOperations {
 	}
 
 	/**
-	 * Returns the number as a word. Zero is converted to "no". Only positive
-	 * numbers from 1 to twelve can be converted. All other numbers are just
-	 * converted to a String containing the number.
+	 * Returns a String who's first letter is now in upper case.
 	 * 
-	 * @param number
+	 * @param name
 	 * @return
 	 */
-	public static String getWordForNumber(long number) {
-		if ((number < Integer.MIN_VALUE) || (Integer.MAX_VALUE < number))
-			return Long.toString(number);
-		switch ((int) number) {
-		case 0:
-			return "no";
-		case 1:
-			return "one";
-		case 2:
-			return "two";
-		case 3:
-			return "three";
-		case 4:
-			return "four";
-		case 5:
-			return "five";
-		case 6:
-			return "six";
-		case 7:
-			return "seven";
-		case 8:
-			return "eight";
-		case 9:
-			return "nine";
-		case 10:
-			return "ten";
-		case 11:
-			return "eleven";
-		case 12:
-			return "twelve";
-		default:
-			return Long.toString(number);
-		}
+	public static String firstLetterUpperCase(String name) {
+		char c = name.charAt(0);
+		if (Character.isLetter(c))
+			c = Character.toUpperCase(c);
+		if (name.length() > 1)
+			name = Character.toString(c) + name.substring(1);
+		else
+			return Character.toString(c);
+		return name;
 	}
 
 
@@ -168,6 +151,49 @@ public class StringOperations {
 	}
 
 	/**
+	 * Returns the number as a word. Zero is converted to "no". Only positive
+	 * numbers from 1 to twelve can be converted. All other numbers are just
+	 * converted to a String containing the number.
+	 * 
+	 * @param number
+	 * @return
+	 */
+	public static String getWordForNumber(long number) {
+		if ((number < Integer.MIN_VALUE) || (Integer.MAX_VALUE < number))
+			return Long.toString(number);
+		switch ((int) number) {
+		case 0:
+			return "no";
+		case 1:
+			return "one";
+		case 2:
+			return "two";
+		case 3:
+			return "three";
+		case 4:
+			return "four";
+		case 5:
+			return "five";
+		case 6:
+			return "six";
+		case 7:
+			return "seven";
+		case 8:
+			return "eight";
+		case 9:
+			return "nine";
+		case 10:
+			return "ten";
+		case 11:
+			return "eleven";
+		case 12:
+			return "twelve";
+		default:
+			return Long.toString(number);
+		}
+	}
+
+	/**
 	 * 
 	 * @param c
 	 * @return True if the given character is a vocal and false if it is a
@@ -177,32 +203,6 @@ public class StringOperations {
 		c = Character.toLowerCase(c);
 		return (c == 'a') || (c == 'e') || (c == 'i') || (c == 'o')
 				|| (c == 'u');
-	}
-
-	/**
-	 * This method introduces left and right quotation marks where we normally
-	 * have straight quotation marks.
-	 * 
-	 * @param text
-	 * @param leftQuotationMark
-	 * @param rightQuotationMark
-	 * @return
-	 */
-	public static String correctQuotationMarks(String text, String leftQuotationMark,
-			String rightQuotationMark) {
-		boolean opening = true;
-		for (int i = 0; i < text.length(); i++)
-			if (text.charAt(i) == '"')
-				if (opening) {
-					text = text.substring(0, i - 1) + leftQuotationMark
-							+ text.substring(i + 1);
-					opening = false;
-				} else {
-					text = text.substring(0, i - 1) + rightQuotationMark
-							+ text.substring(i + 1);
-					opening = true;
-				}
-		return text;
 	}
 
 }

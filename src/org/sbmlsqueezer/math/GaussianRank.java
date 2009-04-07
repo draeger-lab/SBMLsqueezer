@@ -40,48 +40,13 @@ public class GaussianRank {
     this.columnRank = computeColumnRank();
   }
 
-  private void swapRows(int i, int j) {
-    for (int k = 0; k < columnNum; ++k) { // vertausche Zeilen i und j.
-      double temp = N[i][k];
-      N[i][k] = N[j][k];
-      N[j][k] = temp;
-    }
-  }
-
-  private void rowShapeTriangular() {
-    int i = 0, j = 0;
-    zst_rek(i, j);
-  }
-
-  private void zst_rek(int i, int j) {
-    if (i == lineNum - 1 || j >= columnNum) // Abbruchbedingung
-      return;
-    int piv = searchPivot(i, j); // suche Pivotelement unterhalb des Element
-                                  // i,j
-    if (N[piv][j] == 0) { // kein Pivotelement != 0 gefunden
-      zst_rek(i, j + 1); // gleiche Zeile, naechste Spalte
-      return;
-    }
-    swapRows(i, piv); // vertausche Zeile i mit Zeile piv
-    for (int ii = i + 1; ii < lineNum; ++ii) {
-      double d = (double) -N[ii][j] / N[i][j];
-      add(d, i, ii);
-    }// mache j. Spalte unter i.ter Zeile zu 0
-    zst_rek(i + 1, j + 1); // naechste Zeile, naechste Spalte
-    return;
-  }
-
-  private void add(double la, int i, int j) {
-    for (int k = 0; k < columnNum; ++k) { // la-faches der Zeile i zur Zeile j.
-      N[j][k] += N[i][k] * la;
-    }
-  }
-
-  private int searchPivot(int i, int j) {
-    int piv = i;
-    for (int k = i; k < lineNum; k++)
-      if ((N[k][j]) > N[piv][j]) piv = k;
-    return piv;
+  /**
+   * Returns the column rank of the given matrix.
+   *
+   * @return
+   */
+  public int getColumnRank() {
+    return columnRank;
   }
 
   /**
@@ -92,6 +57,12 @@ public class GaussianRank {
   public boolean hasFullRank() {
     if (this.columnRank == this.columnNum) return true;
     return false;
+  }
+
+  private void add(double la, int i, int j) {
+    for (int k = 0; k < columnNum; ++k) { // la-faches der Zeile i zur Zeile j.
+      N[j][k] += N[i][k] * la;
+    }
   }
 
   /**
@@ -110,13 +81,42 @@ public class GaussianRank {
     return c;
   }
 
-  /**
-   * Returns the column rank of the given matrix.
-   *
-   * @return
-   */
-  public int getColumnRank() {
-    return columnRank;
+  private void rowShapeTriangular() {
+    int i = 0, j = 0;
+    zst_rek(i, j);
+  }
+
+  private int searchPivot(int i, int j) {
+    int piv = i;
+    for (int k = i; k < lineNum; k++)
+      if ((N[k][j]) > N[piv][j]) piv = k;
+    return piv;
+  }
+
+  private void swapRows(int i, int j) {
+    for (int k = 0; k < columnNum; ++k) { // vertausche Zeilen i und j.
+      double temp = N[i][k];
+      N[i][k] = N[j][k];
+      N[j][k] = temp;
+    }
+  }
+
+  private void zst_rek(int i, int j) {
+    if (i == lineNum - 1 || j >= columnNum) // Abbruchbedingung
+      return;
+    int piv = searchPivot(i, j); // suche Pivotelement unterhalb des Element
+                                  // i,j
+    if (N[piv][j] == 0) { // kein Pivotelement != 0 gefunden
+      zst_rek(i, j + 1); // gleiche Zeile, naechste Spalte
+      return;
+    }
+    swapRows(i, piv); // vertausche Zeile i mit Zeile piv
+    for (int ii = i + 1; ii < lineNum; ++ii) {
+      double d = (double) -N[ii][j] / N[i][j];
+      add(d, i, ii);
+    }// mache j. Spalte unter i.ter Zeile zu 0
+    zst_rek(i + 1, j + 1); // naechste Zeile, naechste Spalte
+    return;
   }
 
 }

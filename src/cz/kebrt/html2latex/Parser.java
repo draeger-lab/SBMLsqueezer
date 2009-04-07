@@ -28,6 +28,23 @@ public class Parser {
 	/** Stack containing all opened and still non-closed elements. */
 	private Stack<ElementStart> _openElements = new Stack<ElementStart>();
 
+	public void parse(BufferedReader br, ParserHandler handler)
+			throws FatalErrorException {
+		_handler = handler;
+		_file = null;
+		_fr = null;
+		_reader = br;
+		try {
+			doParsing();
+		} catch (IOException e) {
+			_handler.endDocument();
+			destroy();
+			throw new FatalErrorException("InputStream error.");
+		}
+		_handler.endDocument();
+		destroy();
+	}
+
 	/**
 	 * Parses the HTML file and converts it using the particular handler. The
 	 * file is processed char by char and a couple of events are sent to the
@@ -64,37 +81,42 @@ public class Parser {
 		destroy();
 	}
 
-	public void parse(BufferedReader br, ParserHandler handler)
-			throws FatalErrorException {
-		_handler = handler;
-		_file = null;
-		_fr = null;
-		_reader = br;
-		try {
-			doParsing();
-		} catch (IOException e) {
-			_handler.endDocument();
-			destroy();
-			throw new FatalErrorException("InputStream error.");
-		}
-		_handler.endDocument();
-		destroy();
-	}
-
 	/**
-	 * Opens the input file specified in the
-	 * {@link Parser#parse(File, ParserHandler) parse()} method.
+	 * Checks whether the document is well-formed. If not it sends
+	 * <code>endElement</code> events for the elements which were opened but
+	 * not correctly closed.
 	 *
-	 * @throws FatalErrorException
-	 *             when input file can't be opened
+	 * @param element
+	 *            the latest ending element which was reached
 	 */
-	private void init() throws FatalErrorException {
-		try {
-			_fr = new FileReader(_file);
-			_reader = new BufferedReader(_fr);
-		} catch (IOException e) {
-			throw new FatalErrorException("Can't open the input file: "
-					+ _file.getName());
+	private void checkValidity(ElementEnd element) {
+		// no start element -> ignore close element
+		if (_openElements.empty())
+			return;
+
+		// document well-formed
+		if (_openElements.peek().getElementName().equals(
+				element.getElementName())) {
+
+			_handler.endElement(element, _openElements.pop());
+			return;
+		}
+
+		// document non-well-formed
+		// try to find the correspoding start element of the end element in the
+		// stack
+		// and close all non-closed elements; if not found ignore it
+		for (int i = _openElements.size() - 1; i >= 0; --i) {
+			if (_openElements.get(i).getElementName().equals(
+					element.getElementName())) {
+				for (int j = _openElements.size() - 1; j >= i; --j) {
+					ElementStart es = _openElements.get(i);
+					ElementEnd e = new ElementEnd(_openElements.pop()
+							.getElementName());
+					_handler.endElement(e, es);
+				}
+				return;
+			}
 		}
 	}
 
@@ -146,55 +168,19 @@ public class Parser {
 	}
 
 	/**
-	 * Reads elements (tags). Sends <code>comment</code>,
-	 * <code>startElement</code> and <code>endElement</code> events to the
-	 * handler.
+	 * Opens the input file specified in the
+	 * {@link Parser#parse(File, ParserHandler) parse()} method.
 	 *
-	 * @throws IOException
-	 *             when input error occurs
+	 * @throws FatalErrorException
+	 *             when input file can't be opened
 	 */
-	private void readElement() throws IOException {
-		int c;
-		char ch;
-		String str = "";
-
-		while (_reader.ready() && ((c = _reader.read()) != -1)) {
-			ch = (char) c;
-			// i'm at the end of the element
-			if (ch == '>') {
-				// is it a comment
-				if (str.startsWith("!--")) {
-					if (str.endsWith("--")) {
-						// trim the comment's start and end tags
-						str = str.substring(4, str.length());
-						str = str.substring(0, str.length() - 2);
-						_handler.comment(str);
-						return;
-					}
-					str += ch;
-					continue;
-				}
-
-				// parse the element (get the attributes)
-				MyElement element = parseElement(str);
-				if (element instanceof ElementStart) {
-					// non-empty element
-					if (!str.endsWith("/"))
-						_openElements.push((ElementStart) element);
-					_handler.startElement((ElementStart) element);
-					// empty element (ie. "br") -> send also endElement event
-					if (str.endsWith("/")) {
-						_handler.endElement(new ElementEnd(element
-								.getElementName()), (ElementStart) element);
-					}
-				} else if (element instanceof ElementEnd) {
-					// check validity of the document
-					checkValidity((ElementEnd) element);
-				}
-				return;
-			}
-
-			str += ch;
+	private void init() throws FatalErrorException {
+		try {
+			_fr = new FileReader(_file);
+			_reader = new BufferedReader(_fr);
+		} catch (IOException e) {
+			throw new FatalErrorException("Can't open the input file: "
+					+ _file.getName());
 		}
 	}
 
@@ -274,41 +260,55 @@ public class Parser {
 	}
 
 	/**
-	 * Checks whether the document is well-formed. If not it sends
-	 * <code>endElement</code> events for the elements which were opened but
-	 * not correctly closed.
+	 * Reads elements (tags). Sends <code>comment</code>,
+	 * <code>startElement</code> and <code>endElement</code> events to the
+	 * handler.
 	 *
-	 * @param element
-	 *            the latest ending element which was reached
+	 * @throws IOException
+	 *             when input error occurs
 	 */
-	private void checkValidity(ElementEnd element) {
-		// no start element -> ignore close element
-		if (_openElements.empty())
-			return;
+	private void readElement() throws IOException {
+		int c;
+		char ch;
+		String str = "";
 
-		// document well-formed
-		if (_openElements.peek().getElementName().equals(
-				element.getElementName())) {
+		while (_reader.ready() && ((c = _reader.read()) != -1)) {
+			ch = (char) c;
+			// i'm at the end of the element
+			if (ch == '>') {
+				// is it a comment
+				if (str.startsWith("!--")) {
+					if (str.endsWith("--")) {
+						// trim the comment's start and end tags
+						str = str.substring(4, str.length());
+						str = str.substring(0, str.length() - 2);
+						_handler.comment(str);
+						return;
+					}
+					str += ch;
+					continue;
+				}
 
-			_handler.endElement(element, _openElements.pop());
-			return;
-		}
-
-		// document non-well-formed
-		// try to find the correspoding start element of the end element in the
-		// stack
-		// and close all non-closed elements; if not found ignore it
-		for (int i = _openElements.size() - 1; i >= 0; --i) {
-			if (_openElements.get(i).getElementName().equals(
-					element.getElementName())) {
-				for (int j = _openElements.size() - 1; j >= i; --j) {
-					ElementStart es = _openElements.get(i);
-					ElementEnd e = new ElementEnd(_openElements.pop()
-							.getElementName());
-					_handler.endElement(e, es);
+				// parse the element (get the attributes)
+				MyElement element = parseElement(str);
+				if (element instanceof ElementStart) {
+					// non-empty element
+					if (!str.endsWith("/"))
+						_openElements.push((ElementStart) element);
+					_handler.startElement((ElementStart) element);
+					// empty element (ie. "br") -> send also endElement event
+					if (str.endsWith("/")) {
+						_handler.endElement(new ElementEnd(element
+								.getElementName()), (ElementStart) element);
+					}
+				} else if (element instanceof ElementEnd) {
+					// check validity of the document
+					checkValidity((ElementEnd) element);
 				}
 				return;
 			}
+
+			str += ch;
 		}
 	}
 
