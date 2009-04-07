@@ -23,6 +23,17 @@ public class OrderedMechanism extends BasicKineticLaw {
 	 * @param parentReaction
 	 * @param model
 	 * @param reversibility
+	 * @throws RateLawNotApplicableException
+	 */
+	public OrderedMechanism(PluginReaction parentReaction, PluginModel model,
+			boolean reversibility) throws RateLawNotApplicableException {
+		super(parentReaction, model);
+	}
+
+	/**
+	 * @param parentReaction
+	 * @param model
+	 * @param reversibility
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 */
@@ -32,15 +43,33 @@ public class OrderedMechanism extends BasicKineticLaw {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
-	 * @throws RateLawNotApplicableException
-	 */
-	public OrderedMechanism(PluginReaction parentReaction, PluginModel model,
-			boolean reversibility) throws RateLawNotApplicableException {
-		super(parentReaction, model);
+	public static boolean isApplicable(PluginReaction reaction) {
+		// TODO
+		return true;
+	}
+
+	@Override
+	public String getName() {
+		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
+		double stoichiometryRight = 0;
+		for (int i = 0; i < getParentReaction().getNumProducts(); i++)
+			stoichiometryRight += getParentReaction().getProduct(i)
+					.getStoichiometry();
+		String name = "compulsory-order ternary-complex mechanism";
+		if ((getParentReaction().getNumProducts() == 2)
+				|| (stoichiometryRight == 2))
+			name += " with two products";
+		else if ((getParentReaction().getNumProducts() == 1)
+				|| (stoichiometryRight == 1))
+			name += " with one product";
+		if (getParentReaction().getReversible())
+			return "reversible " + name;
+		return "irreversible " + name;
+	}
+
+	@Override
+	public String getSBO() {
+		return "none";
 	}
 
 	@Override
@@ -530,35 +559,6 @@ public class OrderedMechanism extends BasicKineticLaw {
 		if (enzymeNum > 1)
 			formelTeX += "\\end{multline}";
 		return formelTxt;
-	}
-
-	@Override
-	public String getName() {
-		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
-		double stoichiometryRight = 0;
-		for (int i = 0; i < getParentReaction().getNumProducts(); i++)
-			stoichiometryRight += getParentReaction().getProduct(i)
-					.getStoichiometry();
-		String name = "compulsory-order ternary-complex mechanism";
-		if ((getParentReaction().getNumProducts() == 2)
-				|| (stoichiometryRight == 2))
-			name += " with two products";
-		else if ((getParentReaction().getNumProducts() == 1)
-				|| (stoichiometryRight == 1))
-			name += " with one product";
-		if (getParentReaction().getReversible())
-			return "reversible " + name;
-		return "irreversible " + name;
-	}
-
-	public static boolean isApplicable(PluginReaction reaction) {
-		// TODO
-		return true;
-	}
-
-	@Override
-	public String getSBO() {
-		return "none";
 	}
 
 }

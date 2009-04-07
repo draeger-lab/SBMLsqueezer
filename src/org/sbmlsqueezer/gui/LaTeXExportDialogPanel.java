@@ -117,44 +117,6 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 		// ContainerHandler.setAllBackground(this, Color.WHITE);
 	}
 
-	public boolean isIDsInTWFont() {
-		return jCheckBoxIDsInTWFont.isSelected();
-	}
-
-	public boolean isLandscape() {
-		return jCheckBoxLandscape.isSelected();
-	}
-
-	/*
-	 * public boolean isImplicitUnit() { return
-	 * jCheckBoxImplicitUnit.isSelected(); }
-	 */
-
-	public boolean isTitlePage() {
-		return jCheckBoxTitlePage.isSelected();
-	}
-
-	public boolean isNameInEquations() {
-		return jCheckBoxNameInEquations.isSelected();
-	}
-
-	/*
-	 * public boolean isNumberEquations () { return
-	 * jCheckBoxNumberEquations.isSelected(); }
-	 */
-
-	public String getPaperSize() {
-		return jComboBoxPaperSize.getSelectedItem().toString();
-	}
-
-	public short getFontSize() {
-		return Short.valueOf(jComboBoxFontSize.getSelectedItem().toString());
-	}
-
-	public String getTeXFile() {
-		return fileField.getText();
-	}
-
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			JFileChooser chooser = new JFileChooser();
@@ -164,5 +126,43 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 				fileField.setText(path);
 			}
 		}
+	}
+
+	public short getFontSize() {
+		return Short.valueOf(jComboBoxFontSize.getSelectedItem().toString());
+	}
+
+	/*
+	 * public boolean isImplicitUnit() { return
+	 * jCheckBoxImplicitUnit.isSelected(); }
+	 */
+
+	public String getPaperSize() {
+		return jComboBoxPaperSize.getSelectedItem().toString();
+	}
+
+	public String getTeXFile() {
+		return fileField.getText();
+	}
+
+	/*
+	 * public boolean isNumberEquations () { return
+	 * jCheckBoxNumberEquations.isSelected(); }
+	 */
+
+	public boolean isIDsInTWFont() {
+		return jCheckBoxIDsInTWFont.isSelected();
+	}
+
+	public boolean isLandscape() {
+		return jCheckBoxLandscape.isSelected();
+	}
+
+	public boolean isNameInEquations() {
+		return jCheckBoxNameInEquations.isSelected();
+	}
+
+	public boolean isTitlePage() {
+		return jCheckBoxTitlePage.isSelected();
 	}
 }

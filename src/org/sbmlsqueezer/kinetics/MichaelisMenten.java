@@ -31,6 +31,16 @@ public class MichaelisMenten extends BasicKineticLaw {
 	/**
 	 * @param parentReaction
 	 * @param model
+	 * @throws RateLawNotApplicableException
+	 */
+	public MichaelisMenten(PluginReaction parentReaction, PluginModel model)
+			throws RateLawNotApplicableException {
+		super(parentReaction, model);
+	}
+
+	/**
+	 * @param parentReaction
+	 * @param model
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 */
@@ -40,14 +50,95 @@ public class MichaelisMenten extends BasicKineticLaw {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @throws RateLawNotApplicableException
-	 */
-	public MichaelisMenten(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException {
-		super(parentReaction, model);
+	public static boolean isApplicable(PluginReaction reaction) {
+		// TODO
+		return true;
+	}
+
+	@Override
+	public String getName() {
+		switch (numOfEnzymes) {
+		case 0: // no enzyme, irreversible
+			if (!getParentReaction().getReversible() && (numOfActivators == 0)
+					&& (numOfInhibitors == 0))
+				return "normalised kinetics of unireactant enzymes"; // 0000199
+			else if ((numOfActivators == 0) && (numOfInhibitors == 0))
+				return "kinetics of non-modulated unireactant enzymes"; // 0000326
+			break;
+		case 1: // one enzmye
+			if (getParentReaction().getReversible()) {
+				if ((numOfActivators == 0) && (numOfInhibitors == 0))
+					return "kinetics of non-modulated unireactant enzymes"; // 0000199
+			} else if ((numOfActivators == 0) && (numOfInhibitors == 0)) // irreversible
+				// equivalents: Briggs-Haldane equation or Van
+				// Slyke-Cullen
+				// equation
+				return "Henri-Michaelis Menten equation"; // 0000029
+			break;
+		}
+		if (!getParentReaction().getReversible())
+			switch (numOfInhibitors) {
+			case 1:
+				return "simple mixed-type inhibition of irreversible unireactant enzymes"; // 0000265
+			case 2:
+				return "mixed-type inhibition of irreversible unireactant enzymes by two inhibitors"; // 0000276
+			default:
+				return "mixed-type inhibition of irreversible enzymes by mutually exclusive inhibitors"; // 0000275
+			}
+		return "kinetics of unireactant enzymes"; // 0000269
+	}
+
+	@Override
+	public String getSBO() {
+		String name = getName(), sbo = "none";
+		if (name.equalsIgnoreCase("normalised kinetics of unireactant enzymes"))
+			sbo = "0000199";
+		else if (name
+				.equalsIgnoreCase("kinetics of non-modulated unireactant enzymes"))
+			sbo = "0000326";
+		else if (name.equalsIgnoreCase("Briggs-Haldane equation"))
+			sbo = "0000031";
+		else if (name
+				.equalsIgnoreCase("kinetics of irreversible non-modulated unireactant enzymes"))
+			sbo = "0000028";
+		else if (name
+				.equalsIgnoreCase("simple mixed-type inhibition of irreversible unireactant enzymes"))
+			sbo = "0000265";
+		else if (name.equalsIgnoreCase("kinetics of unireactant enzymes"))
+			sbo = "0000269";
+		else if (name.equalsIgnoreCase("Henri-Michaelis Menten equation"))
+			sbo = "0000029";
+		else if (name.equalsIgnoreCase("Van Slyke-Cullen equation"))
+			sbo = "0000030";
+		else if (name
+				.equalsIgnoreCase("simple uncompetitive inhibition of irreversible unireactant enzymes"))
+			sbo = "0000262";
+		else if (name
+				.equalsIgnoreCase("mixed-type inhibition of irreversible enzymes by mutually exclusive inhibitors"))
+			sbo = "0000275";
+		else if (name
+				.equalsIgnoreCase("simple non-competitive inhibition of unireactant enzymes"))
+			sbo = "0000266";
+		else if (name
+				.equalsIgnoreCase("mixed-type inhibition of irreversible unireactant enzymes by two inhibitors"))
+			sbo = "0000276";
+		else if (name
+				.equalsIgnoreCase("mixed-type inhibition of unireactactant enzymes by two inhibitors"))
+			sbo = "0000277";
+		else if (name
+				.equalsIgnoreCase("simple competitive inhibition of irreversible unireactant enzymes by two non-exclusive inhibitors"))
+			sbo = "0000274";
+		else if (name
+				.equalsIgnoreCase("competitive inhibition of irreversible unireactant enzymes by two exclusive inhibitors"))
+			sbo = "0000271";
+		else if (name
+				.equalsIgnoreCase("competitive inhibition of irreversible unireactant enzymes by exclusive inhibitors"))
+			sbo = "0000270";
+		else if (name
+				.equalsIgnoreCase("simple competitive inhibition of irreversible unireactant enzymes by one inhibitor"))
+			sbo = "0000260";
+
+		return sbo;
 	}
 
 	@Override
@@ -566,96 +657,5 @@ public class MichaelisMenten extends BasicKineticLaw {
 		 */
 
 		return formelTxt;
-	}
-
-	@Override
-	public String getName() {
-		switch (numOfEnzymes) {
-		case 0: // no enzyme, irreversible
-			if (!getParentReaction().getReversible() && (numOfActivators == 0)
-					&& (numOfInhibitors == 0))
-				return "normalised kinetics of unireactant enzymes"; // 0000199
-			else if ((numOfActivators == 0) && (numOfInhibitors == 0))
-				return "kinetics of non-modulated unireactant enzymes"; // 0000326
-			break;
-		case 1: // one enzmye
-			if (getParentReaction().getReversible()) {
-				if ((numOfActivators == 0) && (numOfInhibitors == 0))
-					return "kinetics of non-modulated unireactant enzymes"; // 0000199
-			} else if ((numOfActivators == 0) && (numOfInhibitors == 0)) // irreversible
-				// equivalents: Briggs-Haldane equation or Van
-				// Slyke-Cullen
-				// equation
-				return "Henri-Michaelis Menten equation"; // 0000029
-			break;
-		}
-		if (!getParentReaction().getReversible())
-			switch (numOfInhibitors) {
-			case 1:
-				return "simple mixed-type inhibition of irreversible unireactant enzymes"; // 0000265
-			case 2:
-				return "mixed-type inhibition of irreversible unireactant enzymes by two inhibitors"; // 0000276
-			default:
-				return "mixed-type inhibition of irreversible enzymes by mutually exclusive inhibitors"; // 0000275
-			}
-		return "kinetics of unireactant enzymes"; // 0000269
-	}
-
-	public static boolean isApplicable(PluginReaction reaction) {
-		// TODO
-		return true;
-	}
-
-	@Override
-	public String getSBO() {
-		String name = getName(), sbo = "none";
-		if (name.equalsIgnoreCase("normalised kinetics of unireactant enzymes"))
-			sbo = "0000199";
-		else if (name
-				.equalsIgnoreCase("kinetics of non-modulated unireactant enzymes"))
-			sbo = "0000326";
-		else if (name.equalsIgnoreCase("Briggs-Haldane equation"))
-			sbo = "0000031";
-		else if (name
-				.equalsIgnoreCase("kinetics of irreversible non-modulated unireactant enzymes"))
-			sbo = "0000028";
-		else if (name
-				.equalsIgnoreCase("simple mixed-type inhibition of irreversible unireactant enzymes"))
-			sbo = "0000265";
-		else if (name.equalsIgnoreCase("kinetics of unireactant enzymes"))
-			sbo = "0000269";
-		else if (name.equalsIgnoreCase("Henri-Michaelis Menten equation"))
-			sbo = "0000029";
-		else if (name.equalsIgnoreCase("Van Slyke-Cullen equation"))
-			sbo = "0000030";
-		else if (name
-				.equalsIgnoreCase("simple uncompetitive inhibition of irreversible unireactant enzymes"))
-			sbo = "0000262";
-		else if (name
-				.equalsIgnoreCase("mixed-type inhibition of irreversible enzymes by mutually exclusive inhibitors"))
-			sbo = "0000275";
-		else if (name
-				.equalsIgnoreCase("simple non-competitive inhibition of unireactant enzymes"))
-			sbo = "0000266";
-		else if (name
-				.equalsIgnoreCase("mixed-type inhibition of irreversible unireactant enzymes by two inhibitors"))
-			sbo = "0000276";
-		else if (name
-				.equalsIgnoreCase("mixed-type inhibition of unireactactant enzymes by two inhibitors"))
-			sbo = "0000277";
-		else if (name
-				.equalsIgnoreCase("simple competitive inhibition of irreversible unireactant enzymes by two non-exclusive inhibitors"))
-			sbo = "0000274";
-		else if (name
-				.equalsIgnoreCase("competitive inhibition of irreversible unireactant enzymes by two exclusive inhibitors"))
-			sbo = "0000271";
-		else if (name
-				.equalsIgnoreCase("competitive inhibition of irreversible unireactant enzymes by exclusive inhibitors"))
-			sbo = "0000270";
-		else if (name
-				.equalsIgnoreCase("simple competitive inhibition of irreversible unireactant enzymes by one inhibitor"))
-			sbo = "0000260";
-
-		return sbo;
 	}
 }

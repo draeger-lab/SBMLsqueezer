@@ -90,28 +90,54 @@ public class ODE {
     // setODE();
   }
 
-  void setODEreac(PluginSpeciesReference specref, int reacnum) {
-    String ode = speciesAndODE.get(specref.getSpecies());
-    String odeTex = specieAndODETeX.get(specref.getSpecies());
-    String odeTexId = specieAndODETeXId.get(specref.getSpecies());
-    ode = ode + "(" + reactionNumAndKineticName[reacnum] + ") ";
-    odeTex = odeTex + "(" + reactionNumAndKineticTeXName[reacnum] + ") ";
-    odeTexId = odeTexId + "(" + reactionNumAndKineticTeX[reacnum] + ") ";
-    speciesAndODE.put(specref.getSpecies(), ode);
-    specieAndODETeX.put(specref.getSpecies(), odeTex);
-    specieAndODETeXId.put(specref.getSpecies(), odeTexId);
+  public void correctness() {
+    for (int speciesNum = 0; speciesNum < model.getNumSpecies(); speciesNum++) {
+      String kinetic;
+      String kineticTeX;
+      kinetic = speciesAndSimpleODE.get(numAndSpecies.get(speciesNum));
+      kineticTeX = speciesAndSimpleODETeX.get(numAndSpecies.get(speciesNum));
+      if ((kinetic == null) || (kineticTeX == null)) {
+        kinetic = "0";
+        kineticTeX = "0";
+        speciesAndSimpleODE.put(numAndSpecies.get(speciesNum), kinetic);
+        speciesAndSimpleODETeX.put(numAndSpecies.get(speciesNum), kineticTeX);
+      } else if ((kinetic.length() == 0) || (kineticTeX.length() == 0)) {
+        kinetic = "0";
+        kineticTeX = "0";
+        speciesAndSimpleODE.put(numAndSpecies.get(speciesNum), kinetic);
+        speciesAndSimpleODETeX.put(numAndSpecies.get(speciesNum), kineticTeX);
+      } else if (kinetic.charAt(0) == '+') {
+        speciesAndSimpleODE.put(numAndSpecies.get(speciesNum), kinetic
+            .substring(1));
+        speciesAndSimpleODETeX.put(numAndSpecies.get(speciesNum), kineticTeX
+            .substring(1));
+      }
+    }
   }
 
-  void setODEpro(PluginSpeciesReference specref, int reacnum) {
-    String ode = speciesAndODE.get(specref.getSpecies());
-    String odeTex = specieAndODETeX.get(specref.getSpecies());
-    String odeTexId = specieAndODETeXId.get(specref.getSpecies());
-    ode = ode + "(" + reactionNumAndKineticName[reacnum] + ") ";
-    odeTex = odeTex + "(" + reactionNumAndKineticTeXName[reacnum] + ") ";
-    odeTexId = odeTexId + "(" + reactionNumAndKineticTeX[reacnum] + ") ";
-    speciesAndODE.put(specref.getSpecies(), ode);
-    specieAndODETeX.put(specref.getSpecies(), odeTex);
-    specieAndODETeXId.put(specref.getSpecies(), odeTexId);
+  // get ODE
+  public HashMap<String, String> getAllODEs() {
+    return speciesAndODE;
+  }
+
+  public HashMap<String, String> getAllODETeX() {
+    return specieAndODETeX;
+  }
+
+  public String[] getKineticLawNames() {
+    return reactionNumAndKineticName;
+  }
+
+  public String[] getReactionNumAndKinetictexId() {
+    return reactionNumAndKineticTeX;
+  }
+
+  public HashMap<String, String> getSpecieAndSimpleODE() {
+    return speciesAndSimpleODE;
+  }
+
+  public HashMap<String, String> getSpeciesAndSimpleODETeX() {
+    return speciesAndSimpleODETeX;
   }
 
   public void idToName() {
@@ -134,6 +160,23 @@ public class ODE {
             reactionNumAndKineticTeXName[reactionNum] = kineticLawPartTeXName;
           }
         }
+      }
+    }
+  }
+
+  /**
+   * Erzeugt TeX f&uuml;r Kinetiken die schon vorher in SBML standen
+   */
+  public void setTeX() {
+    if (!reacNumOfXexistKinetics.isEmpty()) {
+      for (int i = 0; i < reacNumOfXexistKinetics.size(); i++) {
+        PluginListOf listOfReactions = model.getListOfReactions();
+        PluginReaction reaction = (PluginReaction) listOfReactions
+            .get(reacNumOfXexistKinetics.get(i));
+        String kinetic = reaction.getKineticLaw().getFormula();
+        String2TeX stringToTex = new String2TeX();
+        // TODO
+        reactionNumAndKineticTeX[i] = stringToTex.getEquation(kinetic);
       }
     }
   }
@@ -193,71 +236,28 @@ public class ODE {
     }
   }
 
-  public void correctness() {
-    for (int speciesNum = 0; speciesNum < model.getNumSpecies(); speciesNum++) {
-      String kinetic;
-      String kineticTeX;
-      kinetic = speciesAndSimpleODE.get(numAndSpecies.get(speciesNum));
-      kineticTeX = speciesAndSimpleODETeX.get(numAndSpecies.get(speciesNum));
-      if ((kinetic == null) || (kineticTeX == null)) {
-        kinetic = "0";
-        kineticTeX = "0";
-        speciesAndSimpleODE.put(numAndSpecies.get(speciesNum), kinetic);
-        speciesAndSimpleODETeX.put(numAndSpecies.get(speciesNum), kineticTeX);
-      } else if ((kinetic.length() == 0) || (kineticTeX.length() == 0)) {
-        kinetic = "0";
-        kineticTeX = "0";
-        speciesAndSimpleODE.put(numAndSpecies.get(speciesNum), kinetic);
-        speciesAndSimpleODETeX.put(numAndSpecies.get(speciesNum), kineticTeX);
-      } else if (kinetic.charAt(0) == '+') {
-        speciesAndSimpleODE.put(numAndSpecies.get(speciesNum), kinetic
-            .substring(1));
-        speciesAndSimpleODETeX.put(numAndSpecies.get(speciesNum), kineticTeX
-            .substring(1));
-      }
-    }
+  void setODEpro(PluginSpeciesReference specref, int reacnum) {
+    String ode = speciesAndODE.get(specref.getSpecies());
+    String odeTex = specieAndODETeX.get(specref.getSpecies());
+    String odeTexId = specieAndODETeXId.get(specref.getSpecies());
+    ode = ode + "(" + reactionNumAndKineticName[reacnum] + ") ";
+    odeTex = odeTex + "(" + reactionNumAndKineticTeXName[reacnum] + ") ";
+    odeTexId = odeTexId + "(" + reactionNumAndKineticTeX[reacnum] + ") ";
+    speciesAndODE.put(specref.getSpecies(), ode);
+    specieAndODETeX.put(specref.getSpecies(), odeTex);
+    specieAndODETeXId.put(specref.getSpecies(), odeTexId);
   }
 
-  /**
-   * Erzeugt TeX f&uuml;r Kinetiken die schon vorher in SBML standen
-   */
-  public void setTeX() {
-    if (!reacNumOfXexistKinetics.isEmpty()) {
-      for (int i = 0; i < reacNumOfXexistKinetics.size(); i++) {
-        PluginListOf listOfReactions = model.getListOfReactions();
-        PluginReaction reaction = (PluginReaction) listOfReactions
-            .get(reacNumOfXexistKinetics.get(i));
-        String kinetic = reaction.getKineticLaw().getFormula();
-        String2TeX stringToTex = new String2TeX();
-        // TODO
-        reactionNumAndKineticTeX[i] = stringToTex.getEquation(kinetic);
-      }
-    }
-  }
-
-  // get ODE
-  public HashMap<String, String> getAllODEs() {
-    return speciesAndODE;
-  }
-
-  public HashMap<String, String> getAllODETeX() {
-    return specieAndODETeX;
-  }
-
-  public HashMap<String, String> getSpecieAndSimpleODE() {
-    return speciesAndSimpleODE;
-  }
-
-  public HashMap<String, String> getSpeciesAndSimpleODETeX() {
-    return speciesAndSimpleODETeX;
-  }
-
-  public String[] getReactionNumAndKinetictexId() {
-    return reactionNumAndKineticTeX;
-  }
-
-  public String[] getKineticLawNames() {
-    return reactionNumAndKineticName;
+  void setODEreac(PluginSpeciesReference specref, int reacnum) {
+    String ode = speciesAndODE.get(specref.getSpecies());
+    String odeTex = specieAndODETeX.get(specref.getSpecies());
+    String odeTexId = specieAndODETeXId.get(specref.getSpecies());
+    ode = ode + "(" + reactionNumAndKineticName[reacnum] + ") ";
+    odeTex = odeTex + "(" + reactionNumAndKineticTeXName[reacnum] + ") ";
+    odeTexId = odeTexId + "(" + reactionNumAndKineticTeX[reacnum] + ") ";
+    speciesAndODE.put(specref.getSpecies(), ode);
+    specieAndODETeX.put(specref.getSpecies(), odeTex);
+    specieAndODETeXId.put(specref.getSpecies(), odeTexId);
   }
 
 }

@@ -51,28 +51,6 @@ public class String2TeX {
 		return equation;
 	}
 
-	private String hoch(String equation) {
-		String sub;
-		int c = equation.indexOf("^(");
-		sub = equation.substring(0, c + 1); // vorstring mit ^
-		// System.out.println("dd: " + sub);
-		sub = sub + "{";
-		int count = 0;
-		for (int j = (c + 1); j < equation.length(); j++) {
-			if (equation.charAt(j) == ')') {
-				if (count == 0) {
-					sub = sub + equation.substring(c + 2, j) + "}";
-					equation = sub + equation.substring(j + 1);
-					break;
-				} else
-					count = count - 1;
-			}
-			if (equation.charAt(j) == ')')
-				count = count + 1;
-		}
-		return equation;
-	}
-
 	private String bruch(String equation) {
 		String sub1;
 		String sub2;
@@ -197,6 +175,28 @@ public class String2TeX {
 
 		equation = sub3 + sub4;
 		// System.out.println(equation);
+		return equation;
+	}
+
+	private String hoch(String equation) {
+		String sub;
+		int c = equation.indexOf("^(");
+		sub = equation.substring(0, c + 1); // vorstring mit ^
+		// System.out.println("dd: " + sub);
+		sub = sub + "{";
+		int count = 0;
+		for (int j = (c + 1); j < equation.length(); j++) {
+			if (equation.charAt(j) == ')') {
+				if (count == 0) {
+					sub = sub + equation.substring(c + 2, j) + "}";
+					equation = sub + equation.substring(j + 1);
+					break;
+				} else
+					count = count - 1;
+			}
+			if (equation.charAt(j) == ')')
+				count = count + 1;
+		}
 		return equation;
 	}
 

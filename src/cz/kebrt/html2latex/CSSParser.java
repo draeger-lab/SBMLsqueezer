@@ -49,21 +49,6 @@ public class CSSParser {
 
 
     /**
-     *  Opens the file specified in the
-     *  {@link CSSParser#parse(File, ICSSParserHandler) parse()} method.
-     *  @throws ErrorException when the file can't be opened
-    */
-    private void init() throws ErrorException {
-        try {
-            _fr = new FileReader(_file);
-            _reader = new BufferedReader(_fr);
-        } catch (IOException e) {
-            throw new ErrorException("Can't open CSS file " + _file.getName());
-        }
-    }
-
-
-    /**
      *  Closes the file specified in the
      *  {@link CSSParser#parse(File, ICSSParserHandler) parse()} method.
      *  @throws ErrorException when the file can't be closed
@@ -120,6 +105,21 @@ public class CSSParser {
                     str.delete(0, str.length());
                 }
             }
+        }
+    }
+
+
+    /**
+     *  Opens the file specified in the
+     *  {@link CSSParser#parse(File, ICSSParserHandler) parse()} method.
+     *  @throws ErrorException when the file can't be opened
+    */
+    private void init() throws ErrorException {
+        try {
+            _fr = new FileReader(_file);
+            _reader = new BufferedReader(_fr);
+        } catch (IOException e) {
+            throw new ErrorException("Can't open CSS file " + _file.getName());
         }
     }
 

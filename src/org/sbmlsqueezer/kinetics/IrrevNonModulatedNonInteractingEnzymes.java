@@ -34,6 +34,17 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	/**
 	 * @param parentReaction
 	 * @param model
+	 * @throws RateLawNotApplicableException
+	 */
+	public IrrevNonModulatedNonInteractingEnzymes(
+			PluginReaction parentReaction, PluginModel model)
+			throws RateLawNotApplicableException {
+		super(parentReaction, model);
+	}
+
+	/**
+	 * @param parentReaction
+	 * @param model
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 */
@@ -44,15 +55,53 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @throws RateLawNotApplicableException
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getName()
 	 */
-	public IrrevNonModulatedNonInteractingEnzymes(
-			PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException {
-		super(parentReaction, model);
+	@Override
+	public String getName() {
+		double stoichiometry = 0;
+		for (int i = 0; i < getParentReaction().getNumReactants(); i++)
+			stoichiometry += getParentReaction().getReactant(i)
+					.getStoichiometry();
+		switch ((int) Math.round(stoichiometry)) {
+		case 1:
+			if (numOfEnzymes == 0)
+				return "normalised kinetics of unireactant enzymes";
+			return "Henri-Michaelis Menten equation";
+		case 2:
+			return "kinetics of irreversible non-modulated non-interacting bireactant enzymes";
+		case 3:
+			return "kinetics of irreversible non-modulated non-interacting trireactant enzymes";
+		default:
+			return "kinetics of irreversible non-modulated non-interacting reactant enzymes";
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getSBO()
+	 */
+	@Override
+	public String getSBO() {
+		String name = getName().toLowerCase(), sbo = "none";
+		if (name
+				.equals("kinetics of irreversible non-modulated non-interacting reactant enzymes"))
+			sbo = "0000150";
+		else if (name
+				.equals("kinetics of irreversible non-modulated non-interacting bireactant enzymes"))
+			sbo = "0000151";
+		else if (name
+				.equals("kinetics of irreversible non-modulated non-interacting trireactant enzymes"))
+			sbo = "0000152";
+		else if (name.equals("normalised kinetics of unireactant enzymes"))
+			sbo = "0000199";
+		else if (name.equals("henri-michaelis menten equation"))
+			sbo = "0000029";
+		return sbo;
 	}
 
 	/*
@@ -205,55 +254,6 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 		formelTxt = TextExport.toText(model, ast);
 
 		return formelTxt;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getName()
-	 */
-	@Override
-	public String getName() {
-		double stoichiometry = 0;
-		for (int i = 0; i < getParentReaction().getNumReactants(); i++)
-			stoichiometry += getParentReaction().getReactant(i)
-					.getStoichiometry();
-		switch ((int) Math.round(stoichiometry)) {
-		case 1:
-			if (numOfEnzymes == 0)
-				return "normalised kinetics of unireactant enzymes";
-			return "Henri-Michaelis Menten equation";
-		case 2:
-			return "kinetics of irreversible non-modulated non-interacting bireactant enzymes";
-		case 3:
-			return "kinetics of irreversible non-modulated non-interacting trireactant enzymes";
-		default:
-			return "kinetics of irreversible non-modulated non-interacting reactant enzymes";
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getSBO()
-	 */
-	@Override
-	public String getSBO() {
-		String name = getName().toLowerCase(), sbo = "none";
-		if (name
-				.equals("kinetics of irreversible non-modulated non-interacting reactant enzymes"))
-			sbo = "0000150";
-		else if (name
-				.equals("kinetics of irreversible non-modulated non-interacting bireactant enzymes"))
-			sbo = "0000151";
-		else if (name
-				.equals("kinetics of irreversible non-modulated non-interacting trireactant enzymes"))
-			sbo = "0000152";
-		else if (name.equals("normalised kinetics of unireactant enzymes"))
-			sbo = "0000199";
-		else if (name.equals("henri-michaelis menten equation"))
-			sbo = "0000029";
-		return sbo;
 	}
 
 }

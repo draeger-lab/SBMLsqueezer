@@ -55,6 +55,56 @@ public class LaTeX extends StringOperations {
 	protected static final String NEGATIVE_ININITY = "-\\infty";
 
 	/**
+	 * An opening quotation mark.
+	 */
+	protected String leftQuotationMark = "``";
+
+	/**
+	 * An closing quotation mark.
+	 */
+	protected String rightQuotationMark = "\"";
+	
+	/**
+	 * This is a LaTeX line break. The line break symbol double backslash
+	 * followed by a new line symbol of the operating system.
+	 */
+	protected static final String lineBreak = "\\\\" + newLine;
+
+	/**
+	 * Surrounded by new line symbols. Begin equation. This type of equation
+	 * requires the LaTeX package breqn. It will produce equations with
+	 * automatic line breaks (LaTeX will compute the optimal place for line
+	 * breaks). Unfortunately, this does not work for very long denominators.
+	 */
+	protected static final String eqBegin = newLine + "\\begin{dmath}"
+			+ newLine; // equation
+
+	/**
+	 * End equation; cf. eqBegin. Surrounded by new line symbols.
+	 */
+	protected static final String eqEnd = newLine + "\\end{dmath}" + newLine; // equation
+
+	/**
+	 * Needed for the beginning of a table. Requires LaTeX package booktabs.
+	 * Surounded by new line symbols.
+	 */
+	protected static final String toprule = newLine + "\\toprule" + newLine;
+
+	/**
+	 * Produces a fancy line in tables. Requires LaTeX package booktabs. Starts
+	 * and ends with a new line.
+	 */
+	protected static final String midrule = newLine + "\\midrule" + newLine;
+
+	/**
+	 * Requires LaTeX package booktabs. Produces a fancy line at the bottom of a
+	 * table. This variable also includes the <code>end{longtable}</code>
+	 * command and a new line.
+	 */
+	protected static final String bottomrule = "\\bottomrule\\end{longtable}"
+			+ newLine;
+
+	/**
 	 * 
 	 * @param value
 	 * @return
@@ -74,7 +124,7 @@ public class LaTeX extends StringOperations {
 	public static StringBuffer arccos(StringBuffer value) {
 		return command("arccos", value);
 	}
-	
+
 	/**
 	 * 
 	 * @param value
@@ -358,56 +408,6 @@ public class LaTeX extends StringOperations {
 		heading.append(newLine);
 		return heading;
 	}
-
-	/**
-	 * An opening quotation mark.
-	 */
-	protected String leftQuotationMark = "``";
-
-	/**
-	 * An closing quotation mark.
-	 */
-	protected String rightQuotationMark = "\"";
-
-	/**
-	 * This is a LaTeX line break. The line break symbol double backslash
-	 * followed by a new line symbol of the operating system.
-	 */
-	protected static final String lineBreak = "\\\\" + newLine;
-
-	/**
-	 * Surrounded by new line symbols. Begin equation. This type of equation
-	 * requires the LaTeX package breqn. It will produce equations with
-	 * automatic line breaks (LaTeX will compute the optimal place for line
-	 * breaks). Unfortunately, this does not work for very long denominators.
-	 */
-	protected static final String eqBegin = newLine + "\\begin{dmath}"
-			+ newLine; // equation
-
-	/**
-	 * End equation; cf. eqBegin. Surrounded by new line symbols.
-	 */
-	protected static final String eqEnd = newLine + "\\end{dmath}" + newLine; // equation
-
-	/**
-	 * Needed for the beginning of a table. Requires LaTeX package booktabs.
-	 * Surounded by new line symbols.
-	 */
-	protected static final String toprule = newLine + "\\toprule" + newLine;
-
-	/**
-	 * Produces a fancy line in tables. Requires LaTeX package booktabs. Starts
-	 * and ends with a new line.
-	 */
-	protected static final String midrule = newLine + "\\midrule" + newLine;
-
-	/**
-	 * Requires LaTeX package booktabs. Produces a fancy line at the bottom of a
-	 * table. This variable also includes the <code>end{longtable}</code>
-	 * command and a new line.
-	 */
-	protected static final String bottomrule = "\\bottomrule\\end{longtable}"
-			+ newLine;
 
 	/**
 	 * Encloses the given formula in brackets.

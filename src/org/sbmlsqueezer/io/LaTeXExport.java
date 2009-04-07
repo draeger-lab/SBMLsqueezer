@@ -168,6 +168,157 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	}
 
 	/**
+	 * Writing laTeX code of a string id
+	 * 
+	 * @param pluginSpecies
+	 * @return String
+	 */
+	public String idToTeX(PluginSpecies pluginSpecies) {
+		return nameToTeX(pluginSpecies.getId());
+	}
+
+	/**
+	 * Writing laTeX code of a string name
+	 * 
+	 * @param name
+	 * @return String
+	 */
+	public String nameToTeX(String name) {
+		String speciesTeX = name;
+		int numUnderscore = (new StringTokenizer(speciesTeX, "_"))
+				.countTokens() - 1;
+		if (numUnderscore > 1)
+			speciesTeX = replaceAll("_", speciesTeX, "\\_");
+		else if ((numUnderscore == 0) && (0 < speciesTeX.length())) {
+			int index = -1;
+			while (index != (name.length() - 1)
+					&& !Character.isDigit(name.charAt(index + 1)))
+				index++;
+			if ((-1 < index) && (index < name.length())) {
+				String num = name.substring(++index);
+				speciesTeX = speciesTeX.substring(0, index++) + "_";
+				speciesTeX += (num.length() == 1) ? num : "{" + num + "}";
+			}
+		}
+		return speciesTeX;
+	}
+
+	/**
+	 * a methode for string replacement
+	 * 
+	 * @param what
+	 * @param inString
+	 * @param replacement
+	 * @return string
+	 */
+	public String replaceAll(String what, String inString, String replacement) {
+		StringTokenizer st = new StringTokenizer(inString, what);
+		String end = st.nextElement().toString();
+		while (st.hasMoreElements())
+			end += replacement + st.nextElement().toString();
+		return end;
+	}
+
+	/**
+	 * This is the font size to be used in this document.
+	 * 
+	 * @param Allowed
+	 *            values are:
+	 *            <ul>
+	 *            <li>8</li>
+	 *            <li>9</li>
+	 *            <li>10</li>
+	 *            <li>11</li>
+	 *            <li>12</li>
+	 *            <li>14</li>
+	 *            <li>16</li>
+	 *            <li>17</li>
+	 *            </ul>
+	 *            Other values are set to the default of 11.
+	 * 
+	 */
+	public void setFontSize(short fontSize) {
+		if ((fontSize < 8) || (fontSize == 13) || (17 < fontSize))
+			this.fontSize = 11;
+		this.fontSize = fontSize;
+	}
+
+	/**
+	 * If true is given the whole document will be created in landscape mode.
+	 * Default is portrait.
+	 * 
+	 * @param landscape
+	 */
+	public void setLandscape(boolean landscape) {
+		this.landscape = landscape;
+	}
+
+	/**
+	 * Allowed are
+	 * <ul>
+	 * <li>letter</li>
+	 * <li>legal</li>
+	 * <li>executive</li>
+	 * <li>a* where * stands for values from 0 thru 9</li>
+	 * <li>b*</li>
+	 * <li>c*</li>
+	 * <li>d*</li>
+	 * </ul>
+	 * The default is a4.
+	 */
+	public void setPaperSize(String paperSize) {
+		paperSize = paperSize.toLowerCase();
+		if (paperSize.equals("letter") || paperSize.equals("legal")
+				|| paperSize.equals("executive"))
+			this.paperSize = paperSize;
+		else if (paperSize.length() == 2) {
+			if (!Character.isDigit(paperSize.charAt(1))
+					|| ((paperSize.charAt(0) != 'a')
+							&& (paperSize.charAt(0) != 'b')
+							&& (paperSize.charAt(0) != 'c') && (paperSize
+							.charAt(0) != 'd')))
+				this.paperSize = "a4";
+			else {
+				short size = Short.parseShort(Character.toString(paperSize
+						.charAt(1)));
+				if ((0 <= size) && (size < 10))
+					this.paperSize = paperSize;
+				else
+					this.paperSize = "a4";
+			}
+		} else
+			this.paperSize = "a4";
+		this.paperSize = paperSize;
+	}
+
+	/**
+	 * If true species (reactants, modifiers and products) in reaction equations
+	 * will be displayed with their name if they have one. By default the ids of
+	 * the species are used in these equations.
+	 */
+	public void setPrintNameIfAvailable(boolean printNameIfAvailable) {
+		this.printNameIfAvailable = printNameIfAvailable;
+	}
+
+	/**
+	 * If true an extra title page is created. Default false.
+	 * 
+	 * @param titlepage
+	 */
+	public void setTitlepage(boolean titlepage) {
+		this.titlepage = titlepage;
+	}
+
+	/**
+	 * If true ids are set in typewriter font (default).
+	 * 
+	 * @param typeWriter
+	 */
+	public void setTypeWriter(boolean typeWriter) {
+		this.typeWriter = typeWriter;
+	}
+
+	/**
 	 * This is a method to write the latex file
 	 * 
 	 * @param astnode
@@ -592,28 +743,6 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 			laTeX += "\\bottomrule " + newLine + "\\end{longtable}";
 		}
 		laTeX += newLine + tail;
-		return laTeX;
-	}
-
-	public String toLaTeX(PluginModel model, PluginReaction reaction)
-			throws IOException {
-		String title = model.getName().length() > 0 ? model.getName()
-				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
-		String laTeX = getDocumentHead(title);
-		laTeX += (!reaction.getName().equals("") && !reaction.getName().equals(
-				reaction.getId())) ? "Reaction: \\texttt{"
-				+ replaceAll("_", reaction.getId(), "\\_") + "}" + " ("
-				+ replaceAll("_", reaction.getName(), "\\_") + ")" + newLine
-				+ "\\begin{equation*}" + newLine + "v=" : "Reaction: \\texttt{"
-				+ replaceAll("_", reaction.getId(), "\\_") + "}" + newLine
-				+ "\\begin{equation*}" + newLine + "v=";
-		laTeX += toLaTeX(model, reaction.getKineticLaw().getMath());
-		laTeX += newLine + "\\end{equation*}";
-		laTeX += newLine
-				+ "\\begin{center} For a more comprehensive \\LaTeX{} "
-				+ "export, see \\url{http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX}"
-				+ "\\end{center}";
-		laTeX += newLine + "\\end{document}";
 		return laTeX;
 	}
 
@@ -1162,237 +1291,32 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		bw.close();
 	}
 
-	/**
-	 * Writing laTeX code of a string id
-	 * 
-	 * @param pluginSpecies
-	 * @return String
-	 */
-	public String idToTeX(PluginSpecies pluginSpecies) {
-		return nameToTeX(pluginSpecies.getId());
-	}
-
-	/**
-	 * Writing laTeX code of a string name
-	 * 
-	 * @param name
-	 * @return String
-	 */
-	public String nameToTeX(String name) {
-		String speciesTeX = name;
-		int numUnderscore = (new StringTokenizer(speciesTeX, "_"))
-				.countTokens() - 1;
-		if (numUnderscore > 1)
-			speciesTeX = replaceAll("_", speciesTeX, "\\_");
-		else if ((numUnderscore == 0) && (0 < speciesTeX.length())) {
-			int index = -1;
-			while (index != (name.length() - 1)
-					&& !Character.isDigit(name.charAt(index + 1)))
-				index++;
-			if ((-1 < index) && (index < name.length())) {
-				String num = name.substring(++index);
-				speciesTeX = speciesTeX.substring(0, index++) + "_";
-				speciesTeX += (num.length() == 1) ? num : "{" + num + "}";
-			}
-		}
-		return speciesTeX;
-	}
-
-	/**
-	 * a methode for string replacement
-	 * 
-	 * @param what
-	 * @param inString
-	 * @param replacement
-	 * @return string
-	 */
-	public String replaceAll(String what, String inString, String replacement) {
-		StringTokenizer st = new StringTokenizer(inString, what);
-		String end = st.nextElement().toString();
-		while (st.hasMoreElements())
-			end += replacement + st.nextElement().toString();
-		return end;
-	}
-
-	/**
-	 * This is the font size to be used in this document.
-	 * 
-	 * @param Allowed
-	 *            values are:
-	 *            <ul>
-	 *            <li>8</li>
-	 *            <li>9</li>
-	 *            <li>10</li>
-	 *            <li>11</li>
-	 *            <li>12</li>
-	 *            <li>14</li>
-	 *            <li>16</li>
-	 *            <li>17</li>
-	 *            </ul>
-	 *            Other values are set to the default of 11.
-	 * 
-	 */
-	public void setFontSize(short fontSize) {
-		if ((fontSize < 8) || (fontSize == 13) || (17 < fontSize))
-			this.fontSize = 11;
-		this.fontSize = fontSize;
-	}
-
-	/**
-	 * If true is given the whole document will be created in landscape mode.
-	 * Default is portrait.
-	 * 
-	 * @param landscape
-	 */
-	public void setLandscape(boolean landscape) {
-		this.landscape = landscape;
-	}
-
-	/**
-	 * Allowed are
-	 * <ul>
-	 * <li>letter</li>
-	 * <li>legal</li>
-	 * <li>executive</li>
-	 * <li>a* where * stands for values from 0 thru 9</li>
-	 * <li>b*</li>
-	 * <li>c*</li>
-	 * <li>d*</li>
-	 * </ul>
-	 * The default is a4.
-	 */
-	public void setPaperSize(String paperSize) {
-		paperSize = paperSize.toLowerCase();
-		if (paperSize.equals("letter") || paperSize.equals("legal")
-				|| paperSize.equals("executive"))
-			this.paperSize = paperSize;
-		else if (paperSize.length() == 2) {
-			if (!Character.isDigit(paperSize.charAt(1))
-					|| ((paperSize.charAt(0) != 'a')
-							&& (paperSize.charAt(0) != 'b')
-							&& (paperSize.charAt(0) != 'c') && (paperSize
-							.charAt(0) != 'd')))
-				this.paperSize = "a4";
-			else {
-				short size = Short.parseShort(Character.toString(paperSize
-						.charAt(1)));
-				if ((0 <= size) && (size < 10))
-					this.paperSize = paperSize;
-				else
-					this.paperSize = "a4";
-			}
-		} else
-			this.paperSize = "a4";
-		this.paperSize = paperSize;
-	}
-
-	/**
-	 * If true species (reactants, modifiers and products) in reaction equations
-	 * will be displayed with their name if they have one. By default the ids of
-	 * the species are used in these equations.
-	 */
-	public void setPrintNameIfAvailable(boolean printNameIfAvailable) {
-		this.printNameIfAvailable = printNameIfAvailable;
-	}
-
-	/**
-	 * If true an extra title page is created. Default false.
-	 * 
-	 * @param titlepage
-	 */
-	public void setTitlepage(boolean titlepage) {
-		this.titlepage = titlepage;
-	}
-
-	/**
-	 * If true ids are set in typewriter font (default).
-	 * 
-	 * @param typeWriter
-	 */
-	public void setTypeWriter(boolean typeWriter) {
-		this.typeWriter = typeWriter;
+	public String toLaTeX(PluginModel model, PluginReaction reaction)
+			throws IOException {
+		String title = model.getName().length() > 0 ? model.getName()
+				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
+		String laTeX = getDocumentHead(title);
+		laTeX += (!reaction.getName().equals("") && !reaction.getName().equals(
+				reaction.getId())) ? "Reaction: \\texttt{"
+				+ replaceAll("_", reaction.getId(), "\\_") + "}" + " ("
+				+ replaceAll("_", reaction.getName(), "\\_") + ")" + newLine
+				+ "\\begin{equation*}" + newLine + "v=" : "Reaction: \\texttt{"
+				+ replaceAll("_", reaction.getId(), "\\_") + "}" + newLine
+				+ "\\begin{equation*}" + newLine + "v=";
+		laTeX += toLaTeX(model, reaction.getKineticLaw().getMath());
+		laTeX += newLine + "\\end{equation*}";
+		laTeX += newLine
+				+ "\\begin{center} For a more comprehensive \\LaTeX{} "
+				+ "export, see \\url{http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX}"
+				+ "\\end{center}";
+		laTeX += newLine + "\\end{document}";
+		return laTeX;
 	}
 
 	/*
 	 * public void setNumberEquations(boolean numberEquations) {
 	 * this.numberEquations = numberEquations; }
 	 */
-
-	/**
-	 * Writing laTeX code of a string name
-	 * 
-	 * @param name
-	 * @return String
-	 */
-	private String toTeX(String name) {
-		String tex = "";
-		String help = "";
-		String sign = "";
-		if (name.toLowerCase().startsWith("kass")) {
-			tex += "k^\\mathrm{ass}";
-			name = name.substring(4, name.length());
-		} else if (name.toLowerCase().startsWith("kcatp")) {
-			tex += "k^\\mathrm{cat}";
-			name = name.substring(5, name.length());
-			sign = "+";
-		} else if (name.toLowerCase().startsWith("kcatn")) {
-			tex += "k^\\mathrm{cat}";
-			name = name.substring(5, name.length());
-			sign = "-";
-		} else if (name.toLowerCase().startsWith("kdiss")) {
-			tex += "k^\\mathrm{diss}";
-			name = name.substring(5, name.length());
-		} else if (name.toLowerCase().startsWith("km")) {
-			tex += "k^\\mathrm{m}";
-			name = name.substring(2, name.length());
-		} else if (name.toLowerCase().startsWith("ki")) {
-			tex += "k^\\mathrm{i}";
-			name = name.substring(2, name.length());
-		} else {
-			int j = 0;
-			while (j < name.length() && !(name.substring(j, j + 1).equals("_"))
-					&& !(Character.isDigit(name.charAt(j)))) {
-				tex += name.substring(j, j + 1);
-				j++;
-			}
-			name = name.substring(j - 1, name.length());
-		}
-		String s = "_{" + sign;
-		String nameIndex = "";
-		for (int i = 0; i < name.length(); i++) {
-			if (i > 0) {
-				nameIndex = name.substring(i, i + 1);
-				if (Character.isDigit(name.charAt(i))) {
-					int k = i;
-					while (i < name.length()) {
-						if (Character.isDigit(name.charAt(i)))
-							i++;
-						else
-							break;
-					}
-					nameIndex = name.substring(k, i);
-					if (name.substring(k - 1, k).equals("_")) {
-						if (s.endsWith("{") || s.endsWith("+")
-								|| s.endsWith("-"))
-							s += nameIndex;
-						else if (!s.endsWith(","))
-							s += ", " + nameIndex;
-					} else {
-						if (s.endsWith("{")) {
-							s += help + "_{" + nameIndex + "}";
-							help = "";
-						} else {
-							s += ", " + help + "_{" + nameIndex + "}";
-							help = "";
-						}
-					}
-				} else if (!nameIndex.equals("_"))
-					help += nameIndex;
-			}
-		}
-		s += "}";
-		return tex + s;
-	}
 
 	private String getDocumentHead(String title) {
 		String head = "\\documentclass[" + fontSize + "pt";
@@ -1527,5 +1451,81 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 
 	private String name_idToLaTex(String s) {
 		return "$" + toTeX(s) + "$";
+	}
+
+	/**
+	 * Writing laTeX code of a string name
+	 * 
+	 * @param name
+	 * @return String
+	 */
+	private String toTeX(String name) {
+		String tex = "";
+		String help = "";
+		String sign = "";
+		if (name.toLowerCase().startsWith("kass")) {
+			tex += "k^\\mathrm{ass}";
+			name = name.substring(4, name.length());
+		} else if (name.toLowerCase().startsWith("kcatp")) {
+			tex += "k^\\mathrm{cat}";
+			name = name.substring(5, name.length());
+			sign = "+";
+		} else if (name.toLowerCase().startsWith("kcatn")) {
+			tex += "k^\\mathrm{cat}";
+			name = name.substring(5, name.length());
+			sign = "-";
+		} else if (name.toLowerCase().startsWith("kdiss")) {
+			tex += "k^\\mathrm{diss}";
+			name = name.substring(5, name.length());
+		} else if (name.toLowerCase().startsWith("km")) {
+			tex += "k^\\mathrm{m}";
+			name = name.substring(2, name.length());
+		} else if (name.toLowerCase().startsWith("ki")) {
+			tex += "k^\\mathrm{i}";
+			name = name.substring(2, name.length());
+		} else {
+			int j = 0;
+			while (j < name.length() && !(name.substring(j, j + 1).equals("_"))
+					&& !(Character.isDigit(name.charAt(j)))) {
+				tex += name.substring(j, j + 1);
+				j++;
+			}
+			name = name.substring(j - 1, name.length());
+		}
+		String s = "_{" + sign;
+		String nameIndex = "";
+		for (int i = 0; i < name.length(); i++) {
+			if (i > 0) {
+				nameIndex = name.substring(i, i + 1);
+				if (Character.isDigit(name.charAt(i))) {
+					int k = i;
+					while (i < name.length()) {
+						if (Character.isDigit(name.charAt(i)))
+							i++;
+						else
+							break;
+					}
+					nameIndex = name.substring(k, i);
+					if (name.substring(k - 1, k).equals("_")) {
+						if (s.endsWith("{") || s.endsWith("+")
+								|| s.endsWith("-"))
+							s += nameIndex;
+						else if (!s.endsWith(","))
+							s += ", " + nameIndex;
+					} else {
+						if (s.endsWith("{")) {
+							s += help + "_{" + nameIndex + "}";
+							help = "";
+						} else {
+							s += ", " + help + "_{" + nameIndex + "}";
+							help = "";
+						}
+					}
+				} else if (!nameIndex.equals("_"))
+					help += nameIndex;
+			}
+		}
+		s += "}";
+		return tex + s;
 	}
 }

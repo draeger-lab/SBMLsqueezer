@@ -54,48 +54,6 @@ public class ODEwriter {
 
 	/**
 	 * This method writes the ordinary differential equation system given by the
-	 * {@see KineticLawGenerator} into a plain text file. Note that the file
-	 * extension does not matter.
-	 * 
-	 * @param file
-	 * @param klg
-	 * @throws IOException
-	 */
-	public final void writeTextFile(File file, KineticLawGenerator klg)
-			throws IOException {
-		int i;
-		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-				new FileOutputStream(file.getPath())));
-		append("SBMLsqueezer generated and transfered values", out);
-		append("--------------------------------------------", out);
-
-		for (i = 0; i < klg.getReactionNumAndKineticLaw().size(); i++) {
-			String toWriteReaction = "Reaction: "
-					+ klg.getReactionNumAndId().get(i) + ", "
-					+ klg.getReactionNumAndKineticLaw().get(i).getName();
-			String toWrite = "Kinetic: v" + i + " = "
-					+ klg.getReactionNumAndKineticLaw().get(i).getFormula();
-			append(toWriteReaction, out);
-			append(toWrite, out);
-			append(" ", out);
-		}
-		append(" ", out);
-		for (i = 0; i < klg.getAllSpeciesNumAndIDs().size(); i++) {
-			String toWrite = "Species: "
-					+ klg.getAllSpeciesNumAndIDs().get(i)
-					+ " ODE: d["
-					+ klg.getAllSpeciesNumAndIDs().get(i)
-					+ "]/dt = "
-					+ klg.getSpecieAndSimpleODE().get(
-							klg.getAllSpeciesNumAndIDs().get(i));
-			append(toWrite, out);
-			append(" ", out);
-		}
-		out.close();
-	}
-
-	/**
-	 * This method writes the ordinary differential equation system given by the
 	 * {@see KineticLawGenerator} into a LaTeX file for further processing. Note
 	 * that the file extension does not matter.
 	 * 
@@ -176,6 +134,48 @@ public class ODEwriter {
 		append("http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX", out);
 		append("\\end{center}", out);
 		append("\\end{document}", out);
+		out.close();
+	}
+
+	/**
+	 * This method writes the ordinary differential equation system given by the
+	 * {@see KineticLawGenerator} into a plain text file. Note that the file
+	 * extension does not matter.
+	 * 
+	 * @param file
+	 * @param klg
+	 * @throws IOException
+	 */
+	public final void writeTextFile(File file, KineticLawGenerator klg)
+			throws IOException {
+		int i;
+		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(file.getPath())));
+		append("SBMLsqueezer generated and transfered values", out);
+		append("--------------------------------------------", out);
+
+		for (i = 0; i < klg.getReactionNumAndKineticLaw().size(); i++) {
+			String toWriteReaction = "Reaction: "
+					+ klg.getReactionNumAndId().get(i) + ", "
+					+ klg.getReactionNumAndKineticLaw().get(i).getName();
+			String toWrite = "Kinetic: v" + i + " = "
+					+ klg.getReactionNumAndKineticLaw().get(i).getFormula();
+			append(toWriteReaction, out);
+			append(toWrite, out);
+			append(" ", out);
+		}
+		append(" ", out);
+		for (i = 0; i < klg.getAllSpeciesNumAndIDs().size(); i++) {
+			String toWrite = "Species: "
+					+ klg.getAllSpeciesNumAndIDs().get(i)
+					+ " ODE: d["
+					+ klg.getAllSpeciesNumAndIDs().get(i)
+					+ "]/dt = "
+					+ klg.getSpecieAndSimpleODE().get(
+							klg.getAllSpeciesNumAndIDs().get(i));
+			append(toWrite, out);
+			append(" ", out);
+		}
 		out.close();
 	}
 

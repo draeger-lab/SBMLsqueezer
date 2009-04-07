@@ -24,6 +24,19 @@ public class Species extends PluginSpecies {
    * @param species
    * @return
    */
+  public static String idToTeX(String species) {
+    String idTeX = toTeX(species);
+    return idTeX.substring(1, idTeX.length() - 1);
+  }
+
+
+  /**
+   *
+   * TODO: comment missing
+   *
+   * @param species
+   * @return
+   */
   public static String toTeX(String species) {
     int index = species.length();
     for (int i = 0; i < 10; i++) {
@@ -37,19 +50,6 @@ public class Species extends PluginSpecies {
     speciesTex += num.length() > 0 ? "_{" + num + "}]" : "]";
 
     return speciesTex;
-  }
-
-
-  /**
-   *
-   * TODO: comment missing
-   *
-   * @param species
-   * @return
-   */
-  public static String idToTeX(String species) {
-    String idTeX = toTeX(species);
-    return idTeX.substring(1, idTeX.length() - 1);
   }
 
 }

@@ -124,6 +124,16 @@ public class KineticLawTableModel extends AbstractTableModel {
 		return columnNames[column];
 	}
 
+	/**
+	 * Returns the number of rows in the table, which mark that the
+	 * stoichiometry on the left hand side is to large.
+	 * 
+	 * @return
+	 */
+	public int getNumOfWarnings() {
+		return numOfWarnings;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -153,15 +163,5 @@ public class KineticLawTableModel extends AbstractTableModel {
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		data[rowIndex][columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);
-	}
-
-	/**
-	 * Returns the number of rows in the table, which mark that the
-	 * stoichiometry on the left hand side is to large.
-	 * 
-	 * @return
-	 */
-	public int getNumOfWarnings() {
-		return numOfWarnings;
 	}
 }

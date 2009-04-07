@@ -88,15 +88,6 @@ public class SettingsWriter {
     close();
   }
 
-  private void write(String str) {
-    try {
-      out.write(str);
-      out.newLine();
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    }
-  }
-
   private void append(String str) {
     try {
       out.write(str);
@@ -109,6 +100,15 @@ public class SettingsWriter {
   private void close() {
     try {
       out.close();
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  private void write(String str) {
+    try {
+      out.write(str);
+      out.newLine();
     } catch (IOException ex) {
       ex.printStackTrace();
     }

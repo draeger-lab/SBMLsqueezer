@@ -19,17 +19,6 @@ public class SettingsParser {
 
   private BufferedReader in = null;
 
-  public SettingsParser(String stringDataDir, String stringDataName) {
-    this.dataDir = stringDataDir;
-    this.dataName = stringDataName;
-    try {
-      in = new BufferedReader(new InputStreamReader(new FileInputStream(dataDir
-          + dataName)));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-  }
-
   /**
    *
    * @param parent
@@ -42,6 +31,17 @@ public class SettingsParser {
       } catch (FileNotFoundException e) {
         e.printStackTrace();
       }
+  }
+
+  public SettingsParser(String stringDataDir, String stringDataName) {
+    this.dataDir = stringDataDir;
+    this.dataName = stringDataName;
+    try {
+      in = new BufferedReader(new InputStreamReader(new FileInputStream(dataDir
+          + dataName)));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   public void close() throws IOException {
