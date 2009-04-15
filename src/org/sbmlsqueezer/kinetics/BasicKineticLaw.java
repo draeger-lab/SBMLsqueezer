@@ -28,17 +28,23 @@ import org.sbmlsqueezer.io.LaTeXExport;
 public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		libsbmlConstants {
 
-	protected static final int ACTIVATION = 0;
+	protected static final boolean ACTIVATION = true;
 
-	protected static final int INHIBITION = 1;
+	protected static final boolean INHIBITION = !ACTIVATION;
 
-	protected static final int ASSOCIATION = 2;
+	protected static final boolean ASSOCIATION = true;
 
-	protected static final int DISSOCIATION = 3;
+	protected static final boolean DISSOCIATION = !ASSOCIATION;
 
-	public static final int FORWARD = 4;
+	/**
+	 * 
+	 */
+	public static final boolean FORWARD = true;
 
-	public static final int REVERSE = 5;
+	/**
+	 * 
+	 */
+	public static final boolean REVERSE = false;
 
 	protected HashMap<String, String> idAndName;
 
@@ -48,7 +54,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 	protected String sboTerm;
 
-	protected int type;
 
 	/**
 	 * 
@@ -327,7 +332,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat, int type)
 			throws RateLawNotApplicableException {
-		this.type = type;
 		return createKineticEquation(model, reactionNum, modE, modActi,
 				modTActi, modInhib, modTInhib, modCat);
 	}
@@ -338,7 +342,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	protected StringBuffer sum(StringBuffer... summands) {
-		return arith("+", summands);
+		return arith('+', summands);
 	}
 
 	/**
@@ -347,7 +351,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	protected StringBuffer diff(StringBuffer... subtrahents) {
-		return arith("-", subtrahents);
+		return arith('-', subtrahents);
 	}
 
 	/**
@@ -356,7 +360,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	protected StringBuffer times(StringBuffer... factors) {
-		return arith("*", factors);
+		return arith('*', factors);
 	}
 
 	/**
@@ -366,7 +370,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	protected StringBuffer frac(StringBuffer numerator, StringBuffer denominator) {
-		return arith("/", numerator, denominator);
+		return arith('/', numerator, denominator);
 	}
 
 	/**
@@ -381,7 +385,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		else if (Double.parseDouble(exponent.toString()) == 1.0)
 			return basis;
 		else
-			return arith("^", basis, exponent);
+			return arith('^', basis, exponent);
 	}
 
 	protected StringBuffer root(StringBuffer basis, StringBuffer exponent)
@@ -408,7 +412,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param elements
 	 * @return
 	 */
-	protected StringBuffer arith(String operator, StringBuffer... elements) {
+	protected StringBuffer arith(char operator, StringBuffer... elements) {
 		Vector<StringBuffer> vsb = new Vector<StringBuffer>();
 		for (StringBuffer sb : elements)
 			if (sb.length() > 0)
@@ -417,26 +421,19 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			if (vsb.size() == 1)
 				return vsb.get(0);
 			else {
-				StringBuffer sb = new StringBuffer("(");
+				StringBuffer sb = new StringBuffer('(');
 				sb.append(vsb.get(0));
 				for (int i = 1; i < vsb.size(); i++) {
 					sb.append(operator);
 					sb.append(vsb.get(i));
 				}
-				sb.append(")");
+				sb.append(')');
 				return sb;
 			}
 		else
 			return new StringBuffer();
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public int getType() {
-		return type;
-	}
 
 	/**
 	 * 
