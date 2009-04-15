@@ -1,5 +1,6 @@
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.sbml.libsbml.ASTNode;
@@ -32,9 +33,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 	 * @param parentReaction
 	 * @param model
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException 
 	 */
 	public MichaelisMenten(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model);
 	}
 
@@ -43,10 +45,11 @@ public class MichaelisMenten extends BasicKineticLaw {
 	 * @param model
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException 
 	 */
 	public MichaelisMenten(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 

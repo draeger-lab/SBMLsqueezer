@@ -41,7 +41,7 @@ public class ODE {
 
   private List<Integer>            reacNumOfXexistKinetics = new ArrayList<Integer>();
 
-  private String[]                 reactionNumAndKineticTeX;
+  private StringBuffer[]                 reactionNumAndKineticTeX;
 
   private String[]                 reactionNumAndKineticName;
 
@@ -72,7 +72,7 @@ public class ODE {
     this.specieAndODETeXId.putAll(specieAndODEtex);
     this.speciesAndSimpleODE.putAll(speciesAndODE);
     this.speciesAndSimpleODETeX.putAll(specieAndODEtex);
-    this.reactionNumAndKineticTeX = new String[model.getNumReactions()];
+    this.reactionNumAndKineticTeX = new StringBuffer[model.getNumReactions()];
     this.reactionNumAndKineticTeXName = new String[model.getNumReactions()];
     this.reactionNumAndKineticName = new String[model.getNumReactions()];
     Arrays.fill(reactionNumAndKineticName, "Existing Kinetic");
@@ -128,7 +128,7 @@ public class ODE {
     return reactionNumAndKineticName;
   }
 
-  public String[] getReactionNumAndKinetictexId() {
+  public StringBuffer[] getReactionNumAndKinetictexId() {
     return reactionNumAndKineticTeX;
   }
 
@@ -145,7 +145,7 @@ public class ODE {
       PluginReaction reaction = model.getReaction(reactionNum);
       if (reaction.getKineticLaw() != null) {
         String kineticLawPartName = reaction.getKineticLaw().getFormula();
-        String kineticLawPartTeXName = reactionNumAndKineticTeX[reactionNum];
+        String kineticLawPartTeXName = reactionNumAndKineticTeX[reactionNum].toString();
         // Moeglichkeit hier nur in den Reaktanten zu suchen
         for (int speciesNum = 0; speciesNum < model.getNumSpecies(); speciesNum++) {
           numAndSpecies.get(speciesNum);// name bzw. id suche das in kineticLaw

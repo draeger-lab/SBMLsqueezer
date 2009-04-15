@@ -1,6 +1,8 @@
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Vector;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
@@ -26,14 +28,30 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	private String sbo = null;
 
 	/**
+	 * 
 	 * @param parentReaction
 	 * @param model
-	 * @param reversibility
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException
 	 */
 	public GeneralizedMassAction(PluginReaction parentReaction,
-			PluginModel model) throws RateLawNotApplicableException {
+			PluginModel model) throws RateLawNotApplicableException,
+			IOException {
 		super(parentReaction, model);
+	}
+
+	/**
+	 * 
+	 * @param parentReaction
+	 * @param model
+	 * @param type
+	 * @throws RateLawNotApplicableException
+	 * @throws IOException
+	 */
+	public GeneralizedMassAction(PluginReaction parentReaction,
+			PluginModel model, int type) throws RateLawNotApplicableException,
+			IOException {
+		super(parentReaction, model, type);
 	}
 
 	/**
@@ -42,11 +60,27 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @param reversibility
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException
 	 */
 	public GeneralizedMassAction(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model, listOfPossibleEnzymes);
+	}
+
+	/**
+	 * 
+	 * @param parentReaction
+	 * @param model
+	 * @param listOfPossibleEnzymes
+	 * @param type
+	 * @throws RateLawNotApplicableException
+	 * @throws IOException
+	 */
+	public GeneralizedMassAction(PluginReaction parentReaction,
+			PluginModel model, List<String> listOfPossibleEnzymes, int type)
+			throws RateLawNotApplicableException, IOException {
+		super(parentReaction, model, listOfPossibleEnzymes, type);
 	}
 
 	public static boolean isApplicable(PluginReaction reaction) {
@@ -219,7 +253,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 				else if (name
 						.equals("first order irreversible mass action kinetics"))
 					sbo = "0000049"; // child: SBO:0000333 monoexponential
-										// decay
+				// decay
 				else if (name
 						.equals("second order irreversible mass action kinetics, one reactant"))
 					sbo = "0000052";
@@ -485,120 +519,33 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		return sbo;
 	}
 
-	protected String createKineticEquation(int catNumber, int reactionNum,
-			List<String> modCat, List<String> modActi, List<String> modInhib,
-			boolean zeroReact, boolean zeroProd) {
-		String kass, kdiss, exp = "";
+	protected StringBuffer createKineticEquation(int catNumber,
+			int reactionNum, List<String> modCat, List<String> modActi,
+			List<String> modInhib, boolean zeroReact, boolean zeroProd) {
 		reactionNum++;
+
 		PluginReaction reaction = getParentReaction();
-
-		kass = "kass_" + reactionNum;
-		listOfLocalParameters.add(kass);
-		String formelTxt = kass;
-		formelTeX = "k_{+" + reactionNum + "}";
-		if (!zeroReact)
-			for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
-				exp = "";
-				PluginSpeciesReference specref = reaction
-						.getReactant(reactantNum);
-				if (1.0 != specref.getStoichiometry()) {
-					double val = specref.getStoichiometry();
-					if (((int) val) - val == 0)
-						exp = "^(" + ((int) val) + ')';
-					else
-						exp = "^(" + val + ')';
-				}
-				formelTxt += " * " + specref.getSpecies() + exp;
-				formelTeX += Species.toTeX(specref.getSpecies())
-						+ exp.replace('(', '{').replace(')', '}');
-			}
-		if (-1 < catNumber) {
-			formelTxt += " * " + modCat.get(catNumber);
-			formelTeX += Species.toTeX(modCat.get(catNumber));
+		try {
+			StringBuffer ass = getReactionPartners(reaction, reactionNum,
+					modCat, catNumber, ASSOCIATION, zeroReact);
+			StringBuffer diss = getReactionPartners(reaction, reactionNum,
+					modCat, catNumber, DISSOCIATION, zeroProd);
+			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
+					ACTIVATION);
+			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
+					INHIBITION);
+			return removeBrackets(times(acti, inhib, diff(ass, diss)));
+		} catch (IllegalFormatException exc) {
+			exc.printStackTrace();
+			return new StringBuffer();
 		}
-
-		// nur das wird hinzugefuegt, wenn Reaction reversibel
-		if (reaction.getReversible()) {
-			kdiss = "kdiss_" + reactionNum;
-			listOfLocalParameters.add(kdiss);
-			formelTxt = formelTxt + " - " + kdiss;
-			formelTeX = formelTeX + " - k_{-" + reactionNum + "}";
-			if (!zeroProd)
-				for (int j = 0; j < reaction.getNumProducts(); j++) {
-					exp = "";
-					PluginSpeciesReference specref = reaction.getProduct(j);
-					if (1.0 != specref.getStoichiometry()) {
-						double val = specref.getStoichiometry();
-						if (((int) val) - val == 0)
-							exp = "^(" + ((int) val) + ')';
-						else
-							exp = "^(" + val + ')';
-					}
-					formelTxt += " * " + specref.getSpecies() + exp;
-					formelTeX += Species.toTeX(specref.getSpecies())
-							+ exp.replace('(', '{').replace(')', '}');
-				}
-			if (-1 < catNumber) {
-				formelTxt += " * " + modCat.get(catNumber);
-				formelTeX += Species.toTeX(modCat.get(catNumber));
-			}
-		}
-
-		String inhib = "";
-		String inhibTeX = "";
-		String acti = "";
-		String actiTeX = "";
-
-		if (!modActi.isEmpty()) {
-			for (int activatorNum = 0; activatorNum < modActi.size(); activatorNum++) {
-				String kA = "kA_" + reactionNum + "_"
-						+ modActi.get(activatorNum);
-				String kATeX = "k^\\text{A}_{" + reactionNum + ",\\text{"
-						+ modActi.get(activatorNum) + "}}";
-				if (!listOfLocalParameters.contains(kA))
-					listOfLocalParameters.add(kA);
-				acti += modActi.get(activatorNum) + "/(" + kA + " + "
-						+ modActi.get(activatorNum) + ") * ";
-				actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum))
-						+ "}{" + kATeX + "+"
-						+ Species.toTeX(modActi.get(activatorNum)) + "}\\cdot ";
-			}
-		}
-
-		if (!modInhib.isEmpty()) {
-			for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-				String kI = "kI_" + reactionNum + "_"
-						+ modInhib.get(inhibitorNum), kITeX = "k^\\text{I}_{"
-						+ reactionNum + ",\\text{" + modInhib.get(inhibitorNum)
-						+ "}}";
-				if (!listOfLocalParameters.contains(kI))
-					listOfLocalParameters.add(kI);
-				inhib += kI + "/(" + kI + " + " + modInhib.get(inhibitorNum)
-						+ ") * ";
-				inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + "+"
-						+ Species.toTeX(modInhib.get(inhibitorNum))
-						+ "}\\cdot ";
-			}
-
-		}
-		if (((acti.length() > 0) || (inhib.length() > 0))
-				&& (reaction.getReversible())) {
-			inhib += '(';
-			inhibTeX += "\\left(";
-			formelTeX += "\\right)";
-			formelTxt += ')';
-		}
-
-		formelTxt = acti + inhib + formelTxt;
-		formelTeX = actiTeX + inhibTeX + formelTeX;
-
-		return formelTxt;
 	}
 
 	@Override
-	protected String createKineticEquation(PluginModel model, int reactionNum,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	protected StringBuffer createKineticEquation(PluginModel model,
+			int reactionNum, List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		/*
 		 * boolean zeroReact = (reactantOrder != Double.NaN), zeroProd =
@@ -609,19 +556,81 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		if (modCat.isEmpty())
 			return createKineticEquation(-1, reactionNum, modCat, modActi,
 					modInhib, zeroReact, zeroProd);
-		String formelTxt = "";
-		for (int catalyzerNum = 0; catalyzerNum < modCat.size(); catalyzerNum++) {
-			formelTxt += createKineticEquation(catalyzerNum, reactionNum,
-					modCat, modActi, modInhib, zeroReact, zeroProd);
-			if (catalyzerNum + 1 < modCat.size()) {
-				formelTxt += "+";
-				formelTeX += "\\\\+";
-			}
-		}
-		if (modCat.size() > 1)
-			formelTeX += "\\end{multline}";
+		StringBuffer[] equations = new StringBuffer[modCat.size()];
+		for (int i = 0; i < equations.length; i++)
+			equations[i] = createKineticEquation(i, reactionNum, modCat,
+					modActi, modInhib, zeroReact, zeroProd);
+		return removeBrackets(sum(equations));
+	}
 
-		return formelTxt;
+	protected StringBuffer getReactionModifiers(int reactionNumber,
+			List<String> modifiers, int type) throws IllegalFormatException {
+		if (type == ACTIVATION || type == INHIBITION) {
+			if (!modifiers.isEmpty()) {
+				StringBuffer[] mods = new StringBuffer[modifiers.size()];
+				for (int i = 0; i < mods.length; i++) {
+					StringBuffer k = new StringBuffer(
+							(type == ACTIVATION) ? "kA_" : "kI_");
+					k.append(reactionNumber);
+					k.append("_");
+					k.append(modifiers.get(i));
+					mods[i] = frac(k,
+							sum(k, new StringBuffer(modifiers.get(i))));
+				}
+				return times(mods);
+			} else
+				return new StringBuffer();
+		} else {
+			throw new IllegalFormatException(
+					"Invalid type argument for GMAK reaction modifiers");
+		}
+	}
+
+	private StringBuffer getReactionPartners(PluginReaction reaction,
+			int reactionNumber, List<String> catalysators,
+			int catalysatorNumber, int type, boolean b)
+			throws IllegalFormatException {
+		if (type == ASSOCIATION || type == DISSOCIATION) {
+			if ((type == ASSOCIATION && !b)
+					|| (type == DISSOCIATION && !b)) {
+				StringBuffer k = new StringBuffer(
+						(type == ASSOCIATION) ? "kass_" : "kdiss_");
+				k.append(reactionNumber);
+				listOfLocalParameters.add(k);
+				Vector<StringBuffer> parts = new Vector<StringBuffer>();
+				parts.add(k);
+				for (int i = 0; i < ((type == ASSOCIATION) ? reaction
+						.getNumReactants() : reaction.getNumProducts()); i++) {
+					PluginSpeciesReference ref = (type == ASSOCIATION) ? reaction
+							.getReactant(i)
+							: reaction.getProduct(i);
+					parts.add(pow(getSpecies(ref), getStoichiometry(ref)));
+				}
+
+				if (catalysatorNumber >= 0)
+					parts.add(new StringBuffer(catalysators
+							.get(catalysatorNumber)));
+
+				return times(parts.toArray(new StringBuffer[parts.size()]));
+			} else {
+				return new StringBuffer();
+			}
+		} else {
+			throw new IllegalFormatException(
+					"Invalid type argument for GMAK reaction partners");
+		}
+	}
+
+	protected StringBuffer getSpecies(PluginSpeciesReference ref) {
+		return new StringBuffer(ref.getSpecies());
+	}
+
+	protected StringBuffer getStoichiometry(PluginSpeciesReference ref) {
+		double stoich = ref.getStoichiometry();
+		if ((int) stoich - stoich == 0)
+			return new StringBuffer(Integer.toString((int) stoich));
+		else
+			return new StringBuffer(Double.toString(stoich));
 	}
 
 }

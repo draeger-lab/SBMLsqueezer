@@ -8,6 +8,7 @@
  */
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.List;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
@@ -33,9 +34,10 @@ public class HillEquation extends BasicKineticLaw {
 	 * @param model
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException 
 	 */
 	public HillEquation(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model);
 	}
 
@@ -49,11 +51,12 @@ public class HillEquation extends BasicKineticLaw {
 	 * @param reversibility
 	 * @param modTActi
 	 * @param modTInhib
+	 * @throws IOException 
 	 * @throws ModificationException
 	 */
 	public HillEquation(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 

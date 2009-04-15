@@ -16,7 +16,7 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
  */
 public class String2TeX {
 
-	public String getEquation(String equation) {
+	public StringBuffer getEquation(String equation) {
 		int i = 0;
 		equation = equation.replaceAll("_", "");
 		String newEquation = "";
@@ -36,7 +36,7 @@ public class String2TeX {
 			equation = hoch(equation);
 		}
 
-		return equation;
+		return new StringBuffer(equation);
 	}
 
 	public String getOldEquation(PluginModel model, PluginReaction reaction) {

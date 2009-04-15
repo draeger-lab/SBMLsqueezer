@@ -451,6 +451,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 								+ exc.getMessage() + "</html>", exc.getClass()
 								.getName(), JOptionPane.ERROR_MESSAGE);
 						exc.printStackTrace();
+					} catch (IOException exc) {
+						JOptionPane.showMessageDialog(this, "<html>"
+								+ exc.getMessage() + "</html>", exc.getClass()
+								.getName(), JOptionPane.ERROR_MESSAGE);
+						exc.printStackTrace();
 					}
 
 				else

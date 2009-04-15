@@ -70,7 +70,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 			String id = klg.getModel().getReaction(
 					klg.getReactionNumOfNotExistKinetics().get(reactionNum)
 							.intValue()).getId();
-			List<String> param = klg.getReactionNumAndKineticLaw().get(
+			List<StringBuffer> param = klg.getReactionNumAndKineticLaw().get(
 					klg.getReactionNumOfNotExistKinetics().get(reactionNum))
 					.getLocalParameters();
 			numReac = 0;

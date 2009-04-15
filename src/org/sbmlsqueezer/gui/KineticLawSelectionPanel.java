@@ -11,7 +11,6 @@ import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
@@ -20,6 +19,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -29,7 +29,6 @@ import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
 import org.sbmlsqueezer.io.LaTeXExport;
-import org.sbmlsqueezer.io.ParameterLogger;
 import org.sbmlsqueezer.kinetics.BasicKineticLaw;
 import org.sbmlsqueezer.kinetics.KineticLawGenerator;
 import org.sbmlsqueezer.kinetics.RateLawNotApplicableException;
@@ -91,7 +90,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private String notes;
 
-	private String[] laTeXpreview;
+	private StringBuffer[] laTeXpreview;
 
 	private static final int width = 310, height = 175;
 
@@ -224,6 +223,11 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 							.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
 				} catch (RateLawNotApplicableException exc) {
 					throw new RuntimeException(exc.getMessage(), exc);
+				} catch (IOException exc) {
+					JOptionPane.showMessageDialog(this, "<html>"
+							+ exc.getMessage() + "</html>", exc.getClass()
+							.getName(), JOptionPane.ERROR_MESSAGE);
+					exc.printStackTrace();
 				}
 			} else {
 				klg.setAddAllParametersGlobally(getGlobal());
@@ -304,11 +308,12 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		return possibleTypes[i];
 	}
 
-	private Box initKineticsPanel() throws RateLawNotApplicableException {
+	private Box initKineticsPanel() throws RateLawNotApplicableException,
+			IOException {
 		possibleTypes = klg.identifyPossibleReactionTypes(model, reaction);
 		String[] kineticEquations = new String[possibleTypes.length];
 		String[] toolTips = new String[possibleTypes.length];
-		laTeXpreview = new String[possibleTypes.length + 1];
+		laTeXpreview = new StringBuffer[possibleTypes.length + 1];
 		int i;
 		for (i = 0; i < possibleTypes.length; i++) {
 			BasicKineticLaw kinetic = klg.createKineticLaw(model, reaction,
@@ -322,8 +327,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		if (isKineticLawDefined)
 			try {
 				laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
-						.toLaTeX(model, reaction.getKineticLaw().getMath())
-						.toString();
+						.toLaTeX(model, reaction.getKineticLaw().getMath());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -381,9 +385,10 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		preview.add(new sHotEqn("\\begin{equation}v_\\mbox{"
 				+ reaction.getId()
 				+ "}="
-				+ laTeXpreview[kinNum].replaceAll("mathrm", "mbox").replaceAll(
-						"text", "mbox").replaceAll("mathtt", "mbox")
-				+ "\\end{equation}"), BorderLayout.CENTER);
+				+ laTeXpreview[kinNum].toString().replaceAll("mathrm", "mbox")
+						.replaceAll("text", "mbox")
+						.replaceAll("mathtt", "mbox") + "\\end{equation}"),
+				BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel();
 		eqnPrev.setBorder(BorderFactory
