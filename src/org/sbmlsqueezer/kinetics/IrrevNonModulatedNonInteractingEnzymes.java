@@ -35,10 +35,11 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * @param parentReaction
 	 * @param model
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException 
 	 */
 	public IrrevNonModulatedNonInteractingEnzymes(
 			PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model);
 	}
 
@@ -47,11 +48,12 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * @param model
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException 
 	 */
 	public IrrevNonModulatedNonInteractingEnzymes(
 			PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 

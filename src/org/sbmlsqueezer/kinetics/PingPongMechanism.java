@@ -1,5 +1,6 @@
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.List;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
@@ -24,9 +25,10 @@ public class PingPongMechanism extends BasicKineticLaw {
    * @param model
    * @param reversibility
    * @throws RateLawNotApplicableException
+ * @throws IOException 
    */
   public PingPongMechanism(PluginReaction parentReaction, PluginModel model,
-      boolean reversibility) throws RateLawNotApplicableException {
+      boolean reversibility) throws RateLawNotApplicableException, IOException {
     super(parentReaction, model);
   }
 
@@ -36,9 +38,10 @@ public class PingPongMechanism extends BasicKineticLaw {
    * @param reversibility
    * @param listOfPossibleEnzymes
    * @throws RateLawNotApplicableException
+ * @throws IOException 
    */
   public PingPongMechanism(PluginReaction parentReaction, PluginModel model,
-      List<String> listOfPossibleEnzymes) throws RateLawNotApplicableException {
+      List<String> listOfPossibleEnzymes) throws RateLawNotApplicableException, IOException {
     super(parentReaction, model, listOfPossibleEnzymes);
   }
 

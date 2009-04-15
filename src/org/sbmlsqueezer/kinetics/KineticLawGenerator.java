@@ -1,5 +1,6 @@
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -103,7 +104,7 @@ public class KineticLawGenerator {
 
 	private int columnRank = -1;
 
-	private String[] reactionNumAndKineticTeX;
+	private StringBuffer[] reactionNumAndKineticTeX;
 
 	private String[] reactionNumAndKinetictexName;
 
@@ -287,10 +288,12 @@ public class KineticLawGenerator {
 	 * @return A kinetic law for the given reaction.
 	 * @throws RateLawNotApplicableException
 	 * @throws ModificationException
+	 * @throws IOException
 	 */
 	public BasicKineticLaw createKineticLaw(PluginModel model,
 			PluginReaction reaction, short kinetic, boolean reversibility)
-			throws ModificationException, RateLawNotApplicableException {
+			throws ModificationException, RateLawNotApplicableException,
+			IOException {
 		int reactionNum = 0;
 		BasicKineticLaw kineticLaw;
 
@@ -308,12 +311,12 @@ public class KineticLawGenerator {
 			kineticLaw = new IrrevCompetNonCooperativeEnzymes(reaction, model);
 			break;
 		case ZEROTH_ORDER_REVERSE_MA:
-			kineticLaw = new ZerothOrderReverseGMAK(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new ZerothOrderGMAK(reaction, model,
+					listOfPossibleEnzymes, ZerothOrderGMAK.REVERSE);
 			break;
 		case ZEROTH_ORDER_FORWARD_MA:
-			kineticLaw = new ZerothOrderForwardGMAK(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new ZerothOrderGMAK(reaction, model,
+					listOfPossibleEnzymes, ZerothOrderGMAK.FORWARD);
 			break;
 		case IRREV_NON_MODULATED_ENZYME_KIN:
 			kineticLaw = new IrrevNonModulatedNonInteractingEnzymes(reaction,
@@ -374,10 +377,11 @@ public class KineticLawGenerator {
 	 * @throws IllegalFormatException
 	 * @throws ModificationException
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException
 	 */
 	public void findExistingLawsAndGenerateMissingLaws(PluginModel model,
 			boolean reversibility) throws IllegalFormatException,
-			ModificationException, RateLawNotApplicableException {
+			ModificationException, RateLawNotApplicableException, IOException {
 		for (int reactionNum = 0; reactionNum < model.getNumReactions(); reactionNum++) {
 			boolean create = false;
 			PluginReaction reaction = model.getReaction(reactionNum);
@@ -516,7 +520,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @return
 	 */
-	public String[] getKineticLawsAsTeX() {
+	public StringBuffer[] getKineticLawsAsTeX() {
 		// TODO: ensure that this returns always a meaningful result!
 		return reactionNumAndKineticTeX;
 	}
@@ -589,9 +593,9 @@ public class KineticLawGenerator {
 		if ((kineticLaw instanceof Convenience)
 				|| (kineticLaw instanceof ConvenienceIndependent))
 			return CONVENIENCE_KINETICS;
-		if (kineticLaw instanceof ZerothOrderForwardGMAK)
+		if (kineticLaw.getType() == ZerothOrderGMAK.FORWARD)
 			return ZEROTH_ORDER_FORWARD_MA;
-		if (kineticLaw instanceof ZerothOrderReverseGMAK)
+		if (kineticLaw.getType() == ZerothOrderGMAK.REVERSE)
 			return ZEROTH_ORDER_REVERSE_MA;
 		if (kineticLaw instanceof IrrevNonModulatedNonInteractingEnzymes)
 			return IRREV_NON_MODULATED_ENZYME_KIN;
@@ -636,13 +640,17 @@ public class KineticLawGenerator {
 
 	/**
 	 * <ul>
-	 * <li>1 = generalized mass action kinetics</li> <li>2 = Convenience
-	 * kinetics</li> <li>3 = Michaelis-Menten kinetics</li> <li>4 = Random Order
-	 * ternary kinetics</li> <li>5 = Ping-Pong</li> <li>6 = Ordered</li> <li>7 =
-	 * Hill equation</li> <li>8 = Irreversible non-modulated non-interacting
-	 * enzyme kinetics</li> <li>9 = Zeroth order forward mass action kinetics
-	 * </li> <li>10 = Zeroth order reverse mass action kinetics</li> <li>11 =
-	 * Competitive non-exclusive, non-cooperative inihibition</li>
+	 * <li>1 = generalized mass action kinetics</li>
+	 * <li>2 = Convenience kinetics</li>
+	 * <li>3 = Michaelis-Menten kinetics</li>
+	 * <li>4 = Random Order ternary kinetics</li>
+	 * <li>5 = Ping-Pong</li>
+	 * <li>6 = Ordered</li>
+	 * <li>7 = Hill equation</li>
+	 * <li>8 = Irreversible non-modulated non-interacting enzyme kinetics</li>
+	 * <li>9 = Zeroth order forward mass action kinetics</li>
+	 * <li>10 = Zeroth order reverse mass action kinetics</li>
+	 * <li>11 = Competitive non-exclusive, non-cooperative inihibition</li>
 	 * </ul>
 	 * 
 	 * @return Returns a sorted array of possible kinetic equations for the
@@ -814,6 +822,14 @@ public class KineticLawGenerator {
 
 		if (types.contains(Short.valueOf(GENERALIZED_MASS_ACTION)))
 			types.add(Short.valueOf(ZEROTH_ORDER_FORWARD_MA));
+
+		// remove not updated entries (Hannes Borch)
+		short[] r = { MICHAELIS_MENTEN, RANDOM_ORDER_MECHANISM,
+				PING_PONG_MECAHNISM, ORDERED_MECHANISM, HILL_EQUATION };
+		for (short s : r) {
+			if (types.contains(Short.valueOf(s)))
+				types.remove(Short.valueOf(s));
+		}
 
 		short t[] = new short[types.size()];
 		i = 0;
@@ -1295,14 +1311,14 @@ public class KineticLawGenerator {
 	public void storeParamters(PluginModel model, PluginReaction reaction) {
 		setInitialConcentrationTo(model, reaction, 1d);
 		BasicKineticLaw kineticLaw = (BasicKineticLaw) reaction.getKineticLaw();
-		List<String> paramListLocal = kineticLaw.getLocalParameters();
-		List<String> paramListGlobal = kineticLaw.getGlobalParameters();
+		List<StringBuffer> paramListLocal = kineticLaw.getLocalParameters();
+		List<StringBuffer> paramListGlobal = kineticLaw.getGlobalParameters();
 		int paramNumber, i;
 		for (paramNumber = 0; paramNumber < paramListLocal.size(); paramNumber++) {
 			PluginParameter para;
 			if (addAllParametersGlobally) {
-				para = new PluginParameter(paramListLocal.get(paramNumber),
-						model);
+				para = new PluginParameter(paramListLocal.get(paramNumber)
+						.toString(), model);
 				para.setValue(1d);
 				if (model.getParameter(para.getId()) == null) {
 					model.addParameter(para);
@@ -1310,8 +1326,8 @@ public class KineticLawGenerator {
 				}
 			} else {
 				int contains = -1;
-				para = new PluginParameter(paramListLocal.get(paramNumber),
-						kineticLaw);
+				para = new PluginParameter(paramListLocal.get(paramNumber)
+						.toString(), kineticLaw);
 				para.setValue(1d);
 				for (i = 0; (i < kineticLaw.getNumParameters())
 						&& (contains < 0); i++)
@@ -1324,8 +1340,8 @@ public class KineticLawGenerator {
 			}
 		}
 		for (paramNumber = 0; paramNumber < paramListGlobal.size(); paramNumber++) {
-			PluginParameter para = new PluginParameter(paramListGlobal
-					.get(paramNumber), model);
+			PluginParameter para = new PluginParameter(paramListGlobal.get(
+					paramNumber).toString(), model);
 			para.setValue(1d);
 			if (model.getParameter(para.getId()) == null) {
 				model.addParameter(para);

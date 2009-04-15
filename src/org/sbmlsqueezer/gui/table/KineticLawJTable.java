@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -93,10 +94,12 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					.getSelectedItem();
 			// Reaction Identifier, Kinetic Law, SBO, #Reactants,
 			// Reactants, Products, Parameters, Formula
-			String params = kineticLaw.getLocalParameters().get(
+			StringBuffer params = kineticLaw.getLocalParameters().get(
 					kineticLaw.getLocalParameters().size() - 1);
-			for (i = kineticLaw.getLocalParameters().size() - 2; i > 0; i--)
-				params = kineticLaw.getLocalParameters().get(i) + ", " + params;
+			for (i = kineticLaw.getLocalParameters().size() - 2; i > 0; i--) {
+				params.insert(0, ", ");
+				params.insert(0, kineticLaw.getLocalParameters().get(i));
+			}
 			dataModel.setValueAt(kineticLaw, getSelectedRow(), 1);
 			dataModel.setValueAt(new String(kineticLaw.getSBO()),
 					getSelectedRow(), 2);
@@ -138,8 +141,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		if (colIndex != 1) {
 			BasicKineticLaw kinetic = (BasicKineticLaw) dataModel.getValueAt(
 					rowIndex, 1);
-			String LaTeX = kinetic.getKineticTeX().replaceAll("text", "mbox")
-					.replaceAll("mathrm", "mbox");
+			String LaTeX = kinetic.getKineticTeX().toString().replaceAll(
+					"text", "mbox").replaceAll("mathrm", "mbox");
 			JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
 					+ "\\end{equation}");
 			JPanel panel = new JPanel(new BorderLayout());
@@ -326,6 +329,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					} catch (ModificationException exc) {
 						exc.printStackTrace();
 					} catch (RateLawNotApplicableException exc) {
+						exc.printStackTrace();
+					} catch (IOException exc) {
 						exc.printStackTrace();
 					}
 				JComboBox kineticLawComboBox = new JComboBox(possibleLaws);

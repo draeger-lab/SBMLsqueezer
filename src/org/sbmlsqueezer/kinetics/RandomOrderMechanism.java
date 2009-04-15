@@ -1,5 +1,6 @@
 package org.sbmlsqueezer.kinetics;
 
+import java.io.IOException;
 import java.util.List;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
@@ -24,10 +25,11 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 	 * @param model
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException 
 	 */
 	public RandomOrderMechanism(PluginReaction parentReaction,
 			PluginModel model, boolean reversibility)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model);
 	}
 
@@ -37,10 +39,11 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 	 * @param reversibility
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
+	 * @throws IOException 
 	 */
 	public RandomOrderMechanism(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
