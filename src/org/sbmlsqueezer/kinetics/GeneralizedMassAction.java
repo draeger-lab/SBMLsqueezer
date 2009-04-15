@@ -564,7 +564,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	}
 
 	protected StringBuffer getReactionModifiers(int reactionNumber,
-			List<String> modifiers, int type) throws IllegalFormatException {
+			List<String> modifiers, boolean type) throws IllegalFormatException {
 		if (type == ACTIVATION || type == INHIBITION) {
 			if (!modifiers.isEmpty()) {
 				StringBuffer[] mods = new StringBuffer[modifiers.size()];
@@ -572,7 +572,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					StringBuffer k = new StringBuffer(
 							(type == ACTIVATION) ? "kA_" : "kI_");
 					k.append(reactionNumber);
-					k.append("_");
+					k.append('_');
 					k.append(modifiers.get(i));
 					mods[i] = frac(k,
 							sum(k, new StringBuffer(modifiers.get(i))));
@@ -586,9 +586,20 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		}
 	}
 
+	/**
+	 * 
+	 * @param reaction
+	 * @param reactionNumber
+	 * @param catalysators
+	 * @param catalysatorNumber
+	 * @param type
+	 * @param b
+	 * @return
+	 * @throws IllegalFormatException
+	 */
 	private StringBuffer getReactionPartners(PluginReaction reaction,
 			int reactionNumber, List<String> catalysators,
-			int catalysatorNumber, int type, boolean b)
+			int catalysatorNumber, boolean type, boolean b)
 			throws IllegalFormatException {
 		if (type == ASSOCIATION || type == DISSOCIATION) {
 			if ((type == ASSOCIATION && !b)

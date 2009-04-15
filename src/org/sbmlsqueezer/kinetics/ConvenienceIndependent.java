@@ -1,3 +1,6 @@
+/**
+ * Copyright (c) ZBiT, University of T&uuml;bingen, Germany
+ */
 package org.sbmlsqueezer.kinetics;
 
 import java.io.IOException;
@@ -15,8 +18,8 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @since 2.0
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de> Copyright (c)
- *         ZBiT, University of T&uuml;bingen, Germany
+ * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de> 
+ * @author Hannes Borch
  * @date Aug 1, 2007
  */
 public class ConvenienceIndependent extends Convenience {
@@ -53,19 +56,19 @@ public class ConvenienceIndependent extends Convenience {
 		return true;
 	}
 
-	@Override
+	// @Override
 	public String getName() {
 		if (this.getParentReaction().getReversible())
 			return "reversible thermodynamically independent convenience kinetics";
 		return "irreversible thermodynamically independent convenience kinetics";
 	}
 
-	@Override
+	// @Override
 	public String getSBO() {
 		return "none";
 	}
 
-	@Override
+	// @Override
 	protected StringBuffer createKineticEquation(PluginModel model,
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -80,7 +83,7 @@ public class ConvenienceIndependent extends Convenience {
 				StringBuffer klV = new StringBuffer("kV_");
 				klV.append(reactionNum);
 				if (modE.size() > 1) {
-					klV.append("_");
+					klV.append('_');
 					klV.append(modE.get(i));
 				}
 				if (!listOfLocalParameters.contains(klV))
@@ -88,20 +91,21 @@ public class ConvenienceIndependent extends Convenience {
 
 				StringBuffer numerator, denominator;
 				if (parentReaction.getReversible()) {
-					numerator = times(getNumerators(reactionNum,
+					numerator = times(createNumerators(reactionNum,
 							parentReaction, i, modE, FORWARD));
-					denominator = diff(times(getDenominators(reactionNum,
+					denominator = diff(times(createDenominators(reactionNum,
 							parentReaction, i, modE, FORWARD)),
-							new StringBuffer("1"));
+							new StringBuffer('1'));
 				} else {
-					numerator = diff(times(getNumerators(reactionNum,
+					numerator = diff(times(createNumerators(reactionNum,
 							parentReaction, i, modE, FORWARD)),
-							times(getNumerators(reactionNum, parentReaction, i,
-									modE, REVERSE)));
-					denominator = diff(sum(times(getDenominators(reactionNum,
-							parentReaction, i, modE, FORWARD)),
-							times(getDenominators(reactionNum, parentReaction,
-									i, modE, REVERSE))), new StringBuffer("1"));
+							times(createNumerators(reactionNum, parentReaction,
+									i, modE, REVERSE)));
+					denominator = diff(sum(times(createDenominators(
+							reactionNum, parentReaction, i, modE, FORWARD)),
+							times(createDenominators(reactionNum,
+									parentReaction, i, modE, REVERSE))),
+							new StringBuffer('1'));
 				}
 				if (modE.size() > 0)
 					enzymes[i] = times(new StringBuffer(modE.get(i)), klV,
@@ -120,16 +124,16 @@ public class ConvenienceIndependent extends Convenience {
 		}
 	}
 
-	protected StringBuffer[] getNumerators(int reactionNumber,
+	protected StringBuffer[] createNumerators(int reactionNumber,
 			PluginReaction reaction, int enzymeNumber, List<String> modE,
-			int type) throws IllegalFormatException {
+			boolean type) throws IllegalFormatException {
 		if (type == FORWARD || type == REVERSE) {
 			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? reaction
 					.getNumReactants() : reaction.getNumProducts() + 1];
 			nums[0] = new StringBuffer((type == FORWARD) ? "kcatp_" : "kcatn_");
 			nums[0].append(reactionNumber);
 			if (modE.size() > 1) {
-				nums[0].append("_");
+				nums[0].append('_');
 				nums[0].append(modE.get(enzymeNumber));
 			}
 			if (!listOfLocalParameters.contains(nums[0]))
@@ -141,10 +145,10 @@ public class ConvenienceIndependent extends Convenience {
 				StringBuffer kM = new StringBuffer("kM");
 				kM.append(reactionNumber);
 				if (modE.size() > 1) {
-					kM.append("_");
+					kM.append('_');
 					kM.append(modE.get(enzymeNumber));
 				}
-				kM.append("_");
+				kM.append('_');
 				kM.append(ref.getSpecies());
 				if (!listOfLocalParameters.contains(kM))
 					listOfLocalParameters.add(kM);
@@ -155,7 +159,7 @@ public class ConvenienceIndependent extends Convenience {
 					listOfGlobalParameters.add(kiG);
 
 				nums[i] = times(pow(frac(getSpecies(ref), kM),
-						getStoichiometry(ref)), root(new StringBuffer("2"),
+						getStoichiometry(ref)), root(new StringBuffer('2'),
 						pow(times(kiG, kM), getStoichiometry(ref))));
 			}
 
