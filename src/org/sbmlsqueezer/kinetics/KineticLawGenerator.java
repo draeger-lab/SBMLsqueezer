@@ -311,12 +311,12 @@ public class KineticLawGenerator {
 			kineticLaw = new IrrevCompetNonCooperativeEnzymes(reaction, model);
 			break;
 		case ZEROTH_ORDER_REVERSE_MA:
-			kineticLaw = new ZerothOrderGMAK(reaction, model,
-					listOfPossibleEnzymes, ZerothOrderGMAK.REVERSE);
+			kineticLaw = new ZerothOrderReverseGMAK(reaction, model,
+					listOfPossibleEnzymes);
 			break;
 		case ZEROTH_ORDER_FORWARD_MA:
-			kineticLaw = new ZerothOrderGMAK(reaction, model,
-					listOfPossibleEnzymes, ZerothOrderGMAK.FORWARD);
+			kineticLaw = new ZerothOrderForwardGMAK(reaction, model,
+					listOfPossibleEnzymes);
 			break;
 		case IRREV_NON_MODULATED_ENZYME_KIN:
 			kineticLaw = new IrrevNonModulatedNonInteractingEnzymes(reaction,
@@ -593,9 +593,9 @@ public class KineticLawGenerator {
 		if ((kineticLaw instanceof Convenience)
 				|| (kineticLaw instanceof ConvenienceIndependent))
 			return CONVENIENCE_KINETICS;
-		if (kineticLaw.getType() == ZerothOrderGMAK.FORWARD)
+		if (kineticLaw instanceof ZerothOrderForwardGMAK)
 			return ZEROTH_ORDER_FORWARD_MA;
-		if (kineticLaw.getType() == ZerothOrderGMAK.REVERSE)
+		if (kineticLaw instanceof ZerothOrderReverseGMAK)
 			return ZEROTH_ORDER_REVERSE_MA;
 		if (kineticLaw instanceof IrrevNonModulatedNonInteractingEnzymes)
 			return IRREV_NON_MODULATED_ENZYME_KIN;

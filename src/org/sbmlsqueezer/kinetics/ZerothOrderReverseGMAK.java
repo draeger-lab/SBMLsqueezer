@@ -20,7 +20,7 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @date Feb 8, 2008
  **/
-public class ZerothOrderGMAK extends GeneralizedMassAction {
+public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 
 	/**
 	 * @param parentReaction
@@ -28,22 +28,16 @@ public class ZerothOrderGMAK extends GeneralizedMassAction {
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 */
-	public ZerothOrderGMAK(PluginReaction parentReaction, PluginModel model,
-			int type) throws RateLawNotApplicableException, IOException {
-		super(parentReaction, model, type);
+	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
+			PluginModel model) throws RateLawNotApplicableException,
+			IOException {
+		super(parentReaction, model);
 	}
-
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param listOfPossibleEnzymes
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 */
-	public ZerothOrderGMAK(PluginReaction parentReaction, PluginModel model,
-			List<String> listOfPossibleEnzymes, int type)
+	
+	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
+			PluginModel model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException {
-		super(parentReaction, model, listOfPossibleEnzymes, type);
+		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
 	@Override
@@ -52,25 +46,10 @@ public class ZerothOrderGMAK extends GeneralizedMassAction {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		boolean zeroReact = true;
-		boolean zeroProd = false;
-		try {
-			if (this.type == FORWARD) {
-				reactantOrder = 0;
-				productOrder = Double.NaN;
-			} else if (this.type == REVERSE) {
-				zeroReact = false;
-				zeroProd = true;
-				reactantOrder = Double.NaN;
-				productOrder = 0;
-			} else {
-				throw new IllegalFormatException(
-						"Invalid type argument for Zeroth order GMAK");
-			}
-		} catch (IllegalFormatException exc) {
-			exc.printStackTrace();
-		}
-
+		boolean zeroReact = false;
+		boolean zeroProd = true;
+		reactantOrder = Double.NaN;
+		productOrder = 0;
 		if (modCat.isEmpty())
 			return super.createKineticEquation(-1, reactionNum, modCat,
 					modActi, modActi, zeroReact, zeroProd);

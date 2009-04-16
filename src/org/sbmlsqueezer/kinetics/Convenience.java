@@ -69,7 +69,16 @@ public class Convenience extends GeneralizedMassAction {
 		return "none";
 	}
 
-	// @Override
+	/**
+	 * @Override Creates a convenience kinetic equation. For each enzyme
+	 *           contained in the given reaction, the convenience kinetic term
+	 *           is formed by calling methods which return the numerator and
+	 *           denominator of the fraction. These methods distinguish between
+	 *           reversible and irreversible reactions. The fractions are
+	 *           multiplied with the concentration of the respective enzyme and,
+	 *           afterwards, summed up. The whole sum is multiplied with the
+	 *           activators and inhibitors of the reaction.
+	 */
 	protected StringBuffer createKineticEquation(PluginModel model,
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -80,34 +89,38 @@ public class Convenience extends GeneralizedMassAction {
 		PluginReaction parentReaction = getParentReaction();
 		StringBuffer[] enzymes = new StringBuffer[modE.size()];
 		try {
-			for (int i = 0; i < enzymes.length; i++) {
+			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
+					ACTIVATION);
+			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
+					INHIBITION);
+
+			int i = 0;
+			do {
 				StringBuffer numerator, denominator;
-				if (parentReaction.getReversible()) {
+				if (!parentReaction.getReversible()) {
 					numerator = times(createNumerators(reactionNum,
 							parentReaction, i, modE, FORWARD));
 					denominator = diff(times(createDenominators(reactionNum,
 							parentReaction, i, modE, FORWARD)),
-							new StringBuffer('1'));
+							new StringBuffer("1"));
 				} else {
 					numerator = diff(times(createNumerators(reactionNum,
 							parentReaction, i, modE, FORWARD)),
-							times(createNumerators(reactionNum, parentReaction, i,
-									modE, REVERSE)));
-					denominator = diff(sum(times(createDenominators(reactionNum,
-							parentReaction, i, modE, FORWARD)),
-							times(createDenominators(reactionNum, parentReaction,
-									i, modE, REVERSE))), new StringBuffer("1"));
+							times(createNumerators(reactionNum, parentReaction,
+									i, modE, REVERSE)));
+					denominator = diff(sum(times(createDenominators(
+							reactionNum, parentReaction, i, modE, FORWARD)),
+							times(createDenominators(reactionNum,
+									parentReaction, i, modE, REVERSE))),
+							new StringBuffer("1"));
 				}
 				if (modE.size() > 0)
 					enzymes[i] = times(new StringBuffer(modE.get(i)), frac(
 							numerator, denominator));
 				else
-					enzymes[i] = frac(numerator, denominator);
-			}
-			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
-					ACTIVATION);
-			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
-					INHIBITION);
+					return (times(acti, inhib, frac(numerator, denominator)));
+				i++;
+			} while (i < enzymes.length);
 
 			return times(acti, inhib, sum(enzymes));
 		} catch (IllegalFormatException exc) {
@@ -117,6 +130,10 @@ public class Convenience extends GeneralizedMassAction {
 	}
 
 	/**
+	 * Returns an array containing the factors of the product contained in the
+	 * convenience kinetic's numerator. The array also contains the catalytic
+	 * constant of the reaction. This method is applicable for both forward and
+	 * backward reactions.
 	 * 
 	 * @param reactionNumber
 	 * @param reaction
@@ -130,8 +147,9 @@ public class Convenience extends GeneralizedMassAction {
 			PluginReaction reaction, int enzymeNumber, List<String> modE,
 			boolean type) throws IllegalFormatException {
 		if (type == FORWARD || type == REVERSE) {
-			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? reaction
-					.getNumReactants() : reaction.getNumProducts() + 1];
+			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? (reaction
+					.getNumReactants() + 1)
+					: (reaction.getNumProducts() + 1)];
 			nums[0] = new StringBuffer((type == FORWARD) ? "kcatp_" : "kcatn_");
 			nums[0].append(reactionNumber);
 			if (modE.size() > 1) {
@@ -143,8 +161,8 @@ public class Convenience extends GeneralizedMassAction {
 
 			for (int i = 1; i < nums.length; i++) {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction
-						.getReactant(i) : reaction.getProduct(i);
-				StringBuffer kM = new StringBuffer("kM");
+						.getReactant(i - 1) : reaction.getProduct(i - 1);
+				StringBuffer kM = new StringBuffer("kM_");
 				kM.append(reactionNumber);
 				if (modE.size() > 1) {
 					kM.append('_');
@@ -184,7 +202,7 @@ public class Convenience extends GeneralizedMassAction {
 			for (int i = 0; i < denoms.length; i++) {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction
 						.getReactant(i) : reaction.getProduct(i);
-				StringBuffer kM = new StringBuffer("kM");
+				StringBuffer kM = new StringBuffer("kM_");
 				kM.append(reactionNumber);
 				if (modE.size() > 1) {
 					kM.append('_');
@@ -197,7 +215,7 @@ public class Convenience extends GeneralizedMassAction {
 						.getStoichiometry() + 1];
 				StringBuffer part = frac(getSpecies(ref), kM);
 				for (int j = 0; j < parts.length; j++) {
-					parts[j] = pow(part, new StringBuffer(j));
+					parts[j] = pow(part, new StringBuffer(Integer.toString(j)));
 				}
 				denoms[i] = sum(parts);
 			}
@@ -206,5 +224,10 @@ public class Convenience extends GeneralizedMassAction {
 			throw new IllegalFormatException(
 					"Illegal type argument for Convenience kinetic numerators");
 		}
+	}
+
+	// TODO
+	protected StringBuffer removeOnes(StringBuffer sb) {
+		return sb;
 	}
 }

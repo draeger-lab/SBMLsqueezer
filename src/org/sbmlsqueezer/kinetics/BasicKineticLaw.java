@@ -32,10 +32,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 	protected static final boolean INHIBITION = !ACTIVATION;
 
-	protected static final boolean ASSOCIATION = true;
-
-	protected static final boolean DISSOCIATION = !ASSOCIATION;
-
 	/**
 	 * 
 	 */
@@ -44,7 +40,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	/**
 	 * 
 	 */
-	public static final boolean REVERSE = false;
+	public static final boolean REVERSE = !FORWARD;
 
 	protected HashMap<String, String> idAndName;
 
@@ -53,7 +49,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	protected List<StringBuffer> listOfLocalParameters, listOfGlobalParameters;
 
 	protected String sboTerm;
-
 
 	/**
 	 * 
@@ -64,34 +59,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 */
 	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model)
 			throws RateLawNotApplicableException, IOException {
-		this(parentReaction, model, getDefaultListOfPossibleEnzymes(), 0);
-	}
-
-	/**
-	 * 
-	 * @param parentReaction
-	 * @param model
-	 * @param type
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 */
-	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model,
-			int type) throws RateLawNotApplicableException, IOException {
-		this(parentReaction, model, getDefaultListOfPossibleEnzymes(), type);
-	}
-
-	/**
-	 * 
-	 * @param parentReaction
-	 * @param model
-	 * @param listOfPossibleEnzymes
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 */
-	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model,
-			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
-		this(parentReaction, model, listOfPossibleEnzymes, 0);
+		this(parentReaction, model, getDefaultListOfPossibleEnzymes());
 	}
 
 	/**
@@ -105,7 +73,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 */
 	@SuppressWarnings("deprecation")
 	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model,
-			List<String> listOfPossibleEnzymes, int type)
+			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException {
 		super(parentReaction);
 		int reactionNum = 0;
@@ -125,7 +93,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		identifyModifers(parentReaction, listOfPossibleEnzymes, modInhib,
 				modTActi, modTInhib, modActi, modE, modCat);
 		StringBuffer formula = createKineticEquation(model, reactionNum, modE,
-				modActi, modTActi, modInhib, modTInhib, modCat, type);
+				modActi, modTActi, modInhib, modTInhib, modCat);
 		if (getMath() == null) {
 			setFormula(formula.toString());
 			setMathFromFormula();
@@ -313,30 +281,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			throws RateLawNotApplicableException;
 
 	/**
-	 * TODO: comment missing
-	 * 
-	 * @param model
-	 * @param reactionNum
-	 * @param modE
-	 * @param modActi
-	 * @param modTActi
-	 * @param modInhib
-	 * @param modTInhib
-	 * @param modCat
-	 * @param type
-	 * @return
-	 * @throws RateLawNotApplicableException
-	 */
-	protected StringBuffer createKineticEquation(PluginModel model,
-			int reactionNum, List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat, int type)
-			throws RateLawNotApplicableException {
-		return createKineticEquation(model, reactionNum, modE, modActi,
-				modTActi, modInhib, modTInhib, modCat);
-	}
-
-	/**
+	 * Returns the sum of the given elements as StringBuffer.
 	 * 
 	 * @param summands
 	 * @return
@@ -346,6 +291,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	}
 
 	/**
+	 * Returns the difference of the given elements as StringBuffer.
 	 * 
 	 * @param subtrahents
 	 * @return
@@ -355,6 +301,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	}
 
 	/**
+	 * Returns the product of the given elements as StringBuffer.
 	 * 
 	 * @param factors
 	 * @return
@@ -364,6 +311,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	}
 
 	/**
+	 * Returns a fraction with the given elements as numerator and denominator.
 	 * 
 	 * @param numerator
 	 * @param denominator
@@ -374,6 +322,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	}
 
 	/**
+	 * Returns the basis to the power of the exponent as StringBuffer. Several
+	 * special cases are treated.
 	 * 
 	 * @param basis
 	 * @param exponent
@@ -381,14 +331,22 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 */
 	protected StringBuffer pow(StringBuffer basis, StringBuffer exponent) {
 		if (Double.parseDouble(exponent.toString()) == 0.0)
-			return new StringBuffer(1);
+			return new StringBuffer("1");
 		else if (Double.parseDouble(exponent.toString()) == 1.0)
 			return basis;
 		else
 			return arith('^', basis, exponent);
 	}
 
-	protected StringBuffer root(StringBuffer basis, StringBuffer exponent)
+	/**
+	 * Returns the exponent-th root of the basis as StringBuffer.
+	 * 
+	 * @param exponent
+	 * @param basis
+	 * @return
+	 * @throws IllegalFormatException
+	 */
+	protected StringBuffer root(StringBuffer exponent, StringBuffer basis)
 			throws IllegalFormatException {
 		if (Double.parseDouble(exponent.toString()) == 0.0)
 			throw new IllegalFormatException(
@@ -398,15 +356,17 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		else {
 			StringBuffer root = new StringBuffer("root(");
 			root.append(exponent);
-			root.append(",");
+			root.append(',');
 			root.append(basis);
-			root.append(")");
+			root.append(')');
 			return root;
 		}
 
 	}
 
 	/**
+	 * Basic method which links several elements with a mathematical operator.
+	 * All empty StringBuffer object are excluded.
 	 * 
 	 * @param operator
 	 * @param elements
@@ -421,7 +381,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			if (vsb.size() == 1)
 				return vsb.get(0);
 			else {
-				StringBuffer sb = new StringBuffer('(');
+				StringBuffer sb = new StringBuffer("(");
 				sb.append(vsb.get(0));
 				for (int i = 1; i < vsb.size(); i++) {
 					sb.append(operator);
@@ -434,8 +394,10 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			return new StringBuffer();
 	}
 
-
 	/**
+	 * Recursively removes waste brackets from a formula.
+	 * 
+	 * TODO refine
 	 * 
 	 * @param sb
 	 * @return
@@ -446,6 +408,9 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 				sb.deleteCharAt(sb.length() - 1);
 				sb.deleteCharAt(0);
 			}
+
+		sb = removeBrackets(sb);
+
 		return sb;
 	}
 }

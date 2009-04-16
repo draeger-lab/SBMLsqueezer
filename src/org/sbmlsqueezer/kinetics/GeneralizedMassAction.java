@@ -41,20 +41,6 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	}
 
 	/**
-	 * 
-	 * @param parentReaction
-	 * @param model
-	 * @param type
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 */
-	public GeneralizedMassAction(PluginReaction parentReaction,
-			PluginModel model, int type) throws RateLawNotApplicableException,
-			IOException {
-		super(parentReaction, model, type);
-	}
-
-	/**
 	 * @param parentReaction
 	 * @param model
 	 * @param reversibility
@@ -66,21 +52,6 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			PluginModel model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException {
 		super(parentReaction, model, listOfPossibleEnzymes);
-	}
-
-	/**
-	 * 
-	 * @param parentReaction
-	 * @param model
-	 * @param listOfPossibleEnzymes
-	 * @param type
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 */
-	public GeneralizedMassAction(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes, int type)
-			throws RateLawNotApplicableException, IOException {
-		super(parentReaction, model, listOfPossibleEnzymes, type);
 	}
 
 	public static boolean isApplicable(PluginReaction reaction) {
@@ -523,18 +494,17 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			int reactionNum, List<String> modCat, List<String> modActi,
 			List<String> modInhib, boolean zeroReact, boolean zeroProd) {
 		reactionNum++;
-
 		PluginReaction reaction = getParentReaction();
 		try {
 			StringBuffer ass = getReactionPartners(reaction, reactionNum,
-					modCat, catNumber, ASSOCIATION, zeroReact);
+					modCat, catNumber, FORWARD, zeroReact);
 			StringBuffer diss = getReactionPartners(reaction, reactionNum,
-					modCat, catNumber, DISSOCIATION, zeroProd);
+					modCat, catNumber, REVERSE, zeroProd);
 			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
 					ACTIVATION);
 			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
 					INHIBITION);
-			return removeBrackets(times(acti, inhib, diff(ass, diss)));
+			return times(acti, inhib, diff(ass, diss));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
 			return new StringBuffer();
@@ -547,10 +517,6 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		/*
-		 * boolean zeroReact = (reactantOrder != Double.NaN), zeroProd =
-		 * (productOrder != Double.NaN);//
-		 */
 		reactantOrder = productOrder = Double.NaN;
 		boolean zeroReact = false, zeroProd = false;
 		if (modCat.isEmpty())
@@ -558,9 +524,15 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					modInhib, zeroReact, zeroProd);
 		StringBuffer[] equations = new StringBuffer[modCat.size()];
 		for (int i = 0; i < equations.length; i++)
-			equations[i] = createKineticEquation(i, reactionNum, modCat,
-					modActi, modInhib, zeroReact, zeroProd);
+			if (equations.length == 1)
+				equations[i] = removeBrackets(createKineticEquation(i,
+						reactionNum, modCat, modActi, modInhib, zeroReact,
+						zeroProd));
+			else
+				equations[i] = createKineticEquation(i, reactionNum, modCat,
+						modActi, modInhib, zeroReact, zeroProd);
 		return removeBrackets(sum(equations));
+
 	}
 
 	protected StringBuffer getReactionModifiers(int reactionNumber,
@@ -601,22 +573,23 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			int reactionNumber, List<String> catalysators,
 			int catalysatorNumber, boolean type, boolean b)
 			throws IllegalFormatException {
-		if (type == ASSOCIATION || type == DISSOCIATION) {
-			if ((type == ASSOCIATION && !b)
-					|| (type == DISSOCIATION && !b)) {
-				StringBuffer k = new StringBuffer(
-						(type == ASSOCIATION) ? "kass_" : "kdiss_");
+		if (type == FORWARD || type == REVERSE) {
+			if ((type == FORWARD)
+					|| (type == REVERSE && reaction.getReversible())) {
+				StringBuffer k = new StringBuffer((type == FORWARD) ? "kass_"
+						: "kdiss_");
 				k.append(reactionNumber);
 				listOfLocalParameters.add(k);
 				Vector<StringBuffer> parts = new Vector<StringBuffer>();
 				parts.add(k);
-				for (int i = 0; i < ((type == ASSOCIATION) ? reaction
-						.getNumReactants() : reaction.getNumProducts()); i++) {
-					PluginSpeciesReference ref = (type == ASSOCIATION) ? reaction
-							.getReactant(i)
-							: reaction.getProduct(i);
-					parts.add(pow(getSpecies(ref), getStoichiometry(ref)));
-				}
+				if (!b)
+					for (int i = 0; i < ((type == FORWARD) ? reaction
+							.getNumReactants() : reaction.getNumProducts()); i++) {
+						PluginSpeciesReference ref = (type == FORWARD) ? reaction
+								.getReactant(i)
+								: reaction.getProduct(i);
+						parts.add(pow(getSpecies(ref), getStoichiometry(ref)));
+					}
 
 				if (catalysatorNumber >= 0)
 					parts.add(new StringBuffer(catalysators
