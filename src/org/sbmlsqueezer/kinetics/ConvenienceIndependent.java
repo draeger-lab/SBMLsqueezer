@@ -18,7 +18,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @since 2.0
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de> 
+ * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
  * @author Hannes Borch
  * @date Aug 1, 2007
  */
@@ -79,7 +79,13 @@ public class ConvenienceIndependent extends Convenience {
 		PluginReaction parentReaction = getParentReaction();
 		StringBuffer[] enzymes = new StringBuffer[modE.size()];
 		try {
-			for (int i = 0; i < enzymes.length; i++) {
+			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
+					ACTIVATION);
+			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
+					INHIBITION);
+
+			int i = 0;
+			do {
 				StringBuffer klV = new StringBuffer("kV_");
 				klV.append(reactionNum);
 				if (modE.size() > 1) {
@@ -90,12 +96,12 @@ public class ConvenienceIndependent extends Convenience {
 					listOfLocalParameters.add(klV);
 
 				StringBuffer numerator, denominator;
-				if (parentReaction.getReversible()) {
+				if (!parentReaction.getReversible()) {
 					numerator = times(createNumerators(reactionNum,
 							parentReaction, i, modE, FORWARD));
 					denominator = diff(times(createDenominators(reactionNum,
 							parentReaction, i, modE, FORWARD)),
-							new StringBuffer('1'));
+							new StringBuffer("1"));
 				} else {
 					numerator = diff(times(createNumerators(reactionNum,
 							parentReaction, i, modE, FORWARD)),
@@ -105,18 +111,16 @@ public class ConvenienceIndependent extends Convenience {
 							reactionNum, parentReaction, i, modE, FORWARD)),
 							times(createDenominators(reactionNum,
 									parentReaction, i, modE, REVERSE))),
-							new StringBuffer('1'));
+							new StringBuffer("1"));
 				}
+
 				if (modE.size() > 0)
 					enzymes[i] = times(new StringBuffer(modE.get(i)), klV,
 							frac(numerator, denominator));
 				else
-					enzymes[i] = frac(numerator, denominator);
-			}
-			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
-					ACTIVATION);
-			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
-					INHIBITION);
+					return (times(acti, inhib, frac(numerator, denominator)));
+				i++;
+			} while (i < enzymes.length);
 			return times(acti, inhib, sum(enzymes));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
@@ -128,8 +132,9 @@ public class ConvenienceIndependent extends Convenience {
 			PluginReaction reaction, int enzymeNumber, List<String> modE,
 			boolean type) throws IllegalFormatException {
 		if (type == FORWARD || type == REVERSE) {
-			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? reaction
-					.getNumReactants() : reaction.getNumProducts() + 1];
+			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? (reaction
+					.getNumReactants() + 1)
+					: (reaction.getNumProducts() + 1)];
 			nums[0] = new StringBuffer((type == FORWARD) ? "kcatp_" : "kcatn_");
 			nums[0].append(reactionNumber);
 			if (modE.size() > 1) {
@@ -138,11 +143,10 @@ public class ConvenienceIndependent extends Convenience {
 			}
 			if (!listOfLocalParameters.contains(nums[0]))
 				listOfLocalParameters.add(nums[0]);
-
 			for (int i = 1; i < nums.length; i++) {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction
-						.getReactant(i) : reaction.getProduct(i);
-				StringBuffer kM = new StringBuffer("kM");
+						.getReactant(i - 1) : reaction.getProduct(i - 1);
+				StringBuffer kM = new StringBuffer("kM_");
 				kM.append(reactionNumber);
 				if (modE.size() > 1) {
 					kM.append('_');
@@ -159,7 +163,7 @@ public class ConvenienceIndependent extends Convenience {
 					listOfGlobalParameters.add(kiG);
 
 				nums[i] = times(pow(frac(getSpecies(ref), kM),
-						getStoichiometry(ref)), root(new StringBuffer('2'),
+						getStoichiometry(ref)), root(new StringBuffer("2"),
 						pow(times(kiG, kM), getStoichiometry(ref))));
 			}
 
