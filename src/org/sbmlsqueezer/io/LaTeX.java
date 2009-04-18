@@ -17,6 +17,8 @@
  */
 package org.sbmlsqueezer.io;
 
+import javax.swing.JOptionPane;
+
 /**
  * Created at 2009-01-03.
  * 
@@ -63,7 +65,7 @@ public class LaTeX extends StringOperations {
 	 * An closing quotation mark.
 	 */
 	protected String rightQuotationMark = "\"";
-	
+
 	/**
 	 * This is a LaTeX line break. The line break symbol double backslash
 	 * followed by a new line symbol of the operating system.

@@ -43,6 +43,7 @@ import atp.sHotEqn;
  * @since 2.0
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
+ * @author Hannes Borch <hannes.borch@googlemail.com>
  * @date Feb 7, 2008
  */
 public class KineticLawSelectionPanel extends JPanel implements ActionListener {

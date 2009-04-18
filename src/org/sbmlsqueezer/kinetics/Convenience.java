@@ -21,7 +21,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
  * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
  * @author Michael Ziller <michael@diegrauezelle.de>
- * @author Hannes Borch
+ * @author Hannes Borch <hannes.borch@googlemail.com>
  * @date Aug 1, 2007
  */
 public class Convenience extends GeneralizedMassAction {
@@ -130,10 +130,12 @@ public class Convenience extends GeneralizedMassAction {
 	}
 
 	/**
-	 * Returns an array containing the factors of the product contained in the
-	 * convenience kinetic's numerator. The array also contains the catalytic
-	 * constant of the reaction. This method is applicable for both forward and
-	 * backward reactions.
+	 * Returns an array containing the factors of the reactants and products
+	 * included in the convenience kinetic's numerator. Each factor is given by
+	 * the quotient of the respective species' concentration and it's related
+	 * equilibrium constant to the power of the species' stoichiometry. The
+	 * array also contains the catalytic constant of the reaction. This method
+	 * is applicable for both forward and backward reactions.
 	 * 
 	 * @param reactionNumber
 	 * @param reaction
@@ -183,6 +185,13 @@ public class Convenience extends GeneralizedMassAction {
 	}
 
 	/**
+	 * Returns an array containing the factors of the reactants and products
+	 * included in the convenience kinetic's denominator. For each factor, the
+	 * respective species' concentration and it's equilibrium constant are
+	 * divided and raised to the power of each integer value between zero and
+	 * the species' stoichiometry. All of the species' powers are summed up to
+	 * form the species' factor in the product. The method is applicable for
+	 * both forward and backward reactions.
 	 * 
 	 * @param reactionNumber
 	 * @param reaction
@@ -226,7 +235,12 @@ public class Convenience extends GeneralizedMassAction {
 		}
 	}
 
-	// TODO
+	/**
+	 * TODO Method that sums up the single +1 and -1 terms in the denominator.
+	 * 
+	 * @param sb
+	 * @return
+	 */
 	protected StringBuffer removeOnes(StringBuffer sb) {
 		return sb;
 	}

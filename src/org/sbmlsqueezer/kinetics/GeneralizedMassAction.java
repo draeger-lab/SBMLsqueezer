@@ -17,6 +17,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
  *         JDK 1.6.0
+ * @author Hannes Borch <hannes.borch@googlemail.com>
  * @date Aug 1, 2007
  */
 public class GeneralizedMassAction extends BasicKineticLaw {
@@ -59,7 +60,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		return true;
 	}
 
-	@Override
+	// @Override
 	public String getName() {
 		String name = "mass action kinetics";
 		String orderF = "", orderR = "";
@@ -211,7 +212,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		return name;
 	}
 
-	@Override
+	// @Override
 	public String getSBO() {
 		if (sbo == null) {
 			String name = getName().toLowerCase();
@@ -511,7 +512,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		}
 	}
 
-	@Override
+	// @Override
 	protected StringBuffer createKineticEquation(PluginModel model,
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -535,6 +536,16 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 
 	}
 
+	/**
+	 * Returns the product of either all the activation or inhibition terms of a
+	 * reaction.
+	 * 
+	 * @param reactionNumber
+	 * @param modifiers
+	 * @param type
+	 * @return
+	 * @throws IllegalFormatException
+	 */
 	protected StringBuffer getReactionModifiers(int reactionNumber,
 			List<String> modifiers, boolean type) throws IllegalFormatException {
 		if (type == ACTIVATION || type == INHIBITION) {
@@ -559,6 +570,11 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	}
 
 	/**
+	 * Returns either the forward reaction or backward reaction term for a
+	 * reaction with GMAK. Both types of terms are formed by the product of the
+	 * reaction's reactant or, respectively, product concentrations to the power
+	 * of the belonging stoichiometry. Each product is also multiplied with the
+	 * reaction's forward or backward directed equilibrium constant.
 	 * 
 	 * @param reaction
 	 * @param reactionNumber
@@ -605,10 +621,25 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		}
 	}
 
+	/**
+	 * Returns the name of a PluginSpeciesReference object's belonging species
+	 * as an object of type StringBuffer.
+	 * 
+	 * @param ref
+	 * @return
+	 */
 	protected StringBuffer getSpecies(PluginSpeciesReference ref) {
 		return new StringBuffer(ref.getSpecies());
 	}
 
+	/**
+	 * Returns the value of a PluginSpeciesReference object's stoichiometry
+	 * either as a double or, if the stoichiometry has an integer value, as an
+	 * int object.
+	 * 
+	 * @param ref
+	 * @return
+	 */
 	protected StringBuffer getStoichiometry(PluginSpeciesReference ref) {
 		double stoich = ref.getStoichiometry();
 		if ((int) stoich - stoich == 0)
