@@ -16,6 +16,9 @@ import javax.swing.JTextField;
 
 import org.sbmlsqueezer.io.MyFileFilter;
 
+/**
+ * @author Hannes Borch <hannes.borch@googlemail.com>
+ */
 public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 	/**
 	 * 

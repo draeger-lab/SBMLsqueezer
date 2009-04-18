@@ -19,7 +19,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
  * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
- * @author Hannes Borch
+ * @author Hannes Borch <hannes.borch@googlemail.com>
  * @date Aug 1, 2007
  */
 public class ConvenienceIndependent extends Convenience {
@@ -68,7 +68,13 @@ public class ConvenienceIndependent extends Convenience {
 		return "none";
 	}
 
-	// @Override
+	/**
+	 * @Override Creates the Convenience kinetic's thermodynamicely independent
+	 *           form. This method in general works the same way as the
+	 *           according one for the convenience kinetic. Each enzyme's
+	 *           fraction is multiplied with a reaction constant that is global
+	 *           for the eynzme's reaction.
+	 */
 	protected StringBuffer createKineticEquation(PluginModel model,
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -128,6 +134,23 @@ public class ConvenienceIndependent extends Convenience {
 		}
 	}
 
+	/**
+	 * Returns an array containing the factors of the reactants and products
+	 * included in the convenience kinetic's numerator. Each factor is given by
+	 * the quotient of the respective species' concentration and it's related
+	 * equilibrium constant to the power of the species' stoichiometry,
+	 * multiplied with the product of equilibrium constant and a dimensionless
+	 * energy constant to the power of half the species' stoichiometry. This
+	 * method is applicable for both forward and backward reactions.
+	 * 
+	 * @param reactionNumber
+	 * @param reaction
+	 * @param enzymeNumber
+	 * @param modE
+	 * @param type
+	 * @return
+	 * @throws IllegalFormatException
+	 */
 	protected StringBuffer[] createNumerators(int reactionNumber,
 			PluginReaction reaction, int enzymeNumber, List<String> modE,
 			boolean type) throws IllegalFormatException {

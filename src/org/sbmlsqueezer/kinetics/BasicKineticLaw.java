@@ -23,6 +23,7 @@ import org.sbmlsqueezer.io.LaTeXExport;
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @author Nadine Hassis <Nadine.hassis@gmail.com> Copyright (c) ZBiT,
  *         University of T&uuml;bingen, Germany Compiler: JDK 1.6.0
+ * @author Hannes Borch <hannes.borch@googlemail.com>
  * @date Aug 1, 2007
  */
 public abstract class BasicKineticLaw extends PluginKineticLaw implements
@@ -397,7 +398,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	/**
 	 * Recursively removes waste brackets from a formula.
 	 * 
-	 * TODO refine
+	 * TODO Refinement
 	 * 
 	 * @param sb
 	 * @return
