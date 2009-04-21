@@ -18,7 +18,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  *         JDK 1.6.0
  * @date Aug 1, 2007
  */
-public class RandomOrderMechanism extends BasicKineticLaw {
+public class RandomOrderMechanism extends GeneralizedMassAction {
 
 	/**
 	 * @param parentReaction
@@ -79,18 +79,16 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 	}
 
 	@Override
-	protected String createKineticEquation(PluginModel model, int reactionNum,
+	protected StringBuffer createKineticEquation(PluginModel model, int reactionNum,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		boolean biuni = false;
-		String numerator = "", numeratorTeX = ""; // I
-		String denominator = "", denominatorTeX = ""; // II
-		String inhib = "";
-		String inhibTeX = "";
-		String acti = "";
-		String actiTeX = "";
-		String formelTxt = formelTeX = "";
+		StringBuffer numerator = new StringBuffer();// I
+		StringBuffer denominator = new StringBuffer(); // II
+		StringBuffer inhib = new StringBuffer();
+		StringBuffer acti = new StringBuffer();
+		StringBuffer formelTxt = new StringBuffer();
 
 		PluginReaction reaction = getParentReaction();
 		PluginSpeciesReference specRefE1 = reaction.getReactant(0), specRefE2;
@@ -142,52 +140,37 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 			 * Irreversible reaction
 			 */
 			if (!reaction.getReversible()) {
-				String kcatp, kcatpTeX;
-				String kMr2 = "kM_" + reactionNum;
-				String kMr1 = "kM_" + reactionNum;
-				String kIr1 = "ki_" + reactionNum;
-				String kMr1TeX = "k^\\text{M}_{" + reactionNum;
-				String kMr2TeX = "k^\\text{M}_{" + reactionNum;
-				String kIr1TeX = "k^\\text{i}_{" + reactionNum;
-
+				StringBuffer kcatp;
+				StringBuffer kMr2 = new StringBuffer("kM_"); kMr2.append(reactionNum);
+				StringBuffer kMr1 =new StringBuffer("kM_"); kMr1.append(reactionNum);
+				StringBuffer kIr1 =new StringBuffer("ki_"); kIr1.append(reactionNum);
+				
 				if (modE.size() == 0) {
-					kcatp = "Vp_" + reactionNum;
-					kcatpTeX = "V^\\text{m}_{+" + reactionNum;
-				} else {
-					kcatp = "kcatp_" + reactionNum;
-					kcatpTeX = "k^\\text{cat}_{+" + reactionNum;
+					kcatp = new StringBuffer("Vp_"); kcatp.append(reactionNum);
+					} else {
+					kcatp =new StringBuffer("kcatp_"); kcatp.append(reactionNum);
 					if (modE.size() > 1) {
-						kcatp += "_" + modE.get(enzymeNum);
-						kMr2 += "_" + modE.get(enzymeNum);
-						kMr1 += "_" + modE.get(enzymeNum);
-						kIr1 += "_" + modE.get(enzymeNum);
-						kcatpTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-								+ "}";
-						kMr2TeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-								+ "}";
-						kIr1TeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-								+ "}";
-						kMr1TeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-								+ "}";
+						String  modEnzymeNumber=modE.get(enzymeNum);
+						kcatp=concat(kcatp,'_',modEnzymeNumber);
+						kMr2=concat(kMr2,'_',modEnzymeNumber);
+						kMr1=concat(kMr1,'_',modEnzymeNumber);
+						kIr1=concat(kIr1,'_',modEnzymeNumber);
+						
 					}
 				}
-				kMr2 += "_" + specRefE2.getSpecies();
-				kMr1 += "_" + specRefE1.getSpecies();
+				
+				String speciesE2=specRefE2.getSpecies();
+				kMr2=concat(kMr2,'_',speciesE2);
+				kMr1=concat(kMr1,'_',speciesE2);
+						
 				if (specRefE2.equals(specRefE1)) {
-					kMr1 = "kMr1" + kMr1.substring(2);
-					kMr2 = "kMr2" + kMr2.substring(2);
-					kMr1TeX = "k^\\text{Mr1" + kMr1TeX.substring(9);
-					kMr2TeX = "k^\\text{Mr2" + kMr2TeX.substring(9);
+					
+				kMr1=concat(kMr1,"kMr1",kMr1.substring(2));
+				kMr2=concat(kMr2,"kMr2",kMr2.substring(2));
+					
 				}
-				kIr1 += "_" + specRefE1.getSpecies();
-				kcatpTeX += "}";
-				kMr2TeX += ",{" + Species.idToTeX(specRefE2.getSpecies())
-						+ "}}";
-				kIr1TeX += ",{" + Species.idToTeX(specRefE1.getSpecies())
-						+ "}}";
-				kMr1TeX += ",{" + Species.idToTeX(specRefE1.getSpecies())
-						+ "}}";
-
+				kIr1= concat(kIr1,'_',speciesE2);
+				
 				if (!listOfLocalParameters.contains(kcatp))
 					listOfLocalParameters.add(kcatp);
 				if (!listOfLocalParameters.contains(kMr2))
@@ -196,139 +179,84 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 					listOfLocalParameters.add(kMr1);
 				if (!listOfLocalParameters.contains(kIr1))
 					listOfLocalParameters.add(kIr1);
-
-				numerator = kcatp;
-				numeratorTeX = kcatpTeX;
-				if (modE.size() > 0) {
-					numerator += " * " + modE.get(enzymeNum);
-					numeratorTeX += Species.toTeX(modE.get(enzymeNum));
+                    numerator = kcatp;
+               if (modE.size() > 0) {
+				numerator= times(numerator, new StringBuffer(modE.get(enzymeNum)));
 				}
-
-				numerator += " * " + specRefE1.getSpecies();
-				numeratorTeX += Species.toTeX(specRefE1.getSpecies());
-				denominator = kIr1 + " * " + kMr2 + " + ";
-				denominatorTeX = kIr1TeX + kMr2TeX + "+";
+                numerator= times(numerator, new StringBuffer(specRefE1.getSpecies()));
+               	
 				if (specRefE2.equals(specRefE1)) {
-					numerator += "^2";
-					numeratorTeX += "^2";
-					denominator += "(" + kMr2 + " + " + kMr1 + ") * "
-							+ specRefE1.getSpecies() + " + "
-							+ specRefE1.getSpecies() + "^2";
-					denominatorTeX += "\\left(" + kMr2TeX + " + " + kMr1TeX
-							+ "\\right)"
-							+ Species.toTeX(specRefE1.getSpecies()) + " + "
-							+ Species.toTeX(specRefE1.getSpecies()) + "^2";
+					numerator=pow(numerator, new StringBuffer('2'));
+					denominator=sum(
+							        times(kIr1, kMr2), 
+							        times(sum(kMr2, kMr1),new StringBuffer(specRefE1.getSpecies())),
+							        pow(new StringBuffer(specRefE1.getSpecies()), new StringBuffer('2'))
+							        );
+							
 				} else {
-					numerator += " * " + specRefE2.getSpecies();
-					numeratorTeX += Species.toTeX(specRefE2.getSpecies());
-					denominator += kMr2 + " * " + specRefE1.getSpecies()
-							+ " + " + kMr1 + " * " + specRefE2.getSpecies()
-							+ " + " + specRefE1.getSpecies() + " * "
-							+ specRefE2.getSpecies();
-					denominatorTeX += kMr2TeX
-							+ Species.toTeX(specRefE1.getSpecies()) + " + "
-							+ kMr1TeX + Species.toTeX(specRefE2.getSpecies())
-							+ " + " + Species.toTeX(specRefE1.getSpecies())
-							+ Species.toTeX(specRefE2.getSpecies());
-				}
+					numerator=times(numerator, new StringBuffer(specRefE2.getSpecies()));
+					
+					denominator = sum(
+							       times(kIr1, kMr2),
+					               times(kMr2, new StringBuffer(specRefE1.getSpecies())), 
+							       times(kMr1 , new StringBuffer(specRefE2.getSpecies())),
+                                   times(new StringBuffer(specRefE1.getSpecies()), new StringBuffer(specRefE2.getSpecies()))
+                                   );
+					}
 
 			} else {
 				/*
 				 * Reversible reaction: Bi-Bi
 				 */
 				if (!biuni) {
-					String kcatp, kcatn, kcatnTeX, kcatpTeX;
-					String kMr2 = "kM_" + reactionNum;
-					String kMp1 = "kM_" + reactionNum;
-					String kIp1 = "ki_" + reactionNum;
-					String kIp2 = "ki_" + reactionNum;
-					String kIr2 = "ki_" + reactionNum;
-					String kIr1 = "ki_" + reactionNum;
-					String kMr2TeX = "k^\\text{M}_{" + reactionNum;
-					String kMp1TeX = "k^\\text{M}_{" + reactionNum;
-					String kIp1TeX = "k^\\text{i}_{" + reactionNum;
-					String kIp2TeX = "k^\\text{i}_{" + reactionNum;
-					String kIr2TeX = "k^\\text{i}_{" + reactionNum;
-					String kIr1TeX = "k^\\text{i}_{" + reactionNum;
-
+					
+					StringBuffer kcatp=new StringBuffer();
+					StringBuffer kcatn=new StringBuffer();
+					
+					StringBuffer kMr2 = new StringBuffer("kM_") ;  kMr2.append(reactionNum);
+					StringBuffer kIr1 = new StringBuffer("ki_");  kIr1.append(reactionNum);
+					StringBuffer kMp1 = new StringBuffer("kM_");  kMp1.append(reactionNum);
+					StringBuffer kIp1 = new StringBuffer("ki_");  kIp1.append(reactionNum);
+					StringBuffer kIp2 = new StringBuffer("ki_");  kIp2.append(reactionNum);
+					StringBuffer kIr2 = new StringBuffer("ki_");  kIr2.append(reactionNum);
+					
+					
 					if (modE.size() == 0) {
-						kcatp = "Vp_" + reactionNum;
-						kcatn = "Vn_" + reactionNum;
-						kcatnTeX = "V^\\text{m}_{-" + reactionNum;
-						kcatpTeX = "V^\\text{m}_{+" + reactionNum;
-					} else {
-						kcatp = "kcatp_" + reactionNum;
-						kcatn = "kcatn_" + reactionNum;
-						kcatnTeX = "k^\\text{cat}_{-" + reactionNum;
-						kcatpTeX = "k^\\text{cat}_{+" + reactionNum;
-						if (modE.size() > 1) {
-							kcatp += "_" + modE.get(enzymeNum);
-							kcatn += "_" + modE.get(enzymeNum);
-							kMr2 += "_" + modE.get(enzymeNum);
-							kMp1 += "_" + modE.get(enzymeNum);
-							kIp1 += "_" + modE.get(enzymeNum);
-							kIp2 += "_" + modE.get(enzymeNum);
-							kIr2 += "_" + modE.get(enzymeNum);
-							kIr1 += "_" + modE.get(enzymeNum);
-							kcatnTeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kcatpTeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kMr2TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kMp1TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kIp1TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kIp2TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kIr2TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kIr1TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-						}
-					}
-					kMr2 += "_" + specRefE2.getSpecies();
-					kIr1 += "_" + specRefE2.getSpecies();
-					kIr2 += "_" + specRefE2.getSpecies();
-					kIp1 += "_" + specRefP1.getSpecies();
-					kIp2 += "_" + specRefP2.getSpecies();
-					kMp1 += "_" + specRefP1.getSpecies();
+						kcatp.append("Vp_"); kcatp.append(reactionNum);
+						kcatn.append("Vn_"); kcatn.append(reactionNum);
+						} else {
+						kcatp.append("kcatp_"); kcatp.append(reactionNum);
+						kcatn.append("kcatn_"); kcatn.append(reactionNum);
+							if (modE.size() > 1) {
+								
+								String modEnzymeNumber=modE.get(enzymeNum);
+								kcatp.append('_');  kcatp.append(modEnzymeNumber);
+								kcatn.append('_');  kcatn.append(modEnzymeNumber);
+								kMr2.append('_');  kMr2.append(modEnzymeNumber);
+								kMp1.append('_');  kMp1.append(modEnzymeNumber);
+								kIp1.append('_');  kIp1.append(modEnzymeNumber);
+								kIp2.append('_');  kIp2.append(modEnzymeNumber);
+								kIr2.append('_');  kIr2.append(modEnzymeNumber);
+								kIr1.append('_'); kIr1.append(modEnzymeNumber);
+								}
+					}					
+					
+					String speciesE2= specRefE2.getSpecies();
+					kMr2.append('_');  kMr2.append(speciesE2);
+					kIr1.append('_' );  kIr1.append(speciesE2);
+					kIr2.append('_' );  kIr2.append(speciesE2);
+					kIp1.append( '_' );  kIp1.append(speciesE2);
+					kIp2.append( '_');  kIp2.append(speciesE2);
+					kMp1.append('_' );  kMp1.append(speciesE2);
 					if (specRefE2.equals(specRefE1)) {
-						kIr1 = "kir1" + kIr1.substring(2);
-						kIr2 = "kir2" + kIr2.substring(2);
-						kIr1TeX = "k^\\text{ir1" + kIr1TeX.substring(9);
-						kIr2TeX = "k^\\text{ir2" + kIr2TeX.substring(9);
-					}
+						kIr1.append("kir1"); kIr1.append(kIr1.substring(2));
+						kIr2.append("kir2"); kIr2.append(kIr2.substring(2));
+						}
 					if (specRefP2.equals(specRefP1)) {
-						kIp1 = "kip1" + kIp1.substring(2);
-						kIp2 = "kip2" + kIp2.substring(2);
-						kIp1TeX = "k^\\text{ip1" + kIr1TeX.substring(9);
-						kIp2TeX = "k^\\text{ip2" + kIr2TeX.substring(9);
-					}
-					kcatpTeX += "}";
-					kcatnTeX += "}";
-					kMr2TeX += ",{" + Species.idToTeX(specRefE2.getSpecies())
-							+ "}}";
-					kIr1TeX += ",{" + Species.idToTeX(specRefE1.getSpecies())
-							+ "}}";
-					kIr2TeX += ",{" + Species.idToTeX(specRefE2.getSpecies())
-							+ "}}";
-					kIp1TeX += ",{" + Species.idToTeX(specRefP1.getSpecies())
-							+ "}}";
-					kIp2TeX += ",{" + Species.idToTeX(specRefP2.getSpecies())
-							+ "}}";
-					kMp1TeX += ",{" + Species.idToTeX(specRefP1.getSpecies())
-							+ "}}";
-
+						kIp1.append("kip1"); kIp1.append(kIp1.substring(2));
+						kIp2.append("kip2"); kIp2.append(kIp2.substring(2));
+						}
+					
 					if (!listOfLocalParameters.contains(kcatp))
 						listOfLocalParameters.add(kcatp);
 					if (!listOfLocalParameters.contains(kMr2))
@@ -345,158 +273,108 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						listOfLocalParameters.add(kIr2);
 					if (!listOfLocalParameters.contains(kIr1))
 						listOfLocalParameters.add(kIr1);
+					
+					StringBuffer numeratorForward=new StringBuffer();					
+					StringBuffer numeratorReverse=new StringBuffer();
+					
+					
+					   numeratorForward=kcatp;
+						if (modE.size() > 0) {
+							numeratorForward=times(numeratorForward, new StringBuffer(modE.get(enzymeNum)));
+						}
 
-					numerator = "((" + kcatp + " * ";
-					numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kIr1TeX
-							+ kMr2TeX + "}";
-					if (modE.size() > 0) {
-						numerator += modE.get(enzymeNum) + " * ";
-						numeratorTeX += Species.toTeX(modE.get(enzymeNum));
-					}
-
-					denominator = "1 + (" + specRefE1.getSpecies() + "/" + kIr1
-							+ ") + (" + specRefE2.getSpecies() + "/" + kIr2
-							+ ") + (" + specRefP1.getSpecies() + "/" + kIp1
-							+ ") + (" + specRefP2.getSpecies() + "/" + kIp2
-							+ ") + (";
-					denominatorTeX = "1 + " + "\\frac{"
-							+ Species.toTeX(specRefE1.getSpecies()) + "}{"
-							+ kIr1TeX + "}" + " + \\frac{"
-							+ Species.toTeX(specRefE2.getSpecies()) + "}{"
-							+ kIr2TeX + "}" + " + \\frac{"
-							+ Species.toTeX(specRefP1.getSpecies()) + "}{"
-							+ kIp1TeX + "}" + " + \\frac{"
-							+ Species.toTeX(specRefP2.getSpecies()) + "}{"
-							+ kIp2TeX + "}" + " + \\frac{"
-							+ Species.toTeX(specRefP1.getSpecies());
+					denominator =sum(new StringBuffer('1'),
+							        frac(new StringBuffer(specRefE1.getSpecies()), kIr1),
+						 		    frac(new StringBuffer( specRefE2.getSpecies() ), kIr2),
+							 		frac(new StringBuffer(specRefP1.getSpecies() ),kIp1),
+									frac(new StringBuffer( specRefP2.getSpecies() ),kIp2)
+									);
+							       
+				
+					
 					// happens if the product has a stoichiometry of two.
+				
+					StringBuffer p1p2=new StringBuffer();
+					
 					if (specRefP1.equals(specRefP2)) {
-						denominator += specRefP1.getSpecies() + "^2";
-						denominatorTeX += "^2";
+						p1p2= pow(new StringBuffer(specRefP1.getSpecies()), new StringBuffer('2'));
 					} else {
-						denominator += "(" + specRefP1.getSpecies() + " * "
-								+ specRefP2.getSpecies() + ")";
-						denominatorTeX += Species.toTeX(specRefP2
-								.getSpeciesInstance().getId());
-					}
-					denominator += "/(" + kIp2 + " * " + kMp1 + ")) + (";
-					denominatorTeX += "}{" + kIp2TeX + kMp1TeX + "}"
-							+ " + \\frac{"
-							+ Species.toTeX(specRefE1.getSpecies());
+						p1p2= times(new StringBuffer(specRefP1.getSpecies()),new StringBuffer(specRefP2.getSpecies()));
+						}
+					denominator=sum(denominator, frac(p1p2,times(kIp2,kMp1 )));
+					
 					// happens if the educt has a stoichiometry of two.
 					if (specRefE1.equals(specRefE2)) {
-						numerator += specRefE1.getSpecies() + "^2";
-						numeratorTeX += Species.toTeX(specRefE1
-								.getSpeciesInstance().getId())
-								+ "^2";
-						denominator += specRefE1.getSpecies() + "^2";
-						denominatorTeX += "^2";
+						
+						numeratorForward=times(numeratorForward,pow(new StringBuffer(specRefE1.getSpecies() ), new StringBuffer('2')));
+						p1p2= pow(new StringBuffer(specRefE1.getSpecies() ), new StringBuffer('2'));
 					} else {
-						numerator += specRefE1.getSpecies() + " * "
-								+ specRefE2.getSpecies();
-						numeratorTeX += Species.toTeX(specRefE1
-								.getSpeciesInstance().getId())
-								+ Species.toTeX(specRefE2.getSpecies());
-						denominator += "(" + specRefE1.getSpecies() + " * "
-								+ specRefE2.getSpecies() + ")";
-						denominatorTeX += Species.toTeX(specRefE2
-								.getSpeciesInstance().getId());
-					}
-					numerator += ")/(" + kIr1 + " * " + kMr2 + ")) - (("
-							+ kcatn;
-					numeratorTeX += "-\\frac{" + kcatnTeX + "}{" + kIp2TeX
-							+ kMp1TeX + "}";
-					denominator += "/(" + kIr1 + " * " + kMr2 + "))";
-					denominatorTeX += "}{" + kIr1TeX + kMr2TeX + "}";
-
+						numeratorForward=times(numeratorForward,times(new StringBuffer(specRefE1.getSpecies()),new StringBuffer(specRefE2.getSpecies())));
+						p1p2= times( new StringBuffer(specRefE1.getSpecies()),new StringBuffer(specRefE2.getSpecies()));
+						}
+									
+					numeratorForward=frac(numeratorForward , times(kIr1 , kMr2));
+					denominator=sum(denominator, frac(p1p2, times( kIr1 , kMr2)));
+					
+					
+					numeratorReverse=kcatn;
 					if (modE.size() != 0) {
-					    numerator += " * " + modE.get(enzymeNum);
-						numeratorTeX += Species.toTeX(modE.get(enzymeNum));
-					}
-					numerator += " * " + specRefP1.getSpecies();
-					numeratorTeX += Species.toTeX(specRefP1.getSpecies());
+						numeratorReverse=times(numeratorReverse,new StringBuffer( modE.get(enzymeNum)));
+						}
+					numeratorReverse=times(numeratorReverse,new StringBuffer(specRefP1.getSpecies()));
 					if (specRefP1.equals(specRefP2)) {
-						numerator += "^2";
-						numeratorTeX += "^2";
+						numeratorReverse=pow(numeratorReverse, new StringBuffer('2'));
 					} else {
-						numerator += " * " + specRefP2.getSpecies();
-						numeratorTeX += Species.toTeX(specRefP2
-								.getSpeciesInstance().getId());
+						numeratorReverse=times(numeratorReverse, new StringBuffer('2'));
 					}
-					numerator += ")/(" + kIp2 + " * " + kMp1 + "))";
-
+					numeratorReverse=frac(numeratorReverse, times(kIp2,kMp1));
+					numerator=diff(numeratorForward,numeratorReverse);
 				} else {
 					/*
 					 * Reversible reaction: Bi-Uni reaction
 					 */
-					String kcatp, kcatn, kcatnTeX, kcatpTeX;
-					String kMr2 = "kM_" + reactionNum;
-					String kMp1 = "kM_" + reactionNum;
-					String kIr2 = "ki_" + reactionNum;
-					String kIr1 = "ki_" + reactionNum;
-					String kMr2TeX = "k^\\text{M}_{" + reactionNum;
-					String kMp1TeX = "k^\\text{M}_{" + reactionNum;
-					String kIr2TeX = "k^\\text{i}_{" + reactionNum;
-					String kIr1TeX = "k^\\text{i}_{" + reactionNum;
-
+					StringBuffer kcatp=new StringBuffer();
+					StringBuffer kcatn=new StringBuffer();
+					
+					StringBuffer reactionNumber=new StringBuffer(reactionNum);
+					StringBuffer kMr2 = concat(new StringBuffer("kM_") , reactionNumber);
+					StringBuffer kMp1 = concat(new StringBuffer("kM_"), reactionNumber);
+					StringBuffer kIr2 = concat(new StringBuffer("ki_"), reactionNumber);
+					StringBuffer kIr1 = concat(new StringBuffer("ki_"), reactionNumber);
+					
+					
 					if (modE.size() == 0) {
-						kcatp = "Vp_" + reactionNum;
-						kcatn = "Vn_" + reactionNum;
-						kcatnTeX = "V^\\text{m}_{-" + reactionNum;
-						kcatpTeX = "V^\\text{m}_{+" + reactionNum;
-					} else {
-						kcatp = "kcatp_" + reactionNum;
-						kcatn = "kcatn_" + reactionNum;
-						kcatnTeX = "k^\\text{cat}_{-" + reactionNum;
-						kcatpTeX = "k^\\text{cat}_{+" + reactionNum;
+						kcatp = concat(new StringBuffer("Vp_"), reactionNumber);
+						kcatn = concat(new StringBuffer("Vn_"), reactionNumber);
+						} else {
+						kcatp = concat(new StringBuffer("kcatp_"), reactionNumber);
+						kcatn = concat(new StringBuffer("kcatn_"), reactionNumber);
+					
 						if (modE.size() > 1) {
-							kcatp += "_" + modE.get(enzymeNum);
-							kcatn += "_" + modE.get(enzymeNum);
-							kMr2 += "_" + modE.get(enzymeNum);
-							kMp1 += "_" + modE.get(enzymeNum);
-							kIr2 += "_" + modE.get(enzymeNum);
-							kIr1 += "_" + modE.get(enzymeNum);
-							kcatnTeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kcatpTeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kMr2TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kMp1TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kIr2TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-							kIr1TeX += ",{"
-									+ Species.idToTeX(modE.get(enzymeNum))
-									+ "}";
-						}
+							StringBuffer modEnzymeNumber=new StringBuffer(modE.get(enzymeNum));
+							kcatp=concat(kcatp , new StringBuffer( '_') ,modEnzymeNumber);
+							kcatn=concat(kcatn , new StringBuffer('_') ,modEnzymeNumber);
+							kMr2 =concat(kMr2  , new StringBuffer('_') ,modEnzymeNumber);
+							kMp1 =concat(kMp1 , new StringBuffer('_') ,modEnzymeNumber);
+							kIr2 =concat(kIr2 , new StringBuffer( '_') ,modEnzymeNumber);
+							kIr1 =concat(kIr1 , new StringBuffer('_') ,modEnzymeNumber);
+							
+							}
 					}
-					kMr2 += "_" + specRefE2.getSpecies();
-					kIr1 += "_" + specRefE2.getSpecies();
-					kIr2 += "_" + specRefE2.getSpecies();
-					kMp1 += "_" + specRefP1.getSpecies();
+					
+					StringBuffer speciesE2=new StringBuffer(specRefE2.getSpecies());
+					kMr2=sum(kMr2 , new StringBuffer('_') ,speciesE2);
+					kIr1=concat(kIr1 , new StringBuffer('_' ) ,speciesE2);
+					kIr2=concat(kIr2 , new StringBuffer('_' ) ,speciesE2);
+					kMp1=concat(kMp1 , new StringBuffer('_' ) ,speciesE2);
+					
+				
 					if (specRefE2.equals(specRefE1)) {
-						kIr1 = "kir1" + kIr1.substring(2);
-						kIr2 = "kir2" + kIr2.substring(2);
-						kIr1TeX = "k^\\text{ir1" + kIr1TeX.substring(9);
-						kIr2TeX = "k^\\text{ir2" + kIr2TeX.substring(9);
-					}
-					kcatpTeX += "}";
-					kcatnTeX += "}";
-					kMr2TeX += ",{" + Species.idToTeX(specRefE2.getSpecies())
-							+ "}}";
-					kIr1TeX += ",{" + Species.idToTeX(specRefE1.getSpecies())
-							+ "}}";
-					kIr2TeX += ",{" + Species.idToTeX(specRefE2.getSpecies())
-							+ "}}";
-					kMp1TeX += ",{" + Species.idToTeX(specRefP1.getSpecies())
-							+ "}}";
-
+						kIr1=concat(kIr1 , new StringBuffer("kip1") , new StringBuffer( kIr1.substring(2)));
+						kIr2=concat(kIr2, new StringBuffer("kip2") , new StringBuffer(kIr2.substring(2)));
+					
+						}
+					
 					if (!listOfLocalParameters.contains(kcatp))
 						listOfLocalParameters.add(kcatp);
 					if (!listOfLocalParameters.contains(kcatn))
@@ -509,72 +387,46 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 						listOfLocalParameters.add(kIr2);
 					if (!listOfLocalParameters.contains(kIr1))
 						listOfLocalParameters.add(kIr1);
-
-					numerator = "((" + kcatp + " * ";
-					numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kIr1TeX
-							+ kMr2TeX + "}";
+					StringBuffer numeratorForward=new StringBuffer();					
+					StringBuffer numeratorReverse=new StringBuffer();
+					StringBuffer p1p2=new StringBuffer();
+					
+					numeratorForward = kcatp;
 					if (modE.size() != 0) {
-						numerator += modE.get(enzymeNum) + " * ";
-						numeratorTeX += Species.toTeX(modE.get(enzymeNum));
-					}
+						numeratorForward=times(numeratorForward, new StringBuffer(modE.get(enzymeNum)));
+						}
 
-					denominator = "1 + (" + specRefE1.getSpecies() + "/" + kIr1
-							+ ") + (" + specRefE2.getSpecies() + "/" + kIr2 + ") + (";
-					denominatorTeX = "1 + " + "\\frac{"
-							+ Species.toTeX(specRefE1.getSpecies()) + "}{"
-							+ kIr1TeX + "}" + " + \\frac{"
-							+ Species.toTeX(specRefE2.getSpecies()) + "}{"
-							+ kIr2TeX + "}" + " + \\frac{"
-							+ Species.toTeX(specRefE1.getSpecies());
-
+					denominator = sum(new StringBuffer('1'),
+							frac(new StringBuffer( specRefE1.getSpecies()), kIr1),
+									frac(new StringBuffer( specRefE2.getSpecies()), kIr2));
 					if (specRefE1.equals(specRefE2)) {
-						numerator += specRefE1.getSpecies() + "^2";
-						numeratorTeX += Species.toTeX(specRefE1
-								.getSpeciesInstance().getId())
-								+ "^2";
-						denominator += specRefE1.getSpecies() + "^2";
-						denominatorTeX += "^2";
+						numeratorForward=times(numeratorForward,pow(new StringBuffer(specRefE1.getSpecies() ), new StringBuffer('2')));
+						
+						p1p2= pow(new StringBuffer(specRefE1.getSpecies()), new StringBuffer('2'));
 					} else {
-						numerator += specRefE1.getSpecies() + " * "
-								+ specRefE2.getSpecies();
-						numeratorTeX += Species.toTeX(specRefE1
-								.getSpeciesInstance().getId())
-								+ Species.toTeX(specRefE2.getSpecies());
-						denominator += "(" + specRefE1.getSpecies() + " * "
-								+ specRefE2.getSpecies() + ")";
-						denominatorTeX += Species.toTeX(specRefE2
-								.getSpeciesInstance().getId());
-					}
-					numerator += ")/(" + kIr1 + " * " + kMr2 + ")) - (("
-							+ kcatn;
-					numeratorTeX += "-\\frac{" + kcatnTeX + "}{" + kMp1TeX
-							+ "}";
-
+						numeratorForward=times(numeratorForward,new StringBuffer(specRefE1.getSpecies()), new StringBuffer(specRefE2.getSpecies()));
+						p1p2=times(new StringBuffer( specRefE1.getSpecies() ), new StringBuffer(specRefE2.getSpecies()));
+						}
+					numeratorForward=frac(numerator,times(kIr1, kMr2)); 
+					
+					numeratorReverse=kcatn;
 					if (modE.size() != 0) {
-						numerator += " * " + modE.get(enzymeNum);
-						numeratorTeX += Species.toTeX(modE.get(enzymeNum));
+						numeratorReverse=times(numeratorReverse,new StringBuffer(modE.get(enzymeNum)));
+						}
+					numeratorReverse=times(numeratorReverse,frac(new StringBuffer(specRefP1.getSpecies() ),kMp1 ));
+					numerator=diff(numeratorForward,numeratorReverse);
+					denominator=sum(denominator, frac(p1p2, sum(times( kIr1 , kMr2), frac(new StringBuffer(specRefP1.getSpecies()),kMp1))));
+					
 					}
-					numerator += " * " + specRefP1.getSpecies() + ")/" + kMp1 + ")";
-					numeratorTeX += Species.toTeX(specRefP1.getSpecies());
-
-					denominator += "/(" + kIr1 + " * " + kMr2 + ")) + "
-							+ specRefP1.getSpecies() + "/" + kMp1;
-					denominatorTeX += "}{" + kIr1TeX + kMr2TeX + "}"
-							+ " + \\frac{"
-							+ Species.toTeX(specRefP1.getSpecies()) + "}{"
-							+ kMp1TeX + "}";
-				}
 			}
 
 			/*
 			 * Construct formula
 			 */
-			formelTxt += "((" + numerator + ")/(" + denominator + "))";
-			formelTeX += "\\frac{" + numeratorTeX + "}{" + denominatorTeX + "}";
+			formelTxt=frac(numerator ,denominator);
 			if (enzymeNum < modE.size() - 1) {
-				formelTxt += " + ";
-				formelTeX += "\\\\+";
-			}
+				; 
+				}
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
 
@@ -582,53 +434,34 @@ public class RandomOrderMechanism extends BasicKineticLaw {
 		 * Activation
 		 */
 		if (!modActi.isEmpty()) {
+			StringBuffer kA= new StringBuffer();
 			for (int activatorNum = 0; activatorNum < modActi.size(); activatorNum++) {
-				String kA = "kA_" + reactionNum + "_"
-						+ modActi.get(activatorNum), kATeX = "k^\\text{A}_{"
-						+ reactionNum + ",{"
-						+ Species.idToTeX(modActi.get(activatorNum)) + "}}";
+				kA = concat("kA_" ,reactionNum , '_',modActi.get(activatorNum));
 				if (!listOfLocalParameters.contains(kA))
 					listOfLocalParameters.add(kA);
-				acti += "(" + modActi.get(activatorNum) + "/(" + kA + " + "
-						+ modActi.get(activatorNum) + ")) * ";
-				actiTeX += "\\frac{" + Species.toTeX(modActi.get(activatorNum))
-						+ "}{" + kATeX + " + "
-						+ Species.toTeX(modActi.get(activatorNum)) + "}\\cdot ";
-			}
+				acti=concat(acti ,
+						frac(new StringBuffer(modActi.get(activatorNum)),sum(kA,new StringBuffer(modActi.get(activatorNum)))));
+				}
 		}
 
 		/*
 		 * Inhibition
 		 */
 		if (!modInhib.isEmpty()) {
+			StringBuffer kI= new StringBuffer();
 			for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-				String kI = "kI_" + reactionNum + "_"
-						+ modInhib.get(inhibitorNum), kITeX = "k^\\text{I}_{"
-						+ reactionNum + ",{"
-						+ Species.idToTeX(modInhib.get(inhibitorNum)) + "}}";
+				
+				concat("kI_" , reactionNum ,'_',modInhib.get(inhibitorNum));
 				if (!listOfLocalParameters.contains(kI))
 					listOfLocalParameters.add(kI);
-				inhib += "(" + kI + "/(" + kI + " + "
-						+ modInhib.get(inhibitorNum) + ")) * ";
-				inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + " + "
-						+ Species.toTeX(modInhib.get(inhibitorNum))
-						+ "}\\cdot ";
-			}
+				
+				inhib=concat(inhib,
+						frac(kI, sum(kI,new StringBuffer(modInhib.get(inhibitorNum)))));
+				}
 		}
-		if ((acti.length() + inhib.length() > 0) && (modE.size() > 1)) {
-			inhib += "(";
-			formelTxt += ")";
-			inhibTeX += inhibTeX.substring(0, inhibTeX.length() - 6)
-					+ "\\\\\\cdot\\left(";
-			formelTeX = formelTeX.replaceAll("\\\\\\+",
-					"\\right.\\\\\\\\+\\\\left.")
-					+ "\\right)";
-		}
-		formelTxt = acti + inhib + formelTxt;
-		formelTeX = actiTeX + inhibTeX + formelTeX;
-
-		if (enzymeNum > 1)
-			formelTeX += "\\end{multline}";
+		
+		formelTxt = concat(acti,inhib, formelTxt);
+		
 		return formelTxt;
 	}
 

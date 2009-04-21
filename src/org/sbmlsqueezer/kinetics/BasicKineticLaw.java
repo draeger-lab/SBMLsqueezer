@@ -310,7 +310,19 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	protected StringBuffer times(StringBuffer... factors) {
 		return arith('*', factors);
 	}
-
+	
+	/**
+	 * This method concatenates two or more object strings into a new stringbuffer.
+	 * @param buffers
+	 * @return
+	 */
+	protected StringBuffer concat (Object... buffers) {
+		StringBuffer res=new StringBuffer();
+		for (Object buffer : buffers)
+			res.append(buffer.toString());
+		return res;
+	}
+	
 	/**
 	 * Returns a fraction with the given elements as numerator and denominator.
 	 * 
