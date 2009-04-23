@@ -115,7 +115,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	@Override
-	protected String createKineticEquation(PluginModel model, int reactionNum,
+	protected StringBuffer createKineticEquation(PluginModel model, int reactionNum,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -133,28 +133,23 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 		reactionNum++;
 		// String numerator = "", numeratorTeX = "", denominator = "",
 		// denominatorTeX = "";
-		String formelTxt = formelTeX = "";
+		StringBuffer formelTxt ;
 		PluginReaction reaction = getParentReaction();
 		ASTNode ast = null;
 
 		int enzymeNum = 0;
 		do {
-			String kcat, kcatTeX;
+			String kcat;
 			if (modE.size() == 0) {
 				kcat = "V_" + reactionNum;
-				kcatTeX = "V^\\text{m}_{+" + reactionNum + "}";
-			} else {
+				} else {
 				kcat = "kcat_" + reactionNum;
-				kcatTeX = "k^\\text{cat}_{" + reactionNum;
 				if (modE.size() > 1) {
 					kcat += "_" + modE.get(enzymeNum);
-					kcatTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-							+ "}";
-				}
-				kcatTeX += "}";
+					}
 			}
 			if (!listOfLocalParameters.contains(kcat))
-				listOfLocalParameters.add(new String(kcat));
+				listOfLocalParameters.add(new StringBuffer(kcat));
 
 			ASTNode currEnzyme = new ASTNode(AST_DIVIDE);
 			ASTNode numerator = new ASTNode(AST_TIMES);
@@ -243,17 +238,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
 
-		if (enzymeNum > 1)
-			formelTeX += "\\end{multline}";
-		// setMath(ast);
-		// formelTxt = getFormula();
-		try {
-			formelTeX = (new LaTeXExport()).toLaTeX(model, ast).toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		formelTxt = TextExport.toText(model, ast);
+			formelTxt = TextExport.toText(model, ast);
 
 		return formelTxt;
 	}

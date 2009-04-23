@@ -92,7 +92,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 	 *      java.util.List, java.util.List)
 	 */
 	@Override
-	protected String createKineticEquation(PluginModel model, int reactionNum,
+	protected StringBuffer createKineticEquation(PluginModel model, int reactionNum,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -118,7 +118,6 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 
 		numOfEnzymes = modE.size();
 		reactionNum++;
-		String formelTxt = formelTeX = "";
 		ASTNode ast = null;
 
 		int enzymeNum = 0;
@@ -132,7 +131,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 					kcat += "_" + modE.get(enzymeNum);
 			}
 			if (!listOfLocalParameters.contains(kcat))
-				listOfLocalParameters.add(new String(kcat));
+				listOfLocalParameters.add(new StringBuffer(kcat));
 
 			ASTNode currEnzyme = new ASTNode(AST_DIVIDE);
 			ASTNode numerator = new ASTNode(AST_TIMES);
@@ -246,13 +245,8 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 
 		// setMath(ast);
 		// formelTxt = getFormula();
-		try {
-			formelTeX = (new LaTeXExport()).toLaTeX(model, ast).toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		formelTxt = TextExport.toText(model, ast);
+		
+		formelTxt = new StringBuffer(TextExport.toText(model, ast));
 
 		return formelTxt;
 	}

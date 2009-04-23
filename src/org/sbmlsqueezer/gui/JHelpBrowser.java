@@ -88,13 +88,7 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 	 * 
 	 */
 	private void init() {
-		browser = new JBrowser(/*
-								 * "file://" + System.getProperty("user.dir") +
-								 * System.getProperty("file.separator") +
-								 * "resources" +
-								 * System.getProperty("file.separator") + "html"
-								 * + System.getProperty("file.separator") +
-								 */Resource.class
+		browser = new JBrowser(Resource.class
 				.getResource("html/index.html"));
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(new JScrollPane(browser,

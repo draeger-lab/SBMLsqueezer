@@ -192,21 +192,21 @@ public class OrderedMechanism extends GeneralizedMassAction {
 
 			}
 			// reverse reactions
-			kIp1 =concat (kIp1, "_" , specRefP1.getSpecies());
+			kIp1 =concat (kIp1, Character.valueOf('_') , specRefP1.getSpecies());
 			if (specRefP2 != null) {
 				if (specRefP2.equals(specRefP1)) {
 					kMp1 = concat( "kMp1", kMp1.substring(2));
 					kMp2 = concat( "kMp2", kMp2.substring(2));
 			
 				}
-				kIp2=concat(kIp2 , "_" , specRefP2.getSpecies());
+				kIp2=concat(kIp2 , Character.valueOf('_') , specRefP2.getSpecies());
 			
 			}
-			kIr1 =concat(kIr1,"_" , specRefE1.getSpecies());
+			kIr1 =concat(kIr1,Character.valueOf('_') , specRefE1.getSpecies());
 		
 
 			// reverse reactions
-			kIr2 =concat(kIr2, "_" , specRefE2.getSpecies());
+			kIr2 =concat(kIr2, Character.valueOf('_') , specRefE2.getSpecies());
 		
 
 			if (!listOfLocalParameters.contains(kcatp))
@@ -272,85 +272,74 @@ public class OrderedMechanism extends GeneralizedMassAction {
 					listOfLocalParameters.add(kIp2);
 
 				numerator = kcatp;
-			
-				if (modE.size() > 0) {
-					numerator =times(numerator,new StringBuffer(modE.get(enzymeNum))),;
+				 StringBuffer numeratorForward=new StringBuffer();					
+				 StringBuffer numeratorReverse=new StringBuffer();
 				
-				}
+		         
 
-				numerator += specRefE1.getSpecies();
+				if (modE.size() > 0) 
+					numerator =times(numerator,new StringBuffer(modE.get(enzymeNum)));
+				
+				denominator=sum(new StringBuffer(1),frac(new StringBuffer(specRefE1.getSpecies()),kIr1), 
+						frac(times( kMr1 , new StringBuffer(specRefE2.getSpecies())),times(kIr1 , kMr2 )), 
+						frac(times(kMp2, new StringBuffer(specRefP1.getSpecies())),times(kIp2 ,kMp1 )), frac(new StringBuffer(specRefP2.getSpecies()),kIp2));
 			
-				denominator = "1 + (" + specRefE1.getSpecies() + '/' + kIr1
-						+ ") + ((" + kMr1 + " * " + specRefE2.getSpecies()
-						+ ")/(" + kIr1 + " * " + kMr2 + "))" + " + ((" + kMp2
-						+ " * " + specRefP1.getSpecies() + ")/(" + kIp2 + " * "
-						+ kMp1 + ")) + (" + specRefP2.getSpecies() + '/' + kIp2
-						+ ") + (";
 				if (specRefE2.equals(specRefE1)) {
-					numerator += "^2";
+					numerator =times(numerator,pow(new StringBuffer(specRefE1.getSpecies()), new StringBuffer('2')));
 				
-					denominator += specRefE1.getSpecies() + "^2";
+					denominator=sum(denominator, pow(new StringBuffer( specRefE1.getSpecies()), new StringBuffer('2')));
 				
 				} else {
-					numerator += " * " + specRefE2.getSpecies();
-				
-					denominator += '(' + specRefE1.getSpecies() + " * "
-							+ specRefE2.getSpecies() + ')';
+					numerator =times(numerator,new StringBuffer(specRefE1.getSpecies()));
+					denominator=sum(denominator,times( new StringBuffer(specRefE1.getSpecies()),new StringBuffer(specRefE2.getSpecies())));
 			
 				}
-				numerator += ")/(" + kIr1 + " * " + kMr2 + "))" + " - ((" + kcatn
-						+ " * ";
+				numeratorForward=frac(numerator, times(kIr1,kMr2));
+				
+				numeratorReverse= kcatn;
+				if (modE.size() > 0) 
+					numeratorReverse= new StringBuffer(modE.get(enzymeNum));
+				
+				if (specRefP2.equals(specRefP1)) 
+					numeratorReverse=times(numeratorReverse,pow(new StringBuffer(specRefP1.getSpecies()), new StringBuffer('2')));
+					 else {						
+						numeratorReverse=times(numeratorReverse, new StringBuffer(specRefP1.getSpecies()), new StringBuffer(specRefP2.getSpecies()));
+							}
+				numeratorReverse=frac(numeratorReverse,times(kIp2,kMp1));
+				numerator=diff(numeratorForward,numeratorReverse);
+				denominator=sum(frac(denominator, times( kIr1,kMr2)), 
+						frac(times(kMp2, new StringBuffer(specRefE1.getSpecies()) , new StringBuffer(specRefP1.getSpecies())),times(kIr1,kMp1,kIp2)), 
+						frac(times(kMr1 , new StringBuffer(specRefE2.getSpecies()), new StringBuffer(specRefP2.getSpecies())), times(kIr1,kMr2, kIp2)));
+				
 			
-				if (modE.size() > 0) {
-					numerator += modE.get(enzymeNum) + " * ";
-				
-				}
-				numerator += specRefP1.getSpecies();
-				if (specRefP2.equals(specRefP1)) {
-					numerator += "^2";
-									} else {
-					numerator += " * " + specRefP2.getSpecies();
-									}
-				numerator += ")/(" + kIp2 + " * " + kMp1 + "))";
-				denominator += "/(" + kIr1 + " * " + kMr2 + ")) + ((" + kMp2
-						+ " * " + specRefE1.getSpecies() + " * "
-						+ specRefP1.getSpecies() + ")/(" + kIr1 + " * " + kMp1
-						+ " * " + kIp2 + ")) + ((" + kMr1 + " * "
-						+ specRefE2.getSpecies() + " * "
-						+ specRefP2.getSpecies() + ")/(" + kIr1 + " * " + kMr2
-						+ " * " + kIp2 + ")) + (";
-			
-				if (specRefP2.equals(specRefP1)) {
-					denominator += specRefP1.getSpecies() + "^2";
+				if (specRefP2.equals(specRefP1)) 
+					denominator=sum(denominator,pow(new StringBuffer(specRefP1.getSpecies()),new StringBuffer('2'))) ;
+				 else 
+					denominator=sum(denominator,times(new StringBuffer(specRefP1.getSpecies()),new StringBuffer(specRefP2.getSpecies()))) ;
 					
-				} else {
-					denominator += '(' + specRefP1.getSpecies() + " * "
-							+ specRefP2.getSpecies() + ')';
-					
-				}
-				denominator += "/(" + kMp1 + " * " + kIp2 + ")) + (("
-						+ specRefE1.getSpecies();
+				denominator=sum(frac(denominator,times(kMp1 , kIp2)	));
 				
-				if (specRefE2.equals(specRefE1)) {
-					denominator += "^2";
-					
-				} else {
-					denominator += " * " + specRefE2.getSpecies();
+				StringBuffer denominator_p1p2=new StringBuffer(specRefE1.getSpecies());
+				if (specRefE2.equals(specRefE1))
+					denominator_p1p2=pow(new StringBuffer(specRefE1.getSpecies()),new StringBuffer('2'));
+				 else 
+				    denominator_p1p2=times(new StringBuffer(specRefE1.getSpecies()),new StringBuffer(specRefE2.getSpecies()));
 				
-				}
-				denominator += " * " + specRefP1.getSpecies() + ")/(" + kIr1
-						+ " * " + kMr2 + " * " + kIp1 + ")) + (("
-						+ specRefE2.getSpecies() + " * "
-						+ specRefP1.getSpecies();
-			
-				if (specRefP2.equals(specRefP1)) {
-					denominator += "^2";
-					
-				} else {
-					denominator += " * " + specRefP2.getSpecies();
+				denominator_p1p2=frac(times(denominator_p1p2,new StringBuffer(specRefP1.getSpecies())),times(kIr1, kMr2, kIp1));
+				denominator=sum(denominator,denominator_p1p2);
 				
-				}
-				denominator += ")/(" + kIr2 + " * " + kMp1 + " * " + kIp2 + "))";
+				denominator_p1p2=times(new StringBuffer(specRefE2.getSpecies()),new StringBuffer(specRefE1.getSpecies()));
+				
+							
+				if (specRefP2.equals(specRefP1)) 
+				denominator_p1p2=pow(denominator_p1p2,new StringBuffer('2'));
+					
+				 else 
+					 denominator_p1p2=times(denominator_p1p2,new StringBuffer(specRefP2.getSpecies()));
+					
+				denominator_p1p2=frac(denominator_p1p2,times(kIr2 , kMp1,kIp2));
+				
+				denominator=sum(denominator,denominator_p1p2);
 				
 
 			} else {
@@ -370,57 +359,52 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				if (!listOfLocalParameters.contains(kIp1))
 					listOfLocalParameters.add(kIp1);
 
-				numerator = "((" + kcatp + " * ";
-			
-				if (modE.size() > 0) {
-					numerator += modE.get(enzymeNum) + " * ";
+				 StringBuffer numeratorForward=new StringBuffer();					
+				 StringBuffer numeratorReverse=new StringBuffer();
 				
-				}
-				numerator += specRefE1.getSpecies();
+				numeratorForward=kcatp;
 			
-				denominator = "1 + (" + specRefE1.getSpecies() + '/' + kIr1
-						+ ") + ((" + kMr1 + " * " + specRefE2.getSpecies()
-						+ ")/(" + kIr1 + " * " + kMr2 + ")) + (";
-			
+				if (modE.size() > 0) 
+					numeratorForward=concat(numeratorForward,Integer.valueOf(modE.get(enzymeNum)));
+				
+				numeratorForward=times(numeratorForward, new StringBuffer(specRefE1.getSpecies()));
+				
+				denominator=sum(new StringBuffer(1),frac(new StringBuffer(specRefE1.getSpecies()),kIr1), 
+						frac(times( kMr1 , new StringBuffer(specRefE2.getSpecies())),times(kIr1 , kMr2 )));
+				
+				
 				if (specRefE2.equals(specRefE1)) {
-					numerator += "^2";
-				
-					denominator += specRefE1.getSpecies() + "^2";
+					numeratorForward=times(numeratorForward, pow(new StringBuffer(specRefE1.getSpecies()), new StringBuffer('2')));
+					
+					denominator=sum( denominator, pow(new StringBuffer(specRefE1.getSpecies()), new StringBuffer('2')));
 		
 				} else {
-					numerator += " * " + specRefE2.getSpecies();
-
-					denominator += '(' + specRefE1.getSpecies() + " * "
-							+ specRefE2.getSpecies() + ')';
-
-				}
-				numerator += ")/(" + kIr1 + " * " + kMr2 + "))" + " - ((" + kcatn
-						+ " * ";
-		
-				if (modE.size() > 0) {
-					numerator += modE.get(enzymeNum) + " * ";
+					numeratorForward=times(numeratorForward, times(new StringBuffer(specRefE1.getSpecies()), new StringBuffer(specRefE2.getSpecies())));
+						
+					denominator=sum( denominator, pow(new StringBuffer(specRefE1.getSpecies()), new StringBuffer(specRefE2.getSpecies())));
 					
 				}
-				numerator += specRefP1.getSpecies() + ")/" + kMp1 + ')';
-			
-
-				denominator += "/(" + kIr1 + " * " + kMr2 + ")) + ((" + kMr1
-						+ " * " + specRefE2.getSpecies() + " * "
-						+ specRefP1.getSpecies() + ")/(" + kIr1 + " * " + kMr2
-						+ " * " + kIp1 + ")) + (" + specRefP1.getSpecies() + '/'
-						+ kMp1 + ')';
+				numeratorForward=frac(numeratorForward,times(kIr1 , kMr2));
+				
+				numeratorReverse=kcatn;
+				if (modE.size() > 0) {
+					numeratorReverse=concat(numeratorReverse, modE.get(enzymeNum));
+					
+				}
+				numeratorReverse=times(numeratorReverse, frac(new StringBuffer(specRefP1.getSpecies()),kMp1));
+				
+				numerator=diff(numeratorForward,numeratorReverse);
+				denominator=sum(frac(denominator, times( kIr1 ,kMr2)), 
+						frac(times(kMr1, new StringBuffer(specRefE2.getSpecies()),new StringBuffer(specRefP1.getSpecies()) ), times(kIr1,kMr2,kIp1)),
+						frac(new StringBuffer(specRefP1.getSpecies()),kMp1));
 				
 			}
 
 			/*
 			 * Construct formula
 			 */
-			formelTxt += "((" + numerator + ")/(" + denominator + "))";
-			
-			if (enzymeNum < modE.size() - 1) {
-				formelTxt += " + ";
-				
-			}
+			formelTxt =frac(numerator,denominator); 
+		
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
 
@@ -429,14 +413,13 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		 */
 		if (!modActi.isEmpty()) {
 			for (int activatorNum = 0; activatorNum < modActi.size(); activatorNum++) {
-				String kA = "kA_" + reactionNum;
-				kA += "_" + modActi.get(activatorNum);
+				StringBuffer kA = concat("kA_", Integer.valueOf(reactionNum));
+				kA =concat(kA, Character.valueOf('_') , Integer.valueOf(modActi.get(activatorNum)));
 			
 
 				if (!listOfLocalParameters.contains(kA))
 					listOfLocalParameters.add(kA);
-				acti += '(' + modActi.get(activatorNum) + "/(" + kA + " + "
-						+ modActi.get(activatorNum) + ")) * ";
+				acti =frac(concat(acti, Integer.valueOf(modActi.get(activatorNum))),sum(kA , new StringBuffer(modActi.get(activatorNum)))) ;
 				
 			}
 		}
@@ -446,27 +429,18 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		 */
 		if (!modInhib.isEmpty()) {
 			for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-				String kI = "kI_" + reactionNum;
-				kI += "_" + modInhib.get(inhibitorNum);
+				StringBuffer kI = concat("kI_" ,Integer.valueOf(reactionNum));
+				kI =concat(kI, Character.valueOf('_'), Integer.valueOf( modInhib.get(inhibitorNum)));
 				
 				if (!listOfLocalParameters.contains(kI))
 					listOfLocalParameters.add(kI);
-				inhib += '(' + kI + "/(" + kI + " + "
-						+ modInhib.get(inhibitorNum) + ")) * ";
+				inhib =frac(concat(inhib, kI), sum(kI,new StringBuffer(modInhib.get(inhibitorNum)))); 
 				
 			}
 		}
 
-		if ((acti.length() + inhib.length() > 0) && (modE.size() > 1)) {
-			inhib += '(';
-			formelTxt += ')';
-		
-		}
-		formelTxt = acti + inhib + formelTxt;
-		
-
-		if (enzymeNum > 1)
-			
+		formelTxt =times(acti, inhib, formelTxt);
+	
 		return formelTxt;
 	}
 

@@ -33,8 +33,13 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 
+import jp.sbi.celldesigner.plugin.PluginCompartment;
 import jp.sbi.celldesigner.plugin.PluginModel;
+import jp.sbi.celldesigner.plugin.PluginModifierSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginReaction;
+import jp.sbi.celldesigner.plugin.PluginSpecies;
+import jp.sbi.celldesigner.plugin.PluginSpeciesAlias;
+import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbmlsqueezer.gui.table.KineticLawJTable;
 import org.sbmlsqueezer.gui.table.KineticLawTableModel;
