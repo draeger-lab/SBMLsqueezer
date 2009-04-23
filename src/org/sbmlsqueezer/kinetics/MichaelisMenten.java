@@ -58,7 +58,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 		return true;
 	}
 
-	@Override
+//	@Override
 	public String getName() {
 		switch (numOfEnzymes) {
 		case 0: // no enzyme, irreversible
@@ -91,7 +91,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 		return "kinetics of unireactant enzymes"; // 0000269
 	}
 
-	@Override
+//	@Override
 	public String getSBO() {
 		String name = getName(), sbo = "none";
 		if (name.equalsIgnoreCase("normalised kinetics of unireactant enzymes"))
@@ -145,12 +145,12 @@ public class MichaelisMenten extends BasicKineticLaw {
 	}
 
 	@Override
-	protected String createKineticEquation(PluginModel model, int reactionNum,
+	protected StringBuffer createKineticEquation(PluginModel model, int reactionNum,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		String numerator = "", numeratorTeX = "", denominator = "", denominatorTeX = "";
-		String formelTxt = formelTeX = "";
+		String numerator = "",  denominator = ""; 
+		StringBuffer formelTxt = new StringBuffer();
 		numOfActivators = modActi.size();
 		numOfEnzymes = modE.size();
 		numOfInhibitors = modInhib.size();
@@ -172,42 +172,31 @@ public class MichaelisMenten extends BasicKineticLaw {
 		ASTNode ast = null;
 		int enzymeNum = 0;
 		do {
-			String kcatp, kcatn, kcatpTeX, kcatnTeX;
+			String kcatp, kcatn;
 			String kMe = "kM_" + reactionNum, kMp = kMe;
-			String kMeTeX = "k^\\text{M}_{" + reactionNum, kMpTeX = kMeTeX;
+			String kMeTeX = "k^\\text{M}_{" + reactionNum;
 
 			if (modE.size() == 0) {
 				kcatp = "Vp_" + reactionNum;
 				kcatn = "Vn_" + reactionNum;
-				kcatpTeX = "V^\\text{m}_{+" + reactionNum + '}';
-				kcatnTeX = "V^\\text{m}_{-" + reactionNum + '}';
-			} else {
+				} else {
 				kcatp = "kcatp_" + reactionNum;
 				kcatn = "kcatn_" + reactionNum;
-				kcatpTeX = "k^\\text{cat}_{+" + reactionNum;
-				kcatnTeX = "k^\\text{cat}_{-" + reactionNum;
 				if (modE.size() > 1) {
 					kcatp += "_" + modE.get(enzymeNum);
 					kcatn += "_" + modE.get(enzymeNum);
-					kcatpTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-							+ '}';
-					kcatnTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-							+ '}';
 					kMe += "_" + modE.get(enzymeNum);
 					kMp += "_" + modE.get(enzymeNum);
 					kMeTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
-					kMpTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
-				}
-				kcatpTeX += '}';
-				kcatnTeX += '}';
+					}
+				
 			}
 			kMe += "_" + specRefR.getSpecies();
-			kMeTeX += ",{" + Species.idToTeX(specRefR.getSpecies()) + "}}";
-
+			
 			if (!listOfLocalParameters.contains(kcatp))
-				listOfLocalParameters.add(new String(kcatp));
+				listOfLocalParameters.add(new StringBuffer(kcatp));
 			if (!listOfLocalParameters.contains(kMe))
-				listOfLocalParameters.add(new String(kMe));
+				listOfLocalParameters.add(new StringBuffer(kMe));
 			ASTNode numerator_n;
 			ASTNode denominator_n;
 			ASTNode temp;
@@ -227,12 +216,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp = new ASTNode(AST_NAME);
 				temp.setName(specRefR.getSpecies());
 				numerator_n.addChild(temp);
-				numeratorTeX = kcatpTeX + Species.toTeX(specRefR.getSpecies());
 				denominator = specRefR.getSpecies();
 				denominator_n = new ASTNode(AST_NAME);
 				denominator_n.setName(specRefR.getSpecies());
-				denominatorTeX = Species.toTeX(specRefR.getSpecies());
-
+				
 				/*
 				 * Reversible Reaction
 				 */
@@ -252,8 +239,6 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 				numerator = '(' + kcatp + '/' + kMe + ") * "
 						+ specRefR.getSpecies();
-				numeratorTeX = "\\frac{" + kcatpTeX + "}{" + kMeTeX + '}'
-						+ Species.toTeX(specRefR.getSpecies());
 				denominator_n = new ASTNode(AST_DIVIDE);
 				temp = new ASTNode(AST_NAME);
 				temp.setName(specRefR.getSpecies());
@@ -262,17 +247,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp.setName(kMe);
 				denominator_n.addChild(temp);
 				denominator = "(" + specRefR.getSpecies() + '/' + kMe + ')';
-				denominatorTeX = "\\frac{"
-						+ Species.toTeX(specRefR.getSpecies()) + "}{" + kMeTeX
-						+ '}';
-
+				
 				kMp += "_" + specRefP.getSpecies();
-				kMpTeX += ",{" + Species.idToTeX(specRefP.getSpecies()) + "}}";
-
+				
 				if (!listOfLocalParameters.contains(kcatn))
-					listOfLocalParameters.add(new String(kcatn));
+					listOfLocalParameters.add(new StringBuffer(kcatn));
 				if (!listOfLocalParameters.contains(kMp))
-					listOfLocalParameters.add(new String(kMp));
+					listOfLocalParameters.add(new StringBuffer(kMp));
 
 				temp2 = numerator_n;
 				numerator_n = new ASTNode(AST_MINUS);
@@ -293,9 +274,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 				numerator += " - (" + kcatn + '/' + kMp + ") * "
 						+ specRefP.getSpecies();
-				numeratorTeX += "-\\frac{" + kcatnTeX + "}{" + kMpTeX + '}'
-						+ Species.toTeX(specRefP.getSpecies());
-
+				
 				temp = denominator_n;
 				denominator_n = new ASTNode(AST_PLUS);
 				denominator_n.addChild(temp);
@@ -309,39 +288,26 @@ public class MichaelisMenten extends BasicKineticLaw {
 				denominator_n.addChild(temp2);
 
 				denominator += " + (" + specRefP.getSpecies() + '/' + kMp + ')';
-				denominatorTeX += " + \\frac{"
-						+ Species.toTeX(specRefP.getSpecies()) + "}{" + kMpTeX
-						+ '}';
-			}
+				}
 
 			/*
 			 * Inhibition
 			 */
 			if (modInhib.size() == 1) {
-				String kIa, kIb, kIaTeX, kIbTeX;
+				String kIa, kIb;
 
 				kIa = "KIa_" + reactionNum;
 				kIb = "KIb_" + reactionNum;
-				kIbTeX = "\\left(1+\\frac{" + Species.toTeX(modInhib.get(0))
-						+ "}{K^\\text{Ib}_{" + reactionNum;
-				if (reaction.getReversible())
-					kIaTeX = "\\frac{" + Species.toTeX(modInhib.get(0))
-							+ "}{K^\\text{Ia}_{" + reactionNum;
-				else
-					kIaTeX = "\\frac{" + kMeTeX + "}{K^\\text{Ia}_{"
-							+ reactionNum;
-
+				
 				if (modE.size() > 1) {
 					kIa += "_" + modE.get(enzymeNum);
 					kIb += "_" + modE.get(enzymeNum);
-					kIaTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
-					kIbTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
-				}
+					}
 
 				if (!listOfLocalParameters.contains(kIa))
-					listOfLocalParameters.add(new String(kIa));
+					listOfLocalParameters.add(new StringBuffer(kIa));
 				if (!listOfLocalParameters.contains(kIb))
-					listOfLocalParameters.add(new String(kIb));
+					listOfLocalParameters.add(new StringBuffer(kIb));
 				ASTNode inh = new ASTNode(AST_PLUS);
 				temp = new ASTNode(AST_INTEGER);
 				temp.setValue(1);
@@ -356,9 +322,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 				inh.addChild(temp2);
 				kIb = "(1 + (" + modInhib.get(0) + '/' + kIb + "))";
 				if (reaction.getReversible()) {
-					kIbTeX += "}}\\right)";
-					kIaTeX += "}}";
-
+					
 					temp2 = denominator_n;
 					denominator_n = new ASTNode(AST_PLUS);
 					ASTNode faktor = new ASTNode(AST_DIVIDE);
@@ -376,13 +340,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 					denominator = modInhib.get(0) + '/' + kIa + " + ("
 							+ denominator + ") * " + kIb;
-					denominatorTeX = kIaTeX + " + \\left(" + denominatorTeX
-							+ "\\right)" + kIbTeX;
-				} else {
-					kIbTeX += "}}\\right)";
-					kIaTeX += "}}" + Species.toTeX(modInhib.get(0));
-
-					temp2 = new ASTNode(AST_TIMES);
+					} else {
+						temp2 = new ASTNode(AST_TIMES);
 					temp = new ASTNode(AST_NAME);
 					temp.setName(kMe);
 					temp2.addChild(temp);
@@ -405,8 +364,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 					denominator = '(' + kMe + " * " + modInhib.get(0) + ")/"
 							+ kIa + " + " + denominator + " * " + kIb;
-					denominatorTeX = kIaTeX + " + " + denominatorTeX + kIbTeX;
-				}
+					}
 
 			} else if ((modInhib.size() > 1)
 					&& !getParentReaction().getReversible()) {
@@ -424,8 +382,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp2.addChild(temp);
 
 				denominator += " * (1 + "; // substrate
-				denominatorTeX += "\\cdot\\left(1+";
-
+				
 				kMeN = new ASTNode(AST_PLUS);
 				temp = new ASTNode(AST_INTEGER);
 				temp.setValue(1);
@@ -439,18 +396,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 					String inhib = modInhib.get(i);
 					if (modE.size() > 1) {
 						kIai += "_" + modE.get(enzymeNum);
-						kIaiTeX += ",{" + Species.idToTeX(modE.get(enzymeNum))
-								+ '}';
-					}
-					kIaiTeX += '}';
-					String kIbi = "kIb" + kIai;
+						}
+						String kIbi = "kIb" + kIai;
 					kIai = "kIa" + kIai;
-					String kIbiTeX = "K^\\text{Ib" + kIaiTeX;
-					kIaiTeX = "K^\\text{Ia" + kIaiTeX;
 					if (!listOfLocalParameters.contains(kIai))
-						listOfLocalParameters.add(new String(kIai));
+						listOfLocalParameters.add(new StringBuffer(kIai));
 					if (!listOfLocalParameters.contains(kIbi))
-						listOfLocalParameters.add(new String(kIbi));
+						listOfLocalParameters.add(new StringBuffer(kIbi));
 
 					inh = new ASTNode(AST_DIVIDE);
 					temp = new ASTNode(AST_NAME);
@@ -461,9 +413,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 					inh.addChild(temp);
 					temp2.addChild(inh);
 					denominator += '(' + inhib + '/' + kIai + ')';
-					denominatorTeX += "\\frac{" + Species.idToTeX(inhib) + "}{"
-							+ kIaiTeX + '}';
-
+					
 					inh = new ASTNode(AST_DIVIDE);
 					temp = new ASTNode(AST_NAME);
 					temp.setName(inhib);
@@ -473,16 +423,11 @@ public class MichaelisMenten extends BasicKineticLaw {
 					inh.addChild(temp);
 					kMeN.addChild(inh);
 					// kMe += inhib + '/' + kIbi; // Km
-					kMeTeX += "\\frac{" + Species.idToTeX(inhib) + "}{"
-							+ kIbiTeX + '}';
 					if (i < modInhib.size() - 1) {
 						denominator += " + ";
-						denominatorTeX += "+";
 						// kMe += " + "; // Km
-						kMeTeX += "+";
 					}
 				}
-				kMeTeX += "\\right)";
 				// kMe += ')';
 				temp = kMeN;
 				kMeN = new ASTNode(AST_TIMES);
@@ -492,8 +437,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 				kMeN.addChild(temp);
 				denominator_n.addChild(temp2);
 
-				denominatorTeX += "\\right)";
-				denominator += ')';
+					denominator += ')';
 
 			} else if (modInhib.size() > 1) {
 				// the formalism from the convenience kinetics as a default.
@@ -501,12 +445,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 				ASTNode inh = new ASTNode(AST_TIMES);
 				ASTNode faktor;
 				for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-					String kI = "kI_" + reactionNum, kITeX = "k^\\text{I}_{"
-							+ reactionNum;
+					StringBuffer kI = "kI_" + reactionNum;
 					kI += "_" + modInhib.get(inhibitorNum);
-					kITeX += ",\\text{" + modInhib.get(inhibitorNum) + "}}";
-					if (!listOfLocalParameters.contains(kI))
-						listOfLocalParameters.add(new String(kI));
+						if (!listOfLocalParameters.contains(kI))
+						listOfLocalParameters.add(new StringBuffer(kI));
 
 					temp = new ASTNode(AST_PLUS);
 					temp2 = new ASTNode(AST_NAME);
@@ -524,14 +466,10 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 					inhib += '(' + kI + "/(" + kI + " + "
 							+ modInhib.get(inhibitorNum) + ")) * ";
-					inhibTeX += "\\frac{" + kITeX + "}{" + kITeX + "+"
-							+ Species.toTeX(modInhib.get(inhibitorNum))
-							+ "}\\cdot ";
-				}
+						}
 				currEnzyme.addChild(inh);
-				formelTxt += inhib;
-				formelTeX += inhibTeX;
-			}
+				formelTxt += new StringBuffer(inhib);
+				}
 
 			if (reaction.getReversible()) {
 				temp2 = denominator_n;
@@ -542,15 +480,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 				denominator_n.addChild(temp2);
 
 				denominator = "1 + " + denominator;
-				denominatorTeX = "1 + " + denominatorTeX;
-			} else {
+				} else {
 				temp2 = denominator_n;
 				denominator_n = new ASTNode(AST_PLUS);
 				denominator_n.addChild(kMeN);
 				denominator_n.addChild(temp2);
 
 				denominator = kMe + " + " + denominator;
-				denominatorTeX = kMeTeX + " + " + denominatorTeX;
 			}
 
 			// construct formula
@@ -561,7 +497,6 @@ public class MichaelisMenten extends BasicKineticLaw {
 				currEnzyme = temp;
 
 			formelTxt += "((" + numerator + ")/(" + denominator + "))";
-			formelTeX += "\\frac{" + numeratorTeX + "}{" + denominatorTeX + '}';
 			if (modE.size() > 0) {
 				// TODO - ERROR
 				temp = currEnzyme;
@@ -572,12 +507,9 @@ public class MichaelisMenten extends BasicKineticLaw {
 				currEnzyme.addChild(temp);
 
 				formelTxt = modE.get(enzymeNum) + " * " + formelTxt;
-				formelTeX = Species.toTeX(modE.get(enzymeNum)) + "\\cdot"
-						+ formelTeX;
-				if (enzymeNum < (modE.size() - 1)) {
+					if (enzymeNum < (modE.size() - 1)) {
 					formelTxt += " + ";
-					formelTeX += "\\\\+";
-				}
+					}
 			}
 			if (currEnzyme.getNumChildren() == 1) {
 				currEnzyme = currEnzyme.getLeftChild();
@@ -598,18 +530,16 @@ public class MichaelisMenten extends BasicKineticLaw {
 		ASTNode act = new ASTNode(AST_TIMES);
 		for (int i = 0; i < modActi.size(); i++) {
 
-			String kAa, kAaTeX; // , kAbTeX;
+			String kAa; // , kAbTeX;
 
 			kAa = "kA_" + reactionNum;
 			// ????
 			/* "\\cdot\\left(1+\\frac{" */
-			kAaTeX = "k^\\text{A}_{" + reactionNum;
-			// kAbTeX = "\\cdot\\left(1+\\frac{k^\\text{Ab}_{" + reactionNum;
+		    // kAbTeX = "\\cdot\\left(1+\\frac{k^\\text{Ab}_{" + reactionNum;
 
 			if (!listOfLocalParameters.contains(kAa))
 				listOfLocalParameters.add(new String(kAa));
 
-			kAaTeX += '}';
 			temp = new ASTNode(AST_NAME);
 			temp.setName(kAa);
 			temp2 = new ASTNode(AST_PLUS);
@@ -625,10 +555,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 			formelTxt = '(' + modActi.get(i) + "/(" + kAa + " + "
 					+ modActi.get(i) + ")) * " + formelTxt;
-			formelTeX = "\\frac{" + Species.toTeX(modActi.get(i)) + "}{"
-					+ kAaTeX + "+" + Species.toTeX(modActi.get(i)) + "}\\cdot "
-					+ formelTeX;
-
+			
 			// ????
 			/*
 			 * kAa = " * (1 + " + kAa + '/' + modActi.get(0) + ')'; kAb =
@@ -648,11 +575,9 @@ public class MichaelisMenten extends BasicKineticLaw {
 		}
 
 		if (enzymeNum > 1)
-			formelTeX += "\\end{multline}";
-
 		// setMath(ast);
 		// formelTxt = getFormula();
-		formelTxt = TextExport.toText(model, ast);
+		formelTxt = new StringBuffer(TextExport.toText(model, ast));
 		/*
 		 * try { formelTeX = (new LaTeXExport()).toLaTeX(model, ast).toString();
 		 * } catch (IOException e) { // TODO Auto-generated catch block

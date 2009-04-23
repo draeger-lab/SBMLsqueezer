@@ -91,7 +91,7 @@ public class HillEquation extends BasicKineticLaw {
 	}
 
 	@Override
-	protected String createKineticEquation(PluginModel model, int reactionNum,
+	protected StringBuffer createKineticEquation(PluginModel model, int reactionNum,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -145,13 +145,12 @@ public class HillEquation extends BasicKineticLaw {
 
 		String acti = "";
 		String inhib = "";
-		String actiTeX = "";
-		String inhibTeX = "";
 		reactionNum++;
 
 		// KS: half saturation constant.
 		for (int activatorNum = 0; activatorNum < modTActi.size(); activatorNum++) {
-			String kS = "kSp_" + reactionNum + "_" + modTActi.get(activatorNum), hillcoeff = "np_"
+			String kS = "kSp_" + reactionNum + "_" + modTActi.get(activatorNum);
+			StringBuffer hillcoeff = "np_"
 					+ reactionNum + "_" + modTActi.get(activatorNum);
 			acti += " * " + modTActi.get(activatorNum) + "^" + hillcoeff + "/("
 					+ modTActi.get(activatorNum) + "^" + hillcoeff + " + " + kS
@@ -166,16 +165,9 @@ public class HillEquation extends BasicKineticLaw {
 					+ Species.idToTeX(modTActi.get(activatorNum)) + "}}";
 			hillcoeff = "n_{+" + reactionNum + ",{"
 					+ Species.idToTeX(modTActi.get(activatorNum)) + "}}";
-			actiTeX += "\\cdot\\frac{"
-					+ Species.toTeX(modTActi.get(activatorNum)) + "^{"
-					+ hillcoeff + "}}{"
-					+ Species.toTeX(modTActi.get(activatorNum)) + "^{"
-					+ hillcoeff + "} + \\left(" + kS + "\\right)^{" + hillcoeff
-					+ "}}";
-		}
+	}
 		if (acti.length() > 2) {
 			acti = acti.substring(3);
-			actiTeX = actiTeX.substring(5);
 		}
 
 		for (int inhibitorNum = 0; inhibitorNum < modTInhib.size(); inhibitorNum++) {
@@ -195,17 +187,10 @@ public class HillEquation extends BasicKineticLaw {
 					+ Species.idToTeX(modTInhib.get(inhibitorNum)) + "}}";
 			hillcoeff = "n_{-" + reactionNum + ",{"
 					+ Species.idToTeX(modTInhib.get(inhibitorNum)) + "}}";
-			inhibTeX += "\\cdot\\left(1 - \\frac{"
-					+ Species.toTeX(modTInhib.get(inhibitorNum)) + "^{"
-					+ hillcoeff + "}}{"
-					+ Species.toTeX(modTInhib.get(inhibitorNum)) + "^{"
-					+ hillcoeff + "} + \\left(" + kS + "\\right)^{" + hillcoeff
-					+ "}}\\right)";
-		}
+			}
 		if (inhib.length() > 2) {
 			// cut the multiplication symbol at the beginning.
 			inhib = inhib.substring(3);
-			inhibTeX = inhibTeX.substring(5);
 		}
 
 		formelTeX = "k^\\text{g}_" + reactionNum;

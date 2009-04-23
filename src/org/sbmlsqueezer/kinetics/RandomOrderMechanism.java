@@ -151,17 +151,17 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					kcatp =new StringBuffer("kcatp_"); kcatp.append(reactionNum);
 					if (modE.size() > 1) {
 						String  modEnzymeNumber=modE.get(enzymeNum);
-						kcatp=concat(kcatp,'_',modEnzymeNumber);
-						kMr2=concat(kMr2,'_',modEnzymeNumber);
-						kMr1=concat(kMr1,'_',modEnzymeNumber);
-						kIr1=concat(kIr1,'_',modEnzymeNumber);
+						kcatp=concat(kcatp,Character.valueOf('_'),modEnzymeNumber);
+						kMr2=concat(kMr2,Character.valueOf('_'),modEnzymeNumber);
+						kMr1=concat(kMr1,Character.valueOf('_'),modEnzymeNumber);
+						kIr1=concat(kIr1,Character.valueOf('_'),modEnzymeNumber);
 						
 					}
 				}
 				
 				String speciesE2=specRefE2.getSpecies();
-				kMr2=concat(kMr2,'_',speciesE2);
-				kMr1=concat(kMr1,'_',speciesE2);
+				kMr2=concat(kMr2,Character.valueOf('_'),speciesE2);
+				kMr1=concat(kMr1,Character.valueOf('_'),speciesE2);
 						
 				if (specRefE2.equals(specRefE1)) {
 					
@@ -169,7 +169,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 				kMr2=concat(kMr2,"kMr2",kMr2.substring(2));
 					
 				}
-				kIr1= concat(kIr1,'_',speciesE2);
+				kIr1= concat(kIr1,Character.valueOf('_'),speciesE2);
 				
 				if (!listOfLocalParameters.contains(kcatp))
 					listOfLocalParameters.add(kcatp);
@@ -230,24 +230,24 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 							if (modE.size() > 1) {
 								
 								String modEnzymeNumber=modE.get(enzymeNum);
-								kcatp.append('_');  kcatp.append(modEnzymeNumber);
-								kcatn.append('_');  kcatn.append(modEnzymeNumber);
-								kMr2.append('_');  kMr2.append(modEnzymeNumber);
-								kMp1.append('_');  kMp1.append(modEnzymeNumber);
-								kIp1.append('_');  kIp1.append(modEnzymeNumber);
-								kIp2.append('_');  kIp2.append(modEnzymeNumber);
-								kIr2.append('_');  kIr2.append(modEnzymeNumber);
-								kIr1.append('_'); kIr1.append(modEnzymeNumber);
+								kcatp.append(Character.valueOf('_'));  kcatp.append(modEnzymeNumber);
+								kcatn.append(Character.valueOf('_'));  kcatn.append(modEnzymeNumber);
+								kMr2.append(Character.valueOf('_'));  kMr2.append(modEnzymeNumber);
+								kMp1.append(Character.valueOf('_'));  kMp1.append(modEnzymeNumber);
+								kIp1.append(Character.valueOf('_'));  kIp1.append(modEnzymeNumber);
+								kIp2.append(Character.valueOf('_'));  kIp2.append(modEnzymeNumber);
+								kIr2.append(Character.valueOf('_'));  kIr2.append(modEnzymeNumber);
+								kIr1.append(Character.valueOf('_')); kIr1.append(modEnzymeNumber);
 								}
 					}					
 					
 					String speciesE2= specRefE2.getSpecies();
-					kMr2.append('_');  kMr2.append(speciesE2);
-					kIr1.append('_' );  kIr1.append(speciesE2);
-					kIr2.append('_' );  kIr2.append(speciesE2);
-					kIp1.append( '_' );  kIp1.append(speciesE2);
-					kIp2.append( '_');  kIp2.append(speciesE2);
-					kMp1.append('_' );  kMp1.append(speciesE2);
+					kMr2.append(Character.valueOf('_'));  kMr2.append(speciesE2);
+					kIr1.append(Character.valueOf('_') );  kIr1.append(speciesE2);
+					kIr2.append(Character.valueOf('_') );  kIr2.append(speciesE2);
+					kIp1.append( Character.valueOf('_') );  kIp1.append(speciesE2);
+					kIp2.append( Character.valueOf('_'));  kIp2.append(speciesE2);
+					kMp1.append(Character.valueOf('_') );  kMp1.append(speciesE2);
 					if (specRefE2.equals(specRefE1)) {
 						kIr1.append("kir1"); kIr1.append(kIr1.substring(2));
 						kIr2.append("kir2"); kIr2.append(kIr2.substring(2));
@@ -352,21 +352,21 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					
 						if (modE.size() > 1) {
 							StringBuffer modEnzymeNumber=new StringBuffer(modE.get(enzymeNum));
-							kcatp=concat(kcatp , new StringBuffer( '_') ,modEnzymeNumber);
-							kcatn=concat(kcatn , new StringBuffer('_') ,modEnzymeNumber);
-							kMr2 =concat(kMr2  , new StringBuffer('_') ,modEnzymeNumber);
-							kMp1 =concat(kMp1 , new StringBuffer('_') ,modEnzymeNumber);
-							kIr2 =concat(kIr2 , new StringBuffer( '_') ,modEnzymeNumber);
-							kIr1 =concat(kIr1 , new StringBuffer('_') ,modEnzymeNumber);
+							kcatp=concat(kcatp , new StringBuffer( Character.valueOf('_')) ,modEnzymeNumber);
+							kcatn=concat(kcatn , new StringBuffer(Character.valueOf('_')) ,modEnzymeNumber);
+							kMr2 =concat(kMr2  , new StringBuffer(Character.valueOf('_')) ,modEnzymeNumber);
+							kMp1 =concat(kMp1 , new StringBuffer(Character.valueOf('_')) ,modEnzymeNumber);
+							kIr2 =concat(kIr2 , new StringBuffer( Character.valueOf('_')) ,modEnzymeNumber);
+							kIr1 =concat(kIr1 , new StringBuffer(Character.valueOf('_')) ,modEnzymeNumber);
 							
 							}
 					}
 					
 					StringBuffer speciesE2=new StringBuffer(specRefE2.getSpecies());
-					kMr2=sum(kMr2 , new StringBuffer('_') ,speciesE2);
-					kIr1=concat(kIr1 , new StringBuffer('_' ) ,speciesE2);
-					kIr2=concat(kIr2 , new StringBuffer('_' ) ,speciesE2);
-					kMp1=concat(kMp1 , new StringBuffer('_' ) ,speciesE2);
+					kMr2=sum(kMr2 , new StringBuffer(Character.valueOf('_')) ,speciesE2);
+					kIr1=concat(kIr1 , new StringBuffer(Character.valueOf('_') ) ,speciesE2);
+					kIr2=concat(kIr2 , new StringBuffer(Character.valueOf('_') ) ,speciesE2);
+					kMp1=concat(kMp1 , new StringBuffer(Character.valueOf('_') ) ,speciesE2);
 					
 				
 					if (specRefE2.equals(specRefE1)) {
@@ -436,7 +436,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 		if (!modActi.isEmpty()) {
 			StringBuffer kA= new StringBuffer();
 			for (int activatorNum = 0; activatorNum < modActi.size(); activatorNum++) {
-				kA = concat("kA_" ,reactionNum , '_',modActi.get(activatorNum));
+				kA = concat("kA_" ,reactionNum , Character.valueOf('_'),modActi.get(activatorNum));
 				if (!listOfLocalParameters.contains(kA))
 					listOfLocalParameters.add(kA);
 				acti=concat(acti ,
@@ -451,7 +451,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 			StringBuffer kI= new StringBuffer();
 			for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
 				
-				concat("kI_" , reactionNum ,'_',modInhib.get(inhibitorNum));
+				concat("kI_" , reactionNum ,Character.valueOf('_'),modInhib.get(inhibitorNum));
 				if (!listOfLocalParameters.contains(kI))
 					listOfLocalParameters.add(kI);
 				
@@ -460,7 +460,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 				}
 		}
 		
-		formelTxt = concat(acti,inhib, formelTxt);
+		formelTxt =times(acti, inhib, formelTxt);
 		
 		return formelTxt;
 	}
