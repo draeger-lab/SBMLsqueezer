@@ -30,10 +30,11 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public PingPongMechanism(PluginReaction parentReaction, PluginModel model,
 			boolean reversibility) throws RateLawNotApplicableException,
-			IOException {
+			IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -44,10 +45,11 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public PingPongMechanism(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -75,7 +77,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		StringBuffer numerator = new StringBuffer();// I
 		StringBuffer denominator = new StringBuffer(); // II
 		StringBuffer inhib = new StringBuffer();
@@ -136,12 +138,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			} else {
 				kcatp = concat("kcatp_", reactionNum);
 				if (modE.size() > 1) {
-					kcatp = concat(kcatp,'_', enzyme);
+					kcatp = concat(kcatp, '_', enzyme);
 					kMr1 = concat(kMr1, '_', enzyme);
 					kMr2 = concat(kMr2, '_', enzyme);
 				}
 			}
-			kMr2 = concat(kMr2,'_', specRefE2.getSpecies());
+			kMr2 = concat(kMr2, '_', specRefE2.getSpecies());
 			kMr1 = concat(kMr1, '_', specRefE2.getSpecies());
 			if (specRefE2.equals(specRefE1)) {
 				kMr1 = concat("kMr1", kMr1.substring(2));
@@ -204,12 +206,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					if (modE.size() > 1) {
 						StringBuffer modEnzymeNumber = new StringBuffer(modE
 								.get(enzymeNum));
-						kcatn = concat(kcatn, '_',modEnzymeNumber);
-						kMp1 = concat(kMp1, '_',modEnzymeNumber);
-						kMp2 = concat(kMp2, '_',modEnzymeNumber);
-						kIp1 = concat(kIp1, '_',modEnzymeNumber);
-						kIp2 = concat(kIp2, '_',modEnzymeNumber);
-						kIr1 = concat(kIr1, '_',modEnzymeNumber);
+						kcatn = concat(kcatn, '_', modEnzymeNumber);
+						kMp1 = concat(kMp1, '_', modEnzymeNumber);
+						kMp2 = concat(kMp2, '_', modEnzymeNumber);
+						kIp1 = concat(kIp1, '_', modEnzymeNumber);
+						kIp2 = concat(kIp2, '_', modEnzymeNumber);
+						kIr1 = concat(kIr1, '_', modEnzymeNumber);
 					}
 				}
 				kMp1 = concat(kMp1, '_', specRefP1.getSpecies());
@@ -305,26 +307,8 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			}
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
-
-		try {
-
-			/*
-			 * Activation
-			 */
-			
-	         acti= createModificationFactor(reactionNum, modActi,
-					ACTIVATION);
-					
-			/*
-			 * Inhibition
-			 */
-			
-		         inhib= createModificationFactor(reactionNum, modActi,
-						INHIBITION);
-				} catch (IllegalFormatException exc) {
-					exc.printStackTrace();
-					return new StringBuffer();
-				}
+		acti = createModificationFactor(reactionNum, modActi, ACTIVATION);
+		inhib = createModificationFactor(reactionNum, modActi, INHIBITION);
 		return times(acti, inhib, sum(catalysts));
 	}
 

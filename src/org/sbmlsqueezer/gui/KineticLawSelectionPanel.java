@@ -30,10 +30,12 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 
 import org.sbmlsqueezer.io.LaTeXExport;
 import org.sbmlsqueezer.kinetics.BasicKineticLaw;
+import org.sbmlsqueezer.kinetics.IllegalFormatException;
 import org.sbmlsqueezer.kinetics.KineticLawGenerator;
 import org.sbmlsqueezer.kinetics.RateLawNotApplicableException;
 
 import atp.sHotEqn;
+
 
 /**
  * A panel, which contains all possible kinetic equations for the current
@@ -316,15 +318,17 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		String[] toolTips = new String[possibleTypes.length];
 		laTeXpreview = new StringBuffer[possibleTypes.length + 1];
 		int i;
-		for (i = 0; i < possibleTypes.length; i++) {
-			BasicKineticLaw kinetic = klg.createKineticLaw(model, reaction,
-					possibleTypes[i], false);
-			laTeXpreview[i] = kinetic.getKineticTeX();
-			toolTips[i] = toHTML(kinetic.getName(), 40);
-			kineticEquations[i] = toHTML(klg.getEquationName(possibleTypes[i]),
-					40);
-		}
-
+		for (i = 0; i < possibleTypes.length; i++)
+			try {
+				BasicKineticLaw kinetic = klg.createKineticLaw(model, reaction,
+						possibleTypes[i], false);
+				laTeXpreview[i] = kinetic.getKineticTeX();
+				toolTips[i] = toHTML(kinetic.getName(), 40);
+				kineticEquations[i] = toHTML(klg
+						.getEquationName(possibleTypes[i]), 40);
+			} catch (IllegalFormatException e) {
+				e.printStackTrace();
+			}
 		if (isKineticLawDefined)
 			try {
 				laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())

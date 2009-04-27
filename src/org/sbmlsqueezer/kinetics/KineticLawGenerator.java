@@ -289,11 +289,12 @@ public class KineticLawGenerator {
 	 * @throws RateLawNotApplicableException
 	 * @throws ModificationException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public BasicKineticLaw createKineticLaw(PluginModel model,
 			PluginReaction reaction, short kinetic, boolean reversibility)
 			throws ModificationException, RateLawNotApplicableException,
-			IOException {
+			IOException, IllegalFormatException {
 		int reactionNum = 0;
 		BasicKineticLaw kineticLaw;
 
@@ -824,8 +825,7 @@ public class KineticLawGenerator {
 			types.add(Short.valueOf(ZEROTH_ORDER_FORWARD_MA));
 
 		// TODO remove not updated entries (Hannes Borch)
-		short[] r = { MICHAELIS_MENTEN, RANDOM_ORDER_MECHANISM,
-				PING_PONG_MECAHNISM, ORDERED_MECHANISM, HILL_EQUATION };
+		short[] r = { MICHAELIS_MENTEN, HILL_EQUATION};
 		for (short s : r) {
 			if (types.contains(Short.valueOf(s)))
 				types.remove(Short.valueOf(s));

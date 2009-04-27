@@ -10,7 +10,6 @@ import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
 import org.sbml.libsbml.ASTNode;
-import org.sbmlsqueezer.io.LaTeXExport;
 import org.sbmlsqueezer.io.TextExport;
 
 /**
@@ -27,9 +26,10 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException 
+	 * @throws IllegalFormatException 
 	 */
 	public IrrevCompetNonCooperativeEnzymes(PluginReaction parentReaction,
-			PluginModel model) throws RateLawNotApplicableException, IOException {
+			PluginModel model) throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -39,10 +39,11 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException 
+	 * @throws IllegalFormatException 
 	 */
 	public IrrevCompetNonCooperativeEnzymes(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -242,12 +243,6 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 			ast.addChild(activation);
 			ast.addChild(tmp);
 		}
-
-		// setMath(ast);
-		// formelTxt = getFormula();
-		
-		
-
 		return new StringBuffer(TextExport.toText(model, ast));
 	}
 

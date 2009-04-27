@@ -27,16 +27,17 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
 			PluginModel model) throws RateLawNotApplicableException,
-			IOException {
+			IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 	
 	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 

@@ -28,6 +28,7 @@ import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
 import org.sbmlsqueezer.kinetics.BasicKineticLaw;
+import org.sbmlsqueezer.kinetics.IllegalFormatException;
 import org.sbmlsqueezer.kinetics.KineticLawGenerator;
 import org.sbmlsqueezer.kinetics.ModificationException;
 import org.sbmlsqueezer.kinetics.RateLawNotApplicableException;
@@ -332,6 +333,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 						exc.printStackTrace();
 					} catch (IOException exc) {
 						exc.printStackTrace();
+					} catch (IllegalFormatException e) {
+						e.printStackTrace();
 					}
 				JComboBox kineticLawComboBox = new JComboBox(possibleLaws);
 				kineticLawComboBox.addActionListener(this);

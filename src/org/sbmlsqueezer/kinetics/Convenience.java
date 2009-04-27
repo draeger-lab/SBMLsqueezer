@@ -32,9 +32,10 @@ public class Convenience extends GeneralizedMassAction {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public Convenience(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -45,10 +46,11 @@ public class Convenience extends GeneralizedMassAction {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public Convenience(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -231,7 +233,7 @@ public class Convenience extends GeneralizedMassAction {
 			return denoms;
 		} else {
 			throw new IllegalFormatException(
-					"Illegal type argument for Convenience kinetic numerators");
+					"Illegal type argument for convenience kinetic numerators");
 		}
 	}
 
