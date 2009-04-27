@@ -429,7 +429,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp = kMeN;
 				kMeN = new ASTNode(AST_TIMES);
 				inh = new ASTNode(AST_NAME);
-				inh.setName(kMe);
+				inh.setName(kMe.toString());
 				kMeN.addChild(inh);
 				kMeN.addChild(temp);
 				denominator_n.addChild(temp2);

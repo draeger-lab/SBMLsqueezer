@@ -161,7 +161,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 				kM += "_" + modE.get(enzymeNum);
 			kM += "_" + reaction.getReactant(0).getSpecies();
 			if (!listOfLocalParameters.contains(kM))
-				listOfLocalParameters.add(new String(kM));
+				listOfLocalParameters.add(new StringBuffer(kM));
 			tmp = new ASTNode(AST_NAME);
 			tmp.setName(kM);
 			if (modInhib.size() == 0)
@@ -184,9 +184,9 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 					kIi += "_" + modInhib.get(i);
 					exponent += "_" + modInhib.get(i);
 					if (!listOfLocalParameters.contains(kIi))
-						listOfLocalParameters.add(new String(kIi));
+						listOfLocalParameters.add(new StringBuffer(kIi));
 					if (!listOfLocalParameters.contains(exponent))
-						listOfLocalParameters.add(new String(exponent));
+						listOfLocalParameters.add(new StringBuffer(exponent));
 					tmp.setName(kIi);
 					frac.addChild(tmp);
 
@@ -225,7 +225,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 				tmp.getRightChild().addChild(new ASTNode(AST_NAME));
 				String kAi = "KA_" + reactionNum + "_" + modActi.get(actiNum);
 				if (!listOfLocalParameters.contains(kAi))
-					listOfLocalParameters.add(new String(kAi));
+					listOfLocalParameters.add(new StringBuffer(kAi));
 				tmp.getRightChild().getLeftChild().setName(kAi);
 				tmp.getRightChild().getRightChild().setName(
 						modActi.get(actiNum++));
@@ -246,9 +246,9 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 		// setMath(ast);
 		// formelTxt = getFormula();
 		
-		formelTxt = new StringBuffer(TextExport.toText(model, ast));
+		
 
-		return formelTxt;
+		return new StringBuffer(TextExport.toText(model, ast));
 	}
 
 }
