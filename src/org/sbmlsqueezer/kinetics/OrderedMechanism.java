@@ -239,9 +239,8 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				denominator = times(kIr1, kMr2);
 
 				if (specRefE2.equals(specRefE1)) {
-					StringBuffer numerator_s1s2 = pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer('2'));
-					numerator = times(numerator, numerator_s1s2);
+					numerator = times(numerator, pow(new StringBuffer(
+							specRefE1.getSpecies()), new StringBuffer('2')));
 
 					sum(denominator, times(sum(kMr2, kMr1), new StringBuffer(
 							specRefE1.getSpecies())), pow(new StringBuffer(
@@ -281,15 +280,16 @@ public class OrderedMechanism extends GeneralizedMassAction {
 					listOfLocalParameters.add(kIp1);
 				if (!listOfLocalParameters.contains(kIp2))
 					listOfLocalParameters.add(kIp2);
-
-				numerator = kcatp;
+				
 				StringBuffer numeratorForward = new StringBuffer();
 				StringBuffer numeratorReverse = new StringBuffer();
 
+				numeratorForward = kcatp;
 				if (modE.size() > 0)
-					numerator = times(numerator, new StringBuffer(modE
+					numeratorForward = times(numeratorForward, new StringBuffer(modE
 							.get(enzymeNum)));
 
+				
 				denominator = sum(new StringBuffer(1), frac(new StringBuffer(
 						specRefE1.getSpecies()), kIr1), frac(times(kMr1,
 						new StringBuffer(specRefE2.getSpecies())), times(kIr1,
@@ -298,21 +298,22 @@ public class OrderedMechanism extends GeneralizedMassAction {
 						new StringBuffer(specRefP2.getSpecies()), kIp2));
 
 				if (specRefE2.equals(specRefE1)) {
-					numerator = times(numerator, pow(new StringBuffer(specRefE1
+					numeratorForward = times(numeratorForward, pow(new StringBuffer(specRefE1
 							.getSpecies()), new StringBuffer('2')));
 
-					denominator = sum(denominator, pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer('2')));
+					denominator = sum(denominator, frac(pow(new StringBuffer(
+							specRefE1.getSpecies()), new StringBuffer('2')),  times(kIr1, kMr2)));
 
 				} else {
-					numerator = times(numerator, new StringBuffer(specRefE1
-							.getSpecies()));
-					denominator = sum(denominator, times(new StringBuffer(
+					numeratorForward = times(numeratorForward, times(new StringBuffer(specRefE1
+							.getSpecies())),new StringBuffer(specRefE2
+									.getSpecies()));
+					
+					denominator = sum(denominator, frac(times(new StringBuffer(
 							specRefE1.getSpecies()), new StringBuffer(specRefE2
-							.getSpecies())));
-
+									.getSpecies())), times(kIr1, kMr2)));
 				}
-				numeratorForward = frac(numerator, times(kIr1, kMr2));
+				numeratorForward = frac(numeratorForward, times(kIr1, kMr2));
 
 				numeratorReverse = kcatn;
 				if (modE.size() > 0)
@@ -323,61 +324,52 @@ public class OrderedMechanism extends GeneralizedMassAction {
 							new StringBuffer(specRefP1.getSpecies()),
 							new StringBuffer('2')));
 				else {
-					numeratorReverse = times(numeratorReverse,
+					numeratorReverse = times(numeratorReverse,times(
 							new StringBuffer(specRefP1.getSpecies()),
-							new StringBuffer(specRefP2.getSpecies()));
+							new StringBuffer(specRefP2.getSpecies())));
 				}
 				numeratorReverse = frac(numeratorReverse, times(kIp2, kMp1));
 				numerator = diff(numeratorForward, numeratorReverse);
-				denominator = sum(frac(denominator, times(kIr1, kMr2)), frac(
+				
+				denominator = sum(denominator, frac(
 						times(kMp2, new StringBuffer(specRefE1.getSpecies()),
-								new StringBuffer(specRefP1.getSpecies())),
+						new StringBuffer(specRefP1.getSpecies())),
 						times(kIr1, kMp1, kIp2)), frac(times(kMr1,
 						new StringBuffer(specRefE2.getSpecies()),
 						new StringBuffer(specRefP2.getSpecies())), times(kIr1,
 						kMr2, kIp2)));
-
+				
 				if (specRefP2.equals(specRefP1))
-					denominator = sum(denominator, pow(new StringBuffer(
-							specRefP1.getSpecies()), new StringBuffer('2')));
+					denominator = sum(denominator, frac(pow(new StringBuffer(
+							specRefP1.getSpecies()), new StringBuffer('2')),  times(kMp1, kIp2)));
 				else
-					denominator = sum(denominator, times(new StringBuffer(
+					denominator = sum(denominator, frac(times(new StringBuffer(
 							specRefP1.getSpecies()), new StringBuffer(specRefP2
-							.getSpecies())));
+							.getSpecies())), times(kMp1, kIp2)));
 
-				denominator = sum(frac(denominator, times(kMp1, kIp2)));
+				
 
-				StringBuffer denominator_p1p2 = new StringBuffer(specRefE1
-						.getSpecies());
+				
 				if (specRefE2.equals(specRefE1))
-					denominator_p1p2 = pow(new StringBuffer(specRefE1
-							.getSpecies()), new StringBuffer('2'));
+					denominator=sum(denominator, frac(times(pow(new StringBuffer(specRefE1
+							.getSpecies()), new StringBuffer('2')), 
+							new StringBuffer(specRefP1.getSpecies())),times(kIr1, kMr2)));
 				else
-					denominator_p1p2 = times(new StringBuffer(specRefE1
+					denominator=sum(denominator, frac(times(new StringBuffer(specRefE1
 							.getSpecies()), new StringBuffer(specRefE2
-							.getSpecies()));
+							.getSpecies()), new StringBuffer(specRefP1.getSpecies())),times(kIr1,
+									kMr2, kIp1)));
 
-				denominator_p1p2 = frac(times(denominator_p1p2,
-						new StringBuffer(specRefP1.getSpecies())), times(kIr1,
-						kMr2, kIp1));
-				denominator = sum(denominator, denominator_p1p2);
-
-				denominator_p1p2 = times(new StringBuffer(specRefE2
-						.getSpecies()),
-						new StringBuffer(specRefE1.getSpecies()));
-
+				
 				if (specRefP2.equals(specRefP1))
-					denominator_p1p2 = pow(denominator_p1p2, new StringBuffer(
-							'2'));
-
+					denominator=sum(denominator,frac(times(new StringBuffer(specRefE2.getSpecies()),  
+							pow(new StringBuffer(specRefP1.getSpecies()),
+							new StringBuffer(2))),times(kIr2 , kMp1,kIp2)));
 				else
-					denominator_p1p2 = times(denominator_p1p2,
-							new StringBuffer(specRefP2.getSpecies()));
-
-				denominator_p1p2 = frac(denominator_p1p2, times(kIr2, kMp1,
-						kIp2));
-
-				denominator = sum(denominator, denominator_p1p2);
+					denominator=sum(denominator,frac(times(new StringBuffer(specRefE2.getSpecies()),  
+							times(new StringBuffer(specRefP1.getSpecies()),
+									new StringBuffer(specRefP2.getSpecies()))),times(kIr2 , kMp1,kIp2)));
+				
 
 			} else {
 				/*
@@ -418,17 +410,17 @@ public class OrderedMechanism extends GeneralizedMassAction {
 							new StringBuffer(specRefE1.getSpecies()),
 							new StringBuffer('2')));
 
-					denominator = sum(denominator, pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer('2')));
+					denominator = sum(denominator, frac(pow(new StringBuffer(
+							specRefE1.getSpecies()), new StringBuffer('2')),  times(kIr1, kMr2)));
 
 				} else {
 					numeratorForward = times(numeratorForward, times(
 							new StringBuffer(specRefE1.getSpecies()),
 							new StringBuffer(specRefE2.getSpecies())));
 
-					denominator = sum(denominator, pow(new StringBuffer(
+					denominator = sum(denominator, frac(times(new StringBuffer(
 							specRefE1.getSpecies()), new StringBuffer(specRefE2
-							.getSpecies())));
+							.getSpecies())),  times(kIr1, kMr2)));
 
 				}
 				numeratorForward = frac(numeratorForward, times(kIr1, kMr2));
@@ -443,7 +435,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 						new StringBuffer(specRefP1.getSpecies()), kMp1));
 
 				numerator = diff(numeratorForward, numeratorReverse);
-				denominator = sum(frac(denominator, times(kIr1, kMr2)), frac(
+				denominator = sum(denominator, frac(
 						times(kMr1, new StringBuffer(specRefE2.getSpecies()),
 								new StringBuffer(specRefP1.getSpecies())),
 						times(kIr1, kMr2, kIp1)), frac(new StringBuffer(
