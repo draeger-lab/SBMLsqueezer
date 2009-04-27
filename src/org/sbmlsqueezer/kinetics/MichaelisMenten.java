@@ -68,7 +68,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 			else if ((numOfActivators == 0) && (numOfInhibitors == 0))
 				return "kinetics of non-modulated unireactant enzymes"; // 0000326
 			break;
-		case 1: // one enzmye
+		case 1: // one enzyme
 			if (getParentReaction().getReversible()) {
 				if ((numOfActivators == 0) && (numOfInhibitors == 0))
 					return "kinetics of non-modulated unireactant enzymes"; // 0000199
@@ -149,7 +149,8 @@ public class MichaelisMenten extends BasicKineticLaw {
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		String numerator = "",  denominator = ""; 
+		StringBuffer numerator = new StringBuffer();// I
+		StringBuffer denominator = new StringBuffer(); // II
 		StringBuffer formelTxt = new StringBuffer();
 		numOfActivators = modActi.size();
 		numOfEnzymes = modE.size();
@@ -172,26 +173,25 @@ public class MichaelisMenten extends BasicKineticLaw {
 		ASTNode ast = null;
 		int enzymeNum = 0;
 		do {
-			String kcatp, kcatn;
-			String kMe = "kM_" + reactionNum, kMp = kMe;
-			String kMeTeX = "k^\\text{M}_{" + reactionNum;
-
+			StringBuffer kcatp= new StringBuffer();
+			StringBuffer kcatn=new StringBuffer();
+			StringBuffer kMe = new StringBuffer(concat("kM_" + reactionNum)), kMp = kMe;
+			
 			if (modE.size() == 0) {
-				kcatp = "Vp_" + reactionNum;
-				kcatn = "Vn_" + reactionNum;
+				kcatp = concat("Vp_" ,reactionNum);
+				kcatn = concat("Vn_" , reactionNum);
 				} else {
-				kcatp = "kcatp_" + reactionNum;
-				kcatn = "kcatn_" + reactionNum;
+				kcatp =  concat("kcatp_" , reactionNum);
+				kcatn =  concat("kcatn_" , reactionNum);
 				if (modE.size() > 1) {
-					kcatp += "_" + modE.get(enzymeNum);
-					kcatn += "_" + modE.get(enzymeNum);
-					kMe += "_" + modE.get(enzymeNum);
-					kMp += "_" + modE.get(enzymeNum);
-					kMeTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + '}';
+					kcatp= concat(kcatp ,"_" , modE.get(enzymeNum));
+					kcatn= concat(kcatn ,"_" , modE.get(enzymeNum));
+					kMe = concat(kMe ,"_" , modE.get(enzymeNum));
+					kMp= concat(kMp ,"_" , modE.get(enzymeNum));
 					}
 				
 			}
-			kMe += "_" + specRefR.getSpecies();
+			kMe=concat( kMe,"_" , specRefR.getSpecies());
 			
 			if (!listOfLocalParameters.contains(kcatp))
 				listOfLocalParameters.add(new StringBuffer(kcatp));
@@ -203,20 +203,20 @@ public class MichaelisMenten extends BasicKineticLaw {
 			ASTNode temp2;
 			ASTNode currEnzyme = new ASTNode(AST_TIMES);
 			ASTNode kMeN = new ASTNode(AST_NAME);
-			kMeN.setName(kMe);
+			kMeN.setName(kMe.toString());
 			/*
 			 * Irreversible Reaction
 			 */
 			if (!reaction.getReversible()) {
-				numerator = kcatp + " * " + specRefR.getSpecies();
+				numerator = times(kcatp , new StringBuffer(specRefR.getSpecies()));
 				numerator_n = new ASTNode(AST_TIMES);
 				temp = new ASTNode(AST_NAME);
-				temp.setName(kcatp);
+				temp.setName(kcatp.toString());
 				numerator_n.addChild(temp);
 				temp = new ASTNode(AST_NAME);
 				temp.setName(specRefR.getSpecies());
 				numerator_n.addChild(temp);
-				denominator = specRefR.getSpecies();
+				denominator = new StringBuffer(specRefR.getSpecies());
 				denominator_n = new ASTNode(AST_NAME);
 				denominator_n.setName(specRefR.getSpecies());
 				
@@ -227,43 +227,42 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp2 = new ASTNode(AST_DIVIDE);
 				numerator_n = new ASTNode(AST_TIMES);
 				temp = new ASTNode(AST_NAME);
-				temp.setName(kcatp);
+				temp.setName(kcatp.toString());
 				temp2.addChild(temp);
 				temp = new ASTNode(AST_NAME);
-				temp.setName(kMe);
+				temp.setName(kMe.toString());
 				temp2.addChild(temp);
 				numerator_n.addChild(temp2);
 				temp = new ASTNode(AST_NAME);
 				temp.setName(specRefR.getSpecies());
 				numerator_n.addChild(temp);
 
-				numerator = '(' + kcatp + '/' + kMe + ") * "
-						+ specRefR.getSpecies();
+				numerator = times(frac (kcatp , kMe), new StringBuffer(specRefR.getSpecies()));
 				denominator_n = new ASTNode(AST_DIVIDE);
 				temp = new ASTNode(AST_NAME);
 				temp.setName(specRefR.getSpecies());
 				denominator_n.addChild(temp);
 				temp = new ASTNode(AST_NAME);
-				temp.setName(kMe);
+				temp.setName(kMe.toString());
 				denominator_n.addChild(temp);
-				denominator = "(" + specRefR.getSpecies() + '/' + kMe + ')';
+				denominator = frac( new StringBuffer(specRefR.getSpecies()) , kMe);
 				
-				kMp += "_" + specRefP.getSpecies();
+				kMp = concat(kMp,"_", specRefP.getSpecies());
 				
 				if (!listOfLocalParameters.contains(kcatn))
-					listOfLocalParameters.add(new StringBuffer(kcatn));
+					listOfLocalParameters.add(kcatn);
 				if (!listOfLocalParameters.contains(kMp))
-					listOfLocalParameters.add(new StringBuffer(kMp));
+					listOfLocalParameters.add(kMp);
 
 				temp2 = numerator_n;
 				numerator_n = new ASTNode(AST_MINUS);
 				numerator_n.addChild(temp2);
 				temp = new ASTNode(AST_NAME);
-				temp.setName(kcatn);
+				temp.setName(kcatn.toString());
 				temp2 = new ASTNode(AST_DIVIDE);
 				temp2.addChild(temp);
 				temp = new ASTNode(AST_NAME);
-				temp.setName(kMp);
+				temp.setName(kMp.toString());
 				temp2.addChild(temp);
 				temp = new ASTNode(AST_TIMES);
 				temp.addChild(temp2);
@@ -272,8 +271,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp.addChild(temp2);
 				numerator_n.addChild(temp);
 
-				numerator += " - (" + kcatn + '/' + kMp + ") * "
-						+ specRefP.getSpecies();
+				numerator =diff(numerator, times(frac( kcatn,kMp), new StringBuffer(specRefP.getSpecies())));
 				
 				temp = denominator_n;
 				denominator_n = new ASTNode(AST_PLUS);
@@ -283,11 +281,11 @@ public class MichaelisMenten extends BasicKineticLaw {
 				temp.setName(specRefP.getSpecies());
 				temp2.addChild(temp);
 				temp = new ASTNode(AST_NAME);
-				temp.setName(kMp);
+				temp.setName(kMp.toString());
 				temp2.addChild(temp);
 				denominator_n.addChild(temp2);
 
-				denominator += " + (" + specRefP.getSpecies() + '/' + kMp + ')';
+				denominator =sum(frac( new StringBuffer(specRefP.getSpecies()), kMp));
 				}
 
 			/*
@@ -343,7 +341,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 					} else {
 						temp2 = new ASTNode(AST_TIMES);
 					temp = new ASTNode(AST_NAME);
-					temp.setName(kMe);
+					temp.setName(kMe.toString());
 					temp2.addChild(temp);
 					temp = new ASTNode(AST_NAME);
 					temp.setName(modInhib.get(0));
@@ -389,7 +387,6 @@ public class MichaelisMenten extends BasicKineticLaw {
 				kMeN.addChild(temp);
 				ASTNode inh;
 				// kMe += " * (1 + "; // Km
-				kMeTeX += "\\cdot\\left(1+";
 				for (int i = 0; i < modInhib.size(); i++) {
 					String kIai = (i + 1) + "_" + reactionNum;
 					String kIaiTeX = (i + 1) + "}_{" + reactionNum;
