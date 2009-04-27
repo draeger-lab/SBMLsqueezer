@@ -34,10 +34,11 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public GeneralizedMassAction(PluginReaction parentReaction,
 			PluginModel model) throws RateLawNotApplicableException,
-			IOException {
+			IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -48,10 +49,11 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public GeneralizedMassAction(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -515,7 +517,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		reactantOrder = productOrder = Double.NaN;
 		boolean zeroReact = false, zeroProd = false;
 		if (modCat.isEmpty())

@@ -36,10 +36,11 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException 
+	 * @throws IllegalFormatException 
 	 */
 	public IrrevNonModulatedNonInteractingEnzymes(
 			PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -49,11 +50,12 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException 
+	 * @throws IllegalFormatException 
 	 */
 	public IrrevNonModulatedNonInteractingEnzymes(
 			PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -237,10 +239,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			currEnzyme.addChild(denominator);
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
-
-			formelTxt = new StringBuffer(TextExport.toText(model, ast));
-
-		return formelTxt;
+		return new StringBuffer(TextExport.toText(model, ast));
 	}
 
 }

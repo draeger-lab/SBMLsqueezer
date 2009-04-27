@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler: JDK 1.6.0
+ */
 package org.sbmlsqueezer.kinetics;
 
 import java.io.IOException;
@@ -17,8 +20,6 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
  * @date Aug 1, 2007
  */
 public class MichaelisMenten extends BasicKineticLaw {

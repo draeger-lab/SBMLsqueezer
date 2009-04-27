@@ -30,10 +30,11 @@ public class ConvenienceIndependent extends Convenience {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public ConvenienceIndependent(PluginReaction parentReaction,
 			PluginModel model) throws RateLawNotApplicableException,
-			IOException {
+			IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -44,10 +45,11 @@ public class ConvenienceIndependent extends Convenience {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public ConvenienceIndependent(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -193,7 +195,7 @@ public class ConvenienceIndependent extends Convenience {
 			return nums;
 		} else {
 			throw new IllegalFormatException(
-					"Illegal type argument for Convenience kinetic numerators");
+					"Illegal type argument for convenience kinetic numerators");
 		}
 	}
 }

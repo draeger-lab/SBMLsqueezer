@@ -57,9 +57,10 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		this(parentReaction, model, getDefaultListOfPossibleEnzymes());
 	}
 
@@ -71,11 +72,12 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param type
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
+	 * @throws IllegalFormatException 
 	 */
 	@SuppressWarnings("deprecation")
 	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction);
 		int reactionNum = 0;
 		sboTerm = null;
@@ -274,12 +276,13 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param modCat
 	 * @return
 	 * @throws RateLawNotApplicableException
+	 * @throws IllegalFormatException 
 	 */
 	protected abstract StringBuffer createKineticEquation(PluginModel model,
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException;
+			throws RateLawNotApplicableException, IllegalFormatException;
 
 	/**
 	 * Returns the sum of the given elements as StringBuffer.
