@@ -87,11 +87,11 @@ public class Convenience extends GeneralizedMassAction {
 		reactionNum++;
 
 		PluginReaction parentReaction = getParentReaction();
-		StringBuffer[] enzymes = new StringBuffer[modE.size()];
+		StringBuffer[] catalyst = new StringBuffer[modE.size()];
 		try {
-			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
+			StringBuffer activation = createModificationFactor(reactionNum, modActi,
 					ACTIVATION);
-			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
+			StringBuffer inhibition = createModificationFactor(reactionNum, modInhib,
 					INHIBITION);
 
 			int i = 0;
@@ -115,14 +115,14 @@ public class Convenience extends GeneralizedMassAction {
 							new StringBuffer("1"));
 				}
 				if (modE.size() > 0)
-					enzymes[i] = times(new StringBuffer(modE.get(i)), frac(
+					catalyst[i] = times(new StringBuffer(modE.get(i)), frac(
 							numerator, denominator));
 				else
-					return (times(acti, inhib, frac(numerator, denominator)));
+					return (times(activation, inhibition, frac(numerator, denominator)));
 				i++;
-			} while (i < enzymes.length);
+			} while (i < catalyst.length);
 
-			return times(acti, inhib, sum(enzymes));
+			return times(activation, inhibition, sum(catalyst));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
 			return new StringBuffer();

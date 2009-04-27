@@ -501,11 +501,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					modCat, catNumber, FORWARD, zeroReact);
 			StringBuffer diss = getReactionPartners(reaction, reactionNum,
 					modCat, catNumber, REVERSE, zeroProd);
-			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
-					ACTIVATION);
-			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
-					INHIBITION);
-			return times(acti, inhib, diff(ass, diss));
+			return times(createModificationFactor(reactionNum, modActi,
+					ACTIVATION), createModificationFactor(reactionNum, modInhib,
+					INHIBITION), diff(ass, diss));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
 			return new StringBuffer();
@@ -546,7 +544,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer getReactionModifiers(int reactionNumber,
+	protected StringBuffer createModificationFactor(int reactionNumber,
 			List<String> modifiers, boolean type) throws IllegalFormatException {
 		if (type == ACTIVATION || type == INHIBITION) {
 			if (!modifiers.isEmpty()) {
@@ -559,13 +557,15 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					k.append(modifiers.get(i));
 					mods[i] = frac(k,
 							sum(k, new StringBuffer(modifiers.get(i))));
+					if (!listOfLocalParameters.contains(k))
+						listOfLocalParameters.add(k);
 				}
 				return times(mods);
 			} else
 				return new StringBuffer();
 		} else {
 			throw new IllegalFormatException(
-					"Invalid type argument for GMAK reaction modifiers");
+					"Invalid type argument for reaction modifiers");
 		}
 	}
 

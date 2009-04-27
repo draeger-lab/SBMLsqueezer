@@ -84,7 +84,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		StringBuffer denominator = new StringBuffer(); // II
 		StringBuffer inhib = new StringBuffer();
 		StringBuffer acti = new StringBuffer();
-		StringBuffer formelTxt = new StringBuffer();
+		StringBuffer catalysts[] = new StringBuffer[modE.size()];
 
 		PluginReaction reaction = getParentReaction();
 		PluginSpeciesReference specRefE1 = (PluginSpeciesReference) reaction
@@ -342,7 +342,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				denominator=sum(denominator,denominator_p1p2);
 				
 
-			} else {
+			}else {
 				/*
 				 * Reversible bi-uni reaction
 				 */
@@ -403,45 +403,30 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			/*
 			 * Construct formula
 			 */
-			formelTxt =frac(numerator,denominator); 
-		
-			enzymeNum++;
+			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
+
+		try {
 
 		/*
 		 * Activation
 		 */
-		if (!modActi.isEmpty()) {
-			for (int activatorNum = 0; activatorNum < modActi.size(); activatorNum++) {
-				StringBuffer kA = concat("kA_", Integer.valueOf(reactionNum));
-				kA =concat(kA, Character.valueOf('_') , Integer.valueOf(modActi.get(activatorNum)));
-			
-
-				if (!listOfLocalParameters.contains(kA))
-					listOfLocalParameters.add(kA);
-				acti =frac(concat(acti, Integer.valueOf(modActi.get(activatorNum))),sum(kA , new StringBuffer(modActi.get(activatorNum)))) ;
+		
+         acti= createModificationFactor(reactionNum, modActi,
+				ACTIVATION);
 				
-			}
-		}
-
 		/*
 		 * Inhibition
 		 */
-		if (!modInhib.isEmpty()) {
-			for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-				StringBuffer kI = concat("kI_" ,Integer.valueOf(reactionNum));
-				kI =concat(kI, Character.valueOf('_'), Integer.valueOf( modInhib.get(inhibitorNum)));
-				
-				if (!listOfLocalParameters.contains(kI))
-					listOfLocalParameters.add(kI);
-				inhib =frac(concat(inhib, kI), sum(kI,new StringBuffer(modInhib.get(inhibitorNum)))); 
-				
+		
+	         inhib= createModificationFactor(reactionNum, modActi,
+					INHIBITION);
+			} catch (IllegalFormatException exc) {
+				exc.printStackTrace();
+				return new StringBuffer();
 			}
-		}
 
-		formelTxt =times(acti, inhib, formelTxt);
-	
-		return formelTxt;
+		return times(acti, inhib, sum(catalysts));
 	}
 
 }

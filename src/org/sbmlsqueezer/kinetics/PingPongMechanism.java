@@ -18,7 +18,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- * @author wouamba
+ * @author wouamba <dwouamba@yahoo.fr>
  * 
  * @date Aug 1, 2007
  */
@@ -56,7 +56,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		return true;
 	}
 
-	@Override
+	// @Override
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		String name = "substituted-enzyme mechanism (Ping-Pong)";
@@ -65,12 +65,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		return "irreversible " + name;
 	}
 
-	@Override
+	// @Override
 	public String getSBO() {
 		return "none";
 	}
 
-	@Override
+	// @Override
 	protected StringBuffer createKineticEquation(PluginModel model,
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -80,7 +80,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		StringBuffer denominator = new StringBuffer(); // II
 		StringBuffer inhib = new StringBuffer();
 		StringBuffer acti = new StringBuffer();
-		StringBuffer formelTxt = new StringBuffer();
+		StringBuffer catalysts[] = new StringBuffer[modE.size()];
 
 		PluginReaction reaction = getParentReaction();
 		PluginSpeciesReference specRefE1 = (PluginSpeciesReference) reaction
@@ -126,28 +126,26 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		reactionNum++;
 		do {
 			StringBuffer kcatp = new StringBuffer();
-			StringBuffer kMr1 = concat("kM_", Integer.valueOf(reactionNum));
-			StringBuffer kMr2 = concat("kM_", Integer.valueOf(reactionNum));
+			StringBuffer kMr1 = concat("kM_", reactionNum);
+			StringBuffer kMr2 = concat("kM_", reactionNum);
+			StringBuffer enzyme = new StringBuffer(modE.get(enzymeNum));
 
 			if (modE.size() == 0) {
-				kcatp = concat("Vp_", Integer.valueOf(reactionNum));
+				kcatp = concat("Vp_", reactionNum);
 
 			} else {
-				kcatp = concat("kcatp_", Integer.valueOf(reactionNum));
-
+				kcatp = concat("kcatp_", reactionNum);
 				if (modE.size() > 1) {
-					kcatp = concat(kcatp, Character.valueOf('_'), modE.get(enzymeNum));
-					kMr1 = concat(kMr1, Character.valueOf('_'), modE.get(enzymeNum));
-					kMr2 = concat(kMr2, Character.valueOf('_'), modE.get(enzymeNum));
-
+					kcatp = concat(kcatp,'_', enzyme);
+					kMr1 = concat(kMr1, '_', enzyme);
+					kMr2 = concat(kMr2, '_', enzyme);
 				}
 			}
-			kMr2 = concat(kMr2, Character.valueOf('_'), specRefE2.getSpecies());
-			kMr1 = concat(kMr1, Character.valueOf('_'), specRefE2.getSpecies());
+			kMr2 = concat(kMr2,'_', specRefE2.getSpecies());
+			kMr1 = concat(kMr1, '_', specRefE2.getSpecies());
 			if (specRefE2.equals(specRefE1)) {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
-
 			}
 
 			if (!listOfLocalParameters.contains(kcatp))
@@ -163,11 +161,9 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			if (!reaction.getReversible()) {
 				numerator = kcatp;
 
-				if (modE.size() > 0) {
+				if (modE.size() > 0)
 					numerator = times(numerator, new StringBuffer(modE
 							.get(enzymeNum)));
-
-				}
 				numerator = times(numerator, new StringBuffer(specRefE1
 						.getSpecies()));
 
@@ -185,55 +181,42 @@ public class PingPongMechanism extends GeneralizedMassAction {
 							.getSpecies()));
 					denominator = times(denominator, new StringBuffer(specRefE2
 							.getSpecies()));
-
 				}
 
 				/*
 				 * Reversible Reaction
 				 */
 			} else {
-
 				StringBuffer numeratorForward = new StringBuffer();
 				StringBuffer numeratorReverse = new StringBuffer();
 
 				StringBuffer kcatn;
-				StringBuffer kMp1 = concat("kM_", Integer.valueOf(reactionNum));
-				StringBuffer kMp2 = concat("kM_" , Integer.valueOf(reactionNum));
-				StringBuffer kIp1 = concat("ki_" , Integer.valueOf(reactionNum));
-				StringBuffer kIp2 = concat("ki_" , Integer.valueOf(reactionNum));
-				StringBuffer kIr1 = concat("ki_" , Integer.valueOf(reactionNum));
+				StringBuffer kMp1 = concat("kM_", reactionNum);
+				StringBuffer kMp2 = concat("kM_", reactionNum);
+				StringBuffer kIp1 = concat("ki_", reactionNum);
+				StringBuffer kIp2 = concat("ki_", reactionNum);
+				StringBuffer kIr1 = concat("ki_", reactionNum);
 
 				if (modE.size() == 0)
-					kcatn = concat("Vn_" , Integer.valueOf(reactionNum));
+					kcatn = concat("Vn_", Integer.valueOf(reactionNum));
 				else {
-					kcatn = concat("kcatn_" , Integer.valueOf(reactionNum));
+					kcatn = concat("kcatn_", Integer.valueOf(reactionNum));
 					if (modE.size() > 1) {
 						StringBuffer modEnzymeNumber = new StringBuffer(modE
 								.get(enzymeNum));
-						kcatn = concat(kcatn, Character.valueOf('_'),
-								modEnzymeNumber);
-						kMp1 = concat(kMp1, Character.valueOf('_'),
-								modEnzymeNumber);
-						kMp2 = concat(kMp2, Character.valueOf('_'),
-								modEnzymeNumber);
-						kIp1 = concat(kIp1, Character.valueOf('_'),
-								modEnzymeNumber);
-						kIp2 = concat(kIp2, Character.valueOf('_'),
-								modEnzymeNumber);
-						kIr1 = concat(kIr1, Character.valueOf('_'),
-								modEnzymeNumber);
+						kcatn = concat(kcatn, '_',modEnzymeNumber);
+						kMp1 = concat(kMp1, '_',modEnzymeNumber);
+						kMp2 = concat(kMp2, '_',modEnzymeNumber);
+						kIp1 = concat(kIp1, '_',modEnzymeNumber);
+						kIp2 = concat(kIp2, '_',modEnzymeNumber);
+						kIr1 = concat(kIr1, '_',modEnzymeNumber);
 					}
 				}
-				kMp1 = concat(kMp1, Character.valueOf('_'), specRefP1.getSpecies());
-
-				kMp2 = concat(kMp2, Character.valueOf('_'), specRefP2
-						.getSpecies());
-				kIp1 = concat(kIp1, Character.valueOf('_'), specRefP1
-						.getSpecies());
-				kIp2 = concat(kIp2, Character.valueOf('_'), specRefP2
-						.getSpecies());
-				kIr1 = concat(kIr1, Character.valueOf('_'), specRefE1
-						.getSpecies());
+				kMp1 = concat(kMp1, '_', specRefP1.getSpecies());
+				kMp2 = concat(kMp2, '_', specRefP2.getSpecies());
+				kIp1 = concat(kIp1, '_', specRefP1.getSpecies());
+				kIp2 = concat(kIp2, '_', specRefP2.getSpecies());
+				kIr1 = concat(kIr1, '_', specRefE1.getSpecies());
 				if (specRefP2.equals(specRefP1)) {
 					kMp1 = concat("kMp1", kMp1.substring(2));
 					kMp2 = concat("kMp2", kMp2.substring(2));
@@ -320,50 +303,29 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				denominator_p1p2 = frac(denominator_p1p2, times(kIp1, kMp2));
 				denominator = sum(denominator, denominator_p1p2);
 			}
-
-			/*
-			 * Construct formula.
-			 */
-			formelTxt = frac(numerator, denominator);
-			if (enzymeNum < (modE.size() - 1)) {
-				;
-			}
-			enzymeNum++;
+			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
 
-		/*
-		 * Activation
-		 */
-		if (!modActi.isEmpty()) {
-			for (int activatorNum = 0; activatorNum < modActi.size(); activatorNum++) {
-				StringBuffer kA = concat("kA_", reactionNum, Character.valueOf('_'),Integer.valueOf(modActi
-						.get(activatorNum)));
-				if (!listOfLocalParameters.contains(kA))
-					listOfLocalParameters.add(kA);
+		try {
 
-				acti = concat(acti, frac(new StringBuffer(modActi
-						.get(activatorNum)), sum(kA, new StringBuffer(modActi
-						.get(activatorNum)))));
-
-			}
-		}
-		/*
-		 * Inhibition
-		 */
-		if (!modInhib.isEmpty()) {
-			for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-				StringBuffer kI = concat("kI_", Integer.valueOf(reactionNum), Character.valueOf('_'), Integer.valueOf(modInhib
-						.get(inhibitorNum)));
-
-				listOfLocalParameters.add(kI);
-				inhib = concat(inhib, frac(kI, sum(kI, new StringBuffer(
-						modInhib.get(inhibitorNum)))));
-
-			}
-		}
-		formelTxt =times(acti, inhib, formelTxt);
-
-		return formelTxt;
+			/*
+			 * Activation
+			 */
+			
+	         acti= createModificationFactor(reactionNum, modActi,
+					ACTIVATION);
+					
+			/*
+			 * Inhibition
+			 */
+			
+		         inhib= createModificationFactor(reactionNum, modActi,
+						INHIBITION);
+				} catch (IllegalFormatException exc) {
+					exc.printStackTrace();
+					return new StringBuffer();
+				}
+		return times(acti, inhib, sum(catalysts));
 	}
 
 }

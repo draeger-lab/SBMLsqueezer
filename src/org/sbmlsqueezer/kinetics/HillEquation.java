@@ -149,9 +149,9 @@ public class HillEquation extends BasicKineticLaw {
 
 		// KS: half saturation constant.
 		for (int activatorNum = 0; activatorNum < modTActi.size(); activatorNum++) {
-			String kS = "kSp_" + reactionNum + "_" + modTActi.get(activatorNum);
-			StringBuffer hillcoeff = "np_"
-					+ reactionNum + "_" + modTActi.get(activatorNum);
+			StringBuffer kS = concat("kSp_" , reactionNum , "_" , modTActi.get(activatorNum));
+			StringBuffer hillcoeff =concat( "np_"
+					, reactionNum , "_" , modTActi.get(activatorNum));
 			acti += " * " + modTActi.get(activatorNum) + "^" + hillcoeff + "/("
 					+ modTActi.get(activatorNum) + "^" + hillcoeff + " + " + kS
 					+ "^" + hillcoeff + ')';
@@ -193,18 +193,17 @@ public class HillEquation extends BasicKineticLaw {
 			inhib = inhib.substring(3);
 		}
 
-		formelTeX = "k^\\text{g}_" + reactionNum;
+		
 		String formelTxt = "kg_" + reactionNum;
 		if (!listOfLocalParameters.contains(formelTxt))
 			listOfLocalParameters.add(formelTxt);
-		if ((actiTeX.length() > 0) && (inhibTeX.length() > 0)) {
-			formelTeX += "\\cdot " + actiTeX + "\\cdot " + inhibTeX;
+		if ((acti.length() > 0) && (inhib.length() > 0)) {
+			
 			formelTxt += " * " + acti + " * " + inhib;
-		} else if (actiTeX.length() > 0) {
-			formelTeX += "\\cdot " + actiTeX;
-			formelTxt += " * " + acti;
-		} else if (inhibTeX.length() > 0) {
-			formelTeX += "\\cdot " + inhibTeX;
+		} else if (acti.length() > 0) {
+				formelTxt += " * " + acti;
+		} else if (inhib.length() > 0) {
+			
 			formelTxt += " * " + inhib;
 		}
 
@@ -220,17 +219,7 @@ public class HillEquation extends BasicKineticLaw {
 							+ reaction.getReactant(reactantNum)
 									.getStoichiometry();
 				}
-				formelTeX += "\\cdot " + Species.toTeX(reactant.getId()) + "^{";
-				if (reaction.getReactant(reactantNum).getStoichiometry() != 1.0)
-					if (reaction.getReactant(reactantNum).getStoichiometry()
-							- ((int) reaction.getReactant(reactantNum)
-									.getStoichiometry()) == 0)
-						formelTeX += Integer.toString((int) reaction
-								.getReactant(reactantNum).getStoichiometry());
-					else
-						formelTeX += reaction.getReactant(reactantNum)
-								.getStoichiometry();
-				formelTeX += "}";
+										
 			}
 		}
 		return formelTxt;

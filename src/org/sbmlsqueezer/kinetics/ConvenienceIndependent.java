@@ -85,9 +85,9 @@ public class ConvenienceIndependent extends Convenience {
 		PluginReaction parentReaction = getParentReaction();
 		StringBuffer[] enzymes = new StringBuffer[modE.size()];
 		try {
-			StringBuffer acti = getReactionModifiers(reactionNum, modActi,
+			StringBuffer acti = createModificationFactor(reactionNum, modActi,
 					ACTIVATION);
-			StringBuffer inhib = getReactionModifiers(reactionNum, modInhib,
+			StringBuffer inhib = createModificationFactor(reactionNum, modInhib,
 					INHIBITION);
 
 			int i = 0;

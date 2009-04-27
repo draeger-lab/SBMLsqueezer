@@ -88,7 +88,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 		StringBuffer denominator = new StringBuffer(); // II
 		StringBuffer inhib = new StringBuffer();
 		StringBuffer acti = new StringBuffer();
-		StringBuffer formelTxt = new StringBuffer();
+		StringBuffer catalysts[] = new StringBuffer[modE.size()];
 
 		PluginReaction reaction = getParentReaction();
 		PluginSpeciesReference specRefE1 = reaction.getReactant(0), specRefE2;
@@ -423,46 +423,31 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 			/*
 			 * Construct formula
 			 */
-			formelTxt=frac(numerator ,denominator);
-			if (enzymeNum < modE.size() - 1) {
-				; 
-				}
-			enzymeNum++;
+			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
 
-		/*
-		 * Activation
-		 */
-		if (!modActi.isEmpty()) {
-			StringBuffer kA= new StringBuffer();
-			for (int activatorNum = 0; activatorNum < modActi.size(); activatorNum++) {
-				kA = concat("kA_" ,reactionNum , Character.valueOf('_'),modActi.get(activatorNum));
-				if (!listOfLocalParameters.contains(kA))
-					listOfLocalParameters.add(kA);
-				acti=concat(acti ,
-						frac(new StringBuffer(modActi.get(activatorNum)),sum(kA,new StringBuffer(modActi.get(activatorNum)))));
-				}
-		}
+		try {
 
-		/*
-		 * Inhibition
-		 */
-		if (!modInhib.isEmpty()) {
-			StringBuffer kI= new StringBuffer();
-			for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-				
-				concat("kI_" , reactionNum ,Character.valueOf('_'),modInhib.get(inhibitorNum));
-				if (!listOfLocalParameters.contains(kI))
-					listOfLocalParameters.add(kI);
-				
-				inhib=concat(inhib,
-						frac(kI, sum(kI,new StringBuffer(modInhib.get(inhibitorNum)))));
+			/*
+			 * Activation
+			 */
+			
+	         acti= createModificationFactor(reactionNum, modActi,
+					ACTIVATION);
+					
+			/*
+			 * Inhibition
+			 */
+			
+		         inhib= createModificationFactor(reactionNum, modActi,
+						INHIBITION);
+				} catch (IllegalFormatException exc) {
+					exc.printStackTrace();
+					return new StringBuffer();
 				}
-		}
 		
-		formelTxt =times(acti, inhib, formelTxt);
 		
-		return formelTxt;
+		return times(acti, inhib, sum(catalysts));
 	}
 
 }
