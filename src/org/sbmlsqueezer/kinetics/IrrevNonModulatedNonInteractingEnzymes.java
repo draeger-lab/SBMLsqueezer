@@ -187,7 +187,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				kM += "_" + si.getSpecies();
 				kMeTeX += ",{" + Species.idToTeX(si.getSpecies()) + "}}";
 				if (!listOfLocalParameters.contains(kM))
-					listOfLocalParameters.add(new String(kM));
+					listOfLocalParameters.add(new StringBuffer(kM));
 
 				ASTNode frac = new ASTNode(AST_DIVIDE);
 				tmp = new ASTNode(AST_NAME);
@@ -238,7 +238,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
 
-			formelTxt = TextExport.toText(model, ast);
+			formelTxt = new StringBuffer(TextExport.toText(model, ast));
 
 		return formelTxt;
 	}
