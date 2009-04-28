@@ -507,7 +507,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
 		acti = createModificationFactor(reactionNum, modActi, ACTIVATION);
-		inhib = createModificationFactor(reactionNum, modActi, INHIBITION);
+		inhib = createModificationFactor(reactionNum, modInhib, INHIBITION);
 		return times(acti, inhib, sum(catalysts));
 	}
 

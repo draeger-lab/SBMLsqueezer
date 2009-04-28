@@ -244,8 +244,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				if (modE.size() > 0)
 					numeratorForward = times(numeratorForward,
 							new StringBuffer(modE.get(enzymeNum)));
-				StringBuffer denominator_s1s2 = new StringBuffer(specRefE1
-						.getSpecies());
+				//StringBuffer denominator_s1s2 = new StringBuffer(specRefE1.getSpecies());
 				denominator = sum(frac(
 						new StringBuffer(specRefE1.getSpecies()), kIr1), frac(
 						times(kMr1, new StringBuffer(specRefE2.getSpecies())),
@@ -257,20 +256,20 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					numeratorForward = times(numeratorForward, pow(
 							new StringBuffer(specRefE1.getSpecies()),
 							new StringBuffer('2')));
-					denominator_s1s2 = pow(new StringBuffer(specRefE1
-							.getSpecies()), new StringBuffer('2'));
-
+					denominator = sum(denominator, frac(pow(new StringBuffer(specRefE1
+							.getSpecies()), new StringBuffer('2')), times(
+							kIr1, kMr2)));
 				} else {
 					numeratorForward = times(numeratorForward,
 							new StringBuffer(specRefE1.getSpecies()),
 							new StringBuffer(specRefE2.getSpecies()));
-					denominator_s1s2 = times(new StringBuffer(specRefE1
+					denominator = sum(denominator, frac(times(new StringBuffer(specRefE1
 							.getSpecies()), new StringBuffer(specRefE2
-							.getSpecies()));
+									.getSpecies())), times(
+							kIr1, kMr2)));
 				}
 				numeratorReverse = frac(kcatn, times(kIp1, kMp2));
-				denominator = sum(denominator, frac(denominator_s1s2, times(
-						kIr1, kMr2)));
+			
 				denominator = sum(denominator, frac(times(new StringBuffer(
 						specRefE1.getSpecies()), new StringBuffer(specRefP1
 						.getSpecies())), times(kIr1, kIp1)), frac(times(kMr1,
@@ -308,7 +307,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
 		acti = createModificationFactor(reactionNum, modActi, ACTIVATION);
-		inhib = createModificationFactor(reactionNum, modActi, INHIBITION);
+		inhib = createModificationFactor(reactionNum, modInhib, INHIBITION);
 		return times(acti, inhib, sum(catalysts));
 	}
 
