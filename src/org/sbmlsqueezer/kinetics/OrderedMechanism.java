@@ -242,21 +242,20 @@ public class OrderedMechanism extends GeneralizedMassAction {
 					numerator = times(numerator, pow(new StringBuffer(
 							specRefE1.getSpecies()), new StringBuffer('2')));
 
-					sum(denominator, times(sum(kMr2, kMr1), new StringBuffer(
-							specRefE1.getSpecies())), pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer('2')));
+					denominator=sum(denominator, times(sum(kMr2, kMr1), sum(new StringBuffer(
+							specRefE1.getSpecies()), pow(new StringBuffer(
+							specRefE1.getSpecies()), new StringBuffer('2')))));
 
 				} else {
 					numerator = times(numerator, new StringBuffer(specRefE2
 							.getSpecies()));
 
-					denominator = sum(denominator, times(kMr2,
-							new StringBuffer(specRefE1.getSpecies())), times(
-							kMr1, new StringBuffer(specRefE2.getSpecies())),
-							times(new StringBuffer(specRefE1.getSpecies()),
-									new StringBuffer(specRefE2.getSpecies())));
+					
+					denominator=sum(denominator, times(sum(kMr2, kMr1), sum(new StringBuffer(
+							specRefE1.getSpecies()), times(new StringBuffer(specRefE1.getSpecies()),
+									new StringBuffer(specRefE2.getSpecies())))));
 
-				}
+					    }
 
 			} else if (!biuni) {
 				/*
@@ -369,8 +368,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 					denominator=sum(denominator,frac(times(new StringBuffer(specRefE2.getSpecies()),  
 							times(new StringBuffer(specRefP1.getSpecies()),
 									new StringBuffer(specRefP2.getSpecies()))),times(kIr2 , kMp1,kIp2)));
-				
-
+	
 			} else {
 				/*
 				 * Reversible bi-uni reaction
@@ -449,7 +447,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
 		acti = createModificationFactor(reactionNum, modActi, ACTIVATION);
-		inhib = createModificationFactor(reactionNum, modActi, INHIBITION);
+		inhib = createModificationFactor(reactionNum, modInhib, INHIBITION);
 		return times(acti, inhib, sum(catalysts));
 	}
 
