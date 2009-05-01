@@ -1,9 +1,9 @@
 TODO-Liste
 ==========
 
-Hier wird an vielen Stellen, z.B. in der ConvenienceIndependent Zeile
-105, von einer Stöchiometrie ausgegangen. Es können aber auch komplexe
-Ausdrücke vorkommen. Diesen muss Rechnung getragen werden.
+Hier wird an vielen Stellen von einer Stöchiometrie ausgegangen.
+Es können aber auch komplexe Ausdrücke vorkommen. Diesen muss
+Rechnung getragen werden.
 
 Einheiten sollten auch gleich für die Parameter erstellt werden.
 
@@ -14,3 +14,9 @@ immer falsche Modelle. Dazu muss aber überprüft werden, ob die Spezies
 jeweils mit Substanz-Einheiten interpretiert werden soll.
 
 Problem mit logischen UND, ODER etc.
+
+Parameter, die nur nicht in kinetischen Gleichungen vorkommen, sollten
+nicht gelöscht werden. Es ist dazu eine Überprüfung sämtlicher Stoichiometric-
+Math-Objekte, Funktionen etc. nötig, also aller Stellen, wo Parameter
+auftreten könnten. Nur solche, die wirklich nirgends vorkommen, sollten
+entfernt werden.
