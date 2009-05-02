@@ -20,3 +20,7 @@ nicht gelöscht werden. Es ist dazu eine Überprüfung sämtlicher Stoichiometri
 Math-Objekte, Funktionen etc. nötig, also aller Stellen, wo Parameter
 auftreten könnten. Nur solche, die wirklich nirgends vorkommen, sollten
 entfernt werden.
+
+In Hill-Kinetik dafür sorgen, dass nicht mit der Gen-Konzentration
+multipliziert und der Parameter Ks nicht mit dem Hill-Koeffizienten
+potenziert wird (sonst Probleme mit Einheiten).
