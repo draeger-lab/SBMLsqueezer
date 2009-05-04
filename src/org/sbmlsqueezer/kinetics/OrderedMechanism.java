@@ -133,7 +133,6 @@ public class OrderedMechanism extends GeneralizedMassAction {
 							+ reaction.getId());
 
 		int enzymeNum = 0;
-		reactionNum++;
 		do {
 			/*
 			 * Variables that are needed for the different combinations of
@@ -141,32 +140,31 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			 */
 
 			StringBuffer kcatp = new StringBuffer();
-			StringBuffer kMr1 = concat("kM_", reactionNum);
-			StringBuffer kMr2 = concat("kM_", reactionNum);
-			StringBuffer kIr1 = concat("ki_", reactionNum);
+			StringBuffer kMr1 = concat("kM_", reaction.getId());
+			StringBuffer kMr2 = concat("kM_", reaction.getId());
+			StringBuffer kIr1 = concat("ki_", reaction.getId());
 
 			// reverse reactions
 			StringBuffer kcatn = new StringBuffer();
-			StringBuffer kMp1 = concat("kM_", reactionNum);
-			StringBuffer kMp2 = concat("kM_", reactionNum);
-			StringBuffer kIp1 = concat("ki_", reactionNum);
-			StringBuffer kIp2 = concat("ki_", reactionNum);
-			StringBuffer kIr2 = concat("ki_", reactionNum);
+			StringBuffer kMp1 = concat("kM_", reaction.getId());
+			StringBuffer kMp2 = concat("kM_", reaction.getId());
+			StringBuffer kIp1 = concat("ki_", reaction.getId());
+			StringBuffer kIp2 = concat("ki_", reaction.getId());
+			StringBuffer kIr2 = concat("ki_", reaction.getId());
 
 			if (modE.size() == 0) {
-				kcatp = concat("Vp_", reactionNum);
+				kcatp = concat("Vp_", reaction.getId());
 				// reverse reactions
-				kcatn = concat("Vn_", reactionNum);
+				kcatn = concat("Vn_", reaction.getId());
 			} else {
-				kcatp = concat("kcatp_", reactionNum);
+				kcatp = concat("kcatp_", reaction.getId());
 				//
-				kcatn = concat("kcatn_", reactionNum);
+				kcatn = concat("kcatn_", reaction.getId());
 				if (modE.size() > 1) {
 
 					kcatp = concat(kcatp, "_", modE.get(enzymeNum));
 					kMr1 = concat(kMr1, "_", modE.get(enzymeNum));
 					kMr2 = concat(kMr2, "_", modE.get(enzymeNum));
-
 					kIr1 = concat(kIr1, "_", modE.get(enzymeNum));
 
 					// reverse reactions
@@ -226,8 +224,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				if (!listOfLocalParameters.contains(kIr1))
 					listOfLocalParameters.add(kIr1);
 
-				numerator = kcatp;
-
+				
 				if (modE.size() > 0) {
 					numerator = times(numerator, kcatp, new StringBuffer(modE
 							.get(enzymeNum)));
@@ -249,9 +246,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				} else {
 					numerator = times(numerator, new StringBuffer(specRefE2
 							.getSpecies()));
-
-					
-					denominator=sum(denominator, times(sum(kMr2, kMr1), sum(new StringBuffer(
+                    denominator=sum(denominator, times(sum(kMr2, kMr1), sum(new StringBuffer(
 							specRefE1.getSpecies()), times(new StringBuffer(specRefE1.getSpecies()),
 									new StringBuffer(specRefE2.getSpecies())))));
 
@@ -316,7 +311,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 
 				numeratorReverse = kcatn;
 				if (modE.size() > 0)
-					numeratorReverse = new StringBuffer(modE.get(enzymeNum));
+					numeratorReverse = times(numeratorReverse, new StringBuffer(modE.get(enzymeNum)));
 
 				if (specRefP2.equals(specRefP1))
 					numeratorReverse = times(numeratorReverse, pow(
@@ -446,8 +441,8 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			 */
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
-		acti = createModificationFactor(reactionNum, modActi, ACTIVATION);
-		inhib = createModificationFactor(reactionNum, modInhib, INHIBITION);
+		acti = createModificationFactor(reaction.getId(), modActi, ACTIVATION);
+		inhib = createModificationFactor(reaction.getId(), modInhib, INHIBITION);
 		return times(acti, inhib, sum(catalysts));
 	}
 
