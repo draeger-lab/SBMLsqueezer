@@ -1,5 +1,5 @@
 #Fat Jar Configuration File
-#Mon Dec 29 12:10:08 CET 2008
+#Mon Apr 27 16:27:36 CEST 2009
 onejar.license.required=false
 manifest.classpath=
 manifest.removesigners=true
@@ -10,5 +10,5 @@ manifest.mainclass=org.sbmlsqueezer.gui.SBMLsqueezerUI
 manifest.file=<createnew>
 jarname.isextern=true
 onejar.expand=
-excludes=<jar|libsbmlj.jar>;<jar|celldesigner.jar>
+excludes=<jar|celldesigner.jar>;<jar|libsbmlj.jar>
 includes=
