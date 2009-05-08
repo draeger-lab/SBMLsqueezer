@@ -81,7 +81,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 
 	@Override
 	protected StringBuffer createKineticEquation(PluginModel model,
-			int reactionNum, List<String> modE, List<String> modActi,
+			 List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
@@ -162,31 +162,31 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				kcatn = concat("kcatn_", reaction.getId());
 				if (modE.size() > 1) {
 
-					kcatp = concat(kcatp, "_", modE.get(enzymeNum));
-					kMr1 = concat(kMr1, "_", modE.get(enzymeNum));
-					kMr2 = concat(kMr2, "_", modE.get(enzymeNum));
-					kIr1 = concat(kIr1, "_", modE.get(enzymeNum));
+					kcatp = concat(kcatp, Character.valueOf('_'), modE.get(enzymeNum));
+					kMr1 = concat(kMr1, Character.valueOf('_'), modE.get(enzymeNum));
+					kMr2 = concat(kMr2, Character.valueOf('_'), modE.get(enzymeNum));
+					kIr1 = concat(kIr1, Character.valueOf('_'), modE.get(enzymeNum));
 
 					// reverse reactions
 
 					StringBuffer modEnzymeNumber = new StringBuffer(modE
 							.get(enzymeNum));
-					kcatn = concat(kcatn, '_', modEnzymeNumber);
-					kMp1 = concat(kMp1, '_', modEnzymeNumber);
-					kMp2 = concat(kMp2, '_', modEnzymeNumber);
-					kIp1 = concat(kIp1, '_', modEnzymeNumber);
-					kIp2 = concat(kIp2, '_', modEnzymeNumber);
-					kIr2 = concat(kIr2, '_', modEnzymeNumber);
+					kcatn = concat(kcatn, Character.valueOf('_'), modEnzymeNumber);
+					kMp1 = concat(kMp1, Character.valueOf('_'), modEnzymeNumber);
+					kMp2 = concat(kMp2, Character.valueOf('_'), modEnzymeNumber);
+					kIp1 = concat(kIp1, Character.valueOf('_'), modEnzymeNumber);
+					kIp2 = concat(kIp2, Character.valueOf('_'), modEnzymeNumber);
+					kIr2 = concat(kIr2, Character.valueOf('_'), modEnzymeNumber);
 
 				}
 			}
 
-			kMr2 = concat(kMr2, "_", specRefE2.getSpecies());
-			kMr1 = concat(kMr1, "_", specRefE1.getSpecies());
+			kMr2 = concat(kMr2, Character.valueOf('_'), specRefE2.getSpecies());
+			kMr1 = concat(kMr1, Character.valueOf('_'), specRefE1.getSpecies());
 			// reverse reactions
 			if (specRefP2 != null)
-				kMp2 = concat(kMp2, "_", specRefP2.getSpecies());
-			kMp1 = concat(kMp1, "_", specRefP1.getSpecies());
+				kMp2 = concat(kMp2, Character.valueOf('_'), specRefP2.getSpecies());
+			kMp1 = concat(kMp1, Character.valueOf('_'), specRefP1.getSpecies());
 
 			if (specRefE2.equals(specRefE1)) {
 				kMr1 = concat("kMr1", kMr1.substring(2));

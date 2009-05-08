@@ -57,10 +57,11 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		this(parentReaction, model, getDefaultListOfPossibleEnzymes());
 	}
 
@@ -72,18 +73,15 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param type
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	@SuppressWarnings("deprecation")
 	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction);
-		int reactionNum = 0;
 		sboTerm = null;
-		while (!model.getReaction(reactionNum).getId().equals(
-				parentReaction.getId()))
-			reactionNum++;
 		idAndName = new HashMap<String, String>();
 		listOfLocalParameters = new ArrayList<StringBuffer>();
 		listOfGlobalParameters = new ArrayList<StringBuffer>();
@@ -95,7 +93,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		List<String> modTInhib = new ArrayList<String>();
 		identifyModifers(parentReaction, listOfPossibleEnzymes, modInhib,
 				modTActi, modTInhib, modActi, modE, modCat);
-		StringBuffer formula = createKineticEquation(model, reactionNum, modE,
+		StringBuffer formula = createKineticEquation(model, modE,
 				modActi, modTActi, modInhib, modTInhib, modCat);
 		if (getMath() == null) {
 			setFormula(formula.toString());
@@ -267,7 +265,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	/**
 	 * 
 	 * @param model
-	 * @param reactionNum
 	 * @param modE
 	 * @param modActi
 	 * @param modTActi
@@ -276,12 +273,11 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param modCat
 	 * @return
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	protected abstract StringBuffer createKineticEquation(PluginModel model,
-			int reactionNum, List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
 
 	/**
@@ -313,19 +309,21 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	protected StringBuffer times(StringBuffer... factors) {
 		return arith('*', factors);
 	}
-	
+
 	/**
-	 * This method concatenates two or more object strings into a new stringbuffer.
+	 * This method concatenates two or more object strings into a new
+	 * stringbuffer.
+	 * 
 	 * @param buffers
 	 * @return
 	 */
-	protected StringBuffer concat (Object... buffers) {
-		StringBuffer res=new StringBuffer();
+	protected StringBuffer concat(Object... buffers) {
+		StringBuffer res = new StringBuffer();
 		for (Object buffer : buffers)
 			res.append(buffer.toString());
 		return res;
 	}
-	
+
 	/**
 	 * Returns a fraction with the given elements as numerator and denominator.
 	 * 

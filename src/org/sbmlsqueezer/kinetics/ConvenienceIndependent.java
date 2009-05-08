@@ -84,12 +84,12 @@ public class ConvenienceIndependent extends Convenience {
 			throws RateLawNotApplicableException {
 		reactionNum++;
 
-		PluginReaction parentReaction = getParentReaction();
+		PluginReaction reaction = getParentReaction();
 		StringBuffer[] enzymes = new StringBuffer[modE.size()];
 		try {
-			StringBuffer acti = createModificationFactor(reactionNum, modActi,
+			StringBuffer acti = createModificationFactor(reaction.getId(), modActi,
 					ACTIVATION);
-			StringBuffer inhib = createModificationFactor(reactionNum, modInhib,
+			StringBuffer inhib = createModificationFactor(reaction.getId(), modInhib,
 					INHIBITION);
 
 			int i = 0;
@@ -104,21 +104,21 @@ public class ConvenienceIndependent extends Convenience {
 					listOfLocalParameters.add(klV);
 
 				StringBuffer numerator, denominator;
-				if (!parentReaction.getReversible()) {
+				if (!reaction.getReversible()) {
 					numerator = times(createNumerators(reactionNum,
-							parentReaction, i, modE, FORWARD));
+							reaction, i, modE, FORWARD));
 					denominator = diff(times(createDenominators(reactionNum,
-							parentReaction, i, modE, FORWARD)),
+							reaction, i, modE, FORWARD)),
 							new StringBuffer("1"));
 				} else {
 					numerator = diff(times(createNumerators(reactionNum,
-							parentReaction, i, modE, FORWARD)),
-							times(createNumerators(reactionNum, parentReaction,
+							reaction, i, modE, FORWARD)),
+							times(createNumerators(reactionNum, reaction,
 									i, modE, REVERSE)));
 					denominator = diff(sum(times(createDenominators(
-							reactionNum, parentReaction, i, modE, FORWARD)),
+							reactionNum, reaction, i, modE, FORWARD)),
 							times(createDenominators(reactionNum,
-									parentReaction, i, modE, REVERSE))),
+									reaction, i, modE, REVERSE))),
 							new StringBuffer("1"));
 				}
 

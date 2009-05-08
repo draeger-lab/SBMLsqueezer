@@ -117,7 +117,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	@Override
-	protected StringBuffer createKineticEquation(PluginModel model, int reactionNum,
+	protected StringBuffer createKineticEquation(PluginModel model, 
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -132,7 +132,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			getParentReaction().setReversible(false);
 
 		numOfEnzymes = modE.size();
-		reactionNum++;
+		
 		// String numerator = "", numeratorTeX = "", denominator = "",
 		// denominatorTeX = "";
 		StringBuffer formelTxt ;
@@ -143,9 +143,9 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 		do {
 			String kcat;
 			if (modE.size() == 0) {
-				kcat = "V_" + reactionNum;
+				kcat = "V_" + reaction.getId();
 				} else {
-				kcat = "kcat_" + reactionNum;
+				kcat = "kcat_" + reaction.getId();
 				if (modE.size() > 1) {
 					kcat += "_" + modE.get(enzymeNum);
 					}
@@ -180,8 +180,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
 					throw new RateLawNotApplicableException(
 							"This rate law can only be applied if all reactants have integer stoichiometries.");
-				String kM = "kM_" + reactionNum;
-				String kMeTeX = "k^\\text{M}_{" + reactionNum;
+				String kM = "kM_" + reaction.getId();
+				String kMeTeX = "k^\\text{M}_{" + reaction.getId();
 				if (modE.size() > 1) {
 					kM += "_" + modE.get(enzymeNum);
 					kMeTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
