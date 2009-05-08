@@ -34,7 +34,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public GeneralizedMassAction(PluginReaction parentReaction,
 			PluginModel model) throws RateLawNotApplicableException,
@@ -49,11 +49,12 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public GeneralizedMassAction(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -494,18 +495,18 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	}
 
 	protected StringBuffer createKineticEquation(int catNumber,
-			int reactionNum, List<String> modCat, List<String> modActi,
+			 List<String> modCat, List<String> modActi,
 			List<String> modInhib, boolean zeroReact, boolean zeroProd) {
-		reactionNum++;
+		
 		PluginReaction reaction = getParentReaction();
 		try {
-			StringBuffer ass = getReactionPartners(reaction, reactionNum,
-					modCat, catNumber, FORWARD, zeroReact);
-			StringBuffer diss = getReactionPartners(reaction, reactionNum,
-					modCat, catNumber, REVERSE, zeroProd);
-			return times(createModificationFactor(reactionNum, modActi,
-					ACTIVATION), createModificationFactor(reactionNum, modInhib,
-					INHIBITION), diff(ass, diss));
+			StringBuffer ass = getReactionPartners(reaction, modCat, catNumber,
+					FORWARD, zeroReact);
+			StringBuffer diss = getReactionPartners(reaction, modCat,
+					catNumber, REVERSE, zeroProd);
+			return times(createModificationFactor(reaction.getId(), modActi,
+					ACTIVATION), createModificationFactor(reaction.getId(),
+					modInhib, INHIBITION), diff(ass, diss));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
 			return new StringBuffer();
@@ -514,23 +515,23 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 
 	// @Override
 	protected StringBuffer createKineticEquation(PluginModel model,
-			int reactionNum, List<String> modE, List<String> modActi,
+			 List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		reactantOrder = productOrder = Double.NaN;
 		boolean zeroReact = false, zeroProd = false;
 		if (modCat.isEmpty())
-			return createKineticEquation(-1, reactionNum, modCat, modActi,
+			return createKineticEquation(-1, modCat, modActi,
 					modInhib, zeroReact, zeroProd);
 		StringBuffer[] equations = new StringBuffer[modCat.size()];
 		for (int i = 0; i < equations.length; i++)
 			if (equations.length == 1)
 				equations[i] = removeBrackets(createKineticEquation(i,
-						reactionNum, modCat, modActi, modInhib, zeroReact,
+						 modCat, modActi, modInhib, zeroReact,
 						zeroProd));
 			else
-				equations[i] = createKineticEquation(i, reactionNum, modCat,
+				equations[i] = createKineticEquation(i, modCat,
 						modActi, modInhib, zeroReact, zeroProd);
 		return removeBrackets(sum(equations));
 
@@ -540,13 +541,13 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * Returns the product of either all the activation or inhibition terms of a
 	 * reaction.
 	 * 
-	 * @param reactionNumber
+	 * @param reactionID
 	 * @param modifiers
 	 * @param type
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer createModificationFactor(int reactionNumber,
+	protected StringBuffer createModificationFactor(String reactionID,
 			List<String> modifiers, boolean type) throws IllegalFormatException {
 		if (type == ACTIVATION || type == INHIBITION) {
 			if (!modifiers.isEmpty()) {
@@ -554,7 +555,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 				for (int i = 0; i < mods.length; i++) {
 					StringBuffer k = new StringBuffer(
 							(type == ACTIVATION) ? "kA_" : "kI_");
-					k.append(reactionNumber);
+					k.append(reactionID);
 					k.append('_');
 					k.append(modifiers.get(i));
 					mods[i] = frac(k,
@@ -579,7 +580,6 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * reaction's forward or backward directed equilibrium constant.
 	 * 
 	 * @param reaction
-	 * @param reactionNumber
 	 * @param catalysators
 	 * @param catalysatorNumber
 	 * @param type
@@ -588,16 +588,16 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @throws IllegalFormatException
 	 */
 	private StringBuffer getReactionPartners(PluginReaction reaction,
-			int reactionNumber, List<String> catalysators,
-			int catalysatorNumber, boolean type, boolean b)
-			throws IllegalFormatException {
+			List<String> catalysators, int catalysatorNumber, boolean type,
+			boolean b) throws IllegalFormatException {
 		if (type == FORWARD || type == REVERSE) {
 			if ((type == FORWARD)
 					|| (type == REVERSE && reaction.getReversible())) {
 				StringBuffer k = new StringBuffer((type == FORWARD) ? "kass_"
 						: "kdiss_");
-				k.append(reactionNumber);
-				listOfLocalParameters.add(k);
+				k.append(reaction.getId());
+				if (!listOfLocalParameters.contains(k))
+					listOfLocalParameters.add(k);
 				Vector<StringBuffer> parts = new Vector<StringBuffer>();
 				parts.add(k);
 				if (!b)

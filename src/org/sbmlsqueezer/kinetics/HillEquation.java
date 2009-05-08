@@ -35,9 +35,10 @@ public class HillEquation extends BasicKineticLaw {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException 
+	 * @throws IllegalFormatException 
 	 */
 	public HillEquation(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -52,11 +53,12 @@ public class HillEquation extends BasicKineticLaw {
 	 * @param modTActi
 	 * @param modTInhib
 	 * @throws IOException 
+	 * @throws IllegalFormatException 
 	 * @throws ModificationException
 	 */
 	public HillEquation(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException, IOException, IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -91,7 +93,7 @@ public class HillEquation extends BasicKineticLaw {
 	}
 
 	@Override
-	protected StringBuffer createKineticEquation(PluginModel model, int reactionNum,
+	protected StringBuffer createKineticEquation(PluginModel model, 
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -128,7 +130,7 @@ public class HillEquation extends BasicKineticLaw {
 						&& reaction.getModifier(modifier).getModificationType()
 								.toUpperCase().startsWith("TRANSLATIONAL"))
 					throw new ModificationException(
-							"Wrong activation in reaction " + reactionNum
+							"Wrong activation in reaction " + reaction.getId()
 									+ ". Only transcriptional "
 									+ modificationType + "is allowed here.");
 				else if (reaction.getReactant(0).getSpeciesInstance()
@@ -137,7 +139,7 @@ public class HillEquation extends BasicKineticLaw {
 						&& reaction.getModifier(modifier).getModificationType()
 								.toUpperCase().startsWith("TRANSCRIPTIONAL"))
 					throw new ModificationException(
-							"Wrong activation in reaction " + reactionNum
+							"Wrong activation in reaction " + reaction.getId()
 									+ ". Only translational "
 									+ modificationType + " is allowed here.");
 			}
@@ -145,13 +147,12 @@ public class HillEquation extends BasicKineticLaw {
 
 		String acti = "";
 		String inhib = "";
-		reactionNum++;
-
+		
 		// KS: half saturation constant.
 		for (int activatorNum = 0; activatorNum < modTActi.size(); activatorNum++) {
-			StringBuffer kS = concat("kSp_" , reactionNum , "_" , modTActi.get(activatorNum));
+			StringBuffer kS = concat("kSp_" , reaction.getId() , "_" , modTActi.get(activatorNum));
 			StringBuffer hillcoeff =concat( "np_"
-					, reactionNum , "_" , modTActi.get(activatorNum));
+					, reaction.getId() , "_" , modTActi.get(activatorNum));
 			acti += " * " + modTActi.get(activatorNum) + "^" + hillcoeff + "/("
 					+ modTActi.get(activatorNum) + "^" + hillcoeff + " + " + kS
 					+ "^" + hillcoeff + ')';
@@ -161,9 +162,9 @@ public class HillEquation extends BasicKineticLaw {
 			if (!listOfLocalParameters.contains(kS))
 				listOfLocalParameters.add(kS);
 
-			kS = "k^\\text{S}_{+" + reactionNum + ",{"
+			kS = "k^\\text{S}_{+" + reaction.getId() + ",{"
 					+ Species.idToTeX(modTActi.get(activatorNum)) + "}}";
-			hillcoeff = "n_{+" + reactionNum + ",{"
+			hillcoeff = "n_{+" + reaction.getId() + ",{"
 					+ Species.idToTeX(modTActi.get(activatorNum)) + "}}";
 	}
 		if (acti.length() > 2) {
@@ -171,9 +172,9 @@ public class HillEquation extends BasicKineticLaw {
 		}
 
 		for (int inhibitorNum = 0; inhibitorNum < modTInhib.size(); inhibitorNum++) {
-			String kS = "kSm_" + reactionNum + "_"
+			String kS = "kSm_" + reaction.getId() + "_"
 					+ modTInhib.get(inhibitorNum), hillcoeff = "nm_"
-					+ reactionNum + "_" + modTInhib.get(inhibitorNum);
+					+ reaction.getId() + "_" + modTInhib.get(inhibitorNum);
 			inhib += " * (1 - " + modTInhib.get(inhibitorNum) + "^" + hillcoeff
 					+ "/(" + modTInhib.get(inhibitorNum) + "^" + hillcoeff
 					+ " + " + kS + "^" + hillcoeff + "))";
@@ -183,9 +184,9 @@ public class HillEquation extends BasicKineticLaw {
 			if (!listOfLocalParameters.contains(kS))
 				listOfLocalParameters.add(kS);
 
-			kS = "k^\\text{S}_{-" + reactionNum + ",{"
+			kS = "k^\\text{S}_{-" + reaction.getId() + ",{"
 					+ Species.idToTeX(modTInhib.get(inhibitorNum)) + "}}";
-			hillcoeff = "n_{-" + reactionNum + ",{"
+			hillcoeff = "n_{-" + reaction.getId() + ",{"
 					+ Species.idToTeX(modTInhib.get(inhibitorNum)) + "}}";
 			}
 		if (inhib.length() > 2) {
@@ -194,7 +195,7 @@ public class HillEquation extends BasicKineticLaw {
 		}
 
 		
-		String formelTxt = "kg_" + reactionNum;
+		String formelTxt = "kg_" + reaction.getId();
 		if (!listOfLocalParameters.contains(formelTxt))
 			listOfLocalParameters.add(formelTxt);
 		if ((acti.length() > 0) && (inhib.length() > 0)) {

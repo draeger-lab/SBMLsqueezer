@@ -22,6 +22,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
  * @author Michael Ziller <michael@diegrauezelle.de>
  * @author Hannes Borch <hannes.borch@googlemail.com>
+ * @author Dieudonn&eacute; Motsou Wouamba
  * @date Aug 1, 2007
  */
 public class Convenience extends GeneralizedMassAction {
@@ -32,10 +33,11 @@ public class Convenience extends GeneralizedMassAction {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public Convenience(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -46,11 +48,12 @@ public class Convenience extends GeneralizedMassAction {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public Convenience(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -88,39 +91,38 @@ public class Convenience extends GeneralizedMassAction {
 			throws RateLawNotApplicableException {
 		reactionNum++;
 
-		PluginReaction parentReaction = getParentReaction();
+		PluginReaction reaction = getParentReaction();
 		StringBuffer[] catalyst = new StringBuffer[modE.size()];
 		try {
-			StringBuffer activation = createModificationFactor(reactionNum, modActi,
-					ACTIVATION);
-			StringBuffer inhibition = createModificationFactor(reactionNum, modInhib,
-					INHIBITION);
+			StringBuffer activation = createModificationFactor(
+					reaction.getId(), modActi, ACTIVATION);
+			StringBuffer inhibition = createModificationFactor(
+					reaction.getId(), modInhib, INHIBITION);
 
 			int i = 0;
 			do {
 				StringBuffer numerator, denominator;
-				if (!parentReaction.getReversible()) {
-					numerator = times(createNumerators(reactionNum,
-							parentReaction, i, modE, FORWARD));
+				if (!reaction.getReversible()) {
+					numerator = times(createNumerators( reaction,
+							i, modE, FORWARD));
 					denominator = diff(times(createDenominators(reactionNum,
-							parentReaction, i, modE, FORWARD)),
-							new StringBuffer("1"));
+							reaction, i, modE, FORWARD)), new StringBuffer("1"));
 				} else {
-					numerator = diff(times(createNumerators(reactionNum,
-							parentReaction, i, modE, FORWARD)),
-							times(createNumerators(reactionNum, parentReaction,
-									i, modE, REVERSE)));
+					numerator = diff(times(createNumerators(
+							reaction, i, modE, FORWARD)),
+							times(createNumerators( reaction, i,
+									modE, REVERSE)));
 					denominator = diff(sum(times(createDenominators(
-							reactionNum, parentReaction, i, modE, FORWARD)),
-							times(createDenominators(reactionNum,
-									parentReaction, i, modE, REVERSE))),
-							new StringBuffer("1"));
+							reactionNum, reaction, i, modE, FORWARD)),
+							times(createDenominators(reactionNum, reaction, i,
+									modE, REVERSE))), new StringBuffer("1"));
 				}
 				if (modE.size() > 0)
 					catalyst[i] = times(new StringBuffer(modE.get(i)), frac(
 							numerator, denominator));
 				else
-					return (times(activation, inhibition, frac(numerator, denominator)));
+					return (times(activation, inhibition, frac(numerator,
+							denominator)));
 				i++;
 			} while (i < catalyst.length);
 
@@ -139,7 +141,6 @@ public class Convenience extends GeneralizedMassAction {
 	 * array also contains the catalytic constant of the reaction. This method
 	 * is applicable for both forward and backward reactions.
 	 * 
-	 * @param reactionNumber
 	 * @param reaction
 	 * @param enzymeNumber
 	 * @param modE
@@ -147,15 +148,15 @@ public class Convenience extends GeneralizedMassAction {
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer[] createNumerators(int reactionNumber,
-			PluginReaction reaction, int enzymeNumber, List<String> modE,
-			boolean type) throws IllegalFormatException {
+	protected StringBuffer[] createNumerators(PluginReaction reaction,
+			int enzymeNumber, List<String> modE, boolean type)
+			throws IllegalFormatException {
 		if (type == FORWARD || type == REVERSE) {
 			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? (reaction
 					.getNumReactants() + 1)
 					: (reaction.getNumProducts() + 1)];
 			nums[0] = new StringBuffer((type == FORWARD) ? "kcatp_" : "kcatn_");
-			nums[0].append(reactionNumber);
+			nums[0].append(reaction.getId());
 			if (modE.size() > 1) {
 				nums[0].append('_');
 				nums[0].append(modE.get(enzymeNumber));
@@ -167,7 +168,7 @@ public class Convenience extends GeneralizedMassAction {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction
 						.getReactant(i - 1) : reaction.getProduct(i - 1);
 				StringBuffer kM = new StringBuffer("kM_");
-				kM.append(reactionNumber);
+				kM.append(reaction.getId());
 				if (modE.size() > 1) {
 					kM.append('_');
 					kM.append(modE.get(enzymeNumber));

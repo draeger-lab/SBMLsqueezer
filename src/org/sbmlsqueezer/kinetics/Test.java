@@ -25,8 +25,9 @@ public class Test {
 
 	/**
 	 * @param args
+	 * @throws IllegalFormatException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IllegalFormatException {
 		PluginModel model = new PluginModel("test");
 		model.addCompartment(new PluginCompartment("default"));
 		model.addSpecies(new PluginSpecies("SIMPLE_MOLECULE", "s1"));

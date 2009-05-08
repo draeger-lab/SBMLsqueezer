@@ -30,7 +30,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public PingPongMechanism(PluginReaction parentReaction, PluginModel model,
 			boolean reversibility) throws RateLawNotApplicableException,
@@ -45,11 +45,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public PingPongMechanism(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -74,9 +75,8 @@ public class PingPongMechanism extends GeneralizedMassAction {
 
 	// @Override
 	protected StringBuffer createKineticEquation(PluginModel model,
-			int reactionNum, List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		StringBuffer numerator = new StringBuffer();// I
 		StringBuffer denominator = new StringBuffer(); // II
@@ -125,26 +125,25 @@ public class PingPongMechanism extends GeneralizedMassAction {
 							+ reaction.getId());
 
 		int enzymeNum = 0;
-		reactionNum++;
 		do {
 			StringBuffer kcatp = new StringBuffer();
-			StringBuffer kMr1 = concat("kM_", reactionNum);
-			StringBuffer kMr2 = concat("kM_", reactionNum);
+			StringBuffer kMr1 = concat("kM_", reaction.getId());
+			StringBuffer kMr2 = concat("kM_", reaction.getId());
 			StringBuffer enzyme = new StringBuffer(modE.get(enzymeNum));
 
 			if (modE.size() == 0) {
-				kcatp = concat("Vp_", reactionNum);
+				kcatp = concat("Vp_", reaction.getId());
 
 			} else {
-				kcatp = concat("kcatp_", reactionNum);
+				kcatp = concat("kcatp_", reaction.getId());
 				if (modE.size() > 1) {
-					kcatp = concat(kcatp, '_', enzyme);
-					kMr1 = concat(kMr1, '_', enzyme);
-					kMr2 = concat(kMr2, '_', enzyme);
+					kcatp = concat(kcatp, Character.valueOf('_'), enzyme);
+					kMr1 = concat(kMr1, Character.valueOf('_'), enzyme);
+					kMr2 = concat(kMr2, Character.valueOf('_'), enzyme);
 				}
 			}
-			kMr2 = concat(kMr2, '_', specRefE2.getSpecies());
-			kMr1 = concat(kMr1, '_', specRefE2.getSpecies());
+			kMr2 = concat(kMr2, Character.valueOf('_'), specRefE2.getSpecies());
+			kMr1 = concat(kMr1, Character.valueOf('_'), specRefE2.getSpecies());
 			if (specRefE2.equals(specRefE1)) {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
@@ -193,32 +192,43 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				StringBuffer numeratorReverse = new StringBuffer();
 
 				StringBuffer kcatn;
-				StringBuffer kMp1 = concat("kM_", reactionNum);
-				StringBuffer kMp2 = concat("kM_", reactionNum);
-				StringBuffer kIp1 = concat("ki_", reactionNum);
-				StringBuffer kIp2 = concat("ki_", reactionNum);
-				StringBuffer kIr1 = concat("ki_", reactionNum);
+				StringBuffer kMp1 = concat("kM_", reaction.getId());
+				StringBuffer kMp2 = concat("kM_", reaction.getId());
+				StringBuffer kIp1 = concat("ki_", reaction.getId());
+				StringBuffer kIp2 = concat("ki_", reaction.getId());
+				StringBuffer kIr1 = concat("ki_", reaction.getId());
 
 				if (modE.size() == 0)
-					kcatn = concat("Vn_", Integer.valueOf(reactionNum));
+					kcatn = concat("Vn_", reaction.getId());
 				else {
-					kcatn = concat("kcatn_", Integer.valueOf(reactionNum));
+					kcatn = concat("kcatn_", reaction.getId());
 					if (modE.size() > 1) {
 						StringBuffer modEnzymeNumber = new StringBuffer(modE
 								.get(enzymeNum));
-						kcatn = concat(kcatn, '_', modEnzymeNumber);
-						kMp1 = concat(kMp1, '_', modEnzymeNumber);
-						kMp2 = concat(kMp2, '_', modEnzymeNumber);
-						kIp1 = concat(kIp1, '_', modEnzymeNumber);
-						kIp2 = concat(kIp2, '_', modEnzymeNumber);
-						kIr1 = concat(kIr1, '_', modEnzymeNumber);
+						kcatn = concat(kcatn, Character.valueOf('_'),
+								modEnzymeNumber);
+						kMp1 = concat(kMp1, Character.valueOf('_'),
+								modEnzymeNumber);
+						kMp2 = concat(kMp2, Character.valueOf('_'),
+								modEnzymeNumber);
+						kIp1 = concat(kIp1, Character.valueOf('_'),
+								modEnzymeNumber);
+						kIp2 = concat(kIp2, Character.valueOf('_'),
+								modEnzymeNumber);
+						kIr1 = concat(kIr1, Character.valueOf('_'),
+								modEnzymeNumber);
 					}
 				}
-				kMp1 = concat(kMp1, '_', specRefP1.getSpecies());
-				kMp2 = concat(kMp2, '_', specRefP2.getSpecies());
-				kIp1 = concat(kIp1, '_', specRefP1.getSpecies());
-				kIp2 = concat(kIp2, '_', specRefP2.getSpecies());
-				kIr1 = concat(kIr1, '_', specRefE1.getSpecies());
+				kMp1 = concat(kMp1, Character.valueOf('_'), specRefP1
+						.getSpecies());
+				kMp2 = concat(kMp2, Character.valueOf('_'), specRefP2
+						.getSpecies());
+				kIp1 = concat(kIp1, Character.valueOf('_'), specRefP1
+						.getSpecies());
+				kIp2 = concat(kIp2, Character.valueOf('_'), specRefP2
+						.getSpecies());
+				kIr1 = concat(kIr1, Character.valueOf('_'), specRefE1
+						.getSpecies());
 				if (specRefP2.equals(specRefP1)) {
 					kMp1 = concat("kMp1", kMp1.substring(2));
 					kMp2 = concat("kMp2", kMp2.substring(2));
@@ -244,7 +254,8 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				if (modE.size() > 0)
 					numeratorForward = times(numeratorForward,
 							new StringBuffer(modE.get(enzymeNum)));
-				//StringBuffer denominator_s1s2 = new StringBuffer(specRefE1.getSpecies());
+				// StringBuffer denominator_s1s2 = new
+				// StringBuffer(specRefE1.getSpecies());
 				denominator = sum(frac(
 						new StringBuffer(specRefE1.getSpecies()), kIr1), frac(
 						times(kMr1, new StringBuffer(specRefE2.getSpecies())),
@@ -256,20 +267,19 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					numeratorForward = times(numeratorForward, pow(
 							new StringBuffer(specRefE1.getSpecies()),
 							new StringBuffer('2')));
-					denominator = sum(denominator, frac(pow(new StringBuffer(specRefE1
-							.getSpecies()), new StringBuffer('2')), times(
-							kIr1, kMr2)));
+					denominator = sum(denominator, frac(pow(new StringBuffer(
+							specRefE1.getSpecies()), new StringBuffer('2')),
+							times(kIr1, kMr2)));
 				} else {
 					numeratorForward = times(numeratorForward,
 							new StringBuffer(specRefE1.getSpecies()),
 							new StringBuffer(specRefE2.getSpecies()));
-					denominator = sum(denominator, frac(times(new StringBuffer(specRefE1
-							.getSpecies()), new StringBuffer(specRefE2
-									.getSpecies())), times(
-							kIr1, kMr2)));
+					denominator = sum(denominator, frac(times(new StringBuffer(
+							specRefE1.getSpecies()), new StringBuffer(specRefE2
+							.getSpecies())), times(kIr1, kMr2)));
 				}
 				numeratorReverse = frac(kcatn, times(kIp1, kMp2));
-			
+
 				denominator = sum(denominator, frac(times(new StringBuffer(
 						specRefE1.getSpecies()), new StringBuffer(specRefP1
 						.getSpecies())), times(kIr1, kIp1)), frac(times(kMr1,
@@ -281,18 +291,18 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					numeratorReverse = times(numeratorReverse,
 							new StringBuffer(modE.get(enzymeNum)));
 
-				StringBuffer numerator_p1p2 = new StringBuffer(specRefP1
-						.getSpecies());
 				StringBuffer denominator_p1p2 = new StringBuffer(specRefE1
 						.getSpecies());
 				if (specRefP2.equals(specRefP1)) {
-					numerator_p1p2 = pow(numerator_p1p2, new StringBuffer('2'));
-					numeratorReverse = times(numeratorReverse, numerator_p1p2);
+					numeratorReverse = times(numeratorReverse, pow(
+							new StringBuffer(specRefP1.getSpecies()),
+							new StringBuffer('2')));
 					denominator_p1p2 = pow(new StringBuffer(specRefP1
 							.getSpecies()), new StringBuffer('2'));
 
 				} else {
 					numeratorReverse = times(numeratorReverse,
+							new StringBuffer(specRefP1.getSpecies()),
 							new StringBuffer(specRefP2.getSpecies()));
 
 					denominator_p1p2 = times(new StringBuffer(specRefP1

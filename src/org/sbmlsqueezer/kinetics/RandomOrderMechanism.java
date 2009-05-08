@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) ZBiT, University of T&uuml;bingen, Germany
+ * Compiler: JDK 1.6.0
+ */
 package org.sbmlsqueezer.kinetics;
 
 import java.io.IOException;
@@ -14,8 +18,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
+ * 
  * @date Aug 1, 2007
  */
 public class RandomOrderMechanism extends GeneralizedMassAction {
@@ -26,11 +29,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public RandomOrderMechanism(PluginReaction parentReaction,
 			PluginModel model, boolean reversibility)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -41,11 +45,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public RandomOrderMechanism(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -82,9 +87,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 
 	@Override
 	protected StringBuffer createKineticEquation(PluginModel model,
-			int reactionNum, List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		boolean biuni = false;
 		StringBuffer numerator = new StringBuffer();// I
@@ -137,26 +141,21 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 		 * do not want anything in modE to occur in the kinetic equation.
 		 */
 		int enzymeNum = 0;
-		reactionNum++;
+
 		do {
 			/*
 			 * Irreversible reaction
 			 */
 			if (!reaction.getReversible()) {
 				StringBuffer kcatp;
-				StringBuffer kMr2 = new StringBuffer("kM_");
-				kMr2.append(reactionNum);
-				StringBuffer kMr1 = new StringBuffer("kM_");
-				kMr1.append(reactionNum);
-				StringBuffer kIr1 = new StringBuffer("ki_");
-				kIr1.append(reactionNum);
+				StringBuffer kMr2 = concat("kM_", reaction.getId());
+				StringBuffer kMr1 = concat("kM_", reaction.getId());
+				StringBuffer kIr1 = concat("ki_", reaction.getId());
 
 				if (modE.size() == 0) {
-					kcatp = new StringBuffer("Vp_");
-					kcatp.append(reactionNum);
+					kcatp = concat("Vp_", reaction.getId());
 				} else {
-					kcatp = new StringBuffer("kcatp_");
-					kcatp.append(reactionNum);
+					kcatp = concat("kcatp_", reaction.getId());
 					if (modE.size() > 1) {
 						String modEnzymeNumber = modE.get(enzymeNum);
 						kcatp = concat(kcatp, Character.valueOf('_'),
@@ -226,75 +225,47 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					StringBuffer kcatp = new StringBuffer();
 					StringBuffer kcatn = new StringBuffer();
 
-					StringBuffer kMr2 = new StringBuffer("kM_");
-					kMr2.append(reactionNum);
-					StringBuffer kIr1 = new StringBuffer("ki_");
-					kIr1.append(reactionNum);
-					StringBuffer kMp1 = new StringBuffer("kM_");
-					kMp1.append(reactionNum);
-					StringBuffer kIp1 = new StringBuffer("ki_");
-					kIp1.append(reactionNum);
-					StringBuffer kIp2 = new StringBuffer("ki_");
-					kIp2.append(reactionNum);
-					StringBuffer kIr2 = new StringBuffer("ki_");
-					kIr2.append(reactionNum);
+					StringBuffer kMr2 = concat("kM_", reaction.getId());
+					StringBuffer kIr1 = concat("ki_", reaction.getId());
+					StringBuffer kMp1 = concat("kM_", reaction.getId());
+					StringBuffer kIp1 = concat("ki_", reaction.getId());
+					StringBuffer kIp2 = concat("ki_", reaction.getId());
+					StringBuffer kIr2 = concat("ki_", reaction.getId());
 
 					if (modE.size() == 0) {
-						kcatp.append("Vp_");
-						kcatp.append(reactionNum);
-						kcatn.append("Vn_");
-						kcatn.append(reactionNum);
+						kcatp=concat("Vp_",reaction.getId());
+						kcatn=concat("Vn_",reaction.getId());
 					} else {
-						kcatp.append("kcatp_");
-						kcatp.append(reactionNum);
-						kcatn.append("kcatn_");
-						kcatn.append(reactionNum);
+						kcatp=concat("kcatp_",reaction.getId());
+						kcatn=concat("kcatn_",reaction.getId());
 						if (modE.size() > 1) {
 
 							String modEnzymeNumber = modE.get(enzymeNum);
-							kcatp.append(Character.valueOf('_'));
-							kcatp.append(modEnzymeNumber);
-							kcatn.append(Character.valueOf('_'));
-							kcatn.append(modEnzymeNumber);
-							kMr2.append(Character.valueOf('_'));
-							kMr2.append(modEnzymeNumber);
-							kMp1.append(Character.valueOf('_'));
-							kMp1.append(modEnzymeNumber);
-							kIp1.append(Character.valueOf('_'));
-							kIp1.append(modEnzymeNumber);
-							kIp2.append(Character.valueOf('_'));
-							kIp2.append(modEnzymeNumber);
-							kIr2.append(Character.valueOf('_'));
-							kIr2.append(modEnzymeNumber);
-							kIr1.append(Character.valueOf('_'));
-							kIr1.append(modEnzymeNumber);
+							kcatp=concat('_',modEnzymeNumber);
+							kcatn=concat('_',modEnzymeNumber);
+							kMr2=concat('_',modEnzymeNumber);
+							kMp1=concat('_',modEnzymeNumber);
+							kIp1=concat('_',modEnzymeNumber);
+							kIp2=concat('_',modEnzymeNumber);
+							kIr2=concat('_',modEnzymeNumber);
+							kIr1=concat('_',modEnzymeNumber);
 						}
 					}
 
 					String speciesE2 = specRefE2.getSpecies();
-					kMr2.append(Character.valueOf('_'));
-					kMr2.append(speciesE2);
-					kIr1.append(Character.valueOf('_'));
-					kIr1.append(speciesE2);
-					kIr2.append(Character.valueOf('_'));
-					kIr2.append(speciesE2);
-					kIp1.append(Character.valueOf('_'));
-					kIp1.append(speciesE2);
-					kIp2.append(Character.valueOf('_'));
-					kIp2.append(speciesE2);
-					kMp1.append(Character.valueOf('_'));
-					kMp1.append(speciesE2);
+					kMr2=concat('_',speciesE2);
+					kIr1=concat('_',speciesE2);
+					kIr2=concat('_',speciesE2);
+					kIp1=concat('_',speciesE2);
+					kIp2=concat('_',speciesE2);
+					kMp1=concat('_',speciesE2);
 					if (specRefE2.equals(specRefE1)) {
-						kIr1.append("kir1");
-						kIr1.append(kIr1.substring(2));
-						kIr2.append("kir2");
-						kIr2.append(kIr2.substring(2));
+						kIr1=concat("kir1",kIr1.substring(2));
+						kIr2=concat("kir2",kIr2.substring(2));
 					}
 					if (specRefP2.equals(specRefP1)) {
-						kIp1.append("kip1");
-						kIp1.append(kIp1.substring(2));
-						kIp2.append("kip2");
-						kIp2.append(kIp2.substring(2));
+						kIp1=concat("kip1",kIp1.substring(2));
+						kIp2=concat("kip2",kIp2.substring(2));
 					}
 
 					if (!listOfLocalParameters.contains(kcatp))
@@ -387,60 +358,58 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					StringBuffer kcatp = new StringBuffer();
 					StringBuffer kcatn = new StringBuffer();
 
-					StringBuffer reactionNumber = new StringBuffer(reactionNum);
-					StringBuffer kMr2 = concat(new StringBuffer("kM_"),
-							reactionNumber);
-					StringBuffer kMp1 = concat(new StringBuffer("kM_"),
-							reactionNumber);
-					StringBuffer kIr2 = concat(new StringBuffer("ki_"),
-							reactionNumber);
-					StringBuffer kIr1 = concat(new StringBuffer("ki_"),
-							reactionNumber);
+					StringBuffer kMr2 = concat("kM_",
+							reaction.getId());
+					StringBuffer kMp1 = concat("kM_",
+							reaction.getId());
+					StringBuffer kIr2 = concat("ki_",
+							reaction.getId());
+					StringBuffer kIr1 = concat("ki_",
+							reaction.getId());
 
 					if (modE.size() == 0) {
-						kcatp = concat(new StringBuffer("Vp_"), reactionNumber);
-						kcatn = concat(new StringBuffer("Vn_"), reactionNumber);
+						kcatp = concat("Vp_", reaction.getId());
+						kcatn = concat("Vn_", reaction.getId());
 					} else {
-						kcatp = concat(new StringBuffer("kcatp_"),
-								reactionNumber);
-						kcatn = concat(new StringBuffer("kcatn_"),
-								reactionNumber);
+						kcatp = concat("kcatp_",
+								reaction.getId());
+						kcatn = concat("kcatn_",
+								reaction.getId());
 
 						if (modE.size() > 1) {
 							StringBuffer modEnzymeNumber = new StringBuffer(
 									modE.get(enzymeNum));
-							kcatp = concat(kcatp, new StringBuffer(Character
-									.valueOf('_')), modEnzymeNumber);
-							kcatn = concat(kcatn, new StringBuffer(Character
-									.valueOf('_')), modEnzymeNumber);
-							kMr2 = concat(kMr2, new StringBuffer(Character
-									.valueOf('_')), modEnzymeNumber);
-							kMp1 = concat(kMp1, new StringBuffer(Character
-									.valueOf('_')), modEnzymeNumber);
-							kIr2 = concat(kIr2, new StringBuffer(Character
-									.valueOf('_')), modEnzymeNumber);
-							kIr1 = concat(kIr1, new StringBuffer(Character
-									.valueOf('_')), modEnzymeNumber);
+							kcatp = concat(kcatp, Character
+									.valueOf('_'), modEnzymeNumber);
+							kcatn = concat(kcatn, Character
+									.valueOf('_'), modEnzymeNumber);
+							kMr2 = concat(kMr2, Character
+									.valueOf('_'), modEnzymeNumber);
+							kMp1 = concat(kMp1, Character
+									.valueOf('_'), modEnzymeNumber);
+							kIr2 = concat(kIr2, Character.valueOf('_'), modEnzymeNumber);
+							kIr1 = concat(kIr1, Character
+									.valueOf('_'), modEnzymeNumber);
 
 						}
 					}
 
 					StringBuffer speciesE2 = new StringBuffer(specRefE2
 							.getSpecies());
-					kMr2 = sum(kMr2, new StringBuffer(Character.valueOf('_')),
+					kMr2 = concat(kMr2, Character.valueOf('_'),
 							speciesE2);
 					kIr1 = concat(kIr1,
-							new StringBuffer(Character.valueOf('_')), speciesE2);
+							Character.valueOf('_'), speciesE2);
 					kIr2 = concat(kIr2,
-							new StringBuffer(Character.valueOf('_')), speciesE2);
+							Character.valueOf('_'), speciesE2);
 					kMp1 = concat(kMp1,
-							new StringBuffer(Character.valueOf('_')), speciesE2);
+							Character.valueOf('_'), speciesE2);
 
 					if (specRefE2.equals(specRefE1)) {
-						kIr1 = concat(kIr1, new StringBuffer("kip1"),
-								new StringBuffer(kIr1.substring(2)));
-						kIr2 = concat(kIr2, new StringBuffer("kip2"),
-								new StringBuffer(kIr2.substring(2)));
+						kIr1 = concat(kIr1, "kip1",
+								kIr1.substring(2));
+						kIr2 = concat(kIr2, "kip2",
+								kIr2.substring(2));
 
 					}
 
@@ -491,8 +460,19 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						numeratorReverse = times(numeratorReverse,
 								new StringBuffer(modE.get(enzymeNum)));
 					}
+
+					if (specRefP2.equals(specRefP1))
+						numeratorReverse = times(numeratorReverse, pow(
+								new StringBuffer(specRefP1.getSpecies()),
+								new StringBuffer('2')));
+					else
+						numeratorReverse = times(numeratorReverse,
+								new StringBuffer(specRefP1.getSpecies()),
+								new StringBuffer(specRefP2.getSpecies()));
+
 					numeratorReverse = times(numeratorReverse, frac(
 							new StringBuffer(specRefP1.getSpecies()), kMp1));
+
 					numerator = diff(numeratorForward, numeratorReverse);
 					denominator = sum(denominator, frac(p1p2, sum(times(kIr1,
 							kMr2), frac(

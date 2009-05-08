@@ -93,7 +93,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 	 *      java.util.List, java.util.List)
 	 */
 	@Override
-	protected StringBuffer createKineticEquation(PluginModel model, int reactionNum,
+	protected StringBuffer createKineticEquation(PluginModel model, 
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -118,16 +118,16 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 		numInhib = modInhib.size();
 
 		numOfEnzymes = modE.size();
-		reactionNum++;
+		
 		ASTNode ast = null;
 
 		int enzymeNum = 0;
 		do {
 			String kcat;
 			if (numOfEnzymes == 0)
-				kcat = "V_" + reactionNum;
+				kcat = "V_" + reaction.getId();
 			else {
-				kcat = "kcat_" + reactionNum;
+				kcat = "kcat_" + reaction.getId();
 				if (modE.size() > 1)
 					kcat += "_" + modE.get(enzymeNum);
 			}
@@ -157,7 +157,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 			numerator.addChild(tmp);
 
 			ASTNode denominator = new ASTNode(AST_PLUS);
-			String kM = "kM_" + reactionNum;
+			String kM = "kM_" + reaction.getId();
 			if (numOfEnzymes > 1)
 				kM += "_" + modE.get(enzymeNum);
 			kM += "_" + reaction.getReactant(0).getSpecies();
@@ -176,8 +176,8 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 					tmp.setName(modInhib.get(i));
 					frac.addChild(tmp);
 					tmp = new ASTNode(AST_NAME);
-					String kIi = "Ki_" + reactionNum, exponent = "m_"
-							+ reactionNum;
+					String kIi = "Ki_" + reaction.getId(), exponent = "m_"
+							+ reaction.getId();
 					if (numOfEnzymes > 1) {
 						kIi += "_" + modE.get(enzymeNum);
 						exponent += "_" + modE.get(enzymeNum);
@@ -224,7 +224,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 				tmp.addChild(new ASTNode(AST_PLUS));
 				tmp.getRightChild().addChild(new ASTNode(AST_NAME));
 				tmp.getRightChild().addChild(new ASTNode(AST_NAME));
-				String kAi = "KA_" + reactionNum + "_" + modActi.get(actiNum);
+				String kAi = "KA_" + reaction.getId() + "_" + modActi.get(actiNum);
 				if (!listOfLocalParameters.contains(kAi))
 					listOfLocalParameters.add(new StringBuffer(kAi));
 				tmp.getRightChild().getLeftChild().setName(kAi);
