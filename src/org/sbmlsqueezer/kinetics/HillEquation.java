@@ -145,83 +145,75 @@ public class HillEquation extends BasicKineticLaw {
 			}
 		}
 
-		String acti = "";
-		String inhib = "";
+		StringBuffer acti = new StringBuffer();
+		StringBuffer inhib = new StringBuffer();
 		
 		// KS: half saturation constant.
 		for (int activatorNum = 0; activatorNum < modTActi.size(); activatorNum++) {
 			StringBuffer kS = concat("kSp_" , reaction.getId() , "_" , modTActi.get(activatorNum));
 			StringBuffer hillcoeff =concat( "np_"
 					, reaction.getId() , "_" , modTActi.get(activatorNum));
-			acti += " * " + modTActi.get(activatorNum) + "^" + hillcoeff + "/("
-					+ modTActi.get(activatorNum) + "^" + hillcoeff + " + " + kS
-					+ "^" + hillcoeff + ')';
-
+			acti = times(acti, frac(pow(new StringBuffer(modTActi.get(activatorNum)) , hillcoeff), sum(pow(new StringBuffer(modTActi.get(activatorNum)),hillcoeff), pow(kS, hillcoeff)))
+);
+			
 			if (!listOfLocalParameters.contains(hillcoeff))
 				listOfLocalParameters.add(hillcoeff);
 			if (!listOfLocalParameters.contains(kS))
 				listOfLocalParameters.add(kS);
 
-			kS = "k^\\text{S}_{+" + reaction.getId() + ",{"
-					+ Species.idToTeX(modTActi.get(activatorNum)) + "}}";
-			hillcoeff = "n_{+" + reaction.getId() + ",{"
-					+ Species.idToTeX(modTActi.get(activatorNum)) + "}}";
-	}
+				}
 		if (acti.length() > 2) {
-			acti = acti.substring(3);
+			acti = new StringBuffer(acti.substring(3));
 		}
 
 		for (int inhibitorNum = 0; inhibitorNum < modTInhib.size(); inhibitorNum++) {
-			String kS = "kSm_" + reaction.getId() + "_"
-					+ modTInhib.get(inhibitorNum), hillcoeff = "nm_"
-					+ reaction.getId() + "_" + modTInhib.get(inhibitorNum);
-			inhib += " * (1 - " + modTInhib.get(inhibitorNum) + "^" + hillcoeff
-					+ "/(" + modTInhib.get(inhibitorNum) + "^" + hillcoeff
-					+ " + " + kS + "^" + hillcoeff + "))";
-
+			StringBuffer kS = concat("kSm_" , reaction.getId() ,"_", modTInhib.get(inhibitorNum));
+			StringBuffer hillcoeff = concat("nm_", reaction.getId(), "_", modTInhib.get(inhibitorNum));
+			
+			inhib = times(inhib, frac(diff(concat(1),pow(new StringBuffer(modTActi.get(inhibitorNum)) , hillcoeff)), sum(pow(new StringBuffer(modTActi.get(inhibitorNum)),hillcoeff), pow(kS, hillcoeff)))
+			);
 			if (!listOfLocalParameters.contains(hillcoeff))
 				listOfLocalParameters.add(hillcoeff);
 			if (!listOfLocalParameters.contains(kS))
 				listOfLocalParameters.add(kS);
 
-			kS = "k^\\text{S}_{-" + reaction.getId() + ",{"
-					+ Species.idToTeX(modTInhib.get(inhibitorNum)) + "}}";
-			hillcoeff = "n_{-" + reaction.getId() + ",{"
-					+ Species.idToTeX(modTInhib.get(inhibitorNum)) + "}}";
-			}
+				}
 		if (inhib.length() > 2) {
 			// cut the multiplication symbol at the beginning.
-			inhib = inhib.substring(3);
+			inhib = new StringBuffer(inhib.substring(3));
 		}
 
 		
-		String formelTxt = "kg_" + reaction.getId();
+		StringBuffer formelTxt = concat("kg_",reaction.getId());
 		if (!listOfLocalParameters.contains(formelTxt))
 			listOfLocalParameters.add(formelTxt);
 		if ((acti.length() > 0) && (inhib.length() > 0)) {
 			
-			formelTxt += " * " + acti + " * " + inhib;
+			formelTxt =times(formelTxt, acti, inhib);
 		} else if (acti.length() > 0) {
-				formelTxt += " * " + acti;
+			formelTxt =times(formelTxt, acti);
 		} else if (inhib.length() > 0) {
 			
-			formelTxt += " * " + inhib;
+			formelTxt =times(formelTxt, inhib);
 		}
 
 		// Influence of the concentrations of the educts:
 		for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
 			PluginSpecies reactant = reaction.getReactant(reactantNum)
 					.getSpeciesInstance();
+			StringBuffer gene=new StringBuffer();
 			if (!reactant.getSpeciesAlias(0).getType().toUpperCase().equals(
 					"GENE")) {
-				formelTxt += " * " + reactant.getId();
+				
+				gene = new StringBuffer(reactant.getId());
 				if (reaction.getReactant(reactantNum).getStoichiometry() != 1.0) {
-					formelTxt += "^"
-							+ reaction.getReactant(reactantNum)
-									.getStoichiometry();
+					gene=pow(gene, concat(reaction.getReactant(reactantNum)
+							.getStoichiometry()));
+					
 				}
 										
 			}
+			formelTxt =times(formelTxt, gene);
 		}
 		return formelTxt;
 	}

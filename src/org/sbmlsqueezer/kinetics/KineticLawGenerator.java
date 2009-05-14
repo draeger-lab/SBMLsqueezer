@@ -824,12 +824,12 @@ public class KineticLawGenerator {
 		if (types.contains(Short.valueOf(GENERALIZED_MASS_ACTION)))
 			types.add(Short.valueOf(ZEROTH_ORDER_FORWARD_MA));
 
-		// TODO remove not updated entries (Hannes Borch)
+		/* TODO remove not updated entries (Hannes Borch)
 		short[] r = { MICHAELIS_MENTEN, HILL_EQUATION};
 		for (short s : r) {
 			if (types.contains(Short.valueOf(s)))
 				types.remove(Short.valueOf(s));
-		}
+		}*/
 
 		short t[] = new short[types.size()];
 		i = 0;
