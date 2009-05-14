@@ -250,7 +250,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 				denominator_n.addChild(temp);
 				denominator = frac( new StringBuffer(specRefR.getSpecies()) , kMe);
 				
-				kMp = concat(kMp,'_', specRefP.getSpecies());
+				kMp = concat(kMp,Character.valueOf('_'), specRefP.getSpecies());
 				
 				if (!listOfLocalParameters.contains(kcatn))
 					listOfLocalParameters.add(kcatn);
@@ -389,13 +389,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 				ASTNode inh;
 				// kMe += " * (1 + "; // Km
 				for (int i = 0; i < modInhib.size(); i++) {
-					String kIai = (i + 1) + '_' + reaction.getId();
+					StringBuffer kIai = concat((i + 1), Character.valueOf('_'), reaction.getId());
 						String inhib = modInhib.get(i);
 					if (modE.size() > 1) {
-						kIai += '_' + modE.get(enzymeNum);
+						kIai = concat(kIai, Character.valueOf('_'), modE.get(enzymeNum));
 						}
-						String kIbi = "kIb" + kIai;
-					kIai = "kIa" + kIai;
+						StringBuffer kIbi = concat("kIb", kIai);
+					kIai = concat("kIa" , kIai);
 					if (!listOfLocalParameters.contains(kIai))
 						listOfLocalParameters.add(new StringBuffer(kIai));
 					if (!listOfLocalParameters.contains(kIbi))
@@ -406,7 +406,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 					temp.setName(inhib);
 					inh.addChild(temp);
 					temp = new ASTNode(AST_NAME);
-					temp.setName(kIai);
+					temp.setName(kIai.toString());
 					inh.addChild(temp);
 					temp2.addChild(inh);
 					denominator_mod = sum(denominator_mod, frac(new StringBuffer(inhib), new StringBuffer(kIai)));
@@ -416,7 +416,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 					temp.setName(inhib);
 					inh.addChild(temp);
 					temp = new ASTNode(AST_NAME);
-					temp.setName(kIbi);
+					temp.setName(kIbi.toString());
 					inh.addChild(temp);
 					kMeN.addChild(inh);
 					// kMe += inhib + '/' + kIbi; // Km
