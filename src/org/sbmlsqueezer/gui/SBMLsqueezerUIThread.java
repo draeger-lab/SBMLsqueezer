@@ -37,6 +37,7 @@ public class SBMLsqueezerUIThread extends Thread {
 	 * Inherited from java.lang.Thread.
 	 */
 	
+	@Override
 	public void run() {
 		if (e.getSource() instanceof JMenuItem) {
 			String item = ((JMenuItem) e.getSource()).getText();

@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
@@ -119,7 +121,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		else
 			this.isParametersGlobal = true;
 		isGlobalSelected = isParametersGlobal;
-		JLabel label = new JLabel("<html><body>", JLabel.LEFT);
+		JLabel label = new JLabel("<html><body>", SwingConstants.LEFT);
 		double stoichiometry = 0;
 		for (int i = 0; i < reaction.getNumReactants(); i++)
 			stoichiometry += reaction.getReactant(i).getStoichiometry();
@@ -409,8 +411,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		 * .getPreferredSize().getHeight()));//
 		 */
 		JScrollPane scroll = new JScrollPane(preview,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
 		scroll.setBackground(Color.WHITE);
 		scroll.setPreferredSize(dim);

@@ -112,7 +112,7 @@ public class GaussianRank {
     }
     swapRows(i, piv); // vertausche Zeile i mit Zeile piv
     for (int ii = i + 1; ii < lineNum; ++ii) {
-      double d = (double) -N[ii][j] / N[i][j];
+      double d = -N[ii][j] / N[i][j];
       add(d, i, ii);
     }// mache j. Spalte unter i.ter Zeile zu 0
     zst_rek(i + 1, j + 1); // naechste Zeile, naechste Spalte

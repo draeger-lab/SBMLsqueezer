@@ -60,6 +60,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	}
 
 	// @Override
+	@Override
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		String name = "substituted-enzyme mechanism (Ping-Pong)";
@@ -69,11 +70,13 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	}
 
 	// @Override
+	@Override
 	public String getSBO() {
 		return "none";
 	}
 
 	// @Override
+	@Override
 	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)

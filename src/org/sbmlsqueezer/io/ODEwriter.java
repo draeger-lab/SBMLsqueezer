@@ -62,6 +62,7 @@ public class ODEwriter {
 	 * @throws IOException
 	 * @deprecated Use LaTeXExport.
 	 */
+	@Deprecated
 	public final void writeLaTeXFile(File file, KineticLawGenerator klg)
 			throws IOException {
 		int i;

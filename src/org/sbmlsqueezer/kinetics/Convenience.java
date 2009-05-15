@@ -63,6 +63,7 @@ public class Convenience extends GeneralizedMassAction {
 	}
 
 	// @Override
+	@Override
 	public String getName() {
 		if (getParentReaction().getReversible())
 			return "reversible simple convenience kinetics";
@@ -70,6 +71,7 @@ public class Convenience extends GeneralizedMassAction {
 	}
 
 	// @Override
+	@Override
 	public String getSBO() {
 		return "none";
 	}

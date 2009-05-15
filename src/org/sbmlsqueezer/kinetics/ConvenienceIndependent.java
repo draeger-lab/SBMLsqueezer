@@ -59,6 +59,7 @@ public class ConvenienceIndependent extends Convenience {
 	}
 
 	// @Override
+	@Override
 	public String getName() {
 		if (this.getParentReaction().getReversible())
 			return "reversible thermodynamically independent convenience kinetics";
@@ -66,6 +67,7 @@ public class ConvenienceIndependent extends Convenience {
 	}
 
 	// @Override
+	@Override
 	public String getSBO() {
 		return "none";
 	}
@@ -77,6 +79,7 @@ public class ConvenienceIndependent extends Convenience {
 	 *           fraction is multiplied with a reaction constant that is global
 	 *           for the eynzme's reaction.
 	 */
+	@Override
 	protected StringBuffer createKineticEquation(PluginModel model,
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
