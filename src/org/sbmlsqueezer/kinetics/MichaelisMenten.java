@@ -6,9 +6,6 @@ package org.sbmlsqueezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbmlsqueezer.io.TextExport;
-
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
@@ -62,6 +59,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 	}
 
 //	@Override
+	@Override
 	public String getName() {
 		switch (numOfEnzymes) {
 		case 0: // no enzyme, irreversible
@@ -95,6 +93,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 	}
 
 //	@Override
+	@Override
 	public String getSBO() {
 		String name = getName(), sbo = "none";
 		if (name.equalsIgnoreCase("normalised kinetics of unireactant enzymes"))
@@ -172,7 +171,6 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 		PluginSpeciesReference specRefR = reaction.getReactant(0);
 		PluginSpeciesReference specRefP = reaction.getProduct(0);
-		ASTNode ast = null;
 		int enzymeNum = 0;
 		do {
 			StringBuffer kcatp= new StringBuffer();
@@ -200,54 +198,24 @@ public class MichaelisMenten extends BasicKineticLaw {
 				listOfLocalParameters.add(new StringBuffer(kcatp));
 			if (!listOfLocalParameters.contains(kMe))
 				listOfLocalParameters.add(new StringBuffer(kMe));
-			ASTNode numerator_n;
-			ASTNode denominator_n;
-			ASTNode temp;
-			ASTNode temp2;
-			ASTNode currEnzyme = new ASTNode(AST_TIMES);
-			ASTNode kMeN = new ASTNode(AST_NAME);
-			kMeN.setName(kMe.toString());
+			StringBuffer currEnzyme = new StringBuffer();
+			StringBuffer kMeN = new StringBuffer();
+			kMeN=kMe;
 			/*
 			 * Irreversible Reaction
 			 */
 			if (!reaction.getReversible()) {
 				numerator = times(kcatp , new StringBuffer(specRefR.getSpecies()));
-				numerator_n = new ASTNode(AST_TIMES);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(kcatp.toString());
-				numerator_n.addChild(temp);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(specRefR.getSpecies());
-				numerator_n.addChild(temp);
+				
 				denominator = new StringBuffer(specRefR.getSpecies());
-				denominator_n = new ASTNode(AST_NAME);
-				denominator_n.setName(specRefR.getSpecies());
 				
 				/*
 				 * Reversible Reaction
 				 */
 			} else {
-				temp2 = new ASTNode(AST_DIVIDE);
-				numerator_n = new ASTNode(AST_TIMES);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(kcatp.toString());
-				temp2.addChild(temp);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(kMe.toString());
-				temp2.addChild(temp);
-				numerator_n.addChild(temp2);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(specRefR.getSpecies());
-				numerator_n.addChild(temp);
-
+			
 				numerator = times(frac (kcatp , kMe), new StringBuffer(specRefR.getSpecies()));
-				denominator_n = new ASTNode(AST_DIVIDE);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(specRefR.getSpecies());
-				denominator_n.addChild(temp);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(kMe.toString());
-				denominator_n.addChild(temp);
+				
 				denominator = frac( new StringBuffer(specRefR.getSpecies()) , kMe);
 				
 				kMp = concat(kMp,Character.valueOf('_'), specRefP.getSpecies());
@@ -256,39 +224,9 @@ public class MichaelisMenten extends BasicKineticLaw {
 					listOfLocalParameters.add(kcatn);
 				if (!listOfLocalParameters.contains(kMp))
 					listOfLocalParameters.add(kMp);
-
-				temp2 = numerator_n;
-				numerator_n = new ASTNode(AST_MINUS);
-				numerator_n.addChild(temp2);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(kcatn.toString());
-				temp2 = new ASTNode(AST_DIVIDE);
-				temp2.addChild(temp);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(kMp.toString());
-				temp2.addChild(temp);
-				temp = new ASTNode(AST_TIMES);
-				temp.addChild(temp2);
-				temp2 = new ASTNode(AST_NAME);
-				temp2.setName(specRefP.getSpecies());
-				temp.addChild(temp2);
-				numerator_n.addChild(temp);
-
+		 
 				numerator =diff(numerator, times(frac( kcatn,kMp), new StringBuffer(specRefP.getSpecies())));
-				
-				temp = denominator_n;
-				denominator_n = new ASTNode(AST_PLUS);
-				denominator_n.addChild(temp);
-				temp2 = new ASTNode(AST_DIVIDE);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(specRefP.getSpecies());
-				temp2.addChild(temp);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(kMp.toString());
-				temp2.addChild(temp);
-				denominator_n.addChild(temp2);
-
-				denominator =sum(frac( new StringBuffer(specRefP.getSpecies()), kMp));
+				denominator =sum(denominator, frac(new StringBuffer(specRefP.getSpecies()), kMp));
 				}
 
 			/*
@@ -299,70 +237,22 @@ public class MichaelisMenten extends BasicKineticLaw {
 
 				kIa = concat("KIa_", reaction.getId());
 				kIb = concat("KIb_" , reaction.getId());
-				
-				if (modE.size() > 1) {
-					kIa = concat(kIa, Character.valueOf('_'), modE.get(enzymeNum));
-					kIb = concat(kIb, Character.valueOf('_'), modE.get(enzymeNum));
-					}
-
 				if (!listOfLocalParameters.contains(kIa))
 					listOfLocalParameters.add(kIa);
 				if (!listOfLocalParameters.contains(kIb))
 					listOfLocalParameters.add(kIb);
-				ASTNode inh = new ASTNode(AST_PLUS);
-				temp = new ASTNode(AST_INTEGER);
-				temp.setValue(1);
-				inh.addChild(temp);
-				temp2 = new ASTNode(AST_DIVIDE);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(modInhib.get(0));
-				temp2.addChild(temp);
-				temp = new ASTNode(AST_NAME);
-				temp.setName(kIb.toString());
-				temp2.addChild(temp);
-				inh.addChild(temp2);
+				StringBuffer inh = new StringBuffer();
+		
+				inh = sum(new StringBuffer(1), frac(new StringBuffer(modInhib.get(0)), kIb ));
 				kIb = sum(new StringBuffer(1), frac(new StringBuffer(modInhib.get(0)), kIb ));
 				if (reaction.getReversible()) {
 					
-					temp2 = denominator_n;
-					denominator_n = new ASTNode(AST_PLUS);
-					ASTNode faktor = new ASTNode(AST_DIVIDE);
-					temp = new ASTNode(AST_NAME);
-					temp.setName(modInhib.get(0));
-					faktor.addChild(temp);
-					temp = new ASTNode(AST_NAME);
-					temp.setName(kIa.toString());
-					faktor.addChild(temp);
-					denominator_n.addChild(faktor);
-					temp = new ASTNode(AST_TIMES);
-					temp.addChild(temp2);
-					temp.addChild(inh);
-					denominator_n.addChild(temp);
-
-					denominator = frac(new StringBuffer(modInhib.get(0)),sum(kIa, times(denominator, kIb)));
+					denominator= sum(frac(new StringBuffer(modInhib.get(0)), kIa), times(denominator, inh));
+					//denominator=frac(new StringBuffer(modInhib.get(0)),sum(kIa, times(denominator, kIb)));
 					} else {
-						temp2 = new ASTNode(AST_TIMES);
-					temp = new ASTNode(AST_NAME);
-					temp.setName(kMe.toString());
-					temp2.addChild(temp);
-					temp = new ASTNode(AST_NAME);
-					temp.setName(modInhib.get(0));
-					temp2.addChild(temp);
-					temp = new ASTNode(AST_DIVIDE);
-					temp.addChild(temp2);
-					temp2 = new ASTNode(AST_NAME);
-					temp2.setName(kIa.toString());
-					temp.addChild(temp2);
-
-					temp2 = denominator_n;
-					denominator_n = new ASTNode(AST_PLUS);
-					denominator_n.addChild(temp);
-					temp = new ASTNode(AST_TIMES);
-					temp.addChild(temp2);
-					temp.addChild(inh);
-					denominator_n.addChild(temp);
-
-					denominator = frac(times(kMe, new StringBuffer(modInhib.get(0))) ,sum(kIa ,times(denominator, kIb)));
+				
+					denominator=sum(frac(times(kMe,new StringBuffer(modInhib.get(0))),kIa),times(denominator, inh));
+					//denominator = frac(times(kMe, new StringBuffer(modInhib.get(0))) ,sum(kIa ,times(denominator, kIb)));
 					}
 
 			} else if ((modInhib.size() > 1)
@@ -371,26 +261,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 				// exclusive
 				// inhibitors.
 
-				temp2 = denominator_n;
-				System.out.println("MEHRERE INIBITOREN");
-				denominator_n = new ASTNode(AST_TIMES);
-				denominator_n.addChild(temp2);
-				temp = new ASTNode(AST_INTEGER);
-				temp.setValue(1);
-				temp2 = new ASTNode(AST_PLUS);
-				temp2.addChild(temp);
-
 				StringBuffer denominator_mod= new StringBuffer(1);
 				
-				kMeN = new ASTNode(AST_PLUS);
-				temp = new ASTNode(AST_INTEGER);
-				temp.setValue(1);
-				kMeN.addChild(temp);
-				ASTNode inh;
+			
 				// kMe += " * (1 + "; // Km
 				for (int i = 0; i < modInhib.size(); i++) {
 					StringBuffer kIai = concat((i + 1), Character.valueOf('_'), reaction.getId());
-						String inhib = modInhib.get(i);
+						StringBuffer inhib = new StringBuffer(modInhib.get(i));
 					if (modE.size() > 1) {
 						kIai = concat(kIai, Character.valueOf('_'), modE.get(enzymeNum));
 						}
@@ -401,167 +278,73 @@ public class MichaelisMenten extends BasicKineticLaw {
 					if (!listOfLocalParameters.contains(kIbi))
 						listOfLocalParameters.add(new StringBuffer(kIbi));
 
-					inh = new ASTNode(AST_DIVIDE);
-					temp = new ASTNode(AST_NAME);
-					temp.setName(inhib);
-					inh.addChild(temp);
-					temp = new ASTNode(AST_NAME);
-					temp.setName(kIai.toString());
-					inh.addChild(temp);
-					temp2.addChild(inh);
+					denominator = sum(new StringBuffer(1), frac(inhib, kIai));
 					denominator_mod = sum(denominator_mod, frac(new StringBuffer(inhib), new StringBuffer(kIai)));
 					
-					inh = new ASTNode(AST_DIVIDE);
-					temp = new ASTNode(AST_NAME);
-					temp.setName(inhib);
-					inh.addChild(temp);
-					temp = new ASTNode(AST_NAME);
-					temp.setName(kIbi.toString());
-					inh.addChild(temp);
-					kMeN.addChild(inh);
+					
+					kMeN=sum(new StringBuffer(1),frac(inhib,kIbi));
 					// kMe += inhib + '/' + kIbi; // Km
 				}
 				
 				denominator=times(denominator, denominator_mod); // substrate
-				// kMe += ')';
-				temp = kMeN;
-				kMeN = new ASTNode(AST_TIMES);
-				inh = new ASTNode(AST_NAME);
-				inh.setName(kMe.toString());
-				kMeN.addChild(inh);
-				kMeN.addChild(temp);
-				denominator_n.addChild(temp2);
+			
+				
+				kMeN=times(kMe,kMeN);
 
 			} else if (modInhib.size() > 1) {
 				// the formalism from the convenience kinetics as a default.
 				StringBuffer inhib = new StringBuffer();
-				ASTNode inh = new ASTNode(AST_TIMES);
-				ASTNode faktor;
+				StringBuffer inh =  new StringBuffer();
 				for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
 					StringBuffer kI = concat("kI_" , reaction.getId());
 					kI = concat(kI, Character.valueOf('_') , modInhib.get(inhibitorNum));
-						if (!listOfLocalParameters.contains(kI))
-						listOfLocalParameters.add(new StringBuffer(kI));
-
-					temp = new ASTNode(AST_PLUS);
-					temp2 = new ASTNode(AST_NAME);
-					temp2.setName(kI.toString());
-					temp.addChild(temp2);
-					temp2 = new ASTNode(AST_NAME);
-					temp2.setName(modInhib.get(inhibitorNum));
-					temp.addChild(temp2);
-					faktor = new ASTNode(AST_DIVIDE);
-					temp2 = new ASTNode(AST_NAME);
-					temp2.setName(kI.toString());
-					faktor.addChild(temp2);
-					faktor.addChild(temp);
-					inh.addChild(faktor);
-
+					if (!listOfLocalParameters.contains(kI))
+					listOfLocalParameters.add(new StringBuffer(kI));
+					inh=frac(kI,sum(kI, new StringBuffer(modInhib.get(inhibitorNum))));
+					
 					inhib = frac(new StringBuffer(kI),sum(new StringBuffer(kI), new StringBuffer(modInhib.get(inhibitorNum))));
 						}
-				currEnzyme.addChild(inh);
-				formelTxt =inhib;
+				    currEnzyme=inh;
+				    formelTxt =inhib;
 				}
 
 			if (reaction.getReversible()) {
-				temp2 = denominator_n;
-				denominator_n = new ASTNode(AST_PLUS);
-				temp = new ASTNode(AST_INTEGER);
-				temp.setValue(1);
-				denominator_n.addChild(temp);
-				denominator_n.addChild(temp2);
-
+				
 				denominator = sum(new StringBuffer(1) ,denominator);
 				} else {
-				temp2 = denominator_n;
-				denominator_n = new ASTNode(AST_PLUS);
-				denominator_n.addChild(kMeN);
-				denominator_n.addChild(temp2);
-
-				denominator = sum(kMe ,denominator);
+			
+				denominator = sum(kMeN ,denominator);
 			}
 
 			// construct formula
-			temp = new ASTNode(AST_DIVIDE);
-			temp.addChild(numerator_n);
-			temp.addChild(denominator_n);
-			if (currEnzyme.getNumChildren() <= 1)
-				currEnzyme = temp;
+			currEnzyme = frac(numerator, denominator);
 
 			formelTxt= times(formelTxt, frac(numerator, denominator));
 			if (modE.size() > 0) {
 				// TODO - ERROR
-				temp = currEnzyme;
-				currEnzyme = new ASTNode(AST_TIMES);
-				temp2 = new ASTNode(AST_NAME);
-				temp2.setName(modE.get(enzymeNum));
-				currEnzyme.addChild(temp2);
-				currEnzyme.addChild(temp);
-
+				currEnzyme=times(new StringBuffer(modE.get(enzymeNum)), currEnzyme);
 				formelTxt = sum(new StringBuffer(modE.get(enzymeNum)),formelTxt);
 					
 			}
-			if (currEnzyme.getNumChildren() == 1) {
-				currEnzyme = currEnzyme.getLeftChild();
-			}
-			if (numOfEnzymes <= 1)
-				ast = currEnzyme;
-			else {
-				if (ast == null)
-					ast = new ASTNode(AST_PLUS);
-				ast.addChild(currEnzyme);
-			}
+			
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
 		/*
 		 * Activation
 		 */
-		ASTNode temp, temp2;
-		ASTNode act = new ASTNode(AST_TIMES);
+	
 		for (int i = 0; i < modActi.size(); i++) {
 
-			StringBuffer kAa; // , kAbTeX;
+			StringBuffer kAa; 
 
 			kAa = concat("kA_",reaction.getId());
-			// ????
-			/* "\\cdot\\left(1+\\frac{" */
-		    // kAbTeX = "\\cdot\\left(1+\\frac{k^\\text{Ab}_{" + reaction.getId();
-
+			
 			if (!listOfLocalParameters.contains(kAa))
 				listOfLocalParameters.add(kAa);
 
-			temp = new ASTNode(AST_NAME);
-			temp.setName(kAa.toString());
-			temp2 = new ASTNode(AST_PLUS);
-			temp2.addChild(temp);
-			temp = new ASTNode(AST_NAME);
-			temp.setName(modActi.get(i));
-			temp2.addChild(temp);
-			temp = new ASTNode(AST_DIVIDE);
-			temp.addChild(new ASTNode(AST_NAME));
-			temp.getLeftChild().setName(modActi.get(i));
-			temp.addChild(temp2);
-			act.addChild(temp);
-
 			formelTxt =times(frac(new StringBuffer(modActi.get(i)),sum( kAa, new StringBuffer(modActi.get(i)))), formelTxt);
-			
-			// ????
-			/*
-			 * kAa = " * (1 + " + kAa + '/' + modActi.get(0) + ')'; kAb =
-			 * " * (1 + " + kAb + '/' + modActi.get(0) + ')'; kAaTeX += "}}{" +
-			 * Species.toTeX(modActi.get(0)) + "}\\right)"; kAbTeX += "}}{" +
-			 * Species.toTeX(modActi.get(0)) + "}\\right)";
-			 */
-		}
-		if (act.getNumChildren() > 0) {
-			temp = ast;
-			ast = new ASTNode(AST_TIMES);
-			if (act.getNumChildren() == 1) {
-				act = act.getLeftChild();
 			}
-			ast.addChild(act);
-			ast.addChild(temp);
-		}
+	
 
 		
 		return formelTxt;

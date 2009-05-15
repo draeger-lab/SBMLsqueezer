@@ -17,8 +17,6 @@
  */
 package org.sbmlsqueezer.io;
 
-import javax.swing.JOptionPane;
-
 /**
  * Created at 2009-01-03.
  * 

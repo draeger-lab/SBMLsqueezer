@@ -19,6 +19,7 @@ public class UpdateMessageThread extends Thread {
 		this.plugin = plugin;
 	}
 
+	@Override
 	public void run() {
 		if (!plugin.getUpdateChecked())
 			try {

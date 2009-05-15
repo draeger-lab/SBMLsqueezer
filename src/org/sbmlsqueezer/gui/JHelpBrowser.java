@@ -18,7 +18,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 import org.sbmlsqueezer.resources.Resource;
 
@@ -92,8 +94,8 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 				.getResource("html/index.html"));
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(new JScrollPane(browser,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 				BorderLayout.CENTER);
 		JToolBar toolbar = new JToolBar();
 		JButton backButton, nextButton;
@@ -131,7 +133,7 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		toolbar.add(nextButton);
 		content.add(toolbar, BorderLayout.NORTH);
 		setContentPane(content);
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception exc) {

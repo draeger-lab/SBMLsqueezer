@@ -1322,7 +1322,7 @@ public class KineticLawGenerator {
 				para.setValue(1d);
 				if (model.getParameter(para.getId()) == null) {
 					model.addParameter(para);
-					plugin.notifySBaseAdded((PluginSBase) para);
+					plugin.notifySBaseAdded(para);
 				}
 			} else {
 				int contains = -1;
@@ -1345,7 +1345,7 @@ public class KineticLawGenerator {
 			para.setValue(1d);
 			if (model.getParameter(para.getId()) == null) {
 				model.addParameter(para);
-				plugin.notifySBaseAdded((PluginSBase) para);
+				plugin.notifySBaseAdded(para);
 			}
 		}
 	}
