@@ -253,12 +253,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					}
 
 					String speciesE2 = specRefE2.getSpecies();
-					kMr2=concat('_',speciesE2);
-					kIr1=concat('_',speciesE2);
-					kIr2=concat('_',speciesE2);
-					kIp1=concat('_',speciesE2);
-					kIp2=concat('_',speciesE2);
-					kMp1=concat('_',speciesE2);
+					kMr2=concat(Character.valueOf('_'),speciesE2);
+					kIr1=concat(Character.valueOf('_'),speciesE2);
+					kIr2=concat(Character.valueOf('_'),speciesE2);
+					kIp1=concat(Character.valueOf('_'),speciesE2);
+					kIp2=concat(Character.valueOf('_'),speciesE2);
+					kMp1=concat(Character.valueOf('_'),speciesE2);
 					if (specRefE2.equals(specRefE1)) {
 						kIr1=concat("kir1",kIr1.substring(2));
 						kIr2=concat("kir2",kIr2.substring(2));
