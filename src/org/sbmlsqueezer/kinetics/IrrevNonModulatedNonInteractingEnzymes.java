@@ -7,8 +7,6 @@ package org.sbmlsqueezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbmlsqueezer.io.TextExport;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
@@ -131,114 +129,78 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			getParentReaction().setReversible(false);
 
 		numOfEnzymes = modE.size();
-		
-		// String numerator = "", numeratorTeX = "", denominator = "",
-		// denominatorTeX = "";
-		StringBuffer formelTxt ;
+	
 		PluginReaction reaction = getParentReaction();
-		ASTNode ast = null;
-
+			
 		int enzymeNum = 0;
+		StringBuffer numerator=new StringBuffer();
+		StringBuffer denominator=new StringBuffer();
+		
 		do {
-			String kcat;
+			StringBuffer kcat=new StringBuffer();
 			if (modE.size() == 0) {
-				kcat = "V_" + reaction.getId();
+				kcat = concat("V_" ,reaction.getId());
 				} else {
-				kcat = "kcat_" + reaction.getId();
+					kcat = concat("kcat_", reaction.getId());
 				if (modE.size() > 1) {
-					kcat += "_" + modE.get(enzymeNum);
+					kcat = concat(kcat, Character.valueOf('_') , modE.get(enzymeNum));
 					}
 			}
 			if (!listOfLocalParameters.contains(kcat))
 				listOfLocalParameters.add(new StringBuffer(kcat));
 
-			ASTNode currEnzyme = new ASTNode(AST_DIVIDE);
-			ASTNode numerator = new ASTNode(AST_TIMES);
-			currEnzyme.addChild(numerator);
-
-			ASTNode tmp;
-			if (modE.size() <= 1) {
-				ast = currEnzyme;
-			} else {
-				if (ast == null)
-					ast = new ASTNode(AST_PLUS);
-				ast.addChild(currEnzyme);
-			}
 			if (modE.size() >= 1) {
-				tmp = new ASTNode(AST_NAME);
-				tmp.setName(modE.get(enzymeNum));
-				numerator.addChild(tmp);
+			
+				numerator=times(numerator,new StringBuffer(modE.get(enzymeNum)));
 			}
-			tmp = new ASTNode(AST_NAME);
-			tmp.setName(kcat);
-			numerator.addChild(tmp);
-
-			ASTNode denominator = null;
+		
+			numerator=times(kcat, numerator);
+			//numerator=times(numerator,currEnzyme);
+			
 			for (int i = 0; i < reaction.getNumReactants(); i++) {
 				PluginSpeciesReference si = reaction.getReactant(i);
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
 					throw new RateLawNotApplicableException(
 							"This rate law can only be applied if all reactants have integer stoichiometries.");
-				String kM = "kM_" + reaction.getId();
-				String kMeTeX = "k^\\text{M}_{" + reaction.getId();
+				StringBuffer kM = new StringBuffer();
+					
+				kM=concat("kM_" , reaction.getId());
+				
 				if (modE.size() > 1) {
-					kM += "_" + modE.get(enzymeNum);
-					kMeTeX += ",{" + Species.idToTeX(modE.get(enzymeNum)) + "}";
-				}
-				kM += "_" + si.getSpecies();
-				kMeTeX += ",{" + Species.idToTeX(si.getSpecies()) + "}}";
+					kM=concat(kM , Character.valueOf('_') , modE.get(enzymeNum));
+					}
+				kM=concat(kM , Character.valueOf('_') , si.getSpecies());
 				if (!listOfLocalParameters.contains(kM))
 					listOfLocalParameters.add(new StringBuffer(kM));
 
-				ASTNode frac = new ASTNode(AST_DIVIDE);
-				tmp = new ASTNode(AST_NAME);
-				tmp.setName(si.getSpecies());
-				frac.addChild(tmp);
-				tmp = new ASTNode(AST_NAME);
-				tmp.setName(kM);
-				frac.addChild(tmp);
+				StringBuffer frac= new StringBuffer();
 				if (si.getStoichiometry() != 1) {
-					tmp = new ASTNode(AST_POWER);
-					tmp.addChild(frac);
-					tmp.addChild(new ASTNode(AST_INTEGER));
-					tmp.getChild(1).setValue(si.getStoichiometry());
-					numerator.addChild(tmp);
-				} else
-					numerator.addChild(frac);
-				if (reaction.getNumReactants() > 1) {
-					if (denominator == null)
-						denominator = new ASTNode(AST_TIMES);
-					tmp = new ASTNode(AST_PLUS);
-					tmp.addChild(new ASTNode(AST_INTEGER));
-					tmp.getChild(0).setValue(1);
-					tmp.addChild(clone(frac));
-					if (si.getStoichiometry() != 1) {
-						ASTNode power = new ASTNode(AST_POWER);
-						power.addChild(tmp);
-						power.addChild(new ASTNode(AST_INTEGER));
-						power.getChild(1).setValue(si.getStoichiometry());
-						denominator.addChild(power);
-					} else
-						denominator.addChild(tmp);
+				
+					frac=pow(frac(new StringBuffer(si.getSpecies()),kM), new StringBuffer((int) si.getStoichiometry()));
+					
+					numerator=times(numerator, pow(frac(new StringBuffer(si.getSpecies()),kM), new StringBuffer((int) si.getStoichiometry())));
+				} else{
+					
+				frac=frac(new StringBuffer(si.getSpecies()),kM);
+					
+				numerator=times(numerator, frac(new StringBuffer(si.getSpecies()),kM));
+				}
+				if (reaction.getNumReactants() > 1) {				
+					if (si.getStoichiometry() != 1) 					
+						denominator=times(denominator,pow(sum(new StringBuffer('1'), frac),new StringBuffer((int) si.getStoichiometry())));
+					else						
+						denominator=times(denominator,sum(new StringBuffer('1'), frac));
+					
 				} else {
-					if (si.getStoichiometry() != 1) {
-						denominator = new ASTNode(AST_POWER);
-						denominator.addChild(tmp);
-						denominator.addChild(new ASTNode(AST_INTEGER));
-						denominator.getChild(1).setValue(si.getStoichiometry());
-					} else {
-						denominator = new ASTNode(AST_PLUS);
-						tmp = new ASTNode(AST_INTEGER);
-						tmp.setValue(1);
-						denominator.addChild(tmp);
-						denominator.addChild(clone(frac));
-					}
+					if (si.getStoichiometry() != 1) 						
+					 denominator=times(denominator,pow(sum(new StringBuffer('1'), frac),new StringBuffer((int) si.getStoichiometry())));
+					 else 						
+						denominator=times(denominator,sum(new StringBuffer('1'), frac));
 				}
 			}
-			currEnzyme.addChild(denominator);
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
-		return new StringBuffer(TextExport.toText(model, ast));
+		return frac(numerator, denominator);
 	}
 
 }

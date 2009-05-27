@@ -9,8 +9,6 @@ import java.util.List;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbmlsqueezer.io.TextExport;
 
 /**
  * @author andreas
@@ -117,96 +115,75 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 			reaction.setReversible(false);
 		numInhib = modInhib.size();
 
-		numOfEnzymes = modE.size();
-		
-		ASTNode ast = null;
+		numOfEnzymes = modE.size();		
+		StringBuffer formula = new StringBuffer();
 
 		int enzymeNum = 0;
 		do {
-			String kcat;
+			StringBuffer kcat=new StringBuffer();
 			if (numOfEnzymes == 0)
-				kcat = "V_" + reaction.getId();
+				kcat = concat("V_", reaction.getId());
 			else {
-				kcat = "kcat_" + reaction.getId();
+				kcat = concat("kcat_" , reaction.getId());
 				if (modE.size() > 1)
-					kcat += "_" + modE.get(enzymeNum);
+					kcat = concat(kcat , Character.valueOf('_') , modE.get(enzymeNum));
 			}
 			if (!listOfLocalParameters.contains(kcat))
 				listOfLocalParameters.add(new StringBuffer(kcat));
+			if (!listOfLocalParameters.contains(kcat))
+				listOfLocalParameters.add(new StringBuffer(kcat));
+			StringBuffer currEnzyme=new StringBuffer();
+			StringBuffer numerator = new StringBuffer();
+			
 
-			ASTNode currEnzyme = new ASTNode(AST_DIVIDE);
-			ASTNode numerator = new ASTNode(AST_TIMES);
-			currEnzyme.addChild(numerator);
-
-			ASTNode tmp;
 			if (numOfEnzymes <= 1)
-				ast = currEnzyme;
+				formula = currEnzyme;
 			else {
-				if (ast == null)
-					ast = new ASTNode(AST_PLUS);
-				ast.addChild(currEnzyme);
-				tmp = new ASTNode(AST_NAME);
-				tmp.setName(modE.get(enzymeNum));
-				numerator.addChild(tmp);
+				
+				formula=sum(formula,currEnzyme);
+				numerator=times(numerator,new StringBuffer(modE.get(enzymeNum)));
 			}
-			tmp = new ASTNode(AST_NAME);
-			tmp.setName(kcat);
-			numerator.addChild(tmp);
-			tmp = new ASTNode(AST_NAME);
-			tmp.setName(reaction.getReactant(0).getSpecies());
-			numerator.addChild(tmp);
+			
+			numerator=times(numerator,kcat);			
+			numerator=times(numerator,new StringBuffer(reaction.getReactant(0).getSpecies()));
 
-			ASTNode denominator = new ASTNode(AST_PLUS);
-			String kM = "kM_" + reaction.getId();
+			StringBuffer denominator = new StringBuffer();
+			StringBuffer kM = new StringBuffer(concat("kM_", reaction.getId()));
+			
 			if (numOfEnzymes > 1)
-				kM += "_" + modE.get(enzymeNum);
-			kM += "_" + reaction.getReactant(0).getSpecies();
+				
+			kM = concat(kM ,Character.valueOf('_') , modE.get(enzymeNum));
+			kM = concat(kM ,Character.valueOf('_') , reaction.getReactant(0).getSpecies());
 			if (!listOfLocalParameters.contains(kM))
 				listOfLocalParameters.add(new StringBuffer(kM));
-			tmp = new ASTNode(AST_NAME);
-			tmp.setName(kM);
+			
 			if (modInhib.size() == 0)
-				denominator.addChild(tmp);
+				denominator=sum(denominator,kM);
 			else {
-				ASTNode factor = new ASTNode(AST_TIMES);
-				factor.addChild(tmp);
+				StringBuffer factor = new StringBuffer();
+				factor =times(factor,kM);
 				for (int i = 0; i < modInhib.size(); i++) {
-					ASTNode frac = new ASTNode(AST_DIVIDE);
-					tmp = new ASTNode(AST_NAME);
-					tmp.setName(modInhib.get(i));
-					frac.addChild(tmp);
-					tmp = new ASTNode(AST_NAME);
-					String kIi = "Ki_" + reaction.getId(), exponent = "m_"
-							+ reaction.getId();
+										
+					StringBuffer kIi = new StringBuffer(concat("Ki_" ,reaction.getId()));
+					StringBuffer exponent =new StringBuffer(concat("m_", reaction.getId()));
 					if (numOfEnzymes > 1) {
-						kIi += "_" + modE.get(enzymeNum);
-						exponent += "_" + modE.get(enzymeNum);
+						kIi =concat(Character.valueOf('_') ,modE.get(enzymeNum));
+						exponent = concat(Character.valueOf('_') , modE.get(enzymeNum));
 					}
-					kIi += "_" + modInhib.get(i);
-					exponent += "_" + modInhib.get(i);
+					kIi =concat(kIi, Character.valueOf('_') , modInhib.get(i));
+					exponent =concat(exponent, Character.valueOf('_') , modInhib.get(i));
 					if (!listOfLocalParameters.contains(kIi))
-						listOfLocalParameters.add(new StringBuffer(kIi));
+						listOfLocalParameters.add(kIi);
 					if (!listOfLocalParameters.contains(exponent))
-						listOfLocalParameters.add(new StringBuffer(exponent));
-					tmp.setName(kIi);
-					frac.addChild(tmp);
-
-					ASTNode power = new ASTNode(AST_POWER);
-					tmp = new ASTNode(AST_PLUS);
-					tmp.addChild(new ASTNode(AST_INTEGER));
-					tmp.getLeftChild().setValue(1);
-					tmp.addChild(frac);
-					power.addChild(tmp);
-					power.addChild(new ASTNode(AST_NAME));
-					power.getRightChild().setName(exponent);
-					factor.addChild(power);
+						listOfLocalParameters.add(exponent);
+				
+					factor =times(factor,pow(sum(new StringBuffer('1'),frac(new StringBuffer(modInhib.get(i)),kIi)), exponent));
 				}
-				denominator.addChild(factor);
+				denominator=sum(denominator,factor);
+				
 			}
-			tmp = new ASTNode(AST_NAME);
-			tmp.setName(reaction.getReactant(0).getSpecies());
-			denominator.addChild(tmp);
-			currEnzyme.addChild(denominator);
+			denominator=sum(denominator,new StringBuffer(reaction.getReactant(0).getSpecies()));		
+			currEnzyme=frac(numerator,denominator);
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
 
@@ -215,35 +192,24 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 		 */
 		if (modActi.size() > 0) {
 			int actiNum = 0;
-			ASTNode activation = null;
-			ASTNode tmp;
+			StringBuffer activation = new StringBuffer();
+			
 			do {
-				tmp = new ASTNode(AST_DIVIDE);
-				tmp.addChild(new ASTNode(AST_NAME));
-				tmp.getLeftChild().setName(modActi.get(actiNum));
-				tmp.addChild(new ASTNode(AST_PLUS));
-				tmp.getRightChild().addChild(new ASTNode(AST_NAME));
-				tmp.getRightChild().addChild(new ASTNode(AST_NAME));
-				String kAi = "KA_" + reaction.getId() + "_" + modActi.get(actiNum);
+			    StringBuffer kAi = new StringBuffer(concat( "KA_" , reaction.getId() , Character.valueOf('_') , modActi.get(actiNum)));
+				
 				if (!listOfLocalParameters.contains(kAi))
-					listOfLocalParameters.add(new StringBuffer(kAi));
-				tmp.getRightChild().getLeftChild().setName(kAi);
-				tmp.getRightChild().getRightChild().setName(
-						modActi.get(actiNum++));
-				if (modActi.size() > 1) {
-					if (activation == null)
-						activation = new ASTNode(AST_TIMES);
-					else
-						activation.addChild(tmp);
-				} else
-					activation = tmp;
+					listOfLocalParameters.add(kAi);
+							
+				if (modActi.size() > 1) 					
+						activation = times(activation, frac(new StringBuffer(modActi.get(actiNum)), sum(kAi,new StringBuffer(modActi.get(actiNum++)))));
+				 else
+					activation = frac(new StringBuffer(modActi.get(actiNum)), sum(kAi,new StringBuffer(modActi.get(actiNum++))));
+			
 			} while (actiNum <= modActi.size() - 1);
-			tmp = ast;
-			ast = new ASTNode(AST_TIMES);
-			ast.addChild(activation);
-			ast.addChild(tmp);
+						
+			formula =times(activation,formula);
 		}
-		return new StringBuffer(TextExport.toText(model, ast));
+		return formula;
 	}
 
 }
