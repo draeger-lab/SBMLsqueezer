@@ -199,11 +199,11 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						.getSpecies()));
 
 				if (specRefE2.equals(specRefE1)) {
-					numerator = pow(numerator, new StringBuffer('2'));
+					numerator = pow(numerator, new StringBuffer("2"));
 					denominator = sum(times(kIr1, kMr2), times(sum(kMr2, kMr1),
 							new StringBuffer(specRefE1.getSpecies())), pow(
 							new StringBuffer(specRefE1.getSpecies()),
-							new StringBuffer('2')));
+							new StringBuffer("2")));
 
 				} else {
 					numerator = times(numerator, new StringBuffer(specRefE2
@@ -295,7 +295,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					}
 
 					denominator = sum(
-							new StringBuffer('1'),
+							new StringBuffer("1"),
 							frac(new StringBuffer(specRefE1.getSpecies()), kIr1),
 							frac(new StringBuffer(specRefE2.getSpecies()), kIr2),
 							frac(new StringBuffer(specRefP1.getSpecies()), kIp1),
@@ -307,7 +307,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 
 					if (specRefP1.equals(specRefP2)) {
 						p1p2 = pow(new StringBuffer(specRefP1.getSpecies()),
-								new StringBuffer('2'));
+								new StringBuffer("2"));
 					} else {
 						p1p2 = times(new StringBuffer(specRefP1.getSpecies()),
 								new StringBuffer(specRefP2.getSpecies()));
@@ -320,9 +320,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 
 						numeratorForward = times(numeratorForward, pow(
 								new StringBuffer(specRefE1.getSpecies()),
-								new StringBuffer('2')));
+								new StringBuffer("2")));
 						p1p2 = pow(new StringBuffer(specRefE1.getSpecies()),
-								new StringBuffer('2'));
+								new StringBuffer("2"));
 					} else {
 						numeratorForward = times(numeratorForward, times(
 								new StringBuffer(specRefE1.getSpecies()),
@@ -344,10 +344,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 							new StringBuffer(specRefP1.getSpecies()));
 					if (specRefP1.equals(specRefP2)) {
 						numeratorReverse = pow(numeratorReverse,
-								new StringBuffer('2'));
+								new StringBuffer("2"));
 					} else {
 						numeratorReverse = times(numeratorReverse,
-								new StringBuffer('2'));
+								new StringBuffer("2"));
 					}
 					numeratorReverse = frac(numeratorReverse, times(kIp2, kMp1));
 					numerator = diff(numeratorForward, numeratorReverse);
@@ -436,16 +436,16 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					}
 
 					denominator = sum(
-							new StringBuffer('1'),
+							new StringBuffer("1"),
 							frac(new StringBuffer(specRefE1.getSpecies()), kIr1),
 							frac(new StringBuffer(specRefE2.getSpecies()), kIr2));
 					if (specRefE1.equals(specRefE2)) {
 						numeratorForward = times(numeratorForward, pow(
 								new StringBuffer(specRefE1.getSpecies()),
-								new StringBuffer('2')));
+								new StringBuffer("2")));
 
 						p1p2 = pow(new StringBuffer(specRefE1.getSpecies()),
-								new StringBuffer('2'));
+								new StringBuffer("2"));
 					} else {
 						numeratorForward = times(numeratorForward,
 								new StringBuffer(specRefE1.getSpecies()),
@@ -464,7 +464,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					if (specRefP2.equals(specRefP1))
 						numeratorReverse = times(numeratorReverse, pow(
 								new StringBuffer(specRefP1.getSpecies()),
-								new StringBuffer('2')));
+								new StringBuffer("2")));
 					else
 						numeratorReverse = times(numeratorReverse,
 								new StringBuffer(specRefP1.getSpecies()),

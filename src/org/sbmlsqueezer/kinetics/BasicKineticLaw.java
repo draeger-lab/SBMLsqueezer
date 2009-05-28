@@ -33,6 +33,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 	protected static final boolean INHIBITION = !ACTIVATION;
 
+	protected static final Character underscore = Character.valueOf('_');
+
 	/**
 	 * 
 	 */
@@ -93,8 +95,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		List<String> modTInhib = new ArrayList<String>();
 		identifyModifers(parentReaction, listOfPossibleEnzymes, modInhib,
 				modTActi, modTInhib, modActi, modE, modCat);
-		StringBuffer formula = createKineticEquation(model, modE,
-				modActi, modTActi, modInhib, modTInhib, modCat);
+		StringBuffer formula = createKineticEquation(model, modE, modActi,
+				modTActi, modInhib, modTInhib, modCat);
 		if (getMath() == null) {
 			setFormula(formula.toString());
 			setMathFromFormula();
@@ -345,7 +347,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 */
 	protected StringBuffer pow(StringBuffer basis, StringBuffer exponent) {
 		if (Double.parseDouble(exponent.toString()) == 0.0)
-			return new StringBuffer("1");
+			return new StringBuffer('1');
 		else if (Double.parseDouble(exponent.toString()) == 1.0)
 			return basis;
 		else
@@ -427,4 +429,25 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 		return sb;
 	}
+
+	/**
+	 * Adds the given parameter only to the list of local parameters
+	 * if this list does not yet contain this parameter.
+	 * @param parameter
+	 */
+	protected void addLocalParameter(StringBuffer parameter) {
+		if (!listOfLocalParameters.contains(parameter))
+			listOfLocalParameters.add(parameter);
+	}
+	
+	/**
+	 * Adds the given parameter only to the list of global parameters
+	 * if this list does not yet contain this parameter.
+	 * @param parameter
+	 */
+	protected void addGlobalParameter(StringBuffer parameter) {
+		if (!listOfGlobalParameters.contains(parameter))
+			listOfGlobalParameters.add(parameter);
+	}
+	
 }
