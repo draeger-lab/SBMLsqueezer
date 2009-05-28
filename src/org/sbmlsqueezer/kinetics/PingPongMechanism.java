@@ -271,7 +271,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 							new StringBuffer(specRefE1.getSpecies()),
 							new StringBuffer('2')));
 					denominator = sum(denominator, frac(pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer('2')),
+							specRefE1.getSpecies()), new StringBuffer("2")),
 							times(kIr1, kMr2)));
 				} else {
 					numeratorForward = times(numeratorForward,
@@ -299,9 +299,9 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				if (specRefP2.equals(specRefP1)) {
 					numeratorReverse = times(numeratorReverse, pow(
 							new StringBuffer(specRefP1.getSpecies()),
-							new StringBuffer('2')));
+							new StringBuffer("2")));
 					denominator_p1p2 = pow(new StringBuffer(specRefP1
-							.getSpecies()), new StringBuffer('2'));
+							.getSpecies()), new StringBuffer("2"));
 
 				} else {
 					numeratorReverse = times(numeratorReverse,

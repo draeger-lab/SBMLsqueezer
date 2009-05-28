@@ -177,7 +177,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 					if (!listOfLocalParameters.contains(exponent))
 						listOfLocalParameters.add(exponent);
 				
-					factor =times(factor,pow(sum(new StringBuffer('1'),frac(new StringBuffer(modInhib.get(i)),kIi)), exponent));
+					factor =times(factor,pow(sum(new StringBuffer("1"),frac(new StringBuffer(modInhib.get(i)),kIi)), exponent));
 				}
 				denominator=sum(denominator,factor);
 				

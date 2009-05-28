@@ -3,13 +3,8 @@ package org.sbmlsqueezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbmlsqueezer.io.LaTeXExport;
-import org.sbmlsqueezer.io.TextExport;
-
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 /**
  * TODO: comment missing
@@ -22,7 +17,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  *         JDK 1.6.0
  * @date Aug 1, 2007
  */
-public class MichaelisMenten extends BasicKineticLaw {
+public class MichaelisMenten extends GeneralizedMassAction {
 
 	private int numOfInhibitors;
 
@@ -35,12 +30,13 @@ public class MichaelisMenten extends BasicKineticLaw {
 	 * @param model
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException 
-	 * @throws IOException 
+	 * @throws IllegalFormatException
+	 * @throws IOException
 	 */
 	public MichaelisMenten(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -48,26 +44,26 @@ public class MichaelisMenten extends BasicKineticLaw {
 	 * @param parentReaction
 	 * @param model
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException 
-	 * @throws IOException 
+	 * @throws IllegalFormatException
+	 * @throws IOException
 	 */
 	public MichaelisMenten(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model);
 	}
 
-	@Override
-	protected StringBuffer createKineticEquation(PluginModel model, 
+	// @Override
+	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		StringBuffer numerator =new StringBuffer(); StringBuffer denominator = new StringBuffer();
-		StringBuffer formelTxt = new StringBuffer();
-		
+			throws RateLawNotApplicableException, IllegalFormatException {
+		StringBuffer numerator = new StringBuffer();
+		StringBuffer denominator = new StringBuffer();
+
 		numOfActivators = modActi.size();
 		numOfEnzymes = modE.size();
 		numOfInhibitors = modInhib.size();
-		
 
 		PluginReaction reaction = getParentReaction();
 		if ((reaction.getNumReactants() > 1)
@@ -80,193 +76,147 @@ public class MichaelisMenten extends BasicKineticLaw {
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to reactions with exactly one product.");
 
-		PluginSpeciesReference specRefR = reaction.getReactant(0);
-		PluginSpeciesReference specRefP = reaction.getProduct(0);
-		
-		
+		StringBuffer specRefR = new StringBuffer(reaction.getReactant(0)
+				.getSpecies());
+		StringBuffer specRefP = new StringBuffer(reaction.getProduct(0)
+				.getSpecies());
+
 		StringBuffer formula = new StringBuffer();
 		int enzymeNum = 0;
 		do {
-			StringBuffer kcatp, kcatn =new StringBuffer();
-			StringBuffer kMe = new StringBuffer(concat("kM_", reaction.getId()));
-			StringBuffer kMp = new StringBuffer();
-			kMp = kMe;
-			
+			StringBuffer kcatp, kcatn;
+			StringBuffer kMr = concat("kM_", reaction.getId());
+			StringBuffer kMp = concat("kM_", reaction.getId());
+
 			if (modE.size() == 0) {
-				kcatp = concat("Vp_" , reaction.getId());
+				kcatp = concat("Vp_", reaction.getId());
 				kcatn = concat("Vn_", reaction.getId());
-				} else {
-				kcatp = concat("kcatp_" , reaction.getId());
-				kcatn = concat("kcatn_" ,reaction.getId());
-					if (modE.size() > 1) {
-					kcatp = concat(kcatp,Character.valueOf('_') , modE.get(enzymeNum));
-					kcatn =concat(kcatn, Character.valueOf('_') , modE.get(enzymeNum));
-					kMe= concat(kMe,Character.valueOf('_') , modE.get(enzymeNum));
-					kMp =concat(kMp,Character.valueOf('_') , modE.get(enzymeNum));
-					}
+			} else {
+				kcatp = concat("kcatp_", reaction.getId());
+				kcatn = concat("kcatn_", reaction.getId());
+				if (modE.size() > 1) {
+					kcatp = concat(kcatp, underscore, modE.get(enzymeNum));
+					kcatn = concat(kcatn, underscore, modE.get(enzymeNum));
+					kMr = concat(kMr, underscore, modE.get(enzymeNum));
+					kMp = concat(kMp, underscore, modE.get(enzymeNum));
 				}
-			kMe =concat(kMe, Character.valueOf('_') + specRefR.getSpecies());
-			
-			if (!listOfLocalParameters.contains(kcatp))
-				listOfLocalParameters.add(kcatp);
-			if (!listOfLocalParameters.contains(kMe))
-				listOfLocalParameters.add(kMe);
-			
-			StringBuffer currEnzyme =new StringBuffer();
-			
-			/*
-			 * Irreversible Reaction
-			 */
+			}
+			kMr = concat(kMr, underscore, specRefR);
+
+			addLocalParameter(kcatp);
+			addLocalParameter(kMr);
+
+			StringBuffer currEnzymeKin = new StringBuffer();
+
 			if (!reaction.getReversible()) {
-		
-				numerator = times(kcatp,  new StringBuffer(specRefR.getSpecies()));
-				denominator = new StringBuffer(specRefR.getSpecies());
+				/*
+				 * Irreversible Reaction
+				 */
+				numerator = times(kcatp, specRefR);
+				denominator = new StringBuffer(specRefR);
+			} else {
 				/*
 				 * Reversible Reaction
 				 */
-			}else{
-				numerator = times(frac(kcatp, kMe ), new StringBuffer(specRefR.getSpecies()));
-				denominator = frac(new StringBuffer(specRefR.getSpecies()), kMe);
-				kMp =concat(kMp ,Character.valueOf('_') , specRefP.getSpecies());
-				
-				if (!listOfLocalParameters.contains(kcatn))
-					listOfLocalParameters.add(kcatn);
-				if (!listOfLocalParameters.contains(kMp))
-					listOfLocalParameters.add(kMp);
+				numerator = times(frac(kcatp, kMr), specRefR);
+				denominator = frac(specRefR, kMr);
+				kMp = concat(kMp, underscore, specRefP);
 
-				
-				numerator=diff(numerator, times(frac(kcatn, kMp), new StringBuffer(specRefP.getSpecies())));
-		
-				denominator=sum(denominator, frac(new StringBuffer(specRefP.getSpecies()), kMp));
-				}
+				addLocalParameter(kcatn);
+				addLocalParameter(kMp);
 
-			/*
-			 * Inhibition
-			 */
-			if (modInhib.size() == 1) {
-				StringBuffer kIa, kIb =new StringBuffer();
-
-				kIa = concat("KIa_", reaction.getId());
-				kIb = concat("KIb_", reaction.getId());
-					
-				if (modE.size() > 1) {
-					kIa = concat(kIa, Character.valueOf('_') + modE.get(enzymeNum));
-					kIb = concat(kIb, Character.valueOf('_') + modE.get(enzymeNum));
-					}
-
-				if (!listOfLocalParameters.contains(kIa))
-					listOfLocalParameters.add(kIa);
-				if (!listOfLocalParameters.contains(kIb))
-					listOfLocalParameters.add(kIb);
-				StringBuffer inh = new StringBuffer();
-			
-				inh=sum(new StringBuffer('1'), frac(new StringBuffer(modInhib.get(0)) , kIb));
-				
-				if (reaction.getReversible()) {
-					denominator=sum(frac(new StringBuffer(modInhib.get(0)), kIa), times(denominator,inh));
-					} else {
-				
-					denominator=sum(frac(times(kMe, new StringBuffer(modInhib.get(0))), kIa), times(denominator, inh));
-					}
-
-			} else if ((modInhib.size() > 1)
-					&& !getParentReaction().getReversible()) {
-				// mixed-type inihibition of irreversible enzymes by mutually
-				// exclusive
-				// inhibitors.
-
-				denominator=times(denominator);
-
-				//denominator += " * (1 + "; // substrate
-				
-				StringBuffer inh=new StringBuffer();
-				// kMe += " * (1 + "; // Km
-				for (int i = 0; i < modInhib.size(); i++) {
-					StringBuffer kIai = new StringBuffer(concat((i + 1) , Character.valueOf('_') , reaction.getId()));
-					StringBuffer inhib = new StringBuffer(modInhib.get(i));
-					if (modE.size() > 1) {
-						kIai =concat(kIai ,Character.valueOf('_'),modE.get(enzymeNum));
-						}
-					StringBuffer kIbi = new StringBuffer(concat("kIb", kIai));
-					kIai = concat("kIa" , kIai);
-					if(!listOfLocalParameters.contains(kIai))
-						listOfLocalParameters.add(kIai);
-					if (!listOfLocalParameters.contains(kIbi))
-						listOfLocalParameters.add(kIbi);
-					
-				inh =frac(inhib, kIbi);
-				denominator=times(denominator, sum(new StringBuffer('1'),frac(inhib,kIai)));
-
-				}
-			} else if (modInhib.size() > 1) {
-				// the formalism from the convenience kinetics as a default.
-				StringBuffer inhib = new StringBuffer();
-		        StringBuffer inh = new StringBuffer();
-				
-				for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-					StringBuffer kI = new StringBuffer(concat("kI_" , reaction.getId())) ;
-					kI =concat(kI , Character.valueOf('_'), modInhib.get(inhibitorNum));
-						if (!listOfLocalParameters.contains(kI))
-						listOfLocalParameters.add(kI);
-
-					inhib =times(inhib , frac(kI ,sum(kI , new StringBuffer(modInhib.get(inhibitorNum)))));
-					}
-				currEnzyme=times(currEnzyme, inh);
-						
+				numerator = diff(numerator, times(frac(kcatn, kMp), specRefP));
+				denominator = sum(denominator, frac(specRefP, kMp));
 			}
+			createInihibitionTerms(modInhib, reaction, modE, denominator, kMr,
+					currEnzymeKin, enzymeNum);
 
-			if (reaction.getReversible()) {
-			
-				denominator = sum(new StringBuffer('1') ,denominator);
-				
-			} else {
-				
-				denominator = sum(kMe , denominator);
-				
-			}
+			if (reaction.getReversible())
+				denominator = sum(new StringBuffer("1"), denominator);
+			else if ((modInhib.size() <= 1)
+					|| getParentReaction().getReversible())
+				denominator = sum(kMr, denominator);
 
 			// construct formula
-			currEnzyme = frac(numerator, denominator);
-			
-			if (modE.size() > 0) {
-			
-				currEnzyme =times(new StringBuffer(modE.get(enzymeNum)), currEnzyme);
-				
-			}
-		
-			if (numOfEnzymes <= 1)
-				formula = currEnzyme;
-			else 
-				formula =times(formula, currEnzyme);	
+			currEnzymeKin = frac(numerator, denominator);
+			if (modE.size() > 0)
+				currEnzymeKin = times(new StringBuffer(modE.get(enzymeNum)),
+						currEnzymeKin);
+			formula = sum(formula, currEnzymeKin);
 			enzymeNum++;
 		} while (enzymeNum <= modE.size() - 1);
-		/*
-		 * Activation
-		 */
-	
-		StringBuffer act = new StringBuffer();
-		for (int i = 0; i < modActi.size(); i++) {
 
-			StringBuffer kAa;
-
-			kAa =concat("kA_" , reaction.getId());
-			
-			/* "\\cdot\\left(1+\\frac{" */
-			
-			if (!listOfLocalParameters.contains(kAa))
-				listOfLocalParameters.add(kAa);
-
-			act=times(act, frac(new StringBuffer(modActi.get(i)), sum(kAa,new StringBuffer(modActi.get(i)))));
-			
-				}
-			
-			formula=times(act, formula);
-				
-		
+		// the formalism from the convenience kinetics as a default.
+		if ((modInhib.size() > 1) && (reaction.getReversible()))
+			formula = times(createModificationFactor(reaction.getId(),
+					modInhib, INHIBITION), formula);
+		// Activation
+		if (modActi.size() > 0)
+			formula = times(createModificationFactor(reaction.getId(), modActi,
+					ACTIVATION), formula);
 		return formula;
 	}
 
-	@Override
+	/**
+	 * Inhibition
+	 * 
+	 * @param modInhib
+	 * @param reaction
+	 * @param modE
+	 * @param denominator
+	 * @param kMr
+	 * @param currEnzymeKin
+	 * @param enzymeNum
+	 */
+	private void createInihibitionTerms(List<String> modInhib,
+			PluginReaction reaction, List<String> modE,
+			StringBuffer denominator, StringBuffer kMr,
+			StringBuffer currEnzymeKin, int enzymeNum) {
+		if (modInhib.size() == 1) {
+			StringBuffer kIa = concat("KIa_", reaction.getId()), kIb = concat(
+					"KIb_", reaction.getId());
+
+			if (modE.size() > 1) {
+				kIa = concat(kIa, underscore + modE.get(enzymeNum));
+				kIb = concat(kIb, underscore + modE.get(enzymeNum));
+			}
+
+			addLocalParameter(kIa);
+			addLocalParameter(kIb);
+			StringBuffer specRefI = new StringBuffer(modInhib.get(0));
+			if (reaction.getReversible())
+				denominator = sum(frac(specRefI, kIa), times(denominator, sum(
+						new StringBuffer("1"), frac(specRefI, kIb))));
+			else
+				denominator = sum(times(frac(kMr, kIa), specRefI), denominator,
+						times(frac(kMr, kIb), specRefI));
+
+		} else if ((modInhib.size() > 1)
+				&& !getParentReaction().getReversible()) {
+			/*
+			 * mixed-type inihibition of irreversible enzymes by mutually
+			 * exclusive inhibitors.
+			 */
+			StringBuffer sumIa = new StringBuffer("1");
+			StringBuffer sumIb = new StringBuffer("1");
+			for (int i = 0; i < modInhib.size(); i++) {
+				StringBuffer kIai = concat(Integer.valueOf(i + 1), underscore,
+						reaction.getId());
+				if (modE.size() > 1)
+					kIai = concat(kIai, underscore, modE.get(enzymeNum));
+				StringBuffer kIbi = concat("kIb_", kIai);
+				kIai = concat("kIa_", kIai);
+				addLocalParameter(kIai);
+				addLocalParameter(kIbi);
+				StringBuffer specRefI = new StringBuffer(modInhib.get(i));
+				sumIa = sum(sumIa, frac(specRefI, kIai));
+				sumIb = sum(sumIb, frac(specRefI, kIbi));
+			}
+			denominator = sum(times(denominator, sumIa), times(kMr, sumIb));
+		}
+	}
+
+	// @Override
 	public String getName() {
 		switch (numOfEnzymes) {
 		case 0: // no enzyme, irreversible
@@ -304,7 +254,7 @@ public class MichaelisMenten extends BasicKineticLaw {
 		return true;
 	}
 
-	@Override
+	// @Override
 	public String getSBO() {
 		String name = getName().toLowerCase(), sbo = "none";
 		if (name.equals("normalised kinetics of unireactant enzymes"))

@@ -187,15 +187,15 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				}
 				if (reaction.getNumReactants() > 1) {				
 					if (si.getStoichiometry() != 1) 					
-						denominator=times(denominator,pow(sum(new StringBuffer('1'), frac),new StringBuffer((int) si.getStoichiometry())));
+						denominator=times(denominator,pow(sum(new StringBuffer("1"), frac),new StringBuffer((int) si.getStoichiometry())));
 					else						
-						denominator=times(denominator,sum(new StringBuffer('1'), frac));
+						denominator=times(denominator,sum(new StringBuffer("1"), frac));
 					
 				} else {
 					if (si.getStoichiometry() != 1) 						
-					 denominator=times(denominator,pow(sum(new StringBuffer('1'), frac),new StringBuffer((int) si.getStoichiometry())));
+					 denominator=times(denominator,pow(sum(new StringBuffer("1"), frac),new StringBuffer((int) si.getStoichiometry())));
 					 else 						
-						denominator=times(denominator,sum(new StringBuffer('1'), frac));
+						denominator=times(denominator,sum(new StringBuffer("1"), frac));
 				}
 			}
 			enzymeNum++;
