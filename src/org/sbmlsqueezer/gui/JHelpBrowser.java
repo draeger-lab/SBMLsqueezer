@@ -100,14 +100,8 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		JToolBar toolbar = new JToolBar();
 		JButton backButton, nextButton;
 		try {
-			Image image = ImageIO.read(Resource.class.getResource(
-			/*
-			 * new File(System.getProperty("user.dir") +
-			 * System.getProperty("file.separator") + "resources" +
-			 * System.getProperty("file.separator") + "images" +
-			 * System.getProperty("file.separator") +
-			 */"img/back.png"));
-			// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);*/
+			Image image = ImageIO.read(Resource.class.getResource("img/back.png"));
+			// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
 
 			backButton = new JButton(new ImageIcon(image));
 			backButton.setToolTipText("Last Page");
