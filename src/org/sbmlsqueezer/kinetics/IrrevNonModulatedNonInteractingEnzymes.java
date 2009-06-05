@@ -143,11 +143,10 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				} else {
 					kcat = concat("kcat_", reaction.getId());
 				if (modE.size() > 1) {
-					kcat = concat(kcat, Character.valueOf('_') , modE.get(enzymeNum));
+					kcat = concat(kcat, underscore , modE.get(enzymeNum));
 					}
 			}
-			if (!listOfLocalParameters.contains(kcat))
-				listOfLocalParameters.add(new StringBuffer(kcat));
+			addLocalParameter(kcat);
 
 			if (modE.size() >= 1) {
 			
@@ -167,11 +166,11 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				kM=concat("kM_" , reaction.getId());
 				
 				if (modE.size() > 1) {
-					kM=concat(kM , Character.valueOf('_') , modE.get(enzymeNum));
+					kM=concat(kM , underscore , modE.get(enzymeNum));
 					}
-				kM=concat(kM , Character.valueOf('_') , si.getSpecies());
-				if (!listOfLocalParameters.contains(kM))
-					listOfLocalParameters.add(new StringBuffer(kM));
+				kM=concat(kM , underscore , si.getSpecies());
+				
+				addLocalParameter(kM);
 
 				StringBuffer frac= new StringBuffer();
 				if (si.getStoichiometry() != 1) {

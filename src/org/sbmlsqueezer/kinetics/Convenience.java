@@ -94,7 +94,7 @@ public class Convenience extends GeneralizedMassAction {
 		reactionNum++;
 
 		PluginReaction reaction = getParentReaction();
-		StringBuffer[] catalyst = new StringBuffer[modE.size()];
+		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 		try {
 			StringBuffer activation = createModificationFactor(
 					reaction.getId(), modActi, ACTIVATION);
@@ -120,15 +120,15 @@ public class Convenience extends GeneralizedMassAction {
 									modE, REVERSE))), new StringBuffer("1"));
 				}
 				if (modE.size() > 0)
-					catalyst[i] = times(new StringBuffer(modE.get(i)), frac(
+					catalysts[i] = times(new StringBuffer(modE.get(i)), frac(
 							numerator, denominator));
 				else
 					return (times(activation, inhibition, frac(numerator,
 							denominator)));
 				i++;
-			} while (i < catalyst.length);
-
-			return times(activation, inhibition, sum(catalyst));
+			} while (i < catalysts.length);
+            System.out.println(times(activation, inhibition, sum(catalysts)));
+			return times(activation, inhibition, sum(catalysts));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
 			return new StringBuffer();
@@ -177,8 +177,7 @@ public class Convenience extends GeneralizedMassAction {
 				}
 				kM.append('_');
 				kM.append(ref.getSpecies());
-				if (!listOfLocalParameters.contains(kM))
-					listOfLocalParameters.add(kM);
+				addLocalParameter(kM);
 				nums[i] = pow(frac(getSpecies(ref), kM), getStoichiometry(ref));
 			}
 

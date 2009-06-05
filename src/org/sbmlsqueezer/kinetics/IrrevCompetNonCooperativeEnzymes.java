@@ -128,10 +128,8 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 				if (modE.size() > 1)
 					kcat = concat(kcat , Character.valueOf('_') , modE.get(enzymeNum));
 			}
-			if (!listOfLocalParameters.contains(kcat))
-				listOfLocalParameters.add(new StringBuffer(kcat));
-			if (!listOfLocalParameters.contains(kcat))
-				listOfLocalParameters.add(new StringBuffer(kcat));
+			addLocalParameter(kcat);
+			addLocalParameter(kcat);
 			StringBuffer currEnzyme=new StringBuffer();
 			StringBuffer numerator = new StringBuffer();
 			
@@ -154,8 +152,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 				
 			kM = concat(kM ,Character.valueOf('_') , modE.get(enzymeNum));
 			kM = concat(kM ,Character.valueOf('_') , reaction.getReactant(0).getSpecies());
-			if (!listOfLocalParameters.contains(kM))
-				listOfLocalParameters.add(new StringBuffer(kM));
+			addLocalParameter(kM);
 			
 			if (modInhib.size() == 0)
 				denominator=sum(denominator,kM);
@@ -172,10 +169,8 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 					}
 					kIi =concat(kIi, Character.valueOf('_') , modInhib.get(i));
 					exponent =concat(exponent, Character.valueOf('_') , modInhib.get(i));
-					if (!listOfLocalParameters.contains(kIi))
-						listOfLocalParameters.add(kIi);
-					if (!listOfLocalParameters.contains(exponent))
-						listOfLocalParameters.add(exponent);
+					addLocalParameter(kIi);
+					addLocalParameter(exponent);
 				
 					factor =times(factor,pow(sum(new StringBuffer("1"),frac(new StringBuffer(modInhib.get(i)),kIi)), exponent));
 				}
@@ -197,8 +192,7 @@ public class IrrevCompetNonCooperativeEnzymes extends BasicKineticLaw {
 			do {
 			    StringBuffer kAi = new StringBuffer(concat( "KA_" , reaction.getId() , Character.valueOf('_') , modActi.get(actiNum)));
 				
-				if (!listOfLocalParameters.contains(kAi))
-					listOfLocalParameters.add(kAi);
+				addLocalParameter(kAi);
 							
 				if (modActi.size() > 1) 					
 						activation = times(activation, frac(new StringBuffer(modActi.get(actiNum)), sum(kAi,new StringBuffer(modActi.get(actiNum++)))));

@@ -156,10 +156,8 @@ public class HillEquation extends BasicKineticLaw {
 			acti = times(acti, frac(pow(new StringBuffer(modTActi.get(activatorNum)) , hillcoeff), sum(pow(new StringBuffer(modTActi.get(activatorNum)),hillcoeff), pow(kS, hillcoeff)))
 );
 			
-			if (!listOfLocalParameters.contains(hillcoeff))
-				listOfLocalParameters.add(hillcoeff);
-			if (!listOfLocalParameters.contains(kS))
-				listOfLocalParameters.add(kS);
+			addLocalParameter(hillcoeff);
+			addLocalParameter(kS);
 
 				}
 		if (acti.length() > 2) {
@@ -172,10 +170,8 @@ public class HillEquation extends BasicKineticLaw {
 			
 			inhib = times(inhib, frac(diff(concat(1),pow(new StringBuffer(modTActi.get(inhibitorNum)) , hillcoeff)), sum(pow(new StringBuffer(modTActi.get(inhibitorNum)),hillcoeff), pow(kS, hillcoeff)))
 			);
-			if (!listOfLocalParameters.contains(hillcoeff))
-				listOfLocalParameters.add(hillcoeff);
-			if (!listOfLocalParameters.contains(kS))
-				listOfLocalParameters.add(kS);
+			addLocalParameter(hillcoeff);
+			addLocalParameter(kS);
 
 				}
 		if (inhib.length() > 2) {
@@ -185,8 +181,7 @@ public class HillEquation extends BasicKineticLaw {
 
 		
 		StringBuffer formelTxt = concat("kg_",reaction.getId());
-		if (!listOfLocalParameters.contains(formelTxt))
-			listOfLocalParameters.add(formelTxt);
+		addLocalParameter(formelTxt);
 		if ((acti.length() > 0) && (inhib.length() > 0)) {
 			
 			formelTxt =times(formelTxt, acti, inhib);
