@@ -344,6 +344,7 @@ public class KineticLawGenerator {
 					listOfPossibleEnzymes);
 			break;
 		case CONVENIENCE_KINETICS:
+			System.out.println("Erzeuge Convenience Kinetik.");
 			boolean fullRank = false;
 			if ((model.getNumSpecies() >= model.getNumReactions())
 					&& (columnRank == -1)) {

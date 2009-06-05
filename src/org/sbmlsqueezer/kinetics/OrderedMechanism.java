@@ -55,7 +55,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		return true;
 	}
 
-	@Override
+	//@Override
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		double stoichiometryRight = 0;
@@ -74,12 +74,12 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		return "irreversible " + name;
 	}
 
-	@Override
+	//@Override
 	public String getSBO() {
 		return "none";
 	}
 
-	@Override
+	//@Override
 	protected StringBuffer createKineticEquation(PluginModel model,
 			 List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -89,7 +89,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		StringBuffer denominator = new StringBuffer(); // II
 		StringBuffer inhib = new StringBuffer();
 		StringBuffer acti = new StringBuffer();
-		StringBuffer catalysts[] = new StringBuffer[modE.size()];
+		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 
 		PluginReaction reaction = getParentReaction();
 		PluginSpeciesReference specRefE1 = (PluginSpeciesReference) reaction
@@ -162,31 +162,31 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				kcatn = concat("kcatn_", reaction.getId());
 				if (modE.size() > 1) {
 
-					kcatp = concat(kcatp, Character.valueOf('_'), modE.get(enzymeNum));
-					kMr1 = concat(kMr1, Character.valueOf('_'), modE.get(enzymeNum));
-					kMr2 = concat(kMr2, Character.valueOf('_'), modE.get(enzymeNum));
-					kIr1 = concat(kIr1, Character.valueOf('_'), modE.get(enzymeNum));
+					kcatp = concat(kcatp, underscore, modE.get(enzymeNum));
+					kMr1 = concat(kMr1, underscore, modE.get(enzymeNum));
+					kMr2 = concat(kMr2, underscore, modE.get(enzymeNum));
+					kIr1 = concat(kIr1, underscore, modE.get(enzymeNum));
 
 					// reverse reactions
 
 					StringBuffer modEnzymeNumber = new StringBuffer(modE
 							.get(enzymeNum));
-					kcatn = concat(kcatn, Character.valueOf('_'), modEnzymeNumber);
-					kMp1 = concat(kMp1, Character.valueOf('_'), modEnzymeNumber);
-					kMp2 = concat(kMp2, Character.valueOf('_'), modEnzymeNumber);
-					kIp1 = concat(kIp1, Character.valueOf('_'), modEnzymeNumber);
-					kIp2 = concat(kIp2, Character.valueOf('_'), modEnzymeNumber);
-					kIr2 = concat(kIr2, Character.valueOf('_'), modEnzymeNumber);
+					kcatn = concat(kcatn, underscore, modEnzymeNumber);
+					kMp1 = concat(kMp1, underscore, modEnzymeNumber);
+					kMp2 = concat(kMp2, underscore, modEnzymeNumber);
+					kIp1 = concat(kIp1, underscore, modEnzymeNumber);
+					kIp2 = concat(kIp2, underscore, modEnzymeNumber);
+					kIr2 = concat(kIr2, underscore, modEnzymeNumber);
 
 				}
 			}
 
-			kMr2 = concat(kMr2, Character.valueOf('_'), specRefE2.getSpecies());
-			kMr1 = concat(kMr1, Character.valueOf('_'), specRefE1.getSpecies());
+			kMr2 = concat(kMr2, underscore, specRefE2.getSpecies());
+			kMr1 = concat(kMr1, underscore, specRefE1.getSpecies());
 			// reverse reactions
 			if (specRefP2 != null)
-				kMp2 = concat(kMp2, Character.valueOf('_'), specRefP2.getSpecies());
-			kMp1 = concat(kMp1, Character.valueOf('_'), specRefP1.getSpecies());
+				kMp2 = concat(kMp2, underscore, specRefP2.getSpecies());
+			kMp1 = concat(kMp1, underscore, specRefP1.getSpecies());
 
 			if (specRefE2.equals(specRefE1)) {
 				kMr1 = concat("kMr1", kMr1.substring(2));
@@ -194,35 +194,31 @@ public class OrderedMechanism extends GeneralizedMassAction {
 
 			}
 			// reverse reactions
-			kIp1 = concat(kIp1, Character.valueOf('_'), specRefP1.getSpecies());
+			kIp1 = concat(kIp1, underscore, specRefP1.getSpecies());
 			if (specRefP2 != null) {
 				if (specRefP2.equals(specRefP1)) {
 					kMp1 = concat("kMp1", kMp1.substring(2));
 					kMp2 = concat("kMp2", kMp2.substring(2));
 
 				}
-				kIp2 = concat(kIp2, Character.valueOf('_'), specRefP2
+				kIp2 = concat(kIp2, underscore, specRefP2
 						.getSpecies());
 
 			}
-			kIr1 = concat(kIr1, Character.valueOf('_'), specRefE1.getSpecies());
+			kIr1 = concat(kIr1, underscore, specRefE1.getSpecies());
 
 			// reverse reactions
-			kIr2 = concat(kIr2, Character.valueOf('_'), specRefE2.getSpecies());
+			kIr2 = concat(kIr2, underscore, specRefE2.getSpecies());
 
-			if (!listOfLocalParameters.contains(kcatp))
-				listOfLocalParameters.add(kcatp);
+			addLocalParameter(kcatp);
 
 			/*
 			 * Irreversible reaction
 			 */
 			if (!reaction.getReversible()) {
-				if (!listOfLocalParameters.contains(kMr2))
-					listOfLocalParameters.add(kMr2);
-				if (!listOfLocalParameters.contains(kMr1))
-					listOfLocalParameters.add(kMr1);
-				if (!listOfLocalParameters.contains(kIr1))
-					listOfLocalParameters.add(kIr1);
+				addLocalParameter(kMr2);
+				addLocalParameter(kMr1);
+				addLocalParameter(kIr1);
 
 				
 				if (modE.size() > 0) {
@@ -256,24 +252,15 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible Bi-Bi reaction.
 				 */
-				if (!listOfLocalParameters.contains(kIr2))
-					listOfLocalParameters.add(kIr2);
-				if (!listOfLocalParameters.contains(kcatn))
-					listOfLocalParameters.add(kcatn);
-				if (!listOfLocalParameters.contains(kMr1))
-					listOfLocalParameters.add(kMr1);
-				if (!listOfLocalParameters.contains(kMr2))
-					listOfLocalParameters.add(kMr2);
-				if (!listOfLocalParameters.contains(kMp1))
-					listOfLocalParameters.add(kMp1);
-				if (!listOfLocalParameters.contains(kMp2))
-					listOfLocalParameters.add(kMp2);
-				if (!listOfLocalParameters.contains(kIr1))
-					listOfLocalParameters.add(kIr1);
-				if (!listOfLocalParameters.contains(kIp1))
-					listOfLocalParameters.add(kIp1);
-				if (!listOfLocalParameters.contains(kIp2))
-					listOfLocalParameters.add(kIp2);
+				addLocalParameter(kIr2);
+				addLocalParameter(kcatn);
+				addLocalParameter(kMr1);
+				addLocalParameter(kMr2);
+				addLocalParameter(kMp1);
+				addLocalParameter(kMp2);
+				addLocalParameter(kIr1);
+				addLocalParameter(kIp1);
+				addLocalParameter(kIp2);
 				
 				StringBuffer numeratorForward = new StringBuffer();
 				StringBuffer numeratorReverse = new StringBuffer();
@@ -368,18 +355,12 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible bi-uni reaction
 				 */
-				if (!listOfLocalParameters.contains(kcatn))
-					listOfLocalParameters.add(kcatn);
-				if (!listOfLocalParameters.contains(kMr1))
-					listOfLocalParameters.add(kMr1);
-				if (!listOfLocalParameters.contains(kMr2))
-					listOfLocalParameters.add(kMr2);
-				if (!listOfLocalParameters.contains(kMp1))
-					listOfLocalParameters.add(kMp1);
-				if (!listOfLocalParameters.contains(kIr1))
-					listOfLocalParameters.add(kIr1);
-				if (!listOfLocalParameters.contains(kIp1))
-					listOfLocalParameters.add(kIp1);
+				addLocalParameter(kcatn);
+				addLocalParameter(kMr1);
+				addLocalParameter(kMr2);
+				addLocalParameter(kMp1);
+				addLocalParameter(kIr1);
+				addLocalParameter(kIp1);
 
 				StringBuffer numeratorForward = new StringBuffer();
 				StringBuffer numeratorReverse = new StringBuffer();

@@ -85,7 +85,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		StringBuffer denominator = new StringBuffer(); // II
 		StringBuffer inhib = new StringBuffer();
 		StringBuffer acti = new StringBuffer();
-		StringBuffer catalysts[] = new StringBuffer[modE.size()];
+		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 
 		PluginReaction reaction = getParentReaction();
 		PluginSpeciesReference specRefE1 = (PluginSpeciesReference) reaction
@@ -132,7 +132,8 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			StringBuffer kcatp = new StringBuffer();
 			StringBuffer kMr1 = concat("kM_", reaction.getId());
 			StringBuffer kMr2 = concat("kM_", reaction.getId());
-			StringBuffer enzyme = new StringBuffer(modE.get(enzymeNum));
+			StringBuffer enzyme = new StringBuffer(modE.size() == 0 ? "" : modE
+					.get(enzymeNum));
 
 			if (modE.size() == 0) {
 				kcatp = concat("Vp_", reaction.getId());
@@ -140,24 +141,21 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			} else {
 				kcatp = concat("kcatp_", reaction.getId());
 				if (modE.size() > 1) {
-					kcatp = concat(kcatp, Character.valueOf('_'), enzyme);
-					kMr1 = concat(kMr1, Character.valueOf('_'), enzyme);
-					kMr2 = concat(kMr2, Character.valueOf('_'), enzyme);
+					kcatp = concat(kcatp, underscore, enzyme);
+					kMr1 = concat(kMr1, underscore, enzyme);
+					kMr2 = concat(kMr2, underscore, enzyme);
 				}
 			}
-			kMr2 = concat(kMr2, Character.valueOf('_'), specRefE2.getSpecies());
-			kMr1 = concat(kMr1, Character.valueOf('_'), specRefE2.getSpecies());
+			kMr2 = concat(kMr2, underscore, specRefE2.getSpecies());
+			kMr1 = concat(kMr1, underscore, specRefE2.getSpecies());
 			if (specRefE2.equals(specRefE1)) {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
 			}
 
-			if (!listOfLocalParameters.contains(kcatp))
-				listOfLocalParameters.add(kcatp);
-			if (!listOfLocalParameters.contains(kMr2))
-				listOfLocalParameters.add(kMr2);
-			if (!listOfLocalParameters.contains(kMr1))
-				listOfLocalParameters.add(kMr1);
+			addLocalParameter(kcatp);
+			addLocalParameter(kMr2);
+			addLocalParameter(kMr1);
 
 			/*
 			 * Irreversible Reaction
@@ -208,30 +206,19 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					if (modE.size() > 1) {
 						StringBuffer modEnzymeNumber = new StringBuffer(modE
 								.get(enzymeNum));
-						kcatn = concat(kcatn, Character.valueOf('_'),
-								modEnzymeNumber);
-						kMp1 = concat(kMp1, Character.valueOf('_'),
-								modEnzymeNumber);
-						kMp2 = concat(kMp2, Character.valueOf('_'),
-								modEnzymeNumber);
-						kIp1 = concat(kIp1, Character.valueOf('_'),
-								modEnzymeNumber);
-						kIp2 = concat(kIp2, Character.valueOf('_'),
-								modEnzymeNumber);
-						kIr1 = concat(kIr1, Character.valueOf('_'),
-								modEnzymeNumber);
+						kcatn = concat(kcatn, underscore, modEnzymeNumber);
+						kMp1 = concat(kMp1, underscore, modEnzymeNumber);
+						kMp2 = concat(kMp2, underscore, modEnzymeNumber);
+						kIp1 = concat(kIp1, underscore, modEnzymeNumber);
+						kIp2 = concat(kIp2, underscore, modEnzymeNumber);
+						kIr1 = concat(kIr1, underscore, modEnzymeNumber);
 					}
 				}
-				kMp1 = concat(kMp1, Character.valueOf('_'), specRefP1
-						.getSpecies());
-				kMp2 = concat(kMp2, Character.valueOf('_'), specRefP2
-						.getSpecies());
-				kIp1 = concat(kIp1, Character.valueOf('_'), specRefP1
-						.getSpecies());
-				kIp2 = concat(kIp2, Character.valueOf('_'), specRefP2
-						.getSpecies());
-				kIr1 = concat(kIr1, Character.valueOf('_'), specRefE1
-						.getSpecies());
+				kMp1 = concat(kMp1, underscore, specRefP1.getSpecies());
+				kMp2 = concat(kMp2, underscore, specRefP2.getSpecies());
+				kIp1 = concat(kIp1, underscore, specRefP1.getSpecies());
+				kIp2 = concat(kIp2, underscore, specRefP2.getSpecies());
+				kIr1 = concat(kIr1, underscore, specRefE1.getSpecies());
 				if (specRefP2.equals(specRefP1)) {
 					kMp1 = concat("kMp1", kMp1.substring(2));
 					kMp2 = concat("kMp2", kMp2.substring(2));
@@ -240,18 +227,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 
 				}
 
-				if (!listOfLocalParameters.contains(kcatn))
-					listOfLocalParameters.add(kcatn);
-				if (!listOfLocalParameters.contains(kMp2))
-					listOfLocalParameters.add(kMp2);
-				if (!listOfLocalParameters.contains(kMp1))
-					listOfLocalParameters.add(kMp1);
-				if (!listOfLocalParameters.contains(kIp1))
-					listOfLocalParameters.add(kIp1);
-				if (!listOfLocalParameters.contains(kIp2))
-					listOfLocalParameters.add(kIp2);
-				if (!listOfLocalParameters.contains(kIr1))
-					listOfLocalParameters.add(kIr1);
+				addLocalParameter(kcatn);
+				addLocalParameter(kMp2);
+				addLocalParameter(kMp1);
+				addLocalParameter(kIp1);
+				addLocalParameter(kIp2);
+				addLocalParameter(kIr1);
 
 				numeratorForward = frac(kcatp, times(kIr1, kMr2));
 				if (modE.size() > 0)
