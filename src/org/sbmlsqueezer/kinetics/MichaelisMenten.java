@@ -148,12 +148,10 @@ public class MichaelisMenten extends GeneralizedMassAction {
 
 		// the formalism from the convenience kinetics as a default.
 		if ((modInhib.size() > 1) && (reaction.getReversible()))
-			formula = times(createModificationFactor(reaction.getId(),
-					modInhib, INHIBITION), formula);
+			formula = times(createInhibitionFactor(modInhib), formula);
 		// Activation
 		if (modActi.size() > 0)
-			formula = times(createModificationFactor(reaction.getId(), modActi,
-					ACTIVATION), formula);
+			formula = times(createActivationFactor(modActi), formula);
 		return formula;
 	}
 
