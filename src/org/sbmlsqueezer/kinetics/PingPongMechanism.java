@@ -300,8 +300,8 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			}
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
-		acti = createModificationFactor(reaction.getId(), modActi, ACTIVATION);
-		inhib = createModificationFactor(reaction.getId(), modInhib, INHIBITION);
+		acti = createActivationFactor(modActi);
+		inhib = createInhibitionFactor(modInhib);
 		return times(acti, inhib, sum(catalysts));
 	}
 

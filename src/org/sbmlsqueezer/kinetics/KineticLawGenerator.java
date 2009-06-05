@@ -15,7 +15,6 @@ import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginParameter;
 import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSBase;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
@@ -344,23 +343,29 @@ public class KineticLawGenerator {
 					listOfPossibleEnzymes);
 			break;
 		case CONVENIENCE_KINETICS:
-			System.out.println("Erzeuge Convenience Kinetik.");
+			
 			boolean fullRank = false;
 			if ((model.getNumSpecies() >= model.getNumReactions())
 					&& (columnRank == -1)) {
 				GaussianRank gaussian = new GaussianRank(stoechMatrix(model));
 				columnRank = gaussian.getColumnRank();
 				fullRank = gaussian.hasFullRank();
-			} else if (columnRank == model.getNumReactions()) {
+				
+			} else if (columnRank == model.getNumReactions()) 
 				fullRank = true;
-			}
+				
+		
+		
 			if (fullRank) {
+			
 				kineticLaw = new Convenience(reaction, model,
 						listOfPossibleEnzymes);
+				
 			} else {
 				kineticLaw = new ConvenienceIndependent(reaction, model,
 						listOfPossibleEnzymes);
 			}
+			
 			break;
 		default:
 			kineticLaw = new GeneralizedMassAction(reaction, model,

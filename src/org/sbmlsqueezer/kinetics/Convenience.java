@@ -25,6 +25,17 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @author Dieudonn&eacute; Motsou Wouamba
  * @date Aug 1, 2007
  */
+
+
+
+
+
+
+
+
+
+
+
 public class Convenience extends GeneralizedMassAction {
 
 	/**
@@ -86,20 +97,23 @@ public class Convenience extends GeneralizedMassAction {
 	 *           afterwards, summed up. The whole sum is multiplied with the
 	 *           activators and inhibitors of the reaction.
 	 */
+	
+	
 	protected StringBuffer createKineticEquation(PluginModel model,
 			int reactionNum, List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
+	throws RateLawNotApplicableException {
+		
+		System.out.println(" HURRAAAAAAA sackgesicht!!!!" );
+
 		reactionNum++;
 
 		PluginReaction reaction = getParentReaction();
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 		try {
-			StringBuffer activation = createModificationFactor(
-					reaction.getId(), modActi, ACTIVATION);
-			StringBuffer inhibition = createModificationFactor(
-					reaction.getId(), modInhib, INHIBITION);
+			StringBuffer activation = createActivationFactor(modActi);
+			StringBuffer inhibition = createInhibitionFactor(modInhib);
 
 			int i = 0;
 			do {
@@ -127,7 +141,7 @@ public class Convenience extends GeneralizedMassAction {
 							denominator)));
 				i++;
 			} while (i < catalysts.length);
-            System.out.println(times(activation, inhibition, sum(catalysts)));
+			System.out.println(times(activation, inhibition, sum(catalysts)));
 			return times(activation, inhibition, sum(catalysts));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();

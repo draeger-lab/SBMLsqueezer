@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Fri Jun 05 14:02:54 CEST 2009
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=/opt/CellDesigner4.0.1/plugin/SBMLsqueezerTest1.jar
+manifest.mergeall=true
+manifest.mainclass=org.sbmlsqueezer.gui.SBMLsqueezerUI
+manifest.file=<createnew>
+jarname.isextern=true
+onejar.expand=
+excludes=<po|SBMLsqueezer>~.svn/;<jar|celldesigner.jar>;<jar|sbmlj.jar>
+includes=
