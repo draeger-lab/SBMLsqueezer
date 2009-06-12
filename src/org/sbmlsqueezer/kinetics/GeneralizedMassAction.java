@@ -493,7 +493,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		}
 		return sbo;
 	}
-
+	// TODO umschreiben
 	protected StringBuffer createKineticEquation(int catNumber,
 			 List<String> modCat, List<String> modActi,
 			List<String> modInhib, boolean zeroReact, boolean zeroProd) {
@@ -501,21 +501,30 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		System.out.println("createKineticEquation GMAC 1");
 		
 		PluginReaction reaction = getParentReaction();
+
 		try {
-			StringBuffer ass = getReactionPartners(reaction, modCat, catNumber,
-					FORWARD, zeroReact);
-			StringBuffer diss = getReactionPartners(reaction, modCat,
-					catNumber, REVERSE, zeroProd);
-			return times(createActivationFactor( modActi), 
-					createInhibitionFactor(
-					modInhib), diff(ass, diss));
+			if (reaction.getReversible()){
+				StringBuffer ass = getReactionPartners(reaction, modCat, catNumber,
+						FORWARD, zeroReact);
+				StringBuffer diss = getReactionPartners(reaction, modCat,
+						catNumber, REVERSE, zeroProd);
+				return times(createActivationFactor( modActi), 
+						createInhibitionFactor(
+								modInhib), diff(ass, diss));
+			}else {
+				StringBuffer ass = getReactionPartners(reaction, modCat, catNumber, 
+						FORWARD, zeroReact);
+				return times(createActivationFactor(modActi),
+						createInhibitionFactor(modInhib),ass);
+			}
+
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
 			return new StringBuffer();
 		}
 	}
 
-	// @Override
+	
 	protected StringBuffer createKineticEquation(PluginModel model,
 			 List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -623,22 +632,67 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	private StringBuffer getReactionPartners(PluginReaction reaction,
 			List<String> catalysators, int catalysatorNumber, boolean type,
 			boolean b) throws IllegalFormatException {
-		if (type == FORWARD || type == REVERSE) {
+		
+		
+		StringBuffer k = new StringBuffer((type == FORWARD) ? "kass_"
+				: "kdiss_");
+		k.append(reaction.getId());
+		
+		StringBuffer[] products = new StringBuffer[reaction.getNumProducts()];
+		StringBuffer[] reactants = new StringBuffer[reaction.getNumReactants()];
+		if (type ==FORWARD){
+			int prod = reaction.getNumProducts();
+			for (int i =0; i < prod; i++){
+				products[i] = getSpecies(reaction.getProduct(i));
+			
+			}
+			k = concat (k, times(products));
+			
+	
+		}
+		if (type == REVERSE){
+			int reac = reaction.getNumReactants();
+			for (int i= 0; i < reac; i++){
+				reactants[i] = getSpecies(reaction.getReactant(i));
+
+			}
+			k = concat(k, times(reactants));
+			
+		}
+		
+		
+		return k;
+		
+		
+		
+		
+				
+		
+		
+				
+		/* ERSTMAL DRINLASSEN!!
+	
 			if ((type == FORWARD)
 					|| (type == REVERSE && reaction.getReversible())) {
 				StringBuffer k = new StringBuffer((type == FORWARD) ? "kass_"
 						: "kdiss_");
 				k.append(reaction.getId());
+				
 				if (!listOfLocalParameters.contains(k))
 					listOfLocalParameters.add(k);
 				Vector<StringBuffer> parts = new Vector<StringBuffer>();
 				parts.add(k);
+				
+				// was ist b?
+				
 				if (!b)
 					for (int i = 0; i < ((type == FORWARD) ? reaction
 							.getNumReactants() : reaction.getNumProducts()); i++) {
 						PluginSpeciesReference ref = (type == FORWARD) ? reaction
 								.getReactant(i)
 								: reaction.getProduct(i);
+								
+							//
 						parts.add(pow(getSpecies(ref), getStoichiometry(ref)));
 					}
 
@@ -650,10 +704,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			} else {
 				return new StringBuffer();
 			}
-		} else {
-			throw new IllegalFormatException(
-					"Invalid type argument for GMAK reaction partners");
-		}
+	*/	
 	}
 
 	/**
