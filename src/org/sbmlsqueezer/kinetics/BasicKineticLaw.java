@@ -77,7 +77,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	@SuppressWarnings("deprecation")
 	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
@@ -95,7 +94,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		List<String> modTInhib = new ArrayList<String>();
 		identifyModifers(parentReaction, listOfPossibleEnzymes, modInhib,
 				modTActi, modTInhib, modActi, modE, modCat);
-		StringBuffer formula = createKineticEquation(model, modE, modActi,
+			StringBuffer formula = createKineticEquation(model, modE, modActi,
 				modTActi, modInhib, modTInhib, modCat);
 		if (getMath() == null) {
 			setFormula(formula.toString());
@@ -281,7 +280,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
-
+	
 	/**
 	 * Returns the sum of the given elements as StringBuffer.
 	 * 
@@ -449,5 +448,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		if (!listOfGlobalParameters.contains(parameter))
 			listOfGlobalParameters.add(parameter);
 	}
+
+
 	
 }

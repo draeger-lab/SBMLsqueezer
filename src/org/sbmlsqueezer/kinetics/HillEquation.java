@@ -67,7 +67,7 @@ public class HillEquation extends BasicKineticLaw {
 		return true;
 	}
 
-	@Override
+
 	public String getName() {
 		String name;
 		if (getParentReaction().getNumModifiers() > 0)
@@ -92,7 +92,7 @@ public class HillEquation extends BasicKineticLaw {
 		return sbo;
 	}
 
-	@Override
+	
 	protected StringBuffer createKineticEquation(PluginModel model, 
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
