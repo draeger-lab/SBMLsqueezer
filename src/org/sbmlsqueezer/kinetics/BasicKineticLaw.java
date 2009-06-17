@@ -3,6 +3,7 @@ package org.sbmlsqueezer.kinetics;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -49,7 +50,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 	protected StringBuffer formelTeX;
 
-	protected List<StringBuffer> listOfLocalParameters, listOfGlobalParameters;
+	private List<StringBuffer> listOfLocalParameters, listOfGlobalParameters;
 
 	protected String sboTerm;
 
@@ -94,7 +95,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		List<String> modTInhib = new ArrayList<String>();
 		identifyModifers(parentReaction, listOfPossibleEnzymes, modInhib,
 				modTActi, modTInhib, modActi, modE, modCat);
-			StringBuffer formula = createKineticEquation(model, modE, modActi,
+		StringBuffer formula = createKineticEquation(model, modE, modActi,
 				modTActi, modInhib, modTInhib, modCat);
 		if (getMath() == null) {
 			setFormula(formula.toString());
@@ -280,7 +281,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
-	
+
 	/**
 	 * Returns the sum of the given elements as StringBuffer.
 	 * 
@@ -288,7 +289,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	protected StringBuffer sum(StringBuffer... summands) {
-		return arith('+', summands);
+		return brackets(arith('+', summands));
 	}
 
 	/**
@@ -298,7 +299,9 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	protected StringBuffer diff(StringBuffer... subtrahents) {
-		return arith('-', subtrahents);
+		if (subtrahents.length == 1)
+			return brackets(concat(Character.valueOf('-'), subtrahents));
+		return brackets(arith('-', subtrahents));
 	}
 
 	/**
@@ -333,7 +336,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	protected StringBuffer frac(StringBuffer numerator, StringBuffer denominator) {
-		return arith('/', numerator, denominator);
+		return brackets(arith('/', numerator, denominator));
 	}
 
 	/**
@@ -389,24 +392,26 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 */
 	protected StringBuffer arith(char operator, StringBuffer... elements) {
 		Vector<StringBuffer> vsb = new Vector<StringBuffer>();
+		StringBuffer equation = new StringBuffer();
 		for (StringBuffer sb : elements)
 			if (sb.length() > 0)
 				vsb.add(sb);
-		if (vsb.size() > 0)
-			if (vsb.size() == 1)
-				return vsb.get(0);
-			else {
-				StringBuffer sb = new StringBuffer("(");
-				sb.append(vsb.get(0));
-				for (int i = 1; i < vsb.size(); i++) {
-					sb.append(operator);
-					sb.append(vsb.get(i));
-				}
-				sb.append(')');
-				return sb;
-			}
-		else
-			return new StringBuffer();
+		if (vsb.size() >= 1)
+			equation.append(vsb.get(0));
+
+		for (int count = 1; count < vsb.size(); count++) {
+			equation.append(operator);
+			equation.append(vsb.get(count));
+		}
+		return equation;/*
+						 * ((operator == '*') || (operator == '/')) ? equation :
+						 * brackets(equation);
+						 */
+
+	}
+
+	protected StringBuffer brackets(StringBuffer sb) {
+		return concat(Character.valueOf('('), sb.append(')'));
 	}
 
 	/**
@@ -417,31 +422,28 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param sb
 	 * @return
 	 */
-	protected StringBuffer removeBrackets(StringBuffer sb) {
-		if (sb.length() > 0)
-			if (sb.charAt(0) == '(' && sb.charAt(sb.length() - 1) == ')') {
-				sb.deleteCharAt(sb.length() - 1);
-				sb.deleteCharAt(0);
-			}
-
-		sb = removeBrackets(sb);
-
-		return sb;
-	}
+	/*
+	 * protected StringBuffer removeBrackets(StringBuffer sb) { if (sb.length()
+	 * > 0) { if ((sb.charAt(0) == '(') && (sb.charAt(sb.length() - 1) == ')'))
+	 * { sb.deleteCharAt(sb.length() - 1); sb.deleteCharAt(0); sb =
+	 * removeBrackets(sb); } } return sb; }
+	 */
 
 	/**
-	 * Adds the given parameter only to the list of local parameters
-	 * if this list does not yet contain this parameter.
+	 * Adds the given parameter only to the list of local parameters if this
+	 * list does not yet contain this parameter.
+	 * 
 	 * @param parameter
 	 */
 	protected void addLocalParameter(StringBuffer parameter) {
 		if (!listOfLocalParameters.contains(parameter))
 			listOfLocalParameters.add(parameter);
 	}
-	
+
 	/**
-	 * Adds the given parameter only to the list of global parameters
-	 * if this list does not yet contain this parameter.
+	 * Adds the given parameter only to the list of global parameters if this
+	 * list does not yet contain this parameter.
+	 * 
 	 * @param parameter
 	 */
 	protected void addGlobalParameter(StringBuffer parameter) {
@@ -449,6 +451,4 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			listOfGlobalParameters.add(parameter);
 	}
 
-
-	
 }

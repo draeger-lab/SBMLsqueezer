@@ -101,8 +101,7 @@ public class ConvenienceIndependent extends Convenience {
 					klV.append('_');
 					klV.append(modE.get(i));
 				}
-				if (!listOfLocalParameters.contains(klV))
-					listOfLocalParameters.add(klV);
+				addLocalParameter(klV);
 
 				StringBuffer numerator, denominator;
 				if (!reaction.getReversible()) {
@@ -167,8 +166,7 @@ public class ConvenienceIndependent extends Convenience {
 				nums[0].append('_');
 				nums[0].append(modE.get(enzymeNumber));
 			}
-			if (!listOfLocalParameters.contains(nums[0]))
-				listOfLocalParameters.add(nums[0]);
+			addLocalParameter(nums[0]);
 			for (int i = 1; i < nums.length; i++) {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction
 						.getReactant(i - 1) : reaction.getProduct(i - 1);
@@ -180,14 +178,12 @@ public class ConvenienceIndependent extends Convenience {
 				}
 				kM.append('_');
 				kM.append(ref.getSpecies());
-				if (!listOfLocalParameters.contains(kM))
-					listOfLocalParameters.add(kM);
+				addLocalParameter(kM);
 
 				StringBuffer kiG = new StringBuffer("kG_");
 				kiG.append(ref.getSpecies());
-				if (!listOfGlobalParameters.contains(kiG))
-					listOfGlobalParameters.add(kiG);
-
+				addLocalParameter(kiG);
+				
 				nums[i] = times(pow(frac(getSpecies(ref), kM),
 						getStoichiometry(ref)), root(new StringBuffer("2"),
 						pow(times(kiG, kM), getStoichiometry(ref))));

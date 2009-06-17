@@ -41,7 +41,7 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	@Override
+
 	protected StringBuffer createKineticEquation(PluginModel model,
 		 List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -52,11 +52,11 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 		reactantOrder = 0;
 		productOrder = Double.NaN;
 		if (modCat.isEmpty())
-			return super.createKineticEquation(-1, modCat,
+			return super.createKineticEquation(modE,-1, modCat,
 					modActi, modActi, zeroReact, zeroProd);
 		StringBuffer[] parts = new StringBuffer[modCat.size()];
 		for (int i = 0; i < parts.length; i++)
-			parts[i] = super.createKineticEquation(i, modCat,
+			parts[i] = super.createKineticEquation(modE,i, modCat,
 					modActi, modActi, zeroReact, zeroProd);
 		return sum(parts);
 	}

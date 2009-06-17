@@ -493,29 +493,30 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		}
 		return sbo;
 	}
+
 	// TODO umschreiben
-	protected StringBuffer createKineticEquation(int catNumber,
-			 List<String> modCat, List<String> modActi,
+	protected StringBuffer createKineticEquation(List<String> modE,
+			int catNumber, List<String> modCat, List<String> modActi,
 			List<String> modInhib, boolean zeroReact, boolean zeroProd) {
-		
-		System.out.println("createKineticEquation GMAC 1");
-		
+
 		PluginReaction reaction = getParentReaction();
 
 		try {
-			if (reaction.getReversible()){
-				StringBuffer ass = getReactionPartners(reaction, modCat, catNumber,
-						FORWARD, zeroReact);
-				StringBuffer diss = getReactionPartners(reaction, modCat,
+			if (reaction.getReversible()) {
+				StringBuffer ass = getReactionPartners(reaction, modE, modCat,
+						catNumber, FORWARD, zeroReact);
+
+				StringBuffer diss = getReactionPartners(reaction, modE, modCat,
 						catNumber, REVERSE, zeroProd);
-				return times(createActivationFactor( modActi), 
-						createInhibitionFactor(
-								modInhib), diff(ass, diss));
-			}else {
-				StringBuffer ass = getReactionPartners(reaction, modCat, catNumber, 
-						FORWARD, zeroReact);
+
 				return times(createActivationFactor(modActi),
-						createInhibitionFactor(modInhib),ass);
+						createInhibitionFactor(modInhib), diff(ass, diss));
+			} else {
+				StringBuffer ass = getReactionPartners(reaction, modE, modCat,
+						catNumber, FORWARD, zeroReact);
+
+				return times(createActivationFactor(modActi),
+						createInhibitionFactor(modInhib), ass);
 			}
 
 		} catch (IllegalFormatException exc) {
@@ -524,29 +525,22 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		}
 	}
 
-	
 	protected StringBuffer createKineticEquation(PluginModel model,
-			 List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		
-		System.out.println("createKineticEquation GMAC 2");
+
 		reactantOrder = productOrder = Double.NaN;
 		boolean zeroReact = false, zeroProd = false;
 		if (modCat.isEmpty())
-			return createKineticEquation(-1, modCat, modActi,
-					modInhib, zeroReact, zeroProd);
+			return createKineticEquation(modE, -1, modCat, modActi, modInhib,
+					zeroReact, zeroProd);
 		StringBuffer[] equations = new StringBuffer[modCat.size()];
-		for (int i = 0; i < equations.length; i++)
-			if (equations.length == 1)
-				equations[i] = removeBrackets(createKineticEquation(i,
-						 modCat, modActi, modInhib, zeroReact,
-						zeroProd));
-			else
-				equations[i] = createKineticEquation(i, modCat,
-						modActi, modInhib, zeroReact, zeroProd);
-		return removeBrackets(sum(equations));
+
+		equations[0] = createKineticEquation(modE, 0, modCat, modActi,
+				modInhib, zeroReact, zeroProd);
+
+		return sum(equations);
 
 	}
 
@@ -556,47 +550,39 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * 
 	 * @param reactionID
 	 * @param modifiers
-	 * @param type ACTIVATION or INHIBITION
+	 * @param type
+	 *            ACTIVATION or INHIBITION
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	private StringBuffer createModificationFactor(List<String> modifiers, boolean type) throws IllegalFormatException {
+	private StringBuffer createModificationFactor(List<String> modifiers,
+			boolean type) throws IllegalFormatException {
 
 		if (!modifiers.isEmpty()) {
 			StringBuffer[] mods = new StringBuffer[modifiers.size()];
-			
+
 			for (int i = 0; i < mods.length; i++) {
-		
-				if (type == ACTIVATION) { 
+
+				if (type == ACTIVATION) {
 					// Activator Mod
-			
-					StringBuffer k = new StringBuffer("kA_");
-					k.append(getParentReactionID());
-					k.append('_');
-					k.append(modifiers.get(i));
-					mods[i] = frac(new StringBuffer(modifiers.get(i)),
-							sum(k, new StringBuffer(modifiers.get(i))));
-					if (!listOfLocalParameters.contains(k))
-						listOfLocalParameters.add(k);
-				} else{
-					// 	Inhibitor Mod
-				
-					StringBuffer k = new StringBuffer( "kI_");
-					k.append(getParentReactionID());
-					k.append('_');
-					k.append(modifiers.get(i));
-					mods[i] = frac(k,
-							sum(k, new StringBuffer(modifiers.get(i))));
-					if (!listOfLocalParameters.contains(k))
-						listOfLocalParameters.add(k);
+
+					StringBuffer kA = concat("kA_", getParentReactionID(),
+							underscore, modifiers.get(i));
+					mods[i] = frac(new StringBuffer(modifiers.get(i)), sum(kA,
+							new StringBuffer(modifiers.get(i))));
+					addLocalParameter(kA);
+				} else {
+					// Inhibitor Mod
+					StringBuffer kI = concat("kI_", getParentReactionID(),
+							underscore, modifiers.get(i));
+					mods[i] = frac(kI, sum(kI, new StringBuffer(modifiers
+							.get(i))));
+					addLocalParameter(kI);
 				}
-
-
 			}
 			return times(mods);
 		} else
 			return new StringBuffer();
-
 
 	}
 
@@ -606,11 +592,13 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer createActivationFactor(List<String> modifiers) throws IllegalFormatException {
+	protected StringBuffer createActivationFactor(List<String> modifiers)
+			throws IllegalFormatException {
 		return createModificationFactor(modifiers, ACTIVATION);
 	}
-	
-	protected StringBuffer createInhibitionFactor(List<String> modifiers) throws IllegalFormatException{
+
+	protected StringBuffer createInhibitionFactor(List<String> modifiers)
+			throws IllegalFormatException {
 		return createModificationFactor(modifiers, INHIBITION);
 	}
 
@@ -630,81 +618,109 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @throws IllegalFormatException
 	 */
 	private StringBuffer getReactionPartners(PluginReaction reaction,
-			List<String> catalysators, int catalysatorNumber, boolean type,
-			boolean b) throws IllegalFormatException {
-		
-		
+			List<String> modE, List<String> catalysators,
+			int catalysatorNumber, boolean type, boolean b)
+			throws IllegalFormatException {
+		StringBuffer equation = new StringBuffer();
+
 		StringBuffer k = new StringBuffer((type == FORWARD) ? "kass_"
 				: "kdiss_");
 		k.append(reaction.getId());
+
+		StringBuffer[] speciesforward = new StringBuffer[reaction
+				.getNumReactants() + 2];
+		StringBuffer[] speciesreverse = new StringBuffer[reaction
+				.getNumProducts() + 2];
+		StringBuffer[] eqrare = new StringBuffer[Math.max(modE.size()
+				+ catalysators.size(), 1)];
+		int count = 1;
+		int catcount = 0;
+		speciesforward[0] = k;
+		speciesreverse[0] = k;
+
 		
-		StringBuffer[] products = new StringBuffer[reaction.getNumProducts()];
-		StringBuffer[] reactants = new StringBuffer[reaction.getNumReactants()];
-		if (type ==FORWARD){
-			int prod = reaction.getNumProducts();
-			for (int i =0; i < prod; i++){
-				products[i] = getSpecies(reaction.getProduct(i));
+		
+		if (type == FORWARD) {
+			int prod = reaction.getNumReactants();
+			for (int i = 0; i < prod; i++) {
 			
+				speciesforward[count] = getSpecies(reaction.getReactant(i));
+				count++;
 			}
-			k = concat (k, times(products));
+			for (int i = 0; i < modE.size(); i++) {
 			
-	
+				speciesforward[count] = new StringBuffer(modE.get(i));
+				speciesforward[0] = concat(k,underscore,modE.get(i));
+				eqrare[catcount] = times(speciesforward);
+				catcount++;
+
+			}
+			for (int i = 0; i < catalysators.size(); i++) {
+				speciesforward[count] = new StringBuffer(catalysators.get(i));
+				speciesforward[0] = concat(k,underscore,catalysators.get(i));
+				eqrare[catcount] = times(speciesforward);
+				catcount++;
+
+			}
+
+			equation = sum(eqrare);
+
 		}
-		if (type == REVERSE){
-			int reac = reaction.getNumReactants();
-			for (int i= 0; i < reac; i++){
-				reactants[i] = getSpecies(reaction.getReactant(i));
+		if (type == REVERSE) {
+			int reac = reaction.getNumProducts();
+			for (int i = 0; i < reac; i++) {
+				speciesreverse[count] = getSpecies(reaction.getProduct(i));
+				count++;
 
 			}
-			k = concat(k, times(reactants));
-			
+			for (int i = 0; i < modE.size(); i++) {
+				speciesreverse[count] = new StringBuffer(modE.get(i));
+				speciesreverse[0] = concat(k,underscore,modE.get(i));
+				eqrare[catcount] = times(speciesreverse);
+				catcount++;
+
+			}
+
+			for (int i = 0; i < catalysators.size(); i++) {
+				speciesreverse[count] = new StringBuffer(catalysators.get(i));
+				speciesreverse[0] = concat(k,underscore,catalysators.get(i));
+				eqrare[catcount] = times(speciesreverse);
+				catcount++;
+
+			}
+
+			equation = sum(eqrare);
+
 		}
-		
-		
-		return k;
-		
-		
-		
-		
-				
-		
-		
-				
-		/* ERSTMAL DRINLASSEN!!
-	
-			if ((type == FORWARD)
-					|| (type == REVERSE && reaction.getReversible())) {
-				StringBuffer k = new StringBuffer((type == FORWARD) ? "kass_"
-						: "kdiss_");
-				k.append(reaction.getId());
-				
-				if (!listOfLocalParameters.contains(k))
-					listOfLocalParameters.add(k);
-				Vector<StringBuffer> parts = new Vector<StringBuffer>();
-				parts.add(k);
-				
-				// was ist b?
-				
-				if (!b)
-					for (int i = 0; i < ((type == FORWARD) ? reaction
-							.getNumReactants() : reaction.getNumProducts()); i++) {
-						PluginSpeciesReference ref = (type == FORWARD) ? reaction
-								.getReactant(i)
-								: reaction.getProduct(i);
-								
-							//
-						parts.add(pow(getSpecies(ref), getStoichiometry(ref)));
-					}
 
-				if (catalysatorNumber >= 0)
-					parts.add(new StringBuffer(catalysators
-							.get(catalysatorNumber)));
+		return equation;
 
-				return times(parts.toArray(new StringBuffer[parts.size()]));
-			} else {
-				return new StringBuffer();
-			}
-	*/	
+		/*
+		 * ERSTMAL DRINLASSEN!!
+		 * 
+		 * if ((type == FORWARD) || (type == REVERSE &&
+		 * reaction.getReversible())) { StringBuffer k = new StringBuffer((type
+		 * == FORWARD) ? "kass_" : "kdiss_"); k.append(reaction.getId());
+		 * 
+		 * if (!listOfLocalParameters.contains(k)) listOfLocalParameters.add(k);
+		 * Vector<StringBuffer> parts = new Vector<StringBuffer>();
+		 * parts.add(k);
+		 * 
+		 * // was ist b?
+		 * 
+		 * if (!b) for (int i = 0; i < ((type == FORWARD) ? reaction
+		 * .getNumReactants() : reaction.getNumProducts()); i++) {
+		 * PluginSpeciesReference ref = (type == FORWARD) ? reaction
+		 * .getReactant(i) : reaction.getProduct(i);
+		 * 
+		 * // parts.add(pow(getSpecies(ref), getStoichiometry(ref))); }
+		 * 
+		 * if (catalysatorNumber >= 0) parts.add(new StringBuffer(catalysators
+		 * .get(catalysatorNumber)));
+		 * 
+		 * return times(parts.toArray(new StringBuffer[parts.size()])); } else {
+		 * return new StringBuffer(); }
+		 */
 	}
 
 	/**
