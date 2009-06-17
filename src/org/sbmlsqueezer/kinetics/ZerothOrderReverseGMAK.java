@@ -52,11 +52,11 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 		reactantOrder = Double.NaN;
 		productOrder = 0;
 		if (modCat.isEmpty())
-			return super.createKineticEquation(-1, modCat,
+			return super.createKineticEquation(modE,-1, modCat,
 					modActi, modActi, zeroReact, zeroProd);
 		StringBuffer[] parts = new StringBuffer[modCat.size()];
 		for (int i = 0; i < parts.length; i++)
-			parts[i] = super.createKineticEquation(i, modCat,
+			parts[i] = super.createKineticEquation(modE,i, modCat,
 					modActi, modActi, zeroReact, zeroProd);
 		return sum(parts);
 	}

@@ -177,8 +177,7 @@ public class Convenience extends GeneralizedMassAction {
 				nums[0].append('_');
 				nums[0].append(modE.get(enzymeNumber));
 			}
-			if (!listOfLocalParameters.contains(nums[0]))
-				listOfLocalParameters.add(nums[0]);
+		addLocalParameter(nums[0]);
 
 			for (int i = 1; i < nums.length; i++) {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction

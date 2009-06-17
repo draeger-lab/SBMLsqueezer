@@ -53,7 +53,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		super(parentReaction, model);
 	}
 
-	// @Override
+	
 	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
