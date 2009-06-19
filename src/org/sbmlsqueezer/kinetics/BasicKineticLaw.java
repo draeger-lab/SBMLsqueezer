@@ -288,7 +288,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param summands
 	 * @return
 	 */
-	protected StringBuffer sum(StringBuffer... summands) {
+	protected StringBuffer sum(Object... summands) {
 		return brackets(arith('+', summands));
 	}
 
@@ -298,7 +298,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param subtrahents
 	 * @return
 	 */
-	protected StringBuffer diff(StringBuffer... subtrahents) {
+	protected StringBuffer diff(Object... subtrahents) {
 		if (subtrahents.length == 1)
 			return brackets(concat(Character.valueOf('-'), subtrahents));
 		return brackets(arith('-', subtrahents));
@@ -310,7 +310,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param factors
 	 * @return
 	 */
-	protected StringBuffer times(StringBuffer... factors) {
+	protected StringBuffer times(Object... factors) {
 		return arith('*', factors);
 	}
 
@@ -347,11 +347,12 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param exponent
 	 * @return
 	 */
-	protected StringBuffer pow(StringBuffer basis, StringBuffer exponent) {
+	protected StringBuffer pow(Object basis, Object exponent) {
 		if (Double.parseDouble(exponent.toString()) == 0.0)
 			return new StringBuffer('1');
 		else if (Double.parseDouble(exponent.toString()) == 1.0)
-			return basis;
+			return basis instanceof StringBuffer ? (StringBuffer) basis
+					: new StringBuffer(basis.toString());
 		else
 			return arith('^', basis, exponent);
 	}
@@ -390,11 +391,11 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param elements
 	 * @return
 	 */
-	protected StringBuffer arith(char operator, StringBuffer... elements) {
-		Vector<StringBuffer> vsb = new Vector<StringBuffer>();
+	protected StringBuffer arith(char operator, Object... elements) {
+		Vector<Object> vsb = new Vector<Object>();
 		StringBuffer equation = new StringBuffer();
-		for (StringBuffer sb : elements)
-			if (sb.length() > 0)
+		for (Object sb : elements)
+			if (sb.toString().length() > 0)
 				vsb.add(sb);
 		if (vsb.size() >= 1)
 			equation.append(vsb.get(0));
