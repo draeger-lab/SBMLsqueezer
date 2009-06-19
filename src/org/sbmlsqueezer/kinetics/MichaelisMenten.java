@@ -58,72 +58,80 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		
-		PluginReaction reaction = getParentReaction();
-				
-		StringBuffer acti = createActivationFactor(modActi);
-		StringBuffer inhib= createInhibitionFactor(modInhib);
-		
-		StringBuffer numerator = new StringBuffer();
-		StringBuffer denominator = new StringBuffer();
-		
-		StringBuffer kcatp= new StringBuffer("kcatp_"+reaction.getId());
-		StringBuffer kcatn= new StringBuffer("kcatn"+reaction.getId());
-		StringBuffer kMr = concat("kM_", reaction.getId());
-		StringBuffer kMp = concat("kM_", reaction.getId());
-		
-		//reversible
-		if(reaction.getReversible()){
-			if ((reaction.getNumReactants() > 1)
-					|| (reaction.getReactant(0).getStoichiometry() != 1.0))
-				throw new RateLawNotApplicableException(
-						"This rate law can only be applied to reactions with exactly one reactant.");
-			if (((reaction.getNumProducts() > 1) || (reaction.getProduct(0)
-					.getStoichiometry() != 1.0))
-					&& reaction.getReversible())
-				throw new RateLawNotApplicableException(
-						"This rate law can only be applied to reactions with exactly one product.");
-			
-			
-			
-			
-			if (modE.size()+modCat.size()<1){
-				
-			numerator = diff(times(frac(kcatp,concat(kMr,'_',getSpecies(reaction.getReactant(0)))),
-					new StringBuffer(getSpecies(reaction.getReactant(0)))),19292);
-				
-				
-			}else
-			{
-				
-			}
-			
-			
-		}
-		
-		//irreversible
-		else{
-			if ((reaction.getNumReactants() > 1)
-					|| (reaction.getReactant(0).getStoichiometry() != 1.0))
-				throw new RateLawNotApplicableException(
-						"This rate law can only be applied to reactions with exactly one reactant.");
-			
-			
-		}
-		return null;
+//		PluginReaction reaction = getParentReaction();
+//				
+//		StringBuffer acti = createActivationFactor(modActi);
+//		StringBuffer inhib= createInhibitionFactor(modInhib);
+//		
+//		StringBuffer numerator = new StringBuffer();
+//		StringBuffer denominator = new StringBuffer();
+//		
+//		StringBuffer kcatp= new StringBuffer("kcatp_"+reaction.getId());
+//		StringBuffer kcatn= new StringBuffer("kcatn"+reaction.getId());
+//		StringBuffer kMr = concat("kM_", reaction.getId());
+//		StringBuffer kMp = concat("kM_", reaction.getId());
+//		
+//		//reversible
+//		if(reaction.getReversible()){
+//			if ((reaction.getNumReactants() > 1)
+//					|| (reaction.getReactant(0).getStoichiometry() != 1.0))
+//				throw new RateLawNotApplicableException(
+//						"This rate law can only be applied to reactions with exactly one reactant.");
+//			if (((reaction.getNumProducts() > 1) || (reaction.getProduct(0)
+//					.getStoichiometry() != 1.0))
+//					&& reaction.getReversible())
+//				throw new RateLawNotApplicableException(
+//						"This rate law can only be applied to reactions with exactly one product.");
+//			
+//			
+//			
+//			
+//			if (modE.size()+modCat.size()<1){
+//				
+//			numerator = diff(times(frac(kcatp,concat(kMr,'_',getSpecies(reaction.getReactant(0)))),
+//					new StringBuffer(getSpecies(reaction.getReactant(0)))),19292);
+//				
+//				
+//			}else
+//			{
+//				
+//			}
+//			
+//			
+//		}
+//		
+//		//irreversible
+//		else{
+//			if ((reaction.getNumReactants() > 1)
+//					|| (reaction.getReactant(0).getStoichiometry() != 1.0))
+//				throw new RateLawNotApplicableException(
+//						"This rate law can only be applied to reactions with exactly one reactant.");
+//			
+//			
+//		}
+//		return null;
+		return alt(model, modE, modActi, modTActi, modInhib, modTInhib, modCat);
 	}
 
 		
+	public StringBuffer alt(PluginModel model,
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+			throws RateLawNotApplicableException, IllegalFormatException {
 		
-	/*	numOfActivators = modActi.size();
+		PluginReaction reaction = getParentReaction();
+				
+		StringBuffer numerator = new StringBuffer();
+		StringBuffer denominator = new StringBuffer();
+	
+		numOfActivators = modActi.size();
 		numOfEnzymes = modE.size();
 		numOfInhibitors = modInhib.size();
 
-		PluginReaction reaction = getParentReaction();
 		if ((reaction.getNumReactants() > 1)
-				|| (reaction.getReactant(0).getStoichiometry() != 1.0))
+				|| (reaction.getReactant(0).getStoichiometry() != 1d))
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to reactions with exactly one reactant.");
-		// TODO: auch mehr als ein produkt!
 		if (((reaction.getNumProducts() > 1) || (reaction.getProduct(0)
 				.getStoichiometry() != 1.0))
 				&& reaction.getReversible())
@@ -165,13 +173,13 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			if (!reaction.getReversible()) {
 				/*
 				 * Irreversible Reaction
-				 *//*
+				 */
 				numerator = times(kcatp, specRefR);
 				denominator = new StringBuffer(specRefR);
 			} else {
 				/*
 				 * Reversible Reaction
-				 *//*
+				 */
 				numerator = times(frac(kcatp, kMr), specRefR);
 				denominator = frac(specRefR, kMr);
 				kMp = concat(kMp, underscore, specRefP);
@@ -207,7 +215,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		if (modActi.size() > 0)
 			formula = times(createActivationFactor(modActi), formula);
 		return formula;
-	}*/
+	}
 
 	/**
 	 * Inhibition
