@@ -494,147 +494,45 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		return sbo;
 	}
 
-	// TODO umschreiben
-	protected StringBuffer createKineticEquation(List<String> modE,
-			int catNumber, List<String> modCat, List<String> modActi,
-			List<String> modInhib, boolean zeroReact, boolean zeroProd) {
-
-		PluginReaction reaction = getParentReaction();
-
-		try {
-			if (reaction.getReversible()) {
-				StringBuffer rev = reversible(reaction, modE, modCat);
-				return times(createActivationFactor(modActi),
-						createInhibitionFactor(modInhib), rev);
-			} else {
-				StringBuffer ass = irreversible(reaction, modE, modCat);
-
-				return times(createActivationFactor(modActi),
-						createInhibitionFactor(modInhib), ass);
-			}
-
-		} catch (IllegalFormatException exc) {
-			exc.printStackTrace();
-			return new StringBuffer();
-		}
-	}
-
-	private StringBuffer irreversible(PluginReaction reaction,
-			List<String> modE, List<String> modCat) {
-		StringBuffer kass = new StringBuffer("kass_");
-		kass.append(reaction.getId());
-		
-		StringBuffer[] speciesforward = new StringBuffer[reaction
-				.getNumReactants() + 1];
-		
-		StringBuffer[] equation = new StringBuffer[modE.size() + modCat.size()];
-		int eqcount = 0;
-
-		
-		for (int i = 0; i < reaction.getNumReactants(); i++) {
-			speciesforward[i + 1] = getSpecies(reaction.getReactant(i));
-		}
-				
-		if (modE.size() + modCat.size() < 1) {
-			speciesforward[0] = kass;
-			addLocalParameter(kass);
-			return times(speciesforward);
-			}
-		else{
-			for (int i=0; i < modE.size(); i++){
-				speciesforward[0] = concat(kass,underscore,modE.get(i));
-				addLocalParameter(speciesforward[0]);
-				equation[eqcount] = times(new StringBuffer(modE.get(i)),times(speciesforward));
-				eqcount++;
-			}
-			for (int i = 0; i < modCat.size(); i++){
-				speciesforward[0] = concat(kass,underscore,modCat.get(i));
-				addLocalParameter(speciesforward[0]);
-				equation[eqcount] = times(new StringBuffer(modCat.get(i)),times(speciesforward));
-				eqcount++;
-			}
-			return sum(equation);
-		}
-	}	
-
-	
-	
-	private StringBuffer reversible(PluginReaction reaction, List<String> modE,
-			List<String> modCat) {
-
-		StringBuffer kass = new StringBuffer("kass_");
-		kass.append(reaction.getId());
-		StringBuffer kdiss = new StringBuffer("kdiss_");
-		kdiss.append(reaction.getId());
-		addLocalParameter(kass);
-		addLocalParameter(kdiss);
-
-		StringBuffer[] speciesforward = new StringBuffer[reaction
-				.getNumReactants() + 1];
-		StringBuffer[] speciesreverse = new StringBuffer[reaction
-				.getNumProducts() + 1];
-		StringBuffer[] equation = new StringBuffer[modE.size() + modCat.size()];
-		int eqcount = 0;
-
-		for (int i = 0; i < reaction.getNumReactants(); i++) {
-			speciesforward[i + 1] = getSpecies(reaction.getReactant(i));
-		}
-		for (int i = 0; i < reaction.getNumProducts(); i++) {
-			speciesreverse[i + 1] = getSpecies(reaction.getProduct(i));
-		}
-
-		if (modE.size() + modCat.size() < 1) {
-			speciesforward[0] = kass;
-			speciesreverse[0] = kdiss;
-			addLocalParameter(speciesforward[0]);
-			addLocalParameter(speciesreverse[0]);
-
-			return diff(times(speciesforward), times(speciesreverse));
-
-		} else {
-			for (int i = 0; i < modE.size(); i++) {
-				speciesforward[0] = concat(kass, underscore, modE.get(i));
-				speciesreverse[0] = concat(kdiss, underscore, modE.get(i));
-				addLocalParameter(speciesforward[0]);
-				addLocalParameter(speciesreverse[0]);
-
-				equation[eqcount] = times(new StringBuffer(modE.get(i)), diff(
-						times(speciesforward), times(speciesreverse)));
-				eqcount++;
-			}
-
-			for (int i = 0; i < modCat.size(); i++) {
-				speciesforward[0] = concat(kass, underscore, modCat.get(i));
-				speciesreverse[0] = concat(kdiss, underscore, modCat.get(i));
-				addLocalParameter(speciesforward[0]);
-				addLocalParameter(speciesreverse[0]);
-
-				equation[eqcount] = times(new StringBuffer(modCat.get(i)),
-						diff(times(speciesforward), times(speciesreverse)));
-				eqcount++;
-			}
-			return sum(equation);
-
-		}
-	}
-
 	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-
-		reactantOrder = productOrder = Double.NaN;
-		boolean zeroReact = false, zeroProd = false;
-		if (modCat.isEmpty())
-			return createKineticEquation(modE, -1, modCat, modActi, modInhib,
-					zeroReact, zeroProd);
-		StringBuffer[] equations = new StringBuffer[modCat.size()];
-
-		equations[0] = createKineticEquation(modE, 0, modCat, modActi,
-				modInhib, zeroReact, zeroProd);
-
-		return sum(equations);
-
+		reactantOrder = productOrder = Double.NaN;		
+        List<String> catalysts = new Vector<String>(modE);
+        catalysts.addAll(modCat);
+        StringBuffer rates[] = new StringBuffer[Math.max(1, catalysts.size())];
+        PluginReaction reaction = getParentReaction();
+        for (int c = 0; c < rates.length; c++) {
+                StringBuffer kass = concat("kass_", reaction.getId());
+                if (catalysts.size() > 0)
+                        kass = concat(kass, underscore, catalysts.get(c));
+                addLocalParameter(kass);
+                rates[c] = new StringBuffer(kass);
+                for (int reactants = 0; reactants < reaction.getNumReactants(); reactants++) {
+                        PluginSpeciesReference r = reaction.getReactant(reactants);
+                        rates[c] = times(rates[c], pow(r.getSpecies(), Double
+                                        .toString(r.getStoichiometry())));
+                }
+                if (reaction.getReversible()) {
+                        // reverse reaction, dissociation
+                        StringBuffer kdiss = concat("kdiss_", reaction.getId());
+                        if (catalysts.size() > 0)
+                                kdiss = concat(kdiss, underscore, catalysts.get(c));
+                        addLocalParameter(kdiss);
+                        StringBuffer diss = new StringBuffer(kdiss);
+                        for (int products = 0; products < reaction.getNumProducts(); products++) {
+                                PluginSpeciesReference p = reaction.getProduct(products);
+                                diss = times(diss, pow(p.getSpecies(), Double
+                                                .toString(p.getStoichiometry())));
+                        }
+                        rates[c] = diff(rates[c], diss);
+                }
+                if (catalysts.size() > 0)
+                        rates[c] = times(catalysts.get(c), rates[c]);
+        }
+        return times(createActivationFactor(modActi),
+                        createInhibitionFactor(modInhib), sum(rates));
 	}
 
 	/**

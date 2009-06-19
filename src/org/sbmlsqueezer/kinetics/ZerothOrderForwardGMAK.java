@@ -51,13 +51,14 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 		boolean zeroProd = false;
 		reactantOrder = 0;
 		productOrder = Double.NaN;
-		if (modCat.isEmpty())
-			return super.createKineticEquation(modE,-1, modCat,
-					modActi, modActi, zeroReact, zeroProd);
-		StringBuffer[] parts = new StringBuffer[modCat.size()];
-		for (int i = 0; i < parts.length; i++)
-			parts[i] = super.createKineticEquation(modE,i, modCat,
-					modActi, modActi, zeroReact, zeroProd);
-		return sum(parts);
+//		if (modCat.isEmpty())
+//			return super.createKineticEquation(modE,-1, modCat,
+//					modActi, modActi, zeroReact, zeroProd);
+//		StringBuffer[] parts = new StringBuffer[modCat.size()];
+//		for (int i = 0; i < parts.length; i++)
+//			parts[i] = super.createKineticEquation(modE,i, modCat,
+//					modActi, modActi, zeroReact, zeroProd);
+//		return sum(parts);
+		return new StringBuffer("1");
 	}
 }
