@@ -24,3 +24,7 @@ entfernt werden.
 In Hill-Kinetik dafür sorgen, dass nicht mit der Gen-Konzentration
 multipliziert und der Parameter Ks nicht mit dem Hill-Koeffizienten
 potenziert wird (sonst Probleme mit Einheiten).
+
+Massenwirkungskinetik nullter Ordnung im Falle mehrerer Katalysatoren?
+
+SBO-Ids immer mithilfe des SBO-Parsers identifizieren.
