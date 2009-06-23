@@ -1,3 +1,21 @@
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sbmlsqueezer.kinetics;
 
 import java.io.IOException;
@@ -9,12 +27,10 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 /**
  * TODO: comment missing
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class MichaelisMenten extends GeneralizedMassAction {
@@ -194,7 +210,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 					currEnzymeKin, enzymeNum);
 
 			if (reaction.getReversible())
-				denominator = sum(new StringBuffer("1"), denominator);
+				denominator = sum(new StringBuffer('1'), denominator);
 			else if ((modInhib.size() <= 1)
 					|| getParentReaction().getReversible())
 				denominator = sum(kMr, denominator);
@@ -210,10 +226,10 @@ public class MichaelisMenten extends GeneralizedMassAction {
 
 		// the formalism from the convenience kinetics as a default.
 		if ((modInhib.size() > 1) && (reaction.getReversible()))
-			formula = times(createInhibitionFactor(modInhib), formula);
+			formula = times(inhibitionFactor(modInhib), formula);
 		// Activation
 		if (modActi.size() > 0)
-			formula = times(createActivationFactor(modActi), formula);
+			formula = times(activationFactor(modActi), formula);
 		return formula;
 	}
 
@@ -246,7 +262,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			StringBuffer specRefI = new StringBuffer(modInhib.get(0));
 			if (reaction.getReversible())
 				denominator = sum(frac(specRefI, kIa), times(denominator, sum(
-						new StringBuffer("1"), frac(specRefI, kIb))));
+						new StringBuffer('1'), frac(specRefI, kIb))));
 			else
 				denominator = sum(times(frac(kMr, kIa), specRefI), denominator,
 						times(frac(kMr, kIb), specRefI));
@@ -257,8 +273,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			 * mixed-type inihibition of irreversible enzymes by mutually
 			 * exclusive inhibitors.
 			 */
-			StringBuffer sumIa = new StringBuffer("1");
-			StringBuffer sumIb = new StringBuffer("1");
+			StringBuffer sumIa = new StringBuffer('1');
+			StringBuffer sumIb = new StringBuffer('1');
 			for (int i = 0; i < modInhib.size(); i++) {
 				StringBuffer kIai = concat(Integer.valueOf(i + 1), underscore,
 						reaction.getId());
@@ -360,7 +376,6 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		else if (name
 				.equals("simple competitive inhibition of irreversible unireactant enzymes by one inhibitor"))
 			sbo = "0000260";
-
 		return sbo;
 	}
 }

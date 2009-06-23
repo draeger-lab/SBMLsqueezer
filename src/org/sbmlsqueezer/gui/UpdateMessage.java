@@ -1,3 +1,21 @@
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sbmlsqueezer.gui;
 
 import java.awt.BorderLayout;
@@ -37,7 +55,8 @@ import org.sbmlsqueezer.resources.Resource;
  * corner of the screen. It notifies the user that a more recent version of
  * SBMLsqueezer is available. The release notes of this version can be shown.
  * 
- * @author Hannes Borch <hannes.borch@googlemail.com>
+ * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @since 1.2
  */
 
 public class UpdateMessage extends JWindow implements ActionListener,
@@ -62,7 +81,6 @@ public class UpdateMessage extends JWindow implements ActionListener,
 	 * @param u
 	 * @throws IOException
 	 */
-
 	public UpdateMessage(String u) throws IOException {
 		super();
 		this.setAlwaysOnTop(true);
@@ -98,7 +116,6 @@ public class UpdateMessage extends JWindow implements ActionListener,
 	 * @param plugin
 	 * @throws IOException
 	 */
-
 	public static void checkForUpdate(SBMLsqueezerPlugin plugin)
 			throws IOException {
 		URL url = new URL(
@@ -117,7 +134,6 @@ public class UpdateMessage extends JWindow implements ActionListener,
 	 * @param url
 	 * @return
 	 */
-
 	private static boolean compareVersionNumbers(String prog, String url) {
 		StringTokenizer progToken = new StringTokenizer(prog);
 		StringTokenizer urlToken = new StringTokenizer(url);
@@ -138,7 +154,6 @@ public class UpdateMessage extends JWindow implements ActionListener,
 	 * @param url
 	 * @throws IOException
 	 */
-
 	private static void showUpdateMessage(String url) throws IOException {
 		(new UpdateMessage(url)).setVisible(true);
 	}
@@ -150,7 +165,6 @@ public class UpdateMessage extends JWindow implements ActionListener,
 	 * JEditorPane gets invisible again, and the button's text is rechanged to
 	 * it's default. If "OK" is hit, the window is closed.
 	 */
-
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			String buttonText = ((JButton) e.getSource()).getText();
@@ -177,7 +191,6 @@ public class UpdateMessage extends JWindow implements ActionListener,
 	 * default browser is used. In case of Linux, a available web browser is
 	 * searched an run.
 	 */
-
 	public void hyperlinkUpdate(HyperlinkEvent event) {
 		if (event.getEventType() == HyperlinkEvent.EventType.ENTERED) {
 			((JEditorPane) event.getSource()).setCursor(Cursor

@@ -326,8 +326,10 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 						possibleTypes[i], false);
 				laTeXpreview[i] = kinetic.getKineticTeX();
 				toolTips[i] = toHTML(kinetic.getName(), 40);
-				kineticEquations[i] = toHTML(klg
-						.getEquationName(possibleTypes[i]), 40);
+				kineticEquations[i] = klg.getEquationName(possibleTypes[i]);
+				if (!kinetic.getSBO().equals("none"))
+					kineticEquations[i] += " (SBO:" + kinetic.getSBO() + ")";
+				kineticEquations[i] = toHTML(kineticEquations[i], 40);
 			} catch (IllegalFormatException e) {
 				e.printStackTrace();
 			}

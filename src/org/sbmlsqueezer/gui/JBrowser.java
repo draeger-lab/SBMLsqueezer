@@ -1,9 +1,20 @@
-/**
- * Jul 17, 2007
- * 
- * @since 2.0
- * @author Andreas Dr&auml;ger (draeger) Copyright (c) ZBiT, University of
- *         T&uuml;bingen, Germany Compiler: JDK 1.6.0
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbmlsqueezer.gui;
 
@@ -21,10 +32,10 @@ import javax.swing.event.HyperlinkListener;
 /**
  * A Browser like Editor pane.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Andreas Dr&auml;ger (draeger) Copyright (c) ZBiT, University of
- *         T&uuml;bingen, Germany Compiler: JDK 1.6.0 Jul 17, 2007
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @link http://www.galileocomputing.de/openbook/javainsel6/javainsel_14_016.htm#Xxx1001419
  */
 public class JBrowser extends JEditorPane implements HyperlinkListener {

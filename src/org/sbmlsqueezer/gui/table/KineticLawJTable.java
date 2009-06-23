@@ -95,8 +95,10 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					.getSelectedItem();
 			// Reaction Identifier, Kinetic Law, SBO, #Reactants,
 			// Reactants, Products, Parameters, Formula
-			StringBuffer params = kineticLaw.getLocalParameters().get(
-					kineticLaw.getLocalParameters().size() - 1);
+			StringBuffer params = new StringBuffer((kineticLaw
+					.getLocalParameters().size() > 0) ? kineticLaw
+					.getLocalParameters().get(
+							kineticLaw.getLocalParameters().size() - 1) : "");
 			for (i = kineticLaw.getLocalParameters().size() - 2; i > 0; i--) {
 				params.insert(0, ", ");
 				params.insert(0, kineticLaw.getLocalParameters().get(i));

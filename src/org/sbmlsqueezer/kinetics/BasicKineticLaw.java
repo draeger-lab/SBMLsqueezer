@@ -1,9 +1,26 @@
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sbmlsqueezer.kinetics;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -11,28 +28,26 @@ import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
+import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbmlsqueezer.io.LaTeXExport;
+import org.sbmlsqueezer.io.TextExport;
 
 /**
  * An abstract super class of specialized kinetic laws.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- * @author Nadine Hassis <Nadine.hassis@gmail.com> Copyright (c) ZBiT,
- *         University of T&uuml;bingen, Germany Compiler: JDK 1.6.0
- * @author Hannes Borch <hannes.borch@googlemail.com>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
 public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		libsbmlConstants {
 
-	protected static final boolean ACTIVATION = true;
-
-	protected static final boolean INHIBITION = !ACTIVATION;
 
 	protected static final Character underscore = Character.valueOf('_');
 
@@ -53,6 +68,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	private List<StringBuffer> listOfLocalParameters, listOfGlobalParameters;
 
 	protected String sboTerm;
+
+	protected PluginModel model;
 
 	/**
 	 * 
@@ -83,6 +100,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction);
+		this.model = model;
 		sboTerm = null;
 		idAndName = new HashMap<String, String>();
 		listOfLocalParameters = new ArrayList<StringBuffer>();
@@ -257,7 +275,25 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 */
 	public abstract String getSBO();
 
-	@Override
+	/**
+	 * This method constructs a full length SBO number from a given SBO id.
+	 * Whenever a SBO number is used in the model please don't forget to add
+	 * this identifier to the Set of SBO numbers (only those numbers in this set
+	 * will be displayed in the glossary).
+	 * 
+	 * @param sbo
+	 * @return
+	 */
+	protected static String getSBOnumber(int sbo) {
+		if (sbo < 0)
+			return "none";
+		String sboString = Integer.toString(sbo);
+		while (sboString.length() < 7)
+			sboString = '0' + sboString;
+		return sboString;
+	}
+
+	// @Override
 	public String toString() {
 		if (sboTerm == null)
 			sboTerm = getName();
@@ -335,7 +371,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param denominator
 	 * @return
 	 */
-	protected StringBuffer frac(StringBuffer numerator, StringBuffer denominator) {
+	protected StringBuffer frac(Object numerator, Object denominator) {
 		return brackets(arith('/', numerator, denominator));
 	}
 
@@ -365,13 +401,13 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer root(StringBuffer exponent, StringBuffer basis)
+	protected StringBuffer root(Object exponent, Object basis)
 			throws IllegalFormatException {
-		if (Double.parseDouble(exponent.toString()) == 0.0)
+		if (Double.parseDouble(exponent.toString()) == 0f)
 			throw new IllegalFormatException(
 					"Cannot extract a zeroth root of anything");
-		else if (Double.parseDouble(exponent.toString()) == 1.0)
-			return basis;
+		else if (Double.parseDouble(exponent.toString()) == 1f)
+			return new StringBuffer(basis.toString());
 		else {
 			StringBuffer root = new StringBuffer("root(");
 			root.append(exponent);
@@ -380,7 +416,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			root.append(')');
 			return root;
 		}
-
 	}
 
 	/**
@@ -451,5 +486,34 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		if (!listOfGlobalParameters.contains(parameter))
 			listOfGlobalParameters.add(parameter);
 	}
+	
+	/**
+	 * Returns the value of a PluginSpeciesReference object's stoichiometry
+	 * either as a double or, if the stoichiometry has an integer value, as an
+	 * int object.
+	 * 
+	 * @param ref
+	 * @return
+	 */
+	protected StringBuffer getStoichiometry(PluginSpeciesReference ref) {
+		if (ref.getStoichiometryMath() == null) {
+			double stoich = ref.getStoichiometry();
+			if ((int) stoich - stoich == 0)
+				return new StringBuffer(Integer.toString((int) stoich));
+			else
+				return new StringBuffer(Double.toString(stoich));
+		} return TextExport.toText(model, ref.getStoichiometryMath().getMath());
+	}
 
+	/**
+	 * Returns the id of a PluginSpeciesReference object's belonging species
+	 * as an object of type StringBuffer.
+	 * 
+	 * @param ref
+	 * @return
+	 */
+	protected StringBuffer getSpecies(PluginSpeciesReference ref) {
+		return new StringBuffer(ref.getSpecies());
+	}
+	
 }

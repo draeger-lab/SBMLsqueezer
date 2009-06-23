@@ -1,3 +1,21 @@
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sbmlsqueezer.kinetics;
 
 import java.io.IOException;
@@ -8,16 +26,18 @@ import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
+import org.sbmlsqueezer.io.SBOParser;
+
 /**
- * TODO: comment missing
+ * This class creates rate equations according to the generalized mass action
+ * rate law. For details see Heinrich and Schuster,
+ * "The regulation of Cellluar Systems", pp. 14-17, 1996.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
- * @author Hannes Borch <hannes.borch@googlemail.com>
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
 public class GeneralizedMassAction extends BasicKineticLaw {
@@ -63,37 +83,46 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		return true;
 	}
 
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getName()
+	 */
 	public String getName() {
-		String name = "mass action kinetics";
-		String orderF = "", orderR = "";
+		String name = "", orderF = "", orderR = "", participants = "";
 		if (getParentReaction().getReversible()) {
 			if (reactantOrder == 0)
-				orderF = "zeroth order forward, ";
+				orderF = "zeroth order forward";
 			else
 				switch (getParentReaction().getNumReactants()) {
 				case 1:
 					if (getParentReaction().getReactant(0).getStoichiometry() == 1.0)
-						orderF = "first order forward, ";
+						orderF = "first order forward";
 					else if (getParentReaction().getReactant(0)
-							.getStoichiometry() == 2.0)
-						orderF = "second order forward with one reactant, ";
-					else if (getParentReaction().getReactant(0)
-							.getStoichiometry() == 3.0)
-						orderF = "third order forward with one reactant, ";
+							.getStoichiometry() == 2.0) {
+						orderF = "second order forward";
+						participants = "one reactant, ";
+					} else if (getParentReaction().getReactant(0)
+							.getStoichiometry() == 3.0) {
+						orderF = "third order forward";
+						participants = "one reactant, ";
+					}
 					break;
 				case 2:
 					if ((getParentReaction().getReactant(0).getStoichiometry() == 1.0)
 							&& (getParentReaction().getReactant(1)
-									.getStoichiometry() == 1.0))
-						orderF = "second order forward with two reactants, ";
-					else if (((getParentReaction().getReactant(0)
+									.getStoichiometry() == 1.0)) {
+						orderF = "second order forward";
+						participants = "two reactants, ";
+					} else if (((getParentReaction().getReactant(0)
 							.getStoichiometry() == 1.0) && (getParentReaction()
 							.getReactant(1).getStoichiometry() == 2.0))
 							|| ((getParentReaction().getReactant(0)
 									.getStoichiometry() == 2.0) && (getParentReaction()
-									.getReactant(1).getStoichiometry() == 1.0)))
-						orderF = "third order forward with two reactants, ";
+									.getReactant(1).getStoichiometry() == 1.0))) {
+						orderF = "third order forward";
+						participants = "two reactants, ";
+					}
 					break;
 				case 3:
 					if ((getParentReaction().getReactant(0).getStoichiometry()
@@ -106,8 +135,10 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 							&& (getParentReaction().getReactant(1)
 									.getStoichiometry() == 1.0)
 							&& (getParentReaction().getReactant(2)
-									.getStoichiometry() == 1.0))
-						orderF = "third order forward with three reactants, ";
+									.getStoichiometry() == 1.0)) {
+						orderF = "third order forward";
+						participants = "three reactants, ";
+					}
 					break;
 				}
 
@@ -119,24 +150,30 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					if (getParentReaction().getProduct(0).getStoichiometry() == 1.0)
 						orderR = "first order reverse";
 					else if (getParentReaction().getProduct(0)
-							.getStoichiometry() == 2.0)
-						orderR = "second order reverse with one product";
-					else if (getParentReaction().getProduct(0)
-							.getStoichiometry() == 3.0)
-						orderR = "third order reverse with one product";
+							.getStoichiometry() == 2.0) {
+						orderR = "second order reverse";
+						participants += "one product, ";
+					} else if (getParentReaction().getProduct(0)
+							.getStoichiometry() == 3.0) {
+						orderR = "third order reverse";
+						participants += "one product, ";
+					}
 					break;
 				case 2:
 					if ((getParentReaction().getProduct(0).getStoichiometry() == 1.0)
 							&& (getParentReaction().getProduct(1)
-									.getStoichiometry() == 1.0))
-						orderR = "second order reverse with two products";
-					else if (((getParentReaction().getProduct(0)
+									.getStoichiometry() == 1.0)) {
+						orderR = "second order reverse";
+						participants += "two products, ";
+					} else if (((getParentReaction().getProduct(0)
 							.getStoichiometry() == 1.0) && (getParentReaction()
 							.getProduct(1).getStoichiometry() == 2.0))
 							|| ((getParentReaction().getProduct(0)
 									.getStoichiometry() == 2.0) && (getParentReaction()
-									.getProduct(1).getStoichiometry() == 1.0)))
-						orderR = "third order reverse with two products";
+									.getProduct(1).getStoichiometry() == 1.0))) {
+						orderR = "third order reverse";
+						participants += "two products, ";
+					}
 					break;
 				case 3:
 					if ((getParentReaction().getProduct(0).getStoichiometry()
@@ -148,21 +185,22 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 									.getStoichiometry() == 1.0)
 									&& (getParentReaction().getProduct(1)
 											.getStoichiometry() == 1.0) && (getParentReaction()
-									.getProduct(2).getStoichiometry() == 1.0)))
-						orderR = "third order reverse with three products";
+									.getProduct(2).getStoichiometry() == 1.0))) {
+						orderR = "third order reverse";
+						participants += "three products, ";
+					}
 					break;
 				default:
 					break;
 				}
-			if (orderF == "")
+			if (orderF.length() == 0)
 				orderR = "";
-			if (orderR == "")
+			if (orderR.length() == 0)
 				orderF = "";
-			else {
-				orderR += ", ";
-				name += ", continuous scheme";
-			}
-			name = orderF + orderR + "reversible " + name;
+			else
+				orderR = ", " + orderR;
+			name = orderF + orderR + ", reversible reactions, " + participants
+					+ "continuous scheme";
 		} else { // irreversible
 			if (reactantOrder == 0)
 				orderF = "zeroth order ";
@@ -172,11 +210,11 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 				else {
 					if (getParentReaction().getReactant(0).getStoichiometry() == 2.0) {
 						orderF = "second order ";
-						name += ", one reactant";
+						participants += ", one reactant";
 					} else if (getParentReaction().getReactant(0)
 							.getStoichiometry() == 3.0) {
 						orderF = "third order ";
-						name += ", one reactant";
+						participants += ", one reactant";
 					}
 				}
 			} else if (getParentReaction().getNumReactants() == 2) {
@@ -184,7 +222,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 						&& (getParentReaction().getReactant(1)
 								.getStoichiometry() == 1.0)) {
 					orderF = "second order ";
-					name += ", two reactants";
+					participants += ", two reactants";
 				} else if (((getParentReaction().getReactant(0)
 						.getStoichiometry() == 2.0) && (getParentReaction()
 						.getReactant(1).getStoichiometry() == 1.0))
@@ -192,7 +230,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 								.getStoichiometry() == 2.0) && (getParentReaction()
 								.getReactant(0).getStoichiometry() == 1.0))) {
 					orderF = "third order ";
-					name += ", two reactants";
+					participants += ", two reactants";
 				}
 			} else if (getParentReaction().getNumReactants() == 3) {
 				// third order irreversible mass action kinetics, three
@@ -207,332 +245,104 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 						&& (getParentReaction().getReactant(2)
 								.getStoichiometry() == 1.0)) {
 					orderF = "third order ";
-					name += ", three reactants";
+					participants += ", three reactants";
 				}
 			}
-			name = orderF + "irreversible " + name + ", continuous scheme";
+			name = orderF + "irreversible reactions" + participants
+					+ ", continuous scheme";
 		}
-		return name;
+		return "mass action rate law for " + name;
 	}
 
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getSBO()
+	 */
 	public String getSBO() {
-		if (sbo == null) {
-			String name = getName().toLowerCase();
-			sbo = "none";
-			if (name.endsWith(", continuous scheme")) {
-				name = name.substring(0, name.length() - 19);
-				if (name
-						.equals("zeroth order irreversible mass action kinetics"))
-					sbo = "0000047";
-				else if (name
-						.equals("first order irreversible mass action kinetics"))
-					sbo = "0000049"; // child: SBO:0000333 monoexponential
-				// decay
-				else if (name
-						.equals("second order irreversible mass action kinetics, one reactant"))
-					sbo = "0000052";
-				else if (name
-						.equals("second order irreversible mass action kinetics, two reactants"))
-					sbo = "0000054";
-				else if (name
-						.equals("third order irreversible mass action kinetics, one reactant"))
-					sbo = "0000057";
-				else if (name
-						.equals("third order irreversible mass action kinetics, two reactants"))
-					sbo = "0000059";
-				else if (name
-						.equals("third order irreversible mass action kinetics, three reactants"))
-					sbo = "0000061";
-				else if (name
-						.equals("zeroth order forward, first order reverse, reversible mass action kinetics"))
-					sbo = "0000070";
-				else if (name
-						.equals("zeroth order forward, second order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000072";
-				else if (name
-						.equals("zeroth order forward, second order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000073";
-				else if (name
-						.equals("zeroth order forward, third order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000075";
-				else if (name
-						.equals("zeroth order forward, third order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000076";
-				else if (name
-						.equals("zeroth order forward, third order reverse with three products, reversible mass action kinetics"))
-					sbo = "0000077";
-				else if (name
-						.equals("first order forward, zeroth order reverse, reversible mass action kinetics"))
-					sbo = "0000079";
-				else if (name
-						.equals("first order forward, first order reverse, reversible mass action kinetics"))
-					sbo = "0000080";
-				else if (name
-						.equals("first order forward, second order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000082";
-				else if (name
-						.equals("first order forward, second order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000083";
-				else if (name
-						.equals("first order forward, third order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000085";
-				else if (name
-						.equals("first order forward, third order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000086";
-				else if (name
-						.equals("first order forward, third order reverse with three products, reversible mass action kinetics"))
-					sbo = "0000087";
-				else if (name
-						.equals("second order forward with one reactant, zeroth order reverse, reversible mass action kinetics"))
-					sbo = "0000090";
-				else if (name
-						.equals("second order forward with one reactant, first order reverse, reversible mass action kinetics"))
-					sbo = "0000091";
-				else if (name
-						.equals("second order forward with one reactant, second order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000093";
-				else if (name
-						.equals("second order forward with one reactant, second order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000094";
-				else if (name
-						.equals("second order forward with one reactant, third order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000096";
-				else if (name
-						.equals("second order forward with one reactant, third order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000097";
-				else if (name
-						.equals("second order forward with one reactant, third order reverse with three products, reversible mass action kinetics"))
-					sbo = "0000098";
-				else if (name
-						.equals("second order forward with two reactants, zeroth order reverse, reversible mass action kinetics"))
-					sbo = "0000100";
-				else if (name
-						.equals("second order forward with two reactants, first order reverse, reversible mass action kinetics"))
-					sbo = "0000101";
-				else if (name
-						.equals("second order forward with two reactants, second order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000103";
-				else if (name
-						.equals("second order forward with two reactants, second order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000104";
-				else if (name
-						.equals("second order forward with two reactants, third order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000106";
-				else if (name
-						.equals("second order forward with two reactants, third order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000107";
-				else if (name
-						.equals("second order forward with two reactants, third order reverse with three products, reversible mass action kinetics"))
-					sbo = "0000108";
-				else if (name
-						.equals("third order forward with two reactants, zeroth order reverse, reversible mass action kinetics"))
-					sbo = "0000111";
-				else if (name
-						.equals("third order forward with two reactants, first order reverse, reversible mass action kinetics"))
-					sbo = "0000112";
-				else if (name
-						.equals("third order forward with two reactants, second order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000114";
-				else if (name
-						.equals("third order forward with two reactants, second order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000115";
-				else if (name
-						.equals("third order forward with two reactants, third order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000117";
-				else if (name
-						.equals("third order forward with two reactants, third order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000118";
-				else if (name
-						.equals("third order forward with two reactants, third order reverse with three products, reversible mass action kinetics"))
-					sbo = "0000119";
-				else if (name
-						.equals("third order forward with three reactants, zeroth order reverse, reversible mass action kinetics"))
-					sbo = "0000121";
-				else if (name
-						.equals("third order forward with three reactants, first order reverse, reversible mass action kinetics"))
-					sbo = "0000122";
-				else if (name
-						.equals("third order forward with three reactants, second order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000124";
-				else if (name
-						.equals("third order forward with three reactants, second order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000125";
-				else if (name
-						.equals("third order forward with three reactants, third order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000127";
-				else if (name
-						.equals("third order forward with three reactants, third order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000128";
-				else if (name
-						.equals("third order forward with three reactants, third order reverse with three products, reversible mass action kinetics"))
-					sbo = "0000129";
-				else if (name
-						.equals("third order forward with one reactant, zeroth order reverse, reversible mass action kinetics"))
-					sbo = "0000131";
-				else if (name
-						.equals("third order forward with one reactant, first order reverse, reversible mass action kinetics"))
-					sbo = "0000132";
-				else if (name
-						.equals("third order forward with one reactant, second order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000134";
-				else if (name
-						.equals("third order forward with one reactant, second order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000135";
-				else if (name
-						.equals("third order forward with one reactant, third order reverse with one product, reversible mass action kinetics"))
-					sbo = "0000137";
-				else if (name
-						.equals("third order forward with one reactant, third order reverse with two products, reversible mass action kinetics"))
-					sbo = "0000138";
-				else if (name
-						.equals("third order forward with one reactant, third order reverse with three products, reversible mass action kinetics"))
-					sbo = "0000139";
-				else if (name.equals("irreversible mass action kinetics"))
-					sbo = "0000163"; // an inner node.
-			} else {
-				// other inner vertices
-				if (name.equals("reversible mass action kinetics"))
-					sbo = "0000042";
-				else if (name.equals("irreversible mass action kinetics"))
-					sbo = "0000041";
-				else if (name
-						.equals("zeroth order irreversible mass action kinetics"))
-					sbo = "0000043";
-				else if (name
-						.equals("first order irreversible mass action kinetics"))
-					sbo = "0000044";
-				else if (name
-						.equals("second order irreversible mass action kinetics"))
-					sbo = "0000045";
-				else if (name
-						.equals("second order irreversible mass action kinetics, one reactant"))
-					sbo = "0000050";
-				else if (name
-						.equals("second order irreversible mass action kinetics, two reactants"))
-					sbo = "0000053";
-				else if (name
-						.equals("third order irreversible mass action kinetics"))
-					sbo = "0000055";
-				else if (name
-						.equals("third order irreversible mass action kinetics, one reactant"))
-					sbo = "0000056";
-				else if (name
-						.equals("third order irreversible mass action kinetics, two reactants"))
-					sbo = "0000058";
-				else if (name
-						.equals("third order irreversible mass action kinetics, three reactants"))
-					sbo = "0000060";
-				else if (name
-						.equals("zeroth order forward reversible mass action kinetics"))
-					sbo = "0000069";
-				else if (name
-						.equals("zeroth order forward, second order reverse, reversible mass action kinetics"))
-					sbo = "0000071";
-				else if (name
-						.equals("zeroth order forward, third order reverse, reversible mass action kinetics"))
-					sbo = "0000074";
-				else if (name
-						.equals("first order forward reversible mass action kinetics"))
-					sbo = "0000078";
-				else if (name
-						.equals("first order forward, second order reverse, reversible mass action kinetics"))
-					sbo = "0000081";
-				else if (name
-						.equals("first order forward, third order reverse, reversible mass action kinetics"))
-					sbo = "0000084";
-				else if (name
-						.equals("second order forward reversible mass action kinetics"))
-					sbo = "0000088";
-				else if (name
-						.equals("second order forward with one reactant reversible mass action kinetics"))
-					sbo = "0000089";
-				else if (name
-						.equals("second order forward with one reactant, second order reverse, reversible mass action kinetics"))
-					sbo = "0000092";
-				else if (name
-						.equals("second order forward with one reactant, third order reverse, reversible mass action kinetics"))
-					sbo = "0000095";
-				else if (name
-						.equals("second order forward with two reactants, second order reverse, reversible mass action kinetics"))
-					sbo = "0000102";
-				else if (name
-						.equals("second order forward with two reactants, third order reverse, reversible mass action kinetics"))
-					sbo = "0000105";
-				else if (name
-						.equals("third order forward with two reactants reversible mass action kinetics"))
-					sbo = "0000110";
-				else if (name
-						.equals("third order forward with two reactants, second order reverse, reversible mass action kinetics"))
-					sbo = "0000113";
-				else if (name
-						.equals("third order forward with two reactants, third order reverse, reversible mass action kinetics"))
-					sbo = "0000116";
-				else if (name
-						.equals("third order forward with three reactants reversible mass action kinetics "))
-					sbo = "0000120";
-				else if (name
-						.equals("third order forward with three reactants, second order reverse, reversible mass action kinetics"))
-					sbo = "0000123";
-				else if (name
-						.equals("third order forward with three reactants, third order reverse, reversible mass action kinetics"))
-					sbo = "0000126";
-				else if (name
-						.equals("third order forward with one reactant reversible mass action kinetics"))
-					sbo = "0000130";
-				else if (name
-						.equals("third order forward with one reactant, second order reverse, reversible mass action kinetics"))
-					sbo = "0000133";
-				else if (name
-						.equals("third order forward with one reactant, third order reverse, reversible mass action kinetics"))
-					sbo = "0000136";
-				else if (name
-						.equals("third order forward with one reactant, third order reverse, reversible mass action kinetics"))
-					sbo = "0000136";
+		if (sbo == null)
+			try {
+				sbo = getSBOnumber(SBOParser.getSBOidForName(getName()));
+			} catch (IOException e) {
+				e.printStackTrace();
+				sbo = "none";
 			}
-		}
 		return sbo;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbmlsqueezer.kinetics.BasicKineticLaw#createKineticEquation(jp.sbi
+	 * .celldesigner.plugin.PluginModel, java.util.List, java.util.List,
+	 * java.util.List, java.util.List, java.util.List, java.util.List)
+	 */
 	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		reactantOrder = productOrder = Double.NaN;		
-        List<String> catalysts = new Vector<String>(modE);
-        catalysts.addAll(modCat);
-        StringBuffer rates[] = new StringBuffer[Math.max(1, catalysts.size())];
-        PluginReaction reaction = getParentReaction();
-        for (int c = 0; c < rates.length; c++) {
-                StringBuffer kass = concat("kass_", reaction.getId());
-                if (catalysts.size() > 0)
-                        kass = concat(kass, underscore, catalysts.get(c));
-                addLocalParameter(kass);
-                rates[c] = new StringBuffer(kass);
-                for (int reactants = 0; reactants < reaction.getNumReactants(); reactants++) {
-                        PluginSpeciesReference r = reaction.getReactant(reactants);
-                        rates[c] = times(rates[c], pow(r.getSpecies(), Double
-                                        .toString(r.getStoichiometry())));
-                }
-                if (reaction.getReversible()) {
-                        // reverse reaction, dissociation
-                        StringBuffer kdiss = concat("kdiss_", reaction.getId());
-                        if (catalysts.size() > 0)
-                                kdiss = concat(kdiss, underscore, catalysts.get(c));
-                        addLocalParameter(kdiss);
-                        StringBuffer diss = new StringBuffer(kdiss);
-                        for (int products = 0; products < reaction.getNumProducts(); products++) {
-                                PluginSpeciesReference p = reaction.getProduct(products);
-                                diss = times(diss, pow(p.getSpecies(), Double
-                                                .toString(p.getStoichiometry())));
-                        }
-                        rates[c] = diff(rates[c], diss);
-                }
-                if (catalysts.size() > 0)
-                        rates[c] = times(catalysts.get(c), rates[c]);
-        }
-        return times(createActivationFactor(modActi),
-                        createInhibitionFactor(modInhib), sum(rates));
+		reactantOrder = productOrder = Double.NaN;
+		List<String> catalysts = new Vector<String>(modE);
+		catalysts.addAll(modCat);
+		StringBuffer rates[] = new StringBuffer[Math.max(1, catalysts.size())];
+		PluginReaction reaction = getParentReaction();
+		for (int c = 0; c < rates.length; c++) {
+			rates[c] = association(catalysts, c);
+			if (reaction.getReversible())
+				rates[c] = diff(rates[c], dissociation(catalysts, c));
+			if (catalysts.size() > 0)
+				rates[c] = times(catalysts.get(c), rates[c]);
+		}
+		return times(activationFactor(modActi), inhibitionFactor(modInhib),
+				sum(rates));
+	}
+
+	/**
+	 * This method creates the part of the formula that describes the formation
+	 * of the product.
+	 * 
+	 * @param catalysts
+	 *            The list of all catalysts.
+	 * @param catNum
+	 *            The current catalyst for which this formula is to be created.
+	 * @return A formula consisting of a constant multiplied with the product
+	 *         over all reactants.
+	 */
+	protected StringBuffer association(List<String> catalysts, int catNum) {
+		StringBuffer kass = concat("kass_", getParentReaction().getId());
+		if (catalysts.size() > 0)
+			kass = concat(kass, underscore, catalysts.get(catNum));
+		addLocalParameter(kass);
+		StringBuffer ass = new StringBuffer(kass);
+		for (int reactants = 0; reactants < getParentReaction()
+				.getNumReactants(); reactants++) {
+			PluginSpeciesReference r = getParentReaction().getReactant(
+					reactants);
+			ass = times(ass, pow(r.getSpecies(), getStoichiometry(r)));
+		}
+		return ass;
+	}
+
+	/**
+	 * Creates the part of the formula that describes the reverse reaction or
+	 * dissociation.
+	 * 
+	 * @param catalysts
+	 * @param c
+	 * @return
+	 */
+	protected Object dissociation(List<String> catalysts, int c) {
+		StringBuffer kdiss = concat("kdiss_", getParentReaction().getId());
+		if (catalysts.size() > 0)
+			kdiss = concat(kdiss, underscore, catalysts.get(c));
+		addLocalParameter(kdiss);
+		StringBuffer diss = new StringBuffer(kdiss);
+		for (int products = 0; products < getParentReaction().getNumProducts(); products++) {
+			PluginSpeciesReference p = getParentReaction().getProduct(products);
+			diss = times(diss, pow(p.getSpecies(), getStoichiometry(p)));
+		}
+		return diss;
 	}
 
 	/**
@@ -554,7 +364,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 
 			for (int i = 0; i < mods.length; i++) {
 
-				if (type == ACTIVATION) {
+				if (type) {
 					// Activator Mod
 
 					StringBuffer kA = concat("kA_", getParentReactionID(),
@@ -578,141 +388,48 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	}
 
 	/**
+	 * According to Liebermeister and Klipp, Dec. 2006, activation can be
+	 * modeled with the formula
+	 * 
+	 * <pre>
+	 * hA = A / (k + A),
+	 * </pre>
+	 * 
+	 * where A is the activating species and k is some constant. If multiple
+	 * activators take part in this reaction, on such equation is created for
+	 * each activator and multiplied with all others. This method returns this
+	 * formula for the given list of activators.
+	 * 
+	 * @param activators
+	 *            A list of activators
+	 * @return Activation formula.
+	 * @throws IllegalFormatException
+	 */
+	protected StringBuffer activationFactor(List<String> activators)
+			throws IllegalFormatException {
+		return createModificationFactor(activators, true);
+	}
+
+	/**
+	 * According to Liebermeister and Klipp, Dec. 2006, inhibition can be
+	 * modeled with the formula
+	 * 
+	 * <pre>
+	 * hI = k/(k + I),
+	 * </pre>
+	 * 
+	 * where I is the inhibiting species and k is some constant. In reactions
+	 * infulenced by multiple inhibitors one hI equation is created for each
+	 * inhibitor and multiplied with the others.
 	 * 
 	 * @param modifiers
-	 * @return
+	 *            A list of modifiers
+	 * @return Inhibition formula.
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer createActivationFactor(List<String> modifiers)
+	protected StringBuffer inhibitionFactor(List<String> modifiers)
 			throws IllegalFormatException {
-		return createModificationFactor(modifiers, ACTIVATION);
-	}
-
-	protected StringBuffer createInhibitionFactor(List<String> modifiers)
-			throws IllegalFormatException {
-		return createModificationFactor(modifiers, INHIBITION);
-	}
-
-	/**
-	 * Returns either the forward reaction or backward reaction term for a
-	 * reaction with GMAK. Both types of terms are formed by the product of the
-	 * reaction's reactant or, respectively, product concentrations to the power
-	 * of the belonging stoichiometry. Each product is also multiplied with the
-	 * reaction's forward or backward directed equilibrium constant.
-	 * 
-	 * @param reaction
-	 * @param catalysators
-	 * @param catalysatorNumber
-	 * @param type
-	 * @param b
-	 * @return
-	 * @throws IllegalFormatException
-	 */
-	/*
-	 * private StringBuffer getReactionPartners(PluginReaction reaction,
-	 * List<String> modE, List<String> catalysators, int catalysatorNumber,
-	 * boolean type, boolean b) throws IllegalFormatException { StringBuffer
-	 * equation = new StringBuffer();
-	 * 
-	 * StringBuffer k = new StringBuffer((type == FORWARD) ? "kass_" :
-	 * "kdiss_"); k.append(reaction.getId());
-	 * 
-	 * StringBuffer[] speciesforward = new StringBuffer[reaction
-	 * .getNumReactants() + 2]; StringBuffer[] speciesreverse = new
-	 * StringBuffer[reaction .getNumProducts() + 2]; StringBuffer[] eqrare = new
-	 * StringBuffer[Math.max(modE.size() + catalysators.size(), 1)]; int count =
-	 * 1; int catcount = 0; speciesforward[0] = k; speciesreverse[0] = k;
-	 * 
-	 * if (type == FORWARD) { int prod = reaction.getNumReactants(); for (int i
-	 * = 0; i < prod; i++) {
-	 * 
-	 * speciesforward[count] = getSpecies(reaction.getReactant(i)); count++; }
-	 * for (int i = 0; i < modE.size(); i++) {
-	 * 
-	 * speciesforward[count] = new StringBuffer(modE.get(i)); speciesforward[0]
-	 * = concat(k, underscore, modE.get(i)); eqrare[catcount] =
-	 * times(speciesforward); catcount++;
-	 * 
-	 * } for (int i = 0; i < catalysators.size(); i++) { speciesforward[count] =
-	 * new StringBuffer(catalysators.get(i)); speciesforward[0] = concat(k,
-	 * underscore, catalysators.get(i)); eqrare[catcount] =
-	 * times(speciesforward); catcount++;
-	 * 
-	 * }
-	 * 
-	 * equation = sum(eqrare);
-	 * 
-	 * } if (type == REVERSE) { int reac = reaction.getNumProducts(); for (int i
-	 * = 0; i < reac; i++) { speciesreverse[count] =
-	 * getSpecies(reaction.getProduct(i)); count++;
-	 * 
-	 * } for (int i = 0; i < modE.size(); i++) { speciesreverse[count] = new
-	 * StringBuffer(modE.get(i)); speciesreverse[0] = concat(k, underscore,
-	 * modE.get(i)); eqrare[catcount] = times(speciesreverse); catcount++;
-	 * 
-	 * }
-	 * 
-	 * for (int i = 0; i < catalysators.size(); i++) { speciesreverse[count] =
-	 * new StringBuffer(catalysators.get(i)); speciesreverse[0] = concat(k,
-	 * underscore, catalysators.get(i)); eqrare[catcount] =
-	 * times(speciesreverse); catcount++;
-	 * 
-	 * }
-	 * 
-	 * equation = sum(eqrare);
-	 * 
-	 * }
-	 * 
-	 * return equation; } /* ERSTMAL DRINLASSEN!!
-	 * 
-	 * if ((type == FORWARD) || (type == REVERSE && reaction.getReversible())) {
-	 * StringBuffer k = new StringBuffer((type == FORWARD) ? "kass_" :
-	 * "kdiss_"); k.append(reaction.getId());
-	 * 
-	 * if (!listOfLocalParameters.contains(k)) listOfLocalParameters.add(k);
-	 * Vector<StringBuffer> parts = new Vector<StringBuffer>(); parts.add(k);
-	 * 
-	 * // was ist b?
-	 * 
-	 * if (!b) for (int i = 0; i < ((type == FORWARD) ? reaction
-	 * .getNumReactants() : reaction.getNumProducts()); i++) {
-	 * PluginSpeciesReference ref = (type == FORWARD) ? reaction .getReactant(i)
-	 * : reaction.getProduct(i);
-	 * 
-	 * // parts.add(pow(getSpecies(ref), getStoichiometry(ref))); }
-	 * 
-	 * if (catalysatorNumber >= 0) parts.add(new StringBuffer(catalysators
-	 * .get(catalysatorNumber)));
-	 * 
-	 * return times(parts.toArray(new StringBuffer[parts.size()])); } else {
-	 * return new StringBuffer(); }
-	 */
-
-	/**
-	 * Returns the name of a PluginSpeciesReference object's belonging species
-	 * as an object of type StringBuffer.
-	 * 
-	 * @param ref
-	 * @return
-	 */
-	protected StringBuffer getSpecies(PluginSpeciesReference ref) {
-		return new StringBuffer(ref.getSpecies());
-	}
-
-	/**
-	 * Returns the value of a PluginSpeciesReference object's stoichiometry
-	 * either as a double or, if the stoichiometry has an integer value, as an
-	 * int object.
-	 * 
-	 * @param ref
-	 * @return
-	 */
-	protected StringBuffer getStoichiometry(PluginSpeciesReference ref) {
-		double stoich = ref.getStoichiometry();
-		if ((int) stoich - stoich == 0)
-			return new StringBuffer(Integer.toString((int) stoich));
-		else
-			return new StringBuffer(Double.toString(stoich));
+		return createModificationFactor(modifiers, false);
 	}
 
 }

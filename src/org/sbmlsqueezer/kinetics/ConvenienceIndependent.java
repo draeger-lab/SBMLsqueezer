@@ -1,5 +1,20 @@
-/**
- * Copyright (c) ZBiT, University of T&uuml;bingen, Germany
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbmlsqueezer.kinetics;
 
@@ -11,15 +26,23 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 /**
+ * <p>
  * This is the thermodynamically independent form of the convenience kinetics.
  * In cases that the stochiometric matrix has full column rank the less
- * complicated {@see Convenience} can bee invoked.
+ * complicated {@link Convenience} can bee invoked.
+ * </p>
+ * <p>
+ * Creates the Convenience kinetic's thermodynamicely independent form. This
+ * method in general works the same way as the according one for the convenience
+ * kinetic. Each enzyme's fraction is multiplied with a reaction constant that
+ * is global for the eynzme's reaction.
+ * </p>
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
- * @author Hannes Borch <hannes.borch@googlemail.com>
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis </a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
 public class ConvenienceIndependent extends Convenience {
@@ -30,7 +53,7 @@ public class ConvenienceIndependent extends Convenience {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public ConvenienceIndependent(PluginReaction parentReaction,
 			PluginModel model) throws RateLawNotApplicableException,
@@ -45,11 +68,12 @@ public class ConvenienceIndependent extends Convenience {
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public ConvenienceIndependent(PluginReaction parentReaction,
 			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -59,7 +83,6 @@ public class ConvenienceIndependent extends Convenience {
 	}
 
 	// @Override
-	@Override
 	public String getName() {
 		if (this.getParentReaction().getReversible())
 			return "reversible thermodynamically independent convenience kinetics";
@@ -67,36 +90,31 @@ public class ConvenienceIndependent extends Convenience {
 	}
 
 	// @Override
-	@Override
 	public String getSBO() {
 		return "none";
 	}
 
-	/**
-	 * @Override Creates the Convenience kinetic's thermodynamicely independent
-	 *           form. This method in general works the same way as the
-	 *           according one for the convenience kinetic. Each enzyme's
-	 *           fraction is multiplied with a reaction constant that is global
-	 *           for the eynzme's reaction.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.sbmlsqueezer.kinetics.Convenience#createKineticEquation(jp.sbi.
+	 * celldesigner.plugin.PluginModel, java.util.List, java.util.List,
+	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	@Override
 	protected StringBuffer createKineticEquation(PluginModel model,
-			int reactionNum, List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		reactionNum++;
-
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+			throws RateLawNotApplicableException, IllegalFormatException {
 		PluginReaction reaction = getParentReaction();
 		StringBuffer[] enzymes = new StringBuffer[modE.size()];
 		try {
-			StringBuffer acti = createActivationFactor(modActi);
-			StringBuffer inhib = createInhibitionFactor( modInhib);
+			StringBuffer acti = activationFactor(modActi);
+			StringBuffer inhib = inhibitionFactor(modInhib);
 
 			int i = 0;
 			do {
 				StringBuffer klV = new StringBuffer("kV_");
-				klV.append(reactionNum);
+				klV.append(reaction.getId());
 				if (modE.size() > 1) {
 					klV.append('_');
 					klV.append(modE.get(i));
@@ -105,21 +123,15 @@ public class ConvenienceIndependent extends Convenience {
 
 				StringBuffer numerator, denominator;
 				if (!reaction.getReversible()) {
-					numerator = times(createNumerators(reactionNum,
-							reaction, i, modE, FORWARD));
-					denominator = diff(times(createDenominators(reactionNum,
-							reaction, i, modE, FORWARD)),
-							new StringBuffer("1"));
+					numerator = times(createNumerators(i, modE, FORWARD));
+					denominator = diff(times(createDenominators(i, modE,
+							FORWARD)), new StringBuffer("1"));
 				} else {
-					numerator = diff(times(createNumerators(reactionNum,
-							reaction, i, modE, FORWARD)),
-							times(createNumerators(reactionNum, reaction,
-									i, modE, REVERSE)));
-					denominator = diff(sum(times(createDenominators(
-							reactionNum, reaction, i, modE, FORWARD)),
-							times(createDenominators(reactionNum,
-									reaction, i, modE, REVERSE))),
-							new StringBuffer("1"));
+					numerator = diff(times(createNumerators(i, modE, FORWARD)),
+							times(createNumerators(i, modE, REVERSE)));
+					denominator = diff(sum(times(createDenominators(i, modE,
+							FORWARD)), times(createDenominators(i, modE,
+							REVERSE))), new StringBuffer("1"));
 				}
 
 				if (modE.size() > 0)
@@ -145,7 +157,6 @@ public class ConvenienceIndependent extends Convenience {
 	 * energy constant to the power of half the species' stoichiometry. This
 	 * method is applicable for both forward and backward reactions.
 	 * 
-	 * @param reactionNumber
 	 * @param reaction
 	 * @param enzymeNumber
 	 * @param modE
@@ -153,15 +164,15 @@ public class ConvenienceIndependent extends Convenience {
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer[] createNumerators(int reactionNumber,
-			PluginReaction reaction, int enzymeNumber, List<String> modE,
+	protected StringBuffer[] createNumerators(int enzymeNumber, List<String> modE,
 			boolean type) throws IllegalFormatException {
+		PluginReaction reaction = getParentReaction();
 		if (type == FORWARD || type == REVERSE) {
 			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? (reaction
 					.getNumReactants() + 1)
 					: (reaction.getNumProducts() + 1)];
 			nums[0] = new StringBuffer((type == FORWARD) ? "kcatp_" : "kcatn_");
-			nums[0].append(reactionNumber);
+			nums[0].append(reaction.getId());
 			if (modE.size() > 1) {
 				nums[0].append('_');
 				nums[0].append(modE.get(enzymeNumber));
@@ -171,7 +182,7 @@ public class ConvenienceIndependent extends Convenience {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction
 						.getReactant(i - 1) : reaction.getProduct(i - 1);
 				StringBuffer kM = new StringBuffer("kM_");
-				kM.append(reactionNumber);
+				kM.append(reaction.getId());
 				if (modE.size() > 1) {
 					kM.append('_');
 					kM.append(modE.get(enzymeNumber));
@@ -180,12 +191,11 @@ public class ConvenienceIndependent extends Convenience {
 				kM.append(ref.getSpecies());
 				addLocalParameter(kM);
 
-				StringBuffer kiG = new StringBuffer("kG_");
-				kiG.append(ref.getSpecies());
+				StringBuffer kiG = concat("kG_", ref.getSpecies());
 				addLocalParameter(kiG);
-				
+
 				nums[i] = times(pow(frac(getSpecies(ref), kM),
-						getStoichiometry(ref)), root(new StringBuffer("2"),
+						getStoichiometry(ref)), root(Character.valueOf('2'),
 						pow(times(kiG, kM), getStoichiometry(ref))));
 			}
 

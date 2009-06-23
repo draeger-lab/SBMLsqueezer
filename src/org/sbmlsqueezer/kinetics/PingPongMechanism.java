@@ -1,6 +1,20 @@
 /*
- * Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbmlsqueezer.kinetics;
 
@@ -14,11 +28,11 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 /**
  * TODO: comment missing
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- * @author wouamba <dwouamba@yahoo.fr>
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Wouamba</a>
  * 
  * @date Aug 1, 2007
  */
@@ -60,7 +74,6 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	}
 
 	// @Override
-	@Override
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		String name = "substituted-enzyme mechanism (Ping-Pong)";
@@ -70,21 +83,17 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	}
 
 	// @Override
-	@Override
 	public String getSBO() {
 		return "none";
 	}
 
 	// @Override
-	@Override
 	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		StringBuffer numerator = new StringBuffer();// I
 		StringBuffer denominator = new StringBuffer(); // II
-		StringBuffer inhib = new StringBuffer();
-		StringBuffer acti = new StringBuffer();
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 
 		PluginReaction reaction = getParentReaction();
@@ -97,7 +106,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		if (reaction.getNumReactants() == 2)
 			specRefE2 = (PluginSpeciesReference) reaction.getListOfReactants()
 					.get(1);
-		else if (specRefE1.getStoichiometry() == 2.0)
+		else if (specRefE1.getStoichiometry() == 2d)
 			specRefE2 = specRefE1;
 		else
 			throw new RateLawNotApplicableException(
@@ -108,7 +117,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		boolean exception = false;
 		switch (reaction.getNumProducts()) {
 		case 1:
-			if (specRefP1.getStoichiometry() == 2.0)
+			if (specRefP1.getStoichiometry() == 2d)
 				specRefP2 = specRefP1;
 			else
 				exception = true;
@@ -152,7 +161,6 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
 			}
-
 			addLocalParameter(kcatp);
 			addLocalParameter(kMr2);
 			addLocalParameter(kMr1);
@@ -175,8 +183,8 @@ public class PingPongMechanism extends GeneralizedMassAction {
 						new StringBuffer(specRefE1.getSpecies())));
 
 				if (specRefE2.equals(specRefE1)) {
-					numerator = pow(numerator, new StringBuffer('2'));
-					denominator = pow(denominator, new StringBuffer('2'));
+					numerator = pow(numerator, Character.valueOf('2'));
+					denominator = pow(denominator, Character.valueOf('2'));
 
 				} else {
 					numerator = times(numerator, new StringBuffer(specRefE2
@@ -224,9 +232,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					kMp2 = concat("kMp2", kMp2.substring(2));
 					kIp1 = concat("kip1", kIp1.substring(2));
 					kIp2 = concat("kip2", kIp2.substring(2));
-
 				}
-
 				addLocalParameter(kcatn);
 				addLocalParameter(kMp2);
 				addLocalParameter(kMp1);
@@ -250,9 +256,9 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = times(numeratorForward, pow(
 							new StringBuffer(specRefE1.getSpecies()),
-							new StringBuffer('2')));
+							Character.valueOf('2')));
 					denominator = sum(denominator, frac(pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer("2")),
+							specRefE1.getSpecies()), Character.valueOf('2')),
 							times(kIr1, kMr2)));
 				} else {
 					numeratorForward = times(numeratorForward,
@@ -280,9 +286,9 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				if (specRefP2.equals(specRefP1)) {
 					numeratorReverse = times(numeratorReverse, pow(
 							new StringBuffer(specRefP1.getSpecies()),
-							new StringBuffer("2")));
+							Character.valueOf('2')));
 					denominator_p1p2 = pow(new StringBuffer(specRefP1
-							.getSpecies()), new StringBuffer("2"));
+							.getSpecies()), Character.valueOf('2'));
 
 				} else {
 					numeratorReverse = times(numeratorReverse,
@@ -300,9 +306,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			}
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
-		acti = createActivationFactor(modActi);
-		inhib = createInhibitionFactor(modInhib);
-		return times(acti, inhib, sum(catalysts));
+		return times(activationFactor(modActi), inhibitionFactor(modInhib), sum(catalysts));
 	}
 
 }
