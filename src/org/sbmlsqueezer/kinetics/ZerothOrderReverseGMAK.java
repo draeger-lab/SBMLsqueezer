@@ -27,38 +27,32 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
 			PluginModel model) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
-	}
-	
-	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
-	}
-
-	@Override
-	protected StringBuffer createKineticEquation(PluginModel model,
-			 List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		boolean zeroReact = false;
-		boolean zeroProd = true;
 		reactantOrder = Double.NaN;
 		productOrder = 0;
-//		if (modCat.isEmpty())
-//			return super.createKineticEquation(modE,-1, modCat,
-//					modActi, modActi, zeroReact, zeroProd);
-//		StringBuffer[] parts = new StringBuffer[modCat.size()];
-//		for (int i = 0; i < parts.length; i++)
-//			parts[i] = super.createKineticEquation(modE,i, modCat,
-//					modActi, modActi, zeroReact, zeroProd);
-//		return sum(parts);
-		return new StringBuffer("1");
+	}
+
+	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
+			PluginModel model, List<String> listOfPossibleEnzymes)
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
+		super(parentReaction, model, listOfPossibleEnzymes);
+		reactantOrder = Double.NaN;
+		productOrder = 0;
+	}
+
+
+	// @Override
+	protected Object dissociation(List<String> catalysts, int c) {
+		StringBuffer kdiss = concat("kdiss_", getParentReaction().getId());
+		if (catalysts.size() > 0)
+			kdiss = concat(kdiss, underscore, catalysts.get(c));
+		addLocalParameter(kdiss);
+		return new StringBuffer(kdiss);
 	}
 }

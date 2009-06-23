@@ -1,3 +1,21 @@
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sbmlsqueezer.kinetics;
 
 import java.io.IOException;
@@ -10,12 +28,10 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 /**
  * TODO: comment missing
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class OrderedMechanism extends GeneralizedMassAction {
@@ -65,10 +81,10 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		String name = "compulsory-order ternary-complex mechanism";
 		if ((getParentReaction().getNumProducts() == 2)
 				|| (stoichiometryRight == 2))
-			name += " with two products";
+			name += ", two products";
 		else if ((getParentReaction().getNumProducts() == 1)
 				|| (stoichiometryRight == 1))
-			name += " with one product";
+			name += ", one product";
 		if (getParentReaction().getReversible())
 			return "reversible " + name;
 		return "irreversible " + name;
@@ -87,8 +103,6 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			throws RateLawNotApplicableException, IllegalFormatException {
 		StringBuffer numerator = new StringBuffer();// I
 		StringBuffer denominator = new StringBuffer(); // II
-		StringBuffer inhib = new StringBuffer();
-		StringBuffer acti = new StringBuffer();
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 
 		PluginReaction reaction = getParentReaction();
@@ -177,10 +191,8 @@ public class OrderedMechanism extends GeneralizedMassAction {
 					kIp1 = concat(kIp1, underscore, modEnzymeNumber);
 					kIp2 = concat(kIp2, underscore, modEnzymeNumber);
 					kIr2 = concat(kIr2, underscore, modEnzymeNumber);
-
 				}
 			}
-
 			kMr2 = concat(kMr2, underscore, specRefE2.getSpecies());
 			kMr1 = concat(kMr1, underscore, specRefE1.getSpecies());
 			// reverse reactions
@@ -199,19 +211,16 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				if (specRefP2.equals(specRefP1)) {
 					kMp1 = concat("kMp1", kMp1.substring(2));
 					kMp2 = concat("kMp2", kMp2.substring(2));
-
 				}
 				kIp2 = concat(kIp2, underscore, specRefP2
 						.getSpecies());
-
 			}
 			kIr1 = concat(kIr1, underscore, specRefE1.getSpecies());
 
 			// reverse reactions
 			kIr2 = concat(kIr2, underscore, specRefE2.getSpecies());
-
 			addLocalParameter(kcatp);
-
+			
 			/*
 			 * Irreversible reaction
 			 */
@@ -219,35 +228,28 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				addLocalParameter(kMr2);
 				addLocalParameter(kMr1);
 				addLocalParameter(kIr1);
-
 				
-				if (modE.size() > 0) {
+				if (modE.size() > 0)
 					numerator = times(numerator, kcatp, new StringBuffer(modE
 							.get(enzymeNum)));
-
-				}
 				numerator = times(numerator, kcatp, new StringBuffer(specRefE1
 						.getSpecies()));
-
 				denominator = times(kIr1, kMr2);
 
 				if (specRefE2.equals(specRefE1)) {
 					numerator = times(numerator, pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer("2")));
+							specRefE1.getSpecies()), new StringBuffer('2')));
 
 					denominator=sum(denominator, times(sum(kMr2, kMr1), sum(new StringBuffer(
 							specRefE1.getSpecies()), pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer("2")))));
-
+							specRefE1.getSpecies()), new StringBuffer('2')))));
 				} else {
 					numerator = times(numerator, new StringBuffer(specRefE2
 							.getSpecies()));
                     denominator=sum(denominator, times(sum(kMr2, kMr1), sum(new StringBuffer(
 							specRefE1.getSpecies()), times(new StringBuffer(specRefE1.getSpecies()),
 									new StringBuffer(specRefE2.getSpecies())))));
-
 					    }
-
 			} else if (!biuni) {
 				/*
 				 * Reversible Bi-Bi reaction.
@@ -269,7 +271,6 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				if (modE.size() > 0)
 					numeratorForward = times(numeratorForward, new StringBuffer(modE
 							.get(enzymeNum)));
-
 				
 				denominator = sum(new StringBuffer(1), frac(new StringBuffer(
 						specRefE1.getSpecies()), kIr1), frac(times(kMr1,
@@ -280,16 +281,14 @@ public class OrderedMechanism extends GeneralizedMassAction {
 
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = times(numeratorForward, pow(new StringBuffer(specRefE1
-							.getSpecies()), new StringBuffer("2")));
+							.getSpecies()), new StringBuffer('2')));
 
 					denominator = sum(denominator, frac(pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer("2")),  times(kIr1, kMr2)));
-
+							specRefE1.getSpecies()), new StringBuffer('2')),  times(kIr1, kMr2)));
 				} else {
 					numeratorForward = times(numeratorForward, times(new StringBuffer(specRefE1
 							.getSpecies())),new StringBuffer(specRefE2
 									.getSpecies()));
-					
 					denominator = sum(denominator, frac(times(new StringBuffer(
 							specRefE1.getSpecies()), new StringBuffer(specRefE2
 									.getSpecies())), times(kIr1, kMr2)));
@@ -303,7 +302,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				if (specRefP2.equals(specRefP1))
 					numeratorReverse = times(numeratorReverse, pow(
 							new StringBuffer(specRefP1.getSpecies()),
-							new StringBuffer("2")));
+							new StringBuffer('2')));
 				else {
 					numeratorReverse = times(numeratorReverse,times(
 							new StringBuffer(specRefP1.getSpecies()),
@@ -322,25 +321,21 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				
 				if (specRefP2.equals(specRefP1))
 					denominator = sum(denominator, frac(pow(new StringBuffer(
-							specRefP1.getSpecies()), new StringBuffer("2")),  times(kMp1, kIp2)));
+							specRefP1.getSpecies()), new StringBuffer('2')),  times(kMp1, kIp2)));
 				else
 					denominator = sum(denominator, frac(times(new StringBuffer(
 							specRefP1.getSpecies()), new StringBuffer(specRefP2
 							.getSpecies())), times(kMp1, kIp2)));
-
-				
-
 				
 				if (specRefE2.equals(specRefE1))
 					denominator=sum(denominator, frac(times(pow(new StringBuffer(specRefE1
-							.getSpecies()), new StringBuffer("2")), 
+							.getSpecies()), new StringBuffer('2')), 
 							new StringBuffer(specRefP1.getSpecies())),times(kIr1, kMr2)));
 				else
 					denominator=sum(denominator, frac(times(new StringBuffer(specRefE1
 							.getSpecies()), new StringBuffer(specRefE2
 							.getSpecies()), new StringBuffer(specRefP1.getSpecies())),times(kIr1,
 									kMr2, kIp1)));
-
 				
 				if (specRefP2.equals(specRefP1))
 					denominator=sum(denominator,frac(times(new StringBuffer(specRefE2.getSpecies()),  
@@ -350,7 +345,6 @@ public class OrderedMechanism extends GeneralizedMassAction {
 					denominator=sum(denominator,frac(times(new StringBuffer(specRefE2.getSpecies()),  
 							times(new StringBuffer(specRefP1.getSpecies()),
 									new StringBuffer(specRefP2.getSpecies()))),times(kIr2 , kMp1,kIp2)));
-	
 			} else {
 				/*
 				 * Reversible bi-uni reaction
@@ -382,10 +376,10 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = times(numeratorForward, pow(
 							new StringBuffer(specRefE1.getSpecies()),
-							new StringBuffer("2")));
+							new StringBuffer('2')));
 
 					denominator = sum(denominator, frac(pow(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer("2")),  times(kIr1, kMr2)));
+							specRefE1.getSpecies()), new StringBuffer('2')),  times(kIr1, kMr2)));
 
 				} else {
 					numeratorForward = times(numeratorForward, times(
@@ -422,9 +416,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			 */
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
-		acti = createActivationFactor( modActi);
-		inhib = createInhibitionFactor(modInhib);
-		return times(acti, inhib, sum(catalysts));
+		return times(activationFactor(modActi), inhibitionFactor(modInhib), sum(catalysts));
 	}
 
 }

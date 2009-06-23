@@ -1,8 +1,20 @@
 /*
- * Feb 8, 2008
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
  *
- * Copyright (c) ZBiT, University of T&uuml;bingen, Germany
- * Compiler: JDK 1.6.0
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbmlsqueezer.kinetics;
 
@@ -13,11 +25,12 @@ import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
 /**
- * TODO: comment missing
+ * This class creates generalized mass action rate equations with zeroth order
+ * in all reactants.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
+ * @author <a href="andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Feb 8, 2008
  **/
 public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
@@ -27,38 +40,31 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public ZerothOrderForwardGMAK(PluginReaction parentReaction,
 			PluginModel model) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
-	}
-	
-	public ZerothOrderForwardGMAK(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
-	}
-
-
-	protected StringBuffer createKineticEquation(PluginModel model,
-		 List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
-		boolean zeroReact = true;
-		boolean zeroProd = false;
 		reactantOrder = 0;
 		productOrder = Double.NaN;
-//		if (modCat.isEmpty())
-//			return super.createKineticEquation(modE,-1, modCat,
-//					modActi, modActi, zeroReact, zeroProd);
-//		StringBuffer[] parts = new StringBuffer[modCat.size()];
-//		for (int i = 0; i < parts.length; i++)
-//			parts[i] = super.createKineticEquation(modE,i, modCat,
-//					modActi, modActi, zeroReact, zeroProd);
-//		return sum(parts);
-		return new StringBuffer("1");
+	}
+
+	public ZerothOrderForwardGMAK(PluginReaction parentReaction,
+			PluginModel model, List<String> listOfPossibleEnzymes)
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
+		super(parentReaction, model, listOfPossibleEnzymes);
+		reactantOrder = 0;
+		productOrder = Double.NaN;
+	}
+
+	// @Override
+	protected final StringBuffer association(List<String> catalysts, int catNum) {
+		StringBuffer kass = concat("kass_", getParentReaction().getId());
+		if (catalysts.size() > 0)
+			kass = concat(kass, underscore, catalysts.get(catNum));
+		addLocalParameter(kass);
+		return new StringBuffer(kass);
 	}
 }

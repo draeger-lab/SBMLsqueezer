@@ -25,7 +25,8 @@ import javax.swing.WindowConstants;
 import org.sbmlsqueezer.resources.Resource;
 
 /**
- * @author andreas
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * 
  */
 public class JHelpBrowser extends JDialog implements ActionListener {
@@ -90,8 +91,7 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 	 * 
 	 */
 	private void init() {
-		browser = new JBrowser(Resource.class
-				.getResource("html/index.html"));
+		browser = new JBrowser(Resource.class.getResource("html/index.html"));
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(new JScrollPane(browser,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -100,7 +100,8 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		JToolBar toolbar = new JToolBar();
 		JButton backButton, nextButton;
 		try {
-			Image image = ImageIO.read(Resource.class.getResource("img/back.png"));
+			Image image = ImageIO.read(Resource.class
+					.getResource("img/back.png"));
 			// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
 
 			backButton = new JButton(new ImageIcon(image));
@@ -114,7 +115,8 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		toolbar.add(backButton);
 
 		try {
-			Image image = ImageIO.read(Resource.class.getResource("img/forward.png"));
+			Image image = ImageIO.read(Resource.class
+					.getResource("img/forward.png"));
 			// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
 			nextButton = new JButton(new ImageIcon(image));
 			nextButton.setToolTipText("Next Page");

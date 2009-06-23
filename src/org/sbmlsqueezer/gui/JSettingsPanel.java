@@ -1,6 +1,20 @@
 /*
- * Nov 15, 2007 Copyright (c) ZBiT, University of T&uuml;bingen, Germany
- * Compiler: JDK 1.6.0
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbmlsqueezer.gui;
 
@@ -31,11 +45,10 @@ import org.sbmlsqueezer.io.SettingsWriter;
  * providing get and set methods to alter the current status of the user
  * settings.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Nov 15, 2007
  */
 public class JSettingsPanel extends JPanel {
@@ -95,7 +108,7 @@ public class JSettingsPanel extends JPanel {
 
 	private JRadioButton jRadioButtonBiUniORD;
 
-	@SuppressWarnings("unused")
+	// @SuppressWarnings("unused")
 	private boolean possibleEnzymeAllNotChecked;
 
 	public JSettingsPanel() {
@@ -116,7 +129,8 @@ public class JSettingsPanel extends JPanel {
 		jCheckBoxTreatAllReactionsAsEnzyeReaction
 				.setToolTipText("<html>If checked, all reactions are considered to be enzyme-catalyzed.</html>");
 		jCheckBoxTreatAllReactionsAsEnzyeReaction.setBackground(Color.WHITE);
-		jCheckBoxAddAllParametersGlobally = new JCheckBox("Add all new parameters globally");
+		jCheckBoxAddAllParametersGlobally = new JCheckBox(
+				"Add all new parameters globally");
 		jCheckBoxAddAllParametersGlobally
 				.setToolTipText("<html>If selected, all newly created parameters are stored <br>"
 						+ "globally in the model. Otherwise SBMLsqueezer only stores most <br>"
@@ -143,7 +157,7 @@ public class JSettingsPanel extends JPanel {
 				jCheckBoxWarnings, 0, 1, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerMaxRealisticNumOfReactants, 1, 1, 1, 1, 1, 0);
-		
+
 		// Second Panel
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
 				"Only when missing");
@@ -347,7 +361,10 @@ public class JSettingsPanel extends JPanel {
 		// uni-uni-type = 3
 		jRadioButtonUniUniMMK.setBackground(Color.WHITE);
 
-		jRadioButtonUniUniCONV = new JRadioButton("Convenience kinetics"); // uni-uni-type
+		jRadioButtonUniUniCONV = new JRadioButton("Convenience kinetics"); //uni-
+		// uni
+		// -
+		// type
 		// = 2
 		jRadioButtonUniUniCONV
 				.setToolTipText("<html>Check this box if convenience kinetics is to be<br>"

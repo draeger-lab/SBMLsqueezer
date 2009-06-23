@@ -1,5 +1,20 @@
-/**
- * Copyright (c) ZBiT, University of T&uuml;bingen, Germany
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbmlsqueezer.kinetics;
 
@@ -11,31 +26,31 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 /**
+ * <p>
  * This is the standard convenience kinetics which is only appropriated for
  * systems whose stochiometric matrix has full column rank. Otherwise the more
- * complicated thermodynamically independend form {@see ConvenienceIndependent}
+ * complicated thermodynamically independend form {@link ConvenienceIndependent}
  * needs to be invoked.
+ * </p>
+ * <p>
+ * Creates a convenience kinetic equation. For each enzyme contained in the
+ * given reaction, the convenience kinetic term is formed by calling methods
+ * which return the numerator and denominator of the fraction. These methods
+ * distinguish between reversible and irreversible reactions. The fractions are
+ * multiplied with the concentration of the respective enzyme and, afterwards,
+ * summed up. The whole sum is multiplied with the activators and inhibitors of
+ * the reaction.
+ * </p>
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
- * @author Michael Ziller <michael@diegrauezelle.de>
- * @author Hannes Borch <hannes.borch@googlemail.com>
- * @author Dieudonn&eacute; Motsou Wouamba
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:michael@diegrauezelle.de">Michael Ziller</a>
+ * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Motsou Wouamba</a>
  * @date Aug 1, 2007
  */
-
-
-
-
-
-
-
-
-
-
-
 public class Convenience extends GeneralizedMassAction {
 
 	/**
@@ -74,7 +89,6 @@ public class Convenience extends GeneralizedMassAction {
 	}
 
 	// @Override
-	@Override
 	public String getName() {
 		if (getParentReaction().getReversible())
 			return "reversible simple convenience kinetics";
@@ -82,56 +96,37 @@ public class Convenience extends GeneralizedMassAction {
 	}
 
 	// @Override
-	@Override
 	public String getSBO() {
 		return "none";
 	}
 
-	/**
-	 * @Override Creates a convenience kinetic equation. For each enzyme
-	 *           contained in the given reaction, the convenience kinetic term
-	 *           is formed by calling methods which return the numerator and
-	 *           denominator of the fraction. These methods distinguish between
-	 *           reversible and irreversible reactions. The fractions are
-	 *           multiplied with the concentration of the respective enzyme and,
-	 *           afterwards, summed up. The whole sum is multiplied with the
-	 *           activators and inhibitors of the reaction.
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbmlsqueezer.kinetics.GeneralizedMassAction#createKineticEquation(jp.sbi.celldesigner.plugin.PluginModel, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	
-	
 	protected StringBuffer createKineticEquation(PluginModel model,
-			int reactionNum, List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
-	throws RateLawNotApplicableException {
-		
-		System.out.println(" HURRAAAAAAA sackgesicht!!!!" );
-
-		reactionNum++;
-
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+			throws RateLawNotApplicableException, IllegalFormatException {
 		PluginReaction reaction = getParentReaction();
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 		try {
-			StringBuffer activation = createActivationFactor(modActi);
-			StringBuffer inhibition = createInhibitionFactor(modInhib);
+			StringBuffer activation = activationFactor(modActi);
+			StringBuffer inhibition = inhibitionFactor(modInhib);
 
 			int i = 0;
 			do {
 				StringBuffer numerator, denominator;
 				if (!reaction.getReversible()) {
-					numerator = times(createNumerators( reaction,
-							i, modE, FORWARD));
-					denominator = diff(times(createDenominators(reactionNum,
-							reaction, i, modE, FORWARD)), new StringBuffer("1"));
+					numerator = times(createNumerators(i, modE, FORWARD));
+					denominator = diff(times(createDenominators(i, modE,
+							FORWARD)), new StringBuffer("1"));
 				} else {
-					numerator = diff(times(createNumerators(
-							reaction, i, modE, FORWARD)),
-							times(createNumerators( reaction, i,
-									modE, REVERSE)));
-					denominator = diff(sum(times(createDenominators(
-							reactionNum, reaction, i, modE, FORWARD)),
-							times(createDenominators(reactionNum, reaction, i,
-									modE, REVERSE))), new StringBuffer("1"));
+					numerator = diff(times(createNumerators(i, modE, FORWARD)),
+							times(createNumerators(i, modE, REVERSE)));
+					denominator = diff(sum(times(createDenominators(i, modE,
+							FORWARD)), times(createDenominators(i, modE,
+							REVERSE))), new StringBuffer("1"));
 				}
 				if (modE.size() > 0)
 					catalysts[i] = times(new StringBuffer(modE.get(i)), frac(
@@ -164,9 +159,9 @@ public class Convenience extends GeneralizedMassAction {
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer[] createNumerators(PluginReaction reaction,
-			int enzymeNumber, List<String> modE, boolean type)
-			throws IllegalFormatException {
+	protected StringBuffer[] createNumerators(int enzymeNumber,
+			List<String> modE, boolean type) throws IllegalFormatException {
+		PluginReaction reaction = getParentReaction();
 		if (type == FORWARD || type == REVERSE) {
 			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? (reaction
 					.getNumReactants() + 1)
@@ -177,7 +172,7 @@ public class Convenience extends GeneralizedMassAction {
 				nums[0].append('_');
 				nums[0].append(modE.get(enzymeNumber));
 			}
-		addLocalParameter(nums[0]);
+			addLocalParameter(nums[0]);
 
 			for (int i = 1; i < nums.length; i++) {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction
@@ -210,7 +205,6 @@ public class Convenience extends GeneralizedMassAction {
 	 * form the species' factor in the product. The method is applicable for
 	 * both forward and backward reactions.
 	 * 
-	 * @param reactionNumber
 	 * @param reaction
 	 * @param enzymeNumber
 	 * @param modE
@@ -218,9 +212,9 @@ public class Convenience extends GeneralizedMassAction {
 	 * @return
 	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer[] createDenominators(int reactionNumber,
-			PluginReaction reaction, int enzymeNumber, List<String> modE,
-			boolean type) throws IllegalFormatException {
+	protected StringBuffer[] createDenominators(int enzymeNumber, List<String> modE, boolean type)
+			throws IllegalFormatException {
+		PluginReaction reaction = getParentReaction();
 		if (type == FORWARD || type == REVERSE) {
 			StringBuffer[] denoms = new StringBuffer[(type == FORWARD) ? reaction
 					.getNumReactants()
@@ -229,7 +223,7 @@ public class Convenience extends GeneralizedMassAction {
 				PluginSpeciesReference ref = (type == FORWARD) ? reaction
 						.getReactant(i) : reaction.getProduct(i);
 				StringBuffer kM = new StringBuffer("kM_");
-				kM.append(reactionNumber);
+				kM.append(getParentReactionID());
 				if (modE.size() > 1) {
 					kM.append('_');
 					kM.append(modE.get(enzymeNumber));

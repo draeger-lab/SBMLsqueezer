@@ -1,10 +1,20 @@
-/**
- * Aug 7, 2007
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
  *
- * @since 2.0
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbmlsqueezer.kinetics;
 
@@ -18,13 +28,11 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 /**
  * TODO: comment missing
  * 
- * @since 2.0
+ * @since 1.0
  * @version
- * @author Jochen Supper
- * @author Nadine Hassis
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.5.0
+ * @author <a href="mailto:supper@genomatix.de">Jochen Supper</a>
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 7, 2007
  */
 public class HillEquation extends BasicKineticLaw {
@@ -34,11 +42,12 @@ public class HillEquation extends BasicKineticLaw {
 	 * @param model
 	 * @param reversibility
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException 
-	 * @throws IllegalFormatException 
+	 * @throws IOException
+	 * @throws IllegalFormatException
 	 */
 	public HillEquation(PluginReaction parentReaction, PluginModel model)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -52,13 +61,14 @@ public class HillEquation extends BasicKineticLaw {
 	 * @param reversibility
 	 * @param modTActi
 	 * @param modTInhib
-	 * @throws IOException 
-	 * @throws IllegalFormatException 
+	 * @throws IOException
+	 * @throws IllegalFormatException
 	 * @throws ModificationException
 	 */
 	public HillEquation(PluginReaction parentReaction, PluginModel model,
 			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException, IllegalFormatException {
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
@@ -66,7 +76,6 @@ public class HillEquation extends BasicKineticLaw {
 		// TODO
 		return true;
 	}
-
 
 	public String getName() {
 		String name;
@@ -77,7 +86,7 @@ public class HillEquation extends BasicKineticLaw {
 		return name;
 	}
 
-	@Override
+	// @Override
 	public String getSBO() {
 		String name = getName().toLowerCase(), sbo = "none";
 		if (name.equals("hill equation"))
@@ -92,8 +101,7 @@ public class HillEquation extends BasicKineticLaw {
 		return sbo;
 	}
 
-	
-	protected StringBuffer createKineticEquation(PluginModel model, 
+	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -112,7 +120,8 @@ public class HillEquation extends BasicKineticLaw {
 		 * reactionNum + ". Only transcriptional or translational inhibition, "
 		 * + "respectively, is allowed here.");
 		 */
-		// necessary due to the changes in CellDesigner from version 4.0 alpha to beta and 4.0.1
+		// necessary due to the changes in CellDesigner from version 4.0 alpha
+		// to beta and 4.0.1
 		if (!modE.isEmpty())
 			modTActi.addAll(modE);
 		if (!modCat.isEmpty())
@@ -147,68 +156,74 @@ public class HillEquation extends BasicKineticLaw {
 
 		StringBuffer acti = new StringBuffer();
 		StringBuffer inhib = new StringBuffer();
-		
+
 		// KS: half saturation constant.
 		for (int activatorNum = 0; activatorNum < modTActi.size(); activatorNum++) {
-			StringBuffer kS = concat("kSp_" , reaction.getId() , "_" , modTActi.get(activatorNum));
-			StringBuffer hillcoeff =concat( "np_"
-					, reaction.getId() , "_" , modTActi.get(activatorNum));
-			acti = times(acti, frac(pow(new StringBuffer(modTActi.get(activatorNum)) , hillcoeff), sum(pow(new StringBuffer(modTActi.get(activatorNum)),hillcoeff), pow(kS, hillcoeff)))
-);
-			
+			StringBuffer kS = concat("kSp_", reaction.getId(), underscore, modTActi
+					.get(activatorNum));
+			StringBuffer hillcoeff = concat("np_", reaction.getId(), underscore,
+					modTActi.get(activatorNum));
+			acti = times(acti, frac(pow(new StringBuffer(modTActi
+					.get(activatorNum)), hillcoeff),
+					sum(pow(new StringBuffer(modTActi.get(activatorNum)),
+							hillcoeff), pow(kS, hillcoeff))));
+
 			addLocalParameter(hillcoeff);
 			addLocalParameter(kS);
 
-				}
+		}
 		if (acti.length() > 2) {
 			acti = new StringBuffer(acti.substring(3));
 		}
 
 		for (int inhibitorNum = 0; inhibitorNum < modTInhib.size(); inhibitorNum++) {
-			StringBuffer kS = concat("kSm_" , reaction.getId() ,"_", modTInhib.get(inhibitorNum));
-			StringBuffer hillcoeff = concat("nm_", reaction.getId(), "_", modTInhib.get(inhibitorNum));
-			
-			inhib = times(inhib, frac(diff(concat(1),pow(new StringBuffer(modTActi.get(inhibitorNum)) , hillcoeff)), sum(pow(new StringBuffer(modTActi.get(inhibitorNum)),hillcoeff), pow(kS, hillcoeff)))
-			);
+			StringBuffer kS = concat("kSm_", reaction.getId(), underscore, modTInhib
+					.get(inhibitorNum));
+			StringBuffer hillcoeff = concat("nm_", reaction.getId(), underscore,
+					modTInhib.get(inhibitorNum));
+
+			inhib = times(inhib, frac(diff(concat(1), pow(new StringBuffer(
+					modTActi.get(inhibitorNum)), hillcoeff)), sum(pow(
+					new StringBuffer(modTActi.get(inhibitorNum)), hillcoeff),
+					pow(kS, hillcoeff))));
 			addLocalParameter(hillcoeff);
 			addLocalParameter(kS);
 
-				}
+		}
 		if (inhib.length() > 2) {
 			// cut the multiplication symbol at the beginning.
 			inhib = new StringBuffer(inhib.substring(3));
 		}
 
-		
-		StringBuffer formelTxt = concat("kg_",reaction.getId());
+		StringBuffer formelTxt = concat("kg_", reaction.getId());
 		addLocalParameter(formelTxt);
 		if ((acti.length() > 0) && (inhib.length() > 0)) {
-			
-			formelTxt =times(formelTxt, acti, inhib);
+
+			formelTxt = times(formelTxt, acti, inhib);
 		} else if (acti.length() > 0) {
-			formelTxt =times(formelTxt, acti);
+			formelTxt = times(formelTxt, acti);
 		} else if (inhib.length() > 0) {
-			
-			formelTxt =times(formelTxt, inhib);
+
+			formelTxt = times(formelTxt, inhib);
 		}
 
 		// Influence of the concentrations of the educts:
 		for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
 			PluginSpecies reactant = reaction.getReactant(reactantNum)
 					.getSpeciesInstance();
-			StringBuffer gene=new StringBuffer();
+			StringBuffer gene = new StringBuffer();
 			if (!reactant.getSpeciesAlias(0).getType().toUpperCase().equals(
 					"GENE")) {
-				
+
 				gene = new StringBuffer(reactant.getId());
 				if (reaction.getReactant(reactantNum).getStoichiometry() != 1.0) {
-					gene=pow(gene, concat(reaction.getReactant(reactantNum)
+					gene = pow(gene, concat(reaction.getReactant(reactantNum)
 							.getStoichiometry()));
-					
+
 				}
-										
+
 			}
-			formelTxt =times(formelTxt, gene);
+			formelTxt = times(formelTxt, gene);
 		}
 		return formelTxt;
 	}
