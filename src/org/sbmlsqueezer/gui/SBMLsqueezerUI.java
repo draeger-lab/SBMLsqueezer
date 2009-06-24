@@ -194,7 +194,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 													 * , panel .
 													 * isNumberEquations ()
 													 */);
-				buffer.write(exporter.toLaTeX(model));
+				buffer.write(exporter.toLaTeX(model).toString());
 				buffer.close();
 				dispose();
 			} catch (IOException e1) {
@@ -213,7 +213,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 		try {
 			BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
-			buffer.write(new LaTeXExport().toLaTeX(model, reaction));
+			buffer.write(new LaTeXExport().toLaTeX(model, reaction).toString());
 			buffer.close();
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(null, "<html>" + exc.getMessage()

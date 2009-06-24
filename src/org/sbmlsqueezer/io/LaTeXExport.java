@@ -326,12 +326,12 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * @throws IOException
 	 */
 
-	public String toLaTeX(PluginModel model) throws IOException {
-		String laTeX;
+	public StringBuffer toLaTeX(PluginModel model) throws IOException {
+		StringBuffer laTeX;
 		String newLine = System.getProperty("line.separator");
 		String title = model.getName().length() > 0 ? model.getName()
 				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
-		String head = getDocumentHead(title);
+		StringBuffer head = getDocumentHead(title);
 
 		String rateHead = newLine + "\\section{Rate Laws}" + newLine;
 		String speciesHead = newLine + "\\section{Equations}";
@@ -588,14 +588,14 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		// writing latex
 		laTeX = head;
 		// writing Rate Laws
-		laTeX += rateHead;
+		laTeX.append(rateHead);
 		for (i = 0; i < rateLaws.length; i++) {
-			laTeX += rateLaws[i] + end;
+			laTeX.append(rateLaws[i] + end);
 		}
 		// writing Equations
-		laTeX += speciesHead;
+		laTeX.append(speciesHead);
 		for (i = 0; i < sp.length; i++) {
-			laTeX += sp[i] + end;
+			laTeX.append(sp[i] + end);
 		}
 		// writing Rules
 
@@ -611,92 +611,92 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 							.getMath()));
 				events[i] = assignments;
 			}
-			laTeX += eventsHead;
+			laTeX.append(eventsHead);
 			String var;
 			for (i = 0; i < events.length; i++) {
 				ev = model.getEvent(i);
 				if (ev.getName() == null)
-					laTeX += "\\subsection{Event:}";
+					laTeX.append("\\subsection{Event:}");
 				else
-					laTeX += "\\subsection{Event: " + ev.getName() + "}";
+					laTeX.append("\\subsection{Event: " + ev.getName() + "}");
 				if (ev.getNumEventAssignments() > 1) {
-					laTeX += "\\texttt{Triggers if: }" + newLine;
-					laTeX += /* (numberEquations) ? */"\\begin{equation}"
-							+ events[i].get(0) + "\\end{equation}" + newLine
+					laTeX.append("\\texttt{Triggers if: }" + newLine);
+					laTeX.append(/* (numberEquations) ? */"\\begin{equation}"
+							+ events[i].get(0) + "\\end{equation}" + newLine);
 					/*
 					 * : "\\begin{equation*}" + events[i].get(0) +
 					 * "\\end{equation*}" + newLine
 					 */;
 					if (ev.getDelay() == null)
-						laTeX += newLine
+						laTeX.append(newLine
 								+ "\\texttt{and assigns the following rule: }"
-								+ newLine;
+								+ newLine);
 					else {
-						laTeX += newLine
+						laTeX.append(newLine
 								+ "\\texttt{and assigns after a delay of "
-								+ toLaTeX(model, ev.getDelay().getMath());
+								+ toLaTeX(model, ev.getDelay().getMath()));
 						if (!ev.getTimeUnits().equals(null))
-							laTeX += ev.getTimeUnits()
-									+ " the following rules: }" + newLine;
+							laTeX.append(ev.getTimeUnits()
+									+ " the following rules: }" + newLine);
 						else
-							laTeX += " s the following rules: }" + newLine;
+							laTeX.append(" s the following rules: }" + newLine);
 					}
 				} else {
-					laTeX += "\\texttt{Triggers if: }" + newLine;
-					laTeX += /* (numberEquations) ? */"\\begin{equation}"
-							+ events[i].get(0) + "\\end{equation}" + newLine
+					laTeX.append("\\texttt{Triggers if: }" + newLine);
+					laTeX.append(/* (numberEquations) ? */"\\begin{equation}"
+							+ events[i].get(0) + "\\end{equation}" + newLine)
 					/*
 					 * : "\\begin{equation*}" + events[i].get(0) +
 					 * "\\end{equation*}" + newLine
 					 */;
 					if (ev.getDelay() == null)
-						laTeX += newLine
+						laTeX.append(newLine
 								+ "\\texttt{and assigns the following rule: }"
-								+ newLine;
+								+ newLine);
 					else {
-						laTeX += newLine
+						laTeX.append(newLine
 								+ "\\texttt{and assigns after a delay of "
-								+ toLaTeX(model, ev.getDelay().getMath());
+								+ toLaTeX(model, ev.getDelay().getMath()));
 						if (!ev.getTimeUnits().equals(null))
-							laTeX += ev.getTimeUnits()
-									+ " the following rule: }" + newLine;
+							laTeX.append(ev.getTimeUnits()
+									+ " the following rule: }" + newLine);
 						else
-							laTeX += " s the following rule: }" + newLine;
+							laTeX.append(" s the following rule: }" + newLine);
 					}
 				}
 				if (events[i].size() > 1)
 					for (int j = 0; j < events[i].size() - 1; j++) {
 						var = ev.getEventAssignment(j).getVariable();
 						if (model.getSpecies(var) != null)
-							laTeX += begin + "["
+							laTeX.append(begin + "["
 									+ idToTeX(model.getSpecies(var)) + "]"
 									+ " = " + events[i].get(j + 1) + end
-									+ newLine;
+									+ newLine);
 						else if (model.getParameter(var) != null)
-							laTeX += begin
+							laTeX.append(begin
 									+ toTeX(model.getParameter(var).getId())
 									+ " = " + events[i].get(j + 1) + end
-									+ newLine;
+									+ newLine);
 						else
-							laTeX += begin + events[i].get(j + 1) + end
-									+ newLine;
+							laTeX.append(begin + events[i].get(j + 1) + end
+									+ newLine);
 					}
 				else
 					for (int j = 0; j < events[i].size() - 1; j++) {
 						var = ev.getEventAssignment(j).getVariable();
 						if (model.getSpecies(var) != null)
-							laTeX += begin + "["
+							laTeX.append(begin + "["
 									+ idToTeX(model.getSpecies(var)) + "]"
 									+ " = " + events[i].get(j + 1) + end
-									+ newLine;
+									+ newLine);
 						else if (model.getParameter(var) != null)
-							laTeX += begin
+							laTeX.append(begin
 									+ toTeX(model.getParameter(var).getId())
 									+ " = " + events[i].get(j + 1) + end
-									+ newLine;
+									+ newLine);
 						else
-							laTeX += begin + events[i].get(j + 1) + end
-									+ newLine;
+							laTeX.append(begin + events[i].get(j + 1) + end
+									+ newLine);
 					}
 			}
 		}
@@ -705,44 +705,44 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 
 		// writing parameters
 		if (model.getNumParameters() > 0) {
-			laTeX += newLine + "\\section{Parameters}";
-			laTeX += "\\begin{longtable}{@{}llr@{}}" + newLine + "\\toprule "
+			laTeX.append(newLine + "\\section{Parameters}");
+			laTeX.append("\\begin{longtable}{@{}llr@{}}" + newLine + "\\toprule "
 					+ newLine + "Parameter & Value \\\\  " + newLine
-					+ "\\midrule" + newLine;
+					+ "\\midrule" + newLine);
 			for (i = 0; i < model.getNumParameters(); i++) {
-				laTeX += name_idToLaTex(model.getParameter(i).getId()) + "&"
-						+ model.getParameter(i).getValue() + "\\\\" + newLine;
+				laTeX.append(name_idToLaTex(model.getParameter(i).getId()) + "&"
+						+ model.getParameter(i).getValue() + "\\\\" + newLine);
 			}
-			laTeX += "\\bottomrule " + newLine + "\\end{longtable}";
+			laTeX.append("\\bottomrule " + newLine + "\\end{longtable}");
 		}
 		// writing species list and compartment.
 		if (model.getNumSpecies() > 0) {
-			laTeX += newLine + "\\section{Species}" + newLine;
-			laTeX += "\\begin{longtable}{@{}llr@{}} " + newLine + "\\toprule "
+			laTeX.append(newLine + "\\section{Species}" + newLine);
+			laTeX.append("\\begin{longtable}{@{}llr@{}} " + newLine + "\\toprule "
 					+ newLine
 					+ "Species & Initial concentration & compartment \\\\  "
-					+ newLine + "\\midrule" + newLine;
+					+ newLine + "\\midrule" + newLine);
 			for (i = 0; i < model.getNumSpecies(); i++) {
-				laTeX += name_idToLaTex(model.getSpecies(i).getId()) + "&"
+				laTeX.append(name_idToLaTex(model.getSpecies(i).getId()) + "&"
 						+ model.getSpecies(i).getInitialConcentration() + "&"
 						+ model.getSpecies(i).getCompartment() + "\\\\"
-						+ newLine;
+						+ newLine);
 			}
-			laTeX += "\\bottomrule " + newLine + "\\end{longtable}";
+			laTeX.append("\\bottomrule " + newLine + "\\end{longtable}");
 		}
 		if (model.getNumCompartments() > 0) {
-			laTeX += newLine + "\\section{Compartments}";
-			laTeX += "\\begin{longtable}{@{}llr@{}}" + newLine + "\\toprule "
+			laTeX.append(newLine + "\\section{Compartments}");
+			laTeX.append("\\begin{longtable}{@{}llr@{}}" + newLine + "\\toprule "
 					+ newLine + "Compartment & Volume \\\\  " + newLine
-					+ "\\midrule" + newLine;
+					+ "\\midrule" + newLine);
 			for (i = 0; i < model.getNumCompartments(); i++) {
-				laTeX += name_idToLaTex(model.getCompartment(i).getId()) + "&"
+				laTeX.append(name_idToLaTex(model.getCompartment(i).getId()) + "&"
 						+ model.getCompartment(i).getVolume() + "\\\\"
-						+ newLine;
+						+ newLine);
 			}
-			laTeX += "\\bottomrule " + newLine + "\\end{longtable}";
+			laTeX.append("\\bottomrule " + newLine + "\\end{longtable}");
 		}
-		laTeX += newLine + tail;
+		laTeX.append(newLine + tail);
 		return laTeX;
 	}
 
@@ -1287,29 +1287,34 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 */
 	public void toLaTeX(PluginModel model, File file) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-		bw.write(toLaTeX(model));
+		bw.write(toLaTeX(model).toString());
 		bw.close();
 	}
 
-	public String toLaTeX(PluginModel model, PluginReaction reaction)
+	public StringBuffer toLaTeX(PluginModel model, PluginReaction reaction)
 			throws IOException {
 		String title = model.getName().length() > 0 ? model.getName()
 				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
-		String laTeX = getDocumentHead(title);
-		laTeX += (!reaction.getName().equals("") && !reaction.getName().equals(
-				reaction.getId())) ? "Reaction: \\texttt{"
+		StringBuffer laTeX = getDocumentHead(title);
+		laTeX.append((!reaction.getName().equals("") && !reaction.getName()
+				.equals(reaction.getId())) ? "Reaction: \\texttt{"
 				+ replaceAll("_", reaction.getId(), "\\_") + "}" + " ("
 				+ replaceAll("_", reaction.getName(), "\\_") + ")" + newLine
 				+ "\\begin{equation*}" + newLine + "v=" : "Reaction: \\texttt{"
 				+ replaceAll("_", reaction.getId(), "\\_") + "}" + newLine
-				+ "\\begin{equation*}" + newLine + "v=";
-		laTeX += toLaTeX(model, reaction.getKineticLaw().getMath());
-		laTeX += newLine + "\\end{equation*}";
-		laTeX += newLine
-				+ "\\begin{center} For a more comprehensive \\LaTeX{} "
-				+ "export, see \\url{http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX}"
-				+ "\\end{center}";
-		laTeX += newLine + "\\end{document}";
+				+ "\\begin{equation*}" + newLine + "v=");
+		if ((reaction.getKineticLaw() != null)
+				&& (reaction.getKineticLaw().getMath() != null))
+			laTeX.append(toLaTeX(model, reaction.getKineticLaw().getMath()));
+		else
+			laTeX.append(" \\mathrm{undefined} ");
+		laTeX.append(newLine + "\\end{equation*}");
+		laTeX
+				.append(newLine
+						+ "\\begin{center} For a more comprehensive \\LaTeX{} "
+						+ "export, see \\url{http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX}"
+						+ "\\end{center}");
+		laTeX.append(newLine + "\\end{document}");
 		return laTeX;
 	}
 
@@ -1318,26 +1323,25 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * this.numberEquations = numberEquations; }
 	 */
 
-	private String getDocumentHead(String title) {
-		String head = "\\documentclass[" + fontSize + "pt";
+	private StringBuffer getDocumentHead(String title) {
+		StringBuffer head = new StringBuffer("\\documentclass[" + fontSize + "pt");
 		if (titlepage) {
-			head += ",titlepage";
+			head.append(",titlepage");
 		}
 		if (landscape) {
-			head += ",landscape";
+			head.append(",landscape");
 		}
-		head += "," + paperSize + "paper]{scrartcl}";
-		head += newLine + "\\usepackage[scaled=.9]{helvet}" + newLine
+		head.append("," + paperSize + "paper]{scrartcl}");
+		head.append(newLine + "\\usepackage[scaled=.9]{helvet}" + newLine
 				+ "\\usepackage{amsmath}" + newLine + "\\usepackage{courier}"
 				+ newLine + "\\usepackage{times}" + newLine
 				+ "\\usepackage[english]{babel}" + newLine
 				+ "\\usepackage{a4wide}" + newLine + "\\usepackage{longtable}"
-				+ newLine + "\\usepackage{booktabs}" + newLine;
-		head += "\\usepackage{url}" + newLine;
-		if (landscape) {
-			head += "\\usepackage[landscape]{geometry}" + newLine;
-		}
-		head += "\\title{\\textsc{SBMLsqueezer}: Differential Equation System ``"
+				+ newLine + "\\usepackage{booktabs}" + newLine);
+		head.append("\\usepackage{url}" + newLine);
+		if (landscape)
+			head.append("\\usepackage[landscape]{geometry}" + newLine);
+		head.append("\\title{\\textsc{SBMLsqueezer}: Differential Equation System ``"
 				+ title
 				+ "\"}"
 				+ newLine
@@ -1347,7 +1351,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 				+ newLine
 				+ "\\author{}"
 				+ newLine
-				+ "\\maketitle" + newLine;
+				+ "\\maketitle" + newLine);
 		return head;
 	}
 

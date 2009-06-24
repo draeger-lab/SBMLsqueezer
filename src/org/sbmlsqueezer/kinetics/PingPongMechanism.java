@@ -31,7 +31,8 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Wouamba</a>
  * 
  * @date Aug 1, 2007
@@ -97,15 +98,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 
 		PluginReaction reaction = getParentReaction();
-		PluginSpeciesReference specRefE1 = (PluginSpeciesReference) reaction
-				.getListOfReactants().get(0);
-		PluginSpeciesReference specRefP1 = (PluginSpeciesReference) reaction
-				.getListOfProducts().get(0);
+		PluginSpeciesReference specRefE1 = reaction.getReactant(0);
+		PluginSpeciesReference specRefP1 = reaction.getProduct(0);
 		PluginSpeciesReference specRefE2 = null, specRefP2 = null;
 
 		if (reaction.getNumReactants() == 2)
-			specRefE2 = (PluginSpeciesReference) reaction.getListOfReactants()
-					.get(1);
+			specRefE2 = reaction.getReactant(1);
 		else if (specRefE1.getStoichiometry() == 2d)
 			specRefE2 = specRefE1;
 		else
@@ -123,8 +121,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				exception = true;
 			break;
 		case 2:
-			specRefP2 = (PluginSpeciesReference) reaction.getListOfProducts()
-					.get(1);
+			specRefP2 = reaction.getProduct(1);
 			break;
 		default:
 			exception = true;
@@ -138,25 +135,24 @@ public class PingPongMechanism extends GeneralizedMassAction {
 
 		int enzymeNum = 0;
 		do {
-			StringBuffer kcatp = new StringBuffer();
+			StringBuffer kcatp;
 			StringBuffer kMr1 = concat("kM_", reaction.getId());
 			StringBuffer kMr2 = concat("kM_", reaction.getId());
 			StringBuffer enzyme = new StringBuffer(modE.size() == 0 ? "" : modE
 					.get(enzymeNum));
 
-			if (modE.size() == 0) {
+			if (modE.size() == 0)
 				kcatp = concat("Vp_", reaction.getId());
-
-			} else {
+			else {
 				kcatp = concat("kcatp_", reaction.getId());
 				if (modE.size() > 1) {
-					kcatp = concat(kcatp, underscore, enzyme);
-					kMr1 = concat(kMr1, underscore, enzyme);
-					kMr2 = concat(kMr2, underscore, enzyme);
+					append(kcatp, underscore, enzyme);
+					append(kMr1, underscore, enzyme);
+					append(kMr2, underscore, enzyme);
 				}
 			}
-			kMr2 = concat(kMr2, underscore, specRefE2.getSpecies());
-			kMr1 = concat(kMr1, underscore, specRefE2.getSpecies());
+			append(kMr2, underscore, specRefE2.getSpecies());
+			append(kMr1, underscore, specRefE2.getSpecies());
 			if (specRefE2.equals(specRefE1)) {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
@@ -169,37 +165,27 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			 * Irreversible Reaction
 			 */
 			if (!reaction.getReversible()) {
-				numerator = kcatp;
+				numerator = new StringBuffer(kcatp);
 
 				if (modE.size() > 0)
-					numerator = times(numerator, new StringBuffer(modE
-							.get(enzymeNum)));
-				numerator = times(numerator, new StringBuffer(specRefE1
-						.getSpecies()));
+					numerator = times(numerator, modE.get(enzymeNum));
+				numerator = times(numerator, specRefE1.getSpecies());
 
-				denominator = times(kMr2, sum(new StringBuffer(specRefE1
-						.getSpecies()), kMr1), sum(new StringBuffer(specRefE2
-						.getSpecies()),
-						new StringBuffer(specRefE1.getSpecies())));
+				denominator = times(kMr2, sum(specRefE1.getSpecies(), kMr1),
+						sum(specRefE2.getSpecies(), specRefE1.getSpecies()));
 
 				if (specRefE2.equals(specRefE1)) {
-					numerator = pow(numerator, Character.valueOf('2'));
-					denominator = pow(denominator, Character.valueOf('2'));
-
+					numerator = pow(numerator, Integer.toString(2));
+					denominator = pow(denominator, Integer.toString(2));
 				} else {
-					numerator = times(numerator, new StringBuffer(specRefE2
-							.getSpecies()));
-					denominator = times(denominator, new StringBuffer(specRefE2
-							.getSpecies()));
+					numerator = times(numerator, specRefE2.getSpecies());
+					denominator = times(denominator, specRefE2.getSpecies());
 				}
 
 				/*
 				 * Reversible Reaction
 				 */
 			} else {
-				StringBuffer numeratorForward = new StringBuffer();
-				StringBuffer numeratorReverse = new StringBuffer();
-
 				StringBuffer kcatn;
 				StringBuffer kMp1 = concat("kM_", reaction.getId());
 				StringBuffer kMp2 = concat("kM_", reaction.getId());
@@ -240,65 +226,55 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				addLocalParameter(kIp2);
 				addLocalParameter(kIr1);
 
-				numeratorForward = frac(kcatp, times(kIr1, kMr2));
+				StringBuffer numeratorForward = frac(kcatp, times(kIr1, kMr2));
+				StringBuffer numeratorReverse = frac(kcatn, times(kIp1, kMp2));
+
 				if (modE.size() > 0)
 					numeratorForward = times(numeratorForward,
 							new StringBuffer(modE.get(enzymeNum)));
-				// StringBuffer denominator_s1s2 = new
-				// StringBuffer(specRefE1.getSpecies());
-				denominator = sum(frac(
-						new StringBuffer(specRefE1.getSpecies()), kIr1), frac(
-						times(kMr1, new StringBuffer(specRefE2.getSpecies())),
-						times(kIr1, kMr2)), frac(new StringBuffer(specRefP1
-						.getSpecies()), kIp1), frac(times(kMp1,
-						new StringBuffer(specRefP2.getSpecies())), times(kIp1,
-						kMp2)));
+				denominator = sum(frac(specRefE1.getSpecies(), kIr1),
+						frac(times(kMr1, specRefE2.getSpecies()), times(kIr1,
+								kMr2)), frac(specRefP1.getSpecies(), kIp1),
+						frac(times(kMp1, specRefP2.getSpecies()), times(kIp1,
+								kMp2)));
 				if (specRefE2.equals(specRefE1)) {
-					numeratorForward = times(numeratorForward, pow(
-							new StringBuffer(specRefE1.getSpecies()),
-							Character.valueOf('2')));
-					denominator = sum(denominator, frac(pow(new StringBuffer(
-							specRefE1.getSpecies()), Character.valueOf('2')),
-							times(kIr1, kMr2)));
+					numeratorForward = times(numeratorForward, pow(specRefE1
+							.getSpecies(), Integer.toString(2)));
+					denominator = sum(denominator, frac(pow(specRefE1
+							.getSpecies(), Integer.toString(2)), times(kIr1,
+							kMr2)));
 				} else {
 					numeratorForward = times(numeratorForward,
 							new StringBuffer(specRefE1.getSpecies()),
 							new StringBuffer(specRefE2.getSpecies()));
-					denominator = sum(denominator, frac(times(new StringBuffer(
-							specRefE1.getSpecies()), new StringBuffer(specRefE2
-							.getSpecies())), times(kIr1, kMr2)));
+					denominator = sum(denominator, frac(times(specRefE1
+							.getSpecies(), specRefE2.getSpecies()), times(kIr1,
+							kMr2)));
 				}
-				numeratorReverse = frac(kcatn, times(kIp1, kMp2));
 
-				denominator = sum(denominator, frac(times(new StringBuffer(
-						specRefE1.getSpecies()), new StringBuffer(specRefP1
-						.getSpecies())), times(kIr1, kIp1)), frac(times(kMr1,
-						new StringBuffer(specRefE2.getSpecies()),
-						new StringBuffer(specRefP2.getSpecies())), times(kIr1,
-						kMr2, kIp2)));
+				denominator = sum(denominator, frac(times(specRefE1
+						.getSpecies(), specRefP1.getSpecies()), times(kIr1,
+						kIp1)), frac(times(kMr1, specRefE2.getSpecies(),
+						specRefP2.getSpecies()), times(kIr1, kMr2, kIp2)));
 
 				if (modE.size() > 0)
-					numeratorReverse = times(numeratorReverse,
-							new StringBuffer(modE.get(enzymeNum)));
+					numeratorReverse = times(numeratorReverse, modE
+							.get(enzymeNum));
 
 				StringBuffer denominator_p1p2 = new StringBuffer(specRefE1
 						.getSpecies());
 				if (specRefP2.equals(specRefP1)) {
-					numeratorReverse = times(numeratorReverse, pow(
-							new StringBuffer(specRefP1.getSpecies()),
-							Character.valueOf('2')));
-					denominator_p1p2 = pow(new StringBuffer(specRefP1
-							.getSpecies()), Character.valueOf('2'));
+					numeratorReverse = times(numeratorReverse, pow(specRefP1
+							.getSpecies(), Integer.toString(2)));
+					denominator_p1p2 = pow(specRefP1.getSpecies(), Integer
+							.toString(2));
 
 				} else {
-					numeratorReverse = times(numeratorReverse,
-							new StringBuffer(specRefP1.getSpecies()),
-							new StringBuffer(specRefP2.getSpecies()));
+					numeratorReverse = times(numeratorReverse, specRefP1
+							.getSpecies(), specRefP2.getSpecies());
 
-					denominator_p1p2 = times(new StringBuffer(specRefP1
-							.getSpecies()), new StringBuffer(specRefP2
-							.getSpecies()));
-
+					denominator_p1p2 = times(specRefP1.getSpecies(), specRefP2
+							.getSpecies());
 				}
 				numerator = diff(numeratorForward, numeratorReverse);
 				denominator_p1p2 = frac(denominator_p1p2, times(kIp1, kMp2));
@@ -306,7 +282,8 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			}
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum <= modE.size() - 1);
-		return times(activationFactor(modActi), inhibitionFactor(modInhib), sum(catalysts));
+		return times(activationFactor(modActi), inhibitionFactor(modInhib),
+				sum(catalysts));
 	}
 
 }
