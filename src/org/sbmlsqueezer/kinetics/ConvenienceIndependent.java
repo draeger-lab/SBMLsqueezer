@@ -41,7 +41,8 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis </a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
@@ -105,6 +106,8 @@ public class ConvenienceIndependent extends Convenience {
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
+		final boolean FORWARD = true;
+		final boolean REVERSE = false;
 		PluginReaction reaction = getParentReaction();
 		StringBuffer[] enzymes = new StringBuffer[modE.size()];
 		try {
@@ -123,15 +126,16 @@ public class ConvenienceIndependent extends Convenience {
 
 				StringBuffer numerator, denominator;
 				if (!reaction.getReversible()) {
-					numerator = times(createNumerators(i, modE, FORWARD));
-					denominator = diff(times(createDenominators(i, modE,
-							FORWARD)), new StringBuffer("1"));
+					numerator = times(numerators(i, modE, FORWARD));
+					denominator = diff(times(denominators(i, modE, FORWARD)),
+							new StringBuffer("1"));
 				} else {
-					numerator = diff(times(createNumerators(i, modE, FORWARD)),
-							times(createNumerators(i, modE, REVERSE)));
-					denominator = diff(sum(times(createDenominators(i, modE,
-							FORWARD)), times(createDenominators(i, modE,
-							REVERSE))), new StringBuffer("1"));
+					numerator = diff(times(numerators(i, modE, FORWARD)),
+							times(numerators(i, modE, REVERSE)));
+					denominator = diff(sum(
+							times(denominators(i, modE, FORWARD)),
+							times(denominators(i, modE, REVERSE))),
+							new StringBuffer("1"));
 				}
 
 				if (modE.size() > 0)
@@ -161,48 +165,42 @@ public class ConvenienceIndependent extends Convenience {
 	 * @param enzymeNumber
 	 * @param modE
 	 * @param type
+	 *            true means forward, false means reverse.
 	 * @return
-	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer[] createNumerators(int enzymeNumber, List<String> modE,
-			boolean type) throws IllegalFormatException {
+	protected StringBuffer[] numerators(int enzymeNumber, List<String> modE,
+			boolean type) {
 		PluginReaction reaction = getParentReaction();
-		if (type == FORWARD || type == REVERSE) {
-			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? (reaction
-					.getNumReactants() + 1)
-					: (reaction.getNumProducts() + 1)];
-			nums[0] = new StringBuffer((type == FORWARD) ? "kcatp_" : "kcatn_");
-			nums[0].append(reaction.getId());
-			if (modE.size() > 1) {
-				nums[0].append('_');
-				nums[0].append(modE.get(enzymeNumber));
-			}
-			addLocalParameter(nums[0]);
-			for (int i = 1; i < nums.length; i++) {
-				PluginSpeciesReference ref = (type == FORWARD) ? reaction
-						.getReactant(i - 1) : reaction.getProduct(i - 1);
-				StringBuffer kM = new StringBuffer("kM_");
-				kM.append(reaction.getId());
-				if (modE.size() > 1) {
-					kM.append('_');
-					kM.append(modE.get(enzymeNumber));
-				}
-				kM.append('_');
-				kM.append(ref.getSpecies());
-				addLocalParameter(kM);
+		StringBuffer[] nums = new StringBuffer[type ? (reaction
+				.getNumReactants() + 1) : (reaction.getNumProducts() + 1)];
+		nums[0] = new StringBuffer(type ? "kcatp_" : "kcatn_");
+		nums[0].append(reaction.getId());
+		if (modE.size() > 1)
+			append(nums[0], underscore, modE.get(enzymeNumber));
+		addLocalParameter(nums[0]);
+		for (int i = 1; i < nums.length; i++) {
+			PluginSpeciesReference ref = type ? reaction.getReactant(i - 1)
+					: reaction.getProduct(i - 1);
+			StringBuffer kM = concat("kM_", reaction.getId());
+			if (modE.size() > 1)
+				append(kM, underscore, modE.get(enzymeNumber));
+			append(kM, underscore, ref.getSpecies());
+			addLocalParameter(kM);
 
-				StringBuffer kiG = concat("kG_", ref.getSpecies());
-				addLocalParameter(kiG);
+			StringBuffer kiG = concat("kG_", ref.getSpecies());
+			addLocalParameter(kiG);
 
+			try {
 				nums[i] = times(pow(frac(getSpecies(ref), kM),
-						getStoichiometry(ref)), root(Character.valueOf('2'),
-						pow(times(kiG, kM), getStoichiometry(ref))));
+						getStoichiometry(ref)), root(Integer.toString(2), pow(
+						times(kiG, kM), getStoichiometry(ref))));
+			} catch (IllegalFormatException e) {
+				nums[i] = times(pow(frac(getSpecies(ref), kM),
+						getStoichiometry(ref)), pow(pow(times(kiG, kM),
+						getStoichiometry(ref)), frac(Integer.toString(1),
+						Integer.toString(2))));
 			}
-
-			return nums;
-		} else {
-			throw new IllegalFormatException(
-					"Illegal type argument for convenience kinetic numerators");
 		}
+		return nums;
 	}
 }

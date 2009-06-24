@@ -45,10 +45,12 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:michael@diegrauezelle.de">Michael Ziller</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
- * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Motsou Wouamba</a>
+ * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Motsou
+ *         Wouamba</a>
  * @date Aug 1, 2007
  */
 public class Convenience extends GeneralizedMassAction {
@@ -102,7 +104,11 @@ public class Convenience extends GeneralizedMassAction {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbmlsqueezer.kinetics.GeneralizedMassAction#createKineticEquation(jp.sbi.celldesigner.plugin.PluginModel, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	 * 
+	 * @see
+	 * org.sbmlsqueezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 * (jp.sbi.celldesigner.plugin.PluginModel, java.util.List, java.util.List,
+	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
@@ -110,38 +116,24 @@ public class Convenience extends GeneralizedMassAction {
 			throws RateLawNotApplicableException, IllegalFormatException {
 		PluginReaction reaction = getParentReaction();
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
-		try {
-			StringBuffer activation = activationFactor(modActi);
-			StringBuffer inhibition = inhibitionFactor(modInhib);
-
-			int i = 0;
-			do {
-				StringBuffer numerator, denominator;
-				if (!reaction.getReversible()) {
-					numerator = times(createNumerators(i, modE, FORWARD));
-					denominator = diff(times(createDenominators(i, modE,
-							FORWARD)), new StringBuffer("1"));
-				} else {
-					numerator = diff(times(createNumerators(i, modE, FORWARD)),
-							times(createNumerators(i, modE, REVERSE)));
-					denominator = diff(sum(times(createDenominators(i, modE,
-							FORWARD)), times(createDenominators(i, modE,
-							REVERSE))), new StringBuffer("1"));
-				}
-				if (modE.size() > 0)
-					catalysts[i] = times(new StringBuffer(modE.get(i)), frac(
-							numerator, denominator));
-				else
-					return (times(activation, inhibition, frac(numerator,
-							denominator)));
-				i++;
-			} while (i < catalysts.length);
-			System.out.println(times(activation, inhibition, sum(catalysts)));
-			return times(activation, inhibition, sum(catalysts));
-		} catch (IllegalFormatException exc) {
-			exc.printStackTrace();
-			return new StringBuffer();
+		for (int i = 0; i < catalysts.length; i++) {
+			StringBuffer numerator, denominator;
+			numerator = times(numerators(i, modE, true));
+			if (!reaction.getReversible())
+				denominator = diff(times(denominators(i, modE, true)), Integer
+						.toString(1));
+			else {
+				numerator = diff(numerator, times(numerators(i, modE, false)));
+				denominator = diff(sum(times(denominators(i, modE, true)),
+						times(denominators(i, modE, false))), Integer
+						.toString(1));
+			}
+			catalysts[i] = frac(numerator, denominator);
+			if (modE.size() > 0)
+				catalysts[i] = times(modE.get(i), catalysts[i]);
 		}
+		return times(activationFactor(modActi), inhibitionFactor(modInhib),
+				sum(catalysts));
 	}
 
 	/**
@@ -156,44 +148,31 @@ public class Convenience extends GeneralizedMassAction {
 	 * @param enzymeNumber
 	 * @param modE
 	 * @param type
+	 *            true means forward, false means reverse.
 	 * @return
-	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer[] createNumerators(int enzymeNumber,
-			List<String> modE, boolean type) throws IllegalFormatException {
+	protected StringBuffer[] numerators(int enzymeNumber, List<String> modE,
+			boolean type) {
+		// FORWARD = true;
 		PluginReaction reaction = getParentReaction();
-		if (type == FORWARD || type == REVERSE) {
-			StringBuffer[] nums = new StringBuffer[(type == FORWARD) ? (reaction
-					.getNumReactants() + 1)
-					: (reaction.getNumProducts() + 1)];
-			nums[0] = new StringBuffer((type == FORWARD) ? "kcatp_" : "kcatn_");
-			nums[0].append(reaction.getId());
-			if (modE.size() > 1) {
-				nums[0].append('_');
-				nums[0].append(modE.get(enzymeNumber));
-			}
-			addLocalParameter(nums[0]);
-
-			for (int i = 1; i < nums.length; i++) {
-				PluginSpeciesReference ref = (type == FORWARD) ? reaction
-						.getReactant(i - 1) : reaction.getProduct(i - 1);
-				StringBuffer kM = new StringBuffer("kM_");
-				kM.append(reaction.getId());
-				if (modE.size() > 1) {
-					kM.append('_');
-					kM.append(modE.get(enzymeNumber));
-				}
-				kM.append('_');
-				kM.append(ref.getSpecies());
-				addLocalParameter(kM);
-				nums[i] = pow(frac(getSpecies(ref), kM), getStoichiometry(ref));
-			}
-
-			return nums;
-		} else {
-			throw new IllegalFormatException(
-					"Illegal type argument for Convenience kinetic numerators");
+		StringBuffer[] nums = new StringBuffer[type ? (reaction
+				.getNumReactants() + 1) : (reaction.getNumProducts() + 1)];
+		nums[0] = new StringBuffer(type ? "kcatp_" : "kcatn_");
+		nums[0].append(reaction.getId());
+		if (modE.size() > 1)
+			append(nums[0], underscore, modE.get(enzymeNumber));
+		addLocalParameter(nums[0]);
+		for (int i = 1; i < nums.length; i++) {
+			PluginSpeciesReference ref = type ? reaction.getReactant(i - 1)
+					: reaction.getProduct(i - 1);
+			StringBuffer kM = concat("kM_", reaction.getId());
+			if (modE.size() > 1)
+				append(kM, underscore, modE.get(enzymeNumber));
+			append(kM, underscore, ref.getSpecies());
+			addLocalParameter(kM);
+			nums[i] = pow(frac(getSpecies(ref), kM), getStoichiometry(ref));
 		}
+		return nums;
 	}
 
 	/**
@@ -209,50 +188,40 @@ public class Convenience extends GeneralizedMassAction {
 	 * @param enzymeNumber
 	 * @param modE
 	 * @param type
+	 *            true means forward, false backward.
 	 * @return
-	 * @throws IllegalFormatException
 	 */
-	protected StringBuffer[] createDenominators(int enzymeNumber, List<String> modE, boolean type)
-			throws IllegalFormatException {
+	protected StringBuffer[] denominators(int enzymeNumber, List<String> modE,
+			boolean type) {
+		// type FORWARD = true;
 		PluginReaction reaction = getParentReaction();
-		if (type == FORWARD || type == REVERSE) {
-			StringBuffer[] denoms = new StringBuffer[(type == FORWARD) ? reaction
-					.getNumReactants()
-					: reaction.getNumProducts()];
-			for (int i = 0; i < denoms.length; i++) {
-				PluginSpeciesReference ref = (type == FORWARD) ? reaction
-						.getReactant(i) : reaction.getProduct(i);
-				StringBuffer kM = new StringBuffer("kM_");
-				kM.append(getParentReactionID());
-				if (modE.size() > 1) {
-					kM.append('_');
-					kM.append(modE.get(enzymeNumber));
-				}
-				kM.append('_');
-				kM.append(ref.getSpecies());
+		StringBuffer[] denoms = new StringBuffer[type ? reaction
+				.getNumReactants() : reaction.getNumProducts()];
+		for (int i = 0; i < denoms.length; i++) {
+			PluginSpeciesReference ref = type ? reaction.getReactant(i)
+					: reaction.getProduct(i);
+			StringBuffer kM = concat("kM_", getParentReactionID());
+			if (modE.size() > 1)
+				append(kM, underscore, modE.get(enzymeNumber));
+			append(kM, underscore, ref.getSpecies());
 
-				StringBuffer[] parts = new StringBuffer[(int) ref
-						.getStoichiometry() + 1];
-				StringBuffer part = frac(getSpecies(ref), kM);
-				for (int j = 0; j < parts.length; j++) {
-					parts[j] = pow(part, new StringBuffer(Integer.toString(j)));
-				}
-				denoms[i] = sum(parts);
-			}
-			return denoms;
-		} else {
-			throw new IllegalFormatException(
-					"Illegal type argument for convenience kinetic numerators");
+			StringBuffer[] parts = new StringBuffer[(int) ref
+					.getStoichiometry() + 1];
+			StringBuffer part = frac(getSpecies(ref), kM);
+			for (int j = 0; j < parts.length; j++)
+				parts[j] = pow(part, Integer.toString(j));
+			denoms[i] = sum(parts);
 		}
+		return denoms;
 	}
 
-	/**
-	 * TODO Method that sums up the single +1 and -1 terms in the denominator.
-	 * 
-	 * @param sb
-	 * @return
-	 */
-	protected StringBuffer removeOnes(StringBuffer sb) {
-		return sb;
-	}
+	// /**
+	// * TODO Method that sums up the single +1 and -1 terms in the denominator.
+	// *
+	// * @param sb
+	// * @return
+	// */
+	// protected StringBuffer removeOnes(StringBuffer sb) {
+	// return sb;
+	// }
 }

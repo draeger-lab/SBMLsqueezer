@@ -28,3 +28,46 @@ potenziert wird (sonst Probleme mit Einheiten).
 Massenwirkungskinetik nullter Ordnung im Falle mehrerer Katalysatoren?
 
 SBO-Ids immer mithilfe des SBO-Parsers identifizieren.
+
+
++--------------------------+
+| Abgeschlossene Testfälle |
++--------------------------+
+
+1. geordneter Mechanismus
+=========================
+
+2 S_1 -> 2 S_2  mit und ohne Enzym
+-----------------------------------
+irreversibel
+reversibel
+
+S_1 + S_4 -> 2 S_2 mit und ohne Enzym
+-------------------------------------
+irreversibel
+reversibel
+
+S_1 + S_4 -> S_2 + S_5 mit und ohne Enzym
+-----------------------------------------
+irreversibel
+reversibel
+
+mehrere Enzyme
+mehrere Enzyme und Inhibition
+
+
+2. GMAK
+=======
+reversibel, irreversibel, mehrere Substrate, mehrere Produkte
+nullte Ordnung vorwärts und rückwärts
+
+3. IrrevNonModulatedNonInteractingEnzymes
+=========================================
+
+S_1 + S_4 -> S_2 + S_5 mit und ohne Enzym
+
+
+4. Ping-Pong
+============
+
+

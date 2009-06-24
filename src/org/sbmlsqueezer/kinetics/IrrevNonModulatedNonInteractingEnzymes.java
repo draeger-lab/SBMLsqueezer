@@ -34,7 +34,8 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Feb 6, 2008
  */
 public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
@@ -128,7 +129,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * .celldesigner.plugin.PluginModel, int, java.util.List, java.util.List,
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	@Override
+	// @Override
 	protected StringBuffer createKineticEquation(PluginModel model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
@@ -141,76 +142,39 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to enzyme-catalyzed reactions.");
 		if (getParentReaction().getReversible())
-			getParentReaction().setReversible(false);
-
+			throw new RateLawNotApplicableException(
+					"This rate law can only be applied to irreversible reactions.");
 		numOfEnzymes = modE.size();
-
 		PluginReaction reaction = getParentReaction();
-
-		int enzymeNum = 0;
-		StringBuffer numerator = new StringBuffer();
-		StringBuffer denominator = new StringBuffer();
-
-		do {
-			StringBuffer kcat = new StringBuffer();
-			if (modE.size() == 0)
-				kcat = concat("V_", reaction.getId());
-			else {
-				kcat = concat("kcat_", reaction.getId());
-				if (modE.size() > 1)
-					kcat = concat(kcat, underscore, modE.get(enzymeNum));
-			}
+		StringBuffer enzymes[] = new StringBuffer[Math.max(1, modE.size())];
+		for (int enzymeNum = 0; enzymeNum < enzymes.length; enzymeNum++) {
+			StringBuffer kcat = (modE.size() == 0) ? concat("V_", reaction
+					.getId()) : concat("kcat_", reaction.getId());
+			if (modE.size() > 1)
+				append(kcat, underscore, modE.get(enzymeNum));
 			addLocalParameter(kcat);
+			StringBuffer numerator = new StringBuffer(kcat);
 
-			if (modE.size() >= 1)
-				numerator = times(numerator, new StringBuffer(modE
-						.get(enzymeNum)));
-
-			numerator = times(kcat, numerator);
-			// numerator=times(numerator,currEnzyme);
-
+			StringBuffer denominator = new StringBuffer();
 			for (int i = 0; i < reaction.getNumReactants(); i++) {
 				PluginSpeciesReference si = reaction.getReactant(i);
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
 					throw new RateLawNotApplicableException(
 							"This rate law can only be applied if all reactants have integer stoichiometries.");
-				StringBuffer kM = new StringBuffer();
-
-				kM = concat("kM_", reaction.getId());
-
+				StringBuffer kM = concat("kM_", reaction.getId());
 				if (modE.size() > 1)
-					kM = concat(kM, underscore, modE.get(enzymeNum));
-				kM = concat(kM, underscore, si.getSpecies());
-				addLocalParameter(kM);
-
-				StringBuffer frac = new StringBuffer();
-				if ((si.getStoichiometryMath() != null) || (si.getStoichiometry() != 1)) {
-					frac = pow(frac(getSpecies(si), kM), getStoichiometry(si));
-					numerator = times(numerator, pow(frac(getSpecies(si), kM),
-							getStoichiometry(si)));
-				} else {
-					frac = frac(getSpecies(si), kM);
-					numerator = times(numerator, frac(getSpecies(si), kM));
-				}
-				if (reaction.getNumReactants() > 1) {
-					if ((si.getStoichiometryMath() != null) || (si.getStoichiometry() != 1))
-						denominator = times(denominator, pow(sum(Character
-								.valueOf('1'), frac), getStoichiometry(si)));
-					else
-						denominator = times(denominator, sum(Character
-								.valueOf('1'), frac));
-				} else {
-					if ((si.getStoichiometryMath() != null) || (si.getStoichiometry() != 1))
-						denominator = times(denominator, pow(sum(Character
-								.valueOf('1'), frac), getStoichiometry(si)));
-					else
-						denominator = times(denominator, sum(Character
-								.valueOf('1'), frac));
-				}
+					append(kM, underscore, modE.get(enzymeNum));
+				addLocalParameter(append(kM, underscore, si.getSpecies()));
+				StringBuffer frac = frac(getSpecies(si), kM);
+				numerator = times(numerator, pow(frac(getSpecies(si), kM),
+						getStoichiometry(si)));
+				denominator = times(denominator, pow(sum(Integer.toString(1),
+						frac), getStoichiometry(si)));
 			}
-			enzymeNum++;
-		} while (enzymeNum <= modE.size() - 1);
-		return frac(numerator, denominator);
+			if (modE.size() >= 1)
+				numerator = times(modE.get(enzymeNum), numerator);
+			enzymes[enzymeNum] = frac(numerator, denominator);
+		}
+		return sum(enzymes);
 	}
-
 }
