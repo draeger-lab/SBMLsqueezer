@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Wed Jul 01 12:05:11 CEST 2009
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=SBMLsqueezer_fat.jar
+manifest.mergeall=true
+manifest.mainclass=
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=

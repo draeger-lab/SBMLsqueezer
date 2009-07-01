@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import jp.sbi.celldesigner.plugin.PluginCompartment;
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
@@ -31,6 +32,9 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Species;
+import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbmlsqueezer.io.LaTeXExport;
 
@@ -65,6 +69,27 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		for (Object t : things)
 			k.append(t);
 		return k;
+	}
+
+	/**
+	 * Basic method which links several elements with a mathematical operator.
+	 * All empty StringBuffer object are excluded.
+	 * 
+	 * @param operator
+	 * @param elements
+	 * @return
+	 */
+	private static final StringBuffer arith(char operator, Object... elements) {
+		Vector<Object> vsb = new Vector<Object>();
+		StringBuffer equation = new StringBuffer();
+		for (Object sb : elements)
+			if (sb.toString().length() > 0)
+				vsb.add(sb);
+		if (vsb.size() >= 1)
+			equation.append(vsb.get(0));
+		for (int count = 1; count < vsb.size(); count++)
+			append(equation, operator, vsb.get(count));
+		return equation;
 	}
 
 	/**
@@ -110,31 +135,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	}
 
 	/**
-	 * Returns the difference of the given elements as StringBuffer.
-	 * 
-	 * @param subtrahents
-	 * @return
-	 */
-	public static final StringBuffer diff(Object... subtrahents) {
-		if (subtrahents.length == 1)
-			return brackets(concat(Character.valueOf('-'), subtrahents));
-		return brackets(arith('-', subtrahents));
-	}
-
-	/**
-	 * Returns a fraction with the given elements as numerator and denominator.
-	 * 
-	 * @param numerator
-	 * @param denominator
-	 * @return
-	 */
-	public static final StringBuffer frac(Object numerator, Object denominator) {
-		return brackets(arith('/', numerator,
-				containsArith(denominator) ? brackets(denominator)
-						: denominator));
-	}
-
-	/**
 	 * Tests whether the String representation of the given object contains any
 	 * arithmetic symbols and if the given object is already sorrounded by
 	 * brackets.
@@ -157,6 +157,42 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	}
 
 	/**
+	 * Returns the difference of the given elements as StringBuffer.
+	 * 
+	 * @param subtrahents
+	 * @return
+	 */
+	public static final StringBuffer diff(Object... subtrahents) {
+		if (subtrahents.length == 1)
+			return brackets(concat(Character.valueOf('-'), subtrahents));
+		return brackets(arith('-', subtrahents));
+	}
+
+	public static final StringBuffer diff(StringBuffer... subtrahents) {
+		if (subtrahents.length == 1)
+			return brackets(concat(Character.valueOf('-'), subtrahents));
+		return brackets(arith('-', subtrahents));
+	}
+
+	private static StringBuffer floor(StringBuffer text) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns a fraction with the given elements as numerator and denominator.
+	 * 
+	 * @param numerator
+	 * @param denominator
+	 * @return
+	 */
+	public static final StringBuffer frac(Object numerator, Object denominator) {
+		return brackets(arith('/', numerator,
+				containsArith(denominator) ? brackets(denominator)
+						: denominator));
+	}
+
+	/**
 	 * Creates and returns a list of molecule types accepted as an enzyme by
 	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
 	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
@@ -175,6 +211,35 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		listOfPossibleEnzymes.add("RNA");
 		listOfPossibleEnzymes.add("RECEPTOR");
 		return listOfPossibleEnzymes;
+	}
+
+	/**
+	 * This method constructs a full length SBO number from a given SBO id.
+	 * Whenever a SBO number is used in the model please don't forget to add
+	 * this identifier to the Set of SBO numbers (only those numbers in this set
+	 * will be displayed in the glossary).
+	 * 
+	 * @param sbo
+	 * @return
+	 */
+	protected static String getSBOnumber(int sbo) {
+		if (sbo < 0)
+			return "none";
+		String sboString = Integer.toString(sbo);
+		while (sboString.length() < 7)
+			sboString = '0' + sboString;
+		return sboString;
+	}
+
+	/**
+	 * Returns the id of a PluginSpeciesReference object's belonging species as
+	 * an object of type StringBuffer.
+	 * 
+	 * @param ref
+	 * @return
+	 */
+	protected static final StringBuffer getSpecies(PluginSpeciesReference ref) {
+		return new StringBuffer(ref.getSpecies());
 	}
 
 	/**
@@ -328,584 +393,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		return arith('*', factors);
 	}
 
-	public static final StringBuffer toText(PluginModel model, ASTNode astnode) {
-		// if (astnode == null)
-		// return null;
-		//
-		// ASTNode ast;
-		// StringBuffer value = null;
-		// if (astnode.isUMinus()) {
-		// value = new StringBuffer('-');
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// return value;
-		// } else if (astnode.isSqrt())
-		// return value = sqrt(toText(model, astnode.getChild(astnode
-		// .getNumChildren() - 1)));
-		// else if (astnode.isInfinity())
-		// return value = new StringBuffer(POSITIVE_INFINITY);
-		// else if (astnode.isNegInfinity())
-		// return value = new StringBuffer(NEGATIVE_ININITY);
-		//
-		// switch (astnode.getType()) {
-		// /*
-		// * Numbers
-		// */
-		// case AST_REAL:
-		// return value = new StringBuffer(Double.toString(astnode.getReal()));
-		//
-		// case AST_INTEGER:
-		// return value = new StringBuffer(Integer.toString(astnode
-		// .getInteger()));
-		// /*
-		// * Basic Functions
-		// */
-		// case AST_FUNCTION_LOG: {
-		// value = new StringBuffer("\\log");
-		// if (astnode.getNumChildren() == 2) {
-		// value.append("_{");
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// }
-		// value.append('{');
-		// if (astnode.getChild(astnode.getNumChildren() - 1).getNumChildren() >
-		// 0)
-		// value.append(brackets(toText(model, astnode.getChild(astnode
-		// .getNumChildren() - 1))));
-		// else
-		// value.append(toText(model, astnode.getChild(astnode
-		// .getNumChildren() - 1)));
-		// value.append('}');
-		// return value;
-		// }
-		// /*
-		// * Operators
-		// */
-		// case AST_POWER:
-		// value = toText(model, astnode.getLeftChild());
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value = brackets(value);
-		// value.append("^{");
-		// value.append(toText(model, astnode.getRightChild()));
-		// value.append("}");
-		// return value;
-		//
-		// case AST_PLUS:
-		// value = toText(model, astnode.getLeftChild());
-		// for (int i = 1; i < astnode.getNumChildren(); i++) {
-		// ast = astnode.getChild(i);
-		// value.append(" + ");
-		// if (ast.getType() == AST_MINUS)
-		// value.append(brackets(toText(model, ast)));
-		// else
-		// value.append(toText(model, ast));
-		// }
-		// return value;
-		//
-		// case AST_MINUS:
-		// value = toText(model, astnode.getLeftChild());
-		// for (int i = 1; i < astnode.getNumChildren(); i++) {
-		// ast = astnode.getChild(i);
-		// value.append(" - ");
-		// if (ast.getType() == AST_PLUS)
-		// value.append(brackets(toText(model, ast)));
-		// else
-		// value.append(toText(model, ast));
-		// }
-		// return value;
-		//
-		// case AST_TIMES:
-		// value = toText(model, astnode.getLeftChild());
-		// if ((1 < astnode.getLeftChild().getNumChildren())
-		// && ((astnode.getLeftChild().getType() == AST_MINUS) || (astnode
-		// .getLeftChild().getType() == AST_PLUS)))
-		// value = brackets(value);
-		// for (int i = 1; i < astnode.getNumChildren(); i++) {
-		// ast = astnode.getChild(i);
-		// value.append("\\cdot");
-		// if ((ast.getType() == AST_MINUS) || (ast.getType() == AST_PLUS))
-		// value.append(brackets(toText(model, ast)));
-		// else {
-		// value.append(' ');
-		// value.append(toText(model, ast));
-		// }
-		// }
-		// return value;
-		//
-		// case AST_DIVIDE:
-		// return value = frac(toText(model, astnode.getLeftChild()), toText(
-		// model, astnode.getRightChild()));
-		//
-		// case AST_RATIONAL:
-		// return value = frac(Double.toString(astnode.getNumerator()), Double
-		// .toString(astnode.getDenominator()));
-		//
-		// case AST_NAME_TIME:
-		// return value = mathrm(astnode.getName());
-		//
-		// case AST_FUNCTION_DELAY:
-		// return value = mathrm(astnode.getName());
-		//
-		// /*
-		// * Names of identifiers: parameters, functions, species etc.
-		// */
-		// case AST_NAME:
-		// if (model.getSpecies(astnode.getName()) != null) {
-		// // Species.
-		// Species species = model.getSpecies(astnode.getName());
-		// Compartment c = model.getCompartment(species.getCompartment());
-		// boolean concentration = !species.getHasOnlySubstanceUnits()
-		// && (0 < c.getSpatialDimensions());
-		// value = new StringBuffer();
-		// if (concentration)
-		// value.append('[');
-		// value.append(getNameOrID(species, true));
-		// if (concentration)
-		// value.append(']');
-		// return value;
-		//
-		// } else if (model.getCompartment(astnode.getName()) != null) {
-		// // Compartment
-		// Compartment c = model.getCompartment(astnode.getName());
-		// return value = getSize(c);
-		// }
-		// // TODO: weitere spezialfälle von Namen!!!
-		// return value = new StringBuffer(mathtt(maskSpecialChars(astnode
-		// .getName())));
-		// /*
-		// * Constants: pi, e, true, false
-		// */
-		// case AST_CONSTANT_PI:
-		// return value = new StringBuffer(CONSTANT_PI);
-		// case AST_CONSTANT_E:
-		// return value = new StringBuffer(CONSTANT_E);
-		// case AST_CONSTANT_TRUE:
-		// return value = new StringBuffer(CONSTANT_TRUE);
-		// case AST_CONSTANT_FALSE:
-		// return value = new StringBuffer(CONSTANT_FALSE);
-		// case AST_REAL_E:
-		// return value = new StringBuffer(Double.toString(astnode.getReal()));
-		// /*
-		// * More complicated functions
-		// */
-		// case AST_FUNCTION_ABS:
-		// return value = abs(toText(model, astnode.getChild(astnode
-		// .getNumChildren() - 1)));
-		//
-		// case AST_FUNCTION_ARCCOS:
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// return value = arccos(brackets(toText(model, astnode
-		// .getLeftChild())));
-		// return value = arccos(toText(model, astnode.getLeftChild()));
-		//
-		// case AST_FUNCTION_ARCCOSH:
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// return value = arccosh(brackets(toText(model, astnode
-		// .getLeftChild())));
-		// return value = arccosh(toText(model, astnode.getLeftChild()));
-		//
-		// case AST_FUNCTION_ARCCOT:
-		// value = new StringBuffer("\\arcot{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_ARCCOTH:
-		// value = mathrm("arccoth");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// return value;
-		//
-		// case AST_FUNCTION_ARCCSC:
-		// value = new StringBuffer("\\arccsc{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_ARCCSCH:
-		// value = mathrm("arccsh");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// return value;
-		//
-		// case AST_FUNCTION_ARCSEC:
-		// value = new StringBuffer("\\arcsec{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_ARCSECH:
-		// value = mathrm("arcsech");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// return value;
-		//
-		// case AST_FUNCTION_ARCSIN:
-		// value = new StringBuffer("\\arcsin{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_ARCSINH:
-		// value = mathrm("arcsinh");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// return value;
-		//
-		// case AST_FUNCTION_ARCTAN:
-		// value = new StringBuffer("\\arctan{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_ARCTANH:
-		// value = new StringBuffer("\\arctanh{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_CEILING:
-		// return value = ceiling(toText(model, astnode.getLeftChild()));
-		//
-		// case AST_FUNCTION_COS:
-		// value = new StringBuffer("\\cos{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_COSH:
-		// value = new StringBuffer("\\cosh{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_COT:
-		// value = new StringBuffer("\\cot{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_COTH:
-		// value = new StringBuffer("\\coth{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_CSC:
-		// value = new StringBuffer("\\csc{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_CSCH:
-		// value = mathrm("csch");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// return value;
-		//
-		// case AST_FUNCTION_EXP:
-		// value = new StringBuffer("\\exp{");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_FACTORIAL:
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value = brackets(toText(model, astnode.getLeftChild()));
-		// else
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// value.append('!');
-		// return value;
-		//
-		// case AST_FUNCTION_FLOOR:
-		// return value = floor(toText(model, astnode.getLeftChild()));
-		//
-		// case AST_FUNCTION_LN:
-		// value = new StringBuffer("\\ln{");
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value = brackets(toText(model, astnode.getLeftChild()));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_POWER:
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value = brackets(toText(model, astnode.getLeftChild()));
-		// else
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// value.append("^{");
-		// value.append(toText(model, astnode.getChild(astnode
-		// .getNumChildren() - 1)));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_ROOT:
-		// ASTNode left = astnode.getLeftChild();
-		// if ((astnode.getNumChildren() > 1)
-		// && ((left.isInteger() && (left.getInteger() != 2)) || (left
-		// .isReal() && (left.getReal() != 2d))))
-		// return value = root(toText(model, astnode.getLeftChild()),
-		// toText(model, astnode.getRightChild()));
-		// return value = sqrt(toText(model, astnode.getChild(astnode
-		// .getNumChildren() - 1)));
-		//
-		// case AST_FUNCTION_SEC:
-		// value = new StringBuffer("\\sec{");
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_SECH:
-		// value = mathrm("sech");
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_SIN:
-		// value = new StringBuffer("\\sin{");
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_SINH:
-		// value = new StringBuffer("\\sinh{");
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_TAN:
-		// value = new StringBuffer("\\tan{");
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION_TANH:
-		// value = new StringBuffer("\\tanh{");
-		// if (astnode.getLeftChild().getNumChildren() > 0)
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// value.append('}');
-		// return value;
-		//
-		// case AST_FUNCTION:
-		// value = new StringBuffer(
-		// mathtt(maskSpecialChars(astnode.getName())));
-		// StringBuffer args = new StringBuffer(toText(model, astnode
-		// .getLeftChild()));
-		// for (int i = 1; i < astnode.getNumChildren(); i++) {
-		// args.append(", ");
-		// args.append(toText(model, astnode.getChild(i)));
-		// }
-		// args = brackets(args);
-		// value.append(args);
-		// return value;
-		//
-		// case AST_LAMBDA:
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// // mathtt(maskLaTeXspecialSymbols(astnode.getName())) == LAMBDA!!!
-		// // value.append('(');
-		// for (int i = 1; i < astnode.getNumChildren() - 1; i++) {
-		// value.append(", ");
-		// value.append(toText(model, astnode.getChild(i)));
-		// }
-		// value = brackets(value);
-		// value.append(" = ");
-		// value.append(toText(model, astnode.getRightChild()));
-		// return value;
-		//
-		// case AST_LOGICAL_AND:
-		// return value = mathematicalOperation(astnode, model, "\\wedge ");
-		// case AST_LOGICAL_XOR:
-		// return value = mathematicalOperation(astnode, model, "\\oplus ");
-		// case AST_LOGICAL_OR:
-		// return value = mathematicalOperation(astnode, model, "\\lor ");
-		// case AST_LOGICAL_NOT:
-		// value = new StringBuffer("\\neg ");
-		// if (0 < astnode.getLeftChild().getNumChildren())
-		// value.append(brackets(toText(model, astnode.getLeftChild())));
-		// else
-		// value.append(toText(model, astnode.getLeftChild()));
-		// return value;
-		//
-		// case AST_FUNCTION_PIECEWISE:
-		// value = new StringBuffer("\\begin{dcases}");
-		// value.append(newLine);
-		// for (int i = 0; i < astnode.getNumChildren() - 1; i++) {
-		// value.append(toText(model, astnode.getChild(i)));
-		// value.append(((i % 2) == 0) ? " & \\text{if\\ } " : lineBreak);
-		// }
-		// value.append(toText(model, astnode.getChild(astnode
-		// .getNumChildren() - 1)));
-		// if ((astnode.getNumChildren() % 2) == 1) {
-		// value.append(" & \\text{otherwise}");
-		// value.append(newLine);
-		// }
-		// value.append("\\end{dcases}");
-		// return value;
-		//
-		// case AST_RELATIONAL_EQ:
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// value.append(" = ");
-		// value.append(toText(model, astnode.getRightChild()));
-		// return value;
-		//
-		// case AST_RELATIONAL_GEQ:
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// value.append(" \\geq ");
-		// value.append(toText(model, astnode.getRightChild()));
-		// return value;
-		//
-		// case AST_RELATIONAL_GT:
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// value.append(" > ");
-		// value.append(toText(model, astnode.getRightChild()));
-		// return value;
-		//
-		// case AST_RELATIONAL_NEQ:
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// value.append(" \\neq ");
-		// value.append(toText(model, astnode.getRightChild()));
-		// return value;
-		//
-		// case AST_RELATIONAL_LEQ:
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// value.append(" \\leq ");
-		// value.append(toText(model, astnode.getRightChild()));
-		// return value;
-		//
-		// case AST_RELATIONAL_LT:
-		// value = new StringBuffer(toText(model, astnode.getLeftChild()));
-		// value.append(" < ");
-		// value.append(toText(model, astnode.getRightChild()));
-		// return value;
-		//
-		// case AST_UNKNOWN:
-		// return value = mathtext(" unknown ");
-		//
-		// default:
-		// return value = new StringBuffer();
-		// }
-		return null;
-	}
-
-	/**
-	 * Basic method which links several elements with a mathematical operator.
-	 * All empty StringBuffer object are excluded.
-	 * 
-	 * @param operator
-	 * @param elements
-	 * @return
-	 */
-	private static final StringBuffer arith(char operator, Object... elements) {
-		Vector<Object> vsb = new Vector<Object>();
-		StringBuffer equation = new StringBuffer();
-		for (Object sb : elements)
-			if (sb.toString().length() > 0)
-				vsb.add(sb);
-		if (vsb.size() >= 1)
-			equation.append(vsb.get(0));
-		for (int count = 1; count < vsb.size(); count++)
-			append(equation, operator, vsb.get(count));
-		return equation;
-	}
-
-	private static StringBuffer floor(StringBuffer text) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * This method constructs a full length SBO number from a given SBO id.
-	 * Whenever a SBO number is used in the model please don't forget to add
-	 * this identifier to the Set of SBO numbers (only those numbers in this set
-	 * will be displayed in the glossary).
-	 * 
-	 * @param sbo
-	 * @return
-	 */
-	protected static String getSBOnumber(int sbo) {
-		if (sbo < 0)
-			return "none";
-		String sboString = Integer.toString(sbo);
-		while (sboString.length() < 7)
-			sboString = '0' + sboString;
-		return sboString;
-	}
-
-	/**
-	 * Returns the id of a PluginSpeciesReference object's belonging species as
-	 * an object of type StringBuffer.
-	 * 
-	 * @param ref
-	 * @return
-	 */
-	protected static final StringBuffer getSpecies(PluginSpeciesReference ref) {
-		return new StringBuffer(ref.getSpecies());
+	public static final StringBuffer toText(ASTNode astnode) {
+		return new StringBuffer(libsbml.formulaToString(astnode));
 	}
 
 	protected HashMap<String, String> idAndName;
@@ -970,74 +459,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	}
 
 	/**
-	 * Returns a list of names of all parameters, which are only allowed to be
-	 * stored globally.
-	 * 
-	 * @return
-	 */
-	public List<StringBuffer> getGlobalParameters() {
-		return listOfGlobalParameters;
-	}
-
-	/**
-	 * Returns the LaTeX expression of the generated formual of this kinetic
-	 * law.
-	 * 
-	 * @return
-	 */
-	public StringBuffer getKineticTeX() {
-		return formelTeX;
-	}
-
-	/**
-	 * Returns a list of the names of all parameters used by this law. This list
-	 * contains parameters, which can be either stored locally, i.e., assigned
-	 * to the specific kinetic law or globally for the whole model.
-	 * 
-	 * @return
-	 */
-	public List<StringBuffer> getLocalParameters() {
-		return listOfLocalParameters;
-	}
-
-	/**
-	 * Returns the name of the kinetic formula of this object.
-	 * 
-	 * @return
-	 */
-	public abstract String getName();
-
-	/**
-	 * Recursively removes waste brackets from a formula.
-	 * 
-	 * TODO Refinement
-	 * 
-	 * @param sb
-	 * @return
-	 */
-	/*
-	 * protected StringBuffer removeBrackets(StringBuffer sb) { if (sb.length()
-	 * > 0) { if ((sb.charAt(0) == '(') && (sb.charAt(sb.length() - 1) == ')'))
-	 * { sb.deleteCharAt(sb.length() - 1); sb.deleteCharAt(0); sb =
-	 * removeBrackets(sb); } } return sb; }
-	 */
-
-	/**
-	 * Returns the SBO identifier of the respective kinetic law if there is one
-	 * or an empty String otherwise.
-	 * 
-	 * @return
-	 */
-	public abstract String getSBO();
-
-	// @Override
-	public String toString() {
-		if (sboTerm == null)
-			sboTerm = getName();
-		return sboTerm;
-	}
-
-	/**
 	 * Adds the given parameter only to the list of global parameters if this
 	 * list does not yet contain this parameter.
 	 * 
@@ -1078,6 +499,67 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			throws RateLawNotApplicableException, IllegalFormatException;
 
 	/**
+	 * Returns a list of names of all parameters, which are only allowed to be
+	 * stored globally.
+	 * 
+	 * @return
+	 */
+	public List<StringBuffer> getGlobalParameters() {
+		return listOfGlobalParameters;
+	}
+
+	/**
+	 * Recursively removes waste brackets from a formula.
+	 * 
+	 * TODO Refinement
+	 * 
+	 * @param sb
+	 * @return
+	 */
+	/*
+	 * protected StringBuffer removeBrackets(StringBuffer sb) { if (sb.length()
+	 * > 0) { if ((sb.charAt(0) == '(') && (sb.charAt(sb.length() - 1) == ')'))
+	 * { sb.deleteCharAt(sb.length() - 1); sb.deleteCharAt(0); sb =
+	 * removeBrackets(sb); } } return sb; }
+	 */
+
+	/**
+	 * Returns the LaTeX expression of the generated formual of this kinetic
+	 * law.
+	 * 
+	 * @return
+	 */
+	public StringBuffer getKineticTeX() {
+		return formelTeX;
+	}
+
+	/**
+	 * Returns a list of the names of all parameters used by this law. This list
+	 * contains parameters, which can be either stored locally, i.e., assigned
+	 * to the specific kinetic law or globally for the whole model.
+	 * 
+	 * @return
+	 */
+	public List<StringBuffer> getLocalParameters() {
+		return listOfLocalParameters;
+	}
+
+	/**
+	 * Returns the name of the kinetic formula of this object.
+	 * 
+	 * @return
+	 */
+	public abstract String getName();
+
+	/**
+	 * Returns the SBO identifier of the respective kinetic law if there is one
+	 * or an empty String otherwise.
+	 * 
+	 * @return
+	 */
+	public abstract String getSBO();
+
+	/**
 	 * Returns the value of a PluginSpeciesReference object's stoichiometry
 	 * either as a double or, if the stoichiometry has an integer value, as an
 	 * int object.
@@ -1085,7 +567,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param ref
 	 * @return
 	 */
-	protected final StringBuffer getStoichiometry(PluginSpeciesReference ref) {
+	protected static final StringBuffer getStoichiometry(PluginSpeciesReference ref) {
 		if (ref.getStoichiometryMath() == null) {
 			double stoich = ref.getStoichiometry();
 			if ((int) stoich - stoich == 0)
@@ -1093,7 +575,14 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 			else
 				return new StringBuffer(Double.toString(stoich));
 		}
-		return toText(model, ref.getStoichiometryMath().getMath());
+		return toText(ref.getStoichiometryMath().getMath());
+	}
+
+	// @Override
+	public String toString() {
+		if (sboTerm == null)
+			sboTerm = getName();
+		return sboTerm;
 	}
 
 }

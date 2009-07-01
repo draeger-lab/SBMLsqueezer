@@ -115,6 +115,8 @@ public class Convenience extends GeneralizedMassAction {
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		PluginReaction reaction = getParentReaction();
+		
+		System.out.println("blalla");
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 		for (int i = 0; i < catalysts.length; i++) {
 			StringBuffer numerator, denominator;
