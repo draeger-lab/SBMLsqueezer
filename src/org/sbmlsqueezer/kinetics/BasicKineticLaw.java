@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-import jp.sbi.celldesigner.plugin.PluginCompartment;
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginReaction;
@@ -32,8 +31,6 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.Species;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbmlsqueezer.io.LaTeXExport;
@@ -449,12 +446,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		List<String> modTInhib = new ArrayList<String>();
 		identifyModifers(parentReaction, listOfPossibleEnzymes, modInhib,
 				modTActi, modTInhib, modActi, modE, modCat);
-		StringBuffer formula = createKineticEquation(model, modE, modActi,
-				modTActi, modInhib, modTInhib, modCat);
-		if (getMath() == null) {
-			setFormula(formula.toString());
-			setMathFromFormula();
-		}
+		setMath(libsbml.parseFormula(createKineticEquation(model, modE, modActi,
+				modTActi, modInhib, modTInhib, modCat).toString()));
 		formelTeX = (new LaTeXExport().toLaTeX(model, getMath()));
 	}
 
