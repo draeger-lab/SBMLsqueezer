@@ -71,3 +71,8 @@ S_1 + S_4 -> S_2 + S_5 mit und ohne Enzym
 ============
 
 
+5. Convinience
+===============
+S_1 -> S_2 mit und ohne Enzym
+
+
