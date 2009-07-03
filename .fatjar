@@ -1,14 +1,14 @@
 #Fat Jar Configuration File
-#Wed Jul 01 12:05:11 CEST 2009
+#Thu Jul 02 14:03:21 CEST 2009
 onejar.license.required=true
 manifest.classpath=
 manifest.removesigners=true
 onejar.checkbox=false
-jarname=SBMLsqueezer_fat.jar
+jarname=/opt/CellDesigner4.0.1/plugin/SBMLsqueezerTest1.jar
 manifest.mergeall=true
-manifest.mainclass=
+manifest.mainclass=org.sbmlsqueezer.gui.SBMLsqueezerUI
 manifest.file=<createnew>
-jarname.isextern=false
+jarname.isextern=true
 onejar.expand=
-excludes=
+excludes=<jar|celldesigner.jar>;<jar|sbmlj.jar>
 includes=

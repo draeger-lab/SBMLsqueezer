@@ -398,7 +398,9 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 	protected StringBuffer formelTeX;
 
-	private List<StringBuffer> listOfLocalParameters, listOfGlobalParameters;
+	protected List<StringBuffer> listOfLocalParameters;
+
+	private List<StringBuffer> listOfGlobalParameters;
 
 	protected String sboTerm;
 

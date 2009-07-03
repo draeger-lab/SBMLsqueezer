@@ -390,10 +390,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					if (modE.size() != 0)
 						numeratorReverse = times(numeratorReverse, modE
 								.get(enzymeNum));
-					if (specRefP2.equals(specRefP1))
+					if ((specRefP2 != null) && specRefP2.equals(specRefP1))
 						numeratorReverse = times(numeratorReverse, pow(
 								specRefP1.getSpecies(), Integer.toString(2)));
-					else
+					else if (specRefP2 != null)
 						numeratorReverse = times(numeratorReverse, specRefP1
 								.getSpecies(), specRefP2.getSpecies());
 
