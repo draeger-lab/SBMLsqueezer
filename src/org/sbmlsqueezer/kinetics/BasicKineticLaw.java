@@ -184,7 +184,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	public static final StringBuffer frac(Object numerator, Object denominator) {
-		return brackets(arith('/', numerator,
+		return brackets(arith('/',
+				containsArith(numerator) ? brackets(numerator) : numerator,
 				containsArith(denominator) ? brackets(denominator)
 						: denominator));
 	}
@@ -448,8 +449,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		List<String> modTInhib = new ArrayList<String>();
 		identifyModifers(parentReaction, listOfPossibleEnzymes, modInhib,
 				modTActi, modTInhib, modActi, modE, modCat);
-		setMath(libsbml.parseFormula(createKineticEquation(model, modE, modActi,
-				modTActi, modInhib, modTInhib, modCat).toString()));
+		setMath(libsbml.parseFormula(createKineticEquation(model, modE,
+				modActi, modTActi, modInhib, modTInhib, modCat).toString()));
 		formelTeX = (new LaTeXExport().toLaTeX(model, getMath()));
 	}
 
@@ -562,7 +563,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param ref
 	 * @return
 	 */
-	protected static final StringBuffer getStoichiometry(PluginSpeciesReference ref) {
+	protected static final StringBuffer getStoichiometry(
+			PluginSpeciesReference ref) {
 		if (ref.getStoichiometryMath() == null) {
 			double stoich = ref.getStoichiometry();
 			if ((int) stoich - stoich == 0)
