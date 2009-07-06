@@ -67,7 +67,7 @@ public class Convenience extends GeneralizedMassAction {
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model);
-		
+
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class Convenience extends GeneralizedMassAction {
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
-	
+
 	}
 
 	public static boolean isApplicable(PluginReaction reaction) {
@@ -103,377 +103,155 @@ public class Convenience extends GeneralizedMassAction {
 	public String getSBO() {
 		return "none";
 	}
-	
-	
-	
+
 	protected StringBuffer createKineticEquation(PluginModel model,
-		    List<String> modE, List<String> modActi, List<String> modTActi,
-		    List<String> modInhib, List<String> modTInhib, List<String> modCat)
-		    throws RateLawNotApplicableException, IllegalFormatException {
-			StringBuffer numerator = new StringBuffer();
-			
-			StringBuffer inhib = new StringBuffer();
+			List<String> modE, List<String> modActi, List<String> modTActi,
+			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+			throws RateLawNotApplicableException, IllegalFormatException {
+		StringBuffer numerator;
+		StringBuffer formelTxt[] = new StringBuffer[Math.max(1, modE.size())];
 
-			StringBuffer acti = new StringBuffer();
-	
-			StringBuffer formelTxt = new StringBuffer();
+		PluginReaction parentReaction = getParentReaction();
+		int enzymeNum = 0;
+		do {
+			StringBuffer denominator = new StringBuffer();
+			StringBuffer kcatp = concat("kcatp_", getParentReactionID());
+			if (modE.size() > 1)
+				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
+			addLocalParameter(kcatp);
+			numerator = new StringBuffer(kcatp);
 
-			PluginReaction parentReaction = getParentReaction();
-			int enzymeNum = 0;
-			do {
-				StringBuffer denominator = new StringBuffer();
-				//TODO reaction num
-				numerator = concat("kcatp_",getParentReactionID());
-				
-				if (modE.size() > 1) {
-					numerator= concat(numerator,underscore,modE.get(enzymeNum));
-					
+			// sums for each educt
+			for (int eductNum = 0; eductNum < parentReaction.getNumReactants(); eductNum++) {
+				StringBuffer exp = new StringBuffer();
+				PluginSpeciesReference specref = parentReaction
+						.getReactant(eductNum);
+
+				// build denominator
+				// TODO reactionnum
+				StringBuffer kM = concat("kM_", getParentReactionID());
+
+				if (modE.size() > 1)
+					kM = concat(kM, underscore, modE.get(enzymeNum));
+				kM = append(kM, underscore, specref.getSpecies());
+
+				addLocalParameter(kM);
+
+				// we can save the brakets if there is just one educt.
+				if (parentReaction.getNumReactants() > 1)
+					denominator.append(Character.valueOf('('));
+
+				if (!parentReaction.getReversible()
+						|| ((parentReaction.getNumReactants() != 1) || (parentReaction
+								.getNumProducts() == 1)))
+					denominator.append(" 1 + ");
+
+				denominator = concat(denominator, Character.valueOf('('),
+						specref.getSpecies(), Character.valueOf('/'), kM,
+						Character.valueOf(')'));
+
+				for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
+					exp = concat(Character.valueOf('^'), (m + 1));
+					denominator = concat(denominator, " + (", specref
+							.getSpecies(), Character.valueOf('/'), kM,
+							Character.valueOf(')'), exp);
 				}
-		
 
-				if (!listOfLocalParameters.contains(numerator)) listOfLocalParameters.add(new StringBuffer(numerator));
-				/*
-				 * ASTNode numerator_n = new ASTNode(AST_NAME);
-				 * numerator_n.setName(numerator); ASTNode denominator_n = null; ASTNode
-				 * currEnzyme = new ASTNode(AST_DIVIDE);
-				 */
-				// sums for each educt
-				for (int eductNum = 0; eductNum < parentReaction.getNumReactants(); eductNum++) {
-					StringBuffer exp = new StringBuffer();
-					PluginSpeciesReference specref = parentReaction.getReactant(eductNum);
+				// we can save the brakets if there is just one educt
+				if (parentReaction.getNumReactants() > 1)
+					denominator.append(Character.valueOf(')'));
 
-					// build denominator
-					//TODO reactionnum
-					StringBuffer kM = concat("kM_",getParentReactionID()) ;
-					
-					if (modE.size() > 1) {
-						kM = concat(kM,underscore, modE.get(enzymeNum));
-						
-					}
-					kM =concat(kM,underscore, specref.getSpecies());
-					
-					if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(new StringBuffer(kM));
+				if ((eductNum + 1) < parentReaction.getNumReactants())
+					denominator.append(Character.valueOf('*'));
 
-					// we can save the brakets if there is just one educt.
-					if (parentReaction.getNumReactants() > 1) {
-						denominator.append(Character.valueOf('('));
-						
-					}
-					if (!parentReaction.getReversible()
-					    || ((parentReaction.getNumReactants() != 1) || (parentReaction
-					        .getNumProducts() == 1))) {
-						/*
-						 * denominator_n = new ASTNode(AST_PLUS); temp = new
-						 * ASTNode(AST_INTEGER); temp.setValue(1);
-						 * denominator_n.addChild(temp);
-						 */
-						denominator.append(" 1 + ");
-						
-					}
-					/*
-					 * temp = new ASTNode(AST_DIVIDE); temp2 = new ASTNode(AST_NAME);
-					 * temp2.setName(specref.getSpecies()); temp.addChild(temp2); temp2 =
-					 * new ASTNode(AST_NAME); temp2.setName(kM); temp.addChild(temp2); if
-					 * (denominator_n == null) { denominator_n = temp; } else {
-					 * denominator_n.addChild(temp); }
-					 */
-					denominator = concat(denominator,Character.valueOf('('), specref.getSpecies(),Character.valueOf( '/'), kM ,Character.valueOf(')'));
-					
-					// ASTNode pow = new ASTNode(AST_POWER);
-					// ASTNode basis = new ASTNode(AST_PLUS);
-					// int exp_n = 1;
-					for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
-						exp =concat(Character.valueOf('^'), (m + 1));
-						/*
-						 * exp_n = m+1; temp = new ASTNode(AST_NAME);
-						 * temp.setName(specref.getSpecies()); basis.addChild(temp); temp =
-						 * new ASTNode(AST_NAME); temp.setName(kM); basis.addChild(temp);
-						 * pow.addChild(basis); temp = new ASTNode(AST_INTEGER);
-						 * temp.setValue(m + 1); pow.addChild(temp); temp = denominator_n;
-						 * denominator_n = new ASTNode(AST_PLUS);
-						 * denominator_n.addChild(temp); denominator_n.addChild(pow);
-						 */
-						denominator =concat(denominator, " + (" , specref.getSpecies(),Character.valueOf('/'), kM , Character.valueOf(')'), exp);
-						
-					}
+				// build numerator
+				if (specref.getStoichiometry() == 1.0)
+					numerator = concat(numerator, " * (", specref.getSpecies(),
+							Character.valueOf('/'), kM, Character.valueOf(')'));
+				else
+					numerator = concat(numerator, " * (", specref.getSpecies(),
+							Character.valueOf('/'), kM, Character.valueOf(')'),
+							exp);
+			}
 
-					// we can save the brakets if there is just one educt
-					if (parentReaction.getNumReactants() > 1) {
-						
-						denominator.append(Character.valueOf(')'));
-					}
-					if ((eductNum + 1) < parentReaction.getNumReactants())
-					  denominator.append(Character.valueOf('*'));
+			/*
+			 * only if reaction is reversible or we want it to be.
+			 */
+			if (parentReaction.getReversible()) {
+				denominator.append(Character.valueOf('+'));
+				numerator.append(Character.valueOf('-'));
+
+				// TODO reaction num
+				StringBuffer kcat = concat("kcatn_", getParentReactionID());
+
+				if (modE.size() > 1) {
+					kcat = concat(kcat, underscore, modE.get(enzymeNum));
+
+				}
+				numerator.append(kcat);
+
+				if (!listOfLocalParameters.contains(kcat))
+					listOfLocalParameters.add(new StringBuffer(kcat));
+
+				// Sums for each product
+				for (int productNum = 0; productNum < parentReaction
+						.getNumProducts(); productNum++) {
+					// TODO reaction num
+					StringBuffer kM = new StringBuffer("kM_");
+
+					if (modE.size() > 1)
+						kM = concat(kM, underscore, modE.get(enzymeNum));
+					kM = concat(kM, underscore, parentReaction.getProduct(
+							productNum).getSpeciesInstance().getId());
+
+					if (!listOfLocalParameters.contains(kM))
+						listOfLocalParameters.add(new StringBuffer(kM));
+
+					PluginSpeciesReference specRefP = parentReaction
+							.getProduct(productNum);
+					if (parentReaction.getNumProducts() > 1)
+						denominator.append("(1 + ");
+					denominator = concat(denominator, Character.valueOf('('),
+							specRefP.getSpecies(), Character.valueOf('/'), kM,
+							Character.valueOf(')'));
+
+					// for each stoichiometry (see Liebermeister et al.)
+					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
+						// exp = "^" + (m + 1);
+						denominator = sum(denominator, pow(frac(
+								getSpecies(specRefP), kM), Integer
+								.toString(m + 1)));
+
+					// if (parentReaction.getNumProducts() > 1)
+					// denominator += ')';
+
+					if ((productNum + 1) < parentReaction.getNumProducts())
+						denominator.append(" * ");
 
 					// build numerator
-					if (specref.getStoichiometry() == 1.0) {
-						/*
-						 * temp = new ASTNode(AST_DIVIDE); temp2 = new ASTNode(AST_NAME);
-						 * temp2.setName(specref.getSpecies()); temp.addChild(temp2); temp2 =
-						 * new ASTNode(AST_NAME); temp2.setName(kM); temp.addChild(temp2);
-						 * temp2 = numerator_n; numerator_n = new ASTNode(AST_TIMES);
-						 * numerator_n.addChild(temp2); numerator_n.addChild(temp);
-						 */
-
-						numerator =concat(numerator," * (", specref.getSpecies(),Character.valueOf('/'), kM ,Character.valueOf( ')'));
-					
-					} else {
-						/*
-						 * temp = new ASTNode(AST_DIVIDE); temp2 = new ASTNode(AST_NAME);
-						 * temp2.setName(specref.getSpecies()); temp.addChild(temp2); temp2 =
-						 * new ASTNode(AST_NAME); temp2.setName(kM); temp.addChild(temp2); if
-						 * (exp_n > 1){ temp2 = new ASTNode(AST_POWER); temp2.addChild(temp);
-						 * temp = new ASTNode(AST_INTEGER); temp.setValue(exp_n);
-						 * temp2.addChild(temp); } temp = numerator_n; numerator_n = new
-						 * ASTNode(AST_TIMES); numerator_n.addChild(temp);
-						 * numerator_n.addChild(temp2);
-						 */
-						numerator =concat(numerator, " * (" ,specref.getSpecies() ,Character.valueOf('/'), kM , Character.valueOf(')'),exp);
-						
-					}
+					if (specRefP.getStoichiometry() != 1.0)
+						numerator = times(numerator, pow(frac(
+								getSpecies(specRefP), kM),
+								getStoichiometry(specRefP)));
+					else
+						numerator = times(numerator, frac(getSpecies(specRefP),
+								kM));
 				}
-
-				/*
-				 * only if reaction is reversible or we want it to be.
-				 */
-				if (parentReaction.getReversible()) {
-					denominator.append(Character.valueOf('+'));
-					numerator.append(Character.valueOf('-'));
-				
-					// TODO reaction num
-					StringBuffer kcat = concat("kcatn_",getParentReactionID()) ; 
-
-					if (modE.size() > 1) {
-						kcat = concat(kcat,underscore,modE.get(enzymeNum));
-						
-					}
-					
-					/*
-					 * temp = numerator_n; numerator_n = new ASTNode(AST_MINUS);
-					 * numerator_n.addChild(temp); temp = new ASTNode(AST_NAME);
-					 * temp.setName(kcat); numerator_n.addChild(temp);
-					 */
-					numerator.append(kcat);
-					
-
-					if (!listOfLocalParameters.contains(kcat)) listOfLocalParameters.add(new StringBuffer(kcat));
-
-					// Sums for each product
-					for (int productNum = 0; productNum < parentReaction.getNumProducts(); productNum++) {
-						//TODO reaction num
-						StringBuffer kM = new StringBuffer("kM_") ;
-					
-						if (modE.size() > 1) {
-							kM = concat(kM,underscore, modE.get(enzymeNum));
-							
-						}
-						kM =concat(kM,underscore,
-								parentReaction.getProduct(productNum).getSpeciesInstance()
-						        .getId());
-						
-
-						if (!listOfLocalParameters.contains(kM)) listOfLocalParameters.add(new StringBuffer(kM));
-
-						String exp = "";
-						PluginSpeciesReference specRefP = parentReaction
-						    .getProduct(productNum);
-						/*
-						 * temp = denominator_n; denominator_n = new ASTNode(AST_PLUS);
-						 * denominator_n.addChild(temp); ASTNode part = null;
-						 */
-						if (parentReaction.getNumProducts() > 1) {
-							/*
-							 * part = new ASTNode(AST_PLUS); temp = new ASTNode(AST_INTEGER);
-							 * temp.setValue(1); part.addChild(temp);
-							 */
-							denominator.append("(1 + ");
-							
-						}
-						/*
-						 * if (part == null) { part = new ASTNode(AST_DIVIDE); temp = new
-						 * ASTNode(AST_NAME); temp.setName(specRefP.getSpecies());
-						 * part.addChild(temp); temp = new ASTNode(AST_NAME);
-						 * temp.setName(kM); part.addChild(temp); } else { temp2 = new
-						 * ASTNode(AST_DIVIDE); temp = new ASTNode(AST_NAME);
-						 * temp.setName(specRefP.getSpecies()); temp2.addChild(temp); temp =
-						 * new ASTNode(AST_NAME); temp.setName(kM); temp2.addChild(temp);
-						 * part.addChild(temp2); }
-						 */
-						denominator =concat(denominator,Character.valueOf('('),specRefP.getSpecies(),Character.valueOf('/'), kM ,Character.valueOf(')'));
-						
-						// for each stoichiometry (see Liebermeister et al.)
-						// ASTNode basis;
-						// int exp_n=1;
-						for (int m = 1; m < (int) specRefP.getStoichiometry(); m++) {
-							exp = "^" + (m + 1);
-							/*
-							 * exp_n = m+1; basis = new ASTNode(AST_POWER); temp = new
-							 * ASTNode(AST_NAME); temp.setName(specRefP.getSpecies()); temp2 =
-							 * new ASTNode(AST_DIVIDE); temp2.addChild(temp); temp = new
-							 * ASTNode(AST_NAME); temp.setName(kM); temp2.addChild(temp);
-							 * basis.addChild(temp2); temp = new ASTNode(AST_INTEGER);
-							 * temp.setValue(m + 1); basis.addChild(temp); temp = part; part =
-							 * new ASTNode(AST_PLUS); part.addChild(temp); part.addChild(basis);
-							 */
-							denominator += " + (" + specRefP.getSpecies() + '/' + kM + ')'
-							    + exp;
-							
-						}
-						if (parentReaction.getNumProducts() > 1) {
-							// denominator_n.addChild(part);
-							
-							denominator += ')';
-						}
-						if ((productNum + 1) < parentReaction.getNumProducts())
-						  denominator += " * ";
-
-						// build numerator
-						/*
-						 * temp = numerator_n; numerator_n = new ASTNode(AST_TIMES);
-						 * numerator_n.addChild(temp);
-						 */
-						if (specRefP.getStoichiometry() != 1.0) {
-							/*
-							 * temp2 = new ASTNode(AST_DIVIDE); temp = new ASTNode(AST_NAME);
-							 * temp.setName(specRefP.getSpecies()); temp2.addChild(temp); temp =
-							 * new ASTNode(AST_NAME); temp.setName(kM); temp2.addChild(temp); if
-							 * (exp_n > 1){ temp = new ASTNode(AST_POWER); temp.addChild(temp2);
-							 * temp2 = new ASTNode(AST_INTEGER); temp2.setValue(exp_n);
-							 * temp.addChild(temp2); temp2 = temp; }
-							 * numerator_n.addChild(temp2);
-							 */
-
-							numerator += " * (" + specRefP.getSpecies() + '/' + kM + ')' + exp;
-							
-						} else {
-							/*
-							 * temp2 = new ASTNode(AST_DIVIDE); temp = new ASTNode(AST_NAME);
-							 * temp.setName(specRefP.getSpecies()); temp2.addChild(temp); temp =
-							 * new ASTNode(AST_NAME); temp.setName(kM); temp2.addChild(temp);
-							 * numerator_n.addChild(temp);
-							 */
-
-							numerator += " * (" + specRefP.getSpecies() + '/' + kM + ')';
-						
-						}
-					}
-					if ((parentReaction.getNumProducts() > 1)
-					    && (parentReaction.getNumReactants() > 1)) {
-						/*
-						 * temp = denominator_n; denominator_n = new ASTNode(AST_MINUS);
-						 * denominator_n.addChild(temp); temp = new ASTNode(AST_INTEGER);
-						 * temp.setValue(1); denominator_n.addChild(temp);
-						 */
-
-						denominator += " -1";
-
-					}
-				}
-				if (modE.size() > 0) {
-					formelTxt += modE.get(enzymeNum) + " * ";
-					
-				}
-				/*
-				 * if(denominator_n.getNumChildren() == 1) denominator_n =
-				 * denominator_n.getLeftChild(); currEnzyme.addChild(numerator_n);
-				 * currEnzyme.addChild(denominator_n); if (modE.size() > 0) { temp =
-				 * currEnzyme; currEnzyme = new ASTNode(AST_TIMES); temp2 = new
-				 * ASTNode(AST_NAME); temp2.setName(modE.get(enzymeNum));
-				 * currEnzyme.addChild(temp2); currEnzyme.addChild(temp); }
-				 */
-				formelTxt += '(' + numerator + ')' + "/(" + denominator + ')';
-				
-				/*
-				 * if (numOfEnzymes <= 1) ast = currEnzyme; else { if (ast == null) ast =
-				 * new ASTNode(AST_PLUS); ast.addChild(currEnzyme); }
-				 */
-				if (enzymeNum < (modE.size()) - 1) {
-					formelTxt += " + ";
-				
-				}
-				enzymeNum++;
-			} while (enzymeNum <= modE.size() - 1);
-
-			/*
-			 * Activation
-			 */
-			// ASTNode act = null;
-			if (!modActi.isEmpty()) {
-				for (int activatorNum = 0; activatorNum < modActi.size(); activatorNum++) {
-					//TODO reaction num
-					String kA = "kA_" ;
-				
-					kA += "_" + modActi.get(activatorNum);
-					
-					if (!listOfLocalParameters.contains(kA)) listOfLocalParameters.add(new StringBuffer(kA));
-					/*
-					 * temp2 = new ASTNode(AST_DIVIDE); temp = new ASTNode(AST_NAME);
-					 * temp.setName(modActi.get(activatorNum)); temp2.addChild(temp); temp =
-					 * new ASTNode(AST_PLUS); temp.addChild(new ASTNode(AST_NAME));
-					 * temp.getLeftChild().setName(kA); temp.addChild(new
-					 * ASTNode(AST_NAME));
-					 * temp.getRightChild().setName(modActi.get(activatorNum));
-					 * temp2.addChild(temp); if (act == null) { act = temp2; } else { temp =
-					 * act; act = new ASTNode(AST_TIMES); act.addChild(temp);
-					 * act.addChild(temp2); }
-					 */
-
-					acti += modActi.get(activatorNum) + "/(" + kA + " + "
-					    + modActi.get(activatorNum) + ") * ";
-					
-				}
+				if ((parentReaction.getNumProducts() > 1)
+						&& (parentReaction.getNumReactants() > 1))
+					denominator = diff(denominator, Integer.toString(1));
 			}
-			/*
-			 * Inhibition
-			 */
-			// temp2 = null;
-			// ASTNode inh = null;
-			if (!modInhib.isEmpty()) {
-				// inh = new ASTNode(AST_TIMES);
-				for (int inhibitorNum = 0; inhibitorNum < modInhib.size(); inhibitorNum++) {
-					// TODO reactionnummer?!
-					String kI = "kI_";
-					kI += "_" + modInhib.get(inhibitorNum);
-					
-					if (!listOfLocalParameters.contains(kI)) listOfLocalParameters.add(new StringBuffer(kI));
-					/*
-					 * temp = new ASTNode(AST_PLUS); temp2 = new ASTNode(AST_NAME);
-					 * temp2.setName(kI); temp.addChild(temp2); temp.addChild(new
-					 * ASTNode(AST_NAME));
-					 * temp.getRightChild().setName(modInhib.get(inhibitorNum)); temp2 = new
-					 * ASTNode(AST_DIVIDE); temp2.addChild(new ASTNode(AST_NAME));
-					 * temp2.getLeftChild().setName(kI); temp2.addChild(temp);
-					 * inh.addChild(temp2);
-					 */
-
-					inhib += kI + "/(" + kI + " + " + modInhib.get(inhibitorNum) + ") * ";
-					
-				}
-				// if (inh.getNumChildren() == 1 ) inh = inh.getLeftChild();
-
-			}
-			// TODO here incomplete:
-			if ((acti.length() + inhib.length() > 0) && (modE.size() > 1)) {
-				inhib.append(Character.valueOf('('));
-				formelTxt.append(Character.valueOf(')'));
-
-				
-			}
-			/*
-			 * temp = ast; ast = null; if (act != null) { ast = new ASTNode(AST_TIMES);
-			 * ast.addChild(act); } if (inh != null) { if (ast == null) ast = new
-			 * ASTNode(AST_TIMES); ast.addChild(inh); } if (ast == null) ast = temp;
-			 * else ast.addChild(temp); setMath(ast); formelTxt = getFormula();
-			 * System.err.println(formelTxt); formelTeX =
-			 * LaTeXExport.toLaTeX(model,ast);
-			 */
-			formelTxt = concat(acti,inhib,formelTxt);
-		
-
-			if (enzymeNum > 1) 
-			System.err.println("Reversible 2");
-			return formelTxt;
-		}
+			formelTxt[enzymeNum] = frac(numerator, denominator);
+			if (modE.size() > 0)
+				formelTxt[enzymeNum] = times(modE.get(enzymeNum), formelTxt);
+			enzymeNum++;
+		} while (enzymeNum <= modE.size() - 1);
+		return times(activationFactor(modActi), inhibitionFactor(modInhib),
+				sum(formelTxt));
+		// if (enzymeNum > 1)
+		// System.err.println("Reversible 2");
+		// return formelTxt;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -483,48 +261,49 @@ public class Convenience extends GeneralizedMassAction {
 	 * (jp.sbi.celldesigner.plugin.PluginModel, java.util.List, java.util.List,
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-//	protected StringBuffer createKineticEquation(PluginModel model,
-//			List<String> modE, List<String> modActi, List<String> modTActi,
-//			List<String> modInhib, List<String> modTInhib, List<String> modCat)
-//			throws RateLawNotApplicableException, IllegalFormatException {
-//		PluginReaction reaction = getParentReaction();
-//		
-//
-//		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
-//		for (int i = 0; i < catalysts.length; i++) {
-//			StringBuffer numerator, denominator;
-//			numerator = times(numerators(i, modE, true));
-//			if (!reaction.getReversible())
-//				denominator = times(denominators(i, modE, true));
-//			else {
-//				numerator = diff(numerator, times(numerators(i, modE, false)));
-//				denominator = diff(sum(times(denominators(i, modE, true)),
-//						times(denominators(i, modE, false))), Integer
-//						.toString(1));
-//			}
-//			catalysts[i] = frac(numerator, denominator);
-//			if (modE.size() > 0)
-//				catalysts[i] = times(modE.get(i), catalysts[i]);
-//		}
-//		return times(activationFactor(modActi), inhibitionFactor(modInhib),
-//				sum(catalysts));
-//	}
-//
-//	/**
-//	 * Returns an array containing the factors of the reactants and products
-//	 * included in the convenience kinetic's numerator. Each factor is given by
-//	 * the quotient of the respective species' concentration and it's related
-//	 * equilibrium constant to the power of the species' stoichiometry. The
-//	 * array also contains the catalytic constant of the reaction. This method
-//	 * is applicable for both forward and backward reactions.
-//	 * 
-//	 * @param reaction
-//	 * @param enzymeNumber
-//	 * @param modE
-//	 * @param type
-//	 *            true means forward, false means reverse.
-//	 * @return
-//	 */
+	// protected StringBuffer createKineticEquation(PluginModel model,
+	// List<String> modE, List<String> modActi, List<String> modTActi,
+	// List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	// throws RateLawNotApplicableException, IllegalFormatException {
+	// PluginReaction reaction = getParentReaction();
+	//		
+	//
+	// StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
+	// for (int i = 0; i < catalysts.length; i++) {
+	// StringBuffer numerator, denominator;
+	// numerator = times(numerators(i, modE, true));
+	// if (!reaction.getReversible())
+	// denominator = times(denominators(i, modE, true));
+	// else {
+	// numerator = diff(numerator, times(numerators(i, modE, false)));
+	// denominator = diff(sum(times(denominators(i, modE, true)),
+	// times(denominators(i, modE, false))), Integer
+	// .toString(1));
+	// }
+	// catalysts[i] = frac(numerator, denominator);
+	// if (modE.size() > 0)
+	// catalysts[i] = times(modE.get(i), catalysts[i]);
+	// }
+	// return times(activationFactor(modActi), inhibitionFactor(modInhib),
+	// sum(catalysts));
+	// }
+	//
+	// /**
+	// * Returns an array containing the factors of the reactants and products
+	// * included in the convenience kinetic's numerator. Each factor is given
+	// by
+	// * the quotient of the respective species' concentration and it's related
+	// * equilibrium constant to the power of the species' stoichiometry. The
+	// * array also contains the catalytic constant of the reaction. This method
+	// * is applicable for both forward and backward reactions.
+	// *
+	// * @param reaction
+	// * @param enzymeNumber
+	// * @param modE
+	// * @param type
+	// * true means forward, false means reverse.
+	// * @return
+	// */
 	protected StringBuffer[] numerators(int enzymeNumber, List<String> modE,
 			boolean type) {
 		// FORWARD = true;
@@ -581,7 +360,8 @@ public class Convenience extends GeneralizedMassAction {
 
 			StringBuffer[] parts = new StringBuffer[(int) ref
 					.getStoichiometry() + 1];
-			StringBuffer part = brackets(sum(Integer.toString(1),frac(getSpecies(ref), kM)));
+			StringBuffer part = brackets(sum(Integer.toString(1), frac(
+					getSpecies(ref), kM)));
 			for (int j = 0; j < parts.length; j++)
 				parts[j] = pow(part, Integer.toString(j));
 			denoms[i] = sum(parts);
