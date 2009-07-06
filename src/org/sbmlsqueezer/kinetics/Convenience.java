@@ -188,10 +188,9 @@ public class Convenience extends GeneralizedMassAction {
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 
 				}
-				numerator.append(kcat);
+				numerator.append(new StringBuffer(kcat));
 
-				if (!listOfLocalParameters.contains(kcat))
-					listOfLocalParameters.add(new StringBuffer(kcat));
+				addLocalParameter(kcat);
 
 				// Sums for each product
 				for (int productNum = 0; productNum < parentReaction
@@ -200,20 +199,17 @@ public class Convenience extends GeneralizedMassAction {
 					StringBuffer kM = new StringBuffer("kM_");
 
 					if (modE.size() > 1)
-						kM = concat(kM, underscore, modE.get(enzymeNum));
-					kM = concat(kM, underscore, parentReaction.getProduct(
+						kM = append(kM, underscore, modE.get(enzymeNum));
+					kM = append(kM, underscore, parentReaction.getProduct(
 							productNum).getSpeciesInstance().getId());
 
-					if (!listOfLocalParameters.contains(kM))
-						listOfLocalParameters.add(new StringBuffer(kM));
+					addLocalParameter(kM);
 
 					PluginSpeciesReference specRefP = parentReaction
 							.getProduct(productNum);
 					if (parentReaction.getNumProducts() > 1)
 						denominator.append("(1 + ");
-					denominator = concat(denominator, Character.valueOf('('),
-							specRefP.getSpecies(), Character.valueOf('/'), kM,
-							Character.valueOf(')'));
+					denominator = concat(denominator, frac(getSpecies(specRefP), kM));
 
 					// for each stoichiometry (see Liebermeister et al.)
 					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
