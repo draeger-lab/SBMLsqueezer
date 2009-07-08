@@ -218,7 +218,7 @@ public class Convenience extends GeneralizedMassAction {
 					denominator = concat(denominator, frac(
 							getSpecies(specRefP), kM));
 
-					// for each stoichiometry (see Liebermeister et al.)
+					// for each stoichiometry (see Liebermeister et al.)s
 					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
 						// exp = "^" + (m + 1);
 						denominator = sum(denominator, pow(frac(
