@@ -185,7 +185,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 */
 	public static final StringBuffer frac(Object numerator, Object denominator) {
 		return brackets(arith('/',
-				containsArith(numerator) ? brackets(numerator) : numerator,
+			(containsArith(numerator) ? brackets(numerator) : numerator),
 				containsArith(denominator) ? brackets(denominator)
 						: denominator));
 	}
