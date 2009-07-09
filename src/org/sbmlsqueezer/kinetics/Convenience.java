@@ -130,7 +130,7 @@ public class Convenience extends GeneralizedMassAction {
 						.getReactant(eductNum);
 
 				// build denominator
-				// TODO reactionnum
+
 				StringBuffer kM = concat("kM_", getParentReactionID());
 
 				if (modE.size() > 1)
@@ -143,9 +143,7 @@ public class Convenience extends GeneralizedMassAction {
 				// if (parentReaction.getNumReactants() > 1)
 				// denominator.append(Character.valueOf('('));
 
-
-				denominator1[eductNum] = 
-						brackets(frac(specref.getSpecies(), kM));
+				denominator1[eductNum] = brackets(frac(specref.getSpecies(), kM));
 
 				for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
 
@@ -158,9 +156,11 @@ public class Convenience extends GeneralizedMassAction {
 						|| ((parentReaction.getNumReactants() != 1) || (parentReaction
 								.getNumProducts() == 1)))
 					// TODO what the...
-					denominator1[eductNum] = brackets(concat(Integer.toString(1),
-							Character.valueOf('+'),denominator1[eductNum]));
-				// denominator1[eductNum] = sum(Integer.toString(1), denominator1[eductNum]);
+					// denominator1[eductNum] = brackets(concat(Integer
+					// .toString(1), Character.valueOf('+'),
+					// denominator1[eductNum]));
+					denominator1[eductNum] = sum(Integer.toString(1),
+							denominator1[eductNum]);
 				// we can save the brakets if there is just one educt
 				// if (parentReaction.getNumReactants() > 1)
 				// denominator.append(Character.valueOf(')'));
@@ -185,24 +185,27 @@ public class Convenience extends GeneralizedMassAction {
 			 * only if reaction is reversible or we want it to be.
 			 */
 			if (parentReaction.getReversible()) {
-				denominator.append(Character.valueOf('+'));
-				numerator.append(Character.valueOf('-'));
+				// denominator.append(Character.valueOf('+'));
+				// numerator.append(Character.valueOf('-'));
+				StringBuffer numerator2 = new StringBuffer();
+				StringBuffer[] denominator2 = new StringBuffer[parentReaction
+						.getNumProducts()];
 
-				// TODO reaction num
 				StringBuffer kcat = concat("kcatn_", getParentReactionID());
 
 				if (modE.size() > 1) {
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 
 				}
-				numerator.append(new StringBuffer(kcat));
+				numerator2 = new StringBuffer(kcat);
 
 				addLocalParameter(kcat);
 
 				// Sums for each product
+
 				for (int productNum = 0; productNum < parentReaction
 						.getNumProducts(); productNum++) {
-					// TODO reaction num
+
 					StringBuffer kM = concat("kM_", getParentReactionID());
 
 					if (modE.size() > 1)
@@ -214,36 +217,42 @@ public class Convenience extends GeneralizedMassAction {
 
 					PluginSpeciesReference specRefP = parentReaction
 							.getProduct(productNum);
-				
-					denominator = concat(denominator, frac(
-							getSpecies(specRefP), kM));
+
+					denominator2[productNum] = frac(getSpecies(specRefP), kM);
 
 					// for each stoichiometry (see Liebermeister et al.)s
 					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
 						// exp = "^" + (m + 1);
-						denominator = sum(denominator, pow(frac(
-								getSpecies(specRefP), kM), Integer
-								.toString(m + 1)));
+						denominator2[productNum] = sum(
+								denominator2[productNum], pow(frac(
+										getSpecies(specRefP), kM), Integer
+										.toString(m + 1)));
 					if (parentReaction.getNumProducts() > 1)
-						denominator=brackets(concat(Integer.toString(1),
-								Character.valueOf('+'), denominator));
+						denominator2[productNum] = sum(Integer.toString(1),
+								denominator2[productNum]);
 
 					// if (parentReaction.getNumProducts() > 1)
 					// denominator += ')';
 
-					if ((productNum + 1) < parentReaction.getNumProducts())
-						denominator.append(" * ");
+					// if ((productNum + 1) < parentReaction.getNumProducts())
+					// denominator.append(" * ");
 
 					// build numerator
 					if (specRefP.getStoichiometry() != 1.0)
-						numerator = times(numerator, pow(frac(
+						numerator2 = times(numerator2, pow(frac(
 								getSpecies(specRefP), kM),
 								getStoichiometry(specRefP)));
 					else
-						numerator = times(numerator, frac(getSpecies(specRefP),
-								kM));
+						numerator2 = times(numerator2, frac(
+								getSpecies(specRefP), kM));
 
 				}
+				if (parentReaction.getNumProducts() == 1)
+					denominator = sum(denominator, denominator2[0]);
+				else
+					denominator = sum(denominator, times(denominator2));
+				numerator = diff(numerator, numerator2);
+
 				if ((parentReaction.getNumProducts() > 1)
 						&& (parentReaction.getNumReactants() > 1))
 					denominator = diff(denominator, Integer.toString(1));
@@ -252,12 +261,10 @@ public class Convenience extends GeneralizedMassAction {
 			formelTxt[enzymeNum] = frac(numerator, denominator);
 
 			if (modE.size() > 0)
-				formelTxt[enzymeNum] = times(modE.get(enzymeNum), formelTxt);
+				formelTxt[enzymeNum] = times(modE.get(enzymeNum), formelTxt[enzymeNum]);
 			enzymeNum++;
 		} while (enzymeNum < modE.size());
 
-		System.out.println(times(activationFactor(modActi),
-				inhibitionFactor(modInhib), sum(formelTxt)));
 		return times(activationFactor(modActi), inhibitionFactor(modInhib),
 				sum(formelTxt));
 		// if (enzymeNum > 1)

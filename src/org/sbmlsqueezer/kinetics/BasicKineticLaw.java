@@ -77,15 +77,16 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	private static final StringBuffer arith(char operator, Object... elements) {
-		Vector<Object> vsb = new Vector<Object>();
-		StringBuffer equation = new StringBuffer();
+		List<Object> vsb = new Vector<Object>();
 		for (Object sb : elements)
 			if (sb.toString().length() > 0)
 				vsb.add(sb);
-		if (vsb.size() >= 1)
+		StringBuffer equation = new StringBuffer();
+		if (vsb.size() > 0)
 			equation.append(vsb.get(0));
-		for (int count = 1; count < vsb.size(); count++)
-			append(equation, operator, vsb.get(count));
+		Character op = Character.valueOf(operator);
+		for (int count = 1; count < vsb.size(); count++) 
+			append(equation, op, vsb.get(count));
 		return equation;
 	}
 
