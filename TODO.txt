@@ -73,5 +73,13 @@ S_1 + S_4 -> S_2 + S_5 mit und ohne Enzym
 
 5. Convenience
 ===============
+cats nicht?!
 
-
+mit/ ohne enzym
+rev/irrev
+A ->B
+A + X -> B
+A+X -> B +Y
+2A->B
+2A-> B+Y
+2A + X -> B
