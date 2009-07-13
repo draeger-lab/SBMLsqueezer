@@ -152,7 +152,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				}
 			}
 			append(kMr2, underscore, specRefE2.getSpecies());
-			append(kMr1, underscore, specRefE2.getSpecies());
+			append(kMr1, underscore, specRefE1.getSpecies());
 			if (specRefE2.equals(specRefE1)) {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
@@ -171,15 +171,15 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					numerator = times(numerator, modE.get(enzymeNum));
 				numerator = times(numerator, specRefE1.getSpecies());
 
-				denominator = times(kMr2, sum(specRefE1.getSpecies(), kMr1),
-						sum(specRefE2.getSpecies(), specRefE1.getSpecies()));
+				denominator = sum(times(kMr2, specRefE1.getSpecies()),times( kMr1,
+						specRefE2.getSpecies()));
 
 				if (specRefE2.equals(specRefE1)) {
 					numerator = pow(numerator, Integer.toString(2));
-					denominator = pow(denominator, Integer.toString(2));
+					denominator = pow(sum(denominator,specRefE1.getSpecies()), Integer.toString(2));
 				} else {
 					numerator = times(numerator, specRefE2.getSpecies());
-					denominator = times(denominator, specRefE2.getSpecies());
+					denominator = sum(denominator,times(specRefE1.getSpecies(), specRefE2.getSpecies()));
 				}
 
 				/*

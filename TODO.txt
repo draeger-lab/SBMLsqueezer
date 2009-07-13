@@ -70,10 +70,12 @@ S_1 + S_4 -> S_2 + S_5 mit und ohne Enzym
 4. Ping-Pong
 ============
 
+S_1 +S_2 -> S_3 + S_4 
+rev/irrev
+einem/mehreren enzymen
 
 5. Convenience
 ===============
-cats nicht?!
 
 mit/ ohne enzym
 rev/irrev
@@ -83,3 +85,6 @@ A+X -> B +Y
 2A->B
 2A-> B+Y
 2A + X -> B
+
+
+6. 
