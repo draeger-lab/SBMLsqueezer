@@ -298,7 +298,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				denominator = sum(denominator, frac(times(kMp2, specRefE1
 						.getSpecies(), specRefP1.getSpecies()), times(kIr1,
 						kMp1, kIp2)), frac(times(kMr1, specRefE2.getSpecies(),
-						specRefP1.getSpecies()), times(kIr1, kMr2, kIp1)));
+						specRefP2.getSpecies()), times(kIr1, kMr2, kIp2)));
 
 				if (specRefP2.equals(specRefP1))
 					denominator = sum(denominator, frac(pow(specRefP1
@@ -344,8 +344,8 @@ public class OrderedMechanism extends GeneralizedMassAction {
 					numeratorForward = times(numeratorForward, modE
 							.get(enzymeNum));
 
-				numeratorForward = times(numeratorForward, specRefE1
-						.getSpecies());
+//				numeratorForward = times(numeratorForward, specRefE1
+//						.getSpecies());
 
 				denominator = sum(Integer.toString(1), frac(specRefE1
 						.getSpecies(), kIr1), frac(times(kMr1, specRefE2
@@ -366,7 +366,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				}
 				numeratorForward = frac(numeratorForward, times(kIr1, kMr2));
 				if (modE.size() > 0)
-					numeratorReverse = concat(numeratorReverse, modE
+					numeratorReverse = times(numeratorReverse, modE
 							.get(enzymeNum));
 				numeratorReverse = times(numeratorReverse, frac(specRefP1
 						.getSpecies(), kMp1));

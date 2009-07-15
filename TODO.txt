@@ -87,4 +87,14 @@ A+X -> B +Y
 2A + X -> B
 
 
-6. 
+6. Orderd Mechanism
+====================
+
+S_1 + S_2 -> S_3 +S_4 rev/irrev
+S_1 + S_2 -> S_3 rev/irrev
+
+7. Random Order Mechanism
+=========================
+
+Bi-> uni rev/irrev
+Bi -> bi rev/irrev

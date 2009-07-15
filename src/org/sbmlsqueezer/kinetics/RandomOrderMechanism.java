@@ -175,7 +175,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					}
 				}
 				String speciesE2 = specRefE2.getSpecies();
-				append(kMr1, underscore, speciesE2);
+				String speciesE1 = specRefE1.getSpecies();
+				append(kMr1, underscore, speciesE1);
 				append(kMr2, underscore, speciesE2);
 
 				if (specRefE2.equals(specRefE1)) {
@@ -185,7 +186,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 				addLocalParameter(kcatp);
 				addLocalParameter(kMr2);
 				addLocalParameter(kMr1);
-				addLocalParameter(append(kIr1, underscore, speciesE2));
+				addLocalParameter(append(kIr1, underscore, speciesE1));
 
 				numerator = new StringBuffer(kcatp);
 				if (modE.size() > 0)
@@ -227,23 +228,26 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						kcatn = concat("kcatn_", reaction.getId());
 						if (modE.size() > 1) {
 							String modEnzymeNumber = modE.get(enzymeNum);
-							kcatp = concat(underscore, modEnzymeNumber);
-							kcatn = concat(underscore, modEnzymeNumber);
-							kMr2 = concat(underscore, modEnzymeNumber);
-							kMp1 = concat(underscore, modEnzymeNumber);
-							kIp1 = concat(underscore, modEnzymeNumber);
-							kIp2 = concat(underscore, modEnzymeNumber);
-							kIr2 = concat(underscore, modEnzymeNumber);
-							kIr1 = concat(underscore, modEnzymeNumber);
+							kcatp = concat(kcatp, underscore, modEnzymeNumber);
+							kcatn = concat(kcatn, underscore, modEnzymeNumber);
+							kMr2 = concat(kMr2, underscore, modEnzymeNumber);
+							kMp1 = concat(kMp1, underscore, modEnzymeNumber);
+							kIp1 = concat(kIp1, underscore, modEnzymeNumber);
+							kIp2 = concat(kIp2, underscore, modEnzymeNumber);
+							kIr2 = concat(kIr2, underscore, modEnzymeNumber);
+							kIr1 = concat(kIr1, underscore, modEnzymeNumber);
 						}
 					}
 					String speciesE2 = specRefE2.getSpecies();
-					kMr2 = concat(underscore, speciesE2);
-					kIr1 = concat(underscore, speciesE2);
-					kIr2 = concat(underscore, speciesE2);
-					kIp1 = concat(underscore, speciesE2);
-					kIp2 = concat(underscore, speciesE2);
-					kMp1 = concat(underscore, speciesE2);
+					String speciesE1 = specRefE1.getSpecies();
+					String speciesP1 = specRefP1.getSpecies();
+					String speciesP2 = specRefP2.getSpecies();
+					kMr2 = concat(kMr2, underscore, speciesE2);
+					kIr1 = concat(kIr1, underscore, speciesE1);
+					kIr2 = concat(kIr2, underscore, speciesE2);
+					kIp1 = concat(kIp1, underscore, speciesP1);
+					kIp2 = concat(kIp2, underscore, speciesP2);
+					kMp1 = concat(kMp1, underscore, speciesP1);
 					if (specRefE2.equals(specRefE1)) {
 						kIr1 = concat("kir1", kIr1.substring(2));
 						kIr2 = concat("kir2", kIr2.substring(2));
@@ -311,8 +315,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						numeratorReverse = pow(numeratorReverse, Integer
 								.toString(2));
 					} else {
-						numeratorReverse = times(numeratorReverse, Integer
-								.toString(2));
+						numeratorReverse = times(numeratorReverse, specRefP2
+								.getSpecies());
 					}
 					numeratorReverse = frac(numeratorReverse, times(kIp2, kMp1));
 					numerator = diff(numeratorForward, numeratorReverse);
@@ -362,11 +366,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					addLocalParameter(kIr2);
 					addLocalParameter(kIr1);
 
-					StringBuffer numeratorForward = new StringBuffer();
+					StringBuffer numeratorForward = new StringBuffer(kcatp);
 					StringBuffer numeratorReverse = new StringBuffer();
 					StringBuffer p1p2 = new StringBuffer();
 
-					numeratorForward = kcatp;
 					if (modE.size() != 0)
 						numeratorForward = times(numeratorForward, modE
 								.get(enzymeNum));
@@ -384,7 +387,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						p1p2 = times(specRefE1.getSpecies(), specRefE2
 								.getSpecies());
 					}
-					numeratorForward = frac(numerator, times(kIr1, kMr2));
+					numeratorForward = frac(numeratorForward, times(kIr1, kMr2));
 
 					numeratorReverse = kcatn;
 					if (modE.size() != 0)
@@ -402,7 +405,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 
 					numerator = diff(numeratorForward, numeratorReverse);
 					denominator = sum(denominator, frac(p1p2, sum(times(kIr1,
-							kMr2), frac(specRefP1.getSpecies(), kMp1))));
+							kMr2))), frac(specRefP1.getSpecies(), kMp1));
 				}
 			}
 			// Construct formula
