@@ -63,7 +63,7 @@ nullte Ordnung vorwärts und rückwärts
 
 3. IrrevNonModulatedNonInteractingEnzymes
 =========================================
-
+Formel?!
 S_1 + S_4 -> S_2 + S_5 mit und ohne Enzym
 
 
@@ -98,3 +98,7 @@ S_1 + S_2 -> S_3 rev/irrev
 
 Bi-> uni rev/irrev
 Bi -> bi rev/irrev
+
+formel 0te ordnung?
+hill equation in celldesigner
+
