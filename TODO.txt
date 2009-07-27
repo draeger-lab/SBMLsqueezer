@@ -90,6 +90,7 @@ A+X -> B +Y
 
 
 6. Orderd Mechanism
+
 ====================
 
 S_1 + S_2 -> S_3 +S_4 rev/irrev
@@ -101,7 +102,17 @@ S_1 + S_2 -> S_3 rev/irrev
 Bi-> uni rev/irrev
 Bi -> bi rev/irrev
 
+8.Convinience Independent
+=========================
 
-formel 0te ordnung?
-hill equation in celldesigner
+bi -> bi
+uni -> uni
+rev/irrev
+
+ 
+todo:
+======================================================
+hill equation 
+irrevCompetNoncooperativesenzymes
+MichaelisMenten
 

@@ -126,16 +126,16 @@ public class ConvenienceIndependent extends Convenience {
 
 				StringBuffer numerator, denominator;
 				if (!reaction.getReversible()) {
-					numerator = times(numerators(i, modE, FORWARD));
+					numerator = times(num(i, modE, FORWARD));
 					denominator = diff(times(denominators(i, modE, FORWARD)),
-							new StringBuffer("1"));
+							Integer.toString(1));
 				} else {
-					numerator = diff(times(numerators(i, modE, FORWARD)),
-							times(numerators(i, modE, REVERSE)));
+					numerator = diff(num(i, modE, FORWARD), (num(
+							i, modE, REVERSE)));
 					denominator = diff(sum(
 							times(denominators(i, modE, FORWARD)),
-							times(denominators(i, modE, REVERSE))),
-							new StringBuffer("1"));
+							times(denominators(i, modE, REVERSE))), Integer
+							.toString(1));
 				}
 
 				if (modE.size() > 0)
@@ -168,39 +168,55 @@ public class ConvenienceIndependent extends Convenience {
 	 *            true means forward, false means reverse.
 	 * @return
 	 */
-	protected StringBuffer[] numerators(int enzymeNumber, List<String> modE,
-			boolean type) {
+	protected StringBuffer num(int enzymeNumber, List<String> modE, boolean type) {
 		PluginReaction reaction = getParentReaction();
-		StringBuffer[] nums = new StringBuffer[type ? (reaction
-				.getNumReactants() + 1) : (reaction.getNumProducts() + 1)];
-		nums[0] = new StringBuffer(type ? "kcatp_" : "kcatn_");
-		nums[0].append(reaction.getId());
-		if (modE.size() > 1)
-			append(nums[0], underscore, modE.get(enzymeNumber));
-		addLocalParameter(nums[0]);
-		for (int i = 1; i < nums.length; i++) {
-			PluginSpeciesReference ref = type ? reaction.getReactant(i - 1)
-					: reaction.getProduct(i - 1);
+
+		StringBuffer educts = new StringBuffer();
+		StringBuffer products = new StringBuffer();
+		StringBuffer eductroot = new StringBuffer();
+		StringBuffer productroot = new StringBuffer();
+		StringBuffer equation = new StringBuffer();
+
+		for (int i = 0; i < reaction.getNumReactants(); i++) {
+			PluginSpeciesReference ref = reaction.getReactant(i);
 			StringBuffer kM = concat("kM_", reaction.getId());
 			if (modE.size() > 1)
 				append(kM, underscore, modE.get(enzymeNumber));
 			append(kM, underscore, ref.getSpecies());
 			addLocalParameter(kM);
-
 			StringBuffer kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(kiG);
-
-			try {
-				nums[i] = times(pow(frac(getSpecies(ref), kM),
-						getStoichiometry(ref)), root(Integer.toString(2), pow(
-						times(kiG, kM), getStoichiometry(ref))));
-			} catch (IllegalFormatException e) {
-				nums[i] = times(pow(frac(getSpecies(ref), kM),
-						getStoichiometry(ref)), pow(pow(times(kiG, kM),
-						getStoichiometry(ref)), frac(Integer.toString(1),
-						Integer.toString(2))));
-			}
+			educts = times(educts,pow(frac(getSpecies(ref), kM),ref.getStoichiometry()));
+			eductroot = times(eductroot, pow(brackets(times(kiG, kM)),ref.getStoichiometry()));
 		}
-		return nums;
+
+		for (int i = 0; i < reaction.getNumProducts(); i++) {
+			PluginSpeciesReference ref = reaction.getProduct(i);
+			StringBuffer kM = concat("kM_", reaction.getId());
+			if (modE.size() > 1)
+				append(kM, underscore, modE.get(enzymeNumber));
+			append(kM, underscore, ref.getSpecies());
+			addLocalParameter(kM);
+			StringBuffer kiG = concat("kG_", ref.getSpecies());
+			addLocalParameter(kiG);
+			products = times(products, pow(frac(getSpecies(ref), kM),ref.getStoichiometry()));
+			productroot = times(productroot, pow(brackets(times(kiG, kM)),ref.getStoichiometry()));
+
+		}
+
+		if (type) {
+
+			equation = times(educts, sqrt( frac(eductroot,
+					productroot)));
+
+		} else {
+
+			equation = times(products, sqrt( frac(
+					productroot, eductroot)));
+
+		}
+
+
+		return equation;
 	}
 }

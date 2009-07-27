@@ -125,7 +125,7 @@ public class Convenience extends GeneralizedMassAction {
 			StringBuffer[] denominator1 = new StringBuffer[parentReaction
 					.getNumReactants()];
 			for (int eductNum = 0; eductNum < parentReaction.getNumReactants(); eductNum++) {
-				// StringBuffer exp = new StringBuffer();
+			
 				PluginSpeciesReference specref = parentReaction
 						.getReactant(eductNum);
 
@@ -139,9 +139,6 @@ public class Convenience extends GeneralizedMassAction {
 
 				addLocalParameter(kM);
 
-				// we can save the brakets if there is just one educt.
-				// if (parentReaction.getNumReactants() > 1)
-				// denominator.append(Character.valueOf('('));
 
 				denominator1[eductNum] = brackets(frac(specref.getSpecies(), kM));
 
@@ -155,18 +152,10 @@ public class Convenience extends GeneralizedMassAction {
 				if (!parentReaction.getReversible()
 						|| ((parentReaction.getNumReactants() != 1) || (parentReaction
 								.getNumProducts() == 1)))
-					// TODO what the...
-					// denominator1[eductNum] = brackets(concat(Integer
-					// .toString(1), Character.valueOf('+'),
-					// denominator1[eductNum]));
+				
 					denominator1[eductNum] = sum(Integer.toString(1),
 							denominator1[eductNum]);
-				// we can save the brakets if there is just one educt
-				// if (parentReaction.getNumReactants() > 1)
-				// denominator.append(Character.valueOf(')'));
-
-				// if ((eductNum + 1) < parentReaction.getNumReactants())
-				// denominator.append(Character.valueOf('*'));
+			
 
 				// build numerator
 				if (specref.getStoichiometry() == 1.0)
@@ -185,8 +174,7 @@ public class Convenience extends GeneralizedMassAction {
 			 * only if reaction is reversible or we want it to be.
 			 */
 			if (parentReaction.getReversible()) {
-				// denominator.append(Character.valueOf('+'));
-				// numerator.append(Character.valueOf('-'));
+				
 				StringBuffer numerator2 = new StringBuffer();
 				StringBuffer[] denominator2 = new StringBuffer[parentReaction
 						.getNumProducts()];
@@ -222,7 +210,7 @@ public class Convenience extends GeneralizedMassAction {
 
 					// for each stoichiometry (see Liebermeister et al.)s
 					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
-						// exp = "^" + (m + 1);
+						
 						denominator2[productNum] = sum(
 								denominator2[productNum], pow(frac(
 										getSpecies(specRefP), kM), Integer
@@ -231,12 +219,7 @@ public class Convenience extends GeneralizedMassAction {
 						denominator2[productNum] = sum(Integer.toString(1),
 								denominator2[productNum]);
 
-					// if (parentReaction.getNumProducts() > 1)
-					// denominator += ')';
-
-					// if ((productNum + 1) < parentReaction.getNumProducts())
-					// denominator.append(" * ");
-
+					
 					// build numerator
 					if (specRefP.getStoichiometry() != 1.0)
 						numerator2 = times(numerator2, pow(frac(
@@ -267,46 +250,10 @@ public class Convenience extends GeneralizedMassAction {
 
 		return times(activationFactor(modActi), inhibitionFactor(modInhib),
 				sum(formelTxt));
-		// if (enzymeNum > 1)
-		// System.err.println("Reversible 2");
-		// return formelTxt;
+	
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbmlsqueezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 * (jp.sbi.celldesigner.plugin.PluginModel, java.util.List, java.util.List,
-	 * java.util.List, java.util.List, java.util.List, java.util.List)
-	 */
-	// protected StringBuffer createKineticEquation(PluginModel model,
-	// List<String> modE, List<String> modActi, List<String> modTActi,
-	// List<String> modInhib, List<String> modTInhib, List<String> modCat)
-	// throws RateLawNotApplicableException, IllegalFormatException {
-	// PluginReaction reaction = getParentReaction();
-	//		
-	//
-	// StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
-	// for (int i = 0; i < catalysts.length; i++) {
-	// StringBuffer numerator, denominator;
-	// numerator = times(numerators(i, modE, true));
-	// if (!reaction.getReversible())
-	// denominator = times(denominators(i, modE, true));
-	// else {
-	// numerator = diff(numerator, times(numerators(i, modE, false)));
-	// denominator = diff(sum(times(denominators(i, modE, true)),
-	// times(denominators(i, modE, false))), Integer
-	// .toString(1));
-	// }
-	// catalysts[i] = frac(numerator, denominator);
-	// if (modE.size() > 0)
-	// catalysts[i] = times(modE.get(i), catalysts[i]);
-	// }
-	// return times(activationFactor(modActi), inhibitionFactor(modInhib),
-	// sum(catalysts));
-	// }
-	//
+	
 	// /**
 	// * Returns an array containing the factors of the reactants and products
 	// * included in the convenience kinetic's numerator. Each factor is given
