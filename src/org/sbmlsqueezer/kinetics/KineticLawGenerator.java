@@ -46,7 +46,8 @@ import org.sbmlsqueezer.math.GaussianRank;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
@@ -304,7 +305,7 @@ public class KineticLawGenerator {
 	 * @throws RateLawNotApplicableException
 	 * @throws ModificationException
 	 * @throws IOException
-	 * @throws IllegalFormatException 
+	 * @throws IllegalFormatException
 	 */
 	public BasicKineticLaw createKineticLaw(PluginModel model,
 			PluginReaction reaction, short kinetic, boolean reversibility)
@@ -359,15 +360,15 @@ public class KineticLawGenerator {
 					listOfPossibleEnzymes);
 			break;
 		case CONVENIENCE_KINETICS:
-			
+
 			boolean fullRank = false;
 			if ((model.getNumSpecies() >= model.getNumReactions())
 					&& (columnRank == -1)) {
 				GaussianRank gaussian = new GaussianRank(stoechMatrix(model));
 				columnRank = gaussian.getColumnRank();
 				fullRank = gaussian.hasFullRank();
-				
-			} else if (columnRank == model.getNumReactions()) 
+
+			} else if (columnRank == model.getNumReactions())
 				fullRank = true;
 			if (fullRank) {
 				kineticLaw = new Convenience(reaction, model,
@@ -679,11 +680,8 @@ public class KineticLawGenerator {
 		Set<Short> types = new HashSet<Short>();
 		types.add(Short.valueOf(GENERALIZED_MASS_ACTION));
 		
-//TODO: add Hillequation if reactiontype is translation or transcription		
-		if (reaction.getReactionType().equals("TRANSLATION")||
-				reaction.getReactionType().equals("TRANSCRIPTION"))
+		if (HillEquation.isApplicable(reaction))
 			types.add(Short.valueOf(HILL_EQUATION));
-
 		
 		int i;
 		double stoichiometryLeft = 0d, stoichiometryRight = 0d, stoichiometry;
@@ -730,7 +728,7 @@ public class KineticLawGenerator {
 		/*
 		 * Assign possible rate laws.
 		 */
-		
+
 		// Enzym-Kinetics
 		if (!reaction.getReversible() && !nonEnzyme && stoichiometryIntLeft) {
 			// stoichiometryIntRight not necessary.
@@ -836,8 +834,9 @@ public class KineticLawGenerator {
 			if (reactionWithGenes) {
 				types = new HashSet<Short>();
 				types.add(Short.valueOf(ZEROTH_ORDER_FORWARD_MA));
-			} else if (types.contains(Short.valueOf(HILL_EQUATION)))
-				types.remove(Short.valueOf(HILL_EQUATION));
+				types.add(Short.valueOf(HILL_EQUATION));
+			} /*else if (types.contains(Short.valueOf(HILL_EQUATION)))
+				types.remove(Short.valueOf(HILL_EQUATION));*/
 		} else if (types.contains(Short.valueOf(HILL_EQUATION))
 				&& types.contains(Short.valueOf(ZEROTH_ORDER_FORWARD_MA))
 				&& !reaction.getReversible())
