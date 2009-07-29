@@ -678,7 +678,13 @@ public class KineticLawGenerator {
 
 		Set<Short> types = new HashSet<Short>();
 		types.add(Short.valueOf(GENERALIZED_MASS_ACTION));
+		
+//TODO: add Hillequation if reactiontype is translation or transcription		
+		if (reaction.getReactionType().equals("TRANSLATION")||
+				reaction.getReactionType().equals("TRANSCRIPTION"))
+			types.add(Short.valueOf(HILL_EQUATION));
 
+		
 		int i;
 		double stoichiometryLeft = 0d, stoichiometryRight = 0d, stoichiometry;
 		boolean stoichiometryIntLeft = true;
@@ -724,7 +730,7 @@ public class KineticLawGenerator {
 		/*
 		 * Assign possible rate laws.
 		 */
-
+		
 		// Enzym-Kinetics
 		if (!reaction.getReversible() && !nonEnzyme && stoichiometryIntLeft) {
 			// stoichiometryIntRight not necessary.
@@ -839,14 +845,6 @@ public class KineticLawGenerator {
 
 		if (types.contains(Short.valueOf(GENERALIZED_MASS_ACTION)))
 			types.add(Short.valueOf(ZEROTH_ORDER_FORWARD_MA));
-
-		/* TODO remove not updated entries (Hannes Borch)
-		short[] r = { MICHAELIS_MENTEN, HILL_EQUATION};
-		for (short s : r) {
-			if (types.contains(Short.valueOf(s)))
-				types.remove(Short.valueOf(s));
-		}*/
-
 		short t[] = new short[types.size()];
 		i = 0;
 		for (Iterator<Short> iterator = types.iterator(); iterator.hasNext(); i++)

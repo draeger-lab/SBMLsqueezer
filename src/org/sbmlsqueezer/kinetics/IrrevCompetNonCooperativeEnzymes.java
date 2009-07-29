@@ -152,14 +152,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			StringBuffer currEnzyme = new StringBuffer();
 			StringBuffer numerator = new StringBuffer();
 
-			if (numOfEnzymes <= 1)
-				formula = currEnzyme;
-			else {
-
-				formula = sum(formula, currEnzyme);
-				numerator = times(numerator, new StringBuffer(modE
-						.get(enzymeNum)));
-			}
 
 			numerator = times(numerator, kcat);
 			numerator = times(numerator, new StringBuffer(reaction.getReactant(
@@ -183,8 +175,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 
 					StringBuffer kIi = new StringBuffer(concat("Ki_", reaction
 							.getId()));
-					StringBuffer exponent = new StringBuffer(concat("m_",
-							reaction.getId()));
+					StringBuffer exponent = concat("m_", reaction.getId());
 					if (numOfEnzymes > 1) {
 						kIi = concat(underscore, modE.get(enzymeNum));
 						exponent = concat(underscore, modE.get(enzymeNum));
@@ -194,8 +185,9 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					addLocalParameter(kIi);
 					addLocalParameter(exponent);
 
-					factor = times(factor, pow(sum(new StringBuffer("1"), frac(
+					factor = times(factor, pow(sum(Integer.toString(1), frac(
 							new StringBuffer(modInhib.get(i)), kIi)), exponent));
+					System.out.println("factor:\t"+factor);
 				}
 				denominator = sum(denominator, factor);
 
@@ -203,8 +195,20 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			denominator = sum(denominator, new StringBuffer(reaction
 					.getReactant(0).getSpecies()));
 			currEnzyme = frac(numerator, denominator);
+			System.out.println("currEnzyme "+currEnzyme);
+			System.out.println("formula "+ formula);
 			enzymeNum++;
+			if (numOfEnzymes <= 1)
+				formula = currEnzyme;
+			else {
+
+				formula = sum(formula, currEnzyme);
+				numerator = times(numerator, new StringBuffer(modE
+						.get(enzymeNum)));
+			}
+
 		} while (enzymeNum <= modE.size() - 1);
+	
 		return times(activationFactor(modActi), formula);
 	}
 

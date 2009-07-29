@@ -85,7 +85,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		if (vsb.size() > 0)
 			equation.append(vsb.get(0));
 		Character op = Character.valueOf(operator);
-		for (int count = 1; count < vsb.size(); count++) 
+		for (int count = 1; count < vsb.size(); count++)
 			append(equation, op, vsb.get(count));
 		return equation;
 	}
@@ -186,7 +186,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 */
 	public static final StringBuffer frac(Object numerator, Object denominator) {
 		return brackets(arith('/',
-			(containsArith(numerator) ? brackets(numerator) : numerator),
+				(containsArith(numerator) ? brackets(numerator) : numerator),
 				containsArith(denominator) ? brackets(denominator)
 						: denominator));
 	}
@@ -317,11 +317,15 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	public static final StringBuffer pow(Object basis, Object exponent) {
-		if (Double.parseDouble(exponent.toString()) == 0f)
-			return new StringBuffer('1');
-		if (Double.parseDouble(exponent.toString()) == 1f)
-			return basis instanceof StringBuffer ? (StringBuffer) basis
-					: new StringBuffer(basis.toString());
+		try {
+			if (Double.parseDouble(exponent.toString()) == 0f)
+				return new StringBuffer('1');
+			if (Double.parseDouble(exponent.toString()) == 1f)
+				return basis instanceof StringBuffer ? (StringBuffer) basis
+						: new StringBuffer(basis.toString());
+		} catch (NumberFormatException exc) {
+			//System.out.println("pow(" + basis + ", " + exponent + ")");
+		}
 		return arith('^', basis, exponent);
 	}
 
