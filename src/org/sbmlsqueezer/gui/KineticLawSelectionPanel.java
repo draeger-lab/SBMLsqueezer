@@ -38,7 +38,6 @@ import org.sbmlsqueezer.kinetics.RateLawNotApplicableException;
 
 import atp.sHotEqn;
 
-
 /**
  * A panel, which contains all possible kinetic equations for the current
  * reaction. A panel that contains the whole message for the user: the message
@@ -325,10 +324,10 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				BasicKineticLaw kinetic = klg.createKineticLaw(model, reaction,
 						possibleTypes[i], false);
 				laTeXpreview[i] = kinetic.getKineticTeX();
-				toolTips[i] = toHTML(kinetic.getName(), 40);
+				toolTips[i] = !kinetic.getSBO().equals("none") ? "SBO:"
+						+ kinetic.getSBO() + ": " : "";
+				toolTips[i] = toHTML(toolTips[i] + kinetic.getName(), 40);
 				kineticEquations[i] = klg.getEquationName(possibleTypes[i]);
-				if (!kinetic.getSBO().equals("none"))
-					kineticEquations[i] += " (SBO:" + kinetic.getSBO() + ")";
 				kineticEquations[i] = toHTML(kineticEquations[i], 40);
 			} catch (IllegalFormatException e) {
 				e.printStackTrace();
