@@ -1,6 +1,14 @@
 TODO-Liste
 ==========
 
+Parameter, die nur nicht in kinetischen Gleichungen vorkommen, sollten
+nicht gelöscht werden. Es ist dazu eine Überprüfung sämtlicher Stoichiometric-
+Math-Objekte, Funktionen etc. nötig, also aller Stellen, wo Parameter
+auftreten könnten. Nur solche, die wirklich nirgends vorkommen, sollten
+entfernt werden.
+
+Im Batchmodus anzeigen, dass schon existierende Kinetiken da sind.
+
 Hier wird an vielen Stellen von einer Stöchiometrie ausgegangen.
 Es können aber auch komplexe Ausdrücke vorkommen. Diesen muss
 Rechnung getragen werden.
@@ -14,12 +22,6 @@ immer falsche Modelle. Dazu muss aber überprüft werden, ob die Spezies
 jeweils mit Substanz-Einheiten interpretiert werden soll.
 
 Problem mit logischen UND, ODER etc.
-
-Parameter, die nur nicht in kinetischen Gleichungen vorkommen, sollten
-nicht gelöscht werden. Es ist dazu eine Überprüfung sämtlicher Stoichiometric-
-Math-Objekte, Funktionen etc. nötig, also aller Stellen, wo Parameter
-auftreten könnten. Nur solche, die wirklich nirgends vorkommen, sollten
-entfernt werden.
 
 In Hill-Kinetik dafür sorgen, dass nicht mit der Gen-Konzentration
 multipliziert und der Parameter Ks nicht mit dem Hill-Koeffizienten
