@@ -109,6 +109,16 @@ bi -> bi
 uni -> uni
 rev/irrev
 
+9. MichaelisMenten + irrevcompetnoncoop...
+==========================================
+ uni uni 
+ rev irrev
+ 0, 1 inhibitor 
+ 
+ uni  bi
+ irrev 
+ 0,1 inhibitor
+
  
 todo:
 ======================================================
