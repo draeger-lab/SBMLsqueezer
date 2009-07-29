@@ -32,7 +32,8 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
  * @version
  * @author <a href="mailto:supper@genomatix.de">Jochen Supper</a>
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 7, 2007
  */
 public class HillEquation extends BasicKineticLaw {
@@ -73,8 +74,12 @@ public class HillEquation extends BasicKineticLaw {
 	}
 
 	public static boolean isApplicable(PluginReaction reaction) {
-		// TODO
-		return true;
+		// TODO: add Hillequation if reactiontype is translation or
+		// transcription
+		if (reaction.getReactionType().equals("TRANSLATION")
+				|| reaction.getReactionType().equals("TRANSCRIPTION"))
+			return true;
+		return false;
 	}
 
 	public String getName() {
@@ -159,31 +164,31 @@ public class HillEquation extends BasicKineticLaw {
 
 		// KS: half saturation constant.
 		for (int activatorNum = 0; activatorNum < modTActi.size(); activatorNum++) {
-			StringBuffer kS = concat("kSp_", reaction.getId(), underscore, modTActi
-					.get(activatorNum));
-			StringBuffer hillcoeff = concat("np_", reaction.getId(), underscore,
+			StringBuffer kS = concat("kSp_", reaction.getId(), underscore,
 					modTActi.get(activatorNum));
+			StringBuffer hillcoeff = concat("np_", reaction.getId(),
+					underscore, modTActi.get(activatorNum));
 			acti = times(acti, frac(pow(new StringBuffer(modTActi
 					.get(activatorNum)), hillcoeff),
 					sum(pow(new StringBuffer(modTActi.get(activatorNum)),
 							hillcoeff), pow(kS, hillcoeff))));
-			System.out.println("acti1 "+acti);
+			System.out.println("acti1 " + acti);
 
 			addLocalParameter(hillcoeff);
 			addLocalParameter(kS);
 
 		}
-		System.out.println("acti2 "+acti);
+		System.out.println("acti2 " + acti);
 		for (int inhibitorNum = 0; inhibitorNum < modTInhib.size(); inhibitorNum++) {
-			StringBuffer kS = concat("kSm_", reaction.getId(), underscore, modTInhib
-					.get(inhibitorNum));
-			StringBuffer hillcoeff = concat("nm_", reaction.getId(), underscore,
+			StringBuffer kS = concat("kSm_", reaction.getId(), underscore,
 					modTInhib.get(inhibitorNum));
+			StringBuffer hillcoeff = concat("nm_", reaction.getId(),
+					underscore, modTInhib.get(inhibitorNum));
 
-			inhib = times(inhib, diff(Integer.toString(1),frac( pow(new StringBuffer(
-					modTActi.get(inhibitorNum)), hillcoeff), sum(pow(
+			inhib = times(inhib, diff(Integer.toString(1), frac(pow(
 					new StringBuffer(modTActi.get(inhibitorNum)), hillcoeff),
-					pow(kS, hillcoeff)))));
+					sum(pow(new StringBuffer(modTActi.get(inhibitorNum)),
+							hillcoeff), pow(kS, hillcoeff)))));
 			addLocalParameter(hillcoeff);
 			addLocalParameter(kS);
 
@@ -218,8 +223,8 @@ public class HillEquation extends BasicKineticLaw {
 				}
 
 			}
-		
-			System.out.println("hillfinal"+formelTxt);
+
+			System.out.println("hillfinal" + formelTxt);
 		}
 		return formelTxt;
 	}
