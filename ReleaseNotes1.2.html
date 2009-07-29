@@ -30,12 +30,19 @@
     <p>We now apply the inhibition pre-factor from convenience
     kinetics also to reversible Michaelis-Menten kinetics with multiple 
     inhibitors.</p>
+    <p>Additionally, the activation pre-factor is now also applied for the
+    mixed-type inhibition of irreversible enzymes by mutually exclusive 
+    inhibitors (SBO:0000275) if activators are assigned to the reaction.
+    </p>
     <p>The new SBGN representation of transcription and translation uses
     the trigger symbol (for the gene or the RNA molecule, depending on the
     process) and a reaction from some source to RNA or from some source to a
     protein. SBMLsqueezer did in these cases not suggest the Hill equation
     as a possible rate law because it still required the
-    translation/transcription arrows that are going to be deprecated.</p>
+    translation/transcription arrows that are going to be deprecated. Since
+    this version 1.2, SBMLsqueezer also produces the identical form of the
+    Hill equation for the old style of transcription/translation reaction
+    and the new SBGN compliant form.</p>
 
     <h2>Bugs that were fixed</h2>
     <p>Local parameters could not be removed completely if not necessary
