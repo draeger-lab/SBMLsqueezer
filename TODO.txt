@@ -1,6 +1,9 @@
 TODO-Liste
 ==========
 
+In thermodynamisch-unabhängiger Convenience-Kinetik wird nach wie vor
+in manchen Fällen unterm Bruchstrich eins addiert und wieder subtrahiert.
+
 Hier wird an vielen Stellen von einer Stöchiometrie ausgegangen.
 Es können aber auch komplexe Ausdrücke vorkommen. Diesen muss
 Rechnung getragen werden.
