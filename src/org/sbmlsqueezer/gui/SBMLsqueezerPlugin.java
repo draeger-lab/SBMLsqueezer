@@ -38,7 +38,7 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
-	private String versionNumber = "1.2";
+	private static final String versionNumber = "1.2";
 
 	/**
 	 * Tells if SBMLsqueezer checked for an update after CellDesigner has been
@@ -197,14 +197,5 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 
 	public void setUpdateChecked(boolean b) {
 		isUpdateChecked = b;
-	}
-
-	/**
-	 * Sets the value of versionNumber to the value of s.
-	 * 
-	 * @param s
-	 */
-	public void setVersionNumber(String s) {
-		versionNumber = s;
 	}
 }

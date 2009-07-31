@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Release Notes of SBMLsqueezer version 1.2</title>
+  </head>
+  <body>
+    <h1>Release Notes of SBMLsqueezer version 1.2</h1>
+    <h2>Download of SBMLsquezeezer</h2>
+    You can always download the latest version of SBMLsqueezer at
+    <a href="http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads">
+    http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads</a>.
+    
+    <h2>New Features</h2>
+    <p>SBMLsqueezer now automatically checks for updates. If a newer version 
+    of SBMLsqueezer is available online, the user is notified by a message
+    window in the bottom right corner of the screen. Furthermore, the
+    release notes of the most recent SBMLsqueezer version are shown to the
+    user by clicking on &#8220;show release notes&#8221;.</p>
+    <p>In contrast to previous versions, SBMLsqueezer now indicates
+    if a model already contains rate equations for all reactions or no
+    reactions at all. In earlier versions SBMLsqueezer did not overwrite
+    existing kinetic equations and did also not state why.</p>
+    <p>SBMLsqueezer's complete internal data structure was improved:
+    It has become much more efficient and simpler.</p>
+    
+    <h2>Improved Adaptation of SBMLsqueezer to CellDesigner 4.0.1</h2>
+    <p>Due to the changes in CellDesigner, SBMLsqueezer only offered
+    zeroth order mass action kinetics as available option to model
+    transcription and translation processes. The reason for this was that
+    the arrows for transcriptional/translational activation disappeared.
+    These effects have now to be covered by trigger and physical
+    stimulation. Unfortunately, CellDesigner maps the old arrows for
+    transcriptional/translational activation to catalysis instead of
+    &#8220;trigger&#8221;. Therefore, we also have to cover the case of having
+    a transcription or translation &#8220;catalyzed&#8221; by some
+    stimulator. This has now been implemented and SBMLsqueezer therefore
+    offers several kinetic rate equations for both processes. The same holds
+    true for the &#8220;batch&#8221; mode of SBMLsqueezer: besides
+    transcriptional/translational activators also all kinds of catalysts and
+    activators/inhibitors are accepted for the Hill equation.</p>
+    <p>We now apply the inhibition pre-factor from convenience
+    kinetics also to reversible Michaelis-Menten kinetics with multiple 
+    inhibitors. In cases where the formulas of Michaelis-Menten and 
+    convenience kinetics are equal, only one of both is offered to the
+    user:<ul>
+      <li>For reversible or irreversible uni-uni reactions without 
+      inhibition or activation only the Michaelis-Menten equation is 
+      selectable and</li>
+      <li>in the case of reversible uni-uni reactions with multiple inhibitors
+      only convenience kinetics can be applied.</li>
+      <li>However, if the stoichiometric matrix of the reaction system does 
+      not have a full column rank, the thermodynamically independen form
+      of the convenience kinetics can be selected as an alternative
+      to the Michaelis-Menten equation.</li>
+    </ul></p>
+    <p>Additionally, the activation pre-factor is now also applied for the
+    mixed-type inhibition of irreversible enzymes by mutually exclusive 
+    inhibitors (SBO:0000275) if activators are assigned to the reaction.
+    </p>
+    <p>The new SBGN representation of transcription and translation uses
+    the trigger symbol (for the gene or the RNA molecule, depending on the
+    process) and a reaction from some source to RNA or from some source to a
+    protein. SBMLsqueezer did in these cases not suggest the Hill equation
+    as a possible rate law because it still required the
+    translation/transcription arrows that are going to be deprecated. Since
+    this version, SBMLsqueezer also produces the identical form of the
+    Hill equation for the old style of transcription/translation reaction
+    and the new SBGN compliant form.</p>
+
+    <h2>Bug Fixes</h2>
+    <p>Local parameters could not be removed completely if not necessary
+    (this happened only in SBMLsqueezer version 1.1 because SBMLsqueezer
+    version 1.0 did not create or delete local parameters at all).</p>
+    <p>In Michaelis-Menten kinetics activators were multiplied
+    incorectly (only in the preview, not in the equation itself)</p>
+    <p>The help browser could not be started in SBMLsqueezer version 1.1
+    because of a null pointer exception (an image could not be loaded
+    correctly).</p>
+    <p>Problems of the &#8220;batch mode&#8221;:
+    <ul>
+      <li>In some cases SBMLsqueezer did not show the correct SBO numbers 
+      (for &#8220;Hill equation&#8221; and &#8220;Henri-Michaelis-Menten 
+      equation&#8221;).</li>
+      <li>In the kinetics summary table SBMLsqueezer did not list the 
+      kG parameters of the thermodynamically independent convenience 
+      kinetics in the column &#8220;parameters&#8221;.</li>
+      <li>Sometimes there was a problem with the equation preview.</li>
+    </ul>
+    </p>
+  </body>
+</html>

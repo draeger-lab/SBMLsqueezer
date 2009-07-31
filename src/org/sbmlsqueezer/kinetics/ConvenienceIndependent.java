@@ -116,12 +116,9 @@ public class ConvenienceIndependent extends Convenience {
 
 			int i = 0;
 			do {
-				StringBuffer klV = new StringBuffer("kV_");
-				klV.append(reaction.getId());
-				if (modE.size() > 1) {
-					klV.append('_');
-					klV.append(modE.get(i));
-				}
+				StringBuffer klV = concat("kV_", reaction.getId());
+				if (modE.size() > 1)
+					append(klV, underscore, modE.get(i));
 				addLocalParameter(klV);
 
 				StringBuffer numerator, denominator;
@@ -130,8 +127,8 @@ public class ConvenienceIndependent extends Convenience {
 					denominator = diff(times(denominators(i, modE, FORWARD)),
 							Integer.toString(1));
 				} else {
-					numerator = diff(num(i, modE, FORWARD), (num(
-							i, modE, REVERSE)));
+					numerator = diff(num(i, modE, FORWARD), (num(i, modE,
+							REVERSE)));
 					denominator = diff(sum(
 							times(denominators(i, modE, FORWARD)),
 							times(denominators(i, modE, REVERSE))), Integer
@@ -168,7 +165,7 @@ public class ConvenienceIndependent extends Convenience {
 	 *            true means forward, false means reverse.
 	 * @return
 	 */
-	protected StringBuffer num(int enzymeNumber, List<String> modE, boolean type) {
+	private StringBuffer num(int enzymeNumber, List<String> modE, boolean type) {
 		PluginReaction reaction = getParentReaction();
 
 		StringBuffer educts = new StringBuffer();
@@ -186,8 +183,10 @@ public class ConvenienceIndependent extends Convenience {
 			addLocalParameter(kM);
 			StringBuffer kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(kiG);
-			educts = times(educts,pow(frac(getSpecies(ref), kM),ref.getStoichiometry()));
-			eductroot = times(eductroot, pow(brackets(times(kiG, kM)),ref.getStoichiometry()));
+			educts = times(educts, pow(frac(getSpecies(ref), kM), ref
+					.getStoichiometry()));
+			eductroot = times(eductroot, pow(brackets(times(kiG, kM)), ref
+					.getStoichiometry()));
 		}
 
 		for (int i = 0; i < reaction.getNumProducts(); i++) {
@@ -199,24 +198,55 @@ public class ConvenienceIndependent extends Convenience {
 			addLocalParameter(kM);
 			StringBuffer kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(kiG);
-			products = times(products, pow(frac(getSpecies(ref), kM),ref.getStoichiometry()));
-			productroot = times(productroot, pow(brackets(times(kiG, kM)),ref.getStoichiometry()));
+			products = times(products, pow(frac(getSpecies(ref), kM), ref
+					.getStoichiometry()));
+			productroot = times(productroot, pow(brackets(times(kiG, kM)), ref
+					.getStoichiometry()));
 
 		}
-
-		if (type) {
-
-			equation = times(educts, sqrt( frac(eductroot,
-					productroot)));
-
-		} else {
-
-			equation = times(products, sqrt( frac(
-					productroot, eductroot)));
-
-		}
-
-
+		equation = type ? times(educts, sqrt(frac(eductroot, productroot)))
+				: times(products, sqrt(frac(productroot, eductroot)));
 		return equation;
+	}
+
+	/**
+	 * Returns an array containing the factors of the reactants and products
+	 * included in the convenience kinetic's denominator. For each factor, the
+	 * respective species' concentration and it's equilibrium constant are
+	 * divided and raised to the power of each integer value between zero and
+	 * the species' stoichiometry. All of the species' powers are summed up to
+	 * form the species' factor in the product. The method is applicable for
+	 * both forward and backward reactions.
+	 * 
+	 * @param reaction
+	 * @param enzymeNumber
+	 * @param modE
+	 * @param type
+	 *            true means forward, false backward.
+	 * @return
+	 */
+	private StringBuffer[] denominators(int enzymeNumber, List<String> modE,
+			boolean type) {
+		// type FORWARD = true;
+		PluginReaction reaction = getParentReaction();
+		StringBuffer[] denoms = new StringBuffer[type ? reaction
+				.getNumReactants() : reaction.getNumProducts()];
+		for (int i = 0; i < denoms.length; i++) {
+			PluginSpeciesReference ref = type ? reaction.getReactant(i)
+					: reaction.getProduct(i);
+			StringBuffer kM = concat("kM_", getParentReactionID());
+			if (modE.size() > 1)
+				append(kM, underscore, modE.get(enzymeNumber));
+			append(kM, underscore, ref.getSpecies());
+
+			StringBuffer[] parts = new StringBuffer[(int) ref
+					.getStoichiometry() + 1];
+			StringBuffer part = brackets(sum(Integer.toString(1), frac(
+					getSpecies(ref), kM)));
+			for (int j = 0; j < parts.length; j++)
+				parts[j] = pow(part, Integer.toString(j));
+			denoms[i] = sum(parts);
+		}
+		return denoms;
 	}
 }

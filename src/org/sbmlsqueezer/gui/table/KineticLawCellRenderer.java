@@ -10,7 +10,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * TODO: comment missing
- *
+ * 
  * @since 2.0
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
@@ -20,62 +20,66 @@ import javax.swing.table.TableCellRenderer;
  * @date Aug 1, 2007
  */
 public class KineticLawCellRenderer extends JTextArea implements
-    TableCellRenderer {
+		TableCellRenderer {
 
-  /**
-   * Generated serialziation id.
-   */
-  private static final long serialVersionUID = -7760600735675079594L;
+	/**
+	 * Generated serialziation id.
+	 */
+	private static final long serialVersionUID = -7760600735675079594L;
 
-  private int               maxNumberOfSpecies;
+	private int maxNumberOfSpecies;
 
-  /**
-   * TODO: Comment is missing
-   *
-   * @param maxSpecies
-   */
-  public KineticLawCellRenderer(int maxSpecies) {
-    this.maxNumberOfSpecies = maxSpecies;
-  }
+	public static final Color lightBlue = new Color(205, 225, 255, 50);
+	public static final Color lightRed = new Color(255, 85, 85);
+	public static final Color slateGray3 = new Color(159, 182, 205);
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable,
-   *      java.lang.Object, boolean, boolean, int, int)
-   */
-  public Component getTableCellRendererComponent(JTable table, Object value,
-      boolean isSelected, boolean hasFocus, int row, int column) {
+	/**
+	 * TODO: Comment is missing
+	 * 
+	 * @param maxSpecies
+	 */
+	public KineticLawCellRenderer(int maxSpecies) {
+		this.maxNumberOfSpecies = maxSpecies;
+	}
 
-    table.setGridColor(new Color(159, 182, 205)); // SlateGray3
-    table.setBackground(Color.WHITE);
-    int eductCol = 0;
-    while ((eductCol < table.getColumnCount())
-        && !(table.getModel().getValueAt(row, eductCol) instanceof Double))
-      eductCol++;
-    double numEducts = ((Double) table.getModel().getValueAt(row, eductCol))
-        .doubleValue();
-    if (numEducts >= maxNumberOfSpecies) {
-      setBackground(new Color(255, 85, 85)); // light red
-      setForeground(Color.WHITE);
-      setFont(getFont().deriveFont(Font.PLAIN));
-    } else {
-      if (row % 2 == 0)
-    	  setBackground(Color.WHITE);
-      else setBackground(new Color(205, 225, 255, 50)); // LightBlue
-      setForeground(Color.BLACK);
-      setFont(getFont().deriveFont(Font.PLAIN));
-    }
-    if (table.convertColumnIndexToModel(column) == eductCol) {
-      if (numEducts - ((int) numEducts) == 0.0)
-        setText(Integer.toString((int) numEducts));
-      else setText(Double.toString(numEducts));
-    } else if (value instanceof String) {
-      setText((String) value);
-    } else {
-      setText(value.toString());
-    }
-
-    return this;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax
+	 * .swing.JTable, java.lang.Object, boolean, boolean, int, int)
+	 */
+	public Component getTableCellRendererComponent(JTable table, Object value,
+			boolean isSelected, boolean hasFocus, int row, int column) {
+		table.setGridColor(slateGray3);
+		table.setBackground(Color.WHITE);
+		int eductCol = 0;
+		while ((eductCol < table.getColumnCount())
+				&& !(table.getModel().getValueAt(row, eductCol) instanceof Double))
+			eductCol++;
+		double numEducts = ((Double) table.getModel().getValueAt(row, eductCol))
+				.doubleValue();
+		if (numEducts >= maxNumberOfSpecies) {
+			setBackground(lightRed);
+			setForeground(Color.WHITE);
+			setFont(getFont().deriveFont(Font.PLAIN));
+		} else {
+			if (row % 2 == 0)
+				setBackground(Color.WHITE);
+			else
+				setBackground(lightBlue);
+			setForeground(Color.BLACK);
+			setFont(getFont().deriveFont(Font.PLAIN));
+		}
+		if (table.convertColumnIndexToModel(column) == eductCol) {
+			if (numEducts - ((int) numEducts) == 0.0)
+				setText(Integer.toString((int) numEducts));
+			else
+				setText(Double.toString(numEducts));
+		} else if (value instanceof String)
+			setText((String) value);
+		else
+			setText(value.toString());
+		return this;
+	}
 }

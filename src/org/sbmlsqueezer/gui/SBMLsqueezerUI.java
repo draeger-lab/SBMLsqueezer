@@ -31,14 +31,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -72,7 +71,8 @@ import org.sbmlsqueezer.resources.Resource;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:supper@genomatix.de">Jochen Supper</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 3, 2007
@@ -161,8 +161,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	/**
-	 * This constructor allows to store the given model in a text file. This can
-	 * be a LaTeX or another format.
+	 * This constructor allows us to store the given model in a text file. This
+	 * can be a LaTeX or another format.
 	 * 
 	 * @param model
 	 */
@@ -190,10 +190,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				LaTeXExport exporter = new LaTeXExport(panel.isLandscape(),
 						panel.isIDsInTWFont(), panel.getFontSize(), panel
 								.getPaperSize(), panel.isTitlePage(), panel
-								.isNameInEquations()/*
-													 * , panel .
-													 * isNumberEquations ()
-													 */);
+								.isNameInEquations());
 				buffer.write(exporter.toLaTeX(model).toString());
 				buffer.close();
 				dispose();
@@ -203,14 +200,19 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
+	/**
+	 * 
+	 * @param model
+	 * @param reaction
+	 */
 	public SBMLsqueezerUI(PluginModel model, PluginReaction reaction) {
+		this();
 		JFileChooser chooser = new JFileChooser();
 		chooser.setFileFilter(new MyFileFilter(false, true));
 		File file = null;
 		int state = chooser.showOpenDialog(null);
-		if (state == JFileChooser.APPROVE_OPTION) {
+		if (state == JFileChooser.APPROVE_OPTION)
 			file = chooser.getSelectedFile();
-		}
 		try {
 			BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
 			buffer.write(new LaTeXExport().toLaTeX(model, reaction).toString());
@@ -295,17 +297,18 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
-	public static void listLoadedLibraries() throws Exception {
-		Field loadedLibraryNamesField = ClassLoader.class
-				.getDeclaredField("loadedLibraryNames");
-		loadedLibraryNamesField.setAccessible(true);
-		@SuppressWarnings("unchecked")
-		Vector<String> loadedLibraryNames = (Vector<String>) loadedLibraryNamesField
-				.get(null);
-		for (String string : loadedLibraryNames) {
-			System.out.println(string);
-		}
-	}
+	// public static void listLoadedLibraries() throws Exception {
+	// Field loadedLibraryNamesField = ClassLoader.class
+	// .getDeclaredField("loadedLibraryNames");
+	// loadedLibraryNamesField.setAccessible(true);
+	// @SuppressWarnings("unchecked")
+	// Vector<String> loadedLibraryNames = (Vector<String>)
+	// loadedLibraryNamesField
+	// .get(null);
+	// for (String string : loadedLibraryNames) {
+	// System.out.println(string);
+	// }
+	// }
 
 	/**
 	 * Just for debuggin purposes.
@@ -427,9 +430,26 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 								.getModel()).getNumOfWarnings();
 						tableOfKinetics
 								.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-						JScrollPane scroll = new JScrollPane(tableOfKinetics,
-								JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-								JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+						JScrollPane scroll;
+
+						if (tableOfKinetics.getRowCount() == 0) {
+							JEditorPane pane = new JEditorPane(
+									plugin.getSelectedModel().getNumReactions() > 0 ? Resource.class
+											.getResource("html/NoNewKineticsCreated.html")
+											: Resource.class
+													.getResource("html/ModelDoesNotContainAnyReactions.html"));
+							pane.addHyperlinkListener(new SystemBrowser());
+							pane.setBackground(Color.WHITE);
+							pane.setEditable(false);
+							scroll = new JScrollPane(pane,
+									JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+									JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+						} else {
+							scroll = new JScrollPane(tableOfKinetics,
+									JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+									JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+						}
 						scroll.setBorder(BorderFactory
 								.createBevelBorder(BevelBorder.LOWERED));
 						scroll.setBackground(Color.WHITE);
@@ -739,16 +759,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		getContentPane().add(centralPanel, BorderLayout.CENTER);
 
 		try {
-			Image image = ImageIO.read(/*
-										 * new
-										 * File(System.getProperty("user.dir") +
-										 * System.getProperty("file.separator")
-										 * + "resources" +
-										 * System.getProperty("file.separator")
-										 * + "images" +
-										 * System.getProperty("file.separator")
-										 * +
-										 */Resource.class
+			Image image = ImageIO.read(Resource.class
 					.getResource("img/title_small.jpg"));
 			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(image));

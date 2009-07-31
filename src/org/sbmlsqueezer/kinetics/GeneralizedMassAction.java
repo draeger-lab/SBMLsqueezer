@@ -36,7 +36,8 @@ import org.sbmlsqueezer.io.SBOParser;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
@@ -358,15 +359,11 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 */
 	private StringBuffer createModificationFactor(List<String> modifiers,
 			boolean type) throws IllegalFormatException {
-
 		if (!modifiers.isEmpty()) {
 			StringBuffer[] mods = new StringBuffer[modifiers.size()];
-
 			for (int i = 0; i < mods.length; i++) {
-
 				if (type) {
 					// Activator Mod
-
 					StringBuffer kA = concat("kA_", getParentReactionID(),
 							underscore, modifiers.get(i));
 					mods[i] = frac(new StringBuffer(modifiers.get(i)), sum(kA,
@@ -382,9 +379,8 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 				}
 			}
 			return times(mods);
-		} else
-			return new StringBuffer();
-
+		}
+		return new StringBuffer();
 	}
 
 	/**
