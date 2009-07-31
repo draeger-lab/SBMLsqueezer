@@ -26,7 +26,9 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 
 /**
- * TODO: comment missing
+ * This class creates a Hill equation as defined in the paper"Hill Kinetics
+ * meets P Systems: A Case Study on Gene Regulatory Networks as Computing Agents
+ * in silico and in vivo" of Hinze et al.
  * 
  * @since 1.0
  * @version
@@ -87,7 +89,7 @@ public class HillEquation extends BasicKineticLaw {
 		if (getParentReaction().getNumModifiers() > 0)
 			name = "Hill equation, microscopic form";
 		else
-			name = "zeroth order irreversible mass action kinetics, continuous scheme";
+			name = "mass action rate law for zeroth order irreversible reactions, continuous scheme";
 		return name;
 	}
 
@@ -101,7 +103,7 @@ public class HillEquation extends BasicKineticLaw {
 		else if (name.equals("hill equation, reduced form"))
 			sbo = "0000198";
 		else if (name
-				.equals("zeroth order irreversible mass action kinetics, continuous scheme"))
+				.equals("mass action rate law for zeroth order irreversible reactions, continuous scheme"))
 			sbo = "0000047";
 		return sbo;
 	}
@@ -159,31 +161,63 @@ public class HillEquation extends BasicKineticLaw {
 			}
 		}
 
+		if (reaction.getReactionType().equals("TRANSLATION")
+				|| reaction.getReactionType().equals("TRANSCRIPTION"))
+			for (int i = 0; i < reaction.getNumReactants(); i++)
+				modTActi.add(reaction.getReactant(i).getSpecies());
+		StringBuffer formula = createHillEquation(modTActi, modTInhib);
+		// Influence of the concentrations of the reactants:
+		for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
+			PluginSpecies reactant = reaction.getReactant(reactantNum)
+					.getSpeciesInstance();
+			StringBuffer gene = new StringBuffer();
+			if (!reactant.getSpeciesAlias(0).getType().toUpperCase().equals(
+					"GENE")) {
+				gene = new StringBuffer(reactant.getId());
+				if (reaction.getReactant(reactantNum).getStoichiometry() != 1f) {
+					gene = pow(gene, concat(reaction.getReactant(reactantNum)
+							.getStoichiometry()));
+					formula = times(formula, gene);
+				}
+			}
+		}
+		return formula;
+	}
+
+	/**
+	 * This method actually creates the Hill equation.
+	 * 
+	 * @param reaction
+	 * @param modTActi
+	 * @param modTInhib
+	 * @return
+	 */
+	private StringBuffer createHillEquation(List<String> modTActi,
+			List<String> modTInhib) {
 		StringBuffer acti = new StringBuffer();
 		StringBuffer inhib = new StringBuffer();
+		String rId = getParentReaction().getId();
 
 		// KS: half saturation constant.
 		for (int activatorNum = 0; activatorNum < modTActi.size(); activatorNum++) {
-			StringBuffer kS = concat("kSp_", reaction.getId(), underscore,
-					modTActi.get(activatorNum));
-			StringBuffer hillcoeff = concat("np_", reaction.getId(),
-					underscore, modTActi.get(activatorNum));
+			StringBuffer kS = concat("kSp_", rId, underscore, modTActi
+					.get(activatorNum));
+			StringBuffer hillcoeff = concat("np_", rId, underscore, modTActi
+					.get(activatorNum));
 			acti = times(acti, frac(pow(new StringBuffer(modTActi
 					.get(activatorNum)), hillcoeff),
 					sum(pow(new StringBuffer(modTActi.get(activatorNum)),
 							hillcoeff), pow(kS, hillcoeff))));
-			System.out.println("acti1 " + acti);
 
 			addLocalParameter(hillcoeff);
 			addLocalParameter(kS);
 
 		}
-		System.out.println("acti2 " + acti);
 		for (int inhibitorNum = 0; inhibitorNum < modTInhib.size(); inhibitorNum++) {
-			StringBuffer kS = concat("kSm_", reaction.getId(), underscore,
-					modTInhib.get(inhibitorNum));
-			StringBuffer hillcoeff = concat("nm_", reaction.getId(),
-					underscore, modTInhib.get(inhibitorNum));
+			StringBuffer kS = concat("kSm_", rId, underscore, modTInhib
+					.get(inhibitorNum));
+			StringBuffer hillcoeff = concat("nm_", rId, underscore, modTInhib
+					.get(inhibitorNum));
 
 			inhib = times(inhib, diff(Integer.toString(1), frac(pow(
 					new StringBuffer(modTActi.get(inhibitorNum)), hillcoeff),
@@ -193,39 +227,16 @@ public class HillEquation extends BasicKineticLaw {
 			addLocalParameter(kS);
 
 		}
-		StringBuffer formelTxt = concat("kg_", reaction.getId());
-		addLocalParameter(formelTxt);
+		StringBuffer kg = concat("kg_", rId);
+		addLocalParameter(kg);
 
-		if ((acti.length() > 0) && (inhib.length() > 0)) {
-
+		StringBuffer formelTxt = new StringBuffer(kg);
+		if ((acti.length() > 0) && (inhib.length() > 0))
 			formelTxt = times(formelTxt, acti, inhib);
-		} else if (acti.length() > 0) {
+		else if (acti.length() > 0)
 			formelTxt = times(formelTxt, acti);
-		} else if (inhib.length() > 0) {
-
+		else if (inhib.length() > 0)
 			formelTxt = times(formelTxt, inhib);
-		}
-
-		// Influence of the concentrations of the educts:
-		for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
-			PluginSpecies reactant = reaction.getReactant(reactantNum)
-					.getSpeciesInstance();
-			StringBuffer gene = new StringBuffer();
-			if (!reactant.getSpeciesAlias(0).getType().toUpperCase().equals(
-					"GENE")) {
-
-				gene = new StringBuffer(reactant.getId());
-				if (reaction.getReactant(reactantNum).getStoichiometry() != 1.0) {
-					gene = pow(gene, concat(reaction.getReactant(reactantNum)
-							.getStoichiometry()));
-					formelTxt = times(formelTxt, gene);
-
-				}
-
-			}
-
-			System.out.println("hillfinal" + formelTxt);
-		}
 		return formelTxt;
 	}
 

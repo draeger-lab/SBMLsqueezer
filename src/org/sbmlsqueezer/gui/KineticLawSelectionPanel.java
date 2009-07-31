@@ -1,6 +1,20 @@
 /*
- * Feb 7, 2008 Copyright (c) ZBiT, University of T&uuml;bingen, Germany
- * Compiler: JDK 1.6.0
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbmlsqueezer.gui;
 
@@ -323,9 +337,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			try {
 				BasicKineticLaw kinetic = klg.createKineticLaw(model, reaction,
 						possibleTypes[i], false);
-				laTeXpreview[i] = kinetic.getKineticTeX();
-				toolTips[i] = !kinetic.getSBO().equals("none") ? "SBO:"
-						+ kinetic.getSBO() + ": " : "";
+				laTeXpreview[i] = new StringBuffer(kinetic.getKineticTeX());
+				toolTips[i] = !kinetic.getSBO().equals("none") ? "<b>SBO:"
+						+ kinetic.getSBO() + "</b> " : "";
 				toolTips[i] = toHTML(toolTips[i] + kinetic.getName(), 40);
 				kineticEquations[i] = klg.getEquationName(possibleTypes[i]);
 				kineticEquations[i] = toHTML(kineticEquations[i], 40);
@@ -393,10 +407,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		preview.add(new sHotEqn("\\begin{equation}v_\\mbox{"
 				+ reaction.getId()
 				+ "}="
-				+ laTeXpreview[kinNum].toString().replaceAll("mathrm", "mbox")
-						.replaceAll("text", "mbox")
-						.replaceAll("mathtt", "mbox") + "\\end{equation}"),
-				BorderLayout.CENTER);
+				+ laTeXpreview[kinNum].toString().replace("mathrm", "mbox")
+						.replace("text", "mbox").replace("mathtt", "mbox")
+				+ "\\end{equation}"), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel();
 		eqnPrev.setBorder(BorderFactory

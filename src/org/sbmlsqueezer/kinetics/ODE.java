@@ -58,7 +58,7 @@ public class ODE {
 
   private List<Integer>            reacNumOfXexistKinetics = new ArrayList<Integer>();
 
-  private StringBuffer[]                 reactionNumAndKineticTeX;
+  private String[]                 reactionNumAndKineticTeX;
 
   private String[]                 reactionNumAndKineticName;
 
@@ -89,7 +89,7 @@ public class ODE {
     this.specieAndODETeXId.putAll(specieAndODEtex);
     this.speciesAndSimpleODE.putAll(speciesAndODE);
     this.speciesAndSimpleODETeX.putAll(specieAndODEtex);
-    this.reactionNumAndKineticTeX = new StringBuffer[model.getNumReactions()];
+    this.reactionNumAndKineticTeX = new String[model.getNumReactions()];
     this.reactionNumAndKineticTeXName = new String[model.getNumReactions()];
     this.reactionNumAndKineticName = new String[model.getNumReactions()];
     Arrays.fill(reactionNumAndKineticName, "Existing Kinetic");
@@ -145,7 +145,7 @@ public class ODE {
     return reactionNumAndKineticName;
   }
 
-  public StringBuffer[] getReactionNumAndKinetictexId() {
+  public String[] getReactionNumAndKinetictexId() {
     return reactionNumAndKineticTeX;
   }
 
@@ -193,7 +193,7 @@ public class ODE {
         String kinetic = reaction.getKineticLaw().getFormula();
         String2TeX stringToTex = new String2TeX();
         // TODO
-        reactionNumAndKineticTeX[i] = stringToTex.getEquation(kinetic);
+        reactionNumAndKineticTeX[i] = stringToTex.getEquation(kinetic).toString();
       }
     }
   }

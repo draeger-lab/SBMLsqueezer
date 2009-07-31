@@ -37,6 +37,7 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.SpeciesReference;
 import org.sbmlsqueezer.math.GaussianRank;
 
 /**
@@ -120,7 +121,7 @@ public class KineticLawGenerator {
 
 	private int columnRank = -1;
 
-	private StringBuffer[] reactionNumAndKineticTeX;
+	private String[] reactionNumAndKineticTeX;
 
 	private String[] reactionNumAndKinetictexName;
 
@@ -360,23 +361,9 @@ public class KineticLawGenerator {
 					listOfPossibleEnzymes);
 			break;
 		case CONVENIENCE_KINETICS:
-
-			boolean fullRank = false;
-			if ((model.getNumSpecies() >= model.getNumReactions())
-					&& (columnRank == -1)) {
-				GaussianRank gaussian = new GaussianRank(stoechMatrix(model));
-				columnRank = gaussian.getColumnRank();
-				fullRank = gaussian.hasFullRank();
-
-			} else if (columnRank == model.getNumReactions())
-				fullRank = true;
-			if (fullRank) {
-				kineticLaw = new Convenience(reaction, model,
-						listOfPossibleEnzymes);
-			} else {
-				kineticLaw = new ConvenienceIndependent(reaction, model,
-						listOfPossibleEnzymes);
-			}
+			kineticLaw = hasFullColumnRank(model) ? new Convenience(reaction,
+					model, listOfPossibleEnzymes) : new ConvenienceIndependent(
+					reaction, model, listOfPossibleEnzymes);
 			break;
 		default:
 			kineticLaw = new GeneralizedMassAction(reaction, model,
@@ -386,6 +373,25 @@ public class KineticLawGenerator {
 		reactionNumAndKineticLaw.put(reactionNum, kineticLaw);
 
 		return kineticLaw;
+	}
+
+	/**
+	 * Returns true if the given model's stoichiometric matrix has full column
+	 * rank.
+	 * 
+	 * @param model
+	 * @return
+	 */
+	private boolean hasFullColumnRank(PluginModel model) {
+		boolean fullRank = false;
+		if ((model.getNumSpecies() >= model.getNumReactions())
+				&& (columnRank == -1)) {
+			GaussianRank gaussian = new GaussianRank(stoechMatrix(model));
+			columnRank = gaussian.getColumnRank();
+			fullRank = gaussian.hasFullRank();
+		} else if (columnRank == model.getNumReactions())
+			fullRank = true;
+		return fullRank;
 	}
 
 	/**
@@ -538,7 +544,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @return
 	 */
-	public StringBuffer[] getKineticLawsAsTeX() {
+	public String[] getKineticLawsAsTeX() {
 		// TODO: ensure that this returns always a meaningful result!
 		return reactionNumAndKineticTeX;
 	}
@@ -658,17 +664,13 @@ public class KineticLawGenerator {
 
 	/**
 	 * <ul>
-	 * <li>1 = generalized mass action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
-	 * <li>3 = Michaelis-Menten kinetics</li>
-	 * <li>4 = Random Order ternary kinetics</li>
-	 * <li>5 = Ping-Pong</li>
-	 * <li>6 = Ordered</li>
-	 * <li>7 = Hill equation</li>
-	 * <li>8 = Irreversible non-modulated non-interacting enzyme kinetics</li>
-	 * <li>9 = Zeroth order forward mass action kinetics</li>
-	 * <li>10 = Zeroth order reverse mass action kinetics</li>
-	 * <li>11 = Competitive non-exclusive, non-cooperative inihibition</li>
+	 * <li>1 = generalized mass action kinetics</li> <li>2 = Convenience
+	 * kinetics</li> <li>3 = Michaelis-Menten kinetics</li> <li>4 = Random Order
+	 * ternary kinetics</li> <li>5 = Ping-Pong</li> <li>6 = Ordered</li> <li>7 =
+	 * Hill equation</li> <li>8 = Irreversible non-modulated non-interacting
+	 * enzyme kinetics</li> <li>9 = Zeroth order forward mass action kinetics
+	 * </li> <li>10 = Zeroth order reverse mass action kinetics</li> <li>11 =
+	 * Competitive non-exclusive, non-cooperative inihibition</li>
 	 * </ul>
 	 * 
 	 * @return Returns a sorted array of possible kinetic equations for the
@@ -679,10 +681,10 @@ public class KineticLawGenerator {
 
 		Set<Short> types = new HashSet<Short>();
 		types.add(Short.valueOf(GENERALIZED_MASS_ACTION));
-		
+
 		if (HillEquation.isApplicable(reaction))
 			types.add(Short.valueOf(HILL_EQUATION));
-		
+
 		int i;
 		double stoichiometryLeft = 0d, stoichiometryRight = 0d, stoichiometry;
 		boolean stoichiometryIntLeft = true;
@@ -724,6 +726,7 @@ public class KineticLawGenerator {
 		boolean nonEnzyme = ((nonEnzymeCatalyzers.size() > 0) || (reaction
 				.getProduct(0).getSpeciesInstance().getSpeciesAlias(0)
 				.getType().toUpperCase().equals("DEGRADED"))) ? true : false;
+		boolean uniUniWithoutModulation = false;
 
 		/*
 		 * Assign possible rate laws.
@@ -762,10 +765,16 @@ public class KineticLawGenerator {
 								+ " must be a transcription.");
 
 				} else if (species.getSpeciesAlias(0).getType().equals("RNA"))
-					types.add(Short.valueOf(HILL_EQUATION)); // Hill equation
-				if (!nonEnzyme)
-					types.add(Short.valueOf(MICHAELIS_MENTEN)); // Michaelis-
-				// Menten
+					types.add(Short.valueOf(HILL_EQUATION));
+				if (!nonEnzyme
+						&& !(reaction.getReversible() && (inhibitors.size() > 1 || transInhib
+								.size() > 1))) // otherwise potentially
+					// identical to convenience
+					// kinetics.
+					types.add(Short.valueOf(MICHAELIS_MENTEN));
+				if (inhibitors.size() == 0 && activators.size() == 0
+						&& transActiv.size() == 0 && transInhib.size() == 0)
+					uniUniWithoutModulation = true;
 				// throw exception if false reaction occurs
 
 				if (reaction.getReactionType().equals("TRANSCRIPTION")
@@ -775,41 +784,25 @@ public class KineticLawGenerator {
 
 			} else if (!reaction.getReversible() && !nonEnzyme)
 				// Products don't matter.
-				types.add(Short.valueOf(MICHAELIS_MENTEN)); // Michaelis-Menten
-			if (!nonEnzyme)
-				types.add(Short.valueOf(CONVENIENCE_KINETICS));
-			// Convenience kinetics
+				types.add(Short.valueOf(MICHAELIS_MENTEN));
 
 		} else if (stoichiometryLeft == 2d) {
 			if ((stoichiometryRight == 1d) && !nonEnzyme) {
 				// Bi-Uni: ConvenienceIndependent/Ran/Ord/PP (2E/1P)/(2E/2P)
-				// types.add(Short.valueOf(GENERALIZED_MASS_ACTION)); //
-				// generalized
-				// mass-action
-				types.add(Short.valueOf(CONVENIENCE_KINETICS)); // convenience
-				// kinetics
-				types.add(Short.valueOf(RANDOM_ORDER_MECHANISM)); // random
-				// order
-				types.add(Short.valueOf(ORDERED_MECHANISM)); // ordered
+				types.add(Short.valueOf(RANDOM_ORDER_MECHANISM));
+				types.add(Short.valueOf(ORDERED_MECHANISM));
 			} else if ((stoichiometryRight == 2d) && !nonEnzyme) {
-				// types.add(Short.valueOf(GENERALIZED_MASS_ACTION)); //
-				// generalized
-				// mass-action
-				types.add(Short.valueOf(CONVENIENCE_KINETICS)); // convenience
-				// kinetics
-				types.add(Short.valueOf(RANDOM_ORDER_MECHANISM)); // random
-				// order
-				types.add(Short.valueOf(PING_PONG_MECAHNISM)); // ping-pong
-				types.add(Short.valueOf(ORDERED_MECHANISM)); // ordered
+				types.add(Short.valueOf(RANDOM_ORDER_MECHANISM));
+				types.add(Short.valueOf(PING_PONG_MECAHNISM));
+				types.add(Short.valueOf(ORDERED_MECHANISM));
 			}
-			if (!nonEnzyme)
-				types.add(Short.valueOf(CONVENIENCE_KINETICS));
-			// convenience kinetics
 		}
-		if (!nonEnzyme)
-			// more than 2 types of reacting species or higher stoichiometry
-			types.add(Short.valueOf(CONVENIENCE_KINETICS)); // convenience
-		// kinetics
+		if (!nonEnzyme && !(uniUniWithoutModulation && hasFullColumnRank(model)))
+			/*
+			 * more than 2 types of reacting species or higher stoichiometry or
+			 * any other reaction that is possibly catalyzed by an enzyme.
+			 */
+			types.add(Short.valueOf(CONVENIENCE_KINETICS));
 
 		if (reactionWithGenes) {
 			types.add(Short.valueOf(ZEROTH_ORDER_FORWARD_MA));
@@ -835,8 +828,10 @@ public class KineticLawGenerator {
 				types = new HashSet<Short>();
 				types.add(Short.valueOf(ZEROTH_ORDER_FORWARD_MA));
 				types.add(Short.valueOf(HILL_EQUATION));
-			} /*else if (types.contains(Short.valueOf(HILL_EQUATION)))
-				types.remove(Short.valueOf(HILL_EQUATION));*/
+			} /*
+			 * else if (types.contains(Short.valueOf(HILL_EQUATION)))
+			 * types.remove(Short.valueOf(HILL_EQUATION));
+			 */
 		} else if (types.contains(Short.valueOf(HILL_EQUATION))
 				&& types.contains(Short.valueOf(ZEROTH_ORDER_FORWARD_MA))
 				&& !reaction.getReversible())
@@ -1079,27 +1074,55 @@ public class KineticLawGenerator {
 	 */
 	public void removeUnnecessaryParameters(CellDesignerPlugin plugin) {
 		boolean isNeeded;
-		int i, j;
+		int i, j, k;
 		PluginModel model = plugin.getSelectedModel();
 		PluginParameter p;
+		// remove unnecessary global parameters
 		for (i = 0; i < model.getNumParameters(); i++) {
 			isNeeded = false;
 			p = model.getParameter(i);
-			// is this parameter necessary for some kinetic law?
-			for (j = 0; (j < model.getNumReactions()) && !isNeeded; j++)
-				if (model.getReaction(j).getKineticLaw() != null) {
-					if (model.getReaction(j).getKineticLaw().getFormula()
-							.contains(p.getId()))
+			/*
+			 * Is this parameter necessary for some kinetic law or is this
+			 * parameter a conversion factor in some stoichiometric math?
+			 */
+			for (j = 0; (j < model.getNumReactions()) && !isNeeded; j++) {
+				PluginReaction r = model.getReaction(j);
+				if (r.getKineticLaw() != null)
+					if (contains(
+							model.getReaction(j).getKineticLaw().getMath(), p
+									.getId()))
 						isNeeded = true;
+				if (isNeeded)
+					break;
+				PluginSpeciesReference specRef;
+				for (k = 0; k < r.getNumReactants(); k++) {
+					specRef = r.getReactant(k);
+					if (specRef.getStoichiometryMath() != null) {
+						if (contains(specRef.getStoichiometryMath().getMath(),
+								p.getId()))
+							isNeeded = true;
+					}
 				}
+				if (isNeeded)
+					break;
+				for (k = 0; k < r.getNumProducts(); k++) {
+					specRef = r.getProduct(k);
+					if (specRef.getStoichiometryMath() != null) {
+						if (contains(specRef.getStoichiometryMath().getMath(),
+								p.getId()))
+							isNeeded = true;
+					}
+				}
+			}
+
 			// is this parameter necessary for some rule?
 			for (j = 0; (j < model.getNumRules()) && !isNeeded; j++)
-				if (model.getRule(j).getFormula().contains(p.getId()))
+				if (contains(model.getRule(j).getMath(), p.getId()))
 					isNeeded = true;
 
 			// is this parameter necessary for some event?
 			for (j = 0; (j < model.getNumEvents()) && !isNeeded; j++)
-				for (int k = 0; k < model.getEvent(j).getNumEventAssignments(); k++)
+				for (k = 0; k < model.getEvent(j).getNumEventAssignments(); k++)
 					if (contains(model.getEvent(j).getEventAssignment(k)
 							.getMath(), p.getId()))
 						isNeeded = true;
@@ -1121,7 +1144,7 @@ public class KineticLawGenerator {
 				List<Integer> removeList = new Vector<Integer>();
 				for (j = 0; j < law.getNumParameters(); j++) {
 					p = law.getParameter(j);
-					if (!law.getFormula().contains(p.getId())
+					if (!contains(law.getMath(), p.getId())
 							|| (model.getParameter(p.getId()) != null))
 						removeList.add(Integer.valueOf(j));
 				}

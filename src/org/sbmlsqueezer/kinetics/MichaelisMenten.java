@@ -74,22 +74,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-
 		PluginReaction reaction = getParentReaction();
-
-		// StringBuffer acti = createActivationFactor(modActi);
-
-
-		return alt(model, modE, modActi, modTActi, modInhib, modTInhib, modCat);
-	}
-
-	public StringBuffer alt(PluginModel model, List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
-
-		PluginReaction reaction = getParentReaction();
-
 		StringBuffer numerator = new StringBuffer();
 		StringBuffer denominator = new StringBuffer();
 
@@ -126,13 +111,13 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				kcatp = concat("kcatp_", reaction.getId());
 				kcatn = concat("kcatn_", reaction.getId());
 				if (modE.size() > 1) {
-					kcatp = concat(kcatp, underscore, modE.get(enzymeNum));
-					kcatn = concat(kcatn, underscore, modE.get(enzymeNum));
-					kMr = concat(kMr, underscore, modE.get(enzymeNum));
-					kMp = concat(kMp, underscore, modE.get(enzymeNum));
+					kcatp = append(kcatp, underscore, modE.get(enzymeNum));
+					kcatn = append(kcatn, underscore, modE.get(enzymeNum));
+					kMr = append(kMr, underscore, modE.get(enzymeNum));
+					kMp = append(kMp, underscore, modE.get(enzymeNum));
 				}
 			}
-			kMr = concat(kMr, underscore, specRefR);
+			kMr = append(kMr, underscore, specRefR);
 
 			addLocalParameter(kcatp);
 			addLocalParameter(kMr);
@@ -159,13 +144,13 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				numerator = diff(numerator, times(frac(kcatn, kMp), specRefP));
 				denominator = sum(denominator, frac(specRefP, kMp));
 			}
-			denominator = createInihibitionTerms(modInhib, reaction, modE, denominator, kMr,
-					currEnzymeKin, enzymeNum);
+			denominator = createInihibitionTerms(modInhib, reaction, modE,
+					denominator, kMr, currEnzymeKin, enzymeNum);
 
 			if (reaction.getReversible())
-				denominator = sum(new StringBuffer(Integer.toString(1)), denominator);
-			else if ((modInhib.size() <= 1)
-					|| getParentReaction().getReversible())
+				denominator = sum(new StringBuffer(Integer.toString(1)),
+						denominator);
+			else if (modInhib.size() <= 1)
 				denominator = sum(kMr, denominator);
 
 			// construct formula
@@ -204,14 +189,13 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		if (modInhib.size() == 1) {
 			StringBuffer kIa = concat("KIa_", reaction.getId()), kIb = concat(
 					"KIb_", reaction.getId());
-
 			if (modE.size() > 1) {
-				kIa = concat(kIa, underscore + modE.get(enzymeNum));
-				kIb = concat(kIb, underscore + modE.get(enzymeNum));
+				kIa = append(kIa, underscore, modE.get(enzymeNum));
+				kIb = append(kIb, underscore, modE.get(enzymeNum));
 			}
-
 			addLocalParameter(kIa);
 			addLocalParameter(kIb);
+
 			StringBuffer specRefI = new StringBuffer(modInhib.get(0));
 			if (reaction.getReversible())
 				denominator = sum(frac(specRefI, kIa), times(denominator, sum(
@@ -232,7 +216,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				StringBuffer kIai = concat(Integer.valueOf(i + 1), underscore,
 						reaction.getId());
 				if (modE.size() > 1)
-					kIai = concat(kIai, underscore, modE.get(enzymeNum));
+					kIai = append(kIai, underscore, modE.get(enzymeNum));
 				StringBuffer kIbi = concat("kIb_", kIai);
 				kIai = concat("kIa_", kIai);
 				addLocalParameter(kIai);

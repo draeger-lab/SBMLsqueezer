@@ -27,7 +27,7 @@ import java.awt.Container;
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @since 1.2
  * @date Jan 2009
- *
+ * 
  */
 public class ContainerHandler {
 	/**
@@ -35,22 +35,30 @@ public class ContainerHandler {
 	 */
 	private static final long serialVersionUID = 1283934349784406816L;
 
+	/**
+	 * 
+	 * @param c
+	 * @param color
+	 */
 	public static void setAllBackground(Container c, Color color) {
 		Component children[] = c.getComponents();
 		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof Container) {
+			if (children[i] instanceof Container)
 				setAllBackground((Container) children[i], color);
-			}
 			children[i].setBackground(color);
 		}
 	}
 
+	/**
+	 * 
+	 * @param c
+	 * @param enabled
+	 */
 	public static void setAllEnabled(Container c, boolean enabled) {
 		Component children[] = c.getComponents();
 		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof Container) {
+			if (children[i] instanceof Container)
 				setAllEnabled((Container) children[i], enabled);
-			}
 			children[i].setEnabled(enabled);
 		}
 	}

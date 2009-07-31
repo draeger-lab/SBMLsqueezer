@@ -95,13 +95,16 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					.getSelectedItem();
 			// Reaction Identifier, Kinetic Law, SBO, #Reactants,
 			// Reactants, Products, Parameters, Formula
-			StringBuffer params = new StringBuffer((kineticLaw
-					.getLocalParameters().size() > 0) ? kineticLaw
-					.getLocalParameters().get(
-							kineticLaw.getLocalParameters().size() - 1) : "");
-			for (i = kineticLaw.getLocalParameters().size() - 2; i > 0; i--) {
-				params.insert(0, ", ");
-				params.insert(0, kineticLaw.getLocalParameters().get(i));
+			StringBuffer params = new StringBuffer();
+			for (i = kineticLaw.getLocalParameters().size() - 1; i > 0; i--) {
+				params.append(kineticLaw.getLocalParameters().get(i));
+				if (i > 0)
+					params.append(", ");
+			}
+			for (i = kineticLaw.getGlobalParameters().size() - 1; i > 0; i--) {
+				params.append(kineticLaw.getGlobalParameters().get(i));
+				if (i > 0)
+					params.append(", ");
 			}
 			dataModel.setValueAt(kineticLaw, getSelectedRow(), 1);
 			dataModel.setValueAt(new String(kineticLaw.getSBO()),
@@ -144,8 +147,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		if (colIndex != 1) {
 			BasicKineticLaw kinetic = (BasicKineticLaw) dataModel.getValueAt(
 					rowIndex, 1);
-			String LaTeX = kinetic.getKineticTeX().toString().replaceAll(
-					"text", "mbox").replaceAll("mathrm", "mbox");
+			String LaTeX = kinetic.getKineticTeX().replace("text", "mbox")
+					.replace("mathrm", "mbox").replace("mathtt", "mbox");
 			JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
 					+ "\\end{equation}");
 			JPanel panel = new JPanel(new BorderLayout());

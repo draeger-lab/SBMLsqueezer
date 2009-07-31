@@ -67,7 +67,6 @@ public class Convenience extends GeneralizedMassAction {
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model);
-
 	}
 
 	/**
@@ -115,7 +114,9 @@ public class Convenience extends GeneralizedMassAction {
 		int enzymeNum = 0;
 		do {
 			StringBuffer denominator = new StringBuffer();
-			StringBuffer kcatp = concat("kcatp_", getParentReactionID());
+			StringBuffer kcatp = modE.size() == 0 ? concat("Vp_",
+					getParentReactionID()) : concat("kcatp_",
+					getParentReactionID());
 			if (modE.size() > 1)
 				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
 			addLocalParameter(kcatp);
@@ -125,7 +126,7 @@ public class Convenience extends GeneralizedMassAction {
 			StringBuffer[] denominator1 = new StringBuffer[parentReaction
 					.getNumReactants()];
 			for (int eductNum = 0; eductNum < parentReaction.getNumReactants(); eductNum++) {
-			
+
 				PluginSpeciesReference specref = parentReaction
 						.getReactant(eductNum);
 
@@ -139,7 +140,6 @@ public class Convenience extends GeneralizedMassAction {
 
 				addLocalParameter(kM);
 
-
 				denominator1[eductNum] = brackets(frac(specref.getSpecies(), kM));
 
 				for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
@@ -152,10 +152,9 @@ public class Convenience extends GeneralizedMassAction {
 				if (!parentReaction.getReversible()
 						|| ((parentReaction.getNumReactants() != 1) || (parentReaction
 								.getNumProducts() == 1)))
-				
+
 					denominator1[eductNum] = sum(Integer.toString(1),
 							denominator1[eductNum]);
-			
 
 				// build numerator
 				if (specref.getStoichiometry() == 1.0)
@@ -174,19 +173,17 @@ public class Convenience extends GeneralizedMassAction {
 			 * only if reaction is reversible or we want it to be.
 			 */
 			if (parentReaction.getReversible()) {
-				
+
 				StringBuffer numerator2 = new StringBuffer();
 				StringBuffer[] denominator2 = new StringBuffer[parentReaction
 						.getNumProducts()];
 
-				StringBuffer kcat = concat("kcatn_", getParentReactionID());
-
-				if (modE.size() > 1) {
+				StringBuffer kcat = modE.size() == 0 ? concat("Vn_",
+						getParentReactionID()) : concat("kcatn_",
+						getParentReactionID());
+				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
-
-				}
 				numerator2 = new StringBuffer(kcat);
-
 				addLocalParameter(kcat);
 
 				// Sums for each product
@@ -210,7 +207,7 @@ public class Convenience extends GeneralizedMassAction {
 
 					// for each stoichiometry (see Liebermeister et al.)s
 					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
-						
+
 						denominator2[productNum] = sum(
 								denominator2[productNum], pow(frac(
 										getSpecies(specRefP), kM), Integer
@@ -219,7 +216,6 @@ public class Convenience extends GeneralizedMassAction {
 						denominator2[productNum] = sum(Integer.toString(1),
 								denominator2[productNum]);
 
-					
 					// build numerator
 					if (specRefP.getStoichiometry() != 1.0)
 						numerator2 = times(numerator2, pow(frac(
@@ -244,104 +240,13 @@ public class Convenience extends GeneralizedMassAction {
 			formelTxt[enzymeNum] = frac(numerator, denominator);
 
 			if (modE.size() > 0)
-				formelTxt[enzymeNum] = times(modE.get(enzymeNum), formelTxt[enzymeNum]);
+				formelTxt[enzymeNum] = times(modE.get(enzymeNum),
+						formelTxt[enzymeNum]);
 			enzymeNum++;
 		} while (enzymeNum < modE.size());
 
 		return times(activationFactor(modActi), inhibitionFactor(modInhib),
 				sum(formelTxt));
-	
+
 	}
-
-	
-	// /**
-	// * Returns an array containing the factors of the reactants and products
-	// * included in the convenience kinetic's numerator. Each factor is given
-	// by
-	// * the quotient of the respective species' concentration and it's related
-	// * equilibrium constant to the power of the species' stoichiometry. The
-	// * array also contains the catalytic constant of the reaction. This method
-	// * is applicable for both forward and backward reactions.
-	// *
-	// * @param reaction
-	// * @param enzymeNumber
-	// * @param modE
-	// * @param type
-	// * true means forward, false means reverse.
-	// * @return
-	// */
-	protected StringBuffer[] numerators(int enzymeNumber, List<String> modE,
-			boolean type) {
-		// FORWARD = true;
-		PluginReaction reaction = getParentReaction();
-		StringBuffer[] nums = new StringBuffer[type ? (reaction
-				.getNumReactants() + 1) : (reaction.getNumProducts() + 1)];
-		nums[0] = new StringBuffer(type ? "kcatp_" : "kcatn_");
-		nums[0].append(reaction.getId());
-		if (modE.size() > 1)
-			append(nums[0], underscore, modE.get(enzymeNumber));
-		addLocalParameter(nums[0]);
-		for (int i = 1; i < nums.length; i++) {
-			PluginSpeciesReference ref = type ? reaction.getReactant(i - 1)
-					: reaction.getProduct(i - 1);
-			StringBuffer kM = concat("kM_", reaction.getId());
-			if (modE.size() > 1)
-				append(kM, underscore, modE.get(enzymeNumber));
-			append(kM, underscore, ref.getSpecies());
-			addLocalParameter(kM);
-			nums[i] = pow(frac(getSpecies(ref), kM), getStoichiometry(ref));
-		}
-		return nums;
-	}
-
-	/**
-	 * Returns an array containing the factors of the reactants and products
-	 * included in the convenience kinetic's denominator. For each factor, the
-	 * respective species' concentration and it's equilibrium constant are
-	 * divided and raised to the power of each integer value between zero and
-	 * the species' stoichiometry. All of the species' powers are summed up to
-	 * form the species' factor in the product. The method is applicable for
-	 * both forward and backward reactions.
-	 * 
-	 * @param reaction
-	 * @param enzymeNumber
-	 * @param modE
-	 * @param type
-	 *            true means forward, false backward.
-	 * @return
-	 */
-	protected StringBuffer[] denominators(int enzymeNumber, List<String> modE,
-			boolean type) {
-		// type FORWARD = true;
-		PluginReaction reaction = getParentReaction();
-		StringBuffer[] denoms = new StringBuffer[type ? reaction
-				.getNumReactants() : reaction.getNumProducts()];
-		for (int i = 0; i < denoms.length; i++) {
-			PluginSpeciesReference ref = type ? reaction.getReactant(i)
-					: reaction.getProduct(i);
-			StringBuffer kM = concat("kM_", getParentReactionID());
-			if (modE.size() > 1)
-				append(kM, underscore, modE.get(enzymeNumber));
-			append(kM, underscore, ref.getSpecies());
-
-			StringBuffer[] parts = new StringBuffer[(int) ref
-					.getStoichiometry() + 1];
-			StringBuffer part = brackets(sum(Integer.toString(1), frac(
-					getSpecies(ref), kM)));
-			for (int j = 0; j < parts.length; j++)
-				parts[j] = pow(part, Integer.toString(j));
-			denoms[i] = sum(parts);
-		}
-		return denoms;
-	}
-
-	// /**
-	// * TODO Method that sums up the single +1 and -1 terms in the denominator.
-	// *
-	// * @param sb
-	// * @return
-	// */
-	// protected StringBuffer removeOnes(StringBuffer sb) {
-	// return sb;
-	// }
 }

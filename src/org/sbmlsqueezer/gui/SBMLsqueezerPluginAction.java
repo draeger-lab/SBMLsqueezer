@@ -29,7 +29,7 @@ import jp.sbi.celldesigner.plugin.PluginAction;
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
- * @author Hannes Borch <hannes.borch@googlemail.com>
+ * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  */
 public class SBMLsqueezerPluginAction extends PluginAction {
 	/**

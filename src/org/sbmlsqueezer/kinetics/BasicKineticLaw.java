@@ -530,8 +530,8 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * 
 	 * @return
 	 */
-	public StringBuffer getKineticTeX() {
-		return formelTeX;
+	public String getKineticTeX() {
+		return formelTeX.toString();
 	}
 
 	/**
