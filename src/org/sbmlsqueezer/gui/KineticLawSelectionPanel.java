@@ -177,8 +177,16 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 		rButtonReversible = new JRadioButton("Reversible", reaction
 				.getReversible());
+		rButtonReversible
+				.setToolTipText(toHTML(
+						"If selected, SBMLsqueezer will take the effects of "
+								+ "the products into account when creating rate equations.",
+						40));
 		rButtonIrreversible = new JRadioButton("Irreversible", !reaction
 				.getReversible());
+		rButtonIrreversible.setToolTipText(toHTML(
+				"If selected, SBMLsqueezer will not take effects of products into "
+						+ "account when creating rate equations.", 40));
 		ButtonGroup revGroup = new ButtonGroup();
 		revGroup.add(rButtonReversible);
 		revGroup.add(rButtonIrreversible);
