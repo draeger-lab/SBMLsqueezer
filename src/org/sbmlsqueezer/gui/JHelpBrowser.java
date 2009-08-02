@@ -79,7 +79,7 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 	 * @param title
 	 */
 	public JHelpBrowser(Frame owner, String title) {
-		super(owner, "SBMLsqueezer - Online Help");
+		super(owner, title);
 		init();
 	}
 

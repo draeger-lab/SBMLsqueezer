@@ -140,7 +140,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			exc.printStackTrace();
 		}
 		plugin = null;
-		setTitle("SBMLsqueezer");
+		setTitle("SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber());
 		setAlwaysOnTop(true);
 		try {
 			Image image = ImageIO.read(Resource.class
@@ -264,8 +264,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(
 					klg, model, reaction);
 			if (JOptionPane.showConfirmDialog(this, messagePanel,
-					"SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE, icon) == JOptionPane.OK_OPTION) {
+					"SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber(),
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+					icon) == JOptionPane.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
 					short equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
@@ -353,7 +354,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 			} else if (text.equals("Help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
-						"SBMLsqueezer - online help");
+						"SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber()
+								+ " - Online Help");
 				helpBrowser.addWindowListener(this);
 				helpBrowser.setLocationRelativeTo(this);
 				helpBrowser.setSize(640, 640);
@@ -760,10 +762,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 		try {
 			Image image = ImageIO.read(Resource.class
-					.getResource("img/title_small.jpg"));
+					.getResource("img/logo_small.png")); // title_small.jpg
 			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
 			JLabel label = new JLabel(new ImageIcon(image));
 			label.setBackground(Color.WHITE);
+			label.setText("<html><body><br><br><br><br><br><br>Version "
+					+ SBMLsqueezerPlugin.getVersionNumber() + "</body></html>");
 			JPanel p = new JPanel();
 			p.add(label);
 			p.setBackground(Color.WHITE);
