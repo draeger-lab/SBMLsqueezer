@@ -109,40 +109,36 @@ public class ConvenienceIndependent extends Convenience {
 		final boolean FORWARD = true;
 		final boolean REVERSE = false;
 		PluginReaction reaction = getParentReaction();
-		StringBuffer[] enzymes = new StringBuffer[modE.size()];
+		StringBuffer[] enzymes = new StringBuffer[Math.max(modE.size(), 1)];
 		try {
-			StringBuffer acti = activationFactor(modActi);
-			StringBuffer inhib = inhibitionFactor(modInhib);
-
 			int i = 0;
 			do {
 				StringBuffer klV = concat("kV_", reaction.getId());
-				if (modE.size() > 1)
+				String enzyme = modE.size() > 0 ? modE.get(i) : null;
+				if (enzyme != null) {
 					append(klV, underscore, modE.get(i));
+					enzymes[i] = new StringBuffer(enzyme);
+				} else
+					enzymes[i] = new StringBuffer();
 				addLocalParameter(klV);
 
 				StringBuffer numerator, denominator;
 				if (!reaction.getReversible()) {
-					numerator = times(num(i, modE, FORWARD));
-					denominator = diff(times(denominators(i, modE, FORWARD)),
-							Integer.toString(1));
+					numerator = times(num(enzyme, FORWARD));
+					denominator = times(denominators(enzyme, FORWARD));
 				} else {
-					numerator = diff(num(i, modE, FORWARD), (num(i, modE,
-							REVERSE)));
-					denominator = diff(sum(
-							times(denominators(i, modE, FORWARD)),
-							times(denominators(i, modE, REVERSE))), Integer
-							.toString(1));
+					numerator = diff(num(enzyme, FORWARD), num(enzyme, REVERSE));
+					denominator = sum(times(denominators(enzyme, FORWARD)),
+							times(denominators(enzyme, REVERSE)));
+					if (reaction.getNumProducts() > 1)
+						denominator = diff(denominator, Integer.valueOf(1));
 				}
-
-				if (modE.size() > 0)
-					enzymes[i] = times(new StringBuffer(modE.get(i)), klV,
-							frac(numerator, denominator));
-				else
-					return (times(acti, inhib, frac(numerator, denominator)));
+				enzymes[i] = times(enzymes[i], klV,
+						frac(numerator, denominator));
 				i++;
 			} while (i < enzymes.length);
-			return times(acti, inhib, sum(enzymes));
+			return times(activationFactor(modActi), inhibitionFactor(modInhib),
+					sum(enzymes));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
 			return new StringBuffer();
@@ -158,14 +154,12 @@ public class ConvenienceIndependent extends Convenience {
 	 * energy constant to the power of half the species' stoichiometry. This
 	 * method is applicable for both forward and backward reactions.
 	 * 
-	 * @param reaction
-	 * @param enzymeNumber
-	 * @param modE
+	 * @param enzyme
 	 * @param type
 	 *            true means forward, false means reverse.
 	 * @return
 	 */
-	private StringBuffer num(int enzymeNumber, List<String> modE, boolean type) {
+	private StringBuffer num(String enzyme, boolean type) {
 		PluginReaction reaction = getParentReaction();
 
 		StringBuffer educts = new StringBuffer();
@@ -177,8 +171,8 @@ public class ConvenienceIndependent extends Convenience {
 		for (int i = 0; i < reaction.getNumReactants(); i++) {
 			PluginSpeciesReference ref = reaction.getReactant(i);
 			StringBuffer kM = concat("kM_", reaction.getId());
-			if (modE.size() > 1)
-				append(kM, underscore, modE.get(enzymeNumber));
+			if (enzyme != null)
+				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			addLocalParameter(kM);
 			StringBuffer kiG = concat("kG_", ref.getSpecies());
@@ -192,8 +186,8 @@ public class ConvenienceIndependent extends Convenience {
 		for (int i = 0; i < reaction.getNumProducts(); i++) {
 			PluginSpeciesReference ref = reaction.getProduct(i);
 			StringBuffer kM = concat("kM_", reaction.getId());
-			if (modE.size() > 1)
-				append(kM, underscore, modE.get(enzymeNumber));
+			if (enzyme != null)
+				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			addLocalParameter(kM);
 			StringBuffer kiG = concat("kG_", ref.getSpecies());
@@ -219,32 +213,32 @@ public class ConvenienceIndependent extends Convenience {
 	 * both forward and backward reactions.
 	 * 
 	 * @param reaction
-	 * @param enzymeNumber
-	 * @param modE
 	 * @param type
 	 *            true means forward, false backward.
 	 * @return
 	 */
-	private StringBuffer[] denominators(int enzymeNumber, List<String> modE,
-			boolean type) {
+	private StringBuffer[] denominators(String enzyme, boolean type) {
 		// type FORWARD = true;
 		PluginReaction reaction = getParentReaction();
 		StringBuffer[] denoms = new StringBuffer[type ? reaction
 				.getNumReactants() : reaction.getNumProducts()];
+		boolean noOne = !type && (denoms.length == 1);
 		for (int i = 0; i < denoms.length; i++) {
 			PluginSpeciesReference ref = type ? reaction.getReactant(i)
 					: reaction.getProduct(i);
 			StringBuffer kM = concat("kM_", getParentReactionID());
-			if (modE.size() > 1)
-				append(kM, underscore, modE.get(enzymeNumber));
+			if (enzyme != null)
+				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 
 			StringBuffer[] parts = new StringBuffer[(int) ref
-					.getStoichiometry() + 1];
-			StringBuffer part = brackets(sum(Integer.toString(1), frac(
-					getSpecies(ref), kM)));
+					.getStoichiometry()
+					+ (noOne ? 0 : 1)];
+			// StringBuffer part = brackets(sum(Integer.toString(1), frac(
+			// getSpecies(ref), kM)));
+			StringBuffer part = frac(getSpecies(ref), kM);
 			for (int j = 0; j < parts.length; j++)
-				parts[j] = pow(part, Integer.toString(j));
+				parts[j] = pow(part, Integer.toString(noOne ? j + 1 : j));
 			denoms[i] = sum(parts);
 		}
 		return denoms;

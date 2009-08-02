@@ -220,8 +220,8 @@ public class HillEquation extends BasicKineticLaw {
 					.get(inhibitorNum));
 
 			inhib = times(inhib, diff(Integer.toString(1), frac(pow(
-					new StringBuffer(modTActi.get(inhibitorNum)), hillcoeff),
-					sum(pow(new StringBuffer(modTActi.get(inhibitorNum)),
+					new StringBuffer(modTInhib.get(inhibitorNum)), hillcoeff),
+					sum(pow(new StringBuffer(modTInhib.get(inhibitorNum)),
 							hillcoeff), pow(kS, hillcoeff)))));
 			addLocalParameter(hillcoeff);
 			addLocalParameter(kS);
