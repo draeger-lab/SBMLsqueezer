@@ -319,12 +319,12 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	public static final StringBuffer pow(Object basis, Object exponent) {
 		try {
 			if (Double.parseDouble(exponent.toString()) == 0f)
-				return new StringBuffer('1');
+				return new StringBuffer("1");
 			if (Double.parseDouble(exponent.toString()) == 1f)
 				return basis instanceof StringBuffer ? (StringBuffer) basis
 						: new StringBuffer(basis.toString());
 		} catch (NumberFormatException exc) {
-			//System.out.println("pow(" + basis + ", " + exponent + ")");
+			// System.out.println("pow(" + basis + ", " + exponent + ")");
 		}
 		return arith('^', basis, exponent);
 	}
@@ -404,7 +404,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 	protected StringBuffer formelTeX;
 
-	protected List<StringBuffer> listOfLocalParameters;
+	private List<StringBuffer> listOfLocalParameters;
 
 	private List<StringBuffer> listOfGlobalParameters;
 

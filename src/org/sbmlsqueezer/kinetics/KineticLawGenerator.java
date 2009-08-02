@@ -37,7 +37,6 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.SpeciesReference;
 import org.sbmlsqueezer.math.GaussianRank;
 
 /**
@@ -797,7 +796,8 @@ public class KineticLawGenerator {
 				types.add(Short.valueOf(ORDERED_MECHANISM));
 			}
 		}
-		if (!nonEnzyme && !(uniUniWithoutModulation && hasFullColumnRank(model)))
+		if (!nonEnzyme
+				&& !(uniUniWithoutModulation && hasFullColumnRank(model)))
 			/*
 			 * more than 2 types of reacting species or higher stoichiometry or
 			 * any other reaction that is possibly catalyzed by an enzyme.
@@ -1090,8 +1090,20 @@ public class KineticLawGenerator {
 				if (r.getKineticLaw() != null)
 					if (contains(
 							model.getReaction(j).getKineticLaw().getMath(), p
-									.getId()))
-						isNeeded = true;
+									.getId())) {
+						/*
+						 * ok, parameter occurs here but there could also be a
+						 * local parameter with the same id.
+						 */
+						boolean contains = false;
+						for (k = 0; k < r.getKineticLaw().getNumParameters()
+								&& !contains; k++)
+							if (r.getKineticLaw().getParameter(k).getId()
+									.equals(p.getId()))
+								contains = true;
+						if (!contains)
+							isNeeded = true;
+					}
 				if (isNeeded)
 					break;
 				PluginSpeciesReference specRef;
@@ -1145,7 +1157,7 @@ public class KineticLawGenerator {
 				for (j = 0; j < law.getNumParameters(); j++) {
 					p = law.getParameter(j);
 					if (!contains(law.getMath(), p.getId())
-							|| (model.getParameter(p.getId()) != null))
+					/* || (model.getParameter(p.getId()) != null) */)
 						removeList.add(Integer.valueOf(j));
 				}
 				while (!removeList.isEmpty()) {
@@ -1349,29 +1361,28 @@ public class KineticLawGenerator {
 		BasicKineticLaw kineticLaw = (BasicKineticLaw) reaction.getKineticLaw();
 		List<StringBuffer> paramListLocal = kineticLaw.getLocalParameters();
 		List<StringBuffer> paramListGlobal = kineticLaw.getGlobalParameters();
-		int paramNumber, i;
+		int paramNumber;
 		for (paramNumber = 0; paramNumber < paramListLocal.size(); paramNumber++) {
-			PluginParameter para;
 			if (addAllParametersGlobally) {
-				para = new PluginParameter(paramListLocal.get(paramNumber)
-						.toString(), model);
+				PluginParameter para = new PluginParameter(paramListLocal.get(
+						paramNumber).toString(), model);
 				para.setValue(1d);
 				if (model.getParameter(para.getId()) == null) {
 					model.addParameter(para);
 					plugin.notifySBaseAdded(para);
 				}
 			} else {
-				int contains = -1;
-				para = new PluginParameter(paramListLocal.get(paramNumber)
-						.toString(), kineticLaw);
-				para.setValue(1d);
-				for (i = 0; (i < kineticLaw.getNumParameters())
-						&& (contains < 0); i++)
-					if (kineticLaw.getParameter(i).getId().equals(para.getId()))
-						contains = i;
-				if (contains < 0) {
+				boolean contains = false;
+				String id = paramListLocal.get(paramNumber).toString();
+				for (int i = 0; i < kineticLaw.getNumParameters() && !contains; i++)
+					if (kineticLaw.getParameter(i).getId().equals(id))
+						contains = true;
+				if (!contains) {
+					PluginParameter para = new PluginParameter(id, kineticLaw);
+					para.setValue(1d);
 					kineticLaw.addParameter(para);
-					plugin.notifySBaseAdded(para);
+					System.out.println(plugin.notifySBaseAdded(para));
+					System.out.println(plugin.notifySBaseChanged(kineticLaw));
 				}
 			}
 		}
@@ -1398,7 +1409,7 @@ public class KineticLawGenerator {
 	 */
 	private boolean contains(ASTNode astnode, String id) {
 		if (astnode.isName())
-			if (astnode.getName().toLowerCase().equals(id))
+			if (astnode.getName().equals(id))
 				return true;
 		boolean childContains = false;
 		for (int i = 0; i < astnode.getNumChildren(); i++)
