@@ -130,7 +130,8 @@ public class ConvenienceIndependent extends Convenience {
 					numerator = diff(num(enzyme, FORWARD), num(enzyme, REVERSE));
 					denominator = sum(times(denominators(enzyme, FORWARD)),
 							times(denominators(enzyme, REVERSE)));
-					if (reaction.getNumProducts() > 1)
+					if (reaction.getNumProducts() > 1
+							&& reaction.getNumReactants() > 1)
 						denominator = diff(denominator, Integer.valueOf(1));
 				}
 				enzymes[i] = times(enzymes[i], klV,
@@ -222,7 +223,9 @@ public class ConvenienceIndependent extends Convenience {
 		PluginReaction reaction = getParentReaction();
 		StringBuffer[] denoms = new StringBuffer[type ? reaction
 				.getNumReactants() : reaction.getNumProducts()];
-		boolean noOne = !type && (denoms.length == 1);
+		boolean noOne = (denoms.length == 1)
+				&& (!type || (type && reaction.getReversible() && reaction
+						.getNumProducts() > 1));
 		for (int i = 0; i < denoms.length; i++) {
 			PluginSpeciesReference ref = type ? reaction.getReactant(i)
 					: reaction.getProduct(i);
