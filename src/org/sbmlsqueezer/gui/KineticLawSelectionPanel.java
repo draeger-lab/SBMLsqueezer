@@ -108,6 +108,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private String notes;
 
+	private String selected;
+
 	private StringBuffer[] laTeXpreview;
 
 	private static final int width = 310, height = 175;
@@ -123,6 +125,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			PluginReaction reaction) throws RateLawNotApplicableException,
 			IOException {
 		super(new GridBagLayout());
+		this.selected = "";
 		this.klg = klg;
 		this.model = model;
 		this.reaction = reaction;
@@ -242,6 +245,11 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				isReversibleSelected = getReversible();
 				try {
 					// reversible property was changed.
+					selected = "";
+					for (int i = 0; i < rButtonsKineticEquations.length
+							&& selected.length() == 0; i++)
+						if (rButtonsKineticEquations[i].isSelected())
+							selected = rButtonsKineticEquations[i].getText();
 					reaction.setReversible(getReversible());
 					remove(kineticsPanel);
 					kineticsPanel = initKineticsPanel();
@@ -260,10 +268,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				isGlobalSelected = getGlobal();
 			}
 		} else {
-			int i = 0; /*
-						 * , width = eqnPrev.getWidth(), height = eqnPrev
-						 * .getHeight();
-						 */
+			int i = 0;
 			while ((i < rButtonsKineticEquations.length)
 					&& (!rbutton.equals(rButtonsKineticEquations[i])))
 				i++;
@@ -359,7 +364,6 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
 						.toLaTeX(model, reaction.getKineticLaw().getMath());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.err.println("Error: Unhandled IOException");
 			}
@@ -368,11 +372,16 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		rButtonsKineticEquations = new JRadioButton[kineticEquations.length + 1];
 		ButtonGroup buttonGroup = new ButtonGroup();
 
+		short kinSelected = -1;
 		for (i = 0; i < rButtonsKineticEquations.length; i++) {
 			if (i < rButtonsKineticEquations.length - 1) {
-				rButtonsKineticEquations[i] = (i != 0) ? new JRadioButton(
-						kineticEquations[i], false) : new JRadioButton(
-						kineticEquations[i], true);
+				if (kineticEquations[i].equals(selected)) {
+					rButtonsKineticEquations[i] = new JRadioButton(
+							kineticEquations[i], true);
+					kinSelected = (short) i;
+				} else
+					rButtonsKineticEquations[i] = new JRadioButton(
+							kineticEquations[i], false);
 				rButtonsKineticEquations[i].setToolTipText(toolTips[i]);
 			} else {
 				rButtonsKineticEquations[i] = new JRadioButton(
@@ -392,10 +401,14 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 						(GridBagLayout) kineticsPanel.getLayout(),
 						rButtonsKineticEquations[i], 0, i, 1, 1, 1, 1);
 		}
+		if (kinSelected == -1 && rButtonsKineticEquations.length > 0) {
+			kinSelected = 0;
+			rButtonsKineticEquations[kinSelected].setSelected(true);
+		}
 
 		kineticsPanel.setBorder(BorderFactory
 				.createTitledBorder(" Please choose one kinetic law "));
-		setPreviewPanel(0);
+		setPreviewPanel(kinSelected);
 		Box info = new Box(BoxLayout.Y_AXIS);
 		info.add(kineticsPanel);
 		info.add(eqnPrev);
