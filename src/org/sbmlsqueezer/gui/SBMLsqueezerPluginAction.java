@@ -19,6 +19,7 @@
 package org.sbmlsqueezer.gui;
 
 import java.awt.event.ActionEvent;
+import java.io.PrintStream;
 
 import jp.sbi.celldesigner.plugin.PluginAction;
 
@@ -28,10 +29,23 @@ import jp.sbi.celldesigner.plugin.PluginAction;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  */
 public class SBMLsqueezerPluginAction extends PluginAction {
+	
+	static {
+		PrintStream out = System.out;
+		out.println("-----------------------------------------------------");
+		out.println("SBMLsqueezer Copyright (C) 2009 Andreas Dr\u00e4ger");
+		out.println("This program comes with ABSOLUTELY NO WARRANTY.");
+		out.println("This is free software, and you are welcome");
+		out.println("to redistribute it under certain conditions;");
+		out.println("see http://www.gnu.org/copyleft/gpl.html for details.");
+		out.println("-----------------------------------------------------");
+	}
+	
 	/**
 	 * A serial version number.
 	 */

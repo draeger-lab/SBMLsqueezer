@@ -144,13 +144,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		setAlwaysOnTop(true);
 		try {
 			Image image = ImageIO.read(Resource.class
-					.getResource("img/icon.png")
-			/*
-			 * new File(System.getProperty("user.dir") +
-			 * System.getProperty("file.separator") + "resources" +
-			 * System.getProperty("file.separator") + "images" +
-			 * System.getProperty("file.separator") + "icon.png")
-			 */);
+					.getResource("img/icon.png"));
 			setIconImage(image);
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
@@ -329,13 +323,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				showSettingsPanel();
 			} else if (text.equals("hide options")) {
 				try {
-					Image image = ImageIO.read(Resource.class.getResource(
-					/*
-					 * new File(System.getProperty("user.dir") +
-					 * System.getProperty("file.separator") + "resources" +
-					 * System.getProperty("file.separator") + "images" +
-					 * System.getProperty("file.separator") +
-					 */"img/rightarrow.png"));
+					Image image = ImageIO.read(Resource.class
+							.getResource("img/rightarrow.png"));
 					image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
 					options.setIcon(new ImageIcon(image));
 					options.setIconTextGap(5);
@@ -810,13 +799,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 		options = new JButton("show options");
 		try {
-			Image image = ImageIO.read(Resource.class.getResource(
-			/*
-			 * new File(System.getProperty("user.dir") +
-			 * System.getProperty("file.separator") + "resources" +
-			 * System.getProperty("file.separator") + "images" +
-			 * System.getProperty("file.separator") +
-			 */"img/rightarrow.png"));
+			Image image = ImageIO.read(Resource.class
+					.getResource("img/rightarrow.png"));
 			image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
 			options.setIcon(new ImageIcon(image));
 			options.setIconTextGap(5);
@@ -840,13 +824,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 	private void showSettingsPanel() {
 		try {
-			Image image = ImageIO.read(Resource.class.getResource(
-			/*
-			 * new File(System.getProperty("user.dir") +
-			 * System.getProperty("file.separator") + "resources" +
-			 * System.getProperty("file.separator") + "images" +
-			 * System.getProperty("file.separator") +
-			 */"img/downarrow.png"));
+			Image image = ImageIO.read(Resource.class
+					.getResource("img/downarrow.png"));
 			image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
 			options.setIcon(new ImageIcon(image));
 			options.setIconTextGap(5);

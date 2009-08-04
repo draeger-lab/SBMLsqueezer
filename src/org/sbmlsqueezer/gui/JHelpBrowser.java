@@ -106,7 +106,7 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 	 * 
 	 */
 	private void init() {
-		browser = new JBrowser(Resource.class.getResource("html/index.html"));
+		browser = new JBrowser(Resource.class.getResource("html/help.html"));
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(new JScrollPane(browser,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
