@@ -324,7 +324,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 				return basis instanceof StringBuffer ? (StringBuffer) basis
 						: new StringBuffer(basis.toString());
 		} catch (NumberFormatException exc) {
-			// System.out.println("pow(" + basis + ", " + exponent + ")");
 		}
 		return arith('^', basis, exponent);
 	}
