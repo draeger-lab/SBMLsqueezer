@@ -26,7 +26,8 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 /**
- * TODO: comment missing
+ * This class creates a kinetic equation according to the random order mechanism
+ * (see Cornish-Bowden: Fundamentals of Enzyme Kinetics, p. 169).
  * 
  * @since 1.0
  * @version
@@ -78,8 +79,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		double stoichiometryRight = 0;
-		for (int i = 0; i < getParentReaction().getListOfProducts()
-				.getNumItems(); i++)
+		for (int i = 0; i < getParentReaction().getNumProducts(); i++)
 			stoichiometryRight += getParentReaction().getProduct(i)
 					.getStoichiometry();
 		String name = "rapid-equilibrium random order ternary-complex mechanism";
@@ -104,20 +104,16 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		boolean biuni = false;
-		StringBuffer numerator = new StringBuffer();// I
-		StringBuffer denominator = new StringBuffer(); // II
-		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 
 		PluginReaction reaction = getParentReaction();
-		PluginSpeciesReference specRefE1 = reaction.getReactant(0), specRefE2;
+		PluginSpeciesReference specRefR1 = reaction.getReactant(0), specRefR2;
 		PluginSpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
 		if (reaction.getNumReactants() == 2)
-			specRefE2 = (PluginSpeciesReference) reaction.getListOfReactants()
+			specRefR2 = (PluginSpeciesReference) reaction.getListOfReactants()
 					.get(1);
-		else if (specRefE1.getStoichiometry() == 2.0)
-			specRefE2 = specRefE1;
+		else if (specRefR1.getStoichiometry() == 2f)
+			specRefR2 = specRefR1;
 		else
 			throw new RateLawNotApplicableException(
 					"Number of reactants must equal two to apply random order "
@@ -125,6 +121,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 							+ reaction.getId());
 
 		boolean exception = false;
+		boolean biuni = false;
 		switch (reaction.getNumProducts()) {
 		case 1:
 			if (specRefP1.getStoichiometry() == 1.0)
@@ -152,15 +149,17 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 		 * do not want anything in modE to occur in the kinetic equation.
 		 */
 		int enzymeNum = 0;
-
+		StringBuffer numerator = new StringBuffer();// I
+		StringBuffer denominator = new StringBuffer(); // II
+		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 		do {
 			/*
 			 * Irreversible reaction
 			 */
 			if (!reaction.getReversible()) {
 				StringBuffer kcatp;
-				StringBuffer kMr2 = concat("kM_", reaction.getId());
 				StringBuffer kMr1 = concat("kM_", reaction.getId());
+				StringBuffer kMr2 = concat("kM_", reaction.getId());
 				StringBuffer kIr1 = concat("ki_", reaction.getId());
 
 				if (modE.size() == 0)
@@ -174,36 +173,33 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						append(kIr1, underscore, modE.get(enzymeNum));
 					}
 				}
-				String speciesE2 = specRefE2.getSpecies();
-				String speciesE1 = specRefE1.getSpecies();
-				append(kMr1, underscore, speciesE1);
-				append(kMr2, underscore, speciesE2);
-
-				if (specRefE2.equals(specRefE1)) {
+				String speciesR1 = specRefR1.getSpecies();
+				String speciesR2 = specRefR2.getSpecies();
+				append(kMr1, underscore, speciesR1);
+				append(kMr2, underscore, speciesR2);
+				if (specRefR1.equals(specRefR2)) {
 					append(kMr1, "kMr1", kMr1.substring(2));
 					append(kMr2, "kMr2", kMr2.substring(2));
 				}
 				addLocalParameter(kcatp);
-				addLocalParameter(kMr2);
 				addLocalParameter(kMr1);
-				addLocalParameter(append(kIr1, underscore, speciesE1));
-
+				addLocalParameter(kMr2);
+				addLocalParameter(append(kIr1, underscore, speciesR1));
+				
 				numerator = new StringBuffer(kcatp);
 				if (modE.size() > 0)
 					numerator = times(numerator, modE.get(enzymeNum));
-				numerator = times(numerator, specRefE1.getSpecies());
-				if (specRefE2.equals(specRefE1)) {
-					numerator = pow(numerator, Integer.valueOf(2));
-					denominator = sum(times(kIr1, kMr2), times(sum(kMr2, kMr1),
-							specRefE1.getSpecies()), pow(
-							specRefE1.getSpecies(), Integer.valueOf(2)));
+				if (specRefR2.equals(specRefR1)) {
+					String r1square = pow(speciesR1, Integer.valueOf(2))
+							.toString();
+					numerator = times(numerator, r1square);
+					denominator = sum(times(kIr1, kMr2), times(sum(kMr1, kMr2),
+							speciesR1), r1square);
 				} else {
-					numerator = times(numerator, specRefE2.getSpecies());
-					denominator = sum(times(kIr1, kMr2), times(kMr2, specRefE1
-							.getSpecies()),
-							times(kMr1, specRefE2.getSpecies()), times(
-									specRefE1.getSpecies(), specRefE2
-											.getSpecies()));
+					numerator = times(numerator, speciesR1, speciesR2);
+					denominator = sum(times(kIr1, kMr2),
+							times(kMr2, speciesR1), times(kMr1, speciesR2),
+							times(speciesR1, speciesR2));
 				}
 			} else {
 				/*
@@ -227,28 +223,28 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						kcatp = concat("kcatp_", reaction.getId());
 						kcatn = concat("kcatn_", reaction.getId());
 						if (modE.size() > 1) {
-							String modEnzymeNumber = modE.get(enzymeNum);
-							kcatp = concat(kcatp, underscore, modEnzymeNumber);
-							kcatn = concat(kcatn, underscore, modEnzymeNumber);
-							kMr2 = concat(kMr2, underscore, modEnzymeNumber);
-							kMp1 = concat(kMp1, underscore, modEnzymeNumber);
-							kIp1 = concat(kIp1, underscore, modEnzymeNumber);
-							kIp2 = concat(kIp2, underscore, modEnzymeNumber);
-							kIr2 = concat(kIr2, underscore, modEnzymeNumber);
-							kIr1 = concat(kIr1, underscore, modEnzymeNumber);
+							String currEnzyme = modE.get(enzymeNum);
+							kcatp = concat(kcatp, underscore, currEnzyme);
+							kcatn = concat(kcatn, underscore, currEnzyme);
+							kMr2 = concat(kMr2, underscore, currEnzyme);
+							kMp1 = concat(kMp1, underscore, currEnzyme);
+							kIp1 = concat(kIp1, underscore, currEnzyme);
+							kIp2 = concat(kIp2, underscore, currEnzyme);
+							kIr2 = concat(kIr2, underscore, currEnzyme);
+							kIr1 = concat(kIr1, underscore, currEnzyme);
 						}
 					}
-					String speciesE2 = specRefE2.getSpecies();
-					String speciesE1 = specRefE1.getSpecies();
+					String speciesR1 = specRefR1.getSpecies();
+					String speciesR2 = specRefR2.getSpecies();
 					String speciesP1 = specRefP1.getSpecies();
 					String speciesP2 = specRefP2.getSpecies();
-					kMr2 = concat(kMr2, underscore, speciesE2);
-					kIr1 = concat(kIr1, underscore, speciesE1);
-					kIr2 = concat(kIr2, underscore, speciesE2);
+					kMr2 = concat(kMr2, underscore, speciesR2);
+					kIr1 = concat(kIr1, underscore, speciesR1);
+					kIr2 = concat(kIr2, underscore, speciesR2);
 					kIp1 = concat(kIp1, underscore, speciesP1);
 					kIp2 = concat(kIp2, underscore, speciesP2);
 					kMp1 = concat(kMp1, underscore, speciesP1);
-					if (specRefE2.equals(specRefE1)) {
+					if (specRefR2.equals(specRefR1)) {
 						kIr1 = concat("kir1", kIr1.substring(2));
 						kIr2 = concat("kir2", kIr2.substring(2));
 					}
@@ -265,68 +261,38 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					addLocalParameter(kIr2);
 					addLocalParameter(kIr1);
 
-					StringBuffer numeratorForward = new StringBuffer();
-					StringBuffer numeratorReverse = new StringBuffer();
-
-					numeratorForward = kcatp;
-					if (modE.size() > 0)
-						numeratorForward = times(numeratorForward,
-								new StringBuffer(modE.get(enzymeNum)));
-					denominator = sum(Integer.toString(1), frac(specRefE1
-							.getSpecies(), kIr1), frac(specRefE2.getSpecies(),
-							kIr2), frac(specRefP1.getSpecies(), kIp1), frac(
-							specRefP2.getSpecies(), kIp2));
-
+					StringBuffer numeratorForward = frac(kcatp, times(kIr1,
+							kMr2));
+					StringBuffer numeratorReverse = frac(kcatn, times(kIp2,
+							kMp1));
+					if (modE.size() > 0) {
+						numeratorForward = times(numeratorForward, modE
+								.get(enzymeNum));
+						numeratorReverse = times(numeratorReverse, modE
+								.get(enzymeNum));
+					}
+					// happens if the reactant has a stoichiometry of two.
+					StringBuffer r1r2 = specRefR1.equals(specRefR2) ? pow(
+							speciesR1, Integer.toString(2)) : times(speciesR1,
+							speciesR2);
 					// happens if the product has a stoichiometry of two.
-
 					StringBuffer p1p2 = specRefP1.equals(specRefP2) ? pow(
-							specRefP1.getSpecies(), Integer.toString(2))
-							: times(specRefP1.getSpecies(), specRefP2
-									.getSpecies());
-					denominator = sum(denominator,
-							frac(p1p2, times(kIp2, kMp1)));
-
-					// happens if the educt has a stoichiometry of two.
-					if (specRefE1.equals(specRefE2)) {
-
-						numeratorForward = times(numeratorForward, pow(
-								new StringBuffer(specRefE1.getSpecies()),
-								Integer.toString(2)));
-						p1p2 = pow(new StringBuffer(specRefE1.getSpecies()),
-								Integer.toString(2));
-					} else {
-						numeratorForward = times(numeratorForward, times(
-								new StringBuffer(specRefE1.getSpecies()),
-								new StringBuffer(specRefE2.getSpecies())));
-						p1p2 = times(new StringBuffer(specRefE1.getSpecies()),
-								new StringBuffer(specRefE2.getSpecies()));
-					}
-					numeratorForward = frac(numeratorForward, times(kIr1, kMr2));
-					denominator = sum(denominator,
-							frac(p1p2, times(kIr1, kMr2)));
-
-					numeratorReverse = kcatn;
-					if (modE.size() != 0)
-						numeratorReverse = times(numeratorReverse,
-								new StringBuffer(modE.get(enzymeNum)));
-					numeratorReverse = times(numeratorReverse,
-							new StringBuffer(specRefP1.getSpecies()));
-					if (specRefP1.equals(specRefP2)) {
-						numeratorReverse = pow(numeratorReverse, Integer
-								.toString(2));
-					} else {
-						numeratorReverse = times(numeratorReverse, specRefP2
-								.getSpecies());
-					}
-					numeratorReverse = frac(numeratorReverse, times(kIp2, kMp1));
+							speciesP1, Integer.toString(2)) : times(speciesP1,
+							speciesP2);
+					numeratorForward = times(numeratorForward, r1r2);
+					numeratorReverse = times(numeratorReverse, p1p2);
 					numerator = diff(numeratorForward, numeratorReverse);
+					denominator = sum(Integer.toString(1),
+							frac(speciesR1, kIr1), frac(speciesR2, kIr2), frac(
+									speciesP1, kIp1), frac(speciesP2, kIp2),
+							frac(p1p2, times(kIp2, kMp1)), frac(r1r2, times(
+									kIr1, kMr2)));
 				} else {
 					/*
 					 * Reversible reaction: Bi-Uni reaction
 					 */
-					StringBuffer kcatp = new StringBuffer();
-					StringBuffer kcatn = new StringBuffer();
-
+					StringBuffer kcatp;
+					StringBuffer kcatn;
 					StringBuffer kMr2 = concat("kM_", reaction.getId());
 					StringBuffer kMp1 = concat("kM_", reaction.getId());
 					StringBuffer kIr2 = concat("ki_", reaction.getId());
@@ -348,14 +314,15 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						}
 					}
 
-					StringBuffer speciesE2 = new StringBuffer(specRefE2
-							.getSpecies());
-					append(kMr2, underscore, speciesE2);
-					append(kIr1, underscore, speciesE2);
-					append(kIr2, underscore, speciesE2);
-					append(kMp1, underscore, speciesE2);
+					String speciesR1 = specRefR1.getSpecies();
+					String speciesR2 = specRefR2.getSpecies();
+					String speciesP1 = specRefP1.getSpecies();
+					append(kMr2, underscore, speciesR2);
+					append(kIr1, underscore, speciesR2);
+					append(kIr2, underscore, speciesR2);
+					append(kMp1, underscore, speciesR2);
 
-					if (specRefE2.equals(specRefE1)) {
+					if (specRefR2.equals(specRefR1)) {
 						append(kIr1, "kip1", kIr1.substring(2));
 						append(kIr2, "kip2", kIr2.substring(2));
 					}
@@ -366,46 +333,27 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					addLocalParameter(kIr2);
 					addLocalParameter(kIr1);
 
-					StringBuffer numeratorForward = new StringBuffer(kcatp);
-					StringBuffer numeratorReverse = new StringBuffer();
-					StringBuffer p1p2 = new StringBuffer();
-
-					if (modE.size() != 0)
+					StringBuffer p1p2;
+					if (specRefR1.equals(specRefR2))
+						p1p2 = pow(speciesR1, Integer.toString(2));
+					else
+						p1p2 = times(speciesR1, speciesR2);
+					StringBuffer numeratorForward = frac(kcatp, times(kIr1,
+							kMr2));
+					StringBuffer numeratorReverse = frac(kcatn, kMp1);
+					if (modE.size() != 0) {
 						numeratorForward = times(numeratorForward, modE
 								.get(enzymeNum));
-
-					denominator = sum(Integer.toString(1), frac(specRefE1
-							.getSpecies(), kIr1), frac(specRefE2.getSpecies(),
-							kIr2));
-					if (specRefE1.equals(specRefE2)) {
-						numeratorForward = times(numeratorForward, pow(
-								specRefE1.getSpecies(), Integer.toString(2)));
-						p1p2 = pow(specRefE1.getSpecies(), Integer.toString(2));
-					} else {
-						numeratorForward = times(numeratorForward, specRefE1
-								.getSpecies(), specRefE2.getSpecies());
-						p1p2 = times(specRefE1.getSpecies(), specRefE2
-								.getSpecies());
-					}
-					numeratorForward = frac(numeratorForward, times(kIr1, kMr2));
-
-					numeratorReverse = kcatn;
-					if (modE.size() != 0)
+						numeratorForward = times(numeratorForward, p1p2);
 						numeratorReverse = times(numeratorReverse, modE
 								.get(enzymeNum));
-					if ((specRefP2 != null) && specRefP2.equals(specRefP1))
-						numeratorReverse = times(numeratorReverse, pow(
-								specRefP1.getSpecies(), Integer.toString(2)));
-					else if (specRefP2 != null)
-						numeratorReverse = times(numeratorReverse, specRefP1
-								.getSpecies(), specRefP2.getSpecies());
-
-					numeratorReverse = times(numeratorReverse, frac(specRefP1
-							.getSpecies(), kMp1));
-
+					}
+					numeratorReverse = times(numeratorReverse, speciesP1);
 					numerator = diff(numeratorForward, numeratorReverse);
-					denominator = sum(denominator, frac(p1p2, sum(times(kIr1,
-							kMr2))), frac(specRefP1.getSpecies(), kMp1));
+					denominator = sum(Integer.toString(1),
+							frac(speciesR1, kIr1), frac(speciesR2, kIr2), frac(
+									p1p2, times(kIr1, kMr2)), frac(speciesP1,
+									kMp1));
 				}
 			}
 			// Construct formula
