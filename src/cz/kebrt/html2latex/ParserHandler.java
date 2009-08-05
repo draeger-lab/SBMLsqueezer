@@ -98,7 +98,7 @@ class ParserHandler implements IParserHandler {
         } catch (IOException e) {
             System.err.println("Can't write into output file.");
         } catch (NoItemException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
@@ -130,7 +130,7 @@ class ParserHandler implements IParserHandler {
         } catch (IOException e) {
             System.err.println("Can't write into output file");
         } catch (NoItemException e) {
-            System.out.println(e.toString());
+            System.err.println(e.toString());
             //e.printStackTrace();
         }
 

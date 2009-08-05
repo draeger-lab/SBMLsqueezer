@@ -184,7 +184,7 @@ class CSSStyle {
                         nums[i] = Float.valueOf(numsStr[i])/255;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Wrong color definition in style: " + _name);
+                System.err.println("Wrong color definition in style: " + _name);
                 return;
             }
 

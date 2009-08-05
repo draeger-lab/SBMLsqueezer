@@ -152,7 +152,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			StringBuffer currEnzyme = new StringBuffer();
 			StringBuffer numerator = new StringBuffer();
 
-
 			numerator = times(numerator, kcat);
 			numerator = times(numerator, new StringBuffer(reaction.getReactant(
 					0).getSpecies()));
@@ -187,7 +186,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 
 					factor = times(factor, pow(sum(Integer.toString(1), frac(
 							new StringBuffer(modInhib.get(i)), kIi)), exponent));
-					System.out.println("factor:\t"+factor);
 				}
 				denominator = sum(denominator, factor);
 
@@ -195,20 +193,15 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			denominator = sum(denominator, new StringBuffer(reaction
 					.getReactant(0).getSpecies()));
 			currEnzyme = frac(numerator, denominator);
-			System.out.println("currEnzyme "+currEnzyme);
-			System.out.println("formula "+ formula);
 			enzymeNum++;
 			if (numOfEnzymes <= 1)
 				formula = currEnzyme;
 			else {
-
 				formula = sum(formula, currEnzyme);
 				numerator = times(numerator, new StringBuffer(modE
 						.get(enzymeNum)));
 			}
-
 		} while (enzymeNum <= modE.size() - 1);
-	
 		return times(activationFactor(modActi), formula);
 	}
 

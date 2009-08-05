@@ -67,7 +67,7 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 	 * @see javax.swing.JDialog
 	 */
 	public JHelpBrowser(Dialog owner, String title) {
-		super(owner, "SBMLsqueezer - Online Help");
+		super(owner, title);
 		init();
 	}
 
