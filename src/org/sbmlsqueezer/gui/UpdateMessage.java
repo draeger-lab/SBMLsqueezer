@@ -55,7 +55,7 @@ import org.sbmlsqueezer.resources.Resource;
  */
 
 public class UpdateMessage extends JWindow implements ActionListener {
-
+	
 	/**
 	 * 
 	 */
@@ -75,7 +75,7 @@ public class UpdateMessage extends JWindow implements ActionListener {
 		String notes = "releaseNotes" + out;
 		if (notes.endsWith(".0"))
 			notes = notes.substring(0, notes.length() - 2);
-		if (compareVersionNumbers(plugin.getVersionNumber(), out))
+		if (compareVersionNumbers(SBMLsqueezerPlugin.getVersionNumber(), out))
 			showUpdateMessage("http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/"
 					+ notes + ".htm");
 		plugin.setUpdateChecked(true);
@@ -135,7 +135,7 @@ public class UpdateMessage extends JWindow implements ActionListener {
 
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.setBackground(getBackground());
-		
+
 		okButton = new JButton("OK");
 		okButton.addActionListener(this);
 		showHideButton = new JButton("show release notes");
@@ -145,12 +145,13 @@ public class UpdateMessage extends JWindow implements ActionListener {
 				Image.SCALE_SMOOTH)));
 		showHideButton.setIconTextGap(5);
 		showHideButton.setBorderPainted(false);
-		showHideButton.setBackground(new Color(buttonPanel.getBackground().getRGB()));
+		showHideButton.setBackground(new Color(buttonPanel.getBackground()
+				.getRGB()));
 		showHideButton.setSize(150, 20);
 		showHideButton.addActionListener(this);
 		buttonPanel.add(showHideButton);
 		buttonPanel.add(okButton);
-				
+
 		Scanner scanner = new Scanner(url.openStream());
 		String s = scanner.useDelimiter("<h1>").next();
 		s = "<html><body>" + scanner.useDelimiter("\\Z").next();
@@ -163,7 +164,7 @@ public class UpdateMessage extends JWindow implements ActionListener {
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroll.setPreferredSize(new Dimension(550, 400));
 		contentPanel.add(scroll, BorderLayout.CENTER);
-		
+
 		contentPanel.setVisible(false);
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setBackground(getBackground());
@@ -172,10 +173,8 @@ public class UpdateMessage extends JWindow implements ActionListener {
 				TitledBorder.CENTER, TitledBorder.BELOW_TOP));
 		mainPanel.add(contentPanel, BorderLayout.CENTER);
 		mainPanel.add(buttonPanel, BorderLayout.PAGE_END);
-
 		setContentPane(mainPanel);
 		pack();
-
 		adjustLocation();
 	}
 
@@ -199,8 +198,8 @@ public class UpdateMessage extends JWindow implements ActionListener {
 				dispose();
 			}
 		}
-		this.validate();
-		this.pack();
+		validate();
+		pack();
 		adjustLocation();
 	}
 

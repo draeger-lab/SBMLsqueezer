@@ -43,8 +43,8 @@ public class UpdateMessageThread extends Thread {
 			try {
 				UpdateMessage.checkForUpdate(plugin);
 			} catch (IOException exc) {
-				JOptionPane.showMessageDialog(null, exc.getMessage());
-				exc.printStackTrace();
+				// JOptionPane.showMessageDialog(null, exc.getMessage());
+				// exc.printStackTrace();
 			}
 	}
 }

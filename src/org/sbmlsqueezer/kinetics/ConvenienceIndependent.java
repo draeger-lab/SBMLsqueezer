@@ -124,12 +124,12 @@ public class ConvenienceIndependent extends Convenience {
 
 				StringBuffer numerator, denominator;
 				if (!reaction.getReversible()) {
-					numerator = times(num(enzyme, FORWARD));
-					denominator = times(denominators(enzyme, FORWARD));
+					numerator = times(numeratorElements(enzyme, FORWARD));
+					denominator = times(denominatorElements(enzyme, FORWARD));
 				} else {
-					numerator = diff(num(enzyme, FORWARD), num(enzyme, REVERSE));
-					denominator = sum(times(denominators(enzyme, FORWARD)),
-							times(denominators(enzyme, REVERSE)));
+					numerator = diff(numeratorElements(enzyme, FORWARD), numeratorElements(enzyme, REVERSE));
+					denominator = sum(times(denominatorElements(enzyme, FORWARD)),
+							times(denominatorElements(enzyme, REVERSE)));
 					if (reaction.getNumProducts() > 1
 							&& reaction.getNumReactants() > 1)
 						denominator = diff(denominator, Integer.valueOf(1));
@@ -160,7 +160,7 @@ public class ConvenienceIndependent extends Convenience {
 	 *            true means forward, false means reverse.
 	 * @return
 	 */
-	private StringBuffer num(String enzyme, boolean type) {
+	private StringBuffer numeratorElements(String enzyme, boolean type) {
 		PluginReaction reaction = getParentReaction();
 
 		StringBuffer educts = new StringBuffer();
@@ -168,6 +168,7 @@ public class ConvenienceIndependent extends Convenience {
 		StringBuffer eductroot = new StringBuffer();
 		StringBuffer productroot = new StringBuffer();
 		StringBuffer equation = new StringBuffer();
+		StringBuffer kiG;
 
 		for (int i = 0; i < reaction.getNumReactants(); i++) {
 			PluginSpeciesReference ref = reaction.getReactant(i);
@@ -176,14 +177,13 @@ public class ConvenienceIndependent extends Convenience {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			addLocalParameter(kM);
-			StringBuffer kiG = concat("kG_", ref.getSpecies());
+			kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(kiG);
 			educts = times(educts, pow(frac(getSpecies(ref), kM), ref
 					.getStoichiometry()));
 			eductroot = times(eductroot, pow(brackets(times(kiG, kM)), ref
 					.getStoichiometry()));
 		}
-
 		for (int i = 0; i < reaction.getNumProducts(); i++) {
 			PluginSpeciesReference ref = reaction.getProduct(i);
 			StringBuffer kM = concat("kM_", reaction.getId());
@@ -191,7 +191,7 @@ public class ConvenienceIndependent extends Convenience {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			addLocalParameter(kM);
-			StringBuffer kiG = concat("kG_", ref.getSpecies());
+			kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(kiG);
 			products = times(products, pow(frac(getSpecies(ref), kM), ref
 					.getStoichiometry()));
@@ -218,8 +218,7 @@ public class ConvenienceIndependent extends Convenience {
 	 *            true means forward, false backward.
 	 * @return
 	 */
-	private StringBuffer[] denominators(String enzyme, boolean type) {
-		// type FORWARD = true;
+	private StringBuffer[] denominatorElements(String enzyme, boolean type) {
 		PluginReaction reaction = getParentReaction();
 		StringBuffer[] denoms = new StringBuffer[type ? reaction
 				.getNumReactants() : reaction.getNumProducts()];
@@ -237,8 +236,6 @@ public class ConvenienceIndependent extends Convenience {
 			StringBuffer[] parts = new StringBuffer[(int) ref
 					.getStoichiometry()
 					+ (noOne ? 0 : 1)];
-			// StringBuffer part = brackets(sum(Integer.toString(1), frac(
-			// getSpecies(ref), kM)));
 			StringBuffer part = frac(getSpecies(ref), kM);
 			for (int j = 0; j < parts.length; j++)
 				parts[j] = pow(part, Integer.toString(noOne ? j + 1 : j));
