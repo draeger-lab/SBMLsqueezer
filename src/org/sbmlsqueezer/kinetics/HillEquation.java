@@ -199,33 +199,34 @@ public class HillEquation extends BasicKineticLaw {
 		String rId = getParentReaction().getId();
 
 		// KS: half saturation constant.
-		for (int activatorNum = 0; activatorNum < modTActi.size(); activatorNum++) {
-			StringBuffer kS = concat("kSp_", rId, underscore, modTActi
-					.get(activatorNum));
+		int i;
+		for (i = 0; i < modTActi.size(); i++)
+		/*
+		 * if (!model.getSpecies(modTActi.get(i)).getSpeciesAlias(0).getType()
+		 * .toUpperCase().equals("GENE"))
+		 */{
+			StringBuffer kS = concat("kSp_", rId, underscore, modTActi.get(i));
 			StringBuffer hillcoeff = concat("np_", rId, underscore, modTActi
-					.get(activatorNum));
-			acti = times(acti, frac(pow(new StringBuffer(modTActi
-					.get(activatorNum)), hillcoeff),
-					sum(pow(new StringBuffer(modTActi.get(activatorNum)),
-							hillcoeff), pow(kS, hillcoeff))));
-
+					.get(i));
+			acti = times(acti, frac(pow(modTActi.get(i), hillcoeff), sum(pow(
+					modTActi.get(i), hillcoeff), pow(kS, hillcoeff))));
 			addLocalParameter(hillcoeff);
 			addLocalParameter(kS);
-
 		}
-		for (int inhibitorNum = 0; inhibitorNum < modTInhib.size(); inhibitorNum++) {
-			StringBuffer kS = concat("kSm_", rId, underscore, modTInhib
-					.get(inhibitorNum));
+		for (i = 0; i < modTInhib.size(); i++)
+		/*
+		 * if (!model.getSpecies(modTInhib.get(i)).getSpeciesAlias(0)
+		 * .getType().toUpperCase().equals("GENE"))
+		 */{
+			StringBuffer kS = concat("kSm_", rId, underscore, modTInhib.get(i));
 			StringBuffer hillcoeff = concat("nm_", rId, underscore, modTInhib
-					.get(inhibitorNum));
-
+					.get(i));
 			inhib = times(inhib, diff(Integer.toString(1), frac(pow(
-					new StringBuffer(modTInhib.get(inhibitorNum)), hillcoeff),
-					sum(pow(new StringBuffer(modTInhib.get(inhibitorNum)),
-							hillcoeff), pow(kS, hillcoeff)))));
+					new StringBuffer(modTInhib.get(i)), hillcoeff), sum(pow(
+					new StringBuffer(modTInhib.get(i)), hillcoeff), pow(kS,
+					hillcoeff)))));
 			addLocalParameter(hillcoeff);
 			addLocalParameter(kS);
-
 		}
 		StringBuffer kg = concat("kg_", rId);
 		addLocalParameter(kg);
@@ -239,5 +240,4 @@ public class HillEquation extends BasicKineticLaw {
 			formelTxt = times(formelTxt, inhib);
 		return formelTxt;
 	}
-
 }

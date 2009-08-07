@@ -333,26 +333,26 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					addLocalParameter(kIr2);
 					addLocalParameter(kIr1);
 
-					StringBuffer p1p2;
+					StringBuffer r1r2;
 					if (specRefR1.equals(specRefR2))
-						p1p2 = pow(speciesR1, Integer.toString(2));
+						r1r2 = pow(speciesR1, Integer.toString(2));
 					else
-						p1p2 = times(speciesR1, speciesR2);
+						r1r2 = times(speciesR1, speciesR2);
 					StringBuffer numeratorForward = frac(kcatp, times(kIr1,
 							kMr2));
 					StringBuffer numeratorReverse = frac(kcatn, kMp1);
 					if (modE.size() != 0) {
 						numeratorForward = times(numeratorForward, modE
 								.get(enzymeNum));
-						numeratorForward = times(numeratorForward, p1p2);
 						numeratorReverse = times(numeratorReverse, modE
 								.get(enzymeNum));
 					}
+					numeratorForward = times(numeratorForward, r1r2);
 					numeratorReverse = times(numeratorReverse, speciesP1);
 					numerator = diff(numeratorForward, numeratorReverse);
 					denominator = sum(Integer.toString(1),
 							frac(speciesR1, kIr1), frac(speciesR2, kIr2), frac(
-									p1p2, times(kIr1, kMr2)), frac(speciesP1,
+									r1r2, times(kIr1, kMr2)), frac(speciesP1,
 									kMp1));
 				}
 			}

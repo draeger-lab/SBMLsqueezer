@@ -254,8 +254,8 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				addLocalParameter(kIp1);
 				addLocalParameter(kIp2);
 
-				StringBuffer numeratorForward = new StringBuffer(kcatp);
-				StringBuffer numeratorReverse = new StringBuffer(kcatn);
+				StringBuffer numeratorForward = frac(kcatp, times(kIr1, kMr2));
+				StringBuffer numeratorReverse = frac(kcatn, times(kIp2, kMp1));
 
 				if (modE.size() > 0)
 					numeratorForward = times(numeratorForward, modE
@@ -280,7 +280,6 @@ public class OrderedMechanism extends GeneralizedMassAction {
 							.getSpecies(), specRefE2.getSpecies()), times(kIr1,
 							kMr2)));
 				}
-				numeratorForward = frac(numeratorForward, times(kIr1, kMr2));
 
 				if (modE.size() > 0)
 					numeratorReverse = times(numeratorReverse, modE
@@ -292,7 +291,6 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				else
 					numeratorReverse = times(numeratorReverse, times(specRefP1
 							.getSpecies(), specRefP2.getSpecies()));
-				numeratorReverse = frac(numeratorReverse, times(kIp2, kMp1));
 				numerator = diff(numeratorForward, numeratorReverse);
 
 				denominator = sum(denominator, frac(times(kMp2, specRefE1
@@ -337,8 +335,8 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				addLocalParameter(kIr1);
 				addLocalParameter(kIp1);
 
-				StringBuffer numeratorForward = new StringBuffer(kcatp);
-				StringBuffer numeratorReverse = new StringBuffer(kcatn);
+				StringBuffer numeratorForward = frac(kcatp, times(kIr1, kMr2));
+				StringBuffer numeratorReverse = frac(kcatn, kMp1);
 
 				if (modE.size() > 0)
 					numeratorForward = times(numeratorForward, modE
@@ -364,12 +362,11 @@ public class OrderedMechanism extends GeneralizedMassAction {
 							.getSpecies(), specRefE2.getSpecies()), times(kIr1,
 							kMr2)));
 				}
-				numeratorForward = frac(numeratorForward, times(kIr1, kMr2));
 				if (modE.size() > 0)
 					numeratorReverse = times(numeratorReverse, modE
 							.get(enzymeNum));
-				numeratorReverse = times(numeratorReverse, frac(specRefP1
-						.getSpecies(), kMp1));
+				numeratorReverse = times(numeratorReverse, specRefP1
+						.getSpecies());
 				numerator = diff(numeratorForward, numeratorReverse);
 				denominator = sum(denominator, frac(times(kMr1, specRefE2
 						.getSpecies(), specRefP1.getSpecies()), times(kIr1,

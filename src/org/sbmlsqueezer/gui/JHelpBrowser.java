@@ -36,6 +36,8 @@ import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.sbmlsqueezer.resources.Resource;
 
@@ -44,7 +46,10 @@ import org.sbmlsqueezer.resources.Resource;
  *         Dr&auml;ger</a>
  * 
  */
-public class JHelpBrowser extends JDialog implements ActionListener {
+public class JHelpBrowser extends JDialog implements ActionListener,
+		HyperlinkListener {
+
+	private JButton backButton, nextButton;
 
 	/**
    * 
@@ -91,12 +96,24 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
-			String name = ((JButton) e.getSource()).getName();
+			JButton button = (JButton) e.getSource();
+			String name = button.getName();
 			if (name.equals("back") && (browser != null)) {
-				browser.back();
-
+				if (!browser.back()) {
+					button.setEnabled(false);
+					if (browser.getNumPagesVisited() > 1
+							&& !nextButton.isEnabled())
+						nextButton.setEnabled(true);
+				} else if (!nextButton.isEnabled())
+					nextButton.setEnabled(true);
 			} else if (name.equals("next") && (browser != null)) {
-				browser.next();
+				if (!browser.next()) {
+					button.setEnabled(false);
+					if (browser.getNumPagesVisited() > 1
+							&& !backButton.isEnabled())
+						backButton.setEnabled(true);
+				} else if (!backButton.isEnabled())
+					backButton.setEnabled(true);
 			}
 		}
 	}
@@ -107,18 +124,17 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 	 */
 	private void init() {
 		browser = new JBrowser(Resource.class.getResource("html/help.html"));
+		browser.addHyperlinkListener(this);
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(new JScrollPane(browser,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 				BorderLayout.CENTER);
 		JToolBar toolbar = new JToolBar();
-		JButton backButton, nextButton;
 		try {
 			Image image = ImageIO.read(Resource.class
 					.getResource("img/back.png"));
 			// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-
 			backButton = new JButton(new ImageIcon(image));
 			backButton.setToolTipText("Last Page");
 		} catch (IOException e) {
@@ -127,6 +143,7 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		}
 		backButton.setName("back");
 		backButton.addActionListener(this);
+		backButton.setEnabled(false);
 		toolbar.add(backButton);
 
 		try {
@@ -141,6 +158,7 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		}
 		nextButton.setName("next");
 		nextButton.addActionListener(this);
+		nextButton.setEnabled(false);
 		toolbar.add(nextButton);
 		content.add(toolbar, BorderLayout.NORTH);
 		setContentPane(content);
@@ -152,5 +170,11 @@ public class JHelpBrowser extends JDialog implements ActionListener {
 		}
 		setDefaultLookAndFeelDecorated(true);
 		setLocationByPlatform(true);
+	}
+
+	public void hyperlinkUpdate(HyperlinkEvent event) {
+		if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED
+				&& !backButton.isEnabled())
+			backButton.setEnabled(true);
 	}
 }

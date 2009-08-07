@@ -143,7 +143,6 @@ public class Convenience extends GeneralizedMassAction {
 				denominator1[eductNum] = brackets(frac(specref.getSpecies(), kM));
 
 				for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
-
 					denominator1[eductNum] = sum(denominator1[eductNum], pow(
 							frac(specref.getSpecies(), kM), Integer
 									.toString(m + 1)));
@@ -224,7 +223,6 @@ public class Convenience extends GeneralizedMassAction {
 					else
 						numerator2 = times(numerator2, frac(
 								getSpecies(specRefP), kM));
-
 				}
 				if (parentReaction.getNumProducts() == 1)
 					denominator = sum(denominator, denominator2[0]);
@@ -247,6 +245,5 @@ public class Convenience extends GeneralizedMassAction {
 
 		return times(activationFactor(modActi), inhibitionFactor(modInhib),
 				sum(formelTxt));
-
 	}
 }
