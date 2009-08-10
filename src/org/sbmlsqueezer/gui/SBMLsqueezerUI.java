@@ -212,7 +212,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			buffer.write(new LaTeXExport().toLaTeX(model, reaction).toString());
 			buffer.close();
 		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(null, "<html>" + exc.getMessage()
+			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
 					+ "</html>", exc.getClass().getName(),
 					JOptionPane.WARNING_MESSAGE);
 		}
