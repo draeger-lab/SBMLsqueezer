@@ -1296,13 +1296,12 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		String title = model.getName().length() > 0 ? model.getName()
 				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
 		StringBuffer laTeX = getDocumentHead(title);
-		laTeX.append((!reaction.getName().equals("") && !reaction.getName()
-				.equals(reaction.getId())) ? "Reaction: \\texttt{"
-				+ replaceAll("_", reaction.getId(), "\\_") + "}" + " ("
-				+ replaceAll("_", reaction.getName(), "\\_") + ")" + newLine
-				+ "\\begin{equation*}" + newLine + "v=" : "Reaction: \\texttt{"
-				+ replaceAll("_", reaction.getId(), "\\_") + "}" + newLine
-				+ "\\begin{equation*}" + newLine + "v=");
+		String name = maskSpecialChars(reaction.getId());
+		laTeX.append("\\begin{equation*}");
+		laTeX.append(newLine);
+		laTeX.append("v_\\mathtt{");
+		laTeX.append(name);
+		laTeX.append("}= ");
 		if ((reaction.getKineticLaw() != null)
 				&& (reaction.getKineticLaw().getMath() != null))
 			laTeX.append(toLaTeX(model, reaction.getKineticLaw().getMath()));
@@ -1316,6 +1315,50 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 						+ "\\end{center}");
 		laTeX.append(newLine + "\\end{document}");
 		return laTeX;
+	}
+	
+	/**
+	 * Masks all special characters used by LaTeX with a backslash including
+	 * hyphen symbols.
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static String maskSpecialChars(String string) {
+		return maskSpecialChars(string, true);
+	}
+
+	/**
+	 * 
+	 * @param string
+	 * @param hyphen
+	 *            if true a hyphen symbol is introduced at each position where a
+	 *            special character has to be masked anyway.
+	 * @return
+	 */
+	public static String maskSpecialChars(String string, boolean hyphen) {
+		StringBuffer masked = new StringBuffer();
+		for (int i = 0; i < string.length(); i++) {
+			char atI = string.charAt(i);
+			if (atI == '<')
+				masked.append("$<$");
+			else if (atI == '>')
+				masked.append("$>$");
+			else {
+				if ((atI == '_') || (atI == '\\') || (atI == '$')
+						|| (atI == '&') || (atI == '#') || (atI == '{')
+						|| (atI == '}') || (atI == '~') || (atI == '%')
+						|| (atI == '^')) {
+					if ((i == 0) || (!hyphen))
+						masked.append('\\');
+					else if (hyphen && (string.charAt(i - 1) != '\\'))
+						masked.append("\\-\\"); // masked.append('\\');
+					// } else if ((atI == '[') || (atI == ']')) {
+				}
+				masked.append(atI);
+			}
+		}
+		return masked.toString().trim();
 	}
 
 	/*

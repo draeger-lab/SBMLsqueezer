@@ -21,6 +21,9 @@ potenziert wird (sonst Probleme mit Einheiten).
 
 SBO-Ids immer mithilfe des SBO-Parsers identifizieren.
 
+Direkt am Vorschaufenster für kinetische Gleichungen könnte ein Knopf
+sein, mit dem die Gleichung nach LaTeX oder Text gespeichert werden
+könnte.
 
 +--------------------------+
 | Abgeschlossene Testfälle |
