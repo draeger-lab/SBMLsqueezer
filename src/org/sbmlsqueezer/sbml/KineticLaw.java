@@ -12,18 +12,18 @@ import org.sbml.libsbml.ASTNode;
  * @author Andreas Dr&auml;ger <a href="mailto:andreas.draeger@uni-tuebingen.de">andreas.draeger@uni-tuebingen.de</a>
  *
  */
-public class KineticLaw {
+public class KineticLaw extends SBase{
 
-	List<String> listOfParameters;
-	ASTNode ast;
+	List<Parameter> listOfParameters;
+	ASTNode math;
 	
 	public KineticLaw() {
-		listOfParameters = new LinkedList<String>();
-		ast = new ASTNode();
+		listOfParameters = new LinkedList<Parameter>();
+		math = new ASTNode();
 	}
 
 	
 	public ASTNode getMath() {
-		return ast;
+		return math;
 	}
 }

@@ -1,5 +1,13 @@
 package org.sbmlsqueezer.sbml;
 
-public class ModifierSpeciesReference {
+public class ModifierSpeciesReference extends SimpleSpeciesReference{
+	
+	public ModifierSpeciesReference(){
+		super();
+	}
+	
+	public ModifierSpeciesReference(Species spec){
+		super(spec);
+	}
 
 }
