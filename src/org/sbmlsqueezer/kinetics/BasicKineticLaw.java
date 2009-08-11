@@ -172,11 +172,6 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 		return brackets(arith('-', subtrahents));
 	}
 
-	private static StringBuffer floor(StringBuffer text) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * Returns a fraction with the given elements as numerator and denominator.
 	 * 

@@ -108,7 +108,6 @@ public class JSettingsPanel extends JPanel {
 
 	private JRadioButton jRadioButtonBiUniORD;
 
-	// @SuppressWarnings("unused")
 	private boolean possibleEnzymeAllNotChecked;
 
 	public JSettingsPanel() {
@@ -622,6 +621,10 @@ public class JSettingsPanel extends JPanel {
 		return (short) 1; // GMAK.
 	}
 
+	public boolean isPossibleEnzymeAllNotChecked() {
+		return possibleEnzymeAllNotChecked;
+	}
+
 	public boolean isPossibleEnzymeAsRNA() {
 		return jCheckBoxPossibleEnzymeAsRNA.isSelected();
 	}
@@ -1083,6 +1086,10 @@ public class JSettingsPanel extends JPanel {
 			jRadioButtonGMAK.setSelected(true);
 			break;
 		}
+	}
+
+	public void setPossibleEnzymeAllNotChecked(boolean possibleEnzymeAllNotChecked) {
+		this.possibleEnzymeAllNotChecked = possibleEnzymeAllNotChecked;
 	}
 
 	public void setPossibleEnzymeAsRNA(boolean b) {

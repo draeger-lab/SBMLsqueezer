@@ -20,8 +20,6 @@ package org.sbmlsqueezer.gui;
 
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-
 /**
  * 
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>

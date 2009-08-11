@@ -110,6 +110,10 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 
 	// private boolean numberEquations = true;
 
+	public boolean isTypeWriter() {
+		return typeWriter;
+	}
+
 	/**
 	 * Constructs a new instance of LaTeX export. For each document to be
 	 * translated a new instance has to be created. Here default values are used
