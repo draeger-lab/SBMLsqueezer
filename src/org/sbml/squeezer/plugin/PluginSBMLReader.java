@@ -16,54 +16,42 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.io;
+package org.sbml.squeezer.plugin;
+
+import jp.sbi.celldesigner.plugin.PluginKineticLaw;
+import jp.sbi.celldesigner.plugin.PluginModel;
+import jp.sbi.celldesigner.plugin.PluginModifierSpeciesReference;
+import jp.sbi.celldesigner.plugin.PluginParameter;
+import jp.sbi.celldesigner.plugin.PluginReaction;
+import jp.sbi.celldesigner.plugin.PluginSpecies;
+import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.KineticLaw;
 import org.sbml.Model;
-import org.sbml.ModifierSpeciesReference;
-import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
+import org.sbml.ModifierSpeciesReference;
+import org.sbml.Parameter;
+import org.sbml.squeezer.io.AbstractSBMLconverter;
 
-/**
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
- * 
- */
-public class LibSBMLconverter extends AbstractSBMLconverter {
+public class PluginSBMLReader extends AbstractSBMLconverter {
 
 	private Model model;
-	private SBMLDocument doc;
 
 	/**
-	 * get a libsbml model converts it to sbmlsquezzer format and save the new
-	 * model
+	 * get a model from the celldesigneroutput, converts it to sbmlsqueezer format and stores it
 	 * 
 	 * @param model
 	 */
-	public LibSBMLconverter(org.sbml.libsbml.Model model) {
+
+	public PluginSBMLReader(PluginModel model) {
 		super();
 		this.model = convert(model);
 		this.model.addChangeListener(this);
 	}
 
-	/**
-	 * get a xml file, converts it and save the sbmlsquezzer model
-	 * 
-	 * @param fileName
-	 */
-	public LibSBMLconverter(String fileName) {
-		super();
-		doc = (new SBMLReader()).readSBML(fileName);
-		this.model = convert(doc.getModel());
-		this.model.addChangeListener(this);
-	}
-
-	public Model convert(org.sbml.libsbml.Model model) {
+	public Model convert(PluginModel model) {
 		Model m = new Model(model.getId());
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			m.addReaction(convert(model.getReaction(i)));
@@ -71,11 +59,10 @@ public class LibSBMLconverter extends AbstractSBMLconverter {
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			m.addSpecies(convert(model.getSpecies(i)));
 		}
-
 		return m;
 	}
 
-	public Reaction convert(org.sbml.libsbml.Reaction reac) {
+	public Reaction convert(PluginReaction reac) {
 		Reaction reaction = new Reaction(reac.getId());
 		for (int i = 0; i < reac.getNumReactants(); i++) {
 			reaction.addReactant(convert(reac.getReactant(i)));
@@ -93,29 +80,29 @@ public class LibSBMLconverter extends AbstractSBMLconverter {
 		return reaction;
 	}
 
-	public Species convert(org.sbml.libsbml.Species spec) {
+	public Species convert(PluginSpecies spec) {
 		Species species = new Species(spec.getId());
 		species.addChangeListener(this);
 		return species;
 	}
 
-	public SpeciesReference convert(org.sbml.libsbml.SpeciesReference specref) {
+	public SpeciesReference convert(PluginSpeciesReference specref) {
 		SpeciesReference spec = new SpeciesReference(new Species(specref
-				.getSpecies()));
+				.getSpeciesInstance().getId()));
 		spec.setStoichiometry(specref.getStoichiometry());
 		spec.addChangeListener(this);
 		return spec;
 	}
 
 	public ModifierSpeciesReference convert(
-			org.sbml.libsbml.ModifierSpeciesReference plumod) {
+			PluginModifierSpeciesReference plumod) {
 		ModifierSpeciesReference mod = new ModifierSpeciesReference(
-				new Species(plumod.getSpecies()));
+				new Species(plumod.getSpeciesInstance().getId()));
 		mod.addChangeListener(this);
 		return mod;
 	}
 
-	public KineticLaw convert(org.sbml.libsbml.KineticLaw plukinlaw) {
+	public KineticLaw convert(PluginKineticLaw plukinlaw) {
 		KineticLaw kinlaw = new KineticLaw();
 		kinlaw.setMath(plukinlaw.getMath());
 		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
@@ -125,10 +112,9 @@ public class LibSBMLconverter extends AbstractSBMLconverter {
 		return kinlaw;
 	}
 
-	public Parameter convert(org.sbml.libsbml.Parameter plupara) {
+	public Parameter convert(PluginParameter plupara) {
 		Parameter para = new Parameter(plupara.getId());
 		para.addChangeListener(this);
 		return para;
 	}
-
 }

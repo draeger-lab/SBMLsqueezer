@@ -22,6 +22,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JMenuItem;
 
+import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
+
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
 /**

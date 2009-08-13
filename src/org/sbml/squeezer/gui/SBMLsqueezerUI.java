@@ -63,6 +63,7 @@ import org.sbml.squeezer.kinetics.KineticLawGenerator;
 import org.sbml.squeezer.kinetics.LawListener;
 import org.sbml.squeezer.kinetics.ModificationException;
 import org.sbml.squeezer.kinetics.RateLawNotApplicableException;
+import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
 
 /**

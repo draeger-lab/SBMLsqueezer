@@ -20,6 +20,8 @@ package org.sbml.squeezer.gui;
 
 import java.io.IOException;
 
+import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
+
 /**
  * 
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>

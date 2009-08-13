@@ -27,19 +27,22 @@ package org.sbml;
  */
 public abstract class NamedSBase extends SBase {
 
-	String id;
-	String name;
+	private String id;
+	private String name;
 
 	public NamedSBase() {
+		id = null;
+		name = null;
 	}
 
 	public NamedSBase(String id) {
 		super();
 		this.id = id;
+		name = null;
 	}
 
 	public String getId() {
-		return id;
+		return isSetId() ? id : "";
 	}
 
 	public void setId(String id) {
@@ -48,7 +51,7 @@ public abstract class NamedSBase extends SBase {
 	}
 
 	public String getName() {
-		return name;
+		return isSetName() ? name : "";
 	}
 
 	public void setName(String name) {
@@ -56,4 +59,21 @@ public abstract class NamedSBase extends SBase {
 		stateChanged();
 	}
 
+	@Override
+	public String toString() {
+		if (isSetName())
+			return name;
+		if (isSetId())
+			return id;
+		String name = getClass().getName();
+		return name.substring(name.lastIndexOf('.') + 1);
+	}
+
+	public boolean isSetName() {
+		return name != null ? true : false;
+	}
+
+	public boolean isSetId() {
+		return id != null ? true : false;
+	}
 }
