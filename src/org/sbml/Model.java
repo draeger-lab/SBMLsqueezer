@@ -19,6 +19,7 @@
 package org.sbml;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -29,8 +30,9 @@ import java.util.LinkedList;
  */
 public class Model extends NamedSBase {
 
-	LinkedList<Species> listofSpecies = new LinkedList<Species>();
-	LinkedList<Reaction> listofReactions = new LinkedList<Reaction>();
+	private LinkedList<Species> listOfSpecies = new LinkedList<Species>();
+	private LinkedList<Reaction> listOfReactions = new LinkedList<Reaction>();
+	private LinkedList<Parameter> listOfParameters = new LinkedList<Parameter>();;
 
 	public Model(String id) {
 		super(id);
@@ -42,7 +44,7 @@ public class Model extends NamedSBase {
 	 * @param spec
 	 */
 	public void addSpecies(Species spec) {
-		listofSpecies.add(spec);
+		listOfSpecies.add(spec);
 		stateChanged();
 	}
 
@@ -52,7 +54,7 @@ public class Model extends NamedSBase {
 	 * @param spec
 	 */
 	public void removeSpecies(Species spec) {
-		listofSpecies.remove(spec);
+		listOfSpecies.remove(spec);
 		stateChanged();
 	}
 
@@ -62,7 +64,7 @@ public class Model extends NamedSBase {
 	 * @param reac
 	 */
 	public void addReaction(Reaction reac) {
-		listofReactions.add(reac);
+		listOfReactions.add(reac);
 		stateChanged();
 	}
 
@@ -72,8 +74,42 @@ public class Model extends NamedSBase {
 	 * @param reac
 	 */
 	public void removeReaction(Reaction reac) {
-		listofReactions.remove(reac);
-		stateChanged();
+		listOfReactions.remove(reac);
+		reac.sbaseRemoved();
 	}
 
+	public void addParameter(Parameter parameter) {
+		Parameter p = new Parameter(parameter);
+		listOfParameters.add(p);
+		p.sbaseAdded();
+	}
+	
+	public void removeParameter(Parameter parameter) {
+		listOfParameters.remove(parameter);
+		parameter.sbaseRemoved();
+	}
+
+	public List<Species> getListOfSpecies() {
+		return listOfSpecies;
+	}
+
+	public List<Reaction> getListOfReactions() {
+		return listOfReactions;
+	}
+
+	public List<Parameter> getListOfParameters() {
+		return listOfParameters;
+	}
+
+	public int getNumReactions() {
+		return listOfReactions.size();
+	}
+
+	public int getNumSpecies() {
+		return listOfSpecies.size();
+	}
+
+	public int getNumParameters() {
+		return listOfParameters.size();
+	}
 }

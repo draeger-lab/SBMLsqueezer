@@ -16,7 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.io;
+package org.sbml.squeezer.io;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import org.sbml.SBase;
 
@@ -26,10 +29,43 @@ import org.sbml.SBase;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public interface SBaseChangedListener {
-	void stateChanged(SBase sb);
+public abstract class AbstractSBMLconverter implements SBaseChangedListener {
 
-	void sbaseAdded(SBase sb);
+	private List<SBase> added;
+	private List<SBase> removed;
+	private List<SBase> changed;
 
-	void sbaseRemoved(SBase sb);
+	public AbstractSBMLconverter() {
+		added = new LinkedList<SBase>();
+		removed = new LinkedList<SBase>();
+		changed = new LinkedList<SBase>();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBaseChangedListener#sbaseAdded(org.sbml.SBase)
+	 */
+	public void sbaseAdded(SBase sb) {
+		added.add(sb);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBaseChangedListener#sbaseRemoved(org.sbml.SBase)
+	 */
+	public void sbaseRemoved(SBase sb) {
+		removed.add(sb);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
+	 */
+	public void stateChanged(SBase sb) {
+		changed.add(sb);
+	}
+	
 }

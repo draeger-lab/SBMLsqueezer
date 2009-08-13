@@ -16,10 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package org.sbml.squeezer.plugin;
 
 import java.awt.event.ActionEvent;
 import java.io.PrintStream;
+
+import org.sbml.squeezer.gui.SBMLsqueezerUIThread;
+import org.sbml.squeezer.gui.UpdateMessageThread;
 
 import jp.sbi.celldesigner.plugin.PluginAction;
 

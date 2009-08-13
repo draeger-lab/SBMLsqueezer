@@ -38,8 +38,7 @@ public class KineticLaw extends SBase {
 	public KineticLaw() {
 		listOfParameters = new LinkedList<Parameter>();
 		reaction = null;
-		math = new ASTNode();
-		reaction.setKineticLaw(this);
+		math = null;
 	}
 
 	public KineticLaw(KineticLaw kineticLaw) {
@@ -76,7 +75,7 @@ public class KineticLaw extends SBase {
 	 * @return
 	 */
 	public ASTNode getMath() {
-		return math;
+		return isSetMath() ? math : new ASTNode();
 	}
 
 	/**
@@ -171,5 +170,21 @@ public class KineticLaw extends SBase {
 	public void setReaction(Reaction reaction) {
 		this.reaction = reaction;
 		stateChanged();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#toString()
+	 */
+	@Override
+	public String toString() {
+		if (isSetMath())
+			return libsbml.formulaToString(math);
+		return "";
+	}
+
+	public boolean isSetMath() {
+		return math != null ? true : false;
 	}
 }

@@ -18,9 +18,10 @@
  */
 package org.sbml;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import org.sbml.io.SBaseChangedListener;
+import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
  * 
@@ -37,6 +38,7 @@ public abstract class SBase {
 	private List<SBaseChangedListener> listOfListeners;
 
 	public SBase() {
+		listOfListeners = new LinkedList<SBaseChangedListener>();
 	}
 
 	/**
@@ -113,4 +115,10 @@ public abstract class SBase {
 		for (SBaseChangedListener listener : listOfListeners)
 			listener.stateChanged(this);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public abstract String toString();
 }

@@ -43,6 +43,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
 
 /**
