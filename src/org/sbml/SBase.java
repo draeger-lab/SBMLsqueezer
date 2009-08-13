@@ -20,8 +20,7 @@ package org.sbml;
 
 import java.util.List;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import org.sbml.io.SBaseChangedListener;
 
 /**
  * 
@@ -35,12 +34,12 @@ public abstract class SBase {
 	private String metaid;
 	private int SBOTerm;
 	private String notes;
-	private List<ChangeListener> listOfListeners;
+	private List<SBaseChangedListener> listOfListeners;
 
 	public SBase() {
 	}
 
-	public void addChangeListener(ChangeListener l) {
+	public void addChangeListener(SBaseChangedListener l) {
 		listOfListeners.add(l);
 	}
 
@@ -64,7 +63,7 @@ public abstract class SBase {
 		return sbo.toString();
 	}
 
-	public void removeChangeListener(ChangeListener l) {
+	public void removeChangeListener(SBaseChangedListener l) {
 		listOfListeners.remove(l);
 	}
 
@@ -84,7 +83,17 @@ public abstract class SBase {
 	}
 
 	public void stateChanged() {
-		for (ChangeListener listener : listOfListeners)
-			listener.stateChanged(new ChangeEvent(this));
+		for (SBaseChangedListener listener : listOfListeners)
+			listener.stateChanged(this);
+	}
+	
+	public void sbaseAdded() {
+		for (SBaseChangedListener listener : listOfListeners)
+			listener.sbaseAdded(this);
+	}
+	
+	public void sbaseRemoved() {
+		for (SBaseChangedListener listener : listOfListeners)
+			listener.stateChanged(this);
 	}
 }

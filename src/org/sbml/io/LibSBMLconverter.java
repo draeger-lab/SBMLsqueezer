@@ -39,12 +39,14 @@ public class LibSBMLconverter extends AbstractSBMLconverter {
 	public LibSBMLconverter(org.sbml.libsbml.Model model) {
 		super();
 		this.model = convert(model);
+		this.model.addChangeListener(this);
 	}
 	
 	public LibSBMLconverter(String fileName) {
 		super();
 		doc = (new SBMLReader()).readSBML(fileName);
 		this.model = convert(doc.getModel());
+		this.model.addChangeListener(this);
 	}
 
 	public static Model convert(org.sbml.libsbml.Model model) {
