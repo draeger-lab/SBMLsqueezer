@@ -18,25 +18,102 @@
  */
 package org.sbml.io;
 
+import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
+import jp.sbi.celldesigner.plugin.PluginModifierSpeciesReference;
+import jp.sbi.celldesigner.plugin.PluginParameter;
+import jp.sbi.celldesigner.plugin.PluginReaction;
+import jp.sbi.celldesigner.plugin.PluginSpecies;
+import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
+import org.sbml.KineticLaw;
 import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.Species;
+import org.sbml.SpeciesReference;
+import org.sbml.ModifierSpeciesReference;
+import org.sbml.Parameter;
 
 public class CellDesignerSBMLconverter extends AbstractSBMLconverter {
 
 	private Model model;
-	
+
+	/**
+	 * get a model from the celldesigneroutput, converts it to sbmlsqueezer format and stores it
+	 * 
+	 * @param model
+	 */
+
 	public CellDesignerSBMLconverter(PluginModel model) {
 		super();
 		this.model = convert(model);
 		this.model.addChangeListener(this);
 	}
 
-	public static Model convert(PluginModel model) {
+	public Model convert(PluginModel model) {
 		Model m = new Model(model.getId());
-		// TODO
+		for (int i = 0; i < model.getNumReactions(); i++) {
+			m.addReaction(convert(model.getReaction(i)));
+		}
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			m.addSpecies(convert(model.getSpecies(i)));
+		}
 		return m;
 	}
 
+	public Reaction convert(PluginReaction reac) {
+		Reaction reaction = new Reaction(reac.getId());
+		for (int i = 0; i < reac.getNumReactants(); i++) {
+			reaction.addReactant(convert(reac.getReactant(i)));
+		}
+		for (int i = 0; i < reac.getNumProducts(); i++) {
+			reaction.addProduct(convert(reac.getProduct(i)));
+		}
+		for (int i = 0; i < reac.getNumModifiers(); i++) {
+			reaction.addModifier(convert(reac.getModifier(i)));
+		}
+		reaction.setKineticLaw(convert(reac.getKineticLaw()));
+		reaction.setFast(reac.getFast());
+		reaction.setReversible(reac.getReversible());
+		reaction.addChangeListener(this);
+		return reaction;
+	}
 
+	public Species convert(PluginSpecies spec) {
+		Species species = new Species(spec.getId());
+		species.addChangeListener(this);
+		return species;
+	}
+
+	public SpeciesReference convert(PluginSpeciesReference specref) {
+		SpeciesReference spec = new SpeciesReference(new Species(specref
+				.getSpeciesInstance().getId()));
+		spec.setStoichiometry(specref.getStoichiometry());
+		spec.addChangeListener(this);
+		return spec;
+	}
+
+	public ModifierSpeciesReference convert(
+			PluginModifierSpeciesReference plumod) {
+		ModifierSpeciesReference mod = new ModifierSpeciesReference(
+				new Species(plumod.getSpeciesInstance().getId()));
+		mod.addChangeListener(this);
+		return mod;
+	}
+
+	public KineticLaw convert(PluginKineticLaw plukinlaw) {
+		KineticLaw kinlaw = new KineticLaw();
+		kinlaw.setMath(plukinlaw.getMath());
+		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
+			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
+		}
+		kinlaw.addChangeListener(this);
+		return kinlaw;
+	}
+
+	public Parameter convert(PluginParameter plupara) {
+		Parameter para = new Parameter(plupara.getId());
+		para.addChangeListener(this);
+		return para;
+	}
 }

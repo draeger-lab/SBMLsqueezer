@@ -36,23 +36,44 @@ public class Model extends NamedSBase {
 		super(id);
 	}
 
+	/**
+	 * adds a species to the model
+	 * 
+	 * @param spec
+	 */
 	public void addSpecies(Species spec) {
 		listofSpecies.add(spec);
 		stateChanged();
 	}
 
+	/**
+	 * removes a species from the model
+	 * 
+	 * @param spec
+	 */
 	public void removeSpecies(Species spec) {
 		listofSpecies.remove(spec);
 		stateChanged();
 	}
 
+	/**
+	 * adds a reaction to the model
+	 * 
+	 * @param reac
+	 */
 	public void addReaction(Reaction reac) {
 		listofReactions.add(reac);
 		stateChanged();
 	}
 
+	/**
+	 * removes a reaction from the model
+	 * 
+	 * @param reac
+	 */
 	public void removeReaction(Reaction reac) {
 		listofReactions.remove(reac);
 		stateChanged();
 	}
+
 }

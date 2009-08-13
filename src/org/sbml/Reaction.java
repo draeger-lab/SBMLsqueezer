@@ -34,18 +34,18 @@ public class Reaction extends NamedSBase {
 
 	private LinkedList<SpeciesReference> listOfReactants;
 	private LinkedList<SpeciesReference> listOfProducts;
-	private LinkedList<ModifierSpeciesReference> listOfModifierSpeciesReferences;
+	private LinkedList<ModifierSpeciesReference> listOfModifiers;
 	private KineticLaw kineticLaw;
 
 	public Reaction(String id) {
 		super(id);
 		listOfReactants = new LinkedList<SpeciesReference>();
 		listOfProducts = new LinkedList<SpeciesReference>();
-		listOfModifierSpeciesReferences = new LinkedList<ModifierSpeciesReference>();
+		listOfModifiers = new LinkedList<ModifierSpeciesReference>();
 	}
 
-	public void addModifierSpeciesReference(ModifierSpeciesReference modspecref) {
-		listOfModifierSpeciesReferences.add(modspecref);
+	public void addModifier(ModifierSpeciesReference modspecref) {
+		listOfModifiers.add(modspecref);
 		stateChanged();
 	}
 
@@ -71,9 +71,9 @@ public class Reaction extends NamedSBase {
 		return reversible;
 	}
 
-	public void removeModifierSpeciesReference(
+	public void removeModifier(
 			ModifierSpeciesReference modspecref) {
-		listOfModifierSpeciesReferences.remove(modspecref);
+		listOfModifiers.remove(modspecref);
 		stateChanged();
 	}
 

@@ -39,6 +39,11 @@ public abstract class SBase {
 	public SBase() {
 	}
 
+	/**
+	 * adds a listener to the SBase object. from now on changes will be saved
+	 * 
+	 * @param l
+	 */
 	public void addChangeListener(SBaseChangedListener l) {
 		listOfListeners.add(l);
 	}
@@ -82,16 +87,28 @@ public abstract class SBase {
 		stateChanged();
 	}
 
+	/**
+	 * all listeners are informed about the change in this object
+	 */
 	public void stateChanged() {
 		for (SBaseChangedListener listener : listOfListeners)
 			listener.stateChanged(this);
 	}
-	
+
+	/**
+	 * all listeners are informed about the adding of this object to a list
+	 * 
+	 */
+
 	public void sbaseAdded() {
 		for (SBaseChangedListener listener : listOfListeners)
 			listener.sbaseAdded(this);
 	}
-	
+
+	/**
+	 * 
+	 * all listeners are informed about the deletion of this object from a list
+	 */
 	public void sbaseRemoved() {
 		for (SBaseChangedListener listener : listOfListeners)
 			listener.stateChanged(this);

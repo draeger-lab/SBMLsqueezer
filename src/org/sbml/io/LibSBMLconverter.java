@@ -18,7 +18,13 @@
  */
 package org.sbml.io;
 
+import org.sbml.KineticLaw;
 import org.sbml.Model;
+import org.sbml.ModifierSpeciesReference;
+import org.sbml.Parameter;
+import org.sbml.Reaction;
+import org.sbml.Species;
+import org.sbml.SpeciesReference;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLReader;
 
@@ -34,14 +40,22 @@ public class LibSBMLconverter extends AbstractSBMLconverter {
 	private SBMLDocument doc;
 
 	/**
+	 * get a libsbml model converts it to sbmlsquezzer format and save the new
+	 * model
 	 * 
+	 * @param model
 	 */
 	public LibSBMLconverter(org.sbml.libsbml.Model model) {
 		super();
 		this.model = convert(model);
 		this.model.addChangeListener(this);
 	}
-	
+
+	/**
+	 * get a xml file, converts it and save the sbmlsquezzer model
+	 * 
+	 * @param fileName
+	 */
 	public LibSBMLconverter(String fileName) {
 		super();
 		doc = (new SBMLReader()).readSBML(fileName);
@@ -49,10 +63,72 @@ public class LibSBMLconverter extends AbstractSBMLconverter {
 		this.model.addChangeListener(this);
 	}
 
-	public static Model convert(org.sbml.libsbml.Model model) {
+	public Model convert(org.sbml.libsbml.Model model) {
 		Model m = new Model(model.getId());
-		// TODO
+		for (int i = 0; i < model.getNumReactions(); i++) {
+			m.addReaction(convert(model.getReaction(i)));
+		}
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			m.addSpecies(convert(model.getSpecies(i)));
+		}
+
 		return m;
+	}
+
+	public Reaction convert(org.sbml.libsbml.Reaction reac) {
+		Reaction reaction = new Reaction(reac.getId());
+		for (int i = 0; i < reac.getNumReactants(); i++) {
+			reaction.addReactant(convert(reac.getReactant(i)));
+		}
+		for (int i = 0; i < reac.getNumProducts(); i++) {
+			reaction.addProduct(convert(reac.getProduct(i)));
+		}
+		for (int i = 0; i < reac.getNumModifiers(); i++) {
+			reaction.addModifier(convert(reac.getModifier(i)));
+		}
+		reaction.setKineticLaw(convert(reac.getKineticLaw()));
+		reaction.setFast(reac.getFast());
+		reaction.setReversible(reac.getReversible());
+		reaction.addChangeListener(this);
+		return reaction;
+	}
+
+	public Species convert(org.sbml.libsbml.Species spec) {
+		Species species = new Species(spec.getId());
+		species.addChangeListener(this);
+		return species;
+	}
+
+	public SpeciesReference convert(org.sbml.libsbml.SpeciesReference specref) {
+		SpeciesReference spec = new SpeciesReference(new Species(specref
+				.getSpecies()));
+		spec.setStoichiometry(specref.getStoichiometry());
+		spec.addChangeListener(this);
+		return spec;
+	}
+
+	public ModifierSpeciesReference convert(
+			org.sbml.libsbml.ModifierSpeciesReference plumod) {
+		ModifierSpeciesReference mod = new ModifierSpeciesReference(
+				new Species(plumod.getSpecies()));
+		mod.addChangeListener(this);
+		return mod;
+	}
+
+	public KineticLaw convert(org.sbml.libsbml.KineticLaw plukinlaw) {
+		KineticLaw kinlaw = new KineticLaw();
+		kinlaw.setMath(plukinlaw.getMath());
+		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
+			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
+		}
+		kinlaw.addChangeListener(this);
+		return kinlaw;
+	}
+
+	public Parameter convert(org.sbml.libsbml.Parameter plupara) {
+		Parameter para = new Parameter(plupara.getId());
+		para.addChangeListener(this);
+		return para;
 	}
 
 }
