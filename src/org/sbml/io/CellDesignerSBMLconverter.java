@@ -29,10 +29,12 @@ public class CellDesignerSBMLconverter extends AbstractSBMLconverter {
 	public CellDesignerSBMLconverter(PluginModel model) {
 		super();
 		this.model = convert(model);
+		this.model.addChangeListener(this);
 	}
 
 	public static Model convert(PluginModel model) {
 		Model m = new Model(model.getId());
+		// TODO
 		return m;
 	}
 
