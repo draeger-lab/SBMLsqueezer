@@ -1381,6 +1381,7 @@ public class KineticLawGenerator {
 					PluginParameter para = new PluginParameter(id, kineticLaw);
 					para.setValue(1d);
 					kineticLaw.addParameter(para);
+					plugin.notifySBaseAdded(para);
 				}
 			}
 		}
