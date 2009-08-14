@@ -27,23 +27,61 @@ package org.sbml;
  */
 public class Parameter extends NamedSBase {
 
-	public Parameter(String id) {
-		super(id);
-	}
+	private double value;
+	private boolean constant;
 
 	public Parameter(Parameter p) {
 		super(p.getId());
+		this.value = p.getValue();
+		this.constant = p.isConstant();
 	}
 
+	public Parameter(String id) {
+		super(id);
+		initDefaults();
+	}
+	
+	public void unsetValue() {
+		value = Double.NaN;
+	}
+	public void initDefaults() {
+		value = Double.NaN;
+		// TODO
+	}
+	
 	// @Override
-	public SBase clone() {
+	public Parameter clone() {
 		return new Parameter(this);
 	}
 
-	@Override
+	// @Override
 	public boolean equals(Object o) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public boolean getConstant() {
+		return isConstant();
+	}
+
+	public double getValue() {
+		return value;
+	}
+
+	public boolean isConstant() {
+		return constant;
+	}
+
+	public boolean isSetValue() {
+		return value != Double.NaN;
+	}
+
+	public void setConstant(boolean constant) {
+		this.constant = constant;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
 	}
 
 }

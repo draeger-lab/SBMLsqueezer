@@ -18,8 +18,6 @@
  */
 package org.sbml;
 
-import java.util.LinkedList;
-
 /**
  * 
  * @author Andreas Dr&auml;ger <a
@@ -32,16 +30,21 @@ public class Reaction extends NamedSBase {
 	Boolean reversible = true;
 	Boolean fast = false;
 
-	private LinkedList<SpeciesReference> listOfReactants;
-	private LinkedList<SpeciesReference> listOfProducts;
-	private LinkedList<ModifierSpeciesReference> listOfModifiers;
+	private ListOf<SpeciesReference> listOfReactants;
+	private ListOf<SpeciesReference> listOfProducts;
+	private ListOf<ModifierSpeciesReference> listOfModifiers;
 	private KineticLaw kineticLaw;
 
 	public Reaction(String id) {
 		super(id);
-		listOfReactants = new LinkedList<SpeciesReference>();
-		listOfProducts = new LinkedList<SpeciesReference>();
-		listOfModifiers = new LinkedList<ModifierSpeciesReference>();
+		listOfReactants = new ListOf<SpeciesReference>();
+		listOfProducts = new ListOf<SpeciesReference>();
+		listOfModifiers = new ListOf<ModifierSpeciesReference>();
+	}
+
+	public Reaction(Reaction reaction) {
+		this(reaction.getId());
+		// TODO Auto-generated constructor stub
 	}
 
 	public void addModifier(ModifierSpeciesReference modspecref) {
@@ -71,8 +74,7 @@ public class Reaction extends NamedSBase {
 		return reversible;
 	}
 
-	public void removeModifier(
-			ModifierSpeciesReference modspecref) {
+	public void removeModifier(ModifierSpeciesReference modspecref) {
 		listOfModifiers.remove(modspecref);
 		stateChanged();
 	}
@@ -103,10 +105,9 @@ public class Reaction extends NamedSBase {
 		stateChanged();
 	}
 
-	@Override
-	public SBase clone() {
-		// TODO Auto-generated method stub
-		return null;
+	// @Override
+	public Reaction clone() {
+		return new Reaction(this);
 	}
 
 	@Override

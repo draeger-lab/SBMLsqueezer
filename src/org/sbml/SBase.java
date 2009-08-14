@@ -36,11 +36,39 @@ public abstract class SBase {
 	private String metaid;
 	private int SBOTerm;
 	private String notes;
-	private Set<SBaseChangedListener> listOfListeners;
+	private Set<SBaseChangedListener> setOfListeners;
 
 	public SBase() {
 		parentSBMLObject = null;
-		listOfListeners = new HashSet<SBaseChangedListener>();
+		setOfListeners = new HashSet<SBaseChangedListener>();
+	}
+
+	public SBase(SBase sb) {
+		this();
+		if (sb.isSetMetaId())
+			this.metaid = new String(sb.getMetaid());
+		if (sb.isSetNotes())
+			this.notes = new String(sb.getNotes());
+	}
+
+	/**
+	 * Predicate returning true or false depending on whether this object's
+	 * 'metaid' attribute has been set.
+	 * 
+	 * @return
+	 */
+	public boolean isSetMetaId() {
+		return metaid != null;
+	}
+
+	/**
+	 * Predicate returning true or false depending on whether this object's
+	 * 'notes' subelement exists and has content.
+	 * 
+	 * @return
+	 */
+	public boolean isSetNotes() {
+		return notes != null;
 	}
 
 	/**
@@ -49,7 +77,7 @@ public abstract class SBase {
 	 * @param l
 	 */
 	public void addChangeListener(SBaseChangedListener l) {
-		listOfListeners.add(l);
+		setOfListeners.add(l);
 	}
 
 	public String getMetaid() {
@@ -73,7 +101,7 @@ public abstract class SBase {
 	}
 
 	public void removeChangeListener(SBaseChangedListener l) {
-		listOfListeners.remove(l);
+		setOfListeners.remove(l);
 	}
 
 	public void setMetaid(String metaid) {
@@ -95,7 +123,7 @@ public abstract class SBase {
 	 * all listeners are informed about the change in this object
 	 */
 	public void stateChanged() {
-		for (SBaseChangedListener listener : listOfListeners)
+		for (SBaseChangedListener listener : setOfListeners)
 			listener.stateChanged(this);
 	}
 
@@ -105,7 +133,7 @@ public abstract class SBase {
 	 */
 
 	public void sbaseAdded() {
-		for (SBaseChangedListener listener : listOfListeners)
+		for (SBaseChangedListener listener : setOfListeners)
 			listener.sbaseAdded(this);
 	}
 
@@ -114,7 +142,7 @@ public abstract class SBase {
 	 * all listeners are informed about the deletion of this object from a list
 	 */
 	public void sbaseRemoved() {
-		for (SBaseChangedListener listener : listOfListeners)
+		for (SBaseChangedListener listener : setOfListeners)
 			listener.stateChanged(this);
 	}
 
@@ -129,15 +157,17 @@ public abstract class SBase {
 	public SBase getParentSBMLObject() {
 		return parentSBMLObject;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	public abstract SBase clone();
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public abstract boolean equals(Object o);

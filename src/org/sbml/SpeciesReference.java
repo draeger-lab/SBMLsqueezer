@@ -38,6 +38,11 @@ public class SpeciesReference extends SimpleSpeciesReference {
 		super(spec);
 	}
 
+	public SpeciesReference(SpeciesReference speciesReference) {
+		this();
+		// TODO Auto-generated constructor stub
+	}
+
 	public double getStoichiometry() {
 		return stoichiometry;
 	}
@@ -45,6 +50,17 @@ public class SpeciesReference extends SimpleSpeciesReference {
 	public void setStoichiometry(double stoichiometry) {
 		this.stoichiometry = stoichiometry;
 		stateChanged();
+	}
+
+	// @Override
+	public SpeciesReference clone() {
+		return new SpeciesReference(this);
+	}
+
+	// @Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

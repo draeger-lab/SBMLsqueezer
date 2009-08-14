@@ -31,6 +31,7 @@ public abstract class NamedSBase extends SBase {
 	private String name;
 
 	public NamedSBase() {
+		super();
 		id = null;
 		name = null;
 	}
@@ -39,6 +40,14 @@ public abstract class NamedSBase extends SBase {
 		super();
 		this.id = id;
 		name = null;
+	}
+
+	public NamedSBase(NamedSBase nsb) {
+		super(nsb);
+		if (nsb.isSetId())
+			this.id = new String(nsb.getId());
+		if (nsb.isSetName())
+			this.name = new String(nsb.getName());
 	}
 
 	public String getId() {
