@@ -31,10 +31,14 @@ public class Species extends NamedSBase {
 		super(id);
 	}
 
+	public Species(Species species) {
+		this(species.getId());
+		// TODO Auto-generated constructor stub
+	}
+
 	// @Override
-	public SBase clone() {
-		// TODO Auto-generated method stub
-		return null;
+	public Species clone() {
+		return new Species(this);
 	}
 
 	// @Override

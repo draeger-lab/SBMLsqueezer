@@ -23,7 +23,7 @@ package org.sbml;
  *         Sch&auml;fer</a>
  * 
  */
-public class SimpleSpeciesReference extends NamedSBase {
+public abstract class SimpleSpeciesReference extends NamedSBase {
 
 	private Species species;
 
@@ -49,17 +49,5 @@ public class SimpleSpeciesReference extends NamedSBase {
 	public void setSpecies(Species spec) {
 		this.species = spec;
 		stateChanged();
-	}
-
-	@Override
-	public SBase clone() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

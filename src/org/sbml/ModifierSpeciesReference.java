@@ -35,4 +35,21 @@ public class ModifierSpeciesReference extends SimpleSpeciesReference {
 		super(spec);
 	}
 
+	public ModifierSpeciesReference(
+			ModifierSpeciesReference modifierSpeciesReference) {
+		this();
+		// TODO Auto-generated constructor stub
+	}
+
+	// @Override
+	public ModifierSpeciesReference clone() {
+		return new ModifierSpeciesReference(this);
+	}
+
+	// @Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

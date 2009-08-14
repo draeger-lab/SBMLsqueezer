@@ -18,9 +18,6 @@
  */
 package org.sbml;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * 
  * @author Andreas Dr&auml;ger <a
@@ -30,12 +27,22 @@ import java.util.List;
  */
 public class Model extends NamedSBase {
 
-	private LinkedList<Species> listOfSpecies = new LinkedList<Species>();
-	private LinkedList<Reaction> listOfReactions = new LinkedList<Reaction>();
-	private LinkedList<Parameter> listOfParameters = new LinkedList<Parameter>();;
+	private ListOf<Species> listOfSpecies;
+	private ListOf<Reaction> listOfReactions;
+	private ListOf<Parameter> listOfParameters;
 
 	public Model(String id) {
 		super(id);
+		listOfSpecies = new ListOf<Species>();
+		listOfReactions = new ListOf<Reaction>();
+		listOfParameters = new ListOf<Parameter>();
+	}
+
+	public Model(Model model) {
+		super(model);
+		listOfSpecies = model.getListOfSpecies().clone();
+		listOfReactions = model.getListOfReactions().clone();
+		listOfParameters = model.getListOfParameters().clone();
 	}
 
 	/**
@@ -89,15 +96,15 @@ public class Model extends NamedSBase {
 		parameter.sbaseRemoved();
 	}
 
-	public List<Species> getListOfSpecies() {
+	public ListOf<Species> getListOfSpecies() {
 		return listOfSpecies;
 	}
 
-	public List<Reaction> getListOfReactions() {
+	public ListOf<Reaction> getListOfReactions() {
 		return listOfReactions;
 	}
 
-	public List<Parameter> getListOfParameters() {
+	public ListOf<Parameter> getListOfParameters() {
 		return listOfParameters;
 	}
 
@@ -114,9 +121,8 @@ public class Model extends NamedSBase {
 	}
 
 	// @Override
-	public SBase clone() {
-		// TODO Auto-generated method stub
-		return null;
+	public Model clone() {
+		return new Model(this);
 	}
 
 	// @Override

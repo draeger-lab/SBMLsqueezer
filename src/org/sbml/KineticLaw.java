@@ -68,6 +68,12 @@ public class KineticLaw extends SBase {
 		return new KineticLaw(this);
 	}
 
+	// @Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	/**
 	 * Returns the mathematical formula for this KineticLaw object and return it
 	 * as as an AST.
@@ -118,6 +124,10 @@ public class KineticLaw extends SBase {
 	 */
 	public Reaction getReaction() {
 		return reaction;
+	}
+
+	public boolean isSetMath() {
+		return math != null ? true : false;
 	}
 
 	/**
@@ -182,15 +192,5 @@ public class KineticLaw extends SBase {
 		if (isSetMath())
 			return libsbml.formulaToString(math);
 		return "";
-	}
-
-	public boolean isSetMath() {
-		return math != null ? true : false;
-	}
-
-	// @Override
-	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }
