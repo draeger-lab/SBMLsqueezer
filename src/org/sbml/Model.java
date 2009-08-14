@@ -18,6 +18,8 @@
  */
 package org.sbml;
 
+import org.sbml.squeezer.io.SBaseChangedListener;
+
 /**
  * 
  * @author Andreas Dr&auml;ger <a
@@ -31,13 +33,6 @@ public class Model extends NamedSBase {
 	private ListOf<Reaction> listOfReactions;
 	private ListOf<Parameter> listOfParameters;
 
-	public Model(String id) {
-		super(id);
-		listOfSpecies = new ListOf<Species>();
-		listOfReactions = new ListOf<Reaction>();
-		listOfParameters = new ListOf<Parameter>();
-	}
-
 	public Model(Model model) {
 		super(model);
 		listOfSpecies = model.getListOfSpecies().clone();
@@ -45,24 +40,28 @@ public class Model extends NamedSBase {
 		listOfParameters = model.getListOfParameters().clone();
 	}
 
-	/**
-	 * adds a species to the model
-	 * 
-	 * @param spec
+	public Model(String id) {
+		super(id);
+		listOfSpecies = new ListOf<Species>();
+		listOfReactions = new ListOf<Reaction>();
+		listOfParameters = new ListOf<Parameter>();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#addChangeListener(org.sbml.squeezer.io.SBaseChangedListener)
 	 */
-	public void addSpecies(Species spec) {
-		listOfSpecies.add(spec);
-		stateChanged();
+	public void addChangeListener(SBaseChangedListener l) {
+		super.addChangeListener(l);
+		listOfParameters.addChangeListener(l);
+		listOfReactions.addChangeListener(l);
+		listOfSpecies.addChangeListener(l);
 	}
 
-	/**
-	 * removes a species from the model
-	 * 
-	 * @param spec
-	 */
-	public void removeSpecies(Species spec) {
-		listOfSpecies.remove(spec);
-		stateChanged();
+	public void addParameter(Parameter parameter) {
+		Parameter p = new Parameter(parameter);
+		listOfParameters.add(p);
+		p.sbaseAdded();
 	}
 
 	/**
@@ -76,48 +75,13 @@ public class Model extends NamedSBase {
 	}
 
 	/**
-	 * removes a reaction from the model
+	 * adds a species to the model
 	 * 
-	 * @param reac
+	 * @param spec
 	 */
-	public void removeReaction(Reaction reac) {
-		listOfReactions.remove(reac);
-		reac.sbaseRemoved();
-	}
-
-	public void addParameter(Parameter parameter) {
-		Parameter p = new Parameter(parameter);
-		listOfParameters.add(p);
-		p.sbaseAdded();
-	}
-
-	public void removeParameter(Parameter parameter) {
-		listOfParameters.remove(parameter);
-		parameter.sbaseRemoved();
-	}
-
-	public ListOf<Species> getListOfSpecies() {
-		return listOfSpecies;
-	}
-
-	public ListOf<Reaction> getListOfReactions() {
-		return listOfReactions;
-	}
-
-	public ListOf<Parameter> getListOfParameters() {
-		return listOfParameters;
-	}
-
-	public int getNumReactions() {
-		return listOfReactions.size();
-	}
-
-	public int getNumSpecies() {
-		return listOfSpecies.size();
-	}
-
-	public int getNumParameters() {
-		return listOfParameters.size();
+	public void addSpecies(Species spec) {
+		listOfSpecies.add(spec);
+		stateChanged();
 	}
 
 	// @Override
@@ -129,5 +93,54 @@ public class Model extends NamedSBase {
 	public boolean equals(Object o) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public ListOf<Parameter> getListOfParameters() {
+		return listOfParameters;
+	}
+
+	public ListOf<Reaction> getListOfReactions() {
+		return listOfReactions;
+	}
+
+	public ListOf<Species> getListOfSpecies() {
+		return listOfSpecies;
+	}
+
+	public int getNumParameters() {
+		return listOfParameters.size();
+	}
+
+	public int getNumReactions() {
+		return listOfReactions.size();
+	}
+
+	public int getNumSpecies() {
+		return listOfSpecies.size();
+	}
+
+	public void removeParameter(Parameter parameter) {
+		listOfParameters.remove(parameter);
+		parameter.sbaseRemoved();
+	}
+
+	/**
+	 * removes a reaction from the model
+	 * 
+	 * @param reac
+	 */
+	public void removeReaction(Reaction reac) {
+		listOfReactions.remove(reac);
+		reac.sbaseRemoved();
+	}
+
+	/**
+	 * removes a species from the model
+	 * 
+	 * @param spec
+	 */
+	public void removeSpecies(Species spec) {
+		listOfSpecies.remove(spec);
+		stateChanged();
 	}
 }

@@ -31,21 +31,29 @@ public class ModifierSpeciesReference extends SimpleSpeciesReference {
 		super();
 	}
 
-	public ModifierSpeciesReference(Species spec) {
-		super(spec);
-	}
-
 	public ModifierSpeciesReference(
 			ModifierSpeciesReference modifierSpeciesReference) {
 		this();
 		// TODO Auto-generated constructor stub
 	}
 
+	public ModifierSpeciesReference(Species spec) {
+		super(spec);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#clone()
+	 */
 	// @Override
 	public ModifierSpeciesReference clone() {
 		return new ModifierSpeciesReference(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
 	// @Override
 	public boolean equals(Object o) {
 		// TODO Auto-generated method stub

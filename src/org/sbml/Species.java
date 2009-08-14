@@ -27,23 +27,105 @@ package org.sbml;
  */
 public class Species extends NamedSBase {
 
-	public Species(String id) {
-		super(id);
-	}
+	private boolean boundaryCondition;
+	private int charge;
+	private boolean constant;
+	// private Compartment compartment;
+	private boolean hasOnlySubstanceUnits;
+	private double initialAmount;
+	private double initialConcentration;
 
 	public Species(Species species) {
 		this(species.getId());
 		// TODO Auto-generated constructor stub
 	}
 
+	public Species(String id) {
+		super(id);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#clone()
+	 */
 	// @Override
 	public Species clone() {
 		return new Species(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
 	// @Override
 	public boolean equals(Object o) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public boolean getBoundaryCondition() {
+		return isBoundaryCondition();
+	}
+
+	public int getCharge() {
+		return charge;
+	}
+
+	public boolean getConstant() {
+		return isConstant();
+	}
+
+	public boolean getHasOnlySubstanceUnits() {
+		return isHasOnlySubstanceUnits();
+	}
+
+	public double getInitialAmount() {
+		return initialAmount;
+	}
+
+	public double getInitialConcentration() {
+		return initialConcentration;
+	}
+
+	public void initDefaults() {
+		// TODO
+	}
+
+	public boolean isBoundaryCondition() {
+		return boundaryCondition;
+	}
+
+	public boolean isConstant() {
+		return constant;
+	}
+
+	public boolean isHasOnlySubstanceUnits() {
+		return hasOnlySubstanceUnits;
+	}
+
+	public void setBoundaryCondition(boolean boundaryCondition) {
+		this.boundaryCondition = boundaryCondition;
+	}
+
+	public void setCharge(int charge) {
+		this.charge = charge;
+	}
+
+	public void setConstant(boolean constant) {
+		this.constant = constant;
+	}
+
+	public void setHasOnlySubstanceUnits(boolean hasOnlySubstanceUnits) {
+		this.hasOnlySubstanceUnits = hasOnlySubstanceUnits;
+	}
+
+	public void setInitialAmount(double initialAmount) {
+		this.initialAmount = initialAmount;
+	}
+
+	public void setInitialConcentration(double initialConcentration) {
+		this.initialConcentration = initialConcentration;
 	}
 }
