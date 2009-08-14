@@ -18,6 +18,9 @@
  */
 package org.sbml.squeezer.plugin;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginModifierSpeciesReference;
@@ -34,13 +37,24 @@ import org.sbml.SpeciesReference;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.squeezer.io.AbstractSBMLconverter;
+import org.sbml.squeezer.resources.Resource;
 
 public class PluginSBMLReader extends AbstractSBMLconverter {
 
 	private Model model;
+	private static Properties alias2sbo;
+	static {
+		try {
+			alias2sbo = Resource.readProperties(Resource.class.getResource(
+					"cfg/Alias2SBO.cfg").getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
-	 * get a model from the celldesigneroutput, converts it to sbmlsqueezer format and stores it
+	 * get a model from the celldesigneroutput, converts it to sbmlsqueezer
+	 * format and stores it
 	 * 
 	 * @param model
 	 */
@@ -73,6 +87,7 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 		for (int i = 0; i < reac.getNumModifiers(); i++) {
 			reaction.addModifier(convert(reac.getModifier(i)));
 		}
+		reaction.setSBOTerm(alias2sbo.get(reac.getReactionType()));
 		reaction.setKineticLaw(convert(reac.getKineticLaw()));
 		reaction.setFast(reac.getFast());
 		reaction.setReversible(reac.getReversible());

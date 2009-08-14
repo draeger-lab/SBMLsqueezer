@@ -19,19 +19,23 @@
 package org.sbml.squeezer.standalone;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.sbml.Model;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
+import org.sbml.NamedSBase;
 import org.sbml.Species;
+import org.sbml.squeezer.resources.Resource;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -39,64 +43,47 @@ import org.sbml.Species;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class SBMLsqueezer {
+public class SBMLsqueezer extends JFrame implements TreeSelectionListener {
+
+	private JPanel details;
+	private SBMLTree tree;
 
 	public SBMLsqueezer(String fileName) {
+		super("SBMLsqueezer Stand Alone");
 		LibSBMLReader converter = new LibSBMLReader(fileName);
 		showGUI(converter.getModel());
 	}
 
 	private void showGUI(Model m) {
 		// TODO: only for testing.
-		JFrame f = new JFrame("SBMLsqueezer Stand Alone");
 		JPanel p = new JPanel(new BorderLayout());
+		details = new JPanel();
+		this.tree = new SBMLTree(m);
+		tree.addTreeSelectionListener(this);
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-				new JScrollPane(model2tree(m),
-						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-				new JPanel());
+				new JScrollPane(tree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), details);
 		p.add(split, BorderLayout.CENTER);
-		f.getContentPane().add(p);
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.pack();
-		f.setLocationRelativeTo(null);
-		f.setVisible(true);
+		getContentPane().add(p);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 
-	/**
-	 * 
-	 * @param m
-	 * @return
-	 */
-	public JTree model2tree(Model m) {
-		DefaultMutableTreeNode modelNode = new DefaultMutableTreeNode(m);
-		if (m.getNumReactions() > 0) {
-			DefaultMutableTreeNode reactionsNode = new DefaultMutableTreeNode(
-					"Reactions");
-			modelNode.add(reactionsNode);
-			for (Reaction r : m.getListOfReactions())
-				reactionsNode.add(new DefaultMutableTreeNode(r));
-		}
-		if (m.getNumSpecies() > 0) {
-			DefaultMutableTreeNode speciesNode = new DefaultMutableTreeNode(
-					"Species");
-			modelNode.add(speciesNode);
-			for (Species s : m.getListOfSpecies())
-				speciesNode.add(new DefaultMutableTreeNode(s));
-		}
-		if (m.getNumParameters() > 0) {
-			DefaultMutableTreeNode parametersNode = new DefaultMutableTreeNode(
-					"Parameters");
-			modelNode.add(parametersNode);
-			for (Parameter p : m.getListOfParameters())
-				parametersNode.add(new DefaultMutableTreeNode(p));
-		}
-		return new JTree(modelNode);
-	}
-	
 	public JPanel display(Species s) {
+		JPanel p = display((NamedSBase) s);
+		return p;
+	}
+
+	public JPanel display(NamedSBase nsb) {
 		JPanel p = new JPanel();
-		p.add(new JLabel(s.getId()));
+		if (nsb.isSetId())
+			p.add(new JLabel(nsb.getId()));
+		if (nsb.isSetName())
+			p.add(new JLabel(nsb.getName()));
+		if (nsb.isSetNotes())
+			p.add(new JLabel(nsb.getNotes()));
 		return p;
 	}
 
@@ -106,6 +93,25 @@ public class SBMLsqueezer {
 	public static void main(String[] args) {
 		System.loadLibrary("sbmlj");
 		new SBMLsqueezer(args[0]);
+	}
+
+	public void valueChanged(TreeSelectionEvent e) {
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+				.getLastSelectedPathComponent();
+		if (node == null)
+			// Nothing is selected.
+			return;
+		Object nodeInfo = node.getUserObject();
+		if (node.isLeaf()) {
+			NamedSBase sbase = (NamedSBase) nodeInfo;
+			System.out.println(sbase.getClass().getName());
+			details.removeAll();
+			details.add(display(sbase));
+			validate();
+			pack();
+		} else {
+			// displayURL(helpURL);
+		}
 	}
 
 }
