@@ -18,8 +18,8 @@
  */
 package org.sbml;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.sbml.squeezer.io.SBaseChangedListener;
 
@@ -32,15 +32,15 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  */
 public abstract class SBase {
 
-	SBase parent;
+	SBase parentSBMLObject;
 	private String metaid;
 	private int SBOTerm;
 	private String notes;
-	private List<SBaseChangedListener> listOfListeners;
+	private Set<SBaseChangedListener> listOfListeners;
 
 	public SBase() {
-		parent = null;
-		listOfListeners = new LinkedList<SBaseChangedListener>();
+		parentSBMLObject = null;
+		listOfListeners = new HashSet<SBaseChangedListener>();
 	}
 
 	/**
@@ -127,7 +127,7 @@ public abstract class SBase {
 	 * @return Returns the parent SBML object.
 	 */
 	public SBase getParentSBMLObject() {
-		return parent;
+		return parentSBMLObject;
 	}
 	
 	/*
