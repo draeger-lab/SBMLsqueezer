@@ -21,10 +21,13 @@ package org.sbml.squeezer.plugin;
 import java.awt.event.ActionEvent;
 import java.io.PrintStream;
 
-import org.sbml.squeezer.gui.SBMLsqueezerUIThread;
-import org.sbml.squeezer.gui.UpdateMessageThread;
+import javax.swing.JMenuItem;
 
 import jp.sbi.celldesigner.plugin.PluginAction;
+import jp.sbi.celldesigner.plugin.PluginReaction;
+
+import org.sbml.squeezer.gui.SBMLsqueezerUI;
+import org.sbml.squeezer.gui.UpdateMessageThread;
 
 /**
  * TODO: comment missing
@@ -37,7 +40,7 @@ import jp.sbi.celldesigner.plugin.PluginAction;
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  */
 public class SBMLsqueezerPluginAction extends PluginAction {
-	
+
 	static {
 		PrintStream out = System.out;
 		out.println("-----------------------------------------------------");
@@ -48,7 +51,7 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 		out.println("see http://www.gnu.org/copyleft/gpl.html for details.");
 		out.println("-----------------------------------------------------");
 	}
-	
+
 	/**
 	 * A serial version number.
 	 */
@@ -83,7 +86,38 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 	public void myActionPerformed(ActionEvent e) {
 		UpdateMessageThread umThread = new UpdateMessageThread(plugin);
 		umThread.start();
-		SBMLsqueezerUIThread uiThread = new SBMLsqueezerUIThread(e, plugin);
-		uiThread.start();
+		if (e.getSource() instanceof JMenuItem) {
+			String item = ((JMenuItem) e.getSource()).getText();
+			if (item.equals(plugin.getMainPluginItemText()))
+				new Thread(new Runnable() {
+					public void run() {
+						(new SBMLsqueezerUI(plugin)).setVisible(true);
+					}
+				}).start();
+			else if (item.equals(plugin.getSqueezeContextMenuItemText()))
+				new Thread(new Runnable() {
+					public void run() {
+						new SBMLsqueezerUI(plugin, (PluginReaction) plugin
+								.getSelectedReactionNode().get(0));
+					}
+				}).start();
+			else if (item.equals(plugin.getExportContextMenuItemText()))
+				new Thread(new Runnable() {
+					public void run() {
+						new SBMLsqueezerUI(plugin.getSelectedModel(),
+								(PluginReaction) plugin
+										.getSelectedReactionNode().get(0));
+					}
+				}).start();
+			else if (item.equals(plugin.getExporterItemText()))
+				if (plugin.getSelectedModel() != null)
+					new Thread(new Runnable() {
+						public void run() {
+							new SBMLsqueezerUI(plugin.getSelectedModel());
+						}
+					}).start();
+		} else
+			System.err.println("Unsupported source of action "
+					+ e.getSource().getClass().getName());
 	}
 }

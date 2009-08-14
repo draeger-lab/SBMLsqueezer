@@ -83,7 +83,7 @@ public class Model extends NamedSBase {
 		listOfParameters.add(p);
 		p.sbaseAdded();
 	}
-	
+
 	public void removeParameter(Parameter parameter) {
 		listOfParameters.remove(parameter);
 		parameter.sbaseRemoved();
@@ -111,5 +111,17 @@ public class Model extends NamedSBase {
 
 	public int getNumParameters() {
 		return listOfParameters.size();
+	}
+
+	// @Override
+	public SBase clone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// @Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

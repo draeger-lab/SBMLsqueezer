@@ -34,7 +34,7 @@ import org.sbml.squeezer.io.AbstractSBMLconverter;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class SBMLReader extends AbstractSBMLconverter {
+public class LibSBMLReader extends AbstractSBMLconverter {
 
 	private Model model;
 	private SBMLDocument doc;
@@ -45,7 +45,7 @@ public class SBMLReader extends AbstractSBMLconverter {
 	 * 
 	 * @param model
 	 */
-	public SBMLReader(org.sbml.libsbml.Model model) {
+	public LibSBMLReader(org.sbml.libsbml.Model model) {
 		super();
 		this.model = convert(model);
 		this.model.addChangeListener(this);
@@ -56,7 +56,7 @@ public class SBMLReader extends AbstractSBMLconverter {
 	 * 
 	 * @param fileName
 	 */
-	public SBMLReader(String fileName) {
+	public LibSBMLReader(String fileName) {
 		super();
 		doc = (new org.sbml.libsbml.SBMLReader()).readSBML(fileName);
 		this.model = convert(doc.getModel());

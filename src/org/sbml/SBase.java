@@ -32,12 +32,14 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  */
 public abstract class SBase {
 
+	SBase parent;
 	private String metaid;
 	private int SBOTerm;
 	private String notes;
 	private List<SBaseChangedListener> listOfListeners;
 
 	public SBase() {
+		parent = null;
 		listOfListeners = new LinkedList<SBaseChangedListener>();
 	}
 
@@ -115,9 +117,34 @@ public abstract class SBase {
 		for (SBaseChangedListener listener : listOfListeners)
 			listener.stateChanged(this);
 	}
+
+	/**
+	 * This method is convenient when holding an object nested inside other
+	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
+	 * 
+	 * element containing it.
+	 * 
+	 * @return Returns the parent SBML object.
+	 */
+	public SBase getParentSBMLObject() {
+		return parent;
+	}
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public abstract SBase clone();
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public abstract boolean equals(Object o);
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public abstract String toString();

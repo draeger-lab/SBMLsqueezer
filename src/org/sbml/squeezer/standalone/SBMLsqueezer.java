@@ -21,6 +21,7 @@ package org.sbml.squeezer.standalone;
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -41,7 +42,7 @@ import org.sbml.Species;
 public class SBMLsqueezer {
 
 	public SBMLsqueezer(String fileName) {
-		SBMLReader converter = new SBMLReader(fileName);
+		LibSBMLReader converter = new LibSBMLReader(fileName);
 		showGUI(converter.getModel());
 	}
 
@@ -71,26 +72,32 @@ public class SBMLsqueezer {
 		DefaultMutableTreeNode modelNode = new DefaultMutableTreeNode(m);
 		if (m.getNumReactions() > 0) {
 			DefaultMutableTreeNode reactionsNode = new DefaultMutableTreeNode(
-					"listOfReactions");
+					"Reactions");
 			modelNode.add(reactionsNode);
 			for (Reaction r : m.getListOfReactions())
 				reactionsNode.add(new DefaultMutableTreeNode(r));
 		}
 		if (m.getNumSpecies() > 0) {
 			DefaultMutableTreeNode speciesNode = new DefaultMutableTreeNode(
-					"listOfSpecies");
+					"Species");
 			modelNode.add(speciesNode);
 			for (Species s : m.getListOfSpecies())
 				speciesNode.add(new DefaultMutableTreeNode(s));
 		}
 		if (m.getNumParameters() > 0) {
 			DefaultMutableTreeNode parametersNode = new DefaultMutableTreeNode(
-					"listOfParameters");
+					"Parameters");
 			modelNode.add(parametersNode);
 			for (Parameter p : m.getListOfParameters())
 				parametersNode.add(new DefaultMutableTreeNode(p));
 		}
 		return new JTree(modelNode);
+	}
+	
+	public JPanel display(Species s) {
+		JPanel p = new JPanel();
+		p.add(new JLabel(s.getId()));
+		return p;
 	}
 
 	/**

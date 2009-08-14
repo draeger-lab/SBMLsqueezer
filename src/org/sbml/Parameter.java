@@ -35,4 +35,15 @@ public class Parameter extends NamedSBase {
 		super(p.getId());
 	}
 
+	// @Override
+	public SBase clone() {
+		return new Parameter(this);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
