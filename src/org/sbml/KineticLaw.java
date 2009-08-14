@@ -177,7 +177,7 @@ public class KineticLaw extends SBase {
 	 * 
 	 * @see org.sbml.SBase#toString()
 	 */
-	@Override
+	// @Override
 	public String toString() {
 		if (isSetMath())
 			return libsbml.formulaToString(math);
@@ -186,5 +186,11 @@ public class KineticLaw extends SBase {
 
 	public boolean isSetMath() {
 		return math != null ? true : false;
+	}
+
+	// @Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

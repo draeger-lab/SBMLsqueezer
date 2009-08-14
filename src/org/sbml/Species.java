@@ -30,4 +30,16 @@ public class Species extends NamedSBase {
 	public Species(String id) {
 		super(id);
 	}
+
+	// @Override
+	public SBase clone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// @Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -102,4 +102,16 @@ public class Reaction extends NamedSBase {
 		this.reversible = reversible;
 		stateChanged();
 	}
+
+	@Override
+	public SBase clone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
