@@ -18,6 +18,8 @@
  */
 package org.sbml;
 
+import org.sbml.squeezer.io.SBaseChangedListener;
+
 /**
  * 
  * @author Andreas Dr&auml;ger <a
@@ -35,6 +37,11 @@ public class Reaction extends NamedSBase {
 	private ListOf<ModifierSpeciesReference> listOfModifiers;
 	private KineticLaw kineticLaw;
 
+	public Reaction(Reaction reaction) {
+		this(reaction.getId());
+		// TODO Auto-generated constructor stub
+	}
+
 	public Reaction(String id) {
 		super(id);
 		listOfReactants = new ListOf<SpeciesReference>();
@@ -42,9 +49,15 @@ public class Reaction extends NamedSBase {
 		listOfModifiers = new ListOf<ModifierSpeciesReference>();
 	}
 
-	public Reaction(Reaction reaction) {
-		this(reaction.getId());
-		// TODO Auto-generated constructor stub
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#addChangeListener(org.sbml.squeezer.io.SBaseChangedListener)
+	 */
+	public void addChangeListener(SBaseChangedListener l) {
+		super.addChangeListener(l);
+		listOfReactants.addChangeListener(l);
+		listOfProducts.addChangeListener(l);
+		listOfModifiers.addChangeListener(l);
 	}
 
 	public void addModifier(ModifierSpeciesReference modspecref) {
@@ -60,6 +73,25 @@ public class Reaction extends NamedSBase {
 	public void addReactant(SpeciesReference specref) {
 		listOfReactants.add(specref);
 		stateChanged();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#clone()
+	 */
+	// @Override
+	public Reaction clone() {
+		return new Reaction(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
+	// @Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public Boolean getFast() {
@@ -96,23 +128,13 @@ public class Reaction extends NamedSBase {
 
 	public void setKineticLaw(KineticLaw kineticLaw) {
 		this.kineticLaw = kineticLaw;
-		this.kineticLaw.setReaction(this);
+		this.kineticLaw.parentSBMLObject = this;
+		this.kineticLaw.stateChanged();
 		stateChanged();
 	}
 
 	public void setReversible(Boolean reversible) {
 		this.reversible = reversible;
 		stateChanged();
-	}
-
-	// @Override
-	public Reaction clone() {
-		return new Reaction(this);
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

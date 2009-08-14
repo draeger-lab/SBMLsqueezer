@@ -27,15 +27,16 @@ package org.sbml;
  */
 public class SpeciesReference extends SimpleSpeciesReference {
 
-	double stoichiometry = 1;
+	private double stoichiometry;
 
 	public SpeciesReference() {
 		super();
-
+		initDefaults();
 	}
 
 	public SpeciesReference(Species spec) {
 		super(spec);
+		initDefaults();
 	}
 
 	public SpeciesReference(SpeciesReference speciesReference) {
@@ -43,24 +44,36 @@ public class SpeciesReference extends SimpleSpeciesReference {
 		// TODO Auto-generated constructor stub
 	}
 
-	public double getStoichiometry() {
-		return stoichiometry;
-	}
-
-	public void setStoichiometry(double stoichiometry) {
-		this.stoichiometry = stoichiometry;
-		stateChanged();
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#clone()
+	 */
 	// @Override
 	public SpeciesReference clone() {
 		return new SpeciesReference(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
 	// @Override
 	public boolean equals(Object o) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public double getStoichiometry() {
+		return stoichiometry;
+	}
+
+	public void initDefaults() {
+		stoichiometry = 1;
+	}
+
+	public void setStoichiometry(double stoichiometry) {
+		this.stoichiometry = stoichiometry;
+		stateChanged();
 	}
 
 }

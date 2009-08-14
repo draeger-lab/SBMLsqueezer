@@ -35,11 +35,6 @@ import java.util.NoSuchElementException;
 public class ListOf<E extends SBase> extends SBase implements List<E>,
 		Serializable, Cloneable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5588467260915307797L;
-
 	private static class Entry<E> {
 		E element;
 		Entry<E> next;
@@ -52,8 +47,108 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		}
 	}
 
+	private class ListItr implements ListIterator<E> {
+		private Entry<E> lastReturned = header;
+		private Entry<E> next;
+		private int nextIndex;
+		private int expectedModCount = modCount;
+
+		ListItr(int index) {
+			if (index < 0 || index > size)
+				throw new IndexOutOfBoundsException("Index: " + index
+						+ ", Size: " + size);
+			if (index < (size >> 1)) {
+				next = header.next;
+				for (nextIndex = 0; nextIndex < index; nextIndex++)
+					next = next.next;
+			} else {
+				next = header;
+				for (nextIndex = size; nextIndex > index; nextIndex--)
+					next = next.previous;
+			}
+		}
+
+		public void add(E e) {
+			checkForComodification();
+			lastReturned = header;
+			addBefore(e, next);
+			nextIndex++;
+			expectedModCount++;
+		}
+
+		public boolean hasNext() {
+			return nextIndex != size;
+		}
+
+		public boolean hasPrevious() {
+			return nextIndex != 0;
+		}
+
+		public E next() {
+			checkForComodification();
+			if (nextIndex == size)
+				throw new NoSuchElementException();
+
+			lastReturned = next;
+			next = next.next;
+			nextIndex++;
+			return lastReturned.element;
+		}
+
+		public int nextIndex() {
+			return nextIndex;
+		}
+
+		public E previous() {
+			if (nextIndex == 0)
+				throw new NoSuchElementException();
+
+			lastReturned = next = next.previous;
+			nextIndex--;
+			checkForComodification();
+			return lastReturned.element;
+		}
+
+		public int previousIndex() {
+			return nextIndex - 1;
+		}
+
+		public void remove() {
+			checkForComodification();
+			Entry<E> lastNext = lastReturned.next;
+			try {
+				ListOf.this.remove(lastReturned);
+			} catch (NoSuchElementException e) {
+				throw new IllegalStateException();
+			}
+			if (next == lastReturned)
+				next = lastNext;
+			else
+				nextIndex--;
+			lastReturned = header;
+			expectedModCount++;
+		}
+
+		public void set(E e) {
+			if (lastReturned == header)
+				throw new IllegalStateException();
+			checkForComodification();
+			lastReturned.element = e;
+		}
+
+		final void checkForComodification() {
+			if (modCount != expectedModCount)
+				throw new ConcurrentModificationException();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5588467260915307797L;
 	private Entry<E> header = new Entry<E>(null, null, null);
 	private int size;
+
 	private int modCount;
 
 	public ListOf() {
@@ -66,34 +161,8 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return true;
 	}
 
-	private void addBefore(E e, Entry<E> entry) {
-		Entry<E> newEntry = new Entry<E>(e, entry, entry.previous);
-		newEntry.previous.next = newEntry;
-		newEntry.next.previous = newEntry;
-		size++;
-		modCount++;
-	}
-
 	public void add(int index, E element) {
 		addBefore(element, (index == size ? header : entry(index)));
-	}
-
-	/**
-	 * Returns the indexed entry.
-	 */
-	private Entry<E> entry(int index) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
-					+ size);
-		Entry<E> e = header;
-		if (index < (size >> 1)) {
-			for (int i = 0; i <= index; i++)
-				e = e.next;
-		} else {
-			for (int i = size; i > index; i--)
-				e = e.previous;
-		}
-		return e;
 	}
 
 	public boolean addAll(Collection<? extends E> c) {
@@ -135,6 +204,13 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		modCount++;
 	}
 
+	// @Override
+	public ListOf<E> clone() {
+		ListOf<E> l = new ListOf<E>();
+		l.addAll(this);
+		return l;
+	}
+
 	public boolean contains(Object o) {
 		return indexOf(o) != -1;
 	}
@@ -144,6 +220,16 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		for (Object o : c)
 			contains = contains && contains(o);
 		return contains;
+	}
+
+	// @Override
+	public boolean equals(Object o) {
+		if (o instanceof List) {
+			List<?> l = (List<?>) o;
+			if (l.containsAll(this) && size == l.size())
+				return true;
+		}
+		return false;
 	}
 
 	public E get(int index) {
@@ -202,6 +288,12 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return new ListItr(index);
 	}
 
+	public E remove(int index) {
+		Entry<E> e = entry(index);
+		remove(e);
+		return e.element;
+	}
+
 	public boolean remove(Object o) {
 		if (o == null) {
 			for (Entry<E> e = header.next; e != header; e = e.next) {
@@ -219,12 +311,6 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			}
 		}
 		return false;
-	}
-
-	public E remove(int index) {
-		Entry<E> e = entry(index);
-		remove(e);
-		return e.element;
 	}
 
 	public boolean removeAll(Collection<?> c) {
@@ -297,115 +383,29 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return string.toString();
 	}
 
-	// @Override
-	public ListOf<E> clone() {
-		ListOf<E> l = new ListOf<E>();
-		l.addAll(this);
-		return l;
+	private void addBefore(E e, Entry<E> entry) {
+		Entry<E> newEntry = new Entry<E>(e, entry, entry.previous);
+		newEntry.previous.next = newEntry;
+		newEntry.next.previous = newEntry;
+		size++;
+		modCount++;
 	}
 
-	// @Override
-	public boolean equals(Object o) {
-		if (o instanceof List) {
-			List<?> l = (List<?>) o;
-			if (l.containsAll(this) && size == l.size())
-				return true;
+	/**
+	 * Returns the indexed entry.
+	 */
+	private Entry<E> entry(int index) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
+					+ size);
+		Entry<E> e = header;
+		if (index < (size >> 1)) {
+			for (int i = 0; i <= index; i++)
+				e = e.next;
+		} else {
+			for (int i = size; i > index; i--)
+				e = e.previous;
 		}
-		return false;
-	}
-
-	private class ListItr implements ListIterator<E> {
-		private Entry<E> lastReturned = header;
-		private Entry<E> next;
-		private int nextIndex;
-		private int expectedModCount = modCount;
-
-		ListItr(int index) {
-			if (index < 0 || index > size)
-				throw new IndexOutOfBoundsException("Index: " + index
-						+ ", Size: " + size);
-			if (index < (size >> 1)) {
-				next = header.next;
-				for (nextIndex = 0; nextIndex < index; nextIndex++)
-					next = next.next;
-			} else {
-				next = header;
-				for (nextIndex = size; nextIndex > index; nextIndex--)
-					next = next.previous;
-			}
-		}
-
-		public boolean hasNext() {
-			return nextIndex != size;
-		}
-
-		public E next() {
-			checkForComodification();
-			if (nextIndex == size)
-				throw new NoSuchElementException();
-
-			lastReturned = next;
-			next = next.next;
-			nextIndex++;
-			return lastReturned.element;
-		}
-
-		public boolean hasPrevious() {
-			return nextIndex != 0;
-		}
-
-		public E previous() {
-			if (nextIndex == 0)
-				throw new NoSuchElementException();
-
-			lastReturned = next = next.previous;
-			nextIndex--;
-			checkForComodification();
-			return lastReturned.element;
-		}
-
-		public int nextIndex() {
-			return nextIndex;
-		}
-
-		public int previousIndex() {
-			return nextIndex - 1;
-		}
-
-		public void remove() {
-			checkForComodification();
-			Entry<E> lastNext = lastReturned.next;
-			try {
-				ListOf.this.remove(lastReturned);
-			} catch (NoSuchElementException e) {
-				throw new IllegalStateException();
-			}
-			if (next == lastReturned)
-				next = lastNext;
-			else
-				nextIndex--;
-			lastReturned = header;
-			expectedModCount++;
-		}
-
-		public void set(E e) {
-			if (lastReturned == header)
-				throw new IllegalStateException();
-			checkForComodification();
-			lastReturned.element = e;
-		}
-
-		public void add(E e) {
-			checkForComodification();
-			lastReturned = header;
-			addBefore(e, next);
-			nextIndex++;
-			expectedModCount++;
-		}
-
-		final void checkForComodification() {
-			if (modCount != expectedModCount)
-				throw new ConcurrentModificationException();
-		}
+		return e;
 	}
 }

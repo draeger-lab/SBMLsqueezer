@@ -40,20 +40,22 @@ public class Parameter extends NamedSBase {
 		super(id);
 		initDefaults();
 	}
-	
-	public void unsetValue() {
-		value = Double.NaN;
-	}
-	public void initDefaults() {
-		value = Double.NaN;
-		// TODO
-	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#clone()
+	 */
 	// @Override
 	public Parameter clone() {
 		return new Parameter(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
 	// @Override
 	public boolean equals(Object o) {
 		// TODO Auto-generated method stub
@@ -66,6 +68,11 @@ public class Parameter extends NamedSBase {
 
 	public double getValue() {
 		return value;
+	}
+
+	public void initDefaults() {
+		value = Double.NaN;
+		// TODO
 	}
 
 	public boolean isConstant() {
@@ -82,6 +89,10 @@ public class Parameter extends NamedSBase {
 
 	public void setValue(double value) {
 		this.value = value;
+	}
+
+	public void unsetValue() {
+		value = Double.NaN;
 	}
 
 }

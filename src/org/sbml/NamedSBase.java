@@ -36,12 +36,6 @@ public abstract class NamedSBase extends SBase {
 		name = null;
 	}
 
-	public NamedSBase(String id) {
-		super();
-		this.id = id;
-		name = null;
-	}
-
 	public NamedSBase(NamedSBase nsb) {
 		super(nsb);
 		if (nsb.isSetId())
@@ -50,8 +44,26 @@ public abstract class NamedSBase extends SBase {
 			this.name = new String(nsb.getName());
 	}
 
+	public NamedSBase(String id) {
+		super();
+		this.id = id;
+		name = null;
+	}
+
 	public String getId() {
 		return isSetId() ? id : "";
+	}
+
+	public String getName() {
+		return isSetName() ? name : "";
+	}
+
+	public boolean isSetId() {
+		return id != null ? true : false;
+	}
+
+	public boolean isSetName() {
+		return name != null ? true : false;
 	}
 
 	public void setId(String id) {
@@ -59,16 +71,16 @@ public abstract class NamedSBase extends SBase {
 		stateChanged();
 	}
 
-	public String getName() {
-		return isSetName() ? name : "";
-	}
-
 	public void setName(String name) {
 		this.name = name;
 		stateChanged();
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#toString()
+	 */
+	// @Override
 	public String toString() {
 		if (isSetName())
 			return name;
@@ -76,13 +88,5 @@ public abstract class NamedSBase extends SBase {
 			return id;
 		String name = getClass().getName();
 		return name.substring(name.lastIndexOf('.') + 1);
-	}
-
-	public boolean isSetName() {
-		return name != null ? true : false;
-	}
-
-	public boolean isSetId() {
-		return id != null ? true : false;
 	}
 }

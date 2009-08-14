@@ -87,7 +87,8 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 		for (int i = 0; i < reac.getNumModifiers(); i++) {
 			reaction.addModifier(convert(reac.getModifier(i)));
 		}
-		reaction.setSBOTerm(alias2sbo.get(reac.getReactionType()));
+		reaction.setSBOTerm(Integer.parseInt(alias2sbo.get(
+				reac.getReactionType()).toString()));
 		reaction.setKineticLaw(convert(reac.getKineticLaw()));
 		reaction.setFast(reac.getFast());
 		reaction.setReversible(reac.getReversible());

@@ -52,6 +52,61 @@ public abstract class SBase {
 	}
 
 	/**
+	 * adds a listener to the SBase object. from now on changes will be saved
+	 * 
+	 * @param l
+	 */
+	public void addChangeListener(SBaseChangedListener l) {
+		setOfListeners.add(l);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	public abstract SBase clone();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public abstract boolean equals(Object o);
+
+	public String getMetaid() {
+		return metaid;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
+
+	/**
+	 * This method is convenient when holding an object nested inside other
+	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
+	 * 
+	 * element containing it.
+	 * 
+	 * @return Returns the parent SBML object.
+	 */
+	public SBase getParentSBMLObject() {
+		return parentSBMLObject;
+	}
+
+	public int getSBOTerm() {
+		return SBOTerm;
+	}
+
+	public String getSBOTermID() {
+		StringBuffer sbo = new StringBuffer("SBO:");
+		sbo.append(Integer.toString(SBOTerm));
+		while (sbo.length() < 11)
+			sbo.insert(4, '0');
+		return sbo.toString();
+	}
+
+	/**
 	 * Predicate returning true or false depending on whether this object's
 	 * 'metaid' attribute has been set.
 	 * 
@@ -71,37 +126,27 @@ public abstract class SBase {
 		return notes != null;
 	}
 
-	/**
-	 * adds a listener to the SBase object. from now on changes will be saved
-	 * 
-	 * @param l
-	 */
-	public void addChangeListener(SBaseChangedListener l) {
-		setOfListeners.add(l);
-	}
-
-	public String getMetaid() {
-		return metaid;
-	}
-
-	public String getNotes() {
-		return notes;
-	}
-
-	public int getSBOTerm() {
-		return SBOTerm;
-	}
-
-	public String getSBOTermID() {
-		StringBuffer sbo = new StringBuffer("SBO:");
-		sbo.append(Integer.toString(SBOTerm));
-		while (sbo.length() < 11)
-			sbo.insert(4, '0');
-		return sbo.toString();
-	}
-
 	public void removeChangeListener(SBaseChangedListener l) {
 		setOfListeners.remove(l);
+	}
+
+	/**
+	 * all listeners are informed about the adding of this object to a list
+	 * 
+	 */
+
+	public void sbaseAdded() {
+		for (SBaseChangedListener listener : setOfListeners)
+			listener.sbaseAdded(this);
+	}
+
+	/**
+	 * 
+	 * all listeners are informed about the deletion of this object from a list
+	 */
+	public void sbaseRemoved() {
+		for (SBaseChangedListener listener : setOfListeners)
+			listener.stateChanged(this);
 	}
 
 	public void setMetaid(String metaid) {
@@ -126,51 +171,6 @@ public abstract class SBase {
 		for (SBaseChangedListener listener : setOfListeners)
 			listener.stateChanged(this);
 	}
-
-	/**
-	 * all listeners are informed about the adding of this object to a list
-	 * 
-	 */
-
-	public void sbaseAdded() {
-		for (SBaseChangedListener listener : setOfListeners)
-			listener.sbaseAdded(this);
-	}
-
-	/**
-	 * 
-	 * all listeners are informed about the deletion of this object from a list
-	 */
-	public void sbaseRemoved() {
-		for (SBaseChangedListener listener : setOfListeners)
-			listener.stateChanged(this);
-	}
-
-	/**
-	 * This method is convenient when holding an object nested inside other
-	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
-	 * 
-	 * element containing it.
-	 * 
-	 * @return Returns the parent SBML object.
-	 */
-	public SBase getParentSBMLObject() {
-		return parentSBMLObject;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#clone()
-	 */
-	public abstract SBase clone();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public abstract boolean equals(Object o);
 
 	/*
 	 * (non-Javadoc)

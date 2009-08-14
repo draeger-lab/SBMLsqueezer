@@ -18,10 +18,9 @@
  */
 package org.sbml;
 
-import java.util.LinkedList;
-
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.libsbml;
+import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -31,13 +30,11 @@ import org.sbml.libsbml.libsbml;
  */
 public class KineticLaw extends SBase {
 
-	private LinkedList<Parameter> listOfParameters;
+	private ListOf<Parameter> listOfParameters;
 	private ASTNode math;
-	private Reaction reaction;
 
 	public KineticLaw() {
-		listOfParameters = new LinkedList<Parameter>();
-		reaction = null;
+		listOfParameters = new ListOf<Parameter>();
 		math = null;
 	}
 
@@ -47,6 +44,15 @@ public class KineticLaw extends SBase {
 		setMetaid(kineticLaw.getMetaid());
 		setSBOTerm(kineticLaw.getSBOTerm());
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#addChangeListener(org.sbml.squeezer.io.SBaseChangedListener)
+	 */
+	public void addChangeListener(SBaseChangedListener l) {
+		super.addChangeListener(l);
+		listOfParameters.addChangeListener(l);
+	}
 
 	/**
 	 * Adds a copy of the given Parameter object to the list of local parameters
@@ -55,7 +61,7 @@ public class KineticLaw extends SBase {
 	 * @param p
 	 */
 	public void addParameter(Parameter p) {
-		listOfParameters.addLast(new Parameter(p));
+		listOfParameters.add(new Parameter(p));
 		stateChanged();
 	}
 
@@ -117,15 +123,6 @@ public class KineticLaw extends SBase {
 		return null;
 	}
 
-	/**
-	 * Returns the reaction belonging to this kinetic law.
-	 * 
-	 * @return
-	 */
-	public Reaction getReaction() {
-		return reaction;
-	}
-
 	public boolean isSetMath() {
 		return math != null ? true : false;
 	}
@@ -174,11 +171,6 @@ public class KineticLaw extends SBase {
 	 */
 	public void setMath(ASTNode math) {
 		this.math = math.deepCopy();
-		stateChanged();
-	}
-
-	public void setReaction(Reaction reaction) {
-		this.reaction = reaction;
 		stateChanged();
 	}
 

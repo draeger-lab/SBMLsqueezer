@@ -1,6 +1,8 @@
 TODO-Liste
 ==========
 
+Immer parentSBMLObject setzen, wenn neue Konstrukte erstellt werden.
+
 Hier wird an vielen Stellen von einer Stöchiometrie ausgegangen.
 Es können aber auch komplexe Ausdrücke vorkommen. Diesen muss
 Rechnung getragen werden.
