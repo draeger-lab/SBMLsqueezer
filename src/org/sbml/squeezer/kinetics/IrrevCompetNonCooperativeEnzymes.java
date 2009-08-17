@@ -21,8 +21,8 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
+import org.sbml.Model;
+import org.sbml.Reaction;
 
 /**
  * 
@@ -42,8 +42,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevCompetNonCooperativeEnzymes(PluginReaction parentReaction,
-			PluginModel model) throws RateLawNotApplicableException,
+	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction,
+			Model model) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
@@ -56,8 +56,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevCompetNonCooperativeEnzymes(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes)
+	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction,
+			Model model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
@@ -110,7 +110,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	// @Override
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
@@ -121,7 +121,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 		if ((modCat.size() > 0))
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to enzyme-catalyzed reactions.");
-		PluginReaction reaction = getParentReaction();
+		Reaction reaction = getParentSBMLObject();
 		if ((reaction.getNumReactants() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1.0))
 			throw new RateLawNotApplicableException(

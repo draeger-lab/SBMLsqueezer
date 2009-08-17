@@ -21,8 +21,8 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
+import org.sbml.Model;
+import org.sbml.Reaction;
 
 /**
  * TODO: comment missing
@@ -50,7 +50,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 	 * @throws IllegalFormatException
 	 * @throws IOException
 	 */
-	public MichaelisMenten(PluginReaction parentReaction, PluginModel model,
+	public MichaelisMenten(Reaction parentReaction, Model model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
@@ -64,17 +64,17 @@ public class MichaelisMenten extends GeneralizedMassAction {
 	 * @throws IllegalFormatException
 	 * @throws IOException
 	 */
-	public MichaelisMenten(PluginReaction parentReaction, PluginModel model)
+	public MichaelisMenten(Reaction parentReaction, Model model)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model);
 	}
 
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		PluginReaction reaction = getParentReaction();
+		Reaction reaction = getParentSBMLObject();
 		StringBuffer numerator = new StringBuffer();
 		StringBuffer denominator = new StringBuffer();
 
@@ -183,7 +183,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 	 * @param enzymeNum
 	 */
 	private StringBuffer createInihibitionTerms(List<String> modInhib,
-			PluginReaction reaction, List<String> modE,
+			Reaction reaction, List<String> modE,
 			StringBuffer denominator, StringBuffer kMr,
 			StringBuffer currEnzymeKin, int enzymeNum) {
 		if (modInhib.size() == 1) {
@@ -205,7 +205,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 						times(frac(kMr, kIb), specRefI));
 
 		} else if ((modInhib.size() > 1)
-				&& !getParentReaction().getReversible()) {
+				&& !getParentSBMLObject().getReversible()) {
 			/*
 			 * mixed-type inihibition of irreversible enzymes by mutually
 			 * exclusive inhibitors.
@@ -233,14 +233,14 @@ public class MichaelisMenten extends GeneralizedMassAction {
 	public String getName() {
 		switch (numOfEnzymes) {
 		case 0: // no enzyme, irreversible
-			if (!getParentReaction().getReversible() && (numOfActivators == 0)
+			if (!getParentSBMLObject().getReversible() && (numOfActivators == 0)
 					&& (numOfInhibitors == 0))
 				return "normalised kinetics of unireactant enzymes"; // 0000199
 			else if ((numOfActivators == 0) && (numOfInhibitors == 0))
 				return "kinetics of non-modulated unireactant enzymes"; // 0000326
 			break;
 		case 1: // one enzmye
-			if (getParentReaction().getReversible()) {
+			if (getParentSBMLObject().getReversible()) {
 				if ((numOfActivators == 0) && (numOfInhibitors == 0))
 					return "kinetics of non-modulated unireactant enzymes";
 			} else if ((numOfActivators == 0) && (numOfInhibitors == 0)) // irreversible
@@ -250,7 +250,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				return "Henri-Michaelis Menten equation"; // 0000029
 			break;
 		}
-		if (!getParentReaction().getReversible())
+		if (!getParentSBMLObject().getReversible())
 			switch (numOfInhibitors) {
 			case 1:
 				return "simple mixed-type inhibition of irreversible unireactant enzymes"; // 0000265
@@ -262,7 +262,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		return "kinetics of unireactant enzymes"; // 0000269
 	}
 
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
 	}

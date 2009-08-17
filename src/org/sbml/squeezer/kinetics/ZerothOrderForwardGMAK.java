@@ -21,8 +21,8 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
+import org.sbml.Model;
+import org.sbml.Reaction;
 
 /**
  * This class creates generalized mass action rate equations with zeroth order
@@ -42,16 +42,16 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ZerothOrderForwardGMAK(PluginReaction parentReaction,
-			PluginModel model) throws RateLawNotApplicableException,
+	public ZerothOrderForwardGMAK(Reaction parentReaction,
+			Model model) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
 		reactantOrder = 0;
 		productOrder = Double.NaN;
 	}
 
-	public ZerothOrderForwardGMAK(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes)
+	public ZerothOrderForwardGMAK(Reaction parentReaction,
+			Model model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
@@ -61,7 +61,7 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 
 	// @Override
 	protected final StringBuffer association(List<String> catalysts, int catNum) {
-		StringBuffer kass = concat("kass_", getParentReaction().getId());
+		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
 		addLocalParameter(kass);

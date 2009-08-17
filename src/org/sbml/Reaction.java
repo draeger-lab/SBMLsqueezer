@@ -137,4 +137,39 @@ public class Reaction extends NamedSBase {
 		this.reversible = reversible;
 		stateChanged();
 	}
+	/**
+	 * This method is convenient when holding an object nested inside other
+	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
+	 * 
+	 * element containing it.
+	 * 
+	 * @return Returns the parent SBML object.
+	 */
+	public SBase getParentSBMLObject() {
+		return parentSBMLObject;
+	}
+
+	public int getNumReactants() {
+		return listOfReactants.size();
+	}
+	
+	public int getNumProducts(){
+		return listOfProducts.size();
+	}
+	
+	public int getNumModifiers(){
+		return listOfModifiers.size();
+	}
+	
+	public SpeciesReference getProduct(int i){
+		return listOfProducts.get(i);
+	}
+	
+	public SpeciesReference getReactant(int i){
+		return listOfReactants.get(i);
+	}
+	
+	public ModifierSpeciesReference getModifier(int i){
+		return listOfModifiers.get(i);
+	}
 }

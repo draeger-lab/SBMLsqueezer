@@ -21,9 +21,10 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.SpeciesReference;
+
 
 /**
  * TODO: comment missing
@@ -45,7 +46,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public OrderedMechanism(PluginReaction parentReaction, PluginModel model,
+	public OrderedMechanism(Reaction parentReaction, Model model,
 			boolean reversibility) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
@@ -60,14 +61,14 @@ public class OrderedMechanism extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public OrderedMechanism(PluginReaction parentReaction, PluginModel model,
+	public OrderedMechanism(Reaction parentReaction, Model model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
 	}
@@ -76,17 +77,17 @@ public class OrderedMechanism extends GeneralizedMassAction {
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		double stoichiometryRight = 0;
-		for (int i = 0; i < getParentReaction().getNumProducts(); i++)
-			stoichiometryRight += getParentReaction().getProduct(i)
+		for (int i = 0; i < getParentSBMLObject().getNumProducts(); i++)
+			stoichiometryRight += getParentSBMLObject().getProduct(i)
 					.getStoichiometry();
 		String name = "compulsory-order ternary-complex mechanism";
-		if ((getParentReaction().getNumProducts() == 2)
+		if ((getParentSBMLObject().getNumProducts() == 2)
 				|| (stoichiometryRight == 2))
 			name += ", two products";
-		else if ((getParentReaction().getNumProducts() == 1)
+		else if ((getParentSBMLObject().getNumProducts() == 1)
 				|| (stoichiometryRight == 1))
 			name += ", one product";
-		if (getParentReaction().getReversible())
+		if (getParentSBMLObject().getReversible())
 			return "reversible " + name;
 		return "irreversible " + name;
 	}
@@ -97,7 +98,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 	}
 
 	// @Override
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
@@ -105,9 +106,9 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		StringBuffer denominator; // II
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 
-		PluginReaction reaction = getParentReaction();
-		PluginSpeciesReference specRefE1 = reaction.getReactant(0), specRefE2 = null;
-		PluginSpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
+		Reaction reaction = getParentSBMLObject();
+		SpeciesReference specRefE1 = reaction.getReactant(0), specRefE2 = null;
+		SpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
 		if (reaction.getNumReactants() == 2)
 			specRefE2 = reaction.getReactant(1);

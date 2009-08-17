@@ -185,4 +185,15 @@ public class KineticLaw extends SBase {
 			return libsbml.formulaToString(math);
 		return "";
 	}
+	/**
+	 * This method is convenient when holding an object nested inside other
+	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
+	 * 
+	 * element containing it.
+	 * 
+	 * @return Returns the parent SBML object.
+	 */
+	public Reaction getParentSBMLObject() {
+		return (Reaction) parentSBMLObject;
+	}
 }

@@ -9,8 +9,8 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
+import org.sbml.Model;
+import org.sbml.Reaction;
 
 /**
  * TODO: comment missing
@@ -29,16 +29,16 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
-			PluginModel model) throws RateLawNotApplicableException,
+	public ZerothOrderReverseGMAK(Reaction parentReaction,
+			Model model) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
 		reactantOrder = Double.NaN;
 		productOrder = 0;
 	}
 
-	public ZerothOrderReverseGMAK(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes)
+	public ZerothOrderReverseGMAK(Reaction parentReaction,
+			Model model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
@@ -49,7 +49,7 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 
 	// @Override
 	protected Object dissociation(List<String> catalysts, int c) {
-		StringBuffer kdiss = concat("kdiss_", getParentReaction().getId());
+		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kdiss = concat(kdiss, underscore, catalysts.get(c));
 		addLocalParameter(kdiss);
