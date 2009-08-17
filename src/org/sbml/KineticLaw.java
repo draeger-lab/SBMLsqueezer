@@ -44,10 +44,17 @@ public class KineticLaw extends SBase {
 		setMetaid(kineticLaw.getMetaid());
 		setSBOTerm(kineticLaw.getSBOTerm());
 	}
-	
+
+	public KineticLaw(Reaction parentReaction) {
+		parentReaction.setKineticLaw(this);
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.SBase#addChangeListener(org.sbml.squeezer.io.SBaseChangedListener)
+	 * 
+	 * @see
+	 * org.sbml.SBase#addChangeListener(org.sbml.squeezer.io.SBaseChangedListener
+	 * )
 	 */
 	public void addChangeListener(SBaseChangedListener l) {
 		super.addChangeListener(l);
@@ -74,12 +81,30 @@ public class KineticLaw extends SBase {
 		return new KineticLaw(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
 	// @Override
 	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof KineticLaw) {
+			KineticLaw kl = (KineticLaw) o;
+			return kl.getMath().equals(getMath())
+					&& kl.getListOfParameters().equals(getListOfParameters())
+					&& kl.getSBOTerm() == getSBOTerm();
+		}
 		return false;
 	}
 
+	public String getFormula() {
+		return isSetMath() ? libsbml.formulaToString(math) : "";
+	}
+
+	public ListOf<Parameter> getListOfParameters() {
+		return listOfParameters;
+	}
+	
 	/**
 	 * Returns the mathematical formula for this KineticLaw object and return it
 	 * as as an AST.
@@ -121,6 +146,18 @@ public class KineticLaw extends SBase {
 			if (p.getId().equals(id))
 				return p;
 		return null;
+	}
+
+	/**
+	 * This method is convenient when holding an object nested inside other
+	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
+	 * 
+	 * element containing it.
+	 * 
+	 * @return Returns the parent SBML object.
+	 */
+	public Reaction getParentSBMLObject() {
+		return (Reaction) parentSBMLObject;
 	}
 
 	public boolean isSetMath() {
@@ -184,16 +221,5 @@ public class KineticLaw extends SBase {
 		if (isSetMath())
 			return libsbml.formulaToString(math);
 		return "";
-	}
-	/**
-	 * This method is convenient when holding an object nested inside other
-	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
-	 * 
-	 * element containing it.
-	 * 
-	 * @return Returns the parent SBML object.
-	 */
-	public Reaction getParentSBMLObject() {
-		return (Reaction) parentSBMLObject;
 	}
 }

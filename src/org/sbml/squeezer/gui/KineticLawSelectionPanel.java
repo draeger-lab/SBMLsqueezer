@@ -41,9 +41,8 @@ import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-
+import org.sbml.Model;
+import org.sbml.Reaction;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.IllegalFormatException;
@@ -96,9 +95,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private JRadioButton rButtonLocalParameters;
 
-	private PluginModel model;
+	private Model model;
 
-	private PluginReaction reaction;
+	private Reaction reaction;
 
 	private KineticLawGenerator klg;
 
@@ -121,8 +120,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 */
-	public KineticLawSelectionPanel(KineticLawGenerator klg, PluginModel model,
-			PluginReaction reaction) throws RateLawNotApplicableException,
+	public KineticLawSelectionPanel(KineticLawGenerator klg, Model model,
+			Reaction reaction) throws RateLawNotApplicableException,
 			IOException {
 		super(new GridBagLayout());
 		this.selected = "";
@@ -387,9 +386,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				rButtonsKineticEquations[i] = new JRadioButton(
 						"Existing rate law", false);
 
-				if (reaction.getNotesString().length() > 0)
+				if (reaction.getNotes().length() > 0)
 					rButtonsKineticEquations[i].setToolTipText(toHTML(reaction
-							.getNotesString(), 40));
+							.getNotes(), 40));
 				else
 					rButtonsKineticEquations[i]
 							.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");

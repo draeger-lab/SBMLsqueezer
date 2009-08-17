@@ -209,6 +209,14 @@ public class Model extends NamedSBase {
 		return listOfReactions.get(n);
 	}
 
+	public Reaction getReaction(String id) {
+		for (Reaction r : listOfReactions) {
+			if (r.getId().equals(id))
+				return r;
+		}
+		return null;
+	}
+
 	/**
 	 * Get the n-th Species object in this Model.
 	 * 

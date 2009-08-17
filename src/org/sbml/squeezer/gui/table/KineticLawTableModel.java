@@ -4,8 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import jp.sbi.celldesigner.plugin.PluginReaction;
-
+import org.sbml.Reaction;
 import org.sbml.squeezer.kinetics.KineticLawGenerator;
 
 /**
@@ -54,7 +53,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 
 		for (reactionNum = 0; reactionNum < klg
 				.getReactionNumOfNotExistKinetics().size(); reactionNum++) {
-			PluginReaction reaction = klg.getModel().getReaction(
+			Reaction reaction = klg.getModel().getReaction(
 					klg.getReactionNumOfNotExistKinetics().get(reactionNum));
 			if (reaction.getNumReactants() >= maxEducts)
 				numOfWarnings++;
