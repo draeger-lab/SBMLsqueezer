@@ -29,8 +29,8 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  */
 public class Reaction extends NamedSBase {
 
-	Boolean reversible = true;
-	Boolean fast = false;
+	private Boolean reversible;
+	private Boolean fast;
 
 	private ListOf<SpeciesReference> listOfReactants;
 	private ListOf<SpeciesReference> listOfProducts;
@@ -47,6 +47,9 @@ public class Reaction extends NamedSBase {
 		listOfReactants = new ListOf<SpeciesReference>();
 		listOfProducts = new ListOf<SpeciesReference>();
 		listOfModifiers = new ListOf<ModifierSpeciesReference>();
+		kineticLaw = null;
+		reversible = true;
+		fast = false;
 	}
 
 	/*
@@ -102,41 +105,22 @@ public class Reaction extends NamedSBase {
 		return kineticLaw;
 	}
 
-	public Boolean getReversible() {
-		return reversible;
+	public ModifierSpeciesReference getModifier(int i){
+		return listOfModifiers.get(i);
 	}
 
-	public void removeModifier(ModifierSpeciesReference modspecref) {
-		listOfModifiers.remove(modspecref);
-		stateChanged();
+	public int getNumModifiers(){
+		return listOfModifiers.size();
 	}
 
-	public void removeProduct(SpeciesReference specref) {
-		listOfProducts.remove(specref);
-		stateChanged();
+	public int getNumProducts(){
+		return listOfProducts.size();
 	}
 
-	public void removeReactant(SpeciesReference specref) {
-		listOfReactants.remove(specref);
-		stateChanged();
+	public int getNumReactants() {
+		return listOfReactants.size();
 	}
 
-	public void setFast(Boolean fast) {
-		this.fast = fast;
-		stateChanged();
-	}
-
-	public void setKineticLaw(KineticLaw kineticLaw) {
-		this.kineticLaw = kineticLaw;
-		this.kineticLaw.parentSBMLObject = this;
-		this.kineticLaw.stateChanged();
-		stateChanged();
-	}
-
-	public void setReversible(Boolean reversible) {
-		this.reversible = reversible;
-		stateChanged();
-	}
 	/**
 	 * This method is convenient when holding an object nested inside other
 	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
@@ -149,27 +133,51 @@ public class Reaction extends NamedSBase {
 		return parentSBMLObject;
 	}
 
-	public int getNumReactants() {
-		return listOfReactants.size();
-	}
-	
-	public int getNumProducts(){
-		return listOfProducts.size();
-	}
-	
-	public int getNumModifiers(){
-		return listOfModifiers.size();
-	}
-	
 	public SpeciesReference getProduct(int i){
 		return listOfProducts.get(i);
 	}
-	
+
 	public SpeciesReference getReactant(int i){
 		return listOfReactants.get(i);
 	}
+
+	public Boolean getReversible() {
+		return reversible;
+	}
+
+	public boolean isSetKineticLaw() {
+		return kineticLaw != null;
+	}
 	
-	public ModifierSpeciesReference getModifier(int i){
-		return listOfModifiers.get(i);
+	public void removeModifier(ModifierSpeciesReference modspecref) {
+		listOfModifiers.remove(modspecref);
+		stateChanged();
+	}
+	
+	public void removeProduct(SpeciesReference specref) {
+		listOfProducts.remove(specref);
+		stateChanged();
+	}
+	
+	public void removeReactant(SpeciesReference specref) {
+		listOfReactants.remove(specref);
+		stateChanged();
+	}
+	
+	public void setFast(Boolean fast) {
+		this.fast = fast;
+		stateChanged();
+	}
+	
+	public void setKineticLaw(KineticLaw kineticLaw) {
+		this.kineticLaw = kineticLaw;
+		this.kineticLaw.parentSBMLObject = this;
+		this.kineticLaw.stateChanged();
+		stateChanged();
+	}
+
+	public void setReversible(Boolean reversible) {
+		this.reversible = reversible;
+		stateChanged();
 	}
 }

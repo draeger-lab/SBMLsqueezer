@@ -78,6 +78,19 @@ public abstract class SBase {
 		return metaid;
 	}
 
+	/**
+	 * Returns the Model object in which the current object is located.
+	 * 
+	 * @return
+	 */
+	public Model getModel() {
+		if (this instanceof Model)
+			return (Model) this;
+		if (getParentSBMLObject() != null)
+			return getParentSBMLObject().getModel();
+		return null;
+	}
+
 	public String getNotes() {
 		return notes;
 	}
@@ -99,11 +112,14 @@ public abstract class SBase {
 	}
 
 	public String getSBOTermID() {
-		StringBuffer sbo = new StringBuffer("SBO:");
-		sbo.append(Integer.toString(SBOTerm));
-		while (sbo.length() < 11)
-			sbo.insert(4, '0');
-		return sbo.toString();
+		if (isSetSBOTerm()) {
+			StringBuffer sbo = new StringBuffer("SBO:");
+			sbo.append(Integer.toString(SBOTerm));
+			while (sbo.length() < 11)
+				sbo.insert(4, '0');
+			return sbo.toString();
+		}
+		return "";
 	}
 
 	/**
@@ -178,4 +194,8 @@ public abstract class SBase {
 	 * @see java.lang.Object#toString()
 	 */
 	public abstract String toString();
+
+	private boolean isSetSBOTerm() {
+		return SBOTerm != -1;
+	}
 }

@@ -18,8 +18,6 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.awt.Component;
-
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -72,7 +70,11 @@ public class ModelComponentsPanel extends JSplitPane implements
 			return;
 		Object nodeInfo = node.getUserObject();
 		if (nodeInfo instanceof SBase) {
+			double proportionalLocation = getDividerLocation();
+			if (proportionalLocation < 0 || proportionalLocation > 1)
+				proportionalLocation = .5;
 			setRightComponent(createRightComponent((SBase) nodeInfo));
+			setDividerLocation(proportionalLocation);
 			validate();
 		} else {
 			// displayURL(helpURL);

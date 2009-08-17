@@ -17,16 +17,15 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import jp.sbi.celldesigner.plugin.PluginCompartment;
-import jp.sbi.celldesigner.plugin.PluginEvent;
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSBase;
-import jp.sbi.celldesigner.plugin.PluginSpecies;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
-
+import org.sbml.Compartment;
+import org.sbml.Event;
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.SBase;
+import org.sbml.Species;
+import org.sbml.SpeciesReference;
+import org.sbml.StoichiometryMath;
 import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.StoichiometryMath;
 import org.sbml.libsbml.libsbmlConstants;
 
 /**
@@ -177,7 +176,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * @param pluginSpecies
 	 * @return String
 	 */
-	public String idToTeX(PluginSpecies pluginSpecies) {
+	public String idToTeX(Species pluginSpecies) {
 		return nameToTeX(pluginSpecies.getId());
 	}
 
@@ -330,7 +329,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * @throws IOException
 	 */
 
-	public StringBuffer toLaTeX(PluginModel model) throws IOException {
+	public StringBuffer toLaTeX(Model model) throws IOException {
 		StringBuffer laTeX;
 		String newLine = System.getProperty("line.separator");
 		String title = model.getName().length() > 0 ? model.getName()
@@ -355,11 +354,11 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		String rateLaws[] = new String[(int) model.getNumReactions()];
 		String sp[] = new String[(int) model.getNumSpecies()];
 		int reactionIndex, speciesIndex, sReferenceIndex;
-		PluginSpecies species;
-		PluginSpeciesReference speciesRef;
+		Species species;
+		SpeciesReference speciesRef;
 		HashMap<String, Integer> speciesIDandIndex = new HashMap<String, Integer>();
 		for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
-			PluginReaction r = model.getReaction(reactionIndex);
+			Reaction r = model.getReaction(reactionIndex);
 			int latexReactionIndex = reactionIndex + 1;
 
 			rateLaws[reactionIndex] = (!r.getName().equals("") && !r.getName()
@@ -385,15 +384,15 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 			}
 		}
 
-		Vector<PluginSpecies> reactants = new Vector<PluginSpecies>();
-		Vector<PluginSpecies> products = new Vector<PluginSpecies>();
+		Vector<Species> reactants = new Vector<Species>();
+		Vector<Species> products = new Vector<Species>();
 		Vector<Integer> reactantsReaction = new Vector<Integer>();
 		Vector<Integer> productsReaction = new Vector<Integer>();
-		Vector<PluginSpeciesReference> reactantsStochiometric = new Vector<PluginSpeciesReference>();
-		Vector<PluginSpeciesReference> productsStochiometric = new Vector<PluginSpeciesReference>();
+		Vector<SpeciesReference> reactantsStochiometric = new Vector<SpeciesReference>();
+		Vector<SpeciesReference> productsStochiometric = new Vector<SpeciesReference>();
 
 		for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
-			PluginReaction r = model.getReaction(reactionIndex);
+			Reaction r = model.getReaction(reactionIndex);
 			int latexReactionIndex = reactionIndex + 1;
 			int reactant = 0;
 			int product = 0;
@@ -423,7 +422,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 			String sEquation = "";
 			ASTNode stoch = null;
 			StoichiometryMath stochMath;
-			PluginSpeciesReference ref;
+			SpeciesReference ref;
 			species = model.getSpecies(speciesIndex);
 			for (int k = 0; k < reactants.size(); k++) {
 				if (species.getId().equals(reactants.get(k).getId())) {
@@ -587,7 +586,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		// String rulesHead = newLine + "\\section{Rules}" + newLine;
 		String eventsHead = newLine + "\\section{Events}";
 		// String constraintsHead = newLine + "\\section{Constraints}";
-		LinkedList events[] = new LinkedList[(int) model.getNumEvents()];
+		LinkedList<?> events[] = new LinkedList[(int) model.getNumEvents()];
 		int i;
 		// writing latex
 		laTeX = head;
@@ -605,7 +604,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 
 		// writing Events
 		if (model.getNumEvents() > 0) {
-			PluginEvent ev;
+			Event ev;
 			for (i = 0; i < model.getNumEvents(); i++) {
 				ev = model.getEvent(i);
 				LinkedList<StringBuffer> assignments = new LinkedList<StringBuffer>();
@@ -758,7 +757,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * @return String
 	 */
 
-	public StringBuffer toLaTeX(PluginModel model, ASTNode astnode)
+	public StringBuffer toLaTeX(Model model, ASTNode astnode)
 			throws IOException {
 		if (astnode == null)
 			return mathrm("undefined");
@@ -884,8 +883,8 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		case AST_NAME:
 			if (model.getSpecies(astnode.getName()) != null) {
 				// Species.
-				PluginSpecies species = model.getSpecies(astnode.getName());
-				PluginCompartment c = model.getCompartment(species
+				Species species = model.getSpecies(astnode.getName());
+				Compartment c = model.getCompartment(species
 						.getCompartment());
 				boolean concentration = !species.getHasOnlySubstanceUnits()
 						&& (0 < c.getSpatialDimensions());
@@ -899,7 +898,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 
 			} else if (model.getCompartment(astnode.getName()) != null) {
 				// Compartment
-				PluginCompartment c = model.getCompartment(astnode.getName());
+				Compartment c = model.getCompartment(astnode.getName());
 				return getSize(c);
 			}
 			// TODO: weitere spezialfälle von Namen!!!
@@ -1289,13 +1288,13 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * @param file
 	 * @throws IOException
 	 */
-	public void toLaTeX(PluginModel model, File file) throws IOException {
+	public void toLaTeX(Model model, File file) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 		bw.write(toLaTeX(model).toString());
 		bw.close();
 	}
 
-	public StringBuffer toLaTeX(PluginModel model, PluginReaction reaction)
+	public StringBuffer toLaTeX(Model model, Reaction reaction)
 			throws IOException {
 		String title = model.getName().length() > 0 ? model.getName()
 				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
@@ -1419,14 +1418,14 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 *         which is type set in typewriter font if it is an id. The mathmode
 	 *         argument decides if mathtt or mathrm has to be used.
 	 */
-	private StringBuffer getNameOrID(PluginSBase sbase) {
+	private StringBuffer getNameOrID(SBase sbase) {
 		String name = "";
-		if (sbase instanceof PluginCompartment) {
-			name = (printNameIfAvailable) ? ((PluginCompartment) sbase)
-					.getName() : ((PluginCompartment) sbase).getId();
-		} else if (sbase instanceof PluginSpecies) {
-			name = (printNameIfAvailable) ? ((PluginSpecies) sbase).getName()
-					: ((PluginSpecies) sbase).getId();
+		if (sbase instanceof Compartment) {
+			name = (printNameIfAvailable) ? ((Compartment) sbase)
+					.getName() : ((Compartment) sbase).getId();
+		} else if (sbase instanceof Species) {
+			name = (printNameIfAvailable) ? ((Species) sbase).getName()
+					: ((Species) sbase).getId();
 		} else {
 			name = "Undefinded";
 		}
@@ -1443,7 +1442,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * returns the size of a compartment. This can be a volume, an area, a
 	 * length or a point.
 	 */
-	private StringBuffer getSize(PluginCompartment c) {
+	private StringBuffer getSize(Compartment c) {
 		StringBuffer value = new StringBuffer("\\mathrm{");
 		switch ((int) c.getSpatialDimensions()) {
 		case 3:
@@ -1484,7 +1483,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 * @throws IOException
 	 */
 	private StringBuffer mathematicalOperation(ASTNode astnode,
-			PluginModel model, String symbol) throws IOException {
+			Model model, String symbol) throws IOException {
 		StringBuffer value = new StringBuffer();
 		if (1 < astnode.getLeftChild().getNumChildren())
 			value.append("\\left(");

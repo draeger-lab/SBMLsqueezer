@@ -30,7 +30,7 @@ public class Species extends NamedSBase {
 	private boolean boundaryCondition;
 	private int charge;
 	private boolean constant;
-	// private Compartment compartment;
+	private Compartment compartment;
 	private boolean hasOnlySubstanceUnits;
 	private double initialAmount;
 	private double initialConcentration;
@@ -42,8 +42,9 @@ public class Species extends NamedSBase {
 
 	public Species(String id) {
 		super(id);
+		initDefaults();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -70,7 +71,15 @@ public class Species extends NamedSBase {
 	}
 
 	public int getCharge() {
-		return charge;
+		return charge != Integer.MIN_VALUE ? charge : 0;
+	}
+
+	public String getCompartment() {
+		return compartment.getId();
+	}
+
+	public Compartment getCompartmentInstance() {
+		return compartment;
 	}
 
 	public boolean getConstant() {
@@ -90,6 +99,7 @@ public class Species extends NamedSBase {
 	}
 
 	public void initDefaults() {
+		charge = Integer.MIN_VALUE;
 		// TODO
 	}
 
@@ -105,12 +115,28 @@ public class Species extends NamedSBase {
 		return hasOnlySubstanceUnits;
 	}
 
+	public boolean isSetCharge() {
+		return charge != Integer.MIN_VALUE;
+	}
+
+	public boolean isSetInitialAmount() {
+		return initialAmount != Double.NaN;
+	}
+
+	public boolean isSetInitialConcentration() {
+		return initialConcentration != Double.NaN;
+	}
+
 	public void setBoundaryCondition(boolean boundaryCondition) {
 		this.boundaryCondition = boundaryCondition;
 	}
 
 	public void setCharge(int charge) {
 		this.charge = charge;
+	}
+
+	public void setCompartment(Compartment compartment) {
+		this.compartment = compartment;
 	}
 
 	public void setConstant(boolean constant) {
@@ -127,14 +153,6 @@ public class Species extends NamedSBase {
 
 	public void setInitialConcentration(double initialConcentration) {
 		this.initialConcentration = initialConcentration;
-	}
-
-	public boolean isSetInitialAmount() {
-		return initialAmount != Double.NaN;
-	}
-	
-	public boolean isSetInitialConcentration() {
-		return initialConcentration != Double.NaN;
 	}
 	/**
 	 * This method is convenient when holding an object nested inside other

@@ -18,69 +18,71 @@
  */
 package org.sbml;
 
+import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.libsbml;
+
 /**
- * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public abstract class NamedSBase extends SBase {
+public abstract class MathElement extends SBase {
 
-	private String id;
-	private String name;
+	private ASTNode math;
 
-	public NamedSBase() {
+	/**
+	 * 
+	 */
+	public MathElement() {
 		super();
-		id = null;
-		name = null;
+		math = null;
 	}
 
-	public NamedSBase(NamedSBase nsb) {
-		super(nsb);
-		if (nsb.isSetId())
-			this.id = new String(nsb.getId());
-		if (nsb.isSetName())
-			this.name = new String(nsb.getName());
+	public MathElement(ASTNode math) {
+		setMath(math.deepCopy());
 	}
 
-	public NamedSBase(String id) {
-		super();
-		this.id = id;
-		name = null;
+	public boolean isSetMath() {
+		return math != null;
 	}
 
-	public NamedSBase(String id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
+	/**
+	 * @param sb
+	 */
+	public MathElement(MathElement sb) {
+		super(sb);
+		setMath(sb.getMath().deepCopy());
 	}
 
-	public String getId() {
-		return isSetId() ? id : "";
+	public ASTNode getMath() {
+		return math;
 	}
 
-	public String getName() {
-		return isSetName() ? name : "";
-	}
-
-	public boolean isSetId() {
-		return id != null ? true : false;
-	}
-
-	public boolean isSetName() {
-		return name != null ? true : false;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+	public void setMath(ASTNode math) {
+		this.math = math.deepCopy();
 		stateChanged();
 	}
 
-	public void setName(String name) {
-		this.name = name;
-		stateChanged();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
+	// @Override
+	public boolean equals(Object o) {
+		if (o instanceof MathElement)
+			return getMath().equals(((MathElement) o).getMath());
+		return false;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#clone()
+	 */
+	// @Override
+	public abstract MathElement clone();
 
 	/*
 	 * (non-Javadoc)
@@ -89,11 +91,6 @@ public abstract class NamedSBase extends SBase {
 	 */
 	// @Override
 	public String toString() {
-		if (isSetName())
-			return name;
-		if (isSetId())
-			return id;
-		String name = getClass().getName();
-		return name.substring(name.lastIndexOf('.') + 1);
+		return libsbml.formulaToString(math);
 	}
 }
