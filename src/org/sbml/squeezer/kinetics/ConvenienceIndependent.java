@@ -21,9 +21,10 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
+
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.SpeciesReference;
 
 /**
  * <p>
@@ -56,8 +57,8 @@ public class ConvenienceIndependent extends Convenience {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ConvenienceIndependent(PluginReaction parentReaction,
-			PluginModel model) throws RateLawNotApplicableException,
+	public ConvenienceIndependent(Reaction parentReaction,
+			Model model) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
@@ -71,21 +72,21 @@ public class ConvenienceIndependent extends Convenience {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ConvenienceIndependent(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes)
+	public ConvenienceIndependent(Reaction parentReaction,
+			Model model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
 	}
 
 	// @Override
 	public String getName() {
-		if (this.getParentReaction().getReversible())
+		if (this.getParentSBMLObject().getReversible())
 			return "reversible thermodynamically independent convenience kinetics";
 		return "irreversible thermodynamically independent convenience kinetics";
 	}
@@ -102,13 +103,13 @@ public class ConvenienceIndependent extends Convenience {
 	 * celldesigner.plugin.PluginModel, java.util.List, java.util.List,
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		final boolean FORWARD = true;
 		final boolean REVERSE = false;
-		PluginReaction reaction = getParentReaction();
+		Reaction reaction = getParentSBMLObject();
 		StringBuffer[] enzymes = new StringBuffer[Math.max(modE.size(), 1)];
 		try {
 			int i = 0;
@@ -161,7 +162,7 @@ public class ConvenienceIndependent extends Convenience {
 	 * @return
 	 */
 	private StringBuffer numeratorElements(String enzyme, boolean type) {
-		PluginReaction reaction = getParentReaction();
+		Reaction reaction = getParentSBMLObject();
 
 		StringBuffer educts = new StringBuffer();
 		StringBuffer products = new StringBuffer();
@@ -171,7 +172,7 @@ public class ConvenienceIndependent extends Convenience {
 		StringBuffer kiG;
 
 		for (int i = 0; i < reaction.getNumReactants(); i++) {
-			PluginSpeciesReference ref = reaction.getReactant(i);
+			SpeciesReference ref = reaction.getReactant(i);
 			StringBuffer kM = concat("kM_", reaction.getId());
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
@@ -185,7 +186,7 @@ public class ConvenienceIndependent extends Convenience {
 					.getStoichiometry()));
 		}
 		for (int i = 0; i < reaction.getNumProducts(); i++) {
-			PluginSpeciesReference ref = reaction.getProduct(i);
+			SpeciesReference ref = reaction.getProduct(i);
 			StringBuffer kM = concat("kM_", reaction.getId());
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
@@ -219,16 +220,16 @@ public class ConvenienceIndependent extends Convenience {
 	 * @return
 	 */
 	private StringBuffer[] denominatorElements(String enzyme, boolean type) {
-		PluginReaction reaction = getParentReaction();
+		Reaction reaction = getParentSBMLObject();
 		StringBuffer[] denoms = new StringBuffer[type ? reaction
 				.getNumReactants() : reaction.getNumProducts()];
 		boolean noOne = (denoms.length == 1)
 				&& (!type || (type && reaction.getReversible() && reaction
 						.getNumProducts() > 1));
 		for (int i = 0; i < denoms.length; i++) {
-			PluginSpeciesReference ref = type ? reaction.getReactant(i)
+			SpeciesReference ref = type ? reaction.getReactant(i)
 					: reaction.getProduct(i);
-			StringBuffer kM = concat("kM_", getParentReactionID());
+			StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());

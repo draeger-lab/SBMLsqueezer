@@ -21,9 +21,9 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.SpeciesReference;
 
 /**
  * This class implements SBO:0000150 and all of its special cases. It is an
@@ -50,7 +50,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * @throws IllegalFormatException
 	 */
 	public IrrevNonModulatedNonInteractingEnzymes(
-			PluginReaction parentReaction, PluginModel model)
+			Reaction parentReaction, Model model)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model);
@@ -65,7 +65,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * @throws IllegalFormatException
 	 */
 	public IrrevNonModulatedNonInteractingEnzymes(
-			PluginReaction parentReaction, PluginModel model,
+			Reaction parentReaction, Model model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
@@ -80,8 +80,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	// @Override
 	public String getName() {
 		double stoichiometry = 0;
-		for (int i = 0; i < getParentReaction().getNumReactants(); i++)
-			stoichiometry += getParentReaction().getReactant(i)
+		for (int i = 0; i < getParentSBMLObject().getNumReactants(); i++)
+			stoichiometry += getParentSBMLObject().getReactant(i)
 					.getStoichiometry();
 		switch ((int) Math.round(stoichiometry)) {
 		case 1:
@@ -126,11 +126,11 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * 
 	 * @see
 	 * org.sbmlsqueezer.kinetics.BasicKineticLaw#createKineticEquation(jp.sbi
-	 * .celldesigner.plugin.PluginModel, int, java.util.List, java.util.List,
+	 * .celldesigner.plugin.Model, int, java.util.List, java.util.List,
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	// @Override
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -141,11 +141,11 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 		if ((modCat.size() > 0))
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to enzyme-catalyzed reactions.");
-		if (getParentReaction().getReversible())
+		if (getParentSBMLObject().getReversible())
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to irreversible reactions.");
 		numOfEnzymes = modE.size();
-		PluginReaction reaction = getParentReaction();
+		Reaction reaction = getParentSBMLObject();
 		StringBuffer enzymes[] = new StringBuffer[Math.max(1, modE.size())];
 		for (int enzymeNum = 0; enzymeNum < enzymes.length; enzymeNum++) {
 			StringBuffer kcat = (modE.size() == 0) ? concat("V_", reaction
@@ -157,7 +157,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 
 			StringBuffer denominator = new StringBuffer();
 			for (int i = 0; i < reaction.getNumReactants(); i++) {
-				PluginSpeciesReference si = reaction.getReactant(i);
+				SpeciesReference si = reaction.getReactant(i);
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
 					throw new RateLawNotApplicableException(
 							"This rate law can only be applied if all reactants have integer stoichiometries.");

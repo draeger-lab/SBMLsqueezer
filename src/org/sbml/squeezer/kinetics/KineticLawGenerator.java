@@ -28,13 +28,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
-import jp.sbi.celldesigner.plugin.PluginKineticLaw;
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginParameter;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpecies;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
+import org.sbml.KineticLaw;
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.SpeciesReference;
+import org.sbml.Parameter;
+import org.sbml.Species;
+
+
 
 import org.sbml.libsbml.ASTNode;
 import org.sbml.squeezer.math.GaussianRank;
@@ -51,7 +52,7 @@ import org.sbml.squeezer.math.GaussianRank;
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
-	private PluginModel model;
+	private Model model;
 
 	private CellDesignerPlugin plugin;
 

@@ -24,13 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-import jp.sbi.celldesigner.plugin.PluginKineticLaw;
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpecies;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
-
+import org.sbml.KineticLaw;
+import org.sbml.Model;
+import org.sbml.Species;
+import org.sbml.SpeciesReference;
 import org.sbml.libsbml.ASTNode;
+import org.sbml.Reaction;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.LaTeXExport;
@@ -46,7 +45,7 @@ import org.sbml.squeezer.io.LaTeXExport;
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
-public abstract class BasicKineticLaw extends PluginKineticLaw implements
+public abstract class BasicKineticLaw extends KineticLaw implements
 		libsbmlConstants {
 
 	/**
@@ -232,7 +231,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param ref
 	 * @return
 	 */
-	protected static final StringBuffer getSpecies(PluginSpeciesReference ref) {
+	protected static final StringBuffer getSpecies(SpeciesReference ref) {
 		return new StringBuffer(ref.getSpecies());
 	}
 
@@ -241,7 +240,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * 
 	 * @param reactionNum
 	 */
-	public static final void identifyModifers(PluginReaction reaction,
+	public static final void identifyModifers(Reaction reaction,
 			List<String> listOfPossibleEnzymes, List<String> inhibitors,
 			List<String> transActivators, List<String> transInhibitors,
 			List<String> activators, List<String> enzymes,
@@ -273,7 +272,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 					|| type.equals("PHYSICAL_STIMULATION"))
 				activators.add(reaction.getModifier(modifierNum).getSpecies());
 			else if (type.equals("CATALYSIS")) {
-				PluginSpecies species = reaction.getModifier(modifierNum)
+				Species species = reaction.getModifier(modifierNum)
 						.getSpeciesInstance();
 				String speciesAliasType = species.getSpeciesAlias(0).getType()
 						.equals("PROTEIN") ? species.getSpeciesAlias(0)
@@ -299,7 +298,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @param reaction
 	 * @return
 	 */
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		return false;
 	}
 
@@ -404,7 +403,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 
 	protected String sboTerm;
 
-	protected PluginModel model;
+	protected Model model;
 
 	/**
 	 * 
@@ -414,7 +413,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model)
+	public BasicKineticLaw(Reaction parentReaction, Model model)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		this(parentReaction, model, getDefaultListOfPossibleEnzymes());
@@ -430,7 +429,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public BasicKineticLaw(PluginReaction parentReaction, PluginModel model,
+	public BasicKineticLaw(Reaction parentReaction, Model model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
@@ -488,7 +487,7 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	protected abstract StringBuffer createKineticEquation(PluginModel model,
+	protected abstract StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
@@ -563,15 +562,15 @@ public abstract class BasicKineticLaw extends PluginKineticLaw implements
 	 * @return
 	 */
 	protected static final StringBuffer getStoichiometry(
-			PluginSpeciesReference ref) {
-		if (ref.getStoichiometryMath() == null) {
+			SpeciesReference ref) {
+		
 			double stoich = ref.getStoichiometry();
 			if ((int) stoich - stoich == 0)
 				return new StringBuffer(Integer.toString((int) stoich));
 			else
 				return new StringBuffer(Double.toString(stoich));
-		}
-		return toText(ref.getStoichiometryMath().getMath());
+		
+		
 	}
 
 	// @Override

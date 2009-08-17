@@ -21,9 +21,9 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.SpeciesReference;
 
 /**
  * This class creates a kinetic equation according to the random order mechanism
@@ -47,8 +47,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public RandomOrderMechanism(PluginReaction parentReaction,
-			PluginModel model, boolean reversibility)
+	public RandomOrderMechanism(Reaction parentReaction,
+			Model model, boolean reversibility)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model);
@@ -63,14 +63,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public RandomOrderMechanism(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes)
+	public RandomOrderMechanism(Reaction parentReaction,
+			Model model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
 	}
@@ -79,17 +79,17 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		double stoichiometryRight = 0;
-		for (int i = 0; i < getParentReaction().getNumProducts(); i++)
-			stoichiometryRight += getParentReaction().getProduct(i)
+		for (int i = 0; i < getParentSBMLObject().getNumProducts(); i++)
+			stoichiometryRight += getParentSBMLObject().getProduct(i)
 					.getStoichiometry();
 		String name = "rapid-equilibrium random order ternary-complex mechanism";
-		if ((getParentReaction().getNumProducts() == 2)
+		if ((getParentSBMLObject().getNumProducts() == 2)
 				|| (stoichiometryRight == 2))
 			name += " with two products";
-		else if ((getParentReaction().getNumProducts() == 1)
+		else if ((getParentSBMLObject().getNumProducts() == 1)
 				|| (stoichiometryRight == 1))
 			name += " with one product";
-		if (getParentReaction().getReversible())
+		if (getParentSBMLObject().getReversible())
 			return "reversible " + name;
 		return "irreversible " + name;
 	}
@@ -100,18 +100,17 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	}
 
 	// @Override
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 
-		PluginReaction reaction = getParentReaction();
-		PluginSpeciesReference specRefR1 = reaction.getReactant(0), specRefR2;
-		PluginSpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
+		Reaction reaction = getParentSBMLObject();
+		SpeciesReference specRefR1 = reaction.getReactant(0), specRefR2;
+		SpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
 		if (reaction.getNumReactants() == 2)
-			specRefR2 = (PluginSpeciesReference) reaction.getListOfReactants()
-					.get(1);
+			specRefR2 = (SpeciesReference) reaction.getReactant(1);
 		else if (specRefR1.getStoichiometry() == 2f)
 			specRefR2 = specRefR1;
 		else
@@ -132,8 +131,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 				exception = true;
 			break;
 		case 2:
-			specRefP2 = (PluginSpeciesReference) reaction.getListOfProducts()
-					.get(1);
+			specRefP2 = (SpeciesReference) reaction.getProduct(1);
 			break;
 		default:
 			exception = true;

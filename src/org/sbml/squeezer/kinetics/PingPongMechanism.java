@@ -21,9 +21,9 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.SpeciesReference;
 
 /**
  * TODO: comment missing
@@ -47,7 +47,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public PingPongMechanism(PluginReaction parentReaction, PluginModel model,
+	public PingPongMechanism(Reaction parentReaction, Model model,
 			boolean reversibility) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
@@ -62,14 +62,14 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public PingPongMechanism(PluginReaction parentReaction, PluginModel model,
+	public PingPongMechanism(Reaction parentReaction, Model model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
 	}
@@ -78,7 +78,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	public String getName() {
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		String name = "substituted-enzyme mechanism (Ping-Pong)";
-		if (getParentReaction().getReversible())
+		if (getParentSBMLObject().getReversible())
 			return "reversible " + name;
 		return "irreversible " + name;
 	}
@@ -89,7 +89,7 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	}
 
 	// @Override
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
@@ -97,10 +97,10 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		StringBuffer denominator = new StringBuffer(); // II
 		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
 
-		PluginReaction reaction = getParentReaction();
-		PluginSpeciesReference specRefE1 = reaction.getReactant(0);
-		PluginSpeciesReference specRefP1 = reaction.getProduct(0);
-		PluginSpeciesReference specRefE2 = null, specRefP2 = null;
+		Reaction reaction = getParentSBMLObject();
+		SpeciesReference specRefE1 = reaction.getReactant(0);
+		SpeciesReference specRefP1 = reaction.getProduct(0);
+		SpeciesReference specRefE2 = null, specRefP2 = null;
 
 		if (reaction.getNumReactants() == 2)
 			specRefE2 = reaction.getReactant(1);

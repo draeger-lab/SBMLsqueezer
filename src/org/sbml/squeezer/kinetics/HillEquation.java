@@ -21,9 +21,9 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpecies;
+import org.sbml.Model;
+import org.sbml.Species;
+import org.sbml.Reaction;
 
 /**
  * This class creates a Hill equation as defined in the paper"Hill Kinetics
@@ -48,7 +48,7 @@ public class HillEquation extends BasicKineticLaw {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public HillEquation(PluginReaction parentReaction, PluginModel model)
+	public HillEquation(Reaction parentReaction, Model model)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model);
@@ -68,14 +68,14 @@ public class HillEquation extends BasicKineticLaw {
 	 * @throws IllegalFormatException
 	 * @throws ModificationException
 	 */
-	public HillEquation(PluginReaction parentReaction, PluginModel model,
+	public HillEquation(Reaction parentReaction, Model model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		// TODO: add Hillequation if reactiontype is translation or
 		// transcription
 		if (reaction.getReactionType().equals("TRANSLATION")
@@ -86,7 +86,7 @@ public class HillEquation extends BasicKineticLaw {
 
 	public String getName() {
 		String name;
-		if (getParentReaction().getNumModifiers() > 0)
+		if (getParentSBMLObject().getNumModifiers() > 0)
 			name = "Hill equation, microscopic form";
 		else
 			name = "mass action rate law for zeroth order irreversible reactions, continuous scheme";
@@ -108,7 +108,7 @@ public class HillEquation extends BasicKineticLaw {
 		return sbo;
 	}
 
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -134,7 +134,7 @@ public class HillEquation extends BasicKineticLaw {
 		if (!modCat.isEmpty())
 			modTActi.addAll(modCat);
 
-		PluginReaction reaction = getParentReaction();
+		Reaction reaction = getParentSBMLObject();
 		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
 			String name[] = reaction.getModifier(modifier)
 					.getModificationType().split("_");
@@ -168,7 +168,7 @@ public class HillEquation extends BasicKineticLaw {
 		StringBuffer formula = createHillEquation(modTActi, modTInhib);
 		// Influence of the concentrations of the reactants:
 		for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
-			PluginSpecies reactant = reaction.getReactant(reactantNum)
+			Species reactant = reaction.getReactant(reactantNum)
 					.getSpeciesInstance();
 			StringBuffer gene = new StringBuffer();
 			if (!reactant.getSpeciesAlias(0).getType().toUpperCase().equals(
@@ -196,7 +196,7 @@ public class HillEquation extends BasicKineticLaw {
 			List<String> modTInhib) {
 		StringBuffer acti = new StringBuffer();
 		StringBuffer inhib = new StringBuffer();
-		String rId = getParentReaction().getId();
+		String rId = getParentSBMLObject().getId();
 
 		// KS: half saturation constant.
 		int i;

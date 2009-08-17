@@ -21,9 +21,10 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
+
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.SpeciesReference;
 
 /**
  * <p>
@@ -63,7 +64,7 @@ public class Convenience extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public Convenience(PluginReaction parentReaction, PluginModel model)
+	public Convenience(Reaction parentReaction, Model model)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model);
@@ -78,7 +79,7 @@ public class Convenience extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public Convenience(PluginReaction parentReaction, PluginModel model,
+	public Convenience(Reaction parentReaction, Model model,
 			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
@@ -86,14 +87,14 @@ public class Convenience extends GeneralizedMassAction {
 
 	}
 
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
 	}
 
 	// @Override
 	public String getName() {
-		if (getParentReaction().getReversible())
+		if (getParentSBMLObject().getReversible())
 			return "reversible simple convenience kinetics";
 		return "irreversible simple convenience kinetics";
 	}
@@ -103,20 +104,20 @@ public class Convenience extends GeneralizedMassAction {
 		return "none";
 	}
 
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		StringBuffer numerator;
 		StringBuffer formelTxt[] = new StringBuffer[Math.max(1, modE.size())];
 
-		PluginReaction parentReaction = getParentReaction();
+		Reaction parentReaction = getParentSBMLObject();
 		int enzymeNum = 0;
 		do {
 			StringBuffer denominator = new StringBuffer();
 			StringBuffer kcatp = modE.size() == 0 ? concat("Vp_",
-					getParentReactionID()) : concat("kcatp_",
-					getParentReactionID());
+					getParentSBMLObject().getId()) : concat("kcatp_",
+					getParentSBMLObject().getId());
 			if (modE.size() > 1)
 				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
 			addLocalParameter(kcatp);
@@ -127,12 +128,12 @@ public class Convenience extends GeneralizedMassAction {
 					.getNumReactants()];
 			for (int eductNum = 0; eductNum < parentReaction.getNumReactants(); eductNum++) {
 
-				PluginSpeciesReference specref = parentReaction
+				SpeciesReference specref = parentReaction
 						.getReactant(eductNum);
 
 				// build denominator
 
-				StringBuffer kM = concat("kM_", getParentReactionID());
+				StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
 
 				if (modE.size() > 1)
 					kM = concat(kM, underscore, modE.get(enzymeNum));
@@ -178,8 +179,8 @@ public class Convenience extends GeneralizedMassAction {
 						.getNumProducts()];
 
 				StringBuffer kcat = modE.size() == 0 ? concat("Vn_",
-						getParentReactionID()) : concat("kcatn_",
-						getParentReactionID());
+						getParentSBMLObject().getId()) : concat("kcatn_",
+						getParentSBMLObject().getId());
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 				numerator2 = new StringBuffer(kcat);
@@ -190,7 +191,7 @@ public class Convenience extends GeneralizedMassAction {
 				for (int productNum = 0; productNum < parentReaction
 						.getNumProducts(); productNum++) {
 
-					StringBuffer kM = concat("kM_", getParentReactionID());
+					StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
 
 					if (modE.size() > 1)
 						kM = append(kM, underscore, modE.get(enzymeNum));
@@ -199,7 +200,7 @@ public class Convenience extends GeneralizedMassAction {
 
 					addLocalParameter(kM);
 
-					PluginSpeciesReference specRefP = parentReaction
+					SpeciesReference specRefP = parentReaction
 							.getProduct(productNum);
 
 					denominator2[productNum] = frac(getSpecies(specRefP), kM);

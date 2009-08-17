@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
+
+import org.sbml.Model;
+import org.sbml.Reaction;
+
+import org.sbml.SpeciesReference;
 import org.sbml.squeezer.io.SBOParser;
 
 /**
@@ -57,8 +59,8 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public GeneralizedMassAction(PluginReaction parentReaction,
-			PluginModel model) throws RateLawNotApplicableException,
+	public GeneralizedMassAction(Reaction parentReaction,
+			Model model) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
@@ -72,14 +74,14 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public GeneralizedMassAction(PluginReaction parentReaction,
-			PluginModel model, List<String> listOfPossibleEnzymes)
+	public GeneralizedMassAction(Reaction parentReaction,
+			Model model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
 	}
 
-	public static boolean isApplicable(PluginReaction reaction) {
+	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
 	}
@@ -91,51 +93,51 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 */
 	public String getName() {
 		String name = "", orderF = "", orderR = "", participants = "";
-		if (getParentReaction().getReversible()) {
+		if (getParentSBMLObject().getReversible()) {
 			if (reactantOrder == 0)
 				orderF = "zeroth order forward";
 			else
-				switch (getParentReaction().getNumReactants()) {
+				switch (getParentSBMLObject().getNumReactants()) {
 				case 1:
-					if (getParentReaction().getReactant(0).getStoichiometry() == 1.0)
+					if (getParentSBMLObject().getReactant(0).getStoichiometry() == 1.0)
 						orderF = "first order forward";
-					else if (getParentReaction().getReactant(0)
+					else if (getParentSBMLObject().getReactant(0)
 							.getStoichiometry() == 2.0) {
 						orderF = "second order forward";
 						participants = "one reactant, ";
-					} else if (getParentReaction().getReactant(0)
+					} else if (getParentSBMLObject().getReactant(0)
 							.getStoichiometry() == 3.0) {
 						orderF = "third order forward";
 						participants = "one reactant, ";
 					}
 					break;
 				case 2:
-					if ((getParentReaction().getReactant(0).getStoichiometry() == 1.0)
-							&& (getParentReaction().getReactant(1)
+					if ((getParentSBMLObject().getReactant(0).getStoichiometry() == 1.0)
+							&& (getParentSBMLObject().getReactant(1)
 									.getStoichiometry() == 1.0)) {
 						orderF = "second order forward";
 						participants = "two reactants, ";
-					} else if (((getParentReaction().getReactant(0)
-							.getStoichiometry() == 1.0) && (getParentReaction()
+					} else if (((getParentSBMLObject().getReactant(0)
+							.getStoichiometry() == 1.0) && (getParentSBMLObject()
 							.getReactant(1).getStoichiometry() == 2.0))
-							|| ((getParentReaction().getReactant(0)
-									.getStoichiometry() == 2.0) && (getParentReaction()
+							|| ((getParentSBMLObject().getReactant(0)
+									.getStoichiometry() == 2.0) && (getParentSBMLObject()
 									.getReactant(1).getStoichiometry() == 1.0))) {
 						orderF = "third order forward";
 						participants = "two reactants, ";
 					}
 					break;
 				case 3:
-					if ((getParentReaction().getReactant(0).getStoichiometry()
-							+ getParentReaction().getReactant(1)
+					if ((getParentSBMLObject().getReactant(0).getStoichiometry()
+							+ getParentSBMLObject().getReactant(1)
 									.getStoichiometry()
-							+ getParentReaction().getReactant(2)
+							+ getParentSBMLObject().getReactant(2)
 									.getStoichiometry() == 3.0)
-							&& (getParentReaction().getReactant(0)
+							&& (getParentSBMLObject().getReactant(0)
 									.getStoichiometry() == 1.0)
-							&& (getParentReaction().getReactant(1)
+							&& (getParentSBMLObject().getReactant(1)
 									.getStoichiometry() == 1.0)
-							&& (getParentReaction().getReactant(2)
+							&& (getParentSBMLObject().getReactant(2)
 									.getStoichiometry() == 1.0)) {
 						orderF = "third order forward";
 						participants = "three reactants, ";
@@ -146,46 +148,46 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			if (productOrder == 0)
 				orderR = "zeroth order reverse";
 			else
-				switch (getParentReaction().getNumProducts()) {
+				switch (getParentSBMLObject().getNumProducts()) {
 				case 1:
-					if (getParentReaction().getProduct(0).getStoichiometry() == 1.0)
+					if (getParentSBMLObject().getProduct(0).getStoichiometry() == 1.0)
 						orderR = "first order reverse";
-					else if (getParentReaction().getProduct(0)
+					else if (getParentSBMLObject().getProduct(0)
 							.getStoichiometry() == 2.0) {
 						orderR = "second order reverse";
 						participants += "one product, ";
-					} else if (getParentReaction().getProduct(0)
+					} else if (getParentSBMLObject().getProduct(0)
 							.getStoichiometry() == 3.0) {
 						orderR = "third order reverse";
 						participants += "one product, ";
 					}
 					break;
 				case 2:
-					if ((getParentReaction().getProduct(0).getStoichiometry() == 1.0)
-							&& (getParentReaction().getProduct(1)
+					if ((getParentSBMLObject().getProduct(0).getStoichiometry() == 1.0)
+							&& (getParentSBMLObject().getProduct(1)
 									.getStoichiometry() == 1.0)) {
 						orderR = "second order reverse";
 						participants += "two products, ";
-					} else if (((getParentReaction().getProduct(0)
-							.getStoichiometry() == 1.0) && (getParentReaction()
+					} else if (((getParentSBMLObject().getProduct(0)
+							.getStoichiometry() == 1.0) && (getParentSBMLObject()
 							.getProduct(1).getStoichiometry() == 2.0))
-							|| ((getParentReaction().getProduct(0)
-									.getStoichiometry() == 2.0) && (getParentReaction()
+							|| ((getParentSBMLObject().getProduct(0)
+									.getStoichiometry() == 2.0) && (getParentSBMLObject()
 									.getProduct(1).getStoichiometry() == 1.0))) {
 						orderR = "third order reverse";
 						participants += "two products, ";
 					}
 					break;
 				case 3:
-					if ((getParentReaction().getProduct(0).getStoichiometry()
-							+ getParentReaction().getProduct(1)
+					if ((getParentSBMLObject().getProduct(0).getStoichiometry()
+							+ getParentSBMLObject().getProduct(1)
 									.getStoichiometry()
-							+ getParentReaction().getProduct(2)
+							+ getParentSBMLObject().getProduct(2)
 									.getStoichiometry() == 3.0)
-							&& ((getParentReaction().getProduct(0)
+							&& ((getParentSBMLObject().getProduct(0)
 									.getStoichiometry() == 1.0)
-									&& (getParentReaction().getProduct(1)
-											.getStoichiometry() == 1.0) && (getParentReaction()
+									&& (getParentSBMLObject().getProduct(1)
+											.getStoichiometry() == 1.0) && (getParentSBMLObject()
 									.getProduct(2).getStoichiometry() == 1.0))) {
 						orderR = "third order reverse";
 						participants += "three products, ";
@@ -205,45 +207,45 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		} else { // irreversible
 			if (reactantOrder == 0)
 				orderF = "zeroth order ";
-			else if (getParentReaction().getNumReactants() == 1) {
-				if (getParentReaction().getReactant(0).getStoichiometry() == 1.0)
+			else if (getParentSBMLObject().getNumReactants() == 1) {
+				if (getParentSBMLObject().getReactant(0).getStoichiometry() == 1.0)
 					orderF = "first order ";
 				else {
-					if (getParentReaction().getReactant(0).getStoichiometry() == 2.0) {
+					if (getParentSBMLObject().getReactant(0).getStoichiometry() == 2.0) {
 						orderF = "second order ";
 						participants += ", one reactant";
-					} else if (getParentReaction().getReactant(0)
+					} else if (getParentSBMLObject().getReactant(0)
 							.getStoichiometry() == 3.0) {
 						orderF = "third order ";
 						participants += ", one reactant";
 					}
 				}
-			} else if (getParentReaction().getNumReactants() == 2) {
-				if ((getParentReaction().getReactant(0).getStoichiometry() == 1.0)
-						&& (getParentReaction().getReactant(1)
+			} else if (getParentSBMLObject().getNumReactants() == 2) {
+				if ((getParentSBMLObject().getReactant(0).getStoichiometry() == 1.0)
+						&& (getParentSBMLObject().getReactant(1)
 								.getStoichiometry() == 1.0)) {
 					orderF = "second order ";
 					participants += ", two reactants";
-				} else if (((getParentReaction().getReactant(0)
-						.getStoichiometry() == 2.0) && (getParentReaction()
+				} else if (((getParentSBMLObject().getReactant(0)
+						.getStoichiometry() == 2.0) && (getParentSBMLObject()
 						.getReactant(1).getStoichiometry() == 1.0))
-						|| ((getParentReaction().getReactant(1)
-								.getStoichiometry() == 2.0) && (getParentReaction()
+						|| ((getParentSBMLObject().getReactant(1)
+								.getStoichiometry() == 2.0) && (getParentSBMLObject()
 								.getReactant(0).getStoichiometry() == 1.0))) {
 					orderF = "third order ";
 					participants += ", two reactants";
 				}
-			} else if (getParentReaction().getNumReactants() == 3) {
+			} else if (getParentSBMLObject().getNumReactants() == 3) {
 				// third order irreversible mass action kinetics, three
 				// reactants
-				if (((getParentReaction().getReactant(0).getStoichiometry()
-						+ getParentReaction().getReactant(1).getStoichiometry()
-						+ getParentReaction().getReactant(2).getStoichiometry() == 3.0))
-						&& (getParentReaction().getReactant(0)
+				if (((getParentSBMLObject().getReactant(0).getStoichiometry()
+						+ getParentSBMLObject().getReactant(1).getStoichiometry()
+						+ getParentSBMLObject().getReactant(2).getStoichiometry() == 3.0))
+						&& (getParentSBMLObject().getReactant(0)
 								.getStoichiometry() == 1.0)
-						&& (getParentReaction().getReactant(1)
+						&& (getParentSBMLObject().getReactant(1)
 								.getStoichiometry() == 1.0)
-						&& (getParentReaction().getReactant(2)
+						&& (getParentSBMLObject().getReactant(2)
 								.getStoichiometry() == 1.0)) {
 					orderF = "third order ";
 					participants += ", three reactants";
@@ -276,10 +278,10 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * 
 	 * @see
 	 * org.sbmlsqueezer.kinetics.BasicKineticLaw#createKineticEquation(jp.sbi
-	 * .celldesigner.plugin.PluginModel, java.util.List, java.util.List,
+	 * .celldesigner.plugin.Model, java.util.List, java.util.List,
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	protected StringBuffer createKineticEquation(PluginModel model,
+	protected StringBuffer createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
@@ -287,7 +289,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		List<String> catalysts = new Vector<String>(modE);
 		catalysts.addAll(modCat);
 		StringBuffer rates[] = new StringBuffer[Math.max(1, catalysts.size())];
-		PluginReaction reaction = getParentReaction();
+		Reaction reaction = getParentSBMLObject();
 		for (int c = 0; c < rates.length; c++) {
 			rates[c] = association(catalysts, c);
 			if (reaction.getReversible())
@@ -311,14 +313,14 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 *         over all reactants.
 	 */
 	protected StringBuffer association(List<String> catalysts, int catNum) {
-		StringBuffer kass = concat("kass_", getParentReaction().getId());
+		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
 		addLocalParameter(kass);
 		StringBuffer ass = new StringBuffer(kass);
-		for (int reactants = 0; reactants < getParentReaction()
+		for (int reactants = 0; reactants < getParentSBMLObject()
 				.getNumReactants(); reactants++) {
-			PluginSpeciesReference r = getParentReaction().getReactant(
+			SpeciesReference r = getParentSBMLObject().getReactant(
 					reactants);
 			ass = times(ass, pow(r.getSpecies(), getStoichiometry(r)));
 		}
@@ -334,13 +336,13 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @return
 	 */
 	protected Object dissociation(List<String> catalysts, int c) {
-		StringBuffer kdiss = concat("kdiss_", getParentReaction().getId());
+		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kdiss = concat(kdiss, underscore, catalysts.get(c));
 		addLocalParameter(kdiss);
 		StringBuffer diss = new StringBuffer(kdiss);
-		for (int products = 0; products < getParentReaction().getNumProducts(); products++) {
-			PluginSpeciesReference p = getParentReaction().getProduct(products);
+		for (int products = 0; products < getParentSBMLObject().getNumProducts(); products++) {
+			SpeciesReference p = getParentSBMLObject().getProduct(products);
 			diss = times(diss, pow(p.getSpecies(), getStoichiometry(p)));
 		}
 		return diss;
@@ -364,14 +366,14 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					StringBuffer kA = concat("kA_", getParentReactionID(),
+					StringBuffer kA = concat("kA_", getParentSBMLObject().getId(),
 							underscore, modifiers.get(i));
 					mods[i] = frac(new StringBuffer(modifiers.get(i)), sum(kA,
 							new StringBuffer(modifiers.get(i))));
 					addLocalParameter(kA);
 				} else {
 					// Inhibitor Mod
-					StringBuffer kI = concat("kI_", getParentReactionID(),
+					StringBuffer kI = concat("kI_", getParentSBMLObject().getId(),
 							underscore, modifiers.get(i));
 					mods[i] = frac(kI, sum(kI, new StringBuffer(modifiers
 							.get(i))));
