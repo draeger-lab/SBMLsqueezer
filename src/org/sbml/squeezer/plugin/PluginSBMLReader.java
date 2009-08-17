@@ -98,6 +98,8 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 
 	public Species convert(PluginSpecies spec) {
 		Species species = new Species(spec.getId());
+		species.setSBOTerm(Integer.parseInt(alias2sbo.get(
+				spec.getSpeciesAlias(spec.getId())).toString()));
 		species.addChangeListener(this);
 		return species;
 	}
