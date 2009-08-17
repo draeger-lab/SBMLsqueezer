@@ -22,30 +22,34 @@ import javax.swing.filechooser.FileFilter;
  *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
  *         JDK 1.6.0 Aug 3, 2007
  */
-public class MyFileFilter extends FileFilter implements java.io.FileFilter {
+public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 
 	/**
 	 * True if this filter accepts plain ASCII files
 	 */
-	private boolean textFiles;
+	public static final short TEXT_FILES = 0;
 
 	/**
 	 * True if this filter accepts (La)TeX files.
 	 */
-	private boolean TeXFiles;
+	public static final short TeX_FILES = 1;
+
+	/**
+	 * To be selected if SBML files (XML files) can be choosen.
+	 */
+	public static final short SBML_FILES = 2;
+
+	private short type;
 
 	/**
 	 * Constructs a file filter that accepts or not accepts the following files
 	 * (defined by the given parameters).
 	 * 
-	 * @param acceptTextFiles
-	 *            True if this filter accepts plain ASCII files
-	 * @param acceptTeXfiles
-	 *            True if this filter accepts (La)TeX files.
+	 * @param type
+	 *            One of the short numbers defined in this class.
 	 */
-	public MyFileFilter() {
-		this.textFiles = false;
-		this.TeXFiles = false;
+	public SBFileFilter(short type) {
+		this.type = type;
 	}
 
 	/*
@@ -55,10 +59,28 @@ public class MyFileFilter extends FileFilter implements java.io.FileFilter {
 	 */
 	// @Override
 	public boolean accept(File f) {
-		if (f.isDirectory() || (textFiles && isTextFile(f))
-				|| (TeXFiles && isTeXFile(f)))
+		if (f.isDirectory() || (type == TEXT_FILES && isTextFile(f))
+				|| (type == TeX_FILES && isTeXFile(f))
+				|| (type == SBML_FILES && isSBMLFile(f)))
 			return true;
 		return false;
+	}
+
+	/**
+	 * Returns true if this file filter accepts SBML files.
+	 * 
+	 * @return
+	 */
+	public boolean acceptsSBMLFiles() {
+		return type == SBML_FILES;
+	}
+
+	public boolean acceptsTeXFiles() {
+		return type == TeX_FILES;
+	}
+
+	public boolean acceptsTextFiles() {
+		return type == TEXT_FILES;
 	}
 
 	/*
@@ -68,14 +90,27 @@ public class MyFileFilter extends FileFilter implements java.io.FileFilter {
 	 */
 	// @Override
 	public String getDescription() {
-		String description = "";
-		if (textFiles)
-			description += "Text files (*.txt)";
-		if (description.length() > 0)
-			description += ", ";
-		if (TeXFiles)
-			description += "TeX files (*.tex)";
-		return description;
+		switch (type) {
+		case TEXT_FILES:
+			return "Text files (*.txt)";
+		case TeX_FILES:
+			return "TeX files (*.tex)";
+		case SBML_FILES:
+			return "SBML files (*.sbml, *.xml)";
+		default:
+			return "";
+		}
+	}
+
+	/**
+	 * Returns true if the given file is an SBML file.
+	 * 
+	 * @param f
+	 * @return
+	 */
+	public boolean isSBMLFile(File f) {
+		String extension = f.getName().toLowerCase();
+		return extension.endsWith(".xml") || extension.endsWith(".sbml");
 	}
 
 	/**
@@ -88,10 +123,6 @@ public class MyFileFilter extends FileFilter implements java.io.FileFilter {
 		return f.getName().toLowerCase().endsWith(".tex");
 	}
 
-	public boolean isTeXFiles() {
-		return TeXFiles;
-	}
-
 	/**
 	 * Returns true if the given file is a text file.
 	 * 
@@ -101,19 +132,4 @@ public class MyFileFilter extends FileFilter implements java.io.FileFilter {
 	public boolean isTextFile(File f) {
 		return f.getName().toLowerCase().endsWith(".txt");
 	}
-
-	public boolean isTextFiles() {
-		return textFiles;
-	}
-
-	public void setTeXFiles(boolean teXFiles) {
-		this.TeXFiles = teXFiles;
-		this.textFiles = !TeXFiles;
-	}
-
-	public void setTextFiles(boolean textFiles) {
-		this.textFiles = textFiles;
-		this.TeXFiles = !textFiles;
-	}
-
 }

@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.standalone;
+package org.sbml.squeezer.gui;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;

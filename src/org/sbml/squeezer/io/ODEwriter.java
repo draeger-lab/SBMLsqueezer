@@ -42,10 +42,8 @@ public class ODEwriter {
 	 * @throws IOException
 	 */
 	public ODEwriter(File file, KineticLawGenerator klg) throws IOException {
-		MyFileFilter ff1 = new MyFileFilter();
-		ff1.setTeXFiles(true);
-		MyFileFilter ff2 = new MyFileFilter();
-		ff2.setTextFiles(true);
+		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
+		SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
 		if (ff1.accept(file) || ff2.accept(file)) {
 			if (file.getPath().toLowerCase().endsWith(".txt")) {
 				writeTextFile(file, klg);
