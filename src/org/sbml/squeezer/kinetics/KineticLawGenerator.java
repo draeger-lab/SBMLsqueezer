@@ -308,8 +308,8 @@ public class KineticLawGenerator {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public BasicKineticLaw createKineticLaw(PluginModel model,
-			PluginReaction reaction, short kinetic, boolean reversibility)
+	public BasicKineticLaw createKineticLaw(Model model,
+			Reaction reaction, short kinetic, boolean reversibility)
 			throws ModificationException, RateLawNotApplicableException,
 			IOException, IllegalFormatException {
 		int reactionNum = 0;
@@ -563,7 +563,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @return
 	 */
-	public PluginModel getModel() {
+	public Model getModel() {
 		return plugin.getSelectedModel();
 	}
 
@@ -676,8 +676,8 @@ public class KineticLawGenerator {
 	 * @return Returns a sorted array of possible kinetic equations for the
 	 *         given reaction in the model.
 	 */
-	public short[] identifyPossibleReactionTypes(PluginModel model,
-			PluginReaction reaction) throws RateLawNotApplicableException {
+	public short[] identifyPossibleReactionTypes(Model model,
+			Reaction reaction) throws RateLawNotApplicableException {
 
 		Set<Short> types = new HashSet<Short>();
 		types.add(Short.valueOf(GENERALIZED_MASS_ACTION));

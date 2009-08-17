@@ -24,9 +24,8 @@ import javax.swing.JTable;
 import javax.swing.event.MouseInputListener;
 import javax.swing.event.TableModelEvent;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-
+import org.sbml.Model;
+import org.sbml.Reaction;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.IllegalFormatException;
 import org.sbml.squeezer.kinetics.KineticLawGenerator;
@@ -116,7 +115,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 			i = 0;
 			while ((i < klg.getModel().getNumReactions())
 					&& (!klg.getModel().getReaction(i).getId().equals(
-							kineticLaw.getParentReaction().getId())))
+							kineticLaw.getParentSBMLObject().getId())))
 				i++;
 			klg.getReactionNumAndKineticLaw().put(Integer.valueOf(i),
 					kineticLaw);
@@ -160,7 +159,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					- this.getTopLevelAncestor().getX(), this.getY() + 10);
 			panel.setBorder(BorderFactory.createLoweredBevelBorder());
 			JOptionPane.showMessageDialog(getParent(), panel,
-					"Rate Law of Reaction " + kinetic.getParentReactionID(),
+					"Rate Law of Reaction " + kinetic.getParentSBMLObject().getId(),
 					JOptionPane.INFORMATION_MESSAGE);
 			// JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
 			// JLayeredPane.POPUP_LAYER);
@@ -320,8 +319,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 	 */
 	private void setCellEditor(int rowIndex) {
 		if ((dataModel.getRowCount() > 0) && (dataModel.getColumnCount() > 0)) {
-			PluginModel model = klg.getModel();
-			PluginReaction reaction = model.getReaction(dataModel.getValueAt(
+			Model model = klg.getModel();
+			Reaction reaction = model.getReaction(dataModel.getValueAt(
 					rowIndex, 0).toString());
 			try {
 				short[] possibleTypes = this.klg.identifyPossibleReactionTypes(

@@ -236,6 +236,26 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 	}
 
 	/**
+	 * Returns the value of a PluginSpeciesReference object's stoichiometry
+	 * either as a double or, if the stoichiometry has an integer value, as an
+	 * int object.
+	 * 
+	 * @param ref
+	 * @return
+	 */
+	protected static final StringBuffer getStoichiometry(
+			SpeciesReference ref) {
+		
+			double stoich = ref.getStoichiometry();
+			if ((int) stoich - stoich == 0)
+				return new StringBuffer(Integer.toString((int) stoich));
+			else
+				return new StringBuffer(Double.toString(stoich));
+		
+		
+	}
+
+	/**
 	 * identify which Modifer is used
 	 * 
 	 * @param reactionNum
@@ -493,16 +513,6 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 			throws RateLawNotApplicableException, IllegalFormatException;
 
 	/**
-	 * Returns a list of names of all parameters, which are only allowed to be
-	 * stored globally.
-	 * 
-	 * @return
-	 */
-	public List<StringBuffer> getGlobalParameters() {
-		return listOfGlobalParameters;
-	}
-
-	/**
 	 * Recursively removes waste brackets from a formula.
 	 * 
 	 * TODO Refinement
@@ -516,6 +526,16 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 	 * { sb.deleteCharAt(sb.length() - 1); sb.deleteCharAt(0); sb =
 	 * removeBrackets(sb); } } return sb; }
 	 */
+
+	/**
+	 * Returns a list of names of all parameters, which are only allowed to be
+	 * stored globally.
+	 * 
+	 * @return
+	 */
+	public List<StringBuffer> getGlobalParameters() {
+		return listOfGlobalParameters;
+	}
 
 	/**
 	 * Returns the LaTeX expression of the generated formual of this kinetic
@@ -552,26 +572,6 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 	 * @return
 	 */
 	public abstract String getSBO();
-
-	/**
-	 * Returns the value of a PluginSpeciesReference object's stoichiometry
-	 * either as a double or, if the stoichiometry has an integer value, as an
-	 * int object.
-	 * 
-	 * @param ref
-	 * @return
-	 */
-	protected static final StringBuffer getStoichiometry(
-			SpeciesReference ref) {
-		
-			double stoich = ref.getStoichiometry();
-			if ((int) stoich - stoich == 0)
-				return new StringBuffer(Integer.toString((int) stoich));
-			else
-				return new StringBuffer(Double.toString(stoich));
-		
-		
-	}
 
 	// @Override
 	public String toString() {

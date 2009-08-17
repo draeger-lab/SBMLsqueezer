@@ -50,9 +50,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-import jp.sbi.celldesigner.plugin.PluginReaction;
-
+import org.sbml.Model;
+import org.sbml.Reaction;
 import org.sbml.squeezer.gui.table.KineticLawJTable;
 import org.sbml.squeezer.gui.table.KineticLawTableModel;
 import org.sbml.squeezer.io.LaTeXExport;
@@ -172,7 +171,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * 
 	 * @param model
 	 */
-	public SBMLsqueezerUI(PluginModel model) {
+	public SBMLsqueezerUI(Model model) {
 		this();
 		ImageIcon icon = null;
 		try {
@@ -211,7 +210,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @param model
 	 * @param reaction
 	 */
-	public SBMLsqueezerUI(PluginModel model, PluginReaction reaction) {
+	public SBMLsqueezerUI(Model model, Reaction reaction) {
 		this();
 		JFileChooser chooser = new JFileChooser();
 		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
@@ -262,11 +261,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @param plugin
 	 * @param reaction
 	 */
-	public SBMLsqueezerUI(SBMLsqueezerPlugin plugin, PluginReaction reaction) {
+	public SBMLsqueezerUI(SBMLsqueezerPlugin plugin, Reaction reaction) {
 		this();
 		this.plugin = plugin;
 
-		PluginModel model = plugin.getSelectedModel();
+		Model model = reaction.getModel();
 		ImageIcon icon = null;
 		try {
 			Image image = ImageIO.read(Resource.class
