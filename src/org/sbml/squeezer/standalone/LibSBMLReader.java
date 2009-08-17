@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.standalone;
 
+import org.sbml.Compartment;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
@@ -68,31 +69,27 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 	}
 
 	public Model convert(org.sbml.libsbml.Model model) {
-		Model m = new Model(model.getId());
+		this.model = new Model(model.getId());
 		int i;
-		for (i = 0; i < model.getNumReactions(); i++) {
-			m.addReaction(convert(model.getReaction(i)));
-		}
-		for (i = 0; i < model.getNumSpecies(); i++) {
-			m.addSpecies(convert(model.getSpecies(i)));
-		}
-		for (i = 0; i< model.getNumParameters(); i++) {
-			m.addParameter(convert(model.getParameter(i)));
-		}
-		return m;
+		for (i = 0; i < model.getNumCompartments(); i++)
+			this.model.addCompartment(convert(model.getCompartment(i)));
+		for (i = 0; i < model.getNumReactions(); i++)
+			this.model.addReaction(convert(model.getReaction(i)));
+		for (i = 0; i < model.getNumSpecies(); i++)
+			this.model.addSpecies(convert(model.getSpecies(i)));
+		for (i = 0; i < model.getNumParameters(); i++)
+			this.model.addParameter(convert(model.getParameter(i)));
+		return this.model;
 	}
 
 	public Reaction convert(org.sbml.libsbml.Reaction reac) {
 		Reaction reaction = new Reaction(reac.getId());
-		for (int i = 0; i < reac.getNumReactants(); i++) {
+		for (int i = 0; i < reac.getNumReactants(); i++)
 			reaction.addReactant(convert(reac.getReactant(i)));
-		}
-		for (int i = 0; i < reac.getNumProducts(); i++) {
+		for (int i = 0; i < reac.getNumProducts(); i++)
 			reaction.addProduct(convert(reac.getProduct(i)));
-		}
-		for (int i = 0; i < reac.getNumModifiers(); i++) {
+		for (int i = 0; i < reac.getNumModifiers(); i++)
 			reaction.addModifier(convert(reac.getModifier(i)));
-		}
 		reaction.setSBOTerm(reac.getSBOTerm());
 		reaction.setKineticLaw(convert(reac.getKineticLaw()));
 		reaction.setFast(reac.getFast());
@@ -104,8 +101,28 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 	public Species convert(org.sbml.libsbml.Species spec) {
 		Species species = new Species(spec.getId());
 		species.setSBOTerm(spec.getSBOTerm());
+		if (spec.isSetCharge())
+			species.setCharge(spec.getCharge());
+		species.setBoundaryCondition(spec.getBoundaryCondition());
+		species.setConstant(spec.getConstant());
+		species.setCompartment(model.getCompartment(spec.getCompartment()));
 		species.addChangeListener(this);
 		return species;
+	}
+
+	public Compartment convert(org.sbml.libsbml.Compartment compartment) {
+		Compartment c = new Compartment(compartment.getId(), compartment
+				.getName());
+		c.setConstant(compartment.getConstant());
+		if (compartment.isSetOutside()) {
+			Compartment outside = model.getCompartment(compartment.getOutside());
+			if (outside == null)
+				model.addCompartment(convert(compartment));
+			c.setOutside(outside);
+		}
+		c.setSize(compartment.getSize());
+		c.setSpatialDimensions((int) compartment.getSpatialDimensions());
+		return c;
 	}
 
 	public SpeciesReference convert(org.sbml.libsbml.SpeciesReference specref) {

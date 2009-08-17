@@ -28,6 +28,7 @@ package org.sbml;
 public class SpeciesReference extends SimpleSpeciesReference {
 
 	private double stoichiometry;
+	private StoichiometryMath stoichiometryMath;
 
 	public SpeciesReference() {
 		super();
@@ -46,6 +47,7 @@ public class SpeciesReference extends SimpleSpeciesReference {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#clone()
 	 */
 	// @Override
@@ -55,6 +57,7 @@ public class SpeciesReference extends SimpleSpeciesReference {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#equals(java.lang.Object)
 	 */
 	// @Override
@@ -67,12 +70,23 @@ public class SpeciesReference extends SimpleSpeciesReference {
 		return stoichiometry;
 	}
 
+	public StoichiometryMath getStoichiometryMath() {
+		return stoichiometryMath;
+	}
+
 	public void initDefaults() {
 		stoichiometry = 1;
+		stoichiometryMath = null;
+	}
+	
+	public boolean isSetStoichiometryMath() {
+		return stoichiometryMath != null;
 	}
 
 	public void setStoichiometry(double stoichiometry) {
 		this.stoichiometry = stoichiometry;
+		if (isSetStoichiometryMath())
+			stoichiometryMath = null;
 		stateChanged();
 	}
 	
@@ -86,6 +100,10 @@ public class SpeciesReference extends SimpleSpeciesReference {
 	 */
 	public Species getParentSBMLObject() {
 		return (Species) parentSBMLObject;
+	}
+
+	public void setStoichiometryMath(StoichiometryMath math) {
+		this.stoichiometryMath = math;
 	}
 
 }

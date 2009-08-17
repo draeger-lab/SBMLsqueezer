@@ -1,6 +1,12 @@
 TODO-Liste
 ==========
 
+Fehler in Hill-Kinetik: Laut Paper von Hintze et al. wird bei Inhibition
+1 - Produkt über alle Inhibitionsfunktionen gerechnet. Bei uns ist es
+aber Produkt über alle Inhibitoren mit 1 - Inhibitionsfunktion.
+
+Außerdem fehlt die Abbaurate in der Hillkinetik.
+
 Immer parentSBMLObject setzen, wenn neue Konstrukte erstellt werden.
 
 Hier wird an vielen Stellen von einer Stöchiometrie ausgegangen.
