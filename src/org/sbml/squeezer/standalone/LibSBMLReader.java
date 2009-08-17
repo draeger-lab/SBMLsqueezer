@@ -93,6 +93,7 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 		for (int i = 0; i < reac.getNumModifiers(); i++) {
 			reaction.addModifier(convert(reac.getModifier(i)));
 		}
+		reaction.setSBOTerm(reac.getSBOTerm());
 		reaction.setKineticLaw(convert(reac.getKineticLaw()));
 		reaction.setFast(reac.getFast());
 		reaction.setReversible(reac.getReversible());
@@ -102,6 +103,7 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 
 	public Species convert(org.sbml.libsbml.Species spec) {
 		Species species = new Species(spec.getId());
+		species.setSBOTerm(spec.getSBOTerm());
 		species.addChangeListener(this);
 		return species;
 	}
