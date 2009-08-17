@@ -128,4 +128,12 @@ public class Species extends NamedSBase {
 	public void setInitialConcentration(double initialConcentration) {
 		this.initialConcentration = initialConcentration;
 	}
+
+	public boolean isSetInitialAmount() {
+		return initialAmount != Double.NaN;
+	}
+	
+	public boolean isSetInitialConcentration() {
+		return initialConcentration != Double.NaN;
+	}
 }

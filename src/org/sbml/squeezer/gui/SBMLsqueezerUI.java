@@ -56,7 +56,7 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import org.sbml.squeezer.gui.table.KineticLawJTable;
 import org.sbml.squeezer.gui.table.KineticLawTableModel;
 import org.sbml.squeezer.io.LaTeXExport;
-import org.sbml.squeezer.io.MyFileFilter;
+import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.ODEwriter;
 import org.sbml.squeezer.kinetics.IllegalFormatException;
 import org.sbml.squeezer.kinetics.KineticLawGenerator;
@@ -87,6 +87,17 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private static final long serialVersionUID = -5980678130366530716L;
 
 	private static final int fullHeight = 720;
+
+	/**
+	 * Just for debuggin purposes.
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		SBMLsqueezerUI ui = new SBMLsqueezerUI();
+		ui.init();
+		ui.setVisible(true);
+	}
 
 	// UI ELEMENTS DEFINITION: ReactionFrame
 	private boolean KineticsAndParametersStoredInSBML = false;
@@ -203,8 +214,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	public SBMLsqueezerUI(PluginModel model, PluginReaction reaction) {
 		this();
 		JFileChooser chooser = new JFileChooser();
-		MyFileFilter ff1 = new MyFileFilter();
-		ff1.setTeXFiles(true);
+		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
 		chooser.setFileFilter(ff1);
 		File file = null;
 		int state = chooser.showOpenDialog(null);
@@ -231,6 +241,19 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		this.plugin = plugin;
 		init();
 	}
+
+	// public static void listLoadedLibraries() throws Exception {
+	// Field loadedLibraryNamesField = ClassLoader.class
+	// .getDeclaredField("loadedLibraryNames");
+	// loadedLibraryNamesField.setAccessible(true);
+	// @SuppressWarnings("unchecked")
+	// Vector<String> loadedLibraryNames = (Vector<String>)
+	// loadedLibraryNamesField
+	// .get(null);
+	// for (String string : loadedLibraryNames) {
+	// System.out.println(string);
+	// }
+	// }
 
 	/**
 	 * This constructor is necessary for the GUI to generate just one single
@@ -293,30 +316,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
-	}
-
-	// public static void listLoadedLibraries() throws Exception {
-	// Field loadedLibraryNamesField = ClassLoader.class
-	// .getDeclaredField("loadedLibraryNames");
-	// loadedLibraryNamesField.setAccessible(true);
-	// @SuppressWarnings("unchecked")
-	// Vector<String> loadedLibraryNames = (Vector<String>)
-	// loadedLibraryNamesField
-	// .get(null);
-	// for (String string : loadedLibraryNames) {
-	// System.out.println(string);
-	// }
-	// }
-
-	/**
-	 * Just for debuggin purposes.
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		SBMLsqueezerUI ui = new SBMLsqueezerUI();
-		ui.init();
-		ui.setVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -525,15 +524,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 			} else if (text.equals("Save")) {
 				JFileChooser chooser = new JFileChooser();
-				MyFileFilter ff2 = new MyFileFilter();
-				ff2.setTextFiles(true);
+				SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
 				chooser.setFileFilter(ff2);
 				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 					settingsPanel.save(chooser.getSelectedFile());
 			} else if (text.equals("Load")) {
 				JFileChooser chooser = new JFileChooser();
-				MyFileFilter ff2 = new MyFileFilter();
-				ff2.setTextFiles(true);
+				SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
 				chooser.setFileFilter(ff2);
 				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 					try {
@@ -663,10 +660,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			KineticsAndParametersStoredInSBML = true;
 		}
 		JFileChooser chooser = new JFileChooser();
-		MyFileFilter ff1 = new MyFileFilter();
-		MyFileFilter ff2 = new MyFileFilter();
-		ff1.setTeXFiles(true);
-		ff2.setTextFiles(true);
+		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
+		SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
 		chooser.setFileFilter(ff1);
 		chooser.addChoosableFileFilter(ff2);
 		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
@@ -753,55 +748,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	/**
-	 * This method actually initializes the GUI.
-	 */
-	private void init() {
-		centralPanel = initOptionsPanel();
-
-		setLayout(new BorderLayout());
-		getContentPane().add(centralPanel, BorderLayout.CENTER);
-
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/logo_small.png")); // title_small.jpg
-			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
-			JLabel label = new JLabel(new ImageIcon(image));
-			label.setBackground(Color.WHITE);
-			label.setText("<html><body><br><br><br><br><br><br>Version "
-					+ SBMLsqueezerPlugin.getVersionNumber() + "</body></html>");
-			JPanel p = new JPanel();
-			p.add(label);
-			p.setBackground(Color.WHITE);
-			JScrollPane scroll = new JScrollPane(p,
-					JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			scroll.setBackground(Color.WHITE);
-			getContentPane().add(scroll, BorderLayout.NORTH);
-			// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
-
-		footPanel = getFootPanel(0);
-		getContentPane().add(footPanel, BorderLayout.SOUTH);
-
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setDefaultLookAndFeelDecorated(true);
-		setLocationByPlatform(true);
-		setResizable(false);
-		pack();
-
-		int height = getHeight();
-		setSize(getWidth(), fullHeight);
-		setLocationRelativeTo(null);
-		setSize(getWidth(), height);
-		settingsPanel = getJSettingsPanel();
-	}
-
-	/**
 	 * Returns a JPanel that displays the user options.
 	 * 
 	 * @return
@@ -860,5 +806,54 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		 */
 		pack();
 		validate();
+	}
+
+	/**
+	 * This method actually initializes the GUI.
+	 */
+	protected void init() {
+		centralPanel = initOptionsPanel();
+
+		setLayout(new BorderLayout());
+		getContentPane().add(centralPanel, BorderLayout.CENTER);
+
+		try {
+			Image image = ImageIO.read(Resource.class
+					.getResource("img/logo_small.png")); // title_small.jpg
+			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
+			JLabel label = new JLabel(new ImageIcon(image));
+			label.setBackground(Color.WHITE);
+			label.setText("<html><body><br><br><br><br><br><br>Version "
+					+ SBMLsqueezerPlugin.getVersionNumber() + "</body></html>");
+			JPanel p = new JPanel();
+			p.add(label);
+			p.setBackground(Color.WHITE);
+			JScrollPane scroll = new JScrollPane(p,
+					JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			scroll.setBackground(Color.WHITE);
+			getContentPane().add(scroll, BorderLayout.NORTH);
+			// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
+		} catch (IOException exc) {
+			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
+					+ "</html>", exc.getClass().getName(),
+					JOptionPane.ERROR_MESSAGE);
+			exc.printStackTrace();
+		}
+
+		footPanel = getFootPanel(0);
+		getContentPane().add(footPanel, BorderLayout.SOUTH);
+
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultLookAndFeelDecorated(true);
+		setLocationByPlatform(true);
+		setResizable(false);
+		pack();
+
+		int height = getHeight();
+		setSize(getWidth(), fullHeight);
+		setLocationRelativeTo(null);
+		setSize(getWidth(), height);
+		settingsPanel = getJSettingsPanel();
 	}
 }

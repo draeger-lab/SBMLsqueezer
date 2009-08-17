@@ -32,7 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.squeezer.io.MyFileFilter;
+import org.sbml.squeezer.io.SBFileFilter;
 
 /**
  * @since 1.2
@@ -143,10 +143,8 @@ public class LaTeXExportDialogPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			JFileChooser chooser = new JFileChooser();
-			MyFileFilter ff1 = new MyFileFilter();
-			MyFileFilter ff2 = new MyFileFilter();
-			ff1.setTeXFiles(true);
-			ff2.setTextFiles(true);
+			SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
+			SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
 			chooser.addChoosableFileFilter(ff1);
 			chooser.addChoosableFileFilter(ff2);
 			if (chooser.showOpenDialog(getParent()) == JFileChooser.APPROVE_OPTION) {
