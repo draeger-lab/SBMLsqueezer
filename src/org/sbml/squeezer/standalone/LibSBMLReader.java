@@ -91,7 +91,12 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 		for (int i = 0; i < reac.getNumModifiers(); i++)
 			reaction.addModifier(convert(reac.getModifier(i)));
 		reaction.setSBOTerm(reac.getSBOTerm());
-		reaction.setKineticLaw(convert(reac.getKineticLaw()));
+		if (reac.isSetKineticLaw())
+			reaction.setKineticLaw(convert(reac.getKineticLaw()));
+		if (reac.isSetName())
+			reaction.setName(reac.getName());
+		reaction.setSBOTerm(reac.getSBOTerm());
+		reaction.setNotes(reac.getNotesString());
 		reaction.setFast(reac.getFast());
 		reaction.setReversible(reac.getReversible());
 		reaction.addChangeListener(this);
@@ -115,7 +120,8 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 				.getName());
 		c.setConstant(compartment.getConstant());
 		if (compartment.isSetOutside()) {
-			Compartment outside = model.getCompartment(compartment.getOutside());
+			Compartment outside = model
+					.getCompartment(compartment.getOutside());
 			if (outside == null)
 				model.addCompartment(convert(compartment));
 			c.setOutside(outside);
@@ -143,10 +149,11 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 
 	public KineticLaw convert(org.sbml.libsbml.KineticLaw plukinlaw) {
 		KineticLaw kinlaw = new KineticLaw();
-		kinlaw.setMath(plukinlaw.getMath());
-		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
+		kinlaw.setNotes(plukinlaw.getNotesString());
+		kinlaw.setSBOTerm(plukinlaw.getSBOTerm());
+		kinlaw.setMath(plukinlaw.getMath().deepCopy());
+		for (int i = 0; i < plukinlaw.getNumParameters(); i++)
 			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
-		}
 		kinlaw.addChangeListener(this);
 		return kinlaw;
 	}

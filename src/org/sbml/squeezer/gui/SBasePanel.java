@@ -27,7 +27,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
@@ -43,7 +42,6 @@ import org.sbml.SBase;
 import org.sbml.SimpleSpeciesReference;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.libsbml.libsbml;
 import org.sbml.squeezer.io.LaTeXExport;
 
 import atp.sHotEqn;
@@ -82,7 +80,7 @@ public class SBasePanel extends JPanel {
 		}
 		LayoutHelper.addComponent(this, gbl, new JLabel("Meta identifier"), 0,
 				++row, 1, 1, 1, 1);
-		LayoutHelper.addComponent(this, gbl, new JTextField(sbase.getMetaid()),
+		LayoutHelper.addComponent(this, gbl, new JTextField(sbase.getMetaId()),
 				1, row, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, gbl, new JLabel("Notes"), 0, ++row, 1,
 				1, 1, 1);
@@ -132,7 +130,8 @@ public class SBasePanel extends JPanel {
 							BorderLayout.CENTER);
 					preview.setBackground(Color.WHITE);
 					preview.setBorder(BorderFactory.createLoweredBevelBorder());
-					LayoutHelper.addComponent(this, gbl, preview, 0, ++row, 2, 1, 1, 1);
+					LayoutHelper.addComponent(this, gbl, preview, 0, ++row, 2,
+							1, 1, 1);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -142,16 +141,18 @@ public class SBasePanel extends JPanel {
 			JSpinner spinInitial;
 			if (species.isSetInitialAmount()) {
 				spinInitial = new JSpinner(new SpinnerNumberModel(species
-						.getInitialAmount(), 0d, 1000, .1d));
+						.getInitialAmount(), 0d, Math.max(species
+						.getInitialAmount(), 1000), .1d));
 				LayoutHelper.addComponent(this, gbl, new JLabel(
 						"Initial amount"), 0, ++row, 1, 1, 1, 1);
 			} else {
 				if (species.isSetInitialConcentration())
 					spinInitial = new JSpinner(new SpinnerNumberModel(species
-							.getInitialConcentration(), 0d, 1000, .1d));
+							.getInitialConcentration(), 0d, Math.max(species
+							.getInitialConcentration(), 1000), .1d));
 				else
 					spinInitial = new JSpinner(new SpinnerNumberModel(0, 0d,
-							Double.MAX_VALUE, .1d));
+							1000, .1d));
 				LayoutHelper.addComponent(this, gbl, new JLabel(
 						"Initial amount"), 0, ++row, 1, 1, 1, 1);
 			}

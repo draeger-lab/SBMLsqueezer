@@ -36,15 +36,28 @@ public class Species extends NamedSBase {
 	private double initialConcentration;
 
 	public Species(Species species) {
-		this(species.getId());
-		// TODO Auto-generated constructor stub
+		super(species);
+		this.boundaryCondition = species.getBoundaryCondition();
+		this.charge = species.getCharge();
+		this.compartment = species.getCompartmentInstance().clone();
+		this.constant = species.getConstant();
+		this.hasOnlySubstanceUnits = species.getHasOnlySubstanceUnits();
+		if (species.isSetInitialAmount()) {
+			this.initialAmount = species.getInitialAmount();
+			this.initialConcentration = Double.NaN;
+		} else if (species.isSetInitialConcentration()) {
+			this.initialAmount = Double.NaN;
+			this.initialConcentration = species.getInitialConcentration();
+		} else {
+			this.initialAmount = this.initialConcentration = Double.NaN;
+		}
 	}
 
 	public Species(String id) {
 		super(id);
 		initDefaults();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -62,7 +75,18 @@ public class Species extends NamedSBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Species) {
+			Species s = (Species) o;
+			return s.getBoundaryCondition() == boundaryCondition
+					&& s.getConstant() == constant
+					&& s.getHasOnlySubstanceUnits() == hasOnlySubstanceUnits
+					&& s.getCharge() == charge
+					&& s.getCompartmentInstance().equals(compartment)
+					&& s.getInitialAmount() == initialAmount
+					&& s.getInitialConcentration() == initialConcentration
+					&& s.getName().equals(getName())
+					&& s.getSBOTerm() == getSBOTerm();
+		}
 		return false;
 	}
 
@@ -100,7 +124,10 @@ public class Species extends NamedSBase {
 
 	public void initDefaults() {
 		charge = Integer.MIN_VALUE;
-		// TODO
+		initialAmount = initialConcentration = Double.NaN;
+		hasOnlySubstanceUnits = false;
+		boundaryCondition = false;
+		constant = false;
 	}
 
 	public boolean isBoundaryCondition() {
@@ -120,49 +147,55 @@ public class Species extends NamedSBase {
 	}
 
 	public boolean isSetInitialAmount() {
-		return initialAmount != Double.NaN;
+		return !Double.isNaN(initialAmount);
 	}
 
 	public boolean isSetInitialConcentration() {
-		return initialConcentration != Double.NaN;
+		return !Double.isNaN(initialConcentration);
 	}
 
 	public void setBoundaryCondition(boolean boundaryCondition) {
 		this.boundaryCondition = boundaryCondition;
+		stateChanged();
 	}
 
 	public void setCharge(int charge) {
 		this.charge = charge;
+		stateChanged();
 	}
 
 	public void setCompartment(Compartment compartment) {
 		this.compartment = compartment;
+		stateChanged();
 	}
 
 	public void setConstant(boolean constant) {
 		this.constant = constant;
+		stateChanged();
 	}
 
 	public void setHasOnlySubstanceUnits(boolean hasOnlySubstanceUnits) {
 		this.hasOnlySubstanceUnits = hasOnlySubstanceUnits;
+		stateChanged();
 	}
 
 	public void setInitialAmount(double initialAmount) {
 		this.initialAmount = initialAmount;
+		stateChanged();
 	}
 
 	public void setInitialConcentration(double initialConcentration) {
 		this.initialConcentration = initialConcentration;
+		stateChanged();
 	}
-	/**
-	 * This method is convenient when holding an object nested inside other
-	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * element containing it.
-	 * 
-	 * @return Returns the parent SBML object.
+	 * @see org.sbml.SBase#getParentSBMLObject()
 	 */
-	public Reaction getParentSBMLObject() {
-		return (Reaction) parentSBMLObject;
+	// @Override
+	public Model getParentSBMLObject() {
+		return (Model) parentSBMLObject;
 	}
 }

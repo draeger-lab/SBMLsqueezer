@@ -27,53 +27,29 @@ import org.sbml.libsbml.libsbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public abstract class MathElement extends SBase {
+public abstract class MathContainer extends SBase {
 
 	private ASTNode math;
 
 	/**
 	 * 
 	 */
-	public MathElement() {
+	public MathContainer() {
 		super();
 		math = null;
 	}
 
-	public MathElement(ASTNode math) {
+	public MathContainer(ASTNode math) {
+		super();
 		setMath(math.deepCopy());
-	}
-
-	public boolean isSetMath() {
-		return math != null;
 	}
 
 	/**
 	 * @param sb
 	 */
-	public MathElement(MathElement sb) {
+	public MathContainer(MathContainer sb) {
 		super(sb);
 		setMath(sb.getMath().deepCopy());
-	}
-
-	public ASTNode getMath() {
-		return math;
-	}
-
-	public void setMath(ASTNode math) {
-		this.math = math.deepCopy();
-		stateChanged();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
-	 */
-	// @Override
-	public boolean equals(Object o) {
-		if (o instanceof MathElement)
-			return getMath().equals(((MathElement) o).getMath());
-		return false;
 	}
 
 	/*
@@ -82,7 +58,47 @@ public abstract class MathElement extends SBase {
 	 * @see org.sbml.SBase#clone()
 	 */
 	// @Override
-	public abstract MathElement clone();
+	public abstract MathContainer clone();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
+	// @Override
+	public boolean equals(Object o) {
+		if (o.getClass().getName().equals(this.getClass().getName()))
+			return getMath().equals(((MathContainer) o).getMath());
+		return false;
+	}
+
+	public String getFormula() {
+		return isSetMath() ? libsbml.formulaToString(getMath()) : "";
+	}
+
+	public ASTNode getMath() {
+		return math;
+	}
+	
+	public boolean isSetMath() {
+		return math != null;
+	}
+
+	/**
+	 * Sets the mathematical expression of this KineticLaw instance to the given
+	 * formula.
+	 * 
+	 * @param formula
+	 */
+	public void setFormula(String formula) {
+		math = libsbml.parseFormula(formula);
+		stateChanged();
+	}
+	
+	public void setMath(ASTNode math) {
+		this.math = math.deepCopy();
+		stateChanged();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -91,6 +107,6 @@ public abstract class MathElement extends SBase {
 	 */
 	// @Override
 	public String toString() {
-		return libsbml.formulaToString(math);
+		return isSetMath() ? libsbml.formulaToString(math) : "";
 	}
 }

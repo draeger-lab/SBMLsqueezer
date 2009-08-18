@@ -33,8 +33,7 @@ public class ModifierSpeciesReference extends SimpleSpeciesReference {
 
 	public ModifierSpeciesReference(
 			ModifierSpeciesReference modifierSpeciesReference) {
-		this();
-		// TODO Auto-generated constructor stub
+		super(modifierSpeciesReference);
 	}
 
 	public ModifierSpeciesReference(Species spec) {
@@ -43,32 +42,11 @@ public class ModifierSpeciesReference extends SimpleSpeciesReference {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#clone()
 	 */
 	// @Override
 	public ModifierSpeciesReference clone() {
 		return new ModifierSpeciesReference(this);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.SBase#equals(java.lang.Object)
-	 */
-	// @Override
-	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	/**
-	 * This method is convenient when holding an object nested inside other
-	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
-	 * 
-	 * element containing it.
-	 * 
-	 * @return Returns the parent SBML object.
-	 */
-	public Species getParentSBMLObject() {
-		return (Species) parentSBMLObject;
-	}
-
 }

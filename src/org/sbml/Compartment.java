@@ -52,7 +52,7 @@ public class Compartment extends NamedSBase {
 	 * @see org.sbml.SBase#clone()
 	 */
 	// @Override
-	public SBase clone() {
+	public Compartment clone() {
 		return new Compartment(this);
 	}
 

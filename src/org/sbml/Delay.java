@@ -26,7 +26,7 @@ import org.sbml.libsbml.ASTNode;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Delay extends MathElement {
+public class Delay extends MathContainer {
 
 	/**
 	 * 
@@ -55,7 +55,7 @@ public class Delay extends MathElement {
 	 * @see org.sbml.MathElement#clone()
 	 */
 	// @Override
-	public MathElement clone() {
+	public Delay clone() {
 		return new Delay(this);
 	}
 

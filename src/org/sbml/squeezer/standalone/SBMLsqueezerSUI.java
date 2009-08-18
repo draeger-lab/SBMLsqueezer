@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.standalone;
 
-import java.awt.CardLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +25,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -35,9 +35,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
 import org.sbml.Model;
+import org.sbml.squeezer.gui.JHelpBrowser;
 import org.sbml.squeezer.gui.ModelComponentsPanel;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.io.SBFileFilter;
+import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -49,7 +51,7 @@ import org.sbml.squeezer.resources.Resource;
 public class SBMLsqueezerSUI extends SBMLsqueezerUI implements ActionListener {
 
 	JTabbedPane tabbedPane;
-	
+
 	/**
 	 * Generated serial version id.
 	 */
@@ -101,8 +103,17 @@ public class SBMLsqueezerSUI extends SBMLsqueezerUI implements ActionListener {
 
 			} else if (item.getText().equals("Exit")) {
 				System.exit(0);
-			} else if (item.getText().equals("")) {
+			} else if (item.getText().equals("About")) {
 
+			} else if (item.getText().equals("Online help")) {
+				JHelpBrowser helpBrowser = new JHelpBrowser(this,
+						"SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber()
+								+ " - Online Help");
+				// helpBrowser.addWindowListener(this);
+				helpBrowser.setLocationRelativeTo(this);
+				helpBrowser.setSize(640, 640);
+				helpBrowser.setVisible(true);
+				helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			}
 		}
 	}
@@ -135,9 +146,22 @@ public class SBMLsqueezerSUI extends SBMLsqueezerUI implements ActionListener {
 		}
 		editMenu.add(squeezeItem);
 
+		JMenu helpMenu = new JMenu("Help");
+		JMenuItem about = new JMenuItem("About");
+		about.addActionListener(this);
+		JMenuItem help = new JMenuItem("Online help");
+		help.addActionListener(this);
+		helpMenu.add(help);
+		helpMenu.add(about);
+
 		JMenuBar mBar = new JMenuBar();
 		mBar.add(fileMenu);
 		mBar.add(editMenu);
+		try {
+			mBar.setHelpMenu(helpMenu);
+		} catch (Error e) {
+			mBar.add(helpMenu);
+		}
 		return mBar;
 	}
 

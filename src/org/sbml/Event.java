@@ -39,9 +39,10 @@ public class Event extends NamedSBase {
 	}
 
 	public Event(Event event) {
-		super();
+		super(event);
 		this.trigger = event.getTrigger().clone();
 		this.useValuesFromTriggerTime = event.isUseValuesFromTriggerTime();
+		this.delay = event.getDelay().clone();
 		this.listOfEventAssignments = event.getListOfEventAssignments().clone();
 	}
 
@@ -72,7 +73,16 @@ public class Event extends NamedSBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Event) {
+			Event e = (Event) o;
+			return e.getUseValuesFromTriggerTime() == getUseValuesFromTriggerTime()
+					&& e.getDelay().equals(getDelay())
+					&& e.getListOfEventAssignments().equals(
+							getListOfEventAssignments())
+					&& e.getSBOTerm() == getSBOTerm()
+					&& e.getTimeUnits().equals(getTimeUnits())
+					&& e.getTrigger().equals(getTrigger());
+		}
 		return false;
 	}
 
@@ -130,7 +140,7 @@ public class Event extends NamedSBase {
 
 	public String getTimeUnits() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 }

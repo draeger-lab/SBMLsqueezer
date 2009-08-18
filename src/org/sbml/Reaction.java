@@ -38,8 +38,17 @@ public class Reaction extends NamedSBase {
 	private KineticLaw kineticLaw;
 
 	public Reaction(Reaction reaction) {
-		this(reaction.getId());
-		// TODO Auto-generated constructor stub
+		super(reaction);
+		this.fast = reaction.getFast();
+		if (reaction.isSetKineticLaw())
+			setKineticLaw(reaction.getKineticLaw().clone());
+		this.listOfReactants = reaction.getListOfReactants().clone();
+		this.listOfReactants.parentSBMLObject = this;
+		this.listOfProducts = reaction.getListOfProducts().clone();
+		this.listOfProducts.parentSBMLObject = this;
+		this.listOfModifiers = reaction.getListOfModifiers().clone();
+		this.listOfModifiers.parentSBMLObject = this;
+		this.reversible = reaction.getReversible();
 	}
 
 	public Reaction(String id) {
@@ -54,7 +63,10 @@ public class Reaction extends NamedSBase {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.SBase#addChangeListener(org.sbml.squeezer.io.SBaseChangedListener)
+	 * 
+	 * @see
+	 * org.sbml.SBase#addChangeListener(org.sbml.squeezer.io.SBaseChangedListener
+	 * )
 	 */
 	public void addChangeListener(SBaseChangedListener l) {
 		super.addChangeListener(l);
@@ -64,22 +76,32 @@ public class Reaction extends NamedSBase {
 	}
 
 	public void addModifier(ModifierSpeciesReference modspecref) {
-		listOfModifiers.add(modspecref);
-		stateChanged();
+		if (!listOfModifiers.contains(modspecref)) {
+			listOfModifiers.add(modspecref);
+			modspecref.parentSBMLObject = this;
+			modspecref.sbaseAdded();
+		}
 	}
 
 	public void addProduct(SpeciesReference specref) {
-		listOfProducts.add(specref);
-		stateChanged();
+		if (!listOfProducts.contains(specref)) {
+			listOfProducts.add(specref);
+			specref.parentSBMLObject = this;
+			specref.sbaseAdded();
+		}
 	}
 
 	public void addReactant(SpeciesReference specref) {
-		listOfReactants.add(specref);
-		stateChanged();
+		if (!listOfReactants.contains(specref)) {
+			listOfReactants.add(specref);
+			specref.parentSBMLObject = this;
+			specref.sbaseAdded();
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#clone()
 	 */
 	// @Override
@@ -89,11 +111,21 @@ public class Reaction extends NamedSBase {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#equals(java.lang.Object)
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Reaction) {
+			Reaction r = (Reaction) o;
+			return r.getFast() == fast && r.getKineticLaw().equals(kineticLaw)
+					&& r.getListOfModifiers().equals(listOfModifiers)
+					&& r.getListOfProducts().equals(listOfProducts)
+					&& r.getListOfReactants().equals(listOfReactants)
+					&& r.getName().equals(getName())
+					&& r.getReversible() == reversible
+					&& r.getSBOTerm() == getSBOTerm();
+		}
 		return false;
 	}
 
@@ -105,15 +137,27 @@ public class Reaction extends NamedSBase {
 		return kineticLaw;
 	}
 
-	public ModifierSpeciesReference getModifier(int i){
+	public ListOf<ModifierSpeciesReference> getListOfModifiers() {
+		return listOfModifiers;
+	}
+
+	public ListOf<SpeciesReference> getListOfProducts() {
+		return listOfProducts;
+	}
+
+	public ListOf<SpeciesReference> getListOfReactants() {
+		return listOfReactants;
+	}
+
+	public ModifierSpeciesReference getModifier(int i) {
 		return listOfModifiers.get(i);
 	}
 
-	public int getNumModifiers(){
+	public int getNumModifiers() {
 		return listOfModifiers.size();
 	}
 
-	public int getNumProducts(){
+	public int getNumProducts() {
 		return listOfProducts.size();
 	}
 
@@ -121,23 +165,11 @@ public class Reaction extends NamedSBase {
 		return listOfReactants.size();
 	}
 
-	/**
-	 * This method is convenient when holding an object nested inside other
-	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
-	 * 
-	 * element containing it.
-	 * 
-	 * @return Returns the parent SBML object.
-	 */
-	public SBase getParentSBMLObject() {
-		return parentSBMLObject;
-	}
-
-	public SpeciesReference getProduct(int i){
+	public SpeciesReference getProduct(int i) {
 		return listOfProducts.get(i);
 	}
 
-	public SpeciesReference getReactant(int i){
+	public SpeciesReference getReactant(int i) {
 		return listOfReactants.get(i);
 	}
 
@@ -148,36 +180,45 @@ public class Reaction extends NamedSBase {
 	public boolean isSetKineticLaw() {
 		return kineticLaw != null;
 	}
-	
+
 	public void removeModifier(ModifierSpeciesReference modspecref) {
-		listOfModifiers.remove(modspecref);
-		stateChanged();
+		if (listOfModifiers.remove(modspecref))
+			modspecref.sbaseRemoved();
 	}
-	
+
 	public void removeProduct(SpeciesReference specref) {
-		listOfProducts.remove(specref);
-		stateChanged();
+		if (listOfProducts.remove(specref))
+			specref.sbaseRemoved();
 	}
-	
+
 	public void removeReactant(SpeciesReference specref) {
-		listOfReactants.remove(specref);
-		stateChanged();
+		if (listOfReactants.remove(specref))
+			specref.sbaseRemoved();
 	}
-	
+
 	public void setFast(Boolean fast) {
 		this.fast = fast;
 		stateChanged();
 	}
-	
+
 	public void setKineticLaw(KineticLaw kineticLaw) {
 		this.kineticLaw = kineticLaw;
 		this.kineticLaw.parentSBMLObject = this;
-		this.kineticLaw.stateChanged();
+		this.kineticLaw.sbaseAdded();
 		stateChanged();
 	}
 
 	public void setReversible(Boolean reversible) {
 		this.reversible = reversible;
 		stateChanged();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#getParentSBMLObject()
+	 */
+	@Override
+	public Model getParentSBMLObject() {
+		return (Model) super.getParentSBMLObject();
 	}
 }

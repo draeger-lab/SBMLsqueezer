@@ -10,7 +10,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Trigger extends MathElement {
+public class Trigger extends MathContainer {
 
 	public Trigger() {
 		super();
