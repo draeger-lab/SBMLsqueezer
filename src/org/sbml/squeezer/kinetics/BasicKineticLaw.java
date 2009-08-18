@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import org.biojava.ontology.io.OboParser;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.Species;
@@ -48,6 +49,10 @@ import org.sbml.squeezer.io.LaTeXExport;
 public abstract class BasicKineticLaw extends KineticLaw implements
 		libsbmlConstants {
 
+	static {
+		OboParser parser = new OboParser();
+	}
+	
 	/**
 	 * 
 	 */

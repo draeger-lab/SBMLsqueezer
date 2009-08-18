@@ -1,6 +1,6 @@
 format-version: 1.2
-date: 10:08:2009 07:00
-data-version: 07:08:2009 11:44
+date: 18:08:2009 12:38
+data-version: 17:08:2009 16:53
 saved-by: SBO community
 auto-generated-by: SBO Browser (http://www.ebi.ac.uk/sbo/)
 default-namespace: sbo
@@ -87,7 +87,7 @@ is_a: SBO:0000001 ! rate law
 id: SBO:0000013
 name: catalyst
 def: "Substance that accelerates the velocity of a chemical reaction without itself being consumed or transformed. This effect is achieved by lowering the free energy of the transition state." [src_code:NR]
-is_a: SBO:0000019 ! modifier
+is_a: SBO:0000459 ! stimulator
 
 [Term]
 id: SBO:0000014
@@ -136,7 +136,7 @@ id: SBO:0000021
 name: potentiator
 def: "Substance that increases the probability of a chemical reaction without\nitself being consumed or transformed by the reaction. This effect is achieved by increasing the difference of free energy between the reactant(s) and the product(s)" [src_code:NR]
 synonym: "activator" []
-is_a: SBO:0000019 ! modifier
+is_a: SBO:0000459 ! stimulator
 
 [Term]
 id: SBO:0000022
@@ -1086,7 +1086,7 @@ is_a: SBO:0000168 ! control
 id: SBO:0000171
 name: necessary stimulation
 def: "Control that is necessary to the execution of a process." [src_code:NR]
-synonym: "absolute stimulation" []
+synonym: " absolute stimulation" []
 synonym: "trigger" []
 is_a: SBO:0000170 ! stimulation
 
@@ -1112,6 +1112,7 @@ is_a: SBO:0000237 ! logical combination
 id: SBO:0000175
 name: xor
 def: "Only one of the preceding events or participating entities can perform the control at one time." [src_code:NR]
+synonym: "exclusive or" []
 is_a: SBO:0000237 ! logical combination
 
 [Term]
@@ -1147,7 +1148,8 @@ is_a: SBO:0000176 ! biochemical reaction
 [Term]
 id: SBO:0000181
 name: conformational transition
-def: "Biochemical reaction that does not result in the modification of covalent bonds reactants\, but rather modifies the conformation of some reactants\, that is the relative position of their atoms in space." [src_code:NR]
+def: "Biochemical reaction that does not result in the modification of covalent bonds of reactants\, but rather modifies the conformation of some reactants\, that is the relative position of their atoms in space." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000176 ! biochemical reaction
 
 [Term]
@@ -1270,7 +1272,8 @@ is_a: SBO:0000176 ! biochemical reaction
 [Term]
 id: SBO:0000201
 name: oxidation
-def: "Chemical process in which a molecular entity loose electrons." [src_code:NR]
+def: "Chemical process during which a molecular entity loses electrons." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000200 ! redox reaction
 
 [Term]
@@ -1387,6 +1390,7 @@ is_a: SBO:0000210 ! addition of a chemical group
 id: SBO:0000220
 name: sulfation
 def: "Addition of a sulfate group (SO4--) to a chemical entity. " [src_code:NR]
+synonym: "sulphation" []
 is_a: SBO:0000210 ! addition of a chemical group
 
 [Term]
@@ -1495,7 +1499,7 @@ is_a: SBO:0000168 ! control
 [Term]
 id: SBO:0000240
 name: material entity
-def: "An entity that is defined by its physical structure." [src_code:NR]
+def: "A real thing that is defined by its physico-chemical structure.\n" [src_code:NR]
 is_a: SBO:0000236 ! entity
 
 [Term]
@@ -1507,7 +1511,8 @@ is_a: SBO:0000236 ! entity
 [Term]
 id: SBO:0000242
 name: channel
-def: "Participating entity that let other participating entity go through\, possibly connecting different compartments." [src_code:NR]
+def: "Participating entity that allows another participating entity to pass through it\, possibly connecting different compartments." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000241 ! functional entity
 
 [Term]
@@ -1531,7 +1536,8 @@ is_a: SBO:0000240 ! material entity
 [Term]
 id: SBO:0000246
 name: information macromolecule
-def: "Macromolecule which sequence is encoded in the genome of living organisms.\n\nCHEBI\:33695 " [src_code:NR]
+def: "Macromolecule whose sequence is encoded in the genome of living organisms.\n\nCHEBI\:33695 " [src_code:NR]
+synonym: "" []
 is_a: SBO:0000245 ! macromolecule
 
 [Term]
@@ -1543,7 +1549,8 @@ is_a: SBO:0000240 ! material entity
 [Term]
 id: SBO:0000248
 name: chemical macromolecule
-def: "Macromolecule which sequence is not directly encoded in the genome." [src_code:NR]
+def: "Macromolecule whose sequence is not directly encoded in the genome." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000245 ! macromolecule
 
 [Term]
@@ -1636,7 +1643,7 @@ id: SBO:0000262
 name: enzymatic rate law for simple uncompetitive inhibition of irreversible unireactant enzymes
 def: "Inhibition of a unireactant enzyme by one inhibitor that binds only to the complex enzyme-substrate and totally prevent the catalysis. The enzymes do not catalyse the reactions in both directions. <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n   <lambda>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki</ci></bvar>\n     <apply>\n       <divide/>\n       <apply>\n         <times/>\n         <ci>kcat</ci>\n         <ci>Et</ci>\n         <ci>S</ci>\n       </apply>\n       <apply>\n         <plus/>\n         <apply>\n           <times/>\n           <ci>S</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n               <divide/>\n               <ci>I</ci>\n               <ci>Ki</ci>\n             </apply>\n           </apply>\n         </apply>\n         <ci>Ks</ci>\n       </apply>\n     </apply>\n   </lambda>\n</semantics>\n</math>" [src_code:NR]
 synonym: "simple linear uncompetitive inhibition" []
-is_a: SBO:0000269 ! enzymatic rate law for unireactant enzymes
+is_a: SBO:0000458 ! enzymatic rate law for simple uncompetitive inhibition of reversible unireactant enzymes
 
 [Term]
 id: SBO:0000263
@@ -1659,9 +1666,10 @@ is_a: SBO:0000275 ! enzymatic rate law for mixed-type inhibition of irreversible
 
 [Term]
 id: SBO:0000266
-name: enzymatic rate law for simple non-competitive inhibition of unireactant enzymes
+name: enzymatic rate law for simple irreversible non-competitive inhibition of unireactant enzymes
 def: "Inhibition of a unireactant enzyme by one inhibitor that can bind to the complex enzyme-substrate and the free enzyme with the same equilibrium constant\, and totally prevent the catalysis.<math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n   <lambda>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki</ci></bvar>\n     <apply>\n       <divide/>\n       <apply>\n         <times/>\n         <ci>kcat</ci>\n         <ci>Et</ci>\n         <ci>S</ci>\n       </apply>\n       <apply>\n         <plus/>\n         <apply>\n           <times/>\n           <ci>S</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n               <divide/>\n               <ci>I</ci>\n               <ci>Ki</ci>\n             </apply>\n           </apply>\n         </apply>\n         <apply>\n           <times/>\n           <ci>Ks</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n               <divide/>\n               <ci>I</ci>\n               <ci>Ki</ci>\n             </apply>\n           </apply>\n         </apply>\n       </apply>\n     </apply>\n   </lambda>\n</semantics>\n</math>" [src_code:NR]
-is_a: SBO:0000265 ! enzymatic rate law for simple mixed-type inhibition of irreversible unireactant enzymes
+synonym: "" []
+is_a: SBO:0000442 ! enzymatic rate law for simple reversible non-competitive inhibition of unireactant enzymes
 
 [Term]
 id: SBO:0000267
@@ -1686,7 +1694,6 @@ is_a: SBO:0000268 ! enzymatic rate law
 id: SBO:0000270
 name: enzymatic rate law for competitive inhibition of irreversible unireactant enzymes by exclusive inhibitors
 def: "Inhibition of a unireactant enzyme by inhibitors that bind to the free enzyme on the same binding site than the substrate. The enzymes do not catalyse the reactions in both directions. <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n   <lambda>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000272\">n</ci></bvar>\n     <apply>\n       <divide/>\n       <apply>\n         <times/>\n         <ci>kcat</ci>\n         <ci>Et</ci>\n         <ci>S</ci>\n       </apply>\n       <apply>\n         <plus/>\n         <apply>\n           <times/>\n           <ci>Ks</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n               <sum/>\n               <bvar><ci> i </ci></bvar>\n               <lowlimit><cn type=\"integer\"> 1 </cn></lowlimit>\n               <uplimit><ci> n </ci></uplimit>\n               <apply>\n                 <divide/>\n                 <apply>\n                   <selector/>\n                   <ci type=\"vector\">I</ci>\n                   <ci> i </ci>\n                 </apply>\n                 <apply>\n                   <selector/>\n                   <ci type=\"vector\">Ki</ci>\n                   <ci> i </ci>\n                 </apply>\n               </apply>\n             </apply>\n           </apply>\n         </apply>\n         <ci>S</ci>\n       </apply>\n     </apply>\n   </lambda>\n</semantics>\n</math>\n" [src_code:NR]
-is_a: SBO:0000269 ! enzymatic rate law for unireactant enzymes
 is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
 
 [Term]
@@ -1705,7 +1712,7 @@ is_a: SBO:0000188 ! number of biochemical items
 id: SBO:0000273
 name: enzymatic rate law for competitive inhibition of irreversible unireactant enzymes by non-exclusive non-cooperative inhibitors
 def: "Inhibition of a unireactant enzyme by inhibitors that bind independently to the free enzyme and preclude the binding of the substrate. The enzymes do not catalyse the reactions in both directions.<math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n   <lambda>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000272\">n</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000189\">m</ci></bvar>\n     <apply>\n       <divide/>\n       <apply>\n         <times/>\n         <ci>kcat</ci>\n         <ci>Et</ci>\n         <ci>S</ci>\n       </apply>\n       <apply>\n         <plus/>\n         <apply>\n           <times/>\n           <ci>Ks</ci>\n           <apply>\n             <product/>\n             <bvar><ci> i </ci></bvar>\n             <lowlimit><cn type=\"integer\"> 1 </cn></lowlimit>\n             <uplimit><ci> n </ci></uplimit>\n             <apply>\n               <power/>\n               <apply>\n                 <plus/>\n                 <cn type=\"integer\">1</cn>\n                 <apply>\n                   <divide/>\n                   <apply>\n                     <selector/>\n                     <ci type=\"vector\">I</ci>\n                     <ci> i </ci>\n                   </apply>\n                   <apply>\n                     <selector/>\n                     <ci type=\"vector\">Ki</ci>\n                     <ci> i </ci>\n                   </apply>\n                 </apply>\n               </apply>\n               <apply>\n                 <selector/>\n                 <ci type=\"vector\">m</ci>\n                 <ci> i </ci>\n               </apply>\n             </apply>\n           </apply>\n         </apply>\n         <ci>S</ci>\n       </apply>\n     </apply>\n   </lambda>\n</semantics>\n</math>\n" [src_code:NR]
-is_a: SBO:0000269 ! enzymatic rate law for unireactant enzymes
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
 
 [Term]
 id: SBO:0000274
@@ -1718,7 +1725,7 @@ is_a: SBO:0000379 ! enzymatic rate law for simple competitive inhibition of irre
 id: SBO:0000275
 name: enzymatic rate law for mixed-type inhibition of irreversible enzymes by mutually exclusive inhibitors
 def: "Inhibition of a unireactant enzyme by inhibitors that can bind to the complex enzyme-substrate and the free enzyme\, possibly with different equilibrium constants\, and totally prevent the catalysis. The enzymes do not catalyse the reactions in both directions. <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n   <lambda>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000385\">a</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000272\">n</ci></bvar>\n     <apply>\n       <divide/>\n       <apply>\n         <times/>\n         <ci>kcat</ci>\n         <ci>Et</ci>\n         <ci>S</ci>\n       </apply>\n       <apply>\n         <plus/>\n         <apply>\n           <times/>\n           <ci>Ks</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n               <sum/>\n               <bvar><ci> i </ci></bvar>\n               <lowlimit><cn type=\"integer\"> 1 </cn></lowlimit>\n               <uplimit><ci> n </ci></uplimit>\n               <apply>\n                 <divide/>\n                 <apply>\n                   <selector/>\n                   <ci type=\"vector\">I</ci>\n                   <ci> i </ci>\n                 </apply>\n                 <apply>\n                   <selector/>\n                   <ci type=\"vector\">Ki</ci>\n                   <ci> i </ci>\n                 </apply>\n               </apply>\n             </apply>\n           </apply>\n         </apply>\n         <apply>\n           <times/>\n           <ci>S</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n               <sum/>\n               <bvar><ci> i </ci></bvar>\n               <lowlimit><cn type=\"integer\"> 1 </cn></lowlimit>\n               <uplimit><ci> n </ci></uplimit>\n               <apply>\n                 <divide/>\n                 <apply>\n                   <selector/>\n                   <ci type=\"vector\">I</ci>\n                   <ci> i </ci>\n                 </apply>\n                 <apply>\n                   <times/>\n                   <apply>\n                     <selector/>\n                     <ci type=\"vector\">a</ci>\n                     <ci> i </ci>\n                   </apply>\n                   <apply>\n                     <selector/>\n                     <ci type=\"vector\">Ki</ci>\n                     <ci> i </ci>\n                   </apply>\n                 </apply>\n               </apply>\n             </apply>\n           </apply>\n         </apply>\n       </apply>\n     </apply>\n   </lambda>\n</semantics>\n</math>" [src_code:NR]
-is_a: SBO:0000269 ! enzymatic rate law for unireactant enzymes
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
 
 [Term]
 id: SBO:0000276
@@ -1735,7 +1742,8 @@ is_a: SBO:0000276 ! enzymatic rate law for mixed-type inhibition of irreversible
 [Term]
 id: SBO:0000278
 name: messenger RNA
-def: "A messenger RNA is a ribonucleic acid synthesized during the transcription of a gene\, and that carries the information permetting to encode one or several proteins." [src_code:NR]
+def: "A messenger RNA is a ribonucleic acid synthesized during the transcription of a gene\, and that carries the information to encode one or several proteins." [src_code:NR]
+synonym: "mRNA" []
 is_a: SBO:0000404 ! unit of genetic information
 
 [Term]
@@ -1782,7 +1790,8 @@ is_a: SBO:0000241 ! functional entity
 [Term]
 id: SBO:0000285
 name: material entity of unspecified nature
-def: "Material entity which nature is unknown or irrelevant." [src_code:NR]
+def: "Material entity whose nature is unknown or irrelevant." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000240 ! material entity
 
 [Term]
@@ -1986,7 +1995,7 @@ is_a: SBO:0000334 ! non-coding RNA
 [Term]
 id: SBO:0000317
 name: small interfering RNA
-def: "20-25 nucleotide-long double-stranded RNA molecules. siRNA is involve in the regulation of the expression of specific genes\, antiviral mechanisms\, shaping the chromatin structure of a genome etc. " [src_code:NR]
+def: "siRNA are 20-25 nucleotide-long double-stranded RNA molecules involved in the regulation of the expression of specific genes\, antiviral mechanisms\, shaping the chromatin structure of a genome etc. " [src_code:NR]
 synonym: "siRNA" []
 is_a: SBO:0000241 ! functional entity
 
@@ -2083,7 +2092,8 @@ is_a: SBO:0000211 ! removal of a chemical group
 [Term]
 id: SBO:0000331
 name: half-life
-def: "Time taken by a decreasing quantity to be divided by two." [src_code:NR]
+def: "Time interval over which a quantified entity is reduced to half its original value." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000009 ! kinetic constant
 is_a: SBO:0000346 ! time interval
 
@@ -2114,7 +2124,8 @@ is_a: SBO:0000404 ! unit of genetic information
 [Term]
 id: SBO:0000336
 name: interactor
-def: "Entity participating to a physical or functional interaction." [src_code:NR]
+def: "Entity participating in a physical or functional interaction." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000010 ! reactant
 
 [Term]
@@ -2186,7 +2197,8 @@ is_a: SBO:0000002 ! quantitative parameter
 [Term]
 id: SBO:0000347
 name: duration
-def: "Amount of time necessary for an event to take place." [src_code:NR]
+def: "Amount of time during which an event persists." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000346 ! time interval
 
 [Term]
@@ -2319,7 +2331,8 @@ is_a: SBO:0000161 ! reverse non-integral order rate constant
 [Term]
 id: SBO:0000369
 name: gene regulatory region
-def: "Region of a gene that are involved in the modulation of the expression of the gene. " [src_code:NR]
+def: "Region of a gene that is involved in the modulation of the expression of the gene. " [src_code:NR]
+synonym: "" []
 is_a: SBO:0000404 ! unit of genetic information
 
 [Term]
@@ -2379,8 +2392,9 @@ is_a: SBO:0000270 ! enzymatic rate law for competitive inhibition of irreversibl
 [Term]
 id: SBO:0000379
 name: enzymatic rate law for simple competitive inhibition of irreversible unireactant enzymes by two non-exclusive inhibitors
-def: "Inhibition of a unireactant enzyme by two inhibitors that can bind once to the free enzyme and preclude the binding of the substrate. Binding of one inhibitor may affect binding of the other\, or not. The enzymes do not catalyse the reactions in both directions.\n\nSee Segel I.\, Enzyme Kinetics\, Wiley-Interscience\,1993\, ISBN 0-471-30309-7\, Chapter 8\, System B3\, pp481 \n<math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n    <lambda>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I1</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I2</ci></bvar>\n<bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000383\">a</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki1</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki2</ci></bvar>\n      <apply>\n    <divide/>\n    <apply>\n      <times/>\n      <ci>kcat</ci>\n      <ci>Et</ci>\n      <ci>S</ci>\n    </apply>\n    <apply>\n      <plus/>\n      <apply>\n        <times/>\n        <ci>Ks</ci>\n        <apply>\n          <plus/>\n          <cn type=\"integer\">1</cn>\n          <apply>\n        <divide/>\n        <ci>I1</ci>\n        <ci>Ki1</ci>\n          </apply>\n          <apply>\n        <divide/>\n        <ci>I2</ci>\n        <ci>Ki2</ci>\n          </apply>\n          <apply>\n        <divide/>\n        <apply>\n          <times/>\n          <ci>I1</ci>\n           <ci>I2</ci>\n        </apply>\n        <apply>\n          <times/>\n      <ci>a</ci>   \n          <ci>Ki1</ci>\n          <ci>Ki2</ci>\n        </apply>\n          </apply>\n        </apply>\n      </apply>\n      <ci>S</ci>\n    </apply>\n      </apply>\n    </lambda>\n </semantics>\n </math> " [src_code:NR]
-is_a: SBO:0000269 ! enzymatic rate law for unireactant enzymes
+def: "Inhibition of a unireactant enzyme by two inhibitors that can bind once to the free enzyme and preclude the binding of the substrate. Binding of one inhibitor may affect binding of the other\, or not. The enzymes do not catalyse the reactions in both directions.<math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n    <lambda>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I1</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\">I2</ci></bvar>\n<bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000383\">a</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki1</ci></bvar>\n      <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Ki2</ci></bvar>\n      <apply>\n    <divide/>\n    <apply>\n      <times/>\n      <ci>kcat</ci>\n      <ci>Et</ci>\n      <ci>S</ci>\n    </apply>\n    <apply>\n      <plus/>\n      <apply>\n        <times/>\n        <ci>Ks</ci>\n        <apply>\n          <plus/>\n          <cn type=\"integer\">1</cn>\n          <apply>\n        <divide/>\n        <ci>I1</ci>\n        <ci>Ki1</ci>\n          </apply>\n          <apply>\n        <divide/>\n        <ci>I2</ci>\n        <ci>Ki2</ci>\n          </apply>\n          <apply>\n        <divide/>\n        <apply>\n          <times/>\n          <ci>I1</ci>\n           <ci>I2</ci>\n        </apply>\n        <apply>\n          <times/>\n      <ci>a</ci>   \n          <ci>Ki1</ci>\n          <ci>Ki2</ci>\n        </apply>\n          </apply>\n        </apply>\n      </apply>\n      <ci>S</ci>\n    </apply>\n      </apply>\n    </lambda>\n </semantics>\n </math> " [src_code:NR]
+synonym: "" []
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
 
 [Term]
 id: SBO:0000380
@@ -2421,8 +2435,9 @@ is_a: SBO:0000381 ! biochemical proportionality coefficient
 [Term]
 id: SBO:0000386
 name: enzymatic rate law for inhibition of irreversible unireactant enzymes by single competing substrate
-def: "Inhibition of a unireactant enzyme by a competing substrate (Sa) that binds to the free enzyme on the same binding site. The enzyme does not catalyse the reactions in both directions.\n\[See Cornish-Bowden Fundementals of Enzyme Kinetics (3rd Edition 2004)\: Ch5.6\, pp127\]  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n   <lambda>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000206\">Sa</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ksa</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000272\">n</ci></bvar>\n     <apply>\n       <divide/>\n       <apply>\n         <times/>\n         <ci>kcat</ci>\n         <ci>Et</ci>\n         <ci>S</ci>\n       </apply>\n       <apply>\n         <plus/>\n         <apply>\n           <times/>\n           <ci>Ks</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n                <divide/>\n                <ci>Sa</ci>\n                <ci>Ksa</ci>\n             </apply>\n           </apply>\n         </apply>\n         <ci>S</ci>\n       </apply>\n     </apply>\n   </lambda>\n</semantics>\n</math>  \n" [src_code:NR]
-is_obsolete: true
+def: "Inhibition of a unireactant enzyme by a competing substrate (Sa) that binds to the free enzyme on the same binding site. The enzyme does not catalyse the reactions in both directions.\n<math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n   <lambda>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000206\">Sa</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ksa</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000272\">n</ci></bvar>\n     <apply>\n       <divide/>\n       <apply>\n         <times/>\n         <ci>kcat</ci>\n         <ci>Et</ci>\n         <ci>S</ci>\n       </apply>\n       <apply>\n         <plus/>\n         <apply>\n           <times/>\n           <ci>Ks</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n                <divide/>\n                <ci>Sa</ci>\n                <ci>Ksa</ci>\n             </apply>\n           </apply>\n         </apply>\n         <ci>S</ci>\n       </apply>\n     </apply>\n   </lambda>\n</semantics>\n</math>  \n" [src_code:NR]
+synonym: "" []
+is_a: SBO:0000378 ! enzymatic rate law for inhibition of irreversible unireactant enzymes by competing substrates
 
 [Term]
 id: SBO:0000387
@@ -2434,7 +2449,7 @@ is_a: SBO:0000270 ! enzymatic rate law for competitive inhibition of irreversibl
 id: SBO:0000388
 name: enzymatic rate law for inhibition of irreversible unireactant enzymes by single competing substrate with product inhibition
 def: "Inhibition of a unireactant enzyme by a competing substrate (Sa) that binds to the free enzyme on the same binding site\, and competitive inhibition by a product (P) and an alternative product (Pa). The enzyme does not catalyse the reactions in both directions.\n <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n   <lambda>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000025\">kcat</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\">Et</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">S</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000206\">Sa</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ks</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\">Ksa</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Kp</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\">Kpa</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\">P</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000206\">Pa</ci></bvar>\n     <bvar><ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000272\">n</ci></bvar>\n     <apply>\n       <divide/>\n       <apply>\n         <times/>\n         <ci>kcat</ci>\n         <ci>Et</ci>\n         <ci>S</ci>\n       </apply>\n       <apply>\n         <plus/>\n         <apply>\n           <times/>\n           <ci>Ks</ci>\n           <apply>\n             <plus/>\n             <cn type=\"integer\">1</cn>\n             <apply>\n                <divide/>\n                <ci>Sa</ci>\n                <ci>Ksa</ci>\n             </apply>\n             <apply>\n                <divide/>\n                <ci>P</ci>\n                <ci>Kpa</ci>\n             </apply>\n             <apply>\n                <divide/>\n                <ci>Pa</ci>\n                <ci>Kpa</ci>\n             </apply>\n           </apply>\n         </apply>\n         <ci>S</ci>\n       </apply>\n     </apply>\n   </lambda>\n</semantics>\n</math>  \n" [src_code:NR]
-is_obsolete: true
+is_a: SBO:0000378 ! enzymatic rate law for inhibition of irreversible unireactant enzymes by competing substrates
 
 [Term]
 id: SBO:0000389
@@ -2511,7 +2526,8 @@ is_a: SBO:0000211 ! removal of a chemical group
 [Term]
 id: SBO:0000401
 name: deamination
-def: "Removal of an amine group from a molecule\, often uder the addition of water" [src_code:NR]
+def: "Removal of an amine group from a molecule\, often under the addition of water" [src_code:NR]
+synonym: "" []
 is_a: SBO:0000211 ! removal of a chemical group
 
 [Term]
@@ -2529,7 +2545,8 @@ is_a: SBO:0000402 ! transfer of a chemical group
 [Term]
 id: SBO:0000404
 name: unit of genetic information
-def: "" [src_code:NR]
+def: "Functional entity associated with or derived from a unit of inheritance." [src_code:NR]
+synonym: "" []
 is_a: SBO:0000241 ! functional entity
 
 [Term]
@@ -2554,7 +2571,7 @@ is_a: SBO:0000169 ! inhibition
 id: SBO:0000408
 name: biological activity
 def: "Effect of a biological entity on biological structures or processes." [src_code:NR]
-is_a: SBO:0000003 ! participant role
+is_obsolete: true
 
 [Term]
 id: SBO:0000409
@@ -2619,7 +2636,8 @@ is_a: SBO:0000286 ! multimer
 [Term]
 id: SBO:0000419
 name: multimer of informational molecule segment
-def: "Non-covalent association between portions of macromolecules that carry genetic information\n" [src_code:NR]
+def: "Non-covalent association between portions of macromolecules that carry genetic information" [src_code:NR]
+synonym: "" []
 is_a: SBO:0000286 ! multimer
 
 [Term]
@@ -2656,13 +2674,13 @@ is_a: SBO:0000194 ! pseudo-dissociation constant
 [Term]
 id: SBO:0000425
 name: reversible Hill-type rate law
-def: "" [src_code:NR]
+def: "Reversible Hill-type kinetics represents the situation where a single substrate and product bind cooperatively and reversibly to the enzyme. Co-operativity is seen if the Hill coefficient (h) is greater than 1\, indicating that the binding of one substrate (or product) molecule facilitates the binding of the next. The opposite effect is evident with a coefficient less than 1. " [src_code:NR]
 is_a: SBO:0000268 ! enzymatic rate law
 
 [Term]
 id: SBO:0000426
 name: modulated reversible Hill-type rate law
-def: "" [src_code:NR]
+def: "Reversible Hill-type kinetics in the presence of at least one modifier whose binding is affected by the presence of the substrate or product." [src_code:NR]
 is_a: SBO:0000425 ! reversible Hill-type rate law
 
 [Term]
@@ -2686,7 +2704,7 @@ is_a: SBO:0000268 ! enzymatic rate law
 [Term]
 id: SBO:0000430
 name: enzymatic rate law for modulated unireactant enzymes
-def: "To complete..." [src_code:NR]
+def: "Kinetics of enzymes that react with one substance\, and whose activity may be positively or negatively modulated." [src_code:NR]
 is_a: SBO:0000269 ! enzymatic rate law for unireactant enzymes
 
 [Term]
@@ -2698,7 +2716,8 @@ is_a: SBO:0000425 ! reversible Hill-type rate law
 [Term]
 id: SBO:0000432
 name: irreversible Michaelis Menten rate law for two substrates
-def: "" [src_code:NR]
+def: "Enzymatic rate law for an irreversible reaction involving two substrates and one product.        <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n\t<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n          <lambda>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> A </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> B </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> KmA </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> KmB </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> KiA </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000014\"> Et </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000320\"> kcat </ci>\n            </bvar>\n\t    <apply>\n\t      <divide/>\n\t      <apply>\n\t\t<times/>\n\t\t<ci> Et </ci>\n\t\t<ci> kcat </ci>\n\t\t<ci> A </ci>\n\t\t<ci> B </ci>\n\t      </apply>\n\t      <apply>\n\t\t<plus/>\n\t\t<apply>\n\t\t  <times/>\n\t\t  <ci> KiA </ci>\n\t\t  <ci> KmB </ci>\n\t\t</apply>\n\t\t<apply>\n\t\t  <times/>\n\t\t  <ci> KmB </ci>\n\t\t  <ci> A </ci>\n\t\t</apply>\n\t\t<apply>\n\t\t  <times/>\n\t\t  <ci> KmA </ci>\n\t\t  <ci> B </ci>\n\t\t</apply>\n\t\t<apply>\n\t\t  <times/>\n\t\t  <ci> A </ci>\n\t\t  <ci> B </ci>\n\t\t</apply>\n\t      </apply>\n\t    </apply>\n          </lambda>\n\t</semantics>\n        </math>" [src_code:NR]
+synonym: "" []
 is_a: SBO:0000429 ! enzymatic rate law for multireactant enzymes
 
 [Term]
@@ -2744,6 +2763,149 @@ name: Uni-Uni Reversible using Haldane relationship
 def: "Enzyme catalysed reaction involving one substrate and one product. It is a modification of SBO\:0000436 that directly incorporates the equilibrium constant in the rate law.\n<math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n\t<semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n          <lambda>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n            </bvar>\n            <bvar>\n              <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000281\"> Keq </ci>\n            </bvar>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vf </ci>\n                <apply>\n                  <minus/>\n                  <ci> substrate </ci>\n                  <apply>\n                    <divide/>\n                    <ci> product </ci>\n                    <ci> Keq </ci>\n                  </apply>\n                </apply>\n              </apply>\n              <apply>\n                <plus/>\n                <ci> substrate </ci>\n                <apply>\n                  <times/>\n                  <ci> Kms </ci>\n                  <apply>\n                    <plus/>\n                    <cn> 1 </cn>\n                    <apply>\n                      <divide/>\n                      <ci> product </ci>\n                      <ci> Kmp </ci>\n                    </apply>\n                  </apply>\n                </apply>\n              </apply>\n            </apply>\n          </lambda>\n\t  </semantics>\n        </math>" [src_code:NR]
 synonym: "Uni-Uni" []
 is_a: SBO:0000326 ! enzymatic rate law for non-modulated unireactant enzymes
+
+[Term]
+id: SBO:0000440
+name: enzymatic rate law for irreversible allosteric inhibition
+def: "Enzymatic rate law which follows from the allosteric concerted model (symmetry model or MWC model).This states that enzyme subunits can assume one of two conformational states (relaxed or tense)\, and that the state of one subunit is shared or enforced on the others. The binding of a ligand to a site other than that bound by the substrate (active site) can shift the conformation from one state to the other. L represents the equilibrium constant between active and inactive states of the enzyme\, and n represents the number of binding sites for the substrate and inhibitor.  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\"> Inhibitor </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> V </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000282\"> Ks </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000189\"> n </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000281\"> L </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Ki </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <ci> V </ci>\n            <ci> substrate </ci>\n            <apply>\n              <power/>\n              <apply>\n                <plus/>\n                <ci> Ks </ci>\n                <ci> substrate </ci>\n              </apply>\n              <apply>\n                <minus/>\n                <ci> n </ci>\n                <cn> 1 </cn>\n              </apply>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <apply>\n              <times/>\n              <ci> L </ci>\n              <apply>\n                <power/>\n                <apply>\n                  <times/>\n                  <ci> Ks </ci>\n                  <apply>\n                    <plus/>\n                    <cn> 1 </cn>\n                    <apply>\n                      <divide/>\n                      <ci> Inhibitor </ci>\n                      <ci> Ki </ci>\n                    </apply>\n                  </apply>\n                </apply>\n                <ci> n </ci>\n              </apply>\n            </apply>\n            <apply>\n              <power/>\n              <apply>\n                <plus/>\n                <ci> Ks </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> n </ci>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
+
+[Term]
+id: SBO:0000441
+name: enzymatic rate law for mixed-type inhibition of reversible enzymes by mutually exclusive inhibitors
+def: "Reversible inhibition of a unireactant enzyme by inhibitors that can bind to the enzyme-substrate complex and to the free enzyme with the same equilibrium constant. The inhibitor is noncompetitive with the substrate.  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\"> Inhibitor </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Kis </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Kic </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <minus/>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vf </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vr </ci>\n                <ci> product </ci>\n              </apply>\n              <ci> Kmp </ci>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <cn> 1 </cn>\n            <apply>\n              <divide/>\n              <ci> Inhibitor </ci>\n              <ci> Kis </ci>\n            </apply>\n            <apply>\n              <times/>\n              <apply>\n                <plus/>\n                <apply>\n                  <divide/>\n                  <ci> substrate </ci>\n                  <ci> Kms </ci>\n                </apply>\n                <apply>\n                  <divide/>\n                  <ci> product </ci>\n                  <ci> Kmp </ci>\n                </apply>\n              </apply>\n              <apply>\n                <plus/>\n                <cn> 1 </cn>\n                <apply>\n                  <divide/>\n                  <ci> Inhibitor </ci>\n                  <ci> Kic </ci>\n                </apply>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000275 ! enzymatic rate law for mixed-type inhibition of irreversible enzymes by mutually exclusive inhibitors
+
+[Term]
+id: SBO:0000442
+name: enzymatic rate law for simple reversible non-competitive inhibition of unireactant enzymes
+def: "Reversible inhibition of a unireactant enzyme by one inhibitor that can bind to the enzyme-substrate complex and to the free enzyme with the same equilibrium constant. The inhibitor is noncompetitive with the substrate.\n  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\"> Inhibitor </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Ki </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <minus/>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vf </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vr </ci>\n                <ci> product </ci>\n              </apply>\n              <ci> Kmp </ci>\n            </apply>\n          </apply>\n          <apply>\n            <times/>\n            <apply>\n              <plus/>\n              <cn> 1 </cn>\n              <apply>\n                <divide/>\n                <ci> substrate </ci>\n                <ci> Kms </ci>\n              </apply>\n              <apply>\n                <divide/>\n                <ci> product </ci>\n                <ci> Kmp </ci>\n              </apply>\n            </apply>\n            <apply>\n              <plus/>\n              <cn> 1 </cn>\n              <apply>\n                <divide/>\n                <ci> Inhibitor </ci>\n                <ci> Ki </ci>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000265 ! enzymatic rate law for simple mixed-type inhibition of irreversible unireactant enzymes
+
+[Term]
+id: SBO:0000443
+name: enzymatic rate law for reversible essential activation
+def: "Enzymatic rate law where the free enzyme\, in the absence of the activator\, is unable to bind substrate and has no activity." [src_code:NR]
+synonym: " compulsory activation" []
+synonym: "specific activation" []
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
+
+[Term]
+id: SBO:0000444
+name: enzymatic rate law for reversible mixed activation
+def: "Enzymatic rate law where the activator enhances the rate of reaction through specific and catalytic effects\, which increase the apparent limiting rate and decrease apparent Michaelis constant. The activator can bind reversibly both the free enzyme and enzyme-substrate complex\, while the substrate can bind only to enzyme-activator complex. Catalytic activity is seen only when enzyme\, substrate and activator are complexed.  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000021\"> Activator </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000363\"> Kas </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000363\"> Kac </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <apply>\n              <minus/>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> Vf </ci>\n                  <ci> substrate </ci>\n                </apply>\n                <ci> Kms </ci>\n              </apply>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> Vr </ci>\n                  <ci> product </ci>\n                </apply>\n                <ci> Kmp </ci>\n              </apply>\n            </apply>\n            <ci> Activator </ci>\n          </apply>\n          <apply>\n            <plus/>\n            <ci> Kas </ci>\n            <ci> Activator </ci>\n            <apply>\n              <times/>\n              <apply>\n                <plus/>\n                <apply>\n                  <divide/>\n                  <ci> substrate </ci>\n                  <ci> Kms </ci>\n                </apply>\n                <apply>\n                  <divide/>\n                  <ci> product </ci>\n                  <ci> Kmp </ci>\n                </apply>\n              </apply>\n              <apply>\n                <plus/>\n                <ci> Kac </ci>\n                <ci> Activator </ci>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000443 ! enzymatic rate law for reversible essential activation
+
+[Term]
+id: SBO:0000445
+name: enzymatic rate law for irreversible substrate activation
+def: "This enzymatic rate law is available only for irreversible reactions\, with one substrate and one product. There is a second binding site for the enzyme which\, when occupied\, activates the enzyme. Substrate binding at either site can occur at random.\n  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> V </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000282\"> Ksc </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000282\"> Ksa </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <ci> V </ci>\n            <apply>\n              <power/>\n              <apply>\n                <divide/>\n                <ci> substrate </ci>\n                <ci> Ksa </ci>\n              </apply>\n              <cn> 2 </cn>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <cn> 1 </cn>\n            <apply>\n              <divide/>\n              <ci> substrate </ci>\n              <ci> Ksc </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <ci> substrate </ci>\n              <ci> Ksa </ci>\n            </apply>\n            <apply>\n              <power/>\n              <apply>\n                <divide/>\n                <ci> substrate </ci>\n                <ci> Ksa </ci>\n              </apply>\n              <cn> 2 </cn>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000444 ! enzymatic rate law for reversible mixed activation
+
+[Term]
+id: SBO:0000446
+name: enzymatic rate law for irrreversible mixed activation
+def: "Enzymatic rate law where the activator enhances the rate of reaction through specific and catalytic effects\, which increase the apparent limiting rate and decrease apparent Michaelis constant. The activator can bind irreversibly both free enzyme and enzyme-substrate complex\, while the substrate can bind only to enzyme-activator complex. Catalytic activity is seen only when enzyme\, substrate and activator are complexed.  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000021\"> Activator </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> V </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000363\"> Kas </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000363\"> Kac </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <ci> V </ci>\n            <ci> substrate </ci>\n            <ci> Activator </ci>\n          </apply>\n          <apply>\n            <plus/>\n            <apply>\n              <times/>\n              <ci> Kms </ci>\n              <apply>\n                <plus/>\n                <ci> Kas </ci>\n                <ci> Activator </ci>\n              </apply>\n            </apply>\n            <apply>\n              <times/>\n              <ci> substrate </ci>\n              <apply>\n                <plus/>\n                <ci> Kac </ci>\n                <ci> Activator </ci>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000444 ! enzymatic rate law for reversible mixed activation
+
+[Term]
+id: SBO:0000447
+name: enzymatic rate law for reversible catalytic activation with one activator
+def: "Enzymatic rate law where an activator enhances the rate of reaction by increasing the apparent limiting rate\, The reversible binding of the activator to the enzyme-substrate complex is required for enzyme catalytic activity (to generate the product). \n  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000021\"> Activator </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000363\"> Ka </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <apply>\n              <minus/>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> Vf </ci>\n                  <ci> substrate </ci>\n                </apply>\n                <ci> Kms </ci>\n              </apply>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> Vr </ci>\n                  <ci> product </ci>\n                </apply>\n                <ci> Kmp </ci>\n              </apply>\n            </apply>\n            <ci> Activator </ci>\n          </apply>\n          <apply>\n            <times/>\n            <apply>\n              <plus/>\n              <cn> 1 </cn>\n              <apply>\n                <divide/>\n                <ci> substrate </ci>\n                <ci> Kms </ci>\n              </apply>\n              <apply>\n                <divide/>\n                <ci> product </ci>\n                <ci> Kmp </ci>\n              </apply>\n            </apply>\n            <apply>\n              <plus/>\n              <ci> Ka </ci>\n              <ci> Activator </ci>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000444 ! enzymatic rate law for reversible mixed activation
+
+[Term]
+id: SBO:0000448
+name: enzymatic rate law for reversible specific activation
+def: "Enzymatic rate law for one substrate\, one product and one modifier which acts as an activator. The activator enhances the rate of reaction by decreasing the apparent Michaelis constant. The activator reversibly binds to the enzyme before the enzyme can bind the substrate.  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000021\"> Activator </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000363\"> Ka </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <apply>\n              <minus/>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> Vf </ci>\n                  <ci> substrate </ci>\n                </apply>\n                <ci> Kms </ci>\n              </apply>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> Vr </ci>\n                  <ci> product </ci>\n                </apply>\n                <ci> Kmp </ci>\n              </apply>\n            </apply>\n            <ci> Activator </ci>\n          </apply>\n          <apply>\n            <plus/>\n            <ci> Ka </ci>\n            <apply>\n              <times/>\n              <apply>\n                <plus/>\n                <cn> 1 </cn>\n                <apply>\n                  <divide/>\n                  <ci> substrate </ci>\n                  <ci> Kms </ci>\n                </apply>\n                <apply>\n                  <divide/>\n                  <ci> product </ci>\n                  <ci> Kmp </ci>\n                </apply>\n              </apply>\n              <ci> Activator </ci>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000444 ! enzymatic rate law for reversible mixed activation
+
+[Term]
+id: SBO:0000449
+name: enzymatic rate law for irreversible catalytic activation with one activator
+def: "Enzymatic rate law where an activator enhances the rate of reaction by increasing the apparent limiting rate\, The activator binding to the enzyme-substrate complex (irreversibly) is required for enzyme catalytic activity (to generate the product).   <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000021\"> Activator </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> V </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000363\"> Ka </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <ci> V </ci>\n            <ci> substrate </ci>\n            <ci> Activator </ci>\n          </apply>\n          <apply>\n            <times/>\n            <apply>\n              <plus/>\n              <ci> Kms </ci>\n              <ci> substrate </ci>\n            </apply>\n            <apply>\n              <plus/>\n              <ci> Ka </ci>\n              <ci> Activator </ci>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000447 ! enzymatic rate law for reversible catalytic activation with one activator
+
+[Term]
+id: SBO:0000450
+name: enzymatic rate law for irreversible specific activation
+def: "Enzymatic rate law for one substrate\, one product and one modifier which acts as an activator. The activator enhances the rate of reaction by decreasing the apparent Michaelis constant. The activator must bind to the enzyme before the enzyme can bind the substrate.   <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\">substrate</ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000021\">Activator</ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\">Kms</ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\">V</ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000363\">Ka</ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <ci> V </ci>\n            <ci> substrate </ci>\n            <ci> Activator </ci>\n          </apply>\n          <apply>\n            <plus/>\n            <apply>\n              <times/>\n              <ci> Kms </ci>\n              <ci> Ka </ci>\n            </apply>\n            <apply>\n              <times/>\n              <apply>\n                <plus/>\n                <ci> Kms </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> Activator </ci>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000448 ! enzymatic rate law for reversible specific activation
+
+[Term]
+id: SBO:0000451
+name: enzymatic rate law for reversible reactions with competitive inhibition
+def: "This enzymatic rate law involves one substrate\, one product and one or more modifiers. The modifiers act as competitive inhibitors of the substrate at the enzyme binding site\, The modifiers (inhibitors) reversibly bound to the enzyme block access to the substrate. The inhibitors have the effect of increasing the apparent Km\, and bind exclusively to the enzymes.  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\"> Inhibitor </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Ki </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000272\">n</ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <minus/>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vf </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vr </ci>\n                <ci> product </ci>\n              </apply>\n              <ci> Kmp </ci>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <cn> 1 </cn>\n            <apply>\n              <divide/>\n              <ci> substrate </ci>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <ci> product </ci>\n              <ci> Kmp </ci>\n            </apply>\n            <apply>\n              <sum/>\n              <bvar>\n                <ci> i </ci>\n              </bvar>\n              <lowlimit>\n                <cn type=\"integer\"> 1 </cn>\n              </lowlimit>\n              <uplimit>\n                <ci> n </ci>\n              </uplimit>\n              <apply>\n                <divide/>\n                <apply>\n                  <selector/>\n                  <ci type=\"vector\">I</ci>\n                  <ci> i </ci>\n                </apply>\n                <apply>\n                  <selector/>\n                  <ci type=\"vector\">Ki</ci>\n                  <ci> i </ci>\n                </apply>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+synonym: "" []
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
+
+[Term]
+id: SBO:0000452
+name: enzymatic rate law for reversible competitive inhibition by one inhibitor
+def: "This enzymatic rate law involves one substrate\, one product and one modifier. The modifier acts as a competitive inhibitor with the substrate at the enzyme binding site\, The modifier (inhibitor) reversibly bound to the enzyme blocks access to the substrate. The inhibitor has the effect of increasing the apparent Km.   <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\"> Inhibitor </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Ki </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <minus/>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vf </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vr </ci>\n                <ci> product </ci>\n              </apply>\n              <ci> Kmp </ci>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <cn> 1 </cn>\n            <apply>\n              <divide/>\n              <ci> substrate </ci>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <ci> product </ci>\n              <ci> Kmp </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <ci> Inhibitor </ci>\n              <ci> Ki </ci>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000451 ! enzymatic rate law for reversible reactions with competitive inhibition
+
+[Term]
+id: SBO:0000453
+name: enzymatic rate law for reversible empirical allosteric inhibition by one inhibitor
+def: "Enzymatic rate law where the reversible binding of one ligand decreases the affinity for substrate at other active sites. The ligand does not bind the same site as the substrate on the enzyme. This is an empirical equation\, where n represents the Hill coefficient.  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\"> Inhibitor </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000190\"> n </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Ki </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <minus/>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vf </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vr </ci>\n                <ci> product </ci>\n              </apply>\n              <ci> Kmp </ci>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <cn> 1 </cn>\n            <apply>\n              <divide/>\n              <ci> substrate </ci>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <ci> product </ci>\n              <ci> Kmp </ci>\n            </apply>\n            <apply>\n              <power/>\n              <apply>\n                <divide/>\n                <ci> Inhibitor </ci>\n                <ci> Ki </ci>\n              </apply>\n              <ci> n </ci>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000451 ! enzymatic rate law for reversible reactions with competitive inhibition
+
+[Term]
+id: SBO:0000454
+name: enzymatic rate law for reversible substrate inhibition
+def: "Enzymatic rate law where the substrate for an enzyme also acts as a reversible  inhibitor. This may entail a second (non-active) binding site for the enzyme. The inhibition constant is then the dissociation constant for the substrate from this second site.  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Ki </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <minus/>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vf </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vr </ci>\n                <ci> product </ci>\n              </apply>\n              <ci> Kmp </ci>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <cn> 1 </cn>\n            <apply>\n              <divide/>\n              <ci> substrate </ci>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <ci> product </ci>\n              <ci> Kmp </ci>\n            </apply>\n            <apply>\n              <power/>\n              <apply>\n                <divide/>\n                <ci> substrate </ci>\n                <ci> Ki </ci>\n              </apply>\n              <cn> 2 </cn>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
+
+[Term]
+id: SBO:0000455
+name: enzymatic rate law for irreversible substrate inhibition
+def: "Enzymatic rate law where the substrate for an enzyme also acts as an irreversible inhibitor. This may entail a second (non-active) binding site for the enzyme. The inhibition constant is then the dissociation constant for the substrate from this second site.\n  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\"> Km </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> V </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Ki </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <ci> V </ci>\n            <ci> substrate </ci>\n          </apply>\n          <apply>\n            <plus/>\n            <ci> Km </ci>\n            <ci> substrate </ci>\n            <apply>\n              <times/>\n              <ci> Km </ci>\n              <apply>\n                <power/>\n                <apply>\n                  <divide/>\n                  <ci> substrate </ci>\n                  <ci> Ki </ci>\n                </apply>\n                <cn> 2 </cn>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000454 ! enzymatic rate law for reversible substrate inhibition
+
+[Term]
+id: SBO:0000456
+name: enzymatic rate law for reversible unireactant enzyme with a single hyperbolic modulator
+def: "Enzymatic rate law where the modifier can act as an activator or inhibitor\, depending upon the values of the kinetic constants. The modifier can bind reversibly to all forms of the enzyme and all enzyme-substrate complexes are reactive. \n'a' represents the ratio of dissociation constant of the elementary step Enzyme-Substrate complex + Modifier = Enzyme-Substrate-Modifier complex over that of Enzyme + Modifier = Enzyme-Modifier complex.\n'b' represents ratio of the rate constant of elementary step Enzyme-Substrate-Modifier complex -> Enzyme-Modifier complex + Product over that of Enzyme-Substrate complex -> Enzyme + Product.\n   <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000019\"> Modifier </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000282\"> Kd </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000381\"> a </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000381\"> b </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <apply>\n              <minus/>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> Vf </ci>\n                  <ci> substrate </ci>\n                </apply>\n                <ci> Kms </ci>\n              </apply>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> Vr </ci>\n                  <ci> product </ci>\n                </apply>\n                <ci> Kmp </ci>\n              </apply>\n            </apply>\n            <apply>\n              <plus/>\n              <cn> 1 </cn>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> b </ci>\n                  <ci> Modifier </ci>\n                </apply>\n                <apply>\n                  <times/>\n                  <ci> a </ci>\n                  <ci> Kd </ci>\n                </apply>\n              </apply>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <cn> 1 </cn>\n            <apply>\n              <divide/>\n              <ci> Modifier </ci>\n              <ci> Kd </ci>\n            </apply>\n            <apply>\n              <times/>\n              <apply>\n                <plus/>\n                <apply>\n                  <divide/>\n                  <ci> substrate </ci>\n                  <ci> Kms </ci>\n                </apply>\n                <apply>\n                  <divide/>\n                  <ci> product </ci>\n                  <ci> Kmp </ci>\n                </apply>\n              </apply>\n              <apply>\n                <plus/>\n                <cn> 1 </cn>\n                <apply>\n                  <divide/>\n                  <ci> Modifier </ci>\n                  <apply>\n                    <times/>\n                    <ci> a </ci>\n                    <ci> Kd </ci>\n                  </apply>\n                </apply>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
+
+[Term]
+id: SBO:0000457
+name: enzymatic rate law for irreversible unireactant enzyme with a single hyperbolic modulator
+def: "Enzymatic rate law where the modifier can act as an activator or inhibitor\, depending upon the values of the kinetic constants. The modifier can bind irreversibly to all forms of the enzyme and all enzyme-substrate complexes are reactive. \n'a' represents the ratio of dissociation constant of the elementary step Enzyme-Substrate complex + Modifier = Enzyme-Substrate-Modifier complex) over that of Enzyme + Modifier = Enzyme-Modifier complex.\n'b' represents ratio of the rate constant of elementary step Enzyme-Substrate-Modifier complex -> Enzyme-Modifier complex + Product over that of Enzyme-Substrate complex -> Enzyme + Product.\n   <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000019\"> Modifier </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000027\"> Km </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> V </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000282\"> Kd </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000381\"> a </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000381\"> b </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <times/>\n            <ci> V </ci>\n            <ci> substrate </ci>\n            <apply>\n              <plus/>\n              <cn> 1 </cn>\n              <apply>\n                <divide/>\n                <apply>\n                  <times/>\n                  <ci> b </ci>\n                  <ci> Modifier </ci>\n                </apply>\n                <apply>\n                  <times/>\n                  <ci> a </ci>\n                  <ci> Kd </ci>\n                </apply>\n              </apply>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <apply>\n              <times/>\n              <ci> Km </ci>\n              <apply>\n                <plus/>\n                <cn> 1 </cn>\n                <apply>\n                  <divide/>\n                  <ci> Modifier </ci>\n                  <ci> Kd </ci>\n                </apply>\n              </apply>\n            </apply>\n            <apply>\n              <times/>\n              <ci> substrate </ci>\n              <apply>\n                <plus/>\n                <cn> 1 </cn>\n                <apply>\n                  <divide/>\n                  <ci> Modifier </ci>\n                  <apply>\n                    <times/>\n                    <ci> a </ci>\n                    <ci> Kd </ci>\n                  </apply>\n                </apply>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000456 ! enzymatic rate law for reversible unireactant enzyme with a single hyperbolic modulator
+
+[Term]
+id: SBO:0000458
+name: enzymatic rate law for simple uncompetitive inhibition of reversible unireactant enzymes
+def: "Reversible inhibition of a unireactant enzyme by one inhibitor\, which binds to the enzyme-substrate complex. The inhibitor is uncompetitive with the substrate.\n  <math xmlns=\"http\://www.w3.org/1998/Math/MathML\">\n    <semantics definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000062\">\n      <lambda>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000015\"> substrate </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000011\"> product </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000020\"> Inhibitor </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000322\"> Kms </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000323\"> Kmp </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000324\"> Vf </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000325\"> Vr </ci>\n        </bvar>\n        <bvar>\n          <ci definitionURL=\"http\://biomodels.net/SBO/#SBO\:0000261\"> Ki </ci>\n        </bvar>\n        <apply>\n          <divide/>\n          <apply>\n            <minus/>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vf </ci>\n                <ci> substrate </ci>\n              </apply>\n              <ci> Kms </ci>\n            </apply>\n            <apply>\n              <divide/>\n              <apply>\n                <times/>\n                <ci> Vr </ci>\n                <ci> product </ci>\n              </apply>\n              <ci> Kmp </ci>\n            </apply>\n          </apply>\n          <apply>\n            <plus/>\n            <cn> 1 </cn>\n            <apply>\n              <times/>\n              <apply>\n                <plus/>\n                <apply>\n                  <divide/>\n                  <ci> substrate </ci>\n                  <ci> Kms </ci>\n                </apply>\n                <apply>\n                  <divide/>\n                  <ci> product </ci>\n                  <ci> Kmp </ci>\n                </apply>\n              </apply>\n              <apply>\n                <plus/>\n                <cn> 1 </cn>\n                <apply>\n                  <divide/>\n                  <ci> Inhibitor </ci>\n                  <ci> Ki </ci>\n                </apply>\n              </apply>\n            </apply>\n          </apply>\n        </apply>\n      </lambda>\n    </semantics>\n  </math>" [src_code:NR]
+is_a: SBO:0000430 ! enzymatic rate law for modulated unireactant enzymes
+
+[Term]
+id: SBO:0000459
+name: stimulator
+def: "Substance that accelerates the velocity of a chemical reaction without itself being consumed or transformed. " [src_code:NR]
+synonym: "activator" []
+is_a: SBO:0000019 ! modifier
+
+[Term]
+id: SBO:0000460
+name: enzymatic catalyst
+def: "A substance that accelerates the velocity of a chemical reaction without itself being consumed or transformed\, by lowering the free energy of the transition state. The substance acting as a catalyst is an enzyme." [src_code:NR]
+is_a: SBO:0000013 ! catalyst
+
+[Term]
+id: SBO:0000461
+name: essential activator
+def: "A substance that is absolutely required for occurrence and stimulation of a reaction." [src_code:NR]
+synonym: "necessary stimulator" []
+is_a: SBO:0000459 ! stimulator
+
+[Term]
+id: SBO:0000462
+name: non-essential activator
+def: "An activator which is not necessary for an enzymatic reaction\, but whose presence will further increase enzymatic activity. " [src_code:NR]
+is_a: SBO:0000459 ! stimulator
 
 [Typedef]
 id: is_a
