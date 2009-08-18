@@ -18,10 +18,8 @@
  */
 package org.sbml.squeezer.standalone;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -33,6 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
 import org.sbml.Model;
@@ -49,6 +48,8 @@ import org.sbml.squeezer.resources.Resource;
  */
 public class SBMLsqueezerSUI extends SBMLsqueezerUI implements ActionListener {
 
+	JTabbedPane tabbedPane;
+	
 	/**
 	 * Generated serial version id.
 	 */
@@ -107,7 +108,7 @@ public class SBMLsqueezerSUI extends SBMLsqueezerUI implements ActionListener {
 	}
 
 	private void addModel(Model model) {
-		getContentPane().add(new ModelComponentsPanel(model), model.getId());
+		tabbedPane.addTab(model.getId(), new ModelComponentsPanel(model));
 	}
 
 	private JMenuBar createMenuBar() {
@@ -142,7 +143,8 @@ public class SBMLsqueezerSUI extends SBMLsqueezerUI implements ActionListener {
 
 	// @Override
 	protected void init() {
-		getContentPane().setLayout(new CardLayout());
+		tabbedPane = new JTabbedPane();
+		getContentPane().add(tabbedPane);
 		setJMenuBar(createMenuBar());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
