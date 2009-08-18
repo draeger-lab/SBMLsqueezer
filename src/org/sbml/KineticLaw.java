@@ -18,8 +18,6 @@
  */
 package org.sbml;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.libsbml;
 import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
@@ -28,24 +26,22 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class KineticLaw extends SBase {
+public class KineticLaw extends MathContainer {
 
 	private ListOf<Parameter> listOfParameters;
-	private ASTNode math;
 
 	public KineticLaw() {
+		super();
 		listOfParameters = new ListOf<Parameter>();
-		math = null;
 	}
 
 	public KineticLaw(KineticLaw kineticLaw) {
-		this();
-		setMath(kineticLaw.getMath());
-		setMetaid(kineticLaw.getMetaid());
-		setSBOTerm(kineticLaw.getSBOTerm());
+		super(kineticLaw);
+		listOfParameters = kineticLaw.getListOfParameters().clone();
 	}
 
 	public KineticLaw(Reaction parentReaction) {
+		this();
 		parentReaction.setKineticLaw(this);
 	}
 
@@ -56,6 +52,7 @@ public class KineticLaw extends SBase {
 	 * org.sbml.SBase#addChangeListener(org.sbml.squeezer.io.SBaseChangedListener
 	 * )
 	 */
+	// @Override
 	public void addChangeListener(SBaseChangedListener l) {
 		super.addChangeListener(l);
 		listOfParameters.addChangeListener(l);
@@ -97,22 +94,8 @@ public class KineticLaw extends SBase {
 		return false;
 	}
 
-	public String getFormula() {
-		return isSetMath() ? libsbml.formulaToString(math) : "";
-	}
-
 	public ListOf<Parameter> getListOfParameters() {
 		return listOfParameters;
-	}
-	
-	/**
-	 * Returns the mathematical formula for this KineticLaw object and return it
-	 * as as an AST.
-	 * 
-	 * @return
-	 */
-	public ASTNode getMath() {
-		return isSetMath() ? math : new ASTNode();
 	}
 
 	/**
@@ -160,18 +143,13 @@ public class KineticLaw extends SBase {
 		return (Reaction) parentSBMLObject;
 	}
 
-	public boolean isSetMath() {
-		return math != null ? true : false;
-	}
-
 	/**
 	 * Removes the ith local parameter from this object.
 	 * 
 	 * @param i
 	 */
 	public void removeParameter(int i) {
-		listOfParameters.remove(i);
-		stateChanged();
+		listOfParameters.remove(i).sbaseRemoved();
 	}
 
 	/**
@@ -185,41 +163,6 @@ public class KineticLaw extends SBase {
 				&& !listOfParameters.get(i).getId().equals(id))
 			i++;
 		if (i < listOfParameters.size())
-			listOfParameters.remove(i);
-		stateChanged();
-	}
-
-	/**
-	 * Sets the mathematical expression of this KineticLaw instance to the given
-	 * formula.
-	 * 
-	 * @param formula
-	 */
-	public void setFormula(String formula) {
-		math = libsbml.parseFormula(formula);
-		stateChanged();
-	}
-
-	/**
-	 * Sets the mathematical expression of this KineticLaw instance to a copy of
-	 * the given ASTNode.
-	 * 
-	 * @param math
-	 */
-	public void setMath(ASTNode math) {
-		this.math = math.deepCopy();
-		stateChanged();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBase#toString()
-	 */
-	// @Override
-	public String toString() {
-		if (isSetMath())
-			return libsbml.formulaToString(math);
-		return "";
+			listOfParameters.remove(i).sbaseRemoved();
 	}
 }

@@ -26,7 +26,7 @@ import org.sbml.libsbml.libsbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class EventAssignment extends MathElement {
+public class EventAssignment extends MathContainer {
 
 	private NamedSBase variable;
 

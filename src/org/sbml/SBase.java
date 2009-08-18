@@ -33,12 +33,15 @@ import org.sbml.squeezer.io.SBaseChangedListener;
 public abstract class SBase {
 
 	SBase parentSBMLObject;
-	private String metaid;
-	private int SBOTerm;
+	private String metaId;
+	private int sboTerm;
 	private String notes;
 	private Set<SBaseChangedListener> setOfListeners;
 
 	public SBase() {
+		sboTerm = -1;
+		metaId = null;
+		notes = null;
 		parentSBMLObject = null;
 		setOfListeners = new HashSet<SBaseChangedListener>();
 	}
@@ -46,9 +49,11 @@ public abstract class SBase {
 	public SBase(SBase sb) {
 		this();
 		if (sb.isSetMetaId())
-			this.metaid = new String(sb.getMetaid());
+			this.metaId = new String(sb.getMetaId());
 		if (sb.isSetNotes())
 			this.notes = new String(sb.getNotes());
+		this.parentSBMLObject = sb.getParentSBMLObject();
+		this.setOfListeners.addAll(sb.setOfListeners);
 	}
 
 	/**
@@ -74,8 +79,8 @@ public abstract class SBase {
 	 */
 	public abstract boolean equals(Object o);
 
-	public String getMetaid() {
-		return metaid;
+	public String getMetaId() {
+		return metaId;
 	}
 
 	/**
@@ -108,13 +113,13 @@ public abstract class SBase {
 	}
 
 	public int getSBOTerm() {
-		return SBOTerm;
+		return sboTerm;
 	}
 
 	public String getSBOTermID() {
 		if (isSetSBOTerm()) {
 			StringBuffer sbo = new StringBuffer("SBO:");
-			sbo.append(Integer.toString(SBOTerm));
+			sbo.append(Integer.toString(sboTerm));
 			while (sbo.length() < 11)
 				sbo.insert(4, '0');
 			return sbo.toString();
@@ -129,7 +134,7 @@ public abstract class SBase {
 	 * @return
 	 */
 	public boolean isSetMetaId() {
-		return metaid != null;
+		return metaId != null;
 	}
 
 	/**
@@ -165,8 +170,8 @@ public abstract class SBase {
 			listener.stateChanged(this);
 	}
 
-	public void setMetaid(String metaid) {
-		this.metaid = metaid;
+	public void setMetaId(String metaid) {
+		this.metaId = metaid;
 		stateChanged();
 	}
 
@@ -176,7 +181,7 @@ public abstract class SBase {
 	}
 
 	public void setSBOTerm(int term) {
-		SBOTerm = term;
+		sboTerm = term;
 		stateChanged();
 	}
 
@@ -196,6 +201,6 @@ public abstract class SBase {
 	public abstract String toString();
 
 	private boolean isSetSBOTerm() {
-		return SBOTerm != -1;
+		return sboTerm != -1;
 	}
 }

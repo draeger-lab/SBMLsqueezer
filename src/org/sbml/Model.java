@@ -29,28 +29,28 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  */
 public class Model extends NamedSBase {
 
-	private ListOf<Species> listOfSpecies;
-	private ListOf<Reaction> listOfReactions;
-	private ListOf<Parameter> listOfParameters;
-	private ListOf<Event> listOfEvents;
 	private ListOf<Compartment> listOfCompartments;
+	private ListOf<Species> listOfSpecies;
+	private ListOf<Parameter> listOfParameters;
+	private ListOf<Reaction> listOfReactions;
+	private ListOf<Event> listOfEvents;
 
 	public Model(Model model) {
 		super(model);
-		listOfSpecies = model.getListOfSpecies().clone();
-		listOfReactions = model.getListOfReactions().clone();
-		listOfParameters = model.getListOfParameters().clone();
-		listOfEvents = model.getListOfEvents().clone();
 		listOfCompartments = model.getListOfCompartments().clone();
+		listOfSpecies = model.getListOfSpecies().clone();
+		listOfParameters = model.getListOfParameters().clone();
+		listOfReactions = model.getListOfReactions().clone();
+		listOfEvents = model.getListOfEvents().clone();
 	}
 
 	public Model(String id) {
 		super(id);
-		listOfSpecies = new ListOf<Species>();
-		listOfReactions = new ListOf<Reaction>();
-		listOfParameters = new ListOf<Parameter>();
-		listOfEvents = new ListOf<Event>();
 		listOfCompartments = new ListOf<Compartment>();
+		listOfSpecies = new ListOf<Species>();
+		listOfParameters = new ListOf<Parameter>();
+		listOfReactions = new ListOf<Reaction>();
+		listOfEvents = new ListOf<Event>();
 	}
 
 	/*
@@ -62,22 +62,25 @@ public class Model extends NamedSBase {
 	 */
 	public void addChangeListener(SBaseChangedListener l) {
 		super.addChangeListener(l);
+		listOfCompartments.addChangeListener(l);
+		listOfSpecies.addChangeListener(l);
 		listOfParameters.addChangeListener(l);
 		listOfReactions.addChangeListener(l);
-		listOfSpecies.addChangeListener(l);
+		listOfEvents.addChangeListener(l);
 	}
 
 	public void addCompartment(Compartment compartment) {
 		if (!listOfCompartments.contains(compartment)) {
-			listOfCompartments.add(compartment);
-			compartment.parentSBMLObject = this;
-			compartment.sbaseAdded();
+			Compartment c = compartment.clone();
+			listOfCompartments.add(c);
+			c.parentSBMLObject = this;
+			c.sbaseAdded();
 		}
 	}
 
 	public void addParameter(Parameter parameter) {
 		if (!listOfParameters.contains(parameter)) {
-			Parameter p = new Parameter(parameter);
+			Parameter p = parameter.clone();
 			listOfParameters.add(p);
 			p.parentSBMLObject = this;
 			p.sbaseAdded();
@@ -91,9 +94,10 @@ public class Model extends NamedSBase {
 	 */
 	public void addReaction(Reaction reac) {
 		if (!listOfReactions.contains(reac)) {
-			listOfReactions.add(reac);
-			reac.parentSBMLObject = this;
-			reac.sbaseAdded();
+			Reaction r = reac.clone();
+			listOfReactions.add(r);
+			r.parentSBMLObject = this;
+			r.sbaseAdded();
 		}
 	}
 
@@ -103,19 +107,40 @@ public class Model extends NamedSBase {
 	 * @param spec
 	 */
 	public void addSpecies(Species spec) {
-		listOfSpecies.add(spec);
-		spec.parentSBMLObject = spec;
-		spec.sbaseAdded();
+		if (!listOfSpecies.contains(spec)) {
+			Species s = spec.clone();
+			listOfSpecies.add(s);
+			s.parentSBMLObject = this;
+			s.sbaseAdded();
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#clone()
+	 */
 	// @Override
 	public Model clone() {
 		return new Model(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
 	// @Override
 	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Model) {
+			Model m = (Model) o;
+			return m.getListOfCompartments().equals(listOfCompartments)
+					&& m.getListOfSpecies().equals(listOfSpecies)
+					&& m.getListOfParameters().equals(listOfParameters)
+					&& m.getListOfReactions().equals(listOfReactions)
+					&& m.getListOfEvents().equals(listOfEvents)
+					&& m.getSBOTerm() == getSBOTerm();
+		}
 		return false;
 	}
 
@@ -188,18 +213,6 @@ public class Model extends NamedSBase {
 	}
 
 	/**
-	 * This method is convenient when holding an object nested inside other
-	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
-	 * 
-	 * element containing it.
-	 * 
-	 * @return Returns the parent SBML object.
-	 */
-	public SBase getParentSBMLObject() {
-		return parentSBMLObject;
-	}
-
-	/**
 	 * Get the n-th Reaction object in this Model.
 	 * 
 	 * @param reactionIndex
@@ -258,26 +271,26 @@ public class Model extends NamedSBase {
 	 */
 	public void removeSpecies(Species spec) {
 		listOfSpecies.remove(spec);
-		stateChanged();
+		spec.sbaseRemoved();
 	}
 
 	public void setListOfCompartments(ListOf<Compartment> listOfCompartments) {
-		this.listOfCompartments = listOfCompartments;
+		this.listOfCompartments = listOfCompartments.clone();
 	}
 
 	public void setListOfEvents(ListOf<Event> listOfEvents) {
-		this.listOfEvents = listOfEvents;
+		this.listOfEvents = listOfEvents.clone();
 	}
 
 	public void setListOfParameters(ListOf<Parameter> listOfParameters) {
-		this.listOfParameters = listOfParameters;
+		this.listOfParameters = listOfParameters.clone();
 	}
 
 	public void setListOfReactions(ListOf<Reaction> listOfReactions) {
-		this.listOfReactions = listOfReactions;
+		this.listOfReactions = listOfReactions.clone();
 	}
 
 	public void setListOfSpecies(ListOf<Species> listOfSpecies) {
-		this.listOfSpecies = listOfSpecies;
+		this.listOfSpecies = listOfSpecies.clone();
 	}
 }

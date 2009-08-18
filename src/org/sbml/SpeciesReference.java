@@ -41,8 +41,7 @@ public class SpeciesReference extends SimpleSpeciesReference {
 	}
 
 	public SpeciesReference(SpeciesReference speciesReference) {
-		this();
-		// TODO Auto-generated constructor stub
+		super(speciesReference);
 	}
 
 	/*
@@ -53,17 +52,6 @@ public class SpeciesReference extends SimpleSpeciesReference {
 	// @Override
 	public SpeciesReference clone() {
 		return new SpeciesReference(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
-	 */
-	// @Override
-	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	public double getStoichiometry() {
@@ -78,7 +66,7 @@ public class SpeciesReference extends SimpleSpeciesReference {
 		stoichiometry = 1;
 		stoichiometryMath = null;
 	}
-	
+
 	public boolean isSetStoichiometryMath() {
 		return stoichiometryMath != null;
 	}
@@ -89,21 +77,24 @@ public class SpeciesReference extends SimpleSpeciesReference {
 			stoichiometryMath = null;
 		stateChanged();
 	}
-	
-	/**
-	 * This method is convenient when holding an object nested inside other
-	 * objects in an SBML model. It allows direct access to the &lt;model&gt;
-	 * 
-	 * element containing it.
-	 * 
-	 * @return Returns the parent SBML object.
-	 */
-	public Species getParentSBMLObject() {
-		return (Species) parentSBMLObject;
-	}
 
 	public void setStoichiometryMath(StoichiometryMath math) {
 		this.stoichiometryMath = math;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
+	// @Override
+	public boolean equals(Object o) {
+		if (o instanceof SpeciesReference) {
+			SpeciesReference sr = (SpeciesReference) o;
+			return super.equals(o) && sr.getStoichiometry() == stoichiometry
+					&& sr.getStoichiometryMath().equals(stoichiometryMath);
+		}
+		return false;
 	}
 
 }

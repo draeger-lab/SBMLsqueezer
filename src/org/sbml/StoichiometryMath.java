@@ -25,7 +25,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class StoichiometryMath extends MathElement {
+public class StoichiometryMath extends MathContainer {
 
 	public StoichiometryMath() {
 		super();

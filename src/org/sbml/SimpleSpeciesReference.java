@@ -33,15 +33,21 @@ public abstract class SimpleSpeciesReference extends NamedSBase {
 	public SimpleSpeciesReference() {
 		super();
 	}
-	
+
+	public SimpleSpeciesReference(SimpleSpeciesReference ssr) {
+		super(ssr);
+		this.species = ssr.getSpeciesInstance();
+	}
+
 	public SimpleSpeciesReference(Species spec) {
+		this();
 		this.species = spec;
 	}
-	
+
 	public String getSpecies() {
 		return species.getId();
 	}
-	
+
 	public Species getSpeciesInstance() {
 		return species;
 	}
@@ -49,5 +55,31 @@ public abstract class SimpleSpeciesReference extends NamedSBase {
 	public void setSpecies(Species spec) {
 		this.species = spec;
 		stateChanged();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
+	// @Override
+	public boolean equals(Object o) {
+		if (o.getClass().getName().equals(getClass().getName())) {
+			SimpleSpeciesReference ssr = (SimpleSpeciesReference) o;
+			return ssr.getSBOTerm() == getSBOTerm()
+					&& ssr.getSpeciesInstance().equals(species)
+					&& ssr.getName().equals(getName());
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#getParentSBMLObject()
+	 */
+	// @Override
+	public Reaction getParentSBMLObject() {
+		return (Reaction) parentSBMLObject;
 	}
 }

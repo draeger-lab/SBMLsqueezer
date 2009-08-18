@@ -31,7 +31,7 @@ public class Parameter extends NamedSBase {
 	private boolean constant;
 
 	public Parameter(Parameter p) {
-		super(p.getId());
+		super(p);
 		this.value = p.getValue();
 		this.constant = p.isConstant();
 	}
@@ -58,7 +58,11 @@ public class Parameter extends NamedSBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Parameter) {
+			Parameter p = (Parameter) o;
+			return p.getConstant() == constant && p.getValue() == value
+					&& p.getSBOTerm() == getSBOTerm();
+		}
 		return false;
 	}
 
@@ -72,7 +76,7 @@ public class Parameter extends NamedSBase {
 
 	public void initDefaults() {
 		value = Double.NaN;
-		// TODO
+		constant = true;
 	}
 
 	public boolean isConstant() {
@@ -80,7 +84,7 @@ public class Parameter extends NamedSBase {
 	}
 
 	public boolean isSetValue() {
-		return value != Double.NaN;
+		return !Double.isNaN(value);
 	}
 
 	public void setConstant(boolean constant) {
