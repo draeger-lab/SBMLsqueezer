@@ -37,7 +37,6 @@ import javax.swing.UIManager;
 import org.sbml.Model;
 import org.sbml.squeezer.gui.JHelpBrowser;
 import org.sbml.squeezer.gui.ModelComponentsPanel;
-import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
@@ -48,7 +47,7 @@ import org.sbml.squeezer.resources.Resource;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class SBMLsqueezerSUI extends SBMLsqueezerUI implements ActionListener {
+public class SBMLsqueezerSUI extends JFrame implements ActionListener {
 
 	JTabbedPane tabbedPane;
 

@@ -18,8 +18,6 @@
  */
 package org.sbml;
 
-import org.sbml.libsbml.ASTNode;
-
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">

@@ -18,10 +18,16 @@
  */
 package org.sbml;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.sbml.squeezer.io.LaTeX;
+
 /**
+ * A node in the Abstract Syntax Tree (AST) representation of a mathematical
+ * expression.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
@@ -30,34 +36,36 @@ import java.util.List;
 public class ASTNode {
 
 	private int denominator;
-	private int exponent;
+	private double exponent;
 	private int integer;
-	private LinkedList<ASTNode> listOfChildren;
+	private LinkedList<ASTNode> listOfNodes;
 	private double mantissa;
 	private String name;
 	private int numerator;
-	private char operator;
+	private SBase parentSBMLObject;
+	private boolean printNameIfAvailable;
 	private Constants type;
+
 	private NamedSBase variable;
-	SBase parentSBMLObject;
 
 	/**
+	 * Copy constructor; Creates a deep copy of the given ASTNode.
 	 * 
-	 */
-	public ASTNode() {
-		type = Constants.AST_UNKNOWN;
-		listOfChildren = new LinkedList<ASTNode>();
-	}
-
-	/**
-	 * @param arg0
+	 * @param astNode
+	 *            the ASTNode to be copied.
 	 */
 	public ASTNode(ASTNode astNode) {
-		this();
+		this(astNode.getParentSBMLObject());
 		setType(astNode.getType());
-		parentSBMLObject = astNode.parentSBMLObject;
-		for (ASTNode child : astNode.listOfChildren)
-			listOfChildren.add(new ASTNode(child));
+		this.denominator = astNode.denominator;
+		this.exponent = astNode.exponent;
+		this.integer = astNode.integer;
+		this.mantissa = astNode.mantissa;
+		this.name = astNode.name == null ? null : new String(astNode.name);
+		this.numerator = astNode.numerator;
+		this.printNameIfAvailable = astNode.printNameIfAvailable;
+		for (ASTNode child : astNode.listOfNodes)
+			this.listOfNodes.add(child.clone());
 	}
 
 	/**
@@ -68,14 +76,32 @@ public class ASTNode {
 	 * possible using setType(int)
 	 * 
 	 * @param type
+	 * @param the
+	 *            parent SBML object
 	 */
-	public ASTNode(Constants type) {
-		this();
+	public ASTNode(Constants type, SBase parent) {
+		this(parent);
 		setType(type);
 	}
 
+	/**
+	 * Creates and returns a new ASTNode.
+	 * 
+	 * By default, the returned node will have a type of AST_UNKNOWN. The
+	 * calling code should set the node type to something else as soon as
+	 * possible using setType(int)
+	 * 
+	 * @param astNode
+	 *            the parent SBML object
+	 */
+	public ASTNode(SBase parent) {
+		parentSBMLObject = parent;
+		listOfNodes = null;
+		initDefaults();
+	}
+
 	public void addChild(ASTNode child) {
-		listOfChildren.add(child);
+		listOfNodes.add(child);
 	}
 
 	/*
@@ -99,7 +125,7 @@ public class ASTNode {
 			ASTNode ast = (ASTNode) o;
 			boolean equal = ast.getType() == type;
 			if (equal)
-				for (ASTNode child : listOfChildren)
+				for (ASTNode child : listOfNodes)
 					equal = equal && child.equals(ast);
 			return equal;
 		}
@@ -115,7 +141,20 @@ public class ASTNode {
 	 */
 	public char getCharacter() {
 		if (isOperator())
-			return operator;
+			switch (type) {
+			case AST_PLUS:
+				return '+';
+			case AST_MINUS:
+				return '-';
+			case AST_TIMES:
+				return '*';
+			case AST_DIVIDE:
+				return '/';
+			case AST_POWER:
+				return '^';
+			default:
+				break;
+			}
 		throw new RuntimeException(new IllegalAccessException(
 				"getCharacter() should be called only when isOperator()."));
 	}
@@ -129,7 +168,7 @@ public class ASTNode {
 	 *         child (n > getNumChildren() - 1).
 	 */
 	public ASTNode getChild(int n) {
-		return listOfChildren.get(n);
+		return listOfNodes.get(n);
 	}
 
 	/**
@@ -153,7 +192,7 @@ public class ASTNode {
 	 * 
 	 * @return the value of the exponent of this ASTNode.
 	 */
-	public int getExponent() {
+	public double getExponent() {
 		if (type == Constants.AST_REAL || type == Constants.AST_REAL_E)
 			return exponent;
 		throw new RuntimeException(
@@ -190,7 +229,7 @@ public class ASTNode {
 	 * @return
 	 */
 	public List<ASTNode> getListOfNodes() {
-		return listOfChildren;
+		return listOfNodes;
 	}
 
 	/**
@@ -235,7 +274,7 @@ public class ASTNode {
 	 *         children.
 	 */
 	public int getNumChildren() {
-		return listOfChildren.size();
+		return listOfNodes.size();
 	}
 
 	/**
@@ -274,7 +313,8 @@ public class ASTNode {
 	 * @return the value of this ASTNode as a real (double).
 	 */
 	public double getReal() {
-		if (isReal() || type == Constants.AST_CONSTANT_E || type == Constants.AST_CONSTANT_PI) {
+		if (isReal() || type == Constants.AST_CONSTANT_E
+				|| type == Constants.AST_CONSTANT_PI) {
 			switch (type) {
 			case AST_REAL:
 				return mantissa;
@@ -295,7 +335,7 @@ public class ASTNode {
 	}
 
 	public ASTNode getRightChild() {
-		return listOfChildren.getLast();
+		return listOfNodes.getLast();
 	}
 
 	public Constants getType() {
@@ -321,7 +361,7 @@ public class ASTNode {
 	 *            ASTNode to insert as the nth child
 	 */
 	public void insertChild(int n, ASTNode newChild) {
-		listOfChildren.add(n, newChild);
+		listOfNodes.add(n, newChild);
 	}
 
 	/**
@@ -401,7 +441,7 @@ public class ASTNode {
 	 *         otherwise.
 	 */
 	public boolean isLog10() {
-		return type == Constants.AST_FUNCTION_LOG && listOfChildren.size() == 2
+		return type == Constants.AST_FUNCTION_LOG && listOfNodes.size() == 2
 				&& getLeftChild().isInteger()
 				&& getLeftChild().getInteger() == 10;
 	}
@@ -485,6 +525,10 @@ public class ASTNode {
 		return type == Constants.AST_FUNCTION_PIECEWISE;
 	}
 
+	public boolean isPrintNameIfAvailable() {
+		return printNameIfAvailable;
+	}
+
 	/**
 	 * Predicate returning true (non-zero) if this node represents a rational
 	 * number, false (zero) otherwise.
@@ -530,8 +574,8 @@ public class ASTNode {
 	 *         otherwise.
 	 */
 	public boolean isSqrt() {
-		return type == Constants.AST_FUNCTION_ROOT
-				&& listOfChildren.size() == 2 && getLeftChild().isInteger()
+		return type == Constants.AST_FUNCTION_ROOT && listOfNodes.size() == 2
+				&& getLeftChild().isInteger()
 				&& getLeftChild().getInteger() == 2;
 	}
 
@@ -574,7 +618,7 @@ public class ASTNode {
 	 * @param child
 	 */
 	public void prependChild(ASTNode child) {
-		listOfChildren.addLast(child);
+		listOfNodes.addLast(child);
 	}
 
 	/**
@@ -597,7 +641,7 @@ public class ASTNode {
 	 * 
 	 */
 	public boolean removeChild(long n) {
-		return listOfChildren.remove(n);
+		return listOfNodes.remove(n);
 	}
 
 	/**
@@ -614,7 +658,7 @@ public class ASTNode {
 	 */
 	public void replaceArgument(String bvar, ASTNode arg) {
 		int n = 0;
-		for (ASTNode child : listOfChildren) {
+		for (ASTNode child : listOfNodes) {
 			if (child.isName() && child.getName().equals(bvar))
 				replaceChild(n, arg.clone());
 			else if (child.getNumChildren() > 0)
@@ -633,7 +677,7 @@ public class ASTNode {
 	 * @return the element previously at the specified position
 	 */
 	public ASTNode replaceChild(int n, ASTNode newChild) {
-		return listOfChildren.set(n, newChild);
+		return listOfNodes.set(n, newChild);
 	}
 
 	/**
@@ -645,28 +689,26 @@ public class ASTNode {
 	 *            the character value to which the node's value should be set.
 	 */
 	public void setCharacter(char value) {
-		if (value == '+' || value == '-' || value == '*' || value == '/'
-				|| value == '^') {
-			operator = value;
-			switch (value) {
-			case '+':
-				type = Constants.AST_PLUS;
-				break;
-			case '-':
-				type = Constants.AST_MINUS;
-				break;
-			case '*':
-				type = Constants.AST_TIMES;
-				break;
-			case '/':
-				type = Constants.AST_DIVIDE;
-				break;
-			case '^':
-				type = Constants.AST_POWER;
-				break;
-			}
-		} else
+		switch (value) {
+		case '+':
+			type = Constants.AST_PLUS;
+			break;
+		case '-':
+			type = Constants.AST_MINUS;
+			break;
+		case '*':
+			type = Constants.AST_TIMES;
+			break;
+		case '/':
+			type = Constants.AST_DIVIDE;
+			break;
+		case '^':
+			type = Constants.AST_POWER;
+			break;
+		default:
 			type = Constants.AST_UNKNOWN;
+			break;
+		}
 	}
 
 	/**
@@ -683,6 +725,13 @@ public class ASTNode {
 		variable = identifyVariable(name);
 		if (variable == null)
 			this.name = name;
+		if (type != Constants.AST_NAME && type != Constants.AST_FUNCTION)
+			type = variable == null ? Constants.AST_FUNCTION
+					: Constants.AST_NAME;
+	}
+
+	public void setPrintNameIfAvailable(boolean printNameIfAvailable) {
+		this.printNameIfAvailable = printNameIfAvailable;
 	}
 
 	/**
@@ -694,27 +743,10 @@ public class ASTNode {
 	 *            the type to which this node should be set
 	 */
 	public void setType(Constants type) {
-		// TODO
-		switch (type) {
-		case AST_DIVIDE:
-			setCharacter('/');
-			break;
-		case AST_PLUS:
-			break;
-		case AST_MINUS:
-			break;
-		case AST_POWER:
-			break;
-		case AST_TIMES:
-			break;
-		case AST_NAME:
-			break;
-		case AST_NAME_TIME:
-			break;
-		default:
-			this.type = type;
-			break;
-		}
+		String sType = type.toString();
+		if (sType.startsWith("AST_NAME") || sType.startsWith("AST_CONSTANT"))
+			initDefaults();
+		this.type = type;
 	}
 
 	/**
@@ -794,9 +826,531 @@ public class ASTNode {
 	 *            node's children
 	 */
 	public void swapChildren(ASTNode that) {
-		LinkedList<ASTNode> swap = that.listOfChildren;
-		that.listOfChildren = listOfChildren;
-		listOfChildren = swap;
+		LinkedList<ASTNode> swap = that.listOfNodes;
+		that.listOfNodes = listOfNodes;
+		listOfNodes = swap;
+	}
+
+	/**
+	 * Method that writes the kinetic law (mathematical formula) of into latex
+	 * code
+	 * 
+	 * @param node
+	 * 
+	 * @param astnode
+	 * @return String
+	 */
+	public StringBuffer toLaTeX() {
+		ASTNode ast;
+		StringBuffer value;
+		if (isUMinus()) {
+			value = new StringBuffer('-');
+			if (getLeftChild().getNumChildren() > 0)
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			return value;
+		} else if (isSqrt())
+			return LaTeX.sqrt(getChild(getNumChildren() - 1).toLaTeX());
+		else if (isInfinity())
+			return new StringBuffer(LaTeX.POSITIVE_INFINITY);
+		else if (isNegInfinity())
+			return new StringBuffer(LaTeX.NEGATIVE_ININITY);
+
+		switch (getType()) {
+		/*
+		 * Numbers
+		 */
+		case AST_REAL:
+			return LaTeX.format(getReal());
+
+		case AST_INTEGER:
+			return value = new StringBuffer(Integer.toString(getInteger()));
+			/*
+			 * Basic Functions
+			 */
+		case AST_FUNCTION_LOG: {
+			value = new StringBuffer("\\log");
+			if (getNumChildren() == 2) {
+				value.append("_{");
+				value.append(getLeftChild().toLaTeX());
+				value.append('}');
+			}
+			value.append('{');
+			if (getChild(getNumChildren() - 1).getNumChildren() > 0)
+				value.append(LaTeX.brackets(getChild(getNumChildren() - 1)
+						.toLaTeX()));
+			else
+				value.append(getChild(getNumChildren() - 1).toLaTeX());
+			value.append('}');
+			return value;
+		}
+			/*
+			 * Operators
+			 */
+		case AST_POWER:
+			value = getLeftChild().toLaTeX();
+			if (getLeftChild().getNumChildren() > 0)
+				value = LaTeX.brackets(value);
+			value.append("^{");
+			value.append(getRightChild().toLaTeX());
+			value.append("}");
+			return value;
+
+		case AST_PLUS:
+			value = getLeftChild().toLaTeX();
+			for (int i = 1; i < getNumChildren(); i++) {
+				ast = getChild(i);
+				value.append(" + ");
+				if (ast.getType() == Constants.AST_MINUS)
+					value.append(LaTeX.brackets(ast.toLaTeX()));
+				else
+					value.append(ast.toLaTeX());
+			}
+			return value;
+
+		case AST_MINUS:
+			value = getLeftChild().toLaTeX();
+			for (int i = 1; i < getNumChildren(); i++) {
+				ast = getChild(i);
+				value.append(" - ");
+				if (ast.getType() == Constants.AST_PLUS)
+					value.append(LaTeX.brackets(ast.toLaTeX()));
+				else
+					value.append(ast.toLaTeX());
+			}
+			return value;
+
+		case AST_TIMES:
+			value = getLeftChild().toLaTeX();
+			if (getLeftChild().getNumChildren() > 1
+					&& (getLeftChild().getType() == Constants.AST_MINUS || getLeftChild()
+							.getType() == Constants.AST_PLUS))
+				value = LaTeX.brackets(value);
+			for (int i = 1; i < getNumChildren(); i++) {
+				ast = getChild(i);
+				value.append("\\cdot");
+				if ((ast.getType() == Constants.AST_MINUS)
+						|| (ast.getType() == Constants.AST_PLUS))
+					value.append(LaTeX.brackets(ast.toLaTeX()));
+				else {
+					value.append(' ');
+					value.append(ast.toLaTeX());
+				}
+			}
+			return value;
+
+		case AST_DIVIDE:
+			return LaTeX.frac(getLeftChild().toLaTeX(), getRightChild()
+					.toLaTeX());
+
+		case AST_RATIONAL:
+			return LaTeX.frac(Double.toString(getNumerator()), Double
+					.toString(getDenominator()));
+
+		case AST_NAME_TIME:
+			return LaTeX.mathrm(getName());
+
+		case AST_FUNCTION_DELAY:
+			return LaTeX.mathrm(getName());
+
+			/*
+			 * Names of identifiers: parameters, functions, species etc.
+			 */
+		case AST_NAME:
+			if (variable instanceof Species) {
+				Species species = (Species) getVariable();
+				Compartment c = species.getCompartmentInstance();
+				boolean concentration = !species.getHasOnlySubstanceUnits()
+						&& (0 < c.getSpatialDimensions());
+				value = new StringBuffer();
+				if (concentration)
+					value.append('[');
+				value.append(getNameOrID(species));
+				if (concentration)
+					value.append(']');
+				return value;
+
+			} else if (variable instanceof Compartment) {
+				Compartment c = (Compartment) getVariable();
+				return getSize(c);
+			}
+			// TODO: weitere spezialfälle von Namen!!! PARAMETER, FUNCTION DEF,
+			// REACTION.
+			return value = new StringBuffer(LaTeX.mathtt(LaTeX
+					.maskSpecialChars(getName())));
+			/*
+			 * Constants: pi, e, true, false
+			 */
+		case AST_CONSTANT_PI:
+			return new StringBuffer(LaTeX.CONSTANT_PI);
+		case AST_CONSTANT_E:
+			return new StringBuffer(LaTeX.CONSTANT_E);
+		case AST_CONSTANT_TRUE:
+			return new StringBuffer(LaTeX.CONSTANT_TRUE);
+		case AST_CONSTANT_FALSE:
+			return new StringBuffer(LaTeX.CONSTANT_FALSE);
+		case AST_REAL_E:
+			return new StringBuffer(Double.toString(getReal()));
+			/*
+			 * More complicated functions
+			 */
+		case AST_FUNCTION_ABS:
+			return LaTeX.abs(getChild(getNumChildren() - 1).toLaTeX());
+
+		case AST_FUNCTION_ARCCOS:
+			if (getLeftChild().getNumChildren() > 0)
+				return LaTeX.arccos(LaTeX.brackets(getLeftChild().toLaTeX()));
+			return LaTeX.arccos(getLeftChild().toLaTeX());
+
+		case AST_FUNCTION_ARCCOSH:
+			if (getLeftChild().getNumChildren() > 0)
+				return LaTeX.arccosh(LaTeX.brackets(getLeftChild().toLaTeX()));
+			return LaTeX.arccosh(getLeftChild().toLaTeX());
+
+		case AST_FUNCTION_ARCCOT:
+			value = new StringBuffer("\\arcot{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_ARCCOTH:
+			value = LaTeX.mathrm("arccoth");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			return value;
+
+		case AST_FUNCTION_ARCCSC:
+			value = new StringBuffer("\\arccsc{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_ARCCSCH:
+			value = LaTeX.mathrm("arccsh");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			return value;
+
+		case AST_FUNCTION_ARCSEC:
+			value = new StringBuffer("\\arcsec{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_ARCSECH:
+			value = LaTeX.mathrm("arcsech");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			return value;
+
+		case AST_FUNCTION_ARCSIN:
+			value = new StringBuffer("\\arcsin{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_ARCSINH:
+			value = LaTeX.mathrm("arcsinh");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			return value;
+
+		case AST_FUNCTION_ARCTAN:
+			value = new StringBuffer("\\arctan{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_ARCTANH:
+			value = new StringBuffer("\\arctanh{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_CEILING:
+			return LaTeX.ceiling(getLeftChild().toLaTeX());
+
+		case AST_FUNCTION_COS:
+			value = new StringBuffer("\\cos{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_COSH:
+			value = new StringBuffer("\\cosh{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_COT:
+			value = new StringBuffer("\\cot{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_COTH:
+			value = new StringBuffer("\\coth{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_CSC:
+			value = new StringBuffer("\\csc{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_CSCH:
+			value = LaTeX.mathrm("csch");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			return value;
+
+		case AST_FUNCTION_EXP:
+			value = new StringBuffer("\\exp{");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_FACTORIAL:
+			if (getLeftChild().getNumChildren() > 0)
+				value = LaTeX.brackets(getLeftChild().toLaTeX());
+			else
+				value = new StringBuffer(getLeftChild().toLaTeX());
+			value.append('!');
+			return value;
+
+		case AST_FUNCTION_FLOOR:
+			return LaTeX.floor(getLeftChild().toLaTeX());
+
+		case AST_FUNCTION_LN:
+			value = new StringBuffer("\\ln{");
+			if (getLeftChild().getNumChildren() > 0)
+				value = LaTeX.brackets(getLeftChild().toLaTeX());
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_POWER:
+			if (getLeftChild().getNumChildren() > 0)
+				value = LaTeX.brackets(getLeftChild().toLaTeX());
+			else
+				value = new StringBuffer(getLeftChild().toLaTeX());
+			value.append("^{");
+			value.append(getChild(getNumChildren() - 1).toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_ROOT:
+			ASTNode left = getLeftChild();
+			if ((getNumChildren() > 1)
+					&& ((left.isInteger() && (left.getInteger() != 2)) || (left
+							.isReal() && (left.getReal() != 2d))))
+				value = LaTeX.root(getLeftChild().toLaTeX(), getRightChild()
+						.toLaTeX());
+			value = LaTeX.sqrt(getChild(getNumChildren() - 1).toLaTeX());
+			return value;
+
+		case AST_FUNCTION_SEC:
+			value = new StringBuffer("\\sec{");
+			if (getLeftChild().getNumChildren() > 0)
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_SECH:
+			value = LaTeX.mathrm("sech");
+			if (getLeftChild().getNumChildren() > 0)
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_SIN:
+			value = new StringBuffer("\\sin{");
+			if (getLeftChild().getNumChildren() > 0)
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_SINH:
+			value = new StringBuffer("\\sinh{");
+			if (getLeftChild().getNumChildren() > 0)
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_TAN:
+			value = new StringBuffer("\\tan{");
+			if (getLeftChild().getNumChildren() > 0)
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION_TANH:
+			value = new StringBuffer("\\tanh{");
+			if (getLeftChild().getNumChildren() > 0)
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			value.append('}');
+			return value;
+
+		case AST_FUNCTION:
+			value = new StringBuffer(LaTeX.mathtt(LaTeX
+					.maskSpecialChars(getName())));
+			StringBuffer args = new StringBuffer(getLeftChild().toLaTeX());
+			for (int i = 1; i < getNumChildren(); i++) {
+				args.append(", ");
+				args.append(getChild(i).toLaTeX());
+			}
+			args = LaTeX.brackets(args);
+			value.append(args);
+			return value;
+
+		case AST_LAMBDA:
+			value = new StringBuffer(getLeftChild().toLaTeX());
+			// LaTeX.mathtt(LaTeX.maskLaTeXspecialSymbols(getName())) ==
+			// LAMBDA!!!
+			// value.append('(');
+			for (int i = 1; i < getNumChildren() - 1; i++) {
+				value.append(", ");
+				value.append(getChild(i).toLaTeX());
+			}
+			value = LaTeX.brackets(value);
+			value.append(" = ");
+			value.append(getRightChild().toLaTeX());
+			return value;
+
+		case AST_LOGICAL_AND:
+			return logicalOperation();
+		case AST_LOGICAL_XOR:
+			return logicalOperation();
+		case AST_LOGICAL_OR:
+			return logicalOperation();
+		case AST_LOGICAL_NOT:
+			value = new StringBuffer("\\neg ");
+			if (0 < getLeftChild().getNumChildren())
+				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
+			else
+				value.append(getLeftChild().toLaTeX());
+			return value;
+
+		case AST_FUNCTION_PIECEWISE:
+			value = new StringBuffer("\\begin{dcases}");
+			value.append(LaTeX.newLine);
+			for (int i = 0; i < getNumChildren() - 1; i++) {
+				value.append(getChild(i).toLaTeX());
+				value.append(((i % 2) == 0) ? " & \\text{if\\ } "
+						: LaTeX.lineBreak);
+			}
+			value.append(getChild(getNumChildren() - 1).toLaTeX());
+			if ((getNumChildren() % 2) == 1) {
+				value.append(" & \\text{otherwise}");
+				value.append(LaTeX.newLine);
+			}
+			value.append("\\end{dcases}");
+			return value;
+
+		case AST_RELATIONAL_EQ:
+			value = new StringBuffer(getLeftChild().toLaTeX());
+			value.append(" = ");
+			value.append(getRightChild().toLaTeX());
+			return value;
+
+		case AST_RELATIONAL_GEQ:
+			value = new StringBuffer(getLeftChild().toLaTeX());
+			value.append(" \\geq ");
+			value.append(getRightChild().toLaTeX());
+			return value;
+
+		case AST_RELATIONAL_GT:
+			value = new StringBuffer(getLeftChild().toLaTeX());
+			value.append(" > ");
+			value.append(getRightChild().toLaTeX());
+			return value;
+
+		case AST_RELATIONAL_NEQ:
+			value = new StringBuffer(getLeftChild().toLaTeX());
+			value.append(" \\neq ");
+			value.append(getRightChild().toLaTeX());
+			return value;
+
+		case AST_RELATIONAL_LEQ:
+			value = new StringBuffer(getLeftChild().toLaTeX());
+			value.append(" \\leq ");
+			value.append(getRightChild().toLaTeX());
+			return value;
+
+		case AST_RELATIONAL_LT:
+			value = new StringBuffer(getLeftChild().toLaTeX());
+			value.append(" < ");
+			value.append(getRightChild().toLaTeX());
+			return value;
+
+		case AST_UNKNOWN:
+			return LaTeX.mathtext(" unknown ");
+
+		default:
+			return value = new StringBuffer();
+		}
 	}
 
 	/*
@@ -811,9 +1365,74 @@ public class ASTNode {
 	}
 
 	/**
+	 * If the field printNameIfAvailable is false this method returns a the id
+	 * of the given SBase. If printNameIfAvailable is true this method looks for
+	 * the name of the given SBase and will return it.
+	 * 
+	 * @param sbase
+	 *            the SBase, whose name or id is to be returned.
+	 * @param mathMode
+	 *            if true this method returns the name typesetted in mathmode,
+	 *            i.e., mathrm for names and mathtt for ids, otherwise texttt
+	 *            will be used for ids and normalfont (nothing) will be used for
+	 *            names.
+	 * @return The name or the ID of the SBase (according to the field
+	 *         printNameIfAvailable), whose LaTeX special symbols are masked and
+	 *         which is type set in typewriter font if it is an id. The mathmode
+	 *         argument decides if mathtt or mathrm has to be used.
+	 */
+	private StringBuffer getNameOrID(NamedSBase sbase) {
+		String name = "";
+		if (sbase instanceof Compartment) {
+			name = (printNameIfAvailable) ? ((Compartment) sbase).getName()
+					: ((Compartment) sbase).getId();
+		} else if (sbase instanceof Species) {
+			name = (printNameIfAvailable) ? ((Species) sbase).getName()
+					: ((Species) sbase).getId();
+		} else {
+			name = "Undefinded";
+		}
+		name = LaTeX.maskSpecialChars(name);
+		if (printNameIfAvailable) {
+			return new StringBuffer("\\text{" + name + "}");
+		} else {
+			return LaTeX.mathtt(name);
+		}
+	}
+
+	/**
+	 * This method returns the correct LaTeX expression for a function which
+	 * returns the size of a compartment. This can be a volume, an area, a
+	 * length or a point.
+	 */
+	private StringBuffer getSize(Compartment c) {
+		StringBuffer value = new StringBuffer();
+		switch ((int) c.getSpatialDimensions()) {
+		case 3:
+			value.append("vol");
+			break;
+		case 2:
+			value.append("area");
+			break;
+		case 1:
+			value.append("length");
+			break;
+		default:
+			value.append("point");
+			break;
+		}
+		value = LaTeX.mathrm(value.toString());
+		value.append(LaTeX.leftBrace);
+		value.append(getNameOrID(c));
+		value.append(LaTeX.rightBrace);
+		return value;
+	}
+
+	/**
 	 * try to figure out the meaning of this name.
 	 * 
-	 * @param id an id indicating a variable of the model.
+	 * @param id
+	 *            an id indicating a variable of the model.
 	 * @return null if no model is available or the model does not contain a
 	 *         compartment, species, or parameter wit the given id.
 	 */
@@ -826,7 +1445,69 @@ public class ASTNode {
 				variable = m.getSpecies(id);
 			if (variable == null)
 				variable = m.getParameter(id);
+			if (variable == null)
+				variable = m.getReaction(id);
+			/*
+			 * if (variable == null) variable = m.getFunctionDefinition(id);
+			 */
 		}
 		return variable;
+	}
+
+	private void initDefaults() {
+		type = Constants.AST_UNKNOWN;
+		if (listOfNodes == null)
+			listOfNodes = new LinkedList<ASTNode>();
+		else
+			listOfNodes.clear();
+		variable = null;
+		mantissa = Double.NaN;
+		printNameIfAvailable = false;
+	}
+
+	/**
+	 * This method decides if brakets are to be set. The symbol is a
+	 * mathematical operator, e.g., plus, minus, multiplication etc. in LaTeX
+	 * syntax (for instance
+	 * 
+	 * <pre>
+	 * \cdot
+	 * </pre>
+	 * 
+	 * ). It simply counts the number of descendants on the left and the right
+	 * hand side of the symbol.
+	 * 
+	 * @param astnode
+	 * @param model
+	 * @param symbol
+	 * @return
+	 * @throws IOException
+	 */
+	private StringBuffer logicalOperation() {
+		StringBuffer value = new StringBuffer();
+		if (1 < getLeftChild().getNumChildren())
+			value.append(LaTeX.leftBrace);
+		value.append(getLeftChild().toLaTeX());
+		if (1 < getLeftChild().getNumChildren())
+			value.append(LaTeX.rightBrace);
+		switch (type) {
+		case AST_LOGICAL_AND:
+			value.append(LaTeX.wedge);
+			break;
+		case AST_LOGICAL_XOR:
+			value.append(LaTeX.xor);
+			break;
+		case AST_LOGICAL_OR:
+			value.append(LaTeX.or);
+			break;
+		default:
+			break;
+		}
+		if (1 < getRightChild().getNumChildren())
+			value.append(LaTeX.leftBrace);
+		value.append(getRightChild().toLaTeX());
+		if (1 < getRightChild().getNumChildren())
+			value.append(LaTeX.rightBrace);
+		return value;
 	}
 }

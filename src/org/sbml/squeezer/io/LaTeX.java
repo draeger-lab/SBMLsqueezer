@@ -17,6 +17,8 @@
  */
 package org.sbml.squeezer.io;
 
+import org.sbml.ASTNode;
+
 /**
  * Created at 2009-01-03.
  * 
@@ -30,45 +32,44 @@ public class LaTeX extends StringOperations {
 	 * Surrounded by new line symbols. The begin of a description environment in
 	 * LaTeX.
 	 */
-	protected static final String descriptionBegin = "\\begin{description}"
+	public static final String descriptionBegin = "\\begin{description}"
 			+ newLine;
 
 	/**
 	 * Surrounded by new line symbols. The end of a description environment.
 	 */
-	protected static final String descriptionEnd = "\\end{description}"
-			+ newLine;
+	public static final String descriptionEnd = "\\end{description}" + newLine;
 
 	/**
 	 * The constant pi
 	 */
-	protected static final String CONSTANT_PI = "\\pi";
+	public static final String CONSTANT_PI = "\\pi";
 
-	protected static final String CONSTANT_E = mathrm("e").toString();
+	public static final String CONSTANT_E = mathrm("e").toString();
 
-	protected static final String CONSTANT_TRUE = mathrm("true").toString();
+	public static final String CONSTANT_TRUE = mathrm("true").toString();
 
-	protected static final String CONSTANT_FALSE = mathrm("false").toString();
+	public static final String CONSTANT_FALSE = mathrm("false").toString();
 
-	protected static final String POSITIVE_INFINITY = "\\infty";
+	public static final String POSITIVE_INFINITY = "\\infty";
 
-	protected static final String NEGATIVE_ININITY = "-\\infty";
+	public static final String NEGATIVE_ININITY = "-\\infty";
 
 	/**
 	 * An opening quotation mark.
 	 */
-	protected String leftQuotationMark = "``";
+	public static final String leftQuotationMark = "``";
 
 	/**
 	 * An closing quotation mark.
 	 */
-	protected String rightQuotationMark = "\"";
+	public static final String rightQuotationMark = "\"";
 
 	/**
 	 * This is a LaTeX line break. The line break symbol double backslash
 	 * followed by a new line symbol of the operating system.
 	 */
-	protected static final String lineBreak = "\\\\" + newLine;
+	public static final String lineBreak = "\\\\" + newLine;
 
 	/**
 	 * Surrounded by new line symbols. Begin equation. This type of equation
@@ -76,33 +77,41 @@ public class LaTeX extends StringOperations {
 	 * automatic line breaks (LaTeX will compute the optimal place for line
 	 * breaks). Unfortunately, this does not work for very long denominators.
 	 */
-	protected static final String eqBegin = newLine + "\\begin{dmath}"
-			+ newLine; // equation
+	public static final String eqBegin = newLine + "\\begin{dmath}" + newLine; // equation
 
 	/**
 	 * End equation; cf. eqBegin. Surrounded by new line symbols.
 	 */
-	protected static final String eqEnd = newLine + "\\end{dmath}" + newLine; // equation
+	public static final String eqEnd = newLine + "\\end{dmath}" + newLine; // equation
 
 	/**
 	 * Needed for the beginning of a table. Requires LaTeX package booktabs.
 	 * Surounded by new line symbols.
 	 */
-	protected static final String toprule = newLine + "\\toprule" + newLine;
+	public static final String toprule = newLine + "\\toprule" + newLine;
 
 	/**
 	 * Produces a fancy line in tables. Requires LaTeX package booktabs. Starts
 	 * and ends with a new line.
 	 */
-	protected static final String midrule = newLine + "\\midrule" + newLine;
+	public static final String midrule = newLine + "\\midrule" + newLine;
 
 	/**
 	 * Requires LaTeX package booktabs. Produces a fancy line at the bottom of a
 	 * table. This variable also includes the <code>end{longtable}</code>
 	 * command and a new line.
 	 */
-	protected static final String bottomrule = "\\bottomrule\\end{longtable}"
+	public static final String bottomrule = "\\bottomrule\\end{longtable}"
 			+ newLine;
+
+	public static final String leftBrace = "\\left(";
+	public static final String rightBrace = "\\right)";
+
+	public static final String wedge = "\\wedge ";
+
+	public static final String xor = "\\oplus ";
+
+	public static final String or = "\\lor ";
 
 	/**
 	 * 
@@ -415,7 +424,7 @@ public class LaTeX extends StringOperations {
 	 * @param formula
 	 * @return
 	 */
-	public StringBuffer brackets(Object formula) {
+	public static StringBuffer brackets(Object formula) {
 		StringBuffer buffer = new StringBuffer("\\left(");
 		buffer.append(formula);
 		buffer.append("\\right)");
@@ -428,7 +437,7 @@ public class LaTeX extends StringOperations {
 	 * @param what
 	 * @return
 	 */
-	public StringBuffer colorbox(String color, Object what) {
+	public static StringBuffer colorbox(String color, Object what) {
 		return command("colorbox", color, what);
 	}
 
@@ -443,7 +452,7 @@ public class LaTeX extends StringOperations {
 	 *            e.g., "my description"
 	 * @return
 	 */
-	public StringBuffer descriptionItem(String item, Object description) {
+	public static StringBuffer descriptionItem(String item, Object description) {
 		StringBuffer itemBuffer = new StringBuffer("\\item[");
 		itemBuffer.append(item);
 		itemBuffer.append("] ");
@@ -461,7 +470,7 @@ public class LaTeX extends StringOperations {
 	 * @param value
 	 * @return
 	 */
-	public StringBuffer format(double value) {
+	public static StringBuffer format(double value) {
 		StringBuffer sb = new StringBuffer();
 		String val = Double.toString(value);
 		if (val.contains("E")) {
@@ -489,7 +498,7 @@ public class LaTeX extends StringOperations {
 	 *            The text to be written in the link.
 	 * @return
 	 */
-	public StringBuffer href(String target, Object text) {
+	public static StringBuffer href(String target, Object text) {
 		return command("href", target, text);
 	}
 
@@ -499,7 +508,7 @@ public class LaTeX extends StringOperations {
 	 * @param text
 	 * @return
 	 */
-	public StringBuffer hyperref(String target, Object text) {
+	public static StringBuffer hyperref(String target, Object text) {
 		StringBuffer sb = new StringBuffer("\\hyperref[");
 		sb.append(target);
 		sb.append("]{");
@@ -508,7 +517,7 @@ public class LaTeX extends StringOperations {
 		return sb;
 	}
 
-	public StringBuffer label(String id) {
+	public static StringBuffer label(String id) {
 		return command("label", new StringBuffer(id));
 	}
 
@@ -524,7 +533,7 @@ public class LaTeX extends StringOperations {
 	 *            double backslashes at the end
 	 * @return
 	 */
-	public StringBuffer longtableHead(String columnDef, String caption,
+	public static StringBuffer longtableHead(String columnDef, String caption,
 			String headLine) {
 		StringBuffer buffer = new StringBuffer("\\begin{longtable}[h!]{");
 		buffer.append(columnDef);
@@ -555,7 +564,7 @@ public class LaTeX extends StringOperations {
 	 * @param formula
 	 * @return
 	 */
-	public StringBuffer math(Object formula) {
+	public static StringBuffer math(Object formula) {
 		StringBuffer math = new StringBuffer();
 		String f = String.valueOf(formula);
 		if (f.length() == 0)
@@ -575,11 +584,11 @@ public class LaTeX extends StringOperations {
 	 * @param id
 	 * @return
 	 */
-	public StringBuffer mathtt(String id) {
+	public static StringBuffer mathtt(String id) {
 		return command("mathtt", new StringBuffer(id));
 	}
 
-	public StringBuffer section(String title, boolean numbering) {
+	public static StringBuffer section(String title, boolean numbering) {
 		return heading("section", title, numbering);
 	}
 
@@ -589,7 +598,7 @@ public class LaTeX extends StringOperations {
 	 * @param numbering
 	 * @return
 	 */
-	public StringBuffer subsection(String title, boolean numbering) {
+	public static StringBuffer subsection(String title, boolean numbering) {
 		return heading("subsection", title, numbering);
 	}
 
@@ -599,7 +608,7 @@ public class LaTeX extends StringOperations {
 	 * @param numbering
 	 * @return
 	 */
-	public StringBuffer subsubsection(String title, boolean numbering) {
+	public static StringBuffer subsubsection(String title, boolean numbering) {
 		return heading("subsubsection", title, numbering);
 	}
 
@@ -609,7 +618,7 @@ public class LaTeX extends StringOperations {
 	 * @param text
 	 * @return
 	 */
-	public StringBuffer textcolor(String color, Object text) {
+	public static StringBuffer textcolor(String color, Object text) {
 		return command("textcolor", color, text);
 	}
 
@@ -619,7 +628,7 @@ public class LaTeX extends StringOperations {
 	 * @param id
 	 * @return
 	 */
-	public StringBuffer texttt(String id) {
+	public static StringBuffer texttt(String id) {
 		return command("texttt", new StringBuffer(id));
 	}
 }
