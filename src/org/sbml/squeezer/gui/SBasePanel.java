@@ -115,26 +115,21 @@ public class SBasePanel extends JPanel {
 		} else if (sbase instanceof KineticLaw) {
 			KineticLaw kl = (KineticLaw) sbase;
 			if (kl.isSetMath()) {
-				try {
-					StringBuffer laTeXpreview = new StringBuffer();
-					laTeXpreview.append("\\begin{equation}v_\\mbox{");
-					laTeXpreview.append(kl.getParentSBMLObject().getId());
-					laTeXpreview.append("}=");
-					laTeXpreview.append((new LaTeXExport()).toLaTeX(
-							kl.getModel(), kl.getMath()).toString().replace(
-							"mathrm", "mbox").replace("text", "mbox").replace(
-							"mathtt", "mbox"));
-					laTeXpreview.append("\\end{equation}");
-					JPanel preview = new JPanel(new BorderLayout());
-					preview.add(new sHotEqn(laTeXpreview.toString()),
-							BorderLayout.CENTER);
-					preview.setBackground(Color.WHITE);
-					preview.setBorder(BorderFactory.createLoweredBevelBorder());
-					LayoutHelper.addComponent(this, gbl, preview, 0, ++row, 2,
-							1, 1, 1);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				StringBuffer laTeXpreview = new StringBuffer();
+				laTeXpreview.append("\\begin{equation}v_\\mbox{");
+				laTeXpreview.append(kl.getParentSBMLObject().getId());
+				laTeXpreview.append("}=");
+				laTeXpreview.append(kl.getMath().toLaTeX().toString().replace(
+						"mathrm", "mbox").replace("text", "mbox").replace(
+						"mathtt", "mbox"));
+				laTeXpreview.append("\\end{equation}");
+				JPanel preview = new JPanel(new BorderLayout());
+				preview.add(new sHotEqn(laTeXpreview.toString()),
+						BorderLayout.CENTER);
+				preview.setBackground(Color.WHITE);
+				preview.setBorder(BorderFactory.createLoweredBevelBorder());
+				LayoutHelper.addComponent(this, gbl, preview, 0, ++row, 2, 1,
+						1, 1);
 			}
 		} else if (sbase instanceof Species) {
 			Species species = (Species) sbase;

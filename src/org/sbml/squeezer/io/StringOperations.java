@@ -28,13 +28,13 @@ public class StringOperations {
 	/**
 	 * The file separator of the operating system.
 	 */
-	protected static final String fileSeparator = System
+	public static final String fileSeparator = System
 			.getProperty("file.separator");
 	
 	/**
 	 * New line separator of this operating system
 	 */
-	protected static final String newLine = System.getProperty("line.separator");
+	public static final String newLine = System.getProperty("line.separator");
 	
 	/**
 	 * This method introduces left and right quotation marks where we normally

@@ -18,8 +18,6 @@
  */
 package org.sbml;
 
-import org.sbml.libsbml.libsbml;
-
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -106,7 +104,7 @@ public class EventAssignment extends MathContainer {
 	 */
 	// @Override
 	public String toString() {
-		return getVariable() + " = " + libsbml.formulaToString(getMath());
+		return getVariable() + " = " + getMath().toString();
 	}
 
 }

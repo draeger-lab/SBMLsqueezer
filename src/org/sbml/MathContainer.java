@@ -18,8 +18,6 @@
  */
 package org.sbml;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.libsbml;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -41,7 +39,7 @@ public abstract class MathContainer extends SBase {
 
 	public MathContainer(ASTNode math) {
 		super();
-		setMath(math.deepCopy());
+		setMath(math.clone());
 	}
 
 	/**
@@ -49,7 +47,7 @@ public abstract class MathContainer extends SBase {
 	 */
 	public MathContainer(MathContainer sb) {
 		super(sb);
-		setMath(sb.getMath().deepCopy());
+		setMath(sb.getMath().clone());
 	}
 
 	/*
@@ -73,7 +71,7 @@ public abstract class MathContainer extends SBase {
 	}
 
 	public String getFormula() {
-		return isSetMath() ? libsbml.formulaToString(getMath()) : "";
+		return isSetMath() ? getMath().toString() : "";
 	}
 
 	public ASTNode getMath() {
@@ -91,12 +89,17 @@ public abstract class MathContainer extends SBase {
 	 * @param formula
 	 */
 	public void setFormula(String formula) {
-		math = libsbml.parseFormula(formula);
+		math = parseFormula(formula);
 		stateChanged();
 	}
 	
+	public static ASTNode parseFormula(String formula) {
+		// TODO Auto-generated method stub
+		throw new Error("Not yet implemented.");
+	}
+
 	public void setMath(ASTNode math) {
-		this.math = math.deepCopy();
+		this.math = math.clone();
 		stateChanged();
 	}
 
@@ -107,6 +110,6 @@ public abstract class MathContainer extends SBase {
 	 */
 	// @Override
 	public String toString() {
-		return isSetMath() ? libsbml.formulaToString(math) : "";
+		return isSetMath() ? math.toString() : "";
 	}
 }

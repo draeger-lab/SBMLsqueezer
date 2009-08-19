@@ -359,14 +359,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				e.printStackTrace();
 			}
 		if (isKineticLawDefined)
-			try {
-				laTeXpreview[laTeXpreview.length - 1] = (new LaTeXExport())
-						.toLaTeX(model, reaction.getKineticLaw().getMath());
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.err.println("Error: Unhandled IOException");
-			}
-
+			laTeXpreview[laTeXpreview.length - 1] = reaction.getKineticLaw()
+					.getMath().toLaTeX();
 		JPanel kineticsPanel = new JPanel(new GridBagLayout());
 		rButtonsKineticEquations = new JRadioButton[kineticEquations.length + 1];
 		ButtonGroup buttonGroup = new ButtonGroup();
