@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -31,12 +32,15 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
 import org.sbml.Model;
+import org.sbml.squeezer.gui.JBrowser;
 import org.sbml.squeezer.gui.JHelpBrowser;
 import org.sbml.squeezer.gui.ModelComponentsPanel;
+import org.sbml.squeezer.gui.SystemBrowser;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
@@ -103,7 +107,14 @@ public class SBMLsqueezerSUI extends JFrame implements ActionListener {
 			} else if (item.getText().equals("Exit")) {
 				System.exit(0);
 			} else if (item.getText().equals("About")) {
-
+					JBrowser browser = new JBrowser(Resource.class
+							.getResource("html/about.htm"));
+					browser.removeHyperlinkListener(browser);
+					browser.addHyperlinkListener(new SystemBrowser());
+					browser.setBorder(BorderFactory.createEtchedBorder());
+					JOptionPane.showMessageDialog(this, browser,
+							"About SBMLsqueezer",
+							JOptionPane.INFORMATION_MESSAGE);
 			} else if (item.getText().equals("Online help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
 						"SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber()

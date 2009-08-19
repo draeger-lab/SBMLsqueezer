@@ -29,6 +29,7 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
+import org.sbml.ASTNode;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.Reaction;
@@ -122,12 +123,18 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 
 	public KineticLaw convert(PluginKineticLaw plukinlaw) {
 		KineticLaw kinlaw = new KineticLaw();
-		kinlaw.setMath(plukinlaw.getMath());
+		if (plukinlaw.getMath() != null)
+		  kinlaw.setMath(convert(plukinlaw.getMath()));
 		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
 			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
 		}
 		kinlaw.addChangeListener(this);
 		return kinlaw;
+	}
+
+	public ASTNode convert(org.sbml.libsbml.ASTNode math) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public Parameter convert(PluginParameter plupara) {

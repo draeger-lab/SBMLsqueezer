@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Vector;
 
 import org.biojava.ontology.io.OboParser;
+import org.sbml.ASTNode;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
+import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.libsbml.ASTNode;
-import org.sbml.Reaction;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.LaTeXExport;
@@ -101,25 +101,6 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 	 */
 	public static final StringBuffer brackets(Object sb) {
 		return concat(Character.valueOf('('), sb, Character.valueOf(')'));
-	}
-
-	/**
-	 * Clones an abstract syntax tree.
-	 * 
-	 * @param ast
-	 * @return
-	 */
-	public static final ASTNode clone(ASTNode ast) {
-		ASTNode copy = new ASTNode();
-		copy.setType(ast.getType());
-		if (ast.isConstant() || ast.isInteger() || ast.isNumber()
-				|| ast.isReal())
-			copy.setValue(ast.getReal());
-		else if (ast.isName())
-			copy.setName(new String(ast.getName()));
-		for (long i = 0; i < ast.getNumChildren(); i++)
-			copy.addChild(clone(ast.getChild(i)));
-		return copy;
 	}
 
 	/**
@@ -474,7 +455,7 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 				modTActi, modTInhib, modActi, modE, modCat);
 		setMath(libsbml.parseFormula(createKineticEquation(model, modE,
 				modActi, modTActi, modInhib, modTInhib, modCat).toString()));
-		formelTeX = (new LaTeXExport().toLaTeX(model, getMath()));
+		formelTeX = getMath().toLaTeX();
 	}
 
 	/**
