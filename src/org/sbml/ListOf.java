@@ -152,8 +152,15 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 	private int modCount;
 
 	public ListOf() {
+		super();
 		header.next = header.previous = header; // null
 		size = modCount = 0;
+	}
+
+	public ListOf(ListOf<E> listOf) {
+		this();
+		addAll(listOf);
+		parentSBMLObject = listOf.getParentSBMLObject();
 	}
 
 	public boolean add(E e) {
@@ -206,9 +213,7 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 
 	// @Override
 	public ListOf<E> clone() {
-		ListOf<E> l = new ListOf<E>();
-		l.addAll(this);
-		return l;
+		return new ListOf<E>(this);
 	}
 
 	public boolean contains(Object o) {
