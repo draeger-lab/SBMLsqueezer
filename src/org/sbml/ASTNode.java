@@ -627,8 +627,53 @@ public class ASTNode {
 	 * and(and(x, y), z)
 	 */
 	public void reduceToBinary() {
-		// TODO
-		// restructure this tree.
+		if (getNumChildren() > 2) {
+			int i;
+			switch (type) {
+			case AST_PLUS:
+				ASTNode plus = new ASTNode(Constants.AST_PLUS, parentSBMLObject);
+				for (i = getNumChildren(); i > 0; i--)
+					plus.addChild(listOfNodes.removeLast());
+				addChild(plus);
+				break;
+			case AST_MINUS:
+				// TODO
+				break;
+			case AST_TIMES:
+				ASTNode times = new ASTNode(Constants.AST_TIMES, parentSBMLObject);
+				for (i=getNumChildren(); i>0; i--)
+					times.addChild(listOfNodes.removeLast());
+				addChild(times);
+				break;
+			case AST_DIVIDE:
+				// TODO
+				break;
+			case AST_LOGICAL_AND:
+				ASTNode and = new ASTNode(Constants.AST_LOGICAL_AND, parentSBMLObject);
+				for (i=getNumChildren(); i>0; i--)
+					and.addChild(listOfNodes.removeLast());
+				addChild(and);
+				break;
+			case AST_LOGICAL_OR:
+				ASTNode or = new ASTNode(Constants.AST_LOGICAL_OR, parentSBMLObject);
+				for (i=getNumChildren(); i>0; i--)
+					or.addChild(listOfNodes.removeLast());
+				addChild(or);
+				break;
+			case AST_LOGICAL_NOT:
+				// TODO
+				break;
+			case AST_LOGICAL_XOR:
+				// TODO
+				break;
+			default:
+				// TODO
+				break;
+			}
+		}
+		// recursively restructure this tree.
+		for (ASTNode child : listOfNodes)
+			child.reduceToBinary();
 	}
 
 	/**
@@ -730,6 +775,10 @@ public class ASTNode {
 					: Constants.AST_NAME;
 	}
 
+	/**
+	 * 
+	 * @param printNameIfAvailable
+	 */
 	public void setPrintNameIfAvailable(boolean printNameIfAvailable) {
 		this.printNameIfAvailable = printNameIfAvailable;
 	}
@@ -746,6 +795,12 @@ public class ASTNode {
 		String sType = type.toString();
 		if (sType.startsWith("AST_NAME") || sType.startsWith("AST_CONSTANT"))
 			initDefaults();
+		if (type == Constants.AST_NAME_TIME)
+			name = "time";
+		else if (type == Constants.AST_FUNCTION_DELAY) {
+			name = "delay";
+			initDefaults();
+		}
 		this.type = type;
 	}
 
@@ -777,7 +832,7 @@ public class ASTNode {
 	 * @param exponent
 	 *            the exponent of this node's real-numbered value
 	 */
-	public void setValue(double mantissa, int exponent) {
+	public void setValue(double mantissa, double exponent) {
 		type = Constants.AST_REAL_E;
 		this.mantissa = mantissa;
 		this.exponent = exponent;
@@ -892,16 +947,17 @@ public class ASTNode {
 			value = getLeftChild().toLaTeX();
 			if (getLeftChild().getNumChildren() > 0)
 				value = LaTeX.brackets(value);
-			value.append("^{");
+			value.append(getCharacter());
+			value.append('{');
 			value.append(getRightChild().toLaTeX());
-			value.append("}");
+			value.append('}');
 			return value;
 
 		case AST_PLUS:
 			value = getLeftChild().toLaTeX();
 			for (int i = 1; i < getNumChildren(); i++) {
 				ast = getChild(i);
-				value.append(" + ");
+				value.append(getCharacter());
 				if (ast.getType() == Constants.AST_MINUS)
 					value.append(LaTeX.brackets(ast.toLaTeX()));
 				else
@@ -913,7 +969,7 @@ public class ASTNode {
 			value = getLeftChild().toLaTeX();
 			for (int i = 1; i < getNumChildren(); i++) {
 				ast = getChild(i);
-				value.append(" - ");
+				value.append(getCharacter());
 				if (ast.getType() == Constants.AST_PLUS)
 					value.append(LaTeX.brackets(ast.toLaTeX()));
 				else
