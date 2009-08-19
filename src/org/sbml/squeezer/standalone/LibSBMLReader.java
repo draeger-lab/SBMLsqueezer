@@ -30,10 +30,8 @@ import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.AbstractSBMLconverter;
-import org.sbml.squeezer.io.LaTeX;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -158,8 +156,11 @@ public class LibSBMLReader extends AbstractSBMLconverter implements
 		KineticLaw kinlaw = new KineticLaw();
 		kinlaw.setNotes(plukinlaw.getNotesString());
 		kinlaw.setSBOTerm(plukinlaw.getSBOTerm());
-		if (plukinlaw.isSetMath())
-			kinlaw.setMath(convert(plukinlaw.getMath(), kinlaw));
+		if (plukinlaw.isSetMath()) {
+			ASTNode ast = convert(plukinlaw.getMath(), kinlaw);
+			ast.reduceToBinary();
+			kinlaw.setMath(ast);
+		}
 		for (int i = 0; i < plukinlaw.getNumParameters(); i++)
 			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
 		kinlaw.addChangeListener(this);
@@ -222,6 +223,7 @@ public class LibSBMLReader extends AbstractSBMLconverter implements
 			break;
 		case AST_REAL_E:
 			ast = new ASTNode(Constants.AST_REAL_E, parent);
+			ast.setValue(math.getMantissa(), math.getExponent());
 			break;
 		case AST_FUNCTION_ABS:
 			ast = new ASTNode(Constants.AST_FUNCTION_ABS, parent);
