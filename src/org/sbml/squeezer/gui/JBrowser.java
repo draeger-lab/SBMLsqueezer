@@ -69,6 +69,7 @@ public class JBrowser extends JEditorPane implements HyperlinkListener {
 	 * @param location
 	 */
 	public JBrowser(URL location) {
+		super();
 		setEditable(false);
 		addHyperlinkListener(this);
 		setBackground(Color.WHITE);
