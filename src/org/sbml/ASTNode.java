@@ -85,6 +85,38 @@ public class ASTNode {
 	}
 
 	/**
+	 * 
+	 * @param parent
+	 * @param ast
+	 * @return
+	 */
+	public static ASTNode sum(SBase parent, ASTNode... ast) {
+		if (ast.length == 0)
+			return null;
+		if (ast.length == 1)
+			return ast[0].clone();
+		ASTNode sum = new ASTNode(Constants.AST_PLUS, parent);
+		for (ASTNode node : ast) {
+			setParentSBMLObject(node, parent);
+			sum.addChild(node);
+		}
+		return sum;
+	}
+	
+	private static void setParentSBMLObject(ASTNode node, SBase parent) {
+		// TODO Auto-generated method stub
+	}
+
+	public void plus(ASTNode ast) {
+		ASTNode swap = new ASTNode(type, getParentSBMLObject());
+		swapChildren(swap);
+		setType(Constants.AST_PLUS);
+		addChild(swap);
+		addChild(ast);
+		ast.parentSBMLObject = getParentSBMLObject();
+	}
+
+	/**
 	 * Creates and returns a new ASTNode.
 	 * 
 	 * By default, the returned node will have a type of AST_UNKNOWN. The
@@ -640,8 +672,9 @@ public class ASTNode {
 				// TODO
 				break;
 			case AST_TIMES:
-				ASTNode times = new ASTNode(Constants.AST_TIMES, parentSBMLObject);
-				for (i=getNumChildren(); i>0; i--)
+				ASTNode times = new ASTNode(Constants.AST_TIMES,
+						parentSBMLObject);
+				for (i = getNumChildren(); i > 0; i--)
 					times.addChild(listOfNodes.removeLast());
 				addChild(times);
 				break;
@@ -649,14 +682,16 @@ public class ASTNode {
 				// TODO
 				break;
 			case AST_LOGICAL_AND:
-				ASTNode and = new ASTNode(Constants.AST_LOGICAL_AND, parentSBMLObject);
-				for (i=getNumChildren(); i>0; i--)
+				ASTNode and = new ASTNode(Constants.AST_LOGICAL_AND,
+						parentSBMLObject);
+				for (i = getNumChildren(); i > 0; i--)
 					and.addChild(listOfNodes.removeLast());
 				addChild(and);
 				break;
 			case AST_LOGICAL_OR:
-				ASTNode or = new ASTNode(Constants.AST_LOGICAL_OR, parentSBMLObject);
-				for (i=getNumChildren(); i>0; i--)
+				ASTNode or = new ASTNode(Constants.AST_LOGICAL_OR,
+						parentSBMLObject);
+				for (i = getNumChildren(); i > 0; i--)
 					or.addChild(listOfNodes.removeLast());
 				addChild(or);
 				break;
