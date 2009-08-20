@@ -85,6 +85,7 @@ public class ASTNode {
 	}
 
 	/**
+	 * Creates a AstNode of type Plus with the given nodes as children
 	 * 
 	 * @param parent
 	 * @param ast
@@ -93,8 +94,11 @@ public class ASTNode {
 	public static ASTNode sum(SBase parent, ASTNode... ast) {
 		if (ast.length == 0)
 			return null;
-		if (ast.length == 1)
-			return ast[0].clone();
+		if (ast.length == 1) {
+			ASTNode clone = ast[0].clone();
+			setParentSBMLObject(clone, parent);
+			return clone;
+		}
 		ASTNode sum = new ASTNode(Constants.AST_PLUS, parent);
 		for (ASTNode node : ast) {
 			setParentSBMLObject(node, parent);
@@ -102,10 +106,12 @@ public class ASTNode {
 		}
 		return sum;
 	}
-	
-	private static void setParentSBMLObject(ASTNode node, SBase parent) {
-		// TODO Auto-generated method stub
-	}
+
+	/**
+	 * adds a given node to this node
+	 * 
+	 * @param ast
+	 */
 
 	public void plus(ASTNode ast) {
 		ASTNode swap = new ASTNode(type, getParentSBMLObject());
@@ -113,7 +119,138 @@ public class ASTNode {
 		setType(Constants.AST_PLUS);
 		addChild(swap);
 		addChild(ast);
-		ast.parentSBMLObject = getParentSBMLObject();
+		setParentSBMLObject(ast, getParentSBMLObject());
+	}
+
+	/**
+	 * Creates a new ASTNode of type MINUS and adds the given nodes as children
+	 * 
+	 * @param parent
+	 * @param ast
+	 * @return
+	 */
+	public static ASTNode diff(SBase parent, ASTNode... ast) {
+		if (ast.length == 0)
+			return null;
+		if (ast.length == 1) {
+			ASTNode clone = ast[0].clone();
+			setParentSBMLObject(clone, parent);
+			return clone;
+		}
+		ASTNode minus = new ASTNode(Constants.AST_MINUS, parent);
+		for (ASTNode nodes : ast) {
+			setParentSBMLObject(nodes, parent);
+			minus.addChild(nodes);
+		}
+		return minus;
+	}
+
+	/**
+	 * subtracts the given ASTNode from this node
+	 * 
+	 * @param ast
+	 */
+
+	public void minus(ASTNode ast) {
+		ASTNode swap = new ASTNode(type, getParentSBMLObject());
+		swapChildren(swap);
+		setType(Constants.AST_MINUS);
+		addChild(swap);
+		addChild(ast);
+		setParentSBMLObject(ast, getParentSBMLObject());
+	}
+
+	/**
+	 * Creates an ASTNode of type times and adds the given nodes as children.
+	 * 
+	 * @param parent
+	 * @param ast
+	 * @return
+	 */
+	public static ASTNode times(SBase parent, ASTNode... ast) {
+		if (ast.length == 0)
+			return null;
+		if (ast.length == 1) {
+			ASTNode clone = ast[0].clone();
+			setParentSBMLObject(clone, parent);
+			return clone;
+		}
+		ASTNode times = new ASTNode(Constants.AST_TIMES, parent);
+		for (ASTNode nodes : ast) {
+			setParentSBMLObject(nodes, parent);
+			times.addChild(nodes);
+		}
+		return times;
+	}
+
+	/**
+	 * multiplies this ASTNode with the given node
+	 * 
+	 * @param ast
+	 */
+	public void multiply(ASTNode ast) {
+
+		ASTNode swap = new ASTNode(type, getParentSBMLObject());
+		swapChildren(swap);
+		setType(Constants.AST_TIMES);
+		addChild(swap);
+		addChild(ast);
+		setParentSBMLObject(ast, getParentSBMLObject());
+	}
+
+	/**
+	 * Creates an ASTNode of type DIVIDE with the given nodes as children.
+	 * 
+	 * @param parent
+	 * @param ast
+	 * @return
+	 */
+	public static ASTNode frac(SBase parent, ASTNode... ast) {
+		if (ast.length == 0)
+			return null;
+		if (ast.length == 1) {
+			ASTNode clone = ast[0].clone();
+			setParentSBMLObject(clone, parent);
+			return clone;
+		}
+		// TODO: only two nodes?
+		ASTNode frac = new ASTNode(Constants.AST_DIVIDE, parent);
+		for (ASTNode nodes : ast) {
+			setParentSBMLObject(nodes, parent);
+			frac.addChild(nodes);
+		}
+		return frac;
+	}
+
+	/**
+	 * Divides this node through? the given node
+	 * 
+	 * param ast
+	 */
+	public void divide(ASTNode ast) {
+		ASTNode swap = new ASTNode(type, getParentSBMLObject());
+		swapChildren(swap);
+		setType(Constants.AST_DIVIDE);
+		addChild(swap);
+		addChild(ast);
+		setParentSBMLObject(ast, getParentSBMLObject());
+
+	}
+	
+	public static ASTNode pow(SBase parent,ASTNode...ast){
+		Constants.
+	}
+
+	/**
+	 * set the Parent of the node and its children to the given value
+	 * 
+	 * @param node
+	 * @param parent
+	 */
+	private static void setParentSBMLObject(ASTNode node, SBase parent) {
+		node.parentSBMLObject = parent;
+		for (ASTNode nodes : node.listOfNodes)
+			nodes.setParentSBMLObject(nodes, parent);
 	}
 
 	/**
