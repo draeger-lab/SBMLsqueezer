@@ -35,15 +35,116 @@ import org.sbml.squeezer.io.LaTeX;
  */
 public class ASTNode {
 
+	/**
+	 * Creates a new ASTNode of type MINUS and adds the given nodes as children
+	 * 
+	 * @param parent
+	 * @param ast
+	 * @return
+	 */
+	public static ASTNode diff(ASTNode... ast) {
+		if (ast.length == 0)
+			return null;
+		if (ast.length == 1)
+			return ast[0].clone();
+		ASTNode minus = new ASTNode(Constants.AST_MINUS, ast[0]
+				.getParentSBMLObject());
+		for (ASTNode nodes : ast)
+			minus.addChild(nodes);
+		setParentSBMLObject(minus, ast[0].getParentSBMLObject());
+		return minus;
+	}
+
+	/**
+	 * Creates a new ASTNode of type DIVIDE with the given nodes as children.
+	 * 
+	 * @param numerator
+	 * @param denominator
+	 * @return
+	 */
+	public static ASTNode frac(ASTNode numerator, ASTNode denominator) {
+		numerator.divideBy(denominator);
+		setParentSBMLObject(numerator, numerator.getParentSBMLObject());
+		return numerator;
+	}
+
+	/**
+	 * 
+	 * @param basis
+	 * @param exponent
+	 * @return
+	 */
+	public static ASTNode pow(ASTNode basis, ASTNode exponent) {
+		basis.raiseByThePowerOf(exponent);
+		return basis;
+	}
+
+	/**
+	 * Creates a AstNode of type Plus with the given nodes as children
+	 * 
+	 * @param parent
+	 * @param ast
+	 * @return
+	 */
+	public static ASTNode sum(ASTNode... ast) {
+		if (ast.length == 0)
+			return null;
+		if (ast.length == 1)
+			return ast[0].clone();
+		ASTNode sum = new ASTNode(Constants.AST_PLUS, ast[0]
+				.getParentSBMLObject());
+		for (ASTNode node : ast)
+			sum.addChild(node);
+		setParentSBMLObject(sum, ast[0].getParentSBMLObject());
+		return sum;
+	}
+
+	/**
+	 * Creates an ASTNode of type times and adds the given nodes as children.
+	 * 
+	 * @param ast
+	 * @return
+	 */
+	public static ASTNode times(ASTNode... ast) {
+		if (ast.length == 0)
+			return null;
+		if (ast.length == 1)
+			return ast[0].clone();
+		ASTNode times = new ASTNode(Constants.AST_TIMES,
+				ast[0].parentSBMLObject);
+		for (ASTNode nodes : ast)
+			times.addChild(nodes);
+		setParentSBMLObject(times, ast[0].parentSBMLObject);
+		return times;
+	}
+
+	/**
+	 * set the Parent of the node and its children to the given value
+	 * 
+	 * @param node
+	 * @param parent
+	 */
+	private static void setParentSBMLObject(ASTNode node, SBase parent) {
+		node.parentSBMLObject = parent;
+		for (ASTNode nodes : node.listOfNodes)
+			setParentSBMLObject(nodes, parent);
+	}
+
 	private int denominator;
 	private double exponent;
 	private int integer;
 	private LinkedList<ASTNode> listOfNodes;
+
 	private double mantissa;
+
 	private String name;
+
 	private int numerator;
+
 	private SBase parentSBMLObject;
+
 	private boolean printNameIfAvailable;
+
 	private Constants type;
 
 	private NamedSBase variable;
@@ -85,175 +186,6 @@ public class ASTNode {
 	}
 
 	/**
-	 * Creates a AstNode of type Plus with the given nodes as children
-	 * 
-	 * @param parent
-	 * @param ast
-	 * @return
-	 */
-	public static ASTNode sum(SBase parent, ASTNode... ast) {
-		if (ast.length == 0)
-			return null;
-		if (ast.length == 1) {
-			ASTNode clone = ast[0].clone();
-			setParentSBMLObject(clone, parent);
-			return clone;
-		}
-		ASTNode sum = new ASTNode(Constants.AST_PLUS, parent);
-		for (ASTNode node : ast) {
-			setParentSBMLObject(node, parent);
-			sum.addChild(node);
-		}
-		return sum;
-	}
-
-	/**
-	 * adds a given node to this node
-	 * 
-	 * @param ast
-	 */
-
-	public void plus(ASTNode ast) {
-		ASTNode swap = new ASTNode(type, getParentSBMLObject());
-		swapChildren(swap);
-		setType(Constants.AST_PLUS);
-		addChild(swap);
-		addChild(ast);
-		setParentSBMLObject(ast, getParentSBMLObject());
-	}
-
-	/**
-	 * Creates a new ASTNode of type MINUS and adds the given nodes as children
-	 * 
-	 * @param parent
-	 * @param ast
-	 * @return
-	 */
-	public static ASTNode diff(SBase parent, ASTNode... ast) {
-		if (ast.length == 0)
-			return null;
-		if (ast.length == 1) {
-			ASTNode clone = ast[0].clone();
-			setParentSBMLObject(clone, parent);
-			return clone;
-		}
-		ASTNode minus = new ASTNode(Constants.AST_MINUS, parent);
-		for (ASTNode nodes : ast) {
-			setParentSBMLObject(nodes, parent);
-			minus.addChild(nodes);
-		}
-		return minus;
-	}
-
-	/**
-	 * subtracts the given ASTNode from this node
-	 * 
-	 * @param ast
-	 */
-
-	public void minus(ASTNode ast) {
-		ASTNode swap = new ASTNode(type, getParentSBMLObject());
-		swapChildren(swap);
-		setType(Constants.AST_MINUS);
-		addChild(swap);
-		addChild(ast);
-		setParentSBMLObject(ast, getParentSBMLObject());
-	}
-
-	/**
-	 * Creates an ASTNode of type times and adds the given nodes as children.
-	 * 
-	 * @param parent
-	 * @param ast
-	 * @return
-	 */
-	public static ASTNode times(SBase parent, ASTNode... ast) {
-		if (ast.length == 0)
-			return null;
-		if (ast.length == 1) {
-			ASTNode clone = ast[0].clone();
-			setParentSBMLObject(clone, parent);
-			return clone;
-		}
-		ASTNode times = new ASTNode(Constants.AST_TIMES, parent);
-		for (ASTNode nodes : ast) {
-			setParentSBMLObject(nodes, parent);
-			times.addChild(nodes);
-		}
-		return times;
-	}
-
-	/**
-	 * multiplies this ASTNode with the given node
-	 * 
-	 * @param ast
-	 */
-	public void multiply(ASTNode ast) {
-
-		ASTNode swap = new ASTNode(type, getParentSBMLObject());
-		swapChildren(swap);
-		setType(Constants.AST_TIMES);
-		addChild(swap);
-		addChild(ast);
-		setParentSBMLObject(ast, getParentSBMLObject());
-	}
-
-	/**
-	 * Creates an ASTNode of type DIVIDE with the given nodes as children.
-	 * 
-	 * @param parent
-	 * @param ast
-	 * @return
-	 */
-	public static ASTNode frac(SBase parent, ASTNode... ast) {
-		if (ast.length == 0)
-			return null;
-		if (ast.length == 1) {
-			ASTNode clone = ast[0].clone();
-			setParentSBMLObject(clone, parent);
-			return clone;
-		}
-		// TODO: only two nodes?
-		ASTNode frac = new ASTNode(Constants.AST_DIVIDE, parent);
-		for (ASTNode nodes : ast) {
-			setParentSBMLObject(nodes, parent);
-			frac.addChild(nodes);
-		}
-		return frac;
-	}
-
-	/**
-	 * Divides this node through? the given node
-	 * 
-	 * param ast
-	 */
-	public void divide(ASTNode ast) {
-		ASTNode swap = new ASTNode(type, getParentSBMLObject());
-		swapChildren(swap);
-		setType(Constants.AST_DIVIDE);
-		addChild(swap);
-		addChild(ast);
-		setParentSBMLObject(ast, getParentSBMLObject());
-
-	}
-	
-	public static ASTNode pow(SBase parent,ASTNode...ast){
-		Constants.
-	}
-
-	/**
-	 * set the Parent of the node and its children to the given value
-	 * 
-	 * @param node
-	 * @param parent
-	 */
-	private static void setParentSBMLObject(ASTNode node, SBase parent) {
-		node.parentSBMLObject = parent;
-		for (ASTNode nodes : node.listOfNodes)
-			nodes.setParentSBMLObject(nodes, parent);
-	}
-
-	/**
 	 * Creates and returns a new ASTNode.
 	 * 
 	 * By default, the returned node will have a type of AST_UNKNOWN. The
@@ -281,6 +213,15 @@ public class ASTNode {
 	// @Override
 	public ASTNode clone() {
 		return new ASTNode(this);
+	}
+
+	/**
+	 * Divides this node through? the given node
+	 * 
+	 * param ast
+	 */
+	public void divideBy(ASTNode ast) {
+		arithmeticOperation(Constants.AST_DIVIDE, ast);
 	}
 
 	/*
@@ -781,6 +722,35 @@ public class ASTNode {
 	}
 
 	/**
+	 * subtracts the given ASTNode from this node
+	 * 
+	 * @param ast
+	 */
+
+	public void minus(ASTNode ast) {
+		arithmeticOperation(Constants.AST_MINUS, ast);
+	}
+
+	/**
+	 * multiplies this ASTNode with the given node
+	 * 
+	 * @param ast
+	 */
+	public void multiplyWith(ASTNode ast) {
+		arithmeticOperation(Constants.AST_TIMES, ast);
+	}
+
+	/**
+	 * adds a given node to this node
+	 * 
+	 * @param ast
+	 */
+
+	public void plus(ASTNode ast) {
+		arithmeticOperation(Constants.AST_PLUS, ast);
+	}
+
+	/**
 	 * Adds the given node as a child of this ASTNode. This method adds child
 	 * nodes from right to left.
 	 * 
@@ -788,6 +758,14 @@ public class ASTNode {
 	 */
 	public void prependChild(ASTNode child) {
 		listOfNodes.addLast(child);
+	}
+
+	/**
+	 * 
+	 * @param exponent
+	 */
+	public void raiseByThePowerOf(ASTNode exponent) {
+		arithmeticOperation(Constants.AST_POWER, exponent);
 	}
 
 	/**
@@ -1593,6 +1571,37 @@ public class ASTNode {
 	}
 
 	/**
+	 * Creates a new node with the type of this node, moves all children of this
+	 * node to this new node, sets the type of this node to the given operator,
+	 * adds the new node as left child of this node and the given astnode as the
+	 * right child of this node. The parentSBMLObject of the whole resulting
+	 * ASTNode is then set to the parent of this node.
+	 * 
+	 * @param operator
+	 *            The new type of this node. This has to be one of the
+	 *            following: AST_PLUS, AST_MINUS, AST_TIMES, AST_DIVIDE, or
+	 *            AST_POWER. Otherwise a runtime error is thrown.
+	 * @param astnode
+	 *            The new right child of this node
+	 */
+	private void arithmeticOperation(Constants operator, ASTNode astnode) {
+		if (operator == Constants.AST_PLUS || operator == Constants.AST_MINUS
+				|| operator == Constants.AST_TIMES
+				|| operator == Constants.AST_DIVIDE
+				|| operator == Constants.AST_POWER) {
+			ASTNode swap = new ASTNode(type, getParentSBMLObject());
+			swapChildren(swap);
+			setType(operator);
+			addChild(swap);
+			addChild(astnode);
+			setParentSBMLObject(astnode, getParentSBMLObject());
+		} else
+			throw new RuntimeException(
+					new IllegalAccessException(
+							"The operator must be one of the following constants: AST_PLUS, AST_MINUS, AST_TIMES, AST_DIVIDE, or AST_POWER."));
+	}
+
+	/**
 	 * If the field printNameIfAvailable is false this method returns a the id
 	 * of the given SBase. If printNameIfAvailable is true this method looks for
 	 * the name of the given SBase and will return it.
@@ -1611,21 +1620,14 @@ public class ASTNode {
 	 */
 	private StringBuffer getNameOrID(NamedSBase sbase) {
 		String name = "";
-		if (sbase instanceof Compartment) {
-			name = (printNameIfAvailable) ? ((Compartment) sbase).getName()
-					: ((Compartment) sbase).getId();
-		} else if (sbase instanceof Species) {
-			name = (printNameIfAvailable) ? ((Species) sbase).getName()
-					: ((Species) sbase).getId();
-		} else {
+		if (sbase.isSetName() && printNameIfAvailable)
+			name = sbase.getName();
+		else if (sbase.isSetId())
+			name = sbase.getId();
+		else
 			name = "Undefinded";
-		}
 		name = LaTeX.maskSpecialChars(name);
-		if (printNameIfAvailable) {
-			return new StringBuffer("\\text{" + name + "}");
-		} else {
-			return LaTeX.mathtt(name);
-		}
+		return printNameIfAvailable ? LaTeX.mathrm(name) : LaTeX.mathtt(name);
 	}
 
 	/**
@@ -1649,11 +1651,8 @@ public class ASTNode {
 			value.append("point");
 			break;
 		}
-		value = LaTeX.mathrm(value.toString());
-		value.append(LaTeX.leftBrace);
-		value.append(getNameOrID(c));
-		value.append(LaTeX.rightBrace);
-		return value;
+		return LaTeX.mathrm(value.toString()).append(
+				LaTeX.brackets(getNameOrID(c)));
 	}
 
 	/**
