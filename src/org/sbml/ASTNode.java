@@ -184,6 +184,36 @@ public class ASTNode {
 		this(parent);
 		setType(type);
 	}
+	/**
+	 * 
+	 * @param name
+	 * @param parent
+	 */
+	public ASTNode(String name, SBase parent){
+		this(Constants.AST_NAME, parent);
+		setName(name);
+		
+	}
+	
+	/**
+	 * 
+	 * @param naem
+	 * @param parent
+	 */
+	public ASTNode(StringBuffer name, SBase parent){
+		this(Constants.AST_NAME,parent);
+		setName(name.toString());
+	}
+	/**
+	 * 
+	 * @param stoich
+	 * @param parent
+	 */
+	
+	public ASTNode(double stoich, SBase parent){
+		this(Constants.AST_RATIONAL,parent);
+		setValue(stoich);
+	}
 
 	/**
 	 * Creates and returns a new ASTNode.

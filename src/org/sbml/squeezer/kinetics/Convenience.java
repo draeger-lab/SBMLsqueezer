@@ -21,7 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-
+import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
@@ -104,32 +104,31 @@ public class Convenience extends GeneralizedMassAction {
 		return "none";
 	}
 
-	protected StringBuffer createKineticEquation(Model model,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	protected ASTNode createKineticEquation(Model model, List<String> modE,
+			List<String> modActi, List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		StringBuffer numerator;
-		StringBuffer formelTxt[] = new StringBuffer[Math.max(1, modE.size())];
+		ASTNode numerator;
+		ASTNode formelTxt[] = new ASTNode[Math.max(1, modE.size())];
 
 		Reaction parentReaction = getParentSBMLObject();
 		int enzymeNum = 0;
 		do {
-			StringBuffer denominator = new StringBuffer();
+			ASTNode denominator;
 			StringBuffer kcatp = modE.size() == 0 ? concat("Vp_",
 					getParentSBMLObject().getId()) : concat("kcatp_",
 					getParentSBMLObject().getId());
 			if (modE.size() > 1)
 				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
 			addLocalParameter(kcatp);
-			numerator = new StringBuffer(kcatp);
+			numerator = new ASTNode(kcatp, this);
 
 			// sums for each educt
-			StringBuffer[] denominator1 = new StringBuffer[parentReaction
+			ASTNode[] denominator1 = new ASTNode[parentReaction
 					.getNumReactants()];
 			for (int eductNum = 0; eductNum < parentReaction.getNumReactants(); eductNum++) {
 
-				SpeciesReference specref = parentReaction
-						.getReactant(eductNum);
+				SpeciesReference specref = parentReaction.getReactant(eductNum);
 
 				// build denominator
 
@@ -141,24 +140,29 @@ public class Convenience extends GeneralizedMassAction {
 
 				addLocalParameter(kM);
 
-				denominator1[eductNum] = brackets(frac(specref.getSpecies(), kM));
+				denominator1[eductNum] = ASTNode.frac(new ASTNode(specref
+						.getSpecies(), this), new ASTNode(kM, this));
 
 				for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
-					denominator1[eductNum] = sum(denominator1[eductNum], pow(
-							frac(specref.getSpecies(), kM), Integer
-									.toString(m + 1)));
+					denominator1[eductNum] = ASTNode.sum(
+							denominator1[eductNum], ASTNode.pow(ASTNode.frac(
+									new ASTNode(specref.getSpecies(), this),
+									new ASTNode(kM, this)), new ASTNode(
+									(m + 1), this)));
 				}
 
 				if (!parentReaction.getReversible()
 						|| ((parentReaction.getNumReactants() != 1) || (parentReaction
 								.getNumProducts() == 1)))
 
-					denominator1[eductNum] = sum(Integer.toString(1),
+					denominator1[eductNum] = ASTNode.sum(new ASTNode(1, this),
 							denominator1[eductNum]);
 
 				// build numerator
 				if (specref.getStoichiometry() == 1.0)
-					numerator = times(numerator, frac(specref.getSpecies(), kM));
+					numerator = ASTNode.times(numerator, ASTNode.frac(
+							new ASTNode(specref.getSpecies(), this),
+							new ASTNode(kM, this)));
 				else
 					numerator = times(numerator, pow(frac(specref.getSpecies(),
 							kM), Integer.toString((int) specref
@@ -191,7 +195,8 @@ public class Convenience extends GeneralizedMassAction {
 				for (int productNum = 0; productNum < parentReaction
 						.getNumProducts(); productNum++) {
 
-					StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
+					StringBuffer kM = concat("kM_", getParentSBMLObject()
+							.getId());
 
 					if (modE.size() > 1)
 						kM = append(kM, underscore, modE.get(enzymeNum));
@@ -244,7 +249,7 @@ public class Convenience extends GeneralizedMassAction {
 			enzymeNum++;
 		} while (enzymeNum < modE.size());
 
-		return times(activationFactor(modActi), inhibitionFactor(modInhib),
-				sum(formelTxt));
+		return ASTNode.times(activationFactor(modActi),
+				inhibitionFactor(modInhib), ASTNode.sum(formelTxt));
 	}
 }
