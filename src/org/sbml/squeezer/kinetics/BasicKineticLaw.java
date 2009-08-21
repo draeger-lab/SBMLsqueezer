@@ -229,15 +229,11 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 	 * @param ref
 	 * @return
 	 */
-	protected static final StringBuffer getStoichiometry(
+	protected static final double getStoichiometry(
 			SpeciesReference ref) {
 		
 			double stoich = ref.getStoichiometry();
-			if ((int) stoich - stoich == 0)
-				return new StringBuffer(Integer.toString((int) stoich));
-			else
-				return new StringBuffer(Double.toString(stoich));
-		
+			return stoich;
 		
 	}
 
@@ -493,7 +489,7 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	protected abstract StringBuffer createKineticEquation(Model model,
+	protected abstract ASTNode createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
