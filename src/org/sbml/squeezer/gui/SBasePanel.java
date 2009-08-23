@@ -21,7 +21,6 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagLayout;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -42,7 +41,6 @@ import org.sbml.SBase;
 import org.sbml.SimpleSpeciesReference;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.squeezer.io.LaTeXExport;
 
 import atp.sHotEqn;
 
