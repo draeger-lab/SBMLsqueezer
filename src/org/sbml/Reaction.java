@@ -118,8 +118,10 @@ public class Reaction extends NamedSBase {
 	public boolean equals(Object o) {
 		if (o instanceof Reaction) {
 			Reaction r = (Reaction) o;
-			return r.getFast() == fast && r.getKineticLaw().equals(kineticLaw)
-					&& r.getListOfModifiers().equals(listOfModifiers)
+			boolean equal = r.getFast() == fast;
+			if (r.isSetKineticLaw() && isSetKineticLaw())
+				equal = r.getKineticLaw().equals(kineticLaw);
+			return equal && r.getListOfModifiers().equals(listOfModifiers)
 					&& r.getListOfProducts().equals(listOfProducts)
 					&& r.getListOfReactants().equals(listOfReactants)
 					&& r.getName().equals(getName())
@@ -212,9 +214,10 @@ public class Reaction extends NamedSBase {
 		this.reversible = reversible;
 		stateChanged();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#getParentSBMLObject()
 	 */
 	@Override

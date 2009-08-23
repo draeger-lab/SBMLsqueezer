@@ -16,44 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.standalone;
-
-import org.sbml.Model;
+package org.sbml.squeezer.resources.cfg;
 
 /**
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class SBMLsqueezer {
-
-	public SBMLsqueezer(String fileName) {
-		LibSBMLReader converter = new LibSBMLReader(fileName);
-		showGUI(converter.getModel());
-	}
-
-	public SBMLsqueezer() {
-		showGUI();
-	}
-
-	private void showGUI() {
-		new SBMLsqueezerSUI();
-	}
-
-	private void showGUI(Model model) {
-		new SBMLsqueezerSUI(model);
-	}
-
+public enum CfgKeys {
 	/**
-	 * @param args
+	 * 
 	 */
-	public static void main(String[] args) {
-		System.loadLibrary("sbmlj");
-		if (args.length == 1)
-			new SBMLsqueezer(args[0]);
-		else
-			new SBMLsqueezer();
-	}
-
+	OPEN_DIR,
+	/**
+	 * 
+	 */
+	SAVE_DIR
 }

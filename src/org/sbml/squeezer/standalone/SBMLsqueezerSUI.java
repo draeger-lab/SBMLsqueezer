@@ -21,7 +21,11 @@ package org.sbml.squeezer.standalone;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -33,17 +37,20 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.sbml.Model;
 import org.sbml.squeezer.gui.JBrowser;
 import org.sbml.squeezer.gui.JHelpBrowser;
+import org.sbml.squeezer.gui.JTabbedPaneWithCloseIcons;
 import org.sbml.squeezer.gui.ModelComponentsPanel;
 import org.sbml.squeezer.gui.SystemBrowser;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.resources.cfg.CfgKeys;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -51,9 +58,14 @@ import org.sbml.squeezer.resources.Resource;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class SBMLsqueezerSUI extends JFrame implements ActionListener {
+public class SBMLsqueezerSUI extends JFrame implements ActionListener,
+		WindowListener, ChangeListener {
 
-	JTabbedPane tabbedPane;
+	JTabbedPaneWithCloseIcons tabbedPane;
+	Properties properties;
+	private JMenuItem saveItem;
+	private JMenuItem closeItem;
+	private JMenuItem squeezeItem;
 
 	/**
 	 * Generated serial version id.
@@ -66,14 +78,14 @@ public class SBMLsqueezerSUI extends JFrame implements ActionListener {
 	public SBMLsqueezerSUI() throws HeadlessException {
 		super();
 		init();
+		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 
 	public SBMLsqueezerSUI(Model model) {
 		this();
 		addModel(model);
-		pack();
-		setLocationRelativeTo(null);
-		setVisible(true);
 	}
 
 	// @Override
@@ -84,9 +96,21 @@ public class SBMLsqueezerSUI extends JFrame implements ActionListener {
 				JFileChooser chooser = new JFileChooser();
 				SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
 				chooser.setFileFilter(filter);
-				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+				String dir = properties.getProperty(CfgKeys.OPEN_DIR
+						.toString());
+				if (dir != null) {
+					if (dir.startsWith("user."))
+						dir = System.getProperty(dir);
+					chooser.setCurrentDirectory(new File(dir));
+				}
+				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 					addModel(new LibSBMLReader(chooser.getSelectedFile()
 							.getAbsolutePath()).getModel());
+					String path = chooser.getSelectedFile().getAbsolutePath();
+					path = path.substring(0, path.lastIndexOf('/'));
+					if (!path.equals(dir))
+						properties.put(CfgKeys.OPEN_DIR, path);
+				}
 			} else if (item.getText().equals("Save")) {
 				JFileChooser chooser = new JFileChooser();
 				SBFileFilter filterSBML = new SBFileFilter(
@@ -98,23 +122,39 @@ public class SBMLsqueezerSUI extends JFrame implements ActionListener {
 				chooser.addChoosableFileFilter(filterSBML);
 				chooser.addChoosableFileFilter(filterText);
 				chooser.addChoosableFileFilter(filterTeX);
+				String dir = properties.getProperty(CfgKeys.SAVE_DIR
+						.toString());
+				if (dir != null) {
+					if (dir.startsWith("user."))
+						dir = System.getProperty(dir);
+					chooser.setCurrentDirectory(new File(dir));
+				}
 				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 					// TODO
 					System.err.println("not yet implemented");
+					String path = chooser.getSelectedFile().getAbsolutePath();
+					path = path.substring(0, path.lastIndexOf('/'));
+					if (!path.equals(dir))
+						properties.put(CfgKeys.OPEN_DIR, path);
 				}
+			} else if (item.getText().equals("Close")) {
+				if (tabbedPane.getComponentCount() > 0)
+					tabbedPane.remove(tabbedPane.getSelectedComponent());
+				if (tabbedPane.getComponentCount() == 0)
+					setModelsOpened(false);
 			} else if (item.getText().equals("Squeeze")) {
 
 			} else if (item.getText().equals("Exit")) {
+				saveProperties();
 				System.exit(0);
 			} else if (item.getText().equals("About")) {
-					JBrowser browser = new JBrowser(Resource.class
-							.getResource("html/about.htm"));
-					browser.removeHyperlinkListener(browser);
-					browser.addHyperlinkListener(new SystemBrowser());
-					browser.setBorder(BorderFactory.createEtchedBorder());
-					JOptionPane.showMessageDialog(this, browser,
-							"About SBMLsqueezer",
-							JOptionPane.INFORMATION_MESSAGE);
+				JBrowser browser = new JBrowser(Resource.class
+						.getResource("html/about.htm"));
+				browser.removeHyperlinkListener(browser);
+				browser.addHyperlinkListener(new SystemBrowser());
+				browser.setBorder(BorderFactory.createEtchedBorder());
+				JOptionPane.showMessageDialog(this, browser,
+						"About SBMLsqueezer", JOptionPane.INFORMATION_MESSAGE);
 			} else if (item.getText().equals("Online help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
 						"SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber()
@@ -128,18 +168,28 @@ public class SBMLsqueezerSUI extends JFrame implements ActionListener {
 		}
 	}
 
+	private void setModelsOpened(boolean state) {
+		saveItem.setEnabled(state);
+		closeItem.setEnabled(state);
+		squeezeItem.setEnabled(state);
+	}
+
 	private void addModel(Model model) {
-		tabbedPane.addTab(model.getId(), new ModelComponentsPanel(model));
+		tabbedPane.add(model.getId(), new ModelComponentsPanel(model));
+		setModelsOpened(true);
+		pack();
 	}
 
 	private JMenuBar createMenuBar() {
 		JMenu fileMenu = new JMenu("File");
 		JMenuItem openItem = new JMenuItem("Open", UIManager
 				.getIcon("FileView.directoryIcon"));
-		JMenuItem closeItem = new JMenuItem("Save", UIManager
+		saveItem = new JMenuItem("Save", UIManager
 				.getIcon("FileView.floppyDriveIcon"));
+		closeItem = new JMenuItem("Close");
 		JMenuItem exitItem = new JMenuItem("Exit");
 		fileMenu.add(openItem);
+		fileMenu.add(saveItem);
 		fileMenu.add(closeItem);
 		fileMenu.add(exitItem);
 		openItem.addActionListener(this);
@@ -147,7 +197,7 @@ public class SBMLsqueezerSUI extends JFrame implements ActionListener {
 		exitItem.addActionListener(this);
 
 		JMenu editMenu = new JMenu("Edit");
-		JMenuItem squeezeItem = new JMenuItem("Squeeze");
+		squeezeItem = new JMenuItem("Squeeze");
 		squeezeItem.addActionListener(this);
 		try {
 			squeezeItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
@@ -177,9 +227,72 @@ public class SBMLsqueezerSUI extends JFrame implements ActionListener {
 
 	// @Override
 	protected void init() {
-		tabbedPane = new JTabbedPane();
+		try {
+			properties = Resource.readProperties(Resource.class.getResource(
+					"cfg/SBMLsqueezer.cfg").getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+			properties = new Properties();
+		}
+		tabbedPane = new JTabbedPaneWithCloseIcons();
+		tabbedPane.addChangeListener(this);
 		getContentPane().add(tabbedPane);
 		setJMenuBar(createMenuBar());
+		setModelsOpened(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(this);
+	}
+
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowClosed(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowClosing(WindowEvent arg0) {
+saveProperties();
+	}
+
+	private void saveProperties() {
+		try {
+			String resourceName = Resource.class.getResource(
+					"cfg/SBMLsqueezer.cfg").getPath();
+			Properties p = Resource.readProperties(resourceName);
+			if (!p.equals(properties))
+				Resource.writeProperties(properties, resourceName);
+		} catch (IOException e) {
+		}
+	}
+
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(tabbedPane)) {
+			if (tabbedPane.getComponentCount() == 0) {
+				setModelsOpened(false);
+			}
+		}
 	}
 }
