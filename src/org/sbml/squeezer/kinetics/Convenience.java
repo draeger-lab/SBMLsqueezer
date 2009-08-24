@@ -164,22 +164,23 @@ public class Convenience extends GeneralizedMassAction {
 							new ASTNode(specref.getSpecies(), this),
 							new ASTNode(kM, this)));
 				else
-					numerator = times(numerator, pow(frac(specref.getSpecies(),
-							kM), Integer.toString((int) specref
-							.getStoichiometry())));
+					numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode
+							.frac(new ASTNode(specref.getSpecies(), this),
+									new ASTNode(kM, this)), new ASTNode(specref
+							.getStoichiometry(), this)));
 			}
 			if (denominator1.length == 1)
 				denominator = denominator1[0];
 			else
-				denominator = times(denominator1);
+				denominator = ASTNode.times(denominator1);
 
 			/*
 			 * only if reaction is reversible or we want it to be.
 			 */
 			if (parentReaction.getReversible()) {
 
-				StringBuffer numerator2 = new StringBuffer();
-				StringBuffer[] denominator2 = new StringBuffer[parentReaction
+				ASTNode numerator2;
+				ASTNode[] denominator2 = new ASTNode[parentReaction
 						.getNumProducts()];
 
 				StringBuffer kcat = modE.size() == 0 ? concat("Vn_",
@@ -187,7 +188,7 @@ public class Convenience extends GeneralizedMassAction {
 						getParentSBMLObject().getId());
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
-				numerator2 = new StringBuffer(kcat);
+				numerator2 = new ASTNode(kcat, this);
 				addLocalParameter(kcat);
 
 				// Sums for each product
@@ -208,43 +209,46 @@ public class Convenience extends GeneralizedMassAction {
 					SpeciesReference specRefP = parentReaction
 							.getProduct(productNum);
 
-					denominator2[productNum] = frac(getSpecies(specRefP), kM);
+					denominator2[productNum] = ASTNode.frac(new ASTNode(
+							getSpecies(specRefP), this), new ASTNode(kM, this));
 
 					// for each stoichiometry (see Liebermeister et al.)s
 					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
 
-						denominator2[productNum] = sum(
-								denominator2[productNum], pow(frac(
-										getSpecies(specRefP), kM), Integer
-										.toString(m + 1)));
+						denominator2[productNum] = ASTNode.sum(
+								denominator2[productNum], ASTNode.pow(ASTNode
+										.frac(new ASTNode(getSpecies(specRefP),
+												this), new ASTNode(kM, this)),
+										new ASTNode((m + 1), this)));
 					if (parentReaction.getNumProducts() > 1)
-						denominator2[productNum] = sum(Integer.toString(1),
-								denominator2[productNum]);
+						denominator2[productNum] = ASTNode.sum(new ASTNode(1,
+								this), denominator2[productNum]);
 
 					// build numerator
 					if (specRefP.getStoichiometry() != 1.0)
-						numerator2 = times(numerator2, pow(frac(
-								getSpecies(specRefP), kM),
-								getStoichiometry(specRefP)));
+						numerator2 = ASTNode.times(numerator2, ASTNode.pow(
+								ASTNode.frac(new ASTNode(getSpecies(specRefP),
+										this), new ASTNode(kM, this)),
+								new ASTNode(getStoichiometry(specRefP), this)));
 					else
-						numerator2 = times(numerator2, frac(
-								getSpecies(specRefP), kM));
+						numerator2 = ASTNode.times(numerator2, ASTNode.frac(new ASTNode(
+								getSpecies(specRefP),this),new ASTNode( kM,this)));
 				}
 				if (parentReaction.getNumProducts() == 1)
-					denominator = sum(denominator, denominator2[0]);
+					denominator = ASTNode.sum(denominator, denominator2[0]);
 				else
-					denominator = sum(denominator, times(denominator2));
-				numerator = diff(numerator, numerator2);
+					denominator = ASTNode.sum(denominator, ASTNode.times(denominator2));
+				numerator = ASTNode.diff(numerator, numerator2);
 
 				if ((parentReaction.getNumProducts() > 1)
 						&& (parentReaction.getNumReactants() > 1))
-					denominator = diff(denominator, Integer.toString(1));
+					denominator = ASTNode.diff(denominator, new ASTNode(1,this));
 			}
 
-			formelTxt[enzymeNum] = frac(numerator, denominator);
+			formelTxt[enzymeNum] = ASTNode.frac(numerator, denominator);
 
 			if (modE.size() > 0)
-				formelTxt[enzymeNum] = times(modE.get(enzymeNum),
+				formelTxt[enzymeNum] = ASTNode.times(new ASTNode(modE.get(enzymeNum),this),
 						formelTxt[enzymeNum]);
 			enzymeNum++;
 		} while (enzymeNum < modE.size());
