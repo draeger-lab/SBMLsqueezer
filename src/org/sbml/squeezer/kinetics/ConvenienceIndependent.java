@@ -21,7 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-
+import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
@@ -57,9 +57,9 @@ public class ConvenienceIndependent extends Convenience {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ConvenienceIndependent(Reaction parentReaction,
-			Model model) throws RateLawNotApplicableException,
-			IOException, IllegalFormatException {
+	public ConvenienceIndependent(Reaction parentReaction, Model model)
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -72,8 +72,8 @@ public class ConvenienceIndependent extends Convenience {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ConvenienceIndependent(Reaction parentReaction,
-			Model model, List<String> listOfPossibleEnzymes)
+	public ConvenienceIndependent(Reaction parentReaction, Model model,
+			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
@@ -103,14 +103,14 @@ public class ConvenienceIndependent extends Convenience {
 	 * celldesigner.plugin.PluginModel, java.util.List, java.util.List,
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	protected StringBuffer createKineticEquation(Model model,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	protected ASTNode createKineticEquation(Model model, List<String> modE,
+			List<String> modActi, List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		final boolean FORWARD = true;
 		final boolean REVERSE = false;
 		Reaction reaction = getParentSBMLObject();
-		StringBuffer[] enzymes = new StringBuffer[Math.max(modE.size(), 1)];
+		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		try {
 			int i = 0;
 			do {
@@ -118,32 +118,40 @@ public class ConvenienceIndependent extends Convenience {
 				String enzyme = modE.size() > 0 ? modE.get(i) : null;
 				if (enzyme != null) {
 					append(klV, underscore, modE.get(i));
-					enzymes[i] = new StringBuffer(enzyme);
+					enzymes[i] = new ASTNode(enzyme, this);
 				} else
-					enzymes[i] = new StringBuffer();
+					enzymes[i] = new ASTNode("", this);
 				addLocalParameter(klV);
 
-				StringBuffer numerator, denominator;
+				ASTNode numerator, denominator;
 				if (!reaction.getReversible()) {
-					numerator = times(numeratorElements(enzyme, FORWARD));
-					denominator = times(denominatorElements(enzyme, FORWARD));
+					numerator = ASTNode
+							.times(numeratorElements(enzyme, FORWARD));
+					denominator = ASTNode.times(denominatorElements(enzyme,
+							FORWARD));
 				} else {
-					numerator = diff(numeratorElements(enzyme, FORWARD), numeratorElements(enzyme, REVERSE));
-					denominator = sum(times(denominatorElements(enzyme, FORWARD)),
-							times(denominatorElements(enzyme, REVERSE)));
+					numerator = ASTNode.diff(
+							numeratorElements(enzyme, FORWARD),
+							numeratorElements(enzyme, REVERSE));
+					denominator = ASTNode
+							.sum(ASTNode.times(denominatorElements(enzyme,
+									FORWARD)),
+									ASTNode.times(denominatorElements(enzyme,
+											REVERSE)));
 					if (reaction.getNumProducts() > 1
 							&& reaction.getNumReactants() > 1)
-						denominator = diff(denominator, Integer.valueOf(1));
+						denominator = ASTNode.diff(denominator, new ASTNode(1,
+								this));
 				}
-				enzymes[i] = times(enzymes[i], klV,
-						frac(numerator, denominator));
+				enzymes[i] = ASTNode.times(enzymes[i], new ASTNode(klV, this),
+						ASTNode.frac(numerator, denominator));
 				i++;
 			} while (i < enzymes.length);
-			return times(activationFactor(modActi), inhibitionFactor(modInhib),
-					sum(enzymes));
+			return ASTNode.times(activationFactor(modActi),
+					inhibitionFactor(modInhib), ASTNode.sum(enzymes));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
-			return new StringBuffer();
+			return new ASTNode("", this);
 		}
 	}
 
@@ -158,17 +166,16 @@ public class ConvenienceIndependent extends Convenience {
 	 * 
 	 * @param enzyme
 	 * @param type
-	 *            true means forward, false means reverse.
-	 * @return
+	 * @return true means forward, false means reverse.
 	 */
-	private StringBuffer numeratorElements(String enzyme, boolean type) {
+	private ASTNode numeratorElements(String enzyme, boolean type) {
 		Reaction reaction = getParentSBMLObject();
 
-		StringBuffer educts = new StringBuffer();
-		StringBuffer products = new StringBuffer();
-		StringBuffer eductroot = new StringBuffer();
-		StringBuffer productroot = new StringBuffer();
-		StringBuffer equation = new StringBuffer();
+		ASTNode educts = new ASTNode("", this);
+		ASTNode products = new ASTNode("", this);
+		ASTNode eductroot = new ASTNode("", this);
+		ASTNode productroot = new ASTNode("", this);
+		ASTNode equation;
 		StringBuffer kiG;
 
 		for (int i = 0; i < reaction.getNumReactants(); i++) {
@@ -180,10 +187,12 @@ public class ConvenienceIndependent extends Convenience {
 			addLocalParameter(kM);
 			kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(kiG);
-			educts = times(educts, pow(frac(getSpecies(ref), kM), ref
-					.getStoichiometry()));
-			eductroot = times(eductroot, pow(brackets(times(kiG, kM)), ref
-					.getStoichiometry()));
+			educts = ASTNode.times(educts, ASTNode.pow(ASTNode.frac(
+					new ASTNode(getSpecies(ref), this), new ASTNode(kM, this)),
+					new ASTNode(ref.getStoichiometry(), this)));
+			eductroot = ASTNode.times(eductroot, ASTNode.pow(ASTNode.times(
+					new ASTNode(kiG, this), new ASTNode(kM, this)),
+					new ASTNode(ref.getStoichiometry(), this)));
 		}
 		for (int i = 0; i < reaction.getNumProducts(); i++) {
 			SpeciesReference ref = reaction.getProduct(i);
@@ -194,14 +203,17 @@ public class ConvenienceIndependent extends Convenience {
 			addLocalParameter(kM);
 			kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(kiG);
-			products = times(products, pow(frac(getSpecies(ref), kM), ref
-					.getStoichiometry()));
-			productroot = times(productroot, pow(brackets(times(kiG, kM)), ref
-					.getStoichiometry()));
+			products = ASTNode.times(products, ASTNode.pow(ASTNode.frac(
+					new ASTNode(getSpecies(ref), this), new ASTNode(kM, this)),
+					new ASTNode(ref.getStoichiometry(), this)));
+			productroot = ASTNode.times(productroot, ASTNode.pow(ASTNode.times(
+					new ASTNode(kiG, this), new ASTNode(kM, this)),
+					new ASTNode(ref.getStoichiometry(), this)));
 
 		}
-		equation = type ? times(educts, sqrt(frac(eductroot, productroot)))
-				: times(products, sqrt(frac(productroot, eductroot)));
+		equation = type ? ASTNode.times(educts, ASTNode.sqrt(ASTNode.frac(
+				eductroot, productroot))) : ASTNode.times(products, ASTNode
+				.sqrt(ASTNode.frac(productroot, eductroot)));
 		return equation;
 	}
 
@@ -219,28 +231,29 @@ public class ConvenienceIndependent extends Convenience {
 	 *            true means forward, false backward.
 	 * @return
 	 */
-	private StringBuffer[] denominatorElements(String enzyme, boolean type) {
+	private ASTNode[] denominatorElements(String enzyme, boolean type) {
 		Reaction reaction = getParentSBMLObject();
-		StringBuffer[] denoms = new StringBuffer[type ? reaction
-				.getNumReactants() : reaction.getNumProducts()];
+		ASTNode[] denoms = new ASTNode[type ? reaction.getNumReactants()
+				: reaction.getNumProducts()];
 		boolean noOne = (denoms.length == 1)
 				&& (!type || (type && reaction.getReversible() && reaction
 						.getNumProducts() > 1));
 		for (int i = 0; i < denoms.length; i++) {
-			SpeciesReference ref = type ? reaction.getReactant(i)
-					: reaction.getProduct(i);
+			SpeciesReference ref = type ? reaction.getReactant(i) : reaction
+					.getProduct(i);
 			StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 
-			StringBuffer[] parts = new StringBuffer[(int) ref
-					.getStoichiometry()
+			ASTNode[] parts = new ASTNode[(int) ref.getStoichiometry()
 					+ (noOne ? 0 : 1)];
-			StringBuffer part = frac(getSpecies(ref), kM);
+			ASTNode part = ASTNode.frac(new ASTNode(getSpecies(ref), this),
+					new ASTNode(kM, this));
 			for (int j = 0; j < parts.length; j++)
-				parts[j] = pow(part, Integer.toString(noOne ? j + 1 : j));
-			denoms[i] = sum(parts);
+				parts[j] = ASTNode.pow(part, new ASTNode((noOne ? j + 1 : j),
+						this));
+			denoms[i] = ASTNode.sum(parts);
 		}
 		return denoms;
 	}

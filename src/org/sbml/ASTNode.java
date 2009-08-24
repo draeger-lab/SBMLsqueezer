@@ -79,6 +79,14 @@ public class ASTNode {
 		return basis;
 	}
 
+	public static ASTNode root(ASTNode basis, ASTNode root) {
+		ASTNode roots = new ASTNode(Constants.AST_FUNCTION_ROOT, basis
+				.getParentSBMLObject());
+		roots.addChild(basis);
+		roots.addChild(root);
+		return roots;
+	}
+
 	/**
 	 * Creates a AstNode of type Plus with the given nodes as children
 	 * 
@@ -184,34 +192,36 @@ public class ASTNode {
 		this(parent);
 		setType(type);
 	}
+
 	/**
 	 * 
 	 * @param name
 	 * @param parent
 	 */
-	public ASTNode(String name, SBase parent){
+	public ASTNode(String name, SBase parent) {
 		this(Constants.AST_NAME, parent);
 		setName(name);
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @param naem
 	 * @param parent
 	 */
-	public ASTNode(StringBuffer name, SBase parent){
-		this(Constants.AST_NAME,parent);
+	public ASTNode(StringBuffer name, SBase parent) {
+		this(Constants.AST_NAME, parent);
 		setName(name.toString());
 	}
+
 	/**
 	 * 
 	 * @param stoich
 	 * @param parent
 	 */
-	
-	public ASTNode(double stoich, SBase parent){
-		this(Constants.AST_RATIONAL,parent);
+
+	public ASTNode(double stoich, SBase parent) {
+		this(Constants.AST_RATIONAL, parent);
 		setValue(stoich);
 	}
 
@@ -1766,5 +1776,10 @@ public class ASTNode {
 		if (1 < getRightChild().getNumChildren())
 			value.append(LaTeX.rightBrace);
 		return value;
+	}
+
+	public static ASTNode sqrt(ASTNode frac) {
+		return root(frac, new ASTNode(2, frac.getParentSBMLObject()));
+
 	}
 }
