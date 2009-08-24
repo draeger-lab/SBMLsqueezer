@@ -34,12 +34,12 @@ import org.sbml.SBase;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class ModelComponentsPanel extends JSplitPane implements
+public class SBMLModelSplitPane extends JSplitPane implements
 		TreeSelectionListener {
 
 	private SBMLTree tree;
 
-	public ModelComponentsPanel(Model model) {
+	public SBMLModelSplitPane(Model model) {
 		super(JSplitPane.HORIZONTAL_SPLIT, true);
 		tree = new SBMLTree(model);
 		tree.addTreeSelectionListener(this);

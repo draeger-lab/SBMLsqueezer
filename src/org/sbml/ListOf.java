@@ -373,7 +373,12 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return a;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#toString()
+	 */
+	// @Override
 	public String toString() {
 		StringBuffer string = new StringBuffer();
 		string.append('[');

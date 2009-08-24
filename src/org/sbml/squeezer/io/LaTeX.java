@@ -631,4 +631,12 @@ public class LaTeX extends StringOperations {
 	public static StringBuffer texttt(String id) {
 		return command("texttt", new StringBuffer(id));
 	}
+
+	public static StringBuffer mbox(String s) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(" \\mbox{");
+		sb.append(s);
+		sb.append("} ");
+		return sb;
+	}
 }

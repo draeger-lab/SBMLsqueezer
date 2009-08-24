@@ -22,11 +22,11 @@ import org.sbml.ASTNode;
 import org.sbml.Compartment;
 import org.sbml.Constants;
 import org.sbml.KineticLaw;
+import org.sbml.MathContainer;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
-import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.libsbml.SBMLDocument;
@@ -167,7 +167,7 @@ public class LibSBMLReader extends AbstractSBMLconverter implements
 		return kinlaw;
 	}
 
-	public ASTNode convert(org.sbml.libsbml.ASTNode math, SBase parent) {
+	public ASTNode convert(org.sbml.libsbml.ASTNode math, MathContainer parent) {
 		ASTNode ast;
 		switch (math.getType()) {
 		case AST_REAL:

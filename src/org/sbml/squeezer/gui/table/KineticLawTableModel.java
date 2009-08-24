@@ -95,7 +95,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 			data[reactionNum][0] = id;
 			// Kinetic Law
 			data[reactionNum][1] = klg.getReactionNumAndKineticLaw().get(
-			    klg.getReactionNumOfNotExistKinetics().get(reactionNum));
+					klg.getReactionNumOfNotExistKinetics().get(reactionNum));
 			// SBO
 			data[reactionNum][2] = new String(klg.getReactionNumAndKineticLaw()
 					.get(
@@ -114,11 +114,21 @@ public class KineticLawTableModel extends AbstractTableModel {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.TableModel#getColumnCount()
+	 */
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+	 */
+	// @Override
 	public String getColumnName(int column) {
 		return columnNames[column];
 	}
@@ -151,14 +161,25 @@ public class KineticLawTableModel extends AbstractTableModel {
 		return data[row][column];
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+	 */
+	// @Override
 	public boolean isCellEditable(int row, int col) {
 		if (col == 1)
 			return true;
 		return false;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object,
+	 * int, int)
+	 */
+	// @Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		data[rowIndex][columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);

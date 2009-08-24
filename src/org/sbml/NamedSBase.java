@@ -89,7 +89,7 @@ public abstract class NamedSBase extends SBase {
 	 */
 	// @Override
 	public String toString() {
-		if (isSetName())
+		if (isSetName() && getName().length() > 0)
 			return name;
 		if (isSetId())
 			return id;

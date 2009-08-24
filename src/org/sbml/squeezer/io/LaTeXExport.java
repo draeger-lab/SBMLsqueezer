@@ -17,17 +17,19 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
+
 import org.sbml.ASTNode;
 import org.sbml.Compartment;
 import org.sbml.Constants;
 import org.sbml.Event;
 import org.sbml.Model;
+import org.sbml.ModifierSpeciesReference;
 import org.sbml.Reaction;
 import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
-import org.sbml.libsbml.libsbmlConstants;
 
 /**
  * This class is used to export a sbml model as LaTex file.
@@ -40,7 +42,7 @@ import org.sbml.libsbml.libsbmlConstants;
  *         JDK 1.6.0
  * @date Dec 4, 2007
  */
-public class LaTeXExport extends LaTeX implements libsbmlConstants {
+public class LaTeXExport extends LaTeX {
 
 	/**
 	 * New line separator of this operating system
@@ -373,7 +375,8 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 							+ "}=";
 			if (r.getKineticLaw() != null) {
 				if (r.getKineticLaw().getMath() != null)
-					rateLaws[reactionIndex] += r.getKineticLaw().getMath().toLaTeX();
+					rateLaws[reactionIndex] += r.getKineticLaw().getMath()
+							.toLaTeX();
 				else
 					rateLaws[reactionIndex] += "\\text{no mathematics specified}";
 			} else
@@ -502,8 +505,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 											+ stoch.toLaTeX()
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"
-											: "+" + stoch.toLaTeX()
-													+ "v_{"
+											: "+" + stoch.toLaTeX() + "v_{"
 													+ productsReaction.get(k)
 													+ "}";
 								} else {
@@ -610,8 +612,8 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 				LinkedList<StringBuffer> assignments = new LinkedList<StringBuffer>();
 				assignments.add(ev.getTrigger().getMath().toLaTeX());
 				for (int j = 0; j < ev.getNumEventAssignments(); j++)
-					assignments.add(ev.getEventAssignment(j)
-							.getMath().toLaTeX());
+					assignments.add(ev.getEventAssignment(j).getMath()
+							.toLaTeX());
 				events[i] = assignments;
 			}
 			laTeX.append(eventsHead);
@@ -709,20 +711,21 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		// writing parameters
 		if (model.getNumParameters() > 0) {
 			laTeX.append(newLine + "\\section{Parameters}");
-			laTeX.append("\\begin{longtable}{@{}llr@{}}" + newLine + "\\toprule "
-					+ newLine + "Parameter & Value \\\\  " + newLine
-					+ "\\midrule" + newLine);
+			laTeX.append("\\begin{longtable}{@{}llr@{}}" + newLine
+					+ "\\toprule " + newLine + "Parameter & Value \\\\  "
+					+ newLine + "\\midrule" + newLine);
 			for (i = 0; i < model.getNumParameters(); i++) {
-				laTeX.append(name_idToLaTex(model.getParameter(i).getId()) + "&"
-						+ model.getParameter(i).getValue() + "\\\\" + newLine);
+				laTeX.append(name_idToLaTex(model.getParameter(i).getId())
+						+ "&" + model.getParameter(i).getValue() + "\\\\"
+						+ newLine);
 			}
 			laTeX.append("\\bottomrule " + newLine + "\\end{longtable}");
 		}
 		// writing species list and compartment.
 		if (model.getNumSpecies() > 0) {
 			laTeX.append(newLine + "\\section{Species}" + newLine);
-			laTeX.append("\\begin{longtable}{@{}llr@{}} " + newLine + "\\toprule "
-					+ newLine
+			laTeX.append("\\begin{longtable}{@{}llr@{}} " + newLine
+					+ "\\toprule " + newLine
 					+ "Species & Initial concentration & compartment \\\\  "
 					+ newLine + "\\midrule" + newLine);
 			for (i = 0; i < model.getNumSpecies(); i++) {
@@ -735,12 +738,12 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		}
 		if (model.getNumCompartments() > 0) {
 			laTeX.append(newLine + "\\section{Compartments}");
-			laTeX.append("\\begin{longtable}{@{}llr@{}}" + newLine + "\\toprule "
-					+ newLine + "Compartment & Volume \\\\  " + newLine
-					+ "\\midrule" + newLine);
+			laTeX.append("\\begin{longtable}{@{}llr@{}}" + newLine
+					+ "\\toprule " + newLine + "Compartment & Volume \\\\  "
+					+ newLine + "\\midrule" + newLine);
 			for (i = 0; i < model.getNumCompartments(); i++) {
-				laTeX.append(name_idToLaTex(model.getCompartment(i).getId()) + "&"
-						+ model.getCompartment(i).getVolume() + "\\\\"
+				laTeX.append(name_idToLaTex(model.getCompartment(i).getId())
+						+ "&" + model.getCompartment(i).getVolume() + "\\\\"
 						+ newLine);
 			}
 			laTeX.append("\\bottomrule " + newLine + "\\end{longtable}");
@@ -748,7 +751,6 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		laTeX.append(newLine + tail);
 		return laTeX;
 	}
-
 
 	/**
 	 * Writing a laTeX file
@@ -761,6 +763,68 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 		bw.write(toLaTeX(model).toString());
 		bw.close();
+	}
+
+	/**
+	 * 
+	 * @param reaction
+	 * @return
+	 */
+	public static String reactionEquation(Reaction reaction) {
+		StringBuffer reactionEqn = new StringBuffer();
+		reactionEqn.append(LaTeX.eqBegin);
+		int count = 0;
+		for (SpeciesReference specRef : reaction.getListOfReactants()) {
+			if (count > 0)
+				reactionEqn.append(" + ");
+			if (specRef.isSetStoichiometryMath())
+				reactionEqn.append(specRef.getStoichiometryMath().getMath()
+						.toLaTeX());
+			else if (specRef.getStoichiometry() != 1d)
+				reactionEqn.append(specRef.getStoichiometry());
+			reactionEqn.append(' ');
+			reactionEqn.append(LaTeX.mbox(LaTeX.maskSpecialChars(specRef
+					.getSpecies())));
+			count++;
+		}
+		if (reaction.getNumReactants() == 0)
+			reactionEqn.append("\\emptyset");
+		reactionEqn.append(reaction.getReversible() ? " \\leftrightarrow"
+				: " \\rightarrow");
+		// if (reaction.getNumModifiers() > 0) {
+		// reactionEqn.append('{');
+		// count = 0;
+		// for (ModifierSpeciesReference modRef : reaction
+		// .getListOfModifiers()) {
+		// reactionEqn
+		// .append(LaTeX.mbox(
+		// LaTeX.maskSpecialChars(modRef.getSpecies()))
+		// .toString());
+		// if (count < reaction.getNumModifiers() - 1)
+		// reactionEqn.append(", ");
+		// count++;
+		// }
+		// reactionEqn.append('}');
+		// }
+		reactionEqn.append(' ');
+		count = 0;
+		for (SpeciesReference specRef : reaction.getListOfProducts()) {
+			if (count > 0)
+				reactionEqn.append(" + ");
+			if (specRef.isSetStoichiometryMath())
+				reactionEqn.append(specRef.getStoichiometryMath().getMath()
+						.toLaTeX());
+			else if (specRef.getStoichiometry() != 1d)
+				reactionEqn.append(specRef.getStoichiometry());
+			reactionEqn.append(' ');
+			reactionEqn.append(LaTeX.mbox(LaTeX.maskSpecialChars(specRef
+					.getSpecies())));
+			count++;
+		}
+		if (reaction.getNumProducts() == 0)
+			reactionEqn.append("\\emptyset");
+		reactionEqn.append(LaTeX.eqEnd);
+		return reactionEqn.toString();
 	}
 
 	public StringBuffer toLaTeX(Model model, Reaction reaction)
@@ -788,7 +852,7 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		laTeX.append(newLine + "\\end{document}");
 		return laTeX;
 	}
-	
+
 	/**
 	 * Masks all special characters used by LaTeX with a backslash including
 	 * hyphen symbols.
@@ -839,7 +903,8 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	 */
 
 	private StringBuffer getDocumentHead(String title) {
-		StringBuffer head = new StringBuffer("\\documentclass[" + fontSize + "pt");
+		StringBuffer head = new StringBuffer("\\documentclass[" + fontSize
+				+ "pt");
 		if (titlepage) {
 			head.append(",titlepage");
 		}
@@ -856,17 +921,17 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		head.append("\\usepackage{url}" + newLine);
 		if (landscape)
 			head.append("\\usepackage[landscape]{geometry}" + newLine);
-		head.append("\\title{\\textsc{SBMLsqueezer}: Differential Equation System ``"
-				+ title
-				+ "\"}"
-				+ newLine
-				+ "\\date{\\today}"
-				+ newLine
-				+ "\\begin{document}"
-				+ newLine
-				+ "\\author{}"
-				+ newLine
-				+ "\\maketitle" + newLine);
+		head
+				.append("\\title{\\textsc{SBMLsqueezer}: Differential Equation System ``"
+						+ title
+						+ "\"}"
+						+ newLine
+						+ "\\date{\\today}"
+						+ newLine
+						+ "\\begin{document}"
+						+ newLine
+						+ "\\author{}"
+						+ newLine + "\\maketitle" + newLine);
 		return head;
 	}
 
@@ -890,8 +955,8 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 	private StringBuffer getNameOrID(SBase sbase) {
 		String name = "";
 		if (sbase instanceof Compartment) {
-			name = (printNameIfAvailable) ? ((Compartment) sbase)
-					.getName() : ((Compartment) sbase).getId();
+			name = (printNameIfAvailable) ? ((Compartment) sbase).getName()
+					: ((Compartment) sbase).getId();
 		} else if (sbase instanceof Species) {
 			name = (printNameIfAvailable) ? ((Species) sbase).getName()
 					: ((Species) sbase).getId();
@@ -932,7 +997,6 @@ public class LaTeXExport extends LaTeX implements libsbmlConstants {
 		value.append(')');
 		return value;
 	}
-
 
 	private String name_idToLaTex(String s) {
 		return "$" + toTeX(s) + "$";
