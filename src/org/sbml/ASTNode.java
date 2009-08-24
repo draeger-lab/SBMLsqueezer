@@ -54,7 +54,6 @@ public class ASTNode {
 		setParentSBMLObject(minus, ast[0].getParentSBMLObject());
 		return minus;
 	}
-
 	/**
 	 * Creates a new ASTNode of type DIVIDE with the given nodes as children.
 	 * 
@@ -67,7 +66,6 @@ public class ASTNode {
 		setParentSBMLObject(numerator, numerator.getParentSBMLObject());
 		return numerator;
 	}
-
 	/**
 	 * 
 	 * @param basis
@@ -78,15 +76,31 @@ public class ASTNode {
 		basis.raiseByThePowerOf(exponent);
 		return basis;
 	}
-
-	public static ASTNode root(ASTNode basis, ASTNode root) {
-		ASTNode roots = new ASTNode(Constants.AST_FUNCTION_ROOT, basis
+	
+	/**
+	 * 
+	 * @param radicant
+	 * @param rootExponent
+	 * @return
+	 */
+	public static ASTNode root(ASTNode rootExponent, ASTNode radicant) {
+		ASTNode root = new ASTNode(Constants.AST_FUNCTION_ROOT, radicant
 				.getParentSBMLObject());
-		roots.addChild(basis);
-		roots.addChild(root);
-		return roots;
+		root.addChild(radicant);
+		root.addChild(rootExponent);
+		return root;
 	}
-
+	
+	/**
+	 * 
+	 * @param radicand
+	 * @return
+	 */
+	public static ASTNode sqrt(ASTNode radicand) {
+		return root(new ASTNode(2, radicand.getParentSBMLObject()), radicand);
+	}
+	
+	
 	/**
 	 * Creates a AstNode of type Plus with the given nodes as children
 	 * 
@@ -106,7 +120,6 @@ public class ASTNode {
 		setParentSBMLObject(sum, ast[0].getParentSBMLObject());
 		return sum;
 	}
-
 	/**
 	 * Creates an ASTNode of type times and adds the given nodes as children.
 	 * 
@@ -125,37 +138,56 @@ public class ASTNode {
 		setParentSBMLObject(times, ast[0].parentSBMLObject);
 		return times;
 	}
-
 	/**
 	 * set the Parent of the node and its children to the given value
 	 * 
 	 * @param node
 	 * @param parent
 	 */
-	private static void setParentSBMLObject(ASTNode node, SBase parent) {
+	private static void setParentSBMLObject(ASTNode node, MathContainer parent) {
 		node.parentSBMLObject = parent;
 		for (ASTNode nodes : node.listOfNodes)
 			setParentSBMLObject(nodes, parent);
 	}
-
+	/**
+	 * This value stores the numerator if this.isRational() is true, or the
+	 * value of an integer if this.isInteger() is true.
+	 */
+	private int numerator;
 	private int denominator;
-	private double exponent;
-	private int integer;
-	private LinkedList<ASTNode> listOfNodes;
 
 	private double mantissa;
 
-	private String name;
+	private int exponent;
 
-	private int numerator;
+	/**
+	 * The container that holds this ASTNode.
+	 */
+	private MathContainer parentSBMLObject;
 
-	private SBase parentSBMLObject;
-
+	/**
+	 * Important for LaTeX export to decide whether the name or the id of a
+	 * NamedSBase should be printed.
+	 */
 	private boolean printNameIfAvailable;
 
-	private Constants type;
+	/**
+	 * If no NamedSBase object exists or can be identified when setName() is
+	 * called, the given name is stored in this field.
+	 */
+	private String name;
 
 	private NamedSBase variable;
+
+	/**
+	 * The type of this ASTNode.
+	 */
+	private Constants type;
+
+	/**
+	 * Child nodes.
+	 */
+	private LinkedList<ASTNode> listOfNodes;
 
 	/**
 	 * Copy constructor; Creates a deep copy of the given ASTNode.
@@ -168,7 +200,6 @@ public class ASTNode {
 		setType(astNode.getType());
 		this.denominator = astNode.denominator;
 		this.exponent = astNode.exponent;
-		this.integer = astNode.integer;
 		this.mantissa = astNode.mantissa;
 		this.name = astNode.name == null ? null : new String(astNode.name);
 		this.numerator = astNode.numerator;
@@ -188,41 +219,20 @@ public class ASTNode {
 	 * @param the
 	 *            parent SBML object
 	 */
-	public ASTNode(Constants type, SBase parent) {
+	public ASTNode(Constants type, MathContainer parent) {
 		this(parent);
 		setType(type);
 	}
 
 	/**
 	 * 
-	 * @param name
-	 * @param parent
-	 */
-	public ASTNode(String name, SBase parent) {
-		this(Constants.AST_NAME, parent);
-		setName(name);
-
-	}
-
-	/**
-	 * 
-	 * @param naem
-	 * @param parent
-	 */
-	public ASTNode(StringBuffer name, SBase parent) {
-		this(Constants.AST_NAME, parent);
-		setName(name.toString());
-	}
-
-	/**
-	 * 
-	 * @param stoich
+	 * @param real
 	 * @param parent
 	 */
 
-	public ASTNode(double stoich, SBase parent) {
-		this(Constants.AST_RATIONAL, parent);
-		setValue(stoich);
+	public ASTNode(double real, MathContainer parent) {
+		this(Constants.AST_REAL, parent);
+		setValue(real);
 	}
 
 	/**
@@ -235,12 +245,33 @@ public class ASTNode {
 	 * @param astNode
 	 *            the parent SBML object
 	 */
-	public ASTNode(SBase parent) {
+	public ASTNode(MathContainer parent) {
 		parentSBMLObject = parent;
 		listOfNodes = null;
 		initDefaults();
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param parent
+	 */
+	public ASTNode(String name, MathContainer parent) {
+		this(Constants.AST_NAME, parent);
+		setName(name);
+
+	}
+
+	/**
+	 * 
+	 * @param naem
+	 * @param parent
+	 */
+	public ASTNode(StringBuffer name, MathContainer parent) {
+		this(Constants.AST_NAME, parent);
+		setName(name.toString());
+	}
+	
 	public void addChild(ASTNode child) {
 		listOfNodes.add(child);
 	}
@@ -358,7 +389,7 @@ public class ASTNode {
 	 */
 	public int getInteger() {
 		if (isInteger())
-			return integer;
+			return numerator;
 		throw new RuntimeException(
 				new IllegalAccessException(
 						"getInteger() should be called only when getType() == AST_INTEGER"));
@@ -449,7 +480,7 @@ public class ASTNode {
 	 * 
 	 * @return Returns the parent SBML object.
 	 */
-	public SBase getParentSBMLObject() {
+	public MathContainer getParentSBMLObject() {
 		return parentSBMLObject;
 	}
 
@@ -469,9 +500,9 @@ public class ASTNode {
 			case AST_REAL:
 				return mantissa;
 			case AST_REAL_E:
-				return Math.pow(getMantissa(), getExponent());
+				return getMantissa() * Math.pow(10, getExponent());
 			case AST_RATIONAL:
-				return getNumerator() / getDenominator();
+				return ((double) getNumerator()) / ((double) getDenominator());
 			case AST_CONSTANT_E:
 				return Math.E;
 			case AST_CONSTANT_PI:
@@ -1022,7 +1053,7 @@ public class ASTNode {
 	 * @param exponent
 	 *            the exponent of this node's real-numbered value
 	 */
-	public void setValue(double mantissa, double exponent) {
+	public void setValue(double mantissa, int exponent) {
 		type = Constants.AST_REAL_E;
 		this.mantissa = mantissa;
 		this.exponent = exponent;
@@ -1036,7 +1067,8 @@ public class ASTNode {
 	 */
 	public void setValue(int value) {
 		type = Constants.AST_INTEGER;
-		integer = value;
+		numerator = value;
+		denominator = 1;
 	}
 
 	/**
@@ -1776,10 +1808,5 @@ public class ASTNode {
 		if (1 < getRightChild().getNumChildren())
 			value.append(LaTeX.rightBrace);
 		return value;
-	}
-
-	public static ASTNode sqrt(ASTNode frac) {
-		return root(frac, new ASTNode(2, frac.getParentSBMLObject()));
-
 	}
 }

@@ -21,6 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
+import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
@@ -130,7 +131,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	// @Override
-	protected StringBuffer createKineticEquation(Model model,
+	protected ASTNode createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -175,6 +176,6 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				numerator = times(modE.get(enzymeNum), numerator);
 			enzymes[enzymeNum] = frac(numerator, denominator);
 		}
-		return sum(enzymes);
+		return ASTNode.sum(enzymes);
 	}
 }

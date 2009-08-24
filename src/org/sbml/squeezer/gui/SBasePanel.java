@@ -20,13 +20,17 @@ package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
@@ -41,6 +45,8 @@ import org.sbml.SBase;
 import org.sbml.SimpleSpeciesReference;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.squeezer.io.LaTeX;
+import org.sbml.squeezer.io.LaTeXExport;
 
 import atp.sHotEqn;
 
@@ -91,6 +97,27 @@ public class SBasePanel extends JPanel {
 		if (sbase instanceof ListOf) {
 			// TODO
 		} else if (sbase instanceof Model) {
+			Model m = (Model) sbase;
+			LayoutHelper.addComponent(this, gbl, new JLabel("Compartments: "),
+					0, ++row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel(Integer.toString(m
+					.getNumCompartments())), 1, row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel("Species: "), 0,
+					++row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel(Integer.toString(m
+					.getNumSpecies())), 1, row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel("Parameters: "), 0,
+					++row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel(Integer.toString(m
+					.getNumParameters())), 1, row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel("Reactions: "), 0,
+					++row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel(Integer.toString(m
+					.getNumReactions())), 1, row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel("Events: "), 0,
+					++row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel(Integer.toString(m
+					.getNumEvents())), 1, row, 1, 1, 1, 1);
 			// TODO
 		} else if (sbase instanceof SimpleSpeciesReference) {
 			// TODO
@@ -100,13 +127,55 @@ public class SBasePanel extends JPanel {
 				// TODO
 			}
 		} else if (sbase instanceof Parameter) {
-			// TODO
+			Parameter p = (Parameter) sbase;
+			LayoutHelper.addComponent(this, gbl, new JLabel("Value"), 0, ++row,
+					1, 1, 1, 1);
+			double value = p.isSetValue() ? p.getValue() : 0;
+			LayoutHelper.addComponent(this, gbl, new JSpinner(
+					new SpinnerNumberModel(value, value - 1000d, value + 1000d,
+							1d)), 1, row, 1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JCheckBox("Constant", p
+					.getConstant()), 0, ++row, 2, 1, 1, 1);
 		} else if (sbase instanceof Reaction) {
 			Reaction reaction = (Reaction) sbase;
 			LayoutHelper.addComponent(this, gbl, new JCheckBox("Reversible",
 					reaction.getReversible()), 0, ++row, 2, 1, 1, 1);
 			LayoutHelper.addComponent(this, gbl, new JCheckBox("Fast", reaction
 					.getFast()), 0, ++row, 2, 1, 1, 1);
+
+			// Create Table of reactants, modifiers and products
+			String rmp[][] = new String[Math.max(reaction.getNumReactants(),
+					Math.max(reaction.getNumModifiers(), reaction
+							.getNumProducts()))][3];
+			String colNames[] = new String[] { "Reactants", "Modifiers",
+					"Products" };
+			int count = 0;
+			for (SpeciesReference specRef : reaction.getListOfReactants())
+				rmp[count++][0] = specRef.getSpeciesInstance().toString();
+			count = 0;
+			for (ModifierSpeciesReference mSpecRef : reaction
+					.getListOfModifiers())
+				rmp[count++][1] = mSpecRef.getSpeciesInstance().toString();
+			count = 0;
+			for (SpeciesReference specRef : reaction.getListOfProducts())
+				rmp[count++][2] = specRef.getSpeciesInstance().toString();
+			JTable table = new JTable(rmp, colNames);
+			table.setPreferredScrollableViewportSize(new Dimension(200, table
+					.getRowCount()
+					* table.getRowHeight()));
+			LayoutHelper.addComponent(this, gbl, new JScrollPane(table,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 0, ++row, 2,
+					1, 1, 1);
+
+			JPanel rEqPanel = new JPanel(new GridLayout(1, 1));
+			sHotEqn rEqn = new sHotEqn(LaTeXExport.reactionEquation(reaction));
+			rEqn.setBorder(BorderFactory.createLoweredBevelBorder());
+			rEqPanel.add(rEqn);
+			rEqPanel.setBorder(BorderFactory
+					.createTitledBorder(" Reaction equation "));
+			LayoutHelper
+					.addComponent(this, gbl, rEqPanel, 0, ++row, 2, 1, 1, 1);
 			if (reaction.isSetKineticLaw())
 				LayoutHelper.addComponent(this, gbl, new SBasePanel(reaction
 						.getKineticLaw()), 0, ++row, 2, 1, 1, 1);
@@ -114,13 +183,14 @@ public class SBasePanel extends JPanel {
 			KineticLaw kl = (KineticLaw) sbase;
 			if (kl.isSetMath()) {
 				StringBuffer laTeXpreview = new StringBuffer();
-				laTeXpreview.append("\\begin{equation}v_\\mbox{");
+				laTeXpreview.append(LaTeX.eqBegin);
+				laTeXpreview.append("v_\\mbox{");
 				laTeXpreview.append(kl.getParentSBMLObject().getId());
 				laTeXpreview.append("}=");
 				laTeXpreview.append(kl.getMath().toLaTeX().toString().replace(
 						"mathrm", "mbox").replace("text", "mbox").replace(
 						"mathtt", "mbox"));
-				laTeXpreview.append("\\end{equation}");
+				laTeXpreview.append(LaTeX.eqEnd);
 				JPanel preview = new JPanel(new BorderLayout());
 				preview.add(new sHotEqn(laTeXpreview.toString()),
 						BorderLayout.CENTER);

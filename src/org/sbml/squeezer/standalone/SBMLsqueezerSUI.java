@@ -45,7 +45,7 @@ import org.sbml.Model;
 import org.sbml.squeezer.gui.JBrowser;
 import org.sbml.squeezer.gui.JHelpBrowser;
 import org.sbml.squeezer.gui.JTabbedPaneWithCloseIcons;
-import org.sbml.squeezer.gui.ModelComponentsPanel;
+import org.sbml.squeezer.gui.SBMLModelSplitPane;
 import org.sbml.squeezer.gui.SystemBrowser;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
@@ -175,7 +175,7 @@ public class SBMLsqueezerSUI extends JFrame implements ActionListener,
 	}
 
 	private void addModel(Model model) {
-		tabbedPane.add(model.getId(), new ModelComponentsPanel(model));
+		tabbedPane.add(model.getId(), new SBMLModelSplitPane(model));
 		setModelsOpened(true);
 		pack();
 	}
