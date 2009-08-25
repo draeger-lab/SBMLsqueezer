@@ -19,6 +19,10 @@
 package org.sbml.squeezer.plugin;
 
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import javax.swing.JMenuItem;
@@ -26,8 +30,9 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
-import org.sbml.squeezer.gui.SBMLsqueezerUI;
-import org.sbml.squeezer.gui.UpdateMessageThread;
+import org.sbml.squeezer.gui.KineticLawSelectionDialog;
+import org.sbml.squeezer.gui.UpdateMessage;
+import org.sbml.squeezer.resources.Resource;
 
 /**
  * TODO: comment missing
@@ -42,14 +47,15 @@ import org.sbml.squeezer.gui.UpdateMessageThread;
 public class SBMLsqueezerPluginAction extends PluginAction {
 
 	static {
-		PrintStream out = System.out;
-		out.println("-----------------------------------------------------");
-		out.println("SBMLsqueezer Copyright (C) 2009 Andreas Dr\u00e4ger");
-		out.println("This program comes with ABSOLUTELY NO WARRANTY.");
-		out.println("This is free software, and you are welcome");
-		out.println("to redistribute it under certain conditions;");
-		out.println("see http://www.gnu.org/copyleft/gpl.html for details.");
-		out.println("-----------------------------------------------------");
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(
+					Resource.class.getResource("txt/disclaimer.txt").getFile()));
+			String line;
+			while ((line = br.readLine()) != null)
+				System.out.println(line);
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
 	}
 
 	/**
@@ -84,40 +90,50 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 	 * @param e
 	 */
 	public void myActionPerformed(ActionEvent e) {
-		UpdateMessageThread umThread = new UpdateMessageThread(plugin);
-		umThread.start();
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					UpdateMessage.checkForUpdate(plugin);
+				} catch (IOException exc) {
+					// JOptionPane.showMessageDialog(null, exc.getMessage());
+					// exc.printStackTrace();
+				}
+			}
+		}).start();
 		if (e.getSource() instanceof JMenuItem) {
-			String item = ((JMenuItem) e.getSource()).getText();
-			if (item.equals(plugin.getMainPluginItemText()))
-				new Thread(new Runnable() {
-					public void run() {
-						(new SBMLsqueezerUI(plugin)).setVisible(true);
-					}
-				}).start();
-			else if (item.equals(plugin.getSqueezeContextMenuItemText()))
-				new Thread(new Runnable() {
-					public void run() {
-						new SBMLsqueezerUI(plugin, (PluginReaction) plugin
-								.getSelectedReactionNode().get(0));
-					}
-				}).start();
-			else if (item.equals(plugin.getExportContextMenuItemText()))
-				new Thread(new Runnable() {
-					public void run() {
-						new SBMLsqueezerUI(plugin.getSelectedModel(),
-								(PluginReaction) plugin
-										.getSelectedReactionNode().get(0));
-					}
-				}).start();
-			else if (item.equals(plugin.getExporterItemText()))
-				if (plugin.getSelectedModel() != null)
-					new Thread(new Runnable() {
-						public void run() {
-							new SBMLsqueezerUI(plugin.getSelectedModel());
-						}
-					}).start();
+			final String item = ((JMenuItem) e.getSource()).getText();
+			new Thread(new Runnable() {
+				public void run() {
+					startSBMLsqueezer(item);
+				}
+			}).start();
 		} else
 			System.err.println("Unsupported source of action "
 					+ e.getSource().getClass().getName());
+	}
+
+	/**
+	 * Starts the SBMLsqueezer dialog window for kinetic law selection or LaTeX
+	 * export.
+	 * 
+	 * @param item
+	 */
+	private void startSBMLsqueezer(String item) {
+		PluginSBMLReader reader = new PluginSBMLReader(plugin
+				.getSelectedModel());
+		if (item.equals(plugin.getMainPluginItemText()))
+			(new KineticLawSelectionDialog(null, reader)).setVisible(true);
+		else if (item.equals(plugin.getSqueezeContextMenuItemText()))
+			new KineticLawSelectionDialog(null, reader, reader
+					.convert((PluginReaction) plugin.getSelectedReactionNode()
+							.get(0)));
+		else if (item.equals(plugin.getExportContextMenuItemText()))
+			new KineticLawSelectionDialog(null, reader.getSelectedModel()
+					.getReaction(
+							((PluginReaction) plugin.getSelectedReactionNode()
+									.get(0)).getId()));
+		else if (item.equals(plugin.getExporterItemText()))
+			if (plugin.getSelectedModel() != null)
+				new KineticLawSelectionDialog(null, reader.getSelectedModel());
 	}
 }

@@ -18,115 +18,84 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
-import org.sbml.squeezer.gui.table.KineticLawJTable;
-import org.sbml.squeezer.gui.table.KineticLawTableModel;
-import org.sbml.squeezer.io.LaTeXExport;
-import org.sbml.squeezer.io.ODEwriter;
+import org.sbml.squeezer.io.AbstractSBMLconverter;
 import org.sbml.squeezer.io.SBFileFilter;
-import org.sbml.squeezer.kinetics.IllegalFormatException;
-import org.sbml.squeezer.kinetics.KineticLawGenerator;
-import org.sbml.squeezer.kinetics.LawListener;
-import org.sbml.squeezer.kinetics.ModificationException;
-import org.sbml.squeezer.kinetics.RateLawNotApplicableException;
-import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.resources.cfg.CfgKeys;
 
 /**
- * This is the main GUI class.
+ * @author Andreas Dr&auml;ger <a
+ *         href="mailto:andreas.draeger@uni-tuebingen.de">
+ *         andreas.draeger@uni-tuebingen.de</a>
  * 
- * @since 1.0
- * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
- * @author <a href="mailto:supper@genomatix.de">Jochen Supper</a>
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
- * @date Aug 3, 2007
  */
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
-		WindowListener, LawListener {
+		WindowListener, ChangeListener {
+
+	/**
+	 * The number of the current SBMLsqueezer version.
+	 */
+	private static final String versionNumber = "1.2.1";
+
+	private AbstractSBMLconverter sbmlIO;
+
+	public static final String SQUEEZE = "squeeze_reaction";
+	public static final String TO_LATEX = "reaction_toLaTeX";
+
+	/**
+	 * 
+	 * @return versionNumber
+	 */
+	public static final String getVersionNumber() {
+		return versionNumber;
+	}
+
+	JTabbedPaneWithCloseIcons tabbedPane;
+	Properties properties;
+	private JMenuItem saveItem;
+	private JMenuItem closeItem;
+
+	private JMenuItem squeezeItem;
+
+	private JMenuItem latexItem;
 
 	/**
 	 * Generated serial version id.
 	 */
-	private static final long serialVersionUID = -5980678130366530716L;
-
-	private static final int fullHeight = 720;
+	private static final long serialVersionUID = 5662654607939013825L;
 
 	/**
-	 * Just for debuggin purposes.
-	 * 
-	 * @param args
+	 * @throws HeadlessException
 	 */
-	public static void main(String[] args) {
-		SBMLsqueezerUI ui = new SBMLsqueezerUI();
-		ui.init();
-		ui.setVisible(true);
-	}
-
-	// UI ELEMENTS DEFINITION: ReactionFrame
-	private boolean KineticsAndParametersStoredInSBML = false;
-
-	// CELL DESIGNER VARIABELS
-	private SBMLsqueezerPlugin plugin;
-
-	private int numOfWarnings = 0;
-
-	private JSettingsPanel settingsPanel;
-
-	private JButton options;
-
-	private JPanel centralPanel;
-
-	private JButton helpButton;
-
-	private KineticLawGenerator klg;
-
-	private JPanel footPanel;
-
-	private JProgressBar progressBar;
-
-	private JDialog progressDialog;
-
-	/**
-	 * Constructor
-	 */
-	public SBMLsqueezerUI() {
-		super();
+	public SBMLsqueezerUI(AbstractSBMLconverter io) throws HeadlessException {
+		super("SBMLsqueezer " + getVersionNumber());
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException exc) {
@@ -150,9 +119,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
-		plugin = null;
-		setTitle("SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber());
-		setAlwaysOnTop(true);
 		try {
 			Image image = ImageIO.read(Resource.class
 					.getResource("img/icon.png"));
@@ -163,696 +129,271 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					JOptionPane.ERROR_MESSAGE);
 			exc.printStackTrace();
 		}
-	}
-
-	/**
-	 * This constructor allows us to store the given model in a text file. This
-	 * can be a LaTeX or another format.
-	 * 
-	 * @param model
-	 */
-	public SBMLsqueezerUI(Model model) {
-		this();
-		ImageIcon icon = null;
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/Lemon_small.png"));
-			icon = new ImageIcon(image);
-			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(null, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
-		LaTeXExportDialogPanel panel = new LaTeXExportDialogPanel();
-		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				icon) == JOptionPane.OK_OPTION) {
-			try {
-				BufferedWriter buffer = new BufferedWriter(new FileWriter(panel
-						.getTeXFile()));
-				LaTeXExport exporter = new LaTeXExport(panel.isLandscape(),
-						panel.isIDsInTWFont(), panel.getFontSize(), panel
-								.getPaperSize(), panel.isTitlePage(), panel
-								.isNameInEquations());
-				buffer.write(exporter.toLaTeX(model).toString());
-				buffer.close();
-				dispose();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @param model
-	 * @param reaction
-	 */
-	public SBMLsqueezerUI(Model model, Reaction reaction) {
-		this();
-		JFileChooser chooser = new JFileChooser();
-		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
-		chooser.setFileFilter(ff1);
-		File file = null;
-		int state = chooser.showOpenDialog(null);
-		if (state == JFileChooser.APPROVE_OPTION)
-			file = chooser.getSelectedFile();
-		try {
-			BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
-			buffer.write(new LaTeXExport().toLaTeX(model, reaction).toString());
-			buffer.close();
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.WARNING_MESSAGE);
-		}
-	}
-
-	/**
-	 * DEFAULT Constructor
-	 * 
-	 * @param plugin
-	 */
-	public SBMLsqueezerUI(SBMLsqueezerPlugin plugin) {
-		this();
-		this.plugin = plugin;
+		this.sbmlIO = io;
 		init();
+		pack();
 	}
 
-	// public static void listLoadedLibraries() throws Exception {
-	// Field loadedLibraryNamesField = ClassLoader.class
-	// .getDeclaredField("loadedLibraryNames");
-	// loadedLibraryNamesField.setAccessible(true);
-	// @SuppressWarnings("unchecked")
-	// Vector<String> loadedLibraryNames = (Vector<String>)
-	// loadedLibraryNamesField
-	// .get(null);
-	// for (String string : loadedLibraryNames) {
-	// System.out.println(string);
-	// }
-	// }
-
-	/**
-	 * This constructor is necessary for the GUI to generate just one single
-	 * rate equation for the given reaction.
-	 * 
-	 * @param plugin
-	 * @param reaction
-	 */
-	public SBMLsqueezerUI(SBMLsqueezerPlugin plugin, Reaction reaction) {
-		this();
-		this.plugin = plugin;
-
-		Model model = reaction.getModel();
-		ImageIcon icon = null;
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/Lemon_small.png"));
-			icon = new ImageIcon(image);
-			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(null, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
-		try {
-			klg = new KineticLawGenerator(plugin);
-			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(
-					klg, model, reaction);
-			if (JOptionPane.showConfirmDialog(this, messagePanel,
-					"SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber(),
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-					icon) == JOptionPane.OK_OPTION) {
-				if (!messagePanel.getExistingRateLawSelected()) {
-					short equationType = messagePanel.getSelectedKinetic();
-					reaction.setReversible(messagePanel.getReversible());
-					plugin.notifySBaseChanged(reaction);
-					reaction = klg.storeLaw(plugin, klg.createKineticLaw(model,
-							reaction, equationType, messagePanel
-									.getReversible()), messagePanel
-							.getReversible());
-					klg.removeUnnecessaryParameters(plugin);
+	// @Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals(SQUEEZE)) {
+			if (e.getSource() instanceof Reaction) {
+				new KineticLawSelectionDialog(this, sbmlIO, (Reaction) e
+						.getSource());
+			} else if (e.getSource() instanceof Model) {
+				KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(
+						this, sbmlIO);
+				klsd.setVisible(true);
+			} else if (e.getActionCommand().equals(TO_LATEX)) {
+				if (e.getSource() instanceof Reaction) {
+					new KineticLawSelectionDialog(this, (Reaction) e
+							.getSource());
+				} else if (e.getSource() instanceof Model) {
+					// TODO
 				}
 			}
-		} catch (RateLawNotApplicableException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (RuntimeException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (IllegalFormatException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		}
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() instanceof JButton) {
-			String text = ((JButton) e.getSource()).getText();
-			if (text.equals("show options")) {
-				showSettingsPanel();
-			} else if (text.equals("hide options")) {
-				try {
-					Image image = ImageIO.read(Resource.class
-							.getResource("img/rightarrow.png"));
-					image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-					options.setIcon(new ImageIcon(image));
-					options.setIconTextGap(5);
-				} catch (IOException exc) {
-					exc.printStackTrace();
+		} else if (e.getSource() instanceof JMenuItem) {
+			JMenuItem item = (JMenuItem) e.getSource();
+			if (item.getText().equals("Open")) {
+				JFileChooser chooser = new JFileChooser();
+				SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
+				chooser.setFileFilter(filter);
+				String dir = properties
+						.getProperty(CfgKeys.OPEN_DIR.toString());
+				if (dir != null) {
+					if (dir.startsWith("user."))
+						dir = System.getProperty(dir);
+					chooser.setCurrentDirectory(new File(dir));
 				}
-				options.setText("show options");
-				options
-						.setToolTipText("<html>Customize the advanced settings.</html>");
-				centralPanel.removeAll();
-				JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-				panel.add(options);
-				centralPanel.add(panel, BorderLayout.NORTH);
-				validate();
-				pack();
+				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+					addModel(sbmlIO.convert(chooser.getSelectedFile()
+							.getAbsolutePath()));
+					String path = chooser.getSelectedFile().getAbsolutePath();
+					path = path.substring(0, path.lastIndexOf('/'));
+					if (!path.equals(dir))
+						properties.put(CfgKeys.OPEN_DIR, path);
+				}
+			} else if (item.getText().equals(latexItem.getText())) {
+				// TODO
+				JFileChooser chooser = new JFileChooser();
+				SBFileFilter filterTeX = new SBFileFilter(
+						SBFileFilter.TeX_FILES);
+				chooser.addChoosableFileFilter(filterTeX);
+				String dir = properties
+						.getProperty(CfgKeys.SAVE_DIR.toString());
+				if (dir != null) {
+					if (dir.startsWith("user."))
+						dir = System.getProperty(dir);
+					chooser.setCurrentDirectory(new File(dir));
+				}
+				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+					// TODO
+					System.err.println("not yet implemented");
+					String path = chooser.getSelectedFile().getAbsolutePath();
+					path = path.substring(0, path.lastIndexOf('/'));
+					if (!path.equals(dir))
+						properties.put(CfgKeys.OPEN_DIR, path);
+				}
+			} else if (item.getText().equals(saveItem.getText())) {
+				JFileChooser chooser = new JFileChooser();
+				SBFileFilter filterSBML = new SBFileFilter(
+						SBFileFilter.SBML_FILES);
+				SBFileFilter filterText = new SBFileFilter(
+						SBFileFilter.TEXT_FILES);
+				SBFileFilter filterTeX = new SBFileFilter(
+						SBFileFilter.TeX_FILES);
+				chooser.addChoosableFileFilter(filterSBML);
+				chooser.addChoosableFileFilter(filterText);
+				chooser.addChoosableFileFilter(filterTeX);
+				String dir = properties
+						.getProperty(CfgKeys.SAVE_DIR.toString());
+				if (dir != null) {
+					if (dir.startsWith("user."))
+						dir = System.getProperty(dir);
+					chooser.setCurrentDirectory(new File(dir));
+				}
+				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+					// TODO
+					System.err.println("not yet implemented");
+					String path = chooser.getSelectedFile().getAbsolutePath();
+					path = path.substring(0, path.lastIndexOf('/'));
+					if (!path.equals(dir))
+						properties.put(CfgKeys.OPEN_DIR, path);
+				}
+			} else if (item.getText().equals(closeItem.getText())) {
+				if (tabbedPane.getComponentCount() > 0)
+					tabbedPane.remove(tabbedPane.getSelectedComponent());
+				if (tabbedPane.getComponentCount() == 0)
+					setModelsOpened(false);
+			} else if (item.getText().equals("Squeeze")) {
+				KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(
+						this, sbmlIO);
+				klsd.setVisible(true);
 
-			} else if (text.equals("Help")) {
+			} else if (item.getText().equals("Exit")) {
+				saveProperties();
+				System.exit(0);
+			} else if (item.getText().equals("About")) {
+				JBrowser browser = new JBrowser(Resource.class
+						.getResource("html/about.htm"));
+				browser.removeHyperlinkListener(browser);
+				browser.addHyperlinkListener(new SystemBrowser());
+				browser.setBorder(BorderFactory.createEtchedBorder());
+				JOptionPane.showMessageDialog(this, browser,
+						"About SBMLsqueezer", JOptionPane.INFORMATION_MESSAGE);
+			} else if (item.getText().equals("Online help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
-						"SBMLsqueezer " + SBMLsqueezerPlugin.getVersionNumber()
-								+ " - Online Help");
-				helpBrowser.addWindowListener(this);
+						"SBMLsqueezer " + getVersionNumber() + " - Online Help");
+				// helpBrowser.addWindowListener(this);
 				helpBrowser.setLocationRelativeTo(this);
 				helpBrowser.setSize(640, 640);
-				helpButton.setEnabled(false);
 				helpBrowser.setVisible(true);
-
-			} else if (text.equals("Cancel")) {
-				dispose();
-
-				/*
-				 * } else if (text.equals("Apply")) {
-				 * getContentPane().remove(settingsPanel); pack();
-				 * setLocationRelativeTo(null);//
-				 */
-
-			} else if (text.equals("Restore")) {
-				settingsPanel.restoreDefaults();
-				getContentPane().remove(settingsPanel);
-				pack();
-				setLocationRelativeTo(null);
-
-			} else if (text.equals("Generate")) {
-				if (plugin != null)
-					try {
-						klg = new KineticLawGenerator(
-								plugin,
-								settingsPanel
-										.isSetAllReactionsAreEnzymeCatalyzed(),
-								settingsPanel
-										.isSetAllParametersAreAddedGlobally(),
-								settingsPanel
-										.isSetGenerateKineticsForAllReactions(),
-								settingsPanel.getUniUniType(), settingsPanel
-										.getBiUniType(), settingsPanel
-										.getBiBiType(), settingsPanel
-										.getListOfPossibleEnzymes());
-						klg.findExistingLawsAndGenerateMissingLaws(plugin
-								.getSelectedModel(), settingsPanel
-								.isSetTreatAllReactionsReversible());
-						if (klg.getFastReactions().size() > 0) {
-							String message = "<html><head></head><body><p>The model contains ";
-							if (klg.getFastReactions().size() > 1)
-								message += "fast reactions";
-							else
-								message += "the fast reaction "
-										+ klg.getFastReactions().get(0).getId();
-							message += ". This feature is currently not<br>"
-									+ "supported by SBMLsqueezer. Rate laws can still be generated properly<br>"
-									+ "but the fast attribute ";
-							if (klg.getFastReactions().size() > 1) {
-								message += "of the following reactions is beeing ignored:<br>"
-										+ "<ul type=\"disc\">";
-								for (int i = 0; i < klg.getFastReactions()
-										.size(); i++)
-									message += "<li>"
-											+ klg.getFastReactions().get(i)
-													.getId() + "</li>";
-								message += "</ul>";
-							} else
-								message += "is beeing ignored.";
-							message += "</p></body></html>";
-							JOptionPane.showMessageDialog(this, message,
-									"Fast Reactions",
-									JOptionPane.WARNING_MESSAGE);
-						}
-
-						JPanel reactionsPanel = new JPanel(new BorderLayout());
-						JTable tableOfKinetics = new KineticLawJTable(klg,
-								settingsPanel
-										.getMaxRealisticNumberOfReactants(),
-								settingsPanel
-										.isSetTreatAllReactionsReversible());
-						numOfWarnings = ((KineticLawTableModel) tableOfKinetics
-								.getModel()).getNumOfWarnings();
-						tableOfKinetics
-								.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-						JScrollPane scroll;
-
-						if (tableOfKinetics.getRowCount() == 0) {
-							JEditorPane pane = new JEditorPane(
-									plugin.getSelectedModel().getNumReactions() > 0 ? Resource.class
-											.getResource("html/NoNewKineticsCreated.html")
-											: Resource.class
-													.getResource("html/ModelDoesNotContainAnyReactions.html"));
-							pane.addHyperlinkListener(new SystemBrowser());
-							pane.setBackground(Color.WHITE);
-							pane.setEditable(false);
-							scroll = new JScrollPane(pane,
-									JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-									JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-						} else {
-							scroll = new JScrollPane(tableOfKinetics,
-									JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-									JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-						}
-						scroll.setBorder(BorderFactory
-								.createBevelBorder(BevelBorder.LOWERED));
-						scroll.setBackground(Color.WHITE);
-						reactionsPanel.add(scroll, BorderLayout.CENTER);
-
-						JLabel numberOfWarnings = new JLabel(
-								"<html><table align=left width=500 cellspacing=10><tr><td>"
-										+ "<b>Kinetic Equations</b></td><td>"
-										+ "<td>Number of warnings (red): "
-										+ numOfWarnings
-										+ "</td></tr></table></htlm>");
-						numberOfWarnings
-								.setToolTipText("<html>The number of reactions an unlikely number "
-										+ "of reactants<br>"
-										+ "These are also highlighted in red in the table.</html>");
-						reactionsPanel
-								.add(numberOfWarnings, BorderLayout.NORTH);
-
-						centralPanel.removeAll();
-						centralPanel.add(reactionsPanel, BorderLayout.CENTER);
-						getContentPane().remove(footPanel);
-						getContentPane().add(footPanel = getFootPanel(1),
-								BorderLayout.SOUTH);
-						setResizable(true);
-						setSize(getWidth(), 640);
-						validate();
-
-					} catch (IllegalFormatException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					} catch (ModificationException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					} catch (RateLawNotApplicableException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					} catch (IOException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					}
-
-				else
-					klg = null;
-
-			} else if (text.equals("Back")) {
-				getContentPane().remove(footPanel);
-				getContentPane().add(footPanel = getFootPanel(0),
-						BorderLayout.SOUTH);
-				getContentPane().remove(centralPanel);
-				getContentPane().add(centralPanel = initOptionsPanel(),
-						BorderLayout.CENTER);
-				setResizable(false);
-				showSettingsPanel();
-			} else if (text.equals("Export")) {
-				/*
-				 * new Thread(new Runnable() { public void run() {//
-				 */
-				exportKineticEquations();
-				/*
-				 * } }).start();/
-				 */
-
-			} else if (text.equals("Apply")) {
-				dispose();
-				if (!KineticsAndParametersStoredInSBML) {
-					KineticsAndParametersStoredInSBML = true;
-					if (plugin != null)
-						klg.storeKineticsAndParameters(plugin, settingsPanel
-								.isSetTreatAllReactionsReversible(), this);
-				}
-
-			} else if (text.equals("Save")) {
-				JFileChooser chooser = new JFileChooser();
-				SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-				chooser.setFileFilter(ff2);
-				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-					settingsPanel.save(chooser.getSelectedFile());
-			} else if (text.equals("Load")) {
-				JFileChooser chooser = new JFileChooser();
-				SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-				chooser.setFileFilter(ff2);
-				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-					try {
-						settingsPanel.loadSettings(chooser.getSelectedFile());
-					} catch (IOException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					} catch (NumberFormatException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					}
+				helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			}
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.LawListener#currentNumber(int)
-	 */
-	public void currentNumber(int num) {
-		progressBar.setValue(num);
-		if (num >= progressBar.getMaximum())
-			progressDialog.dispose();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.LawListener#totalNumber(int)
-	 */
-	public void totalNumber(int count) {
-		progressBar = new JProgressBar(0, count);
-		progressBar.setToolTipText("Storing kinetic laws");
-		progressBar.setValue(0);
-		progressDialog = new JDialog(this);
-		GridBagLayout layout = new GridBagLayout();
-		progressDialog.setLayout(layout);
-		LayoutHelper.addComponent(progressDialog.getContentPane(), layout,
-				progressBar, 0, 0, 1, 1, 1, 1);
-		progressDialog.pack();
-		progressDialog.setAlwaysOnTop(true);
-		progressDialog.setLocationRelativeTo(null);
-		progressDialog.setVisible(false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	public void windowActivated(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
-	 */
-	public void windowClosed(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-	 */
-	public void windowClosing(WindowEvent e) {
-		if (e.getSource() instanceof JHelpBrowser)
-			helpButton.setEnabled(true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeactivated(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
-	 */
-	public void windowIconified(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
-	 */
-	public void windowOpened(WindowEvent e) {
-	}
-
-	/**
-	 * This method allows to write the generated kinetic equations to an ASCII
-	 * or TeX file.
-	 */
-	private void exportKineticEquations() {
-		if (!KineticsAndParametersStoredInSBML) {
-			if (plugin != null)
-				klg.storeKineticsAndParameters(plugin, settingsPanel
-						.isSetTreatAllReactionsReversible(), this);
-			KineticsAndParametersStoredInSBML = true;
-		}
-		JFileChooser chooser = new JFileChooser();
-		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
-		SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-		chooser.setFileFilter(ff1);
-		chooser.addChoosableFileFilter(ff2);
-		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-			try {
-				new ODEwriter(chooser.getSelectedFile(), klg);
-			} catch (IOException exc) {
-				JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-						+ "</html>", exc.getClass().getName(),
-						JOptionPane.ERROR_MESSAGE);
-				exc.printStackTrace();
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(tabbedPane)) {
+			if (tabbedPane.getComponentCount() == 0) {
+				setModelsOpened(false);
 			}
+		}
 	}
 
-	/**
-	 * Returns the panel on the bottom of this window.
-	 * 
-	 * @param type
-	 *            if i = 0 this will return the foot containing the buttons
-	 *            "Help", "Cancel" and "Generate" for i = 1 there will be
-	 *            "Export", "Cancel", "Back" and "Apply".
-	 * @return
-	 */
-	private JPanel getFootPanel(int type) {
-		GridBagLayout gbl = new GridBagLayout();
-		JPanel south = new JPanel(gbl), rightPanel = new JPanel(new FlowLayout(
-				FlowLayout.RIGHT)), leftPanel = new JPanel();
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
 
-		JButton cancel = new JButton("Cancel"), apply = new JButton();
-		cancel
-				.setToolTipText("<html>Exit SBMLsqueezer without saving changes.</html>");
-		cancel.addActionListener(this);
-		apply.addActionListener(this);
-
-		rightPanel.add(cancel);
-		switch (type) {
-		case 0:
-			apply.setToolTipText("<html>Start generating an ordinary "
-					+ "differential equation system.</html>");
-			apply.setText("Generate");
-			helpButton = new JButton("Help");
-			helpButton.addActionListener(this);
-			leftPanel.add(helpButton);
-			break;
-		default:
-			apply.setToolTipText("<html>Write the generated kinetics and "
-					+ "parameters to the SBML file.</html>");
-			apply.setText("Apply");
-
-			JButton jButtonReactionsFrameSave = new JButton();
-			jButtonReactionsFrameSave.setEnabled(true);
-			jButtonReactionsFrameSave.setBounds(35, 285, 100, 25);
-			jButtonReactionsFrameSave
-					.setToolTipText("<html>Transfers the kinetics and parameters "
-							+ "to CellDesigner and<br>"
-							+ "allowes to save the generated differential equations as<br>"
-							+ "*.txt or *.tex files.</html>");
-			jButtonReactionsFrameSave.setText("Export");
-			jButtonReactionsFrameSave.addActionListener(this);
-			leftPanel.add(jButtonReactionsFrameSave);
-			JButton back = new JButton("Back");
-			back.addActionListener(this);
-			rightPanel.add(back);
-			break;
-		}
-		rightPanel.add(apply);
-		LayoutHelper.addComponent(south, gbl, leftPanel, 0, 0, 1, 1, 0, 0);
-		LayoutHelper.addComponent(south, gbl, rightPanel, 1, 0, 3, 1, 1, 1);
-
-		return south;
 	}
 
-	/**
-	 * This method initializes a Panel that shows all possible settings of the
-	 * program.
-	 * 
-	 * @return javax.swing.JPanel
-	 */
-	private JSettingsPanel getJSettingsPanel() {
-		if (settingsPanel == null) {
-			settingsPanel = new JSettingsPanel();
-			// settingsPanel.setBackground(Color.WHITE);
-		}
-		return settingsPanel;
+	public void windowClosed(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
-	/**
-	 * Returns a JPanel that displays the user options.
-	 * 
-	 * @return
-	 */
-	private JPanel initOptionsPanel() {
-		JPanel p = new JPanel(new BorderLayout());
-
-		options = new JButton("show options");
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/rightarrow.png"));
-			image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-			options.setIcon(new ImageIcon(image));
-			options.setIconTextGap(5);
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
-		options.setBorderPainted(false);
-		options.setSize(150, 20);
-		options.setToolTipText("Customize the advanced settings.");
-		options.addActionListener(this);
-		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panel.add(options);
-		options.setBackground(new Color(panel.getBackground().getRGB()));
-		p.add(panel, BorderLayout.NORTH);
-
-		return p;
+	public void windowClosing(WindowEvent arg0) {
+		saveProperties();
 	}
 
-	private void showSettingsPanel() {
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/downarrow.png"));
-			image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-			options.setIcon(new ImageIcon(image));
-			options.setIconTextGap(5);
-		} catch (IOException exc) {
-			exc.printStackTrace();
-		}
-		options.setToolTipText("<html>Hide detailed options</html>");
-		options.setText("hide options");
-		settingsPanel = getJSettingsPanel();
-		JScrollPane scroll = new JScrollPane(settingsPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scroll.setBackground(Color.WHITE);
-		centralPanel.add(scroll, BorderLayout.CENTER);
-		centralPanel.validate();
-		/*
-		 * setSize(getWidth(), (int) Math.min(fullHeight,
-		 * GraphicsEnvironment.getLocalGraphicsEnvironment()
-		 * .getMaximumWindowBounds().getHeight()));//
-		 */
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void addModel(Model model) {
+		SBMLModelSplitPane split = new SBMLModelSplitPane(model);
+		split.addActionListener(this);
+		tabbedPane.add(model.getId(), split);
+		setModelsOpened(true);
 		pack();
-		validate();
 	}
 
-	/**
-	 * This method actually initializes the GUI.
-	 */
+	private JMenuBar createMenuBar() {
+		JMenu fileMenu = new JMenu("File");
+		JMenuItem openItem = new JMenuItem("Open", UIManager
+				.getIcon("FileView.directoryIcon"));
+		saveItem = new JMenuItem("Save", UIManager
+				.getIcon("FileView.floppyDriveIcon"));
+		closeItem = new JMenuItem("Close");
+		JMenuItem exitItem = new JMenuItem("Exit");
+		fileMenu.add(openItem);
+		fileMenu.add(saveItem);
+		fileMenu.add(closeItem);
+		fileMenu.add(exitItem);
+		openItem.addActionListener(this);
+		closeItem.addActionListener(this);
+		exitItem.addActionListener(this);
+
+		JMenu editMenu = new JMenu("Edit");
+		squeezeItem = new JMenuItem("Squeeze");
+		squeezeItem.addActionListener(this);
+		try {
+			squeezeItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
+					.getResource("img/Lemon_tiny.png"))));
+		} catch (IOException e) {
+		}
+		latexItem = new JMenuItem("Export to LaTeX");
+		try {
+			latexItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
+					.getResource("img/SBML2LaTeX_vertical_tiny.png"))));
+		} catch (IOException e) {
+		}
+		latexItem.addActionListener(this);
+		latexItem.setActionCommand("toLaTeX");
+		editMenu.add(squeezeItem);
+		editMenu.add(latexItem);
+
+		JMenu helpMenu = new JMenu("Help");
+		JMenuItem about = new JMenuItem("About");
+		about.addActionListener(this);
+		JMenuItem help = new JMenuItem("Online help");
+		help.addActionListener(this);
+		helpMenu.add(help);
+		helpMenu.add(about);
+
+		JMenuBar mBar = new JMenuBar();
+		mBar.add(fileMenu);
+		mBar.add(editMenu);
+		try {
+			mBar.setHelpMenu(helpMenu);
+		} catch (Error e) {
+			mBar.add(helpMenu);
+		}
+		return mBar;
+	}
+
+	private void saveProperties() {
+		try {
+			String resourceName = Resource.class.getResource(
+					"cfg/SBMLsqueezer.cfg").getPath();
+			Properties p = Resource.readProperties(resourceName);
+			if (!p.equals(properties))
+				Resource.writeProperties(properties, resourceName);
+		} catch (IOException e) {
+		}
+	}
+
+	private void setModelsOpened(boolean state) {
+		saveItem.setEnabled(state);
+		closeItem.setEnabled(state);
+		squeezeItem.setEnabled(state);
+		latexItem.setEnabled(state);
+	}
+
+	// @Override
 	protected void init() {
-		centralPanel = initOptionsPanel();
-
-		setLayout(new BorderLayout());
-		getContentPane().add(centralPanel, BorderLayout.CENTER);
-
+		setJMenuBar(createMenuBar());
+		setModelsOpened(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(this);
 		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/logo_small.png")); // title_small.jpg
-			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
-			JLabel label = new JLabel(new ImageIcon(image));
-			label.setBackground(Color.WHITE);
-			label.setText("<html><body><br><br><br><br><br><br>Version "
-					+ SBMLsqueezerPlugin.getVersionNumber() + "</body></html>");
-			JPanel p = new JPanel();
-			p.add(label);
-			p.setBackground(Color.WHITE);
-			JScrollPane scroll = new JScrollPane(p,
-					JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			scroll.setBackground(Color.WHITE);
-			getContentPane().add(scroll, BorderLayout.NORTH);
-			// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
+			properties = Resource.readProperties(Resource.class.getResource(
+					"cfg/SBMLsqueezer.cfg").getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+			properties = new Properties();
 		}
-
-		footPanel = getFootPanel(0);
-		getContentPane().add(footPanel, BorderLayout.SOUTH);
-
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setDefaultLookAndFeelDecorated(true);
-		setLocationByPlatform(true);
-		setResizable(false);
-		pack();
-
-		int height = getHeight();
-		setSize(getWidth(), fullHeight);
-		setLocationRelativeTo(null);
-		setSize(getWidth(), height);
-		settingsPanel = getJSettingsPanel();
+		tabbedPane = new JTabbedPaneWithCloseIcons();
+		for (Model m : sbmlIO.getListOfModels()) {
+			addModel(m);
+		}
+		tabbedPane.addChangeListener(this);
+		tabbedPane.addChangeListener(sbmlIO);
+		getContentPane().add(tabbedPane);
 	}
 }

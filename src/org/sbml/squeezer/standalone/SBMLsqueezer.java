@@ -18,7 +18,14 @@
  */
 package org.sbml.squeezer.standalone;
 
-import org.sbml.Model;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.sbml.squeezer.gui.SBMLsqueezerUI;
+import org.sbml.squeezer.io.AbstractSBMLconverter;
+import org.sbml.squeezer.resources.Resource;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -28,21 +35,22 @@ import org.sbml.Model;
  */
 public class SBMLsqueezer {
 
+	AbstractSBMLconverter converter;
+
 	public SBMLsqueezer(String fileName) {
-		LibSBMLReader converter = new LibSBMLReader(fileName);
-		showGUI(converter.getModel());
+		converter = new LibSBMLReader(fileName);
+		showGUI(converter);
 	}
 
 	public SBMLsqueezer() {
-		showGUI();
+		converter = new LibSBMLReader();
+		showGUI(converter);
 	}
 
-	private void showGUI() {
-		new SBMLsqueezerSUI();
-	}
-
-	private void showGUI(Model model) {
-		new SBMLsqueezerSUI(model);
+	private void showGUI(AbstractSBMLconverter converter) {
+		SBMLsqueezerUI gui = new SBMLsqueezerUI(converter);
+		gui.setLocationRelativeTo(null);
+		gui.setVisible(true);
 	}
 
 	/**
@@ -50,6 +58,15 @@ public class SBMLsqueezer {
 	 */
 	public static void main(String[] args) {
 		System.loadLibrary("sbmlj");
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(
+					Resource.class.getResource("txt/disclaimer.txt").getFile()));
+			String line;
+			while ((line = br.readLine()) != null)
+				System.out.println(line);
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
 		if (args.length == 1)
 			new SBMLsqueezer(args[0]);
 		else

@@ -18,7 +18,17 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
@@ -27,6 +37,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.sbml.Model;
 import org.sbml.SBase;
+import org.sbml.squeezer.resources.Resource;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -48,6 +59,14 @@ public class SBMLModelSplitPane extends JSplitPane implements
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 		setRightComponent(createRightComponent(model));
+	}
+	
+	/**
+	 * 
+	 * @param al
+	 */
+	public void addActionListener(ActionListener al) {
+		tree.addActionListener(al);
 	}
 
 	private JScrollPane createRightComponent(SBase sbase) {
@@ -80,5 +99,4 @@ public class SBMLModelSplitPane extends JSplitPane implements
 			// displayURL(helpURL);
 		}
 	}
-
 }

@@ -18,22 +18,48 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.sbml.Compartment;
 import org.sbml.Event;
 import org.sbml.Model;
+import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.SBase;
 import org.sbml.Species;
+import org.sbml.SpeciesReference;
+import org.sbml.squeezer.resources.Resource;
 
 /**
  * @author <a href="mailto:simon.schaefer@uni-tuebingen.de">Simon
  *         Sch&auml;fer</a>
  * 
  */
-public class SBMLTree extends JTree {
+public class SBMLTree extends JTree implements MouseListener, ActionListener {
+
+	private JPopupMenu popup;
+
+	private JMenuItem squeezeItem;
+
+	private JMenuItem latexItem;
+
+	private SBase currSBase;
+
+	private Set<ActionListener> setOfActionListeners;
 
 	/**
 	 * Generated serial version id
@@ -42,6 +68,37 @@ public class SBMLTree extends JTree {
 
 	public SBMLTree(Model m) {
 		super(createNodes(m));
+		setOfActionListeners = new HashSet<ActionListener>();
+		popup = new JPopupMenu("SBMLsqueezer");
+		squeezeItem = new JMenuItem("Squeeze kinetic law");
+		try {
+			squeezeItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
+					.getResource("img/Lemon_tiny.png"))));
+		} catch (IOException e) {
+		}
+		squeezeItem.addActionListener(this);
+		squeezeItem.setActionCommand(SBMLsqueezerUI.SQUEEZE);
+		popup.add(squeezeItem);
+		latexItem = new JMenuItem("Export to LaTeX");
+		try {
+			latexItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
+					.getResource("img/SBML2LaTeX_vertical_tiny.png"))));
+		} catch (IOException e) {
+		}
+		latexItem.addActionListener(this);
+		latexItem.setActionCommand(SBMLsqueezerUI.TO_LATEX);
+		popup.add(latexItem);
+		popup.setOpaque(true);
+		popup.setLightWeightPopupEnabled(true);
+		addMouseListener(this);
+	}
+
+	/**
+	 * 
+	 * @param al
+	 */
+	public void addActionListener(ActionListener al) {
+		setOfActionListeners.add(al);
 	}
 
 	private static DefaultMutableTreeNode createNodes(Model m) {
@@ -52,10 +109,10 @@ public class SBMLTree extends JTree {
 		// CompartmentTypes
 		// SpeciesTypes
 		if (m.getNumCompartments() > 0) {
-          node = new DefaultMutableTreeNode("Compartments");
-          modelNode.add(node);
-          for (Compartment c : m.getListOfCompartments())
-        	  node.add(new DefaultMutableTreeNode(c));
+			node = new DefaultMutableTreeNode("Compartments");
+			modelNode.add(node);
+			for (Compartment c : m.getListOfCompartments())
+				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumSpecies() > 0) {
 			node = new DefaultMutableTreeNode("Species");
@@ -75,15 +132,81 @@ public class SBMLTree extends JTree {
 		if (m.getNumReactions() > 0) {
 			node = new DefaultMutableTreeNode("Reactions");
 			modelNode.add(node);
-			for (Reaction r : m.getListOfReactions())
-				node.add(new DefaultMutableTreeNode(r));
+			for (Reaction r : m.getListOfReactions()) {
+				DefaultMutableTreeNode currReacNode = new DefaultMutableTreeNode(
+						r);
+				node.add(currReacNode);
+				if (r.getNumReactants() > 0) {
+					DefaultMutableTreeNode reactants = new DefaultMutableTreeNode(
+							"Reactants");
+					currReacNode.add(reactants);
+					for (SpeciesReference specRef : r.getListOfReactants())
+						reactants.add(new DefaultMutableTreeNode(specRef));
+				}
+				if (r.getNumModifiers() > 0) {
+					DefaultMutableTreeNode modifiers = new DefaultMutableTreeNode(
+							"Modifiers");
+					currReacNode.add(modifiers);
+					for (ModifierSpeciesReference mSpecRef : r
+							.getListOfModifiers())
+						modifiers.add(new DefaultMutableTreeNode(mSpecRef));
+				}
+				if (r.getNumProducts() > 0) {
+					DefaultMutableTreeNode products = new DefaultMutableTreeNode(
+							"Products");
+					currReacNode.add(products);
+					for (SpeciesReference specRef : r.getListOfProducts())
+						products.add(new DefaultMutableTreeNode(specRef));
+				}
+			}
 		}
 		if (m.getNumEvents() > 0) {
 			node = new DefaultMutableTreeNode("Events");
-	          modelNode.add(node);
-	          for (Event e : m.getListOfEvents())
-	        	  node.add(new DefaultMutableTreeNode(e));
+			modelNode.add(node);
+			for (Event e : m.getListOfEvents())
+				node.add(new DefaultMutableTreeNode(e));
 		}
 		return modelNode;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		popup.setVisible(false);
+		for (ActionListener al : setOfActionListeners) {
+			e.setSource(currSBase);
+			al.actionPerformed(e);
+		}
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		if (popup.isVisible()) {
+			currSBase = null;
+			popup.setVisible(false);
+		}
+		if ((e.getClickCount() == 2) || (e.getButton() == MouseEvent.BUTTON3)
+				&& setOfActionListeners.size() > 0) {
+			if (getClosestPathForLocation(e.getX(), e.getY())
+					.getLastPathComponent() instanceof DefaultMutableTreeNode) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) getSelectionPath()
+						.getLastPathComponent();
+				if (node.getUserObject() instanceof Reaction
+						|| node.getUserObject() instanceof Model) {
+					currSBase = (SBase) node.getUserObject();
+					popup.setLocation(e.getLocationOnScreen());
+					popup.setVisible(true);
+				}
+			}
+		}
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+	public void mousePressed(MouseEvent e) {
+	}
+
+	public void mouseReleased(MouseEvent e) {
 	}
 }

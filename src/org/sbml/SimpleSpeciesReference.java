@@ -72,6 +72,18 @@ public abstract class SimpleSpeciesReference extends NamedSBase {
 		}
 		return false;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.NamedSBase#toString()
+	 */
+	public String toString() {
+		if (isSetName() && getName().length() > 0)
+			return getName();
+		if (isSetId())
+			return getId();
+		return getSpeciesInstance().toString();
+	}
 
 	/*
 	 * (non-Javadoc)

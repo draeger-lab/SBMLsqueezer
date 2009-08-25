@@ -76,7 +76,7 @@ public class UpdateMessage extends JWindow implements ActionListener {
 		String notes = "releaseNotes" + out;
 		if (notes.endsWith(".0"))
 			notes = notes.substring(0, notes.length() - 2);
-		if (compareVersionNumbers(SBMLsqueezerPlugin.getVersionNumber(), out))
+		if (compareVersionNumbers(SBMLsqueezerUI.getVersionNumber(), out))
 			showUpdateMessage("http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/"
 					+ notes + ".htm");
 		plugin.setUpdateChecked(true);
