@@ -45,6 +45,7 @@ import org.sbml.SBase;
 import org.sbml.SimpleSpeciesReference;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.StoichiometryMath;
 import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.io.LaTeXExport;
 
@@ -120,11 +121,36 @@ public class SBasePanel extends JPanel {
 					.getNumEvents())), 1, row, 1, 1, 1, 1);
 			// TODO
 		} else if (sbase instanceof SimpleSpeciesReference) {
-			// TODO
+			SimpleSpeciesReference ssr = (SimpleSpeciesReference) sbase;
+			LayoutHelper.addComponent(this, gbl, new JLabel("Species"), 1, row,
+					1, 1, 1, 1);
+			LayoutHelper.addComponent(this, gbl, new JLabel(ssr
+					.getSpeciesInstance().toString()), 1, row, 1, 1, 1, 1);
 			if (sbase instanceof SpeciesReference) {
-				// TODO
+				SpeciesReference specRef = (SpeciesReference) sbase;
+				if (specRef.isSetStoichiometryMath()) {
+					StoichiometryMath sMath = specRef.getStoichiometryMath();
+					JPanel p = new JPanel(new GridLayout(1, 1));
+					p.setBorder(BorderFactory.createTitledBorder(" "
+							+ sMath.getClass().getCanonicalName() + ' '));
+					sHotEqn eqn = new sHotEqn(sMath.getMath().toLaTeX()
+							.toString());
+					eqn.setBorder(BorderFactory.createLoweredBevelBorder());
+					p.add(eqn);
+					LayoutHelper.addComponent(this, gbl, p, 1, ++row, 1, 1, 1,
+							1);
+				} else {
+					LayoutHelper.addComponent(this, gbl, new JLabel(
+							"Stoichiometry"), 0, ++row, 1, 1, 1, 1);
+					LayoutHelper.addComponent(this, gbl, new JSpinner(
+							new SpinnerNumberModel(specRef.getStoichiometry(),
+									specRef.getStoichiometry() - 1000, specRef
+											.getStoichiometry() + 1000, .1d)),
+							1, row, 1, 1, 1, 1);
+				}
 			} else if (sbase instanceof ModifierSpeciesReference) {
 				// TODO
+				ModifierSpeciesReference msr = (ModifierSpeciesReference) sbase;
 			}
 		} else if (sbase instanceof Parameter) {
 			Parameter p = (Parameter) sbase;

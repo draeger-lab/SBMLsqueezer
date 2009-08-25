@@ -43,7 +43,6 @@ import javax.swing.SwingConstants;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
-import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.IllegalFormatException;
 import org.sbml.squeezer.kinetics.KineticLawGenerator;
@@ -56,7 +55,7 @@ import atp.sHotEqn;
  * reaction. A panel that contains the whole message for the user: the message
  * itself, the reversibility and the applicable kinetics.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @author Hannes Borch <hannes.borch@googlemail.com>

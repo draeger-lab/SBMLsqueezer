@@ -29,20 +29,18 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
-import org.sbml.ASTNode;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
+import org.sbml.ModifierSpeciesReference;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.ModifierSpeciesReference;
-import org.sbml.Parameter;
 import org.sbml.squeezer.io.AbstractSBMLconverter;
 import org.sbml.squeezer.resources.Resource;
 
 public class PluginSBMLReader extends AbstractSBMLconverter {
 
-	private Model model;
 	private static Properties alias2sbo;
 	static {
 		try {
@@ -61,20 +59,25 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 	 */
 
 	public PluginSBMLReader(PluginModel model) {
-		super();
-		this.model = convert(model);
-		this.model.addChangeListener(this);
+		super(model);
 	}
 
-	public Model convert(PluginModel model) {
-		Model m = new Model(model.getId());
-		for (int i = 0; i < model.getNumReactions(); i++) {
-			m.addReaction(convert(model.getReaction(i)));
+	public PluginSBMLReader() {
+		super();
+	}
+
+	public Model convert(Object model) {
+		if (model instanceof PluginModel) {
+			PluginModel pm = (PluginModel) model;
+			Model m = new Model(pm.getId());
+			for (int i = 0; i < pm.getNumReactions(); i++)
+				m.addReaction(convert(pm.getReaction(i)));
+			for (int i = 0; i < pm.getNumSpecies(); i++)
+				m.addSpecies(convert(pm.getSpecies(i)));
+			m.addChangeListener(this);
+			return m;
 		}
-		for (int i = 0; i < model.getNumSpecies(); i++) {
-			m.addSpecies(convert(model.getSpecies(i)));
-		}
-		return m;
+		return null;
 	}
 
 	public Reaction convert(PluginReaction reac) {
@@ -124,17 +127,12 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 	public KineticLaw convert(PluginKineticLaw plukinlaw) {
 		KineticLaw kinlaw = new KineticLaw();
 		if (plukinlaw.getMath() != null)
-		  kinlaw.setMath(convert(plukinlaw.getMath()));
+			kinlaw.setMath(convert(plukinlaw.getMath(), kinlaw));
 		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
 			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
 		}
 		kinlaw.addChangeListener(this);
 		return kinlaw;
-	}
-
-	public ASTNode convert(org.sbml.libsbml.ASTNode math) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public Parameter convert(PluginParameter plupara) {

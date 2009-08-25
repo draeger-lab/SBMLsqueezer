@@ -67,9 +67,8 @@ public class JTabbedPaneWithCloseIcons extends JTabbedPane implements
 		if (rect.contains(e.getX(), e.getY())) {
 			// the tab is being closed
 			this.removeTabAt(tabNumber);
-			for (ChangeListener cl : getChangeListeners()) {
+			for (ChangeListener cl : getChangeListeners())
 				cl.stateChanged(new ChangeEvent(this));
-			}
 		}
 	}
 

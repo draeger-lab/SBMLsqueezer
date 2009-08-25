@@ -18,8 +18,9 @@
  */
 package org.sbml.squeezer.standalone;
 
-import jp.sbi.celldesigner.SBModel;
-import jp.sbi.celldesigner.SBModelListener;
+import org.sbml.SBase;
+import org.sbml.squeezer.io.SBaseChangedListener;
+
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -27,14 +28,19 @@ import jp.sbi.celldesigner.SBModelListener;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class LibSBMLWriter implements SBModelListener {
+public class LibSBMLWriter implements SBaseChangedListener {
 
-	public void componentSelectionChanged() {
+	public void sbaseAdded(SBase sb) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void modelInformationChanged(SBModel arg0) {
+	public void sbaseRemoved(SBase sb) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void stateChanged(SBase sb) {
 		// TODO Auto-generated method stub
 		
 	}

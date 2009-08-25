@@ -45,6 +45,112 @@ import org.sbml.StoichiometryMath;
 public class LaTeXExport extends LaTeX {
 
 	/**
+	 * Masks all special characters used by LaTeX with a backslash including
+	 * hyphen symbols.
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static String maskSpecialChars(String string) {
+		return maskSpecialChars(string, true);
+	}
+
+	/**
+	 * 
+	 * @param string
+	 * @param hyphen
+	 *            if true a hyphen symbol is introduced at each position where a
+	 *            special character has to be masked anyway.
+	 * @return
+	 */
+	public static String maskSpecialChars(String string, boolean hyphen) {
+		StringBuffer masked = new StringBuffer();
+		for (int i = 0; i < string.length(); i++) {
+			char atI = string.charAt(i);
+			if (atI == '<')
+				masked.append("$<$");
+			else if (atI == '>')
+				masked.append("$>$");
+			else {
+				if ((atI == '_') || (atI == '\\') || (atI == '$')
+						|| (atI == '&') || (atI == '#') || (atI == '{')
+						|| (atI == '}') || (atI == '~') || (atI == '%')
+						|| (atI == '^')) {
+					if ((i == 0) || (!hyphen))
+						masked.append('\\');
+					else if (hyphen && (string.charAt(i - 1) != '\\'))
+						masked.append("\\-\\"); // masked.append('\\');
+					// } else if ((atI == '[') || (atI == ']')) {
+				}
+				masked.append(atI);
+			}
+		}
+		return masked.toString().trim();
+	}
+
+	/**
+	 * 
+	 * @param reaction
+	 * @return
+	 */
+	public static String reactionEquation(Reaction reaction) {
+		StringBuffer reactionEqn = new StringBuffer();
+		reactionEqn.append(LaTeX.eqBegin);
+		int count = 0;
+		for (SpeciesReference specRef : reaction.getListOfReactants()) {
+			if (count > 0)
+				reactionEqn.append(" + ");
+			if (specRef.isSetStoichiometryMath())
+				reactionEqn.append(specRef.getStoichiometryMath().getMath()
+						.toLaTeX());
+			else if (specRef.getStoichiometry() != 1d)
+				reactionEqn.append(specRef.getStoichiometry());
+			reactionEqn.append(' ');
+			reactionEqn.append(LaTeX.mbox(LaTeX.maskSpecialChars(specRef
+					.getSpecies())));
+			count++;
+		}
+		if (reaction.getNumReactants() == 0)
+			reactionEqn.append("\\emptyset");
+		reactionEqn.append(reaction.getReversible() ? " \\leftrightarrow"
+				: " \\rightarrow");
+		// if (reaction.getNumModifiers() > 0) {
+		// reactionEqn.append('{');
+		// count = 0;
+		// for (ModifierSpeciesReference modRef : reaction
+		// .getListOfModifiers()) {
+		// reactionEqn
+		// .append(LaTeX.mbox(
+		// LaTeX.maskSpecialChars(modRef.getSpecies()))
+		// .toString());
+		// if (count < reaction.getNumModifiers() - 1)
+		// reactionEqn.append(", ");
+		// count++;
+		// }
+		// reactionEqn.append('}');
+		// }
+		reactionEqn.append(' ');
+		count = 0;
+		for (SpeciesReference specRef : reaction.getListOfProducts()) {
+			if (count > 0)
+				reactionEqn.append(" + ");
+			if (specRef.isSetStoichiometryMath())
+				reactionEqn.append(specRef.getStoichiometryMath().getMath()
+						.toLaTeX());
+			else if (specRef.getStoichiometry() != 1d)
+				reactionEqn.append(specRef.getStoichiometry());
+			reactionEqn.append(' ');
+			reactionEqn.append(LaTeX.mbox(LaTeX.maskSpecialChars(specRef
+					.getSpecies())));
+			count++;
+		}
+		if (reaction.getNumProducts() == 0)
+			reactionEqn.append("\\emptyset");
+		reactionEqn.append(LaTeX.eqEnd);
+		return reactionEqn.toString();
+	}
+
+	/**
 	 * New line separator of this operating system
 	 */
 	private final String newLine = System.getProperty("line.separator");
@@ -92,6 +198,8 @@ public class LaTeXExport extends LaTeX {
 	 */
 	private boolean titlepage;
 
+	// private boolean numberEquations = true;
+
 	/**
 	 * If true this will produce LaTeX files for for entirely landscape
 	 * documents
@@ -109,12 +217,6 @@ public class LaTeXExport extends LaTeX {
 	 * If true ids are set in typewriter font (default).
 	 */
 	private boolean typeWriter = true;
-
-	// private boolean numberEquations = true;
-
-	public boolean isTypeWriter() {
-		return typeWriter;
-	}
 
 	/**
 	 * Constructs a new instance of LaTeX export. For each document to be
@@ -181,6 +283,10 @@ public class LaTeXExport extends LaTeX {
 	 */
 	public String idToTeX(Species pluginSpecies) {
 		return nameToTeX(pluginSpecies.getId());
+	}
+
+	public boolean isTypeWriter() {
+		return typeWriter;
 	}
 
 	/**
@@ -765,70 +871,9 @@ public class LaTeXExport extends LaTeX {
 		bw.close();
 	}
 
-	/**
-	 * 
-	 * @param reaction
-	 * @return
-	 */
-	public static String reactionEquation(Reaction reaction) {
-		StringBuffer reactionEqn = new StringBuffer();
-		reactionEqn.append(LaTeX.eqBegin);
-		int count = 0;
-		for (SpeciesReference specRef : reaction.getListOfReactants()) {
-			if (count > 0)
-				reactionEqn.append(" + ");
-			if (specRef.isSetStoichiometryMath())
-				reactionEqn.append(specRef.getStoichiometryMath().getMath()
-						.toLaTeX());
-			else if (specRef.getStoichiometry() != 1d)
-				reactionEqn.append(specRef.getStoichiometry());
-			reactionEqn.append(' ');
-			reactionEqn.append(LaTeX.mbox(LaTeX.maskSpecialChars(specRef
-					.getSpecies())));
-			count++;
-		}
-		if (reaction.getNumReactants() == 0)
-			reactionEqn.append("\\emptyset");
-		reactionEqn.append(reaction.getReversible() ? " \\leftrightarrow"
-				: " \\rightarrow");
-		// if (reaction.getNumModifiers() > 0) {
-		// reactionEqn.append('{');
-		// count = 0;
-		// for (ModifierSpeciesReference modRef : reaction
-		// .getListOfModifiers()) {
-		// reactionEqn
-		// .append(LaTeX.mbox(
-		// LaTeX.maskSpecialChars(modRef.getSpecies()))
-		// .toString());
-		// if (count < reaction.getNumModifiers() - 1)
-		// reactionEqn.append(", ");
-		// count++;
-		// }
-		// reactionEqn.append('}');
-		// }
-		reactionEqn.append(' ');
-		count = 0;
-		for (SpeciesReference specRef : reaction.getListOfProducts()) {
-			if (count > 0)
-				reactionEqn.append(" + ");
-			if (specRef.isSetStoichiometryMath())
-				reactionEqn.append(specRef.getStoichiometryMath().getMath()
-						.toLaTeX());
-			else if (specRef.getStoichiometry() != 1d)
-				reactionEqn.append(specRef.getStoichiometry());
-			reactionEqn.append(' ');
-			reactionEqn.append(LaTeX.mbox(LaTeX.maskSpecialChars(specRef
-					.getSpecies())));
-			count++;
-		}
-		if (reaction.getNumProducts() == 0)
-			reactionEqn.append("\\emptyset");
-		reactionEqn.append(LaTeX.eqEnd);
-		return reactionEqn.toString();
-	}
-
-	public StringBuffer toLaTeX(Model model, Reaction reaction)
+	public StringBuffer toLaTeX(Reaction reaction)
 			throws IOException {
+		Model model = reaction.getModel();
 		String title = model.getName().length() > 0 ? model.getName()
 				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");
 		StringBuffer laTeX = getDocumentHead(title);
@@ -851,50 +896,6 @@ public class LaTeXExport extends LaTeX {
 						+ "\\end{center}");
 		laTeX.append(newLine + "\\end{document}");
 		return laTeX;
-	}
-
-	/**
-	 * Masks all special characters used by LaTeX with a backslash including
-	 * hyphen symbols.
-	 * 
-	 * @param string
-	 * @return
-	 */
-	public static String maskSpecialChars(String string) {
-		return maskSpecialChars(string, true);
-	}
-
-	/**
-	 * 
-	 * @param string
-	 * @param hyphen
-	 *            if true a hyphen symbol is introduced at each position where a
-	 *            special character has to be masked anyway.
-	 * @return
-	 */
-	public static String maskSpecialChars(String string, boolean hyphen) {
-		StringBuffer masked = new StringBuffer();
-		for (int i = 0; i < string.length(); i++) {
-			char atI = string.charAt(i);
-			if (atI == '<')
-				masked.append("$<$");
-			else if (atI == '>')
-				masked.append("$>$");
-			else {
-				if ((atI == '_') || (atI == '\\') || (atI == '$')
-						|| (atI == '&') || (atI == '#') || (atI == '{')
-						|| (atI == '}') || (atI == '~') || (atI == '%')
-						|| (atI == '^')) {
-					if ((i == 0) || (!hyphen))
-						masked.append('\\');
-					else if (hyphen && (string.charAt(i - 1) != '\\'))
-						masked.append("\\-\\"); // masked.append('\\');
-					// } else if ((atI == '[') || (atI == ']')) {
-				}
-				masked.append(atI);
-			}
-		}
-		return masked.toString().trim();
 	}
 
 	/*

@@ -37,11 +37,6 @@ import jp.sbi.celldesigner.plugin.PluginSBase;
 public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 
 	/**
-	 * The number of the current SBMLsqueezer version.
-	 */
-	private static final String versionNumber = "1.2.1";
-
-	/**
 	 * Tells if SBMLsqueezer checked for an update after CellDesigner has been
 	 * run.
 	 */
@@ -119,15 +114,6 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 
 	public boolean getUpdateChecked() {
 		return isUpdateChecked;
-	}
-
-	/**
-	 * 
-	 * @return versionNumber
-	 */
-
-	public static final String getVersionNumber() {
-		return versionNumber;
 	}
 
 	/*
