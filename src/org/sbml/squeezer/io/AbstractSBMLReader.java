@@ -19,128 +19,30 @@
 package org.sbml.squeezer.io;
 
 import java.util.LinkedList;
-import java.util.List;
-
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.sbml.ASTNode;
 import org.sbml.Constants;
 import org.sbml.MathContainer;
 import org.sbml.Model;
+import org.sbml.SBMLReader;
 import org.sbml.SBase;
 import org.sbml.libsbml.libsbmlConstants;
 
 /**
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @author Andreas Dr&auml;ger <a href="mailto:andreas.draeger@uni-tuebingen.de">andreas.draeger@uni-tuebingen.de</a>
+ *
  */
-public abstract class AbstractSBMLconverter implements SBaseChangedListener,
-		ChangeListener, libsbmlConstants {
+public abstract class AbstractSBMLReader implements SBMLReader {
+	
+	protected Model model;
+	protected LinkedList<SBaseChangedListener> listOfSBaseChangeListeners;
 
-	private List<SBase> added;
-	private List<SBase> removed;
-	private List<SBase> changed;
-	protected LinkedList<Model> listOfModels;
-	private int selectedModel;
-
-	public void setSelectedModel(int selectedModel) {
-		this.selectedModel = selectedModel;
+	public AbstractSBMLReader() {
+		listOfSBaseChangeListeners = new LinkedList<SBaseChangedListener>();
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Model getSelectedModel() {
-		return listOfModels.get(selectedModel);
-	}
-
-	/**
-	 * 
-	 */
-	public AbstractSBMLconverter() {
-		selectedModel = -1;
-		listOfModels = new LinkedList<Model>();
-		added = new LinkedList<SBase>();
-		removed = new LinkedList<SBase>();
-		changed = new LinkedList<SBase>();
-	}
-
-	/**
-	 * 
-	 * @param model
-	 */
-	public AbstractSBMLconverter(Object model) {
-		this();
-		this.listOfModels.addLast(convert(model));
-	}
-
-	/**
-	 * 
-	 * @param model
-	 * @return
-	 */
-	public abstract Model convert(Object model);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBaseChangedListener#sbaseAdded(org.sbml.SBase)
-	 */
-	public void sbaseAdded(SBase sb) {
-		added.add(sb);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBaseChangedListener#sbaseRemoved(org.sbml.SBase)
-	 */
-	public void sbaseRemoved(SBase sb) {
-		removed.add(sb);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
-	 */
-	public void stateChanged(SBase sb) {
-		changed.add(sb);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-	 * )
-	 */
-	public void stateChanged(ChangeEvent e) {
-		if (e.getSource() instanceof JTabbedPane) {
-			JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
-			if (tabbedPane.getComponentCount() == 0)
-				listOfModels.clear();
-			else {
-				for (Model m : listOfModels) {
-					boolean contains = false;
-					for (int i = 0; i < tabbedPane.getTabCount()
-							&& !contains; i++) {
-						String title = tabbedPane.getTitleAt(i);
-						if (title.equals(m.getName())
-								|| title.equals(m.getId()))
-							contains = true;
-					}
-					if (!contains)
-						listOfModels.remove(m);
-				}
-				selectedModel = tabbedPane.getSelectedIndex();
-			}
-		}
+	public AbstractSBMLReader(Object model) {
+		this.model = readModel(model);
 	}
 
 	/**
@@ -152,195 +54,195 @@ public abstract class AbstractSBMLconverter implements SBaseChangedListener,
 	public ASTNode convert(org.sbml.libsbml.ASTNode math, MathContainer parent) {
 		ASTNode ast;
 		switch (math.getType()) {
-		case AST_REAL:
+		case libsbmlConstants.AST_REAL:
 			ast = new ASTNode(Constants.AST_REAL, parent);
 			ast.setValue(math.getReal());
 			break;
-		case AST_INTEGER:
+		case libsbmlConstants.AST_INTEGER:
 			ast = new ASTNode(Constants.AST_INTEGER, parent);
 			ast.setValue(math.getInteger());
 			break;
-		case AST_FUNCTION_LOG:
+		case libsbmlConstants.AST_FUNCTION_LOG:
 			ast = new ASTNode(Constants.AST_FUNCTION_LOG, parent);
 			break;
-		case AST_POWER:
+		case libsbmlConstants.AST_POWER:
 			ast = new ASTNode(Constants.AST_POWER, parent);
 			break;
-		case AST_PLUS:
+		case libsbmlConstants.AST_PLUS:
 			ast = new ASTNode(Constants.AST_PLUS, parent);
 			break;
-		case AST_MINUS:
+		case libsbmlConstants.AST_MINUS:
 			ast = new ASTNode(Constants.AST_MINUS, parent);
 			break;
-		case AST_TIMES:
+		case libsbmlConstants.AST_TIMES:
 			ast = new ASTNode(Constants.AST_TIMES, parent);
 			break;
-		case AST_DIVIDE:
+		case libsbmlConstants.AST_DIVIDE:
 			ast = new ASTNode(Constants.AST_DIVIDE, parent);
 			break;
-		case AST_RATIONAL:
+		case libsbmlConstants.AST_RATIONAL:
 			ast = new ASTNode(Constants.AST_RATIONAL, parent);
 			break;
-		case AST_NAME_TIME:
+		case libsbmlConstants.AST_NAME_TIME:
 			ast = new ASTNode(Constants.AST_NAME_TIME, parent);
 			break;
-		case AST_FUNCTION_DELAY:
+		case libsbmlConstants.AST_FUNCTION_DELAY:
 			ast = new ASTNode(Constants.AST_FUNCTION_DELAY, parent);
 			break;
-		case AST_NAME:
+		case libsbmlConstants.AST_NAME:
 			ast = new ASTNode(Constants.AST_NAME, parent);
 			ast.setName(math.getName());
 			break;
-		case AST_CONSTANT_PI:
+		case libsbmlConstants.AST_CONSTANT_PI:
 			ast = new ASTNode(Constants.AST_CONSTANT_PI, parent);
 			break;
-		case AST_CONSTANT_E:
+		case libsbmlConstants.AST_CONSTANT_E:
 			ast = new ASTNode(Constants.AST_CONSTANT_E, parent);
 			break;
-		case AST_CONSTANT_TRUE:
+		case libsbmlConstants.AST_CONSTANT_TRUE:
 			ast = new ASTNode(Constants.AST_CONSTANT_TRUE, parent);
 			break;
-		case AST_CONSTANT_FALSE:
+		case libsbmlConstants.AST_CONSTANT_FALSE:
 			ast = new ASTNode(Constants.AST_CONSTANT_FALSE, parent);
 			break;
-		case AST_REAL_E:
+		case libsbmlConstants.AST_REAL_E:
 			ast = new ASTNode(Constants.AST_REAL_E, parent);
 			ast.setValue(math.getMantissa(), math.getExponent());
 			break;
-		case AST_FUNCTION_ABS:
+		case libsbmlConstants.AST_FUNCTION_ABS:
 			ast = new ASTNode(Constants.AST_FUNCTION_ABS, parent);
 			break;
-		case AST_FUNCTION_ARCCOS:
+		case libsbmlConstants.AST_FUNCTION_ARCCOS:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCCOS, parent);
 			break;
-		case AST_FUNCTION_ARCCOSH:
+		case libsbmlConstants.AST_FUNCTION_ARCCOSH:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCCOSH, parent);
 			break;
-		case AST_FUNCTION_ARCCOT:
+		case libsbmlConstants.AST_FUNCTION_ARCCOT:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCCOT, parent);
 			break;
-		case AST_FUNCTION_ARCCOTH:
+		case libsbmlConstants.AST_FUNCTION_ARCCOTH:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCCOTH, parent);
 			break;
-		case AST_FUNCTION_ARCCSC:
+		case libsbmlConstants.AST_FUNCTION_ARCCSC:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCCSC, parent);
 			break;
-		case AST_FUNCTION_ARCCSCH:
+		case libsbmlConstants.AST_FUNCTION_ARCCSCH:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCCSCH, parent);
 			break;
-		case AST_FUNCTION_ARCSEC:
+		case libsbmlConstants.AST_FUNCTION_ARCSEC:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCSEC, parent);
 			break;
-		case AST_FUNCTION_ARCSECH:
+		case libsbmlConstants.AST_FUNCTION_ARCSECH:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCSECH, parent);
 			break;
-		case AST_FUNCTION_ARCSIN:
+		case libsbmlConstants.AST_FUNCTION_ARCSIN:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCSIN, parent);
 			break;
-		case AST_FUNCTION_ARCSINH:
+		case libsbmlConstants.AST_FUNCTION_ARCSINH:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCSINH, parent);
 			break;
-		case AST_FUNCTION_ARCTAN:
+		case libsbmlConstants.AST_FUNCTION_ARCTAN:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCTAN, parent);
 			break;
-		case AST_FUNCTION_ARCTANH:
+		case libsbmlConstants.AST_FUNCTION_ARCTANH:
 			ast = new ASTNode(Constants.AST_FUNCTION_ARCTANH, parent);
 			break;
-		case AST_FUNCTION_CEILING:
+		case libsbmlConstants.AST_FUNCTION_CEILING:
 			ast = new ASTNode(Constants.AST_FUNCTION_CEILING, parent);
 			break;
-		case AST_FUNCTION_COS:
+		case libsbmlConstants.AST_FUNCTION_COS:
 			ast = new ASTNode(Constants.AST_FUNCTION_COS, parent);
 			break;
-		case AST_FUNCTION_COSH:
+		case libsbmlConstants.AST_FUNCTION_COSH:
 			ast = new ASTNode(Constants.AST_FUNCTION_COSH, parent);
 			break;
-		case AST_FUNCTION_COT:
+		case libsbmlConstants.AST_FUNCTION_COT:
 			ast = new ASTNode(Constants.AST_FUNCTION_COT, parent);
 			break;
-		case AST_FUNCTION_COTH:
+		case libsbmlConstants.AST_FUNCTION_COTH:
 			ast = new ASTNode(Constants.AST_FUNCTION_COTH, parent);
 			break;
-		case AST_FUNCTION_CSC:
+		case libsbmlConstants.AST_FUNCTION_CSC:
 			ast = new ASTNode(Constants.AST_FUNCTION_CSC, parent);
 			break;
-		case AST_FUNCTION_CSCH:
+		case libsbmlConstants.AST_FUNCTION_CSCH:
 			ast = new ASTNode(Constants.AST_FUNCTION_CSCH, parent);
 			break;
-		case AST_FUNCTION_EXP:
+		case libsbmlConstants.AST_FUNCTION_EXP:
 			ast = new ASTNode(Constants.AST_FUNCTION_EXP, parent);
 			break;
-		case AST_FUNCTION_FACTORIAL:
+		case libsbmlConstants.AST_FUNCTION_FACTORIAL:
 			ast = new ASTNode(Constants.AST_FUNCTION_FACTORIAL, parent);
 			break;
-		case AST_FUNCTION_FLOOR:
+		case libsbmlConstants.AST_FUNCTION_FLOOR:
 			ast = new ASTNode(Constants.AST_FUNCTION_FLOOR, parent);
 			break;
-		case AST_FUNCTION_LN:
+		case libsbmlConstants.AST_FUNCTION_LN:
 			ast = new ASTNode(Constants.AST_FUNCTION_LN, parent);
 			break;
-		case AST_FUNCTION_POWER:
+		case libsbmlConstants.AST_FUNCTION_POWER:
 			ast = new ASTNode(Constants.AST_FUNCTION_POWER, parent);
 			break;
-		case AST_FUNCTION_ROOT:
+		case libsbmlConstants.AST_FUNCTION_ROOT:
 			ast = new ASTNode(Constants.AST_FUNCTION_ROOT, parent);
 			break;
-		case AST_FUNCTION_SEC:
+		case libsbmlConstants.AST_FUNCTION_SEC:
 			ast = new ASTNode(Constants.AST_FUNCTION_SEC, parent);
 			break;
-		case AST_FUNCTION_SECH:
+		case libsbmlConstants.AST_FUNCTION_SECH:
 			ast = new ASTNode(Constants.AST_FUNCTION_SECH, parent);
 			break;
-		case AST_FUNCTION_SIN:
+		case libsbmlConstants.AST_FUNCTION_SIN:
 			ast = new ASTNode(Constants.AST_FUNCTION_SIN, parent);
 			break;
-		case AST_FUNCTION_SINH:
+		case libsbmlConstants.AST_FUNCTION_SINH:
 			ast = new ASTNode(Constants.AST_FUNCTION_SINH, parent);
 			break;
-		case AST_FUNCTION_TAN:
+		case libsbmlConstants.AST_FUNCTION_TAN:
 			ast = new ASTNode(Constants.AST_FUNCTION_TAN, parent);
 			break;
-		case AST_FUNCTION_TANH:
+		case libsbmlConstants.AST_FUNCTION_TANH:
 			ast = new ASTNode(Constants.AST_FUNCTION_TANH, parent);
 			break;
-		case AST_FUNCTION:
+		case libsbmlConstants.AST_FUNCTION:
 			ast = new ASTNode(Constants.AST_FUNCTION, parent);
 			ast.setName(math.getName());
 			break;
-		case AST_LAMBDA:
+		case libsbmlConstants.AST_LAMBDA:
 			ast = new ASTNode(Constants.AST_LAMBDA, parent);
 			break;
-		case AST_LOGICAL_AND:
+		case libsbmlConstants.AST_LOGICAL_AND:
 			ast = new ASTNode(Constants.AST_LOGICAL_AND, parent);
 			break;
-		case AST_LOGICAL_XOR:
+		case libsbmlConstants.AST_LOGICAL_XOR:
 			ast = new ASTNode(Constants.AST_LOGICAL_XOR, parent);
 			break;
-		case AST_LOGICAL_OR:
+		case libsbmlConstants.AST_LOGICAL_OR:
 			ast = new ASTNode(Constants.AST_LOGICAL_OR, parent);
 			break;
-		case AST_LOGICAL_NOT:
+		case libsbmlConstants.AST_LOGICAL_NOT:
 			ast = new ASTNode(Constants.AST_LOGICAL_NOT, parent);
 			break;
-		case AST_FUNCTION_PIECEWISE:
+		case libsbmlConstants.AST_FUNCTION_PIECEWISE:
 			ast = new ASTNode(Constants.AST_FUNCTION_PIECEWISE, parent);
 			break;
-		case AST_RELATIONAL_EQ:
+		case libsbmlConstants.AST_RELATIONAL_EQ:
 			ast = new ASTNode(Constants.AST_RELATIONAL_EQ, parent);
 			break;
-		case AST_RELATIONAL_GEQ:
+		case libsbmlConstants.AST_RELATIONAL_GEQ:
 			ast = new ASTNode(Constants.AST_RELATIONAL_GEQ, parent);
 			break;
-		case AST_RELATIONAL_GT:
+		case libsbmlConstants.AST_RELATIONAL_GT:
 			ast = new ASTNode(Constants.AST_RELATIONAL_GT, parent);
 			break;
-		case AST_RELATIONAL_NEQ:
+		case libsbmlConstants.AST_RELATIONAL_NEQ:
 			ast = new ASTNode(Constants.AST_RELATIONAL_NEQ, parent);
 			break;
-		case AST_RELATIONAL_LEQ:
+		case libsbmlConstants.AST_RELATIONAL_LEQ:
 			ast = new ASTNode(Constants.AST_RELATIONAL_LEQ, parent);
 			break;
-		case AST_RELATIONAL_LT:
+		case libsbmlConstants.AST_RELATIONAL_LT:
 			ast = new ASTNode(Constants.AST_RELATIONAL_LT, parent);
 			break;
 		default:
@@ -351,9 +253,22 @@ public abstract class AbstractSBMLconverter implements SBaseChangedListener,
 			ast.addChild(convert(math.getChild(i), parent));
 		return ast;
 	}
+	
+	public Model getModel() {
+		return model;
+	}
 
-	public List<Model> getListOfModels() {
-		return listOfModels;
+	/**
+	 * 
+	 * @param sbcl
+	 */
+	public void addSBaseChangeListener(SBaseChangedListener sbcl) {
+		listOfSBaseChangeListeners.add(sbcl);
+	}
+	
+	public void addAllSBaseChangeListenersTo(SBase sb) {
+		for (SBaseChangedListener listener : listOfSBaseChangeListeners)
+			sb.addChangeListener(listener);
 	}
 
 }

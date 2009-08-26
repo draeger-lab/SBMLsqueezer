@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 
+import org.sbml.squeezer.resources.Resource;
+
 /**
  * Program main class.
  */
@@ -18,9 +20,8 @@ public class HTML2LaTeX {
 	/** Output LaTeX file. */
 	private static String _outputFile = "";
 	/** Configuration file. */
-	private static String _configFile = System.getProperty("user.dir")
-			+ System.getProperty("file.separator") + "resources"
-			+ System.getProperty("file.separator") + "config.xml";
+	private static String _configFile = Resource.class.getResource(
+			"cfg/HTML2LaTeX_config.xml").getFile();
 	/** File with CSS. */
 	private static String _cssFile = "";
 
@@ -40,7 +41,7 @@ public class HTML2LaTeX {
 
 	/**
 	 * Returns name of the file with configuration.
-	 *
+	 * 
 	 * @return name of the file with configuration
 	 */
 	public static String getConfigFile() {
@@ -49,7 +50,7 @@ public class HTML2LaTeX {
 
 	/**
 	 * Returns name of the file with CSS.
-	 *
+	 * 
 	 * @return name of the file with CSS
 	 */
 	public static String getCSSFile() {
@@ -59,7 +60,7 @@ public class HTML2LaTeX {
 	/**
 	 * Creates {@link Parser Parser} instance and runs its
 	 * {@link Parser#parse(File, ParserHandler) parse()} method.
-	 *
+	 * 
 	 * @param args
 	 *            command line arguments
 	 */
@@ -93,7 +94,7 @@ public class HTML2LaTeX {
 	 * <li>-config &lt;fileName&gt;</li>
 	 * <li>-css &lt;fileName&gt;</li>
 	 * </ul>
-	 *
+	 * 
 	 * @param args
 	 *            command line arguments
 	 */

@@ -31,7 +31,8 @@ import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.squeezer.io.AbstractSBMLconverter;
+import org.sbml.squeezer.io.AbstractSBMLReader;
+import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -39,7 +40,7 @@ import org.sbml.squeezer.io.AbstractSBMLconverter;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class LibSBMLReader extends AbstractSBMLconverter {
+public class LibSBMLReader extends AbstractSBMLReader {
 
 	private Set<SBMLDocument> setOfDocuments;
 
@@ -67,7 +68,7 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 	public LibSBMLReader(String fileName) {
 		super();
 		setOfDocuments = new HashSet<SBMLDocument>();
-		convert(fileName);
+		readModel(fileName);
 	}
 
 	public Compartment convert(org.sbml.libsbml.Compartment compartment) {
@@ -75,10 +76,10 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 				.getName());
 		c.setConstant(compartment.getConstant());
 		if (compartment.isSetOutside()) {
-			Compartment outside = getSelectedModel().getCompartment(
+			Compartment outside = getModel().getCompartment(
 					compartment.getOutside());
 			if (outside == null)
-				getSelectedModel().addCompartment(convert(compartment));
+				getModel().addCompartment(convert(compartment));
 			c.setOutside(outside);
 		}
 		c.setSize(compartment.getSize());
@@ -97,11 +98,11 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 		}
 		for (int i = 0; i < plukinlaw.getNumParameters(); i++)
 			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
-		kinlaw.addChangeListener(this);
+		addAllSBaseChangeListenersTo(kinlaw);
 		return kinlaw;
 	}
 
-	public Model convert(Object model) {
+	public Model readModel(Object model) {
 		if (model instanceof String) {
 			SBMLDocument doc = (new org.sbml.libsbml.SBMLReader())
 					.readSBML(model.toString());
@@ -111,18 +112,17 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 		if (model instanceof org.sbml.libsbml.Model) {
 			org.sbml.libsbml.Model m = (org.sbml.libsbml.Model) model;
 			Model myModel = new Model(m.getId());
-			listOfModels.addLast(myModel);
-			setSelectedModel(listOfModels.size() - 1);
+			this.model = myModel;
 			int i;
 			for (i = 0; i < m.getNumCompartments(); i++)
 				myModel.addCompartment(convert(m.getCompartment(i)));
 			for (i = 0; i < m.getNumReactions(); i++)
-				myModel.addReaction(convert(m.getReaction(i)));
+				myModel.addReaction(readReaction(m.getReaction(i)));
 			for (i = 0; i < m.getNumSpecies(); i++)
 				myModel.addSpecies(convert(m.getSpecies(i)));
 			for (i = 0; i < m.getNumParameters(); i++)
 				myModel.addParameter(convert(m.getParameter(i)));
-			myModel.addChangeListener(this);
+			addAllSBaseChangeListenersTo(myModel);
 			return myModel;
 		}
 		return null;
@@ -132,34 +132,37 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 			org.sbml.libsbml.ModifierSpeciesReference plumod) {
 		ModifierSpeciesReference mod = new ModifierSpeciesReference(
 				new Species(plumod.getSpecies()));
-		mod.addChangeListener(this);
+		addAllSBaseChangeListenersTo(mod);
 		return mod;
 	}
 
 	public Parameter convert(org.sbml.libsbml.Parameter plupara) {
 		Parameter para = new Parameter(plupara.getId());
-		para.addChangeListener(this);
+		addAllSBaseChangeListenersTo(para);
 		return para;
 	}
 
-	public Reaction convert(org.sbml.libsbml.Reaction reac) {
-		Reaction reaction = new Reaction(reac.getId());
-		for (int i = 0; i < reac.getNumReactants(); i++)
-			reaction.addReactant(convert(reac.getReactant(i)));
-		for (int i = 0; i < reac.getNumProducts(); i++)
-			reaction.addProduct(convert(reac.getProduct(i)));
-		for (int i = 0; i < reac.getNumModifiers(); i++)
-			reaction.addModifier(convert(reac.getModifier(i)));
-		reaction.setSBOTerm(reac.getSBOTerm());
-		if (reac.isSetKineticLaw())
-			reaction.setKineticLaw(convert(reac.getKineticLaw()));
-		if (reac.isSetName())
-			reaction.setName(reac.getName());
-		reaction.setSBOTerm(reac.getSBOTerm());
-		reaction.setNotes(reac.getNotesString());
-		reaction.setFast(reac.getFast());
-		reaction.setReversible(reac.getReversible());
-		reaction.addChangeListener(this);
+	public Reaction readReaction(Object reac) {
+		if (!(reac instanceof org.sbml.libsbml.Reaction))
+			throw new IllegalArgumentException("reaction must be an instance of org.sbml.libsbml.Reaction.");
+		org.sbml.libsbml.Reaction r = (org.sbml.libsbml.Reaction) reac;
+		Reaction reaction = new Reaction(r.getId());
+		for (int i = 0; i < r.getNumReactants(); i++)
+			reaction.addReactant(convert(r.getReactant(i)));
+		for (int i = 0; i < r.getNumProducts(); i++)
+			reaction.addProduct(convert(r.getProduct(i)));
+		for (int i = 0; i < r.getNumModifiers(); i++)
+			reaction.addModifier(convert(r.getModifier(i)));
+		reaction.setSBOTerm(r.getSBOTerm());
+		if (r.isSetKineticLaw())
+			reaction.setKineticLaw(convert(r.getKineticLaw()));
+		if (r.isSetName())
+			reaction.setName(r.getName());
+		reaction.setSBOTerm(r.getSBOTerm());
+		reaction.setNotes(r.getNotesString());
+		reaction.setFast(r.getFast());
+		reaction.setReversible(r.getReversible());
+		addAllSBaseChangeListenersTo(reaction);
 		return reaction;
 	}
 
@@ -170,8 +173,8 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 			species.setCharge(spec.getCharge());
 		species.setBoundaryCondition(spec.getBoundaryCondition());
 		species.setConstant(spec.getConstant());
-		species.setCompartment(getSelectedModel().getCompartment(spec.getCompartment()));
-		species.addChangeListener(this);
+		species.setCompartment(getModel().getCompartment(spec.getCompartment()));
+		addAllSBaseChangeListenersTo(species);
 		return species;
 	}
 
@@ -179,7 +182,7 @@ public class LibSBMLReader extends AbstractSBMLconverter {
 		SpeciesReference spec = new SpeciesReference(new Species(specref
 				.getSpecies()));
 		spec.setStoichiometry(specref.getStoichiometry());
-		spec.addChangeListener(this);
+		addAllSBaseChangeListenersTo(spec);
 		return spec;
 	}
 }

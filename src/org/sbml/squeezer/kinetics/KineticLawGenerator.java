@@ -36,7 +36,7 @@ import org.sbml.Parameter;
 import org.sbml.Species;
 
 import org.sbml.libsbml.ASTNode;
-import org.sbml.squeezer.io.AbstractSBMLconverter;
+import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.math.GaussianRank;
 
 /**
@@ -53,7 +53,7 @@ import org.sbml.squeezer.math.GaussianRank;
 public class KineticLawGenerator {
 	private Model model;
 
-	private AbstractSBMLconverter sbmlIO;
+	private SBMLio sbmlIO;
 
 	private HashMap<Integer, String> numAndSpeciesID = new HashMap<Integer, String>();
 
@@ -181,7 +181,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @param plugin
 	 */
-	public KineticLawGenerator(AbstractSBMLconverter plugin) {
+	public KineticLawGenerator(SBMLio plugin) {
 		this.sbmlIO = plugin;
 		considerEachReactionEnzymeCatalysed = false;
 		generateKineticLawForEachReaction = true;
@@ -252,7 +252,7 @@ public class KineticLawGenerator {
 	 * @throws ModificationException
 	 * @throws RateLawNotApplicableException
 	 */
-	public KineticLawGenerator(AbstractSBMLconverter plugin,
+	public KineticLawGenerator(SBMLio plugin,
 			boolean forceAllReactionsAsEnzymeReaction,
 			boolean addAllParametersGlobally,
 			boolean generateKineticForAllReaction, short uniUniType,
@@ -1072,7 +1072,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @param selectedModel
 	 */
-	public void removeUnnecessaryParameters(AbstractSBMLconverter plugin) {
+	public void removeUnnecessaryParameters(SBMLio plugin) {
 		boolean isNeeded;
 		int i, j, k;
 		Model model = plugin.getSelectedModel();
@@ -1204,7 +1204,7 @@ public class KineticLawGenerator {
 			species.setBoundaryCondition(condition);
 			System.out.println("Boundary condition was now set to "
 					+ species.getBoundaryCondition());
-			sbmlIO.notifySBaseChanged(species);
+			species.stateChanged();
 			System.out
 					.println("I notified the plugin and now the boundary condition is "
 							+ species.getBoundaryCondition());
@@ -1242,7 +1242,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @param reversibility
 	 */
-	public void storeKineticsAndParameters(AbstractSBMLconverter plugin,
+	public void storeKineticsAndParameters(SBMLio plugin,
 			boolean reversibility, LawListener l) {
 		l.totalNumber(reactionNumOfNotExistKinetics.size() + 11);
 		storeLaws(plugin, reversibility, l);
@@ -1289,7 +1289,7 @@ public class KineticLawGenerator {
 	 *            A string with the formula to be assigned to the given
 	 *            reaction.
 	 */
-	public Reaction storeLaw(AbstractSBMLconverter plugin,
+	public Reaction storeLaw(SBMLio plugin,
 			KineticLaw kineticLaw, boolean reversibility) {
 		int i;
 		Reaction reaction = kineticLaw.getParentSBMLObject();
@@ -1340,7 +1340,7 @@ public class KineticLawGenerator {
 	/**
 	 * store the generated Kinetics in SBML-File as MathML.
 	 */
-	public void storeLaws(AbstractSBMLconverter plugin, boolean reversibility,
+	public void storeLaws(SBMLio plugin, boolean reversibility,
 			LawListener l) {
 		for (int i = 0; i < reactionNumOfNotExistKinetics.size(); i++) {
 			storeLaw(plugin, reactionNumAndKineticLaw
@@ -1469,10 +1469,10 @@ public class KineticLawGenerator {
 			if (species.getInitialConcentration() == 0.0) {
 				species.setInitialConcentration(initialValue);
 				species.setHasOnlySubstanceUnits(false);
-				sbmlIO.notifySBaseChanged(species);
+				species.stateChanged();
 			} else if (!species.getHasOnlySubstanceUnits()) {
 				species.setHasOnlySubstanceUnits(false);
-				sbmlIO.notifySBaseChanged(species);
+				species.stateChanged();
 			}
 		}
 		for (int product = 0; product < reaction.getNumProducts(); product++) {
@@ -1481,10 +1481,10 @@ public class KineticLawGenerator {
 			if (species.getInitialConcentration() == 0.0) {
 				species.setInitialConcentration(initialValue);
 				species.setHasOnlySubstanceUnits(false);
-				sbmlIO.notifySBaseChanged(species);
+				species.stateChanged();
 			} else if (!species.getHasOnlySubstanceUnits()) {
 				species.setHasOnlySubstanceUnits(false);
-				sbmlIO.notifySBaseChanged(species);
+				species.stateChanged();
 			}
 		}
 		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
@@ -1493,10 +1493,10 @@ public class KineticLawGenerator {
 			if (species.getInitialConcentration() == 0.0) {
 				species.setInitialConcentration(initialValue);
 				species.setHasOnlySubstanceUnits(false);
-				sbmlIO.notifySBaseChanged(species);
+				species.stateChanged();
 			} else if (!species.getHasOnlySubstanceUnits()) {
 				species.setHasOnlySubstanceUnits(false);
-				sbmlIO.notifySBaseChanged(species);
+				species.stateChanged();
 			}
 		}
 	}

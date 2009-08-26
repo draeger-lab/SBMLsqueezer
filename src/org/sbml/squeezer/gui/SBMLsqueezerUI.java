@@ -45,8 +45,9 @@ import javax.swing.event.ChangeListener;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
-import org.sbml.squeezer.io.AbstractSBMLconverter;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SBFileFilter;
+import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.resources.cfg.CfgKeys;
 
@@ -58,24 +59,11 @@ import org.sbml.squeezer.resources.cfg.CfgKeys;
  */
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		WindowListener, ChangeListener {
-
-	/**
-	 * The number of the current SBMLsqueezer version.
-	 */
-	private static final String versionNumber = "1.2.1";
-
-	private AbstractSBMLconverter sbmlIO;
+	private SBMLio sbmlIO;
 
 	public static final String SQUEEZE = "squeeze_reaction";
 	public static final String TO_LATEX = "reaction_toLaTeX";
 
-	/**
-	 * 
-	 * @return versionNumber
-	 */
-	public static final String getVersionNumber() {
-		return versionNumber;
-	}
 
 	JTabbedPaneWithCloseIcons tabbedPane;
 	Properties properties;
@@ -94,8 +82,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/**
 	 * @throws HeadlessException
 	 */
-	public SBMLsqueezerUI(AbstractSBMLconverter io) throws HeadlessException {
-		super("SBMLsqueezer " + getVersionNumber());
+	public SBMLsqueezerUI(SBMLio io) throws HeadlessException {
+		super("SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException exc) {
@@ -166,7 +154,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					chooser.setCurrentDirectory(new File(dir));
 				}
 				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-					addModel(sbmlIO.convert(chooser.getSelectedFile()
+					addModel(sbmlIO.readModel(chooser.getSelectedFile()
 							.getAbsolutePath()));
 					String path = chooser.getSelectedFile().getAbsolutePath();
 					path = path.substring(0, path.lastIndexOf('/'));
@@ -243,7 +231,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						"About SBMLsqueezer", JOptionPane.INFORMATION_MESSAGE);
 			} else if (item.getText().equals("Online help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
-						"SBMLsqueezer " + getVersionNumber() + " - Online Help");
+						"SBMLsqueezer " + SBMLsqueezer.getVersionNumber() + " - Online Help");
 				// helpBrowser.addWindowListener(this);
 				helpBrowser.setLocationRelativeTo(this);
 				helpBrowser.setSize(640, 640);
@@ -299,6 +287,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		SBMLModelSplitPane split = new SBMLModelSplitPane(model);
 		split.addActionListener(this);
 		tabbedPane.add(model.getId(), split);
+		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
 		setModelsOpened(true);
 		pack();
 	}

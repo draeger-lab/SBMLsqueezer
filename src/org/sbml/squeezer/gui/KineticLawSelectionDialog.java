@@ -46,24 +46,22 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.table.KineticLawJTable;
 import org.sbml.squeezer.gui.table.KineticLawTableModel;
-import org.sbml.squeezer.io.AbstractSBMLconverter;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.ODEwriter;
 import org.sbml.squeezer.io.SBFileFilter;
+import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.kinetics.IllegalFormatException;
 import org.sbml.squeezer.kinetics.KineticLawGenerator;
 import org.sbml.squeezer.kinetics.LawListener;
 import org.sbml.squeezer.kinetics.ModificationException;
 import org.sbml.squeezer.kinetics.RateLawNotApplicableException;
-import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -91,7 +89,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	// UI ELEMENTS DEFINITION: ReactionFrame
 	private boolean KineticsAndParametersStoredInSBML = false;
 
-	private AbstractSBMLconverter sbmlIO;
+	private SBMLio sbmlIO;
 
 	private int numOfWarnings = 0;
 
@@ -115,7 +113,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * Constructor
 	 */
 	public KineticLawSelectionDialog(JFrame owner) {
-		super(owner, "SBMLsqueezer " + SBMLsqueezerUI.getVersionNumber(), true);
+		super(owner, "SBMLsqueezer " + SBMLsqueezer.getVersionNumber(), true);
 		sbmlIO = null;
 		setAlwaysOnTop(true);
 	}
@@ -190,7 +188,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * 
 	 * @param sbmlIO
 	 */
-	public KineticLawSelectionDialog(JFrame owner, AbstractSBMLconverter sbmlIO) {
+	public KineticLawSelectionDialog(JFrame owner, SBMLio sbmlIO) {
 		this(owner);
 		this.sbmlIO = sbmlIO;
 		init();
@@ -217,7 +215,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param reaction
 	 */
 	public KineticLawSelectionDialog(JFrame owner,
-			AbstractSBMLconverter sbmlIO, Reaction reaction) {
+			SBMLio sbmlIO, Reaction reaction) {
 		this(owner);
 		this.sbmlIO = sbmlIO;
 
@@ -239,7 +237,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(
 					klg, model, reaction);
 			if (JOptionPane.showConfirmDialog(this, messagePanel,
-					"SBMLsqueezer " + SBMLsqueezerUI.getVersionNumber(),
+					"SBMLsqueezer " + SBMLsqueezer.getVersionNumber(),
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 					icon) == JOptionPane.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
@@ -300,7 +298,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 			} else if (text.equals("Help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
-						"SBMLsqueezer " + SBMLsqueezerUI.getVersionNumber()
+						"SBMLsqueezer " + SBMLsqueezer.getVersionNumber()
 								+ " - Online Help");
 				helpBrowser.addWindowListener(this);
 				helpBrowser.setLocationRelativeTo(this);
@@ -779,7 +777,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			JLabel label = new JLabel(new ImageIcon(image));
 			label.setBackground(Color.WHITE);
 			label.setText("<html><body><br><br><br><br><br><br>Version "
-					+ SBMLsqueezerUI.getVersionNumber() + "</body></html>");
+					+ SBMLsqueezer.getVersionNumber() + "</body></html>");
 			JPanel p = new JPanel();
 			p.add(label);
 			p.setBackground(Color.WHITE);
