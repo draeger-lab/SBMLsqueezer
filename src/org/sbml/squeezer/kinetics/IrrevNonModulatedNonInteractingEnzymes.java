@@ -50,9 +50,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevNonModulatedNonInteractingEnzymes(
-			Reaction parentReaction, Model model)
-			throws RateLawNotApplicableException, IOException,
+	public IrrevNonModulatedNonInteractingEnzymes(Reaction parentReaction,
+			Model model) throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model);
 	}
@@ -65,9 +64,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevNonModulatedNonInteractingEnzymes(
-			Reaction parentReaction, Model model,
-			List<String> listOfPossibleEnzymes)
+	public IrrevNonModulatedNonInteractingEnzymes(Reaction parentReaction,
+			Model model, List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
@@ -131,9 +129,9 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	// @Override
-	protected ASTNode createKineticEquation(Model model,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	protected ASTNode createKineticEquation(Model model, List<String> modE,
+			List<String> modActi, List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		if ((modActi.size() > 0) || (modInhib.size() > 0)
 				|| (modTActi.size() > 0) || (modTInhib.size() > 0))
@@ -147,16 +145,16 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 					"This rate law can only be applied to irreversible reactions.");
 		numOfEnzymes = modE.size();
 		Reaction reaction = getParentSBMLObject();
-		StringBuffer enzymes[] = new StringBuffer[Math.max(1, modE.size())];
+		ASTNode enzymes[] = new ASTNode[Math.max(1, modE.size())];
 		for (int enzymeNum = 0; enzymeNum < enzymes.length; enzymeNum++) {
 			StringBuffer kcat = (modE.size() == 0) ? concat("V_", reaction
 					.getId()) : concat("kcat_", reaction.getId());
 			if (modE.size() > 1)
 				append(kcat, underscore, modE.get(enzymeNum));
 			addLocalParameter(kcat);
-			StringBuffer numerator = new StringBuffer(kcat);
+			ASTNode numerator = new ASTNode(kcat, this);
 
-			StringBuffer denominator = new StringBuffer();
+			ASTNode denominator = new ASTNode("", this);
 			for (int i = 0; i < reaction.getNumReactants(); i++) {
 				SpeciesReference si = reaction.getReactant(i);
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
@@ -166,15 +164,20 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				if (modE.size() > 1)
 					append(kM, underscore, modE.get(enzymeNum));
 				addLocalParameter(append(kM, underscore, si.getSpecies()));
-				StringBuffer frac = frac(getSpecies(si), kM);
-				numerator = times(numerator, pow(frac(getSpecies(si), kM),
-						getStoichiometry(si)));
-				denominator = times(denominator, pow(sum(Integer.toString(1),
-						frac), getStoichiometry(si)));
+				ASTNode frac = ASTNode.frac(new ASTNode(getSpecies(si), this),
+						new ASTNode(kM, this));
+				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
+						new ASTNode(getSpecies(si), this),
+						new ASTNode(kM, this)), new ASTNode(
+						getStoichiometry(si), this)));
+				denominator = ASTNode.times(denominator, ASTNode.pow(ASTNode
+						.sum(new ASTNode(1, this), frac), new ASTNode(
+						getStoichiometry(si), this)));
 			}
 			if (modE.size() >= 1)
-				numerator = times(modE.get(enzymeNum), numerator);
-			enzymes[enzymeNum] = frac(numerator, denominator);
+				numerator = ASTNode.times(
+						new ASTNode(modE.get(enzymeNum), this), numerator);
+			enzymes[enzymeNum] = ASTNode.frac(numerator, denominator);
 		}
 		return ASTNode.sum(enzymes);
 	}
