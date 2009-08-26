@@ -21,6 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
+import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
@@ -47,10 +48,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public RandomOrderMechanism(Reaction parentReaction,
-			Model model, boolean reversibility)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+	public RandomOrderMechanism(Reaction parentReaction, Model model,
+			boolean reversibility) throws RateLawNotApplicableException,
+			IOException, IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -63,8 +63,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public RandomOrderMechanism(Reaction parentReaction,
-			Model model, List<String> listOfPossibleEnzymes)
+	public RandomOrderMechanism(Reaction parentReaction, Model model,
+			List<String> listOfPossibleEnzymes)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction, model, listOfPossibleEnzymes);
@@ -100,9 +100,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	}
 
 	// @Override
-	protected StringBuffer createKineticEquation(Model model,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	protected ASTNode createKineticEquation(Model model, List<String> modE,
+			List<String> modActi, List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 
 		Reaction reaction = getParentSBMLObject();
@@ -147,9 +147,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 		 * do not want anything in modE to occur in the kinetic equation.
 		 */
 		int enzymeNum = 0;
-		StringBuffer numerator = new StringBuffer();// I
-		StringBuffer denominator = new StringBuffer(); // II
-		StringBuffer catalysts[] = new StringBuffer[Math.max(1, modE.size())];
+		ASTNode numerator;// I
+		ASTNode denominator; // II
+		ASTNode catalysts[] = new ASTNode[Math.max(1, modE.size())];
 		do {
 			/*
 			 * Irreversible reaction
@@ -183,15 +183,16 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 				addLocalParameter(kMr1);
 				addLocalParameter(kMr2);
 				addLocalParameter(append(kIr1, underscore, speciesR1));
-				
-				numerator = new StringBuffer(kcatp);
+
+				numerator = new ASTNode(kcatp, this);
 				if (modE.size() > 0)
-					numerator = times(numerator, modE.get(enzymeNum));
+					numerator = ASTNode.times(numerator, new ASTNode(modE
+							.get(enzymeNum), this));
 				if (specRefR2.equals(specRefR1)) {
-					String r1square = pow(speciesR1, Integer.valueOf(2))
-							.toString();
-					numerator = times(numerator, r1square);
-					denominator = sum(times(kIr1, kMr2), times(sum(kMr1, kMr2),
+					ASTNode r1square = ASTNode.pow(
+							new ASTNode(speciesR1, this), new ASTNode(2, this));
+					numerator = ASTNode.times(numerator, r1square);
+					denominator = ASTNode.sum(ASTNode.times(new ASTNode(kIr1,this),new ASTNode( kMr2,this)), ASTNode.times(ASTNode.sum(kMr1, kMr2),
 							speciesR1), r1square);
 				} else {
 					numerator = times(numerator, speciesR1, speciesR2);
@@ -357,7 +358,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 			// Construct formula
 			catalysts[enzymeNum++] = frac(numerator, denominator);
 		} while (enzymeNum < modE.size());
-		return times(activationFactor(modActi), inhibitionFactor(modInhib),
-				sum(catalysts));
+		return ASTNode.times(activationFactor(modActi),
+				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
 	}
 }

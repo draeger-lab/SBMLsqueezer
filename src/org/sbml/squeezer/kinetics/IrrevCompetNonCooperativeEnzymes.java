@@ -21,6 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
+import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 
@@ -42,9 +43,9 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction,
-			Model model) throws RateLawNotApplicableException,
-			IOException, IllegalFormatException {
+	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction, Model model)
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction, model);
 	}
 
@@ -110,9 +111,9 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	// @Override
-	protected StringBuffer createKineticEquation(Model model,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	protected ASTNode createKineticEquation(Model model, List<String> modE,
+			List<String> modActi, List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		if (((modTActi.size() > 0) && (modActi.size() > 0))
 				|| ((modInhib.size() > 0) && (modTInhib.size() > 0)))
@@ -135,7 +136,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 		numInhib = modInhib.size();
 
 		numOfEnzymes = modE.size();
-		StringBuffer formula = new StringBuffer();
+		ASTNode formula = new ASTNode("",this);
 
 		int enzymeNum = 0;
 		do {
@@ -149,14 +150,14 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			}
 			addLocalParameter(kcat);
 			addLocalParameter(kcat);
-			StringBuffer currEnzyme = new StringBuffer();
-			StringBuffer numerator = new StringBuffer();
+			ASTNode currEnzyme;
+			ASTNode numerator = new ASTNode("",this);
 
-			numerator = times(numerator, kcat);
-			numerator = times(numerator, new StringBuffer(reaction.getReactant(
-					0).getSpecies()));
+			numerator = ASTNode.times(numerator, new ASTNode(kcat,this));
+			numerator = ASTNode.times(numerator, new ASTNode(reaction.getReactant(
+					0).getSpecies(),this));
 
-			StringBuffer denominator = new StringBuffer();
+			ASTNode denominator = new ASTNode("", this);
 			StringBuffer kM = new StringBuffer(concat("kM_", reaction.getId()));
 
 			if (numOfEnzymes > 1)
@@ -166,10 +167,10 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			addLocalParameter(kM);
 
 			if (modInhib.size() == 0)
-				denominator = sum(denominator, kM);
+				denominator = ASTNode.sum(denominator, new ASTNode(kM, this));
 			else {
-				StringBuffer factor = new StringBuffer();
-				factor = times(factor, kM);
+				ASTNode factor = new ASTNode("", this);
+				factor = ASTNode.times(factor, new ASTNode(kM, this));
 				for (int i = 0; i < modInhib.size(); i++) {
 
 					StringBuffer kIi = new StringBuffer(concat("Ki_", reaction
@@ -184,25 +185,27 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					addLocalParameter(kIi);
 					addLocalParameter(exponent);
 
-					factor = times(factor, pow(sum(Integer.toString(1), frac(
-							new StringBuffer(modInhib.get(i)), kIi)), exponent));
+					factor = ASTNode.times(factor, ASTNode.pow(ASTNode.sum(
+							new ASTNode(1, this), ASTNode.frac(new ASTNode(
+									modInhib.get(i), this), new ASTNode(kIi,
+									this))), new ASTNode(exponent, this)));
 				}
-				denominator = sum(denominator, factor);
+				denominator = ASTNode.sum(denominator, factor);
 
 			}
-			denominator = sum(denominator, new StringBuffer(reaction
-					.getReactant(0).getSpecies()));
-			currEnzyme = frac(numerator, denominator);
+			denominator = ASTNode.sum(denominator, new ASTNode(reaction
+					.getReactant(0).getSpecies(),this));
+			currEnzyme = ASTNode.frac(numerator, denominator);
 			enzymeNum++;
 			if (numOfEnzymes <= 1)
 				formula = currEnzyme;
 			else {
-				formula = sum(formula, currEnzyme);
-				numerator = times(numerator, new StringBuffer(modE
-						.get(enzymeNum)));
+				formula = ASTNode.sum(formula, currEnzyme);
+				numerator = ASTNode.times(numerator, new ASTNode(modE
+						.get(enzymeNum),this));
 			}
 		} while (enzymeNum <= modE.size() - 1);
-		return times(activationFactor(modActi), formula);
+		return ASTNode.times(activationFactor(modActi), formula);
 	}
 
 }

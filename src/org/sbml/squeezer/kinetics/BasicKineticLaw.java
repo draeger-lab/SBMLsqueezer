@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.biojava.ontology.io.OboParser;
+import org.sbml.Parameter;
 import org.sbml.ASTNode;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
@@ -399,9 +400,9 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 
 	protected StringBuffer formelTeX;
 
-	private List<StringBuffer> listOfLocalParameters;
+	private List<Parameter> listOfLocalParameters;
 
-	private List<StringBuffer> listOfGlobalParameters;
+	private List<Parameter> listOfGlobalParameters;
 
 	protected String sboTerm;
 
@@ -461,8 +462,8 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 	 * @param parameter
 	 */
 	protected void addGlobalParameter(StringBuffer parameter) {
-		if (!listOfGlobalParameters.contains(parameter))
-			listOfGlobalParameters.add(parameter);
+		if (!contains(parameter,listOfGlobalParameters))
+			listOfGlobalParameters.add(new Parameter(parameter));
 	}
 
 	/**
@@ -472,10 +473,26 @@ public abstract class BasicKineticLaw extends KineticLaw implements
 	 * @param parameter
 	 */
 	protected void addLocalParameter(StringBuffer parameter) {
-		if (!listOfLocalParameters.contains(parameter))
-			listOfLocalParameters.add(parameter);
+		if (!contains(parameter,listOfLocalParameters))
+			listOfLocalParameters.add(new Parameter(parameter));
 	}
+	/**
+	 * searches the list of Parameters if theres already a parameter with the same ID
+	 * 
+	 * @param id
+	 * @param list
+	 * @return
+	 */
 
+	protected boolean contains(StringBuffer id,List<Parameter> list){
+		
+		for (int i =0; i < list.size();i++){
+			if (list.get(i).getId().equals(id))
+				return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * 
 	 * @param model

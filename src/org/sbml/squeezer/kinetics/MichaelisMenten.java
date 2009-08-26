@@ -21,6 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
+import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 
@@ -70,13 +71,13 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		super(parentReaction, model);
 	}
 
-	protected StringBuffer createKineticEquation(Model model,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	protected ASTNode createKineticEquation(Model model, List<String> modE,
+			List<String> modActi, List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		Reaction reaction = getParentSBMLObject();
-		StringBuffer numerator = new StringBuffer();
-		StringBuffer denominator = new StringBuffer();
+		ASTNode numerator;
+		ASTNode denominator;
 
 		numOfActivators = modActi.size();
 		numOfEnzymes = modE.size();
@@ -92,12 +93,12 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to reactions with exactly one product.");
 
-		StringBuffer specRefR = new StringBuffer(reaction.getReactant(0)
-				.getSpecies());
-		StringBuffer specRefP = new StringBuffer(reaction.getProduct(0)
-				.getSpecies());
+		ASTNode specRefR = new ASTNode(reaction.getReactant(0).getSpecies(),
+				this);
+		ASTNode specRefP = new ASTNode(reaction.getProduct(0).getSpecies(),
+				this);
 
-		StringBuffer formula = new StringBuffer();
+		ASTNode formula[] = new ASTNode[modE.size()];
 		int enzymeNum = 0;
 		do {
 			StringBuffer kcatp, kcatn;
@@ -122,53 +123,56 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			addLocalParameter(kcatp);
 			addLocalParameter(kMr);
 
-			StringBuffer currEnzymeKin = new StringBuffer();
-
+			ASTNode currEnzymeKin ;
 			if (!reaction.getReversible()) {
 				/*
 				 * Irreversible Reaction
 				 */
-				numerator = times(kcatp, specRefR);
-				denominator = new StringBuffer(specRefR);
+				numerator = ASTNode.times(new ASTNode(kcatp, this), specRefR);
+				denominator = specRefR;
 			} else {
 				/*
 				 * Reversible Reaction
 				 */
-				numerator = times(frac(kcatp, kMr), specRefR);
-				denominator = frac(specRefR, kMr);
+				numerator = ASTNode.times(ASTNode.frac(
+						new ASTNode(kcatp, this), new ASTNode(kMr, this)),
+						specRefR);
+				denominator = ASTNode.frac(specRefR, new ASTNode(kMr, this));
 				kMp = concat(kMp, underscore, specRefP);
 
 				addLocalParameter(kcatn);
 				addLocalParameter(kMp);
 
-				numerator = diff(numerator, times(frac(kcatn, kMp), specRefP));
-				denominator = sum(denominator, frac(specRefP, kMp));
+				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
+						new ASTNode(kcatn, this), new ASTNode(kMp, this)),
+						specRefP));
+				denominator = ASTNode.sum(denominator, ASTNode.frac(specRefP,
+						new ASTNode(kMp, this)));
 			}
 			denominator = createInihibitionTerms(modInhib, reaction, modE,
-					denominator, kMr, currEnzymeKin, enzymeNum);
+					denominator, kMr, enzymeNum);
 
 			if (reaction.getReversible())
-				denominator = sum(new StringBuffer(Integer.toString(1)),
-						denominator);
+				denominator = ASTNode.sum(new ASTNode(1, this), denominator);
 			else if (modInhib.size() <= 1)
-				denominator = sum(kMr, denominator);
+				denominator = ASTNode.sum(new ASTNode(kMr, this), denominator);
 
 			// construct formula
-			currEnzymeKin = frac(numerator, denominator);
+			currEnzymeKin = ASTNode.frac(numerator, denominator);
 			if (modE.size() > 0)
-				currEnzymeKin = times(new StringBuffer(modE.get(enzymeNum)),
-						currEnzymeKin);
-			formula = sum(formula, currEnzymeKin);
-			enzymeNum++;
+				currEnzymeKin = ASTNode.times(new ASTNode(modE.get(enzymeNum),
+						this), currEnzymeKin);
+			formula[enzymeNum++] = currEnzymeKin;
 		} while (enzymeNum < modE.size());
+		ASTNode sum = ASTNode.sum(formula);
 
 		// the formalism from the convenience kinetics as a default.
 		if ((modInhib.size() > 1) && (reaction.getReversible()))
-			formula = times(inhibitionFactor(modInhib), formula);
+			sum = ASTNode.times(inhibitionFactor(modInhib), sum);
 		// Activation
 		if (modActi.size() > 0)
-			formula = times(activationFactor(modActi), formula);
-		return formula;
+			sum = ASTNode.times(activationFactor(modActi), sum);
+		return sum;
 	}
 
 	/**
@@ -182,10 +186,9 @@ public class MichaelisMenten extends GeneralizedMassAction {
 	 * @param currEnzymeKin
 	 * @param enzymeNum
 	 */
-	private StringBuffer createInihibitionTerms(List<String> modInhib,
-			Reaction reaction, List<String> modE,
-			StringBuffer denominator, StringBuffer kMr,
-			StringBuffer currEnzymeKin, int enzymeNum) {
+	private ASTNode createInihibitionTerms(List<String> modInhib,
+			Reaction reaction, List<String> modE, ASTNode denominator,
+			StringBuffer kMr, int enzymeNum) {
 		if (modInhib.size() == 1) {
 			StringBuffer kIa = concat("KIa_", reaction.getId()), kIb = concat(
 					"KIb_", reaction.getId());
@@ -196,13 +199,18 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			addLocalParameter(kIa);
 			addLocalParameter(kIb);
 
-			StringBuffer specRefI = new StringBuffer(modInhib.get(0));
+			ASTNode specRefI = new ASTNode(modInhib.get(0),this);
 			if (reaction.getReversible())
-				denominator = sum(frac(specRefI, kIa), times(denominator, sum(
-						Integer.toString(1), frac(specRefI, kIb))));
+				denominator = ASTNode.sum(ASTNode.frac(specRefI, new ASTNode(
+						kIa, this)), ASTNode.times(denominator, ASTNode.sum(
+						new ASTNode(1, this), ASTNode.frac(specRefI,
+								new ASTNode(kIb, this)))));
 			else
-				denominator = sum(times(frac(kMr, kIa), specRefI), denominator,
-						times(frac(kMr, kIb), specRefI));
+				denominator = ASTNode.sum(ASTNode.times(ASTNode.frac(
+						new ASTNode(kMr, this), new ASTNode(kIa, this)),
+						specRefI), denominator, ASTNode.times(ASTNode.frac(
+						new ASTNode(kMr, this), new ASTNode(kIb, this)),
+						specRefI));
 
 		} else if ((modInhib.size() > 1)
 				&& !getParentSBMLObject().getReversible()) {
@@ -210,8 +218,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			 * mixed-type inihibition of irreversible enzymes by mutually
 			 * exclusive inhibitors.
 			 */
-			StringBuffer sumIa = new StringBuffer(Integer.toString(1));
-			StringBuffer sumIb = new StringBuffer(Integer.toString(1));
+			ASTNode sumIa = new ASTNode(1, this);
+			ASTNode sumIb = new ASTNode(1, this);
 			for (int i = 0; i < modInhib.size(); i++) {
 				StringBuffer kIai = concat(Integer.valueOf(i + 1), underscore,
 						reaction.getId());
@@ -221,11 +229,14 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				kIai = concat("kIa_", kIai);
 				addLocalParameter(kIai);
 				addLocalParameter(kIbi);
-				StringBuffer specRefI = new StringBuffer(modInhib.get(i));
-				sumIa = sum(sumIa, frac(specRefI, kIai));
-				sumIb = sum(sumIb, frac(specRefI, kIbi));
+				ASTNode specRefI = new ASTNode(modInhib.get(i), this);
+				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, new ASTNode(
+						kIai, this)));
+				sumIb = ASTNode.sum(sumIb, ASTNode.frac(specRefI, new ASTNode(
+						kIbi, this)));
 			}
-			denominator = sum(times(denominator, sumIa), times(kMr, sumIb));
+			denominator = ASTNode.sum(ASTNode.times(denominator, sumIa),
+					ASTNode.times(new ASTNode(kMr,this), sumIb));
 		}
 		return denominator;
 	}
@@ -233,8 +244,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 	public String getName() {
 		switch (numOfEnzymes) {
 		case 0: // no enzyme, irreversible
-			if (!getParentSBMLObject().getReversible() && (numOfActivators == 0)
-					&& (numOfInhibitors == 0))
+			if (!getParentSBMLObject().getReversible()
+					&& (numOfActivators == 0) && (numOfInhibitors == 0))
 				return "normalised kinetics of unireactant enzymes"; // 0000199
 			else if ((numOfActivators == 0) && (numOfInhibitors == 0))
 				return "kinetics of non-modulated unireactant enzymes"; // 0000326
