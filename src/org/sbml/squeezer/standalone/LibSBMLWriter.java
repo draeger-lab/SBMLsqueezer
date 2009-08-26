@@ -18,9 +18,9 @@
  */
 package org.sbml.squeezer.standalone;
 
-import org.sbml.SBase;
-import org.sbml.squeezer.io.SBaseChangedListener;
-
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.squeezer.io.AbstractSBMLWriter;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -28,21 +28,16 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class LibSBMLWriter implements SBaseChangedListener {
+public class LibSBMLWriter extends AbstractSBMLWriter {
 
-	public void sbaseAdded(SBase sb) {
+	public Object writeModel(Model model) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
-	public void sbaseRemoved(SBase sb) {
+	public Object writeReaction(Reaction reaction) {
 		// TODO Auto-generated method stub
-		
-	}
-
-	public void stateChanged(SBase sb) {
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 }

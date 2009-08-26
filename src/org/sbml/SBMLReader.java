@@ -16,32 +16,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.plugin;
-
-import org.sbml.Model;
-import org.sbml.Reaction;
-import org.sbml.squeezer.io.AbstractSBMLWriter;
+package org.sbml;
 
 /**
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @author Andreas Dr&auml;ger <a href="mailto:andreas.draeger@uni-tuebingen.de">andreas.draeger@uni-tuebingen.de</a>
+ *
  */
-public class PluginSBMLWriter extends AbstractSBMLWriter {
+public interface SBMLReader {
 
-	public PluginSBMLWriter(SBMLsqueezerPlugin plugin) {
-		// TODO Auto-generated constructor stub
-	}
-
-	public Object writeModel(Model model) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object writeReaction(Reaction reaction) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/**
+	 * 
+	 * @param model
+	 * @return
+	 */
+	public Model readModel(Object model);
+	
+	/**
+	 * 
+	 * @param reaction
+	 * @return
+	 */
+	public Reaction readReaction(Object reaction);
+	
 }

@@ -1,8 +1,0 @@
------------------------------------------------------
-SBMLsqueezer Copyright (C) 2009 Andreas Dräger
-Center for Bioinformatics Tübingen (ZBIT).
-This program comes with ABSOLUTELY NO WARRANTY.
-This is free software, and you are welcome
-to redistribute it under certain conditions;
-see http://www.gnu.org/copyleft/gpl.html for details.
------------------------------------------------------

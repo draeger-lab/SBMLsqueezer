@@ -36,10 +36,10 @@ import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.squeezer.io.AbstractSBMLconverter;
+import org.sbml.squeezer.io.AbstractSBMLReader;
 import org.sbml.squeezer.resources.Resource;
 
-public class PluginSBMLReader extends AbstractSBMLconverter {
+public class PluginSBMLReader extends AbstractSBMLReader {
 
 	private static Properties alias2sbo;
 	static {
@@ -66,37 +66,40 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 		super();
 	}
 
-	public Model convert(Object model) {
+	public Model readModel(Object model) {
 		if (model instanceof PluginModel) {
 			PluginModel pm = (PluginModel) model;
 			Model m = new Model(pm.getId());
 			for (int i = 0; i < pm.getNumReactions(); i++)
-				m.addReaction(convert(pm.getReaction(i)));
+				m.addReaction(readReaction(pm.getReaction(i)));
 			for (int i = 0; i < pm.getNumSpecies(); i++)
 				m.addSpecies(convert(pm.getSpecies(i)));
-			m.addChangeListener(this);
+			addAllSBaseChangeListenersTo(m);
 			return m;
 		}
 		return null;
 	}
 
-	public Reaction convert(PluginReaction reac) {
-		Reaction reaction = new Reaction(reac.getId());
-		for (int i = 0; i < reac.getNumReactants(); i++) {
-			reaction.addReactant(convert(reac.getReactant(i)));
+	public Reaction readReaction(Object reac) {
+		if (!(reac instanceof PluginReaction))
+			throw new IllegalArgumentException("reaction must be an instance of PluginReaction");
+		PluginReaction r = (PluginReaction) reac;
+		Reaction reaction = new Reaction(r.getId());
+		for (int i = 0; i < r.getNumReactants(); i++) {
+			reaction.addReactant(convert(r.getReactant(i)));
 		}
-		for (int i = 0; i < reac.getNumProducts(); i++) {
-			reaction.addProduct(convert(reac.getProduct(i)));
+		for (int i = 0; i < r.getNumProducts(); i++) {
+			reaction.addProduct(convert(r.getProduct(i)));
 		}
-		for (int i = 0; i < reac.getNumModifiers(); i++) {
-			reaction.addModifier(convert(reac.getModifier(i)));
+		for (int i = 0; i < r.getNumModifiers(); i++) {
+			reaction.addModifier(convert(r.getModifier(i)));
 		}
 		reaction.setSBOTerm(Integer.parseInt(alias2sbo.get(
-				reac.getReactionType()).toString()));
-		reaction.setKineticLaw(convert(reac.getKineticLaw()));
-		reaction.setFast(reac.getFast());
-		reaction.setReversible(reac.getReversible());
-		reaction.addChangeListener(this);
+				r.getReactionType()).toString()));
+		reaction.setKineticLaw(convert(r.getKineticLaw()));
+		reaction.setFast(r.getFast());
+		reaction.setReversible(r.getReversible());
+		addAllSBaseChangeListenersTo(reaction);
 		return reaction;
 	}
 
@@ -104,7 +107,7 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 		Species species = new Species(spec.getId());
 		species.setSBOTerm(Integer.parseInt(alias2sbo.get(
 				spec.getSpeciesAlias(spec.getId())).toString()));
-		species.addChangeListener(this);
+		addAllSBaseChangeListenersTo(species);
 		return species;
 	}
 
@@ -112,7 +115,7 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 		SpeciesReference spec = new SpeciesReference(new Species(specref
 				.getSpeciesInstance().getId()));
 		spec.setStoichiometry(specref.getStoichiometry());
-		spec.addChangeListener(this);
+		addAllSBaseChangeListenersTo(spec);
 		return spec;
 	}
 
@@ -120,7 +123,7 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 			PluginModifierSpeciesReference plumod) {
 		ModifierSpeciesReference mod = new ModifierSpeciesReference(
 				new Species(plumod.getSpeciesInstance().getId()));
-		mod.addChangeListener(this);
+		addAllSBaseChangeListenersTo(mod);
 		return mod;
 	}
 
@@ -131,13 +134,13 @@ public class PluginSBMLReader extends AbstractSBMLconverter {
 		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
 			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
 		}
-		kinlaw.addChangeListener(this);
+		addAllSBaseChangeListenersTo(kinlaw);
 		return kinlaw;
 	}
 
 	public Parameter convert(PluginParameter plupara) {
 		Parameter para = new Parameter(plupara.getId());
-		para.addChangeListener(this);
+		addAllSBaseChangeListenersTo(para);
 		return para;
 	}
 }

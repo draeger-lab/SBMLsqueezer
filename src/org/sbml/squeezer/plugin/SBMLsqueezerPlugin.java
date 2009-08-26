@@ -24,6 +24,8 @@ import jp.sbi.celldesigner.plugin.PluginMenu;
 import jp.sbi.celldesigner.plugin.PluginMenuItem;
 import jp.sbi.celldesigner.plugin.PluginSBase;
 
+import org.sbml.squeezer.SBMLsqueezer;
+
 /**
  * TODO: comment missing
  * 
@@ -37,32 +39,26 @@ import jp.sbi.celldesigner.plugin.PluginSBase;
 public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 
 	/**
-	 * Tells if SBMLsqueezer checked for an update after CellDesigner has been
-	 * run.
-	 */
-	private boolean isUpdateChecked = false;
-
-	/**
 	 * Initializes a new SBMLsqueezerPlugin instance.
 	 */
 	public SBMLsqueezerPlugin() {
-		SBMLsqueezerPluginAction action = new SBMLsqueezerPluginAction(this);
+		SBMLsqueezer sbmlSqueezer = new SBMLsqueezer(this);
 		String title = "SBMLsqueezer";
 		PluginMenu menu = new PluginMenu(title);
 		PluginMenuItem menuItem = new PluginMenuItem(getMainPluginItemText(),
-				action);
+				sbmlSqueezer);
 		menu.add(menuItem);
-		menuItem = new PluginMenuItem(getExporterItemText(), action);
+		menuItem = new PluginMenuItem(getExporterItemText(), sbmlSqueezer);
 		menu.add(menuItem);
 		this.addCellDesignerPluginMenu(menu);
 
 		// Popup menu
 		PluginMenu contextMenu = new PluginMenu(title);
 		PluginMenuItem contextMenuItem = new PluginMenuItem(
-				getSqueezeContextMenuItemText(), action);
+				getSqueezeContextMenuItemText(), sbmlSqueezer);
 		contextMenu.add(contextMenuItem);
 		contextMenuItem = new PluginMenuItem(getExportContextMenuItemText(),
-				action);
+				sbmlSqueezer);
 		contextMenu.add(contextMenuItem);
 
 		addReactionPopupMenuSeparator();
@@ -106,14 +102,6 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	 */
 	public String getSqueezeContextMenuItemText() {
 		return "Squeeze Kinetic Law";
-	}
-
-	/**
-	 * @return isUpdateChecked
-	 */
-
-	public boolean getUpdateChecked() {
-		return isUpdateChecked;
 	}
 
 	/*
@@ -174,15 +162,5 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	 * .plugin.PluginSBase)
 	 */
 	public void SBaseDeleted(PluginSBase arg0) {
-	}
-
-	/**
-	 * Sets the value of isUpdateChecked to the value of b.
-	 * 
-	 * @param b
-	 */
-
-	public void setUpdateChecked(boolean b) {
-		isUpdateChecked = b;
 	}
 }
