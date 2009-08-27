@@ -35,6 +35,10 @@ public class Species extends NamedSBase {
 	private double initialAmount;
 	private double initialConcentration;
 
+	/**
+	 * 
+	 * @param species
+	 */
 	public Species(Species species) {
 		super(species);
 		this.boundaryCondition = species.getBoundaryCondition();
@@ -53,6 +57,10 @@ public class Species extends NamedSBase {
 		}
 	}
 
+	/**
+	 * 
+	 * @param id
+	 */
 	public Species(String id) {
 		super(id);
 		initDefaults();
@@ -71,23 +79,24 @@ public class Species extends NamedSBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 * @see org.sbml.NamedSBase#equals(java.lang.Object)
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
 		if (o instanceof Species) {
 			Species s = (Species) o;
-			return s.getBoundaryCondition() == boundaryCondition
-					&& s.getConstant() == constant
-					&& s.getHasOnlySubstanceUnits() == hasOnlySubstanceUnits
-					&& s.getCharge() == charge
-					&& s.getCompartmentInstance().equals(compartment)
-					&& s.getInitialAmount() == initialAmount
-					&& s.getInitialConcentration() == initialConcentration
-					&& s.getName().equals(getName())
-					&& s.getSBOTerm() == getSBOTerm();
-		}
-		return false;
+			equal &= s.getBoundaryCondition() == boundaryCondition;
+			equal &= s.getConstant() == constant;
+			equal &= s.getHasOnlySubstanceUnits() == hasOnlySubstanceUnits;
+			equal &= s.getCharge() == charge;
+			equal &= s.getCompartmentInstance().equals(compartment);
+			equal &= s.getInitialAmount() == initialAmount;
+			equal &= s.getInitialConcentration() == initialConcentration;
+			return equal;
+		} else
+			equal = false;
+		return equal;
 	}
 
 	public boolean getBoundaryCondition() {

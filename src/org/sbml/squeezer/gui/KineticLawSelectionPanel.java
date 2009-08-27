@@ -379,9 +379,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				rButtonsKineticEquations[i] = new JRadioButton(
 						"Existing rate law", false);
 
-				if (reaction.getNotes().length() > 0)
+				if (reaction.getNotesString().length() > 0)
 					rButtonsKineticEquations[i].setToolTipText(toHTML(reaction
-							.getNotes(), 40));
+							.getNotesString(), 40));
 				else
 					rButtonsKineticEquations[i]
 							.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");

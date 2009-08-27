@@ -30,16 +30,29 @@ public class KineticLaw extends MathContainer {
 
 	private ListOf<Parameter> listOfParameters;
 
+	/**
+	 * 
+	 */
 	public KineticLaw() {
 		super();
 		listOfParameters = new ListOf<Parameter>();
+		listOfParameters.parentSBMLObject = this;
 	}
 
+	/**
+	 * 
+	 * @param kineticLaw
+	 */
 	public KineticLaw(KineticLaw kineticLaw) {
 		super(kineticLaw);
 		listOfParameters = kineticLaw.getListOfParameters().clone();
+		listOfParameters.parentSBMLObject = this;
 	}
 
+	/**
+	 * 
+	 * @param parentReaction
+	 */
 	public KineticLaw(Reaction parentReaction) {
 		this();
 		parentReaction.setKineticLaw(this);
@@ -65,7 +78,9 @@ public class KineticLaw extends MathContainer {
 	 * @param p
 	 */
 	public void addParameter(Parameter p) {
-		listOfParameters.add(new Parameter(p));
+		Parameter parameter = new Parameter(p);
+		parameter.parentSBMLObject = this;
+		listOfParameters.add(parameter);
 		stateChanged();
 	}
 
@@ -81,19 +96,23 @@ public class KineticLaw extends MathContainer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 * @see org.sbml.MathContainer#equals(java.lang.Object)
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
 		if (o instanceof KineticLaw) {
 			KineticLaw kl = (KineticLaw) o;
-			return kl.getMath().equals(getMath())
-					&& kl.getListOfParameters().equals(getListOfParameters())
-					&& kl.getSBOTerm() == getSBOTerm();
-		}
-		return false;
+			equal &= kl.getListOfParameters().equals(getListOfParameters());
+			return equal;
+		} else equal = false;
+		return equal;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<Parameter> getListOfParameters() {
 		return listOfParameters;
 	}
@@ -164,5 +183,13 @@ public class KineticLaw extends MathContainer {
 			i++;
 		if (i < listOfParameters.size())
 			listOfParameters.remove(i).sbaseRemoved();
+	}
+
+	/**
+	 * 
+	 * @param p
+	 */
+	public void removeParameter(Parameter p) {
+		listOfParameters.remove(p);
 	}
 }

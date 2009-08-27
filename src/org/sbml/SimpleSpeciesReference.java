@@ -34,24 +34,55 @@ public abstract class SimpleSpeciesReference extends NamedSBase {
 		super();
 	}
 
+	/**
+	 * 
+	 * @param ssr
+	 */
 	public SimpleSpeciesReference(SimpleSpeciesReference ssr) {
 		super(ssr);
-		this.species = ssr.getSpeciesInstance();
+		if (ssr.isSetSpecies())
+			this.species = ssr.getSpeciesInstance();
+		else
+			this.species = null;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetSpecies() {
+		return species != null;
+	}
+
+	/**
+	 * 
+	 * @param spec
+	 */
 	public SimpleSpeciesReference(Species spec) {
 		this();
 		this.species = spec;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getSpecies() {
 		return species.getId();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Species getSpeciesInstance() {
 		return species;
 	}
 
+	/**
+	 * 
+	 * @param spec
+	 */
 	public void setSpecies(Species spec) {
 		this.species = spec;
 		stateChanged();
@@ -60,21 +91,27 @@ public abstract class SimpleSpeciesReference extends NamedSBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 * @see org.sbml.NamedSBase#equals(java.lang.Object)
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
 		if (o.getClass().getName().equals(getClass().getName())) {
 			SimpleSpeciesReference ssr = (SimpleSpeciesReference) o;
-			return ssr.getSBOTerm() == getSBOTerm()
-					&& ssr.getSpeciesInstance().equals(species)
-					&& ssr.getName().equals(getName());
-		}
-		return false;
+			if ((!isSetSpecies() && ssr.isSetSpecies())
+					|| (isSetSpecies() && !ssr.isSetSpecies()))
+				return false;
+			else if (isSetSpecies() && ssr.isSetSpecies())
+				equal &= ssr.getSpeciesInstance().equals(species);
+			return equal;
+		} else
+			equal = false;
+		return equal;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.NamedSBase#toString()
 	 */
 	public String toString() {
@@ -92,6 +129,6 @@ public abstract class SimpleSpeciesReference extends NamedSBase {
 	 */
 	// @Override
 	public Reaction getParentSBMLObject() {
-		return (Reaction) parentSBMLObject;
+		return (Reaction) super.getParentSBMLObject();
 	}
 }

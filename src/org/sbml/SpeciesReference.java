@@ -30,16 +30,27 @@ public class SpeciesReference extends SimpleSpeciesReference {
 	private double stoichiometry;
 	private StoichiometryMath stoichiometryMath;
 
+	/**
+	 * 
+	 */
 	public SpeciesReference() {
 		super();
 		initDefaults();
 	}
 
+	/**
+	 * 
+	 * @param spec
+	 */
 	public SpeciesReference(Species spec) {
 		super(spec);
 		initDefaults();
 	}
 
+	/**
+	 * 
+	 * @param speciesReference
+	 */
 	public SpeciesReference(SpeciesReference speciesReference) {
 		super(speciesReference);
 	}
@@ -54,23 +65,43 @@ public class SpeciesReference extends SimpleSpeciesReference {
 		return new SpeciesReference(this);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getStoichiometry() {
 		return stoichiometry;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public StoichiometryMath getStoichiometryMath() {
 		return stoichiometryMath;
 	}
 
+	/**
+	 * 
+	 */
+	// @Override
 	public void initDefaults() {
 		stoichiometry = 1;
 		stoichiometryMath = null;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isSetStoichiometryMath() {
 		return stoichiometryMath != null;
 	}
 
+	/**
+	 * 
+	 * @param stoichiometry
+	 */
 	public void setStoichiometry(double stoichiometry) {
 		this.stoichiometry = stoichiometry;
 		if (isSetStoichiometryMath())
@@ -78,8 +109,14 @@ public class SpeciesReference extends SimpleSpeciesReference {
 		stateChanged();
 	}
 
+	/**
+	 * 
+	 * @param math
+	 */
 	public void setStoichiometryMath(StoichiometryMath math) {
 		this.stoichiometryMath = math;
+		this.stoichiometryMath.parentSBMLObject = this;
+		stateChanged();
 	}
 
 	/*
@@ -89,12 +126,20 @@ public class SpeciesReference extends SimpleSpeciesReference {
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
 		if (o instanceof SpeciesReference) {
 			SpeciesReference sr = (SpeciesReference) o;
-			return super.equals(o) && sr.getStoichiometry() == stoichiometry
-					&& sr.getStoichiometryMath().equals(stoichiometryMath);
-		}
-		return false;
+			if ((sr.isSetStoichiometryMath() && !isSetStoichiometryMath())
+					|| (!sr.isSetStoichiometryMath() && isSetStoichiometryMath()))
+				return false;
+			if (sr.isSetStoichiometryMath() && isSetStoichiometryMath())
+				equal &= sr.getStoichiometryMath().equals(stoichiometryMath);
+			else
+				equal &= sr.getStoichiometry() == stoichiometry;
+			return equal;
+		} else
+			equal = false;
+		return equal;
 	}
 
 }

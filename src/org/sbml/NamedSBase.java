@@ -30,12 +30,19 @@ public abstract class NamedSBase extends SBase {
 	private String id;
 	private String name;
 
+	/**
+	 * 
+	 */
 	public NamedSBase() {
 		super();
 		id = null;
 		name = null;
 	}
 
+	/**
+	 * 
+	 * @param nsb
+	 */
 	public NamedSBase(NamedSBase nsb) {
 		super(nsb);
 		if (nsb.isSetId())
@@ -44,16 +51,25 @@ public abstract class NamedSBase extends SBase {
 			this.name = new String(nsb.getName());
 	}
 
+	/**
+	 * 
+	 * @param id
+	 */
 	public NamedSBase(String id) {
 		super();
-		this.id = id;
+		this.id = new String(id);
 		name = null;
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @param name
+	 */
 	public NamedSBase(String id, String name) {
 		super();
-		this.id = id;
-		this.name = name;
+		this.id = new String(id);
+		this.name = new String(name);
 	}
 
 	/*
@@ -80,27 +96,51 @@ public abstract class NamedSBase extends SBase {
 		return equals;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getId() {
 		return isSetId() ? id : "";
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getName() {
 		return isSetName() ? name : "";
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isSetId() {
-		return id != null ? true : false;
+		return id != null;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isSetName() {
-		return name != null ? true : false;
+		return name != null;
 	}
 
+	/**
+	 * 
+	 * @param id
+	 */
 	public void setId(String id) {
 		this.id = id;
 		stateChanged();
 	}
 
+	/**
+	 * 
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name = name;
 		stateChanged();

@@ -35,6 +35,12 @@ import java.util.NoSuchElementException;
 public class ListOf<E extends SBase> extends SBase implements List<E>,
 		Serializable, Cloneable {
 
+	/**
+	 * 
+	 * @author andreas
+	 *
+	 * @param <E>
+	 */
 	private static class Entry<E> {
 		E element;
 		Entry<E> next;
@@ -47,6 +53,11 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		}
 	}
 
+	/**
+	 * 
+	 * @author andreas
+	 *
+	 */
 	private class ListItr implements ListIterator<E> {
 		private Entry<E> lastReturned = header;
 		private Entry<E> next;
@@ -68,6 +79,9 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			}
 		}
 
+		/**
+		 * 
+		 */
 		public void add(E e) {
 			checkForComodification();
 			lastReturned = header;
@@ -76,14 +90,23 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			expectedModCount++;
 		}
 
+		/**
+		 * 
+		 */
 		public boolean hasNext() {
 			return nextIndex != size;
 		}
 
+		/**
+		 * 
+		 */
 		public boolean hasPrevious() {
 			return nextIndex != 0;
 		}
 
+		/**
+		 * 
+		 */
 		public E next() {
 			checkForComodification();
 			if (nextIndex == size)
@@ -95,10 +118,16 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			return lastReturned.element;
 		}
 
+		/**
+		 * 
+		 */
 		public int nextIndex() {
 			return nextIndex;
 		}
 
+		/**
+		 * 
+		 */
 		public E previous() {
 			if (nextIndex == 0)
 				throw new NoSuchElementException();
@@ -109,10 +138,16 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			return lastReturned.element;
 		}
 
+		/**
+		 * 
+		 */
 		public int previousIndex() {
 			return nextIndex - 1;
 		}
 
+		/**
+		 * 
+		 */
 		public void remove() {
 			checkForComodification();
 			Entry<E> lastNext = lastReturned.next;
@@ -129,6 +164,9 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			expectedModCount++;
 		}
 
+		/**
+		 * 
+		 */
 		public void set(E e) {
 			if (lastReturned == header)
 				throw new IllegalStateException();
@@ -136,6 +174,9 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			lastReturned.element = e;
 		}
 
+		/**
+		 * 
+		 */
 		final void checkForComodification() {
 			if (modCount != expectedModCount)
 				throw new ConcurrentModificationException();

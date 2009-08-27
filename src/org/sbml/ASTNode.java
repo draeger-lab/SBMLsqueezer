@@ -54,6 +54,7 @@ public class ASTNode {
 		setParentSBMLObject(minus, ast[0].getParentSBMLObject());
 		return minus;
 	}
+
 	/**
 	 * Creates a new ASTNode of type DIVIDE with the given nodes as children.
 	 * 
@@ -66,6 +67,7 @@ public class ASTNode {
 		setParentSBMLObject(numerator, numerator.getParentSBMLObject());
 		return numerator;
 	}
+
 	/**
 	 * 
 	 * @param basis
@@ -76,7 +78,7 @@ public class ASTNode {
 		basis.raiseByThePowerOf(exponent);
 		return basis;
 	}
-	
+
 	/**
 	 * 
 	 * @param radicant
@@ -90,7 +92,7 @@ public class ASTNode {
 		root.addChild(rootExponent);
 		return root;
 	}
-	
+
 	/**
 	 * 
 	 * @param radicand
@@ -99,8 +101,7 @@ public class ASTNode {
 	public static ASTNode sqrt(ASTNode radicand) {
 		return root(new ASTNode(2, radicand.getParentSBMLObject()), radicand);
 	}
-	
-	
+
 	/**
 	 * Creates a AstNode of type Plus with the given nodes as children
 	 * 
@@ -120,6 +121,7 @@ public class ASTNode {
 		setParentSBMLObject(sum, ast[0].getParentSBMLObject());
 		return sum;
 	}
+
 	/**
 	 * Creates an ASTNode of type times and adds the given nodes as children.
 	 * 
@@ -138,6 +140,7 @@ public class ASTNode {
 		setParentSBMLObject(times, ast[0].parentSBMLObject);
 		return times;
 	}
+
 	/**
 	 * set the Parent of the node and its children to the given value
 	 * 
@@ -149,6 +152,7 @@ public class ASTNode {
 		for (ASTNode nodes : node.listOfNodes)
 			setParentSBMLObject(nodes, parent);
 	}
+
 	/**
 	 * This value stores the numerator if this.isRational() is true, or the
 	 * value of an integer if this.isInteger() is true.
@@ -163,7 +167,7 @@ public class ASTNode {
 	/**
 	 * The container that holds this ASTNode.
 	 */
-	private MathContainer parentSBMLObject;
+	MathContainer parentSBMLObject;
 
 	/**
 	 * Important for LaTeX export to decide whether the name or the id of a
@@ -271,7 +275,7 @@ public class ASTNode {
 		this(Constants.AST_NAME, parent);
 		setName(name.toString());
 	}
-	
+
 	public void addChild(ASTNode child) {
 		listOfNodes.add(child);
 	}
@@ -305,6 +309,19 @@ public class ASTNode {
 		if (o instanceof ASTNode) {
 			ASTNode ast = (ASTNode) o;
 			boolean equal = ast.getType() == type;
+			if (isInteger() && ast.isInteger())
+				equal &= ast.getInteger() == getInteger();
+			if (isName() && ast.isName())
+				equal &= ast.getName().equals(getName());
+			if (isRational() && ast.isRational())
+				equal &= ast.getNumerator() == getNumerator()
+						&& ast.getDenominator() == getDenominator();
+			if (isReal() && ast.isReal())
+				equal &= ast.getReal() == getReal();
+			if (ast.getType() == Constants.AST_REAL_E
+					&& type == Constants.AST_REAL_E)
+				equal &= ast.getMantissa() == getMantissa()
+						&& ast.getExponent() == getExponent();
 			if (equal)
 				for (ASTNode child : listOfNodes)
 					equal = equal && child.equals(ast);

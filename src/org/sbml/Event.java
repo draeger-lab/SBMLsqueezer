@@ -18,6 +18,7 @@
  */
 package org.sbml;
 
+
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -33,24 +34,52 @@ public class Event extends NamedSBase {
 
 	private Delay delay;
 
+	private String timeUnits;
+
+	/**
+	 * 
+	 */
 	public Event() {
 		super();
 		initDefaults();
 	}
 
+	/**
+	 * 
+	 * @param event
+	 */
 	public Event(Event event) {
 		super(event);
-		this.trigger = event.getTrigger().clone();
+		if (event.isSetTrigger())
+			setTrigger(event.getTrigger().clone());
+		else
+			trigger = null;
 		this.useValuesFromTriggerTime = event.isUseValuesFromTriggerTime();
-		this.delay = event.getDelay().clone();
-		this.listOfEventAssignments = event.getListOfEventAssignments().clone();
+		if (event.isSetDelay()) {
+			setDelay(event.getDelay().clone());
+		} else
+			this.delay = null;
+		setListOfEventAssignments(event.getListOfEventAssignments().clone());
+		if (event.isSetTimeUnits())
+			this.timeUnits = new String(event.getTimeUnits());
+		else
+			this.timeUnits = null;
 	}
 
+	/**
+	 * 
+	 * @param id
+	 */
 	public Event(String id) {
 		super(id);
 		initDefaults();
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @param name
+	 */
 	public Event(String id, String name) {
 		super(id, name);
 		initDefaults();
@@ -73,74 +102,169 @@ public class Event extends NamedSBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
 		if (o instanceof Event) {
 			Event e = (Event) o;
-			return e.getUseValuesFromTriggerTime() == getUseValuesFromTriggerTime()
-					&& e.getDelay().equals(getDelay())
-					&& e.getListOfEventAssignments().equals(
-							getListOfEventAssignments())
-					&& e.getSBOTerm() == getSBOTerm()
-					&& e.getTimeUnits().equals(getTimeUnits())
-					&& e.getTrigger().equals(getTrigger());
+			equal &= e.getUseValuesFromTriggerTime() == getUseValuesFromTriggerTime();
+			equal &= e.getListOfEventAssignments().equals(
+					getListOfEventAssignments());
+			if ((e.isSetDelay() && !isSetDelay())
+					|| (!e.isSetDelay() && isSetDelay()))
+				return false;
+			else if (e.isSetDelay() && isSetDelay())
+				equal &= e.getDelay().equals(getDelay());
+			if ((!e.isSetTrigger() && isSetTrigger())
+					|| (e.isSetTrigger() && !isSetTrigger()))
+				return false;
+			else if (e.isSetTrigger() && isSetTrigger())
+				equal &= e.getTrigger().equals(getTrigger());
+			if ((!e.isSetTimeUnits() && isSetTimeUnits())
+					|| (e.isSetTimeUnits() && !isSetTimeUnits()))
+				return false;
+			else if (e.isSetTimeUnits() && isSetTimeUnits())
+				equal &= e.getTimeUnits().equals(getTimeUnits());
+			return equal;
 		}
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Delay getDelay() {
 		return delay;
 	}
 
+	/**
+	 * 
+	 * @param n
+	 * @return
+	 */
 	public EventAssignment getEventAssignment(int n) {
 		return listOfEventAssignments.get(n);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<EventAssignment> getListOfEventAssignments() {
 		return listOfEventAssignments;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumEventAssignments() {
 		return listOfEventAssignments.size();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public String getTimeUnits() {
+		return timeUnits;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public Trigger getTrigger() {
 		return trigger;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean getUseValuesFromTriggerTime() {
 		return getUseValuesFromTriggerTime();
 	}
 
+	/**
+	 * 
+	 */
 	public void initDefaults() {
 		useValuesFromTriggerTime = true;
-		trigger = new Trigger();
-		listOfEventAssignments = new ListOf<EventAssignment>();
+		setTrigger(new Trigger());
+		setListOfEventAssignments(new ListOf<EventAssignment>());
+		timeUnits = null;
 		delay = null;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetDelay() {
+		return delay != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetTimeUnits() {
+		return timeUnits != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetTrigger() {
+		return trigger != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isUseValuesFromTriggerTime() {
 		return useValuesFromTriggerTime;
 	}
 
+	/**
+	 * 
+	 * @param delay
+	 */
 	public void setDelay(Delay delay) {
 		this.delay = delay;
+		this.delay.parentSBMLObject = this;
+		this.delay.sbaseAdded();
 	}
 
+	/**
+	 * 
+	 * @param listOfEventAssignments
+	 */
 	public void setListOfEventAssignments(
 			ListOf<EventAssignment> listOfEventAssignments) {
 		this.listOfEventAssignments = listOfEventAssignments;
+		setThisAsParentSBMLObject(this.listOfEventAssignments);
+		stateChanged();
 	}
 
+	/**
+	 * 
+	 * @param trigger
+	 */
 	public void setTrigger(Trigger trigger) {
 		this.trigger = trigger;
+		this.trigger.parentSBMLObject = this;
+		this.trigger.sbaseAdded();
 	}
 
+	/**
+	 * 
+	 * @param useValuesFromTriggerTime
+	 */
 	public void setUseValuesFromTriggerTime(boolean useValuesFromTriggerTime) {
 		this.useValuesFromTriggerTime = useValuesFromTriggerTime;
-	}
-
-	public String getTimeUnits() {
-		// TODO Auto-generated method stub
-		return "";
 	}
 
 }

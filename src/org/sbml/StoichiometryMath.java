@@ -27,10 +27,17 @@ package org.sbml;
  */
 public class StoichiometryMath extends MathContainer {
 
+	/**
+	 * 
+	 */
 	public StoichiometryMath() {
 		super();
 	}
 
+	/**
+	 * 
+	 * @param stoichiometryMath
+	 */
 	public StoichiometryMath(StoichiometryMath stoichiometryMath) {
 		super(stoichiometryMath);
 	}
