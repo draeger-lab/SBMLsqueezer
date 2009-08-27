@@ -90,13 +90,25 @@ public class Species extends NamedSBase {
 			equal &= s.getConstant() == constant;
 			equal &= s.getHasOnlySubstanceUnits() == hasOnlySubstanceUnits;
 			equal &= s.getCharge() == charge;
-			equal &= s.getCompartmentInstance().equals(compartment);
+			if ((!s.isSetCompartment() && isSetCompartment())
+					|| (s.isSetCompartment() && !isSetCompartment()))
+				return false;
+			if (s.isSetCompartment() && isSetCompartment())
+				equal &= s.getCompartmentInstance().equals(compartment);
 			equal &= s.getInitialAmount() == initialAmount;
 			equal &= s.getInitialConcentration() == initialConcentration;
 			return equal;
 		} else
 			equal = false;
 		return equal;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetCompartment() {
+		return compartment != null;
 	}
 
 	public boolean getBoundaryCondition() {
