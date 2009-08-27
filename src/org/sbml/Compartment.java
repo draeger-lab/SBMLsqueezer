@@ -34,6 +34,9 @@ public class Compartment extends NamedSBase {
 	public Compartment(Compartment compartment) {
 		super(compartment);
 		this.spatialDimensions = (short) compartment.getSpatialDimensions();
+		this.outside = compartment.getOutside();
+		this.constant = compartment.getConstant();
+		this.size = compartment.getSize();
 	}
 
 	public Compartment(String id) {
@@ -59,31 +62,54 @@ public class Compartment extends NamedSBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 * @see org.sbml.NamedSBase#equals(java.lang.Object)
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
 		if (o instanceof Compartment) {
 			Compartment c = (Compartment) o;
-			return c.getConstant() == constant && c.getOutside() == outside
-					&& c.getSize() == size
-					&& c.getSpatialDimensions() == spatialDimensions;
+			equal &= c.getConstant() == constant;
+			if ((!c.isSetOutside() && isSetOutside())
+					|| (c.isSetOutside() && !isSetOutside()))
+				return false;
+			if (c.isSetOutside() && isSetOutside())
+				equal &= c.getOutside().equals(getOutside());
+			equal &= c.getSize() == getSize();
+			equal &= c.getSpatialDimensions() == getSpatialDimensions();
+			return equal;
 		}
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean getConstant() {
 		return isConstant();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Compartment getOutside() {
 		return outside;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getSize() {
 		return size;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getSpatialDimensions() {
 		return spatialDimensions;
 	}
@@ -104,6 +130,9 @@ public class Compartment extends NamedSBase {
 		return getSize();
 	}
 
+	/**
+	 * 
+	 */
 	public void initDefaults() {
 		spatialDimensions = 3;
 		constant = true;
@@ -111,22 +140,50 @@ public class Compartment extends NamedSBase {
 		outside = null;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isConstant() {
 		return constant;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetOutside() {
+		return outside != null;
+	}
+
+	/**
+	 * 
+	 * @param constant
+	 */
 	public void setConstant(boolean constant) {
 		this.constant = constant;
 	}
 
+	/**
+	 * 
+	 * @param outside
+	 */
 	public void setOutside(Compartment outside) {
 		this.outside = outside;
 	}
 
+	/**
+	 * 
+	 * @param size
+	 */
 	public void setSize(double size) {
 		this.size = size;
 	}
 
+	/**
+	 * 
+	 * @param spatialDimensions
+	 */
 	public void setSpatialDimensions(int spatialDimensions) {
 		if (spatialDimensions >= 0 && spatialDimensions <= 3)
 			this.spatialDimensions = (short) spatialDimensions;

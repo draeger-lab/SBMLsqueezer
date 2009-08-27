@@ -12,10 +12,17 @@ package org.sbml;
  */
 public class Trigger extends MathContainer {
 
+	/**
+	 * 
+	 */
 	public Trigger() {
 		super();
 	}
 
+	/**
+	 * 
+	 * @param trigger
+	 */
 	public Trigger(Trigger trigger) {
 		super(trigger);
 	}

@@ -26,13 +26,23 @@ package org.sbml;
  */
 public class EventAssignment extends MathContainer {
 
+	/**
+	 * 
+	 */
 	private NamedSBase variable;
 
+	/**
+	 * 
+	 */
 	public EventAssignment() {
 		super();
 		variable = null;
 	}
 
+	/**
+	 * 
+	 * @param eventAssignment
+	 */
 	public EventAssignment(EventAssignment eventAssignment) {
 		super(eventAssignment);
 		setVariable(eventAssignment.getVariable());
@@ -55,22 +65,47 @@ public class EventAssignment extends MathContainer {
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
 		if (o instanceof EventAssignment) {
 			EventAssignment ea = (EventAssignment) o;
-			return getMath().equals(ea.getMath())
-					&& ea.getVariable().equals(getVariable());
+			if ((!ea.isSetVariable() && isSetVariable())
+					|| (ea.isSetVariable() && !isSetVariable()))
+				return false;
+			if (ea.isSetVariable() && isSetVariable())
+				equal &= ea.getVariable().equals(getVariable());
+			return equal;
 		}
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetVariable() {
+		return variable != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public String getVariable() {
 		return variable.getId();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public NamedSBase getVariableInstance() {
 		return variable;
 	}
 
+	/**
+	 * 
+	 * @param variable
+	 */
 	public void setVariable(NamedSBase variable) {
 		if ((variable instanceof Species) || variable instanceof Compartment
 				|| (variable instanceof Parameter))
@@ -80,6 +115,10 @@ public class EventAssignment extends MathContainer {
 					"Only Species, Compartments, or Parameters allowed as variables");
 	}
 
+	/**
+	 * 
+	 * @param variable
+	 */
 	public void setVariable(String variable) {
 		Model m = getModel();
 		NamedSBase nsb = null;

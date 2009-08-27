@@ -30,19 +30,22 @@ public class Parameter extends NamedSBase {
 	private double value;
 	private boolean constant;
 
+	/**
+	 * 
+	 * @param p
+	 */
 	public Parameter(Parameter p) {
 		super(p);
 		this.value = p.getValue();
 		this.constant = p.isConstant();
 	}
 
+	/**
+	 * 
+	 * @param id
+	 */
 	public Parameter(String id) {
 		super(id);
-		initDefaults();
-	}
-
-	public Parameter(StringBuffer id) {
-		super(id.toString());
 		initDefaults();
 	}
 
@@ -69,39 +72,70 @@ public class Parameter extends NamedSBase {
 			equals &= p.getConstant() == constant;
 			equals &= p.getValue() == value;
 			return equals;
-		}
-		return false;
+		} else
+			equals = false;
+		return equals;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean getConstant() {
 		return isConstant();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getValue() {
 		return value;
 	}
 
+	/**
+	 * 
+	 */
 	public void initDefaults() {
 		value = Double.NaN;
 		constant = true;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isConstant() {
 		return constant;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isSetValue() {
 		return !Double.isNaN(value);
 	}
 
+	/**
+	 * 
+	 * @param constant
+	 */
 	public void setConstant(boolean constant) {
 		this.constant = constant;
 	}
 
+	/**
+	 * 
+	 * @param value
+	 */
 	public void setValue(double value) {
 		this.value = value;
 	}
 
+	/**
+	 * 
+	 */
 	public void unsetValue() {
 		value = Double.NaN;
 	}

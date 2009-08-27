@@ -18,7 +18,6 @@
  */
 package org.sbml;
 
-
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -65,8 +64,15 @@ public abstract class MathContainer extends SBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		if (o.getClass().getName().equals(this.getClass().getName()))
-			return getMath().equals(((MathContainer) o).getMath());
+		boolean equal = super.equals(o);
+		if (o.getClass().getName().equals(this.getClass().getName())) {
+			MathContainer c = (MathContainer) o;
+			if ((c.isSetMath() && !isSetMath()) || (!c.isSetMath() && isSetMath()))
+				return false;
+			if (c.isSetMath() && isSetMath())
+				equal &= getMath().equals(c.getMath());
+			return equal;
+		}
 		return false;
 	}
 
@@ -77,7 +83,7 @@ public abstract class MathContainer extends SBase {
 	public ASTNode getMath() {
 		return math;
 	}
-	
+
 	public boolean isSetMath() {
 		return math != null;
 	}
@@ -92,7 +98,7 @@ public abstract class MathContainer extends SBase {
 		math = parseFormula(formula);
 		stateChanged();
 	}
-	
+
 	public static ASTNode parseFormula(String formula) {
 		// TODO Auto-generated method stub
 		throw new Error("Not yet implemented.");
@@ -100,6 +106,7 @@ public abstract class MathContainer extends SBase {
 
 	public void setMath(ASTNode math) {
 		this.math = math.clone();
+		this.math.parentSBMLObject = this;
 		stateChanged();
 	}
 

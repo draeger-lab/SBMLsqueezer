@@ -89,7 +89,7 @@ public class SBasePanel extends JPanel {
 				1, row, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, gbl, new JLabel("Notes"), 0, ++row, 1,
 				1, 1, 1);
-		LayoutHelper.addComponent(this, gbl, new JTextField(sbase.getNotes()),
+		LayoutHelper.addComponent(this, gbl, new JTextField(sbase.getNotesString()),
 				1, row, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, gbl, new JLabel("SBO term"), 0, ++row,
 				1, 1, 1, 1);

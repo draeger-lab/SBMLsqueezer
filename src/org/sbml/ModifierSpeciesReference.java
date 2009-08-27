@@ -27,15 +27,26 @@ package org.sbml;
  */
 public class ModifierSpeciesReference extends SimpleSpeciesReference {
 
+	/**
+	 * 
+	 */
 	public ModifierSpeciesReference() {
 		super();
 	}
 
+	/**
+	 * 
+	 * @param modifierSpeciesReference
+	 */
 	public ModifierSpeciesReference(
 			ModifierSpeciesReference modifierSpeciesReference) {
 		super(modifierSpeciesReference);
 	}
 
+	/**
+	 * 
+	 * @param spec
+	 */
 	public ModifierSpeciesReference(Species spec) {
 		super(spec);
 	}

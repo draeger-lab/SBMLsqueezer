@@ -38,7 +38,17 @@ public abstract class SBase {
 	private String notes;
 	private Set<SBaseChangedListener> setOfListeners;
 
+	/**
+	 * 
+	 */
 	public SBase() {
+		initDefaults();
+	}
+
+	/**
+	 * 
+	 */
+	public void initDefaults() {
 		sboTerm = -1;
 		metaId = null;
 		notes = null;
@@ -46,12 +56,16 @@ public abstract class SBase {
 		setOfListeners = new HashSet<SBaseChangedListener>();
 	}
 
+	/**
+	 * 
+	 * @param sb
+	 */
 	public SBase(SBase sb) {
 		this();
 		if (sb.isSetMetaId())
 			this.metaId = new String(sb.getMetaId());
 		if (sb.isSetNotes())
-			this.notes = new String(sb.getNotes());
+			this.notes = new String(sb.getNotesString());
 		this.parentSBMLObject = sb.getParentSBMLObject();
 		this.setOfListeners.addAll(sb.setOfListeners);
 	}
@@ -82,15 +96,18 @@ public abstract class SBase {
 		if (o instanceof SBase) {
 			SBase sbase = (SBase) o;
 			boolean equals = true;
-			if ((!sbase.isSetMetaId() && isSetMetaId()) || (sbase.isSetMetaId() && !isSetMetaId()))
+			if ((!sbase.isSetMetaId() && isSetMetaId())
+					|| (sbase.isSetMetaId() && !isSetMetaId()))
 				return false;
 			else if (sbase.isSetMetaId() && isSetMetaId())
 				equals &= sbase.getMetaId().equals(getMetaId());
-			if ((!sbase.isSetNotes() && isSetNotes()) || (sbase.isSetNotes() && !isSetNotes()))
+			if ((!sbase.isSetNotes() && isSetNotes())
+					|| (sbase.isSetNotes() && !isSetNotes()))
 				return false;
 			else if (sbase.isSetNotes() && isSetNotes())
-				equals &= sbase.getNotes().equals(getNotes());
-			if ((!sbase.isSetSBOTerm() && isSetSBOTerm()) || (sbase.isSetSBOTerm() && !isSetSBOTerm()))
+				equals &= sbase.getNotesString().equals(getNotesString());
+			if ((!sbase.isSetSBOTerm() && isSetSBOTerm())
+					|| (sbase.isSetSBOTerm() && !isSetSBOTerm()))
 				return false;
 			else if (sbase.isSetSBOTerm() && isSetSBOTerm())
 				equals &= sbase.getSBOTerm() == getSBOTerm();
@@ -99,6 +116,10 @@ public abstract class SBase {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getMetaId() {
 		return metaId;
 	}
@@ -116,7 +137,11 @@ public abstract class SBase {
 		return null;
 	}
 
-	public String getNotes() {
+	/**
+	 * 
+	 * @return
+	 */
+	public String getNotesString() {
 		return notes;
 	}
 
@@ -132,10 +157,18 @@ public abstract class SBase {
 		return parentSBMLObject;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getSBOTerm() {
 		return sboTerm;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getSBOTermID() {
 		if (isSetSBOTerm()) {
 			StringBuffer sbo = new StringBuffer("SBO:");
@@ -175,6 +208,10 @@ public abstract class SBase {
 		return sboTerm != -1;
 	}
 
+	/**
+	 * 
+	 * @param l
+	 */
 	public void removeChangeListener(SBaseChangedListener l) {
 		setOfListeners.remove(l);
 	}
@@ -183,7 +220,6 @@ public abstract class SBase {
 	 * all listeners are informed about the adding of this object to a list
 	 * 
 	 */
-
 	public void sbaseAdded() {
 		for (SBaseChangedListener listener : setOfListeners)
 			listener.sbaseAdded(this);
@@ -198,17 +234,32 @@ public abstract class SBase {
 			listener.stateChanged(this);
 	}
 
+	/**
+	 * 
+	 * @param metaid
+	 */
 	public void setMetaId(String metaid) {
 		this.metaId = metaid;
 		stateChanged();
 	}
 
+	/**
+	 * 
+	 * @param notes
+	 */
 	public void setNotes(String notes) {
 		this.notes = notes;
 		stateChanged();
 	}
 
+	/**
+	 * 
+	 * @param term
+	 */
 	public void setSBOTerm(int term) {
+		if (term < 0)
+			throw new IllegalArgumentException(
+					"SBO terms must not be smaller than zero.");
 		sboTerm = term;
 		stateChanged();
 	}
@@ -228,4 +279,16 @@ public abstract class SBase {
 	 */
 	// @Override
 	public abstract String toString();
+
+	/**
+	 * Sets the parent SBML object of the given list and all of its elements to
+	 * this object.
+	 * 
+	 * @param list
+	 */
+	void setThisAsParentSBMLObject(ListOf<? extends SBase> list) {
+		list.parentSBMLObject = this;
+		for (SBase base : list)
+			base.parentSBMLObject = this;
+	}
 }

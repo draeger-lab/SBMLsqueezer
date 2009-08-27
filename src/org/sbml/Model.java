@@ -35,22 +35,40 @@ public class Model extends NamedSBase {
 	private ListOf<Reaction> listOfReactions;
 	private ListOf<Event> listOfEvents;
 
+	/**
+	 * 
+	 * @param model
+	 */
 	public Model(Model model) {
 		super(model);
 		listOfCompartments = model.getListOfCompartments().clone();
+		setThisAsParentSBMLObject(listOfCompartments);
 		listOfSpecies = model.getListOfSpecies().clone();
+		setThisAsParentSBMLObject(listOfSpecies);
 		listOfParameters = model.getListOfParameters().clone();
+		setThisAsParentSBMLObject(listOfParameters);
 		listOfReactions = model.getListOfReactions().clone();
+		setThisAsParentSBMLObject(listOfReactions);
 		listOfEvents = model.getListOfEvents().clone();
+		setThisAsParentSBMLObject(listOfEvents);
 	}
 
+	/**
+	 * 
+	 * @param id
+	 */
 	public Model(String id) {
 		super(id);
 		listOfCompartments = new ListOf<Compartment>();
+		setThisAsParentSBMLObject(listOfCompartments);
 		listOfSpecies = new ListOf<Species>();
+		setThisAsParentSBMLObject(listOfSpecies);
 		listOfParameters = new ListOf<Parameter>();
+		setThisAsParentSBMLObject(listOfParameters);
 		listOfReactions = new ListOf<Reaction>();
+		setThisAsParentSBMLObject(listOfReactions);
 		listOfEvents = new ListOf<Event>();
+		setThisAsParentSBMLObject(listOfEvents);
 	}
 
 	/*
@@ -69,6 +87,10 @@ public class Model extends NamedSBase {
 		listOfEvents.addChangeListener(l);
 	}
 
+	/**
+	 * 
+	 * @param compartment
+	 */
 	public void addCompartment(Compartment compartment) {
 		if (!listOfCompartments.contains(compartment)) {
 			Compartment c = compartment.clone();
@@ -78,6 +100,10 @@ public class Model extends NamedSBase {
 		}
 	}
 
+	/**
+	 * 
+	 * @param parameter
+	 */
 	public void addParameter(Parameter parameter) {
 		if (!listOfParameters.contains(parameter)) {
 			Parameter p = parameter.clone();
@@ -128,26 +154,37 @@ public class Model extends NamedSBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 * @see org.sbml.NamedSBase#equals(java.lang.Object)
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
 		if (o instanceof Model) {
 			Model m = (Model) o;
-			return m.getListOfCompartments().equals(listOfCompartments)
-					&& m.getListOfSpecies().equals(listOfSpecies)
-					&& m.getListOfParameters().equals(listOfParameters)
-					&& m.getListOfReactions().equals(listOfReactions)
-					&& m.getListOfEvents().equals(listOfEvents)
-					&& m.getSBOTerm() == getSBOTerm();
+			equal &= m.getListOfCompartments().equals(listOfCompartments);
+			equal &= m.getListOfSpecies().equals(listOfSpecies);
+			equal &= m.getListOfParameters().equals(listOfParameters);
+			equal &= m.getListOfReactions().equals(listOfReactions);
+			equal &= m.getListOfEvents().equals(listOfEvents);
+			return equal;
 		}
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param n
+	 * @return
+	 */
 	public Compartment getCompartment(int n) {
 		return listOfCompartments.get(n);
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public Compartment getCompartment(String id) {
 		for (Compartment c : listOfCompartments) {
 			if (c.getId().equals(id))
@@ -156,54 +193,109 @@ public class Model extends NamedSBase {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param i
+	 * @return
+	 */
 	public Event getEvent(int i) {
 		return listOfEvents.get(i);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<Compartment> getListOfCompartments() {
 		return listOfCompartments;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<Event> getListOfEvents() {
 		return listOfEvents;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<Parameter> getListOfParameters() {
 		return listOfParameters;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<Reaction> getListOfReactions() {
 		return listOfReactions;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<Species> getListOfSpecies() {
 		return listOfSpecies;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumCompartments() {
 		return listOfCompartments.size();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumEvents() {
 		return listOfEvents.size();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumParameters() {
 		return listOfParameters.size();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumReactions() {
 		return listOfReactions.size();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumSpecies() {
 		return listOfSpecies.size();
 	}
 
+	/**
+	 * 
+	 * @param n
+	 * @return
+	 */
 	public Parameter getParameter(int n) {
 		return listOfParameters.get(n);
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public Parameter getParameter(String id) {
 		for (Parameter p : listOfParameters) {
 			if (p.getId().equals(id))
@@ -222,6 +314,11 @@ public class Model extends NamedSBase {
 		return listOfReactions.get(n);
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public Reaction getReaction(String id) {
 		for (Reaction r : listOfReactions) {
 			if (r.getId().equals(id))
@@ -241,6 +338,11 @@ public class Model extends NamedSBase {
 		return listOfSpecies.get(n);
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public Species getSpecies(String id) {
 		for (Species s : listOfSpecies) {
 			if (s.getId().equals(id))
@@ -249,6 +351,10 @@ public class Model extends NamedSBase {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param parameter
+	 */
 	public void removeParameter(Parameter parameter) {
 		listOfParameters.remove(parameter);
 		parameter.sbaseRemoved();
@@ -274,23 +380,48 @@ public class Model extends NamedSBase {
 		spec.sbaseRemoved();
 	}
 
+	/**
+	 * 
+	 * @param listOfCompartments
+	 */
 	public void setListOfCompartments(ListOf<Compartment> listOfCompartments) {
 		this.listOfCompartments = listOfCompartments.clone();
+		setThisAsParentSBMLObject(listOfCompartments);
 	}
 
+	/**
+	 * 
+	 * @param listOfEvents
+	 */
 	public void setListOfEvents(ListOf<Event> listOfEvents) {
 		this.listOfEvents = listOfEvents.clone();
+		setThisAsParentSBMLObject(this.listOfEvents);
 	}
 
+	/**
+	 * 
+	 * @param listOfParameters
+	 */
 	public void setListOfParameters(ListOf<Parameter> listOfParameters) {
 		this.listOfParameters = listOfParameters.clone();
+		setThisAsParentSBMLObject(this.listOfParameters);
 	}
 
+	/**
+	 * 
+	 * @param listOfReactions
+	 */
 	public void setListOfReactions(ListOf<Reaction> listOfReactions) {
 		this.listOfReactions = listOfReactions.clone();
+		setThisAsParentSBMLObject(this.listOfReactions);
 	}
 
+	/**
+	 * 
+	 * @param listOfSpecies
+	 */
 	public void setListOfSpecies(ListOf<Species> listOfSpecies) {
 		this.listOfSpecies = listOfSpecies.clone();
+		setThisAsParentSBMLObject(this.listOfSpecies);
 	}
 }
