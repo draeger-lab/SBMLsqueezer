@@ -56,6 +56,30 @@ public abstract class NamedSBase extends SBase {
 		this.name = name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
+	// @Override
+	public boolean equals(Object o) {
+		boolean equals = super.equals(o);
+		if (o instanceof NamedSBase) {
+			NamedSBase nsb = (NamedSBase) o;
+			if ((nsb.isSetId() && !isSetId()) || (!nsb.isSetId() && isSetId()))
+				return false;
+			else if (nsb.isSetId() && isSetId())
+				equals &= nsb.getId().equals(getId());
+			if ((nsb.isSetName() && !isSetName())
+					|| (!nsb.isSetName() && isSetName()))
+				return false;
+			else if (nsb.isSetName() && isSetName())
+				equals &= nsb.getName().equals(getName());
+		} else
+			equals = false;
+		return equals;
+	}
+
 	public String getId() {
 		return isSetId() ? id : "";
 	}
