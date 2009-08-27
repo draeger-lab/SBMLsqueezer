@@ -32,7 +32,6 @@ import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.squeezer.io.AbstractSBMLReader;
-import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -90,7 +89,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	public KineticLaw convert(org.sbml.libsbml.KineticLaw plukinlaw) {
 		KineticLaw kinlaw = new KineticLaw();
 		kinlaw.setNotes(plukinlaw.getNotesString());
-		kinlaw.setSBOTerm(plukinlaw.getSBOTerm());
+		if (plukinlaw.isSetSBOTerm())
+			kinlaw.setSBOTerm(plukinlaw.getSBOTerm());
 		if (plukinlaw.isSetMath()) {
 			ASTNode ast = convert(plukinlaw.getMath(), kinlaw);
 			ast.reduceToBinary();
@@ -144,7 +144,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 
 	public Reaction readReaction(Object reac) {
 		if (!(reac instanceof org.sbml.libsbml.Reaction))
-			throw new IllegalArgumentException("reaction must be an instance of org.sbml.libsbml.Reaction.");
+			throw new IllegalArgumentException(
+					"reaction must be an instance of org.sbml.libsbml.Reaction.");
 		org.sbml.libsbml.Reaction r = (org.sbml.libsbml.Reaction) reac;
 		Reaction reaction = new Reaction(r.getId());
 		for (int i = 0; i < r.getNumReactants(); i++)
@@ -153,12 +154,12 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			reaction.addProduct(convert(r.getProduct(i)));
 		for (int i = 0; i < r.getNumModifiers(); i++)
 			reaction.addModifier(convert(r.getModifier(i)));
-		reaction.setSBOTerm(r.getSBOTerm());
+		if (r.isSetSBOTerm())
+			reaction.setSBOTerm(r.getSBOTerm());
 		if (r.isSetKineticLaw())
 			reaction.setKineticLaw(convert(r.getKineticLaw()));
 		if (r.isSetName())
 			reaction.setName(r.getName());
-		reaction.setSBOTerm(r.getSBOTerm());
 		reaction.setNotes(r.getNotesString());
 		reaction.setFast(r.getFast());
 		reaction.setReversible(r.getReversible());
@@ -168,12 +169,15 @@ public class LibSBMLReader extends AbstractSBMLReader {
 
 	public Species convert(org.sbml.libsbml.Species spec) {
 		Species species = new Species(spec.getId());
-		species.setSBOTerm(spec.getSBOTerm());
+		if (spec.isSetSBOTerm())
+			species.setSBOTerm(spec.getSBOTerm());
 		if (spec.isSetCharge())
 			species.setCharge(spec.getCharge());
 		species.setBoundaryCondition(spec.getBoundaryCondition());
 		species.setConstant(spec.getConstant());
-		species.setCompartment(getModel().getCompartment(spec.getCompartment()));
+		species
+				.setCompartment(getModel()
+						.getCompartment(spec.getCompartment()));
 		addAllSBaseChangeListenersTo(species);
 		return species;
 	}

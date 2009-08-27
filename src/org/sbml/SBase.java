@@ -42,19 +42,13 @@ public abstract class SBase {
 	 * 
 	 */
 	public SBase() {
-		initDefaults();
-	}
-
-	/**
-	 * 
-	 */
-	public void initDefaults() {
 		sboTerm = -1;
 		metaId = null;
 		notes = null;
 		parentSBMLObject = null;
 		setOfListeners = new HashSet<SBaseChangedListener>();
 	}
+
 
 	/**
 	 * 
