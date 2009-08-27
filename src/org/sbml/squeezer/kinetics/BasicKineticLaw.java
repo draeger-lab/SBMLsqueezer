@@ -24,17 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-import org.biojava.ontology.io.OboParser;
-import org.sbml.Parameter;
 import org.sbml.ASTNode;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.libsbml.libsbml;
-import org.sbml.libsbml.libsbmlConstants;
-import org.sbml.squeezer.io.LaTeXExport;
 
 /**
  * An abstract super class of specialized kinetic laws.
@@ -47,12 +44,7 @@ import org.sbml.squeezer.io.LaTeXExport;
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
-public abstract class BasicKineticLaw extends KineticLaw implements
-		libsbmlConstants {
-
-	static {
-		OboParser parser = new OboParser();
-	}
+public abstract class BasicKineticLaw extends KineticLaw {
 	
 	/**
 	 * 
