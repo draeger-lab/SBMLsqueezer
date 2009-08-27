@@ -40,8 +40,8 @@ public class Parameter extends NamedSBase {
 		super(id);
 		initDefaults();
 	}
-	
-	public Parameter(StringBuffer id){
+
+	public Parameter(StringBuffer id) {
 		super(id.toString());
 		initDefaults();
 	}
@@ -63,10 +63,12 @@ public class Parameter extends NamedSBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
+		boolean equals = super.equals(o);
 		if (o instanceof Parameter) {
 			Parameter p = (Parameter) o;
-			return p.getConstant() == constant && p.getValue() == value
-					&& p.getSBOTerm() == getSBOTerm();
+			equals &= p.getConstant() == constant;
+			equals &= p.getValue() == value;
+			return equals;
 		}
 		return false;
 	}

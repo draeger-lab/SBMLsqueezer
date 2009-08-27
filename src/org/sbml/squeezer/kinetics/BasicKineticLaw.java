@@ -45,7 +45,7 @@ import org.sbml.libsbml.libsbml;
  * @date Aug 1, 2007
  */
 public abstract class BasicKineticLaw extends KineticLaw {
-	
+
 	/**
 	 * 
 	 */
@@ -222,12 +222,11 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param ref
 	 * @return
 	 */
-	protected static final double getStoichiometry(
-			SpeciesReference ref) {
-		
-			double stoich = ref.getStoichiometry();
-			return stoich;
-		
+	protected static final double getStoichiometry(SpeciesReference ref) {
+
+		double stoich = ref.getStoichiometry();
+		return stoich;
+
 	}
 
 	/**
@@ -453,8 +452,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @param parameter
 	 */
-	protected void addGlobalParameter(StringBuffer parameter) {
-		if (!contains(parameter,listOfGlobalParameters))
+	protected void addGlobalParameter(Parameter parameter) {
+		if (!listOfGlobalParameters.contains(parameter))
 			listOfGlobalParameters.add(new Parameter(parameter));
 	}
 
@@ -464,27 +463,11 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @param parameter
 	 */
-	protected void addLocalParameter(StringBuffer parameter) {
-		if (!contains(parameter,listOfLocalParameters))
-			listOfLocalParameters.add(new Parameter(parameter));
+	protected void addLocalParameter(Parameter parameter) {
+		if (!listOfLocalParameters.contains(parameter))
+			listOfLocalParameters.add(parameter);
 	}
-	/**
-	 * searches the list of Parameters if theres already a parameter with the same ID
-	 * 
-	 * @param id
-	 * @param list
-	 * @return
-	 */
 
-	protected boolean contains(StringBuffer id,List<Parameter> list){
-		
-		for (int i =0; i < list.size();i++){
-			if (list.get(i).getId().equals(id))
-				return true;
-		}
-		return false;
-	}
-	
 	/**
 	 * 
 	 * @param model

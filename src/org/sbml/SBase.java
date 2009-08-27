@@ -77,7 +77,27 @@ public abstract class SBase {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public abstract boolean equals(Object o);
+	// @Override
+	public boolean equals(Object o) {
+		if (o instanceof SBase) {
+			SBase sbase = (SBase) o;
+			boolean equals = true;
+			if ((!sbase.isSetMetaId() && isSetMetaId()) || (sbase.isSetMetaId() && !isSetMetaId()))
+				return false;
+			else if (sbase.isSetMetaId() && isSetMetaId())
+				equals &= sbase.getMetaId().equals(getMetaId());
+			if ((!sbase.isSetNotes() && isSetNotes()) || (sbase.isSetNotes() && !isSetNotes()))
+				return false;
+			else if (sbase.isSetNotes() && isSetNotes())
+				equals &= sbase.getNotes().equals(getNotes());
+			if ((!sbase.isSetSBOTerm() && isSetSBOTerm()) || (sbase.isSetSBOTerm() && !isSetSBOTerm()))
+				return false;
+			else if (sbase.isSetSBOTerm() && isSetSBOTerm())
+				equals &= sbase.getSBOTerm() == getSBOTerm();
+			return equals;
+		}
+		return false;
+	}
 
 	public String getMetaId() {
 		return metaId;
@@ -147,6 +167,14 @@ public abstract class SBase {
 		return notes != null;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetSBOTerm() {
+		return sboTerm != -1;
+	}
+
 	public void removeChangeListener(SBaseChangedListener l) {
 		setOfListeners.remove(l);
 	}
@@ -198,9 +226,6 @@ public abstract class SBase {
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	// @Override
 	public abstract String toString();
-
-	private boolean isSetSBOTerm() {
-		return sboTerm != -1;
-	}
 }
