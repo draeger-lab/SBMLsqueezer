@@ -120,7 +120,7 @@ public class Convenience extends GeneralizedMassAction {
 					getParentSBMLObject().getId());
 			if (modE.size() > 1)
 				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
-			addLocalParameter(new Parameter(kcatp));
+			addLocalParameter(new Parameter(kcatp.toString()));
 			numerator = new ASTNode(kcatp, this);
 
 			// sums for each educt
@@ -138,7 +138,7 @@ public class Convenience extends GeneralizedMassAction {
 					kM = concat(kM, underscore, modE.get(enzymeNum));
 				kM = append(kM, underscore, specref.getSpecies());
 
-				addLocalParameter(new Parameter(kM));
+				addLocalParameter(new Parameter(kM.toString()));
 
 				denominator1[eductNum] = ASTNode.frac(new ASTNode(specref
 						.getSpecies(), this), new ASTNode(kM, this));
@@ -189,7 +189,7 @@ public class Convenience extends GeneralizedMassAction {
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 				numerator2 = new ASTNode(kcat, this);
-				addLocalParameter(new Parameter(kcat));
+				addLocalParameter(new Parameter(kcat.toString()));
 
 				// Sums for each product
 
@@ -204,7 +204,7 @@ public class Convenience extends GeneralizedMassAction {
 					kM = append(kM, underscore, parentReaction.getProduct(
 							productNum).getSpeciesInstance().getId());
 
-					addLocalParameter(new Parameter(kM));
+					addLocalParameter(new Parameter(kM.toString()));
 
 					SpeciesReference specRefP = parentReaction
 							.getProduct(productNum);

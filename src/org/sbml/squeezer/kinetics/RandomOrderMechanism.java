@@ -180,10 +180,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					append(kMr1, "kMr1", kMr1.substring(2));
 					append(kMr2, "kMr2", kMr2.substring(2));
 				}
-				addLocalParameter(new Parameter(kcatp));
-				addLocalParameter(new Parameter(kMr1));
-				addLocalParameter(new Parameter(kMr2));
-				addLocalParameter(new Parameter(append(kIr1, underscore, speciesR1)));
+				addLocalParameter(new Parameter(kcatp.toString()));
+				addLocalParameter(new Parameter(kMr1.toString()));
+				addLocalParameter(new Parameter(kMr2.toString()));
+				addLocalParameter(new Parameter(append(kIr1, underscore, speciesR1).toString()));
 
 				numerator = new ASTNode(kcatp, this);
 				if (modE.size() > 0)
@@ -260,14 +260,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						kIp1 = concat("kip1", kIp1.substring(2));
 						kIp2 = concat("kip2", kIp2.substring(2));
 					}
-					addLocalParameter(new Parameter(kcatp));
-					addLocalParameter(new Parameter(kMr2));
-					addLocalParameter(new Parameter(kMr2));
-					addLocalParameter(new Parameter(kMp1));
-					addLocalParameter(new Parameter(kIp1));
-					addLocalParameter(new Parameter(kIp2));
-					addLocalParameter(new Parameter(kIr2));
-					addLocalParameter(new Parameter(kIr1));
+					addLocalParameter(new Parameter(kcatp.toString()));
+					addLocalParameter(new Parameter(kMr2.toString()));
+					addLocalParameter(new Parameter(kMr2.toString()));
+					addLocalParameter(new Parameter(kMp1.toString()));
+					addLocalParameter(new Parameter(kIp1.toString()));
+					addLocalParameter(new Parameter(kIp2.toString()));
+					addLocalParameter(new Parameter(kIr2.toString()));
+					addLocalParameter(new Parameter(kIr1.toString()));
 
 					ASTNode numeratorForward = ASTNode.frac(new ASTNode(kcatp,
 							this), ASTNode.times(new ASTNode(kIr1, this),
@@ -345,12 +345,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						append(kIr1, "kip1", kIr1.substring(2));
 						append(kIr2, "kip2", kIr2.substring(2));
 					}
-					addLocalParameter(new Parameter(kcatp));
-					addLocalParameter(new Parameter(kcatn));
-					addLocalParameter(new Parameter(kMr2));
-					addLocalParameter(new Parameter(kMp1));
-					addLocalParameter(new Parameter(kIr2));
-					addLocalParameter(new Parameter(kIr1));
+					addLocalParameter(new Parameter(kcatp.toString()));
+					addLocalParameter(new Parameter(kcatn.toString()));
+					addLocalParameter(new Parameter(kMr2.toString()));
+					addLocalParameter(new Parameter(kMp1.toString()));
+					addLocalParameter(new Parameter(kIr2.toString()));
+					addLocalParameter(new Parameter(kIr1.toString()));
 
 					ASTNode r1r2;
 					if (specRefR1.equals(specRefR2))

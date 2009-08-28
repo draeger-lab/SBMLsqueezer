@@ -121,8 +121,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			}
 			kMr = append(kMr, underscore, specRefR);
 
-			addLocalParameter(new Parameter(kcatp));
-			addLocalParameter(new Parameter(kMr));
+			addLocalParameter(new Parameter(kcatp.toString()));
+			addLocalParameter(new Parameter(kMr.toString()));
 
 			ASTNode currEnzymeKin ;
 			if (!reaction.getReversible()) {
@@ -141,8 +141,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				denominator = ASTNode.frac(specRefR, new ASTNode(kMr, this));
 				kMp = concat(kMp, underscore, specRefP);
 
-				addLocalParameter(new Parameter(kcatn));
-				addLocalParameter(new Parameter(kMp));
+				addLocalParameter(new Parameter(kcatn.toString()));
+				addLocalParameter(new Parameter(kMp.toString()));
 
 				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
 						new ASTNode(kcatn, this), new ASTNode(kMp, this)),
@@ -197,8 +197,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				kIa = append(kIa, underscore, modE.get(enzymeNum));
 				kIb = append(kIb, underscore, modE.get(enzymeNum));
 			}
-			addLocalParameter(new Parameter(kIa));
-			addLocalParameter(new Parameter(kIb));
+			addLocalParameter(new Parameter(kIa.toString()));
+			addLocalParameter(new Parameter(kIb.toString()));
 
 			ASTNode specRefI = new ASTNode(modInhib.get(0),this);
 			if (reaction.getReversible())
@@ -228,8 +228,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 					kIai = append(kIai, underscore, modE.get(enzymeNum));
 				StringBuffer kIbi = concat("kIb_", kIai);
 				kIai = concat("kIa_", kIai);
-				addLocalParameter(new Parameter(kIai));
-				addLocalParameter(new Parameter(kIbi));
+				addLocalParameter(new Parameter(kIai.toString()));
+				addLocalParameter(new Parameter(kIbi.toString()));
 				ASTNode specRefI = new ASTNode(modInhib.get(i), this);
 				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, new ASTNode(
 						kIai, this)));
