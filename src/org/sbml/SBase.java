@@ -164,14 +164,7 @@ public abstract class SBase {
 	 * @return
 	 */
 	public String getSBOTermID() {
-		if (isSetSBOTerm()) {
-			StringBuffer sbo = new StringBuffer("SBO:");
-			sbo.append(Integer.toString(sboTerm));
-			while (sbo.length() < 11)
-				sbo.insert(4, '0');
-			return sbo.toString();
-		}
-		return "";
+		return SBO.intToString(sboTerm);
 	}
 
 	/**
