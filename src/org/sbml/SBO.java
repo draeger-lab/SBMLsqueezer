@@ -162,207 +162,191 @@ public class SBO {
 	 * @return true if the term is-an Event, false otherwise
 	 */
 	public static boolean isEvent(int sboTerm) {
-		return isChildOf(sboTerm, 63);
+		// TODO
+		return isChildOf(sboTerm, 231);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a functional compartment, false otherwise
 	 */
 	public static boolean isFunctionalCompartment(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 289);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a functional entity, false otherwise
 	 */
 	public static boolean isFunctionalEntity(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 241);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-an interaction, false otherwise
 	 */
 	public static boolean isInteraction(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 231);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a kinetic constant, false otherwise
 	 */
 	public static boolean isKineticConstant(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 9);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a logical framework, false otherwise
 	 */
 	public static boolean isLogicalFramework(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 234);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a material entity, false otherwise
 	 */
 	public static boolean isMaterialEntity(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 240);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a mathematical expression, false otherwise
 	 */
 	public static boolean isMathematicalExpression(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 64);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a modelling framework, false otherwise
 	 */
 	public static boolean isModellingFramework(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 4);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a modifier, false otherwise
 	 */
 	public static boolean isModifier(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 19);
 	}
 
 	/**
 	 * Function for checking whether the SBO term is obselete.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-an obsolete term, false otherwise
 	 */
 	public static boolean isObselete(int sboTerm) {
-		// TODO
-		return false;
+		return sbo.getTerm(intToString(sboTerm)).getDescription().startsWith(
+				"obsolete");
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a participant, false otherwise
 	 */
 	public static boolean isParticipant(int sboTerm) {
-		// TODO
-		return false;
+		// TODO: obsolete
+		return isChildOf(sboTerm, 235);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a participant role, false otherwise
 	 */
 	public static boolean isParticipantRole(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 3);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a physical participant, false otherwise
 	 */
 	public static boolean isPhysicalParticipant(int sboTerm) {
-		// TODO
-		return false;
+		// TODO: what is this?
+		return isChildOf(sboTerm, 240); // material entity?
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a product, false otherwise
 	 */
 	public static boolean isProduct(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 11);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a quantitative parameter, false otherwise
 	 */
 	public static boolean isQuantitativeParameter(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 2);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a rate law, false otherwise
 	 */
 	public static boolean isRateLaw(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 1);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a reactant, false otherwise
 	 */
 	public static boolean isReactant(int sboTerm) {
-		// TODO
-		return false;
+		return isChildOf(sboTerm, 10);
 	}
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
-	 * @return
+	 * @return true if the term is-a steady state expression, false otherwise
 	 */
 	public static boolean isSteadyStateExpression(int sboTerm) {
-		if (!checkTerm(sboTerm))
-			return false;
-		return isChildOf(sbo.getTerm(intToString(sboTerm)), sbo
-				.getTerm("SBO:0000391"));
+		return isChildOf(sboTerm, 391);
 	}
 
 	/**
@@ -415,12 +399,5 @@ public class SBO {
 				return true;
 		}
 		return false;
-	}
-
-	/**
-	 * 
-	 */
-	public SBO() {
-		// TODO
 	}
 }
