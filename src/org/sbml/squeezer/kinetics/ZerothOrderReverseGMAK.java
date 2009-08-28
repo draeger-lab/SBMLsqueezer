@@ -9,7 +9,9 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
+import org.sbml.ASTNode;
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 
 /**
@@ -48,11 +50,11 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 
 
 	// @Override
-	protected Object dissociation(List<String> catalysts, int c) {
+	protected ASTNode dissociation(List<String> catalysts, int c) {
 		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kdiss = concat(kdiss, underscore, catalysts.get(c));
-		addLocalParameter(kdiss);
-		return new StringBuffer(kdiss);
+		addLocalParameter(new Parameter(kdiss));
+		return new ASTNode(kdiss,this);
 	}
 }

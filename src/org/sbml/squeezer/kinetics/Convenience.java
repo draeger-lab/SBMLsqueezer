@@ -25,7 +25,7 @@ import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
-
+import org.sbml.Parameter;
 /**
  * <p>
  * This is the standard convenience kinetics which is only appropriated for
@@ -120,7 +120,7 @@ public class Convenience extends GeneralizedMassAction {
 					getParentSBMLObject().getId());
 			if (modE.size() > 1)
 				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
-			addLocalParameter(kcatp);
+			addLocalParameter(new Parameter(kcatp));
 			numerator = new ASTNode(kcatp, this);
 
 			// sums for each educt
@@ -138,7 +138,7 @@ public class Convenience extends GeneralizedMassAction {
 					kM = concat(kM, underscore, modE.get(enzymeNum));
 				kM = append(kM, underscore, specref.getSpecies());
 
-				addLocalParameter(kM);
+				addLocalParameter(new Parameter(kM));
 
 				denominator1[eductNum] = ASTNode.frac(new ASTNode(specref
 						.getSpecies(), this), new ASTNode(kM, this));
@@ -189,7 +189,7 @@ public class Convenience extends GeneralizedMassAction {
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 				numerator2 = new ASTNode(kcat, this);
-				addLocalParameter(kcat);
+				addLocalParameter(new Parameter(kcat));
 
 				// Sums for each product
 
@@ -204,7 +204,7 @@ public class Convenience extends GeneralizedMassAction {
 					kM = append(kM, underscore, parentReaction.getProduct(
 							productNum).getSpeciesInstance().getId());
 
-					addLocalParameter(kM);
+					addLocalParameter(new Parameter(kM));
 
 					SpeciesReference specRefP = parentReaction
 							.getProduct(productNum);

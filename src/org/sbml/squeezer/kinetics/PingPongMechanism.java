@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.sbml.ASTNode;
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
 
@@ -158,9 +159,9 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
 			}
-			addLocalParameter(kcatp);
-			addLocalParameter(kMr2);
-			addLocalParameter(kMr1);
+			addLocalParameter(new Parameter(kcatp));
+			addLocalParameter(new Parameter(kMr2));
+			addLocalParameter(new Parameter(kMr1));
 
 			/*
 			 * Irreversible Reaction
@@ -230,12 +231,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					kIp1 = concat("kip1", kIp1.substring(2));
 					kIp2 = concat("kip2", kIp2.substring(2));
 				}
-				addLocalParameter(kcatn);
-				addLocalParameter(kMp2);
-				addLocalParameter(kMp1);
-				addLocalParameter(kIp1);
-				addLocalParameter(kIp2);
-				addLocalParameter(kIr1);
+				addLocalParameter(new Parameter(kcatn));
+				addLocalParameter(new Parameter(kMp2));
+				addLocalParameter(new Parameter(kMp1));
+				addLocalParameter(new Parameter(kIp1));
+				addLocalParameter(new Parameter(kIp2));
+				addLocalParameter(new Parameter(kIr1));
 
 				ASTNode numeratorForward = ASTNode.frac(
 						new ASTNode(kcatp, this), ASTNode.times(new ASTNode(

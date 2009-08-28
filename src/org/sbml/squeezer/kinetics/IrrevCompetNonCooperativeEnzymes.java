@@ -21,6 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
+import org.sbml.Parameter;
 import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
@@ -148,8 +149,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 			}
-			addLocalParameter(kcat);
-			addLocalParameter(kcat);
+			addLocalParameter(new Parameter(kcat));
+			addLocalParameter(new Parameter(kcat));
 			ASTNode currEnzyme;
 			ASTNode numerator = new ASTNode("",this);
 
@@ -164,7 +165,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 
 				kM = concat(kM, underscore, modE.get(enzymeNum));
 			kM = concat(kM, underscore, reaction.getReactant(0).getSpecies());
-			addLocalParameter(kM);
+			addLocalParameter(new Parameter(kM));
 
 			if (modInhib.size() == 0)
 				denominator = ASTNode.sum(denominator, new ASTNode(kM, this));
@@ -182,8 +183,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					}
 					kIi = concat(kIi, underscore, modInhib.get(i));
 					exponent = concat(exponent, underscore, modInhib.get(i));
-					addLocalParameter(kIi);
-					addLocalParameter(exponent);
+					addLocalParameter(new Parameter(kIi));
+					addLocalParameter(new Parameter(exponent));
 
 					factor = ASTNode.times(factor, ASTNode.pow(ASTNode.sum(
 							new ASTNode(1, this), ASTNode.frac(new ASTNode(

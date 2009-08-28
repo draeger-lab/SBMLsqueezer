@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.sbml.ASTNode;
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
 
@@ -212,16 +213,16 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				append(kIp2, underscore, specRefP2.getSpecies());
 			}
 
-			addLocalParameter(kcatp);
+			addLocalParameter(new Parameter(kcatp));
 
 			/*
 			 * addLocalParameter(kcatp); Irreversible reaction (bi-bi or bi-uni
 			 * does not matter)
 			 */
 			if (!reaction.getReversible()) {
-				addLocalParameter(kMr2);
-				addLocalParameter(kMr1);
-				addLocalParameter(kIr1);
+				addLocalParameter(new Parameter(kMr2));
+				addLocalParameter(new Parameter(kMr1));
+				addLocalParameter(new Parameter(kIr1));
 
 				numerator = new ASTNode(kcatp, this);
 				if (modE.size() > 0)
@@ -256,15 +257,15 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible Bi-Bi reaction.
 				 */
-				addLocalParameter(kIr2);
-				addLocalParameter(kcatn);
-				addLocalParameter(kMr1);
-				addLocalParameter(kMr2);
-				addLocalParameter(kMp1);
-				addLocalParameter(kMp2);
-				addLocalParameter(kIr1);
-				addLocalParameter(kIp1);
-				addLocalParameter(kIp2);
+				addLocalParameter(new Parameter(kIr2));
+				addLocalParameter(new Parameter(kcatn));
+				addLocalParameter(new Parameter(kMr1));
+				addLocalParameter(new Parameter(kMr2));
+				addLocalParameter(new Parameter(kMp1));
+				addLocalParameter(new Parameter(kMp2));
+				addLocalParameter(new Parameter(kIr1));
+				addLocalParameter(new Parameter(kIp1));
+				addLocalParameter(new Parameter(kIp2));
 
 				ASTNode numeratorForward = ASTNode.frac(
 						new ASTNode(kcatp, this), ASTNode.times(new ASTNode(
@@ -386,12 +387,12 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible bi-uni reaction
 				 */
-				addLocalParameter(kcatn);
-				addLocalParameter(kMr1);
-				addLocalParameter(kMr2);
-				addLocalParameter(kMp1);
-				addLocalParameter(kIr1);
-				addLocalParameter(kIp1);
+				addLocalParameter(new Parameter(kcatn));
+				addLocalParameter(new Parameter(kMr1));
+				addLocalParameter(new Parameter(kMr2));
+				addLocalParameter(new Parameter(kMp1));
+				addLocalParameter(new Parameter(kIr1));
+				addLocalParameter(new Parameter(kIp1));
 
 				ASTNode numeratorForward = ASTNode.frac(
 						new ASTNode(kcatp, this), ASTNode.times(new ASTNode(
