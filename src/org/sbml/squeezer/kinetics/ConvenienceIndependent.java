@@ -163,7 +163,7 @@ public class ConvenienceIndependent extends Convenience {
 			addLocalParameter(new Parameter(kM.toString()));
 			kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(new Parameter(kiG.toString()));
-			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref.getSpecies(),
+			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref.getSpeciesInstance(),
 					this), new ASTNode(kM, this)), new ASTNode(ref
 					.getStoichiometry(), this));
 			eductroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(kiG, this),
@@ -181,7 +181,7 @@ public class ConvenienceIndependent extends Convenience {
 			kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(new Parameter(kiG.toString()));
 			products[i] =  ASTNode.pow(ASTNode.frac(
-					new ASTNode(ref.getSpecies(), this), new ASTNode(kM, this)),
+					new ASTNode(ref.getSpeciesInstance(), this), new ASTNode(kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
 			productroot[i] =  ASTNode.pow(ASTNode.times(
 					new ASTNode(kiG, this), new ASTNode(kM, this)),
@@ -227,7 +227,7 @@ public class ConvenienceIndependent extends Convenience {
 
 			ASTNode[] parts = new ASTNode[(int) ref.getStoichiometry()
 					+ (noOne ? 0 : 1)];
-			ASTNode part = ASTNode.frac(new ASTNode(ref.getSpecies(), this),
+			ASTNode part = ASTNode.frac(new ASTNode(ref.getSpeciesInstance(), this),
 					new ASTNode(kM, this));
 			for (int j = 0; j < parts.length; j++)
 				parts[j] = ASTNode.pow(part, new ASTNode((noOne ? j + 1 : j),

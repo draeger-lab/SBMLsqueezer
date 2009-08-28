@@ -12,7 +12,6 @@ import java.util.List;
 import org.sbml.ASTNode;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * TODO: comment missing
@@ -48,10 +47,10 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 	 */
 	// @Override
 	ASTNode dissociation(List<String> catalysts, int c) {
-		StringBuffer kdiss = StringTools.concat("kdiss_", getParentSBMLObject()
+		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject()
 				.getId());
 		if (catalysts.size() > 0)
-			kdiss = StringTools.concat(kdiss, StringTools.underscore, catalysts
+			kdiss = concat(kdiss, underscore, catalysts
 					.get(c));
 		addLocalParameter(new Parameter(kdiss.toString()));
 		return new ASTNode(kdiss, this);

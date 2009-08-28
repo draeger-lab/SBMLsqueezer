@@ -140,7 +140,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 
 			numerator =  new ASTNode(kcat,this);
 			numerator = ASTNode.times(numerator, new ASTNode(reaction.getReactant(
-					0).getSpecies(),this));
+					0).getSpeciesInstance(),this));
 
 			ASTNode denominator;
 			StringBuffer kM = new StringBuffer(concat("kM_", reaction.getId()));
@@ -179,7 +179,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 
 			}
 			denominator = ASTNode.sum(denominator, new ASTNode(reaction
-					.getReactant(0).getSpecies(),this));
+					.getReactant(0).getSpeciesInstance(),this));
 			currEnzyme = ASTNode.frac(numerator, denominator);
 			enzymeNum++;
 			if (numOfEnzymes <= 1)

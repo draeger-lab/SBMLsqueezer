@@ -53,9 +53,9 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 
 	// @Override
 	protected final ASTNode association(List<String> catalysts, int catNum) {
-		StringBuffer kass = StringTools.concat("kass_", getParentSBMLObject().getId());
+		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
-			kass = StringTools.concat(kass, StringTools.underscore, catalysts.get(catNum));
+			kass = concat(kass, underscore, catalysts.get(catNum));
 		addLocalParameter(new Parameter(kass.toString()));
 		return new ASTNode(kass,this);
 	}
