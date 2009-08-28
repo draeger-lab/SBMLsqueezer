@@ -20,18 +20,16 @@ package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import org.sbml.ASTNode;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
-import org.sbml.Species;
-import org.sbml.SpeciesReference;
-import org.sbml.libsbml.libsbml;
+import org.sbml.SBO;
+import org.sbml.squeezer.io.StringTools;
+import org.sbml.squeezer.plugin.PluginSBMLReader;
 
 /**
  * An abstract super class of specialized kinetic laws.
@@ -47,232 +45,43 @@ import org.sbml.libsbml.libsbml;
 public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
-	 * 
-	 */
-	protected static final Character underscore = Character.valueOf('_');
-
-	/**
-	 * Takes the given StringBuffer as input and appends every further Object to
-	 * it.
-	 * 
-	 * @param k
-	 * @param things
-	 * @return
-	 */
-	public static final StringBuffer append(StringBuffer k, Object... things) {
-		for (Object t : things)
-			k.append(t);
-		return k;
-	}
-
-	/**
-	 * Basic method which links several elements with a mathematical operator.
-	 * All empty StringBuffer object are excluded.
-	 * 
-	 * @param operator
-	 * @param elements
-	 * @return
-	 */
-	private static final StringBuffer arith(char operator, Object... elements) {
-		List<Object> vsb = new Vector<Object>();
-		for (Object sb : elements)
-			if (sb.toString().length() > 0)
-				vsb.add(sb);
-		StringBuffer equation = new StringBuffer();
-		if (vsb.size() > 0)
-			equation.append(vsb.get(0));
-		Character op = Character.valueOf(operator);
-		for (int count = 1; count < vsb.size(); count++)
-			append(equation, op, vsb.get(count));
-		return equation;
-	}
-
-	/**
-	 * 
-	 * @param sb
-	 * @return
-	 */
-	public static final StringBuffer brackets(Object sb) {
-		return concat(Character.valueOf('('), sb, Character.valueOf(')'));
-	}
-
-	/**
-	 * This method concatenates two or more object strings into a new
-	 * stringbuffer.
-	 * 
-	 * @param buffers
-	 * @return
-	 */
-	public static final StringBuffer concat(Object... buffers) {
-		StringBuffer res = new StringBuffer();
-		for (Object buffer : buffers)
-			res.append(buffer.toString());
-		return res;
-	}
-
-	/**
-	 * Tests whether the String representation of the given object contains any
-	 * arithmetic symbols and if the given object is already sorrounded by
-	 * brackets.
-	 * 
-	 * @param something
-	 * @return True if either brackets are set around the given object or the
-	 *         object does not contain any symbols such as +, -, *, /.
-	 */
-	private static boolean containsArith(Object something) {
-		boolean arith = false;
-		String d = something.toString();
-		if (d.length() > 0) {
-			char c;
-			for (int i = 0; (i < d.length()) && !arith; i++) {
-				c = d.charAt(i);
-				arith = ((c == '+') || (c == '-') || (c == '*') || (c == '/'));
-			}
-		}
-		return arith;
-	}
-
-	/**
-	 * Returns the difference of the given elements as StringBuffer.
-	 * 
-	 * @param subtrahents
-	 * @return
-	 */
-	public static final StringBuffer diff(Object... subtrahents) {
-		if (subtrahents.length == 1)
-			return brackets(concat(Character.valueOf('-'), subtrahents));
-		return brackets(arith('-', subtrahents));
-	}
-
-	public static final StringBuffer diff(StringBuffer... subtrahents) {
-		if (subtrahents.length == 1)
-			return brackets(concat(Character.valueOf('-'), subtrahents));
-		return brackets(arith('-', subtrahents));
-	}
-
-	/**
-	 * Returns a fraction with the given elements as numerator and denominator.
-	 * 
-	 * @param numerator
-	 * @param denominator
-	 * @return
-	 */
-	public static final StringBuffer frac(Object numerator, Object denominator) {
-		return brackets(arith('/',
-				(containsArith(numerator) ? brackets(numerator) : numerator),
-				containsArith(denominator) ? brackets(denominator)
-						: denominator));
-	}
-
-	/**
-	 * Creates and returns a list of molecule types accepted as an enzyme by
-	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
-	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
-	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
-	 * 
-	 * @return
-	 */
-	public static final List<String> getDefaultListOfPossibleEnzymes() {
-		List<String> listOfPossibleEnzymes = new Vector<String>();
-		listOfPossibleEnzymes.add("ANTISENSE_RNA");
-		listOfPossibleEnzymes.add("SIMPLE_MOLECULE");
-		listOfPossibleEnzymes.add("UNKNOWN");
-		listOfPossibleEnzymes.add("COMPLEX");
-		listOfPossibleEnzymes.add("TRUNCATED");
-		listOfPossibleEnzymes.add("GENERIC");
-		listOfPossibleEnzymes.add("RNA");
-		listOfPossibleEnzymes.add("RECEPTOR");
-		return listOfPossibleEnzymes;
-	}
-
-	/**
-	 * This method constructs a full length SBO number from a given SBO id.
-	 * Whenever a SBO number is used in the model please don't forget to add
-	 * this identifier to the Set of SBO numbers (only those numbers in this set
-	 * will be displayed in the glossary).
-	 * 
-	 * @param sbo
-	 * @return
-	 */
-	protected static String getSBOnumber(int sbo) {
-		if (sbo < 0)
-			return "none";
-		String sboString = Integer.toString(sbo);
-		while (sboString.length() < 7)
-			sboString = '0' + sboString;
-		return sboString;
-	}
-
-	/**
-	 * Returns the id of a PluginSpeciesReference object's belonging species as
-	 * an object of type StringBuffer.
-	 * 
-	 * @param ref
-	 * @return
-	 */
-	protected static final StringBuffer getSpecies(SpeciesReference ref) {
-		return new StringBuffer(ref.getSpecies());
-	}
-
-	/**
-	 * Returns the value of a PluginSpeciesReference object's stoichiometry
-	 * either as a double or, if the stoichiometry has an integer value, as an
-	 * int object.
-	 * 
-	 * @param ref
-	 * @return
-	 */
-	protected static final double getStoichiometry(SpeciesReference ref) {
-
-		double stoich = ref.getStoichiometry();
-		return stoich;
-
-	}
-
-	/**
 	 * identify which Modifer is used
 	 * 
 	 * @param reactionNum
 	 */
 	public static final void identifyModifers(Reaction reaction,
-			List<String> listOfPossibleEnzymes, List<String> inhibitors,
-			List<String> transActivators, List<String> transInhibitors,
-			List<String> activators, List<String> enzymes,
-			List<String> nonEnzymeCatalyzers) {
+			List<String> inhibitors, List<String> transActivators,
+			List<String> transInhibitors, List<String> activators,
+			List<String> enzymes, List<String> nonEnzymeCatalyzers) {
 		inhibitors.clear();
 		transActivators.clear();
 		transInhibitors.clear();
 		activators.clear();
 		enzymes.clear();
 		nonEnzymeCatalyzers.clear();
-		String type;
+		int type;
 		for (int modifierNum = 0; modifierNum < reaction.getNumModifiers(); modifierNum++) {
-			type = reaction.getModifier(modifierNum).getModificationType()
-					.toUpperCase();
-			if (type.equals("MODULATION")) {
+			type = reaction.getModifier(modifierNum).getSBOTerm();
+			if (SBO.isModulation(type)) {
 				inhibitors.add(reaction.getModifier(modifierNum).getSpecies());
 				activators.add(reaction.getModifier(modifierNum).getSpecies());
-			} else if (type.equals("INHIBITION"))
+			} else if (SBO.isInhibition(type))
 				inhibitors.add(reaction.getModifier(modifierNum).getSpecies());
-			else if (type.equals("TRANSCRIPTIONAL_ACTIVATION")
-					|| type.equals("TRANSLATIONAL_ACTIVATION"))
+			else if (SBO.isTranscriptionalActivation(type)
+					|| SBO.isTranslationalActivation(type))
 				transActivators.add(reaction.getModifier(modifierNum)
 						.getSpecies());
-			else if (type.equals("TRANSCRIPTIONAL_INHIBITION")
-					|| type.equals("TRANSLATIONAL_INHIBITION"))
+			else if (SBO.isTranscriptionalInhibition(type)
+					|| SBO.isTranslationalInhibition(type))
 				transInhibitors.add(reaction.getModifier(modifierNum)
 						.getSpecies());
-			else if (type.equals("UNKNOWN_CATALYSIS") || type.equals("TRIGGER")
-					|| type.equals("PHYSICAL_STIMULATION"))
+			else if (SBO.isUnknownCatalysis(type) || SBO.isTrigger(type)
+					|| SBO.isPhysicalStimulation(type))
 				activators.add(reaction.getModifier(modifierNum).getSpecies());
-			else if (type.equals("CATALYSIS")) {
-				Species species = reaction.getModifier(modifierNum)
-						.getSpeciesInstance();
-				String speciesAliasType = species.getSpeciesAlias(0).getType()
-						.equals("PROTEIN") ? species.getSpeciesAlias(0)
-						.getProtein().getType() : species.getSpeciesAlias(0)
-						.getType();
-				if (listOfPossibleEnzymes.contains(speciesAliasType))
+			else if (SBO.isCatalysis(type)) {
+				if (SBO.isEnzymaticCatalysis(type)
+						|| PluginSBMLReader.listOfPossibleEnzymes
+								.contains(Integer.valueOf(type)))
 					enzymes.add(reaction.getModifier(modifierNum).getSpecies());
 				else
 					nonEnzymeCatalyzers.add(reaction.getModifier(modifierNum)
@@ -296,122 +105,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		return false;
 	}
 
-	/**
-	 * Returns the basis to the power of the exponent as StringBuffer. Several
-	 * special cases are treated.
-	 * 
-	 * @param basis
-	 * @param exponent
-	 * @return
-	 */
-	public static final StringBuffer pow(Object basis, Object exponent) {
-		try {
-			if (Double.parseDouble(exponent.toString()) == 0f)
-				return new StringBuffer("1");
-			if (Double.parseDouble(exponent.toString()) == 1f)
-				return basis instanceof StringBuffer ? (StringBuffer) basis
-						: new StringBuffer(basis.toString());
-		} catch (NumberFormatException exc) {
-		}
-		return arith('^', basis, exponent);
-	}
-
-	/**
-	 * Returns the exponent-th root of the basis as StringBuffer.
-	 * 
-	 * @param exponent
-	 * @param basis
-	 * @return
-	 * @throws IllegalFormatException
-	 *             If the given exponent represents a zero.
-	 */
-	public static final StringBuffer root(Object exponent, Object basis)
-			throws IllegalFormatException {
-		if (Double.parseDouble(exponent.toString()) == 0f)
-			throw new IllegalFormatException(
-					"Cannot extract a zeroth root of anything");
-		if (Double.parseDouble(exponent.toString()) == 1f)
-			return new StringBuffer(basis.toString());
-		return concat("root(", exponent, Character.valueOf(','), basis,
-				Character.valueOf(')'));
-	}
-
-	public static final StringBuffer sqrt(Object basis) {
-		try {
-			return root(Integer.valueOf(2), basis);
-		} catch (IllegalFormatException e) {
-			return pow(basis, frac(Integer.valueOf(1), Integer.valueOf(2)));
-		}
-	}
-
-	/**
-	 * Returns the sum of the given elements as StringBuffer.
-	 * 
-	 * @param summands
-	 * @return
-	 */
-	public static final StringBuffer sum(Object... summands) {
-		return brackets(arith('+', summands));
-	}
-
-	/**
-	 * 
-	 * @param summands
-	 * @return
-	 */
-	public static final StringBuffer sum(StringBuffer... summands) {
-		return brackets(arith('+', summands));
-	}
-
-	/**
-	 * Returns the product of the given elements as StringBuffer.
-	 * 
-	 * @param factors
-	 * @return
-	 */
-	public static final StringBuffer times(Object... factors) {
-		return arith('*', factors);
-	}
-
-	/**
-	 * Returns the product of the given elements as StringBuffer.
-	 * 
-	 * @param factors
-	 * @return
-	 */
-	public static final StringBuffer times(StringBuffer... factors) {
-		return arith('*', factors);
-	}
-
-	public static final StringBuffer toText(ASTNode astnode) {
-		return new StringBuffer(libsbml.formulaToString(astnode));
-	}
-
-	protected HashMap<String, String> idAndName;
-
-	protected StringBuffer formelTeX;
-
-	private List<Parameter> listOfLocalParameters;
-
-	private List<Parameter> listOfGlobalParameters;
-
-	protected String sboTerm;
-
-	protected Model model;
-
-	/**
-	 * 
-	 * @param parentReaction
-	 * @param model
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public BasicKineticLaw(Reaction parentReaction, Model model)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		this(parentReaction, model, getDefaultListOfPossibleEnzymes());
-	}
+	final Character underscore = StringTools.underscore;
 
 	/**
 	 * 
@@ -423,27 +117,39 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public BasicKineticLaw(Reaction parentReaction, Model model,
-			List<String> listOfPossibleEnzymes)
+	public BasicKineticLaw(Reaction parentReaction)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction);
-		this.model = model;
-		sboTerm = null;
-		idAndName = new HashMap<String, String>();
-		listOfLocalParameters = new ArrayList<StringBuffer>();
-		listOfGlobalParameters = new ArrayList<StringBuffer>();
 		List<String> modActi = new ArrayList<String>();
 		List<String> modCat = new ArrayList<String>();
 		List<String> modInhib = new ArrayList<String>();
 		List<String> modE = new ArrayList<String>();
 		List<String> modTActi = new ArrayList<String>();
 		List<String> modTInhib = new ArrayList<String>();
-		identifyModifers(parentReaction, listOfPossibleEnzymes, modInhib,
-				modTActi, modTInhib, modActi, modE, modCat);
-		setMath(libsbml.parseFormula(createKineticEquation(model, modE,
-				modActi, modTActi, modInhib, modTInhib, modCat).toString()));
-		formelTeX = getMath().toLaTeX();
+		identifyModifers(parentReaction, modInhib, modTActi, modTInhib,
+				modActi, modE, modCat);
+		setMath(createKineticEquation(modE, modActi, modTActi, modInhib,
+				modTInhib, modCat));
+	}
+
+	/**
+	 * Returns the name of the kinetic formula of this object.
+	 * 
+	 * @return
+	 */
+	public abstract String getName();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.MathContainer#toString()
+	 */
+	// @Override
+	public String toString() {
+		if (!isSetSBOTerm())
+			return getName();
+		return getSBOTermID();
 	}
 
 	/**
@@ -452,9 +158,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @param parameter
 	 */
-	protected void addGlobalParameter(Parameter parameter) {
-		if (!listOfGlobalParameters.contains(parameter))
-			listOfGlobalParameters.add(new Parameter(parameter));
+	void addGlobalParameter(Parameter parameter) {
+		Model m = getModel();
+		if (!m.getListOfParameters().contains(parameter))
+			m.addParameter(new Parameter(parameter));
 	}
 
 	/**
@@ -463,9 +170,28 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @param parameter
 	 */
-	protected void addLocalParameter(Parameter parameter) {
-		if (!listOfLocalParameters.contains(parameter))
-			listOfLocalParameters.add(parameter);
+	void addLocalParameter(Parameter parameter) {
+		if (!getListOfParameters().contains(parameter))
+			addParameter(parameter);
+	}
+
+	/**
+	 * 
+	 * @param k
+	 * @param things
+	 * @return
+	 */
+	String append(StringBuffer k, Object... things) {
+		return StringTools.append(k, things).toString();
+	}
+
+	/**
+	 * 
+	 * @param things
+	 * @return
+	 */
+	String concat(Object... things) {
+		return StringTools.concat(things).toString();
 	}
 
 	/**
@@ -481,77 +207,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	protected abstract ASTNode createKineticEquation(Model model,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	abstract ASTNode createKineticEquation(List<String> modE,
+			List<String> modActi, List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
-
-	/**
-	 * Recursively removes waste brackets from a formula.
-	 * 
-	 * TODO Refinement
-	 * 
-	 * @param sb
-	 * @return
-	 */
-	/*
-	 * protected StringBuffer removeBrackets(StringBuffer sb) { if (sb.length()
-	 * > 0) { if ((sb.charAt(0) == '(') && (sb.charAt(sb.length() - 1) == ')'))
-	 * { sb.deleteCharAt(sb.length() - 1); sb.deleteCharAt(0); sb =
-	 * removeBrackets(sb); } } return sb; }
-	 */
-
-	/**
-	 * Returns a list of names of all parameters, which are only allowed to be
-	 * stored globally.
-	 * 
-	 * @return
-	 */
-	public List<StringBuffer> getGlobalParameters() {
-		return listOfGlobalParameters;
-	}
-
-	/**
-	 * Returns the LaTeX expression of the generated formual of this kinetic
-	 * law.
-	 * 
-	 * @return
-	 */
-	public String getKineticTeX() {
-		return formelTeX.toString();
-	}
-
-	/**
-	 * Returns a list of the names of all parameters used by this law. This list
-	 * contains parameters, which can be either stored locally, i.e., assigned
-	 * to the specific kinetic law or globally for the whole model.
-	 * 
-	 * @return
-	 */
-	public List<StringBuffer> getLocalParameters() {
-		return listOfLocalParameters;
-	}
-
-	/**
-	 * Returns the name of the kinetic formula of this object.
-	 * 
-	 * @return
-	 */
-	public abstract String getName();
-
-	/**
-	 * Returns the SBO identifier of the respective kinetic law if there is one
-	 * or an empty String otherwise.
-	 * 
-	 * @return
-	 */
-	public abstract String getSBO();
-
-	// @Override
-	public String toString() {
-		if (sboTerm == null)
-			sboTerm = getName();
-		return sboTerm;
-	}
 
 }

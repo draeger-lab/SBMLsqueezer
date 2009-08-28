@@ -23,9 +23,10 @@ import java.util.List;
 
 import org.sbml.ASTNode;
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
-import org.sbml.Parameter;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * <p>
@@ -52,32 +53,14 @@ public class ConvenienceIndependent extends Convenience {
 
 	/**
 	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ConvenienceIndependent(Reaction parentReaction, Model model)
+	public ConvenienceIndependent(Reaction parentReaction)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
-		super(parentReaction, model);
-	}
-
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param listOfPossibleEnzymes
-	 * @param reversibility
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public ConvenienceIndependent(Reaction parentReaction, Model model,
-			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
+		super(parentReaction);
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
@@ -92,19 +75,11 @@ public class ConvenienceIndependent extends Convenience {
 		return "irreversible thermodynamically independent convenience kinetics";
 	}
 
-	// @Override
-	public String getSBO() {
-		return "none";
-	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @seeorg.sbmlsqueezer.kinetics.Convenience#createKineticEquation(jp.sbi.
-	 * celldesigner.plugin.PluginModel, java.util.List, java.util.List,
-	 * java.util.List, java.util.List, java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.Convenience#createKineticEquation(org.sbml.Model, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	protected ASTNode createKineticEquation(Model model, List<String> modE,
+	ASTNode createKineticEquation(Model model, List<String> modE,
 			List<String> modActi, List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
@@ -188,7 +163,7 @@ public class ConvenienceIndependent extends Convenience {
 			addLocalParameter(new Parameter(kM.toString()));
 			kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(new Parameter(kiG.toString()));
-			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(getSpecies(ref),
+			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref.getSpecies(),
 					this), new ASTNode(kM, this)), new ASTNode(ref
 					.getStoichiometry(), this));
 			eductroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(kiG, this),
@@ -206,7 +181,7 @@ public class ConvenienceIndependent extends Convenience {
 			kiG = concat("kG_", ref.getSpecies());
 			addLocalParameter(new Parameter(kiG.toString()));
 			products[i] =  ASTNode.pow(ASTNode.frac(
-					new ASTNode(getSpecies(ref), this), new ASTNode(kM, this)),
+					new ASTNode(ref.getSpecies(), this), new ASTNode(kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
 			productroot[i] =  ASTNode.pow(ASTNode.times(
 					new ASTNode(kiG, this), new ASTNode(kM, this)),
@@ -252,7 +227,7 @@ public class ConvenienceIndependent extends Convenience {
 
 			ASTNode[] parts = new ASTNode[(int) ref.getStoichiometry()
 					+ (noOne ? 0 : 1)];
-			ASTNode part = ASTNode.frac(new ASTNode(getSpecies(ref), this),
+			ASTNode part = ASTNode.frac(new ASTNode(ref.getSpecies(), this),
 					new ASTNode(kM, this));
 			for (int j = 0; j < parts.length; j++)
 				parts[j] = ASTNode.pow(part, new ASTNode((noOne ? j + 1 : j),

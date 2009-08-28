@@ -19,10 +19,26 @@
 package org.sbml;
 
 /**
- * @author Andreas Dr&auml;ger <a href="mailto:andreas.draeger@uni-tuebingen.de">andreas.draeger@uni-tuebingen.de</a>
- *
+ * @author Andreas Dr&auml;ger <a
+ *         href="mailto:andreas.draeger@uni-tuebingen.de">
+ *         andreas.draeger@uni-tuebingen.de</a>
+ * 
  */
 public interface SBMLReader {
+
+	/**
+	 * 
+	 * @param compartment
+	 * @return
+	 */
+	public Compartment readCompartment(Object compartment);
+
+	/**
+	 * 
+	 * @param kineticLaw
+	 * @return
+	 */
+	public KineticLaw readKineticLaw(Object kineticLaw);
 
 	/**
 	 * 
@@ -30,6 +46,21 @@ public interface SBMLReader {
 	 * @return
 	 */
 	public Model readModel(Object model);
+
+	/**
+	 * 
+	 * @param plumod
+	 * @return
+	 */
+	public ModifierSpeciesReference readModifierSpeciesReference(
+			Object modifierSpeciesReference);
+
+	/**
+	 * 
+	 * @param parameter
+	 * @return
+	 */
+	public Parameter readParameter(Object parameter);
 	
 	/**
 	 * 
@@ -37,5 +68,25 @@ public interface SBMLReader {
 	 * @return
 	 */
 	public Reaction readReaction(Object reaction);
+
+	/**
+	 * 
+	 * @param species
+	 * @return
+	 */
+	public Species readSpecies(Object species);
 	
+	/**
+	 * 
+	 * @param speciesReference
+	 * @return
+	 */
+	public SpeciesReference readSpeciesReference(Object speciesReference);
+	
+	/**
+	 * 
+	 * @param stoichiometryMath
+	 * @return
+	 */
+	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath);
 }

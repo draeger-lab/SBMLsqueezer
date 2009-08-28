@@ -79,8 +79,8 @@ public class KineticLaw extends MathContainer {
 	 */
 	public void addParameter(Parameter p) {
 		Parameter parameter = new Parameter(p);
-		parameter.parentSBMLObject = this;
 		listOfParameters.add(parameter);
+		parameter.parentSBMLObject = this;
 		stateChanged();
 	}
 

@@ -26,6 +26,7 @@ import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * TODO: comment missing
@@ -43,32 +44,14 @@ public class PingPongMechanism extends GeneralizedMassAction {
 
 	/**
 	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public PingPongMechanism(Reaction parentReaction, Model model,
-			boolean reversibility) throws RateLawNotApplicableException,
-			IOException, IllegalFormatException {
-		super(parentReaction, model);
-	}
-
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
-	 * @param listOfPossibleEnzymes
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public PingPongMechanism(Reaction parentReaction, Model model,
-			List<String> listOfPossibleEnzymes)
+	public PingPongMechanism(Reaction parentReaction)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
+		super(parentReaction);
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
@@ -138,26 +121,28 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		int enzymeNum = 0;
 		do {
 			StringBuffer kcatp;
-			StringBuffer kMr1 = concat("kM_", reaction.getId());
-			StringBuffer kMr2 = concat("kM_", reaction.getId());
+			StringBuffer kMr1 = StringTools.concat("kM_", reaction.getId());
+			StringBuffer kMr2 = StringTools.concat("kM_", reaction.getId());
 			StringBuffer enzyme = new StringBuffer(modE.size() == 0 ? "" : modE
 					.get(enzymeNum));
 
 			if (modE.size() == 0)
-				kcatp = concat("Vp_", reaction.getId());
+				kcatp = StringTools.concat("Vp_", reaction.getId());
 			else {
-				kcatp = concat("kcatp_", reaction.getId());
+				kcatp = StringTools.concat("kcatp_", reaction.getId());
 				if (modE.size() > 1) {
-					append(kcatp, underscore, enzyme);
-					append(kMr1, underscore, enzyme);
-					append(kMr2, underscore, enzyme);
+					StringTools.append(kcatp, StringTools.underscore, enzyme);
+					StringTools.append(kMr1, StringTools.underscore, enzyme);
+					StringTools.append(kMr2, StringTools.underscore, enzyme);
 				}
 			}
-			append(kMr2, underscore, specRefE2.getSpecies());
-			append(kMr1, underscore, specRefE1.getSpecies());
+			StringTools.append(kMr2, StringTools.underscore, specRefE2
+					.getSpecies());
+			StringTools.append(kMr1, StringTools.underscore, specRefE1
+					.getSpecies());
 			if (specRefE2.equals(specRefE1)) {
-				kMr1 = concat("kMr1", kMr1.substring(2));
-				kMr2 = concat("kMr2", kMr2.substring(2));
+				kMr1 = StringTools.concat("kMr1", kMr1.substring(2));
+				kMr2 = StringTools.concat("kMr2", kMr2.substring(2));
 			}
 			addLocalParameter(new Parameter(kcatp.toString()));
 			addLocalParameter(new Parameter(kMr2.toString()));
@@ -199,37 +184,48 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				 */
 			} else {
 				StringBuffer kcatn;
-				StringBuffer kMp1 = concat("kM_", reaction.getId());
-				StringBuffer kMp2 = concat("kM_", reaction.getId());
-				StringBuffer kIp1 = concat("ki_", reaction.getId());
-				StringBuffer kIp2 = concat("ki_", reaction.getId());
-				StringBuffer kIr1 = concat("ki_", reaction.getId());
+				StringBuffer kMp1 = StringTools.concat("kM_", reaction.getId());
+				StringBuffer kMp2 = StringTools.concat("kM_", reaction.getId());
+				StringBuffer kIp1 = StringTools.concat("ki_", reaction.getId());
+				StringBuffer kIp2 = StringTools.concat("ki_", reaction.getId());
+				StringBuffer kIr1 = StringTools.concat("ki_", reaction.getId());
 
 				if (modE.size() == 0)
-					kcatn = concat("Vn_", reaction.getId());
+					kcatn = StringTools.concat("Vn_", reaction.getId());
 				else {
-					kcatn = concat("kcatn_", reaction.getId());
+					kcatn = StringTools.concat("kcatn_", reaction.getId());
 					if (modE.size() > 1) {
 						StringBuffer modEnzymeNumber = new StringBuffer(modE
 								.get(enzymeNum));
-						kcatn = concat(kcatn, underscore, modEnzymeNumber);
-						kMp1 = concat(kMp1, underscore, modEnzymeNumber);
-						kMp2 = concat(kMp2, underscore, modEnzymeNumber);
-						kIp1 = concat(kIp1, underscore, modEnzymeNumber);
-						kIp2 = concat(kIp2, underscore, modEnzymeNumber);
-						kIr1 = concat(kIr1, underscore, modEnzymeNumber);
+						kcatn = StringTools.concat(kcatn,
+								StringTools.underscore, modEnzymeNumber);
+						kMp1 = StringTools.concat(kMp1, StringTools.underscore,
+								modEnzymeNumber);
+						kMp2 = StringTools.concat(kMp2, StringTools.underscore,
+								modEnzymeNumber);
+						kIp1 = StringTools.concat(kIp1, StringTools.underscore,
+								modEnzymeNumber);
+						kIp2 = StringTools.concat(kIp2, StringTools.underscore,
+								modEnzymeNumber);
+						kIr1 = StringTools.concat(kIr1, StringTools.underscore,
+								modEnzymeNumber);
 					}
 				}
-				kMp1 = concat(kMp1, underscore, specRefP1.getSpecies());
-				kMp2 = concat(kMp2, underscore, specRefP2.getSpecies());
-				kIp1 = concat(kIp1, underscore, specRefP1.getSpecies());
-				kIp2 = concat(kIp2, underscore, specRefP2.getSpecies());
-				kIr1 = concat(kIr1, underscore, specRefE1.getSpecies());
+				kMp1 = StringTools.concat(kMp1, StringTools.underscore,
+						specRefP1.getSpecies());
+				kMp2 = StringTools.concat(kMp2, StringTools.underscore,
+						specRefP2.getSpecies());
+				kIp1 = StringTools.concat(kIp1, StringTools.underscore,
+						specRefP1.getSpecies());
+				kIp2 = StringTools.concat(kIp2, StringTools.underscore,
+						specRefP2.getSpecies());
+				kIr1 = StringTools.concat(kIr1, StringTools.underscore,
+						specRefE1.getSpecies());
 				if (specRefP2.equals(specRefP1)) {
-					kMp1 = concat("kMp1", kMp1.substring(2));
-					kMp2 = concat("kMp2", kMp2.substring(2));
-					kIp1 = concat("kip1", kIp1.substring(2));
-					kIp2 = concat("kip2", kIp2.substring(2));
+					kMp1 = StringTools.concat("kMp1", kMp1.substring(2));
+					kMp2 = StringTools.concat("kMp2", kMp2.substring(2));
+					kIp1 = StringTools.concat("kip1", kIp1.substring(2));
+					kIp2 = StringTools.concat("kip2", kIp2.substring(2));
 				}
 				addLocalParameter(new Parameter(kcatn.toString()));
 				addLocalParameter(new Parameter(kMp2.toString()));

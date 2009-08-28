@@ -19,8 +19,11 @@
 package org.sbml.squeezer.plugin;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
+import jp.sbi.celldesigner.plugin.PluginCompartment;
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginModifierSpeciesReference;
@@ -29,26 +32,71 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
+import org.sbml.Compartment;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.StoichiometryMath;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 import org.sbml.squeezer.resources.Resource;
 
 public class PluginSBMLReader extends AbstractSBMLReader {
 
+	/**
+	 * 
+	 */
 	private static Properties alias2sbo;
+	private static final String error = " must be an instance of ";
+	public static List<Integer> listOfPossibleEnzymes;
 	static {
 		try {
 			alias2sbo = Resource.readProperties(Resource.class.getResource(
 					"cfg/Alias2SBO.cfg").getPath());
+			listOfPossibleEnzymes = getDefaultListOfPossibleEnzymes();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Creates and returns a list of molecule types accepted as an enzyme by
+	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
+	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
+	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
+	 * 
+	 * @return
+	 */
+	public static final List<Integer> getDefaultListOfPossibleEnzymes() {
+		List<Integer> listOfPossibleEnzymes = new LinkedList<Integer>();
+		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
+				.getProperty("ANTISENSE_RNA")));
+		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
+				.getProperty("SIMPLE_MOLECULE")));
+		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
+				.getProperty("UNKNOWN")));
+		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
+				.getProperty("COMPLEX")));
+		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
+				.getProperty("TRUNCATED")));
+		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
+				.getProperty("GENERIC")));
+		listOfPossibleEnzymes
+				.add(Integer.valueOf(alias2sbo.getProperty("RNA")));
+		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
+				.getProperty("RECEPTOR")));
+		return listOfPossibleEnzymes;
+	}
+
+	/**
+	 * 
+	 */
+	public PluginSBMLReader() {
+		super();
 	}
 
 	/**
@@ -57,15 +105,49 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 * 
 	 * @param model
 	 */
-
 	public PluginSBMLReader(PluginModel model) {
 		super(model);
 	}
 
-	public PluginSBMLReader() {
-		super();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readCompartment(java.lang.Object)
+	 */
+	public Compartment readCompartment(Object compartment) {
+		if (!(compartment instanceof PluginCompartment))
+			throw new IllegalArgumentException("compartment" + error
+					+ "PluginCompartment.");
+		PluginCompartment pc = (PluginCompartment) compartment;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readKineticLaw(java.lang.Object)
+	 */
+	public KineticLaw readKineticLaw(Object kineticLaw) {
+		if (!(kineticLaw instanceof PluginKineticLaw))
+			throw new IllegalArgumentException("kineticLaw" + error
+					+ "PluginKineticLaw.");
+		PluginKineticLaw plukinlaw = (PluginKineticLaw) kineticLaw;
+		KineticLaw kinlaw = new KineticLaw();
+		if (plukinlaw.getMath() != null)
+			kinlaw.setMath(convert(plukinlaw.getMath(), kinlaw));
+		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
+			kinlaw.addParameter(readParameter(plukinlaw.getParameter(i)));
+		}
+		addAllSBaseChangeListenersTo(kinlaw);
+		return kinlaw;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readModel(java.lang.Object)
+	 */
 	public Model readModel(Object model) {
 		if (model instanceof PluginModel) {
 			PluginModel pm = (PluginModel) model;
@@ -73,45 +155,118 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			for (int i = 0; i < pm.getNumReactions(); i++)
 				m.addReaction(readReaction(pm.getReaction(i)));
 			for (int i = 0; i < pm.getNumSpecies(); i++)
-				m.addSpecies(convert(pm.getSpecies(i)));
+				m.addSpecies(readSpecies(pm.getSpecies(i)));
 			addAllSBaseChangeListenersTo(m);
 			return m;
 		}
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readModifierSpeciesReference(java.lang.Object)
+	 */
+	public ModifierSpeciesReference readModifierSpeciesReference(
+			Object modifierSpeciesReference) {
+		if (!(modifierSpeciesReference instanceof PluginModifierSpeciesReference))
+			throw new IllegalArgumentException("modifierSpeciesReference"
+					+ error + "PluginModifierSpeciesReference.");
+		PluginModifierSpeciesReference plumod = (PluginModifierSpeciesReference) modifierSpeciesReference;
+		ModifierSpeciesReference mod = new ModifierSpeciesReference(
+				new Species(plumod.getSpeciesInstance().getId()));
+
+		/*
+		 * Set SBO term.
+		 */
+		mod.setSBOTerm(Integer.parseInt(alias2sbo.get(
+				plumod.getModificationType()).toString()));
+		if (SBO.isCatalysis(mod.getSBOTerm())) {
+			PluginSpecies species = plumod.getSpeciesInstance();
+			String speciesAliasType = species.getSpeciesAlias(0).getType()
+					.equals("PROTEIN") ? species.getSpeciesAlias(0)
+					.getProtein().getType() : species.getSpeciesAlias(0)
+					.getType();
+			if (listOfPossibleEnzymes.contains(Integer.valueOf(alias2sbo.get(
+					speciesAliasType).toString())))
+				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
+		}
+		addAllSBaseChangeListenersTo(mod);
+		return mod;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readParameter(java.lang.Object)
+	 */
+	public Parameter readParameter(Object parameter) {
+		if (!(parameter instanceof PluginParameter))
+			throw new IllegalArgumentException("parameter" + error
+					+ "PluginParameter.");
+		PluginParameter pp = (PluginParameter) parameter;
+		Parameter para = new Parameter(pp.getId());
+		addAllSBaseChangeListenersTo(para);
+		return para;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readReaction(java.lang.Object)
+	 */
 	public Reaction readReaction(Object reac) {
 		if (!(reac instanceof PluginReaction))
-			throw new IllegalArgumentException("reaction must be an instance of PluginReaction");
+			throw new IllegalArgumentException(
+					"reaction must be an instance of PluginReaction");
 		PluginReaction r = (PluginReaction) reac;
 		Reaction reaction = new Reaction(r.getId());
 		for (int i = 0; i < r.getNumReactants(); i++) {
-			reaction.addReactant(convert(r.getReactant(i)));
+			reaction.addReactant(readSpeciesReference(r.getReactant(i)));
 		}
 		for (int i = 0; i < r.getNumProducts(); i++) {
-			reaction.addProduct(convert(r.getProduct(i)));
+			reaction.addProduct(readSpeciesReference(r.getProduct(i)));
 		}
 		for (int i = 0; i < r.getNumModifiers(); i++) {
-			reaction.addModifier(convert(r.getModifier(i)));
+			reaction
+					.addModifier(readModifierSpeciesReference(r.getModifier(i)));
 		}
-		reaction.setSBOTerm(Integer.parseInt(alias2sbo.get(
-				r.getReactionType()).toString()));
-		reaction.setKineticLaw(convert(r.getKineticLaw()));
+		reaction.setSBOTerm(Integer.parseInt(alias2sbo.get(r.getReactionType())
+				.toString()));
+		reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
 		reaction.setFast(r.getFast());
 		reaction.setReversible(r.getReversible());
 		addAllSBaseChangeListenersTo(reaction);
 		return reaction;
 	}
 
-	public Species convert(PluginSpecies spec) {
-		Species species = new Species(spec.getId());
-		species.setSBOTerm(Integer.parseInt(alias2sbo.get(
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readSpecies(java.lang.Object)
+	 */
+	public Species readSpecies(Object species) {
+		if (!(species instanceof PluginSpecies))
+			throw new IllegalArgumentException(
+					"species must be an instance of PluginSpecies");
+		PluginSpecies spec = (PluginSpecies) species;
+		Species s = new Species(spec.getId());
+		s.setSBOTerm(Integer.parseInt(alias2sbo.get(
 				spec.getSpeciesAlias(spec.getId())).toString()));
-		addAllSBaseChangeListenersTo(species);
-		return species;
+		addAllSBaseChangeListenersTo(s);
+		return s;
 	}
 
-	public SpeciesReference convert(PluginSpeciesReference specref) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readSpeciesReference(java.lang.Object)
+	 */
+	public SpeciesReference readSpeciesReference(Object speciesReference) {
+		if (!(speciesReference instanceof PluginSpeciesReference))
+			throw new IllegalArgumentException("speciesReference" + error
+					+ "PluginSpeciesReference.");
+		PluginSpeciesReference specref = (PluginSpeciesReference) speciesReference;
 		SpeciesReference spec = new SpeciesReference(new Species(specref
 				.getSpeciesInstance().getId()));
 		spec.setStoichiometry(specref.getStoichiometry());
@@ -119,28 +274,13 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return spec;
 	}
 
-	public ModifierSpeciesReference convert(
-			PluginModifierSpeciesReference plumod) {
-		ModifierSpeciesReference mod = new ModifierSpeciesReference(
-				new Species(plumod.getSpeciesInstance().getId()));
-		addAllSBaseChangeListenersTo(mod);
-		return mod;
-	}
-
-	public KineticLaw convert(PluginKineticLaw plukinlaw) {
-		KineticLaw kinlaw = new KineticLaw();
-		if (plukinlaw.getMath() != null)
-			kinlaw.setMath(convert(plukinlaw.getMath(), kinlaw));
-		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
-			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
-		}
-		addAllSBaseChangeListenersTo(kinlaw);
-		return kinlaw;
-	}
-
-	public Parameter convert(PluginParameter plupara) {
-		Parameter para = new Parameter(plupara.getId());
-		addAllSBaseChangeListenersTo(para);
-		return para;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readStoichiometricMath(java.lang.Object)
+	 */
+	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

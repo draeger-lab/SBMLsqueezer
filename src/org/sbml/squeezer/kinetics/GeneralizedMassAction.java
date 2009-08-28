@@ -23,14 +23,10 @@ import java.util.List;
 import java.util.Vector;
 
 import org.sbml.ASTNode;
-
-import org.sbml.Model;
-import org.sbml.Reaction;
-
-import org.sbml.SpeciesReference;
-import org.sbml.squeezer.io.SBOParser;
-
 import org.sbml.Parameter;
+import org.sbml.Reaction;
+import org.sbml.SpeciesReference;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates rate equations according to the generalized mass action
@@ -47,45 +43,26 @@ import org.sbml.Parameter;
  */
 public class GeneralizedMassAction extends BasicKineticLaw {
 
-	protected double reactantOrder;
+	public static boolean isApplicable(Reaction reaction) {
+		// TODO
+		return true;
+	}
 
-	protected double productOrder;
+	double reactantOrder;
 
-	private String sbo = null;
+	double productOrder;
 
 	/**
 	 * 
 	 * @param parentReaction
-	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public GeneralizedMassAction(Reaction parentReaction, Model model)
+	public GeneralizedMassAction(Reaction parentReaction)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
-		super(parentReaction, model);
-	}
-
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
-	 * @param listOfPossibleEnzymes
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public GeneralizedMassAction(Reaction parentReaction, Model model,
-			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
-	}
-
-	public static boolean isApplicable(Reaction reaction) {
-		// TODO
-		return true;
+		super(parentReaction);
 	}
 
 	/*
@@ -263,100 +240,16 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		return "mass action rate law for " + name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getSBO()
-	 */
-	public String getSBO() {
-		if (sbo == null)
-			try {
-				sbo = getSBOnumber(SBOParser.getSBOidForName(getName()));
-			} catch (IOException e) {
-				e.printStackTrace();
-				sbo = "none";
-			}
-		return sbo;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbmlsqueezer.kinetics.BasicKineticLaw#createKineticEquation(jp.sbi
-	 * .celldesigner.plugin.Model, java.util.List, java.util.List,
-	 * java.util.List, java.util.List, java.util.List, java.util.List)
-	 */
-	protected ASTNode createKineticEquation(Model model, List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
-		reactantOrder = productOrder = Double.NaN;
-		List<String> catalysts = new Vector<String>(modE);
-		catalysts.addAll(modCat);
-		ASTNode rates[] = new ASTNode[Math.max(1, catalysts.size())];
-		Reaction reaction = getParentSBMLObject();
-		for (int c = 0; c < rates.length; c++) {
-			rates[c] = association(catalysts, c);
-			if (reaction.getReversible())
-				rates[c] = ASTNode.diff(rates[c], dissociation(catalysts, c));
-			if (catalysts.size() > 0) {
-				rates[c] = ASTNode.times(new ASTNode(catalysts.get(c), this),
-						rates[c]);
-			}
-		}
-		return ASTNode.times(activationFactor(modActi),
-				inhibitionFactor(modInhib), ASTNode.sum(rates));
-	}
-
-	/**
-	 * This method creates the part of the formula that describes the formation
-	 * of the product.
-	 * 
-	 * @param catalysts
-	 *            The list of all catalysts.
-	 * @param catNum
-	 *            The current catalyst for which this formula is to be created.
-	 * @return A formula consisting of a constant multiplied with the product
-	 *         over all reactants.
-	 */
-	protected ASTNode association(List<String> catalysts, int catNum) {
-		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
-		if (catalysts.size() > 0)
-			kass = concat(kass, underscore, catalysts.get(catNum));
-		addLocalParameter(new Parameter(kass.toString()));
-		ASTNode ass = new ASTNode(kass, this);
-		for (int reactants = 0; reactants < getParentSBMLObject()
-				.getNumReactants(); reactants++) {
-			SpeciesReference r = getParentSBMLObject().getReactant(reactants);
-			ass = ASTNode.times(ass, ASTNode.pow(new ASTNode(r.getSpecies(),
-					this), new ASTNode(getStoichiometry(r), this)));
-		}
-		return ass;
-	}
-
-	/**
-	 * Creates the part of the formula that describes the reverse reaction or
-	 * dissociation.
-	 * 
-	 * @param catalysts
-	 * @param c
-	 * @return
-	 */
-	protected ASTNode dissociation(List<String> catalysts, int c) {
-		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
-		if (catalysts.size() > 0)
-			kdiss = concat(kdiss, underscore, catalysts.get(c));
-		addLocalParameter(new Parameter(kdiss.toString()));
-		ASTNode diss = new ASTNode(kdiss, this);
-		for (int products = 0; products < getParentSBMLObject()
-				.getNumProducts(); products++) {
-			SpeciesReference p = getParentSBMLObject().getProduct(products);
-			diss = ASTNode.times(diss, ASTNode.pow(new ASTNode(p.getSpecies(),
-					this), new ASTNode(getStoichiometry(p), this)));
-		}
-		return diss;
-	}
+	// public String getSBO() {
+	// if (sbo == null)
+	// try {
+	// sbo = getSBOnumber(SBOParser.getSBOidForName(getName()));
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// sbo = "none";
+	// }
+	// return sbo;
+	// }
 
 	/**
 	 * Returns the product of either all the activation or inhibition terms of a
@@ -376,8 +269,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					StringBuffer kAn = concat("kA_", getParentSBMLObject()
-							.getId(), underscore, modifiers.get(i));
+					StringBuffer kAn = StringTools.concat("kA_",
+							getParentSBMLObject().getId(),
+							StringTools.underscore, modifiers.get(i));
 					ASTNode kA = new ASTNode(kAn, this);
 					mods[i] = ASTNode
 							.frac(new ASTNode(modifiers.get(i), this),
@@ -386,8 +280,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					addLocalParameter(new Parameter(kAn.toString()));
 				} else {
 					// Inhibitor Mod
-					StringBuffer kIn = concat("kI_", getParentSBMLObject()
-							.getId(), underscore, modifiers.get(i));
+					StringBuffer kIn = StringTools.concat("kI_",
+							getParentSBMLObject().getId(),
+							StringTools.underscore, modifiers.get(i));
 					ASTNode kI = new ASTNode(kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI, new ASTNode(
 							modifiers.get(i), this)));
@@ -396,8 +291,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			}
 			return ASTNode.times(mods);
 		}
-		//TODO: better solution?
-		return new ASTNode("",this);
+		return null;
 	}
 
 	/**
@@ -424,6 +318,90 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	}
 
 	/**
+	 * This method creates the part of the formula that describes the formation
+	 * of the product.
+	 * 
+	 * @param catalysts
+	 *            The list of all catalysts.
+	 * @param catNum
+	 *            The current catalyst for which this formula is to be created.
+	 * @return A formula consisting of a constant multiplied with the product
+	 *         over all reactants.
+	 */
+	protected ASTNode association(List<String> catalysts, int catNum) {
+		StringBuffer kass = StringTools.concat("kass_", getParentSBMLObject()
+				.getId());
+		if (catalysts.size() > 0)
+			kass = StringTools.concat(kass, StringTools.underscore, catalysts
+					.get(catNum));
+		addLocalParameter(new Parameter(kass.toString()));
+		ASTNode ass = new ASTNode(kass, this);
+		for (int reactants = 0; reactants < getParentSBMLObject()
+				.getNumReactants(); reactants++) {
+			SpeciesReference r = getParentSBMLObject().getReactant(reactants);
+			ass = ASTNode.times(ass, ASTNode.pow(new ASTNode(r.getSpecies(),
+					this), new ASTNode(r.getStoichiometry(), this)));
+		}
+		return ass;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
+	 */
+	// @Override
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
+			throws RateLawNotApplicableException, IllegalFormatException {
+		reactantOrder = productOrder = Double.NaN;
+		List<String> catalysts = new Vector<String>(modE);
+		catalysts.addAll(modCat);
+		ASTNode rates[] = new ASTNode[Math.max(1, catalysts.size())];
+		Reaction reaction = getParentSBMLObject();
+		for (int c = 0; c < rates.length; c++) {
+			rates[c] = association(catalysts, c);
+			if (reaction.getReversible())
+				rates[c] = ASTNode.diff(rates[c], dissociation(catalysts, c));
+			if (catalysts.size() > 0) {
+				rates[c] = ASTNode.times(new ASTNode(catalysts.get(c), this),
+						rates[c]);
+			}
+		}
+		return ASTNode.times(activationFactor(modActi),
+				inhibitionFactor(modInhib), ASTNode.sum(rates));
+	}
+
+	/**
+	 * Creates the part of the formula that describes the reverse reaction or
+	 * dissociation.
+	 * 
+	 * @param catalysts
+	 * @param c
+	 * @return
+	 */
+	ASTNode dissociation(List<String> catalysts, int c) {
+		StringBuffer kdiss = StringTools.concat("kdiss_", getParentSBMLObject()
+				.getId());
+		if (catalysts.size() > 0)
+			kdiss = StringTools.concat(kdiss, StringTools.underscore, catalysts
+					.get(c));
+		addLocalParameter(new Parameter(kdiss.toString()));
+		ASTNode diss = new ASTNode(kdiss, this);
+		for (int products = 0; products < getParentSBMLObject()
+				.getNumProducts(); products++) {
+			SpeciesReference p = getParentSBMLObject().getProduct(products);
+			diss = ASTNode.times(diss, ASTNode.pow(new ASTNode(p.getSpecies(),
+					this), new ASTNode(p.getStoichiometry(), this)));
+		}
+		return diss;
+	}
+
+	/**
 	 * According to Liebermeister and Klipp, Dec. 2006, inhibition can be
 	 * modeled with the formula
 	 * 
@@ -440,7 +418,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @return Inhibition formula.
 	 * @throws IllegalFormatException
 	 */
-	protected ASTNode inhibitionFactor(List<String> modifiers)
+	ASTNode inhibitionFactor(List<String> modifiers)
 			throws IllegalFormatException {
 		return createModificationFactor(modifiers, false);
 	}

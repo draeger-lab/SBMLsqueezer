@@ -30,6 +30,7 @@ import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.StoichiometryMath;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
@@ -42,6 +43,7 @@ import org.sbml.squeezer.io.AbstractSBMLReader;
 public class LibSBMLReader extends AbstractSBMLReader {
 
 	private Set<SBMLDocument> setOfDocuments;
+	private static final String error = " must be an instance of ";
 
 	public LibSBMLReader() {
 		super();
@@ -70,38 +72,69 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		readModel(fileName);
 	}
 
-	public Compartment convert(org.sbml.libsbml.Compartment compartment) {
-		Compartment c = new Compartment(compartment.getId(), compartment
-				.getName());
-		c.setConstant(compartment.getConstant());
-		if (compartment.isSetOutside()) {
-			Compartment outside = getModel().getCompartment(
-					compartment.getOutside());
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readCompartment(java.lang.Object)
+	 */
+	public Compartment readCompartment(Object compartment) {
+		if (!(compartment instanceof org.sbml.libsbml.Compartment))
+			throw new IllegalArgumentException("compartment" + error
+					+ "org.sbml.libsbml.Compartment");
+		org.sbml.libsbml.Compartment comp = (org.sbml.libsbml.Compartment) compartment;
+		Compartment c = new Compartment(comp.getId());
+		if (comp.isSetMetaId())
+			c.setMetaId(comp.getMetaId());
+		if (comp.isSetSBOTerm())
+			c.setSBOTerm(comp.getSBOTerm());
+		if (comp.isSetNotes())
+			c.setNotes(comp.getNotesString());
+		if (comp.isSetName())
+			c.setName(comp.getName());
+		if (comp.isSetOutside()) {
+			Compartment outside = getModel().getCompartment(comp.getOutside());
 			if (outside == null)
-				getModel().addCompartment(convert(compartment));
+				getModel().addCompartment(readCompartment(compartment));
 			c.setOutside(outside);
 		}
-		c.setSize(compartment.getSize());
-		c.setSpatialDimensions((int) compartment.getSpatialDimensions());
+		c.setConstant(comp.getConstant());
+		c.setSize(comp.getSize());
+		c.setSpatialDimensions((int) comp.getSpatialDimensions());
 		return c;
 	}
 
-	public KineticLaw convert(org.sbml.libsbml.KineticLaw plukinlaw) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readKineticLaw(java.lang.Object)
+	 */
+	public KineticLaw readKineticLaw(Object kineticLaw) {
+		if (!(kineticLaw instanceof org.sbml.libsbml.KineticLaw))
+			throw new IllegalArgumentException("kineticLaw" + error
+					+ "org.sbml.libsbml.KineticLaw.");
+		org.sbml.libsbml.KineticLaw kl = (org.sbml.libsbml.KineticLaw) kineticLaw;
 		KineticLaw kinlaw = new KineticLaw();
-		kinlaw.setNotes(plukinlaw.getNotesString());
-		if (plukinlaw.isSetSBOTerm())
-			kinlaw.setSBOTerm(plukinlaw.getSBOTerm());
-		if (plukinlaw.isSetMath()) {
-			ASTNode ast = convert(plukinlaw.getMath(), kinlaw);
+		if (kl.isSetMetaId())
+			kinlaw.setMetaId(kl.getMetaId());
+		if (kl.isSetSBOTerm())
+			kinlaw.setSBOTerm(kl.getSBOTerm());
+		if (kl.isSetNotes())
+			kinlaw.setNotes(kl.getNotesString());
+		if (kl.isSetMath()) {
+			ASTNode ast = convert(kl.getMath(), kinlaw);
 			ast.reduceToBinary();
 			kinlaw.setMath(ast);
 		}
-		for (int i = 0; i < plukinlaw.getNumParameters(); i++)
-			kinlaw.addParameter(convert(plukinlaw.getParameter(i)));
+		for (int i = 0; i < kl.getNumParameters(); i++)
+			kinlaw.addParameter(readParameter(kl.getParameter(i)));
 		addAllSBaseChangeListenersTo(kinlaw);
 		return kinlaw;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readModel(java.lang.Object)
+	 */
 	public Model readModel(Object model) {
 		if (model instanceof String) {
 			SBMLDocument doc = (new org.sbml.libsbml.SBMLReader())
@@ -111,82 +144,197 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		}
 		if (model instanceof org.sbml.libsbml.Model) {
 			org.sbml.libsbml.Model m = (org.sbml.libsbml.Model) model;
-			Model myModel = new Model(m.getId());
-			this.model = myModel;
+			this.model = new Model(m.getId());
 			int i;
+			if (m.isSetMetaId())
+				this.model.setMetaId(m.getMetaId());
+			if (m.isSetName())
+				this.model.setName(m.getName());
+			if (m.isSetNotes())
+				this.model.setNotes(m.getNotesString());
+			if (m.isSetSBOTerm())
+				this.model.setSBOTerm(m.getSBOTerm());
 			for (i = 0; i < m.getNumCompartments(); i++)
-				myModel.addCompartment(convert(m.getCompartment(i)));
-			for (i = 0; i < m.getNumReactions(); i++)
-				myModel.addReaction(readReaction(m.getReaction(i)));
+				this.model.addCompartment(readCompartment(m.getCompartment(i)));
 			for (i = 0; i < m.getNumSpecies(); i++)
-				myModel.addSpecies(convert(m.getSpecies(i)));
+				this.model.addSpecies(readSpecies(m.getSpecies(i)));
 			for (i = 0; i < m.getNumParameters(); i++)
-				myModel.addParameter(convert(m.getParameter(i)));
-			addAllSBaseChangeListenersTo(myModel);
-			return myModel;
+				this.model.addParameter(readParameter(m.getParameter(i)));
+			for (i = 0; i < m.getNumReactions(); i++)
+				this.model.addReaction(readReaction(m.getReaction(i)));
+			addAllSBaseChangeListenersTo(this.model);
+			return this.model;
 		}
 		return null;
 	}
 
-	public ModifierSpeciesReference convert(
-			org.sbml.libsbml.ModifierSpeciesReference plumod) {
-		ModifierSpeciesReference mod = new ModifierSpeciesReference(
-				new Species(plumod.getSpecies()));
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readModifierSpeciesReference(java.lang.Object)
+	 */
+	public ModifierSpeciesReference readModifierSpeciesReference(
+			Object modifierSpeciesReference) {
+		if (!(modifierSpeciesReference instanceof org.sbml.libsbml.ModifierSpeciesReference))
+			throw new IllegalArgumentException("modifierSpeciesReference"
+					+ error + "org.sbml.libsbml.ModifierSpeciesReference.");
+		org.sbml.libsbml.ModifierSpeciesReference msr = (org.sbml.libsbml.ModifierSpeciesReference) modifierSpeciesReference;
+		ModifierSpeciesReference mod = new ModifierSpeciesReference(model
+				.getSpecies(msr.getSpecies()));
+		if (msr.isSetId())
+			mod.setId(msr.getId());
+		if (msr.isSetName())
+			mod.setName(msr.getName());
+		if (msr.isSetMetaId())
+			mod.setMetaId(msr.getMetaId());
+		if (msr.isSetSBOTerm())
+			mod.setSBOTerm(msr.getSBOTerm());
+		if (msr.isSetNotes())
+			mod.setNotes(msr.getNotesString());
 		addAllSBaseChangeListenersTo(mod);
 		return mod;
 	}
 
-	public Parameter convert(org.sbml.libsbml.Parameter plupara) {
-		Parameter para = new Parameter(plupara.getId());
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readParameter(java.lang.Object)
+	 */
+	public Parameter readParameter(Object parameter) {
+		if (!(parameter instanceof org.sbml.libsbml.Parameter))
+			throw new IllegalArgumentException("parameter" + error
+					+ "org.sbml.libsbml.Parameter.");
+		org.sbml.libsbml.Parameter p = (org.sbml.libsbml.Parameter) parameter;
+		Parameter para = new Parameter(p.getId());
+		if (p.isSetName())
+			para.setName(p.getName());
+		if (p.isSetMetaId())
+			para.setMetaId(p.getMetaId());
+		if (p.isSetNotes())
+			para.setNotes(p.getNotesString());
+		if (p.isSetSBOTerm())
+			para.setSBOTerm(p.getSBOTerm());
+		if (p.isSetValue())
+			para.setValue(p.getValue());
 		addAllSBaseChangeListenersTo(para);
 		return para;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readReaction(java.lang.Object)
+	 */
 	public Reaction readReaction(Object reac) {
 		if (!(reac instanceof org.sbml.libsbml.Reaction))
-			throw new IllegalArgumentException(
-					"reaction must be an instance of org.sbml.libsbml.Reaction.");
+			throw new IllegalArgumentException("reaction" + error
+					+ "org.sbml.libsbml.Reaction.");
 		org.sbml.libsbml.Reaction r = (org.sbml.libsbml.Reaction) reac;
 		Reaction reaction = new Reaction(r.getId());
 		for (int i = 0; i < r.getNumReactants(); i++)
-			reaction.addReactant(convert(r.getReactant(i)));
+			reaction.addReactant(readSpeciesReference(r.getReactant(i)));
 		for (int i = 0; i < r.getNumProducts(); i++)
-			reaction.addProduct(convert(r.getProduct(i)));
+			reaction.addProduct(readSpeciesReference(r.getProduct(i)));
 		for (int i = 0; i < r.getNumModifiers(); i++)
-			reaction.addModifier(convert(r.getModifier(i)));
+			reaction
+					.addModifier(readModifierSpeciesReference(r.getModifier(i)));
 		if (r.isSetSBOTerm())
 			reaction.setSBOTerm(r.getSBOTerm());
 		if (r.isSetKineticLaw())
-			reaction.setKineticLaw(convert(r.getKineticLaw()));
+			reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
 		if (r.isSetName())
 			reaction.setName(r.getName());
-		reaction.setNotes(r.getNotesString());
+		if (r.isSetNotes())
+			reaction.setNotes(r.getNotesString());
+		if (r.isSetMetaId())
+			reaction.setMetaId(r.getMetaId());
 		reaction.setFast(r.getFast());
 		reaction.setReversible(r.getReversible());
 		addAllSBaseChangeListenersTo(reaction);
 		return reaction;
 	}
 
-	public Species convert(org.sbml.libsbml.Species spec) {
-		Species species = new Species(spec.getId());
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readSpecies(java.lang.Object)
+	 */
+	public Species readSpecies(Object species) {
+		if (!(species instanceof org.sbml.libsbml.Species))
+			throw new IllegalArgumentException("species" + error
+					+ "org.sbml.libsbml.Species.");
+		org.sbml.libsbml.Species spec = (org.sbml.libsbml.Species) species;
+		Species s = new Species(spec.getId());
+		if (spec.isSetName())
+			s.setName(spec.getName());
+		if (spec.isSetMetaId())
+			s.setMetaId(spec.getMetaId());
+		if (spec.isSetNotes())
+			s.setNotes(spec.getNotesString());
 		if (spec.isSetSBOTerm())
-			species.setSBOTerm(spec.getSBOTerm());
+			s.setSBOTerm(spec.getSBOTerm());
 		if (spec.isSetCharge())
-			species.setCharge(spec.getCharge());
-		species.setBoundaryCondition(spec.getBoundaryCondition());
-		species.setConstant(spec.getConstant());
-		species
-				.setCompartment(getModel()
-						.getCompartment(spec.getCompartment()));
-		addAllSBaseChangeListenersTo(species);
-		return species;
+			s.setCharge(spec.getCharge());
+		if (spec.isSetCompartment())
+			s.setCompartment(getModel().getCompartment(spec.getCompartment()));
+		s.setBoundaryCondition(spec.getBoundaryCondition());
+		s.setConstant(spec.getConstant());
+		s.setHasOnlySubstanceUnits(spec.getHasOnlySubstanceUnits());
+		if (spec.isSetInitialAmount())
+			s.setInitialAmount(spec.getInitialAmount());
+		else if (spec.isSetInitialConcentration())
+			s.setInitialConcentration(spec.getInitialConcentration());
+		addAllSBaseChangeListenersTo(s);
+		return s;
 	}
 
-	public SpeciesReference convert(org.sbml.libsbml.SpeciesReference specref) {
-		SpeciesReference spec = new SpeciesReference(new Species(specref
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readSpeciesReference(java.lang.Object)
+	 */
+	public SpeciesReference readSpeciesReference(Object speciesReference) {
+		if (!(speciesReference instanceof org.sbml.libsbml.SpeciesReference))
+			throw new IllegalArgumentException("speciesReference" + error
+					+ "org.sbml.libsbml.SpeciesReference.");
+		org.sbml.libsbml.SpeciesReference specref = (org.sbml.libsbml.SpeciesReference) speciesReference;
+		SpeciesReference spec = new SpeciesReference(model.getSpecies(specref
 				.getSpecies()));
-		spec.setStoichiometry(specref.getStoichiometry());
+		if (specref.isSetMetaId())
+			spec.setMetaId(specref.getMetaId());
+		if (specref.isSetSBOTerm())
+			spec.setSBOTerm(specref.getSBOTerm());
+		if (specref.isSetNotes())
+			spec.setNotes(specref.getNotesString());
+		if (specref.isSetId())
+			spec.setId(specref.getId());
+		if (specref.isSetName())
+			spec.setName(specref.getName());
+		if (specref.isSetStoichiometryMath())
+			spec.setStoichiometryMath(readStoichiometricMath(specref
+					.getStoichiometryMath()));
+		else
+			spec.setStoichiometry(specref.getStoichiometry());
 		addAllSBaseChangeListenersTo(spec);
 		return spec;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readStoichiometricMath(java.lang.Object)
+	 */
+	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
+		org.sbml.libsbml.StoichiometryMath s = (org.sbml.libsbml.StoichiometryMath) stoichiometryMath;
+		StoichiometryMath sm = new StoichiometryMath();
+		if (s.isSetMetaId())
+			sm.setMetaId(s.getMetaId());
+		if (s.isSetSBOTerm())
+			sm.setSBOTerm(s.getSBOTerm());
+		if (s.isSetNotes())
+			sm.setNotes(s.getNotesString());
+		if (s.isSetMath())
+			sm.setMath(convert(s.getMath(), sm));
+		return sm;
 	}
 }

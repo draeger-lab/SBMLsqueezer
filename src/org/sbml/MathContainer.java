@@ -95,13 +95,8 @@ public abstract class MathContainer extends SBase {
 	 * @param formula
 	 */
 	public void setFormula(String formula) {
-		math = parseFormula(formula);
+		math = ASTNode.parseFormula(formula);
 		stateChanged();
-	}
-
-	public static ASTNode parseFormula(String formula) {
-		// TODO Auto-generated method stub
-		throw new Error("Not yet implemented.");
 	}
 
 	public void setMath(ASTNode math) {
