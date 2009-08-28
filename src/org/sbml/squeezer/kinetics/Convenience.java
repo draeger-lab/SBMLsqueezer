@@ -119,12 +119,12 @@ public class Convenience extends GeneralizedMassAction {
 				addLocalParameter(new Parameter(kM.toString()));
 
 				denominator1[eductNum] = ASTNode.frac(new ASTNode(specref
-						.getSpecies(), this), new ASTNode(kM, this));
+						.getSpeciesInstance(), this), new ASTNode(kM, this));
 
 				for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
 					denominator1[eductNum] = ASTNode.sum(
 							denominator1[eductNum], ASTNode.pow(ASTNode.frac(
-									new ASTNode(specref.getSpecies(), this),
+									new ASTNode(specref.getSpeciesInstance(), this),
 									new ASTNode(kM, this)), new ASTNode(
 									(m + 1), this)));
 				}
@@ -139,11 +139,11 @@ public class Convenience extends GeneralizedMassAction {
 				// build numerator
 				if (specref.getStoichiometry() == 1.0)
 					numerator = ASTNode.times(numerator, ASTNode.frac(
-							new ASTNode(specref.getSpecies(), this),
+							new ASTNode(specref.getSpeciesInstance(), this),
 							new ASTNode(kM, this)));
 				else
 					numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode
-							.frac(new ASTNode(specref.getSpecies(), this),
+							.frac(new ASTNode(specref.getSpeciesInstance(), this),
 									new ASTNode(kM, this)), new ASTNode(specref
 							.getStoichiometry(), this)));
 			}
@@ -162,7 +162,7 @@ public class Convenience extends GeneralizedMassAction {
 						.getNumProducts()];
 
 				StringBuffer kcat = modE.size() == 0 ? concat("Vn_",
-						getParentSBMLObject().getId()) : StringTools.concat(
+						getParentSBMLObject().getId()) : concat(
 						"kcatn_", getParentSBMLObject().getId());
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
@@ -188,7 +188,7 @@ public class Convenience extends GeneralizedMassAction {
 							.getProduct(productNum);
 
 					denominator2[productNum] = ASTNode
-							.frac(new ASTNode(specRefP.getSpecies(), this),
+							.frac(new ASTNode(specRefP.getSpeciesInstance(), this),
 									new ASTNode(kM, this));
 
 					// for each stoichiometry (see Liebermeister et al.)s
@@ -197,7 +197,7 @@ public class Convenience extends GeneralizedMassAction {
 						denominator2[productNum] = ASTNode.sum(
 								denominator2[productNum], ASTNode.pow(ASTNode
 										.frac(new ASTNode(
-												specRefP.getSpecies(), this),
+												specRefP.getSpeciesInstance(), this),
 												new ASTNode(kM, this)),
 										new ASTNode((m + 1), this)));
 					if (parentReaction.getNumProducts() > 1)
@@ -209,14 +209,14 @@ public class Convenience extends GeneralizedMassAction {
 						numerator2 = ASTNode
 								.times(numerator2, ASTNode.pow(ASTNode
 										.frac(new ASTNode(
-												specRefP.getSpecies(), this),
+												specRefP.getSpeciesInstance(), this),
 												new ASTNode(kM, this)),
 										new ASTNode(
 												specRefP.getStoichiometry(),
 												this)));
 					else
 						numerator2 = ASTNode.times(numerator2, ASTNode.frac(
-								new ASTNode(specRefP.getSpecies(), this),
+								new ASTNode(specRefP.getSpeciesInstance(), this),
 								new ASTNode(kM, this)));
 				}
 				if (parentReaction.getNumProducts() == 1)

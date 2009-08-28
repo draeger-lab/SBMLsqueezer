@@ -181,8 +181,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param things
 	 * @return
 	 */
-	String append(StringBuffer k, Object... things) {
-		return StringTools.append(k, things).toString();
+	StringBuffer append(StringBuffer k, Object... things) {
+		return StringTools.append(k, things);
 	}
 
 	/**
@@ -190,8 +190,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param things
 	 * @return
 	 */
-	String concat(Object... things) {
-		return StringTools.concat(things).toString();
+	StringBuffer concat(Object... things) {
+		return StringTools.concat(things);
 	}
 
 	/**
