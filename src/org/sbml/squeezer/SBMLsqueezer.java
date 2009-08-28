@@ -30,8 +30,7 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
-import org.biojava.ontology.Ontology;
-import org.biojava.ontology.io.OboParser;
+import org.sbml.SBO;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
@@ -54,16 +53,6 @@ import org.sbml.squeezer.standalone.LibSBMLWriter;
  */
 public class SBMLsqueezer extends PluginAction {
 
-	private static Ontology ontology;
-	
-	public static Ontology getOntology() {
-		return ontology;
-	}
-
-	static {
-		OboParser parser = new OboParser();
-	}
-	
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
