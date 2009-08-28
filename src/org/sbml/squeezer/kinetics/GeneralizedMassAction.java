@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.Vector;
 
 import org.sbml.ASTNode;
-import org.sbml.Constants;
+
 import org.sbml.Model;
 import org.sbml.Reaction;
 
 import org.sbml.SpeciesReference;
 import org.sbml.squeezer.io.SBOParser;
+
+import org.sbml.Parameter;
 
 /**
  * This class creates rate equations according to the generalized mass action
@@ -322,7 +324,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
-		addLocalParameter(kass);
+		addLocalParameter(new Parameter(kass));
 		ASTNode ass = new ASTNode(kass, this);
 		for (int reactants = 0; reactants < getParentSBMLObject()
 				.getNumReactants(); reactants++) {
@@ -345,7 +347,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kdiss = concat(kdiss, underscore, catalysts.get(c));
-		addLocalParameter(kdiss);
+		addLocalParameter(new Parameter(kdiss));
 		ASTNode diss = new ASTNode(kdiss, this);
 		for (int products = 0; products < getParentSBMLObject()
 				.getNumProducts(); products++) {
@@ -381,7 +383,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 							.frac(new ASTNode(modifiers.get(i), this),
 									ASTNode.sum(kA, new ASTNode(modifiers
 											.get(i), this)));
-					addLocalParameter(kAn);
+					addLocalParameter(new Parameter(kAn));
 				} else {
 					// Inhibitor Mod
 					StringBuffer kIn = concat("kI_", getParentSBMLObject()
@@ -389,7 +391,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					ASTNode kI = new ASTNode(kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI, new ASTNode(
 							modifiers.get(i), this)));
-					addLocalParameter(kIn);
+					addLocalParameter(new Parameter(kIn));
 				}
 			}
 			return ASTNode.times(mods);

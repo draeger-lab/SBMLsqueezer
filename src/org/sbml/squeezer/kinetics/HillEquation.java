@@ -21,6 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
+import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Species;
 import org.sbml.Reaction;
@@ -108,7 +109,7 @@ public class HillEquation extends BasicKineticLaw {
 		return sbo;
 	}
 
-	protected StringBuffer createKineticEquation(Model model,
+	protected ASTNode createKineticEquation(Model model,
 			List<String> modE, List<String> modActi, List<String> modTActi,
 			List<String> modInhib, List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -165,7 +166,7 @@ public class HillEquation extends BasicKineticLaw {
 				|| reaction.getReactionType().equals("TRANSCRIPTION"))
 			for (int i = 0; i < reaction.getNumReactants(); i++)
 				modTActi.add(reaction.getReactant(i).getSpecies());
-		StringBuffer formula = createHillEquation(modTActi, modTInhib);
+		ASTNode formula = createHillEquation(modTActi, modTInhib);
 		// Influence of the concentrations of the reactants:
 		for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
 			Species reactant = reaction.getReactant(reactantNum)
@@ -192,10 +193,10 @@ public class HillEquation extends BasicKineticLaw {
 	 * @param modTInhib
 	 * @return
 	 */
-	private StringBuffer createHillEquation(List<String> modTActi,
+	private ASTNode createHillEquation(List<String> modTActi,
 			List<String> modTInhib) {
-		StringBuffer acti = new StringBuffer();
-		StringBuffer inhib = new StringBuffer();
+		ASTNode acti = new StringBuffer();
+		ASTNode	 inhib = new StringBuffer();
 		String rId = getParentSBMLObject().getId();
 
 		// KS: half saturation constant.
@@ -231,9 +232,9 @@ public class HillEquation extends BasicKineticLaw {
 		StringBuffer kg = concat("kg_", rId);
 		addLocalParameter(kg);
 
-		StringBuffer formelTxt = new StringBuffer(kg);
+		ASTNode formelTxt = new ASTNode(kg,this);
 		if ((acti.length() > 0) && (inhib.length() > 0))
-			formelTxt = times(formelTxt, acti, inhib);
+			formelTxt = ASTNode.times(formelTxt, acti, inhib);
 		else if (acti.length() > 0)
 			formelTxt = times(formelTxt, acti);
 		else if (inhib.length() > 0)

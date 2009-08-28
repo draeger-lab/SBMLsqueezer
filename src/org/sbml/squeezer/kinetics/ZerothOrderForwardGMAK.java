@@ -21,7 +21,9 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
+import org.sbml.ASTNode;
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 
 /**
@@ -60,11 +62,11 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 	}
 
 	// @Override
-	protected final StringBuffer association(List<String> catalysts, int catNum) {
+	protected final ASTNode association(List<String> catalysts, int catNum) {
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
-		addLocalParameter(kass);
-		return new StringBuffer(kass);
+		addLocalParameter(new Parameter(kass));
+		return new ASTNode(kass,this);
 	}
 }

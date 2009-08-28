@@ -25,6 +25,7 @@ import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
+import org.sbml.Parameter;
 
 /**
  * This class implements SBO:0000150 and all of its special cases. It is an
@@ -151,7 +152,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 					.getId()) : concat("kcat_", reaction.getId());
 			if (modE.size() > 1)
 				append(kcat, underscore, modE.get(enzymeNum));
-			addLocalParameter(kcat);
+			addLocalParameter(new Parameter(kcat));
 			ASTNode numerator = new ASTNode(kcat, this);
 
 			ASTNode denominator = new ASTNode("", this);
@@ -163,7 +164,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				StringBuffer kM = concat("kM_", reaction.getId());
 				if (modE.size() > 1)
 					append(kM, underscore, modE.get(enzymeNum));
-				addLocalParameter(append(kM, underscore, si.getSpecies()));
+				addLocalParameter(new Parameter(append(kM, underscore, si.getSpecies())));
 				ASTNode frac = ASTNode.frac(new ASTNode(getSpecies(si), this),
 						new ASTNode(kM, this));
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(

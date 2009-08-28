@@ -25,7 +25,7 @@ import org.sbml.ASTNode;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
-
+import org.sbml.Parameter;
 /**
  * <p>
  * This is the thermodynamically independent form of the convenience kinetics.
@@ -121,7 +121,7 @@ public class ConvenienceIndependent extends Convenience {
 					enzymes[i] = new ASTNode(enzyme, this);
 				} else
 					enzymes[i] = new ASTNode("", this);
-				addLocalParameter(klV);
+				addLocalParameter(new Parameter(klV));
 
 				ASTNode numerator, denominator;
 				if (!reaction.getReversible()) {
@@ -184,9 +184,9 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			addLocalParameter(kM);
+			addLocalParameter(new Parameter(kM));
 			kiG = concat("kG_", ref.getSpecies());
-			addLocalParameter(kiG);
+			addLocalParameter(new Parameter(kiG));
 			educts = ASTNode.times(educts, ASTNode.pow(ASTNode.frac(
 					new ASTNode(getSpecies(ref), this), new ASTNode(kM, this)),
 					new ASTNode(ref.getStoichiometry(), this)));
@@ -200,9 +200,9 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			addLocalParameter(kM);
+			addLocalParameter(new Parameter(kM));
 			kiG = concat("kG_", ref.getSpecies());
-			addLocalParameter(kiG);
+			addLocalParameter(new Parameter(kiG));
 			products = ASTNode.times(products, ASTNode.pow(ASTNode.frac(
 					new ASTNode(getSpecies(ref), this), new ASTNode(kM, this)),
 					new ASTNode(ref.getStoichiometry(), this)));
