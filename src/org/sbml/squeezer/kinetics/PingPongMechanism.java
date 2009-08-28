@@ -159,9 +159,9 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
 			}
-			addLocalParameter(new Parameter(kcatp));
-			addLocalParameter(new Parameter(kMr2));
-			addLocalParameter(new Parameter(kMr1));
+			addLocalParameter(new Parameter(kcatp.toString()));
+			addLocalParameter(new Parameter(kMr2.toString()));
+			addLocalParameter(new Parameter(kMr1.toString()));
 
 			/*
 			 * Irreversible Reaction
@@ -231,12 +231,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					kIp1 = concat("kip1", kIp1.substring(2));
 					kIp2 = concat("kip2", kIp2.substring(2));
 				}
-				addLocalParameter(new Parameter(kcatn));
-				addLocalParameter(new Parameter(kMp2));
-				addLocalParameter(new Parameter(kMp1));
-				addLocalParameter(new Parameter(kIp1));
-				addLocalParameter(new Parameter(kIp2));
-				addLocalParameter(new Parameter(kIr1));
+				addLocalParameter(new Parameter(kcatn.toString()));
+				addLocalParameter(new Parameter(kMp2.toString()));
+				addLocalParameter(new Parameter(kMp1.toString()));
+				addLocalParameter(new Parameter(kIp1.toString()));
+				addLocalParameter(new Parameter(kIp2.toString()));
+				addLocalParameter(new Parameter(kIr1.toString()));
 
 				ASTNode numeratorForward = ASTNode.frac(
 						new ASTNode(kcatp, this), ASTNode.times(new ASTNode(

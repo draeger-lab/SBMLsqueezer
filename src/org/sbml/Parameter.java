@@ -48,11 +48,7 @@ public class Parameter extends NamedSBase {
 		super(id);
 		initDefaults();
 	}
-	
-	public Parameter(StringBuffer id){
-		super(id.toString());
-		initDefaults();
-	}
+
 
 	/*
 	 * (non-Javadoc)

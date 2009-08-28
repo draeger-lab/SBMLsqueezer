@@ -324,7 +324,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
-		addLocalParameter(new Parameter(kass));
+		addLocalParameter(new Parameter(kass.toString()));
 		ASTNode ass = new ASTNode(kass, this);
 		for (int reactants = 0; reactants < getParentSBMLObject()
 				.getNumReactants(); reactants++) {
@@ -347,7 +347,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kdiss = concat(kdiss, underscore, catalysts.get(c));
-		addLocalParameter(new Parameter(kdiss));
+		addLocalParameter(new Parameter(kdiss.toString()));
 		ASTNode diss = new ASTNode(kdiss, this);
 		for (int products = 0; products < getParentSBMLObject()
 				.getNumProducts(); products++) {
@@ -383,7 +383,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 							.frac(new ASTNode(modifiers.get(i), this),
 									ASTNode.sum(kA, new ASTNode(modifiers
 											.get(i), this)));
-					addLocalParameter(new Parameter(kAn));
+					addLocalParameter(new Parameter(kAn.toString()));
 				} else {
 					// Inhibitor Mod
 					StringBuffer kIn = concat("kI_", getParentSBMLObject()
@@ -391,7 +391,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					ASTNode kI = new ASTNode(kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI, new ASTNode(
 							modifiers.get(i), this)));
-					addLocalParameter(new Parameter(kIn));
+					addLocalParameter(new Parameter(kIn.toString()));
 				}
 			}
 			return ASTNode.times(mods);

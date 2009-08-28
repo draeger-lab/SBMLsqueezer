@@ -137,7 +137,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 		numInhib = modInhib.size();
 
 		numOfEnzymes = modE.size();
-		ASTNode formula = new ASTNode("",this);
+		ASTNode[] formula = new ASTNode[Math.max(1, numOfEnzymes)];
 
 		int enzymeNum = 0;
 		do {
@@ -149,29 +149,29 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 			}
-			addLocalParameter(new Parameter(kcat));
-			addLocalParameter(new Parameter(kcat));
+			addLocalParameter(new Parameter(kcat.toString()));
+			addLocalParameter(new Parameter(kcat.toString()));
 			ASTNode currEnzyme;
-			ASTNode numerator = new ASTNode("",this);
+			ASTNode numerator;
 
-			numerator = ASTNode.times(numerator, new ASTNode(kcat,this));
+			numerator =  new ASTNode(kcat,this);
 			numerator = ASTNode.times(numerator, new ASTNode(reaction.getReactant(
 					0).getSpecies(),this));
 
-			ASTNode denominator = new ASTNode("", this);
+			ASTNode denominator;
 			StringBuffer kM = new StringBuffer(concat("kM_", reaction.getId()));
 
 			if (numOfEnzymes > 1)
 
 				kM = concat(kM, underscore, modE.get(enzymeNum));
 			kM = concat(kM, underscore, reaction.getReactant(0).getSpecies());
-			addLocalParameter(new Parameter(kM));
+			addLocalParameter(new Parameter(kM.toString()));
 
 			if (modInhib.size() == 0)
-				denominator = ASTNode.sum(denominator, new ASTNode(kM, this));
+			denominator =  new ASTNode(kM, this);
 			else {
-				ASTNode factor = new ASTNode("", this);
-				factor = ASTNode.times(factor, new ASTNode(kM, this));
+				
+				ASTNode factor =  new ASTNode(kM, this);
 				for (int i = 0; i < modInhib.size(); i++) {
 
 					StringBuffer kIi = new StringBuffer(concat("Ki_", reaction
@@ -183,15 +183,15 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					}
 					kIi = concat(kIi, underscore, modInhib.get(i));
 					exponent = concat(exponent, underscore, modInhib.get(i));
-					addLocalParameter(new Parameter(kIi));
-					addLocalParameter(new Parameter(exponent));
+					addLocalParameter(new Parameter(kIi.toString()));
+					addLocalParameter(new Parameter(exponent.toString()));
 
 					factor = ASTNode.times(factor, ASTNode.pow(ASTNode.sum(
 							new ASTNode(1, this), ASTNode.frac(new ASTNode(
 									modInhib.get(i), this), new ASTNode(kIi,
 									this))), new ASTNode(exponent, this)));
 				}
-				denominator = ASTNode.sum(denominator, factor);
+				denominator =  factor;
 
 			}
 			denominator = ASTNode.sum(denominator, new ASTNode(reaction
@@ -199,14 +199,15 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			currEnzyme = ASTNode.frac(numerator, denominator);
 			enzymeNum++;
 			if (numOfEnzymes <= 1)
-				formula = currEnzyme;
+			{}
 			else {
-				formula = ASTNode.sum(formula, currEnzyme);
+				
 				numerator = ASTNode.times(numerator, new ASTNode(modE
 						.get(enzymeNum),this));
 			}
+			formula[enzymeNum] = currEnzyme;
 		} while (enzymeNum <= modE.size() - 1);
-		return ASTNode.times(activationFactor(modActi), formula);
+		return ASTNode.times(activationFactor(modActi), ASTNode.sum(formula));
 	}
 
 }

@@ -26,6 +26,7 @@ import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
 import org.sbml.Parameter;
+
 /**
  * <p>
  * This is the thermodynamically independent form of the convenience kinetics.
@@ -121,7 +122,7 @@ public class ConvenienceIndependent extends Convenience {
 					enzymes[i] = new ASTNode(enzyme, this);
 				} else
 					enzymes[i] = new ASTNode("", this);
-				addLocalParameter(new Parameter(klV));
+				addLocalParameter(new Parameter(klV.toString()));
 
 				ASTNode numerator, denominator;
 				if (!reaction.getReversible()) {
@@ -171,10 +172,10 @@ public class ConvenienceIndependent extends Convenience {
 	private ASTNode numeratorElements(String enzyme, boolean type) {
 		Reaction reaction = getParentSBMLObject();
 
-		ASTNode educts = new ASTNode("", this);
-		ASTNode products = new ASTNode("", this);
-		ASTNode eductroot = new ASTNode("", this);
-		ASTNode productroot = new ASTNode("", this);
+		ASTNode[] educts = new ASTNode[reaction.getNumReactants()];
+		ASTNode[] products = new ASTNode[reaction.getNumProducts()];
+		ASTNode[] eductroot = new ASTNode[reaction.getNumReactants()];
+		ASTNode[] productroot = new ASTNode[reaction.getNumProducts()];
 		ASTNode equation;
 		StringBuffer kiG;
 
@@ -184,36 +185,39 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			addLocalParameter(new Parameter(kM));
+			addLocalParameter(new Parameter(kM.toString()));
 			kiG = concat("kG_", ref.getSpecies());
-			addLocalParameter(new Parameter(kiG));
-			educts = ASTNode.times(educts, ASTNode.pow(ASTNode.frac(
-					new ASTNode(getSpecies(ref), this), new ASTNode(kM, this)),
-					new ASTNode(ref.getStoichiometry(), this)));
-			eductroot = ASTNode.times(eductroot, ASTNode.pow(ASTNode.times(
-					new ASTNode(kiG, this), new ASTNode(kM, this)),
-					new ASTNode(ref.getStoichiometry(), this)));
+			addLocalParameter(new Parameter(kiG.toString()));
+			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(getSpecies(ref),
+					this), new ASTNode(kM, this)), new ASTNode(ref
+					.getStoichiometry(), this));
+			eductroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(kiG, this),
+					new ASTNode(kM, this)), new ASTNode(ref.getStoichiometry(),
+					this));
 		}
+
 		for (int i = 0; i < reaction.getNumProducts(); i++) {
 			SpeciesReference ref = reaction.getProduct(i);
 			StringBuffer kM = concat("kM_", reaction.getId());
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			addLocalParameter(new Parameter(kM));
+			addLocalParameter(new Parameter(kM.toString()));
 			kiG = concat("kG_", ref.getSpecies());
-			addLocalParameter(new Parameter(kiG));
-			products = ASTNode.times(products, ASTNode.pow(ASTNode.frac(
+			addLocalParameter(new Parameter(kiG.toString()));
+			products[i] =  ASTNode.pow(ASTNode.frac(
 					new ASTNode(getSpecies(ref), this), new ASTNode(kM, this)),
-					new ASTNode(ref.getStoichiometry(), this)));
-			productroot = ASTNode.times(productroot, ASTNode.pow(ASTNode.times(
+					new ASTNode(ref.getStoichiometry(), this));
+			productroot[i] =  ASTNode.pow(ASTNode.times(
 					new ASTNode(kiG, this), new ASTNode(kM, this)),
-					new ASTNode(ref.getStoichiometry(), this)));
+					new ASTNode(ref.getStoichiometry(), this));
 
 		}
-		equation = type ? ASTNode.times(educts, ASTNode.sqrt(ASTNode.frac(
-				eductroot, productroot))) : ASTNode.times(products, ASTNode
-				.sqrt(ASTNode.frac(productroot, eductroot)));
+		equation = type ? ASTNode.times(ASTNode.times(educts), ASTNode
+				.sqrt(ASTNode.frac(ASTNode.times(eductroot), ASTNode
+						.times(productroot)))) : ASTNode.times(ASTNode
+				.times(products), ASTNode.sqrt(ASTNode.frac(ASTNode
+				.times(productroot), ASTNode.times(eductroot))));
 		return equation;
 	}
 
