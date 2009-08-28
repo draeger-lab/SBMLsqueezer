@@ -39,30 +39,14 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 
 	/**
 	 * @param parentReaction
-	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction, Model model)
+	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
-		super(parentReaction, model);
-	}
-
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param listOfPossibleEnzymes
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction,
-			Model model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
+		super(parentReaction);
 	}
 
 	/*

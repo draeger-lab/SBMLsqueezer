@@ -26,6 +26,7 @@ import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates a kinetic equation according to the random order mechanism
@@ -41,39 +42,21 @@ import org.sbml.SpeciesReference;
  */
 public class RandomOrderMechanism extends GeneralizedMassAction {
 
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public RandomOrderMechanism(Reaction parentReaction, Model model,
-			boolean reversibility) throws RateLawNotApplicableException,
-			IOException, IllegalFormatException {
-		super(parentReaction, model);
-	}
-
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
-	 * @param listOfPossibleEnzymes
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public RandomOrderMechanism(Reaction parentReaction, Model model,
-			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
-	}
-
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
+	}
+
+	/**
+	 * @param parentReaction
+	 * @param model
+	 * @throws RateLawNotApplicableException
+	 * @throws IOException
+	 * @throws IllegalFormatException
+	 */
+	public RandomOrderMechanism(Reaction parentReaction) throws RateLawNotApplicableException,
+			IOException, IllegalFormatException {
+		super(parentReaction);
 	}
 
 	// @Override
@@ -95,13 +78,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 		return "irreversible " + name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation(org.sbml.Model, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	 */
 	// @Override
-	public String getSBO() {
-		return "none";
-	}
-
-	// @Override
-	protected ASTNode createKineticEquation(Model model, List<String> modE,
+	ASTNode createKineticEquation(Model model, List<String> modE,
 			List<String> modActi, List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
@@ -157,33 +139,38 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 			 */
 			if (!reaction.getReversible()) {
 				StringBuffer kcatp;
-				StringBuffer kMr1 = concat("kM_", reaction.getId());
-				StringBuffer kMr2 = concat("kM_", reaction.getId());
-				StringBuffer kIr1 = concat("ki_", reaction.getId());
+				StringBuffer kMr1 = StringTools.concat("kM_", reaction.getId());
+				StringBuffer kMr2 = StringTools.concat("kM_", reaction.getId());
+				StringBuffer kIr1 = StringTools.concat("ki_", reaction.getId());
 
 				if (modE.size() == 0)
-					kcatp = concat("Vp_", reaction.getId());
+					kcatp = StringTools.concat("Vp_", reaction.getId());
 				else {
-					kcatp = concat("kcatp_", reaction.getId());
+					kcatp = StringTools.concat("kcatp_", reaction.getId());
 					if (modE.size() > 1) {
-						append(kcatp, underscore, modE.get(enzymeNum));
-						append(kMr2, underscore, modE.get(enzymeNum));
-						append(kMr1, underscore, modE.get(enzymeNum));
-						append(kIr1, underscore, modE.get(enzymeNum));
+						StringTools.append(kcatp, StringTools.underscore, modE
+								.get(enzymeNum));
+						StringTools.append(kMr2, StringTools.underscore, modE
+								.get(enzymeNum));
+						StringTools.append(kMr1, StringTools.underscore, modE
+								.get(enzymeNum));
+						StringTools.append(kIr1, StringTools.underscore, modE
+								.get(enzymeNum));
 					}
 				}
 				String speciesR1 = specRefR1.getSpecies();
 				String speciesR2 = specRefR2.getSpecies();
-				append(kMr1, underscore, speciesR1);
-				append(kMr2, underscore, speciesR2);
+				StringTools.append(kMr1, StringTools.underscore, speciesR1);
+				StringTools.append(kMr2, StringTools.underscore, speciesR2);
 				if (specRefR1.equals(specRefR2)) {
-					append(kMr1, "kMr1", kMr1.substring(2));
-					append(kMr2, "kMr2", kMr2.substring(2));
+					StringTools.append(kMr1, "kMr1", kMr1.substring(2));
+					StringTools.append(kMr2, "kMr2", kMr2.substring(2));
 				}
 				addLocalParameter(new Parameter(kcatp.toString()));
 				addLocalParameter(new Parameter(kMr1.toString()));
 				addLocalParameter(new Parameter(kMr2.toString()));
-				addLocalParameter(new Parameter(append(kIr1, underscore, speciesR1).toString()));
+				addLocalParameter(new Parameter(StringTools.append(kIr1,
+						StringTools.underscore, speciesR1).toString()));
 
 				numerator = new ASTNode(kcatp, this);
 				if (modE.size() > 0)
@@ -217,48 +204,68 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					StringBuffer kcatp;
 					StringBuffer kcatn;
 
-					StringBuffer kMr2 = concat("kM_", reaction.getId());
-					StringBuffer kIr1 = concat("ki_", reaction.getId());
-					StringBuffer kMp1 = concat("kM_", reaction.getId());
-					StringBuffer kIp1 = concat("ki_", reaction.getId());
-					StringBuffer kIp2 = concat("ki_", reaction.getId());
-					StringBuffer kIr2 = concat("ki_", reaction.getId());
+					StringBuffer kMr2 = StringTools.concat("kM_", reaction
+							.getId());
+					StringBuffer kIr1 = StringTools.concat("ki_", reaction
+							.getId());
+					StringBuffer kMp1 = StringTools.concat("kM_", reaction
+							.getId());
+					StringBuffer kIp1 = StringTools.concat("ki_", reaction
+							.getId());
+					StringBuffer kIp2 = StringTools.concat("ki_", reaction
+							.getId());
+					StringBuffer kIr2 = StringTools.concat("ki_", reaction
+							.getId());
 
 					if (modE.size() == 0) {
-						kcatp = concat("Vp_", reaction.getId());
-						kcatn = concat("Vn_", reaction.getId());
+						kcatp = StringTools.concat("Vp_", reaction.getId());
+						kcatn = StringTools.concat("Vn_", reaction.getId());
 					} else {
-						kcatp = concat("kcatp_", reaction.getId());
-						kcatn = concat("kcatn_", reaction.getId());
+						kcatp = StringTools.concat("kcatp_", reaction.getId());
+						kcatn = StringTools.concat("kcatn_", reaction.getId());
 						if (modE.size() > 1) {
 							String currEnzyme = modE.get(enzymeNum);
-							kcatp = concat(kcatp, underscore, currEnzyme);
-							kcatn = concat(kcatn, underscore, currEnzyme);
-							kMr2 = concat(kMr2, underscore, currEnzyme);
-							kMp1 = concat(kMp1, underscore, currEnzyme);
-							kIp1 = concat(kIp1, underscore, currEnzyme);
-							kIp2 = concat(kIp2, underscore, currEnzyme);
-							kIr2 = concat(kIr2, underscore, currEnzyme);
-							kIr1 = concat(kIr1, underscore, currEnzyme);
+							kcatp = StringTools.concat(kcatp,
+									StringTools.underscore, currEnzyme);
+							kcatn = StringTools.concat(kcatn,
+									StringTools.underscore, currEnzyme);
+							kMr2 = StringTools.concat(kMr2,
+									StringTools.underscore, currEnzyme);
+							kMp1 = StringTools.concat(kMp1,
+									StringTools.underscore, currEnzyme);
+							kIp1 = StringTools.concat(kIp1,
+									StringTools.underscore, currEnzyme);
+							kIp2 = StringTools.concat(kIp2,
+									StringTools.underscore, currEnzyme);
+							kIr2 = StringTools.concat(kIr2,
+									StringTools.underscore, currEnzyme);
+							kIr1 = StringTools.concat(kIr1,
+									StringTools.underscore, currEnzyme);
 						}
 					}
 					String speciesR1 = specRefR1.getSpecies();
 					String speciesR2 = specRefR2.getSpecies();
 					String speciesP1 = specRefP1.getSpecies();
 					String speciesP2 = specRefP2.getSpecies();
-					kMr2 = concat(kMr2, underscore, speciesR2);
-					kIr1 = concat(kIr1, underscore, speciesR1);
-					kIr2 = concat(kIr2, underscore, speciesR2);
-					kIp1 = concat(kIp1, underscore, speciesP1);
-					kIp2 = concat(kIp2, underscore, speciesP2);
-					kMp1 = concat(kMp1, underscore, speciesP1);
+					kMr2 = StringTools.concat(kMr2, StringTools.underscore,
+							speciesR2);
+					kIr1 = StringTools.concat(kIr1, StringTools.underscore,
+							speciesR1);
+					kIr2 = StringTools.concat(kIr2, StringTools.underscore,
+							speciesR2);
+					kIp1 = StringTools.concat(kIp1, StringTools.underscore,
+							speciesP1);
+					kIp2 = StringTools.concat(kIp2, StringTools.underscore,
+							speciesP2);
+					kMp1 = StringTools.concat(kMp1, StringTools.underscore,
+							speciesP1);
 					if (specRefR2.equals(specRefR1)) {
-						kIr1 = concat("kir1", kIr1.substring(2));
-						kIr2 = concat("kir2", kIr2.substring(2));
+						kIr1 = StringTools.concat("kir1", kIr1.substring(2));
+						kIr2 = StringTools.concat("kir2", kIr2.substring(2));
 					}
 					if (specRefP2.equals(specRefP1)) {
-						kIp1 = concat("kip1", kIp1.substring(2));
-						kIp2 = concat("kip2", kIp2.substring(2));
+						kIp1 = StringTools.concat("kip1", kIp1.substring(2));
+						kIp2 = StringTools.concat("kip2", kIp2.substring(2));
 					}
 					addLocalParameter(new Parameter(kcatp.toString()));
 					addLocalParameter(new Parameter(kMr2.toString()));
@@ -312,38 +319,48 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					 */
 					StringBuffer kcatp;
 					StringBuffer kcatn;
-					StringBuffer kMr2 = concat("kM_", reaction.getId());
-					StringBuffer kMp1 = concat("kM_", reaction.getId());
-					StringBuffer kIr2 = concat("ki_", reaction.getId());
-					StringBuffer kIr1 = concat("ki_", reaction.getId());
+					StringBuffer kMr2 = StringTools.concat("kM_", reaction
+							.getId());
+					StringBuffer kMp1 = StringTools.concat("kM_", reaction
+							.getId());
+					StringBuffer kIr2 = StringTools.concat("ki_", reaction
+							.getId());
+					StringBuffer kIr1 = StringTools.concat("ki_", reaction
+							.getId());
 
 					if (modE.size() == 0) {
-						kcatp = concat("Vp_", reaction.getId());
-						kcatn = concat("Vn_", reaction.getId());
+						kcatp = StringTools.concat("Vp_", reaction.getId());
+						kcatn = StringTools.concat("Vn_", reaction.getId());
 					} else {
-						kcatp = concat("kcatp_", reaction.getId());
-						kcatn = concat("kcatn_", reaction.getId());
+						kcatp = StringTools.concat("kcatp_", reaction.getId());
+						kcatn = StringTools.concat("kcatn_", reaction.getId());
 						if (modE.size() > 1) {
-							append(kcatp, underscore, modE.get(enzymeNum));
-							append(kcatn, underscore, modE.get(enzymeNum));
-							append(kMr2, underscore, modE.get(enzymeNum));
-							append(kMp1, underscore, modE.get(enzymeNum));
-							append(kIr2, underscore, modE.get(enzymeNum));
-							append(kIr1, underscore, modE.get(enzymeNum));
+							StringTools.append(kcatp, StringTools.underscore,
+									modE.get(enzymeNum));
+							StringTools.append(kcatn, StringTools.underscore,
+									modE.get(enzymeNum));
+							StringTools.append(kMr2, StringTools.underscore,
+									modE.get(enzymeNum));
+							StringTools.append(kMp1, StringTools.underscore,
+									modE.get(enzymeNum));
+							StringTools.append(kIr2, StringTools.underscore,
+									modE.get(enzymeNum));
+							StringTools.append(kIr1, StringTools.underscore,
+									modE.get(enzymeNum));
 						}
 					}
 
 					String speciesR1 = specRefR1.getSpecies();
 					String speciesR2 = specRefR2.getSpecies();
 					String speciesP1 = specRefP1.getSpecies();
-					append(kMr2, underscore, speciesR2);
-					append(kIr1, underscore, speciesR2);
-					append(kIr2, underscore, speciesR2);
-					append(kMp1, underscore, speciesR2);
+					StringTools.append(kMr2, StringTools.underscore, speciesR2);
+					StringTools.append(kIr1, StringTools.underscore, speciesR2);
+					StringTools.append(kIr2, StringTools.underscore, speciesR2);
+					StringTools.append(kMp1, StringTools.underscore, speciesR2);
 
 					if (specRefR2.equals(specRefR1)) {
-						append(kIr1, "kip1", kIr1.substring(2));
-						append(kIr2, "kip2", kIr2.substring(2));
+						StringTools.append(kIr1, "kip1", kIr1.substring(2));
+						StringTools.append(kIr2, "kip2", kIr2.substring(2));
 					}
 					addLocalParameter(new Parameter(kcatp.toString()));
 					addLocalParameter(new Parameter(kcatn.toString()));

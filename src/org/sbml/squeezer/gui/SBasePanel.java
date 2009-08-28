@@ -26,6 +26,7 @@ import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,6 +42,7 @@ import org.sbml.ModifierSpeciesReference;
 import org.sbml.NamedSBase;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.SBO;
 import org.sbml.SBase;
 import org.sbml.SimpleSpeciesReference;
 import org.sbml.Species;
@@ -89,12 +91,32 @@ public class SBasePanel extends JPanel {
 				1, row, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, gbl, new JLabel("Notes"), 0, ++row, 1,
 				1, 1, 1);
-		LayoutHelper.addComponent(this, gbl, new JTextField(sbase.getNotesString()),
-				1, row, 1, 1, 1, 1);
+		JEditorPane notesArea = new JEditorPane("text/html", "");
+		notesArea.setEditable(false);
+		notesArea.setPreferredSize(new Dimension(250, 100));
+		if (sbase.isSetNotes()) {
+			String text = sbase.getNotesString();
+			if (text.startsWith("<notes") && text.endsWith("</notes>"))
+				text = text.substring(8, sbase.getNotesString().length() - 9);
+			text = text.trim();
+			if (!text.startsWith("<body") && !text.endsWith("</body>"))
+				text = "<body>" + text + "</body>";
+			text = "<html><head></head>" + text + "</html>";
+			notesArea.setText(text);
+		}
+		JScrollPane scroll = new JScrollPane(notesArea,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		LayoutHelper.addComponent(this, gbl, scroll, 1, row, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, gbl, new JLabel("SBO term"), 0, ++row,
 				1, 1, 1, 1);
-		LayoutHelper.addComponent(this, gbl, new JTextField(sbase
-				.getSBOTermID()), 1, row, 1, 1, 1, 1);
+		JTextField sboTermField = new JTextField();
+		if (sbase.isSetSBOTerm()) {
+			sboTermField.setText(SBO.getTerm(sbase.getSBOTerm())
+					.getDescription());
+			sboTermField.setColumns(sboTermField.getText().length());
+		}
+		LayoutHelper.addComponent(this, gbl, sboTermField, 1, row, 1, 1, 1, 1);
 		if (sbase instanceof ListOf) {
 			// TODO
 		} else if (sbase instanceof Model) {
@@ -152,6 +174,8 @@ public class SBasePanel extends JPanel {
 				// TODO
 				ModifierSpeciesReference msr = (ModifierSpeciesReference) sbase;
 			}
+			LayoutHelper.addComponent(this, gbl, new SBasePanel(ssr
+					.getSpeciesInstance()), 0, ++row, 2, 1, 1, 1);
 		} else if (sbase instanceof Parameter) {
 			Parameter p = (Parameter) sbase;
 			LayoutHelper.addComponent(this, gbl, new JLabel("Value"), 0, ++row,

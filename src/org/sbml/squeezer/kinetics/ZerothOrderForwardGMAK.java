@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.sbml.ASTNode;
-import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates generalized mass action rate equations with zeroth order
@@ -44,28 +44,18 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ZerothOrderForwardGMAK(Reaction parentReaction,
-			Model model) throws RateLawNotApplicableException,
+	public ZerothOrderForwardGMAK(Reaction parentReaction) throws RateLawNotApplicableException,
 			IOException, IllegalFormatException {
-		super(parentReaction, model);
-		reactantOrder = 0;
-		productOrder = Double.NaN;
-	}
-
-	public ZerothOrderForwardGMAK(Reaction parentReaction,
-			Model model, List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
+		super(parentReaction);
 		reactantOrder = 0;
 		productOrder = Double.NaN;
 	}
 
 	// @Override
 	protected final ASTNode association(List<String> catalysts, int catNum) {
-		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
+		StringBuffer kass = StringTools.concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
-			kass = concat(kass, underscore, catalysts.get(catNum));
+			kass = StringTools.concat(kass, StringTools.underscore, catalysts.get(catNum));
 		addLocalParameter(new Parameter(kass.toString()));
 		return new ASTNode(kass,this);
 	}

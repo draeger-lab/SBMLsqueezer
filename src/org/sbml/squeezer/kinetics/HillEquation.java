@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.sbml.ASTNode;
 import org.sbml.Model;
+import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.Reaction;
 
@@ -43,44 +44,21 @@ public class HillEquation extends BasicKineticLaw {
 
 	/**
 	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public HillEquation(Reaction parentReaction, Model model)
+	public HillEquation(Reaction parentReaction)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
-		super(parentReaction, model);
-	}
-
-	/**
-	 * TODO Add comment
-	 * 
-	 * @param mod
-	 * @param reactionNum
-	 * @param modActi
-	 * @param modInhib
-	 * @param reversibility
-	 * @param modTActi
-	 * @param modTInhib
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 * @throws ModificationException
-	 */
-	public HillEquation(Reaction parentReaction, Model model,
-			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
+		super(parentReaction);
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO: add Hillequation if reactiontype is translation or
 		// transcription
-		if (reaction.getReactionType().equals("TRANSLATION")
-				|| reaction.getReactionType().equals("TRANSCRIPTION"))
+		if (SBO.isTranslation(reaction.getSBOTerm())
+				|| SBO.isTranscription(reaction.getSBOTerm()))
 			return true;
 		return false;
 	}
@@ -94,24 +72,26 @@ public class HillEquation extends BasicKineticLaw {
 		return name;
 	}
 
-	// @Override
-	public String getSBO() {
-		String name = getName().toLowerCase(), sbo = "none";
-		if (name.equals("hill equation"))
-			sbo = "0000192";
-		else if (name.equals("hill equation, microscopic form"))
-			sbo = "0000195";
-		else if (name.equals("hill equation, reduced form"))
-			sbo = "0000198";
-		else if (name
-				.equals("mass action rate law for zeroth order irreversible reactions, continuous scheme"))
-			sbo = "0000047";
-		return sbo;
-	}
+	// // @Override
+	// public String getSBO() {
+	// String name = getName().toLowerCase(), sbo = "none";
+	// if (name.equals("hill equation"))
+	// sbo = "0000192";
+	// else if (name.equals("hill equation, microscopic form"))
+	// sbo = "0000195";
+	// else if (name.equals("hill equation, reduced form"))
+	// sbo = "0000198";
+	// else if (name
+	// .equals(
+	// "mass action rate law for zeroth order irreversible reactions, continuous scheme"
+	// ))
+	// sbo = "0000047";
+	// return sbo;
+	// }
 
-	protected ASTNode createKineticEquation(Model model,
-			List<String> modE, List<String> modActi, List<String> modTActi,
-			List<String> modInhib, List<String> modTInhib, List<String> modCat)
+	protected ASTNode createKineticEquation(Model model, List<String> modE,
+			List<String> modActi, List<String> modTActi, List<String> modInhib,
+			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		if (!modActi.isEmpty())
 			modTActi.addAll(modActi);
@@ -196,7 +176,7 @@ public class HillEquation extends BasicKineticLaw {
 	private ASTNode createHillEquation(List<String> modTActi,
 			List<String> modTInhib) {
 		ASTNode acti = new StringBuffer();
-		ASTNode	 inhib = new StringBuffer();
+		ASTNode inhib = new StringBuffer();
 		String rId = getParentSBMLObject().getId();
 
 		// KS: half saturation constant.
@@ -232,7 +212,7 @@ public class HillEquation extends BasicKineticLaw {
 		StringBuffer kg = concat("kg_", rId);
 		addLocalParameter(kg);
 
-		ASTNode formelTxt = new ASTNode(kg,this);
+		ASTNode formelTxt = new ASTNode(kg, this);
 		if ((acti.length() > 0) && (inhib.length() > 0))
 			formelTxt = ASTNode.times(formelTxt, acti, inhib);
 		else if (acti.length() > 0)

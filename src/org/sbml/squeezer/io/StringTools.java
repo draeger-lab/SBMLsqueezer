@@ -23,8 +23,12 @@ package org.sbml.squeezer.io;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class StringOperations {
+public class StringTools {
 
+	/**
+	 * 
+	 */
+	public static final Character underscore = Character.valueOf('_');
 	/**
 	 * The file separator of the operating system.
 	 */
@@ -35,6 +39,34 @@ public class StringOperations {
 	 * New line separator of this operating system
 	 */
 	public static final String newLine = System.getProperty("line.separator");
+	
+	/**
+	 * Takes the given StringBuffer as input and appends every further Object to
+	 * it.
+	 * 
+	 * @param k
+	 * @param things
+	 * @return
+	 */
+	public static final StringBuffer append(StringBuffer k, Object... things) {
+		for (Object t : things)
+			k.append(t);
+		return k;
+	}
+	
+	/**
+	 * This method concatenates two or more object strings into a new
+	 * stringbuffer.
+	 * 
+	 * @param buffers
+	 * @return
+	 */
+	public static final StringBuffer concat(Object... buffers) {
+		StringBuffer res = new StringBuffer();
+		for (Object buffer : buffers)
+			res.append(buffer.toString());
+		return res;
+	}
 	
 	/**
 	 * This method introduces left and right quotation marks where we normally

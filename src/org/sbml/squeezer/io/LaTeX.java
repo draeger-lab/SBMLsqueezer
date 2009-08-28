@@ -26,7 +26,7 @@ import org.sbml.ASTNode;
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  */
-public class LaTeX extends StringOperations {
+public class LaTeX extends StringTools {
 
 	/**
 	 * Surrounded by new line symbols. The begin of a description environment in
@@ -197,7 +197,7 @@ public class LaTeX extends StringOperations {
 				return "thirteenth";
 			default:
 				if (number < 13) {
-					String word = StringOperations.getWordForNumber(number);
+					String word = StringTools.getWordForNumber(number);
 					return word.endsWith("t") ? word + 'h' : word + "th";
 				}
 				break;
@@ -205,16 +205,16 @@ public class LaTeX extends StringOperations {
 		String numberWord = Long.toString(number);
 		switch (numberWord.charAt(numberWord.length() - 1)) {
 		case '1':
-			return StringOperations.getWordForNumber(number)
+			return StringTools.getWordForNumber(number)
 					+ "\\textsuperscript{st}";
 		case '2':
-			return StringOperations.getWordForNumber(number)
+			return StringTools.getWordForNumber(number)
 					+ "\\textsuperscript{nd}";
 		case '3':
-			return StringOperations.getWordForNumber(number)
+			return StringTools.getWordForNumber(number)
 					+ "\\textsuperscript{rd}";
 		default:
-			return StringOperations.getWordForNumber(number)
+			return StringTools.getWordForNumber(number)
 					+ "\\textsuperscript{th}";
 		}
 	}

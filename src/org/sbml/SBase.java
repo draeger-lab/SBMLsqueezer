@@ -49,13 +49,16 @@ public abstract class SBase {
 		setOfListeners = new HashSet<SBaseChangedListener>();
 	}
 
-
 	/**
 	 * 
 	 * @param sb
 	 */
 	public SBase(SBase sb) {
 		this();
+		if (sb.isSetSBOTerm())
+			this.sboTerm = sb.getSBOTerm();
+		else
+			this.sboTerm = -1;
 		if (sb.isSetMetaId())
 			this.metaId = new String(sb.getMetaId());
 		if (sb.isSetNotes())
@@ -244,9 +247,9 @@ public abstract class SBase {
 	 * @param term
 	 */
 	public void setSBOTerm(int term) {
-		if (term < 0)
+		if (!SBO.checkTerm(term))
 			throw new IllegalArgumentException(
-					"SBO terms must not be smaller than zero.");
+					"SBO terms must not be smaller than zero or larger than 9999999.");
 		sboTerm = term;
 		stateChanged();
 	}

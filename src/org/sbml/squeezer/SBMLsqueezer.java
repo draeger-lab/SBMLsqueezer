@@ -30,7 +30,6 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
-import org.sbml.SBO;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
@@ -53,10 +52,57 @@ import org.sbml.squeezer.standalone.LibSBMLWriter;
  */
 public class SBMLsqueezer extends PluginAction {
 
+	static {
+		try {
+			properties = Resource.readProperties(Resource.class.getResource(
+					"cfg/SBMLsqueezer.cfg").getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+			properties = new Properties();
+		}
+	}
+	
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.2.1";
+
+	/**
+	 * Configuration of SBMLsqueezer
+	 */
+	private static Properties properties;
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Object getProperty(Object key) {
+		return properties.get(key);
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static Object setProperty(Object key, Object value) {
+		return properties.put(key, value);
+	}
+	
+	/**
+	 * 
+	 */
+	public static void saveProperties() {
+		try {
+			String resourceName = Resource.class.getResource(
+					"cfg/SBMLsqueezer.cfg").getPath();
+			Properties p = Resource.readProperties(resourceName);
+			if (!p.equals(properties))
+				Resource.writeProperties(properties, resourceName);
+		} catch (IOException e) {
+		}
+	}
 
 	/**
 	 * 

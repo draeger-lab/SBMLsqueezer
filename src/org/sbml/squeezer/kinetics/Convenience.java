@@ -23,9 +23,11 @@ import java.util.List;
 
 import org.sbml.ASTNode;
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
-import org.sbml.Parameter;
+import org.sbml.squeezer.io.StringTools;
+
 /**
  * <p>
  * This is the standard convenience kinetics which is only appropriated for
@@ -56,40 +58,21 @@ import org.sbml.Parameter;
  */
 public class Convenience extends GeneralizedMassAction {
 
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param reversibility
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public Convenience(Reaction parentReaction, Model model)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		super(parentReaction, model);
-	}
-
-	/**
-	 * @param parentReaction
-	 * @param model
-	 * @param listOfPossibleEnzymes
-	 * @param reversibility
-	 * @throws RateLawNotApplicableException
-	 * @throws IOException
-	 * @throws IllegalFormatException
-	 */
-	public Convenience(Reaction parentReaction, Model model,
-			List<String> listOfPossibleEnzymes)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
-
-	}
-
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
+	}
+
+	/**
+	 * @param parentReaction
+	 * @throws RateLawNotApplicableException
+	 * @throws IOException
+	 * @throws IllegalFormatException
+	 */
+	public Convenience(Reaction parentReaction)
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
+		super(parentReaction);
 	}
 
 	// @Override
@@ -99,12 +82,7 @@ public class Convenience extends GeneralizedMassAction {
 		return "irreversible simple convenience kinetics";
 	}
 
-	// @Override
-	public String getSBO() {
-		return "none";
-	}
-
-	protected ASTNode createKineticEquation(Model model, List<String> modE,
+	ASTNode createKineticEquation(Model model, List<String> modE,
 			List<String> modActi, List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
@@ -184,8 +162,8 @@ public class Convenience extends GeneralizedMassAction {
 						.getNumProducts()];
 
 				StringBuffer kcat = modE.size() == 0 ? concat("Vn_",
-						getParentSBMLObject().getId()) : concat("kcatn_",
-						getParentSBMLObject().getId());
+						getParentSBMLObject().getId()) : StringTools.concat(
+						"kcatn_", getParentSBMLObject().getId());
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 				numerator2 = new ASTNode(kcat, this);
@@ -209,16 +187,18 @@ public class Convenience extends GeneralizedMassAction {
 					SpeciesReference specRefP = parentReaction
 							.getProduct(productNum);
 
-					denominator2[productNum] = ASTNode.frac(new ASTNode(
-							getSpecies(specRefP), this), new ASTNode(kM, this));
+					denominator2[productNum] = ASTNode
+							.frac(new ASTNode(specRefP.getSpecies(), this),
+									new ASTNode(kM, this));
 
 					// for each stoichiometry (see Liebermeister et al.)s
 					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
 
 						denominator2[productNum] = ASTNode.sum(
 								denominator2[productNum], ASTNode.pow(ASTNode
-										.frac(new ASTNode(getSpecies(specRefP),
-												this), new ASTNode(kM, this)),
+										.frac(new ASTNode(
+												specRefP.getSpecies(), this),
+												new ASTNode(kM, this)),
 										new ASTNode((m + 1), this)));
 					if (parentReaction.getNumProducts() > 1)
 						denominator2[productNum] = ASTNode.sum(new ASTNode(1,
@@ -226,30 +206,37 @@ public class Convenience extends GeneralizedMassAction {
 
 					// build numerator
 					if (specRefP.getStoichiometry() != 1.0)
-						numerator2 = ASTNode.times(numerator2, ASTNode.pow(
-								ASTNode.frac(new ASTNode(getSpecies(specRefP),
-										this), new ASTNode(kM, this)),
-								new ASTNode(getStoichiometry(specRefP), this)));
+						numerator2 = ASTNode
+								.times(numerator2, ASTNode.pow(ASTNode
+										.frac(new ASTNode(
+												specRefP.getSpecies(), this),
+												new ASTNode(kM, this)),
+										new ASTNode(
+												specRefP.getStoichiometry(),
+												this)));
 					else
-						numerator2 = ASTNode.times(numerator2, ASTNode.frac(new ASTNode(
-								getSpecies(specRefP),this),new ASTNode( kM,this)));
+						numerator2 = ASTNode.times(numerator2, ASTNode.frac(
+								new ASTNode(specRefP.getSpecies(), this),
+								new ASTNode(kM, this)));
 				}
 				if (parentReaction.getNumProducts() == 1)
 					denominator = ASTNode.sum(denominator, denominator2[0]);
 				else
-					denominator = ASTNode.sum(denominator, ASTNode.times(denominator2));
+					denominator = ASTNode.sum(denominator, ASTNode
+							.times(denominator2));
 				numerator = ASTNode.diff(numerator, numerator2);
 
 				if ((parentReaction.getNumProducts() > 1)
 						&& (parentReaction.getNumReactants() > 1))
-					denominator = ASTNode.diff(denominator, new ASTNode(1,this));
+					denominator = ASTNode.diff(denominator,
+							new ASTNode(1, this));
 			}
 
 			formelTxt[enzymeNum] = ASTNode.frac(numerator, denominator);
 
 			if (modE.size() > 0)
-				formelTxt[enzymeNum] = ASTNode.times(new ASTNode(modE.get(enzymeNum),this),
-						formelTxt[enzymeNum]);
+				formelTxt[enzymeNum] = ASTNode.times(new ASTNode(modE
+						.get(enzymeNum), this), formelTxt[enzymeNum]);
 			enzymeNum++;
 		} while (enzymeNum < modE.size());
 

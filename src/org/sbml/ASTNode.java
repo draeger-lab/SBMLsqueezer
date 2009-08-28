@@ -70,6 +70,16 @@ public class ASTNode {
 
 	/**
 	 * 
+	 * @param formula
+	 * @return
+	 */
+	public static ASTNode parseFormula(String formula) {
+		// TODO Auto-generated method stub
+		throw new Error("Not yet implemented.");
+	}
+
+	/**
+	 * 
 	 * @param basis
 	 * @param exponent
 	 * @return
@@ -152,12 +162,12 @@ public class ASTNode {
 		for (ASTNode nodes : node.listOfNodes)
 			setParentSBMLObject(nodes, parent);
 	}
-
 	/**
 	 * This value stores the numerator if this.isRational() is true, or the
 	 * value of an integer if this.isInteger() is true.
 	 */
 	private int numerator;
+
 	private int denominator;
 
 	private double mantissa;
@@ -233,10 +243,19 @@ public class ASTNode {
 	 * @param real
 	 * @param parent
 	 */
-
 	public ASTNode(double real, MathContainer parent) {
 		this(Constants.AST_REAL, parent);
 		setValue(real);
+	}
+	
+	/**
+	 * 
+	 * @param integer
+	 * @param parent
+	 */
+	public ASTNode(int integer, MathContainer parent) {
+		this(Constants.AST_INTEGER, parent);
+		setValue(integer);
 	}
 
 	/**
@@ -268,14 +287,18 @@ public class ASTNode {
 
 	/**
 	 * 
-	 * @param naem
+	 * @param nsb
 	 * @param parent
 	 */
-	public ASTNode(StringBuffer name, MathContainer parent) {
+	public ASTNode(NamedSBase nsb, MathContainer parent) {
 		this(Constants.AST_NAME, parent);
-		setName(name.toString());
+		setVariable(nsb);
 	}
 
+	/**
+	 * 
+	 * @param child
+	 */
 	public void addChild(ASTNode child) {
 		listOfNodes.add(child);
 	}

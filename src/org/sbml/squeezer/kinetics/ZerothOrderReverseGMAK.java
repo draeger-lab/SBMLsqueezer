@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.sbml.ASTNode;
-import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * TODO: comment missing
@@ -31,30 +31,29 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ZerothOrderReverseGMAK(Reaction parentReaction,
-			Model model) throws RateLawNotApplicableException,
-			IOException, IllegalFormatException {
-		super(parentReaction, model);
-		reactantOrder = Double.NaN;
-		productOrder = 0;
-	}
-
-	public ZerothOrderReverseGMAK(Reaction parentReaction,
-			Model model, List<String> listOfPossibleEnzymes)
+	public ZerothOrderReverseGMAK(Reaction parentReaction)
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
-		super(parentReaction, model, listOfPossibleEnzymes);
+		super(parentReaction);
 		reactantOrder = Double.NaN;
 		productOrder = 0;
 	}
 
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#dissociation(java.util
+	 * .List, int)
+	 */
 	// @Override
-	protected ASTNode dissociation(List<String> catalysts, int c) {
-		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
+	ASTNode dissociation(List<String> catalysts, int c) {
+		StringBuffer kdiss = StringTools.concat("kdiss_", getParentSBMLObject()
+				.getId());
 		if (catalysts.size() > 0)
-			kdiss = concat(kdiss, underscore, catalysts.get(c));
+			kdiss = StringTools.concat(kdiss, StringTools.underscore, catalysts
+					.get(c));
 		addLocalParameter(new Parameter(kdiss.toString()));
-		return new ASTNode(kdiss,this);
+		return new ASTNode(kdiss, this);
 	}
 }

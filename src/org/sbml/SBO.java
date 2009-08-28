@@ -98,6 +98,24 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static Term getTerm(int sboTerm) {
+		return sbo.getTerm(intToString(sboTerm));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static Term getTerm(String sboTerm) {
+		return sbo.getTerm(sboTerm);
+	}
+
+	/**
 	 * Returns the integer as a correctly formatted SBO string. If the sboTerm
 	 * is not in the correct range ({0,.., 9999999}), an empty string is
 	 * returned.
@@ -113,6 +131,25 @@ public class SBO {
 		while (sbo.length() < 11)
 			sbo.insert(4, '0');
 		return sbo.toString();
+	}
+
+	/**
+	 * Checks whether the given sboTerm is a member of the SBO subgraph rooted
+	 * at parent.
+	 * 
+	 * @param sboTerm
+	 *            An SBO term.
+	 * @param parent
+	 *            An SBO term that is the root of a certain subgraph within the
+	 *            SBO.
+	 * @return true if the subgraph of the SBO rooted at the term parent
+	 *         contains a term with the id corresponding to sboTerm.
+	 */
+	public static boolean isChildOf(int sboTerm, int parent) {
+		if (!checkTerm(sboTerm))
+			return false;
+		return isChildOf(sbo.getTerm(intToString(sboTerm)), sbo
+				.getTerm(intToString(parent)));
 	}
 
 	/**
@@ -348,7 +385,7 @@ public class SBO {
 	public static boolean isSteadyStateExpression(int sboTerm) {
 		return isChildOf(sboTerm, 391);
 	}
-
+	
 	/**
 	 * Returns the string as a correctly formatted SBO integer portion.
 	 * 
@@ -360,26 +397,7 @@ public class SBO {
 	public static int stringToInt(String sboTerm) {
 		return checkTerm(sboTerm) ? Integer.parseInt(sboTerm.substring(4)) : -1;
 	}
-
-	/**
-	 * Checks whether the given sboTerm is a member of the SBO subgraph rooted
-	 * at parent.
-	 * 
-	 * @param sboTerm
-	 *            An SBO term.
-	 * @param parent
-	 *            An SBO term that is the root of a certain subgraph within the
-	 *            SBO.
-	 * @return true if the subgraph of the SBO rooted at the term parent
-	 *         contains a term with the id corresponding to sboTerm.
-	 */
-	public static boolean isChildOf(int sboTerm, int parent) {
-		if (!checkTerm(sboTerm))
-			return false;
-		return isChildOf(sbo.getTerm(intToString(sboTerm)), sbo
-				.getTerm(intToString(parent)));
-	}
-
+	
 	/**
 	 * Traverses the systems biology ontology starting at Term subject until
 	 * either the root (SBO:0000000) or the Term object is reached.
@@ -398,6 +416,76 @@ public class SBO {
 			if (isChildOf(triple.getObject(), object))
 				return true;
 		}
+		return false;
+	}
+
+	public static boolean isModulation(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isInhibition(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isTranscriptionalActivation(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isTranslationalActivation(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isTranscriptionalInhibition(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isTranslationalInhibition(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isUnknownCatalysis(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isPhysicalStimulation(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isCatalysis(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isTrigger(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isEnzymaticCatalysis(int type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static int getEnzymaticCatalysis() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public static boolean isTranslation(int term) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean isTranscription(int term) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 }

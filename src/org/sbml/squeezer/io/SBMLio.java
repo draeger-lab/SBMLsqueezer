@@ -25,11 +25,18 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.sbml.Compartment;
+import org.sbml.KineticLaw;
 import org.sbml.Model;
+import org.sbml.ModifierSpeciesReference;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SBMLReader;
 import org.sbml.SBMLWriter;
 import org.sbml.SBase;
+import org.sbml.Species;
+import org.sbml.SpeciesReference;
+import org.sbml.StoichiometryMath;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -47,18 +54,6 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	private AbstractSBMLWriter writer;
 	protected LinkedList<Model> listOfModels;
 	private int selectedModel;
-
-	public void setSelectedModel(int selectedModel) {
-		this.selectedModel = selectedModel;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Model getSelectedModel() {
-		return listOfModels.get(selectedModel);
-	}
 
 	/**
 	 * 
@@ -84,6 +79,101 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		this.listOfModels.addLast(reader.readModel(model));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public List<Model> getListOfModels() {
+		return listOfModels;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Model getSelectedModel() {
+		return listOfModels.get(selectedModel);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readCompartment(java.lang.Object)
+	 */
+	public Compartment readCompartment(Object compartment) {
+		return reader.readCompartment(compartment);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readKineticLaw(java.lang.Object)
+	 */
+	public KineticLaw readKineticLaw(Object kineticLaw) {
+		return reader.readKineticLaw(kineticLaw);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readModel(java.lang.Object)
+	 */
+	// @Override
+	public Model readModel(Object model) {
+		listOfModels.addLast(reader.readModel(model));
+		selectedModel = listOfModels.size() - 1;
+		return listOfModels.getLast();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readModifierSpeciesReference(java.lang.Object)
+	 */
+	public ModifierSpeciesReference readModifierSpeciesReference(
+			Object modifierSpeciesReference) {
+		return reader.readModifierSpeciesReference(modifierSpeciesReference);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readParameter(java.lang.Object)
+	 */
+	public Parameter readParameter(Object parameter) {
+		return reader.readParameter(parameter);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readReaction(java.lang.Object)
+	 */
+	// @Override
+	public Reaction readReaction(Object reaction) {
+		return reader.readReaction(reaction);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readSpecies(java.lang.Object)
+	 */
+	public Species readSpecies(Object species) {
+		return reader.readSpecies(species);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readSpeciesReference(java.lang.Object)
+	 */
+	public SpeciesReference readSpeciesReference(Object speciesReference) {
+		return reader.readSpeciesReference(speciesReference);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readStoichiometricMath(java.lang.Object)
+	 */
+	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
+		return reader.readStoichiometricMath(stoichiometryMath);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -102,13 +192,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		removed.add(sb);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
-	 */
-	public void stateChanged(SBase sb) {
-		changed.add(sb);
+	public void setSelectedModel(int selectedModel) {
+		this.selectedModel = selectedModel;
 	}
 
 	/*
@@ -140,34 +225,13 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		}
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Model> getListOfModels() {
-		return listOfModels;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBMLReader#readModel(java.lang.Object)
+	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
 	 */
-	// @Override
-	public Model readModel(Object model) {
-		listOfModels.addLast(reader.readModel(model));
-		selectedModel = listOfModels.size() - 1;
-		return listOfModels.getLast();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBMLReader#readReaction(java.lang.Object)
-	 */
-	// @Override
-	public Reaction readReaction(Object reaction) {
-		return reader.readReaction(reaction);
+	public void stateChanged(SBase sb) {
+		changed.add(sb);
 	}
 
 	/*
@@ -189,5 +253,4 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	public Object writeReaction(Reaction reaction) {
 		return writer.writeReaction(reaction);
 	}
-
 }

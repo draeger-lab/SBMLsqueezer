@@ -66,7 +66,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 
 	JTabbedPaneWithCloseIcons tabbedPane;
-	Properties properties;
 	private JMenuItem saveItem;
 	private JMenuItem closeItem;
 
@@ -146,8 +145,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				JFileChooser chooser = new JFileChooser();
 				SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
 				chooser.setFileFilter(filter);
-				String dir = properties
-						.getProperty(CfgKeys.OPEN_DIR.toString());
+				String dir = SBMLsqueezer.getProperty(CfgKeys.OPEN_DIR.toString()).toString();
 				if (dir != null) {
 					if (dir.startsWith("user."))
 						dir = System.getProperty(dir);
@@ -159,7 +157,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					String path = chooser.getSelectedFile().getAbsolutePath();
 					path = path.substring(0, path.lastIndexOf('/'));
 					if (!path.equals(dir))
-						properties.put(CfgKeys.OPEN_DIR, path);
+						SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
 				}
 			} else if (item.getText().equals(latexItem.getText())) {
 				// TODO
@@ -167,8 +165,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				SBFileFilter filterTeX = new SBFileFilter(
 						SBFileFilter.TeX_FILES);
 				chooser.addChoosableFileFilter(filterTeX);
-				String dir = properties
-						.getProperty(CfgKeys.SAVE_DIR.toString());
+				String dir = SBMLsqueezer
+						.getProperty(CfgKeys.SAVE_DIR.toString()).toString();
 				if (dir != null) {
 					if (dir.startsWith("user."))
 						dir = System.getProperty(dir);
@@ -180,7 +178,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					String path = chooser.getSelectedFile().getAbsolutePath();
 					path = path.substring(0, path.lastIndexOf('/'));
 					if (!path.equals(dir))
-						properties.put(CfgKeys.OPEN_DIR, path);
+						SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
 				}
 			} else if (item.getText().equals(saveItem.getText())) {
 				JFileChooser chooser = new JFileChooser();
@@ -193,8 +191,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				chooser.addChoosableFileFilter(filterSBML);
 				chooser.addChoosableFileFilter(filterText);
 				chooser.addChoosableFileFilter(filterTeX);
-				String dir = properties
-						.getProperty(CfgKeys.SAVE_DIR.toString());
+				String dir = SBMLsqueezer
+						.getProperty(CfgKeys.SAVE_DIR.toString()).toString();
 				if (dir != null) {
 					if (dir.startsWith("user."))
 						dir = System.getProperty(dir);
@@ -206,7 +204,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					String path = chooser.getSelectedFile().getAbsolutePath();
 					path = path.substring(0, path.lastIndexOf('/'));
 					if (!path.equals(dir))
-						properties.put(CfgKeys.OPEN_DIR, path);
+						SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
 				}
 			} else if (item.getText().equals(closeItem.getText())) {
 				if (tabbedPane.getComponentCount() > 0)
@@ -219,7 +217,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				klsd.setVisible(true);
 
 			} else if (item.getText().equals("Exit")) {
-				saveProperties();
+				SBMLsqueezer.saveProperties();
 				System.exit(0);
 			} else if (item.getText().equals("About")) {
 				JBrowser browser = new JBrowser(Resource.class
@@ -260,7 +258,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	public void windowClosing(WindowEvent arg0) {
-		saveProperties();
+		SBMLsqueezer.saveProperties();
 	}
 
 	public void windowDeactivated(WindowEvent arg0) {
@@ -346,17 +344,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		return mBar;
 	}
 
-	private void saveProperties() {
-		try {
-			String resourceName = Resource.class.getResource(
-					"cfg/SBMLsqueezer.cfg").getPath();
-			Properties p = Resource.readProperties(resourceName);
-			if (!p.equals(properties))
-				Resource.writeProperties(properties, resourceName);
-		} catch (IOException e) {
-		}
-	}
-
 	private void setModelsOpened(boolean state) {
 		saveItem.setEnabled(state);
 		closeItem.setEnabled(state);
@@ -370,13 +357,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		setModelsOpened(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addWindowListener(this);
-		try {
-			properties = Resource.readProperties(Resource.class.getResource(
-					"cfg/SBMLsqueezer.cfg").getPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-			properties = new Properties();
-		}
 		tabbedPane = new JTabbedPaneWithCloseIcons();
 		for (Model m : sbmlIO.getListOfModels()) {
 			addModel(m);
