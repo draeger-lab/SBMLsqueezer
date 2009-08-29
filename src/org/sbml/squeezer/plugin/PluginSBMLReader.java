@@ -19,6 +19,7 @@
 package org.sbml.squeezer.plugin;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -42,61 +43,21 @@ import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 import org.sbml.squeezer.resources.Resource;
 
 public class PluginSBMLReader extends AbstractSBMLReader {
 
-	/**
-	 * 
-	 */
-	private static Properties alias2sbo;
 	private static final String error = " must be an instance of ";
-	public static List<Integer> listOfPossibleEnzymes;
-	static {
-		try {
-			alias2sbo = Resource.readProperties(Resource.class.getResource(
-					"cfg/Alias2SBO.cfg").getPath());
-			listOfPossibleEnzymes = getDefaultListOfPossibleEnzymes();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Creates and returns a list of molecule types accepted as an enzyme by
-	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
-	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
-	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
-	 * 
-	 * @return
-	 */
-	public static final List<Integer> getDefaultListOfPossibleEnzymes() {
-		List<Integer> listOfPossibleEnzymes = new LinkedList<Integer>();
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("ANTISENSE_RNA")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("SIMPLE_MOLECULE")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("UNKNOWN")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("COMPLEX")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("TRUNCATED")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("GENERIC")));
-		listOfPossibleEnzymes
-				.add(Integer.valueOf(alias2sbo.getProperty("RNA")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("RECEPTOR")));
-		return listOfPossibleEnzymes;
-	}
+	private List<Integer> listOfPossibleEnzymes;
 
 	/**
 	 * 
 	 */
-	public PluginSBMLReader() {
+	public PluginSBMLReader(List<Integer> listOfPossibleEnzymes) {
 		super();
+		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
 	}
 
 	/**
@@ -105,8 +66,10 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 * 
 	 * @param model
 	 */
-	public PluginSBMLReader(PluginModel model) {
+	public PluginSBMLReader(PluginModel model,
+			List<Integer> listOfPossibleEnzymes) {
 		super(model);
+		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
 	}
 
 	/*
@@ -175,20 +138,19 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		PluginModifierSpeciesReference plumod = (PluginModifierSpeciesReference) modifierSpeciesReference;
 		ModifierSpeciesReference mod = new ModifierSpeciesReference(
 				new Species(plumod.getSpeciesInstance().getId()));
-
 		/*
 		 * Set SBO term.
 		 */
-		mod.setSBOTerm(Integer.parseInt(alias2sbo.get(
-				plumod.getModificationType()).toString()));
-		if (SBO.isCatalysis(mod.getSBOTerm())) {
+		mod.setSBOTerm(SBMLsqueezer.convertAlias2SBO(plumod
+				.getModificationType()));
+		if (SBO.isCatalyst(mod.getSBOTerm())) {
 			PluginSpecies species = plumod.getSpeciesInstance();
 			String speciesAliasType = species.getSpeciesAlias(0).getType()
 					.equals("PROTEIN") ? species.getSpeciesAlias(0)
 					.getProtein().getType() : species.getSpeciesAlias(0)
 					.getType();
-			if (listOfPossibleEnzymes.contains(Integer.valueOf(alias2sbo.get(
-					speciesAliasType).toString())))
+			if (listOfPossibleEnzymes.contains(Integer.valueOf(SBMLsqueezer
+					.convertAlias2SBO(speciesAliasType))))
 				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
 		}
 		addAllSBaseChangeListenersTo(mod);
@@ -231,8 +193,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			reaction
 					.addModifier(readModifierSpeciesReference(r.getModifier(i)));
 		}
-		reaction.setSBOTerm(Integer.parseInt(alias2sbo.get(r.getReactionType())
-				.toString()));
+		reaction.setSBOTerm(SBMLsqueezer.convertAlias2SBO(r.getReactionType()));
 		reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
 		reaction.setFast(r.getFast());
 		reaction.setReversible(r.getReversible());
@@ -251,8 +212,8 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 					"species must be an instance of PluginSpecies");
 		PluginSpecies spec = (PluginSpecies) species;
 		Species s = new Species(spec.getId());
-		s.setSBOTerm(Integer.parseInt(alias2sbo.get(
-				spec.getSpeciesAlias(spec.getId())).toString()));
+		s.setSBOTerm(SBMLsqueezer.convertAlias2SBO(spec.getSpeciesAlias(
+				spec.getId()).getAliasID()));
 		addAllSBaseChangeListenersTo(s);
 		return s;
 	}

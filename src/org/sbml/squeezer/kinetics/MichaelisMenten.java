@@ -86,63 +86,62 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		ASTNode formula[] = new ASTNode[modE.size()];
 		int enzymeNum = 0;
 		do {
-			Parameter kcatp, kcatn;
-			Parameter kMr = new Parameter(concat("kM_", reaction.getId()));
-			Parameter kMp = new Parameter(concat("kM_", reaction.getId()));
+			StringBuffer kcatp, kcatn;
+			StringBuffer kMr = concat("kM_", reaction.getId());
+			StringBuffer kMp = concat("kM_", reaction.getId());
 
 			if (modE.size() == 0) {
-				kcatp = new Parameter(concat("Vp_", reaction.getId()));
-				kcatn = new Parameter(concat("Vn_", reaction.getId()));
+				kcatp = concat("Vp_", reaction.getId());
+				kcatn = concat("Vn_", reaction.getId());
 			} else {
-				kcatp = new Parameter(concat("kcatp_", reaction.getId()));
-				kcatn = new Parameter(concat("kcatn_", reaction.getId()));
+				kcatp = concat("kcatp_", reaction.getId());
+				kcatn = concat("kcatn_", reaction.getId());
 				if (modE.size() > 1) {
-					kcatp.getId().concat(
-							concat(underscore, modE.get(enzymeNum)));
-					kcatn.getId().concat(
-							concat(underscore, modE.get(enzymeNum)));
-					kMr.getId().concat(concat(underscore, modE.get(enzymeNum)));
-					kMp.getId().concat(concat(underscore, modE.get(enzymeNum)));
+					append(kcatp, underscore, modE.get(enzymeNum));
+					append(kcatn, underscore, modE.get(enzymeNum));
+					append(kMr, underscore, modE.get(enzymeNum));
+					append(kMp, underscore, modE.get(enzymeNum));
 				}
 			}
-			kMr.getId().concat(concat(underscore, specRefR));
-
-			addLocalParameter(kcatp);
-			addLocalParameter(kMr);
+			append(kMr, underscore, specRefR);
+			Parameter p_kcatp = new Parameter(kcatp.toString());
+			Parameter p_kMr = new Parameter(kMr.toString());
+			addLocalParameter(p_kcatp);
+			addLocalParameter(p_kMr);
 
 			ASTNode currEnzymeKin;
 			if (!reaction.getReversible()) {
 				/*
 				 * Irreversible Reaction
 				 */
-				numerator = ASTNode.times(new ASTNode(kcatp, this), specRefR);
+				numerator = ASTNode.times(new ASTNode(p_kcatp, this), specRefR);
 				denominator = specRefR;
 			} else {
 				/*
 				 * Reversible Reaction
 				 */
-				numerator = ASTNode.times(ASTNode.frac(
-						new ASTNode(kcatp, this), new ASTNode(kMr, this)),
-						specRefR);
-				denominator = ASTNode.frac(specRefR, new ASTNode(kMr, this));
-				kMp.getId().concat(concat(underscore, specRefP));
-
-				addLocalParameter(new Parameter(kcatn.toString()));
-				addLocalParameter(new Parameter(kMp.toString()));
+				numerator = ASTNode.times(ASTNode.frac(new ASTNode(p_kcatp,
+						this), new ASTNode(p_kMr, this)), specRefR);
+				denominator = ASTNode.frac(specRefR, new ASTNode(p_kMr, this));
+				append(kMp, underscore, specRefP);
+				Parameter p_kcatn = new Parameter(kcatn.toString());
+				Parameter p_kMp = new Parameter(kMp.toString());
+				addLocalParameter(p_kcatn);
+				addLocalParameter(p_kMp);
 
 				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
-						new ASTNode(kcatn, this), new ASTNode(kMp, this)),
+						new ASTNode(p_kcatn, this), new ASTNode(p_kMp, this)),
 						specRefP));
 				denominator = ASTNode.sum(denominator, ASTNode.frac(specRefP,
-						new ASTNode(kMp, this)));
+						new ASTNode(p_kMp, this)));
 			}
 			denominator = createInihibitionTerms(modInhib, reaction, modE,
-					denominator, kMr, enzymeNum);
+					denominator, p_kMr, enzymeNum);
 
 			if (reaction.getReversible())
 				denominator = ASTNode.sum(new ASTNode(1, this), denominator);
 			else if (modInhib.size() <= 1)
-				denominator = ASTNode.sum(new ASTNode(kMr, this), denominator);
+				denominator = ASTNode.sum(new ASTNode(p_kMr, this), denominator);
 
 			// construct formula
 			currEnzymeKin = ASTNode.frac(numerator, denominator);
@@ -177,26 +176,28 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			Reaction reaction, List<String> modE, ASTNode denominator,
 			Parameter mr, int enzymeNum) {
 		if (modInhib.size() == 1) {
-			Parameter kIa = new Parameter(concat("KIa_", reaction.getId())), kIb = new Parameter(
-					concat("KIb_", reaction.getId()));
+			StringBuffer kIa = concat("KIa_", reaction.getId()), kIb = concat(
+					"KIb_", reaction.getId());
 			if (modE.size() > 1) {
-				kIa.getId().concat(concat(underscore, modE.get(enzymeNum)));
-				kIb.getId().concat(concat(underscore, modE.get(enzymeNum)));
+				append(kIa, underscore, modE.get(enzymeNum));
+				append(kIb, underscore, modE.get(enzymeNum));
 			}
-			addLocalParameter(new Parameter(kIa.toString()));
-			addLocalParameter(new Parameter(kIb.toString()));
+			Parameter p_kIa = new Parameter(kIa.toString());
+			Parameter p_kIb = new Parameter(kIb.toString());
+			addLocalParameter(p_kIa);
+			addLocalParameter(p_kIb);
 
 			ASTNode specRefI = new ASTNode(modInhib.get(0), this);
 			if (reaction.getReversible())
 				denominator = ASTNode.sum(ASTNode.frac(specRefI, new ASTNode(
-						kIa, this)), ASTNode.times(denominator, ASTNode.sum(
+						p_kIa, this)), ASTNode.times(denominator, ASTNode.sum(
 						new ASTNode(1, this), ASTNode.frac(specRefI,
-								new ASTNode(kIb, this)))));
+								new ASTNode(p_kIb, this)))));
 			else
 				denominator = ASTNode.sum(ASTNode.times(ASTNode.frac(
-						new ASTNode(mr, this), new ASTNode(kIa, this)),
+						new ASTNode(mr, this), new ASTNode(p_kIa, this)),
 						specRefI), denominator, ASTNode.times(ASTNode.frac(
-						new ASTNode(mr, this), new ASTNode(kIb, this)),
+						new ASTNode(mr, this), new ASTNode(p_kIb, this)),
 						specRefI));
 
 		} else if ((modInhib.size() > 1)
@@ -208,20 +209,21 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			ASTNode sumIa = new ASTNode(1, this);
 			ASTNode sumIb = new ASTNode(1, this);
 			for (int i = 0; i < modInhib.size(); i++) {
-				Parameter kIai = new Parameter(concat(Integer.valueOf(i + 1),
-						underscore, reaction.getId()));
+				StringBuffer kIai = concat(Integer.valueOf(i + 1), underscore,
+						reaction.getId());
 				if (modE.size() > 1)
-					kIai.getId().concat(
-							concat(kIai, underscore, modE.get(enzymeNum)));
-				Parameter kIbi = new Parameter(concat("kIb_", kIai));
-				kIai = new Parameter(concat("kIa_", kIai));
-				addLocalParameter(new Parameter(kIai.toString()));
-				addLocalParameter(new Parameter(kIbi.toString()));
+					append(kIai, underscore, modE.get(enzymeNum));
+				StringBuffer kIbi = concat("kIb_", kIai);
+				kIai = concat("kIa_", kIai);
+				Parameter p_kIai = new Parameter(kIai.toString());
+				Parameter p_kIbi = new Parameter(kIbi.toString());
+				addLocalParameter(p_kIai);
+				addLocalParameter(p_kIbi);
 				ASTNode specRefI = new ASTNode(modInhib.get(i), this);
 				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, new ASTNode(
-						kIai, this)));
+						p_kIai, this)));
 				sumIb = ASTNode.sum(sumIb, ASTNode.frac(specRefI, new ASTNode(
-						kIbi, this)));
+						p_kIbi, this)));
 			}
 			denominator = ASTNode.sum(ASTNode.times(denominator, sumIa),
 					ASTNode.times(new ASTNode(mr, this), sumIb));

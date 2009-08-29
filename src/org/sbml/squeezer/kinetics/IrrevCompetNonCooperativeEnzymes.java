@@ -21,9 +21,9 @@ package org.sbml.squeezer.kinetics;
 import java.io.IOException;
 import java.util.List;
 
-import org.sbml.Parameter;
 import org.sbml.ASTNode;
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 
 /**
@@ -133,12 +133,12 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 			}
-			addLocalParameter(new Parameter(kcat.toString()));
-			addLocalParameter(new Parameter(kcat.toString()));
+			Parameter p_kcat = new Parameter(kcat.toString());
+			addLocalParameter(p_kcat);
 			ASTNode currEnzyme;
 			ASTNode numerator;
 
-			numerator =  new ASTNode(kcat,this);
+			numerator =  new ASTNode(p_kcat,this);
 			numerator = ASTNode.times(numerator, new ASTNode(reaction.getReactant(
 					0).getSpeciesInstance(),this));
 
@@ -149,13 +149,13 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 
 				kM = concat(kM, underscore, modE.get(enzymeNum));
 			kM = concat(kM, underscore, reaction.getReactant(0).getSpecies());
-			addLocalParameter(new Parameter(kM.toString()));
+			Parameter p_kM = new Parameter(kM.toString());
+			addLocalParameter(p_kM);
 
 			if (modInhib.size() == 0)
-			denominator =  new ASTNode(kM, this);
+			denominator =  new ASTNode(p_kM, this);
 			else {
-				
-				ASTNode factor =  new ASTNode(kM, this);
+				ASTNode factor =  new ASTNode(p_kM, this);
 				for (int i = 0; i < modInhib.size(); i++) {
 
 					StringBuffer kIi = new StringBuffer(concat("Ki_", reaction
@@ -167,13 +167,15 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					}
 					kIi = concat(kIi, underscore, modInhib.get(i));
 					exponent = concat(exponent, underscore, modInhib.get(i));
-					addLocalParameter(new Parameter(kIi.toString()));
-					addLocalParameter(new Parameter(exponent.toString()));
+					Parameter p_kIi = new Parameter(kIi.toString());
+					Parameter p_exp = new Parameter(exponent.toString());
+					addLocalParameter(p_kIi);
+					addLocalParameter(p_exp);
 
 					factor = ASTNode.times(factor, ASTNode.pow(ASTNode.sum(
 							new ASTNode(1, this), ASTNode.frac(new ASTNode(
-									modInhib.get(i), this), new ASTNode(kIi,
-									this))), new ASTNode(exponent, this)));
+									modInhib.get(i), this), new ASTNode(p_kIi,
+									this))), new ASTNode(p_exp, this)));
 				}
 				denominator =  factor;
 

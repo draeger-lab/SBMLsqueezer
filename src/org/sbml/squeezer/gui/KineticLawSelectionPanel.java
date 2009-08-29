@@ -348,9 +348,10 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			try {
 				BasicKineticLaw kinetic = klg.createKineticLaw(model, reaction,
 						possibleTypes[i], false);
-				laTeXpreview[i] = new StringBuffer(kinetic.getKineticTeX());
-				toolTips[i] = !kinetic.getSBO().equals("none") ? "<b>SBO:"
-						+ kinetic.getSBO() + "</b> " : "";
+				laTeXpreview[i] = new StringBuffer(kinetic.getMath().toLaTeX()
+						.toString());
+				toolTips[i] = !kinetic.isSetSBOTerm() ? "<b>SBO:"
+						+ kinetic.getSBOTermID() + "</b> " : "";
 				toolTips[i] = toHTML(toolTips[i] + kinetic.getName(), 40);
 				kineticEquations[i] = klg.getEquationName(possibleTypes[i]);
 				kineticEquations[i] = toHTML(kineticEquations[i], 40);

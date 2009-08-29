@@ -19,14 +19,13 @@
 package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import org.sbml.ASTNode;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates rate equations according to the generalized mass action
@@ -55,6 +54,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	/**
 	 * 
 	 * @param parentReaction
+	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 * @throws IllegalFormatException
@@ -269,24 +269,24 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					StringBuffer kAn = concat("kA_",
-							getParentSBMLObject().getId(),
-							underscore, modifiers.get(i));
-					ASTNode kA = new ASTNode(kAn, this);
+					StringBuffer kAn = concat("kA_", getParentSBMLObject()
+							.getId(), underscore, modifiers.get(i));
+					Parameter p_kAn = new Parameter(kAn.toString());
+					addLocalParameter(p_kAn);
+					ASTNode kA = new ASTNode(p_kAn, this);
 					mods[i] = ASTNode
 							.frac(new ASTNode(modifiers.get(i), this),
 									ASTNode.sum(kA, new ASTNode(modifiers
 											.get(i), this)));
-					addLocalParameter(new Parameter(kAn.toString()));
 				} else {
 					// Inhibitor Mod
-					StringBuffer kIn = concat("kI_",
-							getParentSBMLObject().getId(),
-							underscore, modifiers.get(i));
-					ASTNode kI = new ASTNode(kIn, this);
+					StringBuffer kIn = concat("kI_", getParentSBMLObject()
+							.getId(), underscore, modifiers.get(i));
+					Parameter p_kIn = new Parameter(kIn.toString());
+					addLocalParameter(p_kIn);
+					ASTNode kI = new ASTNode(p_kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI, new ASTNode(
 							modifiers.get(i), this)));
-					addLocalParameter(new Parameter(kIn.toString()));
 				}
 			}
 			return ASTNode.times(mods);
@@ -312,7 +312,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @return Activation formula.
 	 * @throws IllegalFormatException
 	 */
-	protected ASTNode activationFactor(List<String> activators)
+	ASTNode activationFactor(List<String> activators)
 			throws IllegalFormatException {
 		return createModificationFactor(activators, true);
 	}
@@ -328,19 +328,19 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @return A formula consisting of a constant multiplied with the product
 	 *         over all reactants.
 	 */
-	protected ASTNode association(List<String> catalysts, int catNum) {
-		StringBuffer kass = concat("kass_", getParentSBMLObject()
-				.getId());
+	ASTNode association(List<String> catalysts, int catNum) {
+		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
-			kass = concat(kass, underscore, catalysts
-					.get(catNum));
-		addLocalParameter(new Parameter(kass.toString()));
-		ASTNode ass = new ASTNode(kass, this);
+			kass = concat(kass, underscore, catalysts.get(catNum));
+		Parameter p_kass = new Parameter(kass.toString());
+		addLocalParameter(p_kass);
+		ASTNode ass = new ASTNode(p_kass, this);
 		for (int reactants = 0; reactants < getParentSBMLObject()
 				.getNumReactants(); reactants++) {
 			SpeciesReference r = getParentSBMLObject().getReactant(reactants);
-			ass = ASTNode.times(ass, ASTNode.pow(new ASTNode(r.getSpeciesInstance(),
-					this), new ASTNode(r.getStoichiometry(), this)));
+			ass = ASTNode.times(ass, ASTNode.pow(new ASTNode(r
+					.getSpeciesInstance(), this), new ASTNode(r
+					.getStoichiometry(), this)));
 		}
 		return ass;
 	}
@@ -359,7 +359,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		reactantOrder = productOrder = Double.NaN;
-		List<String> catalysts = new Vector<String>(modE);
+		List<String> catalysts = new LinkedList<String>(modE);
 		catalysts.addAll(modCat);
 		ASTNode rates[] = new ASTNode[Math.max(1, catalysts.size())];
 		Reaction reaction = getParentSBMLObject();
@@ -385,18 +385,18 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @return
 	 */
 	ASTNode dissociation(List<String> catalysts, int c) {
-		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject()
-				.getId());
+		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
-			kdiss = concat(kdiss, underscore, catalysts
-					.get(c));
-		addLocalParameter(new Parameter(kdiss.toString()));
-		ASTNode diss = new ASTNode(kdiss, this);
+			kdiss = concat(kdiss, underscore, catalysts.get(c));
+		Parameter p_kdiss = new Parameter(kdiss.toString());
+		addLocalParameter(p_kdiss);
+		ASTNode diss = new ASTNode(p_kdiss, this);
 		for (int products = 0; products < getParentSBMLObject()
 				.getNumProducts(); products++) {
 			SpeciesReference p = getParentSBMLObject().getProduct(products);
-			diss = ASTNode.times(diss, ASTNode.pow(new ASTNode(p.getSpeciesInstance(),
-					this), new ASTNode(p.getStoichiometry(), this)));
+			diss = ASTNode.times(diss, ASTNode.pow(new ASTNode(p
+					.getSpeciesInstance(), this), new ASTNode(p
+					.getStoichiometry(), this)));
 		}
 		return diss;
 	}
@@ -422,5 +422,4 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			throws IllegalFormatException {
 		return createModificationFactor(modifiers, false);
 	}
-
 }

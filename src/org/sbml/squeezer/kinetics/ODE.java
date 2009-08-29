@@ -97,7 +97,7 @@ public class ODE {
         .hasNext();) {
       Integer key = i.next();
       BasicKineticLaw law = reactionNumAndKineticLaw.get(key);
-      reactionNumAndKineticTeX[key.intValue()] = law.getKineticTeX();
+      reactionNumAndKineticTeX[key.intValue()] = law.getMath().toLaTeX().toString();
       reactionNumAndKineticName[key.intValue()] = law.getName();
     }
     setTeX();

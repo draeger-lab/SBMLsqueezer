@@ -22,11 +22,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.sbml.ASTNode;
-import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * <p>
@@ -77,10 +75,15 @@ public class ConvenienceIndependent extends Convenience {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.Convenience#createKineticEquation(org.sbml.Model, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.Convenience#createKineticEquation(java.util
+	 * .List, java.util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List)
 	 */
-	ASTNode createKineticEquation(Model model, List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
+	// @Override
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		final boolean FORWARD = true;
@@ -97,7 +100,8 @@ public class ConvenienceIndependent extends Convenience {
 					enzymes[i] = new ASTNode(enzyme, this);
 				} else
 					enzymes[i] = new ASTNode("", this);
-				addLocalParameter(new Parameter(klV.toString()));
+				Parameter p_klV = new Parameter(klV.toString());
+				addLocalParameter(p_klV);
 
 				ASTNode numerator, denominator;
 				if (!reaction.getReversible()) {
@@ -119,8 +123,9 @@ public class ConvenienceIndependent extends Convenience {
 						denominator = ASTNode.diff(denominator, new ASTNode(1,
 								this));
 				}
-				enzymes[i] = ASTNode.times(enzymes[i], new ASTNode(klV, this),
-						ASTNode.frac(numerator, denominator));
+				enzymes[i] = ASTNode.times(enzymes[i],
+						new ASTNode(p_klV, this), ASTNode.frac(numerator,
+								denominator));
 				i++;
 			} while (i < enzymes.length);
 			return ASTNode.times(activationFactor(modActi),
@@ -160,15 +165,17 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			addLocalParameter(new Parameter(kM.toString()));
+			Parameter p_kM = new Parameter(kM.toString());
+			addLocalParameter(p_kM);
 			kiG = concat("kG_", ref.getSpecies());
-			addLocalParameter(new Parameter(kiG.toString()));
-			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref.getSpeciesInstance(),
-					this), new ASTNode(kM, this)), new ASTNode(ref
+			Parameter p_kiG = new Parameter(kiG.toString());
+			addGlobalParameter(p_kiG);
+			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
+					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
+					new ASTNode(ref.getStoichiometry(), this));
+			eductroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(p_kiG, this),
+					new ASTNode(p_kM, this)), new ASTNode(ref
 					.getStoichiometry(), this));
-			eductroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(kiG, this),
-					new ASTNode(kM, this)), new ASTNode(ref.getStoichiometry(),
-					this));
 		}
 
 		for (int i = 0; i < reaction.getNumProducts(); i++) {
@@ -177,14 +184,16 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			addLocalParameter(new Parameter(kM.toString()));
+			Parameter p_kM = new Parameter(kM.toString());
+			addLocalParameter(p_kM);
 			kiG = concat("kG_", ref.getSpecies());
-			addLocalParameter(new Parameter(kiG.toString()));
-			products[i] =  ASTNode.pow(ASTNode.frac(
-					new ASTNode(ref.getSpeciesInstance(), this), new ASTNode(kM, this)),
+			Parameter p_kiG = new Parameter(kiG.toString());
+			addGlobalParameter(p_kiG);
+			products[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
+					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
-			productroot[i] =  ASTNode.pow(ASTNode.times(
-					new ASTNode(kiG, this), new ASTNode(kM, this)),
+			productroot[i] = ASTNode.pow(ASTNode.times(
+					new ASTNode(p_kiG, this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
 
 		}
@@ -224,11 +233,13 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
+			Parameter p_kM = new Parameter(kM.toString());
+			addLocalParameter(p_kM);
 
 			ASTNode[] parts = new ASTNode[(int) ref.getStoichiometry()
 					+ (noOne ? 0 : 1)];
-			ASTNode part = ASTNode.frac(new ASTNode(ref.getSpeciesInstance(), this),
-					new ASTNode(kM, this));
+			ASTNode part = ASTNode.frac(new ASTNode(ref.getSpeciesInstance(),
+					this), new ASTNode(p_kM, this));
 			for (int j = 0; j < parts.length; j++)
 				parts[j] = ASTNode.pow(part, new ASTNode((noOne ? j + 1 : j),
 						this));
