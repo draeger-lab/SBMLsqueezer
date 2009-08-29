@@ -19,6 +19,7 @@
 package org.sbml.squeezer.standalone;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.sbml.ASTNode;
@@ -28,6 +29,7 @@ import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
@@ -43,10 +45,12 @@ import org.sbml.squeezer.io.AbstractSBMLReader;
 public class LibSBMLReader extends AbstractSBMLReader {
 
 	private Set<SBMLDocument> setOfDocuments;
+	private List<Integer> listOfPossibleEnzymes;
 	private static final String error = " must be an instance of ";
 
-	public LibSBMLReader() {
+	public LibSBMLReader(List<Integer> listOfPossibleEnzymes) {
 		super();
+		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
 		setOfDocuments = new HashSet<SBMLDocument>();
 	}
 
@@ -56,8 +60,9 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * 
 	 * @param model
 	 */
-	public LibSBMLReader(org.sbml.libsbml.Model model) {
+	public LibSBMLReader(org.sbml.libsbml.Model model, List<Integer> listOfPossibleEnzymes) {
 		super(model);
+		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
 		setOfDocuments = new HashSet<SBMLDocument>();
 	}
 
@@ -66,8 +71,9 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * 
 	 * @param fileName
 	 */
-	public LibSBMLReader(String fileName) {
+	public LibSBMLReader(String fileName, List<Integer> listOfPossibleEnzymes) {
 		super();
+		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
 		setOfDocuments = new HashSet<SBMLDocument>();
 		readModel(fileName);
 	}
@@ -187,8 +193,13 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			mod.setName(msr.getName());
 		if (msr.isSetMetaId())
 			mod.setMetaId(msr.getMetaId());
-		if (msr.isSetSBOTerm())
+		if (msr.isSetSBOTerm()) {
 			mod.setSBOTerm(msr.getSBOTerm());
+			if (!SBO.isEnzymaticCatalysis(mod.getSBOTerm())
+					&& listOfPossibleEnzymes
+							.contains(Integer.valueOf(mod.getSBOTerm())))
+				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
+		}
 		if (msr.isSetNotes())
 			mod.setNotes(msr.getNotesString());
 		addAllSBaseChangeListenersTo(mod);

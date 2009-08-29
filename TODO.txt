@@ -1,6 +1,9 @@
 TODO-Liste
 ==========
 
+Im Modell können auch lokale Parameter sein, die mit der Suchfunktion
+im Moment nicht gefunden werden.
+
 Fehler in Hill-Kinetik: Laut Paper von Hintze et al. wird bei Inhibition
 1 - Produkt über alle Inhibitionsfunktionen gerechnet. Bei uns ist es
 aber Produkt über alle Inhibitoren mit 1 - Inhibitionsfunktion.

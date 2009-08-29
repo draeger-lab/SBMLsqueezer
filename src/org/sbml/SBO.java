@@ -29,6 +29,7 @@ import org.biojava.ontology.Ontology;
 import org.biojava.ontology.Term;
 import org.biojava.ontology.Triple;
 import org.biojava.ontology.io.OboParser;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -93,6 +94,14 @@ public class SBO {
 	 * 
 	 * @return
 	 */
+	public static int getEnzymaticCatalysis() {
+		return 460;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public static Ontology getOntology() {
 		return sbo;
 	}
@@ -134,6 +143,24 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isAntisenseRNA(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("ANTISENSERNA"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isCatalyst(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("CATALYSIS"));
+	}
+
+	/**
 	 * Checks whether the given sboTerm is a member of the SBO subgraph rooted
 	 * at parent.
 	 * 
@@ -150,6 +177,29 @@ public class SBO {
 			return false;
 		return isChildOf(sbo.getTerm(intToString(sboTerm)), sbo
 				.getTerm(intToString(parent)));
+	}
+
+	/**
+	 * Traverses the systems biology ontology starting at Term subject until
+	 * either the root (SBO:0000000) or the Term object is reached.
+	 * 
+	 * @param subject
+	 *            Child
+	 * @param object
+	 *            Parent
+	 * @return true if subject is a child of object.
+	 */
+	private static boolean isChildOf(Term subject, Term object) {
+		if (subject.equals(object))
+			return true;
+		Set<Triple> relations = sbo.getTriples(subject, null, null);
+		for (Triple triple : relations) {
+			if (triple.getObject().equals(object))
+				return true;
+			if (isChildOf(triple.getObject(), object))
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -183,6 +233,24 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isDrug(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("DRUG"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isEmptySet(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("DEGRADED"));
+	}
+
+	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
@@ -190,6 +258,15 @@ public class SBO {
 	 */
 	public static boolean isEntity(int sboTerm) {
 		return isChildOf(sboTerm, 236);
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isEnzymaticCatalysis(int sboTerm) {
+		return isChildOf(sboTerm, 460);
 	}
 
 	/**
@@ -224,6 +301,24 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isGene(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("GENE"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isInhibitor(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("INHIBITION"));
+	}
+
+	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
@@ -231,6 +326,15 @@ public class SBO {
 	 */
 	public static boolean isInteraction(int sboTerm) {
 		return isChildOf(sboTerm, 231);
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isIon(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("ION"));
 	}
 
 	/**
@@ -274,6 +378,15 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isMessengerRNA(int sboTerm) {
+		return isChildOf(sboTerm, 278);
+	}
+	
+	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
@@ -282,7 +395,7 @@ public class SBO {
 	public static boolean isModellingFramework(int sboTerm) {
 		return isChildOf(sboTerm, 4);
 	}
-
+	
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -290,7 +403,7 @@ public class SBO {
 	 * @return true if the term is-a modifier, false otherwise
 	 */
 	public static boolean isModifier(int sboTerm) {
-		return isChildOf(sboTerm, 19);
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("MODULATION"));
 	}
 
 	/**
@@ -326,6 +439,15 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isPhenotype(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("PHENOTYPE"));
+	}
+
+	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
@@ -344,6 +466,15 @@ public class SBO {
 	 */
 	public static boolean isProduct(int sboTerm) {
 		return isChildOf(sboTerm, 11);
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isProtein(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("PROTEIN"));
 	}
 
 	/**
@@ -377,6 +508,33 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isRNA(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("RNA"));
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isSimpleMolecule(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("SIMPLE_MOLECULE"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isStateTransition(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("STATE_TRANSITION"));
+	}
+	
+	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
@@ -384,6 +542,114 @@ public class SBO {
 	 */
 	public static boolean isSteadyStateExpression(int sboTerm) {
 		return isChildOf(sboTerm, 391);
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isStimulator(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("PHYSICAL_STIMULATION"));
+	}
+
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isTranscription(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSCRIPTION"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isTranscriptionalActivation(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSCRIPTIONAL_ACTIVATION"));
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isTranscriptionalInhibitor(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSCRIPTIONAL_INHIBITION"));
+	}
+	
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isTransitionOmitted(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("KNOWN_TRANSITION_OMITTED"));
+	}
+	
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isTranslation(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSLATION"));
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isTranslationalActivation(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSLATIONAL_ACTIVATION"));
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isTranslationalInhibitor(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSLATIONAL_INHIBITION"));
+	}
+	
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isTransport(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSPORT"));
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isTrigger(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRIGGER"));
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isUnknownMolecule(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("UNKNOWN"));
+	}
+	
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isUnknownTransition(int sboTerm) {
+		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("UNKNOWN_TRANSITION"));
 	}
 	
 	/**
@@ -396,96 +662,5 @@ public class SBO {
 	 */
 	public static int stringToInt(String sboTerm) {
 		return checkTerm(sboTerm) ? Integer.parseInt(sboTerm.substring(4)) : -1;
-	}
-	
-	/**
-	 * Traverses the systems biology ontology starting at Term subject until
-	 * either the root (SBO:0000000) or the Term object is reached.
-	 * 
-	 * @param subject
-	 *            Child
-	 * @param object
-	 *            Parent
-	 * @return true if subject is a child of object.
-	 */
-	private static boolean isChildOf(Term subject, Term object) {
-		Set<Triple> relations = sbo.getTriples(subject, null, null);
-		for (Triple triple : relations) {
-			if (triple.getObject().equals(object))
-				return true;
-			if (isChildOf(triple.getObject(), object))
-				return true;
-		}
-		return false;
-	}
-
-	public static boolean isModulation(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isInhibition(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isTranscriptionalActivation(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isTranslationalActivation(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isTranscriptionalInhibition(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isTranslationalInhibition(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isUnknownCatalysis(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isPhysicalStimulation(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isCatalysis(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isTrigger(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isEnzymaticCatalysis(int type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static int getEnzymaticCatalysis() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public static boolean isTranslation(int term) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public static boolean isTranscription(int term) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

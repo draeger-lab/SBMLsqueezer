@@ -150,6 +150,19 @@ public class ASTNode {
 		setParentSBMLObject(times, ast[0].parentSBMLObject);
 		return times;
 	}
+	
+	/**
+	 * Multiplication of several NamedSBase objects.
+	 * @param parent
+	 * @param sbase
+	 * @return
+	 */
+	public static ASTNode times(MathContainer parent, NamedSBase... sbase) {
+		ASTNode elements[] = new ASTNode[sbase.length];
+		for (int i=0; i<sbase.length; i++)
+			elements[i] = new ASTNode(sbase[i], parent);
+		return times(elements);
+	}
 
 	/**
 	 * set the Parent of the node and its children to the given value
@@ -162,6 +175,7 @@ public class ASTNode {
 		for (ASTNode nodes : node.listOfNodes)
 			setParentSBMLObject(nodes, parent);
 	}
+
 	/**
 	 * This value stores the numerator if this.isRational() is true, or the
 	 * value of an integer if this.isInteger() is true.
@@ -247,7 +261,7 @@ public class ASTNode {
 		this(Constants.AST_REAL, parent);
 		setValue(real);
 	}
-	
+
 	/**
 	 * 
 	 * @param integer
@@ -850,6 +864,11 @@ public class ASTNode {
 	public void multiplyWith(ASTNode ast) {
 		arithmeticOperation(Constants.AST_TIMES, ast);
 	}
+	
+	public void multiplyWith(ASTNode... nodes) {
+		for (ASTNode node : nodes)
+			multiplyWith(node);
+	}
 
 	/**
 	 * adds a given node to this node
@@ -877,6 +896,14 @@ public class ASTNode {
 	 */
 	public void raiseByThePowerOf(ASTNode exponent) {
 		arithmeticOperation(Constants.AST_POWER, exponent);
+	}
+	
+	/**
+	 * 
+	 * @param exponent
+	 */
+	public void raiseByThePowerOf(double exponent) {
+		raiseByThePowerOf(new ASTNode(exponent, getParentSBMLObject()));
 	}
 
 	/**
@@ -1789,6 +1816,14 @@ public class ASTNode {
 			/*
 			 * if (variable == null) variable = m.getFunctionDefinition(id);
 			 */
+			// check all local parameters
+			if (variable == null)
+				for (Reaction r : m.getListOfReactions()) {
+					if (r.isSetKineticLaw())
+						variable = r.getKineticLaw().getParameter(id);
+					if (variable != null)
+						break;
+				}
 		}
 		return variable;
 	}

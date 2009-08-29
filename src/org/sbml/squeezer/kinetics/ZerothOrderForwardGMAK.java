@@ -24,7 +24,6 @@ import java.util.List;
 import org.sbml.ASTNode;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates generalized mass action rate equations with zeroth order
@@ -44,19 +43,28 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public ZerothOrderForwardGMAK(Reaction parentReaction) throws RateLawNotApplicableException,
-			IOException, IllegalFormatException {
+	public ZerothOrderForwardGMAK(Reaction parentReaction)
+			throws RateLawNotApplicableException, IOException,
+			IllegalFormatException {
 		super(parentReaction);
 		reactantOrder = 0;
 		productOrder = Double.NaN;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util
+	 * .List, int)
+	 */
 	// @Override
-	protected final ASTNode association(List<String> catalysts, int catNum) {
+	final ASTNode association(List<String> catalysts, int catNum) {
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
-		addLocalParameter(new Parameter(kass.toString()));
-		return new ASTNode(kass,this);
+		Parameter p_kass = new Parameter(kass.toString());
+		addLocalParameter(p_kass);
+		return new ASTNode(p_kass, this);
 	}
 }

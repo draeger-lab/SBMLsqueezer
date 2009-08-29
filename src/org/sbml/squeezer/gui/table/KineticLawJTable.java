@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -25,6 +26,7 @@ import javax.swing.event.MouseInputListener;
 import javax.swing.event.TableModelEvent;
 
 import org.sbml.Model;
+import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.IllegalFormatException;
@@ -95,18 +97,20 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 			// Reaction Identifier, Kinetic Law, SBO, #Reactants,
 			// Reactants, Products, Parameters, Formula
 			StringBuffer params = new StringBuffer();
-			for (i = kineticLaw.getLocalParameters().size() - 1; i > 0; i--) {
-				params.append(kineticLaw.getLocalParameters().get(i));
+			for (i = kineticLaw.getNumParameters() - 1; i > 0; i--) {
+				params.append(kineticLaw.getParameter(i));
 				if (i > 0)
 					params.append(", ");
 			}
-			for (i = kineticLaw.getGlobalParameters().size() - 1; i > 0; i--) {
-				params.append(kineticLaw.getGlobalParameters().get(i));
+			List<Parameter> referencedGlobalParameters = kineticLaw
+					.getReferencedGlobalParameters();
+			for (i = referencedGlobalParameters.size() - 1; i > 0; i--) {
+				params.append(referencedGlobalParameters.get(i));
 				if (i > 0)
 					params.append(", ");
 			}
 			dataModel.setValueAt(kineticLaw, getSelectedRow(), 1);
-			dataModel.setValueAt(new String(kineticLaw.getSBO()),
+			dataModel.setValueAt(new String(kineticLaw.getSBOTermID()),
 					getSelectedRow(), 2);
 			dataModel.setValueAt(params, getSelectedRow(), dataModel
 					.getColumnCount() - 2);
@@ -146,8 +150,9 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		if (colIndex != 1) {
 			BasicKineticLaw kinetic = (BasicKineticLaw) dataModel.getValueAt(
 					rowIndex, 1);
-			String LaTeX = kinetic.getKineticTeX().replace("text", "mbox")
-					.replace("mathrm", "mbox").replace("mathtt", "mbox");
+			String LaTeX = kinetic.getMath().toLaTeX().toString().replace(
+					"text", "mbox").replace("mathrm", "mbox").replace("mathtt",
+					"mbox");
 			JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
 					+ "\\end{equation}");
 			JPanel panel = new JPanel(new BorderLayout());
@@ -159,7 +164,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					- this.getTopLevelAncestor().getX(), this.getY() + 10);
 			panel.setBorder(BorderFactory.createLoweredBevelBorder());
 			JOptionPane.showMessageDialog(getParent(), panel,
-					"Rate Law of Reaction " + kinetic.getParentSBMLObject().getId(),
+					"Rate Law of Reaction "
+							+ kinetic.getParentSBMLObject().getId(),
 					JOptionPane.INFORMATION_MESSAGE);
 			// JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
 			// JLayeredPane.POPUP_LAYER);

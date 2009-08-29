@@ -19,17 +19,18 @@
 package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.sbml.ASTNode;
+import org.sbml.Constants;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
+import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SBO;
 import org.sbml.squeezer.io.StringTools;
-import org.sbml.squeezer.plugin.PluginSBMLReader;
 
 /**
  * An abstract super class of specialized kinetic laws.
@@ -60,32 +61,28 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		enzymes.clear();
 		nonEnzymeCatalyzers.clear();
 		int type;
-		for (int modifierNum = 0; modifierNum < reaction.getNumModifiers(); modifierNum++) {
-			type = reaction.getModifier(modifierNum).getSBOTerm();
-			if (SBO.isModulation(type)) {
-				inhibitors.add(reaction.getModifier(modifierNum).getSpecies());
-				activators.add(reaction.getModifier(modifierNum).getSpecies());
-			} else if (SBO.isInhibition(type))
-				inhibitors.add(reaction.getModifier(modifierNum).getSpecies());
+		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
+			type = modifier.getSBOTerm();
+			if (SBO.isModifier(type)) {
+				inhibitors.add(modifier.getSpecies());
+				activators.add(modifier.getSpecies());
+			} else if (SBO.isInhibitor(type))
+				inhibitors.add(modifier.getSpecies());
 			else if (SBO.isTranscriptionalActivation(type)
 					|| SBO.isTranslationalActivation(type))
-				transActivators.add(reaction.getModifier(modifierNum)
-						.getSpecies());
-			else if (SBO.isTranscriptionalInhibition(type)
-					|| SBO.isTranslationalInhibition(type))
-				transInhibitors.add(reaction.getModifier(modifierNum)
-						.getSpecies());
-			else if (SBO.isUnknownCatalysis(type) || SBO.isTrigger(type)
-					|| SBO.isPhysicalStimulation(type))
-				activators.add(reaction.getModifier(modifierNum).getSpecies());
-			else if (SBO.isCatalysis(type)) {
-				if (SBO.isEnzymaticCatalysis(type)
-						|| PluginSBMLReader.listOfPossibleEnzymes
-								.contains(Integer.valueOf(type)))
-					enzymes.add(reaction.getModifier(modifierNum).getSpecies());
+				transActivators.add(modifier.getSpecies());
+			else if (SBO.isTranscriptionalInhibitor(type)
+					|| SBO.isTranslationalInhibitor(type))
+				transInhibitors.add(modifier.getSpecies());
+			else if (SBO.isTrigger(type) || SBO.isStimulator(type))
+				// no extra support for unknown catalysis anymore...
+				// physical stimulation is now also a stimulator.
+				activators.add(modifier.getSpecies());
+			else if (SBO.isCatalyst(type)) {
+				if (SBO.isEnzymaticCatalysis(type))
+					enzymes.add(modifier.getSpecies());
 				else
-					nonEnzymeCatalyzers.add(reaction.getModifier(modifierNum)
-							.getSpecies());
+					nonEnzymeCatalyzers.add(modifier.getSpecies());
 			}
 		}
 	}
@@ -110,9 +107,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * 
 	 * @param parentReaction
-	 * @param model
-	 * @param listOfPossibleEnzymes
-	 * @param type
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 * @throws IllegalFormatException
@@ -121,12 +115,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction);
-		List<String> modActi = new ArrayList<String>();
-		List<String> modCat = new ArrayList<String>();
-		List<String> modInhib = new ArrayList<String>();
-		List<String> modE = new ArrayList<String>();
-		List<String> modTActi = new ArrayList<String>();
-		List<String> modTInhib = new ArrayList<String>();
+		List<String> modActi = new LinkedList<String>();
+		List<String> modCat = new LinkedList<String>();
+		List<String> modInhib = new LinkedList<String>();
+		List<String> modE = new LinkedList<String>();
+		List<String> modTActi = new LinkedList<String>();
+		List<String> modTInhib = new LinkedList<String>();
 		identifyModifers(parentReaction, modInhib, modTActi, modTInhib,
 				modActi, modE, modCat);
 		setMath(createKineticEquation(modE, modActi, modTActi, modInhib,
@@ -176,6 +170,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
+	 * Convenient method to add multiple parameters.
+	 * 
+	 * @param parameters
+	 */
+	void addLocalParameters(Parameter... parameters) {
+		for (Parameter parameter : parameters)
+			addLocalParameter(parameter);
+	}
+
+	/**
 	 * 
 	 * @param k
 	 * @param things
@@ -196,7 +200,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
 	 * 
-	 * @param model
 	 * @param modE
 	 * @param modActi
 	 * @param modTActi
@@ -212,4 +215,29 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
 
+	/**
+	 * Goes through the formula and identifies all global parameters that are
+	 * referenced by this rate equation.
+	 * 
+	 * @return
+	 */
+	public List<Parameter> getReferencedGlobalParameters() {
+		return getReferencedGlobalParameters(getMath());
+	}
+
+	/**
+	 * 
+	 * @param math
+	 * @return
+	 */
+	private List<Parameter> getReferencedGlobalParameters(ASTNode math) {
+		LinkedList<Parameter> pList = new LinkedList<Parameter>();
+		if (math.getType().equals(Constants.AST_NAME)
+				&& (math.getVariable() instanceof Parameter)
+				&& (getModel().getParameter(math.getVariable().getId()) != null))
+			pList.add((Parameter) math.getVariable());
+		for (ASTNode child : math.getListOfNodes())
+			pList.addAll(getReferencedGlobalParameters(child));
+		return pList;
+	}
 }

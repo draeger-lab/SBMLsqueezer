@@ -22,10 +22,11 @@ import java.io.IOException;
 import java.util.List;
 
 import org.sbml.ASTNode;
-import org.sbml.Model;
+import org.sbml.ModifierSpeciesReference;
+import org.sbml.Parameter;
+import org.sbml.Reaction;
 import org.sbml.SBO;
 import org.sbml.Species;
-import org.sbml.Reaction;
 
 /**
  * This class creates a Hill equation as defined in the paper"Hill Kinetics
@@ -89,10 +90,19 @@ public class HillEquation extends BasicKineticLaw {
 	// return sbo;
 	// }
 
-	protected ASTNode createKineticEquation(Model model, List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
+	 */
+	// @Override
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		if (!modActi.isEmpty())
 			modTActi.addAll(modActi);
 		/*
@@ -116,34 +126,28 @@ public class HillEquation extends BasicKineticLaw {
 			modTActi.addAll(modCat);
 
 		Reaction reaction = getParentSBMLObject();
-		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
-			String name[] = reaction.getModifier(modifier)
-					.getModificationType().split("_");
-			if (1 < name.length) {
-				String modificationType = name[1].toLowerCase();
-				if (reaction.getReactant(0).getSpeciesInstance()
-						.getSpeciesAlias(0).getType().toUpperCase().equals(
-								"GENE")
-						&& reaction.getModifier(modifier).getModificationType()
-								.toUpperCase().startsWith("TRANSLATIONAL"))
-					throw new ModificationException(
-							"Wrong activation in reaction " + reaction.getId()
-									+ ". Only transcriptional "
-									+ modificationType + "is allowed here.");
-				else if (reaction.getReactant(0).getSpeciesInstance()
-						.getSpeciesAlias(0).getType().toUpperCase().contains(
-								"RNA")
-						&& reaction.getModifier(modifier).getModificationType()
-								.toUpperCase().startsWith("TRANSCRIPTIONAL"))
-					throw new ModificationException(
-							"Wrong activation in reaction " + reaction.getId()
-									+ ". Only translational "
-									+ modificationType + " is allowed here.");
-			}
+		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
+			if (SBO.isGene(reaction.getReactant(0).getSpeciesInstance()
+					.getSBOTerm())
+					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
+							.isTranslationalInhibitor(modifier.getSBOTerm())))
+				throw new ModificationException(
+						"Wrong activation in reaction "
+								+ reaction.getId()
+								+ ". Only transcriptional modification is allowed here.");
+			else if ((SBO.isMessengerRNA(reaction.getReactant(0)
+					.getSpeciesInstance().getSBOTerm())
+					|| SBO.isRNA(reaction.getReactant(0).getSpeciesInstance()
+							.getSBOTerm()))
+					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
+							.isTranscriptionalInhibitor(modifier.getSBOTerm())))
+				throw new ModificationException("Wrong activation in reaction "
+						+ reaction.getId()
+						+ ". Only translational modification is allowed here.");
 		}
 
-		if (reaction.getReactionType().equals("TRANSLATION")
-				|| reaction.getReactionType().equals("TRANSCRIPTION"))
+		if (SBO.isTranslation(reaction.getSBOTerm())
+				|| SBO.isTranscription(reaction.getSBOTerm()))
 			for (int i = 0; i < reaction.getNumReactants(); i++)
 				modTActi.add(reaction.getReactant(i).getSpecies());
 		ASTNode formula = createHillEquation(modTActi, modTInhib);
@@ -151,14 +155,13 @@ public class HillEquation extends BasicKineticLaw {
 		for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
 			Species reactant = reaction.getReactant(reactantNum)
 					.getSpeciesInstance();
-			StringBuffer gene = new StringBuffer();
-			if (!reactant.getSpeciesAlias(0).getType().toUpperCase().equals(
-					"GENE")) {
-				gene = new StringBuffer(reactant.getId());
+			ASTNode gene;
+			if (!SBO.isGene(reactant.getSBOTerm())) {
+				gene = new ASTNode(reactant, this);
 				if (reaction.getReactant(reactantNum).getStoichiometry() != 1f) {
-					gene = pow(gene, concat(reaction.getReactant(reactantNum)
-							.getStoichiometry()));
-					formula = times(formula, gene);
+					gene.raiseByThePowerOf(reaction.getReactant(reactantNum)
+							.getStoichiometry());
+					formula.multiplyWith(gene);
 				}
 			}
 		}
@@ -175,8 +178,8 @@ public class HillEquation extends BasicKineticLaw {
 	 */
 	private ASTNode createHillEquation(List<String> modTActi,
 			List<String> modTInhib) {
-		ASTNode acti = new StringBuffer();
-		ASTNode inhib = new StringBuffer();
+		ASTNode acti[] = new ASTNode[modTActi.size()];
+		ASTNode inhib[] = new ASTNode[modTInhib.size()];
 		String rId = getParentSBMLObject().getId();
 
 		// KS: half saturation constant.
@@ -186,39 +189,43 @@ public class HillEquation extends BasicKineticLaw {
 		 * if (!model.getSpecies(modTActi.get(i)).getSpeciesAlias(0).getType()
 		 * .toUpperCase().equals("GENE"))
 		 */{
-			StringBuffer kS = concat("kSp_", rId, underscore, modTActi.get(i));
-			StringBuffer hillcoeff = concat("np_", rId, underscore, modTActi
-					.get(i));
-			acti = times(acti, frac(pow(modTActi.get(i), hillcoeff), sum(pow(
-					modTActi.get(i), hillcoeff), pow(kS, hillcoeff))));
-			addLocalParameter(hillcoeff);
-			addLocalParameter(kS);
+			Parameter p_hillcoeff = new Parameter(concat("np_", rId,
+					underscore, modTActi.get(i)).toString());
+			Parameter p_kS = new Parameter(concat("kSp_", rId, underscore,
+					modTActi.get(i)).toString());
+			addLocalParameters(p_hillcoeff, p_kS);
+			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(new ASTNode(
+					modTActi.get(i), this), new ASTNode(p_hillcoeff, this)),
+					ASTNode.sum(ASTNode.pow(new ASTNode(modTActi.get(i), this),
+							new ASTNode(p_hillcoeff, this)), ASTNode.pow(
+							new ASTNode(p_kS, this), new ASTNode(p_hillcoeff,
+									this)))));
 		}
 		for (i = 0; i < modTInhib.size(); i++)
 		/*
 		 * if (!model.getSpecies(modTInhib.get(i)).getSpeciesAlias(0)
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
-			StringBuffer kS = concat("kSm_", rId, underscore, modTInhib.get(i));
-			StringBuffer hillcoeff = concat("nm_", rId, underscore, modTInhib
-					.get(i));
-			inhib = times(inhib, diff(Integer.toString(1), frac(pow(
-					new StringBuffer(modTInhib.get(i)), hillcoeff), sum(pow(
-					new StringBuffer(modTInhib.get(i)), hillcoeff), pow(kS,
-					hillcoeff)))));
-			addLocalParameter(hillcoeff);
-			addLocalParameter(kS);
+			Parameter p_hillcoeff = new Parameter(concat("nm_", rId,
+					underscore, modTInhib.get(i)).toString());
+			Parameter p_kS = new Parameter(concat("kSm_", rId, underscore,
+					modTInhib.get(i)).toString());
+			inhib[i] = ASTNode.times(ASTNode.diff(new ASTNode(1, this), ASTNode
+					.frac(ASTNode.pow(new ASTNode(modTInhib.get(i), this),
+							new ASTNode(p_hillcoeff, this)), ASTNode.sum(
+							ASTNode.pow(new ASTNode(modTInhib.get(i), this),
+									new ASTNode(p_hillcoeff, this)), ASTNode
+									.pow(new ASTNode(p_kS, this), new ASTNode(
+											p_hillcoeff, this))))));
 		}
-		StringBuffer kg = concat("kg_", rId);
-		addLocalParameter(kg);
+		Parameter p_kg = new Parameter(concat("kg_", rId).toString());
+		addLocalParameter(p_kg);
 
-		ASTNode formelTxt = new ASTNode(kg, this);
-		if ((acti.length() > 0) && (inhib.length() > 0))
-			formelTxt = ASTNode.times(formelTxt, acti, inhib);
-		else if (acti.length() > 0)
-			formelTxt = times(formelTxt, acti);
-		else if (inhib.length() > 0)
-			formelTxt = times(formelTxt, inhib);
+		ASTNode formelTxt = new ASTNode(p_kg, this);
+		if (modTActi.size() > 0)
+			formelTxt.multiplyWith(acti);
+		if (modTInhib.size() > 0)
+			formelTxt.multiplyWith(inhib);
 		return formelTxt;
 	}
 }
