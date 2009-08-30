@@ -22,6 +22,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import org.biojava.bio.seq.io.ParseException;
@@ -29,7 +31,6 @@ import org.biojava.ontology.Ontology;
 import org.biojava.ontology.Term;
 import org.biojava.ontology.Triple;
 import org.biojava.ontology.io.OboParser;
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -42,15 +43,26 @@ import org.sbml.squeezer.resources.Resource;
  */
 public class SBO {
 
+	/**
+	 * 
+	 */
 	private static Ontology sbo;
+	/**
+	 * 
+	 */
 	private static final String prefix = "SBO:";
-
+	/**
+	 * 
+	 */
+	private static Properties alias2sbo;
 	static {
 		OboParser parser = new OboParser();
 		try {
 			sbo = parser.parseOBO(new BufferedReader(new FileReader(
 					Resource.class.getResource("txt/SBO_OBO.obo").getFile())),
 					"SBO", "Systems Biology Ontology");
+			alias2sbo = Resource.readProperties(Resource.class.getResource(
+					"cfg/Alias2SBO.cfg").getPath());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -148,7 +160,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isAntisenseRNA(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("ANTISENSERNA"));
+		return isChildOf(sboTerm, convertAlias2SBO("ANTISENSERNA"));
 	}
 
 	/**
@@ -157,7 +169,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isCatalyst(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("CATALYSIS"));
+		return isChildOf(sboTerm, convertAlias2SBO("CATALYSIS"));
 	}
 
 	/**
@@ -238,7 +250,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isDrug(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("DRUG"));
+		return isChildOf(sboTerm, convertAlias2SBO("DRUG"));
 	}
 
 	/**
@@ -247,7 +259,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isEmptySet(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("DEGRADED"));
+		return isChildOf(sboTerm, convertAlias2SBO("DEGRADED"));
 	}
 
 	/**
@@ -306,7 +318,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isGene(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("GENE"));
+		return isChildOf(sboTerm, convertAlias2SBO("GENE"));
 	}
 
 	/**
@@ -315,7 +327,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isInhibitor(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("INHIBITION"));
+		return isChildOf(sboTerm, convertAlias2SBO("INHIBITION"));
 	}
 
 	/**
@@ -334,7 +346,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isIon(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("ION"));
+		return isChildOf(sboTerm, convertAlias2SBO("ION"));
 	}
 
 	/**
@@ -385,7 +397,7 @@ public class SBO {
 	public static boolean isMessengerRNA(int sboTerm) {
 		return isChildOf(sboTerm, 278);
 	}
-	
+
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -395,7 +407,7 @@ public class SBO {
 	public static boolean isModellingFramework(int sboTerm) {
 		return isChildOf(sboTerm, 4);
 	}
-	
+
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -403,7 +415,7 @@ public class SBO {
 	 * @return true if the term is-a modifier, false otherwise
 	 */
 	public static boolean isModifier(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("MODULATION"));
+		return isChildOf(sboTerm, convertAlias2SBO("MODULATION"));
 	}
 
 	/**
@@ -444,7 +456,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isPhenotype(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("PHENOTYPE"));
+		return isChildOf(sboTerm, convertAlias2SBO("PHENOTYPE"));
 	}
 
 	/**
@@ -474,7 +486,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isProtein(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("PROTEIN"));
+		return isChildOf(sboTerm, convertAlias2SBO("PROTEIN"));
 	}
 
 	/**
@@ -513,16 +525,16 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isRNA(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("RNA"));
+		return isChildOf(sboTerm, convertAlias2SBO("RNA"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
 	 * @return
 	 */
 	public static boolean isSimpleMolecule(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("SIMPLE_MOLECULE"));
+		return isChildOf(sboTerm, convertAlias2SBO("SIMPLE_MOLECULE"));
 	}
 
 	/**
@@ -531,9 +543,9 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isStateTransition(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("STATE_TRANSITION"));
+		return isChildOf(sboTerm, convertAlias2SBO("STATE_TRANSITION"));
 	}
-	
+
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -543,14 +555,14 @@ public class SBO {
 	public static boolean isSteadyStateExpression(int sboTerm) {
 		return isChildOf(sboTerm, 391);
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
 	 * @return
 	 */
 	public static boolean isStimulator(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("PHYSICAL_STIMULATION"));
+		return isChildOf(sboTerm, convertAlias2SBO("PHYSICAL_STIMULATION"));
 	}
 
 	/**
@@ -559,7 +571,7 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isTranscription(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSCRIPTION"));
+		return isChildOf(sboTerm, convertAlias2SBO("TRANSCRIPTION"));
 	}
 
 	/**
@@ -568,90 +580,92 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isTranscriptionalActivation(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSCRIPTIONAL_ACTIVATION"));
+		return isChildOf(sboTerm,
+				convertAlias2SBO("TRANSCRIPTIONAL_ACTIVATION"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
 	 * @return
 	 */
 	public static boolean isTranscriptionalInhibitor(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSCRIPTIONAL_INHIBITION"));
+		return isChildOf(sboTerm,
+				convertAlias2SBO("TRANSCRIPTIONAL_INHIBITION"));
 	}
-	
+
 	/**
 	 * 
 	 * @param term
 	 * @return
 	 */
 	public static boolean isTransitionOmitted(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("KNOWN_TRANSITION_OMITTED"));
+		return isChildOf(sboTerm, convertAlias2SBO("KNOWN_TRANSITION_OMITTED"));
 	}
-	
+
 	/**
 	 * 
 	 * @param term
 	 * @return
 	 */
 	public static boolean isTranslation(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSLATION"));
+		return isChildOf(sboTerm, convertAlias2SBO("TRANSLATION"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
 	 * @return
 	 */
 	public static boolean isTranslationalActivation(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSLATIONAL_ACTIVATION"));
+		return isChildOf(sboTerm, convertAlias2SBO("TRANSLATIONAL_ACTIVATION"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
 	 * @return
 	 */
 	public static boolean isTranslationalInhibitor(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSLATIONAL_INHIBITION"));
+		return isChildOf(sboTerm, convertAlias2SBO("TRANSLATIONAL_INHIBITION"));
 	}
-	
+
 	/**
 	 * 
 	 * @param term
 	 * @return
 	 */
 	public static boolean isTransport(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRANSPORT"));
+		return isChildOf(sboTerm, convertAlias2SBO("TRANSPORT"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
 	 * @return
 	 */
 	public static boolean isTrigger(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("TRIGGER"));
+		return isChildOf(sboTerm, convertAlias2SBO("TRIGGER"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
 	 * @return
 	 */
 	public static boolean isUnknownMolecule(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("UNKNOWN"));
+		return isChildOf(sboTerm, convertAlias2SBO("UNKNOWN"));
 	}
-	
+
 	/**
 	 * 
 	 * @param term
 	 * @return
 	 */
 	public static boolean isUnknownTransition(int sboTerm) {
-		return isChildOf(sboTerm, SBMLsqueezer.convertAlias2SBO("UNKNOWN_TRANSITION"));
+		return isChildOf(sboTerm, convertAlias2SBO("UNKNOWN_TRANSITION"));
 	}
-	
+
 	/**
 	 * Returns the string as a correctly formatted SBO integer portion.
 	 * 
@@ -662,5 +676,30 @@ public class SBO {
 	 */
 	public static int stringToInt(String sboTerm) {
 		return checkTerm(sboTerm) ? Integer.parseInt(sboTerm.substring(4)) : -1;
+	}
+
+	/**
+	 * 
+	 * @param aliasType
+	 * @return
+	 */
+	public static int convertAlias2SBO(String aliasType) {
+		return Integer.parseInt(alias2sbo.get(aliasType).toString());
+	}
+
+	/**
+	 * Creates and returns a list of molecule types accepted as an enzyme by
+	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
+	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
+	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
+	 * 
+	 * @return
+	 */
+	public static final Set<Integer> getDefaultPossibleEnzymes() {
+		Set<Integer> possibleEnzymes = new HashSet<Integer>();
+		for (String type : new String[] { "ANTISENSE_RNA", "SIMPLE_MOLECULE",
+				"UNKNOWN", "COMPLEX", "TRUNCATED", "GENERIC", "RNA", "RECEPTOR" })
+			possibleEnzymes.add(Integer.valueOf(convertAlias2SBO(type)));
+		return possibleEnzymes;
 	}
 }

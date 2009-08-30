@@ -18,11 +18,8 @@
  */
 package org.sbml.squeezer.plugin;
 
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Set;
 
 import jp.sbi.celldesigner.plugin.PluginCompartment;
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
@@ -45,19 +42,18 @@ import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.AbstractSBMLReader;
-import org.sbml.squeezer.resources.Resource;
 
 public class PluginSBMLReader extends AbstractSBMLReader {
 
 	private static final String error = " must be an instance of ";
-	private List<Integer> listOfPossibleEnzymes;
+	private Set<Integer> possibleEnzymes;
 
 	/**
 	 * 
 	 */
-	public PluginSBMLReader(List<Integer> listOfPossibleEnzymes) {
+	public PluginSBMLReader(Set<Integer> possibleEnzymes) {
 		super();
-		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
+		this.possibleEnzymes = possibleEnzymes;
 	}
 
 	/**
@@ -66,10 +62,9 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 * 
 	 * @param model
 	 */
-	public PluginSBMLReader(PluginModel model,
-			List<Integer> listOfPossibleEnzymes) {
+	public PluginSBMLReader(PluginModel model, Set<Integer> possibleEnzymes) {
 		super(model);
-		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
+		this.possibleEnzymes = possibleEnzymes;
 	}
 
 	/*
@@ -141,15 +136,14 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		/*
 		 * Set SBO term.
 		 */
-		mod.setSBOTerm(SBMLsqueezer.convertAlias2SBO(plumod
-				.getModificationType()));
+		mod.setSBOTerm(SBO.convertAlias2SBO(plumod.getModificationType()));
 		if (SBO.isCatalyst(mod.getSBOTerm())) {
 			PluginSpecies species = plumod.getSpeciesInstance();
 			String speciesAliasType = species.getSpeciesAlias(0).getType()
 					.equals("PROTEIN") ? species.getSpeciesAlias(0)
 					.getProtein().getType() : species.getSpeciesAlias(0)
 					.getType();
-			if (listOfPossibleEnzymes.contains(Integer.valueOf(SBMLsqueezer
+			if (possibleEnzymes.contains(Integer.valueOf(SBO
 					.convertAlias2SBO(speciesAliasType))))
 				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
 		}
@@ -193,7 +187,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			reaction
 					.addModifier(readModifierSpeciesReference(r.getModifier(i)));
 		}
-		reaction.setSBOTerm(SBMLsqueezer.convertAlias2SBO(r.getReactionType()));
+		reaction.setSBOTerm(SBO.convertAlias2SBO(r.getReactionType()));
 		reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
 		reaction.setFast(r.getFast());
 		reaction.setReversible(r.getReversible());
@@ -212,8 +206,8 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 					"species must be an instance of PluginSpecies");
 		PluginSpecies spec = (PluginSpecies) species;
 		Species s = new Species(spec.getId());
-		s.setSBOTerm(SBMLsqueezer.convertAlias2SBO(spec.getSpeciesAlias(
-				spec.getId()).getAliasID()));
+		s.setSBOTerm(SBO.convertAlias2SBO(spec.getSpeciesAlias(spec.getId())
+				.getAliasID()));
 		addAllSBaseChangeListenersTo(s);
 		return s;
 	}

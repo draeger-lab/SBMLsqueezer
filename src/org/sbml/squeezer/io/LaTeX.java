@@ -17,7 +17,6 @@
  */
 package org.sbml.squeezer.io;
 
-import org.sbml.ASTNode;
 
 /**
  * Created at 2009-01-03.
@@ -34,7 +33,7 @@ public class LaTeX extends StringTools {
 	 */
 	public static final String descriptionBegin = "\\begin{description}"
 			+ newLine;
-
+		
 	/**
 	 * Surrounded by new line symbols. The end of a description environment.
 	 */

@@ -36,6 +36,52 @@ import org.sbml.squeezer.io.LaTeX;
 public class ASTNode {
 
 	/**
+	 * 
+	 * @param operator
+	 * @param ast
+	 * @return
+	 */
+	private static ASTNode arithmethicOperation(Constants operator,
+			ASTNode... ast) {
+		if (operator == Constants.AST_PLUS || operator == Constants.AST_MINUS
+				|| operator == Constants.AST_TIMES
+				|| operator == Constants.AST_DIVIDE
+				|| operator == Constants.AST_POWER) {
+			if (ast.length == 0)
+				return null;
+			if (ast.length == 1)
+				return ast[0] != null ? ast[0].clone() : null;
+			MathContainer mc = null;
+			int notNull = 0;
+			for (int i = 0; i < ast.length; i++) {
+				if (ast[i] != null) {
+					if (mc == null)
+						mc = ast[i].getParentSBMLObject();
+					notNull++;
+				}
+			}
+			if (notNull == 0)
+				return null;
+			if (notNull == 1)
+				for (ASTNode node : ast) {
+					if (node != null)
+						return node.clone();
+				}
+			ASTNode arithmetic = new ASTNode(operator, mc);
+			for (ASTNode nodes : ast) {
+				if (nodes != null) {
+					arithmetic.addChild(nodes);
+					setParentSBMLObject(nodes, ast[0].getParentSBMLObject());
+				}
+			}
+			return arithmetic;
+		} else
+			throw new RuntimeException(
+					new IllegalArgumentException(
+							"The operator must be one of the following constants: AST_PLUS, AST_MINUS, AST_TIMES, AST_DIVIDE, or AST_POWER."));
+	}
+
+	/**
 	 * Creates a new ASTNode of type MINUS and adds the given nodes as children
 	 * 
 	 * @param parent
@@ -43,16 +89,7 @@ public class ASTNode {
 	 * @return
 	 */
 	public static ASTNode diff(ASTNode... ast) {
-		if (ast.length == 0)
-			return null;
-		if (ast.length == 1)
-			return ast[0].clone();
-		ASTNode minus = new ASTNode(Constants.AST_MINUS, ast[0]
-				.getParentSBMLObject());
-		for (ASTNode nodes : ast)
-			minus.addChild(nodes);
-		setParentSBMLObject(minus, ast[0].getParentSBMLObject());
-		return minus;
+		return arithmethicOperation(Constants.AST_MINUS, ast);
 	}
 
 	/**
@@ -63,8 +100,8 @@ public class ASTNode {
 	 * @return
 	 */
 	public static ASTNode frac(ASTNode numerator, ASTNode denominator) {
+		setParentSBMLObject(denominator, numerator.getParentSBMLObject());
 		numerator.divideBy(denominator);
-		setParentSBMLObject(numerator, numerator.getParentSBMLObject());
 		return numerator;
 	}
 
@@ -85,7 +122,12 @@ public class ASTNode {
 	 * @return
 	 */
 	public static ASTNode pow(ASTNode basis, ASTNode exponent) {
-		basis.raiseByThePowerOf(exponent);
+		if (!(exponent.isInteger() && exponent.getInteger() == 1)
+				&& !(exponent.getType() == Constants.AST_REAL && exponent
+						.getReal() == 1d)) {
+			setParentSBMLObject(exponent, basis.getParentSBMLObject());
+			basis.raiseByThePowerOf(exponent);
+		}
 		return basis;
 	}
 
@@ -100,7 +142,20 @@ public class ASTNode {
 				.getParentSBMLObject());
 		root.addChild(radicant);
 		root.addChild(rootExponent);
+		setParentSBMLObject(rootExponent, radicant.getParentSBMLObject());
 		return root;
+	}
+
+	/**
+	 * set the Parent of the node and its children to the given value
+	 * 
+	 * @param node
+	 * @param parent
+	 */
+	private static void setParentSBMLObject(ASTNode node, MathContainer parent) {
+		node.parentSBMLObject = parent;
+		for (ASTNode nodes : node.listOfNodes)
+			setParentSBMLObject(nodes, parent);
 	}
 
 	/**
@@ -120,16 +175,7 @@ public class ASTNode {
 	 * @return
 	 */
 	public static ASTNode sum(ASTNode... ast) {
-		if (ast.length == 0)
-			return null;
-		if (ast.length == 1)
-			return ast[0].clone();
-		ASTNode sum = new ASTNode(Constants.AST_PLUS, ast[0]
-				.getParentSBMLObject());
-		for (ASTNode node : ast)
-			sum.addChild(node);
-		setParentSBMLObject(sum, ast[0].getParentSBMLObject());
-		return sum;
+		return arithmethicOperation(Constants.AST_PLUS, ast);
 	}
 
 	/**
@@ -139,41 +185,23 @@ public class ASTNode {
 	 * @return
 	 */
 	public static ASTNode times(ASTNode... ast) {
-		if (ast.length == 0)
-			return null;
-		if (ast.length == 1)
-			return ast[0].clone();
-		ASTNode times = new ASTNode(Constants.AST_TIMES,
-				ast[0].parentSBMLObject);
-		for (ASTNode nodes : ast)
-			times.addChild(nodes);
-		setParentSBMLObject(times, ast[0].parentSBMLObject);
-		return times;
+		System.out.println(arithmethicOperation(Constants.AST_TIMES, ast)
+				.toLaTeX());
+		return arithmethicOperation(Constants.AST_TIMES, ast);
 	}
-	
+
 	/**
 	 * Multiplication of several NamedSBase objects.
+	 * 
 	 * @param parent
 	 * @param sbase
 	 * @return
 	 */
 	public static ASTNode times(MathContainer parent, NamedSBase... sbase) {
 		ASTNode elements[] = new ASTNode[sbase.length];
-		for (int i=0; i<sbase.length; i++)
+		for (int i = 0; i < sbase.length; i++)
 			elements[i] = new ASTNode(sbase[i], parent);
 		return times(elements);
-	}
-
-	/**
-	 * set the Parent of the node and its children to the given value
-	 * 
-	 * @param node
-	 * @param parent
-	 */
-	private static void setParentSBMLObject(ASTNode node, MathContainer parent) {
-		node.parentSBMLObject = parent;
-		for (ASTNode nodes : node.listOfNodes)
-			setParentSBMLObject(nodes, parent);
 	}
 
 	/**
@@ -230,6 +258,7 @@ public class ASTNode {
 		this.exponent = astNode.exponent;
 		this.mantissa = astNode.mantissa;
 		this.name = astNode.name == null ? null : new String(astNode.name);
+		this.variable = astNode.variable;
 		this.numerator = astNode.numerator;
 		this.printNameIfAvailable = astNode.printNameIfAvailable;
 		for (ASTNode child : astNode.listOfNodes)
@@ -290,6 +319,16 @@ public class ASTNode {
 
 	/**
 	 * 
+	 * @param nsb
+	 * @param parent
+	 */
+	public ASTNode(NamedSBase nsb, MathContainer parent) {
+		this(Constants.AST_NAME, parent);
+		setVariable(nsb);
+	}
+
+	/**
+	 * 
 	 * @param name
 	 * @param parent
 	 */
@@ -301,20 +340,48 @@ public class ASTNode {
 
 	/**
 	 * 
-	 * @param nsb
-	 * @param parent
-	 */
-	public ASTNode(NamedSBase nsb, MathContainer parent) {
-		this(Constants.AST_NAME, parent);
-		setVariable(nsb);
-	}
-
-	/**
-	 * 
 	 * @param child
 	 */
 	public void addChild(ASTNode child) {
 		listOfNodes.add(child);
+	}
+
+	/**
+	 * Creates a new node with the type of this node, moves all children of this
+	 * node to this new node, sets the type of this node to the given operator,
+	 * adds the new node as left child of this node and the given astnode as the
+	 * right child of this node. The parentSBMLObject of the whole resulting
+	 * ASTNode is then set to the parent of this node.
+	 * 
+	 * @param operator
+	 *            The new type of this node. This has to be one of the
+	 *            following: AST_PLUS, AST_MINUS, AST_TIMES, AST_DIVIDE, or
+	 *            AST_POWER. Otherwise a runtime error is thrown.
+	 * @param astnode
+	 *            The new right child of this node
+	 */
+	private void arithmeticOperation(Constants operator, ASTNode astnode) {
+		if (operator == Constants.AST_PLUS || operator == Constants.AST_MINUS
+				|| operator == Constants.AST_TIMES
+				|| operator == Constants.AST_DIVIDE
+				|| operator == Constants.AST_POWER) {
+			ASTNode swap = new ASTNode(type, getParentSBMLObject());
+			swap.denominator = denominator;
+			swap.exponent = exponent;
+			swap.mantissa = mantissa;
+			swap.name = name;
+			swap.numerator = numerator;
+			swap.printNameIfAvailable = printNameIfAvailable;
+			swap.variable = variable;
+			swapChildren(swap);
+			setType(operator);
+			addChild(swap);
+			addChild(astnode);
+			setParentSBMLObject(astnode, getParentSBMLObject());
+		} else
+			throw new RuntimeException(
+					new IllegalArgumentException(
+							"The operator must be one of the following constants: AST_PLUS, AST_MINUS, AST_TIMES, AST_DIVIDE, or AST_POWER."));
 	}
 
 	/*
@@ -390,7 +457,7 @@ public class ASTNode {
 			default:
 				break;
 			}
-		throw new RuntimeException(new IllegalAccessException(
+		throw new RuntimeException(new IllegalArgumentException(
 				"getCharacter() should be called only when isOperator()."));
 	}
 
@@ -417,7 +484,7 @@ public class ASTNode {
 		if (isRational())
 			return denominator;
 		throw new RuntimeException(
-				new IllegalAccessException(
+				new IllegalArgumentException(
 						"getDenominator() should be called only when getType() == AST_RATIONAL."));
 	}
 
@@ -431,7 +498,7 @@ public class ASTNode {
 		if (type == Constants.AST_REAL || type == Constants.AST_REAL_E)
 			return exponent;
 		throw new RuntimeException(
-				new IllegalAccessException(
+				new IllegalArgumentException(
 						"getExponent() should be called only when getType() == AST_REAL_E or AST_REAL"));
 	}
 
@@ -445,7 +512,7 @@ public class ASTNode {
 		if (isInteger())
 			return numerator;
 		throw new RuntimeException(
-				new IllegalAccessException(
+				new IllegalArgumentException(
 						"getInteger() should be called only when getType() == AST_INTEGER"));
 	}
 
@@ -482,7 +549,7 @@ public class ASTNode {
 			return mantissa;
 		default:
 			throw new RuntimeException(
-					new IllegalAccessException(
+					new IllegalArgumentException(
 							"getMantissa() should be called only when getType() == AST_REAL or AST_REAL_E"));
 		}
 	}
@@ -498,8 +565,37 @@ public class ASTNode {
 		if (!isOperator() && !isNumber())
 			return variable == null ? name : variable.getId();
 		throw new RuntimeException(
-				new IllegalAccessException(
+				new IllegalArgumentException(
 						"getName() should be called only when !isNumber() || !isOperator()"));
+	}
+
+	/**
+	 * If the field printNameIfAvailable is false this method returns a the id
+	 * of the given SBase. If printNameIfAvailable is true this method looks for
+	 * the name of the given SBase and will return it.
+	 * 
+	 * @param sbase
+	 *            the SBase, whose name or id is to be returned.
+	 * @param mathMode
+	 *            if true this method returns the name typesetted in mathmode,
+	 *            i.e., mathrm for names and mathtt for ids, otherwise texttt
+	 *            will be used for ids and normalfont (nothing) will be used for
+	 *            names.
+	 * @return The name or the ID of the SBase (according to the field
+	 *         printNameIfAvailable), whose LaTeX special symbols are masked and
+	 *         which is type set in typewriter font if it is an id. The mathmode
+	 *         argument decides if mathtt or mathrm has to be used.
+	 */
+	private StringBuffer getNameOrID(NamedSBase sbase) {
+		String name = "";
+		if (sbase.isSetName() && printNameIfAvailable)
+			name = sbase.getName();
+		else if (sbase.isSetId())
+			name = sbase.getId();
+		else
+			name = "Undefinded";
+		name = LaTeX.maskSpecialChars(name);
+		return printNameIfAvailable ? LaTeX.mathrm(name) : LaTeX.mathtt(name);
 	}
 
 	/**
@@ -522,7 +618,7 @@ public class ASTNode {
 	public int getNumerator() {
 		if (isRational())
 			return numerator;
-		throw new RuntimeException(new IllegalAccessException(
+		throw new RuntimeException(new IllegalArgumentException(
 				"getNumerator() should be called only when isRational()"));
 	}
 
@@ -565,12 +661,37 @@ public class ASTNode {
 				break;
 			}
 		}
-		throw new RuntimeException(new IllegalAccessException(
+		throw new RuntimeException(new IllegalArgumentException(
 				"getReal() should be called only when isReal()"));
 	}
 
 	public ASTNode getRightChild() {
 		return listOfNodes.getLast();
+	}
+
+	/**
+	 * This method returns the correct LaTeX expression for a function which
+	 * returns the size of a compartment. This can be a volume, an area, a
+	 * length or a point.
+	 */
+	private StringBuffer getSize(Compartment c) {
+		StringBuffer value = new StringBuffer();
+		switch ((int) c.getSpatialDimensions()) {
+		case 3:
+			value.append("vol");
+			break;
+		case 2:
+			value.append("area");
+			break;
+		case 1:
+			value.append("length");
+			break;
+		default:
+			value.append("point");
+			break;
+		}
+		return LaTeX.mathrm(value.toString()).append(
+				LaTeX.brackets(getNameOrID(c)));
 	}
 
 	public Constants getType() {
@@ -581,8 +702,53 @@ public class ASTNode {
 		if (isName())
 			return variable;
 		throw new RuntimeException(
-				new IllegalAccessException(
+				new IllegalArgumentException(
 						"getVariable() should be called only when !isNumber() || !isOperator()"));
+	}
+
+	/**
+	 * try to figure out the meaning of this name.
+	 * 
+	 * @param id
+	 *            an id indicating a variable of the model.
+	 * @return null if no model is available or the model does not contain a
+	 *         compartment, species, or parameter wit the given id.
+	 */
+	private NamedSBase identifyVariable(String id) {
+		NamedSBase variable = null;
+		if (parentSBMLObject != null && parentSBMLObject.getModel() != null) {
+			Model m = parentSBMLObject.getModel();
+			variable = m.getCompartment(id);
+			if (variable == null)
+				variable = m.getSpecies(id);
+			if (variable == null)
+				variable = m.getParameter(id);
+			if (variable == null)
+				variable = m.getReaction(id);
+			/*
+			 * if (variable == null) variable = m.getFunctionDefinition(id);
+			 */
+			// check all local parameters
+			if (variable == null)
+				for (Reaction r : m.getListOfReactions()) {
+					if (r.isSetKineticLaw())
+						variable = r.getKineticLaw().getParameter(id);
+					if (variable != null)
+						break;
+				}
+		}
+		return variable;
+	}
+
+	private void initDefaults() {
+		type = Constants.AST_UNKNOWN;
+		if (listOfNodes == null)
+			listOfNodes = new LinkedList<ASTNode>();
+		else
+			listOfNodes.clear();
+		variable = null;
+		mantissa = Double.NaN;
+		printNameIfAvailable = false;
 	}
 
 	/**
@@ -847,6 +1013,52 @@ public class ASTNode {
 	}
 
 	/**
+	 * This method decides if brakets are to be set. The symbol is a
+	 * mathematical operator, e.g., plus, minus, multiplication etc. in LaTeX
+	 * syntax (for instance
+	 * 
+	 * <pre>
+	 * \cdot
+	 * </pre>
+	 * 
+	 * ). It simply counts the number of descendants on the left and the right
+	 * hand side of the symbol.
+	 * 
+	 * @param astnode
+	 * @param model
+	 * @param symbol
+	 * @return
+	 * @throws IOException
+	 */
+	private StringBuffer logicalOperation() {
+		StringBuffer value = new StringBuffer();
+		if (1 < getLeftChild().getNumChildren())
+			value.append(LaTeX.leftBrace);
+		value.append(getLeftChild().toLaTeX());
+		if (1 < getLeftChild().getNumChildren())
+			value.append(LaTeX.rightBrace);
+		switch (type) {
+		case AST_LOGICAL_AND:
+			value.append(LaTeX.wedge);
+			break;
+		case AST_LOGICAL_XOR:
+			value.append(LaTeX.xor);
+			break;
+		case AST_LOGICAL_OR:
+			value.append(LaTeX.or);
+			break;
+		default:
+			break;
+		}
+		if (1 < getRightChild().getNumChildren())
+			value.append(LaTeX.leftBrace);
+		value.append(getRightChild().toLaTeX());
+		if (1 < getRightChild().getNumChildren())
+			value.append(LaTeX.rightBrace);
+		return value;
+	}
+
+	/**
 	 * subtracts the given ASTNode from this node
 	 * 
 	 * @param ast
@@ -864,7 +1076,7 @@ public class ASTNode {
 	public void multiplyWith(ASTNode ast) {
 		arithmeticOperation(Constants.AST_TIMES, ast);
 	}
-	
+
 	public void multiplyWith(ASTNode... nodes) {
 		for (ASTNode node : nodes)
 			multiplyWith(node);
@@ -897,13 +1109,16 @@ public class ASTNode {
 	public void raiseByThePowerOf(ASTNode exponent) {
 		arithmeticOperation(Constants.AST_POWER, exponent);
 	}
-	
+
 	/**
 	 * 
 	 * @param exponent
 	 */
 	public void raiseByThePowerOf(double exponent) {
-		raiseByThePowerOf(new ASTNode(exponent, getParentSBMLObject()));
+		if (exponent == 0d)
+			setValue(1);
+		else if (exponent != 1d)
+			raiseByThePowerOf(new ASTNode(exponent, getParentSBMLObject()));
 	}
 
 	/**
@@ -962,6 +1177,24 @@ public class ASTNode {
 		// recursively restructure this tree.
 		for (ASTNode child : listOfNodes)
 			child.reduceToBinary();
+	}
+
+	/**
+	 * Returns true if this astnode or one of its descendents contains some
+	 * identifier with the given id. This method can be used to scan a formula
+	 * and for a specific parameter or species and detect weather this component
+	 * is used by this formula. This search is done using a DFS.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public boolean refersTo(String id) {
+		if (isName() && getName().equals(id))
+			return true;
+		boolean childContains = false;
+		for (ASTNode child : listOfNodes)
+			childContains |= child.refersTo(id);
+		return childContains;
 	}
 
 	/**
@@ -1707,181 +1940,5 @@ public class ASTNode {
 	public String toString() {
 		// TODO
 		return "";
-	}
-
-	/**
-	 * Creates a new node with the type of this node, moves all children of this
-	 * node to this new node, sets the type of this node to the given operator,
-	 * adds the new node as left child of this node and the given astnode as the
-	 * right child of this node. The parentSBMLObject of the whole resulting
-	 * ASTNode is then set to the parent of this node.
-	 * 
-	 * @param operator
-	 *            The new type of this node. This has to be one of the
-	 *            following: AST_PLUS, AST_MINUS, AST_TIMES, AST_DIVIDE, or
-	 *            AST_POWER. Otherwise a runtime error is thrown.
-	 * @param astnode
-	 *            The new right child of this node
-	 */
-	private void arithmeticOperation(Constants operator, ASTNode astnode) {
-		if (operator == Constants.AST_PLUS || operator == Constants.AST_MINUS
-				|| operator == Constants.AST_TIMES
-				|| operator == Constants.AST_DIVIDE
-				|| operator == Constants.AST_POWER) {
-			ASTNode swap = new ASTNode(type, getParentSBMLObject());
-			swapChildren(swap);
-			setType(operator);
-			addChild(swap);
-			addChild(astnode);
-			setParentSBMLObject(astnode, getParentSBMLObject());
-		} else
-			throw new RuntimeException(
-					new IllegalAccessException(
-							"The operator must be one of the following constants: AST_PLUS, AST_MINUS, AST_TIMES, AST_DIVIDE, or AST_POWER."));
-	}
-
-	/**
-	 * If the field printNameIfAvailable is false this method returns a the id
-	 * of the given SBase. If printNameIfAvailable is true this method looks for
-	 * the name of the given SBase and will return it.
-	 * 
-	 * @param sbase
-	 *            the SBase, whose name or id is to be returned.
-	 * @param mathMode
-	 *            if true this method returns the name typesetted in mathmode,
-	 *            i.e., mathrm for names and mathtt for ids, otherwise texttt
-	 *            will be used for ids and normalfont (nothing) will be used for
-	 *            names.
-	 * @return The name or the ID of the SBase (according to the field
-	 *         printNameIfAvailable), whose LaTeX special symbols are masked and
-	 *         which is type set in typewriter font if it is an id. The mathmode
-	 *         argument decides if mathtt or mathrm has to be used.
-	 */
-	private StringBuffer getNameOrID(NamedSBase sbase) {
-		String name = "";
-		if (sbase.isSetName() && printNameIfAvailable)
-			name = sbase.getName();
-		else if (sbase.isSetId())
-			name = sbase.getId();
-		else
-			name = "Undefinded";
-		name = LaTeX.maskSpecialChars(name);
-		return printNameIfAvailable ? LaTeX.mathrm(name) : LaTeX.mathtt(name);
-	}
-
-	/**
-	 * This method returns the correct LaTeX expression for a function which
-	 * returns the size of a compartment. This can be a volume, an area, a
-	 * length or a point.
-	 */
-	private StringBuffer getSize(Compartment c) {
-		StringBuffer value = new StringBuffer();
-		switch ((int) c.getSpatialDimensions()) {
-		case 3:
-			value.append("vol");
-			break;
-		case 2:
-			value.append("area");
-			break;
-		case 1:
-			value.append("length");
-			break;
-		default:
-			value.append("point");
-			break;
-		}
-		return LaTeX.mathrm(value.toString()).append(
-				LaTeX.brackets(getNameOrID(c)));
-	}
-
-	/**
-	 * try to figure out the meaning of this name.
-	 * 
-	 * @param id
-	 *            an id indicating a variable of the model.
-	 * @return null if no model is available or the model does not contain a
-	 *         compartment, species, or parameter wit the given id.
-	 */
-	private NamedSBase identifyVariable(String id) {
-		NamedSBase variable = null;
-		if (parentSBMLObject != null && parentSBMLObject.getModel() != null) {
-			Model m = parentSBMLObject.getModel();
-			variable = m.getCompartment(id);
-			if (variable == null)
-				variable = m.getSpecies(id);
-			if (variable == null)
-				variable = m.getParameter(id);
-			if (variable == null)
-				variable = m.getReaction(id);
-			/*
-			 * if (variable == null) variable = m.getFunctionDefinition(id);
-			 */
-			// check all local parameters
-			if (variable == null)
-				for (Reaction r : m.getListOfReactions()) {
-					if (r.isSetKineticLaw())
-						variable = r.getKineticLaw().getParameter(id);
-					if (variable != null)
-						break;
-				}
-		}
-		return variable;
-	}
-
-	private void initDefaults() {
-		type = Constants.AST_UNKNOWN;
-		if (listOfNodes == null)
-			listOfNodes = new LinkedList<ASTNode>();
-		else
-			listOfNodes.clear();
-		variable = null;
-		mantissa = Double.NaN;
-		printNameIfAvailable = false;
-	}
-
-	/**
-	 * This method decides if brakets are to be set. The symbol is a
-	 * mathematical operator, e.g., plus, minus, multiplication etc. in LaTeX
-	 * syntax (for instance
-	 * 
-	 * <pre>
-	 * \cdot
-	 * </pre>
-	 * 
-	 * ). It simply counts the number of descendants on the left and the right
-	 * hand side of the symbol.
-	 * 
-	 * @param astnode
-	 * @param model
-	 * @param symbol
-	 * @return
-	 * @throws IOException
-	 */
-	private StringBuffer logicalOperation() {
-		StringBuffer value = new StringBuffer();
-		if (1 < getLeftChild().getNumChildren())
-			value.append(LaTeX.leftBrace);
-		value.append(getLeftChild().toLaTeX());
-		if (1 < getLeftChild().getNumChildren())
-			value.append(LaTeX.rightBrace);
-		switch (type) {
-		case AST_LOGICAL_AND:
-			value.append(LaTeX.wedge);
-			break;
-		case AST_LOGICAL_XOR:
-			value.append(LaTeX.xor);
-			break;
-		case AST_LOGICAL_OR:
-			value.append(LaTeX.or);
-			break;
-		default:
-			break;
-		}
-		if (1 < getRightChild().getNumChildren())
-			value.append(LaTeX.leftBrace);
-		value.append(getRightChild().toLaTeX());
-		if (1 < getRightChild().getNumChildren())
-			value.append(LaTeX.rightBrace);
-		return value;
 	}
 }

@@ -38,10 +38,10 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 	/**
 	 * 
 	 * @author andreas
-	 *
+	 * 
 	 * @param <E>
 	 */
-	private static class Entry<E> {
+	private static class Entry<E extends SBase> {
 		E element;
 		Entry<E> next;
 		Entry<E> previous;
@@ -56,7 +56,7 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 	/**
 	 * 
 	 * @author andreas
-	 *
+	 * 
 	 */
 	private class ListItr implements ListIterator<E> {
 		private Entry<E> lastReturned = header;
@@ -86,8 +86,17 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			checkForComodification();
 			lastReturned = header;
 			addBefore(e, next);
+			e.sbaseAdded();
 			nextIndex++;
 			expectedModCount++;
+		}
+
+		/**
+		 * 
+		 */
+		final void checkForComodification() {
+			if (modCount != expectedModCount)
+				throw new ConcurrentModificationException();
 		}
 
 		/**
@@ -153,6 +162,7 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 			Entry<E> lastNext = lastReturned.next;
 			try {
 				ListOf.this.remove(lastReturned);
+				lastReturned.element.sbaseRemoved();
 			} catch (NoSuchElementException e) {
 				throw new IllegalStateException();
 			}
@@ -172,14 +182,7 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 				throw new IllegalStateException();
 			checkForComodification();
 			lastReturned.element = e;
-		}
-
-		/**
-		 * 
-		 */
-		final void checkForComodification() {
-			if (modCount != expectedModCount)
-				throw new ConcurrentModificationException();
+			lastReturned.element.stateChanged();
 		}
 	}
 
@@ -187,36 +190,71 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 	 * 
 	 */
 	private static final long serialVersionUID = -5588467260915307797L;
+	/**
+	 * 
+	 */
 	private Entry<E> header = new Entry<E>(null, null, null);
+	/**
+	 * 
+	 */
 	private int size;
-
+	/**
+	 * 
+	 */
 	private int modCount;
 
+	/**
+	 * 
+	 */
 	public ListOf() {
 		super();
 		header.next = header.previous = header; // null
 		size = modCount = 0;
 	}
 
-	public ListOf(ListOf<E> listOf) {
+	/**
+	 * 
+	 * @param listOf
+	 */
+	public ListOf(ListOf<? extends E> listOf) {
 		this();
 		addAll(listOf);
 		parentSBMLObject = listOf.getParentSBMLObject();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#add(java.lang.Object)
+	 */
 	public boolean add(E e) {
 		addBefore(e, header);
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#add(int, java.lang.Object)
+	 */
 	public void add(int index, E element) {
 		addBefore(element, (index == size ? header : entry(index)));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#addAll(java.util.Collection)
+	 */
 	public boolean addAll(Collection<? extends E> c) {
 		return addAll(size, c);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#addAll(int, java.util.Collection)
+	 */
 	public boolean addAll(int index, Collection<? extends E> c) {
 		if (index < 0 || index > size)
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
@@ -230,6 +268,7 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		Entry<E> predecessor = successor.previous;
 		for (E e : c) {
 			Entry<E> entry = new Entry<E>(e, successor, predecessor);
+			e.sbaseAdded();
 			predecessor.next = entry;
 			predecessor = entry;
 		}
@@ -239,8 +278,28 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return true;
 	}
 
+	/**
+	 * 
+	 * @param e
+	 * @param entry
+	 */
+	private void addBefore(E e, Entry<E> entry) {
+		Entry<E> newEntry = new Entry<E>(e, entry, entry.previous);
+		e.sbaseAdded();
+		newEntry.previous.next = newEntry;
+		newEntry.next.previous = newEntry;
+		size++;
+		modCount++;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#clear()
+	 */
 	public void clear() {
 		Entry<E> e = header.next;
+		e.element.sbaseRemoved();
 		while (e != header) {
 			Entry<E> next = e.next;
 			e.next = e.previous = null;
@@ -252,15 +311,30 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		modCount++;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#clone()
+	 */
 	// @Override
 	public ListOf<E> clone() {
 		return new ListOf<E>(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#contains(java.lang.Object)
+	 */
 	public boolean contains(Object o) {
 		return indexOf(o) != -1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.List#containsAll(java.util.Collection)
+	 */
 	public boolean containsAll(Collection<?> c) {
 		boolean contains = true;
 		for (Object o : c)
@@ -268,20 +342,52 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return contains;
 	}
 
-	// @Override
-	public boolean equals(Object o) {
-		if (o instanceof List) {
-			List<?> l = (List<?>) o;
-			if (l.containsAll(this) && size == l.size())
-				return true;
+	/**
+	 * Returns the indexed entry.
+	 */
+	private Entry<E> entry(int index) {
+		if (index < 0 || index >= size)
+			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
+					+ size);
+		Entry<E> e = header;
+		if (index < (size >> 1)) {
+			for (int i = 0; i <= index; i++)
+				e = e.next;
+		} else {
+			for (int i = size; i > index; i--)
+				e = e.previous;
 		}
-		return false;
+		return e;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 */
+	// @Override
+	public boolean equals(Object o) {
+		boolean equal = super.equals(o);
+		if (o instanceof List) {
+			List<?> l = (List<?>) o;
+			equal &= l.containsAll(this) && size == l.size();
+		} else
+			equal = false;
+		return equal;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#get(int)
+	 */
 	public E get(int index) {
 		return entry(index).element;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#indexOf(java.lang.Object)
+	 */
 	public int indexOf(Object o) {
 		int index = 0;
 		if (o == null) {
@@ -300,14 +406,26 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return -1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#isEmpty()
+	 */
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#iterator()
+	 */
 	public Iterator<E> iterator() {
 		return new ListItr(0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#lastIndexOf(java.lang.Object)
+	 */
 	public int lastIndexOf(Object o) {
 		int index = size;
 		if (o == null) {
@@ -326,20 +444,37 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return -1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#listIterator()
+	 */
 	public ListIterator<E> listIterator() {
 		return new ListItr(0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#listIterator(int)
+	 */
 	public ListIterator<E> listIterator(int index) {
 		return new ListItr(index);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#remove(int)
+	 */
 	public E remove(int index) {
 		Entry<E> e = entry(index);
 		remove(e);
+		e.element.sbaseRemoved();
 		return e.element;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#remove(java.lang.Object)
+	 */
 	public boolean remove(Object o) {
 		if (o == null) {
 			for (Entry<E> e = header.next; e != header; e = e.next) {
@@ -359,13 +494,21 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#removeAll(java.util.Collection)
+	 */
 	public boolean removeAll(Collection<?> c) {
 		boolean removed = true;
 		for (Object o : c)
-			removed = removed && remove(o);
+			removed &= remove(o);
 		return removed;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#retainAll(java.util.Collection)
+	 */
 	public boolean retainAll(Collection<?> c) {
 		for (E e : this)
 			if (!c.contains(e))
@@ -373,17 +516,30 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#set(int, java.lang.Object)
+	 */
 	public E set(int index, E element) {
 		Entry<E> e = entry(index);
 		E oldVal = e.element;
 		e.element = element;
+		e.element.stateChanged();
 		return oldVal;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#size()
+	 */
 	public int size() {
 		return size;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#subList(int, int)
+	 */
 	public List<E> subList(int fromIndex, int toIndex) {
 		ListOf<E> l = new ListOf<E>();
 		for (int i = fromIndex; i < toIndex; i++)
@@ -391,6 +547,10 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return l;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#toArray()
+	 */
 	public Object[] toArray() {
 		Object a[] = new Object[size];
 		int i = 0;
@@ -399,6 +559,10 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		return a;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.List#toArray(T[])
+	 */
 	public <T> T[] toArray(T[] a) {
 		if (a.length < size)
 			a = (T[]) java.lang.reflect.Array.newInstance(a.getClass()
@@ -432,31 +596,5 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 		}
 		string.append(']');
 		return string.toString();
-	}
-
-	private void addBefore(E e, Entry<E> entry) {
-		Entry<E> newEntry = new Entry<E>(e, entry, entry.previous);
-		newEntry.previous.next = newEntry;
-		newEntry.next.previous = newEntry;
-		size++;
-		modCount++;
-	}
-
-	/**
-	 * Returns the indexed entry.
-	 */
-	private Entry<E> entry(int index) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
-					+ size);
-		Entry<E> e = header;
-		if (index < (size >> 1)) {
-			for (int i = 0; i <= index; i++)
-				e = e.next;
-		} else {
-			for (int i = size; i > index; i--)
-				e = e.previous;
-		}
-		return e;
 	}
 }

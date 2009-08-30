@@ -269,9 +269,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					StringBuffer kAn = concat("kA_", getParentSBMLObject()
-							.getId(), underscore, modifiers.get(i));
-					Parameter p_kAn = new Parameter(kAn.toString());
+					Parameter p_kAn = new Parameter(concat("kA_",
+							getParentSBMLObject().getId(), underscore,
+							modifiers.get(i)).toString());
 					addLocalParameter(p_kAn);
 					ASTNode kA = new ASTNode(p_kAn, this);
 					mods[i] = ASTNode
@@ -335,12 +335,18 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		Parameter p_kass = new Parameter(kass.toString());
 		addLocalParameter(p_kass);
 		ASTNode ass = new ASTNode(p_kass, this);
-		for (int reactants = 0; reactants < getParentSBMLObject()
-				.getNumReactants(); reactants++) {
-			SpeciesReference r = getParentSBMLObject().getReactant(reactants);
-			ass = ASTNode.times(ass, ASTNode.pow(new ASTNode(r
-					.getSpeciesInstance(), this), new ASTNode(r
-					.getStoichiometry(), this)));
+		System.out.println(ass.toLaTeX());
+		for (SpeciesReference reactant : getParentSBMLObject()
+				.getListOfReactants()) {
+			ASTNode basis = new ASTNode(reactant.getSpeciesInstance(), this);
+			if (reactant.isSetStoichiometryMath())
+				basis.raiseByThePowerOf(reactant.getStoichiometryMath()
+						.getMath().clone());
+			else
+				basis.raiseByThePowerOf(reactant.getStoichiometry());
+			System.out.println(basis.toLaTeX());
+			ass.multiplyWith(basis);
+			System.out.println(ass.toLaTeX());
 		}
 		return ass;
 	}
@@ -366,11 +372,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		for (int c = 0; c < rates.length; c++) {
 			rates[c] = association(catalysts, c);
 			if (reaction.getReversible())
-				rates[c] = ASTNode.diff(rates[c], dissociation(catalysts, c));
-			if (catalysts.size() > 0) {
-				rates[c] = ASTNode.times(new ASTNode(catalysts.get(c), this),
-						rates[c]);
-			}
+				rates[c].minus(dissociation(catalysts, c));
+			if (catalysts.size() > 0)
+				rates[c].multiplyWith(new ASTNode(catalysts.get(c), this));
 		}
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(rates));
@@ -394,9 +398,8 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		for (int products = 0; products < getParentSBMLObject()
 				.getNumProducts(); products++) {
 			SpeciesReference p = getParentSBMLObject().getProduct(products);
-			diss = ASTNode.times(diss, ASTNode.pow(new ASTNode(p
-					.getSpeciesInstance(), this), new ASTNode(p
-					.getStoichiometry(), this)));
+			diss.multiplyWith(ASTNode.pow(new ASTNode(p.getSpeciesInstance(),
+					this), new ASTNode(p.getStoichiometry(), this)));
 		}
 		return diss;
 	}

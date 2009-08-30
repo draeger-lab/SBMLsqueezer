@@ -35,7 +35,7 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	public static final short TeX_FILES = 1;
 
 	/**
-	 * To be selected if SBML files (XML files) can be choosen.
+	 * To be selected if SBML files (XML files) can be chosen.
 	 */
 	public static final short SBML_FILES = 2;
 

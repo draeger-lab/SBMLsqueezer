@@ -1,3 +1,21 @@
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sbml.squeezer.io;
 
 import java.io.BufferedWriter;
@@ -6,7 +24,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import org.sbml.squeezer.kinetics.KineticLawGenerator;
+import org.sbml.Model;
+import org.sbml.Reaction;
+import org.sbml.Species;
+import org.sbml.SpeciesReference;
 
 /**
  * This class writes the differential equations given by the {@see
@@ -41,103 +62,15 @@ public class ODEwriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	public ODEwriter(File file, KineticLawGenerator klg) throws IOException {
-		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
-		SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-		if (ff1.accept(file) || ff2.accept(file)) {
-			if (file.getPath().toLowerCase().endsWith(".txt")) {
-				writeTextFile(file, klg);
-			} else if (file.getPath().toLowerCase().toLowerCase().endsWith(
-					".tex")) {
-				writeLaTeXFile(file, klg);
-			}
-		}
-	}
-
-	/**
-	 * This method writes the ordinary differential equation system given by the
-	 * {@see KineticLawGenerator} into a LaTeX file for further processing. Note
-	 * that the file extension does not matter.
-	 * 
-	 * @param file
-	 * @param klg
-	 * @throws IOException
-	 * @deprecated Use LaTeXExport.
-	 */
-	@Deprecated
-	public final void writeLaTeXFile(File file, KineticLawGenerator klg)
-			throws IOException {
-		int i;
-		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-				new FileOutputStream(file.getPath())));
-		append("\\documentclass[11pt,a4paper]{scrartcl}", out);
-		append("\\usepackage[scaled=.9]{helvet}", out);
-		append("\\usepackage{courier}", out);
-		append("\\usepackage{times}", out);
-		append("\\usepackage{a4wide}", out);
-		append("\\usepackage[english]{babel}", out);
-		append("\\usepackage{amsmath}", out);
-		String title = "\\title{\\textsc{SBMLsqueezer}: Ordinary Differential Equation System ``";
-		title += klg.getModel().getName().length() > 0 ? klg.getModel()
-				.getName().replaceAll("_", " ") : klg.getModel().getId()
-				.replaceAll("_", " ");
-		append(title + "\"}", out);
-		append(
-				"\\author{Andreas Dr{\\\"a}ger\\and Nadine Hassis\\and Jochen Supper\\and Adrian Schr{\\\"o}der\\and Andreas Zell}",
-				out);
-		append("\\date{\\today}", out);
-		append("\\begin{document}", out);
-		append("\\maketitle", out);
-		append(System.getProperty("line.separator"), out);
-		// append("\\tableofcontents");
-		append("\\section{Rate Laws}", out);
-
-		for (i = 0; i < klg.getKineticLawsAsTeX().length; i++) {
-			String toWriteKinetic = "v_{" + (i + 1) + "} = "
-					+ klg.getKineticLawsAsTeX()[i];
-			String toWriteReaction = "Reaction: \\texttt{"
-					+ klg.getModel().getReaction(i).getId() + "}, "
-					+ klg.getKineticLawNames()[i];
-
-			append("\\subsection{" + toWriteReaction + "}", out);
-			if (toWriteKinetic.endsWith("\\end{multline}")) {
-				append("\\begin{multline}", out);
-				append(toWriteKinetic, out);
-			} else {
-				append("\\begin{equation}", out);
-				append(toWriteKinetic, out);
-				append("\\end{equation}", out);
-			}
-		}
-
-		append("\\section{Equations}", out);
-		append("\\begin{description}", out);
-
-		for (i = 0; i < klg.getModel().getNumSpecies(); i++) {
-			String toWriteSpecies = "Species: \\texttt{"
-					+ klg.getModel().getSpecies(i).getName().replaceAll("_",
-							"\\_") + "} (\\texttt{"
-					+ klg.getAllSpeciesNumAndIDs().get(i) + "})";
-			String toWriteODE = "\\frac{\\mathrm d ["
-					+ klg.getAllSpeciesNumAndIDs().get(i)
-					+ "]}{\\mathrm d t} = "
-					+ klg.getSpeciesAndSimpleODETeX().get(
-							klg.getAllSpeciesNumAndIDs().get(i));
-
-			append("\\item[" + toWriteSpecies + "]", out);
-			append("\\begin{equation}", out);
-			append(toWriteODE, out);
-			append("\\end{equation}", out);
-		}
-
-		append("\\end{description}", out);
-		append("\\newline",out);
-		append("For a more comprehensive \\LaTeX{} export, see", out);
-		append("\\begin{center}", out);
-		append("http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX", out);
-		append("\\end{center}", out);
-		append("\\end{document}", out);
-		out.close();
+	public ODEwriter(Model model, File file) throws IOException {
+		if ((new SBFileFilter(SBFileFilter.TEXT_FILES)).accept(file)) {
+			writeTextFile(model, file);
+		} else if ((new SBFileFilter(SBFileFilter.TeX_FILES)).accept(file)) {
+			LaTeXExport export = new LaTeXExport();
+			export.toLaTeX(model, file);
+		} else
+			throw new IllegalArgumentException("file type of " + file.getName()
+					+ " not supported.");
 	}
 
 	/**
@@ -149,33 +82,81 @@ public class ODEwriter {
 	 * @param klg
 	 * @throws IOException
 	 */
-	public final void writeTextFile(File file, KineticLawGenerator klg)
-			throws IOException {
+	public final void writeTextFile(Model model, File file) throws IOException {
 		int i;
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(file.getPath())));
 		append("SBMLsqueezer generated and transfered values", out);
 		append("--------------------------------------------", out);
-
-		for (i = 0; i < klg.getReactionNumAndKineticLaw().size(); i++) {
-			String toWriteReaction = "Reaction: "
-					+ klg.getReactionNumAndId().get(i) + ", "
-					+ klg.getReactionNumAndKineticLaw().get(i).getName();
-			String toWrite = "Kinetic: v" + i + " = "
-					+ klg.getReactionNumAndKineticLaw().get(i).getFormula();
-			append(toWriteReaction, out);
-			append(toWrite, out);
-			append(" ", out);
+		for (i = 0; i < model.getNumReactions(); i++) {
+			Reaction r = model.getReaction(i);
+			out.append("Reaction: ");
+			out.append(r.getId());
+			if (r.isSetName()) {
+				out.append(", ");
+				out.append(r.getName());
+			}
+			out.newLine();
+			out.append("Kinetic: v_");
+			out.append(r.getId());
+			out.append(" = ");
+			if (r.isSetKineticLaw())
+				out.append(r.getKineticLaw().getMath().toString());
+			else
+				out.append("undefined");
+			out.newLine();
 		}
-		append(" ", out);
-		for (i = 0; i < klg.getAllSpeciesNumAndIDs().size(); i++) {
-			String toWrite = "Species: "
-					+ klg.getAllSpeciesNumAndIDs().get(i)
-					+ " ODE: d["
-					+ klg.getAllSpeciesNumAndIDs().get(i)
-					+ "]/dt = "
-					+ klg.getSpecieAndSimpleODE().get(
-							klg.getAllSpeciesNumAndIDs().get(i));
+		out.newLine();
+		for (i = 0; i < model.getNumSpecies(); i++) {
+			Species s = model.getSpecies(i);
+			StringBuffer ode = new StringBuffer();
+			for (Reaction r : model.getListOfReactions()) {
+				for (SpeciesReference reactant : r.getListOfReactants()) {
+					if (reactant.getSpecies().equals(s.getId())) {
+						ode.append('-');
+						if (reactant.isSetStoichiometryMath()) {
+							ode.append(reactant.getStoichiometryMath()
+									.getMath().toString());
+							ode.append(' ');
+						} else if (reactant.getStoichiometry() != 1d) {
+							String stoich = Double.toString(reactant
+									.getStoichiometry());
+							if (stoich.endsWith(".0"))
+								ode.append(stoich.substring(0,
+										stoich.length() - 2));
+							else
+								ode.append(stoich);
+							ode.append(' ');
+						}
+						ode.append("v_");
+						ode.append(r.getId());
+					}
+				}
+				for (SpeciesReference product : r.getListOfProducts()) {
+					if (product.getSpecies().equals(s.getId())) {
+						if (ode.length() > 0)
+							ode.append('+');
+						if (product.isSetStoichiometryMath()) {
+							ode.append(product.getStoichiometryMath().getMath()
+									.toString());
+							ode.append(' ');
+						} else if (product.getStoichiometry() != 1d) {
+							String stoich = Double.toString(product
+									.getStoichiometry());
+							if (stoich.endsWith(".0"))
+								ode.append(stoich.substring(0,
+										stoich.length() - 2));
+							else
+								ode.append(stoich);
+							ode.append(' ');
+						}
+						ode.append("v_");
+						ode.append(r.getId());
+					}
+				}
+			}
+			String toWrite = "Species: " + s.getId() + " ODE: d[" + s.getId()
+					+ "]/dt = " + ode.toString();
 			append(toWrite, out);
 			append(" ", out);
 		}

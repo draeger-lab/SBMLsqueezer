@@ -1,8 +1,8 @@
 TODO-Liste
 ==========
 
-Im Modell können auch lokale Parameter sein, die mit der Suchfunktion
-im Moment nicht gefunden werden.
+Modell mus aktualisiert werden, sodass der SBO-Ausdruck für enzymatische
+Katalyse neu gesetzt wird, sobald sich die liste möglicher Enzyme ändert.
 
 Fehler in Hill-Kinetik: Laut Paper von Hintze et al. wird bei Inhibition
 1 - Produkt über alle Inhibitionsfunktionen gerechnet. Bei uns ist es
