@@ -30,7 +30,7 @@ import org.sbml.SpeciesReference;
 /**
  * This class creates rate equations according to the generalized mass action
  * rate law. For details see Heinrich and Schuster,
- * "The regulation of Cellluar Systems", pp. 14-17, 1996.
+ * "The regulation of Cellular Systems", pp. 14-17, 1996.
  * 
  * @since 1.0
  * @version
@@ -335,7 +335,6 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		Parameter p_kass = new Parameter(kass.toString());
 		addLocalParameter(p_kass);
 		ASTNode ass = new ASTNode(p_kass, this);
-		System.out.println(ass.toLaTeX());
 		for (SpeciesReference reactant : getParentSBMLObject()
 				.getListOfReactants()) {
 			ASTNode basis = new ASTNode(reactant.getSpeciesInstance(), this);
@@ -344,9 +343,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 						.getMath().clone());
 			else
 				basis.raiseByThePowerOf(reactant.getStoichiometry());
-			System.out.println(basis.toLaTeX());
 			ass.multiplyWith(basis);
-			System.out.println(ass.toLaTeX());
 		}
 		return ass;
 	}

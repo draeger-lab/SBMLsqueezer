@@ -18,19 +18,24 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -38,6 +43,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
@@ -63,15 +70,28 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 	public static final String SQUEEZE = "squeeze_reaction";
 	public static final String TO_LATEX = "reaction_toLaTeX";
+	public static final String ONLINE_HELP = "online_help";
+	public static final String OPEN_FILE = "open_file";
+	public static final String SAVE_FILE = "save_file";
+	public static final String CLOSE_FILE = "close_file";
 
+	private JTabbedPaneWithCloseIcons tabbedPane;
+	private JToolBar toolbar;
 
-	JTabbedPaneWithCloseIcons tabbedPane;
-	private JMenuItem saveItem;
-	private JMenuItem closeItem;
+	private static Icon latexIcon;
+	private static Icon lemonIcon;
 
-	private JMenuItem squeezeItem;
-
-	private JMenuItem latexItem;
+	static {
+		try {
+			lemonIcon = new ImageIcon(ImageIO.read(Resource.class
+					.getResource("img/Lemon_tiny.png")));
+			latexIcon = new ImageIcon(ImageIO.read(Resource.class
+					.getResource("img/SBML2LaTeX_vertical_tiny.png")));
+		} catch (IOException e) {
+			lemonIcon = null;
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Generated serial version id.
@@ -127,46 +147,30 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			if (e.getSource() instanceof Reaction) {
 				new KineticLawSelectionDialog(this, sbmlIO, (Reaction) e
 						.getSource());
-			} else if (e.getSource() instanceof Model) {
+			} else /*
+					 * if (e.getSource() instanceof Model) {
+					 * KineticLawSelectionDialog klsd = new
+					 * KineticLawSelectionDialog( this, sbmlIO);
+					 * klsd.setVisible(true); } else
+					 */{
 				KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(
 						this, sbmlIO);
 				klsd.setVisible(true);
-			} else if (e.getActionCommand().equals(TO_LATEX)) {
-				if (e.getSource() instanceof Reaction) {
-					new KineticLawSelectionDialog(this, (Reaction) e
-							.getSource());
-				} else if (e.getSource() instanceof Model) {
-					// TODO
-				}
 			}
-		} else if (e.getSource() instanceof JMenuItem) {
-			JMenuItem item = (JMenuItem) e.getSource();
-			if (item.getText().equals("Open")) {
-				JFileChooser chooser = new JFileChooser();
-				SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
-				chooser.setFileFilter(filter);
-				String dir = SBMLsqueezer.getProperty(CfgKeys.OPEN_DIR.toString()).toString();
-				if (dir != null) {
-					if (dir.startsWith("user."))
-						dir = System.getProperty(dir);
-					chooser.setCurrentDirectory(new File(dir));
-				}
-				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-					addModel(sbmlIO.readModel(chooser.getSelectedFile()
-							.getAbsolutePath()));
-					String path = chooser.getSelectedFile().getAbsolutePath();
-					path = path.substring(0, path.lastIndexOf('/'));
-					if (!path.equals(dir))
-						SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
-				}
-			} else if (item.getText().equals(latexItem.getText())) {
+		} else if (e.getActionCommand().equals(TO_LATEX)) {
+			if (e.getSource() instanceof Reaction) {
+				new KineticLawSelectionDialog(this, (Reaction) e.getSource());
+			} else if (e.getSource() instanceof Model) {
+				// TODO
+				System.err.println("not yet implemented");
+			} else {
 				// TODO
 				JFileChooser chooser = new JFileChooser();
 				SBFileFilter filterTeX = new SBFileFilter(
 						SBFileFilter.TeX_FILES);
 				chooser.addChoosableFileFilter(filterTeX);
-				String dir = SBMLsqueezer
-						.getProperty(CfgKeys.SAVE_DIR.toString()).toString();
+				String dir = SBMLsqueezer.getProperty(
+						CfgKeys.SAVE_DIR.toString()).toString();
 				if (dir != null) {
 					if (dir.startsWith("user."))
 						dir = System.getProperty(dir);
@@ -180,43 +184,65 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					if (!path.equals(dir))
 						SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
 				}
-			} else if (item.getText().equals(saveItem.getText())) {
-				JFileChooser chooser = new JFileChooser();
-				SBFileFilter filterSBML = new SBFileFilter(
-						SBFileFilter.SBML_FILES);
-				SBFileFilter filterText = new SBFileFilter(
-						SBFileFilter.TEXT_FILES);
-				SBFileFilter filterTeX = new SBFileFilter(
-						SBFileFilter.TeX_FILES);
-				chooser.addChoosableFileFilter(filterSBML);
-				chooser.addChoosableFileFilter(filterText);
-				chooser.addChoosableFileFilter(filterTeX);
-				String dir = SBMLsqueezer
-						.getProperty(CfgKeys.SAVE_DIR.toString()).toString();
-				if (dir != null) {
-					if (dir.startsWith("user."))
-						dir = System.getProperty(dir);
-					chooser.setCurrentDirectory(new File(dir));
-				}
-				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-					// TODO
-					System.err.println("not yet implemented");
-					String path = chooser.getSelectedFile().getAbsolutePath();
-					path = path.substring(0, path.lastIndexOf('/'));
-					if (!path.equals(dir))
-						SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
-				}
-			} else if (item.getText().equals(closeItem.getText())) {
-				if (tabbedPane.getComponentCount() > 0)
-					tabbedPane.remove(tabbedPane.getSelectedComponent());
-				if (tabbedPane.getComponentCount() == 0)
-					setModelsOpened(false);
-			} else if (item.getText().equals("Squeeze")) {
-				KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(
-						this, sbmlIO);
-				klsd.setVisible(true);
-
-			} else if (item.getText().equals("Exit")) {
+			}
+		} else if (e.getActionCommand().equals(OPEN_FILE)) {
+			JFileChooser chooser = new JFileChooser();
+			SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
+			chooser.setFileFilter(filter);
+			String dir = SBMLsqueezer.getProperty(CfgKeys.OPEN_DIR.toString())
+					.toString();
+			if (dir != null) {
+				if (dir.startsWith("user."))
+					dir = System.getProperty(dir);
+				chooser.setCurrentDirectory(new File(dir));
+			}
+			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+				addModel(sbmlIO.readModel(chooser.getSelectedFile()
+						.getAbsolutePath()));
+				String path = chooser.getSelectedFile().getAbsolutePath();
+				path = path.substring(0, path.lastIndexOf('/'));
+				if (!path.equals(dir))
+					SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
+			}
+		} else if (e.getActionCommand().equals(SAVE_FILE)) {
+			JFileChooser chooser = new JFileChooser();
+			SBFileFilter filterSBML = new SBFileFilter(SBFileFilter.SBML_FILES);
+			SBFileFilter filterText = new SBFileFilter(SBFileFilter.TEXT_FILES);
+			SBFileFilter filterTeX = new SBFileFilter(SBFileFilter.TeX_FILES);
+			chooser.addChoosableFileFilter(filterSBML);
+			chooser.addChoosableFileFilter(filterText);
+			chooser.addChoosableFileFilter(filterTeX);
+			String dir = SBMLsqueezer.getProperty(CfgKeys.SAVE_DIR.toString())
+					.toString();
+			if (dir != null) {
+				if (dir.startsWith("user."))
+					dir = System.getProperty(dir);
+				chooser.setCurrentDirectory(new File(dir));
+			}
+			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+				// TODO
+				System.err.println("not yet implemented");
+				String path = chooser.getSelectedFile().getAbsolutePath();
+				path = path.substring(0, path.lastIndexOf('/'));
+				if (!path.equals(dir))
+					SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
+			}
+		} else if (e.getActionCommand().equals(CLOSE_FILE)) {
+			if (tabbedPane.getComponentCount() > 0)
+				tabbedPane.remove(tabbedPane.getSelectedComponent());
+			if (tabbedPane.getComponentCount() == 0)
+				setModelsOpened(false);
+		} else if (e.getActionCommand().equals(ONLINE_HELP)) {
+			JHelpBrowser helpBrowser = new JHelpBrowser(this, "SBMLsqueezer "
+					+ SBMLsqueezer.getVersionNumber() + " - Online Help");
+			helpBrowser.addWindowListener(this);
+			helpBrowser.setLocationRelativeTo(this);
+			helpBrowser.setSize(640, 640);
+			helpBrowser.setVisible(true);
+			helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		} else if (e.getSource() instanceof JMenuItem) {
+			JMenuItem item = (JMenuItem) e.getSource();
+			if (item.getText().equals("Exit")) {
 				SBMLsqueezer.saveProperties();
 				System.exit(0);
 			} else if (item.getText().equals("About")) {
@@ -227,14 +253,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				browser.setBorder(BorderFactory.createEtchedBorder());
 				JOptionPane.showMessageDialog(this, browser,
 						"About SBMLsqueezer", JOptionPane.INFORMATION_MESSAGE);
-			} else if (item.getText().equals("Online help")) {
-				JHelpBrowser helpBrowser = new JHelpBrowser(this,
-						"SBMLsqueezer " + SBMLsqueezer.getVersionNumber() + " - Online Help");
-				// helpBrowser.addWindowListener(this);
-				helpBrowser.setLocationRelativeTo(this);
-				helpBrowser.setSize(640, 640);
-				helpBrowser.setVisible(true);
-				helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			}
 		}
 	}
@@ -290,14 +308,63 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		pack();
 	}
 
+	private JToolBar createToolBar() {
+		toolbar = new JToolBar("Edit", JToolBar.HORIZONTAL);
+		JButton openButton = new JButton(UIManager
+				.getIcon("FileView.directoryIcon"));
+		openButton.addActionListener(this);
+		openButton.setActionCommand(OPEN_FILE);
+		toolbar.add(openButton);
+		JButton saveButton = new JButton(UIManager
+				.getIcon("FileView.floppyDriveIcon"));
+		saveButton.addActionListener(this);
+		saveButton.setActionCommand(SAVE_FILE);
+		toolbar.add(saveButton);
+		JButton closeButton = new JButton(new CloseIcon(false));
+		closeButton.setActionCommand(CLOSE_FILE);
+		closeButton.addActionListener(this);
+		toolbar.add(closeButton);
+		toolbar.addSeparator();
+		if (lemonIcon != null) {
+			JButton squeezeButton = new JButton(lemonIcon);
+			squeezeButton.setActionCommand(SQUEEZE);
+			squeezeButton.addActionListener(this);
+			toolbar.add(squeezeButton);
+		}
+		if (latexIcon != null) {
+			JButton latexButton = new JButton(latexIcon);
+			latexButton.addActionListener(this);
+			latexButton.setActionCommand(TO_LATEX);
+			toolbar.add(latexButton);
+		}
+		toolbar.addSeparator();
+		JButton helpButton = new JButton("?");
+		helpButton.addActionListener(this);
+		helpButton.setActionCommand(ONLINE_HELP);
+		toolbar.add(helpButton);
+		return toolbar;
+	}
+
 	private JMenuBar createMenuBar() {
 		JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic(fileMenu.getText().charAt(0));
 		JMenuItem openItem = new JMenuItem("Open", UIManager
 				.getIcon("FileView.directoryIcon"));
-		saveItem = new JMenuItem("Save", UIManager
+		openItem.setActionCommand(OPEN_FILE);
+		openItem.setAccelerator(KeyStroke.getKeyStroke('O',
+				InputEvent.CTRL_DOWN_MASK));
+		JMenuItem saveItem = new JMenuItem("Save", UIManager
 				.getIcon("FileView.floppyDriveIcon"));
-		closeItem = new JMenuItem("Close");
+		saveItem.setActionCommand(SAVE_FILE);
+		saveItem.setAccelerator(KeyStroke.getKeyStroke('S',
+				InputEvent.CTRL_DOWN_MASK));
+		JMenuItem closeItem = new JMenuItem("Close", new CloseIcon(false));
+		closeItem.setAccelerator(KeyStroke.getKeyStroke('W',
+				InputEvent.CTRL_DOWN_MASK));
+		closeItem.setActionCommand(CLOSE_FILE);
 		JMenuItem exitItem = new JMenuItem("Exit");
+		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,
+				InputEvent.ALT_DOWN_MASK));
 		fileMenu.add(openItem);
 		fileMenu.add(saveItem);
 		fileMenu.add(closeItem);
@@ -307,29 +374,31 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		exitItem.addActionListener(this);
 
 		JMenu editMenu = new JMenu("Edit");
-		squeezeItem = new JMenuItem("Squeeze");
+		editMenu.setMnemonic(editMenu.getText().charAt(0));
+		JMenuItem squeezeItem = new JMenuItem("Squeeze");
+		squeezeItem.setAccelerator(KeyStroke.getKeyStroke('Q',
+				InputEvent.CTRL_DOWN_MASK));
 		squeezeItem.addActionListener(this);
-		try {
-			squeezeItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/Lemon_tiny.png"))));
-		} catch (IOException e) {
-		}
-		latexItem = new JMenuItem("Export to LaTeX");
-		try {
-			latexItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/SBML2LaTeX_vertical_tiny.png"))));
-		} catch (IOException e) {
-		}
+		squeezeItem.setActionCommand(SQUEEZE);
+		squeezeItem.setIcon(lemonIcon);
+		JMenuItem latexItem = new JMenuItem("Export to LaTeX");
+		latexItem.setAccelerator(KeyStroke.getKeyStroke('E',
+				InputEvent.CTRL_DOWN_MASK));
+		latexItem.setIcon(latexIcon);
 		latexItem.addActionListener(this);
-		latexItem.setActionCommand("toLaTeX");
+		latexItem.setActionCommand(TO_LATEX);
 		editMenu.add(squeezeItem);
 		editMenu.add(latexItem);
 
 		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setMnemonic(helpMenu.getText().charAt(0));
 		JMenuItem about = new JMenuItem("About");
+		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
 		about.addActionListener(this);
 		JMenuItem help = new JMenuItem("Online help");
+		help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		help.addActionListener(this);
+		help.setActionCommand(ONLINE_HELP);
 		helpMenu.add(help);
 		helpMenu.add(about);
 
@@ -345,23 +414,47 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	private void setModelsOpened(boolean state) {
-		saveItem.setEnabled(state);
-		closeItem.setEnabled(state);
-		squeezeItem.setEnabled(state);
-		latexItem.setEnabled(state);
+		int i, j;
+		for (i = 0; i < getJMenuBar().getMenuCount(); i++) {
+			JMenu menu = getJMenuBar().getMenu(i);
+			for (j = 0; j < menu.getItemCount(); j++) {
+				JMenuItem item = menu.getItem(j);
+				if (item.getActionCommand().equals(SAVE_FILE)
+						|| item.getActionCommand().equals(CLOSE_FILE)
+						|| item.getActionCommand().equals(SQUEEZE)
+						|| item.getActionCommand().equals(TO_LATEX))
+					item.setEnabled(state);
+			}
+		}
+		for (i = 0; i < toolbar.getComponentCount(); i++) {
+			Object o = toolbar.getComponent(i);
+			if (o instanceof JButton) {
+				JButton b = (JButton) o;
+				if (b.getActionCommand().equals(SAVE_FILE)
+						|| b.getActionCommand().equals(CLOSE_FILE)
+						|| b.getActionCommand().equals(SQUEEZE)
+						|| b.getActionCommand().equals(TO_LATEX))
+					b.setEnabled(state);
+				if (b.getIcon() != null && b.getIcon() instanceof CloseIcon)
+					((CloseIcon) b.getIcon()).setColor(state ? Color.BLACK
+							: Color.GRAY);
+			}
+		}
 	}
 
 	// @Override
 	protected void init() {
 		setJMenuBar(createMenuBar());
-		setModelsOpened(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addWindowListener(this);
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().add(createToolBar(), BorderLayout.NORTH);
+		setModelsOpened(false);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
 		for (Model m : sbmlIO.getListOfModels())
 			addModel(m);
 		tabbedPane.addChangeListener(this);
 		tabbedPane.addChangeListener(sbmlIO);
-		getContentPane().add(tabbedPane);
+		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 	}
 }
