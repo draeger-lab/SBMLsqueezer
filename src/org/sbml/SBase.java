@@ -139,7 +139,7 @@ public abstract class SBase {
 	 * @return
 	 */
 	public String getNotesString() {
-		return notes;
+		return notes != null ? notes : "";
 	}
 
 	/**

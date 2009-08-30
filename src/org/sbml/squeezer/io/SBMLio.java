@@ -62,8 +62,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		this.reader = reader;
 		this.reader.addSBaseChangeListener(this);
 		this.writer = writer;
-		selectedModel = -1;
 		listOfModels = new LinkedList<Model>();
+		selectedModel = -1;
 		added = new LinkedList<SBase>();
 		removed = new LinkedList<SBase>();
 		changed = new LinkedList<SBase>();
@@ -97,6 +97,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readCompartment(java.lang.Object)
 	 */
 	public Compartment readCompartment(Object compartment) {
@@ -105,6 +106,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readKineticLaw(java.lang.Object)
 	 */
 	public KineticLaw readKineticLaw(Object kineticLaw) {
@@ -125,6 +127,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readModifierSpeciesReference(java.lang.Object)
 	 */
 	public ModifierSpeciesReference readModifierSpeciesReference(
@@ -134,6 +137,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readParameter(java.lang.Object)
 	 */
 	public Parameter readParameter(Object parameter) {
@@ -152,6 +156,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readSpecies(java.lang.Object)
 	 */
 	public Species readSpecies(Object species) {
@@ -160,6 +165,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readSpeciesReference(java.lang.Object)
 	 */
 	public SpeciesReference readSpeciesReference(Object speciesReference) {
@@ -168,6 +174,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readStoichiometricMath(java.lang.Object)
 	 */
 	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {

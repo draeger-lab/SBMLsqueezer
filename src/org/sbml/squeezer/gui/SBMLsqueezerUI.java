@@ -358,9 +358,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addWindowListener(this);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
-		for (Model m : sbmlIO.getListOfModels()) {
+		for (Model m : sbmlIO.getListOfModels())
 			addModel(m);
-		}
 		tabbedPane.addChangeListener(this);
 		tabbedPane.addChangeListener(sbmlIO);
 		getContentPane().add(tabbedPane);

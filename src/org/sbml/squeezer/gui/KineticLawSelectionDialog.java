@@ -214,8 +214,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param sbmlIO
 	 * @param reaction
 	 */
-	public KineticLawSelectionDialog(JFrame owner,
-			SBMLio sbmlIO, Reaction reaction) {
+	public KineticLawSelectionDialog(JFrame owner, SBMLio sbmlIO,
+			Reaction reaction) {
 		this(owner);
 		this.sbmlIO = sbmlIO;
 
@@ -244,7 +244,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					short equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
 					sbmlIO.stateChanged(reaction);
-					reaction = klg.storeLaw(sbmlIO, klg.createKineticLaw(model,
+					reaction = klg.storeLaw(klg.createKineticLaw(model,
 							reaction, equationType, messagePanel
 									.getReversible()), messagePanel
 							.getReversible());
@@ -619,7 +619,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 		chooser.addChoosableFileFilter(ff2);
 		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 			try {
-				new ODEwriter(chooser.getSelectedFile(), klg);
+				new ODEwriter(sbmlIO.getSelectedModel(), chooser
+						.getSelectedFile());
 			} catch (IOException exc) {
 				JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
 						+ "</html>", exc.getClass().getName(),

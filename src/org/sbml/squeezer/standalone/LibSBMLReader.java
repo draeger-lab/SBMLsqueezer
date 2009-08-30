@@ -19,7 +19,6 @@
 package org.sbml.squeezer.standalone;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.sbml.ASTNode;
@@ -45,10 +44,10 @@ import org.sbml.squeezer.io.AbstractSBMLReader;
 public class LibSBMLReader extends AbstractSBMLReader {
 
 	private Set<SBMLDocument> setOfDocuments;
-	private List<Integer> listOfPossibleEnzymes;
+	private Set<Integer> listOfPossibleEnzymes;
 	private static final String error = " must be an instance of ";
 
-	public LibSBMLReader(List<Integer> listOfPossibleEnzymes) {
+	public LibSBMLReader(Set<Integer> listOfPossibleEnzymes) {
 		super();
 		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
 		setOfDocuments = new HashSet<SBMLDocument>();
@@ -60,22 +59,10 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * 
 	 * @param model
 	 */
-	public LibSBMLReader(org.sbml.libsbml.Model model, List<Integer> listOfPossibleEnzymes) {
+	public LibSBMLReader(org.sbml.libsbml.Model model, Set<Integer> listOfPossibleEnzymes) {
 		super(model);
 		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
-		setOfDocuments = new HashSet<SBMLDocument>();
-	}
-
-	/**
-	 * get a xml file, converts it and save the sbmlsquezzer model
-	 * 
-	 * @param fileName
-	 */
-	public LibSBMLReader(String fileName, List<Integer> listOfPossibleEnzymes) {
-		super();
-		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
-		setOfDocuments = new HashSet<SBMLDocument>();
-		readModel(fileName);
+		this.setOfDocuments = new HashSet<SBMLDocument>();
 	}
 
 	/*

@@ -84,12 +84,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * 
 	 * @see
 	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 * (org.sbml.Model, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List, java.util.List)
+	 * (java.util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
-	ASTNode createKineticEquation(Model model, List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 

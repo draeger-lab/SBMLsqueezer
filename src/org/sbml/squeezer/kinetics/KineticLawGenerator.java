@@ -28,22 +28,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import jp.sbi.celldesigner.plugin.PluginKineticLaw;
-import jp.sbi.celldesigner.plugin.PluginSpecies;
-
 import org.sbml.KineticLaw;
+import org.sbml.ListOf;
 import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.libsbml.ASTNode;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.math.GaussianRank;
 
 /**
- * This class identifies and generates the missin kinetic laws for a the
- * selected model in the given plugin.
+ * This class identifies and generates the missing kinetic laws for a the
+ * selected model in the given plug-in.
  * 
  * @since 1.0
  * @version
@@ -53,25 +51,8 @@ import org.sbml.squeezer.math.GaussianRank;
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
-	private Model model;
 
 	private SBMLio sbmlIO;
-
-	private HashMap<Integer, String> numAndSpeciesID = new HashMap<Integer, String>();
-
-	private HashMap<String, Integer> speciesIDandNum = new HashMap<String, Integer>();
-
-	private HashMap<String, String> speciesAndODE = new HashMap<String, String>();
-
-	private HashMap<String, String> speciesAndSimpleODE = new HashMap<String, String>();
-
-	private HashMap<String, String> speciesAndSimpleODETeX = new HashMap<String, String>();
-
-	private HashMap<String, String> speciesAndODETeX = new HashMap<String, String>();
-
-	private HashMap<Integer, BasicKineticLaw> reactionNumAndKineticLaw = new HashMap<Integer, BasicKineticLaw>();
-
-	private HashMap<Integer, String> reactionNumAndId = new HashMap<Integer, String>();
 
 	private List<Integer> reactionNumOfNotExistKinetics = new ArrayList<Integer>();
 
@@ -118,7 +99,7 @@ public class KineticLawGenerator {
 
 	private List<Reaction> listOfFastReactions;
 
-	private List<String> listOfPossibleEnzymes;
+	private Set<Integer> possibleEnzymes;
 
 	private int columnRank = -1;
 
@@ -132,6 +113,8 @@ public class KineticLawGenerator {
 	 * they belong to.
 	 */
 	private boolean addAllParametersGlobally = true;
+
+	private Model model;
 
 	/**
 	 * Generalized mass action kinetics
@@ -190,8 +173,7 @@ public class KineticLawGenerator {
 		uniUniType = GENERALIZED_MASS_ACTION;
 		biUniType = GENERALIZED_MASS_ACTION;
 		biBiType = GENERALIZED_MASS_ACTION;
-		listOfPossibleEnzymes = BasicKineticLaw
-				.getDefaultListOfPossibleEnzymes();
+		possibleEnzymes = SBO.getDefaultPossibleEnzymes();
 		init();
 	}
 
@@ -265,9 +247,8 @@ public class KineticLawGenerator {
 		this.uniUniType = uniUniType;
 		this.biUniType = biUniType;
 		this.biBiType = biBiType;
-		this.listOfPossibleEnzymes = BasicKineticLaw
-				.getDefaultListOfPossibleEnzymes();
-		this.listOfPossibleEnzymes.retainAll(listOfPossibleEnzymes);
+		this.possibleEnzymes = SBO.getDefaultPossibleEnzymes();
+		this.possibleEnzymes.retainAll(listOfPossibleEnzymes);
 		considerEachReactionEnzymeCatalysed = forceAllReactionsAsEnzymeReaction;
 		generateKineticLawForEachReaction = generateKineticForAllReaction;
 		setAddAllParametersGlobally(addAllParametersGlobally);
@@ -309,10 +290,9 @@ public class KineticLawGenerator {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public BasicKineticLaw createKineticLaw(Model model,
-			Reaction reaction, short kinetic, boolean reversibility)
-			throws ModificationException, RateLawNotApplicableException,
-			IOException, IllegalFormatException {
+	public BasicKineticLaw createKineticLaw(Model model, Reaction reaction,
+			short kinetic, boolean reversibility) throws ModificationException,
+			RateLawNotApplicableException, IOException, IllegalFormatException {
 		int reactionNum = 0;
 		BasicKineticLaw kineticLaw;
 
@@ -327,52 +307,40 @@ public class KineticLawGenerator {
 			reactionNumOfNotExistKinetics.add(Integer.valueOf(reactionNum));
 		switch (kinetic) {
 		case COMPETETIVE_NON_EXCLUSIVE_INHIB:
-			kineticLaw = new IrrevCompetNonCooperativeEnzymes(reaction, model);
+			kineticLaw = new IrrevCompetNonCooperativeEnzymes(reaction);
 			break;
 		case ZEROTH_ORDER_REVERSE_MA:
-			kineticLaw = new ZerothOrderReverseGMAK(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new ZerothOrderReverseGMAK(reaction);
 			break;
 		case ZEROTH_ORDER_FORWARD_MA:
-			kineticLaw = new ZerothOrderForwardGMAK(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new ZerothOrderForwardGMAK(reaction);
 			break;
 		case IRREV_NON_MODULATED_ENZYME_KIN:
-			kineticLaw = new IrrevNonModulatedNonInteractingEnzymes(reaction,
-					model);
+			kineticLaw = new IrrevNonModulatedNonInteractingEnzymes(reaction);
 			break;
 		case HILL_EQUATION:
-			kineticLaw = new HillEquation(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new HillEquation(reaction);
 			break;
 		case ORDERED_MECHANISM:
-			kineticLaw = new OrderedMechanism(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new OrderedMechanism(reaction);
 			break;
 		case PING_PONG_MECAHNISM:
-			kineticLaw = new PingPongMechanism(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new PingPongMechanism(reaction);
 			break;
 		case RANDOM_ORDER_MECHANISM:
-			kineticLaw = new RandomOrderMechanism(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new RandomOrderMechanism(reaction);
 			break;
 		case MICHAELIS_MENTEN:
-			kineticLaw = new MichaelisMenten(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new MichaelisMenten(reaction);
 			break;
 		case CONVENIENCE_KINETICS:
-			kineticLaw = hasFullColumnRank(model) ? new Convenience(reaction,
-					model, listOfPossibleEnzymes) : new ConvenienceIndependent(
-					reaction, model, listOfPossibleEnzymes);
+			kineticLaw = hasFullColumnRank(model) ? new Convenience(reaction)
+					: new ConvenienceIndependent(reaction);
 			break;
 		default:
-			kineticLaw = new GeneralizedMassAction(reaction, model,
-					listOfPossibleEnzymes);
+			kineticLaw = new GeneralizedMassAction(reaction);
 			break;
 		}
-		reactionNumAndKineticLaw.put(reactionNum, kineticLaw);
-
 		return kineticLaw;
 	}
 
@@ -415,10 +383,7 @@ public class KineticLawGenerator {
 			// ignored.
 			if (reaction.getFast())
 				listOfFastReactions.add(reaction);
-
-			reactionNumAndId.put(reactionNum, reaction.getId());
 			KineticLaw kineticLaw = reaction.getKineticLaw();
-
 			if (kineticLaw != null) {
 				String formula = kineticLaw.getFormula();
 				if (formula.equals("") || formula.equals(" ")) {
@@ -456,24 +421,6 @@ public class KineticLawGenerator {
 	 * ------------------------------------------------ -------- generate
 	 * kinetics and paramters ------------------------------------------------
 	 */
-
-	/**
-	 * get HashMap<String,String> generated ODE for the corresponding Species
-	 * 
-	 * @return
-	 */
-	public HashMap<String, String> getAllODE() {
-		return speciesAndODE;
-	}
-
-	/**
-	 * get HashMap<Integer,String> get all Species
-	 * 
-	 * @return
-	 */
-	public HashMap<Integer, String> getAllSpeciesNumAndIDs() {
-		return numAndSpeciesID;
-	}
 
 	/**
 	 * <ol>
@@ -551,45 +498,6 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * get the the level for the SBML-File
-	 * 
-	 * @return
-	 */
-	public int getLevel() {
-		return identifyLevel(model);
-	}
-
-	/**
-	 * Returns the selected Model of the plugin.
-	 * 
-	 * @return
-	 */
-	public Model getModel() {
-		return sbmlIO.getSelectedModel();
-	}
-
-	/**
-	 * get HashMap<Integer,String> with reactionNumber and Id for the
-	 * corresponding reaction
-	 * 
-	 * @return
-	 */
-	public HashMap<Integer, String> getReactionNumAndId() {
-		return reactionNumAndId;
-	}
-
-	/**
-	 * Returns a hash containg the generated kinetic laws for the given ids as
-	 * keys. Each kinetic law proviedes a TeX and a C-like String representation
-	 * of the kinetic equation as well as a name.
-	 * 
-	 * @return
-	 */
-	public HashMap<Integer, BasicKineticLaw> getReactionNumAndKineticLaw() {
-		return reactionNumAndKineticLaw;
-	}
-
-	/**
 	 * get List<Integer> with reactionNumbers for the Reactions without kinetics
 	 * 
 	 * @return
@@ -632,38 +540,6 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * get HashMap<String,String> generated ODE with a simple equation for the
-	 * corresponding Species
-	 * 
-	 * @return
-	 */
-	public HashMap<String, String> getSpecieAndSimpleODE() {
-		return speciesAndSimpleODE;
-	}
-
-	/**
-	 * get HashMap<String,String> generated ODE in simple Equation and
-	 * LaTex-Format for the corresponding Species
-	 * 
-	 * @return
-	 */
-	public HashMap<String, String> getSpeciesAndSimpleODETeX() {
-		return speciesAndSimpleODETeX;
-	}
-
-	/**
-	 * Identify the level of the SBML-File
-	 */
-	public short identifyLevel(Model model) {
-		if (model.getNumSpecies() > 0) {
-			Species species = model.getSpecies(0);
-			if (species.getId() != null)
-				return 2;
-		}
-		return 1;
-	}
-
-	/**
 	 * <ul>
 	 * <li>1 = generalized mass action kinetics</li> <li>2 = Convenience
 	 * kinetics</li> <li>3 = Michaelis-Menten kinetics</li> <li>4 = Random Order
@@ -677,8 +553,8 @@ public class KineticLawGenerator {
 	 * @return Returns a sorted array of possible kinetic equations for the
 	 *         given reaction in the model.
 	 */
-	public short[] identifyPossibleReactionTypes(Model model,
-			Reaction reaction) throws RateLawNotApplicableException {
+	public short[] identifyPossibleReactionTypes(Model model, Reaction reaction)
+			throws RateLawNotApplicableException {
 
 		Set<Short> types = new HashSet<Short>();
 		types.add(Short.valueOf(GENERALIZED_MASS_ACTION));
@@ -698,11 +574,10 @@ public class KineticLawGenerator {
 			if (((int) stoichiometry) - stoichiometry != 0d)
 				stoichiometryIntLeft = false;
 			// Transcription or translation?
-			Species species = reaction.getReactant(i)
-					.getSpeciesInstance();
-			if (species.getSpeciesAlias(0).getType().equals("GENE"))
+			Species species = reaction.getReactant(i).getSpeciesInstance();
+			if (SBO.isGene(species.getSBOTerm()))
 				reactionWithGenes = true;
-			else if (species.getSpeciesAlias(0).getType().equals("RNA"))
+			else if (SBO.isRNA(species.getSBOTerm()))
 				reactionWithRNA = true;
 		}
 
@@ -721,12 +596,11 @@ public class KineticLawGenerator {
 		Vector<String> transActiv = new Vector<String>();
 		Vector<String> transInhib = new Vector<String>();
 		Vector<String> enzymes = new Vector<String>();
-		BasicKineticLaw.identifyModifers(reaction, BasicKineticLaw
-				.getDefaultListOfPossibleEnzymes(), inhibitors, transActiv,
+		BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
 				transInhib, activators, enzymes, nonEnzymeCatalyzers);
-		boolean nonEnzyme = ((nonEnzymeCatalyzers.size() > 0) || (reaction
-				.getProduct(0).getSpeciesInstance().getSpeciesAlias(0)
-				.getType().toUpperCase().equals("DEGRADED"))) ? true : false;
+		boolean nonEnzyme = ((nonEnzymeCatalyzers.size() > 0) || (SBO
+				.isEmptySet(reaction.getProduct(0).getSpeciesInstance()
+						.getSBOTerm())));
 		boolean uniUniWithoutModulation = false;
 
 		/*
@@ -746,26 +620,24 @@ public class KineticLawGenerator {
 		if (stoichiometryLeft == 1d) {
 			if (stoichiometryRight == 1d) {
 				// Uni-Uni: MMK/ConvenienceIndependent (1E/1P)
-				Species species = reaction.getReactant(0)
-						.getSpeciesInstance();
-				if (species.getSpeciesAlias(0).getType().equals("GENE")
-						|| (species.getSpeciesAlias(0).getType().equals(
-								"DEGRADED") && (reaction.getProduct(0)
-								.getSpeciesInstance().getSpeciesAlias(0)
-								.getType().equals("RNA") || reaction
-								.getProduct(0).getSpeciesInstance()
-								.getSpeciesAlias(0).getType().equals("PROTEIN")))) {
+				Species species = reaction.getReactant(0).getSpeciesInstance();
+				if (SBO.isGene(species.getSBOTerm())
+						|| (SBO.isEmptySet(species.getSBOTerm()) && (SBO
+								.isRNA(reaction.getProduct(0)
+										.getSpeciesInstance().getSBOTerm()) || SBO
+								.isProtein(reaction.getProduct(0)
+										.getSpeciesInstance().getSBOTerm())))) {
 					setBoundaryCondition(species.getId(), true);
 					types.add(Short.valueOf(HILL_EQUATION));
 
 					// throw exception if false reaction occurs
-					if (reaction.getReactionType().equals("TRANSLATION")
+					if (SBO.isTranslation(reaction.getSBOTerm())
 							&& reactionWithGenes)
 						throw new RateLawNotApplicableException("Reaction "
 								+ reaction.getId()
 								+ " must be a transcription.");
 
-				} else if (species.getSpeciesAlias(0).getType().equals("RNA"))
+				} else if (SBO.isRNA(species.getSBOTerm()))
 					types.add(Short.valueOf(HILL_EQUATION));
 				if (!nonEnzyme
 						&& !(reaction.getReversible() && (inhibitors.size() > 1 || transInhib
@@ -778,7 +650,7 @@ public class KineticLawGenerator {
 					uniUniWithoutModulation = true;
 				// throw exception if false reaction occurs
 
-				if (reaction.getReactionType().equals("TRANSCRIPTION")
+				if (SBO.isTranscription(reaction.getSBOTerm())
 						&& reactionWithRNA)
 					throw new RateLawNotApplicableException("Reaction "
 							+ reaction.getId() + " must be a translation.");
@@ -813,12 +685,10 @@ public class KineticLawGenerator {
 		} else if (types.contains(Short.valueOf(GENERALIZED_MASS_ACTION))
 				&& reaction.getReversible())
 			types.add(Short.valueOf(ZEROTH_ORDER_REVERSE_MA));
-		if (!reactionWithGenes
-				&& reaction.getReactionType().equals("TRANSCRIPTION"))
+		if (!reactionWithGenes && SBO.isTranscription(reaction.getSBOTerm()))
 			throw new RateLawNotApplicableException("Reaction "
 					+ reaction.getId() + " must not be a transcription.");
-		if (!reactionWithRNA
-				&& reaction.getReactionType().equals("TRANSLATION"))
+		if (!reactionWithRNA && SBO.isTranslation(reaction.getSBOTerm()))
 			throw new RateLawNotApplicableException("Reaction "
 					+ reaction.getId() + " must not be a translation.");
 
@@ -863,8 +733,8 @@ public class KineticLawGenerator {
 
 		ArrayList<String> modActi = new ArrayList<String>(), modTActi = new ArrayList<String>(), modCat = new ArrayList<String>(), modInhib = new ArrayList<String>(), modTInhib = new ArrayList<String>(), enzymes = new ArrayList<String>();
 
-		BasicKineticLaw.identifyModifers(reaction, listOfPossibleEnzymes,
-				modInhib, modTActi, modTInhib, modActi, enzymes, modCat);
+		BasicKineticLaw.identifyModifers(reaction, modInhib, modTActi,
+				modTInhib, modActi, enzymes, modCat);
 
 		short whichkin = GENERALIZED_MASS_ACTION;
 		double stoichiometryLeft = 0d, stoichiometryRight = 0d;
@@ -880,23 +750,19 @@ public class KineticLawGenerator {
 				if (stoichiometryRight == 1d) {
 					// Uni-Uni: MMK/ConvenienceIndependent (1E/1P)
 					Species species = specref.getSpeciesInstance();
-					if (species.getSpeciesAlias(0).getType().equals("GENE")) {
+					if (SBO.isGene(species.getSBOTerm())) {
 						setBoundaryCondition(species.getId(), true);
-
-						if (reaction.getReactionType().equals("TRANSLATION"))
+						if (SBO.isTranslation(reaction.getSBOTerm()))
 							throw new RateLawNotApplicableException("Reaction "
 									+ reaction.getId()
 									+ " must be a transcription.");
-
 						whichkin = HILL_EQUATION;
-					} else if (species.getSpeciesAlias(0).getType().equals(
-							"RNA")) {
+					} else if (SBO.isRNA(species.getSBOTerm())) {
 						whichkin = HILL_EQUATION;
-						if (reaction.getReactionType().equals("TRANSCRIPTION"))
+						if (SBO.isTranscription(reaction.getSBOTerm()))
 							throw new RateLawNotApplicableException("Reaction "
 									+ reaction.getId()
 									+ " must be a translation.");
-
 					} else
 						whichkin = uniUniType;
 				} else if (!reaction.getReversible() && !reversibility) {
@@ -924,19 +790,16 @@ public class KineticLawGenerator {
 				switch (reaction.getNumReactants()) {
 				case 1:
 					if (reaction.getNumProducts() == 1) {
-						if (reaction.getProduct(0).getSpeciesInstance()
-								.getSpeciesAlias(0).getType().equalsIgnoreCase(
-										"DEGRADED"))
+						if (SBO.isEmptySet(reaction.getProduct(0)
+								.getSpeciesInstance().getSBOTerm()))
 							whichkin = GENERALIZED_MASS_ACTION;
-						else if (reaction.getReactant(0).getSpeciesInstance()
-								.getSpeciesAlias(0).getType().equalsIgnoreCase(
-										"DEGRADED")
-								&& (reaction.getProduct(0).getSpeciesInstance()
-										.getSpeciesAlias(0).getType()
-										.equalsIgnoreCase("PROTEIN") || reaction
-										.getProduct(0).getSpeciesInstance()
-										.getSpeciesAlias(0).getType()
-										.equalsIgnoreCase("RNA"))) {
+						else if (SBO.isEmptySet(reaction.getReactant(0)
+								.getSpeciesInstance().getSBOTerm())
+								&& (SBO.isProtein(reaction.getProduct(0)
+										.getSpeciesInstance().getSBOTerm()) || SBO
+										.isRNA(reaction.getProduct(0)
+												.getSpeciesInstance()
+												.getSBOTerm()))) {
 							whichkin = HILL_EQUATION;
 						} else {
 							int k;
@@ -944,13 +807,11 @@ public class KineticLawGenerator {
 									&& !model.getSpecies(k).getId().equals(
 											specref.getSpecies()); k++)
 								;
-							PluginSpecies species = model.getSpecies(k);
-							if (species.getSpeciesAlias(0).getType().equals(
-									"GENE")) {
+							Species species = model.getSpecies(k);
+							if (SBO.isGene(species.getSBOTerm())) {
 								setBoundaryCondition(k, true);
 								whichkin = HILL_EQUATION;
-							} else if (species.getSpeciesAlias(0).getType()
-									.equals("RNA"))
+							} else if (SBO.isRNA(species.getSBOTerm()))
 								whichkin = HILL_EQUATION;
 							else
 								whichkin = GENERALIZED_MASS_ACTION;
@@ -969,11 +830,10 @@ public class KineticLawGenerator {
 						// MMK/ConvenienceIndependent
 						// (1E/1P)
 						Species species = specref.getSpeciesInstance();
-						if (species.getSpeciesAlias(0).getType().equals("GENE")) {
+						if (SBO.isGene(species.getSBOTerm())) {
 							setBoundaryCondition(species.getId(), true);
 							whichkin = HILL_EQUATION;
-						} else if (species.getSpeciesAlias(0).getType().equals(
-								"RNA"))
+						} else if (SBO.isRNA(species.getSBOTerm()))
 							whichkin = HILL_EQUATION;
 						else
 							whichkin = uniUniType;
@@ -1001,9 +861,8 @@ public class KineticLawGenerator {
 				&& (modTInhib.size() == 0)) {
 			boolean reactionWithGenes = false;
 			for (int i = 0; i < reaction.getNumReactants(); i++) {
-				Species species = reaction.getReactant(i)
-						.getSpeciesInstance();
-				if (species.getSpeciesAlias(0).getType().equals("GENE"))
+				Species species = reaction.getReactant(i).getSpeciesInstance();
+				if (SBO.isGene(species.getSBOTerm()))
 					reactionWithGenes = true;
 			}
 			if (reactionWithGenes) {
@@ -1011,11 +870,10 @@ public class KineticLawGenerator {
 				for (int i = 0; i < reaction.getNumProducts(); i++) {
 					Species species = reaction.getProduct(i)
 							.getSpeciesInstance();
-					if (species.getSpeciesAlias(0).getType().equals("RNA"))
+					if (SBO.isRNA(species.getSBOTerm()))
 						transcription = true;
 				}
-				if (transcription
-						&& reaction.getReactionType().equals("TRANSLATION"))
+				if (transcription && SBO.isTranslation(reaction.getSBOTerm()))
 					throw new RateLawNotApplicableException("Reaction "
 							+ reaction.getId() + " must be a transcription.");
 			} else {
@@ -1023,7 +881,7 @@ public class KineticLawGenerator {
 				for (int i = 0; i < reaction.getNumReactants(); i++) {
 					Species species = reaction.getReactant(i)
 							.getSpeciesInstance();
-					if (species.getSpeciesAlias(0).getType().equals("RNA"))
+					if (SBO.isRNA(species.getSBOTerm()))
 						reactionWithRNA = true;
 				}
 				if (reactionWithRNA) {
@@ -1031,11 +889,10 @@ public class KineticLawGenerator {
 					for (int i = 0; i < reaction.getNumProducts(); i++) {
 						Species species = reaction.getProduct(i)
 								.getSpeciesInstance();
-						if (!species.getSpeciesAlias(0).getType().equals(
-								"PROTEIN"))
+						if (!SBO.isProtein(species.getSBOTerm()))
 							translation = true;
 					}
-					if (reaction.getReactionType().equals("TRANSCRIPTION")
+					if (SBO.isTranscription(reaction.getSBOTerm())
 							&& translation)
 						throw new RateLawNotApplicableException("Reaction "
 								+ reaction.getId() + " must be a translation.");
@@ -1049,8 +906,8 @@ public class KineticLawGenerator {
 					whichkin = ZEROTH_ORDER_FORWARD_MA;
 			} else
 				whichkin = GENERALIZED_MASS_ACTION;
-		} else if ((reaction.getReactionType().equals("TRANSLATION") || reaction
-				.getReactionType().equals("TRANSCRIPTION"))
+		} else if ((SBO.isTranslation(reaction.getSBOTerm()) || SBO
+				.isTranscription(reaction.getSBOTerm()))
 				&& !(whichkin == HILL_EQUATION))
 			throw new RateLawNotApplicableException("Reaction "
 					+ reaction.getId() + " must be a state transition.");
@@ -1074,10 +931,9 @@ public class KineticLawGenerator {
 	 * 
 	 * @param selectedModel
 	 */
-	public void removeUnnecessaryParameters(SBMLio plugin) {
+	public void removeUnnecessaryParameters(SBMLio sbmlIO) {
 		boolean isNeeded;
 		int i, j, k;
-		Model model = plugin.getSelectedModel();
 		Parameter p;
 		// remove unnecessary global parameters
 		for (i = 0; i < model.getNumParameters(); i++) {
@@ -1089,10 +945,9 @@ public class KineticLawGenerator {
 			 */
 			for (j = 0; (j < model.getNumReactions()) && !isNeeded; j++) {
 				Reaction r = model.getReaction(j);
-				if (r.getKineticLaw() != null)
-					if (contains(
-							model.getReaction(j).getKineticLaw().getMath(), p
-									.getId())) {
+				if (r.getKineticLaw() != null) {
+					if (model.getReaction(j).getKineticLaw().getMath()
+							.refersTo(p.getId())) {
 						/*
 						 * ok, parameter occurs here but there could also be a
 						 * local parameter with the same id.
@@ -1106,13 +961,14 @@ public class KineticLawGenerator {
 						if (!contains)
 							isNeeded = true;
 					}
+				}
 				if (isNeeded)
 					break;
 				SpeciesReference specRef;
 				for (k = 0; k < r.getNumReactants(); k++) {
 					specRef = r.getReactant(k);
 					if (specRef.getStoichiometryMath() != null) {
-						if (contains(specRef.getStoichiometryMath().getMath(),
+						if (specRef.getStoichiometryMath().getMath().refersTo(
 								p.getId()))
 							isNeeded = true;
 					}
@@ -1122,7 +978,7 @@ public class KineticLawGenerator {
 				for (k = 0; k < r.getNumProducts(); k++) {
 					specRef = r.getProduct(k);
 					if (specRef.getStoichiometryMath() != null) {
-						if (contains(specRef.getStoichiometryMath().getMath(),
+						if (specRef.getStoichiometryMath().getMath().refersTo(
 								p.getId()))
 							isNeeded = true;
 					}
@@ -1131,34 +987,33 @@ public class KineticLawGenerator {
 
 			// is this parameter necessary for some rule?
 			for (j = 0; (j < model.getNumRules()) && !isNeeded; j++)
-				if (contains(model.getRule(j).getMath(), p.getId()))
+				if (model.getRule(j).getMath().refersTo(p.getId()))
 					isNeeded = true;
 
 			// is this parameter necessary for some event?
 			for (j = 0; (j < model.getNumEvents()) && !isNeeded; j++)
 				for (k = 0; k < model.getEvent(j).getNumEventAssignments(); k++)
-					if (contains(model.getEvent(j).getEventAssignment(k)
-							.getMath(), p.getId()))
+					if (model.getEvent(j).getEventAssignment(k).getMath()
+							.refersTo(p.getId()))
 						isNeeded = true;
 
 			// is this parameter necessary for some function?
 			for (j = 0; (j < model.getNumFunctionDefinitions()) && !isNeeded; j++)
-				if (contains(model.getFunctionDefinition(j).getMath(), p
-						.getId()))
+				if (model.getFunctionDefinition(j).getMath()
+						.refersTo(p.getId()))
 					isNeeded = true;
 
 			if (!isNeeded) // is this paraemter necessary at all?
-				plugin.notifySBaseDeleted(model.getListOfParameters().remove(
-						i--));
+				model.getListOfParameters().remove(i--);
 		}
 		// remove unnecessary local parameters
 		for (i = 0; i < model.getNumReactions(); i++) {
-			PluginKineticLaw law = model.getReaction(i).getKineticLaw();
+			KineticLaw law = model.getReaction(i).getKineticLaw();
 			if (law != null) {
 				List<Integer> removeList = new Vector<Integer>();
 				for (j = 0; j < law.getNumParameters(); j++) {
 					p = law.getParameter(j);
-					if (!contains(law.getMath(), p.getId())
+					if (!law.getMath().refersTo(p.getId())
 					/* || (model.getParameter(p.getId()) != null) */)
 						removeList.add(Integer.valueOf(j));
 				}
@@ -1167,7 +1022,6 @@ public class KineticLawGenerator {
 							removeList.size() - 1).intValue());
 					if (!law.getListOfParameters().remove(p))
 						law.removeParameter(p);
-					plugin.notifySBaseDeleted(p);
 				}
 			}
 		}
@@ -1188,8 +1042,7 @@ public class KineticLawGenerator {
 	 * @param speciesNum
 	 */
 	public void setBoundaryCondition(int speciesNum, boolean condition) {
-		setBoundaryCondition(sbmlIO.getSelectedModel().getSpecies(speciesNum)
-				.getId(), condition);
+		setBoundaryCondition(model.getSpecies(speciesNum).getId(), condition);
 	}
 
 	/**
@@ -1198,7 +1051,7 @@ public class KineticLawGenerator {
 	 * @param speciesNum
 	 */
 	public void setBoundaryCondition(String speciesID, boolean condition) {
-		Species species = sbmlIO.getSelectedModel().getSpecies(speciesID);
+		Species species = model.getSpecies(speciesID);
 		if (condition != species.getBoundaryCondition()) {
 			System.out
 					.println("\nI am setting the boundary condition for species "
@@ -1223,6 +1076,10 @@ public class KineticLawGenerator {
 				.getNumReactions()];
 		int reactionNum, speciesNum;
 		SpeciesReference speciesRef;
+		HashMap<String, Integer> speciesIDandNum = new HashMap<String, Integer>();
+		int i = 0;
+		for (Species s : model.getListOfSpecies())
+			speciesIDandNum.put(s.getId(), Integer.valueOf(i++));
 		for (reactionNum = 0; reactionNum < model.getNumReactions(); reactionNum++) {
 			Reaction reaction = model.getReaction(reactionNum);
 			for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++) {
@@ -1246,32 +1103,10 @@ public class KineticLawGenerator {
 	 */
 	public void storeKineticsAndParameters(SBMLio plugin,
 			boolean reversibility, LawListener l) {
-		l.totalNumber(reactionNumOfNotExistKinetics.size() + 11);
+		l.totalNumber(reactionNumOfNotExistKinetics.size());
 		storeLaws(plugin, reversibility, l);
-		ODE ode = new ODE(plugin.getSelectedModel(), numAndSpeciesID,
-				speciesAndODE, speciesAndODETeX, reactionNumOfNotExistKinetics,
-				reacNumOfExistKinetics, reactionNumAndKineticLaw);
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 1);
-		speciesAndODETeX.clear();
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 2);
-		speciesAndODE.clear();
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 3);
-		speciesAndODE.clear();
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 4);
-		speciesAndODETeX.clear();
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 5);
-		speciesAndODE.putAll(ode.getAllODEs());
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 6);
-		speciesAndODETeX.putAll(ode.getAllODETeX());
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 7);
-		speciesAndSimpleODE.putAll(ode.getSpecieAndSimpleODE());
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 8);
-		speciesAndSimpleODETeX.putAll(ode.getSpeciesAndSimpleODETeX());
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 9);
-		reactionNumAndKineticTeX = ode.getReactionNumAndKinetictexId();
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 10);
-		reactionNumAndKinetictexName = ode.getKineticLawNames();
-		l.currentNumber(reactionNumOfNotExistKinetics.size() + 11);
+		new ODE(model, reactionNumOfNotExistKinetics, reacNumOfExistKinetics);
+		l.currentNumber(reactionNumOfNotExistKinetics.size());
 	}
 
 	/**
@@ -1291,35 +1126,26 @@ public class KineticLawGenerator {
 	 *            A string with the formula to be assigned to the given
 	 *            reaction.
 	 */
-	public Reaction storeLaw(SBMLio plugin,
-			KineticLaw kineticLaw, boolean reversibility) {
+	public Reaction storeLaw(KineticLaw kineticLaw, boolean reversibility) {
 		int i;
 		Reaction reaction = kineticLaw.getParentSBMLObject();
-		if (!(kineticLaw instanceof IrrevNonModulatedNonInteractingEnzymes)) {
+		if (!(kineticLaw instanceof IrrevNonModulatedNonInteractingEnzymes))
 			reaction.setReversible(reversibility || reaction.getReversible());
-			plugin.notifySBaseChanged(reaction);
-		}
-		if (reaction.getKineticLaw() == null) {
+		if (reaction.getKineticLaw() == null)
 			reaction.setKineticLaw(kineticLaw);
-			plugin.notifySBaseAdded(reaction.getKineticLaw());
-		} else {
+		else
 			reaction.setKineticLaw(kineticLaw);
-			plugin.notifySBaseChanged(kineticLaw);
-		}
 		if ((kineticLaw instanceof BasicKineticLaw)
-				&& (reaction.getNotesString().length() == 0)) {
+				&& (reaction.getNotesString().length() == 0))
 			reaction.setNotes(((BasicKineticLaw) kineticLaw).getName());
-			plugin.notifySBaseChanged(reaction);
-		}
 		// if (kineticLaw.getMath() == null) {
 		// reaction.getKineticLaw().setMathFromFormula();
 		// plugin.notifySBaseChanged(reaction.getKineticLaw());
 		// }
 		// set the BoundaryCondition to true for Genes if not set anyway:
 		for (i = 0; i < reaction.getNumReactants(); i++) {
-			Species species = reaction.getReactant(i)
-					.getSpeciesInstance();
-			if (species.getSpeciesAlias(0).getType().equals("GENE")) {
+			Species species = reaction.getReactant(i).getSpeciesInstance();
+			if (SBO.isGene(species.getSBOTerm())) {
 				setBoundaryCondition(species.getId(), true);
 				System.out.println("BoundaryCondition was set to "
 						+ species.getBoundaryCondition() + " for species "
@@ -1328,25 +1154,23 @@ public class KineticLawGenerator {
 		}
 		for (i = 0; i < reaction.getNumProducts(); i++) {
 			Species species = reaction.getProduct(0).getSpeciesInstance();
-			if (species.getSpeciesAlias(0).getType().equals("GENE")) {
+			if (SBO.isGene(species.getSBOTerm())) {
 				setBoundaryCondition(species.getId(), true);
 				System.out.println("BoundaryCondition was set to "
 						+ species.getBoundaryCondition() + " for species "
 						+ species.getId());
 			}
 		}
-		storeParamters(plugin.getSelectedModel(), reaction);
+		storeParamters(reaction);
 		return reaction;
 	}
 
 	/**
 	 * store the generated Kinetics in SBML-File as MathML.
 	 */
-	public void storeLaws(SBMLio plugin, boolean reversibility,
-			LawListener l) {
+	public void storeLaws(SBMLio plugin, boolean reversibility, LawListener l) {
 		for (int i = 0; i < reactionNumOfNotExistKinetics.size(); i++) {
-			storeLaw(plugin, reactionNumAndKineticLaw
-					.get(reactionNumOfNotExistKinetics.get(i)), reversibility);
+			storeLaw(model.getReaction(reactionNumOfNotExistKinetics.get(i)).getKineticLaw(), reversibility);
 			l.currentNumber(i);
 		}
 		removeUnnecessaryParameters(plugin);
@@ -1358,64 +1182,47 @@ public class KineticLawGenerator {
 	 * @param model
 	 * @param reaction
 	 */
-	public void storeParamters(Model model, Reaction reaction) {
+	public void storeParamters(Reaction reaction) {
+		Model model = reaction.getModel();
 		setInitialConcentrationTo(model, reaction, 1d);
 		BasicKineticLaw kineticLaw = (BasicKineticLaw) reaction.getKineticLaw();
-		List<StringBuffer> paramListLocal = kineticLaw.getLocalParameters();
-		List<StringBuffer> paramListGlobal = kineticLaw.getGlobalParameters();
+		ListOf<Parameter> paramListLocal = kineticLaw.getListOfParameters();
+		List<Parameter> paramListGlobal = kineticLaw
+				.getReferencedGlobalParameters();
 		int paramNumber;
 		for (paramNumber = 0; paramNumber < paramListLocal.size(); paramNumber++) {
-			if (addAllParametersGlobally) {
-				Parameter para = new Parameter(paramListLocal.get(
-						paramNumber).toString(), model);
-				para.setValue(1d);
-				if (model.getParameter(para.getId()) == null) {
-					model.addParameter(para);
-					sbmlIO.notifySBaseAdded(para);
-				}
-			} else {
-				boolean contains = false;
-				String id = paramListLocal.get(paramNumber).toString();
-				for (int i = 0; i < kineticLaw.getNumParameters() && !contains; i++)
-					if (kineticLaw.getParameter(i).getId().equals(id))
-						contains = true;
-				if (!contains) {
-					Parameter para = new Parameter(id, kineticLaw);
-					para.setValue(1d);
-					kineticLaw.addParameter(para);
-					sbmlIO.notifySBaseAdded(para);
-				}
-			}
+			// if (addAllParametersGlobally) {
+			// Parameter para = new Parameter(paramListLocal.get(paramNumber)
+			// .toString(), model);
+			// para.setValue(1d);
+			// if (model.getParameter(para.getId()) == null) {
+			// model.addParameter(para);
+			// sbmlIO.notifySBaseAdded(para);
+			// }
+			// } else {
+			// boolean contains = false;
+			// String id = paramListLocal.get(paramNumber).toString();
+			// for (int i = 0; i < kineticLaw.getNumParameters() && !contains;
+			// i++)
+			// if (kineticLaw.getParameter(i).getId().equals(id))
+			// contains = true;
+			// if (!contains) {
+			// Parameter para = new Parameter(id, kineticLaw);
+			// para.setValue(1d);
+			// kineticLaw.addParameter(para);
+			// sbmlIO.notifySBaseAdded(para);
+			// }
+			// }
 		}
 		for (paramNumber = 0; paramNumber < paramListGlobal.size(); paramNumber++) {
-			Parameter para = new Parameter(paramListGlobal.get(
-					paramNumber).toString(), model);
-			para.setValue(1d);
-			if (model.getParameter(para.getId()) == null) {
-				model.addParameter(para);
-				sbmlIO.notifySBaseAdded(para);
-			}
+			// Parameter para = new Parameter(paramListGlobal.get(paramNumber)
+			// .toString(), model);
+			// para.setValue(1d);
+			// if (model.getParameter(para.getId()) == null) {
+			// model.addParameter(para);
+			// sbmlIO.notifySBaseAdded(para);
+			// }
 		}
-	}
-
-	/**
-	 * Returns true if the given astnode or one of its descendents contains some
-	 * identifier with the given id. This method can be used to scan a formula
-	 * and for a specific parameter or species and detect weather this component
-	 * is used by this formula. This search is done using a DFS.
-	 * 
-	 * @param astnode
-	 * @param id
-	 * @return
-	 */
-	private boolean contains(ASTNode astnode, String id) {
-		if (astnode.isName())
-			if (astnode.getName().equals(id))
-				return true;
-		boolean childContains = false;
-		for (int i = 0; i < astnode.getNumChildren(); i++)
-			childContains = childContains || contains(astnode.getChild(i), id);
-		return childContains;
 	}
 
 	private void init() {
@@ -1434,26 +1241,6 @@ public class KineticLawGenerator {
 				|| (biBiType == MICHAELIS_MENTEN)
 				|| (ORDERED_MECHANISM < biBiType))
 			biBiType = GENERALIZED_MASS_ACTION;
-
-		short level = identifyLevel(model);
-		for (int i = 0; i < model.getNumSpecies(); i++) {
-			Species species = model.getSpecies(i);
-			speciesAndODE.put(species.getName(), "");
-			speciesAndODETeX.put(species.getName(), "");
-			switch (level) {
-			case 1:
-				numAndSpeciesID.put(i, species.getName());
-				speciesIDandNum.put(species.getName(), i);
-				break;
-			case 2:
-				numAndSpeciesID.put(i, species.getId());
-				speciesIDandNum.put(species.getId(), i);
-				break;
-			default:
-				break;
-			}
-		}
-
 	}
 
 	/**
@@ -1463,8 +1250,8 @@ public class KineticLawGenerator {
 	 * @param reaction
 	 * @param initialValue
 	 */
-	private void setInitialConcentrationTo(Model model,
-			Reaction reaction, double initialValue) {
+	private void setInitialConcentrationTo(Model model, Reaction reaction,
+			double initialValue) {
 		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
 			Species species = reaction.getReactant(reactant)
 					.getSpeciesInstance();
@@ -1478,8 +1265,7 @@ public class KineticLawGenerator {
 			}
 		}
 		for (int product = 0; product < reaction.getNumProducts(); product++) {
-			Species species = reaction.getProduct(product)
-					.getSpeciesInstance();
+			Species species = reaction.getProduct(product).getSpeciesInstance();
 			if (species.getInitialConcentration() == 0.0) {
 				species.setInitialConcentration(initialValue);
 				species.setHasOnlySubstanceUnits(false);
@@ -1501,6 +1287,10 @@ public class KineticLawGenerator {
 				species.stateChanged();
 			}
 		}
+	}
+
+	public Model getModel() {
+		return model;
 	}
 
 }

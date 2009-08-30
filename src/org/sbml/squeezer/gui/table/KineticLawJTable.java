@@ -28,6 +28,7 @@ import javax.swing.event.TableModelEvent;
 import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.IllegalFormatException;
 import org.sbml.squeezer.kinetics.KineticLawGenerator;
@@ -121,8 +122,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					&& (!klg.getModel().getReaction(i).getId().equals(
 							kineticLaw.getParentSBMLObject().getId())))
 				i++;
-			klg.getReactionNumAndKineticLaw().put(Integer.valueOf(i),
-					kineticLaw);
+			klg.getModel().getReaction(i).setKineticLaw(kineticLaw);
 			setColumnWidthAppropriately();
 			editing = false;
 		}

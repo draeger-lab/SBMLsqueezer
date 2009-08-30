@@ -424,4 +424,24 @@ public class Model extends NamedSBase {
 		this.listOfSpecies = listOfSpecies.clone();
 		setThisAsParentSBMLObject(this.listOfSpecies);
 	}
+
+	public int getNumRules() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public MathContainer getRule(int j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getNumFunctionDefinitions() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public MathContainer getFunctionDefinition(int j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -64,15 +64,15 @@ public class KineticLawTableModel extends AbstractTableModel {
 						numOfWarnings++;
 						break;
 					}
-			String kinetic = klg.getReactionNumAndKineticLaw().get(
-					klg.getReactionNumOfNotExistKinetics().get(reactionNum))
-					.getFormula();
+			String kinetic = klg.getModel().getReaction(
+					klg.getReactionNumOfNotExistKinetics().get(reactionNum)
+							.intValue()).getKineticLaw().getFormula();
 			String id = klg.getModel().getReaction(
 					klg.getReactionNumOfNotExistKinetics().get(reactionNum)
 							.intValue()).getId();
-			List<Parameter> param = klg.getReactionNumAndKineticLaw().get(
-					klg.getReactionNumOfNotExistKinetics().get(reactionNum))
-					.getListOfParameters();
+			List<Parameter> param = klg.getModel().getReaction(
+					klg.getReactionNumOfNotExistKinetics().get(reactionNum)
+							.intValue()).getKineticLaw().getListOfParameters();
 			numReac = 0;
 			for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++)
 				numReac += reaction.getReactant(speciesNum).getStoichiometry();
@@ -95,13 +95,13 @@ public class KineticLawTableModel extends AbstractTableModel {
 			// Reaction Identifier
 			data[reactionNum][0] = id;
 			// Kinetic Law
-			data[reactionNum][1] = klg.getReactionNumAndKineticLaw().get(
-					klg.getReactionNumOfNotExistKinetics().get(reactionNum));
+			data[reactionNum][1] = klg.getModel().getReaction(
+					klg.getReactionNumOfNotExistKinetics().get(reactionNum)
+							.intValue());
 			// SBO
-			data[reactionNum][2] = new String(klg.getReactionNumAndKineticLaw()
-					.get(
-							klg.getReactionNumOfNotExistKinetics().get(
-									reactionNum)).getSBOTermID());
+			data[reactionNum][2] = new String(klg.getModel().getReaction(
+					klg.getReactionNumOfNotExistKinetics().get(reactionNum)
+							.intValue()).getSBOTermID());
 			// #Reactants
 			data[reactionNum][3] = Double.valueOf(numReac);
 			// Reactants

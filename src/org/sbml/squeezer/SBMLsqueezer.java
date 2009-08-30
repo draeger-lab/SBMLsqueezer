@@ -23,16 +23,15 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.JMenuItem;
 
 import jp.sbi.celldesigner.plugin.PluginAction;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
+import org.sbml.SBO;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
@@ -47,59 +46,24 @@ import org.sbml.squeezer.standalone.LibSBMLWriter;
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a> * @author <a
- *         href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ *         andreas.draeger@uni-tuebingen.de</a>
+ * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @since 1.3
  * @version
  */
 public class SBMLsqueezer extends PluginAction {
 
-	public List<Integer> listOfPossibleEnzymes;
-	/**
-	 * 
-	 */
-	private static Properties alias2sbo;
+	public Set<Integer> possibleEnzymes;
 
 	static {
 		try {
 			properties = Resource.readProperties(Resource.class.getResource(
 					"cfg/SBMLsqueezer.cfg").getPath());
-			alias2sbo = Resource.readProperties(Resource.class.getResource(
-					"cfg/Alias2SBO.cfg").getPath());
 		} catch (IOException e) {
 			e.printStackTrace();
 			properties = new Properties();
 		}
-	}
-
-	/**
-	 * Creates and returns a list of molecule types accepted as an enzyme by
-	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
-	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
-	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
-	 * 
-	 * @return
-	 */
-	private static final List<Integer> getDefaultListOfPossibleEnzymes() {
-		List<Integer> listOfPossibleEnzymes = new LinkedList<Integer>();
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("ANTISENSE_RNA")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("SIMPLE_MOLECULE")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("UNKNOWN")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("COMPLEX")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("TRUNCATED")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("GENERIC")));
-		listOfPossibleEnzymes
-				.add(Integer.valueOf(alias2sbo.getProperty("RNA")));
-		listOfPossibleEnzymes.add(Integer.valueOf(alias2sbo
-				.getProperty("RECEPTOR")));
-		return listOfPossibleEnzymes;
 	}
 
 	/**
@@ -233,7 +197,7 @@ public class SBMLsqueezer extends PluginAction {
 	 */
 	public SBMLsqueezer(SBMLsqueezerPlugin plugin) {
 		this.plugin = plugin;
-		this.listOfPossibleEnzymes = getDefaultListOfPossibleEnzymes();
+		this.possibleEnzymes = SBO.getDefaultPossibleEnzymes();
 		showAboutMsg();
 	}
 
@@ -245,12 +209,10 @@ public class SBMLsqueezer extends PluginAction {
 	 */
 	public SBMLsqueezer(String... args) {
 		Properties p = analyzeCommandLineArguments(args);
+		sbmlIo = new SBMLio(new LibSBMLReader(possibleEnzymes),
+				new LibSBMLWriter());
 		if (p.containsKey(Keys.SBML_FILE))
-			sbmlIo = new SBMLio(new LibSBMLReader(p.getProperty(Keys.SBML_FILE
-					.toString()), listOfPossibleEnzymes), new LibSBMLWriter());
-		else
-			sbmlIo = new SBMLio(new LibSBMLReader(listOfPossibleEnzymes),
-					new LibSBMLWriter());
+			sbmlIo.readModel(p.get(Keys.SBML_FILE));
 		if (p.containsKey(Keys.GUI)
 				&& Boolean.parseBoolean(p.get(Keys.GUI).toString())) {
 			checkForUpdate(true);
@@ -371,8 +333,8 @@ public class SBMLsqueezer extends PluginAction {
 	 */
 	private void startSBMLsqueezerPlugin(String mode) {
 		SBMLio sbmlIO = new SBMLio(new PluginSBMLReader(plugin
-				.getSelectedModel(), listOfPossibleEnzymes),
-				new PluginSBMLWriter(plugin));
+				.getSelectedModel(), possibleEnzymes), new PluginSBMLWriter(
+				plugin));
 		if (mode.equals(plugin.getMainPluginItemText()))
 			(new KineticLawSelectionDialog(null, sbmlIO)).setVisible(true);
 		else if (mode.equals(plugin.getSqueezeContextMenuItemText()))
@@ -391,19 +353,9 @@ public class SBMLsqueezer extends PluginAction {
 
 	/**
 	 * 
-	 * @param aliasType
 	 * @return
 	 */
-	public static int convertAlias2SBO(String aliasType) {
-		return Integer.parseInt(alias2sbo.get(aliasType).toString());
+	public Set<Integer> getPossibleEnzymes() {
+		return possibleEnzymes;
 	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Integer> getListOfPossibleEnzymes() {
-		return listOfPossibleEnzymes;
-	}
-
 }

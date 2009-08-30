@@ -17,14 +17,11 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
-
 import org.sbml.ASTNode;
 import org.sbml.Compartment;
 import org.sbml.Constants;
 import org.sbml.Event;
 import org.sbml.Model;
-import org.sbml.ModifierSpeciesReference;
 import org.sbml.Reaction;
 import org.sbml.SBase;
 import org.sbml.Species;
@@ -154,12 +151,6 @@ public class LaTeXExport extends LaTeX {
 	 * New line separator of this operating system
 	 */
 	private final String newLine = System.getProperty("line.separator");
-
-	/**
-	 * This is a LaTeX line break. The line break symbol double backslash
-	 * followed by a new line symbol of the operating system.
-	 */
-	private final String lineBreak = "\\\\" + newLine;
 
 	/**
 	 * This is the font size to be used in this document. Allowed values are:
@@ -867,7 +858,7 @@ public class LaTeXExport extends LaTeX {
 	 */
 	public void toLaTeX(Model model, File file) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-		bw.write(toLaTeX(model).toString());
+		bw.append(toLaTeX(model));
 		bw.close();
 	}
 
@@ -972,32 +963,6 @@ public class LaTeXExport extends LaTeX {
 		}
 	}
 
-	/**
-	 * This method returns the correct LaTeX expression for a function which
-	 * returns the size of a compartment. This can be a volume, an area, a
-	 * length or a point.
-	 */
-	private StringBuffer getSize(Compartment c) {
-		StringBuffer value = new StringBuffer("\\mathrm{");
-		switch ((int) c.getSpatialDimensions()) {
-		case 3:
-			value.append("vol");
-			break;
-		case 2:
-			value.append("area");
-			break;
-		case 1:
-			value.append("length");
-			break;
-		default:
-			value.append("point");
-			break;
-		}
-		value.append("}(");
-		value.append(getNameOrID(c));
-		value.append(')');
-		return value;
-	}
 
 	private String name_idToLaTex(String s) {
 		return "$" + toTeX(s) + "$";
