@@ -36,7 +36,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.sbml.Model;
-import org.sbml.SBase;
+import org.sbml.AbstractSBase;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -74,7 +74,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * @param sbase
 	 * @return
 	 */
-	private JScrollPane createRightComponent(SBase sbase) {
+	private JScrollPane createRightComponent(AbstractSBase sbase) {
 		JPanel p = new JPanel();
 		p.add(new SBasePanel(sbase));
 		return new JScrollPane(p, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -93,9 +93,9 @@ public class SBMLModelSplitPane extends JSplitPane implements
 			// Nothing is selected.
 			return;
 		Object nodeInfo = node.getUserObject();
-		if (nodeInfo instanceof SBase) {
+		if (nodeInfo instanceof AbstractSBase) {
 			int proportionalLocation = getDividerLocation();
-			setRightComponent(createRightComponent((SBase) nodeInfo));
+			setRightComponent(createRightComponent((AbstractSBase) nodeInfo));
 			setDividerLocation(proportionalLocation);
 			validate();
 		} else {

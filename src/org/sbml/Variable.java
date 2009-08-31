@@ -14,22 +14,37 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.io;
-
-import org.sbml.AbstractSBase;
+package org.sbml;
 
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @date 2009-08-31
  */
-public interface SBaseChangedListener {
-	void stateChanged(AbstractSBase sb);
+public abstract class Variable extends AbstractNamedSBase {
 
-	void sbaseAdded(AbstractSBase sb);
+	/**
+	 * @param nsb
+	 */
+	public Variable(AbstractNamedSBase nsb) {
+		super(nsb);
+	}
 
-	void sbaseRemoved(AbstractSBase sb);
+	/**
+	 * @param id
+	 */
+	public Variable(String id) {
+		super(id);
+	}
+
+	/**
+	 * @param id
+	 * @param name
+	 */
+	public Variable(String id, String name) {
+		super(id, name);
+	}
 }

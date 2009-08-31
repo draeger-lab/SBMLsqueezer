@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml;
 
@@ -27,11 +27,18 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Model extends NamedSBase {
+public class Model extends AbstractNamedSBase {
 
+	private ListOf<FunctionDefinition> listOfFunctionDefinitions;
+	private ListOf<UnitDefinition> listOfUnitDefinitions;
+	private ListOf<CompartmentType> listOfCompartmentTypes;
+	private ListOf<SpeciesType> listOfSpeciesTypes;
 	private ListOf<Compartment> listOfCompartments;
 	private ListOf<Species> listOfSpecies;
 	private ListOf<Parameter> listOfParameters;
+	private ListOf<InitialAssignment> listOfInitialAssignments;
+	private ListOf<Rule> listOfRules;
+	private ListOf<Constraint> listOfConstraints;
 	private ListOf<Reaction> listOfReactions;
 	private ListOf<Event> listOfEvents;
 
@@ -41,12 +48,27 @@ public class Model extends NamedSBase {
 	 */
 	public Model(Model model) {
 		super(model);
+		listOfFunctionDefinitions = model.getListOfFunctionDefinitions()
+				.clone();
+		setThisAsParentSBMLObject(listOfFunctionDefinitions);
+		listOfUnitDefinitions = model.getListOfUnitDefinitions();
+		setThisAsParentSBMLObject(listOfUnitDefinitions);
+		listOfCompartmentTypes = model.getListOfCompartmentTypes().clone();
+		setThisAsParentSBMLObject(listOfCompartmentTypes);
+		listOfSpeciesTypes = model.getListOfSpeciesTypes().clone();
+		setThisAsParentSBMLObject(listOfSpeciesTypes);
 		listOfCompartments = model.getListOfCompartments().clone();
 		setThisAsParentSBMLObject(listOfCompartments);
 		listOfSpecies = model.getListOfSpecies().clone();
 		setThisAsParentSBMLObject(listOfSpecies);
 		listOfParameters = model.getListOfParameters().clone();
 		setThisAsParentSBMLObject(listOfParameters);
+		listOfInitialAssignments = model.getListOfInitialAssignments().clone();
+		setThisAsParentSBMLObject(listOfInitialAssignments);
+		listOfRules = model.getListOfRules().clone();
+		setThisAsParentSBMLObject(listOfRules);
+		listOfConstraints = model.getListOfConstraints().clone();
+		setThisAsParentSBMLObject(listOfConstraints);
 		listOfReactions = model.getListOfReactions().clone();
 		setThisAsParentSBMLObject(listOfReactions);
 		listOfEvents = model.getListOfEvents().clone();
@@ -59,12 +81,26 @@ public class Model extends NamedSBase {
 	 */
 	public Model(String id) {
 		super(id);
+		listOfFunctionDefinitions = new ListOf<FunctionDefinition>();
+		setThisAsParentSBMLObject(listOfFunctionDefinitions);
+		listOfUnitDefinitions = new ListOf<UnitDefinition>();
+		setThisAsParentSBMLObject(listOfUnitDefinitions);
+		listOfCompartmentTypes = new ListOf<CompartmentType>();
+		setThisAsParentSBMLObject(listOfCompartmentTypes);
+		listOfSpeciesTypes = new ListOf<SpeciesType>();
+		setThisAsParentSBMLObject(listOfSpeciesTypes);
 		listOfCompartments = new ListOf<Compartment>();
 		setThisAsParentSBMLObject(listOfCompartments);
 		listOfSpecies = new ListOf<Species>();
 		setThisAsParentSBMLObject(listOfSpecies);
 		listOfParameters = new ListOf<Parameter>();
 		setThisAsParentSBMLObject(listOfParameters);
+		listOfInitialAssignments = new ListOf<InitialAssignment>();
+		setThisAsParentSBMLObject(listOfInitialAssignments);
+		listOfRules = new ListOf<Rule>();
+		setThisAsParentSBMLObject(listOfRules);
+		listOfConstraints = new ListOf<Constraint>();
+		setThisAsParentSBMLObject(listOfRules);
 		listOfReactions = new ListOf<Reaction>();
 		setThisAsParentSBMLObject(listOfReactions);
 		listOfEvents = new ListOf<Event>();
@@ -80,9 +116,16 @@ public class Model extends NamedSBase {
 	 */
 	public void addChangeListener(SBaseChangedListener l) {
 		super.addChangeListener(l);
+		listOfFunctionDefinitions.addChangeListener(l);
+		listOfUnitDefinitions.addChangeListener(l);
+		listOfCompartmentTypes.addChangeListener(l);
+		listOfSpeciesTypes.addChangeListener(l);
 		listOfCompartments.addChangeListener(l);
 		listOfSpecies.addChangeListener(l);
 		listOfParameters.addChangeListener(l);
+		listOfInitialAssignments.addChangeListener(l);
+		listOfRules.addChangeListener(l);
+		listOfConstraints.addChangeListener(l);
 		listOfReactions.addChangeListener(l);
 		listOfEvents.addChangeListener(l);
 	}
@@ -93,10 +136,9 @@ public class Model extends NamedSBase {
 	 */
 	public void addCompartment(Compartment compartment) {
 		if (!listOfCompartments.contains(compartment)) {
-			Compartment c = compartment.clone();
-			listOfCompartments.add(c);
-			c.parentSBMLObject = this;
-			c.sbaseAdded();
+			listOfCompartments.add(compartment);
+			compartment.parentSBMLObject = this;
+			compartment.sbaseAdded();
 		}
 	}
 
@@ -106,10 +148,9 @@ public class Model extends NamedSBase {
 	 */
 	public void addParameter(Parameter parameter) {
 		if (!listOfParameters.contains(parameter)) {
-			Parameter p = parameter.clone();
-			listOfParameters.add(p);
-			p.parentSBMLObject = this;
-			p.sbaseAdded();
+			listOfParameters.add(parameter);
+			parameter.parentSBMLObject = this;
+			parameter.sbaseAdded();
 		}
 	}
 
@@ -120,10 +161,9 @@ public class Model extends NamedSBase {
 	 */
 	public void addReaction(Reaction reac) {
 		if (!listOfReactions.contains(reac)) {
-			Reaction r = reac.clone();
-			listOfReactions.add(r);
-			r.parentSBMLObject = this;
-			r.sbaseAdded();
+			listOfReactions.add(reac);
+			reac.parentSBMLObject = this;
+			reac.sbaseAdded();
 		}
 	}
 
@@ -134,10 +174,9 @@ public class Model extends NamedSBase {
 	 */
 	public void addSpecies(Species spec) {
 		if (!listOfSpecies.contains(spec)) {
-			Species s = spec.clone();
-			listOfSpecies.add(s);
-			s.parentSBMLObject = this;
-			s.sbaseAdded();
+			listOfSpecies.add(spec);
+			spec.parentSBMLObject = this;
+			spec.sbaseAdded();
 		}
 	}
 
@@ -161,14 +200,73 @@ public class Model extends NamedSBase {
 		boolean equal = super.equals(o);
 		if (o instanceof Model) {
 			Model m = (Model) o;
+			equal &= m.getListOfFunctionDefinitions().equals(
+					listOfFunctionDefinitions);
+			// equal &=
+			// m.getListOfUnitDefinitions().equals(listOfUnitDefinitions);
+			// equal &=
+			// m.getListOfCompartmentTypes().equals(listOfCompartmentTypes);
+			// equal &= m.getlistOfSpeciesTypes().equals(listOfSpeciesTypes);
 			equal &= m.getListOfCompartments().equals(listOfCompartments);
 			equal &= m.getListOfSpecies().equals(listOfSpecies);
 			equal &= m.getListOfParameters().equals(listOfParameters);
+			// equal &=
+			// m.getListOfInitialAssignments().equals(listOfInitialAssignments);
+			equal &= m.getListOfRules().equals(listOfRules);
+			// equal &= m.getListOfConstraints().equals(listOfConstraints);
 			equal &= m.getListOfReactions().equals(listOfReactions);
 			equal &= m.getListOfEvents().equals(listOfEvents);
 			return equal;
 		}
 		return false;
+	}
+
+	/**
+	 * try to figure out the meaning of this name.
+	 * 
+	 * @param id
+	 *            an id indicating a variable of the model.
+	 * @return null if no model is available or the model does not contain a
+	 *         compartment, species, or parameter wit the given id.
+	 */
+	public NamedSBase findNamedSBase(String id) {
+		NamedSBase namedSBase = null;
+		if (parentSBMLObject != null && parentSBMLObject.getModel() != null) {
+			Model m = parentSBMLObject.getModel();
+			namedSBase = m.getCompartment(id);
+			if (namedSBase == null)
+				namedSBase = m.getSpecies(id);
+			if (namedSBase == null)
+				namedSBase = m.getParameter(id);
+			if (namedSBase == null)
+				namedSBase = m.getReaction(id);
+			if (namedSBase == null)
+				namedSBase = m.getFunctionDefinition(id);
+
+			// check all local parameters
+			if (namedSBase == null)
+				for (Reaction r : m.getListOfReactions()) {
+					if (r.isSetKineticLaw())
+						namedSBase = r.getKineticLaw().getParameter(id);
+					if (namedSBase != null)
+						break;
+				}
+		}
+		return namedSBase;
+	}
+
+	/**
+	 * 
+	 * @param variable
+	 * @return
+	 */
+	public Variable findVariable(String variable) {
+		Variable nsb = getSpecies(variable);
+		if (nsb == null)
+			nsb = getParameter(variable);
+		if (nsb == null)
+			nsb = getCompartment(variable);
+		return nsb;
 	}
 
 	/**
@@ -204,6 +302,25 @@ public class Model extends NamedSBase {
 
 	/**
 	 * 
+	 * @param n
+	 * @return
+	 */
+	public FunctionDefinition getFunctionDefinition(int n) {
+		return listOfFunctionDefinitions.get(n);
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public FunctionDefinition getFunctionDefinition(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * 
 	 * @return
 	 */
 	public ListOf<Compartment> getListOfCompartments() {
@@ -214,8 +331,38 @@ public class Model extends NamedSBase {
 	 * 
 	 * @return
 	 */
+	public ListOf<CompartmentType> getListOfCompartmentTypes() {
+		return listOfCompartmentTypes;
+	}
+
+	/**
+	 * @return the listOfConstraints
+	 */
+	public ListOf<Constraint> getListOfConstraints() {
+		return listOfConstraints;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<Event> getListOfEvents() {
 		return listOfEvents;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ListOf<FunctionDefinition> getListOfFunctionDefinitions() {
+		return listOfFunctionDefinitions;
+	}
+
+	/**
+	 * @return the listOfInitialAssignments
+	 */
+	public ListOf<InitialAssignment> getListOfInitialAssignments() {
+		return listOfInitialAssignments;
 	}
 
 	/**
@@ -238,8 +385,32 @@ public class Model extends NamedSBase {
 	 * 
 	 * @return
 	 */
+	public ListOf<Rule> getListOfRules() {
+		return listOfRules;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public ListOf<Species> getListOfSpecies() {
 		return listOfSpecies;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ListOf<SpeciesType> getListOfSpeciesTypes() {
+		return listOfSpeciesTypes;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ListOf<UnitDefinition> getListOfUnitDefinitions() {
+		return listOfUnitDefinitions;
 	}
 
 	/**
@@ -262,6 +433,14 @@ public class Model extends NamedSBase {
 	 * 
 	 * @return
 	 */
+	public int getNumFunctionDefinitions() {
+		return listOfFunctionDefinitions.size();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumParameters() {
 		return listOfParameters.size();
 	}
@@ -272,6 +451,14 @@ public class Model extends NamedSBase {
 	 */
 	public int getNumReactions() {
 		return listOfReactions.size();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNumRules() {
+		return listOfRules.size();
 	}
 
 	/**
@@ -325,6 +512,15 @@ public class Model extends NamedSBase {
 				return r;
 		}
 		return null;
+	}
+
+	/**
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public Rule getRule(int n) {
+		return listOfRules.get(n);
 	}
 
 	/**
@@ -387,6 +583,27 @@ public class Model extends NamedSBase {
 	public void setListOfCompartments(ListOf<Compartment> listOfCompartments) {
 		this.listOfCompartments = listOfCompartments.clone();
 		setThisAsParentSBMLObject(listOfCompartments);
+		stateChanged();
+	}
+
+	/**
+	 * @param listOfCompartmentTypes
+	 *            the listOfCompartmentTypes to set
+	 */
+	public void setListOfCompartmentTypes(
+			ListOf<CompartmentType> listOfCompartmentTypes) {
+		this.listOfCompartmentTypes = listOfCompartmentTypes;
+		setThisAsParentSBMLObject(listOfCompartmentTypes);
+		stateChanged();
+	}
+
+	/**
+	 * @param listOfConstraints
+	 *            the listOfConstraints to set
+	 */
+	public void setListOfConstraints(ListOf<Constraint> listOfConstraints) {
+		this.listOfConstraints = listOfConstraints;
+		setThisAsParentSBMLObject(listOfConstraints);
 	}
 
 	/**
@@ -396,6 +613,28 @@ public class Model extends NamedSBase {
 	public void setListOfEvents(ListOf<Event> listOfEvents) {
 		this.listOfEvents = listOfEvents.clone();
 		setThisAsParentSBMLObject(this.listOfEvents);
+		stateChanged();
+	}
+
+	/**
+	 * @param listOfFunctionDefinitions
+	 *            the listOfFunctionDefinitions to set
+	 */
+	public void setListOfFunctionDefinitions(
+			ListOf<FunctionDefinition> listOfFunctionDefinitions) {
+		this.listOfFunctionDefinitions = listOfFunctionDefinitions;
+		setThisAsParentSBMLObject(this.listOfFunctionDefinitions);
+		stateChanged();
+	}
+
+	/**
+	 * @param listOfInitialAssignments
+	 *            the listOfInitialAssignments to set
+	 */
+	public void setListOfInitialAssignments(
+			ListOf<InitialAssignment> listOfInitialAssignments) {
+		this.listOfInitialAssignments = listOfInitialAssignments;
+		setThisAsParentSBMLObject(listOfInitialAssignments);
 	}
 
 	/**
@@ -405,6 +644,7 @@ public class Model extends NamedSBase {
 	public void setListOfParameters(ListOf<Parameter> listOfParameters) {
 		this.listOfParameters = listOfParameters.clone();
 		setThisAsParentSBMLObject(this.listOfParameters);
+		stateChanged();
 	}
 
 	/**
@@ -414,6 +654,17 @@ public class Model extends NamedSBase {
 	public void setListOfReactions(ListOf<Reaction> listOfReactions) {
 		this.listOfReactions = listOfReactions.clone();
 		setThisAsParentSBMLObject(this.listOfReactions);
+		stateChanged();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public void setListOfRules(ListOf<Rule> listOfRules) {
+		this.listOfRules = listOfRules;
+		setThisAsParentSBMLObject(this.listOfRules);
+		stateChanged();
 	}
 
 	/**
@@ -423,25 +674,27 @@ public class Model extends NamedSBase {
 	public void setListOfSpecies(ListOf<Species> listOfSpecies) {
 		this.listOfSpecies = listOfSpecies.clone();
 		setThisAsParentSBMLObject(this.listOfSpecies);
+		stateChanged();
 	}
 
-	public int getNumRules() {
-		// TODO Auto-generated method stub
-		return 0;
+	/**
+	 * @param listOfSpeciesTypes
+	 *            the listOfSpeciesTypes to set
+	 */
+	public void setListOfSpeciesTypes(ListOf<SpeciesType> listOfSpeciesTypes) {
+		this.listOfSpeciesTypes = listOfSpeciesTypes;
+		setThisAsParentSBMLObject(listOfSpeciesTypes);
+		stateChanged();
 	}
 
-	public MathContainer getRule(int j) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int getNumFunctionDefinitions() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public MathContainer getFunctionDefinition(int j) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * 
+	 * @param listOfUnitDefinitions
+	 */
+	public void setListOfUnitDefinitions(
+			ListOf<UnitDefinition> listOfUnitDefinitions) {
+		this.listOfUnitDefinitions = listOfUnitDefinitions;
+		setThisAsParentSBMLObject(this.listOfUnitDefinitions);
+		stateChanged();
 	}
 }

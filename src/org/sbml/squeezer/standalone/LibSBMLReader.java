@@ -33,6 +33,7 @@ import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.libsbml;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
 /**
@@ -59,7 +60,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * 
 	 * @param model
 	 */
-	public LibSBMLReader(org.sbml.libsbml.Model model, Set<Integer> possibleEnzymes) {
+	public LibSBMLReader(org.sbml.libsbml.Model model,
+			Set<Integer> possibleEnzymes) {
 		super(model);
 		this.possibleEnzymes = possibleEnzymes;
 		this.setOfDocuments = new HashSet<SBMLDocument>();
@@ -67,6 +69,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readCompartment(java.lang.Object)
 	 */
 	public Compartment readCompartment(Object compartment) {
@@ -106,6 +109,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 					+ "org.sbml.libsbml.KineticLaw.");
 		org.sbml.libsbml.KineticLaw kl = (org.sbml.libsbml.KineticLaw) kineticLaw;
 		KineticLaw kinlaw = new KineticLaw();
+		this.model.getReaction(kl.getParentSBMLObject().getId()).setKineticLaw(kinlaw);
 		if (kl.isSetMetaId())
 			kinlaw.setMetaId(kl.getMetaId());
 		if (kl.isSetSBOTerm())
@@ -154,7 +158,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			for (i = 0; i < m.getNumParameters(); i++)
 				this.model.addParameter(readParameter(m.getParameter(i)));
 			for (i = 0; i < m.getNumReactions(); i++)
-				this.model.addReaction(readReaction(m.getReaction(i)));
+				readReaction(m.getReaction(i));
 			addAllSBaseChangeListenersTo(this.model);
 			return this.model;
 		}
@@ -183,8 +187,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		if (msr.isSetSBOTerm()) {
 			mod.setSBOTerm(msr.getSBOTerm());
 			if (!SBO.isEnzymaticCatalysis(mod.getSBOTerm())
-					&& possibleEnzymes
-							.contains(Integer.valueOf(mod.getSBOTerm())))
+					&& possibleEnzymes.contains(Integer.valueOf(mod
+							.getSBOTerm())))
 				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
 		}
 		if (msr.isSetNotes())
@@ -229,6 +233,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 					+ "org.sbml.libsbml.Reaction.");
 		org.sbml.libsbml.Reaction r = (org.sbml.libsbml.Reaction) reac;
 		Reaction reaction = new Reaction(r.getId());
+		this.model.addReaction(reaction);
 		for (int i = 0; i < r.getNumReactants(); i++)
 			reaction.addReactant(readSpeciesReference(r.getReactant(i)));
 		for (int i = 0; i < r.getNumProducts(); i++)
@@ -239,7 +244,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		if (r.isSetSBOTerm())
 			reaction.setSBOTerm(r.getSBOTerm());
 		if (r.isSetKineticLaw())
-			reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
+			readKineticLaw(r.getKineticLaw());
 		if (r.isSetName())
 			reaction.setName(r.getName());
 		if (r.isSetNotes())

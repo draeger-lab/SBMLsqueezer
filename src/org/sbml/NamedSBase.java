@@ -19,145 +19,46 @@
 package org.sbml;
 
 /**
- * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public abstract class NamedSBase extends SBase {
-
-	private String id;
-	private String name;
+public interface NamedSBase extends SBase {
 
 	/**
 	 * 
+	 * @return
 	 */
-	public NamedSBase() {
-		super();
-		id = null;
-		name = null;
-	}
+	public String getId();
 
 	/**
 	 * 
-	 * @param nsb
+	 * @return
 	 */
-	public NamedSBase(NamedSBase nsb) {
-		super(nsb);
-		if (nsb.isSetId())
-			this.id = new String(nsb.getId());
-		if (nsb.isSetName())
-			this.name = new String(nsb.getName());
-	}
+	public String getName();
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetId();
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetName();
 
 	/**
 	 * 
 	 * @param id
 	 */
-	public NamedSBase(String id) {
-		super();
-		this.id = new String(id);
-		name = null;
-	}
-
-	/**
-	 * 
-	 * @param id
-	 * @param name
-	 */
-	public NamedSBase(String id, String name) {
-		super();
-		this.id = new String(id);
-		this.name = new String(name);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
-	 */
-	// @Override
-	public boolean equals(Object o) {
-		boolean equals = super.equals(o);
-		if (o instanceof NamedSBase) {
-			NamedSBase nsb = (NamedSBase) o;
-			if ((nsb.isSetId() && !isSetId()) || (!nsb.isSetId() && isSetId()))
-				return false;
-			else if (nsb.isSetId() && isSetId())
-				equals &= nsb.getId().equals(getId());
-			if ((nsb.isSetName() && !isSetName())
-					|| (!nsb.isSetName() && isSetName()))
-				return false;
-			else if (nsb.isSetName() && isSetName())
-				equals &= nsb.getName().equals(getName());
-		} else
-			equals = false;
-		return equals;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getId() {
-		return isSetId() ? id : "";
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName() {
-		return isSetName() ? name : "";
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isSetId() {
-		return id != null;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isSetName() {
-		return name != null;
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(String id) {
-		this.id = id;
-		stateChanged();
-	}
+	public void setId(String id);
 
 	/**
 	 * 
 	 * @param name
 	 */
-	public void setName(String name) {
-		this.name = name;
-		stateChanged();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBase#toString()
-	 */
-	// @Override
-	public String toString() {
-		if (isSetName() && getName().length() > 0)
-			return name;
-		if (isSetId())
-			return id;
-		String name = getClass().getName();
-		return name.substring(name.lastIndexOf('.') + 1);
-	}
+	public void setName(String name);
 }

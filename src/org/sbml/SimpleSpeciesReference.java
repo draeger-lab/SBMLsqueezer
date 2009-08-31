@@ -23,7 +23,7 @@ package org.sbml;
  *         Sch&auml;fer</a>
  * 
  */
-public abstract class SimpleSpeciesReference extends NamedSBase {
+public abstract class SimpleSpeciesReference extends AbstractNamedSBase {
 
 	private Species species;
 

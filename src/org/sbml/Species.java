@@ -25,7 +25,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Species extends NamedSBase {
+public class Species extends Variable {
 
 	private boolean boundaryCondition;
 	private int charge;

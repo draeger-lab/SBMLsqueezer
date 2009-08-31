@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.io;
-
-import org.sbml.AbstractSBase;
+package org.sbml;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -26,10 +24,26 @@ import org.sbml.AbstractSBase;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public interface SBaseChangedListener {
-	void stateChanged(AbstractSBase sb);
+public abstract class Rule extends MathContainer {
 
-	void sbaseAdded(AbstractSBase sb);
+	/**
+	 * 
+	 */
+	public Rule() {
+		super();
+	}
 
-	void sbaseRemoved(AbstractSBase sb);
+	/**
+	 * @param math
+	 */
+	public Rule(ASTNode math) {
+		super(math);
+	}
+
+	/**
+	 * @param sb
+	 */
+	public Rule(MathContainer sb) {
+		super(sb);
+	}
 }

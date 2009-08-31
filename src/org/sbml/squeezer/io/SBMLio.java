@@ -33,7 +33,7 @@ import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SBMLReader;
 import org.sbml.SBMLWriter;
-import org.sbml.SBase;
+import org.sbml.AbstractSBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
@@ -47,9 +47,9 @@ import org.sbml.StoichiometryMath;
 public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		ChangeListener {
 
-	private List<SBase> added;
-	private List<SBase> removed;
-	private List<SBase> changed;
+	private List<AbstractSBase> added;
+	private List<AbstractSBase> removed;
+	private List<AbstractSBase> changed;
 	private AbstractSBMLReader reader;
 	private AbstractSBMLWriter writer;
 	protected LinkedList<Model> listOfModels;
@@ -64,9 +64,9 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		this.writer = writer;
 		listOfModels = new LinkedList<Model>();
 		selectedModel = -1;
-		added = new LinkedList<SBase>();
-		removed = new LinkedList<SBase>();
-		changed = new LinkedList<SBase>();
+		added = new LinkedList<AbstractSBase>();
+		removed = new LinkedList<AbstractSBase>();
+		changed = new LinkedList<AbstractSBase>();
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBaseChangedListener#sbaseAdded(org.sbml.SBase)
 	 */
-	public void sbaseAdded(SBase sb) {
+	public void sbaseAdded(AbstractSBase sb) {
 		added.add(sb);
 	}
 
@@ -195,7 +195,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBaseChangedListener#sbaseRemoved(org.sbml.SBase)
 	 */
-	public void sbaseRemoved(SBase sb) {
+	public void sbaseRemoved(AbstractSBase sb) {
 		removed.add(sb);
 	}
 
@@ -237,7 +237,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
 	 */
-	public void stateChanged(SBase sb) {
+	public void stateChanged(AbstractSBase sb) {
 		changed.add(sb);
 	}
 
