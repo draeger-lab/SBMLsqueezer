@@ -16,12 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.kinetics;
+package org.sbml.squeezer.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.sbml.ListOf;
@@ -29,7 +28,6 @@ import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.squeezer.io.String2TeX;
 
 /**
  * TODO: comment missing

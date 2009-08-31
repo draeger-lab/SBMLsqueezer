@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Vector;
 
@@ -28,12 +29,10 @@ import javax.swing.event.TableModelEvent;
 import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
-import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.ModificationException;
+import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.kinetics.IllegalFormatException;
-import org.sbml.squeezer.kinetics.KineticLawGenerator;
-import org.sbml.squeezer.kinetics.ModificationException;
-import org.sbml.squeezer.kinetics.RateLawNotApplicableException;
 
 import atp.sHotEqn;
 

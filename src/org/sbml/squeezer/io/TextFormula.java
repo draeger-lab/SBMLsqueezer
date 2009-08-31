@@ -1,21 +1,36 @@
 /*
- * Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+    SBML2LaTeX converts SBML files (http://sbml.org) into LaTeX files.
+    Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml.squeezer.io;
 
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Vector;
 
 import org.sbml.SpeciesReference;
-import org.sbml.squeezer.kinetics.IllegalFormatException;
 
 /**
- * @author Andreas Dr&auml;ger <a href="mailto:andreas.draeger@uni-tuebingen.de">andreas.draeger@uni-tuebingen.de</a>
- *
+ * @author Andreas Dr&auml;ger <a
+ *         href="mailto:andreas.draeger@uni-tuebingen.de">
+ *         andreas.draeger@uni-tuebingen.de</a>
+ * 
  */
 public class TextFormula extends StringTools {
-	
-	
+
 	/**
 	 * 
 	 * @param sb
@@ -42,7 +57,7 @@ public class TextFormula extends StringTools {
 			return brackets(concat(Character.valueOf('-'), subtrahents));
 		return brackets(arith('-', subtrahents));
 	}
-	
+
 	/**
 	 * Returns a fraction with the given elements as numerator and denominator.
 	 * 
@@ -87,9 +102,9 @@ public class TextFormula extends StringTools {
 	 *             If the given exponent represents a zero.
 	 */
 	public static final StringBuffer root(Object exponent, Object basis)
-			throws IllegalFormatException {
+			throws NumberFormatException {
 		if (Double.parseDouble(exponent.toString()) == 0f)
-			throw new IllegalFormatException(
+			throw new NumberFormatException(
 					"Cannot extract a zeroth root of anything");
 		if (Double.parseDouble(exponent.toString()) == 1f)
 			return new StringBuffer(basis.toString());
@@ -115,7 +130,6 @@ public class TextFormula extends StringTools {
 		return brackets(arith('+', summands));
 	}
 
-	
 	/**
 	 * 
 	 * @param summands

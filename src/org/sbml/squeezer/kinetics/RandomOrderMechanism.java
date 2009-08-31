@@ -19,6 +19,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.ASTNode;
@@ -26,6 +27,7 @@ import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This class creates a kinetic equation according to the random order mechanism

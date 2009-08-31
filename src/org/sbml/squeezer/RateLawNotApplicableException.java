@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.kinetics;
+package org.sbml.squeezer;
 
 /**
  * An exception to be thrown if the selected kinetics is not applicable to the

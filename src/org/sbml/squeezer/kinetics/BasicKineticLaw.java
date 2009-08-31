@@ -19,6 +19,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SBO;
+import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.io.StringTools;
 
 /**

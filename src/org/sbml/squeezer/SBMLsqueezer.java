@@ -20,9 +20,12 @@ package org.sbml.squeezer;
 
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Properties;
 import java.util.Set;
 
@@ -54,68 +57,6 @@ import org.sbml.squeezer.standalone.LibSBMLWriter;
  */
 public class SBMLsqueezer extends PluginAction {
 
-	public Set<Integer> possibleEnzymes;
-
-	static {
-		try {
-			properties = Resource.readProperties(Resource.class.getResource(
-					"cfg/SBMLsqueezer.cfg").getPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-			properties = new Properties();
-		}
-	}
-
-	/**
-	 * The number of the current SBMLsqueezer version.
-	 */
-	private static final String versionNumber = "1.2.1";
-
-	/**
-	 * Configuration of SBMLsqueezer
-	 */
-	private static Properties properties;
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static Object getProperty(Object key) {
-		return properties.get(key);
-	}
-
-	/**
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public static Object setProperty(Object key, Object value) {
-		return properties.put(key, value);
-	}
-
-	/**
-	 * 
-	 */
-	public static void saveProperties() {
-		try {
-			String resourceName = Resource.class.getResource(
-					"cfg/SBMLsqueezer.cfg").getPath();
-			Properties p = Resource.readProperties(resourceName);
-			if (!p.equals(properties))
-				Resource.writeProperties(properties, resourceName);
-		} catch (IOException e) {
-		}
-	}
-
-	/**
-	 * 
-	 * @return versionNumber
-	 */
-	public static final String getVersionNumber() {
-		return versionNumber;
-	}
-
 	/**
 	 * Possible command line options
 	 * 
@@ -135,10 +76,45 @@ public class SBMLsqueezer extends PluginAction {
 		SBML_FILE
 	}
 
+	public Set<Integer> possibleEnzymes;
+
+	private final static String userConfigFile = "cfg/SBMLsqueezer_local.cfg";
+	private final static String configFile = "cfg/SBMLsqueezer.cfg";
+
+	/**
+	 * Configuration of SBMLsqueezer
+	 */
+	private static Properties properties;
+
+	/**
+	 * The number of the current SBMLsqueezer version.
+	 */
+	private static final String versionNumber = "1.2.1";
+
 	/**
 	 * A serial version number.
 	 */
 	private static final long serialVersionUID = 4134514954192751545L;
+
+	static {
+		properties = initProperties();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Object getProperty(Object key) {
+		return properties.get(key.toString());
+	}
+
+	/**
+	 * 
+	 * @return versionNumber
+	 */
+	public static final String getVersionNumber() {
+		return versionNumber;
+	}
 
 	/**
 	 * @param args
@@ -146,6 +122,62 @@ public class SBMLsqueezer extends PluginAction {
 	public static void main(String[] args) {
 		System.loadLibrary("sbmlj");
 		new SBMLsqueezer(args);
+	}
+
+	/**
+	 * 
+	 */
+	public static void saveProperties() {
+		if (!initProperties().equals(properties))
+			try {
+				RandomAccessFile file = new RandomAccessFile(Resource.class
+						.getResource(userConfigFile).getPath(), "rw");
+				file.setLength(0);
+				file.close();
+				BufferedWriter bw = new BufferedWriter(new FileWriter(
+						Resource.class.getResource(userConfigFile).getPath()));
+				for (Object key : properties.keySet()) {
+					bw.append(key.toString());
+					bw.append('=');
+					bw.append(properties.get(key).toString());
+					bw.newLine();
+				}
+				bw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
+
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static Object setProperty(Object key, Object value) {
+		return properties.put(key.toString(), value);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private static Properties initProperties() {
+		Properties properties;
+		try {
+			properties = Resource.readProperties(Resource.class.getResource(
+					userConfigFile).getPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				properties = Resource.readProperties(Resource.class
+						.getResource(configFile).getPath());
+			} catch (IOException exc) {
+				exc.printStackTrace();
+				properties = new Properties();
+			}
+		}
+		return properties;
 	}
 
 	/**
@@ -209,6 +241,7 @@ public class SBMLsqueezer extends PluginAction {
 	 */
 	public SBMLsqueezer(String... args) {
 		Properties p = analyzeCommandLineArguments(args);
+		possibleEnzymes = SBO.getDefaultPossibleEnzymes();
 		sbmlIo = new SBMLio(new LibSBMLReader(possibleEnzymes),
 				new LibSBMLWriter());
 		if (p.containsKey(Keys.SBML_FILE))
@@ -226,6 +259,14 @@ public class SBMLsqueezer extends PluginAction {
 			checkForUpdate(false);
 			showAboutMsg();
 		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Set<Integer> getPossibleEnzymes() {
+		return possibleEnzymes;
 	}
 
 	/**
@@ -349,13 +390,5 @@ public class SBMLsqueezer extends PluginAction {
 		else if (mode.equals(plugin.getExporterItemText()))
 			if (plugin.getSelectedModel() != null)
 				new KineticLawSelectionDialog(null, sbmlIO.getSelectedModel());
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Set<Integer> getPossibleEnzymes() {
-		return possibleEnzymes;
 	}
 }

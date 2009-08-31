@@ -31,6 +31,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.IllegalFormatException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -50,6 +51,10 @@ import javax.swing.border.BevelBorder;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
+import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.LawListener;
+import org.sbml.squeezer.ModificationException;
+import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.table.KineticLawJTable;
 import org.sbml.squeezer.gui.table.KineticLawTableModel;
@@ -57,11 +62,6 @@ import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.ODEwriter;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
-import org.sbml.squeezer.kinetics.IllegalFormatException;
-import org.sbml.squeezer.kinetics.KineticLawGenerator;
-import org.sbml.squeezer.kinetics.LawListener;
-import org.sbml.squeezer.kinetics.ModificationException;
-import org.sbml.squeezer.kinetics.RateLawNotApplicableException;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -261,10 +261,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (IllegalFormatException exc) {
 			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
 					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();

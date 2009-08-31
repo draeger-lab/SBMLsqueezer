@@ -91,10 +91,8 @@ public final class Resource {
 	 */
 	public byte[] getBytesFromResourceLocation(String rawResrcLoc) {
 		InputStream in = getStreamFromResourceLocation(rawResrcLoc);
-
-		if (in == null) {
+		if (in == null)
 			return null;
-		}
 		return getBytesFromStream(in);
 	}
 

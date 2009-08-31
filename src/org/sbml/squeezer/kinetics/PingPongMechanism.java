@@ -19,13 +19,14 @@
 package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.ASTNode;
-import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
+import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * TODO: comment missing
@@ -72,9 +73,17 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		return "none";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 * (java.util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
+	 */
 	// @Override
-	protected ASTNode createKineticEquation(Model model, List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		ASTNode numerator;// I

@@ -19,12 +19,13 @@
 package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.ASTNode;
-import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * TODO: comment missing
@@ -56,8 +57,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		super(parentReaction);
 	}
 
-	protected ASTNode createKineticEquation(Model model, List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		Reaction reaction = getParentSBMLObject();
@@ -83,7 +84,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 		ASTNode specRefP = new ASTNode(reaction.getProduct(0)
 				.getSpeciesInstance(), this);
 
-		ASTNode formula[] = new ASTNode[modE.size()];
+		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 		int enzymeNum = 0;
 		do {
 			StringBuffer kcatp, kcatn;
@@ -141,7 +142,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			if (reaction.getReversible())
 				denominator = ASTNode.sum(new ASTNode(1, this), denominator);
 			else if (modInhib.size() <= 1)
-				denominator = ASTNode.sum(new ASTNode(p_kMr, this), denominator);
+				denominator = ASTNode
+						.sum(new ASTNode(p_kMr, this), denominator);
 
 			// construct formula
 			currEnzymeKin = ASTNode.frac(numerator, denominator);

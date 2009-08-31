@@ -1,4 +1,4 @@
-package org.sbml.squeezer.kinetics;
+package org.sbml.squeezer;
 
 public interface LawListener {
 

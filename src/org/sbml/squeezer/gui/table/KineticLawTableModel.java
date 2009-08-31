@@ -6,7 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.sbml.Parameter;
 import org.sbml.Reaction;
-import org.sbml.squeezer.kinetics.KineticLawGenerator;
+import org.sbml.squeezer.KineticLawGenerator;
 
 /**
  * TODO: comment missing

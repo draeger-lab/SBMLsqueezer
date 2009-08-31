@@ -288,7 +288,6 @@ public class SBO {
 	 * @return true if the term is-an Event, false otherwise
 	 */
 	public static boolean isEvent(int sboTerm) {
-		// TODO
 		return isChildOf(sboTerm, 231);
 	}
 
@@ -430,13 +429,13 @@ public class SBO {
 	}
 
 	/**
-	 * Function for checking the SBO term is from correct part of SBO.
+	 * Function for checking the SBO term is from correct part of SBO. This term
+	 * is actually obsolete.
 	 * 
 	 * @param sboTerm
 	 * @return true if the term is-a participant, false otherwise
 	 */
 	public static boolean isParticipant(int sboTerm) {
-		// TODO: obsolete
 		return isChildOf(sboTerm, 235);
 	}
 
@@ -461,13 +460,12 @@ public class SBO {
 
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
-	 * 
+	 * Obsolete term.
 	 * @param sboTerm
 	 * @return true if the term is-a physical participant, false otherwise
 	 */
 	public static boolean isPhysicalParticipant(int sboTerm) {
-		// TODO: what is this?
-		return isChildOf(sboTerm, 240); // material entity?
+		return isChildOf(sboTerm, 236);
 	}
 
 	/**

@@ -30,6 +30,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -81,6 +83,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private static Icon latexIcon;
 	private static Icon lemonIcon;
 
+	/**
+	 * Generated serial version id.
+	 */
+	private static final long serialVersionUID = 5662654607939013825L;
+
 	static {
 		try {
 			lemonIcon = new ImageIcon(ImageIO.read(Resource.class
@@ -92,11 +99,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Generated serial version id.
-	 */
-	private static final long serialVersionUID = 5662654607939013825L;
 
 	/**
 	 * @throws HeadlessException
@@ -169,8 +171,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				SBFileFilter filterTeX = new SBFileFilter(
 						SBFileFilter.TeX_FILES);
 				chooser.addChoosableFileFilter(filterTeX);
-				String dir = SBMLsqueezer.getProperty(
-						CfgKeys.SAVE_DIR.toString()).toString();
+				String dir = SBMLsqueezer.getProperty(CfgKeys.SAVE_DIR)
+						.toString();
 				if (dir != null) {
 					if (dir.startsWith("user."))
 						dir = System.getProperty(dir);
@@ -189,12 +191,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			JFileChooser chooser = new JFileChooser();
 			SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
 			chooser.setFileFilter(filter);
-			String dir = SBMLsqueezer.getProperty(CfgKeys.OPEN_DIR.toString())
-					.toString();
+			Object dir = SBMLsqueezer.getProperty(CfgKeys.OPEN_DIR);
 			if (dir != null) {
-				if (dir.startsWith("user."))
-					dir = System.getProperty(dir);
-				chooser.setCurrentDirectory(new File(dir));
+				if (dir.toString().startsWith("user."))
+					dir = System.getProperty(dir.toString());
+				chooser.setCurrentDirectory(new File(dir.toString()));
 			}
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				addModel(sbmlIO.readModel(chooser.getSelectedFile()
@@ -212,8 +213,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			chooser.addChoosableFileFilter(filterSBML);
 			chooser.addChoosableFileFilter(filterText);
 			chooser.addChoosableFileFilter(filterTeX);
-			String dir = SBMLsqueezer.getProperty(CfgKeys.SAVE_DIR.toString())
-					.toString();
+			String dir = SBMLsqueezer.getProperty(CfgKeys.SAVE_DIR).toString();
 			if (dir != null) {
 				if (dir.startsWith("user."))
 					dir = System.getProperty(dir);
@@ -231,7 +231,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			if (tabbedPane.getComponentCount() > 0)
 				tabbedPane.remove(tabbedPane.getSelectedComponent());
 			if (tabbedPane.getComponentCount() == 0)
-				setModelsOpened(false);
+				setEnabled(false, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
 		} else if (e.getActionCommand().equals(ONLINE_HELP)) {
 			JHelpBrowser helpBrowser = new JHelpBrowser(this, "SBMLsqueezer "
 					+ SBMLsqueezer.getVersionNumber() + " - Online Help");
@@ -240,6 +240,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			helpBrowser.setSize(640, 640);
 			helpBrowser.setVisible(true);
 			helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			setEnabled(false, ONLINE_HELP);
 		} else if (e.getSource() instanceof JMenuItem) {
 			JMenuItem item = (JMenuItem) e.getSource();
 			if (item.getText().equals("Exit")) {
@@ -257,26 +258,53 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
+	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(tabbedPane)) {
-			if (tabbedPane.getComponentCount() == 0) {
-				setModelsOpened(false);
-			}
+			if (tabbedPane.getComponentCount() == 0)
+				setEnabled(false, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 */
 	public void windowActivated(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 */
 	public void windowClosed(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void windowClosing(WindowEvent arg0) {
-		SBMLsqueezer.saveProperties();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 */
+	public void windowClosing(WindowEvent we) {
+		if (we.getSource() instanceof JHelpBrowser)
+			setEnabled(true, ONLINE_HELP);
+		else if (we.getSource() instanceof SBMLsqueezerUI)
+			SBMLsqueezer.saveProperties();
 	}
 
 	public void windowDeactivated(WindowEvent arg0) {
@@ -304,45 +332,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		split.addActionListener(this);
 		tabbedPane.add(model.getId(), split);
 		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
-		setModelsOpened(true);
+		setEnabled(true, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
 		pack();
-	}
-
-	private JToolBar createToolBar() {
-		toolbar = new JToolBar("Edit", JToolBar.HORIZONTAL);
-		JButton openButton = new JButton(UIManager
-				.getIcon("FileView.directoryIcon"));
-		openButton.addActionListener(this);
-		openButton.setActionCommand(OPEN_FILE);
-		toolbar.add(openButton);
-		JButton saveButton = new JButton(UIManager
-				.getIcon("FileView.floppyDriveIcon"));
-		saveButton.addActionListener(this);
-		saveButton.setActionCommand(SAVE_FILE);
-		toolbar.add(saveButton);
-		JButton closeButton = new JButton(new CloseIcon(false));
-		closeButton.setActionCommand(CLOSE_FILE);
-		closeButton.addActionListener(this);
-		toolbar.add(closeButton);
-		toolbar.addSeparator();
-		if (lemonIcon != null) {
-			JButton squeezeButton = new JButton(lemonIcon);
-			squeezeButton.setActionCommand(SQUEEZE);
-			squeezeButton.addActionListener(this);
-			toolbar.add(squeezeButton);
-		}
-		if (latexIcon != null) {
-			JButton latexButton = new JButton(latexIcon);
-			latexButton.addActionListener(this);
-			latexButton.setActionCommand(TO_LATEX);
-			toolbar.add(latexButton);
-		}
-		toolbar.addSeparator();
-		JButton helpButton = new JButton("?");
-		helpButton.addActionListener(this);
-		helpButton.setActionCommand(ONLINE_HELP);
-		toolbar.add(helpButton);
-		return toolbar;
 	}
 
 	private JMenuBar createMenuBar() {
@@ -413,16 +404,58 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		return mBar;
 	}
 
-	private void setModelsOpened(boolean state) {
+	private JToolBar createToolBar() {
+		toolbar = new JToolBar("Edit", JToolBar.HORIZONTAL);
+		JButton openButton = new JButton(UIManager
+				.getIcon("FileView.directoryIcon"));
+		openButton.addActionListener(this);
+		openButton.setActionCommand(OPEN_FILE);
+		toolbar.add(openButton);
+		JButton saveButton = new JButton(UIManager
+				.getIcon("FileView.floppyDriveIcon"));
+		saveButton.addActionListener(this);
+		saveButton.setActionCommand(SAVE_FILE);
+		toolbar.add(saveButton);
+		JButton closeButton = new JButton(new CloseIcon(false));
+		closeButton.setActionCommand(CLOSE_FILE);
+		closeButton.addActionListener(this);
+		toolbar.add(closeButton);
+		toolbar.addSeparator();
+		if (lemonIcon != null) {
+			JButton squeezeButton = new JButton(lemonIcon);
+			squeezeButton.setActionCommand(SQUEEZE);
+			squeezeButton.addActionListener(this);
+			toolbar.add(squeezeButton);
+		}
+		if (latexIcon != null) {
+			JButton latexButton = new JButton(latexIcon);
+			latexButton.addActionListener(this);
+			latexButton.setActionCommand(TO_LATEX);
+			toolbar.add(latexButton);
+		}
+		toolbar.addSeparator();
+		JButton helpButton = new JButton("?");
+		helpButton.addActionListener(this);
+		helpButton.setActionCommand(ONLINE_HELP);
+		toolbar.add(helpButton);
+		return toolbar;
+	}
+
+	/**
+	 * 
+	 * @param state
+	 * @param commands
+	 */
+	private void setEnabled(boolean state, String... commands) {
 		int i, j;
+		Set<String> setOfCommands = new HashSet<String>();
+		for (String command : commands)
+			setOfCommands.add(command);
 		for (i = 0; i < getJMenuBar().getMenuCount(); i++) {
 			JMenu menu = getJMenuBar().getMenu(i);
 			for (j = 0; j < menu.getItemCount(); j++) {
 				JMenuItem item = menu.getItem(j);
-				if (item.getActionCommand().equals(SAVE_FILE)
-						|| item.getActionCommand().equals(CLOSE_FILE)
-						|| item.getActionCommand().equals(SQUEEZE)
-						|| item.getActionCommand().equals(TO_LATEX))
+				if (setOfCommands.contains(item.getActionCommand()))
 					item.setEnabled(state);
 			}
 		}
@@ -430,26 +463,26 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			Object o = toolbar.getComponent(i);
 			if (o instanceof JButton) {
 				JButton b = (JButton) o;
-				if (b.getActionCommand().equals(SAVE_FILE)
-						|| b.getActionCommand().equals(CLOSE_FILE)
-						|| b.getActionCommand().equals(SQUEEZE)
-						|| b.getActionCommand().equals(TO_LATEX))
+				if (setOfCommands.contains(b.getActionCommand())) {
 					b.setEnabled(state);
-				if (b.getIcon() != null && b.getIcon() instanceof CloseIcon)
-					((CloseIcon) b.getIcon()).setColor(state ? Color.BLACK
-							: Color.GRAY);
+					if (b.getIcon() != null && b.getIcon() instanceof CloseIcon)
+						((CloseIcon) b.getIcon()).setColor(state ? Color.BLACK
+								: Color.GRAY);
+				}
 			}
 		}
 	}
 
-	// @Override
-	protected void init() {
+	/**
+	 * 
+	 */
+	private void init() {
 		setJMenuBar(createMenuBar());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addWindowListener(this);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(createToolBar(), BorderLayout.NORTH);
-		setModelsOpened(false);
+		setEnabled(false, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
 		for (Model m : sbmlIO.getListOfModels())
 			addModel(m);
