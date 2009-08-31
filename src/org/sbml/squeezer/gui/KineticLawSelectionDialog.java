@@ -59,7 +59,7 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.table.KineticLawJTable;
 import org.sbml.squeezer.gui.table.KineticLawTableModel;
 import org.sbml.squeezer.io.LaTeXExport;
-import org.sbml.squeezer.io.ODEwriter;
+import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
@@ -467,7 +467,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 				if (!KineticsAndParametersStoredInSBML) {
 					KineticsAndParametersStoredInSBML = true;
 					if (sbmlIO != null)
-						klg.storeKineticsAndParameters(sbmlIO, settingsPanel
+						klg.storeLaws(sbmlIO, settingsPanel
 								.isSetTreatAllReactionsReversible(), this);
 				}
 
@@ -604,8 +604,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private void exportKineticEquations() {
 		if (!KineticsAndParametersStoredInSBML) {
 			if (sbmlIO != null)
-				klg.storeKineticsAndParameters(sbmlIO, settingsPanel
-						.isSetTreatAllReactionsReversible(), this);
+				klg.storeLaws(sbmlIO, settingsPanel
+						.isSetTreatAllReactionsReversible(), this);				
 			KineticsAndParametersStoredInSBML = true;
 		}
 		JFileChooser chooser = new JFileChooser();
@@ -615,7 +615,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		chooser.addChoosableFileFilter(ff2);
 		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 			try {
-				new ODEwriter(sbmlIO.getSelectedModel(), chooser
+				new TextExport(sbmlIO.getSelectedModel(), chooser
 						.getSelectedFile());
 			} catch (IOException exc) {
 				JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()

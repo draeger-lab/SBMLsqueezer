@@ -93,7 +93,6 @@ public class SBasePanel extends JPanel {
 				1, 1, 1);
 		JEditorPane notesArea = new JEditorPane("text/html", "");
 		notesArea.setEditable(false);
-		notesArea.setPreferredSize(new Dimension(250, 100));
 		if (sbase.isSetNotes()) {
 			String text = sbase.getNotesString();
 			if (text.startsWith("<notes") && text.endsWith("</notes>"))
@@ -104,6 +103,9 @@ public class SBasePanel extends JPanel {
 			text = "<html><head></head>" + text + "</html>";
 			notesArea.setText(text);
 		}
+		notesArea.addHyperlinkListener(new SystemBrowser());
+		notesArea.setPreferredSize(new Dimension(350, 200));
+		notesArea.setBorder(BorderFactory.createLoweredBevelBorder());
 		JScrollPane scroll = new JScrollPane(notesArea,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

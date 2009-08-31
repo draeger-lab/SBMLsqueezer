@@ -37,7 +37,6 @@ import org.sbml.Reaction;
 import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.squeezer.io.ODE;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.Convenience;
@@ -68,7 +67,7 @@ import org.sbml.squeezer.math.GaussianRank;
 public class KineticLawGenerator {
 
 	private SBMLio sbmlIO;
-	
+
 	private List<Integer> reactionNumOfNotExistKinetics = new ArrayList<Integer>();
 
 	private List<Integer> reacNumOfExistKinetics = new ArrayList<Integer>();
@@ -117,10 +116,6 @@ public class KineticLawGenerator {
 	private Set<Integer> possibleEnzymes;
 
 	private int columnRank = -1;
-
-	private String[] reactionNumAndKineticTeX;
-
-	private String[] reactionNumAndKinetictexName;
 
 	/**
 	 * If true all parameters are stored globally for the whole model (default)
@@ -488,28 +483,6 @@ public class KineticLawGenerator {
 	 */
 	public List<Reaction> getFastReactions() {
 		return listOfFastReactions;
-	}
-
-	/**
-	 * An array, which contains the name of each formula in the model. For
-	 * already existing formulas this will be something like "existing kinetic".
-	 * 
-	 * @return
-	 */
-	public String[] getKineticLawNames() {
-		// TODO: ensure that this returns always a meaningful result!
-		return reactionNumAndKinetictexName;
-	}
-
-	/**
-	 * An array, which contains one formula in LaTeX format for each reaction
-	 * number in the model, even for already existing kinetics.
-	 * 
-	 * @return
-	 */
-	public String[] getKineticLawsAsTeX() {
-		// TODO: ensure that this returns always a meaningful result!
-		return reactionNumAndKineticTeX;
 	}
 
 	/**
@@ -1112,19 +1085,6 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * set the generated kinetics and paramters in corresponding HashMaps
-	 * 
-	 * @param reversibility
-	 */
-	public void storeKineticsAndParameters(SBMLio plugin,
-			boolean reversibility, LawListener l) {
-		l.totalNumber(reactionNumOfNotExistKinetics.size());
-		storeLaws(plugin, reversibility, l);
-		new ODE(model, reactionNumOfNotExistKinetics, reacNumOfExistKinetics);
-		l.currentNumber(reactionNumOfNotExistKinetics.size());
-	}
-
-	/**
 	 * This method stores a kinetic law for the given reaction in the currently
 	 * selected model given by the plugin. The kinetic law is passed as a String
 	 * to this method. A boolean variable tells this method weather the formula
@@ -1185,7 +1145,8 @@ public class KineticLawGenerator {
 	 */
 	public void storeLaws(SBMLio plugin, boolean reversibility, LawListener l) {
 		for (int i = 0; i < reactionNumOfNotExistKinetics.size(); i++) {
-			storeLaw(model.getReaction(reactionNumOfNotExistKinetics.get(i)).getKineticLaw(), reversibility);
+			storeLaw(model.getReaction(reactionNumOfNotExistKinetics.get(i))
+					.getKineticLaw(), reversibility);
 			l.currentNumber(i);
 		}
 		removeUnnecessaryParameters(plugin);
@@ -1198,8 +1159,7 @@ public class KineticLawGenerator {
 	 * @param reaction
 	 */
 	public void storeParamters(Reaction reaction) {
-		Model model = reaction.getModel();
-		setInitialConcentrationTo(model, reaction, 1d);
+		setInitialConcentrationTo(reaction, 1d);
 		BasicKineticLaw kineticLaw = (BasicKineticLaw) reaction.getKineticLaw();
 		ListOf<Parameter> paramListLocal = kineticLaw.getListOfParameters();
 		List<Parameter> paramListGlobal = kineticLaw
@@ -1265,7 +1225,7 @@ public class KineticLawGenerator {
 	 * @param reaction
 	 * @param initialValue
 	 */
-	private void setInitialConcentrationTo(Model model, Reaction reaction,
+	private void setInitialConcentrationTo(Reaction reaction,
 			double initialValue) {
 		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
 			Species species = reaction.getReactant(reactant)
