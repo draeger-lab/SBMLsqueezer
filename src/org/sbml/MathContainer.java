@@ -24,7 +24,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public abstract class MathContainer extends SBase {
+public abstract class MathContainer extends AbstractSBase {
 
 	private ASTNode math;
 

@@ -27,7 +27,7 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Reaction extends NamedSBase {
+public class Reaction extends AbstractNamedSBase {
 
 	private boolean reversible;
 	private boolean fast;

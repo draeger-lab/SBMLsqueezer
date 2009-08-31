@@ -25,7 +25,7 @@ import org.sbml.Constants;
 import org.sbml.MathContainer;
 import org.sbml.Model;
 import org.sbml.SBMLReader;
-import org.sbml.SBase;
+import org.sbml.AbstractSBase;
 import org.sbml.libsbml.libsbmlConstants;
 
 /**
@@ -266,7 +266,7 @@ public abstract class AbstractSBMLReader implements SBMLReader {
 		listOfSBaseChangeListeners.add(sbcl);
 	}
 	
-	public void addAllSBaseChangeListenersTo(SBase sb) {
+	public void addAllSBaseChangeListenersTo(AbstractSBase sb) {
 		for (SBaseChangedListener listener : listOfSBaseChangeListeners)
 			sb.addChangeListener(listener);
 	}

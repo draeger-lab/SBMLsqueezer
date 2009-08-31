@@ -25,7 +25,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Parameter extends NamedSBase {
+public class Parameter extends Variable {
 
 	private double value;
 	private boolean constant;

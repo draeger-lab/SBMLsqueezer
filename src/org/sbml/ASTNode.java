@@ -197,7 +197,8 @@ public class ASTNode {
 	 * @param sbase
 	 * @return
 	 */
-	public static ASTNode times(MathContainer parent, NamedSBase... sbase) {
+	public static ASTNode times(MathContainer parent,
+			AbstractNamedSBase... sbase) {
 		ASTNode elements[] = new ASTNode[sbase.length];
 		for (int i = 0; i < sbase.length; i++)
 			elements[i] = new ASTNode(sbase[i], parent);
@@ -322,7 +323,7 @@ public class ASTNode {
 	 * @param nsb
 	 * @param parent
 	 */
-	public ASTNode(NamedSBase nsb, MathContainer parent) {
+	public ASTNode(AbstractNamedSBase nsb, MathContainer parent) {
 		this(Constants.AST_NAME, parent);
 		setVariable(nsb);
 	}
@@ -586,7 +587,7 @@ public class ASTNode {
 	 *         which is type set in typewriter font if it is an id. The mathmode
 	 *         argument decides if mathtt or mathrm has to be used.
 	 */
-	private StringBuffer getNameOrID(NamedSBase sbase) {
+	private StringBuffer getNameOrID(AbstractNamedSBase sbase) {
 		String name = "";
 		if (sbase.isSetName() && printNameIfAvailable)
 			name = sbase.getName();
@@ -707,39 +708,8 @@ public class ASTNode {
 	}
 
 	/**
-	 * try to figure out the meaning of this name.
 	 * 
-	 * @param id
-	 *            an id indicating a variable of the model.
-	 * @return null if no model is available or the model does not contain a
-	 *         compartment, species, or parameter wit the given id.
 	 */
-	private NamedSBase identifyVariable(String id) {
-		NamedSBase variable = null;
-		if (parentSBMLObject != null && parentSBMLObject.getModel() != null) {
-			Model m = parentSBMLObject.getModel();
-			variable = m.getCompartment(id);
-			if (variable == null)
-				variable = m.getSpecies(id);
-			if (variable == null)
-				variable = m.getParameter(id);
-			if (variable == null)
-				variable = m.getReaction(id);
-			/*
-			 * if (variable == null) variable = m.getFunctionDefinition(id);
-			 */
-			// check all local parameters
-			if (variable == null)
-				for (Reaction r : m.getListOfReactions()) {
-					if (r.isSetKineticLaw())
-						variable = r.getKineticLaw().getParameter(id);
-					if (variable != null)
-						break;
-				}
-		}
-		return variable;
-	}
-
 	private void initDefaults() {
 		type = Constants.AST_UNKNOWN;
 		if (listOfNodes == null)
@@ -1288,7 +1258,7 @@ public class ASTNode {
 	 * @param name
 	 */
 	public void setName(String name) {
-		variable = identifyVariable(name);
+		variable = getParentSBMLObject().getModel().findNamedSBase(name);
 		if (variable == null)
 			this.name = name;
 		if (type != Constants.AST_NAME && type != Constants.AST_FUNCTION)
@@ -1390,7 +1360,7 @@ public class ASTNode {
 	 * 
 	 * @param variable
 	 */
-	public void setVariable(NamedSBase variable) {
+	public void setVariable(AbstractNamedSBase variable) {
 		type = Constants.AST_NAME;
 		this.variable = variable;
 	}

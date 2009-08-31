@@ -14,11 +14,9 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.io;
-
-import org.sbml.AbstractSBase;
+package org.sbml;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -26,10 +24,37 @@ import org.sbml.AbstractSBase;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public interface SBaseChangedListener {
-	void stateChanged(AbstractSBase sb);
+public class AlgebraicRule extends Rule {
 
-	void sbaseAdded(AbstractSBase sb);
+	/**
+	 * 
+	 */
+	public AlgebraicRule() {
+		super();
+	}
 
-	void sbaseRemoved(AbstractSBase sb);
+	/**
+	 * @param math
+	 */
+	public AlgebraicRule(ASTNode math) {
+		super(math);
+	}
+
+	/**
+	 * @param sb
+	 */
+	public AlgebraicRule(MathContainer sb) {
+		super(sb);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.MathContainer#clone()
+	 */
+	// @Override
+	public AlgebraicRule clone() {
+		return new AlgebraicRule(this);
+	}
+
 }

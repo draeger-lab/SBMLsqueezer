@@ -25,7 +25,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Event extends NamedSBase {
+public class Event extends AbstractNamedSBase {
 	private boolean useValuesFromTriggerTime;
 
 	private Trigger trigger;

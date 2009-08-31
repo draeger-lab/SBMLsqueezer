@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml;
 
@@ -24,7 +24,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class EventAssignment extends MathContainer {
+public class RateRule extends Rule {
 
 	/**
 	 * 
@@ -32,58 +32,37 @@ public class EventAssignment extends MathContainer {
 	private Variable variable;
 
 	/**
+	 * @param sb
+	 */
+	public RateRule(RateRule sb) {
+		super(sb);
+		this.variable = sb.getVariableInstance();
+	}
+
+	/**
 	 * 
 	 */
-	public EventAssignment() {
+	public RateRule(Variable variable) {
 		super();
-		variable = null;
+		this.variable = variable;
 	}
 
 	/**
-	 * 
-	 * @param eventAssignment
+	 * @param math
 	 */
-	public EventAssignment(EventAssignment eventAssignment) {
-		super(eventAssignment);
-		setVariable(eventAssignment.getVariable());
+	public RateRule(Variable variable, ASTNode math) {
+		super(math);
+		this.variable = variable;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.MathElement#clone()
+	 * @see org.sbml.MathContainer#clone()
 	 */
 	// @Override
-	public EventAssignment clone() {
-		return new EventAssignment(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.MathElement#equals(java.lang.Object)
-	 */
-	// @Override
-	public boolean equals(Object o) {
-		boolean equal = super.equals(o);
-		if (o instanceof EventAssignment) {
-			EventAssignment ea = (EventAssignment) o;
-			if ((!ea.isSetVariable() && isSetVariable())
-					|| (ea.isSetVariable() && !isSetVariable()))
-				return false;
-			if (ea.isSetVariable() && isSetVariable())
-				equal &= ea.getVariable().equals(getVariable());
-			return equal;
-		}
-		return false;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isSetVariable() {
-		return variable != null;
+	public RateRule clone() {
+		return new RateRule(this);
 	}
 
 	/**
@@ -107,12 +86,8 @@ public class EventAssignment extends MathContainer {
 	 * @param variable
 	 */
 	public void setVariable(Variable variable) {
-		if ((variable instanceof Species) || variable instanceof Compartment
-				|| (variable instanceof Parameter))
-			this.variable = variable;
-		else
-			throw new IllegalArgumentException(
-					"Only Species, Compartments, or Parameters allowed as variables");
+		this.variable = variable;
+		stateChanged();
 	}
 
 	/**
@@ -125,16 +100,6 @@ public class EventAssignment extends MathContainer {
 			throw new IllegalArgumentException(
 					"Only the id of an existing Species, Compartments, or Parameters allowed as variables");
 		setVariable(nsb);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBase#toString()
-	 */
-	// @Override
-	public String toString() {
-		return getVariable() + " = " + getMath().toString();
 	}
 
 }

@@ -39,11 +39,11 @@ import org.sbml.KineticLaw;
 import org.sbml.ListOf;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
-import org.sbml.NamedSBase;
+import org.sbml.AbstractNamedSBase;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SBO;
-import org.sbml.SBase;
+import org.sbml.AbstractSBase;
 import org.sbml.SimpleSpeciesReference;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
@@ -66,7 +66,7 @@ public class SBasePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = -4969096536922920641L;
 
-	public SBasePanel(SBase sbase) {
+	public SBasePanel(AbstractSBase sbase) {
 		super();
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
@@ -74,8 +74,8 @@ public class SBasePanel extends JPanel {
 		String className = sbase.getClass().getName();
 		className = className.substring(className.lastIndexOf('.') + 1);
 		setBorder(BorderFactory.createTitledBorder(" " + className + " "));
-		if (sbase instanceof NamedSBase) {
-			NamedSBase nsb = (NamedSBase) sbase;
+		if (sbase instanceof AbstractNamedSBase) {
+			AbstractNamedSBase nsb = (AbstractNamedSBase) sbase;
 			LayoutHelper.addComponent(this, gbl, new JLabel("Identifier"), 0,
 					++row, 1, 1, 1, 1);
 			LayoutHelper.addComponent(this, gbl, new JTextField(nsb.getId()),

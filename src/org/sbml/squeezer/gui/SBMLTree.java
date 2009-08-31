@@ -39,7 +39,7 @@ import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
-import org.sbml.SBase;
+import org.sbml.AbstractSBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.squeezer.resources.Resource;
@@ -57,7 +57,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
 	private JMenuItem latexItem;
 
-	private SBase currSBase;
+	private AbstractSBase currSBase;
 
 	private Set<ActionListener> setOfActionListeners;
 
@@ -190,7 +190,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 						.getLastPathComponent();
 				if (node.getUserObject() instanceof Reaction
 						|| node.getUserObject() instanceof Model) {
-					currSBase = (SBase) node.getUserObject();
+					currSBase = (AbstractSBase) node.getUserObject();
 					popup.setLocation(e.getLocationOnScreen());
 					popup.setVisible(true);
 				}

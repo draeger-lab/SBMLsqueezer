@@ -14,22 +14,69 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.io;
-
-import org.sbml.AbstractSBase;
+package org.sbml;
 
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
+ * @date 2009-08-31
+ * 
  */
-public interface SBaseChangedListener {
-	void stateChanged(AbstractSBase sb);
+public class Constraint extends MathContainer {
 
-	void sbaseAdded(AbstractSBase sb);
+	private String message;
 
-	void sbaseRemoved(AbstractSBase sb);
+	/**
+	 * 
+	 */
+	public Constraint() {
+		super();
+	}
+
+	/**
+	 * @param math
+	 */
+	public Constraint(ASTNode math) {
+		super(math);
+		message = null;
+	}
+
+	/**
+	 * @param sb
+	 */
+	public Constraint(Constraint sb) {
+		super(sb);
+		this.message = new String(sb.getMessage());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.MathContainer#clone()
+	 */
+	// @Override
+	public Constraint clone() {
+		return new Constraint(this);
+	}
+
+	/**
+	 * @return the message
+	 */
+	public String getMessage() {
+		return message;
+	}
+
+	/**
+	 * @param message
+	 *            the message to set
+	 */
+	public void setMessage(String message) {
+		this.message = message;
+		stateChanged();
+	}
+
 }

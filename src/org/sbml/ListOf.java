@@ -32,7 +32,7 @@ import java.util.NoSuchElementException;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class ListOf<E extends SBase> extends SBase implements List<E>,
+public class ListOf<E extends AbstractSBase> extends AbstractSBase implements List<E>,
 		Serializable, Cloneable {
 
 	/**
@@ -41,7 +41,7 @@ public class ListOf<E extends SBase> extends SBase implements List<E>,
 	 * 
 	 * @param <E>
 	 */
-	private static class Entry<E extends SBase> {
+	private static class Entry<E extends AbstractSBase> {
 		E element;
 		Entry<E> next;
 		Entry<E> previous;
