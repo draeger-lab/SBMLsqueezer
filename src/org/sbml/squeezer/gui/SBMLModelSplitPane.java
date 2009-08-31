@@ -60,7 +60,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 		setRightComponent(createRightComponent(model));
 	}
-	
+
 	/**
 	 * 
 	 * @param al
@@ -69,6 +69,11 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		tree.addActionListener(al);
 	}
 
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
 	private JScrollPane createRightComponent(SBase sbase) {
 		JPanel p = new JPanel();
 		p.add(new SBasePanel(sbase));
@@ -89,9 +94,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 			return;
 		Object nodeInfo = node.getUserObject();
 		if (nodeInfo instanceof SBase) {
-			double proportionalLocation = getDividerLocation();
-			if (proportionalLocation < 0 || proportionalLocation > 1)
-				proportionalLocation = .5;
+			int proportionalLocation = getDividerLocation();
 			setRightComponent(createRightComponent((SBase) nodeInfo));
 			setDividerLocation(proportionalLocation);
 			validate();

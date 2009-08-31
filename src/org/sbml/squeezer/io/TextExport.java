@@ -24,10 +24,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import jp.sbi.celldesigner.plugin.PluginModel;
+
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.libsbml.ListOf;
+import org.sbml.libsbml.ListOfEvents;
+import org.sbml.libsbml.SBMLDocument;
 
 /**
  * This class writes the differential equations given by the {@see
@@ -40,14 +45,14 @@ import org.sbml.SpeciesReference;
  *         University of T&uuml;bingen, Germany Compiler: JDK 1.6.0
  * @date Aug 1, 2007
  */
-public class ODEwriter {
+public class TextExport implements DisplaySBML {
 
 	/**
 	 * <p>
 	 * Default constructor.
 	 * </p>
 	 */
-	public ODEwriter() {
+	public TextExport() {
 	}
 
 	/**
@@ -62,7 +67,7 @@ public class ODEwriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	public ODEwriter(Model model, File file) throws IOException {
+	public TextExport(Model model, File file) throws IOException {
 		if ((new SBFileFilter(SBFileFilter.TEXT_FILES)).accept(file)) {
 			writeTextFile(model, file);
 		} else if ((new SBFileFilter(SBFileFilter.TeX_FILES)).accept(file)) {
@@ -174,6 +179,30 @@ public class ODEwriter {
 			throws IOException {
 		writer.write(str);
 		writer.newLine();
+	}
+
+	public void format(ListOf list, BufferedWriter buffer, boolean section)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void format(ListOfEvents events, BufferedWriter buffer)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void format(PluginModel model, BufferedWriter buffer)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void format(SBMLDocument doc, BufferedWriter buffer)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
