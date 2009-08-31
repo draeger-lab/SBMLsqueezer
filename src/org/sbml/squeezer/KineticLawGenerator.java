@@ -14,15 +14,16 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.kinetics;
+package org.sbml.squeezer;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,21 @@ import org.sbml.Reaction;
 import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.squeezer.io.ODE;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.Convenience;
+import org.sbml.squeezer.kinetics.ConvenienceIndependent;
+import org.sbml.squeezer.kinetics.GeneralizedMassAction;
+import org.sbml.squeezer.kinetics.HillEquation;
+import org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes;
+import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
+import org.sbml.squeezer.kinetics.MichaelisMenten;
+import org.sbml.squeezer.kinetics.OrderedMechanism;
+import org.sbml.squeezer.kinetics.PingPongMechanism;
+import org.sbml.squeezer.kinetics.RandomOrderMechanism;
+import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
+import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 import org.sbml.squeezer.math.GaussianRank;
 
 /**
@@ -53,7 +68,7 @@ import org.sbml.squeezer.math.GaussianRank;
 public class KineticLawGenerator {
 
 	private SBMLio sbmlIO;
-
+	
 	private List<Integer> reactionNumOfNotExistKinetics = new ArrayList<Integer>();
 
 	private List<Integer> reacNumOfExistKinetics = new ArrayList<Integer>();

@@ -44,12 +44,12 @@ import org.sbml.squeezer.io.AbstractSBMLReader;
 public class LibSBMLReader extends AbstractSBMLReader {
 
 	private Set<SBMLDocument> setOfDocuments;
-	private Set<Integer> listOfPossibleEnzymes;
+	private Set<Integer> possibleEnzymes;
 	private static final String error = " must be an instance of ";
 
-	public LibSBMLReader(Set<Integer> listOfPossibleEnzymes) {
+	public LibSBMLReader(Set<Integer> possibleEnzymes) {
 		super();
-		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
+		this.possibleEnzymes = possibleEnzymes;
 		setOfDocuments = new HashSet<SBMLDocument>();
 	}
 
@@ -59,9 +59,9 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * 
 	 * @param model
 	 */
-	public LibSBMLReader(org.sbml.libsbml.Model model, Set<Integer> listOfPossibleEnzymes) {
+	public LibSBMLReader(org.sbml.libsbml.Model model, Set<Integer> possibleEnzymes) {
 		super(model);
-		this.listOfPossibleEnzymes = listOfPossibleEnzymes;
+		this.possibleEnzymes = possibleEnzymes;
 		this.setOfDocuments = new HashSet<SBMLDocument>();
 	}
 
@@ -183,7 +183,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		if (msr.isSetSBOTerm()) {
 			mod.setSBOTerm(msr.getSBOTerm());
 			if (!SBO.isEnzymaticCatalysis(mod.getSBOTerm())
-					&& listOfPossibleEnzymes
+					&& possibleEnzymes
 							.contains(Integer.valueOf(mod.getSBOTerm())))
 				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
 		}

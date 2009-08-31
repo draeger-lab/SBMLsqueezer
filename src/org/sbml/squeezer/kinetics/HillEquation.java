@@ -19,6 +19,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.ASTNode;
@@ -27,6 +28,8 @@ import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SBO;
 import org.sbml.Species;
+import org.sbml.squeezer.ModificationException;
+import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This class creates a Hill equation as defined in the paper"Hill Kinetics

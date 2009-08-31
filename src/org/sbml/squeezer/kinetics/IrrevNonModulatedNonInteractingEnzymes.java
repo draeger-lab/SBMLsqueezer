@@ -19,12 +19,14 @@
 package org.sbml.squeezer.kinetics;
 
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.ASTNode;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SpeciesReference;
+import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This class implements SBO:0000150 and all of its special cases. It is an
@@ -54,7 +56,6 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			IllegalFormatException {
 		super(parentReaction);
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -107,7 +108,11 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -146,12 +151,13 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 					append(kM, underscore, modE.get(enzymeNum));
 				addLocalParameter(new Parameter(append(kM, underscore,
 						si.getSpecies()).toString()));
-				ASTNode frac = ASTNode.frac(new ASTNode(si.getSpeciesInstance(), this),
-						new ASTNode(kM.toString(), this));
+				ASTNode frac = ASTNode.frac(new ASTNode(
+						si.getSpeciesInstance(), this), new ASTNode(kM
+						.toString(), this));
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
 						new ASTNode(si.getSpeciesInstance(), this),
-						new ASTNode(kM.toString(), this)), new ASTNode(
-						si.getStoichiometry(), this)));
+						new ASTNode(kM.toString(), this)), new ASTNode(si
+						.getStoichiometry(), this)));
 				denominator[i] = ASTNode.pow(ASTNode.sum(new ASTNode(1, this),
 						frac), new ASTNode(si.getStoichiometry(), this));
 			}

@@ -26,6 +26,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.IllegalFormatException;
 import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
@@ -43,10 +44,9 @@ import javax.swing.SwingConstants;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
+import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.kinetics.IllegalFormatException;
-import org.sbml.squeezer.kinetics.KineticLawGenerator;
-import org.sbml.squeezer.kinetics.RateLawNotApplicableException;
 
 import atp.sHotEqn;
 
