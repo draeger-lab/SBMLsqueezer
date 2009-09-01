@@ -23,6 +23,11 @@ import java.util.Set;
 
 import org.sbml.ASTNode;
 import org.sbml.Compartment;
+import org.sbml.CompartmentType;
+import org.sbml.Constraint;
+import org.sbml.Delay;
+import org.sbml.Event;
+import org.sbml.EventAssignment;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
@@ -34,6 +39,7 @@ import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
+import org.sbml.Trigger;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
@@ -79,20 +85,18 @@ public class LibSBMLReader extends AbstractSBMLReader {
 					+ "org.sbml.libsbml.Compartment");
 		org.sbml.libsbml.Compartment comp = (org.sbml.libsbml.Compartment) compartment;
 		Compartment c = new Compartment(comp.getId());
-		if (comp.isSetMetaId())
-			c.setMetaId(comp.getMetaId());
-		if (comp.isSetSBOTerm())
-			c.setSBOTerm(comp.getSBOTerm());
-		if (comp.isSetNotes())
-			c.setNotes(comp.getNotesString());
-		if (comp.isSetName())
-			c.setName(comp.getName());
+		copyNamedSBaseProperties(c, comp);
+		c.setName(comp.getName());
 		if (comp.isSetOutside()) {
 			Compartment outside = getModel().getCompartment(comp.getOutside());
 			if (outside == null)
 				getModel().addCompartment(readCompartment(compartment));
 			c.setOutside(outside);
 		}
+		if (comp.isSetCompartmentType())
+			c
+					.setCompartmentType(readCompartmentType(comp
+							.getCompartmentType()));
 		c.setConstant(comp.getConstant());
 		c.setSize(comp.getSize());
 		c.setSpatialDimensions((short) comp.getSpatialDimensions());
@@ -111,12 +115,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.KineticLaw kl = (org.sbml.libsbml.KineticLaw) kineticLaw;
 		KineticLaw kinlaw = new KineticLaw();
 		copySBaseProperties(kinlaw, kl);
-		if (kl.isSetMetaId())
-			kinlaw.setMetaId(kl.getMetaId());
-		if (kl.isSetSBOTerm())
-			kinlaw.setSBOTerm(kl.getSBOTerm());
-		if (kl.isSetNotes())
-			kinlaw.setNotes(kl.getNotesString());
 		if (kl.isSetMath()) {
 			ASTNode ast = convert(kl.getMath(), kinlaw);
 			ast.reduceToBinary();
@@ -133,18 +131,29 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * @param sbase
 	 * @param libSBase
 	 */
-	private void copySBaseProperties(SBase sbase, org.sbml.libsbml.SBase libSBase) {
-		// TODO Auto-generated method stub
+	private void copySBaseProperties(SBase sbase,
+			org.sbml.libsbml.SBase libSBase) {
+		if (libSBase.isSetMetaId())
+			sbase.setMetaId(libSBase.getMetaId());
+		if (libSBase.isSetSBOTerm())
+			sbase.setSBOTerm(libSBase.getSBOTerm());
+		if (libSBase.isSetNotes())
+			sbase.setNotes(libSBase.getNotesString());
 	}
-	
+
 	/**
 	 * 
 	 * @param sbase
 	 * @param libSBase
 	 */
-	private void copyNamedSBaseProperties(NamedSBase sbase, org.sbml.libsbml.SBase libSBase) {
-		// TODO Auto-generated method stub
-		libSBase.getId();
+	private void copyNamedSBaseProperties(NamedSBase sbase,
+			org.sbml.libsbml.SBase libSBase) {
+		copySBaseProperties(sbase, libSBase);
+		if (libSBase.isSetId())
+			sbase.setId(libSBase.getId());
+		if (libSBase.isSetName())
+			sbase.setName(libSBase.getName());
+
 	}
 
 	/*
@@ -163,14 +172,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			org.sbml.libsbml.Model m = (org.sbml.libsbml.Model) model;
 			this.model = new Model(m.getId());
 			int i;
-			if (m.isSetMetaId())
-				this.model.setMetaId(m.getMetaId());
-			if (m.isSetName())
-				this.model.setName(m.getName());
-			if (m.isSetNotes())
-				this.model.setNotes(m.getNotesString());
-			if (m.isSetSBOTerm())
-				this.model.setSBOTerm(m.getSBOTerm());
+			copyNamedSBaseProperties(this.model, m);
 			for (i = 0; i < m.getNumCompartments(); i++)
 				this.model.addCompartment(readCompartment(m.getCompartment(i)));
 			for (i = 0; i < m.getNumSpecies(); i++)
@@ -198,12 +200,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.ModifierSpeciesReference msr = (org.sbml.libsbml.ModifierSpeciesReference) modifierSpeciesReference;
 		ModifierSpeciesReference mod = new ModifierSpeciesReference(model
 				.getSpecies(msr.getSpecies()));
-		if (msr.isSetId())
-			mod.setId(msr.getId());
-		if (msr.isSetName())
-			mod.setName(msr.getName());
-		if (msr.isSetMetaId())
-			mod.setMetaId(msr.getMetaId());
+		copyNamedSBaseProperties(mod, msr);
 		if (msr.isSetSBOTerm()) {
 			mod.setSBOTerm(msr.getSBOTerm());
 			if (!SBO.isEnzymaticCatalysis(mod.getSBOTerm())
@@ -211,8 +208,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 							.getSBOTerm())))
 				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
 		}
-		if (msr.isSetNotes())
-			mod.setNotes(msr.getNotesString());
+
 		addAllSBaseChangeListenersTo(mod);
 		return mod;
 	}
@@ -261,16 +257,9 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		for (int i = 0; i < r.getNumModifiers(); i++)
 			reaction
 					.addModifier(readModifierSpeciesReference(r.getModifier(i)));
-		if (r.isSetSBOTerm())
-			reaction.setSBOTerm(r.getSBOTerm());
 		if (r.isSetKineticLaw())
 			reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
-		if (r.isSetName())
-			reaction.setName(r.getName());
-		if (r.isSetNotes())
-			reaction.setNotes(r.getNotesString());
-		if (r.isSetMetaId())
-			reaction.setMetaId(r.getMetaId());
+		copyNamedSBaseProperties(reaction, r);
 		reaction.setFast(r.getFast());
 		reaction.setReversible(r.getReversible());
 		addAllSBaseChangeListenersTo(reaction);
@@ -288,14 +277,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 					+ "org.sbml.libsbml.Species.");
 		org.sbml.libsbml.Species spec = (org.sbml.libsbml.Species) species;
 		Species s = new Species(spec.getId());
-		if (spec.isSetName())
-			s.setName(spec.getName());
-		if (spec.isSetMetaId())
-			s.setMetaId(spec.getMetaId());
-		if (spec.isSetNotes())
-			s.setNotes(spec.getNotesString());
-		if (spec.isSetSBOTerm())
-			s.setSBOTerm(spec.getSBOTerm());
+		copyNamedSBaseProperties(s, spec);
 		if (spec.isSetCharge())
 			s.setCharge(spec.getCharge());
 		if (spec.isSetCompartment())
@@ -323,16 +305,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.SpeciesReference specref = (org.sbml.libsbml.SpeciesReference) speciesReference;
 		SpeciesReference spec = new SpeciesReference(model.getSpecies(specref
 				.getSpecies()));
-		if (specref.isSetMetaId())
-			spec.setMetaId(specref.getMetaId());
-		if (specref.isSetSBOTerm())
-			spec.setSBOTerm(specref.getSBOTerm());
-		if (specref.isSetNotes())
-			spec.setNotes(specref.getNotesString());
-		if (specref.isSetId())
-			spec.setId(specref.getId());
-		if (specref.isSetName())
-			spec.setName(specref.getName());
+
+		copyNamedSBaseProperties(spec, specref);
 		if (specref.isSetStoichiometryMath())
 			spec.setStoichiometryMath(readStoichiometricMath(specref
 					.getStoichiometryMath()));
@@ -350,14 +324,123 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
 		org.sbml.libsbml.StoichiometryMath s = (org.sbml.libsbml.StoichiometryMath) stoichiometryMath;
 		StoichiometryMath sm = new StoichiometryMath();
-		if (s.isSetMetaId())
-			sm.setMetaId(s.getMetaId());
-		if (s.isSetSBOTerm())
-			sm.setSBOTerm(s.getSBOTerm());
-		if (s.isSetNotes())
-			sm.setNotes(s.getNotesString());
+		copySBaseProperties(sm, s);
 		if (s.isSetMath())
 			sm.setMath(convert(s.getMath(), sm));
 		return sm;
+	}
+
+	/**
+	 * 
+	 * @param constraint
+	 * @return
+	 */
+	public Constraint readConstraint(Object constraint) {
+		if (!(constraint instanceof org.sbml.libsbml.Constraint))
+			throw new IllegalArgumentException("constraint" + error
+					+ "org.sbml.libsml.Constraint");
+		org.sbml.libsbml.Constraint cons = (org.sbml.libsbml.Constraint) constraint;
+		Constraint con = new Constraint();
+		copySBaseProperties(con, cons);
+		if (cons.isSetMath())
+			con.setMath(convert(cons.getMath(), con));
+		if (cons.isSetMessage())
+			con.setMessage(cons.getMessageString());
+		return con;
+
+	}
+
+	/**
+	 * 
+	 * @param delay
+	 * @return
+	 */
+	public Delay readDelay(Object delay) {
+		if (!(delay instanceof org.sbml.libsbml.Delay))
+			throw new IllegalArgumentException("delay" + error
+					+ "org.sbml.libsbml.Delay");
+		org.sbml.libsbml.Delay del = (org.sbml.libsbml.Delay) delay;
+		Delay de = new Delay();
+		copySBaseProperties(de, del);
+		if (del.isSetMath())
+			de.setMath(convert(del.getMath(), de));
+		return de;
+	}
+
+	/**
+	 * 
+	 * @param compartmenttype
+	 * @return
+	 */
+	public CompartmentType readCompartmentType(Object compartmenttype) {
+
+		if (!(compartmenttype instanceof org.sbml.libsbml.CompartmentType))
+			throw new IllegalArgumentException("compartmenttype" + error
+					+ "org.sbml.libsbml.CompartmentType");
+		org.sbml.libsbml.CompartmentType comp = (org.sbml.libsbml.CompartmentType) compartmenttype;
+		CompartmentType com = new CompartmentType(comp.getId());
+		copyNamedSBaseProperties(com, comp);
+		return com;
+
+	}
+
+	/**
+	 * 
+	 * @param trigger
+	 * @return
+	 */
+	public Trigger readTrigger(Object trigger) {
+		if (!(trigger instanceof org.sbml.libsbml.Trigger))
+			throw new IllegalArgumentException("trigger" + error
+					+ "org.sbml.libsbml.Trigger");
+		org.sbml.libsbml.Trigger trigg = (org.sbml.libsbml.Trigger) trigger;
+		Trigger trig = new Trigger();
+		copySBaseProperties(trig, trigg);
+		if (trigg.isSetMath())
+			trig.setMath(convert(trigg.getMath(), trig));
+		return trig;
+
+	}
+
+	/**
+	 * 
+	 * @param event
+	 * @return
+	 */
+
+	public Event readEvent(Object event) {
+		if (!(event instanceof org.sbml.libsbml.Event))
+			throw new IllegalArgumentException("event" + error
+					+ "org.sbml.libsbml.Event");
+		org.sbml.libsbml.Event eve = (org.sbml.libsbml.Event) event;
+		Event ev = new Event();
+		copyNamedSBaseProperties(ev, eve);
+		ev.setTrigger(readTrigger(eve.getTrigger()));
+		ev.setDelay(readDelay(eve.getDelay()));
+		for (int i = 0; i < eve.getNumEventAssignments(); i++) {
+			ev.addEventAssignement(readEventAssignment(eve
+					.getEventAssignment(i)));
+		}
+		return ev;
+
+	}
+
+	/**
+	 * 
+	 * @param eventAssignment
+	 * @return
+	 */
+	private EventAssignment readEventAssignment(Object eventass) {
+		if (!(eventass instanceof org.sbml.libsbml.EventAssignment))
+			throw new IllegalArgumentException("eventassignment" + error
+					+ "org.sbml.libsbml.EventAssignment");
+		org.sbml.libsbml.EventAssignment eve = (org.sbml.libsbml.EventAssignment) eventass;
+		EventAssignment ev = new EventAssignment();
+		copySBaseProperties(ev, eve);
+		if (eve.isSetVariable())
+			ev.setVariable(eve.getVariable());//TODO: get returned string aber set will unsere Variable
+		if (eve.isSetMath())
+			ev.setMath(convert(eve.getMath(),ev));
+		return ev;
 	}
 }

@@ -135,6 +135,14 @@ public class Event extends AbstractNamedSBase {
 	public Delay getDelay() {
 		return delay;
 	}
+	
+	/**
+	 * 
+	 * @param eventass
+	 */
+	public void addEventAssignement(EventAssignment eventass){
+		listOfEventAssignments.add(eventass);
+	}
 
 	/**
 	 * 
