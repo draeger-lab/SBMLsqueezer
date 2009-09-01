@@ -89,7 +89,7 @@ public class SBMLsqueezer extends PluginAction {
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
-	private static final String versionNumber = "1.2.1";
+	private static final String versionNumber = "1.2.2";
 
 	/**
 	 * A serial version number.

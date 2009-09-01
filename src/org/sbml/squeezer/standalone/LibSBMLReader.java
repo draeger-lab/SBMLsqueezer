@@ -26,14 +26,15 @@ import org.sbml.Compartment;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
+import org.sbml.NamedSBase;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.SBO;
+import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.libsbml;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
 /**
@@ -94,7 +95,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		}
 		c.setConstant(comp.getConstant());
 		c.setSize(comp.getSize());
-		c.setSpatialDimensions((int) comp.getSpatialDimensions());
+		c.setSpatialDimensions((short) comp.getSpatialDimensions());
 		return c;
 	}
 
@@ -109,7 +110,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 					+ "org.sbml.libsbml.KineticLaw.");
 		org.sbml.libsbml.KineticLaw kl = (org.sbml.libsbml.KineticLaw) kineticLaw;
 		KineticLaw kinlaw = new KineticLaw();
-		this.model.getReaction(kl.getParentSBMLObject().getId()).setKineticLaw(kinlaw);
+		copySBaseProperties(kinlaw, kl);
 		if (kl.isSetMetaId())
 			kinlaw.setMetaId(kl.getMetaId());
 		if (kl.isSetSBOTerm())
@@ -125,6 +126,25 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			kinlaw.addParameter(readParameter(kl.getParameter(i)));
 		addAllSBaseChangeListenersTo(kinlaw);
 		return kinlaw;
+	}
+
+	/**
+	 * 
+	 * @param sbase
+	 * @param libSBase
+	 */
+	private void copySBaseProperties(SBase sbase, org.sbml.libsbml.SBase libSBase) {
+		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * 
+	 * @param sbase
+	 * @param libSBase
+	 */
+	private void copyNamedSBaseProperties(NamedSBase sbase, org.sbml.libsbml.SBase libSBase) {
+		// TODO Auto-generated method stub
+		libSBase.getId();
 	}
 
 	/*
@@ -158,7 +178,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			for (i = 0; i < m.getNumParameters(); i++)
 				this.model.addParameter(readParameter(m.getParameter(i)));
 			for (i = 0; i < m.getNumReactions(); i++)
-				readReaction(m.getReaction(i));
+				this.model.addReaction(readReaction(m.getReaction(i)));
 			addAllSBaseChangeListenersTo(this.model);
 			return this.model;
 		}
@@ -244,7 +264,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		if (r.isSetSBOTerm())
 			reaction.setSBOTerm(r.getSBOTerm());
 		if (r.isSetKineticLaw())
-			readKineticLaw(r.getKineticLaw());
+			reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
 		if (r.isSetName())
 			reaction.setName(r.getName());
 		if (r.isSetNotes())

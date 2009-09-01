@@ -26,17 +26,34 @@ package org.sbml;
  */
 public class Compartment extends Variable {
 
+	/**
+	 * 
+	 */
+	private CompartmentType compartmentType;
+	/**
+	 * 
+	 */
 	private short spatialDimensions;
-	private double size;
+	/**
+	 * 
+	 */
 	private Compartment outside;
+	/**
+	 * 
+	 */
 	private boolean constant;
 
+	/**
+	 * 
+	 * @param compartment
+	 */
 	public Compartment(Compartment compartment) {
 		super(compartment);
-		this.spatialDimensions = (short) compartment.getSpatialDimensions();
+		this.compartmentType = compartment.getCompartmentType();
+		this.spatialDimensions = compartment.getSpatialDimensions();
 		this.outside = compartment.getOutside();
 		this.constant = compartment.getConstant();
-		this.size = compartment.getSize();
+		setValue(compartment.getSize());
 	}
 
 	public Compartment(String id) {
@@ -86,6 +103,14 @@ public class Compartment extends Variable {
 	 * 
 	 * @return
 	 */
+	public CompartmentType getCompartmentType() {
+		return compartmentType;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean getConstant() {
 		return isConstant();
 	}
@@ -103,14 +128,14 @@ public class Compartment extends Variable {
 	 * @return
 	 */
 	public double getSize() {
-		return size;
+		return getValue();
 	}
 
 	/**
 	 * 
 	 * @return
 	 */
-	public int getSpatialDimensions() {
+	public short getSpatialDimensions() {
 		return spatialDimensions;
 	}
 
@@ -134,10 +159,11 @@ public class Compartment extends Variable {
 	 * 
 	 */
 	public void initDefaults() {
+		compartmentType = null;
 		spatialDimensions = 3;
 		constant = true;
-		size = Double.NaN;
 		outside = null;
+		setSize(Double.NaN);
 	}
 
 	/**
@@ -152,8 +178,24 @@ public class Compartment extends Variable {
 	 * 
 	 * @return
 	 */
+	public boolean isSetCompartmentType() {
+		return compartmentType != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isSetOutside() {
 		return outside != null;
+	}
+
+	/**
+	 * 
+	 * @param compartmentType
+	 */
+	public void setCompartmentType(CompartmentType compartmentType) {
+		this.compartmentType = compartmentType;
 	}
 
 	/**
@@ -177,16 +219,16 @@ public class Compartment extends Variable {
 	 * @param size
 	 */
 	public void setSize(double size) {
-		this.size = size;
+		setValue(size);
 	}
 
 	/**
 	 * 
 	 * @param spatialDimensions
 	 */
-	public void setSpatialDimensions(int spatialDimensions) {
+	public void setSpatialDimensions(short spatialDimensions) {
 		if (spatialDimensions >= 0 && spatialDimensions <= 3)
-			this.spatialDimensions = (short) spatialDimensions;
+			this.spatialDimensions = spatialDimensions;
 		else
 			throw new IllegalArgumentException(
 					"Spatial dimensions must be between [0, 3].");

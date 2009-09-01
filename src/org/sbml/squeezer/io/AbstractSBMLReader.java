@@ -24,16 +24,19 @@ import org.sbml.ASTNode;
 import org.sbml.Constants;
 import org.sbml.MathContainer;
 import org.sbml.Model;
+import org.sbml.NamedSBase;
 import org.sbml.SBMLReader;
 import org.sbml.AbstractSBase;
 import org.sbml.libsbml.libsbmlConstants;
 
 /**
- * @author Andreas Dr&auml;ger <a href="mailto:andreas.draeger@uni-tuebingen.de">andreas.draeger@uni-tuebingen.de</a>
- *
+ * @author Andreas Dr&auml;ger <a
+ *         href="mailto:andreas.draeger@uni-tuebingen.de">
+ *         andreas.draeger@uni-tuebingen.de</a>
+ * 
  */
 public abstract class AbstractSBMLReader implements SBMLReader {
-	
+
 	protected Model model;
 	protected LinkedList<SBaseChangedListener> listOfSBaseChangeListeners;
 
@@ -91,7 +94,11 @@ public abstract class AbstractSBMLReader implements SBMLReader {
 			break;
 		case libsbmlConstants.AST_NAME:
 			ast = new ASTNode(Constants.AST_NAME, parent);
-			ast.setName(math.getName());
+			NamedSBase nsb = model.findNamedSBase(math.getName());
+			if (nsb == null)
+				ast.setName(math.getName());
+			else
+				ast.setVariable(nsb);
 			break;
 		case libsbmlConstants.AST_CONSTANT_PI:
 			ast = new ASTNode(Constants.AST_CONSTANT_PI, parent);
@@ -253,7 +260,7 @@ public abstract class AbstractSBMLReader implements SBMLReader {
 			ast.addChild(convert(math.getChild(i), parent));
 		return ast;
 	}
-	
+
 	public Model getModel() {
 		return model;
 	}
@@ -265,7 +272,7 @@ public abstract class AbstractSBMLReader implements SBMLReader {
 	public void addSBaseChangeListener(SBaseChangedListener sbcl) {
 		listOfSBaseChangeListeners.add(sbcl);
 	}
-	
+
 	public void addAllSBaseChangeListenersTo(AbstractSBase sb) {
 		for (SBaseChangedListener listener : listOfSBaseChangeListeners)
 			sb.addChangeListener(listener);

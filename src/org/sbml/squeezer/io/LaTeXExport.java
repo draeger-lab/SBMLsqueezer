@@ -23,7 +23,7 @@ import org.sbml.Constants;
 import org.sbml.Event;
 import org.sbml.Model;
 import org.sbml.Reaction;
-import org.sbml.AbstractSBase;
+import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
@@ -944,7 +944,7 @@ public class LaTeXExport extends LaTeX {
 	 *         which is type set in typewriter font if it is an id. The mathmode
 	 *         argument decides if mathtt or mathrm has to be used.
 	 */
-	private StringBuffer getNameOrID(AbstractSBase sbase) {
+	private StringBuffer getNameOrID(SBase sbase) {
 		String name = "";
 		if (sbase instanceof Compartment) {
 			name = (printNameIfAvailable) ? ((Compartment) sbase).getName()

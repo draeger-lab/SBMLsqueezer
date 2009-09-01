@@ -31,7 +31,7 @@ public class Unit extends AbstractSBase {
 	/**
 	 * 
 	 */
-	private UnitSId kind;
+	private SIUnit kind;
 	/**
 	 * 
 	 */
@@ -68,7 +68,7 @@ public class Unit extends AbstractSBase {
 	 * @see org.sbml.AbstractSBase#clone()
 	 */
 	// @Override
-	public AbstractSBase clone() {
+	public Unit clone() {
 		return new Unit(this);
 	}
 
@@ -84,7 +84,7 @@ public class Unit extends AbstractSBase {
 	 * 
 	 * @return
 	 */
-	public UnitSId getKind() {
+	public SIUnit getKind() {
 		return kind;
 	}
 
@@ -125,7 +125,7 @@ public class Unit extends AbstractSBase {
 	 * 
 	 * @param kind
 	 */
-	public void setKind(UnitSId kind) {
+	public void setKind(SIUnit kind) {
 		this.kind = kind;
 		stateChanged();
 	}
