@@ -24,7 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -36,6 +37,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
+import org.sbml.SBO;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SettingsParser;
 import org.sbml.squeezer.io.SettingsWriter;
 
@@ -572,25 +575,25 @@ public class JSettingsPanel extends JPanel {
 		return (short) 1; // GMAK.
 	}
 
-	public Vector<String> getListOfPossibleEnzymes() {
-		Vector<String> listOfPossibleEnzymes = new Vector<String>();
+	public Set<Integer> getPossibleEnzymes() {
+		Set<Integer> possibleEnzymes = new HashSet<Integer>();
 		if (jCheckBoxPossibleEnzymeAsRNA.isSelected())
-			listOfPossibleEnzymes.add("ANTISENSE_RNA");
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("ANTISENSE_RNA")));
 		if (jCheckBoxPossibleEnzymeSimpleMolecule.isSelected())
-			listOfPossibleEnzymes.add("SIMPLE_MOLECULE");
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("SIMPLE_MOLECULE")));
 		if (jCheckBoxPossibleEnzymeReceptor.isSelected())
-			listOfPossibleEnzymes.add("RECEPTOR");
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("RECEPTOR")));
 		if (jCheckBoxPossibleEnzymeUnknown.isSelected())
-			listOfPossibleEnzymes.add("UNKNOWN");
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("UNKNOWN")));
 		if (jCheckBoxPossibleEnzymeComplex.isSelected())
-			listOfPossibleEnzymes.add("COMPLEX");
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("COMPLEX")));
 		if (jCheckBoxPossibleEnzymeTruncatedProtein.isSelected())
-			listOfPossibleEnzymes.add("TRUNCATED");
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("TRUNCATED")));
 		if (jCheckBoxPossibleEnzymeGenericProtein.isSelected())
-			listOfPossibleEnzymes.add("GENERIC");
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("GENERIC")));
 		if (jCheckBoxPossibleEnzymeRNA.isSelected())
-			listOfPossibleEnzymes.add("RNA");
-		return listOfPossibleEnzymes;
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("RNA")));
+		return possibleEnzymes;
 	}
 
 	public int getMaxRealisticNumberOfReactants() {

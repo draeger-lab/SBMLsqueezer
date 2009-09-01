@@ -190,7 +190,7 @@ public class Event extends AbstractNamedSBase {
 	 * @return
 	 */
 	public boolean getUseValuesFromTriggerTime() {
-		return getUseValuesFromTriggerTime();
+		return useValuesFromTriggerTime;
 	}
 
 	/**

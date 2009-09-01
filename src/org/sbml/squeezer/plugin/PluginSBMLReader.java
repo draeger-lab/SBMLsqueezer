@@ -31,6 +31,7 @@ import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.Compartment;
+import org.sbml.FunctionDefinition;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
@@ -235,6 +236,11 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 * @see org.sbml.SBMLReader#readStoichiometricMath(java.lang.Object)
 	 */
 	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
 		// TODO Auto-generated method stub
 		return null;
 	}

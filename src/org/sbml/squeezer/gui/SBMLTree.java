@@ -34,14 +34,21 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.sbml.Compartment;
+import org.sbml.CompartmentType;
+import org.sbml.Constraint;
 import org.sbml.Event;
+import org.sbml.FunctionDefinition;
+import org.sbml.InitialAssignment;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.Rule;
 import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.SpeciesType;
+import org.sbml.UnitDefinition;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -104,10 +111,30 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 	private static DefaultMutableTreeNode createNodes(Model m) {
 		DefaultMutableTreeNode modelNode = new DefaultMutableTreeNode(m);
 		DefaultMutableTreeNode node;
-		// FunctionDefinitions
-		// UnitDefinitions
-		// CompartmentTypes
-		// SpeciesTypes
+		if (m.getNumFunctionDefinitions() > 0) {
+			node = new DefaultMutableTreeNode("Function Definitions");
+			modelNode.add(node);
+			for (FunctionDefinition c : m.getListOfFunctionDefinitions())
+				node.add(new DefaultMutableTreeNode(c));
+		}
+		if (m.getNumUnitDefinitions() > 0) {
+			node = new DefaultMutableTreeNode("Unit Definitions");
+			modelNode.add(node);
+			for (UnitDefinition c : m.getListOfUnitDefinitions())
+				node.add(new DefaultMutableTreeNode(c));
+		}
+		if (m.getNumCompartmentTypes() > 0) {
+			node = new DefaultMutableTreeNode("Compartment Types");
+			modelNode.add(node);
+			for (CompartmentType c : m.getListOfCompartmentTypes())
+				node.add(new DefaultMutableTreeNode(c));
+		}
+		if (m.getNumSpeciesTypes() > 0) {
+			node = new DefaultMutableTreeNode("Species Types");
+			modelNode.add(node);
+			for (SpeciesType c : m.getListOfSpeciesTypes())
+				node.add(new DefaultMutableTreeNode(c));
+		}
 		if (m.getNumCompartments() > 0) {
 			node = new DefaultMutableTreeNode("Compartments");
 			modelNode.add(node);
@@ -126,9 +153,24 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			for (Parameter p : m.getListOfParameters())
 				node.add(new DefaultMutableTreeNode(p));
 		}
-		// InitialAssignments
-		// Rules
-		// Constraints
+		if (m.getNumInitialAssignments() > 0) {
+			node = new DefaultMutableTreeNode("Initial Assignments");
+			modelNode.add(node);
+			for (InitialAssignment c : m.getListOfInitialAssignments())
+				node.add(new DefaultMutableTreeNode(c));
+		}
+		if (m.getNumRules() > 0) {
+			node = new DefaultMutableTreeNode("Rules");
+			modelNode.add(node);
+			for (Rule c : m.getListOfRules())
+				node.add(new DefaultMutableTreeNode(c));
+		}
+		if (m.getNumConstraints() > 0) {
+			node = new DefaultMutableTreeNode("Constraints");
+			modelNode.add(node);
+			for (Constraint c : m.getListOfConstraints())
+				node.add(new DefaultMutableTreeNode(c));
+		}
 		if (m.getNumReactions() > 0) {
 			node = new DefaultMutableTreeNode("Reactions");
 			modelNode.add(node);

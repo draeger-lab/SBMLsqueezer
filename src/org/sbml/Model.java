@@ -144,6 +144,30 @@ public class Model extends AbstractNamedSBase {
 
 	/**
 	 * 
+	 * @param event
+	 */
+	public void addEvent(Event event) {
+		if (!listOfEvents.contains(event)) {
+			listOfEvents.add(event);
+			event.parentSBMLObject = this;
+			event.sbaseAdded();
+		}
+	}
+
+	/**
+	 * 
+	 * @param 
+	 */
+	public void addFunctionDefinition(FunctionDefinition functionDefinition) {
+		if (!listOfFunctionDefinitions.contains(functionDefinition)) {
+			listOfFunctionDefinitions.add(functionDefinition);
+			functionDefinition.parentSBMLObject = this;
+			functionDefinition.sbaseAdded();
+		}
+	}
+
+	/**
+	 * 
 	 * @param parameter
 	 */
 	public void addParameter(Parameter parameter) {
@@ -425,6 +449,22 @@ public class Model extends AbstractNamedSBase {
 	 * 
 	 * @return
 	 */
+	public int getNumCompartmentTypes() {
+		return listOfCompartmentTypes.size();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNumConstraints() {
+		return listOfConstraints.size();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumEvents() {
 		return listOfEvents.size();
 	}
@@ -435,6 +475,14 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public int getNumFunctionDefinitions() {
 		return listOfFunctionDefinitions.size();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNumInitialAssignments() {
+		return listOfInitialAssignments.size();
 	}
 
 	/**
@@ -467,6 +515,22 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public int getNumSpecies() {
 		return listOfSpecies.size();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNumSpeciesTypes() {
+		return listOfSpeciesTypes.size();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNumUnitDefinitions() {
+		return listOfUnitDefinitions.size();
 	}
 
 	/**

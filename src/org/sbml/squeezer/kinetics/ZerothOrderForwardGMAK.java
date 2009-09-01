@@ -66,7 +66,7 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
 		Parameter p_kass = new Parameter(kass.toString());
-		addLocalParameter(p_kass);
+		addParameter(p_kass);
 		return new ASTNode(p_kass, this);
 	}
 }

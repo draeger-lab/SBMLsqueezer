@@ -89,4 +89,11 @@ public interface SBMLReader {
 	 * @return
 	 */
 	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath);
+	
+	/**
+	 * 
+	 * @param functionDefinition
+	 * @return
+	 */
+	public FunctionDefinition readFunctionDefinition(Object functionDefinition);
 }

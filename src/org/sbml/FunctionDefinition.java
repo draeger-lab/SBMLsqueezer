@@ -168,6 +168,21 @@ public class FunctionDefinition extends MathContainer implements NamedSBase {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.SBase#toString()
+	 */
+	// @Override
+	public String toString() {
+		if (isSetName() && getName().length() > 0)
+			return name;
+		if (isSetId())
+			return id;
+		String name = getClass().getName();
+		return name.substring(name.lastIndexOf('.') + 1);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.NamedSBase#setName(java.lang.String)
 	 */
 	public void setName(String name) {

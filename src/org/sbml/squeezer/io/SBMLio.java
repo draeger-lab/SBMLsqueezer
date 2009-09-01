@@ -20,12 +20,15 @@ package org.sbml.squeezer.io;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.Compartment;
+import org.sbml.FunctionDefinition;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
@@ -34,6 +37,7 @@ import org.sbml.Reaction;
 import org.sbml.SBMLReader;
 import org.sbml.SBMLWriter;
 import org.sbml.AbstractSBase;
+import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
@@ -259,5 +263,40 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	// @Override
 	public Object writeReaction(Reaction reaction) {
 		return writer.writeReaction(reaction);
+	}
+
+	/**
+	 * 
+	 */
+	public void saveChanges() {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param possibleEnzymes
+	 */
+	public void updateEnzymeKatalysis(Model model, Set<Integer> possibleEnzymes) {
+		for (Reaction r : model.getListOfReactions()) {
+			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
+				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
+						&& !possibleEnzymes.contains(Integer.valueOf(modifier
+								.getSpeciesInstance().getSBOTerm())))
+					modifier.setSBOTerm(SBO.getCatalysis());
+				else if (SBO.isCatalyst(modifier.getSBOTerm())
+						&& possibleEnzymes.contains(Integer.valueOf(modifier
+								.getSpeciesInstance().getSBOTerm())))
+					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readFunctionDefinition(java.lang.Object)
+	 */
+	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
+		return reader.readFunctionDefinition(functionDefinition);
 	}
 }

@@ -103,7 +103,7 @@ public class ConvenienceIndependent extends Convenience {
 				} else
 					enzymes[i] = new ASTNode("", this);
 				Parameter p_klV = new Parameter(klV.toString());
-				addLocalParameter(p_klV);
+				addParameter(p_klV);
 
 				ASTNode numerator, denominator;
 				if (!reaction.getReversible()) {
@@ -168,7 +168,7 @@ public class ConvenienceIndependent extends Convenience {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			Parameter p_kM = new Parameter(kM.toString());
-			addLocalParameter(p_kM);
+			addParameter(p_kM);
 			kiG = concat("kG_", ref.getSpecies());
 			Parameter p_kiG = new Parameter(kiG.toString());
 			addGlobalParameter(p_kiG);
@@ -187,7 +187,7 @@ public class ConvenienceIndependent extends Convenience {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			Parameter p_kM = new Parameter(kM.toString());
-			addLocalParameter(p_kM);
+			addParameter(p_kM);
 			kiG = concat("kG_", ref.getSpecies());
 			Parameter p_kiG = new Parameter(kiG.toString());
 			addGlobalParameter(p_kiG);
@@ -236,7 +236,7 @@ public class ConvenienceIndependent extends Convenience {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			Parameter p_kM = new Parameter(kM.toString());
-			addLocalParameter(p_kM);
+			addParameter(p_kM);
 
 			ASTNode[] parts = new ASTNode[(int) ref.getStoichiometry()
 					+ (noOne ? 0 : 1)];

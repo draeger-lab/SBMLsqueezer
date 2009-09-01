@@ -222,7 +222,7 @@ public class HillEquation extends BasicKineticLaw {
 											p_hillcoeff, this))))));
 		}
 		Parameter p_kg = new Parameter(concat("kg_", rId).toString());
-		addLocalParameter(p_kg);
+		addParameter(p_kg);
 
 		ASTNode formelTxt = new ASTNode(p_kg, this);
 		if (modTActi.size() > 0)
