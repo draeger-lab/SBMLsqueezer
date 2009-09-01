@@ -274,6 +274,10 @@ public class KineticLawGenerator {
 		return listOfFastReactions;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Model getModel() {
 		return model;
 	}
@@ -285,39 +289,6 @@ public class KineticLawGenerator {
 	 */
 	public List<Integer> getReactionNumOfNotExistKinetics() {
 		return reactionNumOfNotExistKinetics;
-	}
-
-	/**
-	 * Returns the code of the given kinetic law.
-	 * 
-	 * @param kineticLaw
-	 * @return
-	 */
-	public Kinetics getReactionType(BasicKineticLaw kineticLaw) {
-		if (kineticLaw instanceof HillEquation)
-			return Kinetics.HILL_EQUATION;
-		if (kineticLaw instanceof OrderedMechanism)
-			return Kinetics.ORDERED_MECHANISM;
-		if (kineticLaw instanceof PingPongMechanism)
-			return Kinetics.PING_PONG_MECAHNISM;
-		if (kineticLaw instanceof RandomOrderMechanism)
-			return Kinetics.RANDOM_ORDER_MECHANISM;
-		if (kineticLaw instanceof MichaelisMenten)
-			return Kinetics.MICHAELIS_MENTEN;
-		if ((kineticLaw instanceof Convenience)
-				|| (kineticLaw instanceof ConvenienceIndependent))
-			return Kinetics.CONVENIENCE_KINETICS;
-		if (kineticLaw instanceof ZerothOrderForwardGMAK)
-			return Kinetics.ZEROTH_ORDER_FORWARD_MA;
-		if (kineticLaw instanceof ZerothOrderReverseGMAK)
-			return Kinetics.ZEROTH_ORDER_REVERSE_MA;
-		if (kineticLaw instanceof IrrevNonModulatedNonInteractingEnzymes)
-			return Kinetics.IRREV_NON_MODULATED_ENZYME_KIN;
-		if (kineticLaw instanceof IrrevCompetNonCooperativeEnzymes)
-			return Kinetics.COMPETETIVE_NON_EXCLUSIVE_INHIB;
-		if (kineticLaw instanceof GeneralizedMassAction)
-			return Kinetics.GENERALIZED_MASS_ACTION;
-		return null;
 	}
 
 	/**
@@ -598,7 +569,7 @@ public class KineticLawGenerator {
 								;
 							Species species = model.getSpecies(k);
 							if (SBO.isGene(species.getSBOTerm())) {
-								setBoundaryCondition(k, true);
+								setBoundaryCondition(species, true);
 								whichkin = Kinetics.HILL_EQUATION;
 							} else if (SBO.isRNA(species.getSBOTerm()))
 								whichkin = Kinetics.HILL_EQUATION;
@@ -705,15 +676,6 @@ public class KineticLawGenerator {
 					+ reaction.getId() + " must be a state transition.");
 
 		return whichkin;
-	}
-
-	/**
-	 * set the boundaryCondition for a gen to the given value
-	 * 
-	 * @param speciesNum
-	 */
-	public void setBoundaryCondition(int speciesNum, boolean condition) {
-		setBoundaryCondition(model.getSpecies(speciesNum), condition);
 	}
 
 	/**
