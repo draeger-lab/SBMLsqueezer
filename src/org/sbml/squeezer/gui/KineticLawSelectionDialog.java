@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.IllegalFormatException;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -51,7 +52,9 @@ import javax.swing.border.BevelBorder;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
+import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.LawListener;
 import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -59,9 +62,9 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.table.KineticLawJTable;
 import org.sbml.squeezer.gui.table.KineticLawTableModel;
 import org.sbml.squeezer.io.LaTeXExport;
-import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -233,7 +236,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			exc.printStackTrace();
 		}
 		try {
-			klg = new KineticLawGenerator(sbmlIO);
+			klg = new KineticLawGenerator(model);
 			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(
 					klg, model, reaction);
 			if (JOptionPane.showConfirmDialog(this, messagePanel,
@@ -241,14 +244,13 @@ public class KineticLawSelectionDialog extends JDialog implements
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 					icon) == JOptionPane.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
-					short equationType = messagePanel.getSelectedKinetic();
+					Kinetics equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
 					sbmlIO.stateChanged(reaction);
-					reaction = klg.storeLaw(klg.createKineticLaw(model,
-							reaction, equationType, messagePanel
-									.getReversible()), messagePanel
-							.getReversible());
-					klg.removeUnnecessaryParameters(sbmlIO);
+					reaction = klg.storeLaw(klg.createKineticLaw(reaction,
+							equationType, messagePanel.getReversible()),
+							messagePanel.getReversible());
+					klg.removeUnnecessaryParameters(model);
 				}
 			}
 		} catch (RateLawNotApplicableException exc) {
@@ -320,18 +322,33 @@ public class KineticLawSelectionDialog extends JDialog implements
 			} else if (text.equals("Generate")) {
 				if (sbmlIO != null)
 					try {
-						klg = new KineticLawGenerator(
-								sbmlIO,
-								settingsPanel
-										.isSetAllReactionsAreEnzymeCatalyzed(),
-								settingsPanel
-										.isSetAllParametersAreAddedGlobally(),
-								settingsPanel
-										.isSetGenerateKineticsForAllReactions(),
-								settingsPanel.getUniUniType(), settingsPanel
-										.getBiUniType(), settingsPanel
-										.getBiBiType(), settingsPanel
-										.getListOfPossibleEnzymes());
+						Properties settings = new Properties();
+						settings
+								.put(
+										CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+										Boolean
+												.valueOf(settingsPanel
+														.isSetAllReactionsAreEnzymeCatalyzed()));
+						settings.put(
+								CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+								Boolean.valueOf(settingsPanel
+										.isSetAllParametersAreAddedGlobally()));
+						settings
+								.put(
+										CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
+										Boolean
+												.valueOf(settingsPanel
+														.isSetGenerateKineticsForAllReactions()));
+						settings.put(CfgKeys.UNI_UNI_TYPE, settingsPanel
+								.getUniUniType());
+						settings.put(CfgKeys.BI_UNI_TYPE, settingsPanel
+								.getBiUniType());
+						settings.put(CfgKeys.BI_BI_TYPE, settingsPanel
+								.getBiBiType());
+						Model model = sbmlIO.getSelectedModel();
+						sbmlIO.updateEnzymeKatalysis(model, settingsPanel
+								.getPossibleEnzymes());
+						klg = new KineticLawGenerator(model, settings);
 						klg.findExistingLawsAndGenerateMissingLaws(sbmlIO
 								.getSelectedModel(), settingsPanel
 								.isSetTreatAllReactionsReversible());
@@ -466,9 +483,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 				dispose();
 				if (!KineticsAndParametersStoredInSBML) {
 					KineticsAndParametersStoredInSBML = true;
-					if (sbmlIO != null)
-						klg.storeLaws(sbmlIO, settingsPanel
+					if (sbmlIO != null) {
+						klg.storeLaws(settingsPanel
 								.isSetTreatAllReactionsReversible(), this);
+						sbmlIO.saveChanges();
+					}
 				}
 
 			} else if (text.equals("Save")) {
@@ -604,8 +623,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private void exportKineticEquations() {
 		if (!KineticsAndParametersStoredInSBML) {
 			if (sbmlIO != null)
-				klg.storeLaws(sbmlIO, settingsPanel
-						.isSetTreatAllReactionsReversible(), this);				
+				klg.storeLaws(settingsPanel.isSetTreatAllReactionsReversible(),
+						this);
 			KineticsAndParametersStoredInSBML = true;
 		}
 		JFileChooser chooser = new JFileChooser();

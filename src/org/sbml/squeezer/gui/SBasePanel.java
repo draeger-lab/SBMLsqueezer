@@ -35,8 +35,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import org.sbml.FunctionDefinition;
 import org.sbml.KineticLaw;
 import org.sbml.ListOf;
+import org.sbml.MathContainer;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.NamedSBase;
@@ -231,15 +233,21 @@ public class SBasePanel extends JPanel {
 			if (reaction.isSetKineticLaw())
 				LayoutHelper.addComponent(this, gbl, new SBasePanel(reaction
 						.getKineticLaw()), 0, ++row, 2, 1, 1, 1);
-		} else if (sbase instanceof KineticLaw) {
-			KineticLaw kl = (KineticLaw) sbase;
-			if (kl.isSetMath()) {
+		} else if (sbase instanceof MathContainer) {
+			MathContainer mc = (MathContainer) sbase;
+			if (mc.isSetMath()) {
 				StringBuffer laTeXpreview = new StringBuffer();
 				laTeXpreview.append(LaTeX.eqBegin);
-				laTeXpreview.append("v_\\mbox{");
-				laTeXpreview.append(kl.getParentSBMLObject().getId());
-				laTeXpreview.append("}=");
-				laTeXpreview.append(kl.getMath().toLaTeX().toString().replace(
+				if (mc instanceof KineticLaw) {
+					KineticLaw k = (KineticLaw) mc;
+					laTeXpreview.append("v_");
+					laTeXpreview.append(LaTeX.mbox(k.getParentSBMLObject().getId()));
+					laTeXpreview.append('=');
+				} else if (mc instanceof FunctionDefinition) {
+					FunctionDefinition f = (FunctionDefinition) mc;
+					laTeXpreview.append(LaTeX.mbox(f.getId()));
+				}
+				laTeXpreview.append(mc.getMath().toLaTeX().toString().replace(
 						"mathrm", "mbox").replace("text", "mbox").replace(
 						"mathtt", "mbox"));
 				laTeXpreview.append(LaTeX.eqEnd);

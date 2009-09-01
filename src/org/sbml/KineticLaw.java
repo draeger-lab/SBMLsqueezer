@@ -77,11 +77,12 @@ public class KineticLaw extends MathContainer {
 	 * 
 	 * @param p
 	 */
-	public void addParameter(Parameter p) {
-		Parameter parameter = new Parameter(p);
-		listOfParameters.add(parameter);
-		parameter.parentSBMLObject = this;
-		stateChanged();
+	public void addParameter(Parameter parameter) {
+		if (!getListOfParameters().contains(parameter)) {
+			listOfParameters.add(parameter);
+			parameter.parentSBMLObject = this;
+			stateChanged();
+		}
 	}
 
 	/*
@@ -105,7 +106,8 @@ public class KineticLaw extends MathContainer {
 			KineticLaw kl = (KineticLaw) o;
 			equal &= kl.getListOfParameters().equals(getListOfParameters());
 			return equal;
-		} else equal = false;
+		} else
+			equal = false;
 		return equal;
 	}
 

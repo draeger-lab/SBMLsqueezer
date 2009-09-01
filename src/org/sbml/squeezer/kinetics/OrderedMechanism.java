@@ -203,7 +203,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				append(kIp2, underscore, specRefP2.getSpecies());
 			}
 			Parameter p_kcatp = new Parameter(kcatp.toString());
-			addLocalParameter(p_kcatp);
+			addParameter(p_kcatp);
 
 			/*
 			 * addLocalParameter(kcatp); Irreversible reaction (bi-bi or bi-uni
@@ -213,9 +213,9 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				Parameter p_kMr1 = new Parameter(kMr1.toString());
 				Parameter p_kMr2 = new Parameter(kMr2.toString());
 				Parameter p_kIr1 = new Parameter(kIr1.toString());
-				addLocalParameter(p_kMr1);
-				addLocalParameter(p_kMr2);
-				addLocalParameter(p_kIr1);
+				addParameter(p_kMr1);
+				addParameter(p_kMr2);
+				addParameter(p_kIr1);
 
 				numerator = new ASTNode(p_kcatp, this);
 				if (modE.size() > 0)

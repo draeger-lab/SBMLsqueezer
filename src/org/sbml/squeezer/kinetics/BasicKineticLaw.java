@@ -150,25 +150,33 @@ public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
 	 * Adds the given parameter only to the list of global parameters if this
-	 * list does not yet contain this parameter.
+	 * list does not yet contain this parameter. Furthermore, the parameter's
+	 * default value is set to one instead of SBML's default of NaN (if no value
+	 * has been set for this parameter before).
 	 * 
 	 * @param parameter
 	 */
 	void addGlobalParameter(Parameter parameter) {
 		Model m = getModel();
+		if (!parameter.isSetValue())
+			parameter.setValue(1d);
 		if (!m.getListOfParameters().contains(parameter))
 			m.addParameter(new Parameter(parameter));
 	}
 
 	/**
 	 * Adds the given parameter only to the list of local parameters if this
-	 * list does not yet contain this parameter.
+	 * list does not yet contain this parameter. Furthermore, the parameter's
+	 * default value is set to one instead of SBML's default of NaN (if no value
+	 * has been set for this parameter before).
 	 * 
 	 * @param parameter
 	 */
-	void addLocalParameter(Parameter parameter) {
-		if (!getListOfParameters().contains(parameter))
-			addParameter(parameter);
+	// @Override
+	public void addParameter(Parameter parameter) {
+		if (!parameter.isSetValue())
+			parameter.setValue(1d);
+		super.addParameter(parameter);
 	}
 
 	/**
@@ -178,7 +186,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	void addLocalParameters(Parameter... parameters) {
 		for (Parameter parameter : parameters)
-			addLocalParameter(parameter);
+			addParameter(parameter);
 	}
 
 	/**

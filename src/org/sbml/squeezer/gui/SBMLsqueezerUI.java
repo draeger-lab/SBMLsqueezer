@@ -54,11 +54,11 @@ import javax.swing.event.ChangeListener;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
+import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
-import org.sbml.squeezer.resources.cfg.CfgKeys;
 
 /**
  * @author Andreas Dr&auml;ger <a

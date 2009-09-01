@@ -30,6 +30,7 @@ import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
@@ -328,13 +329,13 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 			Reaction reaction = model.getReaction(dataModel.getValueAt(
 					rowIndex, 0).toString());
 			try {
-				short[] possibleTypes = this.klg.identifyPossibleReactionTypes(
-						model, reaction);
+				Kinetics possibleTypes[] = this.klg
+						.identifyPossibleReactionTypes(reaction);
 
 				Vector<BasicKineticLaw> possibleLaws = new Vector<BasicKineticLaw>();
 				for (int i = 0; i < possibleTypes.length; i++)
 					try {
-						possibleLaws.add(klg.createKineticLaw(model, reaction,
+						possibleLaws.add(klg.createKineticLaw(reaction,
 								possibleTypes[i], reversibility));
 					} catch (ModificationException exc) {
 						exc.printStackTrace();

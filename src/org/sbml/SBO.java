@@ -700,4 +700,12 @@ public class SBO {
 			possibleEnzymes.add(Integer.valueOf(convertAlias2SBO(type)));
 		return possibleEnzymes;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static int getCatalysis() {
+		return 13;
+	}
 }

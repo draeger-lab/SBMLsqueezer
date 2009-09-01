@@ -44,7 +44,9 @@ import javax.swing.SwingConstants;
 
 import org.sbml.Model;
 import org.sbml.Reaction;
+import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
@@ -80,7 +82,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private boolean isKineticLawDefined;
 
-	private short possibleTypes[];
+	private Kinetics possibleTypes[];
 
 	private JPanel optionsPanel;
 
@@ -262,7 +264,9 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 					exc.printStackTrace();
 				}
 			} else {
-				klg.setAddAllParametersGlobally(getGlobal());
+				klg.getSettings().put(
+						CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+						Boolean.valueOf(getGlobal()));
 				isGlobalSelected = getGlobal();
 			}
 		} else {
@@ -329,7 +333,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 * 
 	 * @return
 	 */
-	public short getSelectedKinetic() {
+	public Kinetics getSelectedKinetic() {
 		int i = 0;
 		while ((i < rButtonsKineticEquations.length)
 				&& (!rButtonsKineticEquations[i].isSelected()))
@@ -339,23 +343,22 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private Box initKineticsPanel() throws RateLawNotApplicableException,
 			IOException {
-		possibleTypes = klg.identifyPossibleReactionTypes(model, reaction);
+		possibleTypes = klg.identifyPossibleReactionTypes(reaction);
 		String[] kineticEquations = new String[possibleTypes.length];
 		String[] toolTips = new String[possibleTypes.length];
 		laTeXpreview = new StringBuffer[possibleTypes.length + 1];
 		int i;
 		for (i = 0; i < possibleTypes.length; i++)
 			try {
-				BasicKineticLaw kinetic = klg.createKineticLaw(model, reaction,
+				BasicKineticLaw kinetic = klg.createKineticLaw(reaction,
 						possibleTypes[i], false);
 				System.out.println(kinetic.getName());
 				laTeXpreview[i] = new StringBuffer(kinetic.getMath().toLaTeX()
 						.toString());
-				toolTips[i] = !kinetic.isSetSBOTerm() ? "<b>SBO:"
+				toolTips[i] = !kinetic.isSetSBOTerm() ? "<b>"
 						+ kinetic.getSBOTermID() + "</b> " : "";
 				toolTips[i] = toHTML(toolTips[i] + kinetic.getName(), 40);
-				kineticEquations[i] = klg.getEquationName(possibleTypes[i]);
-				kineticEquations[i] = toHTML(kineticEquations[i], 40);
+				kineticEquations[i] = toHTML(possibleTypes[i].getEquationName(), 40);
 			} catch (IllegalFormatException e) {
 				e.printStackTrace();
 			}
