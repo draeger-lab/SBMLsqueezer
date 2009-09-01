@@ -19,16 +19,8 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
@@ -36,8 +28,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.sbml.Model;
-import org.sbml.AbstractSBase;
-import org.sbml.squeezer.resources.Resource;
+import org.sbml.SBase;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -74,7 +65,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * @param sbase
 	 * @return
 	 */
-	private JScrollPane createRightComponent(AbstractSBase sbase) {
+	private JScrollPane createRightComponent(SBase sbase) {
 		JPanel p = new JPanel();
 		p.add(new SBasePanel(sbase));
 		return new JScrollPane(p, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -93,9 +84,9 @@ public class SBMLModelSplitPane extends JSplitPane implements
 			// Nothing is selected.
 			return;
 		Object nodeInfo = node.getUserObject();
-		if (nodeInfo instanceof AbstractSBase) {
+		if (nodeInfo instanceof SBase) {
 			int proportionalLocation = getDividerLocation();
-			setRightComponent(createRightComponent((AbstractSBase) nodeInfo));
+			setRightComponent(createRightComponent((SBase) nodeInfo));
 			setDividerLocation(proportionalLocation);
 			validate();
 		} else {

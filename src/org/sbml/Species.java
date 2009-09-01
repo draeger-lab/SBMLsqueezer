@@ -27,13 +27,31 @@ package org.sbml;
  */
 public class Species extends Variable {
 
-	private boolean boundaryCondition;
-	private int charge;
-	private boolean constant;
+	/**
+	 * 
+	 */
+	private SpeciesType speciesType;
+	/**
+	 * 
+	 */
 	private Compartment compartment;
+	/**
+	 * true means initial amount is set. false means that an initial
+	 * concentration is set.
+	 */
+	private boolean amountOrConcentration;
+	/**
+	 * 
+	 */
 	private boolean hasOnlySubstanceUnits;
-	private double initialAmount;
-	private double initialConcentration;
+	/**
+	 * 
+	 */
+	private boolean boundaryCondition;
+	/**
+	 * 
+	 */
+	private int charge;
 
 	/**
 	 * 
@@ -44,17 +62,14 @@ public class Species extends Variable {
 		this.boundaryCondition = species.getBoundaryCondition();
 		this.charge = species.getCharge();
 		this.compartment = species.getCompartmentInstance().clone();
-		this.constant = species.getConstant();
 		this.hasOnlySubstanceUnits = species.getHasOnlySubstanceUnits();
-		if (species.isSetInitialAmount()) {
-			this.initialAmount = species.getInitialAmount();
-			this.initialConcentration = Double.NaN;
-		} else if (species.isSetInitialConcentration()) {
-			this.initialAmount = Double.NaN;
-			this.initialConcentration = species.getInitialConcentration();
-		} else {
-			this.initialAmount = this.initialConcentration = Double.NaN;
-		}
+		if (species.isSetInitialAmount())
+			setInitialAmount(species.getInitialAmount());
+		else if (species.isSetInitialConcentration())
+			setInitialConcentration(species.getInitialConcentration());
+		else
+			setValue(Double.NaN);
+		setConstant(species.getConstant());
 	}
 
 	/**
@@ -87,7 +102,6 @@ public class Species extends Variable {
 		if (o instanceof Species) {
 			Species s = (Species) o;
 			equal &= s.getBoundaryCondition() == boundaryCondition;
-			equal &= s.getConstant() == constant;
 			equal &= s.getHasOnlySubstanceUnits() == hasOnlySubstanceUnits;
 			equal &= s.getCharge() == charge;
 			if ((!s.isSetCompartment() && isSetCompartment())
@@ -95,8 +109,11 @@ public class Species extends Variable {
 				return false;
 			if (s.isSetCompartment() && isSetCompartment())
 				equal &= s.getCompartmentInstance().equals(compartment);
-			equal &= s.getInitialAmount() == initialAmount;
-			equal &= s.getInitialConcentration() == initialConcentration;
+			if (s.isSetInitialAmount() != isSetInitialAmount()) {
+				// TODO
+			}
+			equal &= s.getInitialAmount() == getInitialAmount();
+			equal &= s.getInitialConcentration() == getInitialConcentration();
 			return equal;
 		} else
 			equal = false;
@@ -107,107 +124,60 @@ public class Species extends Variable {
 	 * 
 	 * @return
 	 */
-	public boolean isSetCompartment() {
-		return compartment != null;
-	}
-
 	public boolean getBoundaryCondition() {
 		return isBoundaryCondition();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getCharge() {
 		return charge != Integer.MIN_VALUE ? charge : 0;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getCompartment() {
 		return compartment.getId();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Compartment getCompartmentInstance() {
 		return compartment;
 	}
 
-	public boolean getConstant() {
-		return isConstant();
-	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean getHasOnlySubstanceUnits() {
 		return isHasOnlySubstanceUnits();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getInitialAmount() {
-		return initialAmount;
+		if (isSetInitialAmount())
+			return getValue();
+		return Double.NaN;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getInitialConcentration() {
-		return initialConcentration;
-	}
-
-	public void initDefaults() {
-		charge = Integer.MIN_VALUE;
-		initialAmount = initialConcentration = Double.NaN;
-		hasOnlySubstanceUnits = false;
-		boundaryCondition = false;
-		constant = false;
-	}
-
-	public boolean isBoundaryCondition() {
-		return boundaryCondition;
-	}
-
-	public boolean isConstant() {
-		return constant;
-	}
-
-	public boolean isHasOnlySubstanceUnits() {
-		return hasOnlySubstanceUnits;
-	}
-
-	public boolean isSetCharge() {
-		return charge != Integer.MIN_VALUE;
-	}
-
-	public boolean isSetInitialAmount() {
-		return !Double.isNaN(initialAmount);
-	}
-
-	public boolean isSetInitialConcentration() {
-		return !Double.isNaN(initialConcentration);
-	}
-
-	public void setBoundaryCondition(boolean boundaryCondition) {
-		this.boundaryCondition = boundaryCondition;
-		stateChanged();
-	}
-
-	public void setCharge(int charge) {
-		this.charge = charge;
-		stateChanged();
-	}
-
-	public void setCompartment(Compartment compartment) {
-		this.compartment = compartment;
-		stateChanged();
-	}
-
-	public void setConstant(boolean constant) {
-		this.constant = constant;
-		stateChanged();
-	}
-
-	public void setHasOnlySubstanceUnits(boolean hasOnlySubstanceUnits) {
-		this.hasOnlySubstanceUnits = hasOnlySubstanceUnits;
-		stateChanged();
-	}
-
-	public void setInitialAmount(double initialAmount) {
-		this.initialAmount = initialAmount;
-		stateChanged();
-	}
-
-	public void setInitialConcentration(double initialConcentration) {
-		this.initialConcentration = initialConcentration;
-		stateChanged();
+		if (isSetInitialConcentration())
+			return getValue();
+		return Double.NaN;
 	}
 
 	/*
@@ -218,5 +188,152 @@ public class Species extends Variable {
 	// @Override
 	public Model getParentSBMLObject() {
 		return (Model) parentSBMLObject;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public SpeciesType getSpeciesType() {
+		return speciesType;
+	}
+
+	/**
+	 * 
+	 */
+	public void initDefaults() {
+		charge = Integer.MIN_VALUE;
+		amountOrConcentration = true;
+		hasOnlySubstanceUnits = false;
+		boundaryCondition = false;
+		setConstant(false);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isBoundaryCondition() {
+		return boundaryCondition;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isHasOnlySubstanceUnits() {
+		return hasOnlySubstanceUnits;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetCharge() {
+		return charge != Integer.MIN_VALUE;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetCompartment() {
+		return compartment != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetInitialAmount() {
+		return amountOrConcentration;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetInitialConcentration() {
+		return !isSetInitialAmount();
+	}
+
+	/**
+	 * 
+	 * @param boundaryCondition
+	 */
+	public void setBoundaryCondition(boolean boundaryCondition) {
+		this.boundaryCondition = boundaryCondition;
+		stateChanged();
+	}
+
+	/**
+	 * 
+	 * @param charge
+	 */
+	public void setCharge(int charge) {
+		this.charge = charge;
+		stateChanged();
+	}
+
+	/**
+	 * 
+	 * @param compartment
+	 */
+	public void setCompartment(Compartment compartment) {
+		this.compartment = compartment;
+		stateChanged();
+	}
+
+	/**
+	 * 
+	 * @param hasOnlySubstanceUnits
+	 */
+	public void setHasOnlySubstanceUnits(boolean hasOnlySubstanceUnits) {
+		this.hasOnlySubstanceUnits = hasOnlySubstanceUnits;
+		stateChanged();
+	}
+
+	/**
+	 * 
+	 * @param initialAmount
+	 */
+	public void setInitialAmount(double initialAmount) {
+		setValue(initialAmount);
+		amountOrConcentration = true;
+	}
+
+	/**
+	 * 
+	 * @param initialConcentration
+	 */
+	public void setInitialConcentration(double initialConcentration) {
+		setValue(initialConcentration);
+		amountOrConcentration = false;
+	}
+
+	/**
+	 * 
+	 * @param speciesType
+	 */
+	public void setSpeciesType(SpeciesType speciesType) {
+		this.speciesType = speciesType;
+		this.speciesType.parentSBMLObject = this;
+		stateChanged();
+	}
+	
+	/**
+	 * 
+	 * @param units
+	 */
+	public void setSubstanceUnits(UnitDefinition units) {
+		setUnits(units);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public UnitDefinition getSubstanceUnits() {
+		return getUnits();
 	}
 }

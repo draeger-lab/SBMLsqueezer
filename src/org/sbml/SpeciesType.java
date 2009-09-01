@@ -29,7 +29,7 @@ public class SpeciesType extends AbstractNamedSBase {
 	/**
 	 * @param nsb
 	 */
-	public SpeciesType(AbstractNamedSBase nsb) {
+	public SpeciesType(SpeciesType nsb) {
 		super(nsb);
 	}
 

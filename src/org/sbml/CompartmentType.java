@@ -50,7 +50,6 @@ public class CompartmentType extends AbstractNamedSBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.sbml.AbstractSBase#clone()
 	 */
 	// @Override

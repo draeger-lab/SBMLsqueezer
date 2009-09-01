@@ -23,7 +23,7 @@ package org.sbml;
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @date 2009-08-31
  */
 public abstract class AbstractNamedSBase extends AbstractSBase implements NamedSBase {
 

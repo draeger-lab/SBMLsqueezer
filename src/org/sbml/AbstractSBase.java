@@ -28,7 +28,7 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @date 2009-08-31
  */
 public abstract class AbstractSBase implements SBase {
 
@@ -36,7 +36,7 @@ public abstract class AbstractSBase implements SBase {
 	private String metaId;
 	private int sboTerm;
 	private String notes;
-	private Set<SBaseChangedListener> setOfListeners;
+	Set<SBaseChangedListener> setOfListeners;
 
 	/**
 	 * 
@@ -81,7 +81,7 @@ public abstract class AbstractSBase implements SBase {
 	 * 
 	 * @see java.lang.Object#clone()
 	 */
-	public abstract AbstractSBase clone();
+	public abstract SBase clone();
 
 	/*
 	 * (non-Javadoc)
@@ -91,7 +91,7 @@ public abstract class AbstractSBase implements SBase {
 	// @Override
 	public boolean equals(Object o) {
 		if (o instanceof AbstractSBase) {
-			AbstractSBase sbase = (AbstractSBase) o;
+			SBase sbase = (SBase) o;
 			boolean equals = true;
 			if ((!sbase.isSetMetaId() && isSetMetaId())
 					|| (sbase.isSetMetaId() && !isSetMetaId()))
@@ -197,18 +197,18 @@ public abstract class AbstractSBase implements SBase {
 		setOfListeners.remove(l);
 	}
 
-	/**
-	 * all listeners are informed about the adding of this object to a list
-	 * 
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.sbml.SBase#sbaseAdded()
+     */
 	public void sbaseAdded() {
 		for (SBaseChangedListener listener : setOfListeners)
 			listener.sbaseAdded(this);
 	}
 
-	/**
-	 * 
-	 * all listeners are informed about the deletion of this object from a list
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#sbaseRemoved()
 	 */
 	public void sbaseRemoved() {
 		for (SBaseChangedListener listener : setOfListeners)
@@ -245,8 +245,9 @@ public abstract class AbstractSBase implements SBase {
 		stateChanged();
 	}
 
-	/**
-	 * all listeners are informed about the change in this object
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBase#stateChanged()
 	 */
 	public void stateChanged() {
 		for (SBaseChangedListener listener : setOfListeners)
