@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.plugin;
 
-import java.util.List;
 import java.util.Set;
 
 import jp.sbi.celldesigner.plugin.PluginCompartment;
@@ -32,30 +31,25 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.Compartment;
 import org.sbml.FunctionDefinition;
+import org.sbml.InitialAssignment;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.Rule;
 import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.SpeciesType;
 import org.sbml.StoichiometryMath;
-import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.UnitDefinition;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
 public class PluginSBMLReader extends AbstractSBMLReader {
 
 	private static final String error = " must be an instance of ";
 	private Set<Integer> possibleEnzymes;
-
-	/**
-	 * 
-	 */
-	public PluginSBMLReader(Set<Integer> possibleEnzymes) {
-		super();
-		this.possibleEnzymes = possibleEnzymes;
-	}
 
 	/**
 	 * get a model from the celldesigneroutput, converts it to sbmlsqueezer
@@ -65,6 +59,14 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 */
 	public PluginSBMLReader(PluginModel model, Set<Integer> possibleEnzymes) {
 		super(model);
+		this.possibleEnzymes = possibleEnzymes;
+	}
+
+	/**
+	 * 
+	 */
+	public PluginSBMLReader(Set<Integer> possibleEnzymes) {
+		super();
 		this.possibleEnzymes = possibleEnzymes;
 	}
 
@@ -78,6 +80,16 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("compartment" + error
 					+ "PluginCompartment.");
 		PluginCompartment pc = (PluginCompartment) compartment;
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public InitialAssignment readInitialAssignment(Object initialAssignment) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -196,6 +208,11 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return reaction;
 	}
 
+	public Rule readRule(Object rule) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -230,6 +247,11 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return spec;
 	}
 
+	public SpeciesType readSpeciesType(Object speciesType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -240,7 +262,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return null;
 	}
 
-	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
+	public UnitDefinition readUnitDefinition(Object unitDefinition) {
 		// TODO Auto-generated method stub
 		return null;
 	}

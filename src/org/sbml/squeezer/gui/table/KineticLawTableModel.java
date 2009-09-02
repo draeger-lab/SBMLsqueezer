@@ -80,13 +80,15 @@ public class KineticLawTableModel extends AbstractTableModel {
 			String pro = "";
 			String para = "";
 
-			for (speciesNum = 0; speciesNum < reaction.getNumReactants() - 1; speciesNum++)
-				reac += reaction.getReactant(speciesNum).getSpecies() + ", ";
-			reac += reaction.getReactant(speciesNum).getSpecies();
+			if (reaction.getNumReactants() > 0)
+				reac += reaction.getReactant(0).getSpecies();
+			for (speciesNum = 1; speciesNum < reaction.getNumReactants(); speciesNum++)
+				reac += ", " + reaction.getReactant(speciesNum).getSpecies();
 
-			for (speciesNum = 0; speciesNum < reaction.getNumProducts() - 1; speciesNum++)
-				pro += reaction.getProduct(speciesNum).getSpecies() + ", ";
-			pro += reaction.getProduct(speciesNum).getSpecies();
+			if (reaction.getNumProducts() > 0)
+				pro += reaction.getProduct(0).getSpecies();
+			for (speciesNum = 1; speciesNum < reaction.getNumProducts(); speciesNum++)
+				pro += ", " + reaction.getProduct(speciesNum).getSpecies();
 
 			for (int j = 0; j < param.size() - 1; j++)
 				para += param.get(j).getId() + ", ";

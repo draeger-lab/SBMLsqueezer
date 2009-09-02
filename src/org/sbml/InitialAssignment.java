@@ -26,56 +26,56 @@ package org.sbml;
  */
 public class InitialAssignment extends MathContainer {
 
-	private Variable variable;
+	private Symbol symbol;
 
 	/**
-	 * @return the variable
+	 * @return the symbol
 	 */
-	public String getVariable() {
-		return variable.getId();
+	public String getSymbol() {
+		return symbol.getId();
 	}
 
 	/**
-	 * @return the variable
+	 * @return the symbol
 	 */
-	public Variable getVariableInstance() {
-		return variable;
+	public Symbol getSymbolInstance() {
+		return symbol;
 	}
 
 	/**
-	 * @param variable
-	 *            the variable to set
+	 * @param symbol
+	 *            the symbol to set
 	 */
-	public void setVariable(Variable variable) {
-		this.variable = variable;
+	public void setSymbol(Symbol symbol) {
+		this.symbol = symbol;
 	}
 
 	/**
-	 * @param variable
-	 *            the variable to set
+	 * @param symbol
+	 *            the symbol to set
 	 */
-	public void setVariable(String variable) {
-		Variable nsb = getModel().findVariable(variable);
+	public void setSymbol(String symbol) {
+		Symbol nsb = getModel().findSymbol(symbol);
 		if (nsb == null)
 			throw new IllegalArgumentException(
-					"Only the id of an existing Species, Compartments, or Parameters allowed as variables");
-		setVariable(nsb);
+					"Only the id of an existing Species, Compartments, or Parameters allowed as symbols");
+		setSymbol(nsb);
 	}
 
 	/**
 	 * 
 	 */
-	public InitialAssignment(Variable variable) {
+	public InitialAssignment(Symbol symbol) {
 		super();
-		this.variable = variable;
+		this.symbol = symbol;
 	}
 
 	/**
 	 * @param math
 	 */
-	public InitialAssignment(Variable variable, ASTNode math) {
+	public InitialAssignment(Symbol symbol, ASTNode math) {
 		super(math);
-		this.variable = variable;
+		this.symbol = symbol;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class InitialAssignment extends MathContainer {
 	 */
 	public InitialAssignment(InitialAssignment sb) {
 		super(sb);
-		this.variable = sb.getVariableInstance();
+		this.symbol = sb.getSymbolInstance();
 	}
 
 	/*

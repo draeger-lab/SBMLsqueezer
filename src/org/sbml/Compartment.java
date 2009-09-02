@@ -24,7 +24,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Compartment extends Variable {
+public class Compartment extends Symbol {
 
 	/**
 	 * 

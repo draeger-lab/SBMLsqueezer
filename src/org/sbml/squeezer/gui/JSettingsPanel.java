@@ -38,6 +38,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
 import org.sbml.SBO;
+import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SettingsParser;
 import org.sbml.squeezer.io.SettingsWriter;
@@ -542,16 +543,16 @@ public class JSettingsPanel extends JPanel {
 	 * <li>6 = Ordered</li>
 	 * </ul>
 	 */
-	public short getBiBiType() {
+	public Kinetics getBiBiType() {
 		if (jRadioButtonBiBiORD.isSelected())
-			return (short) 6;
+			return Kinetics.ORDERED_MECHANISM;
 		if (jRadioButtonBiBiPP.isSelected())
-			return (short) 5;
+			return Kinetics.PING_PONG_MECAHNISM;
 		if (jRadioButtonBiBiRND.isSelected())
-			return (short) 4;
+			return Kinetics.RANDOM_ORDER_MECHANISM;
 		if (jRadioButtonBiBiCONV.isSelected())
-			return (short) 2;
-		return (short) 1; // GMAK.
+			return Kinetics.CONVENIENCE_KINETICS;
+		return Kinetics.GENERALIZED_MASS_ACTION;
 	}
 
 	/**
@@ -565,14 +566,14 @@ public class JSettingsPanel extends JPanel {
 	 * 
 	 * @return
 	 */
-	public short getBiUniType() {
+	public Kinetics getBiUniType() {
 		if (jRadioButtonBiUniORD.isSelected())
-			return (short) 6;
+			return Kinetics.ORDERED_MECHANISM;
 		if (jRadioButtonBiUniRND.isSelected())
-			return (short) 4;
+			return Kinetics.RANDOM_ORDER_MECHANISM;
 		if (jRadioButtonBiUniCONV.isSelected())
-			return (short) 2;
-		return (short) 1; // GMAK.
+			return Kinetics.CONVENIENCE_KINETICS;
+		return Kinetics.GENERALIZED_MASS_ACTION;
 	}
 
 	public Set<Integer> getPossibleEnzymes() {
@@ -616,12 +617,12 @@ public class JSettingsPanel extends JPanel {
 	 * 
 	 * @return
 	 */
-	public short getUniUniType() {
+	public Kinetics getUniUniType() {
 		if (jRadioButtonUniUniMMK.isSelected())
-			return (short) 3;
+			return Kinetics.MICHAELIS_MENTEN;
 		if (jRadioButtonUniUniCONV.isSelected())
-			return (short) 2;
-		return (short) 1; // GMAK.
+			return Kinetics.CONVENIENCE_KINETICS;
+		return Kinetics.GENERALIZED_MASS_ACTION;
 	}
 
 	public boolean isPossibleEnzymeAllNotChecked() {
@@ -681,174 +682,6 @@ public class JSettingsPanel extends JPanel {
 	}
 
 	/**
-	 * Loads settings of the SBMLsqueezer from an ASCII file.
-	 * 
-	 * @throws IOException
-	 * @throws NumberFormatException
-	 */
-	public void loadSettings(File file) throws IOException,
-			NumberFormatException {
-		SettingsParser load = new SettingsParser(file);
-
-		String paramLine = "";
-		boolean error = false;
-		while (!paramLine.equals("END")) {
-			paramLine = load.read();
-
-			if (paramLine.contains("maxSpecies")) {
-				String paramValue = paramLine
-						.substring(paramLine.indexOf(":") + 1);
-				setMaxRealisticNumberOfReactants(Integer.parseInt(paramValue));
-				if (getMaxRealisticNumberOfReactants() < 2
-						|| 10 < getMaxRealisticNumberOfReactants()) {
-					error = true;
-					System.err
-							.println("Irregular Value:("
-									+ paramValue
-									+ ") at LoadToken:("
-									+ 0
-									+ "). Expected is a regular value of range 2..10:(maxSpecies).");
-				}
-			}
-			if (paramLine.contains("warnings"))
-				setWarningsForUnrealisticReactions(Boolean
-						.parseBoolean(paramLine.substring(paramLine
-								.indexOf(":") + 1)));
-			if (paramLine.contains("noReactionMAK")) {
-				String paramValue = paramLine
-						.substring(paramLine.indexOf(":") + 1);
-				if (paramValue.equals("true"))
-					setNonEnzymeReactionsType((short) 1);
-				else if (paramValue.equals("false")) // TODO: What else can we
-					// do?
-					setNonEnzymeReactionsType((short) 1);
-				else {
-					System.err
-							.println("Unknown token:("
-									+ paramValue
-									+ ") at LoadToken:("
-									+ 2
-									+ "). Expected is a regular Value for param:(noReactionMAK).");
-					error = true;
-				}
-			}
-			if (paramLine.contains("uniUniType")) {
-				short paramValue = new Integer(paramLine.substring(paramLine
-						.indexOf(":") + 1)).shortValue();
-				if ((paramValue == 3) || (paramValue == 2))
-					setUniUniType(paramValue);
-				else {
-					System.err
-							.println("Unknown token:("
-									+ paramValue
-									+ ") at LoadToken:("
-									+ 3
-									+ "). Expected is a regular Value for param:(uniUniType).");
-					error = true;
-				}
-			}
-			if (paramLine.contains("biUniType")) {
-				short paramValue = new Integer(paramLine.substring(paramLine
-						.indexOf(":") + 1)).shortValue();
-				if ((paramValue == 4) || (paramValue == 6) || (paramValue == 2))
-					setBiUniType(paramValue);
-				else {
-					error = true;
-					System.err
-							.println("Unknown token:("
-									+ paramValue
-									+ ") at LoadToken:("
-									+ 4
-									+ "). Expected is a regular Value for param:(biUniType).");
-				}
-			}
-			if (paramLine.contains("biBiType")) {
-				short paramValue = new Integer(paramLine.substring(paramLine
-						.indexOf(":") + 1)).shortValue();
-				if ((paramValue == 4) || (paramValue == 6) || (paramValue == 2)
-						|| (paramValue == 5))
-					setBiBiType(paramValue);
-				else {
-					error = true;
-					System.err
-							.println("Unknown token:("
-									+ paramValue
-									+ ") at LoadToken:("
-									+ 5
-									+ "). Expected is a regular Value for param:(biBiType).");
-				}
-			}
-			if (paramLine.contains("possibleEnzymeRNA"))
-				setPossibleEnzymeRNA(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-			if (paramLine.contains("possibleEnzymeGenericProtein"))
-				setPossibleEnzymeGenericProtein(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-			if (paramLine.contains("possibleEnzymeTruncatedProtein"))
-				setPossibleEnzymeTruncatedProtein(Boolean
-						.parseBoolean(paramLine.substring(paramLine
-								.indexOf(":") + 1)));
-			if (paramLine.contains("GenKinForAllReac"))
-				setGenerateKineticsForAllReactions(Boolean
-						.parseBoolean(paramLine.substring(paramLine
-								.indexOf(":") + 1)));
-			if (paramLine.contains("reversibility:"))
-				setTreatAllReactionsReversible(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-			if (paramLine.contains("possibleEnzymeComplex"))
-				setPossibleEnzymeEnzymeComplex(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-			if (paramLine.contains("possibleEnzymeUnknown"))
-				setPossibleEnzymeUnknownMolecule(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-			if (paramLine.contains("possibleEnzymeReceptor"))
-				setPossibleEnzymeReceptor(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-			if (paramLine.contains("possibleEnzymeSimpleMolecule"))
-				setPossibleEnzymeSimpleMolecule(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-			if (paramLine.contains("possibleEnzymeAsRNA"))
-				setPossibleEnzymeAsRNA(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-			if (paramLine.contains("forceAllReactionsAsEnzymeReaction"))
-				possibleEnzymeAllNotChecked = Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1));
-			if (paramLine.contains("forceAllReactionsAsEnzymeReaction"))
-				setAllReactionsAreEnzymeCatalyzed(Boolean
-						.parseBoolean(paramLine.substring(paramLine
-								.indexOf(":") + 1)));
-			if (paramLine.contains("addAllParametersGlobally"))
-				setAllParametersAreGlobal(Boolean.parseBoolean(paramLine
-						.substring(paramLine.indexOf(":") + 1)));
-		}
-		load.close();
-		if (error == true) {
-			System.err
-					.println("actionPerformed(Settings:Restore Defaults after LOAD ERROR)");
-
-			setUniUniType((short) 3);// "MMK";
-			setBiUniType((short) 4);// "RND";
-			setBiBiType((short) 4);// "RND";
-			setWarningsForUnrealisticReactions(true);
-			setNonEnzymeReactionsType((short) 1);
-			setMaxRealisticNumberOfReactants(3);
-			setPossibleEnzymeRNA(true);
-			setPossibleEnzymeGenericProtein(true);
-			setPossibleEnzymeTruncatedProtein(true);
-			setPossibleEnzymeAsRNA(false);
-			setPossibleEnzymeUnknownMolecule(false);
-			setPossibleEnzymeEnzymeComplex(true);
-			setPossibleEnzymeReceptor(false);
-			setPossibleEnzymeSimpleMolecule(false);
-			possibleEnzymeAllNotChecked = false;
-			setAllReactionsAreEnzymeCatalyzed(false);
-			setGenerateKineticsForAllReactions(false);
-			setTreatAllReactionsReversible(true);
-			possibleEnzymeTestAllNotChecked();
-		}
-	}
-
-	/**
 	 * This method checks, if there is any possible Enzyme checked or not
 	 * 
 	 * @return: void
@@ -889,47 +722,47 @@ public class JSettingsPanel extends JPanel {
 		} else {
 			possibleEnzymeAllNotChecked = false;
 
-			if (getUniUniType() == 3)// .equals("MMK"))
+			if (getUniUniType() == Kinetics.MICHAELIS_MENTEN)
 				jRadioButtonUniUniMMK.setSelected(true);
 			else
 				jRadioButtonUniUniMMK.setSelected(false);
 
-			if (getUniUniType() == 2)// .equals("CONV"))
+			if (getUniUniType() == Kinetics.CONVENIENCE_KINETICS)
 				jRadioButtonUniUniCONV.setSelected(true);
 			else
 				jRadioButtonUniUniCONV.setSelected(false);
 
-			if (getBiUniType() == 6)// .equals("ORD"))
+			if (getBiUniType() == Kinetics.ORDERED_MECHANISM)
 				jRadioButtonBiUniORD.setSelected(true);
 			else
 				jRadioButtonBiUniORD.setSelected(false);
 
-			if (getBiUniType() == 2)// .equals("CONV"))
+			if (getBiUniType() == Kinetics.CONVENIENCE_KINETICS)
 				jRadioButtonBiUniCONV.setSelected(true);
 			else
 				jRadioButtonBiUniCONV.setSelected(false);
 
-			if (getBiUniType() == 4)// .equals("RND"))
+			if (getBiUniType() == Kinetics.RANDOM_ORDER_MECHANISM)
 				jRadioButtonBiUniRND.setSelected(true);
 			else
 				jRadioButtonBiUniRND.setSelected(false);
 
-			if (getBiBiType() == 5)// .equals("PP"))
+			if (getBiBiType() == Kinetics.PING_PONG_MECAHNISM)
 				jRadioButtonBiBiPP.setSelected(true);
 			else
 				jRadioButtonBiBiPP.setSelected(false);
 
-			if (getBiBiType() == 6)// .equals("ORD"))
+			if (getBiBiType() == Kinetics.ORDERED_MECHANISM)
 				jRadioButtonBiBiORD.setSelected(true);
 			else
 				jRadioButtonBiBiORD.setSelected(false);
 
-			if (getBiBiType() == 2)// .equals("CONV"))
+			if (getBiBiType() == Kinetics.CONVENIENCE_KINETICS)
 				jRadioButtonBiBiCONV.setSelected(true);
 			else
 				jRadioButtonBiBiCONV.setSelected(false);
 
-			if (getBiBiType() == 4)// .equals("RND"))
+			if (getBiBiType() == Kinetics.RANDOM_ORDER_MECHANISM)
 				jRadioButtonBiBiRND.setSelected(true);
 			else
 				jRadioButtonBiBiRND.setSelected(false);
@@ -950,10 +783,13 @@ public class JSettingsPanel extends JPanel {
 		return possibleEnzymeAllNotChecked;
 	}
 
+	/**
+	 * 
+	 */
 	public void restoreDefaults() {
-		setUniUniType((short) 3);// "MMK";
-		setBiUniType((short) 4);// "RND";
-		setBiBiType((short) 4);// "RND";
+		setUniUniType(Kinetics.MICHAELIS_MENTEN);
+		setBiUniType(Kinetics.RANDOM_ORDER_MECHANISM);
+		setBiBiType(Kinetics.RANDOM_ORDER_MECHANISM);
 		jCheckBoxWarnings.setSelected(true);
 		jSpinnerMaxRealisticNumOfReactants.setModel(new SpinnerNumberModel(3,
 				2, 10, 1));
@@ -987,29 +823,17 @@ public class JSettingsPanel extends JPanel {
 	}
 
 	/**
-	 * Saves the current settings of the SBMLsqueezer in an ASCII file.
+	 * 
+	 * @param b
 	 */
-	public void save(File file) {
-		new SettingsWriter(file, getMaxRealisticNumberOfReactants(),
-				getUniUniType(), getBiUniType(), getBiBiType(),
-				isSetWarningsForUnrealisticReactions(),
-				(getNonEnzymeReactionsType() == 1) ? true : false,
-				isPossibleEnzymeRNA(), isSetGenerateKineticsForAllReactions(),
-				isSetTreatAllReactionsReversible(),
-				isPossibleEnzymeGenericProtein(),
-				isPossibleEnzymeTruncatedProtein(),
-				isPossibleEnzymeEnzymeComplex(),
-				isPossibleEnzymeUnknownMolecule(), isPossibleEnzymeReceptor(),
-				isPossibleEnzymeSimpleMolecule(), isPossibleEnzymeAsRNA(),
-				possibleEnzymeTestAllNotChecked(),
-				isSetAllReactionsAreEnzymeCatalyzed(),
-				isSetAllParametersAreAddedGlobally());
-	}
-
 	public void setAllParametersAreGlobal(boolean b) {
 		jCheckBoxAddAllParametersGlobally.setSelected(b);
 	}
 
+	/**
+	 * 
+	 * @param b
+	 */
 	public void setAllReactionsAreEnzymeCatalyzed(boolean b) {
 		jCheckBoxTreatAllReactionsAsEnzyeReaction.setSelected(b);
 	}
@@ -1026,18 +850,18 @@ public class JSettingsPanel extends JPanel {
 	 * 
 	 * @param type
 	 */
-	public void setBiBiType(short type) {
+	public void setBiBiType(Kinetics type) {
 		switch (type) {
-		case 6:
+		case ORDERED_MECHANISM:
 			jRadioButtonBiBiORD.setSelected(true);
 			break;
-		case 5:
+		case PING_PONG_MECAHNISM:
 			jRadioButtonBiBiPP.setSelected(true);
 			break;
-		case 4:
+		case RANDOM_ORDER_MECHANISM:
 			jRadioButtonBiBiRND.setSelected(true);
 			break;
-		case 2:
+		case CONVENIENCE_KINETICS:
 			jRadioButtonBiBiCONV.setSelected(true);
 			break;
 		default:
@@ -1057,15 +881,15 @@ public class JSettingsPanel extends JPanel {
 	 * 
 	 * @param type
 	 */
-	public void setBiUniType(short type) {
+	public void setBiUniType(Kinetics type) {
 		switch (type) {
-		case 6:
+		case ORDERED_MECHANISM:
 			jRadioButtonBiUniORD.setSelected(true);
 			break;
-		case 4:
+		case RANDOM_ORDER_MECHANISM:
 			jRadioButtonBiUniRND.setSelected(true);
 			break;
-		case 2:
+		case CONVENIENCE_KINETICS:
 			jRadioButtonBiUniCONV.setSelected(true);
 			break;
 		default:
@@ -1141,12 +965,12 @@ public class JSettingsPanel extends JPanel {
 	 * 
 	 * @param type
 	 */
-	public void setUniUniType(short type) {
+	public void setUniUniType(Kinetics type) {
 		switch (type) {
-		case 3:
+		case MICHAELIS_MENTEN:
 			jRadioButtonUniUniMMK.setSelected(true);
 			break;
-		case 2:
+		case CONVENIENCE_KINETICS:
 			jRadioButtonUniUniCONV.setSelected(true);
 			break;
 		default:

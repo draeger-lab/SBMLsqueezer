@@ -306,13 +306,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 			} else if (text.equals("Cancel")) {
 				dispose();
-
-				/*
-				 * } else if (text.equals("Apply")) {
-				 * getContentPane().remove(settingsPanel); pack();
-				 * setLocationRelativeTo(null);//
-				 */
-
 			} else if (text.equals("Restore")) {
 				settingsPanel.restoreDefaults();
 				getContentPane().remove(settingsPanel);
@@ -489,31 +482,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 						sbmlIO.saveChanges();
 					}
 				}
-
-			} else if (text.equals("Save")) {
-				JFileChooser chooser = new JFileChooser();
-				SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-				chooser.setFileFilter(ff2);
-				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-					settingsPanel.save(chooser.getSelectedFile());
-			} else if (text.equals("Load")) {
-				JFileChooser chooser = new JFileChooser();
-				SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-				chooser.setFileFilter(ff2);
-				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-					try {
-						settingsPanel.loadSettings(chooser.getSelectedFile());
-					} catch (IOException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					} catch (NumberFormatException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					}
 			}
 		}
 	}
@@ -780,7 +748,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/**
 	 * This method actually initializes the GUI.
 	 */
-	protected void init() {
+	private void init() {
 		centralPanel = initOptionsPanel();
 
 		setLayout(new BorderLayout());

@@ -523,20 +523,20 @@ public class KineticLawGenerator {
 									+ reaction.getId()
 									+ " must be a translation.");
 					} else
-						whichkin = (Kinetics) settings
-								.get(CfgKeys.UNI_UNI_TYPE);
+						whichkin = Kinetics.valueOf(settings
+								.get(CfgKeys.UNI_UNI_TYPE).toString());
 				} else if (!reaction.getReversible() && !reversibility) {
 					// Products don't matter.
-					whichkin = (Kinetics) settings.get(CfgKeys.UNI_UNI_TYPE);
+					whichkin = Kinetics.valueOf(settings.get(CfgKeys.UNI_UNI_TYPE).toString());
 				} else
 					whichkin = Kinetics.CONVENIENCE_KINETICS;
 
 			} else if (stoichiometryLeft == 2d) {
 				if (stoichiometryRight == 1d) {
 					// Bi-Uni: ConvenienceIndependent/Ran/Ord/PP (2E/1P)/(2E/2P)
-					whichkin = (Kinetics) settings.get(CfgKeys.BI_UNI_TYPE);
+					whichkin = Kinetics.valueOf(settings.get(CfgKeys.BI_UNI_TYPE).toString());
 				} else if (stoichiometryRight == 2d) {
-					whichkin = (Kinetics) settings.get(CfgKeys.BI_BI_TYPE);
+					whichkin = Kinetics.valueOf(settings.get(CfgKeys.BI_BI_TYPE).toString());
 				} else
 					whichkin = Kinetics.CONVENIENCE_KINETICS;
 			} else
@@ -596,20 +596,20 @@ public class KineticLawGenerator {
 						} else if (SBO.isRNA(species.getSBOTerm()))
 							whichkin = Kinetics.HILL_EQUATION;
 						else
-							whichkin = (Kinetics) settings
-									.get(CfgKeys.UNI_UNI_TYPE);
+							whichkin = Kinetics.valueOf(settings
+									.get(CfgKeys.UNI_UNI_TYPE).toString());
 
 					} else if (!reaction.getReversible() && !reversibility)
-						whichkin = (Kinetics) settings
-								.get(CfgKeys.UNI_UNI_TYPE);
+						whichkin = Kinetics.valueOf(settings
+								.get(CfgKeys.UNI_UNI_TYPE).toString());
 					else
 						whichkin = Kinetics.CONVENIENCE_KINETICS;
 				} else if (stoichiometryLeft == 2d) {
 					// Bi-Uni: ConvenienceIndependent/Ran/Ord/PP (2E/1P)/(2E/2P)
 					if (stoichiometryRight == 1d) {
-						whichkin = (Kinetics) settings.get(CfgKeys.BI_UNI_TYPE);
+						whichkin = Kinetics.valueOf(settings.get(CfgKeys.BI_UNI_TYPE).toString());
 					} else if (stoichiometryRight == 2d) { // bi-bi kinetics
-						whichkin = (Kinetics) settings.get(CfgKeys.BI_BI_TYPE);
+						whichkin = Kinetics.valueOf(settings.get(CfgKeys.BI_BI_TYPE).toString());
 					} else
 						whichkin = Kinetics.CONVENIENCE_KINETICS;
 				} else
@@ -769,6 +769,7 @@ public class KineticLawGenerator {
 	 * store the generated Kinetics in SBML-File as MathML.
 	 */
 	public void storeLaws(boolean reversibility, LawListener l) {
+		l.totalNumber(reactionNumOfNotExistKinetics.size());
 		for (int i = 0; i < reactionNumOfNotExistKinetics.size(); i++) {
 			storeLaw(model.getReaction(reactionNumOfNotExistKinetics.get(i))
 					.getKineticLaw(), reversibility);
@@ -789,7 +790,7 @@ public class KineticLawGenerator {
 		int i, j, k;
 		Parameter p;
 		// remove unnecessary global parameters
-		for (i = 0; i < model.getNumParameters(); i++) {
+		for (i = model.getNumParameters() - 1; i > 0; i--) {
 			isNeeded = false;
 			p = model.getParameter(i);
 			/*
@@ -857,11 +858,12 @@ public class KineticLawGenerator {
 					isNeeded = true;
 
 			if (!isNeeded) // is this paraemter necessary at all?
-				model.getListOfParameters().remove(i--);
+				model.getListOfParameters().remove(i);
 		}
 		// remove unnecessary local parameters
 		for (i = 0; i < model.getNumReactions(); i++) {
-			KineticLaw law = model.getReaction(i).getKineticLaw();
+			Reaction r = model.getReaction(i);
+			KineticLaw law = r.getKineticLaw();
 			if (law != null) {
 				List<Integer> removeList = new LinkedList<Integer>();
 				for (j = 0; j < law.getNumParameters(); j++) {
@@ -936,7 +938,7 @@ public class KineticLawGenerator {
 			settings
 					.put(CfgKeys.UNI_UNI_TYPE, Kinetics.GENERALIZED_MASS_ACTION);
 		else {
-			Kinetics uniUniType = (Kinetics) settings.get(CfgKeys.UNI_UNI_TYPE);
+			Kinetics uniUniType = Kinetics.valueOf(settings.get(CfgKeys.UNI_UNI_TYPE).toString());
 			if (uniUniType != Kinetics.GENERALIZED_MASS_ACTION
 					&& uniUniType != Kinetics.MICHAELIS_MENTEN
 					&& uniUniType != Kinetics.CONVENIENCE_KINETICS)
@@ -946,7 +948,7 @@ public class KineticLawGenerator {
 		if (!settings.containsKey(CfgKeys.BI_UNI_TYPE))
 			settings.put(CfgKeys.BI_UNI_TYPE, Kinetics.GENERALIZED_MASS_ACTION);
 		else {
-			Kinetics biUniType = (Kinetics) settings.get(CfgKeys.BI_UNI_TYPE);
+			Kinetics biUniType = Kinetics.valueOf(settings.get(CfgKeys.BI_UNI_TYPE).toString());
 			if (biUniType != Kinetics.GENERALIZED_MASS_ACTION
 					&& biUniType != Kinetics.MICHAELIS_MENTEN
 					&& biUniType != Kinetics.CONVENIENCE_KINETICS
@@ -958,7 +960,7 @@ public class KineticLawGenerator {
 		if (!settings.containsKey(CfgKeys.BI_BI_TYPE))
 			settings.put(CfgKeys.BI_BI_TYPE, Kinetics.GENERALIZED_MASS_ACTION);
 		else {
-			Kinetics biBiType = (Kinetics) settings.get(CfgKeys.BI_BI_TYPE);
+			Kinetics biBiType = Kinetics.valueOf(settings.get(CfgKeys.BI_BI_TYPE).toString());
 			if (biBiType != Kinetics.GENERALIZED_MASS_ACTION
 					&& biBiType != Kinetics.MICHAELIS_MENTEN
 					&& biBiType != Kinetics.RANDOM_ORDER_MECHANISM

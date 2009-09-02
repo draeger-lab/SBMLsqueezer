@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.sbml.ASTNode;
+import org.sbml.AlgebraicRule;
+import org.sbml.AssignmentRule;
 import org.sbml.Compartment;
 import org.sbml.CompartmentType;
 import org.sbml.Constraint;
@@ -29,20 +31,24 @@ import org.sbml.Delay;
 import org.sbml.Event;
 import org.sbml.EventAssignment;
 import org.sbml.FunctionDefinition;
+import org.sbml.InitialAssignment;
 import org.sbml.KineticLaw;
-import org.sbml.MathContainer;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.NamedSBase;
 import org.sbml.Parameter;
+import org.sbml.RateRule;
 import org.sbml.Reaction;
+import org.sbml.Rule;
 import org.sbml.SBO;
 import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.SpeciesType;
 import org.sbml.StoichiometryMath;
+import org.sbml.Symbol;
 import org.sbml.Trigger;
-import org.sbml.Variable;
+import org.sbml.UnitDefinition;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
@@ -204,6 +210,27 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.SBMLReader#readInitialAssignment(java.lang.Object)
+	 */
+	public InitialAssignment readInitialAssignment(Object initialAssignment) {
+		if (!(initialAssignment instanceof org.sbml.libsbml.InitialAssignment))
+			throw new IllegalArgumentException("initialAssignment" + error
+					+ "org.sbml.libsbml.InitialAssignment.");
+		org.sbml.libsbml.InitialAssignment sbIA = (org.sbml.libsbml.InitialAssignment) initialAssignment;
+		if (!sbIA.isSetSymbol())
+			throw new IllegalArgumentException(
+					"Symbol attribute not set for InitialAssignment");
+		InitialAssignment ia = new InitialAssignment(model.findSymbol(sbIA
+				.getSymbol()));
+		copySBaseProperties(ia, sbIA);
+		if (sbIA.isSetMath())
+			ia.setMath(convert(sbIA.getMath(), ia));
+		return ia;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readKineticLaw(java.lang.Object)
 	 */
 	public KineticLaw readKineticLaw(Object kineticLaw) {
@@ -244,12 +271,27 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			for (i = 0; i < m.getNumFunctionDefinitions(); i++)
 				this.model.addFunctionDefinition(readFunctionDefinition(m
 						.getFunctionDefinition(i)));
+			for (i = 0; i < m.getNumUnitDefinitions(); i++)
+				this.model.addUnitDefinition(readUnitDefinition(m
+						.getUnitDefinition(i)));
+			for (i = 0; i < m.getNumCompartmentTypes(); i++)
+				this.model.addCompartmentType(readCompartmentType(m
+						.getCompartmentType(i)));
+			for (i = 0; i < m.getNumSpeciesTypes(); i++)
+				this.model.addSpeciesType(readSpeciesType(m.getSpeciesType(i)));
 			for (i = 0; i < m.getNumCompartments(); i++)
 				this.model.addCompartment(readCompartment(m.getCompartment(i)));
 			for (i = 0; i < m.getNumSpecies(); i++)
 				this.model.addSpecies(readSpecies(m.getSpecies(i)));
 			for (i = 0; i < m.getNumParameters(); i++)
 				this.model.addParameter(readParameter(m.getParameter(i)));
+			for (i = 0; i < m.getNumInitialAssignments(); i++)
+				this.model.addInitialAssignment(readInitialAssignment(m
+						.getInitialAssignment(i)));
+			for (i = 0; i < m.getNumRules(); i++)
+				this.model.addRule(readRule(m.getRule(i)));
+			for (i = 0; i < m.getNumConstraints(); i++)
+				this.model.addConstraint(readConstraint(m.getConstraint(i)));
 			for (i = 0; i < m.getNumReactions(); i++)
 				this.model.addReaction(readReaction(m.getReaction(i)));
 			for (i = 0; i < m.getNumEvents(); i++)
@@ -342,6 +384,30 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.SBMLReader#readRule(java.lang.Object)
+	 */
+	public Rule readRule(Object rule) {
+		if (!(rule instanceof org.sbml.libsbml.Rule))
+			throw new IllegalArgumentException("rule" + error
+					+ "org.sbml.libsbml.Rule.");
+		org.sbml.libsbml.Rule libRule = (org.sbml.libsbml.Rule) rule;
+		Rule r;
+		if (libRule.isAlgebraic())
+			r = new AlgebraicRule();
+		else {
+			Symbol v = model.findSymbol(libRule.getVariable());
+			if (libRule.isAssignment()) {
+				r = new AssignmentRule(v);
+			} else {
+				r = new RateRule(v);
+			}
+		}
+		return r;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readSpecies(java.lang.Object)
 	 */
 	public Species readSpecies(Object species) {
@@ -392,6 +458,18 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.SBMLReader#readSpeciesType(java.lang.Object)
+	 */
+	public SpeciesType readSpeciesType(Object speciesType) {
+		if (!(speciesType instanceof org.sbml.libsbml.SpeciesType))
+			throw new IllegalArgumentException("org.sbml.libsbml.SpeciesType");
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readStoichiometricMath(java.lang.Object)
 	 */
 	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
@@ -419,6 +497,19 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			trig.setMath(convert(trigg.getMath(), trig));
 		return trig;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
+	 */
+	public UnitDefinition readUnitDefinition(Object unitDefinition) {
+		if (!(unitDefinition instanceof org.sbml.libsbml.UnitDefinition))
+			throw new IllegalArgumentException(
+					"org.sbml.libsbml.UnitDefinition");
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -464,7 +555,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		EventAssignment ev = new EventAssignment();
 		copySBaseProperties(ev, eve);
 		if (eve.isSetVariable()) {
-			Variable variable = model.findVariable(eve.getVariable());
+			Symbol variable = model.findSymbol(eve.getVariable());
 			if (variable == null)
 				ev.setVariable(eve.getVariable());
 			else
