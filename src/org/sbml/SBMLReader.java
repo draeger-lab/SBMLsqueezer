@@ -96,4 +96,33 @@ public interface SBMLReader {
 	 * @return
 	 */
 	public FunctionDefinition readFunctionDefinition(Object functionDefinition);
+
+	/**
+	 * 
+	 * @param rule
+	 * @return
+	 */
+	public Rule readRule(Object rule);
+
+	/**
+	 * 
+	 * @param initialAssignment
+	 * @return
+	 */
+	public InitialAssignment readInitialAssignment(Object initialAssignment);
+
+	/**
+	 * 
+	 * @param speciesType
+	 * @return
+	 */
+	public SpeciesType readSpeciesType(Object speciesType);
+
+	/**
+	 * 
+	 * @param unitDefinition
+	 * @return
+	 */
+	public UnitDefinition readUnitDefinition(Object unitDefinition);
+
 }

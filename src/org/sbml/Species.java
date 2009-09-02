@@ -25,7 +25,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class Species extends Variable {
+public class Species extends Symbol {
 
 	/**
 	 * 

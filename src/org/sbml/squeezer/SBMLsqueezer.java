@@ -21,6 +21,7 @@ package org.sbml.squeezer;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -78,7 +79,9 @@ public class SBMLsqueezer extends PluginAction {
 
 	public Set<Integer> possibleEnzymes;
 
-	private final static String userConfigFile = "cfg/SBMLsqueezer_local.cfg";
+	private final static String userConfigFile = System
+			.getProperty("user.home")
+			+ "/.SBMLsqueezer/SBMLsqueezer.cfg";
 	private final static String configFile = "cfg/SBMLsqueezer.cfg";
 
 	/**
@@ -130,12 +133,12 @@ public class SBMLsqueezer extends PluginAction {
 	public static void saveProperties() {
 		if (!initProperties().equals(properties))
 			try {
-				RandomAccessFile file = new RandomAccessFile(Resource.class
-						.getResource(userConfigFile).getPath(), "rw");
+				RandomAccessFile file = new RandomAccessFile(userConfigFile,
+						"rw");
 				file.setLength(0);
 				file.close();
 				BufferedWriter bw = new BufferedWriter(new FileWriter(
-						Resource.class.getResource(userConfigFile).getPath()));
+						userConfigFile));
 				for (Object key : properties.keySet()) {
 					bw.append(key.toString());
 					bw.append('=');
@@ -165,8 +168,32 @@ public class SBMLsqueezer extends PluginAction {
 	private static Properties initProperties() {
 		Properties properties;
 		try {
-			properties = Resource.readProperties(Resource.class.getResource(
-					userConfigFile).getPath());
+			StringBuilder path = new StringBuilder(System
+					.getProperty("user.home"));
+			path.append("/.SBMLsqueezer");
+			File f = new File(path.toString());
+			if (!f.exists()) {
+				f.mkdir();
+				path.append("/SBMLsqueezer.cfg");
+				f = new File(path.toString());
+				if (!f.exists())
+					f.createNewFile();
+			}
+			f = new File(userConfigFile);
+			if (f.exists() && f.length() == 0) {
+				BufferedReader br = new BufferedReader(new FileReader(
+						Resource.class.getResource(configFile).getPath()));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+				String line;
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+					bw.append(line);
+					bw.newLine();
+				}
+				bw.close();
+				br.close();
+			}
+			properties = Resource.readProperties(userConfigFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {

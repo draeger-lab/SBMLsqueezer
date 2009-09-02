@@ -29,18 +29,22 @@ import javax.swing.event.ChangeListener;
 
 import org.sbml.Compartment;
 import org.sbml.FunctionDefinition;
+import org.sbml.InitialAssignment;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.Rule;
 import org.sbml.SBMLReader;
 import org.sbml.SBMLWriter;
 import org.sbml.AbstractSBase;
 import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
+import org.sbml.SpeciesType;
 import org.sbml.StoichiometryMath;
+import org.sbml.UnitDefinition;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -110,6 +114,22 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readFunctionDefinition(java.lang.Object)
+	 */
+	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
+		return reader.readFunctionDefinition(functionDefinition);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readInitialAssignment(java.lang.Object)
+	 */
+	public InitialAssignment readInitialAssignment(Object initialAssignment) {
+		return reader.readInitialAssignment(initialAssignment);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.SBMLReader#readKineticLaw(java.lang.Object)
 	 */
@@ -160,6 +180,14 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readRule(java.lang.Object)
+	 */
+	public Rule readRule(Object rule) {
+		return reader.readRule(rule);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.SBMLReader#readSpecies(java.lang.Object)
 	 */
@@ -178,11 +206,35 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readSpeciesType(java.lang.Object)
+	 */
+	public SpeciesType readSpeciesType(Object speciesType) {
+		return reader.readSpeciesType(speciesType);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.SBMLReader#readStoichiometricMath(java.lang.Object)
 	 */
 	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
 		return reader.readStoichiometricMath(stoichiometryMath);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
+	 */
+	public UnitDefinition readUnitDefinition(Object unitDefinition) {
+		return reader.readUnitDefinition(unitDefinition);
+	}
+
+	/**
+	 * 
+	 */
+	public void saveChanges() {
+		// TODO Auto-generated method stub
+		System.out.println("fertig");
 	}
 
 	/*
@@ -205,6 +257,15 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	public void setSelectedModel(int selectedModel) {
 		this.selectedModel = selectedModel;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
+	 */
+	public void stateChanged(AbstractSBase sb) {
+		changed.add(sb);
 	}
 
 	/*
@@ -236,42 +297,6 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
-	 */
-	public void stateChanged(AbstractSBase sb) {
-		changed.add(sb);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBMLWriter#writeModel(org.sbml.Model)
-	 */
-	// @Override
-	public Object writeModel(Model model) {
-		return writer.writeModel(model);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBMLWriter#writeReaction(org.sbml.Reaction)
-	 */
-	// @Override
-	public Object writeReaction(Reaction reaction) {
-		return writer.writeReaction(reaction);
-	}
-
-	/**
-	 * 
-	 */
-	public void saveChanges() {
-		// TODO Auto-generated method stub
-	}
-
 	/**
 	 * 
 	 * @param model
@@ -294,9 +319,21 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.SBMLReader#readFunctionDefinition(java.lang.Object)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeModel(org.sbml.Model)
 	 */
-	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
-		return reader.readFunctionDefinition(functionDefinition);
+	// @Override
+	public Object writeModel(Model model) {
+		return writer.writeModel(model);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeReaction(org.sbml.Reaction)
+	 */
+	// @Override
+	public Object writeReaction(Reaction reaction) {
+		return writer.writeReaction(reaction);
 	}
 }

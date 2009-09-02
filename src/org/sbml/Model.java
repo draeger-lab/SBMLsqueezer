@@ -144,6 +144,30 @@ public class Model extends AbstractNamedSBase {
 
 	/**
 	 * 
+	 * @param compartmentType
+	 */
+	public void addCompartmentType(CompartmentType compartmentType) {
+		if (!listOfCompartmentTypes.contains(compartmentType)) {
+			listOfCompartmentTypes.add(compartmentType);
+			compartmentType.parentSBMLObject = this;
+			compartmentType.sbaseAdded();
+		}
+	}
+
+	/**
+	 * 
+	 * @param constraint
+	 */
+	public void addConstraint(Constraint constraint) {
+		if (!listOfConstraints.contains(constraint)) {
+			listOfConstraints.add(constraint);
+			constraint.parentSBMLObject = this;
+			constraint.sbaseAdded();
+		}
+	}
+
+	/**
+	 * 
 	 * @param event
 	 */
 	public void addEvent(Event event) {
@@ -156,13 +180,25 @@ public class Model extends AbstractNamedSBase {
 
 	/**
 	 * 
-	 * @param 
+	 * @param
 	 */
 	public void addFunctionDefinition(FunctionDefinition functionDefinition) {
 		if (!listOfFunctionDefinitions.contains(functionDefinition)) {
 			listOfFunctionDefinitions.add(functionDefinition);
 			functionDefinition.parentSBMLObject = this;
 			functionDefinition.sbaseAdded();
+		}
+	}
+
+	/**
+	 * 
+	 * @param initialAssignment
+	 */
+	public void addInitialAssignment(InitialAssignment initialAssignment) {
+		if (!listOfInitialAssignments.contains(initialAssignment)) {
+			listOfInitialAssignments.add(initialAssignment);
+			initialAssignment.parentSBMLObject = this;
+			initialAssignment.sbaseAdded();
 		}
 	}
 
@@ -181,13 +217,25 @@ public class Model extends AbstractNamedSBase {
 	/**
 	 * adds a reaction to the model
 	 * 
-	 * @param reac
+	 * @param reaction
 	 */
-	public void addReaction(Reaction reac) {
-		if (!listOfReactions.contains(reac)) {
-			listOfReactions.add(reac);
-			reac.parentSBMLObject = this;
-			reac.sbaseAdded();
+	public void addReaction(Reaction reaction) {
+		if (!listOfReactions.contains(reaction)) {
+			listOfReactions.add(reaction);
+			reaction.parentSBMLObject = this;
+			reaction.sbaseAdded();
+		}
+	}
+
+	/**
+	 * 
+	 * @param rule
+	 */
+	public void addRule(Rule rule) {
+		if (!listOfRules.contains(rule)) {
+			listOfRules.add(rule);
+			rule.parentSBMLObject = this;
+			rule.sbaseAdded();
 		}
 	}
 
@@ -201,6 +249,30 @@ public class Model extends AbstractNamedSBase {
 			listOfSpecies.add(spec);
 			spec.parentSBMLObject = this;
 			spec.sbaseAdded();
+		}
+	}
+
+	/**
+	 * 
+	 * @param speciesType
+	 */
+	public void addSpeciesType(SpeciesType speciesType) {
+		if (!listOfSpeciesTypes.contains(speciesType)) {
+			listOfSpeciesTypes.add(speciesType);
+			speciesType.parentSBMLObject = this;
+			speciesType.sbaseAdded();
+		}
+	}
+
+	/**
+	 * 
+	 * @param unitDefinition
+	 */
+	public void addUnitDefinition(UnitDefinition unitDefinition) {
+		if (!listOfUnitDefinitions.contains(unitDefinition)) {
+			listOfUnitDefinitions.add(unitDefinition);
+			unitDefinition.parentSBMLObject = this;
+			unitDefinition.sbaseAdded();
 		}
 	}
 
@@ -281,15 +353,15 @@ public class Model extends AbstractNamedSBase {
 
 	/**
 	 * 
-	 * @param variable
+	 * @param symbol
 	 * @return
 	 */
-	public Variable findVariable(String variable) {
-		Variable nsb = getSpecies(variable);
+	public Symbol findSymbol(String symbol) {
+		Symbol nsb = getSpecies(symbol);
 		if (nsb == null)
-			nsb = getParameter(variable);
+			nsb = getParameter(symbol);
 		if (nsb == null)
-			nsb = getCompartment(variable);
+			nsb = getCompartment(symbol);
 		return nsb;
 	}
 
@@ -339,7 +411,9 @@ public class Model extends AbstractNamedSBase {
 	 * @return
 	 */
 	public FunctionDefinition getFunctionDefinition(String id) {
-		// TODO Auto-generated method stub
+		for (FunctionDefinition fd : listOfFunctionDefinitions)
+			if (fd.getId().equals(id))
+				return fd;
 		return null;
 	}
 

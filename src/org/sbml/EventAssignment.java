@@ -29,7 +29,7 @@ public class EventAssignment extends MathContainer {
 	/**
 	 * 
 	 */
-	private Variable variable;
+	private Symbol variable;
 
 	/**
 	 * 
@@ -98,7 +98,7 @@ public class EventAssignment extends MathContainer {
 	 * 
 	 * @return
 	 */
-	public Variable getVariableInstance() {
+	public Symbol getVariableInstance() {
 		return variable;
 	}
 
@@ -106,7 +106,7 @@ public class EventAssignment extends MathContainer {
 	 * 
 	 * @param variable
 	 */
-	public void setVariable(Variable variable) {
+	public void setVariable(Symbol variable) {
 		if ((variable instanceof Species) || variable instanceof Compartment
 				|| (variable instanceof Parameter))
 			this.variable = variable;
@@ -120,7 +120,7 @@ public class EventAssignment extends MathContainer {
 	 * @param variable
 	 */
 	public void setVariable(String variable) {
-		Variable nsb = getModel().findVariable(variable);
+		Symbol nsb = getModel().findSymbol(variable);
 		if (nsb == null)
 			throw new IllegalArgumentException(
 					"Only the id of an existing Species, Compartments, or Parameters allowed as variables");

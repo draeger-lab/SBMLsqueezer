@@ -24,7 +24,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-08-31
  */
-public abstract class Variable extends AbstractNamedSBase {
+public abstract class Symbol extends AbstractNamedSBase {
 
 	/**
 	 * The unit attribute of this variable.
@@ -43,7 +43,7 @@ public abstract class Variable extends AbstractNamedSBase {
 	/**
 	 * @param id
 	 */
-	public Variable(String id) {
+	public Symbol(String id) {
 		super(id);
 		this.units = null;
 		this.value = Double.NaN;
@@ -53,7 +53,7 @@ public abstract class Variable extends AbstractNamedSBase {
 	 * @param id
 	 * @param name
 	 */
-	public Variable(String id, String name) {
+	public Symbol(String id, String name) {
 		super(id, name);
 		this.units = null;
 		this.value = Double.NaN;
@@ -62,7 +62,7 @@ public abstract class Variable extends AbstractNamedSBase {
 	/**
 	 * @param nsb
 	 */
-	public Variable(Variable nsb) {
+	public Symbol(Symbol nsb) {
 		super(nsb);
 		this.units = nsb.isSetUnits() ? nsb.getUnits().clone() : null;
 		this.value = nsb.getValue();
@@ -76,8 +76,8 @@ public abstract class Variable extends AbstractNamedSBase {
 	// @Override
 	public boolean equals(Object o) {
 		boolean equal = super.equals(o);
-		if (o instanceof Variable) {
-			Variable v = (Variable) o;
+		if (o instanceof Symbol) {
+			Symbol v = (Symbol) o;
 			equal &= v.getConstant() == constant;
 			equal &= v.isSetUnits() == isSetUnits();
 			if (v.isSetUnits() && isSetUnits())

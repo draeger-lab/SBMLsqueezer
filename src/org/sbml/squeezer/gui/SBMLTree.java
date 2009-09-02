@@ -37,6 +37,7 @@ import org.sbml.Compartment;
 import org.sbml.CompartmentType;
 import org.sbml.Constraint;
 import org.sbml.Event;
+import org.sbml.EventAssignment;
 import org.sbml.FunctionDefinition;
 import org.sbml.InitialAssignment;
 import org.sbml.Model;
@@ -48,6 +49,7 @@ import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.SpeciesType;
+import org.sbml.Unit;
 import org.sbml.UnitDefinition;
 import org.sbml.squeezer.resources.Resource;
 
@@ -120,8 +122,12 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		if (m.getNumUnitDefinitions() > 0) {
 			node = new DefaultMutableTreeNode("Unit Definitions");
 			modelNode.add(node);
-			for (UnitDefinition c : m.getListOfUnitDefinitions())
-				node.add(new DefaultMutableTreeNode(c));
+			for (UnitDefinition c : m.getListOfUnitDefinitions()) {
+				DefaultMutableTreeNode unitDefNode = new DefaultMutableTreeNode(c); 
+				node.add(unitDefNode);
+				for (Unit u : c.getListOfUnits()) 
+					unitDefNode.add(new DefaultMutableTreeNode(u));
+			}
 		}
 		if (m.getNumCompartmentTypes() > 0) {
 			node = new DefaultMutableTreeNode("Compartment Types");
@@ -185,6 +191,13 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 					for (SpeciesReference specRef : r.getListOfReactants())
 						reactants.add(new DefaultMutableTreeNode(specRef));
 				}
+				if (r.getNumProducts() > 0) {
+					DefaultMutableTreeNode products = new DefaultMutableTreeNode(
+							"Products");
+					currReacNode.add(products);
+					for (SpeciesReference specRef : r.getListOfProducts())
+						products.add(new DefaultMutableTreeNode(specRef));
+				}
 				if (r.getNumModifiers() > 0) {
 					DefaultMutableTreeNode modifiers = new DefaultMutableTreeNode(
 							"Modifiers");
@@ -193,20 +206,31 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 							.getListOfModifiers())
 						modifiers.add(new DefaultMutableTreeNode(mSpecRef));
 				}
-				if (r.getNumProducts() > 0) {
-					DefaultMutableTreeNode products = new DefaultMutableTreeNode(
-							"Products");
-					currReacNode.add(products);
-					for (SpeciesReference specRef : r.getListOfProducts())
-						products.add(new DefaultMutableTreeNode(specRef));
-				}
+				if (r.isSetKineticLaw())
+					currReacNode.add(new DefaultMutableTreeNode(r.getKineticLaw()));
 			}
 		}
 		if (m.getNumEvents() > 0) {
 			node = new DefaultMutableTreeNode("Events");
 			modelNode.add(node);
-			for (Event e : m.getListOfEvents())
-				node.add(new DefaultMutableTreeNode(e));
+			for (Event e : m.getListOfEvents()) {
+				DefaultMutableTreeNode eNode = new DefaultMutableTreeNode(e);
+				node.add(eNode);
+				if (e.isSetTrigger())
+					eNode.add(new DefaultMutableTreeNode(e.getTrigger()));
+				if (e.isSetDelay())
+					eNode.add(new DefaultMutableTreeNode(e.getDelay()));
+				if (e.getNumEventAssignments() > 0) {
+					DefaultMutableTreeNode eas = new DefaultMutableTreeNode(
+							"Event Assignments");
+					eNode.add(eas);
+					for (EventAssignment ea : e.getListOfEventAssignments()) {
+						DefaultMutableTreeNode eaNode = new DefaultMutableTreeNode(
+								ea);
+						eas.add(eaNode);
+					}
+				}
+			}
 		}
 		return modelNode;
 	}

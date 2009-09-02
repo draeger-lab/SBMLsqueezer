@@ -61,4 +61,33 @@ public class LayoutHelper {
 		cont.add(c);
 	}
 
+	private Container cont;
+	private GridBagLayout gbl;
+
+	/**
+	 * 
+	 * @param cont
+	 * @param gbl
+	 */
+	public LayoutHelper(Container cont, GridBagLayout gbl) {
+		this.cont = cont;
+		this.gbl = gbl;
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param weightx
+	 * @param weighty
+	 */
+	public void add(Component c, int x, int y, int width, int height,
+			double weightx, double weighty) {
+		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height,
+				weightx, weighty);
+	}
+
 }

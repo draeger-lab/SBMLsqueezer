@@ -29,7 +29,7 @@ public class RateRule extends Rule {
 	/**
 	 * 
 	 */
-	private Variable variable;
+	private Symbol variable;
 
 	/**
 	 * @param sb
@@ -42,7 +42,7 @@ public class RateRule extends Rule {
 	/**
 	 * 
 	 */
-	public RateRule(Variable variable) {
+	public RateRule(Symbol variable) {
 		super();
 		this.variable = variable;
 	}
@@ -50,7 +50,7 @@ public class RateRule extends Rule {
 	/**
 	 * @param math
 	 */
-	public RateRule(Variable variable, ASTNode math) {
+	public RateRule(Symbol variable, ASTNode math) {
 		super(math);
 		this.variable = variable;
 	}
@@ -77,7 +77,7 @@ public class RateRule extends Rule {
 	 * 
 	 * @return
 	 */
-	public Variable getVariableInstance() {
+	public Symbol getVariableInstance() {
 		return variable;
 	}
 
@@ -85,7 +85,7 @@ public class RateRule extends Rule {
 	 * 
 	 * @param variable
 	 */
-	public void setVariable(Variable variable) {
+	public void setVariable(Symbol variable) {
 		this.variable = variable;
 		stateChanged();
 	}
@@ -95,7 +95,7 @@ public class RateRule extends Rule {
 	 * @param variable
 	 */
 	public void setVariable(String variable) {
-		Variable nsb = getModel().findVariable(variable);
+		Symbol nsb = getModel().findSymbol(variable);
 		if (nsb == null)
 			throw new IllegalArgumentException(
 					"Only the id of an existing Species, Compartments, or Parameters allowed as variables");
