@@ -105,12 +105,13 @@ public class ConvenienceIndependent extends Convenience {
 				Parameter p_klV = new Parameter(klV.toString());
 				addParameter(p_klV);
 
-				ASTNode numerator, denominator;
+				ASTNode numerator, denominator = null;
 				if (!reaction.getReversible()) {
 					numerator = ASTNode
 							.times(numeratorElements(enzyme, FORWARD));
-					denominator = ASTNode.times(denominatorElements(enzyme,
-							FORWARD));
+					ASTNode domElem[] = denominatorElements(enzyme, FORWARD);
+					if (domElem.length > 0)
+						denominator = ASTNode.times(domElem);
 				} else {
 					numerator = ASTNode.diff(
 							numeratorElements(enzyme, FORWARD),
@@ -126,8 +127,8 @@ public class ConvenienceIndependent extends Convenience {
 								this));
 				}
 				enzymes[i] = ASTNode.times(enzymes[i],
-						new ASTNode(p_klV, this), ASTNode.frac(numerator,
-								denominator));
+						new ASTNode(p_klV, this), denominator != null ? ASTNode
+								.frac(numerator, denominator) : numerator);
 				i++;
 			} while (i < enzymes.length);
 			return ASTNode.times(activationFactor(modActi),
@@ -199,11 +200,31 @@ public class ConvenienceIndependent extends Convenience {
 					new ASTNode(ref.getStoichiometry(), this));
 
 		}
-		equation = type ? ASTNode.times(ASTNode.times(educts), ASTNode
-				.sqrt(ASTNode.frac(ASTNode.times(eductroot), ASTNode
-						.times(productroot)))) : ASTNode.times(ASTNode
-				.times(products), ASTNode.sqrt(ASTNode.frac(ASTNode
-				.times(productroot), ASTNode.times(eductroot))));
+
+		/*
+		 * TODO: catch special cases for empty list of products or reactants.
+		 */
+
+		if (type) {
+			if (educts.length == 0)
+				equation = ASTNode.sqrt(ASTNode.frac(new ASTNode(1, this),
+						ASTNode.times(productroot)));
+			else
+				equation = ASTNode.times(ASTNode.times(educts), ASTNode
+						.sqrt(ASTNode.frac(ASTNode.times(eductroot), ASTNode
+								.times(productroot))));
+		} else {
+			if (products.length == 0)
+				equation = new ASTNode(1, this);
+			else if (productroot.length > 0 && eductroot.length > 0) {
+				equation = ASTNode.times(ASTNode.times(products), ASTNode
+						.sqrt(ASTNode.frac(ASTNode.times(productroot), ASTNode
+								.times(eductroot))));
+			} else
+				equation = ASTNode.times(ASTNode.times(products), ASTNode
+						.sqrt(ASTNode.frac(new ASTNode(1, this), ASTNode
+								.times(eductroot))));
+		}
 		return equation;
 	}
 

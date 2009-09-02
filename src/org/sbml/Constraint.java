@@ -67,7 +67,7 @@ public class Constraint extends MathContainer {
 	 * @return the message
 	 */
 	public String getMessage() {
-		return message;
+		return isSetMessage() ? message : "";
 	}
 
 	/**
@@ -77,6 +77,14 @@ public class Constraint extends MathContainer {
 	public void setMessage(String message) {
 		this.message = message;
 		stateChanged();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetMessage() {
+		return message != null;
 	}
 
 }

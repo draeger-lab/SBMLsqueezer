@@ -46,6 +46,10 @@ public class Unit extends AbstractSBase {
 	 * 
 	 */
 	private double multiplier;
+	/**
+	 * 
+	 */
+	private double offset;
 
 	/**
 	 * 
@@ -53,6 +57,16 @@ public class Unit extends AbstractSBase {
 	public Unit() {
 		super();
 		initDefaults();
+	}
+	
+	/**
+	 * 
+	 * @param kind
+	 */
+	public Unit(SIUnit kind) {
+		super();
+		initDefaults();
+		this.kind = kind;
 	}
 
 	/**
@@ -111,6 +125,8 @@ public class Unit extends AbstractSBase {
 		exponent = 1;
 		scale = 0;
 		multiplier = 1d;
+		offset = 0d;
+		kind = SIUnit.UNIT_KIND_INVALID;
 	}
 
 	/**
@@ -155,10 +171,51 @@ public class Unit extends AbstractSBase {
 	 */
 	// @Override
 	public String toString() {
-		return TextFormula.pow(
-				TextFormula.times(multiplier, TextFormula.pow(Integer
-						.valueOf(10), Integer.valueOf(scale)), kind), exponent)
-				.toString();
+		StringBuffer times = TextFormula.times(multiplier, TextFormula.pow(
+				Integer.valueOf(10), Integer.valueOf(scale)), kind);
+		if (isSetOffset())
+			times = TextFormula.sum(Double.toString(offset), times);
+		return TextFormula.pow(times, exponent).toString();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private boolean isSetOffset() {
+		return offset != 0d;
+	}
+
+	/**
+	 * 
+	 * @param offset
+	 */
+	public void setOffset(double offset) {
+		this.offset = offset;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public double getOffset() {
+		return offset;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isKilogram() {
+		return kind == SIUnit.UNIT_KIND_KILOGRAM;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isDimensionless() {
+		return kind == SIUnit.UNIT_KIND_DIMENSIONLESS;
 	}
 
 }

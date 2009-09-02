@@ -49,9 +49,9 @@ public class Compartment extends Symbol {
 	 */
 	public Compartment(Compartment compartment) {
 		super(compartment);
-		this.compartmentType = compartment.getCompartmentType();
+		this.compartmentType = compartment.getCompartmentTypeInstance();
 		this.spatialDimensions = compartment.getSpatialDimensions();
-		this.outside = compartment.getOutside();
+		this.outside = compartment.getOutsideInstance();
 		this.constant = compartment.getConstant();
 		setValue(compartment.getSize());
 	}
@@ -103,7 +103,15 @@ public class Compartment extends Symbol {
 	 * 
 	 * @return
 	 */
-	public CompartmentType getCompartmentType() {
+	public String getCompartmentType() {
+		return isSetCompartmentType() ? compartmentType.getId() : "";
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public CompartmentType getCompartmentTypeInstance() {
 		return compartmentType;
 	}
 
@@ -119,7 +127,15 @@ public class Compartment extends Symbol {
 	 * 
 	 * @return
 	 */
-	public Compartment getOutside() {
+	public String getOutside() {
+		return isSetOutside() ? outside.getId() : "";
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Compartment getOutsideInstance() {
 		return outside;
 	}
 
@@ -188,6 +204,14 @@ public class Compartment extends Symbol {
 	 */
 	public boolean isSetOutside() {
 		return outside != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetSize() {
+		return !Double.isNaN(getSize());
 	}
 
 	/**

@@ -35,6 +35,20 @@ public interface SBMLReader {
 
 	/**
 	 * 
+	 * @param functionDefinition
+	 * @return
+	 */
+	public FunctionDefinition readFunctionDefinition(Object functionDefinition);
+
+	/**
+	 * 
+	 * @param initialAssignment
+	 * @return
+	 */
+	public InitialAssignment readInitialAssignment(Object initialAssignment);
+
+	/**
+	 * 
 	 * @param kineticLaw
 	 * @return
 	 */
@@ -46,7 +60,7 @@ public interface SBMLReader {
 	 * @return
 	 */
 	public Model readModel(Object model);
-
+	
 	/**
 	 * 
 	 * @param plumod
@@ -68,48 +82,27 @@ public interface SBMLReader {
 	 * @return
 	 */
 	public Reaction readReaction(Object reaction);
-
-	/**
-	 * 
-	 * @param species
-	 * @return
-	 */
-	public Species readSpecies(Object species);
 	
-	/**
-	 * 
-	 * @param speciesReference
-	 * @return
-	 */
-	public SpeciesReference readSpeciesReference(Object speciesReference);
-	
-	/**
-	 * 
-	 * @param stoichiometryMath
-	 * @return
-	 */
-	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath);
-	
-	/**
-	 * 
-	 * @param functionDefinition
-	 * @return
-	 */
-	public FunctionDefinition readFunctionDefinition(Object functionDefinition);
-
 	/**
 	 * 
 	 * @param rule
 	 * @return
 	 */
 	public Rule readRule(Object rule);
+	
+	/**
+	 * 
+	 * @param species
+	 * @return
+	 */
+	public Species readSpecies(Object species);
 
 	/**
 	 * 
-	 * @param initialAssignment
+	 * @param speciesReference
 	 * @return
 	 */
-	public InitialAssignment readInitialAssignment(Object initialAssignment);
+	public SpeciesReference readSpeciesReference(Object speciesReference);
 
 	/**
 	 * 
@@ -118,6 +111,20 @@ public interface SBMLReader {
 	 */
 	public SpeciesType readSpeciesType(Object speciesType);
 
+	/**
+	 * 
+	 * @param stoichiometryMath
+	 * @return
+	 */
+	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath);
+
+	/**
+	 * 
+	 * @param unit
+	 * @return
+	 */
+	public Unit readUnit(Object unit);
+	
 	/**
 	 * 
 	 * @param unitDefinition

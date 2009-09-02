@@ -35,6 +35,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import org.sbml.AssignmentRule;
+import org.sbml.Compartment;
+import org.sbml.Constraint;
+import org.sbml.Event;
 import org.sbml.EventAssignment;
 import org.sbml.FunctionDefinition;
 import org.sbml.KineticLaw;
@@ -44,6 +48,7 @@ import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.NamedSBase;
 import org.sbml.Parameter;
+import org.sbml.RateRule;
 import org.sbml.Reaction;
 import org.sbml.SBO;
 import org.sbml.SBase;
@@ -51,6 +56,8 @@ import org.sbml.SimpleSpeciesReference;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
+import org.sbml.Symbol;
+import org.sbml.UnitDefinition;
 import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.io.LaTeXExport;
 
@@ -89,20 +96,30 @@ public class SBasePanel extends JPanel {
 		if (sbase instanceof NamedSBase)
 			addProperties((NamedSBase) sbase);
 		addProperties(sbase);
+		if (sbase instanceof SimpleSpeciesReference)
+			addProperties((SimpleSpeciesReference) sbase);
+		if (sbase instanceof MathContainer)
+			addProperties((MathContainer) sbase);
+		if (sbase instanceof Symbol)
+			addProperties((Symbol) sbase);
 		if (sbase instanceof ListOf)
 			addProperties((ListOf) sbase);
-		else if (sbase instanceof Model)
+		if (sbase instanceof Model)
 			addProperties((Model) sbase);
-		else if (sbase instanceof SimpleSpeciesReference)
-			addProperties((SimpleSpeciesReference) sbase);
-		else if (sbase instanceof Parameter)
-			addProperties((Parameter) sbase);
-		else if (sbase instanceof Reaction)
-			addProperties((Reaction) sbase);
-		else if (sbase instanceof MathContainer)
-			addProperties((MathContainer) sbase);
-		else if (sbase instanceof Species)
+		if (sbase instanceof UnitDefinition)
+			addProperties((UnitDefinition) sbase);
+		if (sbase instanceof Compartment)
+			addProperties((Compartment) sbase);
+		if (sbase instanceof Species)
 			addProperties((Species) sbase);
+		if (sbase instanceof Parameter)
+			addProperties((Parameter) sbase);
+		if (sbase instanceof Constraint)
+			addProperties((Constraint) sbase);
+		if (sbase instanceof Reaction)
+			addProperties((Reaction) sbase);
+		if (sbase instanceof Event)
+			addProperties((Event) sbase);
 	}
 
 	/**
@@ -123,10 +140,69 @@ public class SBasePanel extends JPanel {
 
 	/**
 	 * 
-	 * @param sbase
+	 * @param c
 	 */
-	private void addProperties(ListOf<? extends SBase> sbase) {
+	private void addProperties(Compartment c) {
+		if (c.isSetCompartmentType() || editable) {
+			lh.add(new JLabel("Compartment type: "), 0, ++row, 1, 1, 1, 1);
+			JTextField tf = new JTextField(c.getCompartmentTypeInstance()
+					.toString());
+			tf.setEditable(editable);
+			lh.add(tf, 1, ++row, 1, 1, 1, 1);
+		}
+		if (c.isSetOutside() || editable) {
+			lh.add(new JLabel("Outside: "), 0, ++row, 1, 1, 1, 1);
+			JTextField tf = new JTextField(c.getOutsideInstance().toString());
+			tf.setEditable(editable);
+			lh.add(tf, 1, row, 1, 1, 1, 1);
+		}
+		lh.add(new JLabel("Spatial dimensions: "), 0, ++row, 1, 1, 1, 1);
+		JSpinner spinner = new JSpinner(new SpinnerNumberModel(c
+				.getSpatialDimensions(), 0, 3, 1));
+		spinner.setEnabled(editable);
+		lh.add(spinner, 1, row, 1, 1, 1, 1);
+	}
+
+	/**
+	 * 
+	 * @param c
+	 */
+	private void addProperties(Constraint c) {
+		if (c.isSetMessage() || editable) {
+			lh.add(new JLabel("Message: "), 0, ++row, 1, 1, 1, 1);
+			JTextField tf = new JTextField(c.getMessage());
+			tf.setEditable(editable);
+			lh.add(tf, 1, ++row, 1, 1, 1, 1);
+		}
+	}
+
+	/**
+	 * 
+	 * @param e
+	 */
+	private void addProperties(Event e) {
+		JCheckBox check = new JCheckBox("Uses values from trigger time", e
+				.getUseValuesFromTriggerTime());
+		check.setEnabled(editable);
+		lh.add(check, 0, ++row, 2, 1, 1, 1);
+		if (e.isSetTrigger())
+			lh.add(new SBasePanel(e.getTrigger()), 0, ++row, 2, 1, 1, 1);
+		if (e.isSetDelay())
+			lh.add(new SBasePanel(e.getDelay()), 0, ++row, 2, 1, 1, 1);
+		if (e.isSetTimeUnits())
+			lh.add(new SBasePanel(e.getTimeUnitsInstance()), 0, ++row, 2, 1, 1,
+					1);
+		for (EventAssignment ea : e.getListOfEventAssignments())
+			lh.add(new SBasePanel(ea), 0, ++row, 2, 1, 1, 1);
+	}
+
+	/**
+	 * 
+	 * @param list
+	 */
+	private void addProperties(ListOf<? extends SBase> list) {
 		// TODO
+		list.size();
 	}
 
 	/**
@@ -150,6 +226,16 @@ public class SBasePanel extends JPanel {
 				EventAssignment ea = (EventAssignment) mc;
 				laTeXpreview.append(LaTeX.mbox(ea.getVariable()));
 				laTeXpreview.append('=');
+			} else if (mc instanceof AssignmentRule) {
+				AssignmentRule ar = (AssignmentRule) mc;
+				laTeXpreview.append(LaTeX.mbox(ar.getVariable()));
+				laTeXpreview.append('=');
+			} else if (mc instanceof RateRule) {
+				RateRule rr = (RateRule) mc;
+				String d = LaTeX.mbox("d").toString();
+				laTeXpreview.append(LaTeX.frac(LaTeX.times(d, LaTeX.mbox(rr
+						.getVariable())), d));
+				laTeXpreview.append('=');
 			}
 			laTeXpreview.append(mc.getMath().toLaTeX().toString().replace(
 					"mathrm", "mbox").replace("text", "mbox").replace("mathtt",
@@ -169,22 +255,34 @@ public class SBasePanel extends JPanel {
 	 * @param m
 	 */
 	private void addProperties(Model m) {
-		lh.add(new JLabel("Compartments: "), 0, ++row, 1, 1, 1, 1);
-		lh.add(new JLabel(Integer.toString(m.getNumCompartments())), 1, row, 1,
-				1, 1, 1);
-		lh.add(new JLabel("Species: "), 0, ++row, 1, 1, 1, 1);
-		lh.add(new JLabel(Integer.toString(m.getNumSpecies())), 1, row, 1, 1,
-				1, 1);
-		lh.add(new JLabel("Parameters: "), 0, ++row, 1, 1, 1, 1);
-		lh.add(new JLabel(Integer.toString(m.getNumParameters())), 1, row, 1,
-				1, 1, 1);
-		lh.add(new JLabel("Reactions: "), 0, ++row, 1, 1, 1, 1);
-		lh.add(new JLabel(Integer.toString(m.getNumReactions())), 1, row, 1, 1,
-				1, 1);
-		lh.add(new JLabel("Events: "), 0, ++row, 1, 1, 1, 1);
-		lh.add(new JLabel(Integer.toString(m.getNumEvents())), 1, row, 1, 1, 1,
+		String columnNames[] = new String[] { "Element", "Quantity" };
+		String rowData[][] = new String[][] {
+				{ "Function definitions",
+						Integer.toString(m.getNumFunctionDefinitions()) },
+				{ "Unit definitions",
+						Integer.toString(m.getNumUnitDefinitions()) },
+				{ "Compartment types",
+						Integer.toString(m.getNumCompartmentTypes()) },
+				{ "Species types", Integer.toString(m.getNumSpeciesTypes()) },
+				{ "Compartments", Integer.toString(m.getNumCompartments()) },
+				{ "Species", Integer.toString(m.getNumSpecies()) },
+				{ "Global parameters", Integer.toString(m.getNumParameters()) },
+				{ "Local parameters",
+						Integer.toString(m.getNumLocalParameters()) },
+				{ "Initial assignments",
+						Integer.toString(m.getNumInitialAssignments()) },
+				{ "Rules", Integer.toString(m.getNumRules()) },
+				{ "Constraints", Integer.toString(m.getNumConstraints()) },
+				{ "Reactions", Integer.toString(m.getNumReactions()) },
+				{ "Events", Integer.toString(m.getNumEvents()) } };
+		JTable table = new JTable(rowData, columnNames);
+		table.setEnabled(editable);
+		table.setPreferredScrollableViewportSize(new Dimension(200, table
+				.getRowCount()
+				* table.getRowHeight()));
+		lh.add(new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 0, ++row, 2, 1, 1,
 				1);
-		// TODO
 	}
 
 	/**
@@ -200,14 +298,18 @@ public class SBasePanel extends JPanel {
 	 * @param nsb
 	 */
 	private void addProperties(NamedSBase nsb) {
-		lh.add(new JLabel("Identifier"), 0, ++row, 1, 1, 1, 1);
-		JTextField tf = new JTextField(nsb.getId());
-		tf.setEditable(editable);
-		lh.add(tf, 1, row, 1, 1, 1, 1);
-		lh.add(new JLabel("Name"), 0, ++row, 1, 1, 1, 1);
-		tf = new JTextField(nsb.getName());
-		tf.setEditable(editable);
-		lh.add(tf, 1, row, 1, 1, 1, 1);
+		if (nsb.isSetId() || editable) {
+			lh.add(new JLabel("Identifier: "), 0, ++row, 1, 1, 1, 1);
+			JTextField tf = new JTextField(nsb.getId());
+			tf.setEditable(editable);
+			lh.add(tf, 1, row, 1, 1, 1, 1);
+		}
+		if (nsb.isSetName() || editable) {
+			lh.add(new JLabel("Name: "), 0, ++row, 1, 1, 1, 1);
+			JTextField tf = new JTextField(nsb.getName());
+			tf.setEditable(editable);
+			lh.add(tf, 1, row, 1, 1, 1, 1);
+		}
 	}
 
 	/**
@@ -215,15 +317,7 @@ public class SBasePanel extends JPanel {
 	 * @param sbase
 	 */
 	private void addProperties(Parameter p) {
-		lh.add(new JLabel("Value"), 0, ++row, 1, 1, 1, 1);
-		double value = p.isSetValue() ? p.getValue() : 0;
-		JSpinner spinner = new JSpinner(new SpinnerNumberModel(value,
-				value - 1000d, value + 1000d, 1d));
-		spinner.setEnabled(editable);
-		lh.add(spinner, 1, row, 1, 1, 1, 1);
-		JCheckBox check = new JCheckBox("Constant", p.getConstant());
-		check.setEnabled(editable);
-		lh.add(check, 0, ++row, 2, 1, 1, 1);
+		// TODO
 	}
 
 	/**
@@ -276,31 +370,36 @@ public class SBasePanel extends JPanel {
 	 * @param sbase
 	 */
 	private void addProperties(SBase sbase) {
-		lh.add(new JLabel("Meta identifier"), 0, ++row, 1, 1, 1, 1);
-		JTextField tf = new JTextField(sbase.getMetaId());
-		tf.setEditable(editable);
-		lh.add(tf, 1, row, 1, 1, 1, 1);
-		lh.add(new JLabel("Notes"), 0, ++row, 1, 1, 1, 1);
-		JEditorPane notesArea = new JEditorPane("text/html", "");
-		notesArea.setEditable(editable);
-		if (sbase.isSetNotes()) {
-			String text = sbase.getNotesString();
-			if (text.startsWith("<notes") && text.endsWith("</notes>"))
-				text = text.substring(8, sbase.getNotesString().length() - 9);
-			text = text.trim();
-			if (!text.startsWith("<body") && !text.endsWith("</body>"))
-				text = "<body>" + text + "</body>";
-			text = "<html><head></head>" + text + "</html>";
-			notesArea.setText(text);
+		if (sbase.isSetMetaId() || editable) {
+			lh.add(new JLabel("Meta identifier: "), 0, ++row, 1, 1, 1, 1);
+			JTextField tf = new JTextField(sbase.getMetaId());
+			tf.setEditable(editable);
+			lh.add(tf, 1, row, 1, 1, 1, 1);
 		}
-		notesArea.addHyperlinkListener(new SystemBrowser());
-		notesArea.setPreferredSize(new Dimension(350, 200));
-		notesArea.setBorder(BorderFactory.createLoweredBevelBorder());
-		JScrollPane scroll = new JScrollPane(notesArea,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		lh.add(scroll, 1, row, 1, 1, 1, 1);
-		lh.add(new JLabel("SBO term"), 0, ++row, 1, 1, 1, 1);
+		if (sbase.isSetNotes() || editable) {
+			lh.add(new JLabel("Notes: "), 0, ++row, 1, 1, 1, 1);
+			JEditorPane notesArea = new JEditorPane("text/html", "");
+			notesArea.setEditable(editable);
+			if (sbase.isSetNotes()) {
+				String text = sbase.getNotesString();
+				if (text.startsWith("<notes") && text.endsWith("</notes>"))
+					text = text.substring(8,
+							sbase.getNotesString().length() - 9);
+				text = text.trim();
+				if (!text.startsWith("<body") && !text.endsWith("</body>"))
+					text = "<body>" + text + "</body>";
+				text = "<html><head></head>" + text + "</html>";
+				notesArea.setText(text);
+			}
+			notesArea.addHyperlinkListener(new SystemBrowser());
+			notesArea.setBorder(BorderFactory.createLoweredBevelBorder());
+			JScrollPane scroll = new JScrollPane(notesArea,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			notesArea.setPreferredSize(new Dimension(350, 200));
+			lh.add(scroll, 1, row, 1, 1, 1, 1);
+		}
+		lh.add(new JLabel("SBO term: "), 0, ++row, 1, 1, 1, 1);
 		JTextField sboTermField = new JTextField();
 		sboTermField.setEditable(editable);
 		if (sbase.isSetSBOTerm()) {
@@ -316,14 +415,18 @@ public class SBasePanel extends JPanel {
 	 * @param ssr
 	 */
 	private void addProperties(SimpleSpeciesReference ssr) {
-		lh.add(new JLabel("Species"), 1, row, 1, 1, 1, 1);
-		lh.add(new JLabel(ssr.getSpeciesInstance().toString()), 1, row, 1, 1,
-				1, 1);
+		if (ssr.isSetSpecies()) {
+			lh.add(new JLabel("Species"), 1, row, 1, 1, 1, 1);
+			lh.add(new JLabel(ssr.getSpeciesInstance().toString()), 1, row, 1,
+					1, 1, 1);
+		}
 		if (ssr instanceof SpeciesReference)
 			addProperties((SpeciesReference) ssr);
 		else if (ssr instanceof ModifierSpeciesReference)
 			addProperties((ModifierSpeciesReference) ssr);
-		lh.add(new SBasePanel(ssr.getSpeciesInstance()), 0, ++row, 2, 1, 1, 1);
+		if (ssr.isSetSpecies())
+			lh.add(new SBasePanel(ssr.getSpeciesInstance()), 0, ++row, 2, 1, 1,
+					1);
 	}
 
 	/**
@@ -331,34 +434,31 @@ public class SBasePanel extends JPanel {
 	 * @param sbase
 	 */
 	private void addProperties(Species species) {
-		JSpinner spinInitial;
-		if (species.isSetInitialAmount()) {
-			spinInitial = new JSpinner(new SpinnerNumberModel(species
-					.getInitialAmount(), 0d, Math.max(species
-					.getInitialAmount(), 1000), .1d));
-			lh.add(new JLabel("Initial amount"), 0, ++row, 1, 1, 1, 1);
-		} else {
-			if (species.isSetInitialConcentration())
-				spinInitial = new JSpinner(new SpinnerNumberModel(species
-						.getInitialConcentration(), 0d, Math.max(species
-						.getInitialConcentration(), 1000), .1d));
-			else
-				spinInitial = new JSpinner(new SpinnerNumberModel(0, 0d, 1000,
-						.1d));
-			lh.add(new JLabel("Initial amount"), 0, ++row, 1, 1, 1, 1);
-		}
-		spinInitial.setEnabled(editable);
-		lh.add(spinInitial, 1, row, 1, 1, 0, 1);
 		JSpinner spinCharge = new JSpinner(new SpinnerNumberModel(species
 				.getCharge(), -10, 10, 1));
-		lh.add(new JLabel("Charge"), 0, ++row, 1, 1, 1, 1);
+		lh.add(new JLabel("Charge: "), 0, ++row, 1, 1, 1, 1);
 		spinCharge.setEnabled(editable);
 		lh.add(spinCharge, 1, row, 1, 1, 1, 1);
+		if (species.isSetSpeciesType()) {
+			lh.add(new JLabel("Species type: "), 0, ++row, 1, 1, 1, 1);
+			JTextField tf = new JTextField(species.getSpeciesTypeInstance()
+					.toString());
+			tf.setEditable(editable);
+			lh.add(tf, 0, ++row, 1, 1, 1, 1);
+		}
+		lh.add(new JLabel("Compartment: "), 0, ++row, 1, 1, 1, 1);
+		JTextField tf = new JTextField(species.getCompartmentInstance()
+				.toString());
+		tf.setEditable(editable);
+		lh.add(tf, 1, row, 1, 1, 1, 1);
+		if (species.isSetSpeciesType() || editable) {
+			lh.add(new JLabel("Species type: "), 0, row, 1, 1, 1, 1);
+			tf = new JTextField(species.getSpeciesTypeInstance().toString());
+			tf.setEditable(editable);
+			lh.add(tf, 0, row, 1, 1, 1, 1);
+		}
 		JCheckBox check = new JCheckBox("Boundary condition", species
 				.getBoundaryCondition());
-		check.setEnabled(editable);
-		lh.add(check, 0, ++row, 2, 1, 1, 1);
-		check = new JCheckBox("Constant", species.getConstant());
 		check.setEnabled(editable);
 		lh.add(check, 0, ++row, 2, 1, 1, 1);
 		check = new JCheckBox("Has only substance units", species
@@ -389,5 +489,81 @@ public class SBasePanel extends JPanel {
 			spinner.setEnabled(editable);
 			lh.add(spinner, 1, row, 1, 1, 1, 1);
 		}
+	}
+
+	/**
+	 * 
+	 * @param s
+	 */
+	private void addProperties(Symbol s) {
+		String label = null;
+		SpinnerNumberModel spinModel = new SpinnerNumberModel(0, 0d, 1000, .1d);
+		if (s instanceof Species) {
+			Species species = (Species) s;
+			label = "Initial amount: ";
+			if (species.isSetInitialAmount())
+				spinModel = new SpinnerNumberModel(species.getInitialAmount(),
+						0d, Math.max(species.getInitialAmount(), 1000), .1d);
+			else if (species.isSetInitialConcentration()) {
+				spinModel = new SpinnerNumberModel(species
+						.getInitialConcentration(), 0d, Math.max(species
+						.getInitialConcentration(), 1000), .1d);
+				label = "Initial concentration: ";
+			}
+		} else if (s instanceof Compartment) {
+			Compartment c = (Compartment) s;
+			if (c.isSetSize())
+				spinModel = new SpinnerNumberModel(c.getSize(),
+						c.getSize() - 1000, c.getSize() + 1000, .1d);
+			label = "Size: ";
+		} else {
+			Parameter p = (Parameter) s;
+			if (p.isSetValue())
+				spinModel = new SpinnerNumberModel(p.getValue(),
+						p.getValue() - 1000, p.getValue() + 1000, .1d);
+			label = "Value: ";
+		}
+		lh.add(new JLabel(label), 0, ++row, 1, 1, 1, 1);
+		JSpinner spinValue = new JSpinner(spinModel);
+		spinValue.setEnabled(editable);
+		lh.add(spinValue, 1, row, 1, 1, 0, 1);
+		lh
+				.add(new JLabel(s instanceof Species ? "Substance unit: "
+						: "Unit: "), 0, ++row, 1, 1, 1, 1);
+		StringBuffer laTeXpreview = new StringBuffer();
+		laTeXpreview.append(LaTeX.eqBegin);
+		if (s.isSetUnits())
+			laTeXpreview.append((new LaTeXExport()).format(s.getUnits())
+					.toString().replace("\\up", "\\").replace("mathrm", "mbox")
+					.replace("text", "mbox").replace("mathtt", "mbox"));
+		laTeXpreview.append(LaTeX.eqEnd);
+		JPanel preview = new JPanel(new BorderLayout());
+		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
+		preview.setBackground(Color.WHITE);
+		preview.setBorder(BorderFactory.createLoweredBevelBorder());
+		lh.add(preview, 1, row, 1, 1, 1, 1);
+		JCheckBox check = new JCheckBox("Constant", s.isConstant());
+		check.setEnabled(editable);
+		lh.add(check, 0, ++row, 2, 1, 1, 1);
+	}
+
+	/**
+	 * 
+	 * @param ud
+	 */
+	private void addProperties(UnitDefinition ud) {
+		lh.add(new JLabel("Unit: "), 0, ++row, 1, 1, 1, 1);
+		StringBuffer laTeXpreview = new StringBuffer();
+		laTeXpreview.append(LaTeX.eqBegin);
+		System.out.println((new LaTeXExport()).format(ud));
+		laTeXpreview.append((new LaTeXExport()).format(ud).toString().replace(
+				"\\up", "\\").replace("mathrm", "mbox").replace("text", "mbox")
+				.replace("mathtt", "mbox"));
+		laTeXpreview.append(LaTeX.eqEnd);
+		JPanel preview = new JPanel(new BorderLayout());
+		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
+		preview.setBackground(Color.WHITE);
+		preview.setBorder(BorderFactory.createLoweredBevelBorder());
+		lh.add(preview, 1, row, 1, 1, 1, 1);
 	}
 }

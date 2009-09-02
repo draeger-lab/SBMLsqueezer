@@ -24,9 +24,12 @@ import org.sbml.Event;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SBase;
+import org.sbml.SIUnit;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
+import org.sbml.Unit;
+import org.sbml.UnitDefinition;
 
 /**
  * This class is used to export a sbml model as LaTex file.
@@ -83,6 +86,243 @@ public class LaTeXExport extends LaTeX {
 			}
 		}
 		return masked.toString().trim();
+	}
+	
+	/**
+	 * Returns a properly readable unit definition.
+	 * 
+	 * @param def
+	 * @return
+	 */
+	public StringBuffer format(UnitDefinition def) {
+		StringBuffer buffer = new StringBuffer();
+		for (int j = 0; j < def.getNumUnits(); j++) {
+			buffer.append(format((Unit) def.getListOfUnits().get(j)));
+			if (j < def.getListOfUnits().size() - 1)
+				buffer.append("\\cdot ");
+		}
+		return buffer;
+	}
+	
+	/**
+	 * Returns a unit.
+	 * 
+	 * @param u
+	 * @return
+	 */
+	public StringBuffer format(Unit u) {
+		StringBuffer buffer = new StringBuffer();
+		boolean standardScale = (u.getScale() == 18) || (u.getScale() == 12)
+				|| (u.getScale() == 9) || (u.getScale() == 6)
+				|| (u.getScale() == 3) || (u.getScale() == 2)
+				|| (u.getScale() == 1) || (u.getScale() == 0)
+				|| (u.getScale() == -1) || (u.getScale() == -2)
+				|| (u.getScale() == -3) || (u.getScale() == -6)
+				|| (u.getScale() == -9) || (u.getScale() == -12)
+				|| (u.getScale() == -15) || (u.getScale() == -18);
+		if (u.getOffset() != 0d) {
+			buffer.append(format(u.getOffset()).toString()
+					.replaceAll("\\$", ""));
+			if ((u.getMultiplier() != 0) || (!standardScale))
+				buffer.append('+');
+		}
+		if (u.getMultiplier() != 1d) {
+			if (u.getMultiplier() == -1d)
+				buffer.append('-');
+			else {
+				buffer.append(format(u.getMultiplier()).toString().replaceAll(
+						"\\$", ""));
+				buffer.append(!standardScale ? "\\cdot " : "\\;");
+			}
+		}
+		if (u.isKilogram()) {
+			u.setScale(u.getScale() + 3);
+			u.setKind(SIUnit.UNIT_KIND_GRAM);
+		}
+		if (!u.isDimensionless()) {
+			switch (u.getScale()) {
+			case 18:
+				buffer.append(mathrm('E'));
+				break;
+			case 15:
+				buffer.append(mathrm('P'));
+				break;
+			case 12:
+				buffer.append(mathrm('T'));
+				break;
+			case 9:
+				buffer.append(mathrm('G'));
+				break;
+			case 6:
+				buffer.append(mathrm('M'));
+				break;
+			case 3:
+				buffer.append(mathrm('k'));
+				break;
+			case 2:
+				buffer.append(mathrm('h'));
+				break;
+			case 1:
+				buffer.append(mathrm("da"));
+				break;
+			case 0:
+				break;
+			case -1:
+				buffer.append(mathrm('d'));
+				break;
+			case -2:
+				buffer.append(mathrm('c'));
+				break;
+			case -3:
+				buffer.append(mathrm('m'));
+				break;
+			case -6:
+				buffer.append("\\upmu");
+				break;
+			case -9:
+				buffer.append(mathrm('n'));
+				break;
+			case -12:
+				buffer.append(mathrm('p'));
+				break;
+			case -15:
+				buffer.append(mathrm('f'));
+				break;
+			case -18:
+				buffer.append(mathrm('a'));
+				break;
+			default:
+				buffer.append("10^{");
+				buffer.append(Integer.toString(u.getScale()));
+				buffer.append("}\\cdot ");
+				break;
+			}
+			switch (u.getKind()) {
+			case UNIT_KIND_AMPERE:
+				buffer.append(mathrm('A'));
+				break;
+			case UNIT_KIND_BECQUEREL:
+				buffer.append(mathrm("Bq"));
+				break;
+			case UNIT_KIND_CANDELA:
+				buffer.append(mathrm("cd"));
+				break;
+			case UNIT_KIND_CELSIUS:
+				buffer.append("\\text{\\textcelsius}");
+				break;
+			case UNIT_KIND_COULOMB:
+				buffer.append(mathrm('C'));
+				break;
+			case UNIT_KIND_DIMENSIONLESS:
+				break;
+			case UNIT_KIND_FARAD:
+				buffer.append(mathrm('F'));
+				break;
+			case UNIT_KIND_GRAM:
+				buffer.append(mathrm('g'));
+				break;
+			case UNIT_KIND_GRAY:
+				buffer.append(mathrm("Gy"));
+				break;
+			case UNIT_KIND_HENRY:
+				buffer.append(mathrm('H'));
+				break;
+			case UNIT_KIND_HERTZ:
+				buffer.append(mathrm("Hz"));
+				break;
+			case UNIT_KIND_INVALID:
+				buffer.append(mathrm("invalid"));
+				break;
+			case UNIT_KIND_ITEM:
+				buffer.append(mathrm("item"));
+				break;
+			case UNIT_KIND_JOULE:
+				buffer.append(mathrm('J'));
+				break;
+			case UNIT_KIND_KATAL:
+				buffer.append(mathrm("kat"));
+				break;
+			case UNIT_KIND_KELVIN:
+				buffer.append(mathrm('K'));
+				break;
+			// case UNIT_KIND_KILOGRAM:
+			// buffer.append("\\mathrm{kg}");
+			// break;
+			case UNIT_KIND_LITER:
+				buffer.append(mathrm('l'));
+				break;
+			case UNIT_KIND_LITRE:
+				buffer.append(mathrm('l'));
+				break;
+			case UNIT_KIND_LUMEN:
+				buffer.append(mathrm("lm"));
+				break;
+			case UNIT_KIND_LUX:
+				buffer.append(mathrm("lx"));
+				break;
+			case UNIT_KIND_METER:
+				buffer.append(mathrm('m'));
+				break;
+			case UNIT_KIND_METRE:
+				buffer.append(mathrm('m'));
+				break;
+			case UNIT_KIND_MOLE:
+				buffer.append(mathrm("mol"));
+				break;
+			case UNIT_KIND_NEWTON:
+				buffer.append(mathrm('N'));
+				break;
+			case UNIT_KIND_OHM:
+				buffer.append("\\upOmega");
+				break;
+			case UNIT_KIND_PASCAL:
+				buffer.append(mathrm("Pa"));
+				break;
+			case UNIT_KIND_RADIAN:
+				buffer.append(mathrm("rad"));
+				break;
+			case UNIT_KIND_SECOND:
+				buffer.append(mathrm('s'));
+				break;
+			case UNIT_KIND_SIEMENS:
+				buffer.append(mathrm('S'));
+				break;
+			case UNIT_KIND_SIEVERT:
+				buffer.append(mathrm("Sv"));
+				break;
+			case UNIT_KIND_STERADIAN:
+				buffer.append(mathrm("sr"));
+				break;
+			case UNIT_KIND_TESLA:
+				buffer.append(mathrm('T'));
+				break;
+			case UNIT_KIND_VOLT:
+				buffer.append(mathrm('V'));
+				break;
+			case UNIT_KIND_WATT:
+				buffer.append(mathrm('W'));
+				break;
+			case UNIT_KIND_WEBER:
+				buffer.append(mathrm("Wb"));
+				break;
+			}
+		} else {
+			if (u.getScale() != 0) {
+				buffer.append("10^{");
+				buffer.append(Integer.toString(u.getScale()));
+				buffer.append("}\\;");
+			}
+			buffer.append(mathrm("dimensionless"));
+		}
+		if (((u.getOffset() != 0d) || (u.getMultiplier() != 1d) || !standardScale)
+				&& (u.getExponent() != 1d))
+			buffer = brackets(buffer);
+		if (u.getExponent() != 1) {
+			buffer.append("^{");
+			buffer.append(Integer.toString(u.getExponent()));
+			buffer.append('}');
+		}
+		return buffer;
 	}
 
 	/**

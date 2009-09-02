@@ -18,7 +18,6 @@
  */
 package org.sbml;
 
-
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -34,7 +33,7 @@ public class Event extends AbstractNamedSBase {
 
 	private Delay delay;
 
-	private String timeUnits;
+	private UnitDefinition timeUnits;
 
 	/**
 	 * 
@@ -60,10 +59,16 @@ public class Event extends AbstractNamedSBase {
 		} else
 			this.delay = null;
 		setListOfEventAssignments(event.getListOfEventAssignments().clone());
-		if (event.isSetTimeUnits())
-			this.timeUnits = new String(event.getTimeUnits());
-		else
-			this.timeUnits = null;
+		this.timeUnits = event.isSetTimeUnits() ? event.getTimeUnitsInstance()
+				.clone() : null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public UnitDefinition getTimeUnitsInstance() {
+		return timeUnits;
 	}
 
 	/**
@@ -135,12 +140,12 @@ public class Event extends AbstractNamedSBase {
 	public Delay getDelay() {
 		return delay;
 	}
-	
+
 	/**
 	 * 
 	 * @param eventass
 	 */
-	public void addEventAssignement(EventAssignment eventass){
+	public void addEventAssignement(EventAssignment eventass) {
 		listOfEventAssignments.add(eventass);
 	}
 
@@ -174,7 +179,24 @@ public class Event extends AbstractNamedSBase {
 	 * @return
 	 */
 	public String getTimeUnits() {
-		return timeUnits;
+		return isSetTimeUnits() ? timeUnits.getId() : "";
+	}
+	
+	/**
+	 * 
+	 * @param timeUnits
+	 */
+	public void setTimeUnits(UnitDefinition timeUnits) {
+		this.timeUnits = timeUnits;
+		stateChanged();
+	}
+	
+	/**
+	 * 
+	 * @param timeUnits
+	 */
+	public void setTimeUnits(String timeUnits) {
+		this.timeUnits = (UnitDefinition) getModel().findNamedSBase(timeUnits);
 	}
 
 	/**

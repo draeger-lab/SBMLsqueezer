@@ -43,12 +43,19 @@ import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.SpeciesType;
 import org.sbml.StoichiometryMath;
+import org.sbml.Unit;
 import org.sbml.UnitDefinition;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
 public class PluginSBMLReader extends AbstractSBMLReader {
 
+	/**
+	 * 
+	 */
 	private static final String error = " must be an instance of ";
+	/**
+	 * 
+	 */
 	private Set<Integer> possibleEnzymes;
 
 	/**
@@ -84,11 +91,19 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readFunctionDefinition(java.lang.Object)
+	 */
 	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readInitialAssignment(java.lang.Object)
+	 */
 	public InitialAssignment readInitialAssignment(Object initialAssignment) {
 		// TODO Auto-generated method stub
 		return null;
@@ -208,6 +223,10 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return reaction;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readRule(java.lang.Object)
+	 */
 	public Rule readRule(Object rule) {
 		// TODO Auto-generated method stub
 		return null;
@@ -247,6 +266,10 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return spec;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readSpeciesType(java.lang.Object)
+	 */
 	public SpeciesType readSpeciesType(Object speciesType) {
 		// TODO Auto-generated method stub
 		return null;
@@ -262,7 +285,20 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
+	 */
 	public UnitDefinition readUnitDefinition(Object unitDefinition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.SBMLReader#readUnit(java.lang.Object)
+	 */
+	public Unit readUnit(Object unit) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -194,7 +194,15 @@ public class Species extends Symbol {
 	 * 
 	 * @return
 	 */
-	public SpeciesType getSpeciesType() {
+	public String getSpeciesType() {
+		return speciesType.getId();
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public SpeciesType getSpeciesTypeInstance() {
 		return speciesType;
 	}
 
@@ -335,5 +343,13 @@ public class Species extends Symbol {
 	 */
 	public UnitDefinition getSubstanceUnits() {
 		return getUnits();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetSpeciesType() {
+		return speciesType != null;
 	}
 }

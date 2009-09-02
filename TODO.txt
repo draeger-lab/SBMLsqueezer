@@ -1,6 +1,9 @@
 TODO-Liste
 ==========
 
+Edukt- und Produktlisten können leer sein. Dieser Spezialfall wird bisher
+nicht in den einzelnen Kinetiken behandelt.
+
 Modell mus aktualisiert werden, sodass der SBO-Ausdruck für enzymatische
 Katalyse neu gesetzt wird, sobald sich die liste möglicher Enzyme ändert.
 

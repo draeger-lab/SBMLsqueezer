@@ -21,12 +21,12 @@ package org.sbml.squeezer.io;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.sbml.AbstractSBase;
 import org.sbml.Compartment;
 import org.sbml.FunctionDefinition;
 import org.sbml.InitialAssignment;
@@ -38,12 +38,12 @@ import org.sbml.Reaction;
 import org.sbml.Rule;
 import org.sbml.SBMLReader;
 import org.sbml.SBMLWriter;
-import org.sbml.AbstractSBase;
 import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.SpeciesType;
 import org.sbml.StoichiometryMath;
+import org.sbml.Unit;
 import org.sbml.UnitDefinition;
 
 /**
@@ -114,6 +114,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readFunctionDefinition(java.lang.Object)
 	 */
 	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
@@ -122,6 +123,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readInitialAssignment(java.lang.Object)
 	 */
 	public InitialAssignment readInitialAssignment(Object initialAssignment) {
@@ -180,6 +182,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readRule(java.lang.Object)
 	 */
 	public Rule readRule(Object rule) {
@@ -206,6 +209,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readSpeciesType(java.lang.Object)
 	 */
 	public SpeciesType readSpeciesType(Object speciesType) {
@@ -223,6 +227,16 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readUnit(java.lang.Object)
+	 */
+	public Unit readUnit(Object unit) {
+		return reader.readUnit(unit);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
 	 */
 	public UnitDefinition readUnitDefinition(Object unitDefinition) {

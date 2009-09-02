@@ -136,9 +136,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addCompartment(Compartment compartment) {
 		if (!listOfCompartments.contains(compartment)) {
-			listOfCompartments.add(compartment);
 			compartment.parentSBMLObject = this;
-			compartment.sbaseAdded();
+			listOfCompartments.add(compartment);
 		}
 	}
 
@@ -148,9 +147,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addCompartmentType(CompartmentType compartmentType) {
 		if (!listOfCompartmentTypes.contains(compartmentType)) {
-			listOfCompartmentTypes.add(compartmentType);
 			compartmentType.parentSBMLObject = this;
-			compartmentType.sbaseAdded();
+			listOfCompartmentTypes.add(compartmentType);
 		}
 	}
 
@@ -160,9 +158,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addConstraint(Constraint constraint) {
 		if (!listOfConstraints.contains(constraint)) {
-			listOfConstraints.add(constraint);
 			constraint.parentSBMLObject = this;
-			constraint.sbaseAdded();
+			listOfConstraints.add(constraint);
 		}
 	}
 
@@ -172,9 +169,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addEvent(Event event) {
 		if (!listOfEvents.contains(event)) {
-			listOfEvents.add(event);
 			event.parentSBMLObject = this;
-			event.sbaseAdded();
+			listOfEvents.add(event);
 		}
 	}
 
@@ -184,9 +180,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addFunctionDefinition(FunctionDefinition functionDefinition) {
 		if (!listOfFunctionDefinitions.contains(functionDefinition)) {
-			listOfFunctionDefinitions.add(functionDefinition);
 			functionDefinition.parentSBMLObject = this;
-			functionDefinition.sbaseAdded();
+			listOfFunctionDefinitions.add(functionDefinition);
 		}
 	}
 
@@ -196,9 +191,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addInitialAssignment(InitialAssignment initialAssignment) {
 		if (!listOfInitialAssignments.contains(initialAssignment)) {
-			listOfInitialAssignments.add(initialAssignment);
 			initialAssignment.parentSBMLObject = this;
-			initialAssignment.sbaseAdded();
+			listOfInitialAssignments.add(initialAssignment);
 		}
 	}
 
@@ -208,9 +202,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addParameter(Parameter parameter) {
 		if (!listOfParameters.contains(parameter)) {
-			listOfParameters.add(parameter);
 			parameter.parentSBMLObject = this;
-			parameter.sbaseAdded();
+			listOfParameters.add(parameter);
 		}
 	}
 
@@ -221,9 +214,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addReaction(Reaction reaction) {
 		if (!listOfReactions.contains(reaction)) {
-			listOfReactions.add(reaction);
 			reaction.parentSBMLObject = this;
-			reaction.sbaseAdded();
+			listOfReactions.add(reaction);
 		}
 	}
 
@@ -233,9 +225,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addRule(Rule rule) {
 		if (!listOfRules.contains(rule)) {
-			listOfRules.add(rule);
 			rule.parentSBMLObject = this;
-			rule.sbaseAdded();
+			listOfRules.add(rule);
 		}
 	}
 
@@ -246,9 +237,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addSpecies(Species spec) {
 		if (!listOfSpecies.contains(spec)) {
-			listOfSpecies.add(spec);
 			spec.parentSBMLObject = this;
-			spec.sbaseAdded();
+			listOfSpecies.add(spec);
 		}
 	}
 
@@ -258,9 +248,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addSpeciesType(SpeciesType speciesType) {
 		if (!listOfSpeciesTypes.contains(speciesType)) {
-			listOfSpeciesTypes.add(speciesType);
 			speciesType.parentSBMLObject = this;
-			speciesType.sbaseAdded();
+			listOfSpeciesTypes.add(speciesType);
 		}
 	}
 
@@ -270,9 +259,8 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public void addUnitDefinition(UnitDefinition unitDefinition) {
 		if (!listOfUnitDefinitions.contains(unitDefinition)) {
-			listOfUnitDefinitions.add(unitDefinition);
 			unitDefinition.parentSBMLObject = this;
-			unitDefinition.sbaseAdded();
+			listOfUnitDefinitions.add(unitDefinition);
 		}
 	}
 
@@ -338,7 +326,8 @@ public class Model extends AbstractNamedSBase {
 				namedSBase = m.getReaction(id);
 			if (namedSBase == null)
 				namedSBase = m.getFunctionDefinition(id);
-
+			if (namedSBase == null)
+				namedSBase = m.getUnitDefinition(id);
 			// check all local parameters
 			if (namedSBase == null)
 				for (Reaction r : m.getListOfReactions()) {
@@ -834,5 +823,31 @@ public class Model extends AbstractNamedSBase {
 		this.listOfUnitDefinitions = listOfUnitDefinitions;
 		setThisAsParentSBMLObject(this.listOfUnitDefinitions);
 		stateChanged();
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public UnitDefinition getUnitDefinition(String id) {
+		for (UnitDefinition ud : listOfUnitDefinitions)
+			if (ud.getId().equals(id))
+				return ud;
+		return null;
+	}
+
+	/**
+	 * Returns the number of parameters that are containt within kineticLaws in
+	 * the reactions of this model.
+	 * 
+	 * @return
+	 */
+	public int getNumLocalParameters() {
+		int count = 0;
+		for (Reaction r : listOfReactions)
+			if (r.isSetKineticLaw())
+				count += r.getKineticLaw().getNumParameters();
+		return count;
 	}
 }
