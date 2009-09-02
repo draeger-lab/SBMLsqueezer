@@ -185,8 +185,6 @@ public class ASTNode {
 	 * @return
 	 */
 	public static ASTNode times(ASTNode... ast) {
-		System.out.println(arithmethicOperation(Constants.AST_TIMES, ast)
-				.toLaTeX());
 		return arithmethicOperation(Constants.AST_TIMES, ast);
 	}
 

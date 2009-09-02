@@ -17,6 +17,9 @@
  */
 package org.sbml.squeezer.io;
 
+import java.util.LinkedList;
+import java.util.List;
+
 
 /**
  * Created at 2009-01-03.
@@ -637,5 +640,35 @@ public class LaTeX extends StringTools {
 		sb.append(s);
 		sb.append("} ");
 		return sb;
+	}
+
+	/**
+	 * 
+	 * @param factors
+	 * @return
+	 */
+	public static StringBuffer times(Object... factors) {
+		return times("\\cdot", factors);
+	}
+	
+	/**
+	 * Basic method which links several elements with a mathematical operator.
+	 * All empty StringBuffer object are excluded.
+	 * 
+	 * @param operator
+	 * @param elements
+	 * @return
+	 */
+	private static final StringBuffer arith(String operator, Object... elements) {
+		List<Object> vsb = new LinkedList<Object>();
+		for (Object sb : elements)
+			if (sb.toString().length() > 0)
+				vsb.add(sb);
+		StringBuffer equation = new StringBuffer();
+		if (vsb.size() > 0)
+			equation.append(vsb.get(0));
+		for (int count = 1; count < vsb.size(); count++)
+			append(equation, operator, vsb.get(count));
+		return equation;
 	}
 }

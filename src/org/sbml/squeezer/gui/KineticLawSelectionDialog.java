@@ -49,6 +49,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
 
 import org.sbml.Model;
 import org.sbml.Reaction;

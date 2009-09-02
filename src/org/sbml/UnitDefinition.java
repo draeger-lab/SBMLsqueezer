@@ -26,6 +26,9 @@ package org.sbml;
  */
 public class UnitDefinition extends AbstractNamedSBase {
 
+	/**
+	 * 
+	 */
 	private ListOf<Unit> listOfUnits;
 	
 	/**
@@ -34,6 +37,7 @@ public class UnitDefinition extends AbstractNamedSBase {
 	 */
 	public UnitDefinition(String id) {
 		super(id);
+		initDefaults();
 	}
 
 	/**
@@ -43,6 +47,7 @@ public class UnitDefinition extends AbstractNamedSBase {
 	 */
 	public UnitDefinition(String id, String name) {
 		super(id, name);
+		initDefaults();
 	}
 
 	/**
@@ -53,6 +58,16 @@ public class UnitDefinition extends AbstractNamedSBase {
 		super(nsb);
 		listOfUnits = nsb.getListOfUnits().clone();
 		setThisAsParentSBMLObject(listOfUnits);
+	}
+
+	/**
+	 * 
+	 * @param u
+	 */
+	public void addUnit(Unit u) {
+		listOfUnits.add(u);
+		u.parentSBMLObject = this;
+		stateChanged();
 	}
 
 	/*
@@ -67,20 +82,18 @@ public class UnitDefinition extends AbstractNamedSBase {
 	
 	/**
 	 * 
-	 * @param u
+	 * @return
 	 */
-	public void addUnit(Unit u) {
-		listOfUnits.add(u);
-		u.parentSBMLObject = this;
-		stateChanged();
+	public ListOf<Unit> getListOfUnits() {
+		return listOfUnits;
 	}
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public ListOf<Unit> getListOfUnits() {
-		return listOfUnits;
+	public int getNumUnits() {
+		return listOfUnits.size();
 	}
 
 	/**
@@ -91,6 +104,14 @@ public class UnitDefinition extends AbstractNamedSBase {
 		this.listOfUnits = listOfUnits;
 		setThisAsParentSBMLObject(listOfUnits);
 		stateChanged();
+	}
+
+	/**
+	 * 
+	 */
+	private void initDefaults() {
+		listOfUnits = new ListOf<Unit>();
+		setThisAsParentSBMLObject(listOfUnits);
 	}
 
 }

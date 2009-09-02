@@ -92,9 +92,8 @@ public class Reaction extends AbstractNamedSBase {
 	 */
 	public void addModifier(ModifierSpeciesReference modspecref) {
 		if (!listOfModifiers.contains(modspecref)) {
-			listOfModifiers.add(modspecref);
 			modspecref.parentSBMLObject = this;
-			modspecref.sbaseAdded();
+			listOfModifiers.add(modspecref);
 		}
 	}
 
@@ -104,9 +103,8 @@ public class Reaction extends AbstractNamedSBase {
 	 */
 	public void addProduct(SpeciesReference specref) {
 		if (!listOfProducts.contains(specref)) {
-			listOfProducts.add(specref);
 			specref.parentSBMLObject = this;
-			specref.sbaseAdded();
+			listOfProducts.add(specref);
 		}
 	}
 
@@ -116,9 +114,8 @@ public class Reaction extends AbstractNamedSBase {
 	 */
 	public void addReactant(SpeciesReference specref) {
 		if (!listOfReactants.contains(specref)) {
-			listOfReactants.add(specref);
 			specref.parentSBMLObject = this;
-			specref.sbaseAdded();
+			listOfReactants.add(specref);
 		}
 	}
 

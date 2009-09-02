@@ -21,12 +21,15 @@ package org.sbml.squeezer.io;
 import java.util.LinkedList;
 
 import org.sbml.ASTNode;
+import org.sbml.AbstractSBase;
 import org.sbml.Constants;
 import org.sbml.MathContainer;
 import org.sbml.Model;
 import org.sbml.NamedSBase;
 import org.sbml.SBMLReader;
-import org.sbml.AbstractSBase;
+import org.sbml.SIUnit;
+import org.sbml.Unit;
+import org.sbml.UnitDefinition;
 import org.sbml.libsbml.libsbmlConstants;
 
 /**
@@ -37,15 +40,75 @@ import org.sbml.libsbml.libsbmlConstants;
  */
 public abstract class AbstractSBMLReader implements SBMLReader {
 
+	/**
+	 * 
+	 */
 	protected Model model;
+	/**
+	 * 
+	 */
 	protected LinkedList<SBaseChangedListener> listOfSBaseChangeListeners;
 
+	/**
+	 * 
+	 */
 	public AbstractSBMLReader() {
 		listOfSBaseChangeListeners = new LinkedList<SBaseChangedListener>();
 	}
 
+	/**
+	 * 
+	 * @param model
+	 */
 	public AbstractSBMLReader(Object model) {
 		this.model = readModel(model);
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public static final UnitDefinition getPredefinedUnitd(String id) {
+		id = id.toLowerCase();
+		Unit u = new Unit();
+		String name = "Predefined unit ";
+		if (id.equals("substance")) {
+			u.setKind(SIUnit.UNIT_KIND_MOLE);
+			name += "mole";
+		} else if (id.equals("volume")) {
+			u.setKind(SIUnit.UNIT_KIND_LITRE);
+			name += "litre";
+		} else if (id.equals("area")) {
+			u.setKind(SIUnit.UNIT_KIND_METRE);
+			u.setExponent(2);
+			name += "square metre";
+		} else if (id.equals("length")) {
+			u.setKind(SIUnit.UNIT_KIND_METRE);
+			name += "metre";
+		} else if (id.equals("time")) {
+			u.setKind(SIUnit.UNIT_KIND_SECOND);
+			name += "second";
+		} else
+			throw new IllegalArgumentException(
+					"no predefined unit available for " + id);
+		UnitDefinition ud = new UnitDefinition(id);
+		ud.setName(name);
+		ud.addUnit(u);
+		return ud;
+	}
+
+	public static final void addPredefinedUnitDefinitions(Model model) {
+		if (model.getUnitDefinition("substance") == null)
+			model.addUnitDefinition(getPredefinedUnitd("substance"));
+		if (model.getUnitDefinition("volume") == null)
+			model.addUnitDefinition(getPredefinedUnitd("volume"));
+		if (model.getUnitDefinition("area") == null)
+			model.addUnitDefinition(getPredefinedUnitd("area"));
+		if (model.getUnitDefinition("length") == null)
+			model.addUnitDefinition(getPredefinedUnitd("length"));
+		if (model.getUnitDefinition("time") == null)
+			model.addUnitDefinition(getPredefinedUnitd("time"));
 	}
 
 	/**

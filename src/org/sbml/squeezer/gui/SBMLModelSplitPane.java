@@ -27,8 +27,10 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.sbml.AbstractSBase;
 import org.sbml.Model;
 import org.sbml.SBase;
+import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -37,19 +39,26 @@ import org.sbml.SBase;
  * 
  */
 public class SBMLModelSplitPane extends JSplitPane implements
-		TreeSelectionListener {
+		TreeSelectionListener, SBaseChangedListener {
 
+	/**
+	 * 
+	 */
 	private SBMLTree tree;
 
+	/**
+	 * Generated serial version id.
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 
+	 * @param model
+	 */
 	public SBMLModelSplitPane(Model model) {
 		super(JSplitPane.HORIZONTAL_SPLIT, true);
-		tree = new SBMLTree(model);
-		tree.addTreeSelectionListener(this);
-		tree.setSelectionRow(0);
-		setLeftComponent(new JScrollPane(tree,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		setRightComponent(createRightComponent(model));
+		model.addChangeListener(this);
+		init(model, false);
 	}
 
 	/**
@@ -60,23 +69,13 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		tree.addActionListener(al);
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param sbase
-	 * @return
+	 * @see
+	 * javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event
+	 * .TreeSelectionEvent)
 	 */
-	private JScrollPane createRightComponent(SBase sbase) {
-		JPanel p = new JPanel();
-		p.add(new SBasePanel(sbase));
-		return new JScrollPane(p, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	}
-
-	/**
-	 * Generated serial version id.
-	 */
-	private static final long serialVersionUID = 1L;
-
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
@@ -92,5 +91,69 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		} else {
 			// displayURL(helpURL);
 		}
+	}
+
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private JScrollPane createRightComponent(SBase sbase) {
+		JPanel p = new JPanel();
+		p.add(new SBasePanel(sbase));
+		return new JScrollPane(p, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param keepDivider
+	 */
+	private void init(Model model, boolean keepDivider) {
+		int proportionalLocation = getDividerLocation();
+		tree = new SBMLTree(model);
+		tree.addTreeSelectionListener(this);
+		tree.setSelectionRow(0);
+		setLeftComponent(new JScrollPane(tree,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		setRightComponent(createRightComponent(model));
+		if (keepDivider)
+			setDividerLocation(proportionalLocation);
+		validate();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseAdded(org.sbml.AbstractSBase
+	 * )
+	 */
+	public void sbaseAdded(AbstractSBase sb) {
+		init(sb.getModel(), true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseRemoved(org.sbml.AbstractSBase
+	 * )
+	 */
+	public void sbaseRemoved(AbstractSBase sb) {
+		init(sb.getModel(), true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.io.SBaseChangedListener#stateChanged(org.sbml.AbstractSBase
+	 * )
+	 */
+	public void stateChanged(AbstractSBase sb) {
+		init(sb.getModel(), true);
 	}
 }
