@@ -81,7 +81,12 @@ public enum CfgKeys {
 	 * else parameters are stored locally for the respective kinetic equation
 	 * they belong to.
 	 */
-	ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY
+	ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+	/**
+	 * Property that decides whether to set all reactions to reversible before
+	 * creating new kinetic equations.
+	 */
+	TREAT_ALL_REACTIONS_REVERSIBLE
 	/*
 	 *            A list which contains the names of all species that are
 	 *            accepted to act as enzymes during a reaction. Valid are the

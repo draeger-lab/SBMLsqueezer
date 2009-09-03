@@ -26,6 +26,9 @@ package org.sbml;
  */
 public abstract class MathContainer extends AbstractSBase {
 
+	/**
+	 * 
+	 */
 	private ASTNode math;
 
 	/**
@@ -36,6 +39,10 @@ public abstract class MathContainer extends AbstractSBase {
 		math = null;
 	}
 
+	/**
+	 * 
+	 * @param math
+	 */
 	public MathContainer(ASTNode math) {
 		super();
 		setMath(math.clone());
@@ -76,14 +83,26 @@ public abstract class MathContainer extends AbstractSBase {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getFormula() {
 		return isSetMath() ? getMath().toString() : "";
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ASTNode getMath() {
 		return math;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isSetMath() {
 		return math != null;
 	}
@@ -99,6 +118,10 @@ public abstract class MathContainer extends AbstractSBase {
 		stateChanged();
 	}
 
+	/**
+	 * 
+	 * @param math
+	 */
 	public void setMath(ASTNode math) {
 		this.math = math.clone();
 		this.math.parentSBMLObject = this;
