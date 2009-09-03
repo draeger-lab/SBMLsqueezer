@@ -244,7 +244,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	}
 
 	/**
-	 * 
+	 * Write all changes back into the original model.
 	 */
 	public void saveChanges() {
 		// TODO Auto-generated method stub

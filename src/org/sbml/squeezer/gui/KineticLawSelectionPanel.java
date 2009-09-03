@@ -96,8 +96,6 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 
 	private JRadioButton rButtonLocalParameters;
 
-	private Model model;
-
 	private Reaction reaction;
 
 	private KineticLawGenerator klg;
@@ -121,13 +119,11 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 * @throws RateLawNotApplicableException
 	 * @throws IOException
 	 */
-	public KineticLawSelectionPanel(KineticLawGenerator klg, Model model,
-			Reaction reaction) throws RateLawNotApplicableException,
-			IOException {
+	public KineticLawSelectionPanel(KineticLawGenerator klg, Reaction reaction)
+			throws RateLawNotApplicableException, IOException {
 		super(new GridBagLayout());
 		this.selected = "";
 		this.klg = klg;
-		this.model = model;
 		this.reaction = reaction;
 		this.isReactionReversible = reaction.getReversible();
 		this.isKineticLawDefined = reaction.getKineticLaw() != null;
@@ -358,7 +354,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				toolTips[i] = !kinetic.isSetSBOTerm() ? "<b>"
 						+ kinetic.getSBOTermID() + "</b> " : "";
 				toolTips[i] = toHTML(toolTips[i] + kinetic.getName(), 40);
-				kineticEquations[i] = toHTML(possibleTypes[i].getEquationName(), 40);
+				kineticEquations[i] = toHTML(
+						possibleTypes[i].getEquationName(), 40);
 			} catch (IllegalFormatException e) {
 				e.printStackTrace();
 			}
@@ -460,7 +457,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 * @param lineBreak
 	 * @return
 	 */
-	private String toHTML(String string, int lineBreak) {
+	public static String toHTML(String string, int lineBreak) {
 		StringTokenizer st = new StringTokenizer(string, " ");
 		string = new String(st.nextElement().toString());
 		int length = string.length();

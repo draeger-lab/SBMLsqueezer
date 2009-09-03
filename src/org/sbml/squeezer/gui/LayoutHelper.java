@@ -72,6 +72,7 @@ public class LayoutHelper {
 	public LayoutHelper(Container cont, GridBagLayout gbl) {
 		this.cont = cont;
 		this.gbl = gbl;
+		this.cont.setLayout(this.gbl);
 	}
 
 	/**
