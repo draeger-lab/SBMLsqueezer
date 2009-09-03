@@ -19,8 +19,11 @@
 package org.sbml;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.tree.TreeNode;
 
 import org.sbml.squeezer.io.LaTeX;
 
@@ -33,8 +36,13 @@ import org.sbml.squeezer.io.LaTeX;
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class ASTNode {
+public class ASTNode implements TreeNode {
 
+	/**
+	 * important for the TreeNode interface.
+	 */
+	private ASTNode parent; 
+	
 	/**
 	 * 
 	 * @param operator
@@ -342,6 +350,7 @@ public class ASTNode {
 	 */
 	public void addChild(ASTNode child) {
 		listOfNodes.add(child);
+		child.parent = this;
 	}
 
 	/**
@@ -1909,6 +1918,99 @@ public class ASTNode {
 	// @Override
 	public String toString() {
 		// TODO
-		return "";
+		if (isInteger())
+			return Integer.toString(getInteger());
+		if (isReal())
+			return Double.toString(getReal());
+		if (isOperator())
+			return Character.toString(getCharacter());
+		return isName() ? getName() : getType().toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.tree.TreeNode#children()
+	 */
+	public Enumeration<TreeNode> children() {
+		return new Enumeration<TreeNode>() {
+			int pos = 0;
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.util.Enumeration#hasMoreElements()
+			 */
+			public boolean hasMoreElements() {
+				return pos < listOfNodes.size();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.util.Enumeration#nextElement()
+			 */
+			public ASTNode nextElement() {
+				return listOfNodes.get(pos++);
+			}
+		};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.tree.TreeNode#getAllowsChildren()
+	 */
+	public boolean getAllowsChildren() {
+		return !isConstant() && !isInfinity() && !isNumber()
+				&& !isNegInfinity() && !isNaN() && !isRational();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.tree.TreeNode#getChildAt(int)
+	 */
+	public TreeNode getChildAt(int i) {
+		return listOfNodes.get(i);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.tree.TreeNode#getChildCount()
+	 */
+	public int getChildCount() {
+		return getNumChildren();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.tree.TreeNode#getIndex(javax.swing.tree.TreeNode)
+	 */
+	public int getIndex(TreeNode node) {
+		for (int i = 0; i < listOfNodes.size(); i++) {
+			TreeNode n = listOfNodes.get(i);
+			if (node.equals(n))
+				return i;
+		}
+		return -1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.tree.TreeNode#getParent()
+	 */
+	public TreeNode getParent() {
+		return parent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.tree.TreeNode#isLeaf()
+	 */
+	public boolean isLeaf() {
+		return getNumChildren() == 0;
 	}
 }
