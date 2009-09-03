@@ -28,10 +28,12 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.sbml.Compartment;
 import org.sbml.CompartmentType;
@@ -40,6 +42,7 @@ import org.sbml.Event;
 import org.sbml.EventAssignment;
 import org.sbml.FunctionDefinition;
 import org.sbml.InitialAssignment;
+import org.sbml.MathContainer;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
 import org.sbml.Parameter;
@@ -250,8 +253,9 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		}
 		if ((e.getClickCount() == 2) || (e.getButton() == MouseEvent.BUTTON3)
 				&& setOfActionListeners.size() > 0) {
-			if (getClosestPathForLocation(e.getX(), e.getY())
-					.getLastPathComponent() instanceof DefaultMutableTreeNode) {
+			Object clickedOn = getClosestPathForLocation(e.getX(), e.getY())
+			.getLastPathComponent(); 
+			if (clickedOn instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) getSelectionPath()
 						.getLastPathComponent();
 				if (node.getUserObject() instanceof Reaction
@@ -259,6 +263,17 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 					currSBase = (SBase) node.getUserObject();
 					popup.setLocation(e.getLocationOnScreen());
 					popup.setVisible(true);
+				}
+				if (((DefaultMutableTreeNode) clickedOn).getUserObject() instanceof MathContainer) {
+					MathContainer mc = (MathContainer) ((DefaultMutableTreeNode) clickedOn).getUserObject();
+					System.out.println("hier");
+					JDialog dialog = new JDialog();
+					dialog.getContentPane().add(new JTree((TreeNode) mc.getMath()));
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.pack();
+					dialog.setModal(true);
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
 				}
 			}
 		}
