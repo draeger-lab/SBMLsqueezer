@@ -73,61 +73,6 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event
-	 * .TreeSelectionEvent)
-	 */
-	public void valueChanged(TreeSelectionEvent e) {
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-				.getLastSelectedPathComponent();
-		if (node == null)
-			// Nothing is selected.
-			return;
-		Object nodeInfo = node.getUserObject();
-		if (nodeInfo instanceof SBase) {
-			int proportionalLocation = getDividerLocation();
-			setRightComponent(createRightComponent((SBase) nodeInfo));
-			setDividerLocation(proportionalLocation);
-			validate();
-		} else {
-			// displayURL(helpURL);
-		}
-	}
-
-	/**
-	 * 
-	 * @param sbase
-	 * @return
-	 */
-	private JScrollPane createRightComponent(SBase sbase) {
-		JPanel p = new JPanel();
-		p.add(new SBasePanel(sbase));
-		return new JScrollPane(p, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	}
-
-	/**
-	 * 
-	 * @param model
-	 * @param keepDivider
-	 */
-	private void init(Model model, boolean keepDivider) {
-		int proportionalLocation = getDividerLocation();
-		tree = new SBMLTree(model);
-		tree.addTreeSelectionListener(this);
-		tree.setSelectionRow(0);
-		setLeftComponent(new JScrollPane(tree,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		setRightComponent(createRightComponent(model));
-		if (keepDivider)
-			setDividerLocation(proportionalLocation);
-		validate();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseAdded(org.sbml.AbstractSBase
 	 * )
 	 */
@@ -161,5 +106,60 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		// TreePath path = tree.getSelectionPath();
 		// init(sb.getModel(), true);
 		// tree.setSelectionPath(path);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event
+	 * .TreeSelectionEvent)
+	 */
+	public void valueChanged(TreeSelectionEvent e) {
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+				.getLastSelectedPathComponent();
+		if (node == null)
+			// Nothing is selected.
+			return;
+		Object nodeInfo = node.getUserObject();
+		if (nodeInfo instanceof SBase) {
+			int proportionalLocation = getDividerLocation();
+			setRightComponent(createRightComponent((SBase) nodeInfo));
+			setDividerLocation(proportionalLocation);
+		} else {
+			// displayURL(helpURL);
+		}
+	}
+
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private JScrollPane createRightComponent(SBase sbase) {
+		JPanel p = new JPanel();
+		p.add(new SBasePanel(sbase));
+		JScrollPane scroll = new JScrollPane(p, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		return scroll;
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param keepDivider
+	 */
+	private void init(Model model, boolean keepDivider) {
+		int proportionalLocation = getDividerLocation();
+		tree = new SBMLTree(model);
+		tree.addTreeSelectionListener(this);
+		tree.setSelectionRow(0);
+		setLeftComponent(new JScrollPane(tree,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		setRightComponent(createRightComponent(model));
+		if (keepDivider)
+			setDividerLocation(proportionalLocation);
+		validate();
 	}
 }

@@ -55,6 +55,17 @@ import org.sbml.squeezer.io.AbstractSBMLWriter;
  */
 public class LibSBMLWriter extends AbstractSBMLWriter {
 
+	static {
+		try {
+			System.loadLibrary("sbmlj");
+			// Extra check to be sure we have access to libSBML:
+			Class.forName("org.sbml.libsbml.libsbml");
+		} catch (Exception e) {
+			System.err.println("Error: could not load the libSBML library");
+			System.exit(1);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

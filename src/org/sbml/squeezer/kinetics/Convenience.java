@@ -91,8 +91,8 @@ public class Convenience extends GeneralizedMassAction {
 	 * java.util.List, java.util.List)
 	 */
 	// @Override
-	ASTNode createKineticEquation(List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		ASTNode numerator;
@@ -107,7 +107,8 @@ public class Convenience extends GeneralizedMassAction {
 					getParentSBMLObject().getId());
 			if (modE.size() > 1)
 				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
-			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
+			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
+					getVersion());
 			addParameter(p_kcatp);
 			numerator = new ASTNode(p_kcatp, this);
 
@@ -125,7 +126,8 @@ public class Convenience extends GeneralizedMassAction {
 				if (modE.size() > 1)
 					kM = concat(kM, underscore, modE.get(enzymeNum));
 				kM = append(kM, underscore, specref.getSpecies());
-				Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
+				Parameter p_kM = new Parameter(kM.toString(), getLevel(),
+						getVersion());
 				addParameter(p_kM);
 
 				denominator1[eductNum] = ASTNode.frac(new ASTNode(specref
@@ -148,14 +150,14 @@ public class Convenience extends GeneralizedMassAction {
 
 				// build numerator
 				if (specref.getStoichiometry() == 1d)
-					numerator = ASTNode.times(numerator, ASTNode.frac(
-							new ASTNode(specref.getSpeciesInstance(), this),
-							new ASTNode(p_kM, this)));
+					numerator.multiplyWith(ASTNode.frac(new ASTNode(specref
+							.getSpeciesInstance(), this), new ASTNode(p_kM,
+							this)));
 				else
-					numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode
-							.frac(new ASTNode(specref.getSpeciesInstance(),
-									this), new ASTNode(p_kM, this)),
-							new ASTNode(specref.getStoichiometry(), this)));
+					numerator.multiplyWith(ASTNode.pow(ASTNode.frac(
+							new ASTNode(specref.getSpeciesInstance(), this),
+							new ASTNode(p_kM, this)), specref
+							.getStoichiometry()));
 			}
 			if (denominator1.length == 1)
 				denominator = denominator1[0];
@@ -176,7 +178,8 @@ public class Convenience extends GeneralizedMassAction {
 						getParentSBMLObject().getId());
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
-				Parameter p_kcat = new Parameter(kcat.toString(), getLevel(), getVersion());
+				Parameter p_kcat = new Parameter(kcat.toString(), getLevel(),
+						getVersion());
 				addParameter(p_kcat);
 				numerator2 = new ASTNode(p_kcat, this);
 
@@ -192,7 +195,8 @@ public class Convenience extends GeneralizedMassAction {
 						kM = append(kM, underscore, modE.get(enzymeNum));
 					kM = append(kM, underscore, parentReaction.getProduct(
 							productNum).getSpeciesInstance().getId());
-					Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
+					Parameter p_kM = new Parameter(kM.toString(), getLevel(),
+							getVersion());
 					addParameter(p_kM);
 
 					SpeciesReference specRefP = parentReaction

@@ -45,6 +45,9 @@ public class SpeciesReference extends SimpleSpeciesReference {
 	 */
 	public SpeciesReference(SpeciesReference speciesReference) {
 		super(speciesReference);
+		if (speciesReference.isSetStoichiometryMath())
+			setStoichiometryMath(speciesReference.getStoichiometryMath().clone());
+		else setStoichiometry(speciesReference.getStoichiometry());
 	}
 
 	/*

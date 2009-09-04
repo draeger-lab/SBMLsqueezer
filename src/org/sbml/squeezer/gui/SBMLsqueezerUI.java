@@ -36,8 +36,6 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -69,6 +67,11 @@ import org.sbml.squeezer.resources.Resource;
  */
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		WindowListener, ChangeListener {
+	/**
+	 * Generated serial version uid.
+	 */
+	private static final long serialVersionUID = 5461285676322858005L;
+
 	private SBMLio sbmlIO;
 
 	public static final String SQUEEZE = "squeeze_reaction";
@@ -86,30 +89,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private Properties settings;
 
-	private static Icon latexIcon;
-	private static Icon lemonIcon;
-
-	/**
-	 * Generated serial version id.
-	 */
-	private static final long serialVersionUID = 5662654607939013825L;
-
-	static {
-		try {
-			lemonIcon = new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/Lemon_tiny.png")));
-			latexIcon = new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/SBML2LaTeX_vertical_tiny.png")));
-		} catch (IOException e) {
-			lemonIcon = null;
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * @throws HeadlessException
 	 */
-	public SBMLsqueezerUI(SBMLio io, Properties settings) throws HeadlessException {
+	public SBMLsqueezerUI(SBMLio io, Properties settings)
+			throws HeadlessException {
 		super("SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
 		this.settings = settings;
 		try {
@@ -154,8 +138,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(SQUEEZE)) {
 			if (e.getSource() instanceof Reaction) {
-				new KineticLawSelectionDialog(this, sbmlIO, (Reaction) e
-						.getSource());
+				new KineticLawSelectionDialog(this, settings, sbmlIO,
+						(Reaction) e.getSource());
 			} else /*
 					 * if (e.getSource() instanceof Model) {
 					 * KineticLawSelectionDialog klsd = new
@@ -163,12 +147,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					 * klsd.setVisible(true); } else
 					 */{
 				KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(
-						this, sbmlIO);
+						this, settings, sbmlIO);
 				klsd.setVisible(true);
 			}
 		} else if (e.getActionCommand().equals(TO_LATEX)) {
 			if (e.getSource() instanceof Reaction) {
-				new KineticLawSelectionDialog(this, (Reaction) e.getSource());
+				new KineticLawSelectionDialog(this, settings, (Reaction) e
+						.getSource());
 			} else if (e.getSource() instanceof Model) {
 				// TODO
 				System.err.println("not yet implemented");
@@ -178,8 +163,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				SBFileFilter filterTeX = new SBFileFilter(
 						SBFileFilter.TeX_FILES);
 				chooser.addChoosableFileFilter(filterTeX);
-				String dir = settings.get(CfgKeys.SAVE_DIR)
-						.toString();
+				String dir = settings.get(CfgKeys.SAVE_DIR).toString();
 				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 					// TODO
 					System.err.println("not yet implemented");
@@ -190,16 +174,18 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				}
 			}
 		} else if (e.getActionCommand().equals(OPEN_FILE)) {
-			JFileChooser chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser(settings.get(
+					CfgKeys.OPEN_DIR).toString());
 			SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
 			chooser.setFileFilter(filter);
-			Object dir = settings.get(CfgKeys.OPEN_DIR);
+			chooser.setAcceptAllFileFilterUsed(false);
+			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				addModel(sbmlIO.readModel(chooser.getSelectedFile()
 						.getAbsolutePath()));
 				String path = chooser.getSelectedFile().getAbsolutePath();
 				path = path.substring(0, path.lastIndexOf('/'));
-				if (!path.equals(dir))
+				if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
 					settings.put(CfgKeys.OPEN_DIR, path);
 			}
 		} else if (e.getActionCommand().equals(SAVE_FILE)) {
@@ -224,14 +210,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					else {
 						int write = JOptionPane.YES_OPTION;
 						if (out.exists())
-							write = JOptionPane.showConfirmDialog(this, out.getName()
+							write = JOptionPane.showConfirmDialog(this, out
+									.getName()
 									+ " already exists."
 									+ "Do you want to over write it?",
 									"Over write existing file?",
 									JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE);
 						if (write == JOptionPane.YES_OPTION)
-							sbmlIO.writeSelectedModelToSBML(out.getAbsolutePath());
+							sbmlIO.writeSelectedModelToSBML(out
+									.getAbsolutePath());
 					}
 				} else {
 					// TODO
@@ -348,7 +336,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.add(model.getId(), split);
 		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
 		setEnabled(true, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
-		pack();
 	}
 
 	private JMenuBar createMenuBar() {
@@ -386,11 +373,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				InputEvent.CTRL_DOWN_MASK));
 		squeezeItem.addActionListener(this);
 		squeezeItem.setActionCommand(SQUEEZE);
-		squeezeItem.setIcon(lemonIcon);
+		squeezeItem.setIcon(GUITools.LEMON_ICON_TINY);
 		JMenuItem latexItem = new JMenuItem("Export to LaTeX");
 		latexItem.setAccelerator(KeyStroke.getKeyStroke('E',
 				InputEvent.CTRL_DOWN_MASK));
-		latexItem.setIcon(latexIcon);
+		latexItem.setIcon(GUITools.LATEX_ICON_TINY);
 		latexItem.addActionListener(this);
 		latexItem.setActionCommand(TO_LATEX);
 		editMenu.add(squeezeItem);
@@ -436,14 +423,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		closeButton.addActionListener(this);
 		toolbar.add(closeButton);
 		toolbar.addSeparator();
-		if (lemonIcon != null) {
-			JButton squeezeButton = new JButton(lemonIcon);
+		if (GUITools.LEMON_ICON_TINY != null) {
+			JButton squeezeButton = new JButton(GUITools.LEMON_ICON_TINY);
 			squeezeButton.setActionCommand(SQUEEZE);
 			squeezeButton.addActionListener(this);
 			toolbar.add(squeezeButton);
 		}
-		if (latexIcon != null) {
-			JButton latexButton = new JButton(latexIcon);
+		if (GUITools.LATEX_ICON_TINY != null) {
+			JButton latexButton = new JButton(GUITools.LATEX_ICON_TINY);
 			latexButton.addActionListener(this);
 			latexButton.setActionCommand(TO_LATEX);
 			toolbar.add(latexButton);

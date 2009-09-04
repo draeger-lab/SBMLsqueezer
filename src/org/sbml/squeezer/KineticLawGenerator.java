@@ -138,10 +138,13 @@ public class KineticLawGenerator {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public BasicKineticLaw createKineticLaw(Reaction reaction,
+	public BasicKineticLaw createKineticLaw(Reaction r,
 			Kinetics kinetic, boolean reversibility)
 			throws ModificationException, RateLawNotApplicableException,
 			IOException, IllegalFormatException {
+		Reaction reaction = miniModel.getReaction(r.getId());
+		if (reaction == null)
+			reaction = r;
 		BasicKineticLaw kineticLaw;
 		reaction.setReversible(reversibility || reaction.getReversible());
 		switch (kinetic) {
@@ -261,9 +264,11 @@ public class KineticLawGenerator {
 	 * @return Returns a sorted array of possible kinetic equations for the
 	 *         given reaction in the model.
 	 */
-	public Kinetics[] identifyPossibleReactionTypes(Reaction reaction)
+	public Kinetics[] identifyPossibleReactionTypes(Reaction r)
 			throws RateLawNotApplicableException {
-
+		Reaction reaction = miniModel.getReaction(r.getId());
+		if (reaction == null)
+			reaction = r;
 		Set<Kinetics> types = new HashSet<Kinetics>();
 		types.add(Kinetics.GENERALIZED_MASS_ACTION);
 
@@ -895,6 +900,27 @@ public class KineticLawGenerator {
 	}
 
 	/**
+	 * Sets the SBO annotation of modifiers to more precise values in the local
+	 * mini copy of the model.
+	 * 
+	 * @param possibleEnzymes
+	 */
+	public void updateEnzymeKatalysis(Set<Integer> possibleEnzymes) {
+		for (Reaction r : miniModel.getListOfReactions()) {
+			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
+				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
+						&& !possibleEnzymes.contains(Integer.valueOf(modifier
+								.getSpeciesInstance().getSBOTerm())))
+					modifier.setSBOTerm(SBO.getCatalysis());
+				else if (SBO.isCatalyst(modifier.getSBOTerm())
+						&& possibleEnzymes.contains(Integer.valueOf(modifier
+								.getSpeciesInstance().getSBOTerm())))
+					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
+			}
+		}
+	}
+
+	/**
 	 * Creates a minimal copy of the original model that only covers those
 	 * elements needed for the creation of rate equations.
 	 * 
@@ -1005,27 +1031,6 @@ public class KineticLawGenerator {
 		} else if (columnRank == model.getNumReactions())
 			fullRank = true;
 		return fullRank;
-	}
-
-	/**
-	 * Sets the SBO annotation of modifiers to more precise values in the local
-	 * mini copy of the model.
-	 * 
-	 * @param possibleEnzymes
-	 */
-	public void updateEnzymeKatalysis(Set<Integer> possibleEnzymes) {
-		for (Reaction r : miniModel.getListOfReactions()) {
-			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
-				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
-						&& !possibleEnzymes.contains(Integer.valueOf(modifier
-								.getSpeciesInstance().getSBOTerm())))
-					modifier.setSBOTerm(SBO.getCatalysis());
-				else if (SBO.isCatalyst(modifier.getSBOTerm())
-						&& possibleEnzymes.contains(Integer.valueOf(modifier
-								.getSpeciesInstance().getSBOTerm())))
-					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
-			}
-		}
 	}
 
 	/**
