@@ -133,9 +133,26 @@ public class ASTNode implements TreeNode {
 		if (!(exponent.isInteger() && exponent.getInteger() == 1)
 				&& !(exponent.getType() == Constants.AST_REAL && exponent
 						.getReal() == 1d)) {
-			setParentSBMLObject(exponent, basis.getParentSBMLObject());
-			basis.raiseByThePowerOf(exponent);
+			if ((exponent.isInteger() && exponent.getInteger() == 0)
+					|| (exponent.getType() == Constants.AST_REAL && exponent
+							.getReal() == 0d))
+				basis = new ASTNode(1, basis.getParentSBMLObject());
+			else {
+				setParentSBMLObject(exponent, basis.getParentSBMLObject());
+				basis.raiseByThePowerOf(exponent);
+			}
 		}
+		return basis;
+	}
+
+	/**
+	 * 
+	 * @param basis
+	 * @param exponent
+	 * @return
+	 */
+	public static ASTNode pow(ASTNode basis, double exponent) {
+		basis.raiseByThePowerOf(exponent);
 		return basis;
 	}
 

@@ -378,25 +378,21 @@ public class SBasePanel extends JPanel {
 		}
 		if (sbase.isSetNotes() || editable) {
 			lh.add(new JLabel("Notes: "), 0, ++row, 1, 1, 1, 1);
-			JEditorPane notesArea = new JEditorPane("text/html", "");
+			String text = sbase.getNotesString();
+			if (text.startsWith("<notes") && text.endsWith("</notes>"))
+				text = text.substring(8, sbase.getNotesString().length() - 9);
+			text = text.trim();
+			if (!text.startsWith("<body") && !text.endsWith("</body>"))
+				text = "<body>" + text + "</body>";
+			JEditorPane notesArea = new JEditorPane("text/html",
+					"<html><head></head>" + text + "</html>");
+			notesArea.setPreferredSize(new Dimension(400, 200));
 			notesArea.setEditable(editable);
-			if (sbase.isSetNotes()) {
-				String text = sbase.getNotesString();
-				if (text.startsWith("<notes") && text.endsWith("</notes>"))
-					text = text.substring(8,
-							sbase.getNotesString().length() - 9);
-				text = text.trim();
-				if (!text.startsWith("<body") && !text.endsWith("</body>"))
-					text = "<body>" + text + "</body>";
-				text = "<html><head></head>" + text + "</html>";
-				notesArea.setText(text);
-			}
 			notesArea.addHyperlinkListener(new SystemBrowser());
 			notesArea.setBorder(BorderFactory.createLoweredBevelBorder());
 			JScrollPane scroll = new JScrollPane(notesArea,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			notesArea.setPreferredSize(new Dimension(350, 200));
 			lh.add(scroll, 1, row, 1, 1, 1, 1);
 		}
 		lh.add(new JLabel("SBO term: "), 0, ++row, 1, 1, 1, 1);
@@ -533,9 +529,10 @@ public class SBasePanel extends JPanel {
 		StringBuffer laTeXpreview = new StringBuffer();
 		laTeXpreview.append(LaTeX.eqBegin);
 		if (s.isSetUnits())
-			laTeXpreview.append((new LaTeXExport()).format(s.getUnitsInstance())
-					.toString().replace("\\up", "\\").replace("mathrm", "mbox")
-					.replace("text", "mbox").replace("mathtt", "mbox"));
+			laTeXpreview.append((new LaTeXExport())
+					.format(s.getUnitsInstance()).toString().replace("\\up",
+							"\\").replace("mathrm", "mbox").replace("text",
+							"mbox").replace("mathtt", "mbox"));
 		laTeXpreview.append(LaTeX.eqEnd);
 		JPanel preview = new JPanel(new BorderLayout());
 		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);

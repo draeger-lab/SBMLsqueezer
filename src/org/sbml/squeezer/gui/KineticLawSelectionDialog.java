@@ -22,21 +22,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.Properties;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -112,12 +108,17 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private JDialog progressDialog;
 
+	private Properties settings;
+
 	/**
-	 * Constructor
+	 * 
+	 * @param owner
+	 * @param settings
 	 */
-	public KineticLawSelectionDialog(JFrame owner) {
+	public KineticLawSelectionDialog(JFrame owner, Properties settings) {
 		super(owner, "SBMLsqueezer " + SBMLsqueezer.getVersionNumber(), true);
-		sbmlIO = null;
+		this.settings = settings;
+		this.sbmlIO = null;
 		setAlwaysOnTop(true);
 	}
 
@@ -127,24 +128,13 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * 
 	 * @param model
 	 */
-	public KineticLawSelectionDialog(JFrame owner, Model model) {
-		this(owner);
-		ImageIcon icon = null;
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/Lemon_small.png"));
-			icon = new ImageIcon(image);
-			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(null, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
+	public KineticLawSelectionDialog(JFrame owner, Properties settings,
+			Model model) {
+		this(owner, settings);
 		LaTeXExportDialogPanel panel = new LaTeXExportDialogPanel();
 		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				icon) == JOptionPane.OK_OPTION) {
+				GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
 			try {
 				BufferedWriter buffer = new BufferedWriter(new FileWriter(panel
 						.getTeXFile()));
@@ -162,21 +152,24 @@ public class KineticLawSelectionDialog extends JDialog implements
 	}
 
 	/**
+	 * Constructor to save one reaction in a LaTeX file.
 	 * 
 	 * @param model
 	 * @param reaction
 	 */
-	public KineticLawSelectionDialog(JFrame owner, Reaction reaction) {
-		this(owner);
-		JFileChooser chooser = new JFileChooser();
-		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
-		chooser.setFileFilter(ff1);
-		File file = null;
-		int state = chooser.showOpenDialog(null);
-		if (state == JFileChooser.APPROVE_OPTION)
+	public KineticLawSelectionDialog(JFrame owner, Properties settings,
+			Reaction reaction) {
+		this(owner, settings);
+		JFileChooser chooser = new JFileChooser(settings.get(CfgKeys.SAVE_DIR)
+				.toString());
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setFileFilter(new SBFileFilter(SBFileFilter.TeX_FILES));
+		chooser.setMultiSelectionEnabled(false);
+		if (chooser.showOpenDialog(owner) == JFileChooser.APPROVE_OPTION)
 			try {
-				file = chooser.getSelectedFile();
-				BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
+				BufferedWriter buffer = new BufferedWriter(new FileWriter(
+						chooser.getSelectedFile()));
 				buffer.write(new LaTeXExport().toLaTeX(reaction).toString());
 				buffer.close();
 			} catch (IOException exc) {
@@ -189,10 +182,13 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/**
 	 * DEFAULT Constructor
 	 * 
+	 * @param owner
+	 * @param settings
 	 * @param sbmlIO
 	 */
-	public KineticLawSelectionDialog(JFrame owner, SBMLio sbmlIO) {
-		this(owner);
+	public KineticLawSelectionDialog(JFrame owner, Properties settings,
+			SBMLio sbmlIO) {
+		this(owner, settings);
 		this.sbmlIO = sbmlIO;
 		init();
 	}
@@ -204,32 +200,22 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param sbmlIO
 	 * @param reaction
 	 */
-	public KineticLawSelectionDialog(JFrame owner, SBMLio sbmlIO,
-			Reaction reaction) {
-		this(owner);
-		this.sbmlIO = sbmlIO;
-
+	public KineticLawSelectionDialog(JFrame owner, Properties settings,
+			SBMLio sbmlIO, Reaction reaction) {
+		this(owner, settings, sbmlIO);
 		Model model = reaction.getModel();
-		ImageIcon icon = null;
 		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/Lemon_small.png"));
-			icon = new ImageIcon(image);
-			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(owner, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
-		try {
-			klg = new KineticLawGenerator(model);
+			Boolean forAll = (Boolean) settings
+					.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION);
+			settings.put(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
+					Boolean.TRUE);
+			klg = new KineticLawGenerator(model, settings);
 			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(
 					klg, reaction);
 			if (JOptionPane.showConfirmDialog(this, messagePanel,
 					"SBMLsqueezer " + SBMLsqueezer.getVersionNumber(),
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-					icon) == JOptionPane.OK_OPTION) {
+					GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
 					Kinetics equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
@@ -243,6 +229,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 					sbmlIO.saveChanges();
 				}
 			}
+			settings
+					.put(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION, forAll);
 		} catch (RateLawNotApplicableException exc) {
 			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
 					+ "</html>", exc.getClass().getName(),
@@ -259,21 +247,20 @@ public class KineticLawSelectionDialog extends JDialog implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			String text = ((JButton) e.getSource()).getText();
 			if (text.equals("show options")) {
 				showSettingsPanel();
 			} else if (text.equals("hide options")) {
-				try {
-					Image image = ImageIO.read(Resource.class
-							.getResource("img/rightarrow.png"));
-					image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-					options.setIcon(new ImageIcon(image));
-					options.setIconTextGap(5);
-				} catch (IOException exc) {
-					exc.printStackTrace();
-				}
+				options.setIcon(GUITools.RIGHT_ARROW);
+				options.setIconTextGap(5);
 				options.setText("show options");
 				options
 						.setToolTipText("<html>Customize the advanced settings.</html>");
@@ -296,6 +283,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 			} else if (text.equals("Cancel")) {
 				dispose();
+				klg = null;
 			} else if (text.equals("Restore")) {
 				settingsPanel.restoreDefaults();
 				getContentPane().remove(settingsPanel);
@@ -305,7 +293,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 			} else if (text.equals("Generate")) {
 				if (sbmlIO != null)
 					try {
-						Properties settings = new Properties();
 						settings
 								.put(
 										CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED,
@@ -668,6 +655,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private JSettingsPanel getJSettingsPanel() {
 		if (settingsPanel == null) {
 			settingsPanel = new JSettingsPanel();
+			// TODO: use settings for the initialization!!
 			// settingsPanel.setBackground(Color.WHITE);
 		}
 		return settingsPanel;
@@ -680,20 +668,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private JPanel initOptionsPanel() {
 		JPanel p = new JPanel(new BorderLayout());
-
 		options = new JButton("show options");
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/rightarrow.png"));
-			image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-			options.setIcon(new ImageIcon(image));
-			options.setIconTextGap(5);
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
+		options.setIcon(GUITools.RIGHT_ARROW);
+		options.setIconTextGap(5);
 		options.setBorderPainted(false);
 		options.setSize(150, 20);
 		options.setToolTipText("Customize the advanced settings.");
@@ -702,20 +679,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 		panel.add(options);
 		options.setBackground(new Color(panel.getBackground().getRGB()));
 		p.add(panel, BorderLayout.NORTH);
-
 		return p;
 	}
 
 	private void showSettingsPanel() {
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/downarrow.png"));
-			image = image.getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-			options.setIcon(new ImageIcon(image));
-			options.setIconTextGap(5);
-		} catch (IOException exc) {
-			exc.printStackTrace();
-		}
+		options.setIcon(GUITools.DOWN_ARROW);
+		options.setIconTextGap(5);
 		options.setToolTipText("<html>Hide detailed options</html>");
 		options.setText("hide options");
 		settingsPanel = getJSettingsPanel();
@@ -739,33 +708,21 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void init() {
 		centralPanel = initOptionsPanel();
-
 		setLayout(new BorderLayout());
 		getContentPane().add(centralPanel, BorderLayout.CENTER);
-
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/logo_small.png")); // title_small.jpg
-			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
-			JLabel label = new JLabel(new ImageIcon(image));
-			label.setBackground(Color.WHITE);
-			label.setText("<html><body><br><br><br><br><br><br>Version "
-					+ SBMLsqueezer.getVersionNumber() + "</body></html>");
-			JPanel p = new JPanel();
-			p.add(label);
-			p.setBackground(Color.WHITE);
-			JScrollPane scroll = new JScrollPane(p,
-					JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			scroll.setBackground(Color.WHITE);
-			getContentPane().add(scroll, BorderLayout.NORTH);
-			// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
+		JLabel label = new JLabel(GUITools.LOGO_SMALL);
+		label.setBackground(Color.WHITE);
+		label.setText("<html><body><br><br><br><br><br><br>Version "
+				+ SBMLsqueezer.getVersionNumber() + "</body></html>");
+		JPanel p = new JPanel();
+		p.add(label);
+		p.setBackground(Color.WHITE);
+		JScrollPane scroll = new JScrollPane(p,
+				JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setBackground(Color.WHITE);
+		getContentPane().add(scroll, BorderLayout.NORTH);
+		// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
 
 		footPanel = getFootPanel(0);
 		getContentPane().add(footPanel, BorderLayout.SOUTH);

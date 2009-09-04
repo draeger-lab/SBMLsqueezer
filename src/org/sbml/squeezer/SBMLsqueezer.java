@@ -112,8 +112,15 @@ public class SBMLsqueezer extends PluginAction {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.loadLibrary("sbmlj");
-		new SBMLsqueezer(args);
+		try {
+			System.loadLibrary("sbmlj");
+			// Extra check to be sure we have access to libSBML:
+			Class.forName("org.sbml.libsbml.libsbml");
+			new SBMLsqueezer(args);
+		} catch (Exception e) {
+			System.err.println("Error: could not load the libSBML library");
+			System.exit(1);
+		}
 	}
 
 	/**
@@ -395,19 +402,22 @@ public class SBMLsqueezer extends PluginAction {
 		SBMLio sbmlIO = new SBMLio(new PluginSBMLReader(plugin
 				.getSelectedModel(), possibleEnzymes), new PluginSBMLWriter(
 				plugin));
+		Properties settings = initProperties();
 		if (mode.equals(plugin.getMainPluginItemText()))
-			(new KineticLawSelectionDialog(null, sbmlIO)).setVisible(true);
+			(new KineticLawSelectionDialog(null, settings, sbmlIO))
+					.setVisible(true);
 		else if (mode.equals(plugin.getSqueezeContextMenuItemText()))
-			new KineticLawSelectionDialog(null, sbmlIO, sbmlIO
+			new KineticLawSelectionDialog(null, settings, sbmlIO, sbmlIO
 					.readReaction((PluginReaction) plugin
 							.getSelectedReactionNode().get(0)));
 		else if (mode.equals(plugin.getExportContextMenuItemText()))
-			new KineticLawSelectionDialog(null, sbmlIO.getSelectedModel()
-					.getReaction(
+			new KineticLawSelectionDialog(null, settings, sbmlIO
+					.getSelectedModel().getReaction(
 							((PluginReaction) plugin.getSelectedReactionNode()
 									.get(0)).getId()));
 		else if (mode.equals(plugin.getExporterItemText()))
 			if (plugin.getSelectedModel() != null)
-				new KineticLawSelectionDialog(null, sbmlIO.getSelectedModel());
+				new KineticLawSelectionDialog(null, settings, sbmlIO
+						.getSelectedModel());
 	}
 }

@@ -42,7 +42,6 @@ import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
@@ -337,6 +336,12 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		return possibleTypes[i];
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws RateLawNotApplicableException
+	 * @throws IOException
+	 */
 	private Box initKineticsPanel() throws RateLawNotApplicableException,
 			IOException {
 		possibleTypes = klg.identifyPossibleReactionTypes(reaction);
