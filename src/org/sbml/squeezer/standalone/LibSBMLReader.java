@@ -42,7 +42,7 @@ import org.sbml.Reaction;
 import org.sbml.Rule;
 import org.sbml.SBO;
 import org.sbml.SBase;
-import org.sbml.SIUnit;
+import org.sbml.UnitKind;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.SpeciesType;
@@ -66,24 +66,26 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	private Set<SBMLDocument> setOfDocuments;
 	private Set<Integer> possibleEnzymes;
 	private static final String error = " must be an instance of ";
+	private org.sbml.libsbml.Model originalModel;
 
 	/**
-	 * get a libsbml model converts it to sbmlsquezzer format and save the new
-	 * model
 	 * 
-	 * @param model
+	 * @param possibleEnzymes
 	 */
-	public LibSBMLReader(org.sbml.libsbml.Model model,
-			Set<Integer> possibleEnzymes) {
-		super(model);
-		this.possibleEnzymes = possibleEnzymes;
-		this.setOfDocuments = new HashSet<SBMLDocument>();
-	}
-
 	public LibSBMLReader(Set<Integer> possibleEnzymes) {
 		super();
 		this.possibleEnzymes = possibleEnzymes;
 		setOfDocuments = new HashSet<SBMLDocument>();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.io.AbstractSBMLReader#getOriginalModel()
+	 */
+	// @Override
+	public Object getOriginalModel() {
+		return originalModel;
 	}
 
 	/*
@@ -267,40 +269,47 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			model = doc.getModel();
 		}
 		if (model instanceof org.sbml.libsbml.Model) {
-			org.sbml.libsbml.Model m = (org.sbml.libsbml.Model) model;
-			this.model = new Model(m.getId());
+			this.originalModel = (org.sbml.libsbml.Model) model;
+			this.model = new Model(originalModel.getId());
 			int i;
-			copyNamedSBaseProperties(this.model, m);
-			for (i = 0; i < m.getNumFunctionDefinitions(); i++)
-				this.model.addFunctionDefinition(readFunctionDefinition(m
-						.getFunctionDefinition(i)));
-			for (i = 0; i < m.getNumUnitDefinitions(); i++)
-				this.model.addUnitDefinition(readUnitDefinition(m
+			copyNamedSBaseProperties(this.model, originalModel);
+			for (i = 0; i < originalModel.getNumFunctionDefinitions(); i++)
+				this.model
+						.addFunctionDefinition(readFunctionDefinition(originalModel
+								.getFunctionDefinition(i)));
+			for (i = 0; i < originalModel.getNumUnitDefinitions(); i++)
+				this.model.addUnitDefinition(readUnitDefinition(originalModel
 						.getUnitDefinition(i)));
 			// This is something, libSBML wouldn't do...
 			addPredefinedUnitDefinitions(this.model);
-			for (i = 0; i < m.getNumCompartmentTypes(); i++)
-				this.model.addCompartmentType(readCompartmentType(m
+			for (i = 0; i < originalModel.getNumCompartmentTypes(); i++)
+				this.model.addCompartmentType(readCompartmentType(originalModel
 						.getCompartmentType(i)));
-			for (i = 0; i < m.getNumSpeciesTypes(); i++)
-				this.model.addSpeciesType(readSpeciesType(m.getSpeciesType(i)));
-			for (i = 0; i < m.getNumCompartments(); i++)
-				this.model.addCompartment(readCompartment(m.getCompartment(i)));
-			for (i = 0; i < m.getNumSpecies(); i++)
-				this.model.addSpecies(readSpecies(m.getSpecies(i)));
-			for (i = 0; i < m.getNumParameters(); i++)
-				this.model.addParameter(readParameter(m.getParameter(i)));
-			for (i = 0; i < m.getNumInitialAssignments(); i++)
-				this.model.addInitialAssignment(readInitialAssignment(m
-						.getInitialAssignment(i)));
-			for (i = 0; i < m.getNumRules(); i++)
-				this.model.addRule(readRule(m.getRule(i)));
-			for (i = 0; i < m.getNumConstraints(); i++)
-				this.model.addConstraint(readConstraint(m.getConstraint(i)));
-			for (i = 0; i < m.getNumReactions(); i++)
-				this.model.addReaction(readReaction(m.getReaction(i)));
-			for (i = 0; i < m.getNumEvents(); i++)
-				this.model.addEvent(readEvent(m.getEvent(i)));
+			for (i = 0; i < originalModel.getNumSpeciesTypes(); i++)
+				this.model.addSpeciesType(readSpeciesType(originalModel
+						.getSpeciesType(i)));
+			for (i = 0; i < originalModel.getNumCompartments(); i++)
+				this.model.addCompartment(readCompartment(originalModel
+						.getCompartment(i)));
+			for (i = 0; i < originalModel.getNumSpecies(); i++)
+				this.model.addSpecies(readSpecies(originalModel.getSpecies(i)));
+			for (i = 0; i < originalModel.getNumParameters(); i++)
+				this.model.addParameter(readParameter(originalModel
+						.getParameter(i)));
+			for (i = 0; i < originalModel.getNumInitialAssignments(); i++)
+				this.model
+						.addInitialAssignment(readInitialAssignment(originalModel
+								.getInitialAssignment(i)));
+			for (i = 0; i < originalModel.getNumRules(); i++)
+				this.model.addRule(readRule(originalModel.getRule(i)));
+			for (i = 0; i < originalModel.getNumConstraints(); i++)
+				this.model.addConstraint(readConstraint(originalModel
+						.getConstraint(i)));
+			for (i = 0; i < originalModel.getNumReactions(); i++)
+				this.model.addReaction(readReaction(originalModel
+						.getReaction(i)));
+			for (i = 0; i < originalModel.getNumEvents(); i++)
+				this.model.addEvent(readEvent(originalModel.getEvent(i)));
 			addAllSBaseChangeListenersTo(this.model);
 			return this.model;
 		}
@@ -522,112 +531,112 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		copySBaseProperties(u, libUnit);
 		switch (libUnit.getKind()) {
 		case libsbmlConstants.UNIT_KIND_AMPERE:
-			u.setKind(SIUnit.UNIT_KIND_AMPERE);
+			u.setKind(UnitKind.UNIT_KIND_AMPERE);
 			break;
 		case libsbmlConstants.UNIT_KIND_BECQUEREL:
-			u.setKind(SIUnit.UNIT_KIND_BECQUEREL);
+			u.setKind(UnitKind.UNIT_KIND_BECQUEREL);
 			break;
 		case libsbmlConstants.UNIT_KIND_CANDELA:
-			u.setKind(SIUnit.UNIT_KIND_CANDELA);
+			u.setKind(UnitKind.UNIT_KIND_CANDELA);
 			break;
 		case libsbmlConstants.UNIT_KIND_CELSIUS:
-			u.setKind(SIUnit.UNIT_KIND_CELSIUS);
+			u.setKind(UnitKind.UNIT_KIND_CELSIUS);
 			break;
 		case libsbmlConstants.UNIT_KIND_COULOMB:
-			u.setKind(SIUnit.UNIT_KIND_COULOMB);
+			u.setKind(UnitKind.UNIT_KIND_COULOMB);
 			break;
 		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
-			u.setKind(SIUnit.UNIT_KIND_DIMENSIONLESS);
+			u.setKind(UnitKind.UNIT_KIND_DIMENSIONLESS);
 			break;
 		case libsbmlConstants.UNIT_KIND_FARAD:
-			u.setKind(SIUnit.UNIT_KIND_FARAD);
+			u.setKind(UnitKind.UNIT_KIND_FARAD);
 			break;
 		case libsbmlConstants.UNIT_KIND_GRAM:
-			u.setKind(SIUnit.UNIT_KIND_GRAM);
+			u.setKind(UnitKind.UNIT_KIND_GRAM);
 			break;
 		case libsbmlConstants.UNIT_KIND_GRAY:
-			u.setKind(SIUnit.UNIT_KIND_GRAY);
+			u.setKind(UnitKind.UNIT_KIND_GRAY);
 			break;
 		case libsbmlConstants.UNIT_KIND_HENRY:
-			u.setKind(SIUnit.UNIT_KIND_HENRY);
+			u.setKind(UnitKind.UNIT_KIND_HENRY);
 			break;
 		case libsbmlConstants.UNIT_KIND_HERTZ:
-			u.setKind(SIUnit.UNIT_KIND_HERTZ);
+			u.setKind(UnitKind.UNIT_KIND_HERTZ);
 			break;
 		case libsbmlConstants.UNIT_KIND_INVALID:
-			u.setKind(SIUnit.UNIT_KIND_INVALID);
+			u.setKind(UnitKind.UNIT_KIND_INVALID);
 			break;
 		case libsbmlConstants.UNIT_KIND_ITEM:
-			u.setKind(SIUnit.UNIT_KIND_ITEM);
+			u.setKind(UnitKind.UNIT_KIND_ITEM);
 			break;
 		case libsbmlConstants.UNIT_KIND_JOULE:
-			u.setKind(SIUnit.UNIT_KIND_JOULE);
+			u.setKind(UnitKind.UNIT_KIND_JOULE);
 			break;
 		case libsbmlConstants.UNIT_KIND_KATAL:
-			u.setKind(SIUnit.UNIT_KIND_KATAL);
+			u.setKind(UnitKind.UNIT_KIND_KATAL);
 			break;
 		case libsbmlConstants.UNIT_KIND_KELVIN:
-			u.setKind(SIUnit.UNIT_KIND_KELVIN);
+			u.setKind(UnitKind.UNIT_KIND_KELVIN);
 			break;
 		case libsbmlConstants.UNIT_KIND_KILOGRAM:
-			u.setKind(SIUnit.UNIT_KIND_KILOGRAM);
+			u.setKind(UnitKind.UNIT_KIND_KILOGRAM);
 			break;
 		case libsbmlConstants.UNIT_KIND_LITER:
-			u.setKind(SIUnit.UNIT_KIND_LITER);
+			u.setKind(UnitKind.UNIT_KIND_LITER);
 			break;
 		case libsbmlConstants.UNIT_KIND_LITRE:
-			u.setKind(SIUnit.UNIT_KIND_LITRE);
+			u.setKind(UnitKind.UNIT_KIND_LITRE);
 			break;
 		case libsbmlConstants.UNIT_KIND_LUMEN:
-			u.setKind(SIUnit.UNIT_KIND_LUMEN);
+			u.setKind(UnitKind.UNIT_KIND_LUMEN);
 			break;
 		case libsbmlConstants.UNIT_KIND_LUX:
-			u.setKind(SIUnit.UNIT_KIND_LUX);
+			u.setKind(UnitKind.UNIT_KIND_LUX);
 			break;
 		case libsbmlConstants.UNIT_KIND_METER:
-			u.setKind(SIUnit.UNIT_KIND_METER);
+			u.setKind(UnitKind.UNIT_KIND_METER);
 			break;
 		case libsbmlConstants.UNIT_KIND_METRE:
-			u.setKind(SIUnit.UNIT_KIND_METRE);
+			u.setKind(UnitKind.UNIT_KIND_METRE);
 			break;
 		case libsbmlConstants.UNIT_KIND_MOLE:
-			u.setKind(SIUnit.UNIT_KIND_MOLE);
+			u.setKind(UnitKind.UNIT_KIND_MOLE);
 			break;
 		case libsbmlConstants.UNIT_KIND_NEWTON:
-			u.setKind(SIUnit.UNIT_KIND_NEWTON);
+			u.setKind(UnitKind.UNIT_KIND_NEWTON);
 			break;
 		case libsbmlConstants.UNIT_KIND_OHM:
-			u.setKind(SIUnit.UNIT_KIND_OHM);
+			u.setKind(UnitKind.UNIT_KIND_OHM);
 			break;
 		case libsbmlConstants.UNIT_KIND_PASCAL:
-			u.setKind(SIUnit.UNIT_KIND_PASCAL);
+			u.setKind(UnitKind.UNIT_KIND_PASCAL);
 			break;
 		case libsbmlConstants.UNIT_KIND_RADIAN:
-			u.setKind(SIUnit.UNIT_KIND_RADIAN);
+			u.setKind(UnitKind.UNIT_KIND_RADIAN);
 			break;
 		case libsbmlConstants.UNIT_KIND_SECOND:
-			u.setKind(SIUnit.UNIT_KIND_SECOND);
+			u.setKind(UnitKind.UNIT_KIND_SECOND);
 			break;
 		case libsbmlConstants.UNIT_KIND_SIEMENS:
-			u.setKind(SIUnit.UNIT_KIND_SIEMENS);
+			u.setKind(UnitKind.UNIT_KIND_SIEMENS);
 			break;
 		case libsbmlConstants.UNIT_KIND_SIEVERT:
-			u.setKind(SIUnit.UNIT_KIND_SIEVERT);
+			u.setKind(UnitKind.UNIT_KIND_SIEVERT);
 			break;
 		case libsbmlConstants.UNIT_KIND_STERADIAN:
-			u.setKind(SIUnit.UNIT_KIND_STERADIAN);
+			u.setKind(UnitKind.UNIT_KIND_STERADIAN);
 			break;
 		case libsbmlConstants.UNIT_KIND_TESLA:
-			u.setKind(SIUnit.UNIT_KIND_TESLA);
+			u.setKind(UnitKind.UNIT_KIND_TESLA);
 			break;
 		case libsbmlConstants.UNIT_KIND_VOLT:
-			u.setKind(SIUnit.UNIT_KIND_VOLT);
+			u.setKind(UnitKind.UNIT_KIND_VOLT);
 			break;
 		case libsbmlConstants.UNIT_KIND_WATT:
-			u.setKind(SIUnit.UNIT_KIND_WATT);
+			u.setKind(UnitKind.UNIT_KIND_WATT);
 			break;
 		case libsbmlConstants.UNIT_KIND_WEBER:
-			u.setKind(SIUnit.UNIT_KIND_WEBER);
+			u.setKind(UnitKind.UNIT_KIND_WEBER);
 			break;
 		}
 		u.setExponent(libUnit.getExponent());

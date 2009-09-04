@@ -39,6 +39,61 @@ public class UnitDefinition extends AbstractNamedSBase {
 		super(id);
 		initDefaults();
 	}
+	
+	/**
+	 * Predefined unit for substance.
+	 */
+	public static final UnitDefinition SUBSTANCE = getPredefinedUnitd("substance");
+	/**
+	 * Predefined unit for volume. 
+	 */
+	public static final UnitDefinition VOLUME = getPredefinedUnitd("volume");
+	/**
+	 * Predefined unit for area.
+	 */
+	public static final UnitDefinition AREA = getPredefinedUnitd("area");
+	/**
+	 * Predefined unit for length.
+	 */
+	public static final UnitDefinition LENGTH = getPredefinedUnitd("length");
+	/**
+	 * Predefined unit for time.
+	 */
+	public static final UnitDefinition TIME = getPredefinedUnitd("time");
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private static final UnitDefinition getPredefinedUnitd(String id) {
+		id = id.toLowerCase();
+		Unit u = new Unit();
+		String name = "Predefined unit ";
+		if (id.equals("substance")) {
+			u.setKind(UnitKind.UNIT_KIND_MOLE);
+			name += "mole";
+		} else if (id.equals("volume")) {
+			u.setKind(UnitKind.UNIT_KIND_LITRE);
+			name += "litre";
+		} else if (id.equals("area")) {
+			u.setKind(UnitKind.UNIT_KIND_METRE);
+			u.setExponent(2);
+			name += "square metre";
+		} else if (id.equals("length")) {
+			u.setKind(UnitKind.UNIT_KIND_METRE);
+			name += "metre";
+		} else if (id.equals("time")) {
+			u.setKind(UnitKind.UNIT_KIND_SECOND);
+			name += "second";
+		} else
+			throw new IllegalArgumentException(
+					"no predefined unit available for " + id);
+		UnitDefinition ud = new UnitDefinition(id);
+		ud.setName(name);
+		ud.addUnit(u);
+		return ud;
+	}
 
 	/**
 	 * 

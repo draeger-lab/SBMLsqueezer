@@ -18,6 +18,8 @@
  */
 package org.sbml;
 
+import org.sbml.squeezer.io.SBaseChangedListener;
+
 
 
 /**
@@ -28,6 +30,13 @@ package org.sbml;
  */
 public interface SBase {
 	
+	/**
+	 * adds a listener to the SBase object. from now on changes will be saved
+	 * 
+	 * @param l
+	 */
+	public void addChangeListener(SBaseChangedListener l);
+
 	/**
 	 * 
 	 * @return
@@ -120,7 +129,7 @@ public interface SBase {
 	 * @param term
 	 */
 	public void setSBOTerm(int term);
-
+	
 	/**
 	 * all listeners are informed about the change in this object
 	 */

@@ -96,4 +96,12 @@ public class InitialAssignment extends MathContainer {
 		return new InitialAssignment(this);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetSymbol() {
+		return symbol != null;
+	}
+
 }

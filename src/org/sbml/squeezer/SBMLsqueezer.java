@@ -77,39 +77,28 @@ public class SBMLsqueezer extends PluginAction {
 		SBML_FILE
 	}
 
+	/**
+	 * 
+	 */
 	public Set<Integer> possibleEnzymes;
-
+	/**
+	 * 
+	 */
 	private final static String userConfigFile = System
 			.getProperty("user.home")
 			+ "/.SBMLsqueezer/SBMLsqueezer.cfg";
-	private final static String configFile = "cfg/SBMLsqueezer.cfg";
-
 	/**
-	 * Configuration of SBMLsqueezer
+	 * 
 	 */
-	private static Properties properties;
-
+	private final static String configFile = "cfg/SBMLsqueezer.cfg";
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.2.2";
-
 	/**
 	 * A serial version number.
 	 */
 	private static final long serialVersionUID = 4134514954192751545L;
-
-	static {
-		properties = initProperties();
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static Object getProperty(Object key) {
-		return properties.get(key.toString());
-	}
 
 	/**
 	 * 
@@ -130,8 +119,8 @@ public class SBMLsqueezer extends PluginAction {
 	/**
 	 * 
 	 */
-	public static void saveProperties() {
-		if (!initProperties().equals(properties))
+	public static void saveProperties(Properties settings) {
+		if (!initProperties().equals(settings))
 			try {
 				RandomAccessFile file = new RandomAccessFile(userConfigFile,
 						"rw");
@@ -139,26 +128,16 @@ public class SBMLsqueezer extends PluginAction {
 				file.close();
 				BufferedWriter bw = new BufferedWriter(new FileWriter(
 						userConfigFile));
-				for (Object key : properties.keySet()) {
+				for (Object key : settings.keySet()) {
 					bw.append(key.toString());
 					bw.append('=');
-					bw.append(properties.get(key).toString());
+					bw.append(settings.get(key).toString());
 					bw.newLine();
 				}
 				bw.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-	}
-
-	/**
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public static Object setProperty(Object key, Object value) {
-		return properties.put(key.toString(), value);
 	}
 
 	/**
@@ -194,6 +173,19 @@ public class SBMLsqueezer extends PluginAction {
 				br.close();
 			}
 			properties = Resource.readProperties(userConfigFile);
+			Object keys[] = properties.keySet().toArray();
+			for (int i = keys.length - 1; i > 0; i--) {
+				CfgKeys k = CfgKeys.valueOf(keys[i].toString());
+				String val = properties.get(keys[i]).toString();
+				properties.remove(keys[i]);
+				if (val.startsWith("user."))
+					properties.put(k, System.getProperty(val));
+				else if (val.equalsIgnoreCase("true")
+						|| val.equalsIgnoreCase("false"))
+					properties.put(k, Boolean.parseBoolean(val));
+				else
+					properties.put(k, val);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
@@ -247,7 +239,7 @@ public class SBMLsqueezer extends PluginAction {
 	 */
 	private SBMLsqueezerPlugin plugin;
 
-	SBMLio sbmlIo;
+	private SBMLio sbmlIo;
 
 	/**
 	 * Initializes SBMLsqueezer as a CellDesigner plug-in
@@ -343,7 +335,7 @@ public class SBMLsqueezer extends PluginAction {
 	 * Shows the GUI of SBMLsqueezer stand-alone.
 	 */
 	public void showGUI() {
-		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo);
+		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, initProperties());
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
 	}

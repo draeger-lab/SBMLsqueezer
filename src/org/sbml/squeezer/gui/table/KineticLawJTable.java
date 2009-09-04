@@ -29,6 +29,7 @@ import javax.swing.event.TableModelEvent;
 import org.sbml.Model;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.ModificationException;
@@ -70,15 +71,18 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 	 * @param maxEducts
 	 * @param reversibility
 	 */
-	public KineticLawJTable(KineticLawGenerator klg, int maxEducts,
-			boolean reversibility) {
-		super(new KineticLawTableModel(klg, maxEducts));
+	public KineticLawJTable(KineticLawGenerator klg) {
+		super(new KineticLawTableModel(klg));
 		this.klg = klg;
-		this.reversibility = reversibility;
+		this.reversibility = ((Boolean) klg.getSettings().get(
+				CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
 		getModel().addTableModelListener(this);
 		// setRowHeightAppropriately();
 		setColumnWidthAppropriately();
-		setDefaultRenderer(Object.class, new KineticLawCellRenderer(maxEducts));
+		int maxNumReactnats = ((Integer) (klg.getSettings()
+				.get(CfgKeys.MAX_NUMBER_OF_REACTANTS))).intValue();
+		setDefaultRenderer(Object.class, new KineticLawCellRenderer(
+				maxNumReactnats));
 		getTableHeader()
 				.setToolTipText(
 						"<html>Double click on the kinetic law to apply another formalism.<br>"
@@ -148,28 +152,30 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		int rowIndex = rowAtPoint(p);
 		int colIndex = convertColumnIndexToModel(columnAtPoint(p));
 		if (colIndex != 1) {
-			BasicKineticLaw kinetic = (BasicKineticLaw) dataModel.getValueAt(
-					rowIndex, 1);
-			String LaTeX = kinetic.getMath().toLaTeX().toString().replace(
-					"text", "mbox").replace("mathrm", "mbox").replace("mathtt",
-					"mbox");
-			JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
-					+ "\\end{equation}");
-			JPanel panel = new JPanel(new BorderLayout());
-			component.setBackground(Color.WHITE);
-			panel.setBackground(Color.WHITE);
-			panel.add(component, BorderLayout.CENTER);
-			panel.setLocation(((int) MouseInfo.getPointerInfo().getLocation()
-					.getX())
-					- this.getTopLevelAncestor().getX(), this.getY() + 10);
-			panel.setBorder(BorderFactory.createLoweredBevelBorder());
-			JOptionPane.showMessageDialog(getParent(), panel,
-					"Rate Law of Reaction "
-							+ kinetic.getParentSBMLObject().getId(),
-					JOptionPane.INFORMATION_MESSAGE);
-			// JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
-			// JLayeredPane.POPUP_LAYER);
-			validate();
+			Object o = dataModel.getValueAt(rowIndex, 1);
+			if (o instanceof BasicKineticLaw) {
+				BasicKineticLaw kinetic = (BasicKineticLaw) o;
+				String LaTeX = kinetic.getMath().toLaTeX().toString().replace(
+						"text", "mbox").replace("mathrm", "mbox").replace(
+						"mathtt", "mbox");
+				JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
+						+ "\\end{equation}");
+				JPanel panel = new JPanel(new BorderLayout());
+				component.setBackground(Color.WHITE);
+				panel.setBackground(Color.WHITE);
+				panel.add(component, BorderLayout.CENTER);
+				panel.setLocation(((int) MouseInfo.getPointerInfo()
+						.getLocation().getX())
+						- this.getTopLevelAncestor().getX(), this.getY() + 10);
+				panel.setBorder(BorderFactory.createLoweredBevelBorder());
+				JOptionPane.showMessageDialog(getParent(), panel,
+						"Rate Law of Reaction "
+								+ kinetic.getParentSBMLObject().getId(),
+						JOptionPane.INFORMATION_MESSAGE);
+				// JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
+				// JLayeredPane.POPUP_LAYER);
+				validate();
+			}
 		}
 	}
 

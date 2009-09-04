@@ -341,8 +341,16 @@ public class Species extends Symbol {
 	 * 
 	 * @return
 	 */
-	public UnitDefinition getSubstanceUnits() {
+	public String getSubstanceUnits() {
 		return getUnits();
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public UnitDefinition getSubstanceUnitsInstance() {
+		return getUnitsInstance();
 	}
 
 	/**
@@ -351,5 +359,13 @@ public class Species extends Symbol {
 	 */
 	public boolean isSetSpeciesType() {
 		return speciesType != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetSubstanceUnits() {
+		return isSetUnits();
 	}
 }

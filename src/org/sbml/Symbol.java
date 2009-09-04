@@ -64,7 +64,7 @@ public abstract class Symbol extends AbstractNamedSBase {
 	 */
 	public Symbol(Symbol nsb) {
 		super(nsb);
-		this.units = nsb.isSetUnits() ? nsb.getUnits().clone() : null;
+		this.units = nsb.isSetUnits() ? nsb.getUnitsInstance().clone() : null;
 		this.value = nsb.getValue();
 	}
 
@@ -99,7 +99,15 @@ public abstract class Symbol extends AbstractNamedSBase {
 	 * 
 	 * @return
 	 */
-	public UnitDefinition getUnits() {
+	public String getUnits() {
+		return isSetUnits() ? units.getId() : "";
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public UnitDefinition getUnitsInstance() {
 		return units;
 	}
 

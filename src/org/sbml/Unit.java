@@ -31,7 +31,7 @@ public class Unit extends AbstractSBase {
 	/**
 	 * 
 	 */
-	private SIUnit kind;
+	private UnitKind kind;
 	/**
 	 * 
 	 */
@@ -63,7 +63,7 @@ public class Unit extends AbstractSBase {
 	 * 
 	 * @param kind
 	 */
-	public Unit(SIUnit kind) {
+	public Unit(UnitKind kind) {
 		super();
 		initDefaults();
 		this.kind = kind;
@@ -98,7 +98,7 @@ public class Unit extends AbstractSBase {
 	 * 
 	 * @return
 	 */
-	public SIUnit getKind() {
+	public UnitKind getKind() {
 		return kind;
 	}
 
@@ -126,7 +126,7 @@ public class Unit extends AbstractSBase {
 		scale = 0;
 		multiplier = 1d;
 		offset = 0d;
-		kind = SIUnit.UNIT_KIND_INVALID;
+		kind = UnitKind.UNIT_KIND_INVALID;
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class Unit extends AbstractSBase {
 	 * 
 	 * @param kind
 	 */
-	public void setKind(SIUnit kind) {
+	public void setKind(UnitKind kind) {
 		this.kind = kind;
 		stateChanged();
 	}
@@ -207,7 +207,7 @@ public class Unit extends AbstractSBase {
 	 * @return
 	 */
 	public boolean isKilogram() {
-		return kind == SIUnit.UNIT_KIND_KILOGRAM;
+		return kind == UnitKind.UNIT_KIND_KILOGRAM;
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class Unit extends AbstractSBase {
 	 * @return
 	 */
 	public boolean isDimensionless() {
-		return kind == SIUnit.UNIT_KIND_DIMENSIONLESS;
+		return kind == UnitKind.UNIT_KIND_DIMENSIONLESS;
 	}
 
 }

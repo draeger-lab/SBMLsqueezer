@@ -24,7 +24,7 @@ package org.sbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-08-31
  */
-public enum SIUnit {
+public enum UnitKind {
 	/**
 	 * The ampere unit
 	 */

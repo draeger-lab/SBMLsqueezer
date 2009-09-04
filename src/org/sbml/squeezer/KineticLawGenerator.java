@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.swing.JDialog;
-
 import org.sbml.KineticLaw;
 import org.sbml.ListOf;
 import org.sbml.Model;
@@ -40,7 +38,6 @@ import org.sbml.Reaction;
 import org.sbml.SBO;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
-import org.sbml.squeezer.gui.SBMLModelSplitPane;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
@@ -309,9 +306,9 @@ public class KineticLawGenerator {
 		List<String> enzymes = new LinkedList<String>();
 		BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
 				transInhib, activators, enzymes, nonEnzymeCatalyzers);
-		boolean nonEnzyme = ((nonEnzymeCatalyzers.size() > 0) || (SBO
-				.isEmptySet(reaction.getProduct(0).getSpeciesInstance()
-						.getSBOTerm())));
+		boolean nonEnzyme = ((nonEnzymeCatalyzers.size() > 0)
+				|| reaction.getNumProducts() == 0 || (SBO.isEmptySet(reaction
+				.getProduct(0).getSpeciesInstance().getSBOTerm())));
 		boolean uniUniWithoutModulation = false;
 
 		/*
@@ -761,7 +758,8 @@ public class KineticLawGenerator {
 		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
 			Species species = reaction.getReactant(reactant)
 					.getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d || Double.isNaN(species.getInitialConcentration())) {
+			if (species.getInitialConcentration() == 0d
+					|| Double.isNaN(species.getInitialConcentration())) {
 				species.setInitialConcentration(initialValue);
 				species.setHasOnlySubstanceUnits(false);
 				species.stateChanged();
@@ -772,7 +770,8 @@ public class KineticLawGenerator {
 		}
 		for (int product = 0; product < reaction.getNumProducts(); product++) {
 			Species species = reaction.getProduct(product).getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d || Double.isNaN(species.getInitialConcentration())) {
+			if (species.getInitialConcentration() == 0d
+					|| Double.isNaN(species.getInitialConcentration())) {
 				species.setInitialConcentration(initialValue);
 				species.setHasOnlySubstanceUnits(false);
 				species.stateChanged();
@@ -784,7 +783,8 @@ public class KineticLawGenerator {
 		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
 			Species species = reaction.getModifier(modifier)
 					.getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d || Double.isNaN(species.getInitialConcentration())) {
+			if (species.getInitialConcentration() == 0d
+					|| Double.isNaN(species.getInitialConcentration())) {
 				species.setInitialConcentration(initialValue);
 				species.setHasOnlySubstanceUnits(false);
 				species.stateChanged();
@@ -839,7 +839,8 @@ public class KineticLawGenerator {
 	 */
 	public Reaction storeLaw(KineticLaw kineticLaw) {
 		int i;
-		boolean reversibility = ((Boolean) settings.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
+		boolean reversibility = ((Boolean) settings
+				.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
 		Reaction reaction = modelOrig.getReaction(kineticLaw
 				.getParentSBMLObject().getId());
 		if (!(kineticLaw instanceof IrrevNonModulatedNonInteractingEnzymes))
@@ -933,6 +934,9 @@ public class KineticLawGenerator {
 			}
 			if (!r.isSetKineticLaw() || create) {
 				Reaction rc = new Reaction(r.getId());
+				m.addReaction(rc);
+				rc.setFast(r.getFast());
+				rc.setReversible(r.getReversible());
 				for (SpeciesReference s : r.getListOfReactants()) {
 					Species species = s.getSpeciesInstance();
 					if (m.getCompartment(species.getCompartment()) == null)
@@ -979,17 +983,8 @@ public class KineticLawGenerator {
 								m.addParameter(parameter.clone());
 					rc.setKineticLaw(l.clone());
 				}
-				System.out.println(rc);
-				m.addReaction(rc);
 			}
 		}
-		JDialog dialog = new JDialog();
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.getContentPane().add(new SBMLModelSplitPane(m));
-		dialog.pack();
-		dialog.setLocationRelativeTo(null);
-		dialog.setModal(true);
-		dialog.setVisible(true);
 		return m;
 	}
 
@@ -1013,6 +1008,27 @@ public class KineticLawGenerator {
 	}
 
 	/**
+	 * Sets the SBO annotation of modifiers to more precise values in the local
+	 * mini copy of the model.
+	 * 
+	 * @param possibleEnzymes
+	 */
+	public void updateEnzymeKatalysis(Set<Integer> possibleEnzymes) {
+		for (Reaction r : miniModel.getListOfReactions()) {
+			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
+				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
+						&& !possibleEnzymes.contains(Integer.valueOf(modifier
+								.getSpeciesInstance().getSBOTerm())))
+					modifier.setSBOTerm(SBO.getCatalysis());
+				else if (SBO.isCatalyst(modifier.getSBOTerm())
+						&& possibleEnzymes.contains(Integer.valueOf(modifier
+								.getSpeciesInstance().getSBOTerm())))
+					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
+			}
+		}
+	}
+
+	/**
 	 * load default settings and initialize this object.
 	 */
 	private void init() {
@@ -1021,10 +1037,11 @@ public class KineticLawGenerator {
 		if (!settings.containsKey(CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
 			settings.put(CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
 					Boolean.TRUE);
-		if (!settings.contains(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
+		if (!settings
+				.containsKey(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 			settings.put(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
 					Boolean.FALSE);
-		if (!settings.contains(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+		if (!settings.containsKey(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 			settings.put(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 					Boolean.FALSE);
 		if (!settings.containsKey(CfgKeys.UNI_UNI_TYPE))

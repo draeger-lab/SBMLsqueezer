@@ -331,10 +331,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 						settings.put(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE,
 								settingsPanel
 										.isSetTreatAllReactionsReversible());
+						settings.put(CfgKeys.MAX_NUMBER_OF_REACTANTS, Integer.valueOf(settingsPanel
+								.getMaxRealisticNumberOfReactants()));
 						Model model = sbmlIO.getSelectedModel();
-						sbmlIO.updateEnzymeKatalysis(model, settingsPanel
-								.getPossibleEnzymes());
 						klg = new KineticLawGenerator(model, settings);
+						klg.updateEnzymeKatalysis(settingsPanel
+								.getPossibleEnzymes());
 						klg.generateLaws();
 						if (klg.getFastReactions().size() > 0) {
 							String message = "<html><head></head><body><p>The model contains ";
@@ -364,11 +366,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						}
 
 						JPanel reactionsPanel = new JPanel(new BorderLayout());
-						JTable tableOfKinetics = new KineticLawJTable(klg,
-								settingsPanel
-										.getMaxRealisticNumberOfReactants(),
-								settingsPanel
-										.isSetTreatAllReactionsReversible());
+						JTable tableOfKinetics = new KineticLawJTable(klg);
 						numOfWarnings = ((KineticLawTableModel) tableOfKinetics
 								.getModel()).getNumOfWarnings();
 						tableOfKinetics

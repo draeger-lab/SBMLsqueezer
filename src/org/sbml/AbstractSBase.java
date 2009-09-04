@@ -57,8 +57,6 @@ public abstract class AbstractSBase implements SBase {
 		this();
 		if (sb.isSetSBOTerm())
 			this.sboTerm = sb.getSBOTerm();
-		else
-			this.sboTerm = -1;
 		if (sb.isSetMetaId())
 			this.metaId = new String(sb.getMetaId());
 		if (sb.isSetNotes())
