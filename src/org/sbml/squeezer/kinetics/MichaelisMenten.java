@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.ASTNode;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -105,8 +105,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				}
 			}
 			append(kMr, underscore, specRefR);
-			Parameter p_kcatp = new Parameter(kcatp.toString());
-			Parameter p_kMr = new Parameter(kMr.toString());
+			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
+			Parameter p_kMr = new Parameter(kMr.toString(), getLevel(), getVersion());
 			addParameter(p_kcatp);
 			addParameter(p_kMr);
 
@@ -125,8 +125,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 						this), new ASTNode(p_kMr, this)), specRefR);
 				denominator = ASTNode.frac(specRefR, new ASTNode(p_kMr, this));
 				append(kMp, underscore, specRefP);
-				Parameter p_kcatn = new Parameter(kcatn.toString());
-				Parameter p_kMp = new Parameter(kMp.toString());
+				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
+				Parameter p_kMp = new Parameter(kMp.toString(), getLevel(), getVersion());
 				addParameter(p_kcatn);
 				addParameter(p_kMp);
 
@@ -184,8 +184,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				append(kIa, underscore, modE.get(enzymeNum));
 				append(kIb, underscore, modE.get(enzymeNum));
 			}
-			Parameter p_kIa = new Parameter(kIa.toString());
-			Parameter p_kIb = new Parameter(kIb.toString());
+			Parameter p_kIa = new Parameter(kIa.toString(), getLevel(), getVersion());
+			Parameter p_kIb = new Parameter(kIb.toString(), getLevel(), getVersion());
 			addParameter(p_kIa);
 			addParameter(p_kIb);
 
@@ -217,8 +217,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 					append(kIai, underscore, modE.get(enzymeNum));
 				StringBuffer kIbi = concat("kIb_", kIai);
 				kIai = concat("kIa_", kIai);
-				Parameter p_kIai = new Parameter(kIai.toString());
-				Parameter p_kIbi = new Parameter(kIbi.toString());
+				Parameter p_kIai = new Parameter(kIai.toString(), getLevel(), getVersion());
+				Parameter p_kIbi = new Parameter(kIbi.toString(), getLevel(), getVersion());
 				addParameter(p_kIai);
 				addParameter(p_kIbi);
 				ASTNode specRefI = new ASTNode(modInhib.get(i), this);

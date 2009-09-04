@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.ASTNode;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -65,7 +65,7 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
-		Parameter p_kass = new Parameter(kass.toString());
+		Parameter p_kass = new Parameter(kass.toString(), getLevel(), getVersion());
 		addParameter(p_kass);
 		return new ASTNode(p_kass, this);
 	}

@@ -26,11 +26,10 @@ import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 
-import org.sbml.AbstractSBase;
-import org.sbml.Model;
-import org.sbml.SBase;
+import org.sbml.jlibsbml.AbstractSBase;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.SBase;
 import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**

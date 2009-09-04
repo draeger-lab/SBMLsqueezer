@@ -21,36 +21,36 @@ package org.sbml.squeezer.standalone;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.sbml.ASTNode;
-import org.sbml.AlgebraicRule;
-import org.sbml.AssignmentRule;
-import org.sbml.Compartment;
-import org.sbml.CompartmentType;
-import org.sbml.Constraint;
-import org.sbml.Delay;
-import org.sbml.Event;
-import org.sbml.EventAssignment;
-import org.sbml.FunctionDefinition;
-import org.sbml.InitialAssignment;
-import org.sbml.KineticLaw;
-import org.sbml.Model;
-import org.sbml.ModifierSpeciesReference;
-import org.sbml.NamedSBase;
-import org.sbml.Parameter;
-import org.sbml.RateRule;
-import org.sbml.Reaction;
-import org.sbml.Rule;
-import org.sbml.SBO;
-import org.sbml.SBase;
-import org.sbml.UnitKind;
-import org.sbml.Species;
-import org.sbml.SpeciesReference;
-import org.sbml.SpeciesType;
-import org.sbml.StoichiometryMath;
-import org.sbml.Symbol;
-import org.sbml.Trigger;
-import org.sbml.Unit;
-import org.sbml.UnitDefinition;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.AlgebraicRule;
+import org.sbml.jlibsbml.AssignmentRule;
+import org.sbml.jlibsbml.Compartment;
+import org.sbml.jlibsbml.CompartmentType;
+import org.sbml.jlibsbml.Constraint;
+import org.sbml.jlibsbml.Delay;
+import org.sbml.jlibsbml.Event;
+import org.sbml.jlibsbml.EventAssignment;
+import org.sbml.jlibsbml.FunctionDefinition;
+import org.sbml.jlibsbml.InitialAssignment;
+import org.sbml.jlibsbml.KineticLaw;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModifierSpeciesReference;
+import org.sbml.jlibsbml.NamedSBase;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.RateRule;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.Rule;
+import org.sbml.jlibsbml.SBO;
+import org.sbml.jlibsbml.SBase;
+import org.sbml.jlibsbml.Species;
+import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jlibsbml.SpeciesType;
+import org.sbml.jlibsbml.StoichiometryMath;
+import org.sbml.jlibsbml.Symbol;
+import org.sbml.jlibsbml.Trigger;
+import org.sbml.jlibsbml.Unit;
+import org.sbml.jlibsbml.UnitDefinition;
+import org.sbml.jlibsbml.UnitKind;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.AbstractSBMLReader;
@@ -98,7 +98,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("compartment" + error
 					+ "org.sbml.libsbml.Compartment");
 		org.sbml.libsbml.Compartment comp = (org.sbml.libsbml.Compartment) compartment;
-		Compartment c = new Compartment(comp.getId());
+		Compartment c = new Compartment(comp.getId(), (int) comp.getLevel(),
+				(int) comp.getVersion());
 		copyNamedSBaseProperties(c, comp);
 		c.setName(comp.getName());
 		if (comp.isSetOutside()) {
@@ -128,7 +129,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("compartmenttype" + error
 					+ "org.sbml.libsbml.CompartmentType");
 		org.sbml.libsbml.CompartmentType comp = (org.sbml.libsbml.CompartmentType) compartmenttype;
-		CompartmentType com = new CompartmentType(comp.getId());
+		CompartmentType com = new CompartmentType(comp.getId(), (int) comp
+				.getLevel(), (int) comp.getVersion());
 		copyNamedSBaseProperties(com, comp);
 		return com;
 
@@ -144,7 +146,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("constraint" + error
 					+ "org.sbml.libsml.Constraint");
 		org.sbml.libsbml.Constraint cons = (org.sbml.libsbml.Constraint) constraint;
-		Constraint con = new Constraint();
+		Constraint con = new Constraint((int) cons.getLevel(), (int) cons
+				.getVersion());
 		copySBaseProperties(con, cons);
 		if (cons.isSetMath())
 			con.setMath(convert(cons.getMath(), con));
@@ -164,7 +167,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("delay" + error
 					+ "org.sbml.libsbml.Delay");
 		org.sbml.libsbml.Delay del = (org.sbml.libsbml.Delay) delay;
-		Delay de = new Delay();
+		Delay de = new Delay((int) del.getLevel(), (int) del.getVersion());
 		copySBaseProperties(de, del);
 		if (del.isSetMath())
 			de.setMath(convert(del.getMath(), de));
@@ -181,7 +184,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("event" + error
 					+ "org.sbml.libsbml.Event");
 		org.sbml.libsbml.Event eve = (org.sbml.libsbml.Event) event;
-		Event ev = new Event();
+		Event ev = new Event((int) eve.getLevel(), (int) eve.getVersion());
 		copyNamedSBaseProperties(ev, eve);
 		ev.setTrigger(readTrigger(eve.getTrigger()));
 		if (eve.isSetDelay())
@@ -204,7 +207,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("functionDefinition" + error
 					+ "org.sbml.libsbml.FunctionDefinition.");
 		org.sbml.libsbml.FunctionDefinition fd = (org.sbml.libsbml.FunctionDefinition) functionDefinition;
-		FunctionDefinition f = new FunctionDefinition(fd.getId());
+		FunctionDefinition f = new FunctionDefinition(fd.getId(), (int) fd
+				.getLevel(), (int) fd.getVersion());
 		copySBaseProperties(f, fd);
 		copyNamedSBaseProperties(f, fd);
 		if (fd.isSetMath())
@@ -243,7 +247,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("kineticLaw" + error
 					+ "org.sbml.libsbml.KineticLaw.");
 		org.sbml.libsbml.KineticLaw kl = (org.sbml.libsbml.KineticLaw) kineticLaw;
-		KineticLaw kinlaw = new KineticLaw();
+		KineticLaw kinlaw = new KineticLaw((int) kl.getLevel(), (int) kl
+				.getVersion());
 		copySBaseProperties(kinlaw, kl);
 		if (kl.isSetMath()) {
 			ASTNode ast = convert(kl.getMath(), kinlaw);
@@ -270,7 +275,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		}
 		if (model instanceof org.sbml.libsbml.Model) {
 			this.originalModel = (org.sbml.libsbml.Model) model;
-			this.model = new Model(originalModel.getId());
+			this.model = new Model(originalModel.getId(), (int) originalModel
+					.getLevel(), (int) originalModel.getVersion());
 			int i;
 			copyNamedSBaseProperties(this.model, originalModel);
 			for (i = 0; i < originalModel.getNumFunctionDefinitions(); i++)
@@ -352,7 +358,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("parameter" + error
 					+ "org.sbml.libsbml.Parameter.");
 		org.sbml.libsbml.Parameter p = (org.sbml.libsbml.Parameter) parameter;
-		Parameter para = new Parameter(p.getId());
+		Parameter para = new Parameter(p.getId(), (int) p.getLevel(), (int) p
+				.getVersion());
 		if (p.isSetName())
 			para.setName(p.getName());
 		if (p.isSetMetaId())
@@ -377,7 +384,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("reaction" + error
 					+ "org.sbml.libsbml.Reaction.");
 		org.sbml.libsbml.Reaction r = (org.sbml.libsbml.Reaction) reac;
-		Reaction reaction = new Reaction(r.getId());
+		Reaction reaction = new Reaction(r.getId(), (int) r.getLevel(), (int) r
+				.getVersion());
 		for (int i = 0; i < r.getNumReactants(); i++)
 			reaction.addReactant(readSpeciesReference(r.getReactant(i)));
 		for (int i = 0; i < r.getNumProducts(); i++)
@@ -406,7 +414,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.Rule libRule = (org.sbml.libsbml.Rule) rule;
 		Rule r;
 		if (libRule.isAlgebraic())
-			r = new AlgebraicRule();
+			r = new AlgebraicRule((int) libRule.getLevel(), (int) libRule
+					.getVersion());
 		else {
 			Symbol s = model.findSymbol(libRule.getVariable());
 			if (libRule.isAssignment())
@@ -430,7 +439,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("species" + error
 					+ "org.sbml.libsbml.Species.");
 		org.sbml.libsbml.Species spec = (org.sbml.libsbml.Species) species;
-		Species s = new Species(spec.getId());
+		Species s = new Species(spec.getId(), (int) spec.getLevel(), (int) spec
+				.getVersion());
 		copyNamedSBaseProperties(s, spec);
 		if (spec.isSetCharge())
 			s.setCharge(spec.getCharge());
@@ -480,7 +490,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("speciesType" + error
 					+ "org.sbml.libsbml.SpeciesType.");
 		org.sbml.libsbml.SpeciesType libST = (org.sbml.libsbml.SpeciesType) speciesType;
-		SpeciesType st = new SpeciesType(libST.getId());
+		SpeciesType st = new SpeciesType(libST.getId(), (int) libST.getLevel(),
+				(int) libST.getVersion());
 		copyNamedSBaseProperties(st, libST);
 		return st;
 	}
@@ -492,7 +503,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 */
 	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
 		org.sbml.libsbml.StoichiometryMath s = (org.sbml.libsbml.StoichiometryMath) stoichiometryMath;
-		StoichiometryMath sm = new StoichiometryMath();
+		StoichiometryMath sm = new StoichiometryMath((int) s.getLevel(),
+				(int) s.getVersion());
 		copySBaseProperties(sm, s);
 		if (s.isSetMath())
 			sm.setMath(convert(s.getMath(), sm));
@@ -509,7 +521,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("trigger" + error
 					+ "org.sbml.libsbml.Trigger");
 		org.sbml.libsbml.Trigger trigg = (org.sbml.libsbml.Trigger) trigger;
-		Trigger trig = new Trigger();
+		Trigger trig = new Trigger((int) trigg.getLevel(), (int) trigg
+				.getVersion());
 		copySBaseProperties(trig, trigg);
 		if (trigg.isSetMath())
 			trig.setMath(convert(trigg.getMath(), trig));
@@ -527,7 +540,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("unit" + error
 					+ "org.sbml.libsbml.Unit");
 		org.sbml.libsbml.Unit libUnit = (org.sbml.libsbml.Unit) unit;
-		Unit u = new Unit();
+		Unit u = new Unit((int) libUnit.getLevel(), (int) libUnit.getVersion());
 		copySBaseProperties(u, libUnit);
 		switch (libUnit.getKind()) {
 		case libsbmlConstants.UNIT_KIND_AMPERE:
@@ -656,7 +669,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("unitDefinition" + error
 					+ "org.sbml.libsbml.UnitDefinition");
 		org.sbml.libsbml.UnitDefinition libUD = (org.sbml.libsbml.UnitDefinition) unitDefinition;
-		UnitDefinition ud = new UnitDefinition(libUD.getId());
+		UnitDefinition ud = new UnitDefinition(libUD.getId(), (int) libUD
+				.getLevel(), (int) libUD.getVersion());
 		copyNamedSBaseProperties(ud, libUD);
 		for (int i = 0; i < libUD.getNumUnits(); i++)
 			ud.addUnit(readUnit(libUD.getUnit(i)));
@@ -703,7 +717,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("eventassignment" + error
 					+ "org.sbml.libsbml.EventAssignment");
 		org.sbml.libsbml.EventAssignment eve = (org.sbml.libsbml.EventAssignment) eventass;
-		EventAssignment ev = new EventAssignment();
+		EventAssignment ev = new EventAssignment((int) eve.getLevel(),
+				(int) eve.getVersion());
 		copySBaseProperties(ev, eve);
 		if (eve.isSetVariable()) {
 			Symbol variable = model.findSymbol(eve.getVariable());

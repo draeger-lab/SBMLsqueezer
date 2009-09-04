@@ -17,19 +17,19 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.sbml.ASTNode;
-import org.sbml.Compartment;
-import org.sbml.Constants;
-import org.sbml.Event;
-import org.sbml.Model;
-import org.sbml.Reaction;
-import org.sbml.SBase;
-import org.sbml.UnitKind;
-import org.sbml.Species;
-import org.sbml.SpeciesReference;
-import org.sbml.StoichiometryMath;
-import org.sbml.Unit;
-import org.sbml.UnitDefinition;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.Compartment;
+import org.sbml.jlibsbml.Constants;
+import org.sbml.jlibsbml.Event;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.SBase;
+import org.sbml.jlibsbml.Species;
+import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jlibsbml.StoichiometryMath;
+import org.sbml.jlibsbml.Unit;
+import org.sbml.jlibsbml.UnitDefinition;
+import org.sbml.jlibsbml.UnitKind;
 
 /**
  * This class is used to export a sbml model as LaTex file.

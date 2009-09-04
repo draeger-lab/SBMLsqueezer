@@ -23,14 +23,14 @@ import java.util.IllegalFormatException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.sbml.ASTNode;
-import org.sbml.Constants;
-import org.sbml.KineticLaw;
-import org.sbml.Model;
-import org.sbml.ModifierSpeciesReference;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.SBO;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.Constants;
+import org.sbml.jlibsbml.KineticLaw;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModifierSpeciesReference;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.io.StringTools;
 

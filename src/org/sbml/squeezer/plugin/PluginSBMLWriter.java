@@ -18,29 +18,29 @@
  */
 package org.sbml.squeezer.plugin;
 
-import org.sbml.Compartment;
-import org.sbml.CompartmentType;
-import org.sbml.Constraint;
-import org.sbml.Delay;
-import org.sbml.Event;
-import org.sbml.EventAssignment;
-import org.sbml.FunctionDefinition;
-import org.sbml.InitialAssignment;
-import org.sbml.KineticLaw;
-import org.sbml.Model;
-import org.sbml.ModifierSpeciesReference;
-import org.sbml.NamedSBase;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.Rule;
-import org.sbml.SBase;
-import org.sbml.Species;
-import org.sbml.SpeciesReference;
-import org.sbml.SpeciesType;
-import org.sbml.StoichiometryMath;
-import org.sbml.Trigger;
-import org.sbml.Unit;
-import org.sbml.UnitDefinition;
+import org.sbml.jlibsbml.Compartment;
+import org.sbml.jlibsbml.CompartmentType;
+import org.sbml.jlibsbml.Constraint;
+import org.sbml.jlibsbml.Delay;
+import org.sbml.jlibsbml.Event;
+import org.sbml.jlibsbml.EventAssignment;
+import org.sbml.jlibsbml.FunctionDefinition;
+import org.sbml.jlibsbml.InitialAssignment;
+import org.sbml.jlibsbml.KineticLaw;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModifierSpeciesReference;
+import org.sbml.jlibsbml.NamedSBase;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.Rule;
+import org.sbml.jlibsbml.SBase;
+import org.sbml.jlibsbml.Species;
+import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jlibsbml.SpeciesType;
+import org.sbml.jlibsbml.StoichiometryMath;
+import org.sbml.jlibsbml.Trigger;
+import org.sbml.jlibsbml.Unit;
+import org.sbml.jlibsbml.UnitDefinition;
 import org.sbml.squeezer.io.AbstractSBMLWriter;
 
 /**

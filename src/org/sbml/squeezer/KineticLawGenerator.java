@@ -29,15 +29,15 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.sbml.KineticLaw;
-import org.sbml.ListOf;
-import org.sbml.Model;
-import org.sbml.ModifierSpeciesReference;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.SBO;
-import org.sbml.Species;
-import org.sbml.SpeciesReference;
+import org.sbml.jlibsbml.KineticLaw;
+import org.sbml.jlibsbml.ListOf;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModifierSpeciesReference;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.SBO;
+import org.sbml.jlibsbml.Species;
+import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
@@ -901,7 +901,7 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	private Model createMinimalModel() {
-		Model m = new Model(modelOrig.getId());
+		Model m = new Model(modelOrig.getId(), modelOrig.getLevel(), modelOrig.getVersion());
 		boolean create = ((Boolean) settings
 				.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 				.booleanValue();
@@ -933,7 +933,7 @@ public class KineticLawGenerator {
 				}
 			}
 			if (!r.isSetKineticLaw() || create) {
-				Reaction rc = new Reaction(r.getId());
+				Reaction rc = new Reaction(r.getId(), r.getLevel(), r.getVersion());
 				m.addReaction(rc);
 				rc.setFast(r.getFast());
 				rc.setReversible(r.getReversible());

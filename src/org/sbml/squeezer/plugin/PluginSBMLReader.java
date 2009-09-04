@@ -29,26 +29,29 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
-import org.sbml.Compartment;
-import org.sbml.FunctionDefinition;
-import org.sbml.InitialAssignment;
-import org.sbml.KineticLaw;
-import org.sbml.Model;
-import org.sbml.ModifierSpeciesReference;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.Rule;
-import org.sbml.SBO;
-import org.sbml.Species;
-import org.sbml.SpeciesReference;
-import org.sbml.SpeciesType;
-import org.sbml.StoichiometryMath;
-import org.sbml.Unit;
-import org.sbml.UnitDefinition;
+import org.sbml.jlibsbml.Compartment;
+import org.sbml.jlibsbml.FunctionDefinition;
+import org.sbml.jlibsbml.InitialAssignment;
+import org.sbml.jlibsbml.KineticLaw;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModifierSpeciesReference;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.Rule;
+import org.sbml.jlibsbml.SBO;
+import org.sbml.jlibsbml.Species;
+import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jlibsbml.SpeciesType;
+import org.sbml.jlibsbml.StoichiometryMath;
+import org.sbml.jlibsbml.Unit;
+import org.sbml.jlibsbml.UnitDefinition;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
 public class PluginSBMLReader extends AbstractSBMLReader {
 
+	private static final int level = 2;
+	private static final int version = 4;
+	
 	/**
 	 * 
 	 */
@@ -119,7 +122,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("kineticLaw" + error
 					+ "PluginKineticLaw.");
 		PluginKineticLaw plukinlaw = (PluginKineticLaw) kineticLaw;
-		KineticLaw kinlaw = new KineticLaw();
+		KineticLaw kinlaw = new KineticLaw(level, version);
 		if (plukinlaw.getMath() != null)
 			kinlaw.setMath(convert(plukinlaw.getMath(), kinlaw));
 		for (int i = 0; i < plukinlaw.getNumParameters(); i++) {
@@ -137,7 +140,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	public Model readModel(Object model) {
 		if (model instanceof PluginModel) {
 			PluginModel pm = (PluginModel) model;
-			Model m = new Model(pm.getId());
+			Model m = new Model(pm.getId(), level, version);
 			for (int i = 0; i < pm.getNumReactions(); i++)
 				m.addReaction(readReaction(pm.getReaction(i)));
 			for (int i = 0; i < pm.getNumSpecies(); i++)
@@ -160,7 +163,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 					+ error + "PluginModifierSpeciesReference.");
 		PluginModifierSpeciesReference plumod = (PluginModifierSpeciesReference) modifierSpeciesReference;
 		ModifierSpeciesReference mod = new ModifierSpeciesReference(
-				new Species(plumod.getSpeciesInstance().getId()));
+				new Species(plumod.getSpeciesInstance().getId(), level, version));
 		/*
 		 * Set SBO term.
 		 */
@@ -189,7 +192,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("parameter" + error
 					+ "PluginParameter.");
 		PluginParameter pp = (PluginParameter) parameter;
-		Parameter para = new Parameter(pp.getId());
+		Parameter para = new Parameter(pp.getId(), level, version);
 		addAllSBaseChangeListenersTo(para);
 		return para;
 	}
@@ -204,7 +207,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException(
 					"reaction must be an instance of PluginReaction");
 		PluginReaction r = (PluginReaction) reac;
-		Reaction reaction = new Reaction(r.getId());
+		Reaction reaction = new Reaction(r.getId(), level, version);
 		for (int i = 0; i < r.getNumReactants(); i++) {
 			reaction.addReactant(readSpeciesReference(r.getReactant(i)));
 		}
@@ -242,7 +245,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException(
 					"species must be an instance of PluginSpecies");
 		PluginSpecies spec = (PluginSpecies) species;
-		Species s = new Species(spec.getId());
+		Species s = new Species(spec.getId(), level, version);
 		s.setSBOTerm(SBO.convertAlias2SBO(spec.getSpeciesAlias(spec.getId())
 				.getAliasID()));
 		addAllSBaseChangeListenersTo(s);
@@ -260,7 +263,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 					+ "PluginSpeciesReference.");
 		PluginSpeciesReference specref = (PluginSpeciesReference) speciesReference;
 		SpeciesReference spec = new SpeciesReference(new Species(specref
-				.getSpeciesInstance().getId()));
+				.getSpeciesInstance().getId(), level, version));
 		spec.setStoichiometry(specref.getStoichiometry());
 		addAllSBaseChangeListenersTo(spec);
 		return spec;

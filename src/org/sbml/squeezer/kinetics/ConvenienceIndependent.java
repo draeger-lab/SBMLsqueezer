@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.ASTNode;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.SpeciesReference;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -102,7 +102,7 @@ public class ConvenienceIndependent extends Convenience {
 					enzymes[i] = new ASTNode(enzyme, this);
 				} else
 					enzymes[i] = new ASTNode("", this);
-				Parameter p_klV = new Parameter(klV.toString());
+				Parameter p_klV = new Parameter(klV.toString(), getLevel(), getVersion());
 				addParameter(p_klV);
 
 				ASTNode numerator, denominator = null;
@@ -168,10 +168,10 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString());
+			Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
 			addParameter(p_kM);
 			kiG = concat("kG_", ref.getSpecies());
-			Parameter p_kiG = new Parameter(kiG.toString());
+			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(), getVersion());
 			addGlobalParameter(p_kiG);
 			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
 					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
@@ -187,10 +187,10 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString());
+			Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
 			addParameter(p_kM);
 			kiG = concat("kG_", ref.getSpecies());
-			Parameter p_kiG = new Parameter(kiG.toString());
+			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(), getVersion());
 			addGlobalParameter(p_kiG);
 			products[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
 					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
@@ -256,7 +256,7 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString());
+			Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
 			addParameter(p_kM);
 
 			ASTNode[] parts = new ASTNode[(int) ref.getStoichiometry()

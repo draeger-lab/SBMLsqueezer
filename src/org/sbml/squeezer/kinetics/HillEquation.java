@@ -22,12 +22,12 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.ASTNode;
-import org.sbml.ModifierSpeciesReference;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.SBO;
-import org.sbml.Species;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.ModifierSpeciesReference;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.SBO;
+import org.sbml.jlibsbml.Species;
 import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
@@ -193,9 +193,9 @@ public class HillEquation extends BasicKineticLaw {
 		 * .toUpperCase().equals("GENE"))
 		 */{
 			Parameter p_hillcoeff = new Parameter(concat("np_", rId,
-					underscore, modTActi.get(i)).toString());
+					underscore, modTActi.get(i)).toString(), getLevel(), getVersion());
 			Parameter p_kS = new Parameter(concat("kSp_", rId, underscore,
-					modTActi.get(i)).toString());
+					modTActi.get(i)).toString(), getLevel(), getVersion());
 			addLocalParameters(p_hillcoeff, p_kS);
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(new ASTNode(
 					modTActi.get(i), this), new ASTNode(p_hillcoeff, this)),
@@ -210,9 +210,9 @@ public class HillEquation extends BasicKineticLaw {
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
 			Parameter p_hillcoeff = new Parameter(concat("nm_", rId,
-					underscore, modTInhib.get(i)).toString());
+					underscore, modTInhib.get(i)).toString(), getLevel(), getVersion());
 			Parameter p_kS = new Parameter(concat("kSm_", rId, underscore,
-					modTInhib.get(i)).toString());
+					modTInhib.get(i)).toString(), getLevel(), getVersion());
 			inhib[i] = ASTNode.times(ASTNode.diff(new ASTNode(1, this), ASTNode
 					.frac(ASTNode.pow(new ASTNode(modTInhib.get(i), this),
 							new ASTNode(p_hillcoeff, this)), ASTNode.sum(
@@ -221,7 +221,7 @@ public class HillEquation extends BasicKineticLaw {
 									.pow(new ASTNode(p_kS, this), new ASTNode(
 											p_hillcoeff, this))))));
 		}
-		Parameter p_kg = new Parameter(concat("kg_", rId).toString());
+		Parameter p_kg = new Parameter(concat("kg_", rId).toString(), getLevel(), getVersion());
 		addParameter(p_kg);
 
 		ASTNode formelTxt = new ASTNode(p_kg, this);

@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.ASTNode;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.SpeciesReference;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -202,7 +202,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				}
 				append(kIp2, underscore, specRefP2.getSpecies());
 			}
-			Parameter p_kcatp = new Parameter(kcatp.toString());
+			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
 			addParameter(p_kcatp);
 
 			/*
@@ -210,9 +210,9 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			 * does not matter)
 			 */
 			if (!reaction.getReversible()) {
-				Parameter p_kMr1 = new Parameter(kMr1.toString());
-				Parameter p_kMr2 = new Parameter(kMr2.toString());
-				Parameter p_kIr1 = new Parameter(kIr1.toString());
+				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(), getVersion());
+				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
+				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
 				addParameter(p_kMr1);
 				addParameter(p_kMr2);
 				addParameter(p_kIr1);
@@ -251,15 +251,15 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible Bi-Bi reaction.
 				 */
-				Parameter p_kIr2 = new Parameter(kIr2.toString());
-				Parameter p_kcatn = new Parameter(kcatn.toString());
-				Parameter p_kMr1 = new Parameter(kMr1.toString());
-				Parameter p_kMr2 = new Parameter(kMr2.toString());
-				Parameter p_kMp1 = new Parameter(kMp1.toString());
-				Parameter p_kMp2 = new Parameter(kMp2.toString());
-				Parameter p_kIr1 = new Parameter(kIr1.toString());
-				Parameter p_kIp1 = new Parameter(kIp1.toString());
-				Parameter p_kIp2 = new Parameter(kIp2.toString());
+				Parameter p_kIr2 = new Parameter(kIr2.toString(), getLevel(), getVersion());
+				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
+				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(), getVersion());
+				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
+				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(), getVersion());
+				Parameter p_kMp2 = new Parameter(kMp2.toString(), getLevel(), getVersion());
+				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
+				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(), getVersion());
+				Parameter p_kIp2 = new Parameter(kIp2.toString(), getLevel(), getVersion());
 				addLocalParameters(p_kIr2, p_kcatn, p_kMr1, p_kMr2, p_kMp1,
 						p_kMp2, p_kIr1, p_kIp1, p_kIp2);
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
@@ -391,12 +391,12 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible bi-uni reaction
 				 */
-				Parameter p_kcatn = new Parameter(kcatn.toString());
-				Parameter p_kMr1 = new Parameter(kMr1.toString());
-				Parameter p_kMr2 = new Parameter(kMr2.toString());
-				Parameter p_kMp1 = new Parameter(kMp1.toString());
-				Parameter p_kIr1 = new Parameter(kIr1.toString());
-				Parameter p_kIp1 = new Parameter(kIp1.toString());
+				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
+				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(), getVersion());
+				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
+				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(), getVersion());
+				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
+				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(), getVersion());
 				addLocalParameters(p_kcatn, p_kMr1, p_kMr2, p_kMp1, p_kIr1,
 						p_kIp1);
 

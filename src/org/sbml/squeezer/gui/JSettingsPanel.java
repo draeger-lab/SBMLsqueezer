@@ -35,7 +35,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
-import org.sbml.SBO;
+import org.sbml.jlibsbml.SBO;
 import org.sbml.squeezer.Kinetics;
 
 /**
