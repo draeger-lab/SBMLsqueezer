@@ -41,6 +41,7 @@ public class Model extends AbstractNamedSBase {
 	private ListOf<Constraint> listOfConstraints;
 	private ListOf<Reaction> listOfReactions;
 	private ListOf<Event> listOfEvents;
+	private ModelHistory history;
 
 	/**
 	 * 
@@ -73,8 +74,9 @@ public class Model extends AbstractNamedSBase {
 		setThisAsParentSBMLObject(listOfReactions);
 		listOfEvents = model.getListOfEvents().clone();
 		setThisAsParentSBMLObject(listOfEvents);
+		history = model.getModelHistory().clone();
 	}
-
+	
 	/**
 	 * 
 	 * @param id
@@ -105,6 +107,7 @@ public class Model extends AbstractNamedSBase {
 		setThisAsParentSBMLObject(listOfReactions);
 		listOfEvents = new ListOf<Event>(level, version);
 		setThisAsParentSBMLObject(listOfEvents);
+		history = null;
 	}
 
 	/*
@@ -504,6 +507,14 @@ public class Model extends AbstractNamedSBase {
 	 * 
 	 * @return
 	 */
+	public ModelHistory getModelHistory() {
+		return history;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNumCompartments() {
 		return listOfCompartments.size();
 	}
@@ -546,6 +557,20 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public int getNumInitialAssignments() {
 		return listOfInitialAssignments.size();
+	}
+
+	/**
+	 * Returns the number of parameters that are containt within kineticLaws in
+	 * the reactions of this model.
+	 * 
+	 * @return
+	 */
+	public int getNumLocalParameters() {
+		int count = 0;
+		for (Reaction r : listOfReactions)
+			if (r.isSetKineticLaw())
+				count += r.getKineticLaw().getNumParameters();
+		return count;
 	}
 
 	/**
@@ -672,6 +697,26 @@ public class Model extends AbstractNamedSBase {
 				return s;
 		}
 		return null;
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public UnitDefinition getUnitDefinition(String id) {
+		for (UnitDefinition ud : listOfUnitDefinitions)
+			if (ud.getId().equals(id))
+				return ud;
+		return null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSetModelHistory() {
+		return history != null;
 	}
 
 	/**
@@ -827,27 +872,10 @@ public class Model extends AbstractNamedSBase {
 
 	/**
 	 * 
-	 * @param id
-	 * @return
+	 * @param modelHistory
 	 */
-	public UnitDefinition getUnitDefinition(String id) {
-		for (UnitDefinition ud : listOfUnitDefinitions)
-			if (ud.getId().equals(id))
-				return ud;
-		return null;
-	}
-
-	/**
-	 * Returns the number of parameters that are containt within kineticLaws in
-	 * the reactions of this model.
-	 * 
-	 * @return
-	 */
-	public int getNumLocalParameters() {
-		int count = 0;
-		for (Reaction r : listOfReactions)
-			if (r.isSetKineticLaw())
-				count += r.getKineticLaw().getNumParameters();
-		return count;
+	public void setModelHistory(ModelHistory modelHistory) {
+		this.history = modelHistory;
+		stateChanged();
 	}
 }

@@ -34,6 +34,8 @@ import org.sbml.jlibsbml.FunctionDefinition;
 import org.sbml.jlibsbml.InitialAssignment;
 import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModelCreator;
+import org.sbml.jlibsbml.ModelHistory;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.NamedSBase;
 import org.sbml.jlibsbml.Parameter;
@@ -278,6 +280,20 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			this.model = new Model(originalModel.getId(), (int) originalModel
 					.getLevel(), (int) originalModel.getVersion());
 			int i;
+			if (originalModel.isSetModelHistory()) {
+				ModelHistory mh = new ModelHistory();
+				for (i=0; i<originalModel.getModelHistory().getNumCreators(); i++) {
+					ModelCreator mc = new ModelCreator();
+					org.sbml.libsbml.ModelCreator creator = originalModel.getModelHistory().getCreator(i);
+					System.out.println(creator.getFamilyName());
+					mc.setGivenName(creator.getGivenName());
+					mc.setFamilyName(creator.getFamilyName());
+					mc.setEmail(creator.getEmail());
+					mc.setOrganisation(creator.getOrganisation());
+					mh.addCreator(mc);
+				}
+				this.model.setModelHistory(mh);
+			}
 			copyNamedSBaseProperties(this.model, originalModel);
 			for (i = 0; i < originalModel.getNumFunctionDefinitions(); i++)
 				this.model

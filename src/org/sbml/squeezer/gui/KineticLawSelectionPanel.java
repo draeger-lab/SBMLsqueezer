@@ -176,13 +176,13 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		rButtonReversible = new JRadioButton("Reversible", reaction
 				.getReversible());
 		rButtonReversible
-				.setToolTipText(toHTML(
+				.setToolTipText(GUITools.toHTML(
 						"If selected, SBMLsqueezer will take the effects of "
 								+ "the products into account when creating rate equations.",
 						40));
 		rButtonIrreversible = new JRadioButton("Irreversible", !reaction
 				.getReversible());
-		rButtonIrreversible.setToolTipText(toHTML(
+		rButtonIrreversible.setToolTipText(GUITools.toHTML(
 				"If selected, SBMLsqueezer will not take effects of products into "
 						+ "account when creating rate equations.", 40));
 		ButtonGroup revGroup = new ButtonGroup();
@@ -358,8 +358,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 						.toString());
 				toolTips[i] = !kinetic.isSetSBOTerm() ? "<b>"
 						+ kinetic.getSBOTermID() + "</b> " : "";
-				toolTips[i] = toHTML(toolTips[i] + kinetic.getName(), 40);
-				kineticEquations[i] = toHTML(
+				toolTips[i] = GUITools.toHTML(toolTips[i] + kinetic.getName(), 40);
+				kineticEquations[i] = GUITools.toHTML(
 						possibleTypes[i].getEquationName(), 40);
 			} catch (IllegalFormatException e) {
 				e.printStackTrace();
@@ -387,7 +387,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 						"Existing rate law", false);
 
 				if (reaction.getNotesString().length() > 0)
-					rButtonsKineticEquations[i].setToolTipText(toHTML(reaction
+					rButtonsKineticEquations[i].setToolTipText(GUITools.toHTML(reaction
 							.getNotesString(), 40));
 				else
 					rButtonsKineticEquations[i]
@@ -452,31 +452,5 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		scroll.setPreferredSize(dim);
 		// ContainerHandler.setAllBackground(scroll, Color.WHITE);
 		eqnPrev.add(scroll, BorderLayout.CENTER);
-	}
-
-	/**
-	 * Returns a HTML formated String, in which each line is at most lineBreak
-	 * symbols long.
-	 * 
-	 * @param string
-	 * @param lineBreak
-	 * @return
-	 */
-	public static String toHTML(String string, int lineBreak) {
-		StringTokenizer st = new StringTokenizer(string, " ");
-		string = new String(st.nextElement().toString());
-		int length = string.length();
-		while (st.hasMoreElements()) {
-			if (length >= lineBreak) {
-				string += "<br>";
-				length = 0;
-			} else
-				string += " ";
-			String tmp = st.nextElement().toString();
-			length += tmp.length() + 1;
-			string += tmp;
-		}
-		string = "<html><body>" + string + "</body></html>";
-		return string;
 	}
 }

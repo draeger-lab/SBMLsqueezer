@@ -20,6 +20,7 @@ package org.sbml.squeezer.gui;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -81,5 +82,32 @@ public class GUITools {
 					JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Returns a HTML formated String, in which each line is at most lineBreak
+	 * symbols long.
+	 * 
+	 * @param string
+	 * @param lineBreak
+	 * @return
+	 */
+	public static String toHTML(String string, int lineBreak) {
+		StringTokenizer st = new StringTokenizer(string, " ");
+		string = new String(st.nextElement().toString());
+		int length = string.length();
+		StringBuilder sb = new StringBuilder("<html><body>");
+		while (st.hasMoreElements()) {
+			if (length >= lineBreak) {
+				sb.append("<br>");
+				length = 0;
+			} else
+				sb.append(' ');
+			String tmp = st.nextElement().toString();
+			length += tmp.length() + 1;
+			sb.append(tmp);
+		}
+		sb.append("</body></html>");
+		return sb.toString();
 	}
 }

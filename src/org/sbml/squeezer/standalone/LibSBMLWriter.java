@@ -293,7 +293,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			throw new IllegalArgumentException(
 					"sb must be an instance of org.sbml.libsbml.SBase.");
 		org.sbml.libsbml.SBase po = (org.sbml.libsbml.SBase) sb;
-		if (s.getMetaId() != po.getMetaId())
+		if (s.isSetMetaId() && po.isSetMetaId() && !s.getMetaId().equals(po.getMetaId()))
 			po.setMetaId(s.getMetaId());
 		if (!s.getNotesString().equals(po.getNotesString()))
 			po.setNotes(s.getNotesString());
