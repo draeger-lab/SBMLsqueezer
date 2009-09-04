@@ -20,14 +20,14 @@ package org.sbml.squeezer.io;
 
 import java.util.LinkedList;
 
-import org.sbml.ASTNode;
-import org.sbml.AbstractSBase;
-import org.sbml.Constants;
-import org.sbml.MathContainer;
-import org.sbml.Model;
-import org.sbml.NamedSBase;
-import org.sbml.SBMLReader;
-import org.sbml.UnitDefinition;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.AbstractSBase;
+import org.sbml.jlibsbml.Constants;
+import org.sbml.jlibsbml.MathContainer;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.NamedSBase;
+import org.sbml.jlibsbml.SBMLReader;
+import org.sbml.jlibsbml.UnitDefinition;
 import org.sbml.libsbml.libsbmlConstants;
 
 /**

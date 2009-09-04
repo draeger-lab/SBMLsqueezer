@@ -26,9 +26,9 @@ import javax.swing.JTable;
 import javax.swing.event.MouseInputListener;
 import javax.swing.event.TableModelEvent;
 
-import org.sbml.Model;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.Kinetics;

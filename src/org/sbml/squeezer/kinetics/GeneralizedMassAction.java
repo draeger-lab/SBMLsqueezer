@@ -23,10 +23,10 @@ import java.util.IllegalFormatException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.sbml.ASTNode;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.SpeciesReference;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -273,7 +273,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					// Activator Mod
 					Parameter p_kAn = new Parameter(concat("kA_",
 							getParentSBMLObject().getId(), underscore,
-							modifiers.get(i)).toString());
+							modifiers.get(i)).toString(), getLevel(), getVersion());
 					addParameter(p_kAn);
 					ASTNode kA = new ASTNode(p_kAn, this);
 					mods[i] = ASTNode
@@ -284,7 +284,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					// Inhibitor Mod
 					StringBuffer kIn = concat("kI_", getParentSBMLObject()
 							.getId(), underscore, modifiers.get(i));
-					Parameter p_kIn = new Parameter(kIn.toString());
+					Parameter p_kIn = new Parameter(kIn.toString(), getLevel(), getVersion());
 					addParameter(p_kIn);
 					ASTNode kI = new ASTNode(p_kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI, new ASTNode(
@@ -334,7 +334,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
-		Parameter p_kass = new Parameter(kass.toString());
+		Parameter p_kass = new Parameter(kass.toString(), getLevel(), getVersion());
 		addParameter(p_kass);
 		ASTNode ass = new ASTNode(p_kass, this);
 		for (SpeciesReference reactant : getParentSBMLObject()
@@ -391,7 +391,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kdiss = concat(kdiss, underscore, catalysts.get(c));
-		Parameter p_kdiss = new Parameter(kdiss.toString());
+		Parameter p_kdiss = new Parameter(kdiss.toString(), getLevel(), getVersion());
 		addParameter(p_kdiss);
 		ASTNode diss = new ASTNode(p_kdiss, this);
 		for (int products = 0; products < getParentSBMLObject()

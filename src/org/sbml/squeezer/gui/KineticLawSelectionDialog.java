@@ -50,8 +50,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
 
-import org.sbml.Model;
-import org.sbml.Reaction;
+import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.Kinetics;
@@ -331,8 +331,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 						settings.put(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE,
 								settingsPanel
 										.isSetTreatAllReactionsReversible());
-						settings.put(CfgKeys.MAX_NUMBER_OF_REACTANTS, Integer.valueOf(settingsPanel
-								.getMaxRealisticNumberOfReactants()));
+						settings.put(CfgKeys.MAX_NUMBER_OF_REACTANTS, Integer
+								.valueOf(settingsPanel
+										.getMaxRealisticNumberOfReactants()));
 						Model model = sbmlIO.getSelectedModel();
 						klg = new KineticLawGenerator(model, settings);
 						klg.updateEnzymeKatalysis(settingsPanel
@@ -576,26 +577,28 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * or TeX file.
 	 */
 	private void exportKineticEquations() {
-		if (!KineticsAndParametersStoredInSBML && sbmlIO != null && klg != null) {
-			klg.storeLaws(this);
-			sbmlIO.saveChanges();
-			KineticsAndParametersStoredInSBML = true;
-		}
-		JFileChooser chooser = new JFileChooser();
-		SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
-		SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-		chooser.setFileFilter(ff1);
-		chooser.addChoosableFileFilter(ff2);
-		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-			try {
-				new TextExport(sbmlIO.getSelectedModel(), chooser
-						.getSelectedFile());
-			} catch (IOException exc) {
-				JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-						+ "</html>", exc.getClass().getName(),
-						JOptionPane.ERROR_MESSAGE);
-				exc.printStackTrace();
+		if (sbmlIO != null && klg != null) {
+			if (!KineticsAndParametersStoredInSBML) {
+				klg.storeLaws(this);
+				sbmlIO.saveChanges();
+				KineticsAndParametersStoredInSBML = true;
 			}
+			JFileChooser chooser = new JFileChooser();
+			SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
+			SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
+			chooser.setFileFilter(ff1);
+			chooser.addChoosableFileFilter(ff2);
+			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+				try {
+					new TextExport(sbmlIO.getSelectedModel(), chooser
+							.getSelectedFile());
+				} catch (IOException exc) {
+					JOptionPane.showMessageDialog(this, "<html>"
+							+ exc.getMessage() + "</html>", exc.getClass()
+							.getName(), JOptionPane.ERROR_MESSAGE);
+					exc.printStackTrace();
+				}
+		}
 	}
 
 	/**

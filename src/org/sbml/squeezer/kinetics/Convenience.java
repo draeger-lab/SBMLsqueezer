@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.ASTNode;
-import org.sbml.Parameter;
-import org.sbml.Reaction;
-import org.sbml.SpeciesReference;
+import org.sbml.jlibsbml.ASTNode;
+import org.sbml.jlibsbml.Parameter;
+import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -107,7 +107,7 @@ public class Convenience extends GeneralizedMassAction {
 					getParentSBMLObject().getId());
 			if (modE.size() > 1)
 				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
-			Parameter p_kcatp = new Parameter(kcatp.toString());
+			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
 			addParameter(p_kcatp);
 			numerator = new ASTNode(p_kcatp, this);
 
@@ -125,7 +125,7 @@ public class Convenience extends GeneralizedMassAction {
 				if (modE.size() > 1)
 					kM = concat(kM, underscore, modE.get(enzymeNum));
 				kM = append(kM, underscore, specref.getSpecies());
-				Parameter p_kM = new Parameter(kM.toString());
+				Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
 				addParameter(p_kM);
 
 				denominator1[eductNum] = ASTNode.frac(new ASTNode(specref
@@ -176,7 +176,7 @@ public class Convenience extends GeneralizedMassAction {
 						getParentSBMLObject().getId());
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
-				Parameter p_kcat = new Parameter(kcat.toString());
+				Parameter p_kcat = new Parameter(kcat.toString(), getLevel(), getVersion());
 				addParameter(p_kcat);
 				numerator2 = new ASTNode(p_kcat, this);
 
@@ -192,7 +192,7 @@ public class Convenience extends GeneralizedMassAction {
 						kM = append(kM, underscore, modE.get(enzymeNum));
 					kM = append(kM, underscore, parentReaction.getProduct(
 							productNum).getSpeciesInstance().getId());
-					Parameter p_kM = new Parameter(kM.toString());
+					Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
 					addParameter(p_kM);
 
 					SpeciesReference specRefP = parentReaction

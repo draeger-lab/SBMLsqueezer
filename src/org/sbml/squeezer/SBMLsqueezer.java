@@ -35,7 +35,7 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
-import org.sbml.SBO;
+import org.sbml.jlibsbml.SBO;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
