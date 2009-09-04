@@ -650,7 +650,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * This method initializes a Panel that shows all possible settings of the
 	 * program.
 	 * 
-	 * @return javax.swing.JPanel
+	 * @return javax.swing.JPanelsb.append("<br>");
 	 */
 	private JSettingsPanel getJSettingsPanel() {
 		if (settingsPanel == null) {

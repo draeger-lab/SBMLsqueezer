@@ -45,6 +45,7 @@ import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.ListOf;
 import org.sbml.jlibsbml.MathContainer;
 import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModelCreator;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.NamedSBase;
 import org.sbml.jlibsbml.Parameter;
@@ -255,6 +256,24 @@ public class SBasePanel extends JPanel {
 	 * @param m
 	 */
 	private void addProperties(Model m) {
+		if (m.isSetModelHistory()) {
+			int i = 0;
+			for (ModelCreator mc : m.getModelHistory().getListCreators()) {
+				StringBuilder sb = new StringBuilder("<html><body>");
+				sb.append(mc.getGivenName());
+				sb.append(' ');
+				sb.append(mc.getFamilyName());
+				sb.append("<br>");
+				sb.append(mc.getEmail());
+				sb.append("<br>");
+				sb.append(mc.getOrganisation());
+				sb.append("</body></html>");
+				JPanel p = new JPanel();
+				p.add(new JLabel(sb.toString()));
+				lh.add(new JLabel((++i) + ". creator: "), 0, ++row, 1, 1, 1, 1);
+				lh.add(p, 1, row, 1, 1, 1, 1);
+			}
+		}
 		String columnNames[] = new String[] { "Element", "Quantity" };
 		String rowData[][] = new String[][] {
 				{ "Function definitions",
