@@ -20,7 +20,6 @@ package org.sbml.squeezer.io;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -28,21 +27,28 @@ import javax.swing.event.ChangeListener;
 
 import org.sbml.AbstractSBase;
 import org.sbml.Compartment;
+import org.sbml.CompartmentType;
+import org.sbml.Constraint;
+import org.sbml.Delay;
+import org.sbml.Event;
+import org.sbml.EventAssignment;
 import org.sbml.FunctionDefinition;
 import org.sbml.InitialAssignment;
 import org.sbml.KineticLaw;
 import org.sbml.Model;
 import org.sbml.ModifierSpeciesReference;
+import org.sbml.NamedSBase;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
 import org.sbml.Rule;
 import org.sbml.SBMLReader;
 import org.sbml.SBMLWriter;
-import org.sbml.SBO;
+import org.sbml.SBase;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.SpeciesType;
 import org.sbml.StoichiometryMath;
+import org.sbml.Trigger;
 import org.sbml.Unit;
 import org.sbml.UnitDefinition;
 
@@ -55,12 +61,13 @@ import org.sbml.UnitDefinition;
 public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		ChangeListener {
 
-	private List<AbstractSBase> added;
-	private List<AbstractSBase> removed;
-	private List<AbstractSBase> changed;
+	private List<SBase> added;
+	private List<SBase> removed;
+	private List<SBase> changed;
 	private AbstractSBMLReader reader;
 	private AbstractSBMLWriter writer;
 	protected LinkedList<Model> listOfModels;
+	private LinkedList<Object> listOfOrigModels;
 	private int selectedModel;
 
 	/**
@@ -68,13 +75,14 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 */
 	public SBMLio(AbstractSBMLReader reader, AbstractSBMLWriter writer) {
 		this.reader = reader;
-		this.reader.addSBaseChangeListener(this);
+		// this.reader.addSBaseChangeListener(this);
 		this.writer = writer;
 		listOfModels = new LinkedList<Model>();
+		listOfOrigModels = new LinkedList<Object>();
 		selectedModel = -1;
-		added = new LinkedList<AbstractSBase>();
-		removed = new LinkedList<AbstractSBase>();
-		changed = new LinkedList<AbstractSBase>();
+		added = new LinkedList<SBase>();
+		removed = new LinkedList<SBase>();
+		changed = new LinkedList<SBase>();
 	}
 
 	/**
@@ -85,6 +93,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 			Object model) {
 		this(reader, writer);
 		this.listOfModels.addLast(reader.readModel(model));
+		this.listOfOrigModels.addLast(model);
+		System.out.println(model.getClass().getName());
 	}
 
 	/**
@@ -147,6 +157,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	// @Override
 	public Model readModel(Object model) {
 		listOfModels.addLast(reader.readModel(model));
+		if (model instanceof String)
+			listOfOrigModels.addLast(reader.getOriginalModel());
+		else
+			listOfOrigModels.addLast(model);
 		selectedModel = listOfModels.size() - 1;
 		return listOfModels.getLast();
 	}
@@ -248,7 +262,46 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 */
 	public void saveChanges() {
 		// TODO Auto-generated method stub
+		System.out.println("removed: " + removed);
+		System.out.println("added:   " + added);
+		System.out.println("changed: " + changed);
+
+		writer.saveChanges(listOfModels.get(selectedModel), listOfOrigModels
+				.get(selectedModel));
+
 		System.out.println("fertig");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.sbml.SBMLWriter#saveModifierSpeciesReferenceProperties(org.sbml.
+	 * ModifierSpeciesReference, java.lang.Object)
+	 */
+	public void saveModifierSpeciesReferenceProperties(
+			ModifierSpeciesReference modifierSpeciesReference, Object msr) {
+		writer.saveModifierSpeciesReferenceProperties(modifierSpeciesReference,
+				msr);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#saveNamedSBaseProperties(org.sbml.NamedSBase,
+	 * java.lang.Object)
+	 */
+	public void saveNamedSBaseProperties(NamedSBase nsb, Object sb) {
+		writer.saveNamedSBaseProperties(nsb, sb);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#saveSBaseProperties(org.sbml.SBase,
+	 * java.lang.Object)
+	 */
+	public void saveSBaseProperties(SBase s, Object sb) {
+		writer.saveSBaseProperties(s, sb);
 	}
 
 	/*
@@ -257,7 +310,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBaseChangedListener#sbaseAdded(org.sbml.SBase)
 	 */
 	public void sbaseAdded(AbstractSBase sb) {
-		added.add(sb);
+		if (!added.contains(sb))
+			added.add(sb);
 	}
 
 	/*
@@ -266,7 +320,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBaseChangedListener#sbaseRemoved(org.sbml.SBase)
 	 */
 	public void sbaseRemoved(AbstractSBase sb) {
-		removed.add(sb);
+		if (!removed.contains(sb))
+			removed.add(sb);
 	}
 
 	public void setSelectedModel(int selectedModel) {
@@ -279,7 +334,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
 	 */
 	public void stateChanged(AbstractSBase sb) {
-		changed.add(sb);
+		if (!changed.contains(sb))
+			changed.add(sb);
 	}
 
 	/*
@@ -311,24 +367,95 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		}
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param model
-	 * @param possibleEnzymes
+	 * @see org.sbml.SBMLWriter#writeCompartment(org.sbml.Compartment)
 	 */
-	public void updateEnzymeKatalysis(Model model, Set<Integer> possibleEnzymes) {
-		for (Reaction r : model.getListOfReactions()) {
-			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
-				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
-						&& !possibleEnzymes.contains(Integer.valueOf(modifier
-								.getSpeciesInstance().getSBOTerm())))
-					modifier.setSBOTerm(SBO.getCatalysis());
-				else if (SBO.isCatalyst(modifier.getSBOTerm())
-						&& possibleEnzymes.contains(Integer.valueOf(modifier
-								.getSpeciesInstance().getSBOTerm())))
-					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
-			}
-		}
+	// @Override
+	public Object writeCompartment(Compartment compartment) {
+		return writer.writeCompartment(compartment);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeCompartmentType(org.sbml.CompartmentType)
+	 */
+	// @Override
+	public Object writeCompartmentType(CompartmentType compartmentType) {
+		return writer.writeCompartmentType(compartmentType);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeConstraint(org.sbml.Constraint)
+	 */
+	// @Override
+	public Object writeConstraint(Constraint constraint) {
+		return writer.writeConstraint(constraint);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeDelay(org.sbml.Delay)
+	 */
+	// @Override
+	public Object writeDelay(Delay delay) {
+		return writer.writeDelay(delay);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeEvent(org.sbml.Event)
+	 */
+	// @Override
+	public Object writeEvent(Event event) {
+		return writer.writeEvent(event);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeEventAssignment(org.sbml.EventAssignment)
+	 */
+	// @Override
+	public Object writeEventAssignment(EventAssignment eventAssignment) {
+		return writer.writeEventAssignment(eventAssignment);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.SBMLWriter#writeFunctionDefinition(org.sbml.FunctionDefinition)
+	 */
+	// @Override
+	public Object writeFunctionDefinition(FunctionDefinition functionDefinition) {
+		return writer.writeFunctionDefinition(functionDefinition);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.SBMLWriter#writeInitialAssignment(org.sbml.InitialAssignment)
+	 */
+	// @Override
+	public Object writeInitialAssignment(InitialAssignment initialAssignment) {
+		return writer.writeInitialAssignment(initialAssignment);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeKineticLaw(org.sbml.KineticLaw)
+	 */
+	public Object writeKineticLaw(KineticLaw kineticLaw) {
+		return writer.writeKineticLaw(kineticLaw);
 	}
 
 	/*
@@ -341,6 +468,36 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		return writer.writeModel(model);
 	}
 
+	/**
+	 * 
+	 * @param model
+	 * @param filename
+	 * @return
+	 */
+	public boolean writeModelToSBML(int model, String filename) {
+		return writer.writeSBML(listOfOrigModels.get(model), filename);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.sbml.SBMLWriter#writeModifierSpeciesReference(org.sbml.
+	 * ModifierSpeciesReference)
+	 */
+	public Object writeModifierSpeciesReference(
+			ModifierSpeciesReference modifierSpeciesReference) {
+		return writer.writeModifierSpeciesReference(modifierSpeciesReference);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeParameter(org.sbml.Parameter)
+	 */
+	public Object writeParameter(Parameter parameter) {
+		return writer.writeParameter(parameter);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -349,5 +506,103 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	// @Override
 	public Object writeReaction(Reaction reaction) {
 		return writer.writeReaction(reaction);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeRule(org.sbml.Rule)
+	 */
+	// @Override
+	public Object writeRule(Rule rule) {
+		return writer.writeRule(rule);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeSBML(java.lang.Object, java.lang.String)
+	 */
+	// @Override
+	public boolean writeSBML(Object sbmlDocument, String filename) {
+		return writer.writeSBML(sbmlDocument, filename);
+	}
+
+	/**
+	 * 
+	 * @param filename
+	 * @return
+	 */
+	public boolean writeSelectedModelToSBML(String filename) {
+		return writer.writeSBML(listOfOrigModels.get(selectedModel), filename);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeSpecies(org.sbml.Species)
+	 */
+	// @Override
+	public Object writeSpecies(Species species) {
+		return writer.writeSpecies(species);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeSpeciesReference(org.sbml.SpeciesReference)
+	 */
+	public Object writeSpeciesReference(SpeciesReference speciesReference) {
+		return writer.writeSpeciesReference(speciesReference);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeSpeciesType(org.sbml.SpeciesType)
+	 */
+	// @Override
+	public Object writeSpeciesType(SpeciesType speciesType) {
+		return writer.writeSpeciesType(speciesType);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.SBMLWriter#writeStoichoimetryMath(org.sbml.StoichiometryMath)
+	 */
+	public Object writeStoichoimetryMath(StoichiometryMath stoichiometryMath) {
+		return writer.writeStoichoimetryMath(stoichiometryMath);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeTrigger(org.sbml.Trigger)
+	 */
+	// @Override
+	public Object writeTrigger(Trigger trigger) {
+		return writer.writeTrigger(trigger);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeUnit(org.sbml.Unit)
+	 */
+	// @Override
+	public Object writeUnit(Unit unit) {
+		return writer.writeUnit(unit);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLWriter#writeUnitDefinition(org.sbml.UnitDefinition)
+	 */
+	// @Override
+	public Object writeUnitDefinition(UnitDefinition unitDefinition) {
+		return writer.writeUnitDefinition(unitDefinition);
 	}
 }

@@ -86,7 +86,12 @@ public enum CfgKeys {
 	 * Property that decides whether to set all reactions to reversible before
 	 * creating new kinetic equations.
 	 */
-	TREAT_ALL_REACTIONS_REVERSIBLE
+	TREAT_ALL_REACTIONS_REVERSIBLE, 
+	/**
+	 * The maximal number of reactants so that the reaction is still considered
+	 * plausible.
+	 */
+	MAX_NUMBER_OF_REACTANTS
 	/*
 	 *            A list which contains the names of all species that are
 	 *            accepted to act as enzymes during a reaction. Valid are the

@@ -41,8 +41,8 @@ public class ASTNode implements TreeNode {
 	/**
 	 * important for the TreeNode interface.
 	 */
-	private ASTNode parent; 
-	
+	private ASTNode parent;
+
 	/**
 	 * 
 	 * @param operator
@@ -501,7 +501,7 @@ public class ASTNode implements TreeNode {
 	 * 
 	 * @return the value of the exponent of this ASTNode.
 	 */
-	public double getExponent() {
+	public int getExponent() {
 		if (type == Constants.AST_REAL || type == Constants.AST_REAL_E)
 			return exponent;
 		throw new RuntimeException(
@@ -937,7 +937,12 @@ public class ASTNode implements TreeNode {
 	 *         otherwise.
 	 */
 	public boolean isRelational() {
-		return type == Constants.AST_RATIONAL;
+		return type == Constants.AST_RELATIONAL_EQ
+				|| type == Constants.AST_RELATIONAL_GEQ
+				|| type == Constants.AST_RELATIONAL_GT
+				|| type == Constants.AST_RELATIONAL_LEQ
+				|| type == Constants.AST_RELATIONAL_LT
+				|| type == Constants.AST_RELATIONAL_NEQ;
 	}
 
 	/**
@@ -1920,10 +1925,25 @@ public class ASTNode implements TreeNode {
 		// TODO
 		if (isInteger())
 			return Integer.toString(getInteger());
-		if (isReal())
+		else if (isReal())
 			return Double.toString(getReal());
-		if (isOperator())
+		else if (isOperator())
 			return Character.toString(getCharacter());
+		else if (isRelational())
+			switch (type) {
+			case AST_RELATIONAL_EQ:
+				return Character.toString('=');
+			case AST_RELATIONAL_GEQ:
+				return ">=";
+			case AST_RELATIONAL_GT:
+				return Character.toString('>');
+			case AST_RELATIONAL_LEQ:
+				return "<=";
+			case AST_RELATIONAL_LT:
+				return Character.toString('<');
+			case AST_RELATIONAL_NEQ:
+				return "!=";
+			}
 		return isName() ? getName() : getType().toString();
 	}
 
@@ -1934,7 +1954,7 @@ public class ASTNode implements TreeNode {
 	 */
 	public Enumeration<TreeNode> children() {
 		return new Enumeration<TreeNode>() {
-			int pos = 0;
+			private int pos = 0;
 
 			/*
 			 * (non-Javadoc)
@@ -2000,6 +2020,7 @@ public class ASTNode implements TreeNode {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.tree.TreeNode#getParent()
 	 */
 	public TreeNode getParent() {
@@ -2008,6 +2029,7 @@ public class ASTNode implements TreeNode {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.tree.TreeNode#isLeaf()
 	 */
 	public boolean isLeaf() {

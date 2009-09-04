@@ -24,7 +24,7 @@ import org.sbml.Event;
 import org.sbml.Model;
 import org.sbml.Reaction;
 import org.sbml.SBase;
-import org.sbml.SIUnit;
+import org.sbml.UnitKind;
 import org.sbml.Species;
 import org.sbml.SpeciesReference;
 import org.sbml.StoichiometryMath;
@@ -137,7 +137,7 @@ public class LaTeXExport extends LaTeX {
 		}
 		if (u.isKilogram()) {
 			u.setScale(u.getScale() + 3);
-			u.setKind(SIUnit.UNIT_KIND_GRAM);
+			u.setKind(UnitKind.UNIT_KIND_GRAM);
 		}
 		if (!u.isDimensionless()) {
 			switch (u.getScale()) {

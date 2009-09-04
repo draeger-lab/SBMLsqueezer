@@ -533,7 +533,7 @@ public class SBasePanel extends JPanel {
 		StringBuffer laTeXpreview = new StringBuffer();
 		laTeXpreview.append(LaTeX.eqBegin);
 		if (s.isSetUnits())
-			laTeXpreview.append((new LaTeXExport()).format(s.getUnits())
+			laTeXpreview.append((new LaTeXExport()).format(s.getUnitsInstance())
 					.toString().replace("\\up", "\\").replace("mathrm", "mbox")
 					.replace("text", "mbox").replace("mathtt", "mbox"));
 		laTeXpreview.append(LaTeX.eqEnd);

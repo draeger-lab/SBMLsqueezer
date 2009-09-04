@@ -26,6 +26,7 @@ import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.sbml.AbstractSBase;
 import org.sbml.Model;
@@ -132,7 +133,9 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * )
 	 */
 	public void sbaseAdded(AbstractSBase sb) {
-		init(sb.getModel(), true);
+		// TreePath path = tree.getSelectionPath();
+		// init(sb.getModel(), true);
+		// tree.setSelectionPath(path);
 	}
 
 	/*
@@ -143,7 +146,9 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * )
 	 */
 	public void sbaseRemoved(AbstractSBase sb) {
-		init(sb.getModel(), true);
+		// TreePath path = tree.getSelectionPath();
+		// init(sb.getModel(), true);
+		// tree.setSelectionPath(path);
 	}
 
 	/*
@@ -154,6 +159,8 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * )
 	 */
 	public void stateChanged(AbstractSBase sb) {
-		init(sb.getModel(), true);
+		// TreePath path = tree.getSelectionPath();
+		// init(sb.getModel(), true);
+		// tree.setSelectionPath(path);
 	}
 }

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+import org.sbml.squeezer.io.SBaseChangedListener;
+
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -51,6 +53,19 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 			this.next = next;
 			this.previous = previous;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.sbml.AbstractSBase#addChangeListener(org.sbml.squeezer.io.
+	 * SBaseChangedListener)
+	 */
+	// @Override
+	public void addChangeListener(SBaseChangedListener l) {
+		super.addChangeListener(l);
+		for (E element : this)
+			element.addChangeListener(l);
 	}
 
 	/**
@@ -378,6 +393,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#get(int)
 	 */
 	public E get(int index) {
@@ -386,6 +402,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#indexOf(java.lang.Object)
 	 */
 	public int indexOf(Object o) {
@@ -408,6 +425,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#isEmpty()
 	 */
 	public boolean isEmpty() {
@@ -416,6 +434,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#iterator()
 	 */
 	public Iterator<E> iterator() {
@@ -424,6 +443,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#lastIndexOf(java.lang.Object)
 	 */
 	public int lastIndexOf(Object o) {
@@ -446,6 +466,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#listIterator()
 	 */
 	public ListIterator<E> listIterator() {
@@ -454,6 +475,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#listIterator(int)
 	 */
 	public ListIterator<E> listIterator(int index) {
@@ -462,6 +484,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#remove(int)
 	 */
 	public E remove(int index) {
@@ -473,6 +496,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
@@ -496,6 +520,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection<?> c) {
@@ -507,6 +532,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#retainAll(java.util.Collection)
 	 */
 	public boolean retainAll(Collection<?> c) {
@@ -518,6 +544,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#set(int, java.lang.Object)
 	 */
 	public E set(int index, E element) {
@@ -530,6 +557,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#size()
 	 */
 	public int size() {
@@ -538,6 +566,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#subList(int, int)
 	 */
 	public List<E> subList(int fromIndex, int toIndex) {
@@ -549,6 +578,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#toArray()
 	 */
 	public Object[] toArray() {
@@ -561,6 +591,7 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.List#toArray(T[])
 	 */
 	public <T> T[] toArray(T[] a) {

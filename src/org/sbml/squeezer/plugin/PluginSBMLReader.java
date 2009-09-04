@@ -302,4 +302,10 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Object getOriginalModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

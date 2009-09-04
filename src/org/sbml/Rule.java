@@ -46,4 +46,28 @@ public abstract class Rule extends MathContainer {
 	public Rule(MathContainer sb) {
 		super(sb);
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isAlgebraic() {
+		return this instanceof AlgebraicRule;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isAssignment() {
+		return this instanceof AssignmentRule;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isRate() {
+		return this instanceof RateRule;
+	}
 }

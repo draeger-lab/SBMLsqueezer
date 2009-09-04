@@ -22,8 +22,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,9 +37,6 @@ import javax.swing.border.TitledBorder;
 
 import org.sbml.SBO;
 import org.sbml.squeezer.Kinetics;
-import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.io.SettingsParser;
-import org.sbml.squeezer.io.SettingsWriter;
 
 /**
  * This class is a panel, which contains all necessary options to be specified

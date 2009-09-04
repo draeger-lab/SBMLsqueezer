@@ -31,6 +31,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -80,6 +81,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private JTabbedPaneWithCloseIcons tabbedPane;
 	private JToolBar toolbar;
 
+	/**
+	 * 
+	 */
+	private Properties settings;
+
 	private static Icon latexIcon;
 	private static Icon lemonIcon;
 
@@ -103,8 +109,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/**
 	 * @throws HeadlessException
 	 */
-	public SBMLsqueezerUI(SBMLio io) throws HeadlessException {
+	public SBMLsqueezerUI(SBMLio io, Properties settings) throws HeadlessException {
 		super("SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
+		this.settings = settings;
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException exc) {
@@ -171,39 +178,29 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				SBFileFilter filterTeX = new SBFileFilter(
 						SBFileFilter.TeX_FILES);
 				chooser.addChoosableFileFilter(filterTeX);
-				String dir = SBMLsqueezer.getProperty(CfgKeys.SAVE_DIR)
+				String dir = settings.get(CfgKeys.SAVE_DIR)
 						.toString();
-				if (dir != null) {
-					if (dir.startsWith("user."))
-						dir = System.getProperty(dir);
-					chooser.setCurrentDirectory(new File(dir));
-				}
 				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 					// TODO
 					System.err.println("not yet implemented");
 					String path = chooser.getSelectedFile().getAbsolutePath();
 					path = path.substring(0, path.lastIndexOf('/'));
 					if (!path.equals(dir))
-						SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
+						settings.put(CfgKeys.OPEN_DIR, path);
 				}
 			}
 		} else if (e.getActionCommand().equals(OPEN_FILE)) {
 			JFileChooser chooser = new JFileChooser();
 			SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
 			chooser.setFileFilter(filter);
-			Object dir = SBMLsqueezer.getProperty(CfgKeys.OPEN_DIR);
-			if (dir != null) {
-				if (dir.toString().startsWith("user."))
-					dir = System.getProperty(dir.toString());
-				chooser.setCurrentDirectory(new File(dir.toString()));
-			}
+			Object dir = settings.get(CfgKeys.OPEN_DIR);
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				addModel(sbmlIO.readModel(chooser.getSelectedFile()
 						.getAbsolutePath()));
 				String path = chooser.getSelectedFile().getAbsolutePath();
 				path = path.substring(0, path.lastIndexOf('/'));
 				if (!path.equals(dir))
-					SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
+					settings.put(CfgKeys.OPEN_DIR, path);
 			}
 		} else if (e.getActionCommand().equals(SAVE_FILE)) {
 			JFileChooser chooser = new JFileChooser();
@@ -213,19 +210,37 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			chooser.addChoosableFileFilter(filterSBML);
 			chooser.addChoosableFileFilter(filterText);
 			chooser.addChoosableFileFilter(filterTeX);
-			String dir = SBMLsqueezer.getProperty(CfgKeys.SAVE_DIR).toString();
+			String dir = settings.get(CfgKeys.SAVE_DIR).toString();
 			if (dir != null) {
 				if (dir.startsWith("user."))
 					dir = System.getProperty(dir);
 				chooser.setCurrentDirectory(new File(dir));
 			}
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-				// TODO
-				System.err.println("not yet implemented");
+				File out = chooser.getSelectedFile();
+				if (filterSBML.accept(out)) {
+					if (out.isDirectory())
+						System.err.println("no file choosed");
+					else {
+						int write = JOptionPane.YES_OPTION;
+						if (out.exists())
+							write = JOptionPane.showConfirmDialog(this, out.getName()
+									+ " already exists."
+									+ "Do you want to over write it?",
+									"Over write existing file?",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.QUESTION_MESSAGE);
+						if (write == JOptionPane.YES_OPTION)
+							sbmlIO.writeSelectedModelToSBML(out.getAbsolutePath());
+					}
+				} else {
+					// TODO
+					System.err.println("not yet implemented");
+				}
 				String path = chooser.getSelectedFile().getAbsolutePath();
 				path = path.substring(0, path.lastIndexOf('/'));
 				if (!path.equals(dir))
-					SBMLsqueezer.setProperty(CfgKeys.OPEN_DIR, path);
+					settings.put(CfgKeys.OPEN_DIR, path);
 			}
 		} else if (e.getActionCommand().equals(CLOSE_FILE)) {
 			if (tabbedPane.getComponentCount() > 0)
@@ -244,7 +259,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		} else if (e.getSource() instanceof JMenuItem) {
 			JMenuItem item = (JMenuItem) e.getSource();
 			if (item.getText().equals("Exit")) {
-				SBMLsqueezer.saveProperties();
+				SBMLsqueezer.saveProperties(settings);
 				System.exit(0);
 			} else if (item.getText().equals("About")) {
 				JBrowser browser = new JBrowser(Resource.class
@@ -304,7 +319,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		if (we.getSource() instanceof JHelpBrowser)
 			setEnabled(true, ONLINE_HELP);
 		else if (we.getSource() instanceof SBMLsqueezerUI)
-			SBMLsqueezer.saveProperties();
+			SBMLsqueezer.saveProperties(settings);
 	}
 
 	public void windowDeactivated(WindowEvent arg0) {

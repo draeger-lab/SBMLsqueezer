@@ -5,6 +5,7 @@ import javax.swing.table.AbstractTableModel;
 import org.sbml.ListOf;
 import org.sbml.Parameter;
 import org.sbml.Reaction;
+import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 
 /**
@@ -41,7 +42,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * @param reactionNumAndKineticBezeichnung
 	 * @param model
 	 */
-	public KineticLawTableModel(KineticLawGenerator klg, int maxEducts) {
+	public KineticLawTableModel(KineticLawGenerator klg) {
 		int reactionNum, speciesNum;
 		double numReac;
 
@@ -51,13 +52,14 @@ public class KineticLawTableModel extends AbstractTableModel {
 		data = new Object[klg.getNumCreatedKinetics()][this.columnNames.length];
 		numOfWarnings = 0;
 
+		int maxNumReactants = ((Integer) (klg.getSettings().get(CfgKeys.MAX_NUMBER_OF_REACTANTS))).intValue();
 		for (reactionNum = 0; reactionNum < klg.getNumCreatedKinetics(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
-			if (reaction.getNumReactants() >= maxEducts)
+			if (reaction.getNumReactants() >= maxNumReactants)
 				numOfWarnings++;
 			else
 				for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++)
-					if (reaction.getReactant(speciesNum).getStoichiometry() >= maxEducts) {
+					if (reaction.getReactant(speciesNum).getStoichiometry() >= maxNumReactants) {
 						numOfWarnings++;
 						break;
 					}

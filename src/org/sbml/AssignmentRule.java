@@ -38,7 +38,7 @@ public class AssignmentRule extends Rule {
 		super(sb);
 		this.variable = sb.getVariableInstance();
 	}
-
+	
 	/**
 	 * 
 	 */
@@ -83,11 +83,10 @@ public class AssignmentRule extends Rule {
 
 	/**
 	 * 
-	 * @param variable
+	 * @return
 	 */
-	public void setVariable(Symbol variable) {
-		this.variable = variable;
-		stateChanged();
+	public boolean isSetVariable() {
+		return variable != null;
 	}
 
 	/**
@@ -100,6 +99,15 @@ public class AssignmentRule extends Rule {
 			throw new IllegalArgumentException(
 					"Only the id of an existing Species, Compartments, or Parameters allowed as variables");
 		setVariable(nsb);
+	}
+
+	/**
+	 * 
+	 * @param variable
+	 */
+	public void setVariable(Symbol variable) {
+		this.variable = variable;
+		stateChanged();
 	}
 
 }

@@ -27,6 +27,91 @@ package org.sbml;
 public interface SBMLWriter {
 	/**
 	 * 
+	 * @param modifierSpeciesReference
+	 * @param msr
+	 */
+	public void saveModifierSpeciesReferenceProperties(
+			ModifierSpeciesReference modifierSpeciesReference, Object msr);
+
+	/**
+	 * 
+	 * @param nsb
+	 * @param sb
+	 */
+	public void saveNamedSBaseProperties(NamedSBase nsb, Object sb);
+
+	/**
+	 * 
+	 * @param s
+	 * @param sb
+	 */
+	public void saveSBaseProperties(SBase s, Object sb);
+
+	/**
+	 * 
+	 * @param compartment
+	 * @return
+	 */
+	public Object writeCompartment(Compartment compartment);
+
+	/**
+	 * 
+	 * @param compartmentType
+	 * @return
+	 */
+	public Object writeCompartmentType(CompartmentType compartmentType);
+
+	/**
+	 * 
+	 * @param constraint
+	 * @return
+	 */
+	public Object writeConstraint(Constraint constraint);
+
+	/**
+	 * 
+	 * @param delay
+	 * @return
+	 */
+	public Object writeDelay(Delay delay);
+
+	/**
+	 * 
+	 * @param event
+	 * @return
+	 */
+	public Object writeEvent(Event event);
+
+	/**
+	 * 
+	 * @param ea
+	 * @return
+	 */
+	public Object writeEventAssignment(EventAssignment eventAssignment);
+
+	/**
+	 * 
+	 * @param functionDefinition
+	 * @return
+	 */
+	public Object writeFunctionDefinition(FunctionDefinition functionDefinition);
+
+	/**
+	 * 
+	 * @param initialAssignment
+	 * @return
+	 */
+	public Object writeInitialAssignment(InitialAssignment initialAssignment);
+	
+	/**
+	 * 
+	 * @param kineticLaw
+	 * @return
+	 */
+	public Object writeKineticLaw(KineticLaw kineticLaw);
+	
+	/**
+	 * 
 	 * @param model
 	 * @return
 	 */
@@ -34,8 +119,87 @@ public interface SBMLWriter {
 	
 	/**
 	 * 
+	 * @param modifierSpeciesReference
+	 * @return
+	 */
+	public Object writeModifierSpeciesReference(
+			ModifierSpeciesReference modifierSpeciesReference);
+	
+	/**
+	 * 
+	 * @param parameter
+	 * @return
+	 */
+	public Object writeParameter(Parameter parameter);
+	
+	/**
+	 * 
 	 * @param reaction
 	 * @return
 	 */
 	public Object writeReaction(Reaction reaction);
+	
+	/**
+	 * 
+	 * @param rule
+	 * @return
+	 */
+	public Object writeRule(Rule rule);
+	
+	/**
+	 * 
+	 * @param sbmlDocument
+	 * @param filename
+	 * @return
+	 */
+	public boolean writeSBML(Object sbmlDocument, String filename);
+	
+	/**
+	 * 
+	 * @param species
+	 * @return
+	 */
+	public Object writeSpecies(Species species);
+	
+	/**
+	 * 
+	 * @param speciesReference
+	 * @return
+	 */
+	public Object writeSpeciesReference(SpeciesReference speciesReference);
+	
+	/**
+	 * 
+	 * @param speciesType
+	 * @return
+	 */
+	public Object writeSpeciesType(SpeciesType speciesType);
+	
+	/**
+	 * 
+	 * @param stoichiometryMath
+	 * @return
+	 */
+	public Object writeStoichoimetryMath(StoichiometryMath stoichiometryMath);
+	
+	/**
+	 * 
+	 * @param trigger
+	 * @return
+	 */
+	public Object writeTrigger(Trigger trigger);
+	
+	/**
+	 * 
+	 * @param unit
+	 * @return
+	 */
+	public Object writeUnit(Unit unit);
+	
+	/**
+	 * 
+	 * @param unitDefinition
+	 * @return
+	 */
+	public Object writeUnitDefinition(UnitDefinition unitDefinition);
 }

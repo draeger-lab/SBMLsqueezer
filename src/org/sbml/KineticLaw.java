@@ -28,6 +28,9 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  */
 public class KineticLaw extends MathContainer {
 
+	/**
+	 * local parameters
+	 */
 	private ListOf<Parameter> listOfParameters;
 
 	/**
