@@ -92,7 +92,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private int numOfWarnings = 0;
 
-	private JSettingsPanel settingsPanel;
+	private KineticsSettingsPanel settingsPanel;
 
 	private JButton options;
 
@@ -116,7 +116,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param settings
 	 */
 	public KineticLawSelectionDialog(JFrame owner, Properties settings) {
-		super(owner, "SBMLsqueezer " + SBMLsqueezer.getVersionNumber(), true);
+		super(owner, "SBMLsqueezer", true);
 		this.settings = settings;
 		this.sbmlIO = null;
 		setAlwaysOnTop(true);
@@ -173,8 +173,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 				buffer.write(new LaTeXExport().toLaTeX(reaction).toString());
 				buffer.close();
 			} catch (IOException exc) {
-				JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-						+ "</html>", exc.getClass().getName(),
+				JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+						.getMessage(), 40), exc.getClass().getCanonicalName(),
 						JOptionPane.WARNING_MESSAGE);
 			}
 	}
@@ -205,17 +205,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 		this(owner, settings, sbmlIO);
 		Model model = reaction.getModel();
 		try {
-			Boolean forAll = (Boolean) settings
-					.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION);
-			settings.put(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
-					Boolean.TRUE);
-			klg = new KineticLawGenerator(model, settings);
+			klg = new KineticLawGenerator(model, reaction.getId(), settings);
 			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(
 					klg, reaction);
 			if (JOptionPane.showConfirmDialog(this, messagePanel,
-					"SBMLsqueezer " + SBMLsqueezer.getVersionNumber(),
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-					GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
+					"SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE, GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
 					Kinetics equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
@@ -229,20 +224,20 @@ public class KineticLawSelectionDialog extends JDialog implements
 					sbmlIO.saveChanges();
 				}
 			}
-			settings
-					.put(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION, forAll);
 		} catch (RateLawNotApplicableException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getCanonicalName(),
 					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		} catch (RuntimeException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getCanonicalName(),
+					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", "Warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getCanonicalName(),
+					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
 	}
@@ -293,34 +288,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			} else if (text.equals("Generate")) {
 				if (sbmlIO != null)
 					try {
-						settings
-								.put(
-										CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED,
-										Boolean
-												.valueOf(settingsPanel
-														.isSetAllReactionsAreEnzymeCatalyzed()));
-						settings.put(
-								CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
-								Boolean.valueOf(settingsPanel
-										.isSetAllParametersAreAddedGlobally()));
-						settings
-								.put(
-										CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
-										Boolean
-												.valueOf(settingsPanel
-														.isSetGenerateKineticsForAllReactions()));
-						settings.put(CfgKeys.UNI_UNI_TYPE, settingsPanel
-								.getUniUniType());
-						settings.put(CfgKeys.BI_UNI_TYPE, settingsPanel
-								.getBiUniType());
-						settings.put(CfgKeys.BI_BI_TYPE, settingsPanel
-								.getBiBiType());
-						settings.put(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE,
-								settingsPanel
-										.isSetTreatAllReactionsReversible());
-						settings.put(CfgKeys.MAX_NUMBER_OF_REACTANTS, Integer
-								.valueOf(settingsPanel
-										.getMaxRealisticNumberOfReactants()));
+						settings = settingsPanel.getSettings();
 						Model model = sbmlIO.getSelectedModel();
 						klg = new KineticLawGenerator(model, settings);
 						klg.updateEnzymeKatalysis(settingsPanel
@@ -407,24 +375,24 @@ public class KineticLawSelectionDialog extends JDialog implements
 						validate();
 
 					} catch (IllegalFormatException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+								.getMessage(), 40), exc.getClass().getCanonicalName(),
+								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					} catch (ModificationException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+								.getMessage(), 40), exc.getClass().getCanonicalName(),
+								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					} catch (RateLawNotApplicableException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+								.getMessage(), 40), exc.getClass().getCanonicalName(),
+								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					} catch (IOException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+								.getMessage(), 40), exc.getClass().getCanonicalName(),
+								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					}
 
@@ -580,9 +548,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 					new TextExport(sbmlIO.getSelectedModel(), chooser
 							.getSelectedFile());
 				} catch (IOException exc) {
-					JOptionPane.showMessageDialog(this, "<html>"
-							+ exc.getMessage() + "</html>", exc.getClass()
-							.getName(), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+							.getMessage(), 40), exc.getClass().getCanonicalName(),
+							JOptionPane.WARNING_MESSAGE);
 					exc.printStackTrace();
 				}
 		}
@@ -650,12 +618,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * This method initializes a Panel that shows all possible settings of the
 	 * program.
 	 * 
-	 * @return javax.swing.JPanelsb.append("<br>");
+	 * @return javax.swing.JPanelsb.append("<br>
+	 *         ");
 	 */
-	private JSettingsPanel getJSettingsPanel() {
+	private KineticsSettingsPanel getJSettingsPanel() {
 		if (settingsPanel == null) {
-			settingsPanel = new JSettingsPanel();
-			// TODO: use settings for the initialization!!
+			settingsPanel = new KineticsSettingsPanel(settings);
 			// settingsPanel.setBackground(Color.WHITE);
 		}
 		return settingsPanel;

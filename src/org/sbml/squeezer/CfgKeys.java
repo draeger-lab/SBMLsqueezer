@@ -66,6 +66,18 @@ public enum CfgKeys {
 	 */
 	BI_BI_TYPE,
 	/**
+	 * 
+	 */
+	KINETICS_NONE_ENZYME_REACTIONS,
+	/**
+	 * 
+	 */
+	KINETICS_GENE_REGULATION,
+	/**
+	 * 
+	 */
+	KINETICS_OTHER_ENZYME_REACTIONS,
+	/**
 	 * If true, all reactions within the network are considered enzyme reactions. If 
 	 * false, an explicit enzymatic catalyst must be assigned to a reaction to obtain
 	 * this status.
@@ -91,7 +103,43 @@ public enum CfgKeys {
 	 * The maximal number of reactants so that the reaction is still considered
 	 * plausible.
 	 */
-	MAX_NUMBER_OF_REACTANTS
+	MAX_NUMBER_OF_REACTANTS,
+	/**
+	 * If true, warnings will be displayed for too many reactants.
+	 */
+	WARNINGS_FOR_TOO_MANY_REACTANTS,
+	/**
+	 * 
+	 */
+	POSSIBLE_ENZYME_GENERIC,
+	/**
+	 * 
+	 */
+	POSSIBLE_ENZYME_RNA,
+	/**
+	 * 
+	 */
+	POSSIBLE_ENZYME_COMPLEX,
+	/**
+	 * 
+	 */
+	POSSIBLE_ENZYME_TRUNCATED,
+	/**
+	 * 
+	 */
+	POSSIBLE_ENZYME_RECEPTOR,
+	/**
+	 * 
+	 */
+	POSSIBLE_ENZYME_UNKNOWN,
+	/**
+	 * 
+	 */
+	POSSIBLE_ENZYME_ANTISENSE_RNA,
+	/**
+	 * 
+	 */
+	POSSIBLE_ENZYME_SIMPLE_MOLECULE,
 	/*
 	 *            A list which contains the names of all species that are
 	 *            accepted to act as enzymes during a reaction. Valid are the
