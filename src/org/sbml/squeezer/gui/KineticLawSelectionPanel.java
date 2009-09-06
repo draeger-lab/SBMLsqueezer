@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.IllegalFormatException;
-import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -132,37 +131,36 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		else
 			this.isParametersGlobal = true;
 		isGlobalSelected = isParametersGlobal;
-		JLabel label = new JLabel("<html><body>", SwingConstants.LEFT);
+		StringBuilder label = new StringBuilder("<html><body>");
 		double stoichiometry = 0;
 		for (int i = 0; i < reaction.getNumReactants(); i++)
 			stoichiometry += reaction.getReactant(i).getStoichiometry();
 		if (stoichiometry > 2) {
-			label.setText(label.getText() + "<p><span color=\"red\">"
-					+ "Warning: ");
+			label.append("<p><span color=\"red\">" + "Warning: ");
 			if (stoichiometry - ((int) stoichiometry) == 0)
-				label.setText(label.getText()
-						+ Integer.toString((int) stoichiometry));
+				label.append(Integer.toString((int) stoichiometry));
 			else
-				label.setText(label.getText() + stoichiometry);
-			label.setText(label.getText() + " molecules are unlikely "
-					+ "to collide spontainously.</span></p>");
+				label.append(stoichiometry);
+			label.append(" molecules are unlikely ");
+			label.append("to collide spontainously.</span></p>");
 		}
 		if (reaction.getFast()) {
-			label.setText(label.getText() + "<p><span color=\"#505050\">"
-					+ "This is a fast reaction. Note that this attribute is "
-					+ "currently ignored.</span></p>");
+			label.append("<p><span color=\"#505050\">");
+			label.append("This is a fast reaction. Note that this ");
+			label.append("attribute is currently ignored.</span></p>");
 		}
-		label.setText(label.getText() + "</body></html>");
+		label.append("</body></html>");
 		if (reaction.getFast() || (stoichiometry > 2)) {
 			JPanel p = new JPanel();
 			p.setBackground(Color.WHITE);
-			p.add(label);
+			p.add(new JLabel(label.toString(), SwingConstants.LEFT));
 			p.setBorder(BorderFactory.createRaisedBevelBorder());
 			LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 					p, 0, 0, 1, 1, 1, 1);
 		} else
 			LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
-					label, 0, 0, 1, 1, 1, 1);
+					new JLabel(label.toString(), SwingConstants.LEFT), 0, 0, 1,
+					1, 1, 1);
 
 		/*
 		 * A panel, which contains the question, weather the reaction should be
@@ -176,10 +174,11 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		rButtonReversible = new JRadioButton("Reversible", reaction
 				.getReversible());
 		rButtonReversible
-				.setToolTipText(GUITools.toHTML(
-						"If selected, SBMLsqueezer will take the effects of "
-								+ "the products into account when creating rate equations.",
-						40));
+				.setToolTipText(GUITools
+						.toHTML(
+								"If selected, SBMLsqueezer will take the effects of "
+										+ "the products into account when creating rate equations.",
+								40));
 		rButtonIrreversible = new JRadioButton("Irreversible", !reaction
 				.getReversible());
 		rButtonIrreversible.setToolTipText(GUITools.toHTML(
@@ -285,7 +284,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				rButtonGlobalParameters.setSelected(isGlobalSelected);
 				rButtonLocalParameters.setSelected(!isGlobalSelected);
 			}
-			ContainerHandler.setAllEnabled(optionsPanel,
+			GUITools.setAllEnabled(optionsPanel,
 					i != rButtonsKineticEquations.length - 1);
 		}
 		validate();
@@ -344,7 +343,7 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	 */
 	private Box initKineticsPanel() throws RateLawNotApplicableException,
 			IOException {
-		possibleTypes = klg.identifyPossibleReactionTypes(reaction);
+		possibleTypes = klg.identifyPossibleReactionTypes(reaction.getId());
 		String[] kineticEquations = new String[possibleTypes.length];
 		String[] toolTips = new String[possibleTypes.length];
 		laTeXpreview = new StringBuffer[possibleTypes.length + 1];
@@ -358,9 +357,10 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 						.toString());
 				toolTips[i] = !kinetic.isSetSBOTerm() ? "<b>"
 						+ kinetic.getSBOTermID() + "</b> " : "";
-				toolTips[i] = GUITools.toHTML(toolTips[i] + kinetic.getName(), 40);
-				kineticEquations[i] = GUITools.toHTML(
-						possibleTypes[i].getEquationName(), 40);
+				toolTips[i] = GUITools.toHTML(toolTips[i] + kinetic.getName(),
+						40);
+				kineticEquations[i] = GUITools.toHTML(possibleTypes[i]
+						.getEquationName(), 40);
 			} catch (IllegalFormatException e) {
 				e.printStackTrace();
 			}
@@ -387,8 +387,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 						"Existing rate law", false);
 
 				if (reaction.getNotesString().length() > 0)
-					rButtonsKineticEquations[i].setToolTipText(GUITools.toHTML(reaction
-							.getNotesString(), 40));
+					rButtonsKineticEquations[i].setToolTipText(GUITools.toHTML(
+							reaction.getNotesString(), 40));
 				else
 					rButtonsKineticEquations[i]
 							.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");

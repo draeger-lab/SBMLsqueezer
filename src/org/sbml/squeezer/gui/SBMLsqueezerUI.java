@@ -21,7 +21,6 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -29,12 +28,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -47,7 +44,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -80,6 +76,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	public static final String OPEN_FILE = "open_file";
 	public static final String SAVE_FILE = "save_file";
 	public static final String CLOSE_FILE = "close_file";
+	public static final String SET_PREFERENCES = "set_preferences";
 
 	private JTabbedPaneWithCloseIcons tabbedPane;
 	private JToolBar toolbar;
@@ -96,39 +93,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			throws HeadlessException {
 		super("SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
 		this.settings = settings;
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (InstantiationException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (IllegalAccessException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (UnsupportedLookAndFeelException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		}
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/icon.png"));
-			setIconImage(image);
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "<html>" + exc.getMessage()
-					+ "</html>", exc.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-			exc.printStackTrace();
-		}
 		this.sbmlIO = io;
 		init();
 		pack();
@@ -173,6 +137,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						settings.put(CfgKeys.OPEN_DIR, path);
 				}
 			}
+		} else if (e.getActionCommand().equals(SET_PREFERENCES)) {
+			SettingsDialog dialog = new SettingsDialog(this);
+			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION)
+				this.settings = dialog.getSettings();
+
 		} else if (e.getActionCommand().equals(OPEN_FILE)) {
 			JFileChooser chooser = new JFileChooser(settings.get(
 					CfgKeys.OPEN_DIR).toString());
@@ -339,6 +308,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	private JMenuBar createMenuBar() {
+		/*
+		 * File menu
+		 */
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(fileMenu.getText().charAt(0));
 		JMenuItem openItem = new JMenuItem("Open", UIManager
@@ -366,6 +338,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		closeItem.addActionListener(this);
 		exitItem.addActionListener(this);
 
+		/*
+		 * Edit menu
+		 */
 		JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(editMenu.getText().charAt(0));
 		JMenuItem squeezeItem = new JMenuItem("Squeeze");
@@ -380,9 +355,17 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		latexItem.setIcon(GUITools.LATEX_ICON_TINY);
 		latexItem.addActionListener(this);
 		latexItem.setActionCommand(TO_LATEX);
+		JMenuItem preferencesItem = new JMenuItem("Preferences");
+		preferencesItem.setActionCommand(SET_PREFERENCES);
+		preferencesItem.addActionListener(this);
+		preferencesItem.setMnemonic(preferencesItem.getText().charAt(0));
 		editMenu.add(squeezeItem);
 		editMenu.add(latexItem);
+		editMenu.add(preferencesItem);
 
+		/*
+		 * Help menu
+		 */
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic(helpMenu.getText().charAt(0));
 		JMenuItem about = new JMenuItem("About");
@@ -491,5 +474,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.addChangeListener(this);
 		tabbedPane.addChangeListener(sbmlIO);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		setIconImage(GUITools.LEMON_ICON);
 	}
 }

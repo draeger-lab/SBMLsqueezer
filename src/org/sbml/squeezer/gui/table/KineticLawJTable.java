@@ -336,7 +336,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					rowIndex, 0).toString());
 			try {
 				Kinetics possibleTypes[] = this.klg
-						.identifyPossibleReactionTypes(reaction);
+						.identifyPossibleReactionTypes(reaction.getId());
 
 				Vector<BasicKineticLaw> possibleLaws = new Vector<BasicKineticLaw>();
 				for (int i = 0; i < possibleTypes.length; i++)

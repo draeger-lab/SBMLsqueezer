@@ -76,6 +76,16 @@ public class LayoutHelper {
 	}
 
 	/**
+	 * Creates a new GridBaglayout and associates this with the given container.
+	 * @param cont
+	 */
+	public LayoutHelper(Container cont) {
+		this.cont = cont;
+		this.gbl = new GridBagLayout();
+		this.cont.setLayout(gbl);
+	}
+
+	/**
 	 * 
 	 * @param c
 	 * @param x
@@ -89,6 +99,14 @@ public class LayoutHelper {
 			double weightx, double weighty) {
 		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height,
 				weightx, weighty);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Container getContainer() {
+		return this.cont;
 	}
 
 }

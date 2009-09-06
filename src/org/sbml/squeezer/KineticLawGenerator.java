@@ -101,7 +101,7 @@ public class KineticLawGenerator {
 	 */
 	public KineticLawGenerator(Model model) {
 		this.modelOrig = model;
-		init();
+		init(null);
 	}
 
 	/**
@@ -117,7 +117,20 @@ public class KineticLawGenerator {
 			RateLawNotApplicableException {
 		this.settings = settings;
 		this.modelOrig = model;
-		init();
+		init(null);
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param reactionID
+	 * @param settings
+	 */
+	public KineticLawGenerator(Model model, String reactionID,
+			Properties settings) {
+		this.settings = settings;
+		this.modelOrig = model;
+		init(reactionID);
 	}
 
 	/**
@@ -138,10 +151,9 @@ public class KineticLawGenerator {
 	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
-	public BasicKineticLaw createKineticLaw(Reaction r,
-			Kinetics kinetic, boolean reversibility)
-			throws ModificationException, RateLawNotApplicableException,
-			IOException, IllegalFormatException {
+	public BasicKineticLaw createKineticLaw(Reaction r, Kinetics kinetic,
+			boolean reversibility) throws ModificationException,
+			RateLawNotApplicableException, IOException, IllegalFormatException {
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null)
 			reaction = r;
@@ -198,7 +210,7 @@ public class KineticLawGenerator {
 		boolean reversibility = ((Boolean) settings
 				.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
 		for (Reaction r : miniModel.getListOfReactions()) {
-			createKineticLaw(r, identifyReactionType(r, reversibility),
+			createKineticLaw(r, identifyReactionType(r.getId(), reversibility),
 					reversibility);
 		}
 	}
@@ -264,11 +276,9 @@ public class KineticLawGenerator {
 	 * @return Returns a sorted array of possible kinetic equations for the
 	 *         given reaction in the model.
 	 */
-	public Kinetics[] identifyPossibleReactionTypes(Reaction r)
+	public Kinetics[] identifyPossibleReactionTypes(String reactionID)
 			throws RateLawNotApplicableException {
-		Reaction reaction = miniModel.getReaction(r.getId());
-		if (reaction == null)
-			reaction = r;
+		Reaction reaction = miniModel.getReaction(reactionID);
 		Set<Kinetics> types = new HashSet<Kinetics>();
 		types.add(Kinetics.GENERALIZED_MASS_ACTION);
 
@@ -438,8 +448,9 @@ public class KineticLawGenerator {
 	 * 
 	 * @param reactionNum
 	 */
-	public Kinetics identifyReactionType(Reaction reaction,
+	public Kinetics identifyReactionType(String reactionID,
 			boolean reversibility) throws RateLawNotApplicableException {
+		Reaction reaction = miniModel.getReaction(reactionID);
 		SpeciesReference specref = reaction.getReactant(0);
 
 		List<String> modActi = new LinkedList<String>();
@@ -924,10 +935,13 @@ public class KineticLawGenerator {
 	 * Creates a minimal copy of the original model that only covers those
 	 * elements needed for the creation of rate equations.
 	 * 
+	 * @param reactionID
+	 * 
 	 * @return
 	 */
-	private Model createMinimalModel() {
-		Model m = new Model(modelOrig.getId(), modelOrig.getLevel(), modelOrig.getVersion());
+	private Model createMinimalModel(String reactionID) {
+		Model m = new Model(modelOrig.getId(), modelOrig.getLevel(), modelOrig
+				.getVersion());
 		boolean create = ((Boolean) settings
 				.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 				.booleanValue();
@@ -941,6 +955,10 @@ public class KineticLawGenerator {
 			 */
 			if (r.getFast())
 				listOfFastReactions.add(r);
+			if (reactionID != null && !r.getId().equals(reactionID))
+				continue;
+			else
+				create = true;
 			if (r.isSetKineticLaw()) {
 				String formula = r.getKineticLaw().getFormula();
 				if (formula.equals("") || formula.equals(" ")) {
@@ -959,7 +977,8 @@ public class KineticLawGenerator {
 				}
 			}
 			if (!r.isSetKineticLaw() || create) {
-				Reaction rc = new Reaction(r.getId(), r.getLevel(), r.getVersion());
+				Reaction rc = new Reaction(r.getId(), r.getLevel(), r
+						.getVersion());
 				m.addReaction(rc);
 				rc.setFast(r.getFast());
 				rc.setReversible(r.getReversible());
@@ -1011,6 +1030,7 @@ public class KineticLawGenerator {
 				}
 			}
 		}
+		System.out.println("Num copied reactions:\t"+m.getNumReactions());
 		return m;
 	}
 
@@ -1035,61 +1055,13 @@ public class KineticLawGenerator {
 
 	/**
 	 * load default settings and initialize this object.
+	 * 
+	 * @param reactionID
 	 */
-	private void init() {
+	private void init(String reactionID) {
 		if (settings == null)
-			settings = new Properties();
-		if (!settings.containsKey(CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
-			settings.put(CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
-					Boolean.TRUE);
-		if (!settings
-				.containsKey(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
-			settings.put(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
-					Boolean.FALSE);
-		if (!settings.containsKey(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
-			settings.put(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED,
-					Boolean.FALSE);
-		if (!settings.containsKey(CfgKeys.UNI_UNI_TYPE))
-			settings
-					.put(CfgKeys.UNI_UNI_TYPE, Kinetics.GENERALIZED_MASS_ACTION);
-		if (!settings.containsKey(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE))
-			settings.put(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE, Boolean.TRUE);
-		else {
-			Kinetics uniUniType = Kinetics.valueOf(settings.get(
-					CfgKeys.UNI_UNI_TYPE).toString());
-			if (uniUniType != Kinetics.GENERALIZED_MASS_ACTION
-					&& uniUniType != Kinetics.MICHAELIS_MENTEN
-					&& uniUniType != Kinetics.CONVENIENCE_KINETICS)
-				settings.put(CfgKeys.UNI_UNI_TYPE,
-						Kinetics.GENERALIZED_MASS_ACTION);
-		}
-		if (!settings.containsKey(CfgKeys.BI_UNI_TYPE))
-			settings.put(CfgKeys.BI_UNI_TYPE, Kinetics.GENERALIZED_MASS_ACTION);
-		else {
-			Kinetics biUniType = Kinetics.valueOf(settings.get(
-					CfgKeys.BI_UNI_TYPE).toString());
-			if (biUniType != Kinetics.GENERALIZED_MASS_ACTION
-					&& biUniType != Kinetics.MICHAELIS_MENTEN
-					&& biUniType != Kinetics.CONVENIENCE_KINETICS
-					&& biUniType != Kinetics.RANDOM_ORDER_MECHANISM
-					&& biUniType != Kinetics.ORDERED_MECHANISM)
-				settings.put(CfgKeys.BI_UNI_TYPE,
-						Kinetics.GENERALIZED_MASS_ACTION);
-		}
-		if (!settings.containsKey(CfgKeys.BI_BI_TYPE))
-			settings.put(CfgKeys.BI_BI_TYPE, Kinetics.GENERALIZED_MASS_ACTION);
-		else {
-			Kinetics biBiType = Kinetics.valueOf(settings.get(
-					CfgKeys.BI_BI_TYPE).toString());
-			if (biBiType != Kinetics.GENERALIZED_MASS_ACTION
-					&& biBiType != Kinetics.MICHAELIS_MENTEN
-					&& biBiType != Kinetics.RANDOM_ORDER_MECHANISM
-					&& biBiType != Kinetics.PING_PONG_MECAHNISM
-					&& biBiType != Kinetics.ORDERED_MECHANISM)
-				settings.put(CfgKeys.BI_BI_TYPE,
-						Kinetics.GENERALIZED_MASS_ACTION);
-		}
+			settings = SBMLsqueezer.getDefaultSettings();
 		listOfFastReactions = new LinkedList<Reaction>();
-		this.miniModel = createMinimalModel();
+		this.miniModel = createMinimalModel(reactionID);
 	}
 }

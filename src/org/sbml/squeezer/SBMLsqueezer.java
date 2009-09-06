@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml.squeezer;
 
@@ -179,31 +179,72 @@ public class SBMLsqueezer extends PluginAction {
 				bw.close();
 				br.close();
 			}
-			properties = Resource.readProperties(userConfigFile);
-			Object keys[] = properties.keySet().toArray();
-			for (int i = keys.length - 1; i > 0; i--) {
-				CfgKeys k = CfgKeys.valueOf(keys[i].toString());
-				String val = properties.get(keys[i]).toString();
-				properties.remove(keys[i]);
-				if (val.startsWith("user."))
-					properties.put(k, System.getProperty(val));
-				else if (val.equalsIgnoreCase("true")
-						|| val.equalsIgnoreCase("false"))
-					properties.put(k, Boolean.parseBoolean(val));
-				else
-					properties.put(k, val);
-			}
+			properties = correctProperties(Resource
+					.readProperties(userConfigFile));
 		} catch (Exception e) {
 			e.printStackTrace();
-			try {
-				properties = Resource.readProperties(Resource.class
-						.getResource(configFile).getPath());
-			} catch (IOException exc) {
-				exc.printStackTrace();
-				properties = new Properties();
-			}
+			properties = getDefaultSettings();
 		}
 		return properties;
+	}
+
+	/**
+	 * Creates an instance of the given properties, in which all keys are
+	 * literals from the configuration enum and all values are objects such as
+	 * Boolean, Integer, Double, Kinetics and so on.
+	 * 
+	 * @param properties
+	 * @return
+	 */
+	private static Properties correctProperties(Properties properties) {
+		Object keys[] = properties.keySet().toArray();
+		Properties settings = new Properties();
+		for (int i = keys.length - 1; i >= 0; i--) {
+			CfgKeys k = CfgKeys.valueOf(keys[i].toString());
+			String val = properties.get(keys[i]).toString();
+			if (val.startsWith("user."))
+				settings.put(k, System.getProperty(val));
+			else if (val.equalsIgnoreCase("true")
+					|| val.equalsIgnoreCase("false"))
+				settings.put(k, Boolean.parseBoolean(val));
+			else {
+				boolean allDigit = true;
+				short dotCount = 0;
+				for (char c : val.toCharArray()) {
+					if (c == '.')
+						dotCount++;
+					else
+						allDigit &= Character.isDigit(c);
+				}
+				if (allDigit && dotCount == 0)
+					settings.put(k, Integer.parseInt(val));
+				else if (allDigit && dotCount == 1)
+					settings.put(k, Double.parseDouble(val));
+				else
+					try {
+						settings.put(k, Kinetics.valueOf(val));
+					} catch (IllegalArgumentException e) {
+						settings.put(k, val);
+					}
+			}
+		}
+		return settings;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Properties getDefaultSettings() {
+		Properties defaults;
+		try {
+			defaults = Resource.readProperties(Resource.class.getResource(
+					configFile).getPath());
+		} catch (IOException e) {
+			defaults = new Properties();
+			e.printStackTrace();
+		}
+		return correctProperties(defaults);
 	}
 
 	/**
