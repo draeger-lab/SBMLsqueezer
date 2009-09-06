@@ -22,7 +22,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -55,7 +59,8 @@ import org.sbml.squeezer.SBMLsqueezer;
  *         Dr&auml;ger</a>
  * @date Nov 15, 2007
  */
-public class KineticsSettingsPanel extends JPanel implements ChangeListener {
+public class KineticsSettingsPanel extends JPanel implements ChangeListener,
+		ItemListener {
 
 	/**
 	 * Generated serial version ID.
@@ -115,6 +120,9 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 	private Properties settings;
 
 	private JRadioButton hillKineticsRadioButton;
+	
+	private List<ItemListener> itemListeners;
+	private List<ChangeListener> changeListeners;
 
 	/**
 	 * 
@@ -123,6 +131,8 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 	public KineticsSettingsPanel(Properties settings) {
 		super(new GridBagLayout());
 		this.settings = (Properties) settings.clone();
+		this.itemListeners = new LinkedList<ItemListener>();
+		this.changeListeners = new LinkedList<ChangeListener>();
 		init();
 	}
 
@@ -226,7 +236,8 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 		jRadioButtonForceReacRev.setBackground(Color.WHITE);
 		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(
 				"Use information from SBML");
-		jRadioButtonSettingsFrameForceRevAsCD.setSelected(!((Boolean) settings.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue());
+		jRadioButtonSettingsFrameForceRevAsCD.setSelected(!((Boolean) settings
+				.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue());
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setToolTipText("<html>If checked, the information about reversiblity will be left unchanged.</html>");
 		jRadioButtonSettingsFrameForceRevAsCD.setBackground(Color.WHITE);
@@ -505,7 +516,8 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 		jRadioButtonBiBiORD.setBackground(Color.WHITE);
 
 		jRadioButtonBiBiPP = new JRadioButton("Ping-pong"); // biBiType = 5
-		jRadioButtonBiBiPP.setSelected(settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.PING_PONG_MECAHNISM);
+		jRadioButtonBiBiPP
+				.setSelected(settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.PING_PONG_MECAHNISM);
 		jRadioButtonBiBiPP
 				.setToolTipText("<html>Check this box if you want the ping-pong mechanism as reaction scheme<br>"
 						+ "for bi-bi reactions (two reactants, two products).</html>");
@@ -593,32 +605,32 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 		jRadioButtonBiBiRND.setEnabled(true);
 
 		// Add change listener
-		jCheckBoxTreatAllReactionsAsEnzyeReaction.addChangeListener(this);
-		jCheckBoxAddAllParametersGlobally.addChangeListener(this);
-		jCheckBoxWarnings.addChangeListener(this);
+		jCheckBoxTreatAllReactionsAsEnzyeReaction.addItemListener(this);
+		jCheckBoxAddAllParametersGlobally.addItemListener(this);
+		jCheckBoxWarnings.addItemListener(this);
 		jSpinnerMaxRealisticNumOfReactants.addChangeListener(this);
-		jRadioButtonGenerateForAllReactions.addChangeListener(this);
-		jRadioButtonForceReacRev.addChangeListener(this);
-		jCheckBoxPossibleEnzymeGenericProtein.addChangeListener(this);
-		jCheckBoxPossibleEnzymeRNA.addChangeListener(this);
-		jCheckBoxPossibleEnzymeComplex.addChangeListener(this);
-		jCheckBoxPossibleEnzymeTruncatedProtein.addChangeListener(this);
-		jCheckBoxPossibleEnzymeReceptor.addChangeListener(this);
-		jCheckBoxPossibleEnzymeUnknown.addChangeListener(this);
-		jCheckBoxPossibleEnzymeAsRNA.addChangeListener(this);
-		jCheckBoxPossibleEnzymeSimpleMolecule.addChangeListener(this);
-		jRadioButtonGMAK.addChangeListener(this);
-		hillKineticsRadioButton.addChangeListener(this);
-		jRadioButtonUniUniMMK.addChangeListener(this);
-		jRadioButtonUniUniCONV.addChangeListener(this);
-		jRadioButtonBiUniORD.addChangeListener(this);
-		jRadioButtonBiUniCONV.addChangeListener(this);
-		jRadioButtonBiUniRND.addChangeListener(this);
-		jRadioButtonBiBiRND.addChangeListener(this);
-		jRadioButtonBiBiCONV.addChangeListener(this);
-		jRadioButtonBiBiORD.addChangeListener(this);
-		jRadioButtonBiBiPP.addChangeListener(this);
-		jRadioButtonOtherEnzymCONV.addChangeListener(this);
+		jRadioButtonGenerateForAllReactions.addItemListener(this);
+		jRadioButtonForceReacRev.addItemListener(this);
+		jCheckBoxPossibleEnzymeGenericProtein.addItemListener(this);
+		jCheckBoxPossibleEnzymeRNA.addItemListener(this);
+		jCheckBoxPossibleEnzymeComplex.addItemListener(this);
+		jCheckBoxPossibleEnzymeTruncatedProtein.addItemListener(this);
+		jCheckBoxPossibleEnzymeReceptor.addItemListener(this);
+		jCheckBoxPossibleEnzymeUnknown.addItemListener(this);
+		jCheckBoxPossibleEnzymeAsRNA.addItemListener(this);
+		jCheckBoxPossibleEnzymeSimpleMolecule.addItemListener(this);
+		jRadioButtonGMAK.addItemListener(this);
+		hillKineticsRadioButton.addItemListener(this);
+		jRadioButtonUniUniMMK.addItemListener(this);
+		jRadioButtonUniUniCONV.addItemListener(this);
+		jRadioButtonBiUniORD.addItemListener(this);
+		jRadioButtonBiUniCONV.addItemListener(this);
+		jRadioButtonBiUniRND.addItemListener(this);
+		jRadioButtonBiBiRND.addItemListener(this);
+		jRadioButtonBiBiCONV.addItemListener(this);
+		jRadioButtonBiBiORD.addItemListener(this);
+		jRadioButtonBiBiPP.addItemListener(this);
+		jRadioButtonOtherEnzymCONV.addItemListener(this);
 	}
 
 	/**
@@ -750,7 +762,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 			jRadioButtonBiBiORD.setEnabled(true);
 			jRadioButtonBiBiCONV.setEnabled(true);
 			jRadioButtonBiBiRND.setEnabled(true);
-			jRadioButtonOtherEnzymCONV.setEnabled(true);
+			jRadioButtonOtherEnzymCONV.setEnabled(false);
 		}
 		return possibleEnzymeAllNotChecked;
 	}
@@ -785,6 +797,22 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 	 * )
 	 */
 	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(jSpinnerMaxRealisticNumOfReactants)) {
+			settings.put(CfgKeys.MAX_NUMBER_OF_REACTANTS, Integer
+					.parseInt(jSpinnerMaxRealisticNumOfReactants.getValue()
+							.toString()));
+			for (int i=0; i<changeListeners.size(); i++)
+				changeListeners.get(i).stateChanged(e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
+	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jCheckBoxTreatAllReactionsAsEnzyeReaction)) {
 			settings.put(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED, Boolean
 					.valueOf(jCheckBoxTreatAllReactionsAsEnzyeReaction
@@ -792,10 +820,6 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 		} else if (e.getSource().equals(jCheckBoxAddAllParametersGlobally)) {
 			settings.put(CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY, Boolean
 					.valueOf(jCheckBoxAddAllParametersGlobally.isSelected()));
-		} else if (e.getSource().equals(jSpinnerMaxRealisticNumOfReactants)) {
-			settings.put(CfgKeys.MAX_NUMBER_OF_REACTANTS, Integer
-					.parseInt(jSpinnerMaxRealisticNumOfReactants.getValue()
-							.toString()));
 		} else if (e.getSource().equals(jCheckBoxWarnings)) {
 			settings.put(CfgKeys.WARNINGS_FOR_TOO_MANY_REACTANTS, Boolean
 					.valueOf(jCheckBoxWarnings.isSelected()));
@@ -886,6 +910,23 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener {
 				settings.put(CfgKeys.KINETICS_GENE_REGULATION,
 						Kinetics.HILL_EQUATION);
 		}
+		for (ItemListener i : itemListeners)
+			i.itemStateChanged(e);
 	}
 
+	/**
+	 * 
+	 * @param l
+	 */
+	public void addItemListener(ItemListener l) {
+		itemListeners.add(l);
+	}
+	
+	/**
+	 * 
+	 * @param l
+	 */
+	public void addChangeListener(ChangeListener l) {
+		changeListeners.add(l);
+	}
 }
