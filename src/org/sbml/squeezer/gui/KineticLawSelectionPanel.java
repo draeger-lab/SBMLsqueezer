@@ -25,6 +25,8 @@ import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.IllegalFormatException;
 
@@ -32,6 +34,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -40,6 +43,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
 
 import org.sbml.jlibsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
@@ -61,7 +66,7 @@ import atp.sHotEqn;
  * @author Hannes Borch <hannes.borch@googlemail.com>
  * @date Feb 7, 2008
  */
-public class KineticLawSelectionPanel extends JPanel implements ActionListener {
+public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	/**
 	 * Generated Serial ID.
@@ -107,6 +112,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 	private String selected;
 
 	private StringBuffer[] laTeXpreview;
+
+	private JCheckBox treatAsEnzymeReaction;
 
 	private static final int width = 310, height = 175;
 
@@ -167,7 +174,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		 * set to reversible or irreversible. The default is taken from the
 		 * current setting of the given reaction.
 		 */
-		optionsPanel = new JPanel(new GridBagLayout());
+		optionsPanel = new JPanel();
+		LayoutHelper lh = new LayoutHelper(optionsPanel);
 		optionsPanel.setBorder(BorderFactory
 				.createTitledBorder("Reaction options"));
 
@@ -185,14 +193,28 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 				"If selected, SBMLsqueezer will not take effects of products into "
 						+ "account when creating rate equations.", 40));
 		ButtonGroup revGroup = new ButtonGroup();
+		boolean nonEnzyme = klg.isNonEnzymeReaction(reaction);
+		treatAsEnzymeReaction = new JCheckBox(
+				"Consider this reaction to be enzyme-catalyzed", ((Boolean) klg
+						.getSettings().get(
+								CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+						.booleanValue()
+						|| !nonEnzyme);
+		treatAsEnzymeReaction.setToolTipText(GUITools
+				.toHTML(
+						"Allows you to decide whether "
+								+ "or not this reaction should be"
+								+ "interpreted as being enzyme-catalyzed. "
+								+ "If an enzyme catalyst exists for this "
+								+ "reaction, this feature cannot be switched "
+								+ "off.", 40));
+		if (klg.isEnzymeReaction(reaction))
+			treatAsEnzymeReaction.setEnabled(false);
+		lh.add(treatAsEnzymeReaction, 0, 0, 2, 1, 1, 1);
 		revGroup.add(rButtonReversible);
 		revGroup.add(rButtonIrreversible);
-		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
-				.getLayout(), rButtonReversible, 0, 0, 1, 1, 1, 1);
-		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
-				.getLayout(), rButtonIrreversible, 1, 0, 1, 1, 1, 1);
-		rButtonIrreversible.addActionListener(this);
-		rButtonReversible.addActionListener(this);
+		lh.add(rButtonReversible, 0, 1, 1, 1, 1, 1);
+		lh.add(rButtonIrreversible, 1, 1, 1, 1, 1, 1);
 		isReversibleSelected = reaction.getReversible();
 		rButtonGlobalParameters = new JRadioButton("Global parameters",
 				isParametersGlobal);
@@ -207,12 +229,8 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		ButtonGroup paramGroup = new ButtonGroup();
 		paramGroup.add(rButtonGlobalParameters);
 		paramGroup.add(rButtonLocalParameters);
-		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
-				.getLayout(), rButtonGlobalParameters, 0, 1, 1, 1, 1, 1);
-		LayoutHelper.addComponent(optionsPanel, (GridBagLayout) optionsPanel
-				.getLayout(), rButtonLocalParameters, 1, 1, 1, 0, 1, 1);
-		rButtonGlobalParameters.addActionListener(this);
-		rButtonLocalParameters.addActionListener(this);
+		lh.add(rButtonGlobalParameters, 0, 2, 1, 1, 1, 1);
+		lh.add(rButtonLocalParameters, 1, 2, 1, 0, 1, 1);
 
 		kineticsPanel = initKineticsPanel();
 
@@ -223,76 +241,11 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 				optionsPanel, 0, 3, 1, 1, 1, 1);
 
-		// ContainerHandler.setAllBackground(this, Color.WHITE);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		JRadioButton rbutton = (JRadioButton) e.getSource();
-		if (rbutton.getParent().equals(optionsPanel)) {
-			if (rbutton.getText().contains("eversible")) {
-				isReversibleSelected = getReversible();
-				try {
-					// reversible property was changed.
-					selected = "";
-					for (int i = 0; i < rButtonsKineticEquations.length
-							&& selected.length() == 0; i++)
-						if (rButtonsKineticEquations[i].isSelected())
-							selected = rButtonsKineticEquations[i].getText();
-					reaction.setReversible(getReversible());
-					remove(kineticsPanel);
-					kineticsPanel = initKineticsPanel();
-					LayoutHelper.addComponent(this, (GridBagLayout) this
-							.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
-				} catch (RateLawNotApplicableException exc) {
-					throw new RuntimeException(exc.getMessage(), exc);
-				} catch (IOException exc) {
-					JOptionPane.showMessageDialog(this, "<html>"
-							+ exc.getMessage() + "</html>", exc.getClass()
-							.getName(), JOptionPane.ERROR_MESSAGE);
-					exc.printStackTrace();
-				}
-			} else {
-				klg.getSettings().put(
-						CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
-						Boolean.valueOf(getGlobal()));
-				isGlobalSelected = getGlobal();
-			}
-		} else {
-			int i = 0;
-			while ((i < rButtonsKineticEquations.length)
-					&& (!rbutton.equals(rButtonsKineticEquations[i])))
-				i++;
-			kineticsPanel.remove(eqnPrev);
-			setPreviewPanel(i);
-			kineticsPanel.add(eqnPrev);
-			if (i == rButtonsKineticEquations.length - 1) {
-				rButtonReversible.setSelected(isReactionReversible);
-				rButtonIrreversible.setSelected(!isReactionReversible);
-				rButtonGlobalParameters.setSelected(isParametersGlobal);
-				rButtonLocalParameters.setSelected(!isParametersGlobal);
-				isExistingRateLawSelected = true;
-			} else {
-				isExistingRateLawSelected = false;
-				rButtonReversible.setSelected(isReversibleSelected);
-				rButtonIrreversible.setSelected(!isReversibleSelected);
-				rButtonGlobalParameters.setSelected(isGlobalSelected);
-				rButtonLocalParameters.setSelected(!isGlobalSelected);
-			}
-			GUITools.setAllEnabled(optionsPanel,
-					i != rButtonsKineticEquations.length - 1);
-		}
-		validate();
-		getTopLevelAncestor().validate();
-		Window w = (Window) getTopLevelAncestor();
-		int width = w.getWidth();
-		w.pack();
-		w.setSize(width, w.getHeight());
+		treatAsEnzymeReaction.addItemListener(this);
+		// rButtonIrreversible.addItemListener(this);
+		rButtonReversible.addItemListener(this);
+		rButtonGlobalParameters.addItemListener(this);
+		rButtonLocalParameters.addItemListener(this);
 	}
 
 	public boolean getExistingRateLawSelected() {
@@ -393,7 +346,6 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 							.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");
 			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
-			rButtonsKineticEquations[i].addActionListener(this);
 			if (i < rButtonsKineticEquations.length - 1 || isKineticLawDefined)
 				LayoutHelper.addComponent(kineticsPanel,
 						(GridBagLayout) kineticsPanel.getLayout(),
@@ -413,7 +365,117 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 		// ContainerHandler.setAllBackground(info, Color.WHITE);
 
 		isExistingRateLawSelected = false;
+
+		for (i = 0; i < rButtonsKineticEquations.length; i++)
+			rButtonsKineticEquations[i].addItemListener(this);
+
 		return info; // kineticsPanel;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
+	public void itemStateChanged(ItemEvent ie) {
+		if (ie.getSource() instanceof JCheckBox)
+			try {
+				JCheckBox check = (JCheckBox) ie.getSource();
+				klg.getSettings().put(
+						CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+						Boolean.valueOf(check.isSelected()));
+				remove(kineticsPanel);
+				kineticsPanel = initKineticsPanel();
+				LayoutHelper.addComponent(this, (GridBagLayout) this
+						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+			} catch (RateLawNotApplicableException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		else if (ie.getSource() instanceof JRadioButton) {
+			JRadioButton rbutton = (JRadioButton) ie.getSource();
+			if (rbutton.getParent().equals(optionsPanel)) {
+				if (rbutton.getText().contains("eversible")) {
+					isReversibleSelected = getReversible();
+					try {
+						// reversible property was changed.
+						selected = "";
+						int i;
+						for (i = 0; i < rButtonsKineticEquations.length
+								&& selected.length() == 0; i++)
+							if (rButtonsKineticEquations[i].isSelected())
+								selected = rButtonsKineticEquations[i]
+										.getText();
+						klg.setReversible(reaction.getId(), getReversible());
+						remove(kineticsPanel);
+						kineticsPanel = initKineticsPanel();
+						LayoutHelper.addComponent(this, (GridBagLayout) this
+								.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+						for (i = 0; i < rButtonsKineticEquations.length; i++)
+							if (selected.equals(rButtonsKineticEquations[i]
+									.getText())) {
+								rButtonsKineticEquations[i].setSelected(true);
+								break;
+							}
+						updateView(i);
+					} catch (RateLawNotApplicableException exc) {
+						throw new RuntimeException(exc.getMessage(), exc);
+					} catch (IOException exc) {
+						JOptionPane.showMessageDialog(this, "<html>"
+								+ exc.getMessage() + "</html>", exc.getClass()
+								.getName(), JOptionPane.ERROR_MESSAGE);
+						exc.printStackTrace();
+					}
+				} else {
+					klg.getSettings().put(
+							CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+							Boolean.valueOf(getGlobal()));
+					isGlobalSelected = getGlobal();
+				}
+			} else {
+				int i = 0;
+				while ((i < rButtonsKineticEquations.length)
+						&& (!rbutton.equals(rButtonsKineticEquations[i])))
+					i++;
+				updateView(i);
+			}
+		}
+		validate();
+		getTopLevelAncestor().validate();
+		Window w = (Window) getTopLevelAncestor();
+		int width = w.getWidth();
+		w.pack();
+		w.setSize(width, w.getHeight());
+	}
+
+	/**
+	 * 
+	 * @param i
+	 */
+	private void updateView(int i) {
+		boolean disable = i != rButtonsKineticEquations.length - 1; 
+		kineticsPanel.remove(eqnPrev);
+		setPreviewPanel(i);
+		kineticsPanel.add(eqnPrev);
+		if (i == rButtonsKineticEquations.length - 1) {
+			rButtonReversible.setSelected(isReactionReversible);
+			rButtonIrreversible.setSelected(!isReactionReversible);
+			rButtonGlobalParameters.setSelected(isParametersGlobal);
+			rButtonLocalParameters.setSelected(!isParametersGlobal);
+			isExistingRateLawSelected = true;
+		} else {
+			isExistingRateLawSelected = false;
+			rButtonReversible.setSelected(isReversibleSelected);
+			rButtonIrreversible.setSelected(!isReversibleSelected);
+			rButtonGlobalParameters.setSelected(isGlobalSelected);
+			rButtonLocalParameters.setSelected(!isGlobalSelected);
+		}
+		GUITools.setAllEnabled(optionsPanel,
+				disable);
+		if (klg.isEnzymeReaction(reaction))
+			treatAsEnzymeReaction.setEnabled(false);
 	}
 
 	/**

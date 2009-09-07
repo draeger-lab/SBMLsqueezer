@@ -199,6 +199,108 @@ public class KineticLawGenerator {
 	}
 
 	/**
+	 * Creates a minimal copy of the original model that only covers those
+	 * elements needed for the creation of rate equations.
+	 * 
+	 * @param reactionID
+	 * 
+	 * @return
+	 */
+	private Model createMinimalModel(String reactionID) {
+		Model m = new Model(modelOrig.getId(), modelOrig.getLevel(), modelOrig
+				.getVersion());
+		boolean create = ((Boolean) settings
+				.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
+				.booleanValue();
+		/*
+		 * Copy needed species and reactions.
+		 */
+		for (Reaction r : modelOrig.getListOfReactions()) {
+			/*
+			 * Let us find all fast reactions. This feature is currently
+			 * ignored.
+			 */
+			if (r.getFast())
+				listOfFastReactions.add(r);
+			if (reactionID != null && !r.getId().equals(reactionID))
+				continue;
+			else
+				create = true;
+			if (r.isSetKineticLaw()) {
+				String formula = r.getKineticLaw().getFormula();
+				if (formula.equals("") || formula.equals(" ")) {
+					System.err
+							.println("Reaction "
+									+ r.getId()
+									+ " in the model has an incorrect format."
+									+ "This means there is either an empty kinetic law in this reaction "
+									+ "or a kinetic law that only consists of a white space. "
+									+ "If you decide not to save this generated model, there is only one "
+									+ "solution: "
+									+ "open this SBML file in an editor and delete the whole kinetic law."
+									+ "SBMLsqueezer ignores this misstake and generates a proper equation. "
+									+ "Therfore we recomment that you save this generated model.");
+					create = true;
+				}
+			}
+			if (!r.isSetKineticLaw() || create) {
+				Reaction rc = new Reaction(r.getId(), r.getLevel(), r
+						.getVersion());
+				m.addReaction(rc);
+				rc.setFast(r.getFast());
+				rc.setReversible(r.getReversible());
+				for (SpeciesReference s : r.getListOfReactants()) {
+					Species species = s.getSpeciesInstance();
+					if (m.getCompartment(species.getCompartment()) == null)
+						m.addCompartment(species.getCompartmentInstance()
+								.clone());
+					if (m.getSpecies(species.getId()) == null)
+						m.addSpecies(species.clone());
+					SpeciesReference sr = s.clone();
+					sr.setSpecies(m.getSpecies(s.getSpecies()));
+					rc.addReactant(sr);
+				}
+				for (SpeciesReference s : r.getListOfProducts()) {
+					Species species = s.getSpeciesInstance();
+					if (m.getCompartment(species.getCompartment()) == null)
+						m.addCompartment(species.getCompartmentInstance()
+								.clone());
+					if (m.getSpecies(species.getId()) == null)
+						m.addSpecies(species.clone());
+					SpeciesReference sr = s.clone();
+					sr.setSpecies(m.getSpecies(s.getSpecies()));
+					rc.addProduct(sr);
+				}
+				for (ModifierSpeciesReference s : r.getListOfModifiers()) {
+					Species species = s.getSpeciesInstance();
+					if (m.getCompartment(species.getCompartment()) == null)
+						m.addCompartment(species.getCompartmentInstance()
+								.clone());
+					if (m.getSpecies(species.getId()) == null)
+						m.addSpecies(species.clone());
+					ModifierSpeciesReference sr = s.clone();
+					sr.setSpecies(m.getSpecies(s.getSpecies()));
+					rc.addModifier(sr);
+				}
+				/*
+				 * This will be over written later on anyway but ignoring it
+				 * would be confusing for users...
+				 */
+				if (r.isSetKineticLaw()) {
+					KineticLaw l = r.getKineticLaw();
+					if (l.isSetMath())
+						for (Parameter parameter : modelOrig
+								.getListOfParameters())
+							if (l.getMath().refersTo(parameter.getId()))
+								m.addParameter(parameter.clone());
+					rc.setKineticLaw(l.clone());
+				}
+			}
+		}
+		return m;
+	}
+
+	/**
 	 * @throws IOException
 	 * @throws RateLawNotApplicableException
 	 * @throws ModificationException
@@ -256,6 +358,25 @@ public class KineticLawGenerator {
 	 */
 	public Properties getSettings() {
 		return settings;
+	}
+
+	/**
+	 * Returns true if the given model's stoichiometric matrix has full column
+	 * rank.
+	 * 
+	 * @param model
+	 * @return
+	 */
+	private boolean hasFullColumnRank(Model model) {
+		boolean fullRank = false;
+		if ((model.getNumSpecies() >= model.getNumReactions())
+				&& (columnRank == -1)) {
+			GaussianRank gaussian = new GaussianRank(stoechMatrix(model));
+			columnRank = gaussian.getColumnRank();
+			fullRank = gaussian.hasFullRank();
+		} else if (columnRank == model.getNumReactions())
+			fullRank = true;
+		return fullRank;
 	}
 
 	/**
@@ -652,6 +773,58 @@ public class KineticLawGenerator {
 	}
 
 	/**
+	 * load default settings and initialize this object.
+	 * 
+	 * @param reactionID
+	 */
+	private void init(String reactionID) {
+		if (settings == null)
+			settings = SBMLsqueezer.getDefaultSettings();
+		listOfFastReactions = new LinkedList<Reaction>();
+		this.miniModel = createMinimalModel(reactionID);
+	}
+
+	/**
+	 * 
+	 * @param reaction
+	 * @return
+	 */
+	public boolean isNonEnzymeReaction(Reaction reaction) {
+		// identify types of modifiers
+		List<String> nonEnzymeCatalyzers = new LinkedList<String>();
+		List<String> inhibitors = new LinkedList<String>();
+		List<String> activators = new LinkedList<String>();
+		List<String> transActiv = new LinkedList<String>();
+		List<String> transInhib = new LinkedList<String>();
+		List<String> enzymes = new LinkedList<String>();
+		if (reaction.getNumModifiers() > 0)
+			BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
+					transInhib, activators, enzymes, nonEnzymeCatalyzers);
+		boolean nonEnzyme = ((!((Boolean) settings
+				.get(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+				.booleanValue() && enzymes.size() == 0)
+				|| (nonEnzymeCatalyzers.size() > 0)
+				|| reaction.getNumProducts() == 0 || (SBO.isEmptySet(reaction
+				.getProduct(0).getSpeciesInstance().getSBOTerm())));
+		return nonEnzyme;
+	}
+
+	public boolean isEnzymeReaction(Reaction reaction) {
+		// identify types of modifiers
+		List<String> nonEnzymeCatalyzers = new LinkedList<String>();
+		List<String> inhibitors = new LinkedList<String>();
+		List<String> activators = new LinkedList<String>();
+		List<String> transActiv = new LinkedList<String>();
+		List<String> transInhib = new LinkedList<String>();
+		List<String> enzymes = new LinkedList<String>();
+		if (reaction.getNumModifiers() > 0)
+			BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
+					transInhib, activators, enzymes, nonEnzymeCatalyzers);
+		boolean enzyme = (enzymes.size() > 0 && nonEnzymeCatalyzers.size() == 0);
+		return enzyme;
+	}
+
+	/**
 	 * Delete unnecessary paremeters from the model. A parameter is defined to
 	 * be unnecessary if and only if no kinetic law, no event assignment, no
 	 * rule and no function makes use of this parameter.
@@ -817,6 +990,23 @@ public class KineticLawGenerator {
 	}
 
 	/**
+	 * Sets the reaction with the given id in the minimal model copy to the
+	 * given reversibility value.
+	 * 
+	 * @param id
+	 * @param reversible
+	 */
+	public void setReversible(String id, boolean reversible) {
+		Reaction r = miniModel.getReaction(id);
+		if (r != null)
+			r.setReversible(reversible);
+		else
+			throw new IllegalArgumentException(
+					id
+							+ " is not the id of a reaction for which rate laws are to be created.");
+	}
+
+	/**
 	 * Computes the stoichiometric matrix of the model system.
 	 * 
 	 * @return
@@ -934,138 +1124,5 @@ public class KineticLawGenerator {
 					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
 			}
 		}
-	}
-
-	/**
-	 * Creates a minimal copy of the original model that only covers those
-	 * elements needed for the creation of rate equations.
-	 * 
-	 * @param reactionID
-	 * 
-	 * @return
-	 */
-	private Model createMinimalModel(String reactionID) {
-		Model m = new Model(modelOrig.getId(), modelOrig.getLevel(), modelOrig
-				.getVersion());
-		boolean create = ((Boolean) settings
-				.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
-				.booleanValue();
-		/*
-		 * Copy needed species and reactions.
-		 */
-		for (Reaction r : modelOrig.getListOfReactions()) {
-			/*
-			 * Let us find all fast reactions. This feature is currently
-			 * ignored.
-			 */
-			if (r.getFast())
-				listOfFastReactions.add(r);
-			if (reactionID != null && !r.getId().equals(reactionID))
-				continue;
-			else
-				create = true;
-			if (r.isSetKineticLaw()) {
-				String formula = r.getKineticLaw().getFormula();
-				if (formula.equals("") || formula.equals(" ")) {
-					System.err
-							.println("Reaction "
-									+ r.getId()
-									+ " in the model has an incorrect format."
-									+ "This means there is either an empty kinetic law in this reaction "
-									+ "or a kinetic law that only consists of a white space. "
-									+ "If you decide not to save this generated model, there is only one "
-									+ "solution: "
-									+ "open this SBML file in an editor and delete the whole kinetic law."
-									+ "SBMLsqueezer ignores this misstake and generates a proper equation. "
-									+ "Therfore we recomment that you save this generated model.");
-					create = true;
-				}
-			}
-			if (!r.isSetKineticLaw() || create) {
-				Reaction rc = new Reaction(r.getId(), r.getLevel(), r
-						.getVersion());
-				m.addReaction(rc);
-				rc.setFast(r.getFast());
-				rc.setReversible(r.getReversible());
-				for (SpeciesReference s : r.getListOfReactants()) {
-					Species species = s.getSpeciesInstance();
-					if (m.getCompartment(species.getCompartment()) == null)
-						m.addCompartment(species.getCompartmentInstance()
-								.clone());
-					if (m.getSpecies(species.getId()) == null)
-						m.addSpecies(species.clone());
-					SpeciesReference sr = s.clone();
-					sr.setSpecies(m.getSpecies(s.getSpecies()));
-					rc.addReactant(sr);
-				}
-				for (SpeciesReference s : r.getListOfProducts()) {
-					Species species = s.getSpeciesInstance();
-					if (m.getCompartment(species.getCompartment()) == null)
-						m.addCompartment(species.getCompartmentInstance()
-								.clone());
-					if (m.getSpecies(species.getId()) == null)
-						m.addSpecies(species.clone());
-					SpeciesReference sr = s.clone();
-					sr.setSpecies(m.getSpecies(s.getSpecies()));
-					rc.addProduct(sr);
-				}
-				for (ModifierSpeciesReference s : r.getListOfModifiers()) {
-					Species species = s.getSpeciesInstance();
-					if (m.getCompartment(species.getCompartment()) == null)
-						m.addCompartment(species.getCompartmentInstance()
-								.clone());
-					if (m.getSpecies(species.getId()) == null)
-						m.addSpecies(species.clone());
-					ModifierSpeciesReference sr = s.clone();
-					sr.setSpecies(m.getSpecies(s.getSpecies()));
-					rc.addModifier(sr);
-				}
-				/*
-				 * This will be over written later on anyway but ignoring it
-				 * would be confusing for users...
-				 */
-				if (r.isSetKineticLaw()) {
-					KineticLaw l = r.getKineticLaw();
-					if (l.isSetMath())
-						for (Parameter parameter : modelOrig
-								.getListOfParameters())
-							if (l.getMath().refersTo(parameter.getId()))
-								m.addParameter(parameter.clone());
-					rc.setKineticLaw(l.clone());
-				}
-			}
-		}
-		return m;
-	}
-
-	/**
-	 * Returns true if the given model's stoichiometric matrix has full column
-	 * rank.
-	 * 
-	 * @param model
-	 * @return
-	 */
-	private boolean hasFullColumnRank(Model model) {
-		boolean fullRank = false;
-		if ((model.getNumSpecies() >= model.getNumReactions())
-				&& (columnRank == -1)) {
-			GaussianRank gaussian = new GaussianRank(stoechMatrix(model));
-			columnRank = gaussian.getColumnRank();
-			fullRank = gaussian.hasFullRank();
-		} else if (columnRank == model.getNumReactions())
-			fullRank = true;
-		return fullRank;
-	}
-
-	/**
-	 * load default settings and initialize this object.
-	 * 
-	 * @param reactionID
-	 */
-	private void init(String reactionID) {
-		if (settings == null)
-			settings = SBMLsqueezer.getDefaultSettings();
-		listOfFastReactions = new LinkedList<Reaction>();
-		this.miniModel = createMinimalModel(reactionID);
 	}
 }
