@@ -102,6 +102,22 @@ public class SBMLsqueezer extends PluginAction {
 
 	/**
 	 * 
+	 * @return
+	 */
+	public static Properties getDefaultSettings() {
+		Properties defaults;
+		try {
+			defaults = Resource.readProperties(Resource.class.getResource(
+					configFile).getPath());
+		} catch (IOException e) {
+			defaults = new Properties();
+			e.printStackTrace();
+		}
+		return correctProperties(defaults);
+	}
+
+	/**
+	 * 
 	 * @return versionNumber
 	 */
 	public static final String getVersionNumber() {
@@ -116,11 +132,12 @@ public class SBMLsqueezer extends PluginAction {
 			System.loadLibrary("sbmlj");
 			// Extra check to be sure we have access to libSBML:
 			Class.forName("org.sbml.libsbml.libsbml");
-			new SBMLsqueezer(args);
 		} catch (Exception e) {
 			System.err.println("Error: could not load the libSBML library");
+			e.printStackTrace();
 			System.exit(1);
 		}
+		new SBMLsqueezer(args);
 	}
 
 	/**
@@ -145,47 +162,6 @@ public class SBMLsqueezer extends PluginAction {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	private static Properties initProperties() {
-		Properties properties;
-		try {
-			StringBuilder path = new StringBuilder(System
-					.getProperty("user.home"));
-			path.append("/.SBMLsqueezer");
-			File f = new File(path.toString());
-			if (!f.exists()) {
-				f.mkdir();
-				path.append("/SBMLsqueezer.cfg");
-				f = new File(path.toString());
-				if (!f.exists())
-					f.createNewFile();
-			}
-			f = new File(userConfigFile);
-			if (f.exists() && f.length() == 0) {
-				BufferedReader br = new BufferedReader(new FileReader(
-						Resource.class.getResource(configFile).getPath()));
-				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-				String line;
-				while ((line = br.readLine()) != null) {
-					System.out.println(line);
-					bw.append(line);
-					bw.newLine();
-				}
-				bw.close();
-				br.close();
-			}
-			properties = correctProperties(Resource
-					.readProperties(userConfigFile));
-		} catch (Exception e) {
-			e.printStackTrace();
-			properties = getDefaultSettings();
-		}
-		return properties;
 	}
 
 	/**
@@ -235,16 +211,40 @@ public class SBMLsqueezer extends PluginAction {
 	 * 
 	 * @return
 	 */
-	public static Properties getDefaultSettings() {
-		Properties defaults;
+	private static Properties initProperties() {
+		Properties properties;
 		try {
-			defaults = Resource.readProperties(Resource.class.getResource(
-					configFile).getPath());
-		} catch (IOException e) {
-			defaults = new Properties();
+			StringBuilder path = new StringBuilder(System
+					.getProperty("user.home"));
+			path.append("/.SBMLsqueezer");
+			File f = new File(path.toString());
+			if (!f.exists()) {
+				f.mkdir();
+				path.append("/SBMLsqueezer.cfg");
+				f = new File(path.toString());
+				if (!f.exists())
+					f.createNewFile();
+			}
+			f = new File(userConfigFile);
+			if (f.exists() && f.length() == 0) {
+				BufferedReader br = new BufferedReader(new FileReader(
+						Resource.class.getResource(configFile).getPath()));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+				String line;
+				while ((line = br.readLine()) != null) {
+					bw.append(line);
+					bw.newLine();
+				}
+				bw.close();
+				br.close();
+			}
+			properties = correctProperties(Resource
+					.readProperties(userConfigFile));
+		} catch (Exception e) {
 			e.printStackTrace();
+			properties = getDefaultSettings();
 		}
-		return correctProperties(defaults);
+		return properties;
 	}
 
 	/**
@@ -448,9 +448,9 @@ public class SBMLsqueezer extends PluginAction {
 			(new KineticLawSelectionDialog(null, settings, sbmlIO))
 					.setVisible(true);
 		else if (mode.equals(plugin.getSqueezeContextMenuItemText()))
-			new KineticLawSelectionDialog(null, settings, sbmlIO, sbmlIO
-					.readReaction((PluginReaction) plugin
-							.getSelectedReactionNode().get(0)));
+			new KineticLawSelectionDialog(null, settings, sbmlIO,
+					((PluginReaction) plugin.getSelectedReactionNode().get(0))
+							.getId());
 		else if (mode.equals(plugin.getExportContextMenuItemText()))
 			new KineticLawSelectionDialog(null, settings, sbmlIO
 					.getSelectedModel().getReaction(

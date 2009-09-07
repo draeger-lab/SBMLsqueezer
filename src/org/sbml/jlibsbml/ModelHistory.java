@@ -60,25 +60,17 @@ public class ModelHistory {
 	/**
 	 * 
 	 * @param mc
-	 * @return
 	 */
-	public int addCreator(ModelCreator mc) {
+	public void addCreator(ModelCreator mc) {
 		listOfModelCreators.add(mc);
-		// TODO
-		return 0;
-
 	}
 
 	/**
 	 * 
 	 * @param date
-	 * @return
 	 */
-	public int addModifiedDate(Date date) {
+	public void addModifiedDate(Date date) {
 		setModifiedDate(date);
-		// TODO
-		return 0;
-
 	}
 
 	/*
@@ -147,7 +139,7 @@ public class ModelHistory {
 	 * @return Date object representing the modifiedDate from the ModelHistory.
 	 */
 	public Date getModifiedDate() {
-		return listOfModification.getLast();
+		return modifyed;
 	}
 
 	/**
@@ -209,14 +201,9 @@ public class ModelHistory {
 	 * @param date
 	 *            a Date object representing the date the ModelHistory was
 	 *            created.
-	 * @return integer value indicating success/failure of the function. The
-	 *         possible values returned by this function are:
-	 *         LIBSBML_OPERATION_SUCCESS or LIBSBML_INVALID_OBJECT
 	 */
-	public int setCreatedDate(Date date) {
-		// TODO
+	public void setCreatedDate(Date date) {
 		creation = date;
-		return 0;
 	}
 
 	/**
@@ -225,16 +212,11 @@ public class ModelHistory {
 	 * @param date
 	 *            a Date object representing the date the ModelHistory was
 	 *            modified.
-	 * @return integer value indicating success/failure of the function. The
-	 *         possible values returned by this function are:
-	 *         LIBSBML_OPERATION_SUCCESS or LIBSBML_INVALID_OBJECT
 	 */
-	public int setModifiedDate(Date date) {
+	public void setModifiedDate(Date date) {
 		if (isSetModifiedDate())
 			listOfModification.add(getModifiedDate());
 		modifyed = date;
-		// TODO
-		return 0;
 	}
 
 }

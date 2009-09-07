@@ -98,12 +98,18 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		pack();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	// @Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(SQUEEZE)) {
 			if (e.getSource() instanceof Reaction) {
 				new KineticLawSelectionDialog(this, settings, sbmlIO,
-						(Reaction) e.getSource());
+						((Reaction) e.getSource()).getId());
 			} else /*
 					 * if (e.getSource() instanceof Model) {
 					 * KineticLawSelectionDialog klsd = new

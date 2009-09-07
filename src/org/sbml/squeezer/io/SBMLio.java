@@ -94,7 +94,6 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		this(reader, writer);
 		this.listOfModels.addLast(reader.readModel(model));
 		this.listOfOrigModels.addLast(model);
-		System.out.println(model.getClass().getName());
 	}
 
 	/**

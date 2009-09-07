@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml.squeezer.standalone;
 
@@ -54,17 +54,6 @@ import org.sbml.squeezer.io.AbstractSBMLWriter;
  * 
  */
 public class LibSBMLWriter extends AbstractSBMLWriter {
-
-	static {
-		try {
-			System.loadLibrary("sbmlj");
-			// Extra check to be sure we have access to libSBML:
-			Class.forName("org.sbml.libsbml.libsbml");
-		} catch (Exception e) {
-			System.err.println("Error: could not load the libSBML library");
-			System.exit(1);
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -293,7 +282,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			throw new IllegalArgumentException(
 					"sb must be an instance of org.sbml.libsbml.SBase.");
 		org.sbml.libsbml.SBase po = (org.sbml.libsbml.SBase) sb;
-		if (s.isSetMetaId() && po.isSetMetaId() && !s.getMetaId().equals(po.getMetaId()))
+		if (s.isSetMetaId() && po.isSetMetaId()
+				&& !s.getMetaId().equals(po.getMetaId()))
 			po.setMetaId(s.getMetaId());
 		if (!s.getNotesString().equals(po.getNotesString()))
 			po.setNotes(s.getNotesString());
@@ -333,7 +323,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeCompartment(Compartment compartment) {
-		org.sbml.libsbml.Compartment c = new org.sbml.libsbml.Compartment();
+		org.sbml.libsbml.Compartment c = new org.sbml.libsbml.Compartment(
+				compartment.getLevel(), compartment.getVersion());
 		saveNamedSBaseProperties(compartment, c);
 		if (compartment.isSetCompartmentType())
 			c.setCompartmentType(compartment.getCompartmentType());
@@ -355,7 +346,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeCompartmentType(CompartmentType compartmentType) {
-		org.sbml.libsbml.CompartmentType ct = new org.sbml.libsbml.CompartmentType();
+		org.sbml.libsbml.CompartmentType ct = new org.sbml.libsbml.CompartmentType(
+				compartmentType.getLevel(), compartmentType.getVersion());
 		saveNamedSBaseProperties(compartmentType, ct);
 		return ct;
 	}
@@ -367,7 +359,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeConstraint(Constraint constraint) {
-		org.sbml.libsbml.Constraint c = new org.sbml.libsbml.Constraint();
+		org.sbml.libsbml.Constraint c = new org.sbml.libsbml.Constraint(
+				constraint.getLevel(), constraint.getVersion());
 		saveSBaseProperties(constraint, c);
 		if (constraint.isSetMath())
 			c.setMath(convert(constraint.getMath()));
@@ -383,7 +376,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeDelay(Delay delay) {
-		org.sbml.libsbml.Delay d = new org.sbml.libsbml.Delay();
+		org.sbml.libsbml.Delay d = new org.sbml.libsbml.Delay(delay.getLevel(),
+				delay.getVersion());
 		saveSBaseProperties(delay, d);
 		if (delay.isSetMath())
 			d.setMath(convert(delay.getMath()));
@@ -397,7 +391,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeEvent(Event event) {
-		org.sbml.libsbml.Event e = new org.sbml.libsbml.Event();
+		org.sbml.libsbml.Event e = new org.sbml.libsbml.Event(event.getLevel(),
+				event.getVersion());
 		saveNamedSBaseProperties(event, e);
 		if (event.isSetDelay())
 			e.setDelay((org.sbml.libsbml.Delay) writeDelay(event.getDelay()));
@@ -420,7 +415,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeEventAssignment(EventAssignment eventAssignment) {
-		org.sbml.libsbml.EventAssignment ea = new org.sbml.libsbml.EventAssignment();
+		org.sbml.libsbml.EventAssignment ea = new org.sbml.libsbml.EventAssignment(
+				eventAssignment.getLevel(), eventAssignment.getVersion());
 		saveSBaseProperties(eventAssignment, ea);
 		if (eventAssignment.isSetMath())
 			ea.setMath(convert(eventAssignment.getMath()));
@@ -437,7 +433,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeFunctionDefinition(FunctionDefinition functionDefinition) {
-		org.sbml.libsbml.FunctionDefinition fd = new org.sbml.libsbml.FunctionDefinition();
+		org.sbml.libsbml.FunctionDefinition fd = new org.sbml.libsbml.FunctionDefinition(
+				functionDefinition.getLevel(), functionDefinition.getVersion());
 		saveNamedSBaseProperties(functionDefinition, fd);
 		if (functionDefinition.isSetMath())
 			fd.setMath(convert(functionDefinition.getMath()));
@@ -452,7 +449,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeInitialAssignment(InitialAssignment initialAssignment) {
-		org.sbml.libsbml.InitialAssignment ia = new org.sbml.libsbml.InitialAssignment();
+		org.sbml.libsbml.InitialAssignment ia = new org.sbml.libsbml.InitialAssignment(
+				initialAssignment.getLevel(), initialAssignment.getVersion());
 		saveSBaseProperties(initialAssignment, ia);
 		if (initialAssignment.isSetMath())
 			ia.setMath(convert(initialAssignment.getMath()));
@@ -461,12 +459,20 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		return ia;
 	}
 
-	public Object writeKineticLaw(KineticLaw kl) {
-		org.sbml.libsbml.KineticLaw k = new org.sbml.libsbml.KineticLaw();
-		saveSBaseProperties(kl, k);
-		if (kl.isSetMath())
-			k.setMath(convert(kl.getMath()));
-		for (Parameter p : kl.getListOfParameters())
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#writeKineticLaw(org.sbml.jlibsbml.KineticLaw
+	 * )
+	 */
+	public Object writeKineticLaw(KineticLaw kinteicLaw) {
+		org.sbml.libsbml.KineticLaw k = new org.sbml.libsbml.KineticLaw(
+				kinteicLaw.getLevel(), kinteicLaw.getVersion());
+		saveSBaseProperties(kinteicLaw, k);
+		if (kinteicLaw.isSetMath())
+			k.setMath(convert(kinteicLaw.getMath()));
+		for (Parameter p : kinteicLaw.getListOfParameters())
 			k.addParameter((org.sbml.libsbml.Parameter) writeParameter(p));
 		return k;
 	}
@@ -477,7 +483,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeModel(org.sbml.Model)
 	 */
 	public Object writeModel(Model model) {
-		org.sbml.libsbml.Model m = new org.sbml.libsbml.Model();
+		org.sbml.libsbml.Model m = new org.sbml.libsbml.Model(model.getLevel(),
+				model.getVersion());
 		saveNamedSBaseProperties(model, m);
 		for (UnitDefinition ud : model.getListOfUnitDefinitions())
 			m
@@ -521,7 +528,9 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	// @Override
 	public Object writeModifierSpeciesReference(
 			ModifierSpeciesReference modifierSpeciesReference) {
-		org.sbml.libsbml.ModifierSpeciesReference m = new org.sbml.libsbml.ModifierSpeciesReference();
+		org.sbml.libsbml.ModifierSpeciesReference m = new org.sbml.libsbml.ModifierSpeciesReference(
+				modifierSpeciesReference.getLevel(), modifierSpeciesReference
+						.getVersion());
 		saveNamedSBaseProperties(modifierSpeciesReference, m);
 		if (modifierSpeciesReference.isSetSpecies())
 			m.setSpecies(modifierSpeciesReference.getSpecies());
@@ -550,7 +559,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeReaction(org.sbml.Reaction)
 	 */
 	public Object writeReaction(Reaction reaction) {
-		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction();
+		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(reaction
+				.getLevel(), reaction.getVersion());
 		saveNamedSBaseProperties(reaction, r);
 		r.setFast(reaction.getFast());
 		r.setReversible(reaction.getReversible());
@@ -577,14 +587,17 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	public Object writeRule(Rule rule) {
 		org.sbml.libsbml.Rule r;
 		if (rule.isAlgebraic())
-			r = new org.sbml.libsbml.AlgebraicRule();
+			r = new org.sbml.libsbml.AlgebraicRule(rule.getLevel(), rule
+					.getVersion());
 		else {
 			if (rule.isAssignment()) {
-				r = new org.sbml.libsbml.AssignmentRule();
+				r = new org.sbml.libsbml.AssignmentRule(rule.getLevel(), rule
+						.getVersion());
 				if (((AssignmentRule) rule).isSetVariable())
 					r.setVariable(((AssignmentRule) rule).getVariable());
 			} else {
-				r = new org.sbml.libsbml.RateRule();
+				r = new org.sbml.libsbml.RateRule(rule.getLevel(), rule
+						.getVersion());
 				if (((RateRule) rule).isSetVariable())
 					r.setVariable(((RateRule) rule).getVariable());
 			}
@@ -620,7 +633,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeSpecies(Species species) {
-		org.sbml.libsbml.Species s = new org.sbml.libsbml.Species();
+		org.sbml.libsbml.Species s = new org.sbml.libsbml.Species(species
+				.getLevel(), species.getVersion());
 		saveNamedSBaseProperties(species, s);
 		s.setBoundaryCondition(species.getBoundaryCondition());
 		s.setCharge(species.getCharge());
@@ -645,7 +659,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeSpeciesReference(SpeciesReference speciesReference) {
-		org.sbml.libsbml.SpeciesReference sr = new org.sbml.libsbml.SpeciesReference();
+		org.sbml.libsbml.SpeciesReference sr = new org.sbml.libsbml.SpeciesReference(
+				speciesReference.getLevel(), speciesReference.getVersion());
 		saveNamedSBaseProperties(speciesReference, sr);
 		if (speciesReference.isSetSpecies())
 			sr.setSpecies(speciesReference.getSpecies());
@@ -665,7 +680,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeSpeciesType(SpeciesType speciesType) {
-		org.sbml.libsbml.SpeciesType st = new org.sbml.libsbml.SpeciesType();
+		org.sbml.libsbml.SpeciesType st = new org.sbml.libsbml.SpeciesType(
+				speciesType.getLevel(), speciesType.getVersion());
 		saveNamedSBaseProperties(speciesType, st);
 		return st;
 	}
@@ -678,7 +694,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeStoichoimetryMath(StoichiometryMath stoichiometryMath) {
-		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath();
+		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath(
+				stoichiometryMath.getLevel(), stoichiometryMath.getVersion());
 		saveSBaseProperties(stoichiometryMath, sm);
 		if (stoichiometryMath.isSetMath())
 			sm.setMath(convert(stoichiometryMath.getMath()));
@@ -692,7 +709,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeTrigger(Trigger trigger) {
-		org.sbml.libsbml.Trigger t = new org.sbml.libsbml.Trigger();
+		org.sbml.libsbml.Trigger t = new org.sbml.libsbml.Trigger(trigger
+				.getLevel(), trigger.getVersion());
 		saveSBaseProperties(trigger, t);
 		if (trigger.isSetMath())
 			t.setMath(convert(trigger.getMath()));
@@ -706,7 +724,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeUnit(Unit unit) {
-		org.sbml.libsbml.Unit u = new org.sbml.libsbml.Unit();
+		org.sbml.libsbml.Unit u = new org.sbml.libsbml.Unit(unit.getLevel(),
+				unit.getVersion());
 		saveSBaseProperties(unit, u);
 		switch (unit.getKind()) {
 		case UNIT_KIND_AMPERE:
@@ -832,7 +851,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public Object writeUnitDefinition(UnitDefinition unitDefinition) {
-		org.sbml.libsbml.UnitDefinition ud = new org.sbml.libsbml.UnitDefinition();
+		org.sbml.libsbml.UnitDefinition ud = new org.sbml.libsbml.UnitDefinition(
+				unitDefinition.getLevel(), unitDefinition.getVersion());
 		saveNamedSBaseProperties(unitDefinition, ud);
 		for (Unit u : unitDefinition.getListOfUnits())
 			ud.addUnit((org.sbml.libsbml.Unit) writeUnit(u));

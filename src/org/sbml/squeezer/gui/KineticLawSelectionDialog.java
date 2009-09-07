@@ -201,9 +201,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param reaction
 	 */
 	public KineticLawSelectionDialog(JFrame owner, Properties settings,
-			SBMLio sbmlIO, Reaction reaction) {
+			SBMLio sbmlIO, String reactionID) {
 		this(owner, settings, sbmlIO);
-		Model model = reaction.getModel();
+		Model model = sbmlIO.getSelectedModel();
+		Reaction reaction = model.getReaction(reactionID);
 		try {
 			klg = new KineticLawGenerator(model, reaction.getId(), settings);
 			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(

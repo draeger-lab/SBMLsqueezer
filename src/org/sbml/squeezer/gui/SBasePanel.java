@@ -23,11 +23,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -36,6 +39,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.sbml.jlibsbml.AssignmentRule;
+import org.sbml.jlibsbml.CVTerm;
 import org.sbml.jlibsbml.Compartment;
 import org.sbml.jlibsbml.Constraint;
 import org.sbml.jlibsbml.Event;
@@ -46,6 +50,7 @@ import org.sbml.jlibsbml.ListOf;
 import org.sbml.jlibsbml.MathContainer;
 import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.ModelCreator;
+import org.sbml.jlibsbml.ModelHistory;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.NamedSBase;
 import org.sbml.jlibsbml.Parameter;
@@ -77,6 +82,7 @@ public class SBasePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = -4969096536922920641L;
 	private LayoutHelper lh;
+	private static final int preferedWidth = 450;
 	private boolean editable;
 	private int row;
 
@@ -91,9 +97,10 @@ public class SBasePanel extends JPanel {
 		lh = new LayoutHelper(this, gbl);
 		editable = false;
 		row = -1;
-		String className = sbase.getClass().getName();
+		String className = sbase.getClass().getCanonicalName();
 		className = className.substring(className.lastIndexOf('.') + 1);
 		setBorder(BorderFactory.createTitledBorder(" " + className + " "));
+		lh.add(new JPanel(), 0, ++row, 5, 1, 0, 0);
 		if (sbase instanceof NamedSBase)
 			addProperties((NamedSBase) sbase);
 		addProperties(sbase);
@@ -101,8 +108,6 @@ public class SBasePanel extends JPanel {
 			addProperties((SimpleSpeciesReference) sbase);
 		if (sbase instanceof MathContainer)
 			addProperties((MathContainer) sbase);
-		if (sbase instanceof Symbol)
-			addProperties((Symbol) sbase);
 		if (sbase instanceof ListOf)
 			addProperties((ListOf) sbase);
 		if (sbase instanceof Model)
@@ -145,23 +150,27 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(Compartment c) {
 		if (c.isSetCompartmentType() || editable) {
-			lh.add(new JLabel("Compartment type: "), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Compartment type: "), 1, ++row, 1, 1, 1, 1);
 			JTextField tf = new JTextField(c.getCompartmentTypeInstance()
 					.toString());
 			tf.setEditable(editable);
-			lh.add(tf, 1, ++row, 1, 1, 1, 1);
+			lh.add(tf, 3, ++row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		if (c.isSetOutside() || editable) {
-			lh.add(new JLabel("Outside: "), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Outside: "), 1, ++row, 1, 1, 1, 1);
 			JTextField tf = new JTextField(c.getOutsideInstance().toString());
 			tf.setEditable(editable);
-			lh.add(tf, 1, row, 1, 1, 1, 1);
+			lh.add(tf, 3, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
-		lh.add(new JLabel("Spatial dimensions: "), 0, ++row, 1, 1, 1, 1);
+		lh.add(new JLabel("Spatial dimensions: "), 1, ++row, 1, 1, 1, 1);
 		JSpinner spinner = new JSpinner(new SpinnerNumberModel(c
 				.getSpatialDimensions(), 0, 3, 1));
 		spinner.setEnabled(editable);
-		lh.add(spinner, 1, row, 1, 1, 1, 1);
+		lh.add(spinner, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		addProperties((Symbol) c);
 	}
 
 	/**
@@ -170,10 +179,11 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(Constraint c) {
 		if (c.isSetMessage() || editable) {
-			lh.add(new JLabel("Message: "), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Message: "), 1, ++row, 1, 1, 1, 1);
 			JTextField tf = new JTextField(c.getMessage());
 			tf.setEditable(editable);
-			lh.add(tf, 1, ++row, 1, 1, 1, 1);
+			lh.add(tf, 3, ++row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 	}
 
@@ -185,16 +195,25 @@ public class SBasePanel extends JPanel {
 		JCheckBox check = new JCheckBox("Uses values from trigger time", e
 				.getUseValuesFromTriggerTime());
 		check.setEnabled(editable);
-		lh.add(check, 0, ++row, 2, 1, 1, 1);
-		if (e.isSetTrigger())
-			lh.add(new SBasePanel(e.getTrigger()), 0, ++row, 2, 1, 1, 1);
-		if (e.isSetDelay())
-			lh.add(new SBasePanel(e.getDelay()), 0, ++row, 2, 1, 1, 1);
-		if (e.isSetTimeUnits())
-			lh.add(new SBasePanel(e.getTimeUnitsInstance()), 0, ++row, 2, 1, 1,
+		lh.add(check, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		if (e.isSetTrigger()) {
+			lh.add(new SBasePanel(e.getTrigger()), 1, ++row, 3, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		}
+		if (e.isSetDelay()) {
+			lh.add(new SBasePanel(e.getDelay()), 1, ++row, 3, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		}
+		if (e.isSetTimeUnits()) {
+			lh.add(new SBasePanel(e.getTimeUnitsInstance()), 1, ++row, 3, 1, 1,
 					1);
-		for (EventAssignment ea : e.getListOfEventAssignments())
-			lh.add(new SBasePanel(ea), 0, ++row, 2, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		}
+		for (EventAssignment ea : e.getListOfEventAssignments()) {
+			lh.add(new SBasePanel(ea), 1, ++row, 3, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		}
 	}
 
 	/**
@@ -247,7 +266,14 @@ public class SBasePanel extends JPanel {
 					BorderLayout.CENTER);
 			preview.setBackground(Color.WHITE);
 			preview.setBorder(BorderFactory.createLoweredBevelBorder());
-			lh.add(preview, 0, ++row, 2, 1, 1, 1);
+			Dimension d = new Dimension(preferedWidth, 120);
+			JScrollPane scroll = new JScrollPane(preview,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scroll.setPreferredSize(new Dimension((int) d.getWidth() + 10,
+					(int) d.getHeight() + 10));
+			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 	}
 
@@ -257,21 +283,57 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(Model m) {
 		if (m.isSetModelHistory()) {
+			ModelHistory hist = m.getModelHistory();
+			lh.add(new JLabel("Model creators: "), 1, ++row, 1, 1, 1, 1);
+			String columnNames[] = new String[] { "Given name", "Family name",
+					"E-mail", "Organization" };
+			String rowData[][] = new String[hist.getNumCreators()][4];
 			int i = 0;
-			for (ModelCreator mc : m.getModelHistory().getListCreators()) {
-				StringBuilder sb = new StringBuilder("<html><body>");
-				sb.append(mc.getGivenName());
-				sb.append(' ');
-				sb.append(mc.getFamilyName());
-				sb.append("<br>");
-				sb.append(mc.getEmail());
-				sb.append("<br>");
-				sb.append(mc.getOrganisation());
-				sb.append("</body></html>");
-				JPanel p = new JPanel();
-				p.add(new JLabel(sb.toString()));
-				lh.add(new JLabel((++i) + ". creator: "), 0, ++row, 1, 1, 1, 1);
-				lh.add(p, 1, row, 1, 1, 1, 1);
+			for (ModelCreator mc : hist.getListCreators()) {
+				rowData[i][0] = mc.getGivenName();
+				rowData[i][1] = mc.getFamilyName();
+				rowData[i][2] = mc.getEmail();
+				rowData[i][3] = mc.getOrganization();
+				i++;
+			}
+			JTable table = new JTable(rowData, columnNames);
+			table.setEnabled(editable);
+			table.setPreferredScrollableViewportSize(new Dimension(200, table
+					.getRowCount()
+					* table.getRowHeight()));
+			JScrollPane scroll = new JScrollPane(table,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			Dimension dim = table.getPreferredScrollableViewportSize();
+			scroll.setPreferredSize(new Dimension((int) dim.getWidth() + 10,
+					(int) dim.getHeight() + 18));
+			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+			if (hist.isSetCreatedDate()) {
+				lh.add(new JLabel("Model creation: "), 1, ++row, 1, 1, 1, 1);
+				JTextField tf = new JTextField(hist.getCreatedDate().toString());
+				tf.setEditable(editable);
+				lh.add(tf, 3, row, 1, 1, 1, 1);
+				lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+			}
+			Vector<Date> modification = new Vector<Date>();
+			if (hist.isSetModifiedDate())
+				modification.add(hist.getModifiedDate());
+			for (i = 0; i < hist.getNumModifiedDates(); i++)
+				if (!modification.contains(hist.getModifiedDate(i)))
+					modification.add(hist.getModifiedDate(i));
+			if (modification.size() > 0) {
+				lh.add(new JLabel("Modification:"), 1, ++row, 1, 1, 1, 1);
+				JList l = new JList(modification);
+				l.setEnabled(editable);
+				JScrollPane scroll2 = new JScrollPane(l,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				scroll2.setPreferredSize(new Dimension(preferedWidth,
+						modification.size() * 20));
+				scroll2.setBorder(BorderFactory.createLoweredBevelBorder());
+				lh.add(scroll2, 3, row, 1, 1, 1, 1);
+				lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 			}
 		}
 		String columnNames[] = new String[] { "Element", "Quantity" };
@@ -299,9 +361,14 @@ public class SBasePanel extends JPanel {
 		table.setPreferredScrollableViewportSize(new Dimension(200, table
 				.getRowCount()
 				* table.getRowHeight()));
-		lh.add(new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 0, ++row, 2, 1, 1,
-				1);
+		JScrollPane scroll = new JScrollPane(table,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		Dimension dim = table.getPreferredScrollableViewportSize();
+		scroll.setPreferredSize(new Dimension((int) dim.getWidth() + 10,
+				(int) dim.getHeight() + 18));
+		lh.add(scroll, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 
 	/**
@@ -318,16 +385,18 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(NamedSBase nsb) {
 		if (nsb.isSetId() || editable) {
-			lh.add(new JLabel("Identifier: "), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Identifier: "), 1, ++row, 1, 1, 1, 1);
 			JTextField tf = new JTextField(nsb.getId());
 			tf.setEditable(editable);
-			lh.add(tf, 1, row, 1, 1, 1, 1);
+			lh.add(tf, 3, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		if (nsb.isSetName() || editable) {
-			lh.add(new JLabel("Name: "), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Name: "), 1, ++row, 1, 1, 1, 1);
 			JTextField tf = new JTextField(nsb.getName());
 			tf.setEditable(editable);
-			lh.add(tf, 1, row, 1, 1, 1, 1);
+			lh.add(tf, 3, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 	}
 
@@ -336,7 +405,7 @@ public class SBasePanel extends JPanel {
 	 * @param sbase
 	 */
 	private void addProperties(Parameter p) {
-		// TODO
+		addProperties((Symbol) p);
 	}
 
 	/**
@@ -346,10 +415,12 @@ public class SBasePanel extends JPanel {
 	private void addProperties(Reaction reaction) {
 		JCheckBox check = new JCheckBox("Reversible", reaction.getReversible());
 		check.setEnabled(editable);
-		lh.add(check, 0, ++row, 2, 1, 1, 1);
+		lh.add(check, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		check = new JCheckBox("Fast", reaction.getFast());
 		check.setEnabled(editable);
-		lh.add(check, 0, ++row, 2, 1, 1, 1);
+		lh.add(check, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 
 		// Create Table of reactants, modifiers and products
 		String rmp[][] = new String[Math.max(reaction.getNumReactants(), Math
@@ -369,18 +440,28 @@ public class SBasePanel extends JPanel {
 				.getRowCount()
 				* table.getRowHeight()));
 		table.setEnabled(editable);
-		lh.add(new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), 0, ++row, 2, 1, 1,
-				1);
-		JPanel rEqPanel = new JPanel(new GridLayout(1, 1));
+		JScrollPane scroll = new JScrollPane(table,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		Dimension dim = table.getPreferredScrollableViewportSize();
+		scroll.setPreferredSize(new Dimension((int) dim.getWidth() + 10,
+				(int) dim.getHeight() + 18));
+		lh.add(scroll, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		JPanel rEqPanel = new JPanel(new BorderLayout());
 		sHotEqn rEqn = new sHotEqn(LaTeXExport.reactionEquation(reaction));
-		rEqn.setBorder(BorderFactory.createLoweredBevelBorder());
-		rEqPanel.add(rEqn);
+		scroll = new JScrollPane(rEqn,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
+		scroll.setPreferredSize(new Dimension(preferedWidth, 50));
+		rEqPanel.add(scroll, BorderLayout.CENTER);
 		rEqPanel.setBorder(BorderFactory
 				.createTitledBorder(" Reaction equation "));
-		lh.add(rEqPanel, 0, ++row, 2, 1, 1, 1);
+		lh.add(rEqPanel, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		if (reaction.isSetKineticLaw())
-			lh.add(new SBasePanel(reaction.getKineticLaw()), 0, ++row, 2, 1, 1,
+			lh.add(new SBasePanel(reaction.getKineticLaw()), 1, ++row, 3, 1, 1,
 					1);
 	}
 
@@ -389,14 +470,18 @@ public class SBasePanel extends JPanel {
 	 * @param sbase
 	 */
 	private void addProperties(SBase sbase) {
+		lh.add(new JPanel(), 0, row, 1, 1, 0, 0);
+		lh.add(new JPanel(), 4, row, 1, 1, 0, 0);
+		lh.add(new JPanel(), 2, row, 1, 1, 0, 0);
 		if (sbase.isSetMetaId() || editable) {
-			lh.add(new JLabel("Meta identifier: "), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Meta identifier: "), 1, ++row, 1, 1, 1, 1);
 			JTextField tf = new JTextField(sbase.getMetaId());
 			tf.setEditable(editable);
-			lh.add(tf, 1, row, 1, 1, 1, 1);
+			lh.add(tf, 3, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		if (sbase.isSetNotes() || editable) {
-			lh.add(new JLabel("Notes: "), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Notes: "), 1, ++row, 1, 1, 1, 1);
 			String text = sbase.getNotesString();
 			if (text.startsWith("<notes") && text.endsWith("</notes>"))
 				text = text.substring(8, sbase.getNotesString().length() - 9);
@@ -405,16 +490,48 @@ public class SBasePanel extends JPanel {
 				text = "<body>" + text + "</body>";
 			JEditorPane notesArea = new JEditorPane("text/html",
 					"<html><head></head>" + text + "</html>");
-			notesArea.setPreferredSize(new Dimension(400, 200));
 			notesArea.setEditable(editable);
 			notesArea.addHyperlinkListener(new SystemBrowser());
+			notesArea.setPreferredSize(new Dimension(preferedWidth, 200));
+			notesArea.setDoubleBuffered(true);
 			notesArea.setBorder(BorderFactory.createLoweredBevelBorder());
 			JScrollPane scroll = new JScrollPane(notesArea,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			lh.add(scroll, 1, row, 1, 1, 1, 1);
+			scroll.setPreferredSize(new Dimension(preferedWidth, 200));
+			lh.add(scroll, 3, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
-		lh.add(new JLabel("SBO term: "), 0, ++row, 1, 1, 1, 1);
+		if (sbase.getNumCVTerms() > 0) {
+			lh.add(new JLabel("MIRIAM annotation: "), 1, ++row, 1, 1, 1, 1);
+			StringBuilder sb = new StringBuilder();
+			sb.append("<html><body>");
+			if (sbase.getNumCVTerms() > 1)
+				sb.append("<ul>");
+			for (CVTerm cvt : sbase.getCVTerms()) {
+				if (sbase.getNumCVTerms() > 1)
+					sb.append("<li>");
+				sb.append(cvt.toString());
+				if (sbase.getNumCVTerms() > 1)
+					sb.append("</li>");
+			}
+			if (sbase.getNumCVTerms() > 1)
+				sb.append("</ul>");
+			sb.append("</body></html>");
+			JEditorPane l = new JEditorPane("text/html", sb.toString());
+			l.setEditable(editable);
+			l.setBackground(Color.WHITE);
+			Dimension dim = new Dimension(preferedWidth, 125);
+			l.setPreferredSize(dim);
+			JScrollPane scroll = new JScrollPane(l,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scroll.setPreferredSize(dim);
+			scroll.setBorder(BorderFactory.createLoweredBevelBorder());
+			lh.add(scroll, 3, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		}
+		lh.add(new JLabel("SBO term: "), 1, ++row, 1, 1, 1, 1);
 		JTextField sboTermField = new JTextField();
 		sboTermField.setEditable(editable);
 		if (sbase.isSetSBOTerm()) {
@@ -422,7 +539,8 @@ public class SBasePanel extends JPanel {
 					.getDescription());
 			sboTermField.setColumns(sboTermField.getText().length());
 		}
-		lh.add(sboTermField, 1, row, 1, 1, 1, 1);
+		lh.add(sboTermField, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 
 	/**
@@ -431,16 +549,17 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(SimpleSpeciesReference ssr) {
 		if (ssr.isSetSpecies()) {
-			lh.add(new JLabel("Species"), 1, row, 1, 1, 1, 1);
-			lh.add(new JLabel(ssr.getSpeciesInstance().toString()), 1, row, 1,
+			lh.add(new JLabel("Species"), 3, row, 1, 1, 1, 1);
+			lh.add(new JLabel(ssr.getSpeciesInstance().toString()), 3, row, 1,
 					1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		if (ssr instanceof SpeciesReference)
 			addProperties((SpeciesReference) ssr);
 		else if (ssr instanceof ModifierSpeciesReference)
 			addProperties((ModifierSpeciesReference) ssr);
 		if (ssr.isSetSpecies())
-			lh.add(new SBasePanel(ssr.getSpeciesInstance()), 0, ++row, 2, 1, 1,
+			lh.add(new SBasePanel(ssr.getSpeciesInstance()), 1, ++row, 3, 1, 1,
 					1);
 	}
 
@@ -449,37 +568,44 @@ public class SBasePanel extends JPanel {
 	 * @param sbase
 	 */
 	private void addProperties(Species species) {
-		JSpinner spinCharge = new JSpinner(new SpinnerNumberModel(species
-				.getCharge(), -10, 10, 1));
-		lh.add(new JLabel("Charge: "), 0, ++row, 1, 1, 1, 1);
-		spinCharge.setEnabled(editable);
-		lh.add(spinCharge, 1, row, 1, 1, 1, 1);
 		if (species.isSetSpeciesType()) {
-			lh.add(new JLabel("Species type: "), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Species type: "), 1, ++row, 1, 1, 1, 1);
 			JTextField tf = new JTextField(species.getSpeciesTypeInstance()
 					.toString());
 			tf.setEditable(editable);
-			lh.add(tf, 0, ++row, 1, 1, 1, 1);
+			lh.add(tf, 1, ++row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
-		lh.add(new JLabel("Compartment: "), 0, ++row, 1, 1, 1, 1);
+		lh.add(new JLabel("Compartment: "), 1, ++row, 1, 1, 1, 1);
 		JTextField tf = new JTextField(species.getCompartmentInstance()
 				.toString());
 		tf.setEditable(editable);
-		lh.add(tf, 1, row, 1, 1, 1, 1);
+		lh.add(tf, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		if (species.isSetSpeciesType() || editable) {
-			lh.add(new JLabel("Species type: "), 0, row, 1, 1, 1, 1);
+			lh.add(new JLabel("Species type: "), 1, row, 1, 1, 1, 1);
 			tf = new JTextField(species.getSpeciesTypeInstance().toString());
 			tf.setEditable(editable);
-			lh.add(tf, 0, row, 1, 1, 1, 1);
+			lh.add(tf, 1, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
+		JSpinner spinCharge = new JSpinner(new SpinnerNumberModel(species
+				.getCharge(), -10, 10, 1));
+		lh.add(new JLabel("Charge: "), 1, ++row, 1, 1, 1, 1);
+		spinCharge.setEnabled(editable);
+		lh.add(spinCharge, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		addProperties((Symbol) species);
 		JCheckBox check = new JCheckBox("Boundary condition", species
 				.getBoundaryCondition());
 		check.setEnabled(editable);
-		lh.add(check, 0, ++row, 2, 1, 1, 1);
+		lh.add(check, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		check = new JCheckBox("Has only substance units", species
 				.getHasOnlySubstanceUnits());
 		check.setEnabled(editable);
-		lh.add(check, 0, ++row, 2, 1, 1, 1);
+		lh.add(check, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 
 	/**
@@ -495,14 +621,16 @@ public class SBasePanel extends JPanel {
 			sHotEqn eqn = new sHotEqn(sMath.getMath().toLaTeX().toString());
 			eqn.setBorder(BorderFactory.createLoweredBevelBorder());
 			p.add(eqn);
-			lh.add(p, 1, ++row, 1, 1, 1, 1);
+			lh.add(p, 3, ++row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		} else {
-			lh.add(new JLabel("Stoichiometry"), 0, ++row, 1, 1, 1, 1);
+			lh.add(new JLabel("Stoichiometry"), 1, ++row, 1, 1, 1, 1);
 			JSpinner spinner = new JSpinner(new SpinnerNumberModel(specRef
 					.getStoichiometry(), specRef.getStoichiometry() - 1000,
 					specRef.getStoichiometry() + 1000, .1d));
 			spinner.setEnabled(editable);
-			lh.add(spinner, 1, row, 1, 1, 1, 1);
+			lh.add(spinner, 3, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 	}
 
@@ -538,13 +666,14 @@ public class SBasePanel extends JPanel {
 						p.getValue() - 1000, p.getValue() + 1000, .1d);
 			label = "Value: ";
 		}
-		lh.add(new JLabel(label), 0, ++row, 1, 1, 1, 1);
+		lh.add(new JLabel(label), 1, ++row, 1, 1, 1, 1);
 		JSpinner spinValue = new JSpinner(spinModel);
 		spinValue.setEnabled(editable);
-		lh.add(spinValue, 1, row, 1, 1, 0, 1);
+		lh.add(spinValue, 3, row, 1, 1, 0, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		lh
 				.add(new JLabel(s instanceof Species ? "Substance unit: "
-						: "Unit: "), 0, ++row, 1, 1, 1, 1);
+						: "Unit: "), 1, ++row, 1, 1, 1, 1);
 		StringBuffer laTeXpreview = new StringBuffer();
 		laTeXpreview.append(LaTeX.eqBegin);
 		if (s.isSetUnits())
@@ -557,10 +686,13 @@ public class SBasePanel extends JPanel {
 		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
-		lh.add(preview, 1, row, 1, 1, 1, 1);
+		preview.setPreferredSize(new Dimension(200, 30));
+		lh.add(preview, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		JCheckBox check = new JCheckBox("Constant", s.isConstant());
 		check.setEnabled(editable);
-		lh.add(check, 0, ++row, 2, 1, 1, 1);
+		lh.add(check, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 
 	/**
@@ -568,10 +700,9 @@ public class SBasePanel extends JPanel {
 	 * @param ud
 	 */
 	private void addProperties(UnitDefinition ud) {
-		lh.add(new JLabel("Unit: "), 0, ++row, 1, 1, 1, 1);
+		lh.add(new JLabel("Unit: "), 1, ++row, 1, 1, 1, 1);
 		StringBuffer laTeXpreview = new StringBuffer();
 		laTeXpreview.append(LaTeX.eqBegin);
-		System.out.println((new LaTeXExport()).format(ud));
 		laTeXpreview.append((new LaTeXExport()).format(ud).toString().replace(
 				"\\up", "\\").replace("mathrm", "mbox").replace("text", "mbox")
 				.replace("mathtt", "mbox"));
@@ -580,6 +711,8 @@ public class SBasePanel extends JPanel {
 		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
-		lh.add(preview, 1, row, 1, 1, 1, 1);
+		preview.setPreferredSize(new Dimension(200, 30));
+		lh.add(preview, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 }
