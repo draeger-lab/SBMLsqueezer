@@ -165,12 +165,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 		} else if (e.getActionCommand().equals(SAVE_FILE)) {
 			JFileChooser chooser = new JFileChooser();
-			SBFileFilter filterSBML = new SBFileFilter(SBFileFilter.SBML_FILES);
 			SBFileFilter filterText = new SBFileFilter(SBFileFilter.TEXT_FILES);
 			SBFileFilter filterTeX = new SBFileFilter(SBFileFilter.TeX_FILES);
-			chooser.addChoosableFileFilter(filterSBML);
+			SBFileFilter filterSBML = new SBFileFilter(SBFileFilter.SBML_FILES);
+			chooser.setAcceptAllFileFilterUsed(false);
+			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			chooser.addChoosableFileFilter(filterText);
 			chooser.addChoosableFileFilter(filterTeX);
+			chooser.addChoosableFileFilter(filterSBML);
 			String dir = settings.get(CfgKeys.SAVE_DIR).toString();
 			if (dir != null) {
 				if (dir.startsWith("user."))
@@ -326,6 +328,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				InputEvent.CTRL_DOWN_MASK));
 		JMenuItem saveItem = new JMenuItem("Save", UIManager
 				.getIcon("FileView.floppyDriveIcon"));
+		saveItem.addActionListener(this);
 		saveItem.setActionCommand(SAVE_FILE);
 		saveItem.setAccelerator(KeyStroke.getKeyStroke('S',
 				InputEvent.CTRL_DOWN_MASK));
