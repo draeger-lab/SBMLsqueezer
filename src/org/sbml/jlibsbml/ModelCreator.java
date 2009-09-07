@@ -29,7 +29,7 @@ public class ModelCreator {
 	private String email;
 	private String familyName;
 	private String givenName;
-	private String organisation;
+	private String organization;
 
 	/**
 	 * 
@@ -97,17 +97,8 @@ public class ModelCreator {
 	 * 
 	 * @return
 	 */
-	public String getOrganisation() {
-		return organisation;
-	}
-
-	/**
-	 * Returns the organization from the ModelCreator.
-	 * 
-	 * @return
-	 */
 	public String getOrganization() {
-		return organisation;
+		return organization;
 	}
 
 	/**
@@ -146,18 +137,8 @@ public class ModelCreator {
 	 * 
 	 * @return
 	 */
-	public boolean isSetOrganisation() {
-		return organisation != null;
-	}
-
-	/**
-	 * Predicate returning true or false depending on whether this
-	 * ModelCreator's organization has been set.
-	 * 
-	 * @return
-	 */
 	public boolean isSetOrganization() {
-		return isSetOrganisation();
+		return organization != null;
 	}
 
 	/**
@@ -200,22 +181,9 @@ public class ModelCreator {
 	 * Sets the organization
 	 * 
 	 * @param organization
-	 * @return
 	 */
-	public int setOrganisation(String organization) {
-		this.organisation = organization;
-		// TODO
-		return 0;
-	}
-
-	/**
-	 * Sets the organization
-	 * 
-	 * @param organization
-	 * @return
-	 */
-	public int setOrganization(String organization) {
-		return setOrganisation(organization);
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 	/**
@@ -254,20 +222,30 @@ public class ModelCreator {
 	/**
 	 * Unsets the organization of this ModelCreator.
 	 * 
-	 * @return
 	 */
-	public int unsetOrganisation() {
-		organisation = null;
-		// TODO
-		return 0;
+	public void unsetOrganization() {
+		organization = null;
 	}
 
-	/**
-	 * Unsets the organization of this ModelCreator.
-	 * 
-	 * @return
-	 */
-	public int unsetOrganization() {
-		return unsetOrganisation();
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		if (isSetGivenName()) {
+			sb.append(getGivenName());
+			if (isSetFamilyName() || isSetEmail() || isSetOrganization())
+				sb.append(' ');
+		}
+		if (isSetFamilyName()) {
+			sb.append(getFamilyName());
+			if (isSetEmail() || isSetOrganization())
+				sb.append(", ");
+		}
+		if (isSetEmail()) {
+			sb.append(getEmail());
+			if (isSetOrganization())
+				sb.append(", ");
+		}
+		if (isSetOrganization())
+			sb.append(getOrganization());
+		return sb.toString();
 	}
 }

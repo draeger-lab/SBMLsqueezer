@@ -319,9 +319,14 @@ public class KineticLawGenerator {
 		List<String> transActiv = new LinkedList<String>();
 		List<String> transInhib = new LinkedList<String>();
 		List<String> enzymes = new LinkedList<String>();
-		BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
-				transInhib, activators, enzymes, nonEnzymeCatalyzers);
-		boolean nonEnzyme = ((nonEnzymeCatalyzers.size() > 0)
+		if (reaction.getNumModifiers() > 0) {
+			BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
+					transInhib, activators, enzymes, nonEnzymeCatalyzers);
+		}
+		boolean nonEnzyme = ((!((Boolean) settings
+				.get(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+				.booleanValue() && enzymes.size() == 0)
+				|| (nonEnzymeCatalyzers.size() > 0)
 				|| reaction.getNumProducts() == 0 || (SBO.isEmptySet(reaction
 				.getProduct(0).getSpeciesInstance().getSBOTerm())));
 		boolean uniUniWithoutModulation = false;
@@ -1030,7 +1035,6 @@ public class KineticLawGenerator {
 				}
 			}
 		}
-		System.out.println("Num copied reactions:\t"+m.getNumReactions());
 		return m;
 	}
 

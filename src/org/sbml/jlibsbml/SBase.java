@@ -18,9 +18,9 @@
  */
 package org.sbml.jlibsbml;
 
+import java.util.List;
+
 import org.sbml.squeezer.io.SBaseChangedListener;
-
-
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -29,21 +29,67 @@ import org.sbml.squeezer.io.SBaseChangedListener;
  * @date 2009-08-31
  */
 public interface SBase {
-	
+
 	/**
 	 * adds a listener to the SBase object. from now on changes will be saved
 	 * 
 	 * @param l
 	 */
 	public void addChangeListener(SBaseChangedListener l);
-	
+
 	/**
-	 * Returns the SBML Level of the overall SBML document. 
-	 * @return the SBML level of this SBML object. 
+	 * Adds a copy of the given CVTerm to this SBML object.
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public boolean addCVTerm(CVTerm term);
+
+	/**
+	 * 
+	 * @param notes
+	 * @return
+	 */
+	public void appendNotes(String notes);
+
+	/**
+	 * Returns the content of the 'annotation' subelement of this object as a
+	 * character string.
+	 * 
+	 * @return
+	 */
+	public String getAnnotationString();
+
+	/**
+	 * Returns the ith CVTerm in the list of CVTerms of this SBML object.
+	 * 
+	 * @param i
+	 * @return
+	 */
+	public CVTerm getCVTerm(int i);
+
+	/**
+	 * Returns a list of CVTerm objects in the annotations of this SBML object.
+	 * 
+	 * @return
+	 */
+	public List<CVTerm> getCVTerms();
+
+	/**
+	 * Returns the XML element name of this object.
+	 * 
+	 * @return
+	 */
+	public String getElementName();
+
+	/**
+	 * Returns the SBML Level of the overall SBML document.
+	 * 
+	 * @return the SBML level of this SBML object.
 	 * @see getVersion()
 	 */
 	public int getLevel();
-	
+
 	/**
 	 * 
 	 * @return
@@ -62,6 +108,14 @@ public interface SBase {
 	 * @return
 	 */
 	public String getNotesString();
+
+	/**
+	 * Returns the number of CVTerm objects in the annotations of this SBML
+	 * object.
+	 * 
+	 * @return
+	 */
+	public int getNumCVTerms();
 
 	/**
 	 * This method is convenient when holding an object nested inside other
@@ -87,10 +141,26 @@ public interface SBase {
 
 	/**
 	 * Returns the Version within the SBML Level of the overall SBML document.
-	 * @return the SBML version of this SBML object. 
+	 * 
+	 * @return the SBML version of this SBML object.
 	 * @see getLevel()
 	 */
 	public int getVersion();
+
+	/**
+	 * Predicate returning true or false depending on whether this object's
+	 * level/version and namespace values correspond to a valid SBML
+	 * specification.
+	 * 
+	 * @return
+	 */
+	public boolean hasValidLevelVersionNamespaceCombination();
+
+	/**
+	 * Predicate returning true or false depending on whether this object's
+	 * 'annotation' subelement exists and has content.
+	 */
+	public boolean isSetAnnotation();
 
 	/**
 	 * Predicate returning true or false depending on whether this object's
@@ -127,6 +197,14 @@ public interface SBase {
 	public void sbaseRemoved();
 
 	/**
+	 * Sets the value of the 'annotation' subelement of this SBML object to a
+	 * copy of annotation given as a character string.
+	 * 
+	 * @param annotation
+	 */
+	public void setAnnotation(String annotation);
+
+	/**
 	 * 
 	 * @param metaid
 	 */
@@ -139,14 +217,47 @@ public interface SBase {
 	public void setNotes(String notes);
 
 	/**
+	 * Sets the value of the 'sboTerm' attribute.
 	 * 
 	 * @param term
 	 */
 	public void setSBOTerm(int term);
-	
+
+	/**
+	 * Sets the value of the 'sboTerm' attribute.
+	 * 
+	 * @param sboid
+	 */
+	public void setSBOTerm(String sboid);
+
 	/**
 	 * all listeners are informed about the change in this object
 	 */
 	public void stateChanged();
+
+	/**
+	 * Unsets the value of the 'annotation' subelement of this SBML object.
+	 */
+	public void unsetAnnotation();
+
+	/**
+	 * Clears the list of CVTerms of this SBML object.
+	 */
+	public void unsetCVTerms();
+
+	/**
+	 * Unsets the value of the 'metaid' attribute of this SBML object.
+	 */
+	public void unsetMetaId();
+
+	/**
+	 * Unsets the value of the 'notes' subelement of this SBML object.
+	 */
+	public void unsetNotes();
+
+	/**
+	 * Unsets the value of the 'sboTerm' attribute of this SBML object.
+	 */
+	public void unsetSBOTerm();
 
 }

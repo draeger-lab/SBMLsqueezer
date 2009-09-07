@@ -18,12 +18,16 @@
  */
 package org.sbml.squeezer.standalone;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.sbml.jlibsbml.ASTNode;
 import org.sbml.jlibsbml.AlgebraicRule;
 import org.sbml.jlibsbml.AssignmentRule;
+import org.sbml.jlibsbml.CVTerm;
 import org.sbml.jlibsbml.Compartment;
 import org.sbml.jlibsbml.CompartmentType;
 import org.sbml.jlibsbml.Constraint;
@@ -53,6 +57,7 @@ import org.sbml.jlibsbml.Trigger;
 import org.sbml.jlibsbml.Unit;
 import org.sbml.jlibsbml.UnitDefinition;
 import org.sbml.jlibsbml.UnitKind;
+import org.sbml.jlibsbml.CVTerm.Qualifier;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.AbstractSBMLReader;
@@ -282,16 +287,24 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			int i;
 			if (originalModel.isSetModelHistory()) {
 				ModelHistory mh = new ModelHistory();
-				for (i=0; i<originalModel.getModelHistory().getNumCreators(); i++) {
+				org.sbml.libsbml.ModelHistory libHist = originalModel
+						.getModelHistory();
+				for (i = 0; i < libHist.getNumCreators(); i++) {
 					ModelCreator mc = new ModelCreator();
-					org.sbml.libsbml.ModelCreator creator = originalModel.getModelHistory().getCreator(i);
-					System.out.println(creator.getFamilyName());
+					org.sbml.libsbml.ModelCreator creator = originalModel
+							.getModelHistory().getCreator(i);
 					mc.setGivenName(creator.getGivenName());
 					mc.setFamilyName(creator.getFamilyName());
 					mc.setEmail(creator.getEmail());
-					mc.setOrganisation(creator.getOrganisation());
+					mc.setOrganization(creator.getOrganization());
 					mh.addCreator(mc);
 				}
+				if (libHist.isSetCreatedDate())
+					mh.setCreatedDate(convertDate(libHist.getCreatedDate()));
+				if (libHist.isSetModifiedDate())
+					mh.setModifiedDate(convertDate(libHist.getModifiedDate()));
+				for (i = 0; i < libHist.getNumModifiedDates(); i++)
+					mh.addModifiedDate(convertDate(libHist.getModifiedDate(i)));
 				this.model.setModelHistory(mh);
 			}
 			copyNamedSBaseProperties(this.model, originalModel);
@@ -336,6 +349,21 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			return this.model;
 		}
 		return null;
+	}
+
+	/**
+	 * 
+	 * @param d
+	 * @return
+	 */
+	private Date convertDate(org.sbml.libsbml.Date d) {
+		Calendar c = Calendar.getInstance();
+		c.setTimeZone(TimeZone.getTimeZone(TimeZone.getAvailableIDs((int) (d
+				.getSignOffset()
+				* d.getMinutesOffset() * 60000))[0]));
+		c.set((int) d.getYear(), (int) d.getMonth(), (int) d.getDay(), (int) d
+				.getHour(), (int) d.getMinute(), (int) d.getSecond());
+		return c.getTime();
 	}
 
 	/*
@@ -701,11 +729,73 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	private void copyNamedSBaseProperties(NamedSBase sbase,
 			org.sbml.libsbml.SBase libSBase) {
 		copySBaseProperties(sbase, libSBase);
-		if (libSBase.isSetId())
-			sbase.setId(libSBase.getId());
-		if (libSBase.isSetName())
-			sbase.setName(libSBase.getName());
-
+		if (libSBase instanceof org.sbml.libsbml.Compartment) {
+			org.sbml.libsbml.Compartment c = (org.sbml.libsbml.Compartment) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.CompartmentType) {
+			org.sbml.libsbml.CompartmentType c = (org.sbml.libsbml.CompartmentType) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.Event) {
+			org.sbml.libsbml.Event c = (org.sbml.libsbml.Event) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.FunctionDefinition) {
+			org.sbml.libsbml.FunctionDefinition c = (org.sbml.libsbml.FunctionDefinition) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.Model) {
+			org.sbml.libsbml.Model c = (org.sbml.libsbml.Model) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.Parameter) {
+			org.sbml.libsbml.Parameter c = (org.sbml.libsbml.Parameter) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.Reaction) {
+			org.sbml.libsbml.Reaction c = (org.sbml.libsbml.Reaction) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.SimpleSpeciesReference) {
+			org.sbml.libsbml.SimpleSpeciesReference c = (org.sbml.libsbml.SimpleSpeciesReference) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.Species) {
+			org.sbml.libsbml.Species c = (org.sbml.libsbml.Species) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.SpeciesType) {
+			org.sbml.libsbml.SpeciesType c = (org.sbml.libsbml.SpeciesType) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		} else if (libSBase instanceof org.sbml.libsbml.UnitDefinition) {
+			org.sbml.libsbml.UnitDefinition c = (org.sbml.libsbml.UnitDefinition) libSBase;
+			if (c.isSetId())
+				sbase.setId(c.getId());
+			if (c.isSetName())
+				sbase.setName(c.getName());
+		}
 	}
 
 	/**
@@ -721,6 +811,74 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			sbase.setSBOTerm(libSBase.getSBOTerm());
 		if (libSBase.isSetNotes())
 			sbase.setNotes(libSBase.getNotesString());
+		for (int i = 0; i < libSBase.getNumCVTerms(); i++) {
+			CVTerm t = new CVTerm();
+			org.sbml.libsbml.CVTerm libCVt = libSBase.getCVTerm(i);
+			switch (libCVt.getQualifierType()) {
+			case libsbmlConstants.MODEL_QUALIFIER:
+				t.setQualifierType(CVTerm.Qualifier.MODEL_QUALIFIER);
+				switch (libCVt.getModelQualifierType()) {
+				case libsbmlConstants.BQM_IS:
+					t.setModelQualifierType(Qualifier.BQM_IS);
+					break;
+				case libsbmlConstants.BQM_IS_DESCRIBED_BY:
+					t.setModelQualifierType(Qualifier.BQM_IS_DESCRIBED_BY);
+					break;
+				case libsbmlConstants.BQM_UNKNOWN:
+					t.setModelQualifierType(Qualifier.BQM_UNKNOWN);
+					break;
+				default:
+					break;
+				}
+				break;
+			case libsbmlConstants.BIOLOGICAL_QUALIFIER:
+				t.setQualifierType(CVTerm.Qualifier.BIOLOGICAL_QUALIFIER);
+				switch (libCVt.getBiologicalQualifierType()) {
+				case libsbmlConstants.BQB_ENCODES:
+					t.setBiologicalQualifierType(Qualifier.BQB_ENCODES);
+					break;
+				case libsbmlConstants.BQB_HAS_PART:
+					t.setBiologicalQualifierType(Qualifier.BQB_HAS_PART);
+					break;
+				case libsbmlConstants.BQB_HAS_VERSION:
+					t.setBiologicalQualifierType(Qualifier.BQB_HAS_VERSION);
+					break;
+				case libsbmlConstants.BQB_IS:
+					t.setBiologicalQualifierType(Qualifier.BQB_IS);
+					break;
+				case libsbmlConstants.BQB_IS_DESCRIBED_BY:
+					t.setBiologicalQualifierType(Qualifier.BQB_IS_DESCRIBED_BY);
+					break;
+				case libsbmlConstants.BQB_IS_ENCODED_BY:
+					t.setBiologicalQualifierType(Qualifier.BQB_IS_ENCODED_BY);
+					break;
+				case libsbmlConstants.BQB_IS_HOMOLOG_TO:
+					t.setBiologicalQualifierType(Qualifier.BQB_IS_HOMOLOG_TO);
+					break;
+				case libsbmlConstants.BQB_IS_PART_OF:
+					t.setBiologicalQualifierType(Qualifier.BQB_IS_PART_OF);
+					break;
+				case libsbmlConstants.BQB_IS_VERSION_OF:
+					t.setBiologicalQualifierType(Qualifier.BQB_IS_VERSION_OF);
+					break;
+				case libsbmlConstants.BQB_OCCURS_IN:
+					t.setBiologicalQualifierType(Qualifier.BQB_OCCURS_IN);
+					break;
+				case libsbmlConstants.BQB_UNKNOWN:
+					t.setBiologicalQualifierType(Qualifier.BQB_UNKNOWN);
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+			for (int j = 0; j < libCVt.getNumResources(); j++) {
+				t.addResourceURI(libCVt.getResourceURI(j));
+			}
+			sbase.addCVTerm(t);
+		}
 	}
 
 	/**

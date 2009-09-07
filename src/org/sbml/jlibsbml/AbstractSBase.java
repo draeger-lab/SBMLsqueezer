@@ -19,8 +19,11 @@
 package org.sbml.jlibsbml;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
+import org.sbml.jlibsbml.CVTerm.Qualifier;
 import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
@@ -37,21 +40,10 @@ public abstract class AbstractSBase implements SBase {
 	private int sboTerm;
 	private String notes;
 	Set<SBaseChangedListener> setOfListeners;
+	private List<CVTerm> listOfCVTerms;
 	private int level;
 	private int version;
-
-	/**
-	 * 
-	 */
-	public AbstractSBase(int level, int version) {
-		sboTerm = -1;
-		metaId = null;
-		notes = null;
-		parentSBMLObject = null;
-		setOfListeners = new HashSet<SBaseChangedListener>();
-		this.level = level;
-		this.version = version;
-	}
+	private String annotation;
 
 	/**
 	 * 
@@ -69,6 +61,23 @@ public abstract class AbstractSBase implements SBase {
 		this.setOfListeners.addAll(sb.setOfListeners);
 		this.level = sb.getLevel();
 		this.version = sb.getVersion();
+		this.listOfCVTerms = new LinkedList<CVTerm>();
+		for (CVTerm cvt : sb.getCVTerms())
+			this.listOfCVTerms.add(cvt.clone());
+	}
+
+	/**
+	 * 
+	 */
+	public AbstractSBase(int level, int version) {
+		sboTerm = -1;
+		metaId = null;
+		notes = null;
+		parentSBMLObject = null;
+		setOfListeners = new HashSet<SBaseChangedListener>();
+		this.level = level;
+		this.version = version;
+		this.listOfCVTerms = new LinkedList<CVTerm>();
 	}
 
 	/**
@@ -78,6 +87,40 @@ public abstract class AbstractSBase implements SBase {
 	 */
 	public void addChangeListener(SBaseChangedListener l) {
 		setOfListeners.add(l);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#addCVTerm(org.sbml.jlibsbml.CVTerm)
+	 */
+	public boolean addCVTerm(CVTerm term) {
+		return listOfCVTerms.add(term);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#appendNotes(java.lang.String)
+	 */
+	public void appendNotes(String notes) {
+		if (isSetNotes()) {
+			this.notes = this.notes.trim();
+			boolean body = false;
+			if (this.notes.endsWith("\n"))
+				this.notes = this.notes.substring(0, this.notes.length() - 2);
+			if (this.notes.endsWith("</notes>"))
+				this.notes = this.notes.substring(0, this.notes.length() - 9);
+			if (this.notes.endsWith("</body>")) {
+				body = true;
+				this.notes = this.notes.substring(0, this.notes.length() - 8);
+			}
+			this.notes += notes;
+			if (body)
+				this.notes += "</body>";
+			this.notes += "</notes>";
+		} else
+			this.notes = notes;
 	}
 
 	/*
@@ -115,6 +158,44 @@ public abstract class AbstractSBase implements SBase {
 			return equals;
 		}
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#getAnnotationString()
+	 */
+	public String getAnnotationString() {
+		return isSetAnnotation() ? annotation : "";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#getCVTerm(int)
+	 */
+	public CVTerm getCVTerm(int i) {
+		return listOfCVTerms.get(i);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#getCVTerms()
+	 */
+	public List<CVTerm> getCVTerms() {
+		return listOfCVTerms;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#getElementName()
+	 */
+	public String getElementName() {
+		String name = getClass().getCanonicalName();
+		char c = Character.toLowerCase(name.charAt(0));
+		return Character.toString(c) + name.substring(1);
 	}
 
 	/*
@@ -160,6 +241,15 @@ public abstract class AbstractSBase implements SBase {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.jlibsbml.SBase#getNumCVTerms()
+	 */
+	public int getNumCVTerms() {
+		return listOfCVTerms.size();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#getParentSBMLObject()
 	 */
 	public SBase getParentSBMLObject() {
@@ -191,6 +281,36 @@ public abstract class AbstractSBase implements SBase {
 	 */
 	public int getVersion() {
 		return version;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#hasValidLevelVersionNamespaceCombination()
+	 */
+	public boolean hasValidLevelVersionNamespaceCombination() {
+		boolean has = true;
+		if (level == 1) {
+			if (1 <= version && version <= 2)
+				has = true;
+			else has = false;
+		} else if (level == 2) {
+			if (1 <= version && version <= 4)
+				has = true;
+			else
+				has = false;
+		} else
+			has = false;
+		return has;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#isSetAnnotation()
+	 */
+	public boolean isSetAnnotation() {
+		return annotation != null;
 	}
 
 	/*
@@ -251,6 +371,15 @@ public abstract class AbstractSBase implements SBase {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.jlibsbml.SBase#setAnnotation(java.lang.String)
+	 */
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#setMetaId(java.lang.String)
 	 */
 	public void setMetaId(String metaid) {
@@ -284,6 +413,15 @@ public abstract class AbstractSBase implements SBase {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.jlibsbml.SBase#setSBOTerm(java.lang.String)
+	 */
+	public void setSBOTerm(String sboid) {
+		setSBOTerm(SBO.stringToInt(sboid));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBase#stateChanged()
 	 */
 	public void stateChanged() {
@@ -298,6 +436,54 @@ public abstract class AbstractSBase implements SBase {
 	 */
 	// @Override
 	public abstract String toString();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetAnnotation()
+	 */
+	public void unsetAnnotation() {
+		if (isSetAnnotation())
+			annotation = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetCVTerms()
+	 */
+	public void unsetCVTerms() {
+		listOfCVTerms.clear();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetMetaId()
+	 */
+	public void unsetMetaId() {
+		if (isSetMetaId())
+			metaId = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetNotes()
+	 */
+	public void unsetNotes() {
+		if (isSetNotes())
+			notes = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetSBOTerm()
+	 */
+	public void unsetSBOTerm() {
+		sboTerm = -1;
+	}
 
 	/**
 	 * Sets the parent SBML object of the given list and all of its elements to

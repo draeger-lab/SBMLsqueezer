@@ -266,7 +266,6 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				}
 				if (((DefaultMutableTreeNode) clickedOn).getUserObject() instanceof MathContainer) {
 					MathContainer mc = (MathContainer) ((DefaultMutableTreeNode) clickedOn).getUserObject();
-					System.out.println("hier");
 					JDialog dialog = new JDialog();
 					dialog.getContentPane().add(new JTree((TreeNode) mc.getMath()));
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

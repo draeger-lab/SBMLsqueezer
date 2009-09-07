@@ -201,14 +201,4 @@ public final class Resource {
 		}
 		return in;
 	}
-
-	public static void writeProperties(Properties properties,
-			String resourceName) {
-		// TODO Auto-generated method stub
-		System.err.println("Writing properties not yet implemented.");
-		for (Object key : properties.keySet()) {
-			System.out.println(key.toString() + "\t"
-					+ properties.getProperty(key.toString()));
-		}
-	}
 }

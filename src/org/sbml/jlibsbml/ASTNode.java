@@ -1422,8 +1422,10 @@ public class ASTNode implements TreeNode {
 		ASTNode ast;
 		StringBuffer value;
 		if (isUMinus()) {
-			value = new StringBuffer('-');
-			if (getLeftChild().getNumChildren() > 0)
+			value = new StringBuffer();
+			value.append(getCharacter());
+			if (getLeftChild().getNumChildren() > 0
+					&& getLeftChild().getType() != Constants.AST_TIMES)
 				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
 			else
 				value.append(getLeftChild().toLaTeX());
@@ -1480,11 +1482,15 @@ public class ASTNode implements TreeNode {
 			value = getLeftChild().toLaTeX();
 			for (int i = 1; i < getNumChildren(); i++) {
 				ast = getChild(i);
-				value.append(getCharacter());
-				if (ast.getType() == Constants.AST_MINUS)
-					value.append(LaTeX.brackets(ast.toLaTeX()));
-				else
+				if (ast.isUMinus())
 					value.append(ast.toLaTeX());
+				else {
+					value.append(getCharacter());
+					if (ast.getType() == Constants.AST_MINUS)
+						value.append(LaTeX.brackets(ast.toLaTeX()));
+					else
+						value.append(ast.toLaTeX());
+				}
 			}
 			return value;
 
@@ -1509,8 +1515,8 @@ public class ASTNode implements TreeNode {
 			for (int i = 1; i < getNumChildren(); i++) {
 				ast = getChild(i);
 				value.append("\\cdot");
-				if ((ast.getType() == Constants.AST_MINUS)
-						|| (ast.getType() == Constants.AST_PLUS))
+				if ((ast.getType() == Constants.AST_MINUS || ast.getType() == Constants.AST_PLUS)
+						&& ast.getNumChildren() > 1)
 					value.append(LaTeX.brackets(ast.toLaTeX()));
 				else {
 					value.append(' ');

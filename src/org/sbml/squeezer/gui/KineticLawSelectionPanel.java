@@ -352,7 +352,6 @@ public class KineticLawSelectionPanel extends JPanel implements ActionListener {
 			try {
 				BasicKineticLaw kinetic = klg.createKineticLaw(reaction,
 						possibleTypes[i], false);
-				System.out.println(kinetic.getName());
 				laTeXpreview[i] = new StringBuffer(kinetic.getMath().toLaTeX()
 						.toString());
 				toolTips[i] = !kinetic.isSetSBOTerm() ? "<b>"

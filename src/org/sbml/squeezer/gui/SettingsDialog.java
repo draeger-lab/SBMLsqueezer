@@ -22,14 +22,10 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.Properties;
 
@@ -55,7 +51,7 @@ import org.sbml.squeezer.SBMLsqueezer;
  * @version
  */
 public class SettingsDialog extends JDialog implements ActionListener,
-		ItemListener, ChangeListener {
+		ItemListener, ChangeListener, KeyListener {
 
 	/**
 	 * This will tell us later what the user selected here.
@@ -163,6 +159,8 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		 */
 		tfOpenDir = new JTextField();
 		tfSaveDir = new JTextField();
+		tfOpenDir.addKeyListener(this);
+		tfSaveDir.addKeyListener(this);
 		LayoutHelper lh = new LayoutHelper(new JPanel());
 		lh.add(new JLabel("Open directory:"), 0, 0, 1, 1, 1, 0);
 		lh.add(new JPanel(), 0, 1, 1, 1, 0, 0);
@@ -243,6 +241,30 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 	 */
 	public void stateChanged(ChangeEvent e) {
+		apply.setEnabled(true);
+		defaults.setEnabled(true);
+		ok.setEnabled(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
+	public void keyPressed(KeyEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
+	public void keyReleased(KeyEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
+	public void keyTyped(KeyEvent e) {
 		apply.setEnabled(true);
 		defaults.setEnabled(true);
 		ok.setEnabled(true);
