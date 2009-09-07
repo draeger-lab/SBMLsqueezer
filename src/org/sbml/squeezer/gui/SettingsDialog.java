@@ -155,7 +155,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		tabs.addTab("Kinetics settings", kinSettingsPanel);
 
 		/*
-		 * General Settings
+		 * Program settings
 		 */
 		tfOpenDir = new JTextField();
 		tfSaveDir = new JTextField();
@@ -170,7 +170,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		lh.add(new JLabel("Save directory:"), 0, 2, 1, 1, 1, 0);
 		tfSaveDir.setText(this.settings.get(CfgKeys.SAVE_DIR).toString());
 		lh.add(tfSaveDir, 2, 2, 1, 1, 1, 0);
-		tabs.addTab("General settings", lh.getContainer());
+		tabs.addTab("Program settings", lh.getContainer());
 		setLayout(new BorderLayout());
 
 		/*
