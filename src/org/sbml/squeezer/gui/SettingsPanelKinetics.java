@@ -59,7 +59,7 @@ import org.sbml.squeezer.SBMLsqueezer;
  *         Dr&auml;ger</a>
  * @date Nov 15, 2007
  */
-public class KineticsSettingsPanel extends JPanel implements ChangeListener,
+public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		ItemListener {
 
 	/**
@@ -120,7 +120,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 	private Properties settings;
 
 	private JRadioButton hillKineticsRadioButton;
-	
+
 	private List<ItemListener> itemListeners;
 	private List<ChangeListener> changeListeners;
 
@@ -128,9 +128,15 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 	 * 
 	 * @param settings
 	 */
-	public KineticsSettingsPanel(Properties settings) {
+	public SettingsPanelKinetics(Properties settings) {
 		super(new GridBagLayout());
-		this.settings = (Properties) settings.clone();
+		this.settings = new Properties();
+		for (Object key : settings.keySet()) {
+			String k = key.toString();
+			if (k.startsWith("OPT_") || k.startsWith("KINETICS_")
+					|| k.startsWith("POSSIBLE_ENZYME_"))
+				this.settings.put(key, settings.get(key));
+		}
 		this.itemListeners = new LinkedList<ItemListener>();
 		this.changeListeners = new LinkedList<ChangeListener>();
 		init();
@@ -156,7 +162,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 				.setToolTipText("<html>If checked, all reactions are considered to be enzyme-catalyzed.</html>");
 		jCheckBoxTreatAllReactionsAsEnzyeReaction
 				.setSelected(((Boolean) settings
-						.get(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+						.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 						.booleanValue());
 		jCheckBoxTreatAllReactionsAsEnzyeReaction.setBackground(Color.WHITE);
 		jCheckBoxAddAllParametersGlobally = new JCheckBox(
@@ -167,19 +173,20 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 						+ "parameters locally in the respective rate law.</html>");
 		jCheckBoxAddAllParametersGlobally.setBackground(Color.WHITE);
 		jCheckBoxAddAllParametersGlobally.setSelected(((Boolean) settings
-				.get(CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
+				.get(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
 				.booleanValue());
 		jCheckBoxWarnings = new JCheckBox("Warnings for too many reactants:");
 		jCheckBoxWarnings.setSelected(((Boolean) settings
-				.get(CfgKeys.WARNINGS_FOR_TOO_MANY_REACTANTS)).booleanValue());
+				.get(CfgKeys.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS))
+				.booleanValue());
 		jCheckBoxWarnings
 				.setToolTipText("<html>If checked, warnings will be shown for reactions<br>"
 						+ "with more reactants than specified here.</html>");
 		jCheckBoxWarnings.setBackground(Color.WHITE);
 		jSpinnerMaxRealisticNumOfReactants = new JSpinner(
 				new SpinnerNumberModel(((Integer) settings
-						.get(CfgKeys.MAX_NUMBER_OF_REACTANTS)).intValue(), 2,
-						10, 1));
+						.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS)).intValue(),
+						2, 10, 1));
 		jSpinnerMaxRealisticNumOfReactants
 				.setToolTipText("<html>Specifiy how many reactants are at most likely to collide.</html>");
 		jSpinnerMaxRealisticNumOfReactants.setBackground(Color.WHITE);
@@ -198,7 +205,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 				"Only when missing");
 		jRadioButtonGenerateOnlyMissingKinetics
 				.setSelected(!((Boolean) settings
-						.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
+						.get(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 						.booleanValue());
 		jRadioButtonGenerateOnlyMissingKinetics
 				.setToolTipText("<html>If checked, kinetics are only generated if missing in the SBML file.</html>");
@@ -212,7 +219,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 		buttonGroup.add(jRadioButtonGenerateForAllReactions);
 		buttonGroup.add(jRadioButtonGenerateOnlyMissingKinetics);
 		jRadioButtonGenerateOnlyMissingKinetics.setSelected(((Boolean) settings
-				.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
+				.get(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 				.booleanValue());
 		layout = new GridBagLayout();
 		JPanel jPanelGenerateNewKinetics = new JPanel(layout);
@@ -230,14 +237,16 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 		jRadioButtonForceReacRev = new JRadioButton(
 				"Model all reactions in a reversible manner");
 		jRadioButtonForceReacRev.setSelected(((Boolean) settings
-				.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue());
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue());
 		jRadioButtonForceReacRev
 				.setToolTipText("<html>If checked, all reactions will be set to reversible no matter what is given by the SBML file.</html>");
 		jRadioButtonForceReacRev.setBackground(Color.WHITE);
 		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(
 				"Use information from SBML");
 		jRadioButtonSettingsFrameForceRevAsCD.setSelected(!((Boolean) settings
-				.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue());
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue());
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setToolTipText("<html>If checked, the information about reversiblity will be left unchanged.</html>");
 		jRadioButtonSettingsFrameForceRevAsCD.setBackground(Color.WHITE);
@@ -413,8 +422,9 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 
 		jRadioButtonUniUniMMK = new JRadioButton();
-		jRadioButtonUniUniMMK.setSelected(Kinetics.valueOf(settings.get(
-				CfgKeys.UNI_UNI_TYPE).toString()) == Kinetics.MICHAELIS_MENTEN);
+		jRadioButtonUniUniMMK
+				.setSelected(Kinetics.valueOf(settings.get(
+						CfgKeys.KINETICS_UNI_UNI_TYPE).toString()) == Kinetics.MICHAELIS_MENTEN);
 		jRadioButtonUniUniMMK
 				.setToolTipText("<html>Check this box if Michaelis-Menten kinetics is to be<br>"
 						+ "applied for uni-uni reactions (one reactant, one product).</html>");
@@ -425,7 +435,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 		jRadioButtonUniUniCONV = new JRadioButton("Convenience kinetics");
 		// uni-uni-type = 2
 		jRadioButtonUniUniCONV
-				.setSelected(settings.get(CfgKeys.UNI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
+				.setSelected(settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
 		jRadioButtonUniUniCONV
 				.setToolTipText("<html>Check this box if convenience kinetics is to be<br>"
 						+ "applied for uni-uni reactions (one reactant, one product).</html>");
@@ -446,8 +456,9 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 
 		this.jRadioButtonBiUniORD = new JRadioButton();
-		jRadioButtonBiUniORD.setSelected(Kinetics.valueOf(settings.get(
-				CfgKeys.BI_UNI_TYPE).toString()) == Kinetics.ORDERED_MECHANISM);
+		jRadioButtonBiUniORD
+				.setSelected(Kinetics.valueOf(settings.get(
+						CfgKeys.KINETICS_BI_UNI_TYPE).toString()) == Kinetics.ORDERED_MECHANISM);
 		jRadioButtonBiUniORD
 				.setToolTipText("<html>Check this box if you want the ordered mechanism scheme as<br>"
 						+ "reaction scheme for bi-uni reactions (two reactant, one product).</html>");
@@ -457,7 +468,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 		jRadioButtonBiUniCONV = new JRadioButton("Convenience kinetics"); // biUniType
 		// = 2
 		jRadioButtonBiUniCONV
-				.setSelected(settings.get(CfgKeys.BI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
+				.setSelected(settings.get(CfgKeys.KINETICS_BI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
 		jRadioButtonBiUniCONV
 				.setToolTipText("<html>Check this box if you want convenience kinetics as<br>"
 						+ "reaction scheme for bi-uni reactions (two reactant, one product).</html>");
@@ -465,8 +476,8 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 
 		jRadioButtonBiUniRND = new JRadioButton("Random"); // biUniType = 4
 		jRadioButtonBiUniRND
-				.setSelected(Kinetics.valueOf(settings.get(CfgKeys.BI_UNI_TYPE)
-						.toString()) == Kinetics.RANDOM_ORDER_MECHANISM);
+				.setSelected(Kinetics.valueOf(settings.get(
+						CfgKeys.KINETICS_BI_UNI_TYPE).toString()) == Kinetics.RANDOM_ORDER_MECHANISM);
 		jRadioButtonBiUniRND
 				.setToolTipText("<html>Check this box if you want the random mechanism scheme<br>"
 						+ "to be applied for bi-uni reactions (two reactants, one product).</html>");
@@ -491,8 +502,8 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 
 		jRadioButtonBiBiRND = new JRadioButton("Random"); // biBiType = 4
 		jRadioButtonBiBiRND
-				.setSelected(Kinetics.valueOf(settings.get(CfgKeys.BI_BI_TYPE)
-						.toString()) == Kinetics.RANDOM_ORDER_MECHANISM);
+				.setSelected(Kinetics.valueOf(settings.get(
+						CfgKeys.KINETICS_BI_BI_TYPE).toString()) == Kinetics.RANDOM_ORDER_MECHANISM);
 		jRadioButtonBiBiRND
 				.setToolTipText("<html>Check this box if you want the random mechanism to be applied<br>"
 						+ "to bi-bi reactions (two reactants, two products).</html>");
@@ -501,7 +512,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 		jRadioButtonBiBiCONV = new JRadioButton("Convenience kinetics"); // biBiType
 		// = 2
 		jRadioButtonBiBiCONV
-				.setSelected(settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
+				.setSelected(settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
 		jRadioButtonBiBiCONV
 				.setToolTipText("<html>Check this box if you want convenience kinetics to be applied<br>"
 						+ "for bi-bi reactions (two reactants, two products).</html>");
@@ -509,7 +520,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 
 		jRadioButtonBiBiORD = new JRadioButton("Ordered"); // biBiType = 6
 		jRadioButtonBiBiORD
-				.setSelected(settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.ORDERED_MECHANISM);
+				.setSelected(settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.ORDERED_MECHANISM);
 		jRadioButtonBiBiORD
 				.setToolTipText("<html>Check this box if you want the ordered mechanism as reaction scheme<br>"
 						+ "for bi-bi reactions (two reactants, two products).</html>");
@@ -517,7 +528,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 
 		jRadioButtonBiBiPP = new JRadioButton("Ping-pong"); // biBiType = 5
 		jRadioButtonBiBiPP
-				.setSelected(settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.PING_PONG_MECAHNISM);
+				.setSelected(settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.PING_PONG_MECAHNISM);
 		jRadioButtonBiBiPP
 				.setToolTipText("<html>Check this box if you want the ping-pong mechanism as reaction scheme<br>"
 						+ "for bi-bi reactions (two reactants, two products).</html>");
@@ -706,47 +717,47 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 		} else {
 			possibleEnzymeAllNotChecked = false;
 
-			if (settings.get(CfgKeys.UNI_UNI_TYPE) == Kinetics.MICHAELIS_MENTEN)
+			if (settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE) == Kinetics.MICHAELIS_MENTEN)
 				jRadioButtonUniUniMMK.setSelected(true);
 			else
 				jRadioButtonUniUniMMK.setSelected(false);
 
-			if (settings.get(CfgKeys.UNI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS)
+			if (settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS)
 				jRadioButtonUniUniCONV.setSelected(true);
 			else
 				jRadioButtonUniUniCONV.setSelected(false);
 
-			if (settings.get(CfgKeys.BI_UNI_TYPE) == Kinetics.ORDERED_MECHANISM)
+			if (settings.get(CfgKeys.KINETICS_BI_UNI_TYPE) == Kinetics.ORDERED_MECHANISM)
 				jRadioButtonBiUniORD.setSelected(true);
 			else
 				jRadioButtonBiUniORD.setSelected(false);
 
-			if (settings.get(CfgKeys.BI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS)
+			if (settings.get(CfgKeys.KINETICS_BI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS)
 				jRadioButtonBiUniCONV.setSelected(true);
 			else
 				jRadioButtonBiUniCONV.setSelected(false);
 
-			if (settings.get(CfgKeys.BI_UNI_TYPE) == Kinetics.RANDOM_ORDER_MECHANISM)
+			if (settings.get(CfgKeys.KINETICS_BI_UNI_TYPE) == Kinetics.RANDOM_ORDER_MECHANISM)
 				jRadioButtonBiUniRND.setSelected(true);
 			else
 				jRadioButtonBiUniRND.setSelected(false);
 
-			if (settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.PING_PONG_MECAHNISM)
+			if (settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.PING_PONG_MECAHNISM)
 				jRadioButtonBiBiPP.setSelected(true);
 			else
 				jRadioButtonBiBiPP.setSelected(false);
 
-			if (settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.ORDERED_MECHANISM)
+			if (settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.ORDERED_MECHANISM)
 				jRadioButtonBiBiORD.setSelected(true);
 			else
 				jRadioButtonBiBiORD.setSelected(false);
 
-			if (settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.CONVENIENCE_KINETICS)
+			if (settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.CONVENIENCE_KINETICS)
 				jRadioButtonBiBiCONV.setSelected(true);
 			else
 				jRadioButtonBiBiCONV.setSelected(false);
 
-			if (settings.get(CfgKeys.BI_BI_TYPE) == Kinetics.RANDOM_ORDER_MECHANISM)
+			if (settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.RANDOM_ORDER_MECHANISM)
 				jRadioButtonBiBiRND.setSelected(true);
 			else
 				jRadioButtonBiBiRND.setSelected(false);
@@ -798,10 +809,10 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(jSpinnerMaxRealisticNumOfReactants)) {
-			settings.put(CfgKeys.MAX_NUMBER_OF_REACTANTS, Integer
+			settings.put(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS, Integer
 					.parseInt(jSpinnerMaxRealisticNumOfReactants.getValue()
 							.toString()));
-			for (int i=0; i<changeListeners.size(); i++)
+			for (int i = 0; i < changeListeners.size(); i++)
 				changeListeners.get(i).stateChanged(e);
 		}
 	}
@@ -814,21 +825,22 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jCheckBoxTreatAllReactionsAsEnzyeReaction)) {
-			settings.put(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED, Boolean
-					.valueOf(jCheckBoxTreatAllReactionsAsEnzyeReaction
+			settings.put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+					Boolean.valueOf(jCheckBoxTreatAllReactionsAsEnzyeReaction
 							.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxAddAllParametersGlobally)) {
-			settings.put(CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY, Boolean
-					.valueOf(jCheckBoxAddAllParametersGlobally.isSelected()));
+			settings.put(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+					Boolean.valueOf(jCheckBoxAddAllParametersGlobally
+							.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxWarnings)) {
-			settings.put(CfgKeys.WARNINGS_FOR_TOO_MANY_REACTANTS, Boolean
+			settings.put(CfgKeys.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS, Boolean
 					.valueOf(jCheckBoxWarnings.isSelected()));
 		} else if (e.getSource().equals(jRadioButtonGenerateForAllReactions)) {
-			settings.put(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
+			settings.put(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
 					Boolean.valueOf(jRadioButtonGenerateForAllReactions
 							.isSelected()));
 		} else if (e.getSource().equals(jRadioButtonForceReacRev)) {
-			settings.put(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE, Boolean
+			settings.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE, Boolean
 					.valueOf(jRadioButtonForceReacRev.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeRNA)) {
 			settings.put(CfgKeys.POSSIBLE_ENZYME_RNA, Boolean
@@ -872,35 +884,40 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 						Kinetics.GENERALIZED_MASS_ACTION);
 		} else if (e.getSource().equals(jRadioButtonUniUniMMK)) {
 			if (jRadioButtonUniUniMMK.isSelected())
-				settings.put(CfgKeys.UNI_UNI_TYPE, Kinetics.MICHAELIS_MENTEN);
+				settings.put(CfgKeys.KINETICS_UNI_UNI_TYPE,
+						Kinetics.MICHAELIS_MENTEN);
 		} else if (e.getSource().equals(jRadioButtonUniUniCONV)) {
 			if (jRadioButtonUniUniCONV.isSelected())
-				settings.put(CfgKeys.UNI_UNI_TYPE,
+				settings.put(CfgKeys.KINETICS_UNI_UNI_TYPE,
 						Kinetics.CONVENIENCE_KINETICS);
 		} else if (e.getSource().equals(jRadioButtonBiUniRND)) {
 			if (jRadioButtonBiUniRND.isSelected())
-				settings.put(CfgKeys.BI_UNI_TYPE,
+				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE,
 						Kinetics.RANDOM_ORDER_MECHANISM);
 		} else if (e.getSource().equals(jRadioButtonBiUniCONV)) {
 			if (jRadioButtonBiUniCONV.isSelected())
-				settings
-						.put(CfgKeys.BI_UNI_TYPE, Kinetics.CONVENIENCE_KINETICS);
+				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE,
+						Kinetics.CONVENIENCE_KINETICS);
 		} else if (e.getSource().equals(jRadioButtonBiUniORD)) {
 			if (jRadioButtonBiUniORD.isSelected())
-				settings.put(CfgKeys.BI_UNI_TYPE, Kinetics.ORDERED_MECHANISM);
+				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE,
+						Kinetics.ORDERED_MECHANISM);
 		} else if (e.getSource().equals(jRadioButtonBiBiRND)) {
 			if (jRadioButtonBiBiRND.isSelected())
-				settings.put(CfgKeys.BI_BI_TYPE,
+				settings.put(CfgKeys.KINETICS_BI_BI_TYPE,
 						Kinetics.RANDOM_ORDER_MECHANISM);
 		} else if (e.getSource().equals(jRadioButtonBiBiCONV)) {
 			if (jRadioButtonBiBiCONV.isSelected())
-				settings.put(CfgKeys.BI_BI_TYPE, Kinetics.CONVENIENCE_KINETICS);
+				settings.put(CfgKeys.KINETICS_BI_BI_TYPE,
+						Kinetics.CONVENIENCE_KINETICS);
 		} else if (e.getSource().equals(jRadioButtonBiBiORD)) {
 			if (jRadioButtonBiBiORD.isSelected())
-				settings.put(CfgKeys.BI_BI_TYPE, Kinetics.ORDERED_MECHANISM);
+				settings.put(CfgKeys.KINETICS_BI_BI_TYPE,
+						Kinetics.ORDERED_MECHANISM);
 		} else if (e.getSource().equals(jRadioButtonBiBiPP)) {
 			if (jRadioButtonBiBiPP.isSelected())
-				settings.put(CfgKeys.BI_BI_TYPE, Kinetics.PING_PONG_MECAHNISM);
+				settings.put(CfgKeys.KINETICS_BI_BI_TYPE,
+						Kinetics.PING_PONG_MECAHNISM);
 		} else if (e.getSource().equals(jRadioButtonOtherEnzymCONV)) {
 			if (jRadioButtonOtherEnzymCONV.isSelected())
 				settings.put(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS,
@@ -921,7 +938,7 @@ public class KineticsSettingsPanel extends JPanel implements ChangeListener,
 	public void addItemListener(ItemListener l) {
 		itemListeners.add(l);
 	}
-	
+
 	/**
 	 * 
 	 * @param l

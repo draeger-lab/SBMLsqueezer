@@ -71,7 +71,6 @@ import org.sbml.squeezer.resources.Resource;
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
  *         Dr&auml;ger</a>
- * @author <a href="mailto:supper@genomatix.de">Jochen Supper</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 3, 2007
  */
@@ -92,7 +91,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private int numOfWarnings = 0;
 
-	private KineticsSettingsPanel settingsPanel;
+	private SettingsPanelKinetics settingsPanel;
 
 	private JButton options;
 
@@ -131,17 +130,24 @@ public class KineticLawSelectionDialog extends JDialog implements
 	public KineticLawSelectionDialog(JFrame owner, Properties settings,
 			Model model) {
 		this(owner, settings);
-		LaTeXExportDialogPanel panel = new LaTeXExportDialogPanel();
+		SettingsPanelLaTeX panel = new SettingsPanelLaTeX(settings, true);
 		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 				GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
 			try {
 				BufferedWriter buffer = new BufferedWriter(new FileWriter(panel
 						.getTeXFile()));
-				LaTeXExport exporter = new LaTeXExport(panel.isLandscape(),
-						panel.isIDsInTWFont(), panel.getFontSize(), panel
-								.getPaperSize(), panel.isTitlePage(), panel
-								.isNameInEquations());
+				Properties p = panel.getProperties();
+				LaTeXExport exporter = new LaTeXExport(((Boolean) p
+						.get(CfgKeys.LATEX_LANDSCAPE)).booleanValue(),
+						((Boolean) p.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT))
+								.booleanValue(), (short) ((Integer) p
+								.get(CfgKeys.LATEX_FONT_SIZE)).intValue(), p
+								.get(CfgKeys.LATEX_PAPER_SIZE).toString(),
+						((Boolean) p.get(CfgKeys.LATEX_TITLE_PAGE))
+								.booleanValue(), ((Boolean) p
+								.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS))
+								.booleanValue());
 				buffer.write(exporter.toLaTeX(model).toString());
 				buffer.close();
 				dispose();
@@ -217,12 +223,13 @@ public class KineticLawSelectionDialog extends JDialog implements
 					reaction.setReversible(messagePanel.getReversible());
 					sbmlIO.stateChanged(reaction);
 					klg.getSettings().put(
-							CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE,
+							CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 							Boolean.valueOf(messagePanel.getReversible()));
 					reaction = klg.storeLaw(klg.createKineticLaw(reaction,
 							equationType, messagePanel.getReversible()));
 					klg.removeUnnecessaryParameters(model);
 					sbmlIO.saveChanges();
+					KineticsAndParametersStoredInSBML = true;
 				}
 			}
 		} catch (RateLawNotApplicableException exc) {
@@ -231,9 +238,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		} catch (RuntimeException exc) {
-			JOptionPane.showMessageDialog(this, exc.getMessage() != null ? GUITools.toHTML(exc
-					.getMessage(), 40) : "", exc.getClass().getCanonicalName(),
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this,
+					exc.getMessage() != null ? GUITools.toHTML(
+							exc.getMessage(), 40) : "", exc.getClass()
+							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
@@ -377,22 +385,26 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 					} catch (IllegalFormatException exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass().getCanonicalName(),
+								.getMessage(), 40), exc.getClass()
+								.getCanonicalName(),
 								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					} catch (ModificationException exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass().getCanonicalName(),
+								.getMessage(), 40), exc.getClass()
+								.getCanonicalName(),
 								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					} catch (RateLawNotApplicableException exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass().getCanonicalName(),
+								.getMessage(), 40), exc.getClass()
+								.getCanonicalName(),
 								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					} catch (IOException exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass().getCanonicalName(),
+								.getMessage(), 40), exc.getClass()
+								.getCanonicalName(),
 								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					}
@@ -425,6 +437,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					KineticsAndParametersStoredInSBML = true;
 					klg.storeLaws(this);
 					sbmlIO.saveChanges();
+					KineticsAndParametersStoredInSBML = true;
 				}
 			}
 		}
@@ -439,6 +452,198 @@ public class KineticLawSelectionDialog extends JDialog implements
 		progressBar.setValue(num);
 		if (num >= progressBar.getMaximum())
 			progressDialog.dispose();
+	}
+
+	/**
+	 * This method allows to write the generated kinetic equations to an ASCII
+	 * or TeX file.
+	 */
+	private void exportKineticEquations() {
+		if (sbmlIO != null && klg != null) {
+			if (!KineticsAndParametersStoredInSBML) {
+				klg.storeLaws(this);
+				sbmlIO.saveChanges();
+				KineticsAndParametersStoredInSBML = true;
+			}
+			JFileChooser chooser = new JFileChooser();
+			SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
+			SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
+			chooser.setFileFilter(ff1);
+			chooser.addChoosableFileFilter(ff2);
+			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+				try {
+					new TextExport(sbmlIO.getSelectedModel(), chooser
+							.getSelectedFile());
+				} catch (IOException exc) {
+					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+							.getMessage(), 40), exc.getClass()
+							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
+					exc.printStackTrace();
+				}
+		}
+	}
+
+	/**
+	 * Returns the panel on the bottom of this window.
+	 * 
+	 * @param type
+	 *            if i = 0 this will return the foot containing the buttons
+	 *            "Help", "Cancel" and "Generate" for i = 1 there will be
+	 *            "Export", "Cancel", "Back" and "Apply".
+	 * @return
+	 */
+	private JPanel getFootPanel(int type) {
+		GridBagLayout gbl = new GridBagLayout();
+		JPanel south = new JPanel(gbl), rightPanel = new JPanel(new FlowLayout(
+				FlowLayout.RIGHT)), leftPanel = new JPanel();
+
+		JButton cancel = new JButton("Cancel"), apply = new JButton();
+		cancel
+				.setToolTipText("<html>Exit SBMLsqueezer without saving changes.</html>");
+		cancel.addActionListener(this);
+		apply.addActionListener(this);
+
+		rightPanel.add(cancel);
+		switch (type) {
+		case 0:
+			apply.setToolTipText("<html>Start generating an ordinary "
+					+ "differential equation system.</html>");
+			apply.setText("Generate");
+			helpButton = new JButton("Help");
+			helpButton.addActionListener(this);
+			leftPanel.add(helpButton);
+			break;
+		default:
+			apply.setToolTipText("<html>Write the generated kinetics and "
+					+ "parameters to the SBML file.</html>");
+			apply.setText("Apply");
+
+			JButton jButtonReactionsFrameSave = new JButton();
+			jButtonReactionsFrameSave.setEnabled(true);
+			jButtonReactionsFrameSave.setBounds(35, 285, 100, 25);
+			jButtonReactionsFrameSave
+					.setToolTipText("<html>Transfers the kinetics and parameters "
+							+ "to CellDesigner and<br>"
+							+ "allowes to save the generated differential equations as<br>"
+							+ "*.txt or *.tex files.</html>");
+			jButtonReactionsFrameSave.setText("Export");
+			jButtonReactionsFrameSave.addActionListener(this);
+			leftPanel.add(jButtonReactionsFrameSave);
+			JButton back = new JButton("Back");
+			back.addActionListener(this);
+			rightPanel.add(back);
+			break;
+		}
+		rightPanel.add(apply);
+		LayoutHelper.addComponent(south, gbl, leftPanel, 0, 0, 1, 1, 0, 0);
+		LayoutHelper.addComponent(south, gbl, rightPanel, 1, 0, 3, 1, 1, 1);
+
+		return south;
+	}
+
+	/**
+	 * This method initializes a Panel that shows all possible settings of the
+	 * program.
+	 * 
+	 * @return javax.swing.JPanelsb.append("<br>
+	 *         ");
+	 */
+	private SettingsPanelKinetics getJSettingsPanel() {
+		if (settingsPanel == null) {
+			settingsPanel = new SettingsPanelKinetics(settings);
+			// settingsPanel.setBackground(Color.WHITE);
+		}
+		return settingsPanel;
+	}
+
+	/**
+	 * This method actually initializes the GUI.
+	 */
+	private void init() {
+		centralPanel = initOptionsPanel();
+		setLayout(new BorderLayout());
+		getContentPane().add(centralPanel, BorderLayout.CENTER);
+		JLabel label = new JLabel(GUITools.LOGO_SMALL);
+		label.setBackground(Color.WHITE);
+		label.setText("<html><body><br><br><br><br><br><br>Version "
+				+ SBMLsqueezer.getVersionNumber() + "</body></html>");
+		JPanel p = new JPanel();
+		p.add(label);
+		p.setBackground(Color.WHITE);
+		JScrollPane scroll = new JScrollPane(p,
+				JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setBackground(Color.WHITE);
+		getContentPane().add(scroll, BorderLayout.NORTH);
+		// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
+
+		footPanel = getFootPanel(0);
+		getContentPane().add(footPanel, BorderLayout.SOUTH);
+
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultLookAndFeelDecorated(true);
+		setLocationByPlatform(true);
+		setResizable(false);
+		pack();
+
+		int height = getHeight();
+		setSize(getWidth(), fullHeight);
+		setLocationRelativeTo(null);
+		setSize(getWidth(), height);
+		settingsPanel = getJSettingsPanel();
+	}
+
+	/**
+	 * Returns a JPanel that displays the user options.
+	 * 
+	 * @return
+	 */
+	private JPanel initOptionsPanel() {
+		JPanel p = new JPanel(new BorderLayout());
+		options = new JButton("show options");
+		options.setIcon(GUITools.RIGHT_ARROW);
+		options.setIconTextGap(5);
+		options.setBorderPainted(false);
+		options.setSize(150, 20);
+		options.setToolTipText("Customize the advanced settings.");
+		options.addActionListener(this);
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		panel.add(options);
+		options.setBackground(new Color(panel.getBackground().getRGB()));
+		p.add(panel, BorderLayout.NORTH);
+		return p;
+	}
+
+	/**
+	 * Method that indicates whether or not changes have been introduced into
+	 * the given model.
+	 * 
+	 * @return True if kinetic equations and parameters or anything else were
+	 *         changed by SBMLsqueezer.
+	 */
+	public boolean isKineticsAndParametersStoredInSBML() {
+		return KineticsAndParametersStoredInSBML;
+	}
+
+	private void showSettingsPanel() {
+		options.setIcon(GUITools.DOWN_ARROW);
+		options.setIconTextGap(5);
+		options.setToolTipText("<html>Hide detailed options</html>");
+		options.setText("hide options");
+		settingsPanel = getJSettingsPanel();
+		JScrollPane scroll = new JScrollPane(settingsPanel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setBackground(Color.WHITE);
+		centralPanel.add(scroll, BorderLayout.CENTER);
+		centralPanel.validate();
+		/*
+		 * setSize(getWidth(), (int) Math.min(fullHeight,
+		 * GraphicsEnvironment.getLocalGraphicsEnvironment()
+		 * .getMaximumWindowBounds().getHeight()));//
+		 */
+		pack();
+		validate();
 	}
 
 	/*
@@ -526,186 +731,5 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
 	 */
 	public void windowOpened(WindowEvent e) {
-	}
-
-	/**
-	 * This method allows to write the generated kinetic equations to an ASCII
-	 * or TeX file.
-	 */
-	private void exportKineticEquations() {
-		if (sbmlIO != null && klg != null) {
-			if (!KineticsAndParametersStoredInSBML) {
-				klg.storeLaws(this);
-				sbmlIO.saveChanges();
-				KineticsAndParametersStoredInSBML = true;
-			}
-			JFileChooser chooser = new JFileChooser();
-			SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
-			SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-			chooser.setFileFilter(ff1);
-			chooser.addChoosableFileFilter(ff2);
-			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-				try {
-					new TextExport(sbmlIO.getSelectedModel(), chooser
-							.getSelectedFile());
-				} catch (IOException exc) {
-					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-							.getMessage(), 40), exc.getClass().getCanonicalName(),
-							JOptionPane.WARNING_MESSAGE);
-					exc.printStackTrace();
-				}
-		}
-	}
-
-	/**
-	 * Returns the panel on the bottom of this window.
-	 * 
-	 * @param type
-	 *            if i = 0 this will return the foot containing the buttons
-	 *            "Help", "Cancel" and "Generate" for i = 1 there will be
-	 *            "Export", "Cancel", "Back" and "Apply".
-	 * @return
-	 */
-	private JPanel getFootPanel(int type) {
-		GridBagLayout gbl = new GridBagLayout();
-		JPanel south = new JPanel(gbl), rightPanel = new JPanel(new FlowLayout(
-				FlowLayout.RIGHT)), leftPanel = new JPanel();
-
-		JButton cancel = new JButton("Cancel"), apply = new JButton();
-		cancel
-				.setToolTipText("<html>Exit SBMLsqueezer without saving changes.</html>");
-		cancel.addActionListener(this);
-		apply.addActionListener(this);
-
-		rightPanel.add(cancel);
-		switch (type) {
-		case 0:
-			apply.setToolTipText("<html>Start generating an ordinary "
-					+ "differential equation system.</html>");
-			apply.setText("Generate");
-			helpButton = new JButton("Help");
-			helpButton.addActionListener(this);
-			leftPanel.add(helpButton);
-			break;
-		default:
-			apply.setToolTipText("<html>Write the generated kinetics and "
-					+ "parameters to the SBML file.</html>");
-			apply.setText("Apply");
-
-			JButton jButtonReactionsFrameSave = new JButton();
-			jButtonReactionsFrameSave.setEnabled(true);
-			jButtonReactionsFrameSave.setBounds(35, 285, 100, 25);
-			jButtonReactionsFrameSave
-					.setToolTipText("<html>Transfers the kinetics and parameters "
-							+ "to CellDesigner and<br>"
-							+ "allowes to save the generated differential equations as<br>"
-							+ "*.txt or *.tex files.</html>");
-			jButtonReactionsFrameSave.setText("Export");
-			jButtonReactionsFrameSave.addActionListener(this);
-			leftPanel.add(jButtonReactionsFrameSave);
-			JButton back = new JButton("Back");
-			back.addActionListener(this);
-			rightPanel.add(back);
-			break;
-		}
-		rightPanel.add(apply);
-		LayoutHelper.addComponent(south, gbl, leftPanel, 0, 0, 1, 1, 0, 0);
-		LayoutHelper.addComponent(south, gbl, rightPanel, 1, 0, 3, 1, 1, 1);
-
-		return south;
-	}
-
-	/**
-	 * This method initializes a Panel that shows all possible settings of the
-	 * program.
-	 * 
-	 * @return javax.swing.JPanelsb.append("<br>
-	 *         ");
-	 */
-	private KineticsSettingsPanel getJSettingsPanel() {
-		if (settingsPanel == null) {
-			settingsPanel = new KineticsSettingsPanel(settings);
-			// settingsPanel.setBackground(Color.WHITE);
-		}
-		return settingsPanel;
-	}
-
-	/**
-	 * Returns a JPanel that displays the user options.
-	 * 
-	 * @return
-	 */
-	private JPanel initOptionsPanel() {
-		JPanel p = new JPanel(new BorderLayout());
-		options = new JButton("show options");
-		options.setIcon(GUITools.RIGHT_ARROW);
-		options.setIconTextGap(5);
-		options.setBorderPainted(false);
-		options.setSize(150, 20);
-		options.setToolTipText("Customize the advanced settings.");
-		options.addActionListener(this);
-		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panel.add(options);
-		options.setBackground(new Color(panel.getBackground().getRGB()));
-		p.add(panel, BorderLayout.NORTH);
-		return p;
-	}
-
-	private void showSettingsPanel() {
-		options.setIcon(GUITools.DOWN_ARROW);
-		options.setIconTextGap(5);
-		options.setToolTipText("<html>Hide detailed options</html>");
-		options.setText("hide options");
-		settingsPanel = getJSettingsPanel();
-		JScrollPane scroll = new JScrollPane(settingsPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scroll.setBackground(Color.WHITE);
-		centralPanel.add(scroll, BorderLayout.CENTER);
-		centralPanel.validate();
-		/*
-		 * setSize(getWidth(), (int) Math.min(fullHeight,
-		 * GraphicsEnvironment.getLocalGraphicsEnvironment()
-		 * .getMaximumWindowBounds().getHeight()));//
-		 */
-		pack();
-		validate();
-	}
-
-	/**
-	 * This method actually initializes the GUI.
-	 */
-	private void init() {
-		centralPanel = initOptionsPanel();
-		setLayout(new BorderLayout());
-		getContentPane().add(centralPanel, BorderLayout.CENTER);
-		JLabel label = new JLabel(GUITools.LOGO_SMALL);
-		label.setBackground(Color.WHITE);
-		label.setText("<html><body><br><br><br><br><br><br>Version "
-				+ SBMLsqueezer.getVersionNumber() + "</body></html>");
-		JPanel p = new JPanel();
-		p.add(label);
-		p.setBackground(Color.WHITE);
-		JScrollPane scroll = new JScrollPane(p,
-				JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scroll.setBackground(Color.WHITE);
-		getContentPane().add(scroll, BorderLayout.NORTH);
-		// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
-
-		footPanel = getFootPanel(0);
-		getContentPane().add(footPanel, BorderLayout.SOUTH);
-
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setDefaultLookAndFeelDecorated(true);
-		setLocationByPlatform(true);
-		setResizable(false);
-		pack();
-
-		int height = getHeight();
-		setSize(getWidth(), fullHeight);
-		setLocationRelativeTo(null);
-		setSize(getWidth(), height);
-		settingsPanel = getJSettingsPanel();
 	}
 }

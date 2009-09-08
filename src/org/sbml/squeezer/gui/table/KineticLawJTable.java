@@ -75,12 +75,12 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		super(new KineticLawTableModel(klg));
 		this.klg = klg;
 		this.reversibility = ((Boolean) klg.getSettings().get(
-				CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
+				CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
 		getModel().addTableModelListener(this);
 		// setRowHeightAppropriately();
 		setColumnWidthAppropriately();
 		int maxNumReactnats = ((Integer) (klg.getSettings()
-				.get(CfgKeys.MAX_NUMBER_OF_REACTANTS))).intValue();
+				.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
 		setDefaultRenderer(Object.class, new KineticLawCellRenderer(
 				maxNumReactnats));
 		getTableHeader()

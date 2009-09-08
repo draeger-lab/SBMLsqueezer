@@ -27,11 +27,11 @@ package org.sbml.squeezer;
  */
 public enum CfgKeys {
 	/**
-	 * 
+	 * Standard directory where SBML files can be found.
 	 */
 	OPEN_DIR,
 	/**
-	 * 
+	 * Standard directory where SBML or Text files can be saved.
 	 */
 	SAVE_DIR,
 	
@@ -43,7 +43,7 @@ public enum CfgKeys {
 	 * <li>3 = Michaelis-Menten kinetics</li>
 	 * </ul>
 	 */
-	UNI_UNI_TYPE,
+	KINETICS_UNI_UNI_TYPE,
 	/**
 	 *            Possible values are:
 	 *            <ul>
@@ -53,7 +53,7 @@ public enum CfgKeys {
 	 *            <li>6 = Ordered</li>
 	 *            </ul>
 	 */
-	BI_UNI_TYPE,
+	KINETICS_BI_UNI_TYPE,
 	/**
 	 *            Possible values are:
 	 *            <ul>
@@ -64,7 +64,7 @@ public enum CfgKeys {
 	 *            <li>6 = Ordered</li>
 	 *            </ul>
 	 */
-	BI_BI_TYPE,
+	KINETICS_BI_BI_TYPE,
 	/**
 	 * 
 	 */
@@ -82,32 +82,32 @@ public enum CfgKeys {
 	 * false, an explicit enzymatic catalyst must be assigned to a reaction to obtain
 	 * this status.
 	 */
-	ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+	OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 	/**
 	 * If true a new rate law will be created for each reaction irrespective of whether
 	 * there is already a rate law assigned to this reaction or not.
 	 */
-	GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
+	OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
 	/**
 	 * If true all parameters are stored globally for the whole model (default)
 	 * else parameters are stored locally for the respective kinetic equation
 	 * they belong to.
 	 */
-	ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+	OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
 	/**
 	 * Property that decides whether to set all reactions to reversible before
 	 * creating new kinetic equations.
 	 */
-	TREAT_ALL_REACTIONS_REVERSIBLE, 
+	OPT_TREAT_ALL_REACTIONS_REVERSIBLE, 
 	/**
 	 * The maximal number of reactants so that the reaction is still considered
 	 * plausible.
 	 */
-	MAX_NUMBER_OF_REACTANTS,
+	OPT_MAX_NUMBER_OF_REACTANTS,
 	/**
 	 * If true, warnings will be displayed for too many reactants.
 	 */
-	WARNINGS_FOR_TOO_MANY_REACTANTS,
+	OPT_WARNINGS_FOR_TOO_MANY_REACTANTS,
 	/**
 	 * 
 	 */
@@ -158,4 +158,35 @@ public enum CfgKeys {
 	 *            IonChannel</li> <li>Ion</li> </ul> will be filtered out of the
 	 *            list.
 	 */
+	
+	/**
+	 * Standard directory where LaTeX files can be stored.
+	 */
+	LATEX_DIR,
+	/**
+	 * The paper size for LaTeX documents.
+	 */
+	LATEX_PAPER_SIZE,
+	/**
+	 * The font size for LaTeX documents.
+	 */
+	LATEX_FONT_SIZE,
+	/**
+	 * Key that decides whether or not identifiers should be written in typewriter font
+	 * when these occur in mathematical equations.
+	 */
+	LATEX_IDS_IN_TYPEWRITER_FONT,
+	/**
+	 * Decides whether to set the LaTeX document in landscape or portrait mode.
+	 */
+	LATEX_LANDSCAPE,
+	/**
+	 * Decides whether to create a separate title page instead of a simple heading.
+	 */
+	LATEX_TITLE_PAGE,
+	/**
+	 * Decides whether to write the names or the identifiers of NamedSBase object
+	 * in equations.
+	 */
+	LATEX_NAMES_IN_EQUATIONS
 }

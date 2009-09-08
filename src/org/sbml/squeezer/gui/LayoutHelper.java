@@ -45,10 +45,12 @@ public class LayoutHelper {
 	 * @param height
 	 * @param weightx
 	 * @param weighty
+	 * @param ipadx
+	 * @param ipady
 	 */
 	public static void addComponent(Container cont, GridBagLayout gbl,
 			Component c, int x, int y, int width, int height, double weightx,
-			double weighty) {
+			double weighty, int ipadx, int ipady) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = x;
@@ -57,8 +59,30 @@ public class LayoutHelper {
 		gbc.gridheight = height;
 		gbc.weightx = weightx;
 		gbc.weighty = weighty;
+		gbc.ipadx = ipadx;
+		gbc.ipady = ipady;
 		gbl.setConstraints(c, gbc);
 		cont.add(c);
+	}
+
+	/**
+	 * 
+	 * @param cont
+	 * @param gbl
+	 * @param c
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param weightx
+	 * @param weighty
+	 */
+	public static void addComponent(Container cont, GridBagLayout gbl,
+			Component c, int x, int y, int width, int height, double weightx,
+			double weighty) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		addComponent(cont, gbl, c, x, y, width, height, weightx, weighty,
+				gbc.ipadx, gbc.ipady);
 	}
 
 	private Container cont;
@@ -77,6 +101,7 @@ public class LayoutHelper {
 
 	/**
 	 * Creates a new GridBaglayout and associates this with the given container.
+	 * 
 	 * @param cont
 	 */
 	public LayoutHelper(Container cont) {
@@ -99,6 +124,24 @@ public class LayoutHelper {
 			double weightx, double weighty) {
 		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height,
 				weightx, weighty);
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param weightx
+	 * @param weighty
+	 * @param ipadx
+	 * @param ipady
+	 */
+	public void add(Component c, int x, int y, int width, int height,
+			double weightx, double weighty, int ipadx, int ipady) {
+		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height, weightx,
+				weighty, ipadx, ipady);
 	}
 
 	/**

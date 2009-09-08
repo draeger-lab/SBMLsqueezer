@@ -410,6 +410,15 @@ public class Model extends AbstractNamedSBase {
 	}
 
 	/**
+	 * Get the nth InitialAssignment object in this Model. 
+	 * @param n
+	 * @return the nth InitialAssignment of this Model.
+	 */
+	public InitialAssignment getInitialAssignment(int n) {
+		return listOfInitialAssignments.get(n);
+	}
+
+	/**
 	 * 
 	 * @return
 	 */
@@ -869,6 +878,7 @@ public class Model extends AbstractNamedSBase {
 		setThisAsParentSBMLObject(this.listOfUnitDefinitions);
 		stateChanged();
 	}
+	
 
 	/**
 	 * 
@@ -877,5 +887,14 @@ public class Model extends AbstractNamedSBase {
 	public void setModelHistory(ModelHistory modelHistory) {
 		this.history = modelHistory;
 		stateChanged();
+	}
+
+	/**
+	 * Get the nth Constraint object in this Model. 
+	 * @param n
+	 * @return the nth Constraint of this Model.
+	 */
+	public Constraint getConstraint(int n) {
+		return listOfConstraints.get(n);
 	}
 }

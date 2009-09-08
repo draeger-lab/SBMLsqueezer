@@ -29,12 +29,18 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.sbml.jlibsbml.Constraint;
+import org.sbml.jlibsbml.Event;
+import org.sbml.jlibsbml.EventAssignment;
+import org.sbml.jlibsbml.FunctionDefinition;
+import org.sbml.jlibsbml.InitialAssignment;
 import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.ListOf;
 import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.Parameter;
 import org.sbml.jlibsbml.Reaction;
+import org.sbml.jlibsbml.Rule;
 import org.sbml.jlibsbml.SBO;
 import org.sbml.jlibsbml.Species;
 import org.sbml.jlibsbml.SpeciesReference;
@@ -210,7 +216,7 @@ public class KineticLawGenerator {
 		Model m = new Model(modelOrig.getId(), modelOrig.getLevel(), modelOrig
 				.getVersion());
 		boolean create = ((Boolean) settings
-				.get(CfgKeys.GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
+				.get(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 				.booleanValue();
 		/*
 		 * Copy needed species and reactions.
@@ -310,7 +316,8 @@ public class KineticLawGenerator {
 	public void generateLaws() throws IllegalFormatException,
 			ModificationException, RateLawNotApplicableException, IOException {
 		boolean reversibility = ((Boolean) settings
-				.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue();
 		for (Reaction r : miniModel.getListOfReactions()) {
 			createKineticLaw(r, identifyReactionType(r.getId(), reversibility),
 					reversibility);
@@ -445,7 +452,7 @@ public class KineticLawGenerator {
 					transInhib, activators, enzymes, nonEnzymeCatalyzers);
 		}
 		boolean nonEnzyme = ((!((Boolean) settings
-				.get(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 				.booleanValue() && enzymes.size() == 0)
 				|| (nonEnzymeCatalyzers.size() > 0)
 				|| reaction.getNumProducts() == 0 || (SBO.isEmptySet(reaction
@@ -597,7 +604,8 @@ public class KineticLawGenerator {
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
 
 		// Enzym-Kinetics
-		if (((Boolean) settings.get(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+		if (((Boolean) settings
+				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 				.booleanValue()) {
 			if (stoichiometryLeft == 1d) {
 				if (stoichiometryRight == 1d) {
@@ -618,11 +626,11 @@ public class KineticLawGenerator {
 									+ " must be a translation.");
 					} else
 						whichkin = Kinetics.valueOf(settings.get(
-								CfgKeys.UNI_UNI_TYPE).toString());
+								CfgKeys.KINETICS_UNI_UNI_TYPE).toString());
 				} else if (!reaction.getReversible() && !reversibility) {
 					// Products don't matter.
 					whichkin = Kinetics.valueOf(settings.get(
-							CfgKeys.UNI_UNI_TYPE).toString());
+							CfgKeys.KINETICS_UNI_UNI_TYPE).toString());
 				} else
 					whichkin = Kinetics.CONVENIENCE_KINETICS;
 
@@ -630,10 +638,10 @@ public class KineticLawGenerator {
 				if (stoichiometryRight == 1d) {
 					// Bi-Uni: ConvenienceIndependent/Ran/Ord/PP (2E/1P)/(2E/2P)
 					whichkin = Kinetics.valueOf(settings.get(
-							CfgKeys.BI_UNI_TYPE).toString());
+							CfgKeys.KINETICS_BI_UNI_TYPE).toString());
 				} else if (stoichiometryRight == 2d) {
-					whichkin = Kinetics.valueOf(settings
-							.get(CfgKeys.BI_BI_TYPE).toString());
+					whichkin = Kinetics.valueOf(settings.get(
+							CfgKeys.KINETICS_BI_BI_TYPE).toString());
 				} else
 					whichkin = Kinetics.CONVENIENCE_KINETICS;
 			} else
@@ -689,21 +697,21 @@ public class KineticLawGenerator {
 							whichkin = Kinetics.HILL_EQUATION;
 						else
 							whichkin = Kinetics.valueOf(settings.get(
-									CfgKeys.UNI_UNI_TYPE).toString());
+									CfgKeys.KINETICS_UNI_UNI_TYPE).toString());
 
 					} else if (!reaction.getReversible() && !reversibility)
 						whichkin = Kinetics.valueOf(settings.get(
-								CfgKeys.UNI_UNI_TYPE).toString());
+								CfgKeys.KINETICS_UNI_UNI_TYPE).toString());
 					else
 						whichkin = Kinetics.CONVENIENCE_KINETICS;
 				} else if (stoichiometryLeft == 2d) {
 					// Bi-Uni: ConvenienceIndependent/Ran/Ord/PP (2E/1P)/(2E/2P)
 					if (stoichiometryRight == 1d) {
 						whichkin = Kinetics.valueOf(settings.get(
-								CfgKeys.BI_UNI_TYPE).toString());
+								CfgKeys.KINETICS_BI_UNI_TYPE).toString());
 					} else if (stoichiometryRight == 2d) { // bi-bi kinetics
 						whichkin = Kinetics.valueOf(settings.get(
-								CfgKeys.BI_BI_TYPE).toString());
+								CfgKeys.KINETICS_BI_BI_TYPE).toString());
 					} else
 						whichkin = Kinetics.CONVENIENCE_KINETICS;
 				} else
@@ -785,11 +793,15 @@ public class KineticLawGenerator {
 	}
 
 	/**
+	 * Returns true only if this reaction should be considered enzyme-catalyzed
+	 * (independend of any settings, based on the SBO annotation of the current
+	 * model).
 	 * 
 	 * @param reaction
 	 * @return
 	 */
-	public boolean isNonEnzymeReaction(Reaction reaction) {
+	public boolean isEnzymeReaction(String reactionID) {
+		Reaction reaction = miniModel.getReaction(reactionID);
 		// identify types of modifiers
 		List<String> nonEnzymeCatalyzers = new LinkedList<String>();
 		List<String> inhibitors = new LinkedList<String>();
@@ -800,16 +812,18 @@ public class KineticLawGenerator {
 		if (reaction.getNumModifiers() > 0)
 			BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
 					transInhib, activators, enzymes, nonEnzymeCatalyzers);
-		boolean nonEnzyme = ((!((Boolean) settings
-				.get(CfgKeys.ALL_REACTIONS_ARE_ENZYME_CATALYZED))
-				.booleanValue() && enzymes.size() == 0)
-				|| (nonEnzymeCatalyzers.size() > 0)
-				|| reaction.getNumProducts() == 0 || (SBO.isEmptySet(reaction
-				.getProduct(0).getSpeciesInstance().getSBOTerm())));
-		return nonEnzyme;
+		return (enzymes.size() > 0 && nonEnzymeCatalyzers.size() == 0);
 	}
 
-	public boolean isEnzymeReaction(Reaction reaction) {
+	/**
+	 * Returns true only if given the current settings this reaction cannot be
+	 * considered enzyme-catalyzed.
+	 * 
+	 * @param reaction
+	 * @return
+	 */
+	public boolean isNonEnzymeReaction(String reactionID) {
+		Reaction reaction = miniModel.getReaction(reactionID);
 		// identify types of modifiers
 		List<String> nonEnzymeCatalyzers = new LinkedList<String>();
 		List<String> inhibitors = new LinkedList<String>();
@@ -820,8 +834,7 @@ public class KineticLawGenerator {
 		if (reaction.getNumModifiers() > 0)
 			BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
 					transInhib, activators, enzymes, nonEnzymeCatalyzers);
-		boolean enzyme = (enzymes.size() > 0 && nonEnzymeCatalyzers.size() == 0);
-		return enzyme;
+		return enzymes.size() == 0 && nonEnzymeCatalyzers.size() > 0;
 	}
 
 	/**
@@ -836,7 +849,7 @@ public class KineticLawGenerator {
 		int i, j, k;
 		Parameter p;
 		// remove unnecessary global parameters
-		for (i = model.getNumParameters() - 1; i > 0; i--) {
+		for (i = model.getNumParameters() - 1; i >= 0; i--) {
 			isNeeded = false;
 			p = model.getParameter(i);
 			/*
@@ -845,84 +858,96 @@ public class KineticLawGenerator {
 			 */
 			for (j = 0; (j < model.getNumReactions()) && !isNeeded; j++) {
 				Reaction r = model.getReaction(j);
-				if (r.getKineticLaw() != null) {
-					if (model.getReaction(j).getKineticLaw().getMath()
-							.refersTo(p.getId())) {
-						/*
-						 * ok, parameter occurs here but there could also be a
-						 * local parameter with the same id.
-						 */
-						boolean contains = false;
-						for (k = 0; k < r.getKineticLaw().getNumParameters()
-								&& !contains; k++)
-							if (r.getKineticLaw().getParameter(k).getId()
-									.equals(p.getId()))
-								contains = true;
-						if (!contains)
-							isNeeded = true;
-					}
+				if (r.isSetKineticLaw() && r.getKineticLaw().isSetMath()
+						&& r.getKineticLaw().getMath().refersTo(p.getId())) {
+					/*
+					 * ok, parameter occurs here but there could also be a local
+					 * parameter with the same id.
+					 */
+					if (r.getKineticLaw().getParameter(p.getId()) == null)
+						isNeeded = true;
 				}
 				if (isNeeded)
 					break;
 				SpeciesReference specRef;
 				for (k = 0; k < r.getNumReactants(); k++) {
 					specRef = r.getReactant(k);
-					if (specRef.getStoichiometryMath() != null) {
-						if (specRef.getStoichiometryMath().getMath().refersTo(
-								p.getId()))
-							isNeeded = true;
-					}
+					if (specRef.isSetStoichiometryMath()
+							&& specRef.getStoichiometryMath().isSetMath()
+							&& specRef.getStoichiometryMath().getMath()
+									.refersTo(p.getId()))
+						isNeeded = true;
 				}
 				if (isNeeded)
 					break;
 				for (k = 0; k < r.getNumProducts(); k++) {
 					specRef = r.getProduct(k);
-					if (specRef.getStoichiometryMath() != null) {
-						if (specRef.getStoichiometryMath().getMath().refersTo(
-								p.getId()))
-							isNeeded = true;
-					}
+					if (specRef.isSetStoichiometryMath()
+							&& specRef.getStoichiometryMath().isSetMath()
+							&& specRef.getStoichiometryMath().getMath()
+									.refersTo(p.getId()))
+						isNeeded = true;
 				}
 			}
 
 			// is this parameter necessary for some rule?
-			for (j = 0; (j < model.getNumRules()) && !isNeeded; j++)
-				if (model.getRule(j).getMath().refersTo(p.getId()))
+			for (j = 0; (j < model.getNumRules()) && !isNeeded; j++) {
+				Rule r = model.getRule(j);
+				if (r.isSetMath() && r.getMath().refersTo(p.getId()))
 					isNeeded = true;
+			}
 
 			// is this parameter necessary for some event?
-			for (j = 0; (j < model.getNumEvents()) && !isNeeded; j++)
-				for (k = 0; k < model.getEvent(j).getNumEventAssignments(); k++)
-					if (model.getEvent(j).getEventAssignment(k).getMath()
-							.refersTo(p.getId()))
+			for (j = 0; (j < model.getNumEvents()) && !isNeeded; j++) {
+				Event e = model.getEvent(j);
+				if (e.isSetTrigger() && e.getTrigger().isSetMath()
+						&& e.getTrigger().getMath().refersTo(p.getId()))
+					isNeeded = true;
+				if (e.isSetDelay() && e.getDelay().isSetMath()
+						&& e.getDelay().getMath().refersTo(p.getId()))
+					isNeeded = true;
+				for (k = 0; k < model.getEvent(j).getNumEventAssignments()
+						&& !isNeeded; k++) {
+					EventAssignment ea = e.getEventAssignment(k);
+					if (ea.isSetMath() && ea.getMath().refersTo(p.getId()))
 						isNeeded = true;
+				}
+			}
 
 			// is this parameter necessary for some function?
-			for (j = 0; (j < model.getNumFunctionDefinitions()) && !isNeeded; j++)
-				if (model.getFunctionDefinition(j).getMath()
-						.refersTo(p.getId()))
+			for (j = 0; j < model.getNumFunctionDefinitions() && !isNeeded; j++) {
+				FunctionDefinition fd = model.getFunctionDefinition(j);
+				if (fd.isSetMath() && fd.getMath().refersTo(p.getId()))
 					isNeeded = true;
+			}
 
-			if (!isNeeded) // is this paraemter necessary at all?
-				model.getListOfParameters().remove(i);
+			// is this parameter necessary for some initial assignment?
+			for (j = 0; j < model.getNumInitialAssignments() && !isNeeded; j++) {
+				InitialAssignment ia = model.getInitialAssignment(j);
+				if (ia.isSetMath() && ia.getMath().refersTo(p.getId()))
+					isNeeded = true;
+			}
+
+			// is this parameter necessary for some constraint?
+			for (j = 0; j < model.getNumConstraints() && !isNeeded; j++) {
+				Constraint c = model.getConstraint(j);
+				if (c.isSetMath() && c.getMath().refersTo(p.getId()))
+					isNeeded = true;
+			}
+
+			if (!isNeeded) // is this parameter necessary at all?
+				System.out.println(model.getListOfParameters().remove(i));
 		}
 		// remove unnecessary local parameters
 		for (i = 0; i < model.getNumReactions(); i++) {
 			Reaction r = model.getReaction(i);
-			KineticLaw law = r.getKineticLaw();
-			if (law != null) {
-				List<Integer> removeList = new LinkedList<Integer>();
-				for (j = 0; j < law.getNumParameters(); j++) {
-					p = law.getParameter(j);
-					if (!law.getMath().refersTo(p.getId())
-					/* || (model.getParameter(p.getId()) != null) */)
-						removeList.add(Integer.valueOf(j));
-				}
-				while (!removeList.isEmpty()) {
-					p = law.getParameter(removeList.remove(
-							removeList.size() - 1).intValue());
-					if (!law.getListOfParameters().remove(p))
-						law.removeParameter(p);
+			if (r.isSetKineticLaw()) {
+				KineticLaw law = r.getKineticLaw();
+				for (j = law.getNumParameters() - 1; j >= 0; j--) {
+					if (law.isSetMath()
+							&& !law.getMath().refersTo(
+									law.getParameter(j).getId()))
+						law.removeParameter(j);
 				}
 			}
 		}
@@ -1037,32 +1062,24 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * This method stores a kinetic law for the given reaction in the currently
-	 * selected model given by the plugin. The kinetic law is passed as a String
-	 * to this method. A boolean variable tells this method weather the formula
-	 * is for a reversible or for an irreversible reaction. Afterwards all
-	 * parameters within this kinetic law are also stored in the given model.
-	 * There is no need to call the storeParameters method.
 	 * 
 	 * @param kineticLaw
-	 *            A string with the formula to be assigned to the given
-	 *            reaction.
+	 * @param removeParameters
+	 * @return
 	 */
-	public Reaction storeLaw(KineticLaw kineticLaw) {
+	private Reaction storeLaw(KineticLaw kineticLaw, boolean removeParameters) {
 		int i;
 		boolean reversibility = ((Boolean) settings
-				.get(CfgKeys.TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue();
 		Reaction reaction = modelOrig.getReaction(kineticLaw
 				.getParentSBMLObject().getId());
 		if (!(kineticLaw instanceof IrrevNonModulatedNonInteractingEnzymes))
 			reaction.setReversible(reversibility || reaction.getReversible());
-		if (reaction.getKineticLaw() == null)
-			reaction.setKineticLaw(kineticLaw);
-		else
-			reaction.setKineticLaw(kineticLaw);
+		reaction.setKineticLaw(kineticLaw);
 		if ((kineticLaw instanceof BasicKineticLaw)
-				&& (reaction.getNotesString().length() == 0))
-			reaction.setNotes(((BasicKineticLaw) kineticLaw).getName());
+				&& (kineticLaw.getNotesString().length() == 0))
+			kineticLaw.setNotes(((BasicKineticLaw) kineticLaw).getName());
 		// set the BoundaryCondition to true for Genes if not set anyway:
 		for (i = 0; i < reaction.getNumReactants(); i++) {
 			Species species = reaction.getReactant(i).getSpeciesInstance();
@@ -1075,7 +1092,25 @@ public class KineticLawGenerator {
 				setBoundaryCondition(species, true);
 		}
 		storeParamters(reaction);
+		if (removeParameters)
+			removeUnnecessaryParameters(modelOrig);
 		return reaction;
+	}
+
+	/**
+	 * This method stores a kinetic law for the given reaction in the currently
+	 * selected model given by the plugin. The kinetic law is passed as a String
+	 * to this method. A boolean variable tells this method weather the formula
+	 * is for a reversible or for an irreversible reaction. Afterwards all
+	 * parameters within this kinetic law are also stored in the given model.
+	 * There is no need to call the storeParameters method.
+	 * 
+	 * @param kineticLaw
+	 *            A string with the formula to be assigned to the given
+	 *            reaction.
+	 */
+	public Reaction storeLaw(KineticLaw kineticLaw) {
+		return storeLaw(kineticLaw, true);
 	}
 
 	/**
@@ -1084,7 +1119,7 @@ public class KineticLawGenerator {
 	public void storeLaws(LawListener l) {
 		l.totalNumber(miniModel.getNumReactions());
 		for (int i = 0; i < miniModel.getNumReactions(); i++) {
-			storeLaw(miniModel.getReaction(i).getKineticLaw());
+			storeLaw(miniModel.getReaction(i).getKineticLaw(), false);
 			l.currentNumber(i);
 		}
 		removeUnnecessaryParameters(modelOrig);
@@ -1099,9 +1134,10 @@ public class KineticLawGenerator {
 		setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
 		ListOf<Parameter> paramListLocal = kineticLaw.getListOfParameters();
-		if (((Boolean) settings.get(CfgKeys.ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
+		if (((Boolean) settings
+				.get(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
 				.booleanValue())
-			for (int paramNum = paramListLocal.size() - 1; paramNum > 0; paramNum--)
+			for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--)
 				modelOrig.addParameter(paramListLocal.remove(paramNum));
 	}
 
