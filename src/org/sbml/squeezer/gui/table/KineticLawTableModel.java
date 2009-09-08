@@ -52,7 +52,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 		data = new Object[klg.getNumCreatedKinetics()][this.columnNames.length];
 		numOfWarnings = 0;
 
-		int maxNumReactants = ((Integer) (klg.getSettings().get(CfgKeys.MAX_NUMBER_OF_REACTANTS))).intValue();
+		int maxNumReactants = ((Integer) (klg.getSettings().get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
 		for (reactionNum = 0; reactionNum < klg.getNumCreatedKinetics(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
 			if (reaction.getNumReactants() >= maxNumReactants)

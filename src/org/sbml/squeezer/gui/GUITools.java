@@ -45,6 +45,7 @@ import org.sbml.squeezer.resources.Resource;
 public class GUITools {
 
 	public static Icon LATEX_ICON_TINY;
+	public static Icon LATEX_ICON_SMALL;
 	public static Icon LEMON_ICON_TINY;
 	public static Icon LEMON_ICON_SMALL;
 	public static Icon RIGHT_ARROW;
@@ -63,6 +64,8 @@ public class GUITools {
 					.getResource("img/Lemon_tiny.png")));
 			LATEX_ICON_TINY = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/SBML2LaTeX_vertical_tiny.png")));
+			LATEX_ICON_SMALL = new ImageIcon(ImageIO.read(Resource.class
+					.getResource("img/SBML2LaTeX_vertical_small.png")));
 			LEMON_ICON_SMALL = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/Lemon_small.png")));
 			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
@@ -81,8 +84,9 @@ public class GUITools {
 			LEMON_ICON = ImageIO.read(Resource.class
 					.getResource("img/icon.png"));
 		} catch (IOException e) {
-			LEMON_ICON_TINY = null;
 			LATEX_ICON_TINY = null;
+			LATEX_ICON_SMALL = null;
+			LEMON_ICON_TINY = null;
 			LEMON_ICON_SMALL = null;
 			RIGHT_ARROW = null;
 			DOWN_ARROW = null;

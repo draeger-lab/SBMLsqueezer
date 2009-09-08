@@ -61,15 +61,9 @@ public class Parameter extends Symbol {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		boolean equals = super.equals(o);
-		if (o instanceof Parameter) {
-			Parameter p = (Parameter) o;
-			equals &= p.getConstant() == getConstant();
-			equals &= p.getValue() == getValue();
-			return equals;
-		} else
-			equals = false;
-		return equals;
+		if (o instanceof Parameter)
+			return super.equals(o);
+		return false;
 	}
 
 	/**

@@ -79,16 +79,15 @@ public abstract class Symbol extends AbstractNamedSBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		boolean equal = super.equals(o);
 		if (o instanceof Symbol) {
+			boolean equal = super.equals(o);
 			Symbol v = (Symbol) o;
-			equal &= v.getConstant() == constant;
+			equal &= v.getConstant() == getConstant();
 			equal &= v.isSetUnits() == isSetUnits();
 			if (v.isSetUnits() && isSetUnits())
-				equal &= v.getUnits().equals(units);
-		} else
-			equal = false;
-		return equal;
+				equal &= v.getUnits().equals(getUnits());
+		}
+		return false;
 	}
 
 	/**
@@ -106,7 +105,7 @@ public abstract class Symbol extends AbstractNamedSBase {
 	public String getUnits() {
 		return isSetUnits() ? units.getId() : "";
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -182,7 +181,7 @@ public abstract class Symbol extends AbstractNamedSBase {
 		this.value = value;
 		stateChanged();
 	}
-	
+
 	/**
 	 * 
 	 */

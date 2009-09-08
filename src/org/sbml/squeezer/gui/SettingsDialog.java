@@ -62,10 +62,12 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	private Properties settings;
 	private JTextField tfOpenDir;
 	private JTextField tfSaveDir;
-	private KineticsSettingsPanel kinSettingsPanel;
+	private SettingsPanelKinetics kinSettingsPanel;
 	private JButton apply;
 	private JButton defaults;
 	private JButton ok;
+	private SettingsPanelLaTeX latexSettingsPanel;
+	private JTabbedPane tabbedPane;
 	private static final String APPLY = "Apply";
 	private static final String CANCEL = "Cancel";
 	private static final String DEFAULTS = "Defaults";
@@ -97,18 +99,26 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		} else if (ae.getActionCommand().equals(DEFAULTS)) {
 			Properties p = (Properties) this.settings.clone();
 			this.settings = SBMLsqueezer.getDefaultSettings();
+			int tab = tabbedPane.getSelectedIndex();
 			getContentPane().removeAll();
 			init();
+			tabbedPane.setSelectedIndex(tab);
 			this.settings = p;
 			apply.setEnabled(true);
 			ok.setEnabled(true);
 			defaults.setEnabled(false);
 			kinSettingsPanel.addChangeListener(this);
 			kinSettingsPanel.addItemListener(this);
+			latexSettingsPanel.addChangeListener(this);
 			validate();
 		} else if (ae.getActionCommand().equals(APPLY)
 				|| ae.getActionCommand().equals(OK)) {
 			this.settings = kinSettingsPanel.getSettings();
+			for (Object key : kinSettingsPanel.getSettings().keySet())
+				this.settings.put(key, kinSettingsPanel.getSettings().get(key));
+			for (Object key : latexSettingsPanel.getProperties().keySet())
+				this.settings.put(key, latexSettingsPanel.getProperties().get(
+						key));
 			File f = new File(tfOpenDir.getText());
 			if (f.exists() && f.isDirectory())
 				settings.put(CfgKeys.OPEN_DIR, tfOpenDir.getText());
@@ -146,13 +156,13 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 * Initializes this dialog.
 	 */
 	private void init() {
-		JTabbedPane tabs = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 
 		/*
 		 * Kinetics Settings
 		 */
-		kinSettingsPanel = new KineticsSettingsPanel(this.settings);
-		tabs.addTab("Kinetics settings", kinSettingsPanel);
+		kinSettingsPanel = new SettingsPanelKinetics(this.settings);
+		tabbedPane.addTab("Kinetics settings", kinSettingsPanel);
 
 		/*
 		 * Program settings
@@ -170,16 +180,16 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		lh.add(new JLabel("Save directory:"), 0, 2, 1, 1, 1, 0);
 		tfSaveDir.setText(this.settings.get(CfgKeys.SAVE_DIR).toString());
 		lh.add(tfSaveDir, 2, 2, 1, 1, 1, 0);
-		tabs.addTab("Program settings", lh.getContainer());
+		tabbedPane.addTab("Program settings", lh.getContainer());
 		setLayout(new BorderLayout());
 
 		/*
 		 * LaTeX Settings
 		 */
-		// TODO!
-		tabs.addTab("LaTeX output settings", new JPanel());
+		this.latexSettingsPanel = new SettingsPanelLaTeX(settings, false);
+		tabbedPane.addTab("LaTeX output settings", latexSettingsPanel);
 
-		getContentPane().add(tabs, BorderLayout.CENTER);
+		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		JPanel p = new JPanel();
 		defaults = new JButton("Defaults");
@@ -222,13 +232,16 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		setModal(true);
 		kinSettingsPanel.addItemListener(this);
 		kinSettingsPanel.addChangeListener(this);
+		latexSettingsPanel.addChangeListener(this);
 		setVisible(true);
 		return exitStatus;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * 
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		apply.setEnabled(true);
@@ -238,7 +251,10 @@ public class SettingsDialog extends JDialog implements ActionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
+	 * 
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
 	 */
 	public void stateChanged(ChangeEvent e) {
 		apply.setEnabled(true);
@@ -248,6 +264,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
 	 */
 	public void keyPressed(KeyEvent e) {
@@ -255,6 +272,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
 	 */
 	public void keyReleased(KeyEvent e) {
@@ -262,6 +280,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
 	 */
 	public void keyTyped(KeyEvent e) {

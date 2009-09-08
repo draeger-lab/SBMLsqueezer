@@ -19,6 +19,8 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,6 +28,7 @@ import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.sbml.jlibsbml.AbstractSBase;
 import org.sbml.jlibsbml.Model;
@@ -45,6 +48,10 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * 
 	 */
 	private SBMLTree tree;
+	/**
+	 * 
+	 */
+	private Set<ActionListener> actionListeners;
 
 	/**
 	 * Generated serial version id.
@@ -57,6 +64,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 */
 	public SBMLModelSplitPane(Model model) {
 		super(JSplitPane.HORIZONTAL_SPLIT, true);
+		actionListeners = new HashSet<ActionListener>();
 		model.addChangeListener(this);
 		init(model, false);
 	}
@@ -67,6 +75,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 */
 	public void addActionListener(ActionListener al) {
 		tree.addActionListener(al);
+		actionListeners.add(al);
 	}
 
 	/*
@@ -149,9 +158,21 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * @param model
 	 * @param keepDivider
 	 */
-	private void init(Model model, boolean keepDivider) {
+	public void init(Model model, boolean keepDivider) {
 		int proportionalLocation = getDividerLocation();
+		TreePath path = null;
+		if (tree != null)
+			path = (TreePath) tree.getSelectionPath();
 		tree = new SBMLTree(model);
+		tree.setShowsRootHandles(true);
+		tree.setExpandsSelectedPaths(true);
+		tree.setScrollsOnExpand(true);
+		for (ActionListener al : actionListeners)
+			tree.addActionListener(al);
+		if (path != null) {
+			tree.setSelectionPath(path);
+			tree.expandPath(path);
+		}
 		tree.addTreeSelectionListener(this);
 		tree.setSelectionRow(0);
 		setLeftComponent(new JScrollPane(tree,

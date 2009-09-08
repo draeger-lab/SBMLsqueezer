@@ -107,19 +107,21 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	// @Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(SQUEEZE)) {
+			KineticLawSelectionDialog klsd;
 			if (e.getSource() instanceof Reaction) {
-				new KineticLawSelectionDialog(this, settings, sbmlIO,
+				// just one reaction
+				klsd = new KineticLawSelectionDialog(this, settings, sbmlIO,
 						((Reaction) e.getSource()).getId());
-			} else /*
-					 * if (e.getSource() instanceof Model) {
-					 * KineticLawSelectionDialog klsd = new
-					 * KineticLawSelectionDialog( this, sbmlIO);
-					 * klsd.setVisible(true); } else
-					 */{
-				KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(
-						this, settings, sbmlIO);
+			} else {
+				// whole model
+				klsd = new KineticLawSelectionDialog(this, settings, sbmlIO);
 				klsd.setVisible(true);
 			}
+			if (klsd.isKineticsAndParametersStoredInSBML()) {
+				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
+				split.init(sbmlIO.getSelectedModel(), true);
+			}
+
 		} else if (e.getActionCommand().equals(TO_LATEX)) {
 			if (e.getSource() instanceof Reaction) {
 				new KineticLawSelectionDialog(this, settings, (Reaction) e
@@ -143,6 +145,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						settings.put(CfgKeys.OPEN_DIR, path);
 				}
 			}
+
 		} else if (e.getActionCommand().equals(SET_PREFERENCES)) {
 			SettingsDialog dialog = new SettingsDialog(this);
 			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION)
@@ -163,6 +166,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
 					settings.put(CfgKeys.OPEN_DIR, path);
 			}
+
 		} else if (e.getActionCommand().equals(SAVE_FILE)) {
 			JFileChooser chooser = new JFileChooser();
 			SBFileFilter filterText = new SBFileFilter(SBFileFilter.TEXT_FILES);
@@ -174,11 +178,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			chooser.addChoosableFileFilter(filterTeX);
 			chooser.addChoosableFileFilter(filterSBML);
 			String dir = settings.get(CfgKeys.SAVE_DIR).toString();
-			if (dir != null) {
-				if (dir.startsWith("user."))
-					dir = System.getProperty(dir);
-				chooser.setCurrentDirectory(new File(dir));
-			}
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File out = chooser.getSelectedFile();
 				if (filterSBML.accept(out)) {
@@ -207,11 +206,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				if (!path.equals(dir))
 					settings.put(CfgKeys.OPEN_DIR, path);
 			}
+
 		} else if (e.getActionCommand().equals(CLOSE_FILE)) {
 			if (tabbedPane.getComponentCount() > 0)
 				tabbedPane.remove(tabbedPane.getSelectedComponent());
 			if (tabbedPane.getComponentCount() == 0)
 				setEnabled(false, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
+
 		} else if (e.getActionCommand().equals(ONLINE_HELP)) {
 			JHelpBrowser helpBrowser = new JHelpBrowser(this, "SBMLsqueezer "
 					+ SBMLsqueezer.getVersionNumber() + " - Online Help");
@@ -221,6 +222,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			helpBrowser.setVisible(true);
 			helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			setEnabled(false, ONLINE_HELP);
+
 		} else if (e.getSource() instanceof JMenuItem) {
 			JMenuItem item = (JMenuItem) e.getSource();
 			if (item.getText().equals("Exit")) {

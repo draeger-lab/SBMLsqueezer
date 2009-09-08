@@ -42,6 +42,7 @@ import org.sbml.jlibsbml.Event;
 import org.sbml.jlibsbml.EventAssignment;
 import org.sbml.jlibsbml.FunctionDefinition;
 import org.sbml.jlibsbml.InitialAssignment;
+import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.MathContainer;
 import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
@@ -113,6 +114,11 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		setOfActionListeners.add(al);
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
 	private static DefaultMutableTreeNode createNodes(Model m) {
 		DefaultMutableTreeNode modelNode = new DefaultMutableTreeNode(m);
 		DefaultMutableTreeNode node;
@@ -209,8 +215,17 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 							.getListOfModifiers())
 						modifiers.add(new DefaultMutableTreeNode(mSpecRef));
 				}
-				if (r.isSetKineticLaw())
-					currReacNode.add(new DefaultMutableTreeNode(r.getKineticLaw()));
+				if (r.isSetKineticLaw()) {
+					KineticLaw kl = r.getKineticLaw();
+					DefaultMutableTreeNode klNode = new DefaultMutableTreeNode(kl);
+					currReacNode.add(klNode);
+					if (kl.getNumParameters() > 0) {
+						DefaultMutableTreeNode n = new DefaultMutableTreeNode("Parameters");
+						klNode.add(n);
+						for (Parameter p : kl.getListOfParameters())
+							n.add(new DefaultMutableTreeNode(p));
+					}
+				}
 			}
 		}
 		if (m.getNumEvents() > 0) {
@@ -238,6 +253,10 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		return modelNode;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		popup.setVisible(false);
 		for (ActionListener al : setOfActionListeners) {
@@ -246,6 +265,10 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
 	public void mouseClicked(MouseEvent e) {
 		if (popup.isVisible()) {
 			currSBase = null;
@@ -278,15 +301,31 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+	 */
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+	 */
 	public void mouseExited(MouseEvent e) {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+	 */
 	public void mousePressed(MouseEvent e) {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
 	public void mouseReleased(MouseEvent e) {
 	}
 }

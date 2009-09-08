@@ -618,7 +618,7 @@ public class SBasePanel extends JPanel {
 			JPanel p = new JPanel(new GridLayout(1, 1));
 			p.setBorder(BorderFactory.createTitledBorder(" "
 					+ sMath.getClass().getCanonicalName() + ' '));
-			sHotEqn eqn = new sHotEqn(sMath.getMath().toLaTeX().toString());
+			sHotEqn eqn = new sHotEqn(sMath.getMath().toLaTeX().toString().replace("\\\\", "\\"));
 			eqn.setBorder(BorderFactory.createLoweredBevelBorder());
 			p.add(eqn);
 			lh.add(p, 3, ++row, 1, 1, 1, 1);
