@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.sbml.jlibsbml.CVTerm.Qualifier;
 import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
@@ -137,24 +136,24 @@ public abstract class AbstractSBase implements SBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		if (o instanceof AbstractSBase) {
+		if (o instanceof SBase) {
 			SBase sbase = (SBase) o;
 			boolean equals = true;
-			if ((!sbase.isSetMetaId() && isSetMetaId())
-					|| (sbase.isSetMetaId() && !isSetMetaId()))
-				return false;
-			else if (sbase.isSetMetaId() && isSetMetaId())
+			equals &= sbase.isSetMetaId() == isSetMetaId();
+			if (sbase.isSetMetaId() && isSetMetaId())
 				equals &= sbase.getMetaId().equals(getMetaId());
-			if ((!sbase.isSetNotes() && isSetNotes())
-					|| (sbase.isSetNotes() && !isSetNotes()))
-				return false;
-			else if (sbase.isSetNotes() && isSetNotes())
+			equals &= sbase.isSetNotes() == isSetNotes();
+			if (sbase.isSetNotes() && isSetNotes())
 				equals &= sbase.getNotesString().equals(getNotesString());
-			if ((!sbase.isSetSBOTerm() && isSetSBOTerm())
-					|| (sbase.isSetSBOTerm() && !isSetSBOTerm()))
-				return false;
-			else if (sbase.isSetSBOTerm() && isSetSBOTerm())
+			equals &= sbase.isSetSBOTerm() == isSetSBOTerm();
+			if (sbase.isSetSBOTerm() && isSetSBOTerm())
 				equals &= sbase.getSBOTerm() == getSBOTerm();
+			equals &= sbase.getLevel() == getLevel();
+			equals &= sbase.getVersion() == getVersion();
+			equals &= sbase.getNumCVTerms() == getNumCVTerms();
+			if (sbase.getNumCVTerms() == getNumCVTerms() && getNumCVTerms() > 0)
+				for (int i = 0; i < getCVTerms().size(); i++)
+					equals &= sbase.getCVTerm(i).equals(getCVTerm(i));
 			return equals;
 		}
 		return false;
@@ -293,7 +292,8 @@ public abstract class AbstractSBase implements SBase {
 		if (level == 1) {
 			if (1 <= version && version <= 2)
 				has = true;
-			else has = false;
+			else
+				has = false;
 		} else if (level == 2) {
 			if (1 <= version && version <= 4)
 				has = true;

@@ -25,7 +25,8 @@ package org.sbml.jlibsbml;
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-08-31
  */
-public abstract class AbstractNamedSBase extends AbstractSBase implements NamedSBase {
+public abstract class AbstractNamedSBase extends AbstractSBase implements
+		NamedSBase {
 
 	private String id;
 	private String name;
@@ -82,21 +83,19 @@ public abstract class AbstractNamedSBase extends AbstractSBase implements NamedS
 		if (o instanceof NamedSBase) {
 			boolean equals = super.equals(o);
 			NamedSBase nsb = (NamedSBase) o;
-			System.out.println(this + "\t" + nsb);
-			if (nsb.isSetId() != isSetId())
-				return false;
+			equals &= nsb.isSetId() == isSetId();
 			if (nsb.isSetId() && isSetId())
 				equals &= nsb.getId().equals(getId());
-			if (nsb.isSetName() != isSetName())
-				return false;
+			equals &= nsb.isSetName() == isSetName();
 			if (nsb.isSetName() && isSetName())
 				equals &= nsb.getName().equals(getName());
-			System.out.println(equals);
-		} return false;
+		}
+		return false;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.NamedSBase#getId()
 	 */
 	public String getId() {
@@ -105,6 +104,7 @@ public abstract class AbstractNamedSBase extends AbstractSBase implements NamedS
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.NamedSBase#getName()
 	 */
 	public String getName() {
@@ -113,6 +113,7 @@ public abstract class AbstractNamedSBase extends AbstractSBase implements NamedS
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.NamedSBase#isSetId()
 	 */
 	public boolean isSetId() {
@@ -121,6 +122,7 @@ public abstract class AbstractNamedSBase extends AbstractSBase implements NamedS
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.NamedSBase#isSetName()
 	 */
 	public boolean isSetName() {
@@ -129,6 +131,7 @@ public abstract class AbstractNamedSBase extends AbstractSBase implements NamedS
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.NamedSBase#setId(java.lang.String)
 	 */
 	public void setId(String id) {
@@ -138,6 +141,7 @@ public abstract class AbstractNamedSBase extends AbstractSBase implements NamedS
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.NamedSBase#setName(java.lang.String)
 	 */
 	public void setName(String name) {

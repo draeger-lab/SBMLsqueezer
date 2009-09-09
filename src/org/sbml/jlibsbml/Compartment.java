@@ -83,15 +83,16 @@ public class Compartment extends Symbol {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		boolean equal = super.equals(o);
 		if (o instanceof Compartment) {
+			boolean equal = super.equals(o);
 			Compartment c = (Compartment) o;
-			equal &= c.getConstant() == constant;
-			if ((!c.isSetOutside() && isSetOutside())
-					|| (c.isSetOutside() && !isSetOutside()))
-				return false;
+			equal &= c.getConstant() == getConstant();
+			equal &= c.isSetOutside() == isSetOutside();
 			if (c.isSetOutside() && isSetOutside())
 				equal &= c.getOutside().equals(getOutside());
+			equal &= c.isSetCompartmentType() == isSetCompartmentType();
+			if (c.isSetCompartmentType() && isSetCompartmentType())
+				equal &= c.getCompartmentType().equals(getCompartmentType());
 			equal &= c.getSize() == getSize();
 			equal &= c.getSpatialDimensions() == getSpatialDimensions();
 			return equal;

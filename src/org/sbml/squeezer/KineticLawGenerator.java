@@ -936,7 +936,7 @@ public class KineticLawGenerator {
 			}
 
 			if (!isNeeded) // is this parameter necessary at all?
-				System.out.println(model.getListOfParameters().remove(i));
+				model.getListOfParameters().remove(i);
 		}
 		// remove unnecessary local parameters
 		for (i = 0; i < model.getNumReactions(); i++) {

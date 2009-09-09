@@ -18,200 +18,62 @@
  */
 package org.sbml.jlibsbml;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**
+ * This list implementation is a java LinkedList that is however restricted to
+ * generic types that implement the SBase interface and conatains all methods
+ * from AbstractSBase. Unfortunately, there is no way for multiple inheritance
+ * in Java.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
-public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
-		Serializable, Cloneable {
-
-	/**
-	 * 
-	 * @author andreas
-	 * 
-	 * @param <E>
-	 */
-	private static class Entry<E extends SBase> {
-		E element;
-		Entry<E> next;
-		Entry<E> previous;
-
-		Entry(E element, Entry<E> next, Entry<E> previous) {
-			this.element = element;
-			this.next = next;
-			this.previous = previous;
-		}
-	}
-
-	/**
-	 * 
-	 * @author andreas
-	 * 
-	 */
-	private class ListItr implements ListIterator<E> {
-		private Entry<E> lastReturned = header;
-		private Entry<E> next;
-		private int nextIndex;
-		private int expectedModCount = modCount;
-
-		ListItr(int index) {
-			if (index < 0 || index > size)
-				throw new IndexOutOfBoundsException("Index: " + index
-						+ ", Size: " + size);
-			if (index < (size >> 1)) {
-				next = header.next;
-				for (nextIndex = 0; nextIndex < index; nextIndex++)
-					next = next.next;
-			} else {
-				next = header;
-				for (nextIndex = size; nextIndex > index; nextIndex--)
-					next = next.previous;
-			}
-		}
-
-		/**
-		 * 
-		 */
-		public void add(E e) {
-			checkForComodification();
-			lastReturned = header;
-			addBefore(e, next);
-			e.sbaseAdded();
-			nextIndex++;
-			expectedModCount++;
-		}
-
-		/**
-		 * 
-		 */
-		public boolean hasNext() {
-			return nextIndex != size;
-		}
-
-		/**
-		 * 
-		 */
-		public boolean hasPrevious() {
-			return nextIndex != 0;
-		}
-
-		/**
-		 * 
-		 */
-		public E next() {
-			checkForComodification();
-			if (nextIndex == size)
-				throw new NoSuchElementException();
-
-			lastReturned = next;
-			next = next.next;
-			nextIndex++;
-			return lastReturned.element;
-		}
-
-		/**
-		 * 
-		 */
-		public int nextIndex() {
-			return nextIndex;
-		}
-
-		/**
-		 * 
-		 */
-		public E previous() {
-			if (nextIndex == 0)
-				throw new NoSuchElementException();
-
-			lastReturned = next = next.previous;
-			nextIndex--;
-			checkForComodification();
-			return lastReturned.element;
-		}
-
-		/**
-		 * 
-		 */
-		public int previousIndex() {
-			return nextIndex - 1;
-		}
-
-		/**
-		 * 
-		 */
-		public void remove() {
-			checkForComodification();
-			Entry<E> lastNext = lastReturned.next;
-			try {
-				ListOf.this.remove(lastReturned);
-				lastReturned.element.sbaseRemoved();
-			} catch (NoSuchElementException e) {
-				throw new IllegalStateException();
-			}
-			if (next == lastReturned)
-				next = lastNext;
-			else
-				nextIndex--;
-			lastReturned = header;
-			expectedModCount++;
-		}
-
-		/**
-		 * 
-		 */
-		public void set(E e) {
-			if (lastReturned == header)
-				throw new IllegalStateException();
-			checkForComodification();
-			lastReturned.element = e;
-			lastReturned.element.stateChanged();
-		}
-
-		/**
-		 * 
-		 */
-		final void checkForComodification() {
-			if (modCount != expectedModCount)
-				throw new ConcurrentModificationException();
-		}
-	}
+public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5588467260915307797L;
 
-	/**
-	 * 
-	 */
-	private Entry<E> header = new Entry<E>(null, null, null);
-	/**
-	 * 
-	 */
-	private int size;
-	/**
-	 * 
-	 */
-	private int modCount;
+	SBase parentSBMLObject;
+
+	private int level;
+
+	private int version;
+
+	private int sboTerm;
+
+	private String metaId;
+
+	private String notes;
+
+	private Set<SBaseChangedListener> setOfListeners;
+
+	private LinkedList<CVTerm> listOfCVTerms;
+
+	private String annotation;
+
 	/**
 	 * 
 	 */
 	public ListOf(int level, int version) {
-		super(level, version);
-		header.next = header.previous = header; // null
-		size = modCount = 0;
+		super();
+		sboTerm = -1;
+		metaId = null;
+		notes = null;
+		parentSBMLObject = null;
+		setOfListeners = new HashSet<SBaseChangedListener>();
+		this.level = level;
+		this.version = version;
+		this.listOfCVTerms = new LinkedList<CVTerm>();
 	}
 
 	/**
@@ -219,103 +81,38 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 	 * @param listOf
 	 */
 	public ListOf(ListOf<? extends E> listOf) {
-		this(listOf.getLevel(), listOf.getVersion());
-		addAll(listOf);
-		parentSBMLObject = listOf.getParentSBMLObject();
+		super(listOf);
+		if (listOf.isSetSBOTerm())
+			this.sboTerm = listOf.getSBOTerm();
+		if (listOf.isSetMetaId())
+			this.metaId = new String(listOf.getMetaId());
+		if (listOf.isSetNotes())
+			this.notes = new String(listOf.getNotesString());
+		this.parentSBMLObject = listOf.getParentSBMLObject();
+		this.setOfListeners.addAll(listOf.setOfListeners);
+		this.level = listOf.getLevel();
+		this.version = listOf.getVersion();
+		this.listOfCVTerms = new LinkedList<CVTerm>();
+		for (CVTerm cvt : listOf.getCVTerms())
+			this.listOfCVTerms.add(cvt.clone());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#add(java.lang.Object)
-	 */
-	public boolean add(E e) {
-		addBefore(e, header);
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#add(int, java.lang.Object)
-	 */
-	public void add(int index, E element) {
-		addBefore(element, (index == size ? header : entry(index)));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#addAll(java.util.Collection)
-	 */
-	public boolean addAll(Collection<? extends E> c) {
-		return addAll(size, c);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#addAll(int, java.util.Collection)
-	 */
-	public boolean addAll(int index, Collection<? extends E> c) {
-		if (index < 0 || index > size)
-			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
-					+ size);
-		int numNew = c.size();
-		if (numNew == 0)
-			return false;
-		modCount++;
-
-		Entry<E> successor = (index == size ? header : entry(index));
-		Entry<E> predecessor = successor.previous;
-		for (E e : c) {
-			Entry<E> entry = new Entry<E>(e, successor, predecessor);
-			e.sbaseAdded();
-			predecessor.next = entry;
-			predecessor = entry;
-		}
-		successor.previous = predecessor;
-
-		size += numNew;
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.sbml.AbstractSBase#addChangeListener(org.sbml.squeezer.io.
+	 * @seeorg.sbml.jlibsbml.SBase#addChangeListener(org.sbml.squeezer.io.
 	 * SBaseChangedListener)
 	 */
-	// @Override
 	public void addChangeListener(SBaseChangedListener l) {
-		super.addChangeListener(l);
-		for (E element : this)
-			element.addChangeListener(l);
+		setOfListeners.add(l);
+		for (int i = 0; i < this.size(); i++)
+			((SBase) get(i)).addChangeListener(l);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#clear()
-	 */
-	public void clear() {
-		Entry<E> e = header.next;
-		e.element.sbaseRemoved();
-		while (e != header) {
-			Entry<E> next = e.next;
-			e.next = e.previous = null;
-			e.element = null;
-			e = next;
-		}
-		header.next = header.previous = header;
-		size = 0;
-		modCount++;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBase#clone()
+	 * @see java.util.LinkedList#clone()
 	 */
 	// @Override
 	public ListOf<E> clone() {
@@ -325,163 +122,63 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#contains(java.lang.Object)
+	 * @see org.sbml.jlibsbml.SBase#addCVTerm(org.sbml.jlibsbml.CVTerm)
 	 */
-	public boolean contains(Object o) {
-		return indexOf(o) != -1;
+	public boolean addCVTerm(CVTerm term) {
+		return listOfCVTerms.add(term);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#containsAll(java.util.Collection)
+	 * @see org.sbml.jlibsbml.SBase#appendNotes(java.lang.String)
 	 */
-	public boolean containsAll(Collection<?> c) {
-		boolean contains = true;
-		for (Object o : c)
-			contains = contains && contains(o);
-		return contains;
+	public void appendNotes(String notes) {
+		if (isSetNotes()) {
+			this.notes = this.notes.trim();
+			boolean body = false;
+			if (this.notes.endsWith("\n"))
+				this.notes = this.notes.substring(0, this.notes.length() - 2);
+			if (this.notes.endsWith("</notes>"))
+				this.notes = this.notes.substring(0, this.notes.length() - 9);
+			if (this.notes.endsWith("</body>")) {
+				body = true;
+				this.notes = this.notes.substring(0, this.notes.length() - 8);
+			}
+			this.notes += notes;
+			if (body)
+				this.notes += "</body>";
+			this.notes += "</notes>";
+		} else
+			this.notes = notes;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBase#equals(java.lang.Object)
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		boolean equal = super.equals(o);
-		if (o instanceof List) {
-			List<?> l = (List<?>) o;
-			equal &= l.containsAll(this) && size == l.size();
-		} else
-			equal = false;
-		return equal;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#get(int)
-	 */
-	public E get(int index) {
-		return entry(index).element;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#indexOf(java.lang.Object)
-	 */
-	public int indexOf(Object o) {
-		int index = 0;
-		if (o == null) {
-			for (Entry<E> e = header.next; e != header; e = e.next) {
-				if (e.element == null)
-					return index;
-				index++;
-			}
-		} else {
-			for (Entry<E> e = header.next; e != header; e = e.next) {
-				if (o.equals(e.element))
-					return index;
-				index++;
-			}
-		}
-		return -1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#isEmpty()
-	 */
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#iterator()
-	 */
-	public Iterator<E> iterator() {
-		return new ListItr(0);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#lastIndexOf(java.lang.Object)
-	 */
-	public int lastIndexOf(Object o) {
-		int index = size;
-		if (o == null) {
-			for (Entry<E> e = header.previous; e != header; e = e.previous) {
-				index--;
-				if (e.element == null)
-					return index;
-			}
-		} else {
-			for (Entry<E> e = header.previous; e != header; e = e.previous) {
-				index--;
-				if (o.equals(e.element))
-					return index;
-			}
-		}
-		return -1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#listIterator()
-	 */
-	public ListIterator<E> listIterator() {
-		return new ListItr(0);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#listIterator(int)
-	 */
-	public ListIterator<E> listIterator(int index) {
-		return new ListItr(index);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#remove(int)
-	 */
-	public E remove(int index) {
-		Entry<E> e = entry(index);
-		remove(e);
-		e.element.sbaseRemoved();
-		return e.element;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.List#remove(java.lang.Object)
-	 */
-	public boolean remove(Object o) {
-		if (o == null) {
-			for (Entry<E> e = header.next; e != header; e = e.next) {
-				if (e.element == null) {
-					remove(e);
-					return true;
-				}
-			}
-		} else {
-			for (Entry<E> e = header.next; e != header; e = e.next) {
-				if (o.equals(e.element)) {
-					remove(e);
-					return true;
-				}
-			}
+		if (o instanceof ListOf<?>) {
+			boolean equals = super.equals(o);
+			SBase sbase = (SBase) o;
+			equals &= sbase.isSetMetaId() == isSetMetaId();
+			if (sbase.isSetMetaId() && isSetMetaId())
+				equals &= sbase.getMetaId().equals(getMetaId());
+			equals &= sbase.isSetNotes() == isSetNotes();
+			if (sbase.isSetNotes() && isSetNotes())
+				equals &= sbase.getNotesString().equals(getNotesString());
+			equals &= sbase.isSetSBOTerm() == isSetSBOTerm();
+			if (sbase.isSetSBOTerm() && isSetSBOTerm())
+				equals &= sbase.getSBOTerm() == getSBOTerm();
+			equals &= sbase.getLevel() == getLevel();
+			equals &= sbase.getVersion() == getVersion();
+			equals &= sbase.getNumCVTerms() == getNumCVTerms();
+			if (sbase.getNumCVTerms() == getNumCVTerms() && getNumCVTerms() > 0)
+				for (int i = 0; i < getCVTerms().size(); i++)
+					equals &= sbase.getCVTerm(i).equals(getCVTerm(i));
+			return equals;
 		}
 		return false;
 	}
@@ -489,143 +186,317 @@ public class ListOf<E extends SBase> extends AbstractSBase implements List<E>,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#removeAll(java.util.Collection)
+	 * @see org.sbml.jlibsbml.SBase#getAnnotationString()
 	 */
-	public boolean removeAll(Collection<?> c) {
-		boolean removed = true;
-		for (Object o : c)
-			removed &= remove(o);
-		return removed;
+	public String getAnnotationString() {
+		return isSetAnnotation() ? annotation : "";
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#retainAll(java.util.Collection)
+	 * @see org.sbml.jlibsbml.SBase#getCVTerm(int)
 	 */
-	public boolean retainAll(Collection<?> c) {
-		for (E e : this)
-			if (!c.contains(e))
-				remove(e);
-		return true;
+	public CVTerm getCVTerm(int i) {
+		return listOfCVTerms.get(i);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#set(int, java.lang.Object)
+	 * @see org.sbml.jlibsbml.SBase#getCVTerms()
 	 */
-	public E set(int index, E element) {
-		Entry<E> e = entry(index);
-		E oldVal = e.element;
-		e.element = element;
-		e.element.stateChanged();
-		return oldVal;
+	public List<CVTerm> getCVTerms() {
+		return listOfCVTerms;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#size()
+	 * @see org.sbml.jlibsbml.SBase#getElementName()
 	 */
-	public int size() {
-		return size;
+	public String getElementName() {
+		String name = getClass().getCanonicalName();
+		char c = Character.toLowerCase(name.charAt(0));
+		return Character.toString(c) + name.substring(1);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#subList(int, int)
+	 * @see org.sbml.jlibsbml.SBase#getLevel()
 	 */
-	public List<E> subList(int fromIndex, int toIndex) {
-		ListOf<E> l = new ListOf<E>(getLevel(), getVersion());
-		for (int i = fromIndex; i < toIndex; i++)
-			l.add(get(i));
-		return l;
+	public int getLevel() {
+		return level;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#toArray()
+	 * @see org.sbml.SBase#getMetaId()
 	 */
-	public Object[] toArray() {
-		Object a[] = new Object[size];
-		int i = 0;
-		for (Object object : this)
-			a[i++] = object;
-		return a;
+	public String getMetaId() {
+		return metaId;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.util.List#toArray(T[])
+	 * @see org.sbml.SBase#getModel()
 	 */
-	public <T> T[] toArray(T[] a) {
-		if (a.length < size)
-			a = (T[]) java.lang.reflect.Array.newInstance(a.getClass()
-					.getComponentType(), size);
-		int i = 0;
-		Object[] result = a;
-		for (Entry<E> e = header.next; e != header; e = e.next)
-			result[i++] = e.element;
-
-		if (a.length > size)
-			a[size] = null;
-
-		return a;
+	public Model getModel() {
+		if (getParentSBMLObject() != null)
+			return getParentSBMLObject().getModel();
+		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBase#toString()
+	 * @see org.sbml.SBase#getNotesString()
 	 */
-	// @Override
-	public String toString() {
-		StringBuffer string = new StringBuffer();
-		string.append('[');
-		int i = 0;
-		for (E e : this) {
-			if (i > 0)
-				string.append(", ");
-			string.append(e.toString());
-			i++;
-		}
-		string.append(']');
-		return string.toString();
+	public String getNotesString() {
+		return notes != null ? notes : "";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#getNumCVTerms()
+	 */
+	public int getNumCVTerms() {
+		return listOfCVTerms.size();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#getParentSBMLObject()
+	 */
+	public SBase getParentSBMLObject() {
+		return parentSBMLObject;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#getSBOTerm()
+	 */
+	public int getSBOTerm() {
+		return sboTerm;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#getSBOTermID()
+	 */
+	public String getSBOTermID() {
+		return SBO.intToString(sboTerm);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#getVersion()
+	 */
+	public int getVersion() {
+		return version;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#hasValidLevelVersionNamespaceCombination()
+	 */
+	public boolean hasValidLevelVersionNamespaceCombination() {
+		boolean has = true;
+		if (level == 1) {
+			if (1 <= version && version <= 2)
+				has = true;
+			else
+				has = false;
+		} else if (level == 2) {
+			if (1 <= version && version <= 4)
+				has = true;
+			else
+				has = false;
+		} else
+			has = false;
+		return has;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#isSetAnnotation()
+	 */
+	public boolean isSetAnnotation() {
+		return annotation != null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#isSetMetaId()
+	 */
+	public boolean isSetMetaId() {
+		return metaId != null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#isSetNotes()
+	 */
+	public boolean isSetNotes() {
+		return notes != null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#isSetSBOTerm()
+	 */
+	public boolean isSetSBOTerm() {
+		return sboTerm != -1;
 	}
 
 	/**
 	 * 
-	 * @param e
-	 * @param entry
+	 * @param l
 	 */
-	private void addBefore(E e, Entry<E> entry) {
-		Entry<E> newEntry = new Entry<E>(e, entry, entry.previous);
-		e.sbaseAdded();
-		newEntry.previous.next = newEntry;
-		newEntry.next.previous = newEntry;
-		size++;
-		modCount++;
+	public void removeChangeListener(SBaseChangedListener l) {
+		setOfListeners.remove(l);
 	}
 
-	/**
-	 * Returns the indexed entry.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#sbaseAdded()
 	 */
-	private Entry<E> entry(int index) {
-		if (index < 0 || index >= size)
-			throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
-					+ size);
-		Entry<E> e = header;
-		if (index < (size >> 1)) {
-			for (int i = 0; i <= index; i++)
-				e = e.next;
-		} else {
-			for (int i = size; i > index; i--)
-				e = e.previous;
-		}
-		return e;
+	public void sbaseAdded() {
+		for (SBaseChangedListener listener : setOfListeners)
+			listener.sbaseAdded(this);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#sbaseRemoved()
+	 */
+	public void sbaseRemoved() {
+		for (SBaseChangedListener listener : setOfListeners)
+			listener.stateChanged(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#setAnnotation(java.lang.String)
+	 */
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#setMetaId(java.lang.String)
+	 */
+	public void setMetaId(String metaid) {
+		this.metaId = metaid;
+		stateChanged();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#setNotes(java.lang.String)
+	 */
+	public void setNotes(String notes) {
+		this.notes = notes;
+		stateChanged();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#setSBOTerm(int)
+	 */
+	public void setSBOTerm(int term) {
+		if (!SBO.checkTerm(term))
+			throw new IllegalArgumentException(
+					"SBO terms must not be smaller than zero or larger than 9999999.");
+		sboTerm = term;
+		stateChanged();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#setSBOTerm(java.lang.String)
+	 */
+	public void setSBOTerm(String sboid) {
+		setSBOTerm(SBO.stringToInt(sboid));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBase#stateChanged()
+	 */
+	public void stateChanged() {
+		for (SBaseChangedListener listener : setOfListeners)
+			listener.stateChanged(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetAnnotation()
+	 */
+	public void unsetAnnotation() {
+		if (isSetAnnotation())
+			annotation = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetCVTerms()
+	 */
+	public void unsetCVTerms() {
+		listOfCVTerms.clear();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetMetaId()
+	 */
+	public void unsetMetaId() {
+		if (isSetMetaId())
+			metaId = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetNotes()
+	 */
+	public void unsetNotes() {
+		if (isSetNotes())
+			notes = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBase#unsetSBOTerm()
+	 */
+	public void unsetSBOTerm() {
+		sboTerm = -1;
+	}
+
 }
