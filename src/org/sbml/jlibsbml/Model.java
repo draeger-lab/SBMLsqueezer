@@ -76,14 +76,15 @@ public class Model extends AbstractNamedSBase {
 		setThisAsParentSBMLObject(listOfEvents);
 		history = model.getModelHistory().clone();
 	}
-	
+
 	/**
 	 * 
 	 * @param id
 	 */
 	public Model(String id, int level, int version) {
 		super(id, level, version);
-		listOfFunctionDefinitions = new ListOf<FunctionDefinition>(level, version);
+		listOfFunctionDefinitions = new ListOf<FunctionDefinition>(level,
+				version);
 		setThisAsParentSBMLObject(listOfFunctionDefinitions);
 		listOfUnitDefinitions = new ListOf<UnitDefinition>(level, version);
 		setThisAsParentSBMLObject(listOfUnitDefinitions);
@@ -289,20 +290,22 @@ public class Model extends AbstractNamedSBase {
 			Model m = (Model) o;
 			equal &= m.getListOfFunctionDefinitions().equals(
 					listOfFunctionDefinitions);
-			// equal &=
-			// m.getListOfUnitDefinitions().equals(listOfUnitDefinitions);
-			// equal &=
-			// m.getListOfCompartmentTypes().equals(listOfCompartmentTypes);
-			// equal &= m.getlistOfSpeciesTypes().equals(listOfSpeciesTypes);
+			equal &= m.getListOfUnitDefinitions().equals(listOfUnitDefinitions);
+			equal &= m.getListOfCompartmentTypes().equals(
+					listOfCompartmentTypes);
+			equal &= m.getListOfSpeciesTypes().equals(listOfSpeciesTypes);
 			equal &= m.getListOfCompartments().equals(listOfCompartments);
 			equal &= m.getListOfSpecies().equals(listOfSpecies);
 			equal &= m.getListOfParameters().equals(listOfParameters);
-			// equal &=
-			// m.getListOfInitialAssignments().equals(listOfInitialAssignments);
+			equal &= m.getListOfInitialAssignments().equals(
+					listOfInitialAssignments);
 			equal &= m.getListOfRules().equals(listOfRules);
-			// equal &= m.getListOfConstraints().equals(listOfConstraints);
+			equal &= m.getListOfConstraints().equals(listOfConstraints);
 			equal &= m.getListOfReactions().equals(listOfReactions);
 			equal &= m.getListOfEvents().equals(listOfEvents);
+			equal &= isSetModelHistory() == m.isSetModelHistory();
+			if (isSetModelHistory() && m.isSetModelHistory())
+				equal &= getModelHistory().equals(m.getModelHistory());
 			return equal;
 		}
 		return false;
@@ -380,6 +383,16 @@ public class Model extends AbstractNamedSBase {
 	}
 
 	/**
+	 * Get the nth Constraint object in this Model.
+	 * 
+	 * @param n
+	 * @return the nth Constraint of this Model.
+	 */
+	public Constraint getConstraint(int n) {
+		return listOfConstraints.get(n);
+	}
+
+	/**
 	 * 
 	 * @param i
 	 * @return
@@ -410,7 +423,8 @@ public class Model extends AbstractNamedSBase {
 	}
 
 	/**
-	 * Get the nth InitialAssignment object in this Model. 
+	 * Get the nth InitialAssignment object in this Model.
+	 * 
 	 * @param n
 	 * @return the nth InitialAssignment of this Model.
 	 */
@@ -652,6 +666,16 @@ public class Model extends AbstractNamedSBase {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.AbstractSBase#getParentSBMLObject()
+	 */
+	// @Override
+	public SBMLDocument getParentSBMLObject() {
+		return (SBMLDocument) parentSBMLObject;
+	}
+
 	/**
 	 * Get the n-th Reaction object in this Model.
 	 * 
@@ -878,7 +902,6 @@ public class Model extends AbstractNamedSBase {
 		setThisAsParentSBMLObject(this.listOfUnitDefinitions);
 		stateChanged();
 	}
-	
 
 	/**
 	 * 
@@ -887,14 +910,5 @@ public class Model extends AbstractNamedSBase {
 	public void setModelHistory(ModelHistory modelHistory) {
 		this.history = modelHistory;
 		stateChanged();
-	}
-
-	/**
-	 * Get the nth Constraint object in this Model. 
-	 * @param n
-	 * @return the nth Constraint of this Model.
-	 */
-	public Constraint getConstraint(int n) {
-		return listOfConstraints.get(n);
 	}
 }

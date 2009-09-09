@@ -79,10 +79,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseAdded(org.sbml.AbstractSBase
-	 * )
+	 * @see org.sbml.squeezer.io.SBaseChangedListener#sbaseAdded(org.sbml.jlibsbml.SBase)
 	 */
 	public void sbaseAdded(SBase sb) {
 		// TreePath path = tree.getSelectionPath();
@@ -92,10 +89,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseRemoved(org.sbml.AbstractSBase
-	 * )
+	 * @see org.sbml.squeezer.io.SBaseChangedListener#sbaseRemoved(org.sbml.jlibsbml.SBase)
 	 */
 	public void sbaseRemoved(SBase sb) {
 		// TreePath path = tree.getSelectionPath();
@@ -105,10 +99,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.io.SBaseChangedListener#stateChanged(org.sbml.AbstractSBase
-	 * )
+	 * @see org.sbml.squeezer.io.SBaseChangedListener#stateChanged(org.sbml.jlibsbml.SBase)
 	 */
 	public void stateChanged(SBase sb) {
 		// TreePath path = tree.getSelectionPath();

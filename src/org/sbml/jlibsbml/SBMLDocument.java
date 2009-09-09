@@ -34,7 +34,7 @@ public class SBMLDocument extends AbstractSBase {
 	 */
 	public SBMLDocument(SBMLDocument sb) {
 		super(sb);
-		// TODO Auto-generated constructor stub
+		setModel(sb.getModel());
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class SBMLDocument extends AbstractSBase {
 	 */
 	public SBMLDocument(int level, int version) {
 		super(level, version);
-		// TODO Auto-generated constructor stub
+		this.model = null;
 	}
 
 	/**
@@ -63,6 +63,7 @@ public class SBMLDocument extends AbstractSBase {
 	 */
 	public void setModel(Model model) {
 		this.model = model;
+		this.model.parentSBMLObject = this;
 	}
 
 	/**
@@ -97,8 +98,9 @@ public class SBMLDocument extends AbstractSBase {
 	 * @return
 	 */
 	public boolean setLevelAndVersion(int level, int version) {
-		// TODO
-		return false;
+		this.level = level;
+		this.version = version;
+		return hasValidLevelVersionNamespaceCombination();
 	}
 
 	/*
@@ -118,8 +120,7 @@ public class SBMLDocument extends AbstractSBase {
 	 */
 	// @Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "SBML Level " + level + " Version " + version;
 	}
 
 }

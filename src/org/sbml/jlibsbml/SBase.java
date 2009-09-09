@@ -128,6 +128,24 @@ public interface SBase {
 	public SBase getParentSBMLObject();
 
 	/**
+	 * Returns the parent SBMLDocument object.
+	 * 
+	 * LibSBML uses the class SBMLDocument as a top-level container for storing
+	 * SBML content and data associated with it (such as warnings and error
+	 * messages). An SBML model in libSBML is contained inside an SBMLDocument
+	 * object. SBMLDocument corresponds roughly to the class Sbml defined in the
+	 * SBML Level 2 specification, but it does not have a direct correspondence
+	 * in SBML Level 1. (But, it is created by libSBML no matter whether the
+	 * model is Level 1 or Level 2.)
+	 * 
+	 * This method allows the SBMLDocument for the current object to be
+	 * retrieved.
+	 * 
+	 * @return the parent SBMLDocument object of this SBML object.
+	 */
+	public SBMLDocument getSBMLDocument();
+
+	/**
 	 * 
 	 * @return
 	 */

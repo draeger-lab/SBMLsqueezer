@@ -45,6 +45,8 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 
 	SBase parentSBMLObject;
 
+	Set<SBaseChangedListener> setOfListeners;
+	
 	private int level;
 
 	private int version;
@@ -55,12 +57,10 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 
 	private String notes;
 
-	private Set<SBaseChangedListener> setOfListeners;
-
 	private LinkedList<CVTerm> listOfCVTerms;
 
 	private String annotation;
-
+	
 	/**
 	 * 
 	 */
@@ -75,7 +75,7 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 		this.version = version;
 		this.listOfCVTerms = new LinkedList<CVTerm>();
 	}
-
+	
 	/**
 	 * 
 	 * @param listOf
@@ -89,6 +89,7 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 		if (listOf.isSetNotes())
 			this.notes = new String(listOf.getNotesString());
 		this.parentSBMLObject = listOf.getParentSBMLObject();
+		this.setOfListeners = new HashSet<SBaseChangedListener>();
 		this.setOfListeners.addAll(listOf.setOfListeners);
 		this.level = listOf.getLevel();
 		this.version = listOf.getVersion();
@@ -107,16 +108,6 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 		setOfListeners.add(l);
 		for (int i = 0; i < this.size(); i++)
 			((SBase) get(i)).addChangeListener(l);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.LinkedList#clone()
-	 */
-	// @Override
-	public ListOf<E> clone() {
-		return new ListOf<E>(this);
 	}
 
 	/*
@@ -156,6 +147,16 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see java.util.LinkedList#clone()
+	 */
+	// @Override
+	public ListOf<E> clone() {
+		return new ListOf<E>(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	// @Override
@@ -174,10 +175,7 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 				equals &= sbase.getSBOTerm() == getSBOTerm();
 			equals &= sbase.getLevel() == getLevel();
 			equals &= sbase.getVersion() == getVersion();
-			equals &= sbase.getNumCVTerms() == getNumCVTerms();
-			if (sbase.getNumCVTerms() == getNumCVTerms() && getNumCVTerms() > 0)
-				for (int i = 0; i < getCVTerms().size(); i++)
-					equals &= sbase.getCVTerm(i).equals(getCVTerm(i));
+			equals &= sbase.getCVTerms().equals(getCVTerms());
 			return equals;
 		}
 		return false;
@@ -275,6 +273,17 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 	 */
 	public SBase getParentSBMLObject() {
 		return parentSBMLObject;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBase#getSBMLDocument()
+	 */
+	public SBMLDocument getSBMLDocument() {
+		Model m = getModel();
+		if (m != null)
+			return m.getParentSBMLObject();
+		return null;
 	}
 
 	/*

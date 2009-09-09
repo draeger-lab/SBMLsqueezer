@@ -35,35 +35,14 @@ import org.sbml.squeezer.io.SBaseChangedListener;
 public abstract class AbstractSBase implements SBase {
 
 	SBase parentSBMLObject;
+	Set<SBaseChangedListener> setOfListeners;
+	int level;
+	int version;
 	private String metaId;
 	private int sboTerm;
 	private String notes;
-	Set<SBaseChangedListener> setOfListeners;
 	private List<CVTerm> listOfCVTerms;
-	private int level;
-	private int version;
 	private String annotation;
-
-	/**
-	 * 
-	 * @param sb
-	 */
-	public AbstractSBase(AbstractSBase sb) {
-		this(sb.getLevel(), sb.getVersion());
-		if (sb.isSetSBOTerm())
-			this.sboTerm = sb.getSBOTerm();
-		if (sb.isSetMetaId())
-			this.metaId = new String(sb.getMetaId());
-		if (sb.isSetNotes())
-			this.notes = new String(sb.getNotesString());
-		this.parentSBMLObject = sb.getParentSBMLObject();
-		this.setOfListeners.addAll(sb.setOfListeners);
-		this.level = sb.getLevel();
-		this.version = sb.getVersion();
-		this.listOfCVTerms = new LinkedList<CVTerm>();
-		for (CVTerm cvt : sb.getCVTerms())
-			this.listOfCVTerms.add(cvt.clone());
-	}
 
 	/**
 	 * 
@@ -77,6 +56,31 @@ public abstract class AbstractSBase implements SBase {
 		this.level = level;
 		this.version = version;
 		this.listOfCVTerms = new LinkedList<CVTerm>();
+	}
+	
+	/**
+	 * 
+	 * @param sb
+	 */
+	public AbstractSBase(SBase sb) {
+		this(sb.getLevel(), sb.getVersion());
+		if (sb.isSetSBOTerm())
+			this.sboTerm = sb.getSBOTerm();
+		if (sb.isSetMetaId())
+			this.metaId = new String(sb.getMetaId());
+		if (sb.isSetNotes())
+			this.notes = new String(sb.getNotesString());
+		this.parentSBMLObject = sb.getParentSBMLObject();
+		this.setOfListeners = new HashSet<SBaseChangedListener>();
+		if (sb instanceof AbstractSBase)
+			this.setOfListeners.addAll(((AbstractSBase) sb).setOfListeners);
+		else if (sb instanceof ListOf)
+			this.setOfListeners.addAll(((ListOf<?>) sb).setOfListeners);
+		this.level = sb.getLevel();
+		this.version = sb.getVersion();
+		this.listOfCVTerms = new LinkedList<CVTerm>();
+		for (CVTerm cvt : sb.getCVTerms())
+			this.listOfCVTerms.add(cvt.clone());
 	}
 
 	/**
@@ -150,10 +154,7 @@ public abstract class AbstractSBase implements SBase {
 				equals &= sbase.getSBOTerm() == getSBOTerm();
 			equals &= sbase.getLevel() == getLevel();
 			equals &= sbase.getVersion() == getVersion();
-			equals &= sbase.getNumCVTerms() == getNumCVTerms();
-			if (sbase.getNumCVTerms() == getNumCVTerms() && getNumCVTerms() > 0)
-				for (int i = 0; i < getCVTerms().size(); i++)
-					equals &= sbase.getCVTerm(i).equals(getCVTerm(i));
+			equals &= sbase.getCVTerms().equals(getCVTerms());
 			return equals;
 		}
 		return false;
@@ -253,6 +254,19 @@ public abstract class AbstractSBase implements SBase {
 	 */
 	public SBase getParentSBMLObject() {
 		return parentSBMLObject;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBase#getSBMLDocument()
+	 */
+	public SBMLDocument getSBMLDocument() {
+		if (this instanceof SBMLDocument)
+			return (SBMLDocument) this;
+		Model m = getModel();
+		if (m != null)
+			return m.getParentSBMLObject();
+		return null;
 	}
 
 	/*

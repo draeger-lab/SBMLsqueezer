@@ -483,8 +483,9 @@ public class SBasePanel extends JPanel {
 		if (sbase.isSetNotes() || editable) {
 			lh.add(new JLabel("Notes: "), 1, ++row, 1, 1, 1, 1);
 			String text = sbase.getNotesString();
-			if (text.startsWith("<notes") && text.endsWith("</notes>"))
-				text = text.substring(8, sbase.getNotesString().length() - 9);
+			if (text.startsWith("<notes") && text.endsWith("notes>"))
+				text = text.substring(sbase.getNotesString().indexOf('>') + 1,
+						sbase.getNotesString().lastIndexOf('/') - 1);
 			text = text.trim();
 			if (!text.startsWith("<body") && !text.endsWith("</body>"))
 				text = "<body>" + text + "</body>";
@@ -618,7 +619,8 @@ public class SBasePanel extends JPanel {
 			JPanel p = new JPanel(new GridLayout(1, 1));
 			p.setBorder(BorderFactory.createTitledBorder(" "
 					+ sMath.getClass().getCanonicalName() + ' '));
-			sHotEqn eqn = new sHotEqn(sMath.getMath().toLaTeX().toString().replace("\\\\", "\\"));
+			sHotEqn eqn = new sHotEqn(sMath.getMath().toLaTeX().toString()
+					.replace("\\\\", "\\"));
 			eqn.setBorder(BorderFactory.createLoweredBevelBorder());
 			p.add(eqn);
 			lh.add(p, 3, ++row, 1, 1, 1, 1);

@@ -199,7 +199,7 @@ public class Species extends Symbol {
 	 * @return
 	 */
 	public String getSpeciesType() {
-		return speciesType.getId();
+		return isSetSpeciesType() ? speciesType.getId() : "";
 	}
 
 	/**

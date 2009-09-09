@@ -297,7 +297,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 			} else if (text.equals("Generate")) {
 				if (sbmlIO != null)
 					try {
-						settings = settingsPanel.getSettings();
+						for (Object key : settingsPanel.getSettings().keySet())
+							settings.put(key, settingsPanel.getSettings().get(
+									key));
 						Model model = sbmlIO.getSelectedModel();
 						klg = new KineticLawGenerator(model, settings);
 						klg.updateEnzymeKatalysis(settingsPanel

@@ -19,9 +19,7 @@
 package org.sbml.squeezer.io;
 
 import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.Constants;
 import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.NamedSBase;
 import org.sbml.jlibsbml.SBMLWriter;
 import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.libsbml.libsbmlConstants;

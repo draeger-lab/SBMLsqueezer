@@ -56,7 +56,6 @@ import org.sbml.jlibsbml.Symbol;
 import org.sbml.jlibsbml.Trigger;
 import org.sbml.jlibsbml.Unit;
 import org.sbml.jlibsbml.UnitDefinition;
-import org.sbml.jlibsbml.UnitKind;
 import org.sbml.jlibsbml.CVTerm.Qualifier;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.libsbmlConstants;
@@ -588,112 +587,112 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		copySBaseProperties(u, libUnit);
 		switch (libUnit.getKind()) {
 		case libsbmlConstants.UNIT_KIND_AMPERE:
-			u.setKind(UnitKind.UNIT_KIND_AMPERE);
+			u.setKind(Unit.Kind.UNIT_KIND_AMPERE);
 			break;
 		case libsbmlConstants.UNIT_KIND_BECQUEREL:
-			u.setKind(UnitKind.UNIT_KIND_BECQUEREL);
+			u.setKind(Unit.Kind.UNIT_KIND_BECQUEREL);
 			break;
 		case libsbmlConstants.UNIT_KIND_CANDELA:
-			u.setKind(UnitKind.UNIT_KIND_CANDELA);
+			u.setKind(Unit.Kind.UNIT_KIND_CANDELA);
 			break;
 		case libsbmlConstants.UNIT_KIND_CELSIUS:
-			u.setKind(UnitKind.UNIT_KIND_CELSIUS);
+			u.setKind(Unit.Kind.UNIT_KIND_CELSIUS);
 			break;
 		case libsbmlConstants.UNIT_KIND_COULOMB:
-			u.setKind(UnitKind.UNIT_KIND_COULOMB);
+			u.setKind(Unit.Kind.UNIT_KIND_COULOMB);
 			break;
 		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
-			u.setKind(UnitKind.UNIT_KIND_DIMENSIONLESS);
+			u.setKind(Unit.Kind.UNIT_KIND_DIMENSIONLESS);
 			break;
 		case libsbmlConstants.UNIT_KIND_FARAD:
-			u.setKind(UnitKind.UNIT_KIND_FARAD);
+			u.setKind(Unit.Kind.UNIT_KIND_FARAD);
 			break;
 		case libsbmlConstants.UNIT_KIND_GRAM:
-			u.setKind(UnitKind.UNIT_KIND_GRAM);
+			u.setKind(Unit.Kind.UNIT_KIND_GRAM);
 			break;
 		case libsbmlConstants.UNIT_KIND_GRAY:
-			u.setKind(UnitKind.UNIT_KIND_GRAY);
+			u.setKind(Unit.Kind.UNIT_KIND_GRAY);
 			break;
 		case libsbmlConstants.UNIT_KIND_HENRY:
-			u.setKind(UnitKind.UNIT_KIND_HENRY);
+			u.setKind(Unit.Kind.UNIT_KIND_HENRY);
 			break;
 		case libsbmlConstants.UNIT_KIND_HERTZ:
-			u.setKind(UnitKind.UNIT_KIND_HERTZ);
+			u.setKind(Unit.Kind.UNIT_KIND_HERTZ);
 			break;
 		case libsbmlConstants.UNIT_KIND_INVALID:
-			u.setKind(UnitKind.UNIT_KIND_INVALID);
+			u.setKind(Unit.Kind.UNIT_KIND_INVALID);
 			break;
 		case libsbmlConstants.UNIT_KIND_ITEM:
-			u.setKind(UnitKind.UNIT_KIND_ITEM);
+			u.setKind(Unit.Kind.UNIT_KIND_ITEM);
 			break;
 		case libsbmlConstants.UNIT_KIND_JOULE:
-			u.setKind(UnitKind.UNIT_KIND_JOULE);
+			u.setKind(Unit.Kind.UNIT_KIND_JOULE);
 			break;
 		case libsbmlConstants.UNIT_KIND_KATAL:
-			u.setKind(UnitKind.UNIT_KIND_KATAL);
+			u.setKind(Unit.Kind.UNIT_KIND_KATAL);
 			break;
 		case libsbmlConstants.UNIT_KIND_KELVIN:
-			u.setKind(UnitKind.UNIT_KIND_KELVIN);
+			u.setKind(Unit.Kind.UNIT_KIND_KELVIN);
 			break;
 		case libsbmlConstants.UNIT_KIND_KILOGRAM:
-			u.setKind(UnitKind.UNIT_KIND_KILOGRAM);
+			u.setKind(Unit.Kind.UNIT_KIND_KILOGRAM);
 			break;
 		case libsbmlConstants.UNIT_KIND_LITER:
-			u.setKind(UnitKind.UNIT_KIND_LITER);
+			u.setKind(Unit.Kind.UNIT_KIND_LITER);
 			break;
 		case libsbmlConstants.UNIT_KIND_LITRE:
-			u.setKind(UnitKind.UNIT_KIND_LITRE);
+			u.setKind(Unit.Kind.UNIT_KIND_LITRE);
 			break;
 		case libsbmlConstants.UNIT_KIND_LUMEN:
-			u.setKind(UnitKind.UNIT_KIND_LUMEN);
+			u.setKind(Unit.Kind.UNIT_KIND_LUMEN);
 			break;
 		case libsbmlConstants.UNIT_KIND_LUX:
-			u.setKind(UnitKind.UNIT_KIND_LUX);
+			u.setKind(Unit.Kind.UNIT_KIND_LUX);
 			break;
 		case libsbmlConstants.UNIT_KIND_METER:
-			u.setKind(UnitKind.UNIT_KIND_METER);
+			u.setKind(Unit.Kind.UNIT_KIND_METER);
 			break;
 		case libsbmlConstants.UNIT_KIND_METRE:
-			u.setKind(UnitKind.UNIT_KIND_METRE);
+			u.setKind(Unit.Kind.UNIT_KIND_METRE);
 			break;
 		case libsbmlConstants.UNIT_KIND_MOLE:
-			u.setKind(UnitKind.UNIT_KIND_MOLE);
+			u.setKind(Unit.Kind.UNIT_KIND_MOLE);
 			break;
 		case libsbmlConstants.UNIT_KIND_NEWTON:
-			u.setKind(UnitKind.UNIT_KIND_NEWTON);
+			u.setKind(Unit.Kind.UNIT_KIND_NEWTON);
 			break;
 		case libsbmlConstants.UNIT_KIND_OHM:
-			u.setKind(UnitKind.UNIT_KIND_OHM);
+			u.setKind(Unit.Kind.UNIT_KIND_OHM);
 			break;
 		case libsbmlConstants.UNIT_KIND_PASCAL:
-			u.setKind(UnitKind.UNIT_KIND_PASCAL);
+			u.setKind(Unit.Kind.UNIT_KIND_PASCAL);
 			break;
 		case libsbmlConstants.UNIT_KIND_RADIAN:
-			u.setKind(UnitKind.UNIT_KIND_RADIAN);
+			u.setKind(Unit.Kind.UNIT_KIND_RADIAN);
 			break;
 		case libsbmlConstants.UNIT_KIND_SECOND:
-			u.setKind(UnitKind.UNIT_KIND_SECOND);
+			u.setKind(Unit.Kind.UNIT_KIND_SECOND);
 			break;
 		case libsbmlConstants.UNIT_KIND_SIEMENS:
-			u.setKind(UnitKind.UNIT_KIND_SIEMENS);
+			u.setKind(Unit.Kind.UNIT_KIND_SIEMENS);
 			break;
 		case libsbmlConstants.UNIT_KIND_SIEVERT:
-			u.setKind(UnitKind.UNIT_KIND_SIEVERT);
+			u.setKind(Unit.Kind.UNIT_KIND_SIEVERT);
 			break;
 		case libsbmlConstants.UNIT_KIND_STERADIAN:
-			u.setKind(UnitKind.UNIT_KIND_STERADIAN);
+			u.setKind(Unit.Kind.UNIT_KIND_STERADIAN);
 			break;
 		case libsbmlConstants.UNIT_KIND_TESLA:
-			u.setKind(UnitKind.UNIT_KIND_TESLA);
+			u.setKind(Unit.Kind.UNIT_KIND_TESLA);
 			break;
 		case libsbmlConstants.UNIT_KIND_VOLT:
-			u.setKind(UnitKind.UNIT_KIND_VOLT);
+			u.setKind(Unit.Kind.UNIT_KIND_VOLT);
 			break;
 		case libsbmlConstants.UNIT_KIND_WATT:
-			u.setKind(UnitKind.UNIT_KIND_WATT);
+			u.setKind(Unit.Kind.UNIT_KIND_WATT);
 			break;
 		case libsbmlConstants.UNIT_KIND_WEBER:
-			u.setKind(UnitKind.UNIT_KIND_WEBER);
+			u.setKind(Unit.Kind.UNIT_KIND_WEBER);
 			break;
 		}
 		u.setExponent(libUnit.getExponent());
@@ -811,74 +810,83 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			sbase.setSBOTerm(libSBase.getSBOTerm());
 		if (libSBase.isSetNotes())
 			sbase.setNotes(libSBase.getNotesString());
-		for (int i = 0; i < libSBase.getNumCVTerms(); i++) {
-			CVTerm t = new CVTerm();
-			org.sbml.libsbml.CVTerm libCVt = libSBase.getCVTerm(i);
-			switch (libCVt.getQualifierType()) {
-			case libsbmlConstants.MODEL_QUALIFIER:
-				t.setQualifierType(CVTerm.Qualifier.MODEL_QUALIFIER);
-				switch (libCVt.getModelQualifierType()) {
-				case libsbmlConstants.BQM_IS:
-					t.setModelQualifierType(Qualifier.BQM_IS);
-					break;
-				case libsbmlConstants.BQM_IS_DESCRIBED_BY:
-					t.setModelQualifierType(Qualifier.BQM_IS_DESCRIBED_BY);
-					break;
-				case libsbmlConstants.BQM_UNKNOWN:
-					t.setModelQualifierType(Qualifier.BQM_UNKNOWN);
-					break;
-				default:
-					break;
-				}
+		for (int i = 0; i < libSBase.getNumCVTerms(); i++)
+			sbase.addCVTerm(readCVTerm(libSBase.getCVTerm(i)));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBMLReader#readCVTerm(java.lang.Object)
+	 */
+	public CVTerm readCVTerm(Object term) {
+		if (!(term instanceof org.sbml.libsbml.CVTerm))
+			throw new IllegalArgumentException("term" + error + "org.sbml.libsbml.CVTerm.");
+		org.sbml.libsbml.CVTerm libCVt = (org.sbml.libsbml.CVTerm) term;
+		CVTerm t = new CVTerm();
+		switch (libCVt.getQualifierType()) {
+		case libsbmlConstants.MODEL_QUALIFIER:
+			t.setQualifierType(CVTerm.Qualifier.MODEL_QUALIFIER);
+			switch (libCVt.getModelQualifierType()) {
+			case libsbmlConstants.BQM_IS:
+				t.setModelQualifierType(Qualifier.BQM_IS);
 				break;
-			case libsbmlConstants.BIOLOGICAL_QUALIFIER:
-				t.setQualifierType(CVTerm.Qualifier.BIOLOGICAL_QUALIFIER);
-				switch (libCVt.getBiologicalQualifierType()) {
-				case libsbmlConstants.BQB_ENCODES:
-					t.setBiologicalQualifierType(Qualifier.BQB_ENCODES);
-					break;
-				case libsbmlConstants.BQB_HAS_PART:
-					t.setBiologicalQualifierType(Qualifier.BQB_HAS_PART);
-					break;
-				case libsbmlConstants.BQB_HAS_VERSION:
-					t.setBiologicalQualifierType(Qualifier.BQB_HAS_VERSION);
-					break;
-				case libsbmlConstants.BQB_IS:
-					t.setBiologicalQualifierType(Qualifier.BQB_IS);
-					break;
-				case libsbmlConstants.BQB_IS_DESCRIBED_BY:
-					t.setBiologicalQualifierType(Qualifier.BQB_IS_DESCRIBED_BY);
-					break;
-				case libsbmlConstants.BQB_IS_ENCODED_BY:
-					t.setBiologicalQualifierType(Qualifier.BQB_IS_ENCODED_BY);
-					break;
-				case libsbmlConstants.BQB_IS_HOMOLOG_TO:
-					t.setBiologicalQualifierType(Qualifier.BQB_IS_HOMOLOG_TO);
-					break;
-				case libsbmlConstants.BQB_IS_PART_OF:
-					t.setBiologicalQualifierType(Qualifier.BQB_IS_PART_OF);
-					break;
-				case libsbmlConstants.BQB_IS_VERSION_OF:
-					t.setBiologicalQualifierType(Qualifier.BQB_IS_VERSION_OF);
-					break;
-				case libsbmlConstants.BQB_OCCURS_IN:
-					t.setBiologicalQualifierType(Qualifier.BQB_OCCURS_IN);
-					break;
-				case libsbmlConstants.BQB_UNKNOWN:
-					t.setBiologicalQualifierType(Qualifier.BQB_UNKNOWN);
-					break;
-				default:
-					break;
-				}
+			case libsbmlConstants.BQM_IS_DESCRIBED_BY:
+				t.setModelQualifierType(Qualifier.BQM_IS_DESCRIBED_BY);
+				break;
+			case libsbmlConstants.BQM_UNKNOWN:
+				t.setModelQualifierType(Qualifier.BQM_UNKNOWN);
 				break;
 			default:
 				break;
 			}
-			for (int j = 0; j < libCVt.getNumResources(); j++) {
-				t.addResourceURI(libCVt.getResourceURI(j));
+			break;
+		case libsbmlConstants.BIOLOGICAL_QUALIFIER:
+			t.setQualifierType(CVTerm.Qualifier.BIOLOGICAL_QUALIFIER);
+			switch (libCVt.getBiologicalQualifierType()) {
+			case libsbmlConstants.BQB_ENCODES:
+				t.setBiologicalQualifierType(Qualifier.BQB_ENCODES);
+				break;
+			case libsbmlConstants.BQB_HAS_PART:
+				t.setBiologicalQualifierType(Qualifier.BQB_HAS_PART);
+				break;
+			case libsbmlConstants.BQB_HAS_VERSION:
+				t.setBiologicalQualifierType(Qualifier.BQB_HAS_VERSION);
+				break;
+			case libsbmlConstants.BQB_IS:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS);
+				break;
+			case libsbmlConstants.BQB_IS_DESCRIBED_BY:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_DESCRIBED_BY);
+				break;
+			case libsbmlConstants.BQB_IS_ENCODED_BY:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_ENCODED_BY);
+				break;
+			case libsbmlConstants.BQB_IS_HOMOLOG_TO:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_HOMOLOG_TO);
+				break;
+			case libsbmlConstants.BQB_IS_PART_OF:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_PART_OF);
+				break;
+			case libsbmlConstants.BQB_IS_VERSION_OF:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_VERSION_OF);
+				break;
+			case libsbmlConstants.BQB_OCCURS_IN:
+				t.setBiologicalQualifierType(Qualifier.BQB_OCCURS_IN);
+				break;
+			case libsbmlConstants.BQB_UNKNOWN:
+				t.setBiologicalQualifierType(Qualifier.BQB_UNKNOWN);
+				break;
+			default:
+				break;
 			}
-			sbase.addCVTerm(t);
+			break;
+		default:
+			break;
 		}
+		for (int j = 0; j < libCVt.getNumResources(); j++) {
+			t.addResourceURI(libCVt.getResourceURI(j));
+		}
+		return t;
 	}
 
 	/**

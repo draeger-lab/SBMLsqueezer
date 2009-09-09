@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.plugin;
 
+import org.sbml.jlibsbml.CVTerm;
 import org.sbml.jlibsbml.Compartment;
 import org.sbml.jlibsbml.CompartmentType;
 import org.sbml.jlibsbml.Constraint;
@@ -27,6 +28,7 @@ import org.sbml.jlibsbml.EventAssignment;
 import org.sbml.jlibsbml.FunctionDefinition;
 import org.sbml.jlibsbml.InitialAssignment;
 import org.sbml.jlibsbml.KineticLaw;
+import org.sbml.jlibsbml.MathContainer;
 import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.NamedSBase;
@@ -251,6 +253,46 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	}
 
 	public Object writeUnitDefinition(UnitDefinition unitDefinition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void saveCVTermProperties(CVTerm cvt, Object term) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveCompartmentProperties(Compartment c, Object comp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveMathContainerProperties(MathContainer mc, Object sbase) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveParameterProperties(Parameter p, Object parameter) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveReactionProperties(Reaction r, Object reaction) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveSpeciesProperties(Species s, Object species) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Object writeCVTerm(CVTerm cvt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
