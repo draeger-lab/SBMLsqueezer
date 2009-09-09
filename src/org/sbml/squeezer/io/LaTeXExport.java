@@ -19,7 +19,6 @@ import java.util.Vector;
 
 import org.sbml.jlibsbml.ASTNode;
 import org.sbml.jlibsbml.Compartment;
-import org.sbml.jlibsbml.Constants;
 import org.sbml.jlibsbml.Event;
 import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.Reaction;
@@ -29,7 +28,6 @@ import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.jlibsbml.StoichiometryMath;
 import org.sbml.jlibsbml.Unit;
 import org.sbml.jlibsbml.UnitDefinition;
-import org.sbml.jlibsbml.UnitKind;
 
 /**
  * This class is used to export a sbml model as LaTex file.
@@ -137,7 +135,7 @@ public class LaTeXExport extends LaTeX {
 		}
 		if (u.isKilogram()) {
 			u.setScale(u.getScale() + 3);
-			u.setKind(UnitKind.UNIT_KIND_GRAM);
+			u.setKind(Unit.Kind.UNIT_KIND_GRAM);
 		}
 		if (!u.isDimensionless()) {
 			switch (u.getScale()) {
@@ -771,8 +769,8 @@ public class LaTeXExport extends LaTeX {
 						stochMath = ref.getStoichiometryMath();
 						if (stochMath != null && stochMath.isSetMath()) {
 							stoch = stochMath.getMath();
-							sEquation += (stoch.getType() == Constants.AST_PLUS || stoch
-									.getType() == Constants.AST_MINUS) ? sEquation += "-\\left("
+							sEquation += (stoch.getType() == ASTNode.Type.AST_PLUS || stoch
+									.getType() == ASTNode.Type.AST_MINUS) ? sEquation += "-\\left("
 									+ stoch.toLaTeX()
 									+ "\\right)v_{"
 									+ reactantsReaction.get(k) + "}"
@@ -808,8 +806,8 @@ public class LaTeXExport extends LaTeX {
 								stoch = stochMath.getMath();
 							if (sEquation == "") {
 								if (stoch != null) {
-									sEquation += (stoch.getType() == Constants.AST_PLUS || stoch
-											.getType() == Constants.AST_MINUS) ? sEquation += "\\left("
+									sEquation += (stoch.getType() == ASTNode.Type.AST_PLUS || stoch
+											.getType() == ASTNode.Type.AST_MINUS) ? sEquation += "\\left("
 											+ stoch.toLaTeX()
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"
@@ -837,8 +835,8 @@ public class LaTeXExport extends LaTeX {
 
 							} else {
 								if (stoch != null) {
-									sEquation += (stoch.getType() == Constants.AST_PLUS || stoch
-											.getType() == Constants.AST_MINUS) ? sEquation += "+\\left("
+									sEquation += (stoch.getType() == ASTNode.Type.AST_PLUS || stoch
+											.getType() == ASTNode.Type.AST_MINUS) ? sEquation += "+\\left("
 											+ stoch.toLaTeX()
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"

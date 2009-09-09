@@ -62,20 +62,20 @@ public class UnitDefinition extends AbstractNamedSBase {
 		Unit u = new Unit(2, 4);
 		String name = "Predefined unit ";
 		if (id.equals("substance")) {
-			u.setKind(UnitKind.UNIT_KIND_MOLE);
+			u.setKind(Unit.Kind.UNIT_KIND_MOLE);
 			name += "mole";
 		} else if (id.equals("volume")) {
-			u.setKind(UnitKind.UNIT_KIND_LITRE);
+			u.setKind(Unit.Kind.UNIT_KIND_LITRE);
 			name += "litre";
 		} else if (id.equals("area")) {
-			u.setKind(UnitKind.UNIT_KIND_METRE);
+			u.setKind(Unit.Kind.UNIT_KIND_METRE);
 			u.setExponent(2);
 			name += "square metre";
 		} else if (id.equals("length")) {
-			u.setKind(UnitKind.UNIT_KIND_METRE);
+			u.setKind(Unit.Kind.UNIT_KIND_METRE);
 			name += "metre";
 		} else if (id.equals("time")) {
-			u.setKind(UnitKind.UNIT_KIND_SECOND);
+			u.setKind(Unit.Kind.UNIT_KIND_SECOND);
 			name += "second";
 		} else
 			throw new IllegalArgumentException(

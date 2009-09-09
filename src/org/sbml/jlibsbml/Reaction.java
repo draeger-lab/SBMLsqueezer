@@ -136,8 +136,8 @@ public class Reaction extends AbstractNamedSBase {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		boolean equal = super.equals(o);
 		if (o instanceof Reaction) {
+			boolean equal = super.equals(o);
 			Reaction r = (Reaction) o;
 			equal &= r.getFast() == getFast();
 			if (r.isSetKineticLaw() && isSetKineticLaw())
@@ -147,9 +147,8 @@ public class Reaction extends AbstractNamedSBase {
 			equal &= r.getListOfModifiers().equals(listOfModifiers);
 			equal &= r.getListOfProducts().equals(listOfProducts);
 			return equal;
-		} else
-			equal = false;
-		return equal;
+		}
+		return false;
 	}
 
 	/**

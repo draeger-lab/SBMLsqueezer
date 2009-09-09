@@ -29,6 +29,7 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
+import org.sbml.jlibsbml.CVTerm;
 import org.sbml.jlibsbml.Compartment;
 import org.sbml.jlibsbml.FunctionDefinition;
 import org.sbml.jlibsbml.InitialAssignment;
@@ -47,11 +48,18 @@ import org.sbml.jlibsbml.Unit;
 import org.sbml.jlibsbml.UnitDefinition;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
+/**
+ * 
+ * @author Andreas Dr&auml;ger <a
+ *         href="mailto:andreas.draeger@uni-tuebingen.de">
+ *         andreas.draeger@uni-tuebingen.de</a>
+ * 
+ */
 public class PluginSBMLReader extends AbstractSBMLReader {
 
 	private static final int level = 2;
 	private static final int version = 4;
-	
+
 	/**
 	 * 
 	 */
@@ -96,6 +104,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readFunctionDefinition(java.lang.Object)
 	 */
 	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
@@ -105,6 +114,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readInitialAssignment(java.lang.Object)
 	 */
 	public InitialAssignment readInitialAssignment(Object initialAssignment) {
@@ -228,6 +238,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readRule(java.lang.Object)
 	 */
 	public Rule readRule(Object rule) {
@@ -271,6 +282,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readSpeciesType(java.lang.Object)
 	 */
 	public SpeciesType readSpeciesType(Object speciesType) {
@@ -290,6 +302,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
 	 */
 	public UnitDefinition readUnitDefinition(Object unitDefinition) {
@@ -299,6 +312,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.SBMLReader#readUnit(java.lang.Object)
 	 */
 	public Unit readUnit(Object unit) {
@@ -308,6 +322,11 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 
 	@Override
 	public Object getOriginalModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CVTerm readCVTerm(Object term) {
 		// TODO Auto-generated method stub
 		return null;
 	}

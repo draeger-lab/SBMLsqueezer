@@ -27,25 +27,74 @@ package org.sbml.jlibsbml;
 public interface SBMLWriter {
 	/**
 	 * 
+	 * @param c
+	 * @param comp
+	 */
+	public void saveCompartmentProperties(Compartment c, Object comp);
+
+	/**
+	 * 
+	 * @param cvt
+	 * @param term
+	 */
+	public void saveCVTermProperties(CVTerm cvt, Object term);
+
+	/**
+	 * 
+	 * @param kl
+	 * @param kineticLaw
+	 */
+	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw);
+	
+	/**
+	 * 
+	 * @param mc
+	 * @param sbase
+	 */
+	public void saveMathContainerProperties(MathContainer mc, Object sbase);
+	
+	/**
+	 * 
 	 * @param modifierSpeciesReference
 	 * @param msr
 	 */
 	public void saveModifierSpeciesReferenceProperties(
 			ModifierSpeciesReference modifierSpeciesReference, Object msr);
-
+	
 	/**
 	 * 
 	 * @param nsb
 	 * @param sb
 	 */
 	public void saveNamedSBaseProperties(NamedSBase nsb, Object sb);
-
+	
+	/**
+	 * 
+	 * @param p
+	 * @param parameter
+	 */
+	public void saveParameterProperties(Parameter p, Object parameter);
+	
+	/**
+	 * 
+	 * @param r
+	 * @param reaction
+	 */
+	public void saveReactionProperties(Reaction r, Object reaction);
+	
 	/**
 	 * 
 	 * @param s
 	 * @param sb
 	 */
 	public void saveSBaseProperties(SBase s, Object sb);
+
+	/**
+	 * 
+	 * @param s
+	 * @param species
+	 */
+	public void saveSpeciesProperties(Species s, Object species);
 
 	/**
 	 * 
@@ -67,6 +116,13 @@ public interface SBMLWriter {
 	 * @return
 	 */
 	public Object writeConstraint(Constraint constraint);
+
+	/**
+	 * 
+	 * @param cvt
+	 * @return
+	 */
+	public Object writeCVTerm(CVTerm cvt);
 
 	/**
 	 * 
@@ -102,21 +158,21 @@ public interface SBMLWriter {
 	 * @return
 	 */
 	public Object writeInitialAssignment(InitialAssignment initialAssignment);
-	
+
 	/**
 	 * 
 	 * @param kineticLaw
 	 * @return
 	 */
 	public Object writeKineticLaw(KineticLaw kineticLaw);
-	
+
 	/**
 	 * 
 	 * @param model
 	 * @return
 	 */
 	public Object writeModel(Model model);
-	
+
 	/**
 	 * 
 	 * @param modifierSpeciesReference
@@ -124,28 +180,28 @@ public interface SBMLWriter {
 	 */
 	public Object writeModifierSpeciesReference(
 			ModifierSpeciesReference modifierSpeciesReference);
-	
+
 	/**
 	 * 
 	 * @param parameter
 	 * @return
 	 */
 	public Object writeParameter(Parameter parameter);
-	
+
 	/**
 	 * 
 	 * @param reaction
 	 * @return
 	 */
 	public Object writeReaction(Reaction reaction);
-	
+
 	/**
 	 * 
 	 * @param rule
 	 * @return
 	 */
 	public Object writeRule(Rule rule);
-	
+
 	/**
 	 * 
 	 * @param sbmlDocument
@@ -153,49 +209,49 @@ public interface SBMLWriter {
 	 * @return
 	 */
 	public boolean writeSBML(Object sbmlDocument, String filename);
-	
+
 	/**
 	 * 
 	 * @param species
 	 * @return
 	 */
 	public Object writeSpecies(Species species);
-	
+
 	/**
 	 * 
 	 * @param speciesReference
 	 * @return
 	 */
 	public Object writeSpeciesReference(SpeciesReference speciesReference);
-	
+
 	/**
 	 * 
 	 * @param speciesType
 	 * @return
 	 */
 	public Object writeSpeciesType(SpeciesType speciesType);
-	
+
 	/**
 	 * 
 	 * @param stoichiometryMath
 	 * @return
 	 */
 	public Object writeStoichoimetryMath(StoichiometryMath stoichiometryMath);
-	
+
 	/**
 	 * 
 	 * @param trigger
 	 * @return
 	 */
 	public Object writeTrigger(Trigger trigger);
-	
+
 	/**
 	 * 
 	 * @param unit
 	 * @return
 	 */
 	public Object writeUnit(Unit unit);
-	
+
 	/**
 	 * 
 	 * @param unitDefinition

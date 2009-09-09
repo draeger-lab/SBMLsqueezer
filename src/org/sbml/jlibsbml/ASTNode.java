@@ -39,6 +39,268 @@ import org.sbml.squeezer.io.LaTeX;
 public class ASTNode implements TreeNode {
 
 	/**
+	 * 
+	 * @author Andreas Dr&auml;ger <a
+	 *         href="mailto:andreas.draeger@uni-tuebingen.de"
+	 *         >andreas.draeger@uni-tuebingen.de</a>
+	 * 
+	 */
+	public static enum Type {
+		/**
+		 * 
+		 */
+		AST_CONSTANT_E,
+		/**
+		 * 
+		 */
+		AST_CONSTANT_FALSE,
+		/**
+		 * 
+		 */
+		AST_CONSTANT_PI,
+		/**
+		 * 
+		 */
+		AST_CONSTANT_TRUE,
+		/**
+		 * 
+		 */
+		AST_DIVIDE,
+		/**
+		 * 
+		 */
+		AST_FUNCTION,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ABS,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCCOS,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCCOSH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCCOT,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCCOTH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCCSC,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCCSCH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCSEC,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCSECH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCSIN,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCSINH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCTAN,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ARCTANH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_CEILING,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_COS,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_COSH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_COT,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_COTH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_CSC,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_CSCH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_DELAY,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_EXP,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_FACTORIAL,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_FLOOR,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_LN,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_LOG,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_PIECEWISE,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_POWER,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_ROOT,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_SEC,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_SECH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_SIN,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_SINH,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_TAN,
+		/**
+		 * 
+		 */
+		AST_FUNCTION_TANH,
+		/**
+		 * 
+		 */
+		AST_INTEGER,
+		/**
+		 * 
+		 */
+		AST_LAMBDA,
+		/**
+		 * 
+		 */
+		AST_LOGICAL_AND,
+		/**
+		 * 
+		 */
+		AST_LOGICAL_NOT,
+		/**
+		 * 
+		 */
+		AST_LOGICAL_OR,
+		/**
+		 * 
+		 */
+		AST_LOGICAL_XOR,
+		/**
+		 * 
+		 */
+		AST_MINUS,
+		/**
+		 * 
+		 */
+		AST_NAME,
+		/**
+		 * 
+		 */
+		AST_NAME_TIME,
+		/**
+		 * 
+		 */
+		AST_PLUS,
+		/**
+		 * 
+		 */
+		AST_POWER,
+		/**
+		 * 
+		 */
+		AST_RATIONAL,
+		/**
+		 * 
+		 */
+		AST_REAL,
+		/**
+		 * 
+		 */
+		AST_REAL_E,
+		/**
+		 * 
+		 */
+		AST_RELATIONAL_EQ,
+		/**
+		 * 
+		 */
+		AST_RELATIONAL_GEQ,
+		/**
+		 * 
+		 */
+		AST_RELATIONAL_GT,
+		/**
+		 * 
+		 */
+		AST_RELATIONAL_LEQ,
+		/**
+		 * 
+		 */
+		AST_RELATIONAL_LT,
+		/**
+		 * 
+		 */
+		AST_RELATIONAL_NEQ,
+		/**
+		 * 
+		 */
+		AST_TIMES,
+		/**
+		 * 
+		 */
+		AST_UNKNOWN
+	}
+
+	/**
 	 * important for the TreeNode interface.
 	 */
 	private ASTNode parent;
@@ -49,12 +311,12 @@ public class ASTNode implements TreeNode {
 	 * @param ast
 	 * @return
 	 */
-	private static ASTNode arithmethicOperation(Constants operator,
+	private static ASTNode arithmethicOperation(Type operator,
 			ASTNode... ast) {
-		if (operator == Constants.AST_PLUS || operator == Constants.AST_MINUS
-				|| operator == Constants.AST_TIMES
-				|| operator == Constants.AST_DIVIDE
-				|| operator == Constants.AST_POWER) {
+		if (operator == Type.AST_PLUS || operator == Type.AST_MINUS
+				|| operator == Type.AST_TIMES
+				|| operator == Type.AST_DIVIDE
+				|| operator == Type.AST_POWER) {
 			if (ast.length == 0)
 				return null;
 			if (ast.length == 1)
@@ -97,7 +359,7 @@ public class ASTNode implements TreeNode {
 	 * @return
 	 */
 	public static ASTNode diff(ASTNode... ast) {
-		return arithmethicOperation(Constants.AST_MINUS, ast);
+		return arithmethicOperation(Type.AST_MINUS, ast);
 	}
 
 	/**
@@ -131,10 +393,10 @@ public class ASTNode implements TreeNode {
 	 */
 	public static ASTNode pow(ASTNode basis, ASTNode exponent) {
 		if (!(exponent.isInteger() && exponent.getInteger() == 1)
-				&& !(exponent.getType() == Constants.AST_REAL && exponent
+				&& !(exponent.getType() == Type.AST_REAL && exponent
 						.getReal() == 1d)) {
 			if ((exponent.isInteger() && exponent.getInteger() == 0)
-					|| (exponent.getType() == Constants.AST_REAL && exponent
+					|| (exponent.getType() == Type.AST_REAL && exponent
 							.getReal() == 0d))
 				basis = new ASTNode(1, basis.getParentSBMLObject());
 			else {
@@ -163,7 +425,7 @@ public class ASTNode implements TreeNode {
 	 * @return
 	 */
 	public static ASTNode root(ASTNode rootExponent, ASTNode radicant) {
-		ASTNode root = new ASTNode(Constants.AST_FUNCTION_ROOT, radicant
+		ASTNode root = new ASTNode(Type.AST_FUNCTION_ROOT, radicant
 				.getParentSBMLObject());
 		root.addChild(radicant);
 		root.addChild(rootExponent);
@@ -200,7 +462,7 @@ public class ASTNode implements TreeNode {
 	 * @return
 	 */
 	public static ASTNode sum(ASTNode... ast) {
-		return arithmethicOperation(Constants.AST_PLUS, ast);
+		return arithmethicOperation(Type.AST_PLUS, ast);
 	}
 
 	/**
@@ -210,7 +472,7 @@ public class ASTNode implements TreeNode {
 	 * @return
 	 */
 	public static ASTNode times(ASTNode... ast) {
-		return arithmethicOperation(Constants.AST_TIMES, ast);
+		return arithmethicOperation(Type.AST_TIMES, ast);
 	}
 
 	/**
@@ -261,7 +523,7 @@ public class ASTNode implements TreeNode {
 	/**
 	 * The type of this ASTNode.
 	 */
-	private Constants type;
+	private Type type;
 
 	/**
 	 * Child nodes.
@@ -299,7 +561,7 @@ public class ASTNode implements TreeNode {
 	 * @param the
 	 *            parent SBML object
 	 */
-	public ASTNode(Constants type, MathContainer parent) {
+	public ASTNode(Type type, MathContainer parent) {
 		this(parent);
 		setType(type);
 	}
@@ -310,7 +572,7 @@ public class ASTNode implements TreeNode {
 	 * @param parent
 	 */
 	public ASTNode(double real, MathContainer parent) {
-		this(Constants.AST_REAL, parent);
+		this(Type.AST_REAL, parent);
 		setValue(real);
 	}
 
@@ -320,7 +582,7 @@ public class ASTNode implements TreeNode {
 	 * @param parent
 	 */
 	public ASTNode(int integer, MathContainer parent) {
-		this(Constants.AST_INTEGER, parent);
+		this(Type.AST_INTEGER, parent);
 		setValue(integer);
 	}
 
@@ -346,7 +608,7 @@ public class ASTNode implements TreeNode {
 	 * @param parent
 	 */
 	public ASTNode(NamedSBase nsb, MathContainer parent) {
-		this(Constants.AST_NAME, parent);
+		this(Type.AST_NAME, parent);
 		setVariable(nsb);
 	}
 
@@ -356,7 +618,7 @@ public class ASTNode implements TreeNode {
 	 * @param parent
 	 */
 	public ASTNode(String name, MathContainer parent) {
-		this(Constants.AST_NAME, parent);
+		this(Type.AST_NAME, parent);
 		setName(name);
 
 	}
@@ -384,11 +646,11 @@ public class ASTNode implements TreeNode {
 	 * @param astnode
 	 *            The new right child of this node
 	 */
-	private void arithmeticOperation(Constants operator, ASTNode astnode) {
-		if (operator == Constants.AST_PLUS || operator == Constants.AST_MINUS
-				|| operator == Constants.AST_TIMES
-				|| operator == Constants.AST_DIVIDE
-				|| operator == Constants.AST_POWER) {
+	private void arithmeticOperation(Type operator, ASTNode astnode) {
+		if (operator == Type.AST_PLUS || operator == Type.AST_MINUS
+				|| operator == Type.AST_TIMES
+				|| operator == Type.AST_DIVIDE
+				|| operator == Type.AST_POWER) {
 			ASTNode swap = new ASTNode(type, getParentSBMLObject());
 			swap.denominator = denominator;
 			swap.exponent = exponent;
@@ -424,7 +686,7 @@ public class ASTNode implements TreeNode {
 	 * param ast
 	 */
 	public void divideBy(ASTNode ast) {
-		arithmeticOperation(Constants.AST_DIVIDE, ast);
+		arithmeticOperation(Type.AST_DIVIDE, ast);
 	}
 
 	/*
@@ -446,8 +708,8 @@ public class ASTNode implements TreeNode {
 						&& ast.getDenominator() == getDenominator();
 			if (isReal() && ast.isReal())
 				equal &= ast.getReal() == getReal();
-			if (ast.getType() == Constants.AST_REAL_E
-					&& type == Constants.AST_REAL_E)
+			if (ast.getType() == Type.AST_REAL_E
+					&& type == Type.AST_REAL_E)
 				equal &= ast.getMantissa() == getMantissa()
 						&& ast.getExponent() == getExponent();
 			if (equal)
@@ -519,7 +781,7 @@ public class ASTNode implements TreeNode {
 	 * @return the value of the exponent of this ASTNode.
 	 */
 	public int getExponent() {
-		if (type == Constants.AST_REAL || type == Constants.AST_REAL_E)
+		if (type == Type.AST_REAL || type == Type.AST_REAL_E)
 			return exponent;
 		throw new RuntimeException(
 				new IllegalArgumentException(
@@ -668,8 +930,8 @@ public class ASTNode implements TreeNode {
 	 * @return the value of this ASTNode as a real (double).
 	 */
 	public double getReal() {
-		if (isReal() || type == Constants.AST_CONSTANT_E
-				|| type == Constants.AST_CONSTANT_PI) {
+		if (isReal() || type == Type.AST_CONSTANT_E
+				|| type == Type.AST_CONSTANT_PI) {
 			switch (type) {
 			case AST_REAL:
 				return mantissa;
@@ -718,7 +980,7 @@ public class ASTNode implements TreeNode {
 				LaTeX.brackets(getNameOrID(c)));
 	}
 
-	public Constants getType() {
+	public Type getType() {
 		return type;
 	}
 
@@ -734,7 +996,7 @@ public class ASTNode implements TreeNode {
 	 * 
 	 */
 	private void initDefaults() {
-		type = Constants.AST_UNKNOWN;
+		type = Type.AST_UNKNOWN;
 		if (listOfNodes == null)
 			listOfNodes = new LinkedList<ASTNode>();
 		else
@@ -765,12 +1027,12 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is a boolean, false otherwise.
 	 */
 	public boolean isBoolean() {
-		return type == Constants.AST_CONSTANT_FALSE
-				|| type == Constants.AST_CONSTANT_TRUE
-				|| type == Constants.AST_LOGICAL_AND
-				|| type == Constants.AST_LOGICAL_NOT
-				|| type == Constants.AST_LOGICAL_OR
-				|| type == Constants.AST_LOGICAL_XOR;
+		return type == Type.AST_CONSTANT_FALSE
+				|| type == Type.AST_CONSTANT_TRUE
+				|| type == Type.AST_LOGICAL_AND
+				|| type == Type.AST_LOGICAL_NOT
+				|| type == Type.AST_LOGICAL_OR
+				|| type == Type.AST_LOGICAL_XOR;
 	}
 
 	/**
@@ -812,7 +1074,7 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is of type AST_INTEGER, false otherwise.
 	 */
 	public boolean isInteger() {
-		return type == Constants.AST_INTEGER;
+		return type == Type.AST_INTEGER;
 	}
 
 	/**
@@ -822,7 +1084,7 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is of type AST_LAMBDA, false otherwise.
 	 */
 	public boolean isLambda() {
-		return type == Constants.AST_LAMBDA;
+		return type == Type.AST_LAMBDA;
 	}
 
 	/**
@@ -835,7 +1097,7 @@ public class ASTNode implements TreeNode {
 	 *         otherwise.
 	 */
 	public boolean isLog10() {
-		return type == Constants.AST_FUNCTION_LOG && listOfNodes.size() == 2
+		return type == Type.AST_FUNCTION_LOG && listOfNodes.size() == 2
 				&& getLeftChild().isInteger()
 				&& getLeftChild().getInteger() == 10;
 	}
@@ -859,7 +1121,7 @@ public class ASTNode implements TreeNode {
 	 *         L2 (MathML) or the special symbols delay or time.
 	 */
 	public boolean isName() {
-		return type == Constants.AST_NAME;
+		return type == Type.AST_NAME;
 	}
 
 	/**
@@ -904,9 +1166,9 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is an operator.
 	 */
 	public boolean isOperator() {
-		return type == Constants.AST_PLUS || type == Constants.AST_MINUS
-				|| type == Constants.AST_TIMES || type == Constants.AST_DIVIDE
-				|| type == Constants.AST_POWER;
+		return type == Type.AST_PLUS || type == Type.AST_MINUS
+				|| type == Type.AST_TIMES || type == Type.AST_DIVIDE
+				|| type == Type.AST_POWER;
 	}
 
 	/**
@@ -916,7 +1178,7 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is a MathML piecewise function
 	 */
 	public boolean isPiecewise() {
-		return type == Constants.AST_FUNCTION_PIECEWISE;
+		return type == Type.AST_FUNCTION_PIECEWISE;
 	}
 
 	public boolean isPrintNameIfAvailable() {
@@ -930,7 +1192,7 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is of type AST_RATIONAL.
 	 */
 	public boolean isRational() {
-		return type == Constants.AST_RATIONAL;
+		return type == Type.AST_RATIONAL;
 	}
 
 	/**
@@ -942,8 +1204,8 @@ public class ASTNode implements TreeNode {
 	 *         number, false otherwise.
 	 */
 	public boolean isReal() {
-		return type == Constants.AST_REAL || type == Constants.AST_REAL_E
-				|| type == Constants.AST_RATIONAL;
+		return type == Type.AST_REAL || type == Type.AST_REAL_E
+				|| type == Type.AST_RATIONAL;
 	}
 
 	/**
@@ -954,12 +1216,12 @@ public class ASTNode implements TreeNode {
 	 *         otherwise.
 	 */
 	public boolean isRelational() {
-		return type == Constants.AST_RELATIONAL_EQ
-				|| type == Constants.AST_RELATIONAL_GEQ
-				|| type == Constants.AST_RELATIONAL_GT
-				|| type == Constants.AST_RELATIONAL_LEQ
-				|| type == Constants.AST_RELATIONAL_LT
-				|| type == Constants.AST_RELATIONAL_NEQ;
+		return type == Type.AST_RELATIONAL_EQ
+				|| type == Type.AST_RELATIONAL_GEQ
+				|| type == Type.AST_RELATIONAL_GT
+				|| type == Type.AST_RELATIONAL_LEQ
+				|| type == Type.AST_RELATIONAL_LT
+				|| type == Type.AST_RELATIONAL_NEQ;
 	}
 
 	/**
@@ -973,7 +1235,7 @@ public class ASTNode implements TreeNode {
 	 *         otherwise.
 	 */
 	public boolean isSqrt() {
-		return type == Constants.AST_FUNCTION_ROOT && listOfNodes.size() == 2
+		return type == Type.AST_FUNCTION_ROOT && listOfNodes.size() == 2
 				&& getLeftChild().isInteger()
 				&& getLeftChild().getInteger() == 2;
 	}
@@ -991,7 +1253,7 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is a unary minus, false otherwise.
 	 */
 	public boolean isUMinus() {
-		return type == Constants.AST_MINUS && getNumChildren() == 1;
+		return type == Type.AST_MINUS && getNumChildren() == 1;
 	}
 
 	/**
@@ -1007,7 +1269,7 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is of type AST_UNKNOWN, false otherwise.
 	 */
 	public boolean isUnknown() {
-		return type == Constants.AST_UNKNOWN;
+		return type == Type.AST_UNKNOWN;
 	}
 
 	/**
@@ -1063,7 +1325,7 @@ public class ASTNode implements TreeNode {
 	 */
 
 	public void minus(ASTNode ast) {
-		arithmeticOperation(Constants.AST_MINUS, ast);
+		arithmeticOperation(Type.AST_MINUS, ast);
 	}
 
 	/**
@@ -1072,7 +1334,7 @@ public class ASTNode implements TreeNode {
 	 * @param ast
 	 */
 	public void multiplyWith(ASTNode ast) {
-		arithmeticOperation(Constants.AST_TIMES, ast);
+		arithmeticOperation(Type.AST_TIMES, ast);
 	}
 
 	public void multiplyWith(ASTNode... nodes) {
@@ -1087,7 +1349,7 @@ public class ASTNode implements TreeNode {
 	 */
 
 	public void plus(ASTNode ast) {
-		arithmeticOperation(Constants.AST_PLUS, ast);
+		arithmeticOperation(Type.AST_PLUS, ast);
 	}
 
 	/**
@@ -1105,7 +1367,7 @@ public class ASTNode implements TreeNode {
 	 * @param exponent
 	 */
 	public void raiseByThePowerOf(ASTNode exponent) {
-		arithmeticOperation(Constants.AST_POWER, exponent);
+		arithmeticOperation(Type.AST_POWER, exponent);
 	}
 
 	/**
@@ -1129,7 +1391,7 @@ public class ASTNode implements TreeNode {
 			int i;
 			switch (type) {
 			case AST_PLUS:
-				ASTNode plus = new ASTNode(Constants.AST_PLUS, parentSBMLObject);
+				ASTNode plus = new ASTNode(Type.AST_PLUS, parentSBMLObject);
 				for (i = getNumChildren(); i > 0; i--)
 					plus.addChild(listOfNodes.removeLast());
 				addChild(plus);
@@ -1138,7 +1400,7 @@ public class ASTNode implements TreeNode {
 				// TODO
 				break;
 			case AST_TIMES:
-				ASTNode times = new ASTNode(Constants.AST_TIMES,
+				ASTNode times = new ASTNode(Type.AST_TIMES,
 						parentSBMLObject);
 				for (i = getNumChildren(); i > 0; i--)
 					times.addChild(listOfNodes.removeLast());
@@ -1148,14 +1410,14 @@ public class ASTNode implements TreeNode {
 				// TODO
 				break;
 			case AST_LOGICAL_AND:
-				ASTNode and = new ASTNode(Constants.AST_LOGICAL_AND,
+				ASTNode and = new ASTNode(Type.AST_LOGICAL_AND,
 						parentSBMLObject);
 				for (i = getNumChildren(); i > 0; i--)
 					and.addChild(listOfNodes.removeLast());
 				addChild(and);
 				break;
 			case AST_LOGICAL_OR:
-				ASTNode or = new ASTNode(Constants.AST_LOGICAL_OR,
+				ASTNode or = new ASTNode(Type.AST_LOGICAL_OR,
 						parentSBMLObject);
 				for (i = getNumChildren(); i > 0; i--)
 					or.addChild(listOfNodes.removeLast());
@@ -1255,22 +1517,22 @@ public class ASTNode implements TreeNode {
 	public void setCharacter(char value) {
 		switch (value) {
 		case '+':
-			type = Constants.AST_PLUS;
+			type = Type.AST_PLUS;
 			break;
 		case '-':
-			type = Constants.AST_MINUS;
+			type = Type.AST_MINUS;
 			break;
 		case '*':
-			type = Constants.AST_TIMES;
+			type = Type.AST_TIMES;
 			break;
 		case '/':
-			type = Constants.AST_DIVIDE;
+			type = Type.AST_DIVIDE;
 			break;
 		case '^':
-			type = Constants.AST_POWER;
+			type = Type.AST_POWER;
 			break;
 		default:
-			type = Constants.AST_UNKNOWN;
+			type = Type.AST_UNKNOWN;
 			break;
 		}
 	}
@@ -1292,9 +1554,9 @@ public class ASTNode implements TreeNode {
 			variable = m.findNamedSBase(name);
 		if (variable == null)
 			this.name = name;
-		if (type != Constants.AST_NAME && type != Constants.AST_FUNCTION)
-			type = variable == null ? Constants.AST_FUNCTION
-					: Constants.AST_NAME;
+		if (type != Type.AST_NAME && type != Type.AST_FUNCTION)
+			type = variable == null ? Type.AST_FUNCTION
+					: Type.AST_NAME;
 	}
 
 	/**
@@ -1313,13 +1575,13 @@ public class ASTNode implements TreeNode {
 	 * @param type
 	 *            the type to which this node should be set
 	 */
-	public void setType(Constants type) {
+	public void setType(Type type) {
 		String sType = type.toString();
 		if (sType.startsWith("AST_NAME") || sType.startsWith("AST_CONSTANT"))
 			initDefaults();
-		if (type == Constants.AST_NAME_TIME)
+		if (type == Type.AST_NAME_TIME)
 			name = "time";
-		else if (type == Constants.AST_FUNCTION_DELAY) {
+		else if (type == Type.AST_FUNCTION_DELAY) {
 			name = "delay";
 			initDefaults();
 		}
@@ -1342,7 +1604,7 @@ public class ASTNode implements TreeNode {
 	 */
 	public void setValue(double value) {
 		setValue(value, 0);
-		type = Constants.AST_REAL;
+		type = Type.AST_REAL;
 	}
 
 	/**
@@ -1355,7 +1617,7 @@ public class ASTNode implements TreeNode {
 	 *            the exponent of this node's real-numbered value
 	 */
 	public void setValue(double mantissa, int exponent) {
-		type = Constants.AST_REAL_E;
+		type = Type.AST_REAL_E;
 		this.mantissa = mantissa;
 		this.exponent = exponent;
 	}
@@ -1367,7 +1629,7 @@ public class ASTNode implements TreeNode {
 	 * @param value
 	 */
 	public void setValue(int value) {
-		type = Constants.AST_INTEGER;
+		type = Type.AST_INTEGER;
 		numerator = value;
 		denominator = 1;
 	}
@@ -1382,7 +1644,7 @@ public class ASTNode implements TreeNode {
 	 *            the denominator value of the rational
 	 */
 	public void setValue(int numerator, int denominator) {
-		type = Constants.AST_RATIONAL;
+		type = Type.AST_RATIONAL;
 		this.numerator = numerator;
 		this.denominator = denominator;
 	}
@@ -1392,7 +1654,7 @@ public class ASTNode implements TreeNode {
 	 * @param variable
 	 */
 	public void setVariable(NamedSBase variable) {
-		type = Constants.AST_NAME;
+		type = Type.AST_NAME;
 		this.variable = variable;
 	}
 
@@ -1425,7 +1687,7 @@ public class ASTNode implements TreeNode {
 			value = new StringBuffer();
 			value.append(getCharacter());
 			if (getLeftChild().getNumChildren() > 0
-					&& getLeftChild().getType() != Constants.AST_TIMES)
+					&& getLeftChild().getType() != Type.AST_TIMES)
 				value.append(LaTeX.brackets(getLeftChild().toLaTeX()));
 			else
 				value.append(getLeftChild().toLaTeX());
@@ -1486,7 +1748,7 @@ public class ASTNode implements TreeNode {
 					value.append(ast.toLaTeX());
 				else {
 					value.append(getCharacter());
-					if (ast.getType() == Constants.AST_MINUS)
+					if (ast.getType() == Type.AST_MINUS)
 						value.append(LaTeX.brackets(ast.toLaTeX()));
 					else
 						value.append(ast.toLaTeX());
@@ -1499,7 +1761,7 @@ public class ASTNode implements TreeNode {
 			for (int i = 1; i < getNumChildren(); i++) {
 				ast = getChild(i);
 				value.append(getCharacter());
-				if (ast.getType() == Constants.AST_PLUS)
+				if (ast.getType() == Type.AST_PLUS)
 					value.append(LaTeX.brackets(ast.toLaTeX()));
 				else
 					value.append(ast.toLaTeX());
@@ -1509,13 +1771,13 @@ public class ASTNode implements TreeNode {
 		case AST_TIMES:
 			value = getLeftChild().toLaTeX();
 			if (getLeftChild().getNumChildren() > 1
-					&& (getLeftChild().getType() == Constants.AST_MINUS || getLeftChild()
-							.getType() == Constants.AST_PLUS))
+					&& (getLeftChild().getType() == Type.AST_MINUS || getLeftChild()
+							.getType() == Type.AST_PLUS))
 				value = LaTeX.brackets(value);
 			for (int i = 1; i < getNumChildren(); i++) {
 				ast = getChild(i);
 				value.append("\\cdot");
-				if ((ast.getType() == Constants.AST_MINUS || ast.getType() == Constants.AST_PLUS)
+				if ((ast.getType() == Type.AST_MINUS || ast.getType() == Type.AST_PLUS)
 						&& ast.getNumChildren() > 1)
 					value.append(LaTeX.brackets(ast.toLaTeX()));
 				else {
@@ -1565,7 +1827,7 @@ public class ASTNode implements TreeNode {
 			return value = new StringBuffer(LaTeX.mathtt(LaTeX
 					.maskSpecialChars(getName())));
 			/*
-			 * Constants: pi, e, true, false
+			 * Type: pi, e, true, false
 			 */
 		case AST_CONSTANT_PI:
 			return new StringBuffer(LaTeX.CONSTANT_PI);

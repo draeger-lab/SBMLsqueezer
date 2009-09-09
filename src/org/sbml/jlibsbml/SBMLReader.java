@@ -35,6 +35,13 @@ public interface SBMLReader {
 
 	/**
 	 * 
+	 * @param term
+	 * @return
+	 */
+	public CVTerm readCVTerm(Object term);
+	
+	/**
+	 * 
 	 * @param functionDefinition
 	 * @return
 	 */

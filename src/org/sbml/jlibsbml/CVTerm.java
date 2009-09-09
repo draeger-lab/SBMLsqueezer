@@ -279,8 +279,7 @@ public class CVTerm {
 			eq &= t.getBiologicalQualifierType() == typeQualifier
 					|| t.getModelQualifierType() == typeQualifier;
 			eq &= t.getNumResources() == getNumResources();
-			for (int i = 0; i < getNumResources(); i++)
-				eq &= t.getResourceURI(i).equals(getResourceURI(i));
+			eq &= t.resourceURIs.equals(resourceURIs);
 			return eq;
 		}
 		return false;

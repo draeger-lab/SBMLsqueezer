@@ -118,7 +118,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				klsd.setVisible(true);
 			}
 			if (klsd.isKineticsAndParametersStoredInSBML()) {
-				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
+				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
+						.getSelectedComponent();
 				split.init(sbmlIO.getSelectedModel(), true);
 			}
 
@@ -168,7 +169,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 
 		} else if (e.getActionCommand().equals(SAVE_FILE)) {
-			JFileChooser chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser(settings.get(
+					CfgKeys.SAVE_DIR).toString());
 			SBFileFilter filterText = new SBFileFilter(SBFileFilter.TEXT_FILES);
 			SBFileFilter filterTeX = new SBFileFilter(SBFileFilter.TeX_FILES);
 			SBFileFilter filterSBML = new SBFileFilter(SBFileFilter.SBML_FILES);
@@ -180,6 +182,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			String dir = settings.get(CfgKeys.SAVE_DIR).toString();
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File out = chooser.getSelectedFile();
+				if (out.getParentFile() != null
+						&& !out.getParentFile().equals(
+								settings.get(CfgKeys.SAVE_DIR).toString()))
+					settings.put(CfgKeys.SAVE_DIR, out.getParentFile()
+							.getAbsolutePath());
 				if (filterSBML.accept(out)) {
 					if (out.isDirectory())
 						System.err.println("no file choosed");
@@ -188,7 +195,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						if (out.exists())
 							write = JOptionPane.showConfirmDialog(this, out
 									.getName()
-									+ " already exists."
+									+ " already exists. "
 									+ "Do you want to over write it?",
 									"Over write existing file?",
 									JOptionPane.YES_NO_OPTION,

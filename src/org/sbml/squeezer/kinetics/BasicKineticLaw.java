@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.Constants;
 import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
@@ -242,7 +241,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	private List<Parameter> getReferencedGlobalParameters(ASTNode math) {
 		LinkedList<Parameter> pList = new LinkedList<Parameter>();
-		if (math.getType().equals(Constants.AST_NAME)
+		if (math.getType().equals(ASTNode.Type.AST_NAME)
 				&& (math.getVariable() instanceof Parameter)
 				&& (getModel().getParameter(math.getVariable().getId()) != null))
 			pList.add((Parameter) math.getVariable());

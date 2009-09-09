@@ -89,9 +89,17 @@ public class ModelHistory {
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof ModelHistory) {
+			boolean equal = super.equals(o);
 			ModelHistory mh = (ModelHistory) o;
-			return listOfModelCreators.equals(mh.getListCreators())
-					&& listOfModification.equals(mh.getListModifiedDates());
+			equal &= listOfModelCreators.equals(mh.getListCreators());
+			equal &= listOfModification.equals(mh.getListModifiedDates());
+			equal &= isSetCreatedDate() == mh.isSetCreatedDate();
+			if (isSetCreatedDate() && mh.isSetCreatedDate())
+				equal &= creation.equals(mh.getCreatedDate());
+			equal &= isSetModifiedDate() == mh.isSetModifiedDate();
+			if (isSetModifiedDate() && mh.isSetModifiedDate())
+				equal &= modifyed.equals(mh.getModifiedDate());
+			return equal;
 		}
 		return false;
 	}
