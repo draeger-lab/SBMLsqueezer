@@ -100,26 +100,28 @@ public class Species extends Symbol {
 	 */
 	// @Override
 	public boolean equals(Object o) {
-		boolean equal = super.equals(o);
 		if (o instanceof Species) {
+			boolean equal = super.equals(o);
 			Species s = (Species) o;
-			equal &= s.getBoundaryCondition() == boundaryCondition;
-			equal &= s.getHasOnlySubstanceUnits() == hasOnlySubstanceUnits;
-			equal &= s.getCharge() == charge;
-			if ((!s.isSetCompartment() && isSetCompartment())
-					|| (s.isSetCompartment() && !isSetCompartment()))
-				return false;
+			equal &= s.getBoundaryCondition() == getBoundaryCondition();
+			equal &= s.getHasOnlySubstanceUnits() == getHasOnlySubstanceUnits();
+			equal &= s.getCharge() == getCharge();
+			equal &= s.isSetCompartment() == isSetCompartment();
+			equal &= s.isSetSpeciesType() == isSetSpeciesType();
+			if (s.isSetSpeciesType() && isSetSpeciesType())
+				equal &= s.getSpeciesType().equals(getSpeciesType());
 			if (s.isSetCompartment() && isSetCompartment())
-				equal &= s.getCompartmentInstance().equals(compartment);
-			if (s.isSetInitialAmount() != isSetInitialAmount()) {
-				// TODO
-			}
-			equal &= s.getInitialAmount() == getInitialAmount();
-			equal &= s.getInitialConcentration() == getInitialConcentration();
+				equal &= s.getCompartmentInstance().equals(
+						getCompartmentInstance());
+			equal &= s.isSetInitialAmount() == isSetInitialAmount();
+			if (s.isSetInitialAmount() && isSetInitialAmount())
+				equal &= s.getInitialAmount() == getInitialAmount();
+			else if (s.isSetInitialConcentration()
+					&& isSetInitialConcentration())
+				equal &= s.getInitialConcentration() == getInitialConcentration();
 			return equal;
-		} else
-			equal = false;
-		return equal;
+		}
+		return false;
 	}
 
 	/**
@@ -199,7 +201,7 @@ public class Species extends Symbol {
 	public String getSpeciesType() {
 		return speciesType.getId();
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -325,7 +327,7 @@ public class Species extends Symbol {
 		this.compartment = compartment;
 		stateChanged();
 	}
-	
+
 	/**
 	 * 
 	 * @param hasOnlySubstanceUnits
@@ -334,7 +336,7 @@ public class Species extends Symbol {
 		this.hasOnlySubstanceUnits = hasOnlySubstanceUnits;
 		stateChanged();
 	}
-	
+
 	/**
 	 * 
 	 * @param initialAmount
@@ -343,7 +345,7 @@ public class Species extends Symbol {
 		setValue(initialAmount);
 		amountOrConcentration = true;
 	}
-	
+
 	/**
 	 * 
 	 * @param initialConcentration

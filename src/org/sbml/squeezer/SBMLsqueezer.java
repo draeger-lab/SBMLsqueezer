@@ -35,6 +35,7 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
+import org.sbml.jlibsbml.Parameter;
 import org.sbml.jlibsbml.SBO;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -131,7 +132,7 @@ public class SBMLsqueezer extends PluginAction {
 		try {
 			System.loadLibrary("sbmlj");
 			// Extra check to be sure we have access to libSBML:
-			Class.forName("org.sbml.libsbml.libsbml");
+			Class.forName("org.sbml.libsbml.libsbml");			
 			new SBMLsqueezer(args);
 		} catch (Exception e) {
 			System.err.println("Error: could not load the libSBML library");

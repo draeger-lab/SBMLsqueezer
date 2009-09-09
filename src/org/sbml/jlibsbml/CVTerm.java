@@ -275,7 +275,7 @@ public class CVTerm {
 		if (o instanceof CVTerm) {
 			CVTerm t = (CVTerm) o;
 			boolean eq = true;
-			eq &= t.getQualifierType() == type;
+			eq &= t.getQualifierType() == getQualifierType();
 			eq &= t.getBiologicalQualifierType() == typeQualifier
 					|| t.getModelQualifierType() == typeQualifier;
 			eq &= t.getNumResources() == getNumResources();

@@ -18,7 +18,7 @@
  */
 package org.sbml.squeezer.io;
 
-import org.sbml.jlibsbml.AbstractSBase;
+import org.sbml.jlibsbml.SBase;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -27,9 +27,22 @@ import org.sbml.jlibsbml.AbstractSBase;
  * 
  */
 public interface SBaseChangedListener {
-	void stateChanged(AbstractSBase sb);
 
-	void sbaseAdded(AbstractSBase sb);
+	/**
+	 * 
+	 * @param sb
+	 */
+	void stateChanged(SBase sb);
 
-	void sbaseRemoved(AbstractSBase sb);
+	/**
+	 * 
+	 * @param sb
+	 */
+	void sbaseAdded(SBase sb);
+
+	/**
+	 * 
+	 * @param sb
+	 */
+	void sbaseRemoved(SBase sb);
 }

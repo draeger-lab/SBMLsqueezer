@@ -25,7 +25,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.sbml.jlibsbml.AbstractSBase;
 import org.sbml.jlibsbml.Compartment;
 import org.sbml.jlibsbml.CompartmentType;
 import org.sbml.jlibsbml.Constraint;
@@ -305,7 +304,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBaseChangedListener#sbaseAdded(org.sbml.SBase)
 	 */
-	public void sbaseAdded(AbstractSBase sb) {
+	public void sbaseAdded(SBase sb) {
 		if (!added.contains(sb))
 			added.add(sb);
 	}
@@ -315,7 +314,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBaseChangedListener#sbaseRemoved(org.sbml.SBase)
 	 */
-	public void sbaseRemoved(AbstractSBase sb) {
+	public void sbaseRemoved(SBase sb) {
 		if (!removed.contains(sb))
 			removed.add(sb);
 	}
@@ -329,7 +328,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBaseChangedListener#stateChanged(org.sbml.SBase)
 	 */
-	public void stateChanged(AbstractSBase sb) {
+	public void stateChanged(SBase sb) {
 		if (!changed.contains(sb))
 			changed.add(sb);
 	}
