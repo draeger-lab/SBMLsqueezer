@@ -18,6 +18,9 @@
  */
 package org.sbml.squeezer.standalone;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.sbml.jlibsbml.AssignmentRule;
 import org.sbml.jlibsbml.CVTerm;
 import org.sbml.jlibsbml.Compartment;
@@ -31,6 +34,8 @@ import org.sbml.jlibsbml.InitialAssignment;
 import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.MathContainer;
 import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModelCreator;
+import org.sbml.jlibsbml.ModelHistory;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.NamedSBase;
 import org.sbml.jlibsbml.Parameter;
@@ -74,6 +79,22 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 					"only instances of org.sbml.libsbml.Model can be considered.");
 		org.sbml.libsbml.Model mo = (org.sbml.libsbml.Model) orig;
 		long i;
+
+		// Function definitions
+		for (FunctionDefinition c : model.getListOfFunctionDefinitions()) {
+			if (mo.getFunctionDefinition(c.getId()) == null)
+				mo.addFunctionDefinition(writeFunctionDefinition(c));
+			else
+				saveMathContainerProperties(c, mo.getFunctionDefinition(c
+						.getId()));
+		}
+		// remove unnecessary function definitions
+		for (i = mo.getNumFunctionDefinitions() - 1; i >= 0; i--) {
+			org.sbml.libsbml.FunctionDefinition c = mo.getFunctionDefinition(i);
+			if (model.getFunctionDefinition(c.getId()) == null)
+				mo.getListOfFunctionDefinitions().remove(i);
+		}
+
 		// Unit definitions
 		for (UnitDefinition ud : model.getListOfUnitDefinitions())
 			if (!ud.equals(UnitDefinition.SUBSTANCE)
@@ -104,6 +125,35 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			if (model.getUnitDefinition(ud.getId()) == null)
 				mo.getListOfUnitDefinitions().remove(i);
 		}
+
+		// Compartment types
+		for (CompartmentType c : model.getListOfCompartmentTypes()) {
+			if (mo.getCompartmentType(c.getId()) == null)
+				mo.addCompartmentType(writeCompartmentType(c));
+			else
+				saveNamedSBaseProperties(c, mo.getCompartmentType(c.getId()));
+		}
+		// remove unnecessary compartmentTypes
+		for (i = mo.getNumCompartmentTypes() - 1; i >= 0; i--) {
+			org.sbml.libsbml.CompartmentType c = mo.getCompartmentType(i);
+			if (model.getCompartmentType(c.getId()) == null)
+				mo.getListOfCompartmentTypes().remove(i);
+		}
+
+		// Species types
+		for (SpeciesType c : model.getListOfSpeciesTypes()) {
+			if (mo.getSpeciesType(c.getId()) == null)
+				mo.addSpeciesType(writeSpeciesType(c));
+			else
+				saveNamedSBaseProperties(c, mo.getSpeciesType(c.getId()));
+		}
+		// remove unnecessary speciesTypes
+		for (i = mo.getNumSpeciesTypes() - 1; i >= 0; i--) {
+			org.sbml.libsbml.SpeciesType c = mo.getSpeciesType(i);
+			if (model.getSpeciesType(c.getId()) == null)
+				mo.getListOfSpeciesTypes().remove(i);
+		}
+
 		// Compartments
 		for (Compartment c : model.getListOfCompartments()) {
 			if (mo.getCompartment(c.getId()) == null)
@@ -117,6 +167,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			if (model.getCompartment(c.getId()) == null)
 				mo.getListOfCompartments().remove(i);
 		}
+
 		// Species
 		for (Species s : model.getListOfSpecies()) {
 			if (mo.getSpecies(s.getId()) == null)
@@ -130,6 +181,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			if (model.getSpecies(s.getId()) == null)
 				mo.getListOfSpecies().remove(i);
 		}
+
 		// add or change parameters
 		for (Parameter p : model.getListOfParameters()) {
 			if (mo.getParameter(p.getId()) == null)
@@ -143,6 +195,84 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			if (model.getParameter(p.getId()) == null)
 				mo.getListOfParameters().remove(i);
 		}
+
+		// initial assignments
+		for (i = 0; i < model.getNumInitialAssignments(); i++) {
+			InitialAssignment ia = model.getInitialAssignment((int) i);
+			long contains = -1;
+			for (long j = 0; j < mo.getNumInitialAssignments() && contains < 0; j++) {
+				if (reader.readInitialAssignment(mo.getInitialAssignment(j))
+						.equals(ia))
+					contains = j;
+			}
+			if (contains < 0)
+				mo.addInitialAssignment(writeInitialAssignment(ia));
+			else
+				saveMathContainerProperties(ia, mo
+						.getInitialAssignment(contains));
+		}
+		// remove unnecessary initial assignments
+		for (i = mo.getNumInitialAssignments() - 1; i >= 0; i--) {
+			org.sbml.libsbml.InitialAssignment c = mo.getInitialAssignment(i);
+			InitialAssignment ia = reader.readInitialAssignment(c);
+			boolean contains = false;
+			for (int j = 0; j < model.getNumInitialAssignments() && !contains; j++)
+				if (model.getInitialAssignment(j).equals(ia))
+					contains = true;
+			if (!contains)
+				mo.getListOfInitialAssignments().remove(i);
+		}
+
+		// rules
+		for (i = 0; i < model.getNumRules(); i++) {
+			Rule ia = model.getRule((int) i);
+			long contains = -1;
+			for (long j = 0; j < mo.getNumRules() && contains < 0; j++) {
+				if (reader.readRule(mo.getRule(j)).equals(ia))
+					contains = j;
+			}
+			if (contains < 0)
+				mo.addRule(writeRule(ia));
+			else
+				saveMathContainerProperties(ia, mo.getRule(contains));
+		}
+		// remove unnecessary rules
+		for (i = mo.getNumRules() - 1; i >= 0; i--) {
+			org.sbml.libsbml.Rule c = mo.getRule(i);
+			Rule ia = reader.readRule(c);
+			boolean contains = false;
+			for (int j = 0; j < model.getNumRules() && !contains; j++)
+				if (model.getRule(j).equals(ia))
+					contains = true;
+			if (!contains)
+				mo.getListOfRules().remove(i);
+		}
+
+		// constraints
+		for (i = 0; i < model.getNumConstraints(); i++) {
+			Constraint ia = model.getConstraint((int) i);
+			long contains = -1;
+			for (long j = 0; j < mo.getNumConstraints() && contains < 0; j++) {
+				if (reader.readConstraint(mo.getConstraint(j)).equals(ia))
+					contains = j;
+			}
+			if (contains < 0)
+				mo.addConstraint(writeConstraint(ia));
+			else
+				saveMathContainerProperties(ia, mo.getConstraint(contains));
+		}
+		// remove unnecessary constraints
+		for (i = mo.getNumConstraints() - 1; i >= 0; i--) {
+			org.sbml.libsbml.Constraint c = mo.getConstraint(i);
+			Constraint ia = reader.readConstraint(c);
+			boolean contains = false;
+			for (int j = 0; j < model.getNumConstraints() && !contains; j++)
+				if (model.getConstraint(j).equals(ia))
+					contains = true;
+			if (!contains)
+				mo.getListOfConstraints().remove(i);
+		}
+
 		// add or change reactions
 		for (Reaction r : model.getListOfReactions()) {
 			if (mo.getReaction(r.getId()) == null)
@@ -155,6 +285,77 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			org.sbml.libsbml.Reaction r = mo.getReaction(i);
 			if (model.getReaction(r.getId()) == null)
 				mo.getListOfReactions().remove(i);
+		}
+
+		// events
+		for (Event r : model.getListOfEvents()) {
+			if (mo.getEvent(r.getId()) == null)
+				mo.addEvent(writeEvent(r));
+			else
+				saveEventProperties(r, mo.getEvent(r.getId()));
+		}
+		// remove reactions
+		for (i = mo.getNumEvents() - 1; i >= 0; i--) {
+			org.sbml.libsbml.Event r = mo.getEvent(i);
+			if (model.getEvent(r.getId()) == null)
+				mo.getListOfEvents().remove(i);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveEventProperties(org.sbml.jlibsbml.Event,
+	 * java.lang.Object)
+	 */
+	public void saveEventProperties(Event r, Object event) {
+		if (!(event instanceof org.sbml.libsbml.Event))
+			throw new IllegalArgumentException(
+					"event must be an instance of org.sbml.libsbml.Event.");
+		org.sbml.libsbml.Event e = (org.sbml.libsbml.Event) event;
+		saveNamedSBaseProperties(r, e);
+		if (r.getUseValuesFromTriggerTime() != e.getUseValuesFromTriggerTime())
+			e.setUseValuesFromTriggerTime(r.getUseValuesFromTriggerTime());
+		if (r.getTimeUnits() != e.getTimeUnits())
+			e.setTimeUnits(r.getTimeUnits());
+		if (r.isSetDelay()) {
+			if (!e.isSetDelay())
+				e.setDelay(writeDelay(r.getDelay()));
+			else
+				saveMathContainerProperties(r.getDelay(), e.getDelay());
+		} else if (e.isSetDelay())
+			e.unsetDelay();
+		if (r.isSetTrigger()) {
+			if (!e.isSetTrigger())
+				e.setTrigger(writeTrigger(r.getTrigger()));
+			else
+				saveMathContainerProperties(r.getTrigger(), e.getTrigger());
+		}
+		// synchronize event assignments
+		for (EventAssignment ea : r.getListOfEventAssignments()) {
+			long contains = -1;
+			for (long i = 0; i < e.getNumEventAssignments() && contains < 0; i++) {
+				org.sbml.libsbml.EventAssignment libEA = e
+						.getEventAssignment(i);
+				if (reader.readEventAssignment(libEA).equals(ea))
+					contains = i;
+			}
+			if (contains < 0)
+				e.addEventAssignment(writeEventAssignment(ea));
+			else
+				saveMathContainerProperties(ea, e.getEventAssignment(contains));
+		}
+		// remove unnecessary event assignments
+		for (long i = e.getNumEventAssignments() - 1; i >= 0; i--) {
+			EventAssignment ea = reader.readEventAssignment(e
+					.getEventAssignment(i));
+			boolean contains = false;
+			for (int j = 0; j < r.getNumEventAssignments() && !contains; j++)
+				if (r.getEventAssignment(j).equals(ea))
+					contains = true;
+			if (!contains)
+				e.removeEventAssignment(i);
 		}
 	}
 
@@ -266,7 +467,27 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			saveNamedSBaseProperties((NamedSBase) mc, sbase);
 		else
 			saveSBaseProperties(mc, sbase);
-		if (sbase instanceof org.sbml.libsbml.KineticLaw) {
+		if (sbase instanceof org.sbml.libsbml.Constraint) {
+			org.sbml.libsbml.Constraint kl = (org.sbml.libsbml.Constraint) sbase;
+			if (mc.isSetMath())
+				kl.setMath(convert(mc.getMath()));
+		} else if (sbase instanceof org.sbml.libsbml.Delay) {
+			org.sbml.libsbml.Delay kl = (org.sbml.libsbml.Delay) sbase;
+			if (mc.isSetMath())
+				kl.setMath(convert(mc.getMath()));
+		} else if (sbase instanceof org.sbml.libsbml.EventAssignment) {
+			org.sbml.libsbml.EventAssignment kl = (org.sbml.libsbml.EventAssignment) sbase;
+			if (mc.isSetMath())
+				kl.setMath(convert(mc.getMath()));
+		} else if (sbase instanceof org.sbml.libsbml.FunctionDefinition) {
+			org.sbml.libsbml.FunctionDefinition kl = (org.sbml.libsbml.FunctionDefinition) sbase;
+			if (mc.isSetMath())
+				kl.setMath(convert(mc.getMath()));
+		} else if (sbase instanceof org.sbml.libsbml.InitialAssignment) {
+			org.sbml.libsbml.InitialAssignment kl = (org.sbml.libsbml.InitialAssignment) sbase;
+			if (mc.isSetMath())
+				kl.setMath(convert(mc.getMath()));
+		} else if (sbase instanceof org.sbml.libsbml.KineticLaw) {
 			org.sbml.libsbml.KineticLaw kl = (org.sbml.libsbml.KineticLaw) sbase;
 			if (mc.isSetMath())
 				kl.setMath(convert(mc.getMath()));
@@ -274,8 +495,15 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			org.sbml.libsbml.Rule kl = (org.sbml.libsbml.Rule) sbase;
 			if (mc.isSetMath())
 				kl.setMath(convert(mc.getMath()));
+		} else if (sbase instanceof org.sbml.libsbml.StoichiometryMath) {
+			org.sbml.libsbml.StoichiometryMath kl = (org.sbml.libsbml.StoichiometryMath) sbase;
+			if (mc.isSetMath())
+				kl.setMath(convert(mc.getMath()));
+		} else if (sbase instanceof org.sbml.libsbml.Trigger) {
+			org.sbml.libsbml.Trigger kl = (org.sbml.libsbml.Trigger) sbase;
+			if (mc.isSetMath())
+				kl.setMath(convert(mc.getMath()));
 		}
-		// TODO other data types..
 	}
 
 	/*
@@ -431,7 +659,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			org.sbml.libsbml.SpeciesReference roreactant = ro.getReactant(i);
 			boolean keep = false;
 			for (int j = 0; j < r.getNumReactants() && !keep; j++)
-				if (r.getReactant(j).getSpecies().equals(roreactant.getSpecies()))
+				if (r.getReactant(j).getSpecies().equals(
+						roreactant.getSpecies()))
 					keep = true;
 			if (!keep)
 				ro.getListOfReactants().remove(i);
@@ -840,6 +1069,12 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		org.sbml.libsbml.Model m = new org.sbml.libsbml.Model(model.getLevel(),
 				model.getVersion());
 		saveNamedSBaseProperties(model, m);
+		if (model.isSetModelHistory()) {
+			if (!m.isSetModelHistory())
+				m.setModelHistory(new org.sbml.libsbml.ModelHistory());
+			saveModelHistoryProperties(model.getModelHistory(), m
+					.getModelHistory());
+		}
 		for (UnitDefinition ud : model.getListOfUnitDefinitions())
 			m.addUnitDefinition(writeUnitDefinition(ud));
 		for (FunctionDefinition fd : model.getListOfFunctionDefinitions())
@@ -865,6 +1100,132 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		for (Event e : model.getListOfEvents())
 			m.addEvent(writeEvent(e));
 		return m;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveModelHistoryProperties(org.sbml.jlibsbml
+	 * .Model, java.lang.Object)
+	 */
+	public void saveModelHistoryProperties(ModelHistory m, Object modelHistory) {
+		if (!(modelHistory instanceof org.sbml.libsbml.ModelHistory))
+			throw new IllegalArgumentException(
+					"model must be an instance of org.sbml.libsbml.Model.");
+		org.sbml.libsbml.ModelHistory mo = (org.sbml.libsbml.ModelHistory) modelHistory;
+		if (m.isSetCreatedDate())
+			mo.setCreatedDate(convertDate(m.getCreatedDate()));
+		if (m.isSetModifiedDate())
+			mo.setModifiedDate(convertDate(m.getModifiedDate()));
+		// add creators
+		for (ModelCreator mc : m.getListCreators()) {
+			boolean equal = false;
+			boolean nothingSet = true;
+			for (long i = 0; i < mo.getNumCreators() && !equal; i++) {
+				org.sbml.libsbml.ModelCreator moc = mo.getCreator(i);
+				equal = moc.isSetEmail() == mc.isSetEmail();
+				if (moc.isSetEmail() && mc.isSetEmail()) {
+					equal &= moc.getEmail().equals(mc.getEmail());
+					nothingSet = false;
+				}
+				equal &= moc.isSetFamilyName() == mc.isSetFamilyName();
+				if (moc.isSetFamilyName() && mc.isSetFamilyName()) {
+					equal &= moc.getFamilyName().equals(mc.getFamilyName());
+					nothingSet = false;
+				}
+				equal &= moc.isSetGivenName() == mc.isSetGivenName();
+				if (moc.isSetGivenName() && mc.isSetGivenName()) {
+					equal &= moc.getGivenName().equals(mc.getGivenName());
+					nothingSet = false;
+				}
+				equal &= moc.isSetOrganization() == mc.isSetOrganization();
+				if (moc.isSetOrganization() && mc.isSetOrganization()) {
+					equal &= moc.getOrganization().equals(mc.getOrganization());
+					nothingSet = false;
+				}
+			}
+			if (!equal || (equal && nothingSet)) {
+				org.sbml.libsbml.ModelCreator moc = new org.sbml.libsbml.ModelCreator();
+				moc.setEmail(mc.getEmail());
+				moc.setFamilyName(mc.getFamilyName());
+				moc.setGivenName(mc.getGivenName());
+				moc.setOrganization(mc.getOrganization());
+				mo.addCreator(moc);
+			}
+		}
+		// remove unnecessary creators
+		for (long i = mo.getNumCreators() - 1; i >= 0; i--) {
+			boolean contains = false;
+			boolean nothingSet = true;
+			org.sbml.libsbml.ModelCreator moc = mo.getCreator(i);
+			for (int j = 0; j < m.getNumCreators() && !contains; j++) {
+				ModelCreator mc = m.getCreator(j);
+				contains = moc.isSetEmail() == mc.isSetEmail();
+				if (moc.isSetEmail() && mc.isSetEmail()) {
+					contains &= moc.getEmail().equals(mc.getEmail());
+					nothingSet = false;
+				}
+				contains &= moc.isSetFamilyName() == mc.isSetFamilyName();
+				if (moc.isSetFamilyName() && mc.isSetFamilyName()) {
+					contains &= moc.getFamilyName().equals(mc.getFamilyName());
+					nothingSet = false;
+				}
+				contains &= moc.isSetGivenName() == mc.isSetGivenName();
+				if (moc.isSetGivenName() && mc.isSetGivenName()) {
+					contains &= moc.getGivenName().equals(mc.getGivenName());
+					nothingSet = false;
+				}
+				contains &= moc.isSetOrganization() == mc.isSetOrganization();
+				if (moc.isSetOrganization() && mc.isSetOrganization()) {
+					contains &= moc.getOrganization().equals(
+							mc.getOrganization());
+					nothingSet = false;
+				}
+				if (nothingSet)
+					contains = false;
+			}
+			if (!contains)
+				mo.getListCreators().remove(i);
+		}
+
+		// add modified dates
+		for (int i = 0; i < m.getNumModifiedDates(); i++) {
+			String d = convertDate(m.getModifiedDate(i)).toString();
+			long contains = -1;
+			for (long j = 0; j < mo.getNumModifiedDates() && contains < 0; j++)
+				if (mo.getModifiedDate(j).toString().equals(d.toString()))
+					contains = j;
+			if (contains < 0)
+				mo.addModifiedDate(new org.sbml.libsbml.Date(d));
+		}
+
+		// remove modified dates
+		for (long i = mo.getNumModifiedDates() - 1; i >= 0; i--) {
+			String d = mo.getModifiedDate(i).toString();
+			boolean contains = false;
+			for (int j = 0; j < m.getNumModifiedDates() && !contains; j++)
+				if (convertDate(m.getModifiedDate(j)).toString().equals(d))
+					contains = true;
+			if (!contains)
+				mo.getListModifiedDates().remove(i);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBMLWriter#convertDate(java.util.Date)
+	 */
+	public org.sbml.libsbml.Date convertDate(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return new org.sbml.libsbml.Date(c.get(Calendar.YEAR), c
+				.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), c
+				.get(Calendar.HOUR), c.get(Calendar.MINUTE), c
+				.get(Calendar.SECOND), (int) Math.signum(c.getTimeZone()
+				.getRawOffset()), c.getTimeZone().getRawOffset() / 3600000, c
+				.getTimeZone().getRawOffset() / 60000);
 	}
 
 	/*
@@ -1073,112 +1434,112 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 				unit.getVersion());
 		saveSBaseProperties(unit, u);
 		switch (unit.getKind()) {
-		case UNIT_KIND_AMPERE:
+		case AMPERE:
 			u.setKind(libsbmlConstants.UNIT_KIND_AMPERE);
 			break;
-		case UNIT_KIND_BECQUEREL:
+		case BECQUEREL:
 			u.setKind(libsbmlConstants.UNIT_KIND_BECQUEREL);
 			break;
-		case UNIT_KIND_CANDELA:
+		case CANDELA:
 			u.setKind(libsbmlConstants.UNIT_KIND_CANDELA);
 			break;
-		case UNIT_KIND_CELSIUS:
+		case CELSIUS:
 			u.setKind(libsbmlConstants.UNIT_KIND_CELSIUS);
 			break;
-		case UNIT_KIND_COULOMB:
+		case COULOMB:
 			u.setKind(libsbmlConstants.UNIT_KIND_COULOMB);
 			break;
-		case UNIT_KIND_DIMENSIONLESS:
+		case DIMENSIONLESS:
 			u.setKind(libsbmlConstants.UNIT_KIND_DIMENSIONLESS);
 			break;
-		case UNIT_KIND_FARAD:
+		case FARAD:
 			u.setKind(libsbmlConstants.UNIT_KIND_FARAD);
 			break;
-		case UNIT_KIND_GRAM:
+		case GRAM:
 			u.setKind(libsbmlConstants.UNIT_KIND_GRAM);
 			break;
-		case UNIT_KIND_GRAY:
+		case GRAY:
 			u.setKind(libsbmlConstants.UNIT_KIND_GRAY);
 			break;
-		case UNIT_KIND_HENRY:
+		case HENRY:
 			u.setKind(libsbmlConstants.UNIT_KIND_HENRY);
 			break;
-		case UNIT_KIND_HERTZ:
+		case HERTZ:
 			u.setKind(libsbmlConstants.UNIT_KIND_HERTZ);
 			break;
-		case UNIT_KIND_INVALID:
+		case INVALID:
 			u.setKind(libsbmlConstants.UNIT_KIND_INVALID);
 			break;
-		case UNIT_KIND_ITEM:
+		case ITEM:
 			u.setKind(libsbmlConstants.UNIT_KIND_ITEM);
 			break;
-		case UNIT_KIND_JOULE:
+		case JOULE:
 			u.setKind(libsbmlConstants.UNIT_KIND_JOULE);
 			break;
-		case UNIT_KIND_KATAL:
+		case KATAL:
 			u.setKind(libsbmlConstants.UNIT_KIND_KATAL);
 			break;
-		case UNIT_KIND_KELVIN:
+		case KELVIN:
 			u.setKind(libsbmlConstants.UNIT_KIND_KELVIN);
 			break;
-		case UNIT_KIND_KILOGRAM:
+		case KILOGRAM:
 			u.setKind(libsbmlConstants.UNIT_KIND_KILOGRAM);
 			break;
-		case UNIT_KIND_LITER:
+		case LITER:
 			u.setKind(libsbmlConstants.UNIT_KIND_LITER);
 			break;
-		case UNIT_KIND_LITRE:
+		case LITRE:
 			u.setKind(libsbmlConstants.UNIT_KIND_LITRE);
 			break;
-		case UNIT_KIND_LUMEN:
+		case LUMEN:
 			u.setKind(libsbmlConstants.UNIT_KIND_LUMEN);
 			break;
-		case UNIT_KIND_LUX:
+		case LUX:
 			u.setKind(libsbmlConstants.UNIT_KIND_LUX);
 			break;
-		case UNIT_KIND_METER:
+		case METER:
 			u.setKind(libsbmlConstants.UNIT_KIND_METER);
 			break;
-		case UNIT_KIND_METRE:
+		case METRE:
 			u.setKind(libsbmlConstants.UNIT_KIND_METRE);
 			break;
-		case UNIT_KIND_MOLE:
+		case MOLE:
 			u.setKind(libsbmlConstants.UNIT_KIND_MOLE);
 			break;
-		case UNIT_KIND_NEWTON:
+		case NEWTON:
 			u.setKind(libsbmlConstants.UNIT_KIND_NEWTON);
 			break;
-		case UNIT_KIND_OHM:
+		case OHM:
 			u.setKind(libsbmlConstants.UNIT_KIND_OHM);
 			break;
-		case UNIT_KIND_PASCAL:
+		case PASCAL:
 			u.setKind(libsbmlConstants.UNIT_KIND_PASCAL);
 			break;
-		case UNIT_KIND_RADIAN:
+		case RADIAN:
 			u.setKind(libsbmlConstants.UNIT_KIND_RADIAN);
 			break;
-		case UNIT_KIND_SECOND:
+		case SECOND:
 			u.setKind(libsbmlConstants.UNIT_KIND_SECOND);
 			break;
-		case UNIT_KIND_SIEMENS:
+		case SIEMENS:
 			u.setKind(libsbmlConstants.UNIT_KIND_SIEMENS);
 			break;
-		case UNIT_KIND_SIEVERT:
+		case SIEVERT:
 			u.setKind(libsbmlConstants.UNIT_KIND_SIEVERT);
 			break;
-		case UNIT_KIND_STERADIAN:
+		case STERADIAN:
 			u.setKind(libsbmlConstants.UNIT_KIND_STERADIAN);
 			break;
-		case UNIT_KIND_TESLA:
+		case TESLA:
 			u.setKind(libsbmlConstants.UNIT_KIND_TESLA);
 			break;
-		case UNIT_KIND_VOLT:
+		case VOLT:
 			u.setKind(libsbmlConstants.UNIT_KIND_VOLT);
 			break;
-		case UNIT_KIND_WATT:
+		case WATT:
 			u.setKind(libsbmlConstants.UNIT_KIND_WATT);
 			break;
-		case UNIT_KIND_WEBER:
+		case WEBER:
 			u.setKind(libsbmlConstants.UNIT_KIND_WEBER);
 			break;
 		}

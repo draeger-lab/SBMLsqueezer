@@ -18,6 +18,8 @@
  */
 package org.sbml.squeezer.plugin;
 
+import java.util.Date;
+
 import org.sbml.jlibsbml.CVTerm;
 import org.sbml.jlibsbml.Compartment;
 import org.sbml.jlibsbml.CompartmentType;
@@ -30,6 +32,7 @@ import org.sbml.jlibsbml.InitialAssignment;
 import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.MathContainer;
 import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModelHistory;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.NamedSBase;
 import org.sbml.jlibsbml.Parameter;
@@ -295,6 +298,21 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	public Object writeCVTerm(CVTerm cvt) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public Object convertDate(Date date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void saveEventProperties(Event r, Object event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void saveModelHistoryProperties(ModelHistory mh, Object modelHistory) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

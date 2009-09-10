@@ -18,6 +18,8 @@
  */
 package org.sbml.jlibsbml;
 
+import java.util.Date;
+
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -25,6 +27,13 @@ package org.sbml.jlibsbml;
  * 
  */
 public interface SBMLWriter {
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public Object convertDate(Date date);
+
 	/**
 	 * 
 	 * @param c
@@ -38,21 +47,35 @@ public interface SBMLWriter {
 	 * @param term
 	 */
 	public void saveCVTermProperties(CVTerm cvt, Object term);
-
+	
+	/**
+	 * 
+	 * @param r
+	 * @param event
+	 */
+	public void saveEventProperties(Event r, Object event);
+	
 	/**
 	 * 
 	 * @param kl
 	 * @param kineticLaw
 	 */
 	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw);
-	
+
 	/**
 	 * 
 	 * @param mc
 	 * @param sbase
 	 */
 	public void saveMathContainerProperties(MathContainer mc, Object sbase);
-	
+
+	/**
+	 * 
+	 * @param mh
+	 * @param modelHistory
+	 */
+	public void saveModelHistoryProperties(ModelHistory mh, Object modelHistory);
+
 	/**
 	 * 
 	 * @param modifierSpeciesReference
@@ -60,28 +83,28 @@ public interface SBMLWriter {
 	 */
 	public void saveModifierSpeciesReferenceProperties(
 			ModifierSpeciesReference modifierSpeciesReference, Object msr);
-	
+
 	/**
 	 * 
 	 * @param nsb
 	 * @param sb
 	 */
 	public void saveNamedSBaseProperties(NamedSBase nsb, Object sb);
-	
+
 	/**
 	 * 
 	 * @param p
 	 * @param parameter
 	 */
 	public void saveParameterProperties(Parameter p, Object parameter);
-	
+
 	/**
 	 * 
 	 * @param r
 	 * @param reaction
 	 */
 	public void saveReactionProperties(Reaction r, Object reaction);
-	
+
 	/**
 	 * 
 	 * @param s

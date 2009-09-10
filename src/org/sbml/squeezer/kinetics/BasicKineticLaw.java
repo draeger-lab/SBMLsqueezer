@@ -241,7 +241,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	private List<Parameter> getReferencedGlobalParameters(ASTNode math) {
 		LinkedList<Parameter> pList = new LinkedList<Parameter>();
-		if (math.getType().equals(ASTNode.Type.AST_NAME)
+		if (math.getType().equals(ASTNode.Type.NAME)
 				&& (math.getVariable() instanceof Parameter)
 				&& (getModel().getParameter(math.getVariable().getId()) != null))
 			pList.add((Parameter) math.getVariable());

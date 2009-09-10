@@ -120,7 +120,9 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 	 * @return
 	 */
 	private static DefaultMutableTreeNode createNodes(Model m) {
+		DefaultMutableTreeNode docNode = new DefaultMutableTreeNode(m.getSBMLDocument());
 		DefaultMutableTreeNode modelNode = new DefaultMutableTreeNode(m);
+		docNode.add(modelNode);
 		DefaultMutableTreeNode node;
 		if (m.getNumFunctionDefinitions() > 0) {
 			node = new DefaultMutableTreeNode("Function Definitions");
@@ -250,7 +252,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				}
 			}
 		}
-		return modelNode;
+		return docNode;
 	}
 
 	/*

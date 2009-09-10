@@ -38,149 +38,149 @@ public class Unit extends AbstractSBase {
 		/**
 		 * The ampere unit
 		 */
-		UNIT_KIND_AMPERE,
+		AMPERE,
 		/**
 		 * The becquerel unit.
 		 */
-		UNIT_KIND_BECQUEREL,
+		BECQUEREL,
 		/**
 		 * The candela unit.
 		 */
-		UNIT_KIND_CANDELA,
+		CANDELA,
 		/**
 		 * The Celsius unit.
 		 */
-		UNIT_KIND_CELSIUS,
+		CELSIUS,
 		/**
 		 * The coulomb unit.
 		 */
-		UNIT_KIND_COULOMB,
+		COULOMB,
 		/**
 		 * A pseudo-unit indicating a dimensionless quantity. (This is in fact
 		 * defined in the SBML specification.)
 		 */
-		UNIT_KIND_DIMENSIONLESS,
+		DIMENSIONLESS,
 		/**
 		 * The farad unit.
 		 */
-		UNIT_KIND_FARAD,
+		FARAD,
 		/**
 		 * The gram unit.
 		 */
-		UNIT_KIND_GRAM,
+		GRAM,
 		/**
 		 * The gray unit.
 		 */
-		UNIT_KIND_GRAY,
+		GRAY,
 		/**
 		 * The henry unit.
 		 */
-		UNIT_KIND_HENRY,
+		HENRY,
 		/**
 		 * The hertz unit.
 		 */
-		UNIT_KIND_HERTZ,
+		HERTZ,
 		/**
 		 * A pseudo-unit representing a single 'thing'. (This is in fact defined
 		 * in the SBML specification.)
 		 */
-		UNIT_KIND_ITEM,
+		ITEM,
 		/**
 		 * The joule unit.
 		 */
-		UNIT_KIND_JOULE,
+		JOULE,
 		/**
 		 * The katal unit.
 		 */
-		UNIT_KIND_KATAL,
+		KATAL,
 		/**
 		 * The kelvin unit.
 		 */
-		UNIT_KIND_KELVIN,
+		KELVIN,
 		/**
 		 * The kilogram unit.
 		 */
-		UNIT_KIND_KILOGRAM,
+		KILOGRAM,
 		/**
 		 * Alternate spelling of litre.
 		 */
-		UNIT_KIND_LITER,
+		LITER,
 		/**
 		 * The litre unit.
 		 */
-		UNIT_KIND_LITRE,
+		LITRE,
 		/**
 		 * The lumen unit.
 		 */
-		UNIT_KIND_LUMEN,
+		LUMEN,
 		/**
 		 * The lux unit.
 		 */
-		UNIT_KIND_LUX,
+		LUX,
 		/**
 		 * Alternate spelling of metre.
 		 */
-		UNIT_KIND_METER,
+		METER,
 		/**
 		 * The metre unit.
 		 */
-		UNIT_KIND_METRE,
+		METRE,
 		/**
 		 * The mole unit.
 		 */
-		UNIT_KIND_MOLE,
+		MOLE,
 		/**
 		 * The newton unit.
 		 */
-		UNIT_KIND_NEWTON,
+		NEWTON,
 		/**
 		 * The ohm unit.
 		 */
-		UNIT_KIND_OHM,
+		OHM,
 		/**
 		 * The pascal unit.
 		 */
-		UNIT_KIND_PASCAL,
+		PASCAL,
 		/**
 		 * The radian unit.
 		 */
-		UNIT_KIND_RADIAN,
+		RADIAN,
 		/**
 		 * The second unit.
 		 */
-		UNIT_KIND_SECOND,
+		SECOND,
 		/**
 		 * The siemens unit.
 		 */
-		UNIT_KIND_SIEMENS,
+		SIEMENS,
 		/**
 		 * The sievert unit.
 		 */
-		UNIT_KIND_SIEVERT,
+		SIEVERT,
 		/**
 		 * The steradian unit.
 		 */
-		UNIT_KIND_STERADIAN,
+		STERADIAN,
 		/**
 		 * The tesla unit.
 		 */
-		UNIT_KIND_TESLA,
+		TESLA,
 		/**
 		 * The volt unit.
 		 */
-		UNIT_KIND_VOLT,
+		VOLT,
 		/**
 		 * The watt unit.
 		 */
-		UNIT_KIND_WATT,
+		WATT,
 		/**
 		 * The weber unit.
 		 */
-		UNIT_KIND_WEBER,
+		WEBER,
 		/**
 		 * Marker used by libSBML to indicate an invalid or unset unit.
 		 */
-		UNIT_KIND_INVALID
+		INVALID
 	}
 
 	/**
@@ -281,7 +281,7 @@ public class Unit extends AbstractSBase {
 		scale = 0;
 		multiplier = 1d;
 		offset = 0d;
-		kind = Kind.UNIT_KIND_INVALID;
+		kind = Kind.INVALID;
 	}
 
 	/**
@@ -362,7 +362,7 @@ public class Unit extends AbstractSBase {
 	 * @return
 	 */
 	public boolean isKilogram() {
-		return kind == Kind.UNIT_KIND_KILOGRAM;
+		return kind == Kind.KILOGRAM;
 	}
 
 	/**
@@ -370,7 +370,7 @@ public class Unit extends AbstractSBase {
 	 * @return
 	 */
 	public boolean isDimensionless() {
-		return kind == Kind.UNIT_KIND_DIMENSIONLESS;
+		return kind == Kind.DIMENSIONLESS;
 	}
 
 }
