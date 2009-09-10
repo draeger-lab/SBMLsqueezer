@@ -79,7 +79,10 @@ public class SBMLModelSplitPane extends JSplitPane implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.io.SBaseChangedListener#sbaseAdded(org.sbml.jlibsbml.SBase)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseAdded(org.sbml.jlibsbml
+	 * .SBase)
 	 */
 	public void sbaseAdded(SBase sb) {
 		// TreePath path = tree.getSelectionPath();
@@ -89,7 +92,10 @@ public class SBMLModelSplitPane extends JSplitPane implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.io.SBaseChangedListener#sbaseRemoved(org.sbml.jlibsbml.SBase)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseRemoved(org.sbml.jlibsbml
+	 * .SBase)
 	 */
 	public void sbaseRemoved(SBase sb) {
 		// TreePath path = tree.getSelectionPath();
@@ -99,7 +105,10 @@ public class SBMLModelSplitPane extends JSplitPane implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.io.SBaseChangedListener#stateChanged(org.sbml.jlibsbml.SBase)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.io.SBaseChangedListener#stateChanged(org.sbml.jlibsbml
+	 * .SBase)
 	 */
 	public void stateChanged(SBase sb) {
 		// TreePath path = tree.getSelectionPath();
@@ -138,7 +147,8 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	private JScrollPane createRightComponent(SBase sbase) {
 		JPanel p = new JPanel();
 		p.add(new SBasePanel(sbase));
-		JScrollPane scroll = new JScrollPane(p, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		JScrollPane scroll = new JScrollPane(p,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		return scroll;
 	}
@@ -155,12 +165,12 @@ public class SBMLModelSplitPane extends JSplitPane implements
 			path = (TreePath) tree.getSelectionPath();
 		tree = new SBMLTree(model);
 		tree.setShowsRootHandles(true);
-		tree.setExpandsSelectedPaths(true);
 		tree.setScrollsOnExpand(true);
 		for (ActionListener al : actionListeners)
 			tree.addActionListener(al);
 		if (path != null) {
-			tree.setSelectionPath(path);
+			// tree.setSelectionPath(path);
+			tree.setExpandsSelectedPaths(true);
 			tree.expandPath(path);
 		}
 		tree.addTreeSelectionListener(this);
