@@ -315,4 +315,14 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		
 	}
 
+	public String getWarnings(Object sbmlDocument) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getNumErrors(Object sbase) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

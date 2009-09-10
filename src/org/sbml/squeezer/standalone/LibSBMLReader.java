@@ -920,4 +920,29 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		for (int i = 0; i < libSBase.getNumCVTerms(); i++)
 			sbase.addCVTerm(readCVTerm(libSBase.getCVTerm(i)));
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBMLReader#getWarnings()
+	 */
+	public String getWarnings() {
+		org.sbml.libsbml.SBMLDocument doc = originalModel.getSBMLDocument();
+		doc.checkConsistency();
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<doc.getNumErrors(); i++) {
+			sb.append(doc.getError(i).getMessage());
+			sb.append(System.getProperty("line.separator"));
+		}
+		return sb.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBMLReader#getNumErrors()
+	 */
+	public int getNumErrors() {
+		org.sbml.libsbml.SBMLDocument doc = originalModel.getSBMLDocument();
+		doc.checkConsistency();
+		return (int) doc.getNumErrors();
+	}
 }

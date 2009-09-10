@@ -342,4 +342,14 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public String getWarnings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getNumErrors() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

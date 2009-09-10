@@ -20,6 +20,7 @@ package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,11 +42,15 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import jp.sbi.sbml.util.SBMLException;
 
 import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.Reaction;
@@ -160,12 +165,32 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			chooser.setAcceptAllFileFilterUsed(false);
 			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-				addModel(sbmlIO.readModel(chooser.getSelectedFile()
-						.getAbsolutePath()));
-				String path = chooser.getSelectedFile().getAbsolutePath();
-				path = path.substring(0, path.lastIndexOf('/'));
-				if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
-					settings.put(CfgKeys.OPEN_DIR, path);
+				Model model = sbmlIO.readModel(chooser.getSelectedFile()
+						.getAbsolutePath());
+				if (sbmlIO.getNumErrors() > 0) {
+					String warnings = sbmlIO.getWarnings();
+					JTextArea area = new JTextArea(warnings);
+					JScrollPane scroll = new JScrollPane(area,
+							JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+					scroll.setPreferredSize(new Dimension(450, 200));
+					JOptionPane.showMessageDialog(this, scroll,
+							"SBML warnings", JOptionPane.WARNING_MESSAGE);
+				}
+				if (model == null || sbmlIO.getNumErrors() > 0) {
+					String message = "Unable to load this model "
+							+ "due to one or several errors. "
+							+ "Please use the SBML online validator"
+							+ "to check why this model is not correct.";
+					JOptionPane.showMessageDialog(this, GUITools.toHTML(
+							message, 40), "Error", JOptionPane.ERROR_MESSAGE);
+				} else {
+					addModel(model);
+					String path = chooser.getSelectedFile().getAbsolutePath();
+					path = path.substring(0, path.lastIndexOf('/'));
+					if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
+						settings.put(CfgKeys.OPEN_DIR, path);
+				}
 			}
 
 		} else if (e.getActionCommand().equals(SAVE_FILE)) {
@@ -201,8 +226,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 									JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE);
 						if (write == JOptionPane.YES_OPTION)
-							sbmlIO.writeSelectedModelToSBML(out
-									.getAbsolutePath());
+							try {
+								sbmlIO.writeSelectedModelToSBML(out
+										.getAbsolutePath());
+							} catch (SBMLException e1) {
+								JOptionPane.showMessageDialog(null, GUITools
+										.toHTML(e1.getMessage(), 40), e
+										.getClass().getName(),
+										JOptionPane.ERROR_MESSAGE);
+								e1.printStackTrace();
+							}
 					}
 				} else {
 					// TODO

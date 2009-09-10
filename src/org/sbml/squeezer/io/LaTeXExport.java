@@ -18,11 +18,9 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.Compartment;
 import org.sbml.jlibsbml.Event;
 import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.SBase;
 import org.sbml.jlibsbml.Species;
 import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.jlibsbml.StoichiometryMath;
@@ -436,13 +434,6 @@ public class LaTeXExport extends LaTeX {
 	private boolean landscape;
 
 	/**
-	 * If true species (reactants, modifiers and products) in reaction equations
-	 * will be displayed with their name if they have one. By default the ids of
-	 * the species are used in these equations.
-	 */
-	private boolean printNameIfAvailable = true;
-
-	/**
 	 * If true ids are set in typewriter font (default).
 	 */
 	private boolean typeWriter = true;
@@ -500,7 +491,6 @@ public class LaTeXExport extends LaTeX {
 		setFontSize(fontSize);
 		setPaperSize(paperSize);
 		setTitlepage(titlepage);
-		setPrintNameIfAvailable(printNameIfAvailable);
 		// setNumberEquations(numberEquations);
 	}
 
@@ -630,15 +620,6 @@ public class LaTeXExport extends LaTeX {
 		} else
 			this.paperSize = "a4";
 		this.paperSize = paperSize;
-	}
-
-	/**
-	 * If true species (reactants, modifiers and products) in reaction equations
-	 * will be displayed with their name if they have one. By default the ids of
-	 * the species are used in these equations.
-	 */
-	public void setPrintNameIfAvailable(boolean printNameIfAvailable) {
-		this.printNameIfAvailable = printNameIfAvailable;
 	}
 
 	/**

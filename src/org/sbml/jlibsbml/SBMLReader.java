@@ -30,17 +30,24 @@ public interface SBMLReader {
 
 	/**
 	 * 
-	 * @param compartment
-	 * @return
-	 */
-	public Compartment readCompartment(Object compartment);
-	
-	/**
-	 * 
 	 * @param d
 	 * @return
 	 */
 	public Date convertDate(Object d);
+	
+	/**
+	 * 
+	 * @param sbmlDocument
+	 * @return
+	 */
+	public String getWarnings();
+	
+	/**
+	 * 
+	 * @param compartment
+	 * @return
+	 */
+	public Compartment readCompartment(Object compartment);
 	
 	/**
 	 * 
@@ -154,5 +161,11 @@ public interface SBMLReader {
 	 * @return
 	 */
 	public UnitDefinition readUnitDefinition(Object unitDefinition);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNumErrors();
 
 }
