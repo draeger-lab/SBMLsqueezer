@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.sbml.jlibsbml.ASTNode;
 import org.sbml.jlibsbml.AlgebraicRule;
 import org.sbml.jlibsbml.AssignmentRule;
 import org.sbml.jlibsbml.CVTerm;
@@ -109,7 +108,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * @see org.sbml.squeezer.io.AbstractSBMLReader#getOriginalModel()
 	 */
 	// @Override
-	public Object getOriginalModel() {
+	public org.sbml.libsbml.Model getOriginalModel() {
 		return originalModel;
 	}
 
@@ -126,7 +125,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		Compartment c = new Compartment(comp.getId(), (int) comp.getLevel(),
 				(int) comp.getVersion());
 		copyNamedSBaseProperties(c, comp);
-		c.setName(comp.getName());
 		if (comp.isSetOutside()) {
 			Compartment outside = getModel().getCompartment(comp.getOutside());
 			if (outside == null)
@@ -140,6 +138,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		c.setConstant(comp.getConstant());
 		c.setSize(comp.getSize());
 		c.setSpatialDimensions((short) comp.getSpatialDimensions());
+		if (comp.isSetUnits())
+			c.setUnits(getModel().getUnitDefinition(comp.getUnits()));
 		return c;
 	}
 
@@ -149,7 +149,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * @return
 	 */
 	public CompartmentType readCompartmentType(Object compartmenttype) {
-
 		if (!(compartmenttype instanceof org.sbml.libsbml.CompartmentType))
 			throw new IllegalArgumentException("compartmenttype" + error
 					+ "org.sbml.libsbml.CompartmentType");
@@ -158,7 +157,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 				.getLevel(), (int) comp.getVersion());
 		copyNamedSBaseProperties(com, comp);
 		return com;
-
 	}
 
 	/**
@@ -288,13 +286,17 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.Event eve = (org.sbml.libsbml.Event) event;
 		Event ev = new Event((int) eve.getLevel(), (int) eve.getVersion());
 		copyNamedSBaseProperties(ev, eve);
-		ev.setTrigger(readTrigger(eve.getTrigger()));
+		if (eve.isSetTrigger())
+			ev.setTrigger(readTrigger(eve.getTrigger()));
 		if (eve.isSetDelay())
 			ev.setDelay(readDelay(eve.getDelay()));
 		for (int i = 0; i < eve.getNumEventAssignments(); i++) {
 			ev.addEventAssignement(readEventAssignment(eve
 					.getEventAssignment(i)));
 		}
+		if (eve.isSetTimeUnits())
+			ev.setTimeUnits(eve.getTimeUnits());
+		ev.setUseValuesFromTriggerTime(eve.getUseValuesFromTriggerTime());
 		return ev;
 
 	}
@@ -336,7 +338,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.FunctionDefinition fd = (org.sbml.libsbml.FunctionDefinition) functionDefinition;
 		FunctionDefinition f = new FunctionDefinition(fd.getId(), (int) fd
 				.getLevel(), (int) fd.getVersion());
-		copySBaseProperties(f, fd);
 		copyNamedSBaseProperties(f, fd);
 		if (fd.isSetMath())
 			f.setMath(convert(fd.getMath(), f));
@@ -377,11 +378,8 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		KineticLaw kinlaw = new KineticLaw((int) kl.getLevel(), (int) kl
 				.getVersion());
 		copySBaseProperties(kinlaw, kl);
-		if (kl.isSetMath()) {
-			ASTNode ast = convert(kl.getMath(), kinlaw);
-			ast.reduceToBinary();
-			kinlaw.setMath(ast);
-		}
+		if (kl.isSetMath())
+			kinlaw.setMath(convert(kl.getMath(), kinlaw));
 		for (int i = 0; i < kl.getNumParameters(); i++)
 			kinlaw.addParameter(readParameter(kl.getParameter(i)));
 		addAllSBaseChangeListenersTo(kinlaw);
@@ -404,7 +402,9 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			this.originalModel = (org.sbml.libsbml.Model) model;
 			SBMLDocument sbmldoc = new SBMLDocument((int) originalModel
 					.getLevel(), (int) originalModel.getVersion());
+			copySBaseProperties(sbmldoc, originalModel.getSBMLDocument());
 			this.model = sbmldoc.createModel(originalModel.getId());
+			copyNamedSBaseProperties(this.model, originalModel);
 			int i;
 			if (originalModel.isSetModelHistory()) {
 				ModelHistory mh = new ModelHistory();
@@ -428,7 +428,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 					mh.addModifiedDate(convertDate(libHist.getModifiedDate(i)));
 				this.model.setModelHistory(mh);
 			}
-			copyNamedSBaseProperties(this.model, originalModel);
 			for (i = 0; i < originalModel.getNumFunctionDefinitions(); i++)
 				this.model
 						.addFunctionDefinition(readFunctionDefinition(originalModel
@@ -493,7 +492,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 							.getSpeciesInstance().getSBOTerm())))
 				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
 		}
-
 		addAllSBaseChangeListenersTo(mod);
 		return mod;
 	}
@@ -510,16 +508,12 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.Parameter p = (org.sbml.libsbml.Parameter) parameter;
 		Parameter para = new Parameter(p.getId(), (int) p.getLevel(), (int) p
 				.getVersion());
-		if (p.isSetName())
-			para.setName(p.getName());
-		if (p.isSetMetaId())
-			para.setMetaId(p.getMetaId());
-		if (p.isSetNotes())
-			para.setNotes(p.getNotesString());
-		if (p.isSetSBOTerm())
-			para.setSBOTerm(p.getSBOTerm());
+		copyNamedSBaseProperties(para, p);
 		if (p.isSetValue())
 			para.setValue(p.getValue());
+		para.setConstant(p.getConstant());
+		if (p.isSetUnits())
+			para.setUnits(this.model.getUnitDefinition(p.getUnits()));
 		addAllSBaseChangeListenersTo(para);
 		return para;
 	}
@@ -536,6 +530,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.Reaction r = (org.sbml.libsbml.Reaction) reac;
 		Reaction reaction = new Reaction(r.getId(), (int) r.getLevel(), (int) r
 				.getVersion());
+		copyNamedSBaseProperties(reaction, r);
 		for (int i = 0; i < r.getNumReactants(); i++)
 			reaction.addReactant(readSpeciesReference(r.getReactant(i)));
 		for (int i = 0; i < r.getNumProducts(); i++)
@@ -545,7 +540,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 					.addModifier(readModifierSpeciesReference(r.getModifier(i)));
 		if (r.isSetKineticLaw())
 			reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
-		copyNamedSBaseProperties(reaction, r);
 		reaction.setFast(r.getFast());
 		reaction.setReversible(r.getReversible());
 		addAllSBaseChangeListenersTo(reaction);
@@ -603,6 +597,10 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			s.setInitialAmount(spec.getInitialAmount());
 		else if (spec.isSetInitialConcentration())
 			s.setInitialConcentration(spec.getInitialConcentration());
+		if (spec.isSetSubstanceUnits())
+			s.setSubstanceUnits(this.model.getUnitDefinition(spec.getUnits()));
+		if (spec.isSetSpeciesType())
+			s.setSpeciesType(this.model.getSpeciesType(spec.getSpeciesType()));
 		addAllSBaseChangeListenersTo(s);
 		return s;
 	}
@@ -619,7 +617,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		org.sbml.libsbml.SpeciesReference specref = (org.sbml.libsbml.SpeciesReference) speciesReference;
 		SpeciesReference spec = new SpeciesReference(model.getSpecies(specref
 				.getSpecies()));
-
 		copyNamedSBaseProperties(spec, specref);
 		if (specref.isSetStoichiometryMath())
 			spec.setStoichiometryMath(readStoichiometricMath(specref
@@ -923,13 +920,14 @@ public class LibSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#getWarnings()
 	 */
 	public String getWarnings() {
 		org.sbml.libsbml.SBMLDocument doc = originalModel.getSBMLDocument();
 		doc.checkConsistency();
 		StringBuilder sb = new StringBuilder();
-		for (int i=0; i<doc.getNumErrors(); i++) {
+		for (int i = 0; i < doc.getNumErrors(); i++) {
 			sb.append(doc.getError(i).getMessage());
 			sb.append(System.getProperty("line.separator"));
 		}
@@ -938,6 +936,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#getNumErrors()
 	 */
 	public int getNumErrors() {

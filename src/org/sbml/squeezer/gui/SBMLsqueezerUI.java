@@ -167,24 +167,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				Model model = sbmlIO.readModel(chooser.getSelectedFile()
 						.getAbsolutePath());
-				if (sbmlIO.getNumErrors() > 0) {
-					String warnings = sbmlIO.getWarnings();
-					JTextArea area = new JTextArea(warnings);
-					JScrollPane scroll = new JScrollPane(area,
-							JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-					scroll.setPreferredSize(new Dimension(450, 200));
-					JOptionPane.showMessageDialog(this, scroll,
-							"SBML warnings", JOptionPane.WARNING_MESSAGE);
-				}
-				if (model == null || sbmlIO.getNumErrors() > 0) {
-					String message = "Unable to load this model "
-							+ "due to one or several errors. "
-							+ "Please use the SBML online validator"
-							+ "to check why this model is not correct.";
-					JOptionPane.showMessageDialog(this, GUITools.toHTML(
-							message, 40), "Error", JOptionPane.ERROR_MESSAGE);
-				} else {
+				checkForSBMLErrors(model);
+				if (model != null) {
 					addModel(model);
 					String path = chooser.getSelectedFile().getAbsolutePath();
 					path = path.substring(0, path.lastIndexOf('/'));
@@ -213,30 +197,30 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					settings.put(CfgKeys.SAVE_DIR, out.getParentFile()
 							.getAbsolutePath());
 				if (filterSBML.accept(out)) {
-					if (out.isDirectory())
-						System.err.println("no file choosed");
-					else {
-						int write = JOptionPane.YES_OPTION;
-						if (out.exists())
-							write = JOptionPane.showConfirmDialog(this,
-									GUITools.toHTML(out.getName()
-											+ " already exists. Do you"
-											+ " really want to over write it?",
-											40), "Over write existing file?",
-									JOptionPane.YES_NO_OPTION,
-									JOptionPane.QUESTION_MESSAGE);
-						if (write == JOptionPane.YES_OPTION)
-							try {
-								sbmlIO.writeSelectedModelToSBML(out
-										.getAbsolutePath());
-							} catch (SBMLException e1) {
-								JOptionPane.showMessageDialog(null, GUITools
-										.toHTML(e1.getMessage(), 40), e
-										.getClass().getName(),
-										JOptionPane.ERROR_MESSAGE);
-								e1.printStackTrace();
-							}
-					}
+					int write = JOptionPane.YES_OPTION;
+					if (out.exists())
+						write = JOptionPane
+								.showConfirmDialog(
+										this,
+										GUITools
+												.toHTML(
+														out.getName()
+																+ " already exists. Do you"
+																+ " really want to over write it?",
+														40),
+										"Over write existing file?",
+										JOptionPane.YES_NO_OPTION,
+										JOptionPane.QUESTION_MESSAGE);
+					if (write == JOptionPane.YES_OPTION)
+						try {
+							sbmlIO.writeSelectedModelToSBML(out
+									.getAbsolutePath());
+						} catch (SBMLException e1) {
+							JOptionPane.showMessageDialog(null, GUITools
+									.toHTML(e1.getMessage(), 40), e.getClass()
+									.getName(), JOptionPane.ERROR_MESSAGE);
+							e1.printStackTrace();
+						}
 				} else {
 					// TODO
 					System.err.println("not yet implemented");
@@ -276,6 +260,32 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				browser.setBorder(BorderFactory.createEtchedBorder());
 				JOptionPane.showMessageDialog(this, browser,
 						"About SBMLsqueezer", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+	}
+
+	/**
+	 * Checks if the model loaded as the last one contains any errors or
+	 * warnings.
+	 */
+	private void checkForSBMLErrors(Model m) {
+		if (sbmlIO.getNumErrors() > 0) {
+			String warnings = sbmlIO.getWarnings();
+			JTextArea area = new JTextArea(warnings);
+			JScrollPane scroll = new JScrollPane(area,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scroll.setPreferredSize(new Dimension(450, 200));
+			JOptionPane.showMessageDialog(this, scroll, "SBML warnings",
+					JOptionPane.WARNING_MESSAGE);
+			if (m == null) {
+				String message = "Unable to load this model "
+						+ "due to one or several errors. "
+						+ "Please use the SBML online validator "
+						+ "to check why this model is not correct.";
+				JOptionPane.showMessageDialog(this, GUITools
+						.toHTML(message, 40), "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -520,8 +530,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		getContentPane().add(createToolBar(), BorderLayout.NORTH);
 		setEnabled(false, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
-		for (Model m : sbmlIO.getListOfModels())
-			addModel(m);
+		for (Model m : sbmlIO.getListOfModels()) {
+			checkForSBMLErrors(m);
+			if (m != null)
+				addModel(m);
+		}
 		tabbedPane.addChangeListener(this);
 		tabbedPane.addChangeListener(sbmlIO);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);

@@ -131,7 +131,7 @@ public class SBMLsqueezer extends PluginAction {
 		try {
 			System.loadLibrary("sbmlj");
 			// Extra check to be sure we have access to libSBML:
-			Class.forName("org.sbml.libsbml.libsbml");			
+			Class.forName("org.sbml.libsbml.libsbml");
 		} catch (Exception e) {
 			System.err.println("Error: could not load the libSBML library");
 			e.printStackTrace();
@@ -322,6 +322,8 @@ public class SBMLsqueezer extends PluginAction {
 				}
 			}).start();
 		} else {
+			if (sbmlIo.getNumErrors() > 0)
+				System.out.println(sbmlIo.getWarnings());
 			// Do a lot of other stuff...
 			checkForUpdate(false);
 			showAboutMsg();

@@ -1392,7 +1392,6 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		for (long i = 0; i < d.getNumErrors(); i++) {
 			builder.append(d.getError(i).getMessage());
 			builder.append(System.getProperty("line.separator"));
-			System.err.println(builder);
 		}
 		boolean success = writer.writeSBML(d, filename);
 		if (!success)
