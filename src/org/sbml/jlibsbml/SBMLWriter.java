@@ -20,6 +20,8 @@ package org.sbml.jlibsbml;
 
 import java.util.Date;
 
+import jp.sbi.sbml.util.SBMLException;
+
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -27,13 +29,27 @@ import java.util.Date;
  * 
  */
 public interface SBMLWriter {
+	
 	/**
 	 * 
 	 * @param date
 	 * @return
 	 */
 	public Object convertDate(Date date);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getNumErrors(Object sbase);
 
+	/**
+	 * 
+	 * @param sbmlDocument
+	 * @return
+	 */
+	public String getWarnings(Object sbmlDocument);
+	
 	/**
 	 * 
 	 * @param c
@@ -230,8 +246,9 @@ public interface SBMLWriter {
 	 * @param sbmlDocument
 	 * @param filename
 	 * @return
+	 * @throws SBMLException 
 	 */
-	public boolean writeSBML(Object sbmlDocument, String filename);
+	public boolean writeSBML(Object sbmlDocument, String filename) throws SBMLException;
 
 	/**
 	 * 

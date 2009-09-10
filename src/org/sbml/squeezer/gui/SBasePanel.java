@@ -45,6 +45,7 @@ import org.sbml.jlibsbml.Constraint;
 import org.sbml.jlibsbml.Event;
 import org.sbml.jlibsbml.EventAssignment;
 import org.sbml.jlibsbml.FunctionDefinition;
+import org.sbml.jlibsbml.InitialAssignment;
 import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.ListOf;
 import org.sbml.jlibsbml.MathContainer;
@@ -274,6 +275,18 @@ public class SBasePanel extends JPanel {
 					(int) d.getHeight() + 10));
 			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+			if (mc instanceof EventAssignment)
+				lh.add(new SBasePanel(((EventAssignment) mc)
+						.getVariableInstance()), 1, ++row, 3, 1, 1, 1);
+			else if (mc instanceof InitialAssignment)
+				lh.add(new SBasePanel(((InitialAssignment) mc)
+						.getSymbolInstance()), 1, ++row, 3, 1, 1, 1);
+			else if (mc instanceof AssignmentRule)
+				lh.add(new SBasePanel(((AssignmentRule) mc)
+						.getVariableInstance()), 1, ++row, 3, 1, 1, 1);
+			else if (mc instanceof RateRule)
+				lh.add(new SBasePanel(((RateRule) mc).getVariableInstance()),
+						1, ++row, 3, 1, 1, 1);
 		}
 	}
 
