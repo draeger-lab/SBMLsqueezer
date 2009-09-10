@@ -109,7 +109,7 @@ public class SBasePanel extends JPanel {
 		if (sbase instanceof MathContainer)
 			addProperties((MathContainer) sbase);
 		if (sbase instanceof ListOf)
-			addProperties((ListOf) sbase);
+			addProperties((ListOf<?>) sbase);
 		if (sbase instanceof Model)
 			addProperties((Model) sbase);
 		if (sbase instanceof UnitDefinition)

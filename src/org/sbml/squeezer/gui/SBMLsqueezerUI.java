@@ -193,11 +193,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					else {
 						int write = JOptionPane.YES_OPTION;
 						if (out.exists())
-							write = JOptionPane.showConfirmDialog(this, out
-									.getName()
-									+ " already exists. "
-									+ "Do you want to over write it?",
-									"Over write existing file?",
+							write = JOptionPane.showConfirmDialog(this,
+									GUITools.toHTML(out.getName()
+											+ " already exists. Do you"
+											+ " really want to over write it?",
+											40), "Over write existing file?",
 									JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE);
 						if (write == JOptionPane.YES_OPTION)

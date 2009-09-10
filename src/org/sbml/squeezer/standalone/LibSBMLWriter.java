@@ -21,6 +21,7 @@ package org.sbml.squeezer.standalone;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.sbml.jlibsbml.AlgebraicRule;
 import org.sbml.jlibsbml.AssignmentRule;
 import org.sbml.jlibsbml.CVTerm;
 import org.sbml.jlibsbml.Compartment;
@@ -42,7 +43,6 @@ import org.sbml.jlibsbml.Parameter;
 import org.sbml.jlibsbml.RateRule;
 import org.sbml.jlibsbml.Reaction;
 import org.sbml.jlibsbml.Rule;
-import org.sbml.jlibsbml.SBO;
 import org.sbml.jlibsbml.SBase;
 import org.sbml.jlibsbml.Species;
 import org.sbml.jlibsbml.SpeciesReference;
@@ -62,9 +62,6 @@ import org.sbml.squeezer.io.AbstractSBMLWriter;
  * 
  */
 public class LibSBMLWriter extends AbstractSBMLWriter {
-
-	private static LibSBMLReader reader = new LibSBMLReader(SBO
-			.getDefaultPossibleEnzymes());
 
 	/*
 	 * (non-Javadoc)
@@ -109,8 +106,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 					for (Unit u : ud.getListOfUnits()) {
 						boolean contains = false;
 						for (int j = 0; j < libU.getNumUnits() && !contains; j++) {
-							Unit unit = reader.readUnit(libU.getUnit(j));
-							if (unit.equals(u))
+							if (equal(u, libU.getUnit(j)))
 								contains = true;
 						}
 						if (!contains)
@@ -201,8 +197,10 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			InitialAssignment ia = model.getInitialAssignment((int) i);
 			long contains = -1;
 			for (long j = 0; j < mo.getNumInitialAssignments() && contains < 0; j++) {
-				if (reader.readInitialAssignment(mo.getInitialAssignment(j))
-						.equals(ia))
+				org.sbml.libsbml.InitialAssignment libIA = mo
+						.getInitialAssignment(j);
+				if (libIA.getSymbol().equals(ia.getSymbol())
+						&& equal(ia.getMath(), libIA.getMath()))
 					contains = j;
 			}
 			if (contains < 0)
@@ -214,11 +212,13 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		// remove unnecessary initial assignments
 		for (i = mo.getNumInitialAssignments() - 1; i >= 0; i--) {
 			org.sbml.libsbml.InitialAssignment c = mo.getInitialAssignment(i);
-			InitialAssignment ia = reader.readInitialAssignment(c);
 			boolean contains = false;
-			for (int j = 0; j < model.getNumInitialAssignments() && !contains; j++)
-				if (model.getInitialAssignment(j).equals(ia))
+			for (int j = 0; j < model.getNumInitialAssignments() && !contains; j++) {
+				InitialAssignment ia = model.getInitialAssignment(j);
+				if (ia.getSymbol().equals(c.getSymbol())
+						&& equal(ia.getMath(), c.getMath()))
 					contains = true;
+			}
 			if (!contains)
 				mo.getListOfInitialAssignments().remove(i);
 		}
@@ -228,7 +228,26 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			Rule ia = model.getRule((int) i);
 			long contains = -1;
 			for (long j = 0; j < mo.getNumRules() && contains < 0; j++) {
-				if (reader.readRule(mo.getRule(j)).equals(ia))
+				boolean equal = false;
+				org.sbml.libsbml.Rule r = mo.getRule(j);
+				if (ia instanceof RateRule
+						&& r instanceof org.sbml.libsbml.RateRule) {
+					equal = ((RateRule) ia).getVariable().equals(
+							((org.sbml.libsbml.RateRule) r).getVariable());
+				} else if (ia instanceof AssignmentRule
+						&& r instanceof org.sbml.libsbml.AssignmentRule) {
+					equal = ((AssignmentRule) ia).getVariable()
+							.equals(
+									((org.sbml.libsbml.AssignmentRule) r)
+											.getVariable());
+				} else if (ia instanceof AlgebraicRule
+						&& r instanceof org.sbml.libsbml.AlgebraicRule) {
+					equal = true;
+				} else
+					equal = false;
+				if (equal)
+					equal &= equal(ia.getMath(), r.getMath());
+				if (equal)
 					contains = j;
 			}
 			if (contains < 0)
@@ -239,11 +258,21 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		// remove unnecessary rules
 		for (i = mo.getNumRules() - 1; i >= 0; i--) {
 			org.sbml.libsbml.Rule c = mo.getRule(i);
-			Rule ia = reader.readRule(c);
 			boolean contains = false;
-			for (int j = 0; j < model.getNumRules() && !contains; j++)
-				if (model.getRule(j).equals(ia))
-					contains = true;
+			for (int j = 0; j < model.getNumRules() && !contains; j++) {
+				Rule r = model.getRule(j);
+				if ((c instanceof org.sbml.libsbml.RateRule
+						&& r instanceof RateRule && ((org.sbml.libsbml.RateRule) c)
+						.getVariable().equals(((RateRule) r).getVariable()))
+						|| (c instanceof org.sbml.libsbml.AssignmentRule
+								&& r instanceof AssignmentRule && ((AssignmentRule) r)
+								.getVariable().equals(
+										((org.sbml.libsbml.AssignmentRule) c)
+												.getVariable()))
+						|| (c instanceof org.sbml.libsbml.AlgebraicRule && r instanceof AlgebraicRule))
+					if (equal(r.getMath(), c.getMath()))
+						contains = true;
+			}
 			if (!contains)
 				mo.getListOfRules().remove(i);
 		}
@@ -253,7 +282,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			Constraint ia = model.getConstraint((int) i);
 			long contains = -1;
 			for (long j = 0; j < mo.getNumConstraints() && contains < 0; j++) {
-				if (reader.readConstraint(mo.getConstraint(j)).equals(ia))
+				org.sbml.libsbml.Constraint c = mo.getConstraint(j);
+				if (equal(ia.getMath(), c.getMath()))
 					contains = j;
 			}
 			if (contains < 0)
@@ -264,11 +294,12 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		// remove unnecessary constraints
 		for (i = mo.getNumConstraints() - 1; i >= 0; i--) {
 			org.sbml.libsbml.Constraint c = mo.getConstraint(i);
-			Constraint ia = reader.readConstraint(c);
 			boolean contains = false;
-			for (int j = 0; j < model.getNumConstraints() && !contains; j++)
-				if (model.getConstraint(j).equals(ia))
+			for (int j = 0; j < model.getNumConstraints() && !contains; j++) {
+				Constraint ia = model.getConstraint(j);
+				if (equal(ia.getMath(), c.getMath()))
 					contains = true;
+			}
 			if (!contains)
 				mo.getListOfConstraints().remove(i);
 		}
@@ -300,6 +331,134 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			if (model.getEvent(r.getId()) == null)
 				mo.getListOfEvents().remove(i);
 		}
+	}
+
+	/**
+	 * Checks wheter these two units are identical.
+	 * 
+	 * @param u
+	 * @param unit
+	 * @return
+	 */
+	private boolean equal(Unit u, org.sbml.libsbml.Unit unit) {
+		if (u == null || unit == null)
+			return false;
+		boolean equal = true;
+		switch (unit.getKind()) {
+		case libsbmlConstants.UNIT_KIND_AMPERE:
+			equal &= u.getKind() == Unit.Kind.AMPERE;
+			break;
+		case libsbmlConstants.UNIT_KIND_BECQUEREL:
+			equal &= u.getKind() == Unit.Kind.BECQUEREL;
+			break;
+		case libsbmlConstants.UNIT_KIND_CANDELA:
+			equal &= u.getKind() == Unit.Kind.CANDELA;
+			break;
+		case libsbmlConstants.UNIT_KIND_CELSIUS:
+			equal &= u.getKind() == Unit.Kind.CELSIUS;
+			break;
+		case libsbmlConstants.UNIT_KIND_COULOMB:
+			equal &= u.getKind() == Unit.Kind.COULOMB;
+			break;
+		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
+			equal &= u.getKind() == Unit.Kind.DIMENSIONLESS;
+			break;
+		case libsbmlConstants.UNIT_KIND_FARAD:
+			equal &= u.getKind() == Unit.Kind.FARAD;
+			break;
+		case libsbmlConstants.UNIT_KIND_GRAM:
+			equal &= u.getKind() == Unit.Kind.GRAM;
+			break;
+		case libsbmlConstants.UNIT_KIND_GRAY:
+			equal &= u.getKind() == Unit.Kind.GRAY;
+			break;
+		case libsbmlConstants.UNIT_KIND_HENRY:
+			equal &= u.getKind() == Unit.Kind.HENRY;
+			break;
+		case libsbmlConstants.UNIT_KIND_HERTZ:
+			equal &= u.getKind() == Unit.Kind.HERTZ;
+			break;
+		case libsbmlConstants.UNIT_KIND_INVALID:
+			equal &= u.getKind() == Unit.Kind.INVALID;
+			break;
+		case libsbmlConstants.UNIT_KIND_ITEM:
+			equal &= u.getKind() == Unit.Kind.ITEM;
+			break;
+		case libsbmlConstants.UNIT_KIND_JOULE:
+			equal &= u.getKind() == Unit.Kind.JOULE;
+			break;
+		case libsbmlConstants.UNIT_KIND_KATAL:
+			equal &= u.getKind() == Unit.Kind.KATAL;
+			break;
+		case libsbmlConstants.UNIT_KIND_KELVIN:
+			equal &= u.getKind() == Unit.Kind.KELVIN;
+			break;
+		case libsbmlConstants.UNIT_KIND_KILOGRAM:
+			equal &= u.getKind() == Unit.Kind.KILOGRAM;
+			break;
+		case libsbmlConstants.UNIT_KIND_LITER:
+			equal &= u.getKind() == Unit.Kind.LITER;
+			break;
+		case libsbmlConstants.UNIT_KIND_LITRE:
+			equal &= u.getKind() == Unit.Kind.LITRE;
+			break;
+		case libsbmlConstants.UNIT_KIND_LUMEN:
+			equal &= u.getKind() == Unit.Kind.LUMEN;
+			break;
+		case libsbmlConstants.UNIT_KIND_LUX:
+			equal &= u.getKind() == Unit.Kind.LUX;
+			break;
+		case libsbmlConstants.UNIT_KIND_METER:
+			equal &= u.getKind() == Unit.Kind.METER;
+			break;
+		case libsbmlConstants.UNIT_KIND_METRE:
+			equal &= u.getKind() == Unit.Kind.METRE;
+			break;
+		case libsbmlConstants.UNIT_KIND_MOLE:
+			equal &= u.getKind() == Unit.Kind.MOLE;
+			break;
+		case libsbmlConstants.UNIT_KIND_NEWTON:
+			equal &= u.getKind() == Unit.Kind.NEWTON;
+			break;
+		case libsbmlConstants.UNIT_KIND_OHM:
+			equal &= u.getKind() == Unit.Kind.OHM;
+			break;
+		case libsbmlConstants.UNIT_KIND_PASCAL:
+			equal &= u.getKind() == Unit.Kind.PASCAL;
+			break;
+		case libsbmlConstants.UNIT_KIND_RADIAN:
+			equal &= u.getKind() == Unit.Kind.RADIAN;
+			break;
+		case libsbmlConstants.UNIT_KIND_SECOND:
+			equal &= u.getKind() == Unit.Kind.SECOND;
+			break;
+		case libsbmlConstants.UNIT_KIND_SIEMENS:
+			equal &= u.getKind() == Unit.Kind.SIEMENS;
+			break;
+		case libsbmlConstants.UNIT_KIND_SIEVERT:
+			equal &= u.getKind() == Unit.Kind.SIEVERT;
+			break;
+		case libsbmlConstants.UNIT_KIND_STERADIAN:
+			equal &= u.getKind() == Unit.Kind.STERADIAN;
+			break;
+		case libsbmlConstants.UNIT_KIND_TESLA:
+			equal &= u.getKind() == Unit.Kind.TESLA;
+			break;
+		case libsbmlConstants.UNIT_KIND_VOLT:
+			equal &= u.getKind() == Unit.Kind.VOLT;
+			break;
+		case libsbmlConstants.UNIT_KIND_WATT:
+			equal &= u.getKind() == Unit.Kind.WATT;
+			break;
+		case libsbmlConstants.UNIT_KIND_WEBER:
+			equal &= u.getKind() == Unit.Kind.WEBER;
+			break;
+		}
+		equal &= u.getExponent() == unit.getExponent();
+		equal &= u.getMultiplier() == unit.getMultiplier();
+		equal &= u.getScale() == unit.getScale();
+		equal &= u.getOffset() == unit.getOffset();
+		return equal;
 	}
 
 	/*
@@ -338,7 +497,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			for (long i = 0; i < e.getNumEventAssignments() && contains < 0; i++) {
 				org.sbml.libsbml.EventAssignment libEA = e
 						.getEventAssignment(i);
-				if (reader.readEventAssignment(libEA).equals(ea))
+				if (libEA.getVariable().equals(ea.getVariable())
+						&& equal(ea.getMath(), libEA.getMath()))
 					contains = i;
 			}
 			if (contains < 0)
@@ -348,12 +508,14 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		}
 		// remove unnecessary event assignments
 		for (long i = e.getNumEventAssignments() - 1; i >= 0; i--) {
-			EventAssignment ea = reader.readEventAssignment(e
-					.getEventAssignment(i));
+			org.sbml.libsbml.EventAssignment ea = e.getEventAssignment(i);
 			boolean contains = false;
-			for (int j = 0; j < r.getNumEventAssignments() && !contains; j++)
-				if (r.getEventAssignment(j).equals(ea))
+			for (int j = 0; j < r.getNumEventAssignments() && !contains; j++) {
+				EventAssignment eventA = r.getEventAssignment(j);
+				if (eventA.getVariable().equals(ea.getVariable())
+						&& equal(eventA.getMath(), ea.getMath()))
 					contains = true;
+			}
 			if (!contains)
 				e.removeEventAssignment(i);
 		}
@@ -738,8 +900,13 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		for (CVTerm cvt : s.getCVTerms()) {
 			long contains = -1;
 			for (int i = 0; i < po.getNumCVTerms() && contains < 0; i++) {
-				CVTerm cv = reader.readCVTerm(po.getCVTerm(i));
-				if (cvt.equals(cv))
+				org.sbml.libsbml.CVTerm cvo = po.getCVTerm(i);
+				boolean equal = cvo.getNumResources() == cvt.getNumResources();
+				if (equal)
+					for (int j = 0; j < cvo.getNumResources(); j++)
+						equal &= cvo.getResourceURI(j).equals(
+								cvt.getResourceURI(j));
+				if (equal)
 					contains = i;
 			}
 			if (contains < 0)
@@ -749,7 +916,19 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		}
 		// remove CVTerms that are not needed anymore.
 		for (long i = po.getNumCVTerms() - 1; i >= 0; i--) {
-			if (!s.getCVTerms().contains(reader.readCVTerm(po.getCVTerm(i))))
+			long contains = -1;
+			org.sbml.libsbml.CVTerm cvo = po.getCVTerm(i);
+			for (int j = 0; j < s.getNumCVTerms() && contains < 0; j++) {
+				CVTerm cvt = s.getCVTerm(j);
+				boolean equal = cvo.getNumResources() == cvt.getNumResources();
+				if (equal)
+					for (int k = 0; k < cvo.getNumResources(); k++)
+						equal &= cvo.getResourceURI(k).equals(
+								cvt.getResourceURI(k));
+				if (equal)
+					contains = i;
+			}
+			if (contains < 0)
 				po.getCVTerms().remove(i);
 		}
 	}

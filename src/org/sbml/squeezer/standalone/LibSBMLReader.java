@@ -87,6 +87,25 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.jlibsbml.SBMLReader#convertDate(java.lang.Object)
+	 */
+	public Date convertDate(Object date) {
+		if (!(date instanceof org.sbml.libsbml.Date))
+			throw new IllegalArgumentException("date" + error
+					+ "org.sbml.libsbml.Date.");
+		org.sbml.libsbml.Date d = (org.sbml.libsbml.Date) date;
+		Calendar c = Calendar.getInstance();
+		c.setTimeZone(TimeZone.getTimeZone(TimeZone.getAvailableIDs((int) (d
+				.getSignOffset()
+				* d.getMinutesOffset() * 60000))[0]));
+		c.set((int) d.getYear(), (int) d.getMonth(), (int) d.getDay(), (int) d
+				.getHour(), (int) d.getMinute(), (int) d.getSecond());
+		return c.getTime();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.io.AbstractSBMLReader#getOriginalModel()
 	 */
 	// @Override
@@ -163,6 +182,83 @@ public class LibSBMLReader extends AbstractSBMLReader {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBMLReader#readCVTerm(java.lang.Object)
+	 */
+	public CVTerm readCVTerm(Object term) {
+		if (!(term instanceof org.sbml.libsbml.CVTerm))
+			throw new IllegalArgumentException("term" + error
+					+ "org.sbml.libsbml.CVTerm.");
+		org.sbml.libsbml.CVTerm libCVt = (org.sbml.libsbml.CVTerm) term;
+		CVTerm t = new CVTerm();
+		switch (libCVt.getQualifierType()) {
+		case libsbmlConstants.MODEL_QUALIFIER:
+			t.setQualifierType(CVTerm.Qualifier.MODEL_QUALIFIER);
+			switch (libCVt.getModelQualifierType()) {
+			case libsbmlConstants.BQM_IS:
+				t.setModelQualifierType(Qualifier.BQM_IS);
+				break;
+			case libsbmlConstants.BQM_IS_DESCRIBED_BY:
+				t.setModelQualifierType(Qualifier.BQM_IS_DESCRIBED_BY);
+				break;
+			case libsbmlConstants.BQM_UNKNOWN:
+				t.setModelQualifierType(Qualifier.BQM_UNKNOWN);
+				break;
+			default:
+				break;
+			}
+			break;
+		case libsbmlConstants.BIOLOGICAL_QUALIFIER:
+			t.setQualifierType(CVTerm.Qualifier.BIOLOGICAL_QUALIFIER);
+			switch (libCVt.getBiologicalQualifierType()) {
+			case libsbmlConstants.BQB_ENCODES:
+				t.setBiologicalQualifierType(Qualifier.BQB_ENCODES);
+				break;
+			case libsbmlConstants.BQB_HAS_PART:
+				t.setBiologicalQualifierType(Qualifier.BQB_HAS_PART);
+				break;
+			case libsbmlConstants.BQB_HAS_VERSION:
+				t.setBiologicalQualifierType(Qualifier.BQB_HAS_VERSION);
+				break;
+			case libsbmlConstants.BQB_IS:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS);
+				break;
+			case libsbmlConstants.BQB_IS_DESCRIBED_BY:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_DESCRIBED_BY);
+				break;
+			case libsbmlConstants.BQB_IS_ENCODED_BY:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_ENCODED_BY);
+				break;
+			case libsbmlConstants.BQB_IS_HOMOLOG_TO:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_HOMOLOG_TO);
+				break;
+			case libsbmlConstants.BQB_IS_PART_OF:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_PART_OF);
+				break;
+			case libsbmlConstants.BQB_IS_VERSION_OF:
+				t.setBiologicalQualifierType(Qualifier.BQB_IS_VERSION_OF);
+				break;
+			case libsbmlConstants.BQB_OCCURS_IN:
+				t.setBiologicalQualifierType(Qualifier.BQB_OCCURS_IN);
+				break;
+			case libsbmlConstants.BQB_UNKNOWN:
+				t.setBiologicalQualifierType(Qualifier.BQB_UNKNOWN);
+				break;
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+		for (int j = 0; j < libCVt.getNumResources(); j++) {
+			t.addResourceURI(libCVt.getResourceURI(j));
+		}
+		return t;
+	}
+
 	/**
 	 * 
 	 * @param delay
@@ -201,6 +297,31 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		}
 		return ev;
 
+	}
+
+	/**
+	 * 
+	 * @param eventAssignment
+	 * @return
+	 */
+	public EventAssignment readEventAssignment(Object eventass) {
+		if (!(eventass instanceof org.sbml.libsbml.EventAssignment))
+			throw new IllegalArgumentException("eventassignment" + error
+					+ "org.sbml.libsbml.EventAssignment");
+		org.sbml.libsbml.EventAssignment eve = (org.sbml.libsbml.EventAssignment) eventass;
+		EventAssignment ev = new EventAssignment((int) eve.getLevel(),
+				(int) eve.getVersion());
+		copySBaseProperties(ev, eve);
+		if (eve.isSetVariable()) {
+			Symbol variable = model.findSymbol(eve.getVariable());
+			if (variable == null)
+				ev.setVariable(eve.getVariable());
+			else
+				ev.setVariable(variable);
+		}
+		if (eve.isSetMath())
+			ev.setMath(convert(eve.getMath(), ev));
+		return ev;
 	}
 
 	/*
@@ -349,25 +470,6 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			return this.model;
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jlibsbml.SBMLReader#convertDate(java.lang.Object)
-	 */
-	public Date convertDate(Object date) {
-		if (!(date instanceof org.sbml.libsbml.Date))
-			throw new IllegalArgumentException("date" + error
-					+ "org.sbml.libsbml.Date.");
-		org.sbml.libsbml.Date d = (org.sbml.libsbml.Date) date;
-		Calendar c = Calendar.getInstance();
-		c.setTimeZone(TimeZone.getTimeZone(TimeZone.getAvailableIDs((int) (d
-				.getSignOffset()
-				* d.getMinutesOffset() * 60000))[0]));
-		c.set((int) d.getYear(), (int) d.getMonth(), (int) d.getDay(), (int) d
-				.getHour(), (int) d.getMinute(), (int) d.getSecond());
-		return c.getTime();
 	}
 
 	/*
@@ -817,107 +919,5 @@ public class LibSBMLReader extends AbstractSBMLReader {
 			sbase.setNotes(libSBase.getNotesString());
 		for (int i = 0; i < libSBase.getNumCVTerms(); i++)
 			sbase.addCVTerm(readCVTerm(libSBase.getCVTerm(i)));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jlibsbml.SBMLReader#readCVTerm(java.lang.Object)
-	 */
-	public CVTerm readCVTerm(Object term) {
-		if (!(term instanceof org.sbml.libsbml.CVTerm))
-			throw new IllegalArgumentException("term" + error
-					+ "org.sbml.libsbml.CVTerm.");
-		org.sbml.libsbml.CVTerm libCVt = (org.sbml.libsbml.CVTerm) term;
-		CVTerm t = new CVTerm();
-		switch (libCVt.getQualifierType()) {
-		case libsbmlConstants.MODEL_QUALIFIER:
-			t.setQualifierType(CVTerm.Qualifier.MODEL_QUALIFIER);
-			switch (libCVt.getModelQualifierType()) {
-			case libsbmlConstants.BQM_IS:
-				t.setModelQualifierType(Qualifier.BQM_IS);
-				break;
-			case libsbmlConstants.BQM_IS_DESCRIBED_BY:
-				t.setModelQualifierType(Qualifier.BQM_IS_DESCRIBED_BY);
-				break;
-			case libsbmlConstants.BQM_UNKNOWN:
-				t.setModelQualifierType(Qualifier.BQM_UNKNOWN);
-				break;
-			default:
-				break;
-			}
-			break;
-		case libsbmlConstants.BIOLOGICAL_QUALIFIER:
-			t.setQualifierType(CVTerm.Qualifier.BIOLOGICAL_QUALIFIER);
-			switch (libCVt.getBiologicalQualifierType()) {
-			case libsbmlConstants.BQB_ENCODES:
-				t.setBiologicalQualifierType(Qualifier.BQB_ENCODES);
-				break;
-			case libsbmlConstants.BQB_HAS_PART:
-				t.setBiologicalQualifierType(Qualifier.BQB_HAS_PART);
-				break;
-			case libsbmlConstants.BQB_HAS_VERSION:
-				t.setBiologicalQualifierType(Qualifier.BQB_HAS_VERSION);
-				break;
-			case libsbmlConstants.BQB_IS:
-				t.setBiologicalQualifierType(Qualifier.BQB_IS);
-				break;
-			case libsbmlConstants.BQB_IS_DESCRIBED_BY:
-				t.setBiologicalQualifierType(Qualifier.BQB_IS_DESCRIBED_BY);
-				break;
-			case libsbmlConstants.BQB_IS_ENCODED_BY:
-				t.setBiologicalQualifierType(Qualifier.BQB_IS_ENCODED_BY);
-				break;
-			case libsbmlConstants.BQB_IS_HOMOLOG_TO:
-				t.setBiologicalQualifierType(Qualifier.BQB_IS_HOMOLOG_TO);
-				break;
-			case libsbmlConstants.BQB_IS_PART_OF:
-				t.setBiologicalQualifierType(Qualifier.BQB_IS_PART_OF);
-				break;
-			case libsbmlConstants.BQB_IS_VERSION_OF:
-				t.setBiologicalQualifierType(Qualifier.BQB_IS_VERSION_OF);
-				break;
-			case libsbmlConstants.BQB_OCCURS_IN:
-				t.setBiologicalQualifierType(Qualifier.BQB_OCCURS_IN);
-				break;
-			case libsbmlConstants.BQB_UNKNOWN:
-				t.setBiologicalQualifierType(Qualifier.BQB_UNKNOWN);
-				break;
-			default:
-				break;
-			}
-			break;
-		default:
-			break;
-		}
-		for (int j = 0; j < libCVt.getNumResources(); j++) {
-			t.addResourceURI(libCVt.getResourceURI(j));
-		}
-		return t;
-	}
-
-	/**
-	 * 
-	 * @param eventAssignment
-	 * @return
-	 */
-	public EventAssignment readEventAssignment(Object eventass) {
-		if (!(eventass instanceof org.sbml.libsbml.EventAssignment))
-			throw new IllegalArgumentException("eventassignment" + error
-					+ "org.sbml.libsbml.EventAssignment");
-		org.sbml.libsbml.EventAssignment eve = (org.sbml.libsbml.EventAssignment) eventass;
-		EventAssignment ev = new EventAssignment((int) eve.getLevel(),
-				(int) eve.getVersion());
-		copySBaseProperties(ev, eve);
-		if (eve.isSetVariable()) {
-			Symbol variable = model.findSymbol(eve.getVariable());
-			if (variable == null)
-				ev.setVariable(eve.getVariable());
-			else
-				ev.setVariable(variable);
-		}
-		if (eve.isSetMath())
-			ev.setMath(convert(eve.getMath(), ev));
-		return ev;
 	}
 }
