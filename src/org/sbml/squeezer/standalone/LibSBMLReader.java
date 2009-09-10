@@ -46,6 +46,7 @@ import org.sbml.jlibsbml.Parameter;
 import org.sbml.jlibsbml.RateRule;
 import org.sbml.jlibsbml.Reaction;
 import org.sbml.jlibsbml.Rule;
+import org.sbml.jlibsbml.SBMLDocument;
 import org.sbml.jlibsbml.SBO;
 import org.sbml.jlibsbml.SBase;
 import org.sbml.jlibsbml.Species;
@@ -57,7 +58,6 @@ import org.sbml.jlibsbml.Trigger;
 import org.sbml.jlibsbml.Unit;
 import org.sbml.jlibsbml.UnitDefinition;
 import org.sbml.jlibsbml.CVTerm.Qualifier;
-import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
@@ -69,7 +69,7 @@ import org.sbml.squeezer.io.AbstractSBMLReader;
  */
 public class LibSBMLReader extends AbstractSBMLReader {
 
-	private Set<SBMLDocument> setOfDocuments;
+	private Set<org.sbml.libsbml.SBMLDocument> setOfDocuments;
 	private Set<Integer> possibleEnzymes;
 	private static final String error = " must be an instance of ";
 	private org.sbml.libsbml.Model originalModel;
@@ -81,7 +81,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	public LibSBMLReader(Set<Integer> possibleEnzymes) {
 		super();
 		this.possibleEnzymes = possibleEnzymes;
-		setOfDocuments = new HashSet<SBMLDocument>();
+		setOfDocuments = new HashSet<org.sbml.libsbml.SBMLDocument>();
 	}
 
 	/*
@@ -274,15 +274,16 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 */
 	public Model readModel(Object model) {
 		if (model instanceof String) {
-			SBMLDocument doc = (new org.sbml.libsbml.SBMLReader())
+			org.sbml.libsbml.SBMLDocument doc = (new org.sbml.libsbml.SBMLReader())
 					.readSBML(model.toString());
 			setOfDocuments.add(doc);
 			model = doc.getModel();
 		}
 		if (model instanceof org.sbml.libsbml.Model) {
 			this.originalModel = (org.sbml.libsbml.Model) model;
-			this.model = new Model(originalModel.getId(), (int) originalModel
+			SBMLDocument sbmldoc = new SBMLDocument((int) originalModel
 					.getLevel(), (int) originalModel.getVersion());
+			this.model = sbmldoc.createModel(originalModel.getId());
 			int i;
 			if (originalModel.isSetModelHistory()) {
 				ModelHistory mh = new ModelHistory();
@@ -350,12 +351,16 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		return null;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param d
-	 * @return
+	 * @see org.sbml.jlibsbml.SBMLReader#convertDate(java.lang.Object)
 	 */
-	private Date convertDate(org.sbml.libsbml.Date d) {
+	public Date convertDate(Object date) {
+		if (!(date instanceof org.sbml.libsbml.Date))
+			throw new IllegalArgumentException("date" + error
+					+ "org.sbml.libsbml.Date.");
+		org.sbml.libsbml.Date d = (org.sbml.libsbml.Date) date;
 		Calendar c = Calendar.getInstance();
 		c.setTimeZone(TimeZone.getTimeZone(TimeZone.getAvailableIDs((int) (d
 				.getSignOffset()
@@ -587,112 +592,112 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		copySBaseProperties(u, libUnit);
 		switch (libUnit.getKind()) {
 		case libsbmlConstants.UNIT_KIND_AMPERE:
-			u.setKind(Unit.Kind.UNIT_KIND_AMPERE);
+			u.setKind(Unit.Kind.AMPERE);
 			break;
 		case libsbmlConstants.UNIT_KIND_BECQUEREL:
-			u.setKind(Unit.Kind.UNIT_KIND_BECQUEREL);
+			u.setKind(Unit.Kind.BECQUEREL);
 			break;
 		case libsbmlConstants.UNIT_KIND_CANDELA:
-			u.setKind(Unit.Kind.UNIT_KIND_CANDELA);
+			u.setKind(Unit.Kind.CANDELA);
 			break;
 		case libsbmlConstants.UNIT_KIND_CELSIUS:
-			u.setKind(Unit.Kind.UNIT_KIND_CELSIUS);
+			u.setKind(Unit.Kind.CELSIUS);
 			break;
 		case libsbmlConstants.UNIT_KIND_COULOMB:
-			u.setKind(Unit.Kind.UNIT_KIND_COULOMB);
+			u.setKind(Unit.Kind.COULOMB);
 			break;
 		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
-			u.setKind(Unit.Kind.UNIT_KIND_DIMENSIONLESS);
+			u.setKind(Unit.Kind.DIMENSIONLESS);
 			break;
 		case libsbmlConstants.UNIT_KIND_FARAD:
-			u.setKind(Unit.Kind.UNIT_KIND_FARAD);
+			u.setKind(Unit.Kind.FARAD);
 			break;
 		case libsbmlConstants.UNIT_KIND_GRAM:
-			u.setKind(Unit.Kind.UNIT_KIND_GRAM);
+			u.setKind(Unit.Kind.GRAM);
 			break;
 		case libsbmlConstants.UNIT_KIND_GRAY:
-			u.setKind(Unit.Kind.UNIT_KIND_GRAY);
+			u.setKind(Unit.Kind.GRAY);
 			break;
 		case libsbmlConstants.UNIT_KIND_HENRY:
-			u.setKind(Unit.Kind.UNIT_KIND_HENRY);
+			u.setKind(Unit.Kind.HENRY);
 			break;
 		case libsbmlConstants.UNIT_KIND_HERTZ:
-			u.setKind(Unit.Kind.UNIT_KIND_HERTZ);
+			u.setKind(Unit.Kind.HERTZ);
 			break;
 		case libsbmlConstants.UNIT_KIND_INVALID:
-			u.setKind(Unit.Kind.UNIT_KIND_INVALID);
+			u.setKind(Unit.Kind.INVALID);
 			break;
 		case libsbmlConstants.UNIT_KIND_ITEM:
-			u.setKind(Unit.Kind.UNIT_KIND_ITEM);
+			u.setKind(Unit.Kind.ITEM);
 			break;
 		case libsbmlConstants.UNIT_KIND_JOULE:
-			u.setKind(Unit.Kind.UNIT_KIND_JOULE);
+			u.setKind(Unit.Kind.JOULE);
 			break;
 		case libsbmlConstants.UNIT_KIND_KATAL:
-			u.setKind(Unit.Kind.UNIT_KIND_KATAL);
+			u.setKind(Unit.Kind.KATAL);
 			break;
 		case libsbmlConstants.UNIT_KIND_KELVIN:
-			u.setKind(Unit.Kind.UNIT_KIND_KELVIN);
+			u.setKind(Unit.Kind.KELVIN);
 			break;
 		case libsbmlConstants.UNIT_KIND_KILOGRAM:
-			u.setKind(Unit.Kind.UNIT_KIND_KILOGRAM);
+			u.setKind(Unit.Kind.KILOGRAM);
 			break;
 		case libsbmlConstants.UNIT_KIND_LITER:
-			u.setKind(Unit.Kind.UNIT_KIND_LITER);
+			u.setKind(Unit.Kind.LITER);
 			break;
 		case libsbmlConstants.UNIT_KIND_LITRE:
-			u.setKind(Unit.Kind.UNIT_KIND_LITRE);
+			u.setKind(Unit.Kind.LITRE);
 			break;
 		case libsbmlConstants.UNIT_KIND_LUMEN:
-			u.setKind(Unit.Kind.UNIT_KIND_LUMEN);
+			u.setKind(Unit.Kind.LUMEN);
 			break;
 		case libsbmlConstants.UNIT_KIND_LUX:
-			u.setKind(Unit.Kind.UNIT_KIND_LUX);
+			u.setKind(Unit.Kind.LUX);
 			break;
 		case libsbmlConstants.UNIT_KIND_METER:
-			u.setKind(Unit.Kind.UNIT_KIND_METER);
+			u.setKind(Unit.Kind.METER);
 			break;
 		case libsbmlConstants.UNIT_KIND_METRE:
-			u.setKind(Unit.Kind.UNIT_KIND_METRE);
+			u.setKind(Unit.Kind.METRE);
 			break;
 		case libsbmlConstants.UNIT_KIND_MOLE:
-			u.setKind(Unit.Kind.UNIT_KIND_MOLE);
+			u.setKind(Unit.Kind.MOLE);
 			break;
 		case libsbmlConstants.UNIT_KIND_NEWTON:
-			u.setKind(Unit.Kind.UNIT_KIND_NEWTON);
+			u.setKind(Unit.Kind.NEWTON);
 			break;
 		case libsbmlConstants.UNIT_KIND_OHM:
-			u.setKind(Unit.Kind.UNIT_KIND_OHM);
+			u.setKind(Unit.Kind.OHM);
 			break;
 		case libsbmlConstants.UNIT_KIND_PASCAL:
-			u.setKind(Unit.Kind.UNIT_KIND_PASCAL);
+			u.setKind(Unit.Kind.PASCAL);
 			break;
 		case libsbmlConstants.UNIT_KIND_RADIAN:
-			u.setKind(Unit.Kind.UNIT_KIND_RADIAN);
+			u.setKind(Unit.Kind.RADIAN);
 			break;
 		case libsbmlConstants.UNIT_KIND_SECOND:
-			u.setKind(Unit.Kind.UNIT_KIND_SECOND);
+			u.setKind(Unit.Kind.SECOND);
 			break;
 		case libsbmlConstants.UNIT_KIND_SIEMENS:
-			u.setKind(Unit.Kind.UNIT_KIND_SIEMENS);
+			u.setKind(Unit.Kind.SIEMENS);
 			break;
 		case libsbmlConstants.UNIT_KIND_SIEVERT:
-			u.setKind(Unit.Kind.UNIT_KIND_SIEVERT);
+			u.setKind(Unit.Kind.SIEVERT);
 			break;
 		case libsbmlConstants.UNIT_KIND_STERADIAN:
-			u.setKind(Unit.Kind.UNIT_KIND_STERADIAN);
+			u.setKind(Unit.Kind.STERADIAN);
 			break;
 		case libsbmlConstants.UNIT_KIND_TESLA:
-			u.setKind(Unit.Kind.UNIT_KIND_TESLA);
+			u.setKind(Unit.Kind.TESLA);
 			break;
 		case libsbmlConstants.UNIT_KIND_VOLT:
-			u.setKind(Unit.Kind.UNIT_KIND_VOLT);
+			u.setKind(Unit.Kind.VOLT);
 			break;
 		case libsbmlConstants.UNIT_KIND_WATT:
-			u.setKind(Unit.Kind.UNIT_KIND_WATT);
+			u.setKind(Unit.Kind.WATT);
 			break;
 		case libsbmlConstants.UNIT_KIND_WEBER:
-			u.setKind(Unit.Kind.UNIT_KIND_WEBER);
+			u.setKind(Unit.Kind.WEBER);
 			break;
 		}
 		u.setExponent(libUnit.getExponent());
@@ -816,11 +821,13 @@ public class LibSBMLReader extends AbstractSBMLReader {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#readCVTerm(java.lang.Object)
 	 */
 	public CVTerm readCVTerm(Object term) {
 		if (!(term instanceof org.sbml.libsbml.CVTerm))
-			throw new IllegalArgumentException("term" + error + "org.sbml.libsbml.CVTerm.");
+			throw new IllegalArgumentException("term" + error
+					+ "org.sbml.libsbml.CVTerm.");
 		org.sbml.libsbml.CVTerm libCVt = (org.sbml.libsbml.CVTerm) term;
 		CVTerm t = new CVTerm();
 		switch (libCVt.getQualifierType()) {
@@ -894,7 +901,7 @@ public class LibSBMLReader extends AbstractSBMLReader {
 	 * @param eventAssignment
 	 * @return
 	 */
-	private EventAssignment readEventAssignment(Object eventass) {
+	public EventAssignment readEventAssignment(Object eventass) {
 		if (!(eventass instanceof org.sbml.libsbml.EventAssignment))
 			throw new IllegalArgumentException("eventassignment" + error
 					+ "org.sbml.libsbml.EventAssignment");

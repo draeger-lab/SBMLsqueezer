@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.io;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import org.sbml.jlibsbml.InitialAssignment;
 import org.sbml.jlibsbml.KineticLaw;
 import org.sbml.jlibsbml.MathContainer;
 import org.sbml.jlibsbml.Model;
+import org.sbml.jlibsbml.ModelHistory;
 import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.NamedSBase;
 import org.sbml.jlibsbml.Parameter;
@@ -97,6 +99,14 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		this.listOfOrigModels.addLast(model);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBMLWriter#convertDate(java.util.Date)
+	 */
+	public Object convertDate(Date date) {
+		return writer.convertDate(date);
+	}
+
 	/**
 	 * 
 	 * @return
@@ -128,6 +138,14 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 */
 	public CVTerm readCVTerm(Object term) {
 		return reader.readCVTerm(term);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBMLReader#readEventAssignment(java.lang.Object)
+	 */
+	public EventAssignment readEventAssignment(Object eventAssignment) {
+		return reader.readEventAssignment(eventAssignment);
 	}
 
 	/*
@@ -295,6 +313,14 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBMLWriter#saveEventProperties(org.sbml.jlibsbml.Event, java.lang.Object)
+	 */
+	public void saveEventProperties(Event r, Object event) {
+		writer.saveEventProperties(r, event);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.sbml.jlibsbml.SBMLWriter#saveKineticLawProperties(org.sbml.jlibsbml.KineticLaw, java.lang.Object)
 	 */
 	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw) {
@@ -307,6 +333,14 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 */
 	public void saveMathContainerProperties(MathContainer mc, Object sbase) {
 		writer.saveMathContainerProperties(mc, sbase);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBMLWriter#saveModelHistoryProperties(org.sbml.jlibsbml.ModelHistory, java.lang.Object)
+	 */
+	public void saveModelHistoryProperties(ModelHistory mh, Object modelHistory) {
+		writer.saveModelHistoryProperties(mh, modelHistory);		
 	}
 
 	/*
@@ -675,5 +709,13 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	// @Override
 	public Object writeUnitDefinition(UnitDefinition unitDefinition) {
 		return writer.writeUnitDefinition(unitDefinition);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jlibsbml.SBMLReader#convertDate(java.lang.Object)
+	 */
+	public Date convertDate(Object d) {
+		return reader.convertDate(d);
 	}
 }

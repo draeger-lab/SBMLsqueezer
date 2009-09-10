@@ -383,6 +383,18 @@ public class Model extends AbstractNamedSBase {
 	}
 
 	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public CompartmentType getCompartmentType(String id) {
+		for (CompartmentType c : listOfCompartmentTypes)
+			if (c.getId().equals(id))
+				return c;
+		return null;
+	}
+
+	/**
 	 * Get the nth Constraint object in this Model.
 	 * 
 	 * @param n
@@ -399,6 +411,18 @@ public class Model extends AbstractNamedSBase {
 	 */
 	public Event getEvent(int i) {
 		return listOfEvents.get(i);
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Event getEvent(String id) {
+		for (Event e : listOfEvents)
+			if (e.getId().equals(id))
+				return e;
+		return null;
 	}
 
 	/**
@@ -729,6 +753,18 @@ public class Model extends AbstractNamedSBase {
 			if (s.getId().equals(id))
 				return s;
 		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public SpeciesType getSpeciesType(String id) {
+		for (SpeciesType s : listOfSpeciesTypes)
+			if (s.getId().equals(id))
+				return s;
 		return null;
 	}
 

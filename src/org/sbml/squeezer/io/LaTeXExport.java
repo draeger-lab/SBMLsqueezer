@@ -135,7 +135,7 @@ public class LaTeXExport extends LaTeX {
 		}
 		if (u.isKilogram()) {
 			u.setScale(u.getScale() + 3);
-			u.setKind(Unit.Kind.UNIT_KIND_GRAM);
+			u.setKind(Unit.Kind.GRAM);
 		}
 		if (!u.isDimensionless()) {
 			switch (u.getScale()) {
@@ -196,111 +196,111 @@ public class LaTeXExport extends LaTeX {
 				break;
 			}
 			switch (u.getKind()) {
-			case UNIT_KIND_AMPERE:
+			case AMPERE:
 				buffer.append(mathrm('A'));
 				break;
-			case UNIT_KIND_BECQUEREL:
+			case BECQUEREL:
 				buffer.append(mathrm("Bq"));
 				break;
-			case UNIT_KIND_CANDELA:
+			case CANDELA:
 				buffer.append(mathrm("cd"));
 				break;
-			case UNIT_KIND_CELSIUS:
+			case CELSIUS:
 				buffer.append("\\text{\\textcelsius}");
 				break;
-			case UNIT_KIND_COULOMB:
+			case COULOMB:
 				buffer.append(mathrm('C'));
 				break;
-			case UNIT_KIND_DIMENSIONLESS:
+			case DIMENSIONLESS:
 				break;
-			case UNIT_KIND_FARAD:
+			case FARAD:
 				buffer.append(mathrm('F'));
 				break;
-			case UNIT_KIND_GRAM:
+			case GRAM:
 				buffer.append(mathrm('g'));
 				break;
-			case UNIT_KIND_GRAY:
+			case GRAY:
 				buffer.append(mathrm("Gy"));
 				break;
-			case UNIT_KIND_HENRY:
+			case HENRY:
 				buffer.append(mathrm('H'));
 				break;
-			case UNIT_KIND_HERTZ:
+			case HERTZ:
 				buffer.append(mathrm("Hz"));
 				break;
-			case UNIT_KIND_INVALID:
+			case INVALID:
 				buffer.append(mathrm("invalid"));
 				break;
-			case UNIT_KIND_ITEM:
+			case ITEM:
 				buffer.append(mathrm("item"));
 				break;
-			case UNIT_KIND_JOULE:
+			case JOULE:
 				buffer.append(mathrm('J'));
 				break;
-			case UNIT_KIND_KATAL:
+			case KATAL:
 				buffer.append(mathrm("kat"));
 				break;
-			case UNIT_KIND_KELVIN:
+			case KELVIN:
 				buffer.append(mathrm('K'));
 				break;
-			// case UNIT_KIND_KILOGRAM:
+			// case KILOGRAM:
 			// buffer.append("\\mathrm{kg}");
 			// break;
-			case UNIT_KIND_LITER:
+			case LITER:
 				buffer.append(mathrm('l'));
 				break;
-			case UNIT_KIND_LITRE:
+			case LITRE:
 				buffer.append(mathrm('l'));
 				break;
-			case UNIT_KIND_LUMEN:
+			case LUMEN:
 				buffer.append(mathrm("lm"));
 				break;
-			case UNIT_KIND_LUX:
+			case LUX:
 				buffer.append(mathrm("lx"));
 				break;
-			case UNIT_KIND_METER:
+			case METER:
 				buffer.append(mathrm('m'));
 				break;
-			case UNIT_KIND_METRE:
+			case METRE:
 				buffer.append(mathrm('m'));
 				break;
-			case UNIT_KIND_MOLE:
+			case MOLE:
 				buffer.append(mathrm("mol"));
 				break;
-			case UNIT_KIND_NEWTON:
+			case NEWTON:
 				buffer.append(mathrm('N'));
 				break;
-			case UNIT_KIND_OHM:
+			case OHM:
 				buffer.append("\\upOmega");
 				break;
-			case UNIT_KIND_PASCAL:
+			case PASCAL:
 				buffer.append(mathrm("Pa"));
 				break;
-			case UNIT_KIND_RADIAN:
+			case RADIAN:
 				buffer.append(mathrm("rad"));
 				break;
-			case UNIT_KIND_SECOND:
+			case SECOND:
 				buffer.append(mathrm('s'));
 				break;
-			case UNIT_KIND_SIEMENS:
+			case SIEMENS:
 				buffer.append(mathrm('S'));
 				break;
-			case UNIT_KIND_SIEVERT:
+			case SIEVERT:
 				buffer.append(mathrm("Sv"));
 				break;
-			case UNIT_KIND_STERADIAN:
+			case STERADIAN:
 				buffer.append(mathrm("sr"));
 				break;
-			case UNIT_KIND_TESLA:
+			case TESLA:
 				buffer.append(mathrm('T'));
 				break;
-			case UNIT_KIND_VOLT:
+			case VOLT:
 				buffer.append(mathrm('V'));
 				break;
-			case UNIT_KIND_WATT:
+			case WATT:
 				buffer.append(mathrm('W'));
 				break;
-			case UNIT_KIND_WEBER:
+			case WEBER:
 				buffer.append(mathrm("Wb"));
 				break;
 			}
@@ -769,8 +769,8 @@ public class LaTeXExport extends LaTeX {
 						stochMath = ref.getStoichiometryMath();
 						if (stochMath != null && stochMath.isSetMath()) {
 							stoch = stochMath.getMath();
-							sEquation += (stoch.getType() == ASTNode.Type.AST_PLUS || stoch
-									.getType() == ASTNode.Type.AST_MINUS) ? sEquation += "-\\left("
+							sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
+									.getType() == ASTNode.Type.MINUS) ? sEquation += "-\\left("
 									+ stoch.toLaTeX()
 									+ "\\right)v_{"
 									+ reactantsReaction.get(k) + "}"
@@ -806,8 +806,8 @@ public class LaTeXExport extends LaTeX {
 								stoch = stochMath.getMath();
 							if (sEquation == "") {
 								if (stoch != null) {
-									sEquation += (stoch.getType() == ASTNode.Type.AST_PLUS || stoch
-											.getType() == ASTNode.Type.AST_MINUS) ? sEquation += "\\left("
+									sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
+											.getType() == ASTNode.Type.MINUS) ? sEquation += "\\left("
 											+ stoch.toLaTeX()
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"
@@ -835,8 +835,8 @@ public class LaTeXExport extends LaTeX {
 
 							} else {
 								if (stoch != null) {
-									sEquation += (stoch.getType() == ASTNode.Type.AST_PLUS || stoch
-											.getType() == ASTNode.Type.AST_MINUS) ? sEquation += "+\\left("
+									sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
+											.getType() == ASTNode.Type.MINUS) ? sEquation += "+\\left("
 											+ stoch.toLaTeX()
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"
@@ -1164,43 +1164,6 @@ public class LaTeXExport extends LaTeX {
 						+ newLine + "\\maketitle" + newLine);
 		return head;
 	}
-
-	/**
-	 * If the field printNameIfAvailable is false this method returns a the id
-	 * of the given SBase. If printNameIfAvailable is true this method looks for
-	 * the name of the given SBase and will return it.
-	 * 
-	 * @param sbase
-	 *            the SBase, whose name or id is to be returned.
-	 * @param mathMode
-	 *            if true this method returns the name typesetted in mathmode,
-	 *            i.e., mathrm for names and mathtt for ids, otherwise texttt
-	 *            will be used for ids and normalfont (nothing) will be used for
-	 *            names.
-	 * @return The name or the ID of the SBase (according to the field
-	 *         printNameIfAvailable), whose LaTeX special symbols are masked and
-	 *         which is type set in typewriter font if it is an id. The mathmode
-	 *         argument decides if mathtt or mathrm has to be used.
-	 */
-	private StringBuffer getNameOrID(SBase sbase) {
-		String name = "";
-		if (sbase instanceof Compartment) {
-			name = (printNameIfAvailable) ? ((Compartment) sbase).getName()
-					: ((Compartment) sbase).getId();
-		} else if (sbase instanceof Species) {
-			name = (printNameIfAvailable) ? ((Species) sbase).getName()
-					: ((Species) sbase).getId();
-		} else {
-			name = "Undefinded";
-		}
-		name = maskSpecialChars(name);
-		if (printNameIfAvailable) {
-			return new StringBuffer("\\text{" + name + "}");
-		} else {
-			return mathtt(name);
-		}
-	}
-
 
 	private String name_idToLaTex(String s) {
 		return "$" + toTeX(s) + "$";

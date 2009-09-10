@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.plugin;
 
+import java.util.Date;
 import java.util.Set;
 
 import jp.sbi.celldesigner.plugin.PluginCompartment;
@@ -31,6 +32,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 
 import org.sbml.jlibsbml.CVTerm;
 import org.sbml.jlibsbml.Compartment;
+import org.sbml.jlibsbml.EventAssignment;
 import org.sbml.jlibsbml.FunctionDefinition;
 import org.sbml.jlibsbml.InitialAssignment;
 import org.sbml.jlibsbml.KineticLaw;
@@ -88,6 +90,12 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		this.possibleEnzymes = possibleEnzymes;
 	}
 
+	@Override
+	public Object getOriginalModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -98,6 +106,16 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("compartment" + error
 					+ "PluginCompartment.");
 		PluginCompartment pc = (PluginCompartment) compartment;
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CVTerm readCVTerm(Object term) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public EventAssignment readEventAssignment(Object eventAssignment) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -303,16 +321,6 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
-	 */
-	public UnitDefinition readUnitDefinition(Object unitDefinition) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.sbml.SBMLReader#readUnit(java.lang.Object)
 	 */
 	public Unit readUnit(Object unit) {
@@ -320,13 +328,17 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return null;
 	}
 
-	@Override
-	public Object getOriginalModel() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
+	 */
+	public UnitDefinition readUnitDefinition(Object unitDefinition) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public CVTerm readCVTerm(Object term) {
+	public Date convertDate(Object d) {
 		// TODO Auto-generated method stub
 		return null;
 	}

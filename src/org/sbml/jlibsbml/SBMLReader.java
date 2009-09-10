@@ -18,6 +18,8 @@
  */
 package org.sbml.jlibsbml;
 
+import java.util.Date;
+
 /**
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -32,13 +34,27 @@ public interface SBMLReader {
 	 * @return
 	 */
 	public Compartment readCompartment(Object compartment);
-
+	
+	/**
+	 * 
+	 * @param d
+	 * @return
+	 */
+	public Date convertDate(Object d);
+	
 	/**
 	 * 
 	 * @param term
 	 * @return
 	 */
 	public CVTerm readCVTerm(Object term);
+
+	/**
+	 * 
+	 * @param eventAssignment
+	 * @return
+	 */
+	public EventAssignment readEventAssignment(Object eventAssignment);
 	
 	/**
 	 * 
