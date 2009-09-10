@@ -100,9 +100,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		this.listOfModels.addLast(reader.readModel(model));
 		this.listOfOrigModels.addLast(model);
 	}
-		
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLWriter#convertDate(java.util.Date)
 	 */
 	public Object convertDate(Date date) {
@@ -136,6 +137,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#readCVTerm(java.lang.Object)
 	 */
 	public CVTerm readCVTerm(Object term) {
@@ -144,6 +146,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#readEventAssignment(java.lang.Object)
 	 */
 	public EventAssignment readEventAssignment(Object eventAssignment) {
@@ -299,7 +302,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveCompartmentProperties(org.sbml.jlibsbml.Compartment, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveCompartmentProperties(org.sbml.jlibsbml
+	 * .Compartment, java.lang.Object)
 	 */
 	public void saveCompartmentProperties(Compartment c, Object comp) {
 		writer.saveCompartmentProperties(c, comp);
@@ -307,7 +313,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveCVTermProperties(org.sbml.jlibsbml.CVTerm, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveCVTermProperties(org.sbml.jlibsbml.CVTerm
+	 * , java.lang.Object)
 	 */
 	public void saveCVTermProperties(CVTerm cvt, Object term) {
 		writer.saveCVTermProperties(cvt, term);
@@ -315,7 +324,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveEventProperties(org.sbml.jlibsbml.Event, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveEventProperties(org.sbml.jlibsbml.Event,
+	 * java.lang.Object)
 	 */
 	public void saveEventProperties(Event r, Object event) {
 		writer.saveEventProperties(r, event);
@@ -323,7 +335,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveKineticLawProperties(org.sbml.jlibsbml.KineticLaw, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveKineticLawProperties(org.sbml.jlibsbml
+	 * .KineticLaw, java.lang.Object)
 	 */
 	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw) {
 		writer.saveKineticLawProperties(kl, kineticLaw);
@@ -331,7 +346,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveMathContainerProperties(org.sbml.jlibsbml.MathContainer, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveMathContainerProperties(org.sbml.jlibsbml
+	 * .MathContainer, java.lang.Object)
 	 */
 	public void saveMathContainerProperties(MathContainer mc, Object sbase) {
 		writer.saveMathContainerProperties(mc, sbase);
@@ -339,10 +357,13 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveModelHistoryProperties(org.sbml.jlibsbml.ModelHistory, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveModelHistoryProperties(org.sbml.jlibsbml
+	 * .ModelHistory, java.lang.Object)
 	 */
 	public void saveModelHistoryProperties(ModelHistory mh, Object modelHistory) {
-		writer.saveModelHistoryProperties(mh, modelHistory);		
+		writer.saveModelHistoryProperties(mh, modelHistory);
 	}
 
 	/*
@@ -369,7 +390,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveParameterProperties(org.sbml.jlibsbml.Parameter, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveParameterProperties(org.sbml.jlibsbml
+	 * .Parameter, java.lang.Object)
 	 */
 	public void saveParameterProperties(Parameter p, Object parameter) {
 		writer.saveParameterProperties(p, parameter);
@@ -377,7 +401,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveReactionProperties(org.sbml.jlibsbml.Reaction, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveReactionProperties(org.sbml.jlibsbml
+	 * .Reaction, java.lang.Object)
 	 */
 	public void saveReactionProperties(Reaction r, Object reaction) {
 		writer.saveReactionProperties(r, reaction);
@@ -395,7 +422,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jlibsbml.SBMLWriter#saveSpeciesProperties(org.sbml.jlibsbml.Species, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jlibsbml.SBMLWriter#saveSpeciesProperties(org.sbml.jlibsbml.
+	 * Species, java.lang.Object)
 	 */
 	public void saveSpeciesProperties(Species s, Object species) {
 		writer.saveSpeciesProperties(s, species);
@@ -440,17 +470,19 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 				listOfOrigModels.clear();
 			} else {
 				// search for the currently selected model.
-				for (Model m : listOfModels) {
-					boolean contains = false;
-					for (int i = 0; i < tabbedPane.getTabCount() && !contains; i++) {
-						String title = tabbedPane.getTitleAt(i);
-						if (title.equals(m.getName())
-								|| title.equals(m.getId()))
-							contains = true;
+				for (Model m : listOfModels)
+					if (m != null) {
+						boolean contains = false;
+						for (int i = 0; i < tabbedPane.getTabCount()
+								&& !contains; i++) {
+							String title = tabbedPane.getTitleAt(i);
+							if (title.equals(m.getName())
+									|| title.equals(m.getId()))
+								contains = true;
+						}
+						if (!contains)
+							listOfModels.remove(m);
 					}
-					if (!contains)
-						listOfModels.remove(m);
-				}
 				selectedModel = tabbedPane.getSelectedIndex();
 			}
 		}
@@ -498,6 +530,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLWriter#writeCVTerm(org.sbml.jlibsbml.CVTerm)
 	 */
 	public Object writeCVTerm(CVTerm cvt) {
@@ -580,9 +613,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @param model
 	 * @param filename
 	 * @return
-	 * @throws SBMLException 
+	 * @throws SBMLException
 	 */
-	public boolean writeModelToSBML(int model, String filename) throws SBMLException {
+	public boolean writeModelToSBML(int model, String filename)
+			throws SBMLException {
 		return writer.writeSBML(listOfOrigModels.get(model), filename);
 	}
 
@@ -632,7 +666,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeSBML(java.lang.Object, java.lang.String)
 	 */
 	// @Override
-	public boolean writeSBML(Object sbmlDocument, String filename) throws SBMLException {
+	public boolean writeSBML(Object sbmlDocument, String filename)
+			throws SBMLException {
 		return writer.writeSBML(sbmlDocument, filename);
 	}
 
@@ -640,9 +675,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @param filename
 	 * @return
-	 * @throws SBMLException 
+	 * @throws SBMLException
 	 */
-	public boolean writeSelectedModelToSBML(String filename) throws SBMLException {
+	public boolean writeSelectedModelToSBML(String filename)
+			throws SBMLException {
 		return writer.writeSBML(listOfOrigModels.get(selectedModel), filename);
 	}
 
@@ -717,6 +753,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#convertDate(java.lang.Object)
 	 */
 	public Date convertDate(Object d) {
@@ -725,6 +762,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#getWarnings()
 	 */
 	public String getWarnings() {
@@ -733,6 +771,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLWriter#getWarnings(java.lang.Object)
 	 */
 	public String getWarnings(Object sbmlDocument) {
@@ -741,6 +780,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#getNumErrors()
 	 */
 	public int getNumErrors() {
@@ -749,6 +789,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLWriter#getNumErrors(java.lang.Object)
 	 */
 	public int getNumErrors(Object sbase) {

@@ -311,38 +311,24 @@ public class ASTNode implements TreeNode {
 	 * @param ast
 	 * @return
 	 */
-	private static ASTNode arithmethicOperation(Type operator,
-			ASTNode... ast) {
+	private static ASTNode arithmethicOperation(Type operator, ASTNode... ast) {
+		LinkedList<ASTNode> astList = new LinkedList<ASTNode>();
+		if (ast != null)
+			for (ASTNode node : ast)
+				if (node != null)
+					astList.add(node);
+		if (astList.size() == 0)
+			return null;
+		if (astList.size() == 1)
+			return astList.getFirst().clone();
 		if (operator == Type.PLUS || operator == Type.MINUS
-				|| operator == Type.TIMES
-				|| operator == Type.DIVIDE
+				|| operator == Type.TIMES || operator == Type.DIVIDE
 				|| operator == Type.POWER) {
-			if (ast.length == 0)
-				return null;
-			if (ast.length == 1)
-				return ast[0] != null ? ast[0].clone() : null;
-			MathContainer mc = null;
-			int notNull = 0;
-			for (int i = 0; i < ast.length; i++) {
-				if (ast[i] != null) {
-					if (mc == null)
-						mc = ast[i].getParentSBMLObject();
-					notNull++;
-				}
-			}
-			if (notNull == 0)
-				return null;
-			if (notNull == 1)
-				for (ASTNode node : ast) {
-					if (node != null)
-						return node.clone();
-				}
+			MathContainer mc = astList.getFirst().parentSBMLObject;
 			ASTNode arithmetic = new ASTNode(operator, mc);
-			for (ASTNode nodes : ast) {
-				if (nodes != null) {
-					arithmetic.addChild(nodes);
-					setParentSBMLObject(nodes, ast[0].getParentSBMLObject());
-				}
+			for (ASTNode nodes : astList) {
+				arithmetic.addChild(nodes);
+				setParentSBMLObject(nodes, mc);
 			}
 			return arithmetic;
 		} else
@@ -393,11 +379,9 @@ public class ASTNode implements TreeNode {
 	 */
 	public static ASTNode pow(ASTNode basis, ASTNode exponent) {
 		if (!(exponent.isInteger() && exponent.getInteger() == 1)
-				&& !(exponent.getType() == Type.REAL && exponent
-						.getReal() == 1d)) {
+				&& !(exponent.getType() == Type.REAL && exponent.getReal() == 1d)) {
 			if ((exponent.isInteger() && exponent.getInteger() == 0)
-					|| (exponent.getType() == Type.REAL && exponent
-							.getReal() == 0d))
+					|| (exponent.getType() == Type.REAL && exponent.getReal() == 0d))
 				basis = new ASTNode(1, basis.getParentSBMLObject());
 			else {
 				setParentSBMLObject(exponent, basis.getParentSBMLObject());
@@ -427,8 +411,8 @@ public class ASTNode implements TreeNode {
 	public static ASTNode root(ASTNode rootExponent, ASTNode radicant) {
 		ASTNode root = new ASTNode(Type.FUNCTION_ROOT, radicant
 				.getParentSBMLObject());
-		root.addChild(radicant);
 		root.addChild(rootExponent);
+		root.addChild(radicant);
 		setParentSBMLObject(rootExponent, radicant.getParentSBMLObject());
 		return root;
 	}
@@ -553,9 +537,9 @@ public class ASTNode implements TreeNode {
 	/**
 	 * Creates and returns a new ASTNode.
 	 * 
-	 * By default, the returned node will have a type of UNKNOWN. The
-	 * calling code should set the node type to something else as soon as
-	 * possible using setType(int)
+	 * By default, the returned node will have a type of UNKNOWN. The calling
+	 * code should set the node type to something else as soon as possible using
+	 * setType(int)
 	 * 
 	 * @param type
 	 * @param the
@@ -589,9 +573,9 @@ public class ASTNode implements TreeNode {
 	/**
 	 * Creates and returns a new ASTNode.
 	 * 
-	 * By default, the returned node will have a type of UNKNOWN. The
-	 * calling code should set the node type to something else as soon as
-	 * possible using setType(int)
+	 * By default, the returned node will have a type of UNKNOWN. The calling
+	 * code should set the node type to something else as soon as possible using
+	 * setType(int)
 	 * 
 	 * @param astNode
 	 *            the parent SBML object
@@ -641,15 +625,14 @@ public class ASTNode implements TreeNode {
 	 * 
 	 * @param operator
 	 *            The new type of this node. This has to be one of the
-	 *            following: PLUS, MINUS, TIMES, DIVIDE, or
-	 *            POWER. Otherwise a runtime error is thrown.
+	 *            following: PLUS, MINUS, TIMES, DIVIDE, or POWER. Otherwise a
+	 *            runtime error is thrown.
 	 * @param astnode
 	 *            The new right child of this node
 	 */
 	private void arithmeticOperation(Type operator, ASTNode astnode) {
 		if (operator == Type.PLUS || operator == Type.MINUS
-				|| operator == Type.TIMES
-				|| operator == Type.DIVIDE
+				|| operator == Type.TIMES || operator == Type.DIVIDE
 				|| operator == Type.POWER) {
 			ASTNode swap = new ASTNode(type, getParentSBMLObject());
 			swap.denominator = denominator;
@@ -708,8 +691,7 @@ public class ASTNode implements TreeNode {
 						&& ast.getDenominator() == getDenominator();
 			if (isReal() && ast.isReal())
 				equal &= ast.getReal() == getReal();
-			if (ast.getType() == Type.REAL_E
-					&& type == Type.REAL_E)
+			if (ast.getType() == Type.REAL_E && type == Type.REAL_E)
 				equal &= ast.getMantissa() == getMantissa()
 						&& ast.getExponent() == getExponent();
 			if (equal)
@@ -722,8 +704,8 @@ public class ASTNode implements TreeNode {
 
 	/**
 	 * Get the value of this node as a single character. This function should be
-	 * called only when ASTNode.getType() is one of PLUS, MINUS,
-	 * TIMES, DIVIDE or POWER.
+	 * called only when ASTNode.getType() is one of PLUS, MINUS, TIMES, DIVIDE
+	 * or POWER.
 	 * 
 	 * @return the value of this ASTNode as a single character
 	 */
@@ -797,9 +779,8 @@ public class ASTNode implements TreeNode {
 	public int getInteger() {
 		if (isInteger())
 			return numerator;
-		throw new RuntimeException(
-				new IllegalArgumentException(
-						"getInteger() should be called only when getType() == INTEGER"));
+		throw new RuntimeException(new IllegalArgumentException(
+				"getInteger() should be called only when getType() == INTEGER"));
 	}
 
 	/**
@@ -822,8 +803,8 @@ public class ASTNode implements TreeNode {
 
 	/**
 	 * Get the mantissa value of this node. This function should be called only
-	 * when getType() returns REAL_E or REAL. If getType() returns
-	 * REAL, this method is identical to getReal().
+	 * when getType() returns REAL_E or REAL. If getType() returns REAL, this
+	 * method is identical to getReal().
 	 * 
 	 * @return the value of the mantissa of this ASTNode.
 	 */
@@ -930,8 +911,7 @@ public class ASTNode implements TreeNode {
 	 * @return the value of this ASTNode as a real (double).
 	 */
 	public double getReal() {
-		if (isReal() || type == Type.CONSTANT_E
-				|| type == Type.CONSTANT_PI) {
+		if (isReal() || type == Type.CONSTANT_E || type == Type.CONSTANT_PI) {
 			switch (type) {
 			case REAL:
 				return mantissa;
@@ -1027,12 +1007,9 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is a boolean, false otherwise.
 	 */
 	public boolean isBoolean() {
-		return type == Type.CONSTANT_FALSE
-				|| type == Type.CONSTANT_TRUE
-				|| type == Type.LOGICAL_AND
-				|| type == Type.LOGICAL_NOT
-				|| type == Type.LOGICAL_OR
-				|| type == Type.LOGICAL_XOR;
+		return type == Type.CONSTANT_FALSE || type == Type.CONSTANT_TRUE
+				|| type == Type.LOGICAL_AND || type == Type.LOGICAL_NOT
+				|| type == Type.LOGICAL_OR || type == Type.LOGICAL_XOR;
 	}
 
 	/**
@@ -1166,9 +1143,8 @@ public class ASTNode implements TreeNode {
 	 * @return true if this ASTNode is an operator.
 	 */
 	public boolean isOperator() {
-		return type == Type.PLUS || type == Type.MINUS
-				|| type == Type.TIMES || type == Type.DIVIDE
-				|| type == Type.POWER;
+		return type == Type.PLUS || type == Type.MINUS || type == Type.TIMES
+				|| type == Type.DIVIDE || type == Type.POWER;
 	}
 
 	/**
@@ -1216,19 +1192,16 @@ public class ASTNode implements TreeNode {
 	 *         otherwise.
 	 */
 	public boolean isRelational() {
-		return type == Type.RELATIONAL_EQ
-				|| type == Type.RELATIONAL_GEQ
-				|| type == Type.RELATIONAL_GT
-				|| type == Type.RELATIONAL_LEQ
-				|| type == Type.RELATIONAL_LT
-				|| type == Type.RELATIONAL_NEQ;
+		return type == Type.RELATIONAL_EQ || type == Type.RELATIONAL_GEQ
+				|| type == Type.RELATIONAL_GT || type == Type.RELATIONAL_LEQ
+				|| type == Type.RELATIONAL_LT || type == Type.RELATIONAL_NEQ;
 	}
 
 	/**
 	 * Predicate returning true (non-zero) if this node represents a square root
 	 * function, false (zero) otherwise. More precisely, the node type must be
-	 * FUNCTION_ROOT with two children, the first of which is an INTEGER
-	 * node having value equal to 2.
+	 * FUNCTION_ROOT with two children, the first of which is an INTEGER node
+	 * having value equal to 2.
 	 * 
 	 * 
 	 * @return true if the given ASTNode represents a sqrt() function, false
@@ -1247,8 +1220,8 @@ public class ASTNode implements TreeNode {
 	 * 
 	 * For numbers, unary minus nodes can be 'collapsed' by negating the number.
 	 * In fact, SBML_parseFormula() does this during its parse. However, unary
-	 * minus nodes for symbols (NAMES) cannot be 'collapsed', so this
-	 * predicate function is necessary.
+	 * minus nodes for symbols (NAMES) cannot be 'collapsed', so this predicate
+	 * function is necessary.
 	 * 
 	 * @return true if this ASTNode is a unary minus, false otherwise.
 	 */
@@ -1259,12 +1232,12 @@ public class ASTNode implements TreeNode {
 	/**
 	 * Predicate returning true (non-zero) if this node has an unknown type.
 	 * 
-	 * 'Unknown' nodes have the type UNKNOWN. Nodes with unknown types will
-	 * not appear in an ASTNode tree returned by libSBML based upon valid SBML
-	 * input; the only situation in which a node with type UNKNOWN may
-	 * appear is immediately after having create a new, untyped node using the
-	 * ASTNode constructor. Callers creating nodes should endeavor to set the
-	 * type to a valid node type as soon as possible after creating new nodes.
+	 * 'Unknown' nodes have the type UNKNOWN. Nodes with unknown types will not
+	 * appear in an ASTNode tree returned by libSBML based upon valid SBML
+	 * input; the only situation in which a node with type UNKNOWN may appear is
+	 * immediately after having create a new, untyped node using the ASTNode
+	 * constructor. Callers creating nodes should endeavor to set the type to a
+	 * valid node type as soon as possible after creating new nodes.
 	 * 
 	 * @return true if this ASTNode is of type UNKNOWN, false otherwise.
 	 */
@@ -1400,8 +1373,7 @@ public class ASTNode implements TreeNode {
 				// TODO
 				break;
 			case TIMES:
-				ASTNode times = new ASTNode(Type.TIMES,
-						parentSBMLObject);
+				ASTNode times = new ASTNode(Type.TIMES, parentSBMLObject);
 				for (i = getNumChildren(); i > 0; i--)
 					times.addChild(listOfNodes.removeLast());
 				addChild(times);
@@ -1410,15 +1382,13 @@ public class ASTNode implements TreeNode {
 				// TODO
 				break;
 			case LOGICAL_AND:
-				ASTNode and = new ASTNode(Type.LOGICAL_AND,
-						parentSBMLObject);
+				ASTNode and = new ASTNode(Type.LOGICAL_AND, parentSBMLObject);
 				for (i = getNumChildren(); i > 0; i--)
 					and.addChild(listOfNodes.removeLast());
 				addChild(and);
 				break;
 			case LOGICAL_OR:
-				ASTNode or = new ASTNode(Type.LOGICAL_OR,
-						parentSBMLObject);
+				ASTNode or = new ASTNode(Type.LOGICAL_OR, parentSBMLObject);
 				for (i = getNumChildren(); i > 0; i--)
 					or.addChild(listOfNodes.removeLast());
 				addChild(or);
@@ -1540,10 +1510,9 @@ public class ASTNode implements TreeNode {
 	/**
 	 * Sets the value of this ASTNode to the given name.
 	 * 
-	 * The node type will be set (to NAME) only if the ASTNode was
-	 * previously an operator (isOperator(node) == true) or number
-	 * (isNumber(node) == true). This allows names to be set for FUNCTIONs
-	 * and the like.
+	 * The node type will be set (to NAME) only if the ASTNode was previously an
+	 * operator (isOperator(node) == true) or number (isNumber(node) == true).
+	 * This allows names to be set for FUNCTIONs and the like.
 	 * 
 	 * @param name
 	 */
@@ -1555,8 +1524,7 @@ public class ASTNode implements TreeNode {
 		if (variable == null)
 			this.name = name;
 		if (type != Type.NAME && type != Type.FUNCTION)
-			type = variable == null ? Type.FUNCTION
-					: Type.NAME;
+			type = variable == null ? Type.FUNCTION : Type.NAME;
 	}
 
 	/**
@@ -2228,6 +2196,15 @@ public class ASTNode implements TreeNode {
 				return Character.toString('<');
 			case RELATIONAL_NEQ:
 				return "!=";
+			}
+		else if (type.toString().startsWith("FUNCTION"))
+			return type.toString().substring(9).toLowerCase();
+		else
+			switch (type) {
+			case NAME_TIME:
+				return type.toString().substring(4).toLowerCase();
+			default:
+				break;
 			}
 		return isName() ? getName() : getType().toString();
 	}

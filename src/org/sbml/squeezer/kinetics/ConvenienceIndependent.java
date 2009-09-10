@@ -101,8 +101,9 @@ public class ConvenienceIndependent extends Convenience {
 					append(klV, underscore, modE.get(i));
 					enzymes[i] = new ASTNode(enzyme, this);
 				} else
-					enzymes[i] = new ASTNode("", this);
-				Parameter p_klV = new Parameter(klV.toString(), getLevel(), getVersion());
+					enzymes[i] = null;
+				Parameter p_klV = new Parameter(klV.toString(), getLevel(),
+						getVersion());
 				addParameter(p_klV);
 
 				ASTNode numerator, denominator = null;
@@ -168,10 +169,12 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
+			Parameter p_kM = new Parameter(kM.toString(), getLevel(),
+					getVersion());
 			addParameter(p_kM);
 			kiG = concat("kG_", ref.getSpecies());
-			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(), getVersion());
+			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(),
+					getVersion());
 			addGlobalParameter(p_kiG);
 			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
 					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
@@ -187,10 +190,12 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
+			Parameter p_kM = new Parameter(kM.toString(), getLevel(),
+					getVersion());
 			addParameter(p_kM);
 			kiG = concat("kG_", ref.getSpecies());
-			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(), getVersion());
+			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(),
+					getVersion());
 			addGlobalParameter(p_kiG);
 			products[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
 					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
@@ -206,24 +211,26 @@ public class ConvenienceIndependent extends Convenience {
 		 */
 
 		if (type) {
-			if (educts.length == 0)
-				equation = ASTNode.sqrt(ASTNode.frac(new ASTNode(1, this),
-						ASTNode.times(productroot)));
-			else
-				equation = ASTNode.times(ASTNode.times(educts), ASTNode
-						.sqrt(ASTNode.frac(ASTNode.times(eductroot), ASTNode
-								.times(productroot))));
+			/*
+			 * if (educts.length == 0) equation = ASTNode.sqrt(ASTNode.frac(new
+			 * ASTNode(1, this), ASTNode.times(productroot))); else
+			 */
+			equation = ASTNode.times(ASTNode.times(educts), ASTNode
+					.sqrt(ASTNode.frac(ASTNode.times(eductroot), ASTNode
+							.times(productroot))));
 		} else {
-			if (products.length == 0)
-				equation = new ASTNode(1, this);
-			else if (productroot.length > 0 && eductroot.length > 0) {
-				equation = ASTNode.times(ASTNode.times(products), ASTNode
-						.sqrt(ASTNode.frac(ASTNode.times(productroot), ASTNode
-								.times(eductroot))));
-			} else
-				equation = ASTNode.times(ASTNode.times(products), ASTNode
-						.sqrt(ASTNode.frac(new ASTNode(1, this), ASTNode
-								.times(eductroot))));
+			/*
+			 * if (products.length == 0) equation = new ASTNode(1, this); else
+			 * if (productroot.length > 0 && eductroot.length > 0) {
+			 */
+			equation = ASTNode.times(ASTNode.times(products), ASTNode
+					.sqrt(ASTNode.frac(ASTNode.times(productroot), ASTNode
+							.times(eductroot))));
+			/*
+			 * } else equation = ASTNode.times(ASTNode.times(products), ASTNode
+			 * .sqrt(ASTNode.frac(new ASTNode(1, this), ASTNode
+			 * .times(eductroot))));
+			 */
 		}
 		return equation;
 	}
@@ -256,7 +263,8 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
+			Parameter p_kM = new Parameter(kM.toString(), getLevel(),
+					getVersion());
 			addParameter(p_kM);
 
 			ASTNode[] parts = new ASTNode[(int) ref.getStoichiometry()
