@@ -14,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -26,6 +27,7 @@ import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.jlibsbml.StoichiometryMath;
 import org.sbml.jlibsbml.Unit;
 import org.sbml.jlibsbml.UnitDefinition;
+import org.sbml.squeezer.CfgKeys;
 
 /**
  * This class is used to export a sbml model as LaTex file.
@@ -49,6 +51,34 @@ public class LaTeXExport extends LaTeX {
 	 */
 	public static String maskSpecialChars(String string) {
 		return maskSpecialChars(string, true);
+	}
+
+	/**
+	 * Writes a LaTeX report for the given model with the given settings into
+	 * the given TeX-file.
+	 * 
+	 * @param model
+	 * @param texFile
+	 * @param settings
+	 * @throws IOException
+	 */
+	public static void writeLaTeX(Model model, File texFile, Properties settings)
+			throws IOException {
+		if (!(new SBFileFilter(SBFileFilter.TeX_FILES)).accept(texFile))
+			throw new IllegalArgumentException("File "
+					+ texFile.getAbsolutePath() + " is not a valid LaTeX file.");
+		BufferedWriter buffer = new BufferedWriter(new FileWriter(texFile));
+		LaTeXExport exporter = new LaTeXExport(((Boolean) settings
+				.get(CfgKeys.LATEX_LANDSCAPE)).booleanValue(),
+				((Boolean) settings.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT))
+						.booleanValue(), (short) ((Integer) settings
+						.get(CfgKeys.LATEX_FONT_SIZE)).intValue(), settings
+						.get(CfgKeys.LATEX_PAPER_SIZE).toString(),
+				((Boolean) settings.get(CfgKeys.LATEX_TITLE_PAGE))
+						.booleanValue(), ((Boolean) settings
+						.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue());
+		buffer.write(exporter.toLaTeX(model).toString());
+		buffer.close();
 	}
 
 	/**
@@ -83,7 +113,7 @@ public class LaTeXExport extends LaTeX {
 		}
 		return masked.toString().trim();
 	}
-	
+
 	/**
 	 * Returns a properly readable unit definition.
 	 * 
@@ -99,7 +129,7 @@ public class LaTeXExport extends LaTeX {
 		}
 		return buffer;
 	}
-	
+
 	/**
 	 * Returns a unit.
 	 * 
@@ -1081,8 +1111,7 @@ public class LaTeXExport extends LaTeX {
 		bw.close();
 	}
 
-	public StringBuffer toLaTeX(Reaction reaction)
-			throws IOException {
+	public StringBuffer toLaTeX(Reaction reaction) throws IOException {
 		Model model = reaction.getModel();
 		String title = model.getName().length() > 0 ? model.getName()
 				.replaceAll("_", " ") : model.getId().replaceAll("_", " ");

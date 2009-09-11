@@ -1388,11 +1388,17 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		writer.setProgramName("SBMLsqueezer");
 		writer.setProgramVersion(SBMLsqueezer.getVersionNumber());
 		d.checkConsistency();
+		boolean errorFatal = false;		
 		StringBuilder builder = new StringBuilder();
 		for (long i = 0; i < d.getNumErrors(); i++) {
-			builder.append(d.getError(i).getMessage());
+			org.sbml.libsbml.SBMLError e = d.getError(i); 
+			builder.append(e.getMessage());
 			builder.append(System.getProperty("line.separator"));
+			if (e.isError() || e.isFatal())
+				errorFatal = true;
 		}
+		if (errorFatal)
+			System.err.println(builder.toString());
 		boolean success = writer.writeSBML(d, filename);
 		if (!success)
 			throw new SBMLException(builder.toString());
@@ -1780,7 +1786,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		doc.checkConsistency();
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < doc.getNumErrors(); i++) {
-			sb.append(doc.getError(i).getMessage());
+			org.sbml.libsbml.SBMLError e = doc.getError(i);
+			sb.append(e.getMessage());
 			sb.append(System.getProperty("line.separator"));
 		}
 		return sb.toString();
@@ -1788,12 +1795,15 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBMLWriter#getNumErrors(java.lang.Object)
 	 */
 	public int getNumErrors(Object sbase) {
 		if (!(sbase instanceof org.sbml.libsbml.SBase))
-			throw new IllegalArgumentException("sbase must be an instance of org.sbml.libsbml.SBase.");
-		org.sbml.libsbml.SBMLDocument doc = ((org.sbml.libsbml.SBase) sbase).getSBMLDocument();
+			throw new IllegalArgumentException(
+					"sbase must be an instance of org.sbml.libsbml.SBase.");
+		org.sbml.libsbml.SBMLDocument doc = ((org.sbml.libsbml.SBase) sbase)
+				.getSBMLDocument();
 		doc.checkConsistency();
 		return (int) doc.getNumErrors();
 	}

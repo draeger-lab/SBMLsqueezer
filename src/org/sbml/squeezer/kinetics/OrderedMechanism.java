@@ -90,8 +90,8 @@ public class OrderedMechanism extends GeneralizedMassAction {
 	 * java.util.List, java.util.List)
 	 */
 	// @Override
-	ASTNode createKineticEquation(List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		ASTNode numerator;// I
@@ -202,7 +202,8 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				}
 				append(kIp2, underscore, specRefP2.getSpecies());
 			}
-			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
+			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
+					getVersion());
 			addParameter(p_kcatp);
 
 			/*
@@ -210,9 +211,12 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			 * does not matter)
 			 */
 			if (!reaction.getReversible()) {
-				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(), getVersion());
-				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
+				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
+						getVersion());
 				addParameter(p_kMr1);
 				addParameter(p_kMr2);
 				addParameter(p_kIr1);
@@ -224,50 +228,54 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				numerator = ASTNode.times(numerator, ASTNode.pow(new ASTNode(
 						specRefE1.getSpeciesInstance(), this), new ASTNode(
 						specRefE1.getStoichiometry(), this)));
-				denominator = ASTNode.times(new ASTNode(p_kIr1, this),
-						new ASTNode(p_kMr2, this));
+				denominator = ASTNode.times(this, p_kIr1, p_kMr2);
 
 				if (specRefE2.equals(specRefE1)) {
 					denominator = ASTNode.sum(denominator, ASTNode.times(
-							ASTNode.sum(new ASTNode(p_kMr1, this), new ASTNode(
-									p_kMr2, this)), new ASTNode(specRefE1
-									.getSpeciesInstance(), this)), ASTNode.pow(
-							new ASTNode(specRefE1.getSpeciesInstance(), this),
-							new ASTNode(2, this)));
+							ASTNode.sum(this, p_kMr1, p_kMr2), new ASTNode(
+									specRefE1.getSpeciesInstance(), this)),
+							ASTNode.pow(new ASTNode(specRefE1
+									.getSpeciesInstance(), this), new ASTNode(
+									2, this)));
 				} else {
 					numerator = ASTNode.times(numerator, ASTNode.pow(
 							new ASTNode(specRefE2.getSpeciesInstance(), this),
 							new ASTNode(specRefE2.getStoichiometry(), this)));
-					denominator = ASTNode.sum(denominator, ASTNode.times(
-							new ASTNode(p_kMr2, this), new ASTNode(specRefE1
-									.getSpeciesInstance(), this)), ASTNode
-							.times(new ASTNode(p_kMr1, this), new ASTNode(
-									specRefE2.getSpeciesInstance(), this)),
-							ASTNode.times(new ASTNode(specRefE1
-									.getSpeciesInstance(), this), new ASTNode(
-									specRefE2.getSpeciesInstance(), this)));
+					denominator = ASTNode.sum(denominator, ASTNode.times(this,
+							p_kMr2, specRefE1.getSpeciesInstance()),
+							ASTNode.times(this, p_kMr1, specRefE2
+									.getSpeciesInstance()), ASTNode.times(this,
+									specRefE1.getSpeciesInstance(), specRefE2
+											.getSpeciesInstance()));
 				}
 			} else if (!biuni) {
 				/*
 				 * Reversible Bi-Bi reaction.
 				 */
-				Parameter p_kIr2 = new Parameter(kIr2.toString(), getLevel(), getVersion());
-				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
-				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(), getVersion());
-				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
-				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(), getVersion());
-				Parameter p_kMp2 = new Parameter(kMp2.toString(), getLevel(), getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
-				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(), getVersion());
-				Parameter p_kIp2 = new Parameter(kIp2.toString(), getLevel(), getVersion());
+				Parameter p_kIr2 = new Parameter(kIr2.toString(), getLevel(),
+						getVersion());
+				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMp2 = new Parameter(kMp2.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIp2 = new Parameter(kIp2.toString(), getLevel(),
+						getVersion());
 				addLocalParameters(p_kIr2, p_kcatn, p_kMr1, p_kMr2, p_kMp1,
 						p_kMp2, p_kIr1, p_kIp1, p_kIp2);
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
-						this), ASTNode.times(new ASTNode(p_kIr1, this),
-						new ASTNode(p_kMr2, this)));
+						this), ASTNode.times(this, p_kIr1, p_kMr2));
 				ASTNode numeratorReverse = ASTNode.frac(new ASTNode(p_kcatn,
-						this), ASTNode.times(new ASTNode(p_kIp2, this),
-						new ASTNode(p_kMp1, this)));
+						this), ASTNode.times(this, p_kIp2, p_kMp1));
 
 				if (modE.size() > 0)
 					numeratorForward = ASTNode.times(numeratorForward,
@@ -278,35 +286,28 @@ public class OrderedMechanism extends GeneralizedMassAction {
 						new ASTNode(p_kIr1, this)), ASTNode.frac(ASTNode.times(
 						new ASTNode(p_kMr1, this), new ASTNode(specRefE2
 								.getSpeciesInstance(), this)), ASTNode.times(
-						new ASTNode(p_kIr1, this), new ASTNode(p_kMr2, this))),
-						ASTNode.frac(ASTNode.times(new ASTNode(p_kMp2, this),
-								new ASTNode(specRefP1.getSpeciesInstance(),
-										this)), ASTNode.times(new ASTNode(
-								p_kIp2, this), new ASTNode(p_kMp1, this))),
-						ASTNode.frac(new ASTNode(
-								specRefP2.getSpeciesInstance(), this),
-								new ASTNode(p_kIp2, this)));
+						this, p_kIr1, p_kMr2)), ASTNode.frac(ASTNode.times(
+						this, p_kMp2, specRefP1.getSpeciesInstance()), ASTNode
+						.times(this, p_kIp2, p_kMp1)), ASTNode.frac(
+						new ASTNode(specRefP2.getSpeciesInstance(), this),
+						new ASTNode(p_kIp2, this)));
 
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode
 							.pow(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(2, this)));
+									this), 2));
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.pow(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(2, this)), ASTNode
-							.times(new ASTNode(p_kIr1, this), new ASTNode(
-									p_kMr2, this))));
+									this), 2), ASTNode.times(this, p_kIr1,
+							p_kMr2)));
 				} else {
-					numeratorForward = ASTNode.times(numeratorForward, ASTNode
-							.times(new ASTNode(specRefE1.getSpeciesInstance(),
-									this)), new ASTNode(specRefE2
-							.getSpeciesInstance(), this));
+					numeratorForward = ASTNode.times(numeratorForward,
+							new ASTNode(specRefE1.getSpeciesInstance(), this),
+							new ASTNode(specRefE2.getSpeciesInstance(), this));
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-							.times(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(specRefE2
-									.getSpeciesInstance(), this)), ASTNode
-							.times(new ASTNode(p_kIr1, this), new ASTNode(
-									p_kMr2, this))));
+							.times(this, specRefE1.getSpeciesInstance(),
+									specRefE2.getSpeciesInstance()), ASTNode
+							.times(this, p_kIr1, p_kMr2)));
 				}
 
 				if (modE.size() > 0)
@@ -316,7 +317,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				if (specRefP2.equals(specRefP1))
 					numeratorReverse = ASTNode.times(numeratorReverse, ASTNode
 							.pow(new ASTNode(specRefP1.getSpeciesInstance(),
-									this), new ASTNode(2, this)));
+									this), 2));
 				else
 					numeratorReverse = ASTNode.times(numeratorReverse, ASTNode
 							.times(new ASTNode(specRefP1.getSpeciesInstance(),
@@ -325,86 +326,73 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				numerator = ASTNode.diff(numeratorForward, numeratorReverse);
 
 				denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-						.times(new ASTNode(p_kMp2, this), new ASTNode(specRefE1
-								.getSpeciesInstance(), this), new ASTNode(
-								specRefP1.getSpeciesInstance(), this)), ASTNode
-						.times(new ASTNode(p_kIr1, this), new ASTNode(p_kMp1,
-								this), new ASTNode(p_kIp2, this))), ASTNode
-						.frac(ASTNode.times(new ASTNode(p_kMr1, this),
-								new ASTNode(specRefE2.getSpeciesInstance(),
-										this), new ASTNode(specRefP2
-										.getSpeciesInstance(), this)), ASTNode
-								.times(new ASTNode(p_kIr1, this), new ASTNode(
-										p_kMr2, this),
-										new ASTNode(p_kIp2, this))));
+						.times(this, p_kMp2, specRefE1.getSpeciesInstance(),
+								specRefP1.getSpeciesInstance()), ASTNode.times(
+						this, p_kIr1, p_kMp1, p_kIp2)), ASTNode.frac(ASTNode
+						.times(this, p_kMr1, specRefE2.getSpeciesInstance(),
+								specRefP2.getSpeciesInstance()), ASTNode.times(
+						this, p_kIr1, p_kMr2, p_kIp2)));
 
 				if (specRefP2.equals(specRefP1))
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.pow(new ASTNode(specRefP1.getSpeciesInstance(),
-									this), new ASTNode(2, this)), ASTNode
-							.times(new ASTNode(p_kMp1, this), new ASTNode(
-									p_kIp2, this))));
+									this), 2), ASTNode.times(this, p_kMp1,
+							p_kIp2)));
 				else
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-							.times(new ASTNode(specRefP1.getSpeciesInstance(),
-									this), new ASTNode(specRefP2
-									.getSpeciesInstance(), this)), ASTNode
-							.times(new ASTNode(p_kMp1, this), new ASTNode(
-									p_kIp2, this))));
+							.times(this, specRefP1.getSpeciesInstance(),
+									specRefP2.getSpeciesInstance()), ASTNode
+							.times(this, p_kMp1, p_kIp2)));
 
 				if (specRefE2.equals(specRefE1))
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.times(ASTNode.pow(new ASTNode(specRefE1
-									.getSpeciesInstance(), this), new ASTNode(
-									2, this)), new ASTNode(specRefP1
-									.getSpeciesInstance(), this)), ASTNode
-							.times(new ASTNode(p_kIr1, this), new ASTNode(
-									p_kMr2, this), new ASTNode(p_kIp1, this))));
+									.getSpeciesInstance(), this), 2),
+									new ASTNode(specRefP1.getSpeciesInstance(),
+											this)), ASTNode.times(this, p_kIr1,
+							p_kMr2, p_kIp1)));
 				else
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-							.times(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(specRefE2
-									.getSpeciesInstance(), this), new ASTNode(
-									specRefP1.getSpeciesInstance(), this)),
-							ASTNode.times(new ASTNode(p_kIr1, this),
-									new ASTNode(p_kMr2, this), new ASTNode(
-											p_kIp1, this))));
+							.times(this, specRefE1.getSpeciesInstance(),
+									specRefE2.getSpeciesInstance(), specRefP1
+											.getSpeciesInstance()), ASTNode
+							.times(this, p_kIr1, p_kMr2, p_kIp1)));
 
 				if (specRefP2.equals(specRefP1))
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.times(new ASTNode(specRefE2.getSpeciesInstance(),
 									this), ASTNode.pow(new ASTNode(specRefP1
-									.getSpeciesInstance(), this), new ASTNode(
-									2, this))), ASTNode.times(new ASTNode(
-							p_kIr2, this), new ASTNode(p_kMp1, this),
-							new ASTNode(p_kIp2, this))));
+									.getSpeciesInstance(), this), 2)), ASTNode
+							.times(this, p_kIr2, p_kMp1, p_kIp2)));
 				else
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.times(new ASTNode(specRefE2.getSpeciesInstance(),
-									this), ASTNode.times(new ASTNode(specRefP1
-									.getSpeciesInstance(), this), new ASTNode(
-									specRefP2.getSpeciesInstance(), this))),
-							ASTNode.times(new ASTNode(p_kIr2, this),
-									new ASTNode(p_kMp1, this), new ASTNode(
-											p_kIp2, this))));
+									this), ASTNode.times(this, specRefP1
+									.getSpeciesInstance(), specRefP2
+									.getSpeciesInstance())), ASTNode.times(
+							this, p_kIr2, p_kMp1, p_kIp2)));
 			} else {
 				/*
 				 * Reversible bi-uni reaction
 				 */
-				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
-				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(), getVersion());
-				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
-				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(), getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
-				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(), getVersion());
+				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(),
+						getVersion());
 				addLocalParameters(p_kcatn, p_kMr1, p_kMr2, p_kMp1, p_kIr1,
 						p_kIp1);
 
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
-						this), ASTNode.times(new ASTNode(p_kIr1, this),
-						new ASTNode(p_kMr2, this)));
-				ASTNode numeratorReverse = ASTNode.frac(new ASTNode(p_kcatn,
-						this), new ASTNode(p_kMp1, this));
+						this), ASTNode.times(this, p_kIr1, p_kMr2));
+				ASTNode numeratorReverse = ASTNode.frac(this, p_kcatn, p_kMp1);
 
 				if (modE.size() > 0)
 					numeratorForward = ASTNode.times(numeratorForward,
@@ -414,32 +402,27 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				// .getSpeciesInstance());
 
 				denominator = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
-						new ASTNode(specRefE1.getSpeciesInstance(), this),
-						new ASTNode(p_kIr1, this)), ASTNode.frac(ASTNode.times(
-						new ASTNode(p_kMr1, this), new ASTNode(specRefE2
-								.getSpeciesInstance(), this)), ASTNode.times(
-						new ASTNode(p_kIr1, this), new ASTNode(p_kMr2, this))));
+						this, specRefE1.getSpeciesInstance(), p_kIr1), ASTNode
+						.frac(ASTNode.times(this, p_kMr1, specRefE2
+								.getSpeciesInstance()), ASTNode.times(this,
+								p_kIr1, p_kMr2)));
 
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode
 							.pow(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(2, this)));
+									this), 2));
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.pow(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(2, this)), ASTNode
-							.times(new ASTNode(p_kIr1, this), new ASTNode(
-									p_kMr2, this))));
+									this), 2), ASTNode.times(this, p_kIr1,
+							p_kMr2)));
 				} else {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode
-							.times(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(specRefE2
-									.getSpeciesInstance(), this)));
+							.times(this, specRefE1.getSpeciesInstance(),
+									specRefE2.getSpeciesInstance()));
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-							.times(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(specRefE2
-									.getSpeciesInstance(), this)), ASTNode
-							.times(new ASTNode(p_kIr1, this), new ASTNode(
-									p_kMr2, this))));
+							.times(this, specRefE1.getSpeciesInstance(),
+									specRefE2.getSpeciesInstance()), ASTNode
+							.times(this, p_kIr1, p_kMr2)));
 				}
 				if (modE.size() > 0)
 					numeratorReverse = ASTNode.times(numeratorReverse,
@@ -448,14 +431,10 @@ public class OrderedMechanism extends GeneralizedMassAction {
 						specRefP1.getSpeciesInstance(), this));
 				numerator = ASTNode.diff(numeratorForward, numeratorReverse);
 				denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-						.times(new ASTNode(p_kMr1, this), new ASTNode(specRefE2
-								.getSpeciesInstance(), this), new ASTNode(
-								specRefP1.getSpeciesInstance(), this)), ASTNode
-						.times(new ASTNode(p_kIr1, this), new ASTNode(p_kMr2,
-								this), new ASTNode(p_kIp1, this))), ASTNode
-						.frac(
-								new ASTNode(specRefP1.getSpeciesInstance(),
-										this), new ASTNode(p_kMp1, this)));
+						.times(this, p_kMr1, specRefE2.getSpeciesInstance(),
+								specRefP1.getSpeciesInstance()), ASTNode.times(
+						this, p_kIr1, p_kMr2, p_kIp1)), ASTNode.frac(this,
+						specRefP1.getSpeciesInstance(), p_kMp1));
 			}
 
 			/*

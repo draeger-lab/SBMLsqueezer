@@ -172,7 +172,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		chooser.setFileFilter(new SBFileFilter(SBFileFilter.TeX_FILES));
 		chooser.setMultiSelectionEnabled(false);
-		if (chooser.showOpenDialog(owner) == JFileChooser.APPROVE_OPTION)
+		if (chooser.showSaveDialog(owner) == JFileChooser.APPROVE_OPTION)
 			try {
 				BufferedWriter buffer = new BufferedWriter(new FileWriter(
 						chooser.getSelectedFile()));

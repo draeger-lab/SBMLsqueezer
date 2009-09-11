@@ -169,10 +169,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					append(kMr2, "kMr2", kMr2.substring(2));
 				}
 				append(kIr1, underscore, speciesR1);
-				Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
-				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(), getVersion());
-				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
+				Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
+						getVersion());
 				addLocalParameters(p_kcatp, p_kMr1, p_kMr2, p_kIr1);
 
 				numerator = new ASTNode(p_kcatp, this);
@@ -181,12 +185,11 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 							.get(enzymeNum), this));
 				if (specRefR2.equals(specRefR1)) {
 					ASTNode r1square = ASTNode.pow(
-							new ASTNode(speciesR1, this), new ASTNode(2, this));
+							new ASTNode(speciesR1, this), 2);
 					numerator = ASTNode.times(numerator, r1square);
 					denominator = ASTNode.sum(ASTNode.times(this, p_kIr1,
-							p_kMr2), ASTNode.times(ASTNode.sum(new ASTNode(
-							p_kMr1, this), new ASTNode(p_kMr2, this)),
-							new ASTNode(speciesR1, this)), r1square);
+							p_kMr2), ASTNode.times(ASTNode.sum(this, p_kMr1,
+							p_kMr2), new ASTNode(speciesR1, this)), r1square);
 				} else {
 					numerator = ASTNode.times(numerator, new ASTNode(speciesR1,
 							this), new ASTNode(speciesR2, this));
@@ -246,14 +249,22 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						kIp1 = concat("kip1", kIp1.substring(2));
 						kIp2 = concat("kip2", kIp2.substring(2));
 					}
-					Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
-					Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
-					Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
-					Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(), getVersion());
-					Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(), getVersion());
-					Parameter p_kIp2 = new Parameter(kIp2.toString(), getLevel(), getVersion());
-					Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
-					Parameter p_kIr2 = new Parameter(kIr2.toString(), getLevel(), getVersion());
+					Parameter p_kcatp = new Parameter(kcatp.toString(),
+							getLevel(), getVersion());
+					Parameter p_kcatn = new Parameter(kcatn.toString(),
+							getLevel(), getVersion());
+					Parameter p_kMr2 = new Parameter(kMr2.toString(),
+							getLevel(), getVersion());
+					Parameter p_kMp1 = new Parameter(kMp1.toString(),
+							getLevel(), getVersion());
+					Parameter p_kIp1 = new Parameter(kIp1.toString(),
+							getLevel(), getVersion());
+					Parameter p_kIp2 = new Parameter(kIp2.toString(),
+							getLevel(), getVersion());
+					Parameter p_kIr1 = new Parameter(kIr1.toString(),
+							getLevel(), getVersion());
+					Parameter p_kIr2 = new Parameter(kIr2.toString(),
+							getLevel(), getVersion());
 					addLocalParameters(p_kcatp, p_kcatn, p_kMr2, p_kMp1,
 							p_kIp1, p_kIp2, p_kIr1, p_kIr2);
 
@@ -271,27 +282,23 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					}
 					// happens if the reactant has a stoichiometry of two.
 					ASTNode r1r2 = specRefR1.equals(specRefR2) ? ASTNode.pow(
-							new ASTNode(speciesR1, this), new ASTNode(2, this))
-							: ASTNode.times(this, speciesR1, speciesR2);
+							new ASTNode(speciesR1, this), 2) : ASTNode.times(
+							this, speciesR1, speciesR2);
 					// happens if the product has a stoichiometry of two.
 					ASTNode p1p2 = specRefP1.equals(specRefP2) ? ASTNode.pow(
-							new ASTNode(speciesP1, this), new ASTNode(2, this))
-							: ASTNode.times(this, speciesP1, speciesP2);
+							new ASTNode(speciesP1, this), 2) : ASTNode.times(
+							this, speciesP1, speciesP2);
 					numeratorForward = ASTNode.times(numeratorForward, r1r2);
 					numeratorReverse = ASTNode.times(numeratorReverse, p1p2);
 					numerator = ASTNode
 							.diff(numeratorForward, numeratorReverse);
 					denominator = ASTNode.sum(new ASTNode(1, this), ASTNode
-							.frac(new ASTNode(speciesR1, this), new ASTNode(
-									p_kIr1, this)), ASTNode.frac(new ASTNode(
-							speciesR2, this), new ASTNode(p_kIr2, this)),
-							ASTNode.frac(new ASTNode(speciesP1, this),
-									new ASTNode(p_kIp1, this)), ASTNode.frac(
-									new ASTNode(speciesP2, this), new ASTNode(
-											p_kIp2, this)), ASTNode.frac(p1p2,
-									ASTNode.times(this, p_kIp2, p_kMp1)),
-							ASTNode.frac(r1r2, ASTNode.times(this, p_kIr1,
-									p_kMr2)));
+							.frac(this, speciesR1, p_kIr1), ASTNode.frac(this,
+							speciesR2, p_kIr2), ASTNode.frac(this, speciesP1,
+							p_kIp1), ASTNode.frac(this, speciesP2, p_kIp2),
+							ASTNode.frac(p1p2, ASTNode.times(this, p_kIp2,
+									p_kMp1)), ASTNode.frac(r1r2, ASTNode.times(
+									this, p_kIr1, p_kMr2)));
 				} else {
 					/*
 					 * Reversible reaction: Bi-Uni reaction
@@ -331,26 +338,31 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						append(kIr1, "kip1", kIr1.substring(2));
 						append(kIr2, "kip2", kIr2.substring(2));
 					}
-					Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
-					Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
-					Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
-					Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(), getVersion());
-					Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
-					Parameter p_kIr2 = new Parameter(kIr2.toString(), getLevel(), getVersion());
+					Parameter p_kcatp = new Parameter(kcatp.toString(),
+							getLevel(), getVersion());
+					Parameter p_kcatn = new Parameter(kcatn.toString(),
+							getLevel(), getVersion());
+					Parameter p_kMr2 = new Parameter(kMr2.toString(),
+							getLevel(), getVersion());
+					Parameter p_kMp1 = new Parameter(kMp1.toString(),
+							getLevel(), getVersion());
+					Parameter p_kIr1 = new Parameter(kIr1.toString(),
+							getLevel(), getVersion());
+					Parameter p_kIr2 = new Parameter(kIr2.toString(),
+							getLevel(), getVersion());
 					addLocalParameters(p_kcatp, p_kcatn, p_kMr2, p_kMp1,
 							p_kIr1, p_kIr2);
 
 					ASTNode r1r2;
 					if (specRefR1.equals(specRefR2))
-						r1r2 = ASTNode.pow(new ASTNode(speciesR1, this),
-								new ASTNode(2, this));
+						r1r2 = ASTNode.pow(new ASTNode(speciesR1, this), 2);
 					else
 						r1r2 = ASTNode.times(this, speciesR1, speciesR2);
 					ASTNode numeratorForward = ASTNode
 							.frac(new ASTNode(p_kcatp, this), ASTNode.times(
 									this, p_kIr1, p_kMr2));
-					ASTNode numeratorReverse = ASTNode.frac(new ASTNode(
-							p_kcatn, this), new ASTNode(p_kMp1, this));
+					ASTNode numeratorReverse = ASTNode.frac(this, p_kcatn,
+							p_kMp1);
 					if (modE.size() != 0) {
 						numeratorForward = ASTNode.times(numeratorForward,
 								new ASTNode(modE.get(enzymeNum), this));
@@ -363,13 +375,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					numerator = ASTNode
 							.diff(numeratorForward, numeratorReverse);
 					denominator = ASTNode.sum(new ASTNode(1, this), ASTNode
-							.frac(new ASTNode(speciesR1, this), new ASTNode(
-									p_kIr1, this)), ASTNode.frac(new ASTNode(
-							speciesR2, this), new ASTNode(p_kIr2, this)),
-							ASTNode.frac(r1r2, ASTNode.times(this, p_kIr1,
-									p_kMr2)), ASTNode
-									.frac(new ASTNode(speciesP1, this),
-											new ASTNode(p_kMp1, this)));
+							.frac(this, speciesR1, p_kIr1), ASTNode.frac(this,
+							speciesR2, p_kIr2), ASTNode.frac(r1r2, ASTNode
+							.times(this, p_kIr1, p_kMr2)), ASTNode.frac(this,
+							speciesP1, p_kMp1));
 				}
 			}
 			// Construct formula

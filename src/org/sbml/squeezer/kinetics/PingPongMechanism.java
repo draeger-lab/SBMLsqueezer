@@ -150,9 +150,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
 			}
-			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
-			Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(), getVersion());
-			Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(), getVersion());
+			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
+					getVersion());
+			Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
+					getVersion());
+			Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
+					getVersion());
 			addLocalParameters(p_kcatp, p_kMr1, p_kMr2);
 
 			/*
@@ -172,10 +175,10 @@ public class PingPongMechanism extends GeneralizedMassAction {
 						specRefE2.getSpeciesInstance()));
 
 				if (specRefE2.equals(specRefE1)) {
-					numerator = ASTNode.pow(numerator, new ASTNode(2, this));
+					numerator = ASTNode.pow(numerator, 2);
 					denominator = ASTNode.pow(ASTNode.sum(denominator,
 							new ASTNode(specRefE1.getSpeciesInstance(), this)),
-							new ASTNode(2, this));
+							2);
 				} else {
 					numerator = ASTNode.times(numerator, new ASTNode(specRefE2
 							.getSpeciesInstance(), this));
@@ -221,12 +224,18 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					kIp1 = concat("kip1", kIp1.substring(2));
 					kIp2 = concat("kip2", kIp2.substring(2));
 				}
-				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
-				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(), getVersion());
-				Parameter p_kMp2 = new Parameter(kMp2.toString(), getLevel(), getVersion());
-				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(), getVersion());
-				Parameter p_kIp2 = new Parameter(kIp2.toString(), getLevel(), getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(), getVersion());
+				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMp2 = new Parameter(kMp2.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIp2 = new Parameter(kIp2.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
+						getVersion());
 				addLocalParameters(p_kcatn, p_kMp1, p_kMp2, p_kIp1, p_kIp2,
 						p_kIr1);
 
@@ -238,26 +247,22 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				if (modE.size() > 0)
 					numeratorForward = ASTNode.times(numeratorForward,
 							new ASTNode(modE.get(enzymeNum), this));
-				denominator = ASTNode.sum(ASTNode
-						.frac(
-								new ASTNode(specRefE1.getSpeciesInstance(),
-										this), new ASTNode(p_kIr1, this)),
-						ASTNode.frac(ASTNode.times(this, p_kMr1, specRefE2
+				denominator = ASTNode.sum(ASTNode.frac(this, specRefE1
+						.getSpeciesInstance(), p_kIr1), ASTNode.frac(ASTNode
+						.times(this, p_kMr1, specRefE2.getSpeciesInstance()),
+						ASTNode.times(this, p_kIr1, p_kMr2)), ASTNode.frac(
+						this, specRefP1.getSpeciesInstance(), p_kIp1), ASTNode
+						.frac(ASTNode.times(this, p_kMp1, specRefP2
 								.getSpeciesInstance()), ASTNode.times(this,
-								p_kIr1, p_kMr2)), ASTNode.frac(new ASTNode(
-								specRefP1.getSpeciesInstance(), this),
-								new ASTNode(p_kIp1, this)), ASTNode.frac(
-								ASTNode.times(this, p_kMp1, specRefP2
-										.getSpeciesInstance()), ASTNode.times(
-										this, p_kIp1, p_kMp2)));
+								p_kIp1, p_kMp2)));
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode
 							.pow(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(2, this)));
+									this), 2));
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.pow(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), new ASTNode(2, this)), ASTNode
-							.times(this, p_kIr1, p_kMr2)));
+									this), 2), ASTNode.times(this, p_kIr1,
+							p_kMr2)));
 				} else {
 					numeratorForward = ASTNode.times(numeratorForward,
 							new ASTNode(specRefE1.getSpeciesInstance(), this),
@@ -285,9 +290,9 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				if (specRefP2.equals(specRefP1)) {
 					numeratorReverse = ASTNode.times(numeratorReverse, ASTNode
 							.pow(new ASTNode(specRefP1.getSpeciesInstance(),
-									this), new ASTNode(2, this)));
+									this), 2));
 					denominator_p1p2 = ASTNode.pow(new ASTNode(specRefP1
-							.getSpeciesInstance(), this), new ASTNode(2, this));
+							.getSpeciesInstance(), this), 2);
 
 				} else {
 					numeratorReverse = ASTNode.times(numeratorReverse,

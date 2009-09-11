@@ -22,15 +22,18 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileFilter;
 
 import org.sbml.squeezer.resources.Resource;
 
@@ -172,5 +175,43 @@ public class GUITools {
 				setAllEnabled((Container) children[i], enabled);
 			children[i].setEnabled(enabled);
 		}
+	}
+
+	/**
+	 * Creates and sets up a JFileFilter.
+	 * 
+	 * @param dir
+	 *            Start directory
+	 * @param allFilesAcceptable
+	 *            if true, all files are available besides the file filters
+	 * @param mode
+	 *            one of the Options in JFileChooser
+	 * @param filter
+	 *            no, one or several file filters.
+	 * @return Returns a file filter with the desired properties.
+	 */
+	public static JFileChooser prepareFileChooser(String dir,
+			boolean allFilesAcceptable, int mode, FileFilter... filter) {
+		JFileChooser chooser = new JFileChooser(dir);
+		for (FileFilter fileFilter : filter)
+			chooser.addChoosableFileFilter(fileFilter);
+		chooser.setAcceptAllFileFilterUsed(allFilesAcceptable);
+		chooser.setFileSelectionMode(mode);
+		return chooser;
+	}
+
+	/**
+	 * Shows a dialog that asks whether or not to overwrite an existing file and
+	 * returns the answer from JOptionPane constants.
+	 * 
+	 * @param parent
+	 * @param out
+	 * @return An integer representing the user's choice.
+	 */
+	public static int overwriteExistingFileDialog(Component parent, File out) {
+		return JOptionPane.showConfirmDialog(parent, toHTML(out.getName()
+				+ " already exists. Do you really want to over write it?", 40),
+				"Over write existing file?", JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE);
 	}
 }

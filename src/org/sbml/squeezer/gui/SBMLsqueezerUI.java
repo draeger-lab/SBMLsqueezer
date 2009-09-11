@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -56,8 +57,10 @@ import org.sbml.jlibsbml.Model;
 import org.sbml.jlibsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.resources.Resource;
 
 /**
@@ -69,19 +72,52 @@ import org.sbml.squeezer.resources.Resource;
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		WindowListener, ChangeListener {
 	/**
+	 * 
+	 * @author Andreas Dr&auml;ger <a
+	 *         href="mailto:andreas.draeger@uni-tuebingen.de"
+	 *         >andreas.draeger@uni-tuebingen.de</a>
+	 * @date 2009-09-11
+	 */
+	public static enum Command {
+		/**
+		 * 
+		 */
+		SQUEEZE,
+		/**
+		 * 
+		 */
+		TO_LATEX,
+		/**
+		 * 
+		 */
+		ONLINE_HELP,
+		/**
+		 * 
+		 */
+		OPEN_FILE,
+		/**
+		 * 
+		 */
+		SAVE_FILE,
+		/**
+		 * 
+		 */
+		CLOSE_FILE,
+		/**
+		 * 
+		 */
+		SET_PREFERENCES
+	}
+
+	/**
 	 * Generated serial version uid.
 	 */
 	private static final long serialVersionUID = 5461285676322858005L;
 
+	/**
+	 * Manages all models, storage, loading and selecting models.
+	 */
 	private SBMLio sbmlIO;
-
-	public static final String SQUEEZE = "squeeze_reaction";
-	public static final String TO_LATEX = "reaction_toLaTeX";
-	public static final String ONLINE_HELP = "online_help";
-	public static final String OPEN_FILE = "open_file";
-	public static final String SAVE_FILE = "save_file";
-	public static final String CLOSE_FILE = "close_file";
-	public static final String SET_PREFERENCES = "set_preferences";
 
 	private JTabbedPaneWithCloseIcons tabbedPane;
 	private JToolBar toolbar;
@@ -111,7 +147,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	// @Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals(SQUEEZE)) {
+		if (e.getActionCommand().equals(Command.SQUEEZE.toString())) {
 			KineticLawSelectionDialog klsd;
 			if (e.getSource() instanceof Reaction) {
 				// just one reaction
@@ -128,42 +164,39 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				split.init(sbmlIO.getSelectedModel(), true);
 			}
 
-		} else if (e.getActionCommand().equals(TO_LATEX)) {
+		} else if (e.getActionCommand().equals(Command.TO_LATEX.toString())) {
 			if (e.getSource() instanceof Reaction) {
 				new KineticLawSelectionDialog(this, settings, (Reaction) e
 						.getSource());
 			} else if (e.getSource() instanceof Model) {
-				// TODO
-				System.err.println("not yet implemented");
+				new KineticLawSelectionDialog(this, settings, (Model) e
+						.getSource());
 			} else {
-				// TODO
-				JFileChooser chooser = new JFileChooser();
-				SBFileFilter filterTeX = new SBFileFilter(
-						SBFileFilter.TeX_FILES);
-				chooser.addChoosableFileFilter(filterTeX);
-				String dir = settings.get(CfgKeys.SAVE_DIR).toString();
+				String dir = settings.get(CfgKeys.LATEX_DIR).toString();
+				JFileChooser chooser = GUITools.prepareFileChooser(dir, false,
+						JFileChooser.FILES_ONLY, new SBFileFilter(
+								SBFileFilter.TeX_FILES));
 				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-					// TODO
-					System.err.println("not yet implemented");
-					String path = chooser.getSelectedFile().getAbsolutePath();
-					path = path.substring(0, path.lastIndexOf('/'));
+					File out = chooser.getSelectedFile();
+					String path = out.getParent();
 					if (!path.equals(dir))
-						settings.put(CfgKeys.OPEN_DIR, path);
+						settings.put(CfgKeys.LATEX_DIR, path);
+					if (!out.exists()
+							|| GUITools.overwriteExistingFileDialog(this, out) == JOptionPane.YES_OPTION)
+						writeLaTeX(out);
 				}
 			}
 
-		} else if (e.getActionCommand().equals(SET_PREFERENCES)) {
+		} else if (e.getActionCommand().equals(Command.SET_PREFERENCES.toString())) {
 			SettingsDialog dialog = new SettingsDialog(this);
 			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION)
 				this.settings = dialog.getSettings();
 
-		} else if (e.getActionCommand().equals(OPEN_FILE)) {
-			JFileChooser chooser = new JFileChooser(settings.get(
-					CfgKeys.OPEN_DIR).toString());
-			SBFileFilter filter = new SBFileFilter(SBFileFilter.SBML_FILES);
-			chooser.setFileFilter(filter);
-			chooser.setAcceptAllFileFilterUsed(false);
-			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		} else if (e.getActionCommand().equals(Command.OPEN_FILE.toString())) {
+			JFileChooser chooser = GUITools.prepareFileChooser(settings.get(
+					CfgKeys.OPEN_DIR).toString(), false,
+					JFileChooser.FILES_ONLY, new SBFileFilter(
+							SBFileFilter.SBML_FILES));
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				Model model = sbmlIO.readModel(chooser.getSelectedFile()
 						.getAbsolutePath());
@@ -177,67 +210,37 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				}
 			}
 
-		} else if (e.getActionCommand().equals(SAVE_FILE)) {
-			JFileChooser chooser = new JFileChooser(settings.get(
-					CfgKeys.SAVE_DIR).toString());
+		} else if (e.getActionCommand().equals(Command.SAVE_FILE.toString())) {
 			SBFileFilter filterText = new SBFileFilter(SBFileFilter.TEXT_FILES);
 			SBFileFilter filterTeX = new SBFileFilter(SBFileFilter.TeX_FILES);
 			SBFileFilter filterSBML = new SBFileFilter(SBFileFilter.SBML_FILES);
-			chooser.setAcceptAllFileFilterUsed(false);
-			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			chooser.addChoosableFileFilter(filterText);
-			chooser.addChoosableFileFilter(filterTeX);
-			chooser.addChoosableFileFilter(filterSBML);
-			String dir = settings.get(CfgKeys.SAVE_DIR).toString();
+			JFileChooser chooser = GUITools.prepareFileChooser(settings.get(
+					CfgKeys.SAVE_DIR).toString(), false,
+					JFileChooser.FILES_ONLY, filterText, filterTeX, filterSBML);
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File out = chooser.getSelectedFile();
-				if (out.getParentFile() != null
-						&& !out.getParentFile().equals(
-								settings.get(CfgKeys.SAVE_DIR).toString()))
+				if (out.getParentFile() != null)
 					settings.put(CfgKeys.SAVE_DIR, out.getParentFile()
 							.getAbsolutePath());
-				if (filterSBML.accept(out)) {
-					int write = JOptionPane.YES_OPTION;
-					if (out.exists())
-						write = JOptionPane
-								.showConfirmDialog(
-										this,
-										GUITools
-												.toHTML(
-														out.getName()
-																+ " already exists. Do you"
-																+ " really want to over write it?",
-														40),
-										"Over write existing file?",
-										JOptionPane.YES_NO_OPTION,
-										JOptionPane.QUESTION_MESSAGE);
-					if (write == JOptionPane.YES_OPTION)
-						try {
-							sbmlIO.writeSelectedModelToSBML(out
-									.getAbsolutePath());
-						} catch (SBMLException e1) {
-							JOptionPane.showMessageDialog(null, GUITools
-									.toHTML(e1.getMessage(), 40), e.getClass()
-									.getName(), JOptionPane.ERROR_MESSAGE);
-							e1.printStackTrace();
-						}
-				} else {
-					// TODO
-					System.err.println("not yet implemented");
+				if (!out.exists()
+						|| GUITools.overwriteExistingFileDialog(this, out) == JOptionPane.YES_OPTION) {
+					if (filterSBML.accept(out))
+						writeSBML(out);
+					else if (filterTeX.accept(out))
+						writeLaTeX(out);
+					else if (filterText.accept(out))
+						writeText(out);
 				}
-				String path = chooser.getSelectedFile().getAbsolutePath();
-				path = path.substring(0, path.lastIndexOf('/'));
-				if (!path.equals(dir))
-					settings.put(CfgKeys.OPEN_DIR, path);
 			}
 
-		} else if (e.getActionCommand().equals(CLOSE_FILE)) {
+		} else if (e.getActionCommand().equals(Command.CLOSE_FILE.toString())) {
 			if (tabbedPane.getComponentCount() > 0)
 				tabbedPane.remove(tabbedPane.getSelectedComponent());
 			if (tabbedPane.getComponentCount() == 0)
-				setEnabled(false, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
+				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
+						Command.SQUEEZE, Command.TO_LATEX);
 
-		} else if (e.getActionCommand().equals(ONLINE_HELP)) {
+		} else if (e.getActionCommand().equals(Command.ONLINE_HELP.toString())) {
 			JHelpBrowser helpBrowser = new JHelpBrowser(this, "SBMLsqueezer "
 					+ SBMLsqueezer.getVersionNumber() + " - Online Help");
 			helpBrowser.addWindowListener(this);
@@ -245,7 +248,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			helpBrowser.setSize(640, 640);
 			helpBrowser.setVisible(true);
 			helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			setEnabled(false, ONLINE_HELP);
+			setEnabled(false, Command.ONLINE_HELP);
 
 		} else if (e.getSource() instanceof JMenuItem) {
 			JMenuItem item = (JMenuItem) e.getSource();
@@ -262,6 +265,104 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						"About SBMLsqueezer", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
+	 */
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(tabbedPane)) {
+			if (tabbedPane.getComponentCount() == 0)
+				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
+						Command.SQUEEZE, Command.TO_LATEX);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 */
+	public void windowActivated(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 */
+	public void windowClosed(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 */
+	public void windowClosing(WindowEvent we) {
+		if (we.getSource() instanceof JHelpBrowser)
+			setEnabled(true, Command.ONLINE_HELP);
+		else if (we.getSource() instanceof SBMLsqueezerUI)
+			SBMLsqueezer.saveProperties(settings);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
+	 * )
+	 */
+	public void windowDeactivated(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
+	 * )
+	 */
+	public void windowDeiconified(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 */
+	public void windowIconified(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 */
+	public void windowOpened(WindowEvent arg0) {
+	}
+
+	/**
+	 * Adds the given new model into the tabbed pane on the main panel.
+	 * 
+	 * @param model
+	 */
+	private void addModel(Model model) {
+		SBMLModelSplitPane split = new SBMLModelSplitPane(model);
+		split.addActionListener(this);
+		tabbedPane.add(model.getId(), split);
+		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
+		setEnabled(true, Command.SAVE_FILE, Command.CLOSE_FILE,
+				Command.SQUEEZE, Command.TO_LATEX);
 	}
 
 	/**
@@ -290,83 +391,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates the menu bar for SBMLsqueezer's UI.
 	 * 
-	 * @see
-	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-	 * )
+	 * @return
 	 */
-	public void stateChanged(ChangeEvent e) {
-		if (e.getSource().equals(tabbedPane)) {
-			if (tabbedPane.getComponentCount() == 0)
-				setEnabled(false, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
-	 */
-	public void windowClosed(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-	 */
-	public void windowClosing(WindowEvent we) {
-		if (we.getSource() instanceof JHelpBrowser)
-			setEnabled(true, ONLINE_HELP);
-		else if (we.getSource() instanceof SBMLsqueezerUI)
-			SBMLsqueezer.saveProperties(settings);
-	}
-
-	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void addModel(Model model) {
-		SBMLModelSplitPane split = new SBMLModelSplitPane(model);
-		split.addActionListener(this);
-		tabbedPane.add(model.getId(), split);
-		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
-		setEnabled(true, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
-	}
-
 	private JMenuBar createMenuBar() {
 		/*
 		 * File menu
@@ -375,19 +404,19 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		fileMenu.setMnemonic(fileMenu.getText().charAt(0));
 		JMenuItem openItem = new JMenuItem("Open", UIManager
 				.getIcon("FileView.directoryIcon"));
-		openItem.setActionCommand(OPEN_FILE);
+		openItem.setActionCommand(Command.OPEN_FILE.toString());
 		openItem.setAccelerator(KeyStroke.getKeyStroke('O',
 				InputEvent.CTRL_DOWN_MASK));
 		JMenuItem saveItem = new JMenuItem("Save", UIManager
 				.getIcon("FileView.floppyDriveIcon"));
 		saveItem.addActionListener(this);
-		saveItem.setActionCommand(SAVE_FILE);
+		saveItem.setActionCommand(Command.SAVE_FILE.toString());
 		saveItem.setAccelerator(KeyStroke.getKeyStroke('S',
 				InputEvent.CTRL_DOWN_MASK));
 		JMenuItem closeItem = new JMenuItem("Close", new CloseIcon(false));
 		closeItem.setAccelerator(KeyStroke.getKeyStroke('W',
 				InputEvent.CTRL_DOWN_MASK));
-		closeItem.setActionCommand(CLOSE_FILE);
+		closeItem.setActionCommand(Command.CLOSE_FILE.toString());
 		JMenuItem exitItem = new JMenuItem("Exit");
 		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,
 				InputEvent.ALT_DOWN_MASK));
@@ -408,16 +437,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		squeezeItem.setAccelerator(KeyStroke.getKeyStroke('Q',
 				InputEvent.CTRL_DOWN_MASK));
 		squeezeItem.addActionListener(this);
-		squeezeItem.setActionCommand(SQUEEZE);
+		squeezeItem.setActionCommand(Command.SQUEEZE.toString());
 		squeezeItem.setIcon(GUITools.LEMON_ICON_TINY);
 		JMenuItem latexItem = new JMenuItem("Export to LaTeX");
 		latexItem.setAccelerator(KeyStroke.getKeyStroke('E',
 				InputEvent.CTRL_DOWN_MASK));
 		latexItem.setIcon(GUITools.LATEX_ICON_TINY);
 		latexItem.addActionListener(this);
-		latexItem.setActionCommand(TO_LATEX);
+		latexItem.setActionCommand(Command.TO_LATEX.toString());
 		JMenuItem preferencesItem = new JMenuItem("Preferences");
-		preferencesItem.setActionCommand(SET_PREFERENCES);
+		preferencesItem.setActionCommand(Command.SET_PREFERENCES.toString());
 		preferencesItem.addActionListener(this);
 		preferencesItem.setMnemonic(preferencesItem.getText().charAt(0));
 		editMenu.add(squeezeItem);
@@ -435,7 +464,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		JMenuItem help = new JMenuItem("Online help");
 		help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		help.addActionListener(this);
-		help.setActionCommand(ONLINE_HELP);
+		help.setActionCommand(Command.ONLINE_HELP.toString());
 		helpMenu.add(help);
 		helpMenu.add(about);
 
@@ -450,53 +479,85 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		return mBar;
 	}
 
+	/**
+	 * Creates the tool bar for SBMLsqueezer's UI.
+	 * 
+	 * @return
+	 */
 	private JToolBar createToolBar() {
 		toolbar = new JToolBar("Edit", JToolBar.HORIZONTAL);
 		JButton openButton = new JButton(UIManager
 				.getIcon("FileView.directoryIcon"));
 		openButton.addActionListener(this);
-		openButton.setActionCommand(OPEN_FILE);
+		openButton.setActionCommand(Command.OPEN_FILE.toString());
 		toolbar.add(openButton);
 		JButton saveButton = new JButton(UIManager
 				.getIcon("FileView.floppyDriveIcon"));
 		saveButton.addActionListener(this);
-		saveButton.setActionCommand(SAVE_FILE);
+		saveButton.setActionCommand(Command.SAVE_FILE.toString());
 		toolbar.add(saveButton);
 		JButton closeButton = new JButton(new CloseIcon(false));
-		closeButton.setActionCommand(CLOSE_FILE);
+		closeButton.setActionCommand(Command.CLOSE_FILE.toString());
 		closeButton.addActionListener(this);
 		toolbar.add(closeButton);
 		toolbar.addSeparator();
 		if (GUITools.LEMON_ICON_TINY != null) {
 			JButton squeezeButton = new JButton(GUITools.LEMON_ICON_TINY);
-			squeezeButton.setActionCommand(SQUEEZE);
+			squeezeButton.setActionCommand(Command.SQUEEZE.toString());
 			squeezeButton.addActionListener(this);
 			toolbar.add(squeezeButton);
 		}
 		if (GUITools.LATEX_ICON_TINY != null) {
 			JButton latexButton = new JButton(GUITools.LATEX_ICON_TINY);
 			latexButton.addActionListener(this);
-			latexButton.setActionCommand(TO_LATEX);
+			latexButton.setActionCommand(Command.TO_LATEX.toString());
 			toolbar.add(latexButton);
 		}
 		toolbar.addSeparator();
 		JButton helpButton = new JButton("?");
 		helpButton.addActionListener(this);
-		helpButton.setActionCommand(ONLINE_HELP);
+		helpButton.setActionCommand(Command.ONLINE_HELP.toString());
 		toolbar.add(helpButton);
 		return toolbar;
 	}
 
 	/**
+	 * Sets up this GUI.
+	 */
+	private void init() {
+		setJMenuBar(createMenuBar());
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addWindowListener(this);
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().add(createToolBar(), BorderLayout.NORTH);
+		setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
+				Command.SQUEEZE, Command.TO_LATEX);
+		tabbedPane = new JTabbedPaneWithCloseIcons();
+		for (Model m : sbmlIO.getListOfModels()) {
+			checkForSBMLErrors(m);
+			if (m != null)
+				addModel(m);
+		}
+		tabbedPane.addChangeListener(this);
+		tabbedPane.addChangeListener(sbmlIO);
+		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		setIconImage(GUITools.LEMON_ICON);
+	}
+
+	/**
+	 * Enables or disables actions that can be performed by SBMLsqueezer, i.e.,
+	 * all menu items and buttons that are associated with the given actions are
+	 * enabled or disabled.
 	 * 
 	 * @param state
+	 *            if true buttons, items etc. are enabled, otherwise disabled.
 	 * @param commands
 	 */
-	private void setEnabled(boolean state, String... commands) {
+	private void setEnabled(boolean state, Command... commands) {
 		int i, j;
 		Set<String> setOfCommands = new HashSet<String>();
-		for (String command : commands)
-			setOfCommands.add(command);
+		for (Command command : commands)
+			setOfCommands.add(command.toString());
 		for (i = 0; i < getJMenuBar().getMenuCount(); i++) {
 			JMenu menu = getJMenuBar().getMenu(i);
 			for (j = 0; j < menu.getItemCount(); j++) {
@@ -520,24 +581,48 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	/**
+	 * Write the selected model into a LaTeX file.
 	 * 
+	 * @param out
 	 */
-	private void init() {
-		setJMenuBar(createMenuBar());
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		addWindowListener(this);
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(createToolBar(), BorderLayout.NORTH);
-		setEnabled(false, SAVE_FILE, CLOSE_FILE, SQUEEZE, TO_LATEX);
-		tabbedPane = new JTabbedPaneWithCloseIcons();
-		for (Model m : sbmlIO.getListOfModels()) {
-			checkForSBMLErrors(m);
-			if (m != null)
-				addModel(m);
+	private void writeLaTeX(File out) {
+		try {
+			LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), out, settings);
+		} catch (Exception exc) {
+			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+					.getClass().getName(), JOptionPane.WARNING_MESSAGE);
+			exc.printStackTrace();
 		}
-		tabbedPane.addChangeListener(this);
-		tabbedPane.addChangeListener(sbmlIO);
-		getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		setIconImage(GUITools.LEMON_ICON);
+	}
+
+	/**
+	 * Write the selected model into an SBML file.
+	 * 
+	 * @param out
+	 */
+	private void writeSBML(File out) {
+		try {
+			sbmlIO.writeSelectedModelToSBML(out.getAbsolutePath());
+		} catch (SBMLException exc) {
+			JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getName(),
+					JOptionPane.ERROR_MESSAGE);
+			exc.printStackTrace();
+		}
+	}
+
+	/**
+	 * Writes the currently selected model into an ASCII text file.
+	 * 
+	 * @param out
+	 */
+	private void writeText(File out) {
+		try {
+			new TextExport(sbmlIO.getSelectedModel(), out);
+		} catch (IOException exc) {
+			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+					.getClass().getName(), JOptionPane.WARNING_MESSAGE);
+			exc.printStackTrace();
+		}
 	}
 }
