@@ -22,12 +22,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -49,13 +46,13 @@ import org.sbml.jlibsbml.ModifierSpeciesReference;
 import org.sbml.jlibsbml.Parameter;
 import org.sbml.jlibsbml.Reaction;
 import org.sbml.jlibsbml.Rule;
+import org.sbml.jlibsbml.SBMLDocument;
 import org.sbml.jlibsbml.SBase;
 import org.sbml.jlibsbml.Species;
 import org.sbml.jlibsbml.SpeciesReference;
 import org.sbml.jlibsbml.SpeciesType;
 import org.sbml.jlibsbml.Unit;
 import org.sbml.jlibsbml.UnitDefinition;
-import org.sbml.squeezer.resources.Resource;
 
 /**
  * @author <a href="mailto:simon.schaefer@uni-tuebingen.de">Simon
@@ -83,23 +80,14 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		super(createNodes(m));
 		setOfActionListeners = new HashSet<ActionListener>();
 		popup = new JPopupMenu("SBMLsqueezer");
-		squeezeItem = new JMenuItem("Squeeze kinetic law");
-		try {
-			squeezeItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/Lemon_tiny.png"))));
-		} catch (IOException e) {
-		}
+		squeezeItem = new JMenuItem("Squeeze kinetic law",
+				GUITools.LEMON_ICON_TINY);
 		squeezeItem.addActionListener(this);
-		squeezeItem.setActionCommand(SBMLsqueezerUI.SQUEEZE);
+		squeezeItem.setActionCommand(SBMLsqueezerUI.Command.SQUEEZE.toString());
 		popup.add(squeezeItem);
-		latexItem = new JMenuItem("Export to LaTeX");
-		try {
-			latexItem.setIcon(new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/SBML2LaTeX_vertical_tiny.png"))));
-		} catch (IOException e) {
-		}
+		latexItem = new JMenuItem("Export to LaTeX", GUITools.LATEX_ICON_TINY);
 		latexItem.addActionListener(this);
-		latexItem.setActionCommand(SBMLsqueezerUI.TO_LATEX);
+		latexItem.setActionCommand(SBMLsqueezerUI.Command.TO_LATEX.toString());
 		popup.add(latexItem);
 		popup.setOpaque(true);
 		popup.setLightWeightPopupEnabled(true);
@@ -120,7 +108,8 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 	 * @return
 	 */
 	private static DefaultMutableTreeNode createNodes(Model m) {
-		DefaultMutableTreeNode docNode = new DefaultMutableTreeNode(m.getSBMLDocument());
+		DefaultMutableTreeNode docNode = new DefaultMutableTreeNode(m
+				.getSBMLDocument());
 		DefaultMutableTreeNode modelNode = new DefaultMutableTreeNode(m);
 		docNode.add(modelNode);
 		DefaultMutableTreeNode node;
@@ -134,9 +123,10 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			node = new DefaultMutableTreeNode("Unit Definitions");
 			modelNode.add(node);
 			for (UnitDefinition c : m.getListOfUnitDefinitions()) {
-				DefaultMutableTreeNode unitDefNode = new DefaultMutableTreeNode(c); 
+				DefaultMutableTreeNode unitDefNode = new DefaultMutableTreeNode(
+						c);
 				node.add(unitDefNode);
-				for (Unit u : c.getListOfUnits()) 
+				for (Unit u : c.getListOfUnits())
 					unitDefNode.add(new DefaultMutableTreeNode(u));
 			}
 		}
@@ -219,10 +209,12 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				}
 				if (r.isSetKineticLaw()) {
 					KineticLaw kl = r.getKineticLaw();
-					DefaultMutableTreeNode klNode = new DefaultMutableTreeNode(kl);
+					DefaultMutableTreeNode klNode = new DefaultMutableTreeNode(
+							kl);
 					currReacNode.add(klNode);
 					if (kl.getNumParameters() > 0) {
-						DefaultMutableTreeNode n = new DefaultMutableTreeNode("Parameters");
+						DefaultMutableTreeNode n = new DefaultMutableTreeNode(
+								"Parameters");
 						klNode.add(n);
 						for (Parameter p : kl.getListOfParameters())
 							n.add(new DefaultMutableTreeNode(p));
@@ -257,7 +249,9 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
 		popup.setVisible(false);
@@ -269,6 +263,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 	 */
 	public void mouseClicked(MouseEvent e) {
@@ -279,20 +274,27 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		if ((e.getClickCount() == 2) || (e.getButton() == MouseEvent.BUTTON3)
 				&& setOfActionListeners.size() > 0) {
 			Object clickedOn = getClosestPathForLocation(e.getX(), e.getY())
-			.getLastPathComponent(); 
+					.getLastPathComponent();
 			if (clickedOn instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) getSelectionPath()
 						.getLastPathComponent();
-				if (node.getUserObject() instanceof Reaction
-						|| node.getUserObject() instanceof Model) {
-					currSBase = (SBase) node.getUserObject();
+				Object userObject = node.getUserObject();
+				if (userObject instanceof Reaction
+						|| userObject instanceof Model
+						|| userObject instanceof SBMLDocument) {
+					if (userObject instanceof SBMLDocument)
+						currSBase = ((SBMLDocument) userObject).getModel();
+					else
+						currSBase = (SBase) userObject;
 					popup.setLocation(e.getLocationOnScreen());
 					popup.setVisible(true);
 				}
 				if (((DefaultMutableTreeNode) clickedOn).getUserObject() instanceof MathContainer) {
-					MathContainer mc = (MathContainer) ((DefaultMutableTreeNode) clickedOn).getUserObject();
+					MathContainer mc = (MathContainer) ((DefaultMutableTreeNode) clickedOn)
+							.getUserObject();
 					JDialog dialog = new JDialog();
-					dialog.getContentPane().add(new JTree((TreeNode) mc.getMath()));
+					dialog.getContentPane().add(
+							new JTree((TreeNode) mc.getMath()));
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					dialog.pack();
 					dialog.setModal(true);
@@ -305,6 +307,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 	 */
 	public void mouseEntered(MouseEvent e) {
@@ -312,6 +315,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 	 */
 	public void mouseExited(MouseEvent e) {
@@ -319,6 +323,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
 	 */
 	public void mousePressed(MouseEvent e) {
@@ -326,7 +331,9 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 * 
+	 * @see
+	 * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	public void mouseReleased(MouseEvent e) {
 	}

@@ -218,8 +218,7 @@ public class HillEquation extends BasicKineticLaw {
 							new ASTNode(p_hillcoeff, this)), ASTNode.sum(
 							ASTNode.pow(new ASTNode(modTInhib.get(i), this),
 									new ASTNode(p_hillcoeff, this)), ASTNode
-									.pow(new ASTNode(p_kS, this), new ASTNode(
-											p_hillcoeff, this))))));
+									.pow(this, p_kS, p_hillcoeff)))));
 		}
 		Parameter p_kg = new Parameter(concat("kg_", rId).toString(), getLevel(), getVersion());
 		addParameter(p_kg);

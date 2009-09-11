@@ -136,7 +136,7 @@ public class ConvenienceIndependent extends Convenience {
 					inhibitionFactor(modInhib), ASTNode.sum(enzymes));
 		} catch (IllegalFormatException exc) {
 			exc.printStackTrace();
-			return new ASTNode("", this);
+			return null;
 		}
 	}
 
@@ -156,7 +156,7 @@ public class ConvenienceIndependent extends Convenience {
 	private ASTNode numeratorElements(String enzyme, boolean type) {
 		Reaction reaction = getParentSBMLObject();
 
-		ASTNode[] educts = new ASTNode[reaction.getNumReactants()];
+		ASTNode[] reactants = new ASTNode[reaction.getNumReactants()];
 		ASTNode[] products = new ASTNode[reaction.getNumProducts()];
 		ASTNode[] eductroot = new ASTNode[reaction.getNumReactants()];
 		ASTNode[] productroot = new ASTNode[reaction.getNumProducts()];
@@ -176,7 +176,7 @@ public class ConvenienceIndependent extends Convenience {
 			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(),
 					getVersion());
 			addGlobalParameter(p_kiG);
-			educts[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
+			reactants[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
 					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
 			eductroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(p_kiG, this),
@@ -203,7 +203,6 @@ public class ConvenienceIndependent extends Convenience {
 			productroot[i] = ASTNode.pow(ASTNode.times(
 					new ASTNode(p_kiG, this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
-
 		}
 
 		/*
@@ -215,7 +214,7 @@ public class ConvenienceIndependent extends Convenience {
 			 * if (educts.length == 0) equation = ASTNode.sqrt(ASTNode.frac(new
 			 * ASTNode(1, this), ASTNode.times(productroot))); else
 			 */
-			equation = ASTNode.times(ASTNode.times(educts), ASTNode
+			equation = ASTNode.times(ASTNode.times(reactants), ASTNode
 					.sqrt(ASTNode.frac(ASTNode.times(eductroot), ASTNode
 							.times(productroot))));
 		} else {
