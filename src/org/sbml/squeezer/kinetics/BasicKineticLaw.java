@@ -160,7 +160,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!parameter.isSetValue())
 			parameter.setValue(1d);
 		if (!m.getListOfParameters().contains(parameter))
-			m.addParameter(new Parameter(parameter));
+			m.addParameter(parameter);
 	}
 
 	/**
@@ -223,30 +223,4 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			List<String> modActi, List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
-
-	/**
-	 * Goes through the formula and identifies all global parameters that are
-	 * referenced by this rate equation.
-	 * 
-	 * @return
-	 */
-	public List<Parameter> getReferencedGlobalParameters() {
-		return getReferencedGlobalParameters(getMath());
-	}
-
-	/**
-	 * 
-	 * @param math
-	 * @return
-	 */
-	private List<Parameter> getReferencedGlobalParameters(ASTNode math) {
-		LinkedList<Parameter> pList = new LinkedList<Parameter>();
-		if (math.getType().equals(ASTNode.Type.NAME)
-				&& (math.getVariable() instanceof Parameter)
-				&& (getModel().getParameter(math.getVariable().getId()) != null))
-			pList.add((Parameter) math.getVariable());
-		for (ASTNode child : math.getListOfNodes())
-			pList.addAll(getReferencedGlobalParameters(child));
-		return pList;
-	}
 }

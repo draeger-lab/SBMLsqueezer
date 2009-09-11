@@ -107,8 +107,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 				if (i > 0)
 					params.append(", ");
 			}
-			List<Parameter> referencedGlobalParameters = kineticLaw
-					.getReferencedGlobalParameters();
+			List<Parameter> referencedGlobalParameters = klg
+					.getReferencedGlobalParameters(kineticLaw.getMath());
 			for (i = referencedGlobalParameters.size() - 1; i > 0; i--) {
 				params.append(referencedGlobalParameters.get(i));
 				if (i > 0)

@@ -542,8 +542,10 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 				kl.setMath(convert(mc.getMath()));
 		} else if (sbase instanceof org.sbml.libsbml.KineticLaw) {
 			org.sbml.libsbml.KineticLaw kl = (org.sbml.libsbml.KineticLaw) sbase;
-			if (mc.isSetMath())
-				kl.setMath(convert(mc.getMath()));
+			if (mc.isSetMath()) {
+				System.out
+						.println(kl.setMath(convert(mc.getMath())) == libsbmlConstants.LIBSBML_OPERATION_SUCCESS);
+			}
 		} else if (sbase instanceof org.sbml.libsbml.Rule) {
 			org.sbml.libsbml.Rule kl = (org.sbml.libsbml.Rule) sbase;
 			if (mc.isSetMath())
@@ -1388,10 +1390,10 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		writer.setProgramName("SBMLsqueezer");
 		writer.setProgramVersion(SBMLsqueezer.getVersionNumber());
 		d.checkConsistency();
-		boolean errorFatal = false;		
+		boolean errorFatal = false;
 		StringBuilder builder = new StringBuilder();
 		for (long i = 0; i < d.getNumErrors(); i++) {
-			org.sbml.libsbml.SBMLError e = d.getError(i); 
+			org.sbml.libsbml.SBMLError e = d.getError(i);
 			builder.append(e.getMessage());
 			builder.append(System.getProperty("line.separator"));
 			if (e.isError() || e.isFatal())

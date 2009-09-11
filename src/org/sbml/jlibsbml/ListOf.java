@@ -46,7 +46,7 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 	SBase parentSBMLObject;
 
 	Set<SBaseChangedListener> setOfListeners;
-	
+
 	private int level;
 
 	private int version;
@@ -60,7 +60,7 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 	private LinkedList<CVTerm> listOfCVTerms;
 
 	private String annotation;
-	
+
 	/**
 	 * 
 	 */
@@ -75,7 +75,7 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 		this.version = version;
 		this.listOfCVTerms = new LinkedList<CVTerm>();
 	}
-	
+
 	/**
 	 * 
 	 * @param listOf
@@ -96,6 +96,25 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 		this.listOfCVTerms = new LinkedList<CVTerm>();
 		for (CVTerm cvt : listOf.getCVTerms())
 			this.listOfCVTerms.add(cvt.clone());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.LinkedList#add(java.lang.Object)
+	 */
+	// @Override
+	public boolean add(E e) {
+		if (e instanceof NamedSBase) {
+			NamedSBase nsb = (NamedSBase) e;
+			if (nsb.isSetId())
+				for (E element : this) {
+					NamedSBase elem = ((NamedSBase) element);
+					if (elem.isSetId() && elem.getId().equals(nsb.getId()))
+						return false;
+				}
+		}
+		return super.add(e);
 	}
 
 	/*
@@ -277,6 +296,7 @@ public class ListOf<E extends SBase> extends LinkedList<E> implements SBase {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jlibsbml.SBase#getSBMLDocument()
 	 */
 	public SBMLDocument getSBMLDocument() {

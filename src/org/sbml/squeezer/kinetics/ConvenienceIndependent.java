@@ -92,52 +92,40 @@ public class ConvenienceIndependent extends Convenience {
 		final boolean REVERSE = false;
 		Reaction reaction = getParentSBMLObject();
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
-		try {
-			int i = 0;
-			do {
-				StringBuffer klV = concat("kV_", reaction.getId());
-				String enzyme = modE.size() > 0 ? modE.get(i) : null;
-				if (enzyme != null) {
-					append(klV, underscore, modE.get(i));
-					enzymes[i] = new ASTNode(enzyme, this);
-				} else
-					enzymes[i] = null;
-				Parameter p_klV = new Parameter(klV.toString(), getLevel(),
-						getVersion());
-				addParameter(p_klV);
+		for (int i = 0; i < enzymes.length; i++) {
+			StringBuffer klV = concat("kV_", reaction.getId());
+			String enzyme = modE.size() > 0 ? modE.get(i) : null;
+			if (enzyme != null)
+				append(klV, underscore, modE.get(i));
+			Parameter p_klV = new Parameter(klV.toString(), getLevel(),
+					getVersion());
+			addParameter(p_klV);
 
-				ASTNode numerator, denominator = null;
-				if (!reaction.getReversible()) {
-					numerator = ASTNode
-							.times(numeratorElements(enzyme, FORWARD));
-					ASTNode domElem[] = denominatorElements(enzyme, FORWARD);
-					if (domElem.length > 0)
-						denominator = ASTNode.times(domElem);
-				} else {
-					numerator = ASTNode.diff(
-							numeratorElements(enzyme, FORWARD),
-							numeratorElements(enzyme, REVERSE));
-					denominator = ASTNode
-							.sum(ASTNode.times(denominatorElements(enzyme,
-									FORWARD)),
-									ASTNode.times(denominatorElements(enzyme,
-											REVERSE)));
-					if (reaction.getNumProducts() > 1
-							&& reaction.getNumReactants() > 1)
-						denominator = ASTNode.diff(denominator, new ASTNode(1,
-								this));
-				}
-				enzymes[i] = ASTNode.times(enzymes[i],
-						new ASTNode(p_klV, this), denominator != null ? ASTNode
-								.frac(numerator, denominator) : numerator);
-				i++;
-			} while (i < enzymes.length);
-			return ASTNode.times(activationFactor(modActi),
-					inhibitionFactor(modInhib), ASTNode.sum(enzymes));
-		} catch (IllegalFormatException exc) {
-			exc.printStackTrace();
-			return null;
+			ASTNode numerator, denominator = null;
+			if (!reaction.getReversible()) {
+				numerator = ASTNode.times(numeratorElements(enzyme, FORWARD));
+				denominator = ASTNode
+						.times(denominatorElements(enzyme, FORWARD));
+			} else {
+				numerator = ASTNode.diff(numeratorElements(enzyme, FORWARD),
+						numeratorElements(enzyme, REVERSE));
+				denominator = ASTNode.sum(ASTNode.times(denominatorElements(
+						enzyme, FORWARD)), ASTNode.times(denominatorElements(
+						enzyme, REVERSE)));
+				if (reaction.getNumProducts() > 1
+						&& reaction.getNumReactants() > 1)
+					denominator = ASTNode.diff(denominator,
+							new ASTNode(1, this));
+			}
+			ASTNode frac = denominator != null ? ASTNode.frac(numerator,
+					denominator) : numerator;
+			enzymes[i] = ASTNode.times(new ASTNode(p_klV, this), frac);
+			if (enzyme != null)
+				enzymes[i] = ASTNode.times(new ASTNode(enzyme, this),
+						enzymes[i]);
 		}
+		return ASTNode.times(activationFactor(modActi),
+				inhibitionFactor(modInhib), ASTNode.sum(enzymes));
 	}
 
 	/**
@@ -158,7 +146,7 @@ public class ConvenienceIndependent extends Convenience {
 
 		ASTNode[] reactants = new ASTNode[reaction.getNumReactants()];
 		ASTNode[] products = new ASTNode[reaction.getNumProducts()];
-		ASTNode[] eductroot = new ASTNode[reaction.getNumReactants()];
+		ASTNode[] reactantsroot = new ASTNode[reaction.getNumReactants()];
 		ASTNode[] productroot = new ASTNode[reaction.getNumProducts()];
 		ASTNode equation;
 		StringBuffer kiG;
@@ -179,8 +167,8 @@ public class ConvenienceIndependent extends Convenience {
 			reactants[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
 					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
-			eductroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(p_kiG, this),
-					new ASTNode(p_kM, this)), new ASTNode(ref
+			reactantsroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(p_kiG,
+					this), new ASTNode(p_kM, this)), new ASTNode(ref
 					.getStoichiometry(), this));
 		}
 
@@ -204,77 +192,20 @@ public class ConvenienceIndependent extends Convenience {
 					new ASTNode(p_kiG, this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
 		}
-
-		/*
-		 * TODO: catch special cases for empty list of products or reactants.
-		 */
-
-		if (type) {
-			/*
-			 * if (educts.length == 0) equation = ASTNode.sqrt(ASTNode.frac(new
-			 * ASTNode(1, this), ASTNode.times(productroot))); else
-			 */
+		
+		if (type)
 			equation = ASTNode.times(ASTNode.times(reactants), ASTNode
-					.sqrt(ASTNode.frac(ASTNode.times(eductroot), ASTNode
-							.times(productroot))));
-		} else {
-			/*
-			 * if (products.length == 0) equation = new ASTNode(1, this); else
-			 * if (productroot.length > 0 && eductroot.length > 0) {
-			 */
+					.sqrt(ASTNode.frac(reactantsroot.length > 0 ? ASTNode
+							.times(reactantsroot) : new ASTNode(1, this),
+							productroot.length > 0 ? ASTNode.times(productroot)
+									: new ASTNode(1, this))));
+		else
 			equation = ASTNode.times(ASTNode.times(products), ASTNode
-					.sqrt(ASTNode.frac(ASTNode.times(productroot), ASTNode
-							.times(eductroot))));
-			/*
-			 * } else equation = ASTNode.times(ASTNode.times(products), ASTNode
-			 * .sqrt(ASTNode.frac(new ASTNode(1, this), ASTNode
-			 * .times(eductroot))));
-			 */
-		}
+					.sqrt(ASTNode.frac(productroot.length > 0 ? ASTNode
+							.times(productroot) : new ASTNode(1, this),
+							reactantsroot.length > 0 ? ASTNode
+									.times(reactantsroot)
+									: new ASTNode(1, this))));
 		return equation;
-	}
-
-	/**
-	 * Returns an array containing the factors of the reactants and products
-	 * included in the convenience kinetic's denominator. For each factor, the
-	 * respective species' concentration and it's equilibrium constant are
-	 * divided and raised to the power of each integer value between zero and
-	 * the species' stoichiometry. All of the species' powers are summed up to
-	 * form the species' factor in the product. The method is applicable for
-	 * both forward and backward reactions.
-	 * 
-	 * @param reaction
-	 * @param type
-	 *            true means forward, false backward.
-	 * @return
-	 */
-	private ASTNode[] denominatorElements(String enzyme, boolean type) {
-		Reaction reaction = getParentSBMLObject();
-		ASTNode[] denoms = new ASTNode[type ? reaction.getNumReactants()
-				: reaction.getNumProducts()];
-		boolean noOne = (denoms.length == 1)
-				&& (!type || (type && reaction.getReversible() && reaction
-						.getNumProducts() > 1));
-		for (int i = 0; i < denoms.length; i++) {
-			SpeciesReference ref = type ? reaction.getReactant(i) : reaction
-					.getProduct(i);
-			StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
-			if (enzyme != null)
-				append(kM, underscore, enzyme);
-			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString(), getLevel(),
-					getVersion());
-			addParameter(p_kM);
-
-			ASTNode[] parts = new ASTNode[(int) ref.getStoichiometry()
-					+ (noOne ? 0 : 1)];
-			ASTNode part = ASTNode.frac(new ASTNode(ref.getSpeciesInstance(),
-					this), new ASTNode(p_kM, this));
-			for (int j = 0; j < parts.length; j++)
-				parts[j] = ASTNode.pow(part, new ASTNode((noOne ? j + 1 : j),
-						this));
-			denoms[i] = ASTNode.sum(parts);
-		}
-		return denoms;
 	}
 }
