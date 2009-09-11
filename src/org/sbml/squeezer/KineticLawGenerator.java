@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.sbml.jlibsbml.ASTNode;
 import org.sbml.jlibsbml.AssignmentRule;
 import org.sbml.jlibsbml.Constraint;
 import org.sbml.jlibsbml.Event;
@@ -46,7 +47,6 @@ import org.sbml.jlibsbml.Rule;
 import org.sbml.jlibsbml.SBO;
 import org.sbml.jlibsbml.Species;
 import org.sbml.jlibsbml.SpeciesReference;
-import org.sbml.libsbml.ListOfReactions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
@@ -299,15 +299,17 @@ public class KineticLawGenerator {
 
 			types.add(Kinetics.ZEROTH_ORDER_FORWARD_MA);
 			types.add(Kinetics.ZEROTH_ORDER_REVERSE_MA);
-			
-		/*} else if (reaction.getNumReactants() == 0) {
 
-		} else if (reaction.getNumProducts() == 0) {*/
+			/*
+			 * } else if (reaction.getNumReactants() == 0) {
+			 * 
+			 * } else if (reaction.getNumProducts() == 0) {
+			 */
 
 		} else {
 
 			types.add(Kinetics.GENERALIZED_MASS_ACTION);
-			
+
 			double stoichiometryLeft = 0d, stoichiometryRight = 0d, stoichiometry;
 			boolean stoichiometryIntLeft = true;
 			boolean reactionWithGenes = false, reactionWithRNA = false;
@@ -490,7 +492,7 @@ public class KineticLawGenerator {
 			return Kinetics.ZEROTH_ORDER_FORWARD_MA;
 		if (reaction.getNumProducts() == 0)
 			return Kinetics.ZEROTH_ORDER_REVERSE_MA;
-		
+
 		List<String> modActi = new LinkedList<String>();
 		List<String> modTActi = new LinkedList<String>();
 		List<String> modCat = new LinkedList<String>();
@@ -1006,6 +1008,27 @@ public class KineticLawGenerator {
 				.booleanValue())
 			for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--)
 				modelOrig.addParameter(paramListLocal.remove(paramNum));
+		for (Parameter parameter : miniModel.getListOfParameters())
+			if (modelOrig.getParameter(parameter.getId()) == null)
+				modelOrig.addParameter(parameter);
+	}
+
+	/**
+	 * Goes through the formula and identifies all global parameters that are
+	 * referenced by this rate equation.
+	 * 
+	 * @param math
+	 * @return
+	 */
+	public List<Parameter> getReferencedGlobalParameters(ASTNode math) {
+		LinkedList<Parameter> pList = new LinkedList<Parameter>();
+		if (math.getType().equals(ASTNode.Type.NAME)
+				&& (math.getVariable() instanceof Parameter)
+				&& (getModel().getParameter(math.getVariable().getId()) != null))
+			pList.add((Parameter) math.getVariable());
+		for (ASTNode child : math.getListOfNodes())
+			pList.addAll(getReferencedGlobalParameters(child));
+		return pList;
 	}
 
 	/**

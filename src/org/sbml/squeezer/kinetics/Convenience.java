@@ -96,12 +96,11 @@ public class Convenience extends GeneralizedMassAction {
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		ASTNode numerator;
-		ASTNode formelTxt[] = new ASTNode[Math.max(1, modE.size())];
+		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 
-		Reaction parentReaction = getParentSBMLObject();
+		Reaction reaction = getParentSBMLObject();
 		int enzymeNum = 0;
 		do {
-			ASTNode denominator;
 			StringBuffer kcatp = modE.size() == 0 ? concat("Vp_",
 					getParentSBMLObject().getId()) : concat("kcatp_",
 					getParentSBMLObject().getId());
@@ -112,14 +111,10 @@ public class Convenience extends GeneralizedMassAction {
 			addParameter(p_kcatp);
 			numerator = new ASTNode(p_kcatp, this);
 
-			// sums for each educt
-			ASTNode[] denominator1 = new ASTNode[parentReaction
-					.getNumReactants()];
-			for (int eductNum = 0; eductNum < parentReaction.getNumReactants(); eductNum++) {
+			// sums for each reactant
+			for (int eductNum = 0; eductNum < reaction.getNumReactants(); eductNum++) {
 
-				SpeciesReference specref = parentReaction.getReactant(eductNum);
-
-				// build denominator
+				SpeciesReference specref = reaction.getReactant(eductNum);
 
 				StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
 
@@ -130,48 +125,28 @@ public class Convenience extends GeneralizedMassAction {
 						getVersion());
 				addParameter(p_kM);
 
-				denominator1[eductNum] = ASTNode.frac(new ASTNode(specref
-						.getSpeciesInstance(), this), new ASTNode(p_kM, this));
-
-				for (int m = 1; m < (int) specref.getStoichiometry(); m++) {
-					denominator1[eductNum] = ASTNode.sum(
-							denominator1[eductNum], ASTNode.pow(ASTNode.frac(
-									new ASTNode(specref.getSpeciesInstance(),
-											this), new ASTNode(p_kM, this)),
-									new ASTNode((m + 1), this)));
-				}
-
-				if (!parentReaction.getReversible()
-						|| ((parentReaction.getNumReactants() != 1) || (parentReaction
+				if (!reaction.getReversible()
+						|| ((reaction.getNumReactants() != 1) || (reaction
 								.getNumProducts() == 1)))
 
-					denominator1[eductNum] = ASTNode.sum(new ASTNode(1, this),
-							denominator1[eductNum]);
-
-				// build numerator
-				if (specref.getStoichiometry() == 1d)
-					numerator.multiplyWith(ASTNode.frac(new ASTNode(specref
-							.getSpeciesInstance(), this), new ASTNode(p_kM,
-							this)));
-				else
-					numerator.multiplyWith(ASTNode.pow(ASTNode.frac(
-							new ASTNode(specref.getSpeciesInstance(), this),
-							new ASTNode(p_kM, this)), specref
-							.getStoichiometry()));
+					// build numerator
+					if (specref.getStoichiometry() == 1d)
+						numerator.multiplyWith(ASTNode.frac(new ASTNode(specref
+								.getSpeciesInstance(), this), new ASTNode(p_kM,
+								this)));
+					else
+						numerator.multiplyWith(ASTNode.pow(ASTNode
+								.frac(new ASTNode(specref.getSpeciesInstance(),
+										this), new ASTNode(p_kM, this)),
+								specref.getStoichiometry()));
 			}
-			if (denominator1.length == 1)
-				denominator = denominator1[0];
-			else
-				denominator = ASTNode.times(denominator1);
 
 			/*
 			 * only if reaction is reversible or we want it to be.
 			 */
-			if (parentReaction.getReversible()) {
+			if (reaction.getReversible()) {
 
 				ASTNode numerator2;
-				ASTNode[] denominator2 = new ASTNode[parentReaction
-						.getNumProducts()];
 
 				StringBuffer kcat = modE.size() == 0 ? concat("Vn_",
 						getParentSBMLObject().getId()) : concat("kcatn_",
@@ -185,39 +160,20 @@ public class Convenience extends GeneralizedMassAction {
 
 				// Sums for each product
 
-				for (int productNum = 0; productNum < parentReaction
-						.getNumProducts(); productNum++) {
+				for (int productNum = 0; productNum < reaction.getNumProducts(); productNum++) {
 
 					StringBuffer kM = concat("kM_", getParentSBMLObject()
 							.getId());
 
 					if (modE.size() > 1)
 						kM = append(kM, underscore, modE.get(enzymeNum));
-					kM = append(kM, underscore, parentReaction.getProduct(
-							productNum).getSpeciesInstance().getId());
+					kM = append(kM, underscore, reaction.getProduct(productNum)
+							.getSpeciesInstance().getId());
 					Parameter p_kM = new Parameter(kM.toString(), getLevel(),
 							getVersion());
 					addParameter(p_kM);
 
-					SpeciesReference specRefP = parentReaction
-							.getProduct(productNum);
-
-					denominator2[productNum] = ASTNode.frac(new ASTNode(
-							specRefP.getSpeciesInstance(), this), new ASTNode(
-							p_kM, this));
-
-					// for each stoichiometry (see Liebermeister et al.)s
-					for (int m = 1; m < (int) specRefP.getStoichiometry(); m++)
-
-						denominator2[productNum] = ASTNode.sum(
-								denominator2[productNum], ASTNode.pow(ASTNode
-										.frac(new ASTNode(specRefP
-												.getSpeciesInstance(), this),
-												new ASTNode(p_kM, this)),
-										new ASTNode((m + 1), this)));
-					if (parentReaction.getNumProducts() > 1)
-						denominator2[productNum] = ASTNode.sum(new ASTNode(1,
-								this), denominator2[productNum]);
+					SpeciesReference specRefP = reaction.getProduct(productNum);
 
 					// build numerator
 					if (specRefP.getStoichiometry() != 1.0)
@@ -232,28 +188,75 @@ public class Convenience extends GeneralizedMassAction {
 										specRefP.getSpeciesInstance(), this),
 										new ASTNode(p_kM, this)));
 				}
-				if (parentReaction.getNumProducts() == 1)
-					denominator = ASTNode.sum(denominator, denominator2[0]);
-				else
-					denominator = ASTNode.sum(denominator, ASTNode
-							.times(denominator2));
 				numerator = ASTNode.diff(numerator, numerator2);
-
-				if ((parentReaction.getNumProducts() > 1)
-						&& (parentReaction.getNumReactants() > 1))
+			}
+			ASTNode denominator = null;
+			String enzyme = null;
+			if (modE.size() > 0)
+				enzyme = modE.get(enzymeNum);
+			if (!reaction.getReversible())
+				denominator = ASTNode.times(denominatorElements(enzyme, true)); // Forward
+			else {
+				denominator = ASTNode.sum(ASTNode.times(denominatorElements(
+						enzyme, true)), ASTNode.times(denominatorElements(
+						enzyme, false)));
+				if (reaction.getNumProducts() > 1
+						&& reaction.getNumReactants() > 1)
 					denominator = ASTNode.diff(denominator,
 							new ASTNode(1, this));
 			}
-
-			formelTxt[enzymeNum] = ASTNode.frac(numerator, denominator);
+			formula[enzymeNum] = denominator != null ? ASTNode.frac(numerator,
+					denominator) : numerator;
 
 			if (modE.size() > 0)
-				formelTxt[enzymeNum] = ASTNode.times(new ASTNode(modE
-						.get(enzymeNum), this), formelTxt[enzymeNum]);
+				formula[enzymeNum] = ASTNode.times(new ASTNode(modE
+						.get(enzymeNum), this), formula[enzymeNum]);
 			enzymeNum++;
 		} while (enzymeNum < modE.size());
 
 		return ASTNode.times(activationFactor(modActi),
-				inhibitionFactor(modInhib), ASTNode.sum(formelTxt));
+				inhibitionFactor(modInhib), ASTNode.sum(formula));
+	}
+
+	/**
+	 * Returns an array containing the factors of the reactants and products
+	 * included in the convenience kinetic's denominator. For each factor, the
+	 * respective species' concentration and it's equilibrium constant are
+	 * divided and raised to the power of each integer value between zero and
+	 * the species' stoichiometry. All of the species' powers are summed up to
+	 * form the species' factor in the product. The method is applicable for
+	 * both forward and backward reactions.
+	 * 
+	 * @param reaction
+	 * @param type
+	 *            true means forward, false backward.
+	 * @return
+	 */
+	ASTNode[] denominatorElements(String enzyme, boolean type) {
+		Reaction reaction = getParentSBMLObject();
+		ASTNode[] denoms = new ASTNode[type ? reaction.getNumReactants()
+				: reaction.getNumProducts()];
+		boolean noOne = (denoms.length == 1)
+				&& (!type || (type && reaction.getReversible() && reaction
+						.getNumProducts() > 1));
+		for (int i = 0; i < denoms.length; i++) {
+			// product
+			SpeciesReference ref = type ? reaction.getReactant(i) : reaction
+					.getProduct(i);
+			StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
+			if (enzyme != null)
+				append(kM, underscore, enzyme);
+			append(kM, underscore, ref.getSpecies());
+			Parameter p_kM = getParameter(kM.toString());
+
+			denoms[i] = ASTNode.pow(ASTNode.frac(this,
+					ref.getSpeciesInstance(), p_kM), (int) ref
+					.getStoichiometry());
+			for (int j = (int) ref.getStoichiometry() - 1; j >= (noOne ? 1 : 0); j--)
+				denoms[i] = ASTNode.sum(ASTNode.pow(ASTNode.frac(this, ref
+						.getSpeciesInstance(), p_kM), j),
+						denoms[i]);
+		}
+		return denoms;
 	}
 }
