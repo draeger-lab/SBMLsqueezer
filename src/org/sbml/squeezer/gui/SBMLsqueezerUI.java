@@ -37,6 +37,7 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -51,10 +52,9 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import jp.sbi.sbml.util.SBMLException;
-
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.Reaction;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.LaTeXExport;
@@ -187,7 +187,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				}
 			}
 
-		} else if (e.getActionCommand().equals(Command.SET_PREFERENCES.toString())) {
+		} else if (e.getActionCommand().equals(
+				Command.SET_PREFERENCES.toString())) {
 			SettingsDialog dialog = new SettingsDialog(this);
 			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION)
 				this.settings = dialog.getSettings();
@@ -371,8 +372,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private void checkForSBMLErrors(Model m) {
 		if (sbmlIO.getNumErrors() > 0) {
-			String warnings = sbmlIO.getWarnings();
-			JTextArea area = new JTextArea(warnings);
+			String warnings = GUITools.toHTML("<p>"
+					+ sbmlIO.getWarnings().replace("<", "&lt;").replace(">",
+							"&gt;").replace(
+							System.getProperty("line.separator"), "</p><p>")
+					+ "</p>", 200);
+			JEditorPane area = new JEditorPane("text/html", warnings);
+			area.setEditable(false);
 			JScrollPane scroll = new JScrollPane(area,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

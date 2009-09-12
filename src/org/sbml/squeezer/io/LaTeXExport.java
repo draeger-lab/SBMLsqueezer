@@ -18,15 +18,15 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.Event;
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.Species;
-import org.sbml.jlibsbml.SpeciesReference;
-import org.sbml.jlibsbml.StoichiometryMath;
-import org.sbml.jlibsbml.Unit;
-import org.sbml.jlibsbml.UnitDefinition;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.StoichiometryMath;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.CfgKeys;
 
 /**

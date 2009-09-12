@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.Reaction;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -79,10 +80,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to reactions with exactly one product.");
 
-		ASTNode specRefR = new ASTNode(reaction.getReactant(0)
-				.getSpeciesInstance(), this);
-		ASTNode specRefP = new ASTNode(reaction.getProduct(0)
-				.getSpeciesInstance(), this);
+		Species specRefR = reaction.getReactant(0).getSpeciesInstance();
+		Species specRefP = reaction.getProduct(0).getSpeciesInstance();
 
 		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 		int enzymeNum = 0;
@@ -105,8 +104,10 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				}
 			}
 			append(kMr, underscore, specRefR);
-			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(), getVersion());
-			Parameter p_kMr = new Parameter(kMr.toString(), getLevel(), getVersion());
+			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
+					getVersion());
+			Parameter p_kMr = new Parameter(kMr.toString(), getLevel(),
+					getVersion());
 			addParameter(p_kcatp);
 			addParameter(p_kMr);
 
@@ -115,26 +116,27 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				/*
 				 * Irreversible Reaction
 				 */
-				numerator = ASTNode.times(new ASTNode(p_kcatp, this), specRefR);
-				denominator = specRefR;
+				numerator = ASTNode.times(this, p_kcatp, specRefR);
+				denominator = new ASTNode(specRefR, this);
 			} else {
 				/*
 				 * Reversible Reaction
 				 */
-				numerator = ASTNode.times(ASTNode.frac(new ASTNode(p_kcatp,
-						this), new ASTNode(p_kMr, this)), specRefR);
-				denominator = ASTNode.frac(specRefR, new ASTNode(p_kMr, this));
+				numerator = ASTNode.times(ASTNode.frac(this, p_kcatp, p_kMr),
+						new ASTNode(specRefR, this));
+				denominator = ASTNode.frac(this, specRefR, p_kMr);
 				append(kMp, underscore, specRefP);
-				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(), getVersion());
-				Parameter p_kMp = new Parameter(kMp.toString(), getLevel(), getVersion());
+				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(),
+						getVersion());
+				Parameter p_kMp = new Parameter(kMp.toString(), getLevel(),
+						getVersion());
 				addParameter(p_kcatn);
 				addParameter(p_kMp);
 
 				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
-						new ASTNode(p_kcatn, this), new ASTNode(p_kMp, this)),
-						specRefP));
-				denominator = ASTNode.sum(denominator, ASTNode.frac(specRefP,
-						new ASTNode(p_kMp, this)));
+						this, p_kcatn, p_kMp), new ASTNode(specRefP, this)));
+				denominator = ASTNode.sum(denominator, ASTNode.frac(this,
+						specRefP, p_kMp));
 			}
 			denominator = createInihibitionTerms(modInhib, reaction, modE,
 					denominator, p_kMr, enzymeNum);
@@ -184,8 +186,10 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				append(kIa, underscore, modE.get(enzymeNum));
 				append(kIb, underscore, modE.get(enzymeNum));
 			}
-			Parameter p_kIa = new Parameter(kIa.toString(), getLevel(), getVersion());
-			Parameter p_kIb = new Parameter(kIb.toString(), getLevel(), getVersion());
+			Parameter p_kIa = new Parameter(kIa.toString(), getLevel(),
+					getVersion());
+			Parameter p_kIb = new Parameter(kIb.toString(), getLevel(),
+					getVersion());
 			addParameter(p_kIa);
 			addParameter(p_kIb);
 
@@ -217,8 +221,10 @@ public class MichaelisMenten extends GeneralizedMassAction {
 					append(kIai, underscore, modE.get(enzymeNum));
 				StringBuffer kIbi = concat("kIb_", kIai);
 				kIai = concat("kIa_", kIai);
-				Parameter p_kIai = new Parameter(kIai.toString(), getLevel(), getVersion());
-				Parameter p_kIbi = new Parameter(kIbi.toString(), getLevel(), getVersion());
+				Parameter p_kIai = new Parameter(kIai.toString(), getLevel(),
+						getVersion());
+				Parameter p_kIbi = new Parameter(kIbi.toString(), getLevel(),
+						getVersion());
 				addParameter(p_kIai);
 				addParameter(p_kIbi);
 				ASTNode specRefI = new ASTNode(modInhib.get(i), this);

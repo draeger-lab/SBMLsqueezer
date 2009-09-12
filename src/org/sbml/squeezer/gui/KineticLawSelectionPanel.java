@@ -42,7 +42,7 @@ import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-import org.sbml.jlibsbml.Reaction;
+import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.Kinetics;
@@ -455,7 +455,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 */
 	private void updateView() {
 		boolean disable = selected.equals(EXISTING_RATE_LAW);
-		System.out.println(selected + "\t" + disable);
 		int i = disable ? rButtonsKineticEquations.length - 1 : 0;
 		while (i < rButtonsKineticEquations.length
 				&& !selected.equals(rButtonsKineticEquations[i].getText())

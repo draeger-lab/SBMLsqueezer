@@ -22,12 +22,12 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.ModifierSpeciesReference;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.SBO;
-import org.sbml.jlibsbml.Species;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.Species;
 import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
 

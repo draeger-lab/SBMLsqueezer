@@ -26,9 +26,9 @@ import javax.swing.JTable;
 import javax.swing.event.MouseInputListener;
 import javax.swing.event.TableModelEvent;
 
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.Reaction;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.Kinetics;
@@ -107,8 +107,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 				if (i > 0)
 					params.append(", ");
 			}
-			List<Parameter> referencedGlobalParameters = klg
-					.getReferencedGlobalParameters(kineticLaw.getMath());
+			List<Parameter> referencedGlobalParameters = KineticLawGenerator
+					.findReferencedGlobalParameters(kineticLaw.getMath());
 			for (i = referencedGlobalParameters.size() - 1; i > 0; i--) {
 				params.append(referencedGlobalParameters.get(i));
 				if (i > 0)
