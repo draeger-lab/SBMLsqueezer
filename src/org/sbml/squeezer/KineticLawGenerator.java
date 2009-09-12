@@ -62,6 +62,8 @@ import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
 import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 import org.sbml.squeezer.math.GaussianRank;
 
+import org.sbml.squeezer.kinetics.TestKinetik;
+
 /**
  * This class identifies and generates the missing kinetic laws for a the
  * selected model in the given plug-in.
@@ -200,6 +202,9 @@ public class KineticLawGenerator {
 			kineticLaw = hasFullColumnRank(modelOrig) ? new Convenience(
 					reaction) : new ConvenienceIndependent(reaction);
 			break;
+		case TEST_KINETIK:
+			kineticLaw = new TestKinetik(reaction);
+			break;
 		default:
 			kineticLaw = new GeneralizedMassAction(reaction);
 			break;
@@ -294,6 +299,9 @@ public class KineticLawGenerator {
 
 		if (HillEquation.isApplicable(reaction))
 			types.add(Kinetics.HILL_EQUATION);
+		
+		if (TestKinetik.isApplicable(reaction))
+			types.add(Kinetics.TEST_KINETIK);
 
 		if (reaction.getNumReactants() == 0 || reaction.getNumProducts() == 0) {
 
@@ -384,6 +392,7 @@ public class KineticLawGenerator {
 											.getSpeciesInstance().getSBOTerm())))) {
 						setBoundaryCondition(species, true);
 						types.add(Kinetics.HILL_EQUATION);
+						types.add(Kinetics.TEST_KINETIK);
 
 						// throw exception if false reaction occurs
 						if (SBO.isTranslation(reaction.getSBOTerm())
@@ -392,8 +401,9 @@ public class KineticLawGenerator {
 									+ reaction.getId()
 									+ " must be a transcription.");
 
-					} else if (SBO.isRNA(species.getSBOTerm()))
+					} else if (SBO.isRNA(species.getSBOTerm())) {
 						types.add(Kinetics.HILL_EQUATION);
+						types.add(Kinetics.TEST_KINETIK);}
 					if (!nonEnzyme
 							&& !(reaction.getReversible() && (inhibitors.size() > 1 || transInhib
 									.size() > 1))) // otherwise potentially
@@ -457,6 +467,7 @@ public class KineticLawGenerator {
 					types = new HashSet<Kinetics>();
 					types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 					types.add((Kinetics.HILL_EQUATION));
+					types.add(Kinetics.TEST_KINETIK);
 				} /*
 				 * else if (types.contains((Kinetics.HILL_EQUATION)))
 				 * types.remove((Kinetics.HILL_EQUATION));

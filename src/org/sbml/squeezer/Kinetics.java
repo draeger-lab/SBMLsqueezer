@@ -68,7 +68,11 @@ public enum Kinetics {
 	/**
 	 * Competitive non-exclusive, non-cooperative inihibition
 	 */
-	COMPETETIVE_NON_EXCLUSIVE_INHIB;
+	COMPETETIVE_NON_EXCLUSIVE_INHIB,
+	/**
+	 * Test equation
+	 */
+	TEST_KINETIK;
 
 	/**
 	 * <ol>
@@ -108,6 +112,8 @@ public enum Kinetics {
 			return "Michaelis-Menten";
 		case CONVENIENCE_KINETICS:
 			return "Convenience kinetics";
+		case TEST_KINETIK:
+			return "Test-Kinetik!";
 		default: // TODO: default?
 			return "Generalized mass-action";
 		}
