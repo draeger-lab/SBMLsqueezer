@@ -2,9 +2,9 @@ package org.sbml.squeezer.gui.table;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.sbml.jlibsbml.ListOf;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.Reaction;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 

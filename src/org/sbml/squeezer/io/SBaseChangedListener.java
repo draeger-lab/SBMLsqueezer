@@ -18,7 +18,7 @@
  */
 package org.sbml.squeezer.io;
 
-import org.sbml.jlibsbml.SBase;
+import org.sbml.jsbml.SBase;
 
 /**
  * @author Andreas Dr&auml;ger <a

@@ -26,36 +26,35 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import jp.sbi.sbml.util.SBMLException;
-
-import org.sbml.jlibsbml.CVTerm;
-import org.sbml.jlibsbml.Compartment;
-import org.sbml.jlibsbml.CompartmentType;
-import org.sbml.jlibsbml.Constraint;
-import org.sbml.jlibsbml.Delay;
-import org.sbml.jlibsbml.Event;
-import org.sbml.jlibsbml.EventAssignment;
-import org.sbml.jlibsbml.FunctionDefinition;
-import org.sbml.jlibsbml.InitialAssignment;
-import org.sbml.jlibsbml.KineticLaw;
-import org.sbml.jlibsbml.MathContainer;
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.ModelHistory;
-import org.sbml.jlibsbml.ModifierSpeciesReference;
-import org.sbml.jlibsbml.NamedSBase;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.Rule;
-import org.sbml.jlibsbml.SBMLReader;
-import org.sbml.jlibsbml.SBMLWriter;
-import org.sbml.jlibsbml.SBase;
-import org.sbml.jlibsbml.Species;
-import org.sbml.jlibsbml.SpeciesReference;
-import org.sbml.jlibsbml.SpeciesType;
-import org.sbml.jlibsbml.StoichiometryMath;
-import org.sbml.jlibsbml.Trigger;
-import org.sbml.jlibsbml.Unit;
-import org.sbml.jlibsbml.UnitDefinition;
+import org.sbml.jsbml.CVTerm;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.CompartmentType;
+import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.Delay;
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.EventAssignment;
+import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.MathContainer;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModelHistory;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.NamedSBase;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.SpeciesType;
+import org.sbml.jsbml.StoichiometryMath;
+import org.sbml.jsbml.Trigger;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -290,8 +289,9 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/**
 	 * Write all changes back into the original model.
+	 * @throws SBMLException 
 	 */
-	public void saveChanges() {
+	public void saveChanges() throws SBMLException {
 		System.out.println("removed: " + removed);
 		System.out.println("added:   " + added);
 		System.out.println("changed: " + changed);
@@ -329,7 +329,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.jlibsbml.SBMLWriter#saveEventProperties(org.sbml.jlibsbml.Event,
 	 * java.lang.Object)
 	 */
-	public void saveEventProperties(Event r, Object event) {
+	public void saveEventProperties(Event r, Object event) throws SBMLException {
 		writer.saveEventProperties(r, event);
 	}
 
@@ -340,7 +340,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.jlibsbml.SBMLWriter#saveKineticLawProperties(org.sbml.jlibsbml
 	 * .KineticLaw, java.lang.Object)
 	 */
-	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw) {
+	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw) throws SBMLException {
 		writer.saveKineticLawProperties(kl, kineticLaw);
 	}
 
@@ -351,7 +351,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.jlibsbml.SBMLWriter#saveMathContainerProperties(org.sbml.jlibsbml
 	 * .MathContainer, java.lang.Object)
 	 */
-	public void saveMathContainerProperties(MathContainer mc, Object sbase) {
+	public void saveMathContainerProperties(MathContainer mc, Object sbase) throws SBMLException {
 		writer.saveMathContainerProperties(mc, sbase);
 	}
 
@@ -406,7 +406,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.jlibsbml.SBMLWriter#saveReactionProperties(org.sbml.jlibsbml
 	 * .Reaction, java.lang.Object)
 	 */
-	public void saveReactionProperties(Reaction r, Object reaction) {
+	public void saveReactionProperties(Reaction r, Object reaction) throws SBMLException {
 		writer.saveReactionProperties(r, reaction);
 	}
 
@@ -553,7 +553,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeEvent(org.sbml.Event)
 	 */
 	// @Override
-	public Object writeEvent(Event event) {
+	public Object writeEvent(Event event) throws SBMLException {
 		return writer.writeEvent(event);
 	}
 
@@ -563,7 +563,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeEventAssignment(org.sbml.EventAssignment)
 	 */
 	// @Override
-	public Object writeEventAssignment(EventAssignment eventAssignment) {
+	public Object writeEventAssignment(EventAssignment eventAssignment) throws SBMLException {
 		return writer.writeEventAssignment(eventAssignment);
 	}
 
@@ -574,7 +574,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.SBMLWriter#writeFunctionDefinition(org.sbml.FunctionDefinition)
 	 */
 	// @Override
-	public Object writeFunctionDefinition(FunctionDefinition functionDefinition) {
+	public Object writeFunctionDefinition(FunctionDefinition functionDefinition) throws SBMLException {
 		return writer.writeFunctionDefinition(functionDefinition);
 	}
 
@@ -585,7 +585,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.SBMLWriter#writeInitialAssignment(org.sbml.InitialAssignment)
 	 */
 	// @Override
-	public Object writeInitialAssignment(InitialAssignment initialAssignment) {
+	public Object writeInitialAssignment(InitialAssignment initialAssignment) throws SBMLException {
 		return writer.writeInitialAssignment(initialAssignment);
 	}
 
@@ -594,7 +594,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBMLWriter#writeKineticLaw(org.sbml.KineticLaw)
 	 */
-	public Object writeKineticLaw(KineticLaw kineticLaw) {
+	public Object writeKineticLaw(KineticLaw kineticLaw) throws SBMLException {
 		return writer.writeKineticLaw(kineticLaw);
 	}
 
@@ -604,7 +604,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeModel(org.sbml.Model)
 	 */
 	// @Override
-	public Object writeModel(Model model) {
+	public Object writeModel(Model model) throws SBMLException {
 		return writer.writeModel(model);
 	}
 
@@ -646,7 +646,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeReaction(org.sbml.Reaction)
 	 */
 	// @Override
-	public Object writeReaction(Reaction reaction) {
+	public Object writeReaction(Reaction reaction) throws SBMLException {
 		return writer.writeReaction(reaction);
 	}
 

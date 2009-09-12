@@ -18,10 +18,11 @@
  */
 package org.sbml.squeezer.io;
 
-import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.SBMLWriter;
-import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.libsbml.libsbmlConstants;
 
 /**
@@ -40,264 +41,266 @@ public abstract class AbstractSBMLWriter implements SBMLWriter {
 	 * 
 	 * @param model
 	 * @param object
+	 * @throws SBMLException 
 	 */
-	public abstract void saveChanges(Model model, Object object);
+	public abstract void saveChanges(Model model, Object object) throws SBMLException;
 
 	/**
 	 * 
 	 * @param sr
+	 * @throws SBMLException 
 	 */
 	public abstract void saveSpeciesReferenceProperties(SpeciesReference sr,
-			Object specRef);
+			Object specRef) throws SBMLException;
 
 	/**
 	 * 
 	 * @param ast
 	 * @return
 	 */
-	public org.sbml.libsbml.ASTNode convert(ASTNode a) {
-		org.sbml.libsbml.ASTNode ast;
-		switch (a.getType()) {
+	public org.sbml.libsbml.ASTNode convert(ASTNode astnode) {
+		org.sbml.libsbml.ASTNode libAstNode;
+		switch (astnode.getType()) {
 		case REAL:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_REAL);
-			ast.setValue(a.getReal());
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_REAL);
+			libAstNode.setValue(astnode.getReal());
 			break;
 		case INTEGER:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_INTEGER);
-			ast.setValue(a.getInteger());
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_INTEGER);
+			libAstNode.setValue(astnode.getInteger());
 			break;
 		case FUNCTION_LOG:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_LOG);
 			break;
 		case POWER:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_POWER);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_POWER);
 			break;
 		case PLUS:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_PLUS);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_PLUS);
 			break;
 		case MINUS:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_MINUS);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_MINUS);
 			break;
 		case TIMES:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_TIMES);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_TIMES);
 			break;
 		case DIVIDE:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_DIVIDE);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_DIVIDE);
 			break;
 		case RATIONAL:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_RATIONAL);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_RATIONAL);
 			break;
 		case NAME_TIME:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_NAME_TIME);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_NAME_TIME);
 			break;
 		case FUNCTION_DELAY:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_DELAY);
 			break;
 		case NAME:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_NAME);
-			ast.setName(a.getName());
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_NAME);
+			libAstNode.setName(astnode.getName());
 			break;
 		case CONSTANT_PI:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_CONSTANT_PI);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_CONSTANT_PI);
 			break;
 		case CONSTANT_E:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_CONSTANT_E);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_CONSTANT_E);
 			break;
 		case CONSTANT_TRUE:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_CONSTANT_TRUE);
 			break;
 		case CONSTANT_FALSE:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_CONSTANT_FALSE);
 			break;
 		case REAL_E:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_REAL_E);
-			ast.setValue(a.getMantissa(), a.getExponent());
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_REAL_E);
+			libAstNode.setValue(astnode.getMantissa(), astnode.getExponent());
 			break;
 		case FUNCTION_ABS:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ABS);
 			break;
 		case FUNCTION_ARCCOS:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCCOS);
 			break;
 		case FUNCTION_ARCCOSH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCCOSH);
 			break;
 		case FUNCTION_ARCCOT:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCCOT);
 			break;
 		case FUNCTION_ARCCOTH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCCOTH);
 			break;
 		case FUNCTION_ARCCSC:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCCSC);
 			break;
 		case FUNCTION_ARCCSCH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCCSCH);
 			break;
 		case FUNCTION_ARCSEC:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCSEC);
 			break;
 		case FUNCTION_ARCSECH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCSECH);
 			break;
 		case FUNCTION_ARCSIN:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCSIN);
 			break;
 		case FUNCTION_ARCSINH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCSINH);
 			break;
 		case FUNCTION_ARCTAN:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCTAN);
 			break;
 		case FUNCTION_ARCTANH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ARCTANH);
 			break;
 		case FUNCTION_CEILING:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_CEILING);
 			break;
 		case FUNCTION_COS:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_COS);
 			break;
 		case FUNCTION_COSH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_COSH);
 			break;
 		case FUNCTION_COT:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_COT);
 			break;
 		case FUNCTION_COTH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_COTH);
 			break;
 		case FUNCTION_CSC:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_CSC);
 			break;
 		case FUNCTION_CSCH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_CSCH);
 			break;
 		case FUNCTION_EXP:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_EXP);
 			break;
 		case FUNCTION_FACTORIAL:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_FACTORIAL);
 			break;
 		case FUNCTION_FLOOR:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_FLOOR);
 			break;
 		case FUNCTION_LN:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_FUNCTION_LN);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_FUNCTION_LN);
 			break;
 		case FUNCTION_POWER:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_POWER);
 			break;
 		case FUNCTION_ROOT:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_ROOT);
 			break;
 		case FUNCTION_SEC:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_SEC);
 			break;
 		case FUNCTION_SECH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_SECH);
 			break;
 		case FUNCTION_SIN:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_SIN);
 			break;
 		case FUNCTION_SINH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_SINH);
 			break;
 		case FUNCTION_TAN:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_TAN);
 			break;
 		case FUNCTION_TANH:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_TANH);
 			break;
 		case FUNCTION:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_FUNCTION);
-			ast.setName(a.getName());
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_FUNCTION);
+			libAstNode.setName(astnode.getName());
 			break;
 		case LAMBDA:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LAMBDA);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LAMBDA);
 			break;
 		case LOGICAL_AND:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LOGICAL_AND);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LOGICAL_AND);
 			break;
 		case LOGICAL_XOR:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LOGICAL_XOR);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LOGICAL_XOR);
 			break;
 		case LOGICAL_OR:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LOGICAL_OR);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LOGICAL_OR);
 			break;
 		case LOGICAL_NOT:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LOGICAL_NOT);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_LOGICAL_NOT);
 			break;
 		case FUNCTION_PIECEWISE:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_FUNCTION_PIECEWISE);
 			break;
 		case RELATIONAL_EQ:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_RELATIONAL_EQ);
 			break;
 		case RELATIONAL_GEQ:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_RELATIONAL_GEQ);
 			break;
 		case RELATIONAL_GT:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_RELATIONAL_GT);
 			break;
 		case RELATIONAL_NEQ:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_RELATIONAL_NEQ);
 			break;
 		case RELATIONAL_LEQ:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_RELATIONAL_LEQ);
 			break;
 		case RELATIONAL_LT:
-			ast = new org.sbml.libsbml.ASTNode(
+			libAstNode = new org.sbml.libsbml.ASTNode(
 					libsbmlConstants.AST_RELATIONAL_LT);
 			break;
 		default:
-			ast = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_UNKNOWN);
+			libAstNode = new org.sbml.libsbml.ASTNode(libsbmlConstants.AST_UNKNOWN);
 			break;
 		}
-		for (int i = 0; i < a.getNumChildren(); i++)
-			ast.addChild(convert(a.getChild(i)));
-		return ast;
+		for (ASTNode child : astnode.getListOfNodes())
+			libAstNode.addChild(convert(child));
+		return libAstNode;
 	}
 
 	/**
@@ -349,7 +352,7 @@ public abstract class AbstractSBMLWriter implements SBMLWriter {
 			break;
 		case NAME:
 			equal &= libMath.getType() == libsbmlConstants.AST_NAME;
-			equal &= libMath.getName().equals(math.getName());
+			equal &= math.getName().equals(libMath.getName());
 			break;
 		case CONSTANT_PI:
 			equal &= libMath.getType() == libsbmlConstants.AST_CONSTANT_PI;

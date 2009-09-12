@@ -29,24 +29,24 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.AssignmentRule;
-import org.sbml.jlibsbml.Constraint;
-import org.sbml.jlibsbml.Event;
-import org.sbml.jlibsbml.EventAssignment;
-import org.sbml.jlibsbml.FunctionDefinition;
-import org.sbml.jlibsbml.InitialAssignment;
-import org.sbml.jlibsbml.KineticLaw;
-import org.sbml.jlibsbml.ListOf;
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.ModifierSpeciesReference;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.RateRule;
-import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.Rule;
-import org.sbml.jlibsbml.SBO;
-import org.sbml.jlibsbml.Species;
-import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.EventAssignment;
+import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.RateRule;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
@@ -1031,14 +1031,15 @@ public class KineticLawGenerator {
 	 * @param math
 	 * @return
 	 */
-	public List<Parameter> getReferencedGlobalParameters(ASTNode math) {
+	public static List<Parameter> findReferencedGlobalParameters(ASTNode math) {
 		LinkedList<Parameter> pList = new LinkedList<Parameter>();
 		if (math.getType().equals(ASTNode.Type.NAME)
 				&& (math.getVariable() instanceof Parameter)
-				&& (getModel().getParameter(math.getVariable().getId()) != null))
+				&& (math.getParentSBMLObject().getModel().getParameter(
+						math.getVariable().getId()) != null))
 			pList.add((Parameter) math.getVariable());
 		for (ASTNode child : math.getListOfNodes())
-			pList.addAll(getReferencedGlobalParameters(child));
+			pList.addAll(findReferencedGlobalParameters(child));
 		return pList;
 	}
 

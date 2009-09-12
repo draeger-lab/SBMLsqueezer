@@ -30,8 +30,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.SBase;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBase;
 import org.sbml.squeezer.io.SBaseChangedListener;
 
 /**

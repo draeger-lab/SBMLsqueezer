@@ -26,10 +26,10 @@ import java.io.OutputStreamWriter;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
 
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.Species;
-import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.ListOfEvents;
 import org.sbml.libsbml.SBMLDocument;

@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -93,15 +93,8 @@ public class ConvenienceIndependent extends Convenience {
 		Reaction reaction = getParentSBMLObject();
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		for (int i = 0; i < enzymes.length; i++) {
-			StringBuffer klV = concat("kV_", reaction.getId());
-			String enzyme = modE.size() > 0 ? modE.get(i) : null;
-			if (enzyme != null)
-				append(klV, underscore, modE.get(i));
-			Parameter p_klV = new Parameter(klV.toString(), getLevel(),
-					getVersion());
-			addParameter(p_klV);
-
 			ASTNode numerator, denominator = null;
+			String enzyme = modE.size() > 0 ? modE.get(i) : null;
 			if (!reaction.getReversible()) {
 				numerator = ASTNode.times(numeratorElements(enzyme, FORWARD));
 				denominator = ASTNode
@@ -119,6 +112,12 @@ public class ConvenienceIndependent extends Convenience {
 			}
 			ASTNode frac = denominator != null ? ASTNode.frac(numerator,
 					denominator) : numerator;
+			StringBuffer klV = concat("kV_", reaction.getId());
+			if (enzyme != null)
+				append(klV, underscore, modE.get(i));
+			Parameter p_klV = new Parameter(klV.toString(), getLevel(),
+					getVersion());
+			addParameter(p_klV);
 			enzymes[i] = ASTNode.times(new ASTNode(p_klV, this), frac);
 			if (enzyme != null)
 				enzymes[i] = ASTNode.times(new ASTNode(enzyme, this),
@@ -192,7 +191,7 @@ public class ConvenienceIndependent extends Convenience {
 					new ASTNode(p_kiG, this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
 		}
-		
+
 		if (type)
 			equation = ASTNode.times(ASTNode.times(reactants), ASTNode
 					.sqrt(ASTNode.frac(reactantsroot.length > 0 ? ASTNode

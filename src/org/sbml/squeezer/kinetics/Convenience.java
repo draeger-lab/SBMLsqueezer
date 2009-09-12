@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.sbml.jlibsbml.ASTNode;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.SpeciesReference;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -248,7 +248,6 @@ public class Convenience extends GeneralizedMassAction {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			Parameter p_kM = getParameter(kM.toString());
-
 			denoms[i] = ASTNode.pow(ASTNode.frac(this,
 					ref.getSpeciesInstance(), p_kM), (int) ref
 					.getStoichiometry());

@@ -42,7 +42,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.sbml.jlibsbml.SBO;
+import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.SBMLsqueezer;

@@ -46,8 +46,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
 
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.Reaction;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.Kinetics;
@@ -180,7 +181,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 				buffer.close();
 			} catch (IOException exc) {
 				JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-						.getMessage(), 40), exc.getClass().getCanonicalName(),
+						.getMessage(), 40), exc.getClass().getSimpleName(),
 						JOptionPane.WARNING_MESSAGE);
 			}
 	}
@@ -234,7 +235,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			}
 		} catch (RateLawNotApplicableException exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getCanonicalName(),
+					.getMessage(), 40), exc.getClass().getSimpleName(),
 					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		} catch (RuntimeException exc) {
@@ -245,7 +246,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 			exc.printStackTrace();
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getCanonicalName(),
+					.getMessage(), 40), exc.getClass().getSimpleName(),
+					JOptionPane.WARNING_MESSAGE);
+			exc.printStackTrace();
+		} catch (SBMLException exc) {
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getSimpleName(),
 					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
@@ -438,7 +444,15 @@ public class KineticLawSelectionDialog extends JDialog implements
 						&& sbmlIO != null) {
 					KineticsAndParametersStoredInSBML = true;
 					klg.storeLaws(this);
-					sbmlIO.saveChanges();
+					try {
+						sbmlIO.saveChanges();
+					} catch (SBMLException exc) {
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+								.getMessage(), 40), exc.getClass()
+								.getCanonicalName(),
+								JOptionPane.WARNING_MESSAGE);
+						exc.printStackTrace();
+					}
 					KineticsAndParametersStoredInSBML = true;
 				}
 			}
@@ -464,7 +478,14 @@ public class KineticLawSelectionDialog extends JDialog implements
 		if (sbmlIO != null && klg != null) {
 			if (!KineticsAndParametersStoredInSBML) {
 				klg.storeLaws(this);
-				sbmlIO.saveChanges();
+				try {
+					sbmlIO.saveChanges();
+				} catch (SBMLException exc) {
+					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+							.getMessage(), 40), exc.getClass()
+							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
+					exc.printStackTrace();
+				}
 				KineticsAndParametersStoredInSBML = true;
 			}
 			JFileChooser chooser = new JFileChooser();

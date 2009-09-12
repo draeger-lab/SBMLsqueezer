@@ -32,27 +32,27 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.sbml.jlibsbml.Compartment;
-import org.sbml.jlibsbml.CompartmentType;
-import org.sbml.jlibsbml.Constraint;
-import org.sbml.jlibsbml.Event;
-import org.sbml.jlibsbml.EventAssignment;
-import org.sbml.jlibsbml.FunctionDefinition;
-import org.sbml.jlibsbml.InitialAssignment;
-import org.sbml.jlibsbml.KineticLaw;
-import org.sbml.jlibsbml.MathContainer;
-import org.sbml.jlibsbml.Model;
-import org.sbml.jlibsbml.ModifierSpeciesReference;
-import org.sbml.jlibsbml.Parameter;
-import org.sbml.jlibsbml.Reaction;
-import org.sbml.jlibsbml.Rule;
-import org.sbml.jlibsbml.SBMLDocument;
-import org.sbml.jlibsbml.SBase;
-import org.sbml.jlibsbml.Species;
-import org.sbml.jlibsbml.SpeciesReference;
-import org.sbml.jlibsbml.SpeciesType;
-import org.sbml.jlibsbml.Unit;
-import org.sbml.jlibsbml.UnitDefinition;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.CompartmentType;
+import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.EventAssignment;
+import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.MathContainer;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.SpeciesType;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
 
 /**
  * @author <a href="mailto:simon.schaefer@uni-tuebingen.de">Simon
