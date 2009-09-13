@@ -64,8 +64,7 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
 		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kdiss = concat(kdiss, underscore, catalysts.get(c));
-		Parameter p_kdiss = new Parameter(kdiss.toString(), getLevel(), getVersion());
-		addParameter(p_kdiss);
+		Parameter p_kdiss = createOrGetParameter(kdiss.toString());
 		return new ASTNode(p_kdiss, this);
 	}
 }

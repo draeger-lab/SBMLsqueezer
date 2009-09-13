@@ -60,6 +60,7 @@ public class UnitDefinition extends AbstractNamedSBase {
 	private static final UnitDefinition getPredefinedUnitd(String id) {
 		id = id.toLowerCase();
 		Unit u = new Unit(2, 4);
+		UnitDefinition ud = new UnitDefinition(id, 2, 4);
 		String name = "Predefined unit ";
 		if (id.equals("substance")) {
 			u.setKind(Unit.Kind.MOLE);
@@ -76,11 +77,12 @@ public class UnitDefinition extends AbstractNamedSBase {
 			name += "metre";
 		} else if (id.equals("time")) {
 			u.setKind(Unit.Kind.SECOND);
+			u.setSBOTerm(345);
+			ud.setSBOTerm(345);
 			name += "second";
 		} else
 			throw new IllegalArgumentException(
 					"no predefined unit available for " + id);
-		UnitDefinition ud = new UnitDefinition(id, 2, 4);
 		ud.setName(name);
 		ud.addUnit(u);
 		return ud;

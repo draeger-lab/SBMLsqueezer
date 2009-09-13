@@ -45,7 +45,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -173,9 +172,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						.getSource());
 			} else {
 				String dir = settings.get(CfgKeys.LATEX_DIR).toString();
-				JFileChooser chooser = GUITools.prepareFileChooser(dir, false,
-						JFileChooser.FILES_ONLY, new SBFileFilter(
-								SBFileFilter.TeX_FILES));
+				JFileChooser chooser = GUITools.createJFileChooser(dir, false,
+						false, JFileChooser.FILES_ONLY,
+						SBFileFilter.TeX_FILE_FILTER);
 				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 					File out = chooser.getSelectedFile();
 					String path = out.getParent();
@@ -194,10 +193,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				this.settings = dialog.getSettings();
 
 		} else if (e.getActionCommand().equals(Command.OPEN_FILE.toString())) {
-			JFileChooser chooser = GUITools.prepareFileChooser(settings.get(
-					CfgKeys.OPEN_DIR).toString(), false,
-					JFileChooser.FILES_ONLY, new SBFileFilter(
-							SBFileFilter.SBML_FILES));
+			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
+					CfgKeys.OPEN_DIR).toString(), false, false,
+					JFileChooser.FILES_ONLY, SBFileFilter.SBML_FILE_FILTER);
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				Model model = sbmlIO.readModel(chooser.getSelectedFile()
 						.getAbsolutePath());
@@ -212,12 +210,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 
 		} else if (e.getActionCommand().equals(Command.SAVE_FILE.toString())) {
-			SBFileFilter filterText = new SBFileFilter(SBFileFilter.TEXT_FILES);
-			SBFileFilter filterTeX = new SBFileFilter(SBFileFilter.TeX_FILES);
-			SBFileFilter filterSBML = new SBFileFilter(SBFileFilter.SBML_FILES);
-			JFileChooser chooser = GUITools.prepareFileChooser(settings.get(
-					CfgKeys.SAVE_DIR).toString(), false,
-					JFileChooser.FILES_ONLY, filterText, filterTeX, filterSBML);
+			SBFileFilter filterText = SBFileFilter.TEXT_FILE_FILTER;
+			SBFileFilter filterTeX = SBFileFilter.TeX_FILE_FILTER;
+			SBFileFilter filterSBML = SBFileFilter.SBML_FILE_FILTER;
+			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
+					CfgKeys.SAVE_DIR).toString(), false, false,
+					JFileChooser.FILES_ONLY, filterSBML, filterTeX, filterText);
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File out = chooser.getSelectedFile();
 				if (out.getParentFile() != null)
@@ -413,7 +411,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		openItem.setActionCommand(Command.OPEN_FILE.toString());
 		openItem.setAccelerator(KeyStroke.getKeyStroke('O',
 				InputEvent.CTRL_DOWN_MASK));
-		JMenuItem saveItem = new JMenuItem("Save", UIManager
+		JMenuItem saveItem = new JMenuItem("Save as", UIManager
 				.getIcon("FileView.floppyDriveIcon"));
 		saveItem.addActionListener(this);
 		saveItem.setActionCommand(Command.SAVE_FILE.toString());

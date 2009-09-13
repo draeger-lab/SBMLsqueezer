@@ -84,10 +84,10 @@ public class TestKinetik extends BasicKineticLaw {
 		ASTNode kineticLawPart = new ASTNode(this);	
 		String rId = getParentSBMLObject().getId();
 		
-		Parameter a = new Parameter(concat("a_", rId, underscore).toString(), getLevel(), getVersion());
-		Parameter b = new Parameter(concat("b_", rId, underscore).toString(), getLevel(), getVersion());
-		Parameter c = new Parameter(concat("c_", rId, underscore).toString(), getLevel(), getVersion());
-		Parameter d = new Parameter(concat("d_", rId, underscore).toString(), getLevel(), getVersion());
+		Parameter a = createOrGetParameter(concat("a_", rId, underscore).toString());
+		Parameter b = createOrGetParameter(concat("b_", rId, underscore).toString());
+		Parameter c = createOrGetParameter(concat("c_", rId, underscore).toString());
+		Parameter d = createOrGetParameter(concat("d_", rId, underscore).toString());
 		
 		ASTNode nodea = new ASTNode(a, this);
 		ASTNode nodeb = new ASTNode(b, this);
@@ -105,10 +105,9 @@ public class TestKinetik extends BasicKineticLaw {
 			System.out.println("for_testtesttest" + modifier.getSBOTerm());
 			// if(SBO.isProtein(modifier.getSBOTerm())){
 
-			Parameter e = new Parameter(concat("e_", modifierNum, rId,
-					underscore).toString(), getLevel(), getVersion());
+			Parameter e = createOrGetParameter(concat("e_", modifierNum, rId,
+					underscore).toString());
 			System.out.println("Mein Parameters: " + e.toString());
-			addParameter(e);
 
 			ASTNode modnode = new ASTNode(modifier, this);
 			ASTNode enode = new ASTNode(e, this);

@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.IllegalFormatException;
@@ -167,12 +168,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	public KineticLawSelectionDialog(JFrame owner, Properties settings,
 			Reaction reaction) {
 		this(owner, settings);
-		JFileChooser chooser = new JFileChooser(settings.get(CfgKeys.SAVE_DIR)
-				.toString());
-		chooser.setAcceptAllFileFilterUsed(false);
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		chooser.setFileFilter(new SBFileFilter(SBFileFilter.TeX_FILES));
-		chooser.setMultiSelectionEnabled(false);
+		JFileChooser chooser = GUITools.createJFileChooser(settings.get(
+				CfgKeys.SAVE_DIR).toString(), false, false,
+				JFileChooser.FILES_ONLY, SBFileFilter.TeX_FILE_FILTER);
 		if (chooser.showSaveDialog(owner) == JFileChooser.APPROVE_OPTION)
 			try {
 				BufferedWriter buffer = new BufferedWriter(new FileWriter(
@@ -488,15 +486,19 @@ public class KineticLawSelectionDialog extends JDialog implements
 				}
 				KineticsAndParametersStoredInSBML = true;
 			}
-			JFileChooser chooser = new JFileChooser();
-			SBFileFilter ff1 = new SBFileFilter(SBFileFilter.TeX_FILES);
-			SBFileFilter ff2 = new SBFileFilter(SBFileFilter.TEXT_FILES);
-			chooser.setFileFilter(ff1);
-			chooser.addChoosableFileFilter(ff2);
+			SBFileFilter ff1 = SBFileFilter.TeX_FILE_FILTER;
+			SBFileFilter ff2 = SBFileFilter.TEXT_FILE_FILTER;
+			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
+					CfgKeys.SAVE_DIR).toString(), false, false,
+					JFileChooser.FILES_ONLY, ff1, ff2);
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 				try {
-					new TextExport(sbmlIO.getSelectedModel(), chooser
-							.getSelectedFile());
+					File f = chooser.getSelectedFile();
+					if (ff1.accept(f))
+						LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), f,
+								settings);
+					if (ff2.accept(f))
+						new TextExport(sbmlIO.getSelectedModel(), f);
 				} catch (IOException exc) {
 					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 							.getMessage(), 40), exc.getClass()

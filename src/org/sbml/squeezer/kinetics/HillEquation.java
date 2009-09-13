@@ -139,9 +139,8 @@ public class HillEquation extends BasicKineticLaw {
 								+ reaction.getId()
 								+ ". Only transcriptional modification is allowed here.");
 			else if ((SBO.isMessengerRNA(reaction.getReactant(0)
-					.getSpeciesInstance().getSBOTerm())
-					|| SBO.isRNA(reaction.getReactant(0).getSpeciesInstance()
-							.getSBOTerm()))
+					.getSpeciesInstance().getSBOTerm()) || SBO.isRNA(reaction
+					.getReactant(0).getSpeciesInstance().getSBOTerm()))
 					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
 							.isTranscriptionalInhibitor(modifier.getSBOTerm())))
 				throw new ModificationException("Wrong activation in reaction "
@@ -192,11 +191,10 @@ public class HillEquation extends BasicKineticLaw {
 		 * if (!model.getSpecies(modTActi.get(i)).getSpeciesAlias(0).getType()
 		 * .toUpperCase().equals("GENE"))
 		 */{
-			Parameter p_hillcoeff = new Parameter(concat("np_", rId,
-					underscore, modTActi.get(i)).toString(), getLevel(), getVersion());
-			Parameter p_kS = new Parameter(concat("kSp_", rId, underscore,
-					modTActi.get(i)).toString(), getLevel(), getVersion());
-			addLocalParameters(p_hillcoeff, p_kS);
+			Parameter p_hillcoeff = createOrGetParameter(concat("np_", rId,
+					underscore, modTActi.get(i)).toString());
+			Parameter p_kS = createOrGetParameter(concat("kSp_", rId,
+					underscore, modTActi.get(i)).toString());
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(new ASTNode(
 					modTActi.get(i), this), new ASTNode(p_hillcoeff, this)),
 					ASTNode.sum(ASTNode.pow(new ASTNode(modTActi.get(i), this),
@@ -209,10 +207,10 @@ public class HillEquation extends BasicKineticLaw {
 		 * if (!model.getSpecies(modTInhib.get(i)).getSpeciesAlias(0)
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
-			Parameter p_hillcoeff = new Parameter(concat("nm_", rId,
-					underscore, modTInhib.get(i)).toString(), getLevel(), getVersion());
-			Parameter p_kS = new Parameter(concat("kSm_", rId, underscore,
-					modTInhib.get(i)).toString(), getLevel(), getVersion());
+			Parameter p_hillcoeff = createOrGetParameter(concat("nm_", rId,
+					underscore, modTInhib.get(i)).toString());
+			Parameter p_kS = createOrGetParameter(concat("kSm_", rId, underscore,
+					modTInhib.get(i)).toString());
 			inhib[i] = ASTNode.times(ASTNode.diff(new ASTNode(1, this), ASTNode
 					.frac(ASTNode.pow(new ASTNode(modTInhib.get(i), this),
 							new ASTNode(p_hillcoeff, this)), ASTNode.sum(
@@ -220,8 +218,7 @@ public class HillEquation extends BasicKineticLaw {
 									new ASTNode(p_hillcoeff, this)), ASTNode
 									.pow(this, p_kS, p_hillcoeff)))));
 		}
-		Parameter p_kg = new Parameter(concat("kg_", rId).toString(), getLevel(), getVersion());
-		addParameter(p_kg);
+		Parameter p_kg = createOrGetParameter(concat("kg_", rId).toString());
 
 		ASTNode formelTxt = new ASTNode(p_kg, this);
 		if (modTActi.size() > 0)

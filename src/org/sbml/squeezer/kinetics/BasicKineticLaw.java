@@ -129,66 +129,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
-	 * Returns the name of the kinetic formula of this object.
-	 * 
-	 * @return
-	 */
-	public abstract String getName();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.MathContainer#toString()
-	 */
-	// @Override
-	public String toString() {
-		if (!isSetSBOTerm())
-			return getName();
-		return getSBOTermID();
-	}
-
-	/**
-	 * Adds the given parameter only to the list of global parameters if this
-	 * list does not yet contain this parameter. Furthermore, the parameter's
-	 * default value is set to one instead of SBML's default of NaN (if no value
-	 * has been set for this parameter before).
-	 * 
-	 * @param parameter
-	 */
-	void addGlobalParameter(Parameter parameter) {
-		Model m = getModel();
-		if (!parameter.isSetValue())
-			parameter.setValue(1d);
-		if (!m.getListOfParameters().contains(parameter))
-			m.addParameter(parameter);
-	}
-
-	/**
-	 * Adds the given parameter only to the list of local parameters if this
-	 * list does not yet contain this parameter. Furthermore, the parameter's
-	 * default value is set to one instead of SBML's default of NaN (if no value
-	 * has been set for this parameter before).
-	 * 
-	 * @param parameter
-	 */
-	// @Override
-	public void addParameter(Parameter parameter) {
-		if (!parameter.isSetValue())
-			parameter.setValue(1d);
-		super.addParameter(parameter);
-	}
-
-	/**
-	 * Convenient method to add multiple parameters.
-	 * 
-	 * @param parameters
-	 */
-	void addLocalParameters(Parameter... parameters) {
-		for (Parameter parameter : parameters)
-			addParameter(parameter);
-	}
-
-	/**
 	 * 
 	 * @param k
 	 * @param things
@@ -223,4 +163,63 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			List<String> modActi, List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException;
+
+	/**
+	 * If the parent model does not yet contain a parameter with the given id, a
+	 * new parameter is created, its value is set to 1 and it is added to the
+	 * list of global parameters in the model. If there is already a parameter
+	 * with this id, a reference to it will be returned.
+	 * 
+	 * @param id
+	 *            the identifier of the global parameter.
+	 */
+	Parameter createOrGetGlobalParameter(String id) {
+		Model m = getModel();
+		Parameter p = m.getParameter(id);
+		if (p == null) {
+			p = new Parameter(id, getLevel(), getVersion());
+			p.setValue(1d);
+			m.addParameter(p);
+		}
+		return p;
+	}
+
+	/**
+	 * If a parameter with the given identifier has already been created and is
+	 * contained in the list of local parameters for this kinetic law, a pointer
+	 * to it will be returned. If no such parameter exists, a new parameter with
+	 * a value of 1 will be created and a pointer to it will be returned.
+	 * 
+	 * @param id
+	 *            the identifier of the local parameter.
+	 * @return
+	 */
+	Parameter createOrGetParameter(String id) {
+		Parameter p = getParameter(id);
+		if (p == null) {
+			p = new Parameter(id, getLevel(), getVersion());
+			p.setValue(1d);
+			addParameter(p);
+		}
+		return p;
+	}
+
+	/**
+	 * Returns the name of the kinetic formula of this object.
+	 * 
+	 * @return
+	 */
+	public abstract String getName();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.MathContainer#toString()
+	 */
+	// @Override
+	public String toString() {
+		if (!isSetSBOTerm())
+			return getName();
+		return getSBOTermID();
+	}
 }

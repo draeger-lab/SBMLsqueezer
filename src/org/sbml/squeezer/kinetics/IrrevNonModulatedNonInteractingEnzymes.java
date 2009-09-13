@@ -137,8 +137,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 					.getId()) : concat("kcat_", reaction.getId());
 			if (modE.size() > 1)
 				append(kcat, underscore, modE.get(enzymeNum));
-			addParameter(new Parameter(kcat.toString(), getLevel(), getVersion()));
-			ASTNode numerator = new ASTNode(kcat.toString(), this);
+			Parameter p_kcat = createOrGetParameter(kcat.toString());
+			ASTNode numerator = new ASTNode(p_kcat, this);
 
 			ASTNode[] denominator = new ASTNode[reaction.getNumReactants()];
 			for (int i = 0; i < reaction.getNumReactants(); i++) {
@@ -149,15 +149,13 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 				StringBuffer kM = concat("kM_", reaction.getId());
 				if (modE.size() > 1)
 					append(kM, underscore, modE.get(enzymeNum));
-				addParameter(new Parameter(append(kM, underscore,
-						si.getSpecies()).toString(), getLevel(), getVersion()));
-				ASTNode frac = ASTNode.frac(new ASTNode(
-						si.getSpeciesInstance(), this), new ASTNode(kM
-						.toString(), this));
+				append(kM, underscore, si.getSpecies());
+				Parameter p_kM = createOrGetParameter(kM.toString());
+				ASTNode frac = ASTNode
+						.frac(this, si.getSpeciesInstance(), p_kM);
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
-						new ASTNode(si.getSpeciesInstance(), this),
-						new ASTNode(kM.toString(), this)), new ASTNode(si
-						.getStoichiometry(), this)));
+						this, si.getSpeciesInstance(), p_kM), si
+						.getStoichiometry()));
 				denominator[i] = ASTNode.pow(ASTNode.sum(new ASTNode(1, this),
 						frac), new ASTNode(si.getStoichiometry(), this));
 			}

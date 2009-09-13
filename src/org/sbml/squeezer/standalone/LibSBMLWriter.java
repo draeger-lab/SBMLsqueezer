@@ -1429,6 +1429,9 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		org.sbml.libsbml.SBMLWriter writer = new SBMLWriter();
 		writer.setProgramName("SBMLsqueezer");
 		writer.setProgramVersion(SBMLsqueezer.getVersionNumber());
+		d.checkInternalConsistency();
+		d.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
+		d.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY, false);
 		d.checkConsistency();
 		boolean errorFatal = false;
 		StringBuilder builder = new StringBuilder();
