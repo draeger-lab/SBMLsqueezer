@@ -169,15 +169,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					append(kMr2, "kMr2", kMr2.substring(2));
 				}
 				append(kIr1, underscore, speciesR1);
-				Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
-						getVersion());
-				addLocalParameters(p_kcatp, p_kMr1, p_kMr2, p_kIr1);
+				Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
 
 				numerator = new ASTNode(p_kcatp, this);
 				if (modE.size() > 0)
@@ -249,24 +244,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						kIp1 = concat("kip1", kIp1.substring(2));
 						kIp2 = concat("kip2", kIp2.substring(2));
 					}
-					Parameter p_kcatp = new Parameter(kcatp.toString(),
-							getLevel(), getVersion());
-					Parameter p_kcatn = new Parameter(kcatn.toString(),
-							getLevel(), getVersion());
-					Parameter p_kMr2 = new Parameter(kMr2.toString(),
-							getLevel(), getVersion());
-					Parameter p_kMp1 = new Parameter(kMp1.toString(),
-							getLevel(), getVersion());
-					Parameter p_kIp1 = new Parameter(kIp1.toString(),
-							getLevel(), getVersion());
-					Parameter p_kIp2 = new Parameter(kIp2.toString(),
-							getLevel(), getVersion());
-					Parameter p_kIr1 = new Parameter(kIr1.toString(),
-							getLevel(), getVersion());
-					Parameter p_kIr2 = new Parameter(kIr2.toString(),
-							getLevel(), getVersion());
-					addLocalParameters(p_kcatp, p_kcatn, p_kMr2, p_kMp1,
-							p_kIp1, p_kIp2, p_kIr1, p_kIr2);
+					Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+					Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+					Parameter p_kIp1 = createOrGetParameter(kIp1.toString());
+					Parameter p_kIp2 = createOrGetParameter(kIp2.toString());
+					Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+					Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
 
 					ASTNode numeratorForward = ASTNode
 							.frac(new ASTNode(p_kcatp, this), ASTNode.times(
@@ -338,20 +323,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 						append(kIr1, "kip1", kIr1.substring(2));
 						append(kIr2, "kip2", kIr2.substring(2));
 					}
-					Parameter p_kcatp = new Parameter(kcatp.toString(),
-							getLevel(), getVersion());
-					Parameter p_kcatn = new Parameter(kcatn.toString(),
-							getLevel(), getVersion());
-					Parameter p_kMr2 = new Parameter(kMr2.toString(),
-							getLevel(), getVersion());
-					Parameter p_kMp1 = new Parameter(kMp1.toString(),
-							getLevel(), getVersion());
-					Parameter p_kIr1 = new Parameter(kIr1.toString(),
-							getLevel(), getVersion());
-					Parameter p_kIr2 = new Parameter(kIr2.toString(),
-							getLevel(), getVersion());
-					addLocalParameters(p_kcatp, p_kcatn, p_kMr2, p_kMp1,
-							p_kIr1, p_kIr2);
+					Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+					Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+					Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+					Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
 
 					ASTNode r1r2;
 					if (specRefR1.equals(specRefR2))

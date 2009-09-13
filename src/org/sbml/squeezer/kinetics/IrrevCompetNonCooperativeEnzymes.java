@@ -134,8 +134,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 			}
-			Parameter p_kcat = new Parameter(kcat.toString(), getLevel(), getVersion());
-			addParameter(p_kcat);
+			Parameter p_kcat = createOrGetParameter(kcat.toString());
 			ASTNode currEnzyme;
 			ASTNode numerator;
 
@@ -150,8 +149,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 
 				kM = concat(kM, underscore, modE.get(enzymeNum));
 			kM = concat(kM, underscore, reaction.getReactant(0).getSpecies());
-			Parameter p_kM = new Parameter(kM.toString(), getLevel(), getVersion());
-			addParameter(p_kM);
+			Parameter p_kM = createOrGetParameter(kM.toString());
 
 			if (modInhib.size() == 0)
 				denominator = new ASTNode(p_kM, this);
@@ -168,10 +166,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					}
 					kIi = concat(kIi, underscore, modInhib.get(i));
 					exponent = concat(exponent, underscore, modInhib.get(i));
-					Parameter p_kIi = new Parameter(kIi.toString(), getLevel(), getVersion());
-					Parameter p_exp = new Parameter(exponent.toString(), getLevel(), getVersion());
-					addParameter(p_kIi);
-					addParameter(p_exp);
+					Parameter p_kIi = createOrGetParameter(kIi.toString());
+					Parameter p_exp = createOrGetParameter(exponent.toString());
 
 					factor = ASTNode.times(factor, ASTNode.pow(ASTNode.sum(
 							new ASTNode(1, this), ASTNode.frac(new ASTNode(

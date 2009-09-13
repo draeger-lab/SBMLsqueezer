@@ -303,6 +303,38 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * 
+	 * @param operator
+	 * @param ast
+	 * @return
+	 */
+	private static ASTNode arithmethicOperation(Type operator, ASTNode... ast) {
+		LinkedList<ASTNode> astList = new LinkedList<ASTNode>();
+		if (ast != null)
+			for (ASTNode node : ast)
+				if (node != null)
+					astList.add(node);
+		if (astList.size() == 0)
+			return null;
+		if (astList.size() == 1)
+			return astList.getFirst().clone();
+		if (operator == Type.PLUS || operator == Type.MINUS
+				|| operator == Type.TIMES || operator == Type.DIVIDE
+				|| operator == Type.POWER) {
+			MathContainer mc = astList.getFirst().parentSBMLObject;
+			ASTNode arithmetic = new ASTNode(operator, mc);
+			for (ASTNode nodes : astList) {
+				arithmetic.addChild(nodes);
+				setParentSBMLObject(nodes, mc);
+			}
+			return arithmetic;
+		} else
+			throw new RuntimeException(
+					new IllegalArgumentException(
+							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
+	}
+
+	/**
 	 * Creates a new ASTNode of type MINUS and adds the given nodes as children
 	 * 
 	 * @param parent
@@ -338,6 +370,20 @@ public class ASTNode implements TreeNode {
 			NamedSBase denominator) {
 		return frac(new ASTNode(numerator, container), new ASTNode(denominator,
 				container));
+	}
+
+	/**
+	 * Returns a fraction of the two entities.
+	 * 
+	 * @param container
+	 * @param numeratorId
+	 * @param denominatorId
+	 * @return
+	 */
+	public static ASTNode frac(MathContainer container, String numeratorId,
+			String denominatorId) {
+		return frac(new ASTNode(numeratorId, container), new ASTNode(
+				denominatorId, container));
 	}
 
 	/**
@@ -380,6 +426,17 @@ public class ASTNode implements TreeNode {
 		basis.raiseByThePowerOf(exponent);
 		return basis;
 	}
+	
+	/**
+	 * 
+	 * @param basis
+	 * @param exponent
+	 * @return
+	 */
+	public static ASTNode pow(ASTNode basis, int exponent) {
+		basis.raiseByThePowerOf(exponent);
+		return basis;
+	}
 
 	/**
 	 * Raises the given basis by the power of the given exponent.
@@ -408,6 +465,18 @@ public class ASTNode implements TreeNode {
 		root.addChild(radicant);
 		setParentSBMLObject(rootExponent, radicant.getParentSBMLObject());
 		return root;
+	}
+
+	/**
+	 * set the Parent of the node and its children to the given value
+	 * 
+	 * @param node
+	 * @param parent
+	 */
+	private static void setParentSBMLObject(ASTNode node, MathContainer parent) {
+		node.parentSBMLObject = parent;
+		for (ASTNode nodes : node.listOfNodes)
+			setParentSBMLObject(nodes, parent);
 	}
 
 	/**
@@ -466,50 +535,6 @@ public class ASTNode implements TreeNode {
 		for (int i = 0; i < sbase.length; i++)
 			elements[i] = new ASTNode(sbase[i], parent);
 		return times(elements);
-	}
-
-	/**
-	 * 
-	 * @param operator
-	 * @param ast
-	 * @return
-	 */
-	private static ASTNode arithmethicOperation(Type operator, ASTNode... ast) {
-		LinkedList<ASTNode> astList = new LinkedList<ASTNode>();
-		if (ast != null)
-			for (ASTNode node : ast)
-				if (node != null)
-					astList.add(node);
-		if (astList.size() == 0)
-			return null;
-		if (astList.size() == 1)
-			return astList.getFirst().clone();
-		if (operator == Type.PLUS || operator == Type.MINUS
-				|| operator == Type.TIMES || operator == Type.DIVIDE
-				|| operator == Type.POWER) {
-			MathContainer mc = astList.getFirst().parentSBMLObject;
-			ASTNode arithmetic = new ASTNode(operator, mc);
-			for (ASTNode nodes : astList) {
-				arithmetic.addChild(nodes);
-				setParentSBMLObject(nodes, mc);
-			}
-			return arithmetic;
-		} else
-			throw new RuntimeException(
-					new IllegalArgumentException(
-							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
-	}
-
-	/**
-	 * set the Parent of the node and its children to the given value
-	 * 
-	 * @param node
-	 * @param parent
-	 */
-	private static void setParentSBMLObject(ASTNode node, MathContainer parent) {
-		node.parentSBMLObject = parent;
-		for (ASTNode nodes : node.listOfNodes)
-			setParentSBMLObject(nodes, parent);
 	}
 
 	/**
@@ -658,6 +683,43 @@ public class ASTNode implements TreeNode {
 	public void addChild(ASTNode child) {
 		listOfNodes.add(child);
 		child.parent = this;
+	}
+
+	/**
+	 * Creates a new node with the type of this node, moves all children of this
+	 * node to this new node, sets the type of this node to the given operator,
+	 * adds the new node as left child of this node and the given astnode as the
+	 * right child of this node. The parentSBMLObject of the whole resulting
+	 * ASTNode is then set to the parent of this node.
+	 * 
+	 * @param operator
+	 *            The new type of this node. This has to be one of the
+	 *            following: PLUS, MINUS, TIMES, DIVIDE, or POWER. Otherwise a
+	 *            runtime error is thrown.
+	 * @param astnode
+	 *            The new right child of this node
+	 */
+	private void arithmeticOperation(Type operator, ASTNode astnode) {
+		if (operator == Type.PLUS || operator == Type.MINUS
+				|| operator == Type.TIMES || operator == Type.DIVIDE
+				|| operator == Type.POWER) {
+			ASTNode swap = new ASTNode(type, getParentSBMLObject());
+			swap.denominator = denominator;
+			swap.exponent = exponent;
+			swap.mantissa = mantissa;
+			swap.name = name;
+			swap.numerator = numerator;
+			swap.printNameIfAvailable = printNameIfAvailable;
+			swap.variable = variable;
+			swapChildren(swap);
+			setType(operator);
+			addChild(swap);
+			addChild(astnode);
+			setParentSBMLObject(astnode, getParentSBMLObject());
+		} else
+			throw new RuntimeException(
+					new IllegalArgumentException(
+							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
 	}
 
 	/*
@@ -915,6 +977,35 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * If the field printNameIfAvailable is false this method returns a the id
+	 * of the given SBase. If printNameIfAvailable is true this method looks for
+	 * the name of the given SBase and will return it.
+	 * 
+	 * @param sbase
+	 *            the SBase, whose name or id is to be returned.
+	 * @param mathMode
+	 *            if true this method returns the name typesetted in mathmode,
+	 *            i.e., mathrm for names and mathtt for ids, otherwise texttt
+	 *            will be used for ids and normalfont (nothing) will be used for
+	 *            names.
+	 * @return The name or the ID of the SBase (according to the field
+	 *         printNameIfAvailable), whose LaTeX special symbols are masked and
+	 *         which is type set in typewriter font if it is an id. The mathmode
+	 *         argument decides if mathtt or mathrm has to be used.
+	 */
+	private StringBuffer getNameOrID(NamedSBase sbase) {
+		String name = "";
+		if (sbase.isSetName() && printNameIfAvailable)
+			name = sbase.getName();
+		else if (sbase.isSetId())
+			name = sbase.getId();
+		else
+			name = "Undefinded";
+		name = LaTeX.maskSpecialChars(name);
+		return printNameIfAvailable ? LaTeX.mathrm(name) : LaTeX.mathtt(name);
+	}
+
+	/**
 	 * Get the number of children that this node has.
 	 * 
 	 * @return the number of children of this ASTNode, or 0 is this node has no
@@ -989,8 +1080,52 @@ public class ASTNode implements TreeNode {
 				"getReal() should be called only when isReal()"));
 	}
 
+	/**
+	 * Just for testing purposes...
+	 * 
+	 * @return
+	 */
+	public Set<NamedSBase> getReferencedNamedSBases() {
+		Set<NamedSBase> l = new HashSet<NamedSBase>();
+		if (isName()) {
+			if (getVariable() != null)
+				l.add(getVariable());
+			else
+				System.err.println("Name of this node is " + getName()
+						+ " but no variable is set.");
+		}
+		for (ASTNode child : listOfNodes)
+			l.addAll(child.getReferencedNamedSBases());
+		return l;
+	}
+
 	public ASTNode getRightChild() {
 		return listOfNodes.getLast();
+	}
+
+	/**
+	 * This method returns the correct LaTeX expression for a function which
+	 * returns the size of a compartment. This can be a volume, an area, a
+	 * length or a point.
+	 */
+	private StringBuffer getSize(Compartment c) {
+		StringBuffer value = new StringBuffer();
+		switch ((int) c.getSpatialDimensions()) {
+		case 3:
+			value.append("vol");
+			break;
+		case 2:
+			value.append("area");
+			break;
+		case 1:
+			value.append("length");
+			break;
+		default:
+			value.append("point");
+			break;
+		}
+		return LaTeX.mathrm(value.toString()).append(
+				LaTeX.brackets(getNameOrID(c)));
 	}
 
 	public Type getType() {
@@ -1003,6 +1138,20 @@ public class ASTNode implements TreeNode {
 		throw new RuntimeException(
 				new IllegalArgumentException(
 						"getVariable() should be called only when !isNumber() || !isOperator()"));
+	}
+
+	/**
+	 * 
+	 */
+	private void initDefaults() {
+		type = Type.UNKNOWN;
+		if (listOfNodes == null)
+			listOfNodes = new LinkedList<ASTNode>();
+		else
+			listOfNodes.clear();
+		variable = null;
+		mantissa = Double.NaN;
+		printNameIfAvailable = false;
 	}
 
 	/**
@@ -1274,6 +1423,52 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * This method decides if brakets are to be set. The symbol is a
+	 * mathematical operator, e.g., plus, minus, multiplication etc. in LaTeX
+	 * syntax (for instance
+	 * 
+	 * <pre>
+	 * \cdot
+	 * </pre>
+	 * 
+	 * ). It simply counts the number of descendants on the left and the right
+	 * hand side of the symbol.
+	 * 
+	 * @param astnode
+	 * @param model
+	 * @param symbol
+	 * @return
+	 * @throws IOException
+	 */
+	private StringBuffer logicalOperation() {
+		StringBuffer value = new StringBuffer();
+		if (1 < getLeftChild().getNumChildren())
+			value.append(LaTeX.leftBrace);
+		value.append(getLeftChild().toLaTeX());
+		if (1 < getLeftChild().getNumChildren())
+			value.append(LaTeX.rightBrace);
+		switch (type) {
+		case LOGICAL_AND:
+			value.append(LaTeX.wedge);
+			break;
+		case LOGICAL_XOR:
+			value.append(LaTeX.xor);
+			break;
+		case LOGICAL_OR:
+			value.append(LaTeX.or);
+			break;
+		default:
+			break;
+		}
+		if (1 < getRightChild().getNumChildren())
+			value.append(LaTeX.leftBrace);
+		value.append(getRightChild().toLaTeX());
+		if (1 < getRightChild().getNumChildren())
+			value.append(LaTeX.rightBrace);
+		return value;
+	}
+
+	/**
 	 * subtracts the given ASTNode from this node
 	 * 
 	 * @param ast
@@ -1281,6 +1476,24 @@ public class ASTNode implements TreeNode {
 
 	public void minus(ASTNode ast) {
 		arithmeticOperation(Type.MINUS, ast);
+	}
+
+	/**
+	 * Substracts the given real number from this node.
+	 * 
+	 * @param real
+	 */
+	public void minus(double real) {
+		minus(new ASTNode(real, getParentSBMLObject()));
+	}
+
+	/**
+	 * Substracts the given integer from this node.
+	 * 
+	 * @param integer
+	 */
+	public void minus(int integer) {
+		minus(new ASTNode(integer, getParentSBMLObject()));
 	}
 
 	/**
@@ -1308,6 +1521,22 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * 
+	 * @param real
+	 */
+	public void plus(double real) {
+		plus(new ASTNode(real, getParentSBMLObject()));
+	}
+
+	/**
+	 * 
+	 * @param integer
+	 */
+	public void plus(int integer) {
+		plus(new ASTNode(integer, getParentSBMLObject()));
+	}
+
+	/**
 	 * Adds the given node as a child of this ASTNode. This method adds child
 	 * nodes from right to left.
 	 * 
@@ -1330,9 +1559,10 @@ public class ASTNode implements TreeNode {
 	 * @param exponent
 	 */
 	public void raiseByThePowerOf(double exponent) {
-		if (exponent == 0d)
+		if (exponent == 0d) {
 			setValue(1);
-		else if (exponent != 1d)
+			listOfNodes.clear();
+		} else if (exponent != 1d)
 			raiseByThePowerOf(new ASTNode(exponent, getParentSBMLObject()));
 	}
 
@@ -2149,7 +2379,7 @@ public class ASTNode implements TreeNode {
 			return value = new StringBuffer();
 		}
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2189,175 +2419,5 @@ public class ASTNode implements TreeNode {
 				break;
 			}
 		return isName() ? getName() : getType().toString();
-	}
-
-	/**
-	 * Creates a new node with the type of this node, moves all children of this
-	 * node to this new node, sets the type of this node to the given operator,
-	 * adds the new node as left child of this node and the given astnode as the
-	 * right child of this node. The parentSBMLObject of the whole resulting
-	 * ASTNode is then set to the parent of this node.
-	 * 
-	 * @param operator
-	 *            The new type of this node. This has to be one of the
-	 *            following: PLUS, MINUS, TIMES, DIVIDE, or POWER. Otherwise a
-	 *            runtime error is thrown.
-	 * @param astnode
-	 *            The new right child of this node
-	 */
-	private void arithmeticOperation(Type operator, ASTNode astnode) {
-		if (operator == Type.PLUS || operator == Type.MINUS
-				|| operator == Type.TIMES || operator == Type.DIVIDE
-				|| operator == Type.POWER) {
-			ASTNode swap = new ASTNode(type, getParentSBMLObject());
-			swap.denominator = denominator;
-			swap.exponent = exponent;
-			swap.mantissa = mantissa;
-			swap.name = name;
-			swap.numerator = numerator;
-			swap.printNameIfAvailable = printNameIfAvailable;
-			swap.variable = variable;
-			swapChildren(swap);
-			setType(operator);
-			addChild(swap);
-			addChild(astnode);
-			setParentSBMLObject(astnode, getParentSBMLObject());
-		} else
-			throw new RuntimeException(
-					new IllegalArgumentException(
-							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
-	}
-
-	/**
-	 * If the field printNameIfAvailable is false this method returns a the id
-	 * of the given SBase. If printNameIfAvailable is true this method looks for
-	 * the name of the given SBase and will return it.
-	 * 
-	 * @param sbase
-	 *            the SBase, whose name or id is to be returned.
-	 * @param mathMode
-	 *            if true this method returns the name typesetted in mathmode,
-	 *            i.e., mathrm for names and mathtt for ids, otherwise texttt
-	 *            will be used for ids and normalfont (nothing) will be used for
-	 *            names.
-	 * @return The name or the ID of the SBase (according to the field
-	 *         printNameIfAvailable), whose LaTeX special symbols are masked and
-	 *         which is type set in typewriter font if it is an id. The mathmode
-	 *         argument decides if mathtt or mathrm has to be used.
-	 */
-	private StringBuffer getNameOrID(NamedSBase sbase) {
-		String name = "";
-		if (sbase.isSetName() && printNameIfAvailable)
-			name = sbase.getName();
-		else if (sbase.isSetId())
-			name = sbase.getId();
-		else
-			name = "Undefinded";
-		name = LaTeX.maskSpecialChars(name);
-		return printNameIfAvailable ? LaTeX.mathrm(name) : LaTeX.mathtt(name);
-	}
-
-	/**
-	 * This method returns the correct LaTeX expression for a function which
-	 * returns the size of a compartment. This can be a volume, an area, a
-	 * length or a point.
-	 */
-	private StringBuffer getSize(Compartment c) {
-		StringBuffer value = new StringBuffer();
-		switch ((int) c.getSpatialDimensions()) {
-		case 3:
-			value.append("vol");
-			break;
-		case 2:
-			value.append("area");
-			break;
-		case 1:
-			value.append("length");
-			break;
-		default:
-			value.append("point");
-			break;
-		}
-		return LaTeX.mathrm(value.toString()).append(
-				LaTeX.brackets(getNameOrID(c)));
-	}
-
-	/**
-	 * 
-	 */
-	private void initDefaults() {
-		type = Type.UNKNOWN;
-		if (listOfNodes == null)
-			listOfNodes = new LinkedList<ASTNode>();
-		else
-			listOfNodes.clear();
-		variable = null;
-		mantissa = Double.NaN;
-		printNameIfAvailable = false;
-	}
-
-	/**
-	 * This method decides if brakets are to be set. The symbol is a
-	 * mathematical operator, e.g., plus, minus, multiplication etc. in LaTeX
-	 * syntax (for instance
-	 * 
-	 * <pre>
-	 * \cdot
-	 * </pre>
-	 * 
-	 * ). It simply counts the number of descendants on the left and the right
-	 * hand side of the symbol.
-	 * 
-	 * @param astnode
-	 * @param model
-	 * @param symbol
-	 * @return
-	 * @throws IOException
-	 */
-	private StringBuffer logicalOperation() {
-		StringBuffer value = new StringBuffer();
-		if (1 < getLeftChild().getNumChildren())
-			value.append(LaTeX.leftBrace);
-		value.append(getLeftChild().toLaTeX());
-		if (1 < getLeftChild().getNumChildren())
-			value.append(LaTeX.rightBrace);
-		switch (type) {
-		case LOGICAL_AND:
-			value.append(LaTeX.wedge);
-			break;
-		case LOGICAL_XOR:
-			value.append(LaTeX.xor);
-			break;
-		case LOGICAL_OR:
-			value.append(LaTeX.or);
-			break;
-		default:
-			break;
-		}
-		if (1 < getRightChild().getNumChildren())
-			value.append(LaTeX.leftBrace);
-		value.append(getRightChild().toLaTeX());
-		if (1 < getRightChild().getNumChildren())
-			value.append(LaTeX.rightBrace);
-		return value;
-	}
-
-	/**
-	 * Just for testing purposes...
-	 * 
-	 * @return
-	 */
-	public Set<NamedSBase> getReferencedNamedSBases() {
-		Set<NamedSBase> l = new HashSet<NamedSBase>();
-		if (isName()) {
-			if (getVariable() != null)
-				l.add(getVariable());
-			else
-				System.err.println("Name of this node is " + getName()
-						+ " but no variable is set.");
-		}
-		for (ASTNode child : listOfNodes)
-			l.addAll(child.getReferencedNamedSBases());
-		return l;
 	}
 }

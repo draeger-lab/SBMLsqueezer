@@ -202,24 +202,16 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				}
 				append(kIp2, underscore, specRefP2.getSpecies());
 			}
-			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
-					getVersion());
-			addParameter(p_kcatp);
+			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
 
 			/*
 			 * addLocalParameter(kcatp); Irreversible reaction (bi-bi or bi-uni
 			 * does not matter)
 			 */
 			if (!reaction.getReversible()) {
-				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
-						getVersion());
-				addParameter(p_kMr1);
-				addParameter(p_kMr2);
-				addParameter(p_kIr1);
+				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
 
 				numerator = new ASTNode(p_kcatp, this);
 				if (modE.size() > 0)
@@ -252,26 +244,15 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible Bi-Bi reaction.
 				 */
-				Parameter p_kIr2 = new Parameter(kIr2.toString(), getLevel(),
-						getVersion());
-				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMp2 = new Parameter(kMp2.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIp2 = new Parameter(kIp2.toString(), getLevel(),
-						getVersion());
-				addLocalParameters(p_kIr2, p_kcatn, p_kMr1, p_kMr2, p_kMp1,
-						p_kMp2, p_kIr1, p_kIp1, p_kIp2);
+				Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
+				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+				Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+				Parameter p_kMp2 = createOrGetParameter(kMp2.toString());
+				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+				Parameter p_kIp1 = createOrGetParameter(kIp1.toString());
+				Parameter p_kIp2 = createOrGetParameter(kIp2.toString());
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));
 				ASTNode numeratorReverse = ASTNode.frac(new ASTNode(p_kcatn,
@@ -375,20 +356,12 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible bi-uni reaction
 				 */
-				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(),
-						getVersion());
-				addLocalParameters(p_kcatn, p_kMr1, p_kMr2, p_kMp1, p_kIr1,
-						p_kIp1);
+				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+				Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+				Parameter p_kIp1 = createOrGetParameter(kIp1.toString());
 
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));

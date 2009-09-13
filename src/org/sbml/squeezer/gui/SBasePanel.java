@@ -28,6 +28,7 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -64,6 +65,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Symbol;
+import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.io.LaTeXExport;
@@ -111,38 +113,24 @@ public class SBasePanel extends JPanel {
 			addProperties((MathContainer) sbase);
 		if (sbase instanceof ListOf)
 			addProperties((ListOf<?>) sbase);
-		if (sbase instanceof Model)
+		else if (sbase instanceof Model)
 			addProperties((Model) sbase);
-		if (sbase instanceof UnitDefinition)
+		else if (sbase instanceof UnitDefinition)
 			addProperties((UnitDefinition) sbase);
-		if (sbase instanceof Compartment)
+		else if (sbase instanceof Unit)
+			addProperties((Unit) sbase);
+		else if (sbase instanceof Compartment)
 			addProperties((Compartment) sbase);
-		if (sbase instanceof Species)
+		else if (sbase instanceof Species)
 			addProperties((Species) sbase);
-		if (sbase instanceof Parameter)
+		else if (sbase instanceof Parameter)
 			addProperties((Parameter) sbase);
-		if (sbase instanceof Constraint)
+		else if (sbase instanceof Constraint)
 			addProperties((Constraint) sbase);
-		if (sbase instanceof Reaction)
+		else if (sbase instanceof Reaction)
 			addProperties((Reaction) sbase);
-		if (sbase instanceof Event)
+		else if (sbase instanceof Event)
 			addProperties((Event) sbase);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isEditable() {
-		return editable;
-	}
-
-	/**
-	 * 
-	 * @param editable
-	 */
-	public void setEditable(boolean editable) {
-		this.editable = editable;
 	}
 
 	/**
@@ -336,7 +324,7 @@ public class SBasePanel extends JPanel {
 				if (!modification.contains(hist.getModifiedDate(i)))
 					modification.add(hist.getModifiedDate(i));
 			if (modification.size() > 0) {
-				lh.add(new JLabel("Modification:"), 1, ++row, 1, 1, 1, 1);
+				lh.add(new JLabel("Modification: "), 1, ++row, 1, 1, 1, 1);
 				JList l = new JList(modification);
 				l.setEnabled(editable);
 				JScrollPane scroll2 = new JScrollPane(l,
@@ -712,10 +700,55 @@ public class SBasePanel extends JPanel {
 
 	/**
 	 * 
+	 * @param unit
+	 */
+	private void addProperties(Unit unit) {
+		lh.add(new JLabel("Kind: "), 1, ++row, 1, 1, 1, 1);
+		JComboBox unitSelection = new JComboBox();
+		for (Unit.Kind unitKind : Unit.Kind.values()) {
+			unitSelection.addItem(unitKind);
+			if (unitKind.equals(unit.getKind()))
+				unitSelection.setSelectedItem(unitKind);
+		}
+		unitSelection.setEditable(false);
+		unitSelection.setEnabled(editable);
+		lh.add(unitSelection, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		lh.add(new JLabel("Mutiplier: "), 1, ++row, 1, 1, 1, 1);
+		JSpinner sMultiplier = new JSpinner(new SpinnerNumberModel(unit
+				.getMultiplier(), -1000, 1000, 1));
+		sMultiplier.setEnabled(editable);
+		lh.add(sMultiplier, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		if (unit.getLevel() == 1
+				|| (unit.getLevel() == 2 && unit.getVersion() == 1)) {
+			lh.add(new JLabel("Offset: "), 1, ++row, 1, 1, 1, 1);
+			JSpinner sOffset = new JSpinner(new SpinnerNumberModel(unit
+					.getOffset(), -1000, 1000, 1));
+			sOffset.setEnabled(editable);
+			lh.add(sOffset, 3, row, 1, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		}
+		lh.add(new JLabel("Scale: "), 1, ++row, 1, 1, 1, 1);
+		JSpinner sScale = new JSpinner(new SpinnerNumberModel(unit.getScale(),
+				-1000, 1000, 1));
+		sScale.setEnabled(editable);
+		lh.add(sScale, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		JSpinner sExponent = new JSpinner(new SpinnerNumberModel(unit
+				.getExponent(), -24, 24, 1));
+		sExponent.setEnabled(editable);
+		lh.add(new JLabel("Exponent: "), 1, ++row, 1, 1, 1, 1);
+		lh.add(sExponent, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+	}
+
+	/**
+	 * 
 	 * @param ud
 	 */
 	private void addProperties(UnitDefinition ud) {
-		lh.add(new JLabel("Unit: "), 1, ++row, 1, 1, 1, 1);
+		lh.add(new JLabel("Definition: "), 1, ++row, 1, 1, 1, 1);
 		StringBuffer laTeXpreview = new StringBuffer();
 		laTeXpreview.append(LaTeX.eqBegin);
 		laTeXpreview.append((new LaTeXExport()).format(ud).toString().replace(
@@ -729,5 +762,23 @@ public class SBasePanel extends JPanel {
 		preview.setPreferredSize(new Dimension(200, 30));
 		lh.add(preview, 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		for (Unit u : ud.getListOfUnits())
+			lh.add(new SBasePanel(u), 1, ++row, 3, 1, 1, 1);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isEditable() {
+		return editable;
+	}
+
+	/**
+	 * 
+	 * @param editable
+	 */
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 }

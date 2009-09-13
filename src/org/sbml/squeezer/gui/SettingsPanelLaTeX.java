@@ -225,9 +225,9 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			JFileChooser chooser = new JFileChooser(fileField.getText());
+			chooser.setMultiSelectionEnabled(false);
 			if (browse) {
-				chooser.addChoosableFileFilter(new SBFileFilter(
-						SBFileFilter.TeX_FILES));
+				chooser.addChoosableFileFilter(SBFileFilter.TeX_FILE_FILTER);
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				chooser.setAcceptAllFileFilterUsed(false);
 			} else {

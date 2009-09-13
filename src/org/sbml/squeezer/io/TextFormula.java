@@ -89,6 +89,10 @@ public class TextFormula extends StringTools {
 						: new StringBuffer(basis.toString());
 		} catch (NumberFormatException exc) {
 		}
+		String b = basis.toString();
+		if (b.contains("*") || b.contains("-") || b.contains("+")
+				|| b.contains("/") || b.contains("^"))
+			basis = brackets(basis);
 		return arith('^', basis, exponent);
 	}
 

@@ -104,12 +104,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				}
 			}
 			append(kMr, underscore, specRefR);
-			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
-					getVersion());
-			Parameter p_kMr = new Parameter(kMr.toString(), getLevel(),
-					getVersion());
-			addParameter(p_kcatp);
-			addParameter(p_kMr);
+			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+			Parameter p_kMr = createOrGetParameter(kMr.toString());
 
 			ASTNode currEnzymeKin;
 			if (!reaction.getReversible()) {
@@ -126,12 +122,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 						new ASTNode(specRefR, this));
 				denominator = ASTNode.frac(this, specRefR, p_kMr);
 				append(kMp, underscore, specRefP);
-				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMp = new Parameter(kMp.toString(), getLevel(),
-						getVersion());
-				addParameter(p_kcatn);
-				addParameter(p_kMp);
+				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+				Parameter p_kMp = createOrGetParameter(kMp.toString());
 
 				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
 						this, p_kcatn, p_kMp), new ASTNode(specRefP, this)));
@@ -186,12 +178,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				append(kIa, underscore, modE.get(enzymeNum));
 				append(kIb, underscore, modE.get(enzymeNum));
 			}
-			Parameter p_kIa = new Parameter(kIa.toString(), getLevel(),
-					getVersion());
-			Parameter p_kIb = new Parameter(kIb.toString(), getLevel(),
-					getVersion());
-			addParameter(p_kIa);
-			addParameter(p_kIb);
+			Parameter p_kIa = createOrGetParameter(kIa.toString());
+			Parameter p_kIb = createOrGetParameter(kIb.toString());
 
 			ASTNode specRefI = new ASTNode(modInhib.get(0), this);
 			if (reaction.getReversible())
@@ -221,12 +209,8 @@ public class MichaelisMenten extends GeneralizedMassAction {
 					append(kIai, underscore, modE.get(enzymeNum));
 				StringBuffer kIbi = concat("kIb_", kIai);
 				kIai = concat("kIa_", kIai);
-				Parameter p_kIai = new Parameter(kIai.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIbi = new Parameter(kIbi.toString(), getLevel(),
-						getVersion());
-				addParameter(p_kIai);
-				addParameter(p_kIbi);
+				Parameter p_kIai = createOrGetParameter(kIai.toString());
+				Parameter p_kIbi = createOrGetParameter(kIbi.toString());
 				ASTNode specRefI = new ASTNode(modInhib.get(i), this);
 				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, new ASTNode(
 						p_kIai, this)));

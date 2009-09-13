@@ -271,10 +271,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					Parameter p_kAn = new Parameter(concat("kA_",
+					Parameter p_kAn = createOrGetParameter(concat("kA_",
 							getParentSBMLObject().getId(), underscore,
-							modifiers.get(i)).toString(), getLevel(), getVersion());
-					addParameter(p_kAn);
+							modifiers.get(i)).toString());
 					ASTNode kA = new ASTNode(p_kAn, this);
 					mods[i] = ASTNode
 							.frac(new ASTNode(modifiers.get(i), this),
@@ -284,8 +283,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 					// Inhibitor Mod
 					StringBuffer kIn = concat("kI_", getParentSBMLObject()
 							.getId(), underscore, modifiers.get(i));
-					Parameter p_kIn = new Parameter(kIn.toString(), getLevel(), getVersion());
-					addParameter(p_kIn);
+					Parameter p_kIn = createOrGetParameter(kIn.toString());
 					ASTNode kI = new ASTNode(p_kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI, new ASTNode(
 							modifiers.get(i), this)));
@@ -334,8 +332,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));
-		Parameter p_kass = new Parameter(kass.toString(), getLevel(), getVersion());
-		addParameter(p_kass);
+		Parameter p_kass = createOrGetParameter(kass.toString());
 		ASTNode ass = new ASTNode(p_kass, this);
 		for (SpeciesReference reactant : getParentSBMLObject()
 				.getListOfReactants()) {
@@ -391,8 +388,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kdiss = concat(kdiss, underscore, catalysts.get(c));
-		Parameter p_kdiss = new Parameter(kdiss.toString(), getLevel(), getVersion());
-		addParameter(p_kdiss);
+		Parameter p_kdiss = createOrGetParameter(kdiss.toString());
 		ASTNode diss = new ASTNode(p_kdiss, this);
 		for (int products = 0; products < getParentSBMLObject()
 				.getNumProducts(); products++) {

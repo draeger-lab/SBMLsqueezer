@@ -97,8 +97,7 @@ public class ConvenienceIndependent extends Convenience {
 			String enzyme = modE.size() > 0 ? modE.get(i) : null;
 			if (!reaction.getReversible()) {
 				numerator = ASTNode.times(numeratorElements(enzyme, FORWARD));
-				denominator = ASTNode
-						.times(denominatorElements(enzyme, FORWARD));
+				denominator = ASTNode.times(denominatorElements(enzyme, FORWARD));
 			} else {
 				numerator = ASTNode.diff(numeratorElements(enzyme, FORWARD),
 						numeratorElements(enzyme, REVERSE));
@@ -107,18 +106,15 @@ public class ConvenienceIndependent extends Convenience {
 						enzyme, REVERSE)));
 				if (reaction.getNumProducts() > 1
 						&& reaction.getNumReactants() > 1)
-					denominator = ASTNode.diff(denominator,
-							new ASTNode(1, this));
+					denominator.minus(1);
 			}
-			ASTNode frac = denominator != null ? ASTNode.frac(numerator,
-					denominator) : numerator;
 			StringBuffer klV = concat("kV_", reaction.getId());
 			if (enzyme != null)
 				append(klV, underscore, modE.get(i));
-			Parameter p_klV = new Parameter(klV.toString(), getLevel(),
-					getVersion());
-			addParameter(p_klV);
-			enzymes[i] = ASTNode.times(new ASTNode(p_klV, this), frac);
+			Parameter p_klV = createOrGetParameter(klV.toString());
+			if (denominator != null)
+				numerator.divideBy(denominator);
+			enzymes[i] = ASTNode.times(new ASTNode(p_klV, this), numerator);
 			if (enzyme != null)
 				enzymes[i] = ASTNode.times(new ASTNode(enzyme, this),
 						enzymes[i]);
@@ -156,13 +152,9 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString(), getLevel(),
-					getVersion());
-			addParameter(p_kM);
+			Parameter p_kM = createOrGetParameter(kM.toString());
 			kiG = concat("kG_", ref.getSpecies());
-			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(),
-					getVersion());
-			addGlobalParameter(p_kiG);
+			Parameter p_kiG = createOrGetGlobalParameter(kiG.toString());
 			reactants[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
 					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));
@@ -177,13 +169,9 @@ public class ConvenienceIndependent extends Convenience {
 			if (enzyme != null)
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
-			Parameter p_kM = new Parameter(kM.toString(), getLevel(),
-					getVersion());
-			addParameter(p_kM);
+			Parameter p_kM = createOrGetParameter(kM.toString());
 			kiG = concat("kG_", ref.getSpecies());
-			Parameter p_kiG = new Parameter(kiG.toString(), getLevel(),
-					getVersion());
-			addGlobalParameter(p_kiG);
+			Parameter p_kiG = createOrGetGlobalParameter(kiG.toString());
 			products[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
 					.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
 					new ASTNode(ref.getStoichiometry(), this));

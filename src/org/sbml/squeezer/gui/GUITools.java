@@ -184,18 +184,25 @@ public class GUITools {
 	 *            Start directory
 	 * @param allFilesAcceptable
 	 *            if true, all files are available besides the file filters
+	 * @param multiSelectionAllowed
+	 *            if true more the one file can be selected.
 	 * @param mode
 	 *            one of the Options in JFileChooser
 	 * @param filter
 	 *            no, one or several file filters.
 	 * @return Returns a file filter with the desired properties.
 	 */
-	public static JFileChooser prepareFileChooser(String dir,
-			boolean allFilesAcceptable, int mode, FileFilter... filter) {
+	public static JFileChooser createJFileChooser(String dir,
+			boolean allFilesAcceptable, boolean multiSelectionAllowed,
+			int mode, FileFilter... filter) {
 		JFileChooser chooser = new JFileChooser(dir);
-		for (FileFilter fileFilter : filter)
-			chooser.addChoosableFileFilter(fileFilter);
+		int i = 0;
+		if (!allFilesAcceptable && filter.length > 0)
+			chooser.setFileFilter(filter[i++]);
+		while (i < filter.length)
+			chooser.addChoosableFileFilter(filter[i++]);
 		chooser.setAcceptAllFileFilterUsed(allFilesAcceptable);
+		chooser.setMultiSelectionEnabled(multiSelectionAllowed);
 		chooser.setFileSelectionMode(mode);
 		return chooser;
 	}

@@ -150,13 +150,9 @@ public class PingPongMechanism extends GeneralizedMassAction {
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
 			}
-			Parameter p_kcatp = new Parameter(kcatp.toString(), getLevel(),
-					getVersion());
-			Parameter p_kMr1 = new Parameter(kMr1.toString(), getLevel(),
-					getVersion());
-			Parameter p_kMr2 = new Parameter(kMr2.toString(), getLevel(),
-					getVersion());
-			addLocalParameters(p_kcatp, p_kMr1, p_kMr2);
+			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+			Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+			Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
 
 			/*
 			 * Irreversible Reaction
@@ -224,20 +220,12 @@ public class PingPongMechanism extends GeneralizedMassAction {
 					kIp1 = concat("kip1", kIp1.substring(2));
 					kIp2 = concat("kip2", kIp2.substring(2));
 				}
-				Parameter p_kcatn = new Parameter(kcatn.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMp1 = new Parameter(kMp1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kMp2 = new Parameter(kMp2.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIp1 = new Parameter(kIp1.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIp2 = new Parameter(kIp2.toString(), getLevel(),
-						getVersion());
-				Parameter p_kIr1 = new Parameter(kIr1.toString(), getLevel(),
-						getVersion());
-				addLocalParameters(p_kcatn, p_kMp1, p_kMp2, p_kIp1, p_kIp2,
-						p_kIr1);
+				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+				Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+				Parameter p_kMp2 = createOrGetParameter(kMp2.toString());
+				Parameter p_kIp1 = createOrGetParameter(kIp1.toString());
+				Parameter p_kIp2 = createOrGetParameter(kIp2.toString());
+				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());  
 
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));

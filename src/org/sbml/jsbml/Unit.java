@@ -18,6 +18,7 @@
  */
 package org.sbml.jsbml;
 
+import org.sbml.squeezer.io.StringTools;
 import org.sbml.squeezer.io.TextFormula;
 
 /**
@@ -180,7 +181,105 @@ public class Unit extends AbstractSBase {
 		/**
 		 * Marker used by libSBML to indicate an invalid or unset unit.
 		 */
-		INVALID
+		INVALID;
+
+		/**
+		 * Returns the formula symbol of this unit kind in uni code notation.
+		 * 
+		 * @return
+		 */
+		public String getSymbol() {
+			switch (this) {
+			case AMPERE:
+				return "A";
+			case BECQUEREL:
+				return "Bq";
+			case CANDELA:
+				return "cd";
+			case CELSIUS:
+				return "\u00B0C";
+			case COULOMB:
+				return "C";
+			case FARAD:
+				return "F";
+			case GRAM:
+				return "g";
+			case GRAY:
+				return "Gy";
+			case HENRY:
+				return "H";
+			case HERTZ:
+				return "Hz";
+			case JOULE:
+				return "J";
+			case KATAL:
+				return "kat";
+			case KELVIN:
+				return "K";
+			case KILOGRAM:
+				return "kg";
+			case LITER:
+				return "l";
+			case LITRE:
+				return "l";
+			case LUMEN:
+				return "lm";
+			case LUX:
+				return "lx";
+			case METER:
+				return "m";
+			case METRE:
+				return "m";
+			case MOLE:
+				return "mol";
+			case NEWTON:
+				return "N";
+			case OHM:
+				return "\u03A9";
+			case PASCAL:
+				return "Pa";
+			case RADIAN:
+				return "rad";
+			case SECOND:
+				return "s";
+			case SIEMENS:
+				return "S";
+			case SIEVERT:
+				return "Sv";
+			case STERADIAN:
+				return "sr";
+			case TESLA:
+				return "T";
+			case VOLT:
+				return "V";
+			case WATT:
+				return "W";
+			case WEBER:
+				return "Wb";
+			default: // DIMENSIONLESS, ITEM, INVALID:
+				return toString().toLowerCase();
+			}
+		}
+
+		/**
+		 * Returns the name of this unit kind.
+		 * 
+		 * @return
+		 */
+		public String getName() {
+			if (this == CELSIUS)
+				return "degree "
+						+ StringTools.firstLetterUpperCase(toString()
+								.toLowerCase());
+			if (this == DIMENSIONLESS || this == GRAM || this == ITEM
+					|| this == INVALID || this == KILOGRAM || this == LUX
+					|| this == METER || this == METRE || this == MOLE
+					|| this == SECOND)
+				return toString().toLowerCase();
+			else
+				return StringTools.firstLetterUpperCase(toString()
+						.toLowerCase());
+		}
 	}
 
 	/**
@@ -326,11 +425,21 @@ public class Unit extends AbstractSBase {
 	 */
 	// @Override
 	public String toString() {
-		StringBuffer times = TextFormula.times(multiplier, TextFormula.pow(
-				Integer.valueOf(10), Integer.valueOf(scale)), kind);
+		String mult;
+		if (multiplier - ((int) multiplier) == 0)
+			mult = Integer.toString((int) multiplier);
+		else
+			mult = Double.toString(multiplier);
+		StringBuffer times = mult.equals("1") ? new StringBuffer()
+				: new StringBuffer(mult);
+		String pow = TextFormula.pow(Integer.valueOf(10),
+				Integer.valueOf(scale)).toString();
+		if (!pow.equals("1"))
+			times = TextFormula.times(times, pow);
+		times = TextFormula.times(times, kind.getSymbol());
 		if (isSetOffset())
 			times = TextFormula.sum(Double.toString(offset), times);
-		return TextFormula.pow(times, exponent).toString();
+		return TextFormula.pow(times, Integer.valueOf(exponent)).toString();
 	}
 
 	/**

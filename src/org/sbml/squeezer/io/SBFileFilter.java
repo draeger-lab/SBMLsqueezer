@@ -39,6 +39,22 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 */
 	public static final short SBML_FILES = 2;
 
+	/**
+	 * A filter for Text files.
+	 */
+	public static final SBFileFilter TEXT_FILE_FILTER = new SBFileFilter(
+			TEXT_FILES);
+	/**
+	 * A filter for TeX files
+	 */
+	public static final SBFileFilter TeX_FILE_FILTER = new SBFileFilter(
+			TeX_FILES);
+	/**
+	 * A filter for SBML files
+	 */
+	public static final SBFileFilter SBML_FILE_FILTER = new SBFileFilter(
+			SBML_FILES);
+
 	private short type;
 
 	/**
