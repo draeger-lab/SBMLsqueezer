@@ -95,6 +95,7 @@ public class Convenience extends GeneralizedMassAction {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
+		setSBOTerm(429);
 		ASTNode numerator;
 		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 
@@ -107,6 +108,7 @@ public class Convenience extends GeneralizedMassAction {
 			if (modE.size() > 1)
 				kcatp = append(kcatp, underscore, modE.get(enzymeNum));
 			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+			p_kcatp.setSBOTerm(modE.size() == 0 ? 324 : 320);
 			numerator = new ASTNode(p_kcatp, this);
 
 			// sums for each reactant
@@ -120,6 +122,7 @@ public class Convenience extends GeneralizedMassAction {
 					kM = concat(kM, underscore, modE.get(enzymeNum));
 				kM = append(kM, underscore, specref.getSpecies());
 				Parameter p_kM = createOrGetParameter(kM.toString());
+				p_kM.setSBOTerm(322);
 
 				if (!reaction.getReversible()
 						|| ((reaction.getNumReactants() != 1) || (reaction
@@ -141,16 +144,14 @@ public class Convenience extends GeneralizedMassAction {
 			 * only if reaction is reversible or we want it to be.
 			 */
 			if (reaction.getReversible()) {
-
-				ASTNode numerator2;
-
 				StringBuffer kcat = modE.size() == 0 ? concat("Vn_",
 						getParentSBMLObject().getId()) : concat("kcatn_",
 						getParentSBMLObject().getId());
 				if (modE.size() > 1)
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 				Parameter p_kcat = createOrGetParameter(kcat.toString());
-				numerator2 = new ASTNode(p_kcat, this);
+				p_kcat.setSBOTerm(modE.size() == 0 ? 325 : 321);
+				ASTNode numerator2 = new ASTNode(p_kcat, this);
 
 				// Sums for each product
 
@@ -162,23 +163,22 @@ public class Convenience extends GeneralizedMassAction {
 					if (modE.size() > 1)
 						kM = append(kM, underscore, modE.get(enzymeNum));
 					kM = append(kM, underscore, reaction.getProduct(productNum)
-							.getSpeciesInstance().getId());
+							.getSpecies());
 					Parameter p_kM = createOrGetParameter(kM.toString());
+					p_kM.setSBOTerm(323);
 
 					SpeciesReference specRefP = reaction.getProduct(productNum);
 
 					// build numerator
 					if (specRefP.getStoichiometry() != 1.0)
-						numerator2 = ASTNode.times(numerator2, ASTNode.pow(
-								ASTNode.frac(new ASTNode(specRefP
-										.getSpeciesInstance(), this),
-										new ASTNode(p_kM, this)), new ASTNode(
-										specRefP.getStoichiometry(), this)));
+						numerator2 = ASTNode
+								.times(numerator2, ASTNode.pow(ASTNode.frac(
+										this, specRefP.getSpeciesInstance(),
+										p_kM), new ASTNode(specRefP
+										.getStoichiometry(), this)));
 					else
-						numerator2 = ASTNode.times(numerator2, ASTNode
-								.frac(new ASTNode(
-										specRefP.getSpeciesInstance(), this),
-										new ASTNode(p_kM, this)));
+						numerator2 = ASTNode.times(numerator2, ASTNode.frac(
+								this, specRefP.getSpeciesInstance(), p_kM));
 				}
 				numerator = ASTNode.diff(numerator, numerator2);
 			}
@@ -239,6 +239,8 @@ public class Convenience extends GeneralizedMassAction {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			Parameter p_kM = createOrGetParameter(kM.toString());
+			if (!p_kM.isSetSBOTerm())
+				p_kM.setSBOTerm(type ? 322 : 323);
 			denoms[i] = ASTNode.pow(ASTNode.frac(this,
 					ref.getSpeciesInstance(), p_kM), (int) ref
 					.getStoichiometry());

@@ -94,6 +94,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
+		setSBOTerm(429);
 		ASTNode numerator;// I
 		ASTNode denominator; // II
 		ASTNode catalysts[] = new ASTNode[Math.max(1, modE.size())];
@@ -138,7 +139,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		do {
 			/*
 			 * Variables that are needed for the different combinations of
-			 * educts and prodcuts.
+			 * reactants and prodcuts.
 			 */
 
 			StringBuffer kcatp;
@@ -203,6 +204,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				append(kIp2, underscore, specRefP2.getSpecies());
 			}
 			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+			p_kcatp.setSBOTerm(modE.size() == 0 ? 324 : 320);
 
 			/*
 			 * addLocalParameter(kcatp); Irreversible reaction (bi-bi or bi-uni
@@ -210,8 +212,11 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			 */
 			if (!reaction.getReversible()) {
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+				p_kMr2.setSBOTerm(322);
 				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+				p_kIr1.setSBOTerm(261);
 
 				numerator = new ASTNode(p_kcatp, this);
 				if (modE.size() > 0)
@@ -244,15 +249,25 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible Bi-Bi reaction.
 				 */
+				setSBOTerm(433);
 				Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
+				p_kIr2.setSBOTerm(261);
 				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+				p_kcatn.setSBOTerm(modE.size() == 0 ? 325: 321);
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+				p_kMr2.setSBOTerm(322);
 				Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+				p_kMp1.setSBOTerm(323);
 				Parameter p_kMp2 = createOrGetParameter(kMp2.toString());
+				p_kMp2.setSBOTerm(323);
 				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+				p_kIr1.setSBOTerm(261);
 				Parameter p_kIp1 = createOrGetParameter(kIp1.toString());
+				p_kIp1.setSBOTerm(261);
 				Parameter p_kIp2 = createOrGetParameter(kIp2.toString());
+				p_kIp2.setSBOTerm(261);
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));
 				ASTNode numeratorReverse = ASTNode.frac(new ASTNode(p_kcatn,
@@ -356,12 +371,19 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				/*
 				 * Reversible bi-uni reaction
 				 */
+				setSBOTerm(434);
 				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+				p_kcatn.setSBOTerm(modE.size() == 0 ? 325 : 321);
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+				p_kMr2.setSBOTerm(322);
 				Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+				p_kMp1.setSBOTerm(323);
 				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+				p_kIr1.setSBOTerm(261);
 				Parameter p_kIp1 = createOrGetParameter(kIp1.toString());
+				p_kIp1.setSBOTerm(261);
 
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));

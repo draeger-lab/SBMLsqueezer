@@ -105,7 +105,9 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			}
 			append(kMr, underscore, specRefR);
 			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+			p_kcatp.setSBOTerm(modE.size() == 0 ? 324 : 320);
 			Parameter p_kMr = createOrGetParameter(kMr.toString());
+			p_kMr.setSBOTerm(322);
 
 			ASTNode currEnzymeKin;
 			if (!reaction.getReversible()) {
@@ -123,7 +125,9 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				denominator = ASTNode.frac(this, specRefR, p_kMr);
 				append(kMp, underscore, specRefP);
 				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+				p_kcatn.setSBOTerm(modE.size() == 0 ? 325 : 321);
 				Parameter p_kMp = createOrGetParameter(kMp.toString());
+				p_kMp.setSBOTerm(323);
 
 				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
 						this, p_kcatn, p_kMp), new ASTNode(specRefP, this)));
@@ -179,7 +183,9 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				append(kIb, underscore, modE.get(enzymeNum));
 			}
 			Parameter p_kIa = createOrGetParameter(kIa.toString());
+			p_kIa.setSBOTerm(261);
 			Parameter p_kIb = createOrGetParameter(kIb.toString());
+			p_kIb.setSBOTerm(261);
 
 			ASTNode specRefI = new ASTNode(modInhib.get(0), this);
 			if (reaction.getReversible())
@@ -200,6 +206,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 			 * mixed-type inihibition of irreversible enzymes by mutually
 			 * exclusive inhibitors.
 			 */
+			setSBOTerm(275);
 			ASTNode sumIa = new ASTNode(1, this);
 			ASTNode sumIb = new ASTNode(1, this);
 			for (int i = 0; i < modInhib.size(); i++) {
@@ -210,7 +217,9 @@ public class MichaelisMenten extends GeneralizedMassAction {
 				StringBuffer kIbi = concat("kIb_", kIai);
 				kIai = concat("kIa_", kIai);
 				Parameter p_kIai = createOrGetParameter(kIai.toString());
+				p_kIai.setSBOTerm(261);
 				Parameter p_kIbi = createOrGetParameter(kIbi.toString());
+				p_kIbi.setSBOTerm(261);
 				ASTNode specRefI = new ASTNode(modInhib.get(i), this);
 				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, new ASTNode(
 						p_kIai, this)));

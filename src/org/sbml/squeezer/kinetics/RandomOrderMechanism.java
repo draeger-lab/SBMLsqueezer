@@ -93,6 +93,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
+		setSBOTerm(429);
 
 		Reaction reaction = getParentSBMLObject();
 		SpeciesReference specRefR1 = reaction.getReactant(0), specRefR2;
@@ -170,9 +171,13 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 				}
 				append(kIr1, underscore, speciesR1);
 				Parameter p_kcatp = createOrGetParameter(kcatp.toString());
+				p_kcatp.setSBOTerm(modE.size() == 0 ? 324 : 320);
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
+				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+				p_kMr2.setSBOTerm(322);
 				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+				p_kIr1.setSBOTerm(261);
 
 				numerator = new ASTNode(p_kcatp, this);
 				if (modE.size() > 0)
@@ -246,12 +251,25 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					}
 					Parameter p_kcatp = createOrGetParameter(kcatp.toString());
 					Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+					if (modE.size() == 0) {
+						p_kcatp.setSBOTerm(324);
+						p_kcatn.setSBOTerm(325);
+					} else {
+						p_kcatp.setSBOTerm(320);
+						p_kcatn.setSBOTerm(321);
+					}
 					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+					p_kMr2.setSBOTerm(322);
 					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+					p_kMp1.setSBOTerm(323);
 					Parameter p_kIp1 = createOrGetParameter(kIp1.toString());
+					p_kIp1.setSBOTerm(261);
 					Parameter p_kIp2 = createOrGetParameter(kIp2.toString());
+					p_kIp2.setSBOTerm(261);
 					Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+					p_kIr1.setSBOTerm(261);
 					Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
+					p_kIr2.setSBOTerm(261);
 
 					ASTNode numeratorForward = ASTNode
 							.frac(new ASTNode(p_kcatp, this), ASTNode.times(
@@ -325,10 +343,21 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					}
 					Parameter p_kcatp = createOrGetParameter(kcatp.toString());
 					Parameter p_kcatn = createOrGetParameter(kcatn.toString());
+					if (modE.size() == 0) {
+						p_kcatp.setSBOTerm(324);
+						p_kcatn.setSBOTerm(325);
+					} else {
+						p_kcatp.setSBOTerm(320);
+						p_kcatn.setSBOTerm(321);
+					}
 					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
+					p_kMr2.setSBOTerm(322);
 					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
+					p_kMp1.setSBOTerm(323);
 					Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
+					p_kIr1.setSBOTerm(261);
 					Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
+					p_kIr2.setSBOTerm(261);
 
 					ASTNode r1r2;
 					if (specRefR1.equals(specRefR2))
