@@ -138,6 +138,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			if (modE.size() > 1)
 				append(kcat, underscore, modE.get(enzymeNum));
 			Parameter p_kcat = createOrGetParameter(kcat.toString());
+			p_kcat.setSBOTerm(modE.size() == 0 ? 324 : 320);
 			ASTNode numerator = new ASTNode(p_kcat, this);
 
 			ASTNode[] denominator = new ASTNode[reaction.getNumReactants()];
@@ -151,6 +152,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 					append(kM, underscore, modE.get(enzymeNum));
 				append(kM, underscore, si.getSpecies());
 				Parameter p_kM = createOrGetParameter(kM.toString());
+				p_kM.setSBOTerm(322);
 				ASTNode frac = ASTNode
 						.frac(this, si.getSpeciesInstance(), p_kM);
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(

@@ -135,6 +135,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					kcat = concat(kcat, underscore, modE.get(enzymeNum));
 			}
 			Parameter p_kcat = createOrGetParameter(kcat.toString());
+			p_kcat.setSBOTerm(25);
 			ASTNode currEnzyme;
 			ASTNode numerator;
 
@@ -146,10 +147,10 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			StringBuffer kM = new StringBuffer(concat("kM_", reaction.getId()));
 
 			if (numOfEnzymes > 1)
-
 				kM = concat(kM, underscore, modE.get(enzymeNum));
 			kM = concat(kM, underscore, reaction.getReactant(0).getSpecies());
 			Parameter p_kM = createOrGetParameter(kM.toString());
+			p_kM.setSBOTerm(27);
 
 			if (modInhib.size() == 0)
 				denominator = new ASTNode(p_kM, this);
@@ -167,7 +168,9 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					kIi = concat(kIi, underscore, modInhib.get(i));
 					exponent = concat(exponent, underscore, modInhib.get(i));
 					Parameter p_kIi = createOrGetParameter(kIi.toString());
+					p_kIi.setSBOTerm(261);
 					Parameter p_exp = createOrGetParameter(exponent.toString());
+					p_exp.setSBOTerm(189);
 
 					factor = ASTNode.times(factor, ASTNode.pow(ASTNode.sum(
 							new ASTNode(1, this), ASTNode.frac(new ASTNode(

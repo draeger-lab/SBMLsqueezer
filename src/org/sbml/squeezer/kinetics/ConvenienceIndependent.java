@@ -90,6 +90,7 @@ public class ConvenienceIndependent extends Convenience {
 			throws RateLawNotApplicableException, IllegalFormatException {
 		final boolean FORWARD = true;
 		final boolean REVERSE = false;
+		setSBOTerm(429);
 		Reaction reaction = getParentSBMLObject();
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		for (int i = 0; i < enzymes.length; i++) {
@@ -153,6 +154,7 @@ public class ConvenienceIndependent extends Convenience {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			Parameter p_kM = createOrGetParameter(kM.toString());
+			p_kM.setSBOTerm(322);
 			kiG = concat("kG_", ref.getSpecies());
 			Parameter p_kiG = createOrGetGlobalParameter(kiG.toString());
 			reactants[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
@@ -170,6 +172,7 @@ public class ConvenienceIndependent extends Convenience {
 				append(kM, underscore, enzyme);
 			append(kM, underscore, ref.getSpecies());
 			Parameter p_kM = createOrGetParameter(kM.toString());
+			p_kM.setSBOTerm(323);
 			kiG = concat("kG_", ref.getSpecies());
 			Parameter p_kiG = createOrGetGlobalParameter(kiG.toString());
 			products[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref

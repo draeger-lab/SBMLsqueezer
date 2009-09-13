@@ -193,8 +193,10 @@ public class HillEquation extends BasicKineticLaw {
 		 */{
 			Parameter p_hillcoeff = createOrGetParameter(concat("np_", rId,
 					underscore, modTActi.get(i)).toString());
+			p_hillcoeff.setSBOTerm(190);
 			Parameter p_kS = createOrGetParameter(concat("kSp_", rId,
 					underscore, modTActi.get(i)).toString());
+			p_kS.setSBOTerm(194);
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(new ASTNode(
 					modTActi.get(i), this), new ASTNode(p_hillcoeff, this)),
 					ASTNode.sum(ASTNode.pow(new ASTNode(modTActi.get(i), this),
@@ -209,8 +211,10 @@ public class HillEquation extends BasicKineticLaw {
 		 */{
 			Parameter p_hillcoeff = createOrGetParameter(concat("nm_", rId,
 					underscore, modTInhib.get(i)).toString());
+			p_hillcoeff.setSBOTerm(190);
 			Parameter p_kS = createOrGetParameter(concat("kSm_", rId, underscore,
 					modTInhib.get(i)).toString());
+			p_kS.setSBOTerm(194);
 			inhib[i] = ASTNode.times(ASTNode.diff(new ASTNode(1, this), ASTNode
 					.frac(ASTNode.pow(new ASTNode(modTInhib.get(i), this),
 							new ASTNode(p_hillcoeff, this)), ASTNode.sum(
@@ -219,6 +223,7 @@ public class HillEquation extends BasicKineticLaw {
 									.pow(this, p_kS, p_hillcoeff)))));
 		}
 		Parameter p_kg = createOrGetParameter(concat("kg_", rId).toString());
+		p_kg.setSBOTerm(186);
 
 		ASTNode formelTxt = new ASTNode(p_kg, this);
 		if (modTActi.size() > 0)
