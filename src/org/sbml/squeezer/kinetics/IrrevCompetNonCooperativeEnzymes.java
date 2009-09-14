@@ -53,44 +53,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getName()
-	 */
-	@Override
-	public String getName() {
-		switch (numInhib) {
-		case 0:
-			if (numOfEnzymes == 0)
-				return "normalised kinetics of unireactant enzymes";
-			return "Henri-Michaelis Menten equation";
-		case 1:
-			return "competitive inhibition of irreversible unireactant enzymes by one inhibitor";
-		default:
-			return "competitive inhibition of irreversible unireactant enzymes by non-exclusive non-cooperative inhibitors";
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getSBO()
-	 */
-	// @Override
-	public String getSBO() {
-		String name = getName().toLowerCase();
-		if (name
-				.equals("competitive inhibition of irreversible unireactant enzymes by non-exclusive non-cooperative inhibitors"))
-			return "0000273";
-		if (name
-				.equals("competitive inhibition of irreversible unireactant enzymes by one inhibitor"))
-			return "0000267";
-		if (name.equals("henri-michaelis menten equation"))
-			return "0000029";
-		return "none";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
 	 * (java.util.List, java.util.List, java.util.List, java.util.List,
@@ -110,18 +72,27 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					"This rate law can only be applied to enzyme-catalyzed reactions.");
 		Reaction reaction = getParentSBMLObject();
 		if ((reaction.getNumReactants() > 1)
-				|| (reaction.getReactant(0).getStoichiometry() != 1.0))
+				|| (reaction.getReactant(0).getStoichiometry() != 1d))
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to reactions with exactly one substrate.");
 		if (modTActi.size() > 0)
-			modActi = modTActi;
+			modActi.addAll(modTActi);
 		if (modTInhib.size() > 0)
-			modInhib = modTInhib;
+			modInhib.addAll(modTInhib);
 		if (reaction.getReversible())
 			reaction.setReversible(false);
 		numInhib = modInhib.size();
-
 		numOfEnzymes = modE.size();
+
+		switch (numInhib) {
+		case 0:
+			setSBOTerm(numOfEnzymes == 0 ? 199 : 29);
+		case 1:
+			setSBOTerm(267);
+		default:
+			setSBOTerm(273);
+		}
+
 		ASTNode[] formula = new ASTNode[Math.max(1, numOfEnzymes)];
 
 		int enzymeNum = 0;
@@ -172,24 +143,20 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 					Parameter p_exp = createOrGetParameter(exponent.toString());
 					p_exp.setSBOTerm(189);
 
-					factor = ASTNode.times(factor, ASTNode.pow(ASTNode.sum(
-							new ASTNode(1, this), ASTNode.frac(new ASTNode(
-									modInhib.get(i), this), new ASTNode(p_kIi,
-									this))), new ASTNode(p_exp, this)));
+					factor.multiplyWith(ASTNode.pow(ASTNode.sum(new ASTNode(1,
+							this), ASTNode.frac(new ASTNode(modInhib.get(i),
+							this), new ASTNode(p_kIi, this))), new ASTNode(
+							p_exp, this)));
 				}
 				denominator = factor;
 
 			}
-			denominator = ASTNode.sum(denominator, new ASTNode(reaction
-					.getReactant(0).getSpeciesInstance(), this));
+			denominator.plus(new ASTNode(reaction.getReactant(0)
+					.getSpeciesInstance(), this));
 			currEnzyme = ASTNode.frac(numerator, denominator);
 			enzymeNum++;
-			if (numOfEnzymes <= 1) {
-			} else {
-
-				numerator = ASTNode.times(numerator, new ASTNode(modE
-						.get(enzymeNum), this));
-			}
+			if (numOfEnzymes > 1)
+				numerator.multiplyWith(new ASTNode(modE.get(enzymeNum), this));
 			formula[enzymeNum] = currEnzyme;
 		} while (enzymeNum <= modE.size() - 1);
 		return ASTNode.times(activationFactor(modActi), ASTNode.sum(formula));

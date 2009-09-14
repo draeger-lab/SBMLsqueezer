@@ -61,25 +61,6 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 		super(parentReaction);
 	}
 
-	// @Override
-	public String getName() {
-		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
-		double stoichiometryRight = 0;
-		for (int i = 0; i < getParentSBMLObject().getNumProducts(); i++)
-			stoichiometryRight += getParentSBMLObject().getProduct(i)
-					.getStoichiometry();
-		String name = "rapid-equilibrium random order ternary-complex mechanism";
-		if ((getParentSBMLObject().getNumProducts() == 2)
-				|| (stoichiometryRight == 2))
-			name += " with two products";
-		else if ((getParentSBMLObject().getNumProducts() == 1)
-				|| (stoichiometryRight == 1))
-			name += " with one product";
-		if (getParentSBMLObject().getReversible())
-			return "reversible " + name;
-		return "irreversible " + name;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -93,7 +74,6 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		setSBOTerm(429);
 
 		Reaction reaction = getParentSBMLObject();
 		SpeciesReference specRefR1 = reaction.getReactant(0), specRefR2;
@@ -108,6 +88,27 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 					"Number of reactants must equal two to apply random order "
 							+ "Michaelis-Menten kinetics to reaction "
 							+ reaction.getId());
+
+		setSBOTerm(429);
+		double stoichiometryRight = 0;
+		for (int i = 0; i < reaction.getNumProducts(); i++)
+			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
+		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
+		// rapid-equilibrium random order ternary-complex mechanism
+		if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1d)
+				&& !reaction.getReversible())
+			setSBOTerm(432);
+
+		StringBuilder notes = new StringBuilder("rapid-equilibrium random ");
+		notes.append("order ternary-complex mechanism");
+		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
+			notes.append(" with two products");
+		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
+			notes.append(" with one product");
+		notes.insert(0, "reversible ");
+		if (!reaction.getReversible())
+			notes.insert(0, "ir");
+		setNotes(notes.toString());
 
 		boolean exception = false;
 		boolean biuni = false;

@@ -132,21 +132,5 @@ public class TestKinetik extends BasicKineticLaw {
 		 */
 		
 		return kineticLaw;
-	}		
-	
-	
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getName()
-	 */
-	@Override
-	public String getName() {
-		// TODO Automatisch erstellter Methoden-Stub
-		// return null;
-		String name;
-		name = "Kinetik zum Testen";
-		return name;
 	}
-
 }

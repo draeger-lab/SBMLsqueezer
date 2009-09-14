@@ -96,10 +96,16 @@ public class Convenience extends GeneralizedMassAction {
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		setSBOTerm(429);
+		Reaction reaction = getParentSBMLObject();
+
+		if (reaction.getReversible())
+			setNotes("reversible simple convenience kinetics");
+		else
+			setNotes("irreversible simple convenience kinetics");
+
 		ASTNode numerator;
 		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 
-		Reaction reaction = getParentSBMLObject();
 		int enzymeNum = 0;
 		do {
 			StringBuffer kcatp = modE.size() == 0 ? concat("Vp_",

@@ -59,20 +59,6 @@ public class PingPongMechanism extends GeneralizedMassAction {
 		return true;
 	}
 
-	// @Override
-	public String getName() {
-		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
-		String name = "substituted-enzyme mechanism (Ping-Pong)";
-		if (getParentSBMLObject().getReversible())
-			return "reversible " + name;
-		return "irreversible " + name;
-	}
-
-	// @Override
-	public String getSBO() {
-		return "none";
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -86,12 +72,21 @@ public class PingPongMechanism extends GeneralizedMassAction {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		setSBOTerm(429);
+		Reaction reaction = getParentSBMLObject();
+
+		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
+		StringBuilder notes = new StringBuilder(
+				"substituted-enzyme mechanism (Ping-Pong)");
+		notes.insert(0, "reversible ");
+		if (!reaction.getReversible())
+			notes.insert(0, "ir");
+		setNotes(notes.toString());
+
+		setSBOTerm(436);
+
 		ASTNode numerator;// I
 		ASTNode denominator; // II
 		ASTNode catalysts[] = new ASTNode[Math.max(1, modE.size())];
-
-		Reaction reaction = getParentSBMLObject();
 		SpeciesReference specRefE1 = reaction.getReactant(0);
 		SpeciesReference specRefP1 = reaction.getProduct(0);
 		SpeciesReference specRefE2 = null, specRefP2 = null;

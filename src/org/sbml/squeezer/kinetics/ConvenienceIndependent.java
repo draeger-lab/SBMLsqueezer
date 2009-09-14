@@ -68,13 +68,6 @@ public class ConvenienceIndependent extends Convenience {
 		return true;
 	}
 
-	// @Override
-	public String getName() {
-		if (this.getParentSBMLObject().getReversible())
-			return "reversible thermodynamically independent convenience kinetics";
-		return "irreversible thermodynamically independent convenience kinetics";
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -90,8 +83,13 @@ public class ConvenienceIndependent extends Convenience {
 			throws RateLawNotApplicableException, IllegalFormatException {
 		final boolean FORWARD = true;
 		final boolean REVERSE = false;
-		setSBOTerm(429);
 		Reaction reaction = getParentSBMLObject();
+		setSBOTerm(429);
+		
+		if (reaction.getReversible())
+			setNotes("reversible thermodynamically independent convenience kinetics");
+		else setNotes("irreversible thermodynamically independent convenience kinetics");
+		
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		for (int i = 0; i < enzymes.length; i++) {
 			ASTNode numerator, denominator = null;

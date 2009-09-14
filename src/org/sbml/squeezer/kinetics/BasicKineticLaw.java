@@ -204,13 +204,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		return p;
 	}
 
-	/**
-	 * Returns the name of the kinetic formula of this object.
-	 * 
-	 * @return
-	 */
-	public abstract String getName();
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -218,8 +211,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	// @Override
 	public String toString() {
-		if (!isSetSBOTerm())
-			return getName();
-		return getSBOTermID();
+		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
+				.replace("\\,", ",") : getClass().getSimpleName();
 	}
 }

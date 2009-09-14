@@ -299,11 +299,12 @@ public class KineticLawGenerator {
 
 		if (HillEquation.isApplicable(reaction))
 			types.add(Kinetics.HILL_EQUATION);
-		
+
 		if (TestKinetik.isApplicable(reaction))
 			types.add(Kinetics.TEST_KINETIK);
 
-		if (reaction.getNumReactants() == 0 || reaction.getNumProducts() == 0) {
+		if (reaction.getNumReactants() == 0
+				|| (reaction.getNumProducts() == 0 && !reaction.getReversible())) {
 
 			types.add(Kinetics.ZEROTH_ORDER_FORWARD_MA);
 			types.add(Kinetics.ZEROTH_ORDER_REVERSE_MA);
@@ -403,7 +404,8 @@ public class KineticLawGenerator {
 
 					} else if (SBO.isRNA(species.getSBOTerm())) {
 						types.add(Kinetics.HILL_EQUATION);
-						types.add(Kinetics.TEST_KINETIK);}
+						types.add(Kinetics.TEST_KINETIK);
+					}
 					if (!nonEnzyme
 							&& !(reaction.getReversible() && (inhibitors.size() > 1 || transInhib
 									.size() > 1))) // otherwise potentially
@@ -501,7 +503,7 @@ public class KineticLawGenerator {
 
 		if (reaction.getNumReactants() == 0)
 			return Kinetics.ZEROTH_ORDER_FORWARD_MA;
-		if (reaction.getNumProducts() == 0)
+		if (!reaction.getReversible() && reaction.getNumProducts() == 0)
 			return Kinetics.ZEROTH_ORDER_REVERSE_MA;
 
 		List<String> modActi = new LinkedList<String>();
@@ -1215,7 +1217,7 @@ public class KineticLawGenerator {
 		reaction.setKineticLaw(kineticLaw);
 		if ((kineticLaw instanceof BasicKineticLaw)
 				&& (kineticLaw.getNotesString().length() == 0))
-			kineticLaw.setNotes(((BasicKineticLaw) kineticLaw).getName());
+			kineticLaw.setNotes(kineticLaw.toString());
 		// set the BoundaryCondition to true for Genes if not set anyway:
 		for (i = 0; i < reaction.getNumReactants(); i++) {
 			Species species = reaction.getReactant(i).getSpeciesInstance();
