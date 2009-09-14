@@ -70,8 +70,7 @@ public class Convenience extends GeneralizedMassAction {
 	 * @throws IllegalFormatException
 	 */
 	public Convenience(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 

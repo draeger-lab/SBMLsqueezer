@@ -440,9 +440,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 				dispose();
 				if (!KineticsAndParametersStoredInSBML && klg != null
 						&& sbmlIO != null) {
-					KineticsAndParametersStoredInSBML = true;
-					klg.storeLaws(this);
 					try {
+						KineticsAndParametersStoredInSBML = true;
+						klg.storeLaws(this);
 						sbmlIO.saveChanges();
 					} catch (SBMLException exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
@@ -474,18 +474,17 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void exportKineticEquations() {
 		if (sbmlIO != null && klg != null) {
-			if (!KineticsAndParametersStoredInSBML) {
-				klg.storeLaws(this);
+			if (!KineticsAndParametersStoredInSBML)
 				try {
+					klg.storeLaws(this);
 					sbmlIO.saveChanges();
+					KineticsAndParametersStoredInSBML = true;
 				} catch (SBMLException exc) {
 					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 							.getMessage(), 40), exc.getClass()
 							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
 					exc.printStackTrace();
 				}
-				KineticsAndParametersStoredInSBML = true;
-			}
 			SBFileFilter ff1 = SBFileFilter.TeX_FILE_FILTER;
 			SBFileFilter ff2 = SBFileFilter.TEXT_FILE_FILTER;
 			JFileChooser chooser = GUITools.createJFileChooser(settings.get(

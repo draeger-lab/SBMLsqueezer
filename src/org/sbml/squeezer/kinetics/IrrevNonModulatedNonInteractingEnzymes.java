@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -48,12 +47,10 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public IrrevNonModulatedNonInteractingEnzymes(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 

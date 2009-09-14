@@ -113,7 +113,6 @@ public class SettingsDialog extends JDialog implements ActionListener,
 			validate();
 		} else if (ae.getActionCommand().equals(APPLY)
 				|| ae.getActionCommand().equals(OK)) {
-			this.settings = kinSettingsPanel.getSettings();
 			for (Object key : kinSettingsPanel.getSettings().keySet())
 				this.settings.put(key, kinSettingsPanel.getSettings().get(key));
 			for (Object key : latexSettingsPanel.getProperties().keySet())

@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -33,73 +32,93 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- *
+ * 
  */
 public class TestKinetik extends BasicKineticLaw {
 
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public TestKinetik(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
-	
+
 	public static boolean isApplicable(Reaction reaction) {
 		return true;
 	}
-	
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+
+	/*
+	 * (Kein Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		
-		if (!modActi.isEmpty()) modTActi.addAll(modActi);
-		if (!modInhib.isEmpty()) modTInhib.addAll(modInhib);
-		if (!modE.isEmpty()) modTActi.addAll(modE);
-		if (!modCat.isEmpty()) modTActi.addAll(modCat);
+
+		if (!modActi.isEmpty())
+			modTActi.addAll(modActi);
+		if (!modInhib.isEmpty())
+			modTInhib.addAll(modInhib);
+		if (!modE.isEmpty())
+			modTActi.addAll(modE);
+		if (!modCat.isEmpty())
+			modTActi.addAll(modCat);
 		Reaction r = getParentSBMLObject();
-		
+
 		// Exceptions
 		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
 			if (SBO.isGene(r.getReactant(0).getSpeciesInstance().getSBOTerm())
-					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO.isTranslationalInhibitor(modifier.getSBOTerm())))
-				throw new ModificationException("Wrong activation in reaction "+ r.getId()+ ". Only transcriptional modification is allowed here.");
-			else if ((SBO.isMessengerRNA(r.getReactant(0).getSpeciesInstance().getSBOTerm())
-					|| SBO.isRNA(r.getReactant(0).getSpeciesInstance().getSBOTerm()))
-					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO.isTranscriptionalInhibitor(modifier.getSBOTerm())))
-				throw new ModificationException("Wrong activation in reaction "+ r.getId()+ ". Only translational modification is allowed here.");
+					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
+							.isTranslationalInhibitor(modifier.getSBOTerm())))
+				throw new ModificationException(
+						"Wrong activation in reaction "
+								+ r.getId()
+								+ ". Only transcriptional modification is allowed here.");
+			else if ((SBO.isMessengerRNA(r.getReactant(0).getSpeciesInstance()
+					.getSBOTerm()) || SBO.isRNA(r.getReactant(0)
+					.getSpeciesInstance().getSBOTerm()))
+					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
+							.isTranscriptionalInhibitor(modifier.getSBOTerm())))
+				throw new ModificationException("Wrong activation in reaction "
+						+ r.getId()
+						+ ". Only translational modification is allowed here.");
 		}
-		
-		ASTNode kineticLaw = new ASTNode(this);	
-		ASTNode kineticLawPart = new ASTNode(this);	
+
+		ASTNode kineticLaw = new ASTNode(this);
+		ASTNode kineticLawPart = new ASTNode(this);
 		String rId = getParentSBMLObject().getId();
-		
-		Parameter a = createOrGetParameter(concat("a_", rId, underscore).toString());
-		Parameter b = createOrGetParameter(concat("b_", rId, underscore).toString());
-		Parameter c = createOrGetParameter(concat("c_", rId, underscore).toString());
-		Parameter d = createOrGetParameter(concat("d_", rId, underscore).toString());
-		
+
+		Parameter a = createOrGetParameter(concat("a_", rId, underscore)
+				.toString());
+		Parameter b = createOrGetParameter(concat("b_", rId, underscore)
+				.toString());
+		Parameter c = createOrGetParameter(concat("c_", rId, underscore)
+				.toString());
+		Parameter d = createOrGetParameter(concat("d_", rId, underscore)
+				.toString());
+
 		ASTNode nodea = new ASTNode(a, this);
 		ASTNode nodeb = new ASTNode(b, this);
-		//ASTNode nodec = new ASTNode(c, this);
-		//ASTNode noded = new ASTNode(d, this);
-		
+		// ASTNode nodec = new ASTNode(c, this);
+		// ASTNode noded = new ASTNode(d, this);
+
 		// Species reactant = r.getReactant(0).getSpeciesInstance();
 		Species product = r.getProduct(0).getSpeciesInstance();
 		ASTNode productnode = new ASTNode(product, this);
-		
+
 		// Transkription
-		// if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isRNA(product.getSBOTerm())) {
+		// if (SBO.isEmptySet(reactant.getSBOTerm()) &&
+		// SBO.isRNA(product.getSBOTerm())) {
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
 			Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
 			System.out.println("for_testtesttest" + modifier.getSBOTerm());
@@ -114,23 +133,23 @@ public class TestKinetik extends BasicKineticLaw {
 			if (kineticLawPart.isUnknown())
 				kineticLawPart = ASTNode.pow(modnode, enode);
 			else
-				kineticLawPart = ASTNode.times(kineticLawPart, ASTNode.pow(modnode, enode));
-			//}
+				kineticLawPart = ASTNode.times(kineticLawPart, ASTNode.pow(
+						modnode, enode));
+			// }
 		}
 
 		kineticLaw = ASTNode.diff(ASTNode.times(nodea, kineticLawPart), ASTNode
 				.times(nodeb, productnode));
 		// }
-		
+
 		// Translation
 		/*
-		 * if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isProtein(product.getSBOTerm())) { 
-		 * 	for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-		 * 	TODO: tranlslation
-		 * 	}
-		 * }
+		 * if (SBO.isEmptySet(reactant.getSBOTerm()) &&
+		 * SBO.isProtein(product.getSBOTerm())) { for (int modifierNum = 0;
+		 * modifierNum < r.getNumModifiers(); modifierNum++) { TODO:
+		 * tranlslation } }
 		 */
-		
+
 		return kineticLaw;
 	}
 }

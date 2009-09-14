@@ -18,10 +18,13 @@
  */
 package org.sbml.squeezer.io;
 
+import java.awt.BorderLayout;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -55,6 +58,7 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.squeezer.standalone.SBMLTree;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -289,7 +293,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/**
 	 * Write all changes back into the original model.
-	 * @throws SBMLException 
+	 * 
+	 * @throws SBMLException
 	 */
 	public void saveChanges() throws SBMLException {
 		System.out.println("removed: " + removed);
@@ -298,6 +303,15 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		writer.saveChanges(listOfModels.get(selectedModel), listOfOrigModels
 				.get(selectedModel));
 		System.out.println("fertig");
+		JDialog d = new JDialog();
+		d.setTitle("Original SBML");
+		d.getContentPane().setLayout(new BorderLayout());
+		d.getContentPane().add(
+				new SBMLTree((org.sbml.libsbml.Model) listOfOrigModels.get(selectedModel)), BorderLayout.CENTER);
+		d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		d.pack();
+		d.setLocationRelativeTo(null);
+		d.setVisible(true);
 	}
 
 	/*
@@ -340,7 +354,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.jlibsbml.SBMLWriter#saveKineticLawProperties(org.sbml.jlibsbml
 	 * .KineticLaw, java.lang.Object)
 	 */
-	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw) throws SBMLException {
+	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw)
+			throws SBMLException {
 		writer.saveKineticLawProperties(kl, kineticLaw);
 	}
 
@@ -351,7 +366,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.jlibsbml.SBMLWriter#saveMathContainerProperties(org.sbml.jlibsbml
 	 * .MathContainer, java.lang.Object)
 	 */
-	public void saveMathContainerProperties(MathContainer mc, Object sbase) throws SBMLException {
+	public void saveMathContainerProperties(MathContainer mc, Object sbase)
+			throws SBMLException {
 		writer.saveMathContainerProperties(mc, sbase);
 	}
 
@@ -406,7 +422,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.jlibsbml.SBMLWriter#saveReactionProperties(org.sbml.jlibsbml
 	 * .Reaction, java.lang.Object)
 	 */
-	public void saveReactionProperties(Reaction r, Object reaction) throws SBMLException {
+	public void saveReactionProperties(Reaction r, Object reaction)
+			throws SBMLException {
 		writer.saveReactionProperties(r, reaction);
 	}
 
@@ -563,7 +580,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeEventAssignment(org.sbml.EventAssignment)
 	 */
 	// @Override
-	public Object writeEventAssignment(EventAssignment eventAssignment) throws SBMLException {
+	public Object writeEventAssignment(EventAssignment eventAssignment)
+			throws SBMLException {
 		return writer.writeEventAssignment(eventAssignment);
 	}
 
@@ -574,7 +592,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.SBMLWriter#writeFunctionDefinition(org.sbml.FunctionDefinition)
 	 */
 	// @Override
-	public Object writeFunctionDefinition(FunctionDefinition functionDefinition) throws SBMLException {
+	public Object writeFunctionDefinition(FunctionDefinition functionDefinition)
+			throws SBMLException {
 		return writer.writeFunctionDefinition(functionDefinition);
 	}
 
@@ -585,7 +604,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * org.sbml.SBMLWriter#writeInitialAssignment(org.sbml.InitialAssignment)
 	 */
 	// @Override
-	public Object writeInitialAssignment(InitialAssignment initialAssignment) throws SBMLException {
+	public Object writeInitialAssignment(InitialAssignment initialAssignment)
+			throws SBMLException {
 		return writer.writeInitialAssignment(initialAssignment);
 	}
 

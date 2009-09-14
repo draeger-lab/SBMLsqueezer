@@ -164,7 +164,7 @@ public class KineticLawGenerator {
 	 */
 	public BasicKineticLaw createKineticLaw(Reaction r, Kinetics kinetic,
 			boolean reversibility) throws ModificationException,
-			RateLawNotApplicableException, IOException, IllegalFormatException {
+			RateLawNotApplicableException, IllegalFormatException {
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null)
 			reaction = r;
@@ -220,7 +220,7 @@ public class KineticLawGenerator {
 	 * 
 	 */
 	public void generateLaws() throws IllegalFormatException,
-			ModificationException, RateLawNotApplicableException, IOException {
+			ModificationException, RateLawNotApplicableException {
 		boolean reversibility = ((Boolean) settings
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
@@ -300,11 +300,8 @@ public class KineticLawGenerator {
 		if (HillEquation.isApplicable(reaction))
 			types.add(Kinetics.HILL_EQUATION);
 
-		if (TestKinetik.isApplicable(reaction))
-			types.add(Kinetics.TEST_KINETIK);
-
 		if (reaction.getNumReactants() == 0
-				|| (reaction.getNumProducts() == 0 && !reaction.getReversible())) {
+				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
 
 			types.add(Kinetics.ZEROTH_ORDER_FORWARD_MA);
 			types.add(Kinetics.ZEROTH_ORDER_REVERSE_MA);
@@ -393,7 +390,8 @@ public class KineticLawGenerator {
 											.getSpeciesInstance().getSBOTerm())))) {
 						setBoundaryCondition(species, true);
 						types.add(Kinetics.HILL_EQUATION);
-						types.add(Kinetics.TEST_KINETIK);
+						if (reaction.getNumProducts() > 0)
+							types.add(Kinetics.TEST_KINETIK);
 
 						// throw exception if false reaction occurs
 						if (SBO.isTranslation(reaction.getSBOTerm())
@@ -404,7 +402,8 @@ public class KineticLawGenerator {
 
 					} else if (SBO.isRNA(species.getSBOTerm())) {
 						types.add(Kinetics.HILL_EQUATION);
-						types.add(Kinetics.TEST_KINETIK);
+						if (reaction.getNumProducts() > 0)
+							types.add(Kinetics.TEST_KINETIK);
 					}
 					if (!nonEnzyme
 							&& !(reaction.getReversible() && (inhibitors.size() > 1 || transInhib
@@ -469,7 +468,8 @@ public class KineticLawGenerator {
 					types = new HashSet<Kinetics>();
 					types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 					types.add((Kinetics.HILL_EQUATION));
-					types.add(Kinetics.TEST_KINETIK);
+					if (reaction.getNumProducts() > 0)
+						types.add(Kinetics.TEST_KINETIK);
 				} /*
 				 * else if (types.contains((Kinetics.HILL_EQUATION)))
 				 * types.remove((Kinetics.HILL_EQUATION));
@@ -503,7 +503,7 @@ public class KineticLawGenerator {
 
 		if (reaction.getNumReactants() == 0)
 			return Kinetics.ZEROTH_ORDER_FORWARD_MA;
-		if (!reaction.getReversible() && reaction.getNumProducts() == 0)
+		if (reaction.getReversible() && reaction.getNumProducts() == 0)
 			return Kinetics.ZEROTH_ORDER_REVERSE_MA;
 
 		List<String> modActi = new LinkedList<String>();

@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,11 +57,10 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @param parentReaction
 	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public GeneralizedMassAction(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
+			throws RateLawNotApplicableException, 
 			IllegalFormatException {
 		super(parentReaction);
 	}

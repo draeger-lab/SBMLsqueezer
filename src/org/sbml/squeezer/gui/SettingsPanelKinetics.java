@@ -204,10 +204,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
 				"Only when missing");
 		jRadioButtonGenerateOnlyMissingKinetics
-				.setSelected(!((Boolean) settings
-						.get(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
-						.booleanValue());
-		jRadioButtonGenerateOnlyMissingKinetics
 				.setToolTipText("<html>If checked, kinetics are only generated if missing in the SBML file.</html>");
 		jRadioButtonGenerateOnlyMissingKinetics.setBackground(Color.WHITE);
 		jRadioButtonGenerateForAllReactions = new JRadioButton(
@@ -218,9 +214,11 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonGenerateForAllReactions);
 		buttonGroup.add(jRadioButtonGenerateOnlyMissingKinetics);
-		jRadioButtonGenerateOnlyMissingKinetics.setSelected(((Boolean) settings
+		jRadioButtonGenerateForAllReactions.setSelected(((Boolean) settings
 				.get(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 				.booleanValue());
+		jRadioButtonGenerateOnlyMissingKinetics
+				.setSelected(!jRadioButtonGenerateForAllReactions.isSelected());
 		layout = new GridBagLayout();
 		JPanel jPanelGenerateNewKinetics = new JPanel(layout);
 		jPanelGenerateNewKinetics.setBorder(BorderFactory.createTitledBorder(

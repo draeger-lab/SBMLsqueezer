@@ -709,11 +709,11 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public void saveModifierSpeciesReferenceProperties(
-			ModifierSpeciesReference modifierSpeciesReference, Object msr) {
-		if (!(msr instanceof org.sbml.libsbml.ModifierSpeciesReference))
+			ModifierSpeciesReference msr, Object modifierSpeciesReference) {
+		if (!(modifierSpeciesReference instanceof org.sbml.libsbml.ModifierSpeciesReference))
 			throw new IllegalArgumentException(
-					"msr must be an instance of org.sbml.libsbml.ModifierSpeciesReference.");
-		saveNamedSBaseProperties(modifierSpeciesReference, msr);
+					"modifierSpeciesReference must be an instance of org.sbml.libsbml.ModifierSpeciesReference.");
+		saveNamedSBaseProperties(msr, modifierSpeciesReference);
 	}
 
 	/*
@@ -885,7 +885,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		for (ModifierSpeciesReference mr : r.getListOfModifiers()) {
 			contains = -1;
 			for (i = 0; i < ro.getNumModifiers() && contains < 0; i++)
-				if (mr.getSpecies().equals(ro.getModifier(i)))
+				if (mr.getSpecies().equals(ro.getModifier(i).getSpecies()))
 					contains = i;
 			if (contains < 0)
 				ro.addModifier(writeModifierSpeciesReference(mr));
@@ -986,14 +986,15 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		if (s.isSetCompartment()
 				&& !s.getCompartment().equals(spec.getCompartment()))
 			spec.setCompartment(s.getCompartment());
-		if (s.isSetInitialAmount() && !spec.isSetInitialAmount()
-				|| s.getInitialAmount() != spec.getInitialAmount())
-			spec.setInitialAmount(s.getInitialAmount());
-		else if (s.isSetInitialConcentration()
-				&& !spec.isSetInitialConcentration()
-				|| s.getInitialConcentration() != spec
-						.getInitialConcentration())
-			spec.setInitialConcentration(s.getInitialConcentration());
+		if (s.isSetInitialAmount()) {
+			if (!spec.isSetInitialAmount()
+					|| s.getInitialAmount() != spec.getInitialAmount())
+				spec.setInitialAmount(s.getInitialAmount());
+		} else if (s.isSetInitialConcentration())
+			if (!spec.isSetInitialConcentration()
+					|| s.getInitialConcentration() != spec
+							.getInitialConcentration())
+				spec.setInitialConcentration(s.getInitialConcentration());
 		if (s.isSetSubstanceUnits()
 				&& !s.getSubstanceUnits().equals(spec.getSubstanceUnits()))
 			spec.setSubstanceUnits(s.getSubstanceUnits());
@@ -1429,9 +1430,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		org.sbml.libsbml.SBMLWriter writer = new SBMLWriter();
 		writer.setProgramName("SBMLsqueezer");
 		writer.setProgramVersion(SBMLsqueezer.getVersionNumber());
+
 		d.checkInternalConsistency();
-		d.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
-		d.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY, false);
 		d.checkConsistency();
 		boolean errorFatal = false;
 		StringBuilder builder = new StringBuilder();

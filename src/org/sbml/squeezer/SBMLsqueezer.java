@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.IllegalFormatException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -35,10 +36,12 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
+import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.plugin.PluginSBMLReader;
 import org.sbml.squeezer.plugin.PluginSBMLWriter;
@@ -56,7 +59,7 @@ import org.sbml.squeezer.standalone.LibSBMLWriter;
  * @since 1.3
  * @version
  */
-public class SBMLsqueezer extends PluginAction {
+public class SBMLsqueezer extends PluginAction implements LawListener {
 
 	/**
 	 * Possible command line options
@@ -74,7 +77,11 @@ public class SBMLsqueezer extends PluginAction {
 		/**
 		 * 
 		 */
-		SBML_FILE
+		SBML_FILE,
+		/**
+		 * Specifies the file where SBMLsqueezer writes its SBML output.
+		 */
+		SBML_OUT_FILE
 	}
 
 	/**
@@ -327,6 +334,36 @@ public class SBMLsqueezer extends PluginAction {
 			// Do a lot of other stuff...
 			checkForUpdate(false);
 			showAboutMsg();
+			File outFile = null;
+			if (p.containsKey(Keys.SBML_OUT_FILE))
+				outFile = new File(p.get(Keys.SBML_OUT_FILE).toString());
+			if (sbmlIo.getListOfModels().size() == 1)
+				try {
+					KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
+							.getSelectedModel(), initProperties());
+					klg.generateLaws();
+					if (klg.getFastReactions().size() > 0) {
+						System.err.println("Model "
+								+ sbmlIo.getSelectedModel().getId()
+								+ " contains " + klg.getFastReactions().size()
+								+ " fast reaction. This feature is currently"
+								+ "ignored by SBMLsqueezer.");
+					}
+					klg.storeLaws(this);
+					sbmlIo.saveChanges();
+					if (outFile != null
+							&& SBFileFilter.SBML_FILE_FILTER.accept(outFile))
+						sbmlIo.writeSelectedModelToSBML(outFile
+								.getAbsolutePath());
+				} catch (IllegalFormatException e) {
+					e.printStackTrace();
+				} catch (ModificationException e) {
+					e.printStackTrace();
+				} catch (RateLawNotApplicableException e) {
+					e.printStackTrace();
+				} catch (SBMLException e) {
+					e.printStackTrace();
+				}
 		}
 	}
 
@@ -462,5 +499,15 @@ public class SBMLsqueezer extends PluginAction {
 			if (plugin.getSelectedModel() != null)
 				new KineticLawSelectionDialog(null, settings, sbmlIO
 						.getSelectedModel());
+	}
+
+	public void currentNumber(int num) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void totalNumber(int i) {
+		// TODO Auto-generated method stub
+
 	}
 }

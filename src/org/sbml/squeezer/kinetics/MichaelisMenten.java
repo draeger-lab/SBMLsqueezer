@@ -53,8 +53,7 @@ public class MichaelisMenten extends GeneralizedMassAction {
 	 * @throws IOException
 	 */
 	public MichaelisMenten(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 

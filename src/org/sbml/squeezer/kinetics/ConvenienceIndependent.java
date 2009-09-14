@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -54,12 +53,10 @@ public class ConvenienceIndependent extends Convenience {
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public ConvenienceIndependent(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 
@@ -85,18 +82,20 @@ public class ConvenienceIndependent extends Convenience {
 		final boolean REVERSE = false;
 		Reaction reaction = getParentSBMLObject();
 		setSBOTerm(429);
-		
+
 		if (reaction.getReversible())
 			setNotes("reversible thermodynamically independent convenience kinetics");
-		else setNotes("irreversible thermodynamically independent convenience kinetics");
-		
+		else
+			setNotes("irreversible thermodynamically independent convenience kinetics");
+
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		for (int i = 0; i < enzymes.length; i++) {
 			ASTNode numerator, denominator = null;
 			String enzyme = modE.size() > 0 ? modE.get(i) : null;
 			if (!reaction.getReversible()) {
 				numerator = ASTNode.times(numeratorElements(enzyme, FORWARD));
-				denominator = ASTNode.times(denominatorElements(enzyme, FORWARD));
+				denominator = ASTNode
+						.times(denominatorElements(enzyme, FORWARD));
 			} else {
 				numerator = ASTNode.diff(numeratorElements(enzyme, FORWARD),
 						numeratorElements(enzyme, REVERSE));

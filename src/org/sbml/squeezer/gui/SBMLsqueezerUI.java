@@ -190,8 +190,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				Command.SET_PREFERENCES.toString())) {
 			SettingsDialog dialog = new SettingsDialog(this);
 			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION)
-				this.settings = dialog.getSettings();
-
+				for (Object key : dialog.getSettings().keySet())
+					settings.put(key, dialog.getSettings().get(key));
 		} else if (e.getActionCommand().equals(Command.OPEN_FILE.toString())) {
 			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
 					CfgKeys.OPEN_DIR).toString(), false, false,
