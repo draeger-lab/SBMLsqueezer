@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.LinkedList;
 import java.util.List;
@@ -109,12 +108,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public BasicKineticLaw(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 		List<String> modActi = new LinkedList<String>();
 		List<String> modCat = new LinkedList<String>();

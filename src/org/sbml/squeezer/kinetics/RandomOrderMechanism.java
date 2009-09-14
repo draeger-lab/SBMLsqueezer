@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -52,11 +51,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * @param parentReaction
 	 * @param model
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public RandomOrderMechanism(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
+			throws RateLawNotApplicableException, 
 			IllegalFormatException {
 		super(parentReaction);
 	}

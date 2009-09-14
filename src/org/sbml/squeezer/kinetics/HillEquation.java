@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -49,11 +48,10 @@ public class HillEquation extends BasicKineticLaw {
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public HillEquation(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
+			throws RateLawNotApplicableException, 
 			IllegalFormatException {
 		super(parentReaction);
 	}
@@ -66,32 +64,6 @@ public class HillEquation extends BasicKineticLaw {
 			return true;
 		return false;
 	}
-
-	public String getName() {
-		String name;
-		if (getParentSBMLObject().getNumModifiers() > 0)
-			name = "Hill equation, microscopic form";
-		else
-			name = "mass action rate law for zeroth order irreversible reactions, continuous scheme";
-		return name;
-	}
-
-	// // @Override
-	// public String getSBO() {
-	// String name = getName().toLowerCase(), sbo = "none";
-	// if (name.equals("hill equation"))
-	// sbo = "0000192";
-	// else if (name.equals("hill equation, microscopic form"))
-	// sbo = "0000195";
-	// else if (name.equals("hill equation, reduced form"))
-	// sbo = "0000198";
-	// else if (name
-	// .equals(
-	// "mass action rate law for zeroth order irreversible reactions, continuous scheme"
-	// ))
-	// sbo = "0000047";
-	// return sbo;
-	// }
 
 	/*
 	 * (non-Javadoc)
@@ -129,6 +101,7 @@ public class HillEquation extends BasicKineticLaw {
 			modTActi.addAll(modCat);
 
 		Reaction reaction = getParentSBMLObject();
+
 		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
 			if (SBO.isGene(reaction.getReactant(0).getSpeciesInstance()
 					.getSBOTerm())
@@ -146,6 +119,14 @@ public class HillEquation extends BasicKineticLaw {
 				throw new ModificationException("Wrong activation in reaction "
 						+ reaction.getId()
 						+ ". Only translational modification is allowed here.");
+		}
+		
+		if (reaction.getNumModifiers() == 0)
+			setSBOTerm(47);
+		else {
+			setSBOTerm(192);
+			if (modTActi.size() == 1)
+				setSBOTerm(195);
 		}
 
 		if (SBO.isTranslation(reaction.getSBOTerm())
@@ -212,8 +193,8 @@ public class HillEquation extends BasicKineticLaw {
 			Parameter p_hillcoeff = createOrGetParameter(concat("nm_", rId,
 					underscore, modTInhib.get(i)).toString());
 			p_hillcoeff.setSBOTerm(190);
-			Parameter p_kS = createOrGetParameter(concat("kSm_", rId, underscore,
-					modTInhib.get(i)).toString());
+			Parameter p_kS = createOrGetParameter(concat("kSm_", rId,
+					underscore, modTInhib.get(i)).toString());
 			p_kS.setSBOTerm(194);
 			inhib[i] = ASTNode.times(ASTNode.diff(new ASTNode(1, this), ASTNode
 					.frac(ASTNode.pow(new ASTNode(modTInhib.get(i), this),

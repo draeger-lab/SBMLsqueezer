@@ -11,7 +11,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Vector;
@@ -346,8 +345,6 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 					} catch (ModificationException exc) {
 						exc.printStackTrace();
 					} catch (RateLawNotApplicableException exc) {
-						exc.printStackTrace();
-					} catch (IOException exc) {
 						exc.printStackTrace();
 					} catch (IllegalFormatException e) {
 						e.printStackTrace();

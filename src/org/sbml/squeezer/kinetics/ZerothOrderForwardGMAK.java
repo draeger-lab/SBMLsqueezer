@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -42,12 +41,10 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 	 * @param parentReaction
 	 * @param model
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public ZerothOrderForwardGMAK(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 

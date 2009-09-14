@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -43,12 +42,10 @@ public class OrderedMechanism extends GeneralizedMassAction {
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public OrderedMechanism(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 
@@ -74,24 +71,19 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		setSBOTerm(429);
 		double stoichiometryRight = 0;
 		for (int i = 0; i < reaction.getNumProducts(); i++)
-			stoichiometryRight += reaction.getProduct(i)
-					.getStoichiometry();
+			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
 		// compulsory-order ternary-complex mechanism (Cornish-Bowden)
-		if ((reaction.getNumProducts() == 2)
-				&& (stoichiometryRight == 2))
+		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
 			setSBOTerm(433);
-		else if ((reaction.getNumProducts() == 1)
-				&& (stoichiometryRight == 1))
+		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
 			setSBOTerm(434);
-		
+
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		StringBuilder notes = new StringBuilder("compulsory-order");
 		notes.append(" ternary-complex mechanism");
-		if ((reaction.getNumProducts() == 2)
-				&& (stoichiometryRight == 2))
+		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
 			notes.append(", two products");
-		else if ((reaction.getNumProducts() == 1)
-				&& (stoichiometryRight == 1))
+		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
 			notes.append(", one product");
 		notes.insert(0, "reversible ");
 		if (!reaction.getReversible())

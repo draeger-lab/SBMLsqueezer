@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -45,11 +44,10 @@ public class PingPongMechanism extends GeneralizedMassAction {
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public PingPongMechanism(Reaction parentReaction)
-			throws RateLawNotApplicableException, IOException,
+			throws RateLawNotApplicableException, 
 			IllegalFormatException {
 		super(parentReaction);
 	}
