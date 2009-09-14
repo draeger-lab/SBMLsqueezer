@@ -57,30 +57,6 @@ public class OrderedMechanism extends GeneralizedMassAction {
 		return true;
 	}
 
-	// @Override
-	public String getName() {
-		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
-		double stoichiometryRight = 0;
-		for (int i = 0; i < getParentSBMLObject().getNumProducts(); i++)
-			stoichiometryRight += getParentSBMLObject().getProduct(i)
-					.getStoichiometry();
-		String name = "compulsory-order ternary-complex mechanism";
-		if ((getParentSBMLObject().getNumProducts() == 2)
-				|| (stoichiometryRight == 2))
-			name += ", two products";
-		else if ((getParentSBMLObject().getNumProducts() == 1)
-				|| (stoichiometryRight == 1))
-			name += ", one product";
-		if (getParentSBMLObject().getReversible())
-			return "reversible " + name;
-		return "irreversible " + name;
-	}
-
-	// @Override
-	public String getSBO() {
-		return "none";
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -94,12 +70,38 @@ public class OrderedMechanism extends GeneralizedMassAction {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
+		Reaction reaction = getParentSBMLObject();
 		setSBOTerm(429);
+		double stoichiometryRight = 0;
+		for (int i = 0; i < reaction.getNumProducts(); i++)
+			stoichiometryRight += reaction.getProduct(i)
+					.getStoichiometry();
+		// compulsory-order ternary-complex mechanism (Cornish-Bowden)
+		if ((reaction.getNumProducts() == 2)
+				&& (stoichiometryRight == 2))
+			setSBOTerm(433);
+		else if ((reaction.getNumProducts() == 1)
+				&& (stoichiometryRight == 1))
+			setSBOTerm(434);
+		
+		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
+		StringBuilder notes = new StringBuilder("compulsory-order");
+		notes.append(" ternary-complex mechanism");
+		if ((reaction.getNumProducts() == 2)
+				&& (stoichiometryRight == 2))
+			notes.append(", two products");
+		else if ((reaction.getNumProducts() == 1)
+				&& (stoichiometryRight == 1))
+			notes.append(", one product");
+		notes.insert(0, "reversible ");
+		if (!reaction.getReversible())
+			notes.insert(0, "ir");
+		setNotes(notes.toString());
+
 		ASTNode numerator;// I
 		ASTNode denominator; // II
 		ASTNode catalysts[] = new ASTNode[Math.max(1, modE.size())];
 
-		Reaction reaction = getParentSBMLObject();
 		SpeciesReference specRefE1 = reaction.getReactant(0), specRefE2 = null;
 		SpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
@@ -253,7 +255,7 @@ public class OrderedMechanism extends GeneralizedMassAction {
 				Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
 				p_kIr2.setSBOTerm(261);
 				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
-				p_kcatn.setSBOTerm(modE.size() == 0 ? 325: 321);
+				p_kcatn.setSBOTerm(modE.size() == 0 ? 325 : 321);
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
 				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());

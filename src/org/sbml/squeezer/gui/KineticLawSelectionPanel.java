@@ -184,8 +184,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 								+ "off.", 40));
 		if (klg.isEnzymeReaction(reaction.getId()) || nonEnzyme)
 			treatAsEnzymeReaction.setEnabled(false);
-		klg.getSettings().put(
-				CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+		klg.getSettings().put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 				Boolean.valueOf(treatAsEnzymeReaction.isSelected()));
 		lh.add(treatAsEnzymeReaction, 0, 0, 2, 1, 1, 1);
 		revGroup.add(rButtonReversible);
@@ -270,9 +269,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 						possibleTypes[i], false);
 				laTeXpreview[i] = new StringBuffer(kinetic.getMath().toLaTeX()
 						.toString());
-				toolTips[i] = !kinetic.isSetSBOTerm() ? "<b>"
+				toolTips[i] = kinetic.isSetSBOTerm() ? "<b>"
 						+ kinetic.getSBOTermID() + "</b> " : "";
-				toolTips[i] = GUITools.toHTML(toolTips[i] + kinetic.getName(),
+				toolTips[i] = GUITools.toHTML(toolTips[i] + kinetic.toString(),
 						40);
 				kineticEquations[i] = GUITools.toHTML(possibleTypes[i]
 						.getEquationName(), 40);

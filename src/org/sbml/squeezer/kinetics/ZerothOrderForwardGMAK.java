@@ -49,8 +49,6 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 			throws RateLawNotApplicableException, IOException,
 			IllegalFormatException {
 		super(parentReaction);
-		reactantOrder = 0;
-		productOrder = Double.NaN;
 	}
 
 	/*
@@ -62,6 +60,8 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction {
 	 */
 	// @Override
 	final ASTNode association(List<String> catalysts, int catNum) {
+		reactantOrder = 0;
+		productOrder = Double.NaN;
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
 			kass = concat(kass, underscore, catalysts.get(catNum));

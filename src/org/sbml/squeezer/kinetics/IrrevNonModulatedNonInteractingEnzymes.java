@@ -60,55 +60,6 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getName()
-	 */
-	// @Override
-	public String getName() {
-		double stoichiometry = 0;
-		for (int i = 0; i < getParentSBMLObject().getNumReactants(); i++)
-			stoichiometry += getParentSBMLObject().getReactant(i)
-					.getStoichiometry();
-		switch ((int) Math.round(stoichiometry)) {
-		case 1:
-			if (numOfEnzymes == 0)
-				return "normalised kinetics of unireactant enzymes";
-			return "Henri-Michaelis Menten equation";
-		case 2:
-			return "kinetics of irreversible non-modulated non-interacting bireactant enzymes";
-		case 3:
-			return "kinetics of irreversible non-modulated non-interacting trireactant enzymes";
-		default:
-			return "kinetics of irreversible non-modulated non-interacting reactant enzymes";
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.BasicKineticLaw#getSBO()
-	 */
-	// @Override
-	public String getSBO() {
-		String name = getName().toLowerCase(), sbo = "none";
-		if (name
-				.equals("kinetics of irreversible non-modulated non-interacting reactant enzymes"))
-			sbo = "0000150";
-		else if (name
-				.equals("kinetics of irreversible non-modulated non-interacting bireactant enzymes"))
-			sbo = "0000151";
-		else if (name
-				.equals("kinetics of irreversible non-modulated non-interacting trireactant enzymes"))
-			sbo = "0000152";
-		else if (name.equals("normalised kinetics of unireactant enzymes"))
-			sbo = "0000199";
-		else if (name.equals("henri-michaelis menten equation"))
-			sbo = "0000029";
-		return sbo;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
 	 * .util.List, java.util.List, java.util.List, java.util.List,
@@ -168,6 +119,22 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 			enzymes[enzymeNum] = ASTNode.frac(numerator, ASTNode
 					.times(denominator));
 		}
+
+		double stoichiometry = 0;
+		for (int i = 0; i < getParentSBMLObject().getNumReactants(); i++)
+			stoichiometry += getParentSBMLObject().getReactant(i)
+					.getStoichiometry();
+		switch ((int) Math.round(stoichiometry)) {
+		case 1:
+			setSBOTerm(numOfEnzymes == 0 ? 199 : 29);
+		case 2:
+			setSBOTerm(151);
+		case 3:
+			setSBOTerm(152);
+		default:
+			setSBOTerm(150);
+		}
+
 		return ASTNode.sum(enzymes);
 	}
 }
