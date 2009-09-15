@@ -243,35 +243,35 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 
 		// rules
 		for (i = 0; i < model.getNumRules(); i++) {
-			Rule ia = model.getRule((int) i);
+			Rule rule = model.getRule((int) i);
 			long contains = -1;
 			for (long j = 0; j < mo.getNumRules() && contains < 0; j++) {
 				boolean equal = false;
-				org.sbml.libsbml.Rule r = mo.getRule(j);
-				if (ia instanceof RateRule
-						&& r instanceof org.sbml.libsbml.RateRule) {
-					equal = ((RateRule) ia).getVariable().equals(
-							((org.sbml.libsbml.RateRule) r).getVariable());
-				} else if (ia instanceof AssignmentRule
-						&& r instanceof org.sbml.libsbml.AssignmentRule) {
-					equal = ((AssignmentRule) ia).getVariable()
-							.equals(
-									((org.sbml.libsbml.AssignmentRule) r)
-											.getVariable());
-				} else if (ia instanceof AlgebraicRule
-						&& r instanceof org.sbml.libsbml.AlgebraicRule) {
+				org.sbml.libsbml.Rule ruleOrig = mo.getRule(j);
+				if (rule instanceof RateRule
+						&& ruleOrig instanceof org.sbml.libsbml.RateRule) {
+					equal = ((RateRule) rule).getVariable().equals(
+							((org.sbml.libsbml.RateRule) ruleOrig)
+									.getVariable());
+				} else if (rule instanceof AssignmentRule
+						&& ruleOrig instanceof org.sbml.libsbml.AssignmentRule) {
+					equal = ((AssignmentRule) rule).getVariable().equals(
+							((org.sbml.libsbml.AssignmentRule) ruleOrig)
+									.getVariable());
+				} else if (rule instanceof AlgebraicRule
+						&& ruleOrig instanceof org.sbml.libsbml.AlgebraicRule) {
 					equal = true;
-				} else
-					equal = false;
+				}
 				if (equal)
-					equal &= equal(ia.getMath(), r.getMath());
+					equal &= equal(rule.getMath(), ruleOrig.getMath());
 				if (equal)
 					contains = j;
 			}
 			if (contains < 0)
-				mo.addRule(writeRule(ia));
+				mo.addRule(writeRule(rule));
 			else
-				saveMathContainerProperties(ia, mo.getRule(contains));
+				// math is equal anyway...
+				saveSBaseProperties(rule, mo.getRule(contains));
 		}
 		// remove unnecessary rules
 		for (i = mo.getNumRules() - 1; i >= 0; i--) {
@@ -337,16 +337,16 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		}
 
 		// events
-		for (Event r : model.getListOfEvents()) {
-			if (mo.getEvent(r.getId()) == null)
-				mo.addEvent(writeEvent(r));
+		for (Event event : model.getListOfEvents()) {
+			if (mo.getEvent(event.getId()) == null)
+				mo.addEvent(writeEvent(event));
 			else
-				saveEventProperties(r, mo.getEvent(r.getId()));
+				saveEventProperties(event, mo.getEvent(event.getId()));
 		}
-		// remove reactions
+		// remove events
 		for (i = mo.getNumEvents() - 1; i >= 0; i--) {
-			org.sbml.libsbml.Event r = mo.getEvent(i);
-			if (model.getEvent(r.getId()) == null)
+			org.sbml.libsbml.Event eventOrig = mo.getEvent(i);
+			if (model.getEvent(eventOrig.getId()) == null)
 				mo.getListOfEvents().remove(i);
 		}
 	}
@@ -427,31 +427,33 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 * org.sbml.jlibsbml.SBMLWriter#saveEventProperties(org.sbml.jlibsbml.Event,
 	 * java.lang.Object)
 	 */
-	public void saveEventProperties(Event r, Object event) throws SBMLException {
+	public void saveEventProperties(Event ev, Object event)
+			throws SBMLException {
 		if (!(event instanceof org.sbml.libsbml.Event))
 			throw new IllegalArgumentException(
 					"event must be an instance of org.sbml.libsbml.Event.");
 		org.sbml.libsbml.Event e = (org.sbml.libsbml.Event) event;
-		saveNamedSBaseProperties(r, e);
-		if (r.getUseValuesFromTriggerTime() != e.getUseValuesFromTriggerTime())
-			e.setUseValuesFromTriggerTime(r.getUseValuesFromTriggerTime());
-		if (r.isSetTimeUnits() && r.getTimeUnits() != e.getTimeUnits())
-			e.setTimeUnits(r.getTimeUnits());
-		if (r.isSetDelay()) {
+		saveNamedSBaseProperties(ev, e);
+		if (ev.getUseValuesFromTriggerTime() != e.getUseValuesFromTriggerTime())
+			e.setUseValuesFromTriggerTime(ev.getUseValuesFromTriggerTime());
+		if (ev.isSetTimeUnits() && ev.getTimeUnits() != e.getTimeUnits())
+			e.setTimeUnits(ev.getTimeUnits());
+		if (ev.isSetDelay()) {
 			if (!e.isSetDelay())
-				e.setDelay(writeDelay(r.getDelay()));
+				e.setDelay(writeDelay(ev.getDelay()));
 			else
-				saveMathContainerProperties(r.getDelay(), e.getDelay());
+				saveMathContainerProperties(ev.getDelay(), e.getDelay());
 		} else if (e.isSetDelay())
 			e.unsetDelay();
-		if (r.isSetTrigger()) {
+		if (ev.isSetTrigger()) {
 			if (!e.isSetTrigger())
-				e.setTrigger(writeTrigger(r.getTrigger()));
+				e.setTrigger(writeTrigger(ev.getTrigger()));
 			else
-				saveMathContainerProperties(r.getTrigger(), e.getTrigger());
+				saveMathContainerProperties(ev.getTrigger(), e.getTrigger());
 		}
 		// synchronize event assignments
-		for (EventAssignment ea : r.getListOfEventAssignments()) {
+
+		for (EventAssignment ea : ev.getListOfEventAssignments()) {
 			long contains = -1;
 			for (long i = 0; i < e.getNumEventAssignments() && contains < 0; i++) {
 				org.sbml.libsbml.EventAssignment libEA = e
@@ -469,8 +471,8 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 		for (long i = e.getNumEventAssignments() - 1; i >= 0; i--) {
 			org.sbml.libsbml.EventAssignment ea = e.getEventAssignment(i);
 			boolean contains = false;
-			for (int j = 0; j < r.getNumEventAssignments() && !contains; j++) {
-				EventAssignment eventA = r.getEventAssignment(j);
+			for (int j = 0; j < ev.getNumEventAssignments() && !contains; j++) {
+				EventAssignment eventA = ev.getEventAssignment(j);
 				if (eventA.isSetVariable()
 						&& eventA.getVariable().equals(ea.getVariable())
 						&& equal(eventA.getMath(), ea.getMath()))
@@ -527,63 +529,90 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 			saveSBaseProperties(mc, sbase);
 		if (sbase instanceof org.sbml.libsbml.Constraint) {
 			org.sbml.libsbml.Constraint kl = (org.sbml.libsbml.Constraint) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
 		} else if (sbase instanceof org.sbml.libsbml.Delay) {
 			org.sbml.libsbml.Delay kl = (org.sbml.libsbml.Delay) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
 		} else if (sbase instanceof org.sbml.libsbml.EventAssignment) {
 			org.sbml.libsbml.EventAssignment kl = (org.sbml.libsbml.EventAssignment) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
 		} else if (sbase instanceof org.sbml.libsbml.FunctionDefinition) {
 			org.sbml.libsbml.FunctionDefinition kl = (org.sbml.libsbml.FunctionDefinition) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
 		} else if (sbase instanceof org.sbml.libsbml.InitialAssignment) {
 			org.sbml.libsbml.InitialAssignment kl = (org.sbml.libsbml.InitialAssignment) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
 		} else if (sbase instanceof org.sbml.libsbml.KineticLaw) {
 			org.sbml.libsbml.KineticLaw kl = (org.sbml.libsbml.KineticLaw) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
 		} else if (sbase instanceof org.sbml.libsbml.Rule) {
 			org.sbml.libsbml.Rule kl = (org.sbml.libsbml.Rule) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
 		} else if (sbase instanceof org.sbml.libsbml.StoichiometryMath) {
 			org.sbml.libsbml.StoichiometryMath kl = (org.sbml.libsbml.StoichiometryMath) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
 		} else if (sbase instanceof org.sbml.libsbml.Trigger) {
 			org.sbml.libsbml.Trigger kl = (org.sbml.libsbml.Trigger) sbase;
+			boolean equal = kl.isSetMath() && mc.isSetMath()
+					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath()
+					&& !equal
 					&& kl.setMath(convert(mc.getMath())) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "

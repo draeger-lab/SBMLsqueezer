@@ -512,7 +512,7 @@ public abstract class AbstractSBMLWriter implements SBMLWriter {
 			break;
 		}
 		equal &= math.getNumChildren() == libMath.getNumChildren();
-		if (equal)
+		if (equal && math.getNumChildren() > 0)
 			for (int i = 0; i < math.getNumChildren(); i++)
 				equal &= equal(math.getChild(i), libMath.getChild(i));
 		return equal;

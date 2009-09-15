@@ -330,7 +330,7 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 			}).start();
 		} else {
 			if (sbmlIo.getNumErrors() > 0)
-				System.out.println(sbmlIo.getWarnings());
+				System.err.println(sbmlIo.getWarnings());
 			// Do a lot of other stuff...
 			checkForUpdate(false);
 			showAboutMsg();
