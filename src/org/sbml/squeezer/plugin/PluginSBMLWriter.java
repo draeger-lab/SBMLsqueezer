@@ -70,9 +70,42 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeModel(org.sbml.Model)
 	 */
 	public Object writeModel(Model model) {
-		// TODO Auto-generated method stub
-		return null;
+		org.sbml.libsbml.Model m = new org.sbml.libsbml.Model(model.getLevel(),
+				model.getVersion());
+		saveNamedSBaseProperties(model, m);
+		if (model.isSetModelHistory()) {
+			if (!m.isSetModelHistory())
+				m.setModelHistory(new org.sbml.libsbml.ModelHistory());
+			saveModelHistoryProperties(model.getModelHistory(), m
+					.getModelHistory());
+		}
+		for (UnitDefinition ud : model.getListOfUnitDefinitions())
+			m.addUnitDefinition(writeUnitDefinition(ud));
+		for (FunctionDefinition fd : model.getListOfFunctionDefinitions())
+			m.addFunctionDefinition(writeFunctionDefinition(fd));
+		for (CompartmentType ct : model.getListOfCompartmentTypes())
+			m.addCompartmentType(writeCompartmentType(ct));
+		for (SpeciesType st : model.getListOfSpeciesTypes())
+			m.addSpeciesType(writeSpeciesType(st));
+		for (Compartment c : model.getListOfCompartments())
+			m.addCompartment(writeCompartment(c));
+		for (Species s : model.getListOfSpecies())
+			m.addSpecies(writeSpecies(s));
+		for (Parameter p : model.getListOfParameters())
+			m.addParameter(writeParameter(p));
+		for (Constraint c : model.getListOfConstraints())
+			m.addConstraint(writeConstraint(c));
+		for (InitialAssignment ia : model.getListOfInitialAssignments())
+			m.addInitialAssignment(writeInitialAssignment(ia));
+		for (Rule r : model.getListOfRules())
+			m.addRule(writeRule(r));
+		for (Reaction r : model.getListOfReactions())
+			m.addReaction(writeReaction(r));
+		for (Event e : model.getListOfEvents())
+			m.addEvent(writeEvent(e));
+		return m;
 	}
+
 
 	/*
 	 * (non-Javadoc)
