@@ -302,16 +302,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		System.out.println("changed: " + changed);
 		writer.saveChanges(listOfModels.get(selectedModel), listOfOrigModels
 				.get(selectedModel));
-		System.out.println("fertig");
-		JDialog d = new JDialog();
-		d.setTitle("Original SBML");
-		d.getContentPane().setLayout(new BorderLayout());
-		d.getContentPane().add(
-				new SBMLTree((org.sbml.libsbml.Model) listOfOrigModels.get(selectedModel)), BorderLayout.CENTER);
-		d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		d.pack();
-		d.setLocationRelativeTo(null);
-		d.setVisible(true);
+		System.out.println("done");
 	}
 
 	/*

@@ -1,6 +1,20 @@
 /*
- * Nov 13, 2007 Copyright (c) ZBiT, University of T&uuml;bingen, Germany
- * Compiler: JDK 1.6.0
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml.squeezer.gui.table;
 
@@ -38,7 +52,7 @@ import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import atp.sHotEqn;
 
 /**
- * TODO: comment missing
+ * Creates a table that displays all created kinetic equationns.
  * 
  * @since 2.0
  * @version
@@ -113,13 +127,14 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 				if (i > 0)
 					params.append(", ");
 			}
-			dataModel.setValueAt(kineticLaw, getSelectedRow(), 1);
-			dataModel.setValueAt(new String(kineticLaw.getSBOTermID()),
-					getSelectedRow(), 2);
+			dataModel.setValueAt(kineticLaw.getClass().getSimpleName(),
+					getSelectedRow(), 1);
+			dataModel
+					.setValueAt(kineticLaw.getSBOTermID(), getSelectedRow(), 2);
 			dataModel.setValueAt(params, getSelectedRow(), dataModel
 					.getColumnCount() - 2);
-			dataModel.setValueAt(new String(kineticLaw.getFormula()),
-					getSelectedRow(), dataModel.getColumnCount() - 1);
+			dataModel.setValueAt(kineticLaw.getFormula(), getSelectedRow(),
+					dataModel.getColumnCount() - 1);
 			i = 0;
 			while ((i < klg.getModel().getNumReactions())
 					&& (!klg.getModel().getReaction(i).getId().equals(
@@ -140,7 +155,6 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		// Point p = e.getPoint();
 		// int rowIndex = rowAtPoint(p);
 		// int colIndex = columnAtPoint(p);
-		// // System.out.println("Mouse clicked, Zeile: " + rowIndex +
 		// "\tSpalte: "
 		// // + colIndex);
 		// if (convertColumnIndexToModel(colIndex) == 1) {
@@ -220,40 +234,12 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 	}
 
 	/*
-	 * ====================== Action Event Handler =====================
-	 */
-
-	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 	 */
 	public void mouseEntered(MouseEvent e) {
-		// Point p = e.getPoint();
-		// int rowIndex = rowAtPoint(p);
-		// int colIndex = convertColumnIndexToModel(columnAtPoint(p));
-		// // System.out.println("Mouse entered, Zeile: " + rowIndex +
-		// "\tSpalte: "
-		// // + colIndex);
-		// if (colIndex == dataModel.getColumnCount() - 1) {
-		// JComponent component = new sHotEqn("\\begin{equation}"
-		// + ((BasicKineticLaw) dataModel.getValueAt(rowIndex, 1))
-		// .getKineticTeX().replaceAll("text", "mbox") + "\\end{equation}");
-		// component.setBackground(Color.WHITE);
-		// component.setLocation(((int) MouseInfo.getPointerInfo().getLocation()
-		// .getX())
-		// - this.getTopLevelAncestor().getX(), this.getY() + 10);
-		// // component.setSize(100, 20);
-		// component.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		// JOptionPane.showMessageDialog(getParent(), component);
-		// //JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
-		// // JLayeredPane.POPUP_LAYER);
-		// }
 	}
-
-	/*
-	 * ====================== Mouse Event Handler =====================
-	 */
 
 	/*
 	 * (non-Javadoc)
@@ -261,19 +247,18 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 	 */
 	public void mouseExited(MouseEvent e) {
-		// Point p = e.getPoint();
-		// int rowIndex = rowAtPoint(p);
-		// int colIndex = columnAtPoint(p);
-		// System.out.println("Mouse exited, Zeile: " + rowIndex + "\tSpalte: "
-		// + colIndex);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 */
 	public void mouseMoved(MouseEvent e) {
 		// Point p = e.getPoint();
 		// int rowIndex = rowAtPoint(p);
 		// int colIndex = columnAtPoint(p);
-		// System.out.println("Mouse moved, Zeile: " + rowIndex + "\tSpalte: "
-		// + colIndex);
 	}
 
 	/*
@@ -302,9 +287,6 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		// Point p = e.getPoint();
 		// int rowIndex = rowAtPoint(p);
 		// int colIndex = columnAtPoint(p);
-		// System.out.println("Mouse released, Zeile: " + rowIndex + "\tSpalte:
-		// "
-		// + colIndex);
 	}
 
 	/**
@@ -317,7 +299,12 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		this.reversibility = reversibility;
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.JTable#tableChanged(javax.swing.event.TableModelEvent)
+	 */
+	// @Override
 	public void tableChanged(TableModelEvent e) {
 		super.tableChanged(e);
 	}
@@ -364,6 +351,9 @@ public class KineticLawJTable extends JTable implements MouseInputListener,
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void setColumnWidthAppropriately() {
 		for (int col = 0; col < getColumnCount(); col++) {
 			int maxLength = getColumnModel().getColumn(col).getHeaderValue()

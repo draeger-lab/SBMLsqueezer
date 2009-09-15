@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.standalone;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -83,6 +84,21 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		popup.setOpaque(true);
 		popup.setLightWeightPopupEnabled(true);
 		addMouseListener(this);
+	}
+
+	/**
+	 * Displays this tree on a simple dialog window.
+	 * @param model
+	 */
+	public void showTree(Model model) {
+		JDialog d = new JDialog();
+		d.setTitle("Original SBML");
+		d.getContentPane().setLayout(new BorderLayout());
+		d.getContentPane().add(new SBMLTree(model), BorderLayout.CENTER);
+		d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		d.pack();
+		d.setLocationRelativeTo(null);
+		d.setVisible(true);
 	}
 
 	/**

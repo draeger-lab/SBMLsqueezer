@@ -437,8 +437,8 @@ public class SBasePanel extends JPanel {
 		for (SpeciesReference specRef : reaction.getListOfProducts())
 			rmp[count++][2] = specRef.getSpeciesInstance().toString();
 		JTable table = new JTable(rmp, colNames);
-		table.setPreferredScrollableViewportSize(new Dimension(200, table
-				.getRowCount()
+		table.setPreferredScrollableViewportSize(new Dimension(200, (table
+				.getRowCount() + 1)
 				* table.getRowHeight()));
 		table.setEnabled(editable);
 		JScrollPane scroll = new JScrollPane(table,
@@ -538,7 +538,7 @@ public class SBasePanel extends JPanel {
 		sboTermField.setEditable(editable);
 		if (sbase.isSetSBOTerm()) {
 			sboTermField.setText(SBO.getTerm(sbase.getSBOTerm())
-					.getDescription());
+					.getDescription().replace("\\,", ","));
 			sboTermField.setColumns(sboTermField.getText().length());
 		}
 		lh.add(sboTermField, 3, row, 1, 1, 1, 1);
