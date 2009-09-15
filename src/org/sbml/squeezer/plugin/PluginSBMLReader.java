@@ -18,34 +18,60 @@
  */
 package org.sbml.squeezer.plugin;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
+import java.util.TimeZone;
 
+import jp.sbi.celldesigner.plugin.PluginAlgebraicRule;
+import jp.sbi.celldesigner.plugin.PluginAssignmentRule;
 import jp.sbi.celldesigner.plugin.PluginCompartment;
+import jp.sbi.celldesigner.plugin.PluginInitialAssignment;
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginModifierSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginParameter;
+import jp.sbi.celldesigner.plugin.PluginRateRule;
 import jp.sbi.celldesigner.plugin.PluginReaction;
+import jp.sbi.celldesigner.plugin.PluginRule;
+import jp.sbi.celldesigner.plugin.PluginSBase;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
+import jp.sbi.celldesigner.plugin.PluginCompartmentType;
+import jp.sbi.celldesigner.plugin.PluginEvent;
+import jp.sbi.celldesigner.plugin.PluginFunctionDefinition;
+import jp.sbi.celldesigner.plugin.PluginSimpleSpeciesReference;
+import jp.sbi.celldesigner.plugin.PluginSpeciesType;
+import jp.sbi.celldesigner.plugin.PluginUnit;
+import jp.sbi.celldesigner.plugin.PluginUnitDefinition;
+import jp.sbi.celldesigner.plugin.PluginEventAssignment;
 
+import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.libsbml;
+import org.sbml.libsbml.libsbmlConstants;
+import org.sbml.jsbml.AlgebraicRule;
+import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.CompartmentType;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.StoichiometryMath;
+import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.io.AbstractSBMLReader;
@@ -62,6 +88,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	private static final int level = 2;
 	private static final int version = 4;
 
+	private PluginModel originalmodel;
 	/**
 	 * 
 	 */
@@ -92,8 +119,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 
 	@Override
 	public Object getOriginalModel() {
-		// TODO Auto-generated method stub
-		return null;
+		return originalmodel;
 	}
 
 	/*
@@ -106,18 +132,58 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("compartment" + error
 					+ "PluginCompartment.");
 		PluginCompartment pc = (PluginCompartment) compartment;
-		// TODO Auto-generated method stub
-		return null;
+		Compartment c = new Compartment(pc.getId(), level, version);
+		copyNamedSBaseProperties(c, pc);
+		if (pc.getOutside() != null) {
+			Compartment outside = getModel().getCompartment(pc.getOutside());
+			if (outside == null)
+				getModel().addCompartment(readCompartment(compartment));
+			c.setOutside(outside);
+		}
+		if (pc.getCompartmentType() != null)
+			c.setCompartmentType(readCompartmentType(pc.getCompartmentType()));
+		c.setConstant(pc.getConstant());
+		c.setSize(pc.getSize());
+		c.setSpatialDimensions((short) pc.getSpatialDimensions());
+		if (pc.getUnits() != null)
+			c.setUnits(getModel().getUnitDefinition(pc.getUnits()));
+		return c;
 	}
 
-	public CVTerm readCVTerm(Object term) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * 
+	 * @param compartmentType
+	 * @return
+	 */
+	private CompartmentType readCompartmentType(Object compartmentType) {
+		if (!(compartmentType instanceof PluginCompartmentType))
+			throw new IllegalArgumentException("compartmenttype" + error
+					+ "org.sbml.libsbml.CompartmentType");
+		PluginCompartmentType comp = (PluginCompartmentType) compartmentType;
+		CompartmentType com = new CompartmentType(comp.getId(), level, version);
+		copyNamedSBaseProperties(com, comp);
+		return com;
 	}
 
-	public EventAssignment readEventAssignment(Object eventAssignment) {
-		// TODO Auto-generated method stub
-		return null;
+
+
+	public EventAssignment readEventAssignment(Object eventass) {
+		if (!(eventass instanceof PluginEventAssignment))
+			throw new IllegalArgumentException("eventassignment" + error
+					+ "org.sbml.libsbml.EventAssignment");
+		PluginEventAssignment eve = (PluginEventAssignment) eventass;
+		EventAssignment ev = new EventAssignment(level, version);
+		copySBaseProperties(ev, eve);
+		if (eve.getVariable() != null) {
+			Symbol variable = model.findSymbol(eve.getVariable());
+			if (variable == null)
+				ev.setVariable(eve.getVariable());
+			else
+				ev.setVariable(variable);
+		}
+		if (eve.getMath() != null)
+			ev.setMath(convert(eve.getMath(), ev));
+		return ev;
 	}
 
 	/*
@@ -126,8 +192,16 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 * @see org.sbml.SBMLReader#readFunctionDefinition(java.lang.Object)
 	 */
 	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!(functionDefinition instanceof PluginFunctionDefinition))
+			throw new IllegalArgumentException("functionDefinition" + error
+					+ "org.sbml.libsbml.FunctionDefinition.");
+		PluginFunctionDefinition fd = (PluginFunctionDefinition) functionDefinition;
+		FunctionDefinition f = new FunctionDefinition(fd.getId(), level,
+				version);
+		copyNamedSBaseProperties(f, fd);
+		if (fd.getMath() != null)
+			f.setMath(convert(fd.getMath(), f));
+		return f;
 	}
 
 	/*
@@ -136,8 +210,19 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 * @see org.sbml.SBMLReader#readInitialAssignment(java.lang.Object)
 	 */
 	public InitialAssignment readInitialAssignment(Object initialAssignment) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!(initialAssignment instanceof PluginInitialAssignment))
+			throw new IllegalArgumentException("initialAssignment" + error
+					+ "org.sbml.libsbml.InitialAssignment.");
+		PluginInitialAssignment sbIA = (PluginInitialAssignment) initialAssignment;
+		if (sbIA.getSymbol() == null)
+			throw new IllegalArgumentException(
+					"Symbol attribute not set for InitialAssignment");
+		InitialAssignment ia = new InitialAssignment(model.findSymbol(sbIA
+				.getSymbol()));
+		copySBaseProperties(ia, sbIA);
+		if (sbIA.getMath() != null)
+			ia.setMath(convert(libsbml.parseFormula(sbIA.getMath()), ia));
+		return ia;
 	}
 
 	/*
@@ -167,6 +252,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 */
 	public Model readModel(Object model) {
 		if (model instanceof PluginModel) {
+			this.originalmodel = (PluginModel) model;
 			PluginModel pm = (PluginModel) model;
 			Model m = new Model(pm.getId(), level, version);
 			for (int i = 0; i < pm.getNumReactions(); i++)
@@ -260,8 +346,27 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 * @see org.sbml.SBMLReader#readRule(java.lang.Object)
 	 */
 	public Rule readRule(Object rule) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!(rule instanceof PluginRule))
+			throw new IllegalArgumentException("rule" + error
+					+ "org.sbml.libsbml.Rule.");
+		PluginRule libRule = (PluginRule) rule;
+		Rule r;
+		if (libRule instanceof PluginAlgebraicRule)
+			r = new AlgebraicRule(level, version);
+		else {
+
+			if (libRule instanceof PluginAssignmentRule)
+				r = new AssignmentRule(model
+						.findSymbol(((PluginAssignmentRule) libRule)
+								.getVariable()));
+			else
+				r = new RateRule(model.findSymbol(((PluginRateRule) libRule)
+						.getVariable()));
+		}
+		copySBaseProperties(r, libRule);
+		if (libRule.getMath() != null)
+			r.setMath(convert(libRule.getMath(), r));
+		return r;
 	}
 
 	/*
@@ -304,10 +409,165 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 * @see org.sbml.SBMLReader#readSpeciesType(java.lang.Object)
 	 */
 	public SpeciesType readSpeciesType(Object speciesType) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!(speciesType instanceof PluginSpeciesType))
+			throw new IllegalArgumentException("speciesType" + error
+					+ "org.sbml.libsbml.SpeciesType.");
+		PluginSpeciesType libST = (PluginSpeciesType) speciesType;
+		SpeciesType st = new SpeciesType(libST.getId(), level, version);
+		copyNamedSBaseProperties(st, libST);
+		return st;
 	}
 
+		
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readUnit(java.lang.Object)
+	 */
+	
+	//TODO: PluginUnitbez.?
+	public Unit readUnit(Object unit) {
+		if (!(unit instanceof PluginUnit))
+			throw new IllegalArgumentException("unit" + error
+					+ "org.sbml.libsbml.Unit");
+		PluginUnit libUnit = (PluginUnit) unit;
+		Unit u = new Unit(level,version);
+		copySBaseProperties(u, libUnit);
+		switch (libUnit.getKind()) {
+		case libsbmlConstants.UNIT_KIND_AMPERE:
+			u.setKind(Unit.Kind.AMPERE);
+			break;
+		case libsbmlConstants.UNIT_KIND_BECQUEREL:
+			u.setKind(Unit.Kind.BECQUEREL);
+			break;
+		case libsbmlConstants.UNIT_KIND_CANDELA:
+			u.setKind(Unit.Kind.CANDELA);
+			break;
+		case libsbmlConstants.UNIT_KIND_CELSIUS:
+			u.setKind(Unit.Kind.CELSIUS);
+			break;
+		case libsbmlConstants.UNIT_KIND_COULOMB:
+			u.setKind(Unit.Kind.COULOMB);
+			break;
+		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
+			u.setKind(Unit.Kind.DIMENSIONLESS);
+			break;
+		case libsbmlConstants.UNIT_KIND_FARAD:
+			u.setKind(Unit.Kind.FARAD);
+			break;
+		case libsbmlConstants.UNIT_KIND_GRAM:
+			u.setKind(Unit.Kind.GRAM);
+			break;
+		case libsbmlConstants.UNIT_KIND_GRAY:
+			u.setKind(Unit.Kind.GRAY);
+			break;
+		case libsbmlConstants.UNIT_KIND_HENRY:
+			u.setKind(Unit.Kind.HENRY);
+			break;
+		case libsbmlConstants.UNIT_KIND_HERTZ:
+			u.setKind(Unit.Kind.HERTZ);
+			break;
+		case libsbmlConstants.UNIT_KIND_INVALID:
+			u.setKind(Unit.Kind.INVALID);
+			break;
+		case libsbmlConstants.UNIT_KIND_ITEM:
+			u.setKind(Unit.Kind.ITEM);
+			break;
+		case libsbmlConstants.UNIT_KIND_JOULE:
+			u.setKind(Unit.Kind.JOULE);
+			break;
+		case libsbmlConstants.UNIT_KIND_KATAL:
+			u.setKind(Unit.Kind.KATAL);
+			break;
+		case libsbmlConstants.UNIT_KIND_KELVIN:
+			u.setKind(Unit.Kind.KELVIN);
+			break;
+		case libsbmlConstants.UNIT_KIND_KILOGRAM:
+			u.setKind(Unit.Kind.KILOGRAM);
+			break;
+		case libsbmlConstants.UNIT_KIND_LITER:
+			u.setKind(Unit.Kind.LITER);
+			break;
+		case libsbmlConstants.UNIT_KIND_LITRE:
+			u.setKind(Unit.Kind.LITRE);
+			break;
+		case libsbmlConstants.UNIT_KIND_LUMEN:
+			u.setKind(Unit.Kind.LUMEN);
+			break;
+		case libsbmlConstants.UNIT_KIND_LUX:
+			u.setKind(Unit.Kind.LUX);
+			break;
+		case libsbmlConstants.UNIT_KIND_METER:
+			u.setKind(Unit.Kind.METER);
+			break;
+		case libsbmlConstants.UNIT_KIND_METRE:
+			u.setKind(Unit.Kind.METRE);
+			break;
+		case libsbmlConstants.UNIT_KIND_MOLE:
+			u.setKind(Unit.Kind.MOLE);
+			break;
+		case libsbmlConstants.UNIT_KIND_NEWTON:
+			u.setKind(Unit.Kind.NEWTON);
+			break;
+		case libsbmlConstants.UNIT_KIND_OHM:
+			u.setKind(Unit.Kind.OHM);
+			break;
+		case libsbmlConstants.UNIT_KIND_PASCAL:
+			u.setKind(Unit.Kind.PASCAL);
+			break;
+		case libsbmlConstants.UNIT_KIND_RADIAN:
+			u.setKind(Unit.Kind.RADIAN);
+			break;
+		case libsbmlConstants.UNIT_KIND_SECOND:
+			u.setKind(Unit.Kind.SECOND);
+			break;
+		case libsbmlConstants.UNIT_KIND_SIEMENS:
+			u.setKind(Unit.Kind.SIEMENS);
+			break;
+		case libsbmlConstants.UNIT_KIND_SIEVERT:
+			u.setKind(Unit.Kind.SIEVERT);
+			break;
+		case libsbmlConstants.UNIT_KIND_STERADIAN:
+			u.setKind(Unit.Kind.STERADIAN);
+			break;
+		case libsbmlConstants.UNIT_KIND_TESLA:
+			u.setKind(Unit.Kind.TESLA);
+			break;
+		case libsbmlConstants.UNIT_KIND_VOLT:
+			u.setKind(Unit.Kind.VOLT);
+			break;
+		case libsbmlConstants.UNIT_KIND_WATT:
+			u.setKind(Unit.Kind.WATT);
+			break;
+		case libsbmlConstants.UNIT_KIND_WEBER:
+			u.setKind(Unit.Kind.WEBER);
+			break;
+		}
+		u.setExponent(libUnit.getExponent());
+		u.setMultiplier(libUnit.getMultiplier());
+		u.setScale(libUnit.getScale());
+		u.setOffset(libUnit.getOffset());
+		return u;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
+	 */
+	public UnitDefinition readUnitDefinition(Object unitDefinition) {
+		if (!(unitDefinition instanceof PluginUnitDefinition))
+			throw new IllegalArgumentException("unitDefinition" + error
+					+ "org.sbml.libsbml.UnitDefinition");
+		PluginUnitDefinition libUD = (PluginUnitDefinition) unitDefinition;
+		UnitDefinition ud = new UnitDefinition(libUD.getId(), level,version);
+		copyNamedSBaseProperties(ud, libUD);
+		for (int i = 0; i < libUD.getNumUnits(); i++)
+			ud.addUnit(readUnit(libUD.getUnit(i)));
+		return ud;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -317,31 +577,17 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBMLReader#readUnit(java.lang.Object)
-	 */
-	public Unit readUnit(Object unit) {
+	
+	public CVTerm readCVTerm(Object term) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
-	 */
-	public UnitDefinition readUnitDefinition(Object unitDefinition) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	public Date convertDate(Object d) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 	public String getWarnings() {
 		// TODO Auto-generated method stub
@@ -351,5 +597,95 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	public int getNumErrors() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param pc
+	 */
+	private void copyNamedSBaseProperties(NamedSBase n, PluginSBase ps) {
+		copySBaseProperties(n, ps);
+		if (ps instanceof PluginCompartment) {
+			PluginCompartment c = (PluginCompartment) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginCompartmentType) {
+			PluginCompartmentType c = (PluginCompartmentType) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginEvent) {
+			PluginEvent c = (PluginEvent) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginFunctionDefinition) {
+			PluginFunctionDefinition c = (PluginFunctionDefinition) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginModel) {
+			PluginModel c = (PluginModel) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginParameter) {
+			PluginParameter c = (PluginParameter) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginReaction) {
+			PluginReaction c = (PluginReaction) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginSimpleSpeciesReference) {
+			PluginSimpleSpeciesReference c = (PluginSimpleSpeciesReference) ps;
+			// if (c.get != null)
+			// n.setId(c.getId());
+			// if (c.getName() != null)
+			// sbase.setName(c.getName());
+		} else if (ps instanceof PluginSpecies) {
+			PluginSpecies c = (PluginSpecies) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginSpeciesType) {
+			PluginSpeciesType c = (PluginSpeciesType) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		} else if (ps instanceof PluginUnitDefinition) {
+			PluginUnitDefinition c = (PluginUnitDefinition) ps;
+			if (c.getId() != null)
+				n.setId(c.getId());
+			if (c.getName() != null)
+				n.setName(c.getName());
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param pc
+	 */
+
+	private void copySBaseProperties(SBase c, PluginSBase pc) {
+		if (pc.getNotesString() != null)
+			c.setNotes(pc.getNotesString());
+		// TODO
+
 	}
 }
