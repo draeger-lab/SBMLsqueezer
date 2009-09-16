@@ -31,6 +31,14 @@ import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
+ * 
+ * This class creates a S-System based equation as defined in the papers
+ * "A model-based optimization framework for the inference 
+ * on gene regulatory networks from DNA array data" and 
+ * "A model-based optimization framework for the inference 
+ * of regulatory interactions using time-course DNA microarray expression data" 
+ * of Thomas et al. 2004 and 2007
+ * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
@@ -109,24 +117,35 @@ public class TestKinetik extends BasicKineticLaw {
 
 		ASTNode nodea = new ASTNode(a, this);
 		ASTNode nodeb = new ASTNode(b, this);
-		// ASTNode nodec = new ASTNode(c, this);
-		// ASTNode noded = new ASTNode(d, this);
+		ASTNode nodec = new ASTNode(c, this);
+		ASTNode noded = new ASTNode(d, this);
 
-		// Species reactant = r.getReactant(0).getSpeciesInstance();
+		Species reactant = r.getReactant(0).getSpeciesInstance();
 		Species product = r.getProduct(0).getSpeciesInstance();
 		ASTNode productnode = new ASTNode(product, this);
 
 		// Transkription
-		// if (SBO.isEmptySet(reactant.getSBOTerm()) &&
-		// SBO.isRNA(product.getSBOTerm())) {
+		//if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isRNA(product.getSBOTerm())) {
+		System.out.println("Das ist eine Transkription!");
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
 			Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
-			System.out.println("for_testtesttest" + modifier.getSBOTerm());
-			// if(SBO.isProtein(modifier.getSBOTerm())){
+			//if(SBO.isProtein(modifier.getSBOTerm())){
+			System.out.println("Modifier " + modifier + " ist ein Protein!");
 
 			Parameter e = createOrGetParameter(concat("e_", modifierNum, rId,
 					underscore).toString());
-			System.out.println("Mein Parameters: " + e.toString());
+			System.out.println("Parameter erstellt: " + e.toString());
+
+			if (SBO.isTranscriptionalActivation(modifier.getSBOTerm())) {
+				System.out.println("Modifier " + modifier
+						+ " ist Aktivator! set value 1");
+				e.setValue(1);
+			}
+			if (SBO.isTranscriptionalInhibitor(modifier.getSBOTerm())) {
+				System.out.println("Modifier " + modifier
+						+ " ist Inhibitor! set value -1");
+				e.setValue(-1);
+			}
 
 			ASTNode modnode = new ASTNode(modifier, this);
 			ASTNode enode = new ASTNode(e, this);
@@ -135,21 +154,33 @@ public class TestKinetik extends BasicKineticLaw {
 			else
 				kineticLawPart = ASTNode.times(kineticLawPart, ASTNode.pow(
 						modnode, enode));
-			// }
+
+			kineticLaw = ASTNode.diff(ASTNode.times(nodea, kineticLawPart),
+					ASTNode.times(nodeb, productnode));
+			//}
 		}
 
-		kineticLaw = ASTNode.diff(ASTNode.times(nodea, kineticLawPart), ASTNode
-				.times(nodeb, productnode));
-		// }
+		//}
 
 		// Translation
-		/*
-		 * if (SBO.isEmptySet(reactant.getSBOTerm()) &&
-		 * SBO.isProtein(product.getSBOTerm())) { for (int modifierNum = 0;
-		 * modifierNum < r.getNumModifiers(); modifierNum++) { TODO:
-		 * tranlslation } }
-		 */
+		//if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isProtein(product.getSBOTerm())) {
+		System.out.println("Das ist eine Translation!");
+		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
+			Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
+			//if(SBO.isRNA(modifier.getSBOTerm())){
+			// rna des proteins?
+			System.out.println("Modifier " + modifier + " ist eine RNA!");
 
+			ASTNode modnode = new ASTNode(modifier, this);
+
+			kineticLaw = ASTNode.diff(ASTNode.times(nodec, modnode), ASTNode
+					.times(noded, productnode));
+			//}
+		}
+
+		//}
+
+		System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;
 	}
 }
