@@ -45,6 +45,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw {
 	private int numOfEnzymes;
 
 	/**
+	 * 
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException

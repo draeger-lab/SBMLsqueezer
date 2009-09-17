@@ -70,6 +70,10 @@ public enum Kinetics {
 	 */
 	COMPETETIVE_NON_EXCLUSIVE_INHIB,
 	/**
+	 * 
+	 */
+	REVERSIBLE_POWER_LAW,
+	/**
 	 * Test equation
 	 */
 	TEST_KINETIK;
@@ -112,10 +116,49 @@ public enum Kinetics {
 			return "Michaelis-Menten";
 		case CONVENIENCE_KINETICS:
 			return "Convenience kinetics";
+		case REVERSIBLE_POWER_LAW:
+			return "Reversible power law";
 		case TEST_KINETIK:
 			return "Test-Kinetik!";
-		default: // TODO: default?
+		default:
 			return "Generalized mass-action";
 		}
+	}
+
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	static public Kinetics getTypeForName(String name) {
+		String prefix = "org.sbml.squeezer.kinetics.";
+		if (name
+				.equals(prefix + "IrrevCompetNonCooperativeEnzymes"))
+			return COMPETETIVE_NON_EXCLUSIVE_INHIB;
+		if (name.equals(prefix + "ZerothOrderReverseGMAK"))
+			return ZEROTH_ORDER_REVERSE_MA;
+		if (name.equals(prefix + "ZerothOrderForwardGMAK"))
+			return ZEROTH_ORDER_FORWARD_MA;
+		if (name
+				.equals(prefix + "IrrevNonModulatedNonInteractingEnzymes"))
+			return IRREV_NON_MODULATED_ENZYME_KIN;
+		if (name.equals(prefix + "HillEquation"))
+			return HILL_EQUATION;
+		if (name.equals(prefix + "OrderedMechanism"))
+			return ORDERED_MECHANISM;
+		if (name.equals(prefix + "PingPongMechanism"))
+			return PING_PONG_MECAHNISM;
+		if (name.equals(prefix + "RandomOrderMechanism"))
+			return RANDOM_ORDER_MECHANISM;
+		if (name.equals(prefix + "MichaelisMenten"))
+			return MICHAELIS_MENTEN;
+		if (name.startsWith(prefix + "Convenience"))
+			return CONVENIENCE_KINETICS;
+		if (name.equals(prefix + "TestKinetik"))
+			return TEST_KINETIK;
+		if (name.equals(prefix + "ReversiblePowerLaw"))
+			return REVERSIBLE_POWER_LAW;
+		// if (name.equals(prefix + "GeneralizedMassAction"))
+		return GENERALIZED_MASS_ACTION;
 	}
 }

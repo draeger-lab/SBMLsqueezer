@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -64,9 +63,9 @@ public class Convenience extends GeneralizedMassAction {
 	}
 
 	/**
+	 * 
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public Convenience(Reaction parentReaction)

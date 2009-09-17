@@ -46,6 +46,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class HillEquation extends BasicKineticLaw {
 
 	/**
+	 * 
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException

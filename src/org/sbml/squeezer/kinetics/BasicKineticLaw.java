@@ -103,16 +103,19 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	final Character underscore = StringTools.underscore;
+	private Object typeParameters[];
 
 	/**
 	 * 
 	 * @param parentReaction
+	 * @param typeParameters 
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public BasicKineticLaw(Reaction parentReaction)
+	public BasicKineticLaw(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
+		this.typeParameters = typeParameters;
 		List<String> modActi = new LinkedList<String>();
 		List<String> modCat = new LinkedList<String>();
 		List<String> modInhib = new LinkedList<String>();
@@ -123,6 +126,14 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				modActi, modE, modCat);
 		setMath(createKineticEquation(modE, modActi, modTActi, modInhib,
 				modTInhib, modCat));
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Object[] getTypeParameters() {
+		return typeParameters;
 	}
 
 	/**
@@ -199,6 +210,17 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			addParameter(p);
 		}
 		return p;
+	}
+
+	/**
+	 * Equvivalent to {@see createOrGetParameter} but the parts of the id can be
+	 * given separately to this method and are concatenated.
+	 * 
+	 * @param idParts
+	 * @return
+	 */
+	Parameter createOrGetParameter(Object... idParts) {
+		return createOrGetParameter(concat(idParts).toString());
 	}
 
 	/*
