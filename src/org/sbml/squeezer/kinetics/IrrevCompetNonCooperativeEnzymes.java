@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -39,9 +38,10 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 	private int numOfEnzymes;
 
 	/**
+	 * 
 	 * @param parentReaction
+	 * @param parameter
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 * @throws IllegalFormatException
 	 */
 	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction)

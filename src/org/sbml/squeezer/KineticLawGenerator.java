@@ -58,11 +58,11 @@ import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.OrderedMechanism;
 import org.sbml.squeezer.kinetics.PingPongMechanism;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
+import org.sbml.squeezer.kinetics.ReversiblePowerLaw;
+import org.sbml.squeezer.kinetics.TestKinetik;
 import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
 import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 import org.sbml.squeezer.math.GaussianRank;
-
-import org.sbml.squeezer.kinetics.TestKinetik;
 
 /**
  * This class identifies and generates the missing kinetic laws for a the
@@ -201,6 +201,9 @@ public class KineticLawGenerator {
 		case CONVENIENCE_KINETICS:
 			kineticLaw = hasFullColumnRank(modelOrig) ? new Convenience(
 					reaction) : new ConvenienceIndependent(reaction);
+			break;
+		case REVERSIBLE_POWER_LAW:
+			kineticLaw = new ReversiblePowerLaw(reaction, ReversiblePowerLaw.Type.HAL);
 			break;
 		case TEST_KINETIK:
 			kineticLaw = new TestKinetik(reaction);
@@ -481,6 +484,8 @@ public class KineticLawGenerator {
 
 			if (types.contains(Kinetics.GENERALIZED_MASS_ACTION))
 				types.add(Kinetics.ZEROTH_ORDER_FORWARD_MA);
+			if (types.contains(Kinetics.CONVENIENCE_KINETICS))
+				types.add(Kinetics.REVERSIBLE_POWER_LAW);
 		}
 		Kinetics t[] = new Kinetics[types.size()];
 		i = 0;

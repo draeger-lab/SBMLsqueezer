@@ -51,6 +51,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class ConvenienceIndependent extends Convenience {
 
 	/**
+	 * 
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException

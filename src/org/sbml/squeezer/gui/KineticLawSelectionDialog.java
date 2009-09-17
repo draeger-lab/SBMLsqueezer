@@ -242,11 +242,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 							exc.getMessage(), 40) : "", exc.getClass()
 							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
-		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getSimpleName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
 		} catch (SBMLException exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getSimpleName(),

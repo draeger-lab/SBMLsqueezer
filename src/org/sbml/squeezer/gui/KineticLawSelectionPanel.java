@@ -25,7 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.IOException;
 import java.util.IllegalFormatException;
 
 import javax.swing.BorderFactory;
@@ -33,8 +32,8 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -42,6 +41,7 @@ import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
+import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
@@ -95,19 +95,51 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	private JCheckBox treatAsEnzymeReaction;
 
+	private JComboBox kineticLawComboBox;
+
 	private static final String EXISTING_RATE_LAW = "Existing rate law";
 
 	private static final int width = 310, height = 175;
+
+	/**
+	 * 
+	 * @param possibleLaws
+	 * @param selected
+	 */
+	public KineticLawSelectionPanel(KineticLaw[] possibleLaws, int selected) {
+		super(new BorderLayout());
+		if (possibleLaws == null || selected < 0
+				|| selected > possibleLaws.length || possibleLaws.length < 1)
+			throw new IllegalArgumentException(
+					"at least one rate law must be given and the index must be between zero and the number of rate laws.");
+		this.reaction = possibleLaws[0].getParentSBMLObject();
+		this.possibleTypes = new Kinetics[possibleLaws.length];
+		String[] possibleTypesNames = new String[possibleLaws.length];
+		laTeXpreview = new StringBuffer[possibleTypes.length];
+		for (int i = 0; i < possibleTypes.length; i++) {
+			possibleTypes[i] = Kinetics.getTypeForName(possibleLaws[i]
+					.getClass().getName());
+			possibleTypesNames[i] = possibleTypes[i].getEquationName();
+			laTeXpreview[i] = possibleLaws[i].getMath().toLaTeX();
+		}
+		kineticLawComboBox = new JComboBox(possibleTypesNames);
+		kineticLawComboBox.setEditable(false);
+		kineticLawComboBox.setBackground(Color.WHITE);
+		kineticLawComboBox.setSelectedIndex(selected);
+		setPreviewPanel(kineticLawComboBox.getSelectedIndex());
+		kineticLawComboBox.addItemListener(this);
+		add(kineticLawComboBox, BorderLayout.NORTH);
+		add(eqnPrev, BorderLayout.CENTER);
+	}
 
 	/**
 	 * @param plugin
 	 * @param model
 	 * @param reaction
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 */
 	public KineticLawSelectionPanel(KineticLawGenerator klg, Reaction reaction)
-			throws RateLawNotApplicableException, IOException {
+			throws RateLawNotApplicableException {
 		super(new GridBagLayout());
 		this.selected = "";
 		this.klg = klg;
@@ -244,20 +276,96 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 */
 	public Kinetics getSelectedKinetic() {
 		int i = 0;
-		while ((i < rButtonsKineticEquations.length)
-				&& (!rButtonsKineticEquations[i].isSelected()))
-			i++;
+		if (rButtonsKineticEquations != null) {
+			while ((i < rButtonsKineticEquations.length)
+					&& (!rButtonsKineticEquations[i].isSelected()))
+				i++;
+		} else if (kineticLawComboBox != null)
+			i = kineticLawComboBox.getSelectedIndex();
 		return possibleTypes[i];
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
+	public void itemStateChanged(ItemEvent ie) {
+		if (ie.getSource() instanceof JCheckBox)
+			try {
+				JCheckBox check = (JCheckBox) ie.getSource();
+				klg.getSettings().put(
+						CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+						Boolean.valueOf(check.isSelected()));
+				remove(kineticsPanel);
+				kineticsPanel = initKineticsPanel();
+				LayoutHelper.addComponent(this, (GridBagLayout) this
+						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+			} catch (RateLawNotApplicableException e) {
+				e.printStackTrace();
+			}
+		else if (ie.getSource() instanceof JRadioButton) {
+			JRadioButton rbutton = (JRadioButton) ie.getSource();
+			if (rbutton.getParent().equals(optionsPanel)) {
+				if (rbutton.getText().contains("eversible")) {
+					try {
+						// reversible property was changed.
+						selected = "";
+						int i;
+						for (i = 0; i < rButtonsKineticEquations.length
+								&& selected.length() == 0; i++)
+							if (rButtonsKineticEquations[i].isSelected())
+								selected = rButtonsKineticEquations[i]
+										.getText();
+						klg.setReversible(reaction.getId(), getReversible());
+						remove(kineticsPanel);
+						kineticsPanel = initKineticsPanel();
+						LayoutHelper.addComponent(this, (GridBagLayout) this
+								.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+						for (i = 0; i < rButtonsKineticEquations.length; i++)
+							if (selected.equals(rButtonsKineticEquations[i]
+									.getText())) {
+								rButtonsKineticEquations[i].setSelected(true);
+								break;
+							}
+						updateView();
+					} catch (RateLawNotApplicableException exc) {
+						throw new RuntimeException(exc.getMessage(), exc);
+					}
+				} else {
+					klg.getSettings().put(
+							CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+							Boolean.valueOf(rButtonGlobalParameters
+									.isSelected()));
+				}
+			} else {
+				int i = 0;
+				while ((i < rButtonsKineticEquations.length)
+						&& (!rbutton.equals(rButtonsKineticEquations[i])))
+					i++;
+				selected = rButtonsKineticEquations[i].getText();
+				updateView();
+			}
+		} else if (ie.getSource() instanceof JComboBox) {
+			remove(eqnPrev);
+			setPreviewPanel(((JComboBox) ie.getSource()).getSelectedIndex());
+			add(eqnPrev, BorderLayout.CENTER);
+		}
+		validate();
+		getTopLevelAncestor().validate();
+		Window w = (Window) getTopLevelAncestor();
+		int width = w.getWidth();
+		w.pack();
+		w.setSize(width, w.getHeight());
 	}
 
 	/**
 	 * 
 	 * @return
 	 * @throws RateLawNotApplicableException
-	 * @throws IOException
 	 */
-	private Box initKineticsPanel() throws RateLawNotApplicableException,
-			IOException {
+	private Box initKineticsPanel() throws RateLawNotApplicableException {
 		possibleTypes = klg.identifyPossibleReactionTypes(reaction.getId());
 		String[] kineticEquations = new String[possibleTypes.length];
 		String[] toolTips = new String[possibleTypes.length];
@@ -333,84 +441,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			rButtonsKineticEquations[i].addItemListener(this);
 
 		return info; // kineticsPanel;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
-	 */
-	public void itemStateChanged(ItemEvent ie) {
-		if (ie.getSource() instanceof JCheckBox)
-			try {
-				JCheckBox check = (JCheckBox) ie.getSource();
-				klg.getSettings().put(
-						CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
-						Boolean.valueOf(check.isSelected()));
-				remove(kineticsPanel);
-				kineticsPanel = initKineticsPanel();
-				LayoutHelper.addComponent(this, (GridBagLayout) this
-						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
-			} catch (RateLawNotApplicableException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		else if (ie.getSource() instanceof JRadioButton) {
-			JRadioButton rbutton = (JRadioButton) ie.getSource();
-			if (rbutton.getParent().equals(optionsPanel)) {
-				if (rbutton.getText().contains("eversible")) {
-					try {
-						// reversible property was changed.
-						selected = "";
-						int i;
-						for (i = 0; i < rButtonsKineticEquations.length
-								&& selected.length() == 0; i++)
-							if (rButtonsKineticEquations[i].isSelected())
-								selected = rButtonsKineticEquations[i]
-										.getText();
-						klg.setReversible(reaction.getId(), getReversible());
-						remove(kineticsPanel);
-						kineticsPanel = initKineticsPanel();
-						LayoutHelper.addComponent(this, (GridBagLayout) this
-								.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
-						for (i = 0; i < rButtonsKineticEquations.length; i++)
-							if (selected.equals(rButtonsKineticEquations[i]
-									.getText())) {
-								rButtonsKineticEquations[i].setSelected(true);
-								break;
-							}
-						updateView();
-					} catch (RateLawNotApplicableException exc) {
-						throw new RuntimeException(exc.getMessage(), exc);
-					} catch (IOException exc) {
-						JOptionPane.showMessageDialog(this, "<html>"
-								+ exc.getMessage() + "</html>", exc.getClass()
-								.getName(), JOptionPane.ERROR_MESSAGE);
-						exc.printStackTrace();
-					}
-				} else {
-					klg.getSettings().put(
-							CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
-							Boolean.valueOf(rButtonGlobalParameters
-									.isSelected()));
-				}
-			} else {
-				int i = 0;
-				while ((i < rButtonsKineticEquations.length)
-						&& (!rbutton.equals(rButtonsKineticEquations[i])))
-					i++;
-				selected = rButtonsKineticEquations[i].getText();
-				updateView();
-			}
-		}
-		validate();
-		getTopLevelAncestor().validate();
-		Window w = (Window) getTopLevelAncestor();
-		int width = w.getWidth();
-		w.pack();
-		w.setSize(width, w.getHeight());
 	}
 
 	/**

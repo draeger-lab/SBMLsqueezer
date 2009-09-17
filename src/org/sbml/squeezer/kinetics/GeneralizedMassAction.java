@@ -55,7 +55,6 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	/**
 	 * 
 	 * @param parentReaction
-	 * @param listOfPossibleEnzymes
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */

@@ -18,13 +18,10 @@
  */
 package org.sbml.squeezer.io;
 
-import java.awt.BorderLayout;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -58,7 +55,6 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.squeezer.standalone.SBMLTree;
 
 /**
  * @author Andreas Dr&auml;ger <a
