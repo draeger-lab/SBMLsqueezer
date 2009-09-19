@@ -56,7 +56,11 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
-		return true;
+		System.out.println("blabla: "+ reaction.getSBOTerm());
+		if (SBO.isTranslation(reaction.getSBOTerm())
+				|| SBO.isTranscription(reaction.getSBOTerm()))
+			return true;
+		return false;
 	}
 
 	/*
@@ -124,63 +128,69 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 		Species product = r.getProduct(0).getSpeciesInstance();
 		ASTNode productnode = new ASTNode(product, this);
 
-		// Transkription
-		if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isRNA(product.getSBOTerm())) {
-			System.out.println("ja");
-		}
-		System.out.println("Das ist eine Transkription!");
-		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
-			//if(SBO.isProtein(modifier.getSBOTerm())){
-			System.out.println("Modifier " + modifier + " ist ein Protein!");
+		// Transkription		
+		if (SBO.isTranscription(r.getSBOTerm())){
+			// kann eine Transkription noch anders definiert sein (siehe CellDesigner)?
+			// if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isRNA(product.getSBOTerm()))
 
-			Parameter e = createOrGetParameter(concat("e_", modifierNum, rId,
-					underscore).toString());
-			System.out.println("Parameter erstellt: " + e.toString());
+			System.out.println("Das ist eine Transkription!");
+			for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
+				Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
+				if(SBO.isProtein(modifier.getSBOTerm())){
+					System.out.println("Modifier " + modifier + " ist ein Protein!");
 
-			if (SBO.isTranscriptionalActivation(modifier.getSBOTerm())) {
-				System.out.println("Modifier " + modifier
-						+ " ist Aktivator! set value 1");
-				e.setValue(1);
+					Parameter e = createOrGetParameter("e_", modifierNum, rId);
+					System.out.println("Parameter erstellt: " + e.toString());
+
+					if (SBO.isTranscriptionalActivation(modifier.getSBOTerm())) {
+						System.out.println("Modifier " + modifier
+								+ " ist Aktivator! set value 1");
+						e.setValue(1);
+						e.appendNotes("pos");
+					}
+					if (SBO.isTranscriptionalInhibitor(modifier.getSBOTerm())) {
+						System.out.println("Modifier " + modifier
+								+ " ist Inhibitor! set value -1");
+						e.setValue(-1);
+						e.appendNotes("neg");
+					}
+
+					ASTNode modnode = new ASTNode(modifier, this);
+					ASTNode enode = new ASTNode(e, this);
+					if (kineticLawPart.isUnknown())
+						kineticLawPart = ASTNode.pow(modnode, enode);
+					else
+						kineticLawPart = ASTNode.times(kineticLawPart, ASTNode.pow(
+								modnode, enode));
+
+					kineticLaw = ASTNode.diff(ASTNode.times(nodea, kineticLawPart),
+							ASTNode.times(nodeb, productnode));
+				}
 			}
-			if (SBO.isTranscriptionalInhibitor(modifier.getSBOTerm())) {
-				System.out.println("Modifier " + modifier
-						+ " ist Inhibitor! set value -1");
-				e.setValue(-1);
-			}
-
-			ASTNode modnode = new ASTNode(modifier, this);
-			ASTNode enode = new ASTNode(e, this);
-			if (kineticLawPart.isUnknown())
-				kineticLawPart = ASTNode.pow(modnode, enode);
-			else
-				kineticLawPart = ASTNode.times(kineticLawPart, ASTNode.pow(
-						modnode, enode));
-
-			kineticLaw = ASTNode.diff(ASTNode.times(nodea, kineticLawPart),
-					ASTNode.times(nodeb, productnode));
-			//}
 		}
 
-		//}
-
+			
 		// Translation
-		//if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isProtein(product.getSBOTerm())) {
-		System.out.println("Das ist eine Translation!");
-		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
-			//if(SBO.isRNA(modifier.getSBOTerm())){
-			// rna des proteins?
-			System.out.println("Modifier " + modifier + " ist eine RNA!");
+		System.out.println("sbotest: "+r.getSBOTerm());
+		if (SBO.isTranslation(r.getSBOTerm())){
+			// kann eine Translation noch anders definiert sein (siehe CellDesigner)?
+			// if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isProtein(product.getSBOTerm()))
 
-			ASTNode modnode = new ASTNode(modifier, this);
+			System.out.println("Das ist eine Translation!");
+			for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
+				Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
+				System.out.println("modifier: "+modifier.toString()+ "Nr.: " + modifierNum + "sbo: "+modifier.getSBOTerm());
+				if(SBO.isRNA(modifier.getSBOTerm())){
+				// rna des proteins?
+				System.out.println("Modifier " + modifier + " ist eine RNA!");
 
-			kineticLaw = ASTNode.diff(ASTNode.times(nodec, modnode), ASTNode
-					.times(noded, productnode));
-			//}
+				ASTNode modnode = new ASTNode(modifier, this);
+
+				kineticLaw = ASTNode.diff(ASTNode.times(nodec, modnode), ASTNode
+						.times(noded, productnode));
+				}
+			}
 		}
-
-		//}
 
 		System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;

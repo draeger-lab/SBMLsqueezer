@@ -70,7 +70,7 @@ public enum Kinetics {
 	 */
 	COMPETETIVE_NON_EXCLUSIVE_INHIB,
 	/**
-	 * Test equation
+	 * S-System based equation
 	 */
 	SSYSTEM_KINETIC;
 
@@ -113,7 +113,7 @@ public enum Kinetics {
 		case CONVENIENCE_KINETICS:
 			return "Convenience kinetics";
 		case SSYSTEM_KINETIC:
-			return "Test-Kinetik!";
+			return "S-System based kinetic";
 		default: // TODO: default?
 			return "Generalized mass-action";
 		}
