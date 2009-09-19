@@ -300,6 +300,9 @@ public class KineticLawGenerator {
 		if (HillEquation.isApplicable(reaction))
 			types.add(Kinetics.HILL_EQUATION);
 
+		if (GRNSSystemEquation.isApplicable(reaction))
+			types.add(Kinetics.SSYSTEM_KINETIC);
+		
 		if (reaction.getNumReactants() == 0
 				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
 
