@@ -58,11 +58,11 @@ import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.OrderedMechanism;
 import org.sbml.squeezer.kinetics.PingPongMechanism;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
-import org.sbml.squeezer.kinetics.ReversiblePowerLaw;
-import org.sbml.squeezer.kinetics.TestKinetik;
 import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
 import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 import org.sbml.squeezer.math.GaussianRank;
+
+import org.sbml.squeezer.kinetics.GRNSSystemEquation;
 
 /**
  * This class identifies and generates the missing kinetic laws for a the
@@ -202,11 +202,8 @@ public class KineticLawGenerator {
 			kineticLaw = hasFullColumnRank(modelOrig) ? new Convenience(
 					reaction) : new ConvenienceIndependent(reaction);
 			break;
-		case REVERSIBLE_POWER_LAW:
-			kineticLaw = new ReversiblePowerLaw(reaction, ReversiblePowerLaw.Type.HAL);
-			break;
-		case TEST_KINETIK:
-			kineticLaw = new TestKinetik(reaction);
+		case SSYSTEM_KINETIC:
+			kineticLaw = new GRNSSystemEquation(reaction);
 			break;
 		default:
 			kineticLaw = new GeneralizedMassAction(reaction);
@@ -394,7 +391,7 @@ public class KineticLawGenerator {
 						setBoundaryCondition(species, true);
 						types.add(Kinetics.HILL_EQUATION);
 						if (reaction.getNumProducts() > 0)
-							types.add(Kinetics.TEST_KINETIK);
+							types.add(Kinetics.SSYSTEM_KINETIC);
 
 						// throw exception if false reaction occurs
 						if (SBO.isTranslation(reaction.getSBOTerm())
@@ -406,7 +403,7 @@ public class KineticLawGenerator {
 					} else if (SBO.isRNA(species.getSBOTerm())) {
 						types.add(Kinetics.HILL_EQUATION);
 						if (reaction.getNumProducts() > 0)
-							types.add(Kinetics.TEST_KINETIK);
+							types.add(Kinetics.SSYSTEM_KINETIC);
 					}
 					if (!nonEnzyme
 							&& !(reaction.getReversible() && (inhibitors.size() > 1 || transInhib
@@ -472,7 +469,7 @@ public class KineticLawGenerator {
 					types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 					types.add((Kinetics.HILL_EQUATION));
 					if (reaction.getNumProducts() > 0)
-						types.add(Kinetics.TEST_KINETIK);
+						types.add(Kinetics.SSYSTEM_KINETIC);
 				} /*
 				 * else if (types.contains((Kinetics.HILL_EQUATION)))
 				 * types.remove((Kinetics.HILL_EQUATION));
@@ -484,8 +481,6 @@ public class KineticLawGenerator {
 
 			if (types.contains(Kinetics.GENERALIZED_MASS_ACTION))
 				types.add(Kinetics.ZEROTH_ORDER_FORWARD_MA);
-			if (types.contains(Kinetics.CONVENIENCE_KINETICS))
-				types.add(Kinetics.REVERSIBLE_POWER_LAW);
 		}
 		Kinetics t[] = new Kinetics[types.size()];
 		i = 0;
