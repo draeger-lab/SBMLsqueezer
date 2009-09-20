@@ -166,6 +166,7 @@ public class KineticLawGenerator {
 			boolean reversibility) throws ModificationException,
 			RateLawNotApplicableException, IllegalFormatException {
 		Reaction reaction = miniModel.getReaction(r.getId());
+		reaction.setSBOTerm(r.getSBOTerm());
 		if (reaction == null)
 			reaction = r;
 		BasicKineticLaw kineticLaw;
