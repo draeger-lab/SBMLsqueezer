@@ -76,7 +76,11 @@ public enum Kinetics {
 	/**
 	 * S-System based equation
 	 */
-	SSYSTEM_KINETIC;
+	SSYSTEM_KINETIC,
+	/**
+	 * An additive model equation
+	 */
+	ADDITIVE_KINETIC;
 
 	/**
 	 * <ol>
@@ -120,6 +124,8 @@ public enum Kinetics {
 			return "Reversible power law";
 		case SSYSTEM_KINETIC:
 			return "S-System based kinetic";
+		case ADDITIVE_KINETIC:
+			return "An additive model equation";
 		default: // TODO: default?
 			return "Generalized mass-action";
 		}
