@@ -64,8 +64,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
 			type = modifier.getSBOTerm();
 			if (SBO.isModifier(type)) {
-				inhibitors.add(modifier.getSpecies());
-				activators.add(modifier.getSpecies());
+				// Ok, this is confusing...
+				// inhibitors.add(modifier.getSpecies());
+				// activators.add(modifier.getSpecies());
 			} else if (SBO.isInhibitor(type))
 				inhibitors.add(modifier.getSpecies());
 			else if (SBO.isTranscriptionalActivation(type)
