@@ -51,6 +51,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
+import org.sbml.squeezer.kinetics.GRNAdditiveModel;
 import org.sbml.squeezer.kinetics.GRNSSystemEquation;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillEquation;
@@ -213,6 +214,9 @@ public class KineticLawGenerator {
 		case SSYSTEM_KINETIC:
 			kineticLaw = new GRNSSystemEquation(reaction);
 			break;
+		case ADDITIVE_KINETIC:
+			kineticLaw = new GRNAdditiveModel(reaction);
+			break;
 		default:
 			kineticLaw = new GeneralizedMassAction(reaction);
 			break;
@@ -310,6 +314,9 @@ public class KineticLawGenerator {
 
 		if (GRNSSystemEquation.isApplicable(reaction))
 			types.add(Kinetics.SSYSTEM_KINETIC);
+		
+		if (GRNAdditiveModel.isApplicable(reaction))
+			types.add(Kinetics.ADDITIVE_KINETIC);
 
 		if (reaction.getNumReactants() == 0
 				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
@@ -407,8 +414,11 @@ public class KineticLawGenerator {
 											.getSpeciesInstance().getSBOTerm())))) {
 						setBoundaryCondition(species, true);
 						types.add(Kinetics.HILL_EQUATION);
-						if (reaction.getNumProducts() > 0)
+						if (reaction.getNumProducts() > 0) {
 							types.add(Kinetics.SSYSTEM_KINETIC);
+							types.add(Kinetics.ADDITIVE_KINETIC);
+						}
+							
 
 						// throw exception if false reaction occurs
 						if (SBO.isTranslation(reaction.getSBOTerm())
@@ -419,8 +429,10 @@ public class KineticLawGenerator {
 
 					} else if (SBO.isRNA(species.getSBOTerm())) {
 						types.add(Kinetics.HILL_EQUATION);
-						if (reaction.getNumProducts() > 0)
+						if (reaction.getNumProducts() > 0){
 							types.add(Kinetics.SSYSTEM_KINETIC);
+							types.add(Kinetics.ADDITIVE_KINETIC);
+						}
 					}
 					if (!nonEnzyme
 							&& !(reaction.getReversible() && (inhibitors.size() > 1 || transInhib
@@ -485,8 +497,10 @@ public class KineticLawGenerator {
 					types = new HashSet<Kinetics>();
 					types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 					types.add((Kinetics.HILL_EQUATION));
-					if (reaction.getNumProducts() > 0)
+					if (reaction.getNumProducts() > 0){
 						types.add(Kinetics.SSYSTEM_KINETIC);
+						types.add(Kinetics.ADDITIVE_KINETIC);
+					}
 				} /*
 					 * else if (types.contains((Kinetics.HILL_EQUATION)))
 					 * types.remove((Kinetics.HILL_EQUATION));
