@@ -72,8 +72,7 @@ import org.sbml.squeezer.math.GaussianRank;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
@@ -345,6 +344,13 @@ public class KineticLawGenerator {
 					reactionWithRNA = true;
 			}
 
+			// is at least one modifier a gene?
+			for (ModifierSpeciesReference msr : reaction.getListOfModifiers())
+				if (SBO.isGene(msr.getSpeciesInstance().getSBOTerm())) {
+					reactionWithGenes = true;
+					break;
+				}
+
 			// boolean stoichiometryIntRight = true;
 			for (i = 0; i < reaction.getNumProducts(); i++) {
 				stoichiometry = reaction.getProduct(i).getStoichiometry();
@@ -482,9 +488,9 @@ public class KineticLawGenerator {
 					if (reaction.getNumProducts() > 0)
 						types.add(Kinetics.SSYSTEM_KINETIC);
 				} /*
-				 * else if (types.contains((Kinetics.HILL_EQUATION)))
-				 * types.remove((Kinetics.HILL_EQUATION));
-				 */
+					 * else if (types.contains((Kinetics.HILL_EQUATION)))
+					 * types.remove((Kinetics.HILL_EQUATION));
+					 */
 			} else if (types.contains(Kinetics.HILL_EQUATION)
 					&& types.contains(Kinetics.ZEROTH_ORDER_FORWARD_MA)
 					&& !reaction.getReversible())

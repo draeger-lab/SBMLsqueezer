@@ -333,7 +333,7 @@ public class ASTNode implements TreeNode {
 	 * @return
 	 */
 	public static ASTNode frac(ASTNode numerator, ASTNode denominator) {
-		setParentSBMLObject(denominator, numerator.getParentSBMLObject());
+		setParentSBMLObject(denominator, numerator.getParentSBMLObject(), 0);
 		numerator.divideBy(denominator);
 		return numerator;
 	}
@@ -401,7 +401,7 @@ public class ASTNode implements TreeNode {
 					|| (exponent.getType() == Type.REAL && exponent.getReal() == 0d))
 				basis = new ASTNode(1, basis.getParentSBMLObject());
 			else {
-				setParentSBMLObject(exponent, basis.getParentSBMLObject());
+				setParentSBMLObject(exponent, basis.getParentSBMLObject(), 0);
 				basis.raiseByThePowerOf(exponent);
 			}
 		}
@@ -455,7 +455,7 @@ public class ASTNode implements TreeNode {
 				.getParentSBMLObject());
 		root.addChild(rootExponent);
 		root.addChild(radicant);
-		setParentSBMLObject(rootExponent, radicant.getParentSBMLObject());
+		setParentSBMLObject(rootExponent, radicant.getParentSBMLObject(), 0);
 		return root;
 	}
 
@@ -541,7 +541,7 @@ public class ASTNode implements TreeNode {
 			ASTNode arithmetic = new ASTNode(operator, mc);
 			for (ASTNode nodes : astList) {
 				arithmetic.addChild(nodes);
-				setParentSBMLObject(nodes, mc);
+				setParentSBMLObject(nodes, mc, 0);
 			}
 			return arithmetic;
 		} else
@@ -556,10 +556,11 @@ public class ASTNode implements TreeNode {
 	 * @param node
 	 * @param parent
 	 */
-	private static void setParentSBMLObject(ASTNode node, MathContainer parent) {
+	private static void setParentSBMLObject(ASTNode node, MathContainer parent,
+			int depth) {
 		node.parentSBMLObject = parent;
-		for (ASTNode nodes : node.listOfNodes)
-			setParentSBMLObject(nodes, parent);
+		for (ASTNode child : node.listOfNodes)
+			setParentSBMLObject(child, parent, depth + 1);
 	}
 
 	/**
@@ -2365,7 +2366,7 @@ public class ASTNode implements TreeNode {
 					addChild(swap);
 					addChild(astnode);
 				}
-				setParentSBMLObject(astnode, getParentSBMLObject());
+				setParentSBMLObject(astnode, getParentSBMLObject(), 0);
 			}
 		} else
 			throw new RuntimeException(
@@ -2470,10 +2471,8 @@ public class ASTNode implements TreeNode {
 	 * 
 	 * <pre>
 	 * \cdot
-	 * </pre>
-	 * 
-	 * ). It simply counts the number of descendants on the left and the right
-	 * hand side of the symbol.
+	 * </pre> ). It simply counts the number of descendants on the left and the
+	 * right hand side of the symbol.
 	 * 
 	 * @param astnode
 	 * @param model
