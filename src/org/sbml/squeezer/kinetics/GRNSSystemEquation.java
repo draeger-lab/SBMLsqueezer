@@ -76,7 +76,10 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
 
-		if (!modActi.isEmpty())
+		// TODO: Verwendung von modTActi und modTInhib ?
+		// TODO: Exceptions überarbeiten
+
+/*		if (!modActi.isEmpty())
 			modTActi.addAll(modActi);
 		if (!modInhib.isEmpty())
 			modTInhib.addAll(modInhib);
@@ -84,7 +87,6 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 			modTActi.addAll(modE);
 		if (!modCat.isEmpty())
 			modTActi.addAll(modCat);
-		Reaction r = getParentSBMLObject();
 
 		// Exceptions
 		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
@@ -103,8 +105,9 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 				throw new ModificationException("Wrong activation in reaction "
 						+ r.getId()
 						+ ". Only translational modification is allowed here.");
-		}
+		}*/
 
+		Reaction r = getParentSBMLObject();
 		ASTNode kineticLaw = new ASTNode(this);
 		ASTNode kineticLawPart = new ASTNode(this);
 		String rId = getParentSBMLObject().getId();
@@ -118,16 +121,11 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 		Parameter d = createOrGetParameter(concat("d_", rId, underscore)
 				.toString());
 
-		// Species reactant = r.getReactant(0).getSpeciesInstance();
 		Species product = r.getProduct(0).getSpeciesInstance();
 		ASTNode productnode = new ASTNode(product, this);
 
 		// Transkription
 		if (SBO.isTranscription(r.getSBOTerm())) {
-			// kann eine Transkription noch anders definiert sein (siehe
-			// CellDesigner)?
-			// if (SBO.isEmptySet(reactant.getSBOTerm()) &&
-			// SBO.isRNA(product.getSBOTerm()))...
 
 			System.out.println("Das ist eine Transkription! SBOTerm: "
 					+ r.getSBOTerm());
@@ -137,39 +135,29 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 				ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 
 				if (SBO.isProtein(modifierspec.getSBOTerm())) {
+
 					System.out.println("Modifier " + modifierspec
 							+ " ist ein Protein! SBOTerm: "
 							+ modifierspec.getSBOTerm());
+					Parameter e = null;
 
-					Parameter e = createOrGetParameter("e_", modifierNum, rId);
-					System.out.println("Parameter erstellt: " + e.toString());
-
-					 // TODO: ist ein modifier ein aktivator oder inhibitor
-					 // (sboterm)?
-					
-//					 System.out.println("size: " + modTActi.size()+modTInhib.size());
-//					 if (modTActi.contains(modifier.getId())) {
-//					 System.out.println("Modifier " + modifier+ " ist Aktivator! set value 1");
-//					 e.setValue(1);
-//					 e.appendNotes("pos");
-//					 }
-//					 if (modTInhib.contains(modifier.getId())) {
-//					 System.out.println("Modifier " + modifier+ " ist Inhibitor! set value -1");
-//					 e.setValue(-1);
-//					 e.appendNotes("neg");
-//					 }
-					System.out.println("Modifier-sboterm: "+modifier.getSBOTerm());
-					if (SBO.isInhibitor(modifier.getSBOTerm())) {
-						System.out.println("Modifier " + modifierspec
-								+ " ist Aktivator! set value 1"+modifier);
-						e.setValue(1);
-						e.appendNotes("pos");
-					}
 					if (SBO.isStimulator(modifier.getSBOTerm())) {
-						System.out.println("Modifier " + modifierspec
-								+ " ist Inhibitor! set value -1"+modifier);
+						System.out.println("Modifier " + modifier
+								+ " wirkt als Aktivator! SBOTerm: "
+								+ modifier.getSBOTerm());
+						e = createOrGetParameter("e_", modifierNum, underscore,
+								rId, underscore, "pos");
+						System.out.println("Parameter " + e.toString()
+								+ " hat positives Vorzeichen! value 1");
+					} else if (SBO.isInhibitor(modifier.getSBOTerm())) {
+						System.out.println("Modifier " + modifier
+								+ " wirkt als Inhibitor! SBOTerm: "
+								+ modifier.getSBOTerm());
+						e = createOrGetParameter("e_", modifierNum, underscore,
+								rId, underscore, "neg");
+						System.out.println("Parameter " + e.toString()
+								+ " hat negatives Vorzeichen! set value -1");
 						e.setValue(-1);
-						e.appendNotes("neg");
 					}
 
 					ASTNode modnode = new ASTNode(modifierspec, this);
@@ -186,10 +174,6 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 				}
 			}
 		} else if (SBO.isTranslation(r.getSBOTerm())) {
-			// kann eine Translation noch anders definiert sein (siehe
-			// CellDesigner)?
-			// if (SBO.isEmptySet(reactant.getSBOTerm()) &&
-			// SBO.isProtein(product.getSBOTerm()))...
 
 			System.out.println("Das ist eine Translation! SBOTerm: "
 					+ r.getSBOTerm());
@@ -197,7 +181,6 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 				Species modifier = r.getModifier(modifierNum)
 						.getSpeciesInstance();
 				if (SBO.isRNA(modifier.getSBOTerm())) {
-					// TODO: rna des proteins?
 					System.out.println("Modifier " + modifier
 							+ " ist eine RNA! SBOTerm: "
 							+ modifier.getSBOTerm());
