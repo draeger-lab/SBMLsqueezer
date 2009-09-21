@@ -459,8 +459,9 @@ public class SBO {
 	}
 
 	/**
-	 * Function for checking the SBO term is from correct part of SBO.
-	 * Obsolete term.
+	 * Function for checking the SBO term is from correct part of SBO. Obsolete
+	 * term.
+	 * 
 	 * @param sboTerm
 	 * @return true if the term is-a physical participant, false otherwise
 	 */
@@ -707,5 +708,41 @@ public class SBO {
 	 */
 	public static int getCatalysis() {
 		return 13;
+	}
+
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isEssentialActivator(int term) {
+		return isChildOf(term, 461);
+	}
+
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isNonEssentialActivator(int term) {
+		return isChildOf(term, 462);
+	}
+
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isNonCompetetiveInhibitor(int term) {
+		return isChildOf(term, 207);
+	}
+
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isCompetetiveInhibitor(int term) {
+		return isChildOf(term, 206);
 	}
 }

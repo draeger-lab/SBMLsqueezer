@@ -70,6 +70,10 @@ public enum Kinetics {
 	 */
 	COMPETETIVE_NON_EXCLUSIVE_INHIB,
 	/**
+	 * Liebermeister's reversible power law formulation.
+	 */
+	REVERSIBLE_POWER_LAW,
+	/**
 	 * S-System based equation
 	 */
 	SSYSTEM_KINETIC;
@@ -112,10 +116,48 @@ public enum Kinetics {
 			return "Michaelis-Menten";
 		case CONVENIENCE_KINETICS:
 			return "Convenience kinetics";
+		case REVERSIBLE_POWER_LAW:
+			return "Reversible power law";
 		case SSYSTEM_KINETIC:
 			return "S-System based kinetic";
 		default: // TODO: default?
 			return "Generalized mass-action";
 		}
+	}
+
+	/**
+	 * 
+	 * @param className
+	 * @return
+	 */
+	public static Kinetics getTypeForName(String className) {
+		if (!className.startsWith("org.sbml.squeezer.kinetics."))
+			return null;
+		className = className.substring(27);
+		if (className.startsWith("Convenience"))
+			return CONVENIENCE_KINETICS;
+		else if (className.equals("GeneralizedMassAction"))
+			return GENERALIZED_MASS_ACTION;
+		else if (className.equals("GRNSSystemEquation"))
+			return SSYSTEM_KINETIC;
+		else if (className.equals("HillEquation"))
+			return HILL_EQUATION;
+		else if (className.equals("IrrevCompetNonCooperativeEnzymes"))
+			return COMPETETIVE_NON_EXCLUSIVE_INHIB;
+		else if (className.equals("MichaelisMenten"))
+			return MICHAELIS_MENTEN;
+		else if (className.equals("OrderedMechanism"))
+			return ORDERED_MECHANISM;
+		else if (className.equals("PingPongMechanism"))
+			return PING_PONG_MECAHNISM;
+		else if (className.equals("RandomOrderMechanism"))
+			return RANDOM_ORDER_MECHANISM;
+		else if (className.equals("ReversiblePowerLaw"))
+			return REVERSIBLE_POWER_LAW;
+		else if (className.equals("ZerothOrderForwardGMAK"))
+			return ZEROTH_ORDER_FORWARD_MA;
+		else if (className.equals("ZerothOrderReverseGMAK"))
+			return Kinetics.ZEROTH_ORDER_REVERSE_MA;
+		return null;
 	}
 }

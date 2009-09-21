@@ -93,6 +93,10 @@ public class TextFormula extends StringTools {
 		if (b.contains("*") || b.contains("-") || b.contains("+")
 				|| b.contains("/") || b.contains("^"))
 			basis = brackets(basis);
+		String e = exponent.toString();
+		if (e.contains("*") || e.contains("-") || e.contains("+")
+				|| e.contains("/") || e.contains("^"))
+			exponent = brackets(e);
 		return arith('^', basis, exponent);
 	}
 

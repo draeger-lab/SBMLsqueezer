@@ -314,6 +314,18 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * Returns a new ASTNode that represents Euler's constant raised by the
+	 * power of the given exponent.
+	 * 
+	 * @param exponent
+	 * @return
+	 */
+	public static ASTNode exp(ASTNode exponent) {
+		ASTNode e = new ASTNode(Type.CONSTANT_E, exponent.getParentSBMLObject());
+		return e.raiseByThePowerOf(exponent);
+	}
+
+	/**
 	 * Creates a new ASTNode of type DIVIDE with the given nodes as children.
 	 * 
 	 * @param numerator
@@ -514,9 +526,10 @@ public class ASTNode implements TreeNode {
 	private static ASTNode arithmethicOperation(Type operator, ASTNode... ast) {
 		LinkedList<ASTNode> astList = new LinkedList<ASTNode>();
 		if (ast != null)
-			for (ASTNode node : ast)
-				if (node != null)
+			for (ASTNode node : ast) {
+				if (node != null && !(operator == Type.TIMES && node.isOne()))
 					astList.add(node);
+			}
 		if (astList.size() == 0)
 			return null;
 		if (astList.size() == 1)
@@ -1459,8 +1472,8 @@ public class ASTNode implements TreeNode {
 			switch (type) {
 			case PLUS:
 				ASTNode plus = new ASTNode(Type.PLUS, parentSBMLObject);
-				for (i = getNumChildren(); i > 0; i--)
-					plus.addChild(listOfNodes.removeLast());
+				for (i = getNumChildren() - 1; i >= 0; i--)
+					plus.addChild(listOfNodes.remove(i));
 				addChild(plus);
 				break;
 			case MINUS:
@@ -1468,8 +1481,8 @@ public class ASTNode implements TreeNode {
 				break;
 			case TIMES:
 				ASTNode times = new ASTNode(Type.TIMES, parentSBMLObject);
-				for (i = getNumChildren(); i > 0; i--)
-					times.addChild(listOfNodes.removeLast());
+				for (i = getNumChildren() - 1; i >= 0; i--)
+					times.addChild(listOfNodes.remove(i));
 				addChild(times);
 				break;
 			case DIVIDE:
@@ -1477,14 +1490,14 @@ public class ASTNode implements TreeNode {
 				break;
 			case LOGICAL_AND:
 				ASTNode and = new ASTNode(Type.LOGICAL_AND, parentSBMLObject);
-				for (i = getNumChildren(); i > 0; i--)
-					and.addChild(listOfNodes.removeLast());
+				for (i = getNumChildren() - 1; i >= 0; i--)
+					and.addChild(listOfNodes.remove(i));
 				addChild(and);
 				break;
 			case LOGICAL_OR:
 				ASTNode or = new ASTNode(Type.LOGICAL_OR, parentSBMLObject);
-				for (i = getNumChildren(); i > 0; i--)
-					or.addChild(listOfNodes.removeLast());
+				for (i = getNumChildren() - 1; i >= 0; i--)
+					or.addChild(listOfNodes.remove(i));
 				addChild(or);
 				break;
 			case LOGICAL_NOT:
@@ -2331,28 +2344,55 @@ public class ASTNode implements TreeNode {
 		if (operator == Type.PLUS || operator == Type.MINUS
 				|| operator == Type.TIMES || operator == Type.DIVIDE
 				|| operator == Type.POWER || operator == Type.FUNCTION_ROOT) {
-			ASTNode swap = new ASTNode(type, getParentSBMLObject());
-			swap.denominator = denominator;
-			swap.exponent = exponent;
-			swap.mantissa = mantissa;
-			swap.name = name;
-			swap.numerator = numerator;
-			swap.printNameIfAvailable = printNameIfAvailable;
-			swap.variable = variable;
-			swapChildren(swap);
-			setType(operator);
-			if (operator == Type.FUNCTION_ROOT) {
-				addChild(astnode);
-				addChild(swap);
-			} else {
-				addChild(swap);
-				addChild(astnode);
+			if (astnode.isZero() && operator == Type.DIVIDE)
+				throw new RuntimeException(new IllegalArgumentException(
+						"Cannot divide by zero."));
+			if (!(astnode.isOne() && (operator == Type.TIMES || operator == Type.DIVIDE))) {
+				ASTNode swap = new ASTNode(type, getParentSBMLObject());
+				swap.denominator = denominator;
+				swap.exponent = exponent;
+				swap.mantissa = mantissa;
+				swap.name = name;
+				swap.numerator = numerator;
+				swap.printNameIfAvailable = printNameIfAvailable;
+				swap.variable = variable;
+				swapChildren(swap);
+				setType(operator);
+				if (operator == Type.FUNCTION_ROOT) {
+					addChild(astnode);
+					addChild(swap);
+				} else {
+					addChild(swap);
+					addChild(astnode);
+				}
+				setParentSBMLObject(astnode, getParentSBMLObject());
 			}
-			setParentSBMLObject(astnode, getParentSBMLObject());
 		} else
 			throw new RuntimeException(
 					new IllegalArgumentException(
 							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
+	}
+
+	/**
+	 * Returns true if this astnode represents the number zero (either as
+	 * integer or as real value).
+	 * 
+	 * @return
+	 */
+	public boolean isZero() {
+		return (isReal() && getReal() == 0d)
+				|| (isInteger() && getInteger() == 0);
+	}
+
+	/**
+	 * Returns true if this astnode represents the number one (either as integer
+	 * or as real value).
+	 * 
+	 * @return
+	 */
+	public boolean isOne() {
+		return (isReal() && getReal() == 1d)
+				|| (isInteger() && getInteger() == 1);
 	}
 
 	/**
