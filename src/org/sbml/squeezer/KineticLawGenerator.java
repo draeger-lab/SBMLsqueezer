@@ -47,9 +47,11 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
+import org.sbml.squeezer.kinetics.GRNSSystemEquation;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillEquation;
 import org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes;
@@ -58,11 +60,10 @@ import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.OrderedMechanism;
 import org.sbml.squeezer.kinetics.PingPongMechanism;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
+import org.sbml.squeezer.kinetics.ReversiblePowerLaw;
 import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
 import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 import org.sbml.squeezer.math.GaussianRank;
-
-import org.sbml.squeezer.kinetics.GRNSSystemEquation;
 
 /**
  * This class identifies and generates the missing kinetic laws for a the
@@ -71,7 +72,8 @@ import org.sbml.squeezer.kinetics.GRNSSystemEquation;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
@@ -151,7 +153,7 @@ public class KineticLawGenerator {
 	 * Creates a kinetic law for the given reaction, which can be assigned to
 	 * the given reaction.
 	 * 
-	 * @param reaction
+	 * @param r
 	 *            The reaction for which a kinetic law is to be created.
 	 * @param kinetic
 	 *            an element from the Kinetics enum.
@@ -169,8 +171,6 @@ public class KineticLawGenerator {
 			boolean reversibility) throws ModificationException,
 			RateLawNotApplicableException, IllegalFormatException {
 		Reaction reaction = miniModel.getReaction(r.getId());
-		if (r.isSetSBOTerm())
-			reaction.setSBOTerm(r.getSBOTerm());
 		if (reaction == null)
 			reaction = r;
 		BasicKineticLaw kineticLaw;
@@ -206,6 +206,10 @@ public class KineticLawGenerator {
 		case CONVENIENCE_KINETICS:
 			kineticLaw = hasFullColumnRank(modelOrig) ? new Convenience(
 					reaction) : new ConvenienceIndependent(reaction);
+			break;
+		case REVERSIBLE_POWER_LAW:
+			kineticLaw = new ReversiblePowerLaw(reaction,
+					ReversiblePowerLaw.Type.WEG);
 			break;
 		case SSYSTEM_KINETIC:
 			kineticLaw = new GRNSSystemEquation(reaction);
@@ -315,8 +319,8 @@ public class KineticLawGenerator {
 			types.add(Kinetics.ZEROTH_ORDER_REVERSE_MA);
 
 			/*
-			 * } else if (reaction.getNumReactants() == 0) {
-			 *  } else if (reaction.getNumProducts() == 0) {
+			 * } else if (reaction.getNumReactants() == 0) { } else if
+			 * (reaction.getNumProducts() == 0) {
 			 */
 
 		} else {
@@ -478,9 +482,9 @@ public class KineticLawGenerator {
 					if (reaction.getNumProducts() > 0)
 						types.add(Kinetics.SSYSTEM_KINETIC);
 				} /*
-					 * else if (types.contains((Kinetics.HILL_EQUATION)))
-					 * types.remove((Kinetics.HILL_EQUATION));
-					 */
+				 * else if (types.contains((Kinetics.HILL_EQUATION)))
+				 * types.remove((Kinetics.HILL_EQUATION));
+				 */
 			} else if (types.contains(Kinetics.HILL_EQUATION)
 					&& types.contains(Kinetics.ZEROTH_ORDER_FORWARD_MA)
 					&& !reaction.getReversible())
@@ -1015,7 +1019,7 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * TODO: comment missing
+	 * This method stores all newly created parameters in the model.
 	 * 
 	 * @param reaction
 	 */
@@ -1121,6 +1125,8 @@ public class KineticLawGenerator {
 			if (!r.isSetKineticLaw() || create) {
 				Reaction rc = new Reaction(r.getId(), r.getLevel(), r
 						.getVersion());
+				if (r.isSetSBOTerm())
+					rc.setSBOTerm(r.getSBOTerm());
 				m.addReaction(rc);
 				rc.setFast(r.getFast());
 				rc.setReversible(r.getReversible());
@@ -1239,6 +1245,17 @@ public class KineticLawGenerator {
 		storeParamters(reaction);
 		if (removeParameters)
 			removeUnnecessaryParameters(modelOrig);
+		storeUnits();
 		return reaction;
+	}
+
+	/**
+	 * Stores all units created in the mini model in the original model.
+	 */
+	private void storeUnits() {
+		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
+			if (!modelOrig.getListOfUnitDefinitions().contains(ud))
+				modelOrig.addUnitDefinition(ud.clone());
+		}
 	}
 }

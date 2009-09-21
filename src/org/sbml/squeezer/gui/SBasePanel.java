@@ -451,12 +451,12 @@ public class SBasePanel extends JPanel {
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		JPanel rEqPanel = new JPanel(new BorderLayout());
 		sHotEqn rEqn = new sHotEqn(LaTeXExport.reactionEquation(reaction));
-		scroll = new JScrollPane(rEqn,
+		JScrollPane s = new JScrollPane(rEqn,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
-		scroll.setPreferredSize(new Dimension(preferedWidth, 50));
-		rEqPanel.add(scroll, BorderLayout.CENTER);
+		s.setBorder(BorderFactory.createLoweredBevelBorder());
+		s.setPreferredSize(new Dimension(preferedWidth, 50));
+		rEqPanel.add(s, BorderLayout.CENTER);
 		rEqPanel.setBorder(BorderFactory
 				.createTitledBorder(" Reaction equation "));
 		lh.add(rEqPanel, 1, ++row, 3, 1, 1, 1);

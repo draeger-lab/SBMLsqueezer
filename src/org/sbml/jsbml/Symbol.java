@@ -140,6 +140,25 @@ public abstract class Symbol extends AbstractNamedSBase {
 	}
 
 	/**
+	 * 
+	 * @param unit
+	 */
+	public void setUnits(Unit unit) {
+		UnitDefinition ud = new UnitDefinition(unit.getKind().toString(),
+				getLevel(), getVersion());
+		ud.addUnit(unit);
+		setUnits(ud);
+	}
+
+	/**
+	 * 
+	 * @param unitKind
+	 */
+	public void setUnits(Unit.Kind unitKind) {
+		setUnits(new Unit(unitKind, getLevel(), getLevel()));
+	}
+
+	/**
 	 * Set the unit attribute of this variable to the given unit definition.
 	 * 
 	 * @param units
@@ -147,6 +166,13 @@ public abstract class Symbol extends AbstractNamedSBase {
 	public void setUnits(UnitDefinition units) {
 		this.units = units;
 		stateChanged();
+	}
+
+	/**
+	 * 
+	 */
+	public void unsetValue() {
+		value = Double.NaN;
 	}
 
 	/**
@@ -180,13 +206,6 @@ public abstract class Symbol extends AbstractNamedSBase {
 	void setValue(double value) {
 		this.value = value;
 		stateChanged();
-	}
-
-	/**
-	 * 
-	 */
-	public void unsetValue() {
-		value = Double.NaN;
 	}
 
 }

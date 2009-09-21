@@ -184,6 +184,26 @@ public class Unit extends AbstractSBase {
 		INVALID;
 
 		/**
+		 * Returns the name of this unit kind.
+		 * 
+		 * @return
+		 */
+		public String getName() {
+			if (this == CELSIUS)
+				return "degree "
+						+ StringTools.firstLetterUpperCase(toString()
+								.toLowerCase());
+			if (this == DIMENSIONLESS || this == GRAM || this == ITEM
+					|| this == INVALID || this == KILOGRAM || this == LUX
+					|| this == METER || this == METRE || this == MOLE
+					|| this == SECOND)
+				return toString().toLowerCase();
+			else
+				return StringTools.firstLetterUpperCase(toString()
+						.toLowerCase());
+		}
+
+		/**
 		 * Returns the formula symbol of this unit kind in uni code notation.
 		 * 
 		 * @return
@@ -260,26 +280,6 @@ public class Unit extends AbstractSBase {
 				return toString().toLowerCase();
 			}
 		}
-
-		/**
-		 * Returns the name of this unit kind.
-		 * 
-		 * @return
-		 */
-		public String getName() {
-			if (this == CELSIUS)
-				return "degree "
-						+ StringTools.firstLetterUpperCase(toString()
-								.toLowerCase());
-			if (this == DIMENSIONLESS || this == GRAM || this == ITEM
-					|| this == INVALID || this == KILOGRAM || this == LUX
-					|| this == METER || this == METRE || this == MOLE
-					|| this == SECOND)
-				return toString().toLowerCase();
-			else
-				return StringTools.firstLetterUpperCase(toString()
-						.toLowerCase());
-		}
 	}
 
 	/**
@@ -307,10 +307,51 @@ public class Unit extends AbstractSBase {
 
 	/**
 	 * 
+	 * @param multiplier
+	 * @param scale
+	 * @param kind
+	 * @param exponent
+	 * @param level
+	 * @param version
+	 */
+	public Unit(double multiplier, int scale, Kind kind, int exponent,
+			int level, int version) {
+		super(level, version);
+		this.multiplier = multiplier;
+		this.scale = scale;
+		this.kind = kind;
+		this.exponent = exponent;
+	}
+
+	/**
+	 * 
 	 */
 	public Unit(int level, int version) {
 		super(level, version);
 		initDefaults();
+	}
+
+	/**
+	 * 
+	 * @param scale
+	 * @param kind
+	 * @param level
+	 * @param version
+	 */
+	public Unit(int scale, Kind kind, int level, int version) {
+		this(scale, kind, 1, level, version);
+	}
+
+	/**
+	 * 
+	 * @param scale
+	 * @param kind
+	 * @param exponent
+	 * @param level
+	 * @param version
+	 */
+	public Unit(int scale, Kind kind, int exponent, int level, int version) {
+		this(1, scale, kind, exponent, level, version);
 	}
 
 	/**
@@ -321,6 +362,17 @@ public class Unit extends AbstractSBase {
 		super(level, version);
 		initDefaults();
 		this.kind = kind;
+	}
+
+	/**
+	 * 
+	 * @param kind
+	 * @param exponent
+	 * @param level
+	 * @param version
+	 */
+	public Unit(Kind kind, int exponent, int level, int version) {
+		this(0, kind, exponent, level, version);
 	}
 
 	/**
@@ -368,6 +420,14 @@ public class Unit extends AbstractSBase {
 	 * 
 	 * @return
 	 */
+	public double getOffset() {
+		return offset;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public int getScale() {
 		return scale;
 	}
@@ -381,6 +441,22 @@ public class Unit extends AbstractSBase {
 		multiplier = 1d;
 		offset = 0d;
 		kind = Kind.INVALID;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isDimensionless() {
+		return kind == Kind.DIMENSIONLESS;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isKilogram() {
+		return kind == Kind.KILOGRAM;
 	}
 
 	/**
@@ -411,6 +487,14 @@ public class Unit extends AbstractSBase {
 
 	/**
 	 * 
+	 * @param offset
+	 */
+	public void setOffset(double offset) {
+		this.offset = offset;
+	}
+
+	/**
+	 * 
 	 * @param scale
 	 */
 	public void setScale(int scale) {
@@ -432,11 +516,66 @@ public class Unit extends AbstractSBase {
 			mult = Double.toString(multiplier);
 		StringBuffer times = mult.equals("1") ? new StringBuffer()
 				: new StringBuffer(mult);
-		String pow = TextFormula.pow(Integer.valueOf(10),
-				Integer.valueOf(scale)).toString();
-		if (!pow.equals("1"))
-			times = TextFormula.times(times, pow);
-		times = TextFormula.times(times, kind.getSymbol());
+		StringBuffer pow = new StringBuffer(kind.getSymbol());
+		if (!isDimensionless()) {
+			switch (getScale()) {
+			case 18:
+				pow.insert(0, 'E');
+				break;
+			case 15:
+				pow.insert(0, 'P');
+				break;
+			case 12:
+				pow.insert(0, 'T');
+				break;
+			case 9:
+				pow.insert(0, 'G');
+				break;
+			case 6:
+				pow.insert(0, 'M');
+				break;
+			case 3:
+				pow.insert(0, 'k');
+				break;
+			case 2:
+				pow.insert(0, 'h');
+				break;
+			case 1:
+				pow.insert(0, "da");
+				break;
+			case 0:
+				break;
+			case -1:
+				pow.insert(0, 'd');
+				break;
+			case -2:
+				pow.insert(0, 'c');
+				break;
+			case -3:
+				pow.insert(0, 'm');
+				break;
+			case -6:
+				pow.insert(0, "\u03BC");
+				break;
+			case -9:
+				pow.insert(0, 'n');
+				break;
+			case -12:
+				pow.insert(0, 'p');
+				break;
+			case -15:
+				pow.insert(0, 'f');
+				break;
+			case -18:
+				pow.insert(0, 'a');
+				break;
+			default:
+				pow = TextFormula.times(TextFormula.pow(Integer.valueOf(10),
+						Integer.valueOf(scale)), pow);
+				break;
+			}
+		}
+		times = TextFormula.times(times, pow);
 		if (isSetOffset())
 			times = TextFormula.sum(Double.toString(offset), times);
 		return TextFormula.pow(times, Integer.valueOf(exponent)).toString();
@@ -448,38 +587,6 @@ public class Unit extends AbstractSBase {
 	 */
 	private boolean isSetOffset() {
 		return offset != 0d;
-	}
-
-	/**
-	 * 
-	 * @param offset
-	 */
-	public void setOffset(double offset) {
-		this.offset = offset;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public double getOffset() {
-		return offset;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isKilogram() {
-		return kind == Kind.KILOGRAM;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isDimensionless() {
-		return kind == Kind.DIMENSIONLESS;
 	}
 
 }

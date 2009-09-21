@@ -108,7 +108,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * 
 	 * @param parentReaction
-	 * @param typeParameters 
+	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
@@ -190,6 +190,17 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			m.addParameter(p);
 		}
 		return p;
+	}
+
+	/**
+	 * Concatenates the given name parts of the identifier and returns a global
+	 * parameter with this id.
+	 * 
+	 * @param idParts
+	 * @return
+	 */
+	Parameter createOrGetGlobalParameter(Object... idParts) {
+		return createOrGetGlobalParameter(concat(idParts).toString());
 	}
 
 	/**
