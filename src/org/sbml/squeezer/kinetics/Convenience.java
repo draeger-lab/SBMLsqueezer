@@ -47,12 +47,10 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @author <a href="mailto:michael@diegrauezelle.de">Michael Ziller</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
- * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Motsou
- *         Wouamba</a>
+ * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Motsou Wouamba</a>
  * @date Aug 1, 2007
  */
 public class Convenience extends GeneralizedMassAction {
@@ -83,10 +81,9 @@ public class Convenience extends GeneralizedMassAction {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 * (java.util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -181,10 +178,10 @@ public class Convenience extends GeneralizedMassAction {
 										p_kM), new ASTNode(specRefP
 										.getStoichiometry(), this)));
 					else
-						numerator2 = ASTNode.times(numerator2, ASTNode.frac(
-								this, specRefP.getSpeciesInstance(), p_kM));
+						numerator2.multiplyWith(ASTNode.frac(this, specRefP
+								.getSpeciesInstance(), p_kM));
 				}
-				numerator = ASTNode.diff(numerator, numerator2);
+				numerator.minus(numerator2);
 			}
 			ASTNode denominator = null;
 			String enzyme = null;
@@ -198,8 +195,7 @@ public class Convenience extends GeneralizedMassAction {
 						enzyme, false)));
 				if (reaction.getNumProducts() > 1
 						&& reaction.getNumReactants() > 1)
-					denominator = ASTNode.diff(denominator,
-							new ASTNode(1, this));
+					denominator.minus(new ASTNode(1, this));
 			}
 			formula[enzymeNum] = denominator != null ? ASTNode.frac(numerator,
 					denominator) : numerator;

@@ -32,12 +32,11 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * 
- * This class creates a S-System based equation as defined in the papers
- * "A model-based optimization framework for the inference 
- * on gene regulatory networks from DNA array data" and 
- * "A model-based optimization framework for the inference 
- * of regulatory interactions using time-course DNA microarray expression data" 
- * of Thomas et al. 2004 and 2007
+ * This class creates a S-System based equation as defined in the papers "A
+ * model-based optimization framework for the inference on gene regulatory
+ * networks from DNA array data" and "A model-based optimization framework for
+ * the inference of regulatory interactions using time-course DNA microarray
+ * expression data" of Thomas et al. 2004 and 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
@@ -56,7 +55,8 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
-		System.out.println("isApplicable: "+reaction.isSetSBOTerm()+"SBOTerm reaction: "+ reaction.getSBOTerm());
+		System.out.println("isApplicable: " + reaction.isSetSBOTerm()
+				+ "SBOTerm reaction: " + reaction.getSBOTerm());
 		if (SBO.isTranslation(reaction.getSBOTerm())
 				|| SBO.isTranscription(reaction.getSBOTerm()))
 			return true;
@@ -66,10 +66,9 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 	/*
 	 * (Kein Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 *      .util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -119,93 +118,98 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 		Parameter d = createOrGetParameter(concat("d_", rId, underscore)
 				.toString());
 
-		ASTNode nodea = new ASTNode(a, this);
-		ASTNode nodeb = new ASTNode(b, this);
-		ASTNode nodec = new ASTNode(c, this);
-		ASTNode noded = new ASTNode(d, this);
-
-		//Species reactant = r.getReactant(0).getSpeciesInstance();
+		// Species reactant = r.getReactant(0).getSpeciesInstance();
 		Species product = r.getProduct(0).getSpeciesInstance();
 		ASTNode productnode = new ASTNode(product, this);
 
-		// Transkription		
-		if (SBO.isTranscription(r.getSBOTerm())){
-			// kann eine Transkription noch anders definiert sein (siehe CellDesigner)?
-			// if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isRNA(product.getSBOTerm()))...
+		// Transkription
+		if (SBO.isTranscription(r.getSBOTerm())) {
+			// kann eine Transkription noch anders definiert sein (siehe
+			// CellDesigner)?
+			// if (SBO.isEmptySet(reactant.getSBOTerm()) &&
+			// SBO.isRNA(product.getSBOTerm()))...
 
-			System.out.println("Das ist eine Transkription! SBOTerm: "+r.getSBOTerm());
+			System.out.println("Das ist eine Transkription! SBOTerm: "
+					+ r.getSBOTerm());
 			for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-				Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
-				
-				if(SBO.isProtein(modifier.getSBOTerm())){
-					System.out.println("Modifier " + modifier + " ist ein Protein! SBOTerm: "+modifier.getSBOTerm() );
+				Species modifierspec = r.getModifier(modifierNum)
+						.getSpeciesInstance();
+				ModifierSpeciesReference modifier = r.getModifier(modifierNum);
+
+				if (SBO.isProtein(modifierspec.getSBOTerm())) {
+					System.out.println("Modifier " + modifierspec
+							+ " ist ein Protein! SBOTerm: "
+							+ modifierspec.getSBOTerm());
 
 					Parameter e = createOrGetParameter("e_", modifierNum, rId);
 					System.out.println("Parameter erstellt: " + e.toString());
-					
-					//TODO: ist ein modifier ein aktivator oder inhibitor (sboterm)?
 
-					System.out.println("size: "+modTActi.size());
-					if (modTActi.contains(modifier)){
-						System.out.println("Modifier " + modifier
-								+ " ist Aktivator! set value 1");
+					 // TODO: ist ein modifier ein aktivator oder inhibitor
+					 // (sboterm)?
+					
+//					 System.out.println("size: " + modTActi.size()+modTInhib.size());
+//					 if (modTActi.contains(modifier.getId())) {
+//					 System.out.println("Modifier " + modifier+ " ist Aktivator! set value 1");
+//					 e.setValue(1);
+//					 e.appendNotes("pos");
+//					 }
+//					 if (modTInhib.contains(modifier.getId())) {
+//					 System.out.println("Modifier " + modifier+ " ist Inhibitor! set value -1");
+//					 e.setValue(-1);
+//					 e.appendNotes("neg");
+//					 }
+					System.out.println("Modifier-sboterm: "+modifier.getSBOTerm());
+					if (SBO.isInhibitor(modifier.getSBOTerm())) {
+						System.out.println("Modifier " + modifierspec
+								+ " ist Aktivator! set value 1"+modifier);
 						e.setValue(1);
 						e.appendNotes("pos");
 					}
-					if (modTInhib.contains(modifier)){
-						System.out.println("Modifier " + modifier
-								+ " ist Inhibitor! set value -1");
+					if (SBO.isStimulator(modifier.getSBOTerm())) {
+						System.out.println("Modifier " + modifierspec
+								+ " ist Inhibitor! set value -1"+modifier);
 						e.setValue(-1);
 						e.appendNotes("neg");
 					}
-					
-					/*if (SBO.isTranscriptionalActivation(modifier.getSBOTerm())) {
-						System.out.println("Modifier " + modifier
-								+ " ist Aktivator! set value 1");
-						e.setValue(1);
-						e.appendNotes("pos");
-					}
-					if (SBO.isTranscriptionalInhibitor(modifier.getSBOTerm())) {
-						System.out.println("Modifier " + modifier
-								+ " ist Inhibitor! set value -1");
-						e.setValue(-1);
-						e.appendNotes("neg");
-					}*/
 
-					ASTNode modnode = new ASTNode(modifier, this);
+					ASTNode modnode = new ASTNode(modifierspec, this);
 					ASTNode enode = new ASTNode(e, this);
 					if (kineticLawPart.isUnknown())
 						kineticLawPart = ASTNode.pow(modnode, enode);
 					else
-						kineticLawPart = ASTNode.times(kineticLawPart, ASTNode.pow(
-								modnode, enode));
+						kineticLawPart = ASTNode.times(kineticLawPart, ASTNode
+								.pow(modnode, enode));
 
-					kineticLaw = ASTNode.diff(ASTNode.times(nodea, kineticLawPart),
-							ASTNode.times(nodeb, productnode));
+					kineticLaw = ASTNode.diff(ASTNode.times(
+							new ASTNode(a, this), kineticLawPart), ASTNode
+							.times(new ASTNode(b, this), productnode));
 				}
 			}
-		}
-			
-		// Translation
-		if (SBO.isTranslation(r.getSBOTerm())){
-			// kann eine Translation noch anders definiert sein (siehe CellDesigner)?
-			// if (SBO.isEmptySet(reactant.getSBOTerm()) && SBO.isProtein(product.getSBOTerm()))...
+		} else if (SBO.isTranslation(r.getSBOTerm())) {
+			// kann eine Translation noch anders definiert sein (siehe
+			// CellDesigner)?
+			// if (SBO.isEmptySet(reactant.getSBOTerm()) &&
+			// SBO.isProtein(product.getSBOTerm()))...
 
-			System.out.println("Das ist eine Translation! SBOTerm: "+r.getSBOTerm());
+			System.out.println("Das ist eine Translation! SBOTerm: "
+					+ r.getSBOTerm());
 			for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-				Species modifier = r.getModifier(modifierNum).getSpeciesInstance();
-				if(SBO.isRNA(modifier.getSBOTerm())){
-				//TODO: rna des proteins?
-				System.out.println("Modifier " + modifier + " ist eine RNA! SBOTerm: "+modifier.getSBOTerm());
+				Species modifier = r.getModifier(modifierNum)
+						.getSpeciesInstance();
+				if (SBO.isRNA(modifier.getSBOTerm())) {
+					// TODO: rna des proteins?
+					System.out.println("Modifier " + modifier
+							+ " ist eine RNA! SBOTerm: "
+							+ modifier.getSBOTerm());
 
-				ASTNode modnode = new ASTNode(modifier, this);
+					ASTNode modnode = new ASTNode(modifier, this);
 
-				kineticLaw = ASTNode.diff(ASTNode.times(nodec, modnode), ASTNode
-						.times(noded, productnode));
+					kineticLaw = ASTNode.diff(ASTNode.times(
+							new ASTNode(c, this), modnode), ASTNode.times(
+							new ASTNode(d, this), productnode));
 				}
 			}
 		}
-
 		System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;
 	}

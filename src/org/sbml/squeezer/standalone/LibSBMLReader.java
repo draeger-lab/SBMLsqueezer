@@ -487,10 +487,10 @@ public class LibSBMLReader extends AbstractSBMLReader {
 		copyNamedSBaseProperties(mod, msr);
 		if (msr.isSetSBOTerm()) {
 			mod.setSBOTerm(msr.getSBOTerm());
-			if (!SBO.isEnzymaticCatalysis(mod.getSBOTerm())
+/*			if (!SBO.isEnzymaticCatalysis(mod.getSBOTerm())
 					&& possibleEnzymes.contains(Integer.valueOf(mod
 							.getSpeciesInstance().getSBOTerm())))
-				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
+				mod.setSBOTerm(SBO.getEnzymaticCatalysis());*/
 		}
 		addAllSBaseChangeListenersTo(mod);
 		return mod;

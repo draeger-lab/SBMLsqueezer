@@ -30,14 +30,13 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This class creates rate equations according to the generalized mass action
- * rate law. For details see Heinrich and Schuster,
- * "The regulation of Cellular Systems", pp. 14-17, 1996.
+ * rate law. For details see Heinrich and Schuster, "The regulation of Cellular
+ * Systems", pp. 14-17, 1996.
  * 
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
@@ -59,8 +58,7 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	 * @throws IllegalFormatException
 	 */
 	public GeneralizedMassAction(Reaction parentReaction)
-			throws RateLawNotApplicableException, 
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 
@@ -413,23 +411,20 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					Parameter p_kAn = createOrGetParameter(concat("kA_",
-							r.getId(), underscore, modifiers.get(i)).toString());
+					Parameter p_kAn = createOrGetParameter("kA_", r.getId(),
+							underscore, modifiers.get(i));
 					p_kAn.setSBOTerm(363);
-					ASTNode kA = new ASTNode(p_kAn, this);
-					mods[i] = ASTNode
-							.frac(new ASTNode(modifiers.get(i), this),
-									ASTNode.sum(kA, new ASTNode(modifiers
-											.get(i), this)));
+					mods[i] = ASTNode.frac(new ASTNode(modifiers.get(i), this),
+							ASTNode.sum(new ASTNode(p_kAn, this), new ASTNode(
+									modifiers.get(i), this)));
 				} else {
 					// Inhibitor Mod
-					StringBuffer kIn = concat("kI_", r.getId(), underscore,
-							modifiers.get(i));
-					Parameter p_kIn = createOrGetParameter(kIn.toString());
+					Parameter p_kIn = createOrGetParameter("kI_", r.getId(),
+							underscore, modifiers.get(i));
 					p_kIn.setSBOTerm(261);
 					ASTNode kI = new ASTNode(p_kIn, this);
-					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI, new ASTNode(
-							modifiers.get(i), this)));
+					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI.clone(),
+							new ASTNode(modifiers.get(i), this)));
 				}
 			}
 			return ASTNode.times(mods);
@@ -494,10 +489,9 @@ public class GeneralizedMassAction extends BasicKineticLaw {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 *      .util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,

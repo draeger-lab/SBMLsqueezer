@@ -154,11 +154,10 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 			denominator.plus(new ASTNode(reaction.getReactant(0)
 					.getSpeciesInstance(), this));
 			currEnzyme = ASTNode.frac(numerator, denominator);
-			enzymeNum++;
 			if (numOfEnzymes > 1)
 				numerator.multiplyWith(new ASTNode(modE.get(enzymeNum), this));
-			formula[enzymeNum] = currEnzyme;
-		} while (enzymeNum <= modE.size() - 1);
+			formula[enzymeNum++] = currEnzyme;
+		} while (enzymeNum < modE.size());
 		return ASTNode.times(activationFactor(modActi), ASTNode.sum(formula));
 	}
 
