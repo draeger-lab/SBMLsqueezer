@@ -71,8 +71,7 @@ import org.sbml.squeezer.kinetics.GRNSSystemEquation;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
@@ -82,20 +81,24 @@ public class KineticLawGenerator {
 	 * equations.
 	 */
 	private Properties settings;
+
 	/**
 	 * This list contains all fast reactions of the original model. Since the
 	 * fast attribute is still ignored by SBMLsqueezer, we use this list to
 	 * decide whether a warning message should be displayed later on.
 	 */
 	private List<Reaction> listOfFastReactions;
+
 	/**
 	 * The column rank of the soichiometric matrix of the original model.
 	 */
 	private int columnRank = -1;
+
 	/**
 	 * 
 	 */
 	private Model modelOrig;
+
 	/**
 	 * A copy of the model that only covers all compartments, all parameters,
 	 * and all reactions for which kinetic equations are to be created. Hence,
@@ -166,7 +169,8 @@ public class KineticLawGenerator {
 			boolean reversibility) throws ModificationException,
 			RateLawNotApplicableException, IllegalFormatException {
 		Reaction reaction = miniModel.getReaction(r.getId());
-		reaction.setSBOTerm(r.getSBOTerm());
+		if (r.isSetSBOTerm())
+			reaction.setSBOTerm(r.getSBOTerm());
 		if (reaction == null)
 			reaction = r;
 		BasicKineticLaw kineticLaw;
@@ -303,7 +307,7 @@ public class KineticLawGenerator {
 
 		if (GRNSSystemEquation.isApplicable(reaction))
 			types.add(Kinetics.SSYSTEM_KINETIC);
-		
+
 		if (reaction.getNumReactants() == 0
 				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
 
@@ -312,8 +316,7 @@ public class KineticLawGenerator {
 
 			/*
 			 * } else if (reaction.getNumReactants() == 0) {
-			 * 
-			 * } else if (reaction.getNumProducts() == 0) {
+			 *  } else if (reaction.getNumProducts() == 0) {
 			 */
 
 		} else {
@@ -475,9 +478,9 @@ public class KineticLawGenerator {
 					if (reaction.getNumProducts() > 0)
 						types.add(Kinetics.SSYSTEM_KINETIC);
 				} /*
-				 * else if (types.contains((Kinetics.HILL_EQUATION)))
-				 * types.remove((Kinetics.HILL_EQUATION));
-				 */
+					 * else if (types.contains((Kinetics.HILL_EQUATION)))
+					 * types.remove((Kinetics.HILL_EQUATION));
+					 */
 			} else if (types.contains(Kinetics.HILL_EQUATION)
 					&& types.contains(Kinetics.ZEROTH_ORDER_FORWARD_MA)
 					&& !reaction.getReversible())

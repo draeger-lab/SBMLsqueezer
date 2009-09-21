@@ -124,7 +124,7 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 		ASTNode nodec = new ASTNode(c, this);
 		ASTNode noded = new ASTNode(d, this);
 
-		Species reactant = r.getReactant(0).getSpeciesInstance();
+		//Species reactant = r.getReactant(0).getSpeciesInstance();
 		Species product = r.getProduct(0).getSpeciesInstance();
 		ASTNode productnode = new ASTNode(product, this);
 
@@ -144,6 +144,20 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 					System.out.println("Parameter erstellt: " + e.toString());
 					
 					//TODO: ist ein modifier ein aktivator oder inhibitor (sboterm)?
+
+					System.out.println("size: "+modTActi.size());
+					if (modTActi.contains(modifier)){
+						System.out.println("Modifier " + modifier
+								+ " ist Aktivator! set value 1");
+						e.setValue(1);
+						e.appendNotes("pos");
+					}
+					if (modTInhib.contains(modifier)){
+						System.out.println("Modifier " + modifier
+								+ " ist Inhibitor! set value -1");
+						e.setValue(-1);
+						e.appendNotes("neg");
+					}
 					
 					/*if (SBO.isTranscriptionalActivation(modifier.getSBOTerm())) {
 						System.out.println("Modifier " + modifier
