@@ -30,6 +30,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
+ * This class creates an equation based on an additive model.
+ *  
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  *
  */
@@ -64,36 +66,37 @@ public class GRNAdditiveModel extends BasicKineticLaw {
 			throws RateLawNotApplicableException, IllegalFormatException {
 		// TODO Automatisch erstellter Methoden-Stub
 		
-		ASTNode kineticLaw = new ASTNode(this);
-		
+		ASTNode kineticLaw = new ASTNode(this);		
 		kineticLaw = ASTNode.diff(ASTNode.times(m_i(), function_g(function_w(),function_v(), b_i())),function_l());
 		
 		//System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;
 	}
 	
-	ASTNode function_w(){
+	ASTNode function_w() {
 		Reaction r = getParentSBMLObject();
 		Parameter p = null;
 		String rId = getParentSBMLObject().getId();
 		ASTNode modnode = null;
 		ASTNode pnode = null;
+		ASTNode node = new ASTNode(this);
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierspec = r.getModifier(modifierNum).getSpeciesInstance();
+			Species modifierspec = r.getModifier(modifierNum)
+					.getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
-			if (SBO.isProtein(modifierspec.getSBOTerm()) || SBO.isRNA(modifierspec.getSBOTerm())) {
-				if (SBO.isModifier(modifier.getSBOTerm())){
+			if (SBO.isProtein(modifierspec.getSBOTerm())
+					|| SBO.isRNA(modifierspec.getSBOTerm())) {
+				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("w_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
+					if (node.isUnknown())
+						node = ASTNode.times(pnode, modnode);
+					else
+						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
 				}
 			}
 		}
-		ASTNode node = new ASTNode(this);
-		if (node.isUnknown()) node = ASTNode.times(pnode,modnode);
-		else
-			node = ASTNode.sum(node, ASTNode.times(pnode,modnode));
-		
 		return node;
 	}
 	
@@ -104,22 +107,24 @@ public class GRNAdditiveModel extends BasicKineticLaw {
 		String rId = getParentSBMLObject().getId();
 		ASTNode modnode = null;
 		ASTNode pnode = null;
+		ASTNode node = new ASTNode(this);
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierspec = r.getModifier(modifierNum).getSpeciesInstance();
+			Species modifierspec = r.getModifier(modifierNum)
+					.getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
-			if (SBO.isProtein(modifierspec.getSBOTerm()) || SBO.isRNA(modifierspec.getSBOTerm())) {
-				if (SBO.isModifier(modifier.getSBOTerm())){
+			if (SBO.isProtein(modifierspec.getSBOTerm())
+					|| SBO.isRNA(modifierspec.getSBOTerm())) {
+				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("v_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
+					if (node.isUnknown())
+						node = ASTNode.times(pnode, modnode);
+					else
+						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
 				}
 			}
 		}
-		ASTNode node = new ASTNode(this);
-		if (node.isUnknown()) node = ASTNode.times(pnode,modnode);
-		else
-			node = ASTNode.sum(node, ASTNode.times(pnode,modnode));
-		
 		return node;
 	}
 	
@@ -129,40 +134,42 @@ public class GRNAdditiveModel extends BasicKineticLaw {
 		String rId = getParentSBMLObject().getId();
 		ASTNode modnode = null;
 		ASTNode pnode = null;
+		ASTNode node = new ASTNode(this);
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierspec = r.getModifier(modifierNum).getSpeciesInstance();
+			Species modifierspec = r.getModifier(modifierNum)
+					.getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
-			if (SBO.isProtein(modifierspec.getSBOTerm()) || SBO.isRNA(modifierspec.getSBOTerm())) {
-				if (SBO.isModifier(modifier.getSBOTerm())){
+			if (SBO.isProtein(modifierspec.getSBOTerm())
+					|| SBO.isRNA(modifierspec.getSBOTerm())) {
+				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("lambda_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
+					if (node.isUnknown())
+						node = ASTNode.times(pnode, modnode);
+					else
+						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
 				}
 			}
 		}
-		ASTNode node = new ASTNode(this);
-		if (node.isUnknown()) node = ASTNode.times(pnode,modnode);
-		else
-			node = ASTNode.sum(node, ASTNode.times(pnode,modnode));
-		
 		return node;
 	}
 	
 	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b){		
-		ASTNode node = ASTNode.sum(function_w(),function_v(), b_i());
+		ASTNode node = ASTNode.sum(w,v,b);
 		return node;
 	}
 	
 	ASTNode b_i(){
 		String rId = getParentSBMLObject().getId();
-		Parameter b_i = createOrGetParameter("bi_", rId, underscore);
+		Parameter b_i = createOrGetParameter("b_", rId, underscore);
 		ASTNode b_i_node = new ASTNode(b_i, this);
 		return b_i_node;
 	}
 
 	ASTNode m_i(){
 		String rId = getParentSBMLObject().getId();
-		Parameter m_i = createOrGetParameter("mi_", rId, underscore);
+		Parameter m_i = createOrGetParameter("m_", rId, underscore);
 		ASTNode m_i_node = new ASTNode(m_i, this);
 		return m_i_node;
 	}
