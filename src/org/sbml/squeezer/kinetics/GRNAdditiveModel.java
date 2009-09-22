@@ -84,6 +84,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements GeneRegulatoryK
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 			if (SBO.isProtein(modifierspec.getSBOTerm())
 					|| (SBO.isMessengerRNA(modifierspec.getSBOTerm())||SBO.isRNA(modifierspec.getSBOTerm()))) {
+				if (!modifier.isSetSBOTerm())modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("w_", modifierNum, underscore, rId);
@@ -112,6 +113,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements GeneRegulatoryK
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 			if (SBO.isProtein(modifierspec.getSBOTerm())
 					|| (SBO.isMessengerRNA(modifierspec.getSBOTerm())||SBO.isRNA(modifierspec.getSBOTerm()))) {
+				if (!modifier.isSetSBOTerm())modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("v_", modifierNum, underscore, rId);
@@ -139,6 +141,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements GeneRegulatoryK
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 			if (SBO.isProtein(modifierspec.getSBOTerm())
 					|| (SBO.isMessengerRNA(modifierspec.getSBOTerm())||SBO.isRNA(modifierspec.getSBOTerm()))) {
+				if (!modifier.isSetSBOTerm())modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("lambda_", modifierNum, underscore, rId);
