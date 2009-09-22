@@ -1236,6 +1236,17 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * Returns true if this astnode represents the number one (either as integer
+	 * or as real value).
+	 * 
+	 * @return
+	 */
+	public boolean isOne() {
+		return (isReal() && getReal() == 1d)
+				|| (isInteger() && getInteger() == 1);
+	}
+
+	/**
 	 * Predicate returning true (non-zero) if this node is a mathematical
 	 * operator, meaning, +, -, *, / or ^ (power).
 	 * 
@@ -1345,6 +1356,17 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * Returns true if this astnode represents the number zero (either as
+	 * integer or as real value).
+	 * 
+	 * @return
+	 */
+	public boolean isZero() {
+		return (isReal() && getReal() == 0d)
+				|| (isInteger() && getInteger() == 0);
+	}
+
+	/**
 	 * subtracts the given ASTNode from this node
 	 * 
 	 * @param ast
@@ -1389,6 +1411,15 @@ public class ASTNode implements TreeNode {
 		for (ASTNode node : nodes)
 			multiplyWith(node);
 		return this;
+	}
+
+	/**
+	 * 
+	 * @param nsb
+	 * @return
+	 */
+	public ASTNode multiplyWith(NamedSBase nsb) {
+		return multiplyWith(new ASTNode(nsb, getParentSBMLObject()));
 	}
 
 	/**
@@ -2372,28 +2403,6 @@ public class ASTNode implements TreeNode {
 			throw new RuntimeException(
 					new IllegalArgumentException(
 							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
-	}
-
-	/**
-	 * Returns true if this astnode represents the number zero (either as
-	 * integer or as real value).
-	 * 
-	 * @return
-	 */
-	public boolean isZero() {
-		return (isReal() && getReal() == 0d)
-				|| (isInteger() && getInteger() == 0);
-	}
-
-	/**
-	 * Returns true if this astnode represents the number one (either as integer
-	 * or as real value).
-	 * 
-	 * @return
-	 */
-	public boolean isOne() {
-		return (isReal() && getReal() == 1d)
-				|| (isInteger() && getInteger() == 1);
 	}
 
 	/**

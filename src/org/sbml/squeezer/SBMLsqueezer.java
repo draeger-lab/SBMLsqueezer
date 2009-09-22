@@ -247,6 +247,10 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 			}
 			properties = correctProperties(Resource
 					.readProperties(userConfigFile));
+			// avoid senseless exceptions if keys are missing.
+			for (CfgKeys key : CfgKeys.values())
+				if (!properties.containsKey(key))
+					properties.put(key, getDefaultSettings().get(key));
 		} catch (Exception e) {
 			e.printStackTrace();
 			properties = getDefaultSettings();

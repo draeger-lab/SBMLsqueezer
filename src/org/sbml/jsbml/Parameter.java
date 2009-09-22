@@ -104,6 +104,30 @@ public class Parameter extends Symbol {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#setUnits(org.sbml.jsbml.Unit)
+	 */
+	public void setUnits(Unit unit) {
+		super.setUnits(unit);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#setUnits(org.sbml.jsbml.Unit.Kind)
+	 */
+	public void setUnits(Unit.Kind unitKind) {
+		super.setUnits(unitKind);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#setUnits(org.sbml.jsbml.UnitDefinition)
+	 */
+	public void setUnits(UnitDefinition units) {
+		super.setUnits(units);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jlibsbml.Symbol#setValue(double)
 	 */

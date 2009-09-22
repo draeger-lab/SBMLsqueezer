@@ -93,7 +93,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private int numOfWarnings = 0;
 
-	private SettingsPanelKinetics settingsPanel;
+	private SettingsPanelAll settingsPanel;
 
 	private JButton options;
 
@@ -567,9 +567,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @return javax.swing.JPanelsb.append("<br>
 	 *         ");
 	 */
-	private SettingsPanelKinetics getJSettingsPanel() {
+	private SettingsPanelAll getJSettingsPanel() {
 		if (settingsPanel == null) {
-			settingsPanel = new SettingsPanelKinetics(settings);
+			settingsPanel = new SettingsPanelAll(settings);
 			// settingsPanel.setBackground(Color.WHITE);
 		}
 		return settingsPanel;

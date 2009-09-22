@@ -29,6 +29,8 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.io.StringTools;
 
@@ -135,6 +137,51 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	public Object[] getTypeParameters() {
 		return typeParameters;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	UnitDefinition mM() {
+		return mM(1);
+	}
+
+	/**
+	 * 
+	 * @param exponent
+	 * @return
+	 */
+	UnitDefinition mM(int exponent) {
+		String id = "mM";
+		if (exponent != 1)
+			id += exponent;
+		UnitDefinition mM = getModel().getUnitDefinition(id);
+		if (mM == null) {
+			mM = new UnitDefinition(id, getLevel(), getVersion());
+			mM.addUnit(new Unit(-3, Unit.Kind.MOLE, exponent, getLevel(),
+					getVersion()));
+			mM.addUnit(new Unit(Unit.Kind.LITRE, -exponent, getLevel(),
+					getVersion()));
+			getModel().addUnitDefinition(mM);
+		}
+		return mM;
+	}
+
+	/**
+	 * Returns the unit milli mole per litre per second.
+	 * @return
+	 */
+	UnitDefinition mMperSecond() {
+		Model model = getModel();
+		UnitDefinition mMperSecond = model.getUnitDefinition("mMperSecond");
+		if (mMperSecond == null) {
+			mMperSecond = mM().clone();
+			mMperSecond.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(),
+					getVersion()));
+			model.addUnitDefinition(mMperSecond);
+		}
+		return mMperSecond;
 	}
 
 	/**

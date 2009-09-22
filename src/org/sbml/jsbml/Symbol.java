@@ -143,18 +143,31 @@ public abstract class Symbol extends AbstractNamedSBase {
 	 * 
 	 * @param unit
 	 */
-	public void setUnits(Unit unit) {
+	void setUnits(Unit unit) {
 		UnitDefinition ud = new UnitDefinition(unit.getKind().toString(),
 				getLevel(), getVersion());
 		ud.addUnit(unit);
 		setUnits(ud);
+		if (unit.getExponent() != 1 || unit.getScale() != 0
+				|| unit.getMultiplier() != 1d || unit.getOffset() != 0d) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(unit.getMultiplier());
+			sb.append('_');
+			sb.append(unit.getScale());
+			sb.append('_');
+			sb.append(unit.getKind().toString());
+			sb.append('_');
+			sb.append(unit.getExponent());
+			ud.setId(sb.toString());
+			getModel().addUnitDefinition(ud);
+		}
 	}
 
 	/**
 	 * 
 	 * @param unitKind
 	 */
-	public void setUnits(Unit.Kind unitKind) {
+	void setUnits(Unit.Kind unitKind) {
 		setUnits(new Unit(unitKind, getLevel(), getLevel()));
 	}
 
@@ -163,7 +176,7 @@ public abstract class Symbol extends AbstractNamedSBase {
 	 * 
 	 * @param units
 	 */
-	public void setUnits(UnitDefinition units) {
+	void setUnits(UnitDefinition units) {
 		this.units = units;
 		stateChanged();
 	}

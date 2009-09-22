@@ -1,6 +1,6 @@
 format-version: 1.2
-date: 18:08:2009 12:38
-data-version: 17:08:2009 16:53
+date: 21:09:2009 15:57
+data-version: 09:09:2009 11:02
 saved-by: SBO community
 auto-generated-by: SBO Browser (http://www.ebi.ac.uk/sbo/)
 default-namespace: sbo
@@ -1568,7 +1568,7 @@ is_a: SBO:0000246 ! information macromolecule
 
 [Term]
 id: SBO:0000251
-name: deoxribonucleic acid
+name: deoxyribonucleic acid
 def: "Polymer composed of nucleotides containing deoxyribose and linked by phosphodiester bonds.\n\nCHEBI\:16991 " [src_code:NR]
 synonym: "DNA" []
 is_a: SBO:0000246 ! information macromolecule
@@ -2582,7 +2582,7 @@ is_a: SBO:0000236 ! entity
 [Term]
 id: SBO:0000410
 name: implicit compartment
-def: "Compartment that is not defined or described\, but inferred from the existence of pools of material entities that have to be contained.  " [src_code:NR]
+def: "A compartment whose existence is inferred due to the presence of known material entities which must be bounded\, allowing the creation of material entity pools." [src_code:NR]
 is_a: SBO:0000290 ! physical compartment
 
 [Term]
@@ -2906,6 +2906,18 @@ id: SBO:0000462
 name: non-essential activator
 def: "An activator which is not necessary for an enzymatic reaction\, but whose presence will further increase enzymatic activity. " [src_code:NR]
 is_a: SBO:0000459 ! stimulator
+
+[Term]
+id: SBO:0000463
+name: standard biochemical potential
+def: "The biochemical potential of a substance measured at standard concentrations and under standard conditions." [src_code:NR]
+is_a: SBO:0000303 ! biochemical potential
+
+[Term]
+id: SBO:0000464
+name: state variable assignment
+def: "Assignment of a state or a value to a state variable\, characteristic or property\, of a biological entity." [src_code:NR]
+is_a: SBO:0000375 ! process
 
 [Typedef]
 id: is_a

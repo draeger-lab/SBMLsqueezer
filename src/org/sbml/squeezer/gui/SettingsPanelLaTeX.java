@@ -164,6 +164,7 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 		lh.add(new JPanel(), 0, ++row, 5, 1, 0, 0);
 		lh.add(new JLabel("Font size"), 1, ++row, 1, 1, 0, 0);
 		lh.add(jComboBoxFontSize, 3, row, 1, 1, 1, 0);
+		lh.add(new JPanel(), 0, ++row, 5, 1, 0, 0);
 
 		jCheckBoxIDsInTWFont = new JCheckBox("IDs in typewriter font",
 				((Boolean) this.settings
