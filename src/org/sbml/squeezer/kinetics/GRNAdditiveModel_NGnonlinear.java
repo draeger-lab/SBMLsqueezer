@@ -21,22 +21,18 @@ package org.sbml.squeezer.kinetics;
 import java.util.IllegalFormatException;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * 
- * This class creates an equation based on an additive model as defined in the papers
- * "Neural network model of gene expression." of Vohradský, J. 2001 and
- * "Nonlinear differential equation model for quantification of transcriptional regulation applied 
- * to microarray data of Saccharomyces cerevisiae." of Vu, T. T. & Vohradský, J. 2007 
- * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  *
  */
-public class GRNAdditiveModel_1 extends GRNAdditiveModel {
+public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel {
 
 	/**
 	 * @param parentReaction
@@ -44,18 +40,43 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModel {
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public GRNAdditiveModel_1(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+	public GRNAdditiveModel_NGnonlinear(Reaction parentReaction,
+			Object... typeParameters) throws RateLawNotApplicableException,
+			IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
-
+	
 	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b){
 		ASTNode node = ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(ASTNode.times(new ASTNode(-1,this),ASTNode.sum(w,v,b)))));
 		return node;
 	}
 	
-	ASTNode function_v(){
-		return null;
+	ASTNode function_w() {
+		Reaction r = getParentSBMLObject();
+		Parameter p = null;
+		String rId = getParentSBMLObject().getId();
+		ASTNode modnode = null;
+		ASTNode pnode = null;
+		ASTNode node = new ASTNode(this);
+		Species product = r.getProduct(0).getSpeciesInstance();
+		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
+			Species modifierspec = r.getModifier(modifierNum)
+					.getSpeciesInstance();
+			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
+			if ((SBO.isProtein(modifierspec.getSBOTerm())
+					|| SBO.isRNA(modifierspec.getSBOTerm()))&&!product.equals(modifierspec)) {
+				if (SBO.isModifier(modifier.getSBOTerm())) {
+					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
+					p = createOrGetParameter("w_", modifierNum, underscore, rId);
+					pnode = new ASTNode(p, this);
+					if (node.isUnknown())
+						node = ASTNode.times(pnode, modnode);
+					else
+						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
+				}
+			}
+		}
+		return node;
 	}
 	
 	ASTNode function_l(){
@@ -66,11 +87,12 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModel {
 		Species product = r.getProduct(0).getSpeciesInstance();
 		ASTNode productnode = new ASTNode(product, this);	
 
-		Parameter p = createOrGetParameter("lambda_", rId);
+		Parameter p = createOrGetParameter("w_", rId);
 		ASTNode pnode = new ASTNode(p, this);
-		node = ASTNode.times(pnode, productnode);
+		//TODO: -(-1) zu +
+		node = ASTNode.times(new ASTNode(-1,this),pnode, productnode);
 
 		return node;
 	}
-	
+
 }

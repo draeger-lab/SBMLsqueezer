@@ -51,7 +51,6 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 	public GRNSSystemEquation(Reaction parentReaction)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
-		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
 
 	public static boolean isApplicable(Reaction reaction) {

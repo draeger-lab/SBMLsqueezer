@@ -46,7 +46,6 @@ public class GRNAdditiveModel extends BasicKineticLaw {
 	public GRNAdditiveModel(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction, typeParameters);
-		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
 	
 	public static boolean isApplicable(Reaction reaction) {
@@ -64,7 +63,6 @@ public class GRNAdditiveModel extends BasicKineticLaw {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		// TODO Automatisch erstellter Methoden-Stub
 		
 		ASTNode kineticLaw = new ASTNode(this);		
 		kineticLaw = ASTNode.diff(ASTNode.times(m_i(), function_g(function_w(),function_v(), b_i())),function_l());

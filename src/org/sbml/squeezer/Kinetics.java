@@ -88,7 +88,15 @@ public enum Kinetics {
 	/**
 	 * A special additive model equation (Weaver, D.; Workman, C. & Stormo, G. 1999)
 	 */
-	ADDITIVE_KINETIC2;
+	ADDITIVE_KINETIC2,
+	/**
+	 * A special additive model equation (NetGenerator linear model)
+	 */
+	ADDITIVE_KINETIC_NGlinear,
+	/**
+	 * A special additive model equation (NetGenerator non-linear model)
+	 */
+	ADDITIVE_KINETIC_NGnonlinear;
 
 	/**
 	 * <ol>
@@ -138,6 +146,10 @@ public enum Kinetics {
 			return "A special additive model equation (Vohradský 2001 and Vu & Vohradský 2007)";
 		case ADDITIVE_KINETIC2:
 			return "A special additive model equation (Weaver, Workman & Stormo 1999)";
+		case ADDITIVE_KINETIC_NGlinear:
+			return "A special additive model equation (NetGenerator linear model)";
+		case ADDITIVE_KINETIC_NGnonlinear:
+			return "A special additive model equation (NetGenerator non-linear model)";
 		default: // TODO: default?
 			return "Generalized mass-action";
 		}
@@ -163,7 +175,11 @@ public enum Kinetics {
 		else if (className.equals("GRNSAdditivModel_1"))
 			return ADDITIVE_KINETIC1;
 		else if (className.equals("GRNSAdditivModel_2"))
-			return ADDITIVE_KINETIC2;
+			return ADDITIVE_KINETIC2;		
+		else if (className.equals("GRNSAdditivModel_NGlinear"))
+			return ADDITIVE_KINETIC_NGlinear;
+		else if (className.equals("GRNSAdditivModel_NGnonlinear"))
+			return ADDITIVE_KINETIC_NGnonlinear;		
 		else if (className.equals("HillEquation"))
 			return HILL_EQUATION;
 		else if (className.equals("IrrevCompetNonCooperativeEnzymes"))

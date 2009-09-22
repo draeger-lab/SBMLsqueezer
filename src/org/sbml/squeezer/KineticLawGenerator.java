@@ -54,6 +54,8 @@ import org.sbml.squeezer.kinetics.ConvenienceIndependent;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel_1;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel_2;
+import org.sbml.squeezer.kinetics.GRNAdditiveModel_NGlinear;
+import org.sbml.squeezer.kinetics.GRNAdditiveModel_NGnonlinear;
 import org.sbml.squeezer.kinetics.GRNSSystemEquation;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillEquation;
@@ -225,6 +227,12 @@ public class KineticLawGenerator {
 		case ADDITIVE_KINETIC2:
 			kineticLaw = new GRNAdditiveModel_2(reaction);
 			break;
+		case ADDITIVE_KINETIC_NGlinear:
+			kineticLaw = new GRNAdditiveModel_NGlinear(reaction);
+			break;
+		case ADDITIVE_KINETIC_NGnonlinear:
+			kineticLaw = new GRNAdditiveModel_NGnonlinear(reaction);
+			break;
 		default:
 			kineticLaw = new GeneralizedMassAction(reaction);
 			break;
@@ -331,6 +339,12 @@ public class KineticLawGenerator {
 		
 		if (GRNAdditiveModel_2.isApplicable(reaction))
 			types.add(Kinetics.ADDITIVE_KINETIC2);
+		
+		if (GRNAdditiveModel_NGlinear.isApplicable(reaction))
+			types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
+		
+		if (GRNAdditiveModel_NGnonlinear.isApplicable(reaction))
+			types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
 
 		if (reaction.getNumReactants() == 0
 				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
@@ -366,11 +380,16 @@ public class KineticLawGenerator {
 			}
 
 			// is at least one modifier a gene?
-			for (ModifierSpeciesReference msr : reaction.getListOfModifiers())
+			for (ModifierSpeciesReference msr : reaction.getListOfModifiers()){
 				if (SBO.isGene(msr.getSpeciesInstance().getSBOTerm())) {
 					reactionWithGenes = true;
 					break;
 				}
+				if (SBO.isRNA(msr.getSpeciesInstance().getSBOTerm())) {
+					reactionWithRNA = true;
+					break;
+				}
+			}
 
 			// boolean stoichiometryIntRight = true;
 			for (i = 0; i < reaction.getNumProducts(); i++) {
@@ -433,6 +452,8 @@ public class KineticLawGenerator {
 							types.add(Kinetics.ADDITIVE_KINETIC);
 							types.add(Kinetics.ADDITIVE_KINETIC1);
 							types.add(Kinetics.ADDITIVE_KINETIC2);
+							types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
+							types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
 						}
 							
 
@@ -450,6 +471,8 @@ public class KineticLawGenerator {
 							types.add(Kinetics.ADDITIVE_KINETIC);
 							types.add(Kinetics.ADDITIVE_KINETIC1);
 							types.add(Kinetics.ADDITIVE_KINETIC2);
+							types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
+							types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
 						}
 					}
 					if (!nonEnzyme
@@ -520,6 +543,8 @@ public class KineticLawGenerator {
 						types.add(Kinetics.ADDITIVE_KINETIC);
 						types.add(Kinetics.ADDITIVE_KINETIC1);
 						types.add(Kinetics.ADDITIVE_KINETIC2);
+						types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
+						types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
 					}
 				} /*
 					 * else if (types.contains((Kinetics.HILL_EQUATION)))
