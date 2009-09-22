@@ -360,8 +360,7 @@ public class KineticLawGenerator {
 
 			double stoichiometryLeft = 0d, stoichiometryRight = 0d, stoichiometry;
 			boolean stoichiometryIntLeft = true;
-			boolean reactantIsRNA = false, modifierIsRNA = false;
-			boolean reactantIsGene = false, modifierIsGene = false;
+			boolean reactionWithGenes = false, reactionWithRNAs = false;
 
 			// compute stoichiometric properties
 			for (i = 0; i < reaction.getNumReactants(); i++) {
@@ -372,19 +371,19 @@ public class KineticLawGenerator {
 				// Transcription or translation?
 				Species species = reaction.getReactant(i).getSpeciesInstance();
 				if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
-					reactantIsGene = true;
+					reactionWithGenes = true;
 				else if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm()))
-					reactantIsRNA = true;
+					reactionWithRNAs = true;
 			}
 
 			// is at least one modifier a gene or rna?
 			for (ModifierSpeciesReference msr : reaction.getListOfModifiers()){
 				if (SBO.isGeneOrGeneCodingRegion(msr.getSpeciesInstance().getSBOTerm())) {
-					modifierIsGene = true;
+					reactionWithGenes = true;
 					break;
 				}
 				if (SBO.isRNA(msr.getSpeciesInstance().getSBOTerm())||SBO.isMessengerRNA(msr.getSpeciesInstance().getSBOTerm())) {
-					modifierIsRNA = true;
+					reactionWithRNAs = true;
 					break;
 				}
 			}
@@ -467,7 +466,7 @@ public class KineticLawGenerator {
 
 						// throw exception if false reaction occurs
 						if (SBO.isTranslation(reaction.getSBOTerm())
-								&& !(reactantIsRNA||modifierIsRNA))
+								&& !reactionWithRNAs)
 							throw new RateLawNotApplicableException("Reaction "
 									+ reaction.getId()
 									+ " must be a transcription.");
@@ -495,7 +494,7 @@ public class KineticLawGenerator {
 					// throw exception if false reaction occurs
 
 					if (SBO.isTranscription(reaction.getSBOTerm())
-							&& !(reactantIsGene||modifierIsGene))
+							&& !reactionWithGenes)
 						throw new RateLawNotApplicableException("Reaction "
 								+ reaction.getId() + " must be a translation.");
 
@@ -523,18 +522,18 @@ public class KineticLawGenerator {
 				 */
 				types.add((Kinetics.CONVENIENCE_KINETICS));
 
-			if (reactantIsGene||modifierIsGene) {
+			if (reactionWithGenes) {
 				types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 				if (types.contains((Kinetics.GENERALIZED_MASS_ACTION)))
 					types.remove((Kinetics.GENERALIZED_MASS_ACTION));
 			} else if (types.contains((Kinetics.GENERALIZED_MASS_ACTION))
 					&& reaction.getReversible())
 				types.add((Kinetics.ZEROTH_ORDER_REVERSE_MA));
-			if (!(reactantIsGene||modifierIsGene)
+			if (!reactionWithGenes
 					&& SBO.isTranscription(reaction.getSBOTerm()))
 				throw new RateLawNotApplicableException("Reaction "
 						+ reaction.getId() + " must not be a transcription.");
-			if (!(reactantIsRNA||modifierIsRNA) && SBO.isTranslation(reaction.getSBOTerm()))
+			if (!reactionWithRNAs && SBO.isTranslation(reaction.getSBOTerm()))
 				throw new RateLawNotApplicableException("Reaction "
 						+ reaction.getId() + " must not be a translation.");
 
@@ -542,7 +541,7 @@ public class KineticLawGenerator {
 			if ((transActiv.size() == 0) && (transInhib.size() == 0)
 					&& (activators.size() == 0) && (enzymes.size() == 0)
 					&& (nonEnzymeCatalyzers.size() == 0)) {
-				if (reactantIsGene||modifierIsGene) {
+				if (reactionWithGenes) {
 					types = new HashSet<Kinetics>();
 					types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 					types.add((Kinetics.HILL_EQUATION));
@@ -746,14 +745,14 @@ public class KineticLawGenerator {
 					throw new RateLawNotApplicableException("Reaction "
 							+ reaction.getId() + " must be a transcription.");
 			} else {
-				boolean reactionWithRNA = false;
+				boolean reactionWithRNAs = false;
 				for (int i = 0; i < reaction.getNumReactants(); i++) {
 					Species species = reaction.getReactant(i)
 							.getSpeciesInstance();
 					if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm()))
-						reactionWithRNA = true;
+						reactionWithRNAs = true;
 				}
-				if (reactionWithRNA) {
+				if (reactionWithRNAs) {
 					boolean translation = false;
 					for (int i = 0; i < reaction.getNumProducts(); i++) {
 						Species species = reaction.getProduct(i)
