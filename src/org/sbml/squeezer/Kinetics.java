@@ -80,7 +80,15 @@ public enum Kinetics {
 	/**
 	 * An additive model equation
 	 */
-	ADDITIVE_KINETIC;
+	ADDITIVE_KINETIC,
+	/**
+	 * A special additive model equation (Vohradský, J. 2001 and Vu, T. T. & Vohradský, J. 2007)
+	 */
+	ADDITIVE_KINETIC1,
+	/**
+	 * A special additive model equation (Weaver, D.; Workman, C. & Stormo, G. 1999)
+	 */
+	ADDITIVE_KINETIC2;
 
 	/**
 	 * <ol>
@@ -126,6 +134,10 @@ public enum Kinetics {
 			return "S-System based kinetic";
 		case ADDITIVE_KINETIC:
 			return "An additive model equation";
+		case ADDITIVE_KINETIC1:
+			return "A special additive model equation (Vohradský 2001 and Vu & Vohradský 2007)";
+		case ADDITIVE_KINETIC2:
+			return "A special additive model equation (Weaver, Workman & Stormo 1999)";
 		default: // TODO: default?
 			return "Generalized mass-action";
 		}
@@ -146,6 +158,12 @@ public enum Kinetics {
 			return GENERALIZED_MASS_ACTION;
 		else if (className.equals("GRNSSystemEquation"))
 			return SSYSTEM_KINETIC;
+		else if (className.equals("GRNSAdditivModel"))
+			return ADDITIVE_KINETIC;
+		else if (className.equals("GRNSAdditivModel_1"))
+			return ADDITIVE_KINETIC1;
+		else if (className.equals("GRNSAdditivModel_2"))
+			return ADDITIVE_KINETIC2;
 		else if (className.equals("HillEquation"))
 			return HILL_EQUATION;
 		else if (className.equals("IrrevCompetNonCooperativeEnzymes"))

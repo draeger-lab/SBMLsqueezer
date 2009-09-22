@@ -52,6 +52,8 @@ import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel;
+import org.sbml.squeezer.kinetics.GRNAdditiveModel_1;
+import org.sbml.squeezer.kinetics.GRNAdditiveModel_2;
 import org.sbml.squeezer.kinetics.GRNSSystemEquation;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillEquation;
@@ -217,6 +219,12 @@ public class KineticLawGenerator {
 		case ADDITIVE_KINETIC:
 			kineticLaw = new GRNAdditiveModel(reaction);
 			break;
+		case ADDITIVE_KINETIC1:
+			kineticLaw = new GRNAdditiveModel_1(reaction);
+			break;
+		case ADDITIVE_KINETIC2:
+			kineticLaw = new GRNAdditiveModel_2(reaction);
+			break;
 		default:
 			kineticLaw = new GeneralizedMassAction(reaction);
 			break;
@@ -317,6 +325,12 @@ public class KineticLawGenerator {
 		
 		if (GRNAdditiveModel.isApplicable(reaction))
 			types.add(Kinetics.ADDITIVE_KINETIC);
+		
+		if (GRNAdditiveModel_1.isApplicable(reaction))
+			types.add(Kinetics.ADDITIVE_KINETIC1);
+		
+		if (GRNAdditiveModel_2.isApplicable(reaction))
+			types.add(Kinetics.ADDITIVE_KINETIC2);
 
 		if (reaction.getNumReactants() == 0
 				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
@@ -417,6 +431,8 @@ public class KineticLawGenerator {
 						if (reaction.getNumProducts() > 0) {
 							types.add(Kinetics.SSYSTEM_KINETIC);
 							types.add(Kinetics.ADDITIVE_KINETIC);
+							types.add(Kinetics.ADDITIVE_KINETIC1);
+							types.add(Kinetics.ADDITIVE_KINETIC2);
 						}
 							
 
@@ -432,6 +448,8 @@ public class KineticLawGenerator {
 						if (reaction.getNumProducts() > 0){
 							types.add(Kinetics.SSYSTEM_KINETIC);
 							types.add(Kinetics.ADDITIVE_KINETIC);
+							types.add(Kinetics.ADDITIVE_KINETIC1);
+							types.add(Kinetics.ADDITIVE_KINETIC2);
 						}
 					}
 					if (!nonEnzyme
@@ -500,6 +518,8 @@ public class KineticLawGenerator {
 					if (reaction.getNumProducts() > 0){
 						types.add(Kinetics.SSYSTEM_KINETIC);
 						types.add(Kinetics.ADDITIVE_KINETIC);
+						types.add(Kinetics.ADDITIVE_KINETIC1);
+						types.add(Kinetics.ADDITIVE_KINETIC2);
 					}
 				} /*
 					 * else if (types.contains((Kinetics.HILL_EQUATION)))
