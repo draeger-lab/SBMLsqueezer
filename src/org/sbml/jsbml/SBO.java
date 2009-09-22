@@ -414,7 +414,7 @@ public class SBO {
 	public static boolean isMessengerRNA(int sboTerm) {
 		return isChildOf(sboTerm, 278);
 	}
-
+	
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -543,6 +543,15 @@ public class SBO {
 	 */
 	public static boolean isRNA(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("RNA"));
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isRNAOrMessengerRNA(int sboTerm) {
+		return (isChildOf(sboTerm, 278)||isChildOf(sboTerm, convertAlias2SBO("RNA")));
 	}
 
 	/**

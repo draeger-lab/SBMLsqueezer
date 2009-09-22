@@ -112,9 +112,8 @@ public class HillEquation extends BasicKineticLaw implements GeneRegulatoryKinet
 						"Wrong activation in reaction "
 								+ reaction.getId()
 								+ ". Only transcriptional modification is allowed here.");
-			else if ((SBO.isMessengerRNA(reaction.getReactant(0)
-					.getSpeciesInstance().getSBOTerm()) || SBO.isRNA(reaction
-					.getReactant(0).getSpeciesInstance().getSBOTerm()))
+			else if (SBO.isRNAOrMessengerRNA(reaction.getReactant(0)
+					.getSpeciesInstance().getSBOTerm())
 					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
 							.isTranscriptionalInhibitor(modifier.getSBOTerm())))
 				throw new ModificationException("Wrong activation in reaction "
