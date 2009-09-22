@@ -21,18 +21,14 @@ package org.sbml.squeezer.kinetics;
 import java.util.IllegalFormatException;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates an equation based on an additive model as defined in the paper
- * "Modeling regulatory networks with weight matrices" of Weaver, D.; Workman, C. & Stormo, G. 1999
- * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  *
  */
-public class GRNAdditiveModel_2 extends GRNAdditiveModel {
+public class GRNAdditiveModel_NGlinear extends GRNAdditiveModel {
 
 	/**
 	 * @param parentReaction
@@ -40,31 +36,21 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel {
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public GRNAdditiveModel_2(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+	public GRNAdditiveModel_NGlinear(Reaction parentReaction,
+			Object... typeParameters) throws RateLawNotApplicableException,
+			IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
 	
-	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b){
-		String rId = getParentSBMLObject().getId();
-		Parameter pa = createOrGetParameter("a_", rId);
-		ASTNode pnode_a = new ASTNode(pa, this);
-		Parameter pb = createOrGetParameter("b_", rId);
-		ASTNode pnode_b = new ASTNode(pb, this);
-		ASTNode node = ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(
-				ASTNode.sum(ASTNode.times(new ASTNode(-1,this),pnode_a,ASTNode.sum(w,v,b)),pnode_b))));
-		return node;
-	}
-	
-	ASTNode function_v(){
-		return null;
-	}
-	
-	ASTNode function_l(){
+	ASTNode m_i(){
 		return null;
 	}
 	
 	ASTNode b_i(){
+		return null;
+	}
+	
+	ASTNode function_l(){
 		return null;
 	}
 
