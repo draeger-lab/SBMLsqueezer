@@ -48,7 +48,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
-public class ConvenienceIndependent extends Convenience {
+public class ConvenienceIndependent extends Convenience implements
+		UniUniKinetics, BiUniKinetics, ArbitraryEnzymeKinetics {
 
 	/**
 	 * 

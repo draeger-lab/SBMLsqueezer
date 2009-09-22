@@ -40,7 +40,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
-public class GeneralizedMassAction extends BasicKineticLaw {
+public class GeneralizedMassAction extends BasicKineticLaw implements NonEnzymeKinetics {
 
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO

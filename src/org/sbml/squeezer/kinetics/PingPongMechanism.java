@@ -39,7 +39,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @date Aug 1, 2007
  */
-public class PingPongMechanism extends GeneralizedMassAction {
+public class PingPongMechanism extends GeneralizedMassAction implements BiBiKinetics {
 
 	/**
 	 * @param parentReaction

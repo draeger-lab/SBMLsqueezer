@@ -47,13 +47,16 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:michael@diegrauezelle.de">Michael Ziller</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
- * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Motsou Wouamba</a>
+ * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Motsou
+ *         Wouamba</a>
  * @date Aug 1, 2007
  */
-public class Convenience extends GeneralizedMassAction {
+public class Convenience extends GeneralizedMassAction implements
+		UniUniKinetics, BiUniKinetics, ArbitraryEnzymeKinetics {
 
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO
@@ -81,9 +84,10 @@ public class Convenience extends GeneralizedMassAction {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 * (java.util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,

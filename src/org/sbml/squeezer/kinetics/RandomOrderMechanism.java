@@ -40,7 +40,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @date Aug 1, 2007
  */
-public class RandomOrderMechanism extends GeneralizedMassAction {
+public class RandomOrderMechanism extends GeneralizedMassAction implements
+		BiUniKinetics, BiBiKinetics {
 
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO
@@ -54,8 +55,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction {
 	 * @throws IllegalFormatException
 	 */
 	public RandomOrderMechanism(Reaction parentReaction)
-			throws RateLawNotApplicableException, 
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 

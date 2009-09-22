@@ -34,7 +34,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @date Feb 8, 2008
  **/
-public class ZerothOrderReverseGMAK extends GeneralizedMassAction {
+public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements NonEnzymeKinetics {
 
 	/**
 	 * @param parentReaction

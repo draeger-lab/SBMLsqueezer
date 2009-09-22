@@ -37,7 +37,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-09-21
  */
-public class MultiplicativeSaturable extends ReversiblePowerLaw {
+public class MultiplicativeSaturable extends ReversiblePowerLaw implements
+		UniUniKinetics, BiUniKinetics, ArbitraryEnzymeKinetics {
 
 	/**
 	 * @param parentReaction
@@ -101,7 +102,8 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw {
 					.getStoichiometry(), this), new ASTNode(hr, this)));
 			if (term.isUnknown())
 				term = curr;
-			else term.multiplyWith(curr);
+			else
+				term.multiplyWith(curr);
 		}
 		return term;
 	}
