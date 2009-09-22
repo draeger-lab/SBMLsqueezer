@@ -104,7 +104,7 @@ public class HillEquation extends BasicKineticLaw implements GeneRegulatoryKinet
 		Reaction reaction = getParentSBMLObject();
 
 		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
-			if (SBO.isGene(reaction.getReactant(0).getSpeciesInstance()
+			if (SBO.isGeneOrGeneCodingRegion(reaction.getReactant(0).getSpeciesInstance()
 					.getSBOTerm())
 					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
 							.isTranslationalInhibitor(modifier.getSBOTerm())))
@@ -140,7 +140,7 @@ public class HillEquation extends BasicKineticLaw implements GeneRegulatoryKinet
 			Species reactant = reaction.getReactant(reactantNum)
 					.getSpeciesInstance();
 			ASTNode gene;
-			if (!SBO.isGene(reactant.getSBOTerm())) {
+			if (!SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm())) {
 				gene = new ASTNode(reactant, this);
 				if (reaction.getReactant(reactantNum).getStoichiometry() != 1f) {
 					gene.raiseByThePowerOf(reaction.getReactant(reactantNum)

@@ -25,6 +25,11 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
+ * 
+ * This class creates an equation based on an linear additive model as defined in the paper
+ * "The NetGenerator Algorithm: Reconstruction of Gene Regulatory Networks"
+ * of Töpfer, S.; Guthke, R.; Driesch, D.; Wötzel, D. & Pfaff 2007
+ * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  *
  */
