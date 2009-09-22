@@ -68,7 +68,7 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements Ge
 					.getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 			if ((SBO.isProtein(modifierspec.getSBOTerm())
-					|| (SBO.isMessengerRNA(modifierspec.getSBOTerm())||SBO.isRNA(modifierspec.getSBOTerm())))&&!product.equals(modifierspec)) {
+					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm()))&&!product.equals(modifierspec)) {
 				if (!modifier.isSetSBOTerm())modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);

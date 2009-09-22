@@ -175,7 +175,7 @@ public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulator
 			for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
 				Species modifier = r.getModifier(modifierNum)
 						.getSpeciesInstance();
-				if (SBO.isRNA(modifier.getSBOTerm())||SBO.isMessengerRNA(modifier.getSBOTerm())) {
+				if (SBO.isRNAOrMessengerRNA(modifier.getSBOTerm())) {
 //					System.out.println("Modifier " + modifier
 //							+ " ist eine RNA! SBOTerm: "
 //							+ modifier.getSBOTerm());

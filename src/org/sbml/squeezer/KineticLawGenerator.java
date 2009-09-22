@@ -372,7 +372,7 @@ public class KineticLawGenerator {
 				Species species = reaction.getReactant(i).getSpeciesInstance();
 				if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
 					reactionWithGenes = true;
-				else if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm()))
+				else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm()))
 					reactionWithRNAs = true;
 			}
 
@@ -382,7 +382,7 @@ public class KineticLawGenerator {
 					reactionWithGenes = true;
 					break;
 				}
-				if (SBO.isRNA(msr.getSpeciesInstance().getSBOTerm())||SBO.isMessengerRNA(msr.getSpeciesInstance().getSBOTerm())) {
+				if (SBO.isRNAOrMessengerRNA(msr.getSpeciesInstance().getSBOTerm())) {
 					reactionWithRNAs = true;
 					break;
 				}
@@ -444,13 +444,10 @@ public class KineticLawGenerator {
 					Species species = reaction.getReactant(0)
 							.getSpeciesInstance();					
 					if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
-							|| (SBO.isEmptySet(species.getSBOTerm()) && (SBO
-									.isRNA(reaction.getProduct(0)
+							|| (SBO.isEmptySet(species.getSBOTerm()) 
+									&& (SBO.isRNAOrMessengerRNA(reaction.getProduct(0)
 											.getSpeciesInstance().getSBOTerm())
-									|| SBO.isMessengerRNA(reaction
-											.getProduct(0).getSpeciesInstance()
-											.getSBOTerm()) || SBO
-									.isProtein(reaction.getProduct(0)
+									|| SBO.isProtein(reaction.getProduct(0)
 											.getSpeciesInstance().getSBOTerm())))) {						
 						setBoundaryCondition(species, true);
 						types.add(Kinetics.HILL_EQUATION);
@@ -471,7 +468,7 @@ public class KineticLawGenerator {
 									+ reaction.getId()
 									+ " must be a transcription.");
 
-					} else if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm())) {
+					} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm())) {
 						types.add(Kinetics.HILL_EQUATION);
 						if (reaction.getNumProducts() > 0){
 							types.add(Kinetics.SSYSTEM_KINETIC);
@@ -621,7 +618,7 @@ public class KineticLawGenerator {
 									+ reaction.getId()
 									+ " must be a transcription.");
 						whichkin = Kinetics.HILL_EQUATION;
-					} else if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm())) {
+					} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm())) {
 						whichkin = Kinetics.HILL_EQUATION;
 						if (SBO.isTranscription(reaction.getSBOTerm()))
 							throw new RateLawNotApplicableException("Reaction "
@@ -665,16 +662,16 @@ public class KineticLawGenerator {
 								.getSpeciesInstance().getSBOTerm())
 								&& (SBO.isProtein(reaction.getProduct(0)
 										.getSpeciesInstance().getSBOTerm()) || SBO
-										.isRNA(reaction.getProduct(0)
+										.isRNAOrMessengerRNA(reaction.getProduct(0)
 												.getSpeciesInstance()
-												.getSBOTerm())|| SBO.isMessengerRNA(reaction.getProduct(0).getSpeciesInstance().getSBOTerm()))) {
+												.getSBOTerm()))) {
 							whichkin = Kinetics.HILL_EQUATION;
 						} else {
 							Species species = specref.getSpeciesInstance();
 							if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 								setBoundaryCondition(species, true);
 								whichkin = Kinetics.HILL_EQUATION;
-							} else if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm()))
+							} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm()))
 								whichkin = Kinetics.HILL_EQUATION;
 							else
 								whichkin = Kinetics.GENERALIZED_MASS_ACTION;
@@ -696,7 +693,7 @@ public class KineticLawGenerator {
 						if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 							setBoundaryCondition(species, true);
 							whichkin = Kinetics.HILL_EQUATION;
-						} else if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm()))
+						} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm()))
 							whichkin = Kinetics.HILL_EQUATION;
 						else
 							whichkin = Kinetics.valueOf(settings.get(
