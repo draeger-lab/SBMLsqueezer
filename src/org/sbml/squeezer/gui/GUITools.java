@@ -155,6 +155,7 @@ public class GUITools {
 	 * @param color
 	 */
 	public static void setAllBackground(Container c, Color color) {
+		c.setBackground(color);
 		Component children[] = c.getComponents();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof Container)

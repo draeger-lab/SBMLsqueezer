@@ -34,7 +34,7 @@ public enum CfgKeys {
 	 * Standard directory where SBML or Text files can be saved.
 	 */
 	SAVE_DIR,
-	
+
 	/**
 	 * Possible values are:
 	 * <ul>
@@ -45,24 +45,24 @@ public enum CfgKeys {
 	 */
 	KINETICS_UNI_UNI_TYPE,
 	/**
-	 *            Possible values are:
-	 *            <ul>
-	 *            <li>1 = generalized mass-action kinetics</li>
-	 *            <li>2 = Convenience kinetics</li>
-	 *            <li>4 = Random Order Michealis Menten kinetics</li>
-	 *            <li>6 = Ordered</li>
-	 *            </ul>
+	 * Possible values are:
+	 * <ul>
+	 * <li>1 = generalized mass-action kinetics</li>
+	 * <li>2 = Convenience kinetics</li>
+	 * <li>4 = Random Order Michealis Menten kinetics</li>
+	 * <li>6 = Ordered</li>
+	 * </ul>
 	 */
 	KINETICS_BI_UNI_TYPE,
 	/**
-	 *            Possible values are:
-	 *            <ul>
-	 *            <li>1 = generalized mass-action kinetics</li>
-	 *            <li>2 = Convenience kinetics</li>
-	 *            <li>4 = Random Order Michealis Menten kinetics</li>
-	 *            <li>5 = Ping-Pong</li>
-	 *            <li>6 = Ordered</li>
-	 *            </ul>
+	 * Possible values are:
+	 * <ul>
+	 * <li>1 = generalized mass-action kinetics</li>
+	 * <li>2 = Convenience kinetics</li>
+	 * <li>4 = Random Order Michealis Menten kinetics</li>
+	 * <li>5 = Ping-Pong</li>
+	 * <li>6 = Ordered</li>
+	 * </ul>
 	 */
 	KINETICS_BI_BI_TYPE,
 	/**
@@ -78,14 +78,19 @@ public enum CfgKeys {
 	 */
 	KINETICS_OTHER_ENZYME_REACTIONS,
 	/**
-	 * If true, all reactions within the network are considered enzyme reactions. If 
-	 * false, an explicit enzymatic catalyst must be assigned to a reaction to obtain
-	 * this status.
+	 * One of the following values: cat, hal or weg (important for
+	 * Liebermeister's standard kinetics).
+	 */
+	TYPE_STANDARD_VERSION,
+	/**
+	 * If true, all reactions within the network are considered enzyme
+	 * reactions. If false, an explicit enzymatic catalyst must be assigned to a
+	 * reaction to obtain this status.
 	 */
 	OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 	/**
-	 * If true a new rate law will be created for each reaction irrespective of whether
-	 * there is already a rate law assigned to this reaction or not.
+	 * If true a new rate law will be created for each reaction irrespective of
+	 * whether there is already a rate law assigned to this reaction or not.
 	 */
 	OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
 	/**
@@ -98,7 +103,7 @@ public enum CfgKeys {
 	 * Property that decides whether to set all reactions to reversible before
 	 * creating new kinetic equations.
 	 */
-	OPT_TREAT_ALL_REACTIONS_REVERSIBLE, 
+	OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 	/**
 	 * The maximal number of reactants so that the reaction is still considered
 	 * plausible.
@@ -141,24 +146,15 @@ public enum CfgKeys {
 	 */
 	POSSIBLE_ENZYME_SIMPLE_MOLECULE,
 	/*
-	 *            A list which contains the names of all species that are
-	 *            accepted to act as enzymes during a reaction. Valid are the
-	 *            following entries (upper and lower case is ignored):
-	 *            <ul>
-	 *            <li>ANTISENSE_RNA</li>
-	 *            <li>SIMPLE_MOLECULE</li>
-	 *            <li>RECEPTOR</li>
-	 *            <li>UNKNOWN</li>
-	 *            <li>COMPLEX</li>
-	 *            <li>TRUNCATED</li>
-	 *            <li>GENERIC</li>
-	 *            <li>RNA</li>
-	 *            </ul>
-	 *            Not allowed entries like <li>Phenotype</li> <li>Gene</li> <li>
-	 *            IonChannel</li> <li>Ion</li> </ul> will be filtered out of the
-	 *            list.
+	 * A list which contains the names of all species that are accepted to act
+	 * as enzymes during a reaction. Valid are the following entries (upper and
+	 * lower case is ignored): <ul> <li>ANTISENSE_RNA</li>
+	 * <li>SIMPLE_MOLECULE</li> <li>RECEPTOR</li> <li>UNKNOWN</li>
+	 * <li>COMPLEX</li> <li>TRUNCATED</li> <li>GENERIC</li> <li>RNA</li> </ul>
+	 * Not allowed entries like <li>Phenotype</li> <li>Gene</li> <li>
+	 * IonChannel</li> <li>Ion</li> </ul> will be filtered out of the list.
 	 */
-	
+
 	/**
 	 * Standard directory where LaTeX files can be stored.
 	 */
@@ -172,8 +168,8 @@ public enum CfgKeys {
 	 */
 	LATEX_FONT_SIZE,
 	/**
-	 * Key that decides whether or not identifiers should be written in typewriter font
-	 * when these occur in mathematical equations.
+	 * Key that decides whether or not identifiers should be written in
+	 * typewriter font when these occur in mathematical equations.
 	 */
 	LATEX_IDS_IN_TYPEWRITER_FONT,
 	/**
@@ -181,12 +177,13 @@ public enum CfgKeys {
 	 */
 	LATEX_LANDSCAPE,
 	/**
-	 * Decides whether to create a separate title page instead of a simple heading.
+	 * Decides whether to create a separate title page instead of a simple
+	 * heading.
 	 */
 	LATEX_TITLE_PAGE,
 	/**
-	 * Decides whether to write the names or the identifiers of NamedSBase object
-	 * in equations.
+	 * Decides whether to write the names or the identifiers of NamedSBase
+	 * object in equations.
 	 */
 	LATEX_NAMES_IN_EQUATIONS
 }

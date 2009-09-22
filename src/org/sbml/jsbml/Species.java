@@ -364,12 +364,28 @@ public class Species extends Symbol {
 		this.speciesType.parentSBMLObject = this;
 		stateChanged();
 	}
+	
+	/**
+	 * 
+	 * @param unit
+	 */
+	public void setSubstanceUnits(Unit unit) {
+		super.setUnits(unit);
+	}
+	
+	/**
+	 * 
+	 * @param unitKind
+	 */
+	public void setSubstanceUnits(Unit.Kind unitKind) {
+		super.setUnits(unitKind);
+	}
 
 	/**
 	 * 
 	 * @param units
 	 */
 	public void setSubstanceUnits(UnitDefinition units) {
-		setUnits(units);
+		super.setUnits(units);
 	}
 }

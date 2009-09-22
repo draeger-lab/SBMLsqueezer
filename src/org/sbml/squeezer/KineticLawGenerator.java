@@ -49,8 +49,11 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.CommonSaturable;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
+import org.sbml.squeezer.kinetics.DirectSaturable;
+import org.sbml.squeezer.kinetics.ForceDependent;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel_1;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel_2;
@@ -62,6 +65,7 @@ import org.sbml.squeezer.kinetics.HillEquation;
 import org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes;
 import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
 import org.sbml.squeezer.kinetics.MichaelisMenten;
+import org.sbml.squeezer.kinetics.MultiplicativeSaturable;
 import org.sbml.squeezer.kinetics.OrderedMechanism;
 import org.sbml.squeezer.kinetics.PingPongMechanism;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
@@ -77,7 +81,8 @@ import org.sbml.squeezer.math.GaussianRank;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
@@ -177,67 +182,59 @@ public class KineticLawGenerator {
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null)
 			reaction = r;
-		BasicKineticLaw kineticLaw;
 		reaction.setReversible(reversibility || reaction.getReversible());
 		switch (kinetic) {
 		case COMPETETIVE_NON_EXCLUSIVE_INHIB:
-			kineticLaw = new IrrevCompetNonCooperativeEnzymes(reaction);
-			break;
+			return new IrrevCompetNonCooperativeEnzymes(reaction);
 		case ZEROTH_ORDER_REVERSE_MA:
-			kineticLaw = new ZerothOrderReverseGMAK(reaction);
-			break;
+			return new ZerothOrderReverseGMAK(reaction);
 		case ZEROTH_ORDER_FORWARD_MA:
-			kineticLaw = new ZerothOrderForwardGMAK(reaction);
-			break;
+			return new ZerothOrderForwardGMAK(reaction);
 		case IRREV_NON_MODULATED_ENZYME_KIN:
-			kineticLaw = new IrrevNonModulatedNonInteractingEnzymes(reaction);
-			break;
+			return new IrrevNonModulatedNonInteractingEnzymes(reaction);
 		case HILL_EQUATION:
-			kineticLaw = new HillEquation(reaction);
-			break;
+			return new HillEquation(reaction);
 		case ORDERED_MECHANISM:
-			kineticLaw = new OrderedMechanism(reaction);
-			break;
+			return new OrderedMechanism(reaction);
 		case PING_PONG_MECAHNISM:
-			kineticLaw = new PingPongMechanism(reaction);
-			break;
+			return new PingPongMechanism(reaction);
 		case RANDOM_ORDER_MECHANISM:
-			kineticLaw = new RandomOrderMechanism(reaction);
-			break;
+			return new RandomOrderMechanism(reaction);
 		case MICHAELIS_MENTEN:
-			kineticLaw = new MichaelisMenten(reaction);
-			break;
+			return new MichaelisMenten(reaction);
 		case CONVENIENCE_KINETICS:
-			kineticLaw = hasFullColumnRank(modelOrig) ? new Convenience(
-					reaction) : new ConvenienceIndependent(reaction);
-			break;
+			return hasFullColumnRank(modelOrig) ? new Convenience(reaction)
+					: new ConvenienceIndependent(reaction);
 		case REVERSIBLE_POWER_LAW:
-			kineticLaw = new ReversiblePowerLaw(reaction,
-					ReversiblePowerLaw.Type.WEG);
-			break;
+			return new ReversiblePowerLaw(reaction, settings
+					.get(CfgKeys.TYPE_STANDARD_VERSION));
+		case COMMON_SATURABLE:
+			return new CommonSaturable(reaction, settings
+					.get(CfgKeys.TYPE_STANDARD_VERSION));
+		case DIRECT_SATURABLE:
+			return new DirectSaturable(reaction, settings
+					.get(CfgKeys.TYPE_STANDARD_VERSION));
+		case MULTIPLICATIVE_SATURABLE:
+			return new MultiplicativeSaturable(reaction, settings
+					.get(CfgKeys.TYPE_STANDARD_VERSION));
+		case FORCE_DEPENDENT:
+			return new ForceDependent(reaction, settings
+					.get(CfgKeys.TYPE_STANDARD_VERSION));
 		case SSYSTEM_KINETIC:
-			kineticLaw = new GRNSSystemEquation(reaction);
-			break;
+			return new GRNSSystemEquation(reaction);
 		case ADDITIVE_KINETIC:
-			kineticLaw = new GRNAdditiveModel(reaction);
-			break;
+			return new GRNAdditiveModel(reaction);
 		case ADDITIVE_KINETIC1:
-			kineticLaw = new GRNAdditiveModel_1(reaction);
-			break;
+			return new GRNAdditiveModel_1(reaction);
 		case ADDITIVE_KINETIC2:
-			kineticLaw = new GRNAdditiveModel_2(reaction);
-			break;
+			return new GRNAdditiveModel_2(reaction);
 		case ADDITIVE_KINETIC_NGlinear:
-			kineticLaw = new GRNAdditiveModel_NGlinear(reaction);
-			break;
+			return new GRNAdditiveModel_NGlinear(reaction);
 		case ADDITIVE_KINETIC_NGnonlinear:
-			kineticLaw = new GRNAdditiveModel_NGnonlinear(reaction);
-			break;
+			return new GRNAdditiveModel_NGnonlinear(reaction);
 		default:
-			kineticLaw = new GeneralizedMassAction(reaction);
-			break;
+			return new GeneralizedMassAction(reaction);
 		}
-		return kineticLaw;
 	}
 
 	/**
@@ -423,6 +420,13 @@ public class KineticLawGenerator {
 			/*
 			 * Assign possible rate laws.
 			 */
+			if (!nonEnzyme) {
+				types.add(Kinetics.REVERSIBLE_POWER_LAW);
+				types.add(Kinetics.COMMON_SATURABLE);
+				types.add(Kinetics.MULTIPLICATIVE_SATURABLE);
+				types.add(Kinetics.DIRECT_SATURABLE);
+				types.add(Kinetics.FORCE_DEPENDENT);
+			}
 
 			// Enzym-Kinetics
 			if (!reaction.getReversible() && !nonEnzyme && stoichiometryIntLeft) {
@@ -547,9 +551,9 @@ public class KineticLawGenerator {
 						types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
 					}
 				} /*
-					 * else if (types.contains((Kinetics.HILL_EQUATION)))
-					 * types.remove((Kinetics.HILL_EQUATION));
-					 */
+				 * else if (types.contains((Kinetics.HILL_EQUATION)))
+				 * types.remove((Kinetics.HILL_EQUATION));
+				 */
 			} else if (types.contains(Kinetics.HILL_EQUATION)
 					&& types.contains(Kinetics.ZEROTH_ORDER_FORWARD_MA)
 					&& !reaction.getReversible())

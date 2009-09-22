@@ -74,6 +74,22 @@ public enum Kinetics {
 	 */
 	REVERSIBLE_POWER_LAW,
 	/**
+	 * Liebermeister's common saturable rate law.
+	 */
+	COMMON_SATURABLE,
+	/**
+	 * Liebermeister's multiplicative saturable rate law.
+	 */
+	MULTIPLICATIVE_SATURABLE,
+	/**
+	 * Liebermeister's direct saturable rate law.
+	 */
+	DIRECT_SATURABLE,
+	/**
+	 * Liebermeister's force-dependent rate law.
+	 */
+	FORCE_DEPENDENT,
+	/**
 	 * S-System based equation
 	 */
 	SSYSTEM_KINETIC,
@@ -140,6 +156,14 @@ public enum Kinetics {
 			return "Reversible power law";
 		case SSYSTEM_KINETIC:
 			return "S-System based kinetic";
+		case COMMON_SATURABLE:
+			return "Common saturable rate law";
+		case DIRECT_SATURABLE:
+			return "Direct saturable rate law";
+		case FORCE_DEPENDENT:
+			return "Force dependent rate law";
+		case MULTIPLICATIVE_SATURABLE:
+			return "Multiplicative saturable rate law";
 		case ADDITIVE_KINETIC:
 			return "An additive model equation";
 		case ADDITIVE_KINETIC1:
@@ -163,7 +187,7 @@ public enum Kinetics {
 	public static Kinetics getTypeForName(String className) {
 		if (!className.startsWith("org.sbml.squeezer.kinetics."))
 			return null;
-		className = className.substring(27);
+		className = className.substring(className.lastIndexOf('.') + 1);
 		if (className.startsWith("Convenience"))
 			return CONVENIENCE_KINETICS;
 		else if (className.equals("GeneralizedMassAction"))
@@ -197,7 +221,15 @@ public enum Kinetics {
 		else if (className.equals("ZerothOrderForwardGMAK"))
 			return ZEROTH_ORDER_FORWARD_MA;
 		else if (className.equals("ZerothOrderReverseGMAK"))
-			return Kinetics.ZEROTH_ORDER_REVERSE_MA;
+			return ZEROTH_ORDER_REVERSE_MA;
+		else if (className.equals("CommonSaturable"))
+			return COMMON_SATURABLE;
+		else if (className.equals("MultiplicativeSaturable"))
+			return MULTIPLICATIVE_SATURABLE;
+		else if (className.equals("DirectSaturable"))
+			return DIRECT_SATURABLE;
+		else if (className.equals("ForceDependent"))
+			return FORCE_DEPENDENT;
 		return null;
 	}
 }

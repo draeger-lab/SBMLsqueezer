@@ -75,7 +75,7 @@ public class Compartment extends Symbol {
 	public Compartment clone() {
 		return new Compartment(this);
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -99,7 +99,6 @@ public class Compartment extends Symbol {
 		}
 		return false;
 	}
-
 	/**
 	 * 
 	 * @return
@@ -107,7 +106,6 @@ public class Compartment extends Symbol {
 	public String getCompartmentType() {
 		return isSetCompartmentType() ? compartmentType.getId() : "";
 	}
-
 	/**
 	 * 
 	 * @return
@@ -257,5 +255,29 @@ public class Compartment extends Symbol {
 		else
 			throw new IllegalArgumentException(
 					"Spatial dimensions must be between [0, 3].");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#setUnits(org.sbml.jsbml.Unit)
+	 */
+	public void setUnits(Unit unit) {
+		super.setUnits(unit);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#setUnits(org.sbml.jsbml.Unit.Kind)
+	 */
+	public void setUnits(Unit.Kind unitKind) {
+		super.setUnits(unitKind);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#setUnits(org.sbml.jsbml.UnitDefinition)
+	 */
+	public void setUnits(UnitDefinition units) {
+		super.setUnits(units);
 	}
 }

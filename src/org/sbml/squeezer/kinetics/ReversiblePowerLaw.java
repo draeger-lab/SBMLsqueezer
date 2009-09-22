@@ -41,22 +41,14 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  */
 public class ReversiblePowerLaw extends BasicKineticLaw {
 
-	public static enum Type {
-		/**
-		 * 
-		 */
-		CAT,
-		/**
-		 * 
-		 */
-		HAL,
-		/**
-		 * 
-		 */
-		WEG
-	}
-
-	private Type type;
+	/**
+	 * <ol>
+	 * <li>cat</li>
+	 * <li>hal</li>
+	 * <li>weg</li>
+	 * </ol>
+	 */
+	private short type;
 
 	/**
 	 * 
@@ -84,10 +76,10 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
+		int i;
 		Reaction r = getParentSBMLObject();
 		unsetSBOTerm();
-		int i;
-		ASTNode numerator = null, activation = null, inhibition = null;
+		ASTNode activation = null, inhibition = null;
 		for (String acti : modActi) {
 			ModifierSpeciesReference msr = null;
 			for (i = 0; i < r.getNumModifiers() && msr == null; i++)
@@ -96,7 +88,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 			Parameter kA = createOrGetParameter("ka_", r.getId(), underscore,
 					msr.getSpecies());
 			kA.setSBOTerm(363);
-			kA.setUnits(new Unit(-3, Unit.Kind.MOLE, getLevel(), getVersion()));
+			kA.setUnits(mM());
 			ASTNode curr = ASTNode.frac(this, msr.getSpeciesInstance(), kA);
 			curr.divideBy(ASTNode.sum(new ASTNode(1, this), curr.clone()));
 			if (SBO.isEssentialActivator(msr.getSBOTerm())) {
@@ -122,18 +114,11 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 			for (i = 0; i < r.getNumModifiers() && msr == null; i++)
 				if (r.getModifier(i).getSpecies().equals(inhib))
 					msr = r.getModifier(i);
-			if (SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
-				if (inhibition == null) {
-					// TODO
-				} else {
-					// TODO
-				}
-			} else /* if (SBO.isNonCompetetiveInhibitor(msr.getSBOTerm())) */{
+			if (SBO.isNonCompetetiveInhibitor(msr.getSBOTerm())) {
 				Parameter kI = createOrGetParameter("ki_", r.getId(),
 						underscore, msr.getSpecies());
 				kI.setSBOTerm(261);
-				kI.setUnits(new Unit(-3, Unit.Kind.MOLE, getLevel(),
-						getVersion()));
+				kI.setUnits(mM());
 				ASTNode curr = ASTNode.frac(new ASTNode(1, this), ASTNode.sum(
 						new ASTNode(1, this), ASTNode.frac(this, msr
 								.getSpeciesInstance(), kI)));
@@ -143,20 +128,31 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 					inhibition.multiplyWith(curr);
 			}
 		}
-		type = Type.valueOf(getTypeParameters()[0].toString());
-		switch (type) {
-		case CAT:
-			numerator = cat(r);
-			break;
-		case HAL:
-			numerator = hal(r);
-			break;
-		default: // WEG
-			numerator = weg(r);
-			break;
+		type = Short.parseShort(getTypeParameters()[0].toString());
+		ASTNode numerator[] = new ASTNode[Math.max(1, modE.size())];
+		for (i = 0; i < numerator.length; i++) {
+			switch (type) {
+			case 0: // CAT
+				numerator[i] = cat(r, modE.size());
+				break;
+			case 1: // HAL
+				numerator[i] = hal(r, modE.size());
+				break;
+			default: // WEG
+				numerator[i] = weg(r, modE.size());
+				break;
+			}
+			numerator[i].divideBy(denominator(r));
+			if (i < modE.size()) {
+				ModifierSpeciesReference enzyme = null;
+				for (int j = 0; j < r.getNumModifiers() && enzyme == null; j++)
+					if (r.getModifier(j).getSpecies().equals(modE.get(j)))
+						enzyme = r.getModifier(j);
+				numerator[i] = ASTNode.times(new ASTNode(enzyme
+						.getSpeciesInstance(), this), numerator[i]);
+			}
 		}
-		return ASTNode.times(activation, inhibition, numerator
-				.divideBy(denominator(r)));
+		return ASTNode.times(activation, inhibition, ASTNode.sum(numerator));
 	}
 
 	/**
@@ -166,25 +162,51 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 	 * @return
 	 */
 	ASTNode denominator(Reaction r) {
-		return new ASTNode(1, this);
+		ASTNode denominator = new ASTNode(1, this);
+		ASTNode competInhib = competetiveInhibitionSummand(r);
+		return competInhib.isUnknown() ? denominator : denominator
+				.plus(competInhib);
+	}
+
+	/**
+	 * Creates the summand for competetive inhibition in the denominator.
+	 * 
+	 * @param r
+	 * @return
+	 */
+	ASTNode competetiveInhibitionSummand(Reaction r) {
+		ASTNode inhib = new ASTNode(this);
+		for (ModifierSpeciesReference msr : r.getListOfModifiers())
+			if (SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
+				Parameter kI = createOrGetParameter("ki_", r.getId(),
+						underscore, msr.getSpecies());
+				kI.setSBOTerm(261);
+				kI.setUnits(mM());
+				ASTNode curr = ASTNode.frac(this, msr.getSpeciesInstance(), kI);
+				if (inhib.isUnknown())
+					inhib = curr;
+				else
+					inhib.plus(curr);
+			}
+		return inhib;
 	}
 
 	/**
 	 * Weg version of the numerator
 	 * 
+	 * @param numEnzymes
+	 * 
 	 * @param listOfReactants
 	 * @param listOfProducts
 	 * @return
 	 */
-	ASTNode weg(Reaction r) {
-		Parameter kV = createOrGetParameter("kV_", r.getId());
-		kV.setName(concat("KV value for reaction ", r.getId()).toString());
-		kV.setUnits(new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion()));
-		ASTNode numerator = new ASTNode(kV, this);
+	private ASTNode weg(Reaction r, int numEnzymes) {
+		ASTNode numerator = new ASTNode(
+				velocityConstant(r.getId(), numEnzymes), this);
 		Parameter hr = createOrGetParameter("h_", r.getId());
 		hr.setSBOTerm(193);
 		hr.setUnits(Unit.Kind.DIMENSIONLESS);
-		Parameter R = createOrGetParameter("R");
+		Parameter R = createOrGetGlobalParameter("R");
 		R.setValue(8.31447215);
 		R.setName("ideal gas constant");
 		UnitDefinition ud = new UnitDefinition("J_per_K_and_mole",
@@ -196,7 +218,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 				.getVersion()));
 		r.getModel().addUnitDefinition(ud);
 		R.setUnits(ud);
-		Parameter T = createOrGetParameter("T");
+		Parameter T = createOrGetGlobalParameter("T");
 		T.setSBOTerm(147);
 		T.setValue(298.15);
 		T.setUnits(Unit.Kind.KELVIN);
@@ -208,6 +230,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 				.addUnit(new Unit(3, Unit.Kind.JOULE, getLevel(), getVersion()));
 		kJperMole.addUnit(new Unit(Unit.Kind.MOLE, getLevel(), getVersion()));
 		r.getModel().addUnitDefinition(kJperMole);
+		Parameter mu;
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			ASTNode curr = new ASTNode(specRef.getSpeciesInstance(), this);
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(hr, this),
@@ -216,8 +239,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 				forward = curr;
 			else
 				forward.multiplyWith(curr);
-			Parameter mu = createOrGetGlobalParameter("mu0_", specRef
-					.getSpecies());
+			mu = createOrGetGlobalParameter("mu0_", specRef.getSpecies());
 			mu.setName("standard chemical potential");
 			mu.setSBOTerm(463);
 			mu.setUnits(kJperMole);
@@ -238,8 +260,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 				else
 					backward.multiplyWith(curr);
 			}
-			Parameter mu = createOrGetGlobalParameter("mu0_", specRef
-					.getSpecies());
+			mu = createOrGetGlobalParameter("mu0_", specRef.getSpecies());
 			mu.setName("standard chemical potential");
 			mu.setSBOTerm(463);
 			mu.setUnits(kJperMole);
@@ -270,42 +291,72 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 	/**
 	 * Hal version of the numerator
 	 * 
+	 * @param numEnzymes
+	 * 
 	 * @param listOfReactants
 	 * @param listOfProducts
 	 * @return
 	 */
-	ASTNode hal(Reaction r) {
-		Parameter kVr = createOrGetParameter("kv_", r.getId());
-		kVr.setName(concat("KV value of reaction ", r.getId()).toString());
-		kVr.setUnits(new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion()));
-		ASTNode numerator = new ASTNode(kVr, this);
-		Parameter keq = createOrGetParameter("keq_", r.getId());
-		keq.setSBOTerm(281);
-		keq.setName(concat("equilibrium constant of reaction ", r.getId())
-				.toString());
-		// TODO: set unit to mM^x! What is x?
+	private ASTNode hal(Reaction r, int numEnzymes) {
+		ASTNode numerator = new ASTNode(
+				velocityConstant(r.getId(), numEnzymes), this);
 		Parameter hr = createOrGetParameter("h_", r.getId());
 		hr.setSBOTerm(193);
 		hr.setName("Hill coefficient");
 		hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		Parameter keq = createOrGetParameter("keq_", r.getId());
+		keq.setSBOTerm(281);
+		keq.setName(concat("equilibrium constant of reaction ", r.getId())
+				.toString());
 		ASTNode forward = ASTNode.sqrt(ASTNode.pow(new ASTNode(keq, this),
 				new ASTNode(hr, this)));
-		for (SpeciesReference specRef : r.getListOfReactants())
+		double x = 0;
+		for (SpeciesReference specRef : r.getListOfReactants()) {
 			forward.multiplyWith(ASTNode.pow(new ASTNode(specRef
 					.getSpeciesInstance(), this), ASTNode.times(new ASTNode(
 					specRef.getStoichiometry(), this), new ASTNode(hr, this))));
+			x += specRef.getStoichiometry();
+		}
 		numerator.multiplyWith(forward);
 		if (r.getReversible()) {
 			ASTNode backward = ASTNode.frac(1, ASTNode.sqrt(ASTNode.pow(this,
 					keq, hr)));
-			for (SpeciesReference specRef : r.getListOfProducts())
+			for (SpeciesReference specRef : r.getListOfProducts()) {
 				backward.multiplyWith(ASTNode.pow(new ASTNode(specRef
 						.getSpeciesInstance(), this), ASTNode.times(
 						new ASTNode(specRef.getStoichiometry(), this),
 						new ASTNode(hr, this))));
+				x -= specRef.getStoichiometry();
+			}
 			numerator.minus(backward);
 		}
+		keq.setUnits(mM((int) x));
 		return numerator.divideBy(createRoot(r));
+	}
+
+	/**
+	 * Creates and annotates the velocity constant for the reaction with the
+	 * given id and the number of enzymes.
+	 * 
+	 * @param id
+	 * @param numEnzymes
+	 * @return
+	 */
+	private Parameter velocityConstant(String id, int numEnzymes) {
+		Parameter kVr;
+		if (numEnzymes > 0) {
+			kVr = createOrGetParameter("kv_", id);
+			kVr.setName(concat("KV value of reaction ", id).toString());
+			kVr.setUnits(new Unit(Unit.Kind.SECOND, -1, getLevel(),
+					getVersion()));
+		} else {
+			kVr = createOrGetParameter("vmax_geom_", id);
+			kVr.setName(concat(
+					"limiting maximal velocity, geometric mean of reaction ",
+					id).toString());
+			kVr.setUnits(mMperSecond());
+		}
+		return kVr;
 	}
 
 	/**
@@ -315,21 +366,22 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 	 * @return
 	 */
 	private ASTNode createRoot(Reaction r) {
-		ASTNode root = null;
+		ASTNode root = null, exponent = null, curr = null;
+		Parameter kM = null;
+		Parameter hr = createOrGetParameter("h_", r.getId());
+		hr.setSBOTerm(193);
+		hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		for (SpeciesReference specRef : r.getListOfReactants()) {
-			Parameter kM = createOrGetParameter("kM_", r.getId(), underscore,
-					specRef.getSpecies());
+			kM = createOrGetParameter("kM_", r.getId(), underscore, specRef
+					.getSpecies());
 			kM.setSBOTerm(27);
 			kM.setName(concat("Michaelis constant of species ",
 					specRef.getSpecies(), " in reaction ", r.getId())
 					.toString());
-			Parameter hr = createOrGetParameter("h_", r.getId());
-			hr.setSBOTerm(193);
-			hr.setUnits(Unit.Kind.DIMENSIONLESS);
-			// TODO
-			ASTNode exponent = ASTNode.times(new ASTNode(hr, this),
-					new ASTNode(specRef.getStoichiometry(), this));
-			ASTNode curr = ASTNode.pow(new ASTNode(kM, this), exponent);
+			kM.setUnits(mM());
+			exponent = new ASTNode(specRef.getStoichiometry(), this);
+			curr = ASTNode
+					.pow(new ASTNode(kM, this), exponent.multiplyWith(hr));
 			if (root == null)
 				root = curr;
 			else
@@ -337,19 +389,16 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 		}
 		if (r.getReversible()) {
 			for (SpeciesReference specRef : r.getListOfProducts()) {
-				Parameter mriminus = createOrGetParameter("m_bwd_", r.getId(),
-						underscore, specRef.getSpecies());
-				mriminus.setSBOTerm(382);
-				mriminus.setName("structure coefficient");
-				Parameter kM = createOrGetParameter("kM_", r.getId(),
-						underscore, specRef.getSpecies());
-				ASTNode exponent = new ASTNode(mriminus, this);
-				Parameter mriplus = createOrGetParameter("m_fwd_", r.getId(),
-						underscore, specRef.getSpecies());
-				mriplus.setSBOTerm(382);
-				mriplus.setName("structure coefficient");
-				ASTNode curr = ASTNode.pow(new ASTNode(kM, this), exponent
-						.plus(mriplus));
+				kM = createOrGetParameter("kM_", r.getId(), underscore, specRef
+						.getSpecies());
+				kM.setSBOTerm(27);
+				kM.setUnits(mM());
+				kM.setName(concat("Michaelis constant of species ",
+						specRef.getSpecies(), " in reaction ", r.getId())
+						.toString());
+				exponent = new ASTNode(specRef.getStoichiometry(), this);
+				curr = ASTNode.pow(new ASTNode(kM, this), exponent
+						.multiplyWith(hr));
 				if (root == null)
 					root = curr;
 				else
@@ -362,14 +411,16 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 	/**
 	 * Cat version of the numerator
 	 * 
+	 * @param numEnzymes
+	 * 
 	 * @param listOfReactants
 	 * @param listOfProducts
 	 * @return
 	 */
-	private ASTNode cat(Reaction r) {
-		ASTNode forward = cat(r, true);
+	private ASTNode cat(Reaction r, int numEnzymes) {
+		ASTNode forward = cat(r, numEnzymes, true);
 		if (r.getReversible())
-			forward.minus(cat(r, false));
+			forward.minus(cat(r, numEnzymes, false));
 		return forward;
 	}
 
@@ -378,27 +429,38 @@ public class ReversiblePowerLaw extends BasicKineticLaw {
 	 * equation.
 	 * 
 	 * @param r
-	 * @param forwardOrBackward
+	 * @param numEnzymes
+	 * @param forward
 	 * @return
 	 */
-	private ASTNode cat(Reaction r, boolean forwardOrBackward) {
-		Parameter kr = createOrGetParameter("kcat_", forwardOrBackward ? "fwd"
-				: "bwd", underscore, r.getId());
-		kr.setSBOTerm(forwardOrBackward ? 320 : 321);
+	private ASTNode cat(Reaction r, int numEnzymes, boolean forward) {
+		Parameter kr;
+		if (numEnzymes > 0) {
+			kr = createOrGetParameter("kcat_", forward ? "fwd" : "bwd",
+					underscore, r.getId());
+			kr.setSBOTerm(forward ? 320 : 321);
+			kr
+					.setUnits(new Unit(Unit.Kind.SECOND, -1, getLevel(),
+							getVersion()));
+		} else {
+			kr = createOrGetParameter("vmax_", forward ? "fwd" : "bwd",
+					underscore, r.getId());
+			kr.setSBOTerm(forward ? 324 : 325);
+			kr.setUnits(mMperSecond());
+		}
 		ASTNode rate = new ASTNode(kr, this);
+		Parameter hr = createOrGetParameter("h_", r.getId());
+		hr.setSBOTerm(193);
+		hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			Parameter kMrSi = createOrGetParameter("km_", r.getId(),
 					underscore, specRef.getSpecies());
 			kMrSi.setSBOTerm(27);
-			Parameter mriPM = createOrGetParameter("m_",
-					forwardOrBackward ? "fwd" : "bwd", underscore, r.getId(),
-					underscore, specRef.getSpecies());
-			mriPM.setSBOTerm(382);
-			mriPM.setName("structure coefficient");
+			kMrSi.setUnits(mM());
 			rate.multiplyWith(ASTNode.pow(ASTNode.frac(this, specRef
-					.getSpeciesInstance(), kMrSi), new ASTNode(mriPM, this)));
+					.getSpeciesInstance(), kMrSi), ASTNode.times(new ASTNode(
+					specRef.getStoichiometry(), this), new ASTNode(hr, this))));
 		}
 		return rate;
 	}
-
 }

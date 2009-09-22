@@ -43,7 +43,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *         Dr&auml;ger</a>
  * @date Aug 7, 2007
  */
-public class HillEquation extends BasicKineticLaw {
+public class HillEquation extends BasicKineticLaw implements GeneRegulatoryKinetics {
 
 	/**
 	 * 
