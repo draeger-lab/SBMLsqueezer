@@ -319,6 +319,24 @@ public class SBO {
 	public static boolean isGene(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("GENE"));
 	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return true if the sboTerm stands for a gene coding region, false otherwise
+	 */
+	public static boolean isGeneCodingRegion(int sboTerm) {
+		return isChildOf(sboTerm, 335);
+	}
+	
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return true if the sboTerm stands for a gene coding region or a gene, false otherwise
+	 */
+	public static boolean isGeneOrGeneCodingRegion(int sboTerm) {
+		return (isChildOf(sboTerm, 335)||isChildOf(sboTerm, convertAlias2SBO("GENE")));
+	}
 
 	/**
 	 * 

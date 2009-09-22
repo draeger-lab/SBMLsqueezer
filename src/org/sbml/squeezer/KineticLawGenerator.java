@@ -370,7 +370,7 @@ public class KineticLawGenerator {
 					stoichiometryIntLeft = false;
 				// Transcription or translation?
 				Species species = reaction.getReactant(i).getSpeciesInstance();
-				if (SBO.isGene(species.getSBOTerm()))
+				if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
 					reactionWithGenes = true;
 				else if (SBO.isRNA(species.getSBOTerm()))
 					reactionWithRNA = true;
@@ -378,7 +378,7 @@ public class KineticLawGenerator {
 
 			// is at least one modifier a gene?
 			for (ModifierSpeciesReference msr : reaction.getListOfModifiers()){
-				if (SBO.isGene(msr.getSpeciesInstance().getSBOTerm())) {
+				if (SBO.isGeneOrGeneCodingRegion(msr.getSpeciesInstance().getSBOTerm())) {
 					reactionWithGenes = true;
 					break;
 				}
@@ -443,7 +443,7 @@ public class KineticLawGenerator {
 					// Uni-Uni: MMK/ConvenienceIndependent (1E/1P)
 					Species species = reaction.getReactant(0)
 							.getSpeciesInstance();
-					if (SBO.isGene(species.getSBOTerm())
+					if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
 							|| (SBO.isEmptySet(species.getSBOTerm()) && (SBO
 									.isRNA(reaction.getProduct(0)
 											.getSpeciesInstance().getSBOTerm()) || SBO
@@ -611,7 +611,7 @@ public class KineticLawGenerator {
 				if (stoichiometryRight == 1d) {
 					// Uni-Uni: MMK/ConvenienceIndependent (1E/1P)
 					Species species = specref.getSpeciesInstance();
-					if (SBO.isGene(species.getSBOTerm())) {
+					if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 						setBoundaryCondition(species, true);
 						if (SBO.isTranslation(reaction.getSBOTerm()))
 							throw new RateLawNotApplicableException("Reaction "
@@ -668,7 +668,7 @@ public class KineticLawGenerator {
 							whichkin = Kinetics.HILL_EQUATION;
 						} else {
 							Species species = specref.getSpeciesInstance();
-							if (SBO.isGene(species.getSBOTerm())) {
+							if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 								setBoundaryCondition(species, true);
 								whichkin = Kinetics.HILL_EQUATION;
 							} else if (SBO.isRNA(species.getSBOTerm()))
@@ -690,7 +690,7 @@ public class KineticLawGenerator {
 						// MMK/ConvenienceIndependent
 						// (1E/1P)
 						Species species = specref.getSpeciesInstance();
-						if (SBO.isGene(species.getSBOTerm())) {
+						if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 							setBoundaryCondition(species, true);
 							whichkin = Kinetics.HILL_EQUATION;
 						} else if (SBO.isRNA(species.getSBOTerm()))
@@ -727,7 +727,7 @@ public class KineticLawGenerator {
 			boolean reactionWithGenes = false;
 			for (int i = 0; i < reaction.getNumReactants(); i++) {
 				Species species = reaction.getReactant(i).getSpeciesInstance();
-				if (SBO.isGene(species.getSBOTerm()))
+				if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
 					reactionWithGenes = true;
 			}
 			if (reactionWithGenes) {
@@ -1303,12 +1303,12 @@ public class KineticLawGenerator {
 		// set the BoundaryCondition to true for Genes if not set anyway:
 		for (i = 0; i < reaction.getNumReactants(); i++) {
 			Species species = reaction.getReactant(i).getSpeciesInstance();
-			if (SBO.isGene(species.getSBOTerm()))
+			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
 				setBoundaryCondition(species, true);
 		}
 		for (i = 0; i < reaction.getNumProducts(); i++) {
 			Species species = reaction.getProduct(i).getSpeciesInstance();
-			if (SBO.isGene(species.getSBOTerm()))
+			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
 				setBoundaryCondition(species, true);
 		}
 		storeParamters(reaction);
