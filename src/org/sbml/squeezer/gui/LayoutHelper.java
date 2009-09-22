@@ -23,6 +23,8 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.JRadioButton;
+
 /**
  * TODO
  * 
@@ -87,6 +89,7 @@ public class LayoutHelper {
 
 	private Container cont;
 	private GridBagLayout gbl;
+	private int row;
 
 	/**
 	 * 
@@ -97,6 +100,7 @@ public class LayoutHelper {
 		this.cont = cont;
 		this.gbl = gbl;
 		this.cont.setLayout(this.gbl);
+		this.row = 0;
 	}
 
 	/**
@@ -108,6 +112,7 @@ public class LayoutHelper {
 		this.cont = cont;
 		this.gbl = new GridBagLayout();
 		this.cont.setLayout(gbl);
+		this.row = 0;
 	}
 
 	/**
@@ -124,6 +129,7 @@ public class LayoutHelper {
 			double weightx, double weighty) {
 		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height,
 				weightx, weighty);
+		row = y;
 	}
 
 	/**
@@ -142,6 +148,7 @@ public class LayoutHelper {
 			double weightx, double weighty, int ipadx, int ipady) {
 		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height, weightx,
 				weighty, ipadx, ipady);
+		row = y;
 	}
 
 	/**
@@ -150,6 +157,14 @@ public class LayoutHelper {
 	 */
 	public Container getContainer() {
 		return this.cont;
+	}
+
+	/**
+	 * adds this component in the next row.
+	 * @param c
+	 */
+	public void add(Component c) {
+		add(c, 0, ++row, 1, 1, 1, 1);
 	}
 
 }
