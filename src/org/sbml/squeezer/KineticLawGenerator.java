@@ -360,7 +360,8 @@ public class KineticLawGenerator {
 
 			double stoichiometryLeft = 0d, stoichiometryRight = 0d, stoichiometry;
 			boolean stoichiometryIntLeft = true;
-			boolean reactionWithGenes = false, reactionWithRNA = false;
+			boolean reactantIsRNA = false, modifierIsRNA = false;
+			boolean reactantIsGene = false, modifierIsGene = false;
 
 			// compute stoichiometric properties
 			for (i = 0; i < reaction.getNumReactants(); i++) {
@@ -371,19 +372,19 @@ public class KineticLawGenerator {
 				// Transcription or translation?
 				Species species = reaction.getReactant(i).getSpeciesInstance();
 				if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
-					reactionWithGenes = true;
+					reactantIsGene = true;
 				else if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm()))
-					reactionWithRNA = true;
+					reactantIsRNA = true;
 			}
 
 			// is at least one modifier a gene or rna?
 			for (ModifierSpeciesReference msr : reaction.getListOfModifiers()){
 				if (SBO.isGeneOrGeneCodingRegion(msr.getSpeciesInstance().getSBOTerm())) {
-					reactionWithGenes = true;
+					modifierIsGene = true;
 					break;
 				}
 				if (SBO.isRNA(msr.getSpeciesInstance().getSBOTerm())||SBO.isMessengerRNA(msr.getSpeciesInstance().getSBOTerm())) {
-					reactionWithRNA = true;
+					modifierIsRNA = true;
 					break;
 				}
 			}
@@ -466,7 +467,7 @@ public class KineticLawGenerator {
 
 						// throw exception if false reaction occurs
 						if (SBO.isTranslation(reaction.getSBOTerm())
-								&& reactionWithGenes)
+								&& !(reactantIsRNA||modifierIsRNA))
 							throw new RateLawNotApplicableException("Reaction "
 									+ reaction.getId()
 									+ " must be a transcription.");
@@ -494,7 +495,7 @@ public class KineticLawGenerator {
 					// throw exception if false reaction occurs
 
 					if (SBO.isTranscription(reaction.getSBOTerm())
-							&& reactionWithRNA)
+							&& !(reactantIsGene||modifierIsGene))
 						throw new RateLawNotApplicableException("Reaction "
 								+ reaction.getId() + " must be a translation.");
 
@@ -522,18 +523,18 @@ public class KineticLawGenerator {
 				 */
 				types.add((Kinetics.CONVENIENCE_KINETICS));
 
-			if (reactionWithGenes) {
+			if (reactantIsGene||modifierIsGene) {
 				types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 				if (types.contains((Kinetics.GENERALIZED_MASS_ACTION)))
 					types.remove((Kinetics.GENERALIZED_MASS_ACTION));
 			} else if (types.contains((Kinetics.GENERALIZED_MASS_ACTION))
 					&& reaction.getReversible())
 				types.add((Kinetics.ZEROTH_ORDER_REVERSE_MA));
-			if (!reactionWithGenes
+			if (!(reactantIsGene||modifierIsGene)
 					&& SBO.isTranscription(reaction.getSBOTerm()))
 				throw new RateLawNotApplicableException("Reaction "
 						+ reaction.getId() + " must not be a transcription.");
-			if (!reactionWithRNA && SBO.isTranslation(reaction.getSBOTerm()))
+			if (!(reactantIsRNA||modifierIsRNA) && SBO.isTranslation(reaction.getSBOTerm()))
 				throw new RateLawNotApplicableException("Reaction "
 						+ reaction.getId() + " must not be a translation.");
 
@@ -541,7 +542,7 @@ public class KineticLawGenerator {
 			if ((transActiv.size() == 0) && (transInhib.size() == 0)
 					&& (activators.size() == 0) && (enzymes.size() == 0)
 					&& (nonEnzymeCatalyzers.size() == 0)) {
-				if (reactionWithGenes) {
+				if (reactantIsGene||modifierIsGene) {
 					types = new HashSet<Kinetics>();
 					types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 					types.add((Kinetics.HILL_EQUATION));
