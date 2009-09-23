@@ -187,7 +187,7 @@ public interface SBMLWriter {
 	 * @return
 	 * @throws SBMLException 
 	 */
-	public Object writeEventAssignment(EventAssignment eventAssignment) throws SBMLException;
+	public Object writeEventAssignment(EventAssignment eventAssignment, Object...args) throws SBMLException;
 
 	/**
 	 * 
@@ -227,14 +227,14 @@ public interface SBMLWriter {
 	 * @return
 	 */
 	public Object writeModifierSpeciesReference(
-			ModifierSpeciesReference modifierSpeciesReference);
+			ModifierSpeciesReference modifierSpeciesReference, Object...args);
 
 	/**
 	 * 
 	 * @param parameter
 	 * @return
 	 */
-	public Object writeParameter(Parameter parameter);
+	public Object writeParameter(Parameter parameter,Object...args);
 
 	/**
 	 * 
@@ -249,7 +249,7 @@ public interface SBMLWriter {
 	 * @param rule
 	 * @return
 	 */
-	public Object writeRule(Rule rule);
+	public Object writeRule(Rule rule,Object...args);
 
 	/**
 	 * 
@@ -272,7 +272,7 @@ public interface SBMLWriter {
 	 * @param speciesReference
 	 * @return
 	 */
-	public Object writeSpeciesReference(SpeciesReference speciesReference);
+	public Object writeSpeciesReference(SpeciesReference speciesReference,Object...args);
 
 	/**
 	 * 
@@ -300,7 +300,7 @@ public interface SBMLWriter {
 	 * @param unit
 	 * @return
 	 */
-	public Object writeUnit(Unit unit);
+	public Object writeUnit(Unit unit,Object...args);
 
 	/**
 	 * 
