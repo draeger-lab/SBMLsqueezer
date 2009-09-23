@@ -425,8 +425,6 @@ public class KineticLawGenerator {
 
 		} else {
 
-			types.add(Kinetics.GENERALIZED_MASS_ACTION);
-
 			double stoichiometryLeft = 0d, stoichiometryRight = 0d, stoichiometry;
 			boolean stoichiometryIntLeft = true;
 			boolean reactionWithGenes = false, reactionWithRNAs = false;
@@ -491,8 +489,15 @@ public class KineticLawGenerator {
 			/*
 			 * Assign possible rate laws for arbitrary enzyme reations.
 			 */
-			if (!nonEnzyme)
-				for (String className : kinArbEnz)
+			if (!nonEnzyme) {
+				for (String className : kinArbEnz) {
+					if ((reaction.getReversible() && kinRev.contains(className))
+							|| (!reaction.getReversible() && kinIrrev
+									.contains(className)))
+						types.add(Kinetics.getTypeForName(className));
+				}
+			} else
+				for (String className : kinNonEnz)
 					types.add(Kinetics.getTypeForName(className));
 
 			// Enzym-Kinetics
