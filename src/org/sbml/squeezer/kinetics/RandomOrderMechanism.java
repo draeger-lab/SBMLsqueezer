@@ -41,7 +41,9 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date Aug 1, 2007
  */
 public class RandomOrderMechanism extends GeneralizedMassAction implements
-		BiUniKinetics, BiBiKinetics, ReversibleKinetics, IrreversibleKinetics {
+		InterfaceBiUniKinetics, InterfaceBiBiKinetics,
+		InterfaceReversibleKinetics, InterfaceIrreversibleKinetics,
+		InterfaceModulatedKinetics {
 
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO

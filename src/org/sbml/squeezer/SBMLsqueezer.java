@@ -85,9 +85,18 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	}
 
 	/**
+	 * The package where all kinetic equations are located.
+	 */
+	public static final String KINETICS_PACKAGE = "org.sbml.squeezer.kinetics";
+
+	/**
 	 * 
 	 */
-	public Set<Integer> possibleEnzymes;
+	private final static String configFile = "cfg/SBMLsqueezer.cfg";
+	/**
+	 * A serial version number.
+	 */
+	private static final long serialVersionUID = 4134514954192751545L;
 	/**
 	 * 
 	 */
@@ -95,18 +104,9 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 			.getProperty("user.home")
 			+ "/.SBMLsqueezer/SBMLsqueezer.cfg";
 	/**
-	 * 
-	 */
-	private final static String configFile = "cfg/SBMLsqueezer.cfg";
-	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.2.2";
-	/**
-	 * A serial version number.
-	 */
-	private static final long serialVersionUID = 4134514954192751545L;
-
 	/**
 	 * 
 	 * @return
@@ -288,6 +288,11 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	}
 
 	/**
+	 * 
+	 */
+	public Set<Integer> possibleEnzymes;
+
+	/**
 	 * Tells if SBMLsqueezer checked for an update after CellDesigner has been
 	 * run.
 	 */
@@ -371,6 +376,11 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 		}
 	}
 
+	public void currentNumber(int num) {
+		// TODO Auto-generated method stub
+
+	}
+
 	/**
 	 * 
 	 * @return
@@ -429,6 +439,11 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, initProperties());
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
+	}
+
+	public void totalNumber(int i) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**
@@ -503,15 +518,5 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 			if (plugin.getSelectedModel() != null)
 				new KineticLawSelectionDialog(null, settings, sbmlIO
 						.getSelectedModel());
-	}
-
-	public void currentNumber(int num) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void totalNumber(int i) {
-		// TODO Auto-generated method stub
-
 	}
 }

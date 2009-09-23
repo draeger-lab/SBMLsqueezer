@@ -22,8 +22,8 @@ package org.sbml.squeezer.kinetics;
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * @date 2009-09-22
+ * @date 2009-09-23
  */
-public interface BiUniKinetics {
+public interface InterfaceModulatedKinetics {
 
 }

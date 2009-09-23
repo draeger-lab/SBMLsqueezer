@@ -40,7 +40,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date Aug 1, 2007
  */
 public class PingPongMechanism extends GeneralizedMassAction implements
-		BiBiKinetics, ReversibleKinetics, IrreversibleKinetics {
+		InterfaceBiBiKinetics, InterfaceReversibleKinetics,
+		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
 	 * @param parentReaction

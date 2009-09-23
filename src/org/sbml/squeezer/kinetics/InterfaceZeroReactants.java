@@ -19,11 +19,12 @@
 package org.sbml.squeezer.kinetics;
 
 /**
+ * Kinetics that allow for an empty list of reactants.
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * @date 2009-09-23 
+ * @date 2009-09-23
  */
-public interface ReversibleKinetics {
+public interface InterfaceZeroReactants {
 
 }

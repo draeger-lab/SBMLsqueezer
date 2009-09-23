@@ -35,7 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  *
  */
-public class GRNAdditiveModel extends BasicKineticLaw implements GeneRegulatoryKinetics {
+public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRegulatoryKinetics {
 
 	/**
 	 * @param parentReaction

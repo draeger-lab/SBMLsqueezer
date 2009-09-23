@@ -24,6 +24,6 @@ package org.sbml.squeezer.kinetics;
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-09-22
  */
-public interface GeneRegulatoryKinetics {
+public interface InterfaceUniUniKinetics {
 
 }

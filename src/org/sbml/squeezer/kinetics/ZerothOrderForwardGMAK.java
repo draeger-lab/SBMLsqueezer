@@ -36,7 +36,9 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date Feb 8, 2008
  **/
 public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
-		NonEnzymeKinetics, ReversibleKinetics, IrreversibleKinetics {
+		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
+		InterfaceIrreversibleKinetics, InterfaceZeroReactants,
+		InterfaceZeroProducts, InterfaceModulatedKinetics {
 
 	/**
 	 * @param parentReaction

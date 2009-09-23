@@ -33,7 +33,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  */
 public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
-		implements IrreversibleKinetics {
+		implements InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
+		InterfaceUniUniKinetics {
 
 	private int numInhib;
 	private int numOfEnzymes;

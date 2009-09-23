@@ -19,6 +19,7 @@
 package org.sbml.squeezer;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +49,10 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
+import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
 import org.sbml.squeezer.kinetics.CommonSaturable;
 import org.sbml.squeezer.kinetics.Convenience;
 import org.sbml.squeezer.kinetics.ConvenienceIndependent;
@@ -60,19 +64,28 @@ import org.sbml.squeezer.kinetics.GRNAdditiveModel_2;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel_NGlinear;
 import org.sbml.squeezer.kinetics.GRNAdditiveModel_NGnonlinear;
 import org.sbml.squeezer.kinetics.GRNSSystemEquation;
+import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillEquation;
+import org.sbml.squeezer.kinetics.InterfaceModulatedKinetics;
+import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
+import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes;
 import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
+import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
 import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.MultiplicativeSaturable;
+import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
 import org.sbml.squeezer.kinetics.OrderedMechanism;
 import org.sbml.squeezer.kinetics.PingPongMechanism;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
+import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.ReversiblePowerLaw;
+import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
 import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 import org.sbml.squeezer.math.GaussianRank;
+import org.sbml.squeezer.rmi.Reflect;
 
 /**
  * This class identifies and generates the missing kinetic laws for a the
@@ -86,6 +99,64 @@ import org.sbml.squeezer.math.GaussianRank;
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
+
+	private static Set<String> kinBiBi;
+	private static Set<String> kinBiUni;
+	private static Set<String> kinGRN;
+	private static Set<String> kinNonEnz;
+	private static Set<String> kinArbEnz;
+	private static Set<String> kinUniUni;
+	private static Set<String> kinRev;
+	private static Set<String> kinIrrev;
+	private static Set<String> kinZeroReac;
+	private static Set<String> kinZeroProd;
+	private static Set<String> kinModulated;
+
+	static {
+		kinBiBi = new HashSet<String>();
+		kinBiUni = new HashSet<String>();
+		kinGRN = new HashSet<String>();
+		kinNonEnz = new HashSet<String>();
+		kinArbEnz = new HashSet<String>();
+		kinUniUni = new HashSet<String>();
+		kinRev = new HashSet<String>();
+		kinIrrev = new HashSet<String>();
+		kinZeroReac = new HashSet<String>();
+		kinZeroProd = new HashSet<String>();
+		kinModulated = new HashSet<String>();
+		Class<?> l[] = Reflect.getAllClassesInPackage(
+				SBMLsqueezer.KINETICS_PACKAGE, false, true,
+				BasicKineticLaw.class);
+		for (Class<?> c : l) {
+			if (!Modifier.isAbstract(c.getModifiers())) {
+				Set<Class<?>> s = new HashSet<Class<?>>();
+				for (Class<?> interf : c.getInterfaces())
+					s.add(interf);
+				if (s.contains(InterfaceIrreversibleKinetics.class))
+					kinIrrev.add(c.getCanonicalName());
+				if (s.contains(InterfaceReversibleKinetics.class))
+					kinRev.add(c.getCanonicalName());
+				if (s.contains(InterfaceUniUniKinetics.class))
+					kinUniUni.add(c.getCanonicalName());
+				if (s.contains(InterfaceBiUniKinetics.class))
+					kinBiUni.add(c.getCanonicalName());
+				if (s.contains(InterfaceBiBiKinetics.class))
+					kinBiBi.add(c.getCanonicalName());
+				if (s.contains(InterfaceArbitraryEnzymeKinetics.class))
+					kinArbEnz.add(c.getCanonicalName());
+				if (s.contains(InterfaceGeneRegulatoryKinetics.class))
+					kinGRN.add(c.getCanonicalName());
+				if (s.contains(InterfaceNonEnzymeKinetics.class))
+					kinNonEnz.add(c.getCanonicalName());
+				if (s.contains(InterfaceZeroReactants.class))
+					kinZeroReac.add(c.getCanonicalName());
+				if (s.contains(InterfaceZeroProducts.class))
+					kinZeroProd.add(c.getCanonicalName());
+				if (s.contains(InterfaceModulatedKinetics.class))
+					kinModulated.add(c.getCanonicalName());
+			}
+		}
+	}
 
 	/**
 	 * A hashtable that contains all settings of how to create kinetic
@@ -327,32 +398,30 @@ public class KineticLawGenerator {
 
 		if (GRNSSystemEquation.isApplicable(reaction))
 			types.add(Kinetics.SSYSTEM_KINETIC);
-		
+
 		if (GRNAdditiveModel.isApplicable(reaction))
 			types.add(Kinetics.ADDITIVE_KINETIC);
-		
+
 		if (GRNAdditiveModel_1.isApplicable(reaction))
 			types.add(Kinetics.ADDITIVE_KINETIC1);
-		
+
 		if (GRNAdditiveModel_2.isApplicable(reaction))
 			types.add(Kinetics.ADDITIVE_KINETIC2);
-		
+
 		if (GRNAdditiveModel_NGlinear.isApplicable(reaction))
 			types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
-		
+
 		if (GRNAdditiveModel_NGnonlinear.isApplicable(reaction))
 			types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
 
 		if (reaction.getNumReactants() == 0
 				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
-
-			types.add(Kinetics.ZEROTH_ORDER_FORWARD_MA);
-			types.add(Kinetics.ZEROTH_ORDER_REVERSE_MA);
-
-			/*
-			 * } else if (reaction.getNumReactants() == 0) { } else if
-			 * (reaction.getNumProducts() == 0) {
-			 */
+			for (String className : kinZeroReac)
+				types.add(Kinetics.getTypeForName(className));
+			for (String className : kinZeroProd) {
+				if (kinRev.contains(className))
+					types.add(Kinetics.getTypeForName(className));
+			}
 
 		} else {
 
@@ -376,13 +445,15 @@ public class KineticLawGenerator {
 					reactionWithRNAs = true;
 			}
 
-			// is at least one modifier a gene or rna?
-			for (ModifierSpeciesReference msr : reaction.getListOfModifiers()){
-				if (SBO.isGeneOrGeneCodingRegion(msr.getSpeciesInstance().getSBOTerm())) {
+			// is at least one modifier a gene or RNA?
+			for (ModifierSpeciesReference msr : reaction.getListOfModifiers()) {
+				if (SBO.isGeneOrGeneCodingRegion(msr.getSpeciesInstance()
+						.getSBOTerm())) {
 					reactionWithGenes = true;
 					break;
 				}
-				if (SBO.isRNAOrMessengerRNA(msr.getSpeciesInstance().getSBOTerm())) {
+				if (SBO.isRNAOrMessengerRNA(msr.getSpeciesInstance()
+						.getSBOTerm())) {
 					reactionWithRNAs = true;
 					break;
 				}
@@ -418,15 +489,11 @@ public class KineticLawGenerator {
 			boolean uniUniWithoutModulation = false;
 
 			/*
-			 * Assign possible rate laws.
+			 * Assign possible rate laws for arbitrary enzyme reations.
 			 */
-			if (!nonEnzyme) {
-				types.add(Kinetics.REVERSIBLE_POWER_LAW);
-				types.add(Kinetics.COMMON_SATURABLE);
-				types.add(Kinetics.MULTIPLICATIVE_SATURABLE);
-				types.add(Kinetics.DIRECT_SATURABLE);
-				types.add(Kinetics.FORCE_DEPENDENT);
-			}
+			if (!nonEnzyme)
+				for (String className : kinArbEnz)
+					types.add(Kinetics.getTypeForName(className));
 
 			// Enzym-Kinetics
 			if (!reaction.getReversible() && !nonEnzyme && stoichiometryIntLeft) {
@@ -442,13 +509,13 @@ public class KineticLawGenerator {
 				if (stoichiometryRight == 1d) {
 					// Uni-Uni: MMK/ConvenienceIndependent (1E/1P)
 					Species species = reaction.getReactant(0)
-							.getSpeciesInstance();					
+							.getSpeciesInstance();
 					if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
-							|| (SBO.isEmptySet(species.getSBOTerm()) 
-									&& (SBO.isRNAOrMessengerRNA(reaction.getProduct(0)
-											.getSpeciesInstance().getSBOTerm())
-									|| SBO.isProtein(reaction.getProduct(0)
-											.getSpeciesInstance().getSBOTerm())))) {						
+							|| (SBO.isEmptySet(species.getSBOTerm()) && (SBO
+									.isRNAOrMessengerRNA(reaction.getProduct(0)
+											.getSpeciesInstance().getSBOTerm()) || SBO
+									.isProtein(reaction.getProduct(0)
+											.getSpeciesInstance().getSBOTerm())))) {
 						setBoundaryCondition(species, true);
 						types.add(Kinetics.HILL_EQUATION);
 						if (reaction.getNumProducts() > 0) {
@@ -459,7 +526,6 @@ public class KineticLawGenerator {
 							types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
 							types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
 						}
-							
 
 						// throw exception if false reaction occurs
 						if (SBO.isTranslation(reaction.getSBOTerm())
@@ -470,7 +536,7 @@ public class KineticLawGenerator {
 
 					} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm())) {
 						types.add(Kinetics.HILL_EQUATION);
-						if (reaction.getNumProducts() > 0){
+						if (reaction.getNumProducts() > 0) {
 							types.add(Kinetics.SSYSTEM_KINETIC);
 							types.add(Kinetics.ADDITIVE_KINETIC);
 							types.add(Kinetics.ADDITIVE_KINETIC1);
@@ -542,7 +608,7 @@ public class KineticLawGenerator {
 					types = new HashSet<Kinetics>();
 					types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
 					types.add((Kinetics.HILL_EQUATION));
-					if (reaction.getNumProducts() > 0){
+					if (reaction.getNumProducts() > 0) {
 						types.add(Kinetics.SSYSTEM_KINETIC);
 						types.add(Kinetics.ADDITIVE_KINETIC);
 						types.add(Kinetics.ADDITIVE_KINETIC1);
@@ -662,16 +728,19 @@ public class KineticLawGenerator {
 								.getSpeciesInstance().getSBOTerm())
 								&& (SBO.isProtein(reaction.getProduct(0)
 										.getSpeciesInstance().getSBOTerm()) || SBO
-										.isRNAOrMessengerRNA(reaction.getProduct(0)
+										.isRNAOrMessengerRNA(reaction
+												.getProduct(0)
 												.getSpeciesInstance()
 												.getSBOTerm()))) {
 							whichkin = Kinetics.HILL_EQUATION;
 						} else {
 							Species species = specref.getSpeciesInstance();
-							if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
+							if (SBO.isGeneOrGeneCodingRegion(species
+									.getSBOTerm())) {
 								setBoundaryCondition(species, true);
 								whichkin = Kinetics.HILL_EQUATION;
-							} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm()))
+							} else if (SBO.isRNAOrMessengerRNA(species
+									.getSBOTerm()))
 								whichkin = Kinetics.HILL_EQUATION;
 							else
 								whichkin = Kinetics.GENERALIZED_MASS_ACTION;
@@ -693,7 +762,8 @@ public class KineticLawGenerator {
 						if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 							setBoundaryCondition(species, true);
 							whichkin = Kinetics.HILL_EQUATION;
-						} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm()))
+						} else if (SBO
+								.isRNAOrMessengerRNA(species.getSBOTerm()))
 							whichkin = Kinetics.HILL_EQUATION;
 						else
 							whichkin = Kinetics.valueOf(settings.get(
@@ -735,7 +805,8 @@ public class KineticLawGenerator {
 				for (int i = 0; i < reaction.getNumProducts(); i++) {
 					Species species = reaction.getProduct(i)
 							.getSpeciesInstance();
-					if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm()))
+					if (SBO.isRNA(species.getSBOTerm())
+							|| SBO.isMessengerRNA(species.getSBOTerm()))
 						transcription = true;
 				}
 				if (transcription && SBO.isTranslation(reaction.getSBOTerm()))
@@ -746,7 +817,8 @@ public class KineticLawGenerator {
 				for (int i = 0; i < reaction.getNumReactants(); i++) {
 					Species species = reaction.getReactant(i)
 							.getSpeciesInstance();
-					if (SBO.isRNA(species.getSBOTerm())||SBO.isMessengerRNA(species.getSBOTerm()))
+					if (SBO.isRNA(species.getSBOTerm())
+							|| SBO.isMessengerRNA(species.getSBOTerm()))
 						reactionWithRNAs = true;
 				}
 				if (reactionWithRNAs) {

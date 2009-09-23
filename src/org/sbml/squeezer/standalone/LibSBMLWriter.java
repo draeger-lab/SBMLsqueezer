@@ -1299,7 +1299,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 * org.sbml.jlibsbml.SBMLWriter#writeKineticLaw(org.sbml.jlibsbml.KineticLaw
 	 * )
 	 */
-	public org.sbml.libsbml.KineticLaw writeKineticLaw(KineticLaw kinteicLaw)
+	public org.sbml.libsbml.KineticLaw writeKineticLaw(KineticLaw kinteicLaw, Object... args)
 			throws SBMLException {
 		org.sbml.libsbml.KineticLaw k = new org.sbml.libsbml.KineticLaw(
 				kinteicLaw.getLevel(), kinteicLaw.getVersion());
