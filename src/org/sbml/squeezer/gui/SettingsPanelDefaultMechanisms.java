@@ -39,16 +39,17 @@ import javax.swing.border.TitledBorder;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.Kinetics;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.StringTools;
-import org.sbml.squeezer.kinetics.ArbitraryEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.kinetics.BiBiKinetics;
-import org.sbml.squeezer.kinetics.BiUniKinetics;
-import org.sbml.squeezer.kinetics.GeneRegulatoryKinetics;
-import org.sbml.squeezer.kinetics.IrreversibleKinetics;
-import org.sbml.squeezer.kinetics.NonEnzymeKinetics;
-import org.sbml.squeezer.kinetics.ReversibleKinetics;
-import org.sbml.squeezer.kinetics.UniUniKinetics;
+import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
+import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
+import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
+import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.rmi.Reflect;
 
 /**
@@ -66,7 +67,6 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	private static final long serialVersionUID = 243553812503691739L;
 	private Properties settings;
 	private List<ItemListener> itemListeners;
-	private static final String pckg = "org.sbml.squeezer.kinetics";
 	private static final Font titleFont = new Font("Dialog", Font.BOLD, 12);
 	private static final Color borderColor = new Color(51, 51, 51);
 
@@ -95,27 +95,28 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 		List<String> non = new LinkedList<String>();
 		List<String> arb = new LinkedList<String>();
 		List<String> uni = new LinkedList<String>();
-		Class<?> l[] = Reflect.getAllClassesInPackage(pckg, false, true,
+		Class<?> l[] = Reflect.getAllClassesInPackage(
+				SBMLsqueezer.KINETICS_PACKAGE, false, true,
 				BasicKineticLaw.class);
 		for (Class<?> c : l) {
 			if (!Modifier.isAbstract(c.getModifiers())) {
 				Set<Class<?>> s = new HashSet<Class<?>>();
 				for (Class<?> interf : c.getInterfaces())
 					s.add(interf);
-				if (s.contains(IrreversibleKinetics.class)
-						&& s.contains(ReversibleKinetics.class)) {
-					if (s.contains(UniUniKinetics.class))
+				if (s.contains(InterfaceIrreversibleKinetics.class)
+						&& s.contains(InterfaceReversibleKinetics.class)) {
+					if (s.contains(InterfaceUniUniKinetics.class))
 						uni.add(c.getCanonicalName());
-					if (s.contains(BiUniKinetics.class))
+					if (s.contains(InterfaceBiUniKinetics.class))
 						bun.add(c.getCanonicalName());
-					if (s.contains(BiBiKinetics.class))
+					if (s.contains(InterfaceBiBiKinetics.class))
 						bib.add(c.getCanonicalName());
-					if (s.contains(ArbitraryEnzymeKinetics.class))
+					if (s.contains(InterfaceArbitraryEnzymeKinetics.class))
 						arb.add(c.getCanonicalName());
 				}
-				if (s.contains(GeneRegulatoryKinetics.class))
+				if (s.contains(InterfaceGeneRegulatoryKinetics.class))
 					grn.add(c.getCanonicalName());
-				if (s.contains(NonEnzymeKinetics.class))
+				if (s.contains(InterfaceNonEnzymeKinetics.class))
 					non.add(c.getCanonicalName());
 			}
 		}
@@ -170,22 +171,22 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 		Class<?> interfaceClass;
 		switch (key) {
 		case KINETICS_BI_BI_TYPE:
-			interfaceClass = BiBiKinetics.class;
+			interfaceClass = InterfaceBiBiKinetics.class;
 			break;
 		case KINETICS_BI_UNI_TYPE:
-			interfaceClass = BiUniKinetics.class;
+			interfaceClass = InterfaceBiUniKinetics.class;
 			break;
 		case KINETICS_GENE_REGULATION:
-			interfaceClass = GeneRegulatoryKinetics.class;
+			interfaceClass = InterfaceGeneRegulatoryKinetics.class;
 			break;
 		case KINETICS_NONE_ENZYME_REACTIONS:
-			interfaceClass = NonEnzymeKinetics.class;
+			interfaceClass = InterfaceNonEnzymeKinetics.class;
 			break;
 		case KINETICS_OTHER_ENZYME_REACTIONS:
-			interfaceClass = ArbitraryEnzymeKinetics.class;
+			interfaceClass = InterfaceArbitraryEnzymeKinetics.class;
 			break;
 		default: // case KINETICS_UNI_UNI_TYPE:
-			interfaceClass = UniUniKinetics.class;
+			interfaceClass = InterfaceUniUniKinetics.class;
 			break;
 		}
 		JRadioButton jRButton[] = new JRadioButton[classes.size()];
@@ -269,19 +270,20 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() instanceof JRadioButton) {
 			JRadioButton rbutton = (JRadioButton) e.getSource();
-			Kinetics type = Kinetics.getTypeForName(pckg + '.'
-					+ rbutton.getText());
+			Kinetics type = Kinetics
+					.getTypeForName(SBMLsqueezer.KINETICS_PACKAGE + '.'
+							+ rbutton.getText());
 			String command = rbutton.getActionCommand();
-			if (command.equals(NonEnzymeKinetics.class.getCanonicalName()))
+			if (command.equals(InterfaceNonEnzymeKinetics.class.getCanonicalName()))
 				settings.put(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS, type);
-			else if (command.equals(GeneRegulatoryKinetics.class
+			else if (command.equals(InterfaceGeneRegulatoryKinetics.class
 					.getCanonicalName()))
 				settings.put(CfgKeys.KINETICS_GENE_REGULATION, type);
-			else if (command.equals(UniUniKinetics.class.getCanonicalName()))
+			else if (command.equals(InterfaceUniUniKinetics.class.getCanonicalName()))
 				settings.put(CfgKeys.KINETICS_UNI_UNI_TYPE, type);
-			else if (command.equals(BiUniKinetics.class.getCanonicalName()))
+			else if (command.equals(InterfaceBiUniKinetics.class.getCanonicalName()))
 				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE, type);
-			else if (command.equals(BiBiKinetics.class.getCanonicalName()))
+			else if (command.equals(InterfaceBiBiKinetics.class.getCanonicalName()))
 				settings.put(CfgKeys.KINETICS_BI_BI_TYPE, type);
 		}
 		for (ItemListener i : itemListeners)

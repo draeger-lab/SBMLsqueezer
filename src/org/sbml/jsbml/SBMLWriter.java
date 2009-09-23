@@ -211,7 +211,7 @@ public interface SBMLWriter {
 	 * @return
 	 * @throws SBMLException 
 	 */
-	public Object writeKineticLaw(KineticLaw kineticLaw) throws SBMLException;
+	public Object writeKineticLaw(KineticLaw kineticLaw, Object...args) throws SBMLException;
 
 	/**
 	 * 

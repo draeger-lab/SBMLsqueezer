@@ -601,8 +601,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBMLWriter#writeKineticLaw(org.sbml.KineticLaw)
 	 */
-	public Object writeKineticLaw(KineticLaw kineticLaw) throws SBMLException {
-		return writer.writeKineticLaw(kineticLaw);
+	public Object writeKineticLaw(KineticLaw kineticLaw, Object... args) throws SBMLException {
+		return writer.writeKineticLaw(kineticLaw, args);
 	}
 
 	/*
@@ -802,5 +802,4 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	public int getNumErrors(Object sbase) {
 		return writer.getNumErrors(sbase);
 	}
-
 }

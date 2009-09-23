@@ -38,7 +38,9 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *         Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
-public class MichaelisMenten extends GeneralizedMassAction implements UniUniKinetics, ReversibleKinetics, IrreversibleKinetics {
+public class MichaelisMenten extends GeneralizedMassAction implements
+		InterfaceUniUniKinetics, InterfaceReversibleKinetics,
+		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	private int numOfInhibitors;
 

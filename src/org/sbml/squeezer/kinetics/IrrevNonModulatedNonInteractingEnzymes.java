@@ -41,7 +41,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date Feb 6, 2008
  */
 public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
-		implements IrreversibleKinetics {
+		implements InterfaceIrreversibleKinetics, InterfaceArbitraryEnzymeKinetics {
 
 	private int numOfEnzymes;
 

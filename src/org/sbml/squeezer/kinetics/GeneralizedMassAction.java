@@ -42,7 +42,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date Aug 1, 2007
  */
 public class GeneralizedMassAction extends BasicKineticLaw implements
-		NonEnzymeKinetics, ReversibleKinetics, IrreversibleKinetics {
+		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
+		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO

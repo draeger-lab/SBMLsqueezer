@@ -41,7 +41,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulatoryKinetics {
+public class GRNSSystemEquation extends BasicKineticLaw implements
+		InterfaceGeneRegulatoryKinetics {
 
 	/**
 	 * @param parentReaction
@@ -54,8 +55,8 @@ public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulator
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
-//		System.out.println("isApplicable: " + reaction.isSetSBOTerm()
-//				+ "SBOTerm reaction: " + reaction.getSBOTerm());
+		// System.out.println("isApplicable: " + reaction.isSetSBOTerm()
+		// + "SBOTerm reaction: " + reaction.getSBOTerm());
 		if (SBO.isTranslation(reaction.getSBOTerm())
 				|| SBO.isTranscription(reaction.getSBOTerm()))
 			return true;
@@ -65,9 +66,10 @@ public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulator
 	/*
 	 * (Kein Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 *      .util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -78,33 +80,27 @@ public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulator
 		// TODO: Verwendung von modTActi und modTInhib ?
 		// TODO: Exceptions überarbeiten
 
-/*		if (!modActi.isEmpty())
-			modTActi.addAll(modActi);
-		if (!modInhib.isEmpty())
-			modTInhib.addAll(modInhib);
-		if (!modE.isEmpty())
-			modTActi.addAll(modE);
-		if (!modCat.isEmpty())
-			modTActi.addAll(modCat);
-
-		// Exceptions
-		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
-			if (SBO.isGene(r.getReactant(0).getSpeciesInstance().getSBOTerm())
-					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
-							.isTranslationalInhibitor(modifier.getSBOTerm())))
-				throw new ModificationException(
-						"Wrong activation in reaction "
-								+ r.getId()
-								+ ". Only transcriptional modification is allowed here.");
-			else if ((SBO.isMessengerRNA(r.getReactant(0).getSpeciesInstance()
-					.getSBOTerm()) || SBO.isRNA(r.getReactant(0)
-					.getSpeciesInstance().getSBOTerm()))
-					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
-							.isTranscriptionalInhibitor(modifier.getSBOTerm())))
-				throw new ModificationException("Wrong activation in reaction "
-						+ r.getId()
-						+ ". Only translational modification is allowed here.");
-		}*/
+		/*
+		 * if (!modActi.isEmpty()) modTActi.addAll(modActi); if
+		 * (!modInhib.isEmpty()) modTInhib.addAll(modInhib); if
+		 * (!modE.isEmpty()) modTActi.addAll(modE); if (!modCat.isEmpty())
+		 * modTActi.addAll(modCat);
+		 * 
+		 * // Exceptions for (ModifierSpeciesReference modifier :
+		 * r.getListOfModifiers()) { if
+		 * (SBO.isGene(r.getReactant(0).getSpeciesInstance().getSBOTerm()) &&
+		 * (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
+		 * .isTranslationalInhibitor(modifier.getSBOTerm()))) throw new
+		 * ModificationException( "Wrong activation in reaction " + r.getId() +
+		 * ". Only transcriptional modification is allowed here."); else if
+		 * ((SBO.isMessengerRNA(r.getReactant(0).getSpeciesInstance()
+		 * .getSBOTerm()) || SBO.isRNA(r.getReactant(0)
+		 * .getSpeciesInstance().getSBOTerm())) &&
+		 * (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
+		 * .isTranscriptionalInhibitor(modifier.getSBOTerm()))) throw new
+		 * ModificationException("Wrong activation in reaction " + r.getId() +
+		 * ". Only translational modification is allowed here."); }
+		 */
 
 		Reaction r = getParentSBMLObject();
 		ASTNode kineticLaw = new ASTNode(this);
@@ -122,8 +118,8 @@ public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulator
 		// Transkription
 		if (SBO.isTranscription(r.getSBOTerm())) {
 
-//			System.out.println("Das ist eine Transkription! SBOTerm: "
-//					+ r.getSBOTerm());
+			// System.out.println("Das ist eine Transkription! SBOTerm: "
+			// + r.getSBOTerm());
 			for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
 				Species modifierspec = r.getModifier(modifierNum)
 						.getSpeciesInstance();
@@ -131,27 +127,27 @@ public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulator
 
 				if (SBO.isProtein(modifierspec.getSBOTerm())) {
 
-//					System.out.println("Modifier " + modifierspec
-//							+ " ist ein Protein! SBOTerm: "
-//							+ modifierspec.getSBOTerm());
+					// System.out.println("Modifier " + modifierspec
+					// + " ist ein Protein! SBOTerm: "
+					// + modifierspec.getSBOTerm());
 					Parameter e = null;
 
 					if (SBO.isStimulator(modifier.getSBOTerm())) {
-//						System.out.println("Modifier " + modifier
-//								+ " wirkt als Aktivator! SBOTerm: "
-//								+ modifier.getSBOTerm());
+						// System.out.println("Modifier " + modifier
+						// + " wirkt als Aktivator! SBOTerm: "
+						// + modifier.getSBOTerm());
 						e = createOrGetParameter("e_", modifierNum, underscore,
 								rId, underscore, "pos");
-//						System.out.println("Parameter " + e.toString()
-//								+ " hat positives Vorzeichen! value 1");
+						// System.out.println("Parameter " + e.toString()
+						// + " hat positives Vorzeichen! value 1");
 					} else if (SBO.isInhibitor(modifier.getSBOTerm())) {
-//						System.out.println("Modifier " + modifier
-//								+ " wirkt als Inhibitor! SBOTerm: "
-//								+ modifier.getSBOTerm());
+						// System.out.println("Modifier " + modifier
+						// + " wirkt als Inhibitor! SBOTerm: "
+						// + modifier.getSBOTerm());
 						e = createOrGetParameter("e_", modifierNum, underscore,
 								rId, underscore, "neg");
-//						System.out.println("Parameter " + e.toString()
-//								+ " hat negatives Vorzeichen! set value -1");
+						// System.out.println("Parameter " + e.toString()
+						// + " hat negatives Vorzeichen! set value -1");
 						e.setValue(-1);
 					}
 
@@ -170,15 +166,15 @@ public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulator
 			}
 		} else if (SBO.isTranslation(r.getSBOTerm())) {
 
-//			System.out.println("Das ist eine Translation! SBOTerm: "
-//					+ r.getSBOTerm());
+			// System.out.println("Das ist eine Translation! SBOTerm: "
+			// + r.getSBOTerm());
 			for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
 				Species modifier = r.getModifier(modifierNum)
 						.getSpeciesInstance();
 				if (SBO.isRNAOrMessengerRNA(modifier.getSBOTerm())) {
-//					System.out.println("Modifier " + modifier
-//							+ " ist eine RNA! SBOTerm: "
-//							+ modifier.getSBOTerm());
+					// System.out.println("Modifier " + modifier
+					// + " ist eine RNA! SBOTerm: "
+					// + modifier.getSBOTerm());
 
 					ASTNode modnode = new ASTNode(modifier, this);
 
@@ -188,7 +184,7 @@ public class GRNSSystemEquation extends BasicKineticLaw implements GeneRegulator
 				}
 			}
 		}
-//		System.out.println(kineticLaw.toLaTeX());
+		// System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;
 	}
 }

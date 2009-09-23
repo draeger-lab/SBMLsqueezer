@@ -43,7 +43,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *         Dr&auml;ger</a>
  * @date Aug 7, 2007
  */
-public class HillEquation extends BasicKineticLaw implements GeneRegulatoryKinetics {
+public class HillEquation extends BasicKineticLaw implements
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics {
 
 	/**
 	 * 
@@ -52,8 +53,7 @@ public class HillEquation extends BasicKineticLaw implements GeneRegulatoryKinet
 	 * @throws IllegalFormatException
 	 */
 	public HillEquation(Reaction parentReaction)
-			throws RateLawNotApplicableException, 
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 
@@ -104,8 +104,8 @@ public class HillEquation extends BasicKineticLaw implements GeneRegulatoryKinet
 		Reaction reaction = getParentSBMLObject();
 
 		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
-			if (SBO.isGeneOrGeneCodingRegion(reaction.getReactant(0).getSpeciesInstance()
-					.getSBOTerm())
+			if (SBO.isGeneOrGeneCodingRegion(reaction.getReactant(0)
+					.getSpeciesInstance().getSBOTerm())
 					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
 							.isTranslationalInhibitor(modifier.getSBOTerm())))
 				throw new ModificationException(
@@ -120,7 +120,7 @@ public class HillEquation extends BasicKineticLaw implements GeneRegulatoryKinet
 						+ reaction.getId()
 						+ ". Only translational modification is allowed here.");
 		}
-		
+
 		if (reaction.getNumModifiers() == 0)
 			setSBOTerm(47);
 		else {
