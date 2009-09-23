@@ -1251,7 +1251,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public org.sbml.libsbml.EventAssignment writeEventAssignment(
-			EventAssignment eventAssignment) throws SBMLException {
+			EventAssignment eventAssignment,Object...args) throws SBMLException {
 		org.sbml.libsbml.EventAssignment ea = new org.sbml.libsbml.EventAssignment(
 				eventAssignment.getLevel(), eventAssignment.getVersion());
 		saveMathContainerProperties(eventAssignment, ea);
@@ -1359,7 +1359,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public org.sbml.libsbml.ModifierSpeciesReference writeModifierSpeciesReference(
-			ModifierSpeciesReference modifierSpeciesReference) {
+			ModifierSpeciesReference modifierSpeciesReference,Object...args) {
 		org.sbml.libsbml.ModifierSpeciesReference m = new org.sbml.libsbml.ModifierSpeciesReference(
 				modifierSpeciesReference.getLevel(), modifierSpeciesReference
 						.getVersion());
@@ -1375,7 +1375,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeParameter(org.sbml.Parameter)
 	 */
 	// @Override
-	public org.sbml.libsbml.Parameter writeParameter(Parameter parameter) {
+	public org.sbml.libsbml.Parameter writeParameter(Parameter parameter,Object...args) {
 		org.sbml.libsbml.Parameter p = new org.sbml.libsbml.Parameter(parameter
 				.getLevel(), parameter.getVersion());
 		saveNamedSBaseProperties(parameter, p);
@@ -1415,7 +1415,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeRule(org.sbml.Rule)
 	 */
 	// @Override
-	public org.sbml.libsbml.Rule writeRule(Rule rule) {
+	public org.sbml.libsbml.Rule writeRule(Rule rule,Object...args) {
 		org.sbml.libsbml.Rule r;
 		if (rule.isAlgebraic())
 			r = new org.sbml.libsbml.AlgebraicRule(rule.getLevel(), rule
@@ -1512,7 +1512,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 */
 	// @Override
 	public org.sbml.libsbml.SpeciesReference writeSpeciesReference(
-			SpeciesReference speciesReference) {
+			SpeciesReference speciesReference,Object...args) {
 		org.sbml.libsbml.SpeciesReference sr = new org.sbml.libsbml.SpeciesReference(
 				speciesReference.getLevel(), speciesReference.getVersion());
 		saveNamedSBaseProperties(speciesReference, sr);
@@ -1577,7 +1577,7 @@ public class LibSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeUnit(org.sbml.Unit)
 	 */
 	// @Override
-	public org.sbml.libsbml.Unit writeUnit(Unit unit) {
+	public org.sbml.libsbml.Unit writeUnit(Unit unit,Object...args) {
 		org.sbml.libsbml.Unit u = new org.sbml.libsbml.Unit(unit.getLevel(),
 				unit.getVersion());
 		saveSBaseProperties(unit, u);

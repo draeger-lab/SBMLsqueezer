@@ -104,6 +104,39 @@ public class SBO {
 
 	/**
 	 * 
+	 * @param aliasType
+	 * @return
+	 */
+	public static int convertAlias2SBO(String aliasType) {
+		return Integer.parseInt(alias2sbo.get(aliasType).toString());
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static int getCatalysis() {
+		return 13;
+	}
+
+	/**
+	 * Creates and returns a list of molecule types accepted as an enzyme by
+	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
+	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
+	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
+	 * 
+	 * @return
+	 */
+	public static final Set<Integer> getDefaultPossibleEnzymes() {
+		Set<Integer> possibleEnzymes = new HashSet<Integer>();
+		for (String type : new String[] { "ANTISENSE_RNA", "SIMPLE_MOLECULE",
+				"UNKNOWN", "COMPLEX", "TRUNCATED", "GENERIC", "RNA", "RECEPTOR" })
+			possibleEnzymes.add(Integer.valueOf(convertAlias2SBO(type)));
+		return possibleEnzymes;
+	}
+
+	/**
+	 * 
 	 * @return
 	 */
 	public static int getEnzymaticCatalysis() {
@@ -215,6 +248,25 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isCompetetiveInhibitor(int term) {
+		return isChildOf(term, 206);
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	
+	public static boolean isComplex(int sboTerm){
+		return isChildOf(sboTerm,convertAlias2SBO("COMPLEX"));
+	}
+
+	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
 	 * @param sboTerm
@@ -271,7 +323,7 @@ public class SBO {
 	public static boolean isEntity(int sboTerm) {
 		return isChildOf(sboTerm, 236);
 	}
-
+	
 	/**
 	 * 
 	 * @param sboTerm
@@ -279,6 +331,15 @@ public class SBO {
 	 */
 	public static boolean isEnzymaticCatalysis(int sboTerm) {
 		return isChildOf(sboTerm, 460);
+	}
+	
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isEssentialActivator(int term) {
+		return isChildOf(term, 461);
 	}
 
 	/**
@@ -319,7 +380,7 @@ public class SBO {
 	public static boolean isGene(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("GENE"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
@@ -328,7 +389,7 @@ public class SBO {
 	public static boolean isGeneCodingRegion(int sboTerm) {
 		return isChildOf(sboTerm, 335);
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
@@ -343,10 +404,19 @@ public class SBO {
 	 * @param sboTerm
 	 * @return
 	 */
+	public static boolean isGeneric(int sboTerm){
+		return isChildOf(sboTerm,convertAlias2SBO("GENERIC"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
 	public static boolean isInhibitor(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("INHIBITION"));
 	}
-
+	
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -364,6 +434,16 @@ public class SBO {
 	 */
 	public static boolean isIon(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("ION"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
+	public static boolean isIonChannel(int sboTerm){
+		return isChildOf(sboTerm,convertAlias2SBO("ION_CHANNEL"));
+		
 	}
 
 	/**
@@ -414,7 +494,7 @@ public class SBO {
 	public static boolean isMessengerRNA(int sboTerm) {
 		return isChildOf(sboTerm, 278);
 	}
-	
+
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -436,6 +516,24 @@ public class SBO {
 	}
 
 	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isNonCompetetiveInhibitor(int term) {
+		return isChildOf(term, 207);
+	}
+
+	/**
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public static boolean isNonEssentialActivator(int term) {
+		return isChildOf(term, 462);
+	}
+
+	/**
 	 * Function for checking whether the SBO term is obselete.
 	 * 
 	 * @param sboTerm
@@ -445,7 +543,7 @@ public class SBO {
 		return sbo.getTerm(intToString(sboTerm)).getDescription().startsWith(
 				"obsolete");
 	}
-
+	
 	/**
 	 * Function for checking the SBO term is from correct part of SBO. This term
 	 * is actually obsolete.
@@ -541,10 +639,19 @@ public class SBO {
 	 * @param sboTerm
 	 * @return
 	 */
+	public static boolean isReceptor(int sboTerm){
+		return isChildOf(sboTerm,convertAlias2SBO("RECEPTOR"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
 	public static boolean isRNA(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("RNA"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
@@ -571,7 +678,7 @@ public class SBO {
 	public static boolean isStateTransition(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("STATE_TRANSITION"));
 	}
-
+	
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -581,7 +688,7 @@ public class SBO {
 	public static boolean isSteadyStateExpression(int sboTerm) {
 		return isChildOf(sboTerm, 391);
 	}
-
+	
 	/**
 	 * 
 	 * @param sboTerm
@@ -590,7 +697,7 @@ public class SBO {
 	public static boolean isStimulator(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("PHYSICAL_STIMULATION"));
 	}
-
+	
 	/**
 	 * 
 	 * @param term
@@ -599,7 +706,7 @@ public class SBO {
 	public static boolean isTranscription(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("TRANSCRIPTION"));
 	}
-
+	
 	/**
 	 * 
 	 * @param sboTerm
@@ -609,7 +716,7 @@ public class SBO {
 		return isChildOf(sboTerm,
 				convertAlias2SBO("TRANSCRIPTIONAL_ACTIVATION"));
 	}
-
+	
 	/**
 	 * 
 	 * @param sboTerm
@@ -679,6 +786,15 @@ public class SBO {
 	 * @param sboTerm
 	 * @return
 	 */
+	public static boolean isTruncated(int sboTerm){
+		return isChildOf(sboTerm,convertAlias2SBO("TRUNCATED"));
+	}
+
+	/**
+	 * 
+	 * @param sboTerm
+	 * @return
+	 */
 	public static boolean isUnknownMolecule(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("UNKNOWN"));
 	}
@@ -702,74 +818,5 @@ public class SBO {
 	 */
 	public static int stringToInt(String sboTerm) {
 		return checkTerm(sboTerm) ? Integer.parseInt(sboTerm.substring(4)) : -1;
-	}
-
-	/**
-	 * 
-	 * @param aliasType
-	 * @return
-	 */
-	public static int convertAlias2SBO(String aliasType) {
-		return Integer.parseInt(alias2sbo.get(aliasType).toString());
-	}
-
-	/**
-	 * Creates and returns a list of molecule types accepted as an enzyme by
-	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
-	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
-	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
-	 * 
-	 * @return
-	 */
-	public static final Set<Integer> getDefaultPossibleEnzymes() {
-		Set<Integer> possibleEnzymes = new HashSet<Integer>();
-		for (String type : new String[] { "ANTISENSE_RNA", "SIMPLE_MOLECULE",
-				"UNKNOWN", "COMPLEX", "TRUNCATED", "GENERIC", "RNA", "RECEPTOR" })
-			possibleEnzymes.add(Integer.valueOf(convertAlias2SBO(type)));
-		return possibleEnzymes;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static int getCatalysis() {
-		return 13;
-	}
-
-	/**
-	 * 
-	 * @param term
-	 * @return
-	 */
-	public static boolean isEssentialActivator(int term) {
-		return isChildOf(term, 461);
-	}
-
-	/**
-	 * 
-	 * @param term
-	 * @return
-	 */
-	public static boolean isNonEssentialActivator(int term) {
-		return isChildOf(term, 462);
-	}
-
-	/**
-	 * 
-	 * @param term
-	 * @return
-	 */
-	public static boolean isNonCompetetiveInhibitor(int term) {
-		return isChildOf(term, 207);
-	}
-
-	/**
-	 * 
-	 * @param term
-	 * @return
-	 */
-	public static boolean isCompetetiveInhibitor(int term) {
-		return isChildOf(term, 206);
 	}
 }

@@ -65,6 +65,7 @@ import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -77,6 +78,7 @@ import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.AbstractSBMLWriter;
+import org.sbml.squeezer.standalone.LibSBMLWriter;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -951,7 +953,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		PluginConstraint c = new PluginConstraint(constraint.);
 		saveSBaseProperties(constraint, c);
 		if (constraint.isSetMath() && !equal(constraint.getMath(), libsbml.parseFormula(c.getMath())))
-			c.setMath(convert(constraint.getMath()));
+			c.setMa	th(convert(constraint.getMath()));
 		if (constraint.isSetMessage()
 				&& !constraint.getMessage().equals(c.getMessage()))
 			c.setMessage(constraint.getMessage());
@@ -983,9 +985,12 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	}
 
 	public PluginEventAssignment writeEventAssignment(
-			EventAssignment eventAssignment, PluginEvent ev)
-			throws SBMLException {
-		PluginEventAssignment ea = new PluginEventAssignment(ev);
+			EventAssignment eventAssignment, Object... ev) throws SBMLException {
+		if (ev.length != 1 || !(ev[0] instanceof PluginEvent))
+			throw new IllegalArgumentException(
+					"parent must be of type PluginEvent!");
+		PluginEventAssignment ea = new PluginEventAssignment(
+				(PluginEvent) ev[0]);
 		saveMathContainerProperties(eventAssignment, ea);
 		if (eventAssignment.isSetVariable())
 			ea.setVariable(eventAssignment.getVariable());
@@ -1015,8 +1020,11 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeKineticLaw(org.sbml.KineticLaw)
 	 */
 	public PluginKineticLaw writeKineticLaw(KineticLaw kineticLaw,
-			PluginReaction parent) throws SBMLException {
-		PluginKineticLaw k = new PluginKineticLaw(parent);
+			Object... parent) throws SBMLException {
+		if (parent.length != 1 || !(parent[0] instanceof PluginReaction))
+			throw new IllegalArgumentException(
+					"parent must be an instance of PluginReaction!");
+		PluginKineticLaw k = new PluginKineticLaw((PluginReaction) parent[0]);
 		saveMathContainerProperties(kineticLaw, k);
 		for (Parameter p : kineticLaw.getListOfParameters())
 			k.addParameter(writeParameter(p));
@@ -1033,10 +1041,13 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	}
 
 	public PluginModifierSpeciesReference writeModifierSpeciesReference(
-			ModifierSpeciesReference modifierSpeciesReference,
-			PluginReaction parent) {
+			ModifierSpeciesReference modifierSpeciesReference, Object... parent) {
+		if (parent.length != 1 || !(parent[0] instanceof PluginReaction))
+			throw new IllegalArgumentException(
+					"parent must be of type PluginReaction!");
 		PluginModifierSpeciesReference m = new PluginModifierSpeciesReference(
-				parent, writePluginSpeciesAlias(modifierSpeciesReference));
+				(PluginReaction) parent[0],
+				writePluginSpeciesAlias(modifierSpeciesReference));
 		saveNamedSBaseProperties(modifierSpeciesReference, m);
 		return m;
 	}
@@ -1051,9 +1062,19 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * 
 	 * @see org.sbml.SBMLWriter#writeParameter(org.sbml.Parameter)
 	 */
-	public PluginParameter writeParameter(Parameter parameter) {
-		// TODO Auto-generated method stub
-		return null;
+	public PluginParameter writeParameter(Parameter parameter, Object... parent) {
+		if (parent.length != 1 || !(parent[0] instanceof PluginKineticLaw))
+			// TODO: global Parameters?
+			throw new IllegalArgumentException(
+					"parent must be of type PluginKineticLaw!");
+		PluginParameter p = new PluginParameter((PluginKineticLaw) parent[0]);
+		saveNamedSBaseProperties(parameter, p);
+		p.setConstant(parameter.getConstant());
+		if (parameter.isSetUnits())
+			p.setUnits(parameter.getUnits());
+		if (parameter.isSetValue())
+			p.setValue(parameter.getValue());
+		return p;
 	}
 
 	/*
@@ -1076,9 +1097,30 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return r;
 	}
 
-	public PluginRule writeRule(Rule rule) {
-		// TODO Auto-generated method stub
-		return null;
+	public PluginRule writeRule(Rule rule, Object... parent) {
+		if (parent.length != 1 || !(parent[0] instanceof PluginModel))
+			throw new IllegalArgumentException(
+					"parent must be of type PluginModel!");
+		PluginRule r;
+		if (rule.isAlgebraic()) {
+			r = new PluginAlgebraicRule((PluginModel) parent[0]);
+		} else {
+			if (rule.isAssignment()) {
+				r = new PluginAssignmentRule((PluginModel) parent[0]);
+				if (((AssignmentRule) rule).isSetVariable())
+					((PluginAssignmentRule) r)
+							.setVariable(((AssignmentRule) rule).getVariable());
+			} else {
+				r = new PluginRateRule((PluginModel) parent[0]);
+				if (((RateRule) rule).isSetVariable())
+					((PluginRateRule) r).setVariable(((RateRule) rule)
+							.getVariable());
+			}
+		}
+		if (rule.isSetMath())
+			r.setMath(convert(rule.getMath()));
+		saveSBaseProperties(rule, r);
+		return r;
 	}
 
 	public boolean writeSBML(Object sbmlDocument, String filename) {
@@ -1087,8 +1129,55 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	}
 
 	public PluginSpecies writeSpecies(Species species) {
-		// TODO Auto-generated method stub
-		return null;
+		String spectype;
+		int sbo = species.getSBOTerm();
+		if (SBO.isAntisenseRNA(sbo))
+			spectype = "ANTISENSE_RNA";
+		else if (SBO.isDrug(sbo))
+			spectype = "DRUG";
+		else if (SBO.isGene(sbo))
+			spectype = "GENE";
+		else if (SBO.isIon(sbo))
+			spectype = "ION";
+		else if (SBO.isPhenotype(sbo))
+			spectype = "PHENOTYPE";
+		else if (SBO.isProtein(sbo))
+			spectype = "PROTEIN";
+		else if (SBO.isRNA(sbo))
+			spectype = "RNA";
+		else if (SBO.isSimpleMolecule(sbo))
+			spectype = "SIMPLE_MOLECULE";
+		else if (SBO.isUnknownMolecule(sbo))
+			spectype = "UNKNOWN";
+		else if (SBO.isEmptySet(sbo))
+			spectype = "DEGRADED";
+		else if (SBO.isComplex(sbo))
+			spectype = "COMPLEX";
+		else if (SBO.isReceptor(sbo))
+			spectype = "RECEPTOR";
+		else if (SBO.isIonChannel(sbo))
+			spectype = "ION_CHANNEL";
+		else if (SBO.isTruncated(sbo))
+			spectype = "TRUNCATED";
+		else if (SBO.isGeneric(sbo))
+			spectype = "GENERIC";
+		else
+			throw new IllegalArgumentException(
+					"Celldesigner don't know species with SBOnumber: " + sbo);
+		PluginSpecies s = new PluginSpecies(spectype, species.getName());
+		saveNamedSBaseProperties(species, s);
+		s.setBoundaryCondition(species.getBoundaryCondition());
+		s.setCharge(species.getCharge());
+		s.setCompartment(species.getCompartment());
+		s.setConstant(species.getConstant());
+		s.setHasOnlySubstanceUnits(species.getHasOnlySubstanceUnits());
+		if (species.isSetInitialAmount())
+			s.setInitialAmount(species.getInitialAmount());
+		else if (species.isSetInitialConcentration())
+			s.setInitialConcentration(species.getInitialConcentration());
+		if (species.isSetSubstanceUnits())
+			species.getSubstanceUnits();
+		return s;
 	}
 
 	/*
@@ -1097,14 +1186,27 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeSpeciesReference(org.sbml.SpeciesReference)
 	 */
 	public PluginSpeciesReference writeSpeciesReference(
-			SpeciesReference speciesReference) {
-		// TODO Auto-generated method stub
-		return null;
+			SpeciesReference speciesReference, Object...parent) {
+		if (parent.length!=1|| !(parent[0] instanceof PluginReaction))
+			throw new IllegalArgumentException("parent must be of type PluginReaction!");
+		PluginSpeciesReference sr = new PluginSpeciesReference((PluginReaction)parent[0],
+				speciesReference.);
+		saveNamedSBaseProperties(speciesReference, sr);
+		// TODO:
+//		if (speciesReference.isSetSpecies())
+//			sr.setSpecies(speciesReference.getSpecies());
+		if (speciesReference.isSetStoichiometryMath())
+			sr.setStoichiometryMath(writeStoichoimetryMath(speciesReference
+					.getStoichiometryMath()));
+		else
+			sr.setStoichiometry(speciesReference.getStoichiometry());
+		return sr;
 	}
 
 	public PluginSpeciesType writeSpeciesType(SpeciesType speciesType) {
-		// TODO Auto-generated method stub
-		return null;
+		PluginSpeciesType st = new PluginSpeciesType(speciesType.getId());
+		saveNamedSBaseProperties(speciesType, st);
+		return st;
 	}
 
 	/*
@@ -1115,18 +1217,139 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public org.sbml.libsbml.StoichiometryMath writeStoichoimetryMath(
 			StoichiometryMath stoichiometryMath) {
-		// TODO Auto-generated method stub
-		return null;
+		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath(
+				stoichiometryMath.getLevel(), stoichiometryMath.getVersion());
+		/*LibSBMLWriter.*/saveSBaseProperties(stoichiometryMath, sm);
+		if (stoichiometryMath.isSetMath())
+			sm.setMath(convert(stoichiometryMath.getMath()));
+		return sm;
 	}
 
 	public ASTNode writeTrigger(Trigger trigger) {
-		// TODO Auto-generated method stub
-		return null;
+		return convert(trigger.getMath());
 	}
 
-	public PluginUnit writeUnit(Unit unit) {
-		// TODO Auto-generated method stub
-		return null;
+	public PluginUnit writeUnit(Unit unit, Object...parent) {
+		if (parent.length != 1 || !(parent[0] instanceof PluginUnitDefinition))
+			throw new IllegalArgumentException("parent must be of type PluginUnitDefinition!");
+		
+		PluginUnit u = new PluginUnit((PluginUnitDefinition)parent[0]);
+		saveSBaseProperties(unit, u);
+		switch (unit.getKind()) {
+		case AMPERE:
+			u.setKind(libsbmlConstants.UNIT_KIND_AMPERE);
+			break;
+		case BECQUEREL:
+			u.setKind(libsbmlConstants.UNIT_KIND_BECQUEREL);
+			break;
+		case CANDELA:
+			u.setKind(libsbmlConstants.UNIT_KIND_CANDELA);
+			break;
+		case CELSIUS:
+			u.setKind(libsbmlConstants.UNIT_KIND_CELSIUS);
+			break;
+		case COULOMB:
+			u.setKind(libsbmlConstants.UNIT_KIND_COULOMB);
+			break;
+		case DIMENSIONLESS:
+			u.setKind(libsbmlConstants.UNIT_KIND_DIMENSIONLESS);
+			break;
+		case FARAD:
+			u.setKind(libsbmlConstants.UNIT_KIND_FARAD);
+			break;
+		case GRAM:
+			u.setKind(libsbmlConstants.UNIT_KIND_GRAM);
+			break;
+		case GRAY:
+			u.setKind(libsbmlConstants.UNIT_KIND_GRAY);
+			break;
+		case HENRY:
+			u.setKind(libsbmlConstants.UNIT_KIND_HENRY);
+			break;
+		case HERTZ:
+			u.setKind(libsbmlConstants.UNIT_KIND_HERTZ);
+			break;
+		case INVALID:
+			u.setKind(libsbmlConstants.UNIT_KIND_INVALID);
+			break;
+		case ITEM:
+			u.setKind(libsbmlConstants.UNIT_KIND_ITEM);
+			break;
+		case JOULE:
+			u.setKind(libsbmlConstants.UNIT_KIND_JOULE);
+			break;
+		case KATAL:
+			u.setKind(libsbmlConstants.UNIT_KIND_KATAL);
+			break;
+		case KELVIN:
+			u.setKind(libsbmlConstants.UNIT_KIND_KELVIN);
+			break;
+		case KILOGRAM:
+			u.setKind(libsbmlConstants.UNIT_KIND_KILOGRAM);
+			break;
+		case LITER:
+			u.setKind(libsbmlConstants.UNIT_KIND_LITER);
+			break;
+		case LITRE:
+			u.setKind(libsbmlConstants.UNIT_KIND_LITRE);
+			break;
+		case LUMEN:
+			u.setKind(libsbmlConstants.UNIT_KIND_LUMEN);
+			break;
+		case LUX:
+			u.setKind(libsbmlConstants.UNIT_KIND_LUX);
+			break;
+		case METER:
+			u.setKind(libsbmlConstants.UNIT_KIND_METER);
+			break;
+		case METRE:
+			u.setKind(libsbmlConstants.UNIT_KIND_METRE);
+			break;
+		case MOLE:
+			u.setKind(libsbmlConstants.UNIT_KIND_MOLE);
+			break;
+		case NEWTON:
+			u.setKind(libsbmlConstants.UNIT_KIND_NEWTON);
+			break;
+		case OHM:
+			u.setKind(libsbmlConstants.UNIT_KIND_OHM);
+			break;
+		case PASCAL:
+			u.setKind(libsbmlConstants.UNIT_KIND_PASCAL);
+			break;
+		case RADIAN:
+			u.setKind(libsbmlConstants.UNIT_KIND_RADIAN);
+			break;
+		case SECOND:
+			u.setKind(libsbmlConstants.UNIT_KIND_SECOND);
+			break;
+		case SIEMENS:
+			u.setKind(libsbmlConstants.UNIT_KIND_SIEMENS);
+			break;
+		case SIEVERT:
+			u.setKind(libsbmlConstants.UNIT_KIND_SIEVERT);
+			break;
+		case STERADIAN:
+			u.setKind(libsbmlConstants.UNIT_KIND_STERADIAN);
+			break;
+		case TESLA:
+			u.setKind(libsbmlConstants.UNIT_KIND_TESLA);
+			break;
+		case VOLT:
+			u.setKind(libsbmlConstants.UNIT_KIND_VOLT);
+			break;
+		case WATT:
+			u.setKind(libsbmlConstants.UNIT_KIND_WATT);
+			break;
+		case WEBER:
+			u.setKind(libsbmlConstants.UNIT_KIND_WEBER);
+			break;
+		}
+		u.setExponent(unit.getExponent());
+		u.setMultiplier(unit.getMultiplier());
+		u.setOffset(unit.getOffset());
+		u.setScale(unit.getScale());
+		return u;
 	}
 
 	public PluginUnitDefinition writeUnitDefinition(

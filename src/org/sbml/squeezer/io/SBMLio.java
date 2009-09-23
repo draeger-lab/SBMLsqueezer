@@ -567,9 +567,9 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeEventAssignment(org.sbml.EventAssignment)
 	 */
 	// @Override
-	public Object writeEventAssignment(EventAssignment eventAssignment)
+	public Object writeEventAssignment(EventAssignment eventAssignment, Object...args)
 			throws SBMLException {
-		return writer.writeEventAssignment(eventAssignment);
+		return writer.writeEventAssignment(eventAssignment,args);
 	}
 
 	/*
@@ -634,8 +634,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * ModifierSpeciesReference)
 	 */
 	public Object writeModifierSpeciesReference(
-			ModifierSpeciesReference modifierSpeciesReference) {
-		return writer.writeModifierSpeciesReference(modifierSpeciesReference);
+			ModifierSpeciesReference modifierSpeciesReference,Object...args) {
+		return writer.writeModifierSpeciesReference(modifierSpeciesReference,args);
 	}
 
 	/*
@@ -643,8 +643,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBMLWriter#writeParameter(org.sbml.Parameter)
 	 */
-	public Object writeParameter(Parameter parameter) {
-		return writer.writeParameter(parameter);
+	public Object writeParameter(Parameter parameter,Object...args) {
+		return writer.writeParameter(parameter,args);
 	}
 
 	/*
@@ -663,8 +663,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeRule(org.sbml.Rule)
 	 */
 	// @Override
-	public Object writeRule(Rule rule) {
-		return writer.writeRule(rule);
+	public Object writeRule(Rule rule,Object...args) {
+		return writer.writeRule(rule,args);
 	}
 
 	/*
@@ -704,8 +704,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBMLWriter#writeSpeciesReference(org.sbml.SpeciesReference)
 	 */
-	public Object writeSpeciesReference(SpeciesReference speciesReference) {
-		return writer.writeSpeciesReference(speciesReference);
+	public Object writeSpeciesReference(SpeciesReference speciesReference,Object...args) {
+		return writer.writeSpeciesReference(speciesReference,args);
 	}
 
 	/*
@@ -744,8 +744,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeUnit(org.sbml.Unit)
 	 */
 	// @Override
-	public Object writeUnit(Unit unit) {
-		return writer.writeUnit(unit);
+	public Object writeUnit(Unit unit,Object...args) {
+		return writer.writeUnit(unit,args);
 	}
 
 	/*
