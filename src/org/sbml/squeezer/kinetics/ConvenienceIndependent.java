@@ -49,8 +49,9 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date Aug 1, 2007
  */
 public class ConvenienceIndependent extends Convenience implements
-		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceArbitraryEnzymeKinetics,
-		InterfaceReversibleKinetics, InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
+		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
+		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
 	 * 

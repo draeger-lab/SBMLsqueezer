@@ -504,7 +504,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		}
 		if (change) {
 			kineticsPanel.remove(eqnPrev);
-			setPreviewPanel(i);
+			setPreviewPanel(Math.min(i, rButtonsKineticEquations.length - 1));
 			kineticsPanel.add(eqnPrev);
 			GUITools.setAllEnabled(optionsPanel, !disable);
 		}

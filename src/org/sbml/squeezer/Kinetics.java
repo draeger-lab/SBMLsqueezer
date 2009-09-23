@@ -192,6 +192,18 @@ public enum Kinetics {
 			return CONVENIENCE_KINETICS;
 		else if (className.equals("GeneralizedMassAction"))
 			return GENERALIZED_MASS_ACTION;
+		else if (className.equals("MichaelisMenten"))
+			return MICHAELIS_MENTEN;
+		else if (className.equals("RandomOrderMechanism"))
+			return RANDOM_ORDER_MECHANISM;
+		else if (className.equals("PingPongMechanism"))
+			return PING_PONG_MECAHNISM;
+		else if (className.equals("OrderedMechanism"))
+			return ORDERED_MECHANISM;
+		else if (className.equals("HillEquation"))
+			return HILL_EQUATION;
+		else if (className.equals("IrrevNonModulatedNonInteractingEnzymes"))
+			return IRREV_NON_MODULATED_ENZYME_KIN;
 		else if (className.equals("GRNSSystemEquation"))
 			return SSYSTEM_KINETIC;
 		else if (className.equals("GRNSAdditivModel"))
@@ -203,19 +215,9 @@ public enum Kinetics {
 		else if (className.equals("GRNSAdditivModel_NGlinear"))
 			return ADDITIVE_KINETIC_NGlinear;
 		else if (className.equals("GRNSAdditivModel_NGnonlinear"))
-			return ADDITIVE_KINETIC_NGnonlinear;		
-		else if (className.equals("HillEquation"))
-			return HILL_EQUATION;
+			return ADDITIVE_KINETIC_NGnonlinear;
 		else if (className.equals("IrrevCompetNonCooperativeEnzymes"))
 			return COMPETETIVE_NON_EXCLUSIVE_INHIB;
-		else if (className.equals("MichaelisMenten"))
-			return MICHAELIS_MENTEN;
-		else if (className.equals("OrderedMechanism"))
-			return ORDERED_MECHANISM;
-		else if (className.equals("PingPongMechanism"))
-			return PING_PONG_MECAHNISM;
-		else if (className.equals("RandomOrderMechanism"))
-			return RANDOM_ORDER_MECHANISM;
 		else if (className.equals("ReversiblePowerLaw"))
 			return REVERSIBLE_POWER_LAW;
 		else if (className.equals("ZerothOrderForwardGMAK"))
