@@ -32,7 +32,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *         Dr&auml;ger</a>
  * 
  */
-public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
+public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
+		implements IrreversibleKinetics {
 
 	private int numInhib;
 	private int numOfEnzymes;
@@ -45,8 +46,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction {
 	 * @throws IllegalFormatException
 	 */
 	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction)
-			throws RateLawNotApplicableException, 
-			IllegalFormatException {
+			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
 

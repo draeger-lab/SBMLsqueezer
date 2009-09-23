@@ -20,14 +20,16 @@ package org.sbml.squeezer.gui;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -37,12 +39,15 @@ import javax.swing.border.TitledBorder;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.Kinetics;
+import org.sbml.squeezer.io.StringTools;
 import org.sbml.squeezer.kinetics.ArbitraryEnzymeKinetics;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.BiBiKinetics;
 import org.sbml.squeezer.kinetics.BiUniKinetics;
 import org.sbml.squeezer.kinetics.GeneRegulatoryKinetics;
+import org.sbml.squeezer.kinetics.IrreversibleKinetics;
 import org.sbml.squeezer.kinetics.NonEnzymeKinetics;
+import org.sbml.squeezer.kinetics.ReversibleKinetics;
 import org.sbml.squeezer.kinetics.UniUniKinetics;
 import org.sbml.squeezer.rmi.Reflect;
 
@@ -59,21 +64,11 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	 * Generated serial version uid.
 	 */
 	private static final long serialVersionUID = 243553812503691739L;
-	private JRadioButton jRadioButtonGMAK;
-	private JRadioButton jRadioButtonHillEqn;
-	private JRadioButton jRadioButtonUniUniMMK;
-	private JRadioButton jRadioButtonUniUniCONV;
-	private JRadioButton jRadioButtonBiUniORD;
-	private JRadioButton jRadioButtonBiUniCONV;
-	private JRadioButton jRadioButtonBiUniRND;
-	private JRadioButton jRadioButtonBiBiRND;
-	private JRadioButton jRadioButtonBiBiCONV;
-	private JRadioButton jRadioButtonBiBiORD;
-	private JRadioButton jRadioButtonBiBiPP;
-	private JRadioButton jRadioButtonOtherEnzym[];
 	private Properties settings;
 	private List<ItemListener> itemListeners;
-	private final String pckg = "org.sbml.squeezer.kinetics";
+	private static final String pckg = "org.sbml.squeezer.kinetics";
+	private static final Font titleFont = new Font("Dialog", Font.BOLD, 12);
+	private static final Color borderColor = new Color(51, 51, 51);
 
 	/**
 	 * Reaction Mechanism Panel
@@ -87,36 +82,6 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 				settings.put(key, properties.get(key));
 		}
 		itemListeners = new LinkedList<ItemListener>();
-		Font titleFont = new Font("Dialog", Font.BOLD, 12);
-		Color borderColor = new Color(51, 51, 51);
-
-		List<String> grn = new LinkedList<String>();
-		List<String> non = new LinkedList<String>();
-		List<String> uni = new LinkedList<String>();
-		List<String> bun = new LinkedList<String>();
-		List<String> bib = new LinkedList<String>();
-		List<String> arb = new LinkedList<String>();
-		Class<?> l[] = Reflect.getAllClassesInPackage(pckg, false, true,
-				BasicKineticLaw.class);
-		for (Class<?> c : l) {
-			if (!Modifier.isAbstract(c.getModifiers())) {
-				System.out.println(c.getCanonicalName());
-				for (Class<?> interf : c.getInterfaces()) {
-					if (interf.equals(GeneRegulatoryKinetics.class))
-						grn.add(c.getCanonicalName());
-					else if (interf.equals(NonEnzymeKinetics.class))
-						non.add(c.getCanonicalName());
-					else if (interf.equals(UniUniKinetics.class))
-						uni.add(c.getCanonicalName());
-					else if (interf.equals(BiUniKinetics.class))
-						bun.add(c.getCanonicalName());
-					else if (interf.equals(BiBiKinetics.class))
-						bib.add(c.getCanonicalName());
-					else if (interf.equals(ArbitraryEnzymeKinetics.class))
-						arb.add(c.getCanonicalName());
-				}
-			}
-		}
 
 		setLayout(new GridLayout(1, 2));
 		setBorder(BorderFactory.createTitledBorder(null,
@@ -124,268 +89,167 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 		setBackground(Color.WHITE);
 
-		// Sub-panels for the reaction mechanism panel
-		JPanel leftMechanismPanel = new JPanel(new GridBagLayout());
-		leftMechanismPanel.setBackground(Color.WHITE);
-
-		JPanel rightMechanismPanel = new JPanel(new GridBagLayout());
-		rightMechanismPanel.setBackground(Color.WHITE);
-
-		
-		// Non-Enzyme Reactions
-		ButtonGroup buttonGroup = new ButtonGroup();
-		JPanel nonEnzyme = new JPanel(new GridLayout(1, 1));
-		nonEnzyme.setBorder(BorderFactory.createTitledBorder(null,
-				" Non-Enzyme Reaction ", TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-		jRadioButtonGMAK = new JRadioButton(
-				"Genereralized mass-action kinetics");
-		jRadioButtonGMAK
-				.setSelected(Kinetics.valueOf(settings.get(
-						CfgKeys.KINETICS_NONE_ENZYME_REACTIONS).toString()) == Kinetics.GENERALIZED_MASS_ACTION);
-		jRadioButtonGMAK
-				.setToolTipText("<html>Reactions, which are not enzyme-catalyzed,<br>"
-						+ "are described using generalized mass-action kinetics.</html>");
-		jRadioButtonGMAK.setEnabled(false);
-		jRadioButtonGMAK.setBackground(Color.WHITE);
-		jRadioButtonGMAK.addItemListener(this);
-
-		buttonGroup.add(jRadioButtonGMAK);
-
-		nonEnzyme.add(jRadioButtonGMAK);
-		nonEnzyme.setBackground(Color.WHITE);
-
-		// Hill equation
-		JPanel geneRegulation = new JPanel(new GridLayout(1, 1));
-		geneRegulation.setBorder(BorderFactory.createTitledBorder(null,
-				" Gene Expression Regulation ",
-				TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-		jRadioButtonHillEqn = new JRadioButton("Hill equation");
-		jRadioButtonHillEqn
-				.setToolTipText("<html>Check this box if you want the Hill equation as reaction scheme<br>"
-						+ "for gene regulation (reactions involving genes, RNA and proteins).</html>");
-		jRadioButtonHillEqn.setBackground(Color.WHITE);
-		jRadioButtonHillEqn
-				.setSelected(Kinetics.valueOf(settings.get(
-						CfgKeys.KINETICS_GENE_REGULATION).toString()) == Kinetics.HILL_EQUATION);
-		jRadioButtonHillEqn.setEnabled(false);
-		buttonGroup = new ButtonGroup();
-		buttonGroup.add(jRadioButtonHillEqn);
-		geneRegulation.add(jRadioButtonHillEqn);
-		geneRegulation.setBackground(Color.WHITE);
-
-		// Uni-Uni Reactions
-		JPanel uniUniReactions = new JPanel(new GridLayout(2, 1));
-		uniUniReactions.setBorder(BorderFactory.createTitledBorder(null,
-				" Uni-Uni Reaction ", TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-
-		jRadioButtonUniUniMMK = new JRadioButton();
-		jRadioButtonUniUniMMK
-				.setSelected(Kinetics.valueOf(settings.get(
-						CfgKeys.KINETICS_UNI_UNI_TYPE).toString()) == Kinetics.MICHAELIS_MENTEN);
-		jRadioButtonUniUniMMK
-				.setToolTipText("<html>Check this box if Michaelis-Menten kinetics is to be<br>"
-						+ "applied for uni-uni reactions (one reactant, one product).</html>");
-		jRadioButtonUniUniMMK.setText("Michaelis-Menten kinetics");
-		// uni-uni-type = 3
-		jRadioButtonUniUniMMK.setBackground(Color.WHITE);
-
-		jRadioButtonUniUniCONV = new JRadioButton("Convenience kinetics");
-		// uni-uni-type = 2
-		jRadioButtonUniUniCONV
-				.setSelected(settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
-		jRadioButtonUniUniCONV
-				.setToolTipText("<html>Check this box if convenience kinetics is to be<br>"
-						+ "applied for uni-uni reactions (one reactant, one product).</html>");
-		jRadioButtonUniUniCONV.setBackground(Color.WHITE);
-
-		buttonGroup = new ButtonGroup();
-		buttonGroup.add(jRadioButtonUniUniMMK);
-		buttonGroup.add(jRadioButtonUniUniCONV);
-
-		uniUniReactions.add(jRadioButtonUniUniMMK);
-		uniUniReactions.add(jRadioButtonUniUniCONV);
-		uniUniReactions.setBackground(Color.WHITE);
-
-		// Bi-Uni Reactions
-		JPanel biUniReactions = new JPanel(new GridLayout(3, 1));
-		biUniReactions.setBorder(BorderFactory.createTitledBorder(null,
-				" Bi-Uni Reaction ", TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-
-		this.jRadioButtonBiUniORD = new JRadioButton();
-		jRadioButtonBiUniORD
-				.setSelected(Kinetics.valueOf(settings.get(
-						CfgKeys.KINETICS_BI_UNI_TYPE).toString()) == Kinetics.ORDERED_MECHANISM);
-		jRadioButtonBiUniORD
-				.setToolTipText("<html>Check this box if you want the ordered mechanism scheme as<br>"
-						+ "reaction scheme for bi-uni reactions (two reactant, one product).</html>");
-		jRadioButtonBiUniORD.setText("Ordered"); // biUiType = 6
-		jRadioButtonBiUniORD.setBackground(Color.WHITE);
-
-		jRadioButtonBiUniCONV = new JRadioButton("Convenience kinetics"); // biUniType
-		// = 2
-		jRadioButtonBiUniCONV
-				.setSelected(settings.get(CfgKeys.KINETICS_BI_UNI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
-		jRadioButtonBiUniCONV
-				.setToolTipText("<html>Check this box if you want convenience kinetics as<br>"
-						+ "reaction scheme for bi-uni reactions (two reactant, one product).</html>");
-		jRadioButtonBiUniCONV.setBackground(Color.WHITE);
-
-		jRadioButtonBiUniRND = new JRadioButton("Random"); // biUniType = 4
-		jRadioButtonBiUniRND
-				.setSelected(Kinetics.valueOf(settings.get(
-						CfgKeys.KINETICS_BI_UNI_TYPE).toString()) == Kinetics.RANDOM_ORDER_MECHANISM);
-		jRadioButtonBiUniRND
-				.setToolTipText("<html>Check this box if you want the random mechanism scheme<br>"
-						+ "to be applied for bi-uni reactions (two reactants, one product).</html>");
-		jRadioButtonBiUniRND.setBackground(Color.WHITE);
-
-		buttonGroup = new ButtonGroup();
-		buttonGroup.add(jRadioButtonBiUniORD);
-		buttonGroup.add(jRadioButtonBiUniCONV);
-		buttonGroup.add(jRadioButtonBiUniRND);
-
-		biUniReactions.add(jRadioButtonBiUniORD);
-		biUniReactions.add(jRadioButtonBiUniCONV);
-		biUniReactions.add(jRadioButtonBiUniRND);
-		biUniReactions.setBackground(Color.WHITE);
-
-		// right panel
-		// Bi-Bi Reactions
-		JPanel biBiReactions = new JPanel(new GridLayout(4, 1));
-		biBiReactions.setBorder(BorderFactory.createTitledBorder(null,
-				" Bi-Bi Reaction ", TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-
-		jRadioButtonBiBiRND = new JRadioButton("Random"); // biBiType = 4
-		jRadioButtonBiBiRND
-				.setSelected(Kinetics.valueOf(settings.get(
-						CfgKeys.KINETICS_BI_BI_TYPE).toString()) == Kinetics.RANDOM_ORDER_MECHANISM);
-		jRadioButtonBiBiRND
-				.setToolTipText("<html>Check this box if you want the random mechanism to be applied<br>"
-						+ "to bi-bi reactions (two reactants, two products).</html>");
-		jRadioButtonBiBiRND.setBackground(Color.WHITE);
-
-		jRadioButtonBiBiCONV = new JRadioButton("Convenience kinetics"); // biBiType
-		// = 2
-		jRadioButtonBiBiCONV
-				.setSelected(settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.CONVENIENCE_KINETICS);
-		jRadioButtonBiBiCONV
-				.setToolTipText("<html>Check this box if you want convenience kinetics to be applied<br>"
-						+ "for bi-bi reactions (two reactants, two products).</html>");
-		jRadioButtonBiBiCONV.setBackground(Color.WHITE);
-
-		jRadioButtonBiBiORD = new JRadioButton("Ordered"); // biBiType = 6
-		jRadioButtonBiBiORD
-				.setSelected(settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.ORDERED_MECHANISM);
-		jRadioButtonBiBiORD
-				.setToolTipText("<html>Check this box if you want the ordered mechanism as reaction scheme<br>"
-						+ "for bi-bi reactions (two reactants, two products).</html>");
-		jRadioButtonBiBiORD.setBackground(Color.WHITE);
-
-		jRadioButtonBiBiPP = new JRadioButton("Ping-pong"); // biBiType = 5
-		jRadioButtonBiBiPP
-				.setSelected(settings.get(CfgKeys.KINETICS_BI_BI_TYPE) == Kinetics.PING_PONG_MECAHNISM);
-		jRadioButtonBiBiPP
-				.setToolTipText("<html>Check this box if you want the ping-pong mechanism as reaction scheme<br>"
-						+ "for bi-bi reactions (two reactants, two products).</html>");
-		jRadioButtonBiBiPP.setBackground(Color.WHITE);
-
-		buttonGroup = new ButtonGroup();
-		buttonGroup.add(jRadioButtonBiBiRND);
-		buttonGroup.add(jRadioButtonBiBiCONV);
-		buttonGroup.add(jRadioButtonBiBiORD);
-		buttonGroup.add(jRadioButtonBiBiPP);
-
-		biBiReactions.add(jRadioButtonBiBiRND);
-		biBiReactions.add(jRadioButtonBiBiCONV);
-		biBiReactions.add(jRadioButtonBiBiORD);
-		biBiReactions.add(jRadioButtonBiBiPP);
-		biBiReactions.setBackground(Color.WHITE);
-
-		// Other Enzyme Reactions
-		LayoutHelper otherEnzymePanel = new LayoutHelper(new JPanel());
-		((JPanel) otherEnzymePanel.getContainer()).setBorder(BorderFactory
-				.createTitledBorder(null, " Other Enzyme Reaction ",
-						TitledBorder.DEFAULT_JUSTIFICATION,
-						TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-
-		jRadioButtonOtherEnzym = new JRadioButton[arb.size()];
-		buttonGroup = new ButtonGroup();
-		for (int i = 0; i < jRadioButtonOtherEnzym.length; i++) {
-			String name = arb.get(i);
-			jRadioButtonOtherEnzym[i] = new JRadioButton(name.substring(name
-					.lastIndexOf('.') + 1));
-			jRadioButtonOtherEnzym[i]
-					.setSelected(Kinetics
-							.valueOf(settings.get(
-									CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS)
-									.toString()) == Kinetics
-							.getTypeForName(name));
-			jRadioButtonOtherEnzym[i].setToolTipText(GUITools.toHTML(
-					"Reactions, which are enzyme-catalyzed, and follow "
-							+ "none of the schemes uni-uni, bi-uni and bi-bi.",
-					40));
-			jRadioButtonOtherEnzym[i].setEnabled(true);
-			jRadioButtonOtherEnzym[i].setBackground(Color.WHITE);
-			buttonGroup.add(jRadioButtonOtherEnzym[i]);
-			otherEnzymePanel.add(jRadioButtonOtherEnzym[i]);
-			jRadioButtonOtherEnzym[i].addItemListener(this);
+		List<String> bib = new LinkedList<String>();
+		List<String> bun = new LinkedList<String>();
+		List<String> grn = new LinkedList<String>();
+		List<String> non = new LinkedList<String>();
+		List<String> arb = new LinkedList<String>();
+		List<String> uni = new LinkedList<String>();
+		Class<?> l[] = Reflect.getAllClassesInPackage(pckg, false, true,
+				BasicKineticLaw.class);
+		for (Class<?> c : l) {
+			if (!Modifier.isAbstract(c.getModifiers())) {
+				Set<Class<?>> s = new HashSet<Class<?>>();
+				for (Class<?> interf : c.getInterfaces())
+					s.add(interf);
+				if (s.contains(IrreversibleKinetics.class)
+						&& s.contains(ReversibleKinetics.class)) {
+					if (s.contains(UniUniKinetics.class))
+						uni.add(c.getCanonicalName());
+					if (s.contains(BiUniKinetics.class))
+						bun.add(c.getCanonicalName());
+					if (s.contains(BiBiKinetics.class))
+						bib.add(c.getCanonicalName());
+					if (s.contains(ArbitraryEnzymeKinetics.class))
+						arb.add(c.getCanonicalName());
+				}
+				if (s.contains(GeneRegulatoryKinetics.class))
+					grn.add(c.getCanonicalName());
+				if (s.contains(NonEnzymeKinetics.class))
+					non.add(c.getCanonicalName());
+			}
 		}
-		otherEnzymePanel.getContainer().setBackground(Color.WHITE);
 
 		// Add all sub-panels to the reaction mechanism panel:
-		GridBagLayout layout = (GridBagLayout) leftMechanismPanel.getLayout();
-		LayoutHelper.addComponent(leftMechanismPanel, layout, nonEnzyme, 0, 0,
-				1, 1, 1, 0);
-		LayoutHelper.addComponent(leftMechanismPanel, layout, uniUniReactions,
-				0, 1, 1, 1, 1, 0);
-		LayoutHelper.addComponent(leftMechanismPanel, layout, biUniReactions,
-				0, 2, 1, 1, 1, 0);
-		layout = (GridBagLayout) rightMechanismPanel.getLayout();
-		LayoutHelper.addComponent(rightMechanismPanel, layout, geneRegulation,
-				0, 0, 1, 1, 1, 0);
-		LayoutHelper.addComponent(rightMechanismPanel, layout, biBiReactions,
-				0, 1, 1, 1, 1, 0);
-		LayoutHelper.addComponent(rightMechanismPanel, layout,
-				otherEnzymePanel.getContainer(), 0, 2, 1, 1, 1, 0);
+		// Sub-panels for the reaction mechanism panel
+		JPanel leftMechanismPanel = new JPanel();
+		leftMechanismPanel.setBackground(Color.WHITE);
+		LayoutHelper lh = new LayoutHelper(leftMechanismPanel);
+		lh.add(createButtonGroupPanel(non,
+				CfgKeys.KINETICS_NONE_ENZYME_REACTIONS));
+		lh.add(createButtonGroupPanel(uni, CfgKeys.KINETICS_UNI_UNI_TYPE));
+		lh.add(createButtonGroupPanel(bun, CfgKeys.KINETICS_BI_UNI_TYPE));
+
+		JPanel rightMechanismPanel = new JPanel();
+		rightMechanismPanel.setBackground(Color.WHITE);
+		lh = new LayoutHelper(rightMechanismPanel);
+		lh.add(createButtonGroupPanel(bib, CfgKeys.KINETICS_BI_BI_TYPE));
+		lh.add(createButtonGroupPanel(arb,
+				CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS));
+		lh.add(createButtonGroupPanel(grn, CfgKeys.KINETICS_GENE_REGULATION));
 
 		add(leftMechanismPanel);
 		add(rightMechanismPanel);
+	}
 
-		jRadioButtonUniUniMMK.setEnabled(true);
-		jRadioButtonUniUniCONV.setEnabled(true);
-		jRadioButtonBiUniORD.setEnabled(true);
-		jRadioButtonBiUniCONV.setEnabled(true);
-		jRadioButtonBiUniRND.setEnabled(true);
-		jRadioButtonBiBiPP.setEnabled(true);
-		jRadioButtonBiBiORD.setEnabled(true);
-		jRadioButtonBiBiCONV.setEnabled(true);
-		jRadioButtonBiBiRND.setEnabled(true);
-
-		jRadioButtonHillEqn.addItemListener(this);
-		jRadioButtonUniUniMMK.addItemListener(this);
-		jRadioButtonUniUniCONV.addItemListener(this);
-		jRadioButtonBiUniORD.addItemListener(this);
-		jRadioButtonBiUniCONV.addItemListener(this);
-		jRadioButtonBiUniRND.addItemListener(this);
-		jRadioButtonBiBiRND.addItemListener(this);
-		jRadioButtonBiBiCONV.addItemListener(this);
-		jRadioButtonBiBiORD.addItemListener(this);
-		jRadioButtonBiBiPP.addItemListener(this);
-
-		jRadioButtonUniUniMMK.setEnabled(true);
-		jRadioButtonUniUniCONV.setEnabled(true);
-		jRadioButtonBiUniORD.setEnabled(true);
-		jRadioButtonBiUniCONV.setEnabled(true);
-		jRadioButtonBiUniRND.setEnabled(true);
-		jRadioButtonBiBiPP.setEnabled(true);
-		jRadioButtonBiBiORD.setEnabled(true);
-		jRadioButtonBiBiCONV.setEnabled(true);
-		jRadioButtonBiBiRND.setEnabled(true);
+	/**
+	 * Creates a panel that contains radio buttons for the given class of
+	 * kinetic equations.
+	 * 
+	 * @param classes
+	 * @param key
+	 * @param interfaceClass
+	 * @return
+	 */
+	private JPanel createButtonGroupPanel(List<String> classes, CfgKeys key) {
+		ButtonGroup buttonGroup = new ButtonGroup();
+		JPanel p = new JPanel();
+		LayoutHelper helper = new LayoutHelper(p);
+		StringTokenizer st = new StringTokenizer(key.toString().substring(8)
+				.toLowerCase().replace('_', ' '));
+		StringBuilder title = new StringBuilder();
+		while (st.hasMoreElements()) {
+			title.append(' ');
+			title.append(StringTools.firstLetterUpperCase(st.nextElement()
+					.toString()));
+		}
+		title.append(' ');
+		p.setBorder(BorderFactory.createTitledBorder(null, title.toString(),
+				TitledBorder.DEFAULT_JUSTIFICATION,
+				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
+		Class<?> interfaceClass;
+		switch (key) {
+		case KINETICS_BI_BI_TYPE:
+			interfaceClass = BiBiKinetics.class;
+			break;
+		case KINETICS_BI_UNI_TYPE:
+			interfaceClass = BiUniKinetics.class;
+			break;
+		case KINETICS_GENE_REGULATION:
+			interfaceClass = GeneRegulatoryKinetics.class;
+			break;
+		case KINETICS_NONE_ENZYME_REACTIONS:
+			interfaceClass = NonEnzymeKinetics.class;
+			break;
+		case KINETICS_OTHER_ENZYME_REACTIONS:
+			interfaceClass = ArbitraryEnzymeKinetics.class;
+			break;
+		default: // case KINETICS_UNI_UNI_TYPE:
+			interfaceClass = UniUniKinetics.class;
+			break;
+		}
+		JRadioButton jRButton[] = new JRadioButton[classes.size()];
+		for (int i = 0; i < jRButton.length; i++) {
+			String className = classes.get(i);
+			Kinetics type = Kinetics.getTypeForName(className);
+			jRButton[i] = new JRadioButton(className.substring(className
+					.lastIndexOf('.') + 1));
+			jRButton[i].setSelected(Kinetics.valueOf(settings.get(key)
+					.toString()) == type);
+			StringBuilder toolTip = new StringBuilder();
+			switch (key) {
+			case KINETICS_GENE_REGULATION:
+				toolTip.append("Check this box if you want ");
+				toolTip.append(jRButton[i].getText());
+				toolTip.append(" as reaction scheme for gene regulation ");
+				toolTip.append("(reactions involving genes, RNA and proteins)");
+				break;
+			case KINETICS_UNI_UNI_TYPE:
+				toolTip.append("Check this box if ");
+				toolTip.append(jRButton[i].getText());
+				toolTip.append(" is to be applied for uni-uni reactions");
+				toolTip.append(" (one reactant, one product).");
+				break;
+			case KINETICS_BI_UNI_TYPE:
+				toolTip.append("Check this box if you want the ");
+				toolTip.append(jRButton[i].getText());
+				toolTip.append(" scheme as reaction scheme for bi-uni ");
+				toolTip.append("reactions (two reactant, one product).");
+				break;
+			case KINETICS_BI_BI_TYPE:
+				toolTip.append("Check this box if you want the ");
+				toolTip.append(jRButton[i].getText());
+				toolTip.append(" to be applied to all ");
+				toolTip
+						.append("bi-bi reactions (two reactants, two products).");
+				break;
+			case KINETICS_OTHER_ENZYME_REACTIONS:
+				toolTip
+						.append("Reactions, which are enzyme-catalyzed, and follow");
+				toolTip
+						.append("none of the schemes uni-uni, bi-uni and bi-bi ");
+				toolTip.append("can be modeled using ");
+				toolTip.append(jRButton[i].getText());
+				toolTip.append('.');
+				break;
+			default:
+				toolTip.append("Reactions, which are ");
+				toolTip.append(type.toString().toLowerCase().replace('_', ' '));
+				toolTip.append(", can be described using ");
+				toolTip.append(type.getEquationName());
+				toolTip.append('.');
+				break;
+			}
+			jRButton[i].setToolTipText(GUITools.toHTML(toolTip.toString(), 40));
+			jRButton[i].setEnabled(true);
+			jRButton[i].setBackground(Color.WHITE);
+			jRButton[i].addItemListener(this);
+			jRButton[i].setActionCommand(interfaceClass.getCanonicalName());
+			buttonGroup.add(jRButton[i]);
+			helper.add(jRButton[i]);
+		}
+		p.setBackground(Color.WHITE);
+		return p;
 	}
 
 	/**
@@ -403,54 +267,22 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getSource().equals(jRadioButtonGMAK)) {
-			if (jRadioButtonGMAK.isSelected())
-				settings.put(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS,
-						Kinetics.GENERALIZED_MASS_ACTION);
-		} else if (e.getSource().equals(jRadioButtonUniUniMMK)) {
-			if (jRadioButtonUniUniMMK.isSelected())
-				settings.put(CfgKeys.KINETICS_UNI_UNI_TYPE,
-						Kinetics.MICHAELIS_MENTEN);
-		} else if (e.getSource().equals(jRadioButtonUniUniCONV)) {
-			if (jRadioButtonUniUniCONV.isSelected())
-				settings.put(CfgKeys.KINETICS_UNI_UNI_TYPE,
-						Kinetics.CONVENIENCE_KINETICS);
-		} else if (e.getSource().equals(jRadioButtonBiUniRND)) {
-			if (jRadioButtonBiUniRND.isSelected())
-				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE,
-						Kinetics.RANDOM_ORDER_MECHANISM);
-		} else if (e.getSource().equals(jRadioButtonBiUniCONV)) {
-			if (jRadioButtonBiUniCONV.isSelected())
-				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE,
-						Kinetics.CONVENIENCE_KINETICS);
-		} else if (e.getSource().equals(jRadioButtonBiUniORD)) {
-			if (jRadioButtonBiUniORD.isSelected())
-				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE,
-						Kinetics.ORDERED_MECHANISM);
-		} else if (e.getSource().equals(jRadioButtonBiBiRND)) {
-			if (jRadioButtonBiBiRND.isSelected())
-				settings.put(CfgKeys.KINETICS_BI_BI_TYPE,
-						Kinetics.RANDOM_ORDER_MECHANISM);
-		} else if (e.getSource().equals(jRadioButtonBiBiCONV)) {
-			if (jRadioButtonBiBiCONV.isSelected())
-				settings.put(CfgKeys.KINETICS_BI_BI_TYPE,
-						Kinetics.CONVENIENCE_KINETICS);
-		} else if (e.getSource().equals(jRadioButtonBiBiORD)) {
-			if (jRadioButtonBiBiORD.isSelected())
-				settings.put(CfgKeys.KINETICS_BI_BI_TYPE,
-						Kinetics.ORDERED_MECHANISM);
-		} else if (e.getSource().equals(jRadioButtonBiBiPP)) {
-			if (jRadioButtonBiBiPP.isSelected())
-				settings.put(CfgKeys.KINETICS_BI_BI_TYPE,
-						Kinetics.PING_PONG_MECAHNISM);
-		} else if (e.getSource().equals(jRadioButtonHillEqn)) {
-			if (jRadioButtonHillEqn.isSelected())
-				settings.put(CfgKeys.KINETICS_GENE_REGULATION,
-						Kinetics.HILL_EQUATION);
-		} else /* if (e.getSource().equals(jRadioButtonOtherEnzym)) */{
-			settings.put(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS, Kinetics
-					.getTypeForName(pckg + '.'
-							+ ((JRadioButton) e.getSource()).getText()));
+		if (e.getSource() instanceof JRadioButton) {
+			JRadioButton rbutton = (JRadioButton) e.getSource();
+			Kinetics type = Kinetics.getTypeForName(pckg + '.'
+					+ rbutton.getText());
+			String command = rbutton.getActionCommand();
+			if (command.equals(NonEnzymeKinetics.class.getCanonicalName()))
+				settings.put(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS, type);
+			else if (command.equals(GeneRegulatoryKinetics.class
+					.getCanonicalName()))
+				settings.put(CfgKeys.KINETICS_GENE_REGULATION, type);
+			else if (command.equals(UniUniKinetics.class.getCanonicalName()))
+				settings.put(CfgKeys.KINETICS_UNI_UNI_TYPE, type);
+			else if (command.equals(BiUniKinetics.class.getCanonicalName()))
+				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE, type);
+			else if (command.equals(BiBiKinetics.class.getCanonicalName()))
+				settings.put(CfgKeys.KINETICS_BI_BI_TYPE, type);
 		}
 		for (ItemListener i : itemListeners)
 			i.itemStateChanged(e);
