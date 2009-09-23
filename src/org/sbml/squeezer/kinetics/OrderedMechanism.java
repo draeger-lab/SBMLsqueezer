@@ -37,7 +37,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *         Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
-public class OrderedMechanism extends GeneralizedMassAction implements BiUniKinetics, BiBiKinetics {
+public class OrderedMechanism extends GeneralizedMassAction implements
+		BiUniKinetics, BiBiKinetics, ReversibleKinetics, IrreversibleKinetics {
 
 	/**
 	 * @param parentReaction

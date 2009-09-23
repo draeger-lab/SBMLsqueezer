@@ -40,7 +40,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date 2009-09-17
  */
 public class ReversiblePowerLaw extends BasicKineticLaw implements
-		UniUniKinetics, BiUniKinetics, BiBiKinetics, ArbitraryEnzymeKinetics {
+		UniUniKinetics, BiUniKinetics, BiBiKinetics, ArbitraryEnzymeKinetics,
+		ReversibleKinetics, IrreversibleKinetics {
 
 	/**
 	 * <ol>

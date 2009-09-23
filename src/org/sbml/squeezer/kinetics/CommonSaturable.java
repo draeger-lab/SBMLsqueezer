@@ -38,7 +38,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date 2009-09-21
  */
 public class CommonSaturable extends ReversiblePowerLaw implements
-		UniUniKinetics, BiUniKinetics, ArbitraryEnzymeKinetics {
+		UniUniKinetics, BiUniKinetics, ArbitraryEnzymeKinetics,
+		ReversibleKinetics, IrreversibleKinetics {
 
 	/**
 	 * @param parentReaction

@@ -363,7 +363,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		LayoutHelper.addComponent(this, layout, jPanelSettingsEnzymes, 0, 2, 2,
 				1, 1, 0);
 		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 0, 3,
-				2, 1, 1, 1);
+				2, 1, 1, 0);
 
 		setBackground(Color.WHITE);
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));

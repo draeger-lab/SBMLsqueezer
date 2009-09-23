@@ -56,7 +56,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date Aug 1, 2007
  */
 public class Convenience extends GeneralizedMassAction implements
-		UniUniKinetics, BiUniKinetics, ArbitraryEnzymeKinetics {
+		UniUniKinetics, BiUniKinetics, ArbitraryEnzymeKinetics,
+		ReversibleKinetics, IrreversibleKinetics {
 
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO
