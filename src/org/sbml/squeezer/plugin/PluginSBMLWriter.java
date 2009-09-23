@@ -108,7 +108,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @param unit
 	 * @return
 	 */
-	// TODO: libsbmlConstants?
+
 	private boolean equal(Unit u, PluginUnit unit) {
 		if (u == null || unit == null)
 			return false;
@@ -630,23 +630,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), libsbml.parseFormula(kl.getMath()));
 			if (mc.isSetMath() && !equal)
-				// TODO constraint setmath not defined
-				// && kl.setMath(convert(mc.getMath())) !=
-				// libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
-			// } else if (sbase instanceof PluginDelay) {
-			// PluginDelay kl = (PluginDelay) sbase;
-			// boolean equal = kl.isSetMath() && mc.isSetMath()
-			// && equal(mc.getMath(), kl.getMath());
-			// if (mc.isSetMath()
-			// && !equal
-			// && kl.setMath(convert(mc.getMath())) !=
-			// libsbmlConstants.LIBSBML_OPERATION_SUCCESS)
-			// throw new SBMLException("Unable to set math of "
-			// + mc.getClass().getSimpleName() + " in "
-			// + kl.getClass().getName());
+
 		} else if (sbase instanceof PluginEventAssignment) {
 			PluginEventAssignment kl = (PluginEventAssignment) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
@@ -950,10 +937,11 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	// TODO: constructor und setmath
 	public PluginConstraint writeConstraint(Constraint constraint) {
-		PluginConstraint c = new PluginConstraint(constraint.);
+		PluginConstraint c = new PluginConstraint(constraint.getFormula());
 		saveSBaseProperties(constraint, c);
-		if (constraint.isSetMath() && !equal(constraint.getMath(), libsbml.parseFormula(c.getMath())))
-			c.setMa	th(convert(constraint.getMath()));
+		// if (constraint.isSetMath() && !equal(constraint.getMath(),
+		// libsbml.parseFormula(c.getMath())))
+		// c.setMath(convert(constraint.getMath()));
 		if (constraint.isSetMessage()
 				&& !constraint.getMessage().equals(c.getMessage()))
 			c.setMessage(constraint.getMessage());
@@ -1005,12 +993,13 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return fd;
 	}
 
+	// TODO: symbol als constructor?
 	public PluginInitialAssignment writeInitialAssignment(
 			InitialAssignment initialAssignment) throws SBMLException {
-		PluginInitialAssignment ia = new PluginInitialAssignment(initialAssignment.);
+		PluginInitialAssignment ia = new PluginInitialAssignment(
+				initialAssignment.getSymbol());
 		saveMathContainerProperties(initialAssignment, ia);
-		if (initialAssignment.isSetSymbol())
-			ia.setSymbol(initialAssignment.getSymbol());
+
 		return ia;
 	}
 
@@ -1055,6 +1044,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	private PluginSpeciesAlias writePluginSpeciesAlias(
 			ModifierSpeciesReference msr) {	
 		PluginSpeciesAlias psa = new PluginSpeciesAlias(msr.getSpeciesInstance(),msr.g)
+		return psa;
 	}
 
 	/*
@@ -1219,7 +1209,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			StoichiometryMath stoichiometryMath) {
 		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath(
 				stoichiometryMath.getLevel(), stoichiometryMath.getVersion());
-		/*LibSBMLWriter.*/saveSBaseProperties(stoichiometryMath, sm);
+		/* LibSBMLWriter. */saveSBaseProperties(stoichiometryMath, sm);
 		if (stoichiometryMath.isSetMath())
 			sm.setMath(convert(stoichiometryMath.getMath()));
 		return sm;
@@ -1229,11 +1219,12 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return convert(trigger.getMath());
 	}
 
-	public PluginUnit writeUnit(Unit unit, Object...parent) {
+	public PluginUnit writeUnit(Unit unit, Object... parent) {
 		if (parent.length != 1 || !(parent[0] instanceof PluginUnitDefinition))
-			throw new IllegalArgumentException("parent must be of type PluginUnitDefinition!");
-		
-		PluginUnit u = new PluginUnit((PluginUnitDefinition)parent[0]);
+			throw new IllegalArgumentException(
+					"parent must be of type PluginUnitDefinition!");
+
+		PluginUnit u = new PluginUnit((PluginUnitDefinition) parent[0]);
 		saveSBaseProperties(unit, u);
 		switch (unit.getKind()) {
 		case AMPERE:
