@@ -130,9 +130,11 @@ public class GUITools {
 	 * @return
 	 */
 	public static String toHTML(String string, int lineBreak) {
-		StringTokenizer st = new StringTokenizer(string, " ");
+		StringTokenizer st = new StringTokenizer(string != null ? string : "",
+				" ");
 		StringBuilder sb = new StringBuilder();
-		sb.append(st.nextElement().toString());
+		if (st.hasMoreElements())
+			sb.append(st.nextElement().toString());
 		int length = sb.length();
 		sb.insert(0, "<html><body>");
 		while (st.hasMoreElements()) {
