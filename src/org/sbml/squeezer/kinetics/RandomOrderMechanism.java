@@ -56,9 +56,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public RandomOrderMechanism(Reaction parentReaction)
+	public RandomOrderMechanism(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	/*
@@ -393,5 +393,13 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		} while (enzymeNum < modE.size());
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Random order mechanism";
 	}
 }

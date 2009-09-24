@@ -31,11 +31,12 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This class creates an equation based on an additive model.
- *  
+ * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- *
+ * 
  */
-public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRegulatoryKinetics {
+public class GRNAdditiveModel extends BasicKineticLaw implements
+		InterfaceGeneRegulatoryKinetics {
 
 	/**
 	 * @param parentReaction
@@ -47,7 +48,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRe
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
-	
+
 	public static boolean isApplicable(Reaction reaction) {
 		if (SBO.isTranslation(reaction.getSBOTerm())
 				|| SBO.isTranscription(reaction.getSBOTerm()))
@@ -55,22 +56,28 @@ public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRe
 		return false;
 	}
 
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	/*
+	 * (Kein Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		
-		ASTNode kineticLaw = new ASTNode(this);		
-		kineticLaw = ASTNode.diff(ASTNode.times(m_i(), function_g(function_w(),function_v(), b_i())),function_l());
-		
-		//System.out.println(kineticLaw.toLaTeX());
+
+		ASTNode kineticLaw = new ASTNode(this);
+		kineticLaw = ASTNode.diff(ASTNode.times(m_i(), function_g(function_w(),
+				function_v(), b_i())), function_l());
+
+		// System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;
 	}
-	
+
 	ASTNode function_w() {
 		Reaction r = getParentSBMLObject();
 		Parameter p = null;
@@ -84,7 +91,8 @@ public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRe
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 			if (SBO.isProtein(modifierspec.getSBOTerm())
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm())modifier.setSBOTerm(19);
+				if (!modifier.isSetSBOTerm())
+					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("w_", modifierNum, underscore, rId);
@@ -98,9 +106,9 @@ public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRe
 		}
 		return node;
 	}
-	
-	ASTNode function_v(){
-		//TODO: modifier sollen "externe Faktoren" sein
+
+	ASTNode function_v() {
+		// TODO: modifier sollen "externe Faktoren" sein
 		Reaction r = getParentSBMLObject();
 		Parameter p = null;
 		String rId = getParentSBMLObject().getId();
@@ -113,7 +121,8 @@ public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRe
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 			if (SBO.isProtein(modifierspec.getSBOTerm())
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm())modifier.setSBOTerm(19);
+				if (!modifier.isSetSBOTerm())
+					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("v_", modifierNum, underscore, rId);
@@ -127,8 +136,8 @@ public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRe
 		}
 		return node;
 	}
-	
-	ASTNode function_l(){
+
+	ASTNode function_l() {
 		Reaction r = getParentSBMLObject();
 		Parameter p = null;
 		String rId = getParentSBMLObject().getId();
@@ -141,10 +150,12 @@ public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRe
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 			if (SBO.isProtein(modifierspec.getSBOTerm())
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm())modifier.setSBOTerm(19);
+				if (!modifier.isSetSBOTerm())
+					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
-					p = createOrGetParameter("lambda_", modifierNum, underscore, rId);
+					p = createOrGetParameter("lambda_", modifierNum,
+							underscore, rId);
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
@@ -155,24 +166,33 @@ public class GRNAdditiveModel extends BasicKineticLaw implements InterfaceGeneRe
 		}
 		return node;
 	}
-	
-	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b){		
-		ASTNode node = ASTNode.sum(w,v,b);
+
+	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b) {
+		ASTNode node = ASTNode.sum(w, v, b);
 		return node;
 	}
-	
-	ASTNode b_i(){
+
+	ASTNode b_i() {
 		String rId = getParentSBMLObject().getId();
 		Parameter b_i = createOrGetParameter("b_", rId, underscore);
 		ASTNode b_i_node = new ASTNode(b_i, this);
 		return b_i_node;
 	}
 
-	ASTNode m_i(){
+	ASTNode m_i() {
 		String rId = getParentSBMLObject().getId();
 		Parameter m_i = createOrGetParameter("m_", rId, underscore);
 		ASTNode m_i_node = new ASTNode(m_i, this);
 		return m_i_node;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+	 */
+	// @Override
+	public String getSimpleName() {
+		return "An additive model equation";
 	}
 
 }

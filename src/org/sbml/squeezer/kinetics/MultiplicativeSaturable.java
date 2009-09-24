@@ -40,17 +40,17 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
-
+		InterfaceModulatedKinetics {
+	
 	/**
 	 * @param parentReaction
 	 * @param type
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public MultiplicativeSaturable(Reaction parentReaction, Object type)
+	public MultiplicativeSaturable(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction, type);
+		super(parentReaction, types);
 		unsetSBOTerm();
 		setNotes("multiplicative saturable rate law");
 	}
@@ -108,5 +108,13 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 				term.multiplyWith(curr);
 		}
 		return term;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Multiplicative saturable rate law";
 	}
 }

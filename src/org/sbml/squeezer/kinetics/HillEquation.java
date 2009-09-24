@@ -52,7 +52,7 @@ public class HillEquation extends BasicKineticLaw implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public HillEquation(Reaction parentReaction)
+	public HillEquation(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 	}
@@ -212,5 +212,15 @@ public class HillEquation extends BasicKineticLaw implements
 		if (modTInhib.size() > 0)
 			formelTxt.multiplyWith(inhib);
 		return formelTxt;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+	 */
+	// @Override
+	public String getSimpleName() {
+		return "Hill equation";
 	}
 }

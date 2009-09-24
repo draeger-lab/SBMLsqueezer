@@ -40,17 +40,18 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class CommonSaturable extends ReversiblePowerLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+		InterfaceModulatedKinetics {
 
+	
 	/**
 	 * @param parentReaction
 	 * @param type
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public CommonSaturable(Reaction parentReaction, Object type)
+	public CommonSaturable(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction, type);
+		super(parentReaction, types);
 		unsetSBOTerm();
 		setNotes("common saturable rate law");
 	}
@@ -105,5 +106,13 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 				denominator.multiplyWith(curr);
 		}
 		return denominator;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Common saturable rate law";
 	}
 }

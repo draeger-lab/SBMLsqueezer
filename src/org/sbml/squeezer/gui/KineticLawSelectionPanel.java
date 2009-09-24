@@ -25,7 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.IllegalFormatException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -34,6 +33,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -41,11 +41,9 @@ import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
@@ -71,7 +69,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	private boolean isExistingRateLawSelected;
 
-	private Kinetics possibleTypes[];
+	private String possibleTypes[];
 
 	private JPanel optionsPanel;
 
@@ -106,20 +104,19 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @param possibleLaws
 	 * @param selected
 	 */
-	public KineticLawSelectionPanel(KineticLaw[] possibleLaws, int selected) {
+	public KineticLawSelectionPanel(BasicKineticLaw[] possibleLaws, int selected) {
 		super(new BorderLayout());
 		if (possibleLaws == null || selected < 0
 				|| selected > possibleLaws.length || possibleLaws.length < 1)
 			throw new IllegalArgumentException(
 					"at least one rate law must be given and the index must be between zero and the number of rate laws.");
 		this.reaction = possibleLaws[0].getParentSBMLObject();
-		this.possibleTypes = new Kinetics[possibleLaws.length];
+		this.possibleTypes = new String[possibleLaws.length];
 		String[] possibleTypesNames = new String[possibleLaws.length];
 		laTeXpreview = new StringBuffer[possibleTypes.length];
 		for (int i = 0; i < possibleTypes.length; i++) {
-			possibleTypes[i] = Kinetics.getTypeForName(possibleLaws[i]
-					.getClass().getName());
-			possibleTypesNames[i] = possibleTypes[i].getEquationName();
+			possibleTypesNames[i] = possibleLaws[i].getSimpleName();
+			possibleTypes[i] = possibleLaws[i].getClass().getCanonicalName();
 			laTeXpreview[i] = possibleLaws[i].getMath().toLaTeX();
 		}
 		kineticLawComboBox = new JComboBox(possibleTypesNames);
@@ -274,7 +271,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * 
 	 * @return
 	 */
-	public Kinetics getSelectedKinetic() {
+	public String getSelectedKinetic() {
 		int i = 0;
 		if (rButtonsKineticEquations != null) {
 			while ((i < rButtonsKineticEquations.length)
@@ -381,9 +378,12 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 						+ kinetic.getSBOTermID() + "</b> " : "";
 				toolTips[i] = GUITools.toHTML(toolTips[i] + kinetic.toString(),
 						40);
-				kineticEquations[i] = GUITools.toHTML(possibleTypes[i]
-						.getEquationName(), 40);
-			} catch (IllegalFormatException e) {
+				kineticEquations[i] = GUITools.toHTML(kinetic.getSimpleName(),
+						40);
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(getTopLevelAncestor(), GUITools
+						.toHTML(e.getMessage(), 40), e.getClass().getName(),
+						JOptionPane.WARNING_MESSAGE);
 				e.printStackTrace();
 			}
 		if (reaction.isSetKineticLaw())

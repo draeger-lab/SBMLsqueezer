@@ -41,7 +41,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class MichaelisMenten extends GeneralizedMassAction implements
 		InterfaceUniUniKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
-
+	
 	private int numOfInhibitors;
 
 	private int numOfActivators;
@@ -54,9 +54,9 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	 * @throws IllegalFormatException
 	 * @throws IOException
 	 */
-	public MichaelisMenten(Reaction parentReaction)
+	public MichaelisMenten(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -266,5 +266,13 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	public static boolean isApplicable(Reaction reaction) {
 		// TODO
 		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Michaelis-Menten";
 	}
 }

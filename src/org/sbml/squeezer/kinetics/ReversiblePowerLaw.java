@@ -42,7 +42,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class ReversiblePowerLaw extends BasicKineticLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+		InterfaceModulatedKinetics {
 
 	/**
 	 * <ol>
@@ -60,9 +60,9 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public ReversiblePowerLaw(Reaction parentReaction, Object type)
+	public ReversiblePowerLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction, type);
+		super(parentReaction, types);
 		setSBOTerm(42);
 	}
 
@@ -465,5 +465,15 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 					specRef.getStoichiometry(), this), new ASTNode(hr, this))));
 		}
 		return rate;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+	 */
+	// @Override
+	public String getSimpleName() {
+		return "Reversible power law";
 	}
 }

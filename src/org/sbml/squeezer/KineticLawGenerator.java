@@ -18,13 +18,13 @@
  */
 package org.sbml.squeezer;
 
-import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IllegalFormatException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -49,41 +49,20 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
 import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
 import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
-import org.sbml.squeezer.kinetics.CommonSaturable;
-import org.sbml.squeezer.kinetics.Convenience;
-import org.sbml.squeezer.kinetics.ConvenienceIndependent;
-import org.sbml.squeezer.kinetics.DirectSaturable;
-import org.sbml.squeezer.kinetics.ForceDependent;
-import org.sbml.squeezer.kinetics.GRNAdditiveModel;
-import org.sbml.squeezer.kinetics.GRNAdditiveModel_1;
-import org.sbml.squeezer.kinetics.GRNAdditiveModel_2;
-import org.sbml.squeezer.kinetics.GRNAdditiveModel_NGlinear;
-import org.sbml.squeezer.kinetics.GRNAdditiveModel_NGnonlinear;
-import org.sbml.squeezer.kinetics.GRNSSystemEquation;
 import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
-import org.sbml.squeezer.kinetics.GeneralizedMassAction;
-import org.sbml.squeezer.kinetics.HillEquation;
+import org.sbml.squeezer.kinetics.InterfaceIntegerStoichiometry;
+import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceModulatedKinetics;
+import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
 import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
-import org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes;
 import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
-import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
-import org.sbml.squeezer.kinetics.MichaelisMenten;
-import org.sbml.squeezer.kinetics.MultiplicativeSaturable;
-import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
-import org.sbml.squeezer.kinetics.OrderedMechanism;
-import org.sbml.squeezer.kinetics.PingPongMechanism;
-import org.sbml.squeezer.kinetics.RandomOrderMechanism;
-import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
-import org.sbml.squeezer.kinetics.ReversiblePowerLaw;
-import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
-import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
-import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 import org.sbml.squeezer.math.GaussianRank;
 import org.sbml.squeezer.rmi.Reflect;
 
@@ -111,6 +90,7 @@ public class KineticLawGenerator {
 	private static Set<String> kinZeroReac;
 	private static Set<String> kinZeroProd;
 	private static Set<String> kinModulated;
+	private static Set<String> kinIntStoich;
 
 	static {
 		kinBiBi = new HashSet<String>();
@@ -124,6 +104,7 @@ public class KineticLawGenerator {
 		kinZeroReac = new HashSet<String>();
 		kinZeroProd = new HashSet<String>();
 		kinModulated = new HashSet<String>();
+		kinIntStoich = new HashSet<String>();
 		Class<?> l[] = Reflect.getAllClassesInPackage(
 				SBMLsqueezer.KINETICS_PACKAGE, false, true,
 				BasicKineticLaw.class);
@@ -154,6 +135,8 @@ public class KineticLawGenerator {
 					kinZeroProd.add(c.getCanonicalName());
 				if (s.contains(InterfaceModulatedKinetics.class))
 					kinModulated.add(c.getCanonicalName());
+				if (s.contains(InterfaceIntegerStoichiometry.class))
+					kinIntStoich.add(c.getCanonicalName());
 			}
 		}
 	}
@@ -244,79 +227,49 @@ public class KineticLawGenerator {
 	 * @return A kinetic law for the given reaction.
 	 * @throws RateLawNotApplicableException
 	 * @throws ModificationException
-	 * @throws IOException
-	 * @throws IllegalFormatException
+	 * @throws ClassNotFoundException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws IllegalArgumentException
 	 */
-	public BasicKineticLaw createKineticLaw(Reaction r, Kinetics kinetic,
-			boolean reversibility) throws ModificationException,
-			RateLawNotApplicableException, IllegalFormatException {
+	public BasicKineticLaw createKineticLaw(Reaction r,
+			String kineticsClassName, boolean reversibility)
+			throws ModificationException, RateLawNotApplicableException,
+			ClassNotFoundException, SecurityException, NoSuchMethodException,
+			IllegalArgumentException, InstantiationException,
+			IllegalAccessException, InvocationTargetException {
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null)
 			reaction = r;
 		reaction.setReversible(reversibility || reaction.getReversible());
-		switch (kinetic) {
-		case COMPETETIVE_NON_EXCLUSIVE_INHIB:
-			return new IrrevCompetNonCooperativeEnzymes(reaction);
-		case ZEROTH_ORDER_REVERSE_MA:
-			return new ZerothOrderReverseGMAK(reaction);
-		case ZEROTH_ORDER_FORWARD_MA:
-			return new ZerothOrderForwardGMAK(reaction);
-		case IRREV_NON_MODULATED_ENZYME_KIN:
-			return new IrrevNonModulatedNonInteractingEnzymes(reaction);
-		case HILL_EQUATION:
-			return new HillEquation(reaction);
-		case ORDERED_MECHANISM:
-			return new OrderedMechanism(reaction);
-		case PING_PONG_MECAHNISM:
-			return new PingPongMechanism(reaction);
-		case RANDOM_ORDER_MECHANISM:
-			return new RandomOrderMechanism(reaction);
-		case MICHAELIS_MENTEN:
-			return new MichaelisMenten(reaction);
-		case CONVENIENCE_KINETICS:
-			return hasFullColumnRank(modelOrig) ? new Convenience(reaction)
-					: new ConvenienceIndependent(reaction);
-		case REVERSIBLE_POWER_LAW:
-			return new ReversiblePowerLaw(reaction, settings
-					.get(CfgKeys.TYPE_STANDARD_VERSION));
-		case COMMON_SATURABLE:
-			return new CommonSaturable(reaction, settings
-					.get(CfgKeys.TYPE_STANDARD_VERSION));
-		case DIRECT_SATURABLE:
-			return new DirectSaturable(reaction, settings
-					.get(CfgKeys.TYPE_STANDARD_VERSION));
-		case MULTIPLICATIVE_SATURABLE:
-			return new MultiplicativeSaturable(reaction, settings
-					.get(CfgKeys.TYPE_STANDARD_VERSION));
-		case FORCE_DEPENDENT:
-			return new ForceDependent(reaction, settings
-					.get(CfgKeys.TYPE_STANDARD_VERSION));
-		case SSYSTEM_KINETIC:
-			return new GRNSSystemEquation(reaction);
-		case ADDITIVE_KINETIC:
-			return new GRNAdditiveModel(reaction);
-		case ADDITIVE_KINETIC1:
-			return new GRNAdditiveModel_1(reaction);
-		case ADDITIVE_KINETIC2:
-			return new GRNAdditiveModel_2(reaction);
-		case ADDITIVE_KINETIC_NGlinear:
-			return new GRNAdditiveModel_NGlinear(reaction);
-		case ADDITIVE_KINETIC_NGnonlinear:
-			return new GRNAdditiveModel_NGnonlinear(reaction);
-		default:
-			return new GeneralizedMassAction(reaction);
-		}
+		Class<?> kinCls = Class.forName(kineticsClassName);
+		Constructor<?> constr = kinCls.getConstructor(r.getClass(),
+				(new Object[] {}).getClass());
+		return (BasicKineticLaw) constr.newInstance(r, new Object[] {
+				settings.get(CfgKeys.TYPE_STANDARD_VERSION),
+				Boolean.valueOf(hasFullColumnRank(modelOrig)) });
 	}
 
 	/**
-	 * @throws IOException
 	 * @throws RateLawNotApplicableException
 	 * @throws ModificationException
-	 * @throws IllegalFormatException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws ClassNotFoundException
+	 * @throws IllegalArgumentException
+	 * @throws SecurityException
 	 * 
 	 */
-	public void generateLaws() throws IllegalFormatException,
-			ModificationException, RateLawNotApplicableException {
+	public void generateLaws() throws ModificationException,
+			RateLawNotApplicableException, SecurityException,
+			IllegalArgumentException, ClassNotFoundException,
+			NoSuchMethodException, InstantiationException,
+			IllegalAccessException, InvocationTargetException {
 		boolean reversibility = ((Boolean) settings
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
@@ -387,44 +340,29 @@ public class KineticLawGenerator {
 	 * @return Returns a sorted array of possible kinetic equations for the
 	 *         given reaction in the model.
 	 */
-	public Kinetics[] identifyPossibleReactionTypes(String reactionID)
+	public String[] identifyPossibleReactionTypes(String reactionID)
 			throws RateLawNotApplicableException {
 		int i;
 		Reaction reaction = miniModel.getReaction(reactionID);
-		Set<Kinetics> types = new HashSet<Kinetics>();
-
-		if (HillEquation.isApplicable(reaction))
-			types.add(Kinetics.HILL_EQUATION);
-
-		if (GRNSSystemEquation.isApplicable(reaction))
-			types.add(Kinetics.SSYSTEM_KINETIC);
-
-		if (GRNAdditiveModel.isApplicable(reaction))
-			types.add(Kinetics.ADDITIVE_KINETIC);
-
-		if (GRNAdditiveModel_1.isApplicable(reaction))
-			types.add(Kinetics.ADDITIVE_KINETIC1);
-
-		if (GRNAdditiveModel_2.isApplicable(reaction))
-			types.add(Kinetics.ADDITIVE_KINETIC2);
-
-		if (GRNAdditiveModel_NGlinear.isApplicable(reaction))
-			types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
-
-		if (GRNAdditiveModel_NGnonlinear.isApplicable(reaction))
-			types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
+		Set<String> types = new HashSet<String>();
 
 		if (reaction.getNumReactants() == 0
 				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
+			/*
+			 * Special case that occurs if we have at least one emty list of
+			 * species references.
+			 */
 			for (String className : kinZeroReac)
-				types.add(Kinetics.getTypeForName(className));
+				types.add(className);
 			for (String className : kinZeroProd) {
 				if (kinRev.contains(className))
-					types.add(Kinetics.getTypeForName(className));
+					types.add(className);
 			}
 
 		} else {
-
+			/*
+			 * Analyze properties of the reaction
+			 */
 			double stoichiometryLeft = 0d, stoichiometryRight = 0d, stoichiometry;
 			boolean stoichiometryIntLeft = true;
 			boolean reactionWithGenes = false, reactionWithRNAs = false;
@@ -466,7 +404,7 @@ public class KineticLawGenerator {
 			}
 
 			// identify types of modifiers
-			List<String> nonEnzymeCatalyzers = new LinkedList<String>();
+			List<String> nonEnzymeCatalysts = new LinkedList<String>();
 			List<String> inhibitors = new LinkedList<String>();
 			List<String> activators = new LinkedList<String>();
 			List<String> transActiv = new LinkedList<String>();
@@ -475,171 +413,116 @@ public class KineticLawGenerator {
 			if (reaction.getNumModifiers() > 0) {
 				BasicKineticLaw.identifyModifers(reaction, inhibitors,
 						transActiv, transInhib, activators, enzymes,
-						nonEnzymeCatalyzers);
+						nonEnzymeCatalysts);
 			}
 			boolean nonEnzyme = ((!((Boolean) settings
 					.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 					.booleanValue() && enzymes.size() == 0)
-					|| (nonEnzymeCatalyzers.size() > 0)
+					|| (nonEnzymeCatalysts.size() > 0)
 					|| reaction.getNumProducts() == 0 || (SBO
 					.isEmptySet(reaction.getProduct(0).getSpeciesInstance()
 							.getSBOTerm())));
-			boolean uniUniWithoutModulation = false;
+			boolean uniUni = stoichiometryLeft == 1d
+					&& stoichiometryRight == 1d;
+			boolean biUni = stoichiometryLeft == 2d && stoichiometryRight == 1d;
+			boolean biBi = stoichiometryLeft == 2d && stoichiometryRight == 2d;
+			boolean integerStoichiometry = stoichiometryIntLeft;
+			boolean withoutModulation = inhibitors.size() == 0
+					&& activators.size() == 0 && transActiv.size() == 0
+					&& transInhib.size() == 0;
+
+			if (nonEnzyme) {
+				// non enzyme reactions
+				for (String className : kinNonEnz)
+					types.add(className);
+			} else {
+				/*
+				 * Enzym-Kinetics: Assign possible rate laws for arbitrary
+				 * enzyme reations.
+				 */
+				for (String className : kinArbEnz) {
+					if (checkReversibility(reaction, className)
+							&& (!kinIntStoich.contains(className) || integerStoichiometry)
+							&& (kinModulated.contains(className) || withoutModulation))
+						types.add(className);
+				}
+				if (uniUni) {
+					Set<String> onlyUniUni = new HashSet<String>();
+					onlyUniUni.addAll(kinUniUni);
+					onlyUniUni.removeAll(kinArbEnz);
+					if (!integerStoichiometry)
+						onlyUniUni.removeAll(kinIntStoich);
+					if (!withoutModulation)
+						onlyUniUni.removeAll(kinModulated);
+					for (String className : onlyUniUni)
+						if (checkReversibility(reaction, className))
+							types.add(className);
+				} else if (biUni) {
+					Set<String> onlyBiUni = new HashSet<String>();
+					onlyBiUni.addAll(kinBiUni);
+					onlyBiUni.removeAll(kinArbEnz);
+					if (!integerStoichiometry)
+						onlyBiUni.removeAll(kinIntStoich);
+					if (!withoutModulation)
+						onlyBiUni.removeAll(kinModulated);
+					for (String className : onlyBiUni)
+						if (checkReversibility(reaction, className))
+							types.add(className);
+				} else if (biBi) {
+					Set<String> onlyBiBi = new HashSet<String>();
+					onlyBiBi.addAll(kinBiBi);
+					onlyBiBi.removeAll(kinArbEnz);
+					if (!withoutModulation)
+						onlyBiBi.removeAll(kinModulated);
+					for (String className : onlyBiBi)
+						if (checkReversibility(reaction, className))
+							types.add(className);
+				}
+			}
 
 			/*
-			 * Assign possible rate laws for arbitrary enzyme reations.
+			 * Gene regulation
 			 */
-			if (!nonEnzyme) {
-				for (String className : kinArbEnz) {
-					if ((reaction.getReversible() && kinRev.contains(className))
-							|| (!reaction.getReversible() && kinIrrev
-									.contains(className)))
-						types.add(Kinetics.getTypeForName(className));
-				}
-			} else
-				for (String className : kinNonEnz)
-					types.add(Kinetics.getTypeForName(className));
-
-			// Enzym-Kinetics
-			if (!reaction.getReversible() && !nonEnzyme && stoichiometryIntLeft) {
-				// stoichiometryIntRight not necessary.
-				if ((inhibitors.size() == 0) && (activators.size() == 0)
-						&& (stoichiometryLeft > 1))
-					types.add(Kinetics.IRREV_NON_MODULATED_ENZYME_KIN);
-				if ((stoichiometryLeft == 1d)
-						&& ((inhibitors.size() > 1) || (transInhib.size() > 0)))
-					types.add(Kinetics.COMPETETIVE_NON_EXCLUSIVE_INHIB);
-			}
-			if (stoichiometryLeft == 1d) {
-				if (stoichiometryRight == 1d) {
-					// Uni-Uni: MMK/ConvenienceIndependent (1E/1P)
-					Species species = reaction.getReactant(0)
-							.getSpeciesInstance();
-					if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
-							|| (SBO.isEmptySet(species.getSBOTerm()) && (SBO
-									.isRNAOrMessengerRNA(reaction.getProduct(0)
-											.getSpeciesInstance().getSBOTerm()) || SBO
-									.isProtein(reaction.getProduct(0)
-											.getSpeciesInstance().getSBOTerm())))) {
-						setBoundaryCondition(species, true);
-						types.add(Kinetics.HILL_EQUATION);
-						if (reaction.getNumProducts() > 0) {
-							types.add(Kinetics.SSYSTEM_KINETIC);
-							types.add(Kinetics.ADDITIVE_KINETIC);
-							types.add(Kinetics.ADDITIVE_KINETIC1);
-							types.add(Kinetics.ADDITIVE_KINETIC2);
-							types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
-							types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
-						}
-
-						// throw exception if false reaction occurs
-						if (SBO.isTranslation(reaction.getSBOTerm())
-								&& !reactionWithRNAs)
-							throw new RateLawNotApplicableException("Reaction "
-									+ reaction.getId()
-									+ " must be a transcription.");
-
-					} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm())) {
-						types.add(Kinetics.HILL_EQUATION);
-						if (reaction.getNumProducts() > 0) {
-							types.add(Kinetics.SSYSTEM_KINETIC);
-							types.add(Kinetics.ADDITIVE_KINETIC);
-							types.add(Kinetics.ADDITIVE_KINETIC1);
-							types.add(Kinetics.ADDITIVE_KINETIC2);
-							types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
-							types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
-						}
-					}
-					if (!nonEnzyme
-							&& !(reaction.getReversible() && (inhibitors.size() > 1 || transInhib
-									.size() > 1))) // otherwise potentially
-						// identical to convenience
-						// kinetics.
-						types.add(Kinetics.MICHAELIS_MENTEN);
-					if (inhibitors.size() == 0 && activators.size() == 0
-							&& transActiv.size() == 0 && transInhib.size() == 0)
-						uniUniWithoutModulation = true;
+			if (uniUni) {
+				Species reactant = reaction.getReactant(0).getSpeciesInstance();
+				Species product = reaction.getProduct(0).getSpeciesInstance();
+				if (SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm())
+						|| (SBO.isEmptySet(reactant.getSBOTerm()) && (SBO
+								.isRNAOrMessengerRNA(product.getSBOTerm()) || SBO
+								.isProtein(product.getSBOTerm())))) {
+					setBoundaryCondition(reactant, true);
 					// throw exception if false reaction occurs
-
-					if (SBO.isTranscription(reaction.getSBOTerm())
+					if (SBO.isTranslation(reaction.getSBOTerm())
+							&& !reactionWithRNAs)
+						throw new RateLawNotApplicableException("Reaction "
+								+ reaction.getId()
+								+ " must be a transcription.");
+					else if (SBO.isTranscription(reaction.getSBOTerm())
 							&& !reactionWithGenes)
 						throw new RateLawNotApplicableException("Reaction "
 								+ reaction.getId() + " must be a translation.");
 
-				} else if (!reaction.getReversible() && !nonEnzyme)
-					// Products don't matter.
-					types.add(Kinetics.MICHAELIS_MENTEN);
-
-			} else if (stoichiometryLeft == 2d) {
-				if ((stoichiometryRight == 1d) && !nonEnzyme) {
-					// Bi-Uni: ConvenienceIndependent/Ran/Ord/PP (2E/1P)/(2E/2P)
-					types.add(Kinetics.RANDOM_ORDER_MECHANISM);
-					types.add(Kinetics.ORDERED_MECHANISM);
-				} else if ((stoichiometryRight == 2d) && !nonEnzyme) {
-					types.add(Kinetics.RANDOM_ORDER_MECHANISM);
-					types.add(Kinetics.PING_PONG_MECAHNISM);
-					types.add(Kinetics.ORDERED_MECHANISM);
+					for (String className : kinGRN)
+						types.add(className);
 				}
 			}
-			if (!nonEnzyme
-					&& !(uniUniWithoutModulation && hasFullColumnRank(modelOrig)))
-				/*
-				 * more than 2 types of reacting species or higher stoichiometry
-				 * or any other reaction that is possibly catalyzed by an
-				 * enzyme.
-				 */
-				types.add((Kinetics.CONVENIENCE_KINETICS));
-
-			if (reactionWithGenes) {
-				types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
-				if (types.contains((Kinetics.GENERALIZED_MASS_ACTION)))
-					types.remove((Kinetics.GENERALIZED_MASS_ACTION));
-			} else if (types.contains((Kinetics.GENERALIZED_MASS_ACTION))
-					&& reaction.getReversible())
-				types.add((Kinetics.ZEROTH_ORDER_REVERSE_MA));
-			if (!reactionWithGenes
-					&& SBO.isTranscription(reaction.getSBOTerm()))
-				throw new RateLawNotApplicableException("Reaction "
-						+ reaction.getId() + " must not be a transcription.");
-			if (!reactionWithRNAs && SBO.isTranslation(reaction.getSBOTerm()))
-				throw new RateLawNotApplicableException("Reaction "
-						+ reaction.getId() + " must not be a translation.");
-
-			// remove not needed entries:
-			if ((transActiv.size() == 0) && (transInhib.size() == 0)
-					&& (activators.size() == 0) && (enzymes.size() == 0)
-					&& (nonEnzymeCatalyzers.size() == 0)) {
-				if (reactionWithGenes) {
-					types = new HashSet<Kinetics>();
-					types.add((Kinetics.ZEROTH_ORDER_FORWARD_MA));
-					types.add((Kinetics.HILL_EQUATION));
-					if (reaction.getNumProducts() > 0) {
-						types.add(Kinetics.SSYSTEM_KINETIC);
-						types.add(Kinetics.ADDITIVE_KINETIC);
-						types.add(Kinetics.ADDITIVE_KINETIC1);
-						types.add(Kinetics.ADDITIVE_KINETIC2);
-						types.add(Kinetics.ADDITIVE_KINETIC_NGlinear);
-						types.add(Kinetics.ADDITIVE_KINETIC_NGnonlinear);
-					}
-				} /*
-				 * else if (types.contains((Kinetics.HILL_EQUATION)))
-				 * types.remove((Kinetics.HILL_EQUATION));
-				 */
-			} else if (types.contains(Kinetics.HILL_EQUATION)
-					&& types.contains(Kinetics.ZEROTH_ORDER_FORWARD_MA)
-					&& !reaction.getReversible())
-				types.remove(Kinetics.ZEROTH_ORDER_FORWARD_MA);
-
-			if (types.contains(Kinetics.GENERALIZED_MASS_ACTION))
-				types.add(Kinetics.ZEROTH_ORDER_FORWARD_MA);
 		}
-		Kinetics t[] = new Kinetics[types.size()];
-		i = 0;
-		for (Iterator<Kinetics> iterator = types.iterator(); iterator.hasNext(); i++)
-			t[i] = iterator.next();
+		String t[] = types.toArray(new String[] {});
 		Arrays.sort(t);
-
 		return t;
+	}
+
+	/**
+	 * Checks whether for this reaction the given kinetic law can be applied
+	 * just based on the reversibility property (nothing else is checked).
+	 * 
+	 * @param reaction
+	 * @param className
+	 * @return
+	 */
+	private boolean checkReversibility(Reaction reaction, String className) {
+		return (reaction.getReversible() && kinRev.contains(className))
+				|| (!reaction.getReversible() && kinIrrev.contains(className));
 	}
 
 	/**
@@ -647,15 +530,17 @@ public class KineticLawGenerator {
 	 * 
 	 * @param reactionNum
 	 */
-	public Kinetics identifyReactionType(String reactionID,
-			boolean reversibility) throws RateLawNotApplicableException {
+	public String identifyReactionType(String reactionID, boolean reversibility)
+			throws RateLawNotApplicableException {
 		Reaction reaction = miniModel.getReaction(reactionID);
 		SpeciesReference specref = reaction.getReactant(0);
 
 		if (reaction.getNumReactants() == 0)
-			return Kinetics.ZEROTH_ORDER_FORWARD_MA;
+			for (String kin : kinZeroReac)
+				return kin;
 		if (reaction.getReversible() && reaction.getNumProducts() == 0)
-			return Kinetics.ZEROTH_ORDER_REVERSE_MA;
+			for (String kin : kinZeroProd)
+				return kin;
 
 		List<String> modActi = new LinkedList<String>();
 		List<String> modTActi = new LinkedList<String>();
@@ -666,7 +551,8 @@ public class KineticLawGenerator {
 		BasicKineticLaw.identifyModifers(reaction, modInhib, modTActi,
 				modTInhib, modActi, enzymes, modCat);
 
-		Kinetics whichkin = Kinetics.GENERALIZED_MASS_ACTION;
+		String whichkin = settings.get(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS)
+				.toString();
 		double stoichiometryLeft = 0d, stoichiometryRight = 0d;
 
 		for (int i = 0; i < reaction.getNumReactants(); i++)
@@ -688,36 +574,42 @@ public class KineticLawGenerator {
 							throw new RateLawNotApplicableException("Reaction "
 									+ reaction.getId()
 									+ " must be a transcription.");
-						whichkin = Kinetics.HILL_EQUATION;
+						whichkin = settings.get(
+								CfgKeys.KINETICS_GENE_REGULATION).toString();
 					} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm())) {
-						whichkin = Kinetics.HILL_EQUATION;
+						whichkin = settings.get(
+								CfgKeys.KINETICS_GENE_REGULATION).toString();
 						if (SBO.isTranscription(reaction.getSBOTerm()))
 							throw new RateLawNotApplicableException("Reaction "
 									+ reaction.getId()
 									+ " must be a translation.");
 					} else
-						whichkin = Kinetics.valueOf(settings.get(
-								CfgKeys.KINETICS_UNI_UNI_TYPE).toString());
+						whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE)
+								.toString();
 				} else if (!reaction.getReversible() && !reversibility) {
 					// Products don't matter.
-					whichkin = Kinetics.valueOf(settings.get(
-							CfgKeys.KINETICS_UNI_UNI_TYPE).toString());
+					whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE)
+							.toString();
 				} else
-					whichkin = Kinetics.CONVENIENCE_KINETICS;
+					whichkin = settings.get(
+							CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS).toString();
 
 			} else if (stoichiometryLeft == 2d) {
 				if (stoichiometryRight == 1d) {
 					// Bi-Uni: ConvenienceIndependent/Ran/Ord/PP (2E/1P)/(2E/2P)
-					whichkin = Kinetics.valueOf(settings.get(
-							CfgKeys.KINETICS_BI_UNI_TYPE).toString());
+					whichkin = settings.get(CfgKeys.KINETICS_BI_UNI_TYPE)
+							.toString();
 				} else if (stoichiometryRight == 2d) {
-					whichkin = Kinetics.valueOf(settings.get(
-							CfgKeys.KINETICS_BI_BI_TYPE).toString());
+					whichkin = settings.get(CfgKeys.KINETICS_BI_BI_TYPE)
+							.toString();
 				} else
-					whichkin = Kinetics.CONVENIENCE_KINETICS;
+					whichkin = settings.get(
+							CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS).toString();
 			} else
 				// more than 2 types of reacting species or higher stoichiometry
-				whichkin = Kinetics.CONVENIENCE_KINETICS;
+				whichkin = settings
+						.get(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS)
+						.toString();
 
 		} else { // Information of enzyme katalysis form SBML.
 
@@ -728,7 +620,9 @@ public class KineticLawGenerator {
 					if (reaction.getNumProducts() == 1) {
 						if (SBO.isEmptySet(reaction.getProduct(0)
 								.getSpeciesInstance().getSBOTerm()))
-							whichkin = Kinetics.GENERALIZED_MASS_ACTION;
+							whichkin = settings.get(
+									CfgKeys.KINETICS_NONE_ENZYME_REACTIONS)
+									.toString();
 						else if (SBO.isEmptySet(reaction.getReactant(0)
 								.getSpeciesInstance().getSBOTerm())
 								&& (SBO.isProtein(reaction.getProduct(0)
@@ -737,24 +631,35 @@ public class KineticLawGenerator {
 												.getProduct(0)
 												.getSpeciesInstance()
 												.getSBOTerm()))) {
-							whichkin = Kinetics.HILL_EQUATION;
+							whichkin = settings.get(
+									CfgKeys.KINETICS_GENE_REGULATION)
+									.toString();
 						} else {
 							Species species = specref.getSpeciesInstance();
 							if (SBO.isGeneOrGeneCodingRegion(species
 									.getSBOTerm())) {
 								setBoundaryCondition(species, true);
-								whichkin = Kinetics.HILL_EQUATION;
+								whichkin = settings.get(
+										CfgKeys.KINETICS_GENE_REGULATION)
+										.toString();
 							} else if (SBO.isRNAOrMessengerRNA(species
 									.getSBOTerm()))
-								whichkin = Kinetics.HILL_EQUATION;
+								whichkin = settings.get(
+										CfgKeys.KINETICS_GENE_REGULATION)
+										.toString();
 							else
-								whichkin = Kinetics.GENERALIZED_MASS_ACTION;
+								whichkin = settings.get(
+										CfgKeys.KINETICS_NONE_ENZYME_REACTIONS)
+										.toString();
 						}
 					} else
-						whichkin = Kinetics.GENERALIZED_MASS_ACTION;
+						whichkin = settings.get(
+								CfgKeys.KINETICS_NONE_ENZYME_REACTIONS)
+								.toString();
 					break;
 				default:
-					whichkin = Kinetics.GENERALIZED_MASS_ACTION;
+					whichkin = settings.get(
+							CfgKeys.KINETICS_NONE_ENZYME_REACTIONS).toString();
 					break;
 				}
 
@@ -766,39 +671,46 @@ public class KineticLawGenerator {
 						Species species = specref.getSpeciesInstance();
 						if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 							setBoundaryCondition(species, true);
-							whichkin = Kinetics.HILL_EQUATION;
+							whichkin = settings.get(
+									CfgKeys.KINETICS_GENE_REGULATION)
+									.toString();
 						} else if (SBO
 								.isRNAOrMessengerRNA(species.getSBOTerm()))
-							whichkin = Kinetics.HILL_EQUATION;
+							whichkin = settings.get(
+									CfgKeys.KINETICS_GENE_REGULATION)
+									.toString();
 						else
-							whichkin = Kinetics.valueOf(settings.get(
-									CfgKeys.KINETICS_UNI_UNI_TYPE).toString());
+							whichkin = settings.get(
+									CfgKeys.KINETICS_UNI_UNI_TYPE).toString();
 
 					} else if (!reaction.getReversible() && !reversibility)
-						whichkin = Kinetics.valueOf(settings.get(
-								CfgKeys.KINETICS_UNI_UNI_TYPE).toString());
+						whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE)
+								.toString();
 					else
-						whichkin = Kinetics.CONVENIENCE_KINETICS;
+						whichkin = settings.get(
+								CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS)
+								.toString();
 				} else if (stoichiometryLeft == 2d) {
 					// Bi-Uni: ConvenienceIndependent/Ran/Ord/PP (2E/1P)/(2E/2P)
 					if (stoichiometryRight == 1d) {
-						whichkin = Kinetics.valueOf(settings.get(
-								CfgKeys.KINETICS_BI_UNI_TYPE).toString());
-					} else if (stoichiometryRight == 2d) { // bi-bi kinetics
-						whichkin = Kinetics.valueOf(settings.get(
-								CfgKeys.KINETICS_BI_BI_TYPE).toString());
+						whichkin = settings.get(CfgKeys.KINETICS_BI_UNI_TYPE)
+								.toString();
+					} else if (stoichiometryRight == 2d) {
+						whichkin = settings.get(CfgKeys.KINETICS_BI_BI_TYPE)
+								.toString();
 					} else
-						whichkin = Kinetics.CONVENIENCE_KINETICS;
+						whichkin = settings.get(
+								CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS)
+								.toString();
 				} else
-					whichkin = Kinetics.CONVENIENCE_KINETICS; // other enzyme
-				// catalysed
-				// reactions.
+					whichkin = settings.get(
+							CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS).toString();
 			}
 		}
 
-		// remove double entries:
-		if ((whichkin == Kinetics.HILL_EQUATION) && (modTActi.size() == 0)
-				&& (modTInhib.size() == 0)) {
+		// check entries in case of gene regulation:
+		if ((whichkin == settings.get(CfgKeys.KINETICS_GENE_REGULATION))
+				&& (modTActi.size() == 0) && (modTInhib.size() == 0)) {
 			boolean reactionWithGenes = false;
 			for (int i = 0; i < reaction.getNumReactants(); i++) {
 				Species species = reaction.getReactant(i).getSpeciesInstance();
@@ -843,14 +755,19 @@ public class KineticLawGenerator {
 			if (!reaction.getReversible() || reactionWithGenes) {
 				if ((0 < modActi.size()) || (0 < modInhib.size())
 						|| (0 < modCat.size()) || (0 < enzymes.size()))
-					whichkin = Kinetics.HILL_EQUATION;
+					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION)
+							.toString();
 				else
-					whichkin = Kinetics.ZEROTH_ORDER_FORWARD_MA;
+					for (String kin : kinZeroReac) {
+						whichkin = kin;
+						break;
+					}
 			} else
-				whichkin = Kinetics.GENERALIZED_MASS_ACTION;
+				whichkin = settings.get(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS)
+						.toString();
 		} else if ((SBO.isTranslation(reaction.getSBOTerm()) || SBO
 				.isTranscription(reaction.getSBOTerm()))
-				&& !(whichkin == Kinetics.HILL_EQUATION))
+				&& !(whichkin == settings.get(CfgKeys.KINETICS_GENE_REGULATION)))
 			throw new RateLawNotApplicableException("Reaction "
 					+ reaction.getId() + " must be a state transition.");
 
@@ -868,7 +785,7 @@ public class KineticLawGenerator {
 	public boolean isEnzymeReaction(String reactionID) {
 		Reaction reaction = miniModel.getReaction(reactionID);
 		// identify types of modifiers
-		List<String> nonEnzymeCatalyzers = new LinkedList<String>();
+		List<String> nonEnzymeCatalysts = new LinkedList<String>();
 		List<String> inhibitors = new LinkedList<String>();
 		List<String> activators = new LinkedList<String>();
 		List<String> transActiv = new LinkedList<String>();
@@ -876,8 +793,8 @@ public class KineticLawGenerator {
 		List<String> enzymes = new LinkedList<String>();
 		if (reaction.getNumModifiers() > 0)
 			BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
-					transInhib, activators, enzymes, nonEnzymeCatalyzers);
-		return (enzymes.size() > 0 && nonEnzymeCatalyzers.size() == 0);
+					transInhib, activators, enzymes, nonEnzymeCatalysts);
+		return (enzymes.size() > 0 && nonEnzymeCatalysts.size() == 0);
 	}
 
 	/**
@@ -890,7 +807,7 @@ public class KineticLawGenerator {
 	public boolean isNonEnzymeReaction(String reactionID) {
 		Reaction reaction = miniModel.getReaction(reactionID);
 		// identify types of modifiers
-		List<String> nonEnzymeCatalyzers = new LinkedList<String>();
+		List<String> nonEnzymeCatalysts = new LinkedList<String>();
 		List<String> inhibitors = new LinkedList<String>();
 		List<String> activators = new LinkedList<String>();
 		List<String> transActiv = new LinkedList<String>();
@@ -898,8 +815,8 @@ public class KineticLawGenerator {
 		List<String> enzymes = new LinkedList<String>();
 		if (reaction.getNumModifiers() > 0)
 			BasicKineticLaw.identifyModifers(reaction, inhibitors, transActiv,
-					transInhib, activators, enzymes, nonEnzymeCatalyzers);
-		return enzymes.size() == 0 && nonEnzymeCatalyzers.size() > 0;
+					transInhib, activators, enzymes, nonEnzymeCatalysts);
+		return enzymes.size() == 0 && nonEnzymeCatalysts.size() > 0;
 	}
 
 	/**

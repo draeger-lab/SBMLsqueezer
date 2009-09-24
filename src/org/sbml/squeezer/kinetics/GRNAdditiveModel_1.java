@@ -28,15 +28,17 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * 
- * This class creates an equation based on an additive model as defined in the papers
- * "Neural network model of gene expression." of Vohradský, J. 2001 and
- * "Nonlinear differential equation model for quantification of transcriptional regulation applied 
- * to microarray data of Saccharomyces cerevisiae." of Vu, T. T. & Vohradský, J. 2007 
+ * This class creates an equation based on an additive model as defined in the
+ * papers "Neural network model of gene expression." of Vohradský, J. 2001 and
+ * "Nonlinear differential equation model for quantification of transcriptional
+ * regulation applied to microarray data of Saccharomyces cerevisiae." of Vu, T.
+ * T. & Vohradský, J. 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- *
+ * 
  */
-public class GRNAdditiveModel_1 extends GRNAdditiveModel implements InterfaceGeneRegulatoryKinetics {
+public class GRNAdditiveModel_1 extends GRNAdditiveModel implements
+		InterfaceGeneRegulatoryKinetics {
 
 	/**
 	 * @param parentReaction
@@ -49,22 +51,24 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModel implements InterfaceGen
 		super(parentReaction, typeParameters);
 	}
 
-	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b){
-		ASTNode node = ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(ASTNode.times(new ASTNode(-1,this),ASTNode.sum(w,v,b)))));
+	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b) {
+		ASTNode node = ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this),
+				ASTNode.exp(ASTNode.times(new ASTNode(-1, this), ASTNode.sum(w,
+						v, b)))));
 		return node;
 	}
-	
-	ASTNode function_v(){
+
+	ASTNode function_v() {
 		return null;
 	}
-	
-	ASTNode function_l(){
+
+	ASTNode function_l() {
 		Reaction r = getParentSBMLObject();
 		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
-		
+
 		Species product = r.getProduct(0).getSpeciesInstance();
-		ASTNode productnode = new ASTNode(product, this);	
+		ASTNode productnode = new ASTNode(product, this);
 
 		Parameter p = createOrGetParameter("lambda_", rId);
 		ASTNode pnode = new ASTNode(p, this);
@@ -72,5 +76,13 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModel implements InterfaceGen
 
 		return node;
 	}
+
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "A special additive model equation (Vohradský 2001 and Vu & Vohradský 2007)";
+	}
 }

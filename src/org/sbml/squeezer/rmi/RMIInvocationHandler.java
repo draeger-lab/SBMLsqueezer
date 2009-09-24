@@ -14,9 +14,6 @@ package org.sbml.squeezer.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-/*==========================================================================*
-* INTERFACE DECLARATION
-*==========================================================================*/
 /**
  *
  */

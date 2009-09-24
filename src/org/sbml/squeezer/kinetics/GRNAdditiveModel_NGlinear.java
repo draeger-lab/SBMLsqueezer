@@ -35,6 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  */
 public class GRNAdditiveModel_NGlinear extends GRNAdditiveModel implements InterfaceGeneRegulatoryKinetics {
 
+	
 	/**
 	 * @param parentReaction
 	 * @param typeParameters
@@ -59,4 +60,11 @@ public class GRNAdditiveModel_NGlinear extends GRNAdditiveModel implements Inter
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "A special additive model equation (NetGenerator linear model)";
+	}
 }

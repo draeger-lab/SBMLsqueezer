@@ -34,6 +34,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  */
 public class GRNAdditiveModel_2 extends GRNAdditiveModel implements InterfaceGeneRegulatoryKinetics {
 
+	
 	/**
 	 * @param parentReaction
 	 * @param typeParameters
@@ -68,4 +69,7 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements InterfaceGen
 		return null;
 	}
 
+	public String getSimpleName() {
+		return "A special additive model equation (Weaver, Workman & Stormo 1999)";
+	}
 }

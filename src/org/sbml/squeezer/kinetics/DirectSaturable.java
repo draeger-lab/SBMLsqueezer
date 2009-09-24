@@ -40,17 +40,17 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class DirectSaturable extends ReversiblePowerLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
-
+		InterfaceModulatedKinetics {
+	
 	/**
 	 * @param parentReaction
 	 * @param type
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public DirectSaturable(Reaction parentReaction, Object type)
+	public DirectSaturable(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction, type);
+		super(parentReaction, types);
 		unsetSBOTerm();
 		setNotes("direct saturable rate law");
 	}
@@ -105,4 +105,11 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 		return term;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Direct saturable rate law";
+	}
 }

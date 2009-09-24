@@ -41,15 +41,15 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceReversibleKinetics, InterfaceIrreversibleKinetics,
 		InterfaceModulatedKinetics {
-
+	
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public OrderedMechanism(Reaction parentReaction)
+	public OrderedMechanism(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
@@ -436,5 +436,13 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		} while (enzymeNum <= modE.size() - 1);
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Ordered mechanism";
 	}
 }
