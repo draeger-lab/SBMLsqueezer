@@ -55,6 +55,10 @@ public class SBO {
 	 * 
 	 */
 	private static Properties alias2sbo;
+	/**
+	 * 
+	 */
+	private static Properties sbo2alias;
 	static {
 		OboParser parser = new OboParser();
 		try {
@@ -63,6 +67,8 @@ public class SBO {
 					"SBO", "Systems Biology Ontology");
 			alias2sbo = Resource.readProperties(Resource.class.getResource(
 					"cfg/Alias2SBO.cfg").getPath());
+			sbo2alias = Resource.readProperties(Resource.class.getResource(
+					"cfg/SBO2Alias.cfg").getPath());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -109,6 +115,15 @@ public class SBO {
 	 */
 	public static int convertAlias2SBO(String aliasType) {
 		return Integer.parseInt(alias2sbo.get(aliasType).toString());
+	}
+
+	/**
+	 * 
+	 * @param sboterm
+	 * @return
+	 */
+	public static String convertSBO2Alias(int sboterm) {
+		return (String) sbo2alias.get(Integer.toString(sboterm));
 	}
 
 	/**
@@ -261,9 +276,9 @@ public class SBO {
 	 * @param sboTerm
 	 * @return
 	 */
-	
-	public static boolean isComplex(int sboTerm){
-		return isChildOf(sboTerm,convertAlias2SBO("COMPLEX"));
+
+	public static boolean isComplex(int sboTerm) {
+		return isChildOf(sboTerm, convertAlias2SBO("COMPLEX"));
 	}
 
 	/**
@@ -323,7 +338,7 @@ public class SBO {
 	public static boolean isEntity(int sboTerm) {
 		return isChildOf(sboTerm, 236);
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
@@ -332,7 +347,7 @@ public class SBO {
 	public static boolean isEnzymaticCatalysis(int sboTerm) {
 		return isChildOf(sboTerm, 460);
 	}
-	
+
 	/**
 	 * 
 	 * @param term
@@ -384,7 +399,8 @@ public class SBO {
 	/**
 	 * 
 	 * @param sboTerm
-	 * @return true if the sboTerm stands for a gene coding region, false otherwise
+	 * @return true if the sboTerm stands for a gene coding region, false
+	 *         otherwise
 	 */
 	public static boolean isGeneCodingRegion(int sboTerm) {
 		return isChildOf(sboTerm, 335);
@@ -393,10 +409,12 @@ public class SBO {
 	/**
 	 * 
 	 * @param sboTerm
-	 * @return true if the sboTerm stands for a gene coding region or a gene, false otherwise
+	 * @return true if the sboTerm stands for a gene coding region or a gene,
+	 *         false otherwise
 	 */
 	public static boolean isGeneOrGeneCodingRegion(int sboTerm) {
-		return (isChildOf(sboTerm, 335)||isChildOf(sboTerm, convertAlias2SBO("GENE")));
+		return (isChildOf(sboTerm, 335) || isChildOf(sboTerm,
+				convertAlias2SBO("GENE")));
 	}
 
 	/**
@@ -404,8 +422,8 @@ public class SBO {
 	 * @param sboTerm
 	 * @return
 	 */
-	public static boolean isGeneric(int sboTerm){
-		return isChildOf(sboTerm,convertAlias2SBO("GENERIC"));
+	public static boolean isGeneric(int sboTerm) {
+		return isChildOf(sboTerm, convertAlias2SBO("GENERIC"));
 	}
 
 	/**
@@ -416,7 +434,7 @@ public class SBO {
 	public static boolean isInhibitor(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("INHIBITION"));
 	}
-	
+
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -441,9 +459,9 @@ public class SBO {
 	 * @param sboTerm
 	 * @return
 	 */
-	public static boolean isIonChannel(int sboTerm){
-		return isChildOf(sboTerm,convertAlias2SBO("ION_CHANNEL"));
-		
+	public static boolean isIonChannel(int sboTerm) {
+		return isChildOf(sboTerm, convertAlias2SBO("ION_CHANNEL"));
+
 	}
 
 	/**
@@ -543,7 +561,7 @@ public class SBO {
 		return sbo.getTerm(intToString(sboTerm)).getDescription().startsWith(
 				"obsolete");
 	}
-	
+
 	/**
 	 * Function for checking the SBO term is from correct part of SBO. This term
 	 * is actually obsolete.
@@ -639,8 +657,8 @@ public class SBO {
 	 * @param sboTerm
 	 * @return
 	 */
-	public static boolean isReceptor(int sboTerm){
-		return isChildOf(sboTerm,convertAlias2SBO("RECEPTOR"));
+	public static boolean isReceptor(int sboTerm) {
+		return isChildOf(sboTerm, convertAlias2SBO("RECEPTOR"));
 	}
 
 	/**
@@ -658,7 +676,8 @@ public class SBO {
 	 * @return
 	 */
 	public static boolean isRNAOrMessengerRNA(int sboTerm) {
-		return (isChildOf(sboTerm, 278)||isChildOf(sboTerm, convertAlias2SBO("RNA")));
+		return (isChildOf(sboTerm, 278) || isChildOf(sboTerm,
+				convertAlias2SBO("RNA")));
 	}
 
 	/**
@@ -678,7 +697,7 @@ public class SBO {
 	public static boolean isStateTransition(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("STATE_TRANSITION"));
 	}
-	
+
 	/**
 	 * Function for checking the SBO term is from correct part of SBO.
 	 * 
@@ -688,7 +707,7 @@ public class SBO {
 	public static boolean isSteadyStateExpression(int sboTerm) {
 		return isChildOf(sboTerm, 391);
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
@@ -697,7 +716,7 @@ public class SBO {
 	public static boolean isStimulator(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("PHYSICAL_STIMULATION"));
 	}
-	
+
 	/**
 	 * 
 	 * @param term
@@ -706,7 +725,7 @@ public class SBO {
 	public static boolean isTranscription(int sboTerm) {
 		return isChildOf(sboTerm, convertAlias2SBO("TRANSCRIPTION"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
@@ -716,7 +735,7 @@ public class SBO {
 		return isChildOf(sboTerm,
 				convertAlias2SBO("TRANSCRIPTIONAL_ACTIVATION"));
 	}
-	
+
 	/**
 	 * 
 	 * @param sboTerm
@@ -786,8 +805,8 @@ public class SBO {
 	 * @param sboTerm
 	 * @return
 	 */
-	public static boolean isTruncated(int sboTerm){
-		return isChildOf(sboTerm,convertAlias2SBO("TRUNCATED"));
+	public static boolean isTruncated(int sboTerm) {
+		return isChildOf(sboTerm, convertAlias2SBO("TRUNCATED"));
 	}
 
 	/**
