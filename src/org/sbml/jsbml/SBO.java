@@ -47,10 +47,12 @@ public class SBO {
 	 * 
 	 */
 	private static Ontology sbo;
+
 	/**
 	 * 
 	 */
 	private static final String prefix = "SBO:";
+
 	/**
 	 * 
 	 */
@@ -136,9 +138,17 @@ public class SBO {
 
 	/**
 	 * Creates and returns a list of molecule types accepted as an enzyme by
-	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
-	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
-	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
+	 * default. These are:
+	 * <ul type="disk">
+	 * <li>ANTISENSE_RNA</li>
+	 * <li> SIMPLE_MOLECULE</li>
+	 * <li>UNKNOWN</li>
+	 * <li>COMPLEX</li>
+	 * <li>TRUNCATED</li>
+	 * <li>GENERIC</li>
+	 * <li>RNA</li>
+	 * <li>RECEPTOR</li>
+	 * </ul>
 	 * 
 	 * @return
 	 */
