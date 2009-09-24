@@ -27,7 +27,6 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
-import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -49,9 +48,9 @@ public class GRNSSystemEquation extends BasicKineticLaw implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public GRNSSystemEquation(Reaction parentReaction)
+	public GRNSSystemEquation(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
@@ -186,5 +185,14 @@ public class GRNSSystemEquation extends BasicKineticLaw implements
 		}
 		// System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+	 */
+	// @Override
+	public String getSimpleName() {
+		return "S-System based kinetic";
 	}
 }

@@ -64,7 +64,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 */
 	private boolean exitStatus;
 	private JButton ok;
-	private SettingsPanelAll tabbedPane;
+	private SettingsPanelAll panelAllSettings;
 	private Properties settings;
 
 	/**
@@ -88,20 +88,20 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		} else if (ae.getActionCommand().equals(DEFAULTS)) {
 			Properties p = (Properties) this.settings.clone();
 			this.settings = SBMLsqueezer.getDefaultSettings();
-			int tab = tabbedPane.getSelectedIndex();
+			int tab = panelAllSettings.getSelectedIndex();
 			getContentPane().removeAll();
 			init();
-			tabbedPane.setSelectedIndex(tab);
+			panelAllSettings.setSelectedIndex(tab);
 			this.settings = p;
 			apply.setEnabled(true);
 			ok.setEnabled(true);
 			defaults.setEnabled(false);
-			tabbedPane.addChangeListener(this);
-			tabbedPane.addItemListener(this);
+			panelAllSettings.addChangeListener(this);
+			panelAllSettings.addItemListener(this);
 			validate();
 		} else if (ae.getActionCommand().equals(APPLY)
 				|| ae.getActionCommand().equals(OK)) {
-			settings.putAll(tabbedPane.getSettings());
+			settings.putAll(panelAllSettings.getSettings());
 			apply.setEnabled(false);
 			exitStatus = APPROVE_OPTION;
 			if (ae.getActionCommand().equals(OK))
@@ -168,8 +168,8 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		setLocationRelativeTo(getOwner());
 		setResizable(false);
 		setModal(true);
-		tabbedPane.addItemListener(this);
-		tabbedPane.addChangeListener(this);
+		panelAllSettings.addItemListener(this);
+		panelAllSettings.addChangeListener(this);
 		setVisible(true);
 		return exitStatus;
 	}
@@ -191,8 +191,8 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 * Initializes this dialog.
 	 */
 	private void init() {
-		tabbedPane = new SettingsPanelAll(this.settings);
-		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		panelAllSettings = new SettingsPanelAll(this.settings);
+		getContentPane().add(panelAllSettings, BorderLayout.CENTER);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		JPanel p = new JPanel();
 		defaults = new JButton("Defaults");

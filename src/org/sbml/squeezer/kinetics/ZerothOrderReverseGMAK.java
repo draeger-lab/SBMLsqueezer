@@ -38,16 +38,16 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
 		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceZeroReactants,
 		InterfaceZeroProducts, InterfaceModulatedKinetics {
-
+		
 	/**
 	 * @param parentReaction
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public ZerothOrderReverseGMAK(Reaction parentReaction)
+	public ZerothOrderReverseGMAK(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	/*
@@ -67,5 +67,13 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
 		Parameter p_kdiss = createOrGetParameter(kdiss.toString());
 		p_kdiss.setSBOTerm(352);
 		return new ASTNode(p_kdiss, this);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Zeroth order reverse mass action kinetics";
 	}
 }

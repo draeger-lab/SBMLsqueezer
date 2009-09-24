@@ -30,7 +30,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.IllegalFormatException;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -52,10 +51,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.LawListener;
-import org.sbml.squeezer.ModificationException;
-import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.table.KineticLawJTable;
 import org.sbml.squeezer.gui.table.KineticLawTableModel;
@@ -218,7 +214,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					"SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE, GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
-					Kinetics equationType = messagePanel.getSelectedKinetic();
+					String equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
 					sbmlIO.stateChanged(reaction);
 					klg.getSettings().put(
@@ -231,18 +227,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					KineticsAndParametersStoredInSBML = true;
 				}
 			}
-		} catch (RateLawNotApplicableException exc) {
-			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getSimpleName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (RuntimeException exc) {
-			JOptionPane.showMessageDialog(this,
-					exc.getMessage() != null ? GUITools.toHTML(
-							exc.getMessage(), 40) : "", exc.getClass()
-							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (SBMLException exc) {
+		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getSimpleName(),
 					JOptionPane.WARNING_MESSAGE);
@@ -384,25 +369,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						setSize(getWidth(), 640);
 						validate();
 
-					} catch (IllegalFormatException exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass()
-								.getCanonicalName(),
-								JOptionPane.WARNING_MESSAGE);
-						exc.printStackTrace();
-					} catch (ModificationException exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass()
-								.getCanonicalName(),
-								JOptionPane.WARNING_MESSAGE);
-						exc.printStackTrace();
-					} catch (RateLawNotApplicableException exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass()
-								.getCanonicalName(),
-								JOptionPane.WARNING_MESSAGE);
-						exc.printStackTrace();
-					} catch (IOException exc) {
+					} catch (Exception exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 								.getMessage(), 40), exc.getClass()
 								.getCanonicalName(),

@@ -165,6 +165,25 @@ public class GUITools {
 	}
 
 	/**
+	 * Checks whether the first container contains the second one.
+	 * 
+	 * @param c
+	 * @param insight
+	 * @return True if c contains insight.
+	 */
+	public static boolean contains(Component c, Component insight) {
+		boolean contains = c.equals(insight);
+		if ((c instanceof Container) && !contains)
+			for (Component c1 : ((Container) c).getComponents()) {
+				if (c1.equals(insight))
+					return true;
+				else
+					contains |= contains(c1, insight);
+			}
+		return contains;
+	}
+
+	/**
 	 * 
 	 * @param c
 	 * @param enabled

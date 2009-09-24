@@ -42,15 +42,15 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class PingPongMechanism extends GeneralizedMassAction implements
 		InterfaceBiBiKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
-
+	
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public PingPongMechanism(Reaction parentReaction)
+	public PingPongMechanism(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	public static boolean isApplicable(Reaction reaction) {
@@ -305,5 +305,13 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		} while (enzymeNum <= modE.size() - 1);
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Ping-Pong mechanism";
 	}
 }

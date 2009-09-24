@@ -47,9 +47,9 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction)
+	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	/*
@@ -163,4 +163,11 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		return ASTNode.times(activationFactor(modActi), ASTNode.sum(formula));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Irreversible non-exclusive non-cooperative competitive inihibition";
+	}
 }

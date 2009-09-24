@@ -19,7 +19,9 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -32,8 +34,10 @@ import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
@@ -45,7 +49,8 @@ import org.sbml.squeezer.SBMLsqueezer;
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-09-22
  */
-public class SettingsPanelAll extends JPanel implements KeyListener {
+public class SettingsPanelAll extends JPanel implements KeyListener,
+		ItemListener {
 
 	/**
 	 * Generated serial version uid.
@@ -59,6 +64,7 @@ public class SettingsPanelAll extends JPanel implements KeyListener {
 	private JTextField tfSaveDir;
 	private List<KeyListener> keyListeners;
 	private JTabbedPane tab;
+	private boolean reversibility;
 
 	/**
 	 * 
@@ -68,9 +74,12 @@ public class SettingsPanelAll extends JPanel implements KeyListener {
 		super(new GridLayout(1, 1));
 		settings = properties;
 		keyListeners = new LinkedList<KeyListener>();
+		reversibility = ((Boolean) properties
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue();
 		init();
 	}
-	
+
 	private void init() {
 		tab = new JTabbedPane();
 		/*
@@ -84,7 +93,10 @@ public class SettingsPanelAll extends JPanel implements KeyListener {
 		 */
 		panelDefaultMechanisms = new SettingsPanelDefaultMechanisms(
 				this.settings);
-		tab.addTab("Reaction mechanisms", panelDefaultMechanisms);
+		tab.addTab("Reaction mechanisms", new JScrollPane(
+				panelDefaultMechanisms,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
 		/*
 		 * Program settings
@@ -111,6 +123,7 @@ public class SettingsPanelAll extends JPanel implements KeyListener {
 		this.panelLatexSettings = new SettingsPanelLaTeX(settings, false);
 		tab.addTab("LaTeX output settings", panelLatexSettings);
 		this.add(tab);
+		addItemListener(this);
 	}
 
 	/**
@@ -218,5 +231,24 @@ public class SettingsPanelAll extends JPanel implements KeyListener {
 
 	public Set<Integer> getPossibleEnzymes() {
 		return panelKinSettings.getPossibleEnzymes();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
+	public void itemStateChanged(ItemEvent e) {
+		if ((e.getSource() instanceof Container)
+				&& (GUITools.contains(panelKinSettings, ((Container) e
+						.getSource())))) {
+			if (reversibility != ((Boolean) panelKinSettings.getSettings().get(
+					CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue()) {
+				reversibility = !reversibility;
+				panelDefaultMechanisms.stateChanged(new ChangeEvent(Boolean
+						.valueOf(reversibility)));
+			}
+		}
 	}
 }

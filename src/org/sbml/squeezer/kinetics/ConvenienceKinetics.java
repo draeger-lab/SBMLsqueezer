@@ -48,7 +48,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
-public class ConvenienceIndependent extends Convenience implements
+public class ConvenienceKinetics extends GeneralizedMassAction implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
@@ -59,14 +59,9 @@ public class ConvenienceIndependent extends Convenience implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public ConvenienceIndependent(Reaction parentReaction)
+	public ConvenienceKinetics(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
-	}
-
-	public static boolean isApplicable(Reaction reaction) {
-		// TODO
-		return true;
+		super(parentReaction, types);
 	}
 
 	/*
@@ -86,11 +81,16 @@ public class ConvenienceIndependent extends Convenience implements
 		final boolean REVERSE = false;
 		Reaction reaction = getParentSBMLObject();
 		setSBOTerm(429);
-
-		if (reaction.getReversible())
-			setNotes("reversible thermodynamically independent convenience kinetics");
-		else
-			setNotes("irreversible thermodynamically independent convenience kinetics");
+		StringBuilder name = new StringBuilder();
+		name.append("ir");
+		if (!reaction.getReversible())
+			name.append("reversible ");
+		if (getTypeParameters().length > 1) {
+			if (!Boolean.parseBoolean(getTypeParameters()[1].toString()))
+				name.append("thermodynamically independent");
+		}
+		name.append(" convenience kinetics");
+		setNotes(name.toString());
 
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		for (int i = 0; i < enzymes.length; i++) {
@@ -198,5 +198,47 @@ public class ConvenienceIndependent extends Convenience implements
 									.times(reactantsroot)
 									: new ASTNode(1, this))));
 		return equation;
+	}
+
+	/**
+	 * Returns an array containing the factors of the reactants and products
+	 * included in the convenience kinetic's denominator. For each factor, the
+	 * respective species' concentration and it's equilibrium constant are
+	 * divided and raised to the power of each integer value between zero and
+	 * the species' stoichiometry. All of the species' powers are summed up to
+	 * form the species' factor in the product. The method is applicable for
+	 * both forward and backward reactions.
+	 * 
+	 * @param reaction
+	 * @param type
+	 *            true means forward, false backward.
+	 * @return
+	 */
+	private ASTNode[] denominatorElements(String enzyme, boolean type) {
+		Reaction reaction = getParentSBMLObject();
+		ASTNode[] denoms = new ASTNode[type ? reaction.getNumReactants()
+				: reaction.getNumProducts()];
+		boolean noOne = (denoms.length == 1)
+				&& (!type || (type && reaction.getReversible() && reaction
+						.getNumProducts() > 1));
+		for (int i = 0; i < denoms.length; i++) {
+			SpeciesReference ref = type ? reaction.getReactant(i) : reaction
+					.getProduct(i);
+			StringBuffer kM = concat("kM_", getParentSBMLObject().getId());
+			if (enzyme != null)
+				append(kM, underscore, enzyme);
+			append(kM, underscore, ref.getSpecies());
+			Parameter p_kM = createOrGetParameter(kM.toString());
+			if (!p_kM.isSetSBOTerm())
+				p_kM.setSBOTerm(type ? 322 : 323);
+			denoms[i] = ASTNode.pow(ASTNode.frac(this,
+					ref.getSpeciesInstance(), p_kM), (int) ref
+					.getStoichiometry());
+			for (int j = (int) ref.getStoichiometry() - 1; j >= (noOne ? 1 : 0); j--) {
+				denoms[i] = ASTNode.sum(ASTNode.pow(ASTNode.frac(this, ref
+						.getSpeciesInstance(), p_kM), j), denoms[i]);
+			}
+		}
+		return denoms;
 	}
 }

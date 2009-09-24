@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -39,7 +40,6 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.Kinetics;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.gui.KineticLawSelectionPanel;
@@ -194,7 +194,14 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 		// Kinetic Law column
 		if ((convertColumnIndexToModel(colIndex) == 1) && !editing) {
 			// setCellEditor(null);
-			setCellEditor(rowIndex);
+			try {
+				setCellEditor(rowIndex);
+			} catch (Exception exc) {
+				JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
+						.getMessage(), 40), exc.getClass().getName(),
+						JOptionPane.WARNING_MESSAGE);
+				exc.printStackTrace();
+			}
 		}
 	}
 
@@ -232,16 +239,26 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 	 * kinetic law in the given row.
 	 * 
 	 * @param rowIndex
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws ClassNotFoundException
+	 * @throws IllegalArgumentException
+	 * @throws SecurityException
 	 */
-	private void setCellEditor(int rowIndex) {
+	private void setCellEditor(int rowIndex) throws SecurityException,
+			IllegalArgumentException, ClassNotFoundException,
+			NoSuchMethodException, InstantiationException,
+			IllegalAccessException, InvocationTargetException {
 		if ((dataModel.getRowCount() > 0) && (dataModel.getColumnCount() > 0)) {
 			Model model = klg.getModel();
 			Reaction reaction = model.getReaction(dataModel.getValueAt(
 					rowIndex, 0).toString());
 			try {
-				Kinetics possibleTypes[] = this.klg
+				String possibleTypes[] = this.klg
 						.identifyPossibleReactionTypes(reaction.getId());
-				KineticLaw possibleLaws[] = new KineticLaw[possibleTypes.length];
+				BasicKineticLaw possibleLaws[] = new BasicKineticLaw[possibleTypes.length];
 				int selected = 0;
 				for (int i = 0; i < possibleLaws.length; i++) {
 					possibleLaws[i] = klg.createKineticLaw(reaction,

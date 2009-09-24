@@ -60,9 +60,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public GeneralizedMassAction(Reaction parentReaction)
+	public GeneralizedMassAction(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, types);
 	}
 
 	/**
@@ -563,5 +563,10 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	ASTNode inhibitionFactor(List<String> modifiers)
 			throws IllegalFormatException {
 		return createModificationFactor(modifiers, false);
+	}
+
+	// @Override
+	public String getSimpleName() {
+		return "Generalized mass-action";
 	}
 }

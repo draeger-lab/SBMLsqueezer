@@ -48,6 +48,13 @@ import org.sbml.squeezer.io.StringTools;
 public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
+	 * Returns a string that gives a simple description of this rate equation.
+	 * 
+	 * @return
+	 */
+	public abstract String getSimpleName();
+
+	/**
 	 * identify which Modifer is used
 	 * 
 	 * @param reactionNum
@@ -90,20 +97,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		}
 	}
 
-	/**
-	 * This method returns true if and only if the kinetic law can be assigned
-	 * to the given reaction. If the structure of the reaction, i.e. the number
-	 * of reactants or products, the number and type of modifiers does not allow
-	 * to assign this type of kinetic law to this reaction, false will be
-	 * returned. This method must be implemented by more specialized instances
-	 * of this class.
-	 * 
-	 * @param reaction
-	 * @return
-	 */
-	public static boolean isApplicable(Reaction reaction) {
-		return false;
-	}
 
 	final Character underscore = StringTools.underscore;
 	private Object typeParameters[];
@@ -170,6 +163,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
 	 * Returns the unit milli mole per litre per second.
+	 * 
 	 * @return
 	 */
 	UnitDefinition mMperSecond() {

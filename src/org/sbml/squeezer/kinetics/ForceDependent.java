@@ -36,7 +36,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class ForceDependent extends ReversiblePowerLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+		InterfaceModulatedKinetics {
 
 	/**
 	 * @param parentReaction
@@ -44,9 +44,9 @@ public class ForceDependent extends ReversiblePowerLaw implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public ForceDependent(Reaction parentReaction, Object type)
+	public ForceDependent(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction, type);
+		super(parentReaction, types);
 		unsetSBOTerm();
 		setNotes("force-dependent rate law");
 	}
@@ -101,4 +101,11 @@ public class ForceDependent extends ReversiblePowerLaw implements
 		return term;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Force dependent rate law";
+	}
 }

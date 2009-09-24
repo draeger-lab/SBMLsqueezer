@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml.squeezer.kinetics;
 
@@ -41,7 +41,9 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date Feb 6, 2008
  */
 public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
-		implements InterfaceIrreversibleKinetics, InterfaceArbitraryEnzymeKinetics {
+		implements InterfaceIrreversibleKinetics, InterfaceUniUniKinetics,
+		InterfaceBiUniKinetics, InterfaceBiBiKinetics,
+		InterfaceArbitraryEnzymeKinetics, InterfaceIntegerStoichiometry {
 
 	private int numOfEnzymes;
 
@@ -51,9 +53,9 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevNonModulatedNonInteractingEnzymes(Reaction parentReaction)
+	public IrrevNonModulatedNonInteractingEnzymes(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	/*
@@ -135,5 +137,15 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		}
 
 		return ASTNode.sum(enzymes);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+	 */
+	// @Override
+	public String getSimpleName() {
+		return "Irreversible non-modulated non-interacting reactants";
 	}
 }

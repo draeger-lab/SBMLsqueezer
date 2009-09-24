@@ -48,11 +48,36 @@ public class Reflect {
 		}
 	}
 
-	private static boolean TRACE;
 	private static String[] dynCP = null;
+	private static boolean TRACE;
 	private static boolean useFilteredClassPath;
 
 	static int missedJarsOnClassPath = 0;
+
+	/**
+	 * Collect all classes from a given package on the classpath. If includeSubs is true,
+	 * the sub-packages are listed as well.
+	 * 
+	 * @param pckg
+	 * @param includeSubs
+	 * @param bSort	sort alphanumerically by class name 
+	 * @return An ArrayList of Class objects contained in the package which may be empty if an error occurs.
+	 */
+	public static Class<?>[] getAllClassesInPackage(String pckg, boolean includeSubs, boolean bSort) {
+		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg, includeSubs, bSort, null);
+	}
+
+	/**
+	 * 
+	 * @param pckg
+	 * @param includeSubs
+	 * @param bSort
+	 * @param superClass
+	 * @return
+	 */
+	public static Class<?>[] getAllClassesInPackage(String pckg, boolean includeSubs, boolean bSort, Class<?> superClass) {
+		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg, includeSubs, bSort, superClass);
+	}
 
 	/**
 	 * Retrieve assignable classes of the given package from classpath.
@@ -196,7 +221,7 @@ public class Reflect {
 		}
 		return cntAdded;
 	}
-
+	
 	/**
 	 * Collect classes of a given package from the file system.
 	 * 
@@ -248,7 +273,7 @@ public class Reflect {
 			return 0;
 		}
 	}
-
+	
 	/**
 	 * Collect classes of a given package from a jar file.
 	 * 
@@ -324,30 +349,17 @@ public class Reflect {
 		}
 		return cntAdded;
 	}
-	
+
 	/**
-	 * Collect all classes from a given package on the classpath. If includeSubs is true,
-	 * the sub-packages are listed as well.
-	 * 
-	 * @param pckg
-	 * @param includeSubs
-	 * @param bSort	sort alphanumerically by class name 
-	 * @return An ArrayList of Class objects contained in the package which may be empty if an error occurs.
+	 * Read the classes available for user selection from the properties or the
+	 * classpath respectively
 	 */
-	public static Class<?>[] getAllClassesInPackage(String pckg, boolean includeSubs, boolean bSort) {
-		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg, includeSubs, bSort, null);
-	}
-	
-	/**
-	 * 
-	 * @param pckg
-	 * @param includeSubs
-	 * @param bSort
-	 * @param superClass
-	 * @return
-	 */
-	public static Class<?>[] getAllClassesInPackage(String pckg, boolean includeSubs, boolean bSort, Class<?> superClass) {
-		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg, includeSubs, bSort, superClass);
+	public static ArrayList<String> getClassesFromProperties(String className) {
+		if (TRACE)
+			System.out
+					.println("getClassesFromProperties - requesting className: "
+							+ className);
+		return getClassesFromClassPath(className);
 	}
 
 	/**
@@ -443,9 +455,25 @@ public class Reflect {
 			return 1;
 		}
 	}
+	private Object m_Backup;
 
 	private Class<?> m_ClassType;
+
 	private Object m_Object;
+	private PropertyChangeSupport m_Support = new PropertyChangeSupport(this);
+
+	public Reflect() {
+		TRACE = true;
+	}
+
+	/**
+	 * Gets the current Object.
+	 * 
+	 * @return the current Object
+	 */
+	public Object getValue() {
+		return m_Object;
+	}
 
 	/**
 	 * Sets the current object to be the default, taken as the first item in the
@@ -484,9 +512,6 @@ public class Reflect {
 		}
 	}
 
-	private Object m_Backup;
-	private PropertyChangeSupport m_Support = new PropertyChangeSupport(this);
-
 	/**
 	 * Sets the current Object, but doesn't worry about updating the state of
 	 * the Object chooser.
@@ -507,30 +532,5 @@ public class Reflect {
 
 		if (trueChange)
 			m_Support.firePropertyChange("", m_Backup, m_Object);
-	}
-
-	/**
-	 * Gets the current Object.
-	 * 
-	 * @return the current Object
-	 */
-	public Object getValue() {
-		return m_Object;
-	}
-
-	/**
-	 * Read the classes available for user selection from the properties or the
-	 * classpath respectively
-	 */
-	public static ArrayList<String> getClassesFromProperties(String className) {
-		if (TRACE)
-			System.out
-					.println("getClassesFromProperties - requesting className: "
-							+ className);
-		return getClassesFromClassPath(className);
-	}
-
-	public Reflect() {
-		TRACE = true;
 	}
 }

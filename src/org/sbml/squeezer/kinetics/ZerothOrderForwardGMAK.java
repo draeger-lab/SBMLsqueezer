@@ -46,9 +46,9 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public ZerothOrderForwardGMAK(Reaction parentReaction)
+	public ZerothOrderForwardGMAK(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	/*
@@ -68,5 +68,13 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 		Parameter p_kass = createOrGetParameter(kass.toString());
 		p_kass.setSBOTerm(48);
 		return new ASTNode(p_kass, this);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Zeroth order forward mass action kinetics";
 	}
 }

@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.InvocationTargetException;
 import java.util.IllegalFormatException;
 import java.util.Properties;
 import java.util.Set;
@@ -107,6 +108,7 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.2.2";
+
 	/**
 	 * 
 	 * @return
@@ -204,11 +206,7 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 				else if (allDigit && dotCount == 1)
 					settings.put(k, Double.parseDouble(val));
 				else
-					try {
-						settings.put(k, Kinetics.valueOf(val));
-					} catch (IllegalArgumentException e) {
-						settings.put(k, val);
-					}
+					settings.put(k, val);
 			}
 		}
 		return settings;
@@ -371,6 +369,20 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 				} catch (RateLawNotApplicableException e) {
 					e.printStackTrace();
 				} catch (SBMLException e) {
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
 		}
