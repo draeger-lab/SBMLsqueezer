@@ -73,7 +73,8 @@ import org.sbml.squeezer.rmi.Reflect;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
@@ -297,9 +298,9 @@ public class KineticLawGenerator {
 		Object typeParameters[] = new Object[] {
 				settings.get(CfgKeys.TYPE_STANDARD_VERSION),
 				Boolean.valueOf(hasFullColumnRank(modelOrig)) };
-		Constructor<?> constr = kinCls.getConstructor(r.getClass(),
+		Constructor<?> constr = kinCls.getConstructor(reaction.getClass(),
 				typeParameters.getClass());
-		return (BasicKineticLaw) constr.newInstance(r, typeParameters);
+		return (BasicKineticLaw) constr.newInstance(reaction, typeParameters);
 	}
 
 	/**
@@ -614,7 +615,7 @@ public class KineticLawGenerator {
 				 */
 				for (String className : kinArbEnz) {
 					if (checkReversibility(reaction, className)
-							&& (kinIntStoich.contains(className) || !integerStoichiometry)
+							&& (!kinIntStoich.contains(className) || integerStoichiometry)
 							&& (kinModulated.contains(className) || withoutModulation))
 						types.add(className);
 				}
