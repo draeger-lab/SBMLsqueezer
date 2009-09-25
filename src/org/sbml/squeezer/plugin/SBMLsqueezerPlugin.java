@@ -43,7 +43,7 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	 */
 	public SBMLsqueezerPlugin() {
 		SBMLsqueezer sbmlSqueezer = new SBMLsqueezer(this);
-		String title = "SBMLsqueezer";
+		String title = "SBMLsqueezer " + SBMLsqueezer.getVersionNumber();
 		PluginMenu menu = new PluginMenu(title);
 		PluginMenuItem menuItem = new PluginMenuItem(getMainPluginItemText(),
 				sbmlSqueezer);

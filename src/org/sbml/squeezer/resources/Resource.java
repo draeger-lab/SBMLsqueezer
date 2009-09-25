@@ -44,7 +44,7 @@ public final class Resource {
 		resource = new Resource();
 	}
 
-	private static Resource getInstance() {
+	public static Resource getInstance() {
 		return resource;
 	}
 
@@ -184,17 +184,14 @@ public final class Resource {
 			in = getStreamFromFile(resourceLocation);
 		}
 		// InputStream inTest = getStreamFromFile(resourceLocation);
-
 		if (in == null) {
 			in = ClassLoader.getSystemResourceAsStream(resourceLocation);
 		}
-
 		if (in == null) {
 			// try again for web start applications
 			in = this.getClass().getClassLoader().getResourceAsStream(
 					resourceLocation);
 		}
-
 		if (in == null) {
 			// try to search other classpathes...? not really necessary.
 			// in = getStreamFromClassPath(resourceLocation);
