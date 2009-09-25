@@ -20,6 +20,8 @@ package org.sbml.squeezer.plugin;
 
 import java.util.Date;
 
+import jp.sbi.celldesigner.plugin.PluginAlgebraicRule;
+import jp.sbi.celldesigner.plugin.PluginAssignmentRule;
 import jp.sbi.celldesigner.plugin.PluginCompartment;
 import jp.sbi.celldesigner.plugin.PluginCompartmentType;
 import jp.sbi.celldesigner.plugin.PluginConstraint;
@@ -31,6 +33,7 @@ import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginModifierSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginParameter;
+import jp.sbi.celldesigner.plugin.PluginRateRule;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginRule;
 import jp.sbi.celldesigner.plugin.PluginSBase;
@@ -40,9 +43,6 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginSpeciesType;
 import jp.sbi.celldesigner.plugin.PluginUnit;
 import jp.sbi.celldesigner.plugin.PluginUnitDefinition;
-import jp.sbi.celldesigner.plugin.PluginRateRule;
-import jp.sbi.celldesigner.plugin.PluginAlgebraicRule;
-import jp.sbi.celldesigner.plugin.PluginAssignmentRule;
 
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
@@ -79,7 +79,6 @@ import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.AbstractSBMLWriter;
-import org.sbml.squeezer.standalone.LibSBMLWriter;
 
 /**
  * @author Andreas Dr&auml;ger <a

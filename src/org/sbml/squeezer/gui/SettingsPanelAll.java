@@ -26,6 +26,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -42,6 +43,8 @@ import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -207,9 +210,22 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 		}
 		for (Object key : panelKinSettings.getSettings().keySet())
 			this.settings.put(key, panelKinSettings.getSettings().get(key));
-		for (Object key : panelDefaultMechanisms.getSettings().keySet())
-			this.settings.put(key, panelDefaultMechanisms.getSettings()
-					.get(key));
+		for (Object key : panelDefaultMechanisms.getSettings().keySet()) {
+			try {
+				Class<?> cl = Class.forName(panelDefaultMechanisms
+						.getSettings().get(key).toString());
+				Set<Class<?>> interfaces = new HashSet<Class<?>>();
+				for (Class<?> c : cl.getInterfaces())
+					interfaces.add(c);
+				if ((interfaces.contains(InterfaceReversibleKinetics.class) && interfaces
+						.contains(InterfaceIrreversibleKinetics.class))
+						|| ((Boolean) settings
+								.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)))
+					this.settings.put(key, cl.getCanonicalName());
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 		for (Object key : panelLatexSettings.getProperties().keySet())
 			this.settings.put(key, panelLatexSettings.getProperties().get(key));
 		return settings;

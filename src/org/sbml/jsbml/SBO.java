@@ -20,8 +20,9 @@ package org.sbml.jsbml;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -64,13 +65,16 @@ public class SBO {
 	static {
 		OboParser parser = new OboParser();
 		try {
-			sbo = parser.parseOBO(new BufferedReader(new FileReader(
-					Resource.class.getResource("txt/SBO_OBO.obo").getFile())),
-					"SBO", "Systems Biology Ontology");
-			alias2sbo = Resource.readProperties(Resource.class.getResource(
-					"cfg/Alias2SBO.cfg").getPath());
-			sbo2alias = Resource.readProperties(Resource.class.getResource(
-					"cfg/SBO2Alias.cfg").getPath());
+			InputStream is = Resource.getInstance()
+					.getStreamFromResourceLocation(
+							"org/sbml/squeezer/resources/txt/SBO_OBO.obo");
+			sbo = parser.parseOBO(
+					new BufferedReader(new InputStreamReader(is)), "SBO",
+					"Systems Biology Ontology");
+			alias2sbo = Resource
+					.readProperties("org/sbml/squeezer/resources/cfg/Alias2SBO.cfg");
+			sbo2alias = Resource
+					.readProperties("org/sbml/squeezer/resources/cfg/SBO2Alias.cfg");
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -138,17 +142,9 @@ public class SBO {
 
 	/**
 	 * Creates and returns a list of molecule types accepted as an enzyme by
-	 * default. These are:
-	 * <ul type="disk">
-	 * <li>ANTISENSE_RNA</li>
-	 * <li> SIMPLE_MOLECULE</li>
-	 * <li>UNKNOWN</li>
-	 * <li>COMPLEX</li>
-	 * <li>TRUNCATED</li>
-	 * <li>GENERIC</li>
-	 * <li>RNA</li>
-	 * <li>RECEPTOR</li>
-	 * </ul>
+	 * default. These are: <ul type="disk"> <li>ANTISENSE_RNA</li> <li>
+	 * SIMPLE_MOLECULE</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
+	 * <li>GENERIC</li> <li>RNA</li> <li>RECEPTOR</li> </ul>
 	 * 
 	 * @return
 	 */

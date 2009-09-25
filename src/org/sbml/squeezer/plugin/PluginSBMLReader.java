@@ -18,14 +18,16 @@
  */
 package org.sbml.squeezer.plugin;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
-import java.util.TimeZone;
 
 import jp.sbi.celldesigner.plugin.PluginAlgebraicRule;
 import jp.sbi.celldesigner.plugin.PluginAssignmentRule;
 import jp.sbi.celldesigner.plugin.PluginCompartment;
+import jp.sbi.celldesigner.plugin.PluginCompartmentType;
+import jp.sbi.celldesigner.plugin.PluginEvent;
+import jp.sbi.celldesigner.plugin.PluginEventAssignment;
+import jp.sbi.celldesigner.plugin.PluginFunctionDefinition;
 import jp.sbi.celldesigner.plugin.PluginInitialAssignment;
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
 import jp.sbi.celldesigner.plugin.PluginModel;
@@ -35,20 +37,13 @@ import jp.sbi.celldesigner.plugin.PluginRateRule;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginRule;
 import jp.sbi.celldesigner.plugin.PluginSBase;
+import jp.sbi.celldesigner.plugin.PluginSimpleSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
-import jp.sbi.celldesigner.plugin.PluginCompartmentType;
-import jp.sbi.celldesigner.plugin.PluginEvent;
-import jp.sbi.celldesigner.plugin.PluginFunctionDefinition;
-import jp.sbi.celldesigner.plugin.PluginSimpleSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginSpeciesType;
 import jp.sbi.celldesigner.plugin.PluginUnit;
 import jp.sbi.celldesigner.plugin.PluginUnitDefinition;
-import jp.sbi.celldesigner.plugin.PluginEventAssignment;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.libsbml;
-import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CVTerm;
@@ -74,6 +69,8 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.libsbml.libsbml;
+import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.AbstractSBMLReader;
 
 /**

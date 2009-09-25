@@ -75,6 +75,7 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	private static List<String> arb;
 	private static List<String> uni;
 	private Properties settings;
+	private Properties origSett;
 	private List<ItemListener> itemListeners;
 
 	/**
@@ -89,7 +90,8 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 				settings.put(key, properties.get(key));
 		}
 		itemListeners = new LinkedList<ItemListener>();
-		init(((Boolean) properties
+		origSett = properties;
+		init(((Boolean) origSett
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue());
 	}
@@ -204,12 +206,14 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 			break;
 		}
 		JRadioButton jRButton[] = new JRadioButton[classes.size()];
-		for (int i = 0; i < jRButton.length; i++) {
+		int i;
+		for (i = 0; i < jRButton.length; i++) {
 			String className = classes.get(i);
 			String type = className.substring(className.lastIndexOf('.') + 1);
 			jRButton[i] = new JRadioButton(className.substring(className
 					.lastIndexOf('.') + 1));
-			jRButton[i].setSelected(settings.get(key).toString().equals(className));
+			jRButton[i].setSelected(settings.get(key).toString().equals(
+					className));
 			StringBuilder toolTip = new StringBuilder();
 			switch (key) {
 			case KINETICS_GENE_REGULATION:
@@ -262,6 +266,18 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 			buttonGroup.add(jRButton[i]);
 			helper.add(jRButton[i]);
 		}
+		i=0;
+		int pos = 0;
+		boolean oneIsSelected = false;
+		for (JRadioButton radioButton : jRButton) {
+			if (radioButton.isSelected())
+				oneIsSelected = true;
+			if (origSett.get(key).toString().endsWith(radioButton.getText()))
+					pos = i;
+			i++;
+		}
+		if (!oneIsSelected)
+			jRButton[pos].setSelected(true);
 		p.setBackground(Color.WHITE);
 		return p;
 	}
