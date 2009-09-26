@@ -527,7 +527,8 @@ public class ASTNode implements TreeNode {
 		LinkedList<ASTNode> astList = new LinkedList<ASTNode>();
 		if (ast != null)
 			for (ASTNode node : ast) {
-				if (node != null && !(operator == Type.TIMES && node.isOne()))
+				if (node != null
+						&& !(operator == Type.TIMES && node.isOne() && ast.length > 1))
 					astList.add(node);
 			}
 		if (astList.size() == 0)

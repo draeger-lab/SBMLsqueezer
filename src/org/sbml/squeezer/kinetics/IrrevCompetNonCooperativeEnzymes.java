@@ -28,16 +28,15 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * 
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * 
  */
 public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		implements InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
-		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
-		InterfaceArbitraryEnzymeKinetics {
+		InterfaceUniUniKinetics {
 
 	private int numInhib;
+
 	private int numOfEnzymes;
 
 	/**
@@ -47,18 +46,18 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+	public IrrevCompetNonCooperativeEnzymes(Reaction parentReaction,
+			Object... typeParameters) throws RateLawNotApplicableException,
+			IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 * (java.util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -165,6 +164,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {

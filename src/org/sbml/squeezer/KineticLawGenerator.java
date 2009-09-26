@@ -20,7 +20,6 @@ package org.sbml.squeezer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,21 +49,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
-import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
-import org.sbml.squeezer.kinetics.InterfaceIntegerStoichiometry;
-import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
-import org.sbml.squeezer.kinetics.InterfaceModulatedKinetics;
-import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
-import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
-import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
-import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
 import org.sbml.squeezer.math.GaussianRank;
-import org.sbml.squeezer.rmi.Reflect;
 
 /**
  * This class identifies and generates the missing kinetic laws for a the
@@ -73,90 +59,10 @@ import org.sbml.squeezer.rmi.Reflect;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
-
-	private static Set<String> kinBiBi;
-
-	private static Set<String> kinBiUni;
-
-	private static Set<String> kinGRN;
-
-	private static Set<String> kinNonEnz;
-
-	/**
-	 * enzyme mechanism with an arbitrary number of reactants or products
-	 */
-	private static Set<String> kinArbEnz;
-
-	private static Set<String> kinUniUni;
-
-	private static Set<String> kinRev;
-
-	private static Set<String> kinIrrev;
-
-	private static Set<String> kinZeroReac;
-
-	private static Set<String> kinZeroProd;
-
-	/**
-	 * Kinetics that do allow for inhibitors or activators
-	 */
-	private static Set<String> kinModulated;
-
-	private static Set<String> kinIntStoich;
-
-	static {
-		kinBiBi = new HashSet<String>();
-		kinBiUni = new HashSet<String>();
-		kinGRN = new HashSet<String>();
-		kinNonEnz = new HashSet<String>();
-		kinArbEnz = new HashSet<String>();
-		kinUniUni = new HashSet<String>();
-		kinRev = new HashSet<String>();
-		kinIrrev = new HashSet<String>();
-		kinZeroReac = new HashSet<String>();
-		kinZeroProd = new HashSet<String>();
-		kinModulated = new HashSet<String>();
-		kinIntStoich = new HashSet<String>();
-		Class<?> l[] = Reflect.getAllClassesInPackage(
-				SBMLsqueezer.KINETICS_PACKAGE, false, true,
-				BasicKineticLaw.class);
-		for (Class<?> c : l) {
-			if (!Modifier.isAbstract(c.getModifiers())) {
-				Set<Class<?>> s = new HashSet<Class<?>>();
-				for (Class<?> interf : c.getInterfaces())
-					s.add(interf);
-				if (s.contains(InterfaceIrreversibleKinetics.class))
-					kinIrrev.add(c.getCanonicalName());
-				if (s.contains(InterfaceReversibleKinetics.class))
-					kinRev.add(c.getCanonicalName());
-				if (s.contains(InterfaceUniUniKinetics.class))
-					kinUniUni.add(c.getCanonicalName());
-				if (s.contains(InterfaceBiUniKinetics.class))
-					kinBiUni.add(c.getCanonicalName());
-				if (s.contains(InterfaceBiBiKinetics.class))
-					kinBiBi.add(c.getCanonicalName());
-				if (s.contains(InterfaceArbitraryEnzymeKinetics.class))
-					kinArbEnz.add(c.getCanonicalName());
-				if (s.contains(InterfaceGeneRegulatoryKinetics.class))
-					kinGRN.add(c.getCanonicalName());
-				if (s.contains(InterfaceNonEnzymeKinetics.class))
-					kinNonEnz.add(c.getCanonicalName());
-				if (s.contains(InterfaceZeroReactants.class))
-					kinZeroReac.add(c.getCanonicalName());
-				if (s.contains(InterfaceZeroProducts.class))
-					kinZeroProd.add(c.getCanonicalName());
-				if (s.contains(InterfaceModulatedKinetics.class))
-					kinModulated.add(c.getCanonicalName());
-				if (s.contains(InterfaceIntegerStoichiometry.class))
-					kinIntStoich.add(c.getCanonicalName());
-			}
-		}
-	}
 
 	/**
 	 * Goes through the formula and identifies all global parameters that are
@@ -178,10 +84,9 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * A hashtable that contains all settings of how to create kinetic
-	 * equations.
+	 * The column rank of the soichiometric matrix of the original model.
 	 */
-	private Properties settings;
+	private int columnRank = -1;
 
 	/**
 	 * This list contains all fast reactions of the original model. Since the
@@ -191,16 +96,6 @@ public class KineticLawGenerator {
 	private List<Reaction> listOfFastReactions;
 
 	/**
-	 * The column rank of the soichiometric matrix of the original model.
-	 */
-	private int columnRank = -1;
-
-	/**
-	 * 
-	 */
-	private Model modelOrig;
-
-	/**
 	 * A copy of the model that only covers all compartments, all parameters,
 	 * and all reactions for which kinetic equations are to be created. Hence,
 	 * it also contains all other information needed for that purpose, i.e., all
@@ -208,6 +103,17 @@ public class KineticLawGenerator {
 	 * one of these reactions.
 	 */
 	private Model miniModel;
+
+	/**
+	 * 
+	 */
+	private Model modelOrig;
+
+	/**
+	 * A hashtable that contains all settings of how to create kinetic
+	 * equations.
+	 */
+	private Properties settings;
 
 	/**
 	 * A default constructor.
@@ -257,8 +163,10 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	private boolean checkReversibility(Reaction reaction, String className) {
-		return (reaction.getReversible() && kinRev.contains(className))
-				|| (!reaction.getReversible() && kinIrrev.contains(className));
+		return (reaction.getReversible() && SBMLsqueezer
+				.getKineticsReversible().contains(className))
+				|| (!reaction.getReversible() && SBMLsqueezer
+						.getKineticsIrreversible().contains(className));
 	}
 
 	/**
@@ -525,10 +433,10 @@ public class KineticLawGenerator {
 			 * Special case that occurs if we have at least one emty list of
 			 * species references.
 			 */
-			for (String className : kinZeroReac)
+			for (String className : SBMLsqueezer.getKineticsZeroReactants())
 				types.add(className);
-			for (String className : kinZeroProd) {
-				if (kinRev.contains(className))
+			for (String className : SBMLsqueezer.getKineticsZeroProducts()) {
+				if (SBMLsqueezer.getKineticsReversible().contains(className))
 					types.add(className);
 			}
 
@@ -606,47 +514,57 @@ public class KineticLawGenerator {
 
 			if (nonEnzyme) {
 				// non enzyme reactions
-				for (String className : kinNonEnz)
+				for (String className : SBMLsqueezer.getKineticsNonEnzyme())
 					types.add(className);
 			} else {
 				/*
 				 * Enzym-Kinetics: Assign possible rate laws for arbitrary
 				 * enzyme reations.
 				 */
-				for (String className : kinArbEnz) {
+				for (String className : SBMLsqueezer
+						.getKineticsArbitraryEnzymeMechanism()) {
 					if (checkReversibility(reaction, className)
-							&& (!kinIntStoich.contains(className) || integerStoichiometry)
-							&& (kinModulated.contains(className) || withoutModulation))
+							&& (!SBMLsqueezer.getKineticsIntStoichiometry()
+									.contains(className) || integerStoichiometry)
+							&& (SBMLsqueezer.getKineticsModulated().contains(
+									className) || withoutModulation))
 						types.add(className);
 				}
 				if (uniUni) {
 					Set<String> onlyUniUni = new HashSet<String>();
-					onlyUniUni.addAll(kinUniUni);
-					onlyUniUni.removeAll(kinArbEnz);
+					onlyUniUni.addAll(SBMLsqueezer.getKineticsUniUni());
+					onlyUniUni.removeAll(SBMLsqueezer
+							.getKineticsArbitraryEnzymeMechanism());
 					if (!integerStoichiometry)
-						onlyUniUni.removeAll(kinIntStoich);
+						onlyUniUni.removeAll(SBMLsqueezer
+								.getKineticsIntStoichiometry());
 					if (!withoutModulation)
-						onlyUniUni.retainAll(kinModulated);
+						onlyUniUni.retainAll(SBMLsqueezer
+								.getKineticsModulated());
 					for (String className : onlyUniUni)
 						if (checkReversibility(reaction, className))
 							types.add(className);
 				} else if (biUni) {
 					Set<String> onlyBiUni = new HashSet<String>();
-					onlyBiUni.addAll(kinBiUni);
-					onlyBiUni.removeAll(kinArbEnz);
+					onlyBiUni.addAll(SBMLsqueezer.getKineticsBiUni());
+					onlyBiUni.removeAll(SBMLsqueezer
+							.getKineticsArbitraryEnzymeMechanism());
 					if (!integerStoichiometry)
-						onlyBiUni.removeAll(kinIntStoich);
+						onlyBiUni.removeAll(SBMLsqueezer
+								.getKineticsIntStoichiometry());
 					if (!withoutModulation)
-						onlyBiUni.retainAll(kinModulated);
+						onlyBiUni
+								.retainAll(SBMLsqueezer.getKineticsModulated());
 					for (String className : onlyBiUni)
 						if (checkReversibility(reaction, className))
 							types.add(className);
 				} else if (biBi) {
 					Set<String> onlyBiBi = new HashSet<String>();
-					onlyBiBi.addAll(kinBiBi);
-					onlyBiBi.removeAll(kinArbEnz);
+					onlyBiBi.addAll(SBMLsqueezer.getKineticsBiBi());
+					onlyBiBi.removeAll(SBMLsqueezer
+							.getKineticsArbitraryEnzymeMechanism());
 					if (!withoutModulation)
-						onlyBiBi.retainAll(kinModulated);
+						onlyBiBi.retainAll(SBMLsqueezer.getKineticsModulated());
 					for (String className : onlyBiBi)
 						if (checkReversibility(reaction, className))
 							types.add(className);
@@ -675,7 +593,8 @@ public class KineticLawGenerator {
 						throw new RateLawNotApplicableException("Reaction "
 								+ reaction.getId() + " must be a translation.");
 
-					for (String className : kinGRN)
+					for (String className : SBMLsqueezer
+							.getKineticsGeneRegulatoryNetworks())
 						types.add(className);
 				}
 			}
@@ -696,10 +615,10 @@ public class KineticLawGenerator {
 		SpeciesReference specref = reaction.getReactant(0);
 
 		if (reaction.getNumReactants() == 0)
-			for (String kin : kinZeroReac)
+			for (String kin : SBMLsqueezer.getKineticsZeroReactants())
 				return kin;
 		if (reaction.getReversible() && reaction.getNumProducts() == 0)
-			for (String kin : kinZeroProd)
+			for (String kin : SBMLsqueezer.getKineticsZeroProducts())
 				return kin;
 
 		List<String> modActi = new LinkedList<String>();
@@ -918,7 +837,7 @@ public class KineticLawGenerator {
 					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION)
 							.toString();
 				else
-					for (String kin : kinZeroReac) {
+					for (String kin : SBMLsqueezer.getKineticsZeroReactants()) {
 						whichkin = kin;
 						break;
 					}
@@ -1338,5 +1257,15 @@ public class KineticLawGenerator {
 					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return The kinetic law that is currently set to the reaction with the
+	 *         given id.
+	 */
+	public KineticLaw getKineticLaw(String id) {
+		return miniModel.getReaction(id).getKineticLaw();
 	}
 }

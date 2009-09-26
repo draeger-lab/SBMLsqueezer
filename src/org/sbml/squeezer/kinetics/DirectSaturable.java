@@ -41,7 +41,7 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
-	
+
 	/**
 	 * @param parentReaction
 	 * @param type
@@ -58,12 +58,11 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 * .Reaction)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml.Reaction,
+	 *      java.lang.String)
 	 */
-	ASTNode denominator(Reaction r) {
-		ASTNode denominator = super.denominator(r);
+	ASTNode denominator(Reaction r, String enzyme) {
+		ASTNode denominator = super.denominator(r, enzyme);
 		ASTNode forward = denominator(r, true);
 		ASTNode backward = denominator(r, false);
 		if (!forward.isUnknown())
@@ -93,7 +92,7 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 			kM = createOrGetParameter("km_", r.getId(), underscore, specRef
 					.getSpecies());
 			kM.setSBOTerm(27);
-			kM.setUnits(mM());
+			kM.setUnits(unitmM());
 			curr = ASTNode.frac(this, specRef.getSpeciesInstance(), kM);
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));
@@ -107,6 +106,7 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {

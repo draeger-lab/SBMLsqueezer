@@ -39,20 +39,12 @@ import org.sbml.squeezer.io.StringTools;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
 public abstract class BasicKineticLaw extends KineticLaw {
-
-	/**
-	 * Returns a string that gives a simple description of this rate equation.
-	 * 
-	 * @return
-	 */
-	public abstract String getSimpleName();
 
 	/**
 	 * identify which Modifer is used
@@ -97,9 +89,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		}
 	}
 
+	private Object typeParameters[];
 
 	final Character underscore = StringTools.underscore;
-	private Object typeParameters[];
 
 	/**
 	 * 
@@ -122,60 +114,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				modActi, modE, modCat);
 		setMath(createKineticEquation(modE, modActi, modTActi, modInhib,
 				modTInhib, modCat));
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Object[] getTypeParameters() {
-		return typeParameters;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	UnitDefinition mM() {
-		return mM(1);
-	}
-
-	/**
-	 * 
-	 * @param exponent
-	 * @return
-	 */
-	UnitDefinition mM(int exponent) {
-		String id = "mM";
-		if (exponent != 1)
-			id += exponent;
-		UnitDefinition mM = getModel().getUnitDefinition(id);
-		if (mM == null) {
-			mM = new UnitDefinition(id, getLevel(), getVersion());
-			mM.addUnit(new Unit(-3, Unit.Kind.MOLE, exponent, getLevel(),
-					getVersion()));
-			mM.addUnit(new Unit(Unit.Kind.LITRE, -exponent, getLevel(),
-					getVersion()));
-			getModel().addUnitDefinition(mM);
-		}
-		return mM;
-	}
-
-	/**
-	 * Returns the unit milli mole per litre per second.
-	 * 
-	 * @return
-	 */
-	UnitDefinition mMperSecond() {
-		Model model = getModel();
-		UnitDefinition mMperSecond = model.getUnitDefinition("mMperSecond");
-		if (mMperSecond == null) {
-			mMperSecond = mM().clone();
-			mMperSecond.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(),
-					getVersion()));
-			model.addUnitDefinition(mMperSecond);
-		}
-		return mMperSecond;
 	}
 
 	/**
@@ -215,6 +153,17 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			throws RateLawNotApplicableException, IllegalFormatException;
 
 	/**
+	 * Concatenates the given name parts of the identifier and returns a global
+	 * parameter with this id.
+	 * 
+	 * @param idParts
+	 * @return
+	 */
+	Parameter createOrGetGlobalParameter(Object... idParts) {
+		return createOrGetGlobalParameter(concat(idParts).toString());
+	}
+
+	/**
 	 * If the parent model does not yet contain a parameter with the given id, a
 	 * new parameter is created, its value is set to 1 and it is added to the
 	 * list of global parameters in the model. If there is already a parameter
@@ -235,14 +184,14 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
-	 * Concatenates the given name parts of the identifier and returns a global
-	 * parameter with this id.
+	 * Equvivalent to {@see createOrGetParameter} but the parts of the id can be
+	 * given separately to this method and are concatenated.
 	 * 
 	 * @param idParts
 	 * @return
 	 */
-	Parameter createOrGetGlobalParameter(Object... idParts) {
-		return createOrGetGlobalParameter(concat(idParts).toString());
+	Parameter createOrGetParameter(Object... idParts) {
+		return createOrGetParameter(concat(idParts).toString());
 	}
 
 	/**
@@ -266,14 +215,213 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
-	 * Equvivalent to {@see createOrGetParameter} but the parts of the id can be
-	 * given separately to this method and are concatenated.
+	 * Returns a string that gives a simple description of this rate equation.
 	 * 
-	 * @param idParts
 	 * @return
 	 */
-	Parameter createOrGetParameter(Object... idParts) {
-		return createOrGetParameter(concat(idParts).toString());
+	public abstract String getSimpleName();
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Object[] getTypeParameters() {
+		return typeParameters;
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @return
+	 */
+	Parameter parameterEquilibriumConstant(String reactionID) {
+		Parameter keq = createOrGetParameter("keq_", reactionID);
+		keq.setSBOTerm(281);
+		keq.setName(concat("equilibrium constant of reaction ", reactionID)
+				.toString());
+		return keq;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	Parameter parameterGasConstant() {
+		Parameter R = createOrGetGlobalParameter("R");
+		R.setValue(8.31447215);
+		R.setName("ideal gas constant");
+		R.setUnits(unitJperKandM());
+		return R;
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @param enzyme
+	 * @return
+	 */
+	Parameter parameterHillCoefficient(String reactionID, String enzyme) {
+		StringBuffer id = concat("h_", reactionID);
+		if (enzyme != null)
+			append(id, underscore, enzyme);
+		Parameter hr = createOrGetParameter(id.toString());
+		hr.setSBOTerm(193);
+		hr.setName("Hill coefficient");
+		hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		return hr;
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @param species
+	 * @return
+	 */
+	Parameter parameterKa(String reactionID, String species) {
+		Parameter kA = createOrGetParameter("ka_", reactionID, underscore,
+				species);
+		kA.setSBOTerm(363);
+		kA.setUnits(unitmM());
+		return kA;
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @param enzyme
+	 * @param forward
+	 * @return The parameter vmax if and only if the number of enzymes is zero,
+	 *         otherwise kcat.
+	 */
+	Parameter parameterKcatOrVmax(String reactionID, String enzyme,
+			boolean forward) {
+		Parameter kr;
+		if (enzyme != null) {
+			kr = createOrGetParameter("kcat_", forward ? "fwd" : "bwd",
+					underscore, reactionID, underscore, enzyme);
+			kr.setSBOTerm(forward ? 320 : 321);
+			kr
+					.setUnits(new Unit(Unit.Kind.SECOND, -1, getLevel(),
+							getVersion()));
+		} else {
+			kr = createOrGetParameter("vmax_", forward ? "fwd" : "bwd",
+					underscore, reactionID);
+			kr.setSBOTerm(forward ? 324 : 325);
+			kr.setUnits(unitmMperSecond());
+		}
+		return kr;
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @param species
+	 * @return
+	 */
+	Parameter parameterKi(String reactionID, String species) {
+		Parameter kI = createOrGetParameter("ki_", reactionID, underscore,
+				species);
+		kI.setSBOTerm(261);
+		kI.setUnits(unitmM());
+		return kI;
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @param species
+	 * @param enzyme
+	 * @return
+	 */
+	Parameter parameterMichaelis(String reactionID, String species,
+			String enzyme) {
+		StringBuffer id = concat("kM_", reactionID, underscore, species);
+		if (enzyme != null)
+			append(id, underscore, enzyme);
+		Parameter kM = createOrGetParameter(id.toString());
+		kM.setSBOTerm(27);
+		kM.setName(concat("Michaelis constant of species ", species,
+				" in reaction ", reactionID).toString());
+		kM.setUnits(unitmM());
+		return kM;
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @param species
+	 * @param enzyme
+	 * @return
+	 */
+	Parameter parameterMichaelisSubstrate(String reactionID, String species,
+			String enzyme) {
+		Parameter kM = parameterMichaelis(reactionID, species, enzyme);
+		kM.setSBOTerm(322);
+		return kM;
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @param species
+	 * @param enzyme
+	 * @return
+	 */
+	Parameter parameterMichaelisProduct(String reactionID, String species,
+			String enzyme) {
+		Parameter kM = parameterMichaelis(reactionID, species, enzyme);
+		kM.setSBOTerm(323);
+		return kM;
+	}
+
+	/**
+	 * 
+	 * @param species
+	 * @return
+	 */
+	Parameter parameterStandardChemicalPotential(String species) {
+		Parameter mu = createOrGetGlobalParameter("mu0_", species);
+		mu.setName("standard chemical potential");
+		mu.setSBOTerm(463);
+		mu.setUnits(unitkJperMole());
+		return mu;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	Parameter parameterTemperature() {
+		Parameter T = createOrGetGlobalParameter("T");
+		T.setSBOTerm(147);
+		T.setValue(298.15);
+		T.setUnits(Unit.Kind.KELVIN);
+		return T;
+	}
+
+	/**
+	 * Creates and annotates the velocity constant for the reaction with the
+	 * given id and the number of enzymes.
+	 * 
+	 * @param reactionID
+	 * @param numEnzymes
+	 * @return
+	 */
+	Parameter parameterVelocityConstant(String reactionID, String enzyme) {
+		Parameter kVr;
+		if (enzyme != null) {
+			kVr = createOrGetParameter("kv_", reactionID, underscore, enzyme);
+			kVr.setName(concat("KV value of reaction ", reactionID).toString());
+			kVr.setUnits(new Unit(Unit.Kind.SECOND, -1, getLevel(),
+					getVersion()));
+		} else {
+			kVr = createOrGetParameter("vmax_geom_", reactionID);
+			kVr.setName(concat(
+					"limiting maximal velocity, geometric mean of reaction ",
+					reactionID).toString());
+			kVr.setUnits(unitmMperSecond());
+		}
+		return kVr;
 	}
 
 	/*
@@ -285,5 +433,82 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	public String toString() {
 		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
 				.replace("\\,", ",") : getClass().getSimpleName();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	UnitDefinition unitJperKandM() {
+		UnitDefinition ud = new UnitDefinition("J_per_K_and_mole", getLevel(),
+				getVersion());
+		ud.addUnit(new Unit(Unit.Kind.JOULE, getLevel(), getVersion()));
+		ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, getLevel(),
+				getVersion()));
+		ud
+				.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, getLevel(),
+						getVersion()));
+		getModel().addUnitDefinition(ud);
+		return ud;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	UnitDefinition unitkJperMole() {
+		UnitDefinition kJperMole = new UnitDefinition("kJ_per_mole",
+				getLevel(), getVersion());
+		kJperMole
+				.addUnit(new Unit(3, Unit.Kind.JOULE, getLevel(), getVersion()));
+		kJperMole.addUnit(new Unit(Unit.Kind.MOLE, getLevel(), getVersion()));
+		getModel().addUnitDefinition(kJperMole);
+		return kJperMole;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	UnitDefinition unitmM() {
+		return unitmM(1);
+	}
+
+	/**
+	 * 
+	 * @param exponent
+	 * @return
+	 */
+	UnitDefinition unitmM(int exponent) {
+		String id = "mM";
+		if (exponent != 1)
+			id += exponent;
+		UnitDefinition mM = getModel().getUnitDefinition(id);
+		if (mM == null) {
+			mM = new UnitDefinition(id, getLevel(), getVersion());
+			mM.addUnit(new Unit(-3, Unit.Kind.MOLE, exponent, getLevel(),
+					getVersion()));
+			mM.addUnit(new Unit(Unit.Kind.LITRE, -exponent, getLevel(),
+					getVersion()));
+			getModel().addUnitDefinition(mM);
+		}
+		return mM;
+	}
+
+	/**
+	 * Returns the unit milli mole per litre per second.
+	 * 
+	 * @return
+	 */
+	UnitDefinition unitmMperSecond() {
+		Model model = getModel();
+		UnitDefinition mMperSecond = model.getUnitDefinition("mMperSecond");
+		if (mMperSecond == null) {
+			mMperSecond = unitmM().clone();
+			mMperSecond.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(),
+					getVersion()));
+			model.addUnitDefinition(mMperSecond);
+		}
+		return mMperSecond;
 	}
 }

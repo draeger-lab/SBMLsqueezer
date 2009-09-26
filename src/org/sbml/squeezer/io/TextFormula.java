@@ -52,12 +52,6 @@ public class TextFormula extends StringTools {
 		return brackets(arith('-', subtrahents));
 	}
 
-	public static final StringBuffer diff(StringBuffer... subtrahents) {
-		if (subtrahents.length == 1)
-			return brackets(concat(Character.valueOf('-'), subtrahents));
-		return brackets(arith('-', subtrahents));
-	}
-
 	/**
 	 * Returns a fraction with the given elements as numerator and denominator.
 	 * 
@@ -139,31 +133,12 @@ public class TextFormula extends StringTools {
 	}
 
 	/**
-	 * 
-	 * @param summands
-	 * @return
-	 */
-	public static final StringBuffer sum(StringBuffer... summands) {
-		return brackets(arith('+', summands));
-	}
-
-	/**
 	 * Returns the product of the given elements as StringBuffer.
 	 * 
 	 * @param factors
 	 * @return
 	 */
 	public static final StringBuffer times(Object... factors) {
-		return arith('*', factors);
-	}
-
-	/**
-	 * Returns the product of the given elements as StringBuffer.
-	 * 
-	 * @param factors
-	 * @return
-	 */
-	public static final StringBuffer times(StringBuffer... factors) {
 		return arith('*', factors);
 	}
 

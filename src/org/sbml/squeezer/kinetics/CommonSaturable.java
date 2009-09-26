@@ -25,7 +25,6 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -42,7 +41,6 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
 
-	
 	/**
 	 * @param parentReaction
 	 * @param type
@@ -59,16 +57,15 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 * .Reaction)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
+	 *      .Reaction)
 	 */
-	ASTNode denominator(Reaction r) {
-		ASTNode denominator = denominator(r, true);
+	ASTNode denominator(Reaction r, String enzyme) {
+		ASTNode denominator = denominator(r, enzyme, true);
 		if (denominator.isUnknown())
-			denominator = denominator(r, false);
+			denominator = denominator(r, enzyme, false);
 		else
-			denominator.minus(denominator(r, false));
+			denominator.minus(denominator(r, enzyme, false));
 		denominator.minus(new ASTNode(1, this));
 		ASTNode competInhib = competetiveInhibitionSummand(r);
 		return competInhib.isUnknown() ? denominator : denominator
@@ -79,23 +76,19 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 	 * This actually creates the denominator parts.
 	 * 
 	 * @param r
-	 * @param forwardOrReverse
+	 * @param forward
 	 *            true is forward, false reverse.
 	 * @return
 	 */
-	private ASTNode denominator(Reaction r, boolean forwardOrReverse) {
+	private ASTNode denominator(Reaction r, String enzyme, boolean forward) {
 		ASTNode denominator = new ASTNode(this), curr;
-		Parameter kM;
-		Parameter hr = createOrGetParameter("h_", r.getId());
-		hr.setSBOTerm(193);
-		hr.setUnits(Unit.Kind.DIMENSIONLESS);
-		ListOf<SpeciesReference> listOf = forwardOrReverse ? r
-				.getListOfReactants() : r.getListOfProducts();
+		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
+		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
+				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = createOrGetParameter("km_", r.getId(), underscore, specRef
-					.getSpecies());
-			kM.setSBOTerm(27);
-			kM.setUnits(mM());
+			Parameter kM = forward ? parameterMichaelisSubstrate(r.getId(),
+					specRef.getSpecies(), enzyme) : parameterMichaelisProduct(r
+					.getId(), specRef.getSpecies(), enzyme);
 			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(this, specRef
 					.getSpeciesInstance(), kM));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
@@ -107,9 +100,10 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 		}
 		return denominator;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {

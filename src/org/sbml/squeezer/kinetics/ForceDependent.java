@@ -91,7 +91,7 @@ public class ForceDependent extends ReversiblePowerLaw implements
 			kM = createOrGetParameter("km_", r.getId(), underscore, specRef
 					.getSpecies());
 			kM.setSBOTerm(27);
-			kM.setUnits(mM());
+			kM.setUnits(unitmM());
 			curr = ASTNode.frac(this, specRef.getSpeciesInstance(), kM);
 			if (term.isUnknown())
 				term = curr;

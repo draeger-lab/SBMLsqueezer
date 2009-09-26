@@ -28,6 +28,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.IllegalFormatException;
 import java.util.Properties;
 import java.util.Set;
@@ -44,10 +46,24 @@ import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
+import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
+import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
+import org.sbml.squeezer.kinetics.InterfaceIntegerStoichiometry;
+import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceModulatedKinetics;
+import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
+import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
+import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.plugin.PluginSBMLReader;
 import org.sbml.squeezer.plugin.PluginSBMLWriter;
 import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.rmi.Reflect;
 import org.sbml.squeezer.standalone.LibSBMLReader;
 import org.sbml.squeezer.standalone.LibSBMLWriter;
 
@@ -86,91 +102,112 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	}
 
 	/**
+	 * 
+	 */
+	private final static String configFile = "cfg/SBMLsqueezer.cfg";
+
+	/**
 	 * The package where all kinetic equations are located.
 	 */
 	public static final String KINETICS_PACKAGE = "org.sbml.squeezer.kinetics";
 
 	/**
-	 * 
+	 * enzyme mechanism with an arbitrary number of reactants or products
 	 */
-	private final static String configFile = "cfg/SBMLsqueezer.cfg";
+	private static Set<String> kineticsArbitraryEnzymeMechanism;
+
+	private static Set<String> kineticsBiBi;
+
+	private static Set<String> kineticsBiUni;
+
+	private static Set<String> kineticsGeneRegulatoryNetworks;
+
+	private static Set<String> kineticsIntStoichiometry;
+
+	private static Set<String> kineticsIrreversible;
+
+	/**
+	 * Kinetics that do allow for inhibitors or activators
+	 */
+	private static Set<String> kineticsModulated;
+
+	private static Set<String> kineticsNonEnzyme;
+
+	private static Set<String> kineticsReversible;
+
+	private static Set<String> kineticsUniUni;
+
+	private static Set<String> kineticsZeroProducts;
+
+	private static Set<String> kineticsZeroReactants;
+
 	/**
 	 * A serial version number.
 	 */
 	private static final long serialVersionUID = 4134514954192751545L;
+
 	/**
 	 * 
 	 */
 	private final static String userConfigFile = System
 			.getProperty("user.home")
 			+ "/.SBMLsqueezer/SBMLsqueezer.cfg";
+
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.2.2";
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static Properties getDefaultSettings() {
-		Properties defaults;
-		try {
-			defaults = Resource.readProperties(Resource.class.getResource(
-					configFile).getPath());
-		} catch (IOException e) {
-			defaults = new Properties();
-			e.printStackTrace();
-		}
-		return correctProperties(defaults);
-	}
-
-	/**
-	 * 
-	 * @return versionNumber
-	 */
-	public static final String getVersionNumber() {
-		return versionNumber;
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		try {
-			System.loadLibrary("sbmlj");
-			// Extra check to be sure we have access to libSBML:
-			Class.forName("org.sbml.libsbml.libsbml");
-		} catch (Exception e) {
-			System.err.println("Error: could not load the libSBML library");
-			e.printStackTrace();
-			System.exit(1);
-		}
-		new SBMLsqueezer(args);
-	}
-
-	/**
-	 * 
-	 */
-	public static void saveProperties(Properties settings) {
-		if (!initProperties().equals(settings))
-			try {
-				RandomAccessFile file = new RandomAccessFile(userConfigFile,
-						"rw");
-				file.setLength(0);
-				file.close();
-				BufferedWriter bw = new BufferedWriter(new FileWriter(
-						userConfigFile));
-				for (Object key : settings.keySet()) {
-					bw.append(key.toString());
-					bw.append('=');
-					bw.append(settings.get(key).toString());
-					bw.newLine();
-				}
-				bw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+	static {
+		long time = System.currentTimeMillis();
+		System.out.print("Loading kinetic equations... ");
+		kineticsBiBi = new HashSet<String>();
+		kineticsBiUni = new HashSet<String>();
+		kineticsGeneRegulatoryNetworks = new HashSet<String>();
+		kineticsNonEnzyme = new HashSet<String>();
+		kineticsArbitraryEnzymeMechanism = new HashSet<String>();
+		kineticsUniUni = new HashSet<String>();
+		kineticsReversible = new HashSet<String>();
+		kineticsIrreversible = new HashSet<String>();
+		kineticsZeroReactants = new HashSet<String>();
+		kineticsZeroProducts = new HashSet<String>();
+		kineticsModulated = new HashSet<String>();
+		kineticsIntStoichiometry = new HashSet<String>();
+		Class<?> l[] = Reflect.getAllClassesInPackage(
+				SBMLsqueezer.KINETICS_PACKAGE, false, true,
+				BasicKineticLaw.class);
+		for (Class<?> c : l) {
+			if (!Modifier.isAbstract(c.getModifiers())) {
+				Set<Class<?>> s = new HashSet<Class<?>>();
+				for (Class<?> interf : c.getInterfaces())
+					s.add(interf);
+				if (s.contains(InterfaceIrreversibleKinetics.class))
+					kineticsIrreversible.add(c.getCanonicalName());
+				if (s.contains(InterfaceReversibleKinetics.class))
+					kineticsReversible.add(c.getCanonicalName());
+				if (s.contains(InterfaceUniUniKinetics.class))
+					kineticsUniUni.add(c.getCanonicalName());
+				if (s.contains(InterfaceBiUniKinetics.class))
+					kineticsBiUni.add(c.getCanonicalName());
+				if (s.contains(InterfaceBiBiKinetics.class))
+					kineticsBiBi.add(c.getCanonicalName());
+				if (s.contains(InterfaceArbitraryEnzymeKinetics.class))
+					kineticsArbitraryEnzymeMechanism.add(c.getCanonicalName());
+				if (s.contains(InterfaceGeneRegulatoryKinetics.class))
+					kineticsGeneRegulatoryNetworks.add(c.getCanonicalName());
+				if (s.contains(InterfaceNonEnzymeKinetics.class))
+					kineticsNonEnzyme.add(c.getCanonicalName());
+				if (s.contains(InterfaceZeroReactants.class))
+					kineticsZeroReactants.add(c.getCanonicalName());
+				if (s.contains(InterfaceZeroProducts.class))
+					kineticsZeroProducts.add(c.getCanonicalName());
+				if (s.contains(InterfaceModulatedKinetics.class))
+					kineticsModulated.add(c.getCanonicalName());
+				if (s.contains(InterfaceIntegerStoichiometry.class))
+					kineticsIntStoichiometry.add(c.getCanonicalName());
 			}
+		}
+		System.out.println("done in " + (System.currentTimeMillis() - time)
+				+ " ms");
 	}
 
 	/**
@@ -210,6 +247,128 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 			}
 		}
 		return settings;
+	}
+
+	/**
+	 * @return the configFile
+	 */
+	public static String getConfigFile() {
+		return configFile;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Properties getDefaultSettings() {
+		Properties defaults;
+		try {
+			defaults = Resource.readProperties(Resource.class.getResource(
+					configFile).getPath());
+		} catch (IOException e) {
+			defaults = new Properties();
+			e.printStackTrace();
+		}
+		return correctProperties(defaults);
+	}
+
+	/**
+	 * @return the kineticsArbitraryEnzymeMechanism
+	 */
+	public static Set<String> getKineticsArbitraryEnzymeMechanism() {
+		return kineticsArbitraryEnzymeMechanism;
+	}
+
+	/**
+	 * @return the kineticsBiBi
+	 */
+	public static Set<String> getKineticsBiBi() {
+		return kineticsBiBi;
+	}
+
+	/**
+	 * @return the kineticsBiUni
+	 */
+	public static Set<String> getKineticsBiUni() {
+		return kineticsBiUni;
+	}
+
+	/**
+	 * @return the kineticsGeneRegulatoryNetworks
+	 */
+	public static Set<String> getKineticsGeneRegulatoryNetworks() {
+		return kineticsGeneRegulatoryNetworks;
+	}
+
+	/**
+	 * @return the kineticsIntStoichiometry
+	 */
+	public static Set<String> getKineticsIntStoichiometry() {
+		return kineticsIntStoichiometry;
+	}
+
+	/**
+	 * @return the kineticsIrreversible
+	 */
+	public static Set<String> getKineticsIrreversible() {
+		return kineticsIrreversible;
+	}
+
+	/**
+	 * @return the kineticsModulated
+	 */
+	public static Set<String> getKineticsModulated() {
+		return kineticsModulated;
+	}
+
+	/**
+	 * @return the kineticsNonEnzyme
+	 */
+	public static Set<String> getKineticsNonEnzyme() {
+		return kineticsNonEnzyme;
+	}
+
+	/**
+	 * @return the kineticsReversible
+	 */
+	public static Set<String> getKineticsReversible() {
+		return kineticsReversible;
+	}
+
+	/**
+	 * @return the kineticsUniUni
+	 */
+	public static Set<String> getKineticsUniUni() {
+		return kineticsUniUni;
+	}
+
+	/**
+	 * @return the kineticsZeroProducts
+	 */
+	public static Set<String> getKineticsZeroProducts() {
+		return kineticsZeroProducts;
+	}
+
+	/**
+	 * @return the kineticsZeroReactants
+	 */
+	public static Set<String> getKineticsZeroReactants() {
+		return kineticsZeroReactants;
+	}
+
+	/**
+	 * @return the userConfigFile
+	 */
+	public static String getUserConfigFile() {
+		return userConfigFile;
+	}
+
+	/**
+	 * 
+	 * @return versionNumber
+	 */
+	public static final String getVersionNumber() {
+		return versionNumber;
 	}
 
 	/**
@@ -257,6 +416,46 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	}
 
 	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		try {
+			System.loadLibrary("sbmlj");
+			// Extra check to be sure we have access to libSBML:
+			Class.forName("org.sbml.libsbml.libsbml");
+		} catch (Exception e) {
+			System.err.println("Error: could not load the libSBML library");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		new SBMLsqueezer(args);
+	}
+
+	/**
+	 * 
+	 */
+	public static void saveProperties(Properties settings) {
+		if (!initProperties().equals(settings))
+			try {
+				RandomAccessFile file = new RandomAccessFile(userConfigFile,
+						"rw");
+				file.setLength(0);
+				file.close();
+				BufferedWriter bw = new BufferedWriter(new FileWriter(
+						userConfigFile));
+				for (Object key : settings.keySet()) {
+					bw.append(key.toString());
+					bw.append('=');
+					bw.append(settings.get(key).toString());
+					bw.newLine();
+				}
+				bw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
+
+	/**
 	 * Displays a short copyright message on the screen.
 	 */
 	private static void showAboutMsg() {
@@ -286,11 +485,6 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	}
 
 	/**
-	 * 
-	 */
-	public Set<Integer> possibleEnzymes;
-
-	/**
 	 * Tells if SBMLsqueezer checked for an update after CellDesigner has been
 	 * run.
 	 */
@@ -300,6 +494,11 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 * The CellDesigner plugin to which this action belongs.
 	 */
 	private SBMLsqueezerPlugin plugin;
+
+	/**
+	 * 
+	 */
+	public Set<Integer> possibleEnzymes;
 
 	private SBMLio sbmlIo;
 
@@ -323,8 +522,7 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	public SBMLsqueezer(String... args) {
 		Properties p = analyzeCommandLineArguments(args);
 		possibleEnzymes = SBO.getDefaultPossibleEnzymes();
-		sbmlIo = new SBMLio(new LibSBMLReader(possibleEnzymes),
-				new LibSBMLWriter());
+		sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 		if (p.containsKey(Keys.SBML_FILE))
 			sbmlIo.readModel(p.get(Keys.SBML_FILE));
 		if (p.containsKey(Keys.GUI)
@@ -388,76 +586,6 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 		}
 	}
 
-	public void currentNumber(int num) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Set<Integer> getPossibleEnzymes() {
-		return possibleEnzymes;
-	}
-
-	/**
-	 * @return isUpdateChecked
-	 */
-	public boolean getUpdateChecked() {
-		return isUpdateChecked;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * jp.sbi.celldesigner.plugin.PluginActionListener#myActionPerformed(java
-	 * .awt.event.ActionEvent)
-	 */
-	/**
-	 * Runs two threads for checking if an update for SBMLsqueezer is available
-	 * and for initializing an instance of the SBMLsqueezerUI.
-	 * 
-	 * @param e
-	 */
-	public void myActionPerformed(ActionEvent e) {
-		checkForUpdate(true);
-		if (e.getSource() instanceof JMenuItem) {
-			final String item = ((JMenuItem) e.getSource()).getText();
-			new Thread(new Runnable() {
-				public void run() {
-					startSBMLsqueezerPlugin(item);
-				}
-			}).start();
-		} else
-			System.err.println("Unsupported source of action "
-					+ e.getSource().getClass().getName());
-	}
-
-	/**
-	 * Sets the value of isUpdateChecked to the value of b.
-	 * 
-	 * @param b
-	 */
-	public void setUpdateChecked(boolean b) {
-		isUpdateChecked = b;
-	}
-
-	/**
-	 * Shows the GUI of SBMLsqueezer stand-alone.
-	 */
-	public void showGUI() {
-		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, initProperties());
-		gui.setLocationRelativeTo(null);
-		gui.setVisible(true);
-	}
-
-	public void totalNumber(int i) {
-		// TODO Auto-generated method stub
-
-	}
-
 	/**
 	 * 
 	 * @param args
@@ -503,6 +631,91 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 		}).start();
 	}
 
+	public void currentNumber(int num) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @return the plugin
+	 */
+	public SBMLsqueezerPlugin getPlugin() {
+		return plugin;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Set<Integer> getPossibleEnzymes() {
+		return possibleEnzymes;
+	}
+
+	/**
+	 * @return the sbmlIo
+	 */
+	public SBMLio getSbmlIo() {
+		return sbmlIo;
+	}
+
+	/**
+	 * @return isUpdateChecked
+	 */
+	public boolean getUpdateChecked() {
+		return isUpdateChecked;
+	}
+
+	/**
+	 * @return the isUpdateChecked
+	 */
+	public boolean isUpdateChecked() {
+		return isUpdateChecked;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see jp.sbi.celldesigner.plugin.PluginActionListener#myActionPerformed(java
+	 *      .awt.event.ActionEvent)
+	 */
+	/**
+	 * Runs two threads for checking if an update for SBMLsqueezer is available
+	 * and for initializing an instance of the SBMLsqueezerUI.
+	 * 
+	 * @param e
+	 */
+	public void myActionPerformed(ActionEvent e) {
+		checkForUpdate(true);
+		if (e.getSource() instanceof JMenuItem) {
+			final String item = ((JMenuItem) e.getSource()).getText();
+			new Thread(new Runnable() {
+				public void run() {
+					startSBMLsqueezerPlugin(item);
+				}
+			}).start();
+		} else
+			System.err.println("Unsupported source of action "
+					+ e.getSource().getClass().getName());
+	}
+
+	/**
+	 * Sets the value of isUpdateChecked to the value of b.
+	 * 
+	 * @param b
+	 */
+	public void setUpdateChecked(boolean b) {
+		isUpdateChecked = b;
+	}
+
+	/**
+	 * Shows the GUI of SBMLsqueezer stand-alone.
+	 */
+	public void showGUI() {
+		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, initProperties());
+		gui.setLocationRelativeTo(null);
+		gui.setVisible(true);
+	}
+
 	/**
 	 * Starts the SBMLsqueezer dialog window for kinetic law selection or LaTeX
 	 * export.
@@ -530,5 +743,10 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 			if (plugin.getSelectedModel() != null)
 				new KineticLawSelectionDialog(null, settings, sbmlIO
 						.getSelectedModel());
+	}
+
+	public void totalNumber(int i) {
+		// TODO Auto-generated method stub
+
 	}
 }

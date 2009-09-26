@@ -299,8 +299,8 @@ public class SBasePanel extends JPanel {
 			}
 			JTable table = new JTable(rowData, columnNames);
 			table.setEnabled(editable);
-			table.setPreferredScrollableViewportSize(new Dimension(200, table
-					.getRowCount()
+			table.setPreferredScrollableViewportSize(new Dimension(200, (table
+					.getRowCount() +1)
 					* table.getRowHeight()));
 			JScrollPane scroll = new JScrollPane(table,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
