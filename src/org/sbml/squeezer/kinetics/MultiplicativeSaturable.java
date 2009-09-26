@@ -97,7 +97,7 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 			kM = createOrGetParameter("kM_", r.getId(), underscore, specRef
 					.getSpecies());
 			kM.setSBOTerm(27);
-			kM.setUnits(mM());
+			kM.setUnits(unitmM());
 			curr = new ASTNode(1, this);
 			curr.plus(ASTNode.frac(this, specRef.getSpeciesInstance(), kM));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef

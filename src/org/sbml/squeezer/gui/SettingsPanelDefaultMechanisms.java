@@ -23,7 +23,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,16 +42,12 @@ import javax.swing.event.ChangeListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.StringTools;
-import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
 import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
 import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
 import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
-import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
-import org.sbml.squeezer.rmi.Reflect;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -66,17 +62,21 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	 * Generated serial version uid.
 	 */
 	private static final long serialVersionUID = 243553812503691739L;
+
 	private static final Font titleFont = new Font("Dialog", Font.BOLD, 12);
+
 	private static final Color borderColor = new Color(51, 51, 51);
-	private static List<String> bib;
-	private static List<String> bun;
-	private static List<String> grn;
-	private static List<String> non;
-	private static List<String> arb;
-	private static List<String> uni;
+
 	private Properties settings;
+
 	private Properties origSett;
+
 	private List<ItemListener> itemListeners;
+
+	/**
+	 * Set of those kinetic equations that can only be reversible.
+	 */
+	private Set<String> notIrreversible;
 
 	/**
 	 * Reaction Mechanism Panel
@@ -89,6 +89,9 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 			if (key.toString().startsWith("KINETICS_"))
 				settings.put(key, properties.get(key));
 		}
+		notIrreversible = new HashSet<String>();
+		notIrreversible.addAll(SBMLsqueezer.getKineticsReversible());
+		notIrreversible.removeAll(SBMLsqueezer.getKineticsIrreversible());
 		itemListeners = new LinkedList<ItemListener>();
 		origSett = properties;
 		init(((Boolean) origSett
@@ -102,37 +105,6 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	 * @param properties
 	 */
 	private void init(boolean treatReactionsReversible) {
-		bib = new LinkedList<String>();
-		bun = new LinkedList<String>();
-		grn = new LinkedList<String>();
-		non = new LinkedList<String>();
-		arb = new LinkedList<String>();
-		uni = new LinkedList<String>();
-		Class<?> l[] = Reflect.getAllClassesInPackage(
-				SBMLsqueezer.KINETICS_PACKAGE, false, true,
-				BasicKineticLaw.class);
-		for (Class<?> c : l) {
-			if (!Modifier.isAbstract(c.getModifiers())) {
-				Set<Class<?>> s = new HashSet<Class<?>>();
-				for (Class<?> interf : c.getInterfaces())
-					s.add(interf);
-				if ((s.contains(InterfaceIrreversibleKinetics.class) || treatReactionsReversible)
-						&& s.contains(InterfaceReversibleKinetics.class)) {
-					if (s.contains(InterfaceUniUniKinetics.class))
-						uni.add(c.getCanonicalName());
-					if (s.contains(InterfaceBiUniKinetics.class))
-						bun.add(c.getCanonicalName());
-					if (s.contains(InterfaceBiBiKinetics.class))
-						bib.add(c.getCanonicalName());
-					if (s.contains(InterfaceArbitraryEnzymeKinetics.class))
-						arb.add(c.getCanonicalName());
-				}
-				if (s.contains(InterfaceGeneRegulatoryKinetics.class))
-					grn.add(c.getCanonicalName());
-				if (s.contains(InterfaceNonEnzymeKinetics.class))
-					non.add(c.getCanonicalName());
-			}
-		}
 		setLayout(new GridLayout(1, 2));
 		setBorder(BorderFactory.createTitledBorder(null,
 				" Reaction Mechanisms ", TitledBorder.CENTER,
@@ -142,21 +114,53 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 		JPanel leftMechanismPanel = new JPanel();
 		leftMechanismPanel.setBackground(Color.WHITE);
 		LayoutHelper lh = new LayoutHelper(leftMechanismPanel);
-		lh.add(createButtonGroupPanel(non,
+
+		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
+				SBMLsqueezer.getKineticsNonEnzyme()),
 				CfgKeys.KINETICS_NONE_ENZYME_REACTIONS));
-		lh.add(createButtonGroupPanel(uni, CfgKeys.KINETICS_UNI_UNI_TYPE));
-		lh.add(createButtonGroupPanel(bun, CfgKeys.KINETICS_BI_UNI_TYPE));
+		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
+				SBMLsqueezer.getKineticsUniUni()),
+				CfgKeys.KINETICS_UNI_UNI_TYPE));
+		lh
+				.add(createButtonGroupPanel(checkReactions(
+						treatReactionsReversible, SBMLsqueezer
+								.getKineticsBiUni()),
+						CfgKeys.KINETICS_BI_UNI_TYPE));
 
 		JPanel rightMechanismPanel = new JPanel();
 		rightMechanismPanel.setBackground(Color.WHITE);
 		lh = new LayoutHelper(rightMechanismPanel);
-		lh.add(createButtonGroupPanel(bib, CfgKeys.KINETICS_BI_BI_TYPE));
-		lh.add(createButtonGroupPanel(arb,
+		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
+				SBMLsqueezer.getKineticsBiBi()), CfgKeys.KINETICS_BI_BI_TYPE));
+		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
+				SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
 				CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS));
-		lh.add(createButtonGroupPanel(grn, CfgKeys.KINETICS_GENE_REGULATION));
+		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
+				SBMLsqueezer.getKineticsGeneRegulatoryNetworks()),
+				CfgKeys.KINETICS_GENE_REGULATION));
 
 		add(leftMechanismPanel);
 		add(rightMechanismPanel);
+	}
+
+	/**
+	 * Checks if the given set of kinetics can be used given the property if all
+	 * reactions should be treated reversibly.
+	 * 
+	 * @param treatReactionsReversible
+	 * @param allKinetics
+	 * @return A set of kinetics that can be used given the reversible property.
+	 */
+	private Set<String> checkReactions(boolean treatReactionsReversible,
+			Set<String> allKinetics) {
+		Set<String> kinetics = new HashSet<String>();
+		kinetics.addAll(allKinetics);
+		if (!treatReactionsReversible)
+			kinetics.removeAll(notIrreversible);
+		/*
+		 * else kinetics.retainAll(notIrreversible);
+		 */
+		return kinetics;
 	}
 
 	/**
@@ -168,7 +172,7 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	 * @param interfaceClass
 	 * @return
 	 */
-	private JPanel createButtonGroupPanel(List<String> classes, CfgKeys key) {
+	private JPanel createButtonGroupPanel(Set<String> classes, CfgKeys key) {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		JPanel p = new JPanel();
 		LayoutHelper helper = new LayoutHelper(p);
@@ -206,9 +210,11 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 			break;
 		}
 		JRadioButton jRButton[] = new JRadioButton[classes.size()];
+		String cl[] = classes.toArray(new String[] {});
+		Arrays.sort(cl);
 		int i;
 		for (i = 0; i < jRButton.length; i++) {
-			String className = classes.get(i);
+			String className = cl[i];
 			String type = className.substring(className.lastIndexOf('.') + 1);
 			jRButton[i] = new JRadioButton(className.substring(className
 					.lastIndexOf('.') + 1));
@@ -266,14 +272,14 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 			buttonGroup.add(jRButton[i]);
 			helper.add(jRButton[i]);
 		}
-		i=0;
+		i = 0;
 		int pos = 0;
 		boolean oneIsSelected = false;
 		for (JRadioButton radioButton : jRButton) {
 			if (radioButton.isSelected())
 				oneIsSelected = true;
 			if (origSett.get(key).toString().endsWith(radioButton.getText()))
-					pos = i;
+				pos = i;
 			i++;
 		}
 		if (!oneIsSelected)
@@ -293,8 +299,7 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() instanceof JRadioButton) {
@@ -333,9 +338,7 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-	 * )
+	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent )
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() instanceof Boolean) {

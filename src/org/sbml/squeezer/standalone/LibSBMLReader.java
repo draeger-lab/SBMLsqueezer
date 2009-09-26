@@ -46,7 +46,6 @@ import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -69,20 +68,13 @@ import org.sbml.squeezer.io.AbstractSBMLReader;
 public class LibSBMLReader extends AbstractSBMLReader {
 
 	private Set<org.sbml.libsbml.SBMLDocument> setOfDocuments;
-	private Set<Integer> possibleEnzymes;
 	private static final String error = " must be an instance of ";
 	private org.sbml.libsbml.Model originalModel;
 
-	/**
-	 * 
-	 * @param possibleEnzymes
-	 */
-	public LibSBMLReader(Set<Integer> possibleEnzymes) {
-		super();
-		this.possibleEnzymes = possibleEnzymes;
+	public LibSBMLReader() {
 		setOfDocuments = new HashSet<org.sbml.libsbml.SBMLDocument>();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

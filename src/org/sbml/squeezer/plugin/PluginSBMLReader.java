@@ -83,13 +83,16 @@ import org.sbml.squeezer.io.AbstractSBMLReader;
 public class PluginSBMLReader extends AbstractSBMLReader {
 
 	private static final int level = 2;
+
 	private static final int version = 4;
 
 	private PluginModel originalmodel;
+
 	/**
 	 * 
 	 */
 	private static final String error = " must be an instance of ";
+
 	/**
 	 * 
 	 */
@@ -161,8 +164,6 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		copyNamedSBaseProperties(com, comp);
 		return com;
 	}
-
-
 
 	public EventAssignment readEventAssignment(Object eventass) {
 		if (!(eventass instanceof PluginEventAssignment))
@@ -415,22 +416,19 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return st;
 	}
 
-		
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.SBMLReader#readUnit(java.lang.Object)
 	 */
-	
-	//TODO: PluginUnitbez.?
+
+	// TODO: PluginUnitbez.?
 	public Unit readUnit(Object unit) {
 		if (!(unit instanceof PluginUnit))
 			throw new IllegalArgumentException("unit" + error
 					+ "org.sbml.libsbml.Unit");
 		PluginUnit libUnit = (PluginUnit) unit;
-		Unit u = new Unit(level,version);
+		Unit u = new Unit(level, version);
 		copySBaseProperties(u, libUnit);
 		switch (libUnit.getKind()) {
 		case libsbmlConstants.UNIT_KIND_AMPERE:
@@ -548,6 +546,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		u.setOffset(libUnit.getOffset());
 		return u;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -558,13 +557,13 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			throw new IllegalArgumentException("unitDefinition" + error
 					+ "org.sbml.libsbml.UnitDefinition");
 		PluginUnitDefinition libUD = (PluginUnitDefinition) unitDefinition;
-		UnitDefinition ud = new UnitDefinition(libUD.getId(), level,version);
+		UnitDefinition ud = new UnitDefinition(libUD.getId(), level, version);
 		copyNamedSBaseProperties(ud, libUD);
 		for (int i = 0; i < libUD.getNumUnits(); i++)
 			ud.addUnit(readUnit(libUD.getUnit(i)));
 		return ud;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -574,17 +573,16 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public CVTerm readCVTerm(Object term) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public Date convertDate(Object d) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	public String getWarnings() {
 		// TODO Auto-generated method stub
@@ -646,7 +644,9 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 			if (c.getName() != null)
 				n.setName(c.getName());
 		} else if (ps instanceof PluginSimpleSpeciesReference) {
-			PluginSimpleSpeciesReference c = (PluginSimpleSpeciesReference) ps;
+			// TODO
+			// PluginSimpleSpeciesReference c = (PluginSimpleSpeciesReference)
+			// ps;
 			// if (c.get != null)
 			// n.setId(c.getId());
 			// if (c.getName() != null)

@@ -264,7 +264,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 					possibleLaws[i] = klg.createKineticLaw(reaction,
 							possibleTypes[i], reversibility);
 					if (possibleLaws[i].getClass().equals(
-							reaction.getKineticLaw().getClass()))
+							klg.getKineticLaw(reaction.getId()).getClass()))
 						selected = i;
 				}
 				KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
