@@ -41,7 +41,7 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
-	
+
 	/**
 	 * @param parentReaction
 	 * @param type
@@ -58,14 +58,13 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 * .Reaction)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
+	 *      .Reaction)
 	 */
-	ASTNode denominator(Reaction r) {
+	ASTNode denominator(Reaction r, String enzyme) {
 		ASTNode denominator = new ASTNode(this);
-		ASTNode forward = denominator(r, true);
-		ASTNode backward = denominator(r, false);
+		ASTNode forward = denominator(r, enzyme, true);
+		ASTNode backward = denominator(r, enzyme, false);
 		if (!forward.isUnknown())
 			denominator = forward;
 		if (!denominator.isUnknown() && !backward.isUnknown())
@@ -81,23 +80,22 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 	 * This actually creates the denominator parts.
 	 * 
 	 * @param r
+	 * @param enzyme
 	 * @param forward
 	 *            true means forward, false backward.
 	 * @return
 	 */
-	private ASTNode denominator(Reaction r, boolean forward) {
+	private ASTNode denominator(Reaction r, String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		Parameter kM;
-		Parameter hr = createOrGetParameter("h_", r.getId());
-		hr.setSBOTerm(193);
+		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
 		hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = createOrGetParameter("kM_", r.getId(), underscore, specRef
-					.getSpecies());
-			kM.setSBOTerm(27);
-			kM.setUnits(unitmM());
+			kM = forward ? parameterMichaelisSubstrate(r.getId(), specRef
+					.getSpecies(), enzyme) : parameterMichaelisProduct(r
+					.getId(), specRef.getSpecies(), enzyme);
 			curr = new ASTNode(1, this);
 			curr.plus(ASTNode.frac(this, specRef.getSpeciesInstance(), kM));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
@@ -109,9 +107,10 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 		}
 		return term;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {

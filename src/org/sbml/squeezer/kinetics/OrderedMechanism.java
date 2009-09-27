@@ -33,15 +33,14 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class OrderedMechanism extends GeneralizedMassAction implements
 		InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceReversibleKinetics, InterfaceIrreversibleKinetics,
 		InterfaceModulatedKinetics {
-	
+
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
@@ -60,10 +59,9 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 * (java.util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -138,39 +136,30 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			 * Variables that are needed for the different combinations of
 			 * reactants and prodcuts.
 			 */
+			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
 
-			StringBuffer kcatp;
 			StringBuffer kMr1 = concat("kM_", reaction.getId());
 			StringBuffer kMr2 = concat("kM_", reaction.getId());
 			StringBuffer kIr1 = concat("ki_", reaction.getId());
 
 			// reverse reactions
-			StringBuffer kcatn;
 			StringBuffer kMp1 = concat("kM_", reaction.getId());
 			StringBuffer kMp2 = concat("kM_", reaction.getId());
 			StringBuffer kIp1 = concat("ki_", reaction.getId());
 			StringBuffer kIp2 = concat("ki_", reaction.getId());
 			StringBuffer kIr2 = concat("ki_", reaction.getId());
 
-			if (modE.size() == 0) {
-				kcatp = concat("Vp_", reaction.getId());
-				kcatn = concat("Vn_", reaction.getId());
-			} else {
-				kcatp = concat("kcatp_", reaction.getId());
-				kcatn = concat("kcatn_", reaction.getId());
+			if (modE.size() > 0) {
 				if (modE.size() > 1) {
-					String e = modE.get(enzymeNum);
-					append(kcatp, underscore, e);
-					append(kMr1, underscore, e);
-					append(kMr2, underscore, e);
-					append(kIr1, underscore, e);
+					append(kMr1, underscore, enzyme);
+					append(kMr2, underscore, enzyme);
+					append(kIr1, underscore, enzyme);
 					// reverse reactions
-					append(kcatn, underscore, e);
-					append(kMp1, underscore, e);
-					append(kMp2, underscore, e);
-					append(kIp1, underscore, e);
-					append(kIp2, underscore, e);
-					append(kIr2, underscore, e);
+					append(kMp1, underscore, enzyme);
+					append(kMp2, underscore, enzyme);
+					append(kIp1, underscore, enzyme);
+					append(kIp2, underscore, enzyme);
+					append(kIr2, underscore, enzyme);
 				}
 			}
 			append(kMr2, underscore, specRefE2.getSpecies());
@@ -200,8 +189,8 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				}
 				append(kIp2, underscore, specRefP2.getSpecies());
 			}
-			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
-			p_kcatp.setSBOTerm(modE.size() == 0 ? 324 : 320);
+			Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme,
+					true);
 
 			/*
 			 * addLocalParameter(kcatp); Irreversible reaction (bi-bi or bi-uni
@@ -249,8 +238,8 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				setSBOTerm(433);
 				Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
 				p_kIr2.setSBOTerm(261);
-				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
-				p_kcatn.setSBOTerm(modE.size() == 0 ? 325 : 321);
+				Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
+						enzyme, false);
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
 				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
@@ -369,8 +358,8 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				 * Reversible bi-uni reaction
 				 */
 				setSBOTerm(434);
-				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
-				p_kcatn.setSBOTerm(modE.size() == 0 ? 325 : 321);
+				Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
+						enzyme, false);
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
 				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
@@ -437,9 +426,10 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {

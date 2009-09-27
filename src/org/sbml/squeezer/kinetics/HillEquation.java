@@ -39,8 +39,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @version
  * @author <a href="mailto:supper@genomatix.de">Jochen Supper</a>
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 7, 2007
  */
 public class HillEquation extends BasicKineticLaw implements
@@ -69,10 +68,9 @@ public class HillEquation extends BasicKineticLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 *      .util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -83,16 +81,15 @@ public class HillEquation extends BasicKineticLaw implements
 			modTActi.addAll(modActi);
 		/*
 		 * throw new ModificationException("Wrong activation in reaction " +
-		 * model.getReaction(reactionNum).getId() +
-		 * ". Only transcriptional or translational activation, " +
-		 * "respectively, is allowed here.");
+		 * model.getReaction(reactionNum).getId() + ". Only transcriptional or
+		 * translational activation, " + "respectively, is allowed here.");
 		 */
 		if (!modInhib.isEmpty())
 			modTInhib.addAll(modInhib);
 		/*
 		 * throw new ModificationException("Wrong inhibition in reaction " +
-		 * reactionNum + ". Only transcriptional or translational inhibition, "
-		 * + "respectively, is allowed here.");
+		 * reactionNum + ". Only transcriptional or translational inhibition, " +
+		 * "respectively, is allowed here.");
 		 */
 		// necessary due to the changes in CellDesigner from version 4.0 alpha
 		// to beta and 4.0.1
@@ -172,12 +169,9 @@ public class HillEquation extends BasicKineticLaw implements
 		 * if (!model.getSpecies(modTActi.get(i)).getSpeciesAlias(0).getType()
 		 * .toUpperCase().equals("GENE"))
 		 */{
-			Parameter p_hillcoeff = createOrGetParameter(concat("np_", rId,
-					underscore, modTActi.get(i)).toString());
-			p_hillcoeff.setSBOTerm(190);
-			Parameter p_kS = createOrGetParameter(concat("kSp_", rId,
-					underscore, modTActi.get(i)).toString());
-			p_kS.setSBOTerm(194);
+			Parameter p_hillcoeff = parameterHillCoefficient(rId, modTActi
+					.get(i));
+			Parameter p_kS = parameterKS(rId, modTActi.get(i));
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(new ASTNode(
 					modTActi.get(i), this), new ASTNode(p_hillcoeff, this)),
 					ASTNode.sum(ASTNode.pow(new ASTNode(modTActi.get(i), this),
@@ -190,12 +184,9 @@ public class HillEquation extends BasicKineticLaw implements
 		 * if (!model.getSpecies(modTInhib.get(i)).getSpeciesAlias(0)
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
-			Parameter p_hillcoeff = createOrGetParameter(concat("nm_", rId,
-					underscore, modTInhib.get(i)).toString());
-			p_hillcoeff.setSBOTerm(190);
-			Parameter p_kS = createOrGetParameter(concat("kSm_", rId,
-					underscore, modTInhib.get(i)).toString());
-			p_kS.setSBOTerm(194);
+			Parameter p_hillcoeff = parameterHillCoefficient(rId, modTInhib
+					.get(i));
+			Parameter p_kS = parameterKS(rId, modTInhib.get(i));
 			inhib[i] = ASTNode.times(ASTNode.diff(new ASTNode(1, this), ASTNode
 					.frac(ASTNode.pow(new ASTNode(modTInhib.get(i), this),
 							new ASTNode(p_hillcoeff, this)), ASTNode.sum(

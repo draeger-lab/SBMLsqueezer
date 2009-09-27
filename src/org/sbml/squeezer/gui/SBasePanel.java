@@ -85,6 +85,7 @@ public class SBasePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = -4969096536922920641L;
 	private LayoutHelper lh;
+	private LaTeX latex;
 	private static final int preferedWidth = 450;
 	private boolean editable;
 	private int row;
@@ -97,6 +98,7 @@ public class SBasePanel extends JPanel {
 		super();
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
+		latex = new LaTeX();
 		lh = new LayoutHelper(this, gbl);
 		editable = false;
 		row = -1;
@@ -226,23 +228,23 @@ public class SBasePanel extends JPanel {
 				KineticLaw k = (KineticLaw) mc;
 				laTeXpreview.append("v_");
 				laTeXpreview
-						.append(LaTeX.mbox(k.getParentSBMLObject().getId()));
+						.append(latex.mbox(k.getParentSBMLObject().getId()));
 				laTeXpreview.append('=');
 			} else if (mc instanceof FunctionDefinition) {
 				FunctionDefinition f = (FunctionDefinition) mc;
-				laTeXpreview.append(LaTeX.mbox(f.getId()));
+				laTeXpreview.append(latex.mbox(f.getId()));
 			} else if (mc instanceof EventAssignment) {
 				EventAssignment ea = (EventAssignment) mc;
-				laTeXpreview.append(LaTeX.mbox(ea.getVariable()));
+				laTeXpreview.append(latex.mbox(ea.getVariable()));
 				laTeXpreview.append('=');
 			} else if (mc instanceof AssignmentRule) {
 				AssignmentRule ar = (AssignmentRule) mc;
-				laTeXpreview.append(LaTeX.mbox(ar.getVariable()));
+				laTeXpreview.append(latex.mbox(ar.getVariable()));
 				laTeXpreview.append('=');
 			} else if (mc instanceof RateRule) {
 				RateRule rr = (RateRule) mc;
-				String d = LaTeX.mbox("d").toString();
-				laTeXpreview.append(LaTeX.frac(LaTeX.times(d, LaTeX.mbox(rr
+				String d = latex.mbox("d").toString();
+				laTeXpreview.append(latex.frac(latex.times(d, latex.mbox(rr
 						.getVariable())), d));
 				laTeXpreview.append('=');
 			}
