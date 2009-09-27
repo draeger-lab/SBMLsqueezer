@@ -25,7 +25,6 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -63,8 +62,8 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 	 */
 	ASTNode denominator(Reaction r, String enzyme) {
 		ASTNode denominator = super.denominator(r, enzyme);
-		ASTNode forward = denominator(r, true);
-		ASTNode backward = denominator(r, false);
+		ASTNode forward = denominator(r, enzyme, true);
+		ASTNode backward = denominator(r, enzyme, false);
 		if (!forward.isUnknown())
 			denominator.plus(forward);
 		if (!backward.isUnknown())
@@ -76,23 +75,21 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 	 * This creates the denominator parts.
 	 * 
 	 * @param r
+	 * @param enzyme
 	 * @param forward
 	 *            if true forward, otherwise backward
 	 * @return
 	 */
-	private ASTNode denominator(Reaction r, boolean forward) {
+	private ASTNode denominator(Reaction r, String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		Parameter kM;
-		Parameter hr = createOrGetParameter("h_", r.getId());
-		hr.setSBOTerm(193);
-		hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = createOrGetParameter("km_", r.getId(), underscore, specRef
-					.getSpecies());
-			kM.setSBOTerm(27);
-			kM.setUnits(unitmM());
+			kM = forward ? parameterMichaelisSubstrate(r.getId(), specRef
+					.getSpecies(), enzyme) : parameterMichaelisProduct(r
+					.getId(), specRef.getSpecies(), enzyme);
 			curr = ASTNode.frac(this, specRef.getSpeciesInstance(), kM);
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));

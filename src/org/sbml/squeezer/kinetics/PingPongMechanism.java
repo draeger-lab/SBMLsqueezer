@@ -123,18 +123,12 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 
 		int enzymeNum = 0;
 		do {
-			StringBuffer kcatp;
 			StringBuffer kMr1 = concat("kM_", reaction.getId());
 			StringBuffer kMr2 = concat("kM_", reaction.getId());
-			StringBuffer enzyme = new StringBuffer(modE.size() == 0 ? "" : modE
-					.get(enzymeNum));
 
-			if (modE.size() == 0)
-				kcatp = concat("Vp_", reaction.getId());
-			else {
-				kcatp = concat("kcatp_", reaction.getId());
+			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
+			if (modE.size() > 0) {
 				if (modE.size() > 1) {
-					append(kcatp, underscore, enzyme);
 					append(kMr1, underscore, enzyme);
 					append(kMr2, underscore, enzyme);
 				}
@@ -145,8 +139,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
 			}
-			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
-			p_kcatp.setSBOTerm(modE.size() == 0 ? 324 : 320);
+			Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme, true);
 			Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
 			p_kMr1.setSBOTerm(322);
 			Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
@@ -186,21 +179,16 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				 * Reversible Reaction
 				 */
 			} else {
-				StringBuffer kcatn;
 				StringBuffer kMp1 = concat("kM_", reaction.getId());
 				StringBuffer kMp2 = concat("kM_", reaction.getId());
 				StringBuffer kIp1 = concat("ki_", reaction.getId());
 				StringBuffer kIp2 = concat("ki_", reaction.getId());
 				StringBuffer kIr1 = concat("ki_", reaction.getId());
 
-				if (modE.size() == 0)
-					kcatn = concat("Vn_", reaction.getId());
-				else {
-					kcatn = concat("kcatn_", reaction.getId());
+				if (modE.size() > 0) {
 					if (modE.size() > 1) {
 						StringBuffer modEnzymeNumber = new StringBuffer(modE
 								.get(enzymeNum));
-						kcatn = concat(kcatn, underscore, modEnzymeNumber);
 						kMp1 = concat(kMp1, underscore, modEnzymeNumber);
 						kMp2 = concat(kMp2, underscore, modEnzymeNumber);
 						kIp1 = concat(kIp1, underscore, modEnzymeNumber);
@@ -219,8 +207,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 					kIp1 = concat("kip1", kIp1.substring(2));
 					kIp2 = concat("kip2", kIp2.substring(2));
 				}
-				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
-				p_kcatn.setSBOTerm(modE.size() == 0 ? 325 : 321);
+				Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(), enzyme, false);
 				Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
 				p_kMp1.setSBOTerm(322);
 				Parameter p_kMp2 = createOrGetParameter(kMp2.toString());

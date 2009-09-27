@@ -359,6 +359,7 @@ public class LaTeXExport extends LaTeX {
 	public static String reactionEquation(Reaction reaction) {
 		StringBuffer reactionEqn = new StringBuffer();
 		reactionEqn.append(LaTeX.eqBegin);
+		LaTeX latex = new LaTeX();
 		int count = 0;
 		for (SpeciesReference specRef : reaction.getListOfReactants()) {
 			if (count > 0)
@@ -369,7 +370,7 @@ public class LaTeXExport extends LaTeX {
 			else if (specRef.getStoichiometry() != 1d)
 				reactionEqn.append(specRef.getStoichiometry());
 			reactionEqn.append(' ');
-			reactionEqn.append(LaTeX.mbox(LaTeX.maskSpecialChars(specRef
+			reactionEqn.append(latex.mbox(LaTeX.maskSpecialChars(specRef
 					.getSpecies())));
 			count++;
 		}
@@ -403,7 +404,7 @@ public class LaTeXExport extends LaTeX {
 			else if (specRef.getStoichiometry() != 1d)
 				reactionEqn.append(specRef.getStoichiometry());
 			reactionEqn.append(' ');
-			reactionEqn.append(LaTeX.mbox(LaTeX.maskSpecialChars(specRef
+			reactionEqn.append(latex.mbox(LaTeX.maskSpecialChars(specRef
 					.getSpecies())));
 			count++;
 		}

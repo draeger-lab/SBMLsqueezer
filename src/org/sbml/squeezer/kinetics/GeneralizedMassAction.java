@@ -414,17 +414,13 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					Parameter p_kAn = createOrGetParameter("kA_", r.getId(),
-							underscore, modifiers.get(i));
-					p_kAn.setSBOTerm(363);
+					Parameter p_kAn = parameterKa(r.getId(), modifiers.get(i));
 					mods[i] = ASTNode.frac(new ASTNode(modifiers.get(i), this),
 							ASTNode.sum(new ASTNode(p_kAn, this), new ASTNode(
 									modifiers.get(i), this)));
 				} else {
 					// Inhibitor Mod
-					Parameter p_kIn = createOrGetParameter("kI_", r.getId(),
-							underscore, modifiers.get(i));
-					p_kIn.setSBOTerm(261);
+					Parameter p_kIn = parameterKi(r.getId(), modifiers.get(i));
 					ASTNode kI = new ASTNode(p_kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI.clone(),
 							new ASTNode(modifiers.get(i), this)));

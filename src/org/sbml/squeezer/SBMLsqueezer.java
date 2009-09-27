@@ -520,14 +520,24 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 *            Command line arguments.
 	 */
 	public SBMLsqueezer(String... args) {
+		System.out.print("scanning command line arguments...");
 		Properties p = analyzeCommandLineArguments(args);
+		System.out.println(" done.");
+		System.out.print("reading SBO...");
 		possibleEnzymes = SBO.getDefaultPossibleEnzymes();
+		System.out.println(" done.");
 		sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
-		if (p.containsKey(Keys.SBML_FILE))
+		if (p.containsKey(Keys.SBML_FILE)) {
+			long time = System.currentTimeMillis();
+			System.out.print("reating SBML file...");
 			sbmlIo.readModel(p.get(Keys.SBML_FILE));
+			System.out.println(" done in "
+					+ (System.currentTimeMillis() - time) + " ms.");
+		}
 		if (p.containsKey(Keys.GUI)
 				&& Boolean.parseBoolean(p.get(Keys.GUI).toString())) {
 			checkForUpdate(true);
+			System.out.print("loading GUI...");
 			new Thread(new Runnable() {
 				public void run() {
 					showGUI();
@@ -711,6 +721,7 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 * Shows the GUI of SBMLsqueezer stand-alone.
 	 */
 	public void showGUI() {
+		System.out.println(" have fun!");
 		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, initProperties());
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);

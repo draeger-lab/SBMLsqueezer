@@ -45,11 +45,6 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		InterfaceReversibleKinetics, InterfaceIrreversibleKinetics,
 		InterfaceModulatedKinetics {
 
-	public static boolean isApplicable(Reaction reaction) {
-		// TODO
-		return true;
-	}
-
 	/**
 	 * @param parentReaction
 	 * @param model
@@ -142,21 +137,17 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		ASTNode denominator; // II
 		ASTNode catalysts[] = new ASTNode[Math.max(1, modE.size())];
 		do {
+			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
 			/*
 			 * Irreversible reaction
 			 */
 			if (!reaction.getReversible()) {
-				StringBuffer kcatp;
 				StringBuffer kMr1 = concat("kM_", reaction.getId());
 				StringBuffer kMr2 = concat("kM_", reaction.getId());
 				StringBuffer kIr1 = concat("ki_", reaction.getId());
 
-				if (modE.size() == 0)
-					kcatp = concat("Vp_", reaction.getId());
-				else {
-					kcatp = concat("kcatp_", reaction.getId());
+				if (modE.size()> 0) {
 					if (modE.size() > 1) {
-						append(kcatp, underscore, modE.get(enzymeNum));
 						append(kMr2, underscore, modE.get(enzymeNum));
 						append(kMr1, underscore, modE.get(enzymeNum));
 						append(kIr1, underscore, modE.get(enzymeNum));
@@ -171,8 +162,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					append(kMr2, "kMr2", kMr2.substring(2));
 				}
 				append(kIr1, underscore, speciesR1);
-				Parameter p_kcatp = createOrGetParameter(kcatp.toString());
-				p_kcatp.setSBOTerm(modE.size() == 0 ? 324 : 320);
+				Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme, true);
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
 				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
@@ -204,8 +194,6 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 				 * Reversible reaction: Bi-Bi
 				 */
 				if (!biuni) {
-					StringBuffer kcatp;
-					StringBuffer kcatn;
 
 					StringBuffer kMr2 = concat("kM_", reaction.getId());
 					StringBuffer kIr1 = concat("ki_", reaction.getId());
@@ -214,22 +202,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					StringBuffer kIp2 = concat("ki_", reaction.getId());
 					StringBuffer kIr2 = concat("ki_", reaction.getId());
 
-					if (modE.size() == 0) {
-						kcatp = concat("Vp_", reaction.getId());
-						kcatn = concat("Vn_", reaction.getId());
-					} else {
-						kcatp = concat("kcatp_", reaction.getId());
-						kcatn = concat("kcatn_", reaction.getId());
+					if (modE.size() > 0) {
 						if (modE.size() > 1) {
-							String currEnzyme = modE.get(enzymeNum);
-							kcatp = concat(kcatp, underscore, currEnzyme);
-							kcatn = concat(kcatn, underscore, currEnzyme);
-							kMr2 = concat(kMr2, underscore, currEnzyme);
-							kMp1 = concat(kMp1, underscore, currEnzyme);
-							kIp1 = concat(kIp1, underscore, currEnzyme);
-							kIp2 = concat(kIp2, underscore, currEnzyme);
-							kIr2 = concat(kIr2, underscore, currEnzyme);
-							kIr1 = concat(kIr1, underscore, currEnzyme);
+							kMr2 = concat(kMr2, underscore, enzyme);
+							kMp1 = concat(kMp1, underscore, enzyme);
+							kIp1 = concat(kIp1, underscore, enzyme);
+							kIp2 = concat(kIp2, underscore, enzyme);
+							kIr2 = concat(kIr2, underscore, enzyme);
+							kIr1 = concat(kIr1, underscore, enzyme);
 						}
 					}
 					Species speciesR1 = specRefR1.getSpeciesInstance();
@@ -250,15 +230,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 						kIp1 = concat("kip1", kIp1.substring(2));
 						kIp2 = concat("kip2", kIp2.substring(2));
 					}
-					Parameter p_kcatp = createOrGetParameter(kcatp.toString());
-					Parameter p_kcatn = createOrGetParameter(kcatn.toString());
-					if (modE.size() == 0) {
-						p_kcatp.setSBOTerm(324);
-						p_kcatn.setSBOTerm(325);
-					} else {
-						p_kcatp.setSBOTerm(320);
-						p_kcatn.setSBOTerm(321);
-					}
+					Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme, true);
+					Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(), enzyme, false);
 					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
 					p_kMr2.setSBOTerm(322);
 					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
@@ -307,22 +280,13 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					/*
 					 * Reversible reaction: Bi-Uni reaction
 					 */
-					StringBuffer kcatp;
-					StringBuffer kcatn;
 					StringBuffer kMr2 = concat("kM_", reaction.getId());
 					StringBuffer kMp1 = concat("kM_", reaction.getId());
 					StringBuffer kIr2 = concat("ki_", reaction.getId());
 					StringBuffer kIr1 = concat("ki_", reaction.getId());
 
-					if (modE.size() == 0) {
-						kcatp = concat("Vp_", reaction.getId());
-						kcatn = concat("Vn_", reaction.getId());
-					} else {
-						kcatp = concat("kcatp_", reaction.getId());
-						kcatn = concat("kcatn_", reaction.getId());
+					if (modE.size() > 0) {
 						if (modE.size() > 1) {
-							append(kcatp, underscore, modE.get(enzymeNum));
-							append(kcatn, underscore, modE.get(enzymeNum));
 							append(kMr2, underscore, modE.get(enzymeNum));
 							append(kMp1, underscore, modE.get(enzymeNum));
 							append(kIr2, underscore, modE.get(enzymeNum));
@@ -342,15 +306,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 						append(kIr1, "kip1", kIr1.substring(2));
 						append(kIr2, "kip2", kIr2.substring(2));
 					}
-					Parameter p_kcatp = createOrGetParameter(kcatp.toString());
-					Parameter p_kcatn = createOrGetParameter(kcatn.toString());
-					if (modE.size() == 0) {
-						p_kcatp.setSBOTerm(324);
-						p_kcatn.setSBOTerm(325);
-					} else {
-						p_kcatp.setSBOTerm(320);
-						p_kcatn.setSBOTerm(321);
-					}
+					Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme, true);
+					Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(), enzyme, false);
 					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
 					p_kMr2.setSBOTerm(322);
 					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
@@ -372,9 +329,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 							p_kMp1);
 					if (modE.size() != 0) {
 						numeratorForward = ASTNode.times(numeratorForward,
-								new ASTNode(modE.get(enzymeNum), this));
+								new ASTNode(enzyme, this));
 						numeratorReverse = ASTNode.times(numeratorReverse,
-								new ASTNode(modE.get(enzymeNum), this));
+								new ASTNode(enzyme, this));
 					}
 					numeratorForward = ASTNode.times(numeratorForward, r1r2);
 					numeratorReverse = ASTNode.times(numeratorReverse,

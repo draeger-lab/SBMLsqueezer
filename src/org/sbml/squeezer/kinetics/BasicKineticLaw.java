@@ -265,21 +265,27 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (enzyme != null)
 			append(id, underscore, enzyme);
 		Parameter hr = createOrGetParameter(id.toString());
-		hr.setSBOTerm(193);
+		hr.setSBOTerm(190);
 		hr.setName("Hill coefficient");
 		hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		return hr;
+	}
+	
+	Parameter parameterKS(String reactionID, String enzyme) {
+		Parameter kS = createOrGetParameter("kSp_", reactionID);
+		kS.setSBOTerm(194);
+		return kS;
 	}
 
 	/**
 	 * 
 	 * @param reactionID
-	 * @param species
+	 * @param activatorSpecies
 	 * @return
 	 */
-	Parameter parameterKa(String reactionID, String species) {
+	Parameter parameterKa(String reactionID, String activatorSpecies) {
 		Parameter kA = createOrGetParameter("ka_", reactionID, underscore,
-				species);
+				activatorSpecies);
 		kA.setSBOTerm(363);
 		kA.setUnits(unitmM());
 		return kA;
@@ -315,12 +321,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * 
 	 * @param reactionID
-	 * @param species
+	 * @param inhibitorSpecies
 	 * @return
 	 */
-	Parameter parameterKi(String reactionID, String species) {
+	Parameter parameterKi(String reactionID, String inhibitorSpecies) {
 		Parameter kI = createOrGetParameter("ki_", reactionID, underscore,
-				species);
+				inhibitorSpecies);
 		kI.setSBOTerm(261);
 		kI.setUnits(unitmM());
 		return kI;

@@ -54,14 +54,13 @@ public class ForceDependent extends ReversiblePowerLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 * .Reaction)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
+	 *      .Reaction)
 	 */
-	ASTNode denominator(Reaction r) {
+	ASTNode denominator(Reaction r, String enzyme) {
 		ASTNode denominator = new ASTNode(this);
-		ASTNode forward = denominator(r, true);
-		ASTNode backward = denominator(r, false);
+		ASTNode forward = denominator(r, enzyme, true);
+		ASTNode backward = denominator(r, enzyme, false);
 		if (!forward.isUnknown())
 			denominator = forward;
 		if (!denominator.isUnknown() && !backward.isUnknown())
@@ -82,16 +81,15 @@ public class ForceDependent extends ReversiblePowerLaw implements
 	 *            true means forward, false backward.
 	 * @return
 	 */
-	private ASTNode denominator(Reaction r, boolean forward) {
+	private ASTNode denominator(Reaction r, String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		Parameter kM;
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = createOrGetParameter("km_", r.getId(), underscore, specRef
-					.getSpecies());
-			kM.setSBOTerm(27);
-			kM.setUnits(unitmM());
+			kM = forward ? parameterMichaelisSubstrate(r.getId(), specRef
+					.getSpecies(), enzyme) : parameterMichaelisProduct(r
+					.getId(), specRef.getSpecies(), enzyme);
 			curr = ASTNode.frac(this, specRef.getSpeciesInstance(), kM);
 			if (term.isUnknown())
 				term = curr;
@@ -103,6 +101,7 @@ public class ForceDependent extends ReversiblePowerLaw implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {

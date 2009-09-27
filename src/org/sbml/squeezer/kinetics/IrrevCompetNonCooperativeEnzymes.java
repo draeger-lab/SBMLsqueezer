@@ -98,16 +98,11 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 
 		int enzymeNum = 0;
 		do {
-			StringBuffer kcat = new StringBuffer();
-			if (numOfEnzymes == 0)
-				kcat = concat("V_", reaction.getId());
-			else {
-				kcat = concat("kcat_", reaction.getId());
-				if (modE.size() > 1)
-					kcat = concat(kcat, underscore, modE.get(enzymeNum));
-			}
-			Parameter p_kcat = createOrGetParameter(kcat.toString());
-			p_kcat.setSBOTerm(25);
+			String enzyme = null;
+			if (numOfEnzymes > 0)
+				enzyme = modE.get(enzymeNum);
+			Parameter p_kcat = parameterKcatOrVmax(reaction.getId(), enzyme,
+					true);
 			ASTNode currEnzyme;
 			ASTNode numerator;
 
@@ -116,13 +111,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 					.getReactant(0).getSpeciesInstance(), this));
 
 			ASTNode denominator;
-			StringBuffer kM = new StringBuffer(concat("kM_", reaction.getId()));
-
-			if (numOfEnzymes > 1)
-				kM = concat(kM, underscore, modE.get(enzymeNum));
-			kM = concat(kM, underscore, reaction.getReactant(0).getSpecies());
-			Parameter p_kM = createOrGetParameter(kM.toString());
-			p_kM.setSBOTerm(27);
+			Parameter p_kM = parameterMichaelisSubstrate(reaction.getId(),
+					reaction.getReactant(0).getSpecies(), enzyme);
 
 			if (modInhib.size() == 0)
 				denominator = new ASTNode(p_kM, this);

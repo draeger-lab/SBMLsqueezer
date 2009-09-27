@@ -34,14 +34,13 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class MichaelisMenten extends GeneralizedMassAction implements
 		InterfaceUniUniKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
-	
+
 	private int numOfInhibitors;
 
 	private int numOfActivators;
@@ -111,59 +110,41 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				setSBOTerm(275);
 			}
 
-		Species specRefR = reaction.getReactant(0).getSpeciesInstance();
-		Species specRefP = reaction.getProduct(0).getSpeciesInstance();
+		Species speciesR = reaction.getReactant(0).getSpeciesInstance();
+		Species speciesP = reaction.getProduct(0).getSpeciesInstance();
 
 		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 		int enzymeNum = 0;
 		do {
-			StringBuffer kcatp, kcatn;
-			StringBuffer kMr = concat("kM_", reaction.getId());
-			StringBuffer kMp = concat("kM_", reaction.getId());
-
-			if (modE.size() == 0) {
-				kcatp = concat("Vp_", reaction.getId());
-				kcatn = concat("Vn_", reaction.getId());
-			} else {
-				kcatp = concat("kcatp_", reaction.getId());
-				kcatn = concat("kcatn_", reaction.getId());
-				if (modE.size() > 1) {
-					append(kcatp, underscore, modE.get(enzymeNum));
-					append(kcatn, underscore, modE.get(enzymeNum));
-					append(kMr, underscore, modE.get(enzymeNum));
-					append(kMp, underscore, modE.get(enzymeNum));
-				}
-			}
-			append(kMr, underscore, specRefR);
-			Parameter p_kcatp = createOrGetParameter(kcatp.toString());
-			p_kcatp.setSBOTerm(modE.size() == 0 ? 324 : 320);
-			Parameter p_kMr = createOrGetParameter(kMr.toString());
-			p_kMr.setSBOTerm(322);
+			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
+			Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme,
+					true);
+			Parameter p_kMr = parameterMichaelisSubstrate(reaction.getId(),
+					speciesR.getId(), enzyme);
 
 			ASTNode currEnzymeKin;
 			if (!reaction.getReversible()) {
 				/*
 				 * Irreversible Reaction
 				 */
-				numerator = ASTNode.times(this, p_kcatp, specRefR);
-				denominator = new ASTNode(specRefR, this);
+				numerator = ASTNode.times(this, p_kcatp, speciesR);
+				denominator = new ASTNode(speciesR, this);
 			} else {
 				/*
 				 * Reversible Reaction
 				 */
 				numerator = ASTNode.times(ASTNode.frac(this, p_kcatp, p_kMr),
-						new ASTNode(specRefR, this));
-				denominator = ASTNode.frac(this, specRefR, p_kMr);
-				append(kMp, underscore, specRefP);
-				Parameter p_kcatn = createOrGetParameter(kcatn.toString());
-				p_kcatn.setSBOTerm(modE.size() == 0 ? 325 : 321);
-				Parameter p_kMp = createOrGetParameter(kMp.toString());
-				p_kMp.setSBOTerm(323);
+						new ASTNode(speciesR, this));
+				denominator = ASTNode.frac(this, speciesR, p_kMr);
+				Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
+						enzyme, false);
+				Parameter p_kMp = parameterMichaelisProduct(reaction.getId(),
+						speciesP.getId(), enzyme);
 
 				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
-						this, p_kcatn, p_kMp), new ASTNode(specRefP, this)));
+						this, p_kcatn, p_kMp), new ASTNode(speciesP, this)));
 				denominator = ASTNode.sum(denominator, ASTNode.frac(this,
-						specRefP, p_kMp));
+						speciesP, p_kMp));
 			}
 			denominator = createInihibitionTerms(modInhib, reaction, modE,
 					denominator, p_kMr, enzymeNum);
@@ -267,9 +248,10 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		// TODO
 		return true;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
