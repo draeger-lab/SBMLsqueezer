@@ -50,9 +50,8 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements In
 		super(parentReaction, typeParameters);
 	}
 	
-	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b){
-		ASTNode node = ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(ASTNode.times(new ASTNode(-1,this),ASTNode.sum(w,v,b)))));
-		return node;
+	ASTNode actifunction(ASTNode g){
+		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(ASTNode.times(new ASTNode(-1,this),g))));
 	}
 	
 	ASTNode function_w() {
@@ -69,7 +68,7 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements In
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 			if ((SBO.isProtein(modifierspec.getSBOTerm())
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm()))&&!product.equals(modifierspec)) {
-				if (!modifier.isSetSBOTerm())modifier.setSBOTerm(19);
+				if (!modifier.isSetSBOTerm()) modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
 					p = createOrGetParameter("w_", modifierNum, underscore, rId);
@@ -81,7 +80,8 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements In
 				}
 			}
 		}
-		return node;
+		if (node.isUnknown()) return null;
+		else return node;
 	}
 	
 	ASTNode function_l(){

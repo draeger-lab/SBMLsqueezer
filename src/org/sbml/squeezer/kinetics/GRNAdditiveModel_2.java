@@ -46,16 +46,23 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements InterfaceGen
 		super(parentReaction, typeParameters);
 	}
 	
-	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b){
-		String rId = getParentSBMLObject().getId();
-		Parameter pa = createOrGetParameter("a_", rId);
-		ASTNode pnode_a = new ASTNode(pa, this);
-		Parameter pb = createOrGetParameter("b_", rId);
-		ASTNode pnode_b = new ASTNode(pb, this);
-		ASTNode node = ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(
-				ASTNode.sum(ASTNode.times(new ASTNode(-1,this),pnode_a,ASTNode.sum(w,v,b)),pnode_b))));
-		return node;
+	ASTNode actifunction(ASTNode g){
+
+		if (!(g==null)) {
+			String rId = getParentSBMLObject().getId();
+			Parameter pa = createOrGetParameter("a_", rId);
+			ASTNode pnode_a = new ASTNode(pa, this);
+			Parameter pb = createOrGetParameter("b_", rId);
+			ASTNode pnode_b = new ASTNode(pb, this);
+			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(
+					ASTNode.sum(ASTNode.times(new ASTNode(-1,this),pnode_a,g),pnode_b))));	
+		}
+		else {
+			System.out.println("blabla");
+			return new ASTNode(1,this);
+		}
 	}
+	
 	
 	ASTNode function_v(){
 		return null;

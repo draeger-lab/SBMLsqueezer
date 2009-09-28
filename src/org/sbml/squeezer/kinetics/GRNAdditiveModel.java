@@ -71,9 +71,9 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 			throws RateLawNotApplicableException, IllegalFormatException {
 
 		ASTNode kineticLaw = new ASTNode(this);
-		kineticLaw = ASTNode.diff(ASTNode.times(m_i(), function_g(function_w(),
-				function_v(), b_i())), function_l());
-
+	
+		kineticLaw = ASTNode.diff(ASTNode.times(m_i(), actifunction(function_g(function_w(),
+				function_v(), b_i()))), function_l());
 		// System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;
 	}
@@ -104,7 +104,8 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				}
 			}
 		}
-		return node;
+		if (node.isUnknown()) return null;
+		else return node;
 	}
 
 	ASTNode function_v() {
@@ -134,7 +135,8 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				}
 			}
 		}
-		return node;
+		if (node.isUnknown()) return null;
+		else return node;
 	}
 
 	ASTNode function_l() {
@@ -164,12 +166,17 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				}
 			}
 		}
-		return node;
+		if (node.isUnknown()) return null;
+		else return node;
 	}
 
-	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b) {
-		ASTNode node = ASTNode.sum(w, v, b);
-		return node;
+	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b) {		
+		return ASTNode.sum(w, v, b);
+	}
+	
+	ASTNode actifunction(ASTNode g){
+		if (g==null) return new ASTNode(this);
+		else return g;
 	}
 
 	ASTNode b_i() {
