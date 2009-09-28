@@ -19,9 +19,14 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.IllegalFormatException;
+import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -48,18 +53,18 @@ public class GRNAdditiveModel_NGlinear extends GRNAdditiveModel implements Inter
 		super(parentReaction, typeParameters);
 	}
 	
-	ASTNode m_i(){
+	ASTNode function_l() {
 		return null;
 	}
 	
-	ASTNode b_i(){
-		return null;
-	}
-	
-	ASTNode function_l(){
+	ASTNode b_i() {
 		return null;
 	}
 
+	ASTNode m_i() {
+		return new ASTNode(1, this);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()

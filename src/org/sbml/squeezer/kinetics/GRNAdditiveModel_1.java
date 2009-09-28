@@ -51,11 +51,9 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModel implements
 		super(parentReaction, typeParameters);
 	}
 
-	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b) {
-		ASTNode node = ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this),
-				ASTNode.exp(ASTNode.times(new ASTNode(-1, this), ASTNode.sum(w,
-						v, b)))));
-		return node;
+	ASTNode actifunction(ASTNode g){
+		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this),
+				ASTNode.exp(ASTNode.times(new ASTNode(-1, this), g))));
 	}
 
 	ASTNode function_v() {
