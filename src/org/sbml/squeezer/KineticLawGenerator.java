@@ -662,6 +662,30 @@ public class KineticLawGenerator {
 							throw new RateLawNotApplicableException("Reaction "
 									+ reaction.getId()
 									+ " must be a translation.");
+					} else if (SBO.isEmptySet(species.getSBOTerm())) {
+						Species product = reaction.getProduct(0)
+								.getSpeciesInstance();
+						for (int i = 0; i < reaction.getNumModifiers(); i++) {
+							Species modifier = reaction.getModifier(i)
+									.getSpeciesInstance();
+							if (SBO.isRNAOrMessengerRNA(modifier.getSBOTerm())
+									&& SBO.isProtein(product.getSBOTerm())) {
+								// Transcription in the CellDesigner
+								whichkin = settings.get(
+										CfgKeys.KINETICS_GENE_REGULATION)
+										.toString();
+								break;
+							} else if (SBO.isGeneOrGeneCodingRegion(modifier
+									.getSBOTerm())
+									&& SBO.isRNAOrMessengerRNA(product
+											.getSBOTerm())) {
+								// Translation in the CellDesigner
+								whichkin = settings.get(
+										CfgKeys.KINETICS_GENE_REGULATION)
+										.toString();
+								break;
+							}
+						}					
 					} else
 						whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE)
 								.toString();
