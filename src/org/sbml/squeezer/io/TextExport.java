@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Properties;
 
 import jp.sbi.celldesigner.plugin.PluginModel;
 
@@ -64,18 +65,59 @@ public class TextExport implements DisplaySBML {
 	 * other cases, nothing will happen.
 	 * </p>
 	 * 
+	 * @param model
 	 * @param file
+	 * @param settings
+	 *            specify how the model will be written to the file.
 	 * @throws IOException
 	 */
-	public TextExport(Model model, File file) throws IOException {
+	public TextExport(Model model, File file, Properties settings)
+			throws IOException {
 		if ((new SBFileFilter(SBFileFilter.TEXT_FILES)).accept(file)) {
 			writeTextFile(model, file);
 		} else if ((new SBFileFilter(SBFileFilter.TeX_FILES)).accept(file)) {
-			LaTeXExport export = new LaTeXExport();
+			LaTeXExport export = new LaTeXExport(settings);
 			export.toLaTeX(model, file);
 		} else
 			throw new IllegalArgumentException("file type of " + file.getName()
 					+ " not supported.");
+	}
+
+	/**
+	 * This method appends one line to the given writer.
+	 * 
+	 * @param str
+	 * @param writer
+	 * @throws IOException
+	 */
+	private final void append(String str, BufferedWriter writer)
+			throws IOException {
+		writer.write(str);
+		writer.newLine();
+	}
+
+	public void format(ListOf list, BufferedWriter buffer, boolean section)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void format(ListOfEvents events, BufferedWriter buffer)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void format(PluginModel model, BufferedWriter buffer)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void format(SBMLDocument doc, BufferedWriter buffer)
+			throws IOException {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**
@@ -166,43 +208,6 @@ public class TextExport implements DisplaySBML {
 			append(" ", out);
 		}
 		out.close();
-	}
-
-	/**
-	 * This method appends one line to the given writer.
-	 * 
-	 * @param str
-	 * @param writer
-	 * @throws IOException
-	 */
-	private final void append(String str, BufferedWriter writer)
-			throws IOException {
-		writer.write(str);
-		writer.newLine();
-	}
-
-	public void format(ListOf list, BufferedWriter buffer, boolean section)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void format(ListOfEvents events, BufferedWriter buffer)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void format(PluginModel model, BufferedWriter buffer)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void format(SBMLDocument doc, BufferedWriter buffer)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

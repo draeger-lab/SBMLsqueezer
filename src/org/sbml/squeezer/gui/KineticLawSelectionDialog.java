@@ -67,45 +67,44 @@ import org.sbml.squeezer.resources.Resource;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 3, 2007
  */
 public class KineticLawSelectionDialog extends JDialog implements
 		ActionListener, WindowListener, LawListener {
 
+	private static final int fullHeight = 720;
+
 	/**
 	 * Generated serial version id.
 	 */
 	private static final long serialVersionUID = -5980678130366530716L;
 
-	private static final int fullHeight = 720;
+	private JPanel centralPanel;
+
+	private JPanel footPanel;
+
+	private JButton helpButton;
 
 	// UI ELEMENTS DEFINITION: ReactionFrame
 	private boolean KineticsAndParametersStoredInSBML = false;
 
-	private SBMLio sbmlIO;
+	private KineticLawGenerator klg;
 
 	private int numOfWarnings = 0;
 
-	private SettingsPanelAll settingsPanel;
-
 	private JButton options;
-
-	private JPanel centralPanel;
-
-	private JButton helpButton;
-
-	private KineticLawGenerator klg;
-
-	private JPanel footPanel;
 
 	private JProgressBar progressBar;
 
 	private JDialog progressDialog;
 
+	private SBMLio sbmlIO;
+
 	private Properties settings;
+
+	private SettingsPanelAll settingsPanel;
 
 	/**
 	 * 
@@ -135,17 +134,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			try {
 				BufferedWriter buffer = new BufferedWriter(new FileWriter(panel
 						.getTeXFile()));
-				Properties p = panel.getProperties();
-				LaTeXExport exporter = new LaTeXExport(((Boolean) p
-						.get(CfgKeys.LATEX_LANDSCAPE)).booleanValue(),
-						((Boolean) p.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT))
-								.booleanValue(), (short) ((Integer) p
-								.get(CfgKeys.LATEX_FONT_SIZE)).intValue(), p
-								.get(CfgKeys.LATEX_PAPER_SIZE).toString(),
-						((Boolean) p.get(CfgKeys.LATEX_TITLE_PAGE))
-								.booleanValue(), ((Boolean) p
-								.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS))
-								.booleanValue());
+				LaTeXExport exporter = new LaTeXExport(panel.getProperties());
 				buffer.write(exporter.toLaTeX(model).toString());
 				buffer.close();
 				dispose();
@@ -171,7 +160,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 			try {
 				BufferedWriter buffer = new BufferedWriter(new FileWriter(
 						chooser.getSelectedFile()));
-				buffer.write(new LaTeXExport().toLaTeX(reaction).toString());
+				buffer.write(new LaTeXExport(settings).toLaTeX(reaction)
+						.toString());
 				buffer.close();
 			} catch (IOException exc) {
 				JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
@@ -238,8 +228,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
@@ -459,7 +448,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), f,
 								settings);
 					if (ff2.accept(f))
-						new TextExport(sbmlIO.getSelectedModel(), f);
+						new TextExport(sbmlIO.getSelectedModel(), f, settings);
 				} catch (IOException exc) {
 					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 							.getMessage(), 40), exc.getClass()
@@ -655,8 +644,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
 	 */
 	public void windowActivated(WindowEvent e) {
 	}
@@ -664,8 +652,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 	 */
 	public void windowClosed(WindowEvent e) {
 	}
@@ -673,8 +660,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
 	 */
 	public void windowClosing(WindowEvent e) {
 		if (e.getSource() instanceof JHelpBrowser)
@@ -684,9 +670,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
-	 * )
+	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent )
 	 */
 	public void windowDeactivated(WindowEvent e) {
 	}
@@ -694,9 +678,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
-	 * )
+	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent )
 	 */
 	public void windowDeiconified(WindowEvent e) {
 	}
@@ -704,8 +686,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
 	 */
 	public void windowIconified(WindowEvent e) {
 	}
@@ -713,8 +694,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
 	 */
 	public void windowOpened(WindowEvent e) {
 	}

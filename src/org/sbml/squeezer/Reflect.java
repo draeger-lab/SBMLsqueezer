@@ -16,21 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.rmi;
+package org.sbml.squeezer;
 
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -455,12 +452,12 @@ public class Reflect {
 			return 1;
 		}
 	}
-	private Object m_Backup;
+//	private Object m_Backup;
 
-	private Class<?> m_ClassType;
+//	private Class<?> m_ClassType;
 
 	private Object m_Object;
-	private PropertyChangeSupport m_Support = new PropertyChangeSupport(this);
+//	private PropertyChangeSupport m_Support = new PropertyChangeSupport(this);
 
 	public Reflect() {
 		TRACE = true;
@@ -475,62 +472,62 @@ public class Reflect {
 		return m_Object;
 	}
 
-	/**
-	 * Sets the current object to be the default, taken as the first item in the
-	 * chooser
-	 */
-	public void setDefaultValue() {
-		if (m_ClassType == null) {
-			System.err.println("No ClassType set up for GenericObjectEditor!!");
-			return;
-		}
-
-		Vector<String> v;
-		if (Proxy.isProxyClass(m_ClassType)) {
-			if (TRACE)
-				System.out.println("PROXY! original was "
-						+ ((RMIProxyLocal) Proxy
-								.getInvocationHandler(((Proxy) m_Object)))
-								.getOriginalClass().getName());
-			v = new Vector<String>(
-					getClassesFromProperties(((RMIProxyLocal) Proxy
-							.getInvocationHandler(((Proxy) m_Object)))
-							.getOriginalClass().getName()));
-		} else {
-			v = new Vector<String>(getClassesFromProperties(m_ClassType
-					.getName()));
-		}
-
-		v = new Vector<String>(getClassesFromProperties(m_ClassType.getName()));
-		try {
-			if (v.size() > 0)
-				setObject((Object) Class.forName((String) v.get(0))
-						.newInstance());
-		} catch (Exception ex) {
-			System.err.println("Exception in setDefaultValue !!!"
-					+ ex.getMessage());
-		}
-	}
-
-	/**
-	 * Sets the current Object, but doesn't worry about updating the state of
-	 * the Object chooser.
-	 * 
-	 * @param c
-	 *            a value of type 'Object'
-	 */
-	private void setObject(Object c) {
-		// This should really call equals() for comparison.
-		if (TRACE)
-			System.out.println("setObject " + c.getClass().getName());
-		boolean trueChange = (c != getValue());
-		// System.err.println("Didn't even try to make a Object copy!! "+
-		// "(using original)");
-
-		m_Backup = m_Object;
-		m_Object = c;
-
-		if (trueChange)
-			m_Support.firePropertyChange("", m_Backup, m_Object);
-	}
+//	/**
+//	 * Sets the current object to be the default, taken as the first item in the
+//	 * chooser
+//	 */
+//	public void setDefaultValue() {
+//		if (m_ClassType == null) {
+//			System.err.println("No ClassType set up for GenericObjectEditor!!");
+//			return;
+//		}
+//
+//		Vector<String> v;
+//		if (Proxy.isProxyClass(m_ClassType)) {
+//			if (TRACE)
+//				System.out.println("PROXY! original was "
+//						+ ((RMIProxyLocal) Proxy
+//								.getInvocationHandler(((Proxy) m_Object)))
+//								.getOriginalClass().getName());
+//			v = new Vector<String>(
+//					getClassesFromProperties(((RMIProxyLocal) Proxy
+//							.getInvocationHandler(((Proxy) m_Object)))
+//							.getOriginalClass().getName()));
+//		} else {
+//			v = new Vector<String>(getClassesFromProperties(m_ClassType
+//					.getName()));
+//		}
+//
+//		v = new Vector<String>(getClassesFromProperties(m_ClassType.getName()));
+//		try {
+//			if (v.size() > 0)
+//				setObject((Object) Class.forName((String) v.get(0))
+//						.newInstance());
+//		} catch (Exception ex) {
+//			System.err.println("Exception in setDefaultValue !!!"
+//					+ ex.getMessage());
+//		}
+//	}
+//
+//	/**
+//	 * Sets the current Object, but doesn't worry about updating the state of
+//	 * the Object chooser.
+//	 * 
+//	 * @param c
+//	 *            a value of type 'Object'
+//	 */
+//	private void setObject(Object c) {
+//		// This should really call equals() for comparison.
+//		if (TRACE)
+//			System.out.println("setObject " + c.getClass().getName());
+//		boolean trueChange = (c != getValue());
+//		// System.err.println("Didn't even try to make a Object copy!! "+
+//		// "(using original)");
+//
+//		m_Backup = m_Object;
+//		m_Object = c;
+//
+//		if (trueChange)
+//			m_Support.firePropertyChange("", m_Backup, m_Object);
+//	}
 }

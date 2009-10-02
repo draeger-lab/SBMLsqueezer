@@ -86,7 +86,6 @@ public class UpdateMessage {
 		if (compareVersionNumbers(SBMLsqueezer.getVersionNumber(),
 				latestVersion))
 			showUpdateMessage(gui, urlPrefix + notes + ".htm");
-		squeezer.setUpdateChecked(true);
 	}
 
 	/**

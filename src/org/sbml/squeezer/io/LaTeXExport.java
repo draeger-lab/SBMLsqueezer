@@ -54,34 +54,6 @@ public class LaTeXExport extends LaTeX {
 	}
 
 	/**
-	 * Writes a LaTeX report for the given model with the given settings into
-	 * the given TeX-file.
-	 * 
-	 * @param model
-	 * @param texFile
-	 * @param settings
-	 * @throws IOException
-	 */
-	public static void writeLaTeX(Model model, File texFile, Properties settings)
-			throws IOException {
-		if (!(new SBFileFilter(SBFileFilter.TeX_FILES)).accept(texFile))
-			throw new IllegalArgumentException("File "
-					+ texFile.getAbsolutePath() + " is not a valid LaTeX file.");
-		BufferedWriter buffer = new BufferedWriter(new FileWriter(texFile));
-		LaTeXExport exporter = new LaTeXExport(((Boolean) settings
-				.get(CfgKeys.LATEX_LANDSCAPE)).booleanValue(),
-				((Boolean) settings.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT))
-						.booleanValue(), (short) ((Integer) settings
-						.get(CfgKeys.LATEX_FONT_SIZE)).intValue(), settings
-						.get(CfgKeys.LATEX_PAPER_SIZE).toString(),
-				((Boolean) settings.get(CfgKeys.LATEX_TITLE_PAGE))
-						.booleanValue(), ((Boolean) settings
-						.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue());
-		buffer.write(exporter.toLaTeX(model).toString());
-		buffer.close();
-	}
-
-	/**
 	 * 
 	 * @param string
 	 * @param hyphen
@@ -115,19 +87,98 @@ public class LaTeXExport extends LaTeX {
 	}
 
 	/**
-	 * Returns a properly readable unit definition.
+	 * Writes a LaTeX report for the given model with the given settings into
+	 * the given TeX-file.
 	 * 
-	 * @param def
-	 * @return
+	 * @param model
+	 * @param texFile
+	 * @param settings
+	 * @throws IOException
 	 */
-	public StringBuffer format(UnitDefinition def) {
-		StringBuffer buffer = new StringBuffer();
-		for (int j = 0; j < def.getNumUnits(); j++) {
-			buffer.append(format((Unit) def.getListOfUnits().get(j)));
-			if (j < def.getListOfUnits().size() - 1)
-				buffer.append("\\cdot ");
-		}
-		return buffer;
+	public static void writeLaTeX(Model model, File texFile, Properties settings)
+			throws IOException {
+		if (!(new SBFileFilter(SBFileFilter.TeX_FILES)).accept(texFile))
+			throw new IllegalArgumentException("File "
+					+ texFile.getAbsolutePath() + " is not a valid LaTeX file.");
+		BufferedWriter buffer = new BufferedWriter(new FileWriter(texFile));
+		LaTeXExport exporter = new LaTeXExport(settings);
+		buffer.write(exporter.toLaTeX(model).toString());
+		buffer.close();
+	}
+
+	/**
+	 * This is the font size to be used in this document. Allowed values are:
+	 * <ul>
+	 * <li>8</li>
+	 * <li>9</li>
+	 * <li>10</li>
+	 * <li>11</li>
+	 * <li>12</li>
+	 * <li>14</li>
+	 * <li>16</li>
+	 * <li>17</li>
+	 * </ul>
+	 * Other values are set to the default of 11.
+	 */
+	private short fontSize;
+
+	/**
+	 * If true this will produce LaTeX files for for entirely landscape
+	 * documents
+	 */
+	private boolean landscape;
+
+	private LaTeX latex;
+
+	/**
+	 * New line separator of this operating system
+	 */
+	private final String newLine = System.getProperty("line.separator");
+
+	/**
+	 * Allowed are
+	 * <ul>
+	 * <li>letter</li>
+	 * <li>legal</li>
+	 * <li>executive</li>
+	 * <li>a* where * stands for values from 0 thru 9</li>
+	 * <li>b*</li>
+	 * <li>c*</li>
+	 * <li>d*</li>
+	 * </ul>
+	 * The default is a4.
+	 */
+	private String paperSize;
+
+	/**
+	 * If true a title page will be created by LaTeX for the resulting document.
+	 * Otherwise there will only be a title on top of the first page.
+	 */
+	private boolean titlepage;
+
+	/**
+	 * If true ids are set in typewriter font (default).
+	 */
+	private boolean typeWriter = true;
+
+	// private boolean numberEquations = true;
+
+	/**
+	 * Constructs a new instance of LaTeX export. For each document to be
+	 * translated a new instance has to be created. Here default values are used
+	 * (A4 paper, 11pt, portrait, fancy headings, no titlepage).
+	 */
+	public LaTeXExport(Properties settings) {
+		latex = new LaTeX(settings);
+		setLandscape(((Boolean) settings.get(CfgKeys.LATEX_LANDSCAPE))
+				.booleanValue());
+		setTypeWriter(((Boolean) settings
+				.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT)).booleanValue());
+		setFontSize(Short.parseShort(settings.get(CfgKeys.LATEX_FONT_SIZE)
+				.toString()));
+		setPaperSize(settings.get(CfgKeys.LATEX_PAPER_SIZE).toString());
+		setTitlepage(((Boolean) settings.get(CfgKeys.LATEX_TITLE_PAGE))
+				.booleanValue());
 	}
 
 	/**
@@ -352,11 +403,104 @@ public class LaTeXExport extends LaTeX {
 	}
 
 	/**
+	 * Returns a properly readable unit definition.
+	 * 
+	 * @param def
+	 * @return
+	 */
+	public StringBuffer format(UnitDefinition def) {
+		StringBuffer buffer = new StringBuffer();
+		for (int j = 0; j < def.getNumUnits(); j++) {
+			buffer.append(format((Unit) def.getListOfUnits().get(j)));
+			if (j < def.getListOfUnits().size() - 1)
+				buffer.append("\\cdot ");
+		}
+		return buffer;
+	}
+
+	private StringBuffer getDocumentHead(String title) {
+		StringBuffer head = new StringBuffer("\\documentclass[" + fontSize
+				+ "pt");
+		if (titlepage) {
+			head.append(",titlepage");
+		}
+		if (landscape) {
+			head.append(",landscape");
+		}
+		head.append("," + paperSize + "paper]{scrartcl}");
+		head.append(newLine + "\\usepackage[scaled=.9]{helvet}" + newLine
+				+ "\\usepackage{amsmath}" + newLine + "\\usepackage{courier}"
+				+ newLine + "\\usepackage{times}" + newLine
+				+ "\\usepackage[english]{babel}" + newLine
+				+ "\\usepackage{a4wide}" + newLine + "\\usepackage{longtable}"
+				+ newLine + "\\usepackage{booktabs}" + newLine);
+		head.append("\\usepackage{url}" + newLine);
+		if (landscape)
+			head.append("\\usepackage[landscape]{geometry}" + newLine);
+		head
+				.append("\\title{\\textsc{SBMLsqueezer}: Differential Equation System ``"
+						+ title
+						+ "\"}"
+						+ newLine
+						+ "\\date{\\today}"
+						+ newLine
+						+ "\\begin{document}"
+						+ newLine
+						+ "\\author{}"
+						+ newLine + "\\maketitle" + newLine);
+		return head;
+	}
+
+	/**
+	 * Writing laTeX code of a string id
+	 * 
+	 * @param pluginSpecies
+	 * @return String
+	 */
+	public String idToTeX(Species pluginSpecies) {
+		return nameToTeX(pluginSpecies.getId());
+	}
+
+	public boolean isTypeWriter() {
+		return typeWriter;
+	}
+
+	private String name_idToLaTex(String s) {
+		return "$" + toTeX(s) + "$";
+	}
+
+	/**
+	 * Writing laTeX code of a string name
+	 * 
+	 * @param name
+	 * @return String
+	 */
+	public String nameToTeX(String name) {
+		String speciesTeX = name;
+		int numUnderscore = (new StringTokenizer(speciesTeX, "_"))
+				.countTokens() - 1;
+		if (numUnderscore > 1)
+			speciesTeX = replaceAll("_", speciesTeX, "\\_");
+		else if ((numUnderscore == 0) && (0 < speciesTeX.length())) {
+			int index = -1;
+			while (index != (name.length() - 1)
+					&& !Character.isDigit(name.charAt(index + 1)))
+				index++;
+			if ((-1 < index) && (index < name.length())) {
+				String num = name.substring(++index);
+				speciesTeX = speciesTeX.substring(0, index++) + "_";
+				speciesTeX += (num.length() == 1) ? num : "{" + num + "}";
+			}
+		}
+		return speciesTeX;
+	}
+
+	/**
 	 * 
 	 * @param reaction
 	 * @return
 	 */
-	public static String reactionEquation(Reaction reaction) {
+	public String reactionEquation(Reaction reaction) {
 		StringBuffer reactionEqn = new StringBuffer();
 		reactionEqn.append(LaTeX.eqBegin);
 		LaTeX latex = new LaTeX();
@@ -366,7 +510,7 @@ public class LaTeXExport extends LaTeX {
 				reactionEqn.append(" + ");
 			if (specRef.isSetStoichiometryMath())
 				reactionEqn.append(specRef.getStoichiometryMath().getMath()
-						.toLaTeX());
+						.compile(latex));
 			else if (specRef.getStoichiometry() != 1d)
 				reactionEqn.append(specRef.getStoichiometry());
 			reactionEqn.append(' ');
@@ -400,7 +544,7 @@ public class LaTeXExport extends LaTeX {
 				reactionEqn.append(" + ");
 			if (specRef.isSetStoichiometryMath())
 				reactionEqn.append(specRef.getStoichiometryMath().getMath()
-						.toLaTeX());
+						.compile(latex));
 			else if (specRef.getStoichiometry() != 1d)
 				reactionEqn.append(specRef.getStoichiometry());
 			reactionEqn.append(' ');
@@ -412,157 +556,6 @@ public class LaTeXExport extends LaTeX {
 			reactionEqn.append("\\emptyset");
 		reactionEqn.append(LaTeX.eqEnd);
 		return reactionEqn.toString();
-	}
-
-	/**
-	 * New line separator of this operating system
-	 */
-	private final String newLine = System.getProperty("line.separator");
-
-	/**
-	 * This is the font size to be used in this document. Allowed values are:
-	 * <ul>
-	 * <li>8</li>
-	 * <li>9</li>
-	 * <li>10</li>
-	 * <li>11</li>
-	 * <li>12</li>
-	 * <li>14</li>
-	 * <li>16</li>
-	 * <li>17</li>
-	 * </ul>
-	 * Other values are set to the default of 11.
-	 */
-	private short fontSize;
-
-	/**
-	 * Allowed are
-	 * <ul>
-	 * <li>letter</li>
-	 * <li>legal</li>
-	 * <li>executive</li>
-	 * <li>a* where * stands for values from 0 thru 9</li>
-	 * <li>b*</li>
-	 * <li>c*</li>
-	 * <li>d*</li>
-	 * </ul>
-	 * The default is a4.
-	 */
-	private String paperSize;
-
-	/**
-	 * If true a title page will be created by LaTeX for the resulting document.
-	 * Otherwise there will only be a title on top of the first page.
-	 */
-	private boolean titlepage;
-
-	// private boolean numberEquations = true;
-
-	/**
-	 * If true this will produce LaTeX files for for entirely landscape
-	 * documents
-	 */
-	private boolean landscape;
-
-	/**
-	 * If true ids are set in typewriter font (default).
-	 */
-	private boolean typeWriter = true;
-
-	/**
-	 * Constructs a new instance of LaTeX export. For each document to be
-	 * translated a new instance has to be created. Here default values are used
-	 * (A4 paper, 11pt, portrait, fancy headings, no titlepage).
-	 */
-	public LaTeXExport() {
-		this(false, true, (short) 11, "a4", /* true, */false, false/* , true */);
-	}
-
-	/**
-	 * Constructs a new instance of LaTeX export. For each document to be
-	 * translated a new instance has to be created. This constructor allows you
-	 * to set many properties of the resulting LaTeX file.
-	 * 
-	 * @param landscape
-	 *            If <code>true</code> the whole document will be set to
-	 *            landscape format, otherwise portrait.
-	 * @param typeWriter
-	 *            If <code>true</code> ids are set in typewriter font (default).
-	 *            Otherwise the regular font is used.
-	 * @param fontSize
-	 *            The size of the font to be used here. The default is 11.
-	 *            Allowed values are 8, 9, 10, 11, 12, 14, 16 and 17.
-	 * @param paperSize
-	 *            Allowed are
-	 *            <ul>
-	 *            <li>letter</li>
-	 *            <li>legal</li>
-	 *            <li>executive</li>
-	 *            <li>a* where * stands for values from 0 thru 9</li>
-	 *            <li>b*</li>
-	 *            <li>c*</li>
-	 *            <li>d*</li>
-	 *            </ul>
-	 * @param addMissingUnitDeclarations
-	 *            If true SBML built-in units will be made explicitly if not
-	 *            overridden in the model.
-	 * @param titlepage
-	 *            if true a title page will be created for the model report.
-	 *            Default is false (just a caption).
-	 */
-
-	public LaTeXExport(boolean landscape, boolean typeWriter, short fontSize,
-			String paperSize, /* boolean addMissingUnitDeclarations, */
-			boolean titlepage, boolean printNameIfAvailable/*
-															 * , boolean
-															 * numberEquations
-															 */) {
-		setLandscape(landscape);
-		setTypeWriter(typeWriter);
-		setFontSize(fontSize);
-		setPaperSize(paperSize);
-		setTitlepage(titlepage);
-		// setNumberEquations(numberEquations);
-	}
-
-	/**
-	 * Writing laTeX code of a string id
-	 * 
-	 * @param pluginSpecies
-	 * @return String
-	 */
-	public String idToTeX(Species pluginSpecies) {
-		return nameToTeX(pluginSpecies.getId());
-	}
-
-	public boolean isTypeWriter() {
-		return typeWriter;
-	}
-
-	/**
-	 * Writing laTeX code of a string name
-	 * 
-	 * @param name
-	 * @return String
-	 */
-	public String nameToTeX(String name) {
-		String speciesTeX = name;
-		int numUnderscore = (new StringTokenizer(speciesTeX, "_"))
-				.countTokens() - 1;
-		if (numUnderscore > 1)
-			speciesTeX = replaceAll("_", speciesTeX, "\\_");
-		else if ((numUnderscore == 0) && (0 < speciesTeX.length())) {
-			int index = -1;
-			while (index != (name.length() - 1)
-					&& !Character.isDigit(name.charAt(index + 1)))
-				index++;
-			if ((-1 < index) && (index < name.length())) {
-				String num = name.substring(++index);
-				speciesTeX = speciesTeX.substring(0, index++) + "_";
-				speciesTeX += (num.length() == 1) ? num : "{" + num + "}";
-			}
-		}
-		return speciesTeX;
 	}
 
 	/**
@@ -723,7 +716,7 @@ public class LaTeXExport extends LaTeX {
 			if (r.getKineticLaw() != null) {
 				if (r.getKineticLaw().getMath() != null)
 					rateLaws[reactionIndex] += r.getKineticLaw().getMath()
-							.toLaTeX();
+							.compile(latex);
 				else
 					rateLaws[reactionIndex] += "\\text{no mathematics specified}";
 			} else
@@ -783,10 +776,10 @@ public class LaTeXExport extends LaTeX {
 							stoch = stochMath.getMath();
 							sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
 									.getType() == ASTNode.Type.MINUS) ? sEquation += "-\\left("
-									+ stoch.toLaTeX()
+									+ stoch.compile(latex)
 									+ "\\right)v_{"
 									+ reactantsReaction.get(k) + "}"
-									: "-" + stoch.toLaTeX() + "v_{"
+									: "-" + stoch.compile(latex) + "v_{"
 											+ reactantsReaction.get(k) + "}";
 						} else {
 							double doubleStoch = reactantsStochiometric.get(k)
@@ -820,10 +813,10 @@ public class LaTeXExport extends LaTeX {
 								if (stoch != null) {
 									sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
 											.getType() == ASTNode.Type.MINUS) ? sEquation += "\\left("
-											+ stoch.toLaTeX()
+											+ stoch.compile(latex)
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"
-											: stoch.toLaTeX() + "v_{"
+											: stoch.compile(latex) + "v_{"
 													+ productsReaction.get(k)
 													+ "}";
 								} else {
@@ -849,10 +842,11 @@ public class LaTeXExport extends LaTeX {
 								if (stoch != null) {
 									sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
 											.getType() == ASTNode.Type.MINUS) ? sEquation += "+\\left("
-											+ stoch.toLaTeX()
+											+ stoch.compile(latex)
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"
-											: "+" + stoch.toLaTeX() + "v_{"
+											: "+" + stoch.compile(latex)
+													+ "v_{"
 													+ productsReaction.get(k)
 													+ "}";
 								} else {
@@ -957,10 +951,11 @@ public class LaTeXExport extends LaTeX {
 			for (i = 0; i < model.getNumEvents(); i++) {
 				ev = model.getEvent(i);
 				LinkedList<StringBuffer> assignments = new LinkedList<StringBuffer>();
-				assignments.add(ev.getTrigger().getMath().toLaTeX());
+				assignments.add((StringBuffer) ev.getTrigger().getMath()
+						.compile(latex));
 				for (int j = 0; j < ev.getNumEventAssignments(); j++)
-					assignments.add(ev.getEventAssignment(j).getMath()
-							.toLaTeX());
+					assignments.add((StringBuffer) ev.getEventAssignment(j)
+							.getMath().compile(latex));
 				events[i] = assignments;
 			}
 			laTeX.append(eventsHead);
@@ -986,7 +981,7 @@ public class LaTeXExport extends LaTeX {
 					else {
 						laTeX.append(newLine
 								+ "\\texttt{and assigns after a delay of "
-								+ ev.getDelay().getMath().toLaTeX());
+								+ ev.getDelay().getMath().compile(latex));
 						if (!ev.getTimeUnits().equals(null))
 							laTeX.append(ev.getTimeUnits()
 									+ " the following rules: }" + newLine);
@@ -1008,7 +1003,7 @@ public class LaTeXExport extends LaTeX {
 					else {
 						laTeX.append(newLine
 								+ "\\texttt{and assigns after a delay of "
-								+ ev.getDelay().getMath().toLaTeX());
+								+ ev.getDelay().getMath().compile(latex));
 						if (!ev.getTimeUnits().equals(null))
 							laTeX.append(ev.getTimeUnits()
 									+ " the following rule: }" + newLine);
@@ -1099,6 +1094,11 @@ public class LaTeXExport extends LaTeX {
 		return laTeX;
 	}
 
+	/*
+	 * public void setNumberEquations(boolean numberEquations) {
+	 * this.numberEquations = numberEquations; }
+	 */
+
 	/**
 	 * Writing a laTeX file
 	 * 
@@ -1125,7 +1125,7 @@ public class LaTeXExport extends LaTeX {
 		laTeX.append("}= ");
 		if ((reaction.getKineticLaw() != null)
 				&& (reaction.getKineticLaw().getMath() != null))
-			laTeX.append(reaction.getKineticLaw().getMath().toLaTeX());
+			laTeX.append(reaction.getKineticLaw().getMath().compile(latex));
 		else
 			laTeX.append(" \\mathrm{undefined} ");
 		laTeX.append(newLine + "\\end{equation*}");
@@ -1136,48 +1136,6 @@ public class LaTeXExport extends LaTeX {
 						+ "\\end{center}");
 		laTeX.append(newLine + "\\end{document}");
 		return laTeX;
-	}
-
-	/*
-	 * public void setNumberEquations(boolean numberEquations) {
-	 * this.numberEquations = numberEquations; }
-	 */
-
-	private StringBuffer getDocumentHead(String title) {
-		StringBuffer head = new StringBuffer("\\documentclass[" + fontSize
-				+ "pt");
-		if (titlepage) {
-			head.append(",titlepage");
-		}
-		if (landscape) {
-			head.append(",landscape");
-		}
-		head.append("," + paperSize + "paper]{scrartcl}");
-		head.append(newLine + "\\usepackage[scaled=.9]{helvet}" + newLine
-				+ "\\usepackage{amsmath}" + newLine + "\\usepackage{courier}"
-				+ newLine + "\\usepackage{times}" + newLine
-				+ "\\usepackage[english]{babel}" + newLine
-				+ "\\usepackage{a4wide}" + newLine + "\\usepackage{longtable}"
-				+ newLine + "\\usepackage{booktabs}" + newLine);
-		head.append("\\usepackage{url}" + newLine);
-		if (landscape)
-			head.append("\\usepackage[landscape]{geometry}" + newLine);
-		head
-				.append("\\title{\\textsc{SBMLsqueezer}: Differential Equation System ``"
-						+ title
-						+ "\"}"
-						+ newLine
-						+ "\\date{\\today}"
-						+ newLine
-						+ "\\begin{document}"
-						+ newLine
-						+ "\\author{}"
-						+ newLine + "\\maketitle" + newLine);
-		return head;
-	}
-
-	private String name_idToLaTex(String s) {
-		return "$" + toTeX(s) + "$";
 	}
 
 	/**

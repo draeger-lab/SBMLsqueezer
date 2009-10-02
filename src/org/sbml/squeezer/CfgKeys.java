@@ -19,6 +19,7 @@
 package org.sbml.squeezer;
 
 /**
+ * Possible command line options and configuration of SBMLsqueezer.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -26,6 +27,18 @@ package org.sbml.squeezer;
  * 
  */
 public enum CfgKeys {
+	/**
+	 * Can be used in combination with = true or = false or just --gui.
+	 */
+	GUI,
+	/**
+	 * 
+	 */
+	SBML_FILE,
+	/**
+	 * Specifies the file where SBMLsqueezer writes its SBML output.
+	 */
+	SBML_OUT_FILE,
 	/**
 	 * Standard directory where SBML files can be found.
 	 */
@@ -148,11 +161,11 @@ public enum CfgKeys {
 	/*
 	 * A list which contains the names of all species that are accepted to act
 	 * as enzymes during a reaction. Valid are the following entries (upper and
-	 * lower case is ignored): <ul> <li>ANTISENSE_RNA</li>
-	 * <li>SIMPLE_MOLECULE</li> <li>RECEPTOR</li> <li>UNKNOWN</li>
-	 * <li>COMPLEX</li> <li>TRUNCATED</li> <li>GENERIC</li> <li>RNA</li> </ul>
-	 * Not allowed entries like <li>Phenotype</li> <li>Gene</li> <li>
-	 * IonChannel</li> <li>Ion</li> </ul> will be filtered out of the list.
+	 * lower case is ignored): <ul> <li>ANTISENSE_RNA</li> <li>SIMPLE_MOLECULE</li>
+	 * <li>RECEPTOR</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
+	 * <li>GENERIC</li> <li>RNA</li> </ul> Not allowed entries like <li>Phenotype</li>
+	 * <li>Gene</li> <li> IonChannel</li> <li>Ion</li> </ul> will be
+	 * filtered out of the list.
 	 */
 
 	/**

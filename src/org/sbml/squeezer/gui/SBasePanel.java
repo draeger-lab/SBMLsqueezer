@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.util.Date;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -84,21 +85,29 @@ public class SBasePanel extends JPanel {
 	 * Generated serial version id.
 	 */
 	private static final long serialVersionUID = -4969096536922920641L;
+
 	private LayoutHelper lh;
+
 	private LaTeX latex;
+
 	private static final int preferedWidth = 450;
+
 	private boolean editable;
+
 	private int row;
+
+	private Properties settings;
 
 	/**
 	 * 
 	 * @param sbase
 	 */
-	public SBasePanel(SBase sbase) {
+	public SBasePanel(SBase sbase, Properties settings) {
 		super();
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
-		latex = new LaTeX();
+		latex = new LaTeX(settings);
+		this.settings = settings;
 		lh = new LayoutHelper(this, gbl);
 		editable = false;
 		row = -1;
@@ -189,20 +198,23 @@ public class SBasePanel extends JPanel {
 		lh.add(check, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		if (e.isSetTrigger()) {
-			lh.add(new SBasePanel(e.getTrigger()), 1, ++row, 3, 1, 1, 1);
-			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-		}
-		if (e.isSetDelay()) {
-			lh.add(new SBasePanel(e.getDelay()), 1, ++row, 3, 1, 1, 1);
-			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-		}
-		if (e.isSetTimeUnits()) {
-			lh.add(new SBasePanel(e.getTimeUnitsInstance()), 1, ++row, 3, 1, 1,
+			lh.add(new SBasePanel(e.getTrigger(), settings), 1, ++row, 3, 1, 1,
 					1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
+		if (e.isSetDelay()) {
+			lh
+					.add(new SBasePanel(e.getDelay(), settings), 1, ++row, 3,
+							1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		}
+		if (e.isSetTimeUnits()) {
+			lh.add(new SBasePanel(e.getTimeUnitsInstance(), settings), 1,
+					++row, 3, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+		}
 		for (EventAssignment ea : e.getListOfEventAssignments()) {
-			lh.add(new SBasePanel(ea), 1, ++row, 3, 1, 1, 1);
+			lh.add(new SBasePanel(ea, settings), 1, ++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 	}
@@ -248,7 +260,7 @@ public class SBasePanel extends JPanel {
 						.getVariable())), d));
 				laTeXpreview.append('=');
 			}
-			laTeXpreview.append(mc.getMath().toLaTeX().toString().replace(
+			laTeXpreview.append(mc.getMath().compile(latex).toString().replace(
 					"mathrm", "mbox").replace("text", "mbox").replace("mathtt",
 					"mbox"));
 			laTeXpreview.append(LaTeX.eqEnd);
@@ -266,17 +278,21 @@ public class SBasePanel extends JPanel {
 			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 			if (mc instanceof EventAssignment)
-				lh.add(new SBasePanel(((EventAssignment) mc)
-						.getVariableInstance()), 1, ++row, 3, 1, 1, 1);
+				lh
+						.add(new SBasePanel(((EventAssignment) mc)
+								.getVariableInstance(), settings), 1, ++row, 3,
+								1, 1, 1);
 			else if (mc instanceof InitialAssignment)
 				lh.add(new SBasePanel(((InitialAssignment) mc)
-						.getSymbolInstance()), 1, ++row, 3, 1, 1, 1);
+						.getSymbolInstance(), settings), 1, ++row, 3, 1, 1, 1);
 			else if (mc instanceof AssignmentRule)
-				lh.add(new SBasePanel(((AssignmentRule) mc)
-						.getVariableInstance()), 1, ++row, 3, 1, 1, 1);
+				lh
+						.add(new SBasePanel(((AssignmentRule) mc)
+								.getVariableInstance(), settings), 1, ++row, 3,
+								1, 1, 1);
 			else if (mc instanceof RateRule)
-				lh.add(new SBasePanel(((RateRule) mc).getVariableInstance()),
-						1, ++row, 3, 1, 1, 1);
+				lh.add(new SBasePanel(((RateRule) mc).getVariableInstance(),
+						settings), 1, ++row, 3, 1, 1, 1);
 		}
 	}
 
@@ -302,7 +318,7 @@ public class SBasePanel extends JPanel {
 			JTable table = new JTable(rowData, columnNames);
 			table.setEnabled(editable);
 			table.setPreferredScrollableViewportSize(new Dimension(200, (table
-					.getRowCount() +1)
+					.getRowCount() + 1)
 					* table.getRowHeight()));
 			JScrollPane scroll = new JScrollPane(table,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -452,7 +468,8 @@ public class SBasePanel extends JPanel {
 		lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		JPanel rEqPanel = new JPanel(new BorderLayout());
-		sHotEqn rEqn = new sHotEqn(LaTeXExport.reactionEquation(reaction));
+		sHotEqn rEqn = new sHotEqn((new LaTeXExport(settings))
+				.reactionEquation(reaction));
 		JScrollPane s = new JScrollPane(rEqn,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -464,8 +481,8 @@ public class SBasePanel extends JPanel {
 		lh.add(rEqPanel, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		if (reaction.isSetKineticLaw())
-			lh.add(new SBasePanel(reaction.getKineticLaw()), 1, ++row, 3, 1, 1,
-					1);
+			lh.add(new SBasePanel(reaction.getKineticLaw(), settings), 1,
+					++row, 3, 1, 1, 1);
 	}
 
 	/**
@@ -563,8 +580,8 @@ public class SBasePanel extends JPanel {
 		else if (ssr instanceof ModifierSpeciesReference)
 			addProperties((ModifierSpeciesReference) ssr);
 		if (ssr.isSetSpecies())
-			lh.add(new SBasePanel(ssr.getSpeciesInstance()), 1, ++row, 3, 1, 1,
-					1);
+			lh.add(new SBasePanel(ssr.getSpeciesInstance(), settings), 1,
+					++row, 3, 1, 1, 1);
 	}
 
 	/**
@@ -622,7 +639,7 @@ public class SBasePanel extends JPanel {
 			JPanel p = new JPanel(new GridLayout(1, 1));
 			p.setBorder(BorderFactory.createTitledBorder(" "
 					+ sMath.getClass().getCanonicalName() + ' '));
-			sHotEqn eqn = new sHotEqn(sMath.getMath().toLaTeX().toString()
+			sHotEqn eqn = new sHotEqn(sMath.getMath().compile(latex).toString()
 					.replace("\\\\", "\\"));
 			eqn.setBorder(BorderFactory.createLoweredBevelBorder());
 			p.add(eqn);
@@ -682,10 +699,10 @@ public class SBasePanel extends JPanel {
 		StringBuffer laTeXpreview = new StringBuffer();
 		laTeXpreview.append(LaTeX.eqBegin);
 		if (s.isSetUnits())
-			laTeXpreview.append((new LaTeXExport())
-					.format(s.getUnitsInstance()).toString().replace("\\up",
-							"\\").replace("mathrm", "mbox").replace("text",
-							"mbox").replace("mathtt", "mbox"));
+			laTeXpreview.append((new LaTeXExport(settings)).format(
+					s.getUnitsInstance()).toString().replace("\\up", "\\")
+					.replace("mathrm", "mbox").replace("text", "mbox").replace(
+							"mathtt", "mbox"));
 		laTeXpreview.append(LaTeX.eqEnd);
 		JPanel preview = new JPanel(new BorderLayout());
 		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
@@ -753,9 +770,9 @@ public class SBasePanel extends JPanel {
 		lh.add(new JLabel("Definition: "), 1, ++row, 1, 1, 1, 1);
 		StringBuffer laTeXpreview = new StringBuffer();
 		laTeXpreview.append(LaTeX.eqBegin);
-		laTeXpreview.append((new LaTeXExport()).format(ud).toString().replace(
-				"\\up", "\\").replace("mathrm", "mbox").replace("text", "mbox")
-				.replace("mathtt", "mbox"));
+		laTeXpreview.append((new LaTeXExport(settings)).format(ud).toString()
+				.replace("\\up", "\\").replace("mathrm", "mbox").replace(
+						"text", "mbox").replace("mathtt", "mbox"));
 		laTeXpreview.append(LaTeX.eqEnd);
 		JPanel preview = new JPanel(new BorderLayout());
 		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
@@ -765,7 +782,7 @@ public class SBasePanel extends JPanel {
 		lh.add(preview, 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		for (Unit u : ud.getListOfUnits())
-			lh.add(new SBasePanel(u), 1, ++row, 3, 1, 1, 1);
+			lh.add(new SBasePanel(u, settings), 1, ++row, 3, 1, 1, 1);
 	}
 
 	/**

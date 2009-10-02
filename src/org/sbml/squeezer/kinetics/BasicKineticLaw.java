@@ -19,19 +19,18 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.IllegalFormatException;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.io.StringTools;
 
 /**
@@ -45,49 +44,6 @@ import org.sbml.squeezer.io.StringTools;
  * @date Aug 1, 2007
  */
 public abstract class BasicKineticLaw extends KineticLaw {
-
-	/**
-	 * identify which Modifer is used
-	 * 
-	 * @param reactionNum
-	 */
-	public static final void identifyModifers(Reaction reaction,
-			List<String> inhibitors, List<String> transActivators,
-			List<String> transInhibitors, List<String> activators,
-			List<String> enzymes, List<String> nonEnzymeCatalyzers) {
-		inhibitors.clear();
-		transActivators.clear();
-		transInhibitors.clear();
-		activators.clear();
-		enzymes.clear();
-		nonEnzymeCatalyzers.clear();
-		int type;
-		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
-			type = modifier.getSBOTerm();
-			if (SBO.isModifier(type)) {
-				// Ok, this is confusing...
-				// inhibitors.add(modifier.getSpecies());
-				// activators.add(modifier.getSpecies());
-			} else if (SBO.isInhibitor(type))
-				inhibitors.add(modifier.getSpecies());
-			else if (SBO.isTranscriptionalActivation(type)
-					|| SBO.isTranslationalActivation(type))
-				transActivators.add(modifier.getSpecies());
-			else if (SBO.isTranscriptionalInhibitor(type)
-					|| SBO.isTranslationalInhibitor(type))
-				transInhibitors.add(modifier.getSpecies());
-			else if (SBO.isTrigger(type) || SBO.isStimulator(type))
-				// no extra support for unknown catalysis anymore...
-				// physical stimulation is now also a stimulator.
-				activators.add(modifier.getSpecies());
-			else if (SBO.isCatalyst(type)) {
-				if (SBO.isEnzymaticCatalysis(type))
-					enzymes.add(modifier.getSpecies());
-				else
-					nonEnzymeCatalyzers.add(modifier.getSpecies());
-			}
-		}
-	}
 
 	private Object typeParameters[];
 
@@ -104,16 +60,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 		this.typeParameters = typeParameters;
-		List<String> modActi = new LinkedList<String>();
-		List<String> modCat = new LinkedList<String>();
-		List<String> modInhib = new LinkedList<String>();
-		List<String> modE = new LinkedList<String>();
-		List<String> modTActi = new LinkedList<String>();
-		List<String> modTInhib = new LinkedList<String>();
-		identifyModifers(parentReaction, modInhib, modTActi, modTInhib,
-				modActi, modE, modCat);
-		setMath(createKineticEquation(modE, modActi, modTActi, modInhib,
-				modTInhib, modCat));
+		ReactionType rt = new ReactionType(parentReaction);
+		setMath(createKineticEquation(rt.getEnzymes(), rt.getActivators(), rt
+				.getTransActivators(), rt.getInhibitors(), rt
+				.getTransInhibitors(), rt.getNonEnzymeCatalysts()));
 	}
 
 	/**
@@ -270,7 +220,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		return hr;
 	}
-	
+
 	Parameter parameterKS(String reactionID, String enzyme) {
 		Parameter kS = createOrGetParameter("kSp_", reactionID);
 		kS.setSBOTerm(194);

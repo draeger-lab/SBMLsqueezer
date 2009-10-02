@@ -27,10 +27,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
-import java.util.IllegalFormatException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -39,7 +37,6 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 
-import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -63,11 +60,13 @@ import org.sbml.squeezer.plugin.PluginSBMLReader;
 import org.sbml.squeezer.plugin.PluginSBMLWriter;
 import org.sbml.squeezer.plugin.SBMLsqueezerPlugin;
 import org.sbml.squeezer.resources.Resource;
-import org.sbml.squeezer.rmi.Reflect;
 import org.sbml.squeezer.standalone.LibSBMLReader;
 import org.sbml.squeezer.standalone.LibSBMLWriter;
 
 /**
+ * The main program of SBMLsqueezer. This class initializes all requrired
+ * objects, starts the GUI if desired and loads all settings from the user.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
@@ -77,29 +76,6 @@ import org.sbml.squeezer.standalone.LibSBMLWriter;
  * @version
  */
 public class SBMLsqueezer extends PluginAction implements LawListener {
-
-	/**
-	 * Possible command line options
-	 * 
-	 * @author Andreas Dr&auml;ger <a
-	 *         href="mailto:andreas.draeger@uni-tuebingen.de"
-	 *         >andreas.draeger@uni-tuebingen.de</a>
-	 * 
-	 */
-	private enum Keys {
-		/**
-		 * Can be used in combination with = true or = false or just --gui.
-		 */
-		GUI,
-		/**
-		 * 
-		 */
-		SBML_FILE,
-		/**
-		 * Specifies the file where SBMLsqueezer writes its SBML output.
-		 */
-		SBML_OUT_FILE
-	}
 
 	/**
 	 * 
@@ -485,22 +461,13 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	}
 
 	/**
-	 * Tells if SBMLsqueezer checked for an update after CellDesigner has been
-	 * run.
-	 */
-	private boolean isUpdateChecked = false;
-
-	/**
 	 * The CellDesigner plugin to which this action belongs.
 	 */
 	private SBMLsqueezerPlugin plugin;
 
-	/**
-	 * 
-	 */
-	public Set<Integer> possibleEnzymes;
-
 	private SBMLio sbmlIo;
+
+	private static Properties settings;
 
 	/**
 	 * Initializes SBMLsqueezer as a CellDesigner plug-in
@@ -509,7 +476,9 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 */
 	public SBMLsqueezer(SBMLsqueezerPlugin plugin) {
 		this.plugin = plugin;
-		this.possibleEnzymes = SBO.getDefaultPossibleEnzymes();
+		settings = initProperties();
+		sbmlIo = new SBMLio(new PluginSBMLReader(plugin.getSelectedModel(), SBO
+				.getDefaultPossibleEnzymes()), new PluginSBMLWriter(plugin));
 		showAboutMsg();
 	}
 
@@ -520,22 +489,26 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 *            Command line arguments.
 	 */
 	public SBMLsqueezer(String... args) {
+		System.out.print("loading user settings...");
+		settings = initProperties();
+		System.out.println(" done.");
 		System.out.print("scanning command line arguments...");
 		Properties p = analyzeCommandLineArguments(args);
+		for (Object key : p.keySet())
+			settings.put(key, p.get(key));
 		System.out.println(" done.");
 		System.out.print("reading SBO...");
-		possibleEnzymes = SBO.getDefaultPossibleEnzymes();
 		System.out.println(" done.");
 		sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
-		if (p.containsKey(Keys.SBML_FILE)) {
+		if (p.containsKey(CfgKeys.SBML_FILE)) {
 			long time = System.currentTimeMillis();
 			System.out.print("reating SBML file...");
-			sbmlIo.readModel(p.get(Keys.SBML_FILE));
+			sbmlIo.readModel(p.get(CfgKeys.SBML_FILE));
 			System.out.println(" done in "
 					+ (System.currentTimeMillis() - time) + " ms.");
 		}
-		if (p.containsKey(Keys.GUI)
-				&& Boolean.parseBoolean(p.get(Keys.GUI).toString())) {
+		if (p.containsKey(CfgKeys.GUI)
+				&& Boolean.parseBoolean(p.get(CfgKeys.GUI).toString())) {
 			checkForUpdate(true);
 			System.out.print("loading GUI...");
 			new Thread(new Runnable() {
@@ -550,12 +523,12 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 			checkForUpdate(false);
 			showAboutMsg();
 			File outFile = null;
-			if (p.containsKey(Keys.SBML_OUT_FILE))
-				outFile = new File(p.get(Keys.SBML_OUT_FILE).toString());
+			if (p.containsKey(CfgKeys.SBML_OUT_FILE))
+				outFile = new File(p.get(CfgKeys.SBML_OUT_FILE).toString());
 			if (sbmlIo.getListOfModels().size() == 1)
 				try {
 					KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
-							.getSelectedModel(), initProperties());
+							.getSelectedModel(), settings);
 					klg.generateLaws();
 					if (klg.getFastReactions().size() > 0) {
 						System.err.println("Model "
@@ -570,27 +543,7 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 							&& SBFileFilter.SBML_FILE_FILTER.accept(outFile))
 						sbmlIo.writeSelectedModelToSBML(outFile
 								.getAbsolutePath());
-				} catch (IllegalFormatException e) {
-					e.printStackTrace();
-				} catch (ModificationException e) {
-					e.printStackTrace();
-				} catch (RateLawNotApplicableException e) {
-					e.printStackTrace();
-				} catch (SBMLException e) {
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 		}
@@ -608,13 +561,14 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 				string = string.substring(1);
 			if (string.contains("=")) {
 				String keyVal[] = string.split("=");
-				p.put(Keys.valueOf(keyVal[0].toUpperCase().replace('-', '_')),
+				p.put(CfgKeys
+						.valueOf(keyVal[0].toUpperCase().replace('-', '_')),
 						keyVal[1]);
 			} else
-				p.put(Keys.valueOf(string.toUpperCase().replace('-', '_')),
+				p.put(CfgKeys.valueOf(string.toUpperCase().replace('-', '_')),
 						Boolean.TRUE.toString());
 		}
-		return p;
+		return correctProperties(p);
 	}
 
 	/**
@@ -641,53 +595,15 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 		}).start();
 	}
 
-	public void currentNumber(int num) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * @return the plugin
-	 */
-	public SBMLsqueezerPlugin getPlugin() {
-		return plugin;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Set<Integer> getPossibleEnzymes() {
-		return possibleEnzymes;
-	}
-
-	/**
-	 * @return the sbmlIo
-	 */
-	public SBMLio getSbmlIo() {
-		return sbmlIo;
-	}
-
-	/**
-	 * @return isUpdateChecked
-	 */
-	public boolean getUpdateChecked() {
-		return isUpdateChecked;
-	}
-
-	/**
-	 * @return the isUpdateChecked
-	 */
-	public boolean isUpdateChecked() {
-		return isUpdateChecked;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see jp.sbi.celldesigner.plugin.PluginActionListener#myActionPerformed(java
-	 *      .awt.event.ActionEvent)
+	 * @see org.sbml.squeezer.LawListener#currentNumber(int)
 	 */
+	public void currentNumber(int num) {
+		// TODO Auto-generated method stub
+	}
+
 	/**
 	 * Runs two threads for checking if an update for SBMLsqueezer is available
 	 * and for initializing an instance of the SBMLsqueezerUI.
@@ -709,20 +625,11 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	}
 
 	/**
-	 * Sets the value of isUpdateChecked to the value of b.
-	 * 
-	 * @param b
-	 */
-	public void setUpdateChecked(boolean b) {
-		isUpdateChecked = b;
-	}
-
-	/**
 	 * Shows the GUI of SBMLsqueezer stand-alone.
 	 */
 	public void showGUI() {
 		System.out.println(" have fun!");
-		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, initProperties());
+		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, settings);
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
 	}
@@ -734,30 +641,39 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 * @param mode
 	 */
 	private void startSBMLsqueezerPlugin(String mode) {
-		SBMLio sbmlIO = new SBMLio(new PluginSBMLReader(plugin
-				.getSelectedModel(), possibleEnzymes), new PluginSBMLWriter(
-				plugin));
-		Properties settings = initProperties();
 		if (mode.equals(plugin.getMainPluginItemText()))
-			(new KineticLawSelectionDialog(null, settings, sbmlIO))
+			(new KineticLawSelectionDialog(null, settings, sbmlIo))
 					.setVisible(true);
 		else if (mode.equals(plugin.getSqueezeContextMenuItemText()))
-			new KineticLawSelectionDialog(null, settings, sbmlIO,
+			new KineticLawSelectionDialog(null, settings, sbmlIo,
 					((PluginReaction) plugin.getSelectedReactionNode().get(0))
 							.getId());
 		else if (mode.equals(plugin.getExportContextMenuItemText()))
-			new KineticLawSelectionDialog(null, settings, sbmlIO
+			new KineticLawSelectionDialog(null, settings, sbmlIo
 					.getSelectedModel().getReaction(
 							((PluginReaction) plugin.getSelectedReactionNode()
 									.get(0)).getId()));
 		else if (mode.equals(plugin.getExporterItemText()))
 			if (plugin.getSelectedModel() != null)
-				new KineticLawSelectionDialog(null, settings, sbmlIO
+				new KineticLawSelectionDialog(null, settings, sbmlIo
 						.getSelectedModel());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.LawListener#totalNumber(int)
+	 */
 	public void totalNumber(int i) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * Returns the user's settings.
+	 * @return
+	 */
+	public static Properties getProperties() {
+		return settings;
 	}
 }
