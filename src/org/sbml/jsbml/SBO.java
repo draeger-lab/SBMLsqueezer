@@ -155,6 +155,19 @@ public class SBO {
 			possibleEnzymes.add(Integer.valueOf(convertAlias2SBO(type)));
 		return possibleEnzymes;
 	}
+	
+	/**
+	 * Creates and returns a list of molecule types that are accepted
+	 * as an enzyme for the given type names.
+	 * @param types
+	 * @return
+	 */
+	public static final Set<Integer> getPossibleEnzymes(String... types) {
+		Set<Integer> possibleEnzymes = new HashSet<Integer>();
+		for (String type : types)
+			possibleEnzymes.add(Integer.valueOf(convertAlias2SBO(type)));
+		return possibleEnzymes;
+	}
 
 	/**
 	 * 

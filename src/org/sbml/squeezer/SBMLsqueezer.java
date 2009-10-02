@@ -531,8 +531,23 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 		this.plugin = plugin;
 		settings = initProperties();
 		sbmlIo = new SBMLio(new PluginSBMLReader(plugin.getSelectedModel(), SBO
-				.getDefaultPossibleEnzymes()), new PluginSBMLWriter(plugin));
+				.getPossibleEnzymes(getPossibleEnzymeTypes())), new PluginSBMLWriter(plugin));
 		showAboutMsg();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private static String[] getPossibleEnzymeTypes() {
+		Set<String> enzymeTypes = new HashSet<String>();
+		String prefix = "POSSIBLE_ENZYME_";
+		for (Object key : settings.keySet())
+			if (key.toString().startsWith(prefix)) {
+				if (((Boolean) settings.get(key)).booleanValue())
+					enzymeTypes.add(key.toString().substring(prefix.length()));
+			}
+		return enzymeTypes.toArray(new String[]{});
 	}
 
 	/**
