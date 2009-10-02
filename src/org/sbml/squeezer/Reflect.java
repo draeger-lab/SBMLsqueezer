@@ -39,17 +39,54 @@ import java.util.jar.JarInputStream;
  */
 public class Reflect {
 
+	/**
+	 * 
+	 * @author draeger
+	 *
+	 * @param <T>
+	 */
 	static class ClassComparator<T> implements Comparator<T> {
 		public int compare(Object o1, Object o2) {
 			return (o1.toString().compareTo(o2.toString()));
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private static String[] dynCP = null;
+	/**
+	 * 
+	 */
+	static int missedJarsOnClassPath = 0;
+	/**
+	 * 
+	 */
 	private static boolean TRACE;
+
+	/**
+	 * 
+	 */
 	private static boolean useFilteredClassPath;
 
-	static int missedJarsOnClassPath = 0;
+	/**
+	 * 
+	 * @param set
+	 * @param cls
+	 * @return
+	 */
+	private static int addClass(HashSet<Class<?>> set, Class<?> cls) {
+		if (TRACE)
+			System.out.println("adding class " + cls.getName());
+		if (set.contains(cls)) {
+			System.err.println("warning, Class " + cls.getName()
+					+ " not added twice!");
+			return 0;
+		} else {
+			set.add(cls);
+			return 1;
+		}
+	}
 
 	/**
 	 * Collect all classes from a given package on the classpath. If includeSubs is true,
@@ -166,7 +203,16 @@ public class Reflect {
 		}
 		return classes;
 	}
-
+	
+	/**
+	 * 
+	 * @param set
+	 * @param directory
+	 * @param pckgname
+	 * @param includeSubs
+	 * @param reqSuperCls
+	 * @return
+	 */
 	public static int getClassesFromDirFltr(HashSet<Class<?>> set,
 			File directory, String pckgname, boolean includeSubs,
 			Class<?> reqSuperCls) {
@@ -270,7 +316,7 @@ public class Reflect {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Collect classes of a given package from a jar file.
 	 * 
@@ -410,12 +456,20 @@ public class Reflect {
 		return list.toArray(new Class[list.size()]);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static String[] getClassPathElements() {
 		String classPath = System.getProperty("java.class.path", ".");
 		// System.out.println("classpath: " + classPath);
 		return classPath.split(File.pathSeparator);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static String[] getValidCPArray() {
 		ArrayList<String> valids = getValidCPEntries();
 		// vp = valids.toArray(dynCP); // this causes Matlab to crash meanly.
@@ -425,6 +479,10 @@ public class Reflect {
 		return vp;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static ArrayList<String> getValidCPEntries() {
 		String[] pathElements = getClassPathElements();
 		File f;
@@ -440,94 +498,11 @@ public class Reflect {
 		return valids;
 	}
 
-	private static int addClass(HashSet<Class<?>> set, Class<?> cls) {
-		if (TRACE)
-			System.out.println("adding class " + cls.getName());
-		if (set.contains(cls)) {
-			System.err.println("warning, Class " + cls.getName()
-					+ " not added twice!");
-			return 0;
-		} else {
-			set.add(cls);
-			return 1;
-		}
-	}
-//	private Object m_Backup;
-
-//	private Class<?> m_ClassType;
-
-	private Object m_Object;
-//	private PropertyChangeSupport m_Support = new PropertyChangeSupport(this);
-
+	/**
+	 * 
+	 *
+	 */
 	public Reflect() {
 		TRACE = true;
 	}
-
-	/**
-	 * Gets the current Object.
-	 * 
-	 * @return the current Object
-	 */
-	public Object getValue() {
-		return m_Object;
-	}
-
-//	/**
-//	 * Sets the current object to be the default, taken as the first item in the
-//	 * chooser
-//	 */
-//	public void setDefaultValue() {
-//		if (m_ClassType == null) {
-//			System.err.println("No ClassType set up for GenericObjectEditor!!");
-//			return;
-//		}
-//
-//		Vector<String> v;
-//		if (Proxy.isProxyClass(m_ClassType)) {
-//			if (TRACE)
-//				System.out.println("PROXY! original was "
-//						+ ((RMIProxyLocal) Proxy
-//								.getInvocationHandler(((Proxy) m_Object)))
-//								.getOriginalClass().getName());
-//			v = new Vector<String>(
-//					getClassesFromProperties(((RMIProxyLocal) Proxy
-//							.getInvocationHandler(((Proxy) m_Object)))
-//							.getOriginalClass().getName()));
-//		} else {
-//			v = new Vector<String>(getClassesFromProperties(m_ClassType
-//					.getName()));
-//		}
-//
-//		v = new Vector<String>(getClassesFromProperties(m_ClassType.getName()));
-//		try {
-//			if (v.size() > 0)
-//				setObject((Object) Class.forName((String) v.get(0))
-//						.newInstance());
-//		} catch (Exception ex) {
-//			System.err.println("Exception in setDefaultValue !!!"
-//					+ ex.getMessage());
-//		}
-//	}
-//
-//	/**
-//	 * Sets the current Object, but doesn't worry about updating the state of
-//	 * the Object chooser.
-//	 * 
-//	 * @param c
-//	 *            a value of type 'Object'
-//	 */
-//	private void setObject(Object c) {
-//		// This should really call equals() for comparison.
-//		if (TRACE)
-//			System.out.println("setObject " + c.getClass().getName());
-//		boolean trueChange = (c != getValue());
-//		// System.err.println("Didn't even try to make a Object copy!! "+
-//		// "(using original)");
-//
-//		m_Backup = m_Object;
-//		m_Object = c;
-//
-//		if (trueChange)
-//			m_Support.firePropertyChange("", m_Backup, m_Object);
-//	}
 }

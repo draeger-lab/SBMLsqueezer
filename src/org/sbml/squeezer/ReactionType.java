@@ -389,11 +389,10 @@ public class ReactionType {
 						types.add(className);
 				}
 			}
-
-			String t[] = types.toArray(new String[] {});
-			Arrays.sort(t);
 		}
-		return new String[] {};
+		String t[] = types.toArray(new String[] {});
+		Arrays.sort(t);
+		return t;
 	}
 
 	/**
