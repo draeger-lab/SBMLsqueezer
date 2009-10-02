@@ -43,6 +43,7 @@ import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.gui.KineticLawSelectionPanel;
+import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
 import atp.sHotEqn;
@@ -64,11 +65,11 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 	 */
 	private static final long serialVersionUID = -1575566223506382693L;
 
+	private boolean editing;
+
 	private KineticLawGenerator klg;
 
 	private boolean reversibility;
-
-	private boolean editing;
 
 	// private static final int widthMultiplier = 7;
 
@@ -123,7 +124,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 			Object o = dataModel.getValueAt(rowIndex, 1);
 			if (o instanceof BasicKineticLaw) {
 				BasicKineticLaw kinetic = (BasicKineticLaw) o;
-				String LaTeX = kinetic.getMath().toLaTeX().toString().replace(
+				String LaTeX = kinetic.getMath().compile(
+						new LaTeX(klg.getSettings())).toString().replace(
 						"text", "mbox").replace("mathrm", "mbox").replace(
 						"mathtt", "mbox");
 				JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
@@ -150,9 +152,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
-	 * )
+	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent )
 	 */
 	public void mouseDragged(MouseEvent e) {
 	}
@@ -176,8 +176,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 	 */
 	public void mouseMoved(MouseEvent e) {
 	}
@@ -208,30 +207,9 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	public void mouseReleased(MouseEvent e) {
-	}
-
-	/**
-	 * Specifies weather or not all reactions will be modeled in a reversible
-	 * manner or as specified by the SBML model.
-	 * 
-	 * @param reversibility
-	 */
-	public void setReversibility(boolean reversibility) {
-		this.reversibility = reversibility;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.JTable#tableChanged(javax.swing.event.TableModelEvent)
-	 */
-	// @Override
-	public void tableChanged(TableModelEvent e) {
-		super.tableChanged(e);
 	}
 
 	/**
@@ -268,7 +246,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 						selected = i;
 				}
 				KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
-						possibleLaws, selected);
+						possibleLaws, klg.getSettings(), selected);
 				if (JOptionPane
 						.showConfirmDialog(getParent(), klsp,
 								"Choose an alternative kinetic law",
@@ -335,6 +313,26 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 			getColumnModel().getColumn(col).setPreferredWidth(
 					3 * getFont().getSize() / 5 * maxLength + 10);
 		}
+	}
+
+	/**
+	 * Specifies weather or not all reactions will be modeled in a reversible
+	 * manner or as specified by the SBML model.
+	 * 
+	 * @param reversibility
+	 */
+	public void setReversibility(boolean reversibility) {
+		this.reversibility = reversibility;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.JTable#tableChanged(javax.swing.event.TableModelEvent)
+	 */
+	// @Override
+	public void tableChanged(TableModelEvent e) {
+		super.tableChanged(e);
 	}
 
 }

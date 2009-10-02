@@ -20,6 +20,7 @@ package org.sbml.squeezer.gui;
 
 import java.awt.event.ActionListener;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -44,26 +45,28 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		TreeSelectionListener, SBaseChangedListener {
 
 	/**
-	 * 
+	 * Generated serial version id.
 	 */
-	private SBMLTree tree;
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 
 	 */
 	private Set<ActionListener> actionListeners;
+	private Properties settings;
 
 	/**
-	 * Generated serial version id.
+	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private SBMLTree tree;
 
 	/**
 	 * 
 	 * @param model
 	 */
-	public SBMLModelSplitPane(Model model) {
+	public SBMLModelSplitPane(Model model, Properties settings) {
 		super(JSplitPane.HORIZONTAL_SPLIT, true);
 		actionListeners = new HashSet<ActionListener>();
+		this.settings = settings;
 		model.addChangeListener(this);
 		init(model, false);
 	}
@@ -75,6 +78,51 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	public void addActionListener(ActionListener al) {
 		tree.addActionListener(al);
 		actionListeners.add(al);
+	}
+
+	/**
+	 * 
+	 * @param sbase
+	 * @return
+	 */
+	private JScrollPane createRightComponent(SBase sbase) {
+		JPanel p = new JPanel();
+		p.add(new SBasePanel(sbase, settings));
+		JScrollPane scroll = new JScrollPane(p,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		return scroll;
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param keepDivider
+	 */
+	public void init(Model model, boolean keepDivider) {
+		int proportionalLocation = getDividerLocation();
+		TreePath path = null;
+		if (tree != null)
+			path = (TreePath) tree.getSelectionPath();
+		tree = new SBMLTree(model);
+		tree.setShowsRootHandles(true);
+		tree.setScrollsOnExpand(true);
+		for (ActionListener al : actionListeners)
+			tree.addActionListener(al);
+		if (path != null) {
+			// tree.setSelectionPath(path);
+			tree.setExpandsSelectedPaths(true);
+			tree.expandPath(path);
+		}
+		tree.addTreeSelectionListener(this);
+		tree.setSelectionRow(0);
+		setLeftComponent(new JScrollPane(tree,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		setRightComponent(createRightComponent(model));
+		if (keepDivider)
+			setDividerLocation(proportionalLocation);
+		validate();
 	}
 
 	/*
@@ -137,50 +185,5 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		} else {
 			// displayURL(helpURL);
 		}
-	}
-
-	/**
-	 * 
-	 * @param sbase
-	 * @return
-	 */
-	private JScrollPane createRightComponent(SBase sbase) {
-		JPanel p = new JPanel();
-		p.add(new SBasePanel(sbase));
-		JScrollPane scroll = new JScrollPane(p,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		return scroll;
-	}
-
-	/**
-	 * 
-	 * @param model
-	 * @param keepDivider
-	 */
-	public void init(Model model, boolean keepDivider) {
-		int proportionalLocation = getDividerLocation();
-		TreePath path = null;
-		if (tree != null)
-			path = (TreePath) tree.getSelectionPath();
-		tree = new SBMLTree(model);
-		tree.setShowsRootHandles(true);
-		tree.setScrollsOnExpand(true);
-		for (ActionListener al : actionListeners)
-			tree.addActionListener(al);
-		if (path != null) {
-			// tree.setSelectionPath(path);
-			tree.setExpandsSelectedPaths(true);
-			tree.expandPath(path);
-		}
-		tree.addTreeSelectionListener(this);
-		tree.setSelectionRow(0);
-		setLeftComponent(new JScrollPane(tree,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		setRightComponent(createRightComponent(model));
-		if (keepDivider)
-			setDividerLocation(proportionalLocation);
-		validate();
 	}
 }

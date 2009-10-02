@@ -26,8 +26,6 @@ import java.util.Set;
 
 import javax.swing.tree.TreeNode;
 
-import org.sbml.squeezer.io.LaTeX;
-
 /**
  * A node in the Abstract Syntax Tree (AST) representation of a mathematical
  * expression.
@@ -302,6 +300,40 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * 
+	 * @param operator
+	 * @param ast
+	 * @return
+	 */
+	private static ASTNode arithmethicOperation(Type operator, ASTNode... ast) {
+		LinkedList<ASTNode> astList = new LinkedList<ASTNode>();
+		if (ast != null)
+			for (ASTNode node : ast) {
+				if (node != null
+						&& !(operator == Type.TIMES && node.isOne() && ast.length > 1))
+					astList.add(node);
+			}
+		if (astList.size() == 0)
+			return null;
+		if (astList.size() == 1)
+			return astList.getFirst().clone();
+		if (operator == Type.PLUS || operator == Type.MINUS
+				|| operator == Type.TIMES || operator == Type.DIVIDE
+				|| operator == Type.POWER) {
+			MathContainer mc = astList.getFirst().parentSBMLObject;
+			ASTNode arithmetic = new ASTNode(operator, mc);
+			for (ASTNode nodes : astList) {
+				arithmetic.addChild(nodes);
+				setParentSBMLObject(nodes, mc, 0);
+			}
+			return arithmetic;
+		} else
+			throw new RuntimeException(
+					new IllegalArgumentException(
+							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
+	}
+
+	/**
 	 * Creates a new ASTNode of type MINUS and adds the given nodes as children
 	 * 
 	 * @param parent
@@ -459,6 +491,19 @@ public class ASTNode implements TreeNode {
 	}
 
 	/**
+	 * set the Parent of the node and its children to the given value
+	 * 
+	 * @param node
+	 * @param parent
+	 */
+	private static void setParentSBMLObject(ASTNode node, MathContainer parent,
+			int depth) {
+		node.parentSBMLObject = parent;
+		for (ASTNode child : node.listOfNodes)
+			setParentSBMLObject(child, parent, depth + 1);
+	}
+
+	/**
 	 * 
 	 * @param radicand
 	 * @return
@@ -516,74 +561,16 @@ public class ASTNode implements TreeNode {
 		return times(elements);
 	}
 
-	/**
-	 * 
-	 * @param operator
-	 * @param ast
-	 * @return
-	 */
-	private static ASTNode arithmethicOperation(Type operator, ASTNode... ast) {
-		LinkedList<ASTNode> astList = new LinkedList<ASTNode>();
-		if (ast != null)
-			for (ASTNode node : ast) {
-				if (node != null
-						&& !(operator == Type.TIMES && node.isOne() && ast.length > 1))
-					astList.add(node);
-			}
-		if (astList.size() == 0)
-			return null;
-		if (astList.size() == 1)
-			return astList.getFirst().clone();
-		if (operator == Type.PLUS || operator == Type.MINUS
-				|| operator == Type.TIMES || operator == Type.DIVIDE
-				|| operator == Type.POWER) {
-			MathContainer mc = astList.getFirst().parentSBMLObject;
-			ASTNode arithmetic = new ASTNode(operator, mc);
-			for (ASTNode nodes : astList) {
-				arithmetic.addChild(nodes);
-				setParentSBMLObject(nodes, mc, 0);
-			}
-			return arithmetic;
-		} else
-			throw new RuntimeException(
-					new IllegalArgumentException(
-							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
-	}
-
-	/**
-	 * set the Parent of the node and its children to the given value
-	 * 
-	 * @param node
-	 * @param parent
-	 */
-	private static void setParentSBMLObject(ASTNode node, MathContainer parent,
-			int depth) {
-		node.parentSBMLObject = parent;
-		for (ASTNode child : node.listOfNodes)
-			setParentSBMLObject(child, parent, depth + 1);
-	}
-
-	/**
-	 * important for the TreeNode interface.
-	 */
-	private ASTNode parent;
-
-	/**
-	 * This value stores the numerator if this.isRational() is true, or the
-	 * value of an integer if this.isInteger() is true.
-	 */
-	private int numerator;
-
 	private int denominator;
-
-	private double mantissa;
 
 	private int exponent;
 
 	/**
-	 * The container that holds this ASTNode.
+	 * Child nodes.
 	 */
-	MathContainer parentSBMLObject;
+	private LinkedList<ASTNode> listOfNodes;
+
+	private double mantissa;
 
 	/**
 	 * If no NamedSBase object exists or can be identified when setName() is
@@ -591,17 +578,28 @@ public class ASTNode implements TreeNode {
 	 */
 	private String name;
 
-	private NamedSBase variable;
+	/**
+	 * This value stores the numerator if this.isRational() is true, or the
+	 * value of an integer if this.isInteger() is true.
+	 */
+	private int numerator;
+
+	/**
+	 * important for the TreeNode interface.
+	 */
+	private ASTNode parent;
+
+	/**
+	 * The container that holds this ASTNode.
+	 */
+	MathContainer parentSBMLObject;
 
 	/**
 	 * The type of this ASTNode.
 	 */
 	private Type type;
 
-	/**
-	 * Child nodes.
-	 */
-	private LinkedList<ASTNode> listOfNodes;
+	private NamedSBase variable;
 
 	/**
 	 * Copy constructor; Creates a deep copy of the given ASTNode.
@@ -704,6 +702,52 @@ public class ASTNode implements TreeNode {
 		child.parent = this;
 	}
 
+	/**
+	 * Creates a new node with the type of this node, moves all children of this
+	 * node to this new node, sets the type of this node to the given operator,
+	 * adds the new node as left child of this node and the given astnode as the
+	 * right child of this node. The parentSBMLObject of the whole resulting
+	 * ASTNode is then set to the parent of this node.
+	 * 
+	 * @param operator
+	 *            The new type of this node. This has to be one of the
+	 *            following: PLUS, MINUS, TIMES, DIVIDE, or POWER. Otherwise a
+	 *            runtime error is thrown.
+	 * @param astnode
+	 *            The new right child of this node
+	 */
+	private void arithmeticOperation(Type operator, ASTNode astnode) {
+		if (operator == Type.PLUS || operator == Type.MINUS
+				|| operator == Type.TIMES || operator == Type.DIVIDE
+				|| operator == Type.POWER || operator == Type.FUNCTION_ROOT) {
+			if (astnode.isZero() && operator == Type.DIVIDE)
+				throw new RuntimeException(new IllegalArgumentException(
+						"Cannot divide by zero."));
+			if (!(astnode.isOne() && (operator == Type.TIMES || operator == Type.DIVIDE))) {
+				ASTNode swap = new ASTNode(type, getParentSBMLObject());
+				swap.denominator = denominator;
+				swap.exponent = exponent;
+				swap.mantissa = mantissa;
+				swap.name = name;
+				swap.numerator = numerator;
+				swap.variable = variable;
+				swapChildren(swap);
+				setType(operator);
+				if (operator == Type.FUNCTION_ROOT) {
+					addChild(astnode);
+					addChild(swap);
+				} else {
+					addChild(swap);
+					addChild(astnode);
+				}
+				setParentSBMLObject(astnode, getParentSBMLObject(), 0);
+			}
+		} else
+			throw new RuntimeException(
+					new IllegalArgumentException(
+							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -741,6 +785,179 @@ public class ASTNode implements TreeNode {
 	// @Override
 	public ASTNode clone() {
 		return new ASTNode(this);
+	}
+
+	/**
+	 * Compiles this astnode and returns the result.
+	 * 
+	 * @param compiler
+	 * @return
+	 */
+	public Object compile(ASTNodeCompiler compiler) {
+		if (isUMinus())
+			return compiler.uiMinus(this);
+		else if (isSqrt())
+			return compiler.sqrt(getChild(getNumChildren() - 1));
+		else if (isInfinity())
+			return compiler.getPositiveInfinity();
+		else if (isNegInfinity())
+			return compiler.getNegativeInfinity();
+		switch (getType()) {
+		/*
+		 * Numbers
+		 */
+		case REAL:
+			return compiler.compile(getReal());
+		case INTEGER:
+			return compiler.compile(getInteger());
+			/*
+			 * Basic Functions
+			 */
+		case FUNCTION_LOG: {
+			if (getNumChildren() == 2)
+				return compiler.log(getLeftChild(), getRightChild());
+			else
+				return compiler.log(getChild(getNumChildren() - 1));
+		}
+			/*
+			 * Operators
+			 */
+		case POWER:
+			return compiler.pow(getLeftChild(), getRightChild());
+		case PLUS:
+			return compiler.plus(listOfNodes.toArray(new ASTNode[] {}));
+		case MINUS:
+			return compiler.minus(listOfNodes.toArray(new ASTNode[] {}));
+		case TIMES:
+			return compiler.times(listOfNodes.toArray(new ASTNode[] {}));
+		case DIVIDE:
+			return compiler.frac(getLeftChild(), getRightChild());
+		case RATIONAL:
+			return compiler.frac(getNumerator(), getDenominator());
+		case NAME_TIME:
+			return compiler.symbolTime(getName());
+		case FUNCTION_DELAY:
+			return compiler.functionDelay(getName());
+			/*
+			 * Names of identifiers: parameters, functions, species etc.
+			 */
+		case NAME:
+			return compiler.compile(variable);
+			/*
+			 * Type: pi, e, true, false
+			 */
+		case CONSTANT_PI:
+			return compiler.getConstantPi();
+		case CONSTANT_E:
+			return compiler.getConstantE();
+		case CONSTANT_TRUE:
+			return compiler.getConstantTrue();
+		case CONSTANT_FALSE:
+			return compiler.getConstantFalse();
+		case REAL_E:
+			return compiler.compile(getReal());
+			/*
+			 * More complicated functions
+			 */
+		case FUNCTION_ABS:
+			return compiler.abs(getChild(getNumChildren() - 1));
+		case FUNCTION_ARCCOS:
+			return compiler.arccos(getLeftChild());
+		case FUNCTION_ARCCOSH:
+			return compiler.arccosh(getLeftChild());
+		case FUNCTION_ARCCOT:
+			return compiler.arccot(getLeftChild());
+		case FUNCTION_ARCCOTH:
+			return compiler.arccoth(getLeftChild());
+		case FUNCTION_ARCCSC:
+			return compiler.arccsc(getLeftChild());
+		case FUNCTION_ARCCSCH:
+			return compiler.arccsch(getLeftChild());
+		case FUNCTION_ARCSEC:
+			return compiler.arcsec(getLeftChild());
+		case FUNCTION_ARCSECH:
+			return compiler.arcsech(getLeftChild());
+		case FUNCTION_ARCSIN:
+			return compiler.arcsin(getLeftChild());
+		case FUNCTION_ARCSINH:
+			return compiler.arcsinh(getLeftChild());
+		case FUNCTION_ARCTAN:
+			return compiler.arctan(getLeftChild());
+		case FUNCTION_ARCTANH:
+			return compiler.arctanh(getLeftChild());
+		case FUNCTION_CEILING:
+			return compiler.ceiling(getLeftChild());
+		case FUNCTION_COS:
+			return compiler.cos(getLeftChild());
+		case FUNCTION_COSH:
+			return compiler.cosh(getLeftChild());
+		case FUNCTION_COT:
+			return compiler.cot(getLeftChild());
+		case FUNCTION_COTH:
+			return compiler.coth(getLeftChild());
+		case FUNCTION_CSC:
+			return compiler.csc(getLeftChild());
+		case FUNCTION_CSCH:
+			return compiler.csch(getLeftChild());
+		case FUNCTION_EXP:
+			return compiler.exp(getLeftChild());
+		case FUNCTION_FACTORIAL:
+			return compiler.factorial(getLeftChild());
+		case FUNCTION_FLOOR:
+			return compiler.floor(getLeftChild());
+		case FUNCTION_LN:
+			return compiler.ln(getLeftChild());
+		case FUNCTION_POWER:
+			return compiler.pow(getLeftChild(), getChild(getNumChildren() - 1));
+		case FUNCTION_ROOT:
+			ASTNode left = getLeftChild();
+			if ((getNumChildren() > 1)
+					&& ((left.isInteger() && (left.getInteger() != 2)) || (left
+							.isReal() && (left.getReal() != 2d))))
+				return compiler.root(getLeftChild(), getRightChild());
+			return compiler.sqrt(getChild(getNumChildren() - 1));
+		case FUNCTION_SEC:
+			return compiler.sec(getLeftChild());
+		case FUNCTION_SECH:
+			return compiler.sech(getLeftChild());
+		case FUNCTION_SIN:
+			return compiler.sin(getLeftChild());
+		case FUNCTION_SINH:
+			return compiler.sinh(getLeftChild());
+		case FUNCTION_TAN:
+			return compiler.tan(getLeftChild());
+		case FUNCTION_TANH:
+			return compiler.tanh(getLeftChild());
+		case FUNCTION:
+			return compiler.function(getName(), listOfNodes.toArray(new ASTNode[]{}));
+		case LAMBDA:
+			return compiler.lambda(listOfNodes.toArray(new ASTNode[]{}));
+		case LOGICAL_AND:
+			return compiler.logicalOperation(this);
+		case LOGICAL_XOR:
+			return compiler.logicalOperation(this);
+		case LOGICAL_OR:
+			return compiler.logicalOperation(this);
+		case LOGICAL_NOT:
+			return compiler.logicalNot(getLeftChild());
+		case FUNCTION_PIECEWISE:
+			return compiler.piecewise(listOfNodes.toArray(new ASTNode[] {}));
+		case RELATIONAL_EQ:
+			return compiler.relationEqual(getLeftChild(), getRightChild());
+		case RELATIONAL_GEQ:
+			return compiler.relationGreaterEqual(getLeftChild(),
+					getRightChild());
+		case RELATIONAL_GT:
+			return compiler.relationGraterThan(getLeftChild(), getRightChild());
+		case RELATIONAL_NEQ:
+			return compiler.relationNotEqual(getLeftChild(), getRightChild());
+		case RELATIONAL_LEQ:
+			return compiler.relationLessEqual(getLeftChild(), getRightChild());
+		case RELATIONAL_LT:
+			return compiler.relationLessThan(getLeftChild(), getRightChild());
+		default: // UNKNOWN:
+			return compiler.unknownASTNode();
+		}
 	}
 
 	/**
@@ -1067,6 +1284,19 @@ public class ASTNode implements TreeNode {
 		throw new RuntimeException(
 				new IllegalArgumentException(
 						"getVariable() should be called only when !isNumber() || !isOperator()"));
+	}
+
+	/**
+	 * 
+	 */
+	private void initDefaults() {
+		type = Type.UNKNOWN;
+		if (listOfNodes == null)
+			listOfNodes = new LinkedList<ASTNode>();
+		else
+			listOfNodes.clear();
+		variable = null;
+		mantissa = Double.NaN;
 	}
 
 	/**
@@ -1769,192 +1999,6 @@ public class ASTNode implements TreeNode {
 		listOfNodes = swap;
 	}
 
-	/**
-	 * Method that writes the kinetic law (mathematical formula) of into latex
-	 * code
-	 * 
-	 * @param node
-	 * 
-	 * @param astnode
-	 * @return String
-	 */
-	public StringBuffer toLaTeX() {
-		return (StringBuffer) compile(new LaTeX());
-	}
-
-	/**
-	 * Compiles this astnode and returns the result.
-	 * 
-	 * @param compiler
-	 * @return
-	 */
-	public Object compile(ASTNodeCompiler compiler) {
-		if (isUMinus())
-			return compiler.uiMinus(this);
-		else if (isSqrt())
-			return compiler.sqrt(getChild(getNumChildren() - 1));
-		else if (isInfinity())
-			return compiler.getPositiveInfinity();
-		else if (isNegInfinity())
-			return compiler.getNegativeInfinity();
-		switch (getType()) {
-		/*
-		 * Numbers
-		 */
-		case REAL:
-			return compiler.compile(getReal());
-		case INTEGER:
-			return compiler.compile(getInteger());
-			/*
-			 * Basic Functions
-			 */
-		case FUNCTION_LOG: {
-			if (getNumChildren() == 2)
-				return compiler.log(getLeftChild(), getRightChild());
-			else
-				return compiler.log(getChild(getNumChildren() - 1));
-		}
-			/*
-			 * Operators
-			 */
-		case POWER:
-			return compiler.pow(getLeftChild(), getRightChild());
-		case PLUS:
-			return compiler.plus(listOfNodes.toArray(new ASTNode[] {}));
-		case MINUS:
-			return compiler.minus(listOfNodes.toArray(new ASTNode[] {}));
-		case TIMES:
-			return compiler.times(listOfNodes.toArray(new ASTNode[] {}));
-		case DIVIDE:
-			return compiler.frac(getLeftChild(), getRightChild());
-		case RATIONAL:
-			return compiler.frac(getNumerator(), getDenominator());
-		case NAME_TIME:
-			return compiler.symbolTime(getName());
-		case FUNCTION_DELAY:
-			return compiler.functionDelay(getName());
-			/*
-			 * Names of identifiers: parameters, functions, species etc.
-			 */
-		case NAME:
-			return compiler.compile(variable);
-			/*
-			 * Type: pi, e, true, false
-			 */
-		case CONSTANT_PI:
-			return compiler.getConstantPi();
-		case CONSTANT_E:
-			return compiler.getConstantE();
-		case CONSTANT_TRUE:
-			return compiler.getConstantTrue();
-		case CONSTANT_FALSE:
-			return compiler.getConstantFalse();
-		case REAL_E:
-			return compiler.compile(getReal());
-			/*
-			 * More complicated functions
-			 */
-		case FUNCTION_ABS:
-			return compiler.abs(getChild(getNumChildren() - 1));
-		case FUNCTION_ARCCOS:
-			return compiler.arccos(getLeftChild());
-		case FUNCTION_ARCCOSH:
-			return compiler.arccosh(getLeftChild());
-		case FUNCTION_ARCCOT:
-			return compiler.arccot(getLeftChild());
-		case FUNCTION_ARCCOTH:
-			return compiler.arccoth(getLeftChild());
-		case FUNCTION_ARCCSC:
-			return compiler.arccsc(getLeftChild());
-		case FUNCTION_ARCCSCH:
-			return compiler.arccsch(getLeftChild());
-		case FUNCTION_ARCSEC:
-			return compiler.arcsec(getLeftChild());
-		case FUNCTION_ARCSECH:
-			return compiler.arcsech(getLeftChild());
-		case FUNCTION_ARCSIN:
-			return compiler.arcsin(getLeftChild());
-		case FUNCTION_ARCSINH:
-			return compiler.arcsinh(getLeftChild());
-		case FUNCTION_ARCTAN:
-			return compiler.arctan(getLeftChild());
-		case FUNCTION_ARCTANH:
-			return compiler.arctanh(getLeftChild());
-		case FUNCTION_CEILING:
-			return compiler.ceiling(getLeftChild());
-		case FUNCTION_COS:
-			return compiler.cos(getLeftChild());
-		case FUNCTION_COSH:
-			return compiler.cosh(getLeftChild());
-		case FUNCTION_COT:
-			return compiler.cot(getLeftChild());
-		case FUNCTION_COTH:
-			return compiler.coth(getLeftChild());
-		case FUNCTION_CSC:
-			return compiler.csc(getLeftChild());
-		case FUNCTION_CSCH:
-			return compiler.csch(getLeftChild());
-		case FUNCTION_EXP:
-			return compiler.exp(getLeftChild());
-		case FUNCTION_FACTORIAL:
-			return compiler.factorial(getLeftChild());
-		case FUNCTION_FLOOR:
-			return compiler.floor(getLeftChild());
-		case FUNCTION_LN:
-			return compiler.ln(getLeftChild());
-		case FUNCTION_POWER:
-			return compiler.pow(getLeftChild(), getChild(getNumChildren() - 1));
-		case FUNCTION_ROOT:
-			ASTNode left = getLeftChild();
-			if ((getNumChildren() > 1)
-					&& ((left.isInteger() && (left.getInteger() != 2)) || (left
-							.isReal() && (left.getReal() != 2d))))
-				return compiler.root(getLeftChild(), getRightChild());
-			return compiler.sqrt(getChild(getNumChildren() - 1));
-		case FUNCTION_SEC:
-			return compiler.sec(getLeftChild());
-		case FUNCTION_SECH:
-			return compiler.sech(getLeftChild());
-		case FUNCTION_SIN:
-			return compiler.sin(getLeftChild());
-		case FUNCTION_SINH:
-			return compiler.sinh(getLeftChild());
-		case FUNCTION_TAN:
-			return compiler.tan(getLeftChild());
-		case FUNCTION_TANH:
-			return compiler.tanh(getLeftChild());
-		case FUNCTION:
-			return compiler.function(getName(), listOfNodes.toArray(new ASTNode[]{}));
-		case LAMBDA:
-			return compiler.lambda(listOfNodes.toArray(new ASTNode[]{}));
-		case LOGICAL_AND:
-			return compiler.logicalOperation(this);
-		case LOGICAL_XOR:
-			return compiler.logicalOperation(this);
-		case LOGICAL_OR:
-			return compiler.logicalOperation(this);
-		case LOGICAL_NOT:
-			return compiler.logicalNot(getLeftChild());
-		case FUNCTION_PIECEWISE:
-			return compiler.piecewise(listOfNodes.toArray(new ASTNode[] {}));
-		case RELATIONAL_EQ:
-			return compiler.relationEqual(getLeftChild(), getRightChild());
-		case RELATIONAL_GEQ:
-			return compiler.relationGreaterEqual(getLeftChild(),
-					getRightChild());
-		case RELATIONAL_GT:
-			return compiler.relationGraterThan(getLeftChild(), getRightChild());
-		case RELATIONAL_NEQ:
-			return compiler.relationNotEqual(getLeftChild(), getRightChild());
-		case RELATIONAL_LEQ:
-			return compiler.relationLessEqual(getLeftChild(), getRightChild());
-		case RELATIONAL_LT:
-			return compiler.relationLessThan(getLeftChild(), getRightChild());
-		default: // UNKNOWN:
-			return compiler.unknownASTNode();
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1994,65 +2038,6 @@ public class ASTNode implements TreeNode {
 				break;
 			}
 		return isName() ? getName() : getType().toString();
-	}
-
-	/**
-	 * Creates a new node with the type of this node, moves all children of this
-	 * node to this new node, sets the type of this node to the given operator,
-	 * adds the new node as left child of this node and the given astnode as the
-	 * right child of this node. The parentSBMLObject of the whole resulting
-	 * ASTNode is then set to the parent of this node.
-	 * 
-	 * @param operator
-	 *            The new type of this node. This has to be one of the
-	 *            following: PLUS, MINUS, TIMES, DIVIDE, or POWER. Otherwise a
-	 *            runtime error is thrown.
-	 * @param astnode
-	 *            The new right child of this node
-	 */
-	private void arithmeticOperation(Type operator, ASTNode astnode) {
-		if (operator == Type.PLUS || operator == Type.MINUS
-				|| operator == Type.TIMES || operator == Type.DIVIDE
-				|| operator == Type.POWER || operator == Type.FUNCTION_ROOT) {
-			if (astnode.isZero() && operator == Type.DIVIDE)
-				throw new RuntimeException(new IllegalArgumentException(
-						"Cannot divide by zero."));
-			if (!(astnode.isOne() && (operator == Type.TIMES || operator == Type.DIVIDE))) {
-				ASTNode swap = new ASTNode(type, getParentSBMLObject());
-				swap.denominator = denominator;
-				swap.exponent = exponent;
-				swap.mantissa = mantissa;
-				swap.name = name;
-				swap.numerator = numerator;
-				swap.variable = variable;
-				swapChildren(swap);
-				setType(operator);
-				if (operator == Type.FUNCTION_ROOT) {
-					addChild(astnode);
-					addChild(swap);
-				} else {
-					addChild(swap);
-					addChild(astnode);
-				}
-				setParentSBMLObject(astnode, getParentSBMLObject(), 0);
-			}
-		} else
-			throw new RuntimeException(
-					new IllegalArgumentException(
-							"The operator must be one of the following constants: PLUS, MINUS, TIMES, DIVIDE, or POWER."));
-	}
-
-	/**
-	 * 
-	 */
-	private void initDefaults() {
-		type = Type.UNKNOWN;
-		if (listOfNodes == null)
-			listOfNodes = new LinkedList<ASTNode>();
-		else
-			listOfNodes.clear();
-		variable = null;
-		mantissa = Double.NaN;
 	}
 
 }

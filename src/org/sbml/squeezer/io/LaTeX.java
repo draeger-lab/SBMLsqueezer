@@ -18,6 +18,7 @@
 package org.sbml.squeezer.io;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
@@ -25,6 +26,7 @@ import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ASTNode.Type;
+import org.sbml.squeezer.CfgKeys;
 
 /**
  * Created at 2009-01-03.
@@ -277,8 +279,13 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		printNameIfAvailable = false;
 	}
 
-	public LaTeX(boolean printNameIfAvailable) {
-		this.printNameIfAvailable = printNameIfAvailable;
+	/**
+	 * 
+	 * @param settings
+	 */
+	public LaTeX(Properties settings) {
+		setPrintNameIfAvailable(((Boolean) settings
+				.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue());
 	}
 
 	/*
@@ -876,6 +883,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#lambda(org.sbml.jsbml.ASTNode[])
 	 */
 	public StringBuffer lambda(ASTNode... nodes) {
@@ -956,7 +964,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		StringBuffer value = new StringBuffer();
 		if (1 < ast.getLeftChild().getNumChildren())
 			value.append(leftBrace);
-		value.append(ast.getLeftChild().toLaTeX());
+		value.append(ast.getLeftChild().compile(this));
 		if (1 < ast.getLeftChild().getNumChildren())
 			value.append(rightBrace);
 		switch (ast.getType()) {
@@ -974,7 +982,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		}
 		if (1 < ast.getRightChild().getNumChildren())
 			value.append(LaTeX.leftBrace);
-		value.append(ast.getRightChild().toLaTeX());
+		value.append(ast.getRightChild().compile(this));
 		if (1 < ast.getRightChild().getNumChildren())
 			value.append(LaTeX.rightBrace);
 		return value;
