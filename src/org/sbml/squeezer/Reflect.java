@@ -42,7 +42,7 @@ public class Reflect {
 	/**
 	 * 
 	 * @author draeger
-	 *
+	 * 
 	 * @param <T>
 	 */
 	static class ClassComparator<T> implements Comparator<T> {
@@ -55,10 +55,12 @@ public class Reflect {
 	 * 
 	 */
 	private static String[] dynCP = null;
+
 	/**
 	 * 
 	 */
 	static int missedJarsOnClassPath = 0;
+
 	/**
 	 * 
 	 */
@@ -89,16 +91,20 @@ public class Reflect {
 	}
 
 	/**
-	 * Collect all classes from a given package on the classpath. If includeSubs is true,
-	 * the sub-packages are listed as well.
+	 * Collect all classes from a given package on the classpath. If includeSubs
+	 * is true, the sub-packages are listed as well.
 	 * 
 	 * @param pckg
 	 * @param includeSubs
-	 * @param bSort	sort alphanumerically by class name 
-	 * @return An ArrayList of Class objects contained in the package which may be empty if an error occurs.
+	 * @param bSort
+	 *            sort alphanumerically by class name
+	 * @return An ArrayList of Class objects contained in the package which may
+	 *         be empty if an error occurs.
 	 */
-	public static Class<?>[] getAllClassesInPackage(String pckg, boolean includeSubs, boolean bSort) {
-		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg, includeSubs, bSort, null);
+	public static Class<?>[] getAllClassesInPackage(String pckg,
+			boolean includeSubs, boolean bSort) {
+		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg,
+				includeSubs, bSort, null);
 	}
 
 	/**
@@ -109,8 +115,10 @@ public class Reflect {
 	 * @param superClass
 	 * @return
 	 */
-	public static Class<?>[] getAllClassesInPackage(String pckg, boolean includeSubs, boolean bSort, Class<?> superClass) {
-		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg, includeSubs, bSort, superClass);
+	public static Class<?>[] getAllClassesInPackage(String pckg,
+			boolean includeSubs, boolean bSort, Class<?> superClass) {
+		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg,
+				includeSubs, bSort, superClass);
 	}
 
 	/**
@@ -203,7 +211,7 @@ public class Reflect {
 		}
 		return classes;
 	}
-	
+
 	/**
 	 * 
 	 * @param set
@@ -264,7 +272,7 @@ public class Reflect {
 		}
 		return cntAdded;
 	}
-	
+
 	/**
 	 * Collect classes of a given package from the file system.
 	 * 
@@ -353,7 +361,8 @@ public class Reflect {
 						else
 							isInSubPackage = false;
 					}
-					if (includeSubs || !isInSubPackage) { // take the right ones
+					if (includeSubs || !isInSubPackage) { // take the right
+															// ones
 						String clsName = jarEntryName.replace("/", ".");
 						try {
 							// removes the .class extension
@@ -500,7 +509,7 @@ public class Reflect {
 
 	/**
 	 * 
-	 *
+	 * 
 	 */
 	public Reflect() {
 		TRACE = true;

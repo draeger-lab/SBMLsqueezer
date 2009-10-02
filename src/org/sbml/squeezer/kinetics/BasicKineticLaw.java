@@ -19,6 +19,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.IllegalFormatException;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -60,10 +61,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 		this.typeParameters = typeParameters;
-		ReactionType rt = new ReactionType(parentReaction);
-		setMath(createKineticEquation(rt.getEnzymes(), rt.getActivators(), rt
-				.getTransActivators(), rt.getInhibitors(), rt
-				.getTransInhibitors(), rt.getNonEnzymeCatalysts()));
+		List<String> enzymes = new LinkedList<String>();
+		List<String> activat = new LinkedList<String>();
+		List<String> transAc = new LinkedList<String>();
+		List<String> inhibit = new LinkedList<String>();
+		List<String> transIn = new LinkedList<String>();
+		List<String> nonEnzy = new LinkedList<String>();
+		ReactionType.identifyModifers(parentReaction, enzymes, activat,
+				transAc, inhibit, transIn, nonEnzy);
+		setMath(createKineticEquation(enzymes, activat, transAc, inhibit,
+				transIn, nonEnzy));
 	}
 
 	/**
