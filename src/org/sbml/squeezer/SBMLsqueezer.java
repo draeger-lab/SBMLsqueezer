@@ -122,6 +122,8 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 */
 	private static final long serialVersionUID = 4134514954192751545L;
 
+	private static Properties settings;
+
 	/**
 	 * 
 	 */
@@ -133,6 +135,7 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.2.2";
+
 	static {
 		long time = System.currentTimeMillis();
 		System.out.print("Loading kinetic equations... ");
@@ -196,15 +199,15 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 */
 	private static Properties correctProperties(Properties properties) {
 		Object keys[] = properties.keySet().toArray();
-		Properties settings = new Properties();
+		Properties props = new Properties();
 		for (int i = keys.length - 1; i >= 0; i--) {
 			CfgKeys k = CfgKeys.valueOf(keys[i].toString());
 			String val = properties.get(keys[i]).toString();
 			if (val.startsWith("user."))
-				settings.put(k, System.getProperty(val));
+				props.put(k, System.getProperty(val));
 			else if (val.equalsIgnoreCase("true")
 					|| val.equalsIgnoreCase("false"))
-				settings.put(k, Boolean.parseBoolean(val));
+				props.put(k, Boolean.parseBoolean(val));
 			else {
 				boolean allDigit = true;
 				short dotCount = 0;
@@ -215,14 +218,66 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 						allDigit &= Character.isDigit(c);
 				}
 				if (allDigit && dotCount == 0)
-					settings.put(k, Integer.parseInt(val));
+					props.put(k, Integer.parseInt(val));
 				else if (allDigit && dotCount == 1)
-					settings.put(k, Double.parseDouble(val));
+					props.put(k, Double.parseDouble(val));
 				else
-					settings.put(k, val);
+					props.put(k, val);
+			}
+			if (k.toString().startsWith("KINETICS_")) {
+				if (!val.startsWith(KINETICS_PACKAGE)) {
+					val = KINETICS_PACKAGE + '.' + val;
+					props.put(k, val);
+				}
+				boolean invalid = false;
+				switch (k) {
+				// check if valid default kinetics are given.
+				case KINETICS_BI_BI_TYPE:
+					invalid = !kineticsBiBi.contains(val);
+					break;
+				case KINETICS_BI_UNI_TYPE:
+					invalid = !kineticsBiUni.contains(val);
+					break;
+				case KINETICS_GENE_REGULATION:
+					invalid = !kineticsGeneRegulatoryNetworks.contains(val);
+					break;
+				case KINETICS_NONE_ENZYME_REACTIONS:
+					invalid = !kineticsNonEnzyme.contains(val);
+					break;
+				case KINETICS_OTHER_ENZYME_REACTIONS:
+					invalid = !kineticsArbitraryEnzymeMechanism.contains(val);
+					break;
+				case KINETICS_UNI_UNI_TYPE:
+					invalid = !kineticsUniUni.contains(val);
+					break;
+				}
+				boolean allReversible = properties
+						.containsKey(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+				if (allReversible)
+					allReversible &= Boolean.parseBoolean(properties.get(
+							CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)
+							.toString());
+				else if (settings != null) {
+					allReversible = settings
+							.containsKey(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+					if (allReversible)
+						allReversible &= Boolean.parseBoolean(settings.get(
+								CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)
+								.toString());
+				}
+				if (!kineticsIrreversible.contains(val) && !allReversible)
+					invalid = false;
+				if (invalid) {
+					String defaultKin = getDefaultSettings().get(k).toString();
+					if (!defaultKin.startsWith(KINETICS_PACKAGE))
+						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
+					props.put(k, defaultKin);
+					System.err.println("Invalid " + k.toString() + ' '
+							+ val + "; using default " + defaultKin + '.');
+				}
 			}
 		}
-		return settings;
+		return props;
 	}
 
 	/**
@@ -467,8 +522,6 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 
 	private SBMLio sbmlIo;
 
-	private static Properties settings;
-
 	/**
 	 * Initializes SBMLsqueezer as a CellDesigner plug-in
 	 * 
@@ -666,11 +719,10 @@ public class SBMLsqueezer extends PluginAction implements LawListener {
 	 */
 	public void totalNumber(int i) {
 		// TODO Auto-generated method stub
-
 	}
 
 	/**
-	 * Returns the user's settings.
+	 * 
 	 * @return
 	 */
 	public static Properties getProperties() {

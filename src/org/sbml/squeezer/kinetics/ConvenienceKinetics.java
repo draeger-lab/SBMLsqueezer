@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.Arrays;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -29,6 +28,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * <p>
@@ -81,15 +81,18 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		Reaction reaction = getParentSBMLObject();
 		setSBOTerm(429);
 		StringBuilder name = new StringBuilder();
-		if (!reaction.getReversible())
-			name.append("ir");
-		name.append("reversible ");
+		// if (!reaction.getReversible())
+		// name.append("ir");
+		// name.append("reversible ");
+		boolean type = false;
 		if (getTypeParameters().length > 1) {
-			if (!Boolean.parseBoolean(getTypeParameters()[1].toString()))
-				name.append("thermodynamically independent");
+			if (!Boolean.parseBoolean(getTypeParameters()[1].toString())) {
+				name.append("thermodynamically independent ");
+				type = true;
+			}
 		}
-		name.append(" convenience kinetics");
-		setNotes(name.toString());
+		name.append("convenience kinetics");
+		setNotes(StringTools.firstLetterUpperCase(name.toString()));
 
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		for (int i = 0; i < enzymes.length; i++) {
@@ -108,11 +111,14 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 						&& reaction.getNumReactants() > 1)
 					denominator.minus(1);
 			}
-			Parameter p_klV = parameterVelocityConstant(reaction.getId(),
-					enzyme);
 			if (denominator != null)
 				numerator.divideBy(denominator);
-			enzymes[i] = ASTNode.times(new ASTNode(p_klV, this), numerator);
+			if (type) {
+				Parameter p_klV = parameterVelocityConstant(reaction.getId(),
+						enzyme);
+				enzymes[i] = ASTNode.times(new ASTNode(p_klV, this), numerator);
+			} else
+				enzymes[i] = numerator;
 			if (enzyme != null)
 				enzymes[i] = ASTNode.times(new ASTNode(enzyme, this),
 						enzymes[i]);
@@ -254,8 +260,6 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 						.getSpeciesInstance(), p_kM), j), denoms[i]);
 			}
 		}
-		System.out.print(reaction.getId() + "\t");
-		System.out.print(Arrays.toString(denoms) + "\t");
 		return denoms;
 	}
 

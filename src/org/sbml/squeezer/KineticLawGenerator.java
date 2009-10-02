@@ -319,8 +319,8 @@ public class KineticLawGenerator {
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
 		for (Reaction r : miniModel.getListOfReactions()) {
-			ReactionType rt = new ReactionType(r);
-			createKineticLaw(r, rt.identifyReactionType(), reversibility);
+			ReactionType rt = new ReactionType(r, settings);
+			createKineticLaw(r, rt.identifyPossibleKineticLaw(), reversibility);
 		}
 	}
 
@@ -406,8 +406,9 @@ public class KineticLawGenerator {
 	 */
 	public String[] identifyPossibleReactionTypes(String reactionID)
 			throws RateLawNotApplicableException {
-		ReactionType rt = new ReactionType(miniModel.getReaction(reactionID));
-		return rt.identifyPossibleReactionTypes();
+		ReactionType rt = new ReactionType(miniModel.getReaction(reactionID),
+				settings);
+		return rt.identifyPossibleKineticLaws();
 	}
 
 	/**
@@ -417,8 +418,9 @@ public class KineticLawGenerator {
 	 */
 	public String identifyReactionType(String reactionID)
 			throws RateLawNotApplicableException {
-		ReactionType rt = new ReactionType(miniModel.getReaction(reactionID));
-		return rt.identifyReactionType();
+		ReactionType rt = new ReactionType(miniModel.getReaction(reactionID),
+				settings);
+		return rt.identifyPossibleKineticLaw();
 	}
 
 	/**
@@ -790,5 +792,16 @@ public class KineticLawGenerator {
 	 */
 	public KineticLaw getKineticLaw(String id) {
 		return miniModel.getReaction(id).getKineticLaw();
+	}
+
+	/**
+	 * 
+	 * @param reactionID
+	 * @return
+	 * @throws RateLawNotApplicableException
+	 */
+	public ReactionType getReactionType(String reactionID)
+			throws RateLawNotApplicableException {
+		return new ReactionType(miniModel.getReaction(reactionID), settings);
 	}
 }

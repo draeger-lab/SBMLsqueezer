@@ -162,12 +162,9 @@ public final class Resource {
 	 */
 	public InputStream getStreamFromResourceLocation(String rawResrcLoc) {
 		String resourceLocation = rawResrcLoc.replace('\\', '/');
-
-		// System.out.println("Try to get: "+resourceLocation);
 		if (resourceLocation == null) {
 			return null;
 		}
-
 		// to avoid hours of debugging non-found-files under linux with
 		// some f... special characters at the end which will not be shown
 		// at the console output !!!

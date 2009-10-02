@@ -237,9 +237,9 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 		jPanelSettingsReversibility.setBackground(Color.WHITE);
 		LayoutHelper.addComponent(jPanelSettingsReversibility, layout,
-				jRadioButtonSettingsFrameForceRevAsCD, 0, 0, 1, 1, 1, 0);
+				jRadioButtonSettingsFrameForceRevAsCD, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsReversibility, layout,
-				jRadioButtonForceReacRev, 0, 1, 1, 1, 1, 0);
+				jRadioButtonForceReacRev, 0, 1, 1, 1, 1, 1);
 
 		// Fourth Panel
 		jCheckBoxPossibleEnzymeGenericProtein = new JCheckBox("Generic protein");
@@ -317,21 +317,21 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 		jPanelSettingsEnzymes.setBackground(Color.WHITE);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
-				jCheckBoxPossibleEnzymeGenericProtein, 0, 0, 1, 1, 1, 0);
+				jCheckBoxPossibleEnzymeGenericProtein, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
-				jCheckBoxPossibleEnzymeRNA, 1, 0, 1, 1, 1, 0);
+				jCheckBoxPossibleEnzymeRNA, 1, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
-				jCheckBoxPossibleEnzymeComplex, 2, 0, 1, 1, 1, 0);
+				jCheckBoxPossibleEnzymeComplex, 2, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
-				jCheckBoxPossibleEnzymeTruncatedProtein, 3, 0, 1, 1, 1, 0);
+				jCheckBoxPossibleEnzymeTruncatedProtein, 3, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
-				jCheckBoxPossibleEnzymeReceptor, 0, 1, 1, 1, 1, 0);
+				jCheckBoxPossibleEnzymeReceptor, 0, 1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
-				jCheckBoxPossibleEnzymeAsRNA, 1, 1, 1, 1, 1, 0);
+				jCheckBoxPossibleEnzymeAsRNA, 1, 1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
-				jCheckBoxPossibleEnzymeUnknown, 2, 1, 1, 1, 1, 0);
+				jCheckBoxPossibleEnzymeUnknown, 2, 1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
-				jCheckBoxPossibleEnzymeSimpleMolecule, 3, 1, 1, 1, 1, 0);
+				jCheckBoxPossibleEnzymeSimpleMolecule, 3, 1, 1, 1, 1, 1);
 
 		JPanel jPanelStandardVersions = new JPanel();
 		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
@@ -355,15 +355,15 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		// Add all panels to this settings panel:
 		layout = (GridBagLayout) this.getLayout();
 		LayoutHelper.addComponent(this, layout, jPanelGeneralOptions, 0, 0, 2,
-				1, 1, 0);
+				1, 1, 1);
 		LayoutHelper.addComponent(this, layout, jPanelGenerateNewKinetics, 0,
-				1, 1, 1, 1, 0);
+				1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, layout, jPanelSettingsReversibility, 1,
-				1, 1, 1, 1, 0);
+				1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, layout, jPanelSettingsEnzymes, 0, 2, 2,
-				1, 1, 0);
+				1, 1, 1);
 		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 0, 3,
-				2, 1, 1, 0);
+				2, 1, 1, 1);
 
 		setBackground(Color.WHITE);
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));

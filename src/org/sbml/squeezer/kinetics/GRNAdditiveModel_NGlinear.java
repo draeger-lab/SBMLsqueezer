@@ -19,14 +19,9 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.IllegalFormatException;
-import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
