@@ -90,7 +90,8 @@ public class ForceDependent extends ReversiblePowerLaw implements
 			kM = forward ? parameterMichaelisSubstrate(r.getId(), specRef
 					.getSpecies(), enzyme) : parameterMichaelisProduct(r
 					.getId(), specRef.getSpecies(), enzyme);
-			curr = ASTNode.frac(this, specRef.getSpeciesInstance(), kM);
+			curr = ASTNode.frac(speciesTerm(specRef.getSpeciesInstance()),
+					new ASTNode(kM, this));
 			if (term.isUnknown())
 				term = curr;
 			else

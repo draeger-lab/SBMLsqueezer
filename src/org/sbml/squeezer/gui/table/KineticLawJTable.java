@@ -35,7 +35,6 @@ import javax.swing.event.MouseInputListener;
 import javax.swing.event.TableModelEvent;
 
 import org.sbml.jsbml.KineticLaw;
-import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
@@ -92,10 +91,11 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 				.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
 		setDefaultRenderer(Object.class, new KineticLawCellRenderer(
 				maxNumReactnats));
-		getTableHeader()
-				.setToolTipText(
-						"<html>Double click on the kinetic law to apply another formalism.<br>"
-								+ "Single click on any other column to get a formatted equation preview.</html>");
+		getTableHeader().setToolTipText(
+				GUITools.toHTML("Double click on the kinetic "
+						+ "law to apply another formalism. "
+						+ "Single click on any other "
+						+ "column to get a formatted equation preview.", 40));
 		setCellSelectionEnabled(true);
 		setEnabled(true);
 		addMouseListener(this);
@@ -230,8 +230,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 			NoSuchMethodException, InstantiationException,
 			IllegalAccessException, InvocationTargetException {
 		if ((dataModel.getRowCount() > 0) && (dataModel.getColumnCount() > 0)) {
-			Model model = klg.getModel();
-			Reaction reaction = model.getReaction(dataModel.getValueAt(
+			Reaction reaction = klg.getModel().getReaction(dataModel.getValueAt(
 					rowIndex, 0).toString());
 			try {
 				String possibleTypes[] = this.klg
@@ -276,8 +275,10 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 						if (i > 0)
 							params.append(", ");
 					}
-					dataModel.setValueAt(kineticLaw.toString(),
-							getSelectedRow(), 1);
+					String name = kineticLaw instanceof BasicKineticLaw ? ((BasicKineticLaw) kineticLaw)
+							.getSimpleName()
+							: kineticLaw.toString();
+					dataModel.setValueAt(name, getSelectedRow(), 1);
 					dataModel.setValueAt(kineticLaw.getSBOTermID(),
 							getSelectedRow(), 2);
 					dataModel.setValueAt(params, getSelectedRow(), dataModel
@@ -289,7 +290,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 							&& (!klg.getModel().getReaction(i).getId().equals(
 									kineticLaw.getParentSBMLObject().getId())))
 						i++;
-					klg.getModel().getReaction(i).setKineticLaw(kineticLaw);
+					kineticLaw.getParentSBMLObject().setKineticLaw(kineticLaw);
 					setColumnWidthAppropriately();
 					editing = false;
 				}
@@ -313,16 +314,6 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 			getColumnModel().getColumn(col).setPreferredWidth(
 					3 * getFont().getSize() / 5 * maxLength + 10);
 		}
-	}
-
-	/**
-	 * Specifies weather or not all reactions will be modeled in a reversible
-	 * manner or as specified by the SBML model.
-	 * 
-	 * @param reversibility
-	 */
-	public void setReversibility(boolean reversibility) {
-		this.reversibility = reversibility;
 	}
 
 	/*

@@ -96,6 +96,15 @@ public enum CfgKeys {
 	 */
 	TYPE_STANDARD_VERSION,
 	/**
+	 * How to ensure unit consistency in kinetic equations? One way is
+	 * to set each participating species to an initial amount and to set the
+	 * unit to mmole. The other way is to set the initial concentration of
+	 * each species, set the unit to mmole per l and to multiply the species
+	 * with the size of the surrounding compartment whenever it occurs in
+	 * a kinetic equation. Hence, this type paramter belongs to two values.
+	 */
+	TYPE_UNIT_CONSISTENCY,
+	/**
 	 * If true, all reactions within the network are considered enzyme
 	 * reactions. If false, an explicit enzymatic catalyst must be assigned to a
 	 * reaction to obtain this status.

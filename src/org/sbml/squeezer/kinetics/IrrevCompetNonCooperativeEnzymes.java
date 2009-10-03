@@ -107,8 +107,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			ASTNode numerator;
 
 			numerator = new ASTNode(p_kcat, this);
-			numerator = ASTNode.times(numerator, new ASTNode(reaction
-					.getReactant(0).getSpeciesInstance(), this));
+			numerator = ASTNode.times(numerator, speciesTerm(reaction
+					.getReactant(0).getSpeciesInstance()));
 
 			ASTNode denominator;
 			Parameter p_kM = parameterMichaelisSubstrate(reaction.getId(),
@@ -142,8 +142,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 				denominator = factor;
 
 			}
-			denominator.plus(new ASTNode(reaction.getReactant(0)
-					.getSpeciesInstance(), this));
+			denominator.plus(speciesTerm(reaction.getReactant(0)
+					.getSpeciesInstance()));
 			currEnzyme = ASTNode.frac(numerator, denominator);
 			if (numOfEnzymes > 1)
 				numerator.multiplyWith(new ASTNode(modE.get(enzymeNum), this));

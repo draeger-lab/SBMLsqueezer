@@ -33,7 +33,7 @@ public class Compartment extends Symbol {
 	/**
 	 * 
 	 */
-	private short spatialDimensions;
+	private boolean constant;
 	/**
 	 * 
 	 */
@@ -41,7 +41,7 @@ public class Compartment extends Symbol {
 	/**
 	 * 
 	 */
-	private boolean constant;
+	private short spatialDimensions;
 
 	/**
 	 * 
@@ -99,6 +99,7 @@ public class Compartment extends Symbol {
 		}
 		return false;
 	}
+	
 	/**
 	 * 
 	 * @return
@@ -113,7 +114,6 @@ public class Compartment extends Symbol {
 	public CompartmentType getCompartmentTypeInstance() {
 		return compartmentType;
 	}
-
 	/**
 	 * 
 	 * @return
@@ -154,6 +154,22 @@ public class Compartment extends Symbol {
 		return spatialDimensions;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#getUnits()
+	 */
+	public String getUnits() {
+		return super.getUnits();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#getUnitsInstance()
+	 */
+	public UnitDefinition getUnitsInstance() {
+		return super.getUnitsInstance();
+	}
+
 	/**
 	 *(For SBML Level 1) Get the volume of this Compartment
 	 * 
@@ -188,7 +204,7 @@ public class Compartment extends Symbol {
 	public boolean isConstant() {
 		return constant;
 	}
-
+	
 	/**
 	 * 
 	 * @return
@@ -211,6 +227,14 @@ public class Compartment extends Symbol {
 	 */
 	public boolean isSetSize() {
 		return !Double.isNaN(getSize());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#isSetUnits()
+	 */
+	public boolean isSetUnits() {
+		return super.isSetUnits();
 	}
 
 	/**

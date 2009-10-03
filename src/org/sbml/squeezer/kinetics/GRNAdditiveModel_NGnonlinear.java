@@ -70,7 +70,7 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements In
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm()))&&!product.equals(modifierspec)) {
 				if (!modifier.isSetSBOTerm()) modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
+					modnode = speciesTerm(modifier.getSpeciesInstance());
 					p = createOrGetParameter("w_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
@@ -90,7 +90,7 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements In
 		ASTNode node = new ASTNode(this);
 		
 		Species product = r.getProduct(0).getSpeciesInstance();
-		ASTNode productnode = new ASTNode(product, this);	
+		ASTNode productnode = speciesTerm(product);	
 
 		Parameter p = createOrGetParameter("w_", rId);
 		ASTNode pnode = new ASTNode(p, this);

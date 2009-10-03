@@ -28,6 +28,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.SimpleSpeciesReference;
+import org.sbml.jsbml.Species;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -228,12 +230,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		return hr;
 	}
 
-	Parameter parameterKS(String reactionID, String enzyme) {
-		Parameter kS = createOrGetParameter("kSp_", reactionID);
-		kS.setSBOTerm(194);
-		return kS;
-	}
-
 	/**
 	 * 
 	 * @param reactionID
@@ -289,6 +285,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		return kI;
 	}
 
+	Parameter parameterKS(String reactionID, String enzyme) {
+		Parameter kS = createOrGetParameter("kSp_", reactionID);
+		kS.setSBOTerm(194);
+		return kS;
+	}
+
 	/**
 	 * 
 	 * @param reactionID
@@ -316,10 +318,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param enzyme
 	 * @return
 	 */
-	Parameter parameterMichaelisSubstrate(String reactionID, String species,
+	Parameter parameterMichaelisProduct(String reactionID, String species,
 			String enzyme) {
 		Parameter kM = parameterMichaelis(reactionID, species, enzyme);
-		kM.setSBOTerm(322);
+		kM.setSBOTerm(323);
 		return kM;
 	}
 
@@ -330,10 +332,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param enzyme
 	 * @return
 	 */
-	Parameter parameterMichaelisProduct(String reactionID, String species,
+	Parameter parameterMichaelisSubstrate(String reactionID, String species,
 			String enzyme) {
 		Parameter kM = parameterMichaelis(reactionID, species, enzyme);
-		kM.setSBOTerm(323);
+		kM.setSBOTerm(322);
 		return kM;
 	}
 
@@ -385,6 +387,65 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			kVr.setUnits(unitmMperSecond());
 		}
 		return kVr;
+	}
+
+	/**
+	 * 
+	 * @param species
+	 * @return
+	 */
+	ASTNode speciesTerm(Species species) {
+		boolean type = false;
+		if (typeParameters.length > 2)
+			type = ((Integer) typeParameters[2]).intValue() == 0;
+		ASTNode specTerm = new ASTNode(species, this);
+		if (type)
+			// set initial amount and units appropriately
+			species.setHasOnlySubstanceUnits(true);
+		else if (!species.getHasOnlySubstanceUnits())
+			// multiply with compartment size.
+			specTerm.multiplyWith(species.getCompartmentInstance());
+		return specTerm;
+	}
+	
+	/**
+	 * 
+	 * @param species
+	 * @return
+	 */
+	ASTNode speciesTerm(String species) {
+		return speciesTerm(getModel().getSpecies(species));
+	}
+	
+	/**
+	 * 
+	 * @param simpleSpecRef
+	 * @return
+	 */
+	ASTNode speciesTerm(SimpleSpeciesReference simpleSpecRef) {
+		return speciesTerm(simpleSpecRef.getSpeciesInstance());
+	}
+
+	/**
+	 * 
+	 * @return Unit milli mole per metre.
+	 */
+	UnitDefinition unitmMperMetre() {
+		UnitDefinition mMperMetre = unitmM().clone();
+		mMperMetre.addUnit(new Unit(Unit.Kind.METRE, -1, getLevel(),
+				getVersion()));
+		return mMperMetre;
+	}
+
+	/**
+	 * 
+	 * @return Unit milli mole per square metre.
+	 */
+	UnitDefinition unitmMperSquareMetre() {
+		UnitDefinition mMperSquareMetre = unitmM().clone();
+		mMperSquareMetre.addUnit(new Unit(Unit.Kind.METRE, -2, getLevel(),
+				getVersion()));
+		return mMperSquareMetre;
 	}
 
 	/*
@@ -449,13 +510,21 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		UnitDefinition mM = getModel().getUnitDefinition(id);
 		if (mM == null) {
 			mM = new UnitDefinition(id, getLevel(), getVersion());
-			mM.addUnit(new Unit(-3, Unit.Kind.MOLE, exponent, getLevel(),
-					getVersion()));
+			mM.addUnit(unitmmole());
 			mM.addUnit(new Unit(Unit.Kind.LITRE, -exponent, getLevel(),
 					getVersion()));
 			getModel().addUnitDefinition(mM);
 		}
 		return mM;
+	}
+
+	/**
+	 * Creates and returns the unit milli mole.
+	 * 
+	 * @return A Unit object that represents the unit milli mole.
+	 */
+	Unit unitmmole() {
+		return new Unit(-3, Unit.Kind.MOLE, getLevel(), getVersion());
 	}
 
 	/**

@@ -27,13 +27,13 @@ package org.sbml.jsbml;
 public abstract class Symbol extends AbstractNamedSBase {
 
 	/**
-	 * The unit attribute of this variable.
-	 */
-	private UnitDefinition units;
-	/**
 	 * The constant attribute of this variable.
 	 */
 	private boolean constant;
+	/**
+	 * The unit attribute of this variable.
+	 */
+	private UnitDefinition units;
 	/**
 	 * The size, initial amount or concentration, or the actual value of this
 	 * variable.
@@ -102,7 +102,7 @@ public abstract class Symbol extends AbstractNamedSBase {
 	 * 
 	 * @return
 	 */
-	public String getUnits() {
+	String getUnits() {
 		return isSetUnits() ? units.getId() : "";
 	}
 
@@ -110,8 +110,19 @@ public abstract class Symbol extends AbstractNamedSBase {
 	 * 
 	 * @return
 	 */
-	public UnitDefinition getUnitsInstance() {
+	UnitDefinition getUnitsInstance() {
 		return units;
+	}
+
+	/**
+	 * Returns the value of this variable. In Compartments the value is its
+	 * size, in Species the value defines its initial amount or concentration,
+	 * and in Parameters this returns the value attribute from SBML.
+	 * 
+	 * @return the value
+	 */
+	double getValue() {
+		return value;
 	}
 
 	/**
@@ -126,8 +137,16 @@ public abstract class Symbol extends AbstractNamedSBase {
 	 * 
 	 * @return
 	 */
-	public boolean isSetUnits() {
+	boolean isSetUnits() {
 		return units != null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	boolean isSetValue() {
+		return !Double.isNaN(value);
 	}
 
 	/**
@@ -182,32 +201,6 @@ public abstract class Symbol extends AbstractNamedSBase {
 	}
 
 	/**
-	 * 
-	 */
-	public void unsetValue() {
-		value = Double.NaN;
-	}
-
-	/**
-	 * Returns the value of this variable. In Compartments the value is its
-	 * size, in Species the value defines its initial amount or concentration,
-	 * and in Parameters this returns the value attribute from SBML.
-	 * 
-	 * @return the value
-	 */
-	double getValue() {
-		return value;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	boolean isSetValue() {
-		return !Double.isNaN(value);
-	}
-
-	/**
 	 * Note that the meaning of the value can be different in all derived
 	 * classes. In Compartments the value defines its size. In Species the value
 	 * describes either the initial amount or the initial concentration. Only
@@ -219,6 +212,13 @@ public abstract class Symbol extends AbstractNamedSBase {
 	void setValue(double value) {
 		this.value = value;
 		stateChanged();
+	}
+
+	/**
+	 * 
+	 */
+	public void unsetValue() {
+		value = Double.NaN;
 	}
 
 }

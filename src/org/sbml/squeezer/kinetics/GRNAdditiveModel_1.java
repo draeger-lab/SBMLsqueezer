@@ -66,7 +66,7 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModel implements
 		ASTNode node = new ASTNode(this);
 
 		Species product = r.getProduct(0).getSpeciesInstance();
-		ASTNode productnode = new ASTNode(product, this);
+		ASTNode productnode = speciesTerm(product);
 
 		Parameter p = createOrGetParameter("lambda_", rId);
 		ASTNode pnode = new ASTNode(p, this);

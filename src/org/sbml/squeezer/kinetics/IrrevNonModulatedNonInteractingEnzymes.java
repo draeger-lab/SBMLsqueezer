@@ -97,9 +97,9 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 							"This rate law can only be applied if all reactants have integer stoichiometries.");
 				Parameter p_kM = parameterMichaelisSubstrate(reaction.getId(), si.getSpecies(), enzyme);
 				ASTNode frac = ASTNode
-						.frac(this, si.getSpeciesInstance(), p_kM);
+						.frac(speciesTerm(si.getSpeciesInstance()), new ASTNode(p_kM, this));
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
-						this, si.getSpeciesInstance(), p_kM), si
+						speciesTerm(si.getSpeciesInstance()), new ASTNode(p_kM, this)), si
 						.getStoichiometry()));
 				denominator[i] = ASTNode.pow(ASTNode.sum(new ASTNode(1, this),
 						frac), new ASTNode(si.getStoichiometry(), this));

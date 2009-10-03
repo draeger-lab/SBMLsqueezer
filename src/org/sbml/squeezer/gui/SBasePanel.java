@@ -698,11 +698,28 @@ public class SBasePanel extends JPanel {
 						: "Unit: "), 1, ++row, 1, 1, 1, 1);
 		StringBuffer laTeXpreview = new StringBuffer();
 		laTeXpreview.append(LaTeX.eqBegin);
-		if (s.isSetUnits())
-			laTeXpreview.append((new LaTeXExport(settings)).format(
-					s.getUnitsInstance()).toString().replace("\\up", "\\")
-					.replace("mathrm", "mbox").replace("text", "mbox").replace(
-							"mathtt", "mbox"));
+		if (s instanceof Parameter) {
+			Parameter p = (Parameter) s;
+			if (p.isSetUnits())
+				laTeXpreview.append((new LaTeXExport(settings)).format(
+						p.getUnitsInstance()).toString().replace("\\up", "\\")
+						.replace("mathrm", "mbox").replace("text", "mbox")
+						.replace("mathtt", "mbox"));
+		} else if (s instanceof Compartment) {
+			Compartment c = (Compartment) s;
+			if (c.isSetUnits())
+				laTeXpreview.append((new LaTeXExport(settings)).format(
+						c.getUnitsInstance()).toString().replace("\\up", "\\")
+						.replace("mathrm", "mbox").replace("text", "mbox")
+						.replace("mathtt", "mbox"));
+		} else {// Species
+			Species spec = (Species) s;
+			if (spec.isSetSubstanceUnits())
+				laTeXpreview.append((new LaTeXExport(settings)).format(
+						spec.getSubstanceUnitsInstance()).toString().replace(
+						"\\up", "\\").replace("mathrm", "mbox").replace("text",
+						"mbox").replace("mathtt", "mbox"));
+		}
 		laTeXpreview.append(LaTeX.eqEnd);
 		JPanel preview = new JPanel(new BorderLayout());
 		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);

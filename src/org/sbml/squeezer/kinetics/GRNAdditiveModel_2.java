@@ -33,7 +33,6 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *
  */
 public class GRNAdditiveModel_2 extends GRNAdditiveModel implements InterfaceGeneRegulatoryKinetics {
-
 	
 	/**
 	 * @param parentReaction

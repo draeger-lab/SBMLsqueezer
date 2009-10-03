@@ -94,7 +94,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
+					modnode = speciesTerm(modifier.getSpeciesInstance());
 					p = createOrGetParameter("w_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
@@ -125,7 +125,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
+					modnode = speciesTerm(modifier.getSpeciesInstance());
 					p = createOrGetParameter("v_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
@@ -155,7 +155,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = new ASTNode(modifier.getSpeciesInstance(), this);
+					modnode = speciesTerm(modifier.getSpeciesInstance());
 					p = createOrGetParameter("lambda_", modifierNum,
 							underscore, rId);
 					pnode = new ASTNode(p, this);

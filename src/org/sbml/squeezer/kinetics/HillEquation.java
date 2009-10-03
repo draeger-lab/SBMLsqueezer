@@ -137,7 +137,7 @@ public class HillEquation extends BasicKineticLaw implements
 					.getSpeciesInstance();
 			ASTNode gene;
 			if (!SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm())) {
-				gene = new ASTNode(reactant, this);
+				gene = speciesTerm(reactant);
 				if (reaction.getReactant(reactantNum).getStoichiometry() != 1f) {
 					gene.raiseByThePowerOf(reaction.getReactant(reactantNum)
 							.getStoichiometry());

@@ -36,8 +36,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
@@ -416,14 +415,14 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 					// Activator Mod
 					Parameter p_kAn = parameterKa(r.getId(), modifiers.get(i));
 					mods[i] = ASTNode.frac(new ASTNode(modifiers.get(i), this),
-							ASTNode.sum(new ASTNode(p_kAn, this), new ASTNode(
-									modifiers.get(i), this)));
+							ASTNode.sum(new ASTNode(p_kAn, this),
+									speciesTerm(modifiers.get(i))));
 				} else {
 					// Inhibitor Mod
 					Parameter p_kIn = parameterKi(r.getId(), modifiers.get(i));
 					ASTNode kI = new ASTNode(p_kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI.clone(),
-							new ASTNode(modifiers.get(i), this)));
+							speciesTerm(modifiers.get(i))));
 				}
 			}
 			return ASTNode.times(mods);
@@ -474,7 +473,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		p_kass.setSBOTerm(153);
 		ASTNode ass = new ASTNode(p_kass, this);
 		for (SpeciesReference reactant : r.getListOfReactants()) {
-			ASTNode basis = new ASTNode(reactant.getSpeciesInstance(), this);
+			ASTNode basis = speciesTerm(reactant.getSpeciesInstance());
 			if (reactant.isSetStoichiometryMath())
 				basis.raiseByThePowerOf(reactant.getStoichiometryMath()
 						.getMath().clone());
@@ -488,10 +487,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 *      .util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -533,8 +531,8 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		ASTNode diss = new ASTNode(p_kdiss, this);
 		for (int products = 0; products < r.getNumProducts(); products++) {
 			SpeciesReference p = r.getProduct(products);
-			diss.multiplyWith(ASTNode.pow(new ASTNode(p.getSpeciesInstance(),
-					this), new ASTNode(p.getStoichiometry(), this)));
+			diss.multiplyWith(ASTNode.pow(speciesTerm(p.getSpeciesInstance()),
+					new ASTNode(p.getStoichiometry(), this)));
 		}
 		return diss;
 	}
