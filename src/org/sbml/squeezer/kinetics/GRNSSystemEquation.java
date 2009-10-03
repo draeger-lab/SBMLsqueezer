@@ -112,7 +112,7 @@ public class GRNSSystemEquation extends BasicKineticLaw implements
 		Parameter d = createOrGetParameter("d_", rId, underscore);
 
 		Species product = r.getProduct(0).getSpeciesInstance();
-		ASTNode productnode = new ASTNode(product, this);
+		ASTNode productnode = speciesTerm(product);
 
 		// Transkription
 		if (SBO.isTranscription(r.getSBOTerm())) {
@@ -150,7 +150,7 @@ public class GRNSSystemEquation extends BasicKineticLaw implements
 						e.setValue(-1);
 					}
 
-					ASTNode modnode = new ASTNode(modifierspec, this);
+					ASTNode modnode = speciesTerm(modifierspec);
 					ASTNode enode = new ASTNode(e, this);
 					if (kineticLawPart.isUnknown())
 						kineticLawPart = ASTNode.pow(modnode, enode);
@@ -175,7 +175,7 @@ public class GRNSSystemEquation extends BasicKineticLaw implements
 					// + " ist eine RNA! SBOTerm: "
 					// + modifier.getSBOTerm());
 
-					ASTNode modnode = new ASTNode(modifier, this);
+					ASTNode modnode = speciesTerm(modifier);
 
 					kineticLaw = ASTNode.diff(ASTNode.times(
 							new ASTNode(c, this), modnode), ASTNode.times(

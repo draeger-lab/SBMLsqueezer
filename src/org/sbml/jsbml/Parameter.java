@@ -43,7 +43,7 @@ public class Parameter extends Symbol {
 		super(id, level, version);
 		initDefaults();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -76,6 +76,22 @@ public class Parameter extends Symbol {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#getUnits()
+	 */
+	public String getUnits() {
+		return super.getUnits();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#getUnitsInstance()
+	 */
+	public UnitDefinition getUnitsInstance() {
+		return super.getUnitsInstance();
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jlibsbml.Symbol#getValue()
 	 */
@@ -94,6 +110,14 @@ public class Parameter extends Symbol {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.Symbol#isSetUnits()
+	 */
+	public boolean isSetUnits() {
+		return super.isSetUnits();
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jlibsbml.Symbol#isSetValue()
 	 */
@@ -101,7 +125,7 @@ public class Parameter extends Symbol {
 	public boolean isSetValue() {
 		return super.isSetValue();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.sbml.jsbml.Symbol#setUnits(org.sbml.jsbml.Unit)

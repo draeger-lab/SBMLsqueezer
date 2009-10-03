@@ -27,37 +27,36 @@ package org.sbml.jsbml;
 public class UnitDefinition extends AbstractNamedSBase {
 
 	/**
-	 * 
-	 */
-	private ListOf<Unit> listOfUnits;
-	
-	/**
-	 * Predefined unit for substance.
-	 */
-	public static final UnitDefinition SUBSTANCE = getPredefinedUnitd("substance");
-	
-	/**
-	 * Predefined unit for volume. 
-	 */
-	public static final UnitDefinition VOLUME = getPredefinedUnitd("volume");
-	/**
 	 * Predefined unit for area.
 	 */
-	public static final UnitDefinition AREA = getPredefinedUnitd("area");
+	public static final UnitDefinition AREA = getPredefinedUnit("area");
+
 	/**
 	 * Predefined unit for length.
 	 */
-	public static final UnitDefinition LENGTH = getPredefinedUnitd("length");
+	public static final UnitDefinition LENGTH = getPredefinedUnit("length");
+
+	/**
+	 * Predefined unit for substance.
+	 */
+	public static final UnitDefinition SUBSTANCE = getPredefinedUnit("substance");
+
 	/**
 	 * Predefined unit for time.
 	 */
-	public static final UnitDefinition TIME = getPredefinedUnitd("time");
+	public static final UnitDefinition TIME = getPredefinedUnit("time");
+
+	/**
+	 * Predefined unit for volume.
+	 */
+	public static final UnitDefinition VOLUME = getPredefinedUnit("volume");
+
 	/**
 	 * 
 	 * @param id
 	 * @return
 	 */
-	private static final UnitDefinition getPredefinedUnitd(String id) {
+	private static final UnitDefinition getPredefinedUnit(String id) {
 		id = id.toLowerCase();
 		Unit u = new Unit(2, 4);
 		UnitDefinition ud = new UnitDefinition(id, 2, 4);
@@ -87,7 +86,12 @@ public class UnitDefinition extends AbstractNamedSBase {
 		ud.addUnit(u);
 		return ud;
 	}
-	
+
+	/**
+	 * 
+	 */
+	private ListOf<Unit> listOfUnits;
+
 	/**
 	 * 
 	 * @param id
@@ -136,7 +140,20 @@ public class UnitDefinition extends AbstractNamedSBase {
 	public UnitDefinition clone() {
 		return new UnitDefinition(this);
 	}
-	
+
+	/**
+	 * Devides this unit definition by the second unit definition.
+	 * @param definition
+	 */
+	public UnitDefinition divideBy(UnitDefinition definition) {
+		for (Unit u : definition.getListOfUnits()) {
+			Unit unit = u.clone();
+			unit.setExponent(u.getExponent() * -1);
+			addUnit(unit);
+		}
+		return this;
+	}
+
 	/**
 	 * 
 	 * @return
@@ -144,7 +161,7 @@ public class UnitDefinition extends AbstractNamedSBase {
 	public ListOf<Unit> getListOfUnits() {
 		return listOfUnits;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -155,20 +172,111 @@ public class UnitDefinition extends AbstractNamedSBase {
 
 	/**
 	 * 
+	 */
+	private void initDefaults() {
+		listOfUnits = new ListOf<Unit>(getLevel(), getVersion());
+		setThisAsParentSBMLObject(listOfUnits);
+	}
+
+	/**
+	 * Convenience function for testing if a given unit definition is a variant
+	 * of the predefined unit identifier 'length'.
+	 * 
+	 * @param two
+	 * @return true if this UnitDefinition is a variant of the predefined unit
+	 *         length, meaning metres with only abritrary variations in scale or
+	 *         multiplier values; false otherwise.
+	 */
+	public boolean isVariantOfLength() {
+		if (listOfUnits.size() == 1)
+			return listOfUnits.getFirst().isVariantOfLength();
+		return false;
+	}
+
+	/**
+	 * Convenience function for testing if a given unit definition is a variant
+	 * of the predefined unit identifier 'substance'.
+	 * 
+	 * @return true if this UnitDefinition is a variant of the predefined unit
+	 *         substance, meaning moles or items (and grams or kilograms from
+	 *         SBML Level 2 Version 2 onwards) with only abritrary variations in
+	 *         scale or multiplier values; false otherwise.
+	 */
+	public boolean isVariantOfSubstance() {
+		if (listOfUnits.size() == 1)
+			return listOfUnits.getFirst().isVariantOfSubstance();
+		return false;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isVariantOfSubstancePerArea() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isVariantOfSubstancePerLength() {
+		if (listOfUnits.size() == 2) {
+			if (listOfUnits.get(0).isVariantOfSubstance()) {
+				Unit two = listOfUnits.get(1).clone();
+				two.setExponent(two.getExponent() * -1);
+				return two.isVariantOfLength();
+			} else if (listOfUnits.get(1).isVariantOfSubstance()) {
+				Unit one = listOfUnits.get(0).clone();
+				one.setExponent(one.getExponent() * -1);
+				return one.isVariantOfLength();
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isVariantOfSubstancePerVolume() {
+		if (listOfUnits.size() == 2) {
+			if (listOfUnits.get(0).isVariantOfSubstance()) {
+				Unit two = listOfUnits.get(1).clone();
+				two.setExponent(two.getExponent() * -1);
+				return two.isVariantOfVolume();
+			} else if (listOfUnits.get(1).isVariantOfSubstance()) {
+				Unit one = listOfUnits.get(0).clone();
+				one.setExponent(one.getExponent() * -1);
+				return one.isVariantOfVolume();
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Convenience function for testing if a given unit definition is a variant
+	 * of the predefined unit identifier 'volume'.
+	 * 
+	 * @return true if this UnitDefinition is a variant of the predefined unit
+	 *         volume, meaning litre or cubic metre with only abritrary
+	 *         variations in scale or multiplier values; false otherwise.
+	 */
+	public boolean isVariantOfVolume() {
+		if (listOfUnits.size() == 1)
+			return listOfUnits.getFirst().isVariantOfVolume();
+		return false;
+	}
+
+	/**
+	 * 
 	 * @param listOfUnits
 	 */
 	public void setListOfUnits(ListOf<Unit> listOfUnits) {
 		this.listOfUnits = listOfUnits;
 		setThisAsParentSBMLObject(listOfUnits);
 		stateChanged();
-	}
-
-	/**
-	 * 
-	 */
-	private void initDefaults() {
-		listOfUnits = new ListOf<Unit>(getLevel(), getVersion());
-		setThisAsParentSBMLObject(listOfUnits);
 	}
 
 }

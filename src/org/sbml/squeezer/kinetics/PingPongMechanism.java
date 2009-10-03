@@ -33,8 +33,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Wouamba</a>
  * 
  * @date Aug 1, 2007
@@ -42,7 +41,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class PingPongMechanism extends GeneralizedMassAction implements
 		InterfaceBiBiKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
-	
+
 	/**
 	 * @param parentReaction
 	 * @throws RateLawNotApplicableException
@@ -61,10 +60,9 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 * (java.util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -139,7 +137,8 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				kMr1 = concat("kMr1", kMr1.substring(2));
 				kMr2 = concat("kMr2", kMr2.substring(2));
 			}
-			Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme, true);
+			Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme,
+					true);
 			Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
 			p_kMr1.setSBOTerm(322);
 			Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
@@ -155,24 +154,24 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				if (modE.size() > 0)
 					numerator = ASTNode.times(numerator, new ASTNode(modE
 							.get(enzymeNum), this));
-				numerator = ASTNode.times(numerator, new ASTNode(specRefE1
-						.getSpeciesInstance(), this));
+				numerator = ASTNode.times(numerator, speciesTerm(specRefE1
+						.getSpeciesInstance()));
 
-				denominator = ASTNode.sum(ASTNode.times(this, p_kMr2, specRefE1
-						.getSpeciesInstance()), ASTNode.times(this, p_kMr1,
-						specRefE2.getSpeciesInstance()));
+				denominator = ASTNode.sum(ASTNode.times(new ASTNode(p_kMr2,
+						this), speciesTerm(specRefE1.getSpeciesInstance())),
+						ASTNode.times(new ASTNode(p_kMr1, this),
+								speciesTerm(specRefE2.getSpeciesInstance())));
 
 				if (specRefE2.equals(specRefE1)) {
 					numerator = ASTNode.pow(numerator, 2);
 					denominator = ASTNode.pow(ASTNode.sum(denominator,
-							new ASTNode(specRefE1.getSpeciesInstance(), this)),
-							2);
+							speciesTerm(specRefE1.getSpeciesInstance())), 2);
 				} else {
-					numerator = ASTNode.times(numerator, new ASTNode(specRefE2
-							.getSpeciesInstance(), this));
-					denominator = ASTNode.sum(denominator, ASTNode.times(this,
-							specRefE1.getSpeciesInstance(), specRefE2
-									.getSpeciesInstance()));
+					numerator.multiplyWith(speciesTerm(specRefE2
+							.getSpeciesInstance()));
+					denominator.plus(ASTNode.times(speciesTerm(specRefE1
+							.getSpeciesInstance()), speciesTerm(specRefE2
+							.getSpeciesInstance())));
 				}
 
 				/*
@@ -207,7 +206,8 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 					kIp1 = concat("kip1", kIp1.substring(2));
 					kIp2 = concat("kip2", kIp2.substring(2));
 				}
-				Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(), enzyme, false);
+				Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
+						enzyme, false);
 				Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
 				p_kMp1.setSBOTerm(322);
 				Parameter p_kMp2 = createOrGetParameter(kMp2.toString());
@@ -227,61 +227,69 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				if (modE.size() > 0)
 					numeratorForward = ASTNode.times(numeratorForward,
 							new ASTNode(modE.get(enzymeNum), this));
-				denominator = ASTNode.sum(ASTNode.frac(this, specRefE1
-						.getSpeciesInstance(), p_kIr1), ASTNode.frac(ASTNode
-						.times(this, p_kMr1, specRefE2.getSpeciesInstance()),
-						ASTNode.times(this, p_kIr1, p_kMr2)), ASTNode.frac(
-						this, specRefP1.getSpeciesInstance(), p_kIp1), ASTNode
-						.frac(ASTNode.times(this, p_kMp1, specRefP2
-								.getSpeciesInstance()), ASTNode.times(this,
-								p_kIp1, p_kMp2)));
+				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(specRefE1
+						.getSpeciesInstance()), new ASTNode(p_kIr1, this)),
+						ASTNode.frac(ASTNode.times(new ASTNode(p_kMr1, this),
+								speciesTerm(specRefE2.getSpeciesInstance())),
+								ASTNode.times(this, p_kIr1, p_kMr2)), ASTNode
+								.frac(speciesTerm(specRefP1
+										.getSpeciesInstance()), new ASTNode(
+										p_kIp1, this)), ASTNode.frac(ASTNode
+								.times(new ASTNode(p_kMp1, this),
+										speciesTerm(specRefP2
+												.getSpeciesInstance())),
+								ASTNode.times(this, p_kIp1, p_kMp2)));
 				if (specRefE2.equals(specRefE1)) {
-					numeratorForward = ASTNode.times(numeratorForward, ASTNode
-							.pow(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), 2));
-					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-							.pow(new ASTNode(specRefE1.getSpeciesInstance(),
-									this), 2), ASTNode.times(this, p_kIr1,
-							p_kMr2)));
+					numeratorForward = ASTNode.times(numeratorForward,
+							ASTNode.pow(speciesTerm(specRefE1
+									.getSpeciesInstance()), 2));
+					denominator = ASTNode.sum(denominator, ASTNode.frac(
+							ASTNode.pow(speciesTerm(specRefE1
+									.getSpeciesInstance()), 2), ASTNode.times(
+									this, p_kIr1, p_kMr2)));
 				} else {
 					numeratorForward = ASTNode.times(numeratorForward,
-							new ASTNode(specRefE1.getSpeciesInstance(), this),
-							new ASTNode(specRefE2.getSpeciesInstance(), this));
-					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-							.times(this, specRefE1.getSpeciesInstance(),
-									specRefE2.getSpeciesInstance()), ASTNode
-							.times(this, p_kIr1, p_kMr2)));
+							speciesTerm(specRefE1.getSpeciesInstance()),
+							speciesTerm(specRefE2.getSpeciesInstance()));
+					denominator = ASTNode.sum(denominator, ASTNode.frac(
+							ASTNode
+									.times(speciesTerm(specRefE1
+											.getSpeciesInstance()),
+											speciesTerm(specRefE2
+													.getSpeciesInstance())),
+							ASTNode.times(this, p_kIr1, p_kMr2)));
 				}
 
 				denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-						.times(this, specRefE1.getSpeciesInstance(), specRefP1
-								.getSpeciesInstance()), ASTNode.times(this,
-						p_kIr1, p_kIp1)), ASTNode.frac(ASTNode.times(this,
-						p_kMr1, specRefE2.getSpeciesInstance(), specRefP2
-								.getSpeciesInstance()), ASTNode.times(this,
-						p_kIr1, p_kMr2, p_kIp2)));
+						.times(speciesTerm(specRefE1.getSpeciesInstance()),
+								speciesTerm(specRefP1.getSpeciesInstance())),
+						ASTNode.times(this, p_kIr1, p_kIp1)), ASTNode.frac(
+						ASTNode.times(new ASTNode(p_kMr1, this),
+								speciesTerm(specRefE2.getSpeciesInstance()),
+								speciesTerm(specRefP2.getSpeciesInstance())),
+						ASTNode.times(this, p_kIr1, p_kMr2, p_kIp2)));
 
 				if (modE.size() > 0)
 					numeratorReverse = ASTNode.times(numeratorReverse,
 							new ASTNode(modE.get(enzymeNum), this));
 
-				ASTNode denominator_p1p2 = new ASTNode(specRefE1
-						.getSpeciesInstance(), this);
+				ASTNode denominator_p1p2 = speciesTerm(specRefE1
+						.getSpeciesInstance());
 				if (specRefP2.equals(specRefP1)) {
-					numeratorReverse = ASTNode.times(numeratorReverse, ASTNode
-							.pow(new ASTNode(specRefP1.getSpeciesInstance(),
-									this), 2));
-					denominator_p1p2 = ASTNode.pow(new ASTNode(specRefP1
-							.getSpeciesInstance(), this), 2);
+					numeratorReverse = ASTNode.times(numeratorReverse,
+							ASTNode.pow(speciesTerm(specRefP1
+									.getSpeciesInstance()), 2));
+					denominator_p1p2 = ASTNode.pow(speciesTerm(specRefP1
+							.getSpeciesInstance()), 2);
 
 				} else {
-					numeratorReverse = ASTNode.times(numeratorReverse,
-							new ASTNode(specRefP1.getSpeciesInstance(), this),
-							new ASTNode(specRefP2.getSpeciesInstance(), this));
+					numeratorReverse.multiplyWith(speciesTerm(specRefP1
+							.getSpeciesInstance()), speciesTerm(specRefP2
+							.getSpeciesInstance()));
 
-					denominator_p1p2 = ASTNode.times(this, specRefP1
-							.getSpeciesInstance(), specRefP2
-							.getSpeciesInstance());
+					denominator_p1p2 = ASTNode.times(speciesTerm(specRefP1
+							.getSpeciesInstance()), speciesTerm(specRefP2
+							.getSpeciesInstance()));
 				}
 				numerator = ASTNode.diff(numeratorForward, numeratorReverse);
 				denominator_p1p2 = ASTNode.frac(denominator_p1p2, ASTNode
@@ -293,9 +301,10 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {

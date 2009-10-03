@@ -127,24 +127,26 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				/*
 				 * Irreversible Reaction
 				 */
-				numerator = ASTNode.times(this, p_kcatp, speciesR);
-				denominator = new ASTNode(speciesR, this);
+				numerator = ASTNode.times(new ASTNode(p_kcatp, this),
+						speciesTerm(speciesR));
+				denominator = speciesTerm(speciesR);
 			} else {
 				/*
 				 * Reversible Reaction
 				 */
 				numerator = ASTNode.times(ASTNode.frac(this, p_kcatp, p_kMr),
-						new ASTNode(speciesR, this));
-				denominator = ASTNode.frac(this, speciesR, p_kMr);
+						speciesTerm(speciesR));
+				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(
+						p_kMr, this));
 				Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
 						enzyme, false);
 				Parameter p_kMp = parameterMichaelisProduct(reaction.getId(),
 						speciesP.getId(), enzyme);
 
 				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
-						this, p_kcatn, p_kMp), new ASTNode(speciesP, this)));
-				denominator = ASTNode.sum(denominator, ASTNode.frac(this,
-						speciesP, p_kMp));
+						this, p_kcatn, p_kMp), speciesTerm(speciesP)));
+				denominator.plus(ASTNode.frac(speciesTerm(speciesP),
+						new ASTNode(p_kMp, this)));
 			}
 			denominator = createInihibitionTerms(modInhib, reaction, modE,
 					denominator, p_kMr, enzymeNum);
@@ -158,8 +160,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			// construct formula
 			currEnzymeKin = ASTNode.frac(numerator, denominator);
 			if (modE.size() > 0)
-				currEnzymeKin = ASTNode.times(new ASTNode(modE.get(enzymeNum),
-						this), currEnzymeKin);
+				currEnzymeKin = ASTNode.times(speciesTerm(modE.get(enzymeNum)),
+						currEnzymeKin);
 			formula[enzymeNum++] = currEnzymeKin;
 		} while (enzymeNum < modE.size());
 		ASTNode sum = ASTNode.sum(formula);
@@ -199,7 +201,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			Parameter p_kIb = createOrGetParameter(kIb.toString());
 			p_kIb.setSBOTerm(261);
 
-			ASTNode specRefI = new ASTNode(modInhib.get(0), this);
+			ASTNode specRefI = speciesTerm(modInhib.get(0));
 			if (reaction.getReversible())
 				denominator = ASTNode.sum(ASTNode.frac(specRefI, new ASTNode(
 						p_kIa, this)), ASTNode.times(denominator, ASTNode.sum(
@@ -232,7 +234,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				p_kIai.setSBOTerm(261);
 				Parameter p_kIbi = createOrGetParameter(kIbi.toString());
 				p_kIbi.setSBOTerm(261);
-				ASTNode specRefI = new ASTNode(modInhib.get(i), this);
+				ASTNode specRefI = speciesTerm(modInhib.get(i));
 				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, new ASTNode(
 						p_kIai, this)));
 				sumIb = ASTNode.sum(sumIb, ASTNode.frac(specRefI, new ASTNode(

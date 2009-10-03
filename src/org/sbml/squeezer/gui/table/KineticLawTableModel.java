@@ -20,11 +20,13 @@ package org.sbml.squeezer.gui.table;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
 /**
  * TODO: comment missing
@@ -70,7 +72,8 @@ public class KineticLawTableModel extends AbstractTableModel {
 		data = new Object[klg.getNumCreatedKinetics()][this.columnNames.length];
 		numOfWarnings = 0;
 
-		int maxNumReactants = ((Integer) (klg.getSettings().get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
+		int maxNumReactants = ((Integer) (klg.getSettings()
+				.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
 		for (reactionNum = 0; reactionNum < klg.getNumCreatedKinetics(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
 			if (reaction.getNumReactants() >= maxNumReactants)
@@ -82,7 +85,8 @@ public class KineticLawTableModel extends AbstractTableModel {
 						break;
 					}
 			String kinetic = reaction.getKineticLaw().getFormula();
-			ListOf<Parameter> param = reaction.getKineticLaw().getListOfParameters();
+			ListOf<Parameter> param = reaction.getKineticLaw()
+					.getListOfParameters();
 			numReac = 0;
 			for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++)
 				numReac += reaction.getReactant(speciesNum).getStoichiometry();
@@ -104,12 +108,16 @@ public class KineticLawTableModel extends AbstractTableModel {
 				para += param.get(j).getId() + ", ";
 			para += param.get(param.size() - 1).getId();
 
+			KineticLaw kl = reaction.getKineticLaw();
+
 			// Reaction Identifier
 			data[reactionNum][0] = reaction.getId();
 			// Kinetic Law
-			data[reactionNum][1] = reaction.getKineticLaw().toString();
+			data[reactionNum][1] = kl instanceof BasicKineticLaw ? ((BasicKineticLaw) kl)
+					.getSimpleName()
+					: kl.toString();
 			// SBO
-			data[reactionNum][2] = reaction.getKineticLaw().getSBOTermID();
+			data[reactionNum][2] = kl.getSBOTermID();
 			// #Reactants
 			data[reactionNum][3] = Double.valueOf(numReac);
 			// Reactants
@@ -186,7 +194,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object,
-	 * int, int)
+	 *      int, int)
 	 */
 	// @Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {

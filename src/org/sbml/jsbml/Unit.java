@@ -82,6 +82,10 @@ public class Unit extends AbstractSBase {
 		 */
 		HERTZ,
 		/**
+		 * Marker used by libSBML to indicate an invalid or unset unit.
+		 */
+		INVALID,
+		/**
 		 * A pseudo-unit representing a single 'thing'. (This is in fact defined
 		 * in the SBML specification.)
 		 */
@@ -177,11 +181,7 @@ public class Unit extends AbstractSBase {
 		/**
 		 * The weber unit.
 		 */
-		WEBER,
-		/**
-		 * Marker used by libSBML to indicate an invalid or unset unit.
-		 */
-		INVALID;
+		WEBER;
 
 		/**
 		 * Returns the name of this unit kind.
@@ -285,25 +285,27 @@ public class Unit extends AbstractSBase {
 	/**
 	 * 
 	 */
-	private Kind kind;
-	/**
-	 * 
-	 */
 	private int exponent;
 
 	/**
 	 * 
 	 */
-	private int scale;
+	private Kind kind;
 
 	/**
 	 * 
 	 */
 	private double multiplier;
+
 	/**
 	 * 
 	 */
 	private double offset;
+
+	/**
+	 * 
+	 */
+	private int scale;
 
 	/**
 	 * 
@@ -376,10 +378,15 @@ public class Unit extends AbstractSBase {
 	}
 
 	/**
-	 * @param sb
+	 * @param unit
 	 */
-	public Unit(Unit sb) {
-		super(sb);
+	public Unit(Unit unit) {
+		super(unit);
+		this.exponent = unit.getExponent();
+		this.kind = unit.getKind();
+		this.multiplier = unit.getMultiplier();
+		this.offset = unit.getOffset();
+		this.scale = unit.getScale();
 	}
 
 	/*
@@ -457,6 +464,50 @@ public class Unit extends AbstractSBase {
 	 */
 	public boolean isKilogram() {
 		return kind == Kind.KILOGRAM;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private boolean isSetOffset() {
+		return offset != 0d;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isVariantOfLength() {
+		Kind kind = getKind();
+		return kind == Kind.METER || kind == Kind.METRE && getOffset() == 0
+				&& getExponent() == 1;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isVariantOfSubstance() {
+		Kind kind = getKind();
+		if (kind == Kind.MOLE
+				|| kind == Kind.ITEM
+				|| (((level == 2 && version > 1) || level > 2) && (kind == Kind.GRAM || kind == Kind.KILOGRAM)))
+			return getOffset() == 0 && getExponent() == 1;
+		return false;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isVariantOfVolume() {
+		Kind kind = getKind();
+		if (kind == Unit.Kind.LITER || kind == Unit.Kind.LITRE)
+			return getOffset() == 0 && getExponent() == 1;
+		if (kind == Unit.Kind.METER || kind == Unit.Kind.METRE)
+			return getOffset() == 0 && getExponent() == 3;
+		return false;
 	}
 
 	/**
@@ -579,14 +630,6 @@ public class Unit extends AbstractSBase {
 		if (isSetOffset())
 			times = TextFormula.sum(Double.toString(offset), times);
 		return TextFormula.pow(times, Integer.valueOf(exponent)).toString();
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	private boolean isSetOffset() {
-		return offset != 0d;
 	}
 
 }

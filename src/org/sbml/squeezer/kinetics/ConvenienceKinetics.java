@@ -159,8 +159,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 				Parameter p_kM = parameterMichaelisSubstrate(reaction.getId(),
 						ref.getSpecies(), enzyme);
 				Parameter p_kiG = parameterKG(ref.getSpecies());
-				reactants[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
-						.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
+				reactants[i] = ASTNode.pow(ASTNode.frac(speciesTerm(ref
+						.getSpeciesInstance()), new ASTNode(p_kM, this)),
 						new ASTNode(ref.getStoichiometry(), this));
 				reactantsroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(p_kiG,
 						this), new ASTNode(p_kM, this)), new ASTNode(ref
@@ -172,8 +172,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 				Parameter p_kM = parameterMichaelisProduct(reaction.getId(),
 						ref.getSpecies(), enzyme);
 				Parameter p_kiG = parameterKG(ref.getSpecies());
-				products[i] = ASTNode.pow(ASTNode.frac(new ASTNode(ref
-						.getSpeciesInstance(), this), new ASTNode(p_kM, this)),
+				products[i] = ASTNode.pow(ASTNode.frac(speciesTerm(ref
+						.getSpeciesInstance()), new ASTNode(p_kM, this)),
 						new ASTNode(ref.getStoichiometry(), this));
 				productroot[i] = ASTNode.pow(ASTNode.times(new ASTNode(p_kiG,
 						this), new ASTNode(p_kM, this)), new ASTNode(ref
@@ -201,7 +201,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 					.getListOfReactants() : reaction.getListOfProducts();
 			equation = new ASTNode(kcat, this);
 			for (SpeciesReference specRef : listOf) {
-				ASTNode curr = new ASTNode(specRef.getSpeciesInstance(), this);
+				ASTNode curr = speciesTerm(specRef.getSpeciesInstance());
 				if (specRef.getStoichiometry() != 1d)
 					curr.raiseByThePowerOf(specRef.getStoichiometry());
 				equation.multiplyWith(curr);
@@ -252,12 +252,13 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 							.getSpecies(), enzyme);
 			if (!p_kM.isSetSBOTerm())
 				p_kM.setSBOTerm(forward ? 322 : 323);
-			denoms[i] = ASTNode.pow(ASTNode.frac(this,
-					ref.getSpeciesInstance(), p_kM), (int) ref
+			denoms[i] = ASTNode.pow(ASTNode.frac(speciesTerm(ref
+					.getSpeciesInstance()), new ASTNode(p_kM, this)), (int) ref
 					.getStoichiometry());
 			for (int j = (int) ref.getStoichiometry() - 1; j >= (noOne ? 1 : 0); j--) {
-				denoms[i] = ASTNode.sum(ASTNode.pow(ASTNode.frac(this, ref
-						.getSpeciesInstance(), p_kM), j), denoms[i]);
+				denoms[i] = ASTNode.sum(ASTNode.pow(ASTNode.frac(
+						speciesTerm(ref.getSpeciesInstance()), new ASTNode(
+								p_kM, this)), j), denoms[i]);
 			}
 		}
 		return denoms;

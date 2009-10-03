@@ -35,8 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * 
  * @date Aug 1, 2007
  */
@@ -51,18 +50,18 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public RandomOrderMechanism(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+	public RandomOrderMechanism(Reaction parentReaction,
+			Object... typeParameters) throws RateLawNotApplicableException,
+			IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 * (java.util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -146,7 +145,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 				StringBuffer kMr2 = concat("kM_", reaction.getId());
 				StringBuffer kIr1 = concat("ki_", reaction.getId());
 
-				if (modE.size()> 0) {
+				if (modE.size() > 0) {
 					if (modE.size() > 1) {
 						append(kMr2, underscore, modE.get(enzymeNum));
 						append(kMr1, underscore, modE.get(enzymeNum));
@@ -162,7 +161,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					append(kMr2, "kMr2", kMr2.substring(2));
 				}
 				append(kIr1, underscore, speciesR1);
-				Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme, true);
+				Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(),
+						enzyme, true);
 				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
 				p_kMr1.setSBOTerm(322);
 				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
@@ -175,19 +175,20 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					numerator = ASTNode.times(numerator, new ASTNode(modE
 							.get(enzymeNum), this));
 				if (specRefR2.equals(specRefR1)) {
-					ASTNode r1square = ASTNode.pow(
-							new ASTNode(speciesR1, this), 2);
+					ASTNode r1square = ASTNode.pow(speciesTerm(speciesR1), 2);
 					numerator = ASTNode.times(numerator, r1square);
 					denominator = ASTNode.sum(ASTNode.times(this, p_kIr1,
 							p_kMr2), ASTNode.times(ASTNode.sum(this, p_kMr1,
-							p_kMr2), new ASTNode(speciesR1, this)), r1square);
+							p_kMr2), speciesTerm(speciesR1)), r1square);
 				} else {
-					numerator = ASTNode.times(numerator, new ASTNode(speciesR1,
-							this), new ASTNode(speciesR2, this));
+					numerator = ASTNode.times(numerator,
+							speciesTerm(speciesR1), speciesTerm(speciesR2));
 					denominator = ASTNode.sum(ASTNode.times(this, p_kIr1,
-							p_kMr2), ASTNode.times(this, p_kMr2, speciesR1),
-							ASTNode.times(this, p_kMr1, speciesR2), ASTNode
-									.times(this, speciesR1, speciesR2));
+							p_kMr2), ASTNode.times(new ASTNode(p_kMr2, this),
+							speciesTerm(speciesR1)), ASTNode.times(new ASTNode(
+							p_kMr1, this), speciesTerm(speciesR2)), ASTNode
+							.times(speciesTerm(speciesR1),
+									speciesTerm(speciesR2)));
 				}
 			} else {
 				/*
@@ -230,8 +231,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 						kIp1 = concat("kip1", kIp1.substring(2));
 						kIp2 = concat("kip2", kIp2.substring(2));
 					}
-					Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme, true);
-					Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(), enzyme, false);
+					Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(),
+							enzyme, true);
+					Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
+							enzyme, false);
 					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
 					p_kMr2.setSBOTerm(322);
 					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
@@ -259,23 +262,27 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					}
 					// happens if the reactant has a stoichiometry of two.
 					ASTNode r1r2 = specRefR1.equals(specRefR2) ? ASTNode.pow(
-							new ASTNode(speciesR1, this), 2) : ASTNode.times(
-							this, speciesR1, speciesR2);
+							speciesTerm(speciesR1), 2) : ASTNode.times(
+							speciesTerm(speciesR1), speciesTerm(speciesR2));
 					// happens if the product has a stoichiometry of two.
 					ASTNode p1p2 = specRefP1.equals(specRefP2) ? ASTNode.pow(
-							new ASTNode(speciesP1, this), 2) : ASTNode.times(
-							this, speciesP1, speciesP2);
+							speciesTerm(speciesP1), 2) : ASTNode.times(
+							speciesTerm(speciesP1), speciesTerm(speciesP2));
 					numeratorForward = ASTNode.times(numeratorForward, r1r2);
 					numeratorReverse = ASTNode.times(numeratorReverse, p1p2);
 					numerator = ASTNode
 							.diff(numeratorForward, numeratorReverse);
 					denominator = ASTNode.sum(new ASTNode(1, this), ASTNode
-							.frac(this, speciesR1, p_kIr1), ASTNode.frac(this,
-							speciesR2, p_kIr2), ASTNode.frac(this, speciesP1,
-							p_kIp1), ASTNode.frac(this, speciesP2, p_kIp2),
-							ASTNode.frac(p1p2, ASTNode.times(this, p_kIp2,
-									p_kMp1)), ASTNode.frac(r1r2, ASTNode.times(
-									this, p_kIr1, p_kMr2)));
+							.frac(speciesTerm(speciesR1), new ASTNode(p_kIr1,
+									this)), ASTNode.frac(
+							speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
+							ASTNode.frac(speciesTerm(speciesP1), new ASTNode(
+									p_kIp1, this)), ASTNode.frac(
+									speciesTerm(speciesP2), new ASTNode(p_kIp2,
+											this)), ASTNode.frac(p1p2, ASTNode
+									.times(this, p_kIp2, p_kMp1)), ASTNode
+									.frac(r1r2, ASTNode.times(this, p_kIr1,
+											p_kMr2)));
 				} else {
 					/*
 					 * Reversible reaction: Bi-Uni reaction
@@ -306,8 +313,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 						append(kIr1, "kip1", kIr1.substring(2));
 						append(kIr2, "kip2", kIr2.substring(2));
 					}
-					Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme, true);
-					Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(), enzyme, false);
+					Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(),
+							enzyme, true);
+					Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
+							enzyme, false);
 					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
 					p_kMr2.setSBOTerm(322);
 					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
@@ -319,9 +328,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 
 					ASTNode r1r2;
 					if (specRefR1.equals(specRefR2))
-						r1r2 = ASTNode.pow(new ASTNode(speciesR1, this), 2);
+						r1r2 = ASTNode.pow(speciesTerm(speciesR1), 2);
 					else
-						r1r2 = ASTNode.times(this, speciesR1, speciesR2);
+						r1r2 = ASTNode.times(speciesTerm(speciesR1),
+								speciesTerm(speciesR2));
 					ASTNode numeratorForward = ASTNode
 							.frac(new ASTNode(p_kcatp, this), ASTNode.times(
 									this, p_kIr1, p_kMr2));
@@ -335,14 +345,16 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					}
 					numeratorForward = ASTNode.times(numeratorForward, r1r2);
 					numeratorReverse = ASTNode.times(numeratorReverse,
-							new ASTNode(speciesP1, this));
+							speciesTerm(speciesP1));
 					numerator = ASTNode
 							.diff(numeratorForward, numeratorReverse);
 					denominator = ASTNode.sum(new ASTNode(1, this), ASTNode
-							.frac(this, speciesR1, p_kIr1), ASTNode.frac(this,
-							speciesR2, p_kIr2), ASTNode.frac(r1r2, ASTNode
-							.times(this, p_kIr1, p_kMr2)), ASTNode.frac(this,
-							speciesP1, p_kMp1));
+							.frac(speciesTerm(speciesR1), new ASTNode(p_kIr1,
+									this)), ASTNode.frac(
+							speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
+							ASTNode.frac(r1r2, ASTNode.times(this, p_kIr1,
+									p_kMr2)), ASTNode.frac(speciesTerm(speciesP1),
+									new ASTNode(p_kMp1, this)));
 				}
 			}
 			// Construct formula
@@ -351,9 +363,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {

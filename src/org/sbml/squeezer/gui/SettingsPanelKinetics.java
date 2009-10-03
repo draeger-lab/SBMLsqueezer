@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml.squeezer.gui;
 
@@ -55,8 +55,7 @@ import org.sbml.squeezer.SBMLsqueezer;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Nov 15, 2007
  */
 public class SettingsPanelKinetics extends JPanel implements ChangeListener,
@@ -67,40 +66,43 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 	 */
 	private static final long serialVersionUID = 5242359204965070649L;
 
-	private JCheckBox jCheckBoxTreatAllReactionsAsEnzyeReaction;
+	private List<ChangeListener> changeListeners;
+
+	private List<ItemListener> itemListeners;
 
 	private JCheckBox jCheckBoxAddAllParametersGlobally;
 
-	private JSpinner jSpinnerMaxRealisticNumOfReactants;
-
-	private JCheckBox jCheckBoxWarnings;
-
-	private JRadioButton jRadioButtonGenerateForAllReactions;
-
-	private JRadioButton jRadioButtonForceReacRev;
-
-	private JCheckBox jCheckBoxPossibleEnzymeRNA;
-
 	private JCheckBox jCheckBoxPossibleEnzymeAsRNA;
-
-	private JCheckBox jCheckBoxPossibleEnzymeGenericProtein;
-
-	private JCheckBox jCheckBoxPossibleEnzymeTruncatedProtein;
-
-	private JCheckBox jCheckBoxPossibleEnzymeSimpleMolecule;
 
 	private JCheckBox jCheckBoxPossibleEnzymeComplex;
 
+	private JCheckBox jCheckBoxPossibleEnzymeGenericProtein;
+
 	private JCheckBox jCheckBoxPossibleEnzymeReceptor;
+
+	private JCheckBox jCheckBoxPossibleEnzymeRNA;
+
+	private JCheckBox jCheckBoxPossibleEnzymeSimpleMolecule;
+
+	private JCheckBox jCheckBoxPossibleEnzymeTruncatedProtein;
 
 	private JCheckBox jCheckBoxPossibleEnzymeUnknown;
 
+	private JCheckBox jCheckBoxTreatAllReactionsAsEnzyeReaction;
+
+	private JRadioButton jRadioButtonTypeUnitConsistency;
+
+	private JCheckBox jCheckBoxWarnings;
+
 	private JComboBox jComboBoxTypeStandardVersion;
 
-	private Properties settings;
+	private JRadioButton jRadioButtonForceReacRev;
 
-	private List<ItemListener> itemListeners;
-	private List<ChangeListener> changeListeners;
+	private JRadioButton jRadioButtonGenerateForAllReactions;
+
+	private JSpinner jSpinnerMaxRealisticNumOfReactants;
+
+	private Properties settings;
 
 	/**
 	 * 
@@ -118,6 +120,62 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		this.itemListeners = new LinkedList<ItemListener>();
 		this.changeListeners = new LinkedList<ChangeListener>();
 		init();
+	}
+
+	/**
+	 * 
+	 * @param l
+	 */
+	public void addChangeListener(ChangeListener l) {
+		changeListeners.add(l);
+	}
+
+	/**
+	 * 
+	 * @param l
+	 */
+	public void addItemListener(ItemListener l) {
+		itemListeners.add(l);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Set<Integer> getPossibleEnzymes() {
+		Set<Integer> possibleEnzymes = new HashSet<Integer>();
+		if (jCheckBoxPossibleEnzymeAsRNA.isSelected())
+			possibleEnzymes.add(Integer.valueOf(SBO
+					.convertAlias2SBO("ANTISENSE_RNA")));
+		if (jCheckBoxPossibleEnzymeSimpleMolecule.isSelected())
+			possibleEnzymes.add(Integer.valueOf(SBO
+					.convertAlias2SBO("SIMPLE_MOLECULE")));
+		if (jCheckBoxPossibleEnzymeReceptor.isSelected())
+			possibleEnzymes.add(Integer.valueOf(SBO
+					.convertAlias2SBO("RECEPTOR")));
+		if (jCheckBoxPossibleEnzymeUnknown.isSelected())
+			possibleEnzymes.add(Integer
+					.valueOf(SBO.convertAlias2SBO("UNKNOWN")));
+		if (jCheckBoxPossibleEnzymeComplex.isSelected())
+			possibleEnzymes.add(Integer
+					.valueOf(SBO.convertAlias2SBO("COMPLEX")));
+		if (jCheckBoxPossibleEnzymeTruncatedProtein.isSelected())
+			possibleEnzymes.add(Integer.valueOf(SBO
+					.convertAlias2SBO("TRUNCATED")));
+		if (jCheckBoxPossibleEnzymeGenericProtein.isSelected())
+			possibleEnzymes.add(Integer
+					.valueOf(SBO.convertAlias2SBO("GENERIC")));
+		if (jCheckBoxPossibleEnzymeRNA.isSelected())
+			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("RNA")));
+		return possibleEnzymes;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Properties getSettings() {
+		return settings;
 	}
 
 	/**
@@ -333,6 +391,24 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
 				jCheckBoxPossibleEnzymeSimpleMolecule, 3, 1, 1, 1, 1, 1);
 
+		JPanel jPanelTypeUnitConsistency = new JPanel();
+		LayoutHelper unitConsistency = new LayoutHelper(
+				jPanelTypeUnitConsistency);
+		jRadioButtonTypeUnitConsistency = new JRadioButton(GUITools.toHTML(
+				"Set species to substance units", 60), ((Integer) this.settings
+				.get(CfgKeys.TYPE_UNIT_CONSISTENCY)).intValue() == 0);
+		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(GUITools
+				.toHTML("Multyply species with surrounding compartment size",
+						60), !jRadioButtonTypeUnitConsistency.isSelected());
+		buttonGroup = new ButtonGroup();
+		buttonGroup.add(jRadioButtonTypeUnitConsistency);
+		buttonGroup.add(jRadioButtonTypeUnitsCompVol);
+		unitConsistency.add(jRadioButtonTypeUnitConsistency);
+		unitConsistency.add(jRadioButtonTypeUnitsCompVol);
+		jPanelTypeUnitConsistency.setBorder(BorderFactory
+				.createTitledBorder(" Select how to ensure unit consistency "));
+		GUITools.setAllBackground(jPanelTypeUnitConsistency, Color.WHITE);
+
 		JPanel jPanelStandardVersions = new JPanel();
 		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
 				"hal", "weg" });
@@ -362,7 +438,9 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, layout, jPanelSettingsEnzymes, 0, 2, 2,
 				1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 0, 3,
+		LayoutHelper.addComponent(this, layout, jPanelTypeUnitConsistency, 0,
+				3, 2, 1, 1, 1);
+		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 0, 4,
 				2, 1, 1, 1);
 
 		setBackground(Color.WHITE);
@@ -383,107 +461,14 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxPossibleEnzymeUnknown.addItemListener(this);
 		jCheckBoxPossibleEnzymeAsRNA.addItemListener(this);
 		jCheckBoxPossibleEnzymeSimpleMolecule.addItemListener(this);
+		jRadioButtonTypeUnitConsistency.addItemListener(this);
 		jComboBoxTypeStandardVersion.addItemListener(this);
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Set<Integer> getPossibleEnzymes() {
-		Set<Integer> possibleEnzymes = new HashSet<Integer>();
-		if (jCheckBoxPossibleEnzymeAsRNA.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO
-					.convertAlias2SBO("ANTISENSE_RNA")));
-		if (jCheckBoxPossibleEnzymeSimpleMolecule.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO
-					.convertAlias2SBO("SIMPLE_MOLECULE")));
-		if (jCheckBoxPossibleEnzymeReceptor.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO
-					.convertAlias2SBO("RECEPTOR")));
-		if (jCheckBoxPossibleEnzymeUnknown.isSelected())
-			possibleEnzymes.add(Integer
-					.valueOf(SBO.convertAlias2SBO("UNKNOWN")));
-		if (jCheckBoxPossibleEnzymeComplex.isSelected())
-			possibleEnzymes.add(Integer
-					.valueOf(SBO.convertAlias2SBO("COMPLEX")));
-		if (jCheckBoxPossibleEnzymeTruncatedProtein.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO
-					.convertAlias2SBO("TRUNCATED")));
-		if (jCheckBoxPossibleEnzymeGenericProtein.isSelected())
-			possibleEnzymes.add(Integer
-					.valueOf(SBO.convertAlias2SBO("GENERIC")));
-		if (jCheckBoxPossibleEnzymeRNA.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("RNA")));
-		return possibleEnzymes;
-	}
-
-	/**
-	 * This method checks, if there is any possible Enzyme checked or not
-	 * 
-	 * @return: void
-	 */
-	public boolean possibleEnzymeTestAllNotChecked() {
-		boolean possibleEnzymeAllNotChecked;
-		if (!jCheckBoxPossibleEnzymeRNA.isSelected()
-				&& !jCheckBoxPossibleEnzymeAsRNA.isSelected()
-				&& !jCheckBoxPossibleEnzymeGenericProtein.isSelected()
-				&& !jCheckBoxPossibleEnzymeTruncatedProtein.isSelected()
-				&& !jCheckBoxPossibleEnzymeSimpleMolecule.isSelected()
-				&& !jCheckBoxPossibleEnzymeComplex.isSelected()
-				&& !jCheckBoxPossibleEnzymeReceptor.isSelected()
-				&& !jCheckBoxPossibleEnzymeUnknown.isSelected()
-				&& !jCheckBoxTreatAllReactionsAsEnzyeReaction.isSelected())
-			possibleEnzymeAllNotChecked = true;
-		else
-			possibleEnzymeAllNotChecked = false;
-		return possibleEnzymeAllNotChecked;
-	}
-
-	/**
-	 * 
-	 */
-	public void restoreDefaults() {
-		String openDir = settings.get(CfgKeys.OPEN_DIR).toString();
-		String saveDir = settings.get(CfgKeys.SAVE_DIR).toString();
-		settings = SBMLsqueezer.getDefaultSettings();
-		settings.put(CfgKeys.OPEN_DIR, openDir);
-		settings.put(CfgKeys.SAVE_DIR, saveDir);
-		init();
-		validate();
-		possibleEnzymeTestAllNotChecked();
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Properties getSettings() {
-		return settings;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-	 * )
-	 */
-	public void stateChanged(ChangeEvent e) {
-		if (e.getSource().equals(jSpinnerMaxRealisticNumOfReactants)) {
-			settings.put(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS, Integer
-					.parseInt(jSpinnerMaxRealisticNumOfReactants.getValue()
-							.toString()));
-			for (int i = 0; i < changeListeners.size(); i++)
-				changeListeners.get(i).stateChanged(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jCheckBoxTreatAllReactionsAsEnzyeReaction)) {
@@ -540,6 +525,10 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 			settings.put(CfgKeys.POSSIBLE_ENZYME_UNKNOWN, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeUnknown.isSelected()));
 			possibleEnzymeTestAllNotChecked();
+		} else if (e.getSource().equals(jRadioButtonTypeUnitConsistency)) {
+			settings.put(CfgKeys.TYPE_UNIT_CONSISTENCY, Integer
+					.valueOf(jRadioButtonTypeUnitConsistency.isSelected() ? 0
+							: 1));
 		} else if (e.getSource().equals(jComboBoxTypeStandardVersion))
 			settings.put(CfgKeys.TYPE_STANDARD_VERSION, Integer
 					.valueOf(jComboBoxTypeStandardVersion.getSelectedIndex()));
@@ -548,18 +537,53 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 	}
 
 	/**
+	 * This method checks, if there is any possible Enzyme checked or not
 	 * 
-	 * @param l
+	 * @return: void
 	 */
-	public void addItemListener(ItemListener l) {
-		itemListeners.add(l);
+	public boolean possibleEnzymeTestAllNotChecked() {
+		boolean possibleEnzymeAllNotChecked;
+		if (!jCheckBoxPossibleEnzymeRNA.isSelected()
+				&& !jCheckBoxPossibleEnzymeAsRNA.isSelected()
+				&& !jCheckBoxPossibleEnzymeGenericProtein.isSelected()
+				&& !jCheckBoxPossibleEnzymeTruncatedProtein.isSelected()
+				&& !jCheckBoxPossibleEnzymeSimpleMolecule.isSelected()
+				&& !jCheckBoxPossibleEnzymeComplex.isSelected()
+				&& !jCheckBoxPossibleEnzymeReceptor.isSelected()
+				&& !jCheckBoxPossibleEnzymeUnknown.isSelected()
+				&& !jCheckBoxTreatAllReactionsAsEnzyeReaction.isSelected())
+			possibleEnzymeAllNotChecked = true;
+		else
+			possibleEnzymeAllNotChecked = false;
+		return possibleEnzymeAllNotChecked;
 	}
 
 	/**
 	 * 
-	 * @param l
 	 */
-	public void addChangeListener(ChangeListener l) {
-		changeListeners.add(l);
+	public void restoreDefaults() {
+		String openDir = settings.get(CfgKeys.OPEN_DIR).toString();
+		String saveDir = settings.get(CfgKeys.SAVE_DIR).toString();
+		settings = SBMLsqueezer.getDefaultSettings();
+		settings.put(CfgKeys.OPEN_DIR, openDir);
+		settings.put(CfgKeys.SAVE_DIR, saveDir);
+		init();
+		validate();
+		possibleEnzymeTestAllNotChecked();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent )
+	 */
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(jSpinnerMaxRealisticNumOfReactants)) {
+			settings.put(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS, Integer
+					.parseInt(jSpinnerMaxRealisticNumOfReactants.getValue()
+							.toString()));
+			for (int i = 0; i < changeListeners.size(); i++)
+				changeListeners.get(i).stateChanged(e);
+		}
 	}
 }
