@@ -64,7 +64,7 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 		productOrder = Double.NaN;
 		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
-			kass = concat(kass, underscore, catalysts.get(catNum));
+			append(kass, underscore, catalysts.get(catNum));
 		Parameter p_kass = createOrGetParameter(kass.toString());
 		p_kass.setSBOTerm(48);
 		return new ASTNode(p_kass, this);

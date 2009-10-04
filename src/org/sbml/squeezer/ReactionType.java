@@ -40,6 +40,149 @@ import org.sbml.jsbml.SpeciesReference;
  */
 public class ReactionType {
 
+	/**
+	 * Set of those kinetic equations that can only be reversible.
+	 */
+	private static Set<String> notIrreversible;
+
+	private static Set<String> notReversible;
+
+	static {
+		notIrreversible = new HashSet<String>();
+		notIrreversible.addAll(SBMLsqueezer.getKineticsReversible());
+		notIrreversible.removeAll(SBMLsqueezer.getKineticsIrreversible());
+		notReversible = new HashSet<String>();
+		notReversible.addAll(SBMLsqueezer.getKineticsIrreversible());
+		notReversible.removeAll(SBMLsqueezer.getKineticsReversible());
+	}
+
+	/**
+	 * Checks if the given set of kinetics can be used given the property if all
+	 * reactions should be treated reversibly.
+	 * 
+	 * @param treatReactionsReversible
+	 * @param allKinetics
+	 * @return A set of kinetics that can be used given the reversible property.
+	 */
+	private static Set<String> checkReactions(boolean treatReactionsReversible,
+			Set<String> allKinetics) {
+		Set<String> kinetics = new HashSet<String>();
+		kinetics.addAll(allKinetics);
+		kinetics.removeAll(notReversible);
+		if (!treatReactionsReversible)
+			kinetics.removeAll(notIrreversible);
+		/*
+		 * else kinetics.retainAll(notIrreversible);
+		 */
+		return kinetics;
+	}
+
+	/**
+	 * 
+	 * @param treatReactionsReversible
+	 * @return
+	 */
+	public static Set<String> getKineticsArbitraryEnzyme(
+			boolean treatReactionsReversible) {
+		return checkReactions(treatReactionsReversible, SBMLsqueezer
+				.getKineticsArbitraryEnzymeMechanism());
+	}
+
+	/**
+	 * 
+	 * @param treatReactionsReversible
+	 * @return
+	 */
+	public static Set<String> getKineticsBiBi(boolean treatReactionsReversible) {
+		return checkReactions(treatReactionsReversible, SBMLsqueezer
+				.getKineticsBiBi());
+	}
+
+	/**
+	 * 
+	 * @param treatReactionsReversible
+	 * @return
+	 */
+	public static Set<String> getKineticsBiUni(boolean treatReactionsReversible) {
+		return checkReactions(treatReactionsReversible, SBMLsqueezer
+				.getKineticsBiUni());
+	}
+
+	/**
+	 * 
+	 * @param treatReactionsReversible
+	 * @return
+	 */
+	public static Set<String> getKineticsGeneRegulation(
+			boolean treatReactionsReversible) {
+		return checkReactions(treatReactionsReversible, SBMLsqueezer
+				.getKineticsGeneRegulatoryNetworks());
+	}
+
+	/**
+	 * 
+	 * @param treatReactionsReversible
+	 * @return
+	 */
+	public static Set<String> getKineticsNonEnzyme(
+			boolean treatReactionsReversible) {
+		return checkReactions(treatReactionsReversible, SBMLsqueezer
+				.getKineticsNonEnzyme());
+	}
+
+	/**
+	 * 
+	 * @param treatReactionsReversible
+	 * @return
+	 */
+	public static Set<String> getKineticsUniUni(boolean treatReactionsReversible) {
+		return checkReactions(treatReactionsReversible, SBMLsqueezer
+				.getKineticsUniUni());
+	}
+
+	/**
+	 * identify which Modifer is used
+	 * 
+	 * @param reactionNum
+	 */
+	public static final void identifyModifers(Reaction reaction,
+			List<String> enzymes, List<String> activators,
+			List<String> transActiv, List<String> inhibitors,
+			List<String> transInhib, List<String> nonEnzymeCatalysts) {
+		enzymes.clear();
+		activators.clear();
+		transActiv.clear();
+		inhibitors.clear();
+		transInhib.clear();
+		nonEnzymeCatalysts.clear();
+		int type;
+		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
+			type = modifier.getSBOTerm();
+			if (SBO.isModifier(type)) {
+				// Ok, this is confusing...
+				// inhibitors.add(modifier.getSpecies());
+				// activators.add(modifier.getSpecies());
+			} else if (SBO.isInhibitor(type))
+				inhibitors.add(modifier.getSpecies());
+			else if (SBO.isTranscriptionalActivation(type)
+					|| SBO.isTranslationalActivation(type))
+				transActiv.add(modifier.getSpecies());
+			else if (SBO.isTranscriptionalInhibitor(type)
+					|| SBO.isTranslationalInhibitor(type))
+				transInhib.add(modifier.getSpecies());
+			else if (SBO.isTrigger(type) || SBO.isStimulator(type))
+				// no extra support for unknown catalysis anymore...
+				// physical stimulation is now also a stimulator.
+				activators.add(modifier.getSpecies());
+			else if (SBO.isCatalyst(type)) {
+				if (SBO.isEnzymaticCatalysis(type))
+					enzymes.add(modifier.getSpecies());
+				else
+					nonEnzymeCatalysts.add(modifier.getSpecies());
+			}
+		}
+	}
+
 	private List<String> activators;
 
 	private boolean biBi;
@@ -183,7 +326,10 @@ public class ReactionType {
 		if (uniUni) {
 			Species species = reaction.getReactant(0).getSpeciesInstance();
 			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
-				setBoundaryCondition(species, true);
+				if (((Boolean) settings
+						.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
+						.booleanValue())
+					setBoundaryCondition(species, true);
 				if (SBO.isTranslation(reaction.getSBOTerm()))
 					throw new RateLawNotApplicableException("Reaction "
 							+ reaction.getId() + " must be a transcription.");
@@ -293,46 +439,50 @@ public class ReactionType {
 	}
 
 	/**
-	 * identify which Modifer is used
+	 * identify the reactionType for generating the kinetics
 	 * 
-	 * @param reactionNum
 	 */
-	public static final void identifyModifers(Reaction reaction,
-			List<String> enzymes, List<String> activators,
-			List<String> transActiv, List<String> inhibitors,
-			List<String> transInhib, List<String> nonEnzymeCatalysts) {
-		enzymes.clear();
-		activators.clear();
-		transActiv.clear();
-		inhibitors.clear();
-		transInhib.clear();
-		nonEnzymeCatalysts.clear();
-		int type;
-		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
-			type = modifier.getSBOTerm();
-			if (SBO.isModifier(type)) {
-				// Ok, this is confusing...
-				// inhibitors.add(modifier.getSpecies());
-				// activators.add(modifier.getSpecies());
-			} else if (SBO.isInhibitor(type))
-				inhibitors.add(modifier.getSpecies());
-			else if (SBO.isTranscriptionalActivation(type)
-					|| SBO.isTranslationalActivation(type))
-				transActiv.add(modifier.getSpecies());
-			else if (SBO.isTranscriptionalInhibitor(type)
-					|| SBO.isTranslationalInhibitor(type))
-				transInhib.add(modifier.getSpecies());
-			else if (SBO.isTrigger(type) || SBO.isStimulator(type))
-				// no extra support for unknown catalysis anymore...
-				// physical stimulation is now also a stimulator.
-				activators.add(modifier.getSpecies());
-			else if (SBO.isCatalyst(type)) {
-				if (SBO.isEnzymaticCatalysis(type))
-					enzymes.add(modifier.getSpecies());
-				else
-					nonEnzymeCatalysts.add(modifier.getSpecies());
+	public String identifyPossibleKineticLaw() {
+		if (reaction.getNumReactants() == 0)
+			for (String kin : SBMLsqueezer.getKineticsZeroReactants())
+				return kin;
+		if (reaction.getReversible() && reaction.getNumProducts() == 0)
+			for (String kin : SBMLsqueezer.getKineticsZeroProducts())
+				return kin;
+
+		boolean reversibility = ((Boolean) settings
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue();
+		boolean enzymeCatalyzed = ((Boolean) settings
+				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+				.booleanValue()
+				|| enzymes.size() > 0;
+		Object whichkin = settings.get(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS);
+
+		if (enzymeCatalyzed)
+			whichkin = settings.get(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS);
+		if (stoichiometryLeft == 1d) {
+			SpeciesReference specref = reaction.getReactant(0);
+			Species reactant = specref.getSpeciesInstance();
+			if (stoichiometryRight == 1d) {
+				Species product = specref.getSpeciesInstance();
+				if (reactionWithGenes
+						|| reactionWithRNAs
+						|| (SBO.isEmptySet(reactant.getSBOTerm()) && (SBO
+								.isProtein(product.getSBOTerm()) || SBO
+								.isRNAOrMessengerRNA(product.getSBOTerm()))))
+					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION);
 			}
+			if (enzymes.size() > 0
+					|| enzymeCatalyzed
+					&& (stoichiometryRight == 1d || (!reaction.getReversible() && !reversibility)))
+				whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE);
+		} else if (biUni && enzymeCatalyzed) {
+			whichkin = settings.get(CfgKeys.KINETICS_BI_UNI_TYPE);
+		} else if (biBi && enzymeCatalyzed) {
+			whichkin = settings.get(CfgKeys.KINETICS_BI_BI_TYPE);
 		}
+		return whichkin.toString();
 	}
 
 	/**
@@ -448,53 +598,6 @@ public class ReactionType {
 		String t[] = types.toArray(new String[] {});
 		Arrays.sort(t);
 		return t;
-	}
-
-	/**
-	 * identify the reactionType for generating the kinetics
-	 * 
-	 */
-	public String identifyPossibleKineticLaw() {
-		if (reaction.getNumReactants() == 0)
-			for (String kin : SBMLsqueezer.getKineticsZeroReactants())
-				return kin;
-		if (reaction.getReversible() && reaction.getNumProducts() == 0)
-			for (String kin : SBMLsqueezer.getKineticsZeroProducts())
-				return kin;
-
-		boolean reversibility = ((Boolean) settings
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue();
-		boolean enzymeCatalyzed = ((Boolean) settings
-				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
-				.booleanValue()
-				|| enzymes.size() > 0;
-		Object whichkin = settings.get(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS);
-
-		if (enzymeCatalyzed)
-			whichkin = settings.get(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS);
-		if (stoichiometryLeft == 1d) {
-			SpeciesReference specref = reaction.getReactant(0);
-			Species reactant = specref.getSpeciesInstance();
-			if (stoichiometryRight == 1d) {
-				Species product = specref.getSpeciesInstance();
-				if (reactionWithGenes
-						|| reactionWithRNAs
-						|| (SBO.isEmptySet(reactant.getSBOTerm()) && (SBO
-								.isProtein(product.getSBOTerm()) || SBO
-								.isRNAOrMessengerRNA(product.getSBOTerm()))))
-					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION);
-			}
-			if (enzymes.size() > 0
-					|| enzymeCatalyzed
-					&& (stoichiometryRight == 1d || (!reaction.getReversible() && !reversibility)))
-				whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE);
-		} else if (biUni && enzymeCatalyzed) {
-			whichkin = settings.get(CfgKeys.KINETICS_BI_UNI_TYPE);
-		} else if (biBi && enzymeCatalyzed) {
-			whichkin = settings.get(CfgKeys.KINETICS_BI_BI_TYPE);
-		}
-		return whichkin.toString();
 	}
 
 	/**

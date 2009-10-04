@@ -26,6 +26,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SBaseChangedListener;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.libsbml.libsbmlConstants;
 

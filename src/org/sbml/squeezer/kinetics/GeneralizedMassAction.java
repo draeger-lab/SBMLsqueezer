@@ -44,11 +44,6 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
-	public static boolean isApplicable(Reaction reaction) {
-		// TODO
-		return true;
-	}
-
 	double reactantOrder;
 
 	double productOrder;
@@ -414,7 +409,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				if (type) {
 					// Activator Mod
 					Parameter p_kAn = parameterKa(r.getId(), modifiers.get(i));
-					mods[i] = ASTNode.frac(new ASTNode(modifiers.get(i), this),
+					mods[i] = ASTNode.frac(speciesTerm(modifiers.get(i)),
 							ASTNode.sum(new ASTNode(p_kAn, this),
 									speciesTerm(modifiers.get(i))));
 				} else {
@@ -473,7 +468,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		p_kass.setSBOTerm(153);
 		ASTNode ass = new ASTNode(p_kass, this);
 		for (SpeciesReference reactant : r.getListOfReactants()) {
-			ASTNode basis = speciesTerm(reactant.getSpeciesInstance());
+			ASTNode basis = speciesTerm(reactant);
 			if (reactant.isSetStoichiometryMath())
 				basis.raiseByThePowerOf(reactant.getStoichiometryMath()
 						.getMath().clone());
@@ -506,7 +501,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			if (reaction.getReversible())
 				rates[c].minus(dissociation(catalysts, c));
 			if (catalysts.size() > 0)
-				rates[c].multiplyWith(new ASTNode(catalysts.get(c), this));
+				rates[c].multiplyWith(speciesTerm(catalysts.get(c)));
 		}
 		setSBOTerm();
 		return ASTNode.times(activationFactor(modActi),
@@ -531,8 +526,8 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		ASTNode diss = new ASTNode(p_kdiss, this);
 		for (int products = 0; products < r.getNumProducts(); products++) {
 			SpeciesReference p = r.getProduct(products);
-			diss.multiplyWith(ASTNode.pow(speciesTerm(p.getSpeciesInstance()),
-					new ASTNode(p.getStoichiometry(), this)));
+			diss.multiplyWith(ASTNode.pow(speciesTerm(p), new ASTNode(p
+					.getStoichiometry(), this)));
 		}
 		return diss;
 	}

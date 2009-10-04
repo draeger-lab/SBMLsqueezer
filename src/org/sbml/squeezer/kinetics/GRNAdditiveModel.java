@@ -49,20 +49,12 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 		super(parentReaction, typeParameters);
 	}
 
-	public static boolean isApplicable(Reaction reaction) {
-		if (SBO.isTranslation(reaction.getSBOTerm())
-				|| SBO.isTranscription(reaction.getSBOTerm()))
-			return true;
-		return false;
-	}
-
 	/*
 	 * (Kein Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 *      .util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -71,9 +63,9 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 			throws RateLawNotApplicableException, IllegalFormatException {
 
 		ASTNode kineticLaw = new ASTNode(this);
-	
-		kineticLaw = ASTNode.diff(ASTNode.times(m_i(), actifunction(function_g(function_w(),
-				function_v(), b_i()))), function_l());
+
+		kineticLaw = ASTNode.diff(ASTNode.times(m_i(), actifunction(function_g(
+				function_w(), function_v(), b_i()))), function_l());
 		// System.out.println(kineticLaw.toLaTeX());
 		return kineticLaw;
 	}
@@ -94,7 +86,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = speciesTerm(modifier.getSpeciesInstance());
+					modnode = speciesTerm(modifier);
 					p = createOrGetParameter("w_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
@@ -104,8 +96,10 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				}
 			}
 		}
-		if (node.isUnknown()) return null;
-		else return node;
+		if (node.isUnknown())
+			return null;
+		else
+			return node;
 	}
 
 	ASTNode function_v() {
@@ -125,7 +119,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = speciesTerm(modifier.getSpeciesInstance());
+					modnode = speciesTerm(modifier);
 					p = createOrGetParameter("v_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
@@ -135,8 +129,10 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				}
 			}
 		}
-		if (node.isUnknown()) return null;
-		else return node;
+		if (node.isUnknown())
+			return null;
+		else
+			return node;
 	}
 
 	ASTNode function_l() {
@@ -155,7 +151,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = speciesTerm(modifier.getSpeciesInstance());
+					modnode = speciesTerm(modifier);
 					p = createOrGetParameter("lambda_", modifierNum,
 							underscore, rId);
 					pnode = new ASTNode(p, this);
@@ -166,17 +162,21 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 				}
 			}
 		}
-		if (node.isUnknown()) return null;
-		else return node;
+		if (node.isUnknown())
+			return null;
+		else
+			return node;
 	}
 
-	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b) {		
+	ASTNode function_g(ASTNode w, ASTNode v, ASTNode b) {
 		return ASTNode.sum(w, v, b);
 	}
-	
-	ASTNode actifunction(ASTNode g){
-		if (g==null) return new ASTNode(this);
-		else return g;
+
+	ASTNode actifunction(ASTNode g) {
+		if (g == null)
+			return new ASTNode(this);
+		else
+			return g;
 	}
 
 	ASTNode b_i() {
@@ -195,6 +195,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	// @Override

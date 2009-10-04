@@ -47,7 +47,6 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.squeezer.io.StringTools;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
 import org.sbml.squeezer.math.GaussianRank;
@@ -843,6 +842,12 @@ public class KineticLawGenerator {
 				modelOrig.getParameter(p.getId()).setUnits(
 						modelOrig.getUnitDefinition(p.getUnits()));
 		}
+		UnitDefinition ud = modelOrig.getUnitDefinition("substance");
+		ud.getListOfUnits().getFirst().setScale(-3);
+		ud.setName("mmole");
+		ud = modelOrig.getUnitDefinition("volume");
+		ud.getListOfUnits().getFirst().setScale(-3);
+		ud.setName("ml");
 	}
 
 	/**
@@ -852,7 +857,7 @@ public class KineticLawGenerator {
 	 */
 	private void checkUnits(Species species) {
 		Model model = species.getModel();
-		if (species.getHasOnlySubstanceUnits()) {
+//		if (species.getHasOnlySubstanceUnits()) {
 			// substance units
 			if (!species.isSetSubstanceUnits()
 					|| !species.getSubstanceUnitsInstance()
@@ -864,56 +869,56 @@ public class KineticLawGenerator {
 				}
 				species.setSubstanceUnits(ud);
 			}
-		} else {
-			// substance per size units
-			Compartment c = species.getCompartmentInstance();
-			// checkUnits(c);
-			if (!species.isSetSubstanceUnits()) {
-				UnitDefinition ud = UnitDefinition.SUBSTANCE.clone();
-				UnitDefinition u = c.getUnitsInstance();
-				ud.divideBy(u);
-				ud.setName(StringTools.firstLetterUpperCase(ud.getId()
-						+ " per " + u.getId()));
-				ud.setId(ud.getId() + '_' + "per" + '_' + u.getId());
-				species.setSubstanceUnits(ud);
-			} else {
-				UnitDefinition substance = UnitDefinition.SUBSTANCE.clone();
-				String sizeName = null;
-				switch (c.getSpatialDimensions()) {
-				case 3:
-					if (!species.getSubstanceUnitsInstance()
-							.isVariantOfSubstancePerVolume()) {
-						species.setSubstanceUnits(substance
-								.divideBy(UnitDefinition.VOLUME));
-						sizeName = "volume";
-					}
-					break;
-				case 2:
-					if (!species.getSubstanceUnitsInstance()
-							.isVariantOfSubstancePerArea()) {
-						species.setSubstanceUnits(substance
-								.divideBy(UnitDefinition.AREA));
-						sizeName = "area";
-					}
-					break;
-				case 1:
-					if (!species.getSubstanceUnitsInstance()
-							.isVariantOfSubstancePerLength()) {
-						species.setSubstanceUnits(substance
-								.divideBy(UnitDefinition.LENGTH));
-						sizeName = "length";
-					}
-					break;
-				default:
-					break;
-				}
-				if (sizeName != null)
-					species.getSubstanceUnitsInstance().setName(
-							"Substance per " + sizeName);
-			}
-		}
-		if (model.getUnitDefinition(species.getSubstanceUnits()) == null)
-			model.addUnitDefinition(species.getSubstanceUnitsInstance());
+//		} else {
+//			// substance per size units
+//			Compartment c = species.getCompartmentInstance();
+//			// checkUnits(c);
+//			if (!species.isSetSubstanceUnits()) {
+//				UnitDefinition ud = UnitDefinition.SUBSTANCE.clone();
+//				UnitDefinition u = c.getUnitsInstance();
+//				ud.divideBy(u);
+//				ud.setName(StringTools.firstLetterUpperCase(ud.getId()
+//						+ " per " + u.getId()));
+//				ud.setId(ud.getId() + '_' + "per" + '_' + u.getId());
+//				species.setSubstanceUnits(ud);
+//			} else {
+//				UnitDefinition substance = UnitDefinition.SUBSTANCE.clone();
+//				String sizeName = null;
+//				switch (c.getSpatialDimensions()) {
+//				case 3:
+//					if (!species.getSubstanceUnitsInstance()
+//							.isVariantOfSubstancePerVolume()) {
+//						species.setSubstanceUnits(substance
+//								.divideBy(UnitDefinition.VOLUME));
+//						sizeName = "volume";
+//					}
+//					break;
+//				case 2:
+//					if (!species.getSubstanceUnitsInstance()
+//							.isVariantOfSubstancePerArea()) {
+//						species.setSubstanceUnits(substance
+//								.divideBy(UnitDefinition.AREA));
+//						sizeName = "area";
+//					}
+//					break;
+//				case 1:
+//					if (!species.getSubstanceUnitsInstance()
+//							.isVariantOfSubstancePerLength()) {
+//						species.setSubstanceUnits(substance
+//								.divideBy(UnitDefinition.LENGTH));
+//						sizeName = "length";
+//					}
+//					break;
+//				default:
+//					break;
+//				}
+//				if (sizeName != null)
+//					species.getSubstanceUnitsInstance().setName(
+//							"Substance per " + sizeName);
+//			}
+//		}
+//		if (model.getUnitDefinition(species.getSubstanceUnits()) == null)
+//			model.addUnitDefinition(species.getSubstanceUnitsInstance());
 	}
 
 	/**
@@ -922,6 +927,8 @@ public class KineticLawGenerator {
 	 */
 	private void checkUnits(Compartment compartment) {
 		Model model = getModel();
+		if (!compartment.isSetSize())
+			compartment.setSize(1d);
 		if (!compartment.isSetUnits()) {
 			UnitDefinition ud;
 			switch (compartment.getSpatialDimensions()) {

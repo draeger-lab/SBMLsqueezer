@@ -108,7 +108,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 
 			numerator = new ASTNode(p_kcat, this);
 			numerator = ASTNode.times(numerator, speciesTerm(reaction
-					.getReactant(0).getSpeciesInstance()));
+					.getReactant(0)));
 
 			ASTNode denominator;
 			Parameter p_kM = parameterMichaelisSubstrate(reaction.getId(),
@@ -124,8 +124,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 							.getId()));
 					StringBuffer exponent = concat("m_", reaction.getId());
 					if (numOfEnzymes > 1) {
-						kIi = concat(underscore, modE.get(enzymeNum));
-						exponent = concat(underscore, modE.get(enzymeNum));
+						kIi = concat(underscore, enzyme);
+						exponent = concat(underscore, enzyme);
 					}
 					kIi = concat(kIi, underscore, modInhib.get(i));
 					exponent = concat(exponent, underscore, modInhib.get(i));
@@ -135,18 +135,16 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 					p_exp.setSBOTerm(189);
 
 					factor.multiplyWith(ASTNode.pow(ASTNode.sum(new ASTNode(1,
-							this), ASTNode.frac(new ASTNode(modInhib.get(i),
-							this), new ASTNode(p_kIi, this))), new ASTNode(
-							p_exp, this)));
+							this), ASTNode.frac(speciesTerm(modInhib.get(i)),
+							new ASTNode(p_kIi, this))),
+							new ASTNode(p_exp, this)));
 				}
 				denominator = factor;
-
 			}
-			denominator.plus(speciesTerm(reaction.getReactant(0)
-					.getSpeciesInstance()));
+			denominator.plus(speciesTerm(reaction.getReactant(0)));
 			currEnzyme = ASTNode.frac(numerator, denominator);
 			if (numOfEnzymes > 1)
-				numerator.multiplyWith(new ASTNode(modE.get(enzymeNum), this));
+				numerator.multiplyWith(speciesTerm(enzyme));
 			formula[enzymeNum++] = currEnzyme;
 		} while (enzymeNum < modE.size());
 		return ASTNode.times(activationFactor(modActi), ASTNode.sum(formula));

@@ -26,14 +26,16 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates an equation based on an additive model as defined in the paper
- * "Modeling regulatory networks with weight matrices" of Weaver, D.; Workman, C. & Stormo, G. 1999
+ * This class creates an equation based on an additive model as defined in the
+ * paper "Modeling regulatory networks with weight matrices" of Weaver, D.;
+ * Workman, C. & Stormo, G. 1999
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- *
+ * 
  */
-public class GRNAdditiveModel_2 extends GRNAdditiveModel implements InterfaceGeneRegulatoryKinetics {
-	
+public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
+		InterfaceGeneRegulatoryKinetics {
+
 	/**
 	 * @param parentReaction
 	 * @param typeParameters
@@ -44,34 +46,33 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements InterfaceGen
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
-	
-	ASTNode actifunction(ASTNode g){
 
-		if (!(g==null)) {
+	ASTNode actifunction(ASTNode g) {
+
+		if (!(g == null)) {
 			String rId = getParentSBMLObject().getId();
 			Parameter pa = createOrGetParameter("a_", rId);
 			ASTNode pnode_a = new ASTNode(pa, this);
 			Parameter pb = createOrGetParameter("b_", rId);
 			ASTNode pnode_b = new ASTNode(pb, this);
-			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(
-					ASTNode.sum(ASTNode.times(new ASTNode(-1,this),pnode_a,g),pnode_b))));	
-		}
-		else {
+			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
+					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
+							pnode_a, g), pnode_b))));
+		} else {
 			System.out.println("blabla");
-			return new ASTNode(1,this);
+			return new ASTNode(1, this);
 		}
 	}
-	
-	
-	ASTNode function_v(){
+
+	ASTNode function_v() {
 		return null;
 	}
-	
-	ASTNode function_l(){
+
+	ASTNode function_l() {
 		return null;
 	}
-	
-	ASTNode b_i(){
+
+	ASTNode b_i() {
 		return null;
 	}
 

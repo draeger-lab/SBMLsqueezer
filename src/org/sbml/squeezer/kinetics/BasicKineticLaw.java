@@ -266,9 +266,24 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			kr = createOrGetParameter("vmax_", forward ? "fwd" : "bwd",
 					underscore, reactionID);
 			kr.setSBOTerm(forward ? 324 : 325);
-			kr.setUnits(unitmMperSecond());
+			kr.setUnits(unitmmolePerSecond()); //unitmmolePerSecond()
 		}
 		return kr;
+	}
+
+	UnitDefinition unitmmolePerSecond() {
+		Model model = getModel();
+		String id = "mmolePerSecond";
+		UnitDefinition mmolePerSecond = model.getUnitDefinition(id);
+		if (mmolePerSecond == null) {
+			mmolePerSecond = new UnitDefinition(id, getLevel(), getVersion());
+			mmolePerSecond.addUnit(new Unit(-3, Unit.Kind.MOLE, getLevel(),
+					getVersion()));
+			mmolePerSecond.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(),
+					getVersion()));
+			model.addUnitDefinition(mmolePerSecond);
+		}
+		return mmolePerSecond;
 	}
 
 	/**
@@ -307,7 +322,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		kM.setSBOTerm(27);
 		kM.setName(concat("Michaelis constant of species ", species,
 				" in reaction ", reactionID).toString());
-		kM.setUnits(unitmM());
+		Model model = getModel();
+		UnitDefinition ud = model.getUnitDefinition("substance");
+		if (ud == null) {
+			ud = UnitDefinition.SUBSTANCE.clone();
+			model.addUnitDefinition(ud);
+		}
+		kM.setUnits(ud); //unitmM()
 		return kM;
 	}
 
@@ -384,9 +405,18 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			kVr.setName(concat(
 					"limiting maximal velocity, geometric mean of reaction ",
 					reactionID).toString());
-			kVr.setUnits(unitmMperSecond());
+			kVr.setUnits(unitmmolePerSecond());
 		}
 		return kVr;
+	}
+
+	/**
+	 * 
+	 * @param simpleSpecRef
+	 * @return
+	 */
+	ASTNode speciesTerm(SimpleSpeciesReference simpleSpecRef) {
+		return speciesTerm(simpleSpecRef.getSpeciesInstance());
 	}
 
 	/**
@@ -402,12 +432,14 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (type)
 			// set initial amount and units appropriately
 			species.setHasOnlySubstanceUnits(true);
-		else if (!species.getHasOnlySubstanceUnits())
+		else {
 			// multiply with compartment size.
+			species.setHasOnlySubstanceUnits(false);
 			specTerm.multiplyWith(species.getCompartmentInstance());
+		}
 		return specTerm;
 	}
-	
+
 	/**
 	 * 
 	 * @param species
@@ -415,37 +447,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	ASTNode speciesTerm(String species) {
 		return speciesTerm(getModel().getSpecies(species));
-	}
-	
-	/**
-	 * 
-	 * @param simpleSpecRef
-	 * @return
-	 */
-	ASTNode speciesTerm(SimpleSpeciesReference simpleSpecRef) {
-		return speciesTerm(simpleSpecRef.getSpeciesInstance());
-	}
-
-	/**
-	 * 
-	 * @return Unit milli mole per metre.
-	 */
-	UnitDefinition unitmMperMetre() {
-		UnitDefinition mMperMetre = unitmM().clone();
-		mMperMetre.addUnit(new Unit(Unit.Kind.METRE, -1, getLevel(),
-				getVersion()));
-		return mMperMetre;
-	}
-
-	/**
-	 * 
-	 * @return Unit milli mole per square metre.
-	 */
-	UnitDefinition unitmMperSquareMetre() {
-		UnitDefinition mMperSquareMetre = unitmM().clone();
-		mMperSquareMetre.addUnit(new Unit(Unit.Kind.METRE, -2, getLevel(),
-				getVersion()));
-		return mMperSquareMetre;
 	}
 
 	/*
@@ -528,19 +529,43 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
+	 * 
+	 * @return Unit milli mole per metre.
+	 */
+	UnitDefinition unitmMperMetre() {
+		UnitDefinition mMperMetre = unitmM().clone();
+		mMperMetre.addUnit(new Unit(Unit.Kind.METRE, -1, getLevel(),
+				getVersion()));
+		return mMperMetre;
+	}
+
+	/**
 	 * Returns the unit milli mole per litre per second.
 	 * 
 	 * @return
 	 */
 	UnitDefinition unitmMperSecond() {
 		Model model = getModel();
-		UnitDefinition mMperSecond = model.getUnitDefinition("mMperSecond");
+		String id = "mMperSecond";
+		UnitDefinition mMperSecond = model.getUnitDefinition(id);
 		if (mMperSecond == null) {
 			mMperSecond = unitmM().clone();
+			mMperSecond.setId(id);
 			mMperSecond.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(),
 					getVersion()));
 			model.addUnitDefinition(mMperSecond);
 		}
 		return mMperSecond;
+	}
+
+	/**
+	 * 
+	 * @return Unit milli mole per square metre.
+	 */
+	UnitDefinition unitmMperSquareMetre() {
+		UnitDefinition mMperSquareMetre = unitmM().clone();
+		mMperSquareMetre.addUnit(new Unit(Unit.Kind.METRE, -2, getLevel(),
+				getVersion()));
+		return mMperSquareMetre;
 	}
 }

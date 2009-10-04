@@ -52,11 +52,6 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		super(parentReaction, typeParameters);
 	}
 
-	public static boolean isApplicable(Reaction reaction) {
-		// TODO
-		return true;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -125,11 +120,9 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 			StringBuffer kMr2 = concat("kM_", reaction.getId());
 
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			if (modE.size() > 0) {
-				if (modE.size() > 1) {
-					append(kMr1, underscore, enzyme);
-					append(kMr2, underscore, enzyme);
-				}
+			if (modE.size() > 1) {
+				append(kMr1, underscore, enzyme);
+				append(kMr2, underscore, enzyme);
 			}
 			append(kMr2, underscore, specRefE2.getSpecies());
 			append(kMr1, underscore, specRefE1.getSpecies());
@@ -152,26 +145,21 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				numerator = new ASTNode(p_kcatp, this);
 
 				if (modE.size() > 0)
-					numerator = ASTNode.times(numerator, new ASTNode(modE
-							.get(enzymeNum), this));
-				numerator = ASTNode.times(numerator, speciesTerm(specRefE1
-						.getSpeciesInstance()));
+					numerator.multiplyWith(speciesTerm(enzyme));
+				numerator = ASTNode.times(numerator, speciesTerm(specRefE1));
 
 				denominator = ASTNode.sum(ASTNode.times(new ASTNode(p_kMr2,
-						this), speciesTerm(specRefE1.getSpeciesInstance())),
-						ASTNode.times(new ASTNode(p_kMr1, this),
-								speciesTerm(specRefE2.getSpeciesInstance())));
+						this), speciesTerm(specRefE1)), ASTNode.times(
+						new ASTNode(p_kMr1, this), speciesTerm(specRefE2)));
 
 				if (specRefE2.equals(specRefE1)) {
 					numerator = ASTNode.pow(numerator, 2);
 					denominator = ASTNode.pow(ASTNode.sum(denominator,
-							speciesTerm(specRefE1.getSpeciesInstance())), 2);
+							speciesTerm(specRefE1)), 2);
 				} else {
-					numerator.multiplyWith(speciesTerm(specRefE2
-							.getSpeciesInstance()));
-					denominator.plus(ASTNode.times(speciesTerm(specRefE1
-							.getSpeciesInstance()), speciesTerm(specRefE2
-							.getSpeciesInstance())));
+					numerator.multiplyWith(speciesTerm(specRefE2));
+					denominator.plus(ASTNode.times(speciesTerm(specRefE1),
+							speciesTerm(specRefE2)));
 				}
 
 				/*
@@ -184,16 +172,12 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				StringBuffer kIp2 = concat("ki_", reaction.getId());
 				StringBuffer kIr1 = concat("ki_", reaction.getId());
 
-				if (modE.size() > 0) {
-					if (modE.size() > 1) {
-						StringBuffer modEnzymeNumber = new StringBuffer(modE
-								.get(enzymeNum));
-						kMp1 = concat(kMp1, underscore, modEnzymeNumber);
-						kMp2 = concat(kMp2, underscore, modEnzymeNumber);
-						kIp1 = concat(kIp1, underscore, modEnzymeNumber);
-						kIp2 = concat(kIp2, underscore, modEnzymeNumber);
-						kIr1 = concat(kIr1, underscore, modEnzymeNumber);
-					}
+				if (modE.size() > 1) {
+					kMp1 = concat(kMp1, underscore, enzyme);
+					kMp2 = concat(kMp2, underscore, enzyme);
+					kIp1 = concat(kIp1, underscore, enzyme);
+					kIp2 = concat(kIp2, underscore, enzyme);
+					kIr1 = concat(kIr1, underscore, enzyme);
 				}
 				kMp1 = concat(kMp1, underscore, specRefP1.getSpecies());
 				kMp2 = concat(kMp2, underscore, specRefP2.getSpecies());
@@ -225,71 +209,54 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 						this), ASTNode.times(this, p_kIp1, p_kMp2));
 
 				if (modE.size() > 0)
-					numeratorForward = ASTNode.times(numeratorForward,
-							new ASTNode(modE.get(enzymeNum), this));
-				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(specRefE1
-						.getSpeciesInstance()), new ASTNode(p_kIr1, this)),
-						ASTNode.frac(ASTNode.times(new ASTNode(p_kMr1, this),
-								speciesTerm(specRefE2.getSpeciesInstance())),
-								ASTNode.times(this, p_kIr1, p_kMr2)), ASTNode
-								.frac(speciesTerm(specRefP1
-										.getSpeciesInstance()), new ASTNode(
-										p_kIp1, this)), ASTNode.frac(ASTNode
-								.times(new ASTNode(p_kMp1, this),
-										speciesTerm(specRefP2
-												.getSpeciesInstance())),
-								ASTNode.times(this, p_kIp1, p_kMp2)));
+					numeratorForward.multiplyWith(speciesTerm(enzyme));
+				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(specRefE1),
+						new ASTNode(p_kIr1, this)), ASTNode.frac(ASTNode.times(
+						new ASTNode(p_kMr1, this), speciesTerm(specRefE2)),
+						ASTNode.times(this, p_kIr1, p_kMr2)), ASTNode.frac(
+						speciesTerm(specRefP1), new ASTNode(p_kIp1, this)),
+						ASTNode.frac(ASTNode.times(new ASTNode(p_kMp1, this),
+								speciesTerm(specRefP2)), ASTNode.times(this,
+								p_kIp1, p_kMp2)));
 				if (specRefE2.equals(specRefE1)) {
-					numeratorForward = ASTNode.times(numeratorForward,
-							ASTNode.pow(speciesTerm(specRefE1
-									.getSpeciesInstance()), 2));
-					denominator = ASTNode.sum(denominator, ASTNode.frac(
-							ASTNode.pow(speciesTerm(specRefE1
-									.getSpeciesInstance()), 2), ASTNode.times(
-									this, p_kIr1, p_kMr2)));
+					numeratorForward = ASTNode.times(numeratorForward, ASTNode
+							.pow(speciesTerm(specRefE1), 2));
+					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
+							.pow(speciesTerm(specRefE1), 2), ASTNode.times(
+							this, p_kIr1, p_kMr2)));
 				} else {
 					numeratorForward = ASTNode.times(numeratorForward,
-							speciesTerm(specRefE1.getSpeciesInstance()),
-							speciesTerm(specRefE2.getSpeciesInstance()));
-					denominator = ASTNode.sum(denominator, ASTNode.frac(
-							ASTNode
-									.times(speciesTerm(specRefE1
-											.getSpeciesInstance()),
-											speciesTerm(specRefE2
-													.getSpeciesInstance())),
-							ASTNode.times(this, p_kIr1, p_kMr2)));
+							speciesTerm(specRefE1), speciesTerm(specRefE2));
+					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
+							.times(speciesTerm(specRefE1),
+									speciesTerm(specRefE2)), ASTNode.times(
+							this, p_kIr1, p_kMr2)));
 				}
 
 				denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
-						.times(speciesTerm(specRefE1.getSpeciesInstance()),
-								speciesTerm(specRefP1.getSpeciesInstance())),
-						ASTNode.times(this, p_kIr1, p_kIp1)), ASTNode.frac(
-						ASTNode.times(new ASTNode(p_kMr1, this),
-								speciesTerm(specRefE2.getSpeciesInstance()),
-								speciesTerm(specRefP2.getSpeciesInstance())),
-						ASTNode.times(this, p_kIr1, p_kMr2, p_kIp2)));
+						.times(speciesTerm(specRefE1), speciesTerm(specRefP1)),
+						ASTNode.times(this, p_kIr1, p_kIp1)), ASTNode
+						.frac(
+								ASTNode.times(new ASTNode(p_kMr1, this),
+										speciesTerm(specRefE2),
+										speciesTerm(specRefP2)), ASTNode.times(
+										this, p_kIr1, p_kMr2, p_kIp2)));
 
 				if (modE.size() > 0)
-					numeratorReverse = ASTNode.times(numeratorReverse,
-							new ASTNode(modE.get(enzymeNum), this));
+					numeratorReverse.multiplyWith(speciesTerm(enzyme));
 
-				ASTNode denominator_p1p2 = speciesTerm(specRefE1
-						.getSpeciesInstance());
+				ASTNode denominator_p1p2 = speciesTerm(specRefE1);
 				if (specRefP2.equals(specRefP1)) {
-					numeratorReverse = ASTNode.times(numeratorReverse,
-							ASTNode.pow(speciesTerm(specRefP1
-									.getSpeciesInstance()), 2));
-					denominator_p1p2 = ASTNode.pow(speciesTerm(specRefP1
-							.getSpeciesInstance()), 2);
+					numeratorReverse = ASTNode.times(numeratorReverse, ASTNode
+							.pow(speciesTerm(specRefP1), 2));
+					denominator_p1p2 = ASTNode.pow(speciesTerm(specRefP1), 2);
 
 				} else {
-					numeratorReverse.multiplyWith(speciesTerm(specRefP1
-							.getSpeciesInstance()), speciesTerm(specRefP2
-							.getSpeciesInstance()));
+					numeratorReverse.multiplyWith(speciesTerm(specRefP1),
+							speciesTerm(specRefP2));
 
-					denominator_p1p2 = ASTNode.times(speciesTerm(specRefP1
-							.getSpeciesInstance()), speciesTerm(specRefP2
-							.getSpeciesInstance()));
+					denominator_p1p2 = ASTNode.times(speciesTerm(specRefP1),
+							speciesTerm(specRefP2));
 				}
 				numerator = ASTNode.diff(numeratorForward, numeratorReverse);
 				denominator_p1p2 = ASTNode.frac(denominator_p1p2, ASTNode
@@ -297,7 +264,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				denominator = ASTNode.sum(denominator, denominator_p1p2);
 			}
 			catalysts[enzymeNum++] = ASTNode.frac(numerator, denominator);
-		} while (enzymeNum <= modE.size() - 1);
+		} while (enzymeNum < modE.size());
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
 	}

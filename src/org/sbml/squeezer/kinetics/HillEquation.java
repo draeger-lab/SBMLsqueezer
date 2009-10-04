@@ -56,15 +56,6 @@ public class HillEquation extends BasicKineticLaw implements
 		super(parentReaction);
 	}
 
-	public static boolean isApplicable(Reaction reaction) {
-		// TODO: add Hillequation if reactiontype is translation or
-		// transcription
-		if (SBO.isTranslation(reaction.getSBOTerm())
-				|| SBO.isTranscription(reaction.getSBOTerm()))
-			return true;
-		return false;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -172,12 +163,12 @@ public class HillEquation extends BasicKineticLaw implements
 			Parameter p_hillcoeff = parameterHillCoefficient(rId, modTActi
 					.get(i));
 			Parameter p_kS = parameterKS(rId, modTActi.get(i));
-			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(new ASTNode(
-					modTActi.get(i), this), new ASTNode(p_hillcoeff, this)),
-					ASTNode.sum(ASTNode.pow(new ASTNode(modTActi.get(i), this),
-							new ASTNode(p_hillcoeff, this)), ASTNode.pow(
-							new ASTNode(p_kS, this), new ASTNode(p_hillcoeff,
-									this)))));
+			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(
+					speciesTerm(modTActi.get(i)),
+					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
+					speciesTerm(modTActi.get(i)),
+					new ASTNode(p_hillcoeff, this)), ASTNode.pow(new ASTNode(
+					p_kS, this), new ASTNode(p_hillcoeff, this)))));
 		}
 		for (i = 0; i < modTInhib.size(); i++)
 		/*
@@ -187,12 +178,10 @@ public class HillEquation extends BasicKineticLaw implements
 			Parameter p_hillcoeff = parameterHillCoefficient(rId, modTInhib
 					.get(i));
 			Parameter p_kS = parameterKS(rId, modTInhib.get(i));
-			inhib[i] = ASTNode.times(ASTNode.diff(new ASTNode(1, this), ASTNode
-					.frac(ASTNode.pow(new ASTNode(modTInhib.get(i), this),
-							new ASTNode(p_hillcoeff, this)), ASTNode.sum(
-							ASTNode.pow(new ASTNode(modTInhib.get(i), this),
-									new ASTNode(p_hillcoeff, this)), ASTNode
-									.pow(this, p_kS, p_hillcoeff)))));
+			inhib[i] = ASTNode.frac(ASTNode.pow(speciesTerm(modTInhib.get(i)),
+					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
+					speciesTerm(modTInhib.get(i)), new ASTNode(p_hillcoeff,
+							this)), ASTNode.pow(this, p_kS, p_hillcoeff)));
 		}
 		Parameter p_kg = createOrGetParameter(concat("kg_", rId).toString());
 		p_kg.setSBOTerm(186);
@@ -201,7 +190,8 @@ public class HillEquation extends BasicKineticLaw implements
 		if (modTActi.size() > 0)
 			formelTxt.multiplyWith(acti);
 		if (modTInhib.size() > 0)
-			formelTxt.multiplyWith(inhib);
+			formelTxt.multiplyWith(ASTNode.diff(new ASTNode(1, this), ASTNode
+					.times(inhib)));
 		return formelTxt;
 	}
 
