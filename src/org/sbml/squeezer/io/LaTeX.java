@@ -24,6 +24,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.NamedSBase;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.squeezer.CfgKeys;
@@ -516,7 +517,11 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		}
 		// TODO: weitere spezialfälle von Namen!!! PARAMETER, FUNCTION DEF,
 		// REACTION.
-		return new StringBuffer(mathtt(maskSpecialChars(variable.getId())));
+		// return new StringBuffer(mathtt(maskSpecialChars(variable.getId())));
+		else if (variable instanceof Parameter) {
+			return new StringBuffer("parameter");
+		}
+		return new StringBuffer("variable:"+variable);
 	}
 
 	/*
