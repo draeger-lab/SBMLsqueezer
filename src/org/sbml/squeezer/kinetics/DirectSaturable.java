@@ -90,7 +90,7 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 			kM = forward ? parameterMichaelisSubstrate(r.getId(), specRef
 					.getSpecies(), enzyme) : parameterMichaelisProduct(r
 					.getId(), specRef.getSpecies(), enzyme);
-			curr = ASTNode.frac(speciesTerm(specRef.getSpeciesInstance()),
+			curr = ASTNode.frac(speciesTerm(specRef),
 					new ASTNode(kM, this));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));

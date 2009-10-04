@@ -53,15 +53,6 @@ public class GRNSSystemEquation extends BasicKineticLaw implements
 		super(parentReaction, typeParameters);
 	}
 
-	public static boolean isApplicable(Reaction reaction) {
-		// System.out.println("isApplicable: " + reaction.isSetSBOTerm()
-		// + "SBOTerm reaction: " + reaction.getSBOTerm());
-		if (SBO.isTranslation(reaction.getSBOTerm())
-				|| SBO.isTranscription(reaction.getSBOTerm()))
-			return true;
-		return false;
-	}
-
 	/*
 	 * (Kein Javadoc)
 	 * 

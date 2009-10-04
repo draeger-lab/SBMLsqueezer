@@ -24,7 +24,6 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -40,6 +39,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
+import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.StringTools;
 import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
@@ -74,11 +74,6 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	private List<ItemListener> itemListeners;
 
 	/**
-	 * Set of those kinetic equations that can only be reversible.
-	 */
-	private Set<String> notIrreversible;
-
-	/**
 	 * Reaction Mechanism Panel
 	 * 
 	 * @param properties
@@ -89,9 +84,6 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 			if (key.toString().startsWith("KINETICS_"))
 				settings.put(key, properties.get(key));
 		}
-		notIrreversible = new HashSet<String>();
-		notIrreversible.addAll(SBMLsqueezer.getKineticsReversible());
-		notIrreversible.removeAll(SBMLsqueezer.getKineticsIrreversible());
 		itemListeners = new LinkedList<ItemListener>();
 		origSett = properties;
 		init(((Boolean) origSett
@@ -106,61 +98,35 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	 */
 	private void init(boolean treatReactionsReversible) {
 		setLayout(new GridLayout(1, 2));
-		setBorder(BorderFactory.createTitledBorder(null,
-				" Reaction Mechanisms ", TitledBorder.CENTER,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-		setBackground(Color.WHITE);
 
 		JPanel leftMechanismPanel = new JPanel();
-		leftMechanismPanel.setBackground(Color.WHITE);
 		LayoutHelper lh = new LayoutHelper(leftMechanismPanel);
 
-		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
-				SBMLsqueezer.getKineticsNonEnzyme()),
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsNonEnzyme(treatReactionsReversible),
 				CfgKeys.KINETICS_NONE_ENZYME_REACTIONS));
-		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
-				SBMLsqueezer.getKineticsUniUni()),
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsUniUni(treatReactionsReversible),
 				CfgKeys.KINETICS_UNI_UNI_TYPE));
-		lh
-				.add(createButtonGroupPanel(checkReactions(
-						treatReactionsReversible, SBMLsqueezer
-								.getKineticsBiUni()),
-						CfgKeys.KINETICS_BI_UNI_TYPE));
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsBiUni(treatReactionsReversible),
+				CfgKeys.KINETICS_BI_UNI_TYPE));
 
 		JPanel rightMechanismPanel = new JPanel();
-		rightMechanismPanel.setBackground(Color.WHITE);
 		lh = new LayoutHelper(rightMechanismPanel);
-		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
-				SBMLsqueezer.getKineticsBiBi()), CfgKeys.KINETICS_BI_BI_TYPE));
-		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
-				SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsBiBi(treatReactionsReversible),
+				CfgKeys.KINETICS_BI_BI_TYPE));
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsArbitraryEnzyme(treatReactionsReversible),
 				CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS));
-		lh.add(createButtonGroupPanel(checkReactions(treatReactionsReversible,
-				SBMLsqueezer.getKineticsGeneRegulatoryNetworks()),
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsGeneRegulation(treatReactionsReversible),
 				CfgKeys.KINETICS_GENE_REGULATION));
 
 		add(leftMechanismPanel);
 		add(rightMechanismPanel);
-	}
-
-	/**
-	 * Checks if the given set of kinetics can be used given the property if all
-	 * reactions should be treated reversibly.
-	 * 
-	 * @param treatReactionsReversible
-	 * @param allKinetics
-	 * @return A set of kinetics that can be used given the reversible property.
-	 */
-	private Set<String> checkReactions(boolean treatReactionsReversible,
-			Set<String> allKinetics) {
-		Set<String> kinetics = new HashSet<String>();
-		kinetics.addAll(allKinetics);
-		if (!treatReactionsReversible)
-			kinetics.removeAll(notIrreversible);
-		/*
-		 * else kinetics.retainAll(notIrreversible);
-		 */
-		return kinetics;
+		GUITools.setAllBackground(this, Color.WHITE);
 	}
 
 	/**

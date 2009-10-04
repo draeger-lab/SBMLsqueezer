@@ -36,8 +36,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @date Feb 6, 2008
  */
 public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
@@ -53,18 +52,18 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public IrrevNonModulatedNonInteractingEnzymes(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+	public IrrevNonModulatedNonInteractingEnzymes(Reaction parentReaction,
+			Object... typeParameters) throws RateLawNotApplicableException,
+			IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 *      .util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -86,7 +85,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		ASTNode enzymes[] = new ASTNode[Math.max(1, modE.size())];
 		for (int enzymeNum = 0; enzymeNum < enzymes.length; enzymeNum++) {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			Parameter p_kcat = parameterKcatOrVmax(reaction.getId(), enzyme, true);
+			Parameter p_kcat = parameterKcatOrVmax(reaction.getId(), enzyme,
+					true);
 			ASTNode numerator = new ASTNode(p_kcat, this);
 
 			ASTNode[] denominator = new ASTNode[reaction.getNumReactants()];
@@ -95,19 +95,19 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
 					throw new RateLawNotApplicableException(
 							"This rate law can only be applied if all reactants have integer stoichiometries.");
-				Parameter p_kM = parameterMichaelisSubstrate(reaction.getId(), si.getSpecies(), enzyme);
-				ASTNode frac = ASTNode
-						.frac(speciesTerm(si.getSpeciesInstance()), new ASTNode(p_kM, this));
+				Parameter p_kM = parameterMichaelisSubstrate(reaction.getId(),
+						si.getSpecies(), enzyme);
+				ASTNode frac = ASTNode.frac(speciesTerm(si), new ASTNode(p_kM,
+						this));
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
-						speciesTerm(si.getSpeciesInstance()), new ASTNode(p_kM, this)), si
+						speciesTerm(si), new ASTNode(p_kM, this)), si
 						.getStoichiometry()));
 				denominator[i] = ASTNode.pow(ASTNode.sum(new ASTNode(1, this),
 						frac), new ASTNode(si.getStoichiometry(), this));
 			}
 
 			if (modE.size() >= 1)
-				numerator = ASTNode.times(
-						new ASTNode(modE.get(enzymeNum), this), numerator);
+				numerator = ASTNode.times(speciesTerm(enzyme), numerator);
 			enzymes[enzymeNum] = ASTNode.frac(numerator, ASTNode
 					.times(denominator));
 		}

@@ -246,11 +246,6 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		return denominator;
 	}
 
-	public static boolean isApplicable(Reaction reaction) {
-		// TODO
-		return true;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

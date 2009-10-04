@@ -29,15 +29,17 @@ import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates an equation based on an non-linear additive model as defined in the paper
- * "The NetGenerator Algorithm: Reconstruction of Gene Regulatory Networks"
- * of Töpfer, S.; Guthke, R.; Driesch, D.; Wötzel, D. & Pfaff 2007
+ * This class creates an equation based on an non-linear additive model as
+ * defined in the paper "The NetGenerator Algorithm: Reconstruction of Gene
+ * Regulatory Networks" of Töpfer, S.; Guthke, R.; Driesch, D.; Wötzel, D. &
+ * Pfaff 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- *
+ * 
  */
-public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements InterfaceGeneRegulatoryKinetics {
-		
+public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements
+		InterfaceGeneRegulatoryKinetics {
+
 	/**
 	 * @param parentReaction
 	 * @param typeParameters
@@ -49,11 +51,12 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements In
 			IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
-	
-	ASTNode actifunction(ASTNode g){
-		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1,this),ASTNode.exp(ASTNode.times(new ASTNode(-1,this),g))));
+
+	ASTNode actifunction(ASTNode g) {
+		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
+				.exp(ASTNode.times(new ASTNode(-1, this), g))));
 	}
-	
+
 	ASTNode function_w() {
 		Reaction r = getParentSBMLObject();
 		Parameter p = null;
@@ -66,11 +69,13 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements In
 			Species modifierspec = r.getModifier(modifierNum)
 					.getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
-			if ((SBO.isProtein(modifierspec.getSBOTerm())
-					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm()))&&!product.equals(modifierspec)) {
-				if (!modifier.isSetSBOTerm()) modifier.setSBOTerm(19);
+			if ((SBO.isProtein(modifierspec.getSBOTerm()) || SBO
+					.isRNAOrMessengerRNA(modifierspec.getSBOTerm()))
+					&& !product.equals(modifierspec)) {
+				if (!modifier.isSetSBOTerm())
+					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = speciesTerm(modifier.getSpeciesInstance());
+					modnode = speciesTerm(modifier);
 					p = createOrGetParameter("w_", modifierNum, underscore, rId);
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
@@ -80,28 +85,31 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements In
 				}
 			}
 		}
-		if (node.isUnknown()) return null;
-		else return node;
+		if (node.isUnknown())
+			return null;
+		else
+			return node;
 	}
-	
-	ASTNode function_l(){
+
+	ASTNode function_l() {
 		Reaction r = getParentSBMLObject();
 		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
-		
+
 		Species product = r.getProduct(0).getSpeciesInstance();
-		ASTNode productnode = speciesTerm(product);	
+		ASTNode productnode = speciesTerm(product);
 
 		Parameter p = createOrGetParameter("w_", rId);
 		ASTNode pnode = new ASTNode(p, this);
-		//TODO: -(-1) zu +
-		node = ASTNode.times(new ASTNode(-1,this),pnode, productnode);
+		// TODO: -(-1) zu +
+		node = ASTNode.times(new ASTNode(-1, this), pnode, productnode);
 
 		return node;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
 	 */
 	public String getSimpleName() {

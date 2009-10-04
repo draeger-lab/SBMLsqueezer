@@ -92,6 +92,8 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 
 	private JRadioButton jRadioButtonTypeUnitConsistency;
 
+	private JCheckBox jCheckBoxSetBoundaryCondition;
+
 	private JCheckBox jCheckBoxWarnings;
 
 	private JComboBox jComboBoxTypeStandardVersion;
@@ -190,24 +192,34 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		GridBagLayout layout = new GridBagLayout();
 		JPanel jPanelGeneralOptions = new JPanel(layout);
 		jPanelGeneralOptions.setBorder(BorderFactory.createTitledBorder(null,
-				" General Options ", TitledBorder.CENTER,
+				" General options ", TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
+		jCheckBoxSetBoundaryCondition = new JCheckBox(GUITools.toHTML(
+				"Set boundary condition for gene coding species", 80),
+				((Boolean) settings
+						.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
+						.booleanValue());
+		jCheckBoxSetBoundaryCondition
+				.setToolTipText(GUITools
+						.toHTML(
+								"If selected, the boundary condition of all species that represent gene coding elements, such as genes or gene coding regions will be set to true.",
+								40));
 		jCheckBoxTreatAllReactionsAsEnzyeReaction = new JCheckBox(
-				"<html>Consider all reactions to be<br>enzyme-catalyzed</html>");
-		jCheckBoxTreatAllReactionsAsEnzyeReaction
-				.setToolTipText("<html>If checked, all reactions are considered to be enzyme-catalyzed.</html>");
-		jCheckBoxTreatAllReactionsAsEnzyeReaction
-				.setSelected(((Boolean) settings
+				"<html>Consider all reactions to be<br>enzyme-catalyzed</html>",
+				((Boolean) settings
 						.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 						.booleanValue());
-		jCheckBoxTreatAllReactionsAsEnzyeReaction.setBackground(Color.WHITE);
+		jCheckBoxTreatAllReactionsAsEnzyeReaction
+				.setToolTipText(GUITools
+						.toHTML(
+								"If checked, all reactions are considered to be enzyme-catalyzed.",
+								40));
 		jCheckBoxAddAllParametersGlobally = new JCheckBox(
 				"Add all new parameters globally");
 		jCheckBoxAddAllParametersGlobally
 				.setToolTipText("<html>If selected, all newly created parameters are stored <br>"
 						+ "globally in the model. Otherwise SBMLsqueezer only stores most <br>"
 						+ "parameters locally in the respective rate law.</html>");
-		jCheckBoxAddAllParametersGlobally.setBackground(Color.WHITE);
 		jCheckBoxAddAllParametersGlobally.setSelected(((Boolean) settings
 				.get(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
 				.booleanValue());
@@ -218,35 +230,33 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxWarnings
 				.setToolTipText("<html>If checked, warnings will be shown for reactions<br>"
 						+ "with more reactants than specified here.</html>");
-		jCheckBoxWarnings.setBackground(Color.WHITE);
 		jSpinnerMaxRealisticNumOfReactants = new JSpinner(
 				new SpinnerNumberModel(((Integer) settings
 						.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS)).intValue(),
 						2, 10, 1));
-		jSpinnerMaxRealisticNumOfReactants
-				.setToolTipText("<html>Specifiy how many reactants are at most likely to collide.</html>");
-		jSpinnerMaxRealisticNumOfReactants.setBackground(Color.WHITE);
-		jPanelGeneralOptions.setBackground(Color.WHITE);
+		jSpinnerMaxRealisticNumOfReactants.setToolTipText(GUITools.toHTML(
+				"Specifiy how many reactants are at most likely to collide.",
+				40));
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxTreatAllReactionsAsEnzyeReaction, 0, 0, 1, 1, 1, 0);
+				jCheckBoxSetBoundaryCondition, 0, 0, 2, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxAddAllParametersGlobally, 1, 0, 1, 1, 1, 0);
+				jCheckBoxTreatAllReactionsAsEnzyeReaction, 0, 1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxWarnings, 0, 1, 1, 1, 1, 0);
+				jCheckBoxAddAllParametersGlobally, 1, 1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jSpinnerMaxRealisticNumOfReactants, 1, 1, 1, 1, 1, 0);
+				jCheckBoxWarnings, 0, 2, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
+				jSpinnerMaxRealisticNumOfReactants, 1, 2, 1, 1, 1, 1);
 
 		// Second Panel
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
 				"Only when missing");
 		jRadioButtonGenerateOnlyMissingKinetics
 				.setToolTipText("<html>If checked, kinetics are only generated if missing in the SBML file.</html>");
-		jRadioButtonGenerateOnlyMissingKinetics.setBackground(Color.WHITE);
 		jRadioButtonGenerateForAllReactions = new JRadioButton(
 				"For all reactions");
 		jRadioButtonGenerateForAllReactions
 				.setToolTipText("<html>If checked, already existing kinetic laws will be overwritten.</html>");
-		jRadioButtonGenerateForAllReactions.setBackground(Color.WHITE);
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonGenerateForAllReactions);
 		buttonGroup.add(jRadioButtonGenerateOnlyMissingKinetics);
@@ -258,14 +268,13 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		layout = new GridBagLayout();
 		JPanel jPanelGenerateNewKinetics = new JPanel(layout);
 		jPanelGenerateNewKinetics.setBorder(BorderFactory.createTitledBorder(
-				null, " Generate New Kinetics ",
+				null, " Generate new kinetics ",
 				TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-		jPanelGenerateNewKinetics.setBackground(Color.WHITE);
 		LayoutHelper.addComponent(jPanelGenerateNewKinetics, layout,
-				jRadioButtonGenerateOnlyMissingKinetics, 0, 0, 1, 1, 1, 0);
+				jRadioButtonGenerateOnlyMissingKinetics, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGenerateNewKinetics, layout,
-				jRadioButtonGenerateForAllReactions, 0, 1, 1, 1, 1, 0);
+				jRadioButtonGenerateForAllReactions, 0, 1, 1, 1, 1, 1);
 
 		// Third Panel
 		jRadioButtonForceReacRev = new JRadioButton(
@@ -275,7 +284,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.booleanValue());
 		jRadioButtonForceReacRev
 				.setToolTipText("<html>If checked, all reactions will be set to reversible no matter what is given by the SBML file.</html>");
-		jRadioButtonForceReacRev.setBackground(Color.WHITE);
 		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(
 				"Use information from SBML");
 		jRadioButtonSettingsFrameForceRevAsCD.setSelected(!((Boolean) settings
@@ -283,7 +291,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.booleanValue());
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setToolTipText("<html>If checked, the information about reversiblity will be left unchanged.</html>");
-		jRadioButtonSettingsFrameForceRevAsCD.setBackground(Color.WHITE);
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonSettingsFrameForceRevAsCD);
 		buttonGroup.add(jRadioButtonForceReacRev);
@@ -293,7 +300,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jPanelSettingsReversibility.setBorder(BorderFactory.createTitledBorder(
 				null, " Reversibility ", TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-		jPanelSettingsReversibility.setBackground(Color.WHITE);
 		LayoutHelper.addComponent(jPanelSettingsReversibility, layout,
 				jRadioButtonSettingsFrameForceRevAsCD, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsReversibility, layout,
@@ -307,7 +313,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.setToolTipText("<html>If checked, generic proteins are treated as enzymes.<br>"
 						+ "Otherwise, generic protein-catalyzed reactions are<br>"
 						+ "not considered to be enzyme reactions.</html>");
-		jCheckBoxPossibleEnzymeGenericProtein.setBackground(Color.WHITE);
 		jCheckBoxPossibleEnzymeRNA = new JCheckBox("RNA");
 		jCheckBoxPossibleEnzymeRNA.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_RNA)).booleanValue());
@@ -323,7 +328,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.setToolTipText("<html>If checked, complex molecules are treated as enzymes.<br>"
 						+ "Otherwise, complex catalized reactions are not<br>"
 						+ "considered to be enzyme reactions.</html>");
-		jCheckBoxPossibleEnzymeComplex.setBackground(Color.WHITE);
 		jCheckBoxPossibleEnzymeTruncatedProtein = new JCheckBox(
 				"Truncated protein");
 		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(((Boolean) settings
@@ -332,7 +336,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.setToolTipText("<html>If checked, truncated proteins are treated as enzymes.<br>"
 						+ "Otherwise, truncated protein catalized reactions<br>"
 						+ "are not considered to be enzyme reactions.</html>");
-		jCheckBoxPossibleEnzymeTruncatedProtein.setBackground(Color.WHITE);
 		jCheckBoxPossibleEnzymeReceptor = new JCheckBox("Receptor");
 		jCheckBoxPossibleEnzymeReceptor.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_RECEPTOR)).booleanValue());
@@ -340,7 +343,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.setToolTipText("<html>If checked, receptors are treated as enzymes.<br>"
 						+ "Otherwise, receptor catalized reactions are not <br>"
 						+ "considered to be enzyme reactions.</html>");
-		jCheckBoxPossibleEnzymeReceptor.setBackground(Color.WHITE);
 		jCheckBoxPossibleEnzymeUnknown = new JCheckBox("Unknown");
 		jCheckBoxPossibleEnzymeUnknown.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_UNKNOWN)).booleanValue());
@@ -348,7 +350,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.setToolTipText("<html>If checked, unknown molecules are treated as enzymes.<br>"
 						+ "Otherwise, unknown molecule catalized reactions are not<br>"
 						+ "considered to be enzyme reactions.</html>");
-		jCheckBoxPossibleEnzymeUnknown.setBackground(Color.WHITE);
 		jCheckBoxPossibleEnzymeAsRNA = new JCheckBox("asRNA");
 		jCheckBoxPossibleEnzymeAsRNA.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_ANTISENSE_RNA)).booleanValue());
@@ -356,7 +357,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.setToolTipText("<html>If checked, asRNA is treated as an enzyme.<br>"
 						+ "Otherwise asRNA catalized reactions are not<br>"
 						+ "considered to be enzyme-catalyzed reactions.</html>");
-		jCheckBoxPossibleEnzymeAsRNA.setBackground(Color.WHITE);
 		jCheckBoxPossibleEnzymeSimpleMolecule = new JCheckBox("Simple molecule");
 		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_SIMPLE_MOLECULE)).booleanValue());
@@ -364,16 +364,14 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.setToolTipText("<html>If checked, simple molecules are treated as enzymes.<br>"
 						+ "Otherwise, simple molecule catalized reactions are not<br>"
 						+ "considered to be enzyme reactions.</html>");
-		jCheckBoxPossibleEnzymeSimpleMolecule.setBackground(Color.WHITE);
 
 		layout = new GridBagLayout();
 		JPanel jPanelSettingsEnzymes = new JPanel();
 		jPanelSettingsEnzymes.setLayout(layout);
 		jPanelSettingsEnzymes.setBorder(BorderFactory.createTitledBorder(null,
-				" Species to Be Treated as Enzymes ",
+				" Species to be treated as enzymes ",
 				TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-		jPanelSettingsEnzymes.setBackground(Color.WHITE);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
 				jCheckBoxPossibleEnzymeGenericProtein, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
@@ -395,38 +393,55 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		LayoutHelper unitConsistency = new LayoutHelper(
 				jPanelTypeUnitConsistency);
 		jRadioButtonTypeUnitConsistency = new JRadioButton(GUITools.toHTML(
-				"Set species to substance units", 60), ((Integer) this.settings
+				"Set species to substance units", 30), ((Integer) this.settings
 				.get(CfgKeys.TYPE_UNIT_CONSISTENCY)).intValue() == 0);
+		jRadioButtonTypeUnitConsistency
+				.setToolTipText(GUITools
+						.toHTML(
+								"If this option is selected, species occuring in kinetic equations are interpreted in terms of substance units.",
+								40));
 		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(GUITools
 				.toHTML("Multyply species with surrounding compartment size",
-						60), !jRadioButtonTypeUnitConsistency.isSelected());
+						30), !jRadioButtonTypeUnitConsistency.isSelected());
+		jRadioButtonTypeUnitsCompVol
+				.setToolTipText(GUITools
+						.toHTML(
+								"If this option is selected, species are interpreted in terms of concentration and are therefore multiplied with their surrounding compartment when these occur in kinetic equations.",
+								40));
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonTypeUnitConsistency);
 		buttonGroup.add(jRadioButtonTypeUnitsCompVol);
 		unitConsistency.add(jRadioButtonTypeUnitConsistency);
 		unitConsistency.add(jRadioButtonTypeUnitsCompVol);
-		jPanelTypeUnitConsistency.setBorder(BorderFactory
-				.createTitledBorder(" Select how to ensure unit consistency "));
-		GUITools.setAllBackground(jPanelTypeUnitConsistency, Color.WHITE);
+		jPanelTypeUnitConsistency.setBorder(BorderFactory.createTitledBorder(
+				null, " How to ensure unit consistency ",
+				TitledBorder.DEFAULT_JUSTIFICATION,
+				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 
 		JPanel jPanelStandardVersions = new JPanel();
 		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
 				"hal", "weg" });
 		jComboBoxTypeStandardVersion.setSelectedIndex(((Integer) this.settings
 				.get(CfgKeys.TYPE_STANDARD_VERSION)).intValue());
+		jComboBoxTypeStandardVersion
+				.setToolTipText(GUITools
+						.toHTML(
+								"Select the version of the standardised kinetic equations. These options are described in the publications of Liebermeister et al.",
+								40));
 		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
 		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
 		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);
 		helper.add(new JLabel(GUITools.toHTML(
-				"Choose the version of standardised kinetics:", 40)), 1, 1, 1,
-				1, 1, 1);
+				"Choose the version of standardised kinetics:", 20)), 1, 1, 1,
+				1, 0, 1);
 		helper.add(new JPanel(), 2, 1, 1, 1, 1, 1);
-		helper.add(jComboBoxTypeStandardVersion, 3, 1, 1, 1, 1, 1);
+		helper.add(jComboBoxTypeStandardVersion, 3, 1, 1, 1, 1, 0);
 		helper.add(new JPanel(), 4, 1, 1, 1, 1, 1);
 		helper.add(new JPanel(), 0, 2, 5, 1, 1, 1);
-		GUITools.setAllBackground(jPanelStandardVersions, Color.WHITE);
-		jPanelStandardVersions.setBorder(BorderFactory
-				.createTitledBorder(" Version of standard kinetics "));
+		jPanelStandardVersions.setBorder(BorderFactory.createTitledBorder(null,
+				" Version of standard kinetics ",
+				TitledBorder.DEFAULT_JUSTIFICATION,
+				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 
 		// Add all panels to this settings panel:
 		layout = (GridBagLayout) this.getLayout();
@@ -439,11 +454,11 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		LayoutHelper.addComponent(this, layout, jPanelSettingsEnzymes, 0, 2, 2,
 				1, 1, 1);
 		LayoutHelper.addComponent(this, layout, jPanelTypeUnitConsistency, 0,
-				3, 2, 1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 0, 4,
-				2, 1, 1, 1);
+				3, 1, 1, 1, 1);
+		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 1, 3,
+				1, 1, 1, 1);
 
-		setBackground(Color.WHITE);
+		GUITools.setAllBackground(this, Color.WHITE);
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
 		// Add change listener
@@ -463,6 +478,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxPossibleEnzymeSimpleMolecule.addItemListener(this);
 		jRadioButtonTypeUnitConsistency.addItemListener(this);
 		jComboBoxTypeStandardVersion.addItemListener(this);
+		jCheckBoxSetBoundaryCondition.addItemListener(this);
 	}
 
 	/*
@@ -529,9 +545,13 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 			settings.put(CfgKeys.TYPE_UNIT_CONSISTENCY, Integer
 					.valueOf(jRadioButtonTypeUnitConsistency.isSelected() ? 0
 							: 1));
-		} else if (e.getSource().equals(jComboBoxTypeStandardVersion))
+		} else if (e.getSource().equals(jComboBoxTypeStandardVersion)) {
 			settings.put(CfgKeys.TYPE_STANDARD_VERSION, Integer
 					.valueOf(jComboBoxTypeStandardVersion.getSelectedIndex()));
+		} else if (e.getSource().equals(jCheckBoxSetBoundaryCondition)) {
+			settings.put(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, Boolean
+					.valueOf(jCheckBoxSetBoundaryCondition.isSelected()));
+		}
 		for (ItemListener i : itemListeners)
 			i.itemStateChanged(e);
 	}

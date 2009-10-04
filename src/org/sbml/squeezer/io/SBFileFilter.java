@@ -1,10 +1,20 @@
-/**
- * Aug 3, 2007
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
  *
- * @since 2.0
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml.squeezer.io;
 
@@ -16,11 +26,10 @@ import javax.swing.filechooser.FileFilter;
  * A file filter implementation for TeX and text files. It also accepts
  * directories. Otherwise one could not browse in the file system.
  * 
- * @since 2.0
+ * @since 1.0
+ * @date 2007-08-03
  * @version
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0 Aug 3, 2007
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  */
 public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 
@@ -44,11 +53,13 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 */
 	public static final SBFileFilter TEXT_FILE_FILTER = new SBFileFilter(
 			TEXT_FILES);
+
 	/**
 	 * A filter for TeX files
 	 */
 	public static final SBFileFilter TeX_FILE_FILTER = new SBFileFilter(
 			TeX_FILES);
+
 	/**
 	 * A filter for SBML files
 	 */

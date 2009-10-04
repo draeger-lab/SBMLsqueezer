@@ -138,6 +138,10 @@ public enum CfgKeys {
 	/**
 	 * 
 	 */
+	OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
+	/**
+	 * 
+	 */
 	POSSIBLE_ENZYME_GENERIC,
 	/**
 	 * 

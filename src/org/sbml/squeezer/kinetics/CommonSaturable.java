@@ -89,8 +89,8 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 			Parameter kM = forward ? parameterMichaelisSubstrate(r.getId(),
 					specRef.getSpecies(), enzyme) : parameterMichaelisProduct(r
 					.getId(), specRef.getSpecies(), enzyme);
-			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(speciesTerm(specRef
-					.getSpeciesInstance()), new ASTNode(kM, this)));
+			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
+					speciesTerm(specRef), new ASTNode(kM, this)));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));
 			if (denominator.isUnknown())

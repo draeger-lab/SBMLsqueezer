@@ -97,8 +97,9 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 					.getSpecies(), enzyme) : parameterMichaelisProduct(r
 					.getId(), specRef.getSpecies(), enzyme);
 			curr = new ASTNode(1, this);
-			curr.plus(ASTNode.frac(speciesTerm(specRef.getSpeciesInstance()),
-					new ASTNode(kM, this)));
+			curr
+					.plus(ASTNode.frac(speciesTerm(specRef), new ASTNode(kM,
+							this)));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));
 			if (term.isUnknown())

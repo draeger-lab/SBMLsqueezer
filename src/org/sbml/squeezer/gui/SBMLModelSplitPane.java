@@ -33,7 +33,7 @@ import javax.swing.tree.TreePath;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBase;
-import org.sbml.squeezer.io.SBaseChangedListener;
+import org.sbml.jsbml.SBaseChangedListener;
 
 /**
  * @author Andreas Dr&auml;ger <a

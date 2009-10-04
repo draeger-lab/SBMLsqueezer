@@ -48,6 +48,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SBaseChangedListener;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SpeciesType;
