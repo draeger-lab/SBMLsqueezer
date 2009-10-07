@@ -18,47 +18,54 @@
  */
 package org.sbml.squeezer.plugin;
 
-
 import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 import jp.sbi.celldesigner.plugin.PluginMenu;
 import jp.sbi.celldesigner.plugin.PluginMenuItem;
+import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSBase;
 
+import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 
 /**
- * TODO: comment missing
+ * This is the main class for the CellDesigner plugin mode of SBMLsqueezer.
  * 
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @author Hannes Borch <hannes.borch@googlemail.com>
  */
 public class SBMLsqueezerPlugin extends CellDesignerPlugin {
+
+	private SBMLsqueezer sbmlSqueezer;
 
 	/**
 	 * Initializes a new SBMLsqueezerPlugin instance.
 	 */
 	public SBMLsqueezerPlugin() {
-		SBMLsqueezer sbmlSqueezer = new SBMLsqueezer(this);
+		sbmlSqueezer = new SBMLsqueezer(new PluginSBMLReader(
+				getSelectedModel(), SBO.getPossibleEnzymes(SBMLsqueezer
+						.getPossibleEnzymeTypes())), new PluginSBMLWriter(this));
+		sbmlSqueezer.checkForUpdate(true);
+		SBMLsqueezerPluginAction action = new SBMLsqueezerPluginAction(this);
 		String title = "SBMLsqueezer " + SBMLsqueezer.getVersionNumber();
 		PluginMenu menu = new PluginMenu(title);
 		PluginMenuItem menuItem = new PluginMenuItem(getMainPluginItemText(),
-				sbmlSqueezer);
+				action);
 		menu.add(menuItem);
-		menuItem = new PluginMenuItem(getExporterItemText(), sbmlSqueezer);
+		menuItem = new PluginMenuItem(getExporterItemText(), action);
 		menu.add(menuItem);
 		this.addCellDesignerPluginMenu(menu);
 
 		// Popup menu
 		PluginMenu contextMenu = new PluginMenu(title);
 		PluginMenuItem contextMenuItem = new PluginMenuItem(
-				getSqueezeContextMenuItemText(), sbmlSqueezer);
+				getSqueezeContextMenuItemText(), action);
 		contextMenu.add(contextMenuItem);
 		contextMenuItem = new PluginMenuItem(getExportContextMenuItemText(),
-				sbmlSqueezer);
+				action);
 		contextMenu.add(contextMenuItem);
 
 		addReactionPopupMenuSeparator();
@@ -74,16 +81,17 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	}
 
 	public String getExportContextMenuItemText() {
-		return "Export Reaction to other Format";
+		return "Export reaction to other format";
 	}
 
 	/**
-	 * TODO: comment missing
+	 * This method returns the text for the menu item that allows the user to
+	 * exoport th emodel into another format, such as LaTeX.
 	 * 
 	 * @return
 	 */
 	public String getExporterItemText() {
-		return "Export Model to other Format";
+		return "Export model to other format";
 	}
 
 	/**
@@ -92,24 +100,24 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	 * @return Returns the label of the menu item that points to this plugin.
 	 */
 	public String getMainPluginItemText() {
-		return "Squeeze Kinetic Laws";
+		return "Squeeze kinetic laws";
 	}
 
 	/**
-	 * TODO: comment missing
+	 * This is the method that returns the label for the item in CellDesigner's
+	 * menu that allows to "squeeze" a kinetic equation from a given reaction.
 	 * 
 	 * @return
 	 */
 	public String getSqueezeContextMenuItemText() {
-		return "Squeeze Kinetic Law";
+		return "Squeeze kinetic law";
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * jp.sbi.celldesigner.plugin.CellDesignerPlug#modelClosed(jp.sbi.celldesigner
-	 * .plugin.PluginSBase)
+	 * @see jp.sbi.celldesigner.plugin.CellDesignerPlug#modelClosed(jp.sbi.celldesigner
+	 *      .plugin.PluginSBase)
 	 */
 	public void modelClosed(PluginSBase arg0) {
 	}
@@ -117,9 +125,8 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * jp.sbi.celldesigner.plugin.CellDesignerPlug#modelOpened(jp.sbi.celldesigner
-	 * .plugin.PluginSBase)
+	 * @see jp.sbi.celldesigner.plugin.CellDesignerPlug#modelOpened(jp.sbi.celldesigner
+	 *      .plugin.PluginSBase)
 	 */
 	public void modelOpened(PluginSBase arg0) {
 	}
@@ -127,9 +134,8 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * jp.sbi.celldesigner.plugin.CellDesignerPlug#modelSelectChanged(jp.sbi
-	 * .celldesigner.plugin.PluginSBase)
+	 * @see jp.sbi.celldesigner.plugin.CellDesignerPlug#modelSelectChanged(jp.sbi
+	 *      .celldesigner.plugin.PluginSBase)
 	 */
 	public void modelSelectChanged(PluginSBase arg0) {
 	}
@@ -137,9 +143,8 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * jp.sbi.celldesigner.plugin.CellDesignerPlug#SBaseAdded(jp.sbi.celldesigner
-	 * .plugin.PluginSBase)
+	 * @see jp.sbi.celldesigner.plugin.CellDesignerPlug#SBaseAdded(jp.sbi.celldesigner
+	 *      .plugin.PluginSBase)
 	 */
 	public void SBaseAdded(PluginSBase arg0) {
 	}
@@ -147,9 +152,8 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * jp.sbi.celldesigner.plugin.CellDesignerPlug#SBaseChanged(jp.sbi.celldesigner
-	 * .plugin.PluginSBase)
+	 * @see jp.sbi.celldesigner.plugin.CellDesignerPlug#SBaseChanged(jp.sbi.celldesigner
+	 *      .plugin.PluginSBase)
 	 */
 	public void SBaseChanged(PluginSBase arg0) {
 	}
@@ -157,10 +161,35 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * jp.sbi.celldesigner.plugin.CellDesignerPlug#SBaseDeleted(jp.sbi.celldesigner
-	 * .plugin.PluginSBase)
+	 * @see jp.sbi.celldesigner.plugin.CellDesignerPlug#SBaseDeleted(jp.sbi.celldesigner
+	 *      .plugin.PluginSBase)
 	 */
 	public void SBaseDeleted(PluginSBase arg0) {
+	}
+
+	/**
+	 * Starts the SBMLsqueezer dialog window for kinetic law selection or LaTeX
+	 * export.
+	 * 
+	 * @param mode
+	 */
+	public void startSBMLsqueezerPlugin(String mode) {
+		if (mode.equals(getMainPluginItemText()))
+			(new KineticLawSelectionDialog(null, SBMLsqueezer.getProperties(),
+					sbmlSqueezer.getSBMLIO())).setVisible(true);
+		else if (mode.equals(getSqueezeContextMenuItemText()))
+			new KineticLawSelectionDialog(null, SBMLsqueezer.getProperties(),
+					sbmlSqueezer.getSBMLIO(),
+					((PluginReaction) getSelectedReactionNode().get(0)).getId());
+		else if (mode.equals(getExportContextMenuItemText()))
+			new KineticLawSelectionDialog(null, SBMLsqueezer.getProperties(),
+					sbmlSqueezer.getSBMLIO().getSelectedModel().getReaction(
+							((PluginReaction) getSelectedReactionNode().get(0))
+									.getId()));
+		else if (mode.equals(getExporterItemText()))
+			if (getSelectedModel() != null)
+				new KineticLawSelectionDialog(null, SBMLsqueezer
+						.getProperties(), sbmlSqueezer.getSBMLIO()
+						.getSelectedModel());
 	}
 }

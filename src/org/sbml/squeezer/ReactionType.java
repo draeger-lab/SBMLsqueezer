@@ -162,25 +162,31 @@ public class ReactionType {
 				// Ok, this is confusing...
 				// inhibitors.add(modifier.getSpecies());
 				// activators.add(modifier.getSpecies());
-			} else if (SBO.isInhibitor(type))
-				inhibitors.add(modifier.getSpecies());
-			else if (SBO.isTranscriptionalActivation(type)
-					|| SBO.isTranslationalActivation(type))
-				transActiv.add(modifier.getSpecies());
-			else if (SBO.isTranscriptionalInhibitor(type)
-					|| SBO.isTranslationalInhibitor(type))
-				transInhib.add(modifier.getSpecies());
-			else if (SBO.isTrigger(type) || SBO.isStimulator(type))
-				// no extra support for unknown catalysis anymore...
-				// physical stimulation is now also a stimulator.
-				activators.add(modifier.getSpecies());
-			else if (SBO.isCatalyst(type)) {
-				if (SBO.isEnzymaticCatalysis(type))
-					enzymes.add(modifier.getSpecies());
-				else
-					nonEnzymeCatalysts.add(modifier.getSpecies());
+				if (SBO.isCatalyst(type)) {
+					if (SBO.isEnzymaticCatalysis(type))
+						enzymes.add(modifier.getSpecies());
+					else
+						nonEnzymeCatalysts.add(modifier.getSpecies());
+				} else if (SBO.isTranscriptionalInhibitor(type)
+						|| SBO.isTranslationalInhibitor(type))
+					transInhib.add(modifier.getSpecies());
+				else if (SBO.isInhibitor(type))
+					inhibitors.add(modifier.getSpecies());
+				else if (SBO.isTranscriptionalActivation(type)
+						|| SBO.isTranslationalActivation(type))
+					transActiv.add(modifier.getSpecies());
+				else if (SBO.isTrigger(type) || SBO.isStimulator(type))
+					// no extra support for unknown catalysis anymore...
+					// physical stimulation is now also a stimulator.
+					activators.add(modifier.getSpecies());
 			}
 		}
+//		System.out.println("enzymes:\t" + enzymes);
+//		System.out.println("activators:\t" + activators);
+//		System.out.println("transActiv:\t" + transActiv);
+//		System.out.println("inhibitors:\t" + inhibitors);
+//		System.out.println("transInhib:\t" + transInhib);
+//		System.out.println("nonEnzymeCatalysts:\t" + nonEnzymeCatalysts);
 	}
 
 	private List<String> activators;

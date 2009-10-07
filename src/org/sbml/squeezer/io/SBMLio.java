@@ -56,6 +56,8 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.io.AbstractSBMLReader;
+import org.sbml.jsbml.io.AbstractSBMLWriter;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -78,10 +80,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	/**
 	 * 
 	 */
-	public SBMLio(AbstractSBMLReader reader, AbstractSBMLWriter writer) {
-		this.reader = reader;
+	public SBMLio(AbstractSBMLReader sbmlReader, AbstractSBMLWriter sbmlWriter) {
+		this.reader = sbmlReader;
 		// this.reader.addSBaseChangeListener(this);
-		this.writer = writer;
+		this.writer = sbmlWriter;
 		listOfModels = new LinkedList<Model>();
 		listOfOrigModels = new LinkedList<Object>();
 		selectedModel = -1;
