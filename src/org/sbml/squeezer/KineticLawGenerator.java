@@ -382,6 +382,7 @@ public class KineticLawGenerator {
 	/**
 	 * 
 	 * @param id
+	 *            Reaction id
 	 * @return The kinetic law that is currently set to the reaction with the
 	 *         given id.
 	 */
@@ -640,53 +641,53 @@ public class KineticLawGenerator {
 		}
 	}
 
-	/**
-	 * Sets the initial amounts of all modifiers, reactants and products to the
-	 * specified value.
-	 * 
-	 * @param reaction
-	 * @param initialValue
-	 */
-	public void setInitialConcentrationTo(Reaction reaction, double initialValue) {
-		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
-			Species species = reaction.getReactant(reactant)
-					.getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d
-					|| Double.isNaN(species.getInitialConcentration())) {
-				species.setInitialConcentration(initialValue);
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			} else if (!species.getHasOnlySubstanceUnits()) {
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			}
-		}
-		for (int product = 0; product < reaction.getNumProducts(); product++) {
-			Species species = reaction.getProduct(product).getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d
-					|| Double.isNaN(species.getInitialConcentration())) {
-				species.setInitialConcentration(initialValue);
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			} else if (!species.getHasOnlySubstanceUnits()) {
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			}
-		}
-		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
-			Species species = reaction.getModifier(modifier)
-					.getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d
-					|| Double.isNaN(species.getInitialConcentration())) {
-				species.setInitialConcentration(initialValue);
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			} else if (!species.getHasOnlySubstanceUnits()) {
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			}
-		}
-	}
+//	/**
+//	 * Sets the initial amounts of all modifiers, reactants and products to the
+//	 * specified value.
+//	 * 
+//	 * @param reaction
+//	 * @param initialValue
+//	 */
+//	public void setInitialConcentrationTo(Reaction reaction, double initialValue) {
+//		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
+//			Species species = reaction.getReactant(reactant)
+//					.getSpeciesInstance();
+//			if (species.getInitialConcentration() == 0d
+//					|| Double.isNaN(species.getInitialConcentration())) {
+//				species.setInitialConcentration(initialValue);
+//				species.setHasOnlySubstanceUnits(false);
+//				species.stateChanged();
+//			} else if (!species.getHasOnlySubstanceUnits()) {
+//				species.setHasOnlySubstanceUnits(false);
+//				species.stateChanged();
+//			}
+//		}
+//		for (int product = 0; product < reaction.getNumProducts(); product++) {
+//			Species species = reaction.getProduct(product).getSpeciesInstance();
+//			if (species.getInitialConcentration() == 0d
+//					|| Double.isNaN(species.getInitialConcentration())) {
+//				species.setInitialConcentration(initialValue);
+//				species.setHasOnlySubstanceUnits(false);
+//				species.stateChanged();
+//			} else if (!species.getHasOnlySubstanceUnits()) {
+//				species.setHasOnlySubstanceUnits(false);
+//				species.stateChanged();
+//			}
+//		}
+//		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
+//			Species species = reaction.getModifier(modifier)
+//					.getSpeciesInstance();
+//			if (species.getInitialConcentration() == 0d
+//					|| Double.isNaN(species.getInitialConcentration())) {
+//				species.setInitialConcentration(initialValue);
+//				species.setHasOnlySubstanceUnits(false);
+//				species.stateChanged();
+//			} else if (!species.getHasOnlySubstanceUnits()) {
+//				species.setHasOnlySubstanceUnits(false);
+//				species.stateChanged();
+//			}
+//		}
+//	}
 
 	/**
 	 * Sets the reaction with the given id in the minimal model copy to the
@@ -771,14 +772,19 @@ public class KineticLawGenerator {
 				&& (kineticLaw.getNotesString().length() == 0))
 			kineticLaw.setNotes(kineticLaw.toString());
 		// set the BoundaryCondition to true for Genes if not set anyway:
+		boolean setBoundary = ((Boolean) settings
+				.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
+				.booleanValue();
 		for (i = 0; i < reaction.getNumReactants(); i++) {
 			Species species = reaction.getReactant(i).getSpeciesInstance();
-			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
+			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
+					&& setBoundary)
 				setBoundaryCondition(species, true);
 		}
 		for (i = 0; i < reaction.getNumProducts(); i++) {
 			Species species = reaction.getProduct(i).getSpeciesInstance();
-			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
+			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
+					&& setBoundary)
 				setBoundaryCondition(species, true);
 		}
 		storeParamters(reaction);
@@ -806,7 +812,7 @@ public class KineticLawGenerator {
 	 * @param reaction
 	 */
 	public void storeParamters(Reaction reaction) {
-		setInitialConcentrationTo(reaction, 1d);
+//		setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
 		ListOf<Parameter> paramListLocal = kineticLaw.getListOfParameters();
 		if (((Boolean) settings
@@ -857,68 +863,67 @@ public class KineticLawGenerator {
 	 */
 	private void checkUnits(Species species) {
 		Model model = species.getModel();
-//		if (species.getHasOnlySubstanceUnits()) {
-			// substance units
-			if (!species.isSetSubstanceUnits()
-					|| !species.getSubstanceUnitsInstance()
-							.isVariantOfSubstance()) {
-				UnitDefinition ud = model.getUnitDefinition("substance");
-				if (ud == null) {
-					ud = UnitDefinition.SUBSTANCE.clone();
-					model.addUnitDefinition(ud);
-				}
-				species.setSubstanceUnits(ud);
+		// if (species.getHasOnlySubstanceUnits()) {
+		// substance units
+		if (!species.isSetSubstanceUnits()
+				|| !species.getSubstanceUnitsInstance().isVariantOfSubstance()) {
+			UnitDefinition ud = model.getUnitDefinition("substance");
+			if (ud == null) {
+				ud = UnitDefinition.SUBSTANCE.clone();
+				model.addUnitDefinition(ud);
 			}
-//		} else {
-//			// substance per size units
-//			Compartment c = species.getCompartmentInstance();
-//			// checkUnits(c);
-//			if (!species.isSetSubstanceUnits()) {
-//				UnitDefinition ud = UnitDefinition.SUBSTANCE.clone();
-//				UnitDefinition u = c.getUnitsInstance();
-//				ud.divideBy(u);
-//				ud.setName(StringTools.firstLetterUpperCase(ud.getId()
-//						+ " per " + u.getId()));
-//				ud.setId(ud.getId() + '_' + "per" + '_' + u.getId());
-//				species.setSubstanceUnits(ud);
-//			} else {
-//				UnitDefinition substance = UnitDefinition.SUBSTANCE.clone();
-//				String sizeName = null;
-//				switch (c.getSpatialDimensions()) {
-//				case 3:
-//					if (!species.getSubstanceUnitsInstance()
-//							.isVariantOfSubstancePerVolume()) {
-//						species.setSubstanceUnits(substance
-//								.divideBy(UnitDefinition.VOLUME));
-//						sizeName = "volume";
-//					}
-//					break;
-//				case 2:
-//					if (!species.getSubstanceUnitsInstance()
-//							.isVariantOfSubstancePerArea()) {
-//						species.setSubstanceUnits(substance
-//								.divideBy(UnitDefinition.AREA));
-//						sizeName = "area";
-//					}
-//					break;
-//				case 1:
-//					if (!species.getSubstanceUnitsInstance()
-//							.isVariantOfSubstancePerLength()) {
-//						species.setSubstanceUnits(substance
-//								.divideBy(UnitDefinition.LENGTH));
-//						sizeName = "length";
-//					}
-//					break;
-//				default:
-//					break;
-//				}
-//				if (sizeName != null)
-//					species.getSubstanceUnitsInstance().setName(
-//							"Substance per " + sizeName);
-//			}
-//		}
-//		if (model.getUnitDefinition(species.getSubstanceUnits()) == null)
-//			model.addUnitDefinition(species.getSubstanceUnitsInstance());
+			species.setSubstanceUnits(ud);
+		}
+		// } else {
+		// // substance per size units
+		// Compartment c = species.getCompartmentInstance();
+		// // checkUnits(c);
+		// if (!species.isSetSubstanceUnits()) {
+		// UnitDefinition ud = UnitDefinition.SUBSTANCE.clone();
+		// UnitDefinition u = c.getUnitsInstance();
+		// ud.divideBy(u);
+		// ud.setName(StringTools.firstLetterUpperCase(ud.getId()
+		// + " per " + u.getId()));
+		// ud.setId(ud.getId() + '_' + "per" + '_' + u.getId());
+		// species.setSubstanceUnits(ud);
+		// } else {
+		// UnitDefinition substance = UnitDefinition.SUBSTANCE.clone();
+		// String sizeName = null;
+		// switch (c.getSpatialDimensions()) {
+		// case 3:
+		// if (!species.getSubstanceUnitsInstance()
+		// .isVariantOfSubstancePerVolume()) {
+		// species.setSubstanceUnits(substance
+		// .divideBy(UnitDefinition.VOLUME));
+		// sizeName = "volume";
+		// }
+		// break;
+		// case 2:
+		// if (!species.getSubstanceUnitsInstance()
+		// .isVariantOfSubstancePerArea()) {
+		// species.setSubstanceUnits(substance
+		// .divideBy(UnitDefinition.AREA));
+		// sizeName = "area";
+		// }
+		// break;
+		// case 1:
+		// if (!species.getSubstanceUnitsInstance()
+		// .isVariantOfSubstancePerLength()) {
+		// species.setSubstanceUnits(substance
+		// .divideBy(UnitDefinition.LENGTH));
+		// sizeName = "length";
+		// }
+		// break;
+		// default:
+		// break;
+		// }
+		// if (sizeName != null)
+		// species.getSubstanceUnitsInstance().setName(
+		// "Substance per " + sizeName);
+		// }
+		// }
+		// if (model.getUnitDefinition(species.getSubstanceUnits()) == null)
+		// model.addUnitDefinition(species.getSubstanceUnitsInstance());
 	}
 
 	/**

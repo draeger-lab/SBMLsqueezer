@@ -69,9 +69,9 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.io.AbstractSBMLReader;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
-import org.sbml.squeezer.io.AbstractSBMLReader;
 
 /**
  * 
