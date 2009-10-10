@@ -24,7 +24,9 @@ import java.util.List;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * 
@@ -35,8 +37,14 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		implements InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
 		InterfaceUniUniKinetics {
 
+	/**
+	 * 
+	 */
 	private int numInhib;
 
+	/**
+	 * 
+	 */
 	private int numOfEnzymes;
 
 	/**
@@ -120,19 +128,23 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 				ASTNode factor = new ASTNode(p_kM, this);
 				for (int i = 0; i < modInhib.size(); i++) {
 
-					StringBuffer kIi = new StringBuffer(concat("Ki_", reaction
-							.getId()));
-					StringBuffer exponent = concat("m_", reaction.getId());
+					StringBuffer kIi = new StringBuffer(StringTools.concat(
+							"Ki_", reaction.getId()));
+					StringBuffer exponent = StringTools.concat("m_", reaction
+							.getId());
 					if (numOfEnzymes > 1) {
-						kIi = concat(underscore, enzyme);
-						exponent = concat(underscore, enzyme);
+						kIi = StringTools.concat(underscore, enzyme);
+						exponent = StringTools.concat(underscore, enzyme);
 					}
-					kIi = concat(kIi, underscore, modInhib.get(i));
-					exponent = concat(exponent, underscore, modInhib.get(i));
-					Parameter p_kIi = createOrGetParameter(kIi.toString());
-					p_kIi.setSBOTerm(261);
+					kIi = StringTools.concat(kIi, underscore, modInhib.get(i));
+					exponent = StringTools.concat(exponent, underscore,
+							modInhib.get(i));
+					Parameter p_kIi = parameterKi(reaction.getId(), modInhib
+							.get(i));
 					Parameter p_exp = createOrGetParameter(exponent.toString());
 					p_exp.setSBOTerm(189);
+					p_exp.setUnits(new Unit(Unit.Kind.DIMENSIONLESS,
+							getLevel(), getVersion()));
 
 					factor.multiplyWith(ASTNode.pow(ASTNode.sum(new ASTNode(1,
 							this), ASTNode.frac(speciesTerm(modInhib.get(i)),

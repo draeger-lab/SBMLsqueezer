@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui.table;
+package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,8 +40,6 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.gui.GUITools;
-import org.sbml.squeezer.gui.KineticLawSelectionPanel;
 import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
@@ -57,7 +55,7 @@ import atp.sHotEqn;
  *         JDK 1.6.0
  * @date Nov 13, 2007
  */
-public class KineticLawJTable extends JTable implements MouseInputListener {
+public class KineticLawTable extends JTable implements MouseInputListener {
 
 	/**
 	 * Generated serial version ID
@@ -79,7 +77,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 	 * @param maxEducts
 	 * @param reversibility
 	 */
-	public KineticLawJTable(KineticLawGenerator klg) {
+	public KineticLawTable(KineticLawGenerator klg) {
 		super(new KineticLawTableModel(klg));
 		this.klg = klg;
 		this.reversibility = ((Boolean) klg.getSettings().get(
@@ -89,7 +87,7 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 		setColumnWidthAppropriately();
 		int maxNumReactnats = ((Integer) (klg.getSettings()
 				.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
-		setDefaultRenderer(Object.class, new KineticLawCellRenderer(
+		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer(
 				maxNumReactnats));
 		getTableHeader().setToolTipText(
 				GUITools.toHTML("Double click on the kinetic "
@@ -230,18 +228,20 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 			NoSuchMethodException, InstantiationException,
 			IllegalAccessException, InvocationTargetException {
 		if ((dataModel.getRowCount() > 0) && (dataModel.getColumnCount() > 0)) {
-			Reaction reaction = klg.getModel().getReaction(dataModel.getValueAt(
-					rowIndex, 0).toString());
+			Reaction reaction = klg.getModel().getReaction(
+					dataModel.getValueAt(rowIndex, 0).toString());
 			try {
-				String possibleTypes[] = this.klg
-						.identifyPossibleReactionTypes(reaction.getId());
+				String possibleTypes[] = this.klg.getReactionType(
+						reaction.getId()).identifyPossibleKineticLaws();
 				BasicKineticLaw possibleLaws[] = new BasicKineticLaw[possibleTypes.length];
 				int selected = 0;
 				for (int i = 0; i < possibleLaws.length; i++) {
 					possibleLaws[i] = klg.createKineticLaw(reaction,
 							possibleTypes[i], reversibility);
-					if (possibleLaws[i].getClass().equals(
-							klg.getKineticLaw(reaction.getId()).getClass()))
+					if (possibleLaws[i].getSimpleName().equals(
+							((BasicKineticLaw) klg.getModifiedReaction(
+									reaction.getId()).getKineticLaw())
+									.getSimpleName()))
 						selected = i;
 				}
 				KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
@@ -267,9 +267,8 @@ public class KineticLawJTable extends JTable implements MouseInputListener {
 						if (i > 0)
 							params.append(", ");
 					}
-					List<Parameter> referencedGlobalParameters = KineticLawGenerator
-							.findReferencedGlobalParameters(kineticLaw
-									.getMath());
+					List<Parameter> referencedGlobalParameters = kineticLaw
+							.getMath().findReferencedGlobalParameters();
 					for (i = referencedGlobalParameters.size() - 1; i > 0; i--) {
 						params.append(referencedGlobalParameters.get(i));
 						if (i > 0)

@@ -23,11 +23,9 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -43,7 +41,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 
@@ -144,38 +141,6 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 	 * 
 	 * @return
 	 */
-	public Set<Integer> getPossibleEnzymes() {
-		Set<Integer> possibleEnzymes = new HashSet<Integer>();
-		if (jCheckBoxPossibleEnzymeAsRNA.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO
-					.convertAlias2SBO("ANTISENSE_RNA")));
-		if (jCheckBoxPossibleEnzymeSimpleMolecule.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO
-					.convertAlias2SBO("SIMPLE_MOLECULE")));
-		if (jCheckBoxPossibleEnzymeReceptor.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO
-					.convertAlias2SBO("RECEPTOR")));
-		if (jCheckBoxPossibleEnzymeUnknown.isSelected())
-			possibleEnzymes.add(Integer
-					.valueOf(SBO.convertAlias2SBO("UNKNOWN")));
-		if (jCheckBoxPossibleEnzymeComplex.isSelected())
-			possibleEnzymes.add(Integer
-					.valueOf(SBO.convertAlias2SBO("COMPLEX")));
-		if (jCheckBoxPossibleEnzymeTruncatedProtein.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO
-					.convertAlias2SBO("TRUNCATED")));
-		if (jCheckBoxPossibleEnzymeGenericProtein.isSelected())
-			possibleEnzymes.add(Integer
-					.valueOf(SBO.convertAlias2SBO("GENERIC")));
-		if (jCheckBoxPossibleEnzymeRNA.isSelected())
-			possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO("RNA")));
-		return possibleEnzymes;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
 	public Properties getSettings() {
 		return settings;
 	}
@@ -204,8 +169,8 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 						.toHTML(
 								"If selected, the boundary condition of all species that represent gene coding elements, such as genes or gene coding regions will be set to true.",
 								40));
-		jCheckBoxTreatAllReactionsAsEnzyeReaction = new JCheckBox(
-				"<html>Consider all reactions to be<br>enzyme-catalyzed</html>",
+		jCheckBoxTreatAllReactionsAsEnzyeReaction = new JCheckBox(GUITools
+				.toHTML("Consider all reactions to be enzyme-catalyzed", 40),
 				((Boolean) settings
 						.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 						.booleanValue());
@@ -217,9 +182,12 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxAddAllParametersGlobally = new JCheckBox(
 				"Add all new parameters globally");
 		jCheckBoxAddAllParametersGlobally
-				.setToolTipText("<html>If selected, all newly created parameters are stored <br>"
-						+ "globally in the model. Otherwise SBMLsqueezer only stores most <br>"
-						+ "parameters locally in the respective rate law.</html>");
+				.setToolTipText(GUITools
+						.toHTML(
+								"If selected, all newly created parameters are stored "
+										+ "globally in the model. Otherwise SBMLsqueezer only stores most "
+										+ "parameters locally in the respective rate law.",
+								40));
 		jCheckBoxAddAllParametersGlobally.setSelected(((Boolean) settings
 				.get(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
 				.booleanValue());
@@ -227,9 +195,9 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxWarnings.setSelected(((Boolean) settings
 				.get(CfgKeys.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS))
 				.booleanValue());
-		jCheckBoxWarnings
-				.setToolTipText("<html>If checked, warnings will be shown for reactions<br>"
-						+ "with more reactants than specified here.</html>");
+		jCheckBoxWarnings.setToolTipText(GUITools.toHTML(
+				"If checked, warnings will be shown for reactions "
+						+ "with more reactants than specified here.", 40));
 		jSpinnerMaxRealisticNumOfReactants = new JSpinner(
 				new SpinnerNumberModel(((Integer) settings
 						.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS)).intValue(),
@@ -252,11 +220,17 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
 				"Only when missing");
 		jRadioButtonGenerateOnlyMissingKinetics
-				.setToolTipText("<html>If checked, kinetics are only generated if missing in the SBML file.</html>");
+				.setToolTipText(GUITools
+						.toHTML(
+								"If checked, kinetics are only generated if missing in the SBML file.",
+								40));
 		jRadioButtonGenerateForAllReactions = new JRadioButton(
 				"For all reactions");
 		jRadioButtonGenerateForAllReactions
-				.setToolTipText("<html>If checked, already existing kinetic laws will be overwritten.</html>");
+				.setToolTipText(GUITools
+						.toHTML(
+								"If checked, already existing kinetic laws will be overwritten.",
+								40));
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonGenerateForAllReactions);
 		buttonGroup.add(jRadioButtonGenerateOnlyMissingKinetics);
@@ -283,14 +257,20 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue());
 		jRadioButtonForceReacRev
-				.setToolTipText("<html>If checked, all reactions will be set to reversible no matter what is given by the SBML file.</html>");
+				.setToolTipText(GUITools
+						.toHTML(
+								"If checked, all reactions will be set to reversible no matter what is given by the SBML file.",
+								40));
 		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(
 				"Use information from SBML");
 		jRadioButtonSettingsFrameForceRevAsCD.setSelected(!((Boolean) settings
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue());
 		jRadioButtonSettingsFrameForceRevAsCD
-				.setToolTipText("<html>If checked, the information about reversiblity will be left unchanged.</html>");
+				.setToolTipText(GUITools
+						.toHTML(
+								"If checked, the information about reversiblity will be left unchanged.",
+								40));
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonSettingsFrameForceRevAsCD);
 		buttonGroup.add(jRadioButtonForceReacRev);
@@ -309,61 +289,67 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxPossibleEnzymeGenericProtein = new JCheckBox("Generic protein");
 		jCheckBoxPossibleEnzymeGenericProtein.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_GENERIC)).booleanValue());
-		jCheckBoxPossibleEnzymeGenericProtein
-				.setToolTipText("<html>If checked, generic proteins are treated as enzymes.<br>"
-						+ "Otherwise, generic protein-catalyzed reactions are<br>"
-						+ "not considered to be enzyme reactions.</html>");
+		jCheckBoxPossibleEnzymeGenericProtein.setToolTipText(GUITools.toHTML(
+				"If checked, generic proteins are treated as enzymes. "
+						+ "Otherwise, generic protein-catalyzed reactions are "
+						+ "not considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeRNA = new JCheckBox("RNA");
 		jCheckBoxPossibleEnzymeRNA.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_RNA)).booleanValue());
-		jCheckBoxPossibleEnzymeRNA
-				.setToolTipText("<html>If checked, RNA is treated as an enzyme.<br>"
-						+ "Otherwise RNA catalyzed reactions are not<br>"
-						+ "considered to be enzyme-catalyzed reactions.</html>");
+		jCheckBoxPossibleEnzymeRNA.setToolTipText(GUITools.toHTML(
+				"If checked, RNA is treated as an enzyme. "
+						+ "Otherwise RNA catalyzed reactions are not "
+						+ "considered to be enzyme-catalyzed reactions.", 40));
 		jCheckBoxPossibleEnzymeRNA.setBackground(Color.WHITE);
 		jCheckBoxPossibleEnzymeComplex = new JCheckBox("Complex");
 		jCheckBoxPossibleEnzymeComplex.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_COMPLEX)).booleanValue());
-		jCheckBoxPossibleEnzymeComplex
-				.setToolTipText("<html>If checked, complex molecules are treated as enzymes.<br>"
-						+ "Otherwise, complex catalized reactions are not<br>"
-						+ "considered to be enzyme reactions.</html>");
+		jCheckBoxPossibleEnzymeComplex.setToolTipText(GUITools.toHTML(
+				"If checked, complex molecules are treated as enzymes. "
+						+ "Otherwise, complex catalized reactions are not "
+						+ "considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeTruncatedProtein = new JCheckBox(
 				"Truncated protein");
 		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_TRUNCATED)).booleanValue());
-		jCheckBoxPossibleEnzymeTruncatedProtein
-				.setToolTipText("<html>If checked, truncated proteins are treated as enzymes.<br>"
-						+ "Otherwise, truncated protein catalized reactions<br>"
-						+ "are not considered to be enzyme reactions.</html>");
+		jCheckBoxPossibleEnzymeTruncatedProtein.setToolTipText(GUITools.toHTML(
+				"If checked, truncated proteins are treated as enzymes. "
+						+ "Otherwise, truncated protein catalized reactions "
+						+ "are not considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeReceptor = new JCheckBox("Receptor");
 		jCheckBoxPossibleEnzymeReceptor.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_RECEPTOR)).booleanValue());
-		jCheckBoxPossibleEnzymeReceptor
-				.setToolTipText("<html>If checked, receptors are treated as enzymes.<br>"
-						+ "Otherwise, receptor catalized reactions are not <br>"
-						+ "considered to be enzyme reactions.</html>");
+		jCheckBoxPossibleEnzymeReceptor.setToolTipText(GUITools.toHTML(
+				"If checked, receptors are treated as enzymes. "
+						+ "Otherwise, receptor catalized reactions are not "
+						+ "considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeUnknown = new JCheckBox("Unknown");
 		jCheckBoxPossibleEnzymeUnknown.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_UNKNOWN)).booleanValue());
 		jCheckBoxPossibleEnzymeUnknown
-				.setToolTipText("<html>If checked, unknown molecules are treated as enzymes.<br>"
-						+ "Otherwise, unknown molecule catalized reactions are not<br>"
-						+ "considered to be enzyme reactions.</html>");
+				.setToolTipText(GUITools
+						.toHTML(
+								"If checked, unknown molecules are treated as enzymes. "
+										+ "Otherwise, unknown molecule catalized reactions are not "
+										+ "considered to be enzyme reactions.",
+								40));
 		jCheckBoxPossibleEnzymeAsRNA = new JCheckBox("asRNA");
 		jCheckBoxPossibleEnzymeAsRNA.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_ANTISENSE_RNA)).booleanValue());
-		jCheckBoxPossibleEnzymeAsRNA
-				.setToolTipText("<html>If checked, asRNA is treated as an enzyme.<br>"
-						+ "Otherwise asRNA catalized reactions are not<br>"
-						+ "considered to be enzyme-catalyzed reactions.</html>");
+		jCheckBoxPossibleEnzymeAsRNA.setToolTipText(GUITools.toHTML(
+				"If checked, asRNA is treated as an enzyme. "
+						+ "Otherwise asRNA catalized reactions are not "
+						+ "considered to be enzyme-catalyzed reactions.", 40));
 		jCheckBoxPossibleEnzymeSimpleMolecule = new JCheckBox("Simple molecule");
 		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_SIMPLE_MOLECULE)).booleanValue());
 		jCheckBoxPossibleEnzymeSimpleMolecule
-				.setToolTipText("<html>If checked, simple molecules are treated as enzymes.<br>"
-						+ "Otherwise, simple molecule catalized reactions are not<br>"
-						+ "considered to be enzyme reactions.</html>");
+				.setToolTipText(GUITools
+						.toHTML(
+								"If checked, simple molecules are treated as enzymes. "
+										+ "Otherwise, simple molecule catalized reactions are not "
+										+ "considered to be enzyme reactions.",
+								40));
 
 		layout = new GridBagLayout();
 		JPanel jPanelSettingsEnzymes = new JPanel();
@@ -393,20 +379,20 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		LayoutHelper unitConsistency = new LayoutHelper(
 				jPanelTypeUnitConsistency);
 		jRadioButtonTypeUnitConsistency = new JRadioButton(GUITools.toHTML(
-				"Set species to substance units", 30), ((Integer) this.settings
+				"Bring species to substance units.", 30), ((Integer) this.settings
 				.get(CfgKeys.TYPE_UNIT_CONSISTENCY)).intValue() == 0);
 		jRadioButtonTypeUnitConsistency
 				.setToolTipText(GUITools
 						.toHTML(
-								"If this option is selected, species occuring in kinetic equations are interpreted in terms of substance units.",
+								"If this option is selected, species occuring in kinetic equations are multiplyed with the size of the surrounding compartment if their hasOnlySubstanceUnits attribute is set to false. The units of parameters are set accordingly.",
 								40));
 		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(GUITools
-				.toHTML("Multyply species with surrounding compartment size",
+				.toHTML("Bring species to concentration units.",
 						30), !jRadioButtonTypeUnitConsistency.isSelected());
 		jRadioButtonTypeUnitsCompVol
 				.setToolTipText(GUITools
 						.toHTML(
-								"If this option is selected, species are interpreted in terms of concentration and are therefore multiplied with their surrounding compartment when these occur in kinetic equations.",
+								"If this option is selected, species are interpreted in terms of concentration and are therefore divided by their surrounding compartment size when these occur in kinetic equations and their hasOnlySubstanceUnits attribute is false. The units of parameters are set accordingly.",
 								40));
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonTypeUnitConsistency);

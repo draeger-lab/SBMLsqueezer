@@ -25,6 +25,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates generalized mass action rate equations with zeroth order
@@ -62,9 +63,9 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 	final ASTNode association(List<String> catalysts, int catNum) {
 		reactantOrder = 0;
 		productOrder = Double.NaN;
-		StringBuffer kass = concat("kass_", getParentSBMLObject().getId());
+		StringBuffer kass = StringTools.concat("kass_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
-			append(kass, underscore, catalysts.get(catNum));
+			StringTools.append(kass, underscore, catalysts.get(catNum));
 		Parameter p_kass = createOrGetParameter(kass.toString());
 		p_kass.setSBOTerm(48);
 		return new ASTNode(p_kass, this);

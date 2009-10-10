@@ -26,6 +26,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * TODO: comment missing
@@ -133,56 +134,54 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			 */
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
 
-			StringBuffer kMr1 = concat("kM_", reaction.getId());
-			StringBuffer kMr2 = concat("kM_", reaction.getId());
-			StringBuffer kIr1 = concat("ki_", reaction.getId());
+			StringBuffer kMr1 = StringTools.concat("kM_", reaction.getId());
+			StringBuffer kMr2 = StringTools.concat("kM_", reaction.getId());
+			StringBuffer kIr1 = StringTools.concat("ki_", reaction.getId());
 
 			// reverse reactions
-			StringBuffer kMp1 = concat("kM_", reaction.getId());
-			StringBuffer kMp2 = concat("kM_", reaction.getId());
-			StringBuffer kIp1 = concat("ki_", reaction.getId());
-			StringBuffer kIp2 = concat("ki_", reaction.getId());
-			StringBuffer kIr2 = concat("ki_", reaction.getId());
+			StringBuffer kMp1 = StringTools.concat("kM_", reaction.getId());
+			StringBuffer kMp2 = StringTools.concat("kM_", reaction.getId());
+			StringBuffer kIp1 = StringTools.concat("ki_", reaction.getId());
+			StringBuffer kIp2 = StringTools.concat("ki_", reaction.getId());
+			StringBuffer kIr2 = StringTools.concat("ki_", reaction.getId());
 
-			if (modE.size() > 0) {
-				if (modE.size() > 1) {
-					append(kMr1, underscore, enzyme);
-					append(kMr2, underscore, enzyme);
-					append(kIr1, underscore, enzyme);
-					// reverse reactions
-					append(kMp1, underscore, enzyme);
-					append(kMp2, underscore, enzyme);
-					append(kIp1, underscore, enzyme);
-					append(kIp2, underscore, enzyme);
-					append(kIr2, underscore, enzyme);
-				}
+			if (modE.size() > 1) {
+				StringTools.append(kMr1, underscore, enzyme);
+				StringTools.append(kMr2, underscore, enzyme);
+				StringTools.append(kIr1, underscore, enzyme);
+				// reverse reactions
+				StringTools.append(kMp1, underscore, enzyme);
+				StringTools.append(kMp2, underscore, enzyme);
+				StringTools.append(kIp1, underscore, enzyme);
+				StringTools.append(kIp2, underscore, enzyme);
+				StringTools.append(kIr2, underscore, enzyme);
 			}
-			append(kMr2, underscore, specRefE2.getSpecies());
-			append(kMr1, underscore, specRefE1.getSpecies());
+			StringTools.append(kMr2, underscore, specRefE2.getSpecies());
+			StringTools.append(kMr1, underscore, specRefE1.getSpecies());
 			// reverse reactions
-			append(kMp1, underscore, specRefP1.getSpecies());
+			StringTools.append(kMp1, underscore, specRefP1.getSpecies());
 			if (specRefP2 != null)
-				append(kMp2, underscore, specRefP2.getSpecies());
+				StringTools.append(kMp2, underscore, specRefP2.getSpecies());
 
 			if (specRefE2.equals(specRefE1)) {
-				kMr1 = concat("kMr1", kMr1.substring(2));
-				kMr2 = concat("kMr2", kMr2.substring(2));
-				kIr1 = concat("kIr1", kIr1.substring(2));
-				kIr2 = concat("kIr2", kIr2.substring(2));
+				kMr1 = StringTools.concat("kMr1", kMr1.substring(2));
+				kMr2 = StringTools.concat("kMr2", kMr2.substring(2));
+				kIr1 = StringTools.concat("kIr1", kIr1.substring(2));
+				kIr2 = StringTools.concat("kIr2", kIr2.substring(2));
 			}
-			append(kIr1, underscore, specRefE1.getSpecies());
-			append(kIr2, underscore, specRefE2.getSpecies());
+			StringTools.append(kIr1, underscore, specRefE1.getSpecies());
+			StringTools.append(kIr2, underscore, specRefE2.getSpecies());
 
 			// reversible reactions
-			kIp1 = concat(kIp1, underscore, specRefP1.getSpecies());
+			kIp1 = StringTools.concat(kIp1, underscore, specRefP1.getSpecies());
 			if (specRefP2 != null) {
 				if (specRefP2.equals(specRefP1)) {
-					kMp1 = concat("kMp1", kMp1.substring(2));
-					kMp2 = concat("kMp2", kMp2.substring(2));
-					kIp1 = concat("kIp1", kIp1.substring(2));
-					kIp2 = concat("kIp2", kIp2.substring(2));
+					kMp1 = StringTools.concat("kMp1", kMp1.substring(2));
+					kMp2 = StringTools.concat("kMp2", kMp2.substring(2));
+					kIp1 = StringTools.concat("kIp1", kIp1.substring(2));
+					kIp2 = StringTools.concat("kIp2", kIp2.substring(2));
 				}
-				append(kIp2, underscore, specRefP2.getSpecies());
+				StringTools.append(kIp2, underscore, specRefP2.getSpecies());
 			}
 			Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme,
 					true);

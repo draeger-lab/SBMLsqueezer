@@ -27,6 +27,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * TODO: comment missing
@@ -190,11 +191,11 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			Reaction reaction, List<String> modE, ASTNode denominator,
 			Parameter mr, int enzymeNum) {
 		if (modInhib.size() == 1) {
-			StringBuffer kIa = concat("KIa_", reaction.getId()), kIb = concat(
-					"KIb_", reaction.getId());
+			StringBuffer kIa = StringTools.concat("KIa_", reaction.getId()), kIb = StringTools
+					.concat("KIb_", reaction.getId());
 			if (modE.size() > 1) {
-				append(kIa, underscore, modE.get(enzymeNum));
-				append(kIb, underscore, modE.get(enzymeNum));
+				StringTools.append(kIa, underscore, modE.get(enzymeNum));
+				StringTools.append(kIb, underscore, modE.get(enzymeNum));
 			}
 			Parameter p_kIa = createOrGetParameter(kIa.toString());
 			p_kIa.setSBOTerm(261);
@@ -224,12 +225,12 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			ASTNode sumIa = new ASTNode(1, this);
 			ASTNode sumIb = new ASTNode(1, this);
 			for (int i = 0; i < modInhib.size(); i++) {
-				StringBuffer kIai = concat(Integer.valueOf(i + 1), underscore,
+				StringBuffer kIai = StringTools.concat(Integer.valueOf(i + 1), underscore,
 						reaction.getId());
 				if (modE.size() > 1)
-					append(kIai, underscore, modE.get(enzymeNum));
-				StringBuffer kIbi = concat("kIb_", kIai);
-				kIai = concat("kIa_", kIai);
+					StringTools.append(kIai, underscore, modE.get(enzymeNum));
+				StringBuffer kIbi = StringTools.concat("kIb_", kIai);
+				kIai = StringTools.concat("kIa_", kIai);
 				Parameter p_kIai = createOrGetParameter(kIai.toString());
 				p_kIai.setSBOTerm(261);
 				Parameter p_kIbi = createOrGetParameter(kIbi.toString());

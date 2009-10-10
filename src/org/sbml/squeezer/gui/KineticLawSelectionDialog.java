@@ -53,8 +53,6 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.LawListener;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.gui.table.KineticLawJTable;
-import org.sbml.squeezer.gui.table.KineticLawTableModel;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
@@ -210,9 +208,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 					klg.getSettings().put(
 							CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 							Boolean.valueOf(messagePanel.getReversible()));
-					reaction = klg.storeLaw(klg.createKineticLaw(reaction,
+					reaction = klg.storeKineticLaw(klg.createKineticLaw(reaction,
 							equationType, messagePanel.getReversible()));
-					klg.removeUnnecessaryParameters(model);
 					sbmlIO.saveChanges();
 					KineticsAndParametersStoredInSBML = true;
 				}
@@ -275,9 +272,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 									key));
 						Model model = sbmlIO.getSelectedModel();
 						klg = new KineticLawGenerator(model, settings);
-						klg.updateEnzymeKatalysis(settingsPanel
-								.getPossibleEnzymes());
-						klg.generateLaws();
 						if (klg.getFastReactions().size() > 0) {
 							String message = "<html><head></head><body><p>The model contains ";
 							if (klg.getFastReactions().size() > 1)
@@ -306,7 +300,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						}
 
 						JPanel reactionsPanel = new JPanel(new BorderLayout());
-						JTable tableOfKinetics = new KineticLawJTable(klg);
+						JTable tableOfKinetics = new KineticLawTable(klg);
 						numOfWarnings = ((KineticLawTableModel) tableOfKinetics
 								.getModel()).getNumOfWarnings();
 						tableOfKinetics
@@ -393,7 +387,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						&& sbmlIO != null) {
 					try {
 						KineticsAndParametersStoredInSBML = true;
-						klg.storeLaws(this);
+						klg.storeKineticLaws(this);
 						sbmlIO.saveChanges();
 					} catch (SBMLException exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
@@ -427,7 +421,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		if (sbmlIO != null && klg != null) {
 			if (!KineticsAndParametersStoredInSBML)
 				try {
-					klg.storeLaws(this);
+					klg.storeKineticLaws(this);
 					sbmlIO.saveChanges();
 					KineticsAndParametersStoredInSBML = true;
 				} catch (SBMLException exc) {

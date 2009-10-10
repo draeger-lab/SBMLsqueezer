@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui.table;
+package org.sbml.squeezer.gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -38,7 +38,7 @@ import javax.swing.table.TableCellRenderer;
  *         JDK 1.5.0
  * @date Aug 1, 2007
  */
-public class KineticLawCellRenderer extends JTextArea implements
+public class KineticLawTableCellRenderer extends JTextArea implements
 		TableCellRenderer {
 
 	/**
@@ -57,7 +57,7 @@ public class KineticLawCellRenderer extends JTextArea implements
 	 * 
 	 * @param maxSpecies
 	 */
-	public KineticLawCellRenderer(int maxSpecies) {
+	public KineticLawTableCellRenderer(int maxSpecies) {
 		this.maxNumberOfSpecies = maxSpecies;
 	}
 
