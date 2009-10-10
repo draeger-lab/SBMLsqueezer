@@ -25,6 +25,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * TODO: comment missing
@@ -61,9 +62,9 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
 	ASTNode dissociation(List<String> catalysts, int c) {
 		reactantOrder = Double.NaN;
 		productOrder = 0;
-		StringBuffer kdiss = concat("kdiss_", getParentSBMLObject().getId());
+		StringBuffer kdiss = StringTools.concat("kdiss_", getParentSBMLObject().getId());
 		if (catalysts.size() > 0)
-			append(kdiss, underscore, catalysts.get(c));
+			StringTools.append(kdiss, underscore, catalysts.get(c));
 		Parameter p_kdiss = createOrGetParameter(kdiss.toString());
 		p_kdiss.setSBOTerm(352);
 		return new ASTNode(p_kdiss, this);

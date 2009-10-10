@@ -181,12 +181,6 @@ public class ReactionType {
 					activators.add(modifier.getSpecies());
 			}
 		}
-//		System.out.println("enzymes:\t" + enzymes);
-//		System.out.println("activators:\t" + activators);
-//		System.out.println("transActiv:\t" + transActiv);
-//		System.out.println("inhibitors:\t" + inhibitors);
-//		System.out.println("transInhib:\t" + transInhib);
-//		System.out.println("nonEnzymeCatalysts:\t" + nonEnzymeCatalysts);
 	}
 
 	private List<String> activators;
@@ -294,7 +288,7 @@ public class ReactionType {
 		nonEnzyme = ((!((Boolean) this.settings
 				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 				.booleanValue() && enzymes.size() == 0)
-				|| (nonEnzymeCatalysts.size() > 0)
+				|| nonEnzymeCatalysts.size() > 0
 				|| reaction.getNumProducts() == 0 || (SBO.isEmptySet(reaction
 				.getProduct(0).getSpeciesInstance().getSBOTerm())));
 		uniUni = stoichiometryLeft == 1d && stoichiometryRight == 1d;
@@ -529,8 +523,7 @@ public class ReactionType {
 		} else {
 			if (nonEnzyme) {
 				// non enzyme reactions
-				for (String className : SBMLsqueezer.getKineticsNonEnzyme())
-					types.add(className);
+				types.addAll(SBMLsqueezer.getKineticsNonEnzyme());
 			} else {
 				/*
 				 * Enzym-Kinetics: Assign possible rate laws for arbitrary

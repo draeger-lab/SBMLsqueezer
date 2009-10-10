@@ -27,6 +27,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates rate equations according to the generalized mass action
@@ -461,9 +462,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
-		StringBuffer kass = concat("kass_", r.getId());
+		StringBuffer kass = StringTools.concat("kass_", r.getId());
 		if (catalysts.size() > 0)
-			append(kass, underscore, catalysts.get(catNum));
+			StringTools.append(kass, underscore, catalysts.get(catNum));
 		Parameter p_kass = createOrGetParameter(kass.toString());
 		p_kass.setSBOTerm(153);
 		ASTNode ass = new ASTNode(p_kass, this);
@@ -518,9 +519,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	ASTNode dissociation(List<String> catalysts, int c) {
 		Reaction r = getParentSBMLObject();
-		StringBuffer kdiss = concat("kdiss_", r.getId());
+		StringBuffer kdiss = StringTools.concat("kdiss_", r.getId());
 		if (catalysts.size() > 0)
-			kdiss = concat(kdiss, underscore, catalysts.get(c));
+			kdiss = StringTools.concat(kdiss, underscore, catalysts.get(c));
 		Parameter p_kdiss = createOrGetParameter(kdiss.toString());
 		p_kdiss.setSBOTerm(156);
 		ASTNode diss = new ASTNode(p_kdiss, this);

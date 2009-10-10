@@ -29,6 +29,7 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates a Hill equation as defined in the paper"Hill Kinetics
@@ -183,7 +184,7 @@ public class HillEquation extends BasicKineticLaw implements
 					speciesTerm(modTInhib.get(i)), new ASTNode(p_hillcoeff,
 							this)), ASTNode.pow(this, p_kS, p_hillcoeff)));
 		}
-		Parameter p_kg = createOrGetParameter(concat("kg_", rId).toString());
+		Parameter p_kg = createOrGetParameter(StringTools.concat("kg_", rId).toString());
 		p_kg.setSBOTerm(186);
 
 		ASTNode formelTxt = new ASTNode(p_kg, this);

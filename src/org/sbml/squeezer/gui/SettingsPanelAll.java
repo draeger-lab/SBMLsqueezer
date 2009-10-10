@@ -245,10 +245,6 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 		init();
 	}
 
-	public Set<Integer> getPossibleEnzymes() {
-		return panelKinSettings.getPossibleEnzymes();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

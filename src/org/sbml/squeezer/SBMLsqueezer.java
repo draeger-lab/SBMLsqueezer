@@ -584,7 +584,6 @@ public class SBMLsqueezer implements LawListener {
 				try {
 					KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
 							.getSelectedModel(), settings);
-					klg.generateLaws();
 					if (klg.getFastReactions().size() > 0) {
 						System.err.println("Model "
 								+ sbmlIo.getSelectedModel().getId()
@@ -592,7 +591,7 @@ public class SBMLsqueezer implements LawListener {
 								+ " fast reaction. This feature is currently"
 								+ "ignored by SBMLsqueezer.");
 					}
-					klg.storeLaws(this);
+					klg.storeKineticLaws(this);
 					sbmlIo.saveChanges();
 					if (outFile != null
 							&& SBFileFilter.SBML_FILE_FILTER.accept(outFile))

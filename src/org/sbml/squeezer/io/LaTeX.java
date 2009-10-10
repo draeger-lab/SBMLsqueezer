@@ -525,6 +525,14 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(java.lang.String)
+	 */
+	public StringBuffer compile(String name) {
+		return new StringBuffer(maskSpecialChars(name));
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cos(org.sbml.jsbml.ASTNode)
 	 */
