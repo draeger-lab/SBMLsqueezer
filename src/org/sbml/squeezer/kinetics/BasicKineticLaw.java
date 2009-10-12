@@ -81,8 +81,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (typeParameters.length > 2)
 			bringToConcentration = ((Integer) typeParameters[2]).intValue() != 0;
 		if (typeParameters.length > 3)
-			defaultParamValue = Double.parseDouble(typeParameters[3].toString());
-		else defaultParamValue = 1d;
+			defaultParamValue = Double
+					.parseDouble(typeParameters[3].toString());
+		else
+			defaultParamValue = 1d;
 		List<String> enzymes = new LinkedList<String>();
 		List<String> activat = new LinkedList<String>();
 		List<String> transAc = new LinkedList<String>();
@@ -426,11 +428,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (enzymeID != null)
 			StringTools.append(id, underscore, enzymeID);
 		Parameter kI = createOrGetParameter(id.toString());
-		kI.setSBOTerm(261);
-		if (bringToConcentration)
-			kI.setUnits(unitmM());
-		else
-			kI.setUnits(unitmmole());
+		if (!kI.isSetSBOTerm())
+			kI.setSBOTerm(261);
+		if (!kI.isSetUnits())
+			if (bringToConcentration)
+				kI.setUnits(unitmM());
+			else
+				kI.setUnits(unitmmole());
 		return kI;
 	}
 
@@ -466,11 +470,14 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (enzyme != null)
 			StringTools.append(id, underscore, enzyme);
 		Parameter kM = createOrGetParameter(id.toString());
-		kM.setSBOTerm(27);
-		kM.setName(StringTools.concat("Michaelis constant of species ",
-				species, " in reaction ", reactionID).toString());
-		kM.setUnits(bringToConcentration ? unitmM() : getModel()
-				.getUnitDefinition("substance"));
+		if (kM.isSetSBOTerm())
+			kM.setSBOTerm(27);
+		if (!kM.isSetName())
+			kM.setName(StringTools.concat("Michaelis constant of species ",
+					species, " in reaction ", reactionID).toString());
+		if (!kM.isSetUnits())
+			kM.setUnits(bringToConcentration ? unitmM() : getModel()
+					.getUnitDefinition("substance"));
 		return kM;
 	}
 
@@ -824,8 +831,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	UnitDefinition unitPerTimeOrSizePerTime(Compartment c) {
 		if (bringToConcentration) {
 			Model model = getModel();
-			UnitDefinition sizeUnit = c.getUnitsInstance();
 			StringBuilder name = new StringBuilder();
+			if (!c.isSetUnits())
+				c.setUnits(model.getUnitDefinition("volume"));
+			UnitDefinition sizeUnit = c.getUnitsInstance();
 			if (sizeUnit.isVariantOfVolume())
 				name.append("volume");
 			else if (sizeUnit.isVariantOfArea())
