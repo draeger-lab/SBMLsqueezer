@@ -404,7 +404,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		LayoutHelper unitConsistency = new LayoutHelper(
 				jPanelTypeUnitConsistency);
 		jRadioButtonTypeUnitConsistency = new JRadioButton(GUITools.toHTML(
-				"Bring species to substance units.", 30),
+				"Bring species to substance units", 30),
 				((Integer) this.settings.get(CfgKeys.TYPE_UNIT_CONSISTENCY))
 						.intValue() == 0);
 		jRadioButtonTypeUnitConsistency
@@ -413,7 +413,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 								"If this option is selected, species occuring in kinetic equations are multiplyed with the size of the surrounding compartment if their hasOnlySubstanceUnits attribute is set to false. The units of parameters are set accordingly.",
 								40));
 		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(GUITools
-				.toHTML("Bring species to concentration units.", 30),
+				.toHTML("Bring species to concentration units", 30),
 				!jRadioButtonTypeUnitConsistency.isSelected());
 		jRadioButtonTypeUnitsCompVol
 				.setToolTipText(GUITools

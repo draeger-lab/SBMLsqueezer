@@ -71,7 +71,7 @@ public class SBMLsqueezer implements LawListener {
 	/**
 	 * 
 	 */
-	private final static String configFile = "cfg/SBMLsqueezer.cfg";
+	private final static String configFile = "org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
 
 	/**
 	 * The package where all kinetic equations are located.
@@ -120,7 +120,7 @@ public class SBMLsqueezer implements LawListener {
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
-	private static final String versionNumber = "1.2.2";
+	private static final String versionNumber = "1.2.3";
 
 	static {
 		long time = System.currentTimeMillis();
@@ -280,8 +280,7 @@ public class SBMLsqueezer implements LawListener {
 	public static Properties getDefaultSettings() {
 		Properties defaults;
 		try {
-			defaults = Resource.readProperties(Resource.class.getResource(
-					configFile).getPath());
+			defaults = Resource.readProperties(configFile);
 		} catch (IOException e) {
 			defaults = new Properties();
 			e.printStackTrace();
@@ -432,7 +431,7 @@ public class SBMLsqueezer implements LawListener {
 			f = new File(userConfigFile);
 			if (f.exists() && f.length() == 0) {
 				BufferedReader br = new BufferedReader(new FileReader(
-						Resource.class.getResource(configFile).getPath()));
+						configFile));
 				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 				String line;
 				while ((line = br.readLine()) != null) {
@@ -531,7 +530,8 @@ public class SBMLsqueezer implements LawListener {
 	 * 
 	 * @param plugin
 	 */
-	public SBMLsqueezer(AbstractSBMLReader sbmlReader, AbstractSBMLWriter sbmlWriter) {
+	public SBMLsqueezer(AbstractSBMLReader sbmlReader,
+			AbstractSBMLWriter sbmlWriter) {
 		settings = initProperties();
 		sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
 		showAboutMsg();

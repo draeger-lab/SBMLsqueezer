@@ -388,7 +388,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		closeItem.addActionListener(this);
 		exitItem.addActionListener(this);
 
-		File sbmlFile = new File(settings.get(CfgKeys.SBML_FILE).toString());
+		Object path = settings.get(CfgKeys.SBML_FILE); 
+		File sbmlFile = new File(path == null ? "" : path.toString());
 		if (sbmlFile.exists() && sbmlFile.isFile()) {
 			JMenuItem lastSBMLFile = new JMenuItem(sbmlFile.getName());
 			lastSBMLFile.addActionListener(this);
