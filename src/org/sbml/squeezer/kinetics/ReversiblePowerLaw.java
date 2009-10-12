@@ -27,7 +27,6 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -87,7 +86,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 			for (i = 0; i < r.getNumModifiers() && msr == null; i++)
 				if (r.getModifier(i).getSpecies().equals(acti))
 					msr = r.getModifier(i);
-			Parameter kA = parameterKa(r.getId(), msr.getSpecies());
+			Parameter kA = parameterKa(msr.getSpecies());
 			ASTNode curr = ASTNode
 					.frac(speciesTerm(msr), new ASTNode(kA, this));
 			curr.divideBy(ASTNode.sum(new ASTNode(1, this), curr.clone()));
@@ -97,9 +96,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 				else
 					activation.multiplyWith(curr);
 			} else /* if (SBO.isNonEssentialActivator(msr.getSBOTerm())) */{
-				Parameter rhoA = createOrGetParameter("rho_act_", r.getId(),
-						underscore, msr.getSpecies());
-				rhoA.setUnits(Unit.Kind.DIMENSIONLESS);
+				Parameter rhoA = parameterRhoActivation(msr.getSpecies());
 				curr = ASTNode.sum(new ASTNode(rhoA, this), ASTNode.times(
 						ASTNode.diff(new ASTNode(1, this), new ASTNode(rhoA,
 								this)), curr));
@@ -131,16 +128,16 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 			String enzymeID = modE.size() <= i ? null : modE.get(i);
 			switch (type) {
 			case 0: // CAT
-				numerator[i] = cat(r, enzymeID);
+				numerator[i] = cat(enzymeID);
 				break;
 			case 1: // HAL
-				numerator[i] = hal(r, enzymeID);
+				numerator[i] = hal(enzymeID);
 				break;
 			default: // WEG
-				numerator[i] = weg(r, enzymeID);
+				numerator[i] = weg(enzymeID);
 				break;
 			}
-			numerator[i].divideBy(denominator(r, enzymeID));
+			numerator[i].divideBy(denominator(enzymeID));
 			if (i < modE.size()) {
 				ModifierSpeciesReference enzyme = null;
 				for (int j = 0; j < r.getNumModifiers() && enzyme == null; j++)
@@ -158,9 +155,9 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * @param r
 	 * @return
 	 */
-	ASTNode denominator(Reaction r, String enzyme) {
+	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(1, this);
-		ASTNode competInhib = competetiveInhibitionSummand(r);
+		ASTNode competInhib = competetiveInhibitionSummand();
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}
@@ -171,7 +168,8 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * @param r
 	 * @return
 	 */
-	ASTNode competetiveInhibitionSummand(Reaction r) {
+	ASTNode competetiveInhibitionSummand() {
+		Reaction r = getParentSBMLObject();
 		ASTNode inhib = new ASTNode(this);
 		for (ModifierSpeciesReference msr : r.getListOfModifiers())
 			if (SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
@@ -195,15 +193,15 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * @param listOfProducts
 	 * @return
 	 */
-	private ASTNode weg(Reaction r, String enzyme) {
-		ASTNode numerator = new ASTNode(parameterVelocityConstant(r.getId(),
-				enzyme), this);
+	private ASTNode weg(String enzyme) {
+		ASTNode numerator = new ASTNode(parameterVelocityConstant(enzyme), this);
 		Parameter R = parameterGasConstant();
 		Parameter T = parameterTemperature();
 		ASTNode exponent = null;
 		ASTNode forward = null, backward = null;
 		Parameter mu;
-		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
+		Parameter hr = parameterHillCoefficient(enzyme);
+		Reaction r = getParentSBMLObject();
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			ASTNode curr = speciesTerm(specRef);
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
@@ -264,14 +262,14 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * @param listOfProducts
 	 * @return
 	 */
-	private ASTNode hal(Reaction r, String enzyme) {
-		ASTNode numerator = new ASTNode(parameterVelocityConstant(r.getId(),
-				enzyme), this);
-		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
-		Parameter keq = parameterEquilibriumConstant(r.getId());
+	private ASTNode hal(String enzyme) {
+		ASTNode numerator = new ASTNode(parameterVelocityConstant(enzyme), this);
+		Parameter hr = parameterHillCoefficient(enzyme);
+		Parameter keq = parameterEquilibriumConstant();
 		ASTNode forward = ASTNode.sqrt(ASTNode.pow(new ASTNode(keq, this),
 				new ASTNode(hr, this)));
 		double x = 0;
+		Reaction r = getParentSBMLObject();
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			forward.multiplyWith(ASTNode.pow(speciesTerm(specRef), ASTNode
 					.times(new ASTNode(specRef.getStoichiometry(), this),
@@ -303,10 +301,9 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	private ASTNode createRoot(Reaction r, String enzyme) {
 		ASTNode root = null, curr = null;
 		Parameter kM = null;
-		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
+		Parameter hr = parameterHillCoefficient(enzyme);
 		for (SpeciesReference specRef : r.getListOfReactants()) {
-			kM = parameterMichaelisSubstrate(r.getId(), specRef.getSpecies(),
-					enzyme);
+			kM = parameterMichaelis(specRef.getSpecies(), enzyme, true);
 			curr = ASTNode.pow(new ASTNode(kM, this), ASTNode.times(
 					new ASTNode(specRef.getStoichiometry(), this), new ASTNode(
 							hr, this)));
@@ -317,8 +314,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 		}
 		if (r.getReversible()) {
 			for (SpeciesReference specRef : r.getListOfProducts()) {
-				kM = parameterMichaelisProduct(r.getId(), specRef.getSpecies(),
-						enzyme);
+				kM = parameterMichaelis(specRef.getSpecies(), enzyme, false);
 				curr = ASTNode.pow(new ASTNode(kM, this), ASTNode.times(
 						new ASTNode(specRef.getStoichiometry(), this),
 						new ASTNode(hr, this)));
@@ -340,10 +336,10 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * @param listOfProducts
 	 * @return
 	 */
-	private ASTNode cat(Reaction r, String enzyme) {
-		ASTNode forward = cat(r, enzyme, true);
-		if (r.getReversible())
-			forward.minus(cat(r, enzyme, false));
+	private ASTNode cat(String enzyme) {
+		ASTNode forward = cat(enzyme, true);
+		if (getParentSBMLObject().getReversible())
+			forward.minus(cat(enzyme, false));
 		return forward;
 	}
 
@@ -351,19 +347,18 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * This actually creates the rate for forward or backward cat version
 	 * equation.
 	 * 
-	 * @param r
 	 * @param enzyme
 	 * @param forward
 	 * @return
 	 */
-	private ASTNode cat(Reaction r, String enzyme, boolean forward) {
-		Parameter kr = parameterKcatOrVmax(r.getId(), enzyme, forward);
+	private ASTNode cat(String enzyme, boolean forward) {
+		Parameter kr = parameterKcatOrVmax(enzyme, forward);
 		ASTNode rate = new ASTNode(kr, this);
-		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
+		Reaction r = getParentSBMLObject();
+		Parameter hr = parameterHillCoefficient(enzyme);
 		for (SpeciesReference specRef : r.getListOfReactants()) {
-			Parameter kM = forward ? parameterMichaelisSubstrate(r.getId(),
-					specRef.getSpecies(), enzyme) : parameterMichaelisProduct(r
-					.getId(), specRef.getSpecies(), enzyme);
+			Parameter kM = parameterMichaelis(specRef.getSpecies(), enzyme,
+					forward);
 			rate.multiplyWith(ASTNode.pow(ASTNode.frac(speciesTerm(specRef),
 					new ASTNode(kM, this)), ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this))));

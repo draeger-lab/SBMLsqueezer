@@ -19,10 +19,12 @@
 package org.sbml.squeezer.kinetics;
 
 /**
+ * All implementing kinietic laws can bei applied to reversible reactions.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * @date 2009-09-23 
+ * @date 2009-09-23
  */
 public interface InterfaceReversibleKinetics {
 

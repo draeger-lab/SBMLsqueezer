@@ -47,14 +47,21 @@ import org.sbml.squeezer.resources.Resource;
  */
 public class GUITools {
 
-	public static Icon LATEX_ICON_TINY;
-	public static Icon LATEX_ICON_SMALL;
-	public static Icon LEMON_ICON_TINY;
-	public static Icon LEMON_ICON_SMALL;
-	public static Icon RIGHT_ARROW;
 	public static Icon DOWN_ARROW;
-	public static Icon LOGO_SMALL;
+
+	public static Icon LATEX_ICON_SMALL;
+
+	public static Icon LATEX_ICON_TINY;
+
 	public static Image LEMON_ICON;
+
+	public static Icon LEMON_ICON_SMALL;
+
+	public static Icon LEMON_ICON_TINY;
+
+	public static Icon LOGO_SMALL;
+
+	public static Icon RIGHT_ARROW;
 
 	/**
 	 * Generated serial version id.
@@ -122,51 +129,6 @@ public class GUITools {
 	}
 
 	/**
-	 * Returns a HTML formated String, in which each line is at most lineBreak
-	 * symbols long.
-	 * 
-	 * @param string
-	 * @param lineBreak
-	 * @return
-	 */
-	public static String toHTML(String string, int lineBreak) {
-		StringTokenizer st = new StringTokenizer(string != null ? string : "",
-				" ");
-		StringBuilder sb = new StringBuilder();
-		if (st.hasMoreElements())
-			sb.append(st.nextElement().toString());
-		int length = sb.length();
-		sb.insert(0, "<html><body>");
-		while (st.hasMoreElements()) {
-			if (length >= lineBreak) {
-				sb.append("<br>");
-				length = 0;
-			} else
-				sb.append(' ');
-			String tmp = st.nextElement().toString();
-			length += tmp.length() + 1;
-			sb.append(tmp);
-		}
-		sb.append("</body></html>");
-		return sb.toString();
-	}
-
-	/**
-	 * 
-	 * @param c
-	 * @param color
-	 */
-	public static void setAllBackground(Container c, Color color) {
-		c.setBackground(color);
-		Component children[] = c.getComponents();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof Container)
-				setAllBackground((Container) children[i], color);
-			children[i].setBackground(color);
-		}
-	}
-
-	/**
 	 * Checks whether the first container contains the second one.
 	 * 
 	 * @param c
@@ -183,20 +145,6 @@ public class GUITools {
 					contains |= contains(c1, insight);
 			}
 		return contains;
-	}
-
-	/**
-	 * 
-	 * @param c
-	 * @param enabled
-	 */
-	public static void setAllEnabled(Container c, boolean enabled) {
-		Component children[] = c.getComponents();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof Container)
-				setAllEnabled((Container) children[i], enabled);
-			children[i].setEnabled(enabled);
-		}
 	}
 
 	/**
@@ -242,5 +190,73 @@ public class GUITools {
 				+ " already exists. Do you really want to over write it?", 40),
 				"Over write existing file?", JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param color
+	 */
+	public static void setAllBackground(Container c, Color color) {
+		c.setBackground(color);
+		Component children[] = c.getComponents();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] instanceof Container)
+				setAllBackground((Container) children[i], color);
+			children[i].setBackground(color);
+		}
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param enabled
+	 */
+	public static void setAllEnabled(Container c, boolean enabled) {
+		Component children[] = c.getComponents();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] instanceof Container)
+				setAllEnabled((Container) children[i], enabled);
+			children[i].setEnabled(enabled);
+		}
+	}
+
+	/**
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static String toHTML(String string) {
+		return toHTML(string, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Returns a HTML formated String, in which each line is at most lineBreak
+	 * symbols long.
+	 * 
+	 * @param string
+	 * @param lineBreak
+	 * @return
+	 */
+	public static String toHTML(String string, int lineBreak) {
+		StringTokenizer st = new StringTokenizer(string != null ? string : "",
+				" ");
+		StringBuilder sb = new StringBuilder();
+		if (st.hasMoreElements())
+			sb.append(st.nextElement().toString());
+		int length = sb.length();
+		sb.insert(0, "<html><body>");
+		while (st.hasMoreElements()) {
+			if (length >= lineBreak && lineBreak < Integer.MAX_VALUE) {
+				sb.append("<br>");
+				length = 0;
+			} else
+				sb.append(' ');
+			String tmp = st.nextElement().toString();
+			length += tmp.length() + 1;
+			sb.append(tmp);
+		}
+		sb.append("</body></html>");
+		return sb.toString();
 	}
 }

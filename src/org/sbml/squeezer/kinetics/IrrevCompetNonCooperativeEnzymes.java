@@ -24,9 +24,7 @@ import java.util.List;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * 
@@ -109,8 +107,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			String enzyme = null;
 			if (numOfEnzymes > 0)
 				enzyme = modE.get(enzymeNum);
-			Parameter p_kcat = parameterKcatOrVmax(reaction.getId(), enzyme,
-					true);
+			Parameter p_kcat = parameterKcatOrVmax(enzyme, true);
 			ASTNode currEnzyme;
 			ASTNode numerator;
 
@@ -119,33 +116,17 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 					.getReactant(0)));
 
 			ASTNode denominator;
-			Parameter p_kM = parameterMichaelisSubstrate(reaction.getId(),
-					reaction.getReactant(0).getSpecies(), enzyme);
+			Parameter p_kM = parameterMichaelis(reaction.getReactant(0)
+					.getSpecies(), enzyme, true);
 
 			if (modInhib.size() == 0)
 				denominator = new ASTNode(p_kM, this);
 			else {
 				ASTNode factor = new ASTNode(p_kM, this);
 				for (int i = 0; i < modInhib.size(); i++) {
-
-					StringBuffer kIi = new StringBuffer(StringTools.concat(
-							"Ki_", reaction.getId()));
-					StringBuffer exponent = StringTools.concat("m_", reaction
-							.getId());
-					if (numOfEnzymes > 1) {
-						kIi = StringTools.concat(underscore, enzyme);
-						exponent = StringTools.concat(underscore, enzyme);
-					}
-					kIi = StringTools.concat(kIi, underscore, modInhib.get(i));
-					exponent = StringTools.concat(exponent, underscore,
-							modInhib.get(i));
-					Parameter p_kIi = parameterKi(reaction.getId(), modInhib
+					Parameter p_kIi = parameterKi(modInhib.get(i), enzyme);
+					Parameter p_exp = parameterNumBindingSites(enzyme, modInhib
 							.get(i));
-					Parameter p_exp = createOrGetParameter(exponent.toString());
-					p_exp.setSBOTerm(189);
-					p_exp.setUnits(new Unit(Unit.Kind.DIMENSIONLESS,
-							getLevel(), getVersion()));
-
 					factor.multiplyWith(ASTNode.pow(ASTNode.sum(new ASTNode(1,
 							this), ASTNode.frac(speciesTerm(modInhib.get(i)),
 							new ASTNode(p_kIi, this))),

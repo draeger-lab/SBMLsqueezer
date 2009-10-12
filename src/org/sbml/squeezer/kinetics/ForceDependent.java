@@ -57,10 +57,10 @@ public class ForceDependent extends ReversiblePowerLaw implements
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
 	 *      .Reaction)
 	 */
-	ASTNode denominator(Reaction r, String enzyme) {
+	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(this);
-		ASTNode forward = denominator(r, enzyme, true);
-		ASTNode backward = denominator(r, enzyme, false);
+		ASTNode forward = denominator(enzyme, true);
+		ASTNode backward = denominator(enzyme, false);
 		if (!forward.isUnknown())
 			denominator = forward;
 		if (!denominator.isUnknown() && !backward.isUnknown())
@@ -68,7 +68,7 @@ public class ForceDependent extends ReversiblePowerLaw implements
 		else
 			denominator = backward;
 		denominator.sqrt();
-		ASTNode competInhib = competetiveInhibitionSummand(r);
+		ASTNode competInhib = competetiveInhibitionSummand();
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}
@@ -76,22 +76,19 @@ public class ForceDependent extends ReversiblePowerLaw implements
 	/**
 	 * This actually creates the parts of the denominator.
 	 * 
-	 * @param r
 	 * @param forward
 	 *            true means forward, false backward.
 	 * @return
 	 */
-	private ASTNode denominator(Reaction r, String enzyme, boolean forward) {
+	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		Parameter kM;
+		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = forward ? parameterMichaelisSubstrate(r.getId(), specRef
-					.getSpecies(), enzyme) : parameterMichaelisProduct(r
-					.getId(), specRef.getSpecies(), enzyme);
-			curr = ASTNode.frac(speciesTerm(specRef),
-					new ASTNode(kM, this));
+			kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
+			curr = ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this));
 			if (term.isUnknown())
 				term = curr;
 			else

@@ -103,6 +103,8 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 
 	private Properties settings;
 
+	private JSpinner jSpinnerDefaultParamValue;
+
 	/**
 	 * 
 	 * @param settings
@@ -205,6 +207,11 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jSpinnerMaxRealisticNumOfReactants.setToolTipText(GUITools.toHTML(
 				"Specifiy how many reactants are at most likely to collide.",
 				40));
+		jSpinnerDefaultParamValue = new JSpinner(new SpinnerNumberModel(
+				Double
+						.parseDouble(settings.get(
+								CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS)
+								.toString()), 0, 1000, .1));
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jCheckBoxSetBoundaryCondition, 0, 0, 2, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
@@ -215,6 +222,10 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				jCheckBoxWarnings, 0, 2, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerMaxRealisticNumOfReactants, 1, 2, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
+				"Default value for new parameters:"), 0, 3, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
+				jSpinnerDefaultParamValue, 1, 3, 1, 1, 1, 1);
 
 		// Second Panel
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
@@ -379,16 +390,17 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		LayoutHelper unitConsistency = new LayoutHelper(
 				jPanelTypeUnitConsistency);
 		jRadioButtonTypeUnitConsistency = new JRadioButton(GUITools.toHTML(
-				"Bring species to substance units.", 30), ((Integer) this.settings
-				.get(CfgKeys.TYPE_UNIT_CONSISTENCY)).intValue() == 0);
+				"Bring species to substance units.", 30),
+				((Integer) this.settings.get(CfgKeys.TYPE_UNIT_CONSISTENCY))
+						.intValue() == 0);
 		jRadioButtonTypeUnitConsistency
 				.setToolTipText(GUITools
 						.toHTML(
 								"If this option is selected, species occuring in kinetic equations are multiplyed with the size of the surrounding compartment if their hasOnlySubstanceUnits attribute is set to false. The units of parameters are set accordingly.",
 								40));
 		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(GUITools
-				.toHTML("Bring species to concentration units.",
-						30), !jRadioButtonTypeUnitConsistency.isSelected());
+				.toHTML("Bring species to concentration units.", 30),
+				!jRadioButtonTypeUnitConsistency.isSelected());
 		jRadioButtonTypeUnitsCompVol
 				.setToolTipText(GUITools
 						.toHTML(
@@ -452,6 +464,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxAddAllParametersGlobally.addItemListener(this);
 		jCheckBoxWarnings.addItemListener(this);
 		jSpinnerMaxRealisticNumOfReactants.addChangeListener(this);
+		jSpinnerDefaultParamValue.addChangeListener(this);
 		jRadioButtonGenerateForAllReactions.addItemListener(this);
 		jRadioButtonForceReacRev.addItemListener(this);
 		jCheckBoxPossibleEnzymeGenericProtein.addItemListener(this);
@@ -588,8 +601,11 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 			settings.put(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS, Integer
 					.parseInt(jSpinnerMaxRealisticNumOfReactants.getValue()
 							.toString()));
-			for (int i = 0; i < changeListeners.size(); i++)
-				changeListeners.get(i).stateChanged(e);
+		} else if (e.getSource().equals(jSpinnerDefaultParamValue)) {
+			settings.put(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS, Double
+					.valueOf(jSpinnerDefaultParamValue.getValue().toString()));
 		}
+		for (int i = 0; i < changeListeners.size(); i++)
+			changeListeners.get(i).stateChanged(e);
 	}
 }

@@ -60,10 +60,10 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml.Reaction,
 	 *      java.lang.String)
 	 */
-	ASTNode denominator(Reaction r, String enzyme) {
-		ASTNode denominator = super.denominator(r, enzyme);
-		ASTNode forward = denominator(r, enzyme, true);
-		ASTNode backward = denominator(r, enzyme, false);
+	ASTNode denominator(String enzyme) {
+		ASTNode denominator = super.denominator(enzyme);
+		ASTNode forward = denominator(enzyme, true);
+		ASTNode backward = denominator(enzyme, false);
 		if (!forward.isUnknown())
 			denominator.plus(forward);
 		if (!backward.isUnknown())
@@ -74,24 +74,21 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 	/**
 	 * This creates the denominator parts.
 	 * 
-	 * @param r
 	 * @param enzyme
 	 * @param forward
 	 *            if true forward, otherwise backward
 	 * @return
 	 */
-	private ASTNode denominator(Reaction r, String enzyme, boolean forward) {
+	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
+		Reaction r = getParentSBMLObject();
 		Parameter kM;
-		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
+		Parameter hr = parameterHillCoefficient(enzyme);
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = forward ? parameterMichaelisSubstrate(r.getId(), specRef
-					.getSpecies(), enzyme) : parameterMichaelisProduct(r
-					.getId(), specRef.getSpecies(), enzyme);
-			curr = ASTNode.frac(speciesTerm(specRef),
-					new ASTNode(kM, this));
+			kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
+			curr = ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));
 			if (term.isUnknown())

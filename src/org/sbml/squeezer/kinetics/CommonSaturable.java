@@ -60,14 +60,14 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
 	 *      .Reaction)
 	 */
-	ASTNode denominator(Reaction r, String enzyme) {
-		ASTNode denominator = denominator(r, enzyme, true);
+	ASTNode denominator(String enzyme) {
+		ASTNode denominator = denominator(enzyme, true);
 		if (denominator.isUnknown())
-			denominator = denominator(r, enzyme, false);
+			denominator = denominator(enzyme, false);
 		else
-			denominator.minus(denominator(r, enzyme, false));
+			denominator.minus(denominator(enzyme, false));
 		denominator.minus(new ASTNode(1, this));
-		ASTNode competInhib = competetiveInhibitionSummand(r);
+		ASTNode competInhib = competetiveInhibitionSummand();
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}
@@ -75,20 +75,19 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 	/**
 	 * This actually creates the denominator parts.
 	 * 
-	 * @param r
 	 * @param forward
 	 *            true is forward, false reverse.
 	 * @return
 	 */
-	private ASTNode denominator(Reaction r, String enzyme, boolean forward) {
+	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode denominator = new ASTNode(this), curr;
-		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
+		Parameter hr = parameterHillCoefficient(enzyme);
+		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			Parameter kM = forward ? parameterMichaelisSubstrate(r.getId(),
-					specRef.getSpecies(), enzyme) : parameterMichaelisProduct(r
-					.getId(), specRef.getSpecies(), enzyme);
+			Parameter kM = parameterMichaelis(specRef.getSpecies(), enzyme,
+					forward);
 			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
 					speciesTerm(specRef), new ASTNode(kM, this)));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef

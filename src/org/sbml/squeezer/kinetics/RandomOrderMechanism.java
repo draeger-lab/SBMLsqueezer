@@ -27,7 +27,6 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates a kinetic equation according to the random order mechanism
@@ -142,32 +141,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			 * Irreversible reaction
 			 */
 			if (!reaction.getReversible()) {
-				StringBuffer kMr1 = StringTools.concat("kM_", reaction.getId());
-				StringBuffer kMr2 = StringTools.concat("kM_", reaction.getId());
-				StringBuffer kIr1 = StringTools.concat("ki_", reaction.getId());
-
-				if (modE.size() > 1) {
-					StringTools.append(kMr2, underscore, enzyme);
-					StringTools.append(kMr1, underscore, enzyme);
-					StringTools.append(kIr1, underscore, enzyme);
-				}
 				Species speciesR1 = specRefR1.getSpeciesInstance();
 				Species speciesR2 = specRefR2.getSpeciesInstance();
-				StringTools.append(kMr1, underscore, speciesR1);
-				StringTools.append(kMr2, underscore, speciesR2);
-				if (specRefR1.equals(specRefR2)) {
-					StringTools.append(kMr1, "kMr1", kMr1.substring(2));
-					StringTools.append(kMr2, "kMr2", kMr2.substring(2));
-				}
-				StringTools.append(kIr1, underscore, speciesR1);
-				Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(),
+				Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+				Parameter p_kMr1 = parameterMichaelis(speciesR1.getId(),
 						enzyme, true);
-				Parameter p_kMr1 = createOrGetParameter(kMr1.toString());
-				p_kMr1.setSBOTerm(322);
-				Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
-				p_kMr2.setSBOTerm(322);
-				Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
-				p_kIr1.setSBOTerm(261);
+				Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(),
+						enzyme, true);
+				Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
 
 				numerator = new ASTNode(p_kcatp, this);
 				if (modE.size() > 0)
@@ -193,56 +174,20 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 				 * Reversible reaction: Bi-Bi
 				 */
 				if (!biuni) {
-
-					StringBuffer kMr2 = StringTools.concat("kM_", reaction.getId());
-					StringBuffer kIr1 = StringTools.concat("ki_", reaction.getId());
-					StringBuffer kMp1 = StringTools.concat("kM_", reaction.getId());
-					StringBuffer kIp1 = StringTools.concat("ki_", reaction.getId());
-					StringBuffer kIp2 = StringTools.concat("ki_", reaction.getId());
-					StringBuffer kIr2 = StringTools.concat("ki_", reaction.getId());
-
-					if (modE.size() > 1) {
-						kMr2 = StringTools.concat(kMr2, underscore, enzyme);
-						kMp1 = StringTools.concat(kMp1, underscore, enzyme);
-						kIp1 = StringTools.concat(kIp1, underscore, enzyme);
-						kIp2 = StringTools.concat(kIp2, underscore, enzyme);
-						kIr2 = StringTools.concat(kIr2, underscore, enzyme);
-						kIr1 = StringTools.concat(kIr1, underscore, enzyme);
-					}
 					Species speciesR1 = specRefR1.getSpeciesInstance();
 					Species speciesR2 = specRefR2.getSpeciesInstance();
 					Species speciesP1 = specRefP1.getSpeciesInstance();
 					Species speciesP2 = specRefP2.getSpeciesInstance();
-					kMr2 = StringTools.concat(kMr2, underscore, speciesR2);
-					kIr1 = StringTools.concat(kIr1, underscore, speciesR1);
-					kIr2 = StringTools.concat(kIr2, underscore, speciesR2);
-					kIp1 = StringTools.concat(kIp1, underscore, speciesP1);
-					kIp2 = StringTools.concat(kIp2, underscore, speciesP2);
-					kMp1 = StringTools.concat(kMp1, underscore, speciesP1);
-					if (specRefR2.equals(specRefR1)) {
-						kIr1 = StringTools.concat("kir1", kIr1.substring(2));
-						kIr2 = StringTools.concat("kir2", kIr2.substring(2));
-					}
-					if (specRefP2.equals(specRefP1)) {
-						kIp1 = StringTools.concat("kip1", kIp1.substring(2));
-						kIp2 = StringTools.concat("kip2", kIp2.substring(2));
-					}
-					Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(),
-							enzyme, true);
-					Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
-							enzyme, false);
-					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
-					p_kMr2.setSBOTerm(322);
-					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
-					p_kMp1.setSBOTerm(323);
-					Parameter p_kIp1 = createOrGetParameter(kIp1.toString());
-					p_kIp1.setSBOTerm(261);
-					Parameter p_kIp2 = createOrGetParameter(kIp2.toString());
-					p_kIp2.setSBOTerm(261);
-					Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
-					p_kIr1.setSBOTerm(261);
-					Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
-					p_kIr2.setSBOTerm(261);
+					Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+					Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+					Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(),
+							enzyme);
+					Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(),
+							enzyme);
+					Parameter p_kIp1 = parameterKi(speciesP1.getId(), enzyme);
+					Parameter p_kIp2 = parameterKi(speciesP2.getId(), enzyme);
+					Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+					Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
 
 					ASTNode numeratorForward = ASTNode
 							.frac(new ASTNode(p_kcatp, this), ASTNode.times(
@@ -281,42 +226,15 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					/*
 					 * Reversible reaction: Bi-Uni reaction
 					 */
-					StringBuffer kMr2 = StringTools.concat("kM_", reaction.getId());
-					StringBuffer kMp1 = StringTools.concat("kM_", reaction.getId());
-					StringBuffer kIr2 = StringTools.concat("ki_", reaction.getId());
-					StringBuffer kIr1 = StringTools.concat("ki_", reaction.getId());
-
-					if (modE.size() > 1) {
-						StringTools.append(kMr2, underscore, enzyme);
-						StringTools.append(kMp1, underscore, enzyme);
-						StringTools.append(kIr2, underscore, enzyme);
-						StringTools.append(kIr1, underscore, enzyme);
-					}
-
 					Species speciesR1 = specRefR1.getSpeciesInstance();
 					Species speciesR2 = specRefR2.getSpeciesInstance();
 					Species speciesP1 = specRefP1.getSpeciesInstance();
-					StringTools.append(kMr2, underscore, speciesR2);
-					StringTools.append(kIr1, underscore, speciesR2);
-					StringTools.append(kIr2, underscore, speciesR2);
-					StringTools.append(kMp1, underscore, speciesR2);
-
-					if (specRefR2.equals(specRefR1)) {
-						StringTools.append(kIr1, "kip1", kIr1.substring(2));
-						StringTools.append(kIr2, "kip2", kIr2.substring(2));
-					}
-					Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(),
-							enzyme, true);
-					Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
-							enzyme, false);
-					Parameter p_kMr2 = createOrGetParameter(kMr2.toString());
-					p_kMr2.setSBOTerm(322);
-					Parameter p_kMp1 = createOrGetParameter(kMp1.toString());
-					p_kMp1.setSBOTerm(323);
-					Parameter p_kIr1 = createOrGetParameter(kIr1.toString());
-					p_kIr1.setSBOTerm(261);
-					Parameter p_kIr2 = createOrGetParameter(kIr2.toString());
-					p_kIr2.setSBOTerm(261);
+					Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+					Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+					Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
+					Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme, false);
+					Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+					Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
 
 					ASTNode r1r2;
 					if (specRefR1.equals(specRefR2))

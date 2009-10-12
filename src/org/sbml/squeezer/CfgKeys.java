@@ -132,11 +132,15 @@ public enum CfgKeys {
 	 */
 	OPT_MAX_NUMBER_OF_REACTANTS,
 	/**
+	 * The value that is set for newly created parameters.
+	 */
+	OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS,
+	/**
 	 * If true, warnings will be displayed for too many reactants.
 	 */
 	OPT_WARNINGS_FOR_TOO_MANY_REACTANTS,
 	/**
-	 * 
+	 * Decide whether or not to set the boundary condition for genes to true.
 	 */
 	OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
 	/**
