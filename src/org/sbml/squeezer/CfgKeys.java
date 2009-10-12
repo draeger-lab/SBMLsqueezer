@@ -96,12 +96,12 @@ public enum CfgKeys {
 	 */
 	TYPE_STANDARD_VERSION,
 	/**
-	 * How to ensure unit consistency in kinetic equations? One way is
-	 * to set each participating species to an initial amount and to set the
-	 * unit to mmole. The other way is to set the initial concentration of
-	 * each species, set the unit to mmole per l and to multiply the species
-	 * with the size of the surrounding compartment whenever it occurs in
-	 * a kinetic equation. Hence, this type paramter belongs to two values.
+	 * How to ensure unit consistency in kinetic equations? One way is to set
+	 * each participating species to an initial amount and to set the unit to
+	 * mmole. The other way is to set the initial concentration of each species,
+	 * set the unit to mmole per l and to multiply the species with the size of
+	 * the surrounding compartment whenever it occurs in a kinetic equation.
+	 * Hence, this type paramter belongs to two values.
 	 */
 	TYPE_UNIT_CONSISTENCY,
 	/**
@@ -143,6 +143,11 @@ public enum CfgKeys {
 	 * Decide whether or not to set the boundary condition for genes to true.
 	 */
 	OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
+	/**
+	 * If true parameters and units that are never referenced by any element of
+	 * the model are deleted when creating kinetic equations with SBMLsqueezer.
+	 */
+	OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS,
 	/**
 	 * 
 	 */

@@ -91,6 +91,8 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 
 	private JCheckBox jCheckBoxSetBoundaryCondition;
 
+	private JCheckBox jCheckBoxRemoveUnnecessaryPandU;
+
 	private JCheckBox jCheckBoxWarnings;
 
 	private JComboBox jComboBoxTypeStandardVersion;
@@ -162,7 +164,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				" General options ", TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 		jCheckBoxSetBoundaryCondition = new JCheckBox(GUITools.toHTML(
-				"Set boundary condition for gene coding species", 80),
+				"Set boundary condition for gene coding species", 25),
 				((Boolean) settings
 						.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
 						.booleanValue());
@@ -171,8 +173,18 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 						.toHTML(
 								"If selected, the boundary condition of all species that represent gene coding elements, such as genes or gene coding regions will be set to true.",
 								40));
+		jCheckBoxRemoveUnnecessaryPandU = new JCheckBox(
+				GUITools.toHTML("Remove uneccessary parameters and units", 25),
+				((Boolean) settings
+						.get(CfgKeys.OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS))
+						.booleanValue());
+		jCheckBoxRemoveUnnecessaryPandU
+				.setToolTipText(GUITools
+						.toHTML(
+								"If selected parameters and unit definitions that are never referenced in the model are automatically deleted when creating new kinetic laws.",
+								40));
 		jCheckBoxTreatAllReactionsAsEnzyeReaction = new JCheckBox(GUITools
-				.toHTML("Consider all reactions to be enzyme-catalyzed", 40),
+				.toHTML("Consider all reactions to be enzyme-catalyzed", 25),
 				((Boolean) settings
 						.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 						.booleanValue());
@@ -181,8 +193,8 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 						.toHTML(
 								"If checked, all reactions are considered to be enzyme-catalyzed.",
 								40));
-		jCheckBoxAddAllParametersGlobally = new JCheckBox(
-				"Add all new parameters globally");
+		jCheckBoxAddAllParametersGlobally = new JCheckBox(GUITools.toHTML(
+				"Add all new parameters globally", 25));
 		jCheckBoxAddAllParametersGlobally
 				.setToolTipText(GUITools
 						.toHTML(
@@ -213,7 +225,9 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 								CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS)
 								.toString()), 0, 1000, .1));
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jCheckBoxSetBoundaryCondition, 0, 0, 2, 1, 1, 1);
+				jCheckBoxSetBoundaryCondition, 0, 0, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
+				jCheckBoxRemoveUnnecessaryPandU, 1, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jCheckBoxTreatAllReactionsAsEnzyeReaction, 0, 1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
@@ -478,6 +492,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jRadioButtonTypeUnitConsistency.addItemListener(this);
 		jComboBoxTypeStandardVersion.addItemListener(this);
 		jCheckBoxSetBoundaryCondition.addItemListener(this);
+		jCheckBoxRemoveUnnecessaryPandU.addItemListener(this);
 	}
 
 	/*
@@ -497,6 +512,8 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		} else if (e.getSource().equals(jCheckBoxWarnings)) {
 			settings.put(CfgKeys.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS, Boolean
 					.valueOf(jCheckBoxWarnings.isSelected()));
+			jSpinnerMaxRealisticNumOfReactants.setEnabled(jCheckBoxWarnings
+					.isSelected());
 		} else if (e.getSource().equals(jRadioButtonGenerateForAllReactions)) {
 			settings.put(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
 					Boolean.valueOf(jRadioButtonGenerateForAllReactions
@@ -550,6 +567,10 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		} else if (e.getSource().equals(jCheckBoxSetBoundaryCondition)) {
 			settings.put(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, Boolean
 					.valueOf(jCheckBoxSetBoundaryCondition.isSelected()));
+		} else if (e.getSource().equals(jCheckBoxRemoveUnnecessaryPandU)) {
+			settings.put(CfgKeys.OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS,
+					Boolean.valueOf(jCheckBoxRemoveUnnecessaryPandU
+							.isSelected()));
 		}
 		for (ItemListener i : itemListeners)
 			i.itemStateChanged(e);
