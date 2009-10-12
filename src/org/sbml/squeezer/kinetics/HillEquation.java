@@ -29,7 +29,6 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates a Hill equation as defined in the paper"Hill Kinetics
@@ -44,7 +43,8 @@ import org.sbml.squeezer.io.StringTools;
  * @date Aug 7, 2007
  */
 public class HillEquation extends BasicKineticLaw implements
-		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics {
 
 	/**
 	 * 
@@ -152,7 +152,6 @@ public class HillEquation extends BasicKineticLaw implements
 			List<String> modTInhib) {
 		ASTNode acti[] = new ASTNode[modTActi.size()];
 		ASTNode inhib[] = new ASTNode[modTInhib.size()];
-		String rId = getParentSBMLObject().getId();
 
 		// KS: half saturation constant.
 		int i;
@@ -161,9 +160,8 @@ public class HillEquation extends BasicKineticLaw implements
 		 * if (!model.getSpecies(modTActi.get(i)).getSpeciesAlias(0).getType()
 		 * .toUpperCase().equals("GENE"))
 		 */{
-			Parameter p_hillcoeff = parameterHillCoefficient(rId, modTActi
-					.get(i));
-			Parameter p_kS = parameterKS(rId, modTActi.get(i));
+			Parameter p_hillcoeff = parameterHillCoefficient(modTActi.get(i));
+			Parameter p_kS = parameterKS(modTActi.get(i));
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(
 					speciesTerm(modTActi.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
@@ -176,16 +174,14 @@ public class HillEquation extends BasicKineticLaw implements
 		 * if (!model.getSpecies(modTInhib.get(i)).getSpeciesAlias(0)
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
-			Parameter p_hillcoeff = parameterHillCoefficient(rId, modTInhib
-					.get(i));
-			Parameter p_kS = parameterKS(rId, modTInhib.get(i));
+			Parameter p_hillcoeff = parameterHillCoefficient(modTInhib.get(i));
+			Parameter p_kS = parameterKS(modTInhib.get(i));
 			inhib[i] = ASTNode.frac(ASTNode.pow(speciesTerm(modTInhib.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
 					speciesTerm(modTInhib.get(i)), new ASTNode(p_hillcoeff,
 							this)), ASTNode.pow(this, p_kS, p_hillcoeff)));
 		}
-		Parameter p_kg = createOrGetParameter(StringTools.concat("kg_", rId).toString());
-		p_kg.setSBOTerm(186);
+		Parameter p_kg = parameterVmax(true);
 
 		ASTNode formelTxt = new ASTNode(p_kg, this);
 		if (modTActi.size() > 0)

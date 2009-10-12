@@ -19,6 +19,12 @@
 package org.sbml.squeezer.kinetics;
 
 /**
+ * Kinetic law objects that implement this interface are able to describe
+ * enzyme-catalyzed reactions with exactly two reactants (or one reactant with a
+ * stoichiometry of two) and two products (or one product with a stoichiometry
+ * of two). An enzyme does not necessarily have to be assigned to the reaction
+ * explicitely.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>

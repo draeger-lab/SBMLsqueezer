@@ -228,7 +228,8 @@ public class KineticLawGenerator {
 		Object typeParameters[] = new Object[] {
 				settings.get(CfgKeys.TYPE_STANDARD_VERSION),
 				Boolean.valueOf(hasFullColumnRank(modelOrig)),
-				settings.get(CfgKeys.TYPE_UNIT_CONSISTENCY) };
+				settings.get(CfgKeys.TYPE_UNIT_CONSISTENCY),
+				settings.get(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS)};
 		Constructor<?> constr = kinCls.getConstructor(reaction.getClass(),
 				typeParameters.getClass());
 		return (BasicKineticLaw) constr.newInstance(reaction, typeParameters);
@@ -876,6 +877,28 @@ public class KineticLawGenerator {
 		ud = modelOrig.getUnitDefinition("volume");
 		ud.getListOfUnits().getFirst().setScale(-3);
 		ud.setName("ml");
+		/*
+		 * delete unnecessary units.
+		 */
+		for (UnitDefinition udef : modelOrig.getListOfUnitDefinitions()) {
+			boolean isNeeded = udef.equals(UnitDefinition.AREA)
+					|| udef.equals(UnitDefinition.LENGTH)
+					|| udef.equals(UnitDefinition.SUBSTANCE)
+					|| udef.equals(UnitDefinition.TIME)
+					|| udef.equals(UnitDefinition.VOLUME);
+			int i;
+			for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++)
+				if (modelOrig.getCompartment(i).getUnitsInstance().equals(udef))
+					isNeeded = true;
+			for (i=0; i< modelOrig.getNumSpecies() && !isNeeded; i++)
+				if (modelOrig.getSpecies(i).getSubstanceUnitsInstance().equals(udef))
+					isNeeded = true;
+			for (i=0; i<modelOrig.getNumParameters() && !isNeeded; i++)
+				if (modelOrig.getParameter(i).getUnitsInstance().equals(udef))
+					isNeeded=true;
+			if (!isNeeded)
+				modelOrig.removeUnitDefinition(udef);
+		}
 	}
 
 	/**

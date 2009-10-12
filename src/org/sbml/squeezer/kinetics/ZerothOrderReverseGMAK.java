@@ -22,56 +22,52 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.io.StringTools;
 
 /**
- * TODO: comment missing
+ * Mass action rate law for zeroth order reverse reactions.
  * 
  * @since 2.0
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @date Feb 8, 2008
- **/
+ */
 public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
 		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceZeroReactants,
 		InterfaceZeroProducts, InterfaceModulatedKinetics {
-		
+
 	/**
 	 * @param parentReaction
 	 * @param model
 	 * @throws RateLawNotApplicableException
 	 * @throws IllegalFormatException
 	 */
-	public ZerothOrderReverseGMAK(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+	public ZerothOrderReverseGMAK(Reaction parentReaction,
+			Object... typeParameters) throws RateLawNotApplicableException,
+			IllegalFormatException {
 		super(parentReaction, typeParameters);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#dissociation(java.util
-	 * .List, int)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#dissociation(java.util
+	 *      .List, int)
 	 */
 	// @Override
 	ASTNode dissociation(List<String> catalysts, int c) {
 		reactantOrder = Double.NaN;
 		productOrder = 0;
-		StringBuffer kdiss = StringTools.concat("kdiss_", getParentSBMLObject().getId());
-		if (catalysts.size() > 0)
-			StringTools.append(kdiss, underscore, catalysts.get(c));
-		Parameter p_kdiss = createOrGetParameter(kdiss.toString());
-		p_kdiss.setSBOTerm(352);
-		return new ASTNode(p_kdiss, this);
+		return new ASTNode(
+				parameterZerothOrderReverse(catalysts.size() == 0 ? null
+						: catalysts.get(c)), this);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {

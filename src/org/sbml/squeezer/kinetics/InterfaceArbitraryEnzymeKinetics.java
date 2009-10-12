@@ -19,6 +19,11 @@
 package org.sbml.squeezer.kinetics;
 
 /**
+ * Kinetic law objects that implement this interface are able to describe any
+ * enzyme-catalyzed process whether or not an enzyme is explicitely assigned to
+ * the reaction. In this context, arbitrary means that the stoichiometry of
+ * reactants and products can be any real or integer number.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>

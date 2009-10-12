@@ -214,7 +214,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			SBFileFilter filterSBML = SBFileFilter.SBML_FILE_FILTER;
 			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
 					CfgKeys.SAVE_DIR).toString(), false, false,
-					JFileChooser.FILES_ONLY, filterSBML, filterTeX, filterText);
+					JFileChooser.FILES_ONLY, filterText, filterTeX, filterSBML);
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File out = chooser.getSelectedFile();
 				if (out.getParentFile() != null)
@@ -324,13 +324,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private void checkForSBMLErrors(Model m) {
 		if (sbmlIO.getNumErrors() > 0) {
-			String warnings = GUITools.toHTML("<p>"
-					+ sbmlIO.getWarnings().replace("<", "&lt;").replace(">",
-							"&gt;").replace(
-							System.getProperty("line.separator"), "</p><p>")
-					+ "</p>", 200);
+			String warnings = GUITools.toHTML(sbmlIO.getWarnings().replace("<",
+					"&lt;").replace(">", "&gt;").replace(
+					System.getProperty("line.separator"), "<br/>"));
 			JEditorPane area = new JEditorPane("text/html", warnings);
 			area.setEditable(false);
+			area.setBackground(Color.WHITE);
 			JScrollPane scroll = new JScrollPane(area,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

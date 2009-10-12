@@ -19,6 +19,8 @@
 package org.sbml.squeezer.kinetics;
 
 /**
+ * All implementing kinetic laws can be applied to irreversible reactions.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>

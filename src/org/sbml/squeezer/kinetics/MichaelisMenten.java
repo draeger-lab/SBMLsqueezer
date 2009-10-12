@@ -27,7 +27,6 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * TODO: comment missing
@@ -118,10 +117,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		int enzymeNum = 0;
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			Parameter p_kcatp = parameterKcatOrVmax(reaction.getId(), enzyme,
-					true);
-			Parameter p_kMr = parameterMichaelisSubstrate(reaction.getId(),
-					speciesR.getId(), enzyme);
+			Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+			Parameter p_kMr = parameterMichaelis(speciesR.getId(), enzyme, true);
 
 			ASTNode currEnzymeKin;
 			if (!reaction.getReversible()) {
@@ -139,10 +136,9 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 						speciesTerm(speciesR));
 				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(
 						p_kMr, this));
-				Parameter p_kcatn = parameterKcatOrVmax(reaction.getId(),
-						enzyme, false);
-				Parameter p_kMp = parameterMichaelisProduct(reaction.getId(),
-						speciesP.getId(), enzyme);
+				Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+				Parameter p_kMp = parameterMichaelis(speciesP.getId(), enzyme,
+						false);
 
 				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
 						this, p_kcatn, p_kMp), speciesTerm(speciesP)));
@@ -191,16 +187,9 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			Reaction reaction, List<String> modE, ASTNode denominator,
 			Parameter mr, int enzymeNum) {
 		if (modInhib.size() == 1) {
-			StringBuffer kIa = StringTools.concat("KIa_", reaction.getId()), kIb = StringTools
-					.concat("KIb_", reaction.getId());
-			if (modE.size() > 1) {
-				StringTools.append(kIa, underscore, modE.get(enzymeNum));
-				StringTools.append(kIb, underscore, modE.get(enzymeNum));
-			}
-			Parameter p_kIa = createOrGetParameter(kIa.toString());
-			p_kIa.setSBOTerm(261);
-			Parameter p_kIb = createOrGetParameter(kIb.toString());
-			p_kIb.setSBOTerm(261);
+			String enzyme = modE.size() > 1 ? modE.get(enzymeNum) : null;
+			Parameter p_kIa = parameterKi(modInhib.get(0), enzyme, 1);
+			Parameter p_kIb = parameterKi(modInhib.get(0), enzyme, 2);
 
 			ASTNode specRefI = speciesTerm(modInhib.get(0));
 			if (reaction.getReversible())
@@ -224,22 +213,20 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			setSBOTerm(275);
 			ASTNode sumIa = new ASTNode(1, this);
 			ASTNode sumIb = new ASTNode(1, this);
+			String enzyme = modE.size() > 1 ? modE.get(enzymeNum) : null;
 			for (int i = 0; i < modInhib.size(); i++) {
-				StringBuffer kIai = StringTools.concat(Integer.valueOf(i + 1), underscore,
-						reaction.getId());
-				if (modE.size() > 1)
-					StringTools.append(kIai, underscore, modE.get(enzymeNum));
-				StringBuffer kIbi = StringTools.concat("kIb_", kIai);
-				kIai = StringTools.concat("kIa_", kIai);
-				Parameter p_kIai = createOrGetParameter(kIai.toString());
-				p_kIai.setSBOTerm(261);
-				Parameter p_kIbi = createOrGetParameter(kIbi.toString());
-				p_kIbi.setSBOTerm(261);
-				ASTNode specRefI = speciesTerm(modInhib.get(i));
-				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, new ASTNode(
-						p_kIai, this)));
-				sumIb = ASTNode.sum(sumIb, ASTNode.frac(specRefI, new ASTNode(
-						p_kIbi, this)));
+				String inhibitor = modInhib.get(i);
+				Parameter p_kIai = parameterKi(inhibitor, enzyme, 1);
+				Parameter p_kIbi = parameterKi(inhibitor, enzyme, 2);
+				Parameter p_a = parameterCooperativeInhibitorSubstrateCoefficient(
+						"a", inhibitor, enzyme);
+				Parameter p_b = parameterCooperativeInhibitorSubstrateCoefficient(
+						"b", inhibitor, enzyme);
+				ASTNode specRefI = speciesTerm(inhibitor);
+				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, ASTNode
+						.times(this, p_a, p_kIai)));
+				sumIb = ASTNode.sum(sumIb, ASTNode.frac(specRefI, ASTNode
+						.times(this, p_b, p_kIbi)));
 			}
 			denominator = ASTNode.sum(ASTNode.times(denominator, sumIa),
 					ASTNode.times(new ASTNode(mr, this), sumIb));

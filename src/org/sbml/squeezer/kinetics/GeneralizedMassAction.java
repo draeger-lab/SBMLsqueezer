@@ -27,7 +27,6 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.io.StringTools;
 
 /**
  * This class creates rate equations according to the generalized mass action
@@ -403,19 +402,18 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	private ASTNode createModificationFactor(List<String> modifiers,
 			boolean type) throws IllegalFormatException {
-		Reaction r = getParentSBMLObject();
 		if (!modifiers.isEmpty()) {
 			ASTNode[] mods = new ASTNode[modifiers.size()];
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					Parameter p_kAn = parameterKa(r.getId(), modifiers.get(i));
+					Parameter p_kAn = parameterKa(modifiers.get(i));
 					mods[i] = ASTNode.frac(speciesTerm(modifiers.get(i)),
 							ASTNode.sum(new ASTNode(p_kAn, this),
 									speciesTerm(modifiers.get(i))));
 				} else {
 					// Inhibitor Mod
-					Parameter p_kIn = parameterKi(r.getId(), modifiers.get(i));
+					Parameter p_kIn = parameterKi(modifiers.get(i));
 					ASTNode kI = new ASTNode(p_kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI.clone(),
 							speciesTerm(modifiers.get(i))));
@@ -462,11 +460,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
-		StringBuffer kass = StringTools.concat("kass_", r.getId());
-		if (catalysts.size() > 0)
-			StringTools.append(kass, underscore, catalysts.get(catNum));
-		Parameter p_kass = createOrGetParameter(kass.toString());
-		p_kass.setSBOTerm(153);
+		Parameter p_kass = parameterAssociationConst(catalysts.size() > 0 ? catalysts
+				.get(catNum)
+				: null);
 		ASTNode ass = new ASTNode(p_kass, this);
 		for (SpeciesReference reactant : r.getListOfReactants()) {
 			ASTNode basis = speciesTerm(reactant);
@@ -519,11 +515,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	ASTNode dissociation(List<String> catalysts, int c) {
 		Reaction r = getParentSBMLObject();
-		StringBuffer kdiss = StringTools.concat("kdiss_", r.getId());
-		if (catalysts.size() > 0)
-			kdiss = StringTools.concat(kdiss, underscore, catalysts.get(c));
-		Parameter p_kdiss = createOrGetParameter(kdiss.toString());
-		p_kdiss.setSBOTerm(156);
+		Parameter p_kdiss = parameterDissociationConst(catalysts.size() > 0 ? catalysts
+				.get(c)
+				: null);
 		ASTNode diss = new ASTNode(p_kdiss, this);
 		for (int products = 0; products < r.getNumProducts(); products++) {
 			SpeciesReference p = r.getProduct(products);

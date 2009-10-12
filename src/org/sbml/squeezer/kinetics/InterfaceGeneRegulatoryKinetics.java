@@ -19,6 +19,9 @@
 package org.sbml.squeezer.kinetics;
 
 /**
+ * A kinetic law object that implements this interface is able to describe gene
+ * regulatory processes, i.e., transcription and translation.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>

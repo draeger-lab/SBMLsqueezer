@@ -58,20 +58,19 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 *      .Reaction)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(java.lang.String)
 	 */
-	ASTNode denominator(Reaction r, String enzyme) {
+	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(this);
-		ASTNode forward = denominator(r, enzyme, true);
-		ASTNode backward = denominator(r, enzyme, false);
+		ASTNode forward = denominator(enzyme, true);
+		ASTNode backward = denominator(enzyme, false);
 		if (!forward.isUnknown())
 			denominator = forward;
 		if (!denominator.isUnknown() && !backward.isUnknown())
 			denominator.multiplyWith(backward);
 		else
 			denominator = backward;
-		ASTNode competInhib = competetiveInhibitionSummand(r);
+		ASTNode competInhib = competetiveInhibitionSummand();
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}
@@ -79,27 +78,23 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 	/**
 	 * This actually creates the denominator parts.
 	 * 
-	 * @param r
 	 * @param enzyme
 	 * @param forward
 	 *            true means forward, false backward.
 	 * @return
 	 */
-	private ASTNode denominator(Reaction r, String enzyme, boolean forward) {
+	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		Parameter kM;
-		Parameter hr = parameterHillCoefficient(r.getId(), enzyme);
+		Parameter hr = parameterHillCoefficient(enzyme);
 		hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = forward ? parameterMichaelisSubstrate(r.getId(), specRef
-					.getSpecies(), enzyme) : parameterMichaelisProduct(r
-					.getId(), specRef.getSpecies(), enzyme);
+			kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 			curr = new ASTNode(1, this);
-			curr
-					.plus(ASTNode.frac(speciesTerm(specRef), new ASTNode(kM,
-							this)));
+			curr.plus(speciesTerm(specRef).divideBy(kM));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));
 			if (term.isUnknown())
