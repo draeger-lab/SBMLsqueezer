@@ -54,15 +54,16 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util
-	 *      .List, int)
+	 * @see
+	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util
+	 * .List, int)
 	 */
 	// @Override
 	final ASTNode association(List<String> catalysts, int catNum) {
-		reactantOrder = 0;
-		productOrder = Double.NaN;
+		orderReactants = 0;
+		orderProducts = Double.NaN;
 		return new ASTNode(
-				parameterZerothOrderForward(catalysts.size() == 0 ? null
+				parameterAssociationConst(catalysts.size() == 0 ? null
 						: catalysts.get(catNum)), this);
 	}
 

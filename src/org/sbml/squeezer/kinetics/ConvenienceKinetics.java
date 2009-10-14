@@ -45,7 +45,8 @@ import org.sbml.squeezer.io.StringTools;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis </a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
@@ -68,9 +69,10 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.Convenience#createKineticEquation(java.util
-	 *      .List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.Convenience#createKineticEquation(java.util
+	 * .List, java.util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -130,48 +132,58 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		ASTNode[] products = new ASTNode[reaction.getNumProducts()];
 		ASTNode[] reactantsroot = new ASTNode[reaction.getNumReactants()];
 		ASTNode[] productroot = new ASTNode[reaction.getNumProducts()];
-		ASTNode equation, curr;
+		ASTNode equation;
 		Parameter p_kM;
 
 		ListOf<SpeciesReference> listOf = forward ? reaction
 				.getListOfReactants() : reaction.getListOfProducts();
 
 		if (!fullRank) {
-			for (int i = 0; i < listOf.size(); i++) {
+			int i;
+			for (i = 0; i < listOf.size(); i++) {
 				SpeciesReference ref = listOf.get(i);
 				p_kM = parameterMichaelis(ref.getSpecies(), enzyme, forward);
-				Parameter p_kiG = parameterKG(ref.getSpecies());
-				curr = ASTNode
-						.pow(ASTNode.frac(speciesTerm(ref), new ASTNode(p_kM,
-								this)), new ASTNode(ref.getStoichiometry(),
-								this));
-				ASTNode currRoot = ASTNode.pow(ASTNode.times(new ASTNode(p_kiG,
-						this), new ASTNode(p_kM, this)), new ASTNode(ref
-						.getStoichiometry(), this));
-				if (forward) {
-					reactants[i] = curr;
-					reactantsroot[i] = currRoot;
-				} else {
-					products[i] = curr;
-					productroot[i] = currRoot;
-				}
+				if (forward)
+					reactants[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM),
+							ref.getStoichiometry());
+				else
+					products[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM),
+							ref.getStoichiometry());
 			}
-			if (forward)
+			i = 0;
+			for (SpeciesReference ref : reaction.getListOfReactants())
+				reactantsroot[i++] = ASTNode.times(this,
+						parameterKG(ref.getSpecies()),
+						parameterMichaelis(ref.getSpecies(), enzyme, forward))
+						.raiseByThePowerOf(ref.getStoichiometry());
+			i = 0;
+			for (SpeciesReference ref : reaction.getListOfProducts())
+				productroot[i++] = ASTNode.times(this,
+						parameterKG(ref.getSpecies()),
+						parameterMichaelis(ref.getSpecies(), enzyme, forward))
+						.raiseByThePowerOf(ref.getStoichiometry());
+			if (forward) {
+				ASTNode proot = ASTNode.times(productroot);
+				if (proot == null)
+					proot = new ASTNode(1, this);
+				ASTNode rroot = ASTNode.times(reactantsroot);
+				if (rroot == null)
+					rroot = new ASTNode(1, this);
 				equation = ASTNode.times(ASTNode.times(reactants), ASTNode
-						.sqrt(ASTNode.frac(reactantsroot.length > 0 ? ASTNode
-								.times(reactantsroot) : new ASTNode(1, this),
-								productroot.length > 0 ? ASTNode
-										.times(productroot) : new ASTNode(1,
-										this))));
-			else
+						.sqrt(ASTNode.frac(rroot, proot)));
+			} else {
+				ASTNode proot = ASTNode.times(productroot);
+				if (proot == null)
+					proot = new ASTNode(1, this);
+				ASTNode rroot = ASTNode.times(reactantsroot);
+				if (rroot == null)
+					rroot = new ASTNode(1, this);
 				equation = ASTNode.times(ASTNode.times(products), ASTNode
-						.sqrt(ASTNode.frac(productroot.length > 0 ? ASTNode
-								.times(productroot) : new ASTNode(1, this),
-								reactantsroot.length > 0 ? ASTNode
-										.times(reactantsroot) : new ASTNode(1,
-										this))));
+						.sqrt(ASTNode.frac(proot, rroot)));
+			}
 		} else {
 			Parameter kcat = parameterKcatOrVmax(enzyme, forward);
+			ASTNode curr;
 			equation = new ASTNode(kcat, this);
 			for (SpeciesReference specRef : listOf) {
 				p_kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);

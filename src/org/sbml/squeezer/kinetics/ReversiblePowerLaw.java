@@ -59,9 +59,10 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 *      .util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -258,27 +259,21 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 		Parameter keq = parameterEquilibriumConstant();
 		ASTNode forward = ASTNode.sqrt(ASTNode.pow(new ASTNode(keq, this),
 				new ASTNode(hr, this)));
-		double x = 0;
 		Reaction r = getParentSBMLObject();
-		for (SpeciesReference specRef : r.getListOfReactants()) {
+		for (SpeciesReference specRef : r.getListOfReactants())
 			forward.multiplyWith(ASTNode.pow(speciesTerm(specRef), ASTNode
 					.times(new ASTNode(specRef.getStoichiometry(), this),
 							new ASTNode(hr, this))));
-			x += specRef.getStoichiometry();
-		}
 		numerator.multiplyWith(forward);
 		if (r.getReversible()) {
 			ASTNode backward = ASTNode.frac(1, ASTNode.sqrt(ASTNode.pow(this,
 					keq, hr)));
-			for (SpeciesReference specRef : r.getListOfProducts()) {
+			for (SpeciesReference specRef : r.getListOfProducts())
 				backward.multiplyWith(ASTNode.pow(speciesTerm(specRef), ASTNode
 						.times(new ASTNode(specRef.getStoichiometry(), this),
 								new ASTNode(hr, this))));
-				x -= specRef.getStoichiometry();
-			}
 			numerator.minus(backward);
 		}
-		keq.setUnits(unitmM((int) x));
 		return numerator.divideBy(createRoot(r, enzyme));
 	}
 
