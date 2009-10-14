@@ -25,12 +25,14 @@ import java.util.List;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -42,7 +44,8 @@ import org.sbml.squeezer.io.StringTools;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
@@ -50,9 +53,48 @@ import org.sbml.squeezer.io.StringTools;
 public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
-	 * 
+	 * The ids of activators that enhance the progress of this rate law.
+	 */
+	private List<String> activators;
+
+	/**
+	 * If true all species whose hasOnlySubstanceUnits attribute is true are
+	 * divided by the size of their surrounding compartment. If false species
+	 * whose hasOnlySubstanceUnits attribute is false are multiplied with the
+	 * size of their surrounding compartment.
 	 */
 	private boolean bringToConcentration;
+
+	/**
+	 * The default value that is used to initialize new parameters.
+	 */
+	private double defaultParamValue;
+
+	/**
+	 * The ids of the enzymes catalyzing the reaction described by this rate
+	 * law.
+	 */
+	private List<String> enzymes;
+
+	/**
+	 * Ids of inhibitors that lower the velocity of this rate law.
+	 */
+	private List<String> inhibitors;
+
+	/**
+	 * The ids of catalysts that are no enzymes.
+	 */
+	private List<String> nonEnzymeCatalysts;
+
+	/**
+	 * Ids of translational or transcriptional activators.
+	 */
+	private List<String> transActivators;
+
+	/**
+	 * Ids of transcriptional or translational inhibitors.
+	 */
+	private List<String> transInhibitors;
 
 	/**
 	 * 
@@ -60,11 +102,24 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	private Object typeParameters[];
 
 	/**
+	 * True if the reaction system to which the parent reaction belongs has a
+	 * full collumn rank.
+	 */
+	boolean fullRank;
+
+	/**
+	 * <ol>
+	 * <li>cat</li>
+	 * <li>hal</li>
+	 * <li>weg</li>
+	 * </ol>
+	 */
+	short type;
+
+	/**
 	 * 
 	 */
 	final Character underscore = StringTools.underscore;
-
-	private double defaultParamValue;
 
 	/**
 	 * 
@@ -77,24 +132,66 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			throws RateLawNotApplicableException, IllegalFormatException {
 		super(parentReaction);
 		this.typeParameters = typeParameters;
+		this.fullRank = true;
 		this.bringToConcentration = false;
+		this.defaultParamValue = 1d;
+		if (typeParameters.length > 0)
+			type = Short.parseShort(getTypeParameters()[0].toString());
+		if (typeParameters.length > 1
+				&& !Boolean.parseBoolean(getTypeParameters()[1].toString()))
+			fullRank = false;
 		if (typeParameters.length > 2)
 			bringToConcentration = ((Integer) typeParameters[2]).intValue() != 0;
 		if (typeParameters.length > 3)
 			defaultParamValue = Double
 					.parseDouble(typeParameters[3].toString());
-		else
-			defaultParamValue = 1d;
-		List<String> enzymes = new LinkedList<String>();
-		List<String> activat = new LinkedList<String>();
-		List<String> transAc = new LinkedList<String>();
-		List<String> inhibit = new LinkedList<String>();
-		List<String> transIn = new LinkedList<String>();
-		List<String> nonEnzy = new LinkedList<String>();
-		ReactionType.identifyModifers(parentReaction, enzymes, activat,
-				transAc, inhibit, transIn, nonEnzy);
-		setMath(createKineticEquation(enzymes, activat, transAc, inhibit,
-				transIn, nonEnzy));
+		enzymes = new LinkedList<String>();
+		activators = new LinkedList<String>();
+		transActivators = new LinkedList<String>();
+		inhibitors = new LinkedList<String>();
+		transInhibitors = new LinkedList<String>();
+		nonEnzymeCatalysts = new LinkedList<String>();
+		ReactionType.identifyModifers(parentReaction, enzymes, activators,
+				transActivators, inhibitors, transInhibitors,
+				nonEnzymeCatalysts);
+		setMath(createKineticEquation(enzymes, activators, transActivators,
+				inhibitors, transInhibitors, nonEnzymeCatalysts));
+	}
+
+	/**
+	 * Returns a string that gives a simple description of this rate equation.
+	 * 
+	 * @return
+	 */
+	public abstract String getSimpleName();
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Object[] getTypeParameters() {
+		return typeParameters;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.MathContainer#setMath(org.sbml.jsbml.ASTNode)
+	 */
+	public void setMath(ASTNode ast) {
+		if (!isSetMath())
+			super.setMath(ast);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.MathContainer#toString()
+	 */
+	// @Override
+	public String toString() {
+		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
+				.replace("\\,", ",") : getClass().getSimpleName();
 	}
 
 	/**
@@ -180,21 +277,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
-	 * Returns a string that gives a simple description of this rate equation.
-	 * 
-	 * @return
-	 */
-	public abstract String getSimpleName();
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Object[] getTypeParameters() {
-		return typeParameters;
-	}
-
-	/**
 	 * Association constant from mass action kinetics.
 	 * 
 	 * 
@@ -211,10 +293,47 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			p_kass.setName("association constant of reaction " + reactionID);
 		if (!p_kass.isSetSBOTerm())
 			p_kass.setSBOTerm(153);
-		if (!p_kass.isSetUnits()) {
-
-		}
+		if (!p_kass.isSetUnits())
+			p_kass
+					.setUnits(unitPerTimeAndConcentrationOrSubstance(getParentSBMLObject()
+							.getListOfReactants()));
 		return p_kass;
+	}
+
+	/**
+	 * 
+	 * @param listOf
+	 * @return
+	 */
+	UnitDefinition unitPerTimeAndConcentrationOrSubstance(
+			ListOf<SpeciesReference> listOf) {
+		String id = "per_time";
+		double order = 0;
+		int i;
+		for (SpeciesReference specRef : listOf)
+			order += specRef.getStoichiometry();
+		if (order != 1)
+			id += "_and_sizeUnits";
+		Model model = getModel();
+		UnitDefinition ud = new UnitDefinition(id, getLevel(), getVersion());
+		ud.divideBy(model.getUnitDefinition("time"));
+		UnitDefinition amount = new UnitDefinition("amount", getLevel(),
+				getVersion());
+		UnitDefinition curr;
+		SpeciesReference specRef;
+		Species species;
+		for (i = 0; i < listOf.size(); i++) {
+			specRef = listOf.get(i);
+			species = specRef.getSpeciesInstance();
+			curr = species.getSubstanceUnitsInstance().clone();
+			if (bringToConcentration)
+				curr.divideBy(species.getCompartmentInstance()
+						.getUnitsInstance());
+			curr.raiseByThePowerOf((int) specRef.getStoichiometry() - 1);
+			amount.multiplyWith(curr);
+		}
+		return ud.divideBy(amount).multiplyWith(
+				model.getUnitDefinition("substance")).simplify();
 	}
 
 	/**
@@ -258,6 +377,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			p_kdiss.setName("dissociation constant of reaction " + reactionID);
 		if (!p_kdiss.isSetSBOTerm())
 			p_kdiss.setSBOTerm(156);
+		if (!p_kdiss.isSetUnits())
+			p_kdiss
+					.setUnits(unitPerTimeAndConcentrationOrSubstance(getParentSBMLObject()
+							.getListOfProducts()));
 		return p_kdiss;
 	}
 
@@ -664,17 +787,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	ASTNode speciesTerm(String species) {
 		return speciesTerm(getModel().getSpecies(species));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.MathContainer#toString()
-	 */
-	// @Override
-	public String toString() {
-		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
-				.replace("\\,", ",") : getClass().getSimpleName();
 	}
 
 	/**

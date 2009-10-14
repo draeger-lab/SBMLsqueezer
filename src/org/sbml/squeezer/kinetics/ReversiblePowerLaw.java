@@ -44,15 +44,6 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 		InterfaceModulatedKinetics {
 
 	/**
-	 * <ol>
-	 * <li>cat</li>
-	 * <li>hal</li>
-	 * <li>weg</li>
-	 * </ol>
-	 */
-	private short type;
-
-	/**
 	 * 
 	 * @param parentReaction
 	 * @param type
@@ -122,7 +113,6 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 					inhibition.multiplyWith(curr);
 			}
 		}
-		type = Short.parseShort(getTypeParameters()[0].toString());
 		ASTNode numerator[] = new ASTNode[Math.max(1, modE.size())];
 		for (i = 0; i < numerator.length; i++) {
 			String enzymeID = modE.size() <= i ? null : modE.get(i);

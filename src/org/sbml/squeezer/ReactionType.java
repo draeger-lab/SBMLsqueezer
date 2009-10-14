@@ -45,8 +45,16 @@ public class ReactionType {
 	 */
 	private static Set<String> notIrreversible;
 
+	/**
+	 * Set of kinetic equations that can only be applied to irreversible
+	 * reactions.
+	 */
 	private static Set<String> notReversible;
 
+	/**
+	 * Initializes the sets of not reversible and not irreversible kinetic
+	 * equations.
+	 */
 	static {
 		notIrreversible = new HashSet<String>();
 		notIrreversible.addAll(SBMLsqueezer.getKineticsReversible());
@@ -207,8 +215,6 @@ public class ReactionType {
 
 	private Properties settings;
 
-	private double stoichiometry;
-
 	private boolean stoichiometryIntLeft = true;
 
 	private double stoichiometryLeft = 0d;
@@ -237,10 +243,9 @@ public class ReactionType {
 		this.settings = settings;
 
 		/*
-		 * Analyze properties of the reaction
+		 * Analyze properties of the reaction: compute stoichiometric properties
 		 */
-
-		// compute stoichiometric properties
+		double stoichiometry;
 		for (i = 0; i < reaction.getNumReactants(); i++) {
 			stoichiometry = reaction.getReactant(i).getStoichiometry();
 			stoichiometryLeft += stoichiometry;
@@ -347,6 +352,31 @@ public class ReactionType {
 	}
 
 	/**
+	 * 
+	 * Analyze properties of the reaction: compute stoichiometric properties.
+	 * 
+	 * @param r
+	 */
+	public static double reactantOrder(Reaction reaction) {
+		double stoichiometryLeft = 0;
+		for (SpeciesReference specRef : reaction.getListOfReactants())
+			stoichiometryLeft += specRef.getStoichiometry();
+		return stoichiometryLeft;
+	}
+
+	/**
+	 * 
+	 * @param reaction
+	 * @return
+	 */
+	public static double productOrder(Reaction reaction) {
+		double stoichiometryRight = 0;
+		for (SpeciesReference specRef : reaction.getListOfProducts())
+			stoichiometryRight += specRef.getStoichiometry();
+		return stoichiometryRight;
+	}
+
+	/**
 	 * Checks whether for this reaction the given kinetic law can be applied
 	 * just based on the reversibility property (nothing else is checked).
 	 * 
@@ -401,13 +431,6 @@ public class ReactionType {
 	 */
 	public Properties getSettings() {
 		return settings;
-	}
-
-	/**
-	 * @return the stoichiometry
-	 */
-	public double getStoichiometry() {
-		return stoichiometry;
 	}
 
 	/**
@@ -590,8 +613,13 @@ public class ReactionType {
 								.isRNAOrMessengerRNA(product.getSBOTerm()) || SBO
 								.isProtein(product.getSBOTerm()))))
 					for (String className : SBMLsqueezer
-							.getKineticsGeneRegulatoryNetworks())
-						types.add(className);
+							.getKineticsGeneRegulatoryNetworks()) {
+						if ((reaction.getReversible() && !notReversible
+								.contains(className))
+								|| (!reaction.getReversible() && !notIrreversible
+										.contains(className)))
+							types.add(className);
+					}
 			}
 		}
 		String t[] = types.toArray(new String[] {});
