@@ -45,9 +45,10 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.Unit.Kind;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
 import org.sbml.squeezer.math.GaussianRank;
 
 /**
@@ -511,57 +512,54 @@ public class KineticLawGenerator {
 		updateEnzymeCatalysis(getPossibleEnzymes());
 	}
 
-	// /**
-	// * Sets the initial amounts of all modifiers, reactants and products to
-	// the
-	// * specified value.
-	// *
-	// * @param reaction
-	// * @param initialValue
-	// */
-	// public void setInitialConcentrationTo(Reaction reaction, double
-	// initialValue) {
-	// for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++)
-	// {
-	// Species species = reaction.getReactant(reactant)
-	// .getSpeciesInstance();
-	// if (species.getInitialConcentration() == 0d
-	// || Double.isNaN(species.getInitialConcentration())) {
-	// species.setInitialConcentration(initialValue);
-	// species.setHasOnlySubstanceUnits(false);
-	// species.stateChanged();
-	// } else if (!species.getHasOnlySubstanceUnits()) {
-	// species.setHasOnlySubstanceUnits(false);
-	// species.stateChanged();
-	// }
-	// }
-	// for (int product = 0; product < reaction.getNumProducts(); product++) {
-	// Species species = reaction.getProduct(product).getSpeciesInstance();
-	// if (species.getInitialConcentration() == 0d
-	// || Double.isNaN(species.getInitialConcentration())) {
-	// species.setInitialConcentration(initialValue);
-	// species.setHasOnlySubstanceUnits(false);
-	// species.stateChanged();
-	// } else if (!species.getHasOnlySubstanceUnits()) {
-	// species.setHasOnlySubstanceUnits(false);
-	// species.stateChanged();
-	// }
-	// }
-	// for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++)
-	// {
-	// Species species = reaction.getModifier(modifier)
-	// .getSpeciesInstance();
-	// if (species.getInitialConcentration() == 0d
-	// || Double.isNaN(species.getInitialConcentration())) {
-	// species.setInitialConcentration(initialValue);
-	// species.setHasOnlySubstanceUnits(false);
-	// species.stateChanged();
-	// } else if (!species.getHasOnlySubstanceUnits()) {
-	// species.setHasOnlySubstanceUnits(false);
-	// species.stateChanged();
-	// }
-	// }
-	// }
+	/**
+	 * Sets the initial amounts of all modifiers, reactants and products to the
+	 * specified value.
+	 * 
+	 * @param reaction
+	 * @param initialValue
+	 */
+	private void setInitialConcentrationTo(Reaction reaction,
+			double initialValue) {
+		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
+			Species species = reaction.getReactant(reactant)
+					.getSpeciesInstance();
+			if (species.getInitialConcentration() == 0d
+					|| Double.isNaN(species.getInitialConcentration())) {
+				species.setInitialConcentration(initialValue);
+				species.setHasOnlySubstanceUnits(false);
+				species.stateChanged();
+			} else if (!species.getHasOnlySubstanceUnits()) {
+				species.setHasOnlySubstanceUnits(false);
+				species.stateChanged();
+			}
+		}
+		for (int product = 0; product < reaction.getNumProducts(); product++) {
+			Species species = reaction.getProduct(product).getSpeciesInstance();
+			if (species.getInitialConcentration() == 0d
+					|| Double.isNaN(species.getInitialConcentration())) {
+				species.setInitialConcentration(initialValue);
+				species.setHasOnlySubstanceUnits(false);
+				species.stateChanged();
+			} else if (!species.getHasOnlySubstanceUnits()) {
+				species.setHasOnlySubstanceUnits(false);
+				species.stateChanged();
+			}
+		}
+		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
+			Species species = reaction.getModifier(modifier)
+					.getSpeciesInstance();
+			if (species.getInitialConcentration() == 0d
+					|| Double.isNaN(species.getInitialConcentration())) {
+				species.setInitialConcentration(initialValue);
+				species.setHasOnlySubstanceUnits(false);
+				species.stateChanged();
+			} else if (!species.getHasOnlySubstanceUnits()) {
+				species.setHasOnlySubstanceUnits(false);
+				species.stateChanged();
+			}
+		}
+	}
 
 	/**
 	 * Delete unnecessary paremeters from the model. A parameter is defined to
@@ -779,12 +777,8 @@ public class KineticLawGenerator {
 				.booleanValue();
 		Reaction reaction = modelOrig.getReaction(kineticLaw
 				.getParentSBMLObject().getId());
-		if (!(kineticLaw instanceof IrrevNonModulatedNonInteractingEnzymes))
-			reaction.setReversible(reversibility || reaction.getReversible());
+		reaction.setReversible(reversibility || reaction.getReversible());
 		reaction.setKineticLaw(kineticLaw);
-		if ((kineticLaw instanceof BasicKineticLaw)
-				&& (kineticLaw.getNotesString().length() == 0))
-			kineticLaw.setNotes(kineticLaw.toString());
 		// set the BoundaryCondition to true for Genes if not set anyway:
 		boolean setBoundary = ((Boolean) settings
 				.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
@@ -851,12 +845,15 @@ public class KineticLawGenerator {
 	 * Stores all units created in the mini model in the original model.
 	 */
 	private void storeUnits() {
+		Set<String> unitKinds = new HashSet<String>();
+		for (Kind kind : Unit.Kind.values())
+			unitKinds.add(kind.toString().toUpperCase());
 		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
 			if (modelOrig.getUnitDefinition(ud.getId()) == null)
 				modelOrig.addUnitDefinition(ud.clone());
 			else {
 				UnitDefinition orig = modelOrig.getUnitDefinition(ud.getId());
-				orig.setListOfUnits(ud.getListOfUnits());					
+				orig.setListOfUnits(ud.getListOfUnits());
 				orig.simplify();
 			}
 		}
@@ -871,9 +868,29 @@ public class KineticLawGenerator {
 			checkUnits(sorig);
 		}
 		for (Parameter p : miniModel.getListOfParameters()) {
-			if (p.isSetUnits())
-				modelOrig.getParameter(p.getId()).setUnits(
-						modelOrig.getUnitDefinition(p.getUnits()));
+			if (p.isSetUnits()) {
+				String units = p.getUnits().toUpperCase();
+				Parameter porig = modelOrig.getParameter(p.getId());
+				if (unitKinds.contains(units))
+					porig.setUnits(Unit.Kind.valueOf(units));
+				else
+					porig.setUnits(modelOrig.getUnitDefinition(p.getUnits()));
+			}
+		}
+		// local parameters
+		for (Reaction r : miniModel.getListOfReactions()) {
+			for (Parameter p : r.getKineticLaw().getListOfParameters()) {
+				if (p.isSetUnits()) {
+					String units = p.getUnits().toUpperCase();
+					Parameter porig = modelOrig.getReaction(r.getId())
+							.getKineticLaw().getParameter(p.getId());
+					if (unitKinds.contains(units))
+						porig.setUnits(Unit.Kind.valueOf(units));
+					else
+						porig.setUnits(modelOrig
+								.getUnitDefinition(p.getUnits()));
+				}
+			}
 		}
 		/*
 		 * delete unnecessary units.
@@ -882,11 +899,16 @@ public class KineticLawGenerator {
 				.get(CfgKeys.OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS))
 				.booleanValue())
 			for (UnitDefinition udef : modelOrig.getListOfUnitDefinitions()) {
-				boolean isNeeded = udef.equals(UnitDefinition.AREA)
-						|| udef.equals(UnitDefinition.LENGTH)
-						|| udef.equals(UnitDefinition.SUBSTANCE)
-						|| udef.equals(UnitDefinition.TIME)
-						|| udef.equals(UnitDefinition.VOLUME);
+				boolean isNeeded = udef.equals(UnitDefinition.area(udef
+						.getLevel(), udef.getVersion()))
+						|| udef.equals(UnitDefinition.length(udef.getLevel(),
+								udef.getVersion()))
+						|| udef.equals(UnitDefinition.substance(
+								udef.getLevel(), udef.getVersion()))
+						|| udef.equals(UnitDefinition.time(udef.getLevel(),
+								udef.getVersion()))
+						|| udef.equals(UnitDefinition.volume(udef.getLevel(),
+								udef.getVersion()));
 				int i;
 				for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
 					Compartment c = modelOrig.getCompartment(i);
@@ -903,6 +925,17 @@ public class KineticLawGenerator {
 					Parameter p = modelOrig.getParameter(i);
 					if (p.isSetUnits() && p.getUnitsInstance().equals(udef))
 						isNeeded = true;
+				}
+				for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
+					Reaction r = modelOrig.getReaction(i);
+					if (r.isSetKineticLaw())
+						for (int j = 0; j < r.getKineticLaw()
+								.getNumParameters(); j++) {
+							Parameter p = r.getKineticLaw().getParameter(j);
+							if (p.isSetUnits()
+									&& p.getUnitsInstance().equals(udef))
+								isNeeded = true;
+						}
 				}
 				if (!isNeeded)
 					modelOrig.removeUnitDefinition(udef);

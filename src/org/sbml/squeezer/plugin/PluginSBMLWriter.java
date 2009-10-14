@@ -275,11 +275,11 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 		// Unit definitions
 		for (UnitDefinition ud : model.getListOfUnitDefinitions())
-			if (!ud.equals(UnitDefinition.SUBSTANCE)
-					&& !ud.equals(UnitDefinition.VOLUME)
-					&& !ud.equals(UnitDefinition.AREA)
-					&& !ud.equals(UnitDefinition.LENGTH)
-					&& !ud.equals(UnitDefinition.TIME)) {
+			if (!ud.equals(UnitDefinition.substance(ud.getLevel(), ud.getVersion()))
+					&& !ud.equals(UnitDefinition.volume(ud.getLevel(), ud.getVersion()))
+					&& !ud.equals(UnitDefinition.area(ud.getLevel(), ud.getVersion()))
+					&& !ud.equals(UnitDefinition.length(ud.getLevel(), ud.getVersion()))
+					&& !ud.equals(UnitDefinition.time(ud.getLevel(), ud.getVersion()))) {
 				PluginUnitDefinition libU = this.pluginModel
 						.getUnitDefinition(ud.getId());
 				if (libU != null) {
@@ -1238,15 +1238,22 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return sm;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeTrigger(org.sbml.jsbml.Trigger)
+	 */
 	public ASTNode writeTrigger(Trigger trigger) {
 		return convert(trigger.getMath());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeUnit(org.sbml.jsbml.Unit, java.lang.Object[])
+	 */
 	public PluginUnit writeUnit(Unit unit, Object... parent) {
 		if (parent.length != 1 || !(parent[0] instanceof PluginUnitDefinition))
 			throw new IllegalArgumentException(
 					"parent must be of type PluginUnitDefinition!");
-
 		PluginUnit u = new PluginUnit((PluginUnitDefinition) parent[0]);
 		saveSBaseProperties(unit, u);
 		switch (unit.getKind()) {

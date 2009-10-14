@@ -26,19 +26,19 @@ package org.sbml.squeezer.io;
 public class StringTools {
 
 	/**
-	 * 
-	 */
-	public static final Character underscore = Character.valueOf('_');
-	/**
 	 * The file separator of the operating system.
 	 */
 	public static final String fileSeparator = System
 			.getProperty("file.separator");
-	
 	/**
 	 * New line separator of this operating system
 	 */
 	public static final String newLine = System.getProperty("line.separator");
+	
+	/**
+	 * 
+	 */
+	public static final Character underscore = Character.valueOf('_');
 	
 	/**
 	 * Takes the given StringBuffer as input and appends every further Object to
@@ -93,7 +93,7 @@ public class StringTools {
 				}
 		return text;
 	}
-
+	
 	/**
 	 * Retunrs a String who's first letter is now in lower case.
 	 * 
@@ -127,7 +127,6 @@ public class StringTools {
 			return Character.toString(c);
 		return name;
 	}
-
 
 	/**
 	 * Returns the name of a given month.
@@ -165,6 +164,7 @@ public class StringTools {
 			return "invalid month " + month;
 		}
 	}
+
 
 	/**
 	 * This method constructs a full length SBO number from a given SBO id.
@@ -235,6 +235,19 @@ public class StringTools {
 		c = Character.toLowerCase(c);
 		return (c == 'a') || (c == 'e') || (c == 'i') || (c == 'o')
 				|| (c == 'u');
+	}
+
+	/**
+	 * Returns a String from the given value that does not contain a point zero
+	 * at the end.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static String toString(double value) {
+		if (((int) value) - value == 0)
+			return Integer.toString((int) value);
+		return Double.toString(value);
 	}
 
 }

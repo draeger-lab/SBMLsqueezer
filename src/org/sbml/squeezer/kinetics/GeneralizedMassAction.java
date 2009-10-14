@@ -44,10 +44,6 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
-	double reactantOrder;
-
-	double productOrder;
-
 	/**
 	 * 
 	 * @param parentReaction
@@ -76,7 +72,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 
 		if (r.getReversible()) {
 			setSBOTerm(42);
-			if (reactantOrder == 0) {
+			if (orderReactants == 0) {
 				// mass action rate law for zeroth order reversible reactions
 				setSBOTerm(69);
 				if (stoichiometryRight == 1d && r.getNumProducts() == 1)
@@ -110,7 +106,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			} else if (stoichiometryLeft == 1d) {
 				// mass action rate law for first order reversible reactions
 				setSBOTerm(78);
-				if (productOrder == 0)
+				if (orderProducts == 0)
 					setSBOTerm(79);
 				else if (stoichiometryRight == 1d && r.getNumProducts() == 1)
 					setSBOTerm(80);
@@ -145,7 +141,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				// mass action rate law for second order reversible reactions
 				setSBOTerm(88);
 				if (r.getNumReactants() == 1) {
-					if (productOrder == 0)
+					if (orderProducts == 0)
 						setSBOTerm(90);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
@@ -181,7 +177,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 						setSBOTerm(89);
 				} else if (r.getNumReactants() == 2) {
 					setSBOTerm(99);
-					if (productOrder == 0)
+					if (orderProducts == 0)
 						setSBOTerm(100);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
@@ -220,7 +216,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				switch (r.getNumReactants()) {
 				case 1:
 					setSBOTerm(130);
-					if (productOrder == 0)
+					if (orderProducts == 0)
 						setSBOTerm(131);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
@@ -256,7 +252,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 					break;
 				case 2:
 					setSBOTerm(110);
-					if (productOrder == 0)
+					if (orderProducts == 0)
 						setSBOTerm(111);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
@@ -291,7 +287,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 					break;
 				case 3:
 					setSBOTerm(120);
-					if (productOrder == 0)
+					if (orderProducts == 0)
 						setSBOTerm(121);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
@@ -333,7 +329,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		} else {
 			// irreversible
 			setSBOTerm(41);
-			if (reactantOrder == 0) {
+			if (orderReactants == 0) {
 				// setSBOTerm(43);
 				// if continuous
 				setSBOTerm(47);
@@ -488,7 +484,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		reactantOrder = productOrder = Double.NaN;
+		orderReactants = orderProducts = Double.NaN;
 		List<String> catalysts = new LinkedList<String>(modE);
 		catalysts.addAll(modCat);
 		ASTNode rates[] = new ASTNode[Math.max(1, catalysts.size())];
