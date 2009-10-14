@@ -223,7 +223,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				Double
 						.parseDouble(settings.get(
 								CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS)
-								.toString()), 0, 1000, .1));
+								.toString()), 0, 9999.9, .1));
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jCheckBoxSetBoundaryCondition, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,

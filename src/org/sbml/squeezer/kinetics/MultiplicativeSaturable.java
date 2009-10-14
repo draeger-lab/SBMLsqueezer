@@ -87,7 +87,6 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 		ASTNode term = new ASTNode(this), curr;
 		Parameter kM;
 		Parameter hr = parameterHillCoefficient(enzyme);
-		hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();

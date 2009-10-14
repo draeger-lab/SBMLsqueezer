@@ -147,7 +147,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	// @Override
 	public void actionPerformed(ActionEvent e) {
@@ -271,36 +272,41 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @param file
 	 */
 	private void readModel(File file) {
-		Model model = sbmlIO.readModel(file.getAbsolutePath());
-		checkForSBMLErrors(model);
-		if (model != null) {
-			addModel(model);
-			String path = file.getAbsolutePath();
-			String oldPath = settings.get(CfgKeys.SBML_FILE).toString();
-			if (!path.equals(oldPath)) {
-				for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
-					JMenu menu = getJMenuBar().getMenu(i);
-					for (int j = 0; j < menu.getItemCount(); j++) {
-						Object item = menu.getItem(j);
-						if (item != null
-								&& item instanceof JMenu
-								&& ((JMenu) item).getText().equals(
-										"Last opened")) {
-							JMenu m = (JMenu) item;
-							m.removeAll();
-							JMenuItem mItem = new JMenuItem(file.getName());
-							mItem.addActionListener(this);
-							mItem.setActionCommand(Command.OPEN_LAST_FILE
-									.toString());
-							m.add(mItem);
+		try {
+			Model model = sbmlIO.readModel(file.getAbsolutePath());
+			checkForSBMLErrors(model);
+			if (model != null) {
+				addModel(model);
+				String path = file.getAbsolutePath();
+				String oldPath = settings.get(CfgKeys.SBML_FILE).toString();
+				if (!path.equals(oldPath)) {
+					for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
+						JMenu menu = getJMenuBar().getMenu(i);
+						for (int j = 0; j < menu.getItemCount(); j++) {
+							Object item = menu.getItem(j);
+							if (item != null
+									&& item instanceof JMenu
+									&& ((JMenu) item).getText().equals(
+											"Last opened")) {
+								JMenu m = (JMenu) item;
+								m.removeAll();
+								JMenuItem mItem = new JMenuItem(file.getName());
+								mItem.addActionListener(this);
+								mItem.setActionCommand(Command.OPEN_LAST_FILE
+										.toString());
+								m.add(mItem);
+							}
 						}
 					}
+					settings.put(CfgKeys.SBML_FILE, path);
 				}
-				settings.put(CfgKeys.SBML_FILE, path);
+				path = path.substring(0, path.lastIndexOf('/'));
+				if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
+					settings.put(CfgKeys.OPEN_DIR, path);
 			}
-			path = path.substring(0, path.lastIndexOf('/'));
-			if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
-				settings.put(CfgKeys.OPEN_DIR, path);
+		} catch (Exception exc) {
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc.getMessage(), 40), exc
+					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -388,7 +394,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		closeItem.addActionListener(this);
 		exitItem.addActionListener(this);
 
-		Object path = settings.get(CfgKeys.SBML_FILE); 
+		Object path = settings.get(CfgKeys.SBML_FILE);
 		File sbmlFile = new File(path == null ? "" : path.toString());
 		if (sbmlFile.exists() && sbmlFile.isFile()) {
 			JMenuItem lastSBMLFile = new JMenuItem(sbmlFile.getName());
@@ -554,7 +560,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent )
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(tabbedPane)) {
@@ -567,7 +575,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
 	 */
 	public void windowActivated(WindowEvent arg0) {
 	}
@@ -575,7 +584,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 	 */
 	public void windowClosed(WindowEvent arg0) {
 	}
@@ -583,7 +593,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
 	 */
 	public void windowClosing(WindowEvent we) {
 		if (we.getSource() instanceof JHelpBrowser)
@@ -595,7 +606,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent )
+	 * @see
+	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
+	 * )
 	 */
 	public void windowDeactivated(WindowEvent arg0) {
 	}
@@ -603,7 +616,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent )
+	 * @see
+	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
+	 * )
 	 */
 	public void windowDeiconified(WindowEvent arg0) {
 	}
@@ -611,7 +626,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
 	 */
 	public void windowIconified(WindowEvent arg0) {
 	}
@@ -619,7 +635,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
 	 */
 	public void windowOpened(WindowEvent arg0) {
 	}

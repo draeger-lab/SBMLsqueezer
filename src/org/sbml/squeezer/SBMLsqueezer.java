@@ -558,9 +558,15 @@ public class SBMLsqueezer implements LawListener {
 		if (p.containsKey(CfgKeys.SBML_FILE)) {
 			long time = System.currentTimeMillis();
 			System.out.print("reating SBML file...");
-			sbmlIo.readModel(p.get(CfgKeys.SBML_FILE));
-			System.out.println(" done in "
-					+ (System.currentTimeMillis() - time) + " ms.");
+			try {
+				sbmlIo.readModel(p.get(CfgKeys.SBML_FILE));
+				System.out.println(" done in "
+						+ (System.currentTimeMillis() - time) + " ms.");
+			} catch (Exception exc) {
+				System.err
+						.println(" a problem occured while trying to read the model:");
+				System.err.println(exc.getMessage());
+			}
 		}
 		if (p.containsKey(CfgKeys.GUI)
 				&& Boolean.parseBoolean(p.get(CfgKeys.GUI).toString())) {

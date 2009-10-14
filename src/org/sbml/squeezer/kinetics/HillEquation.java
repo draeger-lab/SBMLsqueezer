@@ -54,7 +54,7 @@ public class HillEquation extends BasicKineticLaw implements
 	 */
 	public HillEquation(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException, IllegalFormatException {
-		super(parentReaction);
+		super(parentReaction, typeParameters);
 	}
 
 	/*

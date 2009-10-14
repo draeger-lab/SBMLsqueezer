@@ -54,8 +54,6 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
-	private boolean typeIndependent;
-
 	/**
 	 * 
 	 * @param parentReaction
@@ -82,12 +80,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		Reaction reaction = getParentSBMLObject();
 		setSBOTerm(429);
 		StringBuilder name = new StringBuilder();
-		typeIndependent = false;
-		if (getTypeParameters().length > 1
-				&& !Boolean.parseBoolean(getTypeParameters()[1].toString())) {
+		if (!fullRank)
 			name.append("thermodynamically independent ");
-			typeIndependent = true;
-		}
 		name.append("convenience kinetics");
 		setNotes(StringTools.firstLetterUpperCase(name.toString()));
 
@@ -106,7 +100,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			}
 			if (denominator != null)
 				numerator.divideBy(denominator);
-			enzymes[i] = typeIndependent ? ASTNode.times(new ASTNode(
+			enzymes[i] = !fullRank ? ASTNode.times(new ASTNode(
 					parameterVelocityConstant(enzyme), this), numerator)
 					: numerator;
 			if (enzyme != null)
@@ -142,7 +136,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		ListOf<SpeciesReference> listOf = forward ? reaction
 				.getListOfReactants() : reaction.getListOfProducts();
 
-		if (typeIndependent) {
+		if (!fullRank) {
 			for (int i = 0; i < listOf.size(); i++) {
 				SpeciesReference ref = listOf.get(i);
 				p_kM = parameterMichaelis(ref.getSpecies(), enzyme, forward);

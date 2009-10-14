@@ -189,13 +189,18 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 */
 	// @Override
 	public Model readModel(Object model) {
-		listOfModels.addLast(reader.readModel(model));
-		if (model instanceof String)
-			listOfOrigModels.addLast(reader.getOriginalModel());
-		else
-			listOfOrigModels.addLast(model);
-		selectedModel = listOfModels.size() - 1;
-		return listOfModels.getLast();
+		try {
+			listOfModels.addLast(reader.readModel(model));
+			if (model instanceof String)
+				listOfOrigModels.addLast(reader.getOriginalModel());
+			else
+				listOfOrigModels.addLast(model);
+			selectedModel = listOfModels.size() - 1;
+			return listOfModels.getLast();
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			throw new RuntimeException("Could not read model.");
+		}
 	}
 
 	/*
@@ -570,9 +575,9 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeEventAssignment(org.sbml.EventAssignment)
 	 */
 	// @Override
-	public Object writeEventAssignment(EventAssignment eventAssignment, Object...args)
-			throws SBMLException {
-		return writer.writeEventAssignment(eventAssignment,args);
+	public Object writeEventAssignment(EventAssignment eventAssignment,
+			Object... args) throws SBMLException {
+		return writer.writeEventAssignment(eventAssignment, args);
 	}
 
 	/*
@@ -604,7 +609,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBMLWriter#writeKineticLaw(org.sbml.KineticLaw)
 	 */
-	public Object writeKineticLaw(KineticLaw kineticLaw, Object... args) throws SBMLException {
+	public Object writeKineticLaw(KineticLaw kineticLaw, Object... args)
+			throws SBMLException {
 		return writer.writeKineticLaw(kineticLaw, args);
 	}
 
@@ -637,8 +643,9 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * ModifierSpeciesReference)
 	 */
 	public Object writeModifierSpeciesReference(
-			ModifierSpeciesReference modifierSpeciesReference,Object...args) {
-		return writer.writeModifierSpeciesReference(modifierSpeciesReference,args);
+			ModifierSpeciesReference modifierSpeciesReference, Object... args) {
+		return writer.writeModifierSpeciesReference(modifierSpeciesReference,
+				args);
 	}
 
 	/*
@@ -646,8 +653,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBMLWriter#writeParameter(org.sbml.Parameter)
 	 */
-	public Object writeParameter(Parameter parameter,Object...args) {
-		return writer.writeParameter(parameter,args);
+	public Object writeParameter(Parameter parameter, Object... args) {
+		return writer.writeParameter(parameter, args);
 	}
 
 	/*
@@ -666,8 +673,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeRule(org.sbml.Rule)
 	 */
 	// @Override
-	public Object writeRule(Rule rule,Object...args) {
-		return writer.writeRule(rule,args);
+	public Object writeRule(Rule rule, Object... args) {
+		return writer.writeRule(rule, args);
 	}
 
 	/*
@@ -707,8 +714,9 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.SBMLWriter#writeSpeciesReference(org.sbml.SpeciesReference)
 	 */
-	public Object writeSpeciesReference(SpeciesReference speciesReference,Object...args) {
-		return writer.writeSpeciesReference(speciesReference,args);
+	public Object writeSpeciesReference(SpeciesReference speciesReference,
+			Object... args) {
+		return writer.writeSpeciesReference(speciesReference, args);
 	}
 
 	/*
@@ -747,8 +755,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeUnit(org.sbml.Unit)
 	 */
 	// @Override
-	public Object writeUnit(Unit unit,Object...args) {
-		return writer.writeUnit(unit,args);
+	public Object writeUnit(Unit unit, Object... args) {
+		return writer.writeUnit(unit, args);
 	}
 
 	/*

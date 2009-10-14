@@ -452,7 +452,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(getTopLevelAncestor(), GUITools
-						.toHTML(e.getMessage(), 40), e.getClass().getName(),
+						.toHTML(e.getMessage(), 40), e.getClass().getSimpleName(),
 						JOptionPane.WARNING_MESSAGE);
 				e.printStackTrace();
 			}
