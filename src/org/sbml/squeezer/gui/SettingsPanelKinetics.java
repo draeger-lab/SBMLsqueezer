@@ -176,7 +176,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxRemoveUnnecessaryPandU = new JCheckBox(
 				GUITools.toHTML("Remove uneccessary parameters and units", 25),
 				((Boolean) settings
-						.get(CfgKeys.OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS))
+						.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 						.booleanValue());
 		jCheckBoxRemoveUnnecessaryPandU
 				.setToolTipText(GUITools
@@ -568,7 +568,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 			settings.put(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, Boolean
 					.valueOf(jCheckBoxSetBoundaryCondition.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxRemoveUnnecessaryPandU)) {
-			settings.put(CfgKeys.OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS,
+			settings.put(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
 					Boolean.valueOf(jCheckBoxRemoveUnnecessaryPandU
 							.isSelected()));
 		}

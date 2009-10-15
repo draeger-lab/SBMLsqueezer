@@ -39,7 +39,6 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
@@ -293,7 +292,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 					setColumnWidthAppropriately();
 					editing = false;
 				}
-			} catch (RateLawNotApplicableException e) {
+			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(this, e.getMessage(), e
 						.getClass().getName(), JOptionPane.WARNING_MESSAGE);
 			}

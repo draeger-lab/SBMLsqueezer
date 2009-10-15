@@ -58,6 +58,7 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.io.AbstractSBMLReader;
 import org.sbml.jsbml.io.AbstractSBMLWriter;
+import org.sbml.squeezer.SBMLsqueezer;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -69,13 +70,13 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		ChangeListener {
 
 	private List<SBase> added;
-	private List<SBase> removed;
 	private List<SBase> changed;
+	private LinkedList<Object> listOfOrigModels;
 	private AbstractSBMLReader reader;
+	private List<SBase> removed;
+	private int selectedModel;
 	private AbstractSBMLWriter writer;
 	protected LinkedList<Model> listOfModels;
-	private LinkedList<Object> listOfOrigModels;
-	private int selectedModel;
 
 	/**
 	 * 
@@ -112,6 +113,15 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		return writer.convertDate(date);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBMLReader#convertDate(java.lang.Object)
+	 */
+	public Date convertDate(Object d) {
+		return reader.convertDate(d);
+	}
+
 	/**
 	 * 
 	 * @return
@@ -120,12 +130,48 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		return listOfModels;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBMLReader#getNumErrors()
+	 */
+	public int getNumErrors() {
+		return reader.getNumErrors();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBMLWriter#getNumErrors(java.lang.Object)
+	 */
+	public int getNumErrors(Object sbase) {
+		return writer.getNumErrors(sbase);
+	}
+
 	/**
 	 * 
 	 * @return
 	 */
 	public Model getSelectedModel() {
 		return listOfModels.get(selectedModel);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBMLReader#getWarnings()
+	 */
+	public String getWarnings() {
+		return reader.getWarnings();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jlibsbml.SBMLWriter#getWarnings(java.lang.Object)
+	 */
+	public String getWarnings(Object sbmlDocument) {
+		return writer.getWarnings(sbmlDocument);
 	}
 
 	/*
@@ -301,12 +347,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @throws SBMLException
 	 */
 	public void saveChanges() throws SBMLException {
-		System.out.println("removed: " + removed);
-		System.out.println("added:   " + added);
-		System.out.println("changed: " + changed);
 		writer.saveChanges(listOfModels.get(selectedModel), listOfOrigModels
 				.get(selectedModel));
-		System.out.println("done");
 	}
 
 	/*
@@ -688,6 +730,17 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		return writer.writeSBML(sbmlDocument, filename);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object,
+	 * java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public boolean writeSBML(Object object, String filename,
+			String programName, String versionNumber) throws SBMLException {
+		return writer.writeSBML(object, filename, programName, versionNumber);
+	}
+
 	/**
 	 * 
 	 * @param filename
@@ -696,7 +749,9 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 */
 	public boolean writeSelectedModelToSBML(String filename)
 			throws SBMLException {
-		return writer.writeSBML(listOfOrigModels.get(selectedModel), filename);
+		return writer.writeSBML(listOfOrigModels.get(selectedModel), filename,
+				SBMLsqueezer.class.getSimpleName(), SBMLsqueezer
+						.getVersionNumber());
 	}
 
 	/*
@@ -767,50 +822,5 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	// @Override
 	public Object writeUnitDefinition(UnitDefinition unitDefinition) {
 		return writer.writeUnitDefinition(unitDefinition);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jlibsbml.SBMLReader#convertDate(java.lang.Object)
-	 */
-	public Date convertDate(Object d) {
-		return reader.convertDate(d);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jlibsbml.SBMLReader#getWarnings()
-	 */
-	public String getWarnings() {
-		return reader.getWarnings();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jlibsbml.SBMLWriter#getWarnings(java.lang.Object)
-	 */
-	public String getWarnings(Object sbmlDocument) {
-		return writer.getWarnings(sbmlDocument);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jlibsbml.SBMLReader#getNumErrors()
-	 */
-	public int getNumErrors() {
-		return reader.getNumErrors();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jlibsbml.SBMLWriter#getNumErrors(java.lang.Object)
-	 */
-	public int getNumErrors(Object sbase) {
-		return writer.getNumErrors(sbase);
 	}
 }

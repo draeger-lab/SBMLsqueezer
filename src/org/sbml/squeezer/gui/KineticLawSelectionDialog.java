@@ -214,7 +214,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					KineticsAndParametersStoredInSBML = true;
 				}
 			}
-		} catch (Exception exc) {
+		} catch (Throwable exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getSimpleName(),
 					JOptionPane.WARNING_MESSAGE);
@@ -352,7 +352,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						setSize(getWidth(), 640);
 						validate();
 
-					} catch (Exception exc) {
+					} catch (Throwable exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 								.getMessage(), 40), exc.getClass()
 								.getCanonicalName(),

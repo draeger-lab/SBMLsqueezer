@@ -25,7 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -143,20 +142,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @param plugin
 	 * @param model
 	 * @param reaction
-	 * @throws RateLawNotApplicableException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws ClassNotFoundException
-	 * @throws IllegalArgumentException
-	 * @throws SecurityException
+	 * @throws Throwable 
 	 */
-	public KineticLawSelectionPanel(KineticLawGenerator klg, Reaction reaction)
-			throws RateLawNotApplicableException, SecurityException,
-			IllegalArgumentException, ClassNotFoundException,
-			NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException {
+	public KineticLawSelectionPanel(KineticLawGenerator klg, Reaction reaction) throws Throwable
+			 {
 		super(new GridBagLayout());
 		this.selected = "";
 		this.klg = klg;
@@ -306,20 +295,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	/**
 	 * 
 	 * @return
-	 * @throws RateLawNotApplicableException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws ClassNotFoundException
-	 * @throws IllegalArgumentException
-	 * @throws SecurityException
+	 * @throws Throwable 
 	 */
-	private Box initKineticsPanel() throws RateLawNotApplicableException,
-			SecurityException, IllegalArgumentException,
-			ClassNotFoundException, NoSuchMethodException,
-			InstantiationException, IllegalAccessException,
-			InvocationTargetException {
+	private Box initKineticsPanel() throws Throwable {
 		possibleTypes = klg.getReactionType(reaction.getId())
 				.identifyPossibleKineticLaws();
 		String[] kineticEquations = new String[possibleTypes.length];
@@ -450,7 +428,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				kineticsPanel = initKineticsPanel();
 				LayoutHelper.addComponent(this, (GridBagLayout) this
 						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(getTopLevelAncestor(), GUITools
 						.toHTML(e.getMessage(), 40), e.getClass().getSimpleName(),
 						JOptionPane.WARNING_MESSAGE);
@@ -481,7 +459,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 								break;
 							}
 						updateView();
-					} catch (Exception exc) {
+					} catch (Throwable exc) {
 						throw new RuntimeException(exc.getMessage(), exc);
 					}
 				} else {
