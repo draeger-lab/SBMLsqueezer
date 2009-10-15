@@ -305,8 +305,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					settings.put(CfgKeys.OPEN_DIR, path);
 			}
 		} catch (Exception exc) {
-			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc.getMessage(), 40), exc
-					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getSimpleName(),
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -329,7 +330,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * warnings.
 	 */
 	private void checkForSBMLErrors(Model m) {
-		if (sbmlIO.getNumErrors() > 0) {
+		if (sbmlIO.getNumErrors() > 0
+				&& ((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+						.booleanValue()) {
 			String warnings = GUITools.toHTML(sbmlIO.getWarnings().replace("<",
 					"&lt;").replace(">", "&gt;").replace(
 					System.getProperty("line.separator"), "<br/>"));

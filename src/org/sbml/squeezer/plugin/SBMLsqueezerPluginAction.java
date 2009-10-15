@@ -30,12 +30,11 @@ import jp.sbi.celldesigner.plugin.PluginAction;
  */
 public class SBMLsqueezerPluginAction extends PluginAction {
 
-
 	/**
 	 * A serial version number.
 	 */
 	private static final long serialVersionUID = 4134514954192751545L;
-	
+
 	private SBMLsqueezerPlugin plugin;
 
 	/**
@@ -61,7 +60,7 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 				}
 			}).start();
 		} else
-			System.err.println("Unsupported source of action "
-					+ e.getSource().getClass().getName());
+			System.err.printf("Unsupported source of action %s", e.getSource()
+					.getClass().getName());
 	}
 }

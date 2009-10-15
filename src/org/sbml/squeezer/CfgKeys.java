@@ -47,7 +47,11 @@ public enum CfgKeys {
 	 * Standard directory where SBML or Text files can be saved.
 	 */
 	SAVE_DIR,
-
+	/**
+	 * Can be true or false, depending on if the user wants to see SBML
+	 * warnings.
+	 */
+	SHOW_SBML_WARNINGS,
 	/**
 	 * Possible values are:
 	 * <ul>
@@ -147,7 +151,7 @@ public enum CfgKeys {
 	 * If true parameters and units that are never referenced by any element of
 	 * the model are deleted when creating kinetic equations with SBMLsqueezer.
 	 */
-	OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS,
+	OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
 	/**
 	 * 
 	 */
@@ -183,11 +187,11 @@ public enum CfgKeys {
 	/*
 	 * A list which contains the names of all species that are accepted to act
 	 * as enzymes during a reaction. Valid are the following entries (upper and
-	 * lower case is ignored): <ul> <li>ANTISENSE_RNA</li> <li>SIMPLE_MOLECULE</li>
-	 * <li>RECEPTOR</li> <li>UNKNOWN</li> <li>COMPLEX</li> <li>TRUNCATED</li>
-	 * <li>GENERIC</li> <li>RNA</li> </ul> Not allowed entries like <li>Phenotype</li>
-	 * <li>Gene</li> <li> IonChannel</li> <li>Ion</li> </ul> will be
-	 * filtered out of the list.
+	 * lower case is ignored): <ul> <li>ANTISENSE_RNA</li>
+	 * <li>SIMPLE_MOLECULE</li> <li>RECEPTOR</li> <li>UNKNOWN</li>
+	 * <li>COMPLEX</li> <li>TRUNCATED</li> <li>GENERIC</li> <li>RNA</li> </ul>
+	 * Not allowed entries like <li>Phenotype</li> <li>Gene</li> <li>
+	 * IonChannel</li> <li>Ion</li> </ul> will be filtered out of the list.
 	 */
 
 	/**

@@ -206,6 +206,234 @@ public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
 	 * 
+	 * @return
+	 */
+	private UnitDefinition unitJperKandM() {
+		String id = "joule_per_kelvin_per_mole";
+		Model model = getModel();
+		UnitDefinition ud = model.getUnitDefinition(id);
+		if (ud == null) {
+			ud = new UnitDefinition(id, getLevel(), getVersion());
+			ud.addUnit(new Unit(Unit.Kind.JOULE, getLevel(), getVersion()));
+			ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, getLevel(),
+					getVersion()));
+			ud.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, getLevel(),
+					getVersion()));
+			model.addUnitDefinition(ud);
+		}
+		return ud;
+	}
+
+	/**
+	 * 
+	 * @param substance
+	 * @return
+	 */
+	private UnitDefinition unitkJperSubstance(UnitDefinition substance) {
+		String id = "kjoule_per_" + substance.getId();
+		Model model = getModel();
+		UnitDefinition ud = model.getUnitDefinition(id);
+		if (ud == null) {
+			ud = new UnitDefinition(id, getLevel(), getVersion());
+			ud.addUnit(new Unit(3, Unit.Kind.JOULE, getLevel(), getVersion()));
+			ud.divideBy(substance);
+			model.addUnitDefinition(ud);
+		}
+		return ud;
+	}
+
+	/**
+	 * 1/s, equivalent to Hz.
+	 * 
+	 * @return
+	 */
+	private UnitDefinition unitPerTime() {
+		Model model = getModel();
+		UnitDefinition ud = model.getUnitDefinition("time").clone();
+		if (ud.getNumUnits() == 1) {
+			Unit u = ud.getUnit(0);
+			u.setExponent(-1);
+			ud.setId("per_" + u.getKind().toString().toLowerCase());
+		} else {
+			ud = new UnitDefinition("per_second", getLevel(), getVersion());
+			Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
+			ud.addUnit(unit);
+		}
+		UnitDefinition def = model.getUnitDefinition(ud.getId());
+		if (def == null)
+			model.addUnitDefinition(ud);
+		return model.getUnitDefinition(ud.getId());
+	}
+
+	/**
+	 * 
+	 * @param listOf
+	 * @param zerothOrder
+	 *            if true this unit will be created for a zeroth order rate
+	 *            constant.
+	 * @return
+	 */
+	private UnitDefinition unitPerTimeAndConcentrationOrSubstance(
+			ListOf<SpeciesReference> listOf, boolean zerothOrder) {
+		Model model = getModel();
+		UnitDefinition ud = new UnitDefinition("ud", getLevel(), getVersion());
+		ud.divideBy(model.getUnitDefinition("time"));
+		UnitDefinition amount = new UnitDefinition("amount", getLevel(),
+				getVersion());
+		int i;
+		if (!zerothOrder) {
+			UnitDefinition substance;
+			SpeciesReference specRef;
+			Species species;
+			for (i = 0; i < listOf.size(); i++) {
+				specRef = listOf.get(i);
+				species = specRef.getSpeciesInstance();
+				substance = species.getSubstanceUnitsInstance().clone();
+				if (bringToConcentration)
+					substance.divideBy(species.getCompartmentInstance()
+							.getUnitsInstance());
+				for (Unit u : substance.getListOfUnits())
+					u.setExponent(u.getExponent()
+							+ ((int) specRef.getStoichiometry() - 1));
+				amount.multiplyWith(substance);
+			}
+		}
+		ud = ud.divideBy(amount).multiplyWith(
+				model.getUnitDefinition("substance")).simplify();
+		StringBuilder sb = new StringBuilder();
+		for (i = 0; i < ud.getNumUnits(); i++) {
+			Unit u = ud.getUnit(i);
+			if (i > 0)
+				sb.append('_');
+			if (u.getExponent() < 0)
+				sb.append("per_");
+			sb.append(u.getPrefix());
+			sb.append(u.getKind().getName());
+		}
+		ud.setId(sb.toString());
+		UnitDefinition def = model.getUnitDefinition(ud.getId());
+		if (def == null)
+			model.addUnitDefinition(ud);
+		ud = model.getUnitDefinition(ud.getId());
+		return ud;
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @return
+	 */
+	private UnitDefinition unitPerTimeOrSizePerTime(Compartment c) {
+		if (bringToConcentration) {
+			Model model = getModel();
+			StringBuilder name = new StringBuilder();
+			if (!c.isSetUnits())
+				c.setUnits(model.getUnitDefinition("volume"));
+			UnitDefinition sizeUnit = c.getUnitsInstance();
+			if (sizeUnit.isVariantOfVolume())
+				name.append("volume");
+			else if (sizeUnit.isVariantOfArea())
+				name.append("area");
+			else if (sizeUnit.isVariantOfLength())
+				name.append("length");
+			name.append(" per time");
+			String id = name.toString().replace(' ', '_');
+			UnitDefinition ud = model.getUnitDefinition(id);
+			if (ud == null) {
+				ud = new UnitDefinition(sizeUnit);
+				ud.setId(id);
+				ud.divideBy(model.getUnitDefinition("time"));
+				ud.setName(name.toString());
+				model.addUnitDefinition(ud);
+			}
+			return ud;
+		} else {
+			return unitPerTime();
+		}
+	}
+
+	/**
+	 * 
+	 * @param substance
+	 * @param size
+	 * @return
+	 */
+	private UnitDefinition unitSubstancePerSize(UnitDefinition substance,
+			UnitDefinition size) {
+		return unitSubstancePerSize(substance, size, 1);
+	}
+
+	/**
+	 * 
+	 * @param substance
+	 * @param size
+	 * @param exponent
+	 * @return
+	 */
+	private UnitDefinition unitSubstancePerSize(UnitDefinition substance,
+			UnitDefinition size, int exponent) {
+		StringBuffer id = StringTools.concat(substance.getId(), "_per_", size
+				.getId());
+		if (exponent != 1) {
+			id.append("_raised_by_");
+			id.append(exponent);
+		}
+		UnitDefinition substancePerSize = getModel().getUnitDefinition(
+				id.toString());
+		if (substancePerSize == null) {
+			substancePerSize = new UnitDefinition(id.toString(), getLevel(),
+					getVersion());
+			substancePerSize.multiplyWith(substance);
+			substancePerSize.divideBy(size);
+			substancePerSize.raiseByThePowerOf(exponent);
+			getModel().addUnitDefinition(substancePerSize);
+		}
+		return substancePerSize;
+	}
+
+	/**
+	 * Returns the unit substance per size per second.
+	 * 
+	 * @param size
+	 *            unit of size
+	 * @return
+	 */
+	private UnitDefinition unitSubstancePerSizePerTime(UnitDefinition size) {
+		Model model = getModel();
+		String id = "substance_per_" + size.getId() + "_per_time";
+		UnitDefinition mMperSecond = model.getUnitDefinition(id);
+		if (mMperSecond == null) {
+			mMperSecond = new UnitDefinition(id, getLevel(), getVersion());
+			mMperSecond.multiplyWith(model.getUnitDefinition("substance"));
+			mMperSecond.setId(id);
+			mMperSecond.divideBy(model.getUnitDefinition("time"));
+			model.addUnitDefinition(mMperSecond);
+		}
+		return mMperSecond;
+	}
+
+	/**
+	 * 
+	 * @param substance
+	 * @param time
+	 * @return
+	 */
+	private UnitDefinition unitSubstancePerTime(UnitDefinition substance,
+			UnitDefinition time) {
+		Model model = getModel();
+		String id = substance.getId() + "_per_" + time.getId();
+		UnitDefinition substancePerTime = model.getUnitDefinition(id);
+		if (substancePerTime == null) {
+			substancePerTime = new UnitDefinition(id, getLevel(), getVersion());
+			substancePerTime.multiplyWith(substance);
+			substancePerTime.divideBy(time);
+			model.addUnitDefinition(substancePerTime);
+		}
+		return substancePerTime;
+	}
+
+	/**
+	 * 
 	 * @param modE
 	 * @param modActi
 	 * @param modTActi
@@ -393,7 +621,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			if (r.getReversible())
 				for (SpeciesReference specRef : r.getListOfProducts())
 					x -= specRef.getStoichiometry();
-			keq.setUnits(unitmM((int) x));
+			Model model = getModel();
+			keq.setUnits(unitSubstancePerSize(model
+					.getUnitDefinition("substance"), model
+					.getUnitDefinition("volume"), (int) x));
 		}
 		return keq;
 	}
@@ -447,9 +678,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				activatorSpecies);
 		if (!kA.isSetSBOTerm())
 			kA.setSBOTerm(363);
-		if (!kA.isSetUnits())
-			kA.setUnits(bringToConcentration ? unitmM() : getModel()
-					.getUnitDefinition("substance"));
+		if (!kA.isSetUnits()) {
+			Species species = getModel().getSpecies(activatorSpecies);
+			kA.setUnits(bringToConcentration ? unitSubstancePerSize(species
+					.getSubstanceUnitsInstance(), species
+					.getCompartmentInstance().getUnitsInstance()) : species
+					.getSubstanceUnitsInstance());
+		}
 		return kA;
 	}
 
@@ -501,10 +736,17 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				else
 					kr.setSBOTerm(186);
 			}
-			if (!kr.isSetUnits())
-				kr.setUnits(/*
-							 * bringToConcentration ? unitmMperSecond() :
-							 */unitmmolePerSecond());
+			if (!kr.isSetUnits()) {
+				/*
+				 * bringToConcentration ? unitmMperSecond() :
+				 */
+				Model model = getModel();
+				Species e = model.getSpecies(enzyme);
+				kr.setUnits(unitSubstancePerTime(e != null ? e
+						.getSubstanceUnitsInstance() : model
+						.getUnitDefinition("substance"), model
+						.getUnitDefinition("time")));
+			}
 		}
 		return kr;
 	}
@@ -570,11 +812,15 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		Parameter kI = createOrGetParameter(id.toString());
 		if (!kI.isSetSBOTerm())
 			kI.setSBOTerm(261);
-		if (!kI.isSetUnits())
-			if (bringToConcentration)
-				kI.setUnits(unitmM());
-			else
-				kI.setUnits(unitmmole());
+		if (!kI.isSetUnits()) {
+			Species spec = getModel().getSpecies(inhibitorSpecies);
+			if (bringToConcentration) {
+				kI.setUnits(unitSubstancePerSize(spec
+						.getSubstanceUnitsInstance(), spec
+						.getCompartmentInstance().getUnitsInstance()));
+			} else
+				kI.setUnits(spec.getSubstanceUnitsInstance());
+		}
 		return kI;
 	}
 
@@ -584,15 +830,19 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param enzyme
 	 * @return
 	 */
-	Parameter parameterKS(String enzyme) {
+	Parameter parameterKS(Species species, String enzyme) {
 		Parameter kS = createOrGetParameter("kSp_", getParentSBMLObject()
 				.getId());
 		if (!kS.isSetSBOTerm())
 			kS.setSBOTerm(194);
-		if (bringToConcentration)
-			kS.setUnits(unitmM());
-		else
-			kS.setUnits(unitmmole());
+		if (!kS.isSetUnits()) {
+			if (bringToConcentration) {
+				kS.setUnits(unitSubstancePerSize(species
+						.getSubstanceUnitsInstance(), species
+						.getCompartmentInstance().getUnitsInstance()));
+			} else
+				kS.setUnits(species.getSubstanceUnitsInstance());
+		}
 		return kS;
 	}
 
@@ -615,9 +865,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!kM.isSetName())
 			kM.setName(StringTools.concat("Michaelis constant of species ",
 					species, " in reaction ", reactionID).toString());
-		if (!kM.isSetUnits())
-			kM.setUnits(bringToConcentration ? unitmM() : getModel()
-					.getUnitDefinition("substance"));
+		if (!kM.isSetUnits()) {
+			Model model = getModel();
+			Species spec = model.getSpecies(species);
+			kM.setUnits(bringToConcentration ? unitSubstancePerSize(spec
+					.getSubstanceUnitsInstance(), spec.getCompartmentInstance()
+					.getUnitsInstance()) : spec.getSubstanceUnitsInstance());
+		}
 		return kM;
 	}
 
@@ -688,7 +942,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!mu.isSetSBOTerm())
 			mu.setSBOTerm(463);
 		if (!mu.isSetUnits())
-			mu.setUnits(unitkJperMole());
+			mu.setUnits(unitkJperSubstance(getModel().getSpecies(species)
+					.getSubstanceUnitsInstance()));
 		return mu;
 	}
 
@@ -720,14 +975,15 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	Parameter parameterVelocityConstant(String enzyme) {
 		Parameter kVr;
 		String reactionID = getParentSBMLObject().getId();
+		Model model = getModel();
 		if (enzyme != null) {
 			kVr = createOrGetParameter("kv_", reactionID, underscore, enzyme);
 			if (!kVr.isSetName())
 				kVr.setName(StringTools.concat("KV value of reaction ",
 						reactionID).toString());
 			if (!kVr.isSetUnits())
-				kVr.setUnits(unitPerTimeOrSizePerTime(getModel().getSpecies(
-						enzyme).getCompartmentInstance()));
+				kVr.setUnits(unitPerTimeOrSizePerTime(model.getSpecies(enzyme)
+						.getCompartmentInstance()));
 		} else {
 			kVr = createOrGetParameter("vmax_geom_", reactionID);
 			if (!kVr.isSetName())
@@ -736,9 +992,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 								.concat(
 										"limiting maximal velocity, geometric mean of reaction ",
 										reactionID).toString());
-			if (!kVr.isSetUnits())
-				kVr.setUnits(bringToConcentration ? unitmMperSecond()
-						: unitmmolePerSecond());
+			if (!kVr.isSetUnits()) {
+				if (bringToConcentration) {
+					kVr.setUnits(unitSubstancePerSizePerTime(model
+							.getUnitDefinition("volume")));
+				} else {
+					kVr.setUnits(unitSubstancePerTime(model.getSpecies(enzyme)
+							.getSubstanceUnitsInstance(), model
+							.getUnitDefinition("time")));
+				}
+			}
 		}
 		return kVr;
 	}
@@ -770,14 +1033,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	ASTNode speciesTerm(Species species) {
 		ASTNode specTerm = new ASTNode(species, this);
 		if (species.getHasOnlySubstanceUnits()) {
-			// set initial amount and units appropriately
 			if (bringToConcentration)
 				specTerm.divideBy(species.getCompartmentInstance());
-		} else {
-			// multiply with compartment size.
-			if (!bringToConcentration)
-				specTerm.multiplyWith(species.getCompartmentInstance());
-		}
+		} else if (!bringToConcentration)
+			specTerm.multiplyWith(species.getCompartmentInstance());
 		return specTerm;
 	}
 
@@ -788,245 +1047,5 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	ASTNode speciesTerm(String species) {
 		return speciesTerm(getModel().getSpecies(species));
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	UnitDefinition unitJperKandM() {
-		UnitDefinition ud = new UnitDefinition("J_per_K_and_mole", getLevel(),
-				getVersion());
-		ud.addUnit(new Unit(Unit.Kind.JOULE, getLevel(), getVersion()));
-		ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, getLevel(),
-				getVersion()));
-		ud
-				.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, getLevel(),
-						getVersion()));
-		getModel().addUnitDefinition(ud);
-		return ud;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	UnitDefinition unitkJperMole() {
-		UnitDefinition kJperMole = new UnitDefinition("kJ_per_mole",
-				getLevel(), getVersion());
-		kJperMole
-				.addUnit(new Unit(3, Unit.Kind.JOULE, getLevel(), getVersion()));
-		kJperMole.addUnit(new Unit(Unit.Kind.MOLE, getLevel(), getVersion()));
-		getModel().addUnitDefinition(kJperMole);
-		return kJperMole;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	UnitDefinition unitmM() {
-		return unitmM(1);
-	}
-
-	/**
-	 * 
-	 * @param exponent
-	 * @return
-	 */
-	UnitDefinition unitmM(int exponent) {
-		String id = "mM";
-		if (exponent != 1)
-			id += exponent;
-		UnitDefinition mM = getModel().getUnitDefinition(id);
-		if (mM == null) {
-			mM = new UnitDefinition(id, getLevel(), getVersion());
-			mM.addUnit(unitmmole());
-			mM.addUnit(new Unit(Unit.Kind.LITRE, -exponent, getLevel(),
-					getVersion()));
-			getModel().addUnitDefinition(mM);
-		}
-		return mM;
-	}
-
-	/**
-	 * Creates and returns the unit milli mole.
-	 * 
-	 * @return A Unit object that represents the unit milli mole.
-	 */
-	Unit unitmmole() {
-		return new Unit(-3, Unit.Kind.MOLE, getLevel(), getVersion());
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	UnitDefinition unitmmolePerSecond() {
-		Model model = getModel();
-		String id = "mmolePerSecond";
-		UnitDefinition mmolePerSecond = model.getUnitDefinition(id);
-		if (mmolePerSecond == null) {
-			mmolePerSecond = new UnitDefinition(id, getLevel(), getVersion());
-			mmolePerSecond.addUnit(new Unit(-3, Unit.Kind.MOLE, getLevel(),
-					getVersion()));
-			mmolePerSecond.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(),
-					getVersion()));
-			model.addUnitDefinition(mmolePerSecond);
-		}
-		return mmolePerSecond;
-	}
-
-	/**
-	 * 
-	 * @return Unit milli mole per metre.
-	 */
-	UnitDefinition unitmMperMetre() {
-		UnitDefinition mMperMetre = unitmM().clone();
-		mMperMetre.addUnit(new Unit(Unit.Kind.METRE, -1, getLevel(),
-				getVersion()));
-		return mMperMetre;
-	}
-
-	/**
-	 * Returns the unit milli mole per litre per second.
-	 * 
-	 * @return
-	 */
-	UnitDefinition unitmMperSecond() {
-		Model model = getModel();
-		String id = "mMperSecond";
-		UnitDefinition mMperSecond = model.getUnitDefinition(id);
-		if (mMperSecond == null) {
-			mMperSecond = unitmM().clone();
-			mMperSecond.setId(id);
-			mMperSecond.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(),
-					getVersion()));
-			model.addUnitDefinition(mMperSecond);
-		}
-		return mMperSecond;
-	}
-
-	/**
-	 * 
-	 * @return Unit milli mole per square metre.
-	 */
-	UnitDefinition unitmMperSquareMetre() {
-		UnitDefinition mMperSquareMetre = unitmM().clone();
-		mMperSquareMetre.addUnit(new Unit(Unit.Kind.METRE, -2, getLevel(),
-				getVersion()));
-		return mMperSquareMetre;
-	}
-
-	/**
-	 * 1/s, equivalent to Hz.
-	 * 
-	 * @return
-	 */
-	UnitDefinition unitPerTime() {
-		UnitDefinition ud = getModel().getUnitDefinition("time").clone();
-		if (ud.getNumUnits() == 1) {
-			ud.getListOfUnits().getFirst().setExponent(-1);
-			ud.setId("perTime");
-		} else {
-			ud = new UnitDefinition("perSecond", getLevel(), getVersion());
-			Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
-			ud.addUnit(unit);
-		}
-		return ud;
-	}
-
-	/**
-	 * 
-	 * @param listOf
-	 * @return
-	 */
-	UnitDefinition unitPerTimeAndConcentrationOrSubstance(
-			ListOf<SpeciesReference> listOf) {
-		return unitPerTimeAndConcentrationOrSubstance(listOf, false);
-	}
-
-	/**
-	 * 
-	 * @param listOf
-	 * @param zerothOrder
-	 * @return
-	 */
-	UnitDefinition unitPerTimeAndConcentrationOrSubstance(
-			ListOf<SpeciesReference> listOf, boolean zerothOrder) {
-		Model model = getModel();
-		UnitDefinition ud = new UnitDefinition("ud", getLevel(), getVersion());
-		ud.divideBy(model.getUnitDefinition("time"));
-		UnitDefinition amount = new UnitDefinition("amount", getLevel(),
-				getVersion());
-		int i;
-		if (!zerothOrder) {
-			UnitDefinition substance;
-			SpeciesReference specRef;
-			Species species;
-			for (i = 0; i < listOf.size(); i++) {
-				specRef = listOf.get(i);
-				species = specRef.getSpeciesInstance();
-				substance = species.getSubstanceUnitsInstance().clone();
-				if (bringToConcentration)
-					substance.divideBy(species.getCompartmentInstance()
-							.getUnitsInstance());
-				substance
-						.raiseByThePowerOf((int) specRef.getStoichiometry() - 1);
-				amount.multiplyWith(substance);
-			}
-		}
-		ud = ud.divideBy(amount).multiplyWith(
-				model.getUnitDefinition("substance")).simplify();
-		StringBuilder sb = new StringBuilder();
-		for (i = 0; i < ud.getNumUnits(); i++) {
-			Unit u = ud.getUnit(i);
-			if (i > 0)
-				sb.append('_');
-			if (u.getExponent() < 0)
-				sb.append("per_");
-			sb.append(u.getPrefix());
-			sb.append(u.getKind().getName());
-		}
-		ud.setId(sb.toString());
-		UnitDefinition def = model.getUnitDefinition(ud.getId());
-		if (def == null)
-			model.addUnitDefinition(ud);
-		ud = model.getUnitDefinition(ud.getId());
-		return ud;
-	}
-
-	/**
-	 * 
-	 * @param c
-	 * @return
-	 */
-	UnitDefinition unitPerTimeOrSizePerTime(Compartment c) {
-		if (bringToConcentration) {
-			Model model = getModel();
-			StringBuilder name = new StringBuilder();
-			if (!c.isSetUnits())
-				c.setUnits(model.getUnitDefinition("volume"));
-			UnitDefinition sizeUnit = c.getUnitsInstance();
-			if (sizeUnit.isVariantOfVolume())
-				name.append("volume");
-			else if (sizeUnit.isVariantOfArea())
-				name.append("area");
-			else if (sizeUnit.isVariantOfLength())
-				name.append("length");
-			name.append(" per time");
-			String id = name.toString().replace(' ', '_');
-			UnitDefinition ud = model.getUnitDefinition(id);
-			if (ud == null) {
-				ud = new UnitDefinition(sizeUnit);
-				ud.setId(id);
-				ud.divideBy(model.getUnitDefinition("time"));
-				ud.setName(name.toString());
-				model.addUnitDefinition(ud);
-			}
-			return ud;
-		} else {
-			return unitPerTime();
-		}
 	}
 }

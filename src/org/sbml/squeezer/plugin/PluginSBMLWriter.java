@@ -103,135 +103,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return null;
 	}
 
-	/**
-	 * 
-	 * 
-	 * @param u
-	 * @param unit
-	 * @return
-	 */
-
-	private boolean equal(Unit u, PluginUnit unit) {
-		if (u == null || unit == null)
-			return false;
-		boolean equal = true;
-		switch (unit.getKind()) {
-		case libsbmlConstants.UNIT_KIND_AMPERE:
-			equal &= u.getKind() == Unit.Kind.AMPERE;
-			break;
-		case libsbmlConstants.UNIT_KIND_BECQUEREL:
-			equal &= u.getKind() == Unit.Kind.BECQUEREL;
-			break;
-		case libsbmlConstants.UNIT_KIND_CANDELA:
-			equal &= u.getKind() == Unit.Kind.CANDELA;
-			break;
-		case libsbmlConstants.UNIT_KIND_CELSIUS:
-			equal &= u.getKind() == Unit.Kind.CELSIUS;
-			break;
-		case libsbmlConstants.UNIT_KIND_COULOMB:
-			equal &= u.getKind() == Unit.Kind.COULOMB;
-			break;
-		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
-			equal &= u.getKind() == Unit.Kind.DIMENSIONLESS;
-			break;
-		case libsbmlConstants.UNIT_KIND_FARAD:
-			equal &= u.getKind() == Unit.Kind.FARAD;
-			break;
-		case libsbmlConstants.UNIT_KIND_GRAM:
-			equal &= u.getKind() == Unit.Kind.GRAM;
-			break;
-		case libsbmlConstants.UNIT_KIND_GRAY:
-			equal &= u.getKind() == Unit.Kind.GRAY;
-			break;
-		case libsbmlConstants.UNIT_KIND_HENRY:
-			equal &= u.getKind() == Unit.Kind.HENRY;
-			break;
-		case libsbmlConstants.UNIT_KIND_HERTZ:
-			equal &= u.getKind() == Unit.Kind.HERTZ;
-			break;
-		case libsbmlConstants.UNIT_KIND_INVALID:
-			equal &= u.getKind() == Unit.Kind.INVALID;
-			break;
-		case libsbmlConstants.UNIT_KIND_ITEM:
-			equal &= u.getKind() == Unit.Kind.ITEM;
-			break;
-		case libsbmlConstants.UNIT_KIND_JOULE:
-			equal &= u.getKind() == Unit.Kind.JOULE;
-			break;
-		case libsbmlConstants.UNIT_KIND_KATAL:
-			equal &= u.getKind() == Unit.Kind.KATAL;
-			break;
-		case libsbmlConstants.UNIT_KIND_KELVIN:
-			equal &= u.getKind() == Unit.Kind.KELVIN;
-			break;
-		case libsbmlConstants.UNIT_KIND_KILOGRAM:
-			equal &= u.getKind() == Unit.Kind.KILOGRAM;
-			break;
-		case libsbmlConstants.UNIT_KIND_LITER:
-			equal &= u.getKind() == Unit.Kind.LITER;
-			break;
-		case libsbmlConstants.UNIT_KIND_LITRE:
-			equal &= u.getKind() == Unit.Kind.LITRE;
-			break;
-		case libsbmlConstants.UNIT_KIND_LUMEN:
-			equal &= u.getKind() == Unit.Kind.LUMEN;
-			break;
-		case libsbmlConstants.UNIT_KIND_LUX:
-			equal &= u.getKind() == Unit.Kind.LUX;
-			break;
-		case libsbmlConstants.UNIT_KIND_METER:
-			equal &= u.getKind() == Unit.Kind.METER;
-			break;
-		case libsbmlConstants.UNIT_KIND_METRE:
-			equal &= u.getKind() == Unit.Kind.METRE;
-			break;
-		case libsbmlConstants.UNIT_KIND_MOLE:
-			equal &= u.getKind() == Unit.Kind.MOLE;
-			break;
-		case libsbmlConstants.UNIT_KIND_NEWTON:
-			equal &= u.getKind() == Unit.Kind.NEWTON;
-			break;
-		case libsbmlConstants.UNIT_KIND_OHM:
-			equal &= u.getKind() == Unit.Kind.OHM;
-			break;
-		case libsbmlConstants.UNIT_KIND_PASCAL:
-			equal &= u.getKind() == Unit.Kind.PASCAL;
-			break;
-		case libsbmlConstants.UNIT_KIND_RADIAN:
-			equal &= u.getKind() == Unit.Kind.RADIAN;
-			break;
-		case libsbmlConstants.UNIT_KIND_SECOND:
-			equal &= u.getKind() == Unit.Kind.SECOND;
-			break;
-		case libsbmlConstants.UNIT_KIND_SIEMENS:
-			equal &= u.getKind() == Unit.Kind.SIEMENS;
-			break;
-		case libsbmlConstants.UNIT_KIND_SIEVERT:
-			equal &= u.getKind() == Unit.Kind.SIEVERT;
-			break;
-		case libsbmlConstants.UNIT_KIND_STERADIAN:
-			equal &= u.getKind() == Unit.Kind.STERADIAN;
-			break;
-		case libsbmlConstants.UNIT_KIND_TESLA:
-			equal &= u.getKind() == Unit.Kind.TESLA;
-			break;
-		case libsbmlConstants.UNIT_KIND_VOLT:
-			equal &= u.getKind() == Unit.Kind.VOLT;
-			break;
-		case libsbmlConstants.UNIT_KIND_WATT:
-			equal &= u.getKind() == Unit.Kind.WATT;
-			break;
-		case libsbmlConstants.UNIT_KIND_WEBER:
-			equal &= u.getKind() == Unit.Kind.WEBER;
-			break;
-		}
-		equal &= u.getExponent() == unit.getExponent();
-		equal &= u.getMultiplier() == unit.getMultiplier();
-		equal &= u.getScale() == unit.getScale();
-		equal &= u.getOffset() == unit.getOffset();
-		return equal;
-	}
-
 	public int getNumErrors(Object sbase) {
 		// TODO Auto-generated method stub
 		return 0;
@@ -730,6 +601,15 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		saveSBaseProperties(modifierSpeciesReference, msr);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveNamedSBaseProperties(org.sbml.jsbml.NamedSBase, java.lang.Object)
+	 */
+	public void saveNamedSBaseProperties(NamedSBase nsb, Object sb) {
+		// TODO Auto-generated method stub
+
+	}
+
 	public void saveParameterProperties(Parameter p, Object parameter) {
 		if (!(parameter instanceof PluginParameter))
 			throw new IllegalArgumentException(
@@ -1157,6 +1037,16 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public boolean writeSBML(Object object, String filename,
+			String programName, String versionNumber) throws SBMLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeSpecies(org.sbml.jsbml.Species)
 	 */
@@ -1385,9 +1275,133 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return ud;
 	}
 
-	public void saveNamedSBaseProperties(NamedSBase nsb, Object sb) {
-		// TODO Auto-generated method stub
+	/**
+	 * 
+	 * 
+	 * @param u
+	 * @param unit
+	 * @return
+	 */
 
+	private boolean equal(Unit u, PluginUnit unit) {
+		if (u == null || unit == null)
+			return false;
+		boolean equal = true;
+		switch (unit.getKind()) {
+		case libsbmlConstants.UNIT_KIND_AMPERE:
+			equal &= u.getKind() == Unit.Kind.AMPERE;
+			break;
+		case libsbmlConstants.UNIT_KIND_BECQUEREL:
+			equal &= u.getKind() == Unit.Kind.BECQUEREL;
+			break;
+		case libsbmlConstants.UNIT_KIND_CANDELA:
+			equal &= u.getKind() == Unit.Kind.CANDELA;
+			break;
+		case libsbmlConstants.UNIT_KIND_CELSIUS:
+			equal &= u.getKind() == Unit.Kind.CELSIUS;
+			break;
+		case libsbmlConstants.UNIT_KIND_COULOMB:
+			equal &= u.getKind() == Unit.Kind.COULOMB;
+			break;
+		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
+			equal &= u.getKind() == Unit.Kind.DIMENSIONLESS;
+			break;
+		case libsbmlConstants.UNIT_KIND_FARAD:
+			equal &= u.getKind() == Unit.Kind.FARAD;
+			break;
+		case libsbmlConstants.UNIT_KIND_GRAM:
+			equal &= u.getKind() == Unit.Kind.GRAM;
+			break;
+		case libsbmlConstants.UNIT_KIND_GRAY:
+			equal &= u.getKind() == Unit.Kind.GRAY;
+			break;
+		case libsbmlConstants.UNIT_KIND_HENRY:
+			equal &= u.getKind() == Unit.Kind.HENRY;
+			break;
+		case libsbmlConstants.UNIT_KIND_HERTZ:
+			equal &= u.getKind() == Unit.Kind.HERTZ;
+			break;
+		case libsbmlConstants.UNIT_KIND_INVALID:
+			equal &= u.getKind() == Unit.Kind.INVALID;
+			break;
+		case libsbmlConstants.UNIT_KIND_ITEM:
+			equal &= u.getKind() == Unit.Kind.ITEM;
+			break;
+		case libsbmlConstants.UNIT_KIND_JOULE:
+			equal &= u.getKind() == Unit.Kind.JOULE;
+			break;
+		case libsbmlConstants.UNIT_KIND_KATAL:
+			equal &= u.getKind() == Unit.Kind.KATAL;
+			break;
+		case libsbmlConstants.UNIT_KIND_KELVIN:
+			equal &= u.getKind() == Unit.Kind.KELVIN;
+			break;
+		case libsbmlConstants.UNIT_KIND_KILOGRAM:
+			equal &= u.getKind() == Unit.Kind.KILOGRAM;
+			break;
+		case libsbmlConstants.UNIT_KIND_LITER:
+			equal &= u.getKind() == Unit.Kind.LITER;
+			break;
+		case libsbmlConstants.UNIT_KIND_LITRE:
+			equal &= u.getKind() == Unit.Kind.LITRE;
+			break;
+		case libsbmlConstants.UNIT_KIND_LUMEN:
+			equal &= u.getKind() == Unit.Kind.LUMEN;
+			break;
+		case libsbmlConstants.UNIT_KIND_LUX:
+			equal &= u.getKind() == Unit.Kind.LUX;
+			break;
+		case libsbmlConstants.UNIT_KIND_METER:
+			equal &= u.getKind() == Unit.Kind.METER;
+			break;
+		case libsbmlConstants.UNIT_KIND_METRE:
+			equal &= u.getKind() == Unit.Kind.METRE;
+			break;
+		case libsbmlConstants.UNIT_KIND_MOLE:
+			equal &= u.getKind() == Unit.Kind.MOLE;
+			break;
+		case libsbmlConstants.UNIT_KIND_NEWTON:
+			equal &= u.getKind() == Unit.Kind.NEWTON;
+			break;
+		case libsbmlConstants.UNIT_KIND_OHM:
+			equal &= u.getKind() == Unit.Kind.OHM;
+			break;
+		case libsbmlConstants.UNIT_KIND_PASCAL:
+			equal &= u.getKind() == Unit.Kind.PASCAL;
+			break;
+		case libsbmlConstants.UNIT_KIND_RADIAN:
+			equal &= u.getKind() == Unit.Kind.RADIAN;
+			break;
+		case libsbmlConstants.UNIT_KIND_SECOND:
+			equal &= u.getKind() == Unit.Kind.SECOND;
+			break;
+		case libsbmlConstants.UNIT_KIND_SIEMENS:
+			equal &= u.getKind() == Unit.Kind.SIEMENS;
+			break;
+		case libsbmlConstants.UNIT_KIND_SIEVERT:
+			equal &= u.getKind() == Unit.Kind.SIEVERT;
+			break;
+		case libsbmlConstants.UNIT_KIND_STERADIAN:
+			equal &= u.getKind() == Unit.Kind.STERADIAN;
+			break;
+		case libsbmlConstants.UNIT_KIND_TESLA:
+			equal &= u.getKind() == Unit.Kind.TESLA;
+			break;
+		case libsbmlConstants.UNIT_KIND_VOLT:
+			equal &= u.getKind() == Unit.Kind.VOLT;
+			break;
+		case libsbmlConstants.UNIT_KIND_WATT:
+			equal &= u.getKind() == Unit.Kind.WATT;
+			break;
+		case libsbmlConstants.UNIT_KIND_WEBER:
+			equal &= u.getKind() == Unit.Kind.WEBER;
+			break;
+		}
+		equal &= u.getExponent() == unit.getExponent();
+		equal &= u.getMultiplier() == unit.getMultiplier();
+		equal &= u.getScale() == unit.getScale();
+		equal &= u.getOffset() == unit.getOffset();
+		return equal;
 	}
 
 }

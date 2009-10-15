@@ -43,6 +43,7 @@ import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
@@ -104,22 +105,10 @@ public class KineticLawGenerator {
 	 * 
 	 * @param model
 	 * @param settings
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws ClassNotFoundException
-	 * @throws RateLawNotApplicableException
-	 * @throws IllegalArgumentException
-	 * @throws SecurityException
-	 * @throws ModificationException
+	 * @throws Throwable
 	 */
 	public KineticLawGenerator(Model model, Properties settings)
-			throws ModificationException, SecurityException,
-			IllegalArgumentException, RateLawNotApplicableException,
-			ClassNotFoundException, NoSuchMethodException,
-			InstantiationException, IllegalAccessException,
-			InvocationTargetException {
+			throws Throwable {
 		this.settings = settings;
 		this.modelOrig = model;
 		init(null);
@@ -166,9 +155,10 @@ public class KineticLawGenerator {
 				|| compartment.getSpatialDimensions() > 3) {
 			compartment.setSpatialDimensions((short) 3);
 			compartment.setUnits(model.getUnitDefinition("volume"));
-			System.err.println("Compartment " + compartment.getId()
-					+ " had an invalid spacial dimension "
-					+ "and was therefore set to a volume.");
+			System.err
+					.printf(
+							"Compartment %s had an invalid spacial dimension and was therefore set to a volume.",
+							compartment.getId());
 		}
 		if (model.getUnitDefinition(compartment.getUnits()) == null)
 			model.addUnitDefinition(compartment.getUnitsInstance());
@@ -180,10 +170,10 @@ public class KineticLawGenerator {
 	 * @param species
 	 */
 	private void checkUnits(Species species) {
-		Model model = species.getModel();
 		if (!species.isSetSubstanceUnits()
 				|| !species.getSubstanceUnitsInstance().isVariantOfSubstance())
-			species.setSubstanceUnits(model.getUnitDefinition("substance"));
+			species.setSubstanceUnits(species.getModel().getUnitDefinition(
+					"substance"));
 	}
 
 	/**
@@ -200,35 +190,35 @@ public class KineticLawGenerator {
 	 * @param kinetic
 	 *            an element from the Kinetics enum.
 	 * @return A kinetic law for the given reaction.
-	 * @throws RateLawNotApplicableException
-	 * @throws ModificationException
-	 * @throws ClassNotFoundException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws IllegalArgumentException
+	 * @throws Throwable
 	 */
 	public BasicKineticLaw createKineticLaw(Reaction r,
-			String kineticsClassName, boolean reversibility)
-			throws ModificationException, RateLawNotApplicableException,
-			ClassNotFoundException, SecurityException, NoSuchMethodException,
-			IllegalArgumentException, InstantiationException,
-			IllegalAccessException, InvocationTargetException {
+			String kineticsClassName, boolean reversibility) throws Throwable {
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null)
 			reaction = r;
 		reaction.setReversible(reversibility || reaction.getReversible());
-		Class<?> kinCls = Class.forName(kineticsClassName);
-		Object typeParameters[] = new Object[] {
-				settings.get(CfgKeys.TYPE_STANDARD_VERSION),
-				Boolean.valueOf(hasFullColumnRank(modelOrig)),
-				settings.get(CfgKeys.TYPE_UNIT_CONSISTENCY),
-				settings.get(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS) };
-		Constructor<?> constr = kinCls.getConstructor(reaction.getClass(),
-				typeParameters.getClass());
-		return (BasicKineticLaw) constr.newInstance(reaction, typeParameters);
+		try {
+			Class<?> kinCls = Class.forName(kineticsClassName);
+			Object typeParameters[] = new Object[] {
+					settings.get(CfgKeys.TYPE_STANDARD_VERSION),
+					Boolean.valueOf(hasFullColumnRank(modelOrig)),
+					settings.get(CfgKeys.TYPE_UNIT_CONSISTENCY),
+					settings.get(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS) };
+			Constructor<?> constructor = kinCls.getConstructor(reaction
+					.getClass(), typeParameters.getClass());
+			return (BasicKineticLaw) constructor.newInstance(reaction,
+					typeParameters);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+			throw e.getCause();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw e.getCause();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw e.getCause();
+		}
 	}
 
 	/**
@@ -263,16 +253,9 @@ public class KineticLawGenerator {
 				String formula = reacOrig.getKineticLaw().getFormula();
 				if (formula.equals("") || formula.equals(" ")) {
 					System.err
-							.println("Reaction "
-									+ reacOrig.getId()
-									+ " in the model has an incorrect format."
-									+ "This means there is either an empty kinetic law in this reaction "
-									+ "or a kinetic law that only consists of a white space. "
-									+ "If you decide not to save this generated model, there is only one "
-									+ "solution: "
-									+ "open this SBML file in an editor and delete the whole kinetic law."
-									+ "SBMLsqueezer ignores this misstake and generates a proper equation. "
-									+ "Therfore we recomment that you save this generated model.");
+							.printf(
+									"Reaction %s in the model has an incorrect format. This means there is either an empty kinetic law in this reaction or a kinetic law that only consists of a white space. If you decide not to save this generated model, there is only one solution: open this SBML file in an editor and delete the whole kinetic law. SBMLsqueezer ignores this misstake and generates a proper equation. Therfore we recomment that you save this generated model.",
+									reacOrig.getId());
 					create = true;
 				}
 			}
@@ -376,22 +359,9 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * @throws RateLawNotApplicableException
-	 * @throws ModificationException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws ClassNotFoundException
-	 * @throws IllegalArgumentException
-	 * @throws SecurityException
-	 * 
+	 * @throws Throwable
 	 */
-	private void generateLaws() throws ModificationException,
-			RateLawNotApplicableException, SecurityException,
-			IllegalArgumentException, ClassNotFoundException,
-			NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException {
+	private void generateLaws() throws Throwable {
 		boolean reversibility = ((Boolean) settings
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
@@ -798,7 +768,7 @@ public class KineticLawGenerator {
 		storeParamters(reaction);
 		if (removeParametersAndStoreUnits) {
 			if (((Boolean) settings
-					.get(CfgKeys.OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS))
+					.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 					.booleanValue())
 				removeUnnecessaryParameters(modelOrig);
 			storeUnits();
@@ -816,7 +786,7 @@ public class KineticLawGenerator {
 			l.currentNumber(i);
 		}
 		if (((Boolean) settings
-				.get(CfgKeys.OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS))
+				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 				.booleanValue())
 			removeUnnecessaryParameters(modelOrig);
 		storeUnits();
@@ -896,7 +866,7 @@ public class KineticLawGenerator {
 		 * delete unnecessary units.
 		 */
 		if (((Boolean) settings
-				.get(CfgKeys.OPT_REMOVE_UNECESSARY_PARAMETERS_AND_UNITS))
+				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 				.booleanValue())
 			for (UnitDefinition udef : modelOrig.getListOfUnitDefinitions()) {
 				boolean isNeeded = udef.equals(UnitDefinition.area(udef

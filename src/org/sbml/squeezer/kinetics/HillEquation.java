@@ -161,7 +161,7 @@ public class HillEquation extends BasicKineticLaw implements
 		 * .toUpperCase().equals("GENE"))
 		 */{
 			Parameter p_hillcoeff = parameterHillCoefficient(modTActi.get(i));
-			Parameter p_kS = parameterKS(modTActi.get(i));
+			Parameter p_kS = parameterKS(getModel().getSpecies(modTActi.get(i)), modTActi.get(i));
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(
 					speciesTerm(modTActi.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
@@ -175,7 +175,7 @@ public class HillEquation extends BasicKineticLaw implements
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
 			Parameter p_hillcoeff = parameterHillCoefficient(modTInhib.get(i));
-			Parameter p_kS = parameterKS(modTInhib.get(i));
+			Parameter p_kS = parameterKS(getModel().getSpecies(modTActi.get(i)), modTInhib.get(i));
 			inhib[i] = ASTNode.frac(ASTNode.pow(speciesTerm(modTInhib.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
 					speciesTerm(modTInhib.get(i)), new ASTNode(p_hillcoeff,
