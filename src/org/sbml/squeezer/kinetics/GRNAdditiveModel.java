@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -39,13 +38,13 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
+	 * 
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public GRNAdditiveModel(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
@@ -60,7 +59,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 
 		ASTNode kineticLaw = new ASTNode(this);
 

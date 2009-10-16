@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -49,12 +48,11 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	/**
 	 * 
 	 * @param parentReaction
+	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public IrrevNonModulatedNonInteractingEnzymes(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException,
-			IllegalFormatException {
+			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
@@ -69,7 +67,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		if ((modActi.size() > 0) || (modInhib.size() > 0)
 				|| (modTActi.size() > 0) || (modTInhib.size() > 0))
 			throw new RateLawNotApplicableException(

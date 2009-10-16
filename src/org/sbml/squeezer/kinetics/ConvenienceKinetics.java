@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -58,11 +57,11 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	/**
 	 * 
 	 * @param parentReaction
+	 * @param types
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public ConvenienceKinetics(Reaction parentReaction, Object... types)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, types);
 	}
 
@@ -78,7 +77,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
 		setSBOTerm(429);
 		StringBuilder name = new StringBuilder();

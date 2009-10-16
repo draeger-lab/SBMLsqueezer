@@ -18,8 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
-
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Parameter;
@@ -39,13 +37,13 @@ public class ForceDependent extends ReversiblePowerLaw implements
 		InterfaceModulatedKinetics {
 
 	/**
+	 * 
 	 * @param parentReaction
-	 * @param type
+	 * @param types
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public ForceDependent(Reaction parentReaction, Object... types)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, types);
 		unsetSBOTerm();
 		setNotes("force-dependent rate law");

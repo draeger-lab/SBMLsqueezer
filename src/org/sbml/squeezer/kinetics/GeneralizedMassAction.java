@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,7 +35,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
  */
@@ -47,11 +47,11 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	/**
 	 * 
 	 * @param parentReaction
+	 * @param types
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public GeneralizedMassAction(Reaction parentReaction, Object... types)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, types);
 	}
 
@@ -394,10 +394,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 * @param type
 	 *            ACTIVATION or INHIBITION
 	 * @return
-	 * @throws IllegalFormatException
 	 */
 	private ASTNode createModificationFactor(List<String> modifiers,
-			boolean type) throws IllegalFormatException {
+			boolean type) {
 		if (!modifiers.isEmpty()) {
 			ASTNode[] mods = new ASTNode[modifiers.size()];
 			for (int i = 0; i < mods.length; i++) {
@@ -436,10 +435,8 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 * @param activators
 	 *            A list of activators
 	 * @return Activation formula.
-	 * @throws IllegalFormatException
 	 */
-	ASTNode activationFactor(List<String> activators)
-			throws IllegalFormatException {
+	ASTNode activationFactor(List<String> activators) {
 		return createModificationFactor(activators, true);
 	}
 
@@ -475,15 +472,16 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 *      .util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		orderReactants = orderProducts = Double.NaN;
 		List<String> catalysts = new LinkedList<String>(modE);
 		catalysts.addAll(modCat);
@@ -538,10 +536,8 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 * @param modifiers
 	 *            A list of modifiers
 	 * @return Inhibition formula.
-	 * @throws IllegalFormatException
 	 */
-	ASTNode inhibitionFactor(List<String> modifiers)
-			throws IllegalFormatException {
+	ASTNode inhibitionFactor(List<String> modifiers) {
 		return createModificationFactor(modifiers, false);
 	}
 

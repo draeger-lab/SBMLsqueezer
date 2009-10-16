@@ -35,11 +35,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -92,6 +94,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		 */
 		OPEN_FILE,
 		/**
+		 * Opens the SBML file that was opened last time.
+		 */
+		OPEN_LAST_FILE,
+		/**
 		 * 
 		 */
 		SAVE_FILE,
@@ -106,17 +112,20 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		/**
 		 * 
 		 */
-		TO_LATEX,
-		/**
-		 * Opens the SBML file that was opened last time.
-		 */
-		OPEN_LAST_FILE
+		TO_LATEX
 	}
 
 	/**
 	 * Generated serial version uid.
 	 */
 	private static final long serialVersionUID = 5461285676322858005L;
+
+	/**
+	 * Default background color.
+	 */
+	private Color colorDefault;
+
+	private JLabel logo;
 
 	/**
 	 * Manages all models, storage, loading and selecting models.
@@ -137,7 +146,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	public SBMLsqueezerUI(SBMLio io, Properties settings)
 			throws HeadlessException {
-		super("SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
+		super(SBMLsqueezer.class.getSimpleName());
 		this.settings = settings;
 		this.sbmlIO = io;
 		init();
@@ -266,49 +275,89 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
-	/**
-	 * Reads a model from the given file and adds it to the GUI if possible.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param file
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
 	 */
-	private void readModel(File file) {
-		try {
-			Model model = sbmlIO.readModel(file.getAbsolutePath());
-			checkForSBMLErrors(model);
-			if (model != null) {
-				addModel(model);
-				String path = file.getAbsolutePath();
-				String oldPath = settings.get(CfgKeys.SBML_FILE).toString();
-				if (!path.equals(oldPath)) {
-					for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
-						JMenu menu = getJMenuBar().getMenu(i);
-						for (int j = 0; j < menu.getItemCount(); j++) {
-							Object item = menu.getItem(j);
-							if (item != null
-									&& item instanceof JMenu
-									&& ((JMenu) item).getText().equals(
-											"Last opened")) {
-								JMenu m = (JMenu) item;
-								m.removeAll();
-								JMenuItem mItem = new JMenuItem(file.getName());
-								mItem.addActionListener(this);
-								mItem.setActionCommand(Command.OPEN_LAST_FILE
-										.toString());
-								m.add(mItem);
-							}
-						}
-					}
-					settings.put(CfgKeys.SBML_FILE, path);
-				}
-				path = path.substring(0, path.lastIndexOf('/'));
-				if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
-					settings.put(CfgKeys.OPEN_DIR, path);
-			}
-		} catch (Exception exc) {
-			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getSimpleName(),
-					JOptionPane.ERROR_MESSAGE);
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(tabbedPane)) {
+			if (tabbedPane.getComponentCount() == 0)
+				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
+						Command.SQUEEZE, Command.TO_LATEX);
+			setSBMLsqueezerBackground();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 */
+	public void windowActivated(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 */
+	public void windowClosed(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 */
+	public void windowClosing(WindowEvent we) {
+		if (we.getSource() instanceof JHelpBrowser)
+			setEnabled(true, Command.ONLINE_HELP);
+		else if (we.getSource() instanceof SBMLsqueezerUI)
+			SBMLsqueezer.saveProperties(settings);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
+	 * )
+	 */
+	public void windowDeactivated(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
+	 * )
+	 */
+	public void windowDeiconified(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 */
+	public void windowIconified(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 */
+	public void windowOpened(WindowEvent arg0) {
 	}
 
 	/**
@@ -333,10 +382,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		if (sbmlIO.getNumErrors() > 0
 				&& ((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
 						.booleanValue()) {
-			String warnings = GUITools.toHTML(sbmlIO.getWarnings().replace("<",
-					"&lt;").replace(">", "&gt;").replace(
-					System.getProperty("line.separator"), "<br/>"));
-			JEditorPane area = new JEditorPane("text/html", warnings);
+			StringBuilder warnings = new StringBuilder();
+			for (SBMLException exc : sbmlIO.getWarnings())
+				warnings.append(exc.getMessage().replace("<", "&lt;").replace(
+						">", "&gt;"));
+			JEditorPane area = new JEditorPane("text/html", GUITools
+					.toHTML(warnings.toString()));
 			area.setEditable(false);
 			area.setBackground(Color.WHITE);
 			JScrollPane scroll = new JScrollPane(area,
@@ -509,6 +560,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		addWindowListener(this);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(createToolBar(), BorderLayout.NORTH);
+		colorDefault = getContentPane().getBackground();
+		Icon icon = GUITools.LOGO_SMALL;
+		logo = new JLabel(GUITools.toHTML("<br><br><br><br><br>Version: "
+				+ SBMLsqueezer.getVersionNumber()), icon, JLabel.CENTER);
+		logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
+				.getIconHeight() + 75));
 		setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
 				Command.SQUEEZE, Command.TO_LATEX);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
@@ -520,7 +577,53 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.addChangeListener(this);
 		tabbedPane.addChangeListener(sbmlIO);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		setSBMLsqueezerBackground();
 		setIconImage(GUITools.LEMON_ICON);
+	}
+
+	/**
+	 * Reads a model from the given file and adds it to the GUI if possible.
+	 * 
+	 * @param file
+	 */
+	private void readModel(File file) {
+		try {
+			Model model = sbmlIO.readModel(file.getAbsolutePath());
+			checkForSBMLErrors(model);
+			if (model != null) {
+				addModel(model);
+				String path = file.getAbsolutePath();
+				String oldPath = settings.get(CfgKeys.SBML_FILE).toString();
+				if (!path.equals(oldPath)) {
+					for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
+						JMenu menu = getJMenuBar().getMenu(i);
+						for (int j = 0; j < menu.getItemCount(); j++) {
+							Object item = menu.getItem(j);
+							if (item != null
+									&& item instanceof JMenu
+									&& ((JMenu) item).getText().equals(
+											"Last opened")) {
+								JMenu m = (JMenu) item;
+								m.removeAll();
+								JMenuItem mItem = new JMenuItem(file.getName());
+								mItem.addActionListener(this);
+								mItem.setActionCommand(Command.OPEN_LAST_FILE
+										.toString());
+								m.add(mItem);
+							}
+						}
+					}
+					settings.put(CfgKeys.SBML_FILE, path);
+				}
+				path = path.substring(0, path.lastIndexOf('/'));
+				if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
+					settings.put(CfgKeys.OPEN_DIR, path);
+			}
+		} catch (Exception exc) {
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getSimpleName(),
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	/**
@@ -560,88 +663,20 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see
-	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-	 * )
 	 */
-	public void stateChanged(ChangeEvent e) {
-		if (e.getSource().equals(tabbedPane)) {
-			if (tabbedPane.getComponentCount() == 0)
-				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-						Command.SQUEEZE, Command.TO_LATEX);
+	private void setSBMLsqueezerBackground() {
+		if (tabbedPane.getComponentCount() == 0) {
+			getContentPane().remove(tabbedPane);
+			getContentPane().setBackground(Color.WHITE);
+			getContentPane().add(logo, BorderLayout.CENTER);
+		} else {
+			getContentPane().setBackground(colorDefault);
+			getContentPane().remove(logo);
+			getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	public void windowActivated(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
-	 */
-	public void windowClosed(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-	 */
-	public void windowClosing(WindowEvent we) {
-		if (we.getSource() instanceof JHelpBrowser)
-			setEnabled(true, Command.ONLINE_HELP);
-		else if (we.getSource() instanceof SBMLsqueezerUI)
-			SBMLsqueezer.saveProperties(settings);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeactivated(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeiconified(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
-	 */
-	public void windowIconified(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
-	 */
-	public void windowOpened(WindowEvent arg0) {
+		getContentPane().validate();
 	}
 
 	/**

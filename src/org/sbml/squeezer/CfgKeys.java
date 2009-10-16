@@ -136,6 +136,17 @@ public enum CfgKeys {
 	 */
 	OPT_MAX_NUMBER_OF_REACTANTS,
 	/**
+	 * If not specified the value corresponding to this argument will be used to
+	 * initialize the size of compartments.
+	 */
+	OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE,
+	/**
+	 * If not specified the value corresponding to this argument will be used to
+	 * initialize species depending on their hasOnlySubstanceUnits property as
+	 * initial amount or initial concentration.
+	 */
+	OPT_DEFAULT_SPECIES_INITIAL_VALUE,
+	/**
 	 * The value that is set for newly created parameters.
 	 */
 	OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS,

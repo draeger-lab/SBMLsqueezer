@@ -161,7 +161,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @see org.sbml.jlibsbml.SBMLReader#getWarnings()
 	 */
-	public String getWarnings() {
+	public List<SBMLException> getWarnings() {
 		return reader.getWarnings();
 	}
 

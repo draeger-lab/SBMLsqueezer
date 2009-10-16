@@ -18,8 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.io.IOException;
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -48,20 +46,20 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	private int numOfEnzymes;
 
 	/**
+	 * 
 	 * @param parentReaction
+	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
-	 * @throws IOException
 	 */
 	public MichaelisMenten(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
 		ASTNode numerator;
 		ASTNode denominator;
@@ -219,9 +217,9 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				Parameter p_kIai = parameterKi(inhibitor, enzyme, 1);
 				Parameter p_kIbi = parameterKi(inhibitor, enzyme, 2);
 				Parameter p_a = parameterCooperativeInhibitorSubstrateCoefficient(
-						"a", inhibitor, enzyme);
+						'a', inhibitor, enzyme);
 				Parameter p_b = parameterCooperativeInhibitorSubstrateCoefficient(
-						"b", inhibitor, enzyme);
+						'b', inhibitor, enzyme);
 				ASTNode specRefI = speciesTerm(inhibitor);
 				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, ASTNode
 						.times(this, p_a, p_kIai)));

@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -44,12 +43,13 @@ public class GRNSSystemEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
+	 * 
 	 * @param parentReaction
+	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public GRNSSystemEquation(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
@@ -65,7 +65,7 @@ public class GRNSSystemEquation extends BasicKineticLaw implements
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 
 		// TODO: Verwendung von modTActi und modTInhib ?
 		// TODO: Exceptions überarbeiten

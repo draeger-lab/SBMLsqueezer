@@ -662,34 +662,32 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(Symbol s) {
 		String label = null;
-		SpinnerNumberModel spinModel = new SpinnerNumberModel(0, 0d, 1000, .1d);
+		double val = Double.NaN;
+		double min = 0d;
+		double max = 9999.9;
 		if (s instanceof Species) {
 			Species species = (Species) s;
 			label = "Initial amount: ";
 			if (species.isSetInitialAmount())
-				spinModel = new SpinnerNumberModel(species.getInitialAmount(),
-						0d, Math.max(species.getInitialAmount(), 1000), .1d);
+				val = species.getInitialAmount();
 			else if (species.isSetInitialConcentration()) {
-				spinModel = new SpinnerNumberModel(species
-						.getInitialConcentration(), 0d, Math.max(species
-						.getInitialConcentration(), 1000), .1d);
+				val = species.getInitialConcentration();
 				label = "Initial concentration: ";
 			}
 		} else if (s instanceof Compartment) {
 			Compartment c = (Compartment) s;
 			if (c.isSetSize())
-				spinModel = new SpinnerNumberModel(c.getSize(),
-						c.getSize() - 1000, c.getSize() + 1000, .1d);
+				val = c.getSize();
 			label = "Size: ";
 		} else {
 			Parameter p = (Parameter) s;
 			if (p.isSetValue())
-				spinModel = new SpinnerNumberModel(p.getValue(),
-						p.getValue() - 1000, p.getValue() + 1000, .1d);
+				val = p.getValue();
 			label = "Value: ";
 		}
 		lh.add(new JLabel(label), 1, ++row, 1, 1, 1, 1);
-		JSpinner spinValue = new JSpinner(spinModel);
+		JSpinner spinValue = new JSpinner(new SpinnerNumberModel(val, min, Math
+				.max(val, max), .1d));
 		spinValue.setEnabled(editable);
 		lh.add(spinValue, 3, row, 1, 1, 0, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);

@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -136,10 +135,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public BasicKineticLaw(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction);
 		this.typeParameters = typeParameters;
 		this.fullRank = true;
@@ -205,8 +203,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
+	 * Creates a new unit object or returns an existing one from the model.
 	 * 
-	 * @return
+	 * @return Unit joule per kelvin and per mole.
 	 */
 	private UnitDefinition unitJperKandM() {
 		String id = "joule_per_kelvin_per_mole";
@@ -434,20 +433,20 @@ public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
 	 * 
-	 * @param modE
-	 * @param modActi
-	 * @param modTActi
-	 * @param modInhib
-	 * @param modTInhib
-	 * @param modCat
+	 * @param enzymes
+	 * @param activators
+	 * @param transActivators
+	 * @param inhibitors
+	 * @param transInhibitors
+	 * @param nonEnzymeCatalysts
 	 * @return
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
-	abstract ASTNode createKineticEquation(List<String> modE,
-			List<String> modActi, List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException;
+	abstract ASTNode createKineticEquation(List<String> enzymes,
+			List<String> activators, List<String> transActivators,
+			List<String> inhibitors, List<String> transInhibitors,
+			List<String> nonEnzymeCatalysts)
+			throws RateLawNotApplicableException;
 
 	/**
 	 * Concatenates the given name parts of the identifier and returns a global
@@ -519,6 +518,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * 
 	 * @param catalyst
+	 *            Identifier of the catalyst. Can be null.
 	 * @return
 	 */
 	Parameter parameterAssociationConst(String catalyst) {
@@ -548,15 +548,19 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * biochemical cooperative inhibitor substrate coefficient.
 	 * 
-	 * @param name
+	 * @param aORb
+	 *            a character to specify this parameter. Allowed values are 'a'
+	 *            or 'b'.
 	 * @param inhibitor
+	 *            Identifier of the inhibitory species. Can be null.
 	 * @param enzyme
+	 *            Identifier of the catralyzing enzyme. Can be null.
 	 * @return
 	 */
-	Parameter parameterCooperativeInhibitorSubstrateCoefficient(String name,
+	Parameter parameterCooperativeInhibitorSubstrateCoefficient(char aORb,
 			String inhibitor, String enzyme) {
 		StringBuffer id = new StringBuffer();
-		id.append(name.replace(' ', '_'));
+		id.append(aORb);
 		if (inhibitor != null)
 			StringTools.append(id, underscore, inhibitor);
 		if (enzyme != null)
@@ -572,8 +576,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * Dissociation constant in mass action kinetics
 	 * 
-	 * 
 	 * @param catalyst
+	 *            Identifier of the catalyzing species. Can be null.
 	 * @return
 	 */
 	Parameter parameterDissociationConst(String catalyst) {
@@ -603,7 +607,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * Equilibrium constant of the parent reaction.
 	 * 
-	 * @return
+	 * @return A new or an existing equilibrium constant for the reaction.
 	 */
 	Parameter parameterEquilibriumConstant() {
 		String reactionID = getParentSBMLObject().getId();
@@ -632,7 +636,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * Bolzman's gas constant.
 	 * 
-	 * @return
+	 * @return A new or the existing gas constant parameter from the model
+	 *         (global parameter).
 	 */
 	Parameter parameterGasConstant() {
 		Parameter R = createOrGetGlobalParameter("R");
@@ -649,6 +654,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * Hill coefficient.
 	 * 
 	 * @param enzyme
+	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
 	Parameter parameterHillCoefficient(String enzyme) {
@@ -670,6 +676,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * Activation constant.
 	 * 
 	 * @param activatorSpecies
+	 *            Identifier of the activatory species. Must not be null.
 	 * @return
 	 */
 	Parameter parameterKa(String activatorSpecies) {
@@ -686,19 +693,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 					.getSubstanceUnitsInstance());
 		}
 		return kA;
-	}
-
-	/**
-	 * Catalytic constant
-	 * 
-	 * @param enzyme
-	 *            the id of the enzyme that catalyzes this reaction
-	 * @param forward
-	 *            forward or reverse (true or false).
-	 * @return
-	 */
-	Parameter parameterKcat(String enzyme, boolean forward) {
-		return parameterKcatOrVmax(enzyme, forward);
 	}
 
 	/**
@@ -741,9 +735,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				 * bringToConcentration ? unitmMperSecond() :
 				 */
 				Model model = getModel();
-				Species e = model.getSpecies(enzyme);
-				kr.setUnits(unitSubstancePerTime(e != null ? e
-						.getSubstanceUnitsInstance() : model
+				kr.setUnits(unitSubstancePerTime(model
 						.getUnitDefinition("substance"), model
 						.getUnitDefinition("time")));
 			}
@@ -755,7 +747,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * energy constant of given species
 	 * 
 	 * @param species
-	 * @return
+	 *            Identifier of the species for which this global parameter
+	 *            should be created. Must not be null.
+	 * @return A new or an existing global parameter representing the KG
+	 *         parameter for the given species.
 	 */
 	Parameter parameterKG(String species) {
 		Parameter kG = createOrGetGlobalParameter("kG_", species);
@@ -771,7 +766,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * Inhibitory constant
 	 * 
 	 * @param inhibitorSpecies
-	 *            species that lowers this velocity.
+	 *            species that lowers this velocity. Must not be null.
 	 * @return
 	 */
 	Parameter parameterKi(String inhibitorSpecies) {
@@ -782,7 +777,11 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * Inhibitory constant in an enzyme catalyzed reaction.
 	 * 
 	 * @param inhibitorSpecies
+	 *            Identifier of an inhibitory species in this reaction. Must not
+	 *            be null.
 	 * @param enzyme
+	 *            Identifier of a catalyzing enzyme in this reaction. Can be
+	 *            null.
 	 * @return
 	 */
 	Parameter parameterKi(String inhibitorSpecies, String enzyme) {
@@ -790,9 +789,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
+	 * Inhibitory constant.
 	 * 
 	 * @param inhibitorSpecies
+	 *            Must not be null.
 	 * @param enzymeID
+	 *            can be null.
 	 * @param bindingNum
 	 *            if <= 0 not considered.
 	 * @return
@@ -827,12 +829,18 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * Half saturation constant.
 	 * 
+	 * @param species
+	 *            Must not be null.
 	 * @param enzyme
+	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
 	Parameter parameterKS(Species species, String enzyme) {
-		Parameter kS = createOrGetParameter("kSp_", getParentSBMLObject()
+		StringBuffer id = StringTools.concat("kSp_", getParentSBMLObject()
 				.getId());
+		if (enzyme != null)
+			StringTools.append(id, underscore, enzyme);
+		Parameter kS = createOrGetParameter(id.toString());
 		if (!kS.isSetSBOTerm())
 			kS.setSBOTerm(194);
 		if (!kS.isSetUnits()) {
@@ -850,7 +858,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * Michaelis constant.
 	 * 
 	 * @param species
+	 *            Must not be null.
 	 * @param enzyme
+	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
 	Parameter parameterMichaelis(String species, String enzyme) {
@@ -879,7 +889,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * Michaelis constant.
 	 * 
 	 * @param species
+	 *            Must not be null.
 	 * @param enzyme
+	 *            identifier of the catalyzing enzyme. Can be null.
 	 * @param substrate
 	 *            If true it returns the Michaels constant for substrate, else
 	 *            the Michaelis constant for the product.
@@ -897,7 +909,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * this reaction.
 	 * 
 	 * @param enzyme
+	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @param inhibitor
+	 *            Identifier of the inhibitory species. Can be null.
 	 * @return
 	 */
 	Parameter parameterNumBindingSites(String enzyme, String inhibitor) {
@@ -919,6 +933,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * Rho activator according to Liebermeister et al.
 	 * 
 	 * @param species
+	 *            Identifier of the species for which this parameter is to be
+	 *            created. Must not be null.
 	 * @return
 	 */
 	Parameter parameterRhoActivation(String species) {
@@ -933,6 +949,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * standard chemical potential
 	 * 
 	 * @param species
+	 *            Identifier of the reacting species whose potential parameter
+	 *            is to be created. Must not be null.
 	 * @return
 	 */
 	Parameter parameterStandardChemicalPotential(String species) {
@@ -950,7 +968,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * Standard Temperature
 	 * 
-	 * @return
+	 * @return Temperature parameter with standard value of 288.15 K.
 	 */
 	Parameter parameterTemperature() {
 		Parameter T = createOrGetGlobalParameter("T");
@@ -969,7 +987,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * Creates and annotates the velocity constant for the reaction with the
 	 * given id and the number of enzymes.
 	 * 
-	 * @param numEnzymes
+	 * @param enzyme
+	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
 	Parameter parameterVelocityConstant(String enzyme) {
@@ -997,8 +1016,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 					kVr.setUnits(unitSubstancePerSizePerTime(model
 							.getUnitDefinition("volume")));
 				} else {
-					kVr.setUnits(unitSubstancePerTime(model.getSpecies(enzyme)
-							.getSubstanceUnitsInstance(), model
+					kVr.setUnits(unitSubstancePerTime(model
+							.getUnitDefinition("substance"), model
 							.getUnitDefinition("time")));
 				}
 			}

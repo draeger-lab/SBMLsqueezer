@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -28,7 +27,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * TODO: comment missing
+ * Kinetic law that describes the ping-pong reaction mechanism.
  * 
  * @since 1.0
  * @version
@@ -43,12 +42,13 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
+	 * 
 	 * @param parentReaction
+	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public PingPongMechanism(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
@@ -63,7 +63,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
 
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics

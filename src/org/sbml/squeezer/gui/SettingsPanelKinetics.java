@@ -52,7 +52,8 @@ import org.sbml.squeezer.SBMLsqueezer;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Nov 15, 2007
  */
 public class SettingsPanelKinetics extends JPanel implements ChangeListener,
@@ -105,7 +106,18 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 
 	private Properties settings;
 
+	/**
+	 * 
+	 */
 	private JSpinner jSpinnerDefaultParamValue;
+	/**
+	 * 
+	 */
+	private JSpinner jSpinnerDefaultSpeciesValue;
+	/**
+	 * 
+	 */
+	private JSpinner jSpinnerDefaultCompartmentSize;
 
 	/**
 	 * 
@@ -216,14 +228,39 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				new SpinnerNumberModel(((Integer) settings
 						.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS)).intValue(),
 						2, 10, 1));
-		jSpinnerMaxRealisticNumOfReactants.setToolTipText(GUITools.toHTML(
-				"Specifiy how many reactants are at most likely to collide.",
-				40));
+		jSpinnerMaxRealisticNumOfReactants
+				.setToolTipText(GUITools
+						.toHTML(
+								"Specifiy how many reactants are at most likely to collide. This option is only available if warnings should be displayed at all.",
+								40));
+		jSpinnerDefaultCompartmentSize = new JSpinner(new SpinnerNumberModel(
+				Double.parseDouble(settings.get(
+						CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE)
+						.toString()), 0, 9999.9, .1));
+		jSpinnerDefaultCompartmentSize
+				.setToolTipText(GUITools
+						.toHTML(
+								"For compartments that are not yet initialized, SBMLsqueezer will use this value as the default initial size.",
+								40));
+		jSpinnerDefaultSpeciesValue = new JSpinner(new SpinnerNumberModel(
+				Double.parseDouble(settings.get(
+						CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE).toString()),
+				0, 9999.9, .1));
+		jSpinnerDefaultSpeciesValue
+				.setToolTipText(GUITools
+						.toHTML(
+								"If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species depending on its hasOnlySubstanceUnits value, i.e., for species that are interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts.",
+								40));
 		jSpinnerDefaultParamValue = new JSpinner(new SpinnerNumberModel(
 				Double
 						.parseDouble(settings.get(
 								CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS)
 								.toString()), 0, 9999.9, .1));
+		jSpinnerDefaultParamValue
+				.setToolTipText(GUITools
+						.toHTML(
+								"Specifiy the default value for newly created parameters.",
+								40));
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jCheckBoxSetBoundaryCondition, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
@@ -236,10 +273,28 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				jCheckBoxWarnings, 0, 2, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerMaxRealisticNumOfReactants, 1, 2, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JPanel(),
+				0, 3, 2, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
-				"Default value for new parameters:"), 0, 3, 1, 1, 1, 1);
+				GUITools.toHTML("Default initial size for compartments:", 30)),
+				0, 4, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
-				jSpinnerDefaultParamValue, 1, 3, 1, 1, 1, 1);
+				jSpinnerDefaultCompartmentSize, 1, 4, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JPanel(),
+				0, 5, 2, 1, 1, 0);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
+				GUITools.toHTML(
+						"Default initial amount or concentration for species:",
+						30)), 0, 6, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
+				jSpinnerDefaultSpeciesValue, 1, 6, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JPanel(),
+				0, 7, 2, 1, 1, 0);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
+				GUITools.toHTML("Default value for new parameters:", 30)), 0,
+				8, 1, 1, 1, 1);
+		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
+				jSpinnerDefaultParamValue, 1, 8, 1, 1, 1, 1);
 
 		// Second Panel
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
@@ -438,7 +493,7 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jComboBoxTypeStandardVersion
 				.setToolTipText(GUITools
 						.toHTML(
-								"Select the version of the standardised kinetic equations. These options are described in the publications of Liebermeister et al.",
+								"Select the version of the standardised kinetic equations. These options are described in the publications of Liebermeister et al. This option can only be accessed if all reactions are modeled reversibly.",
 								40));
 		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
 		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
@@ -463,12 +518,12 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 				1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, layout, jPanelSettingsReversibility, 1,
 				1, 1, 1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelSettingsEnzymes, 0, 2, 2,
-				1, 1, 1);
 		LayoutHelper.addComponent(this, layout, jPanelTypeUnitConsistency, 0,
-				3, 1, 1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 1, 3,
+				2, 1, 1, 1, 1);
+		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 1, 2,
 				1, 1, 1, 1);
+		LayoutHelper.addComponent(this, layout, jPanelSettingsEnzymes, 0, 3, 2,
+				1, 1, 1);
 
 		GUITools.setAllBackground(this, Color.WHITE);
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -478,6 +533,8 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jCheckBoxAddAllParametersGlobally.addItemListener(this);
 		jCheckBoxWarnings.addItemListener(this);
 		jSpinnerMaxRealisticNumOfReactants.addChangeListener(this);
+		jSpinnerDefaultCompartmentSize.addChangeListener(this);
+		jSpinnerDefaultSpeciesValue.addChangeListener(this);
 		jSpinnerDefaultParamValue.addChangeListener(this);
 		jRadioButtonGenerateForAllReactions.addItemListener(this);
 		jRadioButtonForceReacRev.addItemListener(this);
@@ -493,12 +550,18 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jComboBoxTypeStandardVersion.addItemListener(this);
 		jCheckBoxSetBoundaryCondition.addItemListener(this);
 		jCheckBoxRemoveUnnecessaryPandU.addItemListener(this);
+
+		jSpinnerMaxRealisticNumOfReactants.setEnabled(jCheckBoxWarnings
+				.isSelected());
+		jComboBoxTypeStandardVersion.setEnabled(jRadioButtonForceReacRev
+				.isSelected());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jCheckBoxTreatAllReactionsAsEnzyeReaction)) {
@@ -521,6 +584,8 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		} else if (e.getSource().equals(jRadioButtonForceReacRev)) {
 			settings.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE, Boolean
 					.valueOf(jRadioButtonForceReacRev.isSelected()));
+			jComboBoxTypeStandardVersion.setEnabled(jRadioButtonForceReacRev
+					.isSelected());
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeRNA)) {
 			settings.put(CfgKeys.POSSIBLE_ENZYME_RNA, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeRNA.isSelected()));
@@ -615,13 +680,24 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent )
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(jSpinnerMaxRealisticNumOfReactants)) {
 			settings.put(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS, Integer
 					.parseInt(jSpinnerMaxRealisticNumOfReactants.getValue()
 							.toString()));
+		} else if (e.getSource().equals(jSpinnerDefaultCompartmentSize)) {
+			settings.put(CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE, Double
+					.valueOf(jSpinnerDefaultCompartmentSize.getValue()
+							.toString()));
+		} else if (e.getSource().equals(jSpinnerDefaultSpeciesValue)) {
+			settings
+					.put(CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE, Double
+							.valueOf(jSpinnerDefaultSpeciesValue.getValue()
+									.toString()));
 		} else if (e.getSource().equals(jSpinnerDefaultParamValue)) {
 			settings.put(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS, Double
 					.valueOf(jSpinnerDefaultParamValue.getValue().toString()));
