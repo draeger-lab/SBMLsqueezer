@@ -109,7 +109,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param owner
 	 * @param settings
 	 */
-	public KineticLawSelectionDialog(JFrame owner, Properties settings) {
+	private KineticLawSelectionDialog(JFrame owner, Properties settings) {
 		super(owner, "SBMLsqueezer", true);
 		this.settings = settings;
 		this.sbmlIO = null;
@@ -414,6 +414,95 @@ public class KineticLawSelectionDialog extends JDialog implements
 	}
 
 	/**
+	 * Method that indicates whether or not changes have been introduced into
+	 * the given model.
+	 * 
+	 * @return True if kinetic equations and parameters or anything else were
+	 *         changed by SBMLsqueezer.
+	 */
+	public boolean isKineticsAndParametersStoredInSBML() {
+		return KineticsAndParametersStoredInSBML;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbmlsqueezer.kinetics.LawListener#totalNumber(int)
+	 */
+	public void totalNumber(int count) {
+		progressBar = new JProgressBar(0, count);
+		progressBar.setToolTipText("Storing kinetic laws");
+		progressBar.setValue(0);
+		progressDialog = new JDialog(this);
+		GridBagLayout layout = new GridBagLayout();
+		progressDialog.setLayout(layout);
+		LayoutHelper.addComponent(progressDialog.getContentPane(), layout,
+				progressBar, 0, 0, 1, 1, 1, 1);
+		progressDialog.pack();
+		progressDialog.setAlwaysOnTop(true);
+		progressDialog.setLocationRelativeTo(null);
+		progressDialog.setVisible(false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 */
+	public void windowActivated(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 */
+	public void windowClosed(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 */
+	public void windowClosing(WindowEvent e) {
+		if (e.getSource() instanceof JHelpBrowser)
+			helpButton.setEnabled(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent )
+	 */
+	public void windowDeactivated(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent )
+	 */
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 */
+	public void windowIconified(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 */
+	public void windowOpened(WindowEvent e) {
+	}
+
+	/**
 	 * This method allows to write the generated kinetic equations to an ASCII
 	 * or TeX file.
 	 */
@@ -583,17 +672,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 		return p;
 	}
 
-	/**
-	 * Method that indicates whether or not changes have been introduced into
-	 * the given model.
-	 * 
-	 * @return True if kinetic equations and parameters or anything else were
-	 *         changed by SBMLsqueezer.
-	 */
-	public boolean isKineticsAndParametersStoredInSBML() {
-		return KineticsAndParametersStoredInSBML;
-	}
-
 	private void showSettingsPanel() {
 		options.setIcon(GUITools.DOWN_ARROW);
 		options.setIconTextGap(5);
@@ -613,83 +691,5 @@ public class KineticLawSelectionDialog extends JDialog implements
 		 */
 		pack();
 		validate();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbmlsqueezer.kinetics.LawListener#totalNumber(int)
-	 */
-	public void totalNumber(int count) {
-		progressBar = new JProgressBar(0, count);
-		progressBar.setToolTipText("Storing kinetic laws");
-		progressBar.setValue(0);
-		progressDialog = new JDialog(this);
-		GridBagLayout layout = new GridBagLayout();
-		progressDialog.setLayout(layout);
-		LayoutHelper.addComponent(progressDialog.getContentPane(), layout,
-				progressBar, 0, 0, 1, 1, 1, 1);
-		progressDialog.pack();
-		progressDialog.setAlwaysOnTop(true);
-		progressDialog.setLocationRelativeTo(null);
-		progressDialog.setVisible(false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	public void windowActivated(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
-	 */
-	public void windowClosed(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-	 */
-	public void windowClosing(WindowEvent e) {
-		if (e.getSource() instanceof JHelpBrowser)
-			helpButton.setEnabled(true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent )
-	 */
-	public void windowDeactivated(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent )
-	 */
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
-	 */
-	public void windowIconified(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
-	 */
-	public void windowOpened(WindowEvent e) {
 	}
 }

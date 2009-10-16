@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -46,12 +45,11 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	/**
 	 * 
 	 * @param parentReaction
-	 * @param type
+	 * @param types
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public ReversiblePowerLaw(Reaction parentReaction, Object... types)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, types);
 		setSBOTerm(42);
 	}
@@ -68,7 +66,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		int i;
 		Reaction r = getParentSBMLObject();
 		unsetSBOTerm();

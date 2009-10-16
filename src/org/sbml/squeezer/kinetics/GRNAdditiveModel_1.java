@@ -18,8 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
-
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
@@ -41,13 +39,13 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModel implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
+	 * 
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public GRNAdditiveModel_1(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 

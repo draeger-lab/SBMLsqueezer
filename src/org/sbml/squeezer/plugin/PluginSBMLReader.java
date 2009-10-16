@@ -19,6 +19,7 @@
 package org.sbml.squeezer.plugin;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import jp.sbi.celldesigner.plugin.PluginAlgebraicRule;
@@ -60,6 +61,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
@@ -579,16 +581,28 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLReader#convertDate(java.lang.Object)
+	 */
 	public Date convertDate(Object d) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String getWarnings() {
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLReader#getWarnings()
+	 */
+	public List<SBMLException> getWarnings() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLReader#getNumErrors()
+	 */
 	public int getNumErrors() {
 		// TODO Auto-generated method stub
 		return 0;

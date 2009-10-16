@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.io.AbstractSBMLReader;
@@ -650,7 +651,8 @@ public class SBMLsqueezer implements LawListener {
 			if (sbmlIo.getNumErrors() > 0
 					&& ((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue())
-				System.err.println(sbmlIo.getWarnings());
+				for (SBMLException exc : sbmlIo.getWarnings())
+					System.err.println(exc.getMessage());
 			// Do a lot of other stuff...
 			checkForUpdate(false);
 			showAboutMsg();

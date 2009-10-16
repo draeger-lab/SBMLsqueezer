@@ -43,7 +43,6 @@ import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
@@ -302,11 +301,17 @@ public class KineticLawGenerator {
 			}
 		}
 		UnitDefinition ud = miniModel.getUnitDefinition("substance");
-		ud.getListOfUnits().getFirst().setScale(-3);
-		ud.setName("mmole");
+		Unit u = ud.getListOfUnits().getFirst();
+		if (u.isMole()) {
+			u.setScale(-3);
+			ud.setName("mmole");
+		}
 		ud = miniModel.getUnitDefinition("volume");
-		ud.getListOfUnits().getFirst().setScale(-3);
-		ud.setName("ml");
+		u = ud.getListOfUnits().getFirst();
+		if (u.isLitre()) {
+			u.setScale(-3);
+			ud.setName("ml");
+		}
 		return miniModel;
 	}
 
@@ -488,47 +493,46 @@ public class KineticLawGenerator {
 	 * 
 	 * @param reaction
 	 * @param initialValue
+	 * @param sizeValue
 	 */
 	private void setInitialConcentrationTo(Reaction reaction,
-			double initialValue) {
+			double initialValue, double sizeValue) {
+		Species species;
 		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
-			Species species = reaction.getReactant(reactant)
-					.getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d
-					|| Double.isNaN(species.getInitialConcentration())) {
-				species.setInitialConcentration(initialValue);
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			} else if (!species.getHasOnlySubstanceUnits()) {
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			}
+			species = reaction.getReactant(reactant).getSpeciesInstance();
+			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
+					species.getCompartmentInstance(), sizeValue);
 		}
 		for (int product = 0; product < reaction.getNumProducts(); product++) {
-			Species species = reaction.getProduct(product).getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d
-					|| Double.isNaN(species.getInitialConcentration())) {
-				species.setInitialConcentration(initialValue);
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			} else if (!species.getHasOnlySubstanceUnits()) {
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			}
+			species = reaction.getProduct(product).getSpeciesInstance();
+			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
+					species.getCompartmentInstance(), sizeValue);
 		}
 		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
-			Species species = reaction.getModifier(modifier)
-					.getSpeciesInstance();
-			if (species.getInitialConcentration() == 0d
-					|| Double.isNaN(species.getInitialConcentration())) {
-				species.setInitialConcentration(initialValue);
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			} else if (!species.getHasOnlySubstanceUnits()) {
-				species.setHasOnlySubstanceUnits(false);
-				species.stateChanged();
-			}
+			species = reaction.getModifier(modifier).getSpeciesInstance();
+			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
+					species.getCompartmentInstance(), sizeValue);
 		}
+	}
+
+	/**
+	 * 
+	 * @param species
+	 * @param initialValue
+	 * @param compartmentInstance
+	 * @param sizeValue
+	 */
+	private void initializeSpeciesAndCompartmentIfNecessary(Species species,
+			double initialValue, Compartment compartment, double sizeValue) {
+		if (!species.isSetInitialAmount()
+				&& !species.isSetInitialConcentration()) {
+			if (species.getHasOnlySubstanceUnits())
+				species.setInitialAmount(initialValue);
+			else
+				species.setInitialConcentration(initialValue);
+		}
+		if (!compartment.isSetSize())
+			compartment.setSize(sizeValue);
 	}
 
 	/**
@@ -765,6 +769,11 @@ public class KineticLawGenerator {
 					&& setBoundary)
 				setBoundaryCondition(species, true);
 		}
+		setInitialConcentrationTo(reaction, Double.parseDouble(settings.get(
+				CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE).toString()), Double
+				.parseDouble(settings.get(
+						CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE)
+						.toString()));
 		storeParamters(reaction);
 		if (removeParametersAndStoreUnits) {
 			if (((Boolean) settings

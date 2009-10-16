@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -28,12 +27,13 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * TODO: comment missing
+ * Rate law for the bi-uni or bi-bi ordered mechanism.
  * 
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class OrderedMechanism extends GeneralizedMassAction implements
@@ -42,27 +42,29 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		InterfaceModulatedKinetics {
 
 	/**
+	 * 
 	 * @param parentReaction
+	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public OrderedMechanism(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 * (java.util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
-			throws RateLawNotApplicableException, IllegalFormatException {
+			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
 		setSBOTerm(429);
 		double stoichiometryRight = 0;
@@ -328,13 +330,13 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				numeratorReverse = ASTNode.times(numeratorReverse,
 						speciesTerm(specRefP1));
 				numerator = ASTNode.diff(numeratorForward, numeratorReverse);
-				denominator = ASTNode.sum(denominator, ASTNode
-						.frac(
+				denominator.plus(
+						ASTNode.frac(
 								ASTNode.times(new ASTNode(p_kMr1, this),
 										speciesTerm(specRefE2),
 										speciesTerm(specRefP1)), ASTNode.times(
-										this, p_kIr1, p_kMr2, p_kIp1)), ASTNode
-						.frac(this, specRefP1, p_kMp1));
+										this, p_kIr1, p_kMr2, p_kIp1))).plus(
+						speciesTerm(specRefP1).divideBy(p_kMp1));
 			}
 
 			/*

@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.kinetics;
 
-import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -40,14 +39,13 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 		InterfaceZeroProducts, InterfaceModulatedKinetics {
 
 	/**
+	 * 
 	 * @param parentReaction
-	 * @param model
+	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
-	 * @throws IllegalFormatException
 	 */
 	public ZerothOrderForwardGMAK(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException,
-			IllegalFormatException {
+			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
