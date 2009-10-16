@@ -88,26 +88,42 @@ import org.sbml.libsbml.libsbmlConstants;
  */
 public class PluginSBMLWriter extends AbstractSBMLWriter {
 
+	/**
+	 * 
+	 */
 	private PluginModel pluginModel;
+	private SBMLsqueezerPlugin plugin;
 
 	/**
 	 * 
 	 * @param plugin
 	 */
 	public PluginSBMLWriter(SBMLsqueezerPlugin plugin) {
-		// TODO Auto-generated constructor stub
+		this.plugin = plugin;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#convertDate(java.util.Date)
+	 */
 	public Object convertDate(Date date) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#getNumErrors(java.lang.Object)
+	 */
 	public int getNumErrors(Object sbase) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#getWarnings(java.lang.Object)
+	 */
 	public String getWarnings(Object sbmlDocument) {
 		// TODO Auto-generated method stub
 		return null;
@@ -396,6 +412,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveCompartmentProperties(org.sbml.jsbml.Compartment, java.lang.Object)
+	 */
 	public void saveCompartmentProperties(Compartment c, Object compartment) {
 		if (!(compartment instanceof PluginCompartment))
 			throw new IllegalArgumentException(
@@ -417,11 +437,19 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			comp.setConstant(c.getConstant());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveCVTermProperties(org.sbml.jsbml.CVTerm, java.lang.Object)
+	 */
 	public void saveCVTermProperties(CVTerm cvt, Object term) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveEventProperties(org.sbml.jsbml.Event, java.lang.Object)
+	 */
 	public void saveEventProperties(Event ev, Object event)
 			throws SBMLException {
 		if (!(event instanceof PluginEvent))
@@ -480,6 +508,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveKineticLawProperties(org.sbml.jsbml.KineticLaw, java.lang.Object)
+	 */
 	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw)
 			throws SBMLException {
 		if (!(kineticLaw instanceof PluginKineticLaw))
@@ -507,6 +539,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		saveMathContainerProperties(kl, libKinLaw);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveMathContainerProperties(org.sbml.jsbml.MathContainer, java.lang.Object)
+	 */
 	public void saveMathContainerProperties(MathContainer mc, Object sbase)
 			throws SBMLException {
 		if (mc instanceof NamedSBase)
@@ -588,11 +624,19 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		// }
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveModelHistoryProperties(org.sbml.jsbml.ModelHistory, java.lang.Object)
+	 */
 	public void saveModelHistoryProperties(ModelHistory mh, Object modelHistory) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveModifierSpeciesReferenceProperties(org.sbml.jsbml.ModifierSpeciesReference, java.lang.Object)
+	 */
 	public void saveModifierSpeciesReferenceProperties(
 			ModifierSpeciesReference modifierSpeciesReference, Object msr) {
 		if (!(msr instanceof PluginModifierSpeciesReference))
@@ -610,6 +654,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveParameterProperties(org.sbml.jsbml.Parameter, java.lang.Object)
+	 */
 	public void saveParameterProperties(Parameter p, Object parameter) {
 		if (!(parameter instanceof PluginParameter))
 			throw new IllegalArgumentException(
@@ -624,6 +672,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			po.setUnits(p.getUnits());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveReactionProperties(org.sbml.jsbml.Reaction, java.lang.Object)
+	 */
 	public void saveReactionProperties(Reaction r, Object reaction)
 			throws SBMLException {
 		if (!(reaction instanceof PluginReaction))
@@ -733,6 +785,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#saveSpeciesProperties(org.sbml.jsbml.Species, java.lang.Object)
+	 */
 	public void saveSpeciesProperties(Species s, Object species) {
 		if (!(species instanceof PluginSpecies))
 			throw new IllegalArgumentException(
@@ -799,6 +855,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			sp.setStoichiometry(sr.getStoichiometry());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeCompartment(org.sbml.jsbml.Compartment)
+	 */
 	public PluginCompartment writeCompartment(Compartment compartment) {
 		PluginCompartment c = new PluginCompartment(compartment
 				.getCompartmentType());
@@ -821,6 +881,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return c;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeCompartmentType(org.sbml.jsbml.CompartmentType)
+	 */
 	public PluginCompartmentType writeCompartmentType(
 			CompartmentType compartmentType) {
 
@@ -832,6 +896,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return ct;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeConstraint(org.sbml.jsbml.Constraint)
+	 */
 	public PluginConstraint writeConstraint(Constraint constraint) {
 		PluginConstraint c = new PluginConstraint(constraint.getFormula());
 		saveSBaseProperties(constraint, c);
@@ -846,15 +914,27 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return c;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeCVTerm(org.sbml.jsbml.CVTerm)
+	 */
 	public Object writeCVTerm(CVTerm cvt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeDelay(org.sbml.jsbml.Delay)
+	 */
 	public ASTNode writeDelay(Delay delay) {
 		return convert(delay.getMath());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeEvent(org.sbml.jsbml.Event)
+	 */
 	public PluginEvent writeEvent(Event event) throws SBMLException {
 		PluginEvent e = new PluginEvent(event.getId());
 		saveSBaseProperties(event, e);
@@ -872,6 +952,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return e;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeEventAssignment(org.sbml.jsbml.EventAssignment, java.lang.Object[])
+	 */
 	public PluginEventAssignment writeEventAssignment(
 			EventAssignment eventAssignment, Object... ev) throws SBMLException {
 		if (ev.length != 1 || !(ev[0] instanceof PluginEvent))
@@ -885,6 +969,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return ea;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeFunctionDefinition(org.sbml.jsbml.FunctionDefinition)
+	 */
 	public PluginFunctionDefinition writeFunctionDefinition(
 			FunctionDefinition functionDefinition) throws SBMLException {
 		PluginFunctionDefinition fd = new PluginFunctionDefinition(
@@ -893,6 +981,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return fd;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeInitialAssignment(org.sbml.jsbml.InitialAssignment)
+	 */
 	public PluginInitialAssignment writeInitialAssignment(
 			InitialAssignment initialAssignment) throws SBMLException {
 		PluginInitialAssignment ia = new PluginInitialAssignment(
@@ -928,6 +1020,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeModifierSpeciesReference(org.sbml.jsbml.ModifierSpeciesReference, java.lang.Object[])
+	 */
 	public PluginModifierSpeciesReference writeModifierSpeciesReference(
 			ModifierSpeciesReference modifierSpeciesReference, Object... parent) {
 		if (parent.length != 1 || !(parent[0] instanceof PluginReaction))
@@ -1030,6 +1126,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return r;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object, java.lang.String)
+	 */
 	public boolean writeSBML(Object sbmlDocument, String filename) {
 		// TODO Auto-generated method stub
 		return false;
@@ -1099,6 +1199,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return sr;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeSpeciesType(org.sbml.jsbml.SpeciesType)
+	 */
 	public PluginSpeciesType writeSpeciesType(SpeciesType speciesType) {
 		PluginSpeciesType st = new PluginSpeciesType(speciesType.getId());
 		saveSBaseProperties(speciesType, st);
@@ -1263,6 +1367,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return u;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#writeUnitDefinition(org.sbml.jsbml.UnitDefinition)
+	 */
 	public PluginUnitDefinition writeUnitDefinition(
 			UnitDefinition unitDefinition) {
 		PluginUnitDefinition ud = new PluginUnitDefinition(unitDefinition
@@ -1282,7 +1390,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @param unit
 	 * @return
 	 */
-
 	private boolean equal(Unit u, PluginUnit unit) {
 		if (u == null || unit == null)
 			return false;

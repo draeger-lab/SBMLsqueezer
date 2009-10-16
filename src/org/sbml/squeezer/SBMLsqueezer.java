@@ -21,10 +21,9 @@ package org.sbml.squeezer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -140,10 +139,24 @@ public class SBMLsqueezer implements LawListener {
 		kineticsZeroProducts = new HashSet<String>();
 		kineticsModulated = new HashSet<String>();
 		kineticsIntStoichiometry = new HashSet<String>();
-		Class<?> l[] = Reflect.getAllClassesInPackage(
-				SBMLsqueezer.KINETICS_PACKAGE, false, true,
-				BasicKineticLaw.class);
-		for (Class<?> c : l) {
+		Class<?> classes[] = Reflect.getAllClassesInPackage(KINETICS_PACKAGE,
+				false, true, BasicKineticLaw.class);
+		if (classes == null || classes.length == 0) {
+			HashSet<Class<?>> set = new HashSet<Class<?>>();
+			String jarPath = "plugin/";
+			boolean tryDir = true;
+			if (tryDir) {
+				File f = new File(jarPath);
+				if (f.isDirectory()) {
+					String[] pathElements = f.list();
+					for (String entry : pathElements)
+						Reflect.getClassesFromJarFltr(set, jarPath + entry,
+								KINETICS_PACKAGE, true, BasicKineticLaw.class);
+				}
+			}
+			classes = Reflect.hashSetToClassArray(set, true);
+		}
+		for (Class<?> c : classes) {
 			if (!Modifier.isAbstract(c.getModifiers())) {
 				Set<Class<?>> s = new HashSet<Class<?>>();
 				for (Class<?> interf : c.getInterfaces())
@@ -176,6 +189,9 @@ public class SBMLsqueezer implements LawListener {
 		}
 		System.out.println("done in " + (System.currentTimeMillis() - time)
 				+ " ms");
+		System.out.print("loading user settings...");
+		settings = initProperties();
+		System.out.println(" done.");
 	}
 
 	/**
@@ -515,8 +531,8 @@ public class SBMLsqueezer implements LawListener {
 					if (!defaultKin.startsWith(KINETICS_PACKAGE))
 						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
 					props.put(k, defaultKin);
-					System.err.println("Invalid " + k.toString() + ' ' + val
-							+ "; using default " + defaultKin + '.');
+					System.err.printf("Invalid %s %s; using default %s.", k
+							.toString(), val, defaultKin);
 				}
 			}
 		}
@@ -567,15 +583,17 @@ public class SBMLsqueezer implements LawListener {
 	 */
 	private static void showAboutMsg() {
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(
-					Resource.class.getResource("html/about.htm").getFile()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					Resource.getInstance().getStreamFromResourceLocation(
+							"org/sbml/squeezer/resources/html/about.htm")));
 			String line;
 			while ((line = br.readLine()) != null) {
 				line = line.trim();
 				if (line.startsWith("<"))
 					continue;
 				line = line.replace("</a>", "");
-				line = line.replace("&#169;", "\uf8e9");
+				line = line.replace("&#246;", "\u00f6");
+				line = line.replace("&#169;", "\u00A9");
 				line = line.replace("&#228;", "\u00e4");
 				line = line.replace("&#252;", "\u00fc");
 				if (line.endsWith("<br>"))
@@ -586,8 +604,7 @@ public class SBMLsqueezer implements LawListener {
 				else
 					System.out.println(line);
 			}
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
+		} catch (Exception e) {
 		}
 	}
 
@@ -602,9 +619,13 @@ public class SBMLsqueezer implements LawListener {
 	 */
 	public SBMLsqueezer(AbstractSBMLReader sbmlReader,
 			AbstractSBMLWriter sbmlWriter) {
-		settings = initProperties();
-		sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 55; i++)
+			sb.append('-');
+		System.out.println(sb.toString());
 		showAboutMsg();
+		System.out.println(sb.toString());
+		sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
 	}
 
 	/**
@@ -614,9 +635,6 @@ public class SBMLsqueezer implements LawListener {
 	 *            Command line arguments.
 	 */
 	public SBMLsqueezer(String... args) {
-		System.out.print("loading user settings...");
-		settings = initProperties();
-		System.out.println(" done.");
 		System.out.print("scanning command line arguments...");
 		Properties p = analyzeCommandLineArguments(args);
 		for (Object key : p.keySet())

@@ -248,7 +248,7 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 				pos = i;
 			i++;
 		}
-		if (!oneIsSelected)
+		if (!oneIsSelected) // no one is selected
 			jRButton[pos].setSelected(true);
 		p.setBackground(Color.WHITE);
 		return p;

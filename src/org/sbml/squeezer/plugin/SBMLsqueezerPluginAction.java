@@ -25,7 +25,10 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 
 /**
- * @author draeger
+ * 
+ * @author Andreas Dr&auml;ger <a
+ *         href="mailto:andreas.draeger@uni-tuebingen.de">
+ *         andreas.draeger@uni-tuebingen.de</a>
  * 
  */
 public class SBMLsqueezerPluginAction extends PluginAction {
@@ -35,6 +38,9 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 	 */
 	private static final long serialVersionUID = 4134514954192751545L;
 
+	/**
+	 * 
+	 */
 	private SBMLsqueezerPlugin plugin;
 
 	/**

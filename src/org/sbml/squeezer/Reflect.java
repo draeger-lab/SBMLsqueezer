@@ -455,6 +455,10 @@ public class Reflect {
 						reqSuperCls);
 			}
 		}
+		return hashSetToClassArray(set, bSort);
+	}
+
+	public static Class<?>[] hashSetToClassArray(HashSet<Class<?>> set, boolean bSort) { 
 		Object[] clsArr = set.toArray();
 		if (bSort) {
 			Arrays.sort(clsArr, new ClassComparator<Object>());
@@ -464,7 +468,6 @@ public class Reflect {
 		list = Arrays.asList(clsArr);
 		return list.toArray(new Class[list.size()]);
 	}
-
 	/**
 	 * 
 	 * @return
@@ -480,7 +483,7 @@ public class Reflect {
 	 * @return
 	 */
 	public static String[] getValidCPArray() {
-		ArrayList<String> valids = getValidCPEntries();
+		ArrayList<String> valids = getValidCPEntries(getClassPathElements());
 		// vp = valids.toArray(dynCP); // this causes Matlab to crash meanly.
 		String[] vp = new String[valids.size()];
 		for (int i = 0; i < valids.size(); i++)
@@ -492,8 +495,8 @@ public class Reflect {
 	 * 
 	 * @return
 	 */
-	public static ArrayList<String> getValidCPEntries() {
-		String[] pathElements = getClassPathElements();
+	public static ArrayList<String> getValidCPEntries(String[] pathElements) {
+//		String[] pathElements = getClassPathElements();
 		File f;
 		ArrayList<String> valids = new ArrayList<String>(pathElements.length);
 		for (int i = 0; i < pathElements.length; i++) {
