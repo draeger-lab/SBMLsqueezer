@@ -20,6 +20,7 @@ package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -31,6 +32,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -378,14 +380,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * Checks if the model loaded as the last one contains any errors or
 	 * warnings.
 	 */
-	private void checkForSBMLErrors(Model m) {
-		if (sbmlIO.getNumErrors() > 0
-				&& ((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
-						.booleanValue()) {
+	public static final void checkForSBMLErrors(Component parent, Model m,
+			List<SBMLException> excl, boolean showWarnings) {
+		if (excl.size() > 0 && showWarnings) {
 			StringBuilder warnings = new StringBuilder();
-			for (SBMLException exc : sbmlIO.getWarnings())
+			for (SBMLException exc : excl) {
+				warnings.append("<p>");
 				warnings.append(exc.getMessage().replace("<", "&lt;").replace(
 						">", "&gt;"));
+				warnings.append("</p>");
+			}
 			JEditorPane area = new JEditorPane("text/html", GUITools
 					.toHTML(warnings.toString()));
 			area.setEditable(false);
@@ -394,16 +398,15 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scroll.setPreferredSize(new Dimension(450, 200));
-			JOptionPane.showMessageDialog(this, scroll, "SBML warnings",
+			JOptionPane.showMessageDialog(parent, scroll, "SBML warnings",
 					JOptionPane.WARNING_MESSAGE);
 			if (m == null) {
 				String message = "Unable to load this model "
 						+ "due to one or several errors. "
 						+ "Please use the SBML online validator "
 						+ "to check why this model is not correct.";
-				JOptionPane.showMessageDialog(this, GUITools
-						.toHTML(message, 40), "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(parent, GUITools.toHTML(message,
+						40), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -570,7 +573,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				Command.SQUEEZE, Command.TO_LATEX);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
 		for (Model m : sbmlIO.getListOfModels()) {
-			checkForSBMLErrors(m);
+			checkForSBMLErrors(this, m, sbmlIO.getWarnings(),
+					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+							.booleanValue());
 			if (m != null)
 				addModel(m);
 		}
@@ -589,7 +594,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private void readModel(File file) {
 		try {
 			Model model = sbmlIO.readModel(file.getAbsolutePath());
-			checkForSBMLErrors(model);
+			checkForSBMLErrors(this, model, sbmlIO.getWarnings(),
+					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+							.booleanValue());
 			if (model != null) {
 				addModel(model);
 				String path = file.getAbsolutePath();

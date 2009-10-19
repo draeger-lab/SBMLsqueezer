@@ -32,7 +32,7 @@ public enum CfgKeys {
 	 */
 	GUI,
 	/**
-	 * 
+	 * SBML input file.
 	 */
 	SBML_FILE,
 	/**
@@ -52,6 +52,10 @@ public enum CfgKeys {
 	 * warnings.
 	 */
 	SHOW_SBML_WARNINGS,
+	/**
+	 * Decide whether or not SBMLsqueezer should search for updates at start-up.
+	 */
+	CHECK_FOR_UPDATES,
 	/**
 	 * Possible values are:
 	 * <ul>

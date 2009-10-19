@@ -703,6 +703,12 @@ public class SBMLsqueezer implements LawListener {
 								.getAbsolutePath());
 						System.out.println(" done in "
 								+ (System.currentTimeMillis() - time) + " ms");
+						if (sbmlIo.getNumErrors() > 0
+								&& ((Boolean) settings
+										.get(CfgKeys.SHOW_SBML_WARNINGS))
+										.booleanValue())
+							for (SBMLException exc : sbmlIo.getWriteWarnings())
+								System.err.println(exc.getMessage());
 					} else
 						System.err.println("Could not write output to SBML.");
 				} catch (Throwable e) {
@@ -720,19 +726,21 @@ public class SBMLsqueezer implements LawListener {
 	 *            otherwise.
 	 */
 	public void checkForUpdate(final boolean gui) {
-		final SBMLsqueezer squeezer = this;
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					UpdateMessage.checkForUpdate(gui, squeezer);
-				} catch (IOException exc) {
-					// Don't annoy people
-					// JOptionPane.showMessageDialog(squeezer,
-					// exc.getMessage());
-					// exc.printStackTrace();
+		if (((Boolean) settings.get(CfgKeys.CHECK_FOR_UPDATES)).booleanValue()) {
+			final SBMLsqueezer squeezer = this;
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						UpdateMessage.checkForUpdate(gui, squeezer);
+					} catch (IOException exc) {
+						// Don't annoy people
+						// JOptionPane.showMessageDialog(squeezer,
+						// exc.getMessage());
+						// exc.printStackTrace();
+					}
 				}
-			}
-		}).start();
+			}).start();
+		}
 	}
 
 	/*

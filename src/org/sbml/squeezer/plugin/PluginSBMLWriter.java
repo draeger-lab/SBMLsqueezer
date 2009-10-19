@@ -19,6 +19,8 @@
 package org.sbml.squeezer.plugin;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import jp.sbi.celldesigner.plugin.PluginAlgebraicRule;
 import jp.sbi.celldesigner.plugin.PluginAssignmentRule;
@@ -43,6 +45,7 @@ import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginSpeciesType;
 import jp.sbi.celldesigner.plugin.PluginUnit;
 import jp.sbi.celldesigner.plugin.PluginUnitDefinition;
+import jp.sbi.celldesigner.plugin.util.PluginReactionSymbolType;
 
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
@@ -88,10 +91,6 @@ import org.sbml.libsbml.libsbmlConstants;
  */
 public class PluginSBMLWriter extends AbstractSBMLWriter {
 
-	/**
-	 * 
-	 */
-	private PluginModel pluginModel;
 	private SBMLsqueezerPlugin plugin;
 
 	/**
@@ -104,6 +103,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#convertDate(java.util.Date)
 	 */
 	public Object convertDate(Date date) {
@@ -113,6 +113,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#getNumErrors(java.lang.Object)
 	 */
 	public int getNumErrors(Object sbase) {
@@ -122,11 +123,11 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#getWarnings(java.lang.Object)
+	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#getWriteWarnings(java.lang.Object)
 	 */
-	public String getWarnings(Object sbmlDocument) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<SBMLException> getWriteWarnings(Object sbase) {
+		return new LinkedList<SBMLException>();
 	}
 
 	/*
@@ -140,35 +141,38 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		if (!(orig instanceof PluginModel))
 			throw new IllegalArgumentException(
 					"only instances of PluginModel can be considered.");
-		this.pluginModel = (PluginModel) orig;
+		PluginModel pluginModel = (PluginModel) orig;
 		int i;
 
 		// Function definitions
 		for (FunctionDefinition c : model.getListOfFunctionDefinitions()) {
-			if (this.pluginModel.getFunctionDefinition(c.getId()) == null)
-				this.pluginModel
-						.addFunctionDefinition(writeFunctionDefinition(c));
+			if (pluginModel.getFunctionDefinition(c.getId()) == null)
+				pluginModel.addFunctionDefinition(writeFunctionDefinition(c));
 			else
-				saveMathContainerProperties(c, this.pluginModel
+				saveMathContainerProperties(c, pluginModel
 						.getFunctionDefinition(c.getId()));
 		}
 		// remove unnecessary function definitions
-		for (i = this.pluginModel.getNumFunctionDefinitions() - 1; i >= 0; i--) {
-			PluginFunctionDefinition c = this.pluginModel
-					.getFunctionDefinition(i);
+		for (i = pluginModel.getNumFunctionDefinitions() - 1; i >= 0; i--) {
+			PluginFunctionDefinition c = pluginModel.getFunctionDefinition(i);
 			if (model.getFunctionDefinition(c.getId()) == null)
-				this.pluginModel.getListOfFunctionDefinitions().remove(i);
+				pluginModel.getListOfFunctionDefinitions().remove(i);
 		}
 
 		// Unit definitions
 		for (UnitDefinition ud : model.getListOfUnitDefinitions())
-			if (!ud.equals(UnitDefinition.substance(ud.getLevel(), ud.getVersion()))
-					&& !ud.equals(UnitDefinition.volume(ud.getLevel(), ud.getVersion()))
-					&& !ud.equals(UnitDefinition.area(ud.getLevel(), ud.getVersion()))
-					&& !ud.equals(UnitDefinition.length(ud.getLevel(), ud.getVersion()))
-					&& !ud.equals(UnitDefinition.time(ud.getLevel(), ud.getVersion()))) {
-				PluginUnitDefinition libU = this.pluginModel
-						.getUnitDefinition(ud.getId());
+			if (!ud.equals(UnitDefinition.substance(ud.getLevel(), ud
+					.getVersion()))
+					&& !ud.equals(UnitDefinition.volume(ud.getLevel(), ud
+							.getVersion()))
+					&& !ud.equals(UnitDefinition.area(ud.getLevel(), ud
+							.getVersion()))
+					&& !ud.equals(UnitDefinition.length(ud.getLevel(), ud
+							.getVersion()))
+					&& !ud.equals(UnitDefinition.time(ud.getLevel(), ud
+							.getVersion()))) {
+				PluginUnitDefinition libU = pluginModel.getUnitDefinition(ud
+						.getId());
 				if (libU != null) {
 					saveSBaseProperties(ud, libU);
 					for (Unit u : ud.getListOfUnits()) {
@@ -181,97 +185,94 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 							libU.addUnit(writeUnit(u));
 					}
 				} else
-					this.pluginModel.addUnitDefinition(writeUnitDefinition(ud));
+					pluginModel.addUnitDefinition(writeUnitDefinition(ud));
 			}
 		// remove unnecessary units
-		for (i = this.pluginModel.getNumUnitDefinitions() - 1; i >= 0; i--) {
-			PluginUnitDefinition ud = this.pluginModel.getUnitDefinition(i);
+		for (i = pluginModel.getNumUnitDefinitions() - 1; i >= 0; i--) {
+			PluginUnitDefinition ud = pluginModel.getUnitDefinition(i);
 			if (model.getUnitDefinition(ud.getId()) == null)
-				this.pluginModel.getListOfUnitDefinitions().remove(i);
+				pluginModel.getListOfUnitDefinitions().remove(i);
 		}
 
 		// Compartment types
 		for (CompartmentType c : model.getListOfCompartmentTypes()) {
-			if (this.pluginModel.getCompartmentType(c.getId()) == null)
-				this.pluginModel.addCompartmentType(writeCompartmentType(c));
+			if (pluginModel.getCompartmentType(c.getId()) == null)
+				pluginModel.addCompartmentType(writeCompartmentType(c));
 			else
-				saveSBaseProperties(c, this.pluginModel
+				saveSBaseProperties(c, pluginModel
 						.getCompartmentType(c.getId()));
 		}
 		// remove unnecessary compartmentTypes
-		for (i = this.pluginModel.getNumCompartmentTypes() - 1; i >= 0; i--) {
-			PluginCompartmentType c = this.pluginModel.getCompartmentType(i);
+		for (i = pluginModel.getNumCompartmentTypes() - 1; i >= 0; i--) {
+			PluginCompartmentType c = pluginModel.getCompartmentType(i);
 			if (model.getCompartmentType(c.getId()) == null)
-				this.pluginModel.getListOfCompartmentTypes().remove(i);
+				pluginModel.getListOfCompartmentTypes().remove(i);
 		}
 
 		// Species types
 		for (SpeciesType c : model.getListOfSpeciesTypes()) {
-			if (this.pluginModel.getSpeciesType(c.getId()) == null)
-				this.pluginModel.addSpeciesType(writeSpeciesType(c));
+			if (pluginModel.getSpeciesType(c.getId()) == null)
+				pluginModel.addSpeciesType(writeSpeciesType(c));
 			else
-				saveSBaseProperties(c, this.pluginModel.getSpeciesType(c
-						.getId()));
+				saveSBaseProperties(c, pluginModel.getSpeciesType(c.getId()));
 		}
 		// remove unnecessary speciesTypes
-		for (i = this.pluginModel.getNumSpeciesTypes() - 1; i >= 0; i--) {
-			PluginSpeciesType c = this.pluginModel.getSpeciesType(i);
+		for (i = pluginModel.getNumSpeciesTypes() - 1; i >= 0; i--) {
+			PluginSpeciesType c = pluginModel.getSpeciesType(i);
 			if (model.getSpeciesType(c.getId()) == null)
-				this.pluginModel.getListOfSpeciesTypes().remove(i);
+				pluginModel.getListOfSpeciesTypes().remove(i);
 		}
 
 		// Compartments
 		for (Compartment c : model.getListOfCompartments()) {
-			if (this.pluginModel.getCompartment(c.getId()) == null)
-				this.pluginModel.addCompartment(writeCompartment(c));
+			if (pluginModel.getCompartment(c.getId()) == null)
+				pluginModel.addCompartment(writeCompartment(c));
 			else
-				saveCompartmentProperties(c, this.pluginModel.getCompartment(c
+				saveCompartmentProperties(c, pluginModel.getCompartment(c
 						.getId()));
 		}
 		// remove unnecessary compartments
-		for (i = this.pluginModel.getNumCompartments() - 1; i >= 0; i--) {
-			PluginCompartment c = this.pluginModel.getCompartment(i);
+		for (i = pluginModel.getNumCompartments() - 1; i >= 0; i--) {
+			PluginCompartment c = pluginModel.getCompartment(i);
 			if (model.getCompartment(c.getId()) == null)
-				this.pluginModel.getListOfCompartments().remove(i);
+				pluginModel.getListOfCompartments().remove(i);
 		}
 
 		// Species
 		for (Species s : model.getListOfSpecies()) {
-			if (this.pluginModel.getSpecies(s.getId()) == null)
-				this.pluginModel.addSpecies(writeSpecies(s));
+			if (pluginModel.getSpecies(s.getId()) == null)
+				pluginModel.addSpecies(writeSpecies(s));
 			else
-				saveSpeciesProperties(s, this.pluginModel.getSpecies(s.getId()));
+				saveSpeciesProperties(s, pluginModel.getSpecies(s.getId()));
 		}
 		// remove unnecessary species
-		for (i = this.pluginModel.getNumSpecies() - 1; i >= 0; i--) {
-			PluginSpecies s = this.pluginModel.getSpecies(i);
+		for (i = pluginModel.getNumSpecies() - 1; i >= 0; i--) {
+			PluginSpecies s = pluginModel.getSpecies(i);
 			if (model.getSpecies(s.getId()) == null)
-				this.pluginModel.getListOfSpecies().remove(i);
+				pluginModel.getListOfSpecies().remove(i);
 		}
 
 		// add or change parameters
 		for (Parameter p : model.getListOfParameters()) {
-			if (this.pluginModel.getParameter(p.getId()) == null)
-				this.pluginModel.addParameter(writeParameter(p,
-						this.pluginModel));
+			if (pluginModel.getParameter(p.getId()) == null)
+				pluginModel.addParameter(writeParameter(p, pluginModel));
 			else
-				saveParameterProperties(p, this.pluginModel.getParameter(p
-						.getId()));
+				saveParameterProperties(p, pluginModel.getParameter(p.getId()));
 		}
 		// remove parameters
-		for (i = this.pluginModel.getNumParameters() - 1; i >= 0; i--) {
-			PluginParameter p = this.pluginModel.getParameter(i);
+		for (i = pluginModel.getNumParameters() - 1; i >= 0; i--) {
+			PluginParameter p = pluginModel.getParameter(i);
 			if (model.getParameter(p.getId()) == null)
-				this.pluginModel.getListOfParameters().remove(i);
+				pluginModel.getListOfParameters().remove(i);
 		}
 
 		// initial assignments
 		for (i = 0; i < model.getNumInitialAssignments(); i++) {
 			InitialAssignment ia = model.getInitialAssignment((int) i);
 			int contains = -1;
-			for (int j = 0; j < this.pluginModel.getNumInitialAssignments()
+			for (int j = 0; j < pluginModel.getNumInitialAssignments()
 					&& contains < 0; j++) {
-				PluginInitialAssignment libIA = this.pluginModel
+				PluginInitialAssignment libIA = pluginModel
 						.getInitialAssignment(j);
 				if (libIA.getSymbol().equals(ia.getSymbol())
 						&& equal(ia.getMath(), libsbml.parseFormula(libIA
@@ -279,16 +280,14 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					contains = j;
 			}
 			if (contains < 0)
-				this.pluginModel
-						.addInitialAssignment(writeInitialAssignment(ia));
+				pluginModel.addInitialAssignment(writeInitialAssignment(ia));
 			else
-				saveMathContainerProperties(ia, this.pluginModel
+				saveMathContainerProperties(ia, pluginModel
 						.getInitialAssignment(contains));
 		}
 		// remove unnecessary initial assignments
-		for (i = this.pluginModel.getNumInitialAssignments() - 1; i >= 0; i--) {
-			PluginInitialAssignment c = this.pluginModel
-					.getInitialAssignment(i);
+		for (i = pluginModel.getNumInitialAssignments() - 1; i >= 0; i--) {
+			PluginInitialAssignment c = pluginModel.getInitialAssignment(i);
 			boolean contains = false;
 			for (int j = 0; j < model.getNumInitialAssignments() && !contains; j++) {
 				InitialAssignment ia = model.getInitialAssignment(j);
@@ -298,16 +297,16 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					contains = true;
 			}
 			if (!contains)
-				this.pluginModel.getListOfInitialAssignments().remove(i);
+				pluginModel.getListOfInitialAssignments().remove(i);
 		}
 
 		// rules
 		for (i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule((int) i);
 			int contains = -1;
-			for (int j = 0; j < this.pluginModel.getNumRules() && contains < 0; j++) {
+			for (int j = 0; j < pluginModel.getNumRules() && contains < 0; j++) {
 				boolean equal = false;
-				PluginRule ruleOrig = this.pluginModel.getRule(j);
+				PluginRule ruleOrig = pluginModel.getRule(j);
 				if (rule instanceof RateRule
 						&& ruleOrig instanceof PluginRateRule) {
 					equal = ((RateRule) rule).getVariable().equals(
@@ -326,14 +325,14 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					contains = j;
 			}
 			if (contains < 0)
-				this.pluginModel.addRule(writeRule(rule));
+				pluginModel.addRule(writeRule(rule));
 			else
 				// math is equal anyway...
-				saveSBaseProperties(rule, this.pluginModel.getRule(contains));
+				saveSBaseProperties(rule, pluginModel.getRule(contains));
 		}
 		// remove unnecessary rules
-		for (i = this.pluginModel.getNumRules() - 1; i >= 0; i--) {
-			PluginRule c = this.pluginModel.getRule(i);
+		for (i = pluginModel.getNumRules() - 1; i >= 0; i--) {
+			PluginRule c = pluginModel.getRule(i);
 			boolean contains = false;
 			for (int j = 0; j < model.getNumRules() && !contains; j++) {
 				Rule r = model.getRule(j);
@@ -349,28 +348,28 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 						contains = true;
 			}
 			if (!contains)
-				this.pluginModel.getListOfRules().remove(i);
+				pluginModel.getListOfRules().remove(i);
 		}
 
 		// constraints
 		for (i = 0; i < model.getNumConstraints(); i++) {
 			Constraint ia = model.getConstraint((int) i);
 			long contains = -1;
-			for (long j = 0; j < this.pluginModel.getNumConstraints()
+			for (long j = 0; j < pluginModel.getNumConstraints()
 					&& contains < 0; j++) {
-				PluginConstraint c = this.pluginModel.getConstraint((int) j);
+				PluginConstraint c = pluginModel.getConstraint((int) j);
 				if (equal(ia.getMath(), libsbml.parseFormula(c.getMath())))
 					contains = j;
 			}
 			if (contains < 0)
-				this.pluginModel.addConstraint(writeConstraint(ia));
+				pluginModel.addConstraint(writeConstraint(ia));
 			else
-				saveMathContainerProperties(ia, this.pluginModel
+				saveMathContainerProperties(ia, pluginModel
 						.getConstraint((int) contains));
 		}
 		// remove unnecessary constraints
-		for (i = this.pluginModel.getNumConstraints() - 1; i >= 0; i--) {
-			PluginConstraint c = this.pluginModel.getConstraint(i);
+		for (i = pluginModel.getNumConstraints() - 1; i >= 0; i--) {
+			PluginConstraint c = pluginModel.getConstraint(i);
 			boolean contains = false;
 			for (int j = 0; j < model.getNumConstraints() && !contains; j++) {
 				Constraint ia = model.getConstraint(j);
@@ -378,43 +377,43 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					contains = true;
 			}
 			if (!contains)
-				this.pluginModel.getListOfConstraints().remove(i);
+				pluginModel.getListOfConstraints().remove(i);
 		}
 
 		// add or change reactions
 		for (Reaction r : model.getListOfReactions()) {
-			if (this.pluginModel.getReaction(r.getId()) == null)
-				this.pluginModel.addReaction(writeReaction(r));
+			if (pluginModel.getReaction(r.getId()) == null)
+				pluginModel.addReaction(writeReaction(r));
 			else
-				saveReactionProperties(r, this.pluginModel.getReaction(r
-						.getId()));
+				saveReactionProperties(r, pluginModel.getReaction(r.getId()));
 		}
 		// remove reactions
-		for (i = this.pluginModel.getNumReactions() - 1; i >= 0; i--) {
-			PluginReaction r = this.pluginModel.getReaction(i);
+		for (i = pluginModel.getNumReactions() - 1; i >= 0; i--) {
+			PluginReaction r = pluginModel.getReaction(i);
 			if (model.getReaction(r.getId()) == null)
-				this.pluginModel.getListOfReactions().remove(i);
+				pluginModel.getListOfReactions().remove(i);
 		}
 
 		// events
 		for (Event event : model.getListOfEvents()) {
-			if (this.pluginModel.getEvent(event.getId()) == null)
-				this.pluginModel.addEvent(writeEvent(event));
+			if (pluginModel.getEvent(event.getId()) == null)
+				pluginModel.addEvent(writeEvent(event));
 			else
-				saveEventProperties(event, this.pluginModel.getEvent(event
-						.getId()));
+				saveEventProperties(event, pluginModel.getEvent(event.getId()));
 		}
 		// remove events
-		for (i = this.pluginModel.getNumEvents() - 1; i >= 0; i--) {
-			PluginEvent eventOrig = this.pluginModel.getEvent(i);
+		for (i = pluginModel.getNumEvents() - 1; i >= 0; i--) {
+			PluginEvent eventOrig = pluginModel.getEvent(i);
 			if (model.getEvent(eventOrig.getId()) == null)
-				this.pluginModel.getListOfEvents().remove(i);
+				pluginModel.getListOfEvents().remove(i);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveCompartmentProperties(org.sbml.jsbml.Compartment, java.lang.Object)
+	 * 
+	 * @seeorg.sbml.jsbml.SBMLWriter#saveCompartmentProperties(org.sbml.jsbml.
+	 * Compartment, java.lang.Object)
 	 */
 	public void saveCompartmentProperties(Compartment c, Object compartment) {
 		if (!(compartment instanceof PluginCompartment))
@@ -439,7 +438,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveCVTermProperties(org.sbml.jsbml.CVTerm, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#saveCVTermProperties(org.sbml.jsbml.CVTerm,
+	 * java.lang.Object)
 	 */
 	public void saveCVTermProperties(CVTerm cvt, Object term) {
 		// TODO Auto-generated method stub
@@ -448,7 +450,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveEventProperties(org.sbml.jsbml.Event, java.lang.Object)
+	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#saveEventProperties(org.sbml.jsbml.Event,
+	 * java.lang.Object)
 	 */
 	public void saveEventProperties(Event ev, Object event)
 			throws SBMLException {
@@ -510,7 +514,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveKineticLawProperties(org.sbml.jsbml.KineticLaw, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#saveKineticLawProperties(org.sbml.jsbml.KineticLaw
+	 * , java.lang.Object)
 	 */
 	public void saveKineticLawProperties(KineticLaw kl, Object kineticLaw)
 			throws SBMLException {
@@ -541,7 +548,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveMathContainerProperties(org.sbml.jsbml.MathContainer, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#saveMathContainerProperties(org.sbml.jsbml.
+	 * MathContainer, java.lang.Object)
 	 */
 	public void saveMathContainerProperties(MathContainer mc, Object sbase)
 			throws SBMLException {
@@ -626,7 +636,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveModelHistoryProperties(org.sbml.jsbml.ModelHistory, java.lang.Object)
+	 * 
+	 * @seeorg.sbml.jsbml.SBMLWriter#saveModelHistoryProperties(org.sbml.jsbml.
+	 * ModelHistory, java.lang.Object)
 	 */
 	public void saveModelHistoryProperties(ModelHistory mh, Object modelHistory) {
 		// TODO Auto-generated method stub
@@ -635,7 +647,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveModifierSpeciesReferenceProperties(org.sbml.jsbml.ModifierSpeciesReference, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#saveModifierSpeciesReferenceProperties(org.
+	 * sbml.jsbml.ModifierSpeciesReference, java.lang.Object)
 	 */
 	public void saveModifierSpeciesReferenceProperties(
 			ModifierSpeciesReference modifierSpeciesReference, Object msr) {
@@ -647,7 +662,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveNamedSBaseProperties(org.sbml.jsbml.NamedSBase, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#saveNamedSBaseProperties(org.sbml.jsbml.NamedSBase
+	 * , java.lang.Object)
 	 */
 	public void saveNamedSBaseProperties(NamedSBase nsb, Object sb) {
 		// TODO Auto-generated method stub
@@ -656,7 +674,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveParameterProperties(org.sbml.jsbml.Parameter, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#saveParameterProperties(org.sbml.jsbml.Parameter
+	 * , java.lang.Object)
 	 */
 	public void saveParameterProperties(Parameter p, Object parameter) {
 		if (!(parameter instanceof PluginParameter))
@@ -674,7 +695,17 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveReactionProperties(org.sbml.jsbml.Reaction, java.lang.Object)
+	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#saveSBaseProperties(org.sbml.jsbml.SBase,
+	 * java.lang.Object)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#saveReactionProperties(org.sbml.jsbml.Reaction,
+	 * java.lang.Object)
 	 */
 	public void saveReactionProperties(Reaction r, Object reaction)
 			throws SBMLException {
@@ -770,13 +801,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			ro.setKineticLaw(null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.SBMLWriter#saveSBaseProperties(org.sbml.jsbml.SBase,
-	 * java.lang.Object)
-	 */
-
 	public void saveSBaseProperties(SBase s, Object sb) {
 		if (!(sb instanceof PluginSBase))
 			throw new IllegalArgumentException(
@@ -787,7 +811,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#saveSpeciesProperties(org.sbml.jsbml.Species, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#saveSpeciesProperties(org.sbml.jsbml.Species,
+	 * java.lang.Object)
 	 */
 	public void saveSpeciesProperties(Species s, Object species) {
 		if (!(species instanceof PluginSpecies))
@@ -857,7 +884,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeCompartment(org.sbml.jsbml.Compartment)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#writeCompartment(org.sbml.jsbml.Compartment)
 	 */
 	public PluginCompartment writeCompartment(Compartment compartment) {
 		PluginCompartment c = new PluginCompartment(compartment
@@ -883,7 +912,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeCompartmentType(org.sbml.jsbml.CompartmentType)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#writeCompartmentType(org.sbml.jsbml.CompartmentType
+	 * )
 	 */
 	public PluginCompartmentType writeCompartmentType(
 			CompartmentType compartmentType) {
@@ -898,6 +930,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeConstraint(org.sbml.jsbml.Constraint)
 	 */
 	public PluginConstraint writeConstraint(Constraint constraint) {
@@ -916,6 +949,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeCVTerm(org.sbml.jsbml.CVTerm)
 	 */
 	public Object writeCVTerm(CVTerm cvt) {
@@ -925,6 +959,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeDelay(org.sbml.jsbml.Delay)
 	 */
 	public ASTNode writeDelay(Delay delay) {
@@ -933,6 +968,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeEvent(org.sbml.jsbml.Event)
 	 */
 	public PluginEvent writeEvent(Event event) throws SBMLException {
@@ -954,7 +990,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeEventAssignment(org.sbml.jsbml.EventAssignment, java.lang.Object[])
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#writeEventAssignment(org.sbml.jsbml.EventAssignment
+	 * , java.lang.Object[])
 	 */
 	public PluginEventAssignment writeEventAssignment(
 			EventAssignment eventAssignment, Object... ev) throws SBMLException {
@@ -971,7 +1010,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeFunctionDefinition(org.sbml.jsbml.FunctionDefinition)
+	 * 
+	 * @seeorg.sbml.jsbml.SBMLWriter#writeFunctionDefinition(org.sbml.jsbml.
+	 * FunctionDefinition)
 	 */
 	public PluginFunctionDefinition writeFunctionDefinition(
 			FunctionDefinition functionDefinition) throws SBMLException {
@@ -983,7 +1024,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeInitialAssignment(org.sbml.jsbml.InitialAssignment)
+	 * 
+	 * @seeorg.sbml.jsbml.SBMLWriter#writeInitialAssignment(org.sbml.jsbml.
+	 * InitialAssignment)
 	 */
 	public PluginInitialAssignment writeInitialAssignment(
 			InitialAssignment initialAssignment) throws SBMLException {
@@ -1022,20 +1065,27 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeModifierSpeciesReference(org.sbml.jsbml.ModifierSpeciesReference, java.lang.Object[])
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#writeModifierSpeciesReference(org.sbml.jsbml
+	 * .ModifierSpeciesReference, java.lang.Object[])
 	 */
 	public PluginModifierSpeciesReference writeModifierSpeciesReference(
 			ModifierSpeciesReference modifierSpeciesReference, Object... parent) {
 		if (parent.length != 1 || !(parent[0] instanceof PluginReaction))
 			throw new IllegalArgumentException(
 					"parent must be of type PluginReaction!");
-
+		PluginReaction pluReac = (PluginReaction) parent[0];
+		PluginModel pluMod = (PluginModel) parent[1];
+		String modificationType;
+		if (modifierSpeciesReference.isSetSBOTerm())
+			modificationType = SBO.convertSBO2Alias(modifierSpeciesReference
+					.getSBOTerm());
+		else modificationType = PluginReactionSymbolType.MODULATION;
 		PluginModifierSpeciesReference m = new PluginModifierSpeciesReference(
-				(PluginReaction) parent[0], new PluginSpeciesAlias(
-						this.pluginModel.getSpecies(modifierSpeciesReference
-								.getSpecies()), this.pluginModel.getSpecies(
-								modifierSpeciesReference.getSpecies())
-								.getSpeciesType()));
+				pluReac, new PluginSpeciesAlias(pluMod
+						.getSpecies(modifierSpeciesReference.getSpecies()),
+						modificationType));
 		saveSBaseProperties(modifierSpeciesReference, m);
 
 		return m;
@@ -1128,7 +1178,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object, java.lang.String)
+	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object,
+	 * java.lang.String)
 	 */
 	public boolean writeSBML(Object sbmlDocument, String filename) {
 		// TODO Auto-generated method stub
@@ -1137,7 +1189,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object, java.lang.String, java.lang.String, java.lang.String)
+	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object,
+	 * java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean writeSBML(Object object, String filename,
 			String programName, String versionNumber) throws SBMLException {
@@ -1201,7 +1255,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeSpeciesType(org.sbml.jsbml.SpeciesType)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#writeSpeciesType(org.sbml.jsbml.SpeciesType)
 	 */
 	public PluginSpeciesType writeSpeciesType(SpeciesType speciesType) {
 		PluginSpeciesType st = new PluginSpeciesType(speciesType.getId());
@@ -1234,6 +1290,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeTrigger(org.sbml.jsbml.Trigger)
 	 */
 	public ASTNode writeTrigger(Trigger trigger) {
@@ -1242,7 +1299,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeUnit(org.sbml.jsbml.Unit, java.lang.Object[])
+	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#writeUnit(org.sbml.jsbml.Unit,
+	 * java.lang.Object[])
 	 */
 	public PluginUnit writeUnit(Unit unit, Object... parent) {
 		if (parent.length != 1 || !(parent[0] instanceof PluginUnitDefinition))
@@ -1369,7 +1428,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLWriter#writeUnitDefinition(org.sbml.jsbml.UnitDefinition)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.SBMLWriter#writeUnitDefinition(org.sbml.jsbml.UnitDefinition
+	 * )
 	 */
 	public PluginUnitDefinition writeUnitDefinition(
 			UnitDefinition unitDefinition) {
