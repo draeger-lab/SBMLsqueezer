@@ -65,7 +65,8 @@ import org.sbml.squeezer.resources.Resource;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 3, 2007
  */
@@ -208,9 +209,17 @@ public class KineticLawSelectionDialog extends JDialog implements
 					klg.getSettings().put(
 							CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 							Boolean.valueOf(messagePanel.getReversible()));
-					reaction = klg.storeKineticLaw(klg.createKineticLaw(reaction,
-							equationType, messagePanel.getReversible()));
+					reaction = klg.storeKineticLaw(klg.createKineticLaw(
+							reaction, equationType, messagePanel
+									.getReversible()));
 					sbmlIO.saveChanges();
+					SBMLsqueezerUI
+							.checkForSBMLErrors(this,
+									sbmlIO.getSelectedModel(), sbmlIO
+											.getWriteWarnings(),
+									((Boolean) settings
+											.get(CfgKeys.SHOW_SBML_WARNINGS))
+											.booleanValue());
 					KineticsAndParametersStoredInSBML = true;
 				}
 			}
@@ -225,7 +234,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
@@ -389,6 +399,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 						KineticsAndParametersStoredInSBML = true;
 						klg.storeKineticLaws(this);
 						sbmlIO.saveChanges();
+						SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO
+								.getSelectedModel(), sbmlIO.getWriteWarnings(),
+								((Boolean) settings
+										.get(CfgKeys.SHOW_SBML_WARNINGS))
+										.booleanValue());
 					} catch (SBMLException exc) {
 						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 								.getMessage(), 40), exc.getClass()
@@ -447,7 +462,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
 	 */
 	public void windowActivated(WindowEvent e) {
 	}
@@ -455,7 +471,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 	 */
 	public void windowClosed(WindowEvent e) {
 	}
@@ -463,7 +480,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
 	 */
 	public void windowClosing(WindowEvent e) {
 		if (e.getSource() instanceof JHelpBrowser)
@@ -473,7 +491,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent )
+	 * @see
+	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
+	 * )
 	 */
 	public void windowDeactivated(WindowEvent e) {
 	}
@@ -481,7 +501,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent )
+	 * @see
+	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
+	 * )
 	 */
 	public void windowDeiconified(WindowEvent e) {
 	}
@@ -489,7 +511,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
 	 */
 	public void windowIconified(WindowEvent e) {
 	}
@@ -497,7 +520,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 * @see
+	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
 	 */
 	public void windowOpened(WindowEvent e) {
 	}
@@ -512,6 +536,13 @@ public class KineticLawSelectionDialog extends JDialog implements
 				try {
 					klg.storeKineticLaws(this);
 					sbmlIO.saveChanges();
+					SBMLsqueezerUI
+							.checkForSBMLErrors(this,
+									sbmlIO.getSelectedModel(), sbmlIO
+											.getWriteWarnings(),
+									((Boolean) settings
+											.get(CfgKeys.SHOW_SBML_WARNINGS))
+											.booleanValue());
 					KineticsAndParametersStoredInSBML = true;
 				} catch (SBMLException exc) {
 					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc

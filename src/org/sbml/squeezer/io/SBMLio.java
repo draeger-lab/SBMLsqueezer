@@ -165,13 +165,21 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		return reader.getWarnings();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public List<SBMLException> getWriteWarnings() {
+		return writer.getWriteWarnings(listOfOrigModels.get(selectedModel));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jlibsbml.SBMLWriter#getWarnings(java.lang.Object)
 	 */
-	public String getWarnings(Object sbmlDocument) {
-		return writer.getWarnings(sbmlDocument);
+	public List<SBMLException> getWriteWarnings(Object sbase) {
+		return writer.getWriteWarnings(sbase);
 	}
 
 	/*
