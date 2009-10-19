@@ -18,10 +18,14 @@
  */
 package org.sbml.squeezer.plugin;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 import jp.sbi.celldesigner.plugin.PluginAlgebraicRule;
 import jp.sbi.celldesigner.plugin.PluginAssignmentRule;
 import jp.sbi.celldesigner.plugin.PluginCompartment;
@@ -32,6 +36,7 @@ import jp.sbi.celldesigner.plugin.PluginEventAssignment;
 import jp.sbi.celldesigner.plugin.PluginFunctionDefinition;
 import jp.sbi.celldesigner.plugin.PluginInitialAssignment;
 import jp.sbi.celldesigner.plugin.PluginKineticLaw;
+import jp.sbi.celldesigner.plugin.PluginListOf;
 import jp.sbi.celldesigner.plugin.PluginModel;
 import jp.sbi.celldesigner.plugin.PluginModifierSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginParameter;
@@ -39,13 +44,16 @@ import jp.sbi.celldesigner.plugin.PluginRateRule;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginRule;
 import jp.sbi.celldesigner.plugin.PluginSBase;
+import jp.sbi.celldesigner.plugin.PluginSimpleSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
 import jp.sbi.celldesigner.plugin.PluginSpeciesAlias;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginSpeciesType;
 import jp.sbi.celldesigner.plugin.PluginUnit;
 import jp.sbi.celldesigner.plugin.PluginUnitDefinition;
+import jp.sbi.celldesigner.plugin.util.PluginCompartmentSymbolType;
 import jp.sbi.celldesigner.plugin.util.PluginReactionSymbolType;
+import jp.sbi.celldesigner.plugin.util.PluginSpeciesSymbolType;
 
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
@@ -59,6 +67,7 @@ import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModelHistory;
@@ -71,6 +80,7 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SpeciesType;
@@ -79,6 +89,7 @@ import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.io.AbstractSBMLWriter;
+import org.sbml.jsbml.io.LibSBMLWriter;
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
@@ -91,13 +102,21 @@ import org.sbml.libsbml.libsbmlConstants;
  */
 public class PluginSBMLWriter extends AbstractSBMLWriter {
 
-	private SBMLsqueezerPlugin plugin;
+	private static final String error = " must be an instance of ";
+	/**
+	 * 
+	 */
+	private PluginModel pluginModel;
+	/**
+	 * 
+	 */
+	private CellDesignerPlugin plugin;
 
 	/**
 	 * 
 	 * @param plugin
 	 */
-	public PluginSBMLWriter(SBMLsqueezerPlugin plugin) {
+	public PluginSBMLWriter(CellDesignerPlugin plugin) {
 		this.plugin = plugin;
 	}
 
@@ -141,22 +160,28 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		if (!(orig instanceof PluginModel))
 			throw new IllegalArgumentException(
 					"only instances of PluginModel can be considered.");
-		PluginModel pluginModel = (PluginModel) orig;
+		pluginModel = (PluginModel) orig;
 		int i;
 
 		// Function definitions
 		for (FunctionDefinition c : model.getListOfFunctionDefinitions()) {
-			if (pluginModel.getFunctionDefinition(c.getId()) == null)
-				pluginModel.addFunctionDefinition(writeFunctionDefinition(c));
-			else
-				saveMathContainerProperties(c, pluginModel
-						.getFunctionDefinition(c.getId()));
+			if (pluginModel.getFunctionDefinition(c.getId()) == null) {
+				PluginFunctionDefinition fd = writeFunctionDefinition(c);
+				pluginModel.addFunctionDefinition(fd);
+				plugin.notifySBaseAdded(fd);
+			} else {
+				PluginFunctionDefinition fd = pluginModel
+						.getFunctionDefinition(c.getId());
+				saveMathContainerProperties(c, fd);
+				plugin.notifySBaseChanged(fd);
+			}
 		}
 		// remove unnecessary function definitions
 		for (i = pluginModel.getNumFunctionDefinitions() - 1; i >= 0; i--) {
 			PluginFunctionDefinition c = pluginModel.getFunctionDefinition(i);
 			if (model.getFunctionDefinition(c.getId()) == null)
-				pluginModel.getListOfFunctionDefinitions().remove(i);
+				plugin.notifySBaseDeleted(pluginModel
+						.getListOfFunctionDefinitions().remove(i));
 		}
 
 		// Unit definitions
@@ -181,94 +206,131 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 							if (equal(u, libU.getUnit(j)))
 								contains = true;
 						}
-						if (!contains)
-							libU.addUnit(writeUnit(u));
+						if (!contains) {
+							PluginUnit unit = writeUnit(u, libU);
+							libU.addUnit(unit);
+							plugin.notifySBaseAdded(unit);
+						}
 					}
-				} else
-					pluginModel.addUnitDefinition(writeUnitDefinition(ud));
+					plugin.notifySBaseChanged(libU);
+				} else {
+					PluginUnitDefinition udef = writeUnitDefinition(ud);
+					pluginModel.addUnitDefinition(udef);
+					plugin.notifySBaseAdded(udef);
+				}
 			}
 		// remove unnecessary units
 		for (i = pluginModel.getNumUnitDefinitions() - 1; i >= 0; i--) {
 			PluginUnitDefinition ud = pluginModel.getUnitDefinition(i);
 			if (model.getUnitDefinition(ud.getId()) == null)
-				pluginModel.getListOfUnitDefinitions().remove(i);
+				plugin.notifySBaseDeleted(pluginModel
+						.getListOfUnitDefinitions().remove(i));
 		}
 
 		// Compartment types
 		for (CompartmentType c : model.getListOfCompartmentTypes()) {
-			if (pluginModel.getCompartmentType(c.getId()) == null)
-				pluginModel.addCompartmentType(writeCompartmentType(c));
-			else
-				saveSBaseProperties(c, pluginModel
-						.getCompartmentType(c.getId()));
+			if (pluginModel.getCompartmentType(c.getId()) == null) {
+				PluginCompartmentType ct = writeCompartmentType(c);
+				pluginModel.addCompartmentType(ct);
+				plugin.notifySBaseAdded(ct);
+			} else {
+				PluginCompartmentType ct = pluginModel.getCompartmentType(c
+						.getId());
+				saveSBaseProperties(c, ct);
+				plugin.notifySBaseChanged(ct);
+			}
 		}
 		// remove unnecessary compartmentTypes
 		for (i = pluginModel.getNumCompartmentTypes() - 1; i >= 0; i--) {
 			PluginCompartmentType c = pluginModel.getCompartmentType(i);
 			if (model.getCompartmentType(c.getId()) == null)
-				pluginModel.getListOfCompartmentTypes().remove(i);
+				plugin.notifySBaseDeleted(pluginModel
+						.getListOfCompartmentTypes().remove(i));
 		}
 
 		// Species types
 		for (SpeciesType c : model.getListOfSpeciesTypes()) {
-			if (pluginModel.getSpeciesType(c.getId()) == null)
-				pluginModel.addSpeciesType(writeSpeciesType(c));
-			else
-				saveSBaseProperties(c, pluginModel.getSpeciesType(c.getId()));
+			if (pluginModel.getSpeciesType(c.getId()) == null) {
+				PluginSpeciesType st = writeSpeciesType(c);
+				pluginModel.addSpeciesType(st);
+				plugin.notifySBaseAdded(st);
+			} else {
+				PluginSpeciesType st = pluginModel.getSpeciesType(c.getId());
+				saveSBaseProperties(c, st);
+				plugin.notifySBaseChanged(st);
+			}
 		}
 		// remove unnecessary speciesTypes
 		for (i = pluginModel.getNumSpeciesTypes() - 1; i >= 0; i--) {
 			PluginSpeciesType c = pluginModel.getSpeciesType(i);
 			if (model.getSpeciesType(c.getId()) == null)
-				pluginModel.getListOfSpeciesTypes().remove(i);
+				plugin.notifySBaseDeleted(pluginModel.getListOfSpeciesTypes()
+						.remove(i));
 		}
 
 		// Compartments
 		for (Compartment c : model.getListOfCompartments()) {
-			if (pluginModel.getCompartment(c.getId()) == null)
-				pluginModel.addCompartment(writeCompartment(c));
-			else
-				saveCompartmentProperties(c, pluginModel.getCompartment(c
-						.getId()));
+			if (pluginModel.getCompartment(c.getId()) == null) {
+				PluginCompartment pc = writeCompartment(c);
+				pluginModel.addCompartment(pc);
+				plugin.notifySBaseAdded(pc);
+			} else {
+				PluginCompartment pc = pluginModel.getCompartment(c.getId());
+				saveCompartmentProperties(c, pc);
+				plugin.notifySBaseChanged(pc);
+			}
 		}
 		// remove unnecessary compartments
 		for (i = pluginModel.getNumCompartments() - 1; i >= 0; i--) {
 			PluginCompartment c = pluginModel.getCompartment(i);
 			if (model.getCompartment(c.getId()) == null)
-				pluginModel.getListOfCompartments().remove(i);
+				plugin.notifySBaseDeleted(pluginModel.getListOfCompartments()
+						.remove(i));
 		}
 
 		// Species
 		for (Species s : model.getListOfSpecies()) {
-			if (pluginModel.getSpecies(s.getId()) == null)
-				pluginModel.addSpecies(writeSpecies(s));
-			else
-				saveSpeciesProperties(s, pluginModel.getSpecies(s.getId()));
+			if (pluginModel.getSpecies(s.getId()) == null) {
+				PluginSpecies ps = writeSpecies(s);
+				pluginModel.addSpecies(ps);
+				plugin.notifySBaseAdded(ps);
+			} else {
+				PluginSpecies ps = pluginModel.getSpecies(s.getId());
+				saveSpeciesProperties(s, ps);
+				plugin.notifySBaseChanged(ps);
+			}
 		}
 		// remove unnecessary species
 		for (i = pluginModel.getNumSpecies() - 1; i >= 0; i--) {
 			PluginSpecies s = pluginModel.getSpecies(i);
 			if (model.getSpecies(s.getId()) == null)
-				pluginModel.getListOfSpecies().remove(i);
+				plugin.notifySBaseDeleted(pluginModel.getListOfSpecies()
+						.remove(i));
 		}
 
 		// add or change parameters
 		for (Parameter p : model.getListOfParameters()) {
-			if (pluginModel.getParameter(p.getId()) == null)
-				pluginModel.addParameter(writeParameter(p, pluginModel));
-			else
-				saveParameterProperties(p, pluginModel.getParameter(p.getId()));
+			if (pluginModel.getParameter(p.getId()) == null) {
+				PluginParameter pp = writeParameter(p, pluginModel);
+				pluginModel.addParameter(pp);
+				plugin.notifySBaseAdded(pp);
+			} else {
+				PluginParameter pp = pluginModel.getParameter(p.getId());
+				saveParameterProperties(p, pp);
+				plugin.notifySBaseChanged(pp);
+			}
 		}
 		// remove parameters
 		for (i = pluginModel.getNumParameters() - 1; i >= 0; i--) {
 			PluginParameter p = pluginModel.getParameter(i);
 			if (model.getParameter(p.getId()) == null)
-				pluginModel.getListOfParameters().remove(i);
+				plugin.notifySBaseDeleted(pluginModel.getListOfParameters()
+						.remove(i));
 		}
 
 		// initial assignments
 		for (i = 0; i < model.getNumInitialAssignments(); i++) {
-			InitialAssignment ia = model.getInitialAssignment((int) i);
+			InitialAssignment ia = model.getInitialAssignment(i);
 			int contains = -1;
 			for (int j = 0; j < pluginModel.getNumInitialAssignments()
 					&& contains < 0; j++) {
@@ -279,11 +341,16 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 								.getMath())))
 					contains = j;
 			}
-			if (contains < 0)
-				pluginModel.addInitialAssignment(writeInitialAssignment(ia));
-			else
-				saveMathContainerProperties(ia, pluginModel
-						.getInitialAssignment(contains));
+			if (contains < 0) {
+				PluginInitialAssignment pia = writeInitialAssignment(ia);
+				pluginModel.addInitialAssignment(pia);
+				plugin.notifySBaseAdded(pia);
+			} else {
+				PluginInitialAssignment pia = pluginModel
+						.getInitialAssignment(contains);
+				saveMathContainerProperties(ia, pia);
+				plugin.notifySBaseChanged(pia);
+			}
 		}
 		// remove unnecessary initial assignments
 		for (i = pluginModel.getNumInitialAssignments() - 1; i >= 0; i--) {
@@ -297,12 +364,13 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					contains = true;
 			}
 			if (!contains)
-				pluginModel.getListOfInitialAssignments().remove(i);
+				plugin.notifySBaseDeleted(pluginModel
+						.getListOfInitialAssignments().remove(i));
 		}
 
 		// rules
 		for (i = 0; i < model.getNumRules(); i++) {
-			Rule rule = model.getRule((int) i);
+			Rule rule = model.getRule(i);
 			int contains = -1;
 			for (int j = 0; j < pluginModel.getNumRules() && contains < 0; j++) {
 				boolean equal = false;
@@ -324,12 +392,18 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				if (equal)
 					contains = j;
 			}
-			if (contains < 0)
-				pluginModel.addRule(writeRule(rule));
-			else
+			if (contains < 0) {
+				PluginRule r = writeRule(rule);
+				pluginModel.addRule(r);
+				plugin.notifySBaseAdded(r);
+			} else {
 				// math is equal anyway...
-				saveSBaseProperties(rule, pluginModel.getRule(contains));
+				PluginRule r = pluginModel.getRule(contains);
+				saveSBaseProperties(rule, r);
+				plugin.notifySBaseChanged(r);
+			}
 		}
+
 		// remove unnecessary rules
 		for (i = pluginModel.getNumRules() - 1; i >= 0; i--) {
 			PluginRule c = pluginModel.getRule(i);
@@ -348,24 +422,28 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 						contains = true;
 			}
 			if (!contains)
-				pluginModel.getListOfRules().remove(i);
+				plugin.notifySBaseDeleted(pluginModel.getListOfRules()
+						.remove(i));
 		}
 
 		// constraints
 		for (i = 0; i < model.getNumConstraints(); i++) {
-			Constraint ia = model.getConstraint((int) i);
-			long contains = -1;
-			for (long j = 0; j < pluginModel.getNumConstraints()
-					&& contains < 0; j++) {
-				PluginConstraint c = pluginModel.getConstraint((int) j);
+			Constraint ia = model.getConstraint(i);
+			int contains = -1;
+			for (int j = 0; j < pluginModel.getNumConstraints() && contains < 0; j++) {
+				PluginConstraint c = pluginModel.getConstraint(j);
 				if (equal(ia.getMath(), libsbml.parseFormula(c.getMath())))
 					contains = j;
 			}
-			if (contains < 0)
-				pluginModel.addConstraint(writeConstraint(ia));
-			else
-				saveMathContainerProperties(ia, pluginModel
-						.getConstraint((int) contains));
+			if (contains < 0) {
+				PluginConstraint constr = writeConstraint(ia);
+				pluginModel.addConstraint(constr);
+				plugin.notifySBaseAdded(constr);
+			} else {
+				PluginConstraint constr = pluginModel.getConstraint(contains);
+				saveMathContainerProperties(ia, constr);
+				plugin.notifySBaseChanged(constr);
+			}
 		}
 		// remove unnecessary constraints
 		for (i = pluginModel.getNumConstraints() - 1; i >= 0; i--) {
@@ -377,35 +455,64 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					contains = true;
 			}
 			if (!contains)
-				pluginModel.getListOfConstraints().remove(i);
+				plugin.notifySBaseDeleted(pluginModel.getListOfConstraints()
+						.remove(i));
 		}
 
 		// add or change reactions
 		for (Reaction r : model.getListOfReactions()) {
-			if (pluginModel.getReaction(r.getId()) == null)
-				pluginModel.addReaction(writeReaction(r));
-			else
-				saveReactionProperties(r, pluginModel.getReaction(r.getId()));
+			if (pluginModel.getReaction(r.getId()) == null) {
+				PluginReaction reac = writeReaction(r);
+				pluginModel.addReaction(reac);
+				plugin.notifySBaseAdded(reac);
+			} else {
+				PluginReaction reac = pluginModel.getReaction(r.getId());
+				saveReactionProperties(r, reac);
+				plugin.notifySBaseChanged(reac);
+			}
 		}
 		// remove reactions
 		for (i = pluginModel.getNumReactions() - 1; i >= 0; i--) {
 			PluginReaction r = pluginModel.getReaction(i);
 			if (model.getReaction(r.getId()) == null)
-				pluginModel.getListOfReactions().remove(i);
+				plugin.notifySBaseChanged(pluginModel.getListOfReactions()
+						.remove(i));
 		}
 
 		// events
-		for (Event event : model.getListOfEvents()) {
-			if (pluginModel.getEvent(event.getId()) == null)
-				pluginModel.addEvent(writeEvent(event));
-			else
-				saveEventProperties(event, pluginModel.getEvent(event.getId()));
+		for (i = 0; i < model.getNumEvents(); i++) {
+			Event ia = model.getEvent(i);
+			int contains = -1;
+			for (int j = 0; j < pluginModel.getNumEvents() && contains < 0; j++) {
+				PluginEvent libIA = pluginModel.getEvent(j);
+				if (libIA.getId().equals(ia.getId())
+						|| libIA.getName().equals(ia.getName())
+						|| libIA.getNotesString().equals(ia.getNotesString()))
+					contains = j;
+			}
+			if (contains < 0) {
+				PluginEvent pia = writeEvent(ia);
+				pluginModel.addEvent(pia);
+				plugin.notifySBaseAdded(pia);
+			} else {
+				PluginEvent pia = pluginModel.getEvent(contains);
+				saveEventProperties(ia, pia);
+				plugin.notifySBaseChanged(pia);
+			}
 		}
 		// remove events
 		for (i = pluginModel.getNumEvents() - 1; i >= 0; i--) {
 			PluginEvent eventOrig = pluginModel.getEvent(i);
-			if (model.getEvent(eventOrig.getId()) == null)
-				pluginModel.getListOfEvents().remove(i);
+			boolean contains = false;
+			for (Event e : model.getListOfEvents())
+				if (e.getId().equals(eventOrig)
+						|| e.getName().equals(eventOrig.getName())
+						|| e.getNotesString()
+								.equals(eventOrig.getNotesString()))
+					contains = true;
+			if (!contains)
+				plugin.notifySBaseDeleted(pluginModel.getListOfEvents().remove(
+						i));
 		}
 	}
 
@@ -420,7 +527,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			throw new IllegalArgumentException(
 					"compartment must be an instance of PluginCompartment.");
 		PluginCompartment comp = (PluginCompartment) compartment;
-		saveSBaseProperties(c, comp);
+		saveNamedSBaseProperties(c, comp);
 		if (c.isSetSize() && c.getSize() != comp.getSize())
 			comp.setSize(c.getSize());
 		if (c.isSetCompartmentType()
@@ -445,7 +552,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public void saveCVTermProperties(CVTerm cvt, Object term) {
 		// TODO Auto-generated method stub
-
 	}
 
 	/*
@@ -460,15 +566,15 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			throw new IllegalArgumentException(
 					"event must be an instance of PluginEvent.");
 		PluginEvent e = (PluginEvent) event;
-		saveSBaseProperties(ev, e);
+		saveNamedSBaseProperties(ev, e);
 		if (ev.getUseValuesFromTriggerTime() != e.getUseValuesFromTriggerTime())
 			e.setUseValuesFromTriggerTime(ev.getUseValuesFromTriggerTime());
 		if (ev.isSetTimeUnits() && ev.getTimeUnits() != e.getTimeUnits())
 			e.setTimeUnits(ev.getTimeUnits());
 		if (ev.isSetDelay()) {
-			if (e.getDelay() != null)
+			if (e.getDelay() != null) {
 				e.setDelay(writeDelay(ev.getDelay()));
-			else
+			} else
 				saveMathContainerProperties(ev.getDelay(), e.getDelay());
 		} else if (e.getDelay() == null)
 			e.setDelay(new ASTNode(0));
@@ -481,23 +587,27 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		// synchronize event assignments
 
 		for (EventAssignment ea : ev.getListOfEventAssignments()) {
-			long contains = -1;
-			for (long i = 0; i < e.getNumEventAssignments() && contains < 0; i++) {
-				PluginEventAssignment libEA = e.getEventAssignment((int) i);
+			int contains = -1;
+			for (int i = 0; i < e.getNumEventAssignments() && contains < 0; i++) {
+				PluginEventAssignment libEA = e.getEventAssignment(i);
 				if (libEA.getVariable().equals(ea.getVariable())
 						&& equal(ea.getMath(), libEA.getMath()))
 					contains = i;
 			}
-			if (contains < 0)
-				e.addEventAssignment(writeEventAssignment(ea,
-						(PluginEvent) event));
-			else
-				saveMathContainerProperties(ea, e
-						.getEventAssignment((int) contains));
+			if (contains < 0) {
+				PluginEventAssignment pev = writeEventAssignment(ea,
+						(PluginEvent) event);
+				e.addEventAssignment(pev);
+				plugin.notifySBaseAdded(pev);
+			} else {
+				PluginEventAssignment pev = e.getEventAssignment(contains);
+				saveMathContainerProperties(ea, pev);
+				plugin.notifySBaseChanged(pev);
+			}
 		}
 		// remove unnecessary event assignments
-		for (long i = e.getNumEventAssignments() - 1; i >= 0; i--) {
-			PluginEventAssignment ea = e.getEventAssignment((int) i);
+		for (int i = e.getNumEventAssignments() - 1; i >= 0; i--) {
+			PluginEventAssignment ea = e.getEventAssignment(i);
 			boolean contains = false;
 			for (int j = 0; j < ev.getNumEventAssignments() && !contains; j++) {
 				EventAssignment eventA = ev.getEventAssignment(j);
@@ -506,8 +616,11 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 						&& equal(eventA.getMath(), ea.getMath()))
 					contains = true;
 			}
-			if (!contains)
-				e.removeEventAssignment((int) i);
+			if (!contains) {
+				PluginEventAssignment pev = e.getEventAssignment(i);
+				e.removeEventAssignment(i);
+				plugin.notifySBaseDeleted(pev);
+			}
 		}
 
 	}
@@ -526,22 +639,27 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					"kineticLaw must be an instance of PluginKineticLaw.");
 		PluginKineticLaw libKinLaw = (PluginKineticLaw) kineticLaw;
 		// add or change parameters
-
+		saveSBaseProperties(kl, libKinLaw);
 		int para = 0;
 		for (Parameter p : kl.getListOfParameters()) {
 			PluginParameter libParam = libKinLaw.getParameter(para);
 			para++;
-			if (libParam == null)
-				libKinLaw.addParameter(writeParameter(p));
-			else
+			if (libParam == null) {
+				PluginParameter pp = writeParameter(p, libKinLaw);
+				libKinLaw.addParameter(pp);
+				plugin.notifySBaseAdded(pp);
+			} else {
 				saveParameterProperties(p, libParam);
+				plugin.notifySBaseChanged(libParam);
+			}
 
 		}
 		// remove parameters
-		for (long i = libKinLaw.getNumParameters() - 1; i >= 0; i--) {
-			PluginParameter p = libKinLaw.getParameter((int) i);
+		for (int i = libKinLaw.getNumParameters() - 1; i >= 0; i--) {
+			PluginParameter p = libKinLaw.getParameter(i);
 			if (kl.getParameter(p.getId()) == null)
-				libKinLaw.getListOfParameters().remove((int) i);
+				plugin.notifySBaseDeleted(libKinLaw.getListOfParameters()
+						.remove(i));
 		}
 		saveMathContainerProperties(kl, libKinLaw);
 	}
@@ -573,43 +691,37 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath() && !equal)
-				throw new SBMLException("Unable to set math of "
-						+ mc.getClass().getSimpleName() + " in "
-						+ kl.getClass().getName());
+				kl.setMath(convert(mc.getMath()));
+
 		} else if (sbase instanceof PluginFunctionDefinition) {
 			PluginFunctionDefinition kl = (PluginFunctionDefinition) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath() && !equal)
-				throw new SBMLException("Unable to set math of "
-						+ mc.getClass().getSimpleName() + " in "
-						+ kl.getClass().getName());
+				kl.setMath(convert(mc.getMath()));
+
 		} else if (sbase instanceof PluginInitialAssignment) {
 			PluginInitialAssignment kl = (PluginInitialAssignment) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), libsbml.parseFormula(kl.getMath()));
 			if (mc.isSetMath() && !equal)
-				throw new SBMLException("Unable to set math of "
-						+ mc.getClass().getSimpleName() + " in "
-						+ kl.getClass().getName());
+				kl.setMath(libsbml.formulaToString(convert(mc.getMath())));
+
 		} else if (sbase instanceof PluginKineticLaw) {
 			PluginKineticLaw kl = (PluginKineticLaw) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath() && !equal)
-				throw new SBMLException("Unable to set math of "
-						+ mc.getClass().getSimpleName() + " in "
-						+ kl.getClass().getName());
+				kl.setMath(convert(mc.getMath()));
+
 		} else if (sbase instanceof PluginRule) {
 			PluginRule kl = (PluginRule) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath() && !equal)
-				throw new SBMLException("Unable to set math of "
-						+ mc.getClass().getSimpleName() + " in "
-						+ kl.getClass().getName());
+				kl.setMath(convert(mc.getMath()));
 		}
-		// } else if (sbase instanceof PluginStoichiometryMath) {
+		// else if (sbase instanceof PluginStoichiometryMath) {
 		// PluginStoichiometryMath kl = (PluginStoichiometryMath) sbase;
 		// boolean equal = kl.isSetMath() && mc.isSetMath()
 		// && equal(mc.getMath(), kl.getMath());
@@ -642,7 +754,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public void saveModelHistoryProperties(ModelHistory mh, Object modelHistory) {
 		// TODO Auto-generated method stub
-
 	}
 
 	/*
@@ -655,9 +766,20 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	public void saveModifierSpeciesReferenceProperties(
 			ModifierSpeciesReference modifierSpeciesReference, Object msr) {
 		if (!(msr instanceof PluginModifierSpeciesReference))
-			throw new IllegalArgumentException(
-					"modifierSpeciesReference must be an instance of org.sbml.libsbml.ModifierSpeciesReference.");
-		saveSBaseProperties(modifierSpeciesReference, msr);
+			throw new IllegalArgumentException("modifierSpeciesReference"
+					+ error + "PluginModifierSpeciesReference.");
+		saveNamedSBaseProperties(modifierSpeciesReference, msr);
+		PluginModifierSpeciesReference pmsr = (PluginModifierSpeciesReference) msr;
+		if (modifierSpeciesReference.isSetSBOTerm()) {
+			String type = SBO.convertSBO2Alias(modifierSpeciesReference
+					.getSBOTerm());
+			if (type.length() > 0)
+				pmsr.setModificationType(type);
+			else
+				pmsr.setModificationType(PluginReactionSymbolType.MODULATION);
+		}
+		// if (modifierSpeciesReference.isSetSpecies() &&
+		// !modifierSpeciesReference.getSpecies().equals(pmsr.getSpecies()))
 	}
 
 	/*
@@ -668,8 +790,74 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * , java.lang.Object)
 	 */
 	public void saveNamedSBaseProperties(NamedSBase nsb, Object sb) {
-		// TODO Auto-generated method stub
+		saveSBaseProperties(nsb, sb);
+		if (sb instanceof PluginCompartmentType) {
+			PluginCompartmentType pt = (PluginCompartmentType) sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				pt.setName(nsb.getName());
+		} else if (sb instanceof PluginEvent) {
+			PluginEvent pt = (PluginEvent) sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				pt.setName(nsb.getName());
+		} else if (sb instanceof PluginModel) {
+			PluginModel pt = (PluginModel) sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				pt.setName(nsb.getName());
+		} else if (sb instanceof PluginReaction) {
+			PluginReaction pt = (PluginReaction) sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				pt.setName(nsb.getName());
+		} else if (sb instanceof PluginSimpleSpeciesReference) {
+			// PluginSimpleSpeciesReference pt = (PluginSimpleSpeciesReference)
+			// sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			// if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			// pt.setName(nsb.getName());
+			if (sb instanceof PluginModifierSpeciesReference) {
+			} else if (sb instanceof PluginSpeciesReference) {
+			}
+		} else if (sb instanceof PluginSpeciesType) {
+			PluginSpeciesType pt = (PluginSpeciesType) sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				pt.setName(nsb.getName());
+		} else if (sb instanceof PluginCompartment) {
+			PluginCompartment pt = (PluginCompartment) sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				pt.setName(nsb.getName());
+		} else if (sb instanceof PluginParameter) {
+			PluginParameter pt = (PluginParameter) sb;
+			if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+				pt.setId(nsb.getId());
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				pt.setName(nsb.getName());
+		} else if (sb instanceof PluginSpecies) {
+			// PluginSpecies pt = (PluginSpecies) sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			// if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			// pt.setName(nsb.getName());
+		} else if (sb instanceof PluginUnitDefinition) {
+			PluginUnitDefinition pt = (PluginUnitDefinition) sb;
+			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			// pt.setId(nsb.getId());
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				pt.setName(nsb.getName());
+		} else if (sb instanceof PluginFunctionDefinition) {
 
+		}
 	}
 
 	/*
@@ -681,10 +869,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public void saveParameterProperties(Parameter p, Object parameter) {
 		if (!(parameter instanceof PluginParameter))
-			throw new IllegalArgumentException(
-					"parameter must be an instance of PluginParameter.");
+			throw new IllegalArgumentException("parameter" + error
+					+ "PluginParameter.");
 		PluginParameter po = (PluginParameter) parameter;
-		saveSBaseProperties(p, po);
+		saveNamedSBaseProperties(p, po);
 		if (p.isSetValue() && p.getValue() != po.getValue())
 			po.setValue(p.getValue());
 		if (p.getConstant() != po.getConstant())
@@ -710,103 +898,119 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	public void saveReactionProperties(Reaction r, Object reaction)
 			throws SBMLException {
 		if (!(reaction instanceof PluginReaction))
-			throw new IllegalArgumentException(
-					"reaction must be an instance of PluginReaction.");
+			throw new IllegalArgumentException("reaction" + error
+					+ "PluginReaction.");
 		PluginReaction ro = (PluginReaction) reaction;
-		long i;
-		saveSBaseProperties(r, ro);
-		if (r.isSetName())
-			ro.setName(r.getName());
+		saveNamedSBaseProperties(r, ro);
 		if (r.getFast() != ro.getFast())
 			ro.setFast(r.getFast());
 		if (r.getReversible() != ro.getReversible())
 			ro.setReversible(r.getReversible());
-		long contains;
-		// reactants.
-		for (SpeciesReference sr : r.getListOfReactants()) {
-			contains = -1;
-			for (i = 0; i < ro.getNumReactants() && contains < 0; i++)
-				if (sr.getSpecies()
-						.equals(ro.getReactant((int) i).getSpecies()))
-					contains = i;
-			if (contains < 0)
-				ro.addReactant(writeSpeciesReference(sr));
-			else
-				saveSpeciesReferenceProperties(sr, ro
-						.getReactant((int) contains));
-		}
-		// remove unnecessary reactants.
-		for (i = ro.getNumReactants() - 1; i >= 0; i--) {
-			PluginSpeciesReference roreactant = ro.getReactant((int) i);
-			boolean keep = false;
-			for (int j = 0; j < r.getNumReactants() && !keep; j++)
-				if (r.getReactant(j).getSpecies().equals(
-						roreactant.getSpecies()))
-					keep = true;
-			if (!keep)
-				ro.getListOfReactants().remove((int) i);
-		}
-		for (SpeciesReference sr : r.getListOfProducts()) {
-			contains = -1;
-			for (i = 0; i < ro.getNumProducts() && contains < 0; i++)
-				if (sr.getSpecies().equals(ro.getProduct((int) i).getSpecies()))
-					contains = i;
-			if (contains < 0)
-				ro.addProduct(writeSpeciesReference(sr));
-			else
-				saveSpeciesReferenceProperties(sr, ro
-						.getProduct((int) contains));
-		}
-		// remove unnecessary products.
-		for (i = ro.getNumProducts() - 1; i >= 0; i--) {
-			PluginSpeciesReference msr = ro.getProduct((int) i);
-			boolean keep = false;
-			for (int j = 0; j < r.getNumProducts() && !keep; j++)
-				if (r.getProduct(j).getSpecies().equals(msr.getSpecies()))
-					keep = true;
-			if (!keep)
-				ro.getListOfProducts().remove((int) i);
-		}
-		// check modifiers
-		for (ModifierSpeciesReference mr : r.getListOfModifiers()) {
-			contains = -1;
-			for (i = 0; i < ro.getNumModifiers() && contains < 0; i++)
-				if (mr.getSpecies()
-						.equals(ro.getModifier((int) i).getSpecies()))
-					contains = i;
-			if (contains < 0)
-				ro.addModifier(writeModifierSpeciesReference(mr,
-						(PluginReaction) reaction));
-			else
-				saveModifierSpeciesReferenceProperties(mr, ro
-						.getModifier((int) contains));
-		}
-		// remove unnecessary modifiers.
-		for (i = ro.getNumModifiers() - 1; i >= 0; i--) {
-			PluginModifierSpeciesReference msr = ro.getModifier((int) i);
-			boolean keep = false;
-			for (int j = 0; j < r.getNumModifiers() && !keep; j++)
-				if (r.getModifier(j).getSpecies().equals(msr.getSpecies()))
-					keep = true;
-			if (!keep)
-				ro.getListOfModifiers().remove((int) i);
-		}
+		saveListOfProperties(r.getListOfReactants(), ro, (short) 0);
+		saveListOfProperties(r.getListOfProducts(), ro, (short) 1);
+		saveListOfProperties(r.getListOfModifiers(), ro, (short) 2);
 		if (r.isSetKineticLaw()) {
-			if (ro.getKineticLaw() == null)
-				ro.setKineticLaw(writeKineticLaw(r.getKineticLaw(),
-						(PluginReaction) reaction));
-			else if (ro.getKineticLaw() != null)
-				saveKineticLawProperties(r.getKineticLaw(), ro.getKineticLaw());
-		} else if (ro.getKineticLaw() != null)
+			if (ro.getKineticLaw() == null) {
+				PluginKineticLaw plukin = writeKineticLaw(r.getKineticLaw(),
+						(PluginReaction) reaction);
+				ro.setKineticLaw(plukin);
+				plugin.notifySBaseAdded(plukin);
+			} else {
+				PluginKineticLaw plukin = ro.getKineticLaw();
+				saveKineticLawProperties(r.getKineticLaw(), plukin);
+				plugin.notifySBaseChanged(plukin);
+			}
+		} else if (ro.getKineticLaw() != null) {
+			PluginKineticLaw plukin = ro.getKineticLaw();
 			ro.setKineticLaw(null);
+			plugin.notifySBaseDeleted(plukin);
+		}
 	}
 
+	/**
+	 * 
+	 * @param listOf
+	 * @param ro
+	 * @param reactant
+	 * @throws SBMLException
+	 */
+	private void saveListOfProperties(
+			ListOf<? extends SimpleSpeciesReference> listOf, PluginReaction ro,
+			short reactant) throws SBMLException {
+		int i, contains;
+		for (SimpleSpeciesReference sr : listOf) {
+			contains = -1;
+			for (i = 0; i < ro.getNumReactants() && contains < 0; i++)
+				if (sr.getSpecies().equals(ro.getReactant(i).getSpecies()))
+					contains = i;
+			if (contains < 0) {
+				if (sr instanceof SpeciesReference) {
+					String type;
+					if (reactant == 0)
+						type = PluginSpeciesReference.REACTANT;
+					else if (reactant == 1)
+						type = PluginSpeciesReference.PRODUCT;
+					else
+						type = PluginSpeciesReference.MODIFIER;
+					PluginSpeciesReference psr = writeSpeciesReference(
+							(SpeciesReference) sr, ro, type);
+					if (reactant == 0)
+						ro.addReactant(psr);
+					else if (reactant == 1)
+						ro.addProduct(psr);
+					plugin.notifySBaseAdded(psr);
+				} else {
+					PluginModifierSpeciesReference pmsr = writeModifierSpeciesReference(
+							(ModifierSpeciesReference) sr, ro, pluginModel);
+					ro.addModifier(pmsr);
+					plugin.notifySBaseAdded(pmsr);
+				}
+			} else {
+				if (sr instanceof SpeciesReference) {
+					PluginSpeciesReference psr = reactant == 0 ? ro
+							.getReactant(contains) : ro.getProduct(contains);
+					saveSpeciesReferenceProperties((SpeciesReference) sr, psr);
+					plugin.notifySBaseChanged(psr);
+				} else if (sr instanceof ModifierSpeciesReference) {
+					PluginModifierSpeciesReference pmsr = ro
+							.getModifier(contains);
+					saveModifierSpeciesReferenceProperties(
+							(ModifierSpeciesReference) sr, pmsr);
+					plugin.notifySBaseChanged(pmsr);
+				}
+			}
+		}
+		// remove unnecessary reactants.
+		PluginListOf plo;
+		if (reactant == 0)
+			plo = ro.getListOfReactants();
+		else if (reactant == 1)
+			plo = ro.getListOfProducts();
+		else
+			plo = ro.getListOfModifiers();
+		for (i = plo.size() - 1; i >= 0; i--) {
+			PluginSimpleSpeciesReference roreactant = (PluginSimpleSpeciesReference) plo
+					.get(i);
+			boolean keep = false;
+			for (int j = 0; j < listOf.size() && !keep; j++)
+				if (listOf.get(j).getSpecies().equals(roreactant.getSpecies()))
+					keep = true;
+			if (!keep)
+				plugin.notifySBaseDeleted(plo.remove(i));
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#saveSBaseProperties(org.sbml.jsbml.SBase,
+	 * java.lang.Object)
+	 */
 	public void saveSBaseProperties(SBase s, Object sb) {
 		if (!(sb instanceof PluginSBase))
-			throw new IllegalArgumentException(
-					"sb must be of type PluginSBase!");
-		((PluginSBase) sb).setNotes(s.getNotesString());
-
+			throw new IllegalArgumentException("sb" + error + "PluginSBase");
+		PluginSBase plusbas = (PluginSBase) sb;
+		plusbas.setNotes(s.getNotesString());
 	}
 
 	/*
@@ -818,11 +1022,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public void saveSpeciesProperties(Species s, Object species) {
 		if (!(species instanceof PluginSpecies))
-			throw new IllegalArgumentException(
-					"species must be an instance of PluginSpecies.");
+			throw new IllegalArgumentException("species" + error
+					+ "PluginSpecies");
 		PluginSpecies spec = (PluginSpecies) species;
-		saveSBaseProperties(s, spec);
-
+		saveNamedSBaseProperties(s, spec);
 		if (s.isSetSpeciesType()
 				&& !s.getSpeciesType().equals(spec.getSpeciesType()))
 			spec.setSpeciesType(s.getSpeciesType());
@@ -849,6 +1052,11 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			spec.setCharge(s.getCharge());
 		if (s.getConstant() != spec.getConstant())
 			spec.setConstant(s.getConstant());
+		if (s.isSetSBOTerm()) {
+			String type = SBO.convertSBO2Alias(s.getSBOTerm());
+			if (type.length() > 0)
+				spec.getSpeciesAlias(0).setType(type);
+		}
 	}
 
 	/*
@@ -865,8 +1073,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			throw new IllegalArgumentException(
 					"specRef must be an instance of PluginSpeciesReference.");
 		PluginSpeciesReference sp = (PluginSpeciesReference) specRef;
-		saveSBaseProperties(sr, sp);
-
+		saveNamedSBaseProperties(sr, sp);
 		// if (sr.isSetSpecies() && !sr.getSpecies().equals(sp.getSpecies()))
 		// sp.setSpecies(sr.getSpecies());
 		if (sr.isSetStoichiometryMath()) {
@@ -889,24 +1096,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * org.sbml.jsbml.SBMLWriter#writeCompartment(org.sbml.jsbml.Compartment)
 	 */
 	public PluginCompartment writeCompartment(Compartment compartment) {
-		PluginCompartment c = new PluginCompartment(compartment
-				.getCompartmentType());
-		saveSBaseProperties(compartment, c);
-		if (compartment.isSetName())
-			c.setName(compartment.getName());
-		if (compartment.isSetCompartmentType()
-				&& !c.getCompartmentType().equals(
-						compartment.getCompartmentType()))
-			c.setCompartmentType(compartment.getCompartmentType());
-		if (compartment.isSetOutside() && !c.equals(compartment.getOutside()))
-			c.setOutside(compartment.getOutside());
-		if (compartment.isSetSize() && compartment.getSize() != c.getSize())
-			c.setSize(compartment.getSize());
-		if (compartment.isSetUnits()
-				&& !compartment.getUnits().equals(c.getUnits()))
-			c.setUnits(compartment.getUnits());
-		c.setConstant(compartment.getConstant());
-		c.setSpatialDimensions(compartment.getSpatialDimensions());
+		PluginCompartment c = new PluginCompartment(
+				PluginCompartmentSymbolType.SQUARE);
+		saveCompartmentProperties(compartment, c);
 		return c;
 	}
 
@@ -919,12 +1111,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public PluginCompartmentType writeCompartmentType(
 			CompartmentType compartmentType) {
-
 		PluginCompartmentType ct = new PluginCompartmentType(compartmentType
 				.getId());
-		saveSBaseProperties(compartmentType, ct);
-		if (compartmentType.isSetName())
-			ct.setName(compartmentType.getName());
+		saveNamedSBaseProperties(compartmentType, ct);
 		return ct;
 	}
 
@@ -934,15 +1123,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.jsbml.SBMLWriter#writeConstraint(org.sbml.jsbml.Constraint)
 	 */
 	public PluginConstraint writeConstraint(Constraint constraint) {
-		PluginConstraint c = new PluginConstraint(constraint.getFormula());
+		PluginConstraint c = new PluginConstraint(libsbml
+				.formulaToString(convert(constraint.getMath())));
 		saveSBaseProperties(constraint, c);
 		if (constraint.isSetMessage())
-			c.setMessage(constraint.getMessage());
-		// if (constraint.isSetMath() && !equal(constraint.getMath(),
-		// libsbml.parseFormula(c.getMath())))
-		// c.setMath(convert(constraint.getMath()));
-		if (constraint.isSetMessage()
-				&& !constraint.getMessage().equals(c.getMessage()))
 			c.setMessage(constraint.getMessage());
 		return c;
 	}
@@ -973,18 +1157,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public PluginEvent writeEvent(Event event) throws SBMLException {
 		PluginEvent e = new PluginEvent(event.getId());
-		saveSBaseProperties(event, e);
-		if (event.isSetName())
-			e.setName(event.getName());
-		if (event.isSetDelay())
-			e.setDelay(writeDelay(event.getDelay()));
-		for (EventAssignment ea : event.getListOfEventAssignments())
-			e.addEventAssignment(writeEventAssignment(ea, e));
-		if (event.isSetTimeUnits())
-			e.setTimeUnits(event.getTimeUnits());
-		if (e.getTrigger() != null)
-			e.setTrigger(writeTrigger(event.getTrigger()));
-		e.setUseValuesFromTriggerTime(event.getUseValuesFromTriggerTime());
+		saveEventProperties(event, e);
 		return e;
 	}
 
@@ -1018,6 +1191,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			FunctionDefinition functionDefinition) throws SBMLException {
 		PluginFunctionDefinition fd = new PluginFunctionDefinition(
 				functionDefinition.getId());
+		saveNamedSBaseProperties(functionDefinition, fd);
 		saveMathContainerProperties(functionDefinition, fd);
 		return fd;
 	}
@@ -1032,8 +1206,8 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			InitialAssignment initialAssignment) throws SBMLException {
 		PluginInitialAssignment ia = new PluginInitialAssignment(
 				initialAssignment.getSymbol());
+		saveSBaseProperties(initialAssignment, ia);
 		saveMathContainerProperties(initialAssignment, ia);
-
 		return ia;
 	}
 
@@ -1045,12 +1219,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	public PluginKineticLaw writeKineticLaw(KineticLaw kineticLaw,
 			Object... parent) throws SBMLException {
 		if (parent.length != 1 || !(parent[0] instanceof PluginReaction))
-			throw new IllegalArgumentException(
-					"parent must be an instance of PluginReaction!");
+			throw new IllegalArgumentException("parent" + error
+					+ "PluginReaction");
 		PluginKineticLaw k = new PluginKineticLaw((PluginReaction) parent[0]);
-		saveMathContainerProperties(kineticLaw, k);
-		for (Parameter p : kineticLaw.getListOfParameters())
-			k.addParameter(writeParameter(p));
+		saveKineticLawProperties(kineticLaw, k);
 		return k;
 	}
 
@@ -1059,8 +1231,12 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * 
 	 * @see org.sbml.SBMLWriter#writeModel(org.sbml.Model)
 	 */
-	public PluginModel writeModel(Model model) {
-		return null;
+	public PluginModel writeModel(Model model) throws SBMLException {
+		LibSBMLWriter writer = new LibSBMLWriter();
+		pluginModel = new PluginModel((org.sbml.libsbml.Model) writer
+				.writeModel(model));
+		saveChanges(model, pluginModel);
+		return pluginModel;
 	}
 
 	/*
@@ -1072,22 +1248,23 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public PluginModifierSpeciesReference writeModifierSpeciesReference(
 			ModifierSpeciesReference modifierSpeciesReference, Object... parent) {
-		if (parent.length != 1 || !(parent[0] instanceof PluginReaction))
+		if (parent.length != 2 || !(parent[0] instanceof PluginReaction)
+				|| !(parent[1] instanceof PluginModel))
 			throw new IllegalArgumentException(
-					"parent must be of type PluginReaction!");
+					"a PluginReaction and a PluginModel must be provided");
 		PluginReaction pluReac = (PluginReaction) parent[0];
 		PluginModel pluMod = (PluginModel) parent[1];
 		String modificationType;
 		if (modifierSpeciesReference.isSetSBOTerm())
 			modificationType = SBO.convertSBO2Alias(modifierSpeciesReference
 					.getSBOTerm());
-		else modificationType = PluginReactionSymbolType.MODULATION;
+		else
+			modificationType = PluginReactionSymbolType.MODULATION;
 		PluginModifierSpeciesReference m = new PluginModifierSpeciesReference(
 				pluReac, new PluginSpeciesAlias(pluMod
 						.getSpecies(modifierSpeciesReference.getSpecies()),
 						modificationType));
-		saveSBaseProperties(modifierSpeciesReference, m);
-
+		saveModifierSpeciesReferenceProperties(modifierSpeciesReference, m);
 		return m;
 	}
 
@@ -1099,24 +1276,14 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	public PluginParameter writeParameter(Parameter parameter, Object... parent) {
 		if (parent.length != 1
 				|| !((parent[0] instanceof PluginKineticLaw) || (parent[0] instanceof PluginModel)))
-
-			throw new IllegalArgumentException(
-					"parent must be of type PluginKineticLaw!");
+			throw new IllegalArgumentException("parent" + error
+					+ "PluginKineticLaw or PluginModel");
 		PluginParameter p;
 		if (parent[0] instanceof PluginKineticLaw)
 			p = new PluginParameter((PluginKineticLaw) parent[0]);
 		else
 			p = new PluginParameter((PluginModel) parent[0]);
-		saveSBaseProperties(parameter, p);
-		if (parameter.isSetName())
-			p.setName(parameter.getName());
-		if (parameter.isSetId())
-			p.setId(parameter.getId());
-		p.setConstant(parameter.getConstant());
-		if (parameter.isSetUnits())
-			p.setUnits(parameter.getUnits());
-		if (parameter.isSetValue())
-			p.setValue(parameter.getValue());
+		saveParameterProperties(parameter, p);
 		return p;
 	}
 
@@ -1127,18 +1294,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public PluginReaction writeReaction(Reaction reaction) throws SBMLException {
 		PluginReaction r = new PluginReaction();
-		saveSBaseProperties(reaction, r);
-		if (reaction.isSetName())
-			r.setName(reaction.getName());
-		r.setFast(reaction.getFast());
-		r.setReversible(reaction.getReversible());
-		r.setKineticLaw(writeKineticLaw(reaction.getKineticLaw(), r));
-		for (SpeciesReference sr : reaction.getListOfReactants())
-			r.addReactant(writeSpeciesReference(sr));
-		for (SpeciesReference sr : reaction.getListOfProducts())
-			r.addProduct(writeSpeciesReference(sr));
-		for (ModifierSpeciesReference mr : reaction.getListOfModifiers())
-			r.addModifier(writeModifierSpeciesReference(mr, r));
+		saveReactionProperties(reaction, r);
 		return r;
 	}
 
@@ -1182,9 +1338,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object,
 	 * java.lang.String)
 	 */
-	public boolean writeSBML(Object sbmlDocument, String filename) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean writeSBML(Object sbmlModel, String filename)
+			throws IOException, SBMLException {
+		return writeSBML(sbmlModel, filename, null, null);
 	}
 
 	/*
@@ -1193,10 +1349,32 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.jsbml.SBMLWriter#writeSBML(java.lang.Object,
 	 * java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public boolean writeSBML(Object object, String filename,
-			String programName, String versionNumber) throws SBMLException {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean writeSBML(Object sbmlModel, String filename,
+			String programName, String versionNumber) throws SBMLException,
+			IOException {
+		if (!(sbmlModel instanceof PluginSBase))
+			throw new IllegalArgumentException("sbmlModel" + error
+					+ "PluginSBase");
+		PluginSBase sbase = (PluginSBase) sbmlModel;
+		BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+		if (programName != null || versionNumber != null) {
+			bw.append("<!-- ");
+			if (programName != null) {
+				bw.append("created by ");
+				bw.append(programName);
+				if (versionNumber != null)
+					bw.append(' ');
+			}
+			if (versionNumber != null) {
+				bw.append("version ");
+				bw.append(versionNumber);
+			}
+			bw.append(" -->");
+			bw.newLine();
+		}
+		bw.append(sbase.toSBML());
+		bw.close();
+		return true;
 	}
 
 	/*
@@ -1206,23 +1384,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public PluginSpecies writeSpecies(Species species) {
 		String spectype = SBO.convertSBO2Alias(species.getSBOTerm());
-		if (spectype == null)
-			throw new IllegalArgumentException(
-					"Celldesigner don't know species with SBOnumber: "
-							+ species.getSBOTerm());
+		if (spectype == null || spectype.length() == 0)
+			spectype = PluginSpeciesSymbolType.SIMPLE_MOLECULE;
 		PluginSpecies s = new PluginSpecies(spectype, species.getName());
-		saveSBaseProperties(species, s);
-		s.setBoundaryCondition(species.getBoundaryCondition());
-		s.setCharge(species.getCharge());
-		s.setCompartment(species.getCompartment());
-		s.setConstant(species.getConstant());
-		s.setHasOnlySubstanceUnits(species.getHasOnlySubstanceUnits());
-		if (species.isSetInitialAmount())
-			s.setInitialAmount(species.getInitialAmount());
-		else if (species.isSetInitialConcentration())
-			s.setInitialConcentration(species.getInitialConcentration());
-		if (species.isSetSubstanceUnits())
-			species.getSubstanceUnits();
+		saveSpeciesProperties(species, s);
 		return s;
 	}
 
@@ -1232,24 +1397,17 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * @see org.sbml.SBMLWriter#writeSpeciesReference(org.sbml.SpeciesReference)
 	 */
 	public PluginSpeciesReference writeSpeciesReference(
-			SpeciesReference speciesReference, Object... parent) {
-		if (parent.length != 1 || !(parent[0] instanceof PluginReaction))
-			throw new IllegalArgumentException(
-					"parent must be of type PluginReaction!");
+			SpeciesReference speciesReference, Object... parent)
+			throws SBMLException {
+		if (parent.length != 2 || !(parent[0] instanceof PluginReaction)
+				|| !(parent[1] instanceof String))
+			throw new IllegalArgumentException("parent" + error
+					+ "PluginReaction and type (String) must be given");
 		PluginSpeciesReference sr = new PluginSpeciesReference(
 				(PluginReaction) parent[0], new PluginSpeciesAlias(pluginModel
-						.getSpecies(speciesReference.getSpecies()), pluginModel
-						.getSpecies(speciesReference.getSpecies())
-						.getSpeciesType()));
-		saveSBaseProperties(speciesReference, sr);
-
-		// if (speciesReference.isSetSpecies())
-		// sr.setSpecies(speciesReference.getSpecies());
-		if (speciesReference.isSetStoichiometryMath())
-			sr.setStoichiometryMath(writeStoichoimetryMath(speciesReference
-					.getStoichiometryMath()));
-		else
-			sr.setStoichiometry(speciesReference.getStoichiometry());
+						.getSpecies(speciesReference.getSpecies()), parent[1]
+						.toString()));
+		saveSpeciesReferenceProperties(speciesReference, sr);
 		return sr;
 	}
 
@@ -1261,9 +1419,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public PluginSpeciesType writeSpeciesType(SpeciesType speciesType) {
 		PluginSpeciesType st = new PluginSpeciesType(speciesType.getId());
-		saveSBaseProperties(speciesType, st);
-		if (speciesType.getName() != null)
-			st.setName(speciesType.getName());
+		saveNamedSBaseProperties(speciesType, st);
 		return st;
 	}
 
@@ -1305,8 +1461,8 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public PluginUnit writeUnit(Unit unit, Object... parent) {
 		if (parent.length != 1 || !(parent[0] instanceof PluginUnitDefinition))
-			throw new IllegalArgumentException(
-					"parent must be of type PluginUnitDefinition!");
+			throw new IllegalArgumentException("parent" + error
+					+ "PluginUnitDefinition");
 		PluginUnit u = new PluginUnit((PluginUnitDefinition) parent[0]);
 		saveSBaseProperties(unit, u);
 		switch (unit.getKind()) {
@@ -1437,11 +1593,12 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			UnitDefinition unitDefinition) {
 		PluginUnitDefinition ud = new PluginUnitDefinition(unitDefinition
 				.getId());
-		saveSBaseProperties(unitDefinition, ud);
-		if (unitDefinition.isSetName())
-			ud.setName(unitDefinition.getName());
-		for (Unit u : unitDefinition.getListOfUnits())
-			ud.addUnit(writeUnit(u));
+		saveNamedSBaseProperties(unitDefinition, ud);
+		for (Unit u : unitDefinition.getListOfUnits()) {
+			PluginUnit unit = writeUnit(u, ud);
+			ud.addUnit(unit);
+			plugin.notifySBaseAdded(unit);
+		}
 		return ud;
 	}
 

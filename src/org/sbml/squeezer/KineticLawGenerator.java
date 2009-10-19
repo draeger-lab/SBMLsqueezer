@@ -776,11 +776,11 @@ public class KineticLawGenerator {
 						.toString()));
 		storeParamters(reaction);
 		if (removeParametersAndStoreUnits) {
+			storeUnits();
 			if (((Boolean) settings
 					.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 					.booleanValue())
 				removeUnnecessaryParameters(modelOrig);
-			storeUnits();
 		}
 		return reaction;
 	}
@@ -794,11 +794,11 @@ public class KineticLawGenerator {
 			storeKineticLaw(miniModel.getReaction(i).getKineticLaw(), false);
 			l.currentNumber(i);
 		}
+		storeUnits();
 		if (((Boolean) settings
 				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 				.booleanValue())
 			removeUnnecessaryParameters(modelOrig);
-		storeUnits();
 	}
 
 	/**

@@ -620,7 +620,7 @@ public class SBMLsqueezer implements LawListener {
 	public SBMLsqueezer(AbstractSBMLReader sbmlReader,
 			AbstractSBMLWriter sbmlWriter) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 55; i++)
+		for (int i = 0; i < 57; i++)
 			sb.append('-');
 		System.out.println(sb.toString());
 		showAboutMsg();
