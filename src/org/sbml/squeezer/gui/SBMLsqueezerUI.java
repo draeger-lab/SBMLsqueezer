@@ -153,6 +153,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		this.sbmlIO = io;
 		init();
 		pack();
+		Dimension dim = logo.getPreferredSize();
+		setMinimumSize(new Dimension((int) dim.getWidth() + 50, (int) dim
+				.getHeight() + 50));
 	}
 
 	/*
@@ -711,7 +714,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			sbmlIO.writeSelectedModelToSBML(out.getAbsolutePath());
 		} catch (SBMLException exc) {
 			JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getName(),
+					.getMessage(), 40), exc.getClass().getSimpleName(),
+					JOptionPane.ERROR_MESSAGE);
+			exc.printStackTrace();
+		} catch (IOException exc) {
+			JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getSimpleName(),
 					JOptionPane.ERROR_MESSAGE);
 			exc.printStackTrace();
 		}

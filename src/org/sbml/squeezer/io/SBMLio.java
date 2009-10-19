@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.io;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -680,9 +681,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @param filename
 	 * @return
 	 * @throws SBMLException
+	 * @throws IOException 
 	 */
 	public boolean writeModelToSBML(int model, String filename)
-			throws SBMLException {
+			throws SBMLException, IOException {
 		return writer.writeSBML(listOfOrigModels.get(model), filename);
 	}
 
@@ -734,7 +736,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 */
 	// @Override
 	public boolean writeSBML(Object sbmlDocument, String filename)
-			throws SBMLException {
+			throws SBMLException, IOException {
 		return writer.writeSBML(sbmlDocument, filename);
 	}
 
@@ -745,7 +747,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean writeSBML(Object object, String filename,
-			String programName, String versionNumber) throws SBMLException {
+			String programName, String versionNumber) throws SBMLException, IOException {
 		return writer.writeSBML(object, filename, programName, versionNumber);
 	}
 
@@ -754,9 +756,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @param filename
 	 * @return
 	 * @throws SBMLException
+	 * @throws IOException 
 	 */
 	public boolean writeSelectedModelToSBML(String filename)
-			throws SBMLException {
+			throws SBMLException, IOException {
 		return writer.writeSBML(listOfOrigModels.get(selectedModel), filename,
 				SBMLsqueezer.class.getSimpleName(), SBMLsqueezer
 						.getVersionNumber());
@@ -778,7 +781,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLWriter#writeSpeciesReference(org.sbml.SpeciesReference)
 	 */
 	public Object writeSpeciesReference(SpeciesReference speciesReference,
-			Object... args) {
+			Object... args) throws SBMLException {
 		return writer.writeSpeciesReference(speciesReference, args);
 	}
 

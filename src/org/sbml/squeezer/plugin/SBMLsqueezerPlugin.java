@@ -56,8 +56,7 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			 */
 			sbmlSqueezer = new SBMLsqueezer(
 					new PluginSBMLReader(SBO.getPossibleEnzymes(SBMLsqueezer
-							.getPossibleEnzymeTypes())), new PluginSBMLWriter(
-							this));
+							.getPossibleEnzymeTypes())), new PluginSBMLWriter(this));
 			sbmlSqueezer.checkForUpdate(true);
 			/*
 			 * Initializing CellDesigner's menu entries
