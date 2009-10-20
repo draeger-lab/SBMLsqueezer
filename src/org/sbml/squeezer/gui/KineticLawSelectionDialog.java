@@ -39,7 +39,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -127,9 +126,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 			Model model) {
 		this(owner, settings);
 		SettingsPanelLaTeX panel = new SettingsPanelLaTeX(settings, true);
-		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
+		if (JOptionDialog.showConfirmDialog(this, panel, "LaTeX export",
+				JOptionDialog.OK_CANCEL_OPTION, JOptionDialog.QUESTION_MESSAGE,
+				GUITools.LEMON_ICON_SMALL) == JOptionDialog.OK_OPTION) {
 			try {
 				BufferedWriter buffer = new BufferedWriter(new FileWriter(panel
 						.getTeXFile()));
@@ -163,9 +162,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 						.toString());
 				buffer.close();
 			} catch (IOException exc) {
-				JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+				JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
 						.getMessage(), 40), exc.getClass().getSimpleName(),
-						JOptionPane.WARNING_MESSAGE);
+						JOptionDialog.WARNING_MESSAGE);
 			}
 	}
 
@@ -199,9 +198,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 			klg = new KineticLawGenerator(model, reaction.getId(), settings);
 			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(
 					klg, reaction);
-			if (JOptionPane.showConfirmDialog(this, messagePanel,
-					"SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE, GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
+			if (JOptionDialog.showConfirmDialog(this, messagePanel,
+					"SBMLsqueezer", JOptionDialog.OK_CANCEL_OPTION,
+					JOptionDialog.QUESTION_MESSAGE, GUITools.LEMON_ICON_SMALL) == JOptionDialog.OK_OPTION) {
 				if (!messagePanel.getExistingRateLawSelected()) {
 					String equationType = messagePanel.getSelectedKinetic();
 					reaction.setReversible(messagePanel.getReversible());
@@ -224,9 +223,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 				}
 			}
 		} catch (Throwable exc) {
-			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+			JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getSimpleName(),
-					JOptionPane.WARNING_MESSAGE);
+					JOptionDialog.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
 	}
@@ -304,9 +303,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 							} else
 								message += "is beeing ignored.";
 							message += "</p></body></html>";
-							JOptionPane.showMessageDialog(this, message,
+							JOptionDialog.showMessageDialog(this, message,
 									"Fast Reactions",
-									JOptionPane.WARNING_MESSAGE);
+									JOptionDialog.WARNING_MESSAGE);
 						}
 
 						JPanel reactionsPanel = new JPanel(new BorderLayout());
@@ -363,10 +362,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 						validate();
 
 					} catch (Throwable exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+						JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
 								.getMessage(), 40), exc.getClass()
 								.getCanonicalName(),
-								JOptionPane.WARNING_MESSAGE);
+								JOptionDialog.WARNING_MESSAGE);
 						exc.printStackTrace();
 					}
 
@@ -405,10 +404,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 										.get(CfgKeys.SHOW_SBML_WARNINGS))
 										.booleanValue());
 					} catch (SBMLException exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+						JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
 								.getMessage(), 40), exc.getClass()
 								.getCanonicalName(),
-								JOptionPane.WARNING_MESSAGE);
+								JOptionDialog.WARNING_MESSAGE);
 						exc.printStackTrace();
 					}
 					KineticsAndParametersStoredInSBML = true;
@@ -545,9 +544,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 											.booleanValue());
 					KineticsAndParametersStoredInSBML = true;
 				} catch (SBMLException exc) {
-					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
 							.getMessage(), 40), exc.getClass()
-							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
+							.getCanonicalName(), JOptionDialog.WARNING_MESSAGE);
 					exc.printStackTrace();
 				}
 			SBFileFilter ff1 = SBFileFilter.TeX_FILE_FILTER;
@@ -564,9 +563,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 					if (ff2.accept(f))
 						new TextExport(sbmlIO.getSelectedModel(), f, settings);
 				} catch (IOException exc) {
-					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
 							.getMessage(), 40), exc.getClass()
-							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
+							.getCanonicalName(), JOptionDialog.WARNING_MESSAGE);
 					exc.printStackTrace();
 				}
 		}

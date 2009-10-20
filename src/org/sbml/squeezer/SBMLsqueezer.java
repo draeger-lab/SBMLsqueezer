@@ -703,10 +703,8 @@ public class SBMLsqueezer implements LawListener {
 								.getAbsolutePath());
 						System.out.println(" done in "
 								+ (System.currentTimeMillis() - time) + " ms");
-						if (sbmlIo.getNumErrors() > 0
-								&& ((Boolean) settings
-										.get(CfgKeys.SHOW_SBML_WARNINGS))
-										.booleanValue())
+						if (((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+								.booleanValue())
 							for (SBMLException exc : sbmlIo.getWriteWarnings())
 								System.err.println(exc.getMessage());
 					} else
