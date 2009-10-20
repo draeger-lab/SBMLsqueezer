@@ -762,14 +762,11 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				kr.setUnits(unitPerTimeOrSizePerTime(getModel().getSpecies(
 						enzyme).getCompartmentInstance()));
 		} else {
-			/*
-			 * TODO!!!!!
-			 */
 			StringBuffer id = StringTools.concat("vma");
 			if (!getParentSBMLObject().getReversible())
 				id.append('x');
 			else
-				id.append(forward ? 'f' : 'b');
+				id.append(forward ? 'f' : 'r');
 			StringTools.append(id, underscore, reactionID);
 			kr = createOrGetParameter(id);
 			if (!kr.isSetSBOTerm()) {

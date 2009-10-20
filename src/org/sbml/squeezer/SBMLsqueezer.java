@@ -122,7 +122,7 @@ public class SBMLsqueezer implements LawListener {
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
-	private static final String versionNumber = "1.2.3";
+	private static final String versionNumber = "1.2.4";
 
 	static {
 		long time = System.currentTimeMillis();
