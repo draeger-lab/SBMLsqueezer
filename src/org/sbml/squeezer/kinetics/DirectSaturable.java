@@ -65,7 +65,7 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 		if (!forward.isUnknown())
 			denominator.plus(forward);
 		if (!backward.isUnknown())
-			denominator.minus(backward);
+			denominator.plus(backward);
 		return denominator;
 	}
 
@@ -81,7 +81,7 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 		ASTNode term = new ASTNode(this), curr;
 		Reaction r = getParentSBMLObject();
 		Parameter kM;
-		Parameter hr = parameterHillCoefficient(enzyme);
+		Parameter hr = parameterReactionCooperativity(enzyme);
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
