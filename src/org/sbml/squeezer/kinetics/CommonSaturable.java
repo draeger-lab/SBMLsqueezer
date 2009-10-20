@@ -63,7 +63,7 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 		if (denominator.isUnknown())
 			denominator = denominator(enzyme, false);
 		else
-			denominator.minus(denominator(enzyme, false));
+			denominator.plus(denominator(enzyme, false));
 		denominator.minus(new ASTNode(1, this));
 		ASTNode competInhib = competetiveInhibitionSummand();
 		return competInhib.isUnknown() ? denominator : denominator
@@ -79,7 +79,7 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 	 */
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode denominator = new ASTNode(this), curr;
-		Parameter hr = parameterHillCoefficient(enzyme);
+		Parameter hr = parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();

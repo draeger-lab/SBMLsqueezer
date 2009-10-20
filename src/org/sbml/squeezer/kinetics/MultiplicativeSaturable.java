@@ -55,7 +55,9 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(java.lang.String)
+	 * @see
+	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(java.lang.String
+	 * )
 	 */
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(this);
@@ -63,10 +65,12 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 		ASTNode backward = denominator(enzyme, false);
 		if (!forward.isUnknown())
 			denominator = forward;
-		if (!denominator.isUnknown() && !backward.isUnknown())
-			denominator.multiplyWith(backward);
-		else
-			denominator = backward;
+		if (!backward.isUnknown()) {
+			if (!denominator.isUnknown())
+				denominator.multiplyWith(backward);
+			else
+				denominator = backward;
+		}
 		ASTNode competInhib = competetiveInhibitionSummand();
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
@@ -83,7 +87,7 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		Parameter kM;
-		Parameter hr = parameterHillCoefficient(enzyme);
+		Parameter hr = parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();

@@ -26,6 +26,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
+ * Force dependent rate law (FD).
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
@@ -52,8 +54,9 @@ public class ForceDependent extends ReversiblePowerLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 *      .Reaction)
+	 * @see
+	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
+	 * .Reaction)
 	 */
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(this);
@@ -61,10 +64,12 @@ public class ForceDependent extends ReversiblePowerLaw implements
 		ASTNode backward = denominator(enzyme, false);
 		if (!forward.isUnknown())
 			denominator = forward;
-		if (!denominator.isUnknown() && !backward.isUnknown())
-			denominator.multiplyWith(backward);
-		else
-			denominator = backward;
+		if (!backward.isUnknown()) {
+			if (!denominator.isUnknown())
+				denominator.multiplyWith(backward);
+			else
+				denominator = backward;
+		}
 		denominator.sqrt();
 		ASTNode competInhib = competetiveInhibitionSummand();
 		return competInhib.isUnknown() ? denominator : denominator
@@ -84,9 +89,12 @@ public class ForceDependent extends ReversiblePowerLaw implements
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
+		Parameter hr = parameterReactionCooperativity(enzyme);
 		for (SpeciesReference specRef : listOf) {
 			kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 			curr = ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this));
+			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(hr, this),
+					new ASTNode(specRef.getStoichiometry(), this)));
 			if (term.isUnknown())
 				term = curr;
 			else
