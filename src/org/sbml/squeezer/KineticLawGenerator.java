@@ -834,6 +834,8 @@ public class KineticLawGenerator {
 				UnitDefinition orig = modelOrig.getUnitDefinition(ud.getId());
 				orig.setListOfUnits(ud.getListOfUnits());
 				orig.simplify();
+				if (ud.isSetName())
+					orig.setName(ud.getName());
 			}
 		}
 		for (Compartment c : miniModel.getListOfCompartments()) {
