@@ -198,6 +198,9 @@ public class KineticLawGenerator {
 			reaction = r;
 		reaction.setReversible(reversibility || reaction.getReversible());
 		try {
+			if (!kineticsClassName.startsWith(SBMLsqueezer.KINETICS_PACKAGE))
+				kineticsClassName = SBMLsqueezer.KINETICS_PACKAGE + '.'
+						+ kineticsClassName;
 			Class<?> kinCls = Class.forName(kineticsClassName);
 			Object typeParameters[] = new Object[] {
 					settings.get(CfgKeys.TYPE_STANDARD_VERSION),
@@ -322,8 +325,8 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	private Species copySpecies(Species speciesOrig, Model miniModel) {
-		Compartment compartment = copyCopmpartment(speciesOrig.getCompartmentInstance(),
-				miniModel);
+		Compartment compartment = copyCopmpartment(speciesOrig
+				.getCompartmentInstance(), miniModel);
 		if (miniModel.getSpecies(speciesOrig.getId()) == null)
 			miniModel.addSpecies(speciesOrig.clone());
 		Species spec = miniModel.getSpecies(speciesOrig.getId());
