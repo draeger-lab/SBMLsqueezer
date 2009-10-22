@@ -20,7 +20,9 @@ package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +41,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -48,6 +51,7 @@ import javax.swing.border.BevelBorder;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBase;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.LawListener;
@@ -105,36 +109,59 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private SettingsPanelAll settingsPanel;
 
 	/**
+	 * Creates an empty dialog with the given settings and sbml io object.
 	 * 
 	 * @param owner
 	 * @param settings
 	 */
-	private KineticLawSelectionDialog(JFrame owner, Properties settings) {
+	private KineticLawSelectionDialog(Frame owner, Properties settings) {
 		super(owner, "SBMLsqueezer", true);
 		this.settings = settings;
 		this.sbmlIO = null;
-		setAlwaysOnTop(true);
+		// setAlwaysOnTop(true);
 	}
 
 	/**
-	 * This constructor allows us to store the given model in a text file. This
-	 * can be a LaTeX or another format.
+	 * This constructor allows us to store the given model or the given reaction
+	 * in a text file. This can be a LaTeX or another format.
 	 * 
-	 * @param model
+	 * @param sbase
+	 *            allowed are a reaction or a model instance.
 	 */
-	public KineticLawSelectionDialog(JFrame owner, Properties settings,
-			Model model) {
+	public KineticLawSelectionDialog(Frame owner, Properties settings,
+			SBase sbase) {
 		this(owner, settings);
 		SettingsPanelLaTeX panel = new SettingsPanelLaTeX(settings, true);
-		if (JOptionDialog.showConfirmDialog(this, panel, "LaTeX export",
-				JOptionDialog.OK_CANCEL_OPTION, JOptionDialog.QUESTION_MESSAGE,
-				GUITools.LEMON_ICON_SMALL) == JOptionDialog.OK_OPTION) {
+		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+				GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
+			for (Object key : panel.getProperties().keySet())
+				settings.put(key, panel.getProperties().get(key));
 			try {
-				BufferedWriter buffer = new BufferedWriter(new FileWriter(panel
-						.getTeXFile()));
-				LaTeXExport exporter = new LaTeXExport(panel.getProperties());
-				buffer.write(exporter.toLaTeX(model).toString());
-				buffer.close();
+				File f = new File(panel.getTeXFile());
+				if (f.exists() && f.isDirectory())
+					JOptionPane
+							.showMessageDialog(
+									this,
+									GUITools
+											.toHTML(
+													"No appropriate file was selected and therefore no TeX file was created.",
+													40));
+				else if (!f.exists()
+						|| GUITools.overwriteExistingFileDialog(owner, f) == JOptionPane.YES_OPTION) {
+					BufferedWriter buffer = new BufferedWriter(
+							new FileWriter(f));
+					LaTeXExport exporter = new LaTeXExport(panel
+							.getProperties());
+					if (sbase instanceof Model)
+						buffer
+								.write(exporter.toLaTeX((Model) sbase)
+										.toString());
+					else if (sbase instanceof Reaction)
+						buffer.write(exporter.toLaTeX((Reaction) sbase)
+								.toString());
+					buffer.close();
+				}
 				dispose();
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -143,39 +170,14 @@ public class KineticLawSelectionDialog extends JDialog implements
 	}
 
 	/**
-	 * Constructor to save one reaction in a LaTeX file.
-	 * 
-	 * @param model
-	 * @param reaction
-	 */
-	public KineticLawSelectionDialog(JFrame owner, Properties settings,
-			Reaction reaction) {
-		this(owner, settings);
-		JFileChooser chooser = GUITools.createJFileChooser(settings.get(
-				CfgKeys.SAVE_DIR).toString(), false, false,
-				JFileChooser.FILES_ONLY, SBFileFilter.TeX_FILE_FILTER);
-		if (chooser.showSaveDialog(owner) == JFileChooser.APPROVE_OPTION)
-			try {
-				BufferedWriter buffer = new BufferedWriter(new FileWriter(
-						chooser.getSelectedFile()));
-				buffer.write(new LaTeXExport(settings).toLaTeX(reaction)
-						.toString());
-				buffer.close();
-			} catch (IOException exc) {
-				JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
-						.getMessage(), 40), exc.getClass().getSimpleName(),
-						JOptionDialog.WARNING_MESSAGE);
-			}
-	}
-
-	/**
-	 * DEFAULT Constructor
+	 * Creates a kinetic law selection dialog to create kinetic equations for a
+	 * whole model.
 	 * 
 	 * @param owner
 	 * @param settings
 	 * @param sbmlIO
 	 */
-	public KineticLawSelectionDialog(JFrame owner, Properties settings,
+	public KineticLawSelectionDialog(Frame owner, Properties settings,
 			SBMLio sbmlIO) {
 		this(owner, settings);
 		this.sbmlIO = sbmlIO;
@@ -189,43 +191,49 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param sbmlIO
 	 * @param reaction
 	 */
-	public KineticLawSelectionDialog(JFrame owner, Properties settings,
+	public KineticLawSelectionDialog(Frame owner, Properties settings,
 			SBMLio sbmlIO, String reactionID) {
-		this(owner, settings, sbmlIO);
-		Model model = sbmlIO.getSelectedModel();
-		Reaction reaction = model.getReaction(reactionID);
+		this(owner, settings);
 		try {
-			klg = new KineticLawGenerator(model, reaction.getId(), settings);
-			KineticLawSelectionPanel messagePanel = new KineticLawSelectionPanel(
-					klg, reaction);
-			if (JOptionDialog.showConfirmDialog(this, messagePanel,
-					"SBMLsqueezer", JOptionDialog.OK_CANCEL_OPTION,
-					JOptionDialog.QUESTION_MESSAGE, GUITools.LEMON_ICON_SMALL) == JOptionDialog.OK_OPTION) {
-				if (!messagePanel.getExistingRateLawSelected()) {
-					String equationType = messagePanel.getSelectedKinetic();
-					reaction.setReversible(messagePanel.getReversible());
-					sbmlIO.stateChanged(reaction);
-					klg.getSettings().put(
-							CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
-							Boolean.valueOf(messagePanel.getReversible()));
-					reaction = klg.storeKineticLaw(klg.createKineticLaw(
-							reaction, equationType, messagePanel
-									.getReversible()));
-					sbmlIO.saveChanges();
-					SBMLsqueezerUI
-							.checkForSBMLErrors(this,
-									sbmlIO.getSelectedModel(), sbmlIO
-											.getWriteWarnings(),
-									((Boolean) settings
-											.get(CfgKeys.SHOW_SBML_WARNINGS))
-											.booleanValue());
-					KineticsAndParametersStoredInSBML = true;
-				}
-			}
+			// This thing is necessary for CellDesigner!
+			KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
+					settings, sbmlIO, reactionID);
+			pack();
+			setResizable(false);
+			setLocationRelativeTo(owner);
+			setVisible(true);
+			KineticsAndParametersStoredInSBML = adapter
+					.isKineticsAndParametersStoredInSBML();
+			dispose();
+			// if (JOptionPane.showConfirmDialog(this, messagePanel,
+			// "SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
+			// JOptionPane.QUESTION_MESSAGE, GUITools.LEMON_ICON_SMALL) ==
+			// JOptionPane.OK_OPTION) {
+			// if (!messagePanel.getExistingRateLawSelected()) {
+			// String equationType = messagePanel.getSelectedKinetic();
+			// reaction.setReversible(messagePanel.getReversible());
+			// sbmlIO.stateChanged(reaction);
+			// klg.getSettings().put(
+			// CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+			// Boolean.valueOf(messagePanel.getReversible()));
+			// reaction = klg.storeKineticLaw(klg.createKineticLaw(
+			// reaction, equationType, messagePanel
+			// .getReversible()));
+			// sbmlIO.saveChanges();
+			// SBMLsqueezerUI
+			// .checkForSBMLErrors(this,
+			// sbmlIO.getSelectedModel(), sbmlIO
+			// .getWriteWarnings(),
+			// ((Boolean) settings
+			// .get(CfgKeys.SHOW_SBML_WARNINGS))
+			// .booleanValue());
+			// KineticsAndParametersStoredInSBML = true;
+			// }
+			// }
 		} catch (Throwable exc) {
-			JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getSimpleName(),
-					JOptionDialog.WARNING_MESSAGE);
+					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
 	}
@@ -303,9 +311,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 							} else
 								message += "is beeing ignored.";
 							message += "</p></body></html>";
-							JOptionDialog.showMessageDialog(this, message,
+							JOptionPane.showMessageDialog(this, message,
 									"Fast Reactions",
-									JOptionDialog.WARNING_MESSAGE);
+									JOptionPane.WARNING_MESSAGE);
 						}
 
 						JPanel reactionsPanel = new JPanel(new BorderLayout());
@@ -362,10 +370,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 						validate();
 
 					} catch (Throwable exc) {
-						JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass()
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(
+								exc.getMessage(), 40), exc.getClass()
 								.getCanonicalName(),
-								JOptionDialog.WARNING_MESSAGE);
+								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					}
 
@@ -404,10 +412,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 										.get(CfgKeys.SHOW_SBML_WARNINGS))
 										.booleanValue());
 					} catch (SBMLException exc) {
-						JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass()
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(
+								exc.getMessage(), 40), exc.getClass()
 								.getCanonicalName(),
-								JOptionDialog.WARNING_MESSAGE);
+								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
 					}
 					KineticsAndParametersStoredInSBML = true;
@@ -544,9 +552,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 											.booleanValue());
 					KineticsAndParametersStoredInSBML = true;
 				} catch (SBMLException exc) {
-					JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
+					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 							.getMessage(), 40), exc.getClass()
-							.getCanonicalName(), JOptionDialog.WARNING_MESSAGE);
+							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
 					exc.printStackTrace();
 				}
 			SBFileFilter ff1 = SBFileFilter.TeX_FILE_FILTER;
@@ -563,9 +571,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 					if (ff2.accept(f))
 						new TextExport(sbmlIO.getSelectedModel(), f, settings);
 				} catch (IOException exc) {
-					JOptionDialog.showMessageDialog(this, GUITools.toHTML(exc
+					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 							.getMessage(), 40), exc.getClass()
-							.getCanonicalName(), JOptionDialog.WARNING_MESSAGE);
+							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
 					exc.printStackTrace();
 				}
 		}
@@ -655,15 +663,16 @@ public class KineticLawSelectionDialog extends JDialog implements
 		label.setBackground(Color.WHITE);
 		label.setText("<html><body><br><br><br><br><br><br>Version "
 				+ SBMLsqueezer.getVersionNumber() + "</body></html>");
+		Dimension d = GUITools.getDimension(GUITools.LOGO_SMALL);
+		d.setSize(d.getWidth() + 125, d.getHeight() + 10);
+		label.setPreferredSize(new Dimension(d));
 		JPanel p = new JPanel();
 		p.add(label);
-		p.setBackground(Color.WHITE);
 		JScrollPane scroll = new JScrollPane(p,
 				JScrollPane.VERTICAL_SCROLLBAR_NEVER,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scroll.setBackground(Color.WHITE);
+		GUITools.setAllBackground(scroll, Color.WHITE);
 		getContentPane().add(scroll, BorderLayout.NORTH);
-		// ContainerHandler.setAllBackground(getContentPane(), Color.WHITE);
 
 		footPanel = getFootPanel(0);
 		getContentPane().add(footPanel, BorderLayout.SOUTH);
@@ -672,6 +681,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 		setDefaultLookAndFeelDecorated(true);
 		setLocationByPlatform(true);
 		setResizable(false);
+		d.setSize(d.getWidth(), d.getHeight() + 125);
+		setMinimumSize(new Dimension(d));
 		pack();
 
 		int height = getHeight();

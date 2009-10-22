@@ -148,7 +148,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	public SBMLsqueezerUI(SBMLio io, Properties settings)
 			throws HeadlessException {
-		super(SBMLsqueezer.class.getSimpleName());
+		super(SBMLsqueezer.class.getSimpleName() + ' '
+				+ SBMLsqueezer.getVersionNumber());
 		this.settings = settings;
 		this.sbmlIO = io;
 		init();
@@ -166,104 +167,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	// @Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals(Command.SQUEEZE.toString())) {
-			KineticLawSelectionDialog klsd;
-			if (e.getSource() instanceof Reaction) {
-				// just one reaction
-				klsd = new KineticLawSelectionDialog(this, settings, sbmlIO,
-						((Reaction) e.getSource()).getId());
-			} else {
-				// whole model
-				klsd = new KineticLawSelectionDialog(this, settings, sbmlIO);
-				klsd.setVisible(true);
-			}
-			if (klsd.isKineticsAndParametersStoredInSBML()) {
-				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
-						.getSelectedComponent();
-				split.init(sbmlIO.getSelectedModel(), true);
-			}
-
-		} else if (e.getActionCommand().equals(Command.TO_LATEX.toString())) {
-			if (e.getSource() instanceof Reaction) {
-				new KineticLawSelectionDialog(this, settings, (Reaction) e
-						.getSource());
-			} else if (e.getSource() instanceof Model) {
-				new KineticLawSelectionDialog(this, settings, (Model) e
-						.getSource());
-			} else {
-				String dir = settings.get(CfgKeys.LATEX_DIR).toString();
-				JFileChooser chooser = GUITools.createJFileChooser(dir, false,
-						false, JFileChooser.FILES_ONLY,
-						SBFileFilter.TeX_FILE_FILTER);
-				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-					File out = chooser.getSelectedFile();
-					String path = out.getParent();
-					if (!path.equals(dir))
-						settings.put(CfgKeys.LATEX_DIR, path);
-					if (!out.exists()
-							|| GUITools.overwriteExistingFileDialog(this, out) == JOptionPane.YES_OPTION)
-						writeLaTeX(out);
-				}
-			}
-
-		} else if (e.getActionCommand().equals(
-				Command.SET_PREFERENCES.toString())) {
-			SettingsDialog dialog = new SettingsDialog(this);
-			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION)
-				for (Object key : dialog.getSettings().keySet())
-					settings.put(key, dialog.getSettings().get(key));
-		} else if (e.getActionCommand().equals(Command.OPEN_FILE.toString())) {
-			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
-					CfgKeys.OPEN_DIR).toString(), false, false,
-					JFileChooser.FILES_ONLY, SBFileFilter.SBML_FILE_FILTER);
-			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-				readModel(chooser.getSelectedFile());
-		} else if (e.getActionCommand().equals(
-				Command.OPEN_LAST_FILE.toString())) {
-			File f = new File(settings.get(CfgKeys.SBML_FILE).toString());
-			if (f.exists() && f.isFile())
-				readModel(f);
-		} else if (e.getActionCommand().equals(Command.SAVE_FILE.toString())) {
-			SBFileFilter filterText = SBFileFilter.TEXT_FILE_FILTER;
-			SBFileFilter filterTeX = SBFileFilter.TeX_FILE_FILTER;
-			SBFileFilter filterSBML = SBFileFilter.SBML_FILE_FILTER;
-			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
-					CfgKeys.SAVE_DIR).toString(), false, false,
-					JFileChooser.FILES_ONLY, filterText, filterTeX, filterSBML);
-			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-				File out = chooser.getSelectedFile();
-				if (out.getParentFile() != null)
-					settings.put(CfgKeys.SAVE_DIR, out.getParentFile()
-							.getAbsolutePath());
-				if (!out.exists()
-						|| GUITools.overwriteExistingFileDialog(this, out) == JOptionPane.YES_OPTION) {
-					if (filterSBML.accept(out))
-						writeSBML(out);
-					else if (filterTeX.accept(out))
-						writeLaTeX(out);
-					else if (filterText.accept(out))
-						writeText(out);
-				}
-			}
-
-		} else if (e.getActionCommand().equals(Command.CLOSE_FILE.toString())) {
-			if (tabbedPane.getComponentCount() > 0)
-				tabbedPane.remove(tabbedPane.getSelectedComponent());
-			if (tabbedPane.getComponentCount() == 0)
-				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-						Command.SQUEEZE, Command.TO_LATEX);
-
-		} else if (e.getActionCommand().equals(Command.ONLINE_HELP.toString())) {
-			JHelpBrowser helpBrowser = new JHelpBrowser(this, "SBMLsqueezer "
-					+ SBMLsqueezer.getVersionNumber() + " - Online Help");
-			helpBrowser.addWindowListener(this);
-			helpBrowser.setLocationRelativeTo(this);
-			helpBrowser.setSize(640, 640);
-			helpBrowser.setVisible(true);
-			helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			setEnabled(false, Command.ONLINE_HELP);
-
-		} else if (e.getSource() instanceof JMenuItem) {
+		boolean done = false;
+		if (e.getSource() instanceof JMenuItem) {
 			JMenuItem item = (JMenuItem) e.getSource();
 			if (item.getText().equals("Exit")) {
 				SBMLsqueezer.saveProperties(settings);
@@ -274,8 +179,118 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				browser.removeHyperlinkListener(browser);
 				browser.addHyperlinkListener(new SystemBrowser());
 				browser.setBorder(BorderFactory.createEtchedBorder());
-				JOptionPane.showMessageDialog(this, browser,
-						"About SBMLsqueezer", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane
+						.showMessageDialog(this, browser, "About SBMLsqueezer",
+								JOptionPane.INFORMATION_MESSAGE);
+				done = true;
+			}
+		}
+		if (!done) {
+			JFileChooser chooser;
+			switch (Command.valueOf(e.getActionCommand())) {
+			case SQUEEZE:
+				KineticLawSelectionDialog klsd;
+				if (e.getSource() instanceof Reaction) {
+					// just one reaction
+					klsd = new KineticLawSelectionDialog(this, settings,
+							sbmlIO, ((Reaction) e.getSource()).getId());
+				} else {
+					// whole model
+					klsd = new KineticLawSelectionDialog(this, settings, sbmlIO);
+					klsd.setVisible(true);
+				}
+				if (klsd.isKineticsAndParametersStoredInSBML()) {
+					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
+							.getSelectedComponent();
+					split.init(sbmlIO.getSelectedModel(), true);
+				}
+				break;
+			case TO_LATEX:
+				if (e.getSource() instanceof Reaction) {
+					new KineticLawSelectionDialog(this, settings, (Reaction) e
+							.getSource());
+				} else if (e.getSource() instanceof Model) {
+					new KineticLawSelectionDialog(this, settings, (Model) e
+							.getSource());
+				} else {
+					String dir = settings.get(CfgKeys.LATEX_DIR).toString();
+					chooser = GUITools.createJFileChooser(dir, false, false,
+							JFileChooser.FILES_ONLY,
+							SBFileFilter.TeX_FILE_FILTER);
+					if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+						File out = chooser.getSelectedFile();
+						String path = out.getParent();
+						if (!path.equals(dir))
+							settings.put(CfgKeys.LATEX_DIR, path);
+						if (!out.exists()
+								|| GUITools.overwriteExistingFileDialog(this,
+										out) == JOptionPane.YES_OPTION)
+							writeLaTeX(out);
+					}
+				}
+				break;
+			case SET_PREFERENCES:
+				SettingsDialog dialog = new SettingsDialog(this);
+				if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION)
+					for (Object key : dialog.getSettings().keySet())
+						settings.put(key, dialog.getSettings().get(key));
+				break;
+			case OPEN_FILE:
+				chooser = GUITools.createJFileChooser(settings.get(
+						CfgKeys.OPEN_DIR).toString(), false, false,
+						JFileChooser.FILES_ONLY, SBFileFilter.SBML_FILE_FILTER);
+				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+					readModel(chooser.getSelectedFile());
+				break;
+			case OPEN_LAST_FILE:
+				File f = new File(settings.get(CfgKeys.SBML_FILE).toString());
+				if (f.exists() && f.isFile())
+					readModel(f);
+				break;
+			case SAVE_FILE:
+				SBFileFilter filterText = SBFileFilter.TEXT_FILE_FILTER;
+				SBFileFilter filterTeX = SBFileFilter.TeX_FILE_FILTER;
+				SBFileFilter filterSBML = SBFileFilter.SBML_FILE_FILTER;
+				chooser = GUITools.createJFileChooser(settings.get(
+						CfgKeys.SAVE_DIR).toString(), false, false,
+						JFileChooser.FILES_ONLY, filterText, filterTeX,
+						filterSBML);
+				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+					File out = chooser.getSelectedFile();
+					if (out.getParentFile() != null)
+						settings.put(CfgKeys.SAVE_DIR, out.getParentFile()
+								.getAbsolutePath());
+					if (!out.exists()
+							|| GUITools.overwriteExistingFileDialog(this, out) == JOptionPane.YES_OPTION) {
+						if (filterSBML.accept(out))
+							writeSBML(out);
+						else if (filterTeX.accept(out))
+							writeLaTeX(out);
+						else if (filterText.accept(out))
+							writeText(out);
+					}
+				}
+				break;
+			case CLOSE_FILE:
+				if (tabbedPane.getComponentCount() > 0)
+					tabbedPane.remove(tabbedPane.getSelectedComponent());
+				if (tabbedPane.getComponentCount() == 0)
+					setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
+							Command.SQUEEZE, Command.TO_LATEX);
+				break;
+			case ONLINE_HELP:
+				JHelpBrowser helpBrowser = new JHelpBrowser(this,
+						"SBMLsqueezer " + SBMLsqueezer.getVersionNumber()
+								+ " - Online Help");
+				helpBrowser.addWindowListener(this);
+				helpBrowser.setLocationRelativeTo(this);
+				helpBrowser.setSize(640, 640);
+				helpBrowser.setVisible(true);
+				helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				setEnabled(false, Command.ONLINE_HELP);
+				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -408,8 +423,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						+ "due to one or several errors. "
 						+ "Please use the SBML online validator "
 						+ "to check why this model is not correct.";
-				JOptionPane.showMessageDialog(parent, GUITools.toHTML(message,
-						40), "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(parent, GUITools.toHTML(
+						message, 40), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

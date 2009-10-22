@@ -14,7 +14,7 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sbml.squeezer.math;
 
@@ -31,12 +31,24 @@ package org.sbml.squeezer.math;
  */
 public class GaussianRank {
 
+	/**
+	 * 
+	 */
 	private double[][] N;
 
+	/**
+	 * 
+	 */
 	private int lineNum;
 
+	/**
+	 * 
+	 */
 	private int columnNum;
 
+	/**
+	 * 
+	 */
 	private int columnRank;
 
 	/**
@@ -77,6 +89,12 @@ public class GaussianRank {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param la
+	 * @param i
+	 * @param j
+	 */
 	private void add(double la, int i, int j) {
 		for (int k = 0; k < columnNum; ++k) { // la-faches der Zeile i zur Zeile
 			// j.
@@ -102,11 +120,20 @@ public class GaussianRank {
 		return c;
 	}
 
+	/**
+	 * 
+	 */
 	private void rowShapeTriangular() {
 		int i = 0, j = 0;
 		zst_rek(i, j);
 	}
 
+	/**
+	 * 
+	 * @param i
+	 * @param j
+	 * @return
+	 */
 	private int searchPivot(int i, int j) {
 		int piv = i;
 		for (int k = i; k < lineNum; k++)
@@ -115,6 +142,11 @@ public class GaussianRank {
 		return piv;
 	}
 
+	/**
+	 * 
+	 * @param i
+	 * @param j
+	 */
 	private void swapRows(int i, int j) {
 		for (int k = 0; k < columnNum; ++k) { // vertausche Zeilen i und j.
 			double temp = N[i][k];
@@ -123,6 +155,11 @@ public class GaussianRank {
 		}
 	}
 
+	/**
+	 * 
+	 * @param i
+	 * @param j
+	 */
 	private void zst_rek(int i, int j) {
 		if (i == lineNum - 1 || j >= columnNum) // Abbruchbedingung
 			return;

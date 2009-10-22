@@ -21,6 +21,7 @@ package org.sbml.squeezer.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -258,5 +259,16 @@ public class GUITools {
 		}
 		sb.append("</body></html>");
 		return sb.toString();
+	}
+
+	/**
+	 * Computes and returns the dimension, i.e., the size of a given icon.
+	 * 
+	 * @param icon
+	 *            an icon whose dimension is required.
+	 * @return The dimension of the given icon.
+	 */
+	public static Dimension getDimension(Icon icon) {
+		return new Dimension(icon.getIconWidth(), icon.getIconHeight());
 	}
 }

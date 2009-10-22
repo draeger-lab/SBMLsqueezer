@@ -18,6 +18,8 @@
  */
 package org.sbml.squeezer.plugin;
 
+import java.util.Properties;
+
 import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 import jp.sbi.celldesigner.plugin.PluginMenu;
 import jp.sbi.celldesigner.plugin.PluginMenuItem;
@@ -27,6 +29,7 @@ import jp.sbi.celldesigner.plugin.PluginSBase;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
+import org.sbml.squeezer.io.SBMLio;
 
 /**
  * This is the main class for the CellDesigner plugin mode of SBMLsqueezer.
@@ -56,7 +59,8 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			 */
 			sbmlSqueezer = new SBMLsqueezer(
 					new PluginSBMLReader(SBO.getPossibleEnzymes(SBMLsqueezer
-							.getPossibleEnzymeTypes())), new PluginSBMLWriter(this));
+							.getPossibleEnzymeTypes())), new PluginSBMLWriter(
+							this));
 			sbmlSqueezer.checkForUpdate(true);
 			/*
 			 * Initializing CellDesigner's menu entries
@@ -64,10 +68,10 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			SBMLsqueezerPluginAction action = new SBMLsqueezerPluginAction(this);
 			String title = "SBMLsqueezer " + SBMLsqueezer.getVersionNumber();
 			PluginMenu menu = new PluginMenu(title);
-			PluginMenuItem menuItem = new PluginMenuItem(
-					getMainPluginItemText(), action);
+			PluginMenuItem menuItem = new PluginMenuItem(Mode.SQUEEZE_ALL
+					.getText(), action);
 			menu.add(menuItem);
-			menuItem = new PluginMenuItem(getExporterItemText(), action);
+			menuItem = new PluginMenuItem(Mode.EXPORT_ALL.getText(), action);
 			menu.add(menuItem);
 			addCellDesignerPluginMenu(menu);
 
@@ -76,10 +80,10 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			 */
 			PluginMenu contextMenu = new PluginMenu(title);
 			PluginMenuItem contextMenuItem = new PluginMenuItem(
-					getSqueezeContextMenuItemText(), action);
+					Mode.SQUEEZE_REACTION.getText(), action);
 			contextMenu.add(contextMenuItem);
 			contextMenuItem = new PluginMenuItem(
-					getExportContextMenuItemText(), action);
+					Mode.EXPORT_REACTION.getText(), action);
 			contextMenu.add(contextMenuItem);
 
 			addReactionPopupMenuSeparator();
@@ -96,43 +100,6 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	 * @see jp.sbi.celldesigner.plugin.CellDesignerPlug#addPluginMenu()
 	 */
 	public void addPluginMenu() {
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getExportContextMenuItemText() {
-		return "Export reaction to other format";
-	}
-
-	/**
-	 * This method returns the text for the menu item that allows the user to
-	 * exoport th emodel into another format, such as LaTeX.
-	 * 
-	 * @return
-	 */
-	public String getExporterItemText() {
-		return "Export model to other format";
-	}
-
-	/**
-	 * Returns the label of the menu item that points to this plugin.
-	 * 
-	 * @return Returns the label of the menu item that points to this plugin.
-	 */
-	public String getMainPluginItemText() {
-		return "Squeeze kinetic laws";
-	}
-
-	/**
-	 * This is the method that returns the label for the item in CellDesigner's
-	 * menu that allows to "squeeze" a kinetic equation from a given reaction.
-	 * 
-	 * @return
-	 */
-	public String getSqueezeContextMenuItemText() {
-		return "Squeeze kinetic law";
 	}
 
 	/*
@@ -196,29 +163,103 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	}
 
 	/**
+	 * 
+	 * @author Andreas Dr&auml;ger <a
+	 *         href="mailto:andreas.draeger@uni-tuebingen.de"
+	 *         >andreas.draeger@uni-tuebingen.de</a>
+	 * @date 2009-10-22
+	 */
+	public enum Mode {
+		/**
+		 * Returns the label of the menu item that points to this plug-in.
+		 */
+		SQUEEZE_ALL,
+		/**
+		 * This is the method that returns the label for the item in
+		 * CellDesigner's menu that allows to "squeeze" a kinetic equation from
+		 * a given reaction.
+		 */
+		SQUEEZE_REACTION,
+		/**
+		 * Export a single reaction int another format.
+		 */
+		EXPORT_REACTION,
+		/**
+		 * This method returns the text for the menu item that allows the user
+		 * to export the model into another format, such as LaTeX.
+		 */
+		EXPORT_ALL;
+
+		/**
+		 * A human-readable label for each mode.
+		 * 
+		 * @return
+		 */
+		public String getText() {
+			switch (this) {
+			case SQUEEZE_ALL:
+				return "Squeeze kinetic laws";
+			case SQUEEZE_REACTION:
+				return "Squeeze kinetic law";
+			case EXPORT_REACTION:
+				return "Export reaction to other format";
+			case EXPORT_ALL:
+				return "Export model to other format";
+			default:
+				return "invalid option";
+			}
+		}
+
+		/**
+		 * Returns the mode for the given label or null.
+		 * 
+		 * @param text
+		 * @return
+		 */
+		public static Mode getMode(String text) {
+			for (Mode m : values())
+				if (text.equals(m.getText()))
+					return m;
+			return null;
+		}
+	}
+
+	/**
 	 * Starts the SBMLsqueezer dialog window for kinetic law selection or LaTeX
 	 * export.
 	 * 
 	 * @param mode
 	 */
-	public void startSBMLsqueezerPlugin(String mode) {
-		sbmlSqueezer.getSBMLIO().readModel(getSelectedModel());
-		if (mode.equals(getMainPluginItemText()))
-			(new KineticLawSelectionDialog(null, SBMLsqueezer.getProperties(),
-					sbmlSqueezer.getSBMLIO())).setVisible(true);
-		else if (mode.equals(getSqueezeContextMenuItemText()))
-			new KineticLawSelectionDialog(null, SBMLsqueezer.getProperties(),
-					sbmlSqueezer.getSBMLIO(),
+	public void startSBMLsqueezerPlugin(String item) {
+		SBMLio io = sbmlSqueezer.getSBMLIO();
+		Properties p = SBMLsqueezer.getProperties();
+		io.readModel(getSelectedModel());
+		KineticLawSelectionDialog klsd;
+		switch (Mode.getMode(item)) {
+		case SQUEEZE_ALL:
+			klsd = new KineticLawSelectionDialog(null, p, io);
+			klsd.setVisible(true);
+			break;
+		case SQUEEZE_REACTION:
+			klsd = new KineticLawSelectionDialog(null, p, io,
 					((PluginReaction) getSelectedReactionNode().get(0)).getId());
-		else if (mode.equals(getExportContextMenuItemText()))
-			new KineticLawSelectionDialog(null, SBMLsqueezer.getProperties(),
-					sbmlSqueezer.getSBMLIO().getSelectedModel().getReaction(
+			break;
+		case EXPORT_REACTION:
+			klsd = new KineticLawSelectionDialog(null, p, io.getSelectedModel()
+					.getReaction(
 							((PluginReaction) getSelectedReactionNode().get(0))
 									.getId()));
-		else if (mode.equals(getExporterItemText()))
+			break;
+		case EXPORT_ALL:
 			if (getSelectedModel() != null)
-				new KineticLawSelectionDialog(null, SBMLsqueezer
-						.getProperties(), sbmlSqueezer.getSBMLIO()
+				klsd = new KineticLawSelectionDialog(null, p, io
 						.getSelectedModel());
+			else
+				System.err.println("no selected model available");
+			break;
+		default:
+			System.err.println("unsuported action");
+			break;
+		}
 	}
 }

@@ -142,10 +142,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @param plugin
 	 * @param model
 	 * @param reaction
-	 * @throws Throwable 
+	 * @throws Throwable
 	 */
-	public KineticLawSelectionPanel(KineticLawGenerator klg, Reaction reaction) throws Throwable
-			 {
+	public KineticLawSelectionPanel(KineticLawGenerator klg, Reaction reaction)
+			throws Throwable {
 		super(new GridBagLayout());
 		this.selected = "";
 		this.klg = klg;
@@ -245,7 +245,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		paramGroup.add(rButtonGlobalParameters);
 		paramGroup.add(rButtonLocalParameters);
 		lh.add(rButtonGlobalParameters, 0, 2, 1, 1, 1, 1);
-		lh.add(rButtonLocalParameters, 1, 2, 1, 0, 1, 1);
+		lh.add(rButtonLocalParameters, 1, 2, 1, 1, 1, 1);
 
 		kineticsPanel = initKineticsPanel();
 
@@ -295,7 +295,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	/**
 	 * 
 	 * @return
-	 * @throws Throwable 
+	 * @throws Throwable
 	 */
 	private Box initKineticsPanel() throws Throwable {
 		possibleTypes = klg.getReactionType(reaction.getId())
@@ -415,7 +415,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent ie) {
 		if (ie.getSource() instanceof JCheckBox)
@@ -430,8 +431,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
 			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(getTopLevelAncestor(), GUITools
-						.toHTML(e.getMessage(), 40), e.getClass().getSimpleName(),
-						JOptionPane.WARNING_MESSAGE);
+						.toHTML(e.getMessage(), 40), e.getClass()
+						.getSimpleName(), JOptionPane.WARNING_MESSAGE);
 				e.printStackTrace();
 			}
 		else if (ie.getSource() instanceof JRadioButton) {
@@ -477,8 +478,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				try {
 					updateView();
 				} catch (RateLawNotApplicableException e) {
-					JOptionPane.showMessageDialog(this, e.getClass().getName(),
-							GUITools.toHTML(e.getMessage(), 40),
+					JOptionPane.showMessageDialog(this, e.getClass()
+							.getName(), GUITools.toHTML(e.getMessage(), 40),
 							JOptionPane.WARNING_MESSAGE);
 					e.printStackTrace();
 				}
@@ -488,12 +489,12 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			setPreviewPanel(((JComboBox) ie.getSource()).getSelectedIndex());
 			add(eqnPrev, BorderLayout.CENTER);
 		}
-		validate();
 		getTopLevelAncestor().validate();
 		Window w = (Window) getTopLevelAncestor();
 		int width = w.getWidth();
 		w.pack();
 		w.setSize(width, w.getHeight());
+		w.validate();
 	}
 
 	/**

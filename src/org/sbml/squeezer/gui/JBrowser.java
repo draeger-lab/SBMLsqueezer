@@ -43,8 +43,8 @@ import javax.swing.event.HyperlinkListener;
 public class JBrowser extends JEditorPane implements HyperlinkListener {
 
 	/**
-   * 
-   */
+     * 
+     */
 	private static final long serialVersionUID = 1L;
 
 	/**
