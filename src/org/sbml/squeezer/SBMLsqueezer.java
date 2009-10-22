@@ -31,14 +31,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.Unit;
-import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.io.AbstractSBMLReader;
 import org.sbml.jsbml.io.AbstractSBMLWriter;
 import org.sbml.jsbml.io.LibSBMLReader;
 import org.sbml.jsbml.io.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
+import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
@@ -122,7 +121,7 @@ public class SBMLsqueezer implements LawListener {
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
-	private static final String versionNumber = "1.2.4";
+	private static final String versionNumber = "1.2.5";
 
 	static {
 		long time = System.currentTimeMillis();
@@ -192,76 +191,6 @@ public class SBMLsqueezer implements LawListener {
 		System.out.print("loading user settings...");
 		settings = initProperties();
 		System.out.println(" done.");
-	}
-
-	/**
-	 * <p>
-	 * Predicate returning true or false depending on whether two UnitDefinition
-	 * objects are equivalent.
-	 * </p>
-	 * <p>
-	 * For the purposes of performing this comparison, two UnitDefinition
-	 * objects are considered equivalent when they contain equivalent list of
-	 * Unit objects. Unit objects are in turn considered equivalent if they
-	 * satisfy the predicate Unit.areEquivalent(). The predicate tests a subset
-	 * of the objects's attributes.
-	 * </p>
-	 * 
-	 * @param ud1
-	 *            the first UnitDefinition object to compare
-	 * @param ud2
-	 *            the second UnitDefinition object to compare
-	 * @return true if all the Unit objects in ud1 are equivalent to the Unit
-	 *         objects in ud2, false otherwise.
-	 * @see areIdentical
-	 * @see Unit.areEquivalent
-	 */
-	public static boolean areEquivalent(UnitDefinition ud1, UnitDefinition ud2) {
-		UnitDefinition comp1 = ud1.clone().simplify();
-		UnitDefinition comp2 = ud2.clone().simplify();
-		if (comp1.getNumUnits() == comp2.getNumUnits()) {
-			boolean equivalent = true;
-			for (int i = 0; i < comp1.getNumUnits(); i++)
-				equivalent &= Unit.areEquivalent(comp1.getUnit(i), comp2
-						.getUnit(i));
-			return equivalent;
-		}
-		return false;
-	}
-
-	/**
-	 * <p>
-	 * Predicate returning true or false depending on whether two UnitDefinition
-	 * objects are identical.
-	 * </p>
-	 * <p>
-	 * For the purposes of performing this comparison, two UnitDefinition
-	 * objects are considered identical when they contain identical lists of
-	 * Unit objects. Pairs of Unit objects in the lists are in turn considered
-	 * identical if they satisfy the predicate Unit.areIdentical(). The
-	 * predicate compares every attribute of the Unit objects.
-	 * </p>
-	 * 
-	 * @param ud1
-	 *            the first UnitDefinition object to compare
-	 * @param ud2
-	 *            the second UnitDefinition object to compare
-	 * @return true if all the Unit objects in ud1 are identical to the Unit
-	 *         objects of ud2, false otherwise.
-	 * @see areEquivalent
-	 * @see Unit.areIdentical
-	 */
-	public static boolean areIdentical(UnitDefinition ud1, UnitDefinition ud2) {
-		UnitDefinition comp1 = ud1.clone().simplify();
-		UnitDefinition comp2 = ud2.clone().simplify();
-		if (comp1.getNumUnits() == comp2.getNumUnits()) {
-			boolean equivalent = true;
-			for (int i = 0; i < comp1.getNumUnits(); i++)
-				equivalent &= Unit.areIdentical(comp1.getUnit(i), comp2
-						.getUnit(i));
-			return equivalent;
-		}
-		return false;
 	}
 
 	/**
@@ -421,7 +350,38 @@ public class SBMLsqueezer implements LawListener {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		new SBMLsqueezer(args);
+		final SBMLsqueezer squeezer = new SBMLsqueezer(new LibSBMLReader(),
+				new LibSBMLWriter());
+		System.out.print("scanning command line arguments...");
+		Properties p = analyzeCommandLineArguments(args);
+		for (Object key : p.keySet())
+			SBMLsqueezer.getProperties().put(key, p.get(key));
+		System.out.println(" done.");
+		System.out.print("reading SBO...");
+		System.out.println(" done.");
+		if (p.containsKey(CfgKeys.GUI)
+				&& Boolean.parseBoolean(p.get(CfgKeys.GUI).toString())) {
+			if (p.containsKey(CfgKeys.SBML_FILE))
+				squeezer.readSBMLSource(p.get(CfgKeys.SBML_FILE).toString());
+			squeezer.checkForUpdate(true);
+			System.out.print("loading GUI...");
+			new Thread(new Runnable() {
+				public void run() {
+					squeezer.showGUI();
+				}
+			}).start();
+		} else {
+			if (squeezer.getSBMLIO().getNumErrors() > 0
+					&& ((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+							.booleanValue())
+				for (SBMLException exc : squeezer.getSBMLIO().getWarnings())
+					System.err.println(exc.getMessage());
+			// Do a lot of other stuff...
+			squeezer.checkForUpdate(false);
+			if (p.containsKey(CfgKeys.SBML_OUT_FILE))
+				squeezer.squeeze(p.get(CfgKeys.SBML_FILE).toString(), p.get(
+						CfgKeys.SBML_OUT_FILE).toString());
+		}
 	}
 
 	/**
@@ -446,6 +406,28 @@ public class SBMLsqueezer implements LawListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+	}
+
+	/**
+	 * 
+	 * @param args
+	 * @return
+	 */
+	private static Properties analyzeCommandLineArguments(String[] args) {
+		Properties p = new Properties();
+		for (String string : args) {
+			while (string.startsWith("-"))
+				string = string.substring(1);
+			if (string.contains("=")) {
+				String keyVal[] = string.split("=");
+				p.put(CfgKeys
+						.valueOf(keyVal[0].toUpperCase().replace('-', '_')),
+						keyVal[1]);
+			} else
+				p.put(CfgKeys.valueOf(string.toUpperCase().replace('-', '_')),
+						Boolean.TRUE.toString());
+		}
+		return correctProperties(p);
 	}
 
 	/**
@@ -620,99 +602,12 @@ public class SBMLsqueezer implements LawListener {
 	public SBMLsqueezer(AbstractSBMLReader sbmlReader,
 			AbstractSBMLWriter sbmlWriter) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 57; i++)
+		for (int i = 0; i < 60; i++)
 			sb.append('-');
 		System.out.println(sb.toString());
 		showAboutMsg();
 		System.out.println(sb.toString());
 		sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
-	}
-
-	/**
-	 * Initializes SBMLsqueezer as a stand-alone program.
-	 * 
-	 * @param args
-	 *            Command line arguments.
-	 */
-	public SBMLsqueezer(String... args) {
-		System.out.print("scanning command line arguments...");
-		Properties p = analyzeCommandLineArguments(args);
-		for (Object key : p.keySet())
-			settings.put(key, p.get(key));
-		System.out.println(" done.");
-		System.out.print("reading SBO...");
-		System.out.println(" done.");
-		sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
-		if (p.containsKey(CfgKeys.SBML_FILE)) {
-			long time = System.currentTimeMillis();
-			System.out.print("reading SBML file...");
-			try {
-				sbmlIo.readModel(p.get(CfgKeys.SBML_FILE));
-				System.out.println(" done in "
-						+ (System.currentTimeMillis() - time) + " ms.");
-			} catch (Exception exc) {
-				System.err
-						.println(" a problem occured while trying to read the model:");
-				System.err.println(exc.getMessage());
-			}
-		}
-		if (p.containsKey(CfgKeys.GUI)
-				&& Boolean.parseBoolean(p.get(CfgKeys.GUI).toString())) {
-			checkForUpdate(true);
-			System.out.print("loading GUI...");
-			new Thread(new Runnable() {
-				public void run() {
-					showGUI();
-				}
-			}).start();
-		} else {
-			if (sbmlIo.getNumErrors() > 0
-					&& ((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
-							.booleanValue())
-				for (SBMLException exc : sbmlIo.getWarnings())
-					System.err.println(exc.getMessage());
-			// Do a lot of other stuff...
-			checkForUpdate(false);
-			showAboutMsg();
-			File outFile = null;
-			if (p.containsKey(CfgKeys.SBML_OUT_FILE))
-				outFile = new File(p.get(CfgKeys.SBML_OUT_FILE).toString());
-			if (sbmlIo.getListOfModels().size() == 1)
-				try {
-					long time = System.currentTimeMillis();
-					System.out.print("Generating kinetic equations...");
-					KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
-							.getSelectedModel(), settings);
-					if (klg.getFastReactions().size() > 0) {
-						System.err.println("Model "
-								+ sbmlIo.getSelectedModel().getId()
-								+ " contains " + klg.getFastReactions().size()
-								+ " fast reaction. This feature is currently"
-								+ "ignored by SBMLsqueezer.");
-					}
-					klg.storeKineticLaws(this);
-					System.out.println(" done in "
-							+ (System.currentTimeMillis() - time) + " ms");
-					time = System.currentTimeMillis();
-					System.out
-							.print("Saving changes and writing SBML file... ");
-					sbmlIo.saveChanges();
-					if (outFile != null
-							&& SBFileFilter.SBML_FILE_FILTER.accept(outFile)) {
-						sbmlIo.writeSelectedModelToSBML(outFile
-								.getAbsolutePath());
-						System.out.println(" done in "
-								+ (System.currentTimeMillis() - time) + " ms");
-						if (((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
-								.booleanValue())
-							for (SBMLException exc : sbmlIo.getWriteWarnings())
-								System.err.println(exc.getMessage());
-					} else
-						System.err.println("Could not write output to SBML.");
-				} catch (Throwable e) {
-					e.printStackTrace();
-				}
-		}
 	}
 
 	/**
@@ -759,6 +654,68 @@ public class SBMLsqueezer implements LawListener {
 	}
 
 	/**
+	 * 
+	 * @param sbmlSource
+	 */
+	public void readSBMLSource(Object sbmlSource) {
+		long time = System.currentTimeMillis();
+		System.out.print("reading SBML file...");
+		try {
+			sbmlIo.readModel(sbmlSource);
+			System.out.println(" done in "
+					+ (System.currentTimeMillis() - time) + " ms.");
+		} catch (Exception exc) {
+			System.err
+					.println(" a problem occured while trying to read the model:");
+			System.err.println(exc.getMessage());
+		}
+	}
+
+	/**
+	 * Change the configuration of SBMLsqueezer.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Object set(CfgKeys key, boolean value) {
+		return settings.put(key, Boolean.valueOf(value));
+	}
+
+	/**
+	 * Change the configuration of SBMLsqueezer.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Object set(CfgKeys key, double value) {
+		return settings.put(key, Double.valueOf(value));
+	}
+
+	/**
+	 * Change the configuration of SBMLsqueezer.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Object set(CfgKeys key, int value) {
+		return settings.put(key, Integer.valueOf(value));
+	}
+
+	/**
+	 * Change the configuration of SBMLsqueezer.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Object set(CfgKeys key, String value) {
+		return settings.put(key, value);
+	}
+
+	/**
 	 * Shows the GUI of SBMLsqueezer stand-alone.
 	 */
 	public void showGUI() {
@@ -768,6 +725,87 @@ public class SBMLsqueezer implements LawListener {
 		gui.setVisible(true);
 	}
 
+	/**
+	 * Reads in the given SBML file, squeezes kinetic equations in and writes
+	 * the reuslt back to the given SBML file. This method only works if
+	 * SBMLsqueezer is used as a stand-alone program.
+	 * 
+	 * @param sbmlSource
+	 *            the path to a file that contains SBML code or another object
+	 *            that can be read by the current reader used by SBMLsqueezer.
+	 * @param outfile
+	 *            The absolute path to a file where the result should be stored.
+	 *            This must be a file that ends with .xml or .sbml (case
+	 *            insensitive).
+	 */
+	public void squeeze(Object sbmlSource, String outfile) {
+		File outFile = outfile != null ? new File(outfile) : null;
+		readSBMLSource(sbmlSource);
+		if (!sbmlIo.getListOfModels().isEmpty())
+			try {
+				long time = System.currentTimeMillis();
+				System.out.print("Generating kinetic equations...");
+				KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
+						.getSelectedModel(), settings);
+				if (klg.getFastReactions().size() > 0) {
+					System.err.println("Model "
+							+ sbmlIo.getSelectedModel().getId() + " contains "
+							+ klg.getFastReactions().size()
+							+ " fast reaction. This feature is currently"
+							+ "ignored by SBMLsqueezer.");
+				}
+				klg.storeKineticLaws(this);
+				System.out.println(" done in "
+						+ (System.currentTimeMillis() - time) + " ms");
+				time = System.currentTimeMillis();
+				System.out.print("Saving changes and writing SBML file... ");
+				sbmlIo.saveChanges();
+				if (outFile != null
+						&& SBFileFilter.SBML_FILE_FILTER.accept(outFile)) {
+					sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
+					System.out.println(" done in "
+							+ (System.currentTimeMillis() - time) + " ms");
+					if (((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+							.booleanValue())
+						for (SBMLException exc : sbmlIo.getWriteWarnings())
+							System.err.println(exc.getMessage());
+				} else
+					System.err.println("Could not write output to SBML.");
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+	}
+
+	/**
+	 * Convenient method that writes a LaTeX file from the given SBML source.
+	 * 
+	 * @param sbmlInfile
+	 * @param latexFile
+	 * @throws IOException
+	 */
+	public void toLaTeX(Object sbmlSource, String latexFile) throws IOException {
+		readSBMLSource(sbmlSource);
+		String dir = settings.get(CfgKeys.LATEX_DIR).toString();
+		if (latexFile != null) {
+			File out = new File(latexFile);
+			if (SBFileFilter.TeX_FILE_FILTER.accept(out)) {
+				String path = out.getParent();
+				if (!path.equals(dir))
+					settings.put(CfgKeys.LATEX_DIR, path);
+				if (!out.exists()) {
+					long time = System.currentTimeMillis();
+					System.out.printf("writing LaTeX output...");
+					LaTeXExport.writeLaTeX(sbmlIo.getSelectedModel(), out,
+							settings);
+					System.out.printf(" done in %d ms\n", (System
+							.currentTimeMillis() - time));
+				}
+			} else
+				System.err.printf("no valid TeX file: %s\n", latexFile);
+		} else
+			System.err.println("no TeX file was provided");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -775,27 +813,5 @@ public class SBMLsqueezer implements LawListener {
 	 */
 	public void totalNumber(int i) {
 		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * 
-	 * @param args
-	 * @return
-	 */
-	private Properties analyzeCommandLineArguments(String[] args) {
-		Properties p = new Properties();
-		for (String string : args) {
-			while (string.startsWith("-"))
-				string = string.substring(1);
-			if (string.contains("=")) {
-				String keyVal[] = string.split("=");
-				p.put(CfgKeys
-						.valueOf(keyVal[0].toUpperCase().replace('-', '_')),
-						keyVal[1]);
-			} else
-				p.put(CfgKeys.valueOf(string.toUpperCase().replace('-', '_')),
-						Boolean.TRUE.toString());
-		}
-		return correctProperties(p);
 	}
 }

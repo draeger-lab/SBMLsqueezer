@@ -44,8 +44,8 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 	private SBMLsqueezerPlugin plugin;
 
 	/**
-	 * @param sbmlSqueezer
 	 * 
+	 * @param sbmlSqueezerPlugin
 	 */
 	public SBMLsqueezerPluginAction(SBMLsqueezerPlugin sbmlSqueezerPlugin) {
 		this.plugin = sbmlSqueezerPlugin;
