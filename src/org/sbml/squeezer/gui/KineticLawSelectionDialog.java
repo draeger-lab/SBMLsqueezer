@@ -134,7 +134,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		SettingsPanelLaTeX panel = new SettingsPanelLaTeX(settings, true);
 		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
+				GUITools.LATEX_ICON_SMALL) == JOptionPane.OK_OPTION) {
 			for (Object key : panel.getProperties().keySet())
 				settings.put(key, panel.getProperties().get(key));
 			try {
@@ -146,7 +146,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 									GUITools
 											.toHTML(
 													"No appropriate file was selected and therefore no TeX file was created.",
-													40));
+													40), "Warning",
+									JOptionPane.WARNING_MESSAGE);
 				else if (!f.exists()
 						|| GUITools.overwriteExistingFileDialog(owner, f) == JOptionPane.YES_OPTION) {
 					BufferedWriter buffer = new BufferedWriter(
@@ -370,8 +371,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 						validate();
 
 					} catch (Throwable exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(
-								exc.getMessage(), 40), exc.getClass()
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+								.getMessage(), 40), exc.getClass()
 								.getCanonicalName(),
 								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
@@ -412,8 +413,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 										.get(CfgKeys.SHOW_SBML_WARNINGS))
 										.booleanValue());
 					} catch (SBMLException exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(
-								exc.getMessage(), 40), exc.getClass()
+						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+								.getMessage(), 40), exc.getClass()
 								.getCanonicalName(),
 								JOptionPane.WARNING_MESSAGE);
 						exc.printStackTrace();
