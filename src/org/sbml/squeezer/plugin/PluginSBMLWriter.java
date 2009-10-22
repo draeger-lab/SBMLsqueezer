@@ -88,7 +88,6 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.io.AbstractSBMLWriter;
 import org.sbml.jsbml.io.LibSBMLWriter;
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.libsbml;
@@ -200,17 +199,15 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 						.getId());
 				if (libU != null) {
 					saveSBaseProperties(ud, libU);
+					for (i = libU.getNumUnits() - 1; i >= 0; i--) {
+						PluginUnit pu = libU.getUnit(i);
+						libU.removeUnit(i);
+						plugin.notifySBaseDeleted(pu);
+					}
 					for (Unit u : ud.getListOfUnits()) {
-						boolean contains = false;
-						for (int j = 0; j < libU.getNumUnits() && !contains; j++) {
-							if (equal(u, libU.getUnit(j)))
-								contains = true;
-						}
-						if (!contains) {
-							PluginUnit unit = writeUnit(u, libU);
-							libU.addUnit(unit);
-							plugin.notifySBaseAdded(unit);
-						}
+						PluginUnit unit = writeUnit(u, libU);
+						libU.addUnit(unit);
+						plugin.notifySBaseAdded(unit);
 					}
 					plugin.notifySBaseChanged(libU);
 				} else {
@@ -709,7 +706,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 		} else if (sbase instanceof PluginKineticLaw) {
 			PluginKineticLaw kl = (PluginKineticLaw) sbase;
-			boolean equal = (kl.getMath() != null) && mc.isSetMath()
+			boolean equal = kl.getMath() != null && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
 			if (mc.isSetMath() && !equal)
 				kl.setMath(convert(mc.getMath()));
@@ -1431,8 +1428,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public org.sbml.libsbml.StoichiometryMath writeStoichoimetryMath(
 			StoichiometryMath st) {
-		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath(
-				st.getLevel(), st.getVersion());
+		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath();
 		if (st.isSetMetaId())
 			sm.setMetaId(st.getMetaId());
 		if (st.isSetAnnotation())
