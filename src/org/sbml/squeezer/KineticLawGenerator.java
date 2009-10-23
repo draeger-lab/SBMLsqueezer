@@ -247,10 +247,12 @@ public class KineticLawGenerator {
 			 */
 			if (reacOrig.getFast())
 				listOfFastReactions.add(reacOrig);
-			if (reactionID != null && !reacOrig.getId().equals(reactionID))
-				continue;
-			else
-				create = true;
+			if (reactionID != null) {
+				if (!reacOrig.getId().equals(reactionID))
+					continue;
+				else
+					create = true;
+			}
 			if (reacOrig.isSetKineticLaw()) {
 				String formula = reacOrig.getKineticLaw().getFormula();
 				if (formula.equals("") || formula.equals(" ")) {

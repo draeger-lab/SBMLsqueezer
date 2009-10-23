@@ -20,6 +20,7 @@ package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -116,6 +117,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private KineticLawSelectionDialog(Frame owner, Properties settings) {
 		super(owner, "SBMLsqueezer", true);
+		if (owner == null)
+			setIconImage(GUITools.LEMON_ICON);
 		this.settings = settings;
 		this.sbmlIO = null;
 		// setAlwaysOnTop(true);
@@ -205,6 +208,16 @@ public class KineticLawSelectionDialog extends JDialog implements
 			setVisible(true);
 			KineticsAndParametersStoredInSBML = adapter
 					.isKineticsAndParametersStoredInSBML();
+			// Test:
+			// Container c = getContentPane();
+			// c.removeAll();
+			// c.setLayout(new BorderLayout());
+			// c.add(new SBMLModelSplitPane(sbmlIO.getSelectedModel(),
+			// settings), BorderLayout.CENTER);
+			// pack();
+			// setLocationRelativeTo(owner);
+			// setResizable(true);
+			// setVisible(true);
 			dispose();
 			// if (JOptionPane.showConfirmDialog(this, messagePanel,
 			// "SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
@@ -425,6 +438,25 @@ public class KineticLawSelectionDialog extends JDialog implements
 		}
 	}
 
+	/**
+	 * Just to show the model.
+	 * 
+	 * @param selectedModel
+	 */
+	private void showModel(Model selectedModel) {
+		JDialog d = new JDialog(this);
+		Container c = d.getContentPane();
+		c.setLayout(new BorderLayout());
+		c.add(new SBMLModelSplitPane(sbmlIO.getSelectedModel(), settings),
+				BorderLayout.CENTER);
+		d.pack();
+		d.setLocationRelativeTo(this);
+		d.setResizable(true);
+		d.setModal(true);
+		d.setVisible(true);
+		d.dispose();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -603,16 +635,22 @@ public class KineticLawSelectionDialog extends JDialog implements
 		rightPanel.add(cancel);
 		switch (type) {
 		case 0:
-			apply.setToolTipText("<html>Start generating an ordinary "
-					+ "differential equation system.</html>");
+			apply
+					.setToolTipText(GUITools
+							.toHTML(
+									"Start generating an ordinary differential equation system.",
+									40));
 			apply.setText("Generate");
 			helpButton = new JButton("Help");
 			helpButton.addActionListener(this);
 			leftPanel.add(helpButton);
 			break;
 		default:
-			apply.setToolTipText("<html>Write the generated kinetics and "
-					+ "parameters to the SBML file.</html>");
+			apply
+					.setToolTipText(GUITools
+							.toHTML(
+									"Write the generated kinetics and parameters to the SBML file.",
+									40));
 			apply.setText("Apply");
 
 			JButton jButtonReactionsFrameSave = new JButton();
@@ -726,12 +764,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 		scroll.setBackground(Color.WHITE);
 		centralPanel.add(scroll, BorderLayout.CENTER);
 		centralPanel.validate();
-		/*
-		 * setSize(getWidth(), (int) Math.min(fullHeight,
-		 * GraphicsEnvironment.getLocalGraphicsEnvironment()
-		 * .getMaximumWindowBounds().getHeight()));//
-		 */
 		pack();
+		// setSize(getWidth(), (int) Math.min(fullHeight, GraphicsEnvironment
+		// .getLocalGraphicsEnvironment().getMaximumWindowBounds()
+		// .getHeight()));
 		validate();
 	}
 }

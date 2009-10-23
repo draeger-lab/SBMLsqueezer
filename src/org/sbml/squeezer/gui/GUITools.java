@@ -48,20 +48,37 @@ import org.sbml.squeezer.resources.Resource;
  */
 public class GUITools {
 
+	/**
+	 * 
+	 */
 	public static Icon DOWN_ARROW;
-
+	/**
+	 * 
+	 */
 	public static Icon LATEX_ICON_SMALL;
-
+	/**
+	 * 
+	 */
 	public static Icon LATEX_ICON_TINY;
-
+	/**
+	 * 
+	 */
 	public static Image LEMON_ICON;
-
+	/**
+	 * 
+	 */
 	public static Icon LEMON_ICON_SMALL;
-
+	/**
+	 * 
+	 */
 	public static Icon LEMON_ICON_TINY;
-
+	/**
+	 * 
+	 */
 	public static Icon LOGO_SMALL;
-
+	/**
+	 * 
+	 */
 	public static Icon RIGHT_ARROW;
 
 	/**

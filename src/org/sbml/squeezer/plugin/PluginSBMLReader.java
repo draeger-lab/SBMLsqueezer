@@ -292,10 +292,13 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 					+ "PluginKineticLaw.");
 		PluginKineticLaw plukinlaw = (PluginKineticLaw) kineticLaw;
 		KineticLaw kinlaw = new KineticLaw(level, version);
-		if (plukinlaw.getMath() != null)
-			kinlaw.setMath(convert(plukinlaw.getMath(), kinlaw));
 		for (int i = 0; i < plukinlaw.getNumParameters(); i++)
 			kinlaw.addParameter(readParameter(plukinlaw.getParameter(i)));
+		if (plukinlaw.getMath() != null)
+			kinlaw.setMath(convert(plukinlaw.getMath(), kinlaw));
+		else if (plukinlaw.getFormula().length() > 0)
+			kinlaw.setMath(convert(libsbml.readMathMLFromString(plukinlaw
+					.getFormula()), kinlaw));
 		addAllSBaseChangeListenersTo(kinlaw);
 		return kinlaw;
 	}
@@ -427,7 +430,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		int sbo = SBO.convertAlias2SBO(r.getReactionType());
 		if (SBO.checkTerm(sbo))
 			reaction.setSBOTerm(sbo);
-		if (reaction.isSetKineticLaw())
+		if (r.getKineticLaw() != null)
 			reaction.setKineticLaw(readKineticLaw(r.getKineticLaw()));
 		reaction.setFast(r.getFast());
 		reaction.setReversible(r.getReversible());
