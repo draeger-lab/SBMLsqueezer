@@ -20,14 +20,23 @@ package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -135,7 +144,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						.getLocation().getX())
 						- this.getTopLevelAncestor().getX(), this.getY() + 10);
 				panel.setBorder(BorderFactory.createLoweredBevelBorder());
-				JOptionPane.showMessageDialog(getParent(), panel,
+				JOptionPane.showMessageDialog(this, panel,
 						"Rate Law of Reaction "
 								+ kinetic.getParentSBMLObject().getId(),
 						JOptionPane.INFORMATION_MESSAGE);
@@ -149,7 +158,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent )
+	 * @see
+	 * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
+	 * )
 	 */
 	public void mouseDragged(MouseEvent e) {
 	}
@@ -173,7 +184,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 * @see
+	 * java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 	 */
 	public void mouseMoved(MouseEvent e) {
 	}
@@ -193,7 +205,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 			try {
 				setCellEditor(rowIndex);
 			} catch (Exception exc) {
-				JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
+				JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 						.getMessage(), 40), exc.getClass().getName(),
 						JOptionPane.WARNING_MESSAGE);
 				exc.printStackTrace();
@@ -204,7 +216,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 * @see
+	 * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	public void mouseReleased(MouseEvent e) {
 	}
@@ -230,9 +243,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 			Reaction reaction = klg.getModel().getReaction(
 					dataModel.getValueAt(rowIndex, 0).toString());
 			try {
-				String possibleTypes[] = this.klg.getReactionType(
+				final String possibleTypes[] = this.klg.getReactionType(
 						reaction.getId()).identifyPossibleKineticLaws();
-				BasicKineticLaw possibleLaws[] = new BasicKineticLaw[possibleTypes.length];
+				final BasicKineticLaw possibleLaws[] = new BasicKineticLaw[possibleTypes.length];
 				int selected = 0;
 				for (int i = 0; i < possibleLaws.length; i++) {
 					possibleLaws[i] = klg.createKineticLaw(reaction,
@@ -243,60 +256,137 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 									.getSimpleName()))
 						selected = i;
 				}
-				KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
-						possibleLaws, klg.getSettings(), selected);
-				if (JOptionPane
-						.showConfirmDialog(getParent(), klsp,
-								"Choose an alternative kinetic law",
-								JOptionPane.OK_CANCEL_OPTION,
-								JOptionPane.QUESTION_MESSAGE,
-								GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
-					int i = 0;
-					while (i < possibleTypes.length
-							&& !possibleTypes[i].equals(klsp
-									.getSelectedKinetic()))
-						i++;
-					KineticLaw kineticLaw = possibleLaws[i];
 
-					// Reaction Identifier, Kinetic Law, SBO, #Reactants,
-					// Reactants, Products, Parameters, Formula
-					StringBuffer params = new StringBuffer();
-					for (i = kineticLaw.getNumParameters() - 1; i > 0; i--) {
-						params.append(kineticLaw.getParameter(i));
-						if (i > 0)
-							params.append(", ");
+				final KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
+						possibleLaws, klg.getSettings(), selected);
+				final JOptionPane pane = new JOptionPane(klsp,
+						JOptionPane.QUESTION_MESSAGE,
+						JOptionPane.OK_CANCEL_OPTION, GUITools.LEMON_ICON_SMALL);
+				pane.selectInitialValue();
+				final JDialog dialog = new JDialog(
+						(Window) getTopLevelAncestor(),
+						"Choose an alternative kinetic law");
+				Container content = dialog.getContentPane();
+				content.setLayout(new BorderLayout());
+				content.add(pane, BorderLayout.CENTER);
+				dialog.setModal(true);
+
+				WindowAdapter adapter = new WindowAdapter() {
+					private boolean gotFocus = false;
+
+					public void windowClosing(WindowEvent we) {
+						pane.setValue(null);
 					}
-					List<Parameter> referencedGlobalParameters = kineticLaw
-							.getMath().findReferencedGlobalParameters();
-					for (i = referencedGlobalParameters.size() - 1; i > 0; i--) {
-						params.append(referencedGlobalParameters.get(i));
-						if (i > 0)
-							params.append(", ");
+
+					public void windowGainedFocus(WindowEvent we) {
+						// Once window gets focus, set initial focus
+						if (!gotFocus) {
+							pane.selectInitialValue();
+							gotFocus = true;
+						}
 					}
-					String name = kineticLaw instanceof BasicKineticLaw ? ((BasicKineticLaw) kineticLaw)
-							.getSimpleName()
-							: kineticLaw.toString();
-					dataModel.setValueAt(name, getSelectedRow(), 1);
-					dataModel.setValueAt(kineticLaw.getSBOTermID(),
-							getSelectedRow(), 2);
-					dataModel.setValueAt(params, getSelectedRow(), dataModel
-							.getColumnCount() - 2);
-					dataModel.setValueAt(kineticLaw.getFormula(),
-							getSelectedRow(), dataModel.getColumnCount() - 1);
-					i = 0;
-					while ((i < klg.getModel().getNumReactions())
-							&& (!klg.getModel().getReaction(i).getId().equals(
-									kineticLaw.getParentSBMLObject().getId())))
-						i++;
-					kineticLaw.getParentSBMLObject().setKineticLaw(kineticLaw);
-					setColumnWidthAppropriately();
-					editing = false;
-				}
+				};
+				dialog.addWindowListener(adapter);
+				dialog.addWindowFocusListener(adapter);
+				dialog.addComponentListener(new ComponentAdapter() {
+					public void componentShown(ComponentEvent ce) {
+						// reset value to ensure closing works properly
+						pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+					}
+				});
+				pane.addPropertyChangeListener(new PropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent event) {
+						// Let the defaultCloseOperation handle the closing
+						// if the user closed the window without selecting a
+						// button
+						// (newValue = null in that case). Otherwise, close the
+						// dialog.
+						if (dialog.isVisible()
+								&& event.getSource() == pane
+								&& (event.getPropertyName()
+										.equals(JOptionPane.VALUE_PROPERTY))
+								&& event.getNewValue() != null
+								&& event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE) {
+							dialog.setVisible(false);
+							int i = 0;
+							while (i < possibleTypes.length
+									&& !possibleTypes[i].equals(klsp
+											.getSelectedKinetic()))
+								i++;
+							updateTable(possibleLaws[i]);
+						}
+					}
+				});
+
+				dialog.pack();
+				dialog.setResizable(false);
+				dialog.setLocationRelativeTo(dialog.getOwner());
+				dialog.setVisible(true);
+				dialog.dispose();
+
+				// This would be to simple for CellDesigner. We need the more
+				// complicated
+				// code...
+				// if (JOptionPane
+				// .showConfirmDialog(this, klsp,
+				// "Choose an alternative kinetic law",
+				// JOptionPane.OK_CANCEL_OPTION,
+				// JOptionPane.QUESTION_MESSAGE,
+				// GUITools.LEMON_ICON_SMALL) == JOptionPane.OK_OPTION) {
+				// int i = 0;
+				// while (i < possibleTypes.length
+				// && !possibleTypes[i].equals(klsp
+				// .getSelectedKinetic()))
+				// i++;
+				// updateTable(possibleLaws[i]);
+				// }
 			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(this, e.getMessage(), e
 						.getClass().getName(), JOptionPane.WARNING_MESSAGE);
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * @param possibleTypes
+	 * @param selectedKinetic
+	 * @param possibleLaws
+	 */
+	public void updateTable(KineticLaw kineticLaw) {
+		// Reaction Identifier, Kinetic Law, SBO, #Reactants,
+		// Reactants, Products, Parameters, Formula
+		int i;
+		StringBuffer params = new StringBuffer();
+		for (i = kineticLaw.getNumParameters() - 1; i > 0; i--) {
+			params.append(kineticLaw.getParameter(i));
+			if (i > 0)
+				params.append(", ");
+		}
+		List<Parameter> referencedGlobalParameters = kineticLaw.getMath()
+				.findReferencedGlobalParameters();
+		for (i = referencedGlobalParameters.size() - 1; i > 0; i--) {
+			params.append(referencedGlobalParameters.get(i));
+			if (i > 0)
+				params.append(", ");
+		}
+		String name = kineticLaw instanceof BasicKineticLaw ? ((BasicKineticLaw) kineticLaw)
+				.getSimpleName()
+				: kineticLaw.toString();
+		dataModel.setValueAt(name, getSelectedRow(), 1);
+		dataModel.setValueAt(kineticLaw.getSBOTermID(), getSelectedRow(), 2);
+		dataModel.setValueAt(params, getSelectedRow(), dataModel
+				.getColumnCount() - 2);
+		dataModel.setValueAt(kineticLaw.getFormula(), getSelectedRow(),
+				dataModel.getColumnCount() - 1);
+		i = 0;
+		while ((i < klg.getModel().getNumReactions())
+				&& (!klg.getModel().getReaction(i).getId().equals(
+						kineticLaw.getParentSBMLObject().getId())))
+			i++;
+		kineticLaw.getParentSBMLObject().setKineticLaw(kineticLaw);
+		setColumnWidthAppropriately();
+		editing = false;
 	}
 
 	/**

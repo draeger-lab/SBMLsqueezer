@@ -261,5 +261,6 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			System.err.println("unsuported action");
 			break;
 		}
+		SBMLsqueezer.saveProperties(p);
 	}
 }
