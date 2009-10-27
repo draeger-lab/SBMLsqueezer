@@ -57,7 +57,6 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
 					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
 							pnode_a, g), pnode_b))));
 		} else {
-			System.out.println("blabla");
 			return new ASTNode(1, this);
 		}
 	}
