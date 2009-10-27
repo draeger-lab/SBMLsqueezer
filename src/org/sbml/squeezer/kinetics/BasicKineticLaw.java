@@ -1196,7 +1196,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @return weight for the weight matrix
 	 */
 	Parameter parameterB(String rId) {
-		Parameter p = createOrGetParameter("b_", underscore, rId);
+		Parameter p = createOrGetParameter("b", underscore, rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetValue())
@@ -1214,13 +1214,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @return weight for the weight matrix
 	 */
 	Parameter parameterM(String rId) {
-		Parameter p = createOrGetParameter("m_", underscore, rId);
+		Parameter p = createOrGetParameter("m", underscore, rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetValue())
 			p.setValue(1);
 		if (!p.isSetUnits())
-//			p.setUnits(unitDimensionlessPerTime());
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
 			p.setName("For the additive Model: constant / max. expression");
 		return p;
