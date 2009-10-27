@@ -1150,7 +1150,79 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetUnits())
 			p.setUnits(unitDimensionlessPerTime());
 		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter");
+			p.setName("For the additive Model: weight parameter for the gene products");
+		return p;
+	}
+	
+	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	Parameter parameterV(int modifierNum, String rId) {
+		Parameter p = createOrGetParameter("v_", modifierNum, underscore, rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(unitDimensionlessPerTime());
+		if (!p.isSetName())
+			p.setName("For the additive Model: weight parameter for the external inputs");
+		return p;
+	}
+	
+	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	Parameter parameterLambda(int modifierNum, String rId) {
+		Parameter p = createOrGetParameter("lambda_", modifierNum, underscore, rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(unitDimensionlessPerTime());
+		if (!p.isSetName())
+			p.setName("For the additive Model: weight parameter for the gene products (degradation)");
+		return p;
+	}
+	
+	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	Parameter parameterB(String rId) {
+		Parameter p = createOrGetParameter("b_", underscore, rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(unitDimensionlessPerTime());
+		if (!p.isSetName())
+			p.setName("For the additive Model: bias");
+		return p;
+	}
+	
+	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	Parameter parameterM(String rId) {
+		Parameter p = createOrGetParameter("m_", underscore, rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+//			p.setUnits(unitDimensionlessPerTime());
+		if (!p.isSetName())
+			p.setName("For the additive Model: constant / max. expression");
 		return p;
 	}
 

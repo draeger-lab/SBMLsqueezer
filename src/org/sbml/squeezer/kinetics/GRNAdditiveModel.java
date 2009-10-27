@@ -109,7 +109,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 	ASTNode function_v() {
 		// TODO: modifier sollen "externe Faktoren" sein
 		Reaction r = getParentSBMLObject();
-		Parameter p = null;
+
 		String rId = getParentSBMLObject().getId();
 		ASTNode modnode = null;
 		ASTNode pnode = null;
@@ -124,7 +124,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = speciesTerm(modifier);
-					p = createOrGetParameter("v_", modifierNum, underscore, rId);
+					Parameter p = parameterV(modifierNum,rId);	
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
@@ -141,7 +141,6 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 
 	ASTNode function_l() {
 		Reaction r = getParentSBMLObject();
-		Parameter p = null;
 		String rId = getParentSBMLObject().getId();
 		ASTNode modnode = null;
 		ASTNode pnode = null;
@@ -156,8 +155,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = speciesTerm(modifier);
-					p = createOrGetParameter("lambda_", modifierNum,
-							underscore, rId);
+					Parameter p = parameterLambda(modifierNum,rId);	
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
@@ -185,14 +183,15 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 
 	ASTNode b_i() {
 		String rId = getParentSBMLObject().getId();
-		Parameter b_i = createOrGetParameter("b_", rId, underscore);
+
+		Parameter b_i = parameterB(rId);	
 		ASTNode b_i_node = new ASTNode(b_i, this);
 		return b_i_node;
 	}
 
 	ASTNode m_i() {
 		String rId = getParentSBMLObject().getId();
-		Parameter m_i = createOrGetParameter("m_", rId, underscore);
+		Parameter m_i = parameterM(rId);
 		ASTNode m_i_node = new ASTNode(m_i, this);
 		return m_i_node;
 	}
