@@ -440,34 +440,37 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	private UnitDefinition unitDimensionlessPerTime() {
 
 		Model model = getModel();
-		UnitDefinition ud = model.getUnitDefinition("time").clone();
-		if (ud.getNumUnits() == 1) {
-			Unit u = ud.getUnit(0);
-			u.setExponent(1);
-			ud.setId("per_" + u.getKind().toString().toLowerCase());
-		} else {
-			ud = new UnitDefinition("per_second", getLevel(), getVersion());
-			Unit unit = new Unit(Unit.Kind.SECOND, 1, getLevel(), getVersion());
-			ud.addUnit(unit);
-		}
-
-		UnitDefinition ud2 = new UnitDefinition("dimensionless", getLevel(),
-				getVersion());
-		Unit unit2 = new Unit(Unit.Kind.DIMENSIONLESS, 1, getLevel(),
-				getVersion());
-		ud2.addUnit(unit2);
-
-		//UnitDefinition def = model.getUnitDefinition(ud.getId());
-		//UnitDefinition def2 = model.getUnitDefinition(ud2.getId());
-		//System.out.println(def2.toString());
-
+//		UnitDefinition ud = model.getUnitDefinition("time").clone();
+//		if (ud.getNumUnits() == 1) {
+//			Unit u = ud.getUnit(0);
+//			u.setExponent(-1);
+//			ud.setId("per_" + u.getKind().toString().toLowerCase());
+//		} else {
+//			ud = new UnitDefinition("per_second", getLevel(), getVersion());
+//			Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
+//			ud.addUnit(unit);
+//		}
+//		UnitDefinition def = model.getUnitDefinition(ud.getId());
 		//if (def == null)
-		//	model.addUnitDefinition(ud);
-		//if (def2 == null)
-		//	model.addUnitDefinition(ud2);
-		UnitDefinition defnew = ud.divideBy(ud2);
-
-		return model.getUnitDefinition(defnew.getId());
+			//model.addUnitDefinition(ud);
+		//return model.getUnitDefinition(ud.getId());
+		
+		UnitDefinition unitdef_dimless = new UnitDefinition("dimensionless", getLevel(), getVersion());
+		Unit unit_dimless = new Unit(Unit.Kind.DIMENSIONLESS, 1, getLevel(), getVersion());
+		unit_dimless.setSBOTerm(470);
+		unitdef_dimless.addUnit(unit_dimless);
+		
+		String id = unitdef_dimless.getId() + "_per_second";
+		
+		UnitDefinition unitdef = model.getUnitDefinition(id);
+		
+		if (unitdef == null) {
+			unitdef = new UnitDefinition(id, getLevel(), getVersion());
+			unitdef.multiplyWith(unitdef_dimless);
+			unitdef.multiplyWith(unitPerTime());
+			model.addUnitDefinition(unitdef);
+		}
+		return unitdef;
 	}
 
 	/**
