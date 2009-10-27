@@ -430,6 +430,45 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		}
 		return substancePerTime;
 	}
+	
+	/**
+	 * 
+	 * @param Unit
+	 * @param time
+	 * @return
+	 */
+	private UnitDefinition unitDimensionlessPerTime() {
+
+		Model model = getModel();
+		UnitDefinition ud = model.getUnitDefinition("time").clone();
+		if (ud.getNumUnits() == 1) {
+			Unit u = ud.getUnit(0);
+			u.setExponent(1);
+			ud.setId("per_" + u.getKind().toString().toLowerCase());
+		} else {
+			ud = new UnitDefinition("per_second", getLevel(), getVersion());
+			Unit unit = new Unit(Unit.Kind.SECOND, 1, getLevel(), getVersion());
+			ud.addUnit(unit);
+		}
+
+		UnitDefinition ud2 = new UnitDefinition("dimensionless", getLevel(),
+				getVersion());
+		Unit unit2 = new Unit(Unit.Kind.DIMENSIONLESS, 1, getLevel(),
+				getVersion());
+		ud2.addUnit(unit2);
+
+		//UnitDefinition def = model.getUnitDefinition(ud.getId());
+		//UnitDefinition def2 = model.getUnitDefinition(ud2.getId());
+		//System.out.println(def2.toString());
+
+		//if (def == null)
+		//	model.addUnitDefinition(ud);
+		//if (def2 == null)
+		//	model.addUnitDefinition(ud2);
+		UnitDefinition defnew = ud.divideBy(ud2);
+
+		return model.getUnitDefinition(defnew.getId());
+	}
 
 	/**
 	 * 
@@ -1093,6 +1132,24 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			T.setName("The temperature of the reaction system");
 		return T;
 	}
+	
+	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	Parameter parameterW(int modifierNum, String rId) {
+		Parameter p = createOrGetParameter("w_", modifierNum, underscore, rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(unitDimensionlessPerTime());
+		if (!p.isSetName())
+			p.setName("For the additive Model: weight parameter");
+		return p;
+	}
 
 	/**
 	 * Creates and annotates the velocity constant for the reaction with the
@@ -1145,7 +1202,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	Parameter parameterVmax(boolean forward) {
 		return parameterKcatOrVmax(null, forward);
-	}
+	}	
 
 	/**
 	 * 

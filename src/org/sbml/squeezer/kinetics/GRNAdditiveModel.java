@@ -26,6 +26,8 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -71,7 +73,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 
 	ASTNode function_w() {
 		Reaction r = getParentSBMLObject();
-		Parameter p = null;
+
 		String rId = getParentSBMLObject().getId();
 		ASTNode modnode = null;
 		ASTNode pnode = null;
@@ -86,7 +88,10 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					modnode = speciesTerm(modifier);
-					p = createOrGetParameter("w_", modifierNum, underscore, rId);
+
+					Parameter p = parameterW(modifierNum,rId);					
+
+					
 					pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
