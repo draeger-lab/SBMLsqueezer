@@ -42,12 +42,6 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.StringTools;
-import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
-import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
-import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -80,10 +74,9 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	 */
 	public SettingsPanelDefaultMechanisms(Properties properties) {
 		settings = new Properties();
-		for (Object key : properties.keySet()) {
+		for (Object key : properties.keySet()) 
 			if (key.toString().startsWith("KINETICS_"))
 				settings.put(key, properties.get(key));
-		}
 		itemListeners = new LinkedList<ItemListener>();
 		origSett = properties;
 		init(((Boolean) origSett
@@ -132,10 +125,8 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	/**
 	 * Creates a panel that contains radio buttons for the given class of
 	 * kinetic equations.
-	 * 
 	 * @param classes
 	 * @param key
-	 * @param interfaceClass
 	 * @return
 	 */
 	private JPanel createButtonGroupPanel(Set<String> classes, CfgKeys key) {
@@ -154,27 +145,6 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 		p.setBorder(BorderFactory.createTitledBorder(null, title.toString(),
 				TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-		Class<?> interfaceClass;
-		switch (key) {
-		case KINETICS_BI_BI_TYPE:
-			interfaceClass = InterfaceBiBiKinetics.class;
-			break;
-		case KINETICS_BI_UNI_TYPE:
-			interfaceClass = InterfaceBiUniKinetics.class;
-			break;
-		case KINETICS_GENE_REGULATION:
-			interfaceClass = InterfaceGeneRegulatoryKinetics.class;
-			break;
-		case KINETICS_NONE_ENZYME_REACTIONS:
-			interfaceClass = InterfaceNonEnzymeKinetics.class;
-			break;
-		case KINETICS_OTHER_ENZYME_REACTIONS:
-			interfaceClass = InterfaceArbitraryEnzymeKinetics.class;
-			break;
-		default: // case KINETICS_UNI_UNI_TYPE:
-			interfaceClass = InterfaceUniUniKinetics.class;
-			break;
-		}
 		JRadioButton jRButton[] = new JRadioButton[classes.size()];
 		String cl[] = classes.toArray(new String[] {});
 		Arrays.sort(cl);
@@ -234,7 +204,7 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 			jRButton[i].setEnabled(true);
 			jRButton[i].setBackground(Color.WHITE);
 			jRButton[i].addItemListener(this);
-			jRButton[i].setActionCommand(interfaceClass.getCanonicalName());
+			jRButton[i].setActionCommand(key.toString());
 			buttonGroup.add(jRButton[i]);
 			helper.add(jRButton[i]);
 		}
@@ -270,24 +240,8 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() instanceof JRadioButton) {
 			JRadioButton rbutton = (JRadioButton) e.getSource();
-			String className = SBMLsqueezer.KINETICS_PACKAGE + '.'
-					+ rbutton.getText();
-			String command = rbutton.getActionCommand();
-			if (command.equals(InterfaceNonEnzymeKinetics.class
-					.getCanonicalName()))
-				settings.put(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS, className);
-			else if (command.equals(InterfaceGeneRegulatoryKinetics.class
-					.getCanonicalName()))
-				settings.put(CfgKeys.KINETICS_GENE_REGULATION, className);
-			else if (command.equals(InterfaceUniUniKinetics.class
-					.getCanonicalName()))
-				settings.put(CfgKeys.KINETICS_UNI_UNI_TYPE, className);
-			else if (command.equals(InterfaceBiUniKinetics.class
-					.getCanonicalName()))
-				settings.put(CfgKeys.KINETICS_BI_UNI_TYPE, className);
-			else if (command.equals(InterfaceBiBiKinetics.class
-					.getCanonicalName()))
-				settings.put(CfgKeys.KINETICS_BI_BI_TYPE, className);
+			settings.put(CfgKeys.valueOf(rbutton.getActionCommand()),
+					SBMLsqueezer.KINETICS_PACKAGE + '.' + rbutton.getText());
 			for (ItemListener i : itemListeners)
 				i.itemStateChanged(e);
 		}

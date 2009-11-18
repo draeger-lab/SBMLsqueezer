@@ -43,8 +43,6 @@ import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
-import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -59,14 +57,23 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	 * Generated serial version uid.
 	 */
 	private static final long serialVersionUID = 3189416350182046246L;
+
 	private SettingsPanelKinetics panelKinSettings;
+
 	private SettingsPanelLaTeX panelLatexSettings;
+
 	private SettingsPanelDefaultMechanisms panelDefaultMechanisms;
+
 	private Properties settings;
+
 	private JTextField tfOpenDir;
+
 	private JTextField tfSaveDir;
+
 	private List<KeyListener> keyListeners;
+
 	private JTabbedPane tab;
+
 	private boolean reversibility;
 
 	/**
@@ -165,9 +172,7 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * javax.swing.JTabbedPane#addChangeListener(javax.swing.event.ChangeListener
-	 * )
+	 * @see javax.swing.JTabbedPane#addChangeListener(javax.swing.event.ChangeListener )
 	 */
 	public void addChangeListener(ChangeListener listener) {
 		if (panelKinSettings != null)
@@ -217,11 +222,7 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 				Set<Class<?>> interfaces = new HashSet<Class<?>>();
 				for (Class<?> c : cl.getInterfaces())
 					interfaces.add(c);
-				if ((interfaces.contains(InterfaceReversibleKinetics.class) && interfaces
-						.contains(InterfaceIrreversibleKinetics.class))
-						|| ((Boolean) settings
-								.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)))
-					this.settings.put(key, cl.getCanonicalName());
+				this.settings.put(key, cl.getCanonicalName());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -248,8 +249,7 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if ((e.getSource() instanceof Container)
