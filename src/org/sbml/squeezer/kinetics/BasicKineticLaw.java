@@ -1173,20 +1173,38 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 	
 	/**
-	 * For the additive Model: weight parameter
+	 * For the additive Model: parameter
 	 * 
-	 * @return weight for the weight matrix
+	 * @return Parameter
 	 */
-	Parameter parameterLambda(int modifierNum, String rId) {
-		Parameter p = createOrGetParameter("lambda_", modifierNum, underscore, rId);
+	Parameter parameterAlpha(String rId) {
+		Parameter p = createOrGetParameter("alpha_", underscore, rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetValue())
 			p.setValue(1);
 		if (!p.isSetUnits())
-			p.setUnits(unitDimensionlessPerTime());
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter for the gene products (degradation)");
+			p.setName("For the additive Model: weight parameter for the activation function");
+		return p;
+	}
+	
+	/**
+	 * For the additive Model: parameter
+	 * 
+	 * @return Parameter
+	 */
+	Parameter parameterBeta(String rId) {
+		Parameter p = createOrGetParameter("beta_", underscore, rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
+		if (!p.isSetName())
+			p.setName("For the additive Model: weight parameter for the activation function");
 		return p;
 	}
 	
