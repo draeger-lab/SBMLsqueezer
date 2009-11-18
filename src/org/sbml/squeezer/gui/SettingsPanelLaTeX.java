@@ -92,25 +92,25 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 
 	/**
 	 * 
-	 * @param settings
+	 * @param properties
 	 *            The settings for this panel
 	 * @param browse
 	 *            if true a browse button will appear that allows to select a
 	 *            LaTeX file. If false this button will only allow to select a
 	 *            directory for LaTeX files.
 	 */
-	public SettingsPanelLaTeX(Properties settings, boolean browse) {
+	public SettingsPanelLaTeX(Properties properties, boolean browse) {
 		super(new BorderLayout());
-		this.settings = new Properties();
-		for (Object key : settings.keySet())
-			if (key.toString().startsWith("LATEX"))
-				this.settings.put(key, settings.get(key));
+		settings = new Properties();
+		for (Object key : properties.keySet())
+			if (key.toString().startsWith("LATEX_"))
+				settings.put(key, properties.get(key));
 		this.changeListeners = new LinkedList<ChangeListener>();
 		this.browse = browse;
 		JPanel filePanel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(filePanel);
 		fileField = new JTextField(15);
-		fileField.setText(this.settings.get(CfgKeys.LATEX_DIR).toString());
+		fileField.setText(settings.get(CfgKeys.LATEX_DIR).toString());
 		fileField.setEditable(false);
 		lh.add(new JPanel(), 0, 0, 4, 1, 0, 0);
 		lh.add(new JPanel(), 0, 1, 1, 1, 0, 0);
@@ -138,14 +138,14 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 
 		int i = 0;
 		while (i < paperSizes.length
-				&& !paperSizes[i].equals(this.settings.get(
+				&& !paperSizes[i].equals(settings.get(
 						CfgKeys.LATEX_PAPER_SIZE).toString()))
 			i++;
 		jComboBoxPaperSize = new JComboBox(paperSizes);
 		jComboBoxPaperSize.setSelectedIndex(i);
 		i = 0;
 		while (i < fontSizes.length
-				&& fontSizes[i].shortValue() != Short.parseShort(this.settings
+				&& fontSizes[i].shortValue() != Short.parseShort(settings
 						.get(CfgKeys.LATEX_FONT_SIZE).toString()))
 			i++;
 		jComboBoxFontSize = new JComboBox(fontSizes);
@@ -167,17 +167,17 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 		lh.add(new JPanel(), 0, ++row, 5, 1, 0, 0);
 
 		jCheckBoxIDsInTWFont = new JCheckBox("IDs in typewriter font",
-				((Boolean) this.settings
+				((Boolean) settings
 						.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT))
 						.booleanValue());
 		jCheckBoxLandscape = new JCheckBox("Landscape",
-				((Boolean) this.settings.get(CfgKeys.LATEX_LANDSCAPE))
+				((Boolean) settings.get(CfgKeys.LATEX_LANDSCAPE))
 						.booleanValue());
 		jCheckBoxTitlePage = new JCheckBox("Create title page",
-				((Boolean) this.settings.get(CfgKeys.LATEX_TITLE_PAGE))
+				((Boolean) settings.get(CfgKeys.LATEX_TITLE_PAGE))
 						.booleanValue());
 		jCheckBoxNameInEquations = new JCheckBox("Set name in equations",
-				((Boolean) this.settings.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS))
+				((Boolean) settings.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS))
 						.booleanValue());
 		lh.add(jCheckBoxIDsInTWFont, 1, ++row, 2, 1, 1, 1);
 		if (!browse) {
