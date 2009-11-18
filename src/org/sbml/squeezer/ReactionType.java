@@ -485,15 +485,14 @@ public class ReactionType {
 		if (enzymeCatalyzed)
 			whichkin = settings.get(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS);
 		if (stoichiometryLeft == 1d) {
-			SpeciesReference specref = reaction.getReactant(0);
-			Species reactant = specref.getSpeciesInstance();
+			Species reactant = reaction.getReactant(0).getSpeciesInstance();
 			if (stoichiometryRight == 1d) {
-				Species product = specref.getSpeciesInstance();
-				if (reactionWithGenes
-						|| reactionWithRNAs
-						|| (SBO.isEmptySet(reactant.getSBOTerm()) && (SBO
-								.isProtein(product.getSBOTerm()) || SBO
-								.isRNAOrMessengerRNA(product.getSBOTerm()))))
+				Species product = reaction.getProduct(0).getSpeciesInstance();
+				if ((reactionWithGenes || reactionWithRNAs || (SBO
+						.isEmptySet(reactant.getSBOTerm()) && (SBO
+						.isProtein(product.getSBOTerm()) || SBO
+						.isRNAOrMessengerRNA(product.getSBOTerm()))))
+						&& !(SBO.isEmptySet(product.getSBOTerm())))
 					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION);
 			}
 			if (!whichkin

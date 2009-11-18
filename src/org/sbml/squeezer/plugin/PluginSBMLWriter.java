@@ -1079,9 +1079,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 							.getStoichiometryMath().getMath()))
 				saveMathContainerProperties(sr.getStoichiometryMath(), sp
 						.getStoichiometryMath());
-			else
-				sp.setStoichiometryMath(writeStoichoimetryMath(sr
-						.getStoichiometryMath()));
+			else {
+//				sp.setStoichiometryMath(writeStoichoimetryMath(sr
+//						.getStoichiometryMath()));
+			}
 		} else
 			sp.setStoichiometry(sr.getStoichiometry());
 	}
@@ -1428,16 +1429,17 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public org.sbml.libsbml.StoichiometryMath writeStoichoimetryMath(
 			StoichiometryMath st) {
-		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath();
-		if (st.isSetMetaId())
-			sm.setMetaId(st.getMetaId());
-		if (st.isSetAnnotation())
-			sm.setAnnotation(st.getAnnotationString());
-		if (st.isSetNotes())
-			sm.setNotes(st.getNotesString());
-		if (st.isSetMath())
-			sm.setMath(convert(st.getMath()));
-		return sm;
+//		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath();
+//		if (st.isSetMetaId())
+//			sm.setMetaId(st.getMetaId());
+//		if (st.isSetAnnotation())
+//			sm.setAnnotation(st.getAnnotationString());
+//		if (st.isSetNotes())
+//			sm.setNotes(st.getNotesString());
+//		if (st.isSetMath())
+//			sm.setMath(convert(st.getMath()));
+//		return sm;
+		return null;
 	}
 
 	/*

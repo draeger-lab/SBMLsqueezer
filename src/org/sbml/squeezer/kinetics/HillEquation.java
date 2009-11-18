@@ -91,23 +91,23 @@ public class HillEquation extends BasicKineticLaw implements
 
 		Reaction reaction = getParentSBMLObject();
 
-		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
-			if (SBO.isGeneOrGeneCodingRegion(reaction.getReactant(0)
-					.getSpeciesInstance().getSBOTerm())
-					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
-							.isTranslationalInhibitor(modifier.getSBOTerm())))
-				throw new ModificationException(
-						"Wrong activation in reaction "
-								+ reaction.getId()
-								+ ". Only transcriptional modification is allowed here.");
-			else if (SBO.isRNAOrMessengerRNA(reaction.getReactant(0)
-					.getSpeciesInstance().getSBOTerm())
-					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
-							.isTranscriptionalInhibitor(modifier.getSBOTerm())))
-				throw new ModificationException("Wrong activation in reaction "
-						+ reaction.getId()
-						+ ". Only translational modification is allowed here.");
-		}
+//		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
+//			if (SBO.isGeneOrGeneCodingRegion(reaction.getReactant(0)
+//					.getSpeciesInstance().getSBOTerm())
+//					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
+//							.isTranslationalInhibitor(modifier.getSBOTerm())))
+//				throw new ModificationException(
+//						"Wrong activation in reaction "
+//								+ reaction.getId()
+//								+ ". Only transcriptional modification is allowed here.");
+//			else if (SBO.isRNAOrMessengerRNA(reaction.getReactant(0)
+//					.getSpeciesInstance().getSBOTerm())
+//					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
+//							.isTranscriptionalInhibitor(modifier.getSBOTerm())))
+//				throw new ModificationException("Wrong activation in reaction "
+//						+ reaction.getId()
+//						+ ". Only translational modification is allowed here.");
+//		}
 
 		if (reaction.getNumModifiers() == 0)
 			setSBOTerm(47);
