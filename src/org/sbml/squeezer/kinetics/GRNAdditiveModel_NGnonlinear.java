@@ -35,7 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements
+public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
@@ -49,32 +49,28 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements
 		super(parentReaction, typeParameters);
 	}
 
-	ASTNode actifunction(ASTNode g) {
-		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-				.exp(ASTNode.times(new ASTNode(-1, this), g))));
-	}
 
+	/**
+	 * weighted sum over all interacting RNAs
+	 * @return ASTNode
+	 */
 	ASTNode function_w() {
 		Reaction r = getParentSBMLObject();
-		Parameter p = null;
 		String rId = getParentSBMLObject().getId();
-		ASTNode modnode = null;
-		ASTNode pnode = null;
 		ASTNode node = new ASTNode(this);
-		Species product = r.getProduct(0).getSpeciesInstance();
+		
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierspec = r.getModifier(modifierNum)
-					.getSpeciesInstance();
+			Species modifierspec = r.getModifier(modifierNum).getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
-			if ((SBO.isProtein(modifierspec.getSBOTerm()) || SBO
-					.isRNAOrMessengerRNA(modifierspec.getSBOTerm()))
-					&& !product.equals(modifierspec)) {
+
+			if (SBO.isProtein(modifierspec.getSBOTerm())
+					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					modnode = speciesTerm(modifier);
-					p = createOrGetParameter("w_", modifierNum, underscore, rId);
-					pnode = new ASTNode(p, this);
+					ASTNode modnode = speciesTerm(modifier);
+					Parameter p = parameterW(modifierNum,rId);	
+					ASTNode pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
 					else
@@ -86,22 +82,6 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModel implements
 			return null;
 		else
 			return node;
-	}
-
-	ASTNode function_l() {
-		Reaction r = getParentSBMLObject();
-		String rId = getParentSBMLObject().getId();
-		ASTNode node = new ASTNode(this);
-
-		Species product = r.getProduct(0).getSpeciesInstance();
-		ASTNode productnode = speciesTerm(product);
-
-		Parameter p = createOrGetParameter("w_", rId);
-		ASTNode pnode = new ASTNode(p, this);
-		// TODO: -(-1) zu +
-		node = ASTNode.times(new ASTNode(-1, this), pnode, productnode);
-
-		return node;
 	}
 
 	/*

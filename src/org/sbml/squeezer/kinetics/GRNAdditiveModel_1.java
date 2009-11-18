@@ -19,9 +19,7 @@
 package org.sbml.squeezer.kinetics;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -35,7 +33,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNAdditiveModel_1 extends GRNAdditiveModel implements
+public class GRNAdditiveModel_1 extends GRNAdditiveModelNonLinear implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
@@ -49,28 +47,8 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModel implements
 		super(parentReaction, typeParameters);
 	}
 
-	ASTNode actifunction(ASTNode g){
-		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this),
-				ASTNode.exp(ASTNode.times(new ASTNode(-1, this), g))));
-	}
-
 	ASTNode function_v() {
 		return null;
-	}
-
-	ASTNode function_l() {
-		Reaction r = getParentSBMLObject();
-		String rId = getParentSBMLObject().getId();
-		ASTNode node = new ASTNode(this);
-
-		Species product = r.getProduct(0).getSpeciesInstance();
-		ASTNode productnode = speciesTerm(product);
-
-		Parameter p = createOrGetParameter("lambda_", rId);
-		ASTNode pnode = new ASTNode(p, this);
-		node = ASTNode.times(pnode, productnode);
-
-		return node;
 	}
 
 	

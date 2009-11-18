@@ -44,10 +44,6 @@ public class GRNAdditiveModel_NGlinear extends GRNAdditiveModel implements Inter
 		super(parentReaction, typeParameters);
 	}
 	
-	ASTNode function_l() {
-		return null;
-	}
-	
 	ASTNode b_i() {
 		return null;
 	}

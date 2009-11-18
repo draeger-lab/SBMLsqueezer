@@ -46,26 +46,25 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
 	}
 
 	ASTNode actifunction(ASTNode g) {
+		String rId = getParentSBMLObject().getId();		
+		Parameter alpha = parameterAlpha(rId);	
+		Parameter beta = parameterBeta(rId);
+		ASTNode alphanode = new ASTNode(alpha, this);
+		ASTNode betanode = new ASTNode(beta, this);		
 
-		if (!(g == null)) {
-			String rId = getParentSBMLObject().getId();
-			Parameter pa = createOrGetParameter("a_", rId);
-			ASTNode pnode_a = new ASTNode(pa, this);
-			Parameter pb = createOrGetParameter("b_", rId);
-			ASTNode pnode_b = new ASTNode(pb, this);
+		if (!(g == null)) {			
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
-							pnode_a, g), pnode_b))));
+							alphanode, g), betanode))));
 		} else {
-			return new ASTNode(1, this);
+			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
+					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
+							alphanode, new ASTNode(this)), betanode))));
 		}
 	}
 
-	ASTNode function_v() {
-		return null;
-	}
 
-	ASTNode function_l() {
+	ASTNode function_v() {
 		return null;
 	}
 
