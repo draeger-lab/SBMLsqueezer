@@ -90,6 +90,6 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear
 	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModelNonLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "A special additive model equation (NetGenerator non-linear model)";
+		return "Additive model: NetGenerator non-linear model";
 	}
 }
