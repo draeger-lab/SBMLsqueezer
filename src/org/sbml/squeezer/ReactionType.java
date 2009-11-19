@@ -65,27 +65,6 @@ public class ReactionType {
 	}
 
 	/**
-	 * Checks if the given set of kinetics can be used given the property if all
-	 * reactions should be treated reversibly.
-	 * 
-	 * @param treatReactionsReversible
-	 * @param allKinetics
-	 * @return A set of kinetics that can be used given the reversible property.
-	 */
-	private static Set<String> checkReactions(boolean treatReactionsReversible,
-			Set<String> allKinetics) {
-		Set<String> kinetics = new HashSet<String>();
-		kinetics.addAll(allKinetics);
-		kinetics.removeAll(notReversible);
-		if (!treatReactionsReversible)
-			kinetics.removeAll(notIrreversible);
-		/*
-		 * else kinetics.retainAll(notIrreversible);
-		 */
-		return kinetics;
-	}
-
-	/**
 	 * 
 	 * @param treatReactionsReversible
 	 * @return
@@ -189,6 +168,52 @@ public class ReactionType {
 					activators.add(modifier.getSpecies());
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * @param reaction
+	 * @return
+	 */
+	public static double productOrder(Reaction reaction) {
+		double stoichiometryRight = 0;
+		for (SpeciesReference specRef : reaction.getListOfProducts())
+			stoichiometryRight += specRef.getStoichiometry();
+		return stoichiometryRight;
+	}
+
+	/**
+	 * 
+	 * Analyze properties of the reaction: compute stoichiometric properties.
+	 * 
+	 * @param r
+	 */
+	public static double reactantOrder(Reaction reaction) {
+		double stoichiometryLeft = 0;
+		for (SpeciesReference specRef : reaction.getListOfReactants())
+			stoichiometryLeft += specRef.getStoichiometry();
+		return stoichiometryLeft;
+	}
+
+	/**
+	 * Checks if the given set of kinetics can be used given the property if all
+	 * reactions should be treated reversibly.
+	 * 
+	 * @param treatReactionsReversible
+	 * @param allKinetics
+	 * @return A set of kinetics that can be used given the reversible property.
+	 */
+	private static Set<String> checkReactions(boolean treatReactionsReversible,
+			Set<String> allKinetics) {
+		Set<String> kinetics = new HashSet<String>();
+		kinetics.addAll(allKinetics);
+		kinetics.removeAll(notReversible);
+		if (!treatReactionsReversible)
+			kinetics.removeAll(notIrreversible);
+		/*
+		 * else kinetics.retainAll(notIrreversible);
+		 */
+		return kinetics;
 	}
 
 	private List<String> activators;
@@ -349,46 +374,6 @@ public class ReactionType {
 				&& !(reactionWithGenes || reactionWithRNAs))
 			throw new RateLawNotApplicableException("Reaction "
 					+ reaction.getId() + " must be a state transition.");
-	}
-
-	/**
-	 * 
-	 * Analyze properties of the reaction: compute stoichiometric properties.
-	 * 
-	 * @param r
-	 */
-	public static double reactantOrder(Reaction reaction) {
-		double stoichiometryLeft = 0;
-		for (SpeciesReference specRef : reaction.getListOfReactants())
-			stoichiometryLeft += specRef.getStoichiometry();
-		return stoichiometryLeft;
-	}
-
-	/**
-	 * 
-	 * @param reaction
-	 * @return
-	 */
-	public static double productOrder(Reaction reaction) {
-		double stoichiometryRight = 0;
-		for (SpeciesReference specRef : reaction.getListOfProducts())
-			stoichiometryRight += specRef.getStoichiometry();
-		return stoichiometryRight;
-	}
-
-	/**
-	 * Checks whether for this reaction the given kinetic law can be applied
-	 * just based on the reversibility property (nothing else is checked).
-	 * 
-	 * @param reaction
-	 * @param className
-	 * @return
-	 */
-	private boolean checkReversibility(Reaction reaction, String className) {
-		return (reaction.getReversible() && SBMLsqueezer
-				.getKineticsReversible().contains(className))
-				|| (!reaction.getReversible() && SBMLsqueezer
-						.getKineticsIrreversible().contains(className));
 	}
 
 	/**
@@ -725,6 +710,21 @@ public class ReactionType {
 			species.setBoundaryCondition(condition);
 			species.stateChanged();
 		}
+	}
+
+	/**
+	 * Checks whether for this reaction the given kinetic law can be applied
+	 * just based on the reversibility property (nothing else is checked).
+	 * 
+	 * @param reaction
+	 * @param className
+	 * @return
+	 */
+	private boolean checkReversibility(Reaction reaction, String className) {
+		return (reaction.getReversible() && SBMLsqueezer
+				.getKineticsReversible().contains(className))
+				|| (!reaction.getReversible() && SBMLsqueezer
+						.getKineticsIrreversible().contains(className));
 	}
 
 }

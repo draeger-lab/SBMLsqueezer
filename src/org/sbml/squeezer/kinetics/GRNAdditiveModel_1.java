@@ -59,6 +59,6 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModelNonLinear implements
 	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModelNonLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "A special additive model equation (Vohradský 2001 and Vu & Vohradský 2007)";
+		return "A special additive model equation (Vohradsk\u00fd 2001 and Vu & Vohradsk\u00fd 2007)";
 	}
 }
