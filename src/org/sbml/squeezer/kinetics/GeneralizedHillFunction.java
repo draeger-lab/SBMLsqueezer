@@ -38,7 +38,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNGeneralizedHillFunction extends BasicKineticLaw implements
+public class GeneralizedHillFunction extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
@@ -46,7 +46,7 @@ public class GRNGeneralizedHillFunction extends BasicKineticLaw implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public GRNGeneralizedHillFunction(Reaction parentReaction,
+	public GeneralizedHillFunction(Reaction parentReaction,
 			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}

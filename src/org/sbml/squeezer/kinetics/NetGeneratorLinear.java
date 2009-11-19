@@ -31,7 +31,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNAdditiveModel_NGlinear extends GRNAdditiveModel implements
+public class NetGeneratorLinear extends AdditiveModelLinear implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
@@ -39,27 +39,27 @@ public class GRNAdditiveModel_NGlinear extends GRNAdditiveModel implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public GRNAdditiveModel_NGlinear(Reaction parentReaction,
+	public NetGeneratorLinear(Reaction parentReaction,
 			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
 	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#b_i()
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
 	 */
 	ASTNode b_i() {
 		return null;
 	}
 
 	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return "Additive model: NetGenerator linear model";
 	}
 
 	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#m_i()
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#m_i()
 	 */
 	ASTNode m_i() {
 		return new ASTNode(1, this);

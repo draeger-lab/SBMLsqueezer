@@ -19,19 +19,21 @@
 package org.sbml.squeezer.kinetics;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
+ * 
  * This class creates an equation based on an additive model as defined in the
- * paper "Modeling regulatory networks with weight matrices" of Weaver, D.;
- * Workman, C. & Stormo, G. 1999
+ * papers "Neural network model of gene expression." of Vohradský, J. 2001 and
+ * "Nonlinear differential equation model for quantification of transcriptional
+ * regulation applied to microarray data of Saccharomyces cerevisiae." of Vu, T.
+ * T. & Vohradský, J. 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
+public class Vohradsky extends AdditiveModelNonLinear implements
 		InterfaceGeneRegulatoryKinetics {
 
 
@@ -40,50 +42,23 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public GRNAdditiveModel_2(Reaction parentReaction, Object... typeParameters)
+	public Vohradsky(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
 	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#actifunction(org.sbml.jsbml.ASTNode)
-	 */
-	ASTNode actifunction(ASTNode g) {
-		String rId = getParentSBMLObject().getId();
-		Parameter alpha = parameterAlpha(rId);
-		Parameter beta = parameterBeta(rId);
-		ASTNode alphanode = new ASTNode(alpha, this);
-		ASTNode betanode = new ASTNode(beta, this);
-
-		if (!(g == null)) {
-			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
-							alphanode, g), betanode))));
-		} else {
-			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
-							alphanode, new ASTNode(this)), betanode))));
-		}
-	}
-
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#b_i()
-	 */
-	ASTNode b_i() {
-		return null;
-	}
-
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#function_v()
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#function_v()
 	 */
 	ASTNode function_v() {
 		return null;
 	}
 
+
 	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Additive model: Weaver, Workman & Stormo 1999";
+		return "Additive model: Vohradsk\u00fd 2001 and Vu & Vohradsk\u00fd 2007";
 	}
 }
