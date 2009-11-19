@@ -39,8 +39,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNSSystemEquation extends BasicKineticLaw implements
-		InterfaceGeneRegulatoryKinetics {
+public class GRNSSystemEquation extends BasicKineticLaw {
 
 	/**
 	 * 
