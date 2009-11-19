@@ -69,7 +69,7 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear impl
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifierNum,rId);	
+					Parameter p = parameterW(modifier.getSpecies(),rId);	
 					ASTNode pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
