@@ -55,7 +55,7 @@ public class GRNAdditiveModel_NGlinear extends GRNAdditiveModel implements
 	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "A special additive model equation (NetGenerator linear model)";
+		return "Additive model: NetGenerator linear model";
 	}
 
 	/* (Kein Javadoc)

@@ -176,7 +176,7 @@ public class GRNAdditiveModel extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "A linear additive model equation";
+		return "Additive model: linear";
 	}
 
 	/**

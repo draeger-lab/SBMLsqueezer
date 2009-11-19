@@ -84,6 +84,6 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
 	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "A special additive model equation (Weaver, Workman & Stormo 1999)";
+		return "Additive model: Weaver, Workman & Stormo 1999";
 	}
 }
