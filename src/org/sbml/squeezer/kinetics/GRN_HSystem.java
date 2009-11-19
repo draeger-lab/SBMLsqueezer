@@ -80,7 +80,7 @@ public class GRN_HSystem extends BasicKineticLaw implements
 		
 		SpeciesReference reactant = r.getReactant(0);
 		ASTNode reactantnode = speciesTerm(reactant);
-		Parameter preactant = parameterW(99,rId);	
+		Parameter preactant = parameterW(reactant.getSpecies(),rId);	
 		ASTNode preactantnode = new ASTNode(preactant, this);
 		node = ASTNode.times(preactantnode,reactantnode);
 		
@@ -94,7 +94,7 @@ public class GRN_HSystem extends BasicKineticLaw implements
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifierNum,rId);	
+					Parameter p = parameterW(modifier.getSpecies(),rId);	
 					ASTNode pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
@@ -120,7 +120,7 @@ public class GRN_HSystem extends BasicKineticLaw implements
 		
 		SpeciesReference reactant = r.getReactant(0);
 		ASTNode reactantnode = speciesTerm(reactant);
-		Parameter preactant = parameterV(99,rId);	
+		Parameter preactant = parameterV(reactant.getSpecies(),rId);	
 		ASTNode preactantnode = new ASTNode(preactant, this);
 		node = ASTNode.times(preactantnode,reactantnode);
 		
@@ -134,7 +134,7 @@ public class GRN_HSystem extends BasicKineticLaw implements
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifierNum,rId);	
+					Parameter p = parameterW(modifier.getSpecies(),rId);	
 					ASTNode pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);

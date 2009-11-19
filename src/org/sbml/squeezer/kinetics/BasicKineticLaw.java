@@ -1141,8 +1141,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return weight for the weight matrix
 	 */
-	Parameter parameterW(int modifierNum, String rId) {
-		Parameter p = createOrGetParameter("w_", modifierNum, underscore, rId);
+	Parameter parameterW(String name, String rId) {
+		Parameter p = createOrGetParameter("w_", underscore, rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetValue())
@@ -1159,8 +1159,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return weight for the weight matrix
 	 */
-	Parameter parameterV(int modifierNum, String rId) {
-		Parameter p = createOrGetParameter("v_", modifierNum, underscore, rId);
+	Parameter parameterV(String name, String rId) {
+		Parameter p = createOrGetParameter("v_", underscore, rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetValue())
@@ -1205,6 +1205,24 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
 			p.setName("For the additive Model: weight parameter for the activation function");
+		return p;
+	}
+	
+	/**
+	 * For the generalized hill function: parameter
+	 * 
+	 * @return Parameter
+	 */
+	Parameter parameterTheta(String rId, String name) {
+		Parameter p = createOrGetParameter("theta_", underscore, rId, underscore, name);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(0);
+		if (!p.isSetUnits())
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
+		if (!p.isSetName())
+			p.setName("For the additive Model: treshold for the generalized hill function");
 		return p;
 	}
 	

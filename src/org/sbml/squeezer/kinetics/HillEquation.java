@@ -21,12 +21,10 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
-import org.sbml.squeezer.ModificationException;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -174,7 +172,7 @@ public class HillEquation extends BasicKineticLaw implements
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
 			Parameter p_hillcoeff = parameterHillCoefficient(modTInhib.get(i));
-			Parameter p_kS = parameterKS(getModel().getSpecies(modTActi.get(i)), modTInhib.get(i));
+			Parameter p_kS = parameterKS(getModel().getSpecies(modTInhib.get(i)),modTInhib.get(i));
 			inhib[i] = ASTNode.frac(ASTNode.pow(speciesTerm(modTInhib.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
 					speciesTerm(modTInhib.get(i)), new ASTNode(p_hillcoeff,
