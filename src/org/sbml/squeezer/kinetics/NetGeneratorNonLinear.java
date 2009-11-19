@@ -35,7 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear
+public class NetGeneratorNonLinear extends AdditiveModelNonLinear
 		implements InterfaceGeneRegulatoryKinetics {
 
 
@@ -44,7 +44,7 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public GRNAdditiveModel_NGnonlinear(Reaction parentReaction,
+	public NetGeneratorNonLinear(Reaction parentReaction,
 			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
@@ -87,7 +87,7 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear
 
 
 	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModelNonLinear#getSimpleName()
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return "Additive model: NetGenerator non-linear model";

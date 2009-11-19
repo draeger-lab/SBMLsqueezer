@@ -23,42 +23,44 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * 
- * This class creates an equation based on an additive model as defined in the
- * papers "Neural network model of gene expression." of Vohradský, J. 2001 and
- * "Nonlinear differential equation model for quantification of transcriptional
- * regulation applied to microarray data of Saccharomyces cerevisiae." of Vu, T.
- * T. & Vohradský, J. 2007
+ * This class creates an equation based on a non-linear additive model.
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNAdditiveModel_1 extends GRNAdditiveModelNonLinear implements
+public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 		InterfaceGeneRegulatoryKinetics {
-
 
 	/**
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public GRNAdditiveModel_1(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException {
+	public AdditiveModelNonLinear(Reaction parentReaction,
+			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#function_v()
+	/**
+	 * @param g
+	 * @return ASTNode
 	 */
-	ASTNode function_v() {
-		return null;
+	ASTNode actifunction(ASTNode g) {
+		if (g == null)
+			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
+					.exp(ASTNode
+							.times(new ASTNode(-1, this), new ASTNode(this)))));
+		else
+			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
+					.exp(ASTNode.times(new ASTNode(-1, this), g))));
 	}
 
 
 	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModelNonLinear#getSimpleName()
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Additive model: Vohradsk\u00fd 2001 and Vu & Vohradsk\u00fd 2007";
+		return "Additive model: non-linear";
 	}
+
 }
