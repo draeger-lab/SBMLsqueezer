@@ -43,8 +43,7 @@ import org.sbml.squeezer.io.StringTools;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
@@ -167,313 +166,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
-	 * Returns a string that gives a simple description of this rate equation.
-	 * 
-	 * @return
-	 */
-	public abstract String getSimpleName();
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Object[] getTypeParameters() {
-		return typeParameters;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.MathContainer#setMath(org.sbml.jsbml.ASTNode)
-	 */
-	public void setMath(ASTNode ast) {
-		if (!isSetMath())
-			super.setMath(ast);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.MathContainer#toString()
-	 */
-	// @Override
-	public String toString() {
-		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
-				.replace("\\,", ",") : getClass().getSimpleName();
-	}
-
-	/**
-	 * Creates a new unit object or returns an existing one from the model.
-	 * 
-	 * @return Unit joule per kelvin and per mole.
-	 */
-	private UnitDefinition unitJperKandM() {
-		String id = "joule_per_kelvin_per_mole";
-		Model model = getModel();
-		UnitDefinition ud = model.getUnitDefinition(id);
-		if (ud == null) {
-			ud = new UnitDefinition(id, getLevel(), getVersion());
-			ud.addUnit(new Unit(Unit.Kind.JOULE, getLevel(), getVersion()));
-			ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, getLevel(),
-					getVersion()));
-			ud.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, getLevel(),
-					getVersion()));
-			model.addUnitDefinition(ud);
-		}
-		return ud;
-	}
-
-	/**
-	 * 
-	 * @param substance
-	 * @return
-	 */
-	private UnitDefinition unitkJperSubstance(UnitDefinition substance) {
-		String id = "kjoule_per_" + substance.getId();
-		Model model = getModel();
-		UnitDefinition ud = model.getUnitDefinition(id);
-		if (ud == null) {
-			ud = new UnitDefinition(id, getLevel(), getVersion());
-			ud.addUnit(new Unit(3, Unit.Kind.JOULE, getLevel(), getVersion()));
-			ud.divideBy(substance);
-			model.addUnitDefinition(ud);
-		}
-		return ud;
-	}
-
-	/**
-	 * 1/s, equivalent to Hz.
-	 * 
-	 * @return
-	 */
-	private UnitDefinition unitPerTime() {
-		Model model = getModel();
-		UnitDefinition ud = model.getUnitDefinition("time").clone();
-		if (ud.getNumUnits() == 1) {
-			Unit u = ud.getUnit(0);
-			u.setExponent(-1);
-			ud.setId("per_" + u.getKind().toString().toLowerCase());
-		} else {
-			ud = new UnitDefinition("per_second", getLevel(), getVersion());
-			Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
-			ud.addUnit(unit);
-		}
-		UnitDefinition def = model.getUnitDefinition(ud.getId());
-		if (def == null)
-			model.addUnitDefinition(ud);
-		return model.getUnitDefinition(ud.getId());
-	}
-
-	/**
-	 * 
-	 * @param listOf
-	 * @param zerothOrder
-	 *            if true this unit will be created for a zeroth order rate
-	 *            constant.
-	 * @return
-	 */
-	private UnitDefinition unitPerTimeAndConcentrationOrSubstance(
-			ListOf<SpeciesReference> listOf, boolean zerothOrder) {
-		Model model = getModel();
-		UnitDefinition ud = new UnitDefinition("ud", getLevel(), getVersion());
-		ud.divideBy(model.getUnitDefinition("time"));
-		UnitDefinition amount = new UnitDefinition("amount", getLevel(),
-				getVersion());
-		int i;
-		if (!zerothOrder) {
-			UnitDefinition substance;
-			SpeciesReference specRef;
-			Species species;
-			for (i = 0; i < listOf.size(); i++) {
-				specRef = listOf.get(i);
-				species = specRef.getSpeciesInstance();
-				substance = species.getSubstanceUnitsInstance().clone();
-				if (bringToConcentration)
-					substance.divideBy(species.getCompartmentInstance()
-							.getUnitsInstance());
-				for (Unit u : substance.getListOfUnits())
-					u.setExponent(u.getExponent()
-							+ ((int) specRef.getStoichiometry() - 1));
-				amount.multiplyWith(substance);
-			}
-		}
-		ud = ud.divideBy(amount).multiplyWith(
-				model.getUnitDefinition("substance")).simplify();
-		StringBuilder sb = new StringBuilder();
-		for (i = 0; i < ud.getNumUnits(); i++) {
-			Unit u = ud.getUnit(i);
-			if (i > 0)
-				sb.append('_');
-			if (u.getExponent() < 0)
-				sb.append("per_");
-			sb.append(u.getPrefix());
-			sb.append(u.getKind().getName());
-		}
-		ud.setId(sb.toString());
-		UnitDefinition def = model.getUnitDefinition(ud.getId());
-		if (def == null)
-			model.addUnitDefinition(ud);
-		ud = model.getUnitDefinition(ud.getId());
-		return ud;
-	}
-
-	/**
-	 * 
-	 * @param c
-	 * @return
-	 */
-	private UnitDefinition unitPerTimeOrSizePerTime(Compartment c) {
-		if (bringToConcentration) {
-			Model model = getModel();
-			StringBuilder name = new StringBuilder();
-			if (!c.isSetUnits())
-				c.setUnits(model.getUnitDefinition("volume"));
-			UnitDefinition sizeUnit = c.getUnitsInstance();
-			if (sizeUnit.isVariantOfVolume())
-				name.append("volume");
-			else if (sizeUnit.isVariantOfArea())
-				name.append("area");
-			else if (sizeUnit.isVariantOfLength())
-				name.append("length");
-			name.append(" per time");
-			String id = name.toString().replace(' ', '_');
-			UnitDefinition ud = model.getUnitDefinition(id);
-			if (ud == null) {
-				ud = new UnitDefinition(sizeUnit);
-				ud.setId(id);
-				ud.divideBy(model.getUnitDefinition("time"));
-				ud.setName(name.toString());
-				model.addUnitDefinition(ud);
-			}
-			return ud;
-		} else {
-			return unitPerTime();
-		}
-	}
-
-	/**
-	 * 
-	 * @param substance
-	 * @param size
-	 * @return
-	 */
-	private UnitDefinition unitSubstancePerSize(UnitDefinition substance,
-			UnitDefinition size) {
-		return unitSubstancePerSize(substance, size, 1);
-	}
-
-	/**
-	 * 
-	 * @param substance
-	 * @param size
-	 * @param exponent
-	 * @return
-	 */
-	private UnitDefinition unitSubstancePerSize(UnitDefinition substance,
-			UnitDefinition size, int exponent) {
-		StringBuffer id = StringTools.concat(substance.getId(), "_per_", size
-				.getId());
-		if (exponent != 1) {
-			id.append("_raised_by_");
-			id.append(exponent);
-		}
-		UnitDefinition substancePerSize = getModel().getUnitDefinition(
-				id.toString());
-		if (substancePerSize == null) {
-			substancePerSize = new UnitDefinition(id.toString(), getLevel(),
-					getVersion());
-			substancePerSize.multiplyWith(substance);
-			substancePerSize.divideBy(size);
-			substancePerSize.raiseByThePowerOf(exponent);
-			getModel().addUnitDefinition(substancePerSize);
-		}
-		return substancePerSize;
-	}
-
-	/**
-	 * Returns the unit substance per size per second.
-	 * 
-	 * @param size
-	 *            unit of size
-	 * @return
-	 */
-	private UnitDefinition unitSubstancePerSizePerTime(UnitDefinition size) {
-		Model model = getModel();
-		String id = "substance_per_" + size.getId() + "_per_time";
-		UnitDefinition mMperSecond = model.getUnitDefinition(id);
-		if (mMperSecond == null) {
-			mMperSecond = new UnitDefinition(id, getLevel(), getVersion());
-			mMperSecond.multiplyWith(model.getUnitDefinition("substance"));
-			mMperSecond.setId(id);
-			mMperSecond.divideBy(model.getUnitDefinition("time"));
-			model.addUnitDefinition(mMperSecond);
-		}
-		return mMperSecond;
-	}
-
-	/**
-	 * 
-	 * @param substance
-	 * @param time
-	 * @return
-	 */
-	private UnitDefinition unitSubstancePerTime(UnitDefinition substance,
-			UnitDefinition time) {
-		Model model = getModel();
-		String id = substance.getId() + "_per_" + time.getId();
-		UnitDefinition substancePerTime = model.getUnitDefinition(id);
-		if (substancePerTime == null) {
-			substancePerTime = new UnitDefinition(id, getLevel(), getVersion());
-			substancePerTime.multiplyWith(substance);
-			substancePerTime.divideBy(time);
-			model.addUnitDefinition(substancePerTime);
-		}
-		return substancePerTime;
-	}
-	
-	/**
-	 * 
-	 * @param Unit
-	 * @param time
-	 * @return
-	 */
-	private UnitDefinition unitDimensionlessPerTime() {
-
-		Model model = getModel();
-//		UnitDefinition ud = model.getUnitDefinition("time").clone();
-//		if (ud.getNumUnits() == 1) {
-//			Unit u = ud.getUnit(0);
-//			u.setExponent(-1);
-//			ud.setId("per_" + u.getKind().toString().toLowerCase());
-//		} else {
-//			ud = new UnitDefinition("per_second", getLevel(), getVersion());
-//			Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
-//			ud.addUnit(unit);
-//		}
-//		UnitDefinition def = model.getUnitDefinition(ud.getId());
-		//if (def == null)
-			//model.addUnitDefinition(ud);
-		//return model.getUnitDefinition(ud.getId());
-		
-		UnitDefinition unitdef_dimless = new UnitDefinition("dimensionless", getLevel(), getVersion());
-		Unit unit_dimless = new Unit(Unit.Kind.DIMENSIONLESS, 1, getLevel(), getVersion());
-		unit_dimless.setSBOTerm(470);
-		unitdef_dimless.addUnit(unit_dimless);
-		
-		String id = unitdef_dimless.getId() + "_per_second";
-		
-		UnitDefinition unitdef = model.getUnitDefinition(id);
-		
-		if (unitdef == null) {
-			unitdef = new UnitDefinition(id, getLevel(), getVersion());
-			unitdef.multiplyWith(unitdef_dimless);
-			unitdef.multiplyWith(unitPerTime());
-			model.addUnitDefinition(unitdef);
-		}
-		return unitdef;
-	}
-
-	/**
 	 * 
 	 * @param enzymes
 	 * @param activators
@@ -556,6 +248,39 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
+	 * Returns a string that gives a simple description of this rate equation.
+	 * 
+	 * @return
+	 */
+	public abstract String getSimpleName();
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Object[] getTypeParameters() {
+		return typeParameters;
+	}
+
+	/**
+	 * For the additive Model: slope of the curve activation function
+	 * 
+	 * @return Parameter
+	 */
+	Parameter parameterAlpha(String rId) {
+		Parameter p = createOrGetParameter("alpha_", rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
+		if (!p.isSetName())
+			p.setName("For the additive Model: weight parameter for the activation function");
+		return p;
+	}
+
+	/**
 	 * Association constant from mass action kinetics.
 	 * 
 	 * 
@@ -584,6 +309,42 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			p_kass.setUnits(unitPerTimeAndConcentrationOrSubstance(r
 					.getListOfReactants(), zerothOrder));
 		return p_kass;
+	}
+
+	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	Parameter parameterB(String rId) {
+		Parameter p = createOrGetParameter("b_", rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(unitDimensionlessPerTime());
+		if (!p.isSetName())
+			p.setName("For the additive Model: basis expression level");
+		return p;
+	}
+
+	/**
+	 * For the additive Model: activation curve's y-intercept
+	 * 
+	 * @return Parameter
+	 */
+	Parameter parameterBeta(String rId) {
+		Parameter p = createOrGetParameter("beta_", rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
+		if (!p.isSetName())
+			p.setName("For the additive Model: weight parameter for the activation function");
+		return p;
 	}
 
 	/**
@@ -712,28 +473,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			StringTools.append(name, " in reaction ", reactionID);
 			hr.setName(name.toString());
 		}
-		if (!hr.isSetUnits())
-			hr.setUnits(Unit.Kind.DIMENSIONLESS);
-		return hr;
-	}
-
-	/**
-	 * Biochemical exponential coefficient
-	 * 
-	 * @param enzyme
-	 *            Identifier of the catalyzing enzyme. Can be null.
-	 * @return
-	 */
-	Parameter parameterReactionCooperativity(String enzyme) {
-		String reactionID = getParentSBMLObject().getId();
-		StringBuffer id = StringTools.concat("hco_", reactionID);
-		if (enzyme != null)
-			StringTools.append(id, underscore, enzyme);
-		Parameter hr = createOrGetParameter(id.toString());
-		if (!hr.isSetSBOTerm())
-			hr.setSBOTerm(382);
-		if (!hr.isSetName())
-			hr.setName("Reaction cooperativity");
 		if (!hr.isSetUnits())
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		return hr;
@@ -970,6 +709,24 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	Parameter parameterM(String rId) {
+		Parameter p = createOrGetParameter("m_", rId);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
+		if (!p.isSetName())
+			p.setName("For the additive Model: constant / max. expression");
+		return p;
+	}
+
+	/**
 	 * Michaelis constant.
 	 * 
 	 * @param species
@@ -1060,6 +817,28 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
+	 * Biochemical exponential coefficient
+	 * 
+	 * @param enzyme
+	 *            Identifier of the catalyzing enzyme. Can be null.
+	 * @return
+	 */
+	Parameter parameterReactionCooperativity(String enzyme) {
+		String reactionID = getParentSBMLObject().getId();
+		StringBuffer id = StringTools.concat("hco_", reactionID);
+		if (enzyme != null)
+			StringTools.append(id, underscore, enzyme);
+		Parameter hr = createOrGetParameter(id.toString());
+		if (!hr.isSetSBOTerm())
+			hr.setSBOTerm(382);
+		if (!hr.isSetName())
+			hr.setName("Reaction cooperativity");
+		if (!hr.isSetUnits())
+			hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		return hr;
+	}
+
+	/**
 	 * Rho activator according to Liebermeister et al.
 	 * 
 	 * @param species
@@ -1135,32 +914,32 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			T.setName("The temperature of the reaction system");
 		return T;
 	}
-	
+
 	/**
-	 * For the additive Model: weight parameter
+	 * For the generalized hill function: threshold
 	 * 
-	 * @return weight for the weight matrix
+	 * @return Parameter
 	 */
-	Parameter parameterW(String name, String rId) {
-		Parameter p = createOrGetParameter("w_", underscore, rId, underscore, name);
+	Parameter parameterTheta(String rId, String name) {
+		Parameter p = createOrGetParameter("theta_", rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetValue())
-			p.setValue(1);
+			p.setValue(0);
 		if (!p.isSetUnits())
-			p.setUnits(unitDimensionlessPerTime());
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter for the gene products");
+			p.setName("Treshold for the generalized hill function");
 		return p;
 	}
-	
+
 	/**
 	 * For the additive Model: weight parameter
 	 * 
 	 * @return weight for the weight matrix
 	 */
 	Parameter parameterV(String name, String rId) {
-		Parameter p = createOrGetParameter("v_", underscore, rId, underscore, name);
+		Parameter p = createOrGetParameter("v_", rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetValue())
@@ -1169,96 +948,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			p.setUnits(unitDimensionlessPerTime());
 		if (!p.isSetName())
 			p.setName("For the additive Model: weight parameter for the external inputs");
-		return p;
-	}
-	
-	/**
-	 * For the additive Model: parameter
-	 * 
-	 * @return Parameter
-	 */
-	Parameter parameterAlpha(String rId) {
-		Parameter p = createOrGetParameter("alpha_", underscore, rId);
-		if (!p.isSetSBOTerm())
-			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
-		if (!p.isSetUnits())
-			p.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter for the activation function");
-		return p;
-	}
-	
-	/**
-	 * For the additive Model: parameter
-	 * 
-	 * @return Parameter
-	 */
-	Parameter parameterBeta(String rId) {
-		Parameter p = createOrGetParameter("beta_", underscore, rId);
-		if (!p.isSetSBOTerm())
-			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
-		if (!p.isSetUnits())
-			p.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter for the activation function");
-		return p;
-	}
-	
-	/**
-	 * For the generalized hill function: parameter
-	 * 
-	 * @return Parameter
-	 */
-	Parameter parameterTheta(String rId, String name) {
-		Parameter p = createOrGetParameter("theta_", underscore, rId, underscore, name);
-		if (!p.isSetSBOTerm())
-			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(0);
-		if (!p.isSetUnits())
-			p.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!p.isSetName())
-			p.setName("For the additive Model: treshold for the generalized hill function");
-		return p;
-	}
-	
-	/**
-	 * For the additive Model: weight parameter
-	 * 
-	 * @return weight for the weight matrix
-	 */
-	Parameter parameterB(String rId) {
-		Parameter p = createOrGetParameter("b", underscore, rId);
-		if (!p.isSetSBOTerm())
-			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
-		if (!p.isSetUnits())
-			p.setUnits(unitDimensionlessPerTime());
-		if (!p.isSetName())
-			p.setName("For the additive Model: bias");
-		return p;
-	}
-	
-	/**
-	 * For the additive Model: weight parameter
-	 * 
-	 * @return weight for the weight matrix
-	 */
-	Parameter parameterM(String rId) {
-		Parameter p = createOrGetParameter("m", underscore, rId);
-		if (!p.isSetSBOTerm())
-			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
-		if (!p.isSetUnits())
-			p.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!p.isSetName())
-			p.setName("For the additive Model: constant / max. expression");
 		return p;
 	}
 
@@ -1313,7 +1002,35 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	Parameter parameterVmax(boolean forward) {
 		return parameterKcatOrVmax(null, forward);
-	}	
+	}
+
+	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	Parameter parameterW(String name, String rId) {
+		Parameter p = createOrGetParameter("w_", rId, underscore, name);
+		if (!p.isSetSBOTerm())
+			p.setSBOTerm(2);
+		if (!p.isSetValue())
+			p.setValue(1);
+		if (!p.isSetUnits())
+			p.setUnits(unitDimensionlessPerTime());
+		if (!p.isSetName())
+			p.setName("For the additive Model: weight parameter for the gene products");
+		return p;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.MathContainer#setMath(org.sbml.jsbml.ASTNode)
+	 */
+	public void setMath(ASTNode ast) {
+		if (!isSetMath())
+			super.setMath(ast);
+	}
 
 	/**
 	 * 
@@ -1346,5 +1063,289 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	ASTNode speciesTerm(String species) {
 		return speciesTerm(getModel().getSpecies(species));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.MathContainer#toString()
+	 */
+	// @Override
+	public String toString() {
+		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
+				.replace("\\,", ",") : getClass().getSimpleName();
+	}
+
+	/**
+	 * 
+	 * @param Unit
+	 * @param time
+	 * @return
+	 */
+	private UnitDefinition unitDimensionlessPerTime() {
+
+		Model model = getModel();
+		// UnitDefinition ud = model.getUnitDefinition("time").clone();
+		// if (ud.getNumUnits() == 1) {
+		// Unit u = ud.getUnit(0);
+		// u.setExponent(-1);
+		// ud.setId("per_" + u.getKind().toString().toLowerCase());
+		// } else {
+		// ud = new UnitDefinition("per_second", getLevel(), getVersion());
+		// Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
+		// ud.addUnit(unit);
+		// }
+		// UnitDefinition def = model.getUnitDefinition(ud.getId());
+		// if (def == null)
+		// model.addUnitDefinition(ud);
+		// return model.getUnitDefinition(ud.getId());
+
+		UnitDefinition unitdef_dimless = new UnitDefinition("dimensionless",
+				getLevel(), getVersion());
+		Unit unit_dimless = new Unit(Unit.Kind.DIMENSIONLESS, 1, getLevel(),
+				getVersion());
+		unit_dimless.setSBOTerm(470);
+		unitdef_dimless.addUnit(unit_dimless);
+
+		String id = unitdef_dimless.getId() + "_per_second";
+
+		UnitDefinition unitdef = model.getUnitDefinition(id);
+
+		if (unitdef == null) {
+			unitdef = new UnitDefinition(id, getLevel(), getVersion());
+			unitdef.multiplyWith(unitdef_dimless);
+			unitdef.multiplyWith(unitPerTime());
+			model.addUnitDefinition(unitdef);
+		}
+		return unitdef;
+	}
+
+	/**
+	 * Creates a new unit object or returns an existing one from the model.
+	 * 
+	 * @return Unit joule per kelvin and per mole.
+	 */
+	private UnitDefinition unitJperKandM() {
+		String id = "joule_per_kelvin_per_mole";
+		Model model = getModel();
+		UnitDefinition ud = model.getUnitDefinition(id);
+		if (ud == null) {
+			ud = new UnitDefinition(id, getLevel(), getVersion());
+			ud.addUnit(new Unit(Unit.Kind.JOULE, getLevel(), getVersion()));
+			ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, getLevel(),
+					getVersion()));
+			ud.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, getLevel(),
+					getVersion()));
+			model.addUnitDefinition(ud);
+		}
+		return ud;
+	}
+
+	/**
+	 * 
+	 * @param substance
+	 * @return
+	 */
+	private UnitDefinition unitkJperSubstance(UnitDefinition substance) {
+		String id = "kjoule_per_" + substance.getId();
+		Model model = getModel();
+		UnitDefinition ud = model.getUnitDefinition(id);
+		if (ud == null) {
+			ud = new UnitDefinition(id, getLevel(), getVersion());
+			ud.addUnit(new Unit(3, Unit.Kind.JOULE, getLevel(), getVersion()));
+			ud.divideBy(substance);
+			model.addUnitDefinition(ud);
+		}
+		return ud;
+	}
+
+	/**
+	 * 1/s, equivalent to Hz.
+	 * 
+	 * @return
+	 */
+	private UnitDefinition unitPerTime() {
+		Model model = getModel();
+		UnitDefinition ud = model.getUnitDefinition("time").clone();
+		if (ud.getNumUnits() == 1) {
+			Unit u = ud.getUnit(0);
+			u.setExponent(-1);
+			ud.setId("per_" + u.getKind().toString().toLowerCase());
+		} else {
+			ud = new UnitDefinition("per_second", getLevel(), getVersion());
+			Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
+			ud.addUnit(unit);
+		}
+		UnitDefinition def = model.getUnitDefinition(ud.getId());
+		if (def == null)
+			model.addUnitDefinition(ud);
+		return model.getUnitDefinition(ud.getId());
+	}
+
+	/**
+	 * 
+	 * @param listOf
+	 * @param zerothOrder
+	 *            if true this unit will be created for a zeroth order rate
+	 *            constant.
+	 * @return
+	 */
+	private UnitDefinition unitPerTimeAndConcentrationOrSubstance(
+			ListOf<SpeciesReference> listOf, boolean zerothOrder) {
+		Model model = getModel();
+		UnitDefinition ud = new UnitDefinition("ud", getLevel(), getVersion());
+		ud.divideBy(model.getUnitDefinition("time"));
+		UnitDefinition amount = new UnitDefinition("amount", getLevel(),
+				getVersion());
+		int i;
+		if (!zerothOrder) {
+			UnitDefinition substance;
+			SpeciesReference specRef;
+			Species species;
+			for (i = 0; i < listOf.size(); i++) {
+				specRef = listOf.get(i);
+				species = specRef.getSpeciesInstance();
+				substance = species.getSubstanceUnitsInstance().clone();
+				if (bringToConcentration)
+					substance.divideBy(species.getCompartmentInstance()
+							.getUnitsInstance());
+				for (Unit u : substance.getListOfUnits())
+					u.setExponent(u.getExponent()
+							+ ((int) specRef.getStoichiometry() - 1));
+				amount.multiplyWith(substance);
+			}
+		}
+		ud = ud.divideBy(amount).multiplyWith(
+				model.getUnitDefinition("substance")).simplify();
+		StringBuilder sb = new StringBuilder();
+		for (i = 0; i < ud.getNumUnits(); i++) {
+			Unit u = ud.getUnit(i);
+			if (i > 0)
+				sb.append('_');
+			if (u.getExponent() < 0)
+				sb.append("per_");
+			sb.append(u.getPrefix());
+			sb.append(u.getKind().getName());
+		}
+		ud.setId(sb.toString());
+		UnitDefinition def = model.getUnitDefinition(ud.getId());
+		if (def == null)
+			model.addUnitDefinition(ud);
+		ud = model.getUnitDefinition(ud.getId());
+		return ud;
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @return
+	 */
+	private UnitDefinition unitPerTimeOrSizePerTime(Compartment c) {
+		if (bringToConcentration) {
+			Model model = getModel();
+			StringBuilder name = new StringBuilder();
+			if (!c.isSetUnits())
+				c.setUnits(model.getUnitDefinition("volume"));
+			UnitDefinition sizeUnit = c.getUnitsInstance();
+			if (sizeUnit.isVariantOfVolume())
+				name.append("volume");
+			else if (sizeUnit.isVariantOfArea())
+				name.append("area");
+			else if (sizeUnit.isVariantOfLength())
+				name.append("length");
+			name.append(" per time");
+			String id = name.toString().replace(' ', '_');
+			UnitDefinition ud = model.getUnitDefinition(id);
+			if (ud == null) {
+				ud = new UnitDefinition(sizeUnit);
+				ud.setId(id);
+				ud.divideBy(model.getUnitDefinition("time"));
+				ud.setName(name.toString());
+				model.addUnitDefinition(ud);
+			}
+			return ud;
+		} else {
+			return unitPerTime();
+		}
+	}
+
+	/**
+	 * 
+	 * @param substance
+	 * @param size
+	 * @return
+	 */
+	private UnitDefinition unitSubstancePerSize(UnitDefinition substance,
+			UnitDefinition size) {
+		return unitSubstancePerSize(substance, size, 1);
+	}
+
+	/**
+	 * 
+	 * @param substance
+	 * @param size
+	 * @param exponent
+	 * @return
+	 */
+	private UnitDefinition unitSubstancePerSize(UnitDefinition substance,
+			UnitDefinition size, int exponent) {
+		StringBuffer id = StringTools.concat(substance.getId(), "_per_", size
+				.getId());
+		if (exponent != 1) {
+			id.append("_raised_by_");
+			id.append(exponent);
+		}
+		UnitDefinition substancePerSize = getModel().getUnitDefinition(
+				id.toString());
+		if (substancePerSize == null) {
+			substancePerSize = new UnitDefinition(id.toString(), getLevel(),
+					getVersion());
+			substancePerSize.multiplyWith(substance);
+			substancePerSize.divideBy(size);
+			substancePerSize.raiseByThePowerOf(exponent);
+			getModel().addUnitDefinition(substancePerSize);
+		}
+		return substancePerSize;
+	}
+
+	/**
+	 * Returns the unit substance per size per second.
+	 * 
+	 * @param size
+	 *            unit of size
+	 * @return
+	 */
+	private UnitDefinition unitSubstancePerSizePerTime(UnitDefinition size) {
+		Model model = getModel();
+		String id = "substance_per_" + size.getId() + "_per_time";
+		UnitDefinition mMperSecond = model.getUnitDefinition(id);
+		if (mMperSecond == null) {
+			mMperSecond = new UnitDefinition(id, getLevel(), getVersion());
+			mMperSecond.multiplyWith(model.getUnitDefinition("substance"));
+			mMperSecond.setId(id);
+			mMperSecond.divideBy(model.getUnitDefinition("time"));
+			model.addUnitDefinition(mMperSecond);
+		}
+		return mMperSecond;
+	}
+
+	/**
+	 * 
+	 * @param substance
+	 * @param time
+	 * @return
+	 */
+	private UnitDefinition unitSubstancePerTime(UnitDefinition substance,
+			UnitDefinition time) {
+		Model model = getModel();
+		String id = substance.getId() + "_per_" + time.getId();
+		UnitDefinition substancePerTime = model.getUnitDefinition(id);
+		if (substancePerTime == null) {
+			substancePerTime = new UnitDefinition(id, getLevel(), getVersion());
+			substancePerTime.multiplyWith(substance);
+			substancePerTime.divideBy(time);
+			model.addUnitDefinition(substancePerTime);
+		}
+		return substancePerTime;
 	}
 }

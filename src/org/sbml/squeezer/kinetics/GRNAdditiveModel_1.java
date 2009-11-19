@@ -36,8 +36,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class GRNAdditiveModel_1 extends GRNAdditiveModelNonLinear implements
 		InterfaceGeneRegulatoryKinetics {
 
+
 	/**
-	 * 
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -47,14 +47,16 @@ public class GRNAdditiveModel_1 extends GRNAdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#function_v()
+	 */
 	ASTNode function_v() {
 		return null;
 	}
 
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
+
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModelNonLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return "A special additive model equation (Vohradský 2001 and Vu & Vohradský 2007)";
