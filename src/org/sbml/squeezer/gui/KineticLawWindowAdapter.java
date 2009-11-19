@@ -69,8 +69,8 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		messagePanel = new KineticLawSelectionPanel(klg, reaction);
 
 		pane = new JOptionPane(messagePanel, JOptionPane.QUESTION_MESSAGE,
-				JOptionPane.OK_CANCEL_OPTION, GUITools.LEMON_ICON_SMALL,
-				null, null);
+				JOptionPane.OK_CANCEL_OPTION, GUITools.LEMON_ICON_SMALL, null,
+				null);
 		pane.setInitialValue(null);
 		Window owner = dialog.getOwner();
 		pane.setComponentOrientation(((owner == null) ? JOptionPane
@@ -155,12 +155,20 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		return KineticsAndParametersStoredInSBML;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.WindowAdapter#windowClosed(java.awt.event.WindowEvent)
+	 */
 	@Override
 	public void windowClosed(WindowEvent we) {
 		// setParentEnabled(we, true);
 		super.windowClosed(we);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+	 */
 	public void windowClosing(WindowEvent we) {
 		pane.setValue(null);
 		// setParentEnabled(we, true);
@@ -181,25 +189,23 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		// Let the defaultCloseOperation handle the closing
 		// if the user closed the window without selecting a button
 		// (newValue = null in that case). Otherwise, close the
 		// dialog.
-		if (dialog.isVisible()
-				&& event.getSource() == pane
-				&& (event.getPropertyName()
-						.equals(JOptionPane.VALUE_PROPERTY))
+		if (dialog.isVisible() && event.getSource() == pane
+				&& (event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY))
 				&& event.getNewValue() != null
 				&& event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE) {
 			Object selectedValue = pane.getValue();
 			value = JOptionPane.CLOSED_OPTION;
-			if (pane.getOptions() == null) {
-				if (selectedValue instanceof Integer)
-					value = ((Integer) selectedValue).intValue();
-				else
-					value = JOptionPane.CLOSED_OPTION;
-			}
+			if (pane.getOptions() == null && selectedValue instanceof Integer)
+				value = ((Integer) selectedValue).intValue();
 			dialog.setVisible(false);
 		}
 	}
