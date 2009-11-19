@@ -34,8 +34,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
 		InterfaceGeneRegulatoryKinetics {
 
+
 	/**
-	 * 
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -45,14 +45,17 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
 		super(parentReaction, typeParameters);
 	}
 
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#actifunction(org.sbml.jsbml.ASTNode)
+	 */
 	ASTNode actifunction(ASTNode g) {
-		String rId = getParentSBMLObject().getId();		
-		Parameter alpha = parameterAlpha(rId);	
+		String rId = getParentSBMLObject().getId();
+		Parameter alpha = parameterAlpha(rId);
 		Parameter beta = parameterBeta(rId);
 		ASTNode alphanode = new ASTNode(alpha, this);
-		ASTNode betanode = new ASTNode(beta, this);		
+		ASTNode betanode = new ASTNode(beta, this);
 
-		if (!(g == null)) {			
+		if (!(g == null)) {
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
 							alphanode, g), betanode))));
@@ -63,15 +66,23 @@ public class GRNAdditiveModel_2 extends GRNAdditiveModel implements
 		}
 	}
 
-
-	ASTNode function_v() {
-		return null;
-	}
-
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#b_i()
+	 */
 	ASTNode b_i() {
 		return null;
 	}
 
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#function_v()
+	 */
+	ASTNode function_v() {
+		return null;
+	}
+
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
+	 */
 	public String getSimpleName() {
 		return "A special additive model equation (Weaver, Workman & Stormo 1999)";
 	}

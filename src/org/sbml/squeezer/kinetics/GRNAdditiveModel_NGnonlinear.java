@@ -35,11 +35,11 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear implements
-		InterfaceGeneRegulatoryKinetics {
+public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear
+		implements InterfaceGeneRegulatoryKinetics {
+
 
 	/**
-	 * 
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -49,18 +49,19 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear impl
 		super(parentReaction, typeParameters);
 	}
 
-
 	/**
 	 * weighted sum over all interacting RNAs
+	 * 
 	 * @return ASTNode
 	 */
 	ASTNode function_w() {
 		Reaction r = getParentSBMLObject();
 		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
-		
+
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierspec = r.getModifier(modifierNum).getSpeciesInstance();
+			Species modifierspec = r.getModifier(modifierNum)
+					.getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 
 			if (SBO.isProtein(modifierspec.getSBOTerm())
@@ -69,7 +70,7 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear impl
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifier.getSpecies(),rId);	
+					Parameter p = parameterW(modifier.getSpecies(), rId);
 					ASTNode pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
@@ -84,10 +85,9 @@ public class GRNAdditiveModel_NGnonlinear extends GRNAdditiveModelNonLinear impl
 			return node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
+
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModelNonLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return "A special additive model equation (NetGenerator non-linear model)";

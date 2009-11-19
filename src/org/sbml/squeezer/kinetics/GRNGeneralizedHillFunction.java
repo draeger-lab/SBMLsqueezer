@@ -29,12 +29,17 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates an equation based on a generalized Hill function.
+ * This class creates an equation based on a generalized Hill function as
+ * defined in the papers "Generalized Hill Function Method for Modeling
+ * Molecular Processes" and "In silico cell. I. Hierarchical approach and
+ * generalized hill functions in modeling enzymatic reactions and gene
+ * expression regulation." of Likhoshvai, V. A. & Ratushny, A. V.
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNGeneralizedHillFunction extends BasicKineticLaw implements InterfaceGeneRegulatoryKinetics {
+public class GRNGeneralizedHillFunction extends BasicKineticLaw implements
+		InterfaceGeneRegulatoryKinetics {
 
 	/**
 	 * @param parentReaction
@@ -44,99 +49,103 @@ public class GRNGeneralizedHillFunction extends BasicKineticLaw implements Inter
 	public GRNGeneralizedHillFunction(Reaction parentReaction,
 			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
-		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
 
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	/*
+	 * (Kein Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List,
+	 *      java.util.List, java.util.List, java.util.List, java.util.List,
+	 *      java.util.List)
 	 */
-	@Override
 	ASTNode createKineticEquation(List<String> enzymes,
 			List<String> activators, List<String> transActivators,
 			List<String> inhibitors, List<String> transInhibitors,
 			List<String> nonEnzymeCatalysts)
 			throws RateLawNotApplicableException {
-		// TODO Automatisch erstellter Methoden-Stub
 
 		ASTNode kineticLaw = new ASTNode(this);
-
-		kineticLaw = ASTNode.sum(synrate(),reg_function());
-
+		kineticLaw = ASTNode.sum(synrate(), reg_function());
 		return kineticLaw;
 	}
-	
+
+	/*
+	 * (Kein Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+	 */
+	public String getSimpleName() {
+		return "Generalized Hill Function";
+	}
+
+	/**
+	 * @return ASTNode
+	 */
 	ASTNode reg_function() {
 
-			Reaction r = getParentSBMLObject();
-			String rId = getParentSBMLObject().getId();
-			ASTNode node = new ASTNode(this);
-			
-			SpeciesReference reactant = r.getReactant(0);		
-			Parameter preactant = parameterW(reactant.getSpecies(),rId);	
-			ASTNode preactantnode = new ASTNode(preactant, this);
-			Parameter thetareactant = parameterTheta(rId,reactant.getSpecies());	
-			ASTNode thetareactantnode = new ASTNode(thetareactant, this);
-			Parameter coeffreactant = parameterHillCoefficient(reactant.getSpecies());	
-			ASTNode coeffreactantnode = new ASTNode(coeffreactant, this);
-			
-			node = ASTNode.frac( 
-						ASTNode.times(
-								preactantnode, 
-								ASTNode.pow(speciesTerm(reactant), coeffreactantnode)
-								), 
-						ASTNode.sum(
-								ASTNode.pow(speciesTerm(reactant), coeffreactantnode), 
-								ASTNode.pow(thetareactantnode, coeffreactantnode)
-								) 
-					);
+		Reaction r = getParentSBMLObject();
+		String rId = getParentSBMLObject().getId();
+		ASTNode node = new ASTNode(this);
 
-			
-			for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
+		SpeciesReference reactant = r.getReactant(0);
+		Parameter preactant = parameterW(reactant.getSpecies(), rId);
+		ASTNode preactantnode = new ASTNode(preactant, this);
+		Parameter thetareactant = parameterTheta(rId, reactant.getSpecies());
+		ASTNode thetareactantnode = new ASTNode(thetareactant, this);
+		Parameter coeffreactant = parameterHillCoefficient(reactant
+				.getSpecies());
+		ASTNode coeffreactantnode = new ASTNode(coeffreactant, this);
 
-				ModifierSpeciesReference modifier = r.getModifier(modifierNum);
+		node = ASTNode.frac(ASTNode.times(preactantnode, ASTNode.pow(
+				speciesTerm(reactant), coeffreactantnode)), ASTNode.sum(ASTNode
+				.pow(speciesTerm(reactant), coeffreactantnode), ASTNode.pow(
+				thetareactantnode, coeffreactantnode)));
 
-					if (!modifier.isSetSBOTerm()) modifier.setSBOTerm(19);
-					if (SBO.isModifier(modifier.getSBOTerm())) {
-						Parameter p = parameterW(modifier.getSpecies(),rId);	
-						ASTNode pnode = new ASTNode(p, this);
-						Parameter theta = parameterTheta(rId,modifier.getSpecies());	
-						ASTNode thetanode = new ASTNode(theta, this);
-						Parameter coeff = parameterHillCoefficient(modifier.getSpecies());	
-						ASTNode coeffnode = new ASTNode(coeff, this);
-						
-						if (node.isUnknown())
-							node = ASTNode.frac( ASTNode.times(pnode, ASTNode.pow(speciesTerm(modifier), coeffnode)), ASTNode.sum(ASTNode.pow(speciesTerm(modifier), coeffnode), ASTNode.pow(thetanode, coeffnode)) );
-						else
-							node = ASTNode.sum(node, ASTNode.frac( ASTNode.times(pnode, ASTNode.pow(speciesTerm(modifier), coeffnode)), ASTNode.sum(ASTNode.pow(speciesTerm(modifier), coeffnode), ASTNode.pow(thetanode, coeffnode)) ));
-					}
+		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
+
+			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
+
+			if (!modifier.isSetSBOTerm())
+				modifier.setSBOTerm(19);
+			if (SBO.isModifier(modifier.getSBOTerm())) {
+				Parameter p = parameterW(modifier.getSpecies(), rId);
+				ASTNode pnode = new ASTNode(p, this);
+				Parameter theta = parameterTheta(rId, modifier.getSpecies());
+				ASTNode thetanode = new ASTNode(theta, this);
+				Parameter coeff = parameterHillCoefficient(modifier
+						.getSpecies());
+				ASTNode coeffnode = new ASTNode(coeff, this);
+
+				if (node.isUnknown())
+					node = ASTNode.frac(ASTNode.times(pnode, ASTNode.pow(
+							speciesTerm(modifier), coeffnode)), ASTNode.sum(
+							ASTNode.pow(speciesTerm(modifier), coeffnode),
+							ASTNode.pow(thetanode, coeffnode)));
+				else
+					node = ASTNode.sum(node, ASTNode.frac(ASTNode.times(pnode,
+							ASTNode.pow(speciesTerm(modifier), coeffnode)),
+							ASTNode.sum(ASTNode.pow(speciesTerm(modifier),
+									coeffnode), ASTNode.pow(thetanode,
+									coeffnode))));
 			}
-			if (node.isUnknown())
-				return null;
-			else
-				return node;
 		}
-	
-	
+		if (node.isUnknown())
+			return null;
+		else
+			return node;
+	}
+
 	/**
 	 * synthesis rate
+	 * 
 	 * @return ASTNode
 	 */
 	ASTNode synrate() {
 		String rId = getParentSBMLObject().getId();
 
-		Parameter b_i = parameterB(rId);	
+		Parameter b_i = parameterB(rId);
 		ASTNode b_i_node = new ASTNode(b_i, this);
 		return b_i_node;
-	}
-	
-
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
-	 */
-	@Override
-	public String getSimpleName() {
-		// TODO Automatisch erstellter Methoden-Stub
-		return "Generalized Hill Function";
 	}
 
 }

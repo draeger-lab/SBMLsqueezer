@@ -29,7 +29,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  */
 public class GRNAdditiveModelNonLinear extends GRNAdditiveModel implements
-InterfaceGeneRegulatoryKinetics  {
+		InterfaceGeneRegulatoryKinetics {
 
 	/**
 	 * @param parentReaction
@@ -39,9 +39,8 @@ InterfaceGeneRegulatoryKinetics  {
 	public GRNAdditiveModelNonLinear(Reaction parentReaction,
 			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
-		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
-	
+
 	/**
 	 * @param g
 	 * @return ASTNode
@@ -49,18 +48,17 @@ InterfaceGeneRegulatoryKinetics  {
 	ASTNode actifunction(ASTNode g) {
 		if (g == null)
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.times(new ASTNode(-1, this), new ASTNode(this)))));
+					.exp(ASTNode
+							.times(new ASTNode(-1, this), new ASTNode(this)))));
 		else
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 					.exp(ASTNode.times(new ASTNode(-1, this), g))));
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+
+
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GRNAdditiveModel#getSimpleName()
 	 */
-	// @Override
 	public String getSimpleName() {
 		return "A non-linear additive model equation";
 	}

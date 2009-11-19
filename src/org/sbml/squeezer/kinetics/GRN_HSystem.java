@@ -30,7 +30,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates an equation based on a linear additive model.
+ * This class creates a non-linear additive equation form
+ * Hadeler, K.: Gedanken zur Parameteridentifikation. Personal Communication, 2003.
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
@@ -38,8 +39,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class GRN_HSystem extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics {
 
+
 	/**
-	 * 
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -49,14 +50,20 @@ public class GRN_HSystem extends BasicKineticLaw implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 *      .util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	/**
+	 * @return ASTNode
 	 */
-	@Override
+	ASTNode b_i() {
+		String rId = getParentSBMLObject().getId();
+		Parameter b_i = parameterB(rId);
+		ASTNode b_i_node = new ASTNode(b_i, this);
+		return b_i_node;
+	}
+
+
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
@@ -70,22 +77,33 @@ public class GRN_HSystem extends BasicKineticLaw implements
 	}
 
 	/**
-	 * 
+	 * @param w
+	 * @param v
+	 * @param b
 	 * @return ASTNode
 	 */
-	ASTNode function_w() {
+	ASTNode function_g(ASTNode b, ASTNode w, ASTNode v) {
+		return ASTNode.sum(b, w, v);
+	}
+
+
+	/**
+	 * @return ASTNode
+	 */
+	ASTNode function_v() {
 		Reaction r = getParentSBMLObject();
 		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
-		
+
 		SpeciesReference reactant = r.getReactant(0);
 		ASTNode reactantnode = speciesTerm(reactant);
-		Parameter preactant = parameterW(reactant.getSpecies(),rId);	
+		Parameter preactant = parameterV(reactant.getSpecies(), rId);
 		ASTNode preactantnode = new ASTNode(preactant, this);
-		node = ASTNode.times(preactantnode,reactantnode);
-		
+		node = ASTNode.times(preactantnode, reactantnode);
+
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierspec = r.getModifier(modifierNum).getSpeciesInstance();
+			Species modifierspec = r.getModifier(modifierNum)
+					.getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 
 			if (SBO.isProtein(modifierspec.getSBOTerm())
@@ -94,7 +112,48 @@ public class GRN_HSystem extends BasicKineticLaw implements
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifier.getSpecies(),rId);	
+					Parameter p = parameterW(modifier.getSpecies(), rId);
+					ASTNode pnode = new ASTNode(p, this);
+					if (node.isUnknown())
+						node = ASTNode.times(pnode, modnode);
+					else
+						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
+				}
+			}
+		}
+		if (node.isUnknown())
+			return null;
+		else
+			return node = ASTNode.times(reactantnode, node);
+	}
+
+
+	/**
+	 * @return ASTNode
+	 */
+	ASTNode function_w() {
+		Reaction r = getParentSBMLObject();
+		String rId = getParentSBMLObject().getId();
+		ASTNode node = new ASTNode(this);
+
+		SpeciesReference reactant = r.getReactant(0);
+		ASTNode reactantnode = speciesTerm(reactant);
+		Parameter preactant = parameterW(reactant.getSpecies(), rId);
+		ASTNode preactantnode = new ASTNode(preactant, this);
+		node = ASTNode.times(preactantnode, reactantnode);
+
+		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
+			Species modifierspec = r.getModifier(modifierNum)
+					.getSpeciesInstance();
+			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
+
+			if (SBO.isProtein(modifierspec.getSBOTerm())
+					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())) {
+				if (!modifier.isSetSBOTerm())
+					modifier.setSBOTerm(19);
+				if (SBO.isModifier(modifier.getSBOTerm())) {
+					ASTNode modnode = speciesTerm(modifier);
+					Parameter p = parameterW(modifier.getSpecies(), rId);
 					ASTNode pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
@@ -108,95 +167,10 @@ public class GRN_HSystem extends BasicKineticLaw implements
 		else
 			return node;
 	}
-	
-	/**
-	 * 
-	 * @return ASTNode
-	 */
-	ASTNode function_v() {
-		Reaction r = getParentSBMLObject();
-		String rId = getParentSBMLObject().getId();
-		ASTNode node = new ASTNode(this);
-		
-		SpeciesReference reactant = r.getReactant(0);
-		ASTNode reactantnode = speciesTerm(reactant);
-		Parameter preactant = parameterV(reactant.getSpecies(),rId);	
-		ASTNode preactantnode = new ASTNode(preactant, this);
-		node = ASTNode.times(preactantnode,reactantnode);
-		
-		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierspec = r.getModifier(modifierNum).getSpeciesInstance();
-			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 
-			if (SBO.isProtein(modifierspec.getSBOTerm())
-					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm())
-					modifier.setSBOTerm(19);
-				if (SBO.isModifier(modifier.getSBOTerm())) {
-					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifier.getSpecies(),rId);	
-					ASTNode pnode = new ASTNode(p, this);
-					if (node.isUnknown())
-						node = ASTNode.times(pnode, modnode);
-					else
-						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
-				}
-			}
-		}
-		if (node.isUnknown())
-			return null;
-		else
-			return node = ASTNode.times(reactantnode,node);
-	}
-
-
-	/**
-	 * @param w
-	 * @param v
-	 * @param b
-	 * @return ASTNode
-	 */
-	ASTNode function_g(ASTNode b, ASTNode w, ASTNode v) {
-		return ASTNode.sum(b, w, v);
-	}
-
-//	/**
-//	 * @param g
-//	 * @return ASTNode
-//	 */
-//	ASTNode actifunction(ASTNode g) {
-//		if (g == null)
-//			return new ASTNode(this);
-//		else
-//			return g;
-//	}
-
-	/**
-	 * @return ASTNode
-	 */
-	ASTNode b_i() {
-		String rId = getParentSBMLObject().getId();
-		Parameter b_i = parameterB(rId);	
-		ASTNode b_i_node = new ASTNode(b_i, this);
-		return b_i_node;
-	}
-
-//	/**
-//	 * @return ASTNode
-//	 */
-//	ASTNode m_i() {
-//		String rId = getParentSBMLObject().getId();
-//		Parameter m_i = parameterM(rId);
-//		ASTNode m_i_node = new ASTNode(m_i, this);
-//		return m_i_node;
-//	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (Kein Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	// @Override
 	public String getSimpleName() {
 		return "H-System-Equation";
 	}

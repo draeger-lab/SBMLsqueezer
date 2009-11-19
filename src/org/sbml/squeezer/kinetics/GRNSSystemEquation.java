@@ -41,8 +41,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  */
 public class GRNSSystemEquation extends BasicKineticLaw {
 
+
 	/**
-	 * 
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -52,15 +52,10 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+
+	/* (Kein Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
 			List<String> modTInhib, List<String> modCat)
@@ -177,11 +172,10 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 		return kineticLaw;
 	}
 
-	/*
-	 * (non-Javadoc)
+
+	/* (Kein Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	// @Override
 	public String getSimpleName() {
 		return "S-System based kinetic";
 	}
