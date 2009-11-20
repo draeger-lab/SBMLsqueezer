@@ -39,7 +39,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GRNSSystemEquation extends BasicKineticLaw {
+public class SSystem extends BasicKineticLaw {
 
 
 	/**
@@ -47,7 +47,7 @@ public class GRNSSystemEquation extends BasicKineticLaw {
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public GRNSSystemEquation(Reaction parentReaction, Object... typeParameters)
+	public SSystem(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
