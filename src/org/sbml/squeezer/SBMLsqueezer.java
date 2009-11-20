@@ -1,4 +1,5 @@
 /*
+ *  $Rev$
  *  SBMLsqueezer creates rate equations for reactions in SBML files
  *  (http://sbml.org).
  *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
