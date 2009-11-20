@@ -142,7 +142,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			try {
 				klg.storeKineticLaw(klg.createKineticLaw(reaction,
 						equationType, messagePanel.getReversible()));
-				sbmlio.saveChanges();
+				sbmlio.saveChanges(reaction);
 			} catch (Throwable e1) {
 				e1.printStackTrace();
 			}

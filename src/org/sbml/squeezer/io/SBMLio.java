@@ -828,4 +828,13 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	public Object writeUnitDefinition(UnitDefinition unitDefinition) {
 		return writer.writeUnitDefinition(unitDefinition);
 	}
+
+	/**
+	 * 
+	 * @param reaction
+	 * @throws SBMLException 
+	 */
+	public void saveChanges(Reaction reaction) throws SBMLException {
+		writer.saveChanges(reaction, listOfOrigModels.get(selectedModel));	
+	}
 }

@@ -21,8 +21,7 @@ package org.sbml.squeezer.io;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-
+import org.sbml.jsbml.Model;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.ListOfEvents;
 import org.sbml.libsbml.SBMLDocument;
@@ -59,7 +58,7 @@ public interface DisplaySBML {
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void format(PluginModel model, BufferedWriter buffer) throws IOException;
+	public void format(Model model, BufferedWriter buffer) throws IOException;
 
 
 	/**

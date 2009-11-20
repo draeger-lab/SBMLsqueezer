@@ -55,6 +55,7 @@ import jp.sbi.celldesigner.plugin.util.PluginCompartmentSymbolType;
 import jp.sbi.celldesigner.plugin.util.PluginReactionSymbolType;
 import jp.sbi.celldesigner.plugin.util.PluginSpeciesSymbolType;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CVTerm;
@@ -89,7 +90,6 @@ import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.io.LibSBMLWriter;
-import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 
@@ -105,11 +105,11 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	/**
 	 * 
 	 */
-	private PluginModel pluginModel;
+	private CellDesignerPlugin plugin;
 	/**
 	 * 
 	 */
-	private CellDesignerPlugin plugin;
+	private PluginModel pluginModel;
 
 	/**
 	 * 
@@ -150,6 +150,151 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.io.AbstractSBMLWriter#removeUnneccessaryElements(org.sbml.jsbml.Model, java.lang.Object)
+	 */
+	@Override
+	public void removeUnneccessaryElements(Model model, Object orig) {
+		if (!(orig instanceof PluginModel))
+			throw new IllegalArgumentException(
+					"only instances of PluginModel can be considered.");
+		pluginModel = (PluginModel) orig;
+		int i;
+		
+		// remove unnecessary function definitions
+		for (i = pluginModel.getNumFunctionDefinitions() - 1; i >= 0; i--) {
+			PluginFunctionDefinition c = pluginModel.getFunctionDefinition(i);
+			if (model.getFunctionDefinition(c.getId()) == null)
+				plugin.notifySBaseDeleted(pluginModel
+						.getListOfFunctionDefinitions().remove(i));
+		}
+		
+		// remove unnecessary units
+		for (i = pluginModel.getNumUnitDefinitions() - 1; i >= 0; i--) {
+			PluginUnitDefinition ud = pluginModel.getUnitDefinition(i);
+			if (model.getUnitDefinition(ud.getId()) == null)
+				plugin.notifySBaseDeleted(pluginModel
+						.getListOfUnitDefinitions().remove(i));
+		}
+		
+		// remove unnecessary compartmentTypes
+		for (i = pluginModel.getNumCompartmentTypes() - 1; i >= 0; i--) {
+			PluginCompartmentType c = pluginModel.getCompartmentType(i);
+			if (model.getCompartmentType(c.getId()) == null)
+				plugin.notifySBaseDeleted(pluginModel
+						.getListOfCompartmentTypes().remove(i));
+		}
+		
+		// remove unnecessary speciesTypes
+		for (i = pluginModel.getNumSpeciesTypes() - 1; i >= 0; i--) {
+			PluginSpeciesType c = pluginModel.getSpeciesType(i);
+			if (model.getSpeciesType(c.getId()) == null)
+				plugin.notifySBaseDeleted(pluginModel.getListOfSpeciesTypes()
+						.remove(i));
+		}
+
+		
+		// remove unnecessary compartments
+		for (i = pluginModel.getNumCompartments() - 1; i >= 0; i--) {
+			PluginCompartment c = pluginModel.getCompartment(i);
+			if (model.getCompartment(c.getId()) == null)
+				plugin.notifySBaseDeleted(pluginModel.getListOfCompartments()
+						.remove(i));
+		}
+
+		// remove unnecessary species
+		for (i = pluginModel.getNumSpecies() - 1; i >= 0; i--) {
+			PluginSpecies s = pluginModel.getSpecies(i);
+			if (model.getSpecies(s.getId()) == null)
+				plugin.notifySBaseDeleted(pluginModel.getListOfSpecies()
+						.remove(i));
+		}
+		
+		// remove parameters
+		for (i = pluginModel.getNumParameters() - 1; i >= 0; i--) {
+			PluginParameter p = pluginModel.getParameter(i);
+			if (model.getParameter(p.getId()) == null)
+				plugin.notifySBaseDeleted(pluginModel.getListOfParameters()
+						.remove(i));
+		}
+		
+		// remove unnecessary initial assignments
+		for (i = pluginModel.getNumInitialAssignments() - 1; i >= 0; i--) {
+			PluginInitialAssignment c = pluginModel.getInitialAssignment(i);
+			boolean contains = false;
+			for (int j = 0; j < model.getNumInitialAssignments() && !contains; j++) {
+				InitialAssignment ia = model.getInitialAssignment(j);
+				if (ia.getSymbol().equals(c.getSymbol())
+						&& equal(ia.getMath(), libsbml
+								.parseFormula(c.getMath())))
+					contains = true;
+			}
+			if (!contains)
+				plugin.notifySBaseDeleted(pluginModel
+						.getListOfInitialAssignments().remove(i));
+		}
+		
+		// remove unnecessary rules
+		for (i = pluginModel.getNumRules() - 1; i >= 0; i--) {
+			PluginRule c = pluginModel.getRule(i);
+			boolean contains = false;
+			for (int j = 0; j < model.getNumRules() && !contains; j++) {
+				Rule r = model.getRule(j);
+				if ((c instanceof PluginRateRule && r instanceof RateRule && ((PluginRateRule) c)
+						.getVariable().equals(((RateRule) r).getVariable()))
+						|| (c instanceof PluginAssignmentRule
+								&& r instanceof AssignmentRule && ((AssignmentRule) r)
+								.getVariable().equals(
+										((PluginAssignmentRule) c)
+												.getVariable()))
+						|| (c instanceof PluginAlgebraicRule && r instanceof AlgebraicRule))
+					if (equal(r.getMath(), c.getMath()))
+						contains = true;
+			}
+			if (!contains)
+				plugin.notifySBaseDeleted(pluginModel.getListOfRules()
+						.remove(i));
+		}
+		
+		// remove unnecessary constraints
+		for (i = pluginModel.getNumConstraints() - 1; i >= 0; i--) {
+			PluginConstraint c = pluginModel.getConstraint(i);
+			boolean contains = false;
+			for (int j = 0; j < model.getNumConstraints() && !contains; j++) {
+				Constraint ia = model.getConstraint(j);
+				if (equal(ia.getMath(), libsbml.parseFormula(c.getMath())))
+					contains = true;
+			}
+			if (!contains)
+				plugin.notifySBaseDeleted(pluginModel.getListOfConstraints()
+						.remove(i));
+		}
+		
+		// remove reactions
+		for (i = pluginModel.getNumReactions() - 1; i >= 0; i--) {
+			PluginReaction r = pluginModel.getReaction(i);
+			if (model.getReaction(r.getId()) == null)
+				plugin.notifySBaseDeleted(pluginModel.getListOfReactions()
+						.remove(i));
+		}
+		
+		// remove events
+		for (i = pluginModel.getNumEvents() - 1; i >= 0; i--) {
+			PluginEvent eventOrig = pluginModel.getEvent(i);
+			boolean contains = false;
+			for (Event e : model.getListOfEvents())
+				if (e.getId().equals(eventOrig)
+						|| e.getName().equals(eventOrig.getName())
+						|| e.getNotesString()
+								.equals(eventOrig.getNotesString()))
+					contains = true;
+			if (!contains)
+				plugin.notifySBaseDeleted(pluginModel.getListOfEvents().remove(
+						i));
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.squeezer.io.AbstractSBMLWriter#saveChanges(org.sbml.Model,
 	 * java.lang.Object)
@@ -174,13 +319,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				saveMathContainerProperties(c, fd);
 				plugin.notifySBaseChanged(fd);
 			}
-		}
-		// remove unnecessary function definitions
-		for (i = pluginModel.getNumFunctionDefinitions() - 1; i >= 0; i--) {
-			PluginFunctionDefinition c = pluginModel.getFunctionDefinition(i);
-			if (model.getFunctionDefinition(c.getId()) == null)
-				plugin.notifySBaseDeleted(pluginModel
-						.getListOfFunctionDefinitions().remove(i));
 		}
 
 		// Unit definitions
@@ -216,13 +354,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					plugin.notifySBaseAdded(udef);
 				}
 			}
-		// remove unnecessary units
-		for (i = pluginModel.getNumUnitDefinitions() - 1; i >= 0; i--) {
-			PluginUnitDefinition ud = pluginModel.getUnitDefinition(i);
-			if (model.getUnitDefinition(ud.getId()) == null)
-				plugin.notifySBaseDeleted(pluginModel
-						.getListOfUnitDefinitions().remove(i));
-		}
 
 		// Compartment types
 		for (CompartmentType c : model.getListOfCompartmentTypes()) {
@@ -237,13 +368,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				plugin.notifySBaseChanged(ct);
 			}
 		}
-		// remove unnecessary compartmentTypes
-		for (i = pluginModel.getNumCompartmentTypes() - 1; i >= 0; i--) {
-			PluginCompartmentType c = pluginModel.getCompartmentType(i);
-			if (model.getCompartmentType(c.getId()) == null)
-				plugin.notifySBaseDeleted(pluginModel
-						.getListOfCompartmentTypes().remove(i));
-		}
 
 		// Species types
 		for (SpeciesType c : model.getListOfSpeciesTypes()) {
@@ -257,14 +381,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				plugin.notifySBaseChanged(st);
 			}
 		}
-		// remove unnecessary speciesTypes
-		for (i = pluginModel.getNumSpeciesTypes() - 1; i >= 0; i--) {
-			PluginSpeciesType c = pluginModel.getSpeciesType(i);
-			if (model.getSpeciesType(c.getId()) == null)
-				plugin.notifySBaseDeleted(pluginModel.getListOfSpeciesTypes()
-						.remove(i));
-		}
-
+		
 		// Compartments
 		for (Compartment c : model.getListOfCompartments()) {
 			if (pluginModel.getCompartment(c.getId()) == null) {
@@ -277,14 +394,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				plugin.notifySBaseChanged(pc);
 			}
 		}
-		// remove unnecessary compartments
-		for (i = pluginModel.getNumCompartments() - 1; i >= 0; i--) {
-			PluginCompartment c = pluginModel.getCompartment(i);
-			if (model.getCompartment(c.getId()) == null)
-				plugin.notifySBaseDeleted(pluginModel.getListOfCompartments()
-						.remove(i));
-		}
-
+		
 		// Species
 		for (Species s : model.getListOfSpecies()) {
 			if (pluginModel.getSpecies(s.getId()) == null) {
@@ -296,13 +406,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				saveSpeciesProperties(s, ps);
 				plugin.notifySBaseChanged(ps);
 			}
-		}
-		// remove unnecessary species
-		for (i = pluginModel.getNumSpecies() - 1; i >= 0; i--) {
-			PluginSpecies s = pluginModel.getSpecies(i);
-			if (model.getSpecies(s.getId()) == null)
-				plugin.notifySBaseDeleted(pluginModel.getListOfSpecies()
-						.remove(i));
 		}
 
 		// add or change parameters
@@ -316,13 +419,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				saveParameterProperties(p, pp);
 				plugin.notifySBaseChanged(pp);
 			}
-		}
-		// remove parameters
-		for (i = pluginModel.getNumParameters() - 1; i >= 0; i--) {
-			PluginParameter p = pluginModel.getParameter(i);
-			if (model.getParameter(p.getId()) == null)
-				plugin.notifySBaseDeleted(pluginModel.getListOfParameters()
-						.remove(i));
 		}
 
 		// initial assignments
@@ -348,21 +444,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				saveMathContainerProperties(ia, pia);
 				plugin.notifySBaseChanged(pia);
 			}
-		}
-		// remove unnecessary initial assignments
-		for (i = pluginModel.getNumInitialAssignments() - 1; i >= 0; i--) {
-			PluginInitialAssignment c = pluginModel.getInitialAssignment(i);
-			boolean contains = false;
-			for (int j = 0; j < model.getNumInitialAssignments() && !contains; j++) {
-				InitialAssignment ia = model.getInitialAssignment(j);
-				if (ia.getSymbol().equals(c.getSymbol())
-						&& equal(ia.getMath(), libsbml
-								.parseFormula(c.getMath())))
-					contains = true;
-			}
-			if (!contains)
-				plugin.notifySBaseDeleted(pluginModel
-						.getListOfInitialAssignments().remove(i));
 		}
 
 		// rules
@@ -401,28 +482,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			}
 		}
 
-		// remove unnecessary rules
-		for (i = pluginModel.getNumRules() - 1; i >= 0; i--) {
-			PluginRule c = pluginModel.getRule(i);
-			boolean contains = false;
-			for (int j = 0; j < model.getNumRules() && !contains; j++) {
-				Rule r = model.getRule(j);
-				if ((c instanceof PluginRateRule && r instanceof RateRule && ((PluginRateRule) c)
-						.getVariable().equals(((RateRule) r).getVariable()))
-						|| (c instanceof PluginAssignmentRule
-								&& r instanceof AssignmentRule && ((AssignmentRule) r)
-								.getVariable().equals(
-										((PluginAssignmentRule) c)
-												.getVariable()))
-						|| (c instanceof PluginAlgebraicRule && r instanceof AlgebraicRule))
-					if (equal(r.getMath(), c.getMath()))
-						contains = true;
-			}
-			if (!contains)
-				plugin.notifySBaseDeleted(pluginModel.getListOfRules()
-						.remove(i));
-		}
-
 		// constraints
 		for (i = 0; i < model.getNumConstraints(); i++) {
 			Constraint ia = model.getConstraint(i);
@@ -442,19 +501,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				plugin.notifySBaseChanged(constr);
 			}
 		}
-		// remove unnecessary constraints
-		for (i = pluginModel.getNumConstraints() - 1; i >= 0; i--) {
-			PluginConstraint c = pluginModel.getConstraint(i);
-			boolean contains = false;
-			for (int j = 0; j < model.getNumConstraints() && !contains; j++) {
-				Constraint ia = model.getConstraint(j);
-				if (equal(ia.getMath(), libsbml.parseFormula(c.getMath())))
-					contains = true;
-			}
-			if (!contains)
-				plugin.notifySBaseDeleted(pluginModel.getListOfConstraints()
-						.remove(i));
-		}
 
 		// add or change reactions
 		for (Reaction r : model.getListOfReactions()) {
@@ -467,13 +513,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				saveReactionProperties(r, reac);
 				plugin.notifySBaseChanged(reac);
 			}
-		}
-		// remove reactions
-		for (i = pluginModel.getNumReactions() - 1; i >= 0; i--) {
-			PluginReaction r = pluginModel.getReaction(i);
-			if (model.getReaction(r.getId()) == null)
-				plugin.notifySBaseChanged(pluginModel.getListOfReactions()
-						.remove(i));
 		}
 
 		// events
@@ -497,20 +536,83 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				plugin.notifySBaseChanged(pia);
 			}
 		}
-		// remove events
-		for (i = pluginModel.getNumEvents() - 1; i >= 0; i--) {
-			PluginEvent eventOrig = pluginModel.getEvent(i);
-			boolean contains = false;
-			for (Event e : model.getListOfEvents())
-				if (e.getId().equals(eventOrig)
-						|| e.getName().equals(eventOrig.getName())
-						|| e.getNotesString()
-								.equals(eventOrig.getNotesString()))
-					contains = true;
-			if (!contains)
-				plugin.notifySBaseDeleted(pluginModel.getListOfEvents().remove(
-						i));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.io.AbstractSBMLWriter#saveChanges(org.sbml.jsbml.Reaction,
+	 * java.lang.Object)
+	 */
+	@Override
+	public void saveChanges(Reaction reaction, Object model)
+			throws SBMLException {
+		if (!(model instanceof PluginModel))
+			throw new IllegalArgumentException("model" + error + "PluginModel");
+		pluginModel = (PluginModel) model;
+		for (SpeciesReference specRef : reaction.getListOfReactants())
+			saveChanges(specRef.getSpeciesInstance(), pluginModel);
+		for (SpeciesReference specRef : reaction.getListOfProducts())
+			saveChanges(specRef.getSpeciesInstance(), pluginModel);
+		for (ModifierSpeciesReference modSpecRef : reaction
+				.getListOfModifiers())
+			saveChanges(modSpecRef.getSpeciesInstance(), pluginModel);
+		if (reaction.isSetKineticLaw() && reaction.getKineticLaw().isSetMath()) {
+			ASTNode math = reaction.getKineticLaw().getMath();
+			Model m = reaction.getModel();
+			for (FunctionDefinition fd : m.getListOfFunctionDefinitions())
+				if (math.refersTo(fd.getId())) {
+					if (pluginModel.getFunctionDefinition(fd.getId()) == null) {
+						PluginFunctionDefinition pluF = writeFunctionDefinition(fd);
+						pluginModel.addFunctionDefinition(pluF);
+						plugin.notifySBaseAdded(pluF);
+					} else
+						saveMathContainerProperties(fd, pluginModel
+								.getFunctionDefinition(fd.getId()));
+				}
+			for (Compartment c : m.getListOfCompartments())
+				if (math.refersTo(c.getId())) {
+					if (c.isSetUnits()
+							&& !Unit.isUnitKind(c.getUnits(), c.getLevel(), c
+									.getVersion())
+							&& pluginModel.getUnitDefinition(c.getUnits()) == null) {
+						PluginUnitDefinition pluU = writeUnitDefinition(c
+								.getUnitsInstance());
+						pluginModel.addUnitDefinition(pluU);
+						plugin.notifySBaseAdded(pluU);
+					}
+					if (pluginModel.getCompartment(c.getId()) == null) {
+						PluginCompartment pluC = writeCompartment(c);
+						pluginModel.addCompartment(pluC);
+						plugin.notifySBaseAdded(pluC);
+					} else
+						saveCompartmentProperties(c, pluginModel
+								.getCompartment(c.getId()));
+				}
+			for (Parameter p : m.getListOfParameters())
+				if (math.refersTo(p.getId())) {
+					if (p.isSetUnits()
+							&& !Unit.isUnitKind(p.getUnits(), p.getLevel(), p
+									.getVersion())
+							&& pluginModel.getUnitDefinition(p.getUnits()) == null) {
+						PluginUnitDefinition ud = writeUnitDefinition(p
+								.getUnitsInstance());
+						pluginModel.addUnitDefinition(ud);
+						plugin.notifySBaseAdded(ud);
+					}
+					if (pluginModel.getParameter(p.getId()) == null) {
+						PluginParameter pluP = writeParameter(p, pluginModel);
+						pluginModel.addParameter(pluP);
+						plugin.notifySBaseAdded(pluP);
+					} else
+						saveParameterProperties(p, pluginModel.getParameter(p
+								.getId()));
+				}
 		}
+		saveReactionProperties(reaction, pluginModel.getReaction(reaction
+				.getId()));
+		removeUnneccessaryElements(reaction.getModel(), model);
 	}
 
 	/*
@@ -574,7 +676,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			} else
 				saveMathContainerProperties(ev.getDelay(), e.getDelay());
 		} else if (e.getDelay() == null)
-			e.setDelay(new ASTNode(0));
+			e.setDelay(new org.sbml.libsbml.ASTNode(0));
 		if (ev.isSetTrigger()) {
 			if (e.getTrigger() == null)
 				e.setTrigger(writeTrigger(ev.getTrigger()));
@@ -641,6 +743,15 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		for (Parameter p : kl.getListOfParameters()) {
 			PluginParameter libParam = libKinLaw.getParameter(para);
 			para++;
+			if (p.isSetUnits()
+					&& !Unit.isUnitKind(p.getUnits(), p.getLevel(), p
+							.getVersion())
+					&& pluginModel.getUnitDefinition(p.getUnits()) == null) {
+				PluginUnitDefinition ud = writeUnitDefinition(p
+						.getUnitsInstance());
+				pluginModel.addUnitDefinition(ud);
+				plugin.notifySBaseAdded(ud);
+			}
 			if (libParam == null) {
 				PluginParameter pp = writeParameter(p, libKinLaw);
 				libKinLaw.addParameter(pp);
@@ -671,7 +782,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	public void saveMathContainerProperties(MathContainer mc, Object sbase)
 			throws SBMLException {
 		if (mc instanceof NamedSBase)
-			saveSBaseProperties((SBase) mc, sbase);
+			saveSBaseProperties((NamedSBase) mc, sbase);
 		else
 			saveSBaseProperties(mc, sbase);
 		if (sbase instanceof PluginConstraint) {
@@ -860,6 +971,13 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#saveSBaseProperties(org.sbml.jsbml.SBase,
+	 * java.lang.Object)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.sbml.jsbml.SBMLWriter#saveParameterProperties(org.sbml.jsbml.Parameter
 	 * , java.lang.Object)
@@ -877,13 +995,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		if (p.isSetUnits() && !p.getUnits().equals(po.getUnits()))
 			po.setUnits(p.getUnits());
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.SBMLWriter#saveSBaseProperties(org.sbml.jsbml.SBase,
-	 * java.lang.Object)
-	 */
 
 	/*
 	 * (non-Javadoc)
@@ -924,79 +1035,6 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		}
 	}
 
-	/**
-	 * 
-	 * @param listOf
-	 * @param ro
-	 * @param reactant
-	 * @throws SBMLException
-	 */
-	private void saveListOfProperties(
-			ListOf<? extends SimpleSpeciesReference> listOf, PluginReaction ro,
-			short reactant) throws SBMLException {
-		int i, contains;
-		for (SimpleSpeciesReference sr : listOf) {
-			contains = -1;
-			for (i = 0; i < ro.getNumReactants() && contains < 0; i++)
-				if (sr.getSpecies().equals(ro.getReactant(i).getSpecies()))
-					contains = i;
-			if (contains < 0) {
-				if (sr instanceof SpeciesReference) {
-					String type;
-					if (reactant == 0)
-						type = PluginSpeciesReference.REACTANT;
-					else if (reactant == 1)
-						type = PluginSpeciesReference.PRODUCT;
-					else
-						type = PluginSpeciesReference.MODIFIER;
-					PluginSpeciesReference psr = writeSpeciesReference(
-							(SpeciesReference) sr, ro, type);
-					if (reactant == 0)
-						ro.addReactant(psr);
-					else if (reactant == 1)
-						ro.addProduct(psr);
-					plugin.notifySBaseAdded(psr);
-				} else {
-					PluginModifierSpeciesReference pmsr = writeModifierSpeciesReference(
-							(ModifierSpeciesReference) sr, ro, pluginModel);
-					ro.addModifier(pmsr);
-					plugin.notifySBaseAdded(pmsr);
-				}
-			} else {
-				if (sr instanceof SpeciesReference) {
-					PluginSpeciesReference psr = reactant == 0 ? ro
-							.getReactant(contains) : ro.getProduct(contains);
-					saveSpeciesReferenceProperties((SpeciesReference) sr, psr);
-					plugin.notifySBaseChanged(psr);
-				} else if (sr instanceof ModifierSpeciesReference) {
-					PluginModifierSpeciesReference pmsr = ro
-							.getModifier(contains);
-					saveModifierSpeciesReferenceProperties(
-							(ModifierSpeciesReference) sr, pmsr);
-					plugin.notifySBaseChanged(pmsr);
-				}
-			}
-		}
-		// remove unnecessary reactants.
-		PluginListOf plo;
-		if (reactant == 0)
-			plo = ro.getListOfReactants();
-		else if (reactant == 1)
-			plo = ro.getListOfProducts();
-		else
-			plo = ro.getListOfModifiers();
-		for (i = plo.size() - 1; i >= 0; i--) {
-			PluginSimpleSpeciesReference roreactant = (PluginSimpleSpeciesReference) plo
-					.get(i);
-			boolean keep = false;
-			for (int j = 0; j < listOf.size() && !keep; j++)
-				if (listOf.get(j).getSpecies().equals(roreactant.getSpecies()))
-					keep = true;
-			if (!keep)
-				plugin.notifySBaseDeleted(plo.remove(i));
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1007,7 +1045,8 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		if (!(sb instanceof PluginSBase))
 			throw new IllegalArgumentException("sb" + error + "PluginSBase");
 		PluginSBase plusbas = (PluginSBase) sb;
-		plusbas.setNotes(s.getNotesString());
+		if (!plusbas.getNotesString().equals(s.getNotesString()))
+			plusbas.setNotes(s.getNotesString());
 	}
 
 	/*
@@ -1080,8 +1119,8 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				saveMathContainerProperties(sr.getStoichiometryMath(), sp
 						.getStoichiometryMath());
 			else {
-//				sp.setStoichiometryMath(writeStoichoimetryMath(sr
-//						.getStoichiometryMath()));
+				// sp.setStoichiometryMath(writeStoichoimetryMath(sr
+				// .getStoichiometryMath()));
 			}
 		} else
 			sp.setStoichiometry(sr.getStoichiometry());
@@ -1096,6 +1135,23 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	public PluginCompartment writeCompartment(Compartment compartment) {
 		PluginCompartment c = new PluginCompartment(
 				PluginCompartmentSymbolType.SQUARE);
+		if (compartment.isSetUnits()
+				&& !Unit.isUnitKind(compartment.getUnits(), compartment
+						.getLevel(), compartment.getVersion())
+				&& pluginModel.getUnitDefinition(compartment.getUnits()) == null) {
+			PluginUnitDefinition ud = writeUnitDefinition(compartment
+					.getUnitsInstance());
+			pluginModel.addUnitDefinition(ud);
+			plugin.notifySBaseAdded(ud);
+		}
+		if (compartment.isSetCompartmentType()
+				&& pluginModel.getCompartmentType(compartment
+						.getCompartmentType()) == null) {
+			PluginCompartmentType ct = writeCompartmentType(compartment
+					.getCompartmentTypeInstance());
+			pluginModel.addCompartmentType(ct);
+			plugin.notifySBaseAdded(ct);
+		}
 		saveCompartmentProperties(compartment, c);
 		return c;
 	}
@@ -1144,7 +1200,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeDelay(org.sbml.jsbml.Delay)
 	 */
-	public ASTNode writeDelay(Delay delay) {
+	public org.sbml.libsbml.ASTNode writeDelay(Delay delay) {
 		return convert(delay.getMath());
 	}
 
@@ -1429,16 +1485,17 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 */
 	public org.sbml.libsbml.StoichiometryMath writeStoichoimetryMath(
 			StoichiometryMath st) {
-//		org.sbml.libsbml.StoichiometryMath sm = new org.sbml.libsbml.StoichiometryMath();
-//		if (st.isSetMetaId())
-//			sm.setMetaId(st.getMetaId());
-//		if (st.isSetAnnotation())
-//			sm.setAnnotation(st.getAnnotationString());
-//		if (st.isSetNotes())
-//			sm.setNotes(st.getNotesString());
-//		if (st.isSetMath())
-//			sm.setMath(convert(st.getMath()));
-//		return sm;
+		// org.sbml.libsbml.StoichiometryMath sm = new
+		// org.sbml.libsbml.StoichiometryMath();
+		// if (st.isSetMetaId())
+		// sm.setMetaId(st.getMetaId());
+		// if (st.isSetAnnotation())
+		// sm.setAnnotation(st.getAnnotationString());
+		// if (st.isSetNotes())
+		// sm.setNotes(st.getNotesString());
+		// if (st.isSetMath())
+		// sm.setMath(convert(st.getMath()));
+		// return sm;
 		return null;
 	}
 
@@ -1447,7 +1504,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeTrigger(org.sbml.jsbml.Trigger)
 	 */
-	public ASTNode writeTrigger(Trigger trigger) {
+	public org.sbml.libsbml.ASTNode writeTrigger(Trigger trigger) {
 		return convert(trigger.getMath());
 	}
 
@@ -1728,4 +1785,120 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return equal;
 	}
 
+	/**
+	 * 
+	 * @param speciesInstance
+	 * @param pluMo
+	 */
+	private void saveChanges(Species species, PluginModel pluMo) {
+		PluginSpecies pluSpec = pluMo.getSpecies(species.getId());
+		if (species.isSetSubstanceUnits()
+				&& !Unit.isUnitKind(species.getSubstanceUnits(), species
+						.getLevel(), species.getVersion())
+				&& pluMo.getUnitDefinition(species.getSubstanceUnits()) == null) {
+			PluginUnitDefinition ud = writeUnitDefinition(species
+					.getSubstanceUnitsInstance());
+			pluMo.addUnitDefinition(ud);
+			plugin.notifySBaseAdded(ud);
+		}
+		if (species.isSetCompartment()
+				&& pluMo.getCompartment(species.getCompartment()) == null) {
+			PluginCompartment c = writeCompartment(species
+					.getCompartmentInstance());
+			pluMo.addCompartment(c);
+			plugin.notifySBaseAdded(c);
+		}
+		if (species.isSetSpeciesType()
+				&& pluMo.getSpeciesType(species.getSpeciesType()) == null) {
+			PluginSpeciesType st = writeSpeciesType(species
+					.getSpeciesTypeInstance());
+			pluMo.addSpeciesType(st);
+			plugin.notifySBaseAdded(st);
+		}
+		saveSpeciesProperties(species, pluSpec);
+	}
+
+	/**
+	 * 
+	 * @param listOf
+	 * @param ro
+	 * @param kind
+	 *            0 means reactant, 1 product, and 2 modifier.
+	 * @throws SBMLException
+	 */
+	private void saveListOfProperties(
+			ListOf<? extends SimpleSpeciesReference> listOf, PluginReaction ro,
+			short kind) throws SBMLException {
+		int i, contains;
+		PluginListOf pluli;
+		switch (kind) {
+		case 0:
+			pluli = ro.getListOfReactants();
+			break;
+		case 1:
+			pluli = ro.getListOfProducts();
+			break;
+		default:
+			pluli = ro.getListOfModifiers();
+			break;
+		}
+		for (SimpleSpeciesReference sr : listOf) {
+			contains = -1;
+			for (i = 0; i < pluli.size() && contains < 0; i++) {
+				if (sr.getSpecies().equals(
+						((PluginSimpleSpeciesReference) pluli.get(i))
+								.getSpecies()))
+					contains = i;
+			}
+			if (contains < 0) {
+				if (sr instanceof SpeciesReference) {
+					String type;
+					if (kind == 0)
+						type = PluginSpeciesReference.REACTANT;
+					else if (kind == 1)
+						type = PluginSpeciesReference.PRODUCT;
+					else
+						type = PluginSpeciesReference.MODIFIER;
+					PluginSpeciesReference psr = writeSpeciesReference(
+							(SpeciesReference) sr, ro, type);
+					if (kind == 0)
+						ro.addReactant(psr);
+					else if (kind == 1)
+						ro.addProduct(psr);
+					plugin.notifySBaseAdded(psr);
+				} else {
+					PluginModifierSpeciesReference pmsr = writeModifierSpeciesReference(
+							(ModifierSpeciesReference) sr, ro, pluginModel);
+					ro.addModifier(pmsr);
+					plugin.notifySBaseAdded(pmsr);
+				}
+			} else {
+				if (sr instanceof SpeciesReference) {
+					PluginSpeciesReference psr = kind == 0 ? ro
+							.getReactant(contains) : ro.getProduct(contains);
+					saveSpeciesReferenceProperties((SpeciesReference) sr, psr);
+					plugin.notifySBaseChanged(psr);
+				} else if (sr instanceof ModifierSpeciesReference) {
+					PluginModifierSpeciesReference pmsr = ro
+							.getModifier(contains);
+					saveModifierSpeciesReferenceProperties(
+							(ModifierSpeciesReference) sr, pmsr);
+					plugin.notifySBaseChanged(pmsr);
+				}
+			}
+		}
+		// remove unnecessary elements.
+		for (i = pluli.size() - 1; i >= 0; i--) {
+			PluginSimpleSpeciesReference rospref = (PluginSimpleSpeciesReference) pluli
+					.get(i);
+			boolean keep = false;
+			for (SimpleSpeciesReference ssr : listOf)
+				if (ssr.getSpecies().equals(rospref.getSpecies())) {
+					keep = true;
+					break;
+				}
+			if (!keep)
+				plugin.notifySBaseDeleted(pluli.remove(i));
+		}
+	}
 }

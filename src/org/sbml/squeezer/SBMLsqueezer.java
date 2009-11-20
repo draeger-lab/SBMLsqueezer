@@ -56,8 +56,6 @@ import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.resources.Resource;
 
 /**
- * $LastChangedDate$
- * $Rev$
  * The main program of SBMLsqueezer. This class initializes all requrired
  * objects, starts the GUI if desired and loads all settings from the user.
  * 
