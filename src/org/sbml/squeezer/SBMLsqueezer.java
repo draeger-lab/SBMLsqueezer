@@ -65,7 +65,7 @@ import org.sbml.squeezer.resources.Resource;
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @since 1.3
- * @version $Revision: 4023 $
+ * @version $Rev$
  */
 public class SBMLsqueezer implements LawListener {
 
