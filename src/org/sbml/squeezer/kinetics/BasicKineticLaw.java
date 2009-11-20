@@ -1171,10 +1171,11 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			Unit u = ud.getUnit(0);
 			u.setExponent(-1);
 			ud.setId("per_" + u.getKind().toString().toLowerCase());
+			ud.setName("per time");
 		} else {
 			ud = new UnitDefinition("per_second", getLevel(), getVersion());
-			Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
-			ud.addUnit(unit);
+			ud.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion()));
+			ud.setName("per second (Hz)");
 		}
 		UnitDefinition def = model.getUnitDefinition(ud.getId());
 		if (def == null)

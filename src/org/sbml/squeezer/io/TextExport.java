@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Properties;
 
-import jp.sbi.celldesigner.plugin.PluginModel;
-
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
@@ -108,7 +106,7 @@ public class TextExport implements DisplaySBML {
 
 	}
 
-	public void format(PluginModel model, BufferedWriter buffer)
+	public void format(Model model, BufferedWriter buffer)
 			throws IOException {
 		// TODO Auto-generated method stub
 
