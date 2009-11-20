@@ -1,5 +1,4 @@
 /*
- *  $Rev$
  *  SBMLsqueezer creates rate equations for reactions in SBML files
  *  (http://sbml.org).
  *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
@@ -60,13 +59,14 @@ import org.sbml.squeezer.resources.Resource;
  * The main program of SBMLsqueezer. This class initializes all requrired
  * objects, starts the GUI if desired and loads all settings from the user.
  * 
+ * $Id$
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @since 1.3
- * @version $Rev$
+ * @version $Revision$
  */
 public class SBMLsqueezer implements LawListener {
 
