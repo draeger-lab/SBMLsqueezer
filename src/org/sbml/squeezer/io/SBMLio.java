@@ -367,6 +367,15 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 				.get(selectedModel));
 	}
 
+	/**
+	 * 
+	 * @param reaction
+	 * @throws SBMLException 
+	 */
+	public void saveChanges(Reaction reaction) throws SBMLException {
+		writer.saveChanges(reaction, listOfOrigModels.get(selectedModel));	
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -827,14 +836,5 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	// @Override
 	public Object writeUnitDefinition(UnitDefinition unitDefinition) {
 		return writer.writeUnitDefinition(unitDefinition);
-	}
-
-	/**
-	 * 
-	 * @param reaction
-	 * @throws SBMLException 
-	 */
-	public void saveChanges(Reaction reaction) throws SBMLException {
-		writer.saveChanges(reaction, listOfOrigModels.get(selectedModel));	
 	}
 }

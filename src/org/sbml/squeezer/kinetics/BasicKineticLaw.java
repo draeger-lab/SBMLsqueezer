@@ -43,7 +43,8 @@ import org.sbml.squeezer.io.StringTools;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 1, 2007
@@ -276,7 +277,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetUnits())
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter for the activation function");
+			p
+					.setName("For the additive Model: weight parameter for the activation function");
 		return p;
 	}
 
@@ -343,7 +345,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetUnits())
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter for the activation function");
+			p
+					.setName("For the additive Model: weight parameter for the activation function");
 		return p;
 	}
 
@@ -758,6 +761,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			kM.setUnits(bringToConcentration ? unitSubstancePerSize(spec
 					.getSubstanceUnitsInstance(), spec.getCompartmentInstance()
 					.getUnitsInstance()) : spec.getSubstanceUnitsInstance());
+			System.out.printf("units of %s:\t%s\tlist of units:\t%s\n", kM
+					.getId(), kM.getUnitsInstance().toString(), kM
+					.getUnitsInstance().getListOfUnits().toString());
 		}
 		return kM;
 	}
@@ -947,7 +953,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetUnits())
 			p.setUnits(unitDimensionlessPerTime());
 		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter for the external inputs");
+			p
+					.setName("For the additive Model: weight parameter for the external inputs");
 		return p;
 	}
 
@@ -1018,7 +1025,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetUnits())
 			p.setUnits(unitDimensionlessPerTime());
 		if (!p.isSetName())
-			p.setName("For the additive Model: weight parameter for the gene products");
+			p
+					.setName("For the additive Model: weight parameter for the gene products");
 		return p;
 	}
 
@@ -1174,7 +1182,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			ud.setName("per time");
 		} else {
 			ud = new UnitDefinition("per_second", getLevel(), getVersion());
-			ud.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion()));
+			ud
+					.addUnit(new Unit(Unit.Kind.SECOND, -1, getLevel(),
+							getVersion()));
 			ud.setName("per second (Hz)");
 		}
 		UnitDefinition def = model.getUnitDefinition(ud.getId());
@@ -1217,7 +1227,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			}
 		}
 		ud = ud.divideBy(amount).multiplyWith(
-				model.getUnitDefinition("substance")).simplify();
+				model.getUnitDefinition("substance"));
+		ud.simplify();
 		StringBuilder sb = new StringBuilder();
 		for (i = 0; i < ud.getNumUnits(); i++) {
 			Unit u = ud.getUnit(i);

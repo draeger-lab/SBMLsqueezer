@@ -129,6 +129,134 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		return null;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param u
+	 * @param unit
+	 * @return
+	 */
+	private boolean equal(Unit u, PluginUnit unit) {
+		if (u == null || unit == null)
+			return false;
+		boolean equal = true;
+		switch (unit.getKind()) {
+		case libsbmlConstants.UNIT_KIND_AMPERE:
+			equal &= u.getKind() == Unit.Kind.AMPERE;
+			break;
+		case libsbmlConstants.UNIT_KIND_BECQUEREL:
+			equal &= u.getKind() == Unit.Kind.BECQUEREL;
+			break;
+		case libsbmlConstants.UNIT_KIND_CANDELA:
+			equal &= u.getKind() == Unit.Kind.CANDELA;
+			break;
+		case libsbmlConstants.UNIT_KIND_CELSIUS:
+			equal &= u.getKind() == Unit.Kind.CELSIUS;
+			break;
+		case libsbmlConstants.UNIT_KIND_COULOMB:
+			equal &= u.getKind() == Unit.Kind.COULOMB;
+			break;
+		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
+			equal &= u.getKind() == Unit.Kind.DIMENSIONLESS;
+			break;
+		case libsbmlConstants.UNIT_KIND_FARAD:
+			equal &= u.getKind() == Unit.Kind.FARAD;
+			break;
+		case libsbmlConstants.UNIT_KIND_GRAM:
+			equal &= u.getKind() == Unit.Kind.GRAM;
+			break;
+		case libsbmlConstants.UNIT_KIND_GRAY:
+			equal &= u.getKind() == Unit.Kind.GRAY;
+			break;
+		case libsbmlConstants.UNIT_KIND_HENRY:
+			equal &= u.getKind() == Unit.Kind.HENRY;
+			break;
+		case libsbmlConstants.UNIT_KIND_HERTZ:
+			equal &= u.getKind() == Unit.Kind.HERTZ;
+			break;
+		case libsbmlConstants.UNIT_KIND_INVALID:
+			equal &= u.getKind() == Unit.Kind.INVALID;
+			break;
+		case libsbmlConstants.UNIT_KIND_ITEM:
+			equal &= u.getKind() == Unit.Kind.ITEM;
+			break;
+		case libsbmlConstants.UNIT_KIND_JOULE:
+			equal &= u.getKind() == Unit.Kind.JOULE;
+			break;
+		case libsbmlConstants.UNIT_KIND_KATAL:
+			equal &= u.getKind() == Unit.Kind.KATAL;
+			break;
+		case libsbmlConstants.UNIT_KIND_KELVIN:
+			equal &= u.getKind() == Unit.Kind.KELVIN;
+			break;
+		case libsbmlConstants.UNIT_KIND_KILOGRAM:
+			equal &= u.getKind() == Unit.Kind.KILOGRAM;
+			break;
+		case libsbmlConstants.UNIT_KIND_LITER:
+			equal &= u.getKind() == Unit.Kind.LITER;
+			break;
+		case libsbmlConstants.UNIT_KIND_LITRE:
+			equal &= u.getKind() == Unit.Kind.LITRE;
+			break;
+		case libsbmlConstants.UNIT_KIND_LUMEN:
+			equal &= u.getKind() == Unit.Kind.LUMEN;
+			break;
+		case libsbmlConstants.UNIT_KIND_LUX:
+			equal &= u.getKind() == Unit.Kind.LUX;
+			break;
+		case libsbmlConstants.UNIT_KIND_METER:
+			equal &= u.getKind() == Unit.Kind.METER;
+			break;
+		case libsbmlConstants.UNIT_KIND_METRE:
+			equal &= u.getKind() == Unit.Kind.METRE;
+			break;
+		case libsbmlConstants.UNIT_KIND_MOLE:
+			equal &= u.getKind() == Unit.Kind.MOLE;
+			break;
+		case libsbmlConstants.UNIT_KIND_NEWTON:
+			equal &= u.getKind() == Unit.Kind.NEWTON;
+			break;
+		case libsbmlConstants.UNIT_KIND_OHM:
+			equal &= u.getKind() == Unit.Kind.OHM;
+			break;
+		case libsbmlConstants.UNIT_KIND_PASCAL:
+			equal &= u.getKind() == Unit.Kind.PASCAL;
+			break;
+		case libsbmlConstants.UNIT_KIND_RADIAN:
+			equal &= u.getKind() == Unit.Kind.RADIAN;
+			break;
+		case libsbmlConstants.UNIT_KIND_SECOND:
+			equal &= u.getKind() == Unit.Kind.SECOND;
+			break;
+		case libsbmlConstants.UNIT_KIND_SIEMENS:
+			equal &= u.getKind() == Unit.Kind.SIEMENS;
+			break;
+		case libsbmlConstants.UNIT_KIND_SIEVERT:
+			equal &= u.getKind() == Unit.Kind.SIEVERT;
+			break;
+		case libsbmlConstants.UNIT_KIND_STERADIAN:
+			equal &= u.getKind() == Unit.Kind.STERADIAN;
+			break;
+		case libsbmlConstants.UNIT_KIND_TESLA:
+			equal &= u.getKind() == Unit.Kind.TESLA;
+			break;
+		case libsbmlConstants.UNIT_KIND_VOLT:
+			equal &= u.getKind() == Unit.Kind.VOLT;
+			break;
+		case libsbmlConstants.UNIT_KIND_WATT:
+			equal &= u.getKind() == Unit.Kind.WATT;
+			break;
+		case libsbmlConstants.UNIT_KIND_WEBER:
+			equal &= u.getKind() == Unit.Kind.WEBER;
+			break;
+		}
+		equal &= u.getExponent() == unit.getExponent();
+		equal &= u.getMultiplier() == unit.getMultiplier();
+		equal &= u.getScale() == unit.getScale();
+		equal &= u.getOffset() == unit.getOffset();
+		return equal;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -150,7 +278,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.io.AbstractSBMLWriter#removeUnneccessaryElements(org.sbml.jsbml.Model, java.lang.Object)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.io.AbstractSBMLWriter#removeUnneccessaryElements(org.sbml
+	 * .jsbml.Model, java.lang.Object)
 	 */
 	@Override
 	public void removeUnneccessaryElements(Model model, Object orig) {
@@ -158,65 +289,107 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			throw new IllegalArgumentException(
 					"only instances of PluginModel can be considered.");
 		pluginModel = (PluginModel) orig;
+		boolean changed = false;
 		int i;
-		
+
 		// remove unnecessary function definitions
 		for (i = pluginModel.getNumFunctionDefinitions() - 1; i >= 0; i--) {
 			PluginFunctionDefinition c = pluginModel.getFunctionDefinition(i);
-			if (model.getFunctionDefinition(c.getId()) == null)
+			if (model.getFunctionDefinition(c.getId()) == null) {
 				plugin.notifySBaseDeleted(pluginModel
 						.getListOfFunctionDefinitions().remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel
+					.getListOfFunctionDefinitions());
+			changed = false;
+		}
+
 		// remove unnecessary units
 		for (i = pluginModel.getNumUnitDefinitions() - 1; i >= 0; i--) {
 			PluginUnitDefinition ud = pluginModel.getUnitDefinition(i);
-			if (model.getUnitDefinition(ud.getId()) == null)
+			if (model.getUnitDefinition(ud.getId()) == null) {
 				plugin.notifySBaseDeleted(pluginModel
 						.getListOfUnitDefinitions().remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfUnitDefinitions());
+			changed = false;
+		}
+
 		// remove unnecessary compartmentTypes
 		for (i = pluginModel.getNumCompartmentTypes() - 1; i >= 0; i--) {
 			PluginCompartmentType c = pluginModel.getCompartmentType(i);
-			if (model.getCompartmentType(c.getId()) == null)
+			if (model.getCompartmentType(c.getId()) == null) {
 				plugin.notifySBaseDeleted(pluginModel
 						.getListOfCompartmentTypes().remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfCompartmentTypes());
+			changed = false;
+		}
+
 		// remove unnecessary speciesTypes
 		for (i = pluginModel.getNumSpeciesTypes() - 1; i >= 0; i--) {
 			PluginSpeciesType c = pluginModel.getSpeciesType(i);
-			if (model.getSpeciesType(c.getId()) == null)
+			if (model.getSpeciesType(c.getId()) == null) {
 				plugin.notifySBaseDeleted(pluginModel.getListOfSpeciesTypes()
 						.remove(i));
+				changed = true;
+			}
 		}
+		if (changed)
+			plugin.notifySBaseChanged(pluginModel.getListOfSpeciesTypes());
 
-		
 		// remove unnecessary compartments
+		changed = true;
 		for (i = pluginModel.getNumCompartments() - 1; i >= 0; i--) {
 			PluginCompartment c = pluginModel.getCompartment(i);
-			if (model.getCompartment(c.getId()) == null)
+			if (model.getCompartment(c.getId()) == null) {
 				plugin.notifySBaseDeleted(pluginModel.getListOfCompartments()
 						.remove(i));
+				changed = true;
+			}
+		}
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfCompartments());
+			changed = false;
 		}
 
 		// remove unnecessary species
 		for (i = pluginModel.getNumSpecies() - 1; i >= 0; i--) {
 			PluginSpecies s = pluginModel.getSpecies(i);
-			if (model.getSpecies(s.getId()) == null)
+			if (model.getSpecies(s.getId()) == null) {
 				plugin.notifySBaseDeleted(pluginModel.getListOfSpecies()
 						.remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfSpecies());
+			changed = false;
+		}
+
 		// remove parameters
 		for (i = pluginModel.getNumParameters() - 1; i >= 0; i--) {
 			PluginParameter p = pluginModel.getParameter(i);
-			if (model.getParameter(p.getId()) == null)
+			if (model.getParameter(p.getId()) == null) {
 				plugin.notifySBaseDeleted(pluginModel.getListOfParameters()
 						.remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfParameters());
+			changed = false;
+		}
+
 		// remove unnecessary initial assignments
 		for (i = pluginModel.getNumInitialAssignments() - 1; i >= 0; i--) {
 			PluginInitialAssignment c = pluginModel.getInitialAssignment(i);
@@ -228,11 +401,17 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 								.parseFormula(c.getMath())))
 					contains = true;
 			}
-			if (!contains)
+			if (!contains) {
 				plugin.notifySBaseDeleted(pluginModel
 						.getListOfInitialAssignments().remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfInitialAssignments());
+			changed = false;
+		}
+
 		// remove unnecessary rules
 		for (i = pluginModel.getNumRules() - 1; i >= 0; i--) {
 			PluginRule c = pluginModel.getRule(i);
@@ -250,11 +429,17 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					if (equal(r.getMath(), c.getMath()))
 						contains = true;
 			}
-			if (!contains)
+			if (!contains) {
 				plugin.notifySBaseDeleted(pluginModel.getListOfRules()
 						.remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfRules());
+			changed = false;
+		}
+
 		// remove unnecessary constraints
 		for (i = pluginModel.getNumConstraints() - 1; i >= 0; i--) {
 			PluginConstraint c = pluginModel.getConstraint(i);
@@ -264,19 +449,31 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				if (equal(ia.getMath(), libsbml.parseFormula(c.getMath())))
 					contains = true;
 			}
-			if (!contains)
+			if (!contains) {
 				plugin.notifySBaseDeleted(pluginModel.getListOfConstraints()
 						.remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfConstraints());
+			changed = false;
+		}
+
 		// remove reactions
 		for (i = pluginModel.getNumReactions() - 1; i >= 0; i--) {
 			PluginReaction r = pluginModel.getReaction(i);
-			if (model.getReaction(r.getId()) == null)
+			if (model.getReaction(r.getId()) == null) {
 				plugin.notifySBaseDeleted(pluginModel.getListOfReactions()
 						.remove(i));
+				changed = true;
+			}
 		}
-		
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfReactions());
+			changed = false;
+		}
+
 		// remove events
 		for (i = pluginModel.getNumEvents() - 1; i >= 0; i--) {
 			PluginEvent eventOrig = pluginModel.getEvent(i);
@@ -287,12 +484,18 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 						|| e.getNotesString()
 								.equals(eventOrig.getNotesString()))
 					contains = true;
-			if (!contains)
+			if (!contains) {
 				plugin.notifySBaseDeleted(pluginModel.getListOfEvents().remove(
 						i));
+				changed = true;
+			}
+		}
+		if (changed) {
+			plugin.notifySBaseChanged(pluginModel.getListOfEvents());
+			changed = false;
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -335,20 +538,9 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 							.getVersion()))) {
 				PluginUnitDefinition libU = pluginModel.getUnitDefinition(ud
 						.getId());
-				if (libU != null) {
-					saveSBaseProperties(ud, libU);
-					for (i = libU.getNumUnits() - 1; i >= 0; i--) {
-						PluginUnit pu = libU.getUnit(i);
-						libU.removeUnit(i);
-						plugin.notifySBaseDeleted(pu);
-					}
-					for (Unit u : ud.getListOfUnits()) {
-						PluginUnit unit = writeUnit(u, libU);
-						libU.addUnit(unit);
-						plugin.notifySBaseAdded(unit);
-					}
-					plugin.notifySBaseChanged(libU);
-				} else {
+				if (libU != null)
+					saveUnitDefinitionProperties(ud, libU);
+				else {
 					PluginUnitDefinition udef = writeUnitDefinition(ud);
 					pluginModel.addUnitDefinition(udef);
 					plugin.notifySBaseAdded(udef);
@@ -381,7 +573,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				plugin.notifySBaseChanged(st);
 			}
 		}
-		
+
 		// Compartments
 		for (Compartment c : model.getListOfCompartments()) {
 			if (pluginModel.getCompartment(c.getId()) == null) {
@@ -394,7 +586,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				plugin.notifySBaseChanged(pc);
 			}
 		}
-		
+
 		// Species
 		for (Species s : model.getListOfSpecies()) {
 			if (pluginModel.getSpecies(s.getId()) == null) {
@@ -594,12 +786,24 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				if (math.refersTo(p.getId())) {
 					if (p.isSetUnits()
 							&& !Unit.isUnitKind(p.getUnits(), p.getLevel(), p
-									.getVersion())
-							&& pluginModel.getUnitDefinition(p.getUnits()) == null) {
-						PluginUnitDefinition ud = writeUnitDefinition(p
-								.getUnitsInstance());
-						pluginModel.addUnitDefinition(ud);
-						plugin.notifySBaseAdded(ud);
+									.getVersion())) {
+						if (pluginModel.getUnitDefinition(p.getUnits()) == null) {
+							PluginUnitDefinition ud = writeUnitDefinition(p
+									.getUnitsInstance());
+							pluginModel.addUnitDefinition(ud);
+							plugin.notifySBaseAdded(ud);
+						} else {
+							System.out
+									.printf(
+											"parameter %s unit: %s, list of units: %s\n",
+											p.getId(), p.getUnitsInstance()
+													.toString(), p
+													.getUnitsInstance()
+													.getListOfUnits()
+													.toString());
+							saveUnitDefinitionProperties(p.getUnitsInstance(),
+									pluginModel.getUnitDefinition(p.getUnits()));
+						}
 					}
 					if (pluginModel.getParameter(p.getId()) == null) {
 						PluginParameter pluP = writeParameter(p, pluginModel);
@@ -608,11 +812,62 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					} else
 						saveParameterProperties(p, pluginModel.getParameter(p
 								.getId()));
+					plugin
+							.notifySBaseChanged(pluginModel
+									.getListOfParameters());
 				}
 		}
 		saveReactionProperties(reaction, pluginModel.getReaction(reaction
 				.getId()));
 		removeUnneccessaryElements(reaction.getModel(), model);
+	}
+
+	/**
+	 * 
+	 * @param speciesInstance
+	 * @param pluMo
+	 */
+	private void saveChanges(Species species, PluginModel pluMo) {
+		PluginSpecies pluSpec = pluMo.getSpecies(species.getId());
+		if (species.isSetSubstanceUnits()
+				&& !Unit.isUnitKind(species.getSubstanceUnits(), species
+						.getLevel(), species.getVersion())) {
+			if (pluMo.getUnitDefinition(species.getSubstanceUnits()) == null) {
+				PluginUnitDefinition ud = writeUnitDefinition(species
+						.getSubstanceUnitsInstance());
+				pluMo.addUnitDefinition(ud);
+				plugin.notifySBaseAdded(ud);
+			} else {
+				System.out.printf("species unit: %s, list of units: %s\n",
+						species.getSubstanceUnitsInstance().toString(), species
+								.getSubstanceUnitsInstance().getListOfUnits()
+								.toString());
+				saveUnitDefinitionProperties(species
+						.getSubstanceUnitsInstance(), pluMo
+						.getUnitDefinition(species.getSubstanceUnits()));
+			}
+		}
+		if (species.isSetCompartment()) {
+			if (pluMo.getCompartment(species.getCompartment()) == null) {
+				PluginCompartment c = writeCompartment(species
+						.getCompartmentInstance());
+				pluMo.addCompartment(c);
+				plugin.notifySBaseAdded(c);
+			} else
+				saveCompartmentProperties(species.getCompartmentInstance(),
+						pluMo.getCompartment(species.getCompartment()));
+		}
+		if (species.isSetSpeciesType()) {
+			if (pluMo.getSpeciesType(species.getSpeciesType()) == null) {
+				PluginSpeciesType st = writeSpeciesType(species
+						.getSpeciesTypeInstance());
+				pluMo.addSpeciesType(st);
+				plugin.notifySBaseAdded(st);
+			} else
+				saveNamedSBaseProperties(species.getSpeciesTypeInstance(),
+						pluMo.getSpeciesType(species.getSpeciesType()));
+		}
+		saveSpeciesProperties(species, pluSpec);
 	}
 
 	/*
@@ -640,6 +895,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			comp.setOutside(c.getOutside());
 		if (c.getConstant() != comp.getConstant())
 			comp.setConstant(c.getConstant());
+		plugin.notifySBaseChanged(comp);
 	}
 
 	/*
@@ -721,7 +977,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				plugin.notifySBaseDeleted(pev);
 			}
 		}
-
+		plugin.notifySBaseChanged(e);
 	}
 
 	/*
@@ -756,11 +1012,12 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				PluginParameter pp = writeParameter(p, libKinLaw);
 				libKinLaw.addParameter(pp);
 				plugin.notifySBaseAdded(pp);
+				plugin.notifySBaseChanged(pluginModel.getListOfParameters());
 			} else {
 				saveParameterProperties(p, libParam);
 				plugin.notifySBaseChanged(libParam);
+				plugin.notifySBaseChanged(libKinLaw.getListOfParameters());
 			}
-
 		}
 		// remove parameters
 		for (int i = libKinLaw.getNumParameters() - 1; i >= 0; i--) {
@@ -770,6 +1027,91 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 						.remove(i));
 		}
 		saveMathContainerProperties(kl, libKinLaw);
+		plugin.notifySBaseChanged(libKinLaw);
+	}
+
+	/**
+	 * 
+	 * @param listOf
+	 * @param ro
+	 * @param kind
+	 *            0 means reactant, 1 product, and 2 modifier.
+	 * @throws SBMLException
+	 */
+	private void saveListOfProperties(
+			ListOf<? extends SimpleSpeciesReference> listOf, PluginReaction ro,
+			short kind) throws SBMLException {
+		int i, contains;
+		PluginListOf pluli;
+		switch (kind) {
+		case 0:
+			pluli = ro.getListOfReactants();
+			break;
+		case 1:
+			pluli = ro.getListOfProducts();
+			break;
+		default:
+			pluli = ro.getListOfModifiers();
+			break;
+		}
+		for (SimpleSpeciesReference sr : listOf) {
+			contains = -1;
+			for (i = 0; i < pluli.size() && contains < 0; i++) {
+				if (sr.getSpecies().equals(
+						((PluginSimpleSpeciesReference) pluli.get(i))
+								.getSpecies()))
+					contains = i;
+			}
+			if (contains < 0) {
+				if (sr instanceof SpeciesReference) {
+					String type;
+					if (kind == 0)
+						type = PluginSpeciesReference.REACTANT;
+					else if (kind == 1)
+						type = PluginSpeciesReference.PRODUCT;
+					else
+						type = PluginSpeciesReference.MODIFIER;
+					PluginSpeciesReference psr = writeSpeciesReference(
+							(SpeciesReference) sr, ro, type);
+					if (kind == 0)
+						ro.addReactant(psr);
+					else if (kind == 1)
+						ro.addProduct(psr);
+					plugin.notifySBaseAdded(psr);
+				} else {
+					PluginModifierSpeciesReference pmsr = writeModifierSpeciesReference(
+							(ModifierSpeciesReference) sr, ro, pluginModel);
+					ro.addModifier(pmsr);
+					plugin.notifySBaseAdded(pmsr);
+				}
+			} else {
+				if (sr instanceof SpeciesReference) {
+					PluginSpeciesReference psr = kind == 0 ? ro
+							.getReactant(contains) : ro.getProduct(contains);
+					saveSpeciesReferenceProperties((SpeciesReference) sr, psr);
+					plugin.notifySBaseChanged(psr);
+				} else if (sr instanceof ModifierSpeciesReference) {
+					PluginModifierSpeciesReference pmsr = ro
+							.getModifier(contains);
+					saveModifierSpeciesReferenceProperties(
+							(ModifierSpeciesReference) sr, pmsr);
+					plugin.notifySBaseChanged(pmsr);
+				}
+			}
+		}
+		// remove unnecessary elements.
+		for (i = pluli.size() - 1; i >= 0; i--) {
+			PluginSimpleSpeciesReference rospref = (PluginSimpleSpeciesReference) pluli
+					.get(i);
+			boolean keep = false;
+			for (SimpleSpeciesReference ssr : listOf)
+				if (ssr.getSpecies().equals(rospref.getSpecies())) {
+					keep = true;
+					break;
+				}
+			if (!keep)
+				plugin.notifySBaseDeleted(pluli.remove(i));
+		}
 	}
 
 	/*
@@ -789,45 +1131,57 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			PluginConstraint kl = (PluginConstraint) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), libsbml.parseFormula(kl.getMath()));
-			if (mc.isSetMath() && !equal)
+			if (mc.isSetMath() && !equal) {
 				throw new SBMLException("Unable to set math of "
 						+ mc.getClass().getSimpleName() + " in "
 						+ kl.getClass().getName());
+				// plugin.notifySBaseChanged(kl);
+			}
 
 		} else if (sbase instanceof PluginEventAssignment) {
 			PluginEventAssignment kl = (PluginEventAssignment) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
-			if (mc.isSetMath() && !equal)
+			if (mc.isSetMath() && !equal) {
 				kl.setMath(convert(mc.getMath()));
+				plugin.notifySBaseChanged(kl);
+			}
 
 		} else if (sbase instanceof PluginFunctionDefinition) {
 			PluginFunctionDefinition kl = (PluginFunctionDefinition) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
-			if (mc.isSetMath() && !equal)
+			if (mc.isSetMath() && !equal) {
 				kl.setMath(convert(mc.getMath()));
+				plugin.notifySBaseChanged(kl);
+			}
 
 		} else if (sbase instanceof PluginInitialAssignment) {
 			PluginInitialAssignment kl = (PluginInitialAssignment) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), libsbml.parseFormula(kl.getMath()));
-			if (mc.isSetMath() && !equal)
+			if (mc.isSetMath() && !equal) {
 				kl.setMath(libsbml.formulaToString(convert(mc.getMath())));
+				plugin.notifySBaseChanged(kl);
+			}
 
 		} else if (sbase instanceof PluginKineticLaw) {
 			PluginKineticLaw kl = (PluginKineticLaw) sbase;
 			boolean equal = kl.getMath() != null && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
-			if (mc.isSetMath() && !equal)
+			if (mc.isSetMath() && !equal) {
 				kl.setMath(convert(mc.getMath()));
+				plugin.notifySBaseChanged(kl);
+			}
 
 		} else if (sbase instanceof PluginRule) {
 			PluginRule kl = (PluginRule) sbase;
 			boolean equal = (kl.getMath() != null) && mc.isSetMath()
 					&& equal(mc.getMath(), kl.getMath());
-			if (mc.isSetMath() && !equal)
+			if (mc.isSetMath() && !equal) {
 				kl.setMath(convert(mc.getMath()));
+				plugin.notifySBaseChanged(kl);
+			}
 		}
 		// else if (sbase instanceof PluginStoichiometryMath) {
 		// PluginStoichiometryMath kl = (PluginStoichiometryMath) sbase;
@@ -867,6 +1221,13 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.jsbml.SBMLWriter#saveSBaseProperties(org.sbml.jsbml.SBase,
+	 * java.lang.Object)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.sbml.jsbml.SBMLWriter#saveModifierSpeciesReferenceProperties(org.
 	 * sbml.jsbml.ModifierSpeciesReference, java.lang.Object)
@@ -888,6 +1249,7 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		}
 		// if (modifierSpeciesReference.isSetSpecies() &&
 		// !modifierSpeciesReference.getSpecies().equals(pmsr.getSpecies()))
+		plugin.notifySBaseChanged(pmsr);
 	}
 
 	/*
@@ -903,26 +1265,34 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			PluginCompartmentType pt = (PluginCompartmentType) sb;
 			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
 			// pt.setId(nsb.getId());
-			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName())) {
 				pt.setName(nsb.getName());
+				plugin.notifySBaseChanged(pt);
+			}
 		} else if (sb instanceof PluginEvent) {
 			PluginEvent pt = (PluginEvent) sb;
 			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
 			// pt.setId(nsb.getId());
-			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName())) {
 				pt.setName(nsb.getName());
+				plugin.notifySBaseChanged(pt);
+			}
 		} else if (sb instanceof PluginModel) {
 			PluginModel pt = (PluginModel) sb;
 			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
 			// pt.setId(nsb.getId());
-			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName())) {
 				pt.setName(nsb.getName());
+				plugin.notifySBaseChanged(pt);
+			}
 		} else if (sb instanceof PluginReaction) {
 			PluginReaction pt = (PluginReaction) sb;
 			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
 			// pt.setId(nsb.getId());
-			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName())) {
 				pt.setName(nsb.getName());
+				plugin.notifySBaseChanged(pt);
+			}
 		} else if (sb instanceof PluginSimpleSpeciesReference) {
 			// PluginSimpleSpeciesReference pt = (PluginSimpleSpeciesReference)
 			// sb;
@@ -937,20 +1307,28 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			PluginSpeciesType pt = (PluginSpeciesType) sb;
 			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
 			// pt.setId(nsb.getId());
-			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName())) {
 				pt.setName(nsb.getName());
+				plugin.notifySBaseChanged(pt);
+			}
 		} else if (sb instanceof PluginCompartment) {
 			PluginCompartment pt = (PluginCompartment) sb;
 			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
 			// pt.setId(nsb.getId());
-			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName())) {
 				pt.setName(nsb.getName());
+				plugin.notifySBaseChanged(pt);
+			}
 		} else if (sb instanceof PluginParameter) {
 			PluginParameter pt = (PluginParameter) sb;
-			if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
+			if (nsb.isSetId() && !pt.getId().equals(nsb.getId())) {
 				pt.setId(nsb.getId());
-			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+				plugin.notifySBaseChanged(pt);
+			}
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName())) {
 				pt.setName(nsb.getName());
+				plugin.notifySBaseChanged(pt);
+			}
 		} else if (sb instanceof PluginSpecies) {
 			// PluginSpecies pt = (PluginSpecies) sb;
 			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
@@ -961,19 +1339,14 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			PluginUnitDefinition pt = (PluginUnitDefinition) sb;
 			// if (nsb.isSetId() && !pt.getId().equals(nsb.getId()))
 			// pt.setId(nsb.getId());
-			if (nsb.isSetName() && !pt.getName().equals(nsb.getName()))
+			if (nsb.isSetName() && !pt.getName().equals(nsb.getName())) {
 				pt.setName(nsb.getName());
+				plugin.notifySBaseChanged(pt);
+			}
 		} else if (sb instanceof PluginFunctionDefinition) {
 
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.SBMLWriter#saveSBaseProperties(org.sbml.jsbml.SBase,
-	 * java.lang.Object)
-	 */
 
 	/*
 	 * (non-Javadoc)
@@ -988,12 +1361,21 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					+ "PluginParameter.");
 		PluginParameter po = (PluginParameter) parameter;
 		saveNamedSBaseProperties(p, po);
-		if (p.isSetValue() && p.getValue() != po.getValue())
+		boolean changed = false;
+		if (p.isSetValue() && p.getValue() != po.getValue()) {
 			po.setValue(p.getValue());
-		if (p.getConstant() != po.getConstant())
+			changed = true;
+		}
+		if (p.getConstant() != po.getConstant()) {
 			po.setConstant(p.getConstant());
-		if (p.isSetUnits() && !p.getUnits().equals(po.getUnits()))
+			changed = true;
+		}
+		if (p.isSetUnits() && !p.getUnits().equals(po.getUnits())) {
 			po.setUnits(p.getUnits());
+			changed = true;
+		}
+		if (changed)
+			plugin.notifySBaseChanged(po);
 	}
 
 	/*
@@ -1010,10 +1392,15 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					+ "PluginReaction.");
 		PluginReaction ro = (PluginReaction) reaction;
 		saveNamedSBaseProperties(r, ro);
-		if (r.getFast() != ro.getFast())
+		boolean changed = false;
+		if (r.getFast() != ro.getFast()) {
 			ro.setFast(r.getFast());
-		if (r.getReversible() != ro.getReversible())
+			changed = true;
+		}
+		if (r.getReversible() != ro.getReversible()) {
 			ro.setReversible(r.getReversible());
+			changed = true;
+		}
 		saveListOfProperties(r.getListOfReactants(), ro, (short) 0);
 		saveListOfProperties(r.getListOfProducts(), ro, (short) 1);
 		saveListOfProperties(r.getListOfModifiers(), ro, (short) 2);
@@ -1033,6 +1420,8 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			ro.setKineticLaw(null);
 			plugin.notifySBaseDeleted(plukin);
 		}
+		if (changed)
+			plugin.notifySBaseChanged(ro);
 	}
 
 	/*
@@ -1045,8 +1434,10 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 		if (!(sb instanceof PluginSBase))
 			throw new IllegalArgumentException("sb" + error + "PluginSBase");
 		PluginSBase plusbas = (PluginSBase) sb;
-		if (!plusbas.getNotesString().equals(s.getNotesString()))
+		if (!plusbas.getNotesString().equals(s.getNotesString())) {
 			plusbas.setNotes(s.getNotesString());
+			plugin.notifySBaseChanged(plusbas);
+		}
 	}
 
 	/*
@@ -1062,37 +1453,60 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 					+ "PluginSpecies");
 		PluginSpecies spec = (PluginSpecies) species;
 		saveNamedSBaseProperties(s, spec);
+		boolean changed = false;
 		if (s.isSetSpeciesType()
-				&& !s.getSpeciesType().equals(spec.getSpeciesType()))
+				&& !s.getSpeciesType().equals(spec.getSpeciesType())) {
 			spec.setSpeciesType(s.getSpeciesType());
+			changed = true;
+		}
 		if (s.isSetCompartment()
-				&& !s.getCompartment().equals(spec.getCompartment()))
+				&& !s.getCompartment().equals(spec.getCompartment())) {
 			spec.setCompartment(s.getCompartment());
+			changed = true;
+		}
 		if (s.isSetInitialAmount()) {
 			if (!spec.isSetInitialAmount()
-					|| s.getInitialAmount() != spec.getInitialAmount())
+					|| s.getInitialAmount() != spec.getInitialAmount()) {
 				spec.setInitialAmount(s.getInitialAmount());
+				changed = true;
+			}
 		} else if (s.isSetInitialConcentration())
 			if (!spec.isSetInitialConcentration()
 					|| s.getInitialConcentration() != spec
-							.getInitialConcentration())
+							.getInitialConcentration()) {
 				spec.setInitialConcentration(s.getInitialConcentration());
+				changed = true;
+			}
 		if (s.isSetSubstanceUnits()
-				&& !s.getSubstanceUnits().equals(spec.getSubstanceUnits()))
+				&& !s.getSubstanceUnits().equals(spec.getSubstanceUnits())) {
 			spec.setSubstanceUnits(s.getSubstanceUnits());
-		if (s.getHasOnlySubstanceUnits() != spec.getHasOnlySubstanceUnits())
+			changed = true;
+		}
+		if (s.getHasOnlySubstanceUnits() != spec.getHasOnlySubstanceUnits()) {
 			spec.setHasOnlySubstanceUnits(s.getHasOnlySubstanceUnits());
-		if (s.getBoundaryCondition() != spec.getBoundaryCondition())
+			changed = true;
+		}
+		if (s.getBoundaryCondition() != spec.getBoundaryCondition()) {
 			spec.setBoundaryCondition(spec.getBoundaryCondition());
-		if (s.isSetCharge() && s.getCharge() != spec.getCharge())
+			changed = true;
+		}
+		if (s.isSetCharge() && s.getCharge() != spec.getCharge()) {
 			spec.setCharge(s.getCharge());
-		if (s.getConstant() != spec.getConstant())
+			changed = true;
+		}
+		if (s.getConstant() != spec.getConstant()) {
 			spec.setConstant(s.getConstant());
+			changed = true;
+		}
 		if (s.isSetSBOTerm()) {
 			String type = SBO.convertSBO2Alias(s.getSBOTerm());
-			if (type.length() > 0)
+			if (type.length() > 0) {
 				spec.getSpeciesAlias(0).setType(type);
+				changed = true;
+			}
 		}
+		if (changed)
+			plugin.notifySBaseChanged(spec);
 	}
 
 	/*
@@ -1119,11 +1533,41 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 				saveMathContainerProperties(sr.getStoichiometryMath(), sp
 						.getStoichiometryMath());
 			else {
-				// sp.setStoichiometryMath(writeStoichoimetryMath(sr
-				// .getStoichiometryMath()));
+				sp.setStoichiometryMath(writeStoichoimetryMath(sr
+						.getStoichiometryMath()));
 			}
 		} else
 			sp.setStoichiometry(sr.getStoichiometry());
+		plugin.notifySBaseChanged(sp);
+	}
+
+	/**
+	 * 
+	 * @param ud
+	 * @param libU
+	 */
+	private void saveUnitDefinitionProperties(UnitDefinition ud,
+			PluginUnitDefinition libU) {
+		saveSBaseProperties(ud, libU);
+		System.out.printf("changing unit definition %s to %s\n", libU.getId(),
+				ud.toString());
+		for (int i = libU.getNumUnits() - 1; i >= 0; i--) {
+			PluginUnit pu = libU.getUnit(i);
+			libU.removeUnit(i);
+			System.out.printf("deleting unit %s\n", pu.toSBML());
+			plugin.notifySBaseDeleted(pu);
+		}
+		System.out.printf("num units: %s, list = %s\n", ud.getListOfUnits(), ud
+				.getListOfUnits().toString());
+		for (Unit u : ud.getListOfUnits()) {
+			PluginUnit unit = writeUnit(u, libU);
+			libU.addUnit(unit);
+			System.out.printf("adding unit %s\n", unit.toSBML());
+			plugin.notifySBaseAdded(unit);
+		}
+		System.out.println();
+		plugin.notifySBaseChanged(libU);
+		plugin.notifySBaseChanged(pluginModel.getListOfUnitDefinitions());
 	}
 
 	/*
@@ -1655,250 +2099,5 @@ public class PluginSBMLWriter extends AbstractSBMLWriter {
 			plugin.notifySBaseAdded(unit);
 		}
 		return ud;
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param u
-	 * @param unit
-	 * @return
-	 */
-	private boolean equal(Unit u, PluginUnit unit) {
-		if (u == null || unit == null)
-			return false;
-		boolean equal = true;
-		switch (unit.getKind()) {
-		case libsbmlConstants.UNIT_KIND_AMPERE:
-			equal &= u.getKind() == Unit.Kind.AMPERE;
-			break;
-		case libsbmlConstants.UNIT_KIND_BECQUEREL:
-			equal &= u.getKind() == Unit.Kind.BECQUEREL;
-			break;
-		case libsbmlConstants.UNIT_KIND_CANDELA:
-			equal &= u.getKind() == Unit.Kind.CANDELA;
-			break;
-		case libsbmlConstants.UNIT_KIND_CELSIUS:
-			equal &= u.getKind() == Unit.Kind.CELSIUS;
-			break;
-		case libsbmlConstants.UNIT_KIND_COULOMB:
-			equal &= u.getKind() == Unit.Kind.COULOMB;
-			break;
-		case libsbmlConstants.UNIT_KIND_DIMENSIONLESS:
-			equal &= u.getKind() == Unit.Kind.DIMENSIONLESS;
-			break;
-		case libsbmlConstants.UNIT_KIND_FARAD:
-			equal &= u.getKind() == Unit.Kind.FARAD;
-			break;
-		case libsbmlConstants.UNIT_KIND_GRAM:
-			equal &= u.getKind() == Unit.Kind.GRAM;
-			break;
-		case libsbmlConstants.UNIT_KIND_GRAY:
-			equal &= u.getKind() == Unit.Kind.GRAY;
-			break;
-		case libsbmlConstants.UNIT_KIND_HENRY:
-			equal &= u.getKind() == Unit.Kind.HENRY;
-			break;
-		case libsbmlConstants.UNIT_KIND_HERTZ:
-			equal &= u.getKind() == Unit.Kind.HERTZ;
-			break;
-		case libsbmlConstants.UNIT_KIND_INVALID:
-			equal &= u.getKind() == Unit.Kind.INVALID;
-			break;
-		case libsbmlConstants.UNIT_KIND_ITEM:
-			equal &= u.getKind() == Unit.Kind.ITEM;
-			break;
-		case libsbmlConstants.UNIT_KIND_JOULE:
-			equal &= u.getKind() == Unit.Kind.JOULE;
-			break;
-		case libsbmlConstants.UNIT_KIND_KATAL:
-			equal &= u.getKind() == Unit.Kind.KATAL;
-			break;
-		case libsbmlConstants.UNIT_KIND_KELVIN:
-			equal &= u.getKind() == Unit.Kind.KELVIN;
-			break;
-		case libsbmlConstants.UNIT_KIND_KILOGRAM:
-			equal &= u.getKind() == Unit.Kind.KILOGRAM;
-			break;
-		case libsbmlConstants.UNIT_KIND_LITER:
-			equal &= u.getKind() == Unit.Kind.LITER;
-			break;
-		case libsbmlConstants.UNIT_KIND_LITRE:
-			equal &= u.getKind() == Unit.Kind.LITRE;
-			break;
-		case libsbmlConstants.UNIT_KIND_LUMEN:
-			equal &= u.getKind() == Unit.Kind.LUMEN;
-			break;
-		case libsbmlConstants.UNIT_KIND_LUX:
-			equal &= u.getKind() == Unit.Kind.LUX;
-			break;
-		case libsbmlConstants.UNIT_KIND_METER:
-			equal &= u.getKind() == Unit.Kind.METER;
-			break;
-		case libsbmlConstants.UNIT_KIND_METRE:
-			equal &= u.getKind() == Unit.Kind.METRE;
-			break;
-		case libsbmlConstants.UNIT_KIND_MOLE:
-			equal &= u.getKind() == Unit.Kind.MOLE;
-			break;
-		case libsbmlConstants.UNIT_KIND_NEWTON:
-			equal &= u.getKind() == Unit.Kind.NEWTON;
-			break;
-		case libsbmlConstants.UNIT_KIND_OHM:
-			equal &= u.getKind() == Unit.Kind.OHM;
-			break;
-		case libsbmlConstants.UNIT_KIND_PASCAL:
-			equal &= u.getKind() == Unit.Kind.PASCAL;
-			break;
-		case libsbmlConstants.UNIT_KIND_RADIAN:
-			equal &= u.getKind() == Unit.Kind.RADIAN;
-			break;
-		case libsbmlConstants.UNIT_KIND_SECOND:
-			equal &= u.getKind() == Unit.Kind.SECOND;
-			break;
-		case libsbmlConstants.UNIT_KIND_SIEMENS:
-			equal &= u.getKind() == Unit.Kind.SIEMENS;
-			break;
-		case libsbmlConstants.UNIT_KIND_SIEVERT:
-			equal &= u.getKind() == Unit.Kind.SIEVERT;
-			break;
-		case libsbmlConstants.UNIT_KIND_STERADIAN:
-			equal &= u.getKind() == Unit.Kind.STERADIAN;
-			break;
-		case libsbmlConstants.UNIT_KIND_TESLA:
-			equal &= u.getKind() == Unit.Kind.TESLA;
-			break;
-		case libsbmlConstants.UNIT_KIND_VOLT:
-			equal &= u.getKind() == Unit.Kind.VOLT;
-			break;
-		case libsbmlConstants.UNIT_KIND_WATT:
-			equal &= u.getKind() == Unit.Kind.WATT;
-			break;
-		case libsbmlConstants.UNIT_KIND_WEBER:
-			equal &= u.getKind() == Unit.Kind.WEBER;
-			break;
-		}
-		equal &= u.getExponent() == unit.getExponent();
-		equal &= u.getMultiplier() == unit.getMultiplier();
-		equal &= u.getScale() == unit.getScale();
-		equal &= u.getOffset() == unit.getOffset();
-		return equal;
-	}
-
-	/**
-	 * 
-	 * @param speciesInstance
-	 * @param pluMo
-	 */
-	private void saveChanges(Species species, PluginModel pluMo) {
-		PluginSpecies pluSpec = pluMo.getSpecies(species.getId());
-		if (species.isSetSubstanceUnits()
-				&& !Unit.isUnitKind(species.getSubstanceUnits(), species
-						.getLevel(), species.getVersion())
-				&& pluMo.getUnitDefinition(species.getSubstanceUnits()) == null) {
-			PluginUnitDefinition ud = writeUnitDefinition(species
-					.getSubstanceUnitsInstance());
-			pluMo.addUnitDefinition(ud);
-			plugin.notifySBaseAdded(ud);
-		}
-		if (species.isSetCompartment()
-				&& pluMo.getCompartment(species.getCompartment()) == null) {
-			PluginCompartment c = writeCompartment(species
-					.getCompartmentInstance());
-			pluMo.addCompartment(c);
-			plugin.notifySBaseAdded(c);
-		}
-		if (species.isSetSpeciesType()
-				&& pluMo.getSpeciesType(species.getSpeciesType()) == null) {
-			PluginSpeciesType st = writeSpeciesType(species
-					.getSpeciesTypeInstance());
-			pluMo.addSpeciesType(st);
-			plugin.notifySBaseAdded(st);
-		}
-		saveSpeciesProperties(species, pluSpec);
-	}
-
-	/**
-	 * 
-	 * @param listOf
-	 * @param ro
-	 * @param kind
-	 *            0 means reactant, 1 product, and 2 modifier.
-	 * @throws SBMLException
-	 */
-	private void saveListOfProperties(
-			ListOf<? extends SimpleSpeciesReference> listOf, PluginReaction ro,
-			short kind) throws SBMLException {
-		int i, contains;
-		PluginListOf pluli;
-		switch (kind) {
-		case 0:
-			pluli = ro.getListOfReactants();
-			break;
-		case 1:
-			pluli = ro.getListOfProducts();
-			break;
-		default:
-			pluli = ro.getListOfModifiers();
-			break;
-		}
-		for (SimpleSpeciesReference sr : listOf) {
-			contains = -1;
-			for (i = 0; i < pluli.size() && contains < 0; i++) {
-				if (sr.getSpecies().equals(
-						((PluginSimpleSpeciesReference) pluli.get(i))
-								.getSpecies()))
-					contains = i;
-			}
-			if (contains < 0) {
-				if (sr instanceof SpeciesReference) {
-					String type;
-					if (kind == 0)
-						type = PluginSpeciesReference.REACTANT;
-					else if (kind == 1)
-						type = PluginSpeciesReference.PRODUCT;
-					else
-						type = PluginSpeciesReference.MODIFIER;
-					PluginSpeciesReference psr = writeSpeciesReference(
-							(SpeciesReference) sr, ro, type);
-					if (kind == 0)
-						ro.addReactant(psr);
-					else if (kind == 1)
-						ro.addProduct(psr);
-					plugin.notifySBaseAdded(psr);
-				} else {
-					PluginModifierSpeciesReference pmsr = writeModifierSpeciesReference(
-							(ModifierSpeciesReference) sr, ro, pluginModel);
-					ro.addModifier(pmsr);
-					plugin.notifySBaseAdded(pmsr);
-				}
-			} else {
-				if (sr instanceof SpeciesReference) {
-					PluginSpeciesReference psr = kind == 0 ? ro
-							.getReactant(contains) : ro.getProduct(contains);
-					saveSpeciesReferenceProperties((SpeciesReference) sr, psr);
-					plugin.notifySBaseChanged(psr);
-				} else if (sr instanceof ModifierSpeciesReference) {
-					PluginModifierSpeciesReference pmsr = ro
-							.getModifier(contains);
-					saveModifierSpeciesReferenceProperties(
-							(ModifierSpeciesReference) sr, pmsr);
-					plugin.notifySBaseChanged(pmsr);
-				}
-			}
-		}
-		// remove unnecessary elements.
-		for (i = pluli.size() - 1; i >= 0; i--) {
-			PluginSimpleSpeciesReference rospref = (PluginSimpleSpeciesReference) pluli
-					.get(i);
-			boolean keep = false;
-			for (SimpleSpeciesReference ssr : listOf)
-				if (ssr.getSpecies().equals(rospref.getSpecies())) {
-					keep = true;
-					break;
-				}
-			if (!keep)
-				plugin.notifySBaseDeleted(pluli.remove(i));
-		}
 	}
 }
