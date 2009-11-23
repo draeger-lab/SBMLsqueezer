@@ -65,7 +65,7 @@ import org.sbml.squeezer.resources.Resource;
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @since 1.3
- * @version $Revision$
+ * @version $Revision: 293$
  */
 public class SBMLsqueezer implements LawListener {
 
@@ -112,17 +112,22 @@ public class SBMLsqueezer implements LawListener {
 	private static Properties settings;
 
 	/**
-	 * 
+	 * The location of the user's configuration file.
 	 */
 	private final static String userConfigFile = System
 			.getProperty("user.home")
-			+ "/.SBMLsqueezer/SBMLsqueezer.cfg";
+			+ System.getProperty("file.separator")
+			+ ".SBMLsqueezer/SBMLsqueezer.cfg";
 
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
-	private static final String versionNumber = "1.2.5";
+	private static final String versionNumber = "1.2.6";
 
+	/**
+	 * Load all available kinetic equations and the user's settings from the
+	 * configuration file.
+	 */
 	static {
 		long time = System.currentTimeMillis();
 		System.out.print("Loading kinetic equations... ");
@@ -194,6 +199,8 @@ public class SBMLsqueezer implements LawListener {
 	}
 
 	/**
+	 * Returns the location of the default configuration file.
+	 * 
 	 * @return the configFile
 	 */
 	public static String getConfigFile() {
@@ -201,6 +208,8 @@ public class SBMLsqueezer implements LawListener {
 	}
 
 	/**
+	 * Reads the default configuration file and returns a properties hash map
+	 * that contains pairs of configuration keys and the entries from the file.
 	 * 
 	 * @return
 	 */
@@ -300,6 +309,10 @@ public class SBMLsqueezer implements LawListener {
 	}
 
 	/**
+	 * Returns an array of Strings that can be interpreted as enzymes. In
+	 * particular this array will contain those configuration keys as strings
+	 * for which in the current configuration the corresponding value is set to
+	 * true.
 	 * 
 	 * @return
 	 */
