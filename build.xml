@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="FatJar SBMLsqueezer1.2.3.jar (experimental)" default="main" basedir=".">
+<project name="FatJar SBMLsqueezer.jar (experimental)" default="main" basedir=".">
     <!-- this file was created by Fat-Jar Eclipse Plug-in -->
     <!-- the ANT-Export is in a very early stage, so this -->
     <!-- is only experimental, ANT 1.6 or above is        -->
@@ -16,13 +16,15 @@
     -->
     <!-- uncomment the above lines to use ANT outside of Eclipse -->
     <target name="main">
-        <fatjar.build output="SBMLsqueezer1.2.3.jar">
+        <fatjar.build output="SBMLsqueezer.jar">
             <fatjar.manifest mainclass="org.sbml.squeezer.SBMLsqueezer"/>
             <fatjar.filesource path="/local/draeger/workspace/SBMLsqueezer/bin" relpath=""/>
             <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/HotEqn.jar" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/biojava.jar" relpath=""/>
             <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/html2latex.jar" relpath=""/>
+            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/eva2des.jar" relpath=""/>
+            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/cdplugin.jar" relpath=""/>
             <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/jsbml.jar" relpath=""/>
+            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/biojava.jar" relpath=""/>
         </fatjar.build>
     </target>
 </project>

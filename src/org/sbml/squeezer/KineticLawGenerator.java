@@ -47,7 +47,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.Unit.Kind;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.math.GaussianRank;
 
@@ -156,7 +155,7 @@ public class KineticLawGenerator {
 			compartment.setUnits(model.getUnitDefinition("volume"));
 			System.err
 					.printf(
-							"Compartment %s had an invalid spacial dimension and was therefore set to a volume.",
+							"Compartment %s had an invalid spacial dimension and was therefore set to a volume.\n",
 							compartment.getId());
 		}
 		if (model.getUnitDefinition(compartment.getUnits()) == null)
@@ -258,7 +257,7 @@ public class KineticLawGenerator {
 				if (formula.equals("") || formula.equals(" ")) {
 					System.err
 							.printf(
-									"Reaction %s in the model has an incorrect format. This means there is either an empty kinetic law in this reaction or a kinetic law that only consists of a white space. If you decide not to save this generated model, there is only one solution: open this SBML file in an editor and delete the whole kinetic law. SBMLsqueezer ignores this misstake and generates a proper equation. Therfore we recomment that you save this generated model.",
+									"Reaction %s in the model has an incorrect format. This means there is either an empty kinetic law in this reaction or a kinetic law that only consists of a white space. If you decide not to save this generated model, there is only one solution: open this SBML file in an editor and delete the whole kinetic law. SBMLsqueezer ignores this misstake and generates a proper equation. Therfore we recomment that you save this generated model.\n",
 									reacOrig.getId());
 					create = true;
 				}
@@ -829,9 +828,6 @@ public class KineticLawGenerator {
 	 * Stores all units created in the mini model in the original model.
 	 */
 	private void storeUnits() {
-		Set<String> unitKinds = new HashSet<String>();
-		for (Kind kind : Unit.Kind.values())
-			unitKinds.add(kind.toString().toUpperCase());
 		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
 			if (modelOrig.getUnitDefinition(ud.getId()) == null)
 				modelOrig.addUnitDefinition(ud.clone());
@@ -846,18 +842,33 @@ public class KineticLawGenerator {
 		for (Compartment c : miniModel.getListOfCompartments()) {
 			Compartment corig = modelOrig.getCompartment(c.getId());
 			corig.setSpatialDimensions(c.getSpatialDimensions());
+			if (c.isSetUnits()) {
+				if (Unit.isUnitKind(c.getUnits(), c.getLevel(), c.getVersion()))
+					corig.setUnits(Unit.Kind.valueOf(c.getUnits()));
+				else
+					corig.setUnits(modelOrig.getUnitDefinition(c.getUnits()));
+			}
 			checkUnits(corig);
 		}
 		for (Species s : miniModel.getListOfSpecies()) {
 			Species sorig = modelOrig.getSpecies(s.getId());
 			sorig.setHasOnlySubstanceUnits(s.getHasOnlySubstanceUnits());
+			if (s.isSetSubstanceUnits()) {
+				if (Unit.isUnitKind(s.getSubstanceUnits(), s.getLevel(), s
+						.getVersion()))
+					sorig.setSubstanceUnits(Unit.Kind.valueOf(s
+							.getSubstanceUnits()));
+				else
+					sorig.setSubstanceUnits(modelOrig.getUnitDefinition(s
+							.getSubstanceUnits()));
+			}
 			checkUnits(sorig);
 		}
 		for (Parameter p : miniModel.getListOfParameters()) {
 			if (p.isSetUnits()) {
-				String units = p.getUnits().toUpperCase();
+				String units = p.getUnits();
 				Parameter porig = modelOrig.getParameter(p.getId());
-				if (unitKinds.contains(units))
+				if (Unit.isUnitKind(units, p.getLevel(), p.getVersion()))
 					porig.setUnits(Unit.Kind.valueOf(units));
 				else
 					porig.setUnits(modelOrig.getUnitDefinition(p.getUnits()));
@@ -867,10 +878,10 @@ public class KineticLawGenerator {
 		for (Reaction r : miniModel.getListOfReactions()) {
 			for (Parameter p : r.getKineticLaw().getListOfParameters()) {
 				if (p.isSetUnits()) {
-					String units = p.getUnits().toUpperCase();
+					String units = p.getUnits();
 					Parameter porig = modelOrig.getReaction(r.getId())
 							.getKineticLaw().getParameter(p.getId());
-					if (unitKinds.contains(units))
+					if (Unit.isUnitKind(units, p.getLevel(), p.getVersion()))
 						porig.setUnits(Unit.Kind.valueOf(units));
 					else
 						porig.setUnits(modelOrig
@@ -884,48 +895,37 @@ public class KineticLawGenerator {
 		if (((Boolean) settings
 				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 				.booleanValue())
-			for (UnitDefinition udef : modelOrig.getListOfUnitDefinitions()) {
-				boolean isNeeded = udef.equals(UnitDefinition.area(udef
-						.getLevel(), udef.getVersion()))
-						|| udef.equals(UnitDefinition.length(udef.getLevel(),
-								udef.getVersion()))
-						|| udef.equals(UnitDefinition.substance(
-								udef.getLevel(), udef.getVersion()))
-						|| udef.equals(UnitDefinition.time(udef.getLevel(),
-								udef.getVersion()))
-						|| udef.equals(UnitDefinition.volume(udef.getLevel(),
-								udef.getVersion()));
-				int i;
-				for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
-					Compartment c = modelOrig.getCompartment(i);
-					if (c.isSetUnits() && c.getUnitsInstance().equals(udef))
-						isNeeded = true;
-				}
-				for (i = 0; i < modelOrig.getNumSpecies() && !isNeeded; i++) {
-					Species s = modelOrig.getSpecies(i);
-					if (s.isSetSubstanceUnits()
-							&& s.getSubstanceUnitsInstance().equals(udef))
-						isNeeded = true;
-				}
-				for (i = 0; i < modelOrig.getNumParameters() && !isNeeded; i++) {
-					Parameter p = modelOrig.getParameter(i);
-					if (p.isSetUnits() && p.getUnitsInstance().equals(udef))
-						isNeeded = true;
-				}
-				for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
-					Reaction r = modelOrig.getReaction(i);
-					if (r.isSetKineticLaw())
-						for (int j = 0; j < r.getKineticLaw()
-								.getNumParameters(); j++) {
-							Parameter p = r.getKineticLaw().getParameter(j);
-							if (p.isSetUnits()
-									&& p.getUnitsInstance().equals(udef))
-								isNeeded = true;
-						}
-				}
-				if (!isNeeded)
-					modelOrig.removeUnitDefinition(udef);
+		for (int j = modelOrig.getNumUnitDefinitions() - 1; j >= 0; j--) {
+			UnitDefinition udef = modelOrig.getUnitDefinition(j);
+			boolean isNeeded = Unit.isBuiltIn(udef.getId(), udef.getLevel());
+			int i;
+			for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
+				Compartment c = modelOrig.getCompartment(i);
+				if (c.isSetUnits() && c.getUnits().equals(udef.getId()))
+					isNeeded = true;
 			}
+			for (i = 0; i < modelOrig.getNumSpecies() && !isNeeded; i++) {
+				Species s = modelOrig.getSpecies(i);
+				if (s.isSetSubstanceUnits()
+						&& s.getSubstanceUnits().equals(udef.getId()))
+					isNeeded = true;
+			}
+			for (i = 0; i < modelOrig.getNumParameters() && !isNeeded; i++) {
+				Parameter p = modelOrig.getParameter(i);
+				if (p.isSetUnits() && p.getUnits().equals(udef.getId()))
+					isNeeded = true;
+			}
+			for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
+				Reaction r = modelOrig.getReaction(i);
+				if (r.isSetKineticLaw())
+					for (Parameter p : r.getKineticLaw().getListOfParameters()) {
+						if (p.isSetUnits() && p.getUnits().equals(udef.getId()))
+							isNeeded = true;
+					}
+			}
+			if (!isNeeded)
+				modelOrig.removeUnitDefinition(udef);
+		}
 	}
 
 	/**

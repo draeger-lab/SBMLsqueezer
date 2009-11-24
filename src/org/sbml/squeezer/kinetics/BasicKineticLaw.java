@@ -761,9 +761,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			kM.setUnits(bringToConcentration ? unitSubstancePerSize(spec
 					.getSubstanceUnitsInstance(), spec.getCompartmentInstance()
 					.getUnitsInstance()) : spec.getSubstanceUnitsInstance());
-			System.out.printf("units of %s:\t%s\tlist of units:\t%s\n", kM
-					.getId(), kM.getUnitsInstance().toString(), kM
-					.getUnitsInstance().getListOfUnits().toString());
 		}
 		return kM;
 	}
@@ -1123,8 +1120,33 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			unitdef = new UnitDefinition(id, getLevel(), getVersion());
 			unitdef.multiplyWith(unitdef_dimless);
 			unitdef.multiplyWith(unitPerTime());
-			model.addUnitDefinition(unitdef);
+			unitdef = checkUnitDefinitions(unitdef, model);
 		}
+		return unitdef;
+	}
+
+	/**
+	 * Avoids adding identical unit definitions multiple times to the model.
+	 * 
+	 * @param unitdef
+	 *            a unit definition that should be added to the given model.
+	 * @param model
+	 *            the model that is to be tested if it really lacks the given
+	 *            unit definition.
+	 * @return the unit definition found in the model or the given unit
+	 *         definition that was added to the model if lacking.
+	 */
+	private UnitDefinition checkUnitDefinitions(UnitDefinition unitdef,
+			Model model) {
+		boolean contains = false;
+		for (UnitDefinition ud : model.getListOfUnitDefinitions())
+			if (UnitDefinition.areIdentical(ud, unitdef)) {
+				unitdef = ud;
+				contains = true;
+				break;
+			}
+		if (!contains)
+			model.addUnitDefinition(unitdef);
 		return unitdef;
 	}
 
@@ -1144,7 +1166,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 					getVersion()));
 			ud.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, getLevel(),
 					getVersion()));
-			model.addUnitDefinition(ud);
+			ud = checkUnitDefinitions(ud, model);
 		}
 		return ud;
 	}
@@ -1162,7 +1184,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			ud = new UnitDefinition(id, getLevel(), getVersion());
 			ud.addUnit(new Unit(3, Unit.Kind.JOULE, getLevel(), getVersion()));
 			ud.divideBy(substance);
-			model.addUnitDefinition(ud);
+			ud = checkUnitDefinitions(ud, model);
 		}
 		return ud;
 	}
@@ -1189,7 +1211,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		}
 		UnitDefinition def = model.getUnitDefinition(ud.getId());
 		if (def == null)
-			model.addUnitDefinition(ud);
+			ud = checkUnitDefinitions(ud, model);
 		return model.getUnitDefinition(ud.getId());
 	}
 
@@ -1227,8 +1249,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			}
 		}
 		ud = ud.divideBy(amount).multiplyWith(
-				model.getUnitDefinition("substance"));
-		ud.simplify();
+				model.getUnitDefinition("substance")).simplify();
 		StringBuilder sb = new StringBuilder();
 		for (i = 0; i < ud.getNumUnits(); i++) {
 			Unit u = ud.getUnit(i);
@@ -1242,7 +1263,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		ud.setId(sb.toString());
 		UnitDefinition def = model.getUnitDefinition(ud.getId());
 		if (def == null)
-			model.addUnitDefinition(ud);
+			ud = checkUnitDefinitions(ud, model);
 		ud = model.getUnitDefinition(ud.getId());
 		return ud;
 	}
@@ -1273,7 +1294,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				ud.setId(id);
 				ud.divideBy(model.getUnitDefinition("time"));
 				ud.setName(name.toString());
-				model.addUnitDefinition(ud);
+				ud = checkUnitDefinitions(ud, model);
 			}
 			return ud;
 		} else {
@@ -1315,7 +1336,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			substancePerSize.multiplyWith(substance);
 			substancePerSize.divideBy(size);
 			substancePerSize.raiseByThePowerOf(exponent);
-			getModel().addUnitDefinition(substancePerSize);
+			substancePerSize = checkUnitDefinitions(substancePerSize,
+					getModel());
 		}
 		return substancePerSize;
 	}
@@ -1336,7 +1358,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			mMperSecond.multiplyWith(model.getUnitDefinition("substance"));
 			mMperSecond.setId(id);
 			mMperSecond.divideBy(model.getUnitDefinition("time"));
-			model.addUnitDefinition(mMperSecond);
+			mMperSecond = checkUnitDefinitions(mMperSecond, model);
 		}
 		return mMperSecond;
 	}
@@ -1356,7 +1378,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			substancePerTime = new UnitDefinition(id, getLevel(), getVersion());
 			substancePerTime.multiplyWith(substance);
 			substancePerTime.divideBy(time);
-			model.addUnitDefinition(substancePerTime);
+			substancePerTime = checkUnitDefinitions(substancePerTime, model);
 		}
 		return substancePerTime;
 	}
