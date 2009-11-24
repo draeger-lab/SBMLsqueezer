@@ -31,8 +31,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.io.AbstractSBMLReader;
-import org.sbml.jsbml.io.AbstractSBMLWriter;
 import org.sbml.jsbml.io.LibSBMLReader;
 import org.sbml.jsbml.io.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -612,8 +612,7 @@ public class SBMLsqueezer implements LawListener {
 	 * @param sbmlReader
 	 * @param sbmlWriter
 	 */
-	public SBMLsqueezer(AbstractSBMLReader sbmlReader,
-			AbstractSBMLWriter sbmlWriter) {
+	public SBMLsqueezer(AbstractSBMLReader sbmlReader, SBMLWriter sbmlWriter) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 60; i++)
 			sb.append('-');
