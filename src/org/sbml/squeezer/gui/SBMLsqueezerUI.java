@@ -114,7 +114,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		/**
 		 * 
 		 */
-		TO_LATEX
+		TO_LATEX,
+		/**
+		 * 
+		 */
+		STABILITY
 	}
 
 	/**
@@ -276,7 +280,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					tabbedPane.remove(tabbedPane.getSelectedComponent());
 				if (tabbedPane.getComponentCount() == 0)
 					setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-							Command.SQUEEZE, Command.TO_LATEX);
+							Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
 				break;
 			case ONLINE_HELP:
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
@@ -306,7 +310,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		if (e.getSource().equals(tabbedPane)) {
 			if (tabbedPane.getComponentCount() == 0)
 				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-						Command.SQUEEZE, Command.TO_LATEX);
+						Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
 			setSBMLsqueezerBackground();
 		}
 	}
@@ -391,7 +395,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.add(model.getId(), split);
 		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
 		setEnabled(true, Command.SAVE_FILE, Command.CLOSE_FILE,
-				Command.SQUEEZE, Command.TO_LATEX);
+				Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
 	}
 
 	/**
@@ -564,6 +568,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			latexButton.setActionCommand(Command.TO_LATEX.toString());
 			toolbar.add(latexButton);
 		}
+		if (GUITools.STABILITY_ICON_SMALL != null) {
+			JButton stabilityButton = new JButton(GUITools.STABILITY_ICON_SMALL);
+			//stabilityButton.addActionListener(this);
+			stabilityButton.setActionCommand(Command.STABILITY.toString());
+			toolbar.add(stabilityButton);
+		}
 		toolbar.addSeparator();
 		JButton helpButton = new JButton("?");
 		helpButton.addActionListener(this);
@@ -588,7 +598,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
 				.getIconHeight() + 75));
 		setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-				Command.SQUEEZE, Command.TO_LATEX);
+				Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
 		for (Model m : sbmlIO.getListOfModels()) {
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(),

@@ -63,6 +63,8 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	private SettingsPanelLaTeX panelLatexSettings;
 
 	private SettingsPanelDefaultMechanisms panelDefaultMechanisms;
+	
+	private SettingsPanelStability panelStabilitySettings;
 
 	private Properties settings;
 
@@ -132,6 +134,14 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 		 */
 		this.panelLatexSettings = new SettingsPanelLaTeX(settings, false);
 		tab.addTab("LaTeX output settings", panelLatexSettings);
+		//this.add(tab);
+		//addItemListener(this);
+		
+		/*
+		 * Stability Settings
+		 */		
+		panelStabilitySettings = new SettingsPanelStability(this.settings);
+		tab.addTab("Stability settings", panelStabilitySettings);
 		this.add(tab);
 		addItemListener(this);
 	}
