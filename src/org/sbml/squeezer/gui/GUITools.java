@@ -80,7 +80,10 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon RIGHT_ARROW;
-
+	/**
+	 * 
+	 */
+	public static Icon STABILITY_ICON_SMALL;
 	/**
 	 * Generated serial version id.
 	 */
@@ -96,6 +99,8 @@ public class GUITools {
 					.getResource("img/SBML2LaTeX_vertical_small.png")));
 			LEMON_ICON_SMALL = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/Lemon_small.png")));
+			STABILITY_ICON_SMALL = new ImageIcon(ImageIO.read(Resource.class
+					.getResource("img/Stability_small.png")));
 			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
 			Image image = ImageIO.read(Resource.class
 					.getResource("img/rightarrow.png"));
@@ -111,11 +116,13 @@ public class GUITools {
 			LOGO_SMALL = new ImageIcon(image);
 			LEMON_ICON = ImageIO.read(Resource.class
 					.getResource("img/icon.png"));
+			
 		} catch (IOException e) {
 			LATEX_ICON_TINY = null;
 			LATEX_ICON_SMALL = null;
 			LEMON_ICON_TINY = null;
 			LEMON_ICON_SMALL = null;
+			STABILITY_ICON_SMALL = null;
 			RIGHT_ARROW = null;
 			DOWN_ARROW = null;
 			LOGO_SMALL = null;

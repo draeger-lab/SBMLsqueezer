@@ -239,5 +239,15 @@ public enum CfgKeys {
 	 * Decides whether to write the names or the identifiers of NamedSBase
 	 * object in equations.
 	 */
-	LATEX_NAMES_IN_EQUATIONS
+	LATEX_NAMES_IN_EQUATIONS,
+	
+	
+	STABILITY_VALUE_OF_DELTA,		
+	STEUER_VALUE_OF_N,                  
+	STEUER_VALUE_OF_M,                   
+	STEUER_NUMBER_OF_RUNS,          
+	STEUER_PC_STEPSIZE,                   
+	STEUER_PC_OUTPUT,                      
+	STEUER_MI_STEPSIZE,                         
+	STEUER_MI_OUTPUT,                          
 }
