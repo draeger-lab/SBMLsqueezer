@@ -686,8 +686,8 @@ public class SBasePanel extends JPanel {
 			label = "Value: ";
 		}
 		lh.add(new JLabel(label), 1, ++row, 1, 1, 1, 1);
-		JSpinner spinValue = new JSpinner(new SpinnerNumberModel(val, min, Math
-				.max(val, max), .1d));
+		JSpinner spinValue = new JSpinner(new SpinnerNumberModel(val, Math.min(
+				val, min), Math.max(val, max), .1d));
 		spinValue.setEnabled(editable);
 		lh.add(spinValue, 3, row, 1, 1, 0, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);

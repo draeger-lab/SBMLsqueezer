@@ -25,14 +25,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.squeezer.gui.GUITools;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -257,6 +254,8 @@ public class ReactionType {
 
 	private boolean withoutModulation;
 
+	private boolean reversibility;
+
 	/**
 	 * Analyses the given reaction for several properties.
 	 * 
@@ -269,6 +268,9 @@ public class ReactionType {
 		int i;
 		this.reaction = r;
 		this.settings = settings;
+		this.reversibility = ((Boolean) settings
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue();
 
 		/*
 		 * Analyze properties of the reaction: compute stoichiometric properties
@@ -280,10 +282,11 @@ public class ReactionType {
 			if (((int) stoichiometry) - stoichiometry != 0d)
 				stoichiometryIntLeft = false;
 			// Transcription or translation?
-			Species species = reaction.getReactant(i).getSpeciesInstance();
-			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()))
+			Species reactantSpecies = reaction.getReactant(i)
+					.getSpeciesInstance();
+			if (SBO.isGeneOrGeneCodingRegion(reactantSpecies.getSBOTerm()))
 				reactionWithGenes = true;
-			else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm()))
+			else if (SBO.isRNAOrMessengerRNA(reactantSpecies.getSBOTerm()))
 				reactionWithRNAs = true;
 		}
 
@@ -334,24 +337,30 @@ public class ReactionType {
 		/*
 		 * Check if this reaction makes sense at all.
 		 */
-		if (reactionWithGenes) {
+		if (reactionWithGenes
+				|| reaction.getNumReactants() == 0
+				|| (reaction.getNumReactants() == 1 && SBO.isEmptySet(reaction
+						.getReactant(0).getSBOTerm()))) {
 			boolean transcription = false;
 			for (i = 0; i < reaction.getNumProducts(); i++) {
 				Species species = reaction.getProduct(i).getSpeciesInstance();
 				if (SBO.isRNA(species.getSBOTerm())
 						|| SBO.isMessengerRNA(species.getSBOTerm()))
-					transcription = true;
+					transcription = reactionWithRNAs = true;
 			}
 			if (transcription && SBO.isTranslation(reaction.getSBOTerm()))
 				throw new RateLawNotApplicableException("Reaction "
 						+ reaction.getId() + " must be a transcription.");
-		} else if (reactionWithRNAs) {
+		}
+		if (reactionWithRNAs
+				|| reaction.getNumReactants() == 0
+				|| (reaction.getNumReactants() == 1 && SBO.isEmptySet(reaction
+						.getReactant(0).getSBOTerm()))) {
 			boolean translation = false;
-			for (i = 0; i < reaction.getNumProducts(); i++) {
-				Species species = reaction.getProduct(i).getSpeciesInstance();
-				if (!SBO.isProtein(species.getSBOTerm()))
-					translation = true;
-			}
+			for (i = 0; i < reaction.getNumProducts() && !translation; i++)
+				if (SBO.isProtein(reaction.getProduct(i).getSpeciesInstance()
+						.getSBOTerm()))
+					translation = reactionWithRNAs = true;
 			if (SBO.isTranscription(reaction.getSBOTerm()) && translation)
 				throw new RateLawNotApplicableException("Reaction "
 						+ reaction.getId() + " must be a translation.");
@@ -454,16 +463,26 @@ public class ReactionType {
 	 * 
 	 */
 	public String identifyPossibleKineticLaw() {
-		if (reaction.getNumReactants() == 0)
+		if (reaction.getNumReactants() == 0) {
+			if (reactionWithGenes || reactionWithRNAs)
+				for (String kin : SBMLsqueezer
+						.getKineticsGeneRegulatoryNetworks())
+					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin))
+						return kin;
 			for (String kin : SBMLsqueezer.getKineticsZeroReactants())
 				return kin;
-		if (reaction.getReversible() && reaction.getNumProducts() == 0)
+		}
+		if (reaction.getNumProducts() == 0
+				&& (reversibility || reaction.getReversible())) {
+			if (reactionWithGenes || reactionWithRNAs)
+				for (String kin : SBMLsqueezer
+						.getKineticsGeneRegulatoryNetworks())
+					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin))
+						return kin;
 			for (String kin : SBMLsqueezer.getKineticsZeroProducts())
 				return kin;
+		}
 
-		boolean reversibility = ((Boolean) settings
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue();
 		boolean enzymeCatalyzed = ((Boolean) settings
 				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 				.booleanValue()
@@ -497,39 +516,30 @@ public class ReactionType {
 	}
 
 	/**
-	 * <ul>
-	 * <li>1 = generalized mass action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
-	 * <li>3 = Michaelis-Menten kinetics</li>
-	 * <li>4 = Random Order ternary kinetics</li>
-	 * <li>5 = Ping-Pong</li>
-	 * <li>6 = Ordered</li>
-	 * <li>7 = Hill equation</li>
-	 * <li>8 = Irreversible non-modulated non-interacting enzyme kinetics</li>
-	 * <li>9 = Zeroth order forward mass action kinetics</li>
-	 * <li>10 = Zeroth order reverse mass action kinetics</li>
-	 * <li>11 = Competitive non-exclusive, non-cooperative inihibition</li>
-	 * </ul>
 	 * 
 	 * @return Returns a sorted array of possible kinetic equations for the
-	 *         given reaction in the model.
+	 *         given reaction in the model (the names of the implementing
+	 *         classes).
 	 * @throws RateLawNotApplicableException
 	 */
 	public String[] identifyPossibleKineticLaws() {
 		Set<String> types = new HashSet<String>();
 
 		if (reaction.getNumReactants() == 0
-				|| (reaction.getNumProducts() == 0 && reaction.getReversible())) {
+				|| (reaction.getNumProducts() == 0 && (reaction.getReversible() || reversibility))) {
 			/*
 			 * Special case that occurs if we have at least one emty list of
 			 * species references.
 			 */
-			for (String className : SBMLsqueezer.getKineticsZeroReactants())
-				types.add(className);
-			for (String className : SBMLsqueezer.getKineticsZeroProducts()) {
-				if (SBMLsqueezer.getKineticsReversible().contains(className))
+			if (reaction.getNumReactants() == 0)
+				for (String className : SBMLsqueezer.getKineticsZeroReactants())
 					types.add(className);
-			}
+			else
+				for (String className : SBMLsqueezer.getKineticsZeroProducts()) {
+					if (SBMLsqueezer.getKineticsReversible()
+							.contains(className))
+						types.add(className);
+				}
 
 		} else {
 			if (nonEnzyme) {
