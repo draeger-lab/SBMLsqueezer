@@ -21,10 +21,10 @@
             <fatjar.filesource path="/local/draeger/workspace/SBMLsqueezer/bin" relpath=""/>
             <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/HotEqn.jar" relpath=""/>
             <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/html2latex.jar" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/eva2des.jar" relpath=""/>
             <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/cdplugin.jar" relpath=""/>
             <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/jsbml.jar" relpath=""/>
             <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/biojava.jar" relpath=""/>
+            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/eva2.jar" relpath=""/>
         </fatjar.build>
     </target>
 </project>

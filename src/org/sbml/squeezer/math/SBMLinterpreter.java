@@ -35,7 +35,6 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.libsbml.libsbmlConstants;
 
 import eva2.tools.des.DESystem;
 
@@ -55,7 +54,7 @@ import eva2.tools.des.DESystem;
  * @author Dieudonne Motsou Wouamba <dwouamba@yahoo.fr>
  * @date Sep 6, 2007
  */
-public class SBMLinterpreter implements DESystem, libsbmlConstants {
+public class SBMLinterpreter implements DESystem {
 	/**
 	 * Generated serial version UID
 	 */
