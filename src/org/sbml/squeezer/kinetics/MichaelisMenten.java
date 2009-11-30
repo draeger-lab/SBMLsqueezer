@@ -117,8 +117,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			}
 
 		Species speciesR = reaction.getReactant(0).getSpeciesInstance();
-		Species speciesP = reaction.getProduct(0).getSpeciesInstance();
-
+		
 		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 		int enzymeNum = 0;
 		do {
@@ -127,7 +126,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			Parameter p_kMr = parameterMichaelis(speciesR.getId(), enzyme, true);
 
 			ASTNode currEnzymeKin;
-			if (!reaction.getReversible()) {
+			if (!reaction.getReversible() || reaction.getNumProducts() == 0) {
 				/*
 				 * Irreversible Reaction
 				 */
@@ -138,6 +137,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				/*
 				 * Reversible Reaction
 				 */
+				Species speciesP = reaction.getProduct(0).getSpeciesInstance();
+				
 				numerator = ASTNode.times(ASTNode.frac(this, p_kcatp, p_kMr),
 						speciesTerm(speciesR));
 				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(

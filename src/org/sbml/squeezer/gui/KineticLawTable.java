@@ -251,13 +251,13 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						reaction.getId()).identifyPossibleKineticLaws();
 				final BasicKineticLaw possibleLaws[] = new BasicKineticLaw[possibleTypes.length];
 				int selected = 0;
+				final BasicKineticLaw oldLaw = ((BasicKineticLaw) klg
+						.getModifiedReaction(reaction.getId()).getKineticLaw());
 				for (int i = 0; i < possibleLaws.length; i++) {
 					possibleLaws[i] = klg.createKineticLaw(reaction,
 							possibleTypes[i], reversibility);
 					if (possibleLaws[i].getSimpleName().equals(
-							((BasicKineticLaw) klg.getModifiedReaction(
-									reaction.getId()).getKineticLaw())
-									.getSimpleName()))
+							oldLaw.getSimpleName()))
 						selected = i;
 				}
 
@@ -269,7 +269,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				pane.selectInitialValue();
 				final JDialog dialog = new JDialog(
 						(Window) getTopLevelAncestor(),
-						"Choose an alternative kinetic law");
+						"Choose an alternative kinetic law for reaction "
+								+ reaction.getId());
 				Container content = dialog.getContentPane();
 				content.setLayout(new BorderLayout());
 				content.add(pane, BorderLayout.CENTER);
@@ -312,14 +313,19 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 								&& event.getNewValue() != null
 								&& event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE) {
 							dialog.setVisible(false);
+							int i = 0;
 							if (((Integer) event.getNewValue()).intValue() == JOptionPane.OK_OPTION) {
-								int i = 0;
 								while (i < possibleTypes.length
 										&& !possibleTypes[i].equals(klsp
 												.getSelectedKinetic()))
 									i++;
-								updateTable(possibleLaws[i]);
+							} else {
+								while (i < possibleTypes.length
+										&& !possibleTypes[i].equals(oldLaw
+												.getClass().getCanonicalName()))
+									i++;
 							}
+							updateTable(possibleLaws[i]);
 						}
 					}
 				});

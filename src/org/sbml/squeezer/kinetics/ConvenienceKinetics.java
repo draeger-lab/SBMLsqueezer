@@ -92,7 +92,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			String enzyme = modE.size() > 0 ? modE.get(i) : null;
 			numerator = numeratorElements(enzyme, true);
 			denominator = denominatorElements(enzyme, true);
-			if (reaction.getReversible()) {
+			if (reaction.getReversible() && reaction.getNumProducts() > 0) {
 				numerator.minus(numeratorElements(enzyme, false));
 				denominator.plus(denominatorElements(enzyme, false));
 				if (reaction.getNumProducts() > 1

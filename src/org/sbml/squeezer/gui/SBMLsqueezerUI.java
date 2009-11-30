@@ -507,7 +507,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		latexItem.setIcon(GUITools.ICON_LATEX_TINY);
 		latexItem.addActionListener(this);
 		latexItem.setActionCommand(Command.TO_LATEX.toString());
-		JMenuItem preferencesItem = new JMenuItem("Preferences", GUITools.ICON_TICK_TINY);
+		JMenuItem preferencesItem = new JMenuItem("Preferences",
+				GUITools.ICON_TICK_TINY);
 		preferencesItem.setActionCommand(Command.SET_PREFERENCES.toString());
 		preferencesItem.addActionListener(this);
 		preferencesItem.setMnemonic(preferencesItem.getText().charAt(0));
@@ -552,39 +553,59 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				.getIcon("FileView.directoryIcon"));
 		openButton.addActionListener(this);
 		openButton.setActionCommand(Command.OPEN_FILE.toString());
+		openButton.setToolTipText(GUITools.toHTML(
+				"Opens a file in SBML format.", 40));
 		toolbar.add(openButton);
 		JButton saveButton = new JButton(UIManager
 				.getIcon("FileView.floppyDriveIcon"));
 		saveButton.addActionListener(this);
 		saveButton.setActionCommand(Command.SAVE_FILE.toString());
+		saveButton
+				.setToolTipText(GUITools
+						.toHTML(
+								"Save the current version of the model in SBML format or export it to a text or LaTeX report.",
+								40));
 		toolbar.add(saveButton);
 		JButton closeButton = new JButton(new CloseIcon(false));
 		closeButton.setActionCommand(Command.CLOSE_FILE.toString());
 		closeButton.addActionListener(this);
+		closeButton.setToolTipText(GUITools.toHTML(
+				"Close the current model without saving.", 40));
 		toolbar.add(closeButton);
 		toolbar.addSeparator();
 		if (GUITools.ICON_LEMON_TINY != null) {
 			JButton squeezeButton = new JButton(GUITools.ICON_LEMON_TINY);
 			squeezeButton.setActionCommand(Command.SQUEEZE.toString());
 			squeezeButton.addActionListener(this);
+			squeezeButton
+					.setToolTipText(GUITools
+							.toHTML(
+									"Generate kinetic equations for all reactions in this model in one step.",
+									40));
 			toolbar.add(squeezeButton);
 		}
 		if (GUITools.ICON_LATEX_TINY != null) {
 			JButton latexButton = new JButton(GUITools.ICON_LATEX_TINY);
 			latexButton.addActionListener(this);
 			latexButton.setActionCommand(Command.TO_LATEX.toString());
+			latexButton.setToolTipText(GUITools.toHTML(
+					"Export this model to a LaTeX report.", 40));
 			toolbar.add(latexButton);
 		}
 		if (GUITools.ICON_STABILITY_SMALL != null) {
 			JButton stabilityButton = new JButton(GUITools.ICON_STABILITY_SMALL);
 			// stabilityButton.addActionListener(this);
 			stabilityButton.setActionCommand(Command.STABILITY.toString());
+			stabilityButton.setToolTipText(GUITools.toHTML(
+					"Analyze the stability properties of the selected model.",
+					40));
 			toolbar.add(stabilityButton);
 		}
 		toolbar.addSeparator();
 		JButton helpButton = new JButton(GUITools.ICON_HELP_TINY);
 		helpButton.addActionListener(this);
 		helpButton.setActionCommand(Command.ONLINE_HELP.toString());
+		helpButton.setToolTipText(GUITools.toHTML("Open the online help.", 40));
 		toolbar.add(helpButton);
 		return toolbar;
 	}

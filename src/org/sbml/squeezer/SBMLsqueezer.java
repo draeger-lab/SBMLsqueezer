@@ -394,8 +394,12 @@ public class SBMLsqueezer implements LawListener {
 			// Do a lot of other stuff...
 			squeezer.checkForUpdate(false);
 			if (p.containsKey(CfgKeys.SBML_OUT_FILE))
-				squeezer.squeeze(p.get(CfgKeys.SBML_FILE).toString(), p.get(
-						CfgKeys.SBML_OUT_FILE).toString());
+				try {
+					squeezer.squeeze(p.get(CfgKeys.SBML_FILE).toString(), p.get(
+							CfgKeys.SBML_OUT_FILE).toString());
+				} catch (Throwable e) {
+					e.printStackTrace();
+				}
 		}
 	}
 
@@ -760,43 +764,40 @@ public class SBMLsqueezer implements LawListener {
 	 *            The absolute path to a file where the result should be stored.
 	 *            This must be a file that ends with .xml or .sbml (case
 	 *            insensitive).
+	 * @throws Throwable
 	 */
-	public void squeeze(Object sbmlSource, String outfile) {
+	public void squeeze(Object sbmlSource, String outfile) throws Throwable {
 		File outFile = outfile != null ? new File(outfile) : null;
 		readSBMLSource(sbmlSource);
-		if (!sbmlIo.getListOfModels().isEmpty())
-			try {
-				long time = System.currentTimeMillis();
-				System.out.print("Generating kinetic equations...");
-				KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
-						.getSelectedModel(), settings);
-				if (klg.getFastReactions().size() > 0) {
-					System.err.println("Model "
-							+ sbmlIo.getSelectedModel().getId() + " contains "
-							+ klg.getFastReactions().size()
-							+ " fast reaction. This feature is currently"
-							+ "ignored by SBMLsqueezer.");
-				}
-				klg.storeKineticLaws(this);
+		if (!sbmlIo.getListOfModels().isEmpty()) {
+			long time = System.currentTimeMillis();
+			System.out.print("Generating kinetic equations...");
+			KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
+					.getSelectedModel(), settings);
+			if (klg.getFastReactions().size() > 0) {
+				System.err.println("Model " + sbmlIo.getSelectedModel().getId()
+						+ " contains " + klg.getFastReactions().size()
+						+ " fast reaction. This feature is currently"
+						+ "ignored by SBMLsqueezer.");
+			}
+			klg.storeKineticLaws(this);
+			System.out.println(" done in "
+					+ (System.currentTimeMillis() - time) + " ms");
+			time = System.currentTimeMillis();
+			System.out.print("Saving changes and writing SBML file... ");
+			sbmlIo.saveChanges();
+			if (outFile != null
+					&& SBFileFilter.SBML_FILE_FILTER.accept(outFile)) {
+				sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
 				System.out.println(" done in "
 						+ (System.currentTimeMillis() - time) + " ms");
-				time = System.currentTimeMillis();
-				System.out.print("Saving changes and writing SBML file... ");
-				sbmlIo.saveChanges();
-				if (outFile != null
-						&& SBFileFilter.SBML_FILE_FILTER.accept(outFile)) {
-					sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
-					System.out.println(" done in "
-							+ (System.currentTimeMillis() - time) + " ms");
-					if (((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
-							.booleanValue())
-						for (SBMLException exc : sbmlIo.getWriteWarnings())
-							System.err.println(exc.getMessage());
-				} else
-					System.err.println("Could not write output to SBML.");
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
+				if (((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+						.booleanValue())
+					for (SBMLException exc : sbmlIo.getWriteWarnings())
+						System.err.println(exc.getMessage());
+			} else
+				System.err.println("Could not write output to SBML.");
+		} else System.err.println("File contains no model. Nothing to do.");
 	}
 
 	/**
