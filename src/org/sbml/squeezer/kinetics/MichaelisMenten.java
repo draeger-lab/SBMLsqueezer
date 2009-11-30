@@ -32,7 +32,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 1, 2007
  */
 public class MichaelisMenten extends GeneralizedMassAction implements
@@ -71,12 +72,19 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		if ((reaction.getNumReactants() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1d))
 			throw new RateLawNotApplicableException(
-					"This rate law can only be applied to reactions with exactly one reactant.");
-		if (((reaction.getNumProducts() > 1) || (reaction.getProduct(0)
-				.getStoichiometry() != 1.0))
+					getClass().getSimpleName()
+							+ " cannot be applied to reaction "
+							+ reaction.getId()
+							+ " because the stoichiometry of the reactant species does not sum up to 1.0.");
+		if (((reaction.getNumProducts() != 1) || (reaction.getProduct(0)
+				.getStoichiometry() != 1d))
 				&& reaction.getReversible())
 			throw new RateLawNotApplicableException(
-					"This rate law can only be applied to reactions with exactly one product.");
+					"Reversible "
+							+ getClass().getSimpleName()
+							+ " cannot be applied to reaction "
+							+ reaction.getId()
+							+ " because the stoichiometry of the product species does not sum up to 1.0.");
 
 		setSBOTerm(269);
 		switch (numOfEnzymes) {

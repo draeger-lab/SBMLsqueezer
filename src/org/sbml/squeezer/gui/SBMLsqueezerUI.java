@@ -21,6 +21,7 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -183,9 +184,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				browser.removeHyperlinkListener(browser);
 				browser.addHyperlinkListener(new SystemBrowser());
 				browser.setBorder(BorderFactory.createEtchedBorder());
-				JOptionPane
-						.showMessageDialog(this, browser, "About SBMLsqueezer",
-								JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(this, browser,
+						"About SBMLsqueezer", JOptionPane.INFORMATION_MESSAGE);
 				done = true;
 			}
 		}
@@ -260,14 +260,18 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						JFileChooser.FILES_ONLY, filterText, filterTeX,
 						filterSBML);
 				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-					File out = chooser.getSelectedFile();
+					final File out = chooser.getSelectedFile();
 					if (out.getParentFile() != null)
 						settings.put(CfgKeys.SAVE_DIR, out.getParentFile()
 								.getAbsolutePath());
 					if (!out.exists()
 							|| GUITools.overwriteExistingFileDialog(this, out) == JOptionPane.YES_OPTION) {
 						if (filterSBML.accept(out))
-							writeSBML(out);
+							new Thread(new Runnable() {
+								public void run() {
+									writeSBML(out);
+								}
+							}).start();
 						else if (filterTeX.accept(out))
 							writeLaTeX(out);
 						else if (filterText.accept(out))
@@ -280,7 +284,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					tabbedPane.remove(tabbedPane.getSelectedComponent());
 				if (tabbedPane.getComponentCount() == 0)
 					setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-							Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
+							Command.SQUEEZE, Command.TO_LATEX,
+							Command.STABILITY);
 				break;
 			case ONLINE_HELP:
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
@@ -310,7 +315,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		if (e.getSource().equals(tabbedPane)) {
 			if (tabbedPane.getComponentCount() == 0)
 				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-						Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
+						Command.SQUEEZE, Command.TO_LATEX,
+						Command.OPEN_LAST_FILE, Command.STABILITY);
 			setSBMLsqueezerBackground();
 		}
 	}
@@ -395,7 +401,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.add(model.getId(), split);
 		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
 		setEnabled(true, Command.SAVE_FILE, Command.CLOSE_FILE,
-				Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
+				Command.SQUEEZE, Command.TO_LATEX, Command.OPEN_LAST_FILE,
+				Command.STABILITY);
 	}
 
 	/**
@@ -427,8 +434,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						+ "due to one or several errors. "
 						+ "Please use the SBML online validator "
 						+ "to check why this model is not correct.";
-				JOptionPane.showMessageDialog(parent, GUITools.toHTML(
-						message, 40), "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(parent, GUITools.toHTML(message,
+						40), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -570,7 +577,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 		if (GUITools.STABILITY_ICON_SMALL != null) {
 			JButton stabilityButton = new JButton(GUITools.STABILITY_ICON_SMALL);
-			//stabilityButton.addActionListener(this);
+			// stabilityButton.addActionListener(this);
 			stabilityButton.setActionCommand(Command.STABILITY.toString());
 			toolbar.add(stabilityButton);
 		}
@@ -636,8 +643,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 							Object item = menu.getItem(j);
 							if (item != null
 									&& item instanceof JMenu
-									&& ((JMenu) item).getText().equals(
-											"Last opened")) {
+									&& ((JMenu) item).getActionCommand()
+											.equals(Command.OPEN_LAST_FILE)) {
 								JMenu m = (JMenu) item;
 								m.removeAll();
 								JMenuItem mItem = new JMenuItem(file.getName());
@@ -650,14 +657,15 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					}
 					settings.put(CfgKeys.SBML_FILE, path);
 				}
-				path = path.substring(0, path.lastIndexOf('/'));
-				if (!path.equals(settings.get(CfgKeys.OPEN_DIR).toString()))
-					settings.put(CfgKeys.OPEN_DIR, path);
+				if (!file.getParentFile().equals(
+						settings.get(CfgKeys.OPEN_DIR).toString()))
+					settings.put(CfgKeys.OPEN_DIR, file.getParentFile());
 			}
 		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getSimpleName(),
 					JOptionPane.ERROR_MESSAGE);
+			exc.printStackTrace();
 		}
 	}
 
@@ -679,6 +687,22 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			JMenu menu = getJMenuBar().getMenu(i);
 			for (j = 0; j < menu.getItemCount(); j++) {
 				JMenuItem item = menu.getItem(j);
+				if (item instanceof JMenu) {
+					JMenu m = (JMenu) item;
+					boolean containsCommand = false;
+					for (int k = 0; k < m.getItemCount(); k++) {
+						JMenuItem it = m.getItem(k);
+						if (it != null
+								&& it.getActionCommand() != null
+								&& setOfCommands
+										.contains(it.getActionCommand())) {
+							it.setEnabled(state);
+							containsCommand = true;
+						}
+					}
+					if (containsCommand)
+						m.setEnabled(state);
+				}
 				if (item != null && item.getActionCommand() != null
 						&& setOfCommands.contains(item.getActionCommand()))
 					item.setEnabled(state);
@@ -719,9 +743,19 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * 
 	 * @param out
 	 */
-	private void writeLaTeX(File out) {
+	private void writeLaTeX(final File out) {
 		try {
 			LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), out, settings);
+			new Thread(new Runnable() {
+
+				public void run() {
+					try {
+						Desktop.getDesktop().open(out);
+					} catch (IOException e) {
+						// e.printStackTrace();
+					}
+				}
+			}).start();
 		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
 					.getClass().getName(), JOptionPane.WARNING_MESSAGE);
@@ -734,7 +768,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * 
 	 * @param out
 	 */
-	private void writeSBML(File out) {
+	private void writeSBML(final File out) {
 		try {
 			sbmlIO.writeSelectedModelToSBML(out.getAbsolutePath());
 		} catch (SBMLException exc) {
@@ -755,9 +789,20 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * 
 	 * @param out
 	 */
-	private void writeText(File out) {
+	private void writeText(final File out) {
 		try {
 			new TextExport(sbmlIO.getSelectedModel(), out, settings);
+			new Thread(new Runnable() {
+
+				public void run() {
+					try {
+						Desktop.getDesktop().edit(out);
+					} catch (IOException e) {
+						// e.printStackTrace();
+					}
+				}
+			}).start();
+
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
 					.getClass().getName(), JOptionPane.WARNING_MESSAGE);

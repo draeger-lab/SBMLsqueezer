@@ -131,8 +131,8 @@ public class TextExport implements DisplaySBML {
 		int i;
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(file.getPath())));
-		append("SBMLsqueezer generated and transfered values", out);
-		append("--------------------------------------------", out);
+		append("SBMLsqueezer generated model report file", out);
+		append("----------------------------------------", out);
 		for (i = 0; i < model.getNumReactions(); i++) {
 			Reaction r = model.getReaction(i);
 			out.append("Reaction: ");

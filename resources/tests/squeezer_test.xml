@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created by SBMLsqueezer version 1.2.2 on 2009-09-13 19:46 with libSBML version 4.0.0. -->
+<!-- Created by SBMLsqueezer version 1.2.7 on 2009-11-25 19:04 with libSBML version 4.0.0. -->
 <sbml xmlns="http://www.sbml.org/sbml/level2" metaid="metaid_0000001" level="2" version="1">
   <model metaid="metaid_0000002" id="Src_MitoticActivation" name="Fuss2006_MitoticActivation">
     <notes>
