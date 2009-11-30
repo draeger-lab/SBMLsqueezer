@@ -379,9 +379,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 										+ numOfWarnings
 										+ "</td></tr></table></htlm>");
 						numberOfWarnings
-								.setToolTipText("<html>The number of reactions an unlikely number "
-										+ "of reactants<br>"
-										+ "These are also highlighted in red in the table.</html>");
+								.setToolTipText(GUITools
+										.toHTML(
+												"The number of reactions an unlikely number of reactants. These are also highlighted in red in the table.",
+												40));
 						reactionsPanel
 								.add(numberOfWarnings, BorderLayout.NORTH);
 

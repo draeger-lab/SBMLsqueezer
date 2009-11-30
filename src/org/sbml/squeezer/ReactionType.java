@@ -25,11 +25,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.squeezer.gui.GUITools;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -480,11 +483,10 @@ public class ReactionType {
 						&& !(SBO.isEmptySet(product.getSBOTerm())))
 					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION);
 			}
-			if (!whichkin
-					.equals(settings.get(CfgKeys.KINETICS_GENE_REGULATION))
-					&& (enzymes.size() > 0 || enzymeCatalyzed
-							&& (stoichiometryRight == 1d || !(reaction
-									.getReversible() || reversibility))))
+			if (!whichkin.toString().equals(
+					settings.get(CfgKeys.KINETICS_GENE_REGULATION).toString())
+					&& ((enzymes.size() > 0 || enzymeCatalyzed) && (stoichiometryRight == 1d || !(reaction
+							.getReversible() || reversibility))))
 				whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE);
 		} else if (biUni && enzymeCatalyzed) {
 			whichkin = settings.get(CfgKeys.KINETICS_BI_UNI_TYPE);
