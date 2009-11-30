@@ -78,7 +78,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		if ((reaction.getNumReactants() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1d))
 			throw new RateLawNotApplicableException(
-					"This rate law can only be applied to reactions with exactly one substrate.");
+					"This rate law can only be applied to reactions with exactly one substrate species.");
 		if (modTActi.size() > 0)
 			modActi.addAll(modTActi);
 		if (modTInhib.size() > 0)

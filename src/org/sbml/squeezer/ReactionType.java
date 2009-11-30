@@ -483,8 +483,8 @@ public class ReactionType {
 			if (!whichkin
 					.equals(settings.get(CfgKeys.KINETICS_GENE_REGULATION))
 					&& (enzymes.size() > 0 || enzymeCatalyzed
-							&& (stoichiometryRight == 1d || (!reaction
-									.getReversible() && !reversibility))))
+							&& (stoichiometryRight == 1d || !(reaction
+									.getReversible() || reversibility))))
 				whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE);
 		} else if (biUni && enzymeCatalyzed) {
 			whichkin = settings.get(CfgKeys.KINETICS_BI_UNI_TYPE);

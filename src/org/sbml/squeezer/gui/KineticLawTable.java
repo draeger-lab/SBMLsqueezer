@@ -91,8 +91,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		this.reversibility = ((Boolean) klg.getSettings().get(
 				CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
 		getModel().addTableModelListener(this);
-		// setRowHeightAppropriately();
 		setColumnWidthAppropriately();
+		setRowHeightAppropriately();
 		int maxNumReactnats = ((Integer) (klg.getSettings()
 				.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
 		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer(
@@ -106,6 +106,10 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		setEnabled(true);
 		addMouseListener(this);
 		editing = false;
+	}
+
+	private void setRowHeightAppropriately() {
+		setRowHeight(getFont().getSize() * 2);
 	}
 
 	/*

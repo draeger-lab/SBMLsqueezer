@@ -21,6 +21,7 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -141,7 +142,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			for (Object key : panel.getProperties().keySet())
 				settings.put(key, panel.getProperties().get(key));
 			try {
-				File f = new File(panel.getTeXFile());
+				final File f = new File(panel.getTeXFile());
 				if (f.exists() && f.isDirectory())
 					JOptionPane
 							.showMessageDialog(
@@ -165,6 +166,16 @@ public class KineticLawSelectionDialog extends JDialog implements
 						buffer.write(exporter.toLaTeX((Reaction) sbase)
 								.toString());
 					buffer.close();
+					new Thread(new Runnable() {
+
+						public void run() {
+							try {
+								Desktop.getDesktop().open(f);
+							} catch (IOException e) {
+								// e.printStackTrace();
+							}
+						}
+					}).start();
 				}
 				dispose();
 			} catch (IOException e1) {
@@ -298,9 +309,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 			} else if (text.equals("Generate")) {
 				if (sbmlIO != null)
 					try {
-						for (Object key : settingsPanel.getSettings().keySet())
-							settings.put(key, settingsPanel.getSettings().get(
-									key));
+						Properties props = settingsPanel.getSettings();
+						for (Object key : props.keySet())
+							settings.put(key, props.get(key));
 						Model model = sbmlIO.getSelectedModel();
 						klg = new KineticLawGenerator(model, settings);
 						if (klg.getFastReactions().size() > 0) {
@@ -403,7 +414,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						BorderLayout.CENTER);
 				setResizable(false);
 				showSettingsPanel();
-			} else if (text.equals("Export")) {
+			} else if (text.equals("Export changes")) {
 				/*
 				 * new Thread(new Runnable() { public void run() {//
 				 */
@@ -571,25 +582,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * or TeX file.
 	 */
 	private void exportKineticEquations() {
-		if (sbmlIO != null && klg != null) {
-			if (!KineticsAndParametersStoredInSBML)
-				try {
-					klg.storeKineticLaws(this);
-					sbmlIO.saveChanges();
-					SBMLsqueezerUI
-							.checkForSBMLErrors(this,
-									sbmlIO.getSelectedModel(), sbmlIO
-											.getWriteWarnings(),
-									((Boolean) settings
-											.get(CfgKeys.SHOW_SBML_WARNINGS))
-											.booleanValue());
-					KineticsAndParametersStoredInSBML = true;
-				} catch (SBMLException exc) {
-					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-							.getMessage(), 40), exc.getClass()
-							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
-					exc.printStackTrace();
-				}
+		if (klg != null) {
 			SBFileFilter ff1 = SBFileFilter.TeX_FILE_FILTER;
 			SBFileFilter ff2 = SBFileFilter.TEXT_FILE_FILTER;
 			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
@@ -597,12 +590,34 @@ public class KineticLawSelectionDialog extends JDialog implements
 					JFileChooser.FILES_ONLY, ff1, ff2);
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 				try {
-					File f = chooser.getSelectedFile();
-					if (ff1.accept(f))
-						LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), f,
-								settings);
-					if (ff2.accept(f))
-						new TextExport(sbmlIO.getSelectedModel(), f, settings);
+					final File f = chooser.getSelectedFile();
+					if (ff1.accept(f)) {
+						LaTeXExport.writeLaTeX(klg.getMiniModel(), f, settings);
+						settings.put(CfgKeys.LATEX_DIR, f.getParentFile());
+						new Thread(new Runnable() {
+							public void run() {
+								try {
+									Desktop.getDesktop().open(f);
+								} catch (IOException e) {
+									// e.printStackTrace();
+								}
+							}
+						}).start();
+					}
+					if (ff2.accept(f)) {
+						new TextExport(klg.getMiniModel(), f, settings);
+						settings.put(CfgKeys.SAVE_DIR, f.getParentFile());
+						new Thread(new Runnable() {
+
+							public void run() {
+								try {
+									Desktop.getDesktop().edit(f);
+								} catch (IOException e) {
+									// e.printStackTrace();
+								}
+							}
+						}).start();
+					}
 				} catch (IOException exc) {
 					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 							.getMessage(), 40), exc.getClass()
@@ -657,11 +672,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 			jButtonReactionsFrameSave.setEnabled(true);
 			jButtonReactionsFrameSave.setBounds(35, 285, 100, 25);
 			jButtonReactionsFrameSave
-					.setToolTipText("<html>Transfers the kinetics and parameters "
-							+ "to CellDesigner and<br>"
-							+ "allowes to save the generated differential equations as<br>"
-							+ "*.txt or *.tex files.</html>");
-			jButtonReactionsFrameSave.setText("Export");
+					.setToolTipText(GUITools
+							.toHTML(
+									"Allowes yout to save the generated differential equations as *.txt or *.tex files. Note that this export only contains those reactions together with referenced, species, compartments, compartment- and species-types, units, and parameters for which new kinetic equations have been generated. If you wish to obtain a complete model report, please choose the \"save as\" function in the main menu.",
+									40));
+			jButtonReactionsFrameSave.setText("Export changes");
 			jButtonReactionsFrameSave.addActionListener(this);
 			leftPanel.add(jButtonReactionsFrameSave);
 			JButton back = new JButton("Back");

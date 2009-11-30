@@ -116,13 +116,15 @@ public class SBMLsqueezer implements LawListener {
 	 */
 	private final static String userConfigFile = System
 			.getProperty("user.home")
-			+ System.getProperty("file.separator")
-			+ ".SBMLsqueezer/SBMLsqueezer.cfg";
+			+ File.separatorChar
+			+ ".SBMLsqueezer"
+			+ File.separatorChar
+			+ "SBMLsqueezer.cfg";
 
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
-	private static final String versionNumber = "1.2.6";
+	private static final String versionNumber = "1.2.7";
 
 	/**
 	 * Load all available kinetic equations and the user's settings from the
@@ -147,7 +149,7 @@ public class SBMLsqueezer implements LawListener {
 				false, true, BasicKineticLaw.class);
 		if (classes == null || classes.length == 0) {
 			HashSet<Class<?>> set = new HashSet<Class<?>>();
-			String jarPath = "plugin/";
+			String jarPath = "plugin" + File.separatorChar;
 			boolean tryDir = true;
 			if (tryDir) {
 				File f = new File(jarPath);
@@ -412,7 +414,14 @@ public class SBMLsqueezer implements LawListener {
 				for (Object key : settings.keySet()) {
 					bw.append(key.toString());
 					bw.append('=');
-					bw.append(settings.get(key).toString());
+					String value = settings.get(key).toString();
+					char c;
+					for (int i = 0; i < value.length(); i++) {
+						c = value.charAt(i);
+						if (c == '\\')
+							bw.append('\\');
+						bw.append(c);
+					}
 					bw.newLine();
 				}
 				bw.close();
@@ -543,11 +552,13 @@ public class SBMLsqueezer implements LawListener {
 		try {
 			StringBuilder path = new StringBuilder(System
 					.getProperty("user.home"));
-			path.append("/.SBMLsqueezer");
+			path.append(File.separatorChar);
+			path.append(".SBMLsqueezer");
 			File f = new File(path.toString());
 			if (!f.exists()) {
 				f.mkdir();
-				path.append("/SBMLsqueezer.cfg");
+				path.append(File.separatorChar);
+				path.append("SBMLsqueezer.cfg");
 				f = new File(path.toString());
 				if (!f.exists())
 					f.createNewFile();

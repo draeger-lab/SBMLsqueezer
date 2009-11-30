@@ -29,7 +29,8 @@ import javax.swing.filechooser.FileFilter;
  * @since 1.0
  * @date 2007-08-03
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  */
 public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 
@@ -86,7 +87,7 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 */
 	// @Override
 	public boolean accept(File f) {
-		if (f.isDirectory() || (type == TEXT_FILES && isTextFile(f))
+		if ((f.isDirectory() || (type == TEXT_FILES && isTextFile(f)))
 				|| (type == TeX_FILES && isTeXFile(f))
 				|| (type == SBML_FILES && isSBMLFile(f)))
 			return true;

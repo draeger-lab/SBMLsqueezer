@@ -895,37 +895,40 @@ public class KineticLawGenerator {
 		if (((Boolean) settings
 				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 				.booleanValue())
-		for (int j = modelOrig.getNumUnitDefinitions() - 1; j >= 0; j--) {
-			UnitDefinition udef = modelOrig.getUnitDefinition(j);
-			boolean isNeeded = Unit.isBuiltIn(udef.getId(), udef.getLevel());
-			int i;
-			for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
-				Compartment c = modelOrig.getCompartment(i);
-				if (c.isSetUnits() && c.getUnits().equals(udef.getId()))
-					isNeeded = true;
+			for (int j = modelOrig.getNumUnitDefinitions() - 1; j >= 0; j--) {
+				UnitDefinition udef = modelOrig.getUnitDefinition(j);
+				boolean isNeeded = Unit
+						.isBuiltIn(udef.getId(), udef.getLevel());
+				int i;
+				for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
+					Compartment c = modelOrig.getCompartment(i);
+					if (c.isSetUnits() && c.getUnits().equals(udef.getId()))
+						isNeeded = true;
+				}
+				for (i = 0; i < modelOrig.getNumSpecies() && !isNeeded; i++) {
+					Species s = modelOrig.getSpecies(i);
+					if (s.isSetSubstanceUnits()
+							&& s.getSubstanceUnits().equals(udef.getId()))
+						isNeeded = true;
+				}
+				for (i = 0; i < modelOrig.getNumParameters() && !isNeeded; i++) {
+					Parameter p = modelOrig.getParameter(i);
+					if (p.isSetUnits() && p.getUnits().equals(udef.getId()))
+						isNeeded = true;
+				}
+				for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
+					Reaction r = modelOrig.getReaction(i);
+					if (r.isSetKineticLaw())
+						for (Parameter p : r.getKineticLaw()
+								.getListOfParameters()) {
+							if (p.isSetUnits()
+									&& p.getUnits().equals(udef.getId()))
+								isNeeded = true;
+						}
+				}
+				if (!isNeeded)
+					modelOrig.removeUnitDefinition(udef);
 			}
-			for (i = 0; i < modelOrig.getNumSpecies() && !isNeeded; i++) {
-				Species s = modelOrig.getSpecies(i);
-				if (s.isSetSubstanceUnits()
-						&& s.getSubstanceUnits().equals(udef.getId()))
-					isNeeded = true;
-			}
-			for (i = 0; i < modelOrig.getNumParameters() && !isNeeded; i++) {
-				Parameter p = modelOrig.getParameter(i);
-				if (p.isSetUnits() && p.getUnits().equals(udef.getId()))
-					isNeeded = true;
-			}
-			for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
-				Reaction r = modelOrig.getReaction(i);
-				if (r.isSetKineticLaw())
-					for (Parameter p : r.getKineticLaw().getListOfParameters()) {
-						if (p.isSetUnits() && p.getUnits().equals(udef.getId()))
-							isNeeded = true;
-					}
-			}
-			if (!isNeeded)
-				modelOrig.removeUnitDefinition(udef);
-		}
 	}
 
 	/**
@@ -949,5 +952,16 @@ public class KineticLawGenerator {
 					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
 			}
 		}
+	}
+
+	/**
+	 * Returns the copy of the model that contains only those reactions together
+	 * with all required species, compartments, species- and compartment types,
+	 * and units for which kinetic equations are to be created.
+	 * 
+	 * @return
+	 */
+	public Model getMiniModel() {
+		return miniModel;
 	}
 }
