@@ -69,7 +69,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		messagePanel = new KineticLawSelectionPanel(klg, reaction);
 
 		pane = new JOptionPane(messagePanel, JOptionPane.QUESTION_MESSAGE,
-				JOptionPane.OK_CANCEL_OPTION, GUITools.LEMON_ICON_SMALL, null,
+				JOptionPane.OK_CANCEL_OPTION, GUITools.ICON_LEMON_SMALL, null,
 				null);
 		pane.setInitialValue(null);
 		Window owner = dialog.getOwner();

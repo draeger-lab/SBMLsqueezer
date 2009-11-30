@@ -265,7 +265,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						possibleLaws, klg.getSettings(), selected);
 				final JOptionPane pane = new JOptionPane(klsp,
 						JOptionPane.QUESTION_MESSAGE,
-						JOptionPane.OK_CANCEL_OPTION, GUITools.LEMON_ICON_SMALL);
+						JOptionPane.OK_CANCEL_OPTION, GUITools.ICON_LEMON_SMALL);
 				pane.selectInitialValue();
 				final JDialog dialog = new JDialog(
 						(Window) getTopLevelAncestor(),

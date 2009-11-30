@@ -183,7 +183,7 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 		if (!browse) {
 			JPanel panel = new JPanel(new BorderLayout());
 			JPanel p = new JPanel(new BorderLayout());
-			p.add(new JLabel(GUITools.LATEX_ICON_SMALL), BorderLayout.SOUTH);
+			p.add(new JLabel(GUITools.ICON_LATEX_SMALL), BorderLayout.SOUTH);
 			panel.add(p, BorderLayout.EAST);
 			lh.add(panel, 3, row, 2, 4, 1, 1);
 		}

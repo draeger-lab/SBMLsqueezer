@@ -131,16 +131,9 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 				BorderLayout.CENTER);
 		JToolBar toolbar = new JToolBar();
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/back.png"));
-			// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-			backButton = new JButton(new ImageIcon(image));
-			backButton.setToolTipText("Last Page");
-		} catch (IOException e) {
-			backButton = new JButton("Back");
-			e.printStackTrace();
-		}
+		// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+		backButton = new JButton(GUITools.ICON_LEFT_ARROW);
+		backButton.setToolTipText("Last Page");
 		backButton.setName("back");
 		backButton.addActionListener(this);
 		backButton.setEnabled(false);
