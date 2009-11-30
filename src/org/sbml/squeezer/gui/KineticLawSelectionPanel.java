@@ -478,8 +478,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				try {
 					updateView();
 				} catch (RateLawNotApplicableException e) {
-					JOptionPane.showMessageDialog(this, e.getClass()
-							.getName(), GUITools.toHTML(e.getMessage(), 40),
+					JOptionPane.showMessageDialog(this, e.getClass().getSimpleName(), GUITools.toHTML(e.getMessage(), 40),
 							JOptionPane.WARNING_MESSAGE);
 					e.printStackTrace();
 				}

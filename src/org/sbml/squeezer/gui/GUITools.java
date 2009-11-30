@@ -51,39 +51,64 @@ public class GUITools {
 	/**
 	 * 
 	 */
-	public static Icon DOWN_ARROW;
+	public static Icon ICON_DOWN_ARROW = null;
 	/**
 	 * 
 	 */
-	public static Icon LATEX_ICON_SMALL;
+	public static Icon ICON_LATEX_SMALL = null;
 	/**
 	 * 
 	 */
-	public static Icon LATEX_ICON_TINY;
+	public static Icon ICON_LATEX_TINY = null;
 	/**
 	 * 
 	 */
-	public static Image LEMON_ICON;
+	public static Image ICON_LEMON = null;
 	/**
 	 * 
 	 */
-	public static Icon LEMON_ICON_SMALL;
+	public static Icon ICON_LEMON_SMALL = null;
 	/**
 	 * 
 	 */
-	public static Icon LEMON_ICON_TINY;
+	public static Icon ICON_LEMON_TINY = null;
 	/**
 	 * 
 	 */
-	public static Icon LOGO_SMALL;
+	public static Icon ICON_LOGO_SMALL = null;
 	/**
 	 * 
 	 */
-	public static Icon RIGHT_ARROW;
+	public static Icon ICON_RIGHT_ARROW = null;
 	/**
 	 * 
 	 */
-	public static Icon STABILITY_ICON_SMALL;
+	public static Icon ICON_STABILITY_SMALL = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_HELP_TINY = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_INFO_TINY = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_TICK_TINY = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_LEFT_ARROW = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_LEFT_ARROW_TINY = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_DELETE = null;
+	
 	/**
 	 * Generated serial version id.
 	 */
@@ -91,42 +116,44 @@ public class GUITools {
 
 	static {
 		try {
-			LEMON_ICON_TINY = new ImageIcon(ImageIO.read(Resource.class
+			ICON_LEMON_TINY = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/Lemon_tiny.png")));
-			LATEX_ICON_TINY = new ImageIcon(ImageIO.read(Resource.class
+			ICON_LATEX_TINY = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/SBML2LaTeX_vertical_tiny.png")));
-			LATEX_ICON_SMALL = new ImageIcon(ImageIO.read(Resource.class
+			ICON_LATEX_SMALL = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/SBML2LaTeX_vertical_small.png")));
-			LEMON_ICON_SMALL = new ImageIcon(ImageIO.read(Resource.class
+			ICON_LEMON_SMALL = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/Lemon_small.png")));
-			STABILITY_ICON_SMALL = new ImageIcon(ImageIO.read(Resource.class
+			ICON_STABILITY_SMALL = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/Stability_small.png")));
 			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
 			Image image = ImageIO.read(Resource.class
 					.getResource("img/rightarrow.png"));
-			RIGHT_ARROW = new ImageIcon(image.getScaledInstance(10, 10,
+			ICON_RIGHT_ARROW = new ImageIcon(image.getScaledInstance(10, 10,
 					Image.SCALE_SMOOTH));
 			image = ImageIO.read(Resource.class
 					.getResource("img/downarrow.png"));
-			DOWN_ARROW = new ImageIcon(image.getScaledInstance(10, 10,
+			ICON_DOWN_ARROW = new ImageIcon(image.getScaledInstance(10, 10,
 					Image.SCALE_SMOOTH));
 			image = ImageIO.read(Resource.class
 					.getResource("img/logo_small.png")); // title_small.jpg
 			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
-			LOGO_SMALL = new ImageIcon(image);
-			LEMON_ICON = ImageIO.read(Resource.class
+			ICON_LOGO_SMALL = new ImageIcon(image);
+			ICON_LEMON = ImageIO.read(Resource.class
 					.getResource("img/icon.png"));
-			
+			ICON_HELP_TINY = new ImageIcon(Resource.class
+					.getResource("img/help_16.png"));
+			ICON_INFO_TINY = new ImageIcon(Resource.class
+					.getResource("img/info_16.png"));
+			ICON_TICK_TINY = new ImageIcon(Resource.class
+					.getResource("img/tick_16.png"));
+			ICON_LEFT_ARROW = new ImageIcon(Resource.class
+					.getResource("img/back.png"));
+			image = ImageIO.read(Resource.class.getResource("img/back.png"))
+					.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+			ICON_LEFT_ARROW_TINY = new ImageIcon(image);
+			ICON_DELETE = new ImageIcon(Resource.class.getResource("img/delete_16.png"));
 		} catch (IOException e) {
-			LATEX_ICON_TINY = null;
-			LATEX_ICON_SMALL = null;
-			LEMON_ICON_TINY = null;
-			LEMON_ICON_SMALL = null;
-			STABILITY_ICON_SMALL = null;
-			RIGHT_ARROW = null;
-			DOWN_ARROW = null;
-			LOGO_SMALL = null;
-			LEMON_ICON = null;
 			JOptionPane.showMessageDialog(null, toHTML(e.getMessage(), 40), e
 					.getClass().getName(), JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();

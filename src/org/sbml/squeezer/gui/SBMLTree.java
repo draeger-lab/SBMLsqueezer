@@ -81,11 +81,11 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		setOfActionListeners = new HashSet<ActionListener>();
 		popup = new JPopupMenu("SBMLsqueezer");
 		squeezeItem = new JMenuItem("Squeeze kinetic law",
-				GUITools.LEMON_ICON_TINY);
+				GUITools.ICON_LEMON_TINY);
 		squeezeItem.addActionListener(this);
 		squeezeItem.setActionCommand(SBMLsqueezerUI.Command.SQUEEZE.toString());
 		popup.add(squeezeItem);
-		latexItem = new JMenuItem("Export to LaTeX", GUITools.LATEX_ICON_TINY);
+		latexItem = new JMenuItem("Export to LaTeX", GUITools.ICON_LATEX_TINY);
 		latexItem.addActionListener(this);
 		latexItem.setActionCommand(SBMLsqueezerUI.Command.TO_LATEX.toString());
 		popup.add(latexItem);

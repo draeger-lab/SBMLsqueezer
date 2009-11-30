@@ -500,14 +500,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				InputEvent.CTRL_DOWN_MASK));
 		squeezeItem.addActionListener(this);
 		squeezeItem.setActionCommand(Command.SQUEEZE.toString());
-		squeezeItem.setIcon(GUITools.LEMON_ICON_TINY);
+		squeezeItem.setIcon(GUITools.ICON_LEMON_TINY);
 		JMenuItem latexItem = new JMenuItem("Export to LaTeX");
 		latexItem.setAccelerator(KeyStroke.getKeyStroke('E',
 				InputEvent.CTRL_DOWN_MASK));
-		latexItem.setIcon(GUITools.LATEX_ICON_TINY);
+		latexItem.setIcon(GUITools.ICON_LATEX_TINY);
 		latexItem.addActionListener(this);
 		latexItem.setActionCommand(Command.TO_LATEX.toString());
-		JMenuItem preferencesItem = new JMenuItem("Preferences");
+		JMenuItem preferencesItem = new JMenuItem("Preferences", GUITools.ICON_TICK_TINY);
 		preferencesItem.setActionCommand(Command.SET_PREFERENCES.toString());
 		preferencesItem.addActionListener(this);
 		preferencesItem.setMnemonic(preferencesItem.getText().charAt(0));
@@ -520,10 +520,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		 */
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic(helpMenu.getText().charAt(0));
-		JMenuItem about = new JMenuItem("About");
+		JMenuItem about = new JMenuItem("About", GUITools.ICON_INFO_TINY);
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
 		about.addActionListener(this);
-		JMenuItem help = new JMenuItem("Online help");
+		JMenuItem help = new JMenuItem("Online help", GUITools.ICON_HELP_TINY);
 		help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		help.addActionListener(this);
 		help.setActionCommand(Command.ONLINE_HELP.toString());
@@ -563,26 +563,26 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		closeButton.addActionListener(this);
 		toolbar.add(closeButton);
 		toolbar.addSeparator();
-		if (GUITools.LEMON_ICON_TINY != null) {
-			JButton squeezeButton = new JButton(GUITools.LEMON_ICON_TINY);
+		if (GUITools.ICON_LEMON_TINY != null) {
+			JButton squeezeButton = new JButton(GUITools.ICON_LEMON_TINY);
 			squeezeButton.setActionCommand(Command.SQUEEZE.toString());
 			squeezeButton.addActionListener(this);
 			toolbar.add(squeezeButton);
 		}
-		if (GUITools.LATEX_ICON_TINY != null) {
-			JButton latexButton = new JButton(GUITools.LATEX_ICON_TINY);
+		if (GUITools.ICON_LATEX_TINY != null) {
+			JButton latexButton = new JButton(GUITools.ICON_LATEX_TINY);
 			latexButton.addActionListener(this);
 			latexButton.setActionCommand(Command.TO_LATEX.toString());
 			toolbar.add(latexButton);
 		}
-		if (GUITools.STABILITY_ICON_SMALL != null) {
-			JButton stabilityButton = new JButton(GUITools.STABILITY_ICON_SMALL);
+		if (GUITools.ICON_STABILITY_SMALL != null) {
+			JButton stabilityButton = new JButton(GUITools.ICON_STABILITY_SMALL);
 			// stabilityButton.addActionListener(this);
 			stabilityButton.setActionCommand(Command.STABILITY.toString());
 			toolbar.add(stabilityButton);
 		}
 		toolbar.addSeparator();
-		JButton helpButton = new JButton("?");
+		JButton helpButton = new JButton(GUITools.ICON_HELP_TINY);
 		helpButton.addActionListener(this);
 		helpButton.setActionCommand(Command.ONLINE_HELP.toString());
 		toolbar.add(helpButton);
@@ -599,7 +599,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(createToolBar(), BorderLayout.NORTH);
 		colorDefault = getContentPane().getBackground();
-		Icon icon = GUITools.LOGO_SMALL;
+		Icon icon = GUITools.ICON_LOGO_SMALL;
 		logo = new JLabel(GUITools.toHTML("<br><br><br><br><br>Version: "
 				+ SBMLsqueezer.getVersionNumber()), icon, JLabel.CENTER);
 		logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
@@ -618,7 +618,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.addChangeListener(sbmlIO);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSBMLsqueezerBackground();
-		setIconImage(GUITools.LEMON_ICON);
+		setIconImage(GUITools.ICON_LEMON);
 	}
 
 	/**
