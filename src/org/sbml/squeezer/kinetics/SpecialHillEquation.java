@@ -29,16 +29,15 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates an equation based on a generalized Hill function as
- * defined in the papers "Generalized Hill Function Method for Modeling
- * Molecular Processes" and "In silico cell. I. Hierarchical approach and
- * generalized hill functions in modeling enzymatic reactions and gene
- * expression regulation." of Likhoshvai, V. A. & Ratushny, A. V.
+ * This class creates Hill equation as
+ * defined in the phdthesis "Modeling Non-Linear Dynamic Phenomena in Biochemical Networks" of Nicole Radde
+ * and the paper "Modeling Non-Linear Dynamic Phenomena in Biochemical Networks" 
+ * of Nicole Radde and Lars Kaderali.
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
  * 
  */
-public class GeneralizedHillFunction extends BasicKineticLaw implements
+public class SpecialHillEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
@@ -46,7 +45,7 @@ public class GeneralizedHillFunction extends BasicKineticLaw implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public GeneralizedHillFunction(Reaction parentReaction,
+	public SpecialHillEquation(Reaction parentReaction,
 			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
@@ -75,7 +74,7 @@ public class GeneralizedHillFunction extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Generalized Hill Function";
+		return "A special Hill-Equation";
 	}
 
 	/**
