@@ -445,8 +445,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	Parameter parameterGasConstant() {
 		Parameter R = createOrGetGlobalParameter("R");
-		if (!R.isSetValue())
-			R.setValue(8.31447215);
+		R.setValue(8.31447215);
 		if (!R.isSetName())
 			R.setName("Ideal gas constant");
 		if (!R.isSetUnits())
@@ -907,10 +906,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	Parameter parameterTemperature() {
 		Parameter T = createOrGetGlobalParameter("T");
+		T.setValue(298.15);
 		if (!T.isSetSBOTerm())
 			T.setSBOTerm(147);
-		if (!T.isSetValue())
-			T.setValue(298.15);
 		if (!T.isSetUnits())
 			T.setUnits(Unit.Kind.KELVIN);
 		if (!T.isSetName())
