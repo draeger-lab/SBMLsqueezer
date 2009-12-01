@@ -248,8 +248,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				break;
 			case OPEN_LAST_FILE:
 				File f = new File(settings.get(CfgKeys.SBML_FILE).toString());
-				if (f.exists() && f.isFile())
+				if (f.exists() && f.isFile()) {
 					readModel(f);
+					setEnabled(false, Command.OPEN_LAST_FILE);
+				}
 				break;
 			case SAVE_FILE:
 				SBFileFilter filterText = SBFileFilter.TEXT_FILE_FILTER;
@@ -313,10 +315,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(tabbedPane)) {
-			if (tabbedPane.getComponentCount() == 0)
+			if (tabbedPane.getComponentCount() == 0) {
 				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-						Command.SQUEEZE, Command.TO_LATEX,
-						Command.OPEN_LAST_FILE, Command.STABILITY);
+						Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
+				if (settings.get(CfgKeys.SBML_FILE).toString().length() > 0)
+					setEnabled(true, Command.OPEN_LAST_FILE);
+			}
 			setSBMLsqueezerBackground();
 		}
 	}
@@ -401,8 +405,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.add(model.getId(), split);
 		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
 		setEnabled(true, Command.SAVE_FILE, Command.CLOSE_FILE,
-				Command.SQUEEZE, Command.TO_LATEX, Command.OPEN_LAST_FILE,
-				Command.STABILITY);
+				Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
+		setEnabled(false, Command.OPEN_LAST_FILE);
 	}
 
 	/**
@@ -628,6 +632,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
 				Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
+		tabbedPane.addChangeListener(this);
+		tabbedPane.addChangeListener(sbmlIO);
+		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		setSBMLsqueezerBackground();
+		setIconImage(GUITools.ICON_LEMON);
 		for (Model m : sbmlIO.getListOfModels()) {
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(),
 					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
@@ -635,11 +644,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			if (m != null)
 				addModel(m);
 		}
-		tabbedPane.addChangeListener(this);
-		tabbedPane.addChangeListener(sbmlIO);
-		getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		setSBMLsqueezerBackground();
-		setIconImage(GUITools.ICON_LEMON);
 	}
 
 	/**
@@ -665,7 +669,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 							if (item != null
 									&& item instanceof JMenu
 									&& ((JMenu) item).getActionCommand()
-											.equals(Command.OPEN_LAST_FILE)) {
+											.equals("Last opened")) {
 								JMenu m = (JMenu) item;
 								m.removeAll();
 								JMenuItem mItem = new JMenuItem(file.getName());
@@ -673,6 +677,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 								mItem.setActionCommand(Command.OPEN_LAST_FILE
 										.toString());
 								m.add(mItem);
+								mItem.setEnabled(false);
 							}
 						}
 					}
