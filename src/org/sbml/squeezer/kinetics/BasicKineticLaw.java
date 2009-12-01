@@ -912,7 +912,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!T.isSetUnits())
 			T.setUnits(Unit.Kind.KELVIN);
 		if (!T.isSetName())
-			T.setName("The temperature of the reaction system");
+			T.setName("The temperature of reaction system " + getModel().getId());
 		return T;
 	}
 
