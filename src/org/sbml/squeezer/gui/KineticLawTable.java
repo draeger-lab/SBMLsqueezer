@@ -56,11 +56,9 @@ import atp.sHotEqn;
 /**
  * Creates a table that displays all created kinetic equationns.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
  * @date Nov 13, 2007
  */
 public class KineticLawTable extends JTable implements MouseInputListener {
@@ -93,10 +91,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		getModel().addTableModelListener(this);
 		setColumnWidthAppropriately();
 		setRowHeightAppropriately();
-		int maxNumReactnats = ((Integer) (klg.getSettings()
-				.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
 		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer(
-				maxNumReactnats));
+				((Integer) (klg.getSettings()
+						.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue()));
 		getTableHeader().setToolTipText(
 				GUITools.toHTML("Double click on the kinetic "
 						+ "law to apply another formalism. "
