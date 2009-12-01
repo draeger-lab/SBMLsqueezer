@@ -329,12 +329,15 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	private Species copySpecies(Species speciesOrig, Model miniModel) {
-		Compartment compartment = copyCopmpartment(speciesOrig
-				.getCompartmentInstance(), miniModel);
+		Compartment compartment = null;
+		if (speciesOrig.isSetCompartment())
+			compartment = copyCopmpartment(
+					speciesOrig.getCompartmentInstance(), miniModel);
 		if (miniModel.getSpecies(speciesOrig.getId()) == null)
 			miniModel.addSpecies(speciesOrig.clone());
 		Species spec = miniModel.getSpecies(speciesOrig.getId());
-		spec.setCompartment(compartment);
+		if (compartment != null)
+			spec.setCompartment(compartment);
 		if (speciesOrig.isSetSubstanceUnits()) {
 			if (miniModel.getUnitDefinition(speciesOrig.getSubstanceUnits()) == null)
 				miniModel.addUnitDefinition(speciesOrig
@@ -538,7 +541,7 @@ public class KineticLawGenerator {
 			else
 				species.setInitialConcentration(initialValue);
 		}
-		if (!compartment.isSetSize())
+		if (compartment != null && !compartment.isSetSize())
 			compartment.setSize(sizeValue);
 	}
 

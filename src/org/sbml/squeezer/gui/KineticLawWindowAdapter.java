@@ -65,7 +65,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 
 		Model model = sbmlIO.getSelectedModel();
 		reaction = model.getReaction(reactionID);
-		klg = new KineticLawGenerator(model, reaction.getId(), settings);
+		klg = new KineticLawGenerator(model, reactionID, settings);
 		messagePanel = new KineticLawSelectionPanel(klg, reaction);
 
 		pane = new JOptionPane(messagePanel, JOptionPane.QUESTION_MESSAGE,

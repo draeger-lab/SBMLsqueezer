@@ -395,8 +395,8 @@ public class SBMLsqueezer implements LawListener {
 			squeezer.checkForUpdate(false);
 			if (p.containsKey(CfgKeys.SBML_OUT_FILE))
 				try {
-					squeezer.squeeze(p.get(CfgKeys.SBML_FILE).toString(), p.get(
-							CfgKeys.SBML_OUT_FILE).toString());
+					squeezer.squeeze(p.get(CfgKeys.SBML_FILE).toString(), p
+							.get(CfgKeys.SBML_OUT_FILE).toString());
 				} catch (Throwable e) {
 					e.printStackTrace();
 				}
@@ -769,7 +769,16 @@ public class SBMLsqueezer implements LawListener {
 	public void squeeze(Object sbmlSource, String outfile) throws Throwable {
 		File outFile = outfile != null ? new File(outfile) : null;
 		readSBMLSource(sbmlSource);
-		if (!sbmlIo.getListOfModels().isEmpty()) {
+		boolean errorFatal = false;
+		SBMLException exception = null;
+		for (SBMLException exc : sbmlIo.getWarnings())
+			if (exc.isFatal() || exc.isXML() || exc.isError()) {
+				errorFatal = true;
+				exception = exc;
+			}
+		if (errorFatal)
+			throw new SBMLException(exception);
+		else if (!sbmlIo.getListOfModels().isEmpty()) {
 			long time = System.currentTimeMillis();
 			System.out.print("Generating kinetic equations...");
 			KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
@@ -797,7 +806,8 @@ public class SBMLsqueezer implements LawListener {
 						System.err.println(exc.getMessage());
 			} else
 				System.err.println("Could not write output to SBML.");
-		} else System.err.println("File contains no model. Nothing to do.");
+		} else
+			System.err.println("File contains no model. Nothing to do.");
 	}
 
 	/**
