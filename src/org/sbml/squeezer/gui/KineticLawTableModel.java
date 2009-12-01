@@ -31,12 +31,10 @@ import org.sbml.squeezer.kinetics.BasicKineticLaw;
 /**
  * TODO: comment missing
  * 
- * @since 2.0
+ * @since 1.0
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.5.0
  * @date Aug 1, 2007
  */
 public class KineticLawTableModel extends AbstractTableModel {
@@ -76,20 +74,14 @@ public class KineticLawTableModel extends AbstractTableModel {
 				.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
 		for (reactionNum = 0; reactionNum < klg.getNumCreatedKinetics(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
-			if (reaction.getNumReactants() >= maxNumReactants)
-				numOfWarnings++;
-			else
-				for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++)
-					if (reaction.getReactant(speciesNum).getStoichiometry() >= maxNumReactants) {
-						numOfWarnings++;
-						break;
-					}
 			String kinetic = reaction.getKineticLaw().getFormula();
 			ListOf<Parameter> param = reaction.getKineticLaw()
 					.getListOfParameters();
 			numReac = 0;
 			for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++)
 				numReac += reaction.getReactant(speciesNum).getStoichiometry();
+			if (numReac >= maxNumReactants)
+				numOfWarnings++;
 			String reac = "";
 			String pro = "";
 			String para = "";

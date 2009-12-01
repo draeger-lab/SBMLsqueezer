@@ -30,12 +30,10 @@ import javax.swing.table.TableCellRenderer;
  * A renderer that paints the background of every second row white or in light
  * blue. For rows containing errors the background is set to a light red.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
  * @author Nadine Hassis <Nadine.hassis@gmail.com>
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.5.0
  * @date Aug 1, 2007
  */
 public class KineticLawTableCellRenderer extends JTextArea implements
