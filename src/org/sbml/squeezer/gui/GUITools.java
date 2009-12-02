@@ -108,11 +108,19 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon ICON_DELETE = null;
-	
+	/**
+	 * 
+	 */
+	public static Icon ICON_SAVE = null;
+
 	/**
 	 * Generated serial version id.
 	 */
 	private static final long serialVersionUID = 5662654607939013825L;
+	/**
+	 * 
+	 */
+	public static Icon ICON_OPEN = null;
 
 	static {
 		try {
@@ -152,7 +160,16 @@ public class GUITools {
 			image = ImageIO.read(Resource.class.getResource("img/back.png"))
 					.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
 			ICON_LEFT_ARROW_TINY = new ImageIcon(image);
-			ICON_DELETE = new ImageIcon(Resource.class.getResource("img/delete_16.png"));
+			ICON_DELETE = new ImageIcon(Resource.class
+					.getResource("img/delete_16.png"));
+			ICON_SAVE = UIManager.getIcon("FileView.floppyDriveIcon");
+			if (ICON_SAVE == null)
+				ICON_SAVE = new ImageIcon(Resource.class
+						.getResource("img/save_16.png"));
+			ICON_OPEN = UIManager.getIcon("FileView.directoryIcon");
+			if (ICON_OPEN == null)
+				ICON_OPEN = new ImageIcon(Resource.class
+						.getResource("img/folder_16.png"));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, toHTML(e.getMessage(), 40), e
 					.getClass().getName(), JOptionPane.ERROR_MESSAGE);

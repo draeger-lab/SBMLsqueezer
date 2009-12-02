@@ -52,7 +52,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -284,10 +283,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			case CLOSE_FILE:
 				if (tabbedPane.getComponentCount() > 0)
 					tabbedPane.remove(tabbedPane.getSelectedComponent());
-				if (tabbedPane.getComponentCount() == 0)
+				if (tabbedPane.getComponentCount() == 0) {
 					setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
 							Command.SQUEEZE, Command.TO_LATEX,
 							Command.STABILITY);
+					setEnabled(true, Command.OPEN_LAST_FILE);
+				}
 				break;
 			case ONLINE_HELP:
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
@@ -455,13 +456,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		 */
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(fileMenu.getText().charAt(0));
-		JMenuItem openItem = new JMenuItem("Open", UIManager
-				.getIcon("FileView.directoryIcon"));
+		JMenuItem openItem = new JMenuItem("Open", GUITools.ICON_OPEN);
 		openItem.setActionCommand(Command.OPEN_FILE.toString());
 		openItem.setAccelerator(KeyStroke.getKeyStroke('O',
 				InputEvent.CTRL_DOWN_MASK));
-		JMenuItem saveItem = new JMenuItem("Save as", UIManager
-				.getIcon("FileView.floppyDriveIcon"));
+		JMenuItem saveItem = new JMenuItem("Save as", GUITools.ICON_SAVE);
 		saveItem.addActionListener(this);
 		saveItem.setActionCommand(Command.SAVE_FILE.toString());
 		saveItem.setAccelerator(KeyStroke.getKeyStroke('S',
@@ -553,15 +552,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private JToolBar createToolBar() {
 		toolbar = new JToolBar("Edit", JToolBar.HORIZONTAL);
-		JButton openButton = new JButton(UIManager
-				.getIcon("FileView.directoryIcon"));
+		JButton openButton = new JButton(GUITools.ICON_OPEN);
 		openButton.addActionListener(this);
 		openButton.setActionCommand(Command.OPEN_FILE.toString());
 		openButton.setToolTipText(GUITools.toHTML(
 				"Opens a file in SBML format.", 40));
 		toolbar.add(openButton);
-		JButton saveButton = new JButton(UIManager
-				.getIcon("FileView.floppyDriveIcon"));
+		JButton saveButton = new JButton(GUITools.ICON_SAVE);
 		saveButton.addActionListener(this);
 		saveButton.setActionCommand(Command.SAVE_FILE.toString());
 		saveButton
