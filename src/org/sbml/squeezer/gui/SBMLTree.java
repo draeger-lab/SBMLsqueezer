@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -286,7 +287,9 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 						currSBase = ((SBMLDocument) userObject).getModel();
 					else
 						currSBase = (SBase) userObject;
-					popup.setLocation(e.getLocationOnScreen());
+					popup.setLocation(e.getX()
+							+ ((int) getLocationOnScreen().getX()),  e.getY()
+							+ ((int) getLocationOnScreen().getY()));// e.getLocationOnScreen());
 					popup.setVisible(true);
 				}
 				if (((DefaultMutableTreeNode) clickedOn).getUserObject() instanceof MathContainer) {

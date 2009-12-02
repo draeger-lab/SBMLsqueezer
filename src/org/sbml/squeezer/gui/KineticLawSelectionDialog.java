@@ -20,8 +20,6 @@ package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -118,8 +116,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private KineticLawSelectionDialog(Frame owner, Properties settings) {
 		super(owner, "SBMLsqueezer", true);
-		if (owner == null)
-			setIconImage(GUITools.ICON_LEMON);
+//		if (owner == null)
+//			setIconImage(GUITools.ICON_LEMON);
 		this.settings = settings;
 		this.sbmlIO = null;
 		// setAlwaysOnTop(true);
@@ -166,16 +164,16 @@ public class KineticLawSelectionDialog extends JDialog implements
 						buffer.write(exporter.toLaTeX((Reaction) sbase)
 								.toString());
 					buffer.close();
-					new Thread(new Runnable() {
-
-						public void run() {
-							try {
-								Desktop.getDesktop().open(f);
-							} catch (IOException e) {
-								// e.printStackTrace();
-							}
-						}
-					}).start();
+//					new Thread(new Runnable() {
+//
+//						public void run() {
+//							try {
+//								Desktop.getDesktop().open(f);
+//							} catch (IOException e) {
+//								// e.printStackTrace();
+//							}
+//						}
+//					}).start();
 				}
 				dispose();
 			} catch (IOException e1) {
@@ -449,25 +447,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 		}
 	}
 
-	/**
-	 * Just to show the model.
-	 * 
-	 * @param selectedModel
-	 */
-	private void showModel(Model selectedModel) {
-		JDialog d = new JDialog(this);
-		Container c = d.getContentPane();
-		c.setLayout(new BorderLayout());
-		c.add(new SBMLModelSplitPane(sbmlIO.getSelectedModel(), settings),
-				BorderLayout.CENTER);
-		d.pack();
-		d.setLocationRelativeTo(this);
-		d.setResizable(true);
-		d.setModal(true);
-		d.setVisible(true);
-		d.dispose();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -594,29 +573,29 @@ public class KineticLawSelectionDialog extends JDialog implements
 					if (ff1.accept(f)) {
 						LaTeXExport.writeLaTeX(klg.getMiniModel(), f, settings);
 						settings.put(CfgKeys.LATEX_DIR, f.getParentFile());
-						new Thread(new Runnable() {
-							public void run() {
-								try {
-									Desktop.getDesktop().open(f);
-								} catch (IOException e) {
-									// e.printStackTrace();
-								}
-							}
-						}).start();
+//						new Thread(new Runnable() {
+//							public void run() {
+//								try {
+//									Desktop.getDesktop().open(f);
+//								} catch (IOException e) {
+//									// e.printStackTrace();
+//								}
+//							}
+//						}).start();
 					}
 					if (ff2.accept(f)) {
 						new TextExport(klg.getMiniModel(), f, settings);
 						settings.put(CfgKeys.SAVE_DIR, f.getParentFile());
-						new Thread(new Runnable() {
-
-							public void run() {
-								try {
-									Desktop.getDesktop().edit(f);
-								} catch (IOException e) {
-									// e.printStackTrace();
-								}
-							}
-						}).start();
+//						new Thread(new Runnable() {
+//
+//							public void run() {
+//								try {
+//									Desktop.getDesktop().edit(f);
+//								} catch (IOException e) {
+//									// e.printStackTrace();
+//								}
+//							}
+//						}).start();
 					}
 				} catch (IOException exc) {
 					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc

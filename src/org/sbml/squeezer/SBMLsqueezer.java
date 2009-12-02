@@ -21,6 +21,7 @@ package org.sbml.squeezer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -569,11 +570,10 @@ public class SBMLsqueezer implements LawListener {
 			}
 			f = new File(userConfigFile);
 			if (f.exists() && f.length() == 0) {
-				Properties orig = Resource.readProperties(configFile);
-				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-				orig.store(bw,
+				FileOutputStream os = new FileOutputStream(new File(configFile));
+				Resource.readProperties(configFile).store(os,
 						"SBMLsqueezer configuration. Do not change manually.");
-				bw.close();
+				os.close();
 			}
 			properties = correctProperties(Resource
 					.readProperties(userConfigFile));
