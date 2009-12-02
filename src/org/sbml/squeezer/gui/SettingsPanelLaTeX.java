@@ -35,7 +35,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -121,14 +120,12 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 			filePanel
 					.setBorder(BorderFactory
 							.createTitledBorder(" Select a LaTeX file for the output "));
-			jButtonTeXFile = new JButton("Browse", UIManager
-					.getIcon("FileView.floppyDriveIcon"));
+			jButtonTeXFile = new JButton("Browse", GUITools.ICON_SAVE);
 		} else {
 			filePanel
 					.setBorder(BorderFactory
 							.createTitledBorder(" Select the standard directory for LaTeX files "));
-			jButtonTeXFile = new JButton("Browse", UIManager
-					.getIcon("FileView.directoryIcon"));
+			jButtonTeXFile = new JButton("Browse", GUITools.ICON_OPEN);
 		}
 		jButtonTeXFile.addActionListener(this);
 		lh.add(jButtonTeXFile, 3, 1, 1, 1, 0, .8);
