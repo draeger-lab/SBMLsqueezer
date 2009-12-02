@@ -52,16 +52,17 @@ public class Weaver extends AdditiveModelNonLinear implements
 		String rId = getParentSBMLObject().getId();
 		Parameter alpha = parameterAlpha(rId);
 		Parameter beta = parameterBeta(rId);
+		ASTNode alphanode = new ASTNode(alpha, this);
 		ASTNode betanode = new ASTNode(beta, this);
 
 		if (!(g == null)) {
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
-							new ASTNode(alpha, this), g), betanode))));
+					.exp(ASTNode.sum(ASTNode.times(ASTNode.times(alphanode, new ASTNode(-1, this)), g), betanode))));
+
 		} else {
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.sum(ASTNode.times(new ASTNode(-1, this),
-							new ASTNode(alpha, this), new ASTNode(this)), betanode))));
+					.exp(ASTNode.sum(ASTNode.times(ASTNode.times(alphanode, new ASTNode(-1, this)), new ASTNode(this)), betanode))));
+
 		}
 	}
 
