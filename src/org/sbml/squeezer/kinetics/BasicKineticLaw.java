@@ -479,6 +479,29 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		return hr;
 	}
+	
+	/**
+	 * S-System exponent
+	 * 
+	 * @return Parameter
+	 */
+	Parameter parameterSSystemExponent(String modifier) {
+		String reactionID = getParentSBMLObject().getId();
+		StringBuffer id = StringTools.concat("ss-exp_", reactionID);
+		if (modifier != null)
+			StringTools.append(id, underscore, modifier);
+		Parameter p = createOrGetParameter(id.toString());
+		if (!p.isSetName()) {
+			StringBuffer name = StringTools.concat("S-System exponent");
+			if (modifier != null)
+				StringTools.append(name, " for modifier ", modifier);
+			StringTools.append(name, " in reaction ", reactionID);
+			p.setName(name.toString());
+		}
+		if (!p.isSetUnits())
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
+		return p;
+	}
 
 	/**
 	 * Activation constant.
