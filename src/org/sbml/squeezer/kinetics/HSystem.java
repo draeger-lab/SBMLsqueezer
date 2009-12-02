@@ -83,7 +83,7 @@ public class HSystem extends BasicKineticLaw implements
 	 * @return ASTNode
 	 */
 	ASTNode function_g(ASTNode b, ASTNode w, ASTNode v) {
-		return ASTNode.sum(b, w, v);
+		return ASTNode.sum(ASTNode.sum(b, w), v);
 	}
 
 
@@ -112,7 +112,7 @@ public class HSystem extends BasicKineticLaw implements
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifier.getSpecies(), rId);
+					Parameter p = parameterV(modifier.getSpecies(), rId);
 					ASTNode pnode = new ASTNode(p, this);
 					if (node.isUnknown())
 						node = ASTNode.times(pnode, modnode);
