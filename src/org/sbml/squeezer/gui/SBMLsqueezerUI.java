@@ -21,7 +21,6 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -769,16 +768,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private void writeLaTeX(final File out) {
 		try {
 			LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), out, settings);
-			new Thread(new Runnable() {
-
-				public void run() {
-					try {
-						Desktop.getDesktop().open(out);
-					} catch (IOException e) {
-						// e.printStackTrace();
-					}
-				}
-			}).start();
+//			new Thread(new Runnable() {
+//
+//				public void run() {
+//					try {
+//						Desktop.getDesktop().open(out);
+//					} catch (IOException e) {
+//						// e.printStackTrace();
+//					}
+//				}
+//			}).start();
 		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
 					.getClass().getName(), JOptionPane.WARNING_MESSAGE);
@@ -815,16 +814,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private void writeText(final File out) {
 		try {
 			new TextExport(sbmlIO.getSelectedModel(), out, settings);
-			new Thread(new Runnable() {
-
-				public void run() {
-					try {
-						Desktop.getDesktop().edit(out);
-					} catch (IOException e) {
-						// e.printStackTrace();
-					}
-				}
-			}).start();
+//			new Thread(new Runnable() {
+//
+//				public void run() {
+//					try {
+//						Desktop.getDesktop().edit(out);
+//					} catch (IOException e) {
+//						// e.printStackTrace();
+//					}
+//				}
+//			}).start();
 
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, exc.getMessage(), exc

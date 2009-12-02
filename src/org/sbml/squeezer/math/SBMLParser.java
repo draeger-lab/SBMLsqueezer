@@ -1,14 +1,15 @@
 package org.sbml.squeezer.math;
 
-import java.io.File;
 import java.util.HashMap;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
@@ -30,7 +31,6 @@ public class SBMLParser {
 	 * Loads the the SBML library
 	 */
 
-	private File file;
 	private SBMLDocument doc;
 	private HashMap<String, Integer> hashReactions, hashSpecies;
 	private int numSpecies, numReactions;
@@ -43,9 +43,8 @@ public class SBMLParser {
 	 * 
 	 * @param path
 	 */
-	public SBMLParser(String path) {
-		this.file = new File(path);
-		this.doc = readSBML(this.file);
+	public SBMLParser(SBMLDocument doc) {
+		this.doc = doc;
 		Model m = doc.getModel();
 		System.out.println(m.getName());
 		this.hashReactions = new HashMap<String, Integer>();
@@ -57,13 +56,6 @@ public class SBMLParser {
 		hashSpezies();
 		hashReactions();
 		sBOTerms = new HashMap<String, HashMap<Integer, Integer>>();
-	}
-
-	/**
-	 * Reads the model from the given file
-	 */
-	public SBMLDocument readSBML(File file) {
-		return (new SBMLReader()).readSBML(file.getAbsolutePath());
 	}
 
 	/**
@@ -94,35 +86,35 @@ public class SBMLParser {
 
 	}
 
-	/**
-	 * Writes the current model back to a file with the old name adding "new" to
-	 * the end
-	 */
-	public void writeback() {
-		this.doc = readSBML(this.file);
-		setSBOTerms();
-
-		SBMLDocument sbmldoc = new SBMLDocument(2, 4);
-		SBMLWriter sbmlwriter = new SBMLWriter();
-		StringBuilder sb = new StringBuilder("");
-
-		if (file.getAbsolutePath().lastIndexOf('.') == file.getAbsolutePath()
-				.length() - 4) {
-			sb.append(file.getAbsolutePath().substring(0,
-					file.getAbsolutePath().length() - 4));
-			sb.append("new");
-			sb.append(file.getAbsolutePath().substring(
-					file.getAbsolutePath().length() - 4,
-					file.getAbsolutePath().length()));
-		} else {
-			sb.append(file.getAbsolutePath());
-			sb.append("new");
-		}
-
-		sbmldoc.setModel(doc.getModel());
-		sbmlwriter.writeSBML(sbmldoc, sb.toString());
-
-	}
+//	/**
+//	 * Writes the current model back to a file with the old name adding "new" to
+//	 * the end
+//	 */
+//	public void writeback() {
+//		this.doc = readSBML(this.file);
+//		setSBOTerms();
+//
+//		SBMLDocument sbmldoc = new SBMLDocument(2, 4);
+//		SBMLWriter sbmlwriter = new SBMLWriter();
+//		StringBuilder sb = new StringBuilder("");
+//
+//		if (file.getAbsolutePath().lastIndexOf('.') == file.getAbsolutePath()
+//				.length() - 4) {
+//			sb.append(file.getAbsolutePath().substring(0,
+//					file.getAbsolutePath().length() - 4));
+//			sb.append("new");
+//			sb.append(file.getAbsolutePath().substring(
+//					file.getAbsolutePath().length() - 4,
+//					file.getAbsolutePath().length()));
+//		} else {
+//			sb.append(file.getAbsolutePath());
+//			sb.append("new");
+//		}
+//
+//		sbmldoc.setModel(doc.getModel());
+//		sbmlwriter.writeSBML(sbmldoc, sb.toString());
+//
+//	}
 
 	/**
 	 * Returns an array with the ids of all participating reactions
@@ -153,7 +145,7 @@ public class SBMLParser {
 		StoichiometricMatrix matrixN = new StoichiometricMatrix(numSpecies, numReactions,
 				0);
 
-		ListOfSpeciesReferences losr;
+		ListOf<SpeciesReference> losr;
 		Reaction reac;
 		SpeciesReference speciesRef;
 		Model model = doc.getModel();
@@ -197,7 +189,7 @@ public class SBMLParser {
 		StabilityMatrix matrixW = new StabilityMatrix(numSpecies, numReactions,
 				0);
 
-		ListOfSpeciesReferences losr;
+		ListOf<ModifierSpeciesReference> losr;
 		Reaction reac;
 		ModifierSpeciesReference modSpeciesRef;
 
@@ -319,7 +311,7 @@ public class SBMLParser {
 	 * Initializes all parameters in the list of local parameter that haven't
 	 * been initialized yet
 	 */
-	private void initLocalParameter(ListOfParameters lop) {
+	private void initLocalParameter(ListOf<Parameter> lop) {
 		for (int i = 0; i < lop.size(); i++) {
 			if (!lop.get(i).isSetValue())
 				lop.get(i).setValue(initvalue);
@@ -333,9 +325,9 @@ public class SBMLParser {
 	 */
 	private void initGlobalParameter(ASTNode astnode) {
 		Model m = doc.getModel();
-		ListOfSpecies los = m.getListOfSpecies();
-		ListOfParameters lop;
-		ListOfCompartments loc;
+		ListOf<Species> los = m.getListOfSpecies();
+		ListOf<Parameter> lop;
+		ListOf<Compartment> loc;
 		boolean found = false;
 		String nodename = new String();
 		int i;

@@ -21,9 +21,9 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Frame;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -265,7 +265,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						JOptionPane.OK_CANCEL_OPTION, GUITools.ICON_LEMON_SMALL);
 				pane.selectInitialValue();
 				final JDialog dialog = new JDialog(
-						(Window) getTopLevelAncestor(),
+						(Frame) getTopLevelAncestor(),
 						"Choose an alternative kinetic law for reaction "
 								+ reaction.getId());
 				Container content = dialog.getContentPane();
