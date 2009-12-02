@@ -325,7 +325,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetValue())
 			p.setValue(1);
 		if (!p.isSetUnits())
-			p.setUnits(unitDimensionlessPerTime());
+			p.setUnits(unitPerTime());
 		if (!p.isSetName())
 			p.setName("For the additive Model: basis expression level");
 		return p;
@@ -969,7 +969,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetValue())
 			p.setValue(1);
 		if (!p.isSetUnits())
-			p.setUnits(unitDimensionlessPerTime());
+			p.setUnits(unitPerTime());
 		if (!p.isSetName())
 			p
 					.setName("For the additive Model: weight parameter for the external inputs");
@@ -1041,7 +1041,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetValue())
 			p.setValue(1);
 		if (!p.isSetUnits())
-			p.setUnits(unitDimensionlessPerTime());
+			p.setUnits(unitPerTime());
 		if (!p.isSetName())
 			p
 					.setName("For the additive Model: weight parameter for the gene products");
@@ -1100,50 +1100,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	public String toString() {
 		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
 				.replace("\\,", ",") : getClass().getSimpleName();
-	}
-
-	/**
-	 * 
-	 * @param Unit
-	 * @param time
-	 * @return
-	 */
-	private UnitDefinition unitDimensionlessPerTime() {
-
-		Model model = getModel();
-		// UnitDefinition ud = model.getUnitDefinition("time").clone();
-		// if (ud.getNumUnits() == 1) {
-		// Unit u = ud.getUnit(0);
-		// u.setExponent(-1);
-		// ud.setId("per_" + u.getKind().toString().toLowerCase());
-		// } else {
-		// ud = new UnitDefinition("per_second", getLevel(), getVersion());
-		// Unit unit = new Unit(Unit.Kind.SECOND, -1, getLevel(), getVersion());
-		// ud.addUnit(unit);
-		// }
-		// UnitDefinition def = model.getUnitDefinition(ud.getId());
-		// if (def == null)
-		// model.addUnitDefinition(ud);
-		// return model.getUnitDefinition(ud.getId());
-
-		UnitDefinition unitdef_dimless = new UnitDefinition("dimensionless",
-				getLevel(), getVersion());
-		Unit unit_dimless = new Unit(Unit.Kind.DIMENSIONLESS, 1, getLevel(),
-				getVersion());
-		unit_dimless.setSBOTerm(470);
-		unitdef_dimless.addUnit(unit_dimless);
-
-		String id = unitdef_dimless.getId() + "_per_second";
-
-		UnitDefinition unitdef = model.getUnitDefinition(id);
-
-		if (unitdef == null) {
-			unitdef = new UnitDefinition(id, getLevel(), getVersion());
-			unitdef.multiplyWith(unitdef_dimless);
-			unitdef.multiplyWith(unitPerTime());
-			unitdef = checkUnitDefinitions(unitdef, model);
-		}
-		return unitdef;
 	}
 
 	/**
@@ -1285,8 +1241,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		UnitDefinition def = model.getUnitDefinition(ud.getId());
 		if (def == null)
 			ud = checkUnitDefinitions(ud, model);
-		ud = model.getUnitDefinition(ud.getId());
-		return ud;
+		return model.getUnitDefinition(ud.getId());
 	}
 
 	/**
