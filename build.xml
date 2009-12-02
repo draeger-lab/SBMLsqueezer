@@ -7,7 +7,7 @@
     <!--       http://sourceforge.net/projects/fjep       -->
     <!-- uncomment the following lines if using ANT outside Eclipse -->
     <!--
-        <property name="fjepPath" value="reference:file:plugins/net.sf.fjep.fatjar_0.0.27/fatjar.jar"/>
+        <property name="fjepPath" value="reference:file:plugins/net.sf.fjep.fatjar_0.0.31.jarfatjar.jar"/>
         <taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}"/>
         <typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}"/>
         <typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}"/>
@@ -18,13 +18,18 @@
     <target name="main">
         <fatjar.build output="SBMLsqueezer.jar">
             <fatjar.manifest mainclass="org.sbml.squeezer.SBMLsqueezer"/>
-            <fatjar.filesource path="/local/draeger/workspace/SBMLsqueezer/bin" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/HotEqn.jar" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/html2latex.jar" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/cdplugin.jar" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/jsbml.jar" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/biojava.jar" relpath=""/>
-            <fatjar.jarsource file="/local/draeger/workspace/SBMLsqueezer/lib/eva2.jar" relpath=""/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/bin" relpath=""/>
+            <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/cdplugin.jar" relpath=""/>
+            <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/eva2.jar" relpath=""/>
+            <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/HotEqn.jar" relpath=""/>
+            <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/html2latex.jar" relpath=""/>
+            <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/biojava.jar" relpath=""/>
+            <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/jsbml.jar" relpath=""/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/biojava.txt" relpath="biojava.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/eva2.txt" relpath="eva2.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/html2latex.txt" relpath="html2latex.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/jsbml.txt" relpath="jsbml.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/SBMLsqueezer.txt" relpath="SBMLsqueezer.txt"/>
         </fatjar.build>
     </target>
 </project>
