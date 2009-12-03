@@ -29,12 +29,13 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates Hill equation as
- * defined in the phdthesis "Modeling Non-Linear Dynamic Phenomena in Biochemical Networks" of Nicole Radde
- * and the paper "Modeling Non-Linear Dynamic Phenomena in Biochemical Networks" 
- * of Nicole Radde and Lars Kaderali.
+ * This class creates Hill equation as defined in the PhD thesis &ldquo;Modeling
+ * Non-Linear Dynamic Phenomena in Biochemical Networks&rdquo; of Nicole Radde
+ * and the paper &ldquo;Modeling Non-Linear Dynamic Phenomena in Biochemical
+ * Networks&ldquo; of Nicole Radde and Lars Kaderali.
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
+ * @since 1.3
  * 
  */
 public class SpecialHillEquation extends BasicKineticLaw implements
@@ -53,9 +54,10 @@ public class SpecialHillEquation extends BasicKineticLaw implements
 	/*
 	 * (Kein Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List,
-	 *      java.util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> enzymes,
 			List<String> activators, List<String> transActivators,

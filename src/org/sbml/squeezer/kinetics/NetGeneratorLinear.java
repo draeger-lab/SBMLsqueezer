@@ -25,11 +25,12 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 /**
  * 
  * This class creates an equation based on an linear additive model as defined
- * in the paper "The NetGenerator Algorithm: Reconstruction of Gene Regulatory
- * Networks" of Töpfer, S.; Guthke, R.; Driesch, D.; Wötzel, D. & Pfaff 2007
+ * in the paper &ldquo;The NetGenerator Algorithm: Reconstruction of Gene
+ * Regulatory Networks&rdquo; of T&ouml;pfer, S.; Guthke, R.; Driesch, D.;
+ * W&ouml;tzel, D., and Pfaff 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * 
+ * @since 1.3
  */
 public class NetGeneratorLinear extends AdditiveModelLinear implements
 		InterfaceGeneRegulatoryKinetics {
@@ -39,26 +40,32 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public NetGeneratorLinear(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException {
+	public NetGeneratorLinear(Reaction parentReaction, Object... typeParameters)
+			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
 	 */
 	ASTNode b_i() {
 		return null;
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return "Additive model: NetGenerator linear model";
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#m_i()
 	 */
 	ASTNode m_i() {

@@ -31,14 +31,19 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This class creates a non-linear additive equation form
- * Hadeler, K.: Gedanken zur Parameteridentifikation. Personal Communication, 2003.
+ * <ul>
+ * <li>Hadeler, K.: &ldquo;Gedanken zur Parameteridentifikation.&rdquo; Personal
+ * Communication, 2003, and</li>
+ * <li>Spieth, C.; Hassis, N.; Streichert, F.; Supper, J.; Beyreuther, K., and
+ * Zell, A. &ldquo;Comparing Mathematical Models on the Problem of Network
+ * Inference&rdquo;, 2006.</li>
+ * </ul>
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * 
+ * @since 1.3
  */
 public class HSystem extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics {
-
 
 	/**
 	 * @param parentReaction
@@ -60,9 +65,13 @@ public class HSystem extends BasicKineticLaw implements
 		return b_i_node;
 	}
 
-
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	/*
+	 * (Kein Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -85,7 +94,6 @@ public class HSystem extends BasicKineticLaw implements
 	ASTNode function_g(ASTNode b, ASTNode w, ASTNode v) {
 		return ASTNode.sum(ASTNode.sum(b, w), v);
 	}
-
 
 	/**
 	 * @return ASTNode
@@ -127,7 +135,6 @@ public class HSystem extends BasicKineticLaw implements
 			return node = ASTNode.times(reactantnode, node);
 	}
 
-
 	/**
 	 * @return ASTNode
 	 */
@@ -168,7 +175,9 @@ public class HSystem extends BasicKineticLaw implements
 			return node;
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
