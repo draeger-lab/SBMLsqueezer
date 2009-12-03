@@ -21,11 +21,13 @@ package org.sbml.squeezer.math;
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+import java.util.Hashtable;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.NamedSBase;
-import org.sbml.squeezer.gui.SBMLsqueezerUI.Command;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -41,8 +43,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#abs(org.sbml.jsbml.ASTNode)
 	 */
 	public Double abs(ASTNode node) {
-		return Double.valueOf(Math.abs(Double.valueOf(node.compile(this)
-				.toString())));
+		return Double.valueOf(Math.abs(((Double) node.compile(this))
+				.doubleValue()));
 	}
 
 	/*
@@ -51,8 +53,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccos(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccos(ASTNode node) {
-		return Double.valueOf(Math.acos(Double.valueOf(node.compile(this)
-				.toString())));
+		return Double.valueOf(Math.acos(((Double) (node.compile(this)))
+				.doubleValue()));
 	}
 
 	/*
@@ -200,9 +202,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.Compartment)
 	 */
-	public StringBuffer compile(Compartment arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double compile(Compartment c) {
+		return Double.valueOf(c.getSize());
 	}
 
 	/*
@@ -211,8 +212,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double)
 	 */
 	public Double compile(double arg0) {
-		// TODO ???
-		return arg0;
+		return Double.valueOf(arg0);
 	}
 
 	/*
@@ -220,9 +220,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(int)
 	 */
-	public Double compile(int arg0) {
-		// TODO ???
-		return Double.valueOf(arg0);
+	public Integer compile(int arg0) {
+		return Integer.valueOf(arg0);
 	}
 
 	/*
@@ -359,9 +358,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(int, int)
 	 */
-	public Double frac(int arg0, int arg1) {
-		// TODO Rückgabe double oder int?
-		return Double.valueOf(arg0 / arg1);
+	public Integer frac(int arg0, int arg1) {
+		return Integer.valueOf(arg0 / arg1);
 	}
 
 	/*
@@ -370,9 +368,32 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#function(java.lang.String,
 	 * org.sbml.jsbml.ASTNode[])
 	 */
-	public Object function(String arg0, ASTNode... arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double function(FunctionDefinition function, ASTNode... arguments) {
+		ASTNode lambda = function.getMath();
+		Hashtable<String, Double> args = new Hashtable<String, Double>();
+		for (int i = 0; i < arguments.length; i++)
+			args.put(lambda.getChild(i).compile(this).toString(),
+					(Double) arguments[i].compile(this));
+		return (Double) replace(lambda.getRightChild().clone(), args).compile(this);
+	}
+
+	/**
+	 * 
+	 * @param lambda
+	 * @param names
+	 * @param d
+	 * @return
+	 */
+	private ASTNode replace(ASTNode lambda, Hashtable<String, Double> args) {
+		String name;
+		for (ASTNode child : lambda.getListOfNodes())
+			if (child.isName() && args.containsKey(child.getName())) {
+				name = child.getName();
+				child.setType(ASTNode.Type.REAL);
+				child.setValue(args.get(name));
+			} else if (child.getNumChildren() > 0)
+				child = replace(child, args);
+		return lambda;
 	}
 
 	/*
@@ -444,8 +465,12 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#lambda(org.sbml.jsbml.ASTNode[])
 	 */
-	public Object lambda(ASTNode... arg0) {
-		// TODO Auto-generated method stub
+	public Double lambda(ASTNode... nodes) {
+		Double d[] = new Double[Math.max(0, nodes.length - 1)];
+		ASTNode function = nodes[nodes.length - 1];
+		int i = 0;
+		for (ASTNode node : nodes)
+			d[i++] = (Double) node.compile(this);
 		return null;
 	}
 
@@ -573,10 +598,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeCompiler#relationGraterThan(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Double relationGraterThan(ASTNode nodeleft, ASTNode noderight) {
-		// TODO schreibfehler im Funktionsnamen
-		return (Double.valueOf(nodeleft.compile(this).toString()) > Double
-				.valueOf(noderight.compile(this).toString())) ? 1.0 : 0.0;
+	public Boolean relationGreaterThan(ASTNode nodeleft, ASTNode noderight) {
+		return Boolean
+				.valueOf(((Double) nodeleft.compile(this)).doubleValue() > ((Double) noderight
+						.compile(this)));
 	}
 
 	/*
@@ -734,7 +759,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#times(org.sbml.jsbml.ASTNode[])
 	 */
 	public Object times(ASTNode... nodes) {
-		// TODO auch keine nodes möglich?
+		// TODO auch keine nodes mï¿½glich?
 		double value = 1.0;
 
 		for (ASTNode node : nodes)

@@ -23,6 +23,7 @@ import java.util.Properties;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ASTNode.Type;
@@ -719,17 +720,17 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#function(java.lang.String,
 	 *      org.sbml.jsbml.ASTNode[])
 	 */
-	public StringBuffer function(String name, ASTNode... args) {
+	public StringBuffer function(FunctionDefinition fun, ASTNode... args) {
 		StringBuffer value = new StringBuffer();
 		int length;
-		if (name != null) {
-			value.append(mathtt(LaTeX.maskSpecialChars(name)));
+		if (fun != null) {
+			value.append(mathtt(LaTeX.maskSpecialChars(fun.getId())));
 			length = args.length;
 		} else
 			length = args.length - 1;
 		StringBuffer argList = new StringBuffer();
 
-		for (int i = 0; i < args.length; i++) {
+		for (int i = 0; i < args.length - 1; i++) {
 			if (i > 0)
 				argList.append(", ");
 			argList.append(args[i].compile(this));
@@ -899,7 +900,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#lambda(org.sbml.jsbml.ASTNode[])
 	 */
 	public StringBuffer lambda(ASTNode... nodes) {
-		return function(null, nodes);
+		return function((FunctionDefinition) null, nodes);
 	}
 
 	/*
@@ -1212,11 +1213,9 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#relationGraterThan(org.sbml.jsbml.ASTNode,
-	 *      org.sbml.jsbml.ASTNode)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#relationGreaterThan(org.sbml.jsbml.ASTNode, org.sbml.jsbml.ASTNode)
 	 */
-	public Object relationGraterThan(ASTNode left, ASTNode right) {
+	public Object relationGreaterThan(ASTNode left, ASTNode right) {
 		return relation(left, " > ", right);
 	}
 
