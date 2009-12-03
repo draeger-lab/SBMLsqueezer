@@ -4,7 +4,7 @@ TODO-Liste
 Edukt- und Produktlisten können leer sein. Dieser Spezialfall wird bisher
 nicht in den einzelnen Kinetiken behandelt.
 
-Modell mus aktualisiert werden, sodass der SBO-Ausdruck für enzymatische
+Modell muss aktualisiert werden, sodass der SBO-Ausdruck für enzymatische
 Katalyse neu gesetzt wird, sobald sich die liste möglicher Enzyme ändert.
 
 Fehler in Hill-Kinetik: Laut Paper von Hintze et al. wird bei Inhibition
@@ -38,100 +38,3 @@ SBO-Ids immer mithilfe des SBO-Parsers identifizieren.
 Direkt am Vorschaufenster für kinetische Gleichungen könnte ein Knopf
 sein, mit dem die Gleichung nach LaTeX oder Text gespeichert werden
 könnte.
-
-+--------------------------+
-| Abgeschlossene Testfälle |
-+--------------------------+
-
-1. geordneter Mechanismus
-=========================
-
-2 S_1 -> 2 S_2  mit und ohne Enzym
------------------------------------
-irreversibel
-reversibel
-
-S_1 + S_4 -> 2 S_2 mit und ohne Enzym
--------------------------------------
-irreversibel
-reversibel
-
-S_1 + S_4 -> S_2 + S_5 mit und ohne Enzym
------------------------------------------
-irreversibel
-reversibel
-
-mehrere Enzyme
-mehrere Enzyme und Inhibition
-
-
-2. GMAK
-=======
-reversibel, irreversibel, mehrere Substrate, mehrere Produkte
-nullte Ordnung vorwärts und rückwärts
-
-3. IrrevNonModulatedNonInteractingEnzymes
-=========================================
-mit und ohne Enzym
-
-S_1 +S_2 -> S_3
-S_1 +S_2 + S_3 -> S_4 +S_5
-S_1 + S_4 -> S_2 + S_5 
-
-4. Ping-Pong
-============
-
-S_1 +S_2 -> S_3 + S_4 
-rev/irrev
-einem/mehreren enzymen
-
-5. Convenience
-===============
-
-mit/ ohne enzym
-rev/irrev
-A ->B
-A + X -> B
-A+X -> B +Y
-2A->B
-2A-> B+Y
-2A + X -> B
-
-
-6. Orderd Mechanism
-
-====================
-
-S_1 + S_2 -> S_3 +S_4 rev/irrev
-S_1 + S_2 -> S_3 rev/irrev
-
-7. Random Order Mechanism
-=========================
-
-Bi-> uni rev/irrev
-Bi -> bi rev/irrev
-
-8.Convinience Independent
-=========================
-
-bi -> bi
-uni -> uni
-rev/irrev
-
-9. MichaelisMenten + irrevcompetnoncoop...
-==========================================
- uni uni 
- rev irrev
- 0, 1 inhibitor 
- 
- uni  bi
- irrev 
- 0,1 inhibitor
-
-10. hill equation
-=================
- 
-todo:
-======================================================
-irrevCompetNoncooperativesenzymes
-MichaelisMenten

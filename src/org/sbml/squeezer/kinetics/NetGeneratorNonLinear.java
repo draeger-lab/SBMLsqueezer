@@ -28,16 +28,15 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This class creates an equation based on an non-linear additive model as
- * defined in the paper "The NetGenerator Algorithm: Reconstruction of Gene
- * Regulatory Networks" of Töpfer, S.; Guthke, R.; Driesch, D.; Wötzel, D. &
- * Pfaff 2007
+ * defined in the paper &ldquo;The NetGenerator Algorithm: Reconstruction of
+ * Gene Regulatory Networks&rdquo; of T&ouml;pfer, S.; Guthke, R.; Driesch, D.;
+ * W&ouml;tzel, D., and Pfaff 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * 
+ * @since 1.3
  */
-public class NetGeneratorNonLinear extends AdditiveModelNonLinear
-		implements InterfaceGeneRegulatoryKinetics {
-
+public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
+		InterfaceGeneRegulatoryKinetics {
 
 	/**
 	 * @param parentReaction
@@ -85,8 +84,9 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear
 			return node;
 	}
 
-
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
 	 */
 	public String getSimpleName() {

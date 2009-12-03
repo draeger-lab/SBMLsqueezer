@@ -32,7 +32,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 /**
  * This class creates an equation based on a linear additive model.
  * 
- * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
+ * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a> 
+ * @since 1.3
  * 
  */
 public class AdditiveModelLinear extends BasicKineticLaw implements
@@ -43,8 +44,8 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public AdditiveModelLinear(Reaction parentReaction, Object... typeParameters)
-			throws RateLawNotApplicableException {
+	public AdditiveModelLinear(Reaction parentReaction,
+			Object... typeParameters) throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
@@ -70,8 +71,13 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 		return b_i_node;
 	}
 
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
+	/*
+	 * (Kein Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modTActi, List<String> modInhib,
@@ -172,7 +178,9 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 			return node;
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {

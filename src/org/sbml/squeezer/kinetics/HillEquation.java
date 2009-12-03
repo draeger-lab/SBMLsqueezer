@@ -28,15 +28,17 @@ import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates a Hill equation as defined in the paper"Hill Kinetics
- * meets P Systems: A Case Study on Gene Regulatory Networks as Computing Agents
- * in silico and in vivo" of Hinze et al.
+ * This class creates a Hill equation as defined in the paper &ldquo;Hill
+ * Kinetics meets P Systems: A Case Study on Gene Regulatory Networks as
+ * Computing Agents in silico and in vivo&rdquo; of Hinze, T.; Hayat, S.;
+ * Lenser, T.; Matsumaru, N., and Dittrich, P., 2007.
  * 
  * @since 1.0
  * @version
  * @author <a href="mailto:supper@genomatix.de">Jochen Supper</a>
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 7, 2007
  */
 public class HillEquation extends BasicKineticLaw implements
@@ -57,9 +59,10 @@ public class HillEquation extends BasicKineticLaw implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 *      .util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -77,8 +80,8 @@ public class HillEquation extends BasicKineticLaw implements
 			modTInhib.addAll(modInhib);
 		/*
 		 * throw new ModificationException("Wrong inhibition in reaction " +
-		 * reactionNum + ". Only transcriptional or translational inhibition, " +
-		 * "respectively, is allowed here.");
+		 * reactionNum + ". Only transcriptional or translational inhibition, "
+		 * + "respectively, is allowed here.");
 		 */
 		// necessary due to the changes in CellDesigner from version 4.0 alpha
 		// to beta and 4.0.1
@@ -89,23 +92,24 @@ public class HillEquation extends BasicKineticLaw implements
 
 		Reaction reaction = getParentSBMLObject();
 
-//		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
-//			if (SBO.isGeneOrGeneCodingRegion(reaction.getReactant(0)
-//					.getSpeciesInstance().getSBOTerm())
-//					&& (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
-//							.isTranslationalInhibitor(modifier.getSBOTerm())))
-//				throw new ModificationException(
-//						"Wrong activation in reaction "
-//								+ reaction.getId()
-//								+ ". Only transcriptional modification is allowed here.");
-//			else if (SBO.isRNAOrMessengerRNA(reaction.getReactant(0)
-//					.getSpeciesInstance().getSBOTerm())
-//					&& (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
-//							.isTranscriptionalInhibitor(modifier.getSBOTerm())))
-//				throw new ModificationException("Wrong activation in reaction "
-//						+ reaction.getId()
-//						+ ". Only translational modification is allowed here.");
-//		}
+		// for (ModifierSpeciesReference modifier :
+		// reaction.getListOfModifiers()) {
+		// if (SBO.isGeneOrGeneCodingRegion(reaction.getReactant(0)
+		// .getSpeciesInstance().getSBOTerm())
+		// && (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
+		// .isTranslationalInhibitor(modifier.getSBOTerm())))
+		// throw new ModificationException(
+		// "Wrong activation in reaction "
+		// + reaction.getId()
+		// + ". Only transcriptional modification is allowed here.");
+		// else if (SBO.isRNAOrMessengerRNA(reaction.getReactant(0)
+		// .getSpeciesInstance().getSBOTerm())
+		// && (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
+		// .isTranscriptionalInhibitor(modifier.getSBOTerm())))
+		// throw new ModificationException("Wrong activation in reaction "
+		// + reaction.getId()
+		// + ". Only translational modification is allowed here.");
+		// }
 
 		if (reaction.getNumModifiers() == 0)
 			setSBOTerm(47);
@@ -158,7 +162,8 @@ public class HillEquation extends BasicKineticLaw implements
 		 * .toUpperCase().equals("GENE"))
 		 */{
 			Parameter p_hillcoeff = parameterHillCoefficient(modTActi.get(i));
-			Parameter p_kS = parameterKS(getModel().getSpecies(modTActi.get(i)), modTActi.get(i));
+			Parameter p_kS = parameterKS(
+					getModel().getSpecies(modTActi.get(i)), modTActi.get(i));
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(
 					speciesTerm(modTActi.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
@@ -172,7 +177,8 @@ public class HillEquation extends BasicKineticLaw implements
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
 			Parameter p_hillcoeff = parameterHillCoefficient(modTInhib.get(i));
-			Parameter p_kS = parameterKS(getModel().getSpecies(modTInhib.get(i)),modTInhib.get(i));
+			Parameter p_kS = parameterKS(getModel()
+					.getSpecies(modTInhib.get(i)), modTInhib.get(i));
 			inhib[i] = ASTNode.frac(ASTNode.pow(speciesTerm(modTInhib.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
 					speciesTerm(modTInhib.get(i)), new ASTNode(p_hillcoeff,

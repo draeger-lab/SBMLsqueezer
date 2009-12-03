@@ -25,15 +25,14 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This class creates an equation based on an additive model as defined in the
- * paper "Modeling regulatory networks with weight matrices" of Weaver, D.;
- * Workman, C. & Stormo, G. 1999
+ * paper &ldquo;Modeling regulatory networks with weight matrices&rdquo; of
+ * Weaver, D.; Workman, C., and Stormo, G. 1999
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * 
+ * @since 1.3
  */
 public class Weaver extends AdditiveModelNonLinear implements
 		InterfaceGeneRegulatoryKinetics {
-
 
 	/**
 	 * @param parentReaction
@@ -45,8 +44,12 @@ public class Weaver extends AdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#actifunction(org.sbml.jsbml.ASTNode)
+	/*
+	 * (Kein Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.AdditiveModelLinear#actifunction(org.sbml.
+	 * jsbml.ASTNode)
 	 */
 	ASTNode actifunction(ASTNode g) {
 		String rId = getParentSBMLObject().getId();
@@ -57,30 +60,39 @@ public class Weaver extends AdditiveModelNonLinear implements
 
 		if (!(g == null)) {
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.sum(ASTNode.times(ASTNode.times(alphanode, new ASTNode(-1, this)), g), betanode))));
+					.exp(ASTNode.sum(ASTNode.times(ASTNode.times(alphanode,
+							new ASTNode(-1, this)), g), betanode))));
 
 		} else {
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.sum(ASTNode.times(ASTNode.times(alphanode, new ASTNode(-1, this)), new ASTNode(this)), betanode))));
+					.exp(ASTNode.sum(ASTNode.times(ASTNode.times(alphanode,
+							new ASTNode(-1, this)), new ASTNode(this)),
+							betanode))));
 
 		}
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
 	 */
 	ASTNode b_i() {
 		return null;
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#function_v()
 	 */
 	ASTNode function_v() {
 		return null;
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
 	 */
 	public String getSimpleName() {

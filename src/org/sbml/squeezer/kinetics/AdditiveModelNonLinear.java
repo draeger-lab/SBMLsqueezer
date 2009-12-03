@@ -26,7 +26,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * This class creates an equation based on a non-linear additive model.
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * 
+ * @since 1.3
  */
 public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 		InterfaceGeneRegulatoryKinetics {

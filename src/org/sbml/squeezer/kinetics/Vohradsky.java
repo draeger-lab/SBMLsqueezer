@@ -25,17 +25,17 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 /**
  * 
  * This class creates an equation based on an additive model as defined in the
- * papers "Neural network model of gene expression." of Vohradský, J. 2001 and
- * "Nonlinear differential equation model for quantification of transcriptional
- * regulation applied to microarray data of Saccharomyces cerevisiae." of Vu, T.
- * T. & Vohradský, J. 2007
+ * papers &ldquo;Neural network model of gene expression.&rdquo; of
+ * Vohradsk&yacute;, J. 2001 and &ldquo;Nonlinear differential equation model
+ * for quantification of transcriptional regulation applied to microarray data
+ * of <i>Saccharomyces cerevisiae</i>.&rdquo; of Vu, T. T. and Vohradsk&yacute;, J.
+ * 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * 
+ * @since 1.3
  */
 public class Vohradsky extends AdditiveModelNonLinear implements
 		InterfaceGeneRegulatoryKinetics {
-
 
 	/**
 	 * @param parentReaction
@@ -47,15 +47,18 @@ public class Vohradsky extends AdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#function_v()
 	 */
 	ASTNode function_v() {
 		return null;
 	}
 
-
-	/* (Kein Javadoc)
+	/*
+	 * (Kein Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
 	 */
 	public String getSimpleName() {
