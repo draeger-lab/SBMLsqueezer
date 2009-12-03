@@ -25,6 +25,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.NamedSBase;
+import org.sbml.squeezer.gui.SBMLsqueezerUI.Command;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -49,9 +50,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccos(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arccos(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arccos(ASTNode node) {
+		return Double.valueOf(Math.acos(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -59,9 +60,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccosh(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arccosh(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arccosh(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		return Double.valueOf(Math.log((interim)
+				+ (Math.sqrt(Math.pow(interim, 2) - 1))));
 	}
 
 	/*
@@ -69,9 +71,11 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccot(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arccot(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arccot(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (interim == 0)
+			throw new java.lang.ArithmeticException("arccot(0) undefined");
+		return Double.valueOf(Math.atan(1 / (interim)));
 	}
 
 	/*
@@ -79,9 +83,13 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccoth(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arccoth(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arccoth(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (interim == 0)
+			throw new java.lang.ArithmeticException("arccoth(0) undefined");
+		return Double.valueOf((Math.log(1 + (1 / (interim))) - Math
+				.log(1 - (1 / (interim)))) / 2);
+
 	}
 
 	/*
@@ -89,9 +97,11 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsc(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arccsc(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arccsc(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (Math.asin(interim) == 0)
+			throw new java.lang.ArithmeticException("Arccsc undefined");
+		return Double.valueOf(1 / (Math.asin(interim)));
 	}
 
 	/*
@@ -99,9 +109,12 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsch(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arccsch(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arccsch(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (Math.asin(interim) == 0)
+			throw new java.lang.ArithmeticException("arccsch(0) undefined");
+		return Double.valueOf(Math.log(1 / interim
+				+ Math.sqrt(Math.pow(1 / interim, 2) + 1)));
 	}
 
 	/*
@@ -109,9 +122,12 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsec(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arcsec(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arcsec(ASTNode node) {
+		double interim = Math.acos(Double
+				.valueOf(node.compile(this).toString()));
+		if (interim == 0)
+			throw new java.lang.ArithmeticException("arcsec undefined");
+		return Double.valueOf(1 / interim);
 	}
 
 	/*
@@ -119,9 +135,12 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsech(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arcsech(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arcsech(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (interim == 0)
+			throw new java.lang.ArithmeticException("arcsech(0) undefined");
+		return Double.valueOf(Math.log((1 / interim)
+				+ (Math.sqrt(Math.pow(1 / interim, 2) - 1))));
 	}
 
 	/*
@@ -129,9 +148,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsin(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arcsin(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arcsin(ASTNode node) {
+		return Double.valueOf(Math.asin(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -139,9 +158,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsinh(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arcsinh(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arcsinh(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		return Double.valueOf(Math.log(interim
+				+ Math.sqrt(Math.pow(interim, 2) + 1)));
 	}
 
 	/*
@@ -149,9 +169,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctan(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arctan(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arctan(ASTNode node) {
+		return Double.valueOf(Math.atan(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -159,9 +179,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctanh(org.sbml.jsbml.ASTNode)
 	 */
-	public Object arctanh(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double arctanh(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		return Double
+				.valueOf((Math.log(1 + interim) - Math.log(1 - interim)) / 2);
 	}
 
 	/*
@@ -169,9 +190,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#ceiling(org.sbml.jsbml.ASTNode)
 	 */
-	public Object ceiling(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double ceiling(ASTNode node) {
+		return Double.valueOf(Math.ceil(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -189,9 +210,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double)
 	 */
-	public Object compile(double arg0) {
+	public Double compile(double arg0) {
 		// TODO Auto-generated method stub
-		return null;
+		return arg0;
 	}
 
 	/*
@@ -199,9 +220,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(int)
 	 */
-	public Object compile(int arg0) {
+	public Integer compile(int arg0) {
 		// TODO Auto-generated method stub
-		return null;
+		return arg0;
 	}
 
 	/*
@@ -229,9 +250,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cos(org.sbml.jsbml.ASTNode)
 	 */
-	public Object cos(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double cos(ASTNode node) {
+		return Double.valueOf(Math.cos(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -239,9 +260,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cosh(org.sbml.jsbml.ASTNode)
 	 */
-	public Object cosh(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double cosh(ASTNode node) {
+		return Double.valueOf(Math.cosh(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -249,9 +270,11 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cot(org.sbml.jsbml.ASTNode)
 	 */
-	public Object cot(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double cot(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (Math.sin(interim) == 0)
+			throw new java.lang.ArithmeticException("cot undefined");
+		return Double.valueOf(Math.cos(interim) / Math.sin(interim));
 	}
 
 	/*
@@ -259,9 +282,11 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#coth(org.sbml.jsbml.ASTNode)
 	 */
-	public Object coth(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double coth(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (Math.sinh(interim) == 0)
+			throw new java.lang.ArithmeticException("coth undefined");
+		return Double.valueOf(Math.cosh(interim) / Math.sinh(interim));
 	}
 
 	/*
@@ -269,9 +294,11 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csc(org.sbml.jsbml.ASTNode)
 	 */
-	public Object csc(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double csc(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (Math.sin(interim) == 0)
+			throw new java.lang.ArithmeticException("Csc undefined");
+		return Double.valueOf(1 / Math.sin(interim));
 	}
 
 	/*
@@ -279,9 +306,11 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csch(org.sbml.jsbml.ASTNode)
 	 */
-	public Object csch(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double csch(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (Math.sinh(interim) == 0)
+			throw new java.lang.ArithmeticException("Csch undefined");
+		return Double.valueOf(1 / Math.sinh(interim));
 	}
 
 	/*
@@ -289,9 +318,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#exp(org.sbml.jsbml.ASTNode)
 	 */
-	public Object exp(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double exp(ASTNode node) {
+		return Double.valueOf(Math.exp(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -299,9 +328,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#factorial(org.sbml.jsbml.ASTNode)
 	 */
-	public Object factorial(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double factorial(ASTNode node) {
+		return Functions.factorial(Double
+				.valueOf(node.compile(this).toString()));
 	}
 
 	/*
@@ -309,9 +338,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#floor(org.sbml.jsbml.ASTNode)
 	 */
-	public Object floor(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double floor(ASTNode node) {
+		return Double.valueOf(Math.floor(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -320,9 +349,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Object frac(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double frac(ASTNode node1, ASTNode node2) {
+		return Double.valueOf(Double.valueOf(node1.compile(this).toString())
+				/ Double.valueOf(node2.compile(this).toString()));
 	}
 
 	/*
@@ -361,9 +390,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantE()
 	 */
-	public Object getConstantE() {
-		// TODO Auto-generated method stub
-		return null;
+	public Double getConstantE() {
+		return Math.E;
 	}
 
 	/*
@@ -371,9 +399,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantFalse()
 	 */
-	public Object getConstantFalse() {
-		// TODO Auto-generated method stub
-		return null;
+	public Double getConstantFalse() {
+		return 0.0;
 	}
 
 	/*
@@ -381,9 +408,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantPi()
 	 */
-	public Object getConstantPi() {
-		// TODO Auto-generated method stub
-		return null;
+	public Double getConstantPi() {
+		return Math.PI;
 	}
 
 	/*
@@ -391,9 +417,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantTrue()
 	 */
-	public Object getConstantTrue() {
-		// TODO Auto-generated method stub
-		return null;
+	public Double getConstantTrue() {
+		return 1.0;
 	}
 
 	/*
@@ -401,9 +426,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getNegativeInfinity()
 	 */
-	public Object getNegativeInfinity() {
-		// TODO Auto-generated method stub
-		return null;
+	public Double getNegativeInfinity() {
+		return Double.NEGATIVE_INFINITY;
 	}
 
 	/*
@@ -411,9 +435,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getPositiveInfinity()
 	 */
-	public Object getPositiveInfinity() {
-		// TODO Auto-generated method stub
-		return null;
+	public Double getPositiveInfinity() {
+		return Double.POSITIVE_INFINITY;
 	}
 
 	/*
@@ -431,9 +454,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNode)
 	 */
-	public Object ln(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double ln(ASTNode node) {
+		return Double.valueOf(Math.log(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -441,9 +464,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode)
 	 */
-	public Object log(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double log(ASTNode node) {
+		return Double.valueOf(Math.log10(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -452,9 +475,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Object log(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double log(ASTNode node1, ASTNode node2) {
+		// TODO richtige reihenfolge?
+		return Functions.logarithm(Double.valueOf(node1.compile(this)
+				.toString()), Double.valueOf(node2.compile(this).toString()));
 	}
 
 	/*
@@ -483,9 +507,13 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#minus(org.sbml.jsbml.ASTNode[])
 	 */
-	public Object minus(ASTNode... arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double minus(ASTNode... nodes) {
+		double value = 0.0;
+
+		for (ASTNode node : nodes)
+			value -= Double.valueOf(node.compile(this).toString());
+
+		return value;
 	}
 
 	/*
@@ -503,9 +531,13 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#plus(org.sbml.jsbml.ASTNode[])
 	 */
-	public Object plus(ASTNode... arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double plus(ASTNode... nodes) {
+		double value = 0.0;
+
+		for (ASTNode node : nodes)
+			value += Double.valueOf(node.compile(this).toString());
+
+		return value;
 	}
 
 	/*
@@ -514,9 +546,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Object pow(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double pow(ASTNode node1, ASTNode node2) {
+		return Double.valueOf(Math.pow(Double.valueOf(node1.compile(this)
+				.toString()), Double.valueOf(node2.compile(this).toString())));
+
 	}
 
 	/*
@@ -595,9 +628,13 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#root(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Object root(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double root(ASTNode node1, ASTNode node2) {
+		// TODO richtige reihenfolge?
+		double interim = Double.valueOf(node2.compile(this).toString());
+		if (interim != 0)
+			return Double.valueOf(Math.pow(Double.valueOf(node1.compile(this)
+					.toString()), 1 / interim));
+		throw new java.lang.ArithmeticException("Division by zero");
 	}
 
 	/*
@@ -605,9 +642,12 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
 	 */
-	public Object sec(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double sec(ASTNode node) {
+		double interim = Math
+				.cos(Double.valueOf(node.compile(this).toString()));
+		if (interim == 0)
+			throw new java.lang.ArithmeticException("sec(0) undefined");
+		return Double.valueOf(1 / interim);
 	}
 
 	/*
@@ -615,9 +655,11 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNode)
 	 */
-	public Object sech(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double sech(ASTNode node) {
+		double interim = Double.valueOf(node.compile(this).toString());
+		if (Math.cosh(interim) == 0)
+			throw new java.lang.ArithmeticException("Sech undefined");
+		return Double.valueOf(1 / Math.cosh(interim));
 	}
 
 	/*
@@ -625,9 +667,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sin(org.sbml.jsbml.ASTNode)
 	 */
-	public Object sin(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double sin(ASTNode node) {
+		return Double.valueOf(Math.sin(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -635,9 +677,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sinh(org.sbml.jsbml.ASTNode)
 	 */
-	public Object sinh(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double sinh(ASTNode node) {
+		return Double.valueOf(Math.sinh(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -645,8 +687,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sqrt(org.sbml.jsbml.ASTNode)
 	 */
-	public Object sqrt(ASTNode arg0) {
-		// TODO Auto-generated method stub
+	public Double sqrt(ASTNode node) {
+		Double
+				.valueOf(Math.sqrt(Double
+						.valueOf(node.compile(this).toString())));
 		return null;
 	}
 
@@ -665,9 +709,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#tan(org.sbml.jsbml.ASTNode)
 	 */
-	public Object tan(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double tan(ASTNode node) {
+		return Double.valueOf(Math.tan(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -675,9 +719,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#tanh(org.sbml.jsbml.ASTNode)
 	 */
-	public Object tanh(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double tanh(ASTNode node) {
+		return Double.valueOf(Math.tanh(Double.valueOf(node.compile(this)
+				.toString())));
 	}
 
 	/*
@@ -685,9 +729,14 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#times(org.sbml.jsbml.ASTNode[])
 	 */
-	public Object times(ASTNode... arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object times(ASTNode... nodes) {
+		// TODO auch keine nodes möglich?
+		double value = 1.0;
+
+		for (ASTNode node : nodes)
+			value *= Double.valueOf(node.compile(this).toString());
+
+		return value;
 	}
 
 	/*
@@ -695,9 +744,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#uiMinus(org.sbml.jsbml.ASTNode)
 	 */
-	public Object uiMinus(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double uiMinus(ASTNode node) {
+		return -Double.valueOf(node.compile(this).toString());
 	}
 
 	/*
@@ -705,9 +753,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#unknownASTNode()
 	 */
-	public Object unknownASTNode() {
-		// TODO Auto-generated method stub
-		return null;
+	public Double unknownASTNode() {
+		return Double.NaN;
 	}
 
 }
