@@ -21,6 +21,7 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -159,9 +160,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
-	 * )
+	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent )
 	 */
 	public void mouseDragged(MouseEvent e) {
 	}
@@ -185,8 +184,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 	 */
 	public void mouseMoved(MouseEvent e) {
 	}
@@ -217,8 +215,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	public void mouseReleased(MouseEvent e) {
 	}
@@ -264,10 +261,22 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						JOptionPane.QUESTION_MESSAGE,
 						JOptionPane.OK_CANCEL_OPTION, GUITools.ICON_LEMON_SMALL);
 				pane.selectInitialValue();
-				final JDialog dialog = new JDialog(
-						(Frame) getTopLevelAncestor(),
-						"Choose an alternative kinetic law for reaction "
-								+ reaction.getId());
+				Container container = getTopLevelAncestor();
+				final JDialog dialog;
+				if (container instanceof Frame)
+					dialog = new JDialog((Frame) container,
+							"Choose an alternative kinetic law for reaction "
+									+ reaction.getId());
+				else if (container instanceof Dialog)
+					dialog = new JDialog((Dialog) container,
+							"Choose an alternative kinetic law for reaction "
+									+ reaction.getId());
+				else {
+					dialog = new JDialog();
+					dialog
+							.setTitle("Choose an alternative kinetic law for reaction "
+									+ reaction.getId());
+				}
 				Container content = dialog.getContentPane();
 				content.setLayout(new BorderLayout());
 				content.add(pane, BorderLayout.CENTER);
