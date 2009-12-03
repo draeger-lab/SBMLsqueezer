@@ -211,7 +211,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double)
 	 */
 	public Double compile(double arg0) {
-		// TODO Auto-generated method stub
+		// TODO ???
 		return arg0;
 	}
 
@@ -220,9 +220,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(int)
 	 */
-	public Integer compile(int arg0) {
-		// TODO Auto-generated method stub
-		return arg0;
+	public Double compile(int arg0) {
+		// TODO ???
+		return Double.valueOf(arg0);
 	}
 
 	/*
@@ -349,9 +349,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Double frac(ASTNode node1, ASTNode node2) {
-		return Double.valueOf(Double.valueOf(node1.compile(this).toString())
-				/ Double.valueOf(node2.compile(this).toString()));
+	public Double frac(ASTNode nodeleft, ASTNode noderight) {
+		return Double.valueOf(Double.valueOf(nodeleft.compile(this).toString())
+				/ Double.valueOf(noderight.compile(this).toString()));
 	}
 
 	/*
@@ -359,9 +359,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(int, int)
 	 */
-	public Object frac(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double frac(int arg0, int arg1) {
+		// TODO Rückgabe double oder int?
+		return Double.valueOf(arg0 / arg1);
 	}
 
 	/*
@@ -475,10 +475,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Double log(ASTNode node1, ASTNode node2) {
-		// TODO richtige reihenfolge?
-		return Functions.logarithm(Double.valueOf(node1.compile(this)
-				.toString()), Double.valueOf(node2.compile(this).toString()));
+	public Double log(ASTNode nodeleft, ASTNode noderight) {
+		return Functions.logarithm(Double.valueOf(nodeleft.compile(this)
+				.toString()), Double
+				.valueOf(noderight.compile(this).toString()));
 	}
 
 	/*
@@ -486,9 +486,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalNot(org.sbml.jsbml.ASTNode)
 	 */
-	public Object logicalNot(ASTNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double logicalNot(ASTNode node) {
+		// TODO ???
+		return ((Double.valueOf(node.compile(this).toString()) == getConstantTrue())) ? 0.0
+				: 1.0;
 	}
 
 	/*
@@ -497,7 +498,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see
 	 * org.sbml.jsbml.ASTNodeCompiler#logicalOperation(org.sbml.jsbml.ASTNode)
 	 */
-	public Object logicalOperation(ASTNode arg0) {
+	public Object logicalOperation(ASTNode node) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -546,9 +547,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Double pow(ASTNode node1, ASTNode node2) {
-		return Double.valueOf(Math.pow(Double.valueOf(node1.compile(this)
-				.toString()), Double.valueOf(node2.compile(this).toString())));
+	public Double pow(ASTNode nodeleft, ASTNode noderight) {
+		return Double.valueOf(Math.pow(Double.valueOf(nodeleft.compile(this)
+				.toString()), Double
+				.valueOf(noderight.compile(this).toString())));
 
 	}
 
@@ -558,8 +560,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#relationEqual(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Boolean relationEqual(ASTNode node1, ASTNode node2) {
-		return Boolean.valueOf(node1.compile(this).equals(node2.compile(this)));
+	public Boolean relationEqual(ASTNode nodeleft, ASTNode noderight) {
+		// TODO ???
+		return Boolean.valueOf(nodeleft.compile(this).equals(
+				noderight.compile(this)));
 	}
 
 	/*
@@ -569,9 +573,10 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeCompiler#relationGraterThan(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Object relationGraterThan(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double relationGraterThan(ASTNode nodeleft, ASTNode noderight) {
+		// TODO schreibfehler im Funktionsnamen
+		return (Double.valueOf(nodeleft.compile(this).toString()) > Double
+				.valueOf(noderight.compile(this).toString())) ? 1.0 : 0.0;
 	}
 
 	/*
@@ -581,9 +586,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeCompiler#relationGreaterEqual(org.sbml.jsbml.ASTNode
 	 * , org.sbml.jsbml.ASTNode)
 	 */
-	public Object relationGreaterEqual(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double relationGreaterEqual(ASTNode nodeleft, ASTNode noderight) {
+		return (Double.valueOf(nodeleft.compile(this).toString()) >= Double
+				.valueOf(noderight.compile(this).toString())) ? 1.0 : 0.0;
 	}
 
 	/*
@@ -593,9 +598,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeCompiler#relationLessEqual(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Object relationLessEqual(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object relationLessEqual(ASTNode nodeleft, ASTNode noderight) {
+		return (Double.valueOf(nodeleft.compile(this).toString()) <= Double
+				.valueOf(noderight.compile(this).toString())) ? 1.0 : 0.0;
 	}
 
 	/*
@@ -605,9 +610,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeCompiler#relationLessThan(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Object relationLessThan(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object relationLessThan(ASTNode nodeleft, ASTNode noderight) {
+		return (Double.valueOf(nodeleft.compile(this).toString()) < Double
+				.valueOf(noderight.compile(this).toString())) ? 1.0 : 0.0;
 	}
 
 	/*
@@ -617,9 +622,9 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeCompiler#relationNotEqual(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Object relationNotEqual(ASTNode arg0, ASTNode arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object relationNotEqual(ASTNode nodeleft, ASTNode noderight) {
+		return (Double.valueOf(nodeleft.compile(this).toString()) != Double
+				.valueOf(noderight.compile(this).toString())) ? 1.0 : 0.0;
 	}
 
 	/*
@@ -628,12 +633,11 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#root(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public Double root(ASTNode node1, ASTNode node2) {
-		// TODO richtige reihenfolge?
-		double interim = Double.valueOf(node2.compile(this).toString());
+	public Double root(ASTNode nodeleft, ASTNode noderight) {
+		double interim = Double.valueOf(noderight.compile(this).toString());
 		if (interim != 0)
-			return Double.valueOf(Math.pow(Double.valueOf(node1.compile(this)
-					.toString()), 1 / interim));
+			return Double.valueOf(Math.pow(Double.valueOf(nodeleft
+					.compile(this).toString()), 1 / interim));
 		throw new java.lang.ArithmeticException("Division by zero");
 	}
 
