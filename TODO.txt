@@ -4,36 +4,15 @@ TODO-Liste
 Edukt- und Produktlisten können leer sein. Dieser Spezialfall wird bisher
 nicht in den einzelnen Kinetiken behandelt.
 
-Modell muss aktualisiert werden, sodass der SBO-Ausdruck für enzymatische
-Katalyse neu gesetzt wird, sobald sich die liste möglicher Enzyme ändert.
-
-Fehler in Hill-Kinetik: Laut Paper von Hintze et al. wird bei Inhibition
-1 - Produkt über alle Inhibitionsfunktionen gerechnet. Bei uns ist es
-aber Produkt über alle Inhibitoren mit 1 - Inhibitionsfunktion.
-
-Außerdem fehlt die Abbaurate in der Hillkinetik.
-
-Immer parentSBMLObject setzen, wenn neue Konstrukte erstellt werden.
-
 Hier wird an vielen Stellen von einer Stöchiometrie ausgegangen.
 Es können aber auch komplexe Ausdrücke vorkommen. Diesen muss
 Rechnung getragen werden.
-
-Einheiten sollten auch gleich für die Parameter erstellt werden.
-
-Da kinetische Gleichungen in SBML immer in Substanz pro Zeit ablaufen
-sollen, muss die Größe des Kompartiments jeweils mit den Spezies in
-der kinetischen Gleichung multipliziert werden. Ansonsten erhält man 
-immer falsche Modelle. Dazu muss aber überprüft werden, ob die Spezies
-jeweils mit Substanz-Einheiten interpretiert werden soll.
 
 Problem mit logischen UND, ODER etc.
 
 In Hill-Kinetik dafür sorgen, dass nicht mit der Gen-Konzentration
 multipliziert und der Parameter Ks nicht mit dem Hill-Koeffizienten
 potenziert wird (sonst Probleme mit Einheiten).
-
-SBO-Ids immer mithilfe des SBO-Parsers identifizieren.
 
 Direkt am Vorschaufenster für kinetische Gleichungen könnte ein Knopf
 sein, mit dem die Gleichung nach LaTeX oder Text gespeichert werden

@@ -39,6 +39,8 @@ import org.sbml.jsbml.io.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
 import org.sbml.squeezer.io.LaTeXExport;
+import org.sbml.squeezer.io.MessageListener;
+import org.sbml.squeezer.io.MessageProcessor;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
@@ -112,6 +114,8 @@ public class SBMLsqueezer implements LawListener {
 
 	private static Properties settings;
 
+	private static MessageListener msg;
+
 	/**
 	 * The location of the user's configuration file.
 	 */
@@ -132,8 +136,10 @@ public class SBMLsqueezer implements LawListener {
 	 * configuration file.
 	 */
 	static {
+		msg = new MessageProcessor();
+		msg.setWriteTime(false);
 		long time = System.currentTimeMillis();
-		System.out.print("Loading kinetic equations... ");
+		msg.log("Loading kinetic equations... ");
 		kineticsBiBi = new HashSet<String>();
 		kineticsBiUni = new HashSet<String>();
 		kineticsGeneRegulatoryNetworks = new HashSet<String>();
@@ -194,11 +200,10 @@ public class SBMLsqueezer implements LawListener {
 					kineticsIntStoichiometry.add(c.getCanonicalName());
 			}
 		}
-		System.out.println("done in " + (System.currentTimeMillis() - time)
-				+ " ms");
-		System.out.print("loading user settings...");
+		msg.logln("done in " + (System.currentTimeMillis() - time) + " ms");
+		msg.log("loading user settings...");
 		settings = initProperties();
-		System.out.println(" done.");
+		msg.logln(" done.");
 	}
 
 	/**
@@ -362,25 +367,23 @@ public class SBMLsqueezer implements LawListener {
 			// Extra check to be sure we have access to libSBML:
 			Class.forName("org.sbml.libsbml.libsbml");
 		} catch (Exception e) {
-			System.err.println("Error: could not load the libSBML library");
+			msg.err("Error: could not load the libSBML library");
 			e.printStackTrace();
 			System.exit(1);
 		}
 		final SBMLsqueezer squeezer = new SBMLsqueezer(new LibSBMLReader(),
 				new LibSBMLWriter());
-		System.out.print("scanning command line arguments...");
+		msg.log("scanning command line arguments...");
 		Properties p = analyzeCommandLineArguments(args);
 		for (Object key : p.keySet())
 			SBMLsqueezer.getProperties().put(key, p.get(key));
-		System.out.println(" done.");
-		System.out.print("reading SBO...");
-		System.out.println(" done.");
+		msg.logln(" done.\nreading SBO... done.");
 		if (p.containsKey(CfgKeys.GUI)
 				&& Boolean.parseBoolean(p.get(CfgKeys.GUI).toString())) {
 			if (p.containsKey(CfgKeys.SBML_FILE))
 				squeezer.readSBMLSource(p.get(CfgKeys.SBML_FILE).toString());
 			squeezer.checkForUpdate(true);
-			System.out.print("loading GUI...");
+			msg.log("loading GUI...");
 			new Thread(new Runnable() {
 				public void run() {
 					squeezer.showGUI();
@@ -391,7 +394,7 @@ public class SBMLsqueezer implements LawListener {
 					&& ((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue())
 				for (SBMLException exc : squeezer.getSBMLIO().getWarnings())
-					System.err.println(exc.getMessage());
+					msg.err(exc.getMessage());
 			// Do a lot of other stuff...
 			squeezer.checkForUpdate(false);
 			if (p.containsKey(CfgKeys.SBML_OUT_FILE))
@@ -540,8 +543,8 @@ public class SBMLsqueezer implements LawListener {
 					if (!defaultKin.startsWith(KINETICS_PACKAGE))
 						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
 					props.put(k, defaultKin);
-					System.err.printf("Invalid %s %s; using default %s.", k
-							.toString(), val, defaultKin);
+					msg.errf("Invalid %s %s; using default %s.", k.toString(),
+							val, defaultKin);
 				}
 			}
 		}
@@ -609,10 +612,9 @@ public class SBMLsqueezer implements LawListener {
 				if (line.endsWith("<br>"))
 					line = line.substring(0, line.length() - 4);
 				if (line.contains("<a href"))
-					System.out
-							.print(line.substring(0, line.indexOf('<') - 1) + ' ');
+					msg.logln(line.substring(0, line.indexOf('<') - 1) + ' ');
 				else
-					System.out.println(line);
+					msg.logln(line);
 			}
 		} catch (Exception e) {
 		}
@@ -631,9 +633,9 @@ public class SBMLsqueezer implements LawListener {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 60; i++)
 			sb.append('-');
-		System.out.println(sb.toString());
+		msg.logln(sb.toString());
 		showAboutMsg();
-		System.out.println(sb.toString());
+		msg.logln(sb.toString());
 		sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
 	}
 
@@ -686,15 +688,14 @@ public class SBMLsqueezer implements LawListener {
 	 */
 	public void readSBMLSource(Object sbmlSource) {
 		long time = System.currentTimeMillis();
-		System.out.print("reading SBML file...");
+		msg.log("reading SBML file...");
 		try {
 			sbmlIo.readModel(sbmlSource);
-			System.out.println(" done in "
-					+ (System.currentTimeMillis() - time) + " ms.");
+			msg.logln(" done in " + (System.currentTimeMillis() - time)
+					+ " ms.");
 		} catch (Exception exc) {
-			System.err
-					.println(" a problem occured while trying to read the model:");
-			System.err.println(exc.getMessage());
+			msg.errln(" a problem occured while trying to read the model:"
+					+ exc.getMessage());
 		}
 	}
 
@@ -746,7 +747,7 @@ public class SBMLsqueezer implements LawListener {
 	 * Shows the GUI of SBMLsqueezer stand-alone.
 	 */
 	public void showGUI() {
-		System.out.println(" have fun!");
+		msg.logln(" have fun!");
 		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, settings);
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
@@ -780,34 +781,35 @@ public class SBMLsqueezer implements LawListener {
 			throw new SBMLException(exception);
 		else if (!sbmlIo.getListOfModels().isEmpty()) {
 			long time = System.currentTimeMillis();
-			System.out.print("Generating kinetic equations...");
+			msg.log("Generating kinetic equations...");
 			KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
 					.getSelectedModel(), settings);
 			if (klg.getFastReactions().size() > 0) {
-				System.err.println("Model " + sbmlIo.getSelectedModel().getId()
+				msg.err("Model " + sbmlIo.getSelectedModel().getId()
 						+ " contains " + klg.getFastReactions().size()
 						+ " fast reaction. This feature is currently"
 						+ "ignored by SBMLsqueezer.");
 			}
 			klg.storeKineticLaws(this);
-			System.out.println(" done in "
-					+ (System.currentTimeMillis() - time) + " ms");
+			msg
+					.logln(" done in " + (System.currentTimeMillis() - time)
+							+ " ms");
 			time = System.currentTimeMillis();
-			System.out.print("Saving changes and writing SBML file... ");
+			msg.log("Saving changes and writing SBML file... ");
 			sbmlIo.saveChanges();
 			if (outFile != null
 					&& SBFileFilter.SBML_FILE_FILTER.accept(outFile)) {
 				sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
-				System.out.println(" done in "
-						+ (System.currentTimeMillis() - time) + " ms");
+				msg.logln(" done in " + (System.currentTimeMillis() - time)
+						+ " ms");
 				if (((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
 						.booleanValue())
 					for (SBMLException exc : sbmlIo.getWriteWarnings())
-						System.err.println(exc.getMessage());
+						msg.errln(exc.getMessage());
 			} else
-				System.err.println("Could not write output to SBML.");
+				msg.errln("Could not write output to SBML.");
 		} else
-			System.err.println("File contains no model. Nothing to do.");
+			msg.errln("File contains no model. Nothing to do.");
 	}
 
 	/**
@@ -828,16 +830,16 @@ public class SBMLsqueezer implements LawListener {
 					settings.put(CfgKeys.LATEX_DIR, path);
 				if (!out.exists()) {
 					long time = System.currentTimeMillis();
-					System.out.printf("writing LaTeX output...");
+					msg.log("writing LaTeX output...");
 					LaTeXExport.writeLaTeX(sbmlIo.getSelectedModel(), out,
 							settings);
-					System.out.printf(" done in %d ms\n", (System
-							.currentTimeMillis() - time));
+					msg.logf(" done in %d ms\n",
+							(System.currentTimeMillis() - time));
 				}
 			} else
-				System.err.printf("no valid TeX file: %s\n", latexFile);
+				msg.errf("no valid TeX file: %s\n", latexFile);
 		} else
-			System.err.println("no TeX file was provided");
+			msg.errln("no TeX file was provided");
 	}
 
 	/*
