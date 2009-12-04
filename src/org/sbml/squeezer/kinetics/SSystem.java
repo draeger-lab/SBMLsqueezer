@@ -254,6 +254,15 @@ public class SSystem extends BasicKineticLaw implements
 
 					Parameter exp = parameterSSystemExponent(modifier
 							.getSpecies());
+					String name=exp.getName();
+					if(SBO.isStimulator(modifier.getSBOTerm())){
+						name.concat("_sti");
+						exp.setName(name);
+					}
+					if(SBO.isInhibitor(modifier.getSBOTerm())){
+						name.concat("_inh");
+						exp.setName(name);						
+					}
 					ASTNode expnode = new ASTNode(exp, this);
 
 					if (node.isUnknown())
