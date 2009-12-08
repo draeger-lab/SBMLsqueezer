@@ -94,6 +94,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private KineticLawGenerator klg;
 
+	private JLabel label;
+
 	private int numOfWarnings = 0;
 
 	private JButton options;
@@ -107,21 +109,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private Properties settings;
 
 	private SettingsPanelAll settingsPanel;
-
-	/**
-	 * Creates an empty dialog with the given settings and sbml io object.
-	 * 
-	 * @param owner
-	 * @param settings
-	 */
-	private KineticLawSelectionDialog(Frame owner, Properties settings) {
-		super(owner, "SBMLsqueezer", true);
-//		if (owner == null)
-//			setIconImage(GUITools.ICON_LEMON);
-		this.settings = settings;
-		this.sbmlIO = null;
-		// setAlwaysOnTop(true);
-	}
 
 	/**
 	 * This constructor allows us to store the given model or the given reaction
@@ -164,16 +151,16 @@ public class KineticLawSelectionDialog extends JDialog implements
 						buffer.write(exporter.toLaTeX((Reaction) sbase)
 								.toString());
 					buffer.close();
-//					new Thread(new Runnable() {
-//
-//						public void run() {
-//							try {
-//								Desktop.getDesktop().open(f);
-//							} catch (IOException e) {
-//								// e.printStackTrace();
-//							}
-//						}
-//					}).start();
+					// new Thread(new Runnable() {
+					//
+					// public void run() {
+					// try {
+					// Desktop.getDesktop().open(f);
+					// } catch (IOException e) {
+					// // e.printStackTrace();
+					// }
+					// }
+					// }).start();
 				}
 				dispose();
 			} catch (IOException e1) {
@@ -261,6 +248,21 @@ public class KineticLawSelectionDialog extends JDialog implements
 		}
 	}
 
+	/**
+	 * Creates an empty dialog with the given settings and sbml io object.
+	 * 
+	 * @param owner
+	 * @param settings
+	 */
+	private KineticLawSelectionDialog(Frame owner, Properties settings) {
+		super(owner, "SBMLsqueezer", true);
+		// if (owner == null)
+		// setIconImage(GUITools.ICON_LEMON);
+		this.settings = settings;
+		this.sbmlIO = null;
+		// setAlwaysOnTop(true);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -306,100 +308,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 			} else if (text.equals("Generate")) {
 				if (sbmlIO != null)
-					try {
-						Properties props = settingsPanel.getSettings();
-						for (Object key : props.keySet())
-							settings.put(key, props.get(key));
-						Model model = sbmlIO.getSelectedModel();
-						klg = new KineticLawGenerator(model, settings);
-						if (klg.getFastReactions().size() > 0) {
-							String message = "<html><head></head><body><p>The model contains ";
-							if (klg.getFastReactions().size() > 1)
-								message += "fast reactions";
-							else
-								message += "the fast reaction "
-										+ klg.getFastReactions().get(0).getId();
-							message += ". This feature is currently not<br>"
-									+ "supported by SBMLsqueezer. Rate laws can still be generated properly<br>"
-									+ "but the fast attribute ";
-							if (klg.getFastReactions().size() > 1) {
-								message += "of the following reactions is beeing ignored:<br>"
-										+ "<ul type=\"disc\">";
-								for (int i = 0; i < klg.getFastReactions()
-										.size(); i++)
-									message += "<li>"
-											+ klg.getFastReactions().get(i)
-													.getId() + "</li>";
-								message += "</ul>";
-							} else
-								message += "is beeing ignored.";
-							message += "</p></body></html>";
-							JOptionPane.showMessageDialog(this, message,
-									"Fast Reactions",
-									JOptionPane.WARNING_MESSAGE);
+					new Thread(new Runnable() {
+						public void run() {
+							generateKineticLaws();
 						}
-
-						JPanel reactionsPanel = new JPanel(new BorderLayout());
-						JTable tableOfKinetics = new KineticLawTable(klg);
-						numOfWarnings = ((KineticLawTableModel) tableOfKinetics
-								.getModel()).getNumOfWarnings();
-						tableOfKinetics
-								.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-						JScrollPane scroll;
-
-						if (tableOfKinetics.getRowCount() == 0) {
-							JEditorPane pane = new JEditorPane(
-									sbmlIO.getSelectedModel().getNumReactions() > 0 ? Resource.class
-											.getResource("html/NoNewKineticsCreated.html")
-											: Resource.class
-													.getResource("html/ModelDoesNotContainAnyReactions.html"));
-							pane.addHyperlinkListener(new SystemBrowser());
-							pane.setBackground(Color.WHITE);
-							pane.setEditable(false);
-							scroll = new JScrollPane(pane,
-									JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-									JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-						} else {
-							scroll = new JScrollPane(tableOfKinetics,
-									JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-									JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-						}
-						scroll.setBorder(BorderFactory
-								.createBevelBorder(BevelBorder.LOWERED));
-						scroll.setBackground(Color.WHITE);
-						reactionsPanel.add(scroll, BorderLayout.CENTER);
-
-						JLabel numberOfWarnings = new JLabel(
-								"<html><table align=left width=500 cellspacing=10><tr><td>"
-										+ "<b>Kinetic Equations</b></td><td>"
-										+ "<td>Number of warnings (red): "
-										+ numOfWarnings
-										+ "</td></tr></table></htlm>");
-						numberOfWarnings
-								.setToolTipText(GUITools
-										.toHTML(
-												"The number of reactions an unlikely number of reactants. These are also highlighted in red in the table.",
-												40));
-						reactionsPanel
-								.add(numberOfWarnings, BorderLayout.NORTH);
-
-						centralPanel.removeAll();
-						centralPanel.add(reactionsPanel, BorderLayout.CENTER);
-						getContentPane().remove(footPanel);
-						getContentPane().add(footPanel = getFootPanel(1),
-								BorderLayout.SOUTH);
-						setResizable(true);
-						setSize(getWidth(), 640);
-						validate();
-
-					} catch (Throwable exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass()
-								.getSimpleName(), JOptionPane.WARNING_MESSAGE);
-						exc.printStackTrace();
-					}
-
+					}).start();
 				else
 					klg = null;
 
@@ -424,25 +337,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 			} else if (text.equals("Apply")) {
 				dispose();
 				if (!KineticsAndParametersStoredInSBML && klg != null
-						&& sbmlIO != null) {
-					try {
-						KineticsAndParametersStoredInSBML = true;
-						klg.storeKineticLaws(this);
-						sbmlIO.saveChanges();
-						SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO
-								.getSelectedModel(), sbmlIO.getWriteWarnings(),
-								((Boolean) settings
-										.get(CfgKeys.SHOW_SBML_WARNINGS))
-										.booleanValue());
-					} catch (SBMLException exc) {
-						JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-								.getMessage(), 40), exc.getClass()
-								.getCanonicalName(),
-								JOptionPane.WARNING_MESSAGE);
-						exc.printStackTrace();
-					}
-					KineticsAndParametersStoredInSBML = true;
-				}
+						&& sbmlIO != null)
+					new Thread(new Runnable() {
+						public void run() {
+							storeKineticsInOriginalModel();
+						}
+					}).start();
 			}
 		}
 	}
@@ -453,6 +353,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @see org.sbmlsqueezer.kinetics.LawListener#currentNumber(int)
 	 */
 	public void currentNumber(int num) {
+		label.setText(" Done with " + Integer.toString(num) + " ");
 		progressBar.setValue(num);
 		if (num >= progressBar.getMaximum())
 			progressDialog.dispose();
@@ -475,18 +376,30 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @see org.sbmlsqueezer.kinetics.LawListener#totalNumber(int)
 	 */
 	public void totalNumber(int count) {
-		progressBar = new JProgressBar(0, count);
+		progressBar = new JProgressBar(0, count - 1);
 		progressBar.setToolTipText("Storing kinetic laws");
 		progressBar.setValue(0);
-		progressDialog = new JDialog(this);
-		GridBagLayout layout = new GridBagLayout();
-		progressDialog.setLayout(layout);
-		LayoutHelper.addComponent(progressDialog.getContentPane(), layout,
-				progressBar, 0, 0, 1, 1, 1, 1);
+		progressDialog = new JDialog(this, "Storing kinetic laws");
+		progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		JPanel p = new JPanel();
+		LayoutHelper lh = new LayoutHelper(p);
+		String space = " ";
+		for (int i = 0; i < Integer.toString(count).length(); i++)
+			space += ' ';
+		label = new JLabel(" Done with " + Integer.valueOf(0) + space);
+		lh.add(label, 0, 0, 1, 1, 1, 1);
+		JPanel progress = new JPanel();
+		progress.add(progressBar);
+		progress.setBorder(BorderFactory.createLoweredBevelBorder());
+		lh.add(progress, 1, 0, 1, 1, 1, 1);
+		lh.add(new JLabel(" of " + count + " reactions"), 2, 0, 1, 1, 1, 1);
+		JPanel outer = new JPanel();
+		outer.add(p);
+		progressDialog.getContentPane().add(outer);
 		progressDialog.pack();
-		progressDialog.setAlwaysOnTop(true);
+		progressDialog.setResizable(false);
 		progressDialog.setLocationRelativeTo(null);
-		progressDialog.setVisible(false);
+		progressDialog.setVisible(true);
 	}
 
 	/*
@@ -573,29 +486,29 @@ public class KineticLawSelectionDialog extends JDialog implements
 					if (ff1.accept(f)) {
 						LaTeXExport.writeLaTeX(klg.getMiniModel(), f, settings);
 						settings.put(CfgKeys.LATEX_DIR, f.getParentFile());
-//						new Thread(new Runnable() {
-//							public void run() {
-//								try {
-//									Desktop.getDesktop().open(f);
-//								} catch (IOException e) {
-//									// e.printStackTrace();
-//								}
-//							}
-//						}).start();
+						// new Thread(new Runnable() {
+						// public void run() {
+						// try {
+						// Desktop.getDesktop().open(f);
+						// } catch (IOException e) {
+						// // e.printStackTrace();
+						// }
+						// }
+						// }).start();
 					}
 					if (ff2.accept(f)) {
 						new TextExport(klg.getMiniModel(), f, settings);
 						settings.put(CfgKeys.SAVE_DIR, f.getParentFile());
-//						new Thread(new Runnable() {
-//
-//							public void run() {
-//								try {
-//									Desktop.getDesktop().edit(f);
-//								} catch (IOException e) {
-//									// e.printStackTrace();
-//								}
-//							}
-//						}).start();
+						// new Thread(new Runnable() {
+						//
+						// public void run() {
+						// try {
+						// Desktop.getDesktop().edit(f);
+						// } catch (IOException e) {
+						// // e.printStackTrace();
+						// }
+						// }
+						// }).start();
 					}
 				} catch (IOException exc) {
 					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
@@ -604,6 +517,102 @@ public class KineticLawSelectionDialog extends JDialog implements
 					exc.printStackTrace();
 				}
 		}
+	}
+
+	/**
+	 * 
+	 */
+	private void generateKineticLaws() {
+		try {
+			GUITools.setAllEnabled(this, false);
+			Properties props = settingsPanel.getSettings();
+			for (Object key : props.keySet())
+				settings.put(key, props.get(key));
+			Model model = sbmlIO.getSelectedModel();
+			klg = new KineticLawGenerator(model, settings);
+			if (klg.getFastReactions().size() > 0) {
+				String message = "<html><head></head><body><p>The model contains ";
+				if (klg.getFastReactions().size() > 1)
+					message += "fast reactions";
+				else
+					message += "the fast reaction "
+							+ klg.getFastReactions().get(0).getId();
+				message += ". This feature is currently not<br>"
+						+ "supported by SBMLsqueezer. Rate laws can still be generated properly<br>"
+						+ "but the fast attribute ";
+				if (klg.getFastReactions().size() > 1) {
+					message += "of the following reactions is beeing ignored:<br>"
+							+ "<ul type=\"disc\">";
+					for (int i = 0; i < klg.getFastReactions().size(); i++)
+						message += "<li>"
+								+ klg.getFastReactions().get(i).getId()
+								+ "</li>";
+					message += "</ul>";
+				} else
+					message += "is beeing ignored.";
+				message += "</p></body></html>";
+				JOptionPane.showMessageDialog(this, message, "Fast Reactions",
+						JOptionPane.WARNING_MESSAGE);
+			}
+
+			JPanel reactionsPanel = new JPanel(new BorderLayout());
+			JTable tableOfKinetics = new KineticLawTable(klg);
+			numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
+					.getNumOfWarnings();
+			tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+			JScrollPane scroll;
+
+			if (tableOfKinetics.getRowCount() == 0) {
+				JEditorPane pane = new JEditorPane(
+						sbmlIO.getSelectedModel().getNumReactions() > 0 ? Resource.class
+								.getResource("html/NoNewKineticsCreated.html")
+								: Resource.class
+										.getResource("html/ModelDoesNotContainAnyReactions.html"));
+				pane.addHyperlinkListener(new SystemBrowser());
+				pane.setBackground(Color.WHITE);
+				pane.setEditable(false);
+				scroll = new JScrollPane(pane,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			} else {
+				scroll = new JScrollPane(tableOfKinetics,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			}
+			scroll.setBorder(BorderFactory
+					.createBevelBorder(BevelBorder.LOWERED));
+			scroll.setBackground(Color.WHITE);
+			reactionsPanel.add(scroll, BorderLayout.CENTER);
+
+			JLabel numberOfWarnings = new JLabel(
+					"<html><table align=left width=500 cellspacing=10><tr><td>"
+							+ "<b>Kinetic Equations</b></td><td>"
+							+ "<td>Number of warnings (red): " + numOfWarnings
+							+ "</td></tr></table></htlm>");
+			numberOfWarnings
+					.setToolTipText(GUITools
+							.toHTML(
+									"The number of reactions an unlikely number of reactants. These are also highlighted in red in the table.",
+									40));
+			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
+
+			centralPanel.removeAll();
+			centralPanel.add(reactionsPanel, BorderLayout.CENTER);
+			getContentPane().remove(footPanel);
+			getContentPane().add(footPanel = getFootPanel(1),
+					BorderLayout.SOUTH);
+			setResizable(true);
+			setSize(getWidth(), 640);
+			GUITools.setAllEnabled(this, true);
+			validate();
+		} catch (Throwable exc) {
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getSimpleName(),
+					JOptionPane.WARNING_MESSAGE);
+			exc.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -621,8 +630,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 				FlowLayout.RIGHT)), leftPanel = new JPanel();
 
 		JButton cancel = new JButton("Cancel", GUITools.ICON_DELETE), apply = new JButton();
-		cancel
-				.setToolTipText("<html>Exit SBMLsqueezer without saving changes.</html>");
+		cancel.setToolTipText(GUITools.toHTML(
+				"Exit SBMLsqueezer without saving changes.", 40));
 		cancel.addActionListener(this);
 		apply.addActionListener(this);
 
@@ -766,5 +775,24 @@ public class KineticLawSelectionDialog extends JDialog implements
 		// .getLocalGraphicsEnvironment().getMaximumWindowBounds()
 		// .getHeight()));
 		validate();
+	}
+
+	/**
+	 * 
+	 */
+	private void storeKineticsInOriginalModel() {
+		try {
+			klg.storeKineticLaws(this);
+			sbmlIO.saveChanges();
+			SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
+					sbmlIO.getWriteWarnings(), ((Boolean) settings
+							.get(CfgKeys.SHOW_SBML_WARNINGS)).booleanValue());
+		} catch (SBMLException exc) {
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
+					.getMessage(), 40), exc.getClass().getCanonicalName(),
+					JOptionPane.WARNING_MESSAGE);
+			exc.printStackTrace();
+		}
+		KineticsAndParametersStoredInSBML = true;
 	}
 }
