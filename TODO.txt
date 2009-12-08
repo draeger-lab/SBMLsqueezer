@@ -17,3 +17,13 @@ potenziert wird (sonst Probleme mit Einheiten).
 Direkt am Vorschaufenster für kinetische Gleichungen könnte ein Knopf
 sein, mit dem die Gleichung nach LaTeX oder Text gespeichert werden
 könnte.
+
+Bug erkannt im CellDesigner: Im Biomodell 5 verschwindet bei Anwendung
+der Liebermeister-Kinetiken der Parameter R für die Gaskonstante.
+
+Problem in jsbml: Änderungen an CVTerms können nicht richtig mit libSBML
+synchronisiert werden.
+
+Probleme mit UTF-8 in jsbml: libSBML-Parser wandeln alle Zeichen in
+UTF-8 um. Beim Synchronisieren müssen Sonderzeichen wieder zu den Zeichen-
+Codes übersetzt werden.

@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
@@ -40,6 +41,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import org.jdom.JDOMException;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.Compartment;
@@ -70,6 +72,8 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.io.LaTeXExport;
+import org.sbml.squeezer.io.MIRIAMparser;
+import org.sbml.squeezer.resources.Resource;
 
 import atp.sHotEqn;
 
@@ -97,6 +101,22 @@ public class SBasePanel extends JPanel {
 	private int row;
 
 	private Properties settings;
+
+	/**
+	 * 
+	 */
+	private static final MIRIAMparser miriam = new MIRIAMparser();
+
+	static {
+		try {
+			miriam.setMIRIAMfile(Resource.class.getResource("cfg/MIRIAM.xml")
+					.getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JDOMException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 
@@ -532,7 +552,23 @@ public class SBasePanel extends JPanel {
 			for (CVTerm cvt : sbase.getCVTerms()) {
 				if (sbase.getNumCVTerms() > 1)
 					sb.append("<li>");
-				sb.append(cvt.toString());
+				String cvtString = cvt.toString();
+				for (int k = 0; k < cvt.getNumResources(); k++) {
+					String uri = cvt.getResourceURI(k);
+					String loc[] = miriam.getLocations(uri);
+					if (loc.length > 0) {
+						String split[] = cvtString.split(uri);
+						StringBuilder sbu = new StringBuilder();
+						for (int l = 0; l < split.length - 1; l++) {
+							sbu.append(split[l]);
+							sbu.append("<a href=\"" + loc[0] + "\">" + uri
+									+ "</a>");
+						}
+						sbu.append(split[split.length - 1]);
+						cvtString = sbu.toString();
+					}
+				}
+				sb.append(cvtString);
 				if (sbase.getNumCVTerms() > 1)
 					sb.append("</li>");
 			}
@@ -540,6 +576,7 @@ public class SBasePanel extends JPanel {
 				sb.append("</ul>");
 			sb.append("</body></html>");
 			JEditorPane l = new JEditorPane("text/html", sb.toString());
+			l.addHyperlinkListener(new SystemBrowser());
 			l.setEditable(editable);
 			l.setBackground(Color.WHITE);
 			Dimension dim = new Dimension(preferedWidth, 125);

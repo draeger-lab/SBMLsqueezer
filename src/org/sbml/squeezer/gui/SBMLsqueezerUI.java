@@ -241,8 +241,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				chooser = GUITools.createJFileChooser(settings.get(
 						CfgKeys.OPEN_DIR).toString(), false, false,
 						JFileChooser.FILES_ONLY, SBFileFilter.SBML_FILE_FILTER);
-				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-					readModel(chooser.getSelectedFile());
+				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+					final File f = chooser.getSelectedFile();
+					new Thread(new Runnable() {
+						public void run() {
+							readModel(f);
+						}
+					}).start();
+				}
 				break;
 			case OPEN_LAST_FILE:
 				File f = new File(settings.get(CfgKeys.SBML_FILE).toString());
