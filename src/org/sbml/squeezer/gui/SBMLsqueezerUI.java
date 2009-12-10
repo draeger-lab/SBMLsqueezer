@@ -311,13 +311,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				setEnabled(false, Command.ONLINE_HELP);
 				break;
-			default:
-				break;
 			case CHECK_STABILITY:
 				StabilityDialog stabilitydialog = new StabilityDialog(this);
 				stabilitydialog.showStabilityDialog(settings, sbmlIO);
 				break;
 			case STRUCTURAL_KINETIC_MODELLING:
+				break;
+			default:
 				break;
 			}
 		}
