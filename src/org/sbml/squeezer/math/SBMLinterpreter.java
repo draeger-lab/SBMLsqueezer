@@ -41,6 +41,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Symbol;
 
 import eva2.tools.des.DESystem;
 
@@ -354,7 +355,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	public Double compile(NamedSBase nsb) {
 		if (nsb instanceof Parameter) {
 			Parameter p = (Parameter) nsb;
-			if (p.isConstant())
+			if (p.isConstant() || p.getParentSBMLObject() instanceof KineticLaw)
 				return Double.valueOf(p.getValue());
 			else {
 				// TODO
@@ -635,6 +636,32 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	public double getTime() {
 		return currentTime;
 	}
+
+	/**
+	 * Stores initial values of symbols changed due to initial assignments.
+	 * 
+	 * @author Andreas Dr&auml;ger <a
+	 *         href="mailto:andreas.draeger@uni-tuebingen.de"
+	 *         >andreas.draeger@uni-tuebingen.de</a>
+	 * 
+	 */
+	private static class InitialValue {
+		String id;
+		double val;
+		/**
+		 * 
+		 * @param s
+		 */
+		public InitialValue(Symbol s) {
+			this.id = s.getId();
+			// TODO: compute initial value
+			this.val = Double.NaN;
+		}
+	}
+
+	private InitialValue initSpec[];
+	private InitialValue initComp[];
+	private InitialValue initPara[];
 
 	/*
 	 * (non-Javadoc)
