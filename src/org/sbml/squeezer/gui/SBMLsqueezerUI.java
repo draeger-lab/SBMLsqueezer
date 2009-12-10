@@ -117,7 +117,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		/**
 		 * 
 		 */
-		STABILITY
+		CHECK_STABILITY,
+		/**
+		 * 
+		 */
+		STRUCTURAL_KINETIC_MODELLING
 	}
 
 	/**
@@ -291,7 +295,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				if (tabbedPane.getComponentCount() == 0) {
 					setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
 							Command.SQUEEZE, Command.TO_LATEX,
-							Command.STABILITY);
+							Command.CHECK_STABILITY,
+							Command.STRUCTURAL_KINETIC_MODELLING);
 					setEnabled(true, Command.OPEN_LAST_FILE);
 				}
 				break;
@@ -308,6 +313,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				break;
 			default:
 				break;
+			case CHECK_STABILITY:
+				StabilityDialog stabilitydialog = new StabilityDialog(this);
+				stabilitydialog.showStabilityDialog(settings, sbmlIO);
+				break;
+			case STRUCTURAL_KINETIC_MODELLING:
+				break;
 			}
 		}
 	}
@@ -323,7 +334,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		if (e.getSource().equals(tabbedPane)) {
 			if (tabbedPane.getComponentCount() == 0) {
 				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-						Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
+						Command.SQUEEZE, Command.TO_LATEX,
+						Command.CHECK_STABILITY,
+						Command.STRUCTURAL_KINETIC_MODELLING);
 				if (settings.get(CfgKeys.SBML_FILE).toString().length() > 0)
 					setEnabled(true, Command.OPEN_LAST_FILE);
 			}
@@ -411,7 +424,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.add(model.getId(), split);
 		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
 		setEnabled(true, Command.SAVE_FILE, Command.CLOSE_FILE,
-				Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
+				Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
+				Command.STRUCTURAL_KINETIC_MODELLING);
 		setEnabled(false, Command.OPEN_LAST_FILE);
 	}
 
@@ -515,6 +529,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		latexItem.setIcon(GUITools.ICON_LATEX_TINY);
 		latexItem.addActionListener(this);
 		latexItem.setActionCommand(Command.TO_LATEX.toString());
+		JMenuItem stabilityItem = new JMenuItem("Analyze Stability");
+		stabilityItem.setIcon(GUITools.ICON_STABILITY_SMALL);
+		stabilityItem.addActionListener(this);
+		stabilityItem.setActionCommand(Command.CHECK_STABILITY.toString());
+		JMenuItem structuralItem = new JMenuItem("Structural Kinetic Modelling");
+		//stabilityItem.setIcon();
+		structuralItem.addActionListener(this);
+		structuralItem.setActionCommand(Command.STRUCTURAL_KINETIC_MODELLING.toString());
 		JMenuItem preferencesItem = new JMenuItem("Preferences",
 				GUITools.ICON_TICK_TINY);
 		preferencesItem.setActionCommand(Command.SET_PREFERENCES.toString());
@@ -522,6 +544,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		preferencesItem.setMnemonic(preferencesItem.getText().charAt(0));
 		editMenu.add(squeezeItem);
 		editMenu.add(latexItem);
+		editMenu.add(stabilityItem);
+		editMenu.add(structuralItem);
 		editMenu.add(preferencesItem);
 
 		/*
@@ -600,8 +624,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 		if (GUITools.ICON_STABILITY_SMALL != null) {
 			JButton stabilityButton = new JButton(GUITools.ICON_STABILITY_SMALL);
-			// stabilityButton.addActionListener(this);
-			stabilityButton.setActionCommand(Command.STABILITY.toString());
+			stabilityButton.addActionListener(this);
+			stabilityButton
+					.setActionCommand(Command.CHECK_STABILITY.toString());
 			stabilityButton.setToolTipText(GUITools.toHTML(
 					"Analyze the stability properties of the selected model.",
 					40));
@@ -632,7 +657,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
 				.getIconHeight() + 75));
 		setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-				Command.SQUEEZE, Command.TO_LATEX, Command.STABILITY);
+				Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY, Command.STRUCTURAL_KINETIC_MODELLING);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
 		tabbedPane.addChangeListener(this);
 		tabbedPane.addChangeListener(sbmlIO);
@@ -774,16 +799,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private void writeLaTeX(final File out) {
 		try {
 			LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), out, settings);
-//			new Thread(new Runnable() {
-//
-//				public void run() {
-//					try {
-//						Desktop.getDesktop().open(out);
-//					} catch (IOException e) {
-//						// e.printStackTrace();
-//					}
-//				}
-//			}).start();
+			// new Thread(new Runnable() {
+			//
+			// public void run() {
+			// try {
+			// Desktop.getDesktop().open(out);
+			// } catch (IOException e) {
+			// // e.printStackTrace();
+			// }
+			// }
+			// }).start();
 		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
 					.getClass().getName(), JOptionPane.WARNING_MESSAGE);
@@ -820,16 +845,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private void writeText(final File out) {
 		try {
 			new TextExport(sbmlIO.getSelectedModel(), out, settings);
-//			new Thread(new Runnable() {
-//
-//				public void run() {
-//					try {
-//						Desktop.getDesktop().edit(out);
-//					} catch (IOException e) {
-//						// e.printStackTrace();
-//					}
-//				}
-//			}).start();
+			// new Thread(new Runnable() {
+			//
+			// public void run() {
+			// try {
+			// Desktop.getDesktop().edit(out);
+			// } catch (IOException e) {
+			// // e.printStackTrace();
+			// }
+			// }
+			// }).start();
 
 		} catch (IOException exc) {
 			JOptionPane.showMessageDialog(this, exc.getMessage(), exc

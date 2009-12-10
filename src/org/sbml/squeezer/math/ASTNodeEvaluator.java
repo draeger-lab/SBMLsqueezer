@@ -728,7 +728,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#symbolTime(java.lang.String)
 	 */
-	public Object symbolTime(String arg0) {
+	public Double symbolTime(String arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}

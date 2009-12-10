@@ -133,7 +133,7 @@ public class GUITools {
 			ICON_LEMON_SMALL = new ImageIcon(ImageIO.read(Resource.class
 					.getResource("img/Lemon_small.png")));
 			ICON_STABILITY_SMALL = new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/Stability_small.png")));
+					.getResource("img/Stability_tiny.png")));
 			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
 			Image image = ImageIO.read(Resource.class
 					.getResource("img/rightarrow.png"));
