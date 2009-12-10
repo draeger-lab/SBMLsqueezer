@@ -239,9 +239,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(java.lang.String)
 	 */
-	public Object compile(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public String compile(String arg0) {
+		return String.valueOf(arg0);
 	}
 
 	/*
@@ -413,7 +412,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantE()
 	 */
 	public Double getConstantE() {
-		return Math.E;
+		return Double.valueOf(Math.E);
 	}
 
 	/*
@@ -422,7 +421,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantFalse()
 	 */
 	public Double getConstantFalse() {
-		return 0.0;
+		return Double.valueOf(0.0);
 	}
 
 	/*
@@ -431,7 +430,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantPi()
 	 */
 	public Double getConstantPi() {
-		return Math.PI;
+		return Double.valueOf(Math.PI);
 	}
 
 	/*
@@ -440,7 +439,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantTrue()
 	 */
 	public Double getConstantTrue() {
-		return 1.0;
+		return Double.valueOf(1.0);
 	}
 
 	/*
@@ -449,7 +448,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getNegativeInfinity()
 	 */
 	public Double getNegativeInfinity() {
-		return Double.NEGATIVE_INFINITY;
+		return Double.valueOf(Double.NEGATIVE_INFINITY);
 	}
 
 	/*
@@ -458,7 +457,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getPositiveInfinity()
 	 */
 	public Double getPositiveInfinity() {
-		return Double.POSITIVE_INFINITY;
+		return Double.valueOf(Double.POSITIVE_INFINITY);
 	}
 
 	/*
@@ -513,8 +512,8 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalNot(org.sbml.jsbml.ASTNode)
 	 */
 	public Double logicalNot(ASTNode node) {
-		return ((((Double) node.compile(this)).doubleValue() == getConstantTrue())) ? 0.0
-				: 1.0;
+		return Double.valueOf(((((Double) node.compile(this)).doubleValue() == getConstantTrue())) ? 0.0
+				: 1.0);
 	}
 
 	/*
@@ -539,7 +538,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 		for (ASTNode node : nodes)
 			value -= ((Double) node.compile(this)).doubleValue();
 
-		return value;
+		return Double.valueOf(value);
 	}
 
 	/*
@@ -563,7 +562,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 		for (ASTNode node : nodes)
 			value += ((Double) node.compile(this)).doubleValue();
 
-		return value;
+		return Double.valueOf(value);
 	}
 
 	/*
@@ -766,7 +765,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 		for (ASTNode node : nodes)
 			value *= ((Double) node.compile(this)).doubleValue();
 
-		return value;
+		return Double.valueOf(value);
 	}
 
 	/*
@@ -775,7 +774,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#uiMinus(org.sbml.jsbml.ASTNode)
 	 */
 	public Double uiMinus(ASTNode node) {
-		return -((Double) node.compile(this)).doubleValue();
+		return Double.valueOf(-((Double) node.compile(this)).doubleValue());
 	}
 
 	/*
@@ -784,7 +783,7 @@ public class ASTNodeEvaluator implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#unknownASTNode()
 	 */
 	public Double unknownASTNode() {
-		return Double.NaN;
+		return Double.valueOf(Double.NaN);
 	}
 
 }
