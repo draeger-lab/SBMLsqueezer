@@ -1,1 +1,0 @@
--source 1.5 -target 1.5 -classpath ./src:./lib/celldesigner.jar:./lib/libsbml/bindings/java/classes/sbmlj.jar -d ./bin
