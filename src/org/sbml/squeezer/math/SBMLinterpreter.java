@@ -1449,4 +1449,19 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	protected boolean logicalOR(boolean left, boolean right) {
 		return (!left && !right) ? false : true;
 	}
+
+	public Object logicalAND(ASTNode... nodes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object logicalOR(ASTNode... nodes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object logicalXOR(ASTNode... nodes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

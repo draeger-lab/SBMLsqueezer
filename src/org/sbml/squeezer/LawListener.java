@@ -18,24 +18,30 @@
  */
 package org.sbml.squeezer;
 
-public interface LawListener {
+import java.util.EventListener;
+
+import org.sbml.jsbml.SBase;
+
+public interface LawListener extends EventListener {
 
 	/**
 	 * Allows you to tell this listener which number (in a list or in an array
 	 * or what ever) you are currently working with.
 	 * 
+	 * @param item
 	 * @param num
 	 *            The current element.
 	 */
-	public void currentNumber(int num);
+	public void currentState(SBase item, int num);
 
 	/**
 	 * Allows you to tell this listener the total number of elements to work
 	 * with.
 	 * 
-	 * @param i
+	 * @param className
+	 *            the name of objects that is to be changed now.
+	 * @param numberOfElements
 	 *            Number of elements.
 	 */
-	public void totalNumber(int i);
-
+	public void initLawListener(String className, int numberOfElements);
 }
