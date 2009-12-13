@@ -155,23 +155,24 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 */
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(1, this);
-		ASTNode competInhib = competetiveInhibitionSummand();
+		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}
 
 	/**
 	 * Creates the summand for competetive inhibition in the denominator.
+	 * @param enzyme 
 	 * 
 	 * @param r
 	 * @return
 	 */
-	ASTNode competetiveInhibitionSummand() {
+	ASTNode competetiveInhibitionSummand(String enzyme) {
 		Reaction r = getParentSBMLObject();
 		ASTNode inhib = new ASTNode(this);
 		for (ModifierSpeciesReference msr : r.getListOfModifiers())
 			if (SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
-				Parameter kI = parameterKi(r.getId(), msr.getSpecies());
+				Parameter kI = parameterKi(msr.getSpecies(), enzyme);
 				ASTNode curr = ASTNode.frac(speciesTerm(msr), new ASTNode(kI,
 						this));
 				if (inhib.isUnknown())

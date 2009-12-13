@@ -71,7 +71,7 @@ public class ForceDependent extends ReversiblePowerLaw implements
 				denominator = backward;
 		}
 		denominator.sqrt();
-		ASTNode competInhib = competetiveInhibitionSummand();
+		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}

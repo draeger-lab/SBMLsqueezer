@@ -65,7 +65,7 @@ public class CommonSaturable extends ReversiblePowerLaw implements
 		else
 			denominator.plus(denominator(enzyme, false));
 		denominator.minus(new ASTNode(1, this));
-		ASTNode competInhib = competetiveInhibitionSummand();
+		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}

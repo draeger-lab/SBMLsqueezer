@@ -71,7 +71,7 @@ public class MultiplicativeSaturable extends ReversiblePowerLaw implements
 			else
 				denominator = backward;
 		}
-		ASTNode competInhib = competetiveInhibitionSummand();
+		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}

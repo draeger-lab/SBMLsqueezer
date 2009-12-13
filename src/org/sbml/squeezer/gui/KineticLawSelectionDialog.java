@@ -49,9 +49,11 @@ import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
 
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.LawListener;
@@ -74,7 +76,7 @@ import org.sbml.squeezer.resources.Resource;
  * @date Aug 3, 2007
  */
 public class KineticLawSelectionDialog extends JDialog implements
-		ActionListener, WindowListener, LawListener {
+		ActionListener, WindowListener, LawListener, IOProgressListener {
 
 	private static final int fullHeight = 720;
 
@@ -197,7 +199,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		try {
 			// This thing is necessary for CellDesigner!
 			KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
-					settings, sbmlIO, reactionID);
+					settings, sbmlIO, reactionID, this);
 			pack();
 			setResizable(false);
 			setLocationRelativeTo(owner);
@@ -334,15 +336,17 @@ public class KineticLawSelectionDialog extends JDialog implements
 				 * } }).start();/
 				 */
 
-			} else if (text.equals("Apply")) {
-				dispose();
-				if (!KineticsAndParametersStoredInSBML && klg != null
-						&& sbmlIO != null)
-					new Thread(new Runnable() {
-						public void run() {
-							storeKineticsInOriginalModel();
-						}
-					}).start();
+			} else if (text.equals("Apply")
+					&& !KineticsAndParametersStoredInSBML && klg != null
+					&& sbmlIO != null) {
+				// GUITools.setAllEnabled(this, false);
+				new Thread(new Runnable() {
+					public void run() {
+						setVisible(false);
+						storeKineticsInOriginalModel();
+						dispose();
+					}
+				}).start();
 			}
 		}
 	}
@@ -350,9 +354,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbmlsqueezer.kinetics.LawListener#currentNumber(int)
+	 * @see org.sbml.squeezer.LawListener#currentState(org.sbml.jsbml.SBase,
+	 * int)
 	 */
-	public void currentNumber(int num) {
+	public void currentState(SBase item, int num) {
 		label.setText(" Done with " + Integer.toString(num) + " ");
 		progressBar.setValue(num);
 		if (num >= progressBar.getMaximum())
@@ -373,33 +378,39 @@ public class KineticLawSelectionDialog extends JDialog implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbmlsqueezer.kinetics.LawListener#totalNumber(int)
+	 * @see org.sbml.squeezer.LawListener#initLawListener(java.lang.String, int)
 	 */
-	public void totalNumber(int count) {
-		progressBar = new JProgressBar(0, count - 1);
-		progressBar.setToolTipText("Storing kinetic laws");
-		progressBar.setValue(0);
-		progressDialog = new JDialog(this, "Storing kinetic laws");
-		progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		JPanel p = new JPanel();
-		LayoutHelper lh = new LayoutHelper(p);
-		String space = " ";
-		for (int i = 0; i < Integer.toString(count).length(); i++)
-			space += ' ';
-		label = new JLabel(" Done with " + Integer.valueOf(0) + space);
-		lh.add(label, 0, 0, 1, 1, 1, 1);
-		JPanel progress = new JPanel();
-		progress.add(progressBar);
-		progress.setBorder(BorderFactory.createLoweredBevelBorder());
-		lh.add(progress, 1, 0, 1, 1, 1, 1);
-		lh.add(new JLabel(" of " + count + " reactions"), 2, 0, 1, 1, 1, 1);
-		JPanel outer = new JPanel();
-		outer.add(p);
-		progressDialog.getContentPane().add(outer);
-		progressDialog.pack();
-		progressDialog.setResizable(false);
-		progressDialog.setLocationRelativeTo(null);
-		progressDialog.setVisible(true);
+	public void initLawListener(String className, int count) {
+		if (count > 0) {
+			if (!className.endsWith("s") && count != 1)
+				className += "s";
+			progressBar = new JProgressBar(0, count - 1);
+			progressBar.setToolTipText("Saving changes in " + className);
+			progressBar.setValue(0);
+			progressDialog = new JDialog(this, "Saving changes");
+			progressDialog
+					.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+			JPanel p = new JPanel();
+			LayoutHelper lh = new LayoutHelper(p);
+			String space = " ";
+			for (int i = 0; i < Integer.toString(count).length(); i++)
+				space += ' ';
+			label = new JLabel(" Done with " + Integer.valueOf(0) + space);
+			lh.add(label, 0, 0, 1, 1, 1, 1);
+			JPanel progress = new JPanel();
+			progress.add(progressBar);
+			progress.setBorder(BorderFactory.createLoweredBevelBorder());
+			lh.add(progress, 1, 0, 1, 1, 1, 1);
+			lh.add(new JLabel(" of " + count + ' ' + className), 2, 0, 1, 1, 1,
+					1);
+			JPanel outer = new JPanel();
+			outer.add(p);
+			progressDialog.getContentPane().add(outer);
+			progressDialog.pack();
+			progressDialog.setResizable(false);
+			progressDialog.setLocationRelativeTo(null);
+			progressDialog.setVisible(true);
+		}
 	}
 
 	/*
@@ -783,16 +794,42 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private void storeKineticsInOriginalModel() {
 		try {
 			klg.storeKineticLaws(this);
-			sbmlIO.saveChanges();
+			progressDialog = new JDialog(this, "Saving changes");
+			progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+			label = new JLabel();
+			progressDialog.getContentPane().add(label);
+			progressDialog.setSize(200, 150);
+			progressDialog.setLocationRelativeTo(null);
+			progressDialog.setVisible(true);
+			sbmlIO.saveChanges(this);
 			SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
 					sbmlIO.getWriteWarnings(), ((Boolean) settings
 							.get(CfgKeys.SHOW_SBML_WARNINGS)).booleanValue());
+			KineticsAndParametersStoredInSBML = true;
 		} catch (SBMLException exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getCanonicalName(),
 					JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
-		KineticsAndParametersStoredInSBML = true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
+	 */
+	public void ioProgressOn(Object currObject) {
+		if (currObject == null)
+			progressDialog.dispose();
+		else {
+			StringBuilder sb = new StringBuilder();
+			sb.append("writing ");
+			sb.append(currObject.getClass().getSimpleName());
+			if (currObject instanceof NamedSBase) {
+				sb.append(' ');
+				sb.append(((NamedSBase) currObject).getId());
+			}
+			label.setText(GUITools.toHTML(sb.toString(), 40));
+		}
 	}
 }

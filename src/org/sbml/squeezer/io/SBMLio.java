@@ -57,7 +57,7 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.io.AbstractSBMLReader;
+import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.squeezer.SBMLsqueezer;
 
 /**
@@ -75,7 +75,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	private LinkedList<Object> listOfOrigModels;
 
-	private AbstractSBMLReader reader;
+	private SBMLReader reader;
 
 	private List<SBase> removed;
 
@@ -88,7 +88,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	/**
 	 * 
 	 */
-	public SBMLio(AbstractSBMLReader sbmlReader, SBMLWriter sbmlWriter) {
+	public SBMLio(SBMLReader sbmlReader, SBMLWriter sbmlWriter) {
 		this.reader = sbmlReader;
 		// this.reader.addSBaseChangeListener(this);
 		this.writer = sbmlWriter;
@@ -104,7 +104,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * 
 	 * @param model
 	 */
-	public SBMLio(AbstractSBMLReader reader, SBMLWriter writer, Object model) {
+	public SBMLio(SBMLReader reader, SBMLWriter writer, Object model) {
 		this(reader, writer);
 		this.listOfModels.addLast(reader.readModel(model));
 		this.listOfOrigModels.addLast(model);
@@ -368,12 +368,15 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/**
 	 * Write all changes back into the original model.
+	 * @param listener 
 	 * 
 	 * @throws SBMLException
 	 */
-	public void saveChanges() throws SBMLException {
+	public void saveChanges(IOProgressListener listener) throws SBMLException {
+		writer.addIOProgressListener(listener);
 		writer.saveChanges(listOfModels.get(selectedModel), listOfOrigModels
 				.get(selectedModel));
+		listener.ioProgressOn(null);
 	}
 
 	/*
@@ -892,5 +895,22 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	// @Override
 	public Object writeUnitDefinition(UnitDefinition unitDefinition) {
 		return writer.writeUnitDefinition(unitDefinition);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLReader#addEventListener(java.util.EventListener)
+	 */
+	public void addIOProgressListener(IOProgressListener listener) {
+		reader.addIOProgressListener(listener);
+		writer.addIOProgressListener(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLReader#getOriginalModel()
+	 */
+	public Object getOriginalModel() {
+		return reader.getOriginalModel();
 	}
 }

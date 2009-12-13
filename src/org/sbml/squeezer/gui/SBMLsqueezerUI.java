@@ -55,8 +55,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.LaTeXExport;
@@ -72,7 +74,11 @@ import org.sbml.squeezer.resources.Resource;
  * 
  */
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
-		WindowListener, ChangeListener {
+		WindowListener, ChangeListener, IOProgressListener {
+
+	private JDialog progressDialog;
+	private JLabel label;
+
 	/**
 	 * This is what the graphical user interface of SBMLsqueezer can do...
 	 * 
@@ -159,6 +165,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				+ SBMLsqueezer.getVersionNumber());
 		this.settings = settings;
 		this.sbmlIO = io;
+		this.sbmlIO.addIOProgressListener(this);
 		init();
 		pack();
 		Dimension dim = logo.getPreferredSize();
@@ -203,6 +210,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				} else {
 					// whole model
 					klsd = new KineticLawSelectionDialog(this, settings, sbmlIO);
+					klsd.addWindowListener(this);
 					klsd.setVisible(true);
 				}
 				if (klsd.isKineticsAndParametersStoredInSBML()) {
@@ -359,7 +367,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @see
 	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 	 */
-	public void windowClosed(WindowEvent arg0) {
+	public void windowClosed(WindowEvent we) {
+		if (we.getWindow() instanceof KineticLawSelectionDialog) {
+			KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we
+					.getWindow();
+			if (klsd.isKineticsAndParametersStoredInSBML()) {
+				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
+						.getSelectedComponent();
+				split.init(sbmlIO.getSelectedModel(), true);
+			}
+		}
 	}
 
 	/*
@@ -534,9 +551,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		stabilityItem.addActionListener(this);
 		stabilityItem.setActionCommand(Command.CHECK_STABILITY.toString());
 		JMenuItem structuralItem = new JMenuItem("Structural Kinetic Modelling");
-		//stabilityItem.setIcon();
+		// stabilityItem.setIcon();
 		structuralItem.addActionListener(this);
-		structuralItem.setActionCommand(Command.STRUCTURAL_KINETIC_MODELLING.toString());
+		structuralItem.setActionCommand(Command.STRUCTURAL_KINETIC_MODELLING
+				.toString());
 		JMenuItem preferencesItem = new JMenuItem("Preferences",
 				GUITools.ICON_TICK_TINY);
 		preferencesItem.setActionCommand(Command.SET_PREFERENCES.toString());
@@ -657,7 +675,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
 				.getIconHeight() + 75));
 		setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-				Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY, Command.STRUCTURAL_KINETIC_MODELLING);
+				Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
+				Command.STRUCTURAL_KINETIC_MODELLING);
 		tabbedPane = new JTabbedPaneWithCloseIcons();
 		tabbedPane.addChangeListener(this);
 		tabbedPane.addChangeListener(sbmlIO);
@@ -681,6 +700,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private void readModel(File file) {
 		try {
 			Model model = sbmlIO.readModel(file.getAbsolutePath());
+			ioProgressOn(null);
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(),
 					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue());
@@ -861,5 +881,38 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					.getClass().getName(), JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
+	 */
+	public void ioProgressOn(Object currObject) {
+		if (currObject != null) {
+			if (label == null)
+				label = new JLabel();
+			StringBuilder sb = new StringBuilder();
+			sb.append(currObject.getClass().getSimpleName());
+			if (currObject instanceof NamedSBase) {
+				sb.append(' ');
+				NamedSBase nsb = (NamedSBase) currObject; 
+				sb.append(nsb.getId());
+				if (nsb.getName() != null && nsb.getName().length() > 0) {
+					sb.append(' ');
+					sb.append(nsb.getName());
+				}
+			}
+			label.setText(GUITools.toHTML(sb.toString(), 40));
+			if (progressDialog == null) {
+				progressDialog = new JDialog(this, "SBML IO progress");
+				progressDialog.getContentPane().add(label);
+				progressDialog.setSize(200, 150);
+				progressDialog.setLocationRelativeTo(this);
+				progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+				progressDialog.setVisible(true);
+			}
+		} else if (progressDialog != null)
+			progressDialog.dispose();
 	}
 }

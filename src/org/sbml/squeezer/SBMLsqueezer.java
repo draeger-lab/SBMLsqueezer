@@ -32,8 +32,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.io.AbstractSBMLReader;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.jsbml.io.LibSBMLReader;
 import org.sbml.jsbml.io.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -70,17 +72,17 @@ import org.sbml.squeezer.resources.Resource;
  * @since 1.3
  * @version $Revision: 293$
  */
-public class SBMLsqueezer implements LawListener {
-
-	/**
-	 * The package where all kinetic equations are located.
-	 */
-	public static final String KINETICS_PACKAGE = "org.sbml.squeezer.kinetics";
+public class SBMLsqueezer implements LawListener, IOProgressListener {
 
 	/**
 	 * 
 	 */
 	private final static String configFile = "org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
+
+	/**
+	 * The package where all kinetic equations are located.
+	 */
+	public static final String KINETICS_PACKAGE = "org.sbml.squeezer.kinetics";
 
 	/**
 	 * enzyme mechanism with an arbitrary number of reactants or products
@@ -112,9 +114,9 @@ public class SBMLsqueezer implements LawListener {
 
 	private static Set<String> kineticsZeroReactants;
 
-	private static Properties settings;
-
 	private static MessageListener msg;
+
+	private static Properties settings;
 
 	/**
 	 * The location of the user's configuration file.
@@ -204,6 +206,119 @@ public class SBMLsqueezer implements LawListener {
 		msg.log("loading user settings...");
 		settings = initProperties();
 		msg.logln(" done.");
+	}
+
+	/**
+	 * 
+	 * @param args
+	 * @return
+	 */
+	private static Properties analyzeCommandLineArguments(String[] args) {
+		Properties p = new Properties();
+		for (String string : args) {
+			while (string.startsWith("-"))
+				string = string.substring(1);
+			if (string.contains("=")) {
+				String keyVal[] = string.split("=");
+				p.put(CfgKeys
+						.valueOf(keyVal[0].toUpperCase().replace('-', '_')),
+						keyVal[1]);
+			} else
+				p.put(CfgKeys.valueOf(string.toUpperCase().replace('-', '_')),
+						Boolean.TRUE.toString());
+		}
+		return correctProperties(p);
+	}
+
+	/**
+	 * Creates an instance of the given properties, in which all keys are
+	 * literals from the configuration enum and all values are objects such as
+	 * Boolean, Integer, Double, Kinetics and so on.
+	 * 
+	 * @param properties
+	 * @return
+	 */
+	private static Properties correctProperties(Properties properties) {
+		Object keys[] = properties.keySet().toArray();
+		Properties props = new Properties();
+		for (int i = keys.length - 1; i >= 0; i--) {
+			CfgKeys k = CfgKeys.valueOf(keys[i].toString());
+			String val = properties.get(keys[i]).toString();
+			if (val.startsWith("user."))
+				props.put(k, System.getProperty(val));
+			else if (val.equalsIgnoreCase("true")
+					|| val.equalsIgnoreCase("false"))
+				props.put(k, Boolean.parseBoolean(val));
+			else {
+				boolean allDigit = true;
+				short dotCount = 0;
+				for (char c : val.toCharArray()) {
+					if (c == '.')
+						dotCount++;
+					else
+						allDigit &= Character.isDigit(c);
+				}
+				if (allDigit && dotCount == 0)
+					props.put(k, Integer.parseInt(val));
+				else if (allDigit && dotCount == 1)
+					props.put(k, Double.parseDouble(val));
+				else
+					props.put(k, val);
+			}
+			if (k.toString().startsWith("KINETICS_")) {
+				if (!val.startsWith(KINETICS_PACKAGE)) {
+					val = KINETICS_PACKAGE + '.' + val;
+					props.put(k, val);
+				}
+				boolean invalid = false;
+				switch (k) {
+				// check if valid default kinetics are given.
+				case KINETICS_BI_BI_TYPE:
+					invalid = !kineticsBiBi.contains(val);
+					break;
+				case KINETICS_BI_UNI_TYPE:
+					invalid = !kineticsBiUni.contains(val);
+					break;
+				case KINETICS_GENE_REGULATION:
+					invalid = !kineticsGeneRegulatoryNetworks.contains(val);
+					break;
+				case KINETICS_NONE_ENZYME_REACTIONS:
+					invalid = !kineticsNonEnzyme.contains(val);
+					break;
+				case KINETICS_OTHER_ENZYME_REACTIONS:
+					invalid = !kineticsArbitraryEnzymeMechanism.contains(val);
+					break;
+				case KINETICS_UNI_UNI_TYPE:
+					invalid = !kineticsUniUni.contains(val);
+					break;
+				}
+				boolean allReversible = properties
+						.containsKey(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+				if (allReversible)
+					allReversible &= Boolean.parseBoolean(properties.get(
+							CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)
+							.toString());
+				else if (settings != null) {
+					allReversible = settings
+							.containsKey(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+					if (allReversible)
+						allReversible &= Boolean.parseBoolean(settings.get(
+								CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)
+								.toString());
+				}
+				if (!kineticsIrreversible.contains(val) && !allReversible)
+					invalid = false;
+				if (invalid) {
+					String defaultKin = getDefaultSettings().get(k).toString();
+					if (!defaultKin.startsWith(KINETICS_PACKAGE))
+						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
+					props.put(k, defaultKin);
+					msg.errf("Invalid %s %s; using default %s.", k.toString(),
+							val, defaultKin);
+				}
+			}
+		}
+		return props;
 	}
 
 	/**
@@ -359,6 +474,46 @@ public class SBMLsqueezer implements LawListener {
 	}
 
 	/**
+	 * 
+	 * @return
+	 */
+	private static Properties initProperties() {
+		Properties properties;
+		try {
+			StringBuilder path = new StringBuilder(System
+					.getProperty("user.home"));
+			path.append(File.separatorChar);
+			path.append(".SBMLsqueezer");
+			File f = new File(path.toString());
+			if (!f.exists()) {
+				f.mkdir();
+				path.append(File.separatorChar);
+				path.append("SBMLsqueezer.cfg");
+				f = new File(path.toString());
+				if (!f.exists())
+					f.createNewFile();
+			}
+			f = new File(userConfigFile);
+			if (f.exists() && f.length() == 0) {
+				FileOutputStream os = new FileOutputStream(new File(configFile));
+				Resource.readProperties(configFile).store(os,
+						"SBMLsqueezer configuration. Do not change manually.");
+				os.close();
+			}
+			properties = correctProperties(Resource
+					.readProperties(userConfigFile));
+			// avoid senseless exceptions if keys are missing.
+			for (CfgKeys key : CfgKeys.values())
+				if (!properties.containsKey(key))
+					properties.put(key, getDefaultSettings().get(key));
+		} catch (Exception e) {
+			e.printStackTrace();
+			properties = getDefaultSettings();
+		}
+		return properties;
+	}
+
+	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -439,159 +594,6 @@ public class SBMLsqueezer implements LawListener {
 	}
 
 	/**
-	 * 
-	 * @param args
-	 * @return
-	 */
-	private static Properties analyzeCommandLineArguments(String[] args) {
-		Properties p = new Properties();
-		for (String string : args) {
-			while (string.startsWith("-"))
-				string = string.substring(1);
-			if (string.contains("=")) {
-				String keyVal[] = string.split("=");
-				p.put(CfgKeys
-						.valueOf(keyVal[0].toUpperCase().replace('-', '_')),
-						keyVal[1]);
-			} else
-				p.put(CfgKeys.valueOf(string.toUpperCase().replace('-', '_')),
-						Boolean.TRUE.toString());
-		}
-		return correctProperties(p);
-	}
-
-	/**
-	 * Creates an instance of the given properties, in which all keys are
-	 * literals from the configuration enum and all values are objects such as
-	 * Boolean, Integer, Double, Kinetics and so on.
-	 * 
-	 * @param properties
-	 * @return
-	 */
-	private static Properties correctProperties(Properties properties) {
-		Object keys[] = properties.keySet().toArray();
-		Properties props = new Properties();
-		for (int i = keys.length - 1; i >= 0; i--) {
-			CfgKeys k = CfgKeys.valueOf(keys[i].toString());
-			String val = properties.get(keys[i]).toString();
-			if (val.startsWith("user."))
-				props.put(k, System.getProperty(val));
-			else if (val.equalsIgnoreCase("true")
-					|| val.equalsIgnoreCase("false"))
-				props.put(k, Boolean.parseBoolean(val));
-			else {
-				boolean allDigit = true;
-				short dotCount = 0;
-				for (char c : val.toCharArray()) {
-					if (c == '.')
-						dotCount++;
-					else
-						allDigit &= Character.isDigit(c);
-				}
-				if (allDigit && dotCount == 0)
-					props.put(k, Integer.parseInt(val));
-				else if (allDigit && dotCount == 1)
-					props.put(k, Double.parseDouble(val));
-				else
-					props.put(k, val);
-			}
-			if (k.toString().startsWith("KINETICS_")) {
-				if (!val.startsWith(KINETICS_PACKAGE)) {
-					val = KINETICS_PACKAGE + '.' + val;
-					props.put(k, val);
-				}
-				boolean invalid = false;
-				switch (k) {
-				// check if valid default kinetics are given.
-				case KINETICS_BI_BI_TYPE:
-					invalid = !kineticsBiBi.contains(val);
-					break;
-				case KINETICS_BI_UNI_TYPE:
-					invalid = !kineticsBiUni.contains(val);
-					break;
-				case KINETICS_GENE_REGULATION:
-					invalid = !kineticsGeneRegulatoryNetworks.contains(val);
-					break;
-				case KINETICS_NONE_ENZYME_REACTIONS:
-					invalid = !kineticsNonEnzyme.contains(val);
-					break;
-				case KINETICS_OTHER_ENZYME_REACTIONS:
-					invalid = !kineticsArbitraryEnzymeMechanism.contains(val);
-					break;
-				case KINETICS_UNI_UNI_TYPE:
-					invalid = !kineticsUniUni.contains(val);
-					break;
-				}
-				boolean allReversible = properties
-						.containsKey(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-				if (allReversible)
-					allReversible &= Boolean.parseBoolean(properties.get(
-							CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)
-							.toString());
-				else if (settings != null) {
-					allReversible = settings
-							.containsKey(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-					if (allReversible)
-						allReversible &= Boolean.parseBoolean(settings.get(
-								CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)
-								.toString());
-				}
-				if (!kineticsIrreversible.contains(val) && !allReversible)
-					invalid = false;
-				if (invalid) {
-					String defaultKin = getDefaultSettings().get(k).toString();
-					if (!defaultKin.startsWith(KINETICS_PACKAGE))
-						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
-					props.put(k, defaultKin);
-					msg.errf("Invalid %s %s; using default %s.", k.toString(),
-							val, defaultKin);
-				}
-			}
-		}
-		return props;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	private static Properties initProperties() {
-		Properties properties;
-		try {
-			StringBuilder path = new StringBuilder(System
-					.getProperty("user.home"));
-			path.append(File.separatorChar);
-			path.append(".SBMLsqueezer");
-			File f = new File(path.toString());
-			if (!f.exists()) {
-				f.mkdir();
-				path.append(File.separatorChar);
-				path.append("SBMLsqueezer.cfg");
-				f = new File(path.toString());
-				if (!f.exists())
-					f.createNewFile();
-			}
-			f = new File(userConfigFile);
-			if (f.exists() && f.length() == 0) {
-				FileOutputStream os = new FileOutputStream(new File(configFile));
-				Resource.readProperties(configFile).store(os,
-						"SBMLsqueezer configuration. Do not change manually.");
-				os.close();
-			}
-			properties = correctProperties(Resource
-					.readProperties(userConfigFile));
-			// avoid senseless exceptions if keys are missing.
-			for (CfgKeys key : CfgKeys.values())
-				if (!properties.containsKey(key))
-					properties.put(key, getDefaultSettings().get(key));
-		} catch (Exception e) {
-			e.printStackTrace();
-			properties = getDefaultSettings();
-		}
-		return properties;
-	}
-
-	/**
 	 * Displays a short copyright message on the screen.
 	 */
 	private static void showAboutMsg() {
@@ -629,7 +631,7 @@ public class SBMLsqueezer implements LawListener {
 	 * @param sbmlReader
 	 * @param sbmlWriter
 	 */
-	public SBMLsqueezer(AbstractSBMLReader sbmlReader, SBMLWriter sbmlWriter) {
+	public SBMLsqueezer(SBMLReader sbmlReader, SBMLWriter sbmlWriter) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 60; i++)
 			sb.append('-');
@@ -637,6 +639,7 @@ public class SBMLsqueezer implements LawListener {
 		showAboutMsg();
 		msg.logln(sb.toString());
 		sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
+		// sbmlIo.addIOProgressListener(this);
 	}
 
 	/**
@@ -668,9 +671,10 @@ public class SBMLsqueezer implements LawListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.LawListener#currentNumber(int)
+	 * @see org.sbml.squeezer.LawListener#currentState(org.sbml.jsbml.SBase,
+	 * int)
 	 */
-	public void currentNumber(int num) {
+	public void currentState(SBase item, int num) {
 		// TODO Auto-generated method stub
 	}
 
@@ -680,6 +684,15 @@ public class SBMLsqueezer implements LawListener {
 	 */
 	public SBMLio getSBMLIO() {
 		return sbmlIo;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.LawListener#initLawListener(java.lang.String, int)
+	 */
+	public void initLawListener(String className, int numberOfElements) {
+		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -796,7 +809,7 @@ public class SBMLsqueezer implements LawListener {
 							+ " ms");
 			time = System.currentTimeMillis();
 			msg.log("Saving changes and writing SBML file... ");
-			sbmlIo.saveChanges();
+			sbmlIo.saveChanges(this);
 			if (outFile != null
 					&& SBFileFilter.SBML_FILE_FILTER.accept(outFile)) {
 				sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
@@ -845,9 +858,10 @@ public class SBMLsqueezer implements LawListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.LawListener#totalNumber(int)
+	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
 	 */
-	public void totalNumber(int i) {
+	public void ioProgressOn(Object currObject) {
 		// TODO Auto-generated method stub
+		System.out.println(currObject.toString());
 	}
 }

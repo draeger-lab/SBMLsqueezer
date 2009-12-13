@@ -21,6 +21,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.LawListener;
 import org.sbml.squeezer.io.SBMLio;
 
 /**
@@ -45,6 +46,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	private Reaction reaction;
 	private Properties settings;
 	private int value;
+	private LawListener lawListener;
 
 	/**
 	 * 
@@ -55,13 +57,14 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 * @throws Throwable
 	 */
 	public KineticLawWindowAdapter(JDialog dialog, Properties settings,
-			SBMLio sbmlIO, String reactionID) throws Throwable {
+			SBMLio sbmlIO, String reactionID, LawListener l) throws Throwable {
 		super();
 		this.dialog = dialog;
 		this.sbmlio = sbmlIO;
 		this.gotFocus = false;
 		this.KineticsAndParametersStoredInSBML = false;
 		this.settings = settings;
+		this.lawListener = l;
 
 		Model model = sbmlIO.getSelectedModel();
 		reaction = model.getReaction(reactionID);
@@ -141,7 +144,8 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 					Boolean.valueOf(messagePanel.getReversible()));
 			try {
 				klg.storeKineticLaw(klg.createKineticLaw(reaction,
-						equationType, messagePanel.getReversible()));
+						equationType, messagePanel.getReversible()),
+						lawListener);
 				sbmlio.saveChanges(reaction);
 			} catch (Throwable e1) {
 				e1.printStackTrace();
@@ -157,7 +161,9 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.awt.event.WindowAdapter#windowClosed(java.awt.event.WindowEvent)
+	 * 
+	 * @see
+	 * java.awt.event.WindowAdapter#windowClosed(java.awt.event.WindowEvent)
 	 */
 	@Override
 	public void windowClosed(WindowEvent we) {
@@ -167,7 +173,9 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+	 * 
+	 * @see
+	 * java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
 	 */
 	public void windowClosing(WindowEvent we) {
 		pane.setValue(null);
@@ -191,7 +199,9 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 * 
+	 * @seejava.beans.PropertyChangeListener#propertyChange(java.beans.
+	 * PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		// Let the defaultCloseOperation handle the closing

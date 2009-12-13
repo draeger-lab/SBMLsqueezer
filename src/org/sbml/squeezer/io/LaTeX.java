@@ -17,7 +17,6 @@
  */
 package org.sbml.squeezer.io;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.sbml.jsbml.ASTNode;
@@ -120,6 +119,37 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/**
 	 * 
+	 * @param command
+	 * @param what
+	 * @return
+	 */
+	private static StringBuffer command(String command, Object what) {
+		StringBuffer sb = new StringBuffer("\\");
+		sb.append(command);
+		sb.append('{');
+		sb.append(what);
+		sb.append('}');
+		return sb;
+	}
+
+	/**
+	 * 
+	 * @param command
+	 * @param first
+	 * @param second
+	 * @return
+	 */
+	private static StringBuffer command(String command, Object first,
+			Object second) {
+		StringBuffer sb = command(command, first);
+		sb.append('{');
+		sb.append(second);
+		sb.append('}');
+		return sb;
+	}
+
+	/**
+	 * 
 	 * @param number
 	 * @return
 	 */
@@ -158,6 +188,31 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			return StringTools.getWordForNumber(number)
 					+ "\\textsuperscript{th}";
 		}
+	}
+
+	/**
+	 * Creates head lines.
+	 * 
+	 * @param kind
+	 *            E.g., section, subsection, subsubsection, paragraph etc.
+	 * @param title
+	 *            The title of the heading.
+	 * @param numbering
+	 *            If true a number will be placed in front of the title.
+	 * @return
+	 */
+	private static StringBuffer heading(String kind, String title,
+			boolean numbering) {
+		StringBuffer heading = new StringBuffer(newLine);
+		heading.append("\\");
+		heading.append(kind);
+		if (!numbering)
+			heading.append('*');
+		heading.append('{');
+		heading.append(title);
+		heading.append('}');
+		heading.append(newLine);
+		return heading;
 	}
 
 	/**
@@ -202,62 +257,6 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			}
 		}
 		return masked.toString().trim();
-	}
-
-	/**
-	 * 
-	 * @param command
-	 * @param what
-	 * @return
-	 */
-	private static StringBuffer command(String command, Object what) {
-		StringBuffer sb = new StringBuffer("\\");
-		sb.append(command);
-		sb.append('{');
-		sb.append(what);
-		sb.append('}');
-		return sb;
-	}
-
-	/**
-	 * 
-	 * @param command
-	 * @param first
-	 * @param second
-	 * @return
-	 */
-	private static StringBuffer command(String command, Object first,
-			Object second) {
-		StringBuffer sb = command(command, first);
-		sb.append('{');
-		sb.append(second);
-		sb.append('}');
-		return sb;
-	}
-
-	/**
-	 * Creates head lines.
-	 * 
-	 * @param kind
-	 *            E.g., section, subsection, subsubsection, paragraph etc.
-	 * @param title
-	 *            The title of the heading.
-	 * @param numbering
-	 *            If true a number will be placed in front of the title.
-	 * @return
-	 */
-	private static StringBuffer heading(String kind, String title,
-			boolean numbering) {
-		StringBuffer heading = new StringBuffer(newLine);
-		heading.append("\\");
-		heading.append(kind);
-		if (!numbering)
-			heading.append('*');
-		heading.append('{');
-		heading.append(title);
-		heading.append('}');
-		heading.append(newLine);
-		return heading;
 	}
 
 	public final String CONSTANT_E = mathrm("e").toString();
@@ -526,6 +525,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(java.lang.String)
 	 */
 	public StringBuffer compile(String name) {
@@ -673,7 +673,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(org.sbml.jsbml.ASTNode,
-	 *      org.sbml.jsbml.ASTNode)
+	 * org.sbml.jsbml.ASTNode)
 	 */
 	public StringBuffer frac(ASTNode left, ASTNode right) {
 		return frac(left.compile(this), right.compile(this));
@@ -702,7 +702,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#function(java.lang.String,
-	 *      org.sbml.jsbml.ASTNode[])
+	 * org.sbml.jsbml.ASTNode[])
 	 */
 	public StringBuffer function(FunctionDefinition fun, ASTNode... args) {
 		StringBuffer value = new StringBuffer();
@@ -725,6 +725,40 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			value.append(args[args.length - 1].compile(this));
 		}
 		return value;
+	}
+
+	/**
+	 * Decides whether to produce brackets.
+	 * 
+	 * @param func
+	 * @param node
+	 * @return
+	 */
+	private StringBuffer function(String func, ASTNode node) {
+		StringBuffer value = new StringBuffer();
+		if (0 < node.getNumChildren())
+			value.append(brackets(node.compile(this)));
+		else
+			value.append(node.compile(this));
+		return function(func, value);
+	}
+
+	/**
+	 * Without brackets.
+	 * 
+	 * @param func
+	 * @param value
+	 * @return
+	 */
+	private StringBuffer function(String func, Object value) {
+		boolean command = func.startsWith("\\");
+		StringBuffer fun = command ? new StringBuffer(func) : mathrm(func);
+		if (command)
+			fun.append('{');
+		fun.append(value);
+		if (command)
+			fun.append('}');
+		return fun;
 	}
 
 	/*
@@ -770,6 +804,35 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 */
 	public StringBuffer getConstantTrue() {
 		return new StringBuffer(CONSTANT_TRUE);
+	}
+
+	/**
+	 * If the field printNameIfAvailable is false this method returns a the id
+	 * of the given SBase. If printNameIfAvailable is true this method looks for
+	 * the name of the given SBase and will return it.
+	 * 
+	 * @param sbase
+	 *            the SBase, whose name or id is to be returned.
+	 * @param mathMode
+	 *            if true this method returns the name typesetted in mathmode,
+	 *            i.e., mathrm for names and mathtt for ids, otherwise texttt
+	 *            will be used for ids and normalfont (nothing) will be used for
+	 *            names.
+	 * @return The name or the ID of the SBase (according to the field
+	 *         printNameIfAvailable), whose LaTeX special symbols are masked and
+	 *         which is type set in typewriter font if it is an id. The mathmode
+	 *         argument decides if mathtt or mathrm has to be used.
+	 */
+	private StringBuffer getNameOrID(NamedSBase sbase) {
+		String name = "";
+		if (sbase.isSetName() && printNameIfAvailable)
+			name = sbase.getName();
+		else if (sbase.isSetId())
+			name = sbase.getId();
+		else
+			name = "Undefinded";
+		name = maskSpecialChars(name);
+		return printNameIfAvailable ? mathrm(name) : mathtt(name);
 	}
 
 	/*
@@ -862,7 +925,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode,
-	 *      org.sbml.jsbml.ASTNode)
+	 * org.sbml.jsbml.ASTNode)
 	 */
 	public StringBuffer log(ASTNode left, ASTNode right) {
 		StringBuffer value = new StringBuffer("\\log");
@@ -883,6 +946,15 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalAND(org.sbml.jsbml.ASTNode[])
+	 */
+	public String logicalAND(ASTNode... nodes) {
+		return logicalOperation(wedge, nodes);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalNot(org.sbml.jsbml.ASTNode)
 	 */
 	public Object logicalNot(ASTNode node) {
@@ -895,47 +967,43 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	}
 
 	/**
-	 * This method decides if brakets are to be set. The symbol is a
-	 * mathematical operator, e.g., plus, minus, multiplication etc. in LaTeX
-	 * syntax (for instance
 	 * 
-	 * <pre>
-	 * \cdot
-	 * </pre> ). It simply counts the number of descendants on the left and the
-	 * right hand side of the symbol.
-	 * 
-	 * @param astnode
-	 * @param model
 	 * @param symbol
+	 * @param nodes
 	 * @return
-	 * @throws IOException
 	 */
-	public StringBuffer logicalOperation(ASTNode ast) {
+	private String logicalOperation(String symbol, ASTNode... nodes) {
 		StringBuffer value = new StringBuffer();
-		if (1 < ast.getLeftChild().getNumChildren())
-			value.append(leftBrace);
-		value.append(ast.getLeftChild().compile(this));
-		if (1 < ast.getLeftChild().getNumChildren())
-			value.append(rightBrace);
-		switch (ast.getType()) {
-		case LOGICAL_AND:
-			value.append(wedge);
-			break;
-		case LOGICAL_XOR:
-			value.append(xor);
-			break;
-		case LOGICAL_OR:
-			value.append(or);
-			break;
-		default:
-			break;
+		int i = 0;
+		for (ASTNode node : nodes) {
+			if (1 < node.getNumChildren())
+				value.append(leftBrace);
+			value.append(node.compile(this));
+			if (1 < node.getNumChildren())
+				value.append(rightBrace);
+			if (i < nodes.length - 1)
+				value.append(symbol);
+			i++;
 		}
-		if (1 < ast.getRightChild().getNumChildren())
-			value.append(LaTeX.leftBrace);
-		value.append(ast.getRightChild().compile(this));
-		if (1 < ast.getRightChild().getNumChildren())
-			value.append(LaTeX.rightBrace);
-		return value;
+		return value.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalOR(org.sbml.jsbml.ASTNode[])
+	 */
+	public String logicalOR(ASTNode... nodes) {
+		return logicalOperation(or, nodes);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalXOR(org.sbml.jsbml.ASTNode[])
+	 */
+	public String logicalXOR(ASTNode... nodes) {
+		return logicalOperation(xor, nodes);
 	}
 
 	/**
@@ -1108,7 +1176,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNode,
-	 *      org.sbml.jsbml.ASTNode)
+	 * org.sbml.jsbml.ASTNode)
 	 */
 	public StringBuffer pow(ASTNode left, ASTNode right) {
 		StringBuffer value = (StringBuffer) left.compile(this);
@@ -1121,11 +1189,28 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		return value;
 	}
 
+	/**
+	 * Creates a relation between two astnodes.
+	 * 
+	 * @param left
+	 * @param relationSymbol
+	 * @param right
+	 * @return
+	 */
+	private StringBuffer relation(ASTNode left, String relationSymbol,
+			ASTNode right) {
+		StringBuffer value = new StringBuffer();
+		value.append(left.compile(this));
+		value.append(" = ");
+		value.append(right.compile(this));
+		return value;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#relationEqual(org.sbml.jsbml.ASTNode,
-	 *      org.sbml.jsbml.ASTNode)
+	 * org.sbml.jsbml.ASTNode)
 	 */
 	public StringBuffer relationEqual(ASTNode left, ASTNode right) {
 		return relation(left, " = ", right);
@@ -1134,8 +1219,9 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#relationGreaterEqual(org.sbml.jsbml.ASTNode,
-	 *      org.sbml.jsbml.ASTNode)
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#relationGreaterEqual(org.sbml.jsbml.ASTNode
+	 * , org.sbml.jsbml.ASTNode)
 	 */
 	public Object relationGreaterEqual(ASTNode left, ASTNode right) {
 		return relation(left, " \\geq ", right);
@@ -1143,7 +1229,10 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.ASTNodeCompiler#relationGreaterThan(org.sbml.jsbml.ASTNode, org.sbml.jsbml.ASTNode)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#relationGreaterThan(org.sbml.jsbml.ASTNode
+	 * , org.sbml.jsbml.ASTNode)
 	 */
 	public Object relationGreaterThan(ASTNode left, ASTNode right) {
 		return relation(left, " > ", right);
@@ -1153,7 +1242,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#equal(java.lang.Object,
-	 *      java.lang.Object)
+	 * java.lang.Object)
 	 */
 	public StringBuffer relationLessEqual(ASTNode left, ASTNode right) {
 		StringBuffer value = new StringBuffer();
@@ -1167,7 +1256,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#lessThan(java.lang.Object,
-	 *      java.lang.Object)
+	 * java.lang.Object)
 	 */
 	public StringBuffer relationLessThan(ASTNode left, ASTNode right) {
 		StringBuffer value = new StringBuffer();
@@ -1180,8 +1269,9 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#relationNotEqual(org.sbml.jsbml.ASTNode,
-	 *      org.sbml.jsbml.ASTNode)
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#relationNotEqual(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
 	public StringBuffer relationNotEqual(ASTNode left, ASTNode right) {
 		StringBuffer value = new StringBuffer();
@@ -1195,7 +1285,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#root(org.sbml.jsbml.ASTNode,
-	 *      org.sbml.jsbml.ASTNode)
+	 * org.sbml.jsbml.ASTNode)
 	 */
 	public StringBuffer root(ASTNode rootExponent, ASTNode value) {
 		Object degree = rootExponent.compile(this);
@@ -1422,85 +1512,5 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		usepackage.append('}');
 		usepackage.append(newLine);
 		return usepackage;
-	}
-
-	/**
-	 * Decides whether to produce brackets.
-	 * 
-	 * @param func
-	 * @param node
-	 * @return
-	 */
-	private StringBuffer function(String func, ASTNode node) {
-		StringBuffer value = new StringBuffer();
-		if (0 < node.getNumChildren())
-			value.append(brackets(node.compile(this)));
-		else
-			value.append(node.compile(this));
-		return function(func, value);
-	}
-
-	/**
-	 * Without brackets.
-	 * 
-	 * @param func
-	 * @param value
-	 * @return
-	 */
-	private StringBuffer function(String func, Object value) {
-		boolean command = func.startsWith("\\");
-		StringBuffer fun = command ? new StringBuffer(func) : mathrm(func);
-		if (command)
-			fun.append('{');
-		fun.append(value);
-		if (command)
-			fun.append('}');
-		return fun;
-	}
-
-	/**
-	 * If the field printNameIfAvailable is false this method returns a the id
-	 * of the given SBase. If printNameIfAvailable is true this method looks for
-	 * the name of the given SBase and will return it.
-	 * 
-	 * @param sbase
-	 *            the SBase, whose name or id is to be returned.
-	 * @param mathMode
-	 *            if true this method returns the name typesetted in mathmode,
-	 *            i.e., mathrm for names and mathtt for ids, otherwise texttt
-	 *            will be used for ids and normalfont (nothing) will be used for
-	 *            names.
-	 * @return The name or the ID of the SBase (according to the field
-	 *         printNameIfAvailable), whose LaTeX special symbols are masked and
-	 *         which is type set in typewriter font if it is an id. The mathmode
-	 *         argument decides if mathtt or mathrm has to be used.
-	 */
-	private StringBuffer getNameOrID(NamedSBase sbase) {
-		String name = "";
-		if (sbase.isSetName() && printNameIfAvailable)
-			name = sbase.getName();
-		else if (sbase.isSetId())
-			name = sbase.getId();
-		else
-			name = "Undefinded";
-		name = maskSpecialChars(name);
-		return printNameIfAvailable ? mathrm(name) : mathtt(name);
-	}
-
-	/**
-	 * Creates a relation between two astnodes.
-	 * 
-	 * @param left
-	 * @param relationSymbol
-	 * @param right
-	 * @return
-	 */
-	private StringBuffer relation(ASTNode left, String relationSymbol,
-			ASTNode right) {
-		StringBuffer value = new StringBuffer();
-		value.append(left.compile(this));
-		value.append(" = ");
-		value.append(right.compile(this));
-		return value;
 	}
 }
