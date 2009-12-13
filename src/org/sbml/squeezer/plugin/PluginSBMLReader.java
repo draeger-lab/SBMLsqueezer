@@ -19,6 +19,7 @@
 package org.sbml.squeezer.plugin;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -77,6 +78,7 @@ import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.io.AbstractSBMLReader;
+import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 
@@ -114,6 +116,8 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	 */
 	private Set<Integer> possibleEnzymes;
 
+	private Set<IOProgressListener> setIOListeners;
+
 	/**
 	 * get a model from the celldesigneroutput, converts it to sbmlsqueezer
 	 * format and stores it
@@ -123,6 +127,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	public PluginSBMLReader(PluginModel model, Set<Integer> possibleEnzymes) {
 		super(model);
 		this.possibleEnzymes = possibleEnzymes;
+		setIOListeners = new HashSet<IOProgressListener>();
 	}
 
 	/**
@@ -131,6 +136,7 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 	public PluginSBMLReader(Set<Integer> possibleEnzymes) {
 		super();
 		this.possibleEnzymes = possibleEnzymes;
+		setIOListeners = new HashSet<IOProgressListener>();
 	}
 
 	/*
@@ -894,5 +900,13 @@ public class PluginSBMLReader extends AbstractSBMLReader {
 		if (trigger.isSetMath())
 			trig.setMath(convert(trigger.getMath(), trig));
 		return trig;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLReader#addIOProgressListener(org.sbml.jsbml.io.IOProgressListener)
+	 */
+	public void addIOProgressListener(IOProgressListener listener) {
+		setIOListeners.add(listener);
 	}
 }

@@ -22,8 +22,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 import jp.sbi.celldesigner.plugin.PluginAlgebraicRule;
@@ -90,6 +92,7 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.jsbml.io.LibSBMLWriter;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
@@ -121,6 +124,7 @@ public class PluginSBMLWriter implements SBMLWriter {
 	 * 
 	 */
 	private PluginModel pluginModel;
+	private Set<IOProgressListener> setIOListeners;
 
 	/**
 	 * 
@@ -129,6 +133,7 @@ public class PluginSBMLWriter implements SBMLWriter {
 	public PluginSBMLWriter(CellDesignerPlugin plugin) {
 		this.plugin = plugin;
 		msg.setVerbose(false);
+		setIOListeners = new HashSet<IOProgressListener>();
 	}
 
 	/**
@@ -2643,5 +2648,14 @@ public class PluginSBMLWriter implements SBMLWriter {
 		}
 		plugin.notifySBaseChanged(libU);
 		plugin.notifySBaseChanged(pluginModel.getListOfUnitDefinitions());
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLWriter#addIOProgressListener(org.sbml.jsbml.io.IOProgressListener)
+	 */
+	public void addIOProgressListener(IOProgressListener listener) {
+		setIOListeners.add(listener);
 	}
 }
