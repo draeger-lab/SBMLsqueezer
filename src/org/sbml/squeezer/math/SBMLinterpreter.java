@@ -648,6 +648,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	private static class InitialValue {
 		String id;
 		double val;
+
 		/**
 		 * 
 		 * @param s
@@ -855,8 +856,42 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Double logicalNot(ASTNode node) {
 		return Double
-				.valueOf(((((Double) node.compile(this)).doubleValue() == getConstantTrue())) ? 0.0
+				.valueOf((((Double) node.compile(this)).doubleValue() == getConstantTrue()) ? 0.0
 						: 1.0);
+	}
+
+	public Double logicalAND(ASTNode... nodes) {
+
+		for (ASTNode node : nodes) {
+			if (((Double) node.compile(this)).doubleValue() == getConstantFalse())
+				return getConstantFalse();
+
+		}
+		return getConstantTrue();
+	}
+
+	public Double logicalOR(ASTNode... nodes) {
+		for (ASTNode node : nodes) {
+			if (((Double) node.compile(this)).doubleValue() == getConstantTrue())
+				return getConstantTrue();
+
+		}
+		return getConstantFalse();
+	}
+
+	public Double logicalXOR(ASTNode... nodes) {
+		Double value = getConstantFalse();
+
+		if (nodes.length > 0) {
+			value = ((Double) nodes[1].compile(this)).doubleValue();
+		}
+
+		for (int i = 1; i < nodes.length; i++) {
+			if (((Double) nodes[i].compile(this)).doubleValue() == value);
+
+			value = getConstantFalse();
+		}
+		return value;
 	}
 
 	/*
@@ -889,9 +924,16 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#piecewise(org.sbml.jsbml.ASTNode[])
 	 */
-	public Object piecewise(ASTNode... arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double piecewise(ASTNode... nodes) {
+		int i;
+		for (i = 1; i < nodes.length - 1; i += 2) {
+			if (((Double) nodes[i].compile(this)).doubleValue() == getConstantTrue())
+				return Double.valueOf((Double) nodes[i - 1].compile(this));
+
+		}
+
+		return Double.valueOf((Double) nodes[i - 1].compile(this));
+
 	}
 
 	/*
@@ -1450,18 +1492,4 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return (!left && !right) ? false : true;
 	}
 
-	public Object logicalAND(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object logicalOR(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object logicalXOR(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
