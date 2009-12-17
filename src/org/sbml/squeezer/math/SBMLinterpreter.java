@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.math;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -156,7 +157,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		this.Y = new double[(int) this.model.getListOfSpecies().size()];
 		this.v = new double[(int) this.model.getListOfReactions().size()];
 		this.swap = new double[this.Y.length];
-		this.initialValues = this.init();
+		this.init();
 	}
 
 	/*
@@ -645,24 +646,45 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 *         >andreas.draeger@uni-tuebingen.de</a>
 	 * 
 	 */
-	private static class InitialValue {
-		String id;
-		double val;
+	private class Value {
+		Integer index;
+		double value;
 
 		/**
 		 * 
-		 * @param s
+		 * @param index
+		 * @param value
 		 */
-		public InitialValue(Symbol s) {
-			this.id = s.getId();
-			// TODO: compute initial value
-			this.val = Double.NaN;
+		public Value(Integer index) {
+			setIndex(index);
+
 		}
+
+		public Value(Double value) {
+			setValue(value);
+		}
+
+		public Integer getIndex() {
+			return index;
+		}
+
+		public void setIndex(Integer index) {
+			this.index = index;
+			this.value = Double.NaN;
+		}
+
+		public double getValue() {
+			return value;
+		}
+
+		public void setValue(double value) {
+			this.value = value;
+			this.index = -1;
+		}
+
 	}
 
-	private InitialValue initSpec[];
-	private InitialValue initComp[];
-	private InitialValue initPara[];
+	private HashMap<String, Value> valuesHash;
 
 	/*
 	 * (non-Javadoc)
@@ -887,11 +909,27 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		}
 
 		for (int i = 1; i < nodes.length; i++) {
-			if (((Double) nodes[i].compile(this)).doubleValue() == value);
+			if (((Double) nodes[i].compile(this)).doubleValue() == value)
+				;
 
 			value = getConstantFalse();
 		}
 		return value;
+	}
+
+	public Double and(ASTNode... nodes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Double or(ASTNode... nodes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Double xor(ASTNode... nodes) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/*
@@ -1091,25 +1129,29 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 *         after the parameter values were set. Otherwise the initial values
 	 *         will remain unchanged.
 	 */
-	public double[] setParameters(double[] params) {
-		// TODO consider local parameters as well.
-		// if (params.length != model.getNumParameters())
-		// throw new IllegalArgumentException(
-		// "The number of parameters passed to this method must "
-		// + "match the number of parameters in the model.");
-		int paramNum, reactionNum, localPnum;
-		for (paramNum = 0; paramNum < model.getNumParameters(); paramNum++)
-			model.getParameter(paramNum).setValue(params[paramNum]);
-		for (reactionNum = 0; reactionNum < model.getNumReactions(); reactionNum++) {
-			KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
-			for (localPnum = 0; localPnum < law.getNumParameters(); localPnum++)
-				law.getParameter(localPnum).setValue(params[paramNum++]);
-		}
-		if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0)
-			initialValues = init();
-		return this.initialValues;
-	}
-
+	//TODO changing the model directly not allowed
+	
+	// public double[] setParameters(double[] params) {
+	// // TODO consider local parameters as well.
+	// // if (params.length != model.getNumParameters())
+	// // throw new IllegalArgumentException(
+	// // "The number of parameters passed to this method must "
+	// // + "match the number of parameters in the model.");
+	// int paramNum, reactionNum, localPnum;
+	// for (paramNum = 0; paramNum < model.getNumParameters(); paramNum++)
+	// model.getParameter(paramNum).setValue(params[paramNum]);
+	// for (reactionNum = 0; reactionNum < model.getNumReactions();
+	// reactionNum++) {
+	// KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
+	// for (localPnum = 0; localPnum < law.getNumParameters(); localPnum++)
+	// law.getParameter(localPnum).setValue(params[paramNum++]);
+	// }
+	// if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0)
+	// // TODO check
+	// // initialValues = init();
+	// return this.initialValues;
+	// }
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1350,45 +1392,92 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 *         SBML file as this method also evaluates initial assignments if
 	 *         there are any.
 	 */
-	protected double[] init() {
+	protected void init() {
 		int i;
+		valuesHash = new HashMap<String, Value>();
+		ArrayList<Double> constantValues = new ArrayList<Double>();
+		int constantIndex = 0;
 
-		/*
-		 * Use initial concentration or initial amount to initialize every
-		 * species.
-		 */
 		for (i = 0; i < model.getNumSpecies(); i++) {
 			Species s = model.getSpecies(i);
-			if (s.isSetInitialAmount()) {
-				// TODO Einheitenabgleich beim Umrechnen von Item in
-				// Konzentration.
-				Y[i] = s.getInitialAmount()
-						/ model.getCompartment(s.getCompartment()).getVolume();
-			} else
-				Y[i] = s.getInitialConcentration();
-			speciesIdIndex.put(s.getId(), Integer.valueOf(i));
+			// TODO boundary
+			if (s.isConstant()) {
+				if (s.isSetInitialAmount()) {
+					// TODO Einheitenabgleich beim Umrechnen von Item in
+					valuesHash.put(s.getId(), new Value(s.getInitialAmount()
+							/ model.getCompartment(s.getCompartment())
+									.getVolume()));
+				} else
+					valuesHash.put(s.getId(), new Value(s
+							.getInitialConcentration()));
+			}
+
+			else {
+				if (s.isSetInitialAmount())
+					// TODO Einheitenabgleich beim Umrechnen von Item in
+					constantValues.add(s.getInitialAmount()
+							/ model.getCompartment(s.getCompartment())
+									.getVolume());
+				else
+					constantValues.add(s.getInitialConcentration());
+
+				valuesHash.put(s.getId(), new Value(constantIndex));
+				constantIndex++;
+			}
 		}
-		/*
-		 * Invoke initial assignments for Species, Compartments, Parameters
-		 */
+
+		for (i = 0; i < model.getNumCompartments(); i++) {
+			Compartment c = model.getCompartment(i);
+
+			if (c.isConstant())
+				valuesHash.put(c.getId(), new Value(c.getSize()));
+			else {
+				constantValues.add(c.getSize());
+				valuesHash.put(c.getId(), new Value(constantIndex));
+				constantIndex++;
+			}
+		}
+
+		for (i = 0; i < model.getNumParameters(); i++) {
+			Parameter p = model.getParameter(i);
+
+			if (p.isConstant()) {
+				valuesHash.put(p.getId(), new Value(p.getValue()));
+			} else {
+				constantValues.add(p.getValue());
+				valuesHash.put(p.getId(), new Value(constantIndex));
+				constantIndex++;
+			}
+		}
+
+		this.Y = new double[constantValues.size()];
+
+		for (i = 0; i < constantValues.size(); i++) {
+			this.Y[i] = constantValues.get(i);
+		}
+
 		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment assign = model.getInitialAssignment(i);
+			Value val = null;
 			if (assign.isSetMath() && assign.isSetSymbol()) {
 				if (model.getSpecies(assign.getSymbol()) != null) {
-					Y[(int) this.speciesIdIndex.get(assign.getSymbol())
-							.intValue()] = evaluateToDouble(assign.getMath());
+					Species s = model.getSpecies(assign.getSymbol());
+					val = valuesHash.get(s.getId());
 				} else if (model.getCompartment(assign.getSymbol()) != null) {
-					// TODO: Einheiten beachten.
-					model.getCompartment(assign.getSymbol()).setVolume(
-							evaluateToDouble(assign.getMath()));
+					Compartment c = model.getCompartment(assign.getSymbol());
+					val = valuesHash.get(c.getId());
 				} else if (model.getParameter(assign.getSymbol()) != null) {
-					model.getParameter(assign.getSymbol()).setValue(
-							evaluateToDouble(assign.getMath()));
+					Parameter p = model.getParameter(assign.getSymbol());
+					val = valuesHash.get(p.getId());
 				} else
 					System.err
 							.println("The model contains an initial assignment for a "
 									+ "component other than species, compartment or parameter.");
 			}
+			if (val.getIndex() == -1)
+				val.setValue(evaluateToDouble(assign.getMath()));
+			else
+				this.Y[val.getIndex()] = evaluateToDouble(assign.getMath());
 		}
 
 		/*
@@ -1412,7 +1501,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		 */
 		if (model.getNumEvents() > 0)
 			initEvents();
-		return Y;
+
 	}
 
 	/**
