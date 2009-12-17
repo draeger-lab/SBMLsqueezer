@@ -1,11 +1,8 @@
 package org.sbml.squeezer.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -16,11 +13,8 @@ import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
@@ -32,7 +26,6 @@ import javax.swing.event.ChangeListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 
-import com.sun.security.auth.module.JndiLoginModule;
 
 /**
  * This class is a panel, which contains all necessary options to perform a
@@ -113,7 +106,7 @@ public class SettingsPanelStability extends JPanel implements ChangeListener,
 				GUITools.toHTML("Value for numerical differentiation:", 20)),
 				0, 0, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelStabilityAnalysis, layout,
-				jTextFieldDelta, 1, 0, 1, 1, 1, 1);
+				jTextFieldDelta, 1, 0, 1, 1, 1, 0);
 
 		// Component c, int x, int y, int width, int height, double weightx,
 		// double weighty
@@ -172,8 +165,8 @@ public class SettingsPanelStability extends JPanel implements ChangeListener,
 				GUITools.toHTML("Number of sampled Jacobians:", 20)), 0, 0, 1,
 				1, 1, 0);
 		LayoutHelper.addComponent(jPanelStructuralKinetic, layout,
-				jTextFieldNumberofRuns, 1, 0, 1, 1, 1, 1);
-
+				jTextFieldNumberofRuns, 1, 0, 1, 1, 0, 0);
+		
 		LayoutHelper.addComponent(jPanelStructuralKinetic, layout, new JLabel(
 				GUITools.toHTML("Value for n:", 20)), 0, 1, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelStructuralKinetic, layout,
@@ -209,11 +202,11 @@ public class SettingsPanelStability extends JPanel implements ChangeListener,
 				jTextFieldMIOutputLocation, 1, 6, 1, 1, 1, 1);
 
 		layout = (GridBagLayout) this.getLayout();
-		LayoutHelper.addComponent(this, layout, jPanelStabilityAnalysis, 0, 0,
-				1, 1, 1, 0);
-		LayoutHelper.addComponent(this, layout, jPanelStructuralKinetic, 0, 1,
-				1, 3, 1, 1);
-
+		
+		LayoutHelper helper = new LayoutHelper(this);
+		helper.add(jPanelStabilityAnalysis);
+		helper.add(jPanelStructuralKinetic);
+		
 		GUITools.setAllBackground(this, Color.WHITE);
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
