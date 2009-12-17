@@ -354,18 +354,23 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.NamedSBase)
 	 */
 	public Double compile(NamedSBase nsb) {
-		if (nsb instanceof Parameter) {
-			Parameter p = (Parameter) nsb;
-			if (p.isConstant() || p.getParentSBMLObject() instanceof KineticLaw)
-				return Double.valueOf(p.getValue());
-			else {
-				// TODO
+		Value val;
+		if (nsb instanceof Species || nsb instanceof Compartment
+				|| nsb instanceof Parameter) {
+			if (nsb instanceof Parameter) {
+				Parameter p = (Parameter) nsb;
+				if (p.getParentSBMLObject() instanceof KineticLaw) {
+					// TODO
+				}				
 			}
-		} else if (nsb instanceof Species) {
-			// TODO
-		} else if (nsb instanceof Compartment)
-			return compile((Compartment) nsb);
-		else if (nsb instanceof FunctionDefinition)
+			val = valuesHash.get(nsb.getId());
+			if (val.getIndex() == -1)
+				return val.getValue();
+			else {
+				return Y[val.getIndex()];
+			}
+
+		} else if (nsb instanceof FunctionDefinition)
 			return function((FunctionDefinition) nsb);
 		else if (nsb instanceof Reaction) {
 			Reaction r = (Reaction) nsb;
@@ -700,7 +705,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		else
 			this.Y = Y;
 		this.currentTime = time;
-
+		double res[] = new double[Y.length];
 		/*
 		 * Events checking if the model has events and executing events that
 		 * must be executed at this time point: t = time.
@@ -761,6 +766,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			}
 		}
 		// Velocities of each reaction.
+		// TODO don't change Y, change res
 		for (i = 0; i < v.length; i++) {
 			currentReaction = model.getReaction(i);
 			KineticLaw kin = currentReaction.getKineticLaw();
@@ -770,6 +776,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				v[i] = 0;
 		}
 		this.Y = linearCombinationOfVelocities(v);
+
 		/*
 		 * TODO: Rules
 		 */
@@ -1129,8 +1136,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 *         after the parameter values were set. Otherwise the initial values
 	 *         will remain unchanged.
 	 */
-	//TODO changing the model directly not allowed
-	
+	// TODO changing the model directly not allowed
 	// public double[] setParameters(double[] params) {
 	// // TODO consider local parameters as well.
 	// // if (params.length != model.getNumParameters())
@@ -1151,7 +1157,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	// // initialValues = init();
 	// return this.initialValues;
 	// }
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1455,6 +1460,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < constantValues.size(); i++) {
 			this.Y[i] = constantValues.get(i);
 		}
+		constantValues.clear();
 
 		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment assign = model.getInitialAssignment(i);
