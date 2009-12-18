@@ -32,6 +32,16 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
 /**
+ * The purpose of this class is to analyze a reaction object for several
+ * properties, such as the number of reactants and products, the types of
+ * modifiers and their number, if the stoichiometries are always integer numbers
+ * or real valued and much more. With this information at hand the reaction type
+ * is able to suggest applicable kinetic equations from the list of available
+ * kinetic laws and also to select the default kinetic equation for this
+ * specific type. This class can also answer several questions regarding a
+ * reaction, for instance, whether a reaction is follows a bi-bi mechanism. This
+ * can be used for GUIs to display reaction properties to a user.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>

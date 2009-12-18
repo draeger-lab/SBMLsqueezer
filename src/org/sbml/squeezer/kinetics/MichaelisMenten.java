@@ -27,7 +27,10 @@ import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * TODO: comment missing
+ * This is the well-known (Henry-) Michaelis-Menten equation and can be found in
+ * the {@link SBO} under one of the following terms (depending on the specific
+ * structure of the underlying {@link Reaction}): 28, 199, 265, 269, 275, 276,
+ * or 326.
  * 
  * @since 1.0
  * @version
@@ -117,7 +120,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			}
 
 		Species speciesR = reaction.getReactant(0).getSpeciesInstance();
-		
+
 		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 		int enzymeNum = 0;
 		do {
@@ -138,7 +141,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				 * Reversible Reaction
 				 */
 				Species speciesP = reaction.getProduct(0).getSpeciesInstance();
-				
+
 				numerator = ASTNode.times(ASTNode.frac(this, p_kcatp, p_kMr),
 						speciesTerm(speciesR));
 				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(

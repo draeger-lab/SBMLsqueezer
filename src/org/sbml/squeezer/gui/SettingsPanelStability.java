@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -26,15 +25,14 @@ import javax.swing.event.ChangeListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 
-
 /**
  * This class is a panel, which contains all necessary options to perform a
  * stability analysis of the given model.
  * 
  * @author <a href="mailto:a.doerr@uni-tuebingen.de">Alexander D&ouml;rr</a>
- * @date
+ * @date 2009-12-18
+ * @since 1.3
  */
-
 public class SettingsPanelStability extends JPanel implements ChangeListener,
 		ItemListener, KeyListener {
 
@@ -85,7 +83,7 @@ public class SettingsPanelStability extends JPanel implements ChangeListener,
 	}
 
 	private void init() {
-		ButtonGroup buttonGroup;
+		// ButtonGroup buttonGroup;
 		Font titleFont = new Font("Dialog", Font.BOLD, 12);
 		Color borderColor = new Color(51, 51, 51);
 
@@ -166,7 +164,7 @@ public class SettingsPanelStability extends JPanel implements ChangeListener,
 				1, 1, 0);
 		LayoutHelper.addComponent(jPanelStructuralKinetic, layout,
 				jTextFieldNumberofRuns, 1, 0, 1, 1, 0, 0);
-		
+
 		LayoutHelper.addComponent(jPanelStructuralKinetic, layout, new JLabel(
 				GUITools.toHTML("Value for n:", 20)), 0, 1, 1, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelStructuralKinetic, layout,
@@ -202,11 +200,11 @@ public class SettingsPanelStability extends JPanel implements ChangeListener,
 				jTextFieldMIOutputLocation, 1, 6, 1, 1, 1, 1);
 
 		layout = (GridBagLayout) this.getLayout();
-		
+
 		LayoutHelper helper = new LayoutHelper(this);
 		helper.add(jPanelStabilityAnalysis);
 		helper.add(jPanelStructuralKinetic);
-		
+
 		GUITools.setAllBackground(this, Color.WHITE);
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
@@ -268,12 +266,10 @@ public class SettingsPanelStability extends JPanel implements ChangeListener,
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jSpinnerValueofN)) {
 			settings.put(CfgKeys.STEUER_VALUE_OF_N, Integer
-					.parseInt(jSpinnerValueofN.getValue()
-							.toString()));
+					.parseInt(jSpinnerValueofN.getValue().toString()));
 		} else if (e.getSource().equals(jSpinnerValueofM)) {
-			settings.put(CfgKeys.STEUER_VALUE_OF_M  , Double
-					.valueOf(jSpinnerValueofM.getValue()
-							.toString()));
+			settings.put(CfgKeys.STEUER_VALUE_OF_M, Double
+					.valueOf(jSpinnerValueofM.getValue().toString()));
 		}
 		for (ItemListener i : itemListeners)
 			i.itemStateChanged(e);

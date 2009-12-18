@@ -11,7 +11,7 @@ package org.sbml.squeezer.math;
  * This class contains a multitude of well defined mathematical functions
  * like the faculty, logarithms and several trigonometric functions.
  *
- * @since 2.0
+ * @since 1.3
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @author Diedonne Wouamba <dwouamba@yahoo.fr>

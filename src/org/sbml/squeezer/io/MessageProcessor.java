@@ -22,10 +22,13 @@ import java.io.PrintStream;
 import java.util.Calendar;
 
 /**
+ * An implementation of {@link MessageListener} that provides some nice methods
+ * for date presentation in combination with messages.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @since 1.3
  */
 public class MessageProcessor implements MessageListener {
 

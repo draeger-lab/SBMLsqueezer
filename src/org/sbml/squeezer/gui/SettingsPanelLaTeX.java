@@ -42,6 +42,9 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.io.SBFileFilter;
 
 /**
+ * A {@link JPanel} to configure all necessary options to perform a LaTeX export
+ * of a model.
+ * 
  * @since 1.2
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
@@ -135,15 +138,15 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 
 		int i = 0;
 		while (i < paperSizes.length
-				&& !paperSizes[i].equals(settings.get(
-						CfgKeys.LATEX_PAPER_SIZE).toString()))
+				&& !paperSizes[i].equals(settings.get(CfgKeys.LATEX_PAPER_SIZE)
+						.toString()))
 			i++;
 		jComboBoxPaperSize = new JComboBox(paperSizes);
 		jComboBoxPaperSize.setSelectedIndex(i);
 		i = 0;
 		while (i < fontSizes.length
-				&& fontSizes[i].shortValue() != Short.parseShort(settings
-						.get(CfgKeys.LATEX_FONT_SIZE).toString()))
+				&& fontSizes[i].shortValue() != Short.parseShort(settings.get(
+						CfgKeys.LATEX_FONT_SIZE).toString()))
 			i++;
 		jComboBoxFontSize = new JComboBox(fontSizes);
 		jComboBoxFontSize.setSelectedIndex(i);
@@ -164,12 +167,10 @@ public class SettingsPanelLaTeX extends JPanel implements ActionListener,
 		lh.add(new JPanel(), 0, ++row, 5, 1, 0, 0);
 
 		jCheckBoxIDsInTWFont = new JCheckBox("IDs in typewriter font",
-				((Boolean) settings
-						.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT))
+				((Boolean) settings.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT))
 						.booleanValue());
-		jCheckBoxLandscape = new JCheckBox("Landscape",
-				((Boolean) settings.get(CfgKeys.LATEX_LANDSCAPE))
-						.booleanValue());
+		jCheckBoxLandscape = new JCheckBox("Landscape", ((Boolean) settings
+				.get(CfgKeys.LATEX_LANDSCAPE)).booleanValue());
 		jCheckBoxTitlePage = new JCheckBox("Create title page",
 				((Boolean) settings.get(CfgKeys.LATEX_TITLE_PAGE))
 						.booleanValue());

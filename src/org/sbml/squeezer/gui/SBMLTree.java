@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -56,9 +55,13 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 
 /**
+ * A specialized {@link JTree} that shows the elements of a JSBML model as a
+ * hierarchical structure.
+ * 
  * @author <a href="mailto:simon.schaefer@uni-tuebingen.de">Simon
  *         Sch&auml;fer</a>
- * 
+ * @author Andreas Dr&auml;ger
+ * @since 1.3
  */
 public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
@@ -288,7 +291,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 					else
 						currSBase = (SBase) userObject;
 					popup.setLocation(e.getX()
-							+ ((int) getLocationOnScreen().getX()),  e.getY()
+							+ ((int) getLocationOnScreen().getX()), e.getY()
 							+ ((int) getLocationOnScreen().getY()));// e.getLocationOnScreen());
 					popup.setVisible(true);
 				}

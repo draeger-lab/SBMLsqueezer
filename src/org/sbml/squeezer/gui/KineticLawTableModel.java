@@ -29,7 +29,9 @@ import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
 /**
- * TODO: comment missing
+ * Data model for the {@link KineticLawTable} that determins, which information
+ * is displayed there and it provides methods to access comlumn or row names and
+ * single elements in the table.
  * 
  * @since 1.0
  * @version
@@ -186,7 +188,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * (non-Javadoc)
 	 * 
 	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object,
-	 *      int, int)
+	 * int, int)
 	 */
 	// @Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {

@@ -68,10 +68,25 @@ import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.resources.Resource;
 
 /**
+ * The central class for SBMLsqueezer's graphical user interface. This class has
+ * actually nothing to do with earlier versions of SBMLsqueezerUI because the
+ * class that had this name before has now become the
+ * {@link KineticLawSelectionDialog}. This UI class provides several additional
+ * features: It displays all model components in a
+ * {@link JTabbedPaneWithCloseIcons} so that multiple models can be opened at
+ * the same time and can be closed easily and it provides several options to
+ * manipulate the model. Each tab in this tabbed pane contains a
+ * {@link SBMLModelSplitPane} showing the details of the selected model. This
+ * class contains the enumeration {@link Command} that contains the names of all
+ * possible actions this UI can start. As the
+ * {@link SBMLsqueezerUI#actionPerformed(ActionEvent)} is a public method, any
+ * one of the given commands can be passed through {@link ActionEvent} objects
+ * to this UI class and will therefore start the given action.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @since 1.0
  */
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		WindowListener, ChangeListener, IOProgressListener {
@@ -896,7 +911,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			sb.append(currObject.getClass().getSimpleName());
 			if (currObject instanceof NamedSBase) {
 				sb.append(' ');
-				NamedSBase nsb = (NamedSBase) currObject; 
+				NamedSBase nsb = (NamedSBase) currObject;
 				sb.append(nsb.getId());
 				if (nsb.getName() != null && nsb.getName().length() > 0) {
 					sb.append(' ');
@@ -909,7 +924,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				progressDialog.getContentPane().add(label);
 				progressDialog.setSize(200, 150);
 				progressDialog.setLocationRelativeTo(this);
-				progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+				progressDialog
+						.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 				progressDialog.setVisible(true);
 			}
 		} else if (progressDialog != null)

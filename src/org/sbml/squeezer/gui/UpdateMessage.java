@@ -107,7 +107,8 @@ public class UpdateMessage {
 				if (localVers < latestVers && lastTokenComp)
 					return true;
 				lastTokenComp = true;
-			} else lastTokenComp = false;
+			} else
+				lastTokenComp = false;
 		}
 		if (urlToken.hasMoreElements()
 				&& Integer.parseInt(urlToken.nextToken(".")) > 0
@@ -146,6 +147,9 @@ public class UpdateMessage {
 	}
 
 	/**
+	 * A small yellow {@link JWindow} without regular window decoration that
+	 * pops up on the right bottom of the screen to display the update message.
+	 * 
 	 * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
 	 * @author Andreas Dr&auml;ger <a
 	 *         href="mailto:andreas.draeger@uni-tuebingen.de"

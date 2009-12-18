@@ -35,13 +35,12 @@ import org.sbml.libsbml.SBMLDocument;
 
 /**
  * This class writes the differential equations given by the {@see
- * KineticLawGenerator} to a LaTeX or plain text file.
+ * KineticLawGenerator} to a plain text file.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- * @author Nadine Hassis <Nadine.hassis@gmail.com> Copyright (c) ZBiT,
- *         University of T&uuml;bingen, Germany Compiler: JDK 1.6.0
+ * @author Nadine Hassis <Nadine.hassis@gmail.com>
  * @date Aug 1, 2007
  */
 public class TextExport implements DisplaySBML {

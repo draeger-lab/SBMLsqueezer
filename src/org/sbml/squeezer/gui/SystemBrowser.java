@@ -27,9 +27,14 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 
 /**
+ * Provides a method to open the default browser of the window system under the
+ * user's operating system when following a hyper link.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Hannes Borch
+ * @since 1.2
  * 
  */
 public class SystemBrowser implements HyperlinkListener {

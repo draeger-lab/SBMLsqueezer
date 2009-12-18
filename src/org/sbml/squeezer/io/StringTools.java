@@ -18,10 +18,12 @@
 package org.sbml.squeezer.io;
 
 /**
+ * Provices several methods for {@link String} manipulation.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @since 1.1
  */
 public class StringTools {
 
@@ -34,12 +36,12 @@ public class StringTools {
 	 * New line separator of this operating system
 	 */
 	public static final String newLine = System.getProperty("line.separator");
-	
+
 	/**
 	 * 
 	 */
 	public static final Character underscore = Character.valueOf('_');
-	
+
 	/**
 	 * Takes the given StringBuffer as input and appends every further Object to
 	 * it.
@@ -53,7 +55,7 @@ public class StringTools {
 			k.append(t);
 		return k;
 	}
-	
+
 	/**
 	 * This method concatenates two or more object strings into a new
 	 * stringbuffer.
@@ -67,7 +69,7 @@ public class StringTools {
 			res.append(buffer.toString());
 		return res;
 	}
-	
+
 	/**
 	 * This method introduces left and right quotation marks where we normally
 	 * have straight quotation marks.
@@ -77,8 +79,8 @@ public class StringTools {
 	 * @param rightQuotationMark
 	 * @return
 	 */
-	public static String correctQuotationMarks(String text, String leftQuotationMark,
-			String rightQuotationMark) {
+	public static String correctQuotationMarks(String text,
+			String leftQuotationMark, String rightQuotationMark) {
 		boolean opening = true;
 		for (int i = 0; i < text.length(); i++)
 			if (text.charAt(i) == '"')
@@ -93,7 +95,7 @@ public class StringTools {
 				}
 		return text;
 	}
-	
+
 	/**
 	 * Retunrs a String who's first letter is now in lower case.
 	 * 
@@ -164,7 +166,6 @@ public class StringTools {
 			return "invalid month " + month;
 		}
 	}
-
 
 	/**
 	 * This method constructs a full length SBO number from a given SBO id.

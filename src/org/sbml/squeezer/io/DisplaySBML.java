@@ -27,45 +27,49 @@ import org.sbml.libsbml.ListOfEvents;
 import org.sbml.libsbml.SBMLDocument;
 
 /**
- *
- * @author wouamba
+ * A super class for all export methods that convert the contence of JSBML
+ * objects into a human-readable format.
+ * 
+ * @author Dieudonn&eacute; Motsuo Wouamba
  * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
+ * @since 1.1
  */
 public interface DisplaySBML {
 
 	/**
-	 *
+	 * 
 	 * @param list
 	 * @param name
 	 * @param buffer
 	 * @param section
 	 * @throws IOException
 	 */
-	public void format(ListOf list, BufferedWriter buffer, boolean section) throws IOException;
+	public void format(ListOf list, BufferedWriter buffer, boolean section)
+			throws IOException;
 
 	/**
-	 *
+	 * 
 	 * @param events
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void format(ListOfEvents events, BufferedWriter buffer) throws IOException;
-
+	public void format(ListOfEvents events, BufferedWriter buffer)
+			throws IOException;
 
 	/**
-	 *
+	 * 
 	 * @param model
 	 * @param buffer
 	 * @throws IOException
 	 */
 	public void format(Model model, BufferedWriter buffer) throws IOException;
 
-
 	/**
-	 *
+	 * 
 	 * @param doc
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void format(SBMLDocument doc, BufferedWriter buffer) throws IOException;
+	public void format(SBMLDocument doc, BufferedWriter buffer)
+			throws IOException;
 }

@@ -24,7 +24,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 /**
- * TODO
+ * A helper class that provides several methods for working with a
+ * {@link GridBagLayout}.
  * 
  * @since 1.0
  * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
@@ -144,8 +145,8 @@ public class LayoutHelper {
 	 */
 	public void add(Component c, int x, int y, int width, int height,
 			double weightx, double weighty, int ipadx, int ipady) {
-		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height, weightx,
-				weighty, ipadx, ipady);
+		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height,
+				weightx, weighty, ipadx, ipady);
 		row = y;
 	}
 
@@ -159,6 +160,7 @@ public class LayoutHelper {
 
 	/**
 	 * adds this component in the next row.
+	 * 
 	 * @param c
 	 */
 	public void add(Component c) {

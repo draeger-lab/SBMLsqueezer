@@ -10,14 +10,15 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SBMLio;
 
 /**
- * 
+ * A dialog window to start a stability analysis on the currently selected
+ * model.
  * 
  * @author <a href="mailto:a.doerr@uni-tuebingen.de">Alexander D&ouml;rr</a>
- * @date
+ * @date 2009-12-18
+ * @since 1.3
  */
 
 public class StabilityDialog extends JDialog implements ActionListener {
@@ -33,7 +34,7 @@ public class StabilityDialog extends JDialog implements ActionListener {
 	private Properties settings;
 	private SBMLio sbmlIO;
 	private boolean exitStatus;
-	
+
 	/**
 	 * Generated serial version id.
 	 */
@@ -46,13 +47,13 @@ public class StabilityDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(CANCEL)) {
 			dispose();
-			
+
 		} else if (e.getActionCommand().equals(APPLY)) {
 			sbmlIO.getSelectedModel();
 		}
 
 	}
-	
+
 	/**
 	 * Initializes this dialog.
 	 */
@@ -75,7 +76,7 @@ public class StabilityDialog extends JDialog implements ActionListener {
 		p.add(apply);
 		add(p, BorderLayout.SOUTH);
 	}
-	
+
 	/**
 	 * 
 	 * @return

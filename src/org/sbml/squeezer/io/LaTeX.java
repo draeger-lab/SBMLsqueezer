@@ -28,12 +28,17 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.squeezer.CfgKeys;
 
+import atp.sHotEqn;
+
 /**
- * Created at 2009-01-03.
+ * Converts {@link ASTNode} objects into a LaTeX {@link String} to be included
+ * into scientific writings or to be displayed by {@link sHotEqn} in a GUI.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
+ * @since 1.1
+ * @date 2009-01-03
  */
 public class LaTeX extends StringTools implements ASTNodeCompiler {
 

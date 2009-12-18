@@ -33,6 +33,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-09-21
+ * @since 1.3
  */
 public class CommonSaturable extends ReversiblePowerLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,

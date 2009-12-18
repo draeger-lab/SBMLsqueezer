@@ -31,12 +31,18 @@ import java.util.Properties;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.SBMLsqueezer;
 
 /**
+ * A specialized {@link JDialog} that shows several configuration options in a
+ * {@link JTabbedPane}, provides a button for applying the choosed selection and
+ * also to restore the default settings. All settings are synchronized with the
+ * central configuration of SBMLsqueezer.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>

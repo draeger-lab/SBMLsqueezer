@@ -18,7 +18,8 @@ import org.sbml.jsbml.SpeciesReference;
  * analysis out of a SBML file
  * 
  * @author <a href="mailto:a.doerr@uni-tuebingen.de">Alexander D&ouml;rr</a>
- * @date
+ * @date 2009-12-18
+ * @since 1.3
  */
 public class SBMLMatrixParser {
 

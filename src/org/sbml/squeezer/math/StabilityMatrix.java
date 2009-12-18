@@ -14,7 +14,8 @@ import org.sbml.squeezer.math.jama.QRDecomposition;;
  * functions
  * 
  * @author <a href="mailto:a.doerr@uni-tuebingen.de">Alexander D&ouml;rr</a>
- * @date
+ * @date 2009-12-18
+ * @since 1.3
  */
 public class StabilityMatrix extends Matrix {
 

@@ -36,10 +36,15 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SBaseChangedListener;
 
 /**
+ * A specialized {@link JSplitPane} that displays a {@link JTree} containing all
+ * model elements of a JSBML model on the left hand side and an
+ * {@link SBasePanel} showing details of the active element in the tree on the
+ * right hand side.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @since 1.3
  */
 public class SBMLModelSplitPane extends JSplitPane implements
 		TreeSelectionListener, SBaseChangedListener {

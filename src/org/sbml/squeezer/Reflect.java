@@ -32,20 +32,29 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 /**
+ * This class loads other classes that implement certain interfaces or extend
+ * certain super types. With this method it becomes possible to load and
+ * initialize instances of certain classes at runtime.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-09-22
+ * @since 1.3
  */
 public class Reflect {
 
 	/**
+	 * Compares the string values of given objects.
 	 * 
 	 * @author draeger
 	 * 
 	 * @param <T>
 	 */
 	static class ClassComparator<T> implements Comparator<T> {
+		/**
+		 * 
+		 */
 		public int compare(Object o1, Object o2) {
 			return (o1.toString().compareTo(o2.toString()));
 		}
@@ -362,7 +371,7 @@ public class Reflect {
 							isInSubPackage = false;
 					}
 					if (includeSubs || !isInSubPackage) { // take the right
-															// ones
+						// ones
 						String clsName = jarEntryName.replace("/", ".");
 						try {
 							// removes the .class extension
@@ -458,16 +467,6 @@ public class Reflect {
 		return hashSetToClassArray(set, bSort);
 	}
 
-	public static Class<?>[] hashSetToClassArray(HashSet<Class<?>> set, boolean bSort) { 
-		Object[] clsArr = set.toArray();
-		if (bSort) {
-			Arrays.sort(clsArr, new ClassComparator<Object>());
-		}
-
-		List<Object> list;
-		list = Arrays.asList(clsArr);
-		return list.toArray(new Class[list.size()]);
-	}
 	/**
 	 * 
 	 * @return
@@ -496,7 +495,7 @@ public class Reflect {
 	 * @return
 	 */
 	public static ArrayList<String> getValidCPEntries(String[] pathElements) {
-//		String[] pathElements = getClassPathElements();
+		// String[] pathElements = getClassPathElements();
 		File f;
 		ArrayList<String> valids = new ArrayList<String>(pathElements.length);
 		for (int i = 0; i < pathElements.length; i++) {
@@ -508,6 +507,18 @@ public class Reflect {
 			}
 		}
 		return valids;
+	}
+
+	public static Class<?>[] hashSetToClassArray(HashSet<Class<?>> set,
+			boolean bSort) {
+		Object[] clsArr = set.toArray();
+		if (bSort) {
+			Arrays.sort(clsArr, new ClassComparator<Object>());
+		}
+
+		List<Object> list;
+		list = Arrays.asList(clsArr);
+		return list.toArray(new Class[list.size()]);
 	}
 
 	/**
