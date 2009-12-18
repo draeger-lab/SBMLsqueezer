@@ -28,13 +28,13 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Dummy class that just loads resource files if required. Created at
- * 2009-02-05.
+ * Loads resource files if required.
  * 
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
  *         Dr&auml;ger</a>
- * 
+ * @since 1.1
+ * @date 2009-02-05
  */
 public final class Resource {
 

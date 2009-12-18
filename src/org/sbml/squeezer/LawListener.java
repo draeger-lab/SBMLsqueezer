@@ -21,7 +21,17 @@ package org.sbml.squeezer;
 import java.util.EventListener;
 
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.UnitDefinition;
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
+/**
+ * Classes that implement this interface can display the progress made by
+ * {@link KineticLawGenerator} when assigning {@link BasicKineticLaw},
+ * {@link Parameter}, {@link UnitDefinition} objects and so forth to a model.
+ * 
+ * @author Andreas Dr&auml;ger
+ * @since 1.1
+ */
 public interface LawListener extends EventListener {
 
 	/**

@@ -42,9 +42,13 @@ import javax.swing.event.HyperlinkListener;
 import org.sbml.squeezer.resources.Resource;
 
 /**
+ * This is a specialized dialog that displays HTML pages and contains a toolbar
+ * with two buttons for jumping forward or backward in the history of visited
+ * pages.
+ * 
  * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
  *         Dr&auml;ger</a>
- * 
+ * @since 1.0
  */
 public class JHelpBrowser extends JDialog implements ActionListener,
 		HyperlinkListener {

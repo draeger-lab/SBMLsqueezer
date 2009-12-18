@@ -42,7 +42,6 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.Symbol;
 
 import eva2.tools.des.DESystem;
 
@@ -56,7 +55,7 @@ import eva2.tools.des.DESystem;
  * Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler: JDK 1.6.0
  * </p>
  * 
- * @since 2.0
+ * @since 1.3
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @author Dieudonne Motsou Wouamba <dwouamba@yahoo.fr>

@@ -1,5 +1,7 @@
-org.sbmlsqueezer.gui
-org.sbmlsqueezer.gui.table
-org.sbmlsqueezer.io
-org.sbmlsqueezer.kinetics
-org.sbmlsqueezer.math
+org.sbml.squeezer
+org.sbml.squeezer.gui
+org.sbml.squeezer.io
+org.sbml.squeezer.kinetics
+org.sbml.squeezer.math
+org.sbml.squeezer.math.jama
+org.sbml.squeezer.resources

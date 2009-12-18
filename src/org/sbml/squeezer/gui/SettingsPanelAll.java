@@ -45,9 +45,13 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 
 /**
+ * A {@link JPanel} containing a {@link JTabbedPane} with several options for
+ * the configuration of {@link SBMLsqueezer} in a GUI.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
+ * @since 1.3
  * @date 2009-09-22
  */
 public class SettingsPanelAll extends JPanel implements KeyListener,
@@ -63,7 +67,7 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	private SettingsPanelLaTeX panelLatexSettings;
 
 	private SettingsPanelDefaultMechanisms panelDefaultMechanisms;
-	
+
 	private SettingsPanelStability panelStabilitySettings;
 
 	private Properties settings;
@@ -134,12 +138,12 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 		 */
 		this.panelLatexSettings = new SettingsPanelLaTeX(settings, false);
 		tab.addTab("LaTeX output settings", panelLatexSettings);
-		//this.add(tab);
-		//addItemListener(this);
-		
+		// this.add(tab);
+		// addItemListener(this);
+
 		/*
 		 * Stability Settings
-		 */		
+		 */
 		panelStabilitySettings = new SettingsPanelStability(this.settings);
 		tab.addTab("Stability settings", panelStabilitySettings);
 		this.add(tab);
@@ -182,7 +186,9 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see javax.swing.JTabbedPane#addChangeListener(javax.swing.event.ChangeListener )
+	 * @see
+	 * javax.swing.JTabbedPane#addChangeListener(javax.swing.event.ChangeListener
+	 * )
 	 */
 	public void addChangeListener(ChangeListener listener) {
 		if (panelKinSettings != null)
@@ -259,7 +265,8 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if ((e.getSource() instanceof Container)

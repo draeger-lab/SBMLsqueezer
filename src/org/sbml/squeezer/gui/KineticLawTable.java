@@ -59,7 +59,7 @@ import atp.sHotEqn;
  * 
  * @since 1.0
  * @version
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
+ * @author Andreas Dr&auml;ger
  * @date Nov 13, 2007
  */
 public class KineticLawTable extends JTable implements MouseInputListener {

@@ -26,9 +26,13 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
+ * Irreversible non-exclusive non-cooperative competitive inihibition, a special
+ * case of the {@link KineticLaw}s defined by {@link SBO} term identifier 199,
+ * 29, 267, or 273 depending on the structure of the reaction.
  * 
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
- * 
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
+ * @since 1.0
  */
 public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		implements InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
@@ -58,9 +62,10 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 * (java.util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,

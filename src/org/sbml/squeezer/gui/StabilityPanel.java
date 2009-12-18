@@ -2,7 +2,6 @@ package org.sbml.squeezer.gui;
 
 import java.awt.Color;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.util.Properties;
 
 import javax.swing.JLabel;
@@ -10,11 +9,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.io.SBMLio;
 
 /**
  * @author <a href="mailto:a.doerr@uni-tuebingen.de">Alexander D&ouml;rr</a>
  * @date 2009-12-10
+ * @since 1.3
  */
 public class StabilityPanel extends JPanel {
 	

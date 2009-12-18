@@ -18,11 +18,18 @@
  */
 package org.sbml.squeezer.io;
 
+import java.io.PrintStream;
+
 /**
+ * Processes messages that have been sent to this object and writes them to a
+ * given {@link PrintStream}. It can be used as an alternative to
+ * {@link System#out} because it is very easy to let messages appear, e.g., in a
+ * {@link File} or on a GUI element.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @since 1.3
  */
 public interface MessageListener {
 	/**

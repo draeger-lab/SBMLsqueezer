@@ -42,12 +42,18 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.StringTools;
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
 /**
+ * A {@link JPanel} to let the user select all default instances of
+ * {@link BasicKineticLaw} that implement the designated interfaces to be
+ * available for certain reaction types.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-09-22
+ * @since 1.3
  */
 public class SettingsPanelDefaultMechanisms extends JPanel implements
 		ItemListener, ChangeListener {
@@ -74,7 +80,7 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	 */
 	public SettingsPanelDefaultMechanisms(Properties properties) {
 		settings = new Properties();
-		for (Object key : properties.keySet()) 
+		for (Object key : properties.keySet())
 			if (key.toString().startsWith("KINETICS_"))
 				settings.put(key, properties.get(key));
 		itemListeners = new LinkedList<ItemListener>();
@@ -125,6 +131,7 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	/**
 	 * Creates a panel that contains radio buttons for the given class of
 	 * kinetic equations.
+	 * 
 	 * @param classes
 	 * @param key
 	 * @return
@@ -235,7 +242,8 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() instanceof JRadioButton) {
@@ -258,7 +266,9 @@ public class SettingsPanelDefaultMechanisms extends JPanel implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent )
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() instanceof Boolean) {

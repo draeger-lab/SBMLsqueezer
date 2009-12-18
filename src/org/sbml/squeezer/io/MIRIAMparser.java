@@ -32,12 +32,14 @@ import org.jdom.input.SAXBuilder;
 import org.xml.sax.SAXException;
 
 /**
- * This class parses MIRIAM uris. Created at 2008-12-09.
+ * This class parses MIRIAM uris given in a XML file and links them to the actual
+ * internet resources.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @date 2008-12-09
+ * @since 1.3
  */
 public class MIRIAMparser {
 

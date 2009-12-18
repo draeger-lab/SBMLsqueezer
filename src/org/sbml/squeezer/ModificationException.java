@@ -18,58 +18,60 @@
  */
 package org.sbml.squeezer;
 
-
 /**
- * TODO: comment missing
- *
+ * An exception that can be raised if a wront type of modification is assigned
+ * to a reaction; it is a special kind of a
+ * {@link RateLawNotApplicableException}.
+ * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Aug 13, 2007
  */
 public class ModificationException extends RateLawNotApplicableException {
 
-  /**
-   * ID
-   */
-  private static final long serialVersionUID = 495775752324636450L;
+	/**
+	 * ID
+	 */
+	private static final long serialVersionUID = 495775752324636450L;
 
-  /**
-   * Construct a new exception for cases in which transcriptional activation or
-   * translational activation or inhibition, respectively, was used where
-   * regular activation or inhibition had to be applied or the other way
-   * arround.
-   */
-  public ModificationException() {
-    super();
-  }
+	/**
+	 * Construct a new exception for cases in which transcriptional activation
+	 * or translational activation or inhibition, respectively, was used where
+	 * regular activation or inhibition had to be applied or the other way
+	 * arround.
+	 */
+	public ModificationException() {
+		super();
+	}
 
-  /**
-   * Construct a new exception for cases in which transcriptional activation or
-   * translational activation or inhibition, respectively, was used where
-   * regular activation or inhibition had to be applied or the other way
-   * arround.
-   *
-   * @param message
-   *          Exception message
-   */
-  public ModificationException(String message) {
-    super(message);
-  }
+	/**
+	 * Construct a new exception for cases in which transcriptional activation
+	 * or translational activation or inhibition, respectively, was used where
+	 * regular activation or inhibition had to be applied or the other way
+	 * arround.
+	 * 
+	 * @param message
+	 *            Exception message
+	 */
+	public ModificationException(String message) {
+		super(message);
+	}
 
-  /**
-   * Construct a new exception for cases in which transcriptional activation or
-   * translational activation or inhibition, respectively, was used where
-   * regular activation or inhibition had to be applied or the other way
-   * arround.
-   *
-   * @param message
-   *          Exception message
-   * @param cause
-   *          Reason for the exception to be thrown.
-   */
-  public ModificationException(String message, Throwable cause) {
-    super(message, cause);
-  }
+	/**
+	 * Construct a new exception for cases in which transcriptional activation
+	 * or translational activation or inhibition, respectively, was used where
+	 * regular activation or inhibition had to be applied or the other way
+	 * arround.
+	 * 
+	 * @param message
+	 *            Exception message
+	 * @param cause
+	 *            Reason for the exception to be thrown.
+	 */
+	public ModificationException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
 }

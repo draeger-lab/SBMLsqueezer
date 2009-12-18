@@ -27,7 +27,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 /**
  * Mass action rate law for zeroth order reverse reactions.
  * 
- * @since 2.0
+ * @since 1.0
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @date Feb 8, 2008

@@ -39,6 +39,10 @@ import javax.swing.filechooser.FileFilter;
 import org.sbml.squeezer.resources.Resource;
 
 /**
+ * A convenient class that provides several handy methods for working with
+ * graphical user interfaces. It loads all icons that are required by the GUI
+ * and provides methods for changing color and state of GUI elements.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>

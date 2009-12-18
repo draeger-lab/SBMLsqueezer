@@ -78,10 +78,13 @@ import org.sbml.squeezer.resources.Resource;
 import atp.sHotEqn;
 
 /**
+ * A specialized {@link JPanel} that displays all available properties of a
+ * given {@link SBase} in a GUI.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @since 1.3
  */
 public class SBasePanel extends JPanel {
 
@@ -142,7 +145,7 @@ public class SBasePanel extends JPanel {
 			addProperties((SimpleSpeciesReference) sbase);
 		if (sbase instanceof MathContainer)
 			addProperties((MathContainer) sbase);
-		if (sbase instanceof ListOf)
+		if (sbase instanceof ListOf<?>)
 			addProperties((ListOf<?>) sbase);
 		else if (sbase instanceof Model)
 			addProperties((Model) sbase);

@@ -32,6 +32,7 @@ import javax.swing.Icon;
  * 
  * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
  *         Dr&auml;ger</a>
+ * @since 1.3
  */
 public class CloseIcon implements Icon {
 	private int x_pos;

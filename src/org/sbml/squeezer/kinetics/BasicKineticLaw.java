@@ -39,7 +39,12 @@ import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.io.StringTools;
 
 /**
- * An abstract super class of specialized kinetic laws.
+ * An abstract super class of specialized kinetic laws, which provides methods
+ * for creating {@link Parameter} and {@link UnitDefinition} objects and
+ * maintains all these in dedicated lists. All variants of {@link KineticLaw}s
+ * that are to be displayed in SBMLsqueezer's GUI and to be available in
+ * SBMLsqueezer at all must extend this class and at least one of the interfaces
+ * in this package.
  * 
  * @since 1.0
  * @version
@@ -479,7 +484,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
 		return hr;
 	}
-	
+
 	/**
 	 * S-System exponent
 	 * 
@@ -935,7 +940,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!T.isSetUnits())
 			T.setUnits(Unit.Kind.KELVIN);
 		if (!T.isSetName())
-			T.setName("The temperature of reaction system " + getModel().getId());
+			T.setName("The temperature of reaction system "
+					+ getModel().getId());
 		return T;
 	}
 

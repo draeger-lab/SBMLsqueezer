@@ -19,12 +19,14 @@
 package org.sbml.squeezer;
 
 /**
- * Possible command line options and configuration of SBMLsqueezer.
+ * This is a list of possible command line options and configuration of
+ * SBMLsqueezer. Each element listed here determins a key for a configuration
+ * value.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @since 1.3
  */
 public enum CfgKeys {
 	/**
@@ -57,45 +59,51 @@ public enum CfgKeys {
 	 */
 	CHECK_FOR_UPDATES,
 	/**
-	 * Possible values are:
+	 * Possible values are, for instance,
 	 * <ul>
-	 * <li>1 = generalized mass-action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
-	 * <li>3 = Michaelis-Menten kinetics</li>
+	 * <li>generalized mass-action kinetics</li>
+	 * <li>Convenience kinetics</li>
+	 * <li>Michaelis-Menten kinetics</li>
 	 * </ul>
 	 */
 	KINETICS_UNI_UNI_TYPE,
 	/**
-	 * Possible values are:
+	 * Possible values are, e.g.,
 	 * <ul>
-	 * <li>1 = generalized mass-action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
-	 * <li>4 = Random Order Michealis Menten kinetics</li>
-	 * <li>6 = Ordered</li>
+	 * <li>generalized mass-action kinetics</li>
+	 * <li>Convenience kinetics</li>
+	 * <li>Random Order Michealis Menten kinetics</li>
+	 * <li>Ordered</li>
 	 * </ul>
 	 */
 	KINETICS_BI_UNI_TYPE,
 	/**
-	 * Possible values are:
+	 * Possible values are, among others,
 	 * <ul>
-	 * <li>1 = generalized mass-action kinetics</li>
-	 * <li>2 = Convenience kinetics</li>
-	 * <li>4 = Random Order Michealis Menten kinetics</li>
-	 * <li>5 = Ping-Pong</li>
-	 * <li>6 = Ordered</li>
+	 * <li>generalized mass-action kinetics</li>
+	 * <li>Convenience kinetics</li>
+	 * <li>Random Order Michealis Menten kinetics</li>
+	 * <li>Ping-Pong</li>
+	 * <li>Ordered</li>
 	 * </ul>
 	 */
 	KINETICS_BI_BI_TYPE,
 	/**
-	 * 
+	 * Determins the key for the standar kinetic law to be applied for reactions
+	 * that are catalyzed by non-enzymes or that are not catalyzed at all.
 	 */
 	KINETICS_NONE_ENZYME_REACTIONS,
 	/**
-	 * 
+	 * Determins the key for the standar kinetic law to be applied for reactions
+	 * that are identified to belong to gene-regulatory processes, such as
+	 * transcription or translation.
 	 */
 	KINETICS_GENE_REGULATION,
 	/**
-	 * 
+	 * Determins the key for the standar kinetic law to be applied for reactions
+	 * that are identified to be enzyme-catalyzed (with or without explicit
+	 * catalyst) and that do not belong to one of the other standard
+	 * enzyme-catalysis schemes.
 	 */
 	KINETICS_OTHER_ENZYME_REACTIONS,
 	/**
@@ -168,47 +176,45 @@ public enum CfgKeys {
 	 */
 	OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
 	/**
-	 * 
+	 * Determins whether or not generic proteins are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_GENERIC,
 	/**
-	 * 
+	 * Determins whether or not RNA molecules are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_RNA,
 	/**
-	 * 
+	 * Determins whether or not enzyme complexes are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_COMPLEX,
 	/**
-	 * 
+	 * Determins whether or not trunkated proteins are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_TRUNCATED,
 	/**
-	 * 
+	 * Determins whether or not receptors are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_RECEPTOR,
 	/**
-	 * 
+	 * Determins whether or not unknown molecules are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_UNKNOWN,
 	/**
-	 * 
+	 * Determins whether or not antisense RNA molecules are accepted as enzymes
+	 * when catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_ANTISENSE_RNA,
 	/**
-	 * 
+	 * Determins whether or not simple molecules are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_SIMPLE_MOLECULE,
-	/*
-	 * A list which contains the names of all species that are accepted to act
-	 * as enzymes during a reaction. Valid are the following entries (upper and
-	 * lower case is ignored): <ul> <li>ANTISENSE_RNA</li>
-	 * <li>SIMPLE_MOLECULE</li> <li>RECEPTOR</li> <li>UNKNOWN</li>
-	 * <li>COMPLEX</li> <li>TRUNCATED</li> <li>GENERIC</li> <li>RNA</li> </ul>
-	 * Not allowed entries like <li>Phenotype</li> <li>Gene</li> <li>
-	 * IonChannel</li> <li>Ion</li> </ul> will be filtered out of the list.
-	 */
-
 	/**
 	 * Standard directory where LaTeX files can be stored.
 	 */
@@ -240,14 +246,36 @@ public enum CfgKeys {
 	 * object in equations.
 	 */
 	LATEX_NAMES_IN_EQUATIONS,
-	
-	
-	STABILITY_VALUE_OF_DELTA,		
-	STEUER_VALUE_OF_N,                  
-	STEUER_VALUE_OF_M,                   
-	STEUER_NUMBER_OF_RUNS,          
-	STEUER_PC_STEPSIZE,                   
-	STEUER_PC_OUTPUT,                      
-	STEUER_MI_STEPSIZE,                         
-	STEUER_MI_OUTPUT,                          
+	/**
+     * 
+     */
+	STABILITY_VALUE_OF_DELTA,
+	/**
+	 * 
+	 */
+	STEUER_VALUE_OF_N,
+	/**
+	 * 
+	 */
+	STEUER_VALUE_OF_M,
+	/**
+	 * 
+	 */
+	STEUER_NUMBER_OF_RUNS,
+	/**
+	 * 
+	 */
+	STEUER_PC_STEPSIZE,
+	/**
+	 * 
+	 */
+	STEUER_PC_OUTPUT,
+	/**
+	 * 
+	 */
+	STEUER_MI_STEPSIZE,
+	/**
+	 * 
+	 */
+	STEUER_MI_OUTPUT
 }

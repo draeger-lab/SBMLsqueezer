@@ -61,10 +61,19 @@ import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.squeezer.SBMLsqueezer;
 
 /**
+ * A manager class for reading and writing models from some source into JSBML
+ * data objects and to synchronize the model with the original data structure
+ * afterwards. This class requires an instance of the so called
+ * {@link SBMLReader} and {@link SBMLWriter} classes and maintains all loaded
+ * original model objects and the JSBML representation of it in designated
+ * lists. It can be used to, e.g., load a model from CellDesigner's plug-in data
+ * structures and save changes back in CellDesigner or to do the same with
+ * models that originate from libSBML.
+ * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
- * 
+ * @since 1.3
  */
 public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 		ChangeListener {
@@ -368,7 +377,8 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/**
 	 * Write all changes back into the original model.
-	 * @param listener 
+	 * 
+	 * @param listener
 	 * 
 	 * @throws SBMLException
 	 */
@@ -899,6 +909,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLReader#addEventListener(java.util.EventListener)
 	 */
 	public void addIOProgressListener(IOProgressListener listener) {
@@ -908,6 +919,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLReader#getOriginalModel()
 	 */
 	public Object getOriginalModel() {

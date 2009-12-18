@@ -27,6 +27,7 @@ package org.sbml.squeezer.kinetics;
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * @date 2009-09-24
+ * @since 1.3
  */
 public interface InterfaceIntegerStoichiometry {
 
