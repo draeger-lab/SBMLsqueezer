@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.sbml.jsbml.Event;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
@@ -326,7 +328,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.Compartment)
 	 */
 	public Double compile(Compartment c) {
-		// TODO
 		return Double.valueOf(c.getSize());
 	}
 
@@ -360,7 +361,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			if (nsb instanceof Parameter) {
 				Parameter p = (Parameter) nsb;
 				if (p.getParentSBMLObject() instanceof KineticLaw) {
-					// TODO
+					ListOf<Parameter> params = ((KineticLaw) p
+							.getParentSBMLObject()).getListOfParameters();
+					for (int i = 0; i < params.size(); i++) {
+						if (p.getId() == params.get(i).getId())
+							return params.get(i).getValue();
+					}
 				}
 			}
 			val = valuesHash.get(nsb.getId());
@@ -528,9 +534,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#functionDelay(java.lang.String)
 	 */
-	public Object functionDelay(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Double functionDelay(String arg0) {
+		return Double.valueOf(arg0);
 	}
 
 	/*
@@ -1550,7 +1555,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				val = valuesHash.get(speciesRef.getId());
 
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
-					speciesIndex = val.getIndex();					
+					speciesIndex = val.getIndex();
 					if (speciesRef.isSetStoichiometryMath())
 						swap[speciesIndex] -= evaluateToDouble(speciesRef
 								.getStoichiometryMath().getMath())
@@ -1567,7 +1572,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				// species = model.getSpecies(speciesIndex);
 				species = model.getSpecies(speciesRef.getId());
 				val = valuesHash.get(speciesRef.getId());
-				if (!species.getBoundaryCondition() && !species.getConstant()){
+				if (!species.getBoundaryCondition() && !species.getConstant()) {
 					speciesIndex = val.getIndex();
 					if (speciesRef.isSetStoichiometryMath())
 						swap[speciesIndex] += evaluateToDouble(speciesRef
