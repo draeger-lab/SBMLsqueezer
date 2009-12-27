@@ -86,7 +86,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * are changed, because the parameters may influence the return values of
 	 * the initial assignments.
 	 */
-	protected double[] initialValues;
+	// protected double[] initialValues;
+	private HashMap<String, Value> valuesHash;
 
 	/**
 	 * An array, which stores for each constraint the list of times, in which
@@ -360,7 +361,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				Parameter p = (Parameter) nsb;
 				if (p.getParentSBMLObject() instanceof KineticLaw) {
 					// TODO
-				}				
+				}
 			}
 			val = valuesHash.get(nsb.getId());
 			if (val.getIndex() == -1)
@@ -584,10 +585,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 * @return Returns the initial values of the model to be simulated.
 	 */
-	public double[] getInitialValues() {
-		return this.initialValues;
-	}
-
+	// public double[] getInitialValues() {
+	// return this.initialValues;
+	// }
 	/**
 	 * Returns the model that is used by this object.
 	 * 
@@ -688,8 +688,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 	}
 
-	private HashMap<String, Value> valuesHash;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -699,10 +697,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public double[] getValue(double time, double[] Y) {
 		int i;
-		if ((Y == null) || (time == 0.0))
-			System.arraycopy(initialValues, 0, this.Y, 0, initialValues.length);
-		else
-			this.Y = Y;
+		// if ((Y == null) || (time == 0.0))
+		// System.arraycopy(initialValues, 0, this.Y, 0, initialValues.length);
+		// else
+		// this.Y = Y;
 		this.currentTime = time;
 		double res[] = new double[Y.length];
 		/*
@@ -765,7 +763,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			}
 		}
 		// Velocities of each reaction.
-		// TODO don't change Y, change res
 		for (i = 0; i < v.length; i++) {
 			currentReaction = model.getReaction(i);
 			KineticLaw kin = currentReaction.getKineticLaw();
@@ -774,7 +771,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			else
 				v[i] = 0;
 		}
-		this.Y = linearCombinationOfVelocities(v);
+		res = linearCombinationOfVelocities(v);
 
 		/*
 		 * TODO: Rules
@@ -924,18 +921,37 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	}
 
 	public Double and(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
+		for (ASTNode node : nodes) {
+			if (((Double) node.compile(this)).doubleValue() == getConstantFalse())
+				return getConstantFalse();
+
+		}
+		return getConstantTrue();
 	}
 
 	public Double or(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
+		for (ASTNode node : nodes) {
+			if (((Double) node.compile(this)).doubleValue() == getConstantTrue())
+				return getConstantTrue();
+
+		}
+		return getConstantFalse();
 	}
 
 	public Double xor(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
+		Double value = getConstantFalse();
+
+		if (nodes.length > 0) {
+			value = ((Double) nodes[1].compile(this)).doubleValue();
+		}
+
+		for (int i = 1; i < nodes.length; i++) {
+			if (((Double) nodes[i].compile(this)).doubleValue() == value)
+				;
+
+			value = getConstantFalse();
+		}
+		return value;
 	}
 
 	/*
@@ -1130,32 +1146,28 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 *            An array of parameter values to be set for this model. If the
 	 *            number of given parameters does not match the number of model
 	 *            parameters, an exception will be thrown.
-	 * @return Returns the initial values of the model. If the model contains
-	 *         initial assignments, all initial values have to be recomputed
-	 *         after the parameter values were set. Otherwise the initial values
-	 *         will remain unchanged.
 	 */
-	// TODO changing the model directly not allowed
-	// public double[] setParameters(double[] params) {
-	// // TODO consider local parameters as well.
-	// // if (params.length != model.getNumParameters())
-	// // throw new IllegalArgumentException(
-	// // "The number of parameters passed to this method must "
-	// // + "match the number of parameters in the model.");
-	// int paramNum, reactionNum, localPnum;
-	// for (paramNum = 0; paramNum < model.getNumParameters(); paramNum++)
-	// model.getParameter(paramNum).setValue(params[paramNum]);
-	// for (reactionNum = 0; reactionNum < model.getNumReactions();
-	// reactionNum++) {
-	// KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
-	// for (localPnum = 0; localPnum < law.getNumParameters(); localPnum++)
-	// law.getParameter(localPnum).setValue(params[paramNum++]);
-	// }
-	// if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0)
-	// // TODO check
-	// // initialValues = init();
-	// return this.initialValues;
-	// }
+	// TODO changing the model directly not allowed / does this method still
+	// make sense?
+	public void setParameters(double[] params) {
+		// TODO consider local parameters as well.
+		// if (params.length != model.getNumParameters())
+		// throw new IllegalArgumentException(
+		// "The number of parameters passed to this method must "
+		// + "match the number of parameters in the model.");
+		int paramNum, reactionNum, localPnum;
+		for (paramNum = 0; paramNum < model.getNumParameters(); paramNum++)
+			model.getParameter(paramNum).setValue(params[paramNum]);
+		for (reactionNum = 0; reactionNum < model.getNumReactions(); reactionNum++) {
+			KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
+			for (localPnum = 0; localPnum < law.getNumParameters(); localPnum++)
+				law.getParameter(localPnum).setValue(params[paramNum++]);
+		}
+		if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0)
+			init();
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1399,7 +1411,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	protected void init() {
 		int i;
 		valuesHash = new HashMap<String, Value>();
-		ArrayList<Double> constantValues = new ArrayList<Double>();
+		ArrayList<Double> variableValues = new ArrayList<Double>();
 		int constantIndex = 0;
 
 		for (i = 0; i < model.getNumSpecies(); i++) {
@@ -1419,11 +1431,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			else {
 				if (s.isSetInitialAmount())
 					// TODO Einheitenabgleich beim Umrechnen von Item in
-					constantValues.add(s.getInitialAmount()
+					variableValues.add(s.getInitialAmount()
 							/ model.getCompartment(s.getCompartment())
 									.getVolume());
 				else
-					constantValues.add(s.getInitialConcentration());
+					variableValues.add(s.getInitialConcentration());
 
 				valuesHash.put(s.getId(), new Value(constantIndex));
 				constantIndex++;
@@ -1436,7 +1448,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			if (c.isConstant())
 				valuesHash.put(c.getId(), new Value(c.getSize()));
 			else {
-				constantValues.add(c.getSize());
+				variableValues.add(c.getSize());
 				valuesHash.put(c.getId(), new Value(constantIndex));
 				constantIndex++;
 			}
@@ -1448,18 +1460,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			if (p.isConstant()) {
 				valuesHash.put(p.getId(), new Value(p.getValue()));
 			} else {
-				constantValues.add(p.getValue());
+				variableValues.add(p.getValue());
 				valuesHash.put(p.getId(), new Value(constantIndex));
 				constantIndex++;
 			}
 		}
 
-		this.Y = new double[constantValues.size()];
+		this.Y = new double[variableValues.size()];
 
-		for (i = 0; i < constantValues.size(); i++) {
-			this.Y[i] = constantValues.get(i);
+		for (i = 0; i < variableValues.size(); i++) {
+			this.Y[i] = variableValues.get(i);
 		}
-		constantValues.clear();
+		variableValues.clear();
 
 		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment assign = model.getInitialAssignment(i);
@@ -1525,18 +1537,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		int reactionIndex, sReferenceIndex, speciesIndex;
 		Species species;
 		SpeciesReference speciesRef;
-
+		Value val;
 		Arrays.fill(swap, 0.0);
 		for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
 			Reaction r = model.getReaction(reactionIndex);
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumReactants(); sReferenceIndex++) {
 				speciesRef = r.getReactant(sReferenceIndex);
-				speciesIndex = (int) speciesIdIndex
-						.get(speciesRef.getSpecies()).intValue();
-				// TODO: Testen!!! species =
-				// model.getSpecies(speciesRef.getId());
-				species = model.getSpecies(speciesIndex);
+				// speciesIndex = (int) speciesIdIndex
+				// .get(speciesRef.getSpecies()).intValue();
+				// species = model.getSpecies(speciesIndex);
+				species = model.getSpecies(speciesRef.getId());
+				val = valuesHash.get(speciesRef.getId());
+
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
+					speciesIndex = val.getIndex();					
 					if (speciesRef.isSetStoichiometryMath())
 						swap[speciesIndex] -= evaluateToDouble(speciesRef
 								.getStoichiometryMath().getMath())
@@ -1548,10 +1562,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			}
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
 				speciesRef = r.getProduct(sReferenceIndex);
-				speciesIndex = (int) speciesIdIndex
-						.get(speciesRef.getSpecies()).intValue();
-				species = model.getSpecies(speciesIndex);
-				if (!species.getBoundaryCondition() && !species.getConstant())
+				// speciesIndex = (int) speciesIdIndex
+				// .get(speciesRef.getSpecies()).intValue();
+				// species = model.getSpecies(speciesIndex);
+				species = model.getSpecies(speciesRef.getId());
+				val = valuesHash.get(speciesRef.getId());
+				if (!species.getBoundaryCondition() && !species.getConstant()){
+					speciesIndex = val.getIndex();
 					if (speciesRef.isSetStoichiometryMath())
 						swap[speciesIndex] += evaluateToDouble(speciesRef
 								.getStoichiometryMath().getMath())
@@ -1559,6 +1576,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 					else
 						swap[speciesIndex] += speciesRef.getStoichiometry()
 								* velocities[reactionIndex];
+				}
 			}
 		}
 		return swap;
