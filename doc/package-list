@@ -1,0 +1,6 @@
+org.sbml.squeezer
+org.sbml.squeezer.gui
+org.sbml.squeezer.io
+org.sbml.squeezer.kinetics
+org.sbml.squeezer.math
+org.sbml.squeezer.resources
