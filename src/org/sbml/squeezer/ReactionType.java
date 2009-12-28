@@ -605,7 +605,7 @@ public class ReactionType {
 									className) || withoutModulation))
 						types.add(className);
 				}
-				if (uniUni) {
+				if (uniUni || (stoichiometryLeft == 1d && !(reaction.getReversible() || reversibility))) {
 					Set<String> onlyUniUni = new HashSet<String>();
 					onlyUniUni.addAll(SBMLsqueezer.getKineticsUniUni());
 					onlyUniUni.removeAll(SBMLsqueezer
@@ -619,7 +619,7 @@ public class ReactionType {
 					for (String className : onlyUniUni)
 						if (checkReversibility(reaction, className))
 							types.add(className);
-				} else if (biUni) {
+				} else if (biUni || (stoichiometryLeft == 2d && !(reaction.getReversible() || reversibility))) {
 					Set<String> onlyBiUni = new HashSet<String>();
 					onlyBiUni.addAll(SBMLsqueezer.getKineticsBiUni());
 					onlyBiUni.removeAll(SBMLsqueezer

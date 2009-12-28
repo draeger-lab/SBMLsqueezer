@@ -150,6 +150,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		this.selected = "";
 		this.klg = klg;
 		this.reaction = reaction;
+		this.klg.getSettings().put(
+				CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+				Boolean.valueOf(this.reaction.getReversible()));
 		StringBuilder label = new StringBuilder("<html><body>");
 		double stoichiometry = 0;
 		for (int i = 0; i < reaction.getNumReactants(); i++)
@@ -449,6 +452,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 								selected = rButtonsKineticEquations[i]
 										.getText();
 						klg.setReversible(reaction.getId(), getReversible());
+						klg.getSettings().put(
+								CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+								Boolean.valueOf(getReversible()));
 						remove(kineticsPanel);
 						kineticsPanel = initKineticsPanel();
 						LayoutHelper.addComponent(this, (GridBagLayout) this
@@ -478,8 +484,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				try {
 					updateView();
 				} catch (RateLawNotApplicableException e) {
-					JOptionPane.showMessageDialog(this, e.getClass().getSimpleName(), GUITools.toHTML(e.getMessage(), 40),
-							JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(this, e.getClass()
+							.getSimpleName(), GUITools.toHTML(e.getMessage(),
+							40), JOptionPane.WARNING_MESSAGE);
 					e.printStackTrace();
 				}
 			}
