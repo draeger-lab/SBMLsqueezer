@@ -701,13 +701,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * .Des.DESystem#getValue(double, double[])
 	 */
 	public double[] getValue(double time, double[] Y) {
-		int i;
+		int i, speciesIndex;
 		// if ((Y == null) || (time == 0.0))
 		// System.arraycopy(initialValues, 0, this.Y, 0, initialValues.length);
 		// else
 		// this.Y = Y;
 		this.currentTime = time;
 		double res[] = new double[Y.length];
+		Value val;
 		/*
 		 * Events checking if the model has events and executing events that
 		 * must be executed at this time point: t = time.
@@ -784,32 +785,43 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
-				// TODO
+				
+				if(evaluateToDouble(rule.getMath()) != getConstantFalse());
+					//throw error?
+
 			} else if (rule.isAssignment()) {
 				AssignmentRule ar = (AssignmentRule) rule;
-				if (ar.isCompartmentVolume())
-					model.getCompartment(ar.getVariable()).setVolume(
-							evaluateToDouble(rule.getMath()));
-				else if (ar.isParameter())
-					model.getParameter(ar.getVariable()).setValue(
-							evaluateToDouble(rule.getMath()));
-				else if (ar.isSpeciesConcentration()) {
-					// TODO
-				}
+				val = valuesHash.get(ar.getVariable());
+				speciesIndex = val.getIndex();
+				// if (ar.isCompartmentVolume())
+				//					
+				// model.getCompartment(ar.getVariable()).setVolume(
+				// evaluateToDouble(rule.getMath()));
+				// else if (ar.isParameter())
+				// model.getParameter(ar.getVariable()).setValue(
+				// evaluateToDouble(rule.getMath()));
+				// else if (ar.isSpeciesConcentration()) {
+				// }
+				res[speciesIndex] = evaluateToDouble(ar.getMath());
+
 			} else if (rule.isRate()) {
 				// The entity identify must have its constant attribute set
 				// to false
 				RateRule rr = (RateRule) rule;
-				String var = rr.getVariable();
-				if (rr.isCompartmentVolume()) {
-					// TODO
-				} else if (rr.isSpeciesConcentration()) {
-					// boundaryCondition must be true
-					Y[speciesIdIndex.get(var).intValue()] = evaluateToDouble(rule
-							.getMath());
-				} else if (rr.isParameter()) {
-					// TODOConstraints
-				}
+				// String var = rr.getVariable();
+				// if (rr.isCompartmentVolume()) {
+				// // TODO
+				// } else if (rr.isSpeciesConcentration()) {
+				// // boundaryCondition must be true
+				// Y[speciesIdIndex.get(var).intValue()] = evaluateToDouble(rule
+				// .getMath());
+				// } else if (rr.isParameter()) {
+				// // TODOConstraints
+				// }
+				val = valuesHash.get(rr.getVariable());
+				speciesIndex = val.getIndex();
+				res[speciesIndex] = evaluateToDouble(rr.getMath());
+
 			} else if (rule.isScalar()) {
 			}
 		}
@@ -1417,7 +1429,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		int i;
 		valuesHash = new HashMap<String, Value>();
 		ArrayList<Double> variableValues = new ArrayList<Double>();
-		int constantIndex = 0;
+		int constantIndex = 0, speciesIndex;
+		Value val = null;
 
 		for (i = 0; i < model.getNumSpecies(); i++) {
 			Species s = model.getSpecies(i);
@@ -1480,7 +1493,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment assign = model.getInitialAssignment(i);
-			Value val = null;
+			val = null;
 			if (assign.isSetMath() && assign.isSetSymbol()) {
 				if (model.getSpecies(assign.getSymbol()) != null) {
 					Species s = model.getSpecies(assign.getSymbol());
@@ -1523,6 +1536,25 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		 */
 		if (model.getNumEvents() > 0)
 			initEvents();
+
+		/*
+		 * Rules
+		 */
+		for (i = 0; i < model.getNumRules(); i++) {
+			Rule rule = model.getRule(i);
+			if (rule.isAlgebraic()) {
+				
+				if(evaluateToDouble(rule.getMath()) != getConstantFalse());
+					//throw error?
+				
+			} else if (rule.isAssignment()) {
+				AssignmentRule ar = (AssignmentRule) rule;
+				val = valuesHash.get(ar.getVariable());
+				speciesIndex = val.getIndex();
+				this.Y[speciesIndex] = evaluateToDouble(rule.getMath());
+
+			}
+		}
 
 	}
 
