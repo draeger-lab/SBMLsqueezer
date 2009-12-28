@@ -505,7 +505,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			}
 			f = new File(userConfigFile);
 			if (f.exists() && f.length() == 0) {
-				FileOutputStream os = new FileOutputStream(new File(configFile));
+				FileOutputStream os = new FileOutputStream(f);
 				Resource.readProperties(configFile).store(os,
 						"SBMLsqueezer configuration. Do not change manually.");
 				os.close();
@@ -590,7 +590,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 					Object val = settings.get(key);
 					String value = val.toString();
 					if (val instanceof List<?>) {
-						value = Arrays.toString(((List<?>) val).toArray()).substring(1).replace(" ", "");
+						value = Arrays.toString(((List<?>) val).toArray())
+								.substring(1).replace(" ", "");
 						value = value.substring(0, value.length() - 1);
 					}
 					char c;
