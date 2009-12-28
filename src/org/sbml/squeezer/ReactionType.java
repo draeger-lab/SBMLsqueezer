@@ -30,6 +30,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.CVTerm.Qualifier;
 
 /**
  * The purpose of this class is to analyze a reaction object for several
@@ -276,7 +277,42 @@ public class ReactionType {
 	public ReactionType(Reaction r, Properties settings)
 			throws RateLawNotApplicableException {
 		int i;
-		this.reaction = r;
+		this.reaction = r; //.clone();
+		// Check ignore list:
+		List<String> ignoreList = null;
+		if (settings
+				.containsKey(CfgKeys.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)) {
+			Object o = settings
+					.get(CfgKeys.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
+			if (o instanceof List<?>)
+				ignoreList = (List<String>) o;
+			else {
+				ignoreList = new LinkedList<String>();
+				ignoreList.add(o.toString());
+			}
+			if (ignoreList != null && ignoreList.size() >= 0) {
+				Species spec;
+				for (i = reaction.getNumReactants() - 1; i >= 0; i--) {
+					spec = reaction.getReactant(i).getSpeciesInstance();
+					for (String string : ignoreList) {
+						if (spec.filterCVTerms(Qualifier.BQB_IS, string).size() > 0) {
+							reaction.removeReactant(i);
+							break;
+						}
+					}
+				}
+				for (i = reaction.getNumProducts() - 1; i >= 0; i--) {
+					spec = reaction.getProduct(i).getSpeciesInstance();
+					for (String string : ignoreList) {
+						if (spec.filterCVTerms(Qualifier.BQB_IS, string).size() > 0) {
+							reaction.removeProduct(i);
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		this.settings = settings;
 		this.reversibility = ((Boolean) settings
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))

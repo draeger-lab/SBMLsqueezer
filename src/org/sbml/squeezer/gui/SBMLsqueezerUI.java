@@ -155,6 +155,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private Color colorDefault;
 
+	/**
+	 * 
+	 */
 	private JLabel logo;
 
 	/**
@@ -167,8 +170,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private Properties settings;
 
+	/**
+	 * 
+	 */
 	private JTabbedPaneWithCloseIcons tabbedPane;
 
+	/**
+	 * 
+	 */
 	private JToolBar toolbar;
 
 	/**
@@ -194,7 +203,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @see
 	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
-	// @Override
 	public void actionPerformed(ActionEvent e) {
 		boolean done = false;
 		if (e.getSource() instanceof JMenuItem) {
@@ -572,8 +580,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		preferencesItem.setMnemonic(preferencesItem.getText().charAt(0));
 		editMenu.add(squeezeItem);
 		editMenu.add(latexItem);
-		editMenu.add(stabilityItem);
-		editMenu.add(structuralItem);
+		// Next version!
+		// editMenu.add(stabilityItem);
+		// editMenu.add(structuralItem);
 		editMenu.add(preferencesItem);
 
 		/*
@@ -650,16 +659,17 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					"Export this model to a LaTeX report.", 40));
 			toolbar.add(latexButton);
 		}
-		if (GUITools.ICON_STABILITY_SMALL != null) {
-			JButton stabilityButton = new JButton(GUITools.ICON_STABILITY_SMALL);
-			stabilityButton.addActionListener(this);
-			stabilityButton
-					.setActionCommand(Command.CHECK_STABILITY.toString());
-			stabilityButton.setToolTipText(GUITools.toHTML(
-					"Analyze the stability properties of the selected model.",
-					40));
-			toolbar.add(stabilityButton);
-		}
+		// Next version!
+//		if (GUITools.ICON_STABILITY_SMALL != null) {
+//			JButton stabilityButton = new JButton(GUITools.ICON_STABILITY_SMALL);
+//			stabilityButton.addActionListener(this);
+//			stabilityButton
+//					.setActionCommand(Command.CHECK_STABILITY.toString());
+//			stabilityButton.setToolTipText(GUITools.toHTML(
+//					"Analyze the stability properties of the selected model.",
+//					40));
+//			toolbar.add(stabilityButton);
+//		}
 		toolbar.addSeparator();
 		JButton helpButton = new JButton(GUITools.ICON_HELP_TINY);
 		helpButton.addActionListener(this);
@@ -931,10 +941,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 /**
  * 
  * @author Andreas Dr&auml;ger
- *
+ * 
  */
 class FileReaderThread extends Thread implements Runnable {
-	
+
 	private SBMLsqueezerUI reader;
 	private File file;
 
@@ -949,9 +959,10 @@ class FileReaderThread extends Thread implements Runnable {
 		this.file = f;
 		start();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#run()
 	 */
 	public void run() {

@@ -110,6 +110,20 @@
     <p>Whenever possible, SBMLsqueezer annotates newly created objects, such as
       <span style="font-family:Courier">Parameter</span>s or <span 
       style="font-family:Courier">UnitDefinition</span>s, with SBO identifiers.</p>
+      
+    <h3>MIRIAM Support</h3>
+    
+    <p>In contrast to earlier versions, SBMLsqueezer now also interprets and uses
+    MIRIAM tags. The new command-line and configuration key option <span 
+    style="font-family:Courier">OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS</span>
+    takes a list of comma-separated MIRIAM identifiers as value. Species annotated
+    with BQB_IS and the given MIRIAM resource are then ignored when creating rate
+    equations. This is, for instance, useful if small molecules such as water take
+    part in a reaction. The concentration of water can hardly be measured and it is
+    assumed to occur abundantly within the cell. By default, the KEGG compound ids
+    for water (<span style="font-family:Courier">C00001</span>) and for single 
+    protons (<span style="font-family:Courier">C00080</span>) set to be ignored when
+    creating new kinetic equations.</p>
     
     <h3>New Kinetic Equations and Extensibility</h3>
 
