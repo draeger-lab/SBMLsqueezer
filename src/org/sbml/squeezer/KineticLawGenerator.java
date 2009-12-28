@@ -794,7 +794,7 @@ public class KineticLawGenerator {
 					.booleanValue())
 				removeUnnecessaryParameters(modelOrig, l);
 		}
-		storeParamters(reaction);
+		storeParamters(reaction, l);
 		return reaction;
 	}
 
@@ -817,11 +817,13 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * This method stores all newly created parameters in the model.
+	 * This method stores all newly created parameters in the model and sets the
+	 * references to the units appropriately. UnitDefinitions that are not
+	 * referenced by any object are removed from the model.
 	 * 
 	 * @param reaction
 	 */
-	private void storeParamters(Reaction reaction) {
+	private void storeParamters(Reaction reaction, LawListener l) {
 		// setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
 		ListOf<Parameter> paramListLocal = kineticLaw.getListOfParameters();
@@ -830,15 +832,91 @@ public class KineticLawGenerator {
 				.booleanValue())
 			for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--) {
 				Parameter p = paramListLocal.remove(paramNum);
-				System.out.println(p.getId() + "\t" + p.getUnits());
 				modelOrig.addParameter(p);
 			}
 		for (Parameter parameter : miniModel.getListOfParameters())
 			if (modelOrig.getParameter(parameter.getId()) == null) {
-				System.out.println(parameter.getId() + "\t"
-						+ parameter.getUnits());
 				modelOrig.addParameter(parameter);
 			}
+
+		int num = 0;
+		l.initLawListener(Parameter.class.getSimpleName(), modelOrig
+				.getNumParameters());
+		for (Parameter p : modelOrig.getListOfParameters()) {
+			if (p.isSetUnits()) {
+				String units = p.getUnits();
+				if (Unit.isUnitKind(units, p.getLevel(), p.getVersion()))
+					p.setUnits(Unit.Kind.valueOf(units));
+				else
+					p.setUnits(modelOrig.getUnitDefinition(p.getUnits()));
+			}
+			l.currentState(p, ++num);
+		}
+		// local parameters
+		num = 0;
+		l.initLawListener(Reaction.class.getSimpleName(), miniModel
+				.getNumReactions());
+		for (Reaction r : miniModel.getListOfReactions()) {
+			for (Parameter p : r.getKineticLaw().getListOfParameters()) {
+				if (p.isSetUnits()) {
+					String units = p.getUnits();
+					Parameter porig = modelOrig.getReaction(r.getId())
+							.getKineticLaw().getParameter(p.getId());
+					if (Unit.isUnitKind(units, p.getLevel(), p.getVersion()))
+						porig.setUnits(Unit.Kind.valueOf(units));
+					else
+						porig.setUnits(modelOrig
+								.getUnitDefinition(p.getUnits()));
+				}
+			}
+			l.currentState(r, ++num);
+		}
+
+		/*
+		 * delete unnecessary units.
+		 */
+		if (((Boolean) settings
+				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
+				.booleanValue()) {
+			num = 0;
+			l.initLawListener(UnitDefinition.class.getSimpleName(), modelOrig
+					.getNumUnitDefinitions());
+			for (int j = modelOrig.getNumUnitDefinitions() - 1; j >= 0; j--) {
+				UnitDefinition udef = modelOrig.getUnitDefinition(j);
+				boolean isNeeded = Unit
+						.isBuiltIn(udef.getId(), udef.getLevel());
+				int i;
+				for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
+					Compartment c = modelOrig.getCompartment(i);
+					if (c.isSetUnits() && c.getUnits().equals(udef.getId()))
+						isNeeded = true;
+				}
+				for (i = 0; i < modelOrig.getNumSpecies() && !isNeeded; i++) {
+					Species s = modelOrig.getSpecies(i);
+					if (s.isSetSubstanceUnits()
+							&& s.getSubstanceUnits().equals(udef.getId()))
+						isNeeded = true;
+				}
+				for (i = 0; i < modelOrig.getNumParameters() && !isNeeded; i++) {
+					Parameter p = modelOrig.getParameter(i);
+					if (p.isSetUnits() && p.getUnits().equals(udef.getId()))
+						isNeeded = true;
+				}
+				for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
+					Reaction r = modelOrig.getReaction(i);
+					if (r.isSetKineticLaw())
+						for (Parameter p : r.getKineticLaw()
+								.getListOfParameters()) {
+							if (p.isSetUnits()
+									&& p.getUnits().equals(udef.getId()))
+								isNeeded = true;
+						}
+				}
+				if (!isNeeded)
+					modelOrig.removeUnitDefinition(udef);
+				l.currentState(udef, ++num);
+			}
+		}
 	}
 
 	/**
@@ -894,83 +972,6 @@ public class KineticLawGenerator {
 			}
 			checkUnits(sorig);
 			l.currentState(s, ++num);
-		}
-		num = 0;
-		l.initLawListener(Parameter.class.getSimpleName(), modelOrig
-				.getNumParameters());
-		for (Parameter p : modelOrig.getListOfParameters()) {
-			if (p.isSetUnits()) {
-				String units = p.getUnits();
-				if (Unit.isUnitKind(units, p.getLevel(), p.getVersion()))
-					p.setUnits(Unit.Kind.valueOf(units));
-				else
-					p.setUnits(modelOrig.getUnitDefinition(p.getUnits()));
-			}
-			l.currentState(p, ++num);
-		}
-		// local parameters
-		num = 0;
-		l.initLawListener(Reaction.class.getSimpleName(), miniModel
-				.getNumReactions());
-		for (Reaction r : miniModel.getListOfReactions()) {
-			for (Parameter p : r.getKineticLaw().getListOfParameters()) {
-				if (p.isSetUnits()) {
-					String units = p.getUnits();
-					Parameter porig = modelOrig.getReaction(r.getId())
-							.getKineticLaw().getParameter(p.getId());
-					if (Unit.isUnitKind(units, p.getLevel(), p.getVersion()))
-						porig.setUnits(Unit.Kind.valueOf(units));
-					else
-						porig.setUnits(modelOrig
-								.getUnitDefinition(p.getUnits()));
-				}
-			}
-			l.currentState(r, ++num);
-		}
-		/*
-		 * delete unnecessary units.
-		 */
-		if (((Boolean) settings
-				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
-				.booleanValue()) {
-			num = 0;
-			l.initLawListener(UnitDefinition.class.getSimpleName(), modelOrig
-					.getNumUnitDefinitions());
-			for (int j = modelOrig.getNumUnitDefinitions() - 1; j >= 0; j--) {
-				UnitDefinition udef = modelOrig.getUnitDefinition(j);
-				boolean isNeeded = Unit
-						.isBuiltIn(udef.getId(), udef.getLevel());
-				int i;
-				for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
-					Compartment c = modelOrig.getCompartment(i);
-					if (c.isSetUnits() && c.getUnits().equals(udef.getId()))
-						isNeeded = true;
-				}
-				for (i = 0; i < modelOrig.getNumSpecies() && !isNeeded; i++) {
-					Species s = modelOrig.getSpecies(i);
-					if (s.isSetSubstanceUnits()
-							&& s.getSubstanceUnits().equals(udef.getId()))
-						isNeeded = true;
-				}
-				for (i = 0; i < modelOrig.getNumParameters() && !isNeeded; i++) {
-					Parameter p = modelOrig.getParameter(i);
-					if (p.isSetUnits() && p.getUnits().equals(udef.getId()))
-						isNeeded = true;
-				}
-				for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
-					Reaction r = modelOrig.getReaction(i);
-					if (r.isSetKineticLaw())
-						for (Parameter p : r.getKineticLaw()
-								.getListOfParameters()) {
-							if (p.isSetUnits()
-									&& p.getUnits().equals(udef.getId()))
-								isNeeded = true;
-						}
-				}
-				if (!isNeeded)
-					modelOrig.removeUnitDefinition(udef);
-				l.currentState(udef, ++num);
-			}
 		}
 	}
 
