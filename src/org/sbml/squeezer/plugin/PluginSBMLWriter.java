@@ -93,7 +93,7 @@ import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.io.IOProgressListener;
-import org.sbml.jsbml.io.LibSBMLWriter;
+import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.libsbml.libsbml;
 import org.sbml.libsbml.libsbmlConstants;
 import org.sbml.squeezer.io.MessageListener;
@@ -655,7 +655,6 @@ public class PluginSBMLWriter implements SBMLWriter {
 	 * org.sbml.jsbml.io.AbstractSBMLWriter#removeUnneccessaryElements(org.sbml
 	 * .jsbml.Model, java.lang.Object)
 	 */
-	@Override
 	public void removeUnneccessaryElements(Model model, Object orig) {
 		if (!(orig instanceof PluginModel))
 			throw new IllegalArgumentException(
@@ -1124,7 +1123,6 @@ public class PluginSBMLWriter implements SBMLWriter {
 	 * org.sbml.jsbml.io.AbstractSBMLWriter#saveChanges(org.sbml.jsbml.Reaction,
 	 * java.lang.Object)
 	 */
-	@Override
 	public void saveChanges(Reaction reaction, Object model)
 			throws SBMLException {
 		if (!(model instanceof PluginModel))
