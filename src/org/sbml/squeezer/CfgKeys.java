@@ -176,6 +176,15 @@ public enum CfgKeys {
 	 */
 	OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
 	/**
+	 * Allows the user to ignore species that are annotated with the given
+	 * compound identifiers when creating rate laws for reactions that involve
+	 * these species. For instance, water or single protons can often be ignored
+	 * when creating rate equations, hence simplifying the resulting rate
+	 * equations. Preselected are the KEGG compound identifiers for water and
+	 * protons
+	 */
+	OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS,
+	/**
 	 * Determins whether or not generic proteins are accepted as enzymes when
 	 * catalyzing a reaction.
 	 */
