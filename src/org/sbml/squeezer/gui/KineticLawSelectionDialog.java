@@ -113,6 +113,21 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private SettingsPanelAll settingsPanel;
 
 	/**
+	 * Creates an empty dialog with the given settings and sbml io object.
+	 * 
+	 * @param owner
+	 * @param settings
+	 */
+	private KineticLawSelectionDialog(Frame owner, Properties settings) {
+		super(owner, "SBMLsqueezer", true);
+		// if (owner == null)
+		// setIconImage(GUITools.ICON_LEMON);
+		this.settings = settings;
+		this.sbmlIO = null;
+		// setAlwaysOnTop(true);
+	}
+
+	/**
 	 * This constructor allows us to store the given model or the given reaction
 	 * in a text file. This can be a LaTeX or another format.
 	 * 
@@ -250,21 +265,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 		}
 	}
 
-	/**
-	 * Creates an empty dialog with the given settings and sbml io object.
-	 * 
-	 * @param owner
-	 * @param settings
-	 */
-	private KineticLawSelectionDialog(Frame owner, Properties settings) {
-		super(owner, "SBMLsqueezer", true);
-		// if (owner == null)
-		// setIconImage(GUITools.ICON_LEMON);
-		this.settings = settings;
-		this.sbmlIO = null;
-		// setAlwaysOnTop(true);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -362,122 +362,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 		progressBar.setValue(num);
 		if (num >= progressBar.getMaximum())
 			progressDialog.dispose();
-	}
-
-	/**
-	 * Method that indicates whether or not changes have been introduced into
-	 * the given model.
-	 * 
-	 * @return True if kinetic equations and parameters or anything else were
-	 *         changed by SBMLsqueezer.
-	 */
-	public boolean isKineticsAndParametersStoredInSBML() {
-		return KineticsAndParametersStoredInSBML;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.LawListener#initLawListener(java.lang.String, int)
-	 */
-	public void initLawListener(String className, int count) {
-		if (count > 0) {
-			if (!className.endsWith("s") && count != 1)
-				className += "s";
-			progressBar = new JProgressBar(0, count - 1);
-			progressBar.setToolTipText("Saving changes in " + className);
-			progressBar.setValue(0);
-			progressDialog = new JDialog(this, "Saving changes");
-			progressDialog
-					.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-			JPanel p = new JPanel();
-			LayoutHelper lh = new LayoutHelper(p);
-			String space = " ";
-			for (int i = 0; i < Integer.toString(count).length(); i++)
-				space += ' ';
-			label = new JLabel(" Done with " + Integer.valueOf(0) + space);
-			lh.add(label, 0, 0, 1, 1, 1, 1);
-			JPanel progress = new JPanel();
-			progress.add(progressBar);
-			progress.setBorder(BorderFactory.createLoweredBevelBorder());
-			lh.add(progress, 1, 0, 1, 1, 1, 1);
-			lh.add(new JLabel(" of " + count + ' ' + className), 2, 0, 1, 1, 1,
-					1);
-			JPanel outer = new JPanel();
-			outer.add(p);
-			progressDialog.getContentPane().add(outer);
-			progressDialog.pack();
-			progressDialog.setResizable(false);
-			progressDialog.setLocationRelativeTo(null);
-			progressDialog.setVisible(true);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	public void windowActivated(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
-	 */
-	public void windowClosed(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-	 */
-	public void windowClosing(WindowEvent e) {
-		if (e.getSource() instanceof JHelpBrowser)
-			helpButton.setEnabled(true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeactivated(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
-	 */
-	public void windowIconified(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
-	 */
-	public void windowOpened(WindowEvent e) {
 	}
 
 	/**
@@ -748,6 +632,44 @@ public class KineticLawSelectionDialog extends JDialog implements
 		settingsPanel = getJSettingsPanel();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.LawListener#initLawListener(java.lang.String, int)
+	 */
+	public void initLawListener(String className, int count) {
+		if (count > 0) {
+			if (!className.endsWith("s") && count != 1)
+				className += "s";
+			progressBar = new JProgressBar(0, count - 1);
+			progressBar.setToolTipText("Saving changes in " + className);
+			progressBar.setValue(0);
+			progressDialog = new JDialog(this, "Saving changes");
+			progressDialog
+					.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+			JPanel p = new JPanel();
+			LayoutHelper lh = new LayoutHelper(p);
+			String space = " ";
+			for (int i = 0; i < Integer.toString(count).length(); i++)
+				space += ' ';
+			label = new JLabel(" Done with " + Integer.valueOf(0) + space);
+			lh.add(label, 0, 0, 1, 1, 1, 1);
+			JPanel progress = new JPanel();
+			progress.add(progressBar);
+			progress.setBorder(BorderFactory.createLoweredBevelBorder());
+			lh.add(progress, 1, 0, 1, 1, 1, 1);
+			lh.add(new JLabel(" of " + count + ' ' + className), 2, 0, 1, 1, 1,
+					1);
+			JPanel outer = new JPanel();
+			outer.add(p);
+			progressDialog.getContentPane().add(outer);
+			progressDialog.pack();
+			progressDialog.setResizable(false);
+			progressDialog.setLocationRelativeTo(null);
+			progressDialog.setVisible(true);
+		}
+	}
+
 	/**
 	 * Returns a JPanel that displays the user options.
 	 * 
@@ -767,6 +689,36 @@ public class KineticLawSelectionDialog extends JDialog implements
 		options.setBackground(new Color(panel.getBackground().getRGB()));
 		p.add(panel, BorderLayout.NORTH);
 		return p;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
+	 */
+	public void ioProgressOn(Object currObject) {
+		if (currObject == null)
+			progressDialog.dispose();
+		else {
+			StringBuilder sb = new StringBuilder();
+			sb.append("writing ");
+			sb.append(currObject.getClass().getSimpleName());
+			if (currObject instanceof NamedSBase) {
+				sb.append(' ');
+				sb.append(((NamedSBase) currObject).getId());
+			}
+			label.setText(GUITools.toHTML(sb.toString(), 40));
+		}
+	}
+
+	/**
+	 * Method that indicates whether or not changes have been introduced into
+	 * the given model.
+	 * 
+	 * @return True if kinetic equations and parameters or anything else were
+	 *         changed by SBMLsqueezer.
+	 */
+	public boolean isKineticsAndParametersStoredInSBML() {
+		return KineticsAndParametersStoredInSBML;
 	}
 
 	private void showSettingsPanel() {
@@ -816,20 +768,68 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
 	 */
-	public void ioProgressOn(Object currObject) {
-		if (currObject == null)
-			progressDialog.dispose();
-		else {
-			StringBuilder sb = new StringBuilder();
-			sb.append("writing ");
-			sb.append(currObject.getClass().getSimpleName());
-			if (currObject instanceof NamedSBase) {
-				sb.append(' ');
-				sb.append(((NamedSBase) currObject).getId());
-			}
-			label.setText(GUITools.toHTML(sb.toString(), 40));
-		}
+	public void windowActivated(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 */
+	public void windowClosed(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 */
+	public void windowClosing(WindowEvent e) {
+		if (e.getSource() instanceof JHelpBrowser)
+			helpButton.setEnabled(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
+	 * )
+	 */
+	public void windowDeactivated(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
+	 * )
+	 */
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 */
+	public void windowIconified(WindowEvent e) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 */
+	public void windowOpened(WindowEvent e) {
 	}
 }

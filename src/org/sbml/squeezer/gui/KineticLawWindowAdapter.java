@@ -155,6 +155,13 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue());
 			KineticsAndParametersStoredInSBML = true;
+			
+//			JDialog d = new JDialog();
+//			d.getContentPane().add(new SBMLModelSplitPane(klg.getMiniModel(), settings));
+//			d.pack();
+//			d.setLocationRelativeTo(null);
+//			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			d.setVisible(true);
 		}
 		return KineticsAndParametersStoredInSBML;
 	}
