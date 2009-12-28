@@ -26,8 +26,13 @@ import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -275,19 +280,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 		if (e.getSource() instanceof JButton) {
 			String text = ((JButton) e.getSource()).getText();
 			if (text.equals("show options")) {
-				showSettingsPanel();
+				showSettingsPanel(true);
 			} else if (text.equals("hide options")) {
-				options.setIcon(GUITools.ICON_RIGHT_ARROW);
-				options.setIconTextGap(5);
-				options.setText("show options");
-				options
-						.setToolTipText("<html>Customize the advanced settings.</html>");
-				centralPanel.removeAll();
-				JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-				panel.add(options);
-				centralPanel.add(panel, BorderLayout.NORTH);
-				validate();
-				pack();
+				showSettingsPanel(false);
 
 			} else if (text.equals("Help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
@@ -326,7 +321,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 				getContentPane().add(centralPanel = initOptionsPanel(),
 						BorderLayout.CENTER);
 				setResizable(false);
-				showSettingsPanel();
+				showSettingsPanel(true);
 			} else if (text.equals("Export changes")) {
 				/*
 				 * new Thread(new Runnable() { public void run() {//
@@ -419,35 +414,86 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void generateKineticLaws() {
 		try {
-			GUITools.setAllEnabled(this, false);
+			showSettingsPanel(false);
+			options.setEnabled(false);
+			GUITools.setAllEnabled(footPanel, false);
 			Properties props = settingsPanel.getSettings();
 			for (Object key : props.keySet())
 				settings.put(key, props.get(key));
 			Model model = sbmlIO.getSelectedModel();
 			klg = new KineticLawGenerator(model, settings);
 			if (klg.getFastReactions().size() > 0) {
-				String message = "<html><head></head><body><p>The model contains ";
+				StringBuilder message = new StringBuilder();
+				message.append("The model contains ");
 				if (klg.getFastReactions().size() > 1)
-					message += "fast reactions";
-				else
-					message += "the fast reaction "
-							+ klg.getFastReactions().get(0).getId();
-				message += ". This feature is currently not<br>"
-						+ "supported by SBMLsqueezer. Rate laws can still be generated properly<br>"
-						+ "but the fast attribute ";
+					message.append("fast reactions");
+				else {
+					message.append("the fast reaction ");
+					message.append(klg.getFastReactions().get(0).getId());
+				}
+				message.append(". This feature is currently not supported ");
+				message.append("by SBMLsqueezer. Rate laws can still ");
+				message.append("be generated properly but the fast attribute ");
 				if (klg.getFastReactions().size() > 1) {
-					message += "of the following reactions is beeing ignored:<br>"
-							+ "<ul type=\"disc\">";
-					for (int i = 0; i < klg.getFastReactions().size(); i++)
-						message += "<li>"
-								+ klg.getFastReactions().get(i).getId()
-								+ "</li>";
-					message += "</ul>";
+					message
+							.append("of the following reactions is beeing ignored:");
+					message.append("<ul type=\"disc\">");
+					for (int i = 0; i < klg.getFastReactions().size(); i++) {
+						message.append("<li>");
+						message.append(klg.getFastReactions().get(i).getId());
+						message.append("</li>");
+					}
+					message.append("</ul>");
 				} else
-					message += "is beeing ignored.";
-				message += "</p></body></html>";
-				JOptionPane.showMessageDialog(this, message, "Fast Reactions",
+					message.append("is beeing ignored.");
+				System.out.println(message);
+				final JOptionPane pane = new JOptionPane(GUITools.toHTML(
+						message.toString(), 40),
 						JOptionPane.WARNING_MESSAGE);
+				final JDialog d = new JDialog();
+				d.setTitle("Fast Reactions");
+				d.setModal(true);
+				d.getContentPane().add(pane);
+				d.pack();
+				d.setResizable(false);
+				d.setLocationRelativeTo(this);
+				WindowAdapter adapter = new WindowAdapter() {
+					private boolean gotFocus = false;
+
+					public void windowClosing(WindowEvent we) {
+						pane.setValue(null);
+					}
+
+					public void windowGainedFocus(WindowEvent we) {
+						if (!gotFocus) {
+							pane.selectInitialValue();
+							gotFocus = true;
+						}
+					}
+				};
+				d.addWindowListener(adapter);
+				d.addWindowFocusListener(adapter);
+				d.addComponentListener(new ComponentAdapter() {
+					public void componentShown(ComponentEvent ce) {
+						pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+					}
+				});
+				pane.addPropertyChangeListener(new PropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (d.isVisible()
+								&& evt.getSource() == pane
+								&& evt.getPropertyName().equals(
+										JOptionPane.VALUE_PROPERTY)
+								&& evt.getNewValue() != null
+								&& evt.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)
+							d.setVisible(false);
+					}
+				});
+				d.setVisible(true);
+				d.dispose();
+				// JOptionPane.showMessageDialog(null, GUITools.toHTML(message
+				// .toString(), 40), "Fast Reactions",
+				// JOptionPane.WARNING_MESSAGE);
 			}
 
 			JPanel reactionsPanel = new JPanel(new BorderLayout());
@@ -499,8 +545,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 					BorderLayout.SOUTH);
 			setResizable(true);
 			setSize(getWidth(), 640);
-			GUITools.setAllEnabled(this, true);
+			GUITools.setAllEnabled(footPanel, true);
+			options.setEnabled(true);
 			validate();
+
 		} catch (Throwable exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getSimpleName(),
@@ -693,6 +741,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
 	 */
 	public void ioProgressOn(Object currObject) {
@@ -721,18 +770,34 @@ public class KineticLawSelectionDialog extends JDialog implements
 		return KineticsAndParametersStoredInSBML;
 	}
 
-	private void showSettingsPanel() {
-		options.setIcon(GUITools.ICON_DOWN_ARROW);
-		options.setIconTextGap(5);
-		options.setToolTipText("<html>Hide detailed options</html>");
-		options.setText("hide options");
-		settingsPanel = getJSettingsPanel();
-		JScrollPane scroll = new JScrollPane(settingsPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scroll.setBackground(Color.WHITE);
-		centralPanel.add(scroll, BorderLayout.CENTER);
-		centralPanel.validate();
+	/**
+	 * 
+	 * @param show
+	 */
+	private void showSettingsPanel(boolean show) {
+		if (show) {
+			options.setIcon(GUITools.ICON_DOWN_ARROW);
+			options.setIconTextGap(5);
+			options.setToolTipText("<html>Hide detailed options</html>");
+			options.setText("hide options");
+			settingsPanel = getJSettingsPanel();
+			JScrollPane scroll = new JScrollPane(settingsPanel,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scroll.setBackground(Color.WHITE);
+			centralPanel.add(scroll, BorderLayout.CENTER);
+			centralPanel.validate();
+		} else {
+			options.setIcon(GUITools.ICON_RIGHT_ARROW);
+			options.setIconTextGap(5);
+			options.setText("show options");
+			options
+					.setToolTipText("<html>Customize the advanced settings.</html>");
+			centralPanel.removeAll();
+			JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			panel.add(options);
+			centralPanel.add(panel, BorderLayout.NORTH);
+		}
 		pack();
 		// setSize(getWidth(), (int) Math.min(fullHeight, GraphicsEnvironment
 		// .getLocalGraphicsEnvironment().getMaximumWindowBounds()
@@ -747,7 +812,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 		try {
 			klg.storeKineticLaws(this);
 			progressDialog = new JDialog(this, "Saving changes");
-			progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+			progressDialog
+					.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 			label = new JLabel();
 			progressDialog.getContentPane().add(label);
 			progressDialog.setSize(200, 150);
