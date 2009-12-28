@@ -239,14 +239,14 @@ public class GUITools {
 			boolean allFilesAcceptable, boolean multiSelectionAllowed,
 			int mode, FileFilter... filter) {
 		JFileChooser chooser = new JFileChooser(dir);
-		int i = 0;
-		if (!allFilesAcceptable && filter.length > 0)
-			chooser.setFileFilter(filter[i++]);
-		while (i < filter.length)
-			chooser.addChoosableFileFilter(filter[i++]);
 		chooser.setAcceptAllFileFilterUsed(allFilesAcceptable);
 		chooser.setMultiSelectionEnabled(multiSelectionAllowed);
 		chooser.setFileSelectionMode(mode);
+		int i = filter.length -1;
+		while (0 <= i)
+			chooser.addChoosableFileFilter(filter[i--]);
+		if (i >= 0)
+			chooser.setFileFilter(filter[i]);
 		return chooser;
 	}
 

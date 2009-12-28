@@ -269,18 +269,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						CfgKeys.OPEN_DIR).toString(), false, false,
 						JFileChooser.FILES_ONLY, SBFileFilter.SBML_FILE_FILTER);
 				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-					final File f = chooser.getSelectedFile();
-					new Thread(new Runnable() {
-						public void run() {
-							readModel(f);
-						}
-					}).start();
+					new FileReaderThread(this, chooser.getSelectedFile());
 				}
 				break;
 			case OPEN_LAST_FILE:
 				File f = new File(settings.get(CfgKeys.SBML_FILE).toString());
 				if (f.exists() && f.isFile()) {
-					readModel(f);
+					new FileReaderThread(this, f);
 					setEnabled(false, Command.OPEN_LAST_FILE);
 				}
 				break;
@@ -712,7 +707,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * 
 	 * @param file
 	 */
-	private void readModel(File file) {
+	void readModel(File file) {
 		try {
 			Model model = sbmlIO.readModel(file.getAbsolutePath());
 			ioProgressOn(null);
@@ -930,5 +925,36 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 		} else if (progressDialog != null)
 			progressDialog.dispose();
+	}
+}
+
+/**
+ * 
+ * @author Andreas Dr&auml;ger
+ *
+ */
+class FileReaderThread extends Thread implements Runnable {
+	
+	private SBMLsqueezerUI reader;
+	private File file;
+
+	/**
+	 * 
+	 * @param ui
+	 * @param f
+	 */
+	public FileReaderThread(SBMLsqueezerUI ui, File f) {
+		super();
+		this.reader = ui;
+		this.file = f;
+		start();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
+	public void run() {
+		reader.readModel(file);
 	}
 }
