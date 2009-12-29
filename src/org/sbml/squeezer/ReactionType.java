@@ -277,20 +277,14 @@ public class ReactionType {
 	public ReactionType(Reaction r, Properties settings)
 			throws RateLawNotApplicableException {
 		int i;
-		this.reaction = r; //.clone();
+		this.reaction = r; // .clone();
 		// Check ignore list:
-		List<String> ignoreList = null;
 		if (settings
 				.containsKey(CfgKeys.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)) {
-			Object o = settings
-					.get(CfgKeys.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
-			if (o instanceof List<?>)
-				ignoreList = (List<String>) o;
-			else {
-				ignoreList = new LinkedList<String>();
-				ignoreList.add(o.toString());
-			}
-			if (ignoreList != null && ignoreList.size() >= 0) {
+			String ignoreList[] = settings.get(
+					CfgKeys.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)
+					.toString().split(",");
+			if (ignoreList != null && ignoreList.length >= 0) {
 				Species spec;
 				for (i = reaction.getNumReactants() - 1; i >= 0; i--) {
 					spec = reaction.getReactant(i).getSpeciesInstance();
@@ -605,7 +599,9 @@ public class ReactionType {
 									className) || withoutModulation))
 						types.add(className);
 				}
-				if (uniUni || (stoichiometryLeft == 1d && !(reaction.getReversible() || reversibility))) {
+				if (uniUni
+						|| (stoichiometryLeft == 1d && !(reaction
+								.getReversible() || reversibility))) {
 					Set<String> onlyUniUni = new HashSet<String>();
 					onlyUniUni.addAll(SBMLsqueezer.getKineticsUniUni());
 					onlyUniUni.removeAll(SBMLsqueezer
@@ -619,7 +615,9 @@ public class ReactionType {
 					for (String className : onlyUniUni)
 						if (checkReversibility(reaction, className))
 							types.add(className);
-				} else if (biUni || (stoichiometryLeft == 2d && !(reaction.getReversible() || reversibility))) {
+				} else if (biUni
+						|| (stoichiometryLeft == 2d && !(reaction
+								.getReversible() || reversibility))) {
 					Set<String> onlyBiUni = new HashSet<String>();
 					onlyBiUni.addAll(SBMLsqueezer.getKineticsBiUni());
 					onlyBiUni.removeAll(SBMLsqueezer

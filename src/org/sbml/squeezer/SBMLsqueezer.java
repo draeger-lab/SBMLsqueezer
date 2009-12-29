@@ -27,13 +27,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
@@ -248,13 +244,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		for (int i = keys.length - 1; i >= 0; i--) {
 			CfgKeys k = CfgKeys.valueOf(keys[i].toString());
 			String val = properties.get(keys[i]).toString();
-			if (val.contains(",")) {
-				StringTokenizer st = new StringTokenizer(val, ",");
-				List<String> list = new LinkedList<String>();
-				while (st.hasMoreElements())
-					list.add(st.nextElement().toString());
-				props.put(k, list);
-			} else if (val.startsWith("user."))
+			if (val.startsWith("user."))
 				props.put(k, System.getProperty(val));
 			else if (val.equalsIgnoreCase("true")
 					|| val.equalsIgnoreCase("false"))
@@ -587,13 +577,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				for (Object key : settings.keySet()) {
 					bw.append(key.toString());
 					bw.append('=');
-					Object val = settings.get(key);
-					String value = val.toString();
-					if (val instanceof List<?>) {
-						value = Arrays.toString(((List<?>) val).toArray())
-								.substring(1).replace(" ", "");
-						value = value.substring(0, value.length() - 1);
-					}
+					String value = settings.get(key).toString();
 					char c;
 					for (int i = 0; i < value.length(); i++) {
 						c = value.charAt(i);
@@ -773,17 +757,6 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	}
 
 	/**
-	 * Change the configuration of SBMLsqueezer.
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public Object set(CfgKeys key, List<Object> value) {
-		return settings.put(key, value);
-	}
-
-	/**
 	 * Shows the GUI of SBMLsqueezer stand-alone.
 	 */
 	public void showGUI() {
@@ -888,7 +861,6 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
 	 */
 	public void ioProgressOn(Object currObject) {
-		// TODO Auto-generated method stub
-		System.out.println(currObject.toString());
+		msg.log(currObject.toString());
 	}
 }

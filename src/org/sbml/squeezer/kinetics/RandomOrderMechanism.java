@@ -34,7 +34,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * 
  * @date Aug 1, 2007
  */
@@ -57,9 +58,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 *      (java.util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
+	 * (java.util.List, java.util.List, java.util.List, java.util.List,
+	 * java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -120,11 +122,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			exception = true;
 			break;
 		}
-		if (exception)
+		if (exception && reaction.getReversible())
 			throw new RateLawNotApplicableException(
-					"Number of products must equal either one or two to apply random order "
-							+ "Michaelis-Menten kinetics to reaction "
-							+ reaction.getId());
+					String
+							.format(
+									"For reversible reactions the number of products must equal either one or two to apply random order Michaelis-Menten kinetics to reaction %s.",
+									reaction.getId()));
 		/*
 		 * If modE is empty there was no enzyme sined to the reaction. Thus we
 		 * do not want anything in modE to occur in the kinetic equation.
@@ -229,8 +232,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 					Species speciesP1 = specRefP1.getSpeciesInstance();
 					Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
 					Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-					Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
-					Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme, false);
+					Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(),
+							enzyme, true);
+					Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(),
+							enzyme, false);
 					Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
 					Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
 

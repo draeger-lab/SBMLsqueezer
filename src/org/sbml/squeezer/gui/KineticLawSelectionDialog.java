@@ -446,7 +446,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 					message.append("</ul>");
 				} else
 					message.append("is beeing ignored.");
-				System.out.println(message);
 				final JOptionPane pane = new JOptionPane(GUITools.toHTML(
 						message.toString(), 40),
 						JOptionPane.WARNING_MESSAGE);

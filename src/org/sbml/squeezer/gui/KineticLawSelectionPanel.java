@@ -59,7 +59,7 @@ import atp.sHotEqn;
  * itself, the reversibility and the applicable kinetics.
  * 
  * @since 1.0
- * @version
+ * @version $Revision: 355$
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @author Hannes Borch <hannes.borch@googlemail.com>
  * @date Feb 7, 2008
@@ -132,7 +132,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		kineticLawComboBox.setEditable(false);
 		kineticLawComboBox.setBackground(Color.WHITE);
 		kineticLawComboBox.setSelectedIndex(selected);
-		setPreviewPanel(kineticLawComboBox.getSelectedIndex());
+		createPreviewPanel(kineticLawComboBox.getSelectedIndex());
 		kineticLawComboBox.addItemListener(this);
 		add(kineticLawComboBox, BorderLayout.NORTH);
 		add(eqnPrev, BorderLayout.CENTER);
@@ -150,8 +150,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		this.selected = "";
 		this.klg = klg;
 		this.reaction = reaction;
-		this.klg.getSettings().put(
-				CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+		this.klg.getSettings().put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 				Boolean.valueOf(this.reaction.getReversible()));
 		StringBuilder label = new StringBuilder("<html><body>");
 		double stoichiometry = 0;
@@ -364,7 +363,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 		kineticsPanel.setBorder(BorderFactory
 				.createTitledBorder(" Please choose one kinetic law "));
-		setPreviewPanel(kinSelected);
+		createPreviewPanel(kinSelected);
 		Box info = new Box(BoxLayout.Y_AXIS);
 		info.add(kineticsPanel);
 		info.add(eqnPrev);
@@ -492,7 +491,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			}
 		} else if (ie.getSource() instanceof JComboBox) {
 			remove(eqnPrev);
-			setPreviewPanel(((JComboBox) ie.getSource()).getSelectedIndex());
+			createPreviewPanel(((JComboBox) ie.getSource()).getSelectedIndex());
 			add(eqnPrev, BorderLayout.CENTER);
 		}
 		getTopLevelAncestor().validate();
@@ -508,7 +507,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * 
 	 * @param kinNum
 	 */
-	private void setPreviewPanel(int kinNum) {
+	private void createPreviewPanel(int kinNum) {
 		JPanel preview = new JPanel(new BorderLayout());
 		StringBuilder sb = new StringBuilder("\\begin{equation}v_\\mbox{");
 		sb.append(reaction.getId());
@@ -565,7 +564,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		}
 		if (change) {
 			kineticsPanel.remove(eqnPrev);
-			setPreviewPanel(Math.min(i, rButtonsKineticEquations.length - 1));
+			createPreviewPanel(Math.min(i, rButtonsKineticEquations.length - 1));
 			kineticsPanel.add(eqnPrev);
 			GUITools.setAllEnabled(optionsPanel, !disable);
 		}
