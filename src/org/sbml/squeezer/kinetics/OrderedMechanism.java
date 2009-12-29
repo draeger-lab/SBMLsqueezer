@@ -122,10 +122,12 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			exception = true;
 			break;
 		}
-		if (exception)
+		if (exception && reaction.getReversible())
 			throw new RateLawNotApplicableException(
-					"Number of products must equal either one or two to apply ordered "
-							+ "kinetics to reaction " + reaction.getId());
+					String
+							.format(
+									"For reversible reactions the number of products must equal either one or two to apply ordered kinetics to reaction %s.",
+									reaction.getId()));
 
 		int enzymeNum = 0;
 		do {

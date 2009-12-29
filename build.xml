@@ -30,6 +30,7 @@
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/jdom.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/saxpath.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer/lib/jsbmlio.jar" relpath=""/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/AUTHORS" relpath="AUTHORS"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/biojava.txt" relpath="biojava.txt"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/eva2.txt" relpath="eva2.txt"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer/Licenses/html2latex.txt" relpath="html2latex.txt"/>

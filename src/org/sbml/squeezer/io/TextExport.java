@@ -25,13 +25,13 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Properties;
 
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.ListOfEvents;
-import org.sbml.libsbml.SBMLDocument;
 
 /**
  * This class writes the differential equations given by the {@see
@@ -93,13 +93,13 @@ public class TextExport implements DisplaySBML {
 		writer.newLine();
 	}
 
-	public void format(ListOf list, BufferedWriter buffer, boolean section)
+	public void format(ListOf<?> list, BufferedWriter buffer, boolean section)
 			throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void format(ListOfEvents events, BufferedWriter buffer)
+	public void format(ListOf<Event> events, BufferedWriter buffer)
 			throws IOException {
 		// TODO Auto-generated method stub
 

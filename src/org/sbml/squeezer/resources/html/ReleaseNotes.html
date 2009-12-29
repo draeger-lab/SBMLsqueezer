@@ -120,10 +120,24 @@
     with BQB_IS and the given MIRIAM resource are then ignored when creating rate
     equations. This is, for instance, useful if small molecules such as water take
     part in a reaction. The concentration of water can hardly be measured and it is
-    assumed to occur abundantly within the cell. By default, the KEGG compound ids
-    for water (<span style="font-family:Courier">C00001</span>) and for single 
-    protons (<span style="font-family:Courier">C00080</span>) set to be ignored when
-    creating new kinetic equations.</p>
+    assumed to occur abundantly within the cell. By default, the list of species whose
+    influence is to be neglected when creating new kinetic equations contains
+    the KEGG compound identifiers for the following substances:
+    <ul>
+    <li><span style="font-family:Courier">C00001</span>: water</li>
+    <li><span style="font-family:Courier">C00038</span>: Zn<sup>2+</sup></li>
+    <li><span style="font-family:Courier">C00070</span>: Cu<sup>2+</sup></li>
+    <li><span style="font-family:Courier">C00076</span>: Ca<sup>2+</sup></li>
+    <li><span style="font-family:Courier">C00080</span>: proton</li>
+    <li><span style="font-family:Courier">C00175</span>: Co<sup>2+</sup></li>
+    <li><span style="font-family:Courier">C00238</span>: K<sup>+</sup></li>
+    <li><span style="font-family:Courier">C00282</span>: H<sub>2</sub></li>
+    <li><span style="font-family:Courier">C00291</span>: Ni<sup>2+</sup></li>
+    <li><span style="font-family:Courier">C01327</span>: Cl<sup>-</sup></li>
+    <li><span style="font-family:Courier">C01528</span>: H<sub>2</sub>Se</li>
+    <li><span style="font-family:Courier">C14818</span>: Fe(II)</li>
+    <li><span style="font-family:Courier">C14819</span>: Fe(III)</li>
+    </ul></p>
     
     <h3>New Kinetic Equations and Extensibility</h3>
 
