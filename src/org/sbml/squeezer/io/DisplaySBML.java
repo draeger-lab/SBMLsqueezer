@@ -21,10 +21,10 @@ package org.sbml.squeezer.io;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.ListOfEvents;
-import org.sbml.libsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLDocument;
 
 /**
  * A super class for all export methods that convert the contence of JSBML
@@ -44,7 +44,7 @@ public interface DisplaySBML {
 	 * @param section
 	 * @throws IOException
 	 */
-	public void format(ListOf list, BufferedWriter buffer, boolean section)
+	public void format(ListOf<?> list, BufferedWriter buffer, boolean section)
 			throws IOException;
 
 	/**
@@ -53,7 +53,7 @@ public interface DisplaySBML {
 	 * @param buffer
 	 * @throws IOException
 	 */
-	public void format(ListOfEvents events, BufferedWriter buffer)
+	public void format(ListOf<Event> events, BufferedWriter buffer)
 			throws IOException;
 
 	/**
