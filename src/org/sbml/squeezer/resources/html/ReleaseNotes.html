@@ -58,7 +58,27 @@
       style="font-family:Courier">set(CfgKey, &lt;boolean|double|int|String&gt;)</span>
       in class <span style="font-family:Courier">SBMLsqueezer</span> allow the
       programmer to set any configuration key and value pair, similar to the command-line
-      mode.</p>
+      mode. Here we give a minimal example of how to use this new API:
+      <table border="0" align="center" cellspacing="10" cellpadding="5"><tr><td><code>
+      public static void main(String[] args) {<br>
+      &#160;&#160;// Initialize SBMLsqueezer with appropriate SBML readers/writers<br>
+      &#160;&#160;SBMLsqueezer squeezer = new SBMLsqueezer(new LibSBMLReader(), new LibSBMLWriter());<br>
+      &#160;&#160;// Configure SBMLsqueezer<br>
+      &#160;&#160;squeezer.set(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED, true);<br>
+      &#160;&#160;squeezer.set(CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE, 1.0);<br>
+      &#160;&#160;squeezer.set(CfgKeys.POSSIBLE_ENZYME_RNA, true);<br>
+      &#160;&#160;squeezer.set(CfgKeys.KINETICS_UNI_UNI_TYPE, MichaelisMenten.class.getName());<br>
+      &#160;&#160;squeezer.set(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS, ConvenienceKinetics.class.getName());<br>
+      &#160;&#160;try {<br>
+      &#160;&#160;&#160;&#160;// Create kinetic equations, parameters, units etc. and save the result<br>
+      &#160;&#160;&#160;&#160;// args contains infile and outfile path<br>
+      &#160;&#160;&#160;&#160;squeezer.squeeze(args[0], args[1]);<br>
+      &#160;&#160;} catch (Throwable e) {<br>
+      &#160;&#160;&#160;&#160;e.printStackTrace();<br>
+      &#160;&#160;}<br>
+      }<br>
+      </code></td></tr></table>
+    </p>
     <p>Since SBMLsqueezer still requires an installation of libSBML on the user's
       system, which can sometimes become problematic, a more convenient way of using
       SBMLsqueezer has now been made available: the SBMLsqueezer web application does
