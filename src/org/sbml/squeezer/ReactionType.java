@@ -156,27 +156,28 @@ public class ReactionType {
 		int type;
 		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
 			type = modifier.getSBOTerm();
-			if (SBO.isModifier(type)) {
-				// Ok, this is confusing...
-				// inhibitors.add(modifier.getSpecies());
-				// activators.add(modifier.getSpecies());
-				if (SBO.isCatalyst(type)) {
-					if (SBO.isEnzymaticCatalysis(type))
-						enzymes.add(modifier.getSpecies());
-					else
-						nonEnzymeCatalysts.add(modifier.getSpecies());
-				} else if (SBO.isTranscriptionalInhibitor(type)
-						|| SBO.isTranslationalInhibitor(type))
-					transInhib.add(modifier.getSpecies());
-				else if (SBO.isInhibitor(type))
-					inhibitors.add(modifier.getSpecies());
-				else if (SBO.isTranscriptionalActivation(type)
-						|| SBO.isTranslationalActivation(type))
-					transActiv.add(modifier.getSpecies());
-				else if (SBO.isTrigger(type) || SBO.isStimulator(type))
-					// no extra support for unknown catalysis anymore...
-					// physical stimulation is now also a stimulator.
-					activators.add(modifier.getSpecies());
+			// if (SBO.isModifier(type)) {
+			// Ok, this is confusing...
+			// inhibitors.add(modifier.getSpecies());
+			// activators.add(modifier.getSpecies());
+			// }
+			if (SBO.isCatalyst(type)) {
+				if (SBO.isEnzymaticCatalysis(type))
+					enzymes.add(modifier.getSpecies());
+				else
+					nonEnzymeCatalysts.add(modifier.getSpecies());
+			} else if (SBO.isTranscriptionalInhibitor(type)
+					|| SBO.isTranslationalInhibitor(type))
+				transInhib.add(modifier.getSpecies());
+			else if (SBO.isInhibitor(type))
+				inhibitors.add(modifier.getSpecies());
+			else if (SBO.isTranscriptionalActivation(type)
+					|| SBO.isTranslationalActivation(type))
+				transActiv.add(modifier.getSpecies());
+			else if (SBO.isTrigger(type) || SBO.isStimulator(type)) {
+				// no extra support for unknown catalysis anymore...
+				// physical stimulation is now also a stimulator.
+				activators.add(modifier.getSpecies());
 			}
 		}
 	}
