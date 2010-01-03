@@ -20,8 +20,6 @@ package org.sbml.squeezer.plugin;
 
 import java.util.Properties;
 
-import javax.swing.JDialog;
-
 import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 import jp.sbi.celldesigner.plugin.PluginMenu;
 import jp.sbi.celldesigner.plugin.PluginMenuItem;
@@ -31,7 +29,6 @@ import jp.sbi.celldesigner.plugin.PluginSBase;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
-import org.sbml.squeezer.gui.SBMLModelSplitPane;
 import org.sbml.squeezer.gui.SettingsDialog;
 import org.sbml.squeezer.io.SBMLio;
 
