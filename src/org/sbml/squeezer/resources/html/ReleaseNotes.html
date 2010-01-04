@@ -257,5 +257,13 @@
     <p>In all gene-regulation kinetics, it is now assumed that degradation processes
       are distinct reactions that can be, e.g., modeled using a mass action rate law.
       Hence, no degradation terms can be found in gene-regulation kinetics anymore.</p>
+    <p>The rate law corresponging to SBO:0000266 was not correct. Earlier versions of
+      SBMLsqueezer produced the fraction Kmjs/Kibj * I, but correct is S * I/Kibj (see
+      Equation 10 in the <a 
+      href="http://www.biomedcentral.com/content/supplementary/1752-0509-2-39-s1.pdf">
+      supplementary material &#8220;Kinetic Laws&#8221;</a>; the correct version of
+      this equation can be found at <a href="http://www.ebi.ac.uk/sbo/main/SBO:0000266">
+      http://www.ebi.ac.uk/sbo/main/SBO:0000266</a>).</p>
+    
   </body>
 </html>
