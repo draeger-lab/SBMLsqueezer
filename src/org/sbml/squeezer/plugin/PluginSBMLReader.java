@@ -43,10 +43,12 @@ import jp.sbi.celldesigner.plugin.PluginRule;
 import jp.sbi.celldesigner.plugin.PluginSBase;
 import jp.sbi.celldesigner.plugin.PluginSimpleSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginSpecies;
+import jp.sbi.celldesigner.plugin.PluginSpeciesAlias;
 import jp.sbi.celldesigner.plugin.PluginSpeciesReference;
 import jp.sbi.celldesigner.plugin.PluginSpeciesType;
 import jp.sbi.celldesigner.plugin.PluginUnit;
 import jp.sbi.celldesigner.plugin.PluginUnitDefinition;
+import jp.sbi.celldesigner.plugin.util.PluginSpeciesSymbolType;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
@@ -98,16 +100,22 @@ public class PluginSBMLReader implements SBMLReader {
 	 * 
 	 */
 	private static final String error = " must be an instance of ";
-
 	/**
 	 * 
 	 */
 	private static final int level = 2;
-
 	/**
 	 * 
 	 */
 	private static final int version = 4;
+	/**
+	 * 
+	 */
+	protected LinkedList<SBaseChangedListener> listOfSBaseChangeListeners;
+	/**
+	 * 
+	 */
+	private Model model;
 
 	/**
 	 * 
@@ -120,13 +128,6 @@ public class PluginSBMLReader implements SBMLReader {
 	private Set<Integer> possibleEnzymes;
 
 	private Set<IOProgressListener> setIOListeners;
-
-	private Model model;
-
-	/**
-	 * 
-	 */
-	protected LinkedList<SBaseChangedListener> listOfSBaseChangeListeners;
 
 	/**
 	 * get a model from the celldesigneroutput, converts it to sbmlsqueezer
@@ -162,7 +163,9 @@ public class PluginSBMLReader implements SBMLReader {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLReader#addIOProgressListener(org.sbml.jsbml.io.IOProgressListener)
+	 * 
+	 * @seeorg.sbml.jsbml.SBMLReader#addIOProgressListener(org.sbml.jsbml.io.
+	 * IOProgressListener)
 	 */
 	public void addIOProgressListener(IOProgressListener listener) {
 		setIOListeners.add(listener);
@@ -398,7 +401,7 @@ public class PluginSBMLReader implements SBMLReader {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param c
@@ -476,7 +479,7 @@ public class PluginSBMLReader implements SBMLReader {
 		}
 
 	}
-	
+
 	/**
 	 * 
 	 * @param c
@@ -506,7 +509,7 @@ public class PluginSBMLReader implements SBMLReader {
 	public Object getOriginalModel() {
 		return originalmodel;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -635,12 +638,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return e;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.jsbml.SBMLReader#readEventAssignment(java.lang.Object)
+	 * @param eventass
+	 * @return
 	 */
-	public EventAssignment readEventAssignment(Object eventass) {
+	private EventAssignment readEventAssignment(Object eventass) {
 		if (!(eventass instanceof PluginEventAssignment))
 			throw new IllegalArgumentException("eventass" + error
 					+ "PluginEventAssignment");
@@ -656,12 +659,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return ev;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readFunctionDefinition(java.lang.Object)
+	 * @param functionDefinition
+	 * @return
 	 */
-	public FunctionDefinition readFunctionDefinition(Object functionDefinition) {
+	private FunctionDefinition readFunctionDefinition(Object functionDefinition) {
 		if (!(functionDefinition instanceof PluginFunctionDefinition))
 			throw new IllegalArgumentException("functionDefinition" + error
 					+ "PluginFunctionDefinition.");
@@ -675,12 +678,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return f;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readInitialAssignment(java.lang.Object)
+	 * @param initialAssignment
+	 * @return
 	 */
-	public InitialAssignment readInitialAssignment(Object initialAssignment) {
+	private InitialAssignment readInitialAssignment(Object initialAssignment) {
 		if (!(initialAssignment instanceof PluginInitialAssignment))
 			throw new IllegalArgumentException("initialAssignment" + error
 					+ "PluginInitialAssignment.");
@@ -697,12 +700,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return ia;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readKineticLaw(java.lang.Object)
+	 * @param kineticLaw
+	 * @return
 	 */
-	public KineticLaw readKineticLaw(Object kineticLaw) {
+	private KineticLaw readKineticLaw(Object kineticLaw) {
 		if (!(kineticLaw instanceof PluginKineticLaw))
 			throw new IllegalArgumentException("kineticLaw" + error
 					+ "PluginKineticLaw.");
@@ -722,13 +725,7 @@ public class PluginSBMLReader implements SBMLReader {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.SBMLReader#readUnit(java.lang.Object)
-	 */
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.SBMLReader#readModel(java.lang.Object)
+	 * @see org.sbml.jsbml.SBMLReader#readModel(java.lang.Object)
 	 */
 	public Model readModel(Object model) {
 		if (!(model instanceof PluginModel))
@@ -773,12 +770,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return this.model;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readModifierSpeciesReference(java.lang.Object)
+	 * @param modifierSpeciesReference
+	 * @return
 	 */
-	public ModifierSpeciesReference readModifierSpeciesReference(
+	private ModifierSpeciesReference readModifierSpeciesReference(
 			Object modifierSpeciesReference) {
 		if (!(modifierSpeciesReference instanceof PluginModifierSpeciesReference))
 			throw new IllegalArgumentException("modifierSpeciesReference"
@@ -797,8 +794,8 @@ public class PluginSBMLReader implements SBMLReader {
 					.equals("PROTEIN") ? species.getSpeciesAlias(0)
 					.getProtein().getType() : species.getSpeciesAlias(0)
 					.getType();
-			if (possibleEnzymes.contains(Integer.valueOf(SBO
-					.convertAlias2SBO(speciesAliasType))))
+			int sbo = SBO.convertAlias2SBO(speciesAliasType);
+			if (possibleEnzymes.contains(Integer.valueOf(sbo)))
 				mod.setSBOTerm(SBO.getEnzymaticCatalysis());
 		}
 		mod.setSpecies(model.getSpecies(plumod.getSpecies()));
@@ -806,12 +803,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return mod;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readParameter(java.lang.Object)
+	 * @param parameter
+	 * @return
 	 */
-	public Parameter readParameter(Object parameter) {
+	private Parameter readParameter(Object parameter) {
 		if (!(parameter instanceof PluginParameter))
 			throw new IllegalArgumentException("parameter" + error
 					+ "PluginParameter.");
@@ -831,12 +828,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return para;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readReaction(java.lang.Object)
+	 * @param reac
+	 * @return
 	 */
-	public Reaction readReaction(Object reac) {
+	private Reaction readReaction(Object reac) {
 		if (!(reac instanceof PluginReaction))
 			throw new IllegalArgumentException("reaction" + error
 					+ "PluginReaction");
@@ -860,12 +857,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return reaction;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readRule(java.lang.Object)
+	 * @param rule
+	 * @return
 	 */
-	public Rule readRule(Object rule) {
+	private Rule readRule(Object rule) {
 		if (!(rule instanceof PluginRule))
 			throw new IllegalArgumentException("rule" + error + "PluginRule.");
 		PluginRule libRule = (PluginRule) rule;
@@ -885,12 +882,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readSpecies(java.lang.Object)
+	 * @param species
+	 * @return
 	 */
-	public Species readSpecies(Object species) {
+	private Species readSpecies(Object species) {
 		if (!(species instanceof PluginSpecies))
 			throw new IllegalArgumentException("species" + error
 					+ "PluginSpecies");
@@ -898,6 +895,11 @@ public class PluginSBMLReader implements SBMLReader {
 		Species s = new Species(spec.getId(), level, version);
 		copyNamedSBaseProperties(s, spec);
 		int sbo = SBO.convertAlias2SBO(spec.getSpeciesAlias(0).getType());
+		PluginSpeciesAlias alias = spec.getSpeciesAlias(0);
+		String type = alias.getType();
+		if (alias.getType().equals(PluginSpeciesSymbolType.PROTEIN))
+			type = alias.getProtein().getType();
+		sbo = SBO.convertAlias2SBO(type);
 		if (SBO.checkTerm(sbo))
 			s.setSBOTerm(sbo);
 		s.setBoundaryCondition(spec.getBoundaryCondition());
@@ -931,12 +933,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return s;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readSpeciesReference(java.lang.Object)
+	 * @param speciesReference
+	 * @return
 	 */
-	public SpeciesReference readSpeciesReference(Object speciesReference) {
+	private SpeciesReference readSpeciesReference(Object speciesReference) {
 		if (!(speciesReference instanceof PluginSpeciesReference))
 			throw new IllegalArgumentException("speciesReference" + error
 					+ "PluginSpeciesReference.");
@@ -959,12 +961,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return spec;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readSpeciesType(java.lang.Object)
+	 * @param speciesType
+	 * @return
 	 */
-	public SpeciesType readSpeciesType(Object speciesType) {
+	private SpeciesType readSpeciesType(Object speciesType) {
 		if (!(speciesType instanceof PluginSpeciesType))
 			throw new IllegalArgumentException("speciesType" + error
 					+ "PluginSpeciesType.");
@@ -975,12 +977,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return st;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readStoichiometricMath(java.lang.Object)
+	 * @param stoichiometryMath
+	 * @return
 	 */
-	public StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
+	private StoichiometryMath readStoichiometricMath(Object stoichiometryMath) {
 		if (!(stoichiometryMath instanceof org.sbml.libsbml.StoichiometryMath))
 			throw new IllegalArgumentException("stoichiometryMath" + error
 					+ "org.sbml.libsbml.StoichiometryMath");
@@ -1005,12 +1007,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return trig;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.jsbml.SBMLReader#readUnit(java.lang.Object)
+	 * @param unit
+	 * @return
 	 */
-	public Unit readUnit(Object unit) {
+	private Unit readUnit(Object unit) {
 		if (!(unit instanceof PluginUnit))
 			throw new IllegalArgumentException("unit" + error + "PluginUnit");
 		PluginUnit libUnit = (PluginUnit) unit;
@@ -1134,12 +1136,12 @@ public class PluginSBMLReader implements SBMLReader {
 		return u;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see org.sbml.SBMLReader#readUnitDefinition(java.lang.Object)
+	 * @param unitDefinition
+	 * @return
 	 */
-	public UnitDefinition readUnitDefinition(Object unitDefinition) {
+	private UnitDefinition readUnitDefinition(Object unitDefinition) {
 		if (!(unitDefinition instanceof PluginUnitDefinition))
 			throw new IllegalArgumentException("unitDefinition" + error
 					+ "PluginUnitDefinition");
