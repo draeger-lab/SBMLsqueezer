@@ -40,16 +40,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 
 	/**
 	 * 
-	 */
-	private int numInhib;
-
-	/**
-	 * 
-	 */
-	private int numOfEnzymes;
-
-	/**
-	 * 
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -90,30 +80,27 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			modInhib.addAll(modTInhib);
 		if (reaction.getReversible())
 			reaction.setReversible(false);
-		numInhib = modInhib.size();
-		numOfEnzymes = modE.size();
 
-		switch (numInhib) {
+		switch (modInhib.size()) {
 		case 0:
-			setSBOTerm(numOfEnzymes == 0 ? 199 : 29);
+			setSBOTerm(modE.size() == 0 ? 199 : 29);
 		case 1:
 			setSBOTerm(267);
 		default:
 			setSBOTerm(273);
 		}
 
-		ASTNode[] formula = new ASTNode[Math.max(1, numOfEnzymes)];
+		ASTNode[] formula = new ASTNode[Math.max(1, modE.size())];
 
 		int enzymeNum = 0;
 		do {
-			String enzyme = null;
-			if (numOfEnzymes > 0)
-				enzyme = modE.get(enzymeNum);
-			Parameter p_kcat = parameterKcatOrVmax(enzyme, true);
 			ASTNode currEnzyme;
 			ASTNode numerator;
 
-			numerator = new ASTNode(p_kcat, this);
+			String enzyme = modE.isEmpty() ? null : modE.get(enzymeNum);
+			numerator = new ASTNode(parameterKcatOrVmax(enzyme, true), this);
+			if (!modE.isEmpty())
+				numerator.multiplyWith(speciesTerm(enzyme));
 			numerator = ASTNode.times(numerator, speciesTerm(reaction
 					.getReactant(0)));
 
@@ -138,8 +125,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			}
 			denominator.plus(speciesTerm(reaction.getReactant(0)));
 			currEnzyme = ASTNode.frac(numerator, denominator);
-			if (numOfEnzymes > 1)
-				numerator.multiplyWith(speciesTerm(enzyme));
 			formula[enzymeNum++] = currEnzyme;
 		} while (enzymeNum < modE.size());
 		return ASTNode.times(activationFactor(modActi), ASTNode.sum(formula));
