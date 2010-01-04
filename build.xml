@@ -24,130 +24,22 @@
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/eva2.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/HotEqn.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/html2latex.jar" relpath=""/>
-            <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/installLibSBML.sh" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/jaxen-core.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/jaxen-jdom.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/jdom.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/jsbml.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/jsbmlio.jar" relpath=""/>
             <fatjar.jarsource file="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/lib/saxpath.jar" relpath=""/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/.svn/" relpath="org/sbml/.svn/"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/CloseIcon.java" relpath="org/sbml/squeezer/gui/CloseIcon.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/GUITools.java" relpath="org/sbml/squeezer/gui/GUITools.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/JBrowser.java" relpath="org/sbml/squeezer/gui/JBrowser.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/JHelpBrowser.java" relpath="org/sbml/squeezer/gui/JHelpBrowser.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/JTabbedPaneWithCloseIcons.java" relpath="org/sbml/squeezer/gui/JTabbedPaneWithCloseIcons.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/KineticLawSelectionDialog.java" relpath="org/sbml/squeezer/gui/KineticLawSelectionDialog.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/KineticLawSelectionPanel.java" relpath="org/sbml/squeezer/gui/KineticLawSelectionPanel.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/KineticLawTable.java" relpath="org/sbml/squeezer/gui/KineticLawTable.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/KineticLawTableCellRenderer.java" relpath="org/sbml/squeezer/gui/KineticLawTableCellRenderer.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/KineticLawTableModel.java" relpath="org/sbml/squeezer/gui/KineticLawTableModel.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/KineticLawWindowAdapter.java" relpath="org/sbml/squeezer/gui/KineticLawWindowAdapter.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/LayoutHelper.java" relpath="org/sbml/squeezer/gui/LayoutHelper.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/package.html" relpath="org/sbml/squeezer/gui/package.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SBasePanel.java" relpath="org/sbml/squeezer/gui/SBasePanel.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SBMLModelSplitPane.java" relpath="org/sbml/squeezer/gui/SBMLModelSplitPane.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SBMLsqueezerUI.java" relpath="org/sbml/squeezer/gui/SBMLsqueezerUI.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SBMLTree.java" relpath="org/sbml/squeezer/gui/SBMLTree.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SettingsDialog.java" relpath="org/sbml/squeezer/gui/SettingsDialog.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SettingsPanelAll.java" relpath="org/sbml/squeezer/gui/SettingsPanelAll.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SettingsPanelDefaultMechanisms.java" relpath="org/sbml/squeezer/gui/SettingsPanelDefaultMechanisms.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SettingsPanelKinetics.java" relpath="org/sbml/squeezer/gui/SettingsPanelKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SettingsPanelLaTeX.java" relpath="org/sbml/squeezer/gui/SettingsPanelLaTeX.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SettingsPanelStability.java" relpath="org/sbml/squeezer/gui/SettingsPanelStability.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/StabilityDialog.java" relpath="org/sbml/squeezer/gui/StabilityDialog.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/StabilityPanel.java" relpath="org/sbml/squeezer/gui/StabilityPanel.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/SystemBrowser.java" relpath="org/sbml/squeezer/gui/SystemBrowser.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/UpdateMessage.java" relpath="org/sbml/squeezer/gui/UpdateMessage.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/DisplaySBML.java" relpath="org/sbml/squeezer/io/DisplaySBML.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/LaTeX.java" relpath="org/sbml/squeezer/io/LaTeX.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/LaTeXExport.java" relpath="org/sbml/squeezer/io/LaTeXExport.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/MessageListener.java" relpath="org/sbml/squeezer/io/MessageListener.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/MessageProcessor.java" relpath="org/sbml/squeezer/io/MessageProcessor.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/MIRIAMparser.java" relpath="org/sbml/squeezer/io/MIRIAMparser.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/package.html" relpath="org/sbml/squeezer/io/package.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/SBFileFilter.java" relpath="org/sbml/squeezer/io/SBFileFilter.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/SBMLio.java" relpath="org/sbml/squeezer/io/SBMLio.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/StringTools.java" relpath="org/sbml/squeezer/io/StringTools.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/TextExport.java" relpath="org/sbml/squeezer/io/TextExport.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/AdditiveModelLinear.java" relpath="org/sbml/squeezer/kinetics/AdditiveModelLinear.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/AdditiveModelNonLinear.java" relpath="org/sbml/squeezer/kinetics/AdditiveModelNonLinear.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/BasicKineticLaw.java" relpath="org/sbml/squeezer/kinetics/BasicKineticLaw.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/CommonSaturable.java" relpath="org/sbml/squeezer/kinetics/CommonSaturable.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ConvenienceKinetics.java" relpath="org/sbml/squeezer/kinetics/ConvenienceKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/DirectSaturable.java" relpath="org/sbml/squeezer/kinetics/DirectSaturable.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ForceDependent.java" relpath="org/sbml/squeezer/kinetics/ForceDependent.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/GeneralizedMassAction.java" relpath="org/sbml/squeezer/kinetics/GeneralizedMassAction.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/HillEquation.java" relpath="org/sbml/squeezer/kinetics/HillEquation.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/HSystem.java" relpath="org/sbml/squeezer/kinetics/HSystem.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceArbitraryEnzymeKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceArbitraryEnzymeKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceBiBiKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceBiBiKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceBiUniKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceBiUniKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceGeneRegulatoryKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceGeneRegulatoryKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceIntegerStoichiometry.java" relpath="org/sbml/squeezer/kinetics/InterfaceIntegerStoichiometry.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceIrreversibleKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceIrreversibleKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceModulatedKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceModulatedKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceNonEnzymeKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceNonEnzymeKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceReversibleKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceReversibleKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceUniUniKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceUniUniKinetics.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceZeroProducts.java" relpath="org/sbml/squeezer/kinetics/InterfaceZeroProducts.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceZeroReactants.java" relpath="org/sbml/squeezer/kinetics/InterfaceZeroReactants.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/IrrevCompetNonCooperativeEnzymes.java" relpath="org/sbml/squeezer/kinetics/IrrevCompetNonCooperativeEnzymes.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/IrrevNonModulatedNonInteractingEnzymes.java" relpath="org/sbml/squeezer/kinetics/IrrevNonModulatedNonInteractingEnzymes.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/MichaelisMenten.java" relpath="org/sbml/squeezer/kinetics/MichaelisMenten.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/MultiplicativeSaturable.java" relpath="org/sbml/squeezer/kinetics/MultiplicativeSaturable.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/NetGeneratorLinear.java" relpath="org/sbml/squeezer/kinetics/NetGeneratorLinear.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/NetGeneratorNonLinear.java" relpath="org/sbml/squeezer/kinetics/NetGeneratorNonLinear.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/OrderedMechanism.java" relpath="org/sbml/squeezer/kinetics/OrderedMechanism.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/package.html" relpath="org/sbml/squeezer/kinetics/package.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/PingPongMechanism.java" relpath="org/sbml/squeezer/kinetics/PingPongMechanism.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/RandomOrderMechanism.java" relpath="org/sbml/squeezer/kinetics/RandomOrderMechanism.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ReversiblePowerLaw.java" relpath="org/sbml/squeezer/kinetics/ReversiblePowerLaw.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/SpecialHillEquation.java" relpath="org/sbml/squeezer/kinetics/SpecialHillEquation.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/SSystem.java" relpath="org/sbml/squeezer/kinetics/SSystem.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/Vohradsky.java" relpath="org/sbml/squeezer/kinetics/Vohradsky.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/Weaver.java" relpath="org/sbml/squeezer/kinetics/Weaver.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ZerothOrderForwardGMAK.java" relpath="org/sbml/squeezer/kinetics/ZerothOrderForwardGMAK.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ZerothOrderReverseGMAK.java" relpath="org/sbml/squeezer/kinetics/ZerothOrderReverseGMAK.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/math/Functions.java" relpath="org/sbml/squeezer/math/Functions.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/math/GaussianRank.java" relpath="org/sbml/squeezer/math/GaussianRank.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/math/package.html" relpath="org/sbml/squeezer/math/package.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/math/SBMLinterpreter.java" relpath="org/sbml/squeezer/math/SBMLinterpreter.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/cfg/MIRIAM.xml" relpath="org/sbml/squeezer/resources/cfg/MIRIAM.xml"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg" relpath="org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/about.htm" relpath="org/sbml/squeezer/resources/html/about.htm"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/help.html" relpath="org/sbml/squeezer/resources/html/help.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/ModelDoesNotContainAnyReactions.html" relpath="org/sbml/squeezer/resources/html/ModelDoesNotContainAnyReactions.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/NoNewKineticsCreated.html" relpath="org/sbml/squeezer/resources/html/NoNewKineticsCreated.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/ReleaseNotes.html" relpath="org/sbml/squeezer/resources/html/ReleaseNotes.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/back.png" relpath="org/sbml/squeezer/resources/img/back.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/delete_16.png" relpath="org/sbml/squeezer/resources/img/delete_16.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/downarrow.png" relpath="org/sbml/squeezer/resources/img/downarrow.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/folder_16.png" relpath="org/sbml/squeezer/resources/img/folder_16.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/forward.png" relpath="org/sbml/squeezer/resources/img/forward.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/help_16.png" relpath="org/sbml/squeezer/resources/img/help_16.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/icon.png" relpath="org/sbml/squeezer/resources/img/icon.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/info_16.png" relpath="org/sbml/squeezer/resources/img/info_16.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/Lemon_small.png" relpath="org/sbml/squeezer/resources/img/Lemon_small.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/Lemon_tiny.png" relpath="org/sbml/squeezer/resources/img/Lemon_tiny.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/logo_small.png" relpath="org/sbml/squeezer/resources/img/logo_small.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/rightarrow.png" relpath="org/sbml/squeezer/resources/img/rightarrow.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/save_16.png" relpath="org/sbml/squeezer/resources/img/save_16.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/SBML2LaTeX_vertical_small.png" relpath="org/sbml/squeezer/resources/img/SBML2LaTeX_vertical_small.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/SBML2LaTeX_vertical_tiny.png" relpath="org/sbml/squeezer/resources/img/SBML2LaTeX_vertical_tiny.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/Stability_tiny.png" relpath="org/sbml/squeezer/resources/img/Stability_tiny.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/tick_16.png" relpath="org/sbml/squeezer/resources/img/tick_16.png"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/package.html" relpath="org/sbml/squeezer/resources/package.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/Resource.java" relpath="org/sbml/squeezer/resources/Resource.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/CfgKeys.java" relpath="org/sbml/squeezer/CfgKeys.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/KineticLawGenerator.java" relpath="org/sbml/squeezer/KineticLawGenerator.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/LawListener.java" relpath="org/sbml/squeezer/LawListener.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/ModificationException.java" relpath="org/sbml/squeezer/ModificationException.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/package.html" relpath="org/sbml/squeezer/package.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/RateLawNotApplicableException.java" relpath="org/sbml/squeezer/RateLawNotApplicableException.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/ReactionType.java" relpath="org/sbml/squeezer/ReactionType.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/Reflect.java" relpath="org/sbml/squeezer/Reflect.java"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/SBMLsqueezer.java" relpath="org/sbml/squeezer/SBMLsqueezer.java"/>
+            <fatjar.jarsource file="/usr/local/share/java/libsbmlj.jar" relpath=""/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/AUTHORS" relpath="AUTHORS"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/biojava.txt" relpath="biojava.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/eva2.txt" relpath="eva2.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/html2latex.txt" relpath="html2latex.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/icons.txt" relpath="icons.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/jaxen.txt" relpath="jaxen.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/jdom.txt" relpath="jdom.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/jsbml.txt" relpath="jsbml.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/SBMLsqueezer.txt" relpath="SBMLsqueezer.txt"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/index-files/index-1.html" relpath="index-files/index-1.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/index-files/index-10.html" relpath="index-files/index-10.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/index-files/index-11.html" relpath="index-files/index-11.html"/>
@@ -181,7 +73,6 @@
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/class-use/ReactionType.html" relpath="org/sbml/squeezer/class-use/ReactionType.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/class-use/Reflect.html" relpath="org/sbml/squeezer/class-use/Reflect.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/class-use/SBMLsqueezer.html" relpath="org/sbml/squeezer/class-use/SBMLsqueezer.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/gui/class-use/" relpath="org/sbml/squeezer/gui/class-use/"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/gui/CloseIcon.html" relpath="org/sbml/squeezer/gui/CloseIcon.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/gui/GUITools.html" relpath="org/sbml/squeezer/gui/GUITools.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/gui/JBrowser.html" relpath="org/sbml/squeezer/gui/JBrowser.html"/>
@@ -213,22 +104,45 @@
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/gui/StabilityPanel.html" relpath="org/sbml/squeezer/gui/StabilityPanel.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/gui/SystemBrowser.html" relpath="org/sbml/squeezer/gui/SystemBrowser.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/gui/UpdateMessage.html" relpath="org/sbml/squeezer/gui/UpdateMessage.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/class-use/" relpath="org/sbml/squeezer/io/class-use/"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/DisplaySBML.html" relpath="org/sbml/squeezer/io/DisplaySBML.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/LaTeX.html" relpath="org/sbml/squeezer/io/LaTeX.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/LaTeXExport.html" relpath="org/sbml/squeezer/io/LaTeXExport.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/MessageListener.html" relpath="org/sbml/squeezer/io/MessageListener.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/MessageProcessor.html" relpath="org/sbml/squeezer/io/MessageProcessor.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/MIRIAMparser.html" relpath="org/sbml/squeezer/io/MIRIAMparser.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/package-frame.html" relpath="org/sbml/squeezer/io/package-frame.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/package-summary.html" relpath="org/sbml/squeezer/io/package-summary.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/package-tree.html" relpath="org/sbml/squeezer/io/package-tree.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/package-use.html" relpath="org/sbml/squeezer/io/package-use.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/SBFileFilter.html" relpath="org/sbml/squeezer/io/SBFileFilter.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/SBMLio.html" relpath="org/sbml/squeezer/io/SBMLio.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/StringTools.html" relpath="org/sbml/squeezer/io/StringTools.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/TextExport.html" relpath="org/sbml/squeezer/io/TextExport.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/" relpath="org/sbml/squeezer/kinetics/class-use/"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/io/" relpath="org/sbml/squeezer/io/"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/AdditiveModelLinear.html" relpath="org/sbml/squeezer/kinetics/class-use/AdditiveModelLinear.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/AdditiveModelNonLinear.html" relpath="org/sbml/squeezer/kinetics/class-use/AdditiveModelNonLinear.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/BasicKineticLaw.html" relpath="org/sbml/squeezer/kinetics/class-use/BasicKineticLaw.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/CommonSaturable.html" relpath="org/sbml/squeezer/kinetics/class-use/CommonSaturable.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/ConvenienceKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/ConvenienceKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/DirectSaturable.html" relpath="org/sbml/squeezer/kinetics/class-use/DirectSaturable.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/ForceDependent.html" relpath="org/sbml/squeezer/kinetics/class-use/ForceDependent.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/GeneralizedMassAction.html" relpath="org/sbml/squeezer/kinetics/class-use/GeneralizedMassAction.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/HillEquation.html" relpath="org/sbml/squeezer/kinetics/class-use/HillEquation.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/HSystem.html" relpath="org/sbml/squeezer/kinetics/class-use/HSystem.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceArbitraryEnzymeKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceArbitraryEnzymeKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceBiBiKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceBiBiKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceBiUniKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceBiUniKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceGeneRegulatoryKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceGeneRegulatoryKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceIntegerStoichiometry.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceIntegerStoichiometry.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceIrreversibleKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceIrreversibleKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceModulatedKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceModulatedKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceNonEnzymeKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceNonEnzymeKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceReversibleKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceReversibleKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceUniUniKinetics.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceUniUniKinetics.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceZeroProducts.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceZeroProducts.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/InterfaceZeroReactants.html" relpath="org/sbml/squeezer/kinetics/class-use/InterfaceZeroReactants.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/IrrevCompetNonCooperativeEnzymes.html" relpath="org/sbml/squeezer/kinetics/class-use/IrrevCompetNonCooperativeEnzymes.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/IrrevNonModulatedNonInteractingEnzymes.html" relpath="org/sbml/squeezer/kinetics/class-use/IrrevNonModulatedNonInteractingEnzymes.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/MichaelisMenten.html" relpath="org/sbml/squeezer/kinetics/class-use/MichaelisMenten.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/MultiplicativeSaturable.html" relpath="org/sbml/squeezer/kinetics/class-use/MultiplicativeSaturable.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/NetGeneratorLinear.html" relpath="org/sbml/squeezer/kinetics/class-use/NetGeneratorLinear.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/NetGeneratorNonLinear.html" relpath="org/sbml/squeezer/kinetics/class-use/NetGeneratorNonLinear.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/OrderedMechanism.html" relpath="org/sbml/squeezer/kinetics/class-use/OrderedMechanism.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/PingPongMechanism.html" relpath="org/sbml/squeezer/kinetics/class-use/PingPongMechanism.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/RandomOrderMechanism.html" relpath="org/sbml/squeezer/kinetics/class-use/RandomOrderMechanism.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/ReversiblePowerLaw.html" relpath="org/sbml/squeezer/kinetics/class-use/ReversiblePowerLaw.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/SpecialHillEquation.html" relpath="org/sbml/squeezer/kinetics/class-use/SpecialHillEquation.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/SSystem.html" relpath="org/sbml/squeezer/kinetics/class-use/SSystem.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/Vohradsky.html" relpath="org/sbml/squeezer/kinetics/class-use/Vohradsky.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/Weaver.html" relpath="org/sbml/squeezer/kinetics/class-use/Weaver.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/ZerothOrderForwardGMAK.html" relpath="org/sbml/squeezer/kinetics/class-use/ZerothOrderForwardGMAK.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/class-use/ZerothOrderReverseGMAK.html" relpath="org/sbml/squeezer/kinetics/class-use/ZerothOrderReverseGMAK.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/AdditiveModelLinear.html" relpath="org/sbml/squeezer/kinetics/AdditiveModelLinear.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/AdditiveModelNonLinear.html" relpath="org/sbml/squeezer/kinetics/AdditiveModelNonLinear.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/kinetics/BasicKineticLaw.html" relpath="org/sbml/squeezer/kinetics/BasicKineticLaw.html"/>
@@ -279,7 +193,7 @@
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/math/package-tree.html" relpath="org/sbml/squeezer/math/package-tree.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/math/package-use.html" relpath="org/sbml/squeezer/math/package-use.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/math/SBMLinterpreter.html" relpath="org/sbml/squeezer/math/SBMLinterpreter.html"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/resources/class-use/" relpath="org/sbml/squeezer/resources/class-use/"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/resources/class-use/Resource.html" relpath="org/sbml/squeezer/resources/class-use/Resource.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/resources/package-frame.html" relpath="org/sbml/squeezer/resources/package-frame.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/resources/package-summary.html" relpath="org/sbml/squeezer/resources/package-summary.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/org/sbml/squeezer/resources/package-tree.html" relpath="org/sbml/squeezer/resources/package-tree.html"/>
@@ -310,15 +224,94 @@
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/package-list" relpath="package-list"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/serialized-form.html" relpath="serialized-form.html"/>
             <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/doc/stylesheet.css" relpath="stylesheet.css"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/AUTHORS" relpath="AUTHORS"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/biojava.txt" relpath="biojava.txt"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/eva2.txt" relpath="eva2.txt"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/html2latex.txt" relpath="html2latex.txt"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/icons.txt" relpath="icons.txt"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/jaxen.txt" relpath="jaxen.txt"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/jdom.txt" relpath="jdom.txt"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/jsbml.txt" relpath="jsbml.txt"/>
-            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/Licenses/SBMLsqueezer.txt" relpath="SBMLsqueezer.txt"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/gui/" relpath="org/sbml/squeezer/gui/"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/DisplaySBML.java" relpath="org/sbml/squeezer/io/DisplaySBML.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/LaTeX.java" relpath="org/sbml/squeezer/io/LaTeX.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/LaTeXExport.java" relpath="org/sbml/squeezer/io/LaTeXExport.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/MessageListener.java" relpath="org/sbml/squeezer/io/MessageListener.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/MessageProcessor.java" relpath="org/sbml/squeezer/io/MessageProcessor.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/MIRIAMparser.java" relpath="org/sbml/squeezer/io/MIRIAMparser.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/package.html" relpath="org/sbml/squeezer/io/package.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/SBFileFilter.java" relpath="org/sbml/squeezer/io/SBFileFilter.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/SBMLio.java" relpath="org/sbml/squeezer/io/SBMLio.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/StringTools.java" relpath="org/sbml/squeezer/io/StringTools.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/io/TextExport.java" relpath="org/sbml/squeezer/io/TextExport.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/AdditiveModelLinear.java" relpath="org/sbml/squeezer/kinetics/AdditiveModelLinear.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/AdditiveModelNonLinear.java" relpath="org/sbml/squeezer/kinetics/AdditiveModelNonLinear.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/BasicKineticLaw.java" relpath="org/sbml/squeezer/kinetics/BasicKineticLaw.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/CommonSaturable.java" relpath="org/sbml/squeezer/kinetics/CommonSaturable.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ConvenienceKinetics.java" relpath="org/sbml/squeezer/kinetics/ConvenienceKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/DirectSaturable.java" relpath="org/sbml/squeezer/kinetics/DirectSaturable.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ForceDependent.java" relpath="org/sbml/squeezer/kinetics/ForceDependent.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/GeneralizedMassAction.java" relpath="org/sbml/squeezer/kinetics/GeneralizedMassAction.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/HillEquation.java" relpath="org/sbml/squeezer/kinetics/HillEquation.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/HSystem.java" relpath="org/sbml/squeezer/kinetics/HSystem.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceArbitraryEnzymeKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceArbitraryEnzymeKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceBiBiKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceBiBiKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceBiUniKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceBiUniKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceGeneRegulatoryKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceGeneRegulatoryKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceIntegerStoichiometry.java" relpath="org/sbml/squeezer/kinetics/InterfaceIntegerStoichiometry.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceIrreversibleKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceIrreversibleKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceModulatedKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceModulatedKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceNonEnzymeKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceNonEnzymeKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceReversibleKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceReversibleKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceUniUniKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceUniUniKinetics.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceZeroProducts.java" relpath="org/sbml/squeezer/kinetics/InterfaceZeroProducts.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceZeroReactants.java" relpath="org/sbml/squeezer/kinetics/InterfaceZeroReactants.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/IrrevCompetNonCooperativeEnzymes.java" relpath="org/sbml/squeezer/kinetics/IrrevCompetNonCooperativeEnzymes.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/IrrevNonModulatedNonInteractingEnzymes.java" relpath="org/sbml/squeezer/kinetics/IrrevNonModulatedNonInteractingEnzymes.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/MichaelisMenten.java" relpath="org/sbml/squeezer/kinetics/MichaelisMenten.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/MultiplicativeSaturable.java" relpath="org/sbml/squeezer/kinetics/MultiplicativeSaturable.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/NetGeneratorLinear.java" relpath="org/sbml/squeezer/kinetics/NetGeneratorLinear.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/NetGeneratorNonLinear.java" relpath="org/sbml/squeezer/kinetics/NetGeneratorNonLinear.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/OrderedMechanism.java" relpath="org/sbml/squeezer/kinetics/OrderedMechanism.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/package.html" relpath="org/sbml/squeezer/kinetics/package.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/PingPongMechanism.java" relpath="org/sbml/squeezer/kinetics/PingPongMechanism.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/RandomOrderMechanism.java" relpath="org/sbml/squeezer/kinetics/RandomOrderMechanism.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ReversiblePowerLaw.java" relpath="org/sbml/squeezer/kinetics/ReversiblePowerLaw.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/SpecialHillEquation.java" relpath="org/sbml/squeezer/kinetics/SpecialHillEquation.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/SSystem.java" relpath="org/sbml/squeezer/kinetics/SSystem.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/Vohradsky.java" relpath="org/sbml/squeezer/kinetics/Vohradsky.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/Weaver.java" relpath="org/sbml/squeezer/kinetics/Weaver.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ZerothOrderForwardGMAK.java" relpath="org/sbml/squeezer/kinetics/ZerothOrderForwardGMAK.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ZerothOrderReverseGMAK.java" relpath="org/sbml/squeezer/kinetics/ZerothOrderReverseGMAK.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/math/GaussianRank.java" relpath="org/sbml/squeezer/math/GaussianRank.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/math/package.html" relpath="org/sbml/squeezer/math/package.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/cfg/MIRIAM.xml" relpath="org/sbml/squeezer/resources/cfg/MIRIAM.xml"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg" relpath="org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/about.htm" relpath="org/sbml/squeezer/resources/html/about.htm"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/help.html" relpath="org/sbml/squeezer/resources/html/help.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/ModelDoesNotContainAnyReactions.html" relpath="org/sbml/squeezer/resources/html/ModelDoesNotContainAnyReactions.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/NoNewKineticsCreated.html" relpath="org/sbml/squeezer/resources/html/NoNewKineticsCreated.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/html/ReleaseNotes.html" relpath="org/sbml/squeezer/resources/html/ReleaseNotes.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/back.png" relpath="org/sbml/squeezer/resources/img/back.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/delete_16.png" relpath="org/sbml/squeezer/resources/img/delete_16.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/downarrow.png" relpath="org/sbml/squeezer/resources/img/downarrow.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/folder_16.png" relpath="org/sbml/squeezer/resources/img/folder_16.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/forward.png" relpath="org/sbml/squeezer/resources/img/forward.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/help_16.png" relpath="org/sbml/squeezer/resources/img/help_16.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/icon.png" relpath="org/sbml/squeezer/resources/img/icon.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/info_16.png" relpath="org/sbml/squeezer/resources/img/info_16.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/Lemon_small.png" relpath="org/sbml/squeezer/resources/img/Lemon_small.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/Lemon_tiny.png" relpath="org/sbml/squeezer/resources/img/Lemon_tiny.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/logo_small.png" relpath="org/sbml/squeezer/resources/img/logo_small.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/rightarrow.png" relpath="org/sbml/squeezer/resources/img/rightarrow.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/save_16.png" relpath="org/sbml/squeezer/resources/img/save_16.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/SBML2LaTeX_vertical_small.png" relpath="org/sbml/squeezer/resources/img/SBML2LaTeX_vertical_small.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/SBML2LaTeX_vertical_tiny.png" relpath="org/sbml/squeezer/resources/img/SBML2LaTeX_vertical_tiny.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/Stability_tiny.png" relpath="org/sbml/squeezer/resources/img/Stability_tiny.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/img/tick_16.png" relpath="org/sbml/squeezer/resources/img/tick_16.png"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/package.html" relpath="org/sbml/squeezer/resources/package.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/resources/Resource.java" relpath="org/sbml/squeezer/resources/Resource.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/CfgKeys.java" relpath="org/sbml/squeezer/CfgKeys.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/KineticLawGenerator.java" relpath="org/sbml/squeezer/KineticLawGenerator.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/LawListener.java" relpath="org/sbml/squeezer/LawListener.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/ModificationException.java" relpath="org/sbml/squeezer/ModificationException.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/package.html" relpath="org/sbml/squeezer/package.html"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/RateLawNotApplicableException.java" relpath="org/sbml/squeezer/RateLawNotApplicableException.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/ReactionType.java" relpath="org/sbml/squeezer/ReactionType.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/Reflect.java" relpath="org/sbml/squeezer/Reflect.java"/>
+            <fatjar.filesource path="/Users/Gastuser/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/SBMLsqueezer.java" relpath="org/sbml/squeezer/SBMLsqueezer.java"/>
         </fatjar.build>
     </target>
 </project>
