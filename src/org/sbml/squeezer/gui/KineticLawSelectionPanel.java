@@ -213,8 +213,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED)).booleanValue()
 				|| !nonEnzyme;
 		treatAsEnzymeReaction = new JCheckBox(
-				"Consider this reaction to be enzyme-catalyzed",
-				isEnzymeKineticsSelected);
+				"Consider this reaction to be enzyme-catalyzed");
 		treatAsEnzymeReaction.setToolTipText(GUITools
 				.toHTML(
 						"Allows you to decide whether "
@@ -223,10 +222,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 								+ "If an enzyme catalyst exists for this "
 								+ "reaction, this feature cannot be switched "
 								+ "off.", 40));
-		if (reactionType.isEnzymeReaction() || nonEnzyme)
-			treatAsEnzymeReaction.setEnabled(false);
-		klg.getSettings().put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
-				Boolean.valueOf(treatAsEnzymeReaction.isSelected()));
 		lh.add(treatAsEnzymeReaction, 0, 0, 2, 1, 1, 1);
 		revGroup.add(rButtonReversible);
 		revGroup.add(rButtonIrreversible);
@@ -249,6 +244,12 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		lh.add(rButtonGlobalParameters, 0, 2, 1, 1, 1, 1);
 		lh.add(rButtonLocalParameters, 1, 2, 1, 1, 1, 1);
 
+		treatAsEnzymeReaction.setSelected(isEnzymeKineticsSelected);
+		if (reactionType.isEnzymeReaction() || nonEnzyme)
+			treatAsEnzymeReaction.setEnabled(false);
+		klg.getSettings().put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+				Boolean.valueOf(treatAsEnzymeReaction.isSelected()));
+		klg.updateEnzymeCatalysis();
 		kineticsPanel = initKineticsPanel();
 
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
@@ -258,8 +259,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 				optionsPanel, 0, 3, 1, 1, 1, 1);
 
-		treatAsEnzymeReaction.addItemListener(this);
 		// rButtonIrreversible.addItemListener(this);
+		treatAsEnzymeReaction.addItemListener(this);
 		rButtonReversible.addItemListener(this);
 		rButtonGlobalParameters.addItemListener(this);
 		rButtonLocalParameters.addItemListener(this);
@@ -421,16 +422,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent ie) {
-		if (ie.getSource() instanceof JCheckBox)
-			try {
-				JCheckBox check = (JCheckBox) ie.getSource();
-				klg.getSettings().put(
-						CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
-						Boolean.valueOf(check.isSelected()));
-				remove(kineticsPanel);
-				kineticsPanel = initKineticsPanel();
-				LayoutHelper.addComponent(this, (GridBagLayout) this
-						.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+		if (ie.getSource() instanceof JCheckBox) try {
+			JCheckBox check = (JCheckBox) ie.getSource();
+			setEnzymeKatalysis(check.isSelected());
 			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(getTopLevelAncestor(), GUITools
 						.toHTML(e.getMessage(), 40), e.getClass()
@@ -494,12 +488,30 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			createPreviewPanel(((JComboBox) ie.getSource()).getSelectedIndex());
 			add(eqnPrev, BorderLayout.CENTER);
 		}
-		getTopLevelAncestor().validate();
-		Window w = (Window) getTopLevelAncestor();
-		int width = w.getWidth();
-		w.pack();
-		w.setSize(width, w.getHeight());
-		w.validate();
+		if (getTopLevelAncestor() != null) {
+			Window w = (Window) getTopLevelAncestor();
+			w.validate();
+			int width = w.getWidth();
+			w.pack();
+			w.setSize(width, w.getHeight());
+			w.validate();
+		}
+	}
+
+	/**
+	 * 
+	 * @param selected
+	 * @throws Throwable
+	 */
+	private void setEnzymeKatalysis(boolean selected) throws Throwable {
+		klg.getSettings().put(
+				CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+				Boolean.valueOf(selected));
+		klg.updateEnzymeCatalysis();
+		remove(kineticsPanel);
+		kineticsPanel = initKineticsPanel();
+		LayoutHelper.addComponent(this, (GridBagLayout) this
+				.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
 	}
 
 	/**

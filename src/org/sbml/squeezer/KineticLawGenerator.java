@@ -109,7 +109,7 @@ public class KineticLawGenerator {
 			throws Throwable {
 		this.settings = settings;
 		this.modelOrig = model;
-		init(null);
+		init();
 		generateLaws();
 	}
 
@@ -220,6 +220,14 @@ public class KineticLawGenerator {
 			e.printStackTrace();
 			throw e.getCause();
 		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private Model createMinimalModel() {
+		return createMinimalModel(null);
 	}
 
 	/**
@@ -433,9 +441,11 @@ public class KineticLawGenerator {
 		String prefix = "POSSIBLE_ENZYME_", k;
 		for (Object key : settings.keySet()) {
 			k = key.toString();
-			if (k.startsWith(prefix))
+			if (k.startsWith(prefix)
+					&& ((Boolean) settings.get(key)).booleanValue()) {
 				possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO(k
 						.substring(prefix.length()))));
+			}
 		}
 		return possibleEnzymes;
 	}
@@ -488,7 +498,20 @@ public class KineticLawGenerator {
 			settings = SBMLsqueezer.getDefaultSettings();
 		listOfFastReactions = new LinkedList<Reaction>();
 		this.miniModel = createMinimalModel(reactionID);
-		updateEnzymeCatalysis(getPossibleEnzymes());
+		updateEnzymeCatalysis();
+	}
+
+	/**
+	 * load default settings and initialize this object.
+	 * 
+	 * @param reactionID
+	 */
+	private void init() {
+		if (settings == null)
+			settings = SBMLsqueezer.getDefaultSettings();
+		listOfFastReactions = new LinkedList<Reaction>();
+		this.miniModel = createMinimalModel();
+		updateEnzymeCatalysis();
 	}
 
 	/**
@@ -973,9 +996,11 @@ public class KineticLawGenerator {
 	 * Sets the SBO annotation of modifiers to more precise values in the local
 	 * mini copy of the model.
 	 * 
-	 * @param possibleEnzymes
+	 * Updates the minimal model so that all possible enzymes are marked as
+	 * enzymatic catalyst.
 	 */
-	private void updateEnzymeCatalysis(Set<Integer> possibleEnzymes) {
+	public void updateEnzymeCatalysis() {
+		Set<Integer> possibleEnzymes = getPossibleEnzymes();
 		for (Reaction r : miniModel.getListOfReactions()) {
 			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
 				Species species = modifier.getSpeciesInstance();
