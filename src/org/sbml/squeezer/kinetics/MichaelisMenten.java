@@ -109,8 +109,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		if (!getParentSBMLObject().getReversible())
 			switch (modInhib.size()) {
 			case 1:
-				setSBOTerm(266); // enzymatic rate law for simple irreversible
-				// non-competitive inhibition of unireactant
+				setSBOTerm(265); // enzymatic rate law for simple mixed-type
+				// inhibition of irreversible unireactant
 				// enzymes
 				break;
 			case 2:
