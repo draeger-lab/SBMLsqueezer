@@ -23,13 +23,14 @@ import java.util.List;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
  * This is the well-known (Henry-) Michaelis-Menten equation and can be found in
  * the {@link SBO} under one of the following terms (depending on the specific
- * structure of the underlying {@link Reaction}): 28, 199, 265, 269, 275, 276,
+ * structure of the underlying {@link Reaction}): 28, 199, 266, 269, 275, 276,
  * or 326.
  * 
  * @since 1.0
@@ -42,12 +43,6 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class MichaelisMenten extends GeneralizedMassAction implements
 		InterfaceUniUniKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
-
-	private int numOfInhibitors;
-
-	private int numOfActivators;
-
-	private int numOfEnzymes;
 
 	/**
 	 * 
@@ -68,55 +63,66 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		ASTNode numerator;
 		ASTNode denominator;
 
-		numOfActivators = modActi.size();
-		numOfEnzymes = modE.size();
-		numOfInhibitors = modInhib.size();
-
 		if ((reaction.getNumReactants() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1d))
 			throw new RateLawNotApplicableException(
-					getClass().getSimpleName()
-							+ " cannot be applied to reaction "
-							+ reaction.getId()
-							+ " because the stoichiometry of the reactant species does not sum up to 1.0.");
+					String
+							.format(
+									"%s cannot be applied to reaction %s  because the stoichiometry of the reactant species does not sum up to 1.0.",
+									getClass().getSimpleName(), reaction
+											.getId()));
 		if (((reaction.getNumProducts() != 1) || (reaction.getProduct(0)
 				.getStoichiometry() != 1d))
 				&& reaction.getReversible())
 			throw new RateLawNotApplicableException(
-					"Reversible "
-							+ getClass().getSimpleName()
-							+ " cannot be applied to reaction "
-							+ reaction.getId()
-							+ " because the stoichiometry of the product species does not sum up to 1.0.");
+					String
+							.format(
+									"Reversible %s cannot be applied to reaction %s because the stoichiometry of the product species does not sum up to 1.0.",
+									getClass().getSimpleName(), reaction
+											.getId()));
 
-		setSBOTerm(269);
-		switch (numOfEnzymes) {
+		setSBOTerm(269); // enzymatic rate law for unireactant enzymes
+		switch (modE.size()) {
 		case 0: // no enzyme, irreversible
-			if (!getParentSBMLObject().getReversible()
-					&& (numOfActivators == 0) && (numOfInhibitors == 0))
-				setSBOTerm(199);
-			else if ((numOfActivators == 0) && (numOfInhibitors == 0))
-				setSBOTerm(326);
+			if (!getParentSBMLObject().getReversible() && (modActi.size() == 0)
+					&& (modInhib.size() == 0))
+				setSBOTerm(199); // normalised enzymatic rate law for
+			// unireactant enzymes
+			else if ((modActi.size() == 0) && (modInhib.size() == 0))
+				setSBOTerm(326); // enzymatic rate law for non-modulated
+			// unireactant enzymes
 			break;
 		case 1: // one enzmye
 			if (getParentSBMLObject().getReversible()) {
-				if ((numOfActivators == 0) && (numOfInhibitors == 0))
-					setSBOTerm(326);
-			} else if ((numOfActivators == 0) && (numOfInhibitors == 0))
+				if ((modActi.size() == 0) && (modInhib.size() == 0))
+					setSBOTerm(326); // enzymatic rate law for non-modulated
+				// unireactant enzymes
+			} else if ((modActi.size() == 0) && (modInhib.size() == 0))
 				// irreversible equivalents: Briggs-Haldane equation (31) or
 				// Van Slyke-Cullen equation (30)
 				// 29 = Henri-Michaelis-Menten
-				setSBOTerm(28);
+				setSBOTerm(28); // enzymatic rate law for irreversible
+			// non-modulated non-interacting unireactant
+			// enzymes
 			break;
 		}
 		if (!getParentSBMLObject().getReversible())
-			switch (numOfInhibitors) {
+			switch (modInhib.size()) {
 			case 1:
-				setSBOTerm(265);
+				setSBOTerm(266); // enzymatic rate law for simple irreversible
+				// non-competitive inhibition of unireactant
+				// enzymes
+				break;
 			case 2:
-				setSBOTerm(276);
+				setSBOTerm(276); // enzymatic rate law for mixed-type inhibition
+				// of irreversible unireactant enzymes by
+				// two inhibitors
+				break;
 			default:
-				setSBOTerm(275);
+				setSBOTerm(275); // enzymatic rate law for mixed-type inhibition
+				// of irreversible enzymes by mutually
+				// exclusive inhibitors
+				break;
 			}
 
 		Species speciesR = reaction.getReactant(0).getSpeciesInstance();
@@ -150,17 +156,18 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				Parameter p_kMp = parameterMichaelis(speciesP.getId(), enzyme,
 						false);
 
-				numerator = ASTNode.diff(numerator, ASTNode.times(ASTNode.frac(
-						this, p_kcatn, p_kMp), speciesTerm(speciesP)));
+				numerator.minus(ASTNode.times(ASTNode
+						.frac(this, p_kcatn, p_kMp), speciesTerm(speciesP)));
 				denominator.plus(ASTNode.frac(speciesTerm(speciesP),
 						new ASTNode(p_kMp, this)));
 			}
-			denominator = createInihibitionTerms(modInhib, reaction, modE,
-					denominator, p_kMr, enzymeNum);
+			denominator = createInihibitionTerms(modInhib, reaction,
+					denominator, p_kMr, modE.size() > 1 ? modE.get(enzymeNum)
+							: null);
 
 			if (reaction.getReversible())
 				denominator = ASTNode.sum(new ASTNode(1, this), denominator);
-			else if (modInhib.size() <= 1)
+			else if (modInhib.size() < 1)
 				denominator = ASTNode
 						.sum(new ASTNode(p_kMr, this), denominator);
 
@@ -183,36 +190,42 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	}
 
 	/**
-	 * Inhibition
+	 * * Inhibition
 	 * 
 	 * @param modInhib
+	 *            A list containing the ids of all inhibitors of this reaction
 	 * @param reaction
+	 *            The reaction for which a kinetic equation is to be created
 	 * @param modE
+	 *            A list containing the ids of all enzymes of this reaction
 	 * @param denominator
+	 *            The denominator of this kinetic equation created so far.
 	 * @param mr
-	 * @param currEnzymeKin
+	 *            Michaelis constant of the substrate
 	 * @param enzymeNum
+	 *            Current index of the enzyme in the list of enzyme ids
+	 * @return
 	 */
 	private ASTNode createInihibitionTerms(List<String> modInhib,
-			Reaction reaction, List<String> modE, ASTNode denominator,
-			Parameter mr, int enzymeNum) {
+			Reaction reaction, ASTNode denominator, Parameter mr, String enzyme) {
 		if (modInhib.size() == 1) {
-			String enzyme = modE.size() > 1 ? modE.get(enzymeNum) : null;
 			Parameter p_kIa = parameterKi(modInhib.get(0), enzyme, 1);
 			Parameter p_kIb = parameterKi(modInhib.get(0), enzyme, 2);
-
-			ASTNode specRefI = speciesTerm(modInhib.get(0));
 			if (reaction.getReversible())
-				denominator = ASTNode.sum(ASTNode.frac(specRefI, new ASTNode(
-						p_kIa, this)), ASTNode.times(denominator, ASTNode.sum(
-						new ASTNode(1, this), ASTNode.frac(specRefI,
-								new ASTNode(p_kIb, this)))));
-			else
-				denominator = ASTNode.sum(ASTNode.times(ASTNode.frac(
-						new ASTNode(mr, this), new ASTNode(p_kIa, this)),
-						specRefI), denominator, ASTNode.times(ASTNode.frac(
-						new ASTNode(mr, this), new ASTNode(p_kIb, this)),
-						specRefI));
+				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(modInhib
+						.get(0)), new ASTNode(p_kIa, this)), ASTNode.times(
+						denominator, ASTNode.sum(new ASTNode(1, this), ASTNode
+								.frac(speciesTerm(modInhib.get(0)),
+										new ASTNode(p_kIb, this)))));
+			else {
+				denominator = ASTNode.sum(ASTNode.times(new ASTNode(mr, this),
+						ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
+								speciesTerm(modInhib.get(0)), new ASTNode(
+										p_kIa, this)))), ASTNode.times(
+						denominator, ASTNode.sum(new ASTNode(1, this), ASTNode
+								.frac(speciesTerm(modInhib.get(0)),
+										new ASTNode(p_kIb, this)))));
+			}
 
 		} else if ((modInhib.size() > 1)
 				&& !getParentSBMLObject().getReversible()) {
@@ -220,10 +233,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			 * mixed-type inihibition of irreversible enzymes by mutually
 			 * exclusive inhibitors.
 			 */
-			setSBOTerm(275);
 			ASTNode sumIa = new ASTNode(1, this);
 			ASTNode sumIb = new ASTNode(1, this);
-			String enzyme = modE.size() > 1 ? modE.get(enzymeNum) : null;
 			for (int i = 0; i < modInhib.size(); i++) {
 				String inhibitor = modInhib.get(i);
 				Parameter p_kIai = parameterKi(inhibitor, enzyme, 1);
