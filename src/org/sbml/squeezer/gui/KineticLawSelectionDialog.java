@@ -447,8 +447,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 				} else
 					message.append("is beeing ignored.");
 				final JOptionPane pane = new JOptionPane(GUITools.toHTML(
-						message.toString(), 40),
-						JOptionPane.WARNING_MESSAGE);
+						message.toString(), 40), JOptionPane.WARNING_MESSAGE);
 				final JDialog d = new JDialog();
 				d.setTitle("Fast Reactions");
 				d.setModal(true);
@@ -790,8 +789,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 			options.setIcon(GUITools.ICON_RIGHT_ARROW);
 			options.setIconTextGap(5);
 			options.setText("show options");
-			options
-					.setToolTipText("<html>Customize the advanced settings.</html>");
+			options.setToolTipText(GUITools
+					.toHTML("Customize the advanced settings."));
 			centralPanel.removeAll();
 			JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			panel.add(options);
