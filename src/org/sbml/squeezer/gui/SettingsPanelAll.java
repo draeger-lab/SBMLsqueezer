@@ -68,7 +68,7 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 
 	private SettingsPanelDefaultMechanisms panelDefaultMechanisms;
 
-	private SettingsPanelStability panelStabilitySettings;
+	// private SettingsPanelStability panelStabilitySettings;
 
 	private Properties settings;
 
@@ -144,8 +144,8 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 		/*
 		 * Stability Settings
 		 */
-		panelStabilitySettings = new SettingsPanelStability(this.settings);
 		// Next version!
+		// panelStabilitySettings = new SettingsPanelStability(this.settings);
 		// tab.addTab("Stability settings", panelStabilitySettings);
 		this.add(tab);
 		addItemListener(this);

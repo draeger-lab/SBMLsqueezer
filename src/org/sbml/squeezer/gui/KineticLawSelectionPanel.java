@@ -39,7 +39,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
@@ -209,8 +208,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		ButtonGroup revGroup = new ButtonGroup();
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
 		boolean nonEnzyme = reactionType.isNonEnzymeReaction();
-		boolean isEnzymeKineticsSelected = ((Boolean) klg.getSettings().get(
-				CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED)).booleanValue()
+		boolean isEnzymeKineticsSelected = ((Boolean) this.klg.getSettings()
+				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+				.booleanValue()
 				|| !nonEnzyme;
 		treatAsEnzymeReaction = new JCheckBox(
 				"Consider this reaction to be enzyme-catalyzed");
@@ -228,8 +228,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		lh.add(rButtonReversible, 0, 1, 1, 1, 1, 1);
 		lh.add(rButtonIrreversible, 1, 1, 1, 1, 1, 1);
 		JRadioButton rButtonLocalParameters = new JRadioButton(
-				"Local parameters", reaction.isSetKineticLaw()
-						&& reaction.getKineticLaw().getNumParameters() > 0);
+				"Local parameters", !((Boolean) this.klg.getSettings().get(
+						CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
+						.booleanValue());
 		rButtonGlobalParameters = new JRadioButton("Global parameters",
 				!rButtonLocalParameters.isSelected());
 		rButtonGlobalParameters.setToolTipText(GUITools.toHTML(
@@ -255,9 +256,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 				kineticsPanel, 0, 1, 1, 1, 1, 1);
 		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
-				new JSeparator(), 0, 2, 1, 1, 1, 1);
-		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
-				optionsPanel, 0, 3, 1, 1, 1, 1);
+				optionsPanel, 0, 2, 1, 1, 1, 1);
 
 		// rButtonIrreversible.addItemListener(this);
 		treatAsEnzymeReaction.addItemListener(this);
@@ -422,9 +421,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent ie) {
-		if (ie.getSource() instanceof JCheckBox) try {
-			JCheckBox check = (JCheckBox) ie.getSource();
-			setEnzymeKatalysis(check.isSelected());
+		if (ie.getSource() instanceof JCheckBox)
+			try {
+				JCheckBox check = (JCheckBox) ie.getSource();
+				setEnzymeKatalysis(check.isSelected());
 			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(getTopLevelAncestor(), GUITools
 						.toHTML(e.getMessage(), 40), e.getClass()
@@ -504,14 +504,13 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @throws Throwable
 	 */
 	private void setEnzymeKatalysis(boolean selected) throws Throwable {
-		klg.getSettings().put(
-				CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+		klg.getSettings().put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 				Boolean.valueOf(selected));
 		klg.updateEnzymeCatalysis();
 		remove(kineticsPanel);
 		kineticsPanel = initKineticsPanel();
-		LayoutHelper.addComponent(this, (GridBagLayout) this
-				.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
+		LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
+				kineticsPanel, 0, 1, 1, 1, 1, 1);
 	}
 
 	/**

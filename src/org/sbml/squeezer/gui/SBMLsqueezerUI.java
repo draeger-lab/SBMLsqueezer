@@ -338,8 +338,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				setEnabled(false, Command.ONLINE_HELP);
 				break;
 			case CHECK_STABILITY:
-				StabilityDialog stabilitydialog = new StabilityDialog(this);
-				stabilitydialog.showStabilityDialog(settings, sbmlIO);
+				// Next version!
+				// StabilityDialog stabilitydialog = new StabilityDialog(this);
+				// stabilitydialog.showStabilityDialog(settings, sbmlIO);
 				break;
 			case STRUCTURAL_KINETIC_MODELLING:
 				break;

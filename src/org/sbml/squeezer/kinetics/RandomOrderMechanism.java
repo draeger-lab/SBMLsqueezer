@@ -108,9 +108,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		boolean biuni = false;
 		switch (reaction.getNumProducts()) {
 		case 1:
-			if (specRefP1.getStoichiometry() == 1.0)
+			if (specRefP1.getStoichiometry() == 1d)
 				biuni = true;
-			else if (specRefP1.getStoichiometry() == 2.0)
+			else if (specRefP1.getStoichiometry() == 2d)
 				specRefP2 = specRefP1;
 			else
 				exception = true;
@@ -133,145 +133,164 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		 * do not want anything in modE to occur in the kinetic equation.
 		 */
 		int enzymeNum = 0;
-		ASTNode numerator;// I
-		ASTNode denominator; // II
 		ASTNode catalysts[] = new ASTNode[Math.max(1, modE.size())];
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			/*
-			 * Irreversible reaction
-			 */
-			if (!reaction.getReversible()) {
-				Species speciesR1 = specRefR1.getSpeciesInstance();
-				Species speciesR2 = specRefR2.getSpeciesInstance();
-				Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-				Parameter p_kMr1 = parameterMichaelis(speciesR1.getId(),
-						enzyme, true);
-				Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(),
-						enzyme, true);
-				Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+			if (!reaction.getReversible())
+				catalysts[enzymeNum++] = irreversible(specRefP2, specRefP2,
+						enzyme);
+			else
+				catalysts[enzymeNum++] = biuni ? reversibleBiUni(specRefP2,
+						specRefP2, specRefP2, enzyme) : reversibleBiBi(
+						specRefR1, specRefR2, specRefP1, specRefP2, enzyme);
+		} while (enzymeNum < modE.size());
+		return ASTNode.times(activationFactor(modActi),
+				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
+	}
 
-				numerator = new ASTNode(p_kcatp, this);
-				if (modE.size() > 0)
-					numerator.multiplyWith(speciesTerm(enzyme));
-				if (specRefR2.equals(specRefR1)) {
-					ASTNode r1square = ASTNode.pow(speciesTerm(speciesR1), 2);
-					numerator = ASTNode.times(numerator, r1square);
-					denominator = ASTNode.sum(ASTNode.times(this, p_kIr1,
-							p_kMr2), ASTNode.times(ASTNode.sum(this, p_kMr1,
-							p_kMr2), speciesTerm(speciesR1)), r1square);
-				} else {
-					numerator = ASTNode.times(numerator,
-							speciesTerm(speciesR1), speciesTerm(speciesR2));
-					denominator = ASTNode.sum(ASTNode.times(this, p_kIr1,
-							p_kMr2), ASTNode.times(new ASTNode(p_kMr2, this),
+	/**
+	 * Irreversible reaction
+	 * 
+	 * @param specRefR1
+	 * @param specRefR2
+	 * @param enzyme
+	 */
+	private ASTNode irreversible(SpeciesReference specRefR1,
+			SpeciesReference specRefR2, String enzyme) {
+		Species speciesR1 = specRefR1.getSpeciesInstance();
+		Species speciesR2 = specRefR2.getSpeciesInstance();
+		Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+		Parameter p_kMr1 = parameterMichaelis(speciesR1.getId(), enzyme, true);
+		Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
+		Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+		ASTNode numerator = new ASTNode(p_kcatp, this);
+		ASTNode denominator; // II
+		if (enzyme != null)
+			numerator.multiplyWith(speciesTerm(enzyme));
+		if (specRefR2.equals(specRefR1)) {
+			ASTNode r1square = ASTNode.pow(speciesTerm(speciesR1), 2);
+			numerator = ASTNode.times(numerator, r1square);
+			denominator = ASTNode.sum(ASTNode.times(this, p_kIr1, p_kMr2),
+					ASTNode.times(ASTNode.sum(this, p_kMr1, p_kMr2),
+							speciesTerm(speciesR1)), r1square);
+		} else {
+			numerator = ASTNode.times(numerator, speciesTerm(speciesR1),
+					speciesTerm(speciesR2));
+			denominator = ASTNode.sum(ASTNode.times(this, p_kIr1, p_kMr2),
+					ASTNode.times(new ASTNode(p_kMr2, this),
 							speciesTerm(speciesR1)), ASTNode.times(new ASTNode(
 							p_kMr1, this), speciesTerm(speciesR2)), ASTNode
 							.times(speciesTerm(speciesR1),
 									speciesTerm(speciesR2)));
-				}
-			} else {
-				/*
-				 * Reversible reaction: Bi-Bi
-				 */
-				if (!biuni) {
-					Species speciesR1 = specRefR1.getSpeciesInstance();
-					Species speciesR2 = specRefR2.getSpeciesInstance();
-					Species speciesP1 = specRefP1.getSpeciesInstance();
-					Species speciesP2 = specRefP2.getSpeciesInstance();
-					Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-					Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-					Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(),
-							enzyme);
-					Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(),
-							enzyme);
-					Parameter p_kIp1 = parameterKi(speciesP1.getId(), enzyme);
-					Parameter p_kIp2 = parameterKi(speciesP2.getId(), enzyme);
-					Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
-					Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
+		}
+		return ASTNode.frac(numerator, denominator);
+	}
 
-					ASTNode numeratorForward = ASTNode
-							.frac(new ASTNode(p_kcatp, this), ASTNode.times(
-									this, p_kIr1, p_kMr2));
-					ASTNode numeratorReverse = ASTNode
-							.frac(new ASTNode(p_kcatn, this), ASTNode.times(
-									this, p_kIp2, p_kMp1));
-					if (modE.size() > 0) {
-						numeratorForward.multiplyWith(speciesTerm(enzyme));
-						numeratorReverse.multiplyWith(speciesTerm(enzyme));
-					}
-					// happens if the reactant has a stoichiometry of two.
-					ASTNode r1r2 = specRefR1.equals(specRefR2) ? ASTNode.pow(
-							speciesTerm(speciesR1), 2) : ASTNode.times(
-							speciesTerm(speciesR1), speciesTerm(speciesR2));
-					// happens if the product has a stoichiometry of two.
-					ASTNode p1p2 = specRefP1.equals(specRefP2) ? ASTNode.pow(
-							speciesTerm(speciesP1), 2) : ASTNode.times(
-							speciesTerm(speciesP1), speciesTerm(speciesP2));
-					numeratorForward = ASTNode.times(numeratorForward, r1r2);
-					numeratorReverse = ASTNode.times(numeratorReverse, p1p2);
-					numerator = ASTNode
-							.diff(numeratorForward, numeratorReverse);
-					denominator = ASTNode.sum(new ASTNode(1, this), ASTNode
-							.frac(speciesTerm(speciesR1), new ASTNode(p_kIr1,
-									this)), ASTNode.frac(
-							speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
-							ASTNode.frac(speciesTerm(speciesP1), new ASTNode(
-									p_kIp1, this)), ASTNode.frac(
-									speciesTerm(speciesP2), new ASTNode(p_kIp2,
-											this)), ASTNode.frac(p1p2, ASTNode
-									.times(this, p_kIp2, p_kMp1)), ASTNode
-									.frac(r1r2, ASTNode.times(this, p_kIr1,
-											p_kMr2)));
-				} else {
-					/*
-					 * Reversible reaction: Bi-Uni reaction
-					 */
-					Species speciesR1 = specRefR1.getSpeciesInstance();
-					Species speciesR2 = specRefR2.getSpeciesInstance();
-					Species speciesP1 = specRefP1.getSpeciesInstance();
-					Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-					Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-					Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(),
-							enzyme, true);
-					Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(),
-							enzyme, false);
-					Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
-					Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
+	/**
+	 * Reversible reaction: Bi-Uni reactions
+	 * 
+	 * @param specRefR1
+	 * @param specRefR2
+	 * @param specRefP1
+	 * @param enzyme
+	 */
+	private ASTNode reversibleBiUni(SpeciesReference specRefR1,
+			SpeciesReference specRefR2, SpeciesReference specRefP1,
+			String enzyme) {
+		Species speciesR1 = specRefR1.getSpeciesInstance();
+		Species speciesR2 = specRefR2.getSpeciesInstance();
+		Species speciesP1 = specRefP1.getSpeciesInstance();
+		Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+		Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+		Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
+		Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme, false);
+		Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+		Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
 
-					ASTNode r1r2;
-					if (specRefR1.equals(specRefR2))
-						r1r2 = ASTNode.pow(speciesTerm(speciesR1), 2);
-					else
-						r1r2 = ASTNode.times(speciesTerm(speciesR1),
-								speciesTerm(speciesR2));
-					ASTNode numeratorForward = ASTNode
-							.frac(new ASTNode(p_kcatp, this), ASTNode.times(
-									this, p_kIr1, p_kMr2));
-					ASTNode numeratorReverse = ASTNode.frac(this, p_kcatn,
-							p_kMp1);
-					if (modE.size() != 0) {
-						numeratorForward.multiplyWith(speciesTerm(enzyme));
-						numeratorReverse.multiplyWith(speciesTerm(enzyme));
-					}
-					numeratorForward.multiplyWith(r1r2);
-					numeratorReverse.multiplyWith(speciesTerm(speciesP1));
-					numerator = numeratorForward.minus(numeratorReverse);
-					denominator = ASTNode.sum(new ASTNode(1, this), ASTNode
-							.frac(speciesTerm(speciesR1), new ASTNode(p_kIr1,
-									this)), ASTNode.frac(
-							speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
-							ASTNode.frac(r1r2, ASTNode.times(this, p_kIr1,
-									p_kMr2)), ASTNode.frac(
-									speciesTerm(speciesP1), new ASTNode(p_kMp1,
-											this)));
-				}
-			}
-			// Construct formula
-			catalysts[enzymeNum++] = ASTNode.frac(numerator, denominator);
-		} while (enzymeNum < modE.size());
-		return ASTNode.times(activationFactor(modActi),
-				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
+		ASTNode r1r2;
+		if (specRefR1.equals(specRefR2))
+			r1r2 = ASTNode.pow(speciesTerm(speciesR1), 2);
+		else
+			r1r2 = ASTNode
+					.times(speciesTerm(speciesR1), speciesTerm(speciesR2));
+		ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp, this),
+				ASTNode.times(this, p_kIr1, p_kMr2));
+		ASTNode numeratorReverse = ASTNode.frac(this, p_kcatn, p_kMp1);
+		if (enzyme != null) {
+			numeratorForward.multiplyWith(speciesTerm(enzyme));
+			numeratorReverse.multiplyWith(speciesTerm(enzyme));
+		}
+		numeratorForward.multiplyWith(r1r2);
+		numeratorReverse.multiplyWith(speciesTerm(speciesP1));
+		ASTNode numerator = numeratorForward.minus(numeratorReverse);
+		ASTNode denominator = ASTNode
+				.sum(
+						new ASTNode(1, this),
+						ASTNode.frac(speciesTerm(speciesR1), new ASTNode(
+								p_kIr1, this)),
+						ASTNode.frac(speciesTerm(speciesR2), new ASTNode(
+								p_kIr2, this)),
+						ASTNode.frac(r1r2, ASTNode.times(this, p_kIr1, p_kMr2)),
+						ASTNode.frac(speciesTerm(speciesP1), new ASTNode(
+								p_kMp1, this)));
+		return ASTNode.frac(numerator, denominator);
+	}
+
+	/**
+	 * Reversible bi-bi case.
+	 * 
+	 * @param specRefR1
+	 * @param specRefR2
+	 * @param specRefP1
+	 * @param specRefP2
+	 * @param enzyme
+	 */
+	private ASTNode reversibleBiBi(SpeciesReference specRefR1,
+			SpeciesReference specRefR2, SpeciesReference specRefP1,
+			SpeciesReference specRefP2, String enzyme) {
+		Species speciesR1 = specRefR1.getSpeciesInstance();
+		Species speciesR2 = specRefR2.getSpeciesInstance();
+		Species speciesP1 = specRefP1.getSpeciesInstance();
+		Species speciesP2 = specRefP2.getSpeciesInstance();
+		Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+		Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+		Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme);
+		Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme);
+		Parameter p_kIp1 = parameterKi(speciesP1.getId(), enzyme);
+		Parameter p_kIp2 = parameterKi(speciesP2.getId(), enzyme);
+		Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+		Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
+
+		ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp, this),
+				ASTNode.times(this, p_kIr1, p_kMr2));
+		ASTNode numeratorReverse = ASTNode.frac(new ASTNode(p_kcatn, this),
+				ASTNode.times(this, p_kIp2, p_kMp1));
+		if (enzyme != null) {
+			numeratorForward.multiplyWith(speciesTerm(enzyme));
+			numeratorReverse.multiplyWith(speciesTerm(enzyme));
+		}
+		// happens if the reactant has a stoichiometry of two.
+		ASTNode r1r2 = specRefR1.equals(specRefR2) ? ASTNode.pow(
+				speciesTerm(speciesR1), 2) : ASTNode.times(
+				speciesTerm(speciesR1), speciesTerm(speciesR2));
+		// happens if the product has a stoichiometry of two.
+		ASTNode p1p2 = specRefP1.equals(specRefP2) ? ASTNode.pow(
+				speciesTerm(speciesP1), 2) : ASTNode.times(
+				speciesTerm(speciesP1), speciesTerm(speciesP2));
+		numeratorForward.multiplyWith(r1r2.clone());
+		numeratorReverse.multiplyWith(p1p2.clone());
+		ASTNode numerator = ASTNode.diff(numeratorForward, numeratorReverse);
+		ASTNode denominator = ASTNode
+				.sum(new ASTNode(1, this), ASTNode.frac(speciesTerm(speciesR1),
+						new ASTNode(p_kIr1, this)), ASTNode.frac(
+						speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
+						ASTNode.frac(speciesTerm(speciesP1), new ASTNode(
+								p_kIp1, this)), ASTNode.frac(
+								speciesTerm(speciesP2), new ASTNode(p_kIp2,
+										this)), ASTNode.frac(p1p2, ASTNode
+								.times(this, p_kIp2, p_kMp1)), ASTNode.frac(
+								r1r2, ASTNode.times(this, p_kIr1, p_kMr2)));
+		return ASTNode.frac(numerator, denominator);
 	}
 
 	/*
