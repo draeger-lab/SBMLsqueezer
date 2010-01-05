@@ -137,11 +137,11 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
 			if (!reaction.getReversible())
-				catalysts[enzymeNum++] = irreversible(specRefP2, specRefP2,
+				catalysts[enzymeNum++] = irreversible(specRefR1, specRefR2,
 						enzyme);
 			else
-				catalysts[enzymeNum++] = biuni ? reversibleBiUni(specRefP2,
-						specRefP2, specRefP2, enzyme) : reversibleBiBi(
+				catalysts[enzymeNum++] = biuni ? reversibleBiUni(specRefR1,
+						specRefR2, specRefP1, enzyme) : reversibleBiBi(
 						specRefR1, specRefR2, specRefP1, specRefP2, enzyme);
 		} while (enzymeNum < modE.size());
 		return ASTNode.times(activationFactor(modActi),
@@ -169,7 +169,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			numerator.multiplyWith(speciesTerm(enzyme));
 		if (specRefR2.equals(specRefR1)) {
 			ASTNode r1square = ASTNode.pow(speciesTerm(speciesR1), 2);
-			numerator = ASTNode.times(numerator, r1square);
+			numerator = ASTNode.times(numerator, r1square.clone());
 			denominator = ASTNode.sum(ASTNode.times(this, p_kIr1, p_kMr2),
 					ASTNode.times(ASTNode.sum(this, p_kMr1, p_kMr2),
 							speciesTerm(speciesR1)), r1square);
@@ -207,12 +207,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
 		Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
 
-		ASTNode r1r2;
-		if (specRefR1.equals(specRefR2))
-			r1r2 = ASTNode.pow(speciesTerm(speciesR1), 2);
-		else
-			r1r2 = ASTNode
-					.times(speciesTerm(speciesR1), speciesTerm(speciesR2));
+		ASTNode r1r2 = specRefR1.equals(specRefR2) ? ASTNode.pow(
+				speciesTerm(speciesR1), 2) : ASTNode.times(
+				speciesTerm(speciesR1), speciesTerm(speciesR2));
 		ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp, this),
 				ASTNode.times(this, p_kIr1, p_kMr2));
 		ASTNode numeratorReverse = ASTNode.frac(this, p_kcatn, p_kMp1);
@@ -220,7 +217,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			numeratorForward.multiplyWith(speciesTerm(enzyme));
 			numeratorReverse.multiplyWith(speciesTerm(enzyme));
 		}
-		numeratorForward.multiplyWith(r1r2);
+		numeratorForward.multiplyWith(r1r2.clone());
 		numeratorReverse.multiplyWith(speciesTerm(speciesP1));
 		ASTNode numerator = numeratorForward.minus(numeratorReverse);
 		ASTNode denominator = ASTNode
