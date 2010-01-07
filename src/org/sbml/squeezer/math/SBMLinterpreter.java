@@ -169,8 +169,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#abs(org.sbml.jsbml.ASTNode)
 	 */
 	public Double abs(ASTNode node) {
-		return Double.valueOf(Math.abs(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.abs(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -179,8 +178,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccos(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccos(ASTNode node) {
-		return Double.valueOf(Math.acos(((Double) (node.compile(this)))
-				.doubleValue()));
+		return Double.valueOf(Math.acos(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -189,7 +187,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccosh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccosh(ASTNode node) {
-		return Functions.arccosh(((Double) node.compile(this)).doubleValue());
+		return Functions.arccosh(toDouble(node.compile(this)));
 
 	}
 
@@ -199,7 +197,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccot(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccot(ASTNode node) {
-		return Functions.arccot(((Double) node.compile(this)).doubleValue());
+		return Functions.arccot(toDouble(node.compile(this)));
 	}
 
 	/*
@@ -208,7 +206,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccoth(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccoth(ASTNode node) {
-		return Functions.arccoth(((Double) node.compile(this)).doubleValue());
+		return Functions.arccoth(toDouble(node.compile(this)));
 
 	}
 
@@ -218,7 +216,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsc(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccsc(ASTNode node) {
-		return Functions.arccsc(((Double) node.compile(this)).doubleValue());
+		return Functions.arccsc(toDouble(node.compile(this)));
 	}
 
 	/*
@@ -227,7 +225,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsch(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccsch(ASTNode node) {
-		return Functions.arccsch(((Double) node.compile(this)).doubleValue());
+		return Functions.arccsch(toDouble(node.compile(this)));
 	}
 
 	/*
@@ -236,7 +234,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsec(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arcsec(ASTNode node) {
-		return Functions.arcsec(((Double) node.compile(this)).doubleValue());
+		return Functions.arcsec(toDouble(node.compile(this)));
 	}
 
 	/*
@@ -245,7 +243,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsech(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arcsech(ASTNode node) {
-		return Functions.arcsech(((Double) node.compile(this)).doubleValue());
+		return Functions.arcsech(toDouble(node.compile(this)));
 
 	}
 
@@ -255,8 +253,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsin(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arcsin(ASTNode node) {
-		return Double.valueOf(Math.asin(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.asin(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -265,7 +262,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsinh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arcsinh(ASTNode node) {
-		return Functions.arcsinh(((Double) node.compile(this)).doubleValue());
+		return Functions.arcsinh(toDouble(node.compile(this)));
 
 	}
 
@@ -275,8 +272,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctan(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arctan(ASTNode node) {
-		return Double.valueOf(Math.atan(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.atan(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -285,7 +281,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctanh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arctanh(ASTNode node) {
-		return Functions.arctanh(((Double) node.compile(this)).doubleValue());
+		return Functions.arctanh(toDouble(node.compile(this)));
 	}
 
 	/*
@@ -294,8 +290,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#ceiling(org.sbml.jsbml.ASTNode)
 	 */
 	public Double ceiling(ASTNode node) {
-		return Double.valueOf(Math.ceil(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.ceil(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -377,8 +372,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cos(org.sbml.jsbml.ASTNode)
 	 */
 	public Double cos(ASTNode node) {
-		return Double.valueOf(Math.cos(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.cos(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -387,8 +381,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cosh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double cosh(ASTNode node) {
-		return Double.valueOf(Math.cosh(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.cosh(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -397,7 +390,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cot(org.sbml.jsbml.ASTNode)
 	 */
 	public Double cot(ASTNode node) {
-		return Functions.cot(((Double) node.compile(this)).doubleValue());
+		return Functions.cot(toDouble(node.compile(this)));
 
 	}
 
@@ -407,7 +400,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#coth(org.sbml.jsbml.ASTNode)
 	 */
 	public Double coth(ASTNode node) {
-		return Functions.coth(((Double) node.compile(this)).doubleValue());
+		return Functions.coth(toDouble(node.compile(this)));
 
 	}
 
@@ -417,7 +410,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csc(org.sbml.jsbml.ASTNode)
 	 */
 	public Double csc(ASTNode node) {
-		return Functions.csc(((Double) node.compile(this)).doubleValue());
+		return Functions.csc(toDouble(node.compile(this)));
 
 	}
 
@@ -427,7 +420,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csch(org.sbml.jsbml.ASTNode)
 	 */
 	public Double csch(ASTNode node) {
-		return Functions.csch(((Double) node.compile(this)).doubleValue());
+		return Functions.csch(toDouble(node.compile(this)));
 
 	}
 
@@ -437,8 +430,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#exp(org.sbml.jsbml.ASTNode)
 	 */
 	public Double exp(ASTNode node) {
-		return Double.valueOf(Math.exp(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.exp(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -447,8 +439,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#factorial(org.sbml.jsbml.ASTNode)
 	 */
 	public Double factorial(ASTNode node) {
-		return Double.valueOf(Functions.factorial(((Double) node.compile(this))
-				.doubleValue()));
+		return Double
+				.valueOf(Functions.factorial(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -457,8 +449,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#floor(org.sbml.jsbml.ASTNode)
 	 */
 	public Double floor(ASTNode node) {
-		return Double.valueOf(Math.floor(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.floor(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -468,8 +459,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double frac(ASTNode nodeleft, ASTNode noderight) {
-		return Double.valueOf(((Double) nodeleft.compile(this)).doubleValue()
-				/ ((Double) noderight.compile(this)).doubleValue());
+		return Double.valueOf(toDouble(nodeleft.compile(this))
+				/ toDouble(noderight.compile(this)));
 	}
 
 	/*
@@ -492,9 +483,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		Hashtable<String, Double> args = new Hashtable<String, Double>();
 		for (int i = 0; i < arguments.length; i++)
 			args.put(lambda.getChild(i).compile(this).toString(),
-					(Double) arguments[i].compile(this));
-		return (Double) replace(lambda.getRightChild().clone(), args).compile(
-				this);
+					toDouble(arguments[i].compile(this)));
+		return toDouble(replace(lambda.getRightChild().clone(), args).compile(
+				this));
 	}
 
 	/*
@@ -840,7 +831,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		ASTNode function = nodes[nodes.length - 1];
 		int i = 0;
 		for (ASTNode node : nodes)
-			d[i++] = (Double) node.compile(this);
+			d[i++] = toDouble(node.compile(this));
 		return null;
 	}
 
@@ -850,7 +841,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNode)
 	 */
 	public Double ln(ASTNode node) {
-		return Functions.ln(((Double) node.compile(this)).doubleValue());
+		return Functions.ln(toDouble(node.compile(this)));
 
 	}
 
@@ -860,7 +851,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode)
 	 */
 	public Double log(ASTNode node) {
-		return Functions.log(((Double) node.compile(this)).doubleValue());
+		return Functions.log(toDouble(node.compile(this)));
 
 	}
 
@@ -871,8 +862,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double log(ASTNode nodeleft, ASTNode noderight) {
-		return Functions.log(((Double) nodeleft.compile(this)).doubleValue(),
-				((Double) noderight.compile(this)).doubleValue());
+		return Functions.log(toDouble(nodeleft.compile(this)),
+				toDouble(noderight.compile(this)));
 
 	}
 
@@ -883,14 +874,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Double logicalNot(ASTNode node) {
 		return Double
-				.valueOf((((Double) node.compile(this)).doubleValue() == getConstantTrue()) ? 0.0
-						: 1.0);
+				.valueOf((toDouble(node.compile(this)) == getConstantTrue()) ? getConstantFalse()
+						: getConstantTrue());
 	}
 
 	public Double logicalAND(ASTNode... nodes) {
 
 		for (ASTNode node : nodes) {
-			if (((Double) node.compile(this)).doubleValue() == getConstantFalse())
+			if (toDouble(node.compile(this)) == getConstantFalse())
 				return getConstantFalse();
 
 		}
@@ -899,7 +890,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 	public Double logicalOR(ASTNode... nodes) {
 		for (ASTNode node : nodes) {
-			if (((Double) node.compile(this)).doubleValue() == getConstantTrue())
+			if (toDouble(node.compile(this)) == getConstantTrue())
 				return getConstantTrue();
 
 		}
@@ -910,21 +901,21 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		Double value = getConstantFalse();
 
 		if (nodes.length > 0) {
-			value = ((Double) nodes[1].compile(this)).doubleValue();
+			value = toDouble(nodes[1].compile(this));
 		}
 
 		for (int i = 1; i < nodes.length; i++) {
-			if (((Double) nodes[i].compile(this)).doubleValue() == value)
-				;
-
-			value = getConstantFalse();
+			if (toDouble(nodes[i].compile(this)) == value)
+				value = getConstantFalse();
+			else
+				value = getConstantTrue();
 		}
 		return value;
 	}
 
 	public Double and(ASTNode... nodes) {
 		for (ASTNode node : nodes) {
-			if (((Double) node.compile(this)).doubleValue() == getConstantFalse())
+			if (toDouble(node.compile(this)) == getConstantFalse())
 				return getConstantFalse();
 
 		}
@@ -933,7 +924,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 	public Double or(ASTNode... nodes) {
 		for (ASTNode node : nodes) {
-			if (((Double) node.compile(this)).doubleValue() == getConstantTrue())
+			if (toDouble(node.compile(this)) == getConstantTrue())
 				return getConstantTrue();
 
 		}
@@ -944,14 +935,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		Double value = getConstantFalse();
 
 		if (nodes.length > 0) {
-			value = ((Double) nodes[1].compile(this)).doubleValue();
+			value = toDouble(nodes[1].compile(this));
 		}
 
 		for (int i = 1; i < nodes.length; i++) {
-			if (((Double) nodes[i].compile(this)).doubleValue() == value)
-				;
-
-			value = getConstantFalse();
+			if (toDouble(nodes[i].compile(this)) == value)
+				value = getConstantFalse();
+			else
+				value = getConstantTrue();
 		}
 		return value;
 	}
@@ -976,7 +967,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		double value = 0.0;
 
 		for (ASTNode node : nodes)
-			value -= ((Double) node.compile(this)).doubleValue();
+			value -= toDouble(node.compile(this));
 
 		return Double.valueOf(value);
 	}
@@ -990,12 +981,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		int i;
 		for (i = 1; i < nodes.length - 1; i += 2) {
 			if (((Double) nodes[i].compile(this)).doubleValue() == getConstantTrue())
-				return Double.valueOf((Double) nodes[i - 1].compile(this));
-
-		}
-
-		return Double.valueOf((Double) nodes[i - 1].compile(this));
-
+				return toDouble(nodes[i - 1].compile(this));
+		}		
+		
+		return toDouble(nodes[i - 1].compile(this));
 	}
 
 	/*
@@ -1019,9 +1008,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double pow(ASTNode nodeleft, ASTNode noderight) {
-		return Double.valueOf(Math.pow(((Double) nodeleft.compile(this))
-				.doubleValue(), ((Double) noderight.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.pow(toDouble(nodeleft.compile(this)), toDouble(noderight.compile(this))));
 
 	}
 
@@ -1033,8 +1020,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Boolean relationEqual(ASTNode nodeleft, ASTNode noderight) {
 		return Boolean
-				.valueOf(((Double) nodeleft.compile(this)).doubleValue() == ((Double) noderight
-						.compile(this)).doubleValue());
+				.valueOf(toDouble(nodeleft.compile(this)) == toDouble(noderight.compile(this)));
 	}
 
 	/*
@@ -1046,8 +1032,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Boolean relationGreaterEqual(ASTNode nodeleft, ASTNode noderight) {
 		return Boolean
-				.valueOf(((Double) nodeleft.compile(this)).doubleValue() >= ((Double) noderight
-						.compile(this)).doubleValue());
+				.valueOf(toDouble(nodeleft.compile(this)) >= toDouble(noderight.compile(this)));
 	}
 
 	/*
@@ -1059,8 +1044,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Boolean relationGreaterThan(ASTNode nodeleft, ASTNode noderight) {
 		return Boolean
-				.valueOf(((Double) nodeleft.compile(this)).doubleValue() > ((Double) noderight
-						.compile(this)));
+				.valueOf(toDouble(nodeleft.compile(this)) > toDouble(noderight.compile(this)));
 	}
 
 	/*
@@ -1072,8 +1056,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Boolean relationLessEqual(ASTNode nodeleft, ASTNode noderight) {
 		return Boolean
-				.valueOf(((Double) nodeleft.compile(this)).doubleValue() <= ((Double) noderight
-						.compile(this)).doubleValue());
+				.valueOf(toDouble(nodeleft.compile(this)) <= toDouble(noderight.compile(this)));
 	}
 
 	/*
@@ -1085,8 +1068,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Boolean relationLessThan(ASTNode nodeleft, ASTNode noderight) {
 		return Boolean
-				.valueOf(((Double) nodeleft.compile(this)).doubleValue() < ((Double) noderight
-						.compile(this)).doubleValue());
+				.valueOf(toDouble(nodeleft.compile(this)) < toDouble(noderight.compile(this)));
 	}
 
 	/*
@@ -1098,8 +1080,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Boolean relationNotEqual(ASTNode nodeleft, ASTNode noderight) {
 		return Boolean
-				.valueOf(((Double) nodeleft.compile(this)).doubleValue() != ((Double) noderight
-						.compile(this)).doubleValue());
+				.valueOf(toDouble(nodeleft.compile(this)) != toDouble(noderight.compile(this)));
 	}
 
 	/*
@@ -1109,8 +1090,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double root(ASTNode nodeleft, ASTNode noderight) {
-		return Functions.log(((Double) nodeleft.compile(this)).doubleValue(),
-				((Double) noderight.compile(this)).doubleValue());
+		return Functions.log(toDouble(nodeleft.compile(this)),
+				toDouble(noderight.compile(this)));
 
 	}
 
@@ -1120,7 +1101,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
 	 */
 	public Double sec(ASTNode node) {
-		return Functions.sec(((Double) node.compile(this)).doubleValue());
+		return Functions.sec(toDouble(node.compile(this)));
 
 	}
 
@@ -1130,7 +1111,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNode)
 	 */
 	public Double sech(ASTNode node) {
-		return Functions.sech(((Double) node.compile(this)).doubleValue());
+		return Functions.sech(toDouble(node.compile(this)));
 
 	}
 
@@ -1170,8 +1151,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sin(org.sbml.jsbml.ASTNode)
 	 */
 	public Double sin(ASTNode node) {
-		return Double.valueOf(Math.sin(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.sin(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -1180,8 +1160,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sinh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double sinh(ASTNode node) {
-		return Double.valueOf(Math.sinh(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.sinh(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -1190,8 +1169,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sqrt(org.sbml.jsbml.ASTNode)
 	 */
 	public Double sqrt(ASTNode node) {
-		return Double.valueOf(Math.sqrt(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.sqrt(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -1209,8 +1187,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#tan(org.sbml.jsbml.ASTNode)
 	 */
 	public Double tan(ASTNode node) {
-		return Double.valueOf(Math.tan(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.tan(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -1219,8 +1196,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#tanh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double tanh(ASTNode node) {
-		return Double.valueOf(Math.tanh(((Double) node.compile(this))
-				.doubleValue()));
+		return Double.valueOf(Math.tanh(toDouble(node.compile(this))));
 	}
 
 	/*
@@ -1411,7 +1387,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 *         logical expression is TRUE and 0.0 otherwise.
 	 */
 	protected double evaluateToDouble(ASTNode astnode) {
-		return ((Double) astnode.compile(this)).doubleValue();
+		return toDouble(astnode.compile(this));
 	}
 
 	/**
@@ -1645,7 +1621,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @return
 	 */
 	public Double not(ASTNode node) {
-		if (((Double) node.compile(this)).doubleValue() == getConstantTrue())
+		if (toDouble(node.compile(this)) == getConstantTrue())
 			return getConstantFalse();
 		else
 			return getConstantTrue();
