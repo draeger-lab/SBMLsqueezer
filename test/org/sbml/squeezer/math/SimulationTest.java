@@ -11,7 +11,7 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
 
 import eva2.gui.Plot;
-import eva2.tools.des.RKSolver;
+import eva2.tools.math.des.RKSolver;
 
 /**
  * @author Andreas Dr&auml;ger <a

@@ -6,6 +6,8 @@
  */
 package org.sbml.squeezer.math;
 
+import eva2.tools.math.Mathematics;
+
 
 /**
  * This class contains a multitude of well defined mathematical functions
@@ -17,7 +19,7 @@ package org.sbml.squeezer.math;
  * @author Diedonne Wouamba <dwouamba@yahoo.fr>
  * @date Oct 29, 2007
  **/
-public final class Functions extends eva2.tools.Mathematics {
+public final class Functions extends Mathematics {
 
 	/**
 	 * There shouldn't be any instances of this class.

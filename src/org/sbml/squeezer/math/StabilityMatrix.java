@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.sbml.squeezer.math.jama.EigenvalueDecomposition;
-import org.sbml.squeezer.math.jama.Matrix;
-import org.sbml.squeezer.math.jama.QRDecomposition;;
+import eva2.tools.math.Jama.EigenvalueDecomposition;
+import eva2.tools.math.Jama.Matrix;
+import eva2.tools.math.Jama.QRDecomposition;
 
 /**
  * This Class extends the representation of a m x n Matrix with some additional
