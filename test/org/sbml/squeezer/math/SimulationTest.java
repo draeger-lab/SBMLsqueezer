@@ -35,6 +35,7 @@ public class SimulationTest {
 			System.exit(1);
 		}
 		SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
+		System.out.println(args[0]);
 		Model model = sbmlIo.readModel(args[0]);
 		RKSolver rk = new RKSolver();
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
