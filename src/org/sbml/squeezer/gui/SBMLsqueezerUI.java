@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -327,15 +328,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				}
 				break;
 			case ONLINE_HELP:
-				JHelpBrowser helpBrowser = new JHelpBrowser(this,
-						"SBMLsqueezer " + SBMLsqueezer.getVersionNumber()
-								+ " - Online Help");
-				helpBrowser.addWindowListener(this);
-				helpBrowser.setLocationRelativeTo(this);
-				helpBrowser.setSize(640, 640);
-				helpBrowser.setVisible(true);
-				helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				setEnabled(false, Command.ONLINE_HELP);
+				showOnlineHelp(this, this);
 				break;
 			case CHECK_STABILITY:
 				// Next version!
@@ -348,6 +342,23 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Shows a dialog window with the online help.
+	 * 
+	 * @param owner
+	 * @param wl
+	 */
+	public static void showOnlineHelp(Frame owner, WindowListener wl) {
+		JHelpBrowser helpBrowser = new JHelpBrowser(owner, String.format(
+				"SBMLsqueezer %s - Online Help", SBMLsqueezer
+						.getVersionNumber()));
+		helpBrowser.addWindowListener(wl);
+		helpBrowser.setLocationRelativeTo(owner);
+		helpBrowser.setSize(640, 640);
+		helpBrowser.setVisible(true);
+		helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	}
 
 	/*
@@ -661,16 +672,16 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			toolbar.add(latexButton);
 		}
 		// Next version!
-//		if (GUITools.ICON_STABILITY_SMALL != null) {
-//			JButton stabilityButton = new JButton(GUITools.ICON_STABILITY_SMALL);
-//			stabilityButton.addActionListener(this);
-//			stabilityButton
-//					.setActionCommand(Command.CHECK_STABILITY.toString());
-//			stabilityButton.setToolTipText(GUITools.toHTML(
-//					"Analyze the stability properties of the selected model.",
-//					40));
-//			toolbar.add(stabilityButton);
-//		}
+		// if (GUITools.ICON_STABILITY_SMALL != null) {
+		// JButton stabilityButton = new JButton(GUITools.ICON_STABILITY_SMALL);
+		// stabilityButton.addActionListener(this);
+		// stabilityButton
+		// .setActionCommand(Command.CHECK_STABILITY.toString());
+		// stabilityButton.setToolTipText(GUITools.toHTML(
+		// "Analyze the stability properties of the selected model.",
+		// 40));
+		// toolbar.add(stabilityButton);
+		// }
 		toolbar.addSeparator();
 		JButton helpButton = new JButton(GUITools.ICON_HELP_TINY);
 		helpButton.addActionListener(this);
