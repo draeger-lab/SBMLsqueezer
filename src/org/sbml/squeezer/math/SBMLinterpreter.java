@@ -1641,4 +1641,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return (!left && !right) ? false : true;
 	}
 
+	public Object not(ASTNode node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public double[] getInitialValues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
