@@ -66,6 +66,52 @@ import eva2.tools.math.des.DESystem;
 public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 	/**
+	 * Stores initial values of symbols changed due to initial assignments.
+	 * 
+	 * @author Andreas Dr&auml;ger <a
+	 *         href="mailto:andreas.draeger@uni-tuebingen.de"
+	 *         >andreas.draeger@uni-tuebingen.de</a>
+	 * 
+	 */
+	private class Value {
+		Integer index;
+		double value;
+
+		public Value(Double value) {
+			setValue(value);
+		}
+
+		/**
+		 * 
+		 * @param index
+		 * @param value
+		 */
+		public Value(Integer index) {
+			setIndex(index);
+
+		}
+
+		public Integer getIndex() {
+			return index;
+		}
+
+		public double getValue() {
+			return value;
+		}
+
+		public void setIndex(Integer index) {
+			this.index = index;
+			this.value = Double.NaN;
+		}
+
+		public void setValue(double value) {
+			this.value = value;
+			this.index = -1;
+		}
+
+	}
+
+	/**
 	 * Generated serial version UID
 	 */
 	private static final long serialVersionUID = 3453063382705340995L;
@@ -170,6 +216,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Double abs(ASTNode node) {
 		return Double.valueOf(Math.abs(toDouble(node.compile(this))));
+	}
+
+	public Double and(ASTNode... nodes) {
+		for (ASTNode node : nodes) {
+			if (toDouble(node.compile(this)) == getConstantFalse())
+				return getConstantFalse();
+
+		}
+		return getConstantTrue();
 	}
 
 	/*
@@ -424,6 +479,73 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 	}
 
+	/**
+	 * 
+	 * @param alr
+	 * @param res
+	 */
+	private void evaluateAlgebraicRule(AlgebraicRule alr, double res[]) {
+		int speciesIndex;
+		Value val;
+
+		// TODO
+
+	}
+
+	/**
+	 * 
+	 * @param ar
+	 * @param res
+	 */
+	private void evaluateAssignmentRule(AssignmentRule ar, double res[]) {
+		int speciesIndex;
+		Value val;
+
+		val = valuesHash.get(ar.getVariable());
+		speciesIndex = val.getIndex();
+		res[speciesIndex] = evaluateToDouble(ar.getMath());
+
+	}
+
+	/**
+	 * 
+	 * @param rr
+	 * @param res
+	 */
+	private void evaluateRateRule(RateRule rr, double res[]) {
+		int speciesIndex;
+		Value val;
+
+		// TODO
+		// val = valuesHash.get(rr.getVariable());
+		// speciesIndex = val.getIndex();
+		// res[speciesIndex] = evaluateToDouble(rr.getMath());
+	}
+
+	/**
+	 * TODO: comment missing
+	 * 
+	 * @param ast
+	 * @return
+	 */
+	protected boolean evaluateToBoolean(ASTNode ast) {
+		return Boolean.valueOf((Boolean) ast.compile(this));
+	}
+
+	/**
+	 * Executes the mathematics of any ASTNode and returns the result.
+	 * 
+	 * @param astnode
+	 *            A tree data structure representing the mathematics stored in
+	 *            an SBML file.
+	 * @return a real number that is the result of the mathematics described by
+	 *         this ASTNode. This function return 1.0 if the evaluation of a
+	 *         logical expression is TRUE and 0.0 otherwise.
+	 */
+	protected double evaluateToDouble(ASTNode astnode) {
+		return toDouble(astnode.compile(this));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -511,8 +633,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantFalse()
 	 */
-	public Double getConstantFalse() {
-		return Double.valueOf(0.0);
+	public Boolean getConstantFalse() {
+		return Boolean.FALSE;
 	}
 
 	/*
@@ -529,8 +651,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantTrue()
 	 */
-	public Double getConstantTrue() {
-		return Double.valueOf(1.0);
+	public Boolean getConstantTrue() {
+		return Boolean.TRUE;
 	}
 
 	/*
@@ -605,52 +727,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public double getTime() {
 		return currentTime;
-	}
-
-	/**
-	 * Stores initial values of symbols changed due to initial assignments.
-	 * 
-	 * @author Andreas Dr&auml;ger <a
-	 *         href="mailto:andreas.draeger@uni-tuebingen.de"
-	 *         >andreas.draeger@uni-tuebingen.de</a>
-	 * 
-	 */
-	private class Value {
-		Integer index;
-		double value;
-
-		/**
-		 * 
-		 * @param index
-		 * @param value
-		 */
-		public Value(Integer index) {
-			setIndex(index);
-
-		}
-
-		public Value(Double value) {
-			setValue(value);
-		}
-
-		public Integer getIndex() {
-			return index;
-		}
-
-		public void setIndex(Integer index) {
-			this.index = index;
-			this.value = Double.NaN;
-		}
-
-		public double getValue() {
-			return value;
-		}
-
-		public void setValue(double value) {
-			this.value = value;
-			this.index = -1;
-		}
-
 	}
 
 	/*
@@ -767,49 +843,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return this.Y;
 	}
 
-	/**
-	 * 
-	 * @param rr
-	 * @param res
-	 */
-	private void evaluateRateRule(RateRule rr, double res[]) {
-		int speciesIndex;
-		Value val;
-
-		// TODO
-		// val = valuesHash.get(rr.getVariable());
-		// speciesIndex = val.getIndex();
-		// res[speciesIndex] = evaluateToDouble(rr.getMath());
-	}
-
-	/**
-	 * 
-	 * @param ar
-	 * @param res
-	 */
-	private void evaluateAssignmentRule(AssignmentRule ar, double res[]) {
-		int speciesIndex;
-		Value val;
-
-		val = valuesHash.get(ar.getVariable());
-		speciesIndex = val.getIndex();
-		res[speciesIndex] = evaluateToDouble(ar.getMath());
-
-	}
-
-	/**
-	 * 
-	 * @param alr
-	 * @param res
-	 */
-	private void evaluateAlgebraicRule(AlgebraicRule alr, double res[]) {
-		int speciesIndex;
-		Value val;
-
-		// TODO
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -819,575 +852,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public void getValue(double time, double[] Y, double[] res) {
 		System.arraycopy(getValue(time, Y), 0, res, 0, res.length);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#lambda(org.sbml.jsbml.ASTNode[])
-	 */
-	public Double lambda(ASTNode... nodes) {
-		Double d[] = new Double[Math.max(0, nodes.length - 1)];
-		ASTNode function = nodes[nodes.length - 1];
-		int i = 0;
-		for (ASTNode node : nodes)
-			d[i++] = toDouble(node.compile(this));
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNode)
-	 */
-	public Double ln(ASTNode node) {
-		return Functions.ln(toDouble(node.compile(this)));
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode)
-	 */
-	public Double log(ASTNode node) {
-		return Functions.log(toDouble(node.compile(this)));
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Double log(ASTNode nodeleft, ASTNode noderight) {
-		return Functions.log(toDouble(nodeleft.compile(this)),
-				toDouble(noderight.compile(this)));
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalNot(org.sbml.jsbml.ASTNode)
-	 */
-	public Double logicalNot(ASTNode node) {
-		return Double
-				.valueOf((toDouble(node.compile(this)) == getConstantTrue()) ? getConstantFalse()
-						: getConstantTrue());
-	}
-
-	public Double logicalAND(ASTNode... nodes) {
-
-		for (ASTNode node : nodes) {
-			if (toDouble(node.compile(this)) == getConstantFalse())
-				return getConstantFalse();
-
-		}
-		return getConstantTrue();
-	}
-
-	public Double logicalOR(ASTNode... nodes) {
-		for (ASTNode node : nodes) {
-			if (toDouble(node.compile(this)) == getConstantTrue())
-				return getConstantTrue();
-
-		}
-		return getConstantFalse();
-	}
-
-	public Double logicalXOR(ASTNode... nodes) {
-		Double value = getConstantFalse();
-
-		if (nodes.length > 0) {
-			value = toDouble(nodes[1].compile(this));
-		}
-
-		for (int i = 1; i < nodes.length; i++) {
-			if (toDouble(nodes[i].compile(this)) == value)
-				value = getConstantFalse();
-			else
-				value = getConstantTrue();
-		}
-		return value;
-	}
-
-	public Double and(ASTNode... nodes) {
-		for (ASTNode node : nodes) {
-			if (toDouble(node.compile(this)) == getConstantFalse())
-				return getConstantFalse();
-
-		}
-		return getConstantTrue();
-	}
-
-	public Double or(ASTNode... nodes) {
-		for (ASTNode node : nodes) {
-			if (toDouble(node.compile(this)) == getConstantTrue())
-				return getConstantTrue();
-
-		}
-		return getConstantFalse();
-	}
-
-	public Double xor(ASTNode... nodes) {
-		Double value = getConstantFalse();
-
-		if (nodes.length > 0) {
-			value = toDouble(nodes[1].compile(this));
-		}
-
-		for (int i = 1; i < nodes.length; i++) {
-			if (toDouble(nodes[i].compile(this)) == value)
-				value = getConstantFalse();
-			else
-				value = getConstantTrue();
-		}
-		return value;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#logicalOperation(org.sbml.jsbml.ASTNode)
-	 */
-	public Object logicalOperation(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#minus(org.sbml.jsbml.ASTNode[])
-	 */
-	public Double minus(ASTNode... nodes) {
-		double value = 0.0;
-
-		for (ASTNode node : nodes)
-			value -= toDouble(node.compile(this));
-
-		return Double.valueOf(value);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#piecewise(org.sbml.jsbml.ASTNode[])
-	 */
-	public Double piecewise(ASTNode... nodes) {
-		int i;
-		for (i = 1; i < nodes.length - 1; i += 2) {
-			if (((Double) nodes[i].compile(this)).doubleValue() == getConstantTrue())
-				return toDouble(nodes[i - 1].compile(this));
-		}		
-		
-		return toDouble(nodes[i - 1].compile(this));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#plus(org.sbml.jsbml.ASTNode[])
-	 */
-	public Double plus(ASTNode... nodes) {
-		double value = 0d;
-
-		for (ASTNode node : nodes)
-			value += toDouble(node.compile(this));
-
-		return Double.valueOf(value);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Double pow(ASTNode nodeleft, ASTNode noderight) {
-		return Double.valueOf(Math.pow(toDouble(nodeleft.compile(this)), toDouble(noderight.compile(this))));
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#relationEqual(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Boolean relationEqual(ASTNode nodeleft, ASTNode noderight) {
-		return Boolean
-				.valueOf(toDouble(nodeleft.compile(this)) == toDouble(noderight.compile(this)));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationGreaterEqual(org.sbml.jsbml.ASTNode
-	 * , org.sbml.jsbml.ASTNode)
-	 */
-	public Boolean relationGreaterEqual(ASTNode nodeleft, ASTNode noderight) {
-		return Boolean
-				.valueOf(toDouble(nodeleft.compile(this)) >= toDouble(noderight.compile(this)));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationGraterThan(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Boolean relationGreaterThan(ASTNode nodeleft, ASTNode noderight) {
-		return Boolean
-				.valueOf(toDouble(nodeleft.compile(this)) > toDouble(noderight.compile(this)));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationLessEqual(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Boolean relationLessEqual(ASTNode nodeleft, ASTNode noderight) {
-		return Boolean
-				.valueOf(toDouble(nodeleft.compile(this)) <= toDouble(noderight.compile(this)));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationLessThan(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Boolean relationLessThan(ASTNode nodeleft, ASTNode noderight) {
-		return Boolean
-				.valueOf(toDouble(nodeleft.compile(this)) < toDouble(noderight.compile(this)));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationNotEqual(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Boolean relationNotEqual(ASTNode nodeleft, ASTNode noderight) {
-		return Boolean
-				.valueOf(toDouble(nodeleft.compile(this)) != toDouble(noderight.compile(this)));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#root(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Double root(ASTNode nodeleft, ASTNode noderight) {
-		return Functions.log(toDouble(nodeleft.compile(this)),
-				toDouble(noderight.compile(this)));
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
-	 */
-	public Double sec(ASTNode node) {
-		return Functions.sec(toDouble(node.compile(this)));
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNode)
-	 */
-	public Double sech(ASTNode node) {
-		return Functions.sech(toDouble(node.compile(this)));
-
-	}
-
-	/**
-	 * This method allows to set the parameters of the model to the specified
-	 * values in the given array.
-	 * 
-	 * @param params
-	 *            An array of parameter values to be set for this model. If the
-	 *            number of given parameters does not match the number of model
-	 *            parameters, an exception will be thrown.
-	 */
-	// TODO changing the model directly not allowed / does this method still
-	// make sense?
-	public void setParameters(double[] params) {
-		// TODO consider local parameters as well.
-		// if (params.length != model.getNumParameters())
-		// throw new IllegalArgumentException(
-		// "The number of parameters passed to this method must "
-		// + "match the number of parameters in the model.");
-		int paramNum, reactionNum, localPnum;
-		for (paramNum = 0; paramNum < model.getNumParameters(); paramNum++)
-			model.getParameter(paramNum).setValue(params[paramNum]);
-		for (reactionNum = 0; reactionNum < model.getNumReactions(); reactionNum++) {
-			KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
-			for (localPnum = 0; localPnum < law.getNumParameters(); localPnum++)
-				law.getParameter(localPnum).setValue(params[paramNum++]);
-		}
-		if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0)
-			init();
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sin(org.sbml.jsbml.ASTNode)
-	 */
-	public Double sin(ASTNode node) {
-		return Double.valueOf(Math.sin(toDouble(node.compile(this))));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sinh(org.sbml.jsbml.ASTNode)
-	 */
-	public Double sinh(ASTNode node) {
-		return Double.valueOf(Math.sinh(toDouble(node.compile(this))));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sqrt(org.sbml.jsbml.ASTNode)
-	 */
-	public Double sqrt(ASTNode node) {
-		return Double.valueOf(Math.sqrt(toDouble(node.compile(this))));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#symbolTime(java.lang.String)
-	 */
-	public Double symbolTime(String timeSymbol) {
-		return Double.valueOf(getTime());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#tan(org.sbml.jsbml.ASTNode)
-	 */
-	public Double tan(ASTNode node) {
-		return Double.valueOf(Math.tan(toDouble(node.compile(this))));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#tanh(org.sbml.jsbml.ASTNode)
-	 */
-	public Double tanh(ASTNode node) {
-		return Double.valueOf(Math.tanh(toDouble(node.compile(this))));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#times(org.sbml.jsbml.ASTNode[])
-	 */
-	public Double times(ASTNode... nodes) {
-		if (nodes.length == 0)
-			return 0d;
-		double value = 1d;
-		for (ASTNode node : nodes)
-			value *= toDouble(node.compile(this));
-		return Double.valueOf(value);
-	}
-
-	/**
-	 * Tries to convert the given Object into a double number.
-	 * 
-	 * @param o
-	 *            An object that is either an instance of Integer, Double or
-	 *            String.
-	 * @return The double value represented by the given Object.
-	 */
-	private double toDouble(Object o) {
-		if (o instanceof Integer)
-			return Double.valueOf(((Integer) o).intValue()).doubleValue();
-		else if (o instanceof Double)
-			return ((Double) o).doubleValue();
-		return Double.parseDouble(o.toString());
-	}
-
-	/**
-	 * Tries to convert the given Object into a int number.
-	 * 
-	 * @param o
-	 *            An object that is either an instance of Integer, Double or
-	 *            String.
-	 * @return The int value represented by the given Object.
-	 */
-	private int toInt(Object o) {
-		if (o instanceof Integer)
-			return ((Integer) o).intValue();
-		else if (o instanceof Double)
-			return Integer.valueOf((int) ((Double) o).doubleValue());
-		return Integer.parseInt(o.toString());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#uiMinus(org.sbml.jsbml.ASTNode)
-	 */
-	public Double uiMinus(ASTNode node) {
-		return Double.valueOf(-((Double) node.compile(this)).doubleValue());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#unknownASTNode()
-	 */
-	public Double unknownASTNode() {
-		return Double.valueOf(Double.NaN);
-	}
-
-	/**
-	 * TODO Comment
-	 * 
-	 */
-	private void initEvents() {
-		listOfEvents_delay = new LinkedList[(int) model.getNumEvents()];
-		for (int i = 0; i < listOfEvents_delay.length; i++) {
-			listOfEvents_delay[i] = new LinkedList<Double>();
-			if (evaluateToBoolean(model.getEvent(i).getTrigger().getMath())) {
-				listOfEvents_delay[i].add(Double.POSITIVE_INFINITY);
-				listOfEvents_delay[i].addFirst(Double.NaN);
-				listOfEvents_delay[i].addLast(0.0);
-			} else {
-				listOfEvents_delay[i].add(Double.NaN);
-				listOfEvents_delay[i].addFirst(Double.NaN);
-				listOfEvents_delay[i].addLast(0.0);
-			}
-		}
-	}
-
-	// ---- Setters ----
-
-	/**
-	 * Method inserting a double value in a sorted list which contains at least
-	 * 2 element.
-	 */
-	private void insertSort(LinkedList<Double> list, double value) {
-		// list size is at leat 2
-		if (list.size() <= 3) {
-			list.addFirst(value);
-		} else {
-			int counter = 0;
-			while (list.get(counter) < value) {
-				counter++;
-			}
-			list.add(counter, value);
-		}
-	}
-
-	/*
-	 * ---- Getters ----
-	 */
-
-	/**
-	 * Method performing event.
-	 */
-	private void performEvents(Event ev) {
-		for (int j = 0; j < ev.getNumEventAssignments(); j++) {
-			ASTNode assignment_math = ev.getEventAssignment(j).getMath();
-			/*
-			 * check variable.
-			 */
-			String variable = ev.getEventAssignment(j).getVariable();
-			// if the variable is a species
-			if (model.getSpecies(variable) != null) {
-				System.out.println(variable + "=\t"
-						+ Y[speciesIdIndex.get(variable).intValue()] + "\t"
-						+ evaluateToDouble(ev.getEventAssignment(j).getMath()));
-
-				this.Y[speciesIdIndex.get(variable).intValue()] = evaluateToDouble(assignment_math);
-			}
-			// if the variable is a parameter
-			else if (model.getParameter(variable) != null)
-				model.getParameter(variable).setValue(
-						evaluateToDouble(assignment_math));
-			else if (model.getCompartment(variable) != null)
-				model.getCompartment(variable).setVolume(
-						evaluateToDouble(assignment_math));
-			// if the variable is a function
-			else if (model.getFunctionDefinition(assignment_math.getName()) != null)
-				model.getFunctionDefinition(variable).setMath(assignment_math);
-		}
-	}
-
-	/**
-	 * This Method is filling the array listOfEvents_delay with lists of times
-	 * at which events must be executed.
-	 */
-	private void prepareEvents(int index, double time, ASTNode delay) {
-		double value = time;
-		value += evaluateToDouble(delay);
-		insertSort(listOfEvents_delay[index], value);
-	}
-
-	/**
-	 * 
-	 * @param lambda
-	 * @param names
-	 * @param d
-	 * @return
-	 */
-	private ASTNode replace(ASTNode lambda, Hashtable<String, Double> args) {
-		String name;
-		for (ASTNode child : lambda.getListOfNodes())
-			if (child.isName() && args.containsKey(child.getName())) {
-				name = child.getName();
-				child.setType(ASTNode.Type.REAL);
-				child.setValue(args.get(name));
-			} else if (child.getNumChildren() > 0)
-				child = replace(child, args);
-		return lambda;
-	}
-
-	/**
-	 * TODO: comment missing
-	 * 
-	 * @param ast
-	 * @return
-	 */
-	protected boolean evaluateToBoolean(ASTNode ast) {
-		return Boolean.valueOf((Boolean) ast.compile(this));
-	}
-
-	/**
-	 * Executes the mathematics of any ASTNode and returns the result.
-	 * 
-	 * @param astnode
-	 *            A tree data structure representing the mathematics stored in
-	 *            an SBML file.
-	 * @return a real number that is the result of the mathematics described by
-	 *         this ASTNode. This function return 1.0 if the evaluation of a
-	 *         logical expression is TRUE and 0.0 otherwise.
-	 */
-	protected double evaluateToDouble(ASTNode astnode) {
-		return toDouble(astnode.compile(this));
 	}
 
 	/**
@@ -1537,6 +1001,57 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	}
 
 	/**
+	 * TODO Comment
+	 * 
+	 */
+	private void initEvents() {
+		listOfEvents_delay = new LinkedList[(int) model.getNumEvents()];
+		for (int i = 0; i < listOfEvents_delay.length; i++) {
+			listOfEvents_delay[i] = new LinkedList<Double>();
+			if (evaluateToBoolean(model.getEvent(i).getTrigger().getMath())) {
+				listOfEvents_delay[i].add(Double.POSITIVE_INFINITY);
+				listOfEvents_delay[i].addFirst(Double.NaN);
+				listOfEvents_delay[i].addLast(0.0);
+			} else {
+				listOfEvents_delay[i].add(Double.NaN);
+				listOfEvents_delay[i].addFirst(Double.NaN);
+				listOfEvents_delay[i].addLast(0.0);
+			}
+		}
+	}
+
+	/**
+	 * Method inserting a double value in a sorted list which contains at least
+	 * 2 element.
+	 */
+	private void insertSort(LinkedList<Double> list, double value) {
+		// list size is at leat 2
+		if (list.size() <= 3) {
+			list.addFirst(value);
+		} else {
+			int counter = 0;
+			while (list.get(counter) < value) {
+				counter++;
+			}
+			list.add(counter, value);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#lambda(org.sbml.jsbml.ASTNode[])
+	 */
+	public Double lambda(ASTNode... nodes) {
+		Double d[] = new Double[Math.max(0, nodes.length - 1)];
+		ASTNode function = nodes[nodes.length - 1];
+		int i = 0;
+		for (ASTNode node : nodes)
+			d[i++] = toDouble(node.compile(this));
+		return null;
+	}
+
+	/**
 	 * This method computes the multiplication of the stoichiometric matrix of
 	 * the given model system with the reaction velocities vector passed to this
 	 * method. Note, the stoichiometric matrix is only constructed implicitely
@@ -1592,6 +1107,48 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return swap;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNode)
+	 */
+	public Double ln(ASTNode node) {
+		return Functions.ln(toDouble(node.compile(this)));
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode)
+	 */
+	public Double log(ASTNode node) {
+		return Functions.log(toDouble(node.compile(this)));
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
+	 */
+	public Double log(ASTNode nodeleft, ASTNode noderight) {
+		return Functions.log(toDouble(nodeleft.compile(this)),
+				toDouble(noderight.compile(this)));
+
+	}
+
+	public Double logicalAND(ASTNode... nodes) {
+
+		for (ASTNode node : nodes) {
+			if (toDouble(node.compile(this)) == getConstantFalse())
+				return getConstantFalse();
+
+		}
+		return getConstantTrue();
+	}
+
 	/**
 	 * logical AND
 	 * 
@@ -1601,6 +1158,37 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	protected boolean logicalAND(boolean a, boolean b) {
 		return (a && b) ? true : false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalNot(org.sbml.jsbml.ASTNode)
+	 */
+	public Double logicalNot(ASTNode node) {
+		return Double
+				.valueOf((toDouble(node.compile(this)) == getConstantTrue()) ? getConstantFalse()
+						: getConstantTrue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#logicalOperation(org.sbml.jsbml.ASTNode)
+	 */
+	public Object logicalOperation(ASTNode node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Double logicalOR(ASTNode... nodes) {
+		for (ASTNode node : nodes) {
+			if (toDouble(node.compile(this)) == getConstantTrue())
+				return getConstantTrue();
+
+		}
+		return getConstantFalse();
 	}
 
 	/**
@@ -1614,6 +1202,36 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return (!left && !right) ? false : true;
 	}
 
+	public Double logicalXOR(ASTNode... nodes) {
+		Double value = getConstantFalse();
+
+		if (nodes.length > 0) {
+			value = toDouble(nodes[1].compile(this));
+		}
+
+		for (int i = 1; i < nodes.length; i++) {
+			if (toDouble(nodes[i].compile(this)) == value)
+				value = getConstantFalse();
+			else
+				value = getConstantTrue();
+		}
+		return value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#minus(org.sbml.jsbml.ASTNode[])
+	 */
+	public Double minus(ASTNode... nodes) {
+		double value = 0.0;
+
+		for (ASTNode node : nodes)
+			value -= toDouble(node.compile(this));
+
+		return Double.valueOf(value);
+	}
+
 	/**
 	 * not
 	 * 
@@ -1625,6 +1243,423 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			return getConstantFalse();
 		else
 			return getConstantTrue();
+	}
+
+	public Double or(ASTNode... nodes) {
+		for (ASTNode node : nodes) {
+			if (toDouble(node.compile(this)) == getConstantTrue())
+				return getConstantTrue();
+
+		}
+		return getConstantFalse();
+	}
+
+	/**
+	 * Method performing event.
+	 */
+	private void performEvents(Event ev) {
+		for (int j = 0; j < ev.getNumEventAssignments(); j++) {
+			ASTNode assignment_math = ev.getEventAssignment(j).getMath();
+			/*
+			 * check variable.
+			 */
+			String variable = ev.getEventAssignment(j).getVariable();
+			// if the variable is a species
+			if (model.getSpecies(variable) != null) {
+				System.out.println(variable + "=\t"
+						+ Y[speciesIdIndex.get(variable).intValue()] + "\t"
+						+ evaluateToDouble(ev.getEventAssignment(j).getMath()));
+
+				this.Y[speciesIdIndex.get(variable).intValue()] = evaluateToDouble(assignment_math);
+			}
+			// if the variable is a parameter
+			else if (model.getParameter(variable) != null)
+				model.getParameter(variable).setValue(
+						evaluateToDouble(assignment_math));
+			else if (model.getCompartment(variable) != null)
+				model.getCompartment(variable).setVolume(
+						evaluateToDouble(assignment_math));
+			// if the variable is a function
+			else if (model.getFunctionDefinition(assignment_math.getName()) != null)
+				model.getFunctionDefinition(variable).setMath(assignment_math);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#piecewise(org.sbml.jsbml.ASTNode[])
+	 */
+	public Double piecewise(ASTNode... nodes) {
+		int i;
+		for (i = 1; i < nodes.length - 1; i += 2) {
+			if (((Double) nodes[i].compile(this)).doubleValue() == getConstantTrue())
+				return toDouble(nodes[i - 1].compile(this));
+		}
+
+		return toDouble(nodes[i - 1].compile(this));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#plus(org.sbml.jsbml.ASTNode[])
+	 */
+	public Double plus(ASTNode... nodes) {
+		double value = 0d;
+
+		for (ASTNode node : nodes)
+			value += toDouble(node.compile(this));
+
+		return Double.valueOf(value);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
+	 */
+	public Double pow(ASTNode nodeleft, ASTNode noderight) {
+		return Double.valueOf(Math.pow(toDouble(nodeleft.compile(this)),
+				toDouble(noderight.compile(this))));
+
+	}
+
+	/**
+	 * This Method is filling the array listOfEvents_delay with lists of times
+	 * at which events must be executed.
+	 */
+	private void prepareEvents(int index, double time, ASTNode delay) {
+		double value = time;
+		value += evaluateToDouble(delay);
+		insertSort(listOfEvents_delay[index], value);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#relationEqual(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
+	 */
+	public Boolean relationEqual(ASTNode nodeleft, ASTNode noderight) {
+		return Boolean
+				.valueOf(toDouble(nodeleft.compile(this)) == toDouble(noderight
+						.compile(this)));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#relationGreaterEqual(org.sbml.jsbml.ASTNode
+	 * , org.sbml.jsbml.ASTNode)
+	 */
+	public Boolean relationGreaterEqual(ASTNode nodeleft, ASTNode noderight) {
+		return Boolean
+				.valueOf(toDouble(nodeleft.compile(this)) >= toDouble(noderight
+						.compile(this)));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#relationGraterThan(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
+	 */
+	public Boolean relationGreaterThan(ASTNode nodeleft, ASTNode noderight) {
+		return Boolean
+				.valueOf(toDouble(nodeleft.compile(this)) > toDouble(noderight
+						.compile(this)));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#relationLessEqual(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
+	 */
+	public Boolean relationLessEqual(ASTNode nodeleft, ASTNode noderight) {
+		return Boolean
+				.valueOf(toDouble(nodeleft.compile(this)) <= toDouble(noderight
+						.compile(this)));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#relationLessThan(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
+	 */
+	public Boolean relationLessThan(ASTNode nodeleft, ASTNode noderight) {
+		return Boolean
+				.valueOf(toDouble(nodeleft.compile(this)) < toDouble(noderight
+						.compile(this)));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.jsbml.ASTNodeCompiler#relationNotEqual(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
+	 */
+	public Boolean relationNotEqual(ASTNode nodeleft, ASTNode noderight) {
+		return Boolean
+				.valueOf(toDouble(nodeleft.compile(this)) != toDouble(noderight
+						.compile(this)));
+	}
+
+	/**
+	 * 
+	 * @param lambda
+	 * @param names
+	 * @param d
+	 * @return
+	 */
+	private ASTNode replace(ASTNode lambda, Hashtable<String, Double> args) {
+		String name;
+		for (ASTNode child : lambda.getListOfNodes())
+			if (child.isName() && args.containsKey(child.getName())) {
+				name = child.getName();
+				child.setType(ASTNode.Type.REAL);
+				child.setValue(args.get(name));
+			} else if (child.getNumChildren() > 0)
+				child = replace(child, args);
+		return lambda;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#root(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
+	 */
+	public Double root(ASTNode nodeleft, ASTNode noderight) {
+		return Functions.log(toDouble(nodeleft.compile(this)),
+				toDouble(noderight.compile(this)));
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
+	 */
+	public Double sec(ASTNode node) {
+		return Functions.sec(toDouble(node.compile(this)));
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNode)
+	 */
+	public Double sech(ASTNode node) {
+		return Functions.sech(toDouble(node.compile(this)));
+
+	}
+
+	/**
+	 * This method allows to set the parameters of the model to the specified
+	 * values in the given array.
+	 * 
+	 * @param params
+	 *            An array of parameter values to be set for this model. If the
+	 *            number of given parameters does not match the number of model
+	 *            parameters, an exception will be thrown.
+	 */
+	// TODO changing the model directly not allowed / does this method still
+	// make sense?
+	public void setParameters(double[] params) {
+		// TODO consider local parameters as well.
+		// if (params.length != model.getNumParameters())
+		// throw new IllegalArgumentException(
+		// "The number of parameters passed to this method must "
+		// + "match the number of parameters in the model.");
+		int paramNum, reactionNum, localPnum;
+		for (paramNum = 0; paramNum < model.getNumParameters(); paramNum++)
+			model.getParameter(paramNum).setValue(params[paramNum]);
+		for (reactionNum = 0; reactionNum < model.getNumReactions(); reactionNum++) {
+			KineticLaw law = model.getReaction(reactionNum).getKineticLaw();
+			for (localPnum = 0; localPnum < law.getNumParameters(); localPnum++)
+				law.getParameter(localPnum).setValue(params[paramNum++]);
+		}
+		if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0)
+			init();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#sin(org.sbml.jsbml.ASTNode)
+	 */
+	public Double sin(ASTNode node) {
+		return Double.valueOf(Math.sin(toDouble(node.compile(this))));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#sinh(org.sbml.jsbml.ASTNode)
+	 */
+	public Double sinh(ASTNode node) {
+		return Double.valueOf(Math.sinh(toDouble(node.compile(this))));
+	}
+
+	// ---- Setters ----
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#sqrt(org.sbml.jsbml.ASTNode)
+	 */
+	public Double sqrt(ASTNode node) {
+		return Double.valueOf(Math.sqrt(toDouble(node.compile(this))));
+	}
+
+	/*
+	 * ---- Getters ----
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#symbolTime(java.lang.String)
+	 */
+	public Double symbolTime(String timeSymbol) {
+		return Double.valueOf(getTime());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#tan(org.sbml.jsbml.ASTNode)
+	 */
+	public Double tan(ASTNode node) {
+		return Double.valueOf(Math.tan(toDouble(node.compile(this))));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#tanh(org.sbml.jsbml.ASTNode)
+	 */
+	public Double tanh(ASTNode node) {
+		return Double.valueOf(Math.tanh(toDouble(node.compile(this))));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#times(org.sbml.jsbml.ASTNode[])
+	 */
+	public Double times(ASTNode... nodes) {
+		if (nodes.length == 0)
+			return 0d;
+		double value = 1d;
+		for (ASTNode node : nodes)
+			value *= toDouble(node.compile(this));
+		return Double.valueOf(value);
+	}
+
+	/**
+	 * Tries to convert the given Object into a boolean value.
+	 * 
+	 * @param o
+	 *            An object that is either an instance of Boolean, Integer,
+	 *            Double, or String.
+	 * @return The boolean value represented by the givne Object. If the given
+	 *         value is a number, true is returned if its value is not zero.
+	 */
+	private boolean toBoolean(Object o) {
+		if (o instanceof Boolean)
+			return ((Boolean) o).booleanValue();
+		if (o instanceof String)
+			return Boolean.parseBoolean(o.toString());
+		return toInt(o) != 0;
+	}
+
+	/**
+	 * Tries to convert the given Object into a double number.
+	 * 
+	 * @param o
+	 *            An object that is either an instance of Integer, Double,
+	 *            Boolean, or String.
+	 * @return The double value represented by the given Object. In case the
+	 *         given Object is an instance of Boolean, zero is returned for
+	 *         false and one for true. If the object is null, NaN will be
+	 *         returned.
+	 */
+	private double toDouble(Object o) {
+		if (o == null)
+			return Double.NaN;
+		if (o instanceof Integer)
+			return Double.valueOf(((Integer) o).intValue()).doubleValue();
+		if (o instanceof Double)
+			return ((Double) o).doubleValue();
+		if (o instanceof Boolean)
+			return ((Boolean) o).booleanValue() == false ? 0d : 1d;
+		return Double.parseDouble(o.toString());
+	}
+
+	/**
+	 * Tries to convert the given Object into a int number.
+	 * 
+	 * @param o
+	 *            An object that is either an instance of Integer, Double,
+	 *            Boolean, or String.
+	 * @return The int value represented by the given Object. In case the given
+	 *         Object is an instance of Boolean, zero is returned for false and
+	 *         one for true.
+	 */
+	private int toInt(Object o) {
+		if (o instanceof Integer)
+			return ((Integer) o).intValue();
+		if (o instanceof Double)
+			return Integer.valueOf((int) ((Double) o).doubleValue());
+		if (o instanceof Boolean)
+			return ((Boolean) o).booleanValue() == false ? 0 : 1;
+		return Integer.parseInt(o.toString());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#uiMinus(org.sbml.jsbml.ASTNode)
+	 */
+	public Double uiMinus(ASTNode node) {
+		return Double.valueOf(-((Double) node.compile(this)).doubleValue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#unknownASTNode()
+	 */
+	public Double unknownASTNode() {
+		return Double.valueOf(Double.NaN);
+	}
+
+	public Double xor(ASTNode... nodes) {
+		Double value = getConstantFalse();
+
+		if (nodes.length > 0) {
+			value = toDouble(nodes[1].compile(this));
+		}
+
+		for (int i = 1; i < nodes.length; i++) {
+			if (toDouble(nodes[i].compile(this)) == value)
+				value = getConstantFalse();
+			else
+				value = getConstantTrue();
+		}
+		return value;
 	}
 
 }
