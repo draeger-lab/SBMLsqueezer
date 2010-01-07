@@ -55,13 +55,14 @@ public class SimulationTest {
 				}
 				time = 0;
 			}
-			JDialog dialog = new JDialog();
-			dialog.getContentPane().add(plot.getFunctionArea());
-			dialog.pack();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setLocationRelativeTo(null);
-			dialog.setTitle("Simulation of model " + model.getId());
-			dialog.setVisible(true);
+
+			// JDialog dialog = new JDialog();
+			// dialog.getContentPane().add(plot.getFunctionArea());
+			// dialog.pack();
+			// dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			// dialog.setLocationRelativeTo(null);
+			// dialog.setTitle("Simulation of model " + model.getId());
+			// dialog.setVisible(true);
 		}
 	}
 
