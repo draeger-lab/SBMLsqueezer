@@ -29,6 +29,7 @@ import jp.sbi.celldesigner.plugin.PluginSBase;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
+import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.SettingsDialog;
 import org.sbml.squeezer.io.SBMLio;
 
@@ -78,6 +79,9 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			menu.add(menuItem);
 			// Options
 			menuItem = new PluginMenuItem(Mode.CONFIGURE.getText(), action);
+			menu.add(menuItem);
+			// Help
+			menuItem = new PluginMenuItem(Mode.ONLINE_HELP.getText(), action);
 			menu.add(menuItem);
 			addCellDesignerPluginMenu(menu);
 
@@ -199,7 +203,12 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 		 * This method returns the text for the menu item that allows the user
 		 * to export the model into another format, such as LaTeX.
 		 */
-		EXPORT_ALL;
+		EXPORT_ALL,
+		/**
+		 * Show the online help.
+		 */
+		ONLINE_HELP;
+		
 
 		/**
 		 * A human-readable label for each mode.
@@ -218,6 +227,8 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 				return "Export reaction to other format";
 			case EXPORT_ALL:
 				return "Export model to other format";
+			case ONLINE_HELP:
+				return "Help";
 			default:
 				return "invalid option";
 			}
@@ -278,6 +289,8 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			else
 				System.err.println("no selected model available");
 			break;
+		case ONLINE_HELP:
+			SBMLsqueezerUI.showOnlineHelp(null, null);
 		default:
 			System.err.println("unsuported action");
 			break;
