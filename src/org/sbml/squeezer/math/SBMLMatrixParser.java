@@ -246,6 +246,8 @@ public class SBMLMatrixParser {
 			result = 1;
 		else if (half > normal && normal > twice)
 			result = -1;
+		
+		m.getSpecies(msr.getSpecies()).setInitialAmount(iA);
 
 		return result;
 	}
