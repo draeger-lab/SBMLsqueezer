@@ -861,7 +861,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Double log(ASTNode node) {
 		return Functions.log(((Double) node.compile(this)).doubleValue());
-		
+
 	}
 
 	/*
@@ -871,8 +871,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double log(ASTNode nodeleft, ASTNode noderight) {
-		return Functions.log(((Double) nodeleft.compile(this)).doubleValue(),((Double) noderight.compile(this)).doubleValue());
-		
+		return Functions.log(((Double) nodeleft.compile(this)).doubleValue(),
+				((Double) noderight.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -1108,7 +1109,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double root(ASTNode nodeleft, ASTNode noderight) {
-		return Functions.log(((Double) nodeleft.compile(this)).doubleValue(),((Double) noderight.compile(this)).doubleValue());
+		return Functions.log(((Double) nodeleft.compile(this)).doubleValue(),
+				((Double) noderight.compile(this)).doubleValue());
 
 	}
 
@@ -1119,7 +1121,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Double sec(ASTNode node) {
 		return Functions.sec(((Double) node.compile(this)).doubleValue());
-	
+
 	}
 
 	/*
@@ -1408,7 +1410,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		ArrayList<Double> variableValues = new ArrayList<Double>();
 		int constantIndex = 0;
 		Value val = null;
-		
+
 		for (i = 0; i < model.getNumCompartments(); i++) {
 			Compartment c = model.getCompartment(i);
 
@@ -1551,9 +1553,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			Reaction r = model.getReaction(reactionIndex);
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumReactants(); sReferenceIndex++) {
 				speciesRef = r.getReactant(sReferenceIndex);
-				species = model.getSpecies(speciesRef.getId());
-				val = valuesHash.get(speciesRef.getId());
-
+				species = speciesRef.getSpeciesInstance();
+				// species = model.getSpecies(speciesRef.getId());
+				val = valuesHash.get(species.getId());
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
 					speciesIndex = val.getIndex();
 					if (speciesRef.isSetStoichiometryMath())
@@ -1567,8 +1569,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			}
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
 				speciesRef = r.getProduct(sReferenceIndex);
-				species = model.getSpecies(speciesRef.getId());
-				val = valuesHash.get(speciesRef.getId());
+				species = speciesRef.getSpeciesInstance();
+				//species = model.getSpecies(speciesRef.getId());
+				val = valuesHash.get(species.getId());
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
 					speciesIndex = val.getIndex();
 					if (speciesRef.isSetStoichiometryMath())
