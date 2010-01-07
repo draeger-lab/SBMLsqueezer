@@ -1408,6 +1408,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		ArrayList<Double> variableValues = new ArrayList<Double>();
 		int constantIndex = 0;
 		Value val = null;
+		
+		for (i = 0; i < model.getNumCompartments(); i++) {
+			Compartment c = model.getCompartment(i);
+
+			if (c.isConstant())
+				valuesHash.put(c.getId(), new Value(c.getSize()));
+			else {
+				variableValues.add(c.getSize());
+				valuesHash.put(c.getId(), new Value(constantIndex));
+				constantIndex++;
+			}
+		}
 
 		for (i = 0; i < model.getNumSpecies(); i++) {
 			Species s = model.getSpecies(i);
@@ -1430,18 +1442,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 					variableValues.add(s.getInitialConcentration());
 
 				valuesHash.put(s.getId(), new Value(constantIndex));
-				constantIndex++;
-			}
-		}
-
-		for (i = 0; i < model.getNumCompartments(); i++) {
-			Compartment c = model.getCompartment(i);
-
-			if (c.isConstant())
-				valuesHash.put(c.getId(), new Value(c.getSize()));
-			else {
-				variableValues.add(c.getSize());
-				valuesHash.put(c.getId(), new Value(constantIndex));
 				constantIndex++;
 			}
 		}
@@ -1596,7 +1596,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	}
 
 	/**
-	 * logicalOR
+	 * logical OR
 	 * 
 	 * @param left
 	 * @param right
@@ -1607,7 +1607,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	}
 
 	/**
-	 * logical not
+	 * not
 	 * 
 	 * @param node
 	 * @return
