@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
+import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Event;
@@ -87,7 +88,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * are changed, because the parameters may influence the return values of
 	 * the initial assignments.
 	 */
-	// protected double[] initialValues;
+	protected double[] initialValues;
+
 	private HashMap<String, Value> valuesHash;
 
 	/**
@@ -187,9 +189,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccosh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccosh(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		return Double.valueOf(Math.log((interim)
-				+ (Math.sqrt(Math.pow(interim, 2) - 1))));
+		return Functions.arccosh(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -198,10 +199,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccot(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccot(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (interim == 0)
-			throw new java.lang.ArithmeticException("arccot(0) undefined");
-		return Double.valueOf(Math.atan(1 / (interim)));
+		return Functions.arccot(((Double) node.compile(this)).doubleValue());
 	}
 
 	/*
@@ -210,11 +208,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccoth(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccoth(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (interim == 0)
-			throw new java.lang.ArithmeticException("arccoth(0) undefined");
-		return Double.valueOf((Math.log(1 + (1 / (interim))) - Math
-				.log(1 - (1 / (interim)))) / 2);
+		return Functions.arccoth(((Double) node.compile(this)).doubleValue());
 
 	}
 
@@ -224,10 +218,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsc(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccsc(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (Math.asin(interim) == 0)
-			throw new java.lang.ArithmeticException("Arccsc undefined");
-		return Double.valueOf(1 / (Math.asin(interim)));
+		return Functions.arccsc(((Double) node.compile(this)).doubleValue());
 	}
 
 	/*
@@ -236,11 +227,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsch(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arccsch(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (Math.asin(interim) == 0)
-			throw new java.lang.ArithmeticException("arccsch(0) undefined");
-		return Double.valueOf(Math.log(1 / interim
-				+ Math.sqrt(Math.pow(1 / interim, 2) + 1)));
+		return Functions.arccsch(((Double) node.compile(this)).doubleValue());
 	}
 
 	/*
@@ -249,11 +236,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsec(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arcsec(ASTNode node) {
-		double interim = Double.valueOf(Math.acos(((Double) node.compile(this))
-				.doubleValue()));
-		if (interim == 0)
-			throw new java.lang.ArithmeticException("arcsec undefined");
-		return Double.valueOf(1 / interim);
+		return Functions.arcsec(((Double) node.compile(this)).doubleValue());
 	}
 
 	/*
@@ -262,11 +245,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsech(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arcsech(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (interim == 0)
-			throw new java.lang.ArithmeticException("arcsech(0) undefined");
-		return Double.valueOf(Math.log((1 / interim)
-				+ (Math.sqrt(Math.pow(1 / interim, 2) - 1))));
+		return Functions.arcsech(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -285,9 +265,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsinh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arcsinh(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		return Double.valueOf(Math.log(interim
-				+ Math.sqrt(Math.pow(interim, 2) + 1)));
+		return Functions.arcsinh(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -306,9 +285,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctanh(org.sbml.jsbml.ASTNode)
 	 */
 	public Double arctanh(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		return Double
-				.valueOf((Math.log(1 + interim) - Math.log(1 - interim)) / 2);
+		return Functions.arctanh(((Double) node.compile(this)).doubleValue());
 	}
 
 	/*
@@ -420,10 +397,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cot(org.sbml.jsbml.ASTNode)
 	 */
 	public Double cot(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (Math.sin(interim) == 0)
-			throw new java.lang.ArithmeticException("cot undefined");
-		return Double.valueOf(Math.cos(interim) / Math.sin(interim));
+		return Functions.cot(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -432,10 +407,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#coth(org.sbml.jsbml.ASTNode)
 	 */
 	public Double coth(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (Math.sinh(interim) == 0)
-			throw new java.lang.ArithmeticException("coth undefined");
-		return Double.valueOf(Math.cosh(interim) / Math.sinh(interim));
+		return Functions.coth(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -444,10 +417,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csc(org.sbml.jsbml.ASTNode)
 	 */
 	public Double csc(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (Math.sin(interim) == 0)
-			throw new java.lang.ArithmeticException("Csc undefined");
-		return Double.valueOf(1 / Math.sin(interim));
+		return Functions.csc(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -456,10 +427,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csch(org.sbml.jsbml.ASTNode)
 	 */
 	public Double csch(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (Math.sinh(interim) == 0)
-			throw new java.lang.ArithmeticException("Csch undefined");
-		return Double.valueOf(1 / Math.sinh(interim));
+		return Functions.csch(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -589,9 +558,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 * @return Returns the initial values of the model to be simulated.
 	 */
-	// public double[] getInitialValues() {
-	// return this.initialValues;
-	// }
+	public double[] getInitialValues() {
+		return this.initialValues;
+	}
+
 	/**
 	 * Returns the model that is used by this object.
 	 * 
@@ -700,14 +670,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * .Des.DESystem#getValue(double, double[])
 	 */
 	public double[] getValue(double time, double[] Y) {
-		int i, speciesIndex;
-		// if ((Y == null) || (time == 0.0))
-		// System.arraycopy(initialValues, 0, this.Y, 0, initialValues.length);
-		// else
-		// this.Y = Y;
+		int i;
 		this.currentTime = time;
 		double res[] = new double[Y.length];
-		Value val;
+
 		/*
 		 * Events checking if the model has events and executing events that
 		 * must be executed at this time point: t = time.
@@ -784,42 +750,16 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
-				
-				if(evaluateToDouble(rule.getMath()) != getConstantFalse());
-					//throw error?
+				AlgebraicRule alr = (AlgebraicRule) rule;
+				evaluateAlgebraicRule(alr, res);
 
 			} else if (rule.isAssignment()) {
 				AssignmentRule ar = (AssignmentRule) rule;
-				val = valuesHash.get(ar.getVariable());
-				speciesIndex = val.getIndex();
-				// if (ar.isCompartmentVolume())
-				//					
-				// model.getCompartment(ar.getVariable()).setVolume(
-				// evaluateToDouble(rule.getMath()));
-				// else if (ar.isParameter())
-				// model.getParameter(ar.getVariable()).setValue(
-				// evaluateToDouble(rule.getMath()));
-				// else if (ar.isSpeciesConcentration()) {
-				// }
-				res[speciesIndex] = evaluateToDouble(ar.getMath());
+				evaluateAssignmentRule(ar, res);
 
 			} else if (rule.isRate()) {
-				// The entity identify must have its constant attribute set
-				// to false
 				RateRule rr = (RateRule) rule;
-				// String var = rr.getVariable();
-				// if (rr.isCompartmentVolume()) {
-				// // TODO
-				// } else if (rr.isSpeciesConcentration()) {
-				// // boundaryCondition must be true
-				// Y[speciesIdIndex.get(var).intValue()] = evaluateToDouble(rule
-				// .getMath());
-				// } else if (rr.isParameter()) {
-				// // TODOConstraints
-				// }
-				val = valuesHash.get(rr.getVariable());
-				speciesIndex = val.getIndex();
-				res[speciesIndex] = evaluateToDouble(rr.getMath());
+				evaluateRateRule(rr, res);
 
 			} else if (rule.isScalar()) {
 			}
@@ -830,7 +770,53 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < (int) model.getNumConstraints(); i++)
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
+
+		System.arraycopy(res, 0, this.Y, 0, res.length);
+
 		return this.Y;
+	}
+
+	/**
+	 * 
+	 * @param rr
+	 * @param res
+	 */
+	private void evaluateRateRule(RateRule rr, double res[]) {
+		int speciesIndex;
+		Value val;
+
+		// TODO
+		// val = valuesHash.get(rr.getVariable());
+		// speciesIndex = val.getIndex();
+		// res[speciesIndex] = evaluateToDouble(rr.getMath());
+	}
+
+	/**
+	 * 
+	 * @param ar
+	 * @param res
+	 */
+	private void evaluateAssignmentRule(AssignmentRule ar, double res[]) {
+		int speciesIndex;
+		Value val;
+
+		val = valuesHash.get(ar.getVariable());
+		speciesIndex = val.getIndex();
+		res[speciesIndex] = evaluateToDouble(ar.getMath());
+
+	}
+
+	/**
+	 * 
+	 * @param alr
+	 * @param res
+	 */
+	private void evaluateAlgebraicRule(AlgebraicRule alr, double res[]) {
+		int speciesIndex;
+		Value val;
+
+		// TODO
+
 	}
 
 	/*
@@ -864,8 +850,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNode)
 	 */
 	public Double ln(ASTNode node) {
-		return Double.valueOf(Math.log(((Double) node.compile(this))
-				.doubleValue()));
+		return Functions.ln(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -874,8 +860,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode)
 	 */
 	public Double log(ASTNode node) {
-		return Double.valueOf(Math.log10(((Double) node.compile(this))
-				.doubleValue()));
+		return Functions.log(((Double) node.compile(this)).doubleValue());
+		
 	}
 
 	/*
@@ -885,9 +871,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double log(ASTNode nodeleft, ASTNode noderight) {
-		return Functions.logarithm(((Double) nodeleft.compile(this))
-				.doubleValue(), ((Double) noderight.compile(this))
-				.doubleValue());
+		return Functions.log(((Double) nodeleft.compile(this)).doubleValue(),((Double) noderight.compile(this)).doubleValue());
+		
 	}
 
 	/*
@@ -1123,11 +1108,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double root(ASTNode nodeleft, ASTNode noderight) {
-		double interim = ((Double) noderight.compile(this)).doubleValue();
-		if (interim != 0)
-			return Double.valueOf(Math.pow(((Double) nodeleft.compile(this))
-					.doubleValue(), 1 / interim));
-		throw new java.lang.ArithmeticException("Division by zero");
+		return Functions.log(((Double) nodeleft.compile(this)).doubleValue(),((Double) noderight.compile(this)).doubleValue());
+
 	}
 
 	/*
@@ -1136,10 +1118,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
 	 */
 	public Double sec(ASTNode node) {
-		double interim = Math.cos(((Double) node.compile(this)).doubleValue());
-		if (interim == 0)
-			throw new java.lang.ArithmeticException("sec(0) undefined");
-		return Double.valueOf(1 / interim);
+		return Functions.sec(((Double) node.compile(this)).doubleValue());
+	
 	}
 
 	/*
@@ -1148,10 +1128,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNode)
 	 */
 	public Double sech(ASTNode node) {
-		double interim = ((Double) node.compile(this)).doubleValue();
-		if (Math.cosh(interim) == 0)
-			throw new java.lang.ArithmeticException("Sech undefined");
-		return Double.valueOf(1 / Math.cosh(interim));
+		return Functions.sech(((Double) node.compile(this)).doubleValue());
+
 	}
 
 	/**
@@ -1428,15 +1406,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		int i;
 		valuesHash = new HashMap<String, Value>();
 		ArrayList<Double> variableValues = new ArrayList<Double>();
-		int constantIndex = 0, speciesIndex;
+		int constantIndex = 0;
 		Value val = null;
 
 		for (i = 0; i < model.getNumSpecies(); i++) {
 			Species s = model.getSpecies(i);
-			// TODO boundary
 			if (s.isConstant()) {
 				if (s.isSetInitialAmount()) {
-					// TODO Einheitenabgleich beim Umrechnen von Item in
 					valuesHash.put(s.getId(), new Value(s.getInitialAmount()
 							/ model.getCompartment(s.getCompartment())
 									.getVolume()));
@@ -1447,7 +1423,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 			else {
 				if (s.isSetInitialAmount())
-					// TODO Einheitenabgleich beim Umrechnen von Item in
 					variableValues.add(s.getInitialAmount()
 							/ model.getCompartment(s.getCompartment())
 									.getVolume());
@@ -1489,6 +1464,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			this.Y[i] = variableValues.get(i);
 		}
 		variableValues.clear();
+		initialValues = new double[Y.length];
+		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
 
 		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment assign = model.getInitialAssignment(i);
@@ -1542,15 +1519,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
-				
-				if(evaluateToDouble(rule.getMath()) != getConstantFalse());
-					//throw error?
-				
+				AlgebraicRule alr = (AlgebraicRule) rule;
+
 			} else if (rule.isAssignment()) {
 				AssignmentRule ar = (AssignmentRule) rule;
-				val = valuesHash.get(ar.getVariable());
-				speciesIndex = val.getIndex();
-				this.Y[speciesIndex] = evaluateToDouble(rule.getMath());
 
 			}
 		}
@@ -1579,9 +1551,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			Reaction r = model.getReaction(reactionIndex);
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumReactants(); sReferenceIndex++) {
 				speciesRef = r.getReactant(sReferenceIndex);
-				// speciesIndex = (int) speciesIdIndex
-				// .get(speciesRef.getSpecies()).intValue();
-				// species = model.getSpecies(speciesIndex);
 				species = model.getSpecies(speciesRef.getId());
 				val = valuesHash.get(speciesRef.getId());
 
@@ -1598,9 +1567,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			}
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
 				speciesRef = r.getProduct(sReferenceIndex);
-				// speciesIndex = (int) speciesIdIndex
-				// .get(speciesRef.getSpecies()).intValue();
-				// species = model.getSpecies(speciesIndex);
 				species = model.getSpecies(speciesRef.getId());
 				val = valuesHash.get(speciesRef.getId());
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
@@ -1630,28 +1596,27 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	}
 
 	/**
-	 * logocalOR
+	 * logicalOR
 	 * 
 	 * @param left
 	 * @param right
-	 * @return false false if left and right are false, true otherwise
+	 * @return false if left and right are false, true otherwise
 	 */
 	protected boolean logicalOR(boolean left, boolean right) {
 		return (!left && !right) ? false : true;
 	}
 
-	public Object not(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
+	 * logical not
 	 * 
+	 * @param node
 	 * @return
 	 */
-	public double[] getInitialValues() {
-		// TODO Auto-generated method stub
-		return null;
+	public Double not(ASTNode node) {
+		if (((Double) node.compile(this)).doubleValue() == getConstantTrue())
+			return getConstantFalse();
+		else
+			return getConstantTrue();
 	}
 
 }
