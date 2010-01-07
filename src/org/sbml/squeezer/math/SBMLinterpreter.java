@@ -1004,10 +1004,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#plus(org.sbml.jsbml.ASTNode[])
 	 */
 	public Double plus(ASTNode... nodes) {
-		double value = 0.0;
+		double value = 0d;
 
 		for (ASTNode node : nodes)
-			value += ((Double) node.compile(this)).doubleValue();
+			value += toDouble(node.compile(this));
 
 		return Double.valueOf(value);
 	}
@@ -1230,14 +1230,43 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Double times(ASTNode... nodes) {
 		if (nodes.length == 0)
-			return 0.0;
-
-		double value = 1.0;
-
+			return 0d;
+		double value = 1d;
 		for (ASTNode node : nodes)
-			value *= ((Double) node.compile(this)).doubleValue();
-
+			value *= toDouble(node.compile(this));
 		return Double.valueOf(value);
+	}
+
+	/**
+	 * Tries to convert the given Object into a double number.
+	 * 
+	 * @param o
+	 *            An object that is either an instance of Integer, Double or
+	 *            String.
+	 * @return The double value represented by the given Object.
+	 */
+	private double toDouble(Object o) {
+		if (o instanceof Integer)
+			return Double.valueOf(((Integer) o).intValue()).doubleValue();
+		else if (o instanceof Double)
+			return ((Double) o).doubleValue();
+		return Double.parseDouble(o.toString());
+	}
+
+	/**
+	 * Tries to convert the given Object into a int number.
+	 * 
+	 * @param o
+	 *            An object that is either an instance of Integer, Double or
+	 *            String.
+	 * @return The int value represented by the given Object.
+	 */
+	private int toInt(Object o) {
+		if (o instanceof Integer)
+			return ((Integer) o).intValue();
+		else if (o instanceof Double)
+			return Integer.valueOf((int) ((Double) o).doubleValue());
+		return Integer.parseInt(o.toString());
 	}
 
 	/*
@@ -1570,7 +1599,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
 				speciesRef = r.getProduct(sReferenceIndex);
 				species = speciesRef.getSpeciesInstance();
-				//species = model.getSpecies(speciesRef.getId());
+				// species = model.getSpecies(speciesRef.getId());
 				val = valuesHash.get(species.getId());
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
 					speciesIndex = val.getIndex();
