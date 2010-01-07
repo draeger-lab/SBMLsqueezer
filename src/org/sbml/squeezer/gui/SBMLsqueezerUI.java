@@ -69,6 +69,38 @@ import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.resources.Resource;
 
 /**
+ * 
+ * @author Andreas Dr&auml;ger
+ * 
+ */
+class FileReaderThread extends Thread implements Runnable {
+
+	private File file;
+	private SBMLsqueezerUI reader;
+
+	/**
+	 * 
+	 * @param ui
+	 * @param f
+	 */
+	public FileReaderThread(SBMLsqueezerUI ui, File f) {
+		super();
+		this.reader = ui;
+		this.file = f;
+		start();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Thread#run()
+	 */
+	public void run() {
+		reader.readModel(file);
+	}
+}
+
+/**
  * The central class for SBMLsqueezer's graphical user interface. This class has
  * actually nothing to do with earlier versions of SBMLsqueezerUI because the
  * class that had this name before has now become the
@@ -92,9 +124,6 @@ import org.sbml.squeezer.resources.Resource;
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		WindowListener, ChangeListener, IOProgressListener {
 
-	private JDialog progressDialog;
-	private JLabel label;
-
 	/**
 	 * This is what the graphical user interface of SBMLsqueezer can do...
 	 * 
@@ -104,6 +133,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @date 2009-09-11
 	 */
 	public static enum Command {
+		/**
+		 * 
+		 */
+		CHECK_STABILITY,
 		/**
 		 * 
 		 */
@@ -135,31 +168,82 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		/**
 		 * 
 		 */
-		TO_LATEX,
+		STRUCTURAL_KINETIC_MODELLING,
 		/**
 		 * 
 		 */
-		CHECK_STABILITY,
-		/**
-		 * 
-		 */
-		STRUCTURAL_KINETIC_MODELLING
+		TO_LATEX
 	}
-
 	/**
 	 * Generated serial version uid.
 	 */
 	private static final long serialVersionUID = 5461285676322858005L;
 
 	/**
+	 * Checks if the model loaded as the last one contains any errors or
+	 * warnings.
+	 */
+	public static final void checkForSBMLErrors(Component parent, Model m,
+			List<SBMLException> excl, boolean showWarnings) {
+		if (excl.size() > 0 && showWarnings) {
+			StringBuilder warnings = new StringBuilder();
+			for (SBMLException exc : excl) {
+				warnings.append("<p>");
+				warnings.append(exc.getMessage().replace("<", "&lt;").replace(
+						">", "&gt;"));
+				warnings.append("</p>");
+			}
+			JEditorPane area = new JEditorPane("text/html", GUITools
+					.toHTML(warnings.toString()));
+			area.setEditable(false);
+			area.setBackground(Color.WHITE);
+			JScrollPane scroll = new JScrollPane(area,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scroll.setPreferredSize(new Dimension(450, 200));
+			JOptionPane.showMessageDialog(parent, scroll, "SBML warnings",
+					JOptionPane.WARNING_MESSAGE);
+			if (m == null) {
+				String message = "Unable to load this model "
+						+ "due to one or several errors. "
+						+ "Please use the SBML online validator "
+						+ "to check why this model is not correct.";
+				JOptionPane.showMessageDialog(parent, GUITools.toHTML(message,
+						40), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	/**
+	 * Shows a dialog window with the online help.
+	 * 
+	 * @param owner
+	 * @param wl
+	 */
+	public static void showOnlineHelp(Frame owner, WindowListener wl) {
+		JHelpBrowser helpBrowser = new JHelpBrowser(owner, String.format(
+				"SBMLsqueezer %s - Online Help", SBMLsqueezer
+						.getVersionNumber()));
+		helpBrowser.addWindowListener(wl);
+		helpBrowser.setLocationRelativeTo(owner);
+		helpBrowser.setSize(640, 640);
+		helpBrowser.setVisible(true);
+		helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	}
+
+	/**
 	 * Default background color.
 	 */
 	private Color colorDefault;
+
+	private JLabel label;
 
 	/**
 	 * 
 	 */
 	private JLabel logo;
+
+	private JDialog progressDialog;
 
 	/**
 	 * Manages all models, storage, loading and selecting models.
@@ -345,122 +429,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	/**
-	 * Shows a dialog window with the online help.
-	 * 
-	 * @param owner
-	 * @param wl
-	 */
-	public static void showOnlineHelp(Frame owner, WindowListener wl) {
-		JHelpBrowser helpBrowser = new JHelpBrowser(owner, String.format(
-				"SBMLsqueezer %s - Online Help", SBMLsqueezer
-						.getVersionNumber()));
-		helpBrowser.addWindowListener(wl);
-		helpBrowser.setLocationRelativeTo(owner);
-		helpBrowser.setSize(640, 640);
-		helpBrowser.setVisible(true);
-		helpBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-	 * )
-	 */
-	public void stateChanged(ChangeEvent e) {
-		if (e.getSource().equals(tabbedPane)) {
-			if (tabbedPane.getComponentCount() == 0) {
-				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
-						Command.SQUEEZE, Command.TO_LATEX,
-						Command.CHECK_STABILITY,
-						Command.STRUCTURAL_KINETIC_MODELLING);
-				if (settings.get(CfgKeys.SBML_FILE).toString().length() > 0)
-					setEnabled(true, Command.OPEN_LAST_FILE);
-			}
-			setSBMLsqueezerBackground();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	public void windowActivated(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
-	 */
-	public void windowClosed(WindowEvent we) {
-		if (we.getWindow() instanceof KineticLawSelectionDialog) {
-			KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we
-					.getWindow();
-			if (klsd.isKineticsAndParametersStoredInSBML()) {
-				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
-						.getSelectedComponent();
-				split.init(sbmlIO.getSelectedModel(), true);
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-	 */
-	public void windowClosing(WindowEvent we) {
-		if (we.getSource() instanceof JHelpBrowser)
-			setEnabled(true, Command.ONLINE_HELP);
-		else if (we.getSource() instanceof SBMLsqueezerUI)
-			SBMLsqueezer.saveProperties(settings);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeactivated(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeiconified(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
-	 */
-	public void windowIconified(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
-	 */
-	public void windowOpened(WindowEvent arg0) {
-	}
-
-	/**
 	 * Adds the given new model into the tabbed pane on the main panel.
 	 * 
 	 * @param model
@@ -474,41 +442,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
 				Command.STRUCTURAL_KINETIC_MODELLING);
 		setEnabled(false, Command.OPEN_LAST_FILE);
-	}
-
-	/**
-	 * Checks if the model loaded as the last one contains any errors or
-	 * warnings.
-	 */
-	public static final void checkForSBMLErrors(Component parent, Model m,
-			List<SBMLException> excl, boolean showWarnings) {
-		if (excl.size() > 0 && showWarnings) {
-			StringBuilder warnings = new StringBuilder();
-			for (SBMLException exc : excl) {
-				warnings.append("<p>");
-				warnings.append(exc.getMessage().replace("<", "&lt;").replace(
-						">", "&gt;"));
-				warnings.append("</p>");
-			}
-			JEditorPane area = new JEditorPane("text/html", GUITools
-					.toHTML(warnings.toString()));
-			area.setEditable(false);
-			area.setBackground(Color.WHITE);
-			JScrollPane scroll = new JScrollPane(area,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scroll.setPreferredSize(new Dimension(450, 200));
-			JOptionPane.showMessageDialog(parent, scroll, "SBML warnings",
-					JOptionPane.WARNING_MESSAGE);
-			if (m == null) {
-				String message = "Unable to load this model "
-						+ "due to one or several errors. "
-						+ "Please use the SBML online validator "
-						+ "to check why this model is not correct.";
-				JOptionPane.showMessageDialog(parent, GUITools.toHTML(message,
-						40), "Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
 	}
 
 	/**
@@ -724,6 +657,40 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
+	 */
+	public void ioProgressOn(Object currObject) {
+		if (currObject != null) {
+			if (label == null)
+				label = new JLabel();
+			StringBuilder sb = new StringBuilder();
+			sb.append(currObject.getClass().getSimpleName());
+			if (currObject instanceof NamedSBase) {
+				sb.append(' ');
+				NamedSBase nsb = (NamedSBase) currObject;
+				sb.append(nsb.getId());
+				if (nsb.getName() != null && nsb.getName().length() > 0) {
+					sb.append(' ');
+					sb.append(nsb.getName());
+				}
+			}
+			label.setText(GUITools.toHTML(sb.toString(), 40));
+			if (progressDialog == null) {
+				progressDialog = new JDialog(this, "SBML IO progress");
+				progressDialog.getContentPane().add(label);
+				progressDialog.setSize(200, 150);
+				progressDialog.setLocationRelativeTo(this);
+				progressDialog
+						.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+				progressDialog.setVisible(true);
+			}
+		} else if (progressDialog != null)
+			progressDialog.dispose();
+	}
+
 	/**
 	 * Reads a model from the given file and adds it to the GUI if possible.
 	 * 
@@ -843,6 +810,105 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		getContentPane().validate();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
+	 */
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(tabbedPane)) {
+			if (tabbedPane.getComponentCount() == 0) {
+				setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
+						Command.SQUEEZE, Command.TO_LATEX,
+						Command.CHECK_STABILITY,
+						Command.STRUCTURAL_KINETIC_MODELLING);
+				if (settings.get(CfgKeys.SBML_FILE).toString().length() > 0)
+					setEnabled(true, Command.OPEN_LAST_FILE);
+			}
+			setSBMLsqueezerBackground();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 */
+	public void windowActivated(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 */
+	public void windowClosed(WindowEvent we) {
+		if (we.getWindow() instanceof KineticLawSelectionDialog) {
+			KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we
+					.getWindow();
+			if (klsd.isKineticsAndParametersStoredInSBML()) {
+				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
+						.getSelectedComponent();
+				split.init(sbmlIO.getSelectedModel(), true);
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 */
+	public void windowClosing(WindowEvent we) {
+		if (we.getSource() instanceof JHelpBrowser)
+			setEnabled(true, Command.ONLINE_HELP);
+		else if (we.getSource() instanceof SBMLsqueezerUI)
+			SBMLsqueezer.saveProperties(settings);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
+	 * )
+	 */
+	public void windowDeactivated(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
+	 * )
+	 */
+	public void windowDeiconified(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 */
+	public void windowIconified(WindowEvent arg0) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 */
+	public void windowOpened(WindowEvent arg0) {
+	}
+
 	/**
 	 * Write the selected model into a LaTeX file.
 	 * 
@@ -913,71 +979,5 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					.getClass().getName(), JOptionPane.WARNING_MESSAGE);
 			exc.printStackTrace();
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
-	 */
-	public void ioProgressOn(Object currObject) {
-		if (currObject != null) {
-			if (label == null)
-				label = new JLabel();
-			StringBuilder sb = new StringBuilder();
-			sb.append(currObject.getClass().getSimpleName());
-			if (currObject instanceof NamedSBase) {
-				sb.append(' ');
-				NamedSBase nsb = (NamedSBase) currObject;
-				sb.append(nsb.getId());
-				if (nsb.getName() != null && nsb.getName().length() > 0) {
-					sb.append(' ');
-					sb.append(nsb.getName());
-				}
-			}
-			label.setText(GUITools.toHTML(sb.toString(), 40));
-			if (progressDialog == null) {
-				progressDialog = new JDialog(this, "SBML IO progress");
-				progressDialog.getContentPane().add(label);
-				progressDialog.setSize(200, 150);
-				progressDialog.setLocationRelativeTo(this);
-				progressDialog
-						.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-				progressDialog.setVisible(true);
-			}
-		} else if (progressDialog != null)
-			progressDialog.dispose();
-	}
-}
-
-/**
- * 
- * @author Andreas Dr&auml;ger
- * 
- */
-class FileReaderThread extends Thread implements Runnable {
-
-	private SBMLsqueezerUI reader;
-	private File file;
-
-	/**
-	 * 
-	 * @param ui
-	 * @param f
-	 */
-	public FileReaderThread(SBMLsqueezerUI ui, File f) {
-		super();
-		this.reader = ui;
-		this.file = f;
-		start();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#run()
-	 */
-	public void run() {
-		reader.readModel(file);
 	}
 }
