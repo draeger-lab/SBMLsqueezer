@@ -493,20 +493,20 @@ public class SettingsPanelKinetics extends JPanel implements ChangeListener,
 		jComboBoxTypeStandardVersion
 				.setToolTipText(GUITools
 						.toHTML(
-								"Select the version of the standardised kinetic equations. These options are described in the publications of Liebermeister et al. This option can only be accessed if all reactions are modeled reversibly.",
+								"Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.",
 								40));
 		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
 		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
 		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);
 		helper.add(new JLabel(GUITools.toHTML(
-				"Choose the version of standardised kinetics:", 20)), 1, 1, 1,
-				1, 0, 1);
+				"Choose the version of modular rate laws:", 20)), 1, 1, 1, 1,
+				0, 1);
 		helper.add(new JPanel(), 2, 1, 1, 1, 1, 1);
 		helper.add(jComboBoxTypeStandardVersion, 3, 1, 1, 1, 1, 0);
 		helper.add(new JPanel(), 4, 1, 1, 1, 1, 1);
 		helper.add(new JPanel(), 0, 2, 5, 1, 1, 1);
 		jPanelStandardVersions.setBorder(BorderFactory.createTitledBorder(null,
-				" Version of standard kinetics ",
+				" Version of modular rate laws ",
 				TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
 
