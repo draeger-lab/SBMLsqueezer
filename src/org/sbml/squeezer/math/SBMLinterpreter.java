@@ -582,6 +582,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double frac(ASTNode nodeleft, ASTNode noderight) {
+		System.out.println("Hi");
 		return Double.valueOf(toDouble(nodeleft.compile(this))
 				/ toDouble(noderight.compile(this)));
 	}
@@ -741,7 +742,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		int i;
 		this.currentTime = time;
 		double res[] = new double[Y.length];
-
+		this.Y  = Y;
 		/*
 		 * Events checking if the model has events and executing events that
 		 * must be executed at this time point: t = time.
@@ -805,16 +806,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < v.length; i++) {
 			currentReaction = model.getReaction(i);
 			KineticLaw kin = currentReaction.getKineticLaw();
-			if (kin != null)
+			if (kin != null){
 				v[i] = evaluateToDouble(kin.getMath());
+			System.out.println("v: "+v[i]);	
+			}
 			else
 				v[i] = 0;
 		}
 		res = linearCombinationOfVelocities(v);
 
-		/*
-		 * TODO: Rules
-		 */
 		for (i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
@@ -838,10 +838,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < (int) model.getNumConstraints(); i++)
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
-
-		System.arraycopy(res, 0, this.Y, 0, res.length);
-
-		return this.Y;
+		//System.arraycopy(res, 0, this.Y, 0, res.length);
+		System.out.println(this.Y[0]+ " - "+ this.Y[1]);
+		//return this.Y;
+		return res;
 	}
 
 	/*
@@ -895,7 +895,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 		for (i = 0; i < model.getNumSpecies(); i++) {
 			Species s = model.getSpecies(i);
-			if (s.isConstant()) {
+			if (s.isConstant()) {				
 				if (s.isSetInitialAmount()) {
 					valuesHash.put(s.getId(), new Value(s.getInitialAmount()
 							/ model.getCompartment(s.getCompartment())
@@ -1001,8 +1001,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		//save the initial values of this system
 		initialValues = new double[Y.length];
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
-		
-		
+	
 
 	}
 
@@ -1066,6 +1065,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 * @param velocities
 	 *            An array of reaction velocities at the current time.
+	 * @param Y 
 	 * @return An array containing the rates of change for each species in the
 	 *         model system of this class.
 	 */
@@ -1077,6 +1077,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		Arrays.fill(swap, 0.0);
 		for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
 			Reaction r = model.getReaction(reactionIndex);
+			int test = 0;
+			
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumReactants(); sReferenceIndex++) {
 				speciesRef = r.getReactant(sReferenceIndex);
 				species = speciesRef.getSpeciesInstance();
@@ -1084,13 +1086,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				val = valuesHash.get(species.getId());
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
 					speciesIndex = val.getIndex();
+					test = val.getIndex();
 					if (speciesRef.isSetStoichiometryMath())
-						swap[speciesIndex] -= evaluateToDouble(speciesRef
+						swap[speciesIndex] =- evaluateToDouble(speciesRef
 								.getStoichiometryMath().getMath())
 								* velocities[reactionIndex];
 					else
-						swap[speciesIndex] -= speciesRef.getStoichiometry()
+						swap[speciesIndex] =- speciesRef.getStoichiometry()
 								* velocities[reactionIndex];
+					
 				}
 			}
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
@@ -1099,14 +1103,16 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				// species = model.getSpecies(speciesRef.getId());
 				val = valuesHash.get(species.getId());
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
+		
 					speciesIndex = val.getIndex();
 					if (speciesRef.isSetStoichiometryMath())
-						swap[speciesIndex] += evaluateToDouble(speciesRef
+						swap[speciesIndex] =+ evaluateToDouble(speciesRef
 								.getStoichiometryMath().getMath())
 								* velocities[reactionIndex];
 					else
-						swap[speciesIndex] += speciesRef.getStoichiometry()
+						swap[speciesIndex] =+ speciesRef.getStoichiometry()
 								* velocities[reactionIndex];
+					
 				}
 			}
 		}
@@ -1230,9 +1236,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Double minus(ASTNode... nodes) {
 		double value = 0.0;
-
-		for (ASTNode node : nodes)
-			value -= toDouble(node.compile(this));
+		if (nodes.length>0) {
+			value = toDouble(nodes[0].compile(this));
+		}
+		for (int i = 1; i < nodes.length; i++) {
+			value -= toDouble(nodes[i].compile(this));
+		}
 
 		return Double.valueOf(value);
 	}
