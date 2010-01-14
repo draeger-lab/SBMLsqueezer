@@ -3,6 +3,8 @@
  */
 package org.sbml.squeezer.math;
 
+import java.util.Arrays;
+
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
@@ -39,8 +41,7 @@ public class SimulationTest {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		double time = 0;
 		double solution[][] = rk.solveByStepSize(interpreter, interpreter
-				.getInitialValues(), time, 5);
-		//System.out.println(solution[12].length);
+				.getInitialValues(), time, 1);
 		if (rk.isUnstable())
 			System.err.println("unstable!");
 		else {
@@ -48,16 +49,16 @@ public class SimulationTest {
 			for (int i = 0; i < solution.length; i++) {
 				double[] symbol = solution[i];
 				for (int j = 0; j < symbol.length; j++) {
+
 					double sym = symbol[j];
 					plot.setConnectedPoint(time, sym, j);
-					
+
 				}
 				time += rk.getStepSize();
-				
+
 			}
 		}
-		
-		
+
 	}
 
 }
