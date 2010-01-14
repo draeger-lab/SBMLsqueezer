@@ -664,7 +664,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * .Des.DESystem#getDESystemDimension()
 	 */
 	public int getDESystemDimension() {
-		return (int) model.getNumSpecies();
+		return this.initialValues.length;
 	}
 
 	/**
@@ -931,14 +931,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		}
 
 		this.Y = new double[variableValues.size()];
-
+		
 		for (i = 0; i < variableValues.size(); i++) {
 			this.Y[i] = variableValues.get(i);
 		}
 		variableValues.clear();
-		initialValues = new double[Y.length];
-		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
 
+		
 		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment assign = model.getInitialAssignment(i);
 			val = null;
@@ -998,6 +997,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 			}
 		}
+
+		//save the initial values of this system
+		initialValues = new double[Y.length];
+		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
+		
+		
 
 	}
 
