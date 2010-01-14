@@ -204,9 +204,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	public SBMLinterpreter(Model model) {
 		this.model = model;
 		this.speciesIdIndex = new HashMap<String, Integer>();
-		this.Y = new double[(int) this.model.getListOfSpecies().size()];
-		this.v = new double[(int) this.model.getListOfReactions().size()];
-		this.swap = new double[this.Y.length];
+		this.v = new double[(int) this.model.getListOfReactions().size()];		
 		this.init();
 	}
 
@@ -808,13 +806,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			KineticLaw kin = currentReaction.getKineticLaw();
 			if (kin != null){
 				v[i] = evaluateToDouble(kin.getMath());
-			System.out.println("v: "+v[i]);	
 			}
 			else
 				v[i] = 0;
 		}
 		res = linearCombinationOfVelocities(v);
-
+		
 		for (i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
@@ -1001,6 +998,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		//save the initial values of this system
 		initialValues = new double[Y.length];
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
+		this.swap = new double[this.Y.length];
 	
 
 	}
