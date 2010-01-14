@@ -108,7 +108,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			this.value = value;
 			this.index = -1;
 		}
-
+		
+		
 	}
 
 	/**
@@ -218,9 +219,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return Double.valueOf(Math.abs(toDouble(node.compile(this))));
 	}
 
-	public Double and(ASTNode... nodes) {
+	public Boolean and(ASTNode... nodes) {
 		for (ASTNode node : nodes) {
-			if (toDouble(node.compile(this)) == getConstantFalse())
+			if (toBoolean(node.compile(this)) == getConstantFalse())
 				return getConstantFalse();
 
 		}
@@ -515,11 +516,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	private void evaluateRateRule(RateRule rr, double res[]) {
 		int speciesIndex;
 		Value val;
+		
+		val = valuesHash.get(rr.getVariable());
+		speciesIndex = val.getIndex();
+		res[speciesIndex] += evaluateToDouble(rr.getMath());
 
-		// TODO
-		// val = valuesHash.get(rr.getVariable());
-		// speciesIndex = val.getIndex();
-		// res[speciesIndex] = evaluateToDouble(rr.getMath());
 	}
 
 	/**
@@ -1139,10 +1140,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 	}
 
-	public Double logicalAND(ASTNode... nodes) {
+	public Boolean logicalAND(ASTNode... nodes) {
 
 		for (ASTNode node : nodes) {
-			if (toDouble(node.compile(this)) == getConstantFalse())
+			if (toBoolean(node.compile(this)) == getConstantFalse())
 				return getConstantFalse();
 
 		}
@@ -1165,9 +1166,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalNot(org.sbml.jsbml.ASTNode)
 	 */
-	public Double logicalNot(ASTNode node) {
-		return Double
-				.valueOf((toDouble(node.compile(this)) == getConstantTrue()) ? getConstantFalse()
+	public Boolean logicalNot(ASTNode node) {
+		return ((toBoolean(node.compile(this)) == getConstantTrue()) ? getConstantFalse()
 						: getConstantTrue());
 	}
 
@@ -1182,9 +1182,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return null;
 	}
 
-	public Double logicalOR(ASTNode... nodes) {
+	public Boolean logicalOR(ASTNode... nodes) {
 		for (ASTNode node : nodes) {
-			if (toDouble(node.compile(this)) == getConstantTrue())
+			if (toBoolean(node.compile(this)) == getConstantTrue())
 				return getConstantTrue();
 
 		}
@@ -1202,15 +1202,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return (!left && !right) ? false : true;
 	}
 
-	public Double logicalXOR(ASTNode... nodes) {
-		Double value = getConstantFalse();
+	public Boolean logicalXOR(ASTNode... nodes) {
+		Boolean value = getConstantFalse();
 
 		if (nodes.length > 0) {
-			value = toDouble(nodes[1].compile(this));
+			value = toBoolean(nodes[1].compile(this));
 		}
 
 		for (int i = 1; i < nodes.length; i++) {
-			if (toDouble(nodes[i].compile(this)) == value)
+			if (toBoolean(nodes[i].compile(this)) == value)
 				value = getConstantFalse();
 			else
 				value = getConstantTrue();
@@ -1238,16 +1238,16 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @param node
 	 * @return
 	 */
-	public Double not(ASTNode node) {
-		if (toDouble(node.compile(this)) == getConstantTrue())
+	public Boolean not(ASTNode node) {
+		if (toBoolean(node.compile(this)) == getConstantTrue())
 			return getConstantFalse();
 		else
 			return getConstantTrue();
 	}
 
-	public Double or(ASTNode... nodes) {
+	public Boolean or(ASTNode... nodes) {
 		for (ASTNode node : nodes) {
-			if (toDouble(node.compile(this)) == getConstantTrue())
+			if (toBoolean(node.compile(this)) == getConstantTrue())
 				return getConstantTrue();
 
 		}
@@ -1293,7 +1293,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	public Double piecewise(ASTNode... nodes) {
 		int i;
 		for (i = 1; i < nodes.length - 1; i += 2) {
-			if (((Double) nodes[i].compile(this)).doubleValue() == getConstantTrue())
+			if (toBoolean(nodes[i].compile(this)) == getConstantTrue())
 				return toDouble(nodes[i - 1].compile(this));
 		}
 
@@ -1646,15 +1646,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return Double.valueOf(Double.NaN);
 	}
 
-	public Double xor(ASTNode... nodes) {
-		Double value = getConstantFalse();
+	public Boolean xor(ASTNode... nodes) {
+		Boolean value = getConstantFalse();
 
 		if (nodes.length > 0) {
-			value = toDouble(nodes[1].compile(this));
+			value = toBoolean(nodes[1].compile(this));
 		}
 
 		for (int i = 1; i < nodes.length; i++) {
-			if (toDouble(nodes[i].compile(this)) == value)
+			if (toBoolean(nodes[i].compile(this)) == value)
 				value = getConstantFalse();
 			else
 				value = getConstantTrue();
