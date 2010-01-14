@@ -40,6 +40,7 @@ public class SimulationTest {
 		double time = 0;
 		double solution[][] = rk.solveByStepSize(interpreter, interpreter
 				.getInitialValues(), time, 5);
+		//System.out.println(solution[12].length);
 		if (rk.isUnstable())
 			System.err.println("unstable!");
 		else {
@@ -48,12 +49,15 @@ public class SimulationTest {
 				double[] symbol = solution[i];
 				for (int j = 0; j < symbol.length; j++) {
 					double sym = symbol[j];
-					plot.setConnectedPoint(time, sym, i);
-					time += rk.getStepSize();
+					plot.setConnectedPoint(time, sym, j);
+					
 				}
-				time = 0;
+				time += rk.getStepSize();
+				
 			}
 		}
+		
+		
 	}
 
 }
