@@ -1,0 +1,12 @@
+Wenn sich die Menge eine Spezies nicht ändert, hat der Plot keine 
+Achsenbeschriften für die Menge. Wenn die Stoffmenge zu klein ist, gibt
+es ebenfalls keine Beschriftung.
+Y-Achse fängt oft mit den kleinsten Mengen an und hört mit den größten auf, 
+davor und danach ist nichts.
+
+
+test suite:
+21: compartiment wird vermutlich anders einbezogen als beim celldesigner, S2 steigt
+nicht so schnell an wie es sollte
+	
+	
