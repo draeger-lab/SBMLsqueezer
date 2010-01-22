@@ -382,8 +382,35 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 */
 	public Double compile(NamedSBase nsb) {
 		Value val;
-		if (nsb instanceof Species || nsb instanceof Compartment
-				|| nsb instanceof Parameter) {
+		if (nsb instanceof Species) {
+			Species s = (Species) nsb;
+			Compartment c = model.getCompartment(s.getCompartment());
+			Double compartment;
+			Value compval;
+
+			compval = valuesHash.get(c.getId());
+
+			if (compval.getIndex() == -1)
+				compartment = compval.getValue();
+			else
+				compartment = Y[compval.getIndex()];
+
+			val = valuesHash.get(nsb.getId());
+
+			if (val.getIndex() == -1)
+				return val.getValue();
+
+			else {
+				if (s.isSetInitialAmount())
+					return Y[val.getIndex()] / compartment;
+
+				else
+					return Y[val.getIndex()];
+			}
+
+		}
+
+		else if (nsb instanceof Compartment || nsb instanceof Parameter) {
 			if (nsb instanceof Parameter) {
 				Parameter p = (Parameter) nsb;
 				if (p.getParentSBMLObject() instanceof KineticLaw) {
@@ -399,9 +426,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			if (val.getIndex() == -1)
 				return val.getValue();
 
-			else 
+			else
 				return Y[val.getIndex()];
-
 
 		} else if (nsb instanceof FunctionDefinition)
 			return function((FunctionDefinition) nsb);
@@ -838,7 +864,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < (int) model.getNumConstraints(); i++)
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
-		
+
 		return res;
 	}
 
@@ -895,26 +921,22 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			Species s = model.getSpecies(i);
 			if (s.isConstant()) {
 				if (s.isSetInitialAmount()) {
-					valuesHash.put(s.getId(), new Value(s.getInitialAmount()
-							/ model.getCompartment(s.getCompartment())
-									.getVolume()));
+					valuesHash.put(s.getId(), new Value(s.getInitialAmount()));
 				} else
 					valuesHash.put(s.getId(), new Value(s
 							.getInitialConcentration()));
-				
+
 			}
 
 			else {
 				if (s.isSetInitialAmount())
-					variableValues.add(s.getInitialAmount()
-							/ model.getCompartment(s.getCompartment())
-									.getVolume());
+					variableValues.add(s.getInitialAmount());
 				else
 					variableValues.add(s.getInitialConcentration());
 
 				valuesHash.put(s.getId(), new Value(nonconstantIndex));
 				nonconstantIndex++;
-				
+
 			}
 		}
 
@@ -1107,10 +1129,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 						swap[speciesIndex] += evaluateToDouble(speciesRef
 								.getStoichiometryMath().getMath())
 								* velocities[reactionIndex];
-					else 
+					else
 						swap[speciesIndex] += speciesRef.getStoichiometry()
 								* velocities[reactionIndex];
-						
+
 					changed.add(speciesIndex);
 				}
 			}
