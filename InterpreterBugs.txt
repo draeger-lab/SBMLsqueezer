@@ -6,7 +6,6 @@ davor und danach ist nichts.
 
 
 test suite:
-21: compartiment wird vermutlich anders einbezogen als beim celldesigner, S2 steigt
-nicht so schnell an wie es sollte
+Bei Compartmentgröße != 1.0 haben CellDesigner und Plot der Testsuite unterschiedliche Startwerte 
 	
 	
