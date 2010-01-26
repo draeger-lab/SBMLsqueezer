@@ -256,7 +256,7 @@ public class SBMLMatrixParser {
 	 * Adds SBOTerms to all modifiers hashed in the HashMap sBOTerms because
 	 * their SBOTerm hasn't been set yet
 	 */
-	//TODO noch nötig?
+	//TODO noch nï¿½tig?
 	private void setSBOTerms() {
 		HashMap<Integer, Integer> sBOReaction;
 		Model m = doc.getModel();
@@ -301,7 +301,7 @@ public class SBMLMatrixParser {
 				found = true;
 				Species s = los.get(i);
 				if (!s.isSetInitialAmount() && !s.isSetInitialConcentration())
-					los.get(i).setInitialAmount(initvalue);
+					los.get(i).setInitialAmount(Double.valueOf(initvalue));
 			}
 		}
 		lop = m.getListOfParameters();
