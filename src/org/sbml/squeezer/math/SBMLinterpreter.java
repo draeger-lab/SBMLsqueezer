@@ -205,7 +205,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	public SBMLinterpreter(Model model) {
 		this.model = model;
 		this.speciesIdIndex = new HashMap<String, Integer>();
-		this.v = new double[(int) this.model.getListOfReactions().size()];
+		this.v = new double[this.model.getListOfReactions().size()];
 		this.init();
 	}
 
@@ -384,30 +384,22 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		Value val;
 		if (nsb instanceof Species) {
 			Species s = (Species) nsb;
-			Compartment c = model.getCompartment(s.getCompartment());
-			Double compartment;
-			Value compval;
+			double compartment;
+			Value compval = valuesHash.get(s.getCompartment());
 
-			compval = valuesHash.get(c.getId());
-
-			if (compval.getIndex() == -1)
-				compartment = compval.getValue();
-			else
-				compartment = Y[compval.getIndex()];
+			// check if compval is not in the Y array
+			compartment = compval.getIndex() == -1 ? compval.getValue()
+					: Y[compval.getIndex()];
 
 			val = valuesHash.get(nsb.getId());
 
 			if (val.getIndex() == -1)
 				return val.getValue();
-
-			else {
-				if (s.isSetInitialAmount())
-					return Y[val.getIndex()] / compartment;
-
-				else
-					return Y[val.getIndex()];
-			}
-
+			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
+				return Y[val.getIndex()] / compartment;
+			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())
+				return Y[val.getIndex()] * compartment;
+			return Y[val.getIndex()];
 		}
 
 		else if (nsb instanceof Compartment || nsb instanceof Parameter) {
