@@ -11,7 +11,7 @@ import java.util.Set;
  * 
  * @author <a href="mailto:a.doerr@uni-tuebingen.de">Alexander D&ouml;rr</a>
  * @date 2009-12-18
- * @since 1.3
+ * @since 1.4
  *
  */
 public class StoichiometricMatrix extends StabilityMatrix {

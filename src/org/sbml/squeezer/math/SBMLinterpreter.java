@@ -59,7 +59,7 @@ import eva2.tools.math.des.DESystem;
  * Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler: JDK 1.6.0
  * </p>
  * 
- * @since 1.3
+ * @since 1.4
  * @version
  * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
  * @author Dieudonne Motsou Wouamba <dwouamba@yahoo.fr>
