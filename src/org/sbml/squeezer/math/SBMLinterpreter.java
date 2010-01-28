@@ -381,25 +381,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.NamedSBase)
 	 */
 	public Double compile(NamedSBase nsb) {
-		Value val;
+		Value speciesVal;
 		if (nsb instanceof Species) {
 			Species s = (Species) nsb;
-			double compartment;
-			Value compval = valuesHash.get(s.getCompartment());
+			Value compVal = valuesHash.get(s.getCompartment());
+			speciesVal = valuesHash.get(nsb.getId());
 
-			// check if compval is not in the Y array
-			compartment = compval.getIndex() == -1 ? compval.getValue()
-					: Y[compval.getIndex()];
-
-			val = valuesHash.get(nsb.getId());
-
-			if (val.getIndex() == -1)
-				return val.getValue();
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
-				return Y[val.getIndex()] / compartment;
+				return Y[speciesVal.getIndex()] / Y[compVal.getIndex()];
 			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())
-				return Y[val.getIndex()] * compartment;
-			return Y[val.getIndex()];
+				return Y[speciesVal.getIndex()] * Y[compVal.getIndex()];
+			return Y[speciesVal.getIndex()];
 		}
 
 		else if (nsb instanceof Compartment || nsb instanceof Parameter) {
@@ -414,12 +406,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 					}
 				}
 			}
-			val = valuesHash.get(nsb.getId());
-			if (val.getIndex() == -1)
-				return val.getValue();
-
-			else
-				return Y[val.getIndex()];
+			speciesVal = valuesHash.get(nsb.getId());
+				return Y[speciesVal.getIndex()];
 
 		} else if (nsb instanceof FunctionDefinition)
 			return function((FunctionDefinition) nsb);
@@ -831,13 +819,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		}
 		BitSet changed = new BitSet(res.length);
 		double[] velocities = linearCombinationOfVelocities(v, changed);
-		
-		for (i = 0; i < changed.size(); i++) {
-			if (changed.get(i) == true) {
-				res[i] = velocities[i];	
-			}
+
+		for (i = 0; i < res.length; i++) {
+		 if (changed.get(i) == true){			
+			res[i] = velocities[i];
+		 }
+
 		}
-		
 
 		for (i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
@@ -900,63 +888,43 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	protected void init() {
 		int i;
 		valuesHash = new HashMap<String, Value>();
-		ArrayList<Double> variableValues = new ArrayList<Double>();
-		int nonconstantIndex = 0;
+		int yIndex = 0;
 		Value val = null;
+
+		this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
+				+ model.getNumParameters()];
 
 		for (i = 0; i < model.getNumCompartments(); i++) {
 			Compartment c = model.getCompartment(i);
 
-			if (c.isConstant())
-				valuesHash.put(c.getId(), new Value(c.getSize()));
-			else {
-				variableValues.add(c.getSize());
-				valuesHash.put(c.getId(), new Value(nonconstantIndex));
-				nonconstantIndex++;
-			}
+			Y[yIndex]= c.getSize();
+			valuesHash.put(c.getId(), new Value(yIndex));
+			yIndex++;
+
 		}
 
 		for (i = 0; i < model.getNumSpecies(); i++) {
 			Species s = model.getSpecies(i);
-			if (s.isConstant()) {
-				if (s.isSetInitialAmount()) {
-					valuesHash.put(s.getId(), new Value(s.getInitialAmount()));
-				} else
-					valuesHash.put(s.getId(), new Value(s
-							.getInitialConcentration()));
 
-			}
+			if (s.isSetInitialAmount())
+				Y[yIndex]= s.getInitialAmount();
+			else
+				Y[yIndex]= s.getInitialConcentration();
 
-			else {
-				if (s.isSetInitialAmount())
-					variableValues.add(s.getInitialAmount());
-				else
-					variableValues.add(s.getInitialConcentration());
+			valuesHash.put(s.getId(), new Value(yIndex));
+			yIndex++;
 
-				valuesHash.put(s.getId(), new Value(nonconstantIndex));
-				nonconstantIndex++;
-
-			}
 		}
 
 		for (i = 0; i < model.getNumParameters(); i++) {
 			Parameter p = model.getParameter(i);
-
-			if (p.isConstant()) {
-				valuesHash.put(p.getId(), new Value(p.getValue()));
-			} else {
-				variableValues.add(p.getValue());
-				valuesHash.put(p.getId(), new Value(nonconstantIndex));
-				nonconstantIndex++;
-			}
+			
+				Y[yIndex]= p.getValue();
+				valuesHash.put(p.getId(), new Value(yIndex));
+				yIndex++;
+			
 		}
 
-		this.Y = new double[variableValues.size()];
-
-		for (i = 0; i < variableValues.size(); i++) {
-			this.Y[i] = variableValues.get(i);
-		}
-		variableValues.clear();
 
 		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment assign = model.getInitialAssignment(i);
@@ -976,10 +944,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 							.println("The model contains an initial assignment for a "
 									+ "component other than species, compartment or parameter.");
 			}
-			if (val.getIndex() == -1)
-				val.setValue(evaluateToDouble(assign.getMath()));
-			else
-				this.Y[val.getIndex()] = evaluateToDouble(assign.getMath());
+			this.Y[val.getIndex()] = evaluateToDouble(assign.getMath());
 		}
 
 		/*
@@ -1089,7 +1054,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @return An array containing the rates of change for each species in the
 	 *         model system of this class.
 	 */
-	protected double[] linearCombinationOfVelocities(double[] velocities, BitSet changed) {
+	protected double[] linearCombinationOfVelocities(double[] velocities,
+			BitSet changed) {
 		int reactionIndex, sReferenceIndex, speciesIndex;
 		Species species;
 		SpeciesReference speciesRef;
