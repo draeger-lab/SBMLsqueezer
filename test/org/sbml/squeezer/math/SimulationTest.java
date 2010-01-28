@@ -10,6 +10,8 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
 
+import sun.security.krb5.internal.crypto.Des;
+
 import eva2.gui.Plot;
 import eva2.tools.math.des.RKSolver;
 
@@ -34,14 +36,22 @@ public class SimulationTest {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		String path;
+		path = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/tst suite/sbml-test-cases-2009-09-05/cases/semantic/";
+		path += "00021/00021-sbml-l2v4.xml";
 		SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 		System.out.println(args[0]);
-		Model model = sbmlIo.readModel(args[0]);
+		System.out.println(path);
+		//Model model = sbmlIo.readModel(args[0]);
+		Model model = sbmlIo.readModel(path);
 		RKSolver rk = new RKSolver();
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		double time = 0;
+	
+		//rk.setStepSize(0.9);
 		double solution[][] = rk.solveByStepSize(interpreter, interpreter
-				.getInitialValues(), time, 1);
+				.getInitialValues(), time, 10);
+
 		if (rk.isUnstable())
 			System.err.println("unstable!");
 		else {
@@ -60,5 +70,4 @@ public class SimulationTest {
 		}
 
 	}
-
 }

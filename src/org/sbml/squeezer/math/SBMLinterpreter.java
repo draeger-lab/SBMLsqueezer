@@ -20,6 +20,7 @@ package org.sbml.squeezer.math;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -46,7 +47,6 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
-import eva2.tools.math.Mathematics;
 import eva2.tools.math.des.DESystem;
 
 /**
@@ -503,7 +503,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @param alr
 	 * @param res
 	 */
-	private void evaluateAlgebraicRule(AlgebraicRule alr, double res[]) {
+	private void evaluateAlgebraicRule(AlgebraicRule alr, double arr[]) {
 		int speciesIndex;
 		Value val;
 
@@ -514,15 +514,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	/**
 	 * 
 	 * @param ar
-	 * @param res
+	 * @param arr
 	 */
-	private void evaluateAssignmentRule(AssignmentRule ar, double res[]) {
+	private void evaluateAssignmentRule(AssignmentRule ar, double arr[]) {
 		int speciesIndex;
 		Value val;
 
 		val = valuesHash.get(ar.getVariable());
 		speciesIndex = val.getIndex();
-		res[speciesIndex] = evaluateToDouble(ar.getMath());
+		arr[speciesIndex] = evaluateToDouble(ar.getMath());
 
 	}
 
@@ -531,13 +531,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @param rr
 	 * @param res
 	 */
-	private void evaluateRateRule(RateRule rr, double res[]) {
+	private void evaluateRateRule(RateRule rr, double arr[]) {
 		int speciesIndex;
 		Value val;
 
 		val = valuesHash.get(rr.getVariable());
 		speciesIndex = val.getIndex();
-		res[speciesIndex] += evaluateToDouble(rr.getMath());
+		arr[speciesIndex] += evaluateToDouble(rr.getMath());
 
 	}
 
@@ -829,8 +829,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			} else
 				v[i] = 0;
 		}
-
-		res = linearCombinationOfVelocities(v);
+		BitSet changed = new BitSet(res.length);
+		double[] velocities = linearCombinationOfVelocities(v, changed);
+		
+		for (i = 0; i < changed.size(); i++) {
+			if (changed.get(i) == true) {
+				res[i] = velocities[i];	
+			}
+		}
+		
 
 		for (i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
@@ -1004,10 +1011,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
 				AlgebraicRule alr = (AlgebraicRule) rule;
+				evaluateAlgebraicRule(alr, this.Y);
 
 			} else if (rule.isAssignment()) {
 				AssignmentRule ar = (AssignmentRule) rule;
-
+				evaluateAssignmentRule(ar, this.Y);
 			}
 		}
 
@@ -1081,13 +1089,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @return An array containing the rates of change for each species in the
 	 *         model system of this class.
 	 */
-	protected double[] linearCombinationOfVelocities(double[] velocities) {
+	protected double[] linearCombinationOfVelocities(double[] velocities, BitSet changed) {
 		int reactionIndex, sReferenceIndex, speciesIndex;
 		Species species;
 		SpeciesReference speciesRef;
 		Value val;
 		Arrays.fill(swap, 0.0);
-		HashSet<Integer> changed = new HashSet<Integer>();
 
 		for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
 			Reaction r = model.getReaction(reactionIndex);
@@ -1106,7 +1113,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 						swap[speciesIndex] -= speciesRef.getStoichiometry()
 								* velocities[reactionIndex];
 
-					changed.add(speciesIndex);
+					changed.set(speciesIndex);
 				}
 			}
 
@@ -1125,7 +1132,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 						swap[speciesIndex] += speciesRef.getStoichiometry()
 								* velocities[reactionIndex];
 
-					changed.add(speciesIndex);
+					changed.set(speciesIndex);
 				}
 			}
 
