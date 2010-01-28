@@ -18,11 +18,9 @@
  */
 package org.sbml.squeezer.math;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +31,7 @@ import org.sbml.jsbml.ASTNodeCompiler;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.Delay;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
@@ -46,6 +45,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Symbol;
 
 import eva2.tools.math.des.DESystem;
 
@@ -76,7 +76,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * 
 	 */
 	private class Value {
-		Integer index;
+		int index;
 		double value;
 
 		public Value(Double value) {
@@ -88,12 +88,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		 * @param index
 		 * @param value
 		 */
-		public Value(Integer index) {
+		public Value(int index) {
 			setIndex(index);
 
 		}
 
-		public Integer getIndex() {
+		public int getIndex() {
 			return index;
 		}
 
@@ -407,7 +407,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				}
 			}
 			speciesVal = valuesHash.get(nsb.getId());
-				return Y[speciesVal.getIndex()];
+			return Y[speciesVal.getIndex()];
 
 		} else if (nsb instanceof FunctionDefinition)
 			return function((FunctionDefinition) nsb);
@@ -613,6 +613,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (int i = 0; i < arguments.length; i++)
 			args.put(lambda.getChild(i).compile(this).toString(),
 					toDouble(arguments[i].compile(this)));
+
 		return toDouble(replace(lambda.getRightChild().clone(), args).compile(
 				this));
 	}
@@ -752,61 +753,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		 * Events checking if the model has events and executing events that
 		 * must be executed at this time point: t = time.
 		 */
-		if (model.getNumEvents() > 0) {
-			Event ev;
-			// number of events = listOfEvents_delay.length
-			for (i = 0; i < listOfEvents_delay.length; i++) {
-				ev = model.getEvent(i);
-				// check if event must be fired (update)
-				if (evaluateToBoolean(ev.getTrigger().getMath())) {
-					if (listOfEvents_delay[i].get(
-							listOfEvents_delay[i].size() - 2).isNaN()) {
-						prepareEvents(i, time, ev.getDelay().getMath());
-						listOfEvents_delay[i].set(
-								listOfEvents_delay[i].size() - 2,
-								Double.POSITIVE_INFINITY);
-					}
-				} else if (listOfEvents_delay[i].get(
-						listOfEvents_delay[i].size() - 2).isInfinite()) {
-					listOfEvents_delay[i].set(listOfEvents_delay[i].size() - 2,
-							Double.NaN);
-				}
-			}
-			// check events to be executed at this time point
-			for (int j = 0; j < listOfEvents_delay.length; j++) {
-				Double elt;
-				int counter = 0;
-				// execute events
-				int k = 0;
-				while (k < listOfEvents_delay[j].size() - 3) {
-					elt = listOfEvents_delay[j].get(k).doubleValue();
-					if (!elt.isNaN() && elt <= time) {
-						counter++;
-						System.out.println("Time\t" + time);
-						performEvents(model.getEvent(j));
-					}
-					k++;
-				}
-				if (listOfEvents_delay[j].get(listOfEvents_delay[j].size() - 3)
-						.isInfinite()) {
-					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 3,
-							Double.NaN);
-					for (int p = 0; p < listOfEvents_delay[j].getLast()
-							.intValue(); p++) {
-						if (p < listOfEvents_delay[j].size() - 3)
-							listOfEvents_delay[j].remove(p);
-					}
-				}
-				if (listOfEvents_delay[j].get(listOfEvents_delay[j].size() - 3)
-						.isNaN()) {
-					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 3,
-							Double.POSITIVE_INFINITY);
-
-					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 1,
-							counter * 1.0);
-				}
-			}
-		}
+	
 
 		// Velocities of each reaction.
 		for (i = 0; i < v.length; i++) {
@@ -821,9 +768,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		double[] velocities = linearCombinationOfVelocities(v, changed);
 
 		for (i = 0; i < res.length; i++) {
-		 if (changed.get(i) == true){			
-			res[i] = velocities[i];
-		 }
+			if (changed.get(i) == true) {
+				res[i] = velocities[i];
+			}
 
 		}
 
@@ -852,6 +799,63 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
 
+		if (model.getNumEvents() > 0) {
+			Event ev;
+			// number of events = listOfEvents_delay.length
+			for (i = 0; i < listOfEvents_delay.length; i++) {
+				ev = model.getEvent(i);
+				// check if event must be fired (update)
+				if (evaluateToBoolean(ev.getTrigger().getMath())) {
+					if (listOfEvents_delay[i].get(
+							listOfEvents_delay[i].size() - 2).isNaN()) {
+						prepareEvents(i, time, ev.getDelay());
+						listOfEvents_delay[i].set(
+								listOfEvents_delay[i].size() - 2,
+								Double.POSITIVE_INFINITY);
+					}
+				} else if (listOfEvents_delay[i].get(
+						listOfEvents_delay[i].size() - 2).isInfinite()) {
+					listOfEvents_delay[i].set(listOfEvents_delay[i].size() - 2,
+							Double.NaN);
+				}
+			}
+			// check events to be executed at this time point
+			for (int j = 0; j < listOfEvents_delay.length; j++) {
+				Double elt;
+				int counter = 0;
+				// execute events
+				int k = 0;
+				while (k < listOfEvents_delay[j].size() - 3) {
+					elt = listOfEvents_delay[j].get(k).doubleValue();
+					if (!elt.isNaN() && elt <= time) {
+						counter++;
+						System.out.println("Time\t" + time);
+						performEvents(model.getEvent(j), res);
+					}
+					k++;
+				}
+				if (listOfEvents_delay[j].get(listOfEvents_delay[j].size() - 3)
+						.isInfinite()) {
+					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 3,
+							Double.NaN);
+					for (int p = 0; p < listOfEvents_delay[j].getLast()
+							.intValue(); p++) {
+						if (p < listOfEvents_delay[j].size() - 3)
+							listOfEvents_delay[j].remove(p);
+					}
+				}
+				if (listOfEvents_delay[j].get(listOfEvents_delay[j].size() - 3)
+						.isNaN()) {
+					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 3,
+							Double.POSITIVE_INFINITY);
+
+					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 1,
+							counter * 1.0);
+				}
+			}
+		}
+	
+		
 		return res;
 	}
 
@@ -897,7 +901,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		for (i = 0; i < model.getNumCompartments(); i++) {
 			Compartment c = model.getCompartment(i);
 
-			Y[yIndex]= c.getSize();
+			Y[yIndex] = c.getSize();
 			valuesHash.put(c.getId(), new Value(yIndex));
 			yIndex++;
 
@@ -907,9 +911,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			Species s = model.getSpecies(i);
 
 			if (s.isSetInitialAmount())
-				Y[yIndex]= s.getInitialAmount();
+				Y[yIndex] = s.getInitialAmount();
 			else
-				Y[yIndex]= s.getInitialConcentration();
+				Y[yIndex] = s.getInitialConcentration();
 
 			valuesHash.put(s.getId(), new Value(yIndex));
 			yIndex++;
@@ -918,13 +922,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 		for (i = 0; i < model.getNumParameters(); i++) {
 			Parameter p = model.getParameter(i);
-			
-				Y[yIndex]= p.getValue();
-				valuesHash.put(p.getId(), new Value(yIndex));
-				yIndex++;
-			
-		}
 
+			Y[yIndex] = p.getValue();
+			valuesHash.put(p.getId(), new Value(yIndex));
+			yIndex++;
+
+		}
 
 		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment assign = model.getInitialAssignment(i);
@@ -1259,31 +1262,26 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	/**
 	 * Method performing event.
 	 */
-	private void performEvents(Event ev) {
+	private void performEvents(Event ev, double[] res) {
 		for (int j = 0; j < ev.getNumEventAssignments(); j++) {
 			ASTNode assignment_math = ev.getEventAssignment(j).getMath();
 			/*
 			 * check variable.
 			 */
-			String variable = ev.getEventAssignment(j).getVariable();
+			Symbol variable = ev.getEventAssignment(j).getVariableInstance();
 			// if the variable is a species
-			if (model.getSpecies(variable) != null) {
-				System.out.println(variable + "=\t"
-						+ Y[speciesIdIndex.get(variable).intValue()] + "\t"
-						+ evaluateToDouble(ev.getEventAssignment(j).getMath()));
 
-				this.Y[speciesIdIndex.get(variable).intValue()] = evaluateToDouble(assignment_math);
-			}
-			// if the variable is a parameter
-			else if (model.getParameter(variable) != null)
-				model.getParameter(variable).setValue(
-						evaluateToDouble(assignment_math));
-			else if (model.getCompartment(variable) != null)
-				model.getCompartment(variable).setVolume(
-						evaluateToDouble(assignment_math));
-			// if the variable is a function
-			else if (model.getFunctionDefinition(assignment_math.getName()) != null)
-				model.getFunctionDefinition(variable).setMath(assignment_math);
+			//		System.out.println(variable + "=\t"
+			//						+ Y[speciesIdIndex.get(variable).intValue()] + "\t"
+			//						+ evaluateToDouble(ev.getEventAssignment(j).getMath()));
+			double newVal = evaluateToDouble(assignment_math);
+			int index = valuesHash.get(variable.getId()).getIndex();
+			System.out.println(res[index]+"\t"+newVal+"\t"+Y[index]);
+	
+			res[index] = (newVal  - Y[index]) * 200;
+			//res[index] = res[index] + (newVal - Y[index]) ;
+			
+
 		}
 	}
 
@@ -1332,9 +1330,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * This Method is filling the array listOfEvents_delay with lists of times
 	 * at which events must be executed.
 	 */
-	private void prepareEvents(int index, double time, ASTNode delay) {
+	private void prepareEvents(int index, double time, Delay delay) {
 		double value = time;
-		value += evaluateToDouble(delay);
+		if (delay != null)
+			value += evaluateToDouble(delay.getMath());
 		insertSort(listOfEvents_delay[index], value);
 	}
 

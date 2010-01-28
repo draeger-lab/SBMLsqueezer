@@ -53,7 +53,7 @@ public class SimulationTestAutomatic {
 		double duration = 0d, steps = 0d;
 		BufferedReader reader;
 		BufferedWriter writer;
-		for (modelnr = 24; modelnr <= 30; modelnr++) {
+		for (modelnr = 26; modelnr <= 26; modelnr++) {
 			System.out.println("model " + modelnr);
 			folder = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/semantic/";
 			if (modelnr < 100) {
@@ -170,7 +170,7 @@ public class SimulationTestAutomatic {
 				 plot.getFunctionArea().paint(img.createGraphics());
 				 ImageIO.write(img, "jpg", new
 				 File("C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/results/"+modelnr+"-graph.jpg"));
-				 plot.dispose();
+				 //plot.dispose();
 			}
 		}
 	}
