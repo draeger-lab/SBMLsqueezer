@@ -38,27 +38,33 @@ public class SimulationTest {
 		}
 		String path;
 		path = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/tst suite/sbml-test-cases-2009-09-05/cases/semantic/";
-		path += "00021/00021-sbml-l2v4.xml";
+		path += "00025/00025-sbml-l2v4.xml";
 		SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
-		System.out.println(args[0]);
-		System.out.println(path);
+		// System.out.println(args[0]);
+		// System.out.println(path);
 		//Model model = sbmlIo.readModel(args[0]);
 		Model model = sbmlIo.readModel(path);
 		RKSolver rk = new RKSolver();
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		double time = 0;
-	
-		//rk.setStepSize(0.9);
-		double solution[][] = rk.solveByStepSize(interpreter, interpreter
-				.getInitialValues(), time, 10);
 
+		double solution[][] = rk.solveByStepSize(interpreter, interpreter
+				.getInitialValues(), time, 5);
+//		rk.solveAtTimePoints(interpreter, interpreter
+//				.getInitialValues(), timePoints)
+//		
+		
+		System.out.println(solution[0].length);
 		if (rk.isUnstable())
 			System.err.println("unstable!");
 		else {
+			int from = model.getNumCompartments();
+			int to = from + model.getNumSpecies();
 			Plot plot = new Plot("Simulation", "time", "value");
 			for (int i = 0; i < solution.length; i++) {
 				double[] symbol = solution[i];
-				for (int j = 0; j < symbol.length; j++) {
+				System.out.println();
+				for (int j = from; j < to; j++) {
 
 					double sym = symbol[j];
 					plot.setConnectedPoint(time, sym, j);

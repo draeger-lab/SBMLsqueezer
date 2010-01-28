@@ -5,9 +5,11 @@ package org.sbml.squeezer.math;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -50,8 +52,9 @@ public class SimulationTestAutomatic {
 		int modelnr, start = 0;
 		double duration = 0d, steps = 0d;
 		BufferedReader reader;
-		for (modelnr = 21; modelnr < 22; modelnr++) {
-
+		BufferedWriter writer;
+		for (modelnr = 24; modelnr <= 30; modelnr++) {
+			System.out.println("model " + modelnr);
 			folder = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/semantic/";
 			if (modelnr < 100) {
 				sbmlfile = folder + "000" + modelnr + "/000" + modelnr
@@ -80,7 +83,7 @@ public class SimulationTestAutomatic {
 				line = reader.readLine();
 				steps = Double.valueOf(line
 						.substring(line.lastIndexOf(" ") + 1));
-
+				reader.close();
 			} catch (FileNotFoundException e) {
 
 				e.printStackTrace();
@@ -93,40 +96,64 @@ public class SimulationTestAutomatic {
 			SBMLinterpreter interpreter = new SBMLinterpreter(model);
 			double time = 0;
 
-			rk.setStepSize(duration / steps);
-
-			double solution[][] = rk.solveByStepSize(interpreter, interpreter
-					.getInitialValues(), time, duration);
-
+			// get timepoints
 			CSVReader csvreader = new CSVReader(new FileReader(csvfile), ',',
 					'\'', 1);
 			List<String[]> input = csvreader.readAll();
+			double[] timepoints = new double[input.size()];
+			for (int i = 0; i < timepoints.length; i++) {
+				timepoints[i] = Double.valueOf(input.get(i)[0]);
+
+			}
+			csvreader.close();
+
+			// solve By StepSize
+			// rk.setStepSize(duration / steps);
+			// double solution[][] = rk.solveByStepSize(interpreter, interpreter
+			// .getInitialValues(), time, duration);
+
+			// solve At StepSize
+
+			double solution[][] = rk.solveAtTimePoints(interpreter, interpreter
+					.getInitialValues(), timepoints);
+
+			csvreader = new CSVReader(new FileReader(csvfile), ',', '\'', 1);
+			input = csvreader.readAll();
+			csvreader.close();
 			double[][] data = new double[input.get(0).length - 1][input.size()];
 			double[][] solutiontrans = new double[input.get(0).length - 1][input
 					.size()];
-
+			int from = model.getNumCompartments();
+			int to = from + model.getNumSpecies();
+			
 			for (int i = 1; i < data.length + 1; i++) {
 
 				for (int j = 0; j < input.size(); j++) {
 
 					data[i - 1][j] = Double.valueOf(input.get(j)[i]);
-					solutiontrans[i - 1][j] = solution[j][i - 1];
+					solutiontrans[i - 1][j] = solution[j][i - 1 + from];
 				}
 			}
 
 			RSE rse = new RSE();
-			System.out.println("relative distance - model " + modelnr);
-			System.out.println(rse.distance(data, solutiontrans));
+
+			writer = new BufferedWriter(
+					new FileWriter(
+							"C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/results/"+modelnr+"-deviation.txt"));
+			writer.write("relative distance for model-" + modelnr);
+			writer.newLine();
+			writer.write(String.valueOf(rse.distance(data, solutiontrans)));
+			writer.close();
 
 			if (rk.isUnstable())
 				System.err.println("unstable!");
 			else {
 				Plot plot = new Plot("Simulation", "time", "value");
-				for (int i = 0; i < solution.length; i++) {
-					double[] symbol = solution[i];
-					for (int j = 0; j < symbol.length; j++) {
 
-						double sym = symbol[j];
+				for (int i = 0; i < solution.length; i++) {
+					for (int j = 0; j < solutiontrans.length; j++) {
+
+						double sym = solutiontrans[j][i];
 						double un = data[j][i];
 						plot.setConnectedPoint(time, sym, j);
 						plot.setUnconnectedPoint(time, un, 90 + j);
@@ -135,10 +162,15 @@ public class SimulationTestAutomatic {
 					time += rk.getStepSize();
 
 				}
-			BufferedImage img = new BufferedImage(plot.getFunctionArea().getWidth(), plot.getFunctionArea().getHeight(), BufferedImage.TYPE_INT_RGB);
-			plot.getFunctionArea().paint(img.createGraphics());
-			ImageIO.write(img, "jpg", new File("C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/results/graph"+ modelnr+ ".jpg"));
-			
+				//save graph as jpg
+				 BufferedImage img = new
+				 BufferedImage(plot.getFunctionArea().getWidth(),
+				 plot.getFunctionArea().getHeight(),
+				 BufferedImage.TYPE_INT_RGB);
+				 plot.getFunctionArea().paint(img.createGraphics());
+				 ImageIO.write(img, "jpg", new
+				 File("C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/results/"+modelnr+"-graph.jpg"));
+				 plot.dispose();
 			}
 		}
 	}
