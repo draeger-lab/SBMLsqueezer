@@ -38,7 +38,7 @@ public class SimulationTest {
 		}
 		String path;
 		path = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/tst suite/sbml-test-cases-2009-09-05/cases/semantic/";
-		path += "00025/00025-sbml-l2v4.xml";
+		path += "00026/00026-sbml-l2v4.xml";
 		SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 		// System.out.println(args[0]);
 		// System.out.println(path);
@@ -63,8 +63,7 @@ public class SimulationTest {
 			Plot plot = new Plot("Simulation", "time", "value");
 			for (int i = 0; i < solution.length; i++) {
 				double[] symbol = solution[i];
-				System.out.println();
-				for (int j = from; j < to; j++) {
+					for (int j = from; j < to; j++) {
 
 					double sym = symbol[j];
 					plot.setConnectedPoint(time, sym, j);
