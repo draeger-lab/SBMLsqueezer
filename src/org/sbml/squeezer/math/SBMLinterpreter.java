@@ -119,6 +119,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	private static final long serialVersionUID = 3453063382705340995L;
 
 	private double currentTime;
+	private double lastTimeStep = 0;
 
 	/**
 	 * This field is necessary to also consider local parameters of the current
@@ -129,14 +130,24 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	protected Reaction currentReaction;
 
 	/**
-	 * An array, which stores all computed initial values of the model. If this
-	 * model does not contain initial assignments, the initial values will only
-	 * be taken once from the information stored in the model. Otherwise they
-	 * have to be computed again as soon as the parameter values of this model
-	 * are changed, because the parameters may influence the return values of
-	 * the initial assignments.
+	 * <p>
+	 * This constructs a new DifferentialEquationSystem for the given SBML
+	 * model. Note that only a maximum of <code>Integer.MAX_VALUE</code> species
+	 * can be simulated. If the model contains more species, this class is not
+	 * applicable.
+	 * </p>
+	 * <p>
+	 * Note that currently, units are not considered.
+	 * </p>
+	 * 
+	 * @param model
 	 */
-	protected double[] initialValues;
+	public SBMLinterpreter(Model model) {
+		this.model = model;
+		this.speciesIdIndex = new HashMap<String, Integer>();
+		this.v = new double[this.model.getListOfReactions().size()];
+		this.init();
+	}
 
 	private HashMap<String, Value> valuesHash;
 
@@ -170,6 +181,16 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	protected Map<String, Integer> speciesIdIndex;
 
 	/**
+	 * An array, which stores all computed initial values of the model. If this
+	 * model does not contain initial assignments, the initial values will only
+	 * be taken once from the information stored in the model. Otherwise they
+	 * have to be computed again as soon as the parameter values of this model
+	 * are changed, because the parameters may influence the return values of
+	 * the initial assignments.
+	 */
+	protected double[] initialValues;
+
+	/**
 	 * This array is to avoid to allocate memory repeatedly. It stores the
 	 * values computed during the linear combination of velocities. These values
 	 * are passed to the array Y afterwards.
@@ -188,26 +209,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * system.
 	 */
 	protected double[] Y;
-
-	/**
-	 * <p>
-	 * This constructs a new DifferentialEquationSystem for the given SBML
-	 * model. Note that only a maximum of <code>Integer.MAX_VALUE</code> species
-	 * can be simulated. If the model contains more species, this class is not
-	 * applicable.
-	 * </p>
-	 * <p>
-	 * Note that currently, units are not considered.
-	 * </p>
-	 * 
-	 * @param model
-	 */
-	public SBMLinterpreter(Model model) {
-		this.model = model;
-		this.speciesIdIndex = new HashMap<String, Integer>();
-		this.v = new double[this.model.getListOfReactions().size()];
-		this.init();
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -753,7 +754,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		 * Events checking if the model has events and executing events that
 		 * must be executed at this time point: t = time.
 		 */
-	
 
 		// Velocities of each reaction.
 		for (i = 0; i < v.length; i++) {
@@ -829,7 +829,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 					elt = listOfEvents_delay[j].get(k).doubleValue();
 					if (!elt.isNaN() && elt <= time) {
 						counter++;
-						System.out.println("Time\t" + time);
+						//System.out.println("Time\t" + time);
 						performEvents(model.getEvent(j), res);
 					}
 					k++;
@@ -854,8 +854,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				}
 			}
 		}
-	
-		
+		lastTimeStep = time;
 		return res;
 	}
 
@@ -1265,23 +1264,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	private void performEvents(Event ev, double[] res) {
 		for (int j = 0; j < ev.getNumEventAssignments(); j++) {
 			ASTNode assignment_math = ev.getEventAssignment(j).getMath();
-			/*
-			 * check variable.
-			 */
-			Symbol variable = ev.getEventAssignment(j).getVariableInstance();
-			// if the variable is a species
 
-			//		System.out.println(variable + "=\t"
-			//						+ Y[speciesIdIndex.get(variable).intValue()] + "\t"
-			//						+ evaluateToDouble(ev.getEventAssignment(j).getMath()));
+			Symbol variable = ev.getEventAssignment(j).getVariableInstance();
 			double newVal = evaluateToDouble(assignment_math);
 			int index = valuesHash.get(variable.getId()).getIndex();
-			System.out.println(res[index]+"\t"+newVal+"\t"+Y[index]);
-	
-			res[index] = (newVal  - Y[index]) * 200;
-			//res[index] = res[index] + (newVal - Y[index]) ;
-			
-
+			if ((newVal - Y[index]) > 0)
+				res[index] = (newVal - Y[index]) / (currentTime - lastTimeStep);
 		}
 	}
 
