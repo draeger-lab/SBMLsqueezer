@@ -43,7 +43,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  */
 public class HillEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics {
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
 	 * 
