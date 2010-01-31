@@ -536,11 +536,11 @@ public class ReactionType {
 			Species reactant = reaction.getReactant(0).getSpeciesInstance();
 			if (stoichiometryRight == 1d) {
 				Species product = reaction.getProduct(0).getSpeciesInstance();
-				if ((reactionWithGenes || reactionWithRNAs || (SBO
+				if ((reactionWithGenes || reactionWithRNAs || (SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm()) || (SBO
 						.isEmptySet(reactant.getSBOTerm()) && (SBO
 						.isProtein(product.getSBOTerm()) || SBO
 						.isRNAOrMessengerRNA(product.getSBOTerm()))))
-						&& !(SBO.isEmptySet(product.getSBOTerm())))
+						&& !(SBO.isEmptySet(product.getSBOTerm()))))
 					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION);
 			}
 			if (!whichkin.toString().equals(
@@ -651,10 +651,11 @@ public class ReactionType {
 			if (uniUni) {
 				Species reactant = reaction.getReactant(0).getSpeciesInstance();
 				Species product = reaction.getProduct(0).getSpeciesInstance();
-				if (SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm())
+				if ((reactionWithGenes || reactionWithRNAs || (
+						SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm())
 						|| (SBO.isEmptySet(reactant.getSBOTerm()) && (SBO
 								.isRNAOrMessengerRNA(product.getSBOTerm()) || SBO
-								.isProtein(product.getSBOTerm()))))
+								.isProtein(product.getSBOTerm()))))))
 					for (String className : SBMLsqueezer
 							.getKineticsGeneRegulatoryNetworks()) {
 						if ((reaction.getReversible() && !notReversible
