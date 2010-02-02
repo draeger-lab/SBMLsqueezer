@@ -208,10 +208,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		ButtonGroup revGroup = new ButtonGroup();
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
 		boolean nonEnzyme = reactionType.isNonEnzymeReaction();
-		boolean isEnzymeKineticsSelected = (((Boolean) this.klg.getSettings()
+		boolean isEnzymeKineticsSelected = ((Boolean) this.klg.getSettings()
 				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
-				.booleanValue() || reactionType.isEnzymeReaction())
-				&& !nonEnzyme;
+				.booleanValue()
+				|| !nonEnzyme;
 		treatAsEnzymeReaction = new JCheckBox(
 				"Consider this reaction to be enzyme-catalyzed");
 		treatAsEnzymeReaction.setToolTipText(GUITools
@@ -263,6 +263,41 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		rButtonReversible.addItemListener(this);
 		rButtonGlobalParameters.addItemListener(this);
 		rButtonLocalParameters.addItemListener(this);
+	}
+
+	/**
+	 * Sets up the panel for the preview of the formula.
+	 * 
+	 * @param kinNum
+	 */
+	private void createPreviewPanel(int kinNum) {
+		JPanel preview = new JPanel(new BorderLayout());
+		StringBuilder sb = new StringBuilder("\\begin{equation}v_\\mbox{");
+		sb.append(reaction.getId());
+		sb.append("}=");
+		sb.append(laTeXpreview[kinNum].toString().replace("mathrm", "mbox")
+				.replace("text", "mbox").replace("mathtt", "mbox"));
+		sb.append("\\end{equation}");
+		preview.add(new sHotEqn(sb.toString()), BorderLayout.CENTER);
+		preview.setBackground(Color.WHITE);
+		eqnPrev = new JPanel();
+		eqnPrev.setBorder(BorderFactory
+				.createTitledBorder(" Equation Preview "));
+		eqnPrev.setLayout(new BorderLayout());
+		Dimension dim = new Dimension(width, height);
+		/*
+		 * new Dimension((int) Math.min(width, preview
+		 * .getPreferredSize().getWidth()), (int) Math.min(height, preview
+		 * .getPreferredSize().getHeight()));//
+		 */
+		JScrollPane scroll = new JScrollPane(preview,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
+		scroll.setBackground(Color.WHITE);
+		scroll.setPreferredSize(dim);
+		// ContainerHandler.setAllBackground(scroll, Color.WHITE);
+		eqnPrev.add(scroll, BorderLayout.CENTER);
 	}
 
 	public boolean getExistingRateLawSelected() {
@@ -377,43 +412,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		return info; // kineticsPanel;
 	}
 
-	/**
-	 * Alphabetically sort the human-readable simple names and change the
-	 * ordering of all other elements so the order is the same as in the simple
-	 * names array.
-	 * 
-	 * @param laws
-	 * @param typeNames
-	 * @param simpleNames
-	 * @param toolTips
-	 * @param laTeX
-	 */
-	private void sort(String[] typeNames, String[] simpleNames,
-			String[] toolTips, String[] laTeX) {
-		String names[] = new String[simpleNames.length];
-		System.arraycopy(simpleNames, 0, names, 0, simpleNames.length);
-		Arrays.sort(simpleNames);
-		int indices[] = new int[names.length];
-		int i = 0, pos;
-		for (String name : simpleNames) {
-			pos = 0;
-			while (!name.equals(names[pos]))
-				pos++;
-			indices[i++] = pos;
-		}
-		String types[] = new String[indices.length];
-		String tipps[] = new String[indices.length];
-		String lt[] = new String[indices.length];
-		System.arraycopy(typeNames, 0, types, 0, types.length);
-		System.arraycopy(toolTips, 0, tipps, 0, tipps.length);
-		System.arraycopy(laTeX, 0, lt, 0, lt.length);
-		for (i = 0; i < indices.length; i++) {
-			typeNames[i] = types[indices[i]];
-			toolTips[i] = tipps[indices[i]];
-			laTeX[i] = lt[indices[i]];
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -514,38 +512,40 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	}
 
 	/**
-	 * Sets up the panel for the preview of the formula.
+	 * Alphabetically sort the human-readable simple names and change the
+	 * ordering of all other elements so the order is the same as in the simple
+	 * names array.
 	 * 
-	 * @param kinNum
+	 * @param laws
+	 * @param typeNames
+	 * @param simpleNames
+	 * @param toolTips
+	 * @param laTeX
 	 */
-	private void createPreviewPanel(int kinNum) {
-		JPanel preview = new JPanel(new BorderLayout());
-		StringBuilder sb = new StringBuilder("\\begin{equation}v_\\mbox{");
-		sb.append(reaction.getId());
-		sb.append("}=");
-		sb.append(laTeXpreview[kinNum].toString().replace("mathrm", "mbox")
-				.replace("text", "mbox").replace("mathtt", "mbox"));
-		sb.append("\\end{equation}");
-		preview.add(new sHotEqn(sb.toString()), BorderLayout.CENTER);
-		preview.setBackground(Color.WHITE);
-		eqnPrev = new JPanel();
-		eqnPrev.setBorder(BorderFactory
-				.createTitledBorder(" Equation Preview "));
-		eqnPrev.setLayout(new BorderLayout());
-		Dimension dim = new Dimension(width, height);
-		/*
-		 * new Dimension((int) Math.min(width, preview
-		 * .getPreferredSize().getWidth()), (int) Math.min(height, preview
-		 * .getPreferredSize().getHeight()));//
-		 */
-		JScrollPane scroll = new JScrollPane(preview,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
-		scroll.setBackground(Color.WHITE);
-		scroll.setPreferredSize(dim);
-		// ContainerHandler.setAllBackground(scroll, Color.WHITE);
-		eqnPrev.add(scroll, BorderLayout.CENTER);
+	private void sort(String[] typeNames, String[] simpleNames,
+			String[] toolTips, String[] laTeX) {
+		String names[] = new String[simpleNames.length];
+		System.arraycopy(simpleNames, 0, names, 0, simpleNames.length);
+		Arrays.sort(simpleNames);
+		int indices[] = new int[names.length];
+		int i = 0, pos;
+		for (String name : simpleNames) {
+			pos = 0;
+			while (!name.equals(names[pos]))
+				pos++;
+			indices[i++] = pos;
+		}
+		String types[] = new String[indices.length];
+		String tipps[] = new String[indices.length];
+		String lt[] = new String[indices.length];
+		System.arraycopy(typeNames, 0, types, 0, types.length);
+		System.arraycopy(toolTips, 0, tipps, 0, tipps.length);
+		System.arraycopy(laTeX, 0, lt, 0, lt.length);
+		for (i = 0; i < indices.length; i++) {
+			typeNames[i] = types[indices[i]];
+			toolTips[i] = tipps[indices[i]];
+			laTeX[i] = lt[indices[i]];
+		}
 	}
 
 	/**
