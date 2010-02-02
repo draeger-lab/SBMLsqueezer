@@ -536,7 +536,7 @@ public class SBasePanel extends JPanel {
 					"<html><head></head>" + text + "</html>");
 			notesArea.setEditable(editable);
 			notesArea.addHyperlinkListener(new SystemBrowser());
-			notesArea.setPreferredSize(new Dimension(preferedWidth, 200));
+			notesArea.setMaximumSize(new Dimension(preferedWidth, 200));
 			notesArea.setDoubleBuffered(true);
 			notesArea.setBorder(BorderFactory.createLoweredBevelBorder());
 			JScrollPane scroll = new JScrollPane(notesArea,
@@ -583,11 +583,11 @@ public class SBasePanel extends JPanel {
 			l.setEditable(editable);
 			l.setBackground(Color.WHITE);
 			Dimension dim = new Dimension(preferedWidth, 125);
-			l.setPreferredSize(dim);
+			l.setMaximumSize(dim);
 			JScrollPane scroll = new JScrollPane(l,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scroll.setPreferredSize(dim);
+			scroll.setMaximumSize(dim);
 			scroll.setBorder(BorderFactory.createLoweredBevelBorder());
 			lh.add(scroll, 3, row, 1, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
@@ -763,7 +763,7 @@ public class SBasePanel extends JPanel {
 		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
-		preview.setPreferredSize(new Dimension(200, 30));
+		preview.setMaximumSize(new Dimension(200, 30));
 		lh.add(preview, 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		JCheckBox check = new JCheckBox("Constant", s.isConstant());
@@ -833,7 +833,7 @@ public class SBasePanel extends JPanel {
 		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
-		preview.setPreferredSize(new Dimension(200, 30));
+		preview.setMaximumSize(new Dimension(200, 30));
 		lh.add(preview, 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		for (Unit u : ud.getListOfUnits())
