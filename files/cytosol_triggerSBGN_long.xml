@@ -316,7 +316,7 @@
 </celldesigner:extension>
 </annotation>
 </species>
-<species id="s3" name="s3" compartment="c1" initialAmount="0" sboTerm="SBO:0000240">
+<species id="s3" name="s3" compartment="c1" initialAmount="0" sboTerm="SBO:0000252">
 <annotation>
 <celldesigner:extension>
 <celldesigner:positionToCompartment>inside</celldesigner:positionToCompartment>

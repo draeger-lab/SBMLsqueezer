@@ -118,13 +118,13 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		docNode.add(modelNode);
 		DefaultMutableTreeNode node;
 		if (m.getNumFunctionDefinitions() > 0) {
-			node = new DefaultMutableTreeNode("Function Definitions");
+			node = new NamedMutableSBMLTreeNode("Function Definitions", m.getListOfFunctionDefinitions());
 			modelNode.add(node);
 			for (FunctionDefinition c : m.getListOfFunctionDefinitions())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumUnitDefinitions() > 0) {
-			node = new DefaultMutableTreeNode("Unit Definitions");
+			node = new NamedMutableSBMLTreeNode("Unit Definitions", m.getListOfUnitDefinitions());
 			modelNode.add(node);
 			for (UnitDefinition c : m.getListOfUnitDefinitions()) {
 				DefaultMutableTreeNode unitDefNode = new DefaultMutableTreeNode(
@@ -135,77 +135,77 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			}
 		}
 		if (m.getNumCompartmentTypes() > 0) {
-			node = new DefaultMutableTreeNode("Compartment Types");
+			node = new NamedMutableSBMLTreeNode("Compartment Types", m.getListOfCompartmentTypes());
 			modelNode.add(node);
 			for (CompartmentType c : m.getListOfCompartmentTypes())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumSpeciesTypes() > 0) {
-			node = new DefaultMutableTreeNode("Species Types");
+			node = new NamedMutableSBMLTreeNode("Species Types", m.getListOfSpeciesTypes());
 			modelNode.add(node);
 			for (SpeciesType c : m.getListOfSpeciesTypes())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumCompartments() > 0) {
-			node = new DefaultMutableTreeNode("Compartments");
+			node = new NamedMutableSBMLTreeNode("Compartments", m.getListOfCompartments());
 			modelNode.add(node);
 			for (Compartment c : m.getListOfCompartments())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumSpecies() > 0) {
-			node = new DefaultMutableTreeNode("Species");
+			node = new NamedMutableSBMLTreeNode("Species", m.getListOfSpecies());
 			modelNode.add(node);
 			for (Species s : m.getListOfSpecies())
 				node.add(new DefaultMutableTreeNode(s));
 		}
 		if (m.getNumParameters() > 0) {
-			node = new DefaultMutableTreeNode("Parameters");
+			node = new NamedMutableSBMLTreeNode("Parameters", m.getListOfParameters());
 			modelNode.add(node);
 			for (Parameter p : m.getListOfParameters())
 				node.add(new DefaultMutableTreeNode(p));
 		}
 		if (m.getNumInitialAssignments() > 0) {
-			node = new DefaultMutableTreeNode("Initial Assignments");
+			node = new NamedMutableSBMLTreeNode("Initial Assignments", m.getListOfInitialAssignments());
 			modelNode.add(node);
 			for (InitialAssignment c : m.getListOfInitialAssignments())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumRules() > 0) {
-			node = new DefaultMutableTreeNode("Rules");
+			node = new NamedMutableSBMLTreeNode("Rules", m.getListOfRules());
 			modelNode.add(node);
 			for (Rule c : m.getListOfRules())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumConstraints() > 0) {
-			node = new DefaultMutableTreeNode("Constraints");
+			node = new NamedMutableSBMLTreeNode("Constraints", m.getListOfConstraints());
 			modelNode.add(node);
 			for (Constraint c : m.getListOfConstraints())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumReactions() > 0) {
-			node = new DefaultMutableTreeNode("Reactions");
+			node = new NamedMutableSBMLTreeNode("Reactions", m.getListOfReactions());
 			modelNode.add(node);
 			for (Reaction r : m.getListOfReactions()) {
 				DefaultMutableTreeNode currReacNode = new DefaultMutableTreeNode(
 						r);
 				node.add(currReacNode);
 				if (r.getNumReactants() > 0) {
-					DefaultMutableTreeNode reactants = new DefaultMutableTreeNode(
-							"Reactants");
+					NamedMutableSBMLTreeNode reactants = new NamedMutableSBMLTreeNode(
+							"Reactants", r.getListOfReactants());
 					currReacNode.add(reactants);
 					for (SpeciesReference specRef : r.getListOfReactants())
 						reactants.add(new DefaultMutableTreeNode(specRef));
 				}
 				if (r.getNumProducts() > 0) {
-					DefaultMutableTreeNode products = new DefaultMutableTreeNode(
-							"Products");
+					NamedMutableSBMLTreeNode products = new NamedMutableSBMLTreeNode(
+							"Products", r.getListOfProducts());
 					currReacNode.add(products);
 					for (SpeciesReference specRef : r.getListOfProducts())
 						products.add(new DefaultMutableTreeNode(specRef));
 				}
 				if (r.getNumModifiers() > 0) {
-					DefaultMutableTreeNode modifiers = new DefaultMutableTreeNode(
-							"Modifiers");
+					NamedMutableSBMLTreeNode modifiers = new NamedMutableSBMLTreeNode(
+							"Modifiers", r.getListOfModifiers());
 					currReacNode.add(modifiers);
 					for (ModifierSpeciesReference mSpecRef : r
 							.getListOfModifiers())
@@ -213,12 +213,11 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				}
 				if (r.isSetKineticLaw()) {
 					KineticLaw kl = r.getKineticLaw();
-					DefaultMutableTreeNode klNode = new DefaultMutableTreeNode(
-							kl);
+					NamedMutableSBMLTreeNode klNode = new NamedMutableSBMLTreeNode("Kinetic Law", kl);
 					currReacNode.add(klNode);
 					if (kl.getNumParameters() > 0) {
-						DefaultMutableTreeNode n = new DefaultMutableTreeNode(
-								"Parameters");
+						NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(
+								"Parameters", kl.getListOfParameters());
 						klNode.add(n);
 						for (Parameter p : kl.getListOfParameters())
 							n.add(new DefaultMutableTreeNode(p));
@@ -344,3 +343,36 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 	public void mouseReleased(MouseEvent e) {
 	}
 }
+
+/**
+ * 
+ * @author Andreas Dr&auml;ger
+ *
+ */
+class NamedMutableSBMLTreeNode extends DefaultMutableTreeNode {
+
+	/**
+	 * 
+	 */
+	private String name;
+
+	/**
+	 * 
+	 * @param name
+	 * @param sbase
+	 */
+	public NamedMutableSBMLTreeNode(String name, SBase sbase) {
+		super(sbase);
+		this.name = name;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.swing.tree.DefaultMutableTreeNode#toString()
+	 */
+	@Override
+	public String toString() {
+	  return name;	
+	}
+}
+
