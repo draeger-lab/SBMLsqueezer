@@ -48,6 +48,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 
 import eva2.tools.math.des.DESystem;
+import eva2.tools.math.des.EventDESystem;
 
 /**
  * <p>
@@ -65,7 +66,7 @@ import eva2.tools.math.des.DESystem;
  * @author Dieudonne Motsou Wouamba <dwouamba@yahoo.fr>
  * @date Sep 6, 2007
  */
-public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
+public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/**
 	 * Stores initial values of symbols changed due to initial assignments.
@@ -758,18 +759,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		this.currentTime = time;
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
-		Arrays.fill(changeRate, 0.0);
-
+		System.out.println("Y");
+		System.out.println(Arrays.toString(Y));
+		Arrays.fill(changeRate, 0.0);		
 		
-		
-		/*
-		 * Events checking if the model has events and executing events that
-		 * must be executed at this time point: t = time.
-		 */
-		processEvents(changeRate);
-
 		processVelocities(changeRate);
-		//System.out.println(changeRate[1]+" "+changeRate[2]);
+
 		processRules(changeRate);
 
 		/*
@@ -780,7 +775,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				listOfContraintsViolations[i].add(time);
 
 		lastTimeStep = time;
-
+		System.out.println("res");
+		System.out.println(Arrays.toString(changeRate));
+		
 		return changeRate;
 	}
 
@@ -806,7 +803,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 
 	}
 
-	private void processEvents(double[] changeRate) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eva2.tools.math.des.EventDESystem#processEvents(double, double[],
+	 * double[])
+	 */
+	public double[] processEvents(double t, double[] Y, double[] res) {
+		double[] delays = new double[Y.length];
+		Arrays.fill(delays, Double.NaN);
 
 		if (model.getNumEvents() > 0) {
 			Event ev;
@@ -815,9 +820,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				ev = model.getEvent(i);
 				// check if event must be fired (update)
 				if (evaluateToBoolean(ev.getTrigger().getMath())) {
+					// check if trigger has just become true
 					if (listOfEvents_delay[i].get(
 							listOfEvents_delay[i].size() - 2).isNaN()) {
-						prepareEvents(i, currentTime, ev.getDelay());
+						/*
+						 * Fill the array listOfEvents_delay with lists of times
+						 * at which events must be executed.
+						 */
+						if (ev.getDelay() != null)
+							currentTime += evaluateToDouble(ev.getDelay()
+									.getMath());
+
+						insertSort(listOfEvents_delay[i], currentTime);
 						listOfEvents_delay[i].set(
 								listOfEvents_delay[i].size() - 2,
 								Double.POSITIVE_INFINITY);
@@ -839,7 +853,27 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 					if (!elt.isNaN() && elt <= currentTime) {
 						counter++;
 						// System.out.println("Time\t" + time);
-						performEvents(model.getEvent(j), changeRate);
+
+						ev = model.getEvent(j);
+						for (int l = 0; l < ev.getNumEventAssignments(); l++) {
+							ASTNode assignment_math = ev.getEventAssignment(l)
+									.getMath();
+							Symbol variable = ev.getEventAssignment(l)
+									.getVariableInstance();
+							double newVal = evaluateToDouble(assignment_math);
+							int index = valuesHash.get(variable.getId())
+									.getIndex();
+							
+							if (ev.getDelay() != null)
+								delays[index] = evaluateToDouble(ev.getDelay()
+										.getMath());
+							else
+								delays[index] = 0d;
+							
+							res[index] = newVal;
+
+						}
+
 					}
 					k++;
 				}
@@ -863,6 +897,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				}
 			}
 		}
+		
+		return delays;
 
 	}
 
@@ -1001,15 +1037,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		listOfEvents_delay = new LinkedList[(int) model.getNumEvents()];
 		for (int i = 0; i < listOfEvents_delay.length; i++) {
 			listOfEvents_delay[i] = new LinkedList<Double>();
-			if (evaluateToBoolean(model.getEvent(i).getTrigger().getMath())) {
+			if (evaluateToBoolean(model.getEvent(i).getTrigger().getMath()))
 				listOfEvents_delay[i].add(Double.POSITIVE_INFINITY);
-				listOfEvents_delay[i].addFirst(Double.NaN);
-				listOfEvents_delay[i].addLast(0.0);
-			} else {
+			else
 				listOfEvents_delay[i].add(Double.NaN);
-				listOfEvents_delay[i].addFirst(Double.NaN);
-				listOfEvents_delay[i].addLast(0.0);
-			}
+
+			listOfEvents_delay[i].addFirst(Double.NaN);
+			listOfEvents_delay[i].addLast(0.0);
 		}
 	}
 
@@ -1264,38 +1298,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return getConstantFalse();
 	}
 
-	/**
-	 * Method performing event.
-	 */
-	private void performEvents(Event ev, double[] changeRate) {
-		for (int j = 0; j < ev.getNumEventAssignments(); j++) {
-			ASTNode assignment_math = ev.getEventAssignment(j).getMath();
-
-			Symbol variable = ev.getEventAssignment(j).getVariableInstance();
-			double newVal = evaluateToDouble(assignment_math);
-			int index = valuesHash.get(variable.getId()).getIndex();
-
-			// calculate rate of change due to EventAssignment
-			//if ((newVal - Y[index]) > 0) {			
-			System.out.println();
-			System.out.println(currentTime > lastTimeStep);
-			if (currentTime > lastTimeStep) {					
-				
-				changeRate[index] += (newVal - Y[index])
-						/ (currentTime - lastTimeStep);
-
-				System.out.println(currentTime+" "+lastTimeStep+" s"+index+ " " +newVal+" " +Y[index]);
-				
-				
-			}
-			else {
-				System.out.println(currentTime+" "+lastTimeStep+" s"+index+ " " +newVal+" " +Y[index]);
-				
-			}
-			
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1335,17 +1337,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		return Double.valueOf(Math.pow(toDouble(nodeleft.compile(this)),
 				toDouble(noderight.compile(this))));
 
-	}
-
-	/**
-	 * This Method is filling the array listOfEvents_delay with lists of times
-	 * at which events must be executed.
-	 */
-	private void prepareEvents(int index, double time, Delay delay) {
-		double value = time;
-		if (delay != null)
-			value += evaluateToDouble(delay.getMath());
-		insertSort(listOfEvents_delay[index], value);
 	}
 
 	/*
