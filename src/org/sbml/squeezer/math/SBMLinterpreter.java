@@ -492,7 +492,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @param alr
 	 * @param res
 	 */
-	private void evaluateAlgebraicRule(AlgebraicRule alr, double arr[]) {
+	private void evaluateAlgebraicRule(AlgebraicRule alr, double changeRate[]) {
 		int speciesIndex;
 		Value val;
 
@@ -505,13 +505,21 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @param ar
 	 * @param arr
 	 */
-	private void evaluateAssignmentRule(AssignmentRule ar, double arr[]) {
+	private void evaluateAssignmentRule(AssignmentRule ar, double changeRate[]) {
 		int speciesIndex;
 		Value val;
-
+		double newVal = evaluateToDouble(ar.getMath());
 		val = valuesHash.get(ar.getVariable());
 		speciesIndex = val.getIndex();
-		arr[speciesIndex] = evaluateToDouble(ar.getMath());
+
+		if (currentTime == 0d)
+			changeRate[speciesIndex] = newVal;
+		else {
+			if (currentTime > lastTimeStep)
+				changeRate[speciesIndex] += (newVal - Y[speciesIndex])
+						/ (currentTime - lastTimeStep);
+
+		}
 
 	}
 
@@ -520,13 +528,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @param rr
 	 * @param res
 	 */
-	private void evaluateRateRule(RateRule rr, double arr[]) {
+	private void evaluateRateRule(RateRule rr, double changeRate[]) {
 		int speciesIndex;
 		Value val;
 
 		val = valuesHash.get(rr.getVariable());
 		speciesIndex = val.getIndex();
-		arr[speciesIndex] += evaluateToDouble(rr.getMath());
+		changeRate[speciesIndex] += evaluateToDouble(rr.getMath());
 
 	}
 
@@ -548,7 +556,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 *            an SBML file.
 	 * @return a real number that is the result of the mathematics described by
 	 *         this ASTNode. This function return 1.0 if the evaluation of a
-	 *         logical expression is TRUE and 0.0 otherwise.
+	 *         logical expchangeRatesion is TRUE and 0.0 otherwise.
 	 */
 	protected double evaluateToDouble(ASTNode astnode) {
 		return toDouble(astnode.compile(this));
@@ -748,50 +756,22 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	public double[] getValue(double time, double[] Y) {
 		int i;
 		this.currentTime = time;
-		double res[] = new double[Y.length];
+		double changeRate[] = new double[Y.length];
 		this.Y = Y;
+		Arrays.fill(changeRate, 0.0);
+
+		
+		
 		/*
 		 * Events checking if the model has events and executing events that
 		 * must be executed at this time point: t = time.
 		 */
+		processEvents(changeRate);
 
-		// Velocities of each reaction.
-		for (i = 0; i < v.length; i++) {
-			currentReaction = model.getReaction(i);
-			KineticLaw kin = currentReaction.getKineticLaw();
-			if (kin != null) {
-				v[i] = evaluateToDouble(kin.getMath());
-			} else
-				v[i] = 0;
-		}
-		BitSet changed = new BitSet(res.length);
-		double[] velocities = linearCombinationOfVelocities(v, changed);
+		processVelocities(changeRate);
+		//System.out.println(changeRate[1]+" "+changeRate[2]);
+		processRules(changeRate);
 
-		for (i = 0; i < res.length; i++) {
-			if (changed.get(i) == true) {
-				res[i] = velocities[i];
-			}
-
-		}
-
-		for (i = 0; i < model.getNumRules(); i++) {
-			Rule rule = model.getRule(i);
-			if (rule.isAlgebraic()) {
-				AlgebraicRule alr = (AlgebraicRule) rule;
-				evaluateAlgebraicRule(alr, res);
-
-			} else if (rule.isAssignment()) {
-				AssignmentRule ar = (AssignmentRule) rule;
-				evaluateAssignmentRule(ar, res);
-
-			} else if (rule.isRate()) {
-				RateRule rr = (RateRule) rule;
-				evaluateRateRule(rr, res);
-
-			} else if (rule.isScalar()) {
-
-			}
-		}
 		/*
 		 * Checking the Constraints
 		 */
@@ -799,16 +779,45 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
 
+		lastTimeStep = time;
+
+		return changeRate;
+	}
+
+	private void processRules(double[] changeRate) {
+		for (int i = 0; i < model.getNumRules(); i++) {
+			Rule rule = model.getRule(i);
+			if (rule.isAlgebraic()) {
+				AlgebraicRule alr = (AlgebraicRule) rule;
+				evaluateAlgebraicRule(alr, changeRate);
+
+			} else if (rule.isAssignment()) {
+				AssignmentRule ar = (AssignmentRule) rule;
+				evaluateAssignmentRule(ar, changeRate);
+
+			} else if (rule.isRate() && currentTime > 0d) {
+				RateRule rr = (RateRule) rule;
+				evaluateRateRule(rr, changeRate);
+
+			} else if (rule.isScalar()) {
+
+			}
+		}
+
+	}
+
+	private void processEvents(double[] changeRate) {
+
 		if (model.getNumEvents() > 0) {
 			Event ev;
 			// number of events = listOfEvents_delay.length
-			for (i = 0; i < listOfEvents_delay.length; i++) {
+			for (int i = 0; i < listOfEvents_delay.length; i++) {
 				ev = model.getEvent(i);
 				// check if event must be fired (update)
 				if (evaluateToBoolean(ev.getTrigger().getMath())) {
 					if (listOfEvents_delay[i].get(
 							listOfEvents_delay[i].size() - 2).isNaN()) {
-						prepareEvents(i, time, ev.getDelay());
+						prepareEvents(i, currentTime, ev.getDelay());
 						listOfEvents_delay[i].set(
 								listOfEvents_delay[i].size() - 2,
 								Double.POSITIVE_INFINITY);
@@ -827,10 +836,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				int k = 0;
 				while (k < listOfEvents_delay[j].size() - 3) {
 					elt = listOfEvents_delay[j].get(k).doubleValue();
-					if (!elt.isNaN() && elt <= time) {
+					if (!elt.isNaN() && elt <= currentTime) {
 						counter++;
-						//System.out.println("Time\t" + time);
-						performEvents(model.getEvent(j), res);
+						// System.out.println("Time\t" + time);
+						performEvents(model.getEvent(j), changeRate);
 					}
 					k++;
 				}
@@ -854,8 +863,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 				}
 			}
 		}
-		lastTimeStep = time;
-		return res;
+
 	}
 
 	/*
@@ -865,8 +873,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * javaeva.server.oa.go.OptimizationProblems.InferenceRegulatoryNetworks
 	 * .Des.DESystem#getValue(double, double[], double[])
 	 */
-	public void getValue(double time, double[] Y, double[] res) {
-		System.arraycopy(getValue(time, Y), 0, res, 0, res.length);
+	public void getValue(double time, double[] Y, double[] changeRate) {
+		System
+				.arraycopy(getValue(time, Y), 0, changeRate, 0,
+						changeRate.length);
 	}
 
 	/**
@@ -893,6 +903,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		valuesHash = new HashMap<String, Value>();
 		int yIndex = 0;
 		Value val = null;
+		currentTime = 0d;
 
 		this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
 				+ model.getNumParameters()];
@@ -974,17 +985,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 		/*
 		 * Rules
 		 */
-		for (i = 0; i < model.getNumRules(); i++) {
-			Rule rule = model.getRule(i);
-			if (rule.isAlgebraic()) {
-				AlgebraicRule alr = (AlgebraicRule) rule;
-				evaluateAlgebraicRule(alr, this.Y);
-
-			} else if (rule.isAssignment()) {
-				AssignmentRule ar = (AssignmentRule) rule;
-				evaluateAssignmentRule(ar, this.Y);
-			}
-		}
+		processRules(Y);
 
 		// save the initial values of this system
 		initialValues = new double[Y.length];
@@ -1056,13 +1057,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	 * @return An array containing the rates of change for each species in the
 	 *         model system of this class.
 	 */
-	protected double[] linearCombinationOfVelocities(double[] velocities,
-			BitSet changed) {
+	protected void processVelocities(double[] changeRate) {
 		int reactionIndex, sReferenceIndex, speciesIndex;
 		Species species;
 		SpeciesReference speciesRef;
 		Value val;
-		Arrays.fill(swap, 0.0);
+		// Velocities of each reaction.
+		for (int i = 0; i < v.length; i++) {
+			currentReaction = model.getReaction(i);
+			KineticLaw kin = currentReaction.getKineticLaw();
+			if (kin != null) {
+				v[i] = evaluateToDouble(kin.getMath());
+			} else
+				v[i] = 0;
+		}
 
 		for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
 			Reaction r = model.getReaction(reactionIndex);
@@ -1074,14 +1082,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 					speciesIndex = val.getIndex();
 
 					if (speciesRef.isSetStoichiometryMath())
-						swap[speciesIndex] -= evaluateToDouble(speciesRef
+						changeRate[speciesIndex] -= evaluateToDouble(speciesRef
 								.getStoichiometryMath().getMath())
-								* velocities[reactionIndex];
+								* v[reactionIndex];
 					else
-						swap[speciesIndex] -= speciesRef.getStoichiometry()
-								* velocities[reactionIndex];
+						changeRate[speciesIndex] -= speciesRef
+								.getStoichiometry()
+								* v[reactionIndex];
 
-					changed.set(speciesIndex);
 				}
 			}
 
@@ -1093,20 +1101,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 					speciesIndex = val.getIndex();
 
 					if (speciesRef.isSetStoichiometryMath())
-						swap[speciesIndex] += evaluateToDouble(speciesRef
+						changeRate[speciesIndex] += evaluateToDouble(speciesRef
 								.getStoichiometryMath().getMath())
-								* velocities[reactionIndex];
+								* v[reactionIndex];
 					else
-						swap[speciesIndex] += speciesRef.getStoichiometry()
-								* velocities[reactionIndex];
+						changeRate[speciesIndex] += speciesRef
+								.getStoichiometry()
+								* v[reactionIndex];
 
-					changed.set(speciesIndex);
 				}
 			}
 
 		}
-
-		return swap;
 	}
 
 	/*
@@ -1261,15 +1267,32 @@ public class SBMLinterpreter implements ASTNodeCompiler, DESystem {
 	/**
 	 * Method performing event.
 	 */
-	private void performEvents(Event ev, double[] res) {
+	private void performEvents(Event ev, double[] changeRate) {
 		for (int j = 0; j < ev.getNumEventAssignments(); j++) {
 			ASTNode assignment_math = ev.getEventAssignment(j).getMath();
 
 			Symbol variable = ev.getEventAssignment(j).getVariableInstance();
 			double newVal = evaluateToDouble(assignment_math);
 			int index = valuesHash.get(variable.getId()).getIndex();
-			if ((newVal - Y[index]) > 0)
-				res[index] = (newVal - Y[index]) / (currentTime - lastTimeStep);
+
+			// calculate rate of change due to EventAssignment
+			//if ((newVal - Y[index]) > 0) {			
+			System.out.println();
+			System.out.println(currentTime > lastTimeStep);
+			if (currentTime > lastTimeStep) {					
+				
+				changeRate[index] += (newVal - Y[index])
+						/ (currentTime - lastTimeStep);
+
+				System.out.println(currentTime+" "+lastTimeStep+" s"+index+ " " +newVal+" " +Y[index]);
+				
+				
+			}
+			else {
+				System.out.println(currentTime+" "+lastTimeStep+" s"+index+ " " +newVal+" " +Y[index]);
+				
+			}
+			
 		}
 	}
 
