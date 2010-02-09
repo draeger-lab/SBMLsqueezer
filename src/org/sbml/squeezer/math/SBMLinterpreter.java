@@ -49,6 +49,7 @@ import org.sbml.jsbml.Symbol;
 
 import eva2.tools.math.des.DESystem;
 import eva2.tools.math.des.EventDESystem;
+import eva2.tools.math.des.RKSolverV2;
 
 /**
  * <p>
@@ -210,6 +211,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * system.
 	 */
 	protected double[] Y;
+
+	protected boolean isNaN = false;
 
 	/*
 	 * (non-Javadoc)
@@ -759,10 +762,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		this.currentTime = time;
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
-		System.out.println("Y");
-		System.out.println(Arrays.toString(Y));
-		Arrays.fill(changeRate, 0.0);		
-		
+
+		Arrays.fill(changeRate, 0.0);
+
 		processVelocities(changeRate);
 
 		processRules(changeRate);
@@ -775,9 +777,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				listOfContraintsViolations[i].add(time);
 
 		lastTimeStep = time;
-		System.out.println("res");
-		System.out.println(Arrays.toString(changeRate));
-		
+		if (RKSolverV2.containsNaN(changeRate) && !isNaN) {
+			// if (!isNaN) {
+			System.out.println("Y");
+			System.out.println(time + " " + Arrays.toString(Y));
+			System.out.println("res");
+			System.out.println(time + " " + Arrays.toString(changeRate));
+			isNaN = true;
+		}
+
 		return changeRate;
 	}
 
@@ -810,9 +818,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * double[])
 	 */
 	public double[] processEvents(double t, double[] Y, double[] res) {
+		this.Y = Y;
 		double[] delays = new double[Y.length];
 		Arrays.fill(delays, Double.NaN);
-
+		this.currentTime = t;
 		if (model.getNumEvents() > 0) {
 			Event ev;
 			// number of events = listOfEvents_delay.length
@@ -822,7 +831,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				if (evaluateToBoolean(ev.getTrigger().getMath())) {
 					// check if trigger has just become true
 					if (listOfEvents_delay[i].get(
-							listOfEvents_delay[i].size() - 2).isNaN()) {
+							listOfEvents_delay[i].size() - 2).isNaN()) {						
 						/*
 						 * Fill the array listOfEvents_delay with lists of times
 						 * at which events must be executed.
@@ -863,13 +872,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 							double newVal = evaluateToDouble(assignment_math);
 							int index = valuesHash.get(variable.getId())
 									.getIndex();
-							
+
 							if (ev.getDelay() != null)
 								delays[index] = evaluateToDouble(ev.getDelay()
 										.getMath());
 							else
 								delays[index] = 0d;
-							
+
 							res[index] = newVal;
 
 						}
@@ -897,7 +906,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				}
 			}
 		}
-		
+
 		return delays;
 
 	}
