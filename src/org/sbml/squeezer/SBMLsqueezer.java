@@ -131,7 +131,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
-	private static final String versionNumber = "1.3";
+	private static final String versionNumber = "1.4";
 
 	/**
 	 * Load all available kinetic equations and the user's settings from the

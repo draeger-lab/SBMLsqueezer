@@ -28,10 +28,11 @@ import java.util.Set;
 import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.CompartmentType;
 import org.sbml.jsbml.Constraint;
@@ -82,6 +83,23 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 
 	public SBMLTree(Model m) {
 		super(createNodes(m));
+		init();
+	}
+
+	/**
+	 * Generate a tree that displays an ASTNode tree.
+	 * 
+	 * @param math
+	 */
+	public SBMLTree(ASTNode math) {
+		super(math);
+		init();
+	}
+
+	/**
+	 * Initializes this object.
+	 */
+	private void init() {
 		setOfActionListeners = new HashSet<ActionListener>();
 		popup = new JPopupMenu("SBMLsqueezer");
 		squeezeItem = new JMenuItem("Squeeze kinetic law",
@@ -118,13 +136,15 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		docNode.add(modelNode);
 		DefaultMutableTreeNode node;
 		if (m.getNumFunctionDefinitions() > 0) {
-			node = new NamedMutableSBMLTreeNode("Function Definitions", m.getListOfFunctionDefinitions());
+			node = new NamedMutableSBMLTreeNode("Function Definitions", m
+					.getListOfFunctionDefinitions());
 			modelNode.add(node);
 			for (FunctionDefinition c : m.getListOfFunctionDefinitions())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumUnitDefinitions() > 0) {
-			node = new NamedMutableSBMLTreeNode("Unit Definitions", m.getListOfUnitDefinitions());
+			node = new NamedMutableSBMLTreeNode("Unit Definitions", m
+					.getListOfUnitDefinitions());
 			modelNode.add(node);
 			for (UnitDefinition c : m.getListOfUnitDefinitions()) {
 				DefaultMutableTreeNode unitDefNode = new DefaultMutableTreeNode(
@@ -135,19 +155,22 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			}
 		}
 		if (m.getNumCompartmentTypes() > 0) {
-			node = new NamedMutableSBMLTreeNode("Compartment Types", m.getListOfCompartmentTypes());
+			node = new NamedMutableSBMLTreeNode("Compartment Types", m
+					.getListOfCompartmentTypes());
 			modelNode.add(node);
 			for (CompartmentType c : m.getListOfCompartmentTypes())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumSpeciesTypes() > 0) {
-			node = new NamedMutableSBMLTreeNode("Species Types", m.getListOfSpeciesTypes());
+			node = new NamedMutableSBMLTreeNode("Species Types", m
+					.getListOfSpeciesTypes());
 			modelNode.add(node);
 			for (SpeciesType c : m.getListOfSpeciesTypes())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumCompartments() > 0) {
-			node = new NamedMutableSBMLTreeNode("Compartments", m.getListOfCompartments());
+			node = new NamedMutableSBMLTreeNode("Compartments", m
+					.getListOfCompartments());
 			modelNode.add(node);
 			for (Compartment c : m.getListOfCompartments())
 				node.add(new DefaultMutableTreeNode(c));
@@ -159,13 +182,15 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				node.add(new DefaultMutableTreeNode(s));
 		}
 		if (m.getNumParameters() > 0) {
-			node = new NamedMutableSBMLTreeNode("Parameters", m.getListOfParameters());
+			node = new NamedMutableSBMLTreeNode("Parameters", m
+					.getListOfParameters());
 			modelNode.add(node);
 			for (Parameter p : m.getListOfParameters())
 				node.add(new DefaultMutableTreeNode(p));
 		}
 		if (m.getNumInitialAssignments() > 0) {
-			node = new NamedMutableSBMLTreeNode("Initial Assignments", m.getListOfInitialAssignments());
+			node = new NamedMutableSBMLTreeNode("Initial Assignments", m
+					.getListOfInitialAssignments());
 			modelNode.add(node);
 			for (InitialAssignment c : m.getListOfInitialAssignments())
 				node.add(new DefaultMutableTreeNode(c));
@@ -177,13 +202,15 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumConstraints() > 0) {
-			node = new NamedMutableSBMLTreeNode("Constraints", m.getListOfConstraints());
+			node = new NamedMutableSBMLTreeNode("Constraints", m
+					.getListOfConstraints());
 			modelNode.add(node);
 			for (Constraint c : m.getListOfConstraints())
 				node.add(new DefaultMutableTreeNode(c));
 		}
 		if (m.getNumReactions() > 0) {
-			node = new NamedMutableSBMLTreeNode("Reactions", m.getListOfReactions());
+			node = new NamedMutableSBMLTreeNode("Reactions", m
+					.getListOfReactions());
 			modelNode.add(node);
 			for (Reaction r : m.getListOfReactions()) {
 				DefaultMutableTreeNode currReacNode = new DefaultMutableTreeNode(
@@ -213,7 +240,8 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				}
 				if (r.isSetKineticLaw()) {
 					KineticLaw kl = r.getKineticLaw();
-					NamedMutableSBMLTreeNode klNode = new NamedMutableSBMLTreeNode("Kinetic Law", kl);
+					NamedMutableSBMLTreeNode klNode = new NamedMutableSBMLTreeNode(
+							"Kinetic Law", kl);
 					currReacNode.add(klNode);
 					if (kl.getNumParameters() > 0) {
 						NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(
@@ -274,10 +302,14 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			currSBase = null;
 			popup.setVisible(false);
 		}
-		if ((e.getClickCount() == 2) || (e.getButton() == MouseEvent.BUTTON3)
+		Object clickedOn = getClosestPathForLocation(e.getX(), e.getY())
+				.getLastPathComponent();
+		if (clickedOn instanceof ASTNode) {
+			ASTNode ast = (ASTNode) clickedOn;
+			System.out.println(ast.getType());
+		} else if ((e.getClickCount() == 2)
+				|| (e.getButton() == MouseEvent.BUTTON3)
 				&& setOfActionListeners.size() > 0) {
-			Object clickedOn = getClosestPathForLocation(e.getX(), e.getY())
-					.getLastPathComponent();
 			if (clickedOn instanceof DefaultMutableTreeNode) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) getSelectionPath()
 						.getLastPathComponent();
@@ -298,8 +330,11 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 					MathContainer mc = (MathContainer) ((DefaultMutableTreeNode) clickedOn)
 							.getUserObject();
 					JDialog dialog = new JDialog();
-					dialog.getContentPane().add(
-							new JTree((TreeNode) mc.getMath()));
+					JScrollPane scroll = new JScrollPane(new SBMLTree(mc
+							.getMath()),
+							JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+					dialog.getContentPane().add(scroll);
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					dialog.pack();
 					dialog.setModal(true);
@@ -347,10 +382,14 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 /**
  * 
  * @author Andreas Dr&auml;ger
- *
+ * 
  */
 class NamedMutableSBMLTreeNode extends DefaultMutableTreeNode {
 
+	/**
+	 * Generatred Serial Version ID.s
+	 */
+	private static final long serialVersionUID = 2647365066465077496L;
 	/**
 	 * 
 	 */
@@ -365,14 +404,14 @@ class NamedMutableSBMLTreeNode extends DefaultMutableTreeNode {
 		super(sbase);
 		this.name = name;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.tree.DefaultMutableTreeNode#toString()
 	 */
 	@Override
 	public String toString() {
-	  return name;	
+		return name;
 	}
 }
-

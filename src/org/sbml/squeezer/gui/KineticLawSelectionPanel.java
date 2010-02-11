@@ -208,10 +208,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		ButtonGroup revGroup = new ButtonGroup();
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
 		boolean nonEnzyme = reactionType.isNonEnzymeReaction();
-		boolean isEnzymeKineticsSelected = ((Boolean) this.klg.getSettings()
+		boolean isEnzymeKineticsSelected = (((Boolean) this.klg.getSettings()
 				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
-				.booleanValue()
-				|| !nonEnzyme;
+				.booleanValue() || reactionType.isEnzymeReaction())
+				&& !nonEnzyme;
 		treatAsEnzymeReaction = new JCheckBox(
 				"Consider this reaction to be enzyme-catalyzed");
 		treatAsEnzymeReaction.setToolTipText(GUITools

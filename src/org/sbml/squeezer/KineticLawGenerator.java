@@ -1007,9 +1007,9 @@ public class KineticLawGenerator {
 				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
 						&& species.isSetSBOTerm()
 						&& !possibleEnzymes.contains(Integer.valueOf(species
-								.getSBOTerm())))
+								.getSBOTerm()))) {
 					modifier.setSBOTerm(SBO.getCatalysis());
-				else if (SBO.isCatalyst(modifier.getSBOTerm())
+				} else if (SBO.isCatalyst(modifier.getSBOTerm())
 						&& (possibleEnzymes.contains(Integer.valueOf(species
 								.getSBOTerm())) || !species.isSetSBOTerm()))
 					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
