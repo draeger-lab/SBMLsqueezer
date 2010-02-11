@@ -18,8 +18,9 @@
  */
 package org.sbml.squeezer.math;
 
+import java.util.ArrayList;
+
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -28,10 +29,9 @@ import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
-import org.sbml.jsbml.AlgebraicRule;
-import org.sbml.jsbml.AssignmentRule;
+
 import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.Delay;
+
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
@@ -47,9 +47,10 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 
-import eva2.tools.math.des.DESystem;
+import eva2.tools.math.des.DESEvent;
 import eva2.tools.math.des.EventDESystem;
-import eva2.tools.math.des.RKSolverV2;
+
+
 
 /**
  * <p>
@@ -121,7 +122,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private static final long serialVersionUID = 3453063382705340995L;
 
 	private double currentTime;
-	private double lastTimeStep = 0;
 
 	/**
 	 * This field is necessary to also consider local parameters of the current
@@ -493,52 +493,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/**
 	 * 
-	 * @param alr
-	 * @param res
-	 */
-	private void evaluateAlgebraicRule(AlgebraicRule alr, double changeRate[]) {
-		int speciesIndex;
-		Value val;
-
-		// TODO
-
-	}
-
-	/**
-	 * 
-	 * @param ar
-	 * @param arr
-	 */
-	private void evaluateAssignmentRule(AssignmentRule ar, double changeRate[]) {
-		int speciesIndex;
-		Value val;
-		double newVal = evaluateToDouble(ar.getMath());
-		val = valuesHash.get(ar.getVariable());
-		speciesIndex = val.getIndex();
-
-		if (currentTime == 0d)
-			changeRate[speciesIndex] = newVal;
-		else {
-			if (currentTime > lastTimeStep)
-				changeRate[speciesIndex] += (newVal - Y[speciesIndex])
-						/ (currentTime - lastTimeStep);
-
-		}
-
-	}
-
-	/**
-	 * 
 	 * @param rr
 	 * @param res
 	 */
 	private void evaluateRateRule(RateRule rr, double changeRate[]) {
 		int speciesIndex;
-		Value val;
 
-		val = valuesHash.get(rr.getVariable());
-		speciesIndex = val.getIndex();
-		changeRate[speciesIndex] += evaluateToDouble(rr.getMath());
+		speciesIndex = valuesHash.get(rr.getVariable()).getIndex();
+		changeRate[speciesIndex] = evaluateToDouble(rr.getMath());
 
 	}
 
@@ -763,8 +725,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
 
-		Arrays.fill(changeRate, 0.0);
-
 		processVelocities(changeRate);
 
 		processRules(changeRate);
@@ -776,15 +736,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
 
-		lastTimeStep = time;
-		if (RKSolverV2.containsNaN(changeRate) && !isNaN) {
-			// if (!isNaN) {
-			System.out.println("Y");
-			System.out.println(time + " " + Arrays.toString(Y));
-			System.out.println("res");
-			System.out.println(time + " " + Arrays.toString(changeRate));
-			isNaN = true;
-		}
+//		if (RKEventSolver.containsNaN(changeRate) && !isNaN) {
+//			// if (!isNaN) {
+//			System.out.println("Y");
+//			System.out.println(time + " " + Arrays.toString(Y));
+//			System.out.println("res");
+//			System.out.println(time + " " + Arrays.toString(changeRate));
+//			isNaN = true;
+//		}
 
 		return changeRate;
 	}
@@ -792,15 +751,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private void processRules(double[] changeRate) {
 		for (int i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
-			if (rule.isAlgebraic()) {
-				AlgebraicRule alr = (AlgebraicRule) rule;
-				evaluateAlgebraicRule(alr, changeRate);
-
-			} else if (rule.isAssignment()) {
-				AssignmentRule ar = (AssignmentRule) rule;
-				evaluateAssignmentRule(ar, changeRate);
-
-			} else if (rule.isRate() && currentTime > 0d) {
+			if (rule.isRate() && currentTime > 0d) {
 				RateRule rr = (RateRule) rule;
 				evaluateRateRule(rr, changeRate);
 
@@ -810,6 +761,25 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see eva2.tools.math.des.EventDESystem#processAssignmentRules(double, double[], double[])
+	 */
+	public double[] processAssignmentRules(double t, double Y[], double res[]){
+		
+		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see eva2.tools.math.des.EventDESystem#processAlgebraicRules(double, double[], double[])
+	 */
+	public double[] processAlgebraicRules(double t, double Y[], double res[]){
+		
+		return null;
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -818,9 +788,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * double[])
 	 */
 	public double[] processEvents(double t, double[] Y, double[] res) {
+		//ArrayList<DESEvent> events = new ArrayList<DESEvent>();
+		//change point because of different timepoint due to events
+		double[] delay =  new double[Y.length];
+		Arrays.fill(delay, Double.NaN);
 		this.Y = Y;
-		double[] delays = new double[Y.length];
-		Arrays.fill(delays, Double.NaN);
 		this.currentTime = t;
 		if (model.getNumEvents() > 0) {
 			Event ev;
@@ -872,14 +844,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 							double newVal = evaluateToDouble(assignment_math);
 							int index = valuesHash.get(variable.getId())
 									.getIndex();
-
+							res[index] = newVal;				
+							
 							if (ev.getDelay() != null)
-								delays[index] = evaluateToDouble(ev.getDelay()
-										.getMath());
-							else
-								delays[index] = 0d;
+								delay[index] = evaluateToDouble(ev.getDelay()
+										.getMath()); 
+//								events.add(new DESEvent(evaluateToDouble(ev.getDelay()
+//										.getMath()),index, newVal ));	
 
-							res[index] = newVal;
+							else
+								delay[index] = 0d; 
+//								events.add(new DESEvent(index, newVal));		
+
 
 						}
 
@@ -907,7 +883,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 		}
 
-		return delays;
+		return delay;
 
 	}
 
