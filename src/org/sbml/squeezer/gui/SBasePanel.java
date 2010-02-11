@@ -54,8 +54,8 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ModelCreator;
-import org.sbml.jsbml.ModelHistory;
+import org.sbml.jsbml.Creator;
+import org.sbml.jsbml.History;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
@@ -325,13 +325,13 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(Model m) {
 		if (m.isSetModelHistory()) {
-			ModelHistory hist = m.getModelHistory();
+			History hist = m.getModelHistory();
 			lh.add(new JLabel("Model creators: "), 1, ++row, 1, 1, 1, 1);
 			String columnNames[] = new String[] { "Given name", "Family name",
 					"E-mail", "Organization" };
 			String rowData[][] = new String[hist.getNumCreators()][4];
 			int i = 0;
-			for (ModelCreator mc : hist.getListCreators()) {
+			for (Creator mc : hist.getListCreators()) {
 				rowData[i][0] = mc.getGivenName();
 				rowData[i][1] = mc.getFamilyName();
 				rowData[i][2] = mc.getEmail();

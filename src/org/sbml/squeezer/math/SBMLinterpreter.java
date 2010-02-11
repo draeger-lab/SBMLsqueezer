@@ -120,8 +120,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	private static final long serialVersionUID = 3453063382705340995L;
 
-	private double currentTime;
-
 	/**
 	 * This field is necessary to also consider local parameters of the current
 	 * reaction because it is not possible to access these parameters from the
@@ -129,6 +127,78 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * and thus to the list of these parameters.
 	 */
 	protected Reaction currentReaction;
+
+	private double currentTime;
+
+	/**
+	 * 
+	 */
+	private boolean[] eventDelays;
+
+	/**
+	 * 
+	 */
+	private ArrayList<DESAssignment> events;
+
+	/**
+	 * An array, which stores all computed initial values of the model. If this
+	 * model does not contain initial assignments, the initial values will only
+	 * be taken once from the information stored in the model. Otherwise they
+	 * have to be computed again as soon as the parameter values of this model
+	 * are changed, because the parameters may influence the return values of
+	 * the initial assignments.
+	 */
+	protected double[] initialValues;
+
+	protected boolean isNaN = false;
+	/**
+	 * An array, which stores for each constraint the list of times, in which
+	 * the constraint was violated during the simulation.
+	 */
+	protected List<Double>[] listOfContraintsViolations;
+	/**
+	 * This array data structure stores at the position i a list of time (double
+	 * values) at which the event with ID equals i must be executed. The value
+	 * before last of the list ist the watcher. It can be
+	 * <code>POSITIVE_INFINITY </code>if the trigger expession has the value
+	 * <code>true</code>or <code>NaN<code> if value of trigger
+	 * expression is <code>false</code>
+	 */
+	protected LinkedList<Double>[] listOfEvents_delay;
+	/**
+	 * The model to be simulated.
+	 */
+	protected Model model;
+
+	/**
+	 * This map data structure is necessary to save the index of every species
+	 * within the model system since libSBML doesn't provide the index of a
+	 * species for a given name. This, however, is necessary to work with an
+	 * array containing the concentrations of the species.
+	 */
+	protected Map<String, Integer> speciesIdIndex;
+
+	/**
+	 * This array is to avoid to allocate memory repeatedly. It stores the
+	 * values computed during the linear combination of velocities. These values
+	 * are passed to the array Y afterwards.
+	 */
+	protected double[] swap;
+
+	/**
+	 * An array of the velocities of each reaction within the model system.
+	 * Holding this globally saves many new memory allocations during simulation
+	 * time.
+	 */
+	protected double[] v;
+
+	private HashMap<String, Value> valuesHash;
+
+	/**
+	 * An array of the current concentration of each species within the model
+	 * system.
+	 */
+	protected double[] Y;
 
 	/**
 	 * <p>
@@ -149,76 +219,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		this.v = new double[this.model.getListOfReactions().size()];
 		this.init();
 	}
-
-	private HashMap<String, Value> valuesHash;
-
-	/**
-	 * An array, which stores for each constraint the list of times, in which
-	 * the constraint was violated during the simulation.
-	 */
-	protected List<Double>[] listOfContraintsViolations;
-
-	/**
-	 * This array data structure stores at the position i a list of time (double
-	 * values) at which the event with ID equals i must be executed. The value
-	 * before last of the list ist the watcher. It can be
-	 * <code>POSITIVE_INFINITY </code>if the trigger expession has the value
-	 * <code>true</code>or <code>NaN<code> if value of trigger
-	 * expression is <code>false</code>
-	 */
-	protected LinkedList<Double>[] listOfEvents_delay;
-	/**
-	 * 
-	 */
-	private boolean[] eventDelays;
-	/**
-	 * 
-	 */
-	private ArrayList<DESAssignment> events;
-	/**
-	 * The model to be simulated.
-	 */
-	protected Model model;
-
-	/**
-	 * This map data structure is necessary to save the index of every species
-	 * within the model system since libSBML doesn't provide the index of a
-	 * species for a given name. This, however, is necessary to work with an
-	 * array containing the concentrations of the species.
-	 */
-	protected Map<String, Integer> speciesIdIndex;
-
-	/**
-	 * An array, which stores all computed initial values of the model. If this
-	 * model does not contain initial assignments, the initial values will only
-	 * be taken once from the information stored in the model. Otherwise they
-	 * have to be computed again as soon as the parameter values of this model
-	 * are changed, because the parameters may influence the return values of
-	 * the initial assignments.
-	 */
-	protected double[] initialValues;
-
-	/**
-	 * This array is to avoid to allocate memory repeatedly. It stores the
-	 * values computed during the linear combination of velocities. These values
-	 * are passed to the array Y afterwards.
-	 */
-	protected double[] swap;
-
-	/**
-	 * An array of the velocities of each reaction within the model system.
-	 * Holding this globally saves many new memory allocations during simulation
-	 * time.
-	 */
-	protected double[] v;
-
-	/**
-	 * An array of the current concentration of each species within the model
-	 * system.
-	 */
-	protected double[] Y;
-
-	protected boolean isNaN = false;
 
 	/*
 	 * (non-Javadoc)
@@ -498,17 +498,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	}
 
-	/**
-	 * 
-	 * @param rr
-	 * @param res
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(org.sbml.jsbml.ASTNode, double)
 	 */
-	private void evaluateRateRule(RateRule rr, double changeRate[]) {
-		int speciesIndex;
-
-		speciesIndex = valuesHash.get(rr.getVariable()).getIndex();
-		changeRate[speciesIndex] = evaluateToDouble(rr.getMath());
-
+	public Double delay(ASTNode x, double d) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -520,6 +516,19 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		int speciesIndex;
 		speciesIndex = valuesHash.get(as.getVariable()).getIndex();
 		Y[speciesIndex] = evaluateToDouble(as.getMath());
+
+	}
+
+	/**
+	 * 
+	 * @param rr
+	 * @param res
+	 */
+	private void evaluateRateRule(RateRule rr, double changeRate[]) {
+		int speciesIndex;
+
+		speciesIndex = valuesHash.get(rr.getVariable()).getIndex();
+		changeRate[speciesIndex] = evaluateToDouble(rr.getMath());
 
 	}
 
@@ -610,15 +619,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		return toDouble(replace(lambda.getRightChild().clone(), args).compile(
 				this));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#functionDelay(java.lang.String)
-	 */
-	public Double functionDelay(String arg0) {
-		return Double.valueOf(arg0);
 	}
 
 	/*
@@ -767,149 +767,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		// }
 
 		return changeRate;
-	}
-
-	private void processRules(double[] changeRate) {
-		for (int i = 0; i < model.getNumRules(); i++) {
-			Rule rule = model.getRule(i);
-			if (rule.isRate() && currentTime > 0d) {
-				RateRule rr = (RateRule) rule;
-				evaluateRateRule(rr, changeRate);
-			} else if (currentTime == 0d && rule.isAssignment()) {
-				AssignmentRule as = (AssignmentRule) rule;
-				evaluateAssignmentRule(as, changeRate);
-			}
-
-			else if (rule.isScalar()) {
-
-			}
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.EventDESystem#processAssignmentRules(double,
-	 * double[], double[])
-	 */
-	public ArrayList<DESAssignment> processAssignmentRules(double t, double Y[]) {
-		ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
-		Value val;
-		for (int i = 0; i < model.getNumRules(); i++) {
-			Rule rule = model.getRule(i);
-			if (rule.isAssignment()) {
-				AssignmentRule as = (AssignmentRule) rule;
-				val = valuesHash.get(as.getVariable());
-				assignmentRules.add(new DESAssignment(t, val.getIndex(),
-						evaluateToDouble(as.getMath())));
-
-			}
-		}
-
-		return assignmentRules;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.EventDESystem#processAlgebraicRules(double,
-	 * double[], double[])
-	 */
-	public ArrayList<DESAssignment> processAlgebraicRules(double t, double Y[]) {
-		ArrayList<DESAssignment> algebraicRules = new ArrayList<DESAssignment>();
-		// for (int i = 0; i < model.getNumRules(); i++) {
-		// Rule rule = model.getRule(i);
-		// if (rule.isAlgebraic()()) {
-		//				
-		// }
-		// }
-		return algebraicRules;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eva2.tools.math.des.EventDESystem#processEvents(double, double[],
-	 * double[])
-	 */
-	public ArrayList<DESAssignment> processEvents(double t, double[] Y) {
-		ArrayList<DESAssignment> events = new ArrayList<DESAssignment>();
-		// change point because of different timepoint due to events
-		this.Y = Y;
-		this.currentTime = t;
-
-		ASTNode assignment_math;
-		Symbol variable;
-		double newVal;
-		int index;
-
-			Event ev;
-			// number of events = listOfEvents_delay.length
-			for (int i = 0; i < model.getNumEvents(); i++) {
-				ev = model.getEvent(i);
-				// check if event must be fired (update)
-				if (evaluateToBoolean(ev.getTrigger().getMath())) {
-					if (!eventDelays[i]) {							
-
-						//fire event
-						eventDelays[i] = true;
-						for (int l = 0; l < ev.getNumEventAssignments(); l++) {
-							assignment_math = ev.getEventAssignment(l)
-									.getMath();
-							variable = ev.getEventAssignment(l)
-									.getVariableInstance();
-							newVal = evaluateToDouble(assignment_math);
-							index = valuesHash.get(variable.getId()).getIndex();
-
-							if (ev.getDelay() != null) {
-								if (ev.getUseValuesFromTriggerTime()){
-									this.events
-											.add(new DESAssignment(currentTime
-													+ evaluateToDouble(ev
-															.getDelay()
-															.getMath()), index,
-													newVal));
-								}
-
-								else
-									this.events.add(new DESAssignment(currentTime
-											+ evaluateToDouble(ev.getDelay()
-													.getMath()), index));
-
-							} else
-								events.add(new DESAssignment(currentTime, index, newVal));
-
-						}
-
-					}
-					
-				} 				
-				else{
-					eventDelays[i] = false;
-				}
-				
-			}
-			
-		int i = 0;
-		DESAssignment desa;
-		while (this.events.size() > i) {
-			desa = this.events.get(i);
-			if (desa.getProcessTime() == currentTime) {
-				if (desa.getValue() != null) {
-					events.add(desa);
-					this.events.remove(desa);
-				} else {
-					this.events.remove(desa);
-					//TODO ausrechnen
-				}
-			} else
-				i++;
-
-		}
-
-		return events;
-
 	}
 
 	/*
@@ -1092,77 +949,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		for (ASTNode node : nodes)
 			d[i++] = toDouble(node.compile(this));
 		return null;
-	}
-
-	/**
-	 * This method computes the multiplication of the stoichiometric matrix of
-	 * the given model system with the reaction velocities vector passed to this
-	 * method. Note, the stoichiometric matrix is only constructed implicitely
-	 * by running over all reactions and considering all participating reactants
-	 * and products with their according stoichiometry or stoichiometric math.
-	 * 
-	 * @param velocities
-	 *            An array of reaction velocities at the current time.
-	 * @param Y
-	 * @return An array containing the rates of change for each species in the
-	 *         model system of this class.
-	 */
-	protected void processVelocities(double[] changeRate) {
-		int reactionIndex, sReferenceIndex, speciesIndex;
-		Species species;
-		SpeciesReference speciesRef;
-		Value val;
-		// Velocities of each reaction.
-		for (int i = 0; i < v.length; i++) {
-			currentReaction = model.getReaction(i);
-			KineticLaw kin = currentReaction.getKineticLaw();
-			if (kin != null) {
-				v[i] = evaluateToDouble(kin.getMath());
-			} else
-				v[i] = 0;
-		}
-
-		for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
-			Reaction r = model.getReaction(reactionIndex);
-			for (sReferenceIndex = 0; sReferenceIndex < r.getNumReactants(); sReferenceIndex++) {
-				speciesRef = r.getReactant(sReferenceIndex);
-				species = speciesRef.getSpeciesInstance();
-				val = valuesHash.get(species.getId());
-				if (!species.getBoundaryCondition() && !species.getConstant()) {
-					speciesIndex = val.getIndex();
-
-					if (speciesRef.isSetStoichiometryMath())
-						changeRate[speciesIndex] -= evaluateToDouble(speciesRef
-								.getStoichiometryMath().getMath())
-								* v[reactionIndex];
-					else
-						changeRate[speciesIndex] -= speciesRef
-								.getStoichiometry()
-								* v[reactionIndex];
-
-				}
-			}
-
-			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
-				speciesRef = r.getProduct(sReferenceIndex);
-				species = speciesRef.getSpeciesInstance();
-				val = valuesHash.get(species.getId());
-				if (!species.getBoundaryCondition() && !species.getConstant()) {
-					speciesIndex = val.getIndex();
-
-					if (speciesRef.isSetStoichiometryMath())
-						changeRate[speciesIndex] += evaluateToDouble(speciesRef
-								.getStoichiometryMath().getMath())
-								* v[reactionIndex];
-					else
-						changeRate[speciesIndex] += speciesRef
-								.getStoichiometry()
-								* v[reactionIndex];
-
-				}
-			}
-
-		}
 	}
 
 	/*
@@ -1358,6 +1144,220 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see eva2.tools.math.des.EventDESystem#processAlgebraicRules(double,
+	 * double[], double[])
+	 */
+	public ArrayList<DESAssignment> processAlgebraicRules(double t, double Y[]) {
+		ArrayList<DESAssignment> algebraicRules = new ArrayList<DESAssignment>();
+		// for (int i = 0; i < model.getNumRules(); i++) {
+		// Rule rule = model.getRule(i);
+		// if (rule.isAlgebraic()()) {
+		//				
+		// }
+		// }
+		return algebraicRules;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eva2.tools.math.des.EventDESystem#processAssignmentRules(double,
+	 * double[], double[])
+	 */
+	public ArrayList<DESAssignment> processAssignmentRules(double t, double Y[]) {
+		ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
+		Value val;
+		for (int i = 0; i < model.getNumRules(); i++) {
+			Rule rule = model.getRule(i);
+			if (rule.isAssignment()) {
+				AssignmentRule as = (AssignmentRule) rule;
+				val = valuesHash.get(as.getVariable());
+				assignmentRules.add(new DESAssignment(t, val.getIndex(),
+						evaluateToDouble(as.getMath())));
+
+			}
+		}
+
+		return assignmentRules;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eva2.tools.math.des.EventDESystem#processEvents(double, double[],
+	 * double[])
+	 */
+	public ArrayList<DESAssignment> processEvents(double t, double[] Y) {
+		ArrayList<DESAssignment> events = new ArrayList<DESAssignment>();
+		// change point because of different timepoint due to events
+		this.Y = Y;
+		this.currentTime = t;
+
+		ASTNode assignment_math;
+		Symbol variable;
+		double newVal;
+		int index;
+
+			Event ev;
+			// number of events = listOfEvents_delay.length
+			for (int i = 0; i < model.getNumEvents(); i++) {
+				ev = model.getEvent(i);
+				// check if event must be fired (update)
+				if (evaluateToBoolean(ev.getTrigger().getMath())) {
+					if (!eventDelays[i]) {							
+
+						//fire event
+						eventDelays[i] = true;
+						for (int l = 0; l < ev.getNumEventAssignments(); l++) {
+							assignment_math = ev.getEventAssignment(l)
+									.getMath();
+							variable = ev.getEventAssignment(l)
+									.getVariableInstance();
+							newVal = evaluateToDouble(assignment_math);
+							index = valuesHash.get(variable.getId()).getIndex();
+
+							if (ev.getDelay() != null) {
+								if (ev.getUseValuesFromTriggerTime()){
+									this.events
+											.add(new DESAssignment(currentTime
+													+ evaluateToDouble(ev
+															.getDelay()
+															.getMath()), index,
+													newVal));
+								}
+
+								else
+									this.events.add(new DESAssignment(currentTime
+											+ evaluateToDouble(ev.getDelay()
+													.getMath()), index));
+
+							} else
+								events.add(new DESAssignment(currentTime, index, newVal));
+
+						}
+
+					}
+					
+				} 				
+				else{
+					eventDelays[i] = false;
+				}
+				
+			}
+			
+		int i = 0;
+		DESAssignment desa;
+		while (this.events.size() > i) {
+			desa = this.events.get(i);
+			if (desa.getProcessTime() == currentTime) {
+				if (desa.getValue() != null) {
+					events.add(desa);
+					this.events.remove(desa);
+				} else {
+					this.events.remove(desa);
+					//TODO ausrechnen
+				}
+			} else
+				i++;
+
+		}
+
+		return events;
+
+	}
+
+	private void processRules(double[] changeRate) {
+		for (int i = 0; i < model.getNumRules(); i++) {
+			Rule rule = model.getRule(i);
+			if (rule.isRate() && currentTime > 0d) {
+				RateRule rr = (RateRule) rule;
+				evaluateRateRule(rr, changeRate);
+			} else if (currentTime == 0d && rule.isAssignment()) {
+				AssignmentRule as = (AssignmentRule) rule;
+				evaluateAssignmentRule(as, changeRate);
+			}
+
+			else if (rule.isScalar()) {
+
+			}
+		}
+
+	}
+
+	/**
+	 * This method computes the multiplication of the stoichiometric matrix of
+	 * the given model system with the reaction velocities vector passed to this
+	 * method. Note, the stoichiometric matrix is only constructed implicitely
+	 * by running over all reactions and considering all participating reactants
+	 * and products with their according stoichiometry or stoichiometric math.
+	 * 
+	 * @param velocities
+	 *            An array of reaction velocities at the current time.
+	 * @param Y
+	 * @return An array containing the rates of change for each species in the
+	 *         model system of this class.
+	 */
+	protected void processVelocities(double[] changeRate) {
+		int reactionIndex, sReferenceIndex, speciesIndex;
+		Species species;
+		SpeciesReference speciesRef;
+		Value val;
+		// Velocities of each reaction.
+		for (int i = 0; i < v.length; i++) {
+			currentReaction = model.getReaction(i);
+			KineticLaw kin = currentReaction.getKineticLaw();
+			if (kin != null) {
+				v[i] = evaluateToDouble(kin.getMath());
+			} else
+				v[i] = 0;
+		}
+
+		for (reactionIndex = 0; reactionIndex < model.getNumReactions(); reactionIndex++) {
+			Reaction r = model.getReaction(reactionIndex);
+			for (sReferenceIndex = 0; sReferenceIndex < r.getNumReactants(); sReferenceIndex++) {
+				speciesRef = r.getReactant(sReferenceIndex);
+				species = speciesRef.getSpeciesInstance();
+				val = valuesHash.get(species.getId());
+				if (!species.getBoundaryCondition() && !species.getConstant()) {
+					speciesIndex = val.getIndex();
+
+					if (speciesRef.isSetStoichiometryMath())
+						changeRate[speciesIndex] -= evaluateToDouble(speciesRef
+								.getStoichiometryMath().getMath())
+								* v[reactionIndex];
+					else
+						changeRate[speciesIndex] -= speciesRef
+								.getStoichiometry()
+								* v[reactionIndex];
+
+				}
+			}
+
+			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
+				speciesRef = r.getProduct(sReferenceIndex);
+				species = speciesRef.getSpeciesInstance();
+				val = valuesHash.get(species.getId());
+				if (!species.getBoundaryCondition() && !species.getConstant()) {
+					speciesIndex = val.getIndex();
+
+					if (speciesRef.isSetStoichiometryMath())
+						changeRate[speciesIndex] += evaluateToDouble(speciesRef
+								.getStoichiometryMath().getMath())
+								* v[reactionIndex];
+					else
+						changeRate[speciesIndex] += speciesRef
+								.getStoichiometry()
+								* v[reactionIndex];
+
+				}
+			}
+
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#relationEqual(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
@@ -1522,6 +1522,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		return Double.valueOf(Math.sin(toDouble(node.compile(this))));
 	}
 
+	// ---- Setters ----
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1531,7 +1533,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		return Double.valueOf(Math.sinh(toDouble(node.compile(this))));
 	}
 
-	// ---- Setters ----
+	/*
+	 * ---- Getters ----
+	 */
 
 	/*
 	 * (non-Javadoc)
@@ -1541,10 +1545,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	public Double sqrt(ASTNode node) {
 		return Double.valueOf(Math.sqrt(toDouble(node.compile(this))));
 	}
-
-	/*
-	 * ---- Getters ----
-	 */
 
 	/*
 	 * (non-Javadoc)
