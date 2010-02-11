@@ -170,6 +170,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/**
 	 * 
 	 */
+	private boolean[] eventDelays;
+	/**
+	 * 
+	 */
 	private ArrayList<DESAssignment> events;
 	/**
 	 * The model to be simulated.
@@ -837,51 +841,19 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		ASTNode assignment_math;
 		Symbol variable;
-		double newVal, executeTime = 0;
+		double newVal;
 		int index;
 
-		if (model.getNumEvents() > 0) {
 			Event ev;
 			// number of events = listOfEvents_delay.length
-			for (int i = 0; i < listOfEvents_delay.length; i++) {
+			for (int i = 0; i < model.getNumEvents(); i++) {
 				ev = model.getEvent(i);
 				// check if event must be fired (update)
 				if (evaluateToBoolean(ev.getTrigger().getMath())) {
-					// check if trigger has just become true
-					if (listOfEvents_delay[i].get(
-							listOfEvents_delay[i].size() - 2).isNaN()) {
-						/*
-						 * Fill the array listOfEvents_delay with lists of times
-						 * at which events must be executed.
-						 */
-						if (ev.getDelay() != null)
-							executeTime = currentTime + evaluateToDouble(ev.getDelay()
-									.getMath());
+					if (!eventDelays[i]) {							
 
-						insertSort(listOfEvents_delay[i], executeTime);
-						listOfEvents_delay[i].set(
-								listOfEvents_delay[i].size() - 2,
-								Double.POSITIVE_INFINITY);
-					}
-				} else if (listOfEvents_delay[i].get(
-						listOfEvents_delay[i].size() - 2).isInfinite()) {
-					listOfEvents_delay[i].set(listOfEvents_delay[i].size() - 2,
-							Double.NaN);
-				}
-			}
-			// check events to be executed at this time point
-			for (int j = 0; j < listOfEvents_delay.length; j++) {
-				Double elt;
-				int counter = 0;
-				// execute events
-				int k = 0;
-				while (k < listOfEvents_delay[j].size() - 3) {
-					elt = listOfEvents_delay[j].get(k).doubleValue();
-					if (!elt.isNaN()) {
-						counter++;
-						// System.out.println("Time\t" + time);
-
-						ev = model.getEvent(j);
+						//fire event
+						eventDelays[i] = true;
 						for (int l = 0; l < ev.getNumEventAssignments(); l++) {
 							assignment_math = ev.getEventAssignment(l)
 									.getMath();
@@ -911,28 +883,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						}
 
 					}
-					k++;
+					
+				} 				
+				else{
+					eventDelays[i] = false;
 				}
-				if (listOfEvents_delay[j].get(listOfEvents_delay[j].size() - 3)
-						.isInfinite()) {
-					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 3,
-							Double.NaN);
-					for (int p = 0; p < listOfEvents_delay[j].getLast()
-							.intValue(); p++) {
-						if (p < listOfEvents_delay[j].size() - 3)
-							listOfEvents_delay[j].remove(p);
-					}
-				}
-				if (listOfEvents_delay[j].get(listOfEvents_delay[j].size() - 3)
-						.isNaN()) {
-					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 3,
-							Double.POSITIVE_INFINITY);
-
-					listOfEvents_delay[j].set(listOfEvents_delay[j].size() - 1,
-							counter * 1.0);
-				}
+				
 			}
-		}
+			
 		int i = 0;
 		DESAssignment desa;
 		while (this.events.size() > i) {
@@ -950,7 +908,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		}
 
-		// return delay;
 		return events;
 
 	}
@@ -1085,6 +1042,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
 		this.swap = new double[this.Y.length];
 		this.events = new ArrayList<DESAssignment>();
+		this.eventDelays = new boolean[model.getNumEvents()];		
 	}
 
 	/**
