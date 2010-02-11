@@ -32,6 +32,7 @@ import org.sbml.jsbml.ASTNodeCompiler;
 
 import org.sbml.jsbml.Compartment;
 
+import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
@@ -47,10 +48,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 
-import eva2.tools.math.des.DESEvent;
+import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
-
-
 
 /**
  * <p>
@@ -168,7 +167,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * expression is <code>false</code>
 	 */
 	protected LinkedList<Double>[] listOfEvents_delay;
-
+	/**
+	 * 
+	 */
+	private ArrayList<DESAssignment> events;
 	/**
 	 * The model to be simulated.
 	 */
@@ -391,7 +393,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			Species s = (Species) nsb;
 			Value compVal = valuesHash.get(s.getCompartment());
 			speciesVal = valuesHash.get(nsb.getId());
-
+			if (Y[compVal.getIndex()] == 0)
+				return Y[speciesVal.getIndex()];
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
 				return Y[speciesVal.getIndex()] / Y[compVal.getIndex()];
 			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())
@@ -501,6 +504,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		speciesIndex = valuesHash.get(rr.getVariable()).getIndex();
 		changeRate[speciesIndex] = evaluateToDouble(rr.getMath());
+
+	}
+
+	/**
+	 * 
+	 * @param as
+	 * @param Y
+	 */
+	private void evaluateAssignmentRule(AssignmentRule as, double Y[]) {
+		int speciesIndex;
+		speciesIndex = valuesHash.get(as.getVariable()).getIndex();
+		Y[speciesIndex] = evaluateToDouble(as.getMath());
 
 	}
 
@@ -725,6 +740,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
 
+		// System.out.println(Arrays.toString(Y));
+
 		processVelocities(changeRate);
 
 		processRules(changeRate);
@@ -736,14 +753,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
 
-//		if (RKEventSolver.containsNaN(changeRate) && !isNaN) {
-//			// if (!isNaN) {
-//			System.out.println("Y");
-//			System.out.println(time + " " + Arrays.toString(Y));
-//			System.out.println("res");
-//			System.out.println(time + " " + Arrays.toString(changeRate));
-//			isNaN = true;
-//		}
+		// if (RKEventSolver.containsNaN(changeRate) && !isNaN) {
+		// // if (!isNaN) {
+		// System.out.println("Y");
+		// System.out.println(time + " " + Arrays.toString(Y));
+		// System.out.println("res");
+		// System.out.println(time + " " + Arrays.toString(changeRate));
+		// isNaN = true;
+		// }
 
 		return changeRate;
 	}
@@ -754,32 +771,57 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			if (rule.isRate() && currentTime > 0d) {
 				RateRule rr = (RateRule) rule;
 				evaluateRateRule(rr, changeRate);
+			} else if (currentTime == 0d && rule.isAssignment()) {
+				AssignmentRule as = (AssignmentRule) rule;
+				evaluateAssignmentRule(as, changeRate);
+			}
 
-			} else if (rule.isScalar()) {
+			else if (rule.isScalar()) {
 
 			}
 		}
 
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see eva2.tools.math.des.EventDESystem#processAssignmentRules(double, double[], double[])
+	 * 
+	 * @see eva2.tools.math.des.EventDESystem#processAssignmentRules(double,
+	 * double[], double[])
 	 */
-	public double[] processAssignmentRules(double t, double Y[], double res[]){
-		
-		return null;
+	public ArrayList<DESAssignment> processAssignmentRules(double t, double Y[]) {
+		ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
+		Value val;
+		for (int i = 0; i < model.getNumRules(); i++) {
+			Rule rule = model.getRule(i);
+			if (rule.isAssignment()) {
+				AssignmentRule as = (AssignmentRule) rule;
+				val = valuesHash.get(as.getVariable());
+				assignmentRules.add(new DESAssignment(t, val.getIndex(),
+						evaluateToDouble(as.getMath())));
+
+			}
+		}
+
+		return assignmentRules;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see eva2.tools.math.des.EventDESystem#processAlgebraicRules(double, double[], double[])
+	 * 
+	 * @see eva2.tools.math.des.EventDESystem#processAlgebraicRules(double,
+	 * double[], double[])
 	 */
-	public double[] processAlgebraicRules(double t, double Y[], double res[]){
-		
-		return null;
+	public ArrayList<DESAssignment> processAlgebraicRules(double t, double Y[]) {
+		ArrayList<DESAssignment> algebraicRules = new ArrayList<DESAssignment>();
+		// for (int i = 0; i < model.getNumRules(); i++) {
+		// Rule rule = model.getRule(i);
+		// if (rule.isAlgebraic()()) {
+		//				
+		// }
+		// }
+		return algebraicRules;
 	}
-	
 
 	/*
 	 * (non-Javadoc)
@@ -787,13 +829,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @see eva2.tools.math.des.EventDESystem#processEvents(double, double[],
 	 * double[])
 	 */
-	public double[] processEvents(double t, double[] Y, double[] res) {
-		//ArrayList<DESEvent> events = new ArrayList<DESEvent>();
-		//change point because of different timepoint due to events
-		double[] delay =  new double[Y.length];
-		Arrays.fill(delay, Double.NaN);
+	public ArrayList<DESAssignment> processEvents(double t, double[] Y) {
+		ArrayList<DESAssignment> events = new ArrayList<DESAssignment>();
+		// change point because of different timepoint due to events
 		this.Y = Y;
 		this.currentTime = t;
+
+		ASTNode assignment_math;
+		Symbol variable;
+		double newVal, executeTime = 0;
+		int index;
+
 		if (model.getNumEvents() > 0) {
 			Event ev;
 			// number of events = listOfEvents_delay.length
@@ -803,16 +849,16 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				if (evaluateToBoolean(ev.getTrigger().getMath())) {
 					// check if trigger has just become true
 					if (listOfEvents_delay[i].get(
-							listOfEvents_delay[i].size() - 2).isNaN()) {						
+							listOfEvents_delay[i].size() - 2).isNaN()) {
 						/*
 						 * Fill the array listOfEvents_delay with lists of times
 						 * at which events must be executed.
 						 */
 						if (ev.getDelay() != null)
-							currentTime += evaluateToDouble(ev.getDelay()
+							executeTime = currentTime + evaluateToDouble(ev.getDelay()
 									.getMath());
 
-						insertSort(listOfEvents_delay[i], currentTime);
+						insertSort(listOfEvents_delay[i], executeTime);
 						listOfEvents_delay[i].set(
 								listOfEvents_delay[i].size() - 2,
 								Double.POSITIVE_INFINITY);
@@ -831,31 +877,36 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				int k = 0;
 				while (k < listOfEvents_delay[j].size() - 3) {
 					elt = listOfEvents_delay[j].get(k).doubleValue();
-					if (!elt.isNaN() && elt <= currentTime) {
+					if (!elt.isNaN()) {
 						counter++;
 						// System.out.println("Time\t" + time);
 
 						ev = model.getEvent(j);
 						for (int l = 0; l < ev.getNumEventAssignments(); l++) {
-							ASTNode assignment_math = ev.getEventAssignment(l)
+							assignment_math = ev.getEventAssignment(l)
 									.getMath();
-							Symbol variable = ev.getEventAssignment(l)
+							variable = ev.getEventAssignment(l)
 									.getVariableInstance();
-							double newVal = evaluateToDouble(assignment_math);
-							int index = valuesHash.get(variable.getId())
-									.getIndex();
-							res[index] = newVal;				
-							
-							if (ev.getDelay() != null)
-								delay[index] = evaluateToDouble(ev.getDelay()
-										.getMath()); 
-//								events.add(new DESEvent(evaluateToDouble(ev.getDelay()
-//										.getMath()),index, newVal ));	
+							newVal = evaluateToDouble(assignment_math);
+							index = valuesHash.get(variable.getId()).getIndex();
 
-							else
-								delay[index] = 0d; 
-//								events.add(new DESEvent(index, newVal));		
+							if (ev.getDelay() != null) {
+								if (ev.getUseValuesFromTriggerTime()){
+									this.events
+											.add(new DESAssignment(currentTime
+													+ evaluateToDouble(ev
+															.getDelay()
+															.getMath()), index,
+													newVal));
+								}
 
+								else
+									this.events.add(new DESAssignment(currentTime
+											+ evaluateToDouble(ev.getDelay()
+													.getMath()), index));
+
+							} else
+								events.add(new DESAssignment(currentTime, index, newVal));
 
 						}
 
@@ -882,8 +933,25 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				}
 			}
 		}
+		int i = 0;
+		DESAssignment desa;
+		while (this.events.size() > i) {
+			desa = this.events.get(i);
+			if (desa.getProcessTime() == currentTime) {
+				if (desa.getValue() != null) {
+					events.add(desa);
+					this.events.remove(desa);
+				} else {
+					this.events.remove(desa);
+					//TODO ausrechnen
+				}
+			} else
+				i++;
 
-		return delay;
+		}
+
+		// return delay;
+		return events;
 
 	}
 
@@ -932,7 +1000,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		for (i = 0; i < model.getNumCompartments(); i++) {
 			Compartment c = model.getCompartment(i);
 
-			Y[yIndex] = c.getSize();
+			if (Double.isNaN(c.getSize()))
+				Y[yIndex] = 0;
+			else
+				Y[yIndex] = c.getSize();
+
 			valuesHash.put(c.getId(), new Value(yIndex));
 			yIndex++;
 
@@ -1012,6 +1084,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		initialValues = new double[Y.length];
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
 		this.swap = new double[this.Y.length];
+		this.events = new ArrayList<DESAssignment>();
 	}
 
 	/**
