@@ -696,7 +696,7 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * set the boundaryCondition for a gen to the given value
+	 * set the boundaryCondition for a gene to the given value
 	 * 
 	 * @param species
 	 * @param condition
@@ -795,13 +795,15 @@ public class KineticLawGenerator {
 				.booleanValue();
 		for (i = 0; i < reaction.getNumReactants(); i++) {
 			Species species = reaction.getReactant(i).getSpeciesInstance();
-			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
+			if ((SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || SBO
+					.isEmptySet(species.getSBOTerm()))
 					&& setBoundary)
 				setBoundaryCondition(species, true);
 		}
 		for (i = 0; i < reaction.getNumProducts(); i++) {
 			Species species = reaction.getProduct(i).getSpeciesInstance();
-			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
+			if ((SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || SBO
+					.isEmptySet(species.getSBOTerm()))
 					&& setBoundary)
 				setBoundaryCondition(species, true);
 		}
