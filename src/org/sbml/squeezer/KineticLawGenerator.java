@@ -696,7 +696,7 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * set the boundaryCondition for a gen to the given value
+	 * set the boundaryCondition for a gene to the given value
 	 * 
 	 * @param species
 	 * @param condition
@@ -795,13 +795,15 @@ public class KineticLawGenerator {
 				.booleanValue();
 		for (i = 0; i < reaction.getNumReactants(); i++) {
 			Species species = reaction.getReactant(i).getSpeciesInstance();
-			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
+			if ((SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || SBO
+					.isEmptySet(species.getSBOTerm()))
 					&& setBoundary)
 				setBoundaryCondition(species, true);
 		}
 		for (i = 0; i < reaction.getNumProducts(); i++) {
 			Species species = reaction.getProduct(i).getSpeciesInstance();
-			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())
+			if ((SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || SBO
+					.isEmptySet(species.getSBOTerm()))
 					&& setBoundary)
 				setBoundaryCondition(species, true);
 		}
@@ -1007,9 +1009,9 @@ public class KineticLawGenerator {
 				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
 						&& species.isSetSBOTerm()
 						&& !possibleEnzymes.contains(Integer.valueOf(species
-								.getSBOTerm()))) {
+								.getSBOTerm())))
 					modifier.setSBOTerm(SBO.getCatalysis());
-				} else if (SBO.isCatalyst(modifier.getSBOTerm())
+				else if (SBO.isCatalyst(modifier.getSBOTerm())
 						&& (possibleEnzymes.contains(Integer.valueOf(species
 								.getSBOTerm())) || !species.isSetSBOTerm()))
 					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
