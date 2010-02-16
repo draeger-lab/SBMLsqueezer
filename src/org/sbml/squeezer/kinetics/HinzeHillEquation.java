@@ -25,6 +25,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -41,7 +42,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  *         Dr&auml;ger</a>
  * @date Aug 7, 2007
  */
-public class HillEquation extends BasicKineticLaw implements
+public class HinzeHillEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
@@ -51,7 +52,7 @@ public class HillEquation extends BasicKineticLaw implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public HillEquation(Reaction parentReaction, Object... typeParameters)
+	public HinzeHillEquation(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
@@ -61,69 +62,47 @@ public class HillEquation extends BasicKineticLaw implements
 	 * 
 	 * @see
 	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * .util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		if (!modActi.isEmpty())
-			modTActi.addAll(modActi);
-		/*
-		 * throw new ModificationException("Wrong activation in reaction " +
-		 * model.getReaction(reactionNum).getId() + ". Only transcriptional or
-		 * translational activation, " + "respectively, is allowed here.");
-		 */
-		if (!modInhib.isEmpty())
-			modTInhib.addAll(modInhib);
-		/*
-		 * throw new ModificationException("Wrong inhibition in reaction " +
-		 * reactionNum + ". Only transcriptional or translational inhibition, "
-		 * + "respectively, is allowed here.");
-		 */
 		// necessary due to the changes in CellDesigner from version 4.0 alpha
 		// to beta and 4.0.1
 		if (!modE.isEmpty())
-			modTActi.addAll(modE);
+			modActi.addAll(modE);
 		if (!modCat.isEmpty())
-			modTActi.addAll(modCat);
+			modActi.addAll(modCat);
 
 		Reaction reaction = getParentSBMLObject();
 
-		// for (ModifierSpeciesReference modifier :
-		// reaction.getListOfModifiers()) {
-		// if (SBO.isGeneOrGeneCodingRegion(reaction.getReactant(0)
-		// .getSpeciesInstance().getSBOTerm())
-		// && (SBO.isTranslationalActivation(modifier.getSBOTerm()) || SBO
-		// .isTranslationalInhibitor(modifier.getSBOTerm())))
-		// throw new ModificationException(
-		// "Wrong activation in reaction "
-		// + reaction.getId()
-		// + ". Only transcriptional modification is allowed here.");
-		// else if (SBO.isRNAOrMessengerRNA(reaction.getReactant(0)
-		// .getSpeciesInstance().getSBOTerm())
-		// && (SBO.isTranscriptionalActivation(modifier.getSBOTerm()) || SBO
-		// .isTranscriptionalInhibitor(modifier.getSBOTerm())))
-		// throw new ModificationException("Wrong activation in reaction "
-		// + reaction.getId()
-		// + ". Only translational modification is allowed here.");
-		// }
-
-		if (reaction.getNumModifiers() == 0)
+		if (reaction.getNumReactants() == 0 || reaction.getNumModifiers() == 0)
 			setSBOTerm(47);
-		else {
-			setSBOTerm(192);
-			if (modTActi.size() == 1)
+		else if (reaction.getNumReactants() == 1) {
+			if (SBO.isEmptySet(reaction.getReactant(0).getSpeciesInstance()
+					.getSBOTerm())) {
+				if (reaction.getNumModifiers() == 1
+						&& !SBO.isInhibitor(reaction.getModifier(0)
+								.getSBOTerm()))
+					setSBOTerm(195);
+				else
+					setSBOTerm(47);
+			} else if (reaction.getNumModifiers() == 0)
 				setSBOTerm(195);
-		}
+		} else if (reaction.getNumReactants() == 0
+				&& reaction.getNumModifiers() == 1
+				&& !SBO.isInhibitor(reaction.getModifier(0).getSBOTerm()))
+			setSBOTerm(195);
 
 		if (SBO.isTranslation(reaction.getSBOTerm())
 				|| SBO.isTranscription(reaction.getSBOTerm()))
-			for (int i = 0; i < reaction.getNumReactants(); i++)
-				modTActi.add(reaction.getReactant(i).getSpecies());
-		ASTNode formula = createHillEquation(modTActi, modTInhib);
+			for (int i = 0; i < reaction.getNumReactants(); i++) {
+				SpeciesReference reactant = reaction.getReactant(i);
+				if (!SBO.isEmptySet(reactant.getSpeciesInstance().getSBOTerm()))
+					modActi.add(reactant.getSpecies());
+			}
+		ASTNode formula = createHillEquation(modActi, modInhib);
 		// Influence of the concentrations of the reactants:
 		for (int reactantNum = 0; reactantNum < reaction.getNumReactants(); reactantNum++) {
 			Species reactant = reaction.getReactant(reactantNum)
@@ -202,6 +181,8 @@ public class HillEquation extends BasicKineticLaw implements
 	 */
 	// @Override
 	public String getSimpleName() {
-		return "Hill equation";
+		if (isSetSBOTerm())
+			return "Hill equation";
+		return "Hinze-Hill equation";
 	}
 }

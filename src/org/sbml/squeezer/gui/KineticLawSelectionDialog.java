@@ -226,42 +226,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			setVisible(true);
 			KineticsAndParametersStoredInSBML = adapter
 					.isKineticsAndParametersStoredInSBML();
-			// Test:
-			// Container c = getContentPane();
-			// c.removeAll();
-			// c.setLayout(new BorderLayout());
-			// c.add(new SBMLModelSplitPane(sbmlIO.getSelectedModel(),
-			// settings), BorderLayout.CENTER);
-			// pack();
-			// setLocationRelativeTo(owner);
-			// setResizable(true);
-			// setVisible(true);
 			dispose();
-			// if (JOptionPane.showConfirmDialog(this, messagePanel,
-			// "SBMLsqueezer", JOptionPane.OK_CANCEL_OPTION,
-			// JOptionPane.QUESTION_MESSAGE, GUITools.LEMON_ICON_SMALL) ==
-			// JOptionPane.OK_OPTION) {
-			// if (!messagePanel.getExistingRateLawSelected()) {
-			// String equationType = messagePanel.getSelectedKinetic();
-			// reaction.setReversible(messagePanel.getReversible());
-			// sbmlIO.stateChanged(reaction);
-			// klg.getSettings().put(
-			// CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
-			// Boolean.valueOf(messagePanel.getReversible()));
-			// reaction = klg.storeKineticLaw(klg.createKineticLaw(
-			// reaction, equationType, messagePanel
-			// .getReversible()));
-			// sbmlIO.saveChanges();
-			// SBMLsqueezerUI
-			// .checkForSBMLErrors(this,
-			// sbmlIO.getSelectedModel(), sbmlIO
-			// .getWriteWarnings(),
-			// ((Boolean) settings
-			// .get(CfgKeys.SHOW_SBML_WARNINGS))
-			// .booleanValue());
-			// KineticsAndParametersStoredInSBML = true;
-			// }
-			// }
 		} catch (Throwable exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
 					.getMessage(), 40), exc.getClass().getSimpleName(),

@@ -591,6 +591,13 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		return function("csch", node);
 	}
 
+	/*
+	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(org.sbml.jsbml.ASTNode, double)
+	 */
+	public StringBuffer delay(ASTNode x, double d) {
+		return concat(mathrm("delay"), brackets(concat(x.compile(this), ", ", toString(d))));
+	}
+
 	/**
 	 * This method simplifies the process of creating descriptions. There is an
 	 * item entry together with a description. No new line or space is needed
@@ -764,15 +771,6 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		if (command)
 			fun.append('}');
 		return fun;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#functionDelay(java.lang.String)
-	 */
-	public StringBuffer functionDelay(String delay) {
-		return mathrm(delay);
 	}
 
 	/*

@@ -208,10 +208,11 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		ButtonGroup revGroup = new ButtonGroup();
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
 		boolean nonEnzyme = reactionType.isNonEnzymeReaction();
-		boolean isEnzymeKineticsSelected = ((Boolean) this.klg.getSettings()
+		boolean isEnzymeKineticsSelected = (((Boolean) this.klg.getSettings()
 				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
-				.booleanValue()
-				|| !nonEnzyme;
+				.booleanValue() || !nonEnzyme)
+				&& !(reactionType.isReactionWithGenes() || reactionType
+						.isReactionWithRNAs());
 		treatAsEnzymeReaction = new JCheckBox(
 				"Consider this reaction to be enzyme-catalyzed");
 		treatAsEnzymeReaction.setToolTipText(GUITools
@@ -246,7 +247,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		lh.add(rButtonLocalParameters, 1, 2, 1, 1, 1, 1);
 
 		treatAsEnzymeReaction.setSelected(isEnzymeKineticsSelected);
-		if (reactionType.isEnzymeReaction() || nonEnzyme)
+		if (reactionType.isEnzymeReaction() || nonEnzyme
+				|| reactionType.isReactionWithGenes()
+				|| reactionType.isReactionWithRNAs())
 			treatAsEnzymeReaction.setEnabled(false);
 		klg.getSettings().put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 				Boolean.valueOf(treatAsEnzymeReaction.isSelected()));
@@ -581,7 +584,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		}
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
 		if (reactionType.isEnzymeReaction()
-				|| reactionType.isNonEnzymeReaction())
+				|| reactionType.isNonEnzymeReaction()
+				|| reactionType.isReactionWithGenes()
+				|| reactionType.isReactionWithRNAs())
 			treatAsEnzymeReaction.setEnabled(false);
 	}
 }

@@ -35,10 +35,12 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * Networks&ldquo; of Nicole Radde and Lars Kaderali.
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @since 1.3
  * 
  */
-public class SpecialHillEquation extends BasicKineticLaw implements
+public class RaddeHillEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
@@ -46,27 +48,25 @@ public class SpecialHillEquation extends BasicKineticLaw implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public SpecialHillEquation(Reaction parentReaction,
-			Object... typeParameters) throws RateLawNotApplicableException {
+	public RaddeHillEquation(Reaction parentReaction, Object... typeParameters)
+			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
 
 	/*
-	 * (Kein Javadoc)
+	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * .util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> enzymes,
-			List<String> activators, List<String> transActivators,
-			List<String> inhibitors, List<String> transInhibitors,
+			List<String> activators, List<String> inhibitors,
 			List<String> nonEnzymeCatalysts)
 			throws RateLawNotApplicableException {
 
 		ASTNode kineticLaw = new ASTNode(this);
-		kineticLaw = ASTNode.sum(synrate(), reg_function());
+		kineticLaw = ASTNode.sum(synrate(), regulation());
 		return kineticLaw;
 	}
 
@@ -76,31 +76,37 @@ public class SpecialHillEquation extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "A special Hill-Equation";
+		return "Radde-Hill equation";
 	}
 
 	/**
 	 * @return ASTNode
 	 */
-	ASTNode reg_function() {
+	ASTNode regulation() {
 
 		Reaction r = getParentSBMLObject();
 		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
 
-		SpeciesReference reactant = r.getReactant(0);
-		Parameter preactant = parameterW(reactant.getSpecies(), rId);
-		ASTNode preactantnode = new ASTNode(preactant, this);
-		Parameter thetareactant = parameterTheta(rId, reactant.getSpecies());
-		ASTNode thetareactantnode = new ASTNode(thetareactant, this);
-		Parameter coeffreactant = parameterHillCoefficient(reactant
-				.getSpecies());
-		ASTNode coeffreactantnode = new ASTNode(coeffreactant, this);
+		if (r.getNumReactants() > 0) {
+			SpeciesReference reactant = r.getReactant(0);
+			if (!SBO.isEmptySet(reactant.getSpeciesInstance().getSBOTerm())) {
+				Parameter preactant = parameterW(reactant.getSpecies(), rId);
+				ASTNode preactantnode = new ASTNode(preactant, this);
+				Parameter thetareactant = parameterTheta(rId, reactant
+						.getSpecies());
+				ASTNode thetareactantnode = new ASTNode(thetareactant, this);
+				Parameter coeffreactant = parameterHillCoefficient(reactant
+						.getSpecies());
+				ASTNode coeffreactantnode = new ASTNode(coeffreactant, this);
 
-		node = ASTNode.frac(ASTNode.times(preactantnode, ASTNode.pow(
-				speciesTerm(reactant), coeffreactantnode)), ASTNode.sum(ASTNode
-				.pow(speciesTerm(reactant), coeffreactantnode), ASTNode.pow(
-				thetareactantnode, coeffreactantnode)));
+				node = ASTNode.frac(ASTNode.times(preactantnode, ASTNode.pow(
+						speciesTerm(reactant), coeffreactantnode)), ASTNode
+						.sum(ASTNode.pow(speciesTerm(reactant),
+								coeffreactantnode), ASTNode.pow(
+								thetareactantnode, coeffreactantnode)));
+			}
+		}
 
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
 
@@ -130,10 +136,7 @@ public class SpecialHillEquation extends BasicKineticLaw implements
 									coeffnode))));
 			}
 		}
-		if (node.isUnknown())
-			return null;
-		else
-			return node;
+		return node.isUnknown() ? null : node;
 	}
 
 	/**

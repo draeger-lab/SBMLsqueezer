@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
@@ -73,6 +74,27 @@ public class ReactionType {
 		notReversible = new HashSet<String>();
 		notReversible.addAll(SBMLsqueezer.getKineticsIrreversible());
 		notReversible.removeAll(SBMLsqueezer.getKineticsReversible());
+	}
+
+	/**
+	 * Checks if the given set of kinetics can be used given the property if all
+	 * reactions should be treated reversibly.
+	 * 
+	 * @param treatReactionsReversible
+	 * @param allKinetics
+	 * @return A set of kinetics that can be used given the reversible property.
+	 */
+	private static Set<String> checkReactions(boolean treatReactionsReversible,
+			Set<String> allKinetics) {
+		Set<String> kinetics = new HashSet<String>();
+		kinetics.addAll(allKinetics);
+		kinetics.removeAll(notReversible);
+		if (!treatReactionsReversible)
+			kinetics.removeAll(notIrreversible);
+		/*
+		 * else kinetics.retainAll(notIrreversible);
+		 */
+		return kinetics;
 	}
 
 	/**
@@ -145,13 +167,10 @@ public class ReactionType {
 	 */
 	public static final void identifyModifers(Reaction reaction,
 			List<String> enzymes, List<String> activators,
-			List<String> transActiv, List<String> inhibitors,
-			List<String> transInhib, List<String> nonEnzymeCatalysts) {
+			List<String> inhibitors, List<String> nonEnzymeCatalysts) {
 		enzymes.clear();
 		activators.clear();
-		transActiv.clear();
 		inhibitors.clear();
-		transInhib.clear();
 		nonEnzymeCatalysts.clear();
 		int type;
 		for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
@@ -168,12 +187,12 @@ public class ReactionType {
 					nonEnzymeCatalysts.add(modifier.getSpecies());
 			} else if (SBO.isTranscriptionalInhibitor(type)
 					|| SBO.isTranslationalInhibitor(type))
-				transInhib.add(modifier.getSpecies());
+				inhibitors.add(modifier.getSpecies());
 			else if (SBO.isInhibitor(type))
 				inhibitors.add(modifier.getSpecies());
 			else if (SBO.isTranscriptionalActivation(type)
 					|| SBO.isTranslationalActivation(type))
-				transActiv.add(modifier.getSpecies());
+				activators.add(modifier.getSpecies());
 			else if (SBO.isTrigger(type) || SBO.isStimulator(type)) {
 				// no extra support for unknown catalysis anymore...
 				// physical stimulation is now also a stimulator.
@@ -208,24 +227,21 @@ public class ReactionType {
 	}
 
 	/**
-	 * Checks if the given set of kinetics can be used given the property if all
-	 * reactions should be treated reversibly.
+	 * Convenient method to check whether the given ListOf is either empty or
+	 * contains only elements with an SBO annotation that corresponds to an
+	 * empty set.
 	 * 
-	 * @param treatReactionsReversible
-	 * @param allKinetics
-	 * @return A set of kinetics that can be used given the reversible property.
+	 * @param listOf
+	 * @return
 	 */
-	private static Set<String> checkReactions(boolean treatReactionsReversible,
-			Set<String> allKinetics) {
-		Set<String> kinetics = new HashSet<String>();
-		kinetics.addAll(allKinetics);
-		kinetics.removeAll(notReversible);
-		if (!treatReactionsReversible)
-			kinetics.removeAll(notIrreversible);
-		/*
-		 * else kinetics.retainAll(notIrreversible);
-		 */
-		return kinetics;
+	public static boolean representsEmptySet(ListOf<SpeciesReference> listOf) {
+		if (listOf.size() == 0)
+			return true;
+		boolean emptySet = true;
+		for (SpeciesReference specRef : listOf)
+			emptySet &= SBO.isEmptySet(specRef.getSpeciesInstance()
+					.getSBOTerm());
+		return emptySet;
 	}
 
 	private List<String> activators;
@@ -250,6 +266,8 @@ public class ReactionType {
 
 	private boolean reactionWithRNAs = false;
 
+	private boolean reversibility;
+
 	private Properties settings;
 
 	private boolean stoichiometryIntLeft = true;
@@ -258,15 +276,9 @@ public class ReactionType {
 
 	private double stoichiometryRight = 0d;
 
-	private List<String> transActiv;
-
-	private List<String> transInhib;
-
 	private boolean uniUni;
 
 	private boolean withoutModulation;
-
-	private boolean reversibility;
 
 	/**
 	 * Analyses the given reaction for several properties.
@@ -356,12 +368,10 @@ public class ReactionType {
 		nonEnzymeCatalysts = new LinkedList<String>();
 		inhibitors = new LinkedList<String>();
 		activators = new LinkedList<String>();
-		transActiv = new LinkedList<String>();
-		transInhib = new LinkedList<String>();
 		enzymes = new LinkedList<String>();
 		if (reaction.getNumModifiers() > 0)
-			identifyModifers(reaction, enzymes, activators, transActiv,
-					inhibitors, transInhib, nonEnzymeCatalysts);
+			identifyModifers(reaction, enzymes, activators, inhibitors,
+					nonEnzymeCatalysts);
 		nonEnzyme = ((!((Boolean) this.settings
 				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 				.booleanValue() && enzymes.size() == 0)
@@ -372,8 +382,7 @@ public class ReactionType {
 		biUni = stoichiometryLeft == 2d && stoichiometryRight == 1d;
 		biBi = stoichiometryLeft == 2d && stoichiometryRight == 2d;
 		integerStoichiometry = stoichiometryIntLeft;
-		withoutModulation = inhibitors.size() == 0 && activators.size() == 0
-				&& transActiv.size() == 0 && transInhib.size() == 0;
+		withoutModulation = inhibitors.size() == 0 && activators.size() == 0;
 
 		/*
 		 * Check if this reaction makes sense at all.
@@ -398,10 +407,12 @@ public class ReactionType {
 				|| (reaction.getNumReactants() == 1 && SBO.isEmptySet(reaction
 						.getReactant(0).getSBOTerm()))) {
 			boolean translation = false;
-			for (i = 0; i < reaction.getNumProducts() && !translation; i++)
-				if (SBO.isProtein(reaction.getProduct(i).getSpeciesInstance()
-						.getSBOTerm()))
+			for (i = 0; i < reaction.getNumProducts() && !translation; i++) {
+				Species product = reaction.getProduct(i).getSpeciesInstance();
+				if (SBO.isProtein(product.getSBOTerm())
+						|| SBO.isGeneric(product.getSBOTerm()))
 					translation = reactionWithRNAs = true;
+			}
 			if (SBO.isTranscription(reaction.getSBOTerm()) && translation)
 				throw new RateLawNotApplicableException("Reaction "
 						+ reaction.getId() + " must be a translation.");
@@ -427,6 +438,21 @@ public class ReactionType {
 				&& !(reactionWithGenes || reactionWithRNAs))
 			throw new RateLawNotApplicableException("Reaction "
 					+ reaction.getId() + " must be a state transition.");
+	}
+
+	/**
+	 * Checks whether for this reaction the given kinetic law can be applied
+	 * just based on the reversibility property (nothing else is checked).
+	 * 
+	 * @param reaction
+	 * @param className
+	 * @return
+	 */
+	private boolean checkReversibility(Reaction reaction, String className) {
+		return (reaction.getReversible() && SBMLsqueezer
+				.getKineticsReversible().contains(className))
+				|| (!reaction.getReversible() && SBMLsqueezer
+						.getKineticsIrreversible().contains(className));
 	}
 
 	/**
@@ -486,25 +512,11 @@ public class ReactionType {
 	}
 
 	/**
-	 * @return the transActiv
-	 */
-	public List<String> getTransActivators() {
-		return transActiv;
-	}
-
-	/**
-	 * @return the transInhib
-	 */
-	public List<String> getTransInhibitors() {
-		return transInhib;
-	}
-
-	/**
 	 * identify the reactionType for generating the kinetics
 	 * 
 	 */
 	public String identifyPossibleKineticLaw() {
-		if (reaction.getNumReactants() == 0) {
+		if (representsEmptySet(reaction.getListOfReactants())) {
 			if (reactionWithGenes || reactionWithRNAs)
 				for (String kin : SBMLsqueezer
 						.getKineticsGeneRegulatoryNetworks())
@@ -513,7 +525,7 @@ public class ReactionType {
 			for (String kin : SBMLsqueezer.getKineticsZeroReactants())
 				return kin;
 		}
-		if (reaction.getNumProducts() == 0
+		if (representsEmptySet(reaction.getListOfProducts())
 				&& (reversibility || reaction.getReversible())) {
 			if (reactionWithGenes || reactionWithRNAs)
 				for (String kin : SBMLsqueezer
@@ -536,9 +548,11 @@ public class ReactionType {
 			Species reactant = reaction.getReactant(0).getSpeciesInstance();
 			if (stoichiometryRight == 1d) {
 				Species product = reaction.getProduct(0).getSpeciesInstance();
-				if ((reactionWithGenes || reactionWithRNAs || (SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm()) || (SBO
+				if ((reactionWithGenes || reactionWithRNAs || (SBO
+						.isGeneOrGeneCodingRegion(reactant.getSBOTerm()) || (SBO
 						.isEmptySet(reactant.getSBOTerm()) && (SBO
-						.isProtein(product.getSBOTerm()) || SBO
+						.isProtein(product.getSBOTerm())
+						|| SBO.isGeneric(product.getSBOTerm()) || SBO
 						.isRNAOrMessengerRNA(product.getSBOTerm()))))
 						&& !(SBO.isEmptySet(product.getSBOTerm()))))
 					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION);
@@ -565,20 +579,32 @@ public class ReactionType {
 	 */
 	public String[] identifyPossibleKineticLaws() {
 		Set<String> types = new HashSet<String>();
-
-		if (reaction.getNumReactants() == 0
-				|| (reaction.getNumProducts() == 0 && (reaction.getReversible() || reversibility))) {
+		boolean emptyListOfReactants = representsEmptySet(reaction
+				.getListOfReactants());
+		if (emptyListOfReactants
+				|| ((reaction.getReversible() || reversibility) && representsEmptySet(reaction
+						.getListOfProducts()))) {
 			/*
-			 * Special case that occurs if we have at least one emty list of
+			 * Special case that occurs if we have at least one empty list of
 			 * species references.
 			 */
-			if (reaction.getNumReactants() == 0)
+			if (emptyListOfReactants)
 				for (String className : SBMLsqueezer.getKineticsZeroReactants())
 					types.add(className);
 			else
 				for (String className : SBMLsqueezer.getKineticsZeroProducts()) {
 					if (SBMLsqueezer.getKineticsReversible()
 							.contains(className))
+						types.add(className);
+				}
+			// Gene-regulation
+			if (reactionWithGenes || reactionWithRNAs)
+				for (String className : SBMLsqueezer
+						.getKineticsGeneRegulatoryNetworks()) {
+					if ((reaction.getReversible() && !notReversible
+							.contains(className))
+							|| (!reaction.getReversible() && !notIrreversible
+									.contains(className)))
 						types.add(className);
 				}
 
@@ -651,11 +677,12 @@ public class ReactionType {
 			if (uniUni) {
 				Species reactant = reaction.getReactant(0).getSpeciesInstance();
 				Species product = reaction.getProduct(0).getSpeciesInstance();
-				if ((reactionWithGenes || reactionWithRNAs || (
-						SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm())
-						|| (SBO.isEmptySet(reactant.getSBOTerm()) && (SBO
-								.isRNAOrMessengerRNA(product.getSBOTerm()) || SBO
-								.isProtein(product.getSBOTerm()))))))
+				if ((reactionWithGenes || reactionWithRNAs || (SBO
+						.isGeneOrGeneCodingRegion(reactant.getSBOTerm()) || (SBO
+						.isEmptySet(reactant.getSBOTerm()) && (SBO
+						.isRNAOrMessengerRNA(product.getSBOTerm())
+						|| SBO.isProtein(product.getSBOTerm()) || SBO
+						.isGeneric(product.getSBOTerm()))))))
 					for (String className : SBMLsqueezer
 							.getKineticsGeneRegulatoryNetworks()) {
 						if ((reaction.getReversible() && !notReversible
@@ -768,21 +795,6 @@ public class ReactionType {
 			species.setBoundaryCondition(condition);
 			species.stateChanged();
 		}
-	}
-
-	/**
-	 * Checks whether for this reaction the given kinetic law can be applied
-	 * just based on the reversibility property (nothing else is checked).
-	 * 
-	 * @param reaction
-	 * @param className
-	 * @return
-	 */
-	private boolean checkReversibility(Reaction reaction, String className) {
-		return (reaction.getReversible() && SBMLsqueezer
-				.getKineticsReversible().contains(className))
-				|| (!reaction.getReversible() && SBMLsqueezer
-						.getKineticsIrreversible().contains(className));
 	}
 
 }

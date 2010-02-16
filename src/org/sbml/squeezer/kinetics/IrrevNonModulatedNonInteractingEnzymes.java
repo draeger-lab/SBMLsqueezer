@@ -35,7 +35,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @date Feb 6, 2008
  */
 public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
@@ -59,17 +60,15 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 *      .util.List, java.util.List, java.util.List, java.util.List,
-	 *      java.util.List, java.util.List)
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		if ((modActi.size() > 0) || (modInhib.size() > 0)
-				|| (modTActi.size() > 0) || (modTInhib.size() > 0))
+		if ((modActi.size() > 0) || (modInhib.size() > 0))
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to non-modulated reactions.");
 		if ((modCat.size() > 0))

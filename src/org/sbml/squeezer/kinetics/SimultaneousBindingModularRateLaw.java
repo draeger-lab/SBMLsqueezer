@@ -26,8 +26,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates the direct saturable rate law according to Liebermeister
- * et al. 2009.
+ * This class creates the mulitiplicative saturable kinetic equation according
+ * to Liebermeister et al. 2009.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -35,7 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date 2009-09-21
  * @since 1.3
  */
-public class DirectSaturable extends ReversiblePowerLaw implements
+public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
@@ -46,48 +46,56 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 	 * @param types
 	 * @throws RateLawNotApplicableException
 	 */
-	public DirectSaturable(Reaction parentReaction, Object... types)
+	public SimultaneousBindingModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
 		unsetSBOTerm();
-		setNotes("direct saturable rate law");
+		setNotes("multiplicative saturable rate law");
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml.Reaction,
-	 *      java.lang.String)
+	 * @see
+	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(java.lang.String
+	 * )
 	 */
 	ASTNode denominator(String enzyme) {
-		ASTNode denominator = super.denominator(enzyme);
+		ASTNode denominator = new ASTNode(this);
 		ASTNode forward = denominator(enzyme, true);
 		ASTNode backward = denominator(enzyme, false);
 		if (!forward.isUnknown())
-			denominator.plus(forward);
-		if (!backward.isUnknown())
-			denominator.plus(backward);
-		return denominator;
+			denominator = forward;
+		if (!backward.isUnknown()) {
+			if (!denominator.isUnknown())
+				denominator.multiplyWith(backward);
+			else
+				denominator = backward;
+		}
+		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
+		return competInhib.isUnknown() ? denominator : denominator
+				.plus(competInhib);
 	}
 
 	/**
-	 * This creates the denominator parts.
+	 * This actually creates the denominator parts.
 	 * 
 	 * @param enzyme
 	 * @param forward
-	 *            if true forward, otherwise backward
+	 *            true means forward, false backward.
 	 * @return
 	 */
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
-		Reaction r = getParentSBMLObject();
 		Parameter kM;
 		Parameter hr = parameterReactionCooperativity(enzyme);
+		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
 			kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
-			curr = ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this));
+			curr = new ASTNode(1, this);
+			curr.plus(speciesTerm(specRef).divideBy(kM));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));
 			if (term.isUnknown())
@@ -104,6 +112,6 @@ public class DirectSaturable extends ReversiblePowerLaw implements
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Direct saturable rate law";
+		return "Simultaneous binding modular rate law";
 	}
 }

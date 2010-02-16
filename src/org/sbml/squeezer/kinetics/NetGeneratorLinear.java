@@ -30,6 +30,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * W&ouml;tzel, D., and Pfaff 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @since 1.3
  */
 public class NetGeneratorLinear extends AdditiveModelLinear implements
@@ -45,29 +46,17 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
-	 */
+	@Override
 	ASTNode b_i() {
 		return null;
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
-	 */
+	@Override
 	public String getSimpleName() {
 		return "Additive model: NetGenerator linear model";
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#m_i()
-	 */
+	@Override
 	ASTNode m_i() {
 		return new ASTNode(1, this);
 	}

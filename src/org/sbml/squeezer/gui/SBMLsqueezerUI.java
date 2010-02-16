@@ -97,6 +97,7 @@ class FileReaderThread extends Thread implements Runnable {
 	 */
 	public void run() {
 		reader.readModel(file);
+		reader.pack();
 	}
 }
 
@@ -174,6 +175,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		 */
 		TO_LATEX
 	}
+
 	/**
 	 * Generated serial version uid.
 	 */
@@ -361,9 +363,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				chooser = GUITools.createJFileChooser(settings.get(
 						CfgKeys.OPEN_DIR).toString(), false, false,
 						JFileChooser.FILES_ONLY, SBFileFilter.SBML_FILE_FILTER);
-				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+				if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 					new FileReaderThread(this, chooser.getSelectedFile());
-				}
 				break;
 			case OPEN_LAST_FILE:
 				File f = new File(settings.get(CfgKeys.SBML_FILE).toString());

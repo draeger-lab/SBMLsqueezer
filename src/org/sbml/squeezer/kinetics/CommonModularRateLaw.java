@@ -26,7 +26,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * Force dependent rate law (FD) according to Liebermeister et al 2009.
+ * This class creates the common saturable rate law according to Liebermeister
+ * et al. 2009.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -34,7 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date 2009-09-21
  * @since 1.3
  */
-public class ForceDependent extends ReversiblePowerLaw implements
+public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
@@ -45,63 +46,57 @@ public class ForceDependent extends ReversiblePowerLaw implements
 	 * @param types
 	 * @throws RateLawNotApplicableException
 	 */
-	public ForceDependent(Reaction parentReaction, Object... types)
+	public CommonModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
 		unsetSBOTerm();
-		setNotes("force-dependent rate law");
+		setNotes("common saturable rate law");
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 * .Reaction)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
+	 *      .Reaction)
 	 */
 	ASTNode denominator(String enzyme) {
-		ASTNode denominator = new ASTNode(this);
-		ASTNode forward = denominator(enzyme, true);
-		ASTNode backward = denominator(enzyme, false);
-		if (!forward.isUnknown())
-			denominator = forward;
-		if (!backward.isUnknown()) {
-			if (!denominator.isUnknown())
-				denominator.multiplyWith(backward);
-			else
-				denominator = backward;
-		}
-		denominator.sqrt();
+		ASTNode denominator = denominator(enzyme, true);
+		if (denominator.isUnknown())
+			denominator = denominator(enzyme, false);
+		else
+			denominator.plus(denominator(enzyme, false));
+		denominator.minus(new ASTNode(1, this));
 		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}
 
 	/**
-	 * This actually creates the parts of the denominator.
+	 * This actually creates the denominator parts.
 	 * 
 	 * @param forward
-	 *            true means forward, false backward.
+	 *            true is forward, false reverse.
 	 * @return
 	 */
 	private final ASTNode denominator(String enzyme, boolean forward) {
-		ASTNode term = new ASTNode(this), curr;
-		Parameter kM;
+		ASTNode denominator = new ASTNode(this), curr;
+		Parameter hr = parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
-		Parameter hr = parameterReactionCooperativity(enzyme);
 		for (SpeciesReference specRef : listOf) {
-			kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
-			curr = ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this));
-			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(hr, this),
-					new ASTNode(specRef.getStoichiometry(), this)));
-			if (term.isUnknown())
-				term = curr;
+			Parameter kM = parameterMichaelis(specRef.getSpecies(), enzyme,
+					forward);
+			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
+					speciesTerm(specRef), new ASTNode(kM, this)));
+			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
+					.getStoichiometry(), this), new ASTNode(hr, this)));
+			if (denominator.isUnknown())
+				denominator = curr;
 			else
-				term.multiplyWith(curr);
+				denominator.multiplyWith(curr);
 		}
-		return term;
+		return denominator;
 	}
 
 	/*
@@ -110,6 +105,6 @@ public class ForceDependent extends ReversiblePowerLaw implements
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Force dependent rate law";
+		return "Common modular rate law";
 	}
 }
