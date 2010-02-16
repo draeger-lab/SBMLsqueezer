@@ -26,6 +26,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * This class creates an equation based on a non-linear additive model.
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @since 1.3
  */
 public class AdditiveModelNonLinear extends AdditiveModelLinear implements
@@ -45,20 +46,15 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 	 * @param g
 	 * @return ASTNode
 	 */
-	ASTNode actifunction(ASTNode g) {
+	ASTNode activation(ASTNode g) {
 		if (g == null)
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode
-							.times(new ASTNode(-1, this), new ASTNode(this)))));
-		else
-			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.times(new ASTNode(-1, this), g))));
+					.exp(ASTNode.uMinus(new ASTNode(this)))));
+		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
+				.exp(ASTNode.uMinus(g))));
 	}
 
-
-	/* (Kein Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
-	 */
+	@Override
 	public String getSimpleName() {
 		return "Additive model: non-linear";
 	}

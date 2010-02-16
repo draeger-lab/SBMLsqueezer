@@ -24,6 +24,7 @@ import java.util.List;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
@@ -457,15 +458,16 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				.get(catNum)
 				: null);
 		ASTNode ass = new ASTNode(p_kass, this);
-		for (SpeciesReference reactant : r.getListOfReactants()) {
-			ASTNode basis = speciesTerm(reactant);
-			if (reactant.isSetStoichiometryMath())
-				basis.raiseByThePowerOf(reactant.getStoichiometryMath()
-						.getMath().clone());
-			else
-				basis.raiseByThePowerOf(reactant.getStoichiometry());
-			ass.multiplyWith(basis);
-		}
+		for (SpeciesReference specRef : r.getListOfReactants())
+			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
+				ASTNode basis = speciesTerm(specRef);
+				if (specRef.isSetStoichiometryMath())
+					basis.raiseByThePowerOf(specRef.getStoichiometryMath()
+							.getMath().clone());
+				else
+					basis.raiseByThePowerOf(specRef.getStoichiometry());
+				ass.multiplyWith(basis);
+			}
 		return ass;
 	}
 
@@ -474,13 +476,10 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 * 
 	 * @see
 	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * .util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		orderReactants = orderProducts = Double.NaN;
 		List<String> catalysts = new LinkedList<String>(modE);
@@ -513,11 +512,10 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				.get(c)
 				: null);
 		ASTNode diss = new ASTNode(p_kdiss, this);
-		for (int products = 0; products < r.getNumProducts(); products++) {
-			SpeciesReference p = r.getProduct(products);
-			diss.multiplyWith(ASTNode.pow(speciesTerm(p), new ASTNode(p
-					.getStoichiometry(), this)));
-		}
+		for (SpeciesReference specRef : r.getListOfProducts())
+			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm()))
+				diss.multiplyWith(ASTNode.pow(speciesTerm(specRef),
+						new ASTNode(specRef.getStoichiometry(), this)));
 		return diss;
 	}
 

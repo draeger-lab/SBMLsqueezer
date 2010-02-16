@@ -592,7 +592,6 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(org.sbml.jsbml.ASTNode, double)
 	 */
 	public StringBuffer delay(ASTNode x, double d) {

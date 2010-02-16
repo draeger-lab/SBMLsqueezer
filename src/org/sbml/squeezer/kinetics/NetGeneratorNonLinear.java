@@ -33,6 +33,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * W&ouml;tzel, D., and Pfaff 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @since 1.3
  */
 public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
@@ -48,48 +50,41 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
+	@Override
+	public String getSimpleName() {
+		return "Additive model: NetGenerator non-linear model";
+	}
+
 	/**
 	 * weighted sum over all interacting RNAs
 	 * 
 	 * @return ASTNode
 	 */
-	ASTNode function_w() {
+	@Override
+	ASTNode w() {
 		Reaction r = getParentSBMLObject();
-		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
 
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierspec = r.getModifier(modifierNum)
+			Species modifierSpec = r.getModifier(modifierNum)
 					.getSpeciesInstance();
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 
-			if (SBO.isProtein(modifierspec.getSBOTerm())
-					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())) {
+			if (SBO.isProtein(modifierSpec.getSBOTerm())
+					|| SBO.isGeneric(modifierSpec.getSBOTerm())
+					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
+					|| SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifier.getSpecies(), rId);
+					Parameter p = parameterW(modifier.getSpecies(), r.getId());
 					ASTNode pnode = new ASTNode(p, this);
-					if (node.isUnknown())
-						node = ASTNode.times(pnode, modnode);
-					else
-						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
+					node = node.isUnknown() ? ASTNode.times(pnode, modnode)
+							: ASTNode.sum(node, ASTNode.times(pnode, modnode));
 				}
 			}
 		}
-		if (node.isUnknown())
-			return null;
-		else
-			return node;
-	}
-
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
-	 */
-	public String getSimpleName() {
-		return "Additive model: NetGenerator non-linear model";
+		return node.isUnknown() ? null : node;
 	}
 }

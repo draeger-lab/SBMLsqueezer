@@ -91,16 +91,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	private List<String> nonEnzymeCatalysts;
 
 	/**
-	 * Ids of translational or transcriptional activators.
-	 */
-	private List<String> transActivators;
-
-	/**
-	 * Ids of transcriptional or translational inhibitors.
-	 */
-	private List<String> transInhibitors;
-
-	/**
 	 * 
 	 */
 	private Object typeParameters[];
@@ -160,31 +150,25 @@ public abstract class BasicKineticLaw extends KineticLaw {
 					.parseDouble(typeParameters[3].toString());
 		enzymes = new LinkedList<String>();
 		activators = new LinkedList<String>();
-		transActivators = new LinkedList<String>();
 		inhibitors = new LinkedList<String>();
-		transInhibitors = new LinkedList<String>();
 		nonEnzymeCatalysts = new LinkedList<String>();
 		ReactionType.identifyModifers(parentReaction, enzymes, activators,
-				transActivators, inhibitors, transInhibitors,
-				nonEnzymeCatalysts);
-		setMath(createKineticEquation(enzymes, activators, transActivators,
-				inhibitors, transInhibitors, nonEnzymeCatalysts));
+				inhibitors, nonEnzymeCatalysts);
+		setMath(createKineticEquation(enzymes, activators, inhibitors,
+				nonEnzymeCatalysts));
 	}
 
 	/**
 	 * 
 	 * @param enzymes
 	 * @param activators
-	 * @param transActivators
 	 * @param inhibitors
-	 * @param transInhibitors
 	 * @param nonEnzymeCatalysts
 	 * @return
 	 * @throws RateLawNotApplicableException
 	 */
 	abstract ASTNode createKineticEquation(List<String> enzymes,
-			List<String> activators, List<String> transActivators,
-			List<String> inhibitors, List<String> transInhibitors,
+			List<String> activators, List<String> inhibitors,
 			List<String> nonEnzymeCatalysts)
 			throws RateLawNotApplicableException;
 
@@ -277,8 +261,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		Parameter p = createOrGetParameter("alpha_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
 		if (!p.isSetUnits())
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
@@ -327,8 +309,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		Parameter p = createOrGetParameter("b_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
 		if (!p.isSetUnits())
 			p.setUnits(unitPerTime());
 		if (!p.isSetName())
@@ -345,8 +325,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		Parameter p = createOrGetParameter("beta_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
 		if (!p.isSetUnits())
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
@@ -492,7 +470,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	Parameter parameterSSystemExponent(String modifier) {
 		String reactionID = getParentSBMLObject().getId();
-		StringBuffer id = StringTools.concat("ss-exp_", reactionID);
+		StringBuffer id = StringTools.concat("ssexp_", reactionID);
 		if (modifier != null)
 			StringTools.append(id, underscore, modifier);
 		Parameter p = createOrGetParameter(id.toString());
@@ -747,8 +725,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		Parameter p = createOrGetParameter("m_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
 		if (!p.isSetUnits())
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
@@ -906,18 +882,18 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
-	 * standard biochemical potential
+	 * standard chemical potential
 	 * 
 	 * @param species
 	 *            Identifier of the reacting species whose potential parameter
 	 *            is to be created. Must not be null.
 	 * @return
 	 */
-	Parameter parameterStandardBiochemicalPotential(String species) {
+	Parameter parameterStandardChemicalPotential(String species) {
 		Parameter mu = createOrGetGlobalParameter("scp_", species);
 		if (!mu.isSetName())
 			mu.setName(StringTools.concat(
-					"Standard biochemical potential of species ", species)
+					"Standard chemical potential of species ", species)
 					.toString());
 		if (!mu.isSetSBOTerm())
 			mu.setSBOTerm(463);
@@ -972,8 +948,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		Parameter p = createOrGetParameter("v_", rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
 		if (!p.isSetUnits())
 			p.setUnits(unitPerTime());
 		if (!p.isSetName())
@@ -1044,8 +1018,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		Parameter p = createOrGetParameter("w_", rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
-		if (!p.isSetValue())
-			p.setValue(1);
 		if (!p.isSetUnits())
 			p.setUnits(unitPerTime());
 		if (!p.isSetName())
@@ -1119,7 +1091,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @return the unit definition found in the model or the given unit
 	 *         definition that was added to the model if lacking.
 	 */
-	private UnitDefinition checkUnitDefinitions(UnitDefinition unitdef,
+	UnitDefinition checkUnitDefinitions(UnitDefinition unitdef,
 			Model model) {
 		boolean contains = false;
 		for (UnitDefinition ud : model.getListOfUnitDefinitions())
@@ -1138,7 +1110,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return Unit joule per kelvin and per mole.
 	 */
-	private UnitDefinition unitJperKandM() {
+	UnitDefinition unitJperKandM() {
 		String id = "joule_per_kelvin_per_mole";
 		Model model = getModel();
 		UnitDefinition ud = model.getUnitDefinition(id);
@@ -1159,7 +1131,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param substance
 	 * @return
 	 */
-	private UnitDefinition unitkJperSubstance(UnitDefinition substance) {
+	UnitDefinition unitkJperSubstance(UnitDefinition substance) {
 		String id = "kjoule_per_" + substance.getId();
 		Model model = getModel();
 		UnitDefinition ud = model.getUnitDefinition(id);
@@ -1177,7 +1149,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return
 	 */
-	private UnitDefinition unitPerTime() {
+	UnitDefinition unitPerTime() {
 		Model model = getModel();
 		UnitDefinition ud = model.getUnitDefinition("time").clone();
 		if (ud.getNumUnits() == 1) {
@@ -1206,7 +1178,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            constant.
 	 * @return
 	 */
-	private UnitDefinition unitPerTimeAndConcentrationOrSubstance(
+	UnitDefinition unitPerTimeAndConcentrationOrSubstance(
 			ListOf<SpeciesReference> listOf, boolean zerothOrder) {
 		Model model = getModel();
 		UnitDefinition ud = new UnitDefinition("ud", getLevel(), getVersion());
@@ -1255,7 +1227,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param c
 	 * @return
 	 */
-	private UnitDefinition unitPerTimeOrSizePerTime(Compartment c) {
+	UnitDefinition unitPerTimeOrSizePerTime(Compartment c) {
 		if (bringToConcentration) {
 			Model model = getModel();
 			StringBuilder name = new StringBuilder();
@@ -1290,7 +1262,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param size
 	 * @return
 	 */
-	private UnitDefinition unitSubstancePerSize(UnitDefinition substance,
+	UnitDefinition unitSubstancePerSize(UnitDefinition substance,
 			UnitDefinition size) {
 		return unitSubstancePerSize(substance, size, 1);
 	}
@@ -1302,7 +1274,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param exponent
 	 * @return
 	 */
-	private UnitDefinition unitSubstancePerSize(UnitDefinition substance,
+	UnitDefinition unitSubstancePerSize(UnitDefinition substance,
 			UnitDefinition size, int exponent) {
 		StringBuffer id = StringTools.concat(substance.getId(), "_per_", size
 				.getId());
@@ -1331,7 +1303,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            unit of size
 	 * @return
 	 */
-	private UnitDefinition unitSubstancePerSizePerTime(UnitDefinition size) {
+	UnitDefinition unitSubstancePerSizePerTime(UnitDefinition size) {
 		Model model = getModel();
 		String id = "substance_per_" + size.getId() + "_per_time";
 		UnitDefinition mMperSecond = model.getUnitDefinition(id);
@@ -1351,7 +1323,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param time
 	 * @return
 	 */
-	private UnitDefinition unitSubstancePerTime(UnitDefinition substance,
+	UnitDefinition unitSubstancePerTime(UnitDefinition substance,
 			UnitDefinition time) {
 		Model model = getModel();
 		String id = substance.getId() + "_per_" + time.getId();

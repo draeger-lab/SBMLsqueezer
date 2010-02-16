@@ -37,7 +37,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.3
  * @date 2009-09-17
  */
-public class ReversiblePowerLaw extends BasicKineticLaw implements
+public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
@@ -48,7 +48,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * @param types
 	 * @throws RateLawNotApplicableException
 	 */
-	public ReversiblePowerLaw(Reaction parentReaction, Object... types)
+	public PowerLawModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
 		setSBOTerm(42);
@@ -59,13 +59,11 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 * 
 	 * @see
 	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * .util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		int i;
 		Reaction r = getParentSBMLObject();
@@ -162,7 +160,8 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 
 	/**
 	 * Creates the summand for competetive inhibition in the denominator.
-	 * @param enzyme 
+	 * 
+	 * @param enzyme
 	 * 
 	 * @param r
 	 * @return
@@ -209,7 +208,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 				forward = curr;
 			else
 				forward.multiplyWith(curr);
-			mu = parameterStandardBiochemicalPotential(specRef.getSpecies());
+			mu = parameterStandardChemicalPotential(specRef.getSpecies());
 			ASTNode product = ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(mu, this));
 			if (exponent == null)
@@ -227,7 +226,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 				else
 					backward.multiplyWith(curr);
 			}
-			mu = parameterStandardBiochemicalPotential(specRef.getSpecies());
+			mu = parameterStandardChemicalPotential(specRef.getSpecies());
 			ASTNode product = ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(mu, this));
 			if (exponent == null)
@@ -287,6 +286,7 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 
 	/**
 	 * Creates the root term for hal and weg.
+	 * 
 	 * @param enzyme
 	 * @return
 	 */
@@ -366,6 +366,6 @@ public class ReversiblePowerLaw extends BasicKineticLaw implements
 	 */
 	// @Override
 	public String getSimpleName() {
-		return "Reversible power law";
+		return "Power-law modular rate law";
 	}
 }
