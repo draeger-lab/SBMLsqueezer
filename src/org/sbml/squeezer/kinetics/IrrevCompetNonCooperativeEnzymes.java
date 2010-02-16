@@ -53,20 +53,13 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#createKineticEquation
-	 * (java.util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		if (((modTActi.size() > 0) && (modActi.size() > 0))
-				|| ((modInhib.size() > 0) && (modTInhib.size() > 0)))
-			throw new RateLawNotApplicableException(
-					"Mixture of translational/transcriptional and regular activation/inhibition is not allowed.");
-		if ((modCat.size() > 0))
+		if (modCat.size() > 0)
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to enzyme-catalyzed reactions.");
 		Reaction reaction = getParentSBMLObject();
@@ -74,10 +67,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 				|| (reaction.getReactant(0).getStoichiometry() != 1d))
 			throw new RateLawNotApplicableException(
 					"This rate law can only be applied to reactions with exactly one substrate species.");
-		if (modTActi.size() > 0)
-			modActi.addAll(modTActi);
-		if (modTInhib.size() > 0)
-			modInhib.addAll(modTInhib);
 		if (reaction.getReversible())
 			reaction.setReversible(false);
 

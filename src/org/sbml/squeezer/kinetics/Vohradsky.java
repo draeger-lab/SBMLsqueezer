@@ -32,6 +32,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
  * @since 1.3
  */
 public class Vohradsky extends AdditiveModelNonLinear implements
@@ -47,21 +48,13 @@ public class Vohradsky extends AdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#function_v()
-	 */
-	ASTNode function_v() {
-		return null;
-	}
-
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
-	 */
+	@Override
 	public String getSimpleName() {
 		return "Additive model: Vohradsk\u00fd 2001 and Vu & Vohradsk\u00fd 2007";
+	}
+
+	@Override
+	ASTNode v() {
+		return null;
 	}
 }

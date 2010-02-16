@@ -69,14 +69,11 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.sbml.squeezer.kinetics.Convenience#createKineticEquation(java.util
-	 * .List, java.util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List)
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
+	 * .util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
-			List<String> modTActi, List<String> modInhib,
-			List<String> modTInhib, List<String> modCat)
+			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
 		setSBOTerm(429);
