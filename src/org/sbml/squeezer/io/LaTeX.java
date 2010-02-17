@@ -948,19 +948,17 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalAND(org.sbml.jsbml.ASTNode[])
+	 * @see org.sbml.jsbml.ASTNodeCompiler#and(org.sbml.jsbml.ASTNode[])
 	 */
-	public String logicalAND(ASTNode... nodes) {
+	public String and(ASTNode... nodes) {
 		return logicalOperation(wedge, nodes);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalNot(org.sbml.jsbml.ASTNode)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#not(org.sbml.jsbml.ASTNode)
 	 */
-	public Object logicalNot(ASTNode node) {
+	public Object not(ASTNode node) {
 		StringBuffer value = new StringBuffer("\\neg ");
 		if (0 < node.getNumChildren())
 			value.append(brackets(node.compile(this)));
@@ -993,19 +991,17 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalOR(org.sbml.jsbml.ASTNode[])
+	 * @see org.sbml.jsbml.ASTNodeCompiler#or(org.sbml.jsbml.ASTNode[])
 	 */
-	public String logicalOR(ASTNode... nodes) {
+	public String or(ASTNode... nodes) {
 		return logicalOperation(or, nodes);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalXOR(org.sbml.jsbml.ASTNode[])
+	 * @see org.sbml.jsbml.ASTNodeCompiler#xor(org.sbml.jsbml.ASTNode[])
 	 */
-	public String logicalXOR(ASTNode... nodes) {
+	public String xor(ASTNode... nodes) {
 		return logicalOperation(xor, nodes);
 	}
 

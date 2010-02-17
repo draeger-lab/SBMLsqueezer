@@ -19,8 +19,6 @@
 package org.sbml.squeezer.math;
 
 import java.util.ArrayList;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -29,10 +27,8 @@ import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
-
-import org.sbml.jsbml.Compartment;
-
 import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
@@ -983,84 +979,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	}
 
-	public Boolean logicalAND(ASTNode... nodes) {
-
-		for (ASTNode node : nodes) {
-			if (toBoolean(node.compile(this)) == getConstantFalse())
-				return getConstantFalse();
-
-		}
-		return getConstantTrue();
-	}
-
-	/**
-	 * logical AND
-	 * 
-	 * @param a
-	 * @param b
-	 * @return true if a and b are true, false otherwise
-	 */
-	protected boolean logicalAND(boolean a, boolean b) {
-		return (a && b) ? true : false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#logicalNot(org.sbml.jsbml.ASTNode)
-	 */
-	public Boolean logicalNot(ASTNode node) {
-		return ((toBoolean(node.compile(this)) == getConstantTrue()) ? getConstantFalse()
-				: getConstantTrue());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#logicalOperation(org.sbml.jsbml.ASTNode)
-	 */
-	public Object logicalOperation(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Boolean logicalOR(ASTNode... nodes) {
-		for (ASTNode node : nodes) {
-			if (toBoolean(node.compile(this)) == getConstantTrue())
-				return getConstantTrue();
-
-		}
-		return getConstantFalse();
-	}
-
-	/**
-	 * logical OR
-	 * 
-	 * @param left
-	 * @param right
-	 * @return false if left and right are false, true otherwise
-	 */
-	protected boolean logicalOR(boolean left, boolean right) {
-		return (!left && !right) ? false : true;
-	}
-
-	public Boolean logicalXOR(ASTNode... nodes) {
-		Boolean value = getConstantFalse();
-
-		if (nodes.length > 0) {
-			value = toBoolean(nodes[1].compile(this));
-		}
-
-		for (int i = 1; i < nodes.length; i++) {
-			if (toBoolean(nodes[i].compile(this)) == value)
-				value = getConstantFalse();
-			else
-				value = getConstantTrue();
-		}
-		return value;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1078,11 +996,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		return Double.valueOf(value);
 	}
 
-	/**
-	 * not
-	 * 
-	 * @param node
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#not(org.sbml.jsbml.ASTNode)
 	 */
 	public Boolean not(ASTNode node) {
 		if (toBoolean(node.compile(this)) == getConstantTrue())
@@ -1091,6 +1007,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			return getConstantTrue();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#or(org.sbml.jsbml.ASTNode[])
+	 */
 	public Boolean or(ASTNode... nodes) {
 		for (ASTNode node : nodes) {
 			if (toBoolean(node.compile(this)) == getConstantTrue())
