@@ -127,9 +127,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private double currentTime;
 
 	/**
-	 * 
+	 * This array data structure stores at the position i if the ith event has
+	 * fired recently
 	 */
-	private boolean[] eventDelays;
+	private boolean[] eventFired;
 
 	/**
 	 * 
@@ -146,21 +147,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	protected double[] initialValues;
 
-	protected boolean isNaN = false;
 	/**
 	 * An array, which stores for each constraint the list of times, in which
 	 * the constraint was violated during the simulation.
 	 */
 	protected List<Double>[] listOfContraintsViolations;
-	/**
-	 * This array data structure stores at the position i a list of time (double
-	 * values) at which the event with ID equals i must be executed. The value
-	 * before last of the list ist the watcher. It can be
-	 * <code>POSITIVE_INFINITY </code>if the trigger expession has the value
-	 * <code>true</code>or <code>NaN<code> if value of trigger
-	 * expression is <code>false</code>
-	 */
-	protected LinkedList<Double>[] listOfEvents_delay;
+
 	/**
 	 * The model to be simulated.
 	 */
@@ -172,7 +164,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * species for a given name. This, however, is necessary to work with an
 	 * array containing the concentrations of the species.
 	 */
-	protected Map<String, Integer> speciesIdIndex;
+	//protected Map<String, Integer> speciesIdIndex;
 
 	/**
 	 * This array is to avoid to allocate memory repeatedly. It stores the
@@ -188,7 +180,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	protected double[] v;
 
+	/**
+	 * Hashes the name of a species to an value object which contains
+	 * the position in the Y vector
+	 */
 	private HashMap<String, Value> valuesHash;
+	
+	private HashMap<DESAssignment, ASTNode> eventMath;
+	
 
 	/**
 	 * An array of the current concentration of each species within the model
@@ -211,7 +210,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	public SBMLinterpreter(Model model) {
 		this.model = model;
-		this.speciesIdIndex = new HashMap<String, Integer>();
+		//this.speciesIdIndex = new HashMap<String, Integer>();
 		this.v = new double[this.model.getListOfReactions().size()];
 		this.init();
 	}
@@ -496,6 +495,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(org.sbml.jsbml.ASTNode, double)
 	 */
 	public Double delay(ASTNode x, double d) {
@@ -740,7 +740,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
 
-		// System.out.println(Arrays.toString(Y));
 
 		processVelocities(changeRate);
 
@@ -753,14 +752,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
 
-		// if (RKEventSolver.containsNaN(changeRate) && !isNaN) {
-		// // if (!isNaN) {
-		// System.out.println("Y");
-		// System.out.println(time + " " + Arrays.toString(Y));
-		// System.out.println("res");
-		// System.out.println(time + " " + Arrays.toString(changeRate));
-		// isNaN = true;
-		// }
 
 		return changeRate;
 	}
@@ -878,12 +869,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 
 		/*
-		 * Initialize events. At the begin of the simulation each event has a
-		 * list containing whether <code>POSITIVE_INFINITY </code>or
-		 * <code>NaN</code>.
+		 * Init Events
 		 */
-		if (model.getNumEvents() > 0)
+		if (model.getNumEvents() > 0) {
+			this.eventFired = new boolean[model.getNumEvents()];
+			this.eventMath = new HashMap<DESAssignment, ASTNode>();
 			initEvents();
+		}
 
 		/*
 		 * Rules
@@ -895,41 +887,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
 		this.swap = new double[this.Y.length];
 		this.events = new ArrayList<DESAssignment>();
-		this.eventDelays = new boolean[model.getNumEvents()];		
+
 	}
 
 	/**
-	 * TODO Comment
+	 * Initializes the events of the given model. An Event that triggers at t =
+	 * 0 must not fire. Only when it triggers at t > 0
 	 * 
 	 */
 	private void initEvents() {
-		listOfEvents_delay = new LinkedList[(int) model.getNumEvents()];
-		for (int i = 0; i < listOfEvents_delay.length; i++) {
-			listOfEvents_delay[i] = new LinkedList<Double>();
+		for (int i = 0; i < eventFired.length; i++) {
 			if (evaluateToBoolean(model.getEvent(i).getTrigger().getMath()))
-				listOfEvents_delay[i].add(Double.POSITIVE_INFINITY);
-			else
-				listOfEvents_delay[i].add(Double.NaN);
-
-			listOfEvents_delay[i].addFirst(Double.NaN);
-			listOfEvents_delay[i].addLast(0.0);
-		}
-	}
-
-	/**
-	 * Method inserting a double value in a sorted list which contains at least
-	 * 2 element.
-	 */
-	private void insertSort(LinkedList<Double> list, double value) {
-		// list size is at leat 2
-		if (list.size() <= 3) {
-			list.addFirst(value);
-		} else {
-			int counter = 0;
-			while (list.get(counter) < value) {
-				counter++;
-			}
-			list.add(counter, value);
+				eventFired[i] = this.getConstantTrue();
 		}
 	}
 
@@ -998,6 +967,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#not(org.sbml.jsbml.ASTNode)
 	 */
 	public Boolean not(ASTNode node) {
@@ -1009,6 +979,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#or(org.sbml.jsbml.ASTNode[])
 	 */
 	public Boolean or(ASTNode... nodes) {
@@ -1116,70 +1087,77 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		ASTNode assignment_math;
 		Symbol variable;
 		double newVal;
-		int index;
-
-			Event ev;
-			// number of events = listOfEvents_delay.length
-			for (int i = 0; i < model.getNumEvents(); i++) {
-				ev = model.getEvent(i);
-				// check if event must be fired (update)
-				if (evaluateToBoolean(ev.getTrigger().getMath())) {
-					if (!eventDelays[i]) {							
-
-						//fire event
-						eventDelays[i] = true;
-						for (int l = 0; l < ev.getNumEventAssignments(); l++) {
-							assignment_math = ev.getEventAssignment(l)
-									.getMath();
-							variable = ev.getEventAssignment(l)
-									.getVariableInstance();
-							newVal = evaluateToDouble(assignment_math);
-							index = valuesHash.get(variable.getId()).getIndex();
-
-							if (ev.getDelay() != null) {
-								if (ev.getUseValuesFromTriggerTime()){
-									this.events
-											.add(new DESAssignment(currentTime
-													+ evaluateToDouble(ev
-															.getDelay()
-															.getMath()), index,
-													newVal));
-								}
-
-								else
-									this.events.add(new DESAssignment(currentTime
-											+ evaluateToDouble(ev.getDelay()
-													.getMath()), index));
-
-							} else
-								events.add(new DESAssignment(currentTime, index, newVal));
-
-						}
-
-					}
-					
-				} 				
-				else{
-					eventDelays[i] = false;
-				}
-				
-			}
-			
-		int i = 0;
+		int index, i;
 		DESAssignment desa;
+		
+		Event ev;
+		// number of events = listOfEvents_delay.length
+		for (i = 0; i < model.getNumEvents(); i++) {
+			ev = model.getEvent(i);
+			// check if event triggers
+			if (evaluateToBoolean(ev.getTrigger().getMath())) {
+				// check if trigger has just become true
+				if (!eventFired[i]) {
+
+					// fire event
+					eventFired[i] = true;
+					for (int l = 0; l < ev.getNumEventAssignments(); l++) {
+						assignment_math = ev.getEventAssignment(l).getMath();
+						variable = ev.getEventAssignment(l)
+								.getVariableInstance();
+						index = valuesHash.get(variable.getId()).getIndex();
+						
+						// check conditions of the event
+						if (ev.getDelay() != null) {
+							if (ev.getUseValuesFromTriggerTime()) {
+								newVal = evaluateToDouble(assignment_math);
+								this.events.add(new DESAssignment(currentTime
+										+ evaluateToDouble(ev.getDelay()
+												.getMath()), index, newVal));
+							} else{
+								desa = new DESAssignment(currentTime
+										+ evaluateToDouble(ev.getDelay()
+												.getMath()), index);
+								this.eventMath.put(desa, assignment_math);
+								this.events.add(desa);								
+							}
+							
+						} else{
+							newVal = evaluateToDouble(assignment_math);
+							events.add(new DESAssignment(currentTime, index,
+									newVal));
+						}
+							
+					}
+				}
+			}
+			// trigger is false -> event has not fired recently
+			else {
+				eventFired[i] = false;
+			}
+
+		}
+
+		i = 0;
+		
 		while (this.events.size() > i) {
 			desa = this.events.get(i);
 			if (desa.getProcessTime() == currentTime) {
+				//uses value from trigger time
 				if (desa.getValue() != null) {
 					events.add(desa);
 					this.events.remove(desa);
-				} else {
+				} 
+				//don't uses value from trigger time
+				else {
+					desa.setValue(evaluateToDouble(this.eventMath.get(desa)));
+					events.add(desa);
 					this.events.remove(desa);
-					//TODO ausrechnen
+					this.eventMath.remove(desa);
+					
 				}
 			} else
 				i++;
-
 		}
 
 		return events;
