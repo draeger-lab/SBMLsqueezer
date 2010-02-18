@@ -73,7 +73,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ModelHistory;
+import org.sbml.jsbml.History;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
@@ -1758,7 +1758,7 @@ public class PluginSBMLWriter implements SBMLWriter {
 	 * @param mh
 	 * @param modelHistory
 	 */
-	private void saveModelHistoryProperties(ModelHistory mh, Object modelHistory) {
+	private void saveModelHistoryProperties(History mh, Object modelHistory) {
 		// TODO Auto-generated method stub
 	}
 
