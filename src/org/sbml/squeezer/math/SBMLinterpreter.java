@@ -512,7 +512,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		int speciesIndex;
 		speciesIndex = valuesHash.get(as.getVariable()).getIndex();
 		Y[speciesIndex] = evaluateToDouble(as.getMath());
-
+		System.out.println(Y[speciesIndex]);
 	}
 
 	/**
@@ -525,7 +525,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		speciesIndex = valuesHash.get(rr.getVariable()).getIndex();
 		changeRate[speciesIndex] = evaluateToDouble(rr.getMath());
-
 	}
 
 	/**
@@ -596,8 +595,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(int, int)
 	 */
-	public Integer frac(int arg0, int arg1) {
-		return Integer.valueOf(arg0 / arg1);
+	public Double frac(int arg0, int arg1) {
+		return Double.valueOf((double) arg0 / (double) arg1);
 	}
 
 	/*
@@ -1140,9 +1139,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		i = 0;
 		
+		
 		while (this.events.size() > i) {
 			desa = this.events.get(i);
-			if (desa.getProcessTime() == currentTime) {
+			if (desa.getProcessTime() <= currentTime) {
 				//uses value from trigger time
 				if (desa.getValue() != null) {
 					events.add(desa);
