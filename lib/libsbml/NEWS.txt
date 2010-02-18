@@ -1,0 +1,1139 @@
+           libsbml NEWS -- History of user-visible changes
+
+
+=== Version 2.3.4 ===
+
+* New Features:
+
+  - The SBML and MathML XML Schemas are now stored in the libSBML
+    Xerces library itself.  This vastly simplifies XML Schema
+    validation as it is no longer necessary to store and locate the
+    XML Schemas on the end-users filesystem.
+
+  - Validator Constraint 1801, which ensures an event trigger is a
+    boolean now takes into account FunctionDefinitions and piecewise
+    functions, in additional to inline MathML.  Sarah Keating provided
+    this extra functionality.
+
+  - ASTNode now has a deepCopy() method which will clone an ASTNode
+    and all of its children, and so on.  Thanks to Andrew Finney for
+    suggesting this feature.
+
+  - In libSBML Java and Python it is no longer necessary to pass an
+    absolute path and filename to readSBML() and SBMLReader.readSBML().
+    Relative path and filenames now work as expected.
+
+
+* Bug Fixes:
+
+  - When reading nested <piecewise> elements, libSBML looses the outer
+    piecewise elements.  Thanks to Martin Ginkel for reporting this
+    bug and providing a test case.  Sarah Keating tracked down the
+    cause of the bug and provided a fix.
+
+  - In some rare cases libSBML Expat would not be able to read all
+    characters between <cn> and </cn> or <ci> and </ci> elements which
+    would cause their contents to be parsed incorrectly.  Thanks to
+    Ralph Gauges for reporting this bug and Stefan Hoops for providing
+    a fix.
+
+  - When compiled with MSVC++ on Windows libSBML's ASTNode.getReal()
+    would return zero when the ASTNode represented a
+    <cn type="e-notation">.  This bug did *not* manifest itself on
+    Linux, Mac OS X (gcc compiler) systems.  Thanks to Andrew Finney
+    and Jordan Atlas for reporting this bug and Andrew Finney for
+    suggesting a fix.
+
+  - ASTNode::swapChildren() and ASTNode_swapChildren() are now
+    accessible (public) in the libSBML Windows DLL.  These functions
+    were already public on Linux and Mac OS X.  Thanks to Rainer
+    Machne and Akira Funahashi for reporting this problem.
+
+  - When formatting numbers, libSBML would not obey the "C" locale if
+    another locale was set.  For example, if a program using libSBML
+    called, setlocale(LC_ALL, "de_DE") (or setlocale(LC_ALL, "German")
+    under Windows), thereafter libSBML would only read and write
+    floating point numbers where the decimal was a comma (instead of a
+    period).  Such behavior is in violation of the SBML
+    specifications.  Thanks to Pedro Mendes for asking a question (via
+    sbml-discuss) that lead to the discovery of this bug.
+
+  - Thanks to Ralph Gauges for reporting i) a discrepancy between the
+    Xerces-C++ Attributes and the ExpatAttributes interface which was
+    causing the layout extension to occasionally malfunction, and ii)
+    for reporting a mismatched new / free in ExpatXMLString.  These
+    were bugs that only a libSBML extension developer is likely to
+    notice. ;)  They have been fixed.
+
+  - 'make tags' now creates tags files, for use with [X]Emacs.  The
+    tags files are created in the individual source directories,
+    however.  To use them, visit the individual tags files needed.  
+    In the future there will be a scheme for creating one master tags
+    file.
+
+  - 'make uninstall' was actually not implemented almost anywhere
+    (except for the implementation contributed by Martin Ginkel for
+    the Lisp bindings).  There is now a mostly-complete implementation
+    (but it has not seen significant testing, so caveats apply).
+
+
+* Changes:
+
+  - The xml-schema files are no longer included as part of the libSBML
+    download as these are no longer necessary for validation. However 
+    the files are available via the SBML web-site.
+ 
+
+* Known Bugs:
+
+  - Qualified (prefixed) element names are broken in the Xerces-C++
+    2.6.0 SAX2 handler.  Currently, libSBML does not work around this
+    bug.  As a result, when libSBML converts <annotation>s to strings,
+    qualified element names with intervening element content
+    (e.g. <foo:bar> <baz:bop> </foo:bar>) will result in end elements
+    with incorrect prefixes (e.g. </baz:bar>).  If you prefer
+    Xerces-C++, for now please use 2.5.0 or earlier.
+
+  - In libSBML C++, adding objects created on the *stack* to a
+    container object (e.g. adding a Species to a Model or a Unit to a
+    UnitDefinition) may cause libSBML to crash.  LibSBML assumes:
+    i) container objects adopt the the objects they contain
+    (i.e. container objects will freeing objects they contain) and
+    ii) all such objects are heap based (e.g. created with new).
+
+    This bug will be fixed in a future release (2.4.0?) with reference
+    counted objects.  Note this bug *does not occur* in any of LibSBML
+    C, Java, Python, Perl, Lisp, or Matlab.
+
+
+* Released October 3, 2005
+
+
+
+
+=== Version 2.3.3 ===
+
+* libSBML 2.3.3 was a prerelease for libSBML 2.3.4.  Thanks to Frank
+  Bergmann, Christoph Flamm, Ed Frank, Ralph Gauges, Herbert Sauro,
+  Jeremy Zucker, Tim (?), and other members of the libsbml-discuss
+  mailing list for taking the time to test this release and report and
+  fix problems.
+
+
+* Released September 26, 2005
+
+
+
+
+=== Version 2.3.2 ===
+
+* New Features:
+
+  - New example programs:
+
+    - At the 3rd SBML Hackathon, Nicolas Rodriguez converted all C++
+      example programs to Java.  See examples/java/README.txt for more
+      information.
+
+    - Christoph Flamm has started to convert the C++ example programs
+      to Perl.  See examples/perl.
+
+    - Sarah Keating converted the printMath.c example program to C++.
+      See examples/c++/printMath.cpp.
+
+  - Christoph Flamm added the following functions to the Perl binding:
+    LibSBML::printWarnings, LibSBML::printErrors, and
+    LibSBML::printFatals.
+
+
+* Bug Fixes:
+
+  - libSBML 2.3.0 and 2.3.1 required both PREFIX/include and
+    PREFIX/include/sbml (e.g. /usr/local/include and
+    /usr/local/include/sbml) to be on the include path when compiling
+    programs with libSBML.  This has been fixed.  Once again, only
+    PREFIX/include is required to find all appropriate libSBML header
+    files.  Thanks to Colin Gillespie and many others at the recent
+    SBML Hackathon for reporting this bug.
+
+  - readMathMLFromString() would crash if the returned MathMLDocument
+    was freed in-between subsequent calls to the function.  This bug
+    only manifested itself when libSBML was configured to use Expat.
+    Thanks to Herbert Sauro for reporting this bug and Frank Bergmann
+    for providing a fix.
+
+  - AST_PLUS, AST_MINUS, AST_TIMES, AST_DIVIDE, and AST_POWER
+    enumerations may (once again) be used in Java switch statements.
+    Thanks to Nicolas Rodriguez for reporting this bug.
+
+  - Local Parameters with the same ids in separate KineticLaws were
+    incorrectly reported as duplicates / conflicting by the libSBML
+    consistency checker (consistency check id 902).  Thanks to Jo
+    Matthews for reporting this bug.
+
+  - In the libSBML Matlab 'IsSetFast' was renamed to 'isSetFast'
+    (TranslateSBML.c).  This bug caused no problem with Matlab 6, but
+    would crash Matlab 7.
+
+  - Configuring with --with-check on MacOSX would cause -Lyes/lib to be
+    added to the LDFLAGS.  This bug in config/libcheck.m4 is now fixed.
+    (Tracker libsbml case #57.)
+
+  - Minor layout extension bug fixes.
+
+
+* Known Bugs:
+
+  - Same as for libSBML 2.3.1
+
+
+* Released May 27, 2005
+
+
+
+
+=== Version 2.3.1 ===
+
+* New Features:
+
+  - LibSBML now keeps infix formula strings and ASTs internally
+    synchronized for Rules and KineticLaws.  This means you may use
+    whichever you prefer: get/setFormula(), get/setMath(), or freely
+    intermix them.  This brings the libSBML object model another step
+    closer to SBML level and version transparency (where reasonably
+    possible).  As a result, the methods / functions
+    setFormulaFromMath() and setMathFromFormula() are no longer
+    necessary, but are kept around for backward compatibility.
+
+
+* Bug Fixes:
+
+  - LibSBML now converts plural <annotations> into their singular form
+    when reading and storing annotation strings.  This prevents
+    technically incorrect SBML from being written when a plural
+    annotations are read-in and an L1v2 or L2v1 SBML document is
+    subsequently written-out.
+
+    Note: It is still possible to pass setAnnotation() an incorrectly
+    formatted annotation string.  This is one of the many shortcomings
+    of the libSBML annotation system, which will be overhauled soon.
+
+    Thanks to Jo Matthews for reporting this bug.
+
+  - Doxygen generated HTML documentation, which was broken in libSBML
+    2.3.0, is working again.
+
+  - ./configure --with-expat=... works again.  There was a small typo
+    in the config/expat.m4 script that caused LDFLAGS to be set
+    incorrectly.  Thanks to Ed Frank for reporting this bug.
+
+* Changes:
+
+  - The methods / functions setFormulaFromMath() and
+    setMathFromFormula() for Rules and KineticLaws are no longer
+    necessary, but are kept around for backward compatibility (see New
+    Features).
+
+
+* Known Bugs:
+
+  - Same as for libSBML 2.3.0
+
+
+* Released May 9, 2005
+
+
+
+
+=== Version 2.3.0 ===
+
+* New Features:
+
+  - Ralph Gauges extension to libSBML to support the diagram layout
+    proposal (previously available as a separate patch) is now part of
+    the libSBML distribution.  Since the layout extension is still
+    experimental at this point, it is not compiled into libSBML by
+    default.  To enable it:
+
+      ./configure --enable-layout
+      make
+
+    The layout extension may be used from libSBML C, C++, Java and
+    Python.  It has not been tested under Windows (the MSVC++ 6 and
+    MSVC++ 7 project files do not even attempt to compile it).
+    Example code can be found in examples/layout.
+
+
+  - The new and much improved libSBML Validator framework may be found
+    in src/validator.  This framework has been used to implement 45
+    (out of approximately 50) SBML model consistency checks listed on
+    the SBML Wiki (http://sbml.org/wiki/Semantic_Validation).
+
+    The libSBML Validator framework is designed to allow you to
+    express model validation constraints in a succinct yet readable
+    manner.  The constraint "language" has a declarative feel while
+    still allowing you to use the full expressive power of C++ when
+    necessary.  To see the current set of 45 consistency constraints,
+    see src/validator/contraints/ConsistencyConstraints.cpp.
+
+    The most up-to-date validator documentation is available on the
+    libSBML website (http://www.sbml.org/software/libsbml).
+
+
+  - LibSBML now supports SBML Level 2 to SBML Level 1 conversions for
+    certain classes models.  To use, on an SBML L2 document, simply
+    call SBMLDocument.setLevel(1).  If no errors were logged,
+    conversion was successful.  Currently, libSBML is somewhat
+    conservative about the classes of models it will allow to be down
+    converted.  The sophistication of this conversion will improve
+    over time.  See also examples/c++/convertSBML.cpp.
+
+
+  - libSBML now implements a variant of the Visitor pattern (Design
+    Patterns, GoF, 1995, p. 331).  The parent Visitor class is called
+    SBMLVisitor and each SBML class now has an accept() method to
+    accept subclasses of SBMLVisitor.  See the libSBML Developer's
+    Manual for more information.
+
+  - The Java and Python language bindings now include documentation
+    strings for each method and function.  The docstrings are
+    extracted from the C/C++ docstrings and added to each language
+    bindings (see src/bindings/swig/swigdoc.py for more information).
+
+      - Since the SWIG generated sources are annotated, Java
+        docstrings can be accessed by running JavaDoc on the generated
+        Java source files.
+
+      - Python docstrings may be accessed via help() (since Python
+        2.1), pydoc, docutils, HappyDoc, etc.
+
+  - SBMLWriter and MathMLWriter are now full-fledged classes.  Plus,
+    thanks to Stefan Hoops, it is now possible to:
+
+      1.  To use these classes to write to a C++ std::ostream, and
+
+      2.  Set a program and version name when writing SBMLDocuments,
+          which will write the following XML comment (intended for
+          human consumption) at the beginning of the file:
+
+            <!-- Created by <program name> version <program version>
+            on yyyy-MM-dd HH:mm with libsbml version <libsbml version>. -->
+
+  - Added const versions of the getListOfXXX() methods for Model,
+    UnitDefinition, Reaction, KineticLaw, and Events.
+
+  - There are several new convenience methods (and functions) on Unit
+    and UnitDefinition.  These make many libSBML consistency checks
+    much readable.  In particular the following were added:
+
+      - Unit.isXXX() C++ methods (and corresponding Unit_isXXX() C
+        functions) for each UnitKind.  For example, Unit.isMetre() (or
+        Unit_isLitre()).
+
+      - A static C++ method Unit::isBuiltIn() (and the corresponding C
+        function Unit_isBuiltIn()).  It takes a string as an argument
+        and returns true if it is one of the five SBML built-in units:
+        'area', 'length', 'substance', 'time', or 'volume'.
+
+      - Five new methods that allow you to ask whether or not a
+        particular UnitDefinition is a variant of a built-in unit.
+        That is, the unit expresses the built-in type and varies
+        arbitrarily in only scale, multiplier, and/or offset.  The
+        methods are:
+
+          - isVariantOfArea()
+          - isVariantOfLength()
+          - isVariantOfSubstance()
+          - isVariantOfTime()
+          - isVariantOfVolume()
+
+  - ParseMessages can now have an integer identification number
+    associated with them to uniquely identify each message.  The id
+    the first argument passed to the ParseMessage constructor and
+    ParseMessage_createWith().
+
+    The new and improved libSBML consistency check facility makes use
+    of ParseMessage ids.
+
+    Thanks to Damon Hachmeister for suggesting this idea.
+
+
+* Bug Fixes:
+
+  - XML namespace handling is now working properly with libSBML Expat.
+    Thanks to Ben Skrainka for reporting this bug.
+
+  - Because libSBML did not trim leading and trailing whitespace on
+    <notes> and <annotation> content, each time libSBML read and then
+    wrote a file, the amount of leading and trailing whitespace within
+    this content would grow (i.e. the extra whitespace and libSBML's
+    modest pretty printing were interfering with each other).  Thanks
+    to Damon Hachmeister for reporting this bug.
+
+  - There's a bug in Xerces-C++ 2.6.0 (#1308) that caused libSBML to
+    record an incorrect XML namespace on a </annotation> element in
+    some instances.  Thanks to Johan Hattne for discovering this bug
+    and providing a workaround.  Thanks also to Eryk Wolski who sent
+    in runs of 'make check' that also revealed this bug.
+
+  - When converting L1 models to L2, any Compartment or Parameter
+    involved in a CompartmentVolumeRule or ParameterRule,
+    respectively, now correctly has its constant attribute set to
+    false (instead of the L2 default of true).  (As for Species, their
+    constant attribute defaults to false in L2).  Thanks to Andrew
+    Finney and Nicolas Le Novere for reporting this bug.
+
+  - When reading SBML with libSBML Expat some classes of errors would
+    result in segmentation faults.  This has been fixed.
+
+  - When reading SBML from an in-memory string with libSBML Expat
+    parse errors were not be logged.  This has been fixed.
+
+
+* Changes:
+
+  - Leading and trailing whitespace is now removed before storing
+    <notes> and <annotation> content.  Note that whitespace *within*
+    <notes> and <annotation> content is preserved as always.
+
+  - readSBML(filename), SBMLReader_readSBML(filename) and
+    SBMLReader::readSBML(filename) now log specific fatal error
+    ParseMessages if the file could not be found or the content is not
+    SBML.  See the function / method docstrings for more information.
+    Thanks to Eryk Wolski and Ralph Gauges for suggesting this idea.
+
+  - Removed support for writing various character encodings.  This
+    change has been a long time coming.  LibSBML should support
+    writing only UTF-8 because that is what the SBML standard
+    requires.
+
+  - Renamed two methods on the Reaction class:
+
+      - getReactantById() -> getReactant()
+      - getProductById()  -> getProduct ()
+
+    The naming scheme takes advantage of C++ overloading (i.e. you can
+    specify either a string id or an integer position to get the nth
+    reactant or product) and is consistent with similar methods
+    elsewhere in libSBML.  The 'ById' portion of the name was a
+    holdover from the C API and was introduced by mistake when
+    converting the C API to C++.
+
+  - Started upgrading some unit tests to 'check' 0.92.  In version
+    0.92, NULL may be omitted as the second argument to fail_unless()
+    and fail_if().
+
+  - All header files use forward class declarations in order to
+    minimize dependencies and increase compilation speed.
+
+  - The make system tries harder to use the user's LD_LIBRARY_PATH
+    setting, especially when running tests with 'make check'.
+
+  - 'make install' now strips the installed library on systems where
+    we can do it at installation time (which currently are non-MacOSX
+    systems).
+  
+  - 'make install' no longer installs the documentation by default;
+    use 'make install-docs' for this.  The install-docs formats the
+    latex-based documentation in the docs subdirectory and requires
+    latex and pdflatex to be available on your system.  It can also be
+    a time-consuming step.  To reduce annoyances for people who
+    frequently do 'make install', we took out the docs installation
+    step and make it separate.
+
+  - The default documentation creation procedure no longer creates 
+    DVI files, only PDF and HTML.  Some people's TeX/LaTeX installations
+    apparently don't have a latex, only a pdflatex, and the default
+    actions could fail.  DVI and PS formats can still by obtained by
+    using explicit commands.  (See the Makefile in docs/src for more.)
+
+
+* Known Bugs:
+
+  - Qualified (prefixed) element names are broken in the Xerces-C++
+    2.6.0 SAX2 handler.  Currently, libSBML does not work around this
+    bug.  As a result, when libSBML converts <annotation>s to strings,
+    qualified element names with intervening element content
+    (e.g. <foo:bar> <baz:bop> </foo:bar>) will result in end elements
+    with incorrect prefixes (e.g. </baz:bar>).  If you prefer
+    Xerces-C++, for now please use 2.5.0 or earlier.
+
+  - When reading nested <piecewise> elements, libSBML looses the outer
+    piecewise elements.  Martin Ginkel has reported this bug and
+    provided a test case.
+
+  - In libSBML C++, adding objects created on the *stack* to a
+    container object (e.g. adding a Species to a Model or a Unit to a
+    UnitDefinition) may cause libSBML to crash.  LibSBML assumes:
+    i) container objects adopt the the objects they contain
+    (i.e. container objects will freeing objects they contain) and
+    ii) all such objects are heap based (e.g. created with new).
+
+    This bug will be fixed in a future release (2.4.0?) with reference
+    counted objects.  Note this bug *does not occur* in any of LibSBML
+    C, Java, Python, Perl, Lisp, or Matlab.
+
+
+* Released May 2, 2005
+
+
+
+
+=== Version 2.2.0 ===
+
+* New Features:
+
+    - Perl
+
+      A full libSBML Perl API was contributed by Christoph Flamm and
+      Rainer Machne.  For more information, see
+      bindings/perl/README.txt.
+
+      The Perl API is not yet integrated into the libSBML 'configure'
+      system.  To build and install it, after installing libSBML,
+      change to bindings/perl and follow the CPAN-style build
+      instructions in the README.txt file.
+
+    - Lisp
+
+      A full libSBML Lisp API was contributed by Martin Ginkel.
+      For more information, see bindings/lisp/README.txt.
+
+    - Windows Installation Program
+
+      Sarah Keating created Windows setup programs in two flavors:
+      libsbml-2.2.0-win-xerces.exe and libsbml-2.2.0-win-expat.exe.
+
+    - XML namespace definitions may be retrieved from or added to any
+      SBML object.  It's good practice, however, to put namespaces
+      only on the top-level <sbml> element.  For example:
+
+        SBMLDocument d;
+        d.getNamespaces().add("jd", "http://www.sbml.org/2001/ns/jdesigner");
+
+      To find out if an SBML object (XML element) has any namespaces
+      defined, use hasNamespaces(), for e.g.:
+
+        if (d.hasNamespaces()) ...
+
+
+* Bug Fixes:
+
+    - <notes> and <annotation> elements on the top-level <sbml>
+      element were not being written-out for L2 documents.  Thanks to
+      Damon Hachmeister for reporting this bug.
+
+    - <csymbol> delay functions were being handled incorrectly
+      throughout libSBML as symbols (similar to <csymbol> time, which
+      is a symbol) instead of functions.  The fix results in three
+      changes:
+
+        1. The ASTNodeType AST_NAME_DELAY is changed to
+           AST_FUNCTION_DELAY.
+
+        2. As a result of (1), ASTNode.isFunction() will now return
+           true for delay function nodes.
+
+        3. The infix expression parser will parse:
+
+             delay(...)
+
+           as an AST_FUNCTION_DELAY (This does not mean delay
+           functions must be called "delay" in MathML, it simply means
+           if you want to create them in infix, you need to use the
+           name "delay").
+
+      I'm reasonably confident the effect of these changes on existing
+      code will be minimal.  My guess is that if anyone had been using
+      this aspect of libSBML, they would have reported it as a bug.
+      Thanks to Sarah Keating for reporting this bug.
+
+    - The consistency checks were referencing ids instead of names
+      when checking L1 models.  Thanks to Jo Matthews, Mike Hucka, and
+      Manuel Martin for reporting this bug.
+
+    - XML namespace definitions were not being preserved when writing
+      out an SBML document.  Thanks to Jo Matthews, Michael Lawrence,
+      and Herbert Sauro for reporting this bug.
+
+
+* Changes:
+
+    - The API SBMLDocument.validate() has been deprecated and will be
+      removed in a future release of libSBML.  Use
+      SBMLDocument.checkConsistency() instead.
+
+    - A HTML version of the libSBML Developer's Manual is now available.
+      Thanks to Mike Hucka for working that out.
+
+
+* Released October 6, 2004
+
+
+
+
+=== Version 2.1.0 ===
+
+* New Features:
+
+    - C++
+
+      While it's always been possible to call the C API from C++ code,
+      this version of libSBML features a true object-oriented API that
+      mirrors the SBML specifications.  To get a feel for the C++ API,
+      see src/TestReadFromFile5.cpp.
+
+      For those that prefer the straight C API, it's still available
+      and over 730 unit tests prove its backward compatible with
+      previous releases.
+
+    - Java
+
+      A full libSBML Java API is also available.  See:
+
+        docs/formatted/java.txt  -  For more information
+        bindings/java/Test.java  -  For example code
+
+    - Python
+
+      A full libSBML Python API is also available. See:
+
+        docs/formatted/python.txt  -  For more information
+        bindings/python/accept.py  -  For example code
+
+
+    - Validation Engine / Consistency Checks
+
+      In addition to validating an SBML document against the SBML XML
+      Schema, we've added a (customizable) validation engine.
+
+      Currently libSBML comes pre-configured with 39 consistency check
+      rules described at:
+
+        http://sbml.org/wiki/Semantic_Validation
+
+      To test whether or not an SBML document violates any of these
+      consistency checks, simply load an SBML document, d, and call:
+
+        SBMLDocument_validate(d)  -  C
+        d.validate()              -  C++, Java, Python
+
+      Every violation adds an error message to the SBML document
+      (accessible with getNumErrors() and getError()) and validate()
+      returns the total number of errors found.
+
+      The ability to add your own rules is still a bit rough around
+      the edges.  The API was started before libSBML was ported to
+      C++, so new rules must be written in C or C++ (no Java or
+      Python).  If you're interested, please see
+      src/ValidationRules.c.
+
+
+    - Additional Convenience Functions:
+
+      It's now possible retrieve objects from a Model either via their
+      ordinal position or their SId.  In C++, Java, and Python the
+      same method name is overloaded to take either an integer or a
+      string:
+
+        int   n;
+        Model m;
+
+        m.getXXX(n);
+        m.getXXX("SomeSId");
+
+      In C, two separate functions are provided:
+
+        Model_getXXX(n);
+        Model_getXXXById("SomeSId");
+
+
+* Bug Fixes:
+
+    - All bugs reported for the libSBML betas, 2.0.4 and 2.0.5, have
+      been fixed.
+
+    - Infix formula strings with grouped non-associative operators of
+      the same precedence were being formatted incorrectly.  That is:
+
+        "a - (b - c)"  ->  "a - b - c"
+        "a - (b / c)"  ->  "a / b / c"
+
+      To be clear, the formula string would parse correctly, but would
+      be written out incorrectly.  Thanks to Rainer Machne for
+      reporting this bug.
+
+    - Double precision numbers (in attribute values, infix formulas,
+      or MathML) were being printed to a maximum precision of six
+      digits.  This artifically low limit has been increased to 15
+      digits (the maximum precision possible for an IEEE-754 doubles).
+      Thanks to Tatsuya Ishida for reporting this bug.
+
+    - MathML incorrectly nested inside <notes> or <annotation>
+      elements would cause libSBML to crash.  Thanks to Adam Halasz
+      reporting this bug.
+
+    - Negative numbers in MathML <cn> elements were being incorrectly
+      parsed.  Thanks to Nadia Ugel and Victoria Gor, both of whom
+      independently discovered and reported this bug.
+
+    - A <rateRule> element would be written without the closing angle
+      bracket (!) if it had a note and/or annotation associated with
+      it.  Thanks to Konstantin Kozlov for reporting this bug and
+      providing a fix.
+
+    - A MathML expression involving a <csymbol> did not "reduce" to
+      the correct syntax tree when it was the last argument of an
+      <apply>.  Thanks to Jacek Puchalka for reporting this bug and
+      providing a fix.
+
+
+* Changes:
+
+    - SBMLTypes.h now includes MathMLDocument.h, MathMLReader.h and
+      MathMLWriter.h
+
+    - Mike Hucka rewrote the entire build/make system.  It no longer uses
+      automake or libtool; as a result, it is smaller, leaner and faster.
+      Other features include changes to configure to add --with-python,
+      --with-java, --with-matlab.
+
+    - Mike Hucka updated the libsbml-manual.tex to make it reflect the
+      current state of the API.  Mike also created a new LaTeX class file
+      called sbmlmanual.tex, available in the docs/src/tex subdirectory.
+
+    - In order to make the generation of the manuals self-contained, we've
+      put all the necessary LaTeX class files and extensions they use in
+      docs/src/tex.  This bloats the distribution, but is the only safe way
+      to ensure that people can actually make the docs.
+
+    - Mike Hucka also updated the doxygen documentation configuration and
+      the makefile that drives it.  However, it's still not ready for
+      prime-time and we are not yet distributing it as a standard part of
+      the regular distributions.
+
+* Released July 23, 2004
+
+
+
+
+=== Version 2.0.3 ===
+
+* Major New Features:
+
+    - Stephan Hoops has contributed a port of libsbml to use the Expat
+      XML parser library as an alternative to Xerces.  To build
+      libsbml to use Expat:
+
+        ./configure --with-expat[=PATH]
+
+      All checks but one pass with Expat enabled (See Bugs below).
+      There are currently two caveats to using Expat with libsbml:
+
+        1.  libsbml *will not* be able to validate SBML and MathML
+            content against an XML Schema.  Expat has no facilities
+            for XML Schema validation.
+
+        2.  XML entity references (e.g. &#160;), which are most likely
+            to occur in XHTML <notes> sections, will be output as
+            their UTF-8 byte sequence instead of the more human
+            readable entity reference (see Bugs below for more
+            information).
+
+    - Rainer Machne has contributed an example program that evaluates
+      infix expressions and prints their results using the libsbml AST
+      API.  See examples/evaluateMath.c.
+
+
+* Bug Fixes:
+
+    - The correct namespace is now output for both SBML Level 1 and
+      Level 2 documents.  This bug was introduced as a result of a bug
+      fix in the 2.0.1 release which output only Level 1 namespaces.
+      The bug is fixed now.  Honest.  Thanks to Akira Funahashi for
+      reporting this bug.
+
+    - XML entity references (e.g. &#160;), which are most likely to
+      occur in XHTML <notes> sections, are now output using the same
+      entity reference notation instead the corresponding UTF-8 byte
+      sequence.  Thanks to Jo Matthews for reporting this bug.
+
+      NOTE: This bug has not yet been fixed in the Expat version of
+      libsbml.  While Expat reads and writes UTF-8 by default, it
+      comes with no APIs to manipulate or translate Unicode encodings.
+      Writing such a conversion routine and ensuring it is
+      cross-platform is non-trivial and would hold up this release of
+      libsbml for too long.
+
+* Released December 19, 2003
+
+
+
+
+=== Version 2.0.2 ===
+
+* Major New Features:
+
+    - Sarah Keating has contributed a Matlab interface to libsbml and
+      tools to load, store and view (via a Matlab GUI) a database of
+      models (from a .mat file).  See the README.txt in
+      bindings/matlab/SBMLToolbox for build instructions and
+      additional information.
+
+* Bug Fixes:
+
+    - Writing SBML L2 documents with FunctionDefinitions would cause
+      libsbml to crash (segfault).  The cause was a typo in
+      SBMLFormatter.cpp where a call to listOfUnitDefinitions() should
+      have been (and is now) listOfFunctionDefinitions() (Thanks to Jo
+      Matthews for reporting an anomaly that led to the discovery of
+      this bug).
+
+* Released October 24, 2003
+
+
+
+
+=== Version 2.0.1 ===
+
+* Bug Fixes:
+
+    - The correct namespace is now output for SBML Level 2 documents.
+
+    - The MathMLHandler now correctly constructs ASTs for calls to
+      user-defined function containing numeric arguments (Thanks to
+      Colin Gillespie for reporting an anomaly that lead to the
+      discovery of this bug).
+
+    - SBML_formulaToString() did not correctly reproduce (sub)
+      expressions with operators of the same precedence, but modified
+      associativity.  For example, "1 / (2 * 3)" was correctly parsed
+      (in infix or MathML) but incorrectly converted to "1 / 2 * 3".
+      This bug has been fixed!
+
+* Major New Features:
+
+    - When reading SBML Level 2, MathML expressions are automatically
+      converted to and stored as SBML L1 infix expressions for maximum
+      backward compatibility with L1.  That is, either XXX_getMath()
+      or XXX_getFormula() may be used.  There is no need to call
+      SBML_formulaToString() under most circumstances.
+
+    - SBML_convertToL2(SBase_t *sb) converts any SBML Level 1 object
+      and its subordinate objects to SBML Level 2.  Currently this
+      function:
+
+        - Converts name fields to id fields
+
+        - Adds ModifierSpeciesReferences when converting Reactions
+          (via SBML_addModifiersToReaction(Reaction_t *r, const Model_t *m))
+
+      In the future this function will also:
+
+        - Add FunctionDefinitions for L1 predefined functions
+
+     SBMLDocument_setLevel() calls SBML_convertToL2() automatically
+     when the current level is 1 and the new level is 2.
+
+* Major New APIs:
+
+    - char *
+      writeMathMLToString (MathMLDocument_t *d)
+  
+    - unsigned int
+      Model_getNumSpeciesWithBoundaryCondition (const Model_t *m)
+
+    - Species_t *
+      Model_getSpeciesById (const Model_t *m, const char *sid)
+ 
+    - SpeciesReference_t *
+      Reaction_getReactantById (const Reaction_t *r, const char *sid)
+
+    - SpeciesReference_t *
+      Reaction_getProductById (const Reaction_t *r, const char *sid)
+
+    - ModifierSpeciesReference_t *
+      Reaction_getModifierById (const Reaction_t *r, const char *sid)
+
+    - unsigned int
+      ListOf_countIf (const ListOf_t *lo, ListItemPredicate p);
+
+    - void *
+      ListOf_find (const ListOf_t *lo, const void *item1, ListItemComparator c)
+
+    - List_t *
+      ASTNode_getListOfNodes (const ASTNode_t *node, ASTNodePredicate p)
+
+    Where ListItemPredicate, ListItemComparator and ASTNodePredicate
+    are pointers to functions with a particular signature.  This
+    allows for convenient and powerful Lisp map-like or C++ STL
+    operations over a container (In fact, the XXX_countIf() name was
+    inspired by the C++ STL).  For example,
+    Model_getNumSpeciesWithBoundaryCondition() (above) is implemented
+    simply as follows:
+
+      return ListOf_countIf( m->species,
+                            (ListItemPredicate) Species_getBoundaryCondition );
+
+
+* New example program:
+
+    - translateMath.c is an interactive console program that translates infix
+      formulas into MathML and vice-versa.
+
+* Improved Windows build and binary distribution:
+
+    - Andrew Finney constructed an MSVC++ project file and a set of
+      batch files to build both regular and debug versions of libsbml
+      and all example programs.
+
+    - Xerces-C++ 2.2.0 headers, DLLs and .lib files are included with
+      the Windows distribution (libsbml-2.0.1.zip; see the win32/
+      subdirectory).
+
+* Minor improvements:
+
+  - Public API header files no longer include references to C-specific
+    header files (e.g. stdio.h).  This should make it easier for
+    automated tools to read these header files and generate API
+    bindings for other languages (e.g. Delphi; Thanks to Herbert Sauro
+    for suggesting this).
+
+  - SBMLTypes.h now #includes both SBMLReader.h and SBMLWriter.h.
+
+  - Internal utility classes and functions are now officially public.
+    See List.h, Stack.h, StringBuffer.h and util.h.
+
+* Released August 6, 2003
+
+
+
+
+=== Version 2.0.0 ===
+
+* Near complete L2 support.  The two features not yet supported are:
+
+    1. RDF (although the metaid attribute is read, stored and written)
+
+    2. Processing of the MathML <semantic> element (for annotating
+       MathML elements with additional content, e.g. TeX).
+
+
+* New L2 Structures:
+
+    - FunctionDefinition
+    - Event
+    - EventAssignment
+    - SimpleSpeciesReference    (abstract)
+    - ModifierSpeciesReference
+    - AssignmentRule            (no longer abstract)
+    - RateRule
+
+    - MathML and L1 infix expressions (when parsed) are both stored in
+      the same Abstract Syntax Tree (AST) structure ASTNode.
+
+    - ListOf stores lists of others SBML objects and may contain a
+      metaid, notes or annotations.
+
+
+* New L2 Functions:
+
+    - The getters, setters, isSet and unset functions are too numerous
+      to mention here.  Like L1, they parallel the UML structures
+      defined in the SBML specification.  All L1 functions are kept
+      for backward compatibility (see below).
+
+    - Any structure containing a list now has a getListOfXXX()
+      function which returns the corresponding ListOf structure.
+
+    - There are currently three convenience functions for converting
+      between SBML infix and MathML formulae:
+
+        - ASTNode_t        *SBML_parseFormula(const char *formula)
+        - char             *SBML_formulaToString(const ASTNode_t *math)
+        - MathMLDocument_t *readMathMLFromString(cont char *xml)
+
+      Again, these are provided purely for convenience.  Under normal
+      circumstances, libsbml performs all conversions behind the
+      scenes when necessary.
+
+
+* L1 to L2 Changes:
+
+  libsbml stores both L1 and L2 models in the same memory structure.
+  While the L1 getters, setters, isSet and unset functions exist for
+  backward compatibility there are some changes of which users of
+  previous versions of libsbml should be aware:
+
+    - Compartment:
+
+        - .volume has been renamed to .size.
+
+    - Species:
+
+        - .units has been renamed to .substanceUnits.
+
+        - .initialAmount and .initialConcentration are stored in a
+          union called .initial with discriminators .Amount and
+          .Concentration.
+
+    - Reaction:
+
+        - .fast is optional in L2 which introduces Reaction_isSet /
+          unsetFast() functions.
+
+    - SpeciesReference:
+
+        - .stoichiometry is now of type double which necessitated a
+          change in the signature of the getter and setter functions.
+
+        - The use of .denominator is deprecated in L2.
+
+          However, libsbml still uses denominator in L2 models.  When
+          reading a <stoichiometry Math> if the content is a single
+          <CNN type='rational'>, libsbml will discard the
+          stoichiometry Math and set stoichiometry and denominator
+          directly.  Similarly, libsbml will write <stoichiometryMath>
+          in L2 documents if the .stoichiometryMath field is not set
+          and the denominator is not 1.
+
+    - CompartmentVolumeRule:
+    - SpeciesConcentrationRule:
+    - ParameterRule:
+
+        - .compartment, .species and .parameter have all been renamed
+          to .variable.
+
+    - The XXX_createWith() functions now set the .id field instead of
+      the .name field.
+
+    - List_t has been replaced by ListOf_t to store a metaid, notes,
+      and annotations.  ListOf_t is simply a wrapper around List_t.
+
+
+* SBMLReader allows you to set up to three Schema filenames (one each
+  for L1v1, L1v2 and L2v1) and it will automatically use the
+  appropriate Schema for the SBML document being read.
+
+* A simple command-line executable that converts L1 models to L2 was
+  added to the examples/ subdirectory.
+
+* A new subdirectory, xml-schemas/, contains schemas for SBML L1v1,
+  L1v2, L2v1 and MathML 2.
+
+* Xerces-C 2.3.0 is now supported by libsbml.  Older versions of
+  Xerces-C (2.2.0 and 2.1.0) are still supported.
+
+
+* Released July 23, 2003
+
+
+
+
+=== Version 1.1.2 ===
+
+* A new subdirectory, examples, contains a few small programs that
+  demonstrate how libsbml may be used.
+
+* IEEE-754 NaN, +Inf, -Inf and -0.0 are handled correctly and
+  consistently on all supported platforms.  In previous versions, these
+  values were not represented, read or written correctly on native
+  Windows and under Cygwin.
+
+  When writing these values to XML, libsbml now strictly adheres to the
+  XML Schema specification for doubles, namely exactly: "NaN", "INF",
+  "-INF" and "-0".
+
+* The build platform was upgraded to Libtool 1.5.  This means dynamic
+  libraries will build correctly on all platforms: Linux (.so),
+  Solaris (.so), Cygwin (.DLL) and MacOS X (.dylib).
+
+* SBMLWriter now defaults to an output encoding of UTF-8.
+
+* SBML_parseFormula() now returns NULL if the formula contains an
+  error.  The next version of libsbml will return the position of the
+  syntax error.
+
+* Added method: SBMLDocument_setModel().
+
+* To build and run the libsbml test suite now requires an explicit
+  configure option:
+
+    ./configure  --enable-check
+
+  In addition, 'check' needs to be installed (http://check.sf.net/).
+  Under Cygwin ONLY, due to a limitation of Libtool, if libsbml is
+  built with --check-enabled, a DLL cannot be built.  So, after
+  testing, re-run configure without enabling check then 'make' and
+  'make install' as usual.
+
+  Running the test suite on any platform is completely optional.
+  Libsbml is tested on all supported platforms before it is released.
+
+
+* Released June 6, 2003
+
+
+
+
+=== Version 1.1.0 ====
+
+* A Developer's Manual (DRAFT) is available in docs/formatted/.
+
+* Formula strings may optionally be parsed into abstract syntax trees.
+  See ASTNode.h, and SBML_parseFormula() in FormulaParser.h.
+
+* XXX_isSetYYY() and XXX_unsetYYY() methods are available for optional
+  fields without default values.
+
+* XXX_getYYY() and XXX_setYYY() methods are available for every field.
+
+* SBML (XML) namespace handling is much improved.
+
+* '<annotations>' is treated as a synonym for the correct form
+  '<annotation>' (singular).
+
+* Notes and annotations on the top-level <sbml> element are read-in
+  and stored (SBMLDocument_t now "inherits" from SBase_t), but not
+  written.  When this occurs, a warning message is logged.
+
+* Builds successfully on Solaris 2.8.
+
+* SBML documents may now be validated against their XML schema.  This
+  is still off by default.  To turn validation on see
+  SBMLReader_create(), SBMLReader_readSBML() and possibly SBMLReader.h
+  for more information.
+
+* Three new convenience functions exist to quickly print warnings,
+  errors and fatal errors that occurred while reading an SBMLDocument.
+  The prototype for this class of function is:
+
+    SBMLDocument_printXXXs(SBMLDocument_t *d, FILE *stream).
+
+  Where XXX is Warning, Error or Fatal.
+
+
+* Released May 11, 2003.
+
+
+
+
+=== Version 1.0.1 ====
+
+* The build system detects and supports Xerces-C 2.1.0, Xerces-C 2.2.0
+  compiled with or without namespace support.
+
+* Released March 14, 2003.
+
+
+
+
+=== Version 1.0.0 ===
+
+
+
+* Initial release, March 12, 2003.
+# The following is for [X]Emacs users.  Please leave in place.
+# Local Variables:
+# fill-column: 70
+# End:
