@@ -208,6 +208,7 @@ public class PluginSBMLReader implements SBMLReader {
 			break;
 		case libsbmlConstants.AST_RATIONAL:
 			ast = new ASTNode(ASTNode.Type.RATIONAL, parent);
+			ast.setValue(math.getNumerator(), math.getDenominator());
 			break;
 		case libsbmlConstants.AST_NAME_TIME:
 			ast = new ASTNode(ASTNode.Type.NAME_TIME, parent);
