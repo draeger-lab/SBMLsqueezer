@@ -74,50 +74,40 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 			for (i = 0; i < r.getNumModifiers() && msr == null; i++)
 				if (r.getModifier(i).getSpecies().equals(acti))
 					msr = r.getModifier(i);
-			Parameter kA = parameterKa(msr.getSpecies());
-			ASTNode curr = ASTNode
-					.frac(speciesTerm(msr), new ASTNode(kA, this));
-			curr.divideBy(ASTNode.sum(new ASTNode(1, this), curr.clone()));
+			ASTNode curr = ASTNode.frac(speciesTerm(msr), ASTNode.sum(
+					new ASTNode(parameterKa(msr.getSpecies()), this),
+					speciesTerm(msr)));
 			if (SBO.isEssentialActivator(msr.getSBOTerm())) {
-				if (activation == null)
-					activation = curr;
-				else
-					activation.multiplyWith(curr);
-			} else /* if (SBO.isNonEssentialActivator(msr.getSBOTerm())) */{
+				// nothing to do...
+			} else if (SBO.isNonEssentialActivator(msr.getSBOTerm())) {
 				Parameter rhoA = parameterRhoActivation(msr.getSpecies());
 				curr = ASTNode.sum(new ASTNode(rhoA, this), ASTNode.times(
 						ASTNode.diff(new ASTNode(1, this), new ASTNode(rhoA,
 								this)), curr));
-				if (activation == null)
-					activation = curr;
-				else
-					activation.multiplyWith(curr);
 			}
+			if (activation == null)
+				activation = curr;
+			else
+				activation.multiplyWith(curr);
 		}
 		for (ModifierSpeciesReference msr : r.getListOfModifiers())
 			if (SBO.isInhibitor(msr.getSBOTerm())) {
-				ASTNode curr = new ASTNode(this);
+				Parameter kI = parameterKi(msr.getSpecies());
+				ASTNode curr = ASTNode.frac(new ASTNode(kI, this), ASTNode.sum(
+						new ASTNode(kI, this), speciesTerm(msr)));
 				if (SBO.isNonCompetetiveInhibitor(msr.getSBOTerm())) {
-					Parameter kI = parameterKi(r.getId(), msr.getSpecies());
-					curr = ASTNode.frac(new ASTNode(1, this), ASTNode.sum(
-							new ASTNode(1, this), ASTNode.frac(
-									speciesTerm(msr), new ASTNode(kI, this))));
+					// nothing to do
 				} else if (!SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
 					// partial non-competetive inhibition
 					Parameter rhoI = parameterRhoInhibition(msr.getSpecies());
-					Parameter kI = parameterKi(msr.getSpecies());
-					curr = new ASTNode(rhoI, this);
-					curr.plus(ASTNode.frac(ASTNode.diff(new ASTNode(1, this),
-							new ASTNode(rhoI, this)), ASTNode.sum(new ASTNode(
-							1, this), ASTNode.frac(this, msr
-							.getSpeciesInstance(), kI))));
+					curr = ASTNode.times(ASTNode.sum(new ASTNode(rhoI, this),
+							ASTNode.diff(new ASTNode(1, this), new ASTNode(
+									rhoI, this))), curr);
 				}
-				if (!curr.isUnknown()) {
-					if (inhibition == null)
-						inhibition = curr;
-					else
-						inhibition.multiplyWith(curr);
-				}
+				if (inhibition == null)
+					inhibition = curr;
+				else
+					inhibition.multiplyWith(curr);
 			}
 		ASTNode numerator[] = new ASTNode[Math.max(1, modE.size())];
 		for (i = 0; i < numerator.length; i++) {
@@ -153,7 +143,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 */
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(1, this);
-		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
+		ASTNode competInhib = specificModificationSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}
@@ -166,20 +156,32 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @param r
 	 * @return
 	 */
-	ASTNode competetiveInhibitionSummand(String enzyme) {
+	ASTNode specificModificationSummand(String enzyme) {
 		Reaction r = getParentSBMLObject();
-		ASTNode inhib = new ASTNode(this);
+		ASTNode inhib = null;
+		ASTNode activ = null;
 		for (ModifierSpeciesReference msr : r.getListOfModifiers())
 			if (SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
 				Parameter kI = parameterKi(msr.getSpecies(), enzyme);
 				ASTNode curr = ASTNode.frac(speciesTerm(msr), new ASTNode(kI,
 						this));
-				if (inhib.isUnknown())
+				if (inhib == null)
 					inhib = curr;
 				else
 					inhib.plus(curr);
+			} else if (SBO.isStimulator(msr.getSBOTerm())
+					&& !SBO.isCatalyst(msr.getSBOTerm())
+					&& !SBO.isEssentialActivator(msr.getSBOTerm())
+					&& !SBO.isNonEssentialActivator(msr.getSBOTerm())) {
+				Parameter kA = parameterKa(msr.getSpecies(), enzyme);
+				ASTNode curr = ASTNode.frac(new ASTNode(kA, this),
+						speciesTerm(msr));
+				if (activ == null)
+					activ = curr;
+				else
+					activ.plus(curr);
 			}
-		return inhib;
+		return ASTNode.sum(activ, inhib);
 	}
 
 	/**
