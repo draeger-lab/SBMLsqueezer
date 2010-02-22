@@ -66,7 +66,7 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		else
 			denominator.plus(denominator(enzyme, false));
 		denominator.minus(new ASTNode(1, this));
-		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
+		ASTNode competInhib = specificModificationSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}

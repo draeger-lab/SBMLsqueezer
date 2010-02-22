@@ -239,12 +239,8 @@
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/AdditiveModelLinear.java" relpath="org/sbml/squeezer/kinetics/AdditiveModelLinear.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/AdditiveModelNonLinear.java" relpath="org/sbml/squeezer/kinetics/AdditiveModelNonLinear.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/BasicKineticLaw.java" relpath="org/sbml/squeezer/kinetics/BasicKineticLaw.java"/>
-            <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/CommonSaturable.java" relpath="org/sbml/squeezer/kinetics/CommonSaturable.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ConvenienceKinetics.java" relpath="org/sbml/squeezer/kinetics/ConvenienceKinetics.java"/>
-            <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/DirectSaturable.java" relpath="org/sbml/squeezer/kinetics/DirectSaturable.java"/>
-            <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ForceDependent.java" relpath="org/sbml/squeezer/kinetics/ForceDependent.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/GeneralizedMassAction.java" relpath="org/sbml/squeezer/kinetics/GeneralizedMassAction.java"/>
-            <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/HillEquation.java" relpath="org/sbml/squeezer/kinetics/HillEquation.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/HSystem.java" relpath="org/sbml/squeezer/kinetics/HSystem.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceArbitraryEnzymeKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceArbitraryEnzymeKinetics.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/InterfaceBiBiKinetics.java" relpath="org/sbml/squeezer/kinetics/InterfaceBiBiKinetics.java"/>
@@ -261,15 +257,12 @@
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/IrrevCompetNonCooperativeEnzymes.java" relpath="org/sbml/squeezer/kinetics/IrrevCompetNonCooperativeEnzymes.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/IrrevNonModulatedNonInteractingEnzymes.java" relpath="org/sbml/squeezer/kinetics/IrrevNonModulatedNonInteractingEnzymes.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/MichaelisMenten.java" relpath="org/sbml/squeezer/kinetics/MichaelisMenten.java"/>
-            <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/MultiplicativeSaturable.java" relpath="org/sbml/squeezer/kinetics/MultiplicativeSaturable.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/NetGeneratorLinear.java" relpath="org/sbml/squeezer/kinetics/NetGeneratorLinear.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/NetGeneratorNonLinear.java" relpath="org/sbml/squeezer/kinetics/NetGeneratorNonLinear.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/OrderedMechanism.java" relpath="org/sbml/squeezer/kinetics/OrderedMechanism.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/package.html" relpath="org/sbml/squeezer/kinetics/package.html"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/PingPongMechanism.java" relpath="org/sbml/squeezer/kinetics/PingPongMechanism.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/RandomOrderMechanism.java" relpath="org/sbml/squeezer/kinetics/RandomOrderMechanism.java"/>
-            <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/ReversiblePowerLaw.java" relpath="org/sbml/squeezer/kinetics/ReversiblePowerLaw.java"/>
-            <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/SpecialHillEquation.java" relpath="org/sbml/squeezer/kinetics/SpecialHillEquation.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/SSystem.java" relpath="org/sbml/squeezer/kinetics/SSystem.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/Vohradsky.java" relpath="org/sbml/squeezer/kinetics/Vohradsky.java"/>
             <fatjar.filesource path="/Users/draeger/Documents/workspace/SBMLsqueezer1.3/src/org/sbml/squeezer/kinetics/Weaver.java" relpath="org/sbml/squeezer/kinetics/Weaver.java"/>

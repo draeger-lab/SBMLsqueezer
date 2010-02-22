@@ -72,7 +72,7 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw im
 			else
 				denominator = backward;
 		}
-		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
+		ASTNode competInhib = specificModificationSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}

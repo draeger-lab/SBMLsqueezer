@@ -491,12 +491,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @param activatorSpecies
 	 *            Identifier of the activatory species. Must not be null.
+	 * @param enzyme
 	 * @return
 	 */
-	Parameter parameterKa(String activatorSpecies) {
+	Parameter parameterKa(String activatorSpecies, String enzyme) {
 		String reactionID = getParentSBMLObject().getId();
-		Parameter kA = createOrGetParameter("kac_", reactionID, underscore,
+		StringBuffer name = StringTools.concat("kac_", reactionID, underscore,
 				activatorSpecies);
+		if (enzyme != null)
+			StringTools.append(name, underscore, enzyme);
+		Parameter kA = createOrGetParameter(name);
 		if (!kA.isSetSBOTerm())
 			kA.setSBOTerm(363);
 		if (!kA.isSetName())
@@ -510,6 +514,17 @@ public abstract class BasicKineticLaw extends KineticLaw {
 					.getSubstanceUnitsInstance());
 		}
 		return kA;
+	}
+
+	/**
+	 * Activation constant.
+	 * 
+	 * @param activatorSpecies
+	 *            Identifier of the activatory species. Must not be null.
+	 * @return
+	 */
+	Parameter parameterKa(String activatorSpecies) {
+		return parameterKa(activatorSpecies, null);
 	}
 
 	/**
@@ -1091,8 +1106,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @return the unit definition found in the model or the given unit
 	 *         definition that was added to the model if lacking.
 	 */
-	UnitDefinition checkUnitDefinitions(UnitDefinition unitdef,
-			Model model) {
+	UnitDefinition checkUnitDefinitions(UnitDefinition unitdef, Model model) {
 		boolean contains = false;
 		for (UnitDefinition ud : model.getListOfUnitDefinitions())
 			if (UnitDefinition.areIdentical(ud, unitdef)) {
