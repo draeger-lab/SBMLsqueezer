@@ -72,7 +72,7 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw impleme
 				denominator = backward;
 		}
 		denominator.sqrt();
-		ASTNode competInhib = competetiveInhibitionSummand(enzyme);
+		ASTNode competInhib = specificModificationSummand(enzyme);
 		return competInhib.isUnknown() ? denominator : denominator
 				.plus(competInhib);
 	}
