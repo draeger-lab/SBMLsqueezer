@@ -147,12 +147,11 @@ public class SBasePanel extends JPanel {
 			addProperties((MathContainer) sbase);
 		if (sbase instanceof ListOf<?>) {
 			addProperties((ListOf<?>) sbase);
-			//ListOf<?> list = (ListOf<?>) sbase;
-			//for (SBase s : list) {
-			//	lh.add(new SBasePanel(s, settings));
-			//}
-		}
-		else if (sbase instanceof Model)
+			// ListOf<?> list = (ListOf<?>) sbase;
+			// for (SBase s : list) {
+			// lh.add(new SBasePanel(s, settings));
+			// }
+		} else if (sbase instanceof Model)
 			addProperties((Model) sbase);
 		else if (sbase instanceof UnitDefinition)
 			addProperties((UnitDefinition) sbase);
@@ -568,9 +567,14 @@ public class SBasePanel extends JPanel {
 						String split[] = cvtString.split(uri);
 						StringBuilder sbu = new StringBuilder();
 						for (int l = 0; l < split.length - 1; l++) {
+							if (l > 0)
+								sbu.append(", ");
 							sbu.append(split[l]);
-							sbu.append("<a href=\"" + loc[0] + "\">" + uri
-									+ "</a>");
+							sbu.append("<a href=\"");
+							sbu.append(loc[0]);
+							sbu.append("\">");
+							sbu.append(uri);
+							sbu.append("</a>");
 						}
 						sbu.append(split[split.length - 1]);
 						cvtString = sbu.toString();

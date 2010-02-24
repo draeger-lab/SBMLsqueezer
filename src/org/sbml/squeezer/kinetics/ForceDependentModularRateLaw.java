@@ -26,7 +26,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * Force dependent rate law (FD) according to Liebermeister et al 2009.
+ * Force-dependent modular rate law (FM) according to Liebermeister et al. 2010.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -34,10 +34,10 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date 2009-09-21
  * @since 1.3
  */
-public class ForceDependentModularRateLaw extends PowerLawModularRateLaw implements
-		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
-		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceModulatedKinetics {
+public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
+		implements InterfaceUniUniKinetics, InterfaceBiUniKinetics,
+		InterfaceBiBiKinetics, InterfaceArbitraryEnzymeKinetics,
+		InterfaceReversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
 	 * 
@@ -45,11 +45,10 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw impleme
 	 * @param types
 	 * @throws RateLawNotApplicableException
 	 */
-	public ForceDependentModularRateLaw(Reaction parentReaction, Object... types)
-			throws RateLawNotApplicableException {
+	public ForceDependentModularRateLaw(Reaction parentReaction,
+			Object... types) throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		unsetSBOTerm();
-		setNotes("force-dependent rate law");
+		setSBOTerm(532); // force-dependent modular rate law
 	}
 
 	/*
@@ -73,7 +72,7 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw impleme
 		}
 		denominator.sqrt();
 		ASTNode competInhib = specificModificationSummand(enzyme);
-		return competInhib.isUnknown() ? denominator : denominator
+		return competInhib == null ? denominator : denominator
 				.plus(competInhib);
 	}
 
@@ -110,6 +109,6 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw impleme
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Force-dependent modular rate law";
+		return "Force-dependent modular rate law (FM)";
 	}
 }

@@ -60,10 +60,7 @@ public class HSystem extends BasicKineticLaw implements
 	 * @return ASTNode
 	 */
 	ASTNode b_i() {
-		String rId = getParentSBMLObject().getId();
-		Parameter b_i = parameterB(rId);
-		ASTNode b_i_node = new ASTNode(b_i, this);
-		return b_i_node;
+		return new ASTNode(parameterB(getParentSBMLObject().getId()), this);
 	}
 
 	/*
@@ -120,7 +117,8 @@ public class HSystem extends BasicKineticLaw implements
 		if (r.getNumProducts() > 0
 				&& !SBO.isEmptySet(r.getProduct(0).getSpeciesInstance()
 						.getSBOTerm()))
-			return ASTNode.times(speciesTerm(r.getProduct(0)), node);
+			return node.isUnknown() ? speciesTerm(r.getProduct(0)) : ASTNode
+					.times(speciesTerm(r.getProduct(0)), node);
 		return node.isUnknown() ? null : node;
 	}
 
