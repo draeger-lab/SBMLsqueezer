@@ -26,8 +26,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates the common saturable rate law according to Liebermeister
- * et al. 2009.
+ * This class creates the common modular rate law (CM) according to Liebermeister et
+ * al. 2010.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -49,15 +49,15 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	public CommonModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		unsetSBOTerm();
-		setNotes("common saturable rate law");
+		setSBOTerm(528); // common modular rate law
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 *      .Reaction)
+	 * @see
+	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
+	 * .Reaction)
 	 */
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = denominator(enzyme, true);
@@ -67,7 +67,7 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 			denominator.plus(denominator(enzyme, false));
 		denominator.minus(new ASTNode(1, this));
 		ASTNode competInhib = specificModificationSummand(enzyme);
-		return competInhib.isUnknown() ? denominator : denominator
+		return competInhib == null ? denominator : denominator
 				.plus(competInhib);
 	}
 
@@ -105,6 +105,6 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Common modular rate law";
+		return "Common modular rate law (CM)";
 	}
 }

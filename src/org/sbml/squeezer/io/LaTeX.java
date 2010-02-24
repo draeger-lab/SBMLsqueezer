@@ -484,7 +484,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double)
 	 */
 	public StringBuffer compile(double real) {
-		return new StringBuffer(Double.toString(real));
+		return format(real);
 	}
 
 	/*
@@ -595,7 +595,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(org.sbml.jsbml.ASTNode, double)
 	 */
 	public StringBuffer delay(ASTNode x, double d) {
-		return concat(mathrm("delay"), brackets(concat(x.compile(this), ", ", toString(d))));
+		return concat(mathrm("delay"), brackets(concat(x.compile(this), ", ", format(d))));
 	}
 
 	/**
@@ -656,9 +656,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/**
 	 * This method returns a <code>StringBuffer</code> representing a properly
-	 * LaTeX formatted number. However, if the <code>double</code> argument
-	 * contains "Exx" (power of ten), then the returned value starts and ends
-	 * with a dollar symbol.
+	 * LaTeX formatted number.
 	 * 
 	 * @param value
 	 * @return

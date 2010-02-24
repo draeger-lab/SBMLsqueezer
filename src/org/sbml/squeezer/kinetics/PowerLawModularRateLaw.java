@@ -29,7 +29,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * Represents the reversible power law (RP) from Liebermeister et al.
+ * Represents the power-law modular rate law (PM) from Liebermeister et al.
+ * 2010.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -51,7 +52,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	public PowerLawModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		setSBOTerm(42);
+		setSBOTerm(531); // power law modular rate law
 	}
 
 	/*
@@ -67,38 +68,40 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 			throws RateLawNotApplicableException {
 		int i;
 		Reaction r = getParentSBMLObject();
-		unsetSBOTerm();
 		ASTNode activation = null, inhibition = null;
-		for (String acti : modActi) {
-			ModifierSpeciesReference msr = null;
-			for (i = 0; i < r.getNumModifiers() && msr == null; i++)
-				if (r.getModifier(i).getSpecies().equals(acti))
-					msr = r.getModifier(i);
-			ASTNode curr = ASTNode.frac(speciesTerm(msr), ASTNode.sum(
-					new ASTNode(parameterKa(msr.getSpecies()), this),
-					speciesTerm(msr)));
-			if (SBO.isEssentialActivator(msr.getSBOTerm())) {
-				// nothing to do...
-			} else if (SBO.isNonEssentialActivator(msr.getSBOTerm())) {
-				Parameter rhoA = parameterRhoActivation(msr.getSpecies());
-				curr = ASTNode.sum(new ASTNode(rhoA, this), ASTNode.times(
-						ASTNode.diff(new ASTNode(1, this), new ASTNode(rhoA,
-								this)), curr));
-			}
-			if (activation == null)
-				activation = curr;
-			else
-				activation.multiplyWith(curr);
-		}
-		for (ModifierSpeciesReference msr : r.getListOfModifiers())
-			if (SBO.isInhibitor(msr.getSBOTerm())) {
-				Parameter kI = parameterKi(msr.getSpecies());
-				ASTNode curr = ASTNode.frac(new ASTNode(kI, this), ASTNode.sum(
-						new ASTNode(kI, this), speciesTerm(msr)));
-				if (SBO.isNonCompetetiveInhibitor(msr.getSBOTerm())) {
-					// nothing to do
-				} else if (!SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
+		for (ModifierSpeciesReference msr : r.getListOfModifiers()) {
+			if (SBO.isStimulator(msr.getSBOTerm())) {
+				ASTNode curr = null;
+				if (SBO.isCatalyticActivator(msr.getSBOTerm())) {
+					// complete activation
+					curr = ASTNode.frac(speciesTerm(msr), ASTNode.sum(
+							new ASTNode(parameterKa(msr.getSpecies()), this),
+							speciesTerm(msr))); // A / (A + Ka)
+				} else if (SBO.isNonEssentialActivator(msr.getSBOTerm())) {
+					// partial activation
+					curr = ASTNode.frac(speciesTerm(msr), ASTNode.sum(
+							new ASTNode(parameterKa(msr.getSpecies()), this),
+							speciesTerm(msr))); // A / (A + Ka)
+					Parameter rhoA = parameterRhoActivation(msr.getSpecies());
+					curr = ASTNode.sum(new ASTNode(rhoA, this), ASTNode.times(
+							ASTNode.diff(new ASTNode(1, this), new ASTNode(
+									rhoA, this)), curr));
+				}
+				if (activation == null)
+					activation = curr;
+				else if (curr != null)
+					activation.multiplyWith(curr);
+			} else if (SBO.isInhibitor(msr.getSBOTerm())) {
+				ASTNode curr = null;
+				if (SBO.isCompleteInhibitor(msr.getSBOTerm())) {
+					Parameter kI = parameterKi(msr.getSpecies());
+					curr = ASTNode.frac(new ASTNode(kI, this), ASTNode.sum(
+							new ASTNode(kI, this), speciesTerm(msr)));
+				} else if (SBO.isPartialInhibitor(msr.getSBOTerm())) {
 					// partial non-competetive inhibition
+					Parameter kI = parameterKi(msr.getSpecies());
+					curr = ASTNode.frac(new ASTNode(kI, this), ASTNode.sum(
+							new ASTNode(kI, this), speciesTerm(msr)));
 					Parameter rhoI = parameterRhoInhibition(msr.getSpecies());
 					curr = ASTNode.times(ASTNode.sum(new ASTNode(rhoI, this),
 							ASTNode.diff(new ASTNode(1, this), new ASTNode(
@@ -106,9 +109,10 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 				}
 				if (inhibition == null)
 					inhibition = curr;
-				else
+				else if (curr != null)
 					inhibition.multiplyWith(curr);
 			}
+		}
 		ASTNode numerator[] = new ASTNode[Math.max(1, modE.size())];
 		for (i = 0; i < numerator.length; i++) {
 			String enzymeID = modE.size() <= i ? null : modE.get(i);
@@ -144,7 +148,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(1, this);
 		ASTNode competInhib = specificModificationSummand(enzyme);
-		return competInhib.isUnknown() ? denominator : denominator
+		return competInhib == null ? denominator : denominator
 				.plus(competInhib);
 	}
 
@@ -162,6 +166,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		ASTNode activ = null;
 		for (ModifierSpeciesReference msr : r.getListOfModifiers())
 			if (SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
+				// specific inhibition
 				Parameter kI = parameterKi(msr.getSpecies(), enzyme);
 				ASTNode curr = ASTNode.frac(speciesTerm(msr), new ASTNode(kI,
 						this));
@@ -169,10 +174,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 					inhib = curr;
 				else
 					inhib.plus(curr);
-			} else if (SBO.isStimulator(msr.getSBOTerm())
-					&& !SBO.isCatalyst(msr.getSBOTerm())
-					&& !SBO.isEssentialActivator(msr.getSBOTerm())
-					&& !SBO.isNonEssentialActivator(msr.getSBOTerm())) {
+			} else if (SBO.isSpecificActivator(msr.getSBOTerm())) {
 				Parameter kA = parameterKa(msr.getSpecies(), enzyme);
 				ASTNode curr = ASTNode.frac(new ASTNode(kA, this),
 						speciesTerm(msr));
@@ -351,7 +353,8 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		ASTNode rate = new ASTNode(kr, this);
 		Reaction r = getParentSBMLObject();
 		Parameter hr = parameterReactionCooperativity(enzyme);
-		for (SpeciesReference specRef : r.getListOfReactants()) {
+		for (SpeciesReference specRef : forward ? r.getListOfReactants() : r
+				.getListOfProducts()) {
 			Parameter kM = parameterMichaelis(specRef.getSpecies(), enzyme,
 					forward);
 			rate.multiplyWith(ASTNode.pow(ASTNode.frac(speciesTerm(specRef),
@@ -368,6 +371,6 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 */
 	// @Override
 	public String getSimpleName() {
-		return "Power-law modular rate law";
+		return "Power-law modular rate law (PM)";
 	}
 }

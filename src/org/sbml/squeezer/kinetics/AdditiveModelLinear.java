@@ -27,6 +27,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.io.LaTeX;
 
 /**
  * This class creates an equation based on a linear additive model.
@@ -55,17 +56,14 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	 * @return ASTNode
 	 */
 	ASTNode activation(ASTNode g) {
-		return g == null ? new ASTNode(this) : g;
+		return g == null ? new ASTNode(1, this) : g;
 	}
 
 	/**
 	 * @return ASTNode
 	 */
 	ASTNode b_i() {
-		String rId = getParentSBMLObject().getId();
-		Parameter b_i = parameterB(rId);
-		ASTNode b_i_node = new ASTNode(b_i, this);
-		return b_i_node;
+		return new ASTNode(parameterB(getParentSBMLObject().getId()), this);
 	}
 
 	/*
@@ -78,7 +76,11 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		return ASTNode.times(m_i(), activation(g(w(), v(), b_i())));
+		ASTNode m = m_i();
+		ASTNode a = activation(g(w(), v(), b_i()));
+		if (m.isOne() && a.isOne())
+			return m;
+		return ASTNode.times(m_i(), a);
 	}
 
 	/**

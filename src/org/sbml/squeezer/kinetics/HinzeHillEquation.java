@@ -27,6 +27,7 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.ReactionType;
 
 /**
  * This class creates a Hill equation as defined in the paper &ldquo;Hill
@@ -80,14 +81,11 @@ public class HinzeHillEquation extends BasicKineticLaw implements
 		if (reaction.getNumReactants() == 0 || reaction.getNumModifiers() == 0)
 			setSBOTerm(47);
 		else if (reaction.getNumReactants() == 1) {
-			if (SBO.isEmptySet(reaction.getReactant(0).getSpeciesInstance()
-					.getSBOTerm())) {
+			if (ReactionType.representsEmptySet(reaction.getListOfReactants())) {
 				if (reaction.getNumModifiers() == 1
 						&& !SBO.isInhibitor(reaction.getModifier(0)
 								.getSBOTerm()))
 					setSBOTerm(195);
-				else
-					setSBOTerm(47);
 			} else if (reaction.getNumModifiers() == 0)
 				setSBOTerm(195);
 		} else if (reaction.getNumReactants() == 0
@@ -181,7 +179,7 @@ public class HinzeHillEquation extends BasicKineticLaw implements
 	 */
 	// @Override
 	public String getSimpleName() {
-		if (isSetSBOTerm())
+		if (isSetSBOTerm() && SBO.isHillEquation(getSBOTerm()))
 			return "Hill equation";
 		return "Hinze-Hill equation";
 	}

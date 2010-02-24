@@ -26,8 +26,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates the mulitiplicative saturable kinetic equation according
- * to Liebermeister et al. 2009.
+ * This class creates the simultaneous binding modular rate law (SM) according
+ * to Liebermeister et al. 2010.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -35,10 +35,10 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date 2009-09-21
  * @since 1.3
  */
-public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw implements
-		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
-		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceModulatedKinetics {
+public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
+		implements InterfaceUniUniKinetics, InterfaceBiUniKinetics,
+		InterfaceBiBiKinetics, InterfaceArbitraryEnzymeKinetics,
+		InterfaceReversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
 	 * 
@@ -46,11 +46,10 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw im
 	 * @param types
 	 * @throws RateLawNotApplicableException
 	 */
-	public SimultaneousBindingModularRateLaw(Reaction parentReaction, Object... types)
-			throws RateLawNotApplicableException {
+	public SimultaneousBindingModularRateLaw(Reaction parentReaction,
+			Object... types) throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		unsetSBOTerm();
-		setNotes("multiplicative saturable rate law");
+		setSBOTerm(530); // simultaneous binding modular rate law
 	}
 
 	/*
@@ -73,7 +72,7 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw im
 				denominator = backward;
 		}
 		ASTNode competInhib = specificModificationSummand(enzyme);
-		return competInhib.isUnknown() ? denominator : denominator
+		return competInhib == null ? denominator : denominator
 				.plus(competInhib);
 	}
 
@@ -112,6 +111,6 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw im
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Simultaneous binding modular rate law";
+		return "Simultaneous binding modular rate law (SM)";
 	}
 }
