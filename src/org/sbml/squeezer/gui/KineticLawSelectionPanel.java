@@ -43,11 +43,13 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.io.LaTeX;
+import org.sbml.squeezer.io.StringTools;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
 import atp.sHotEqn;
@@ -206,13 +208,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				"If selected, SBMLsqueezer will not take effects of products into "
 						+ "account when creating rate equations.", 40));
 		ButtonGroup revGroup = new ButtonGroup();
-		ReactionType reactionType = klg.getReactionType(reaction.getId());
-		boolean nonEnzyme = reactionType.isNonEnzymeReaction();
-		boolean isEnzymeKineticsSelected = (((Boolean) this.klg.getSettings()
-				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
-				.booleanValue() || !nonEnzyme)
-				&& !(reactionType.isReactionWithGenes() || reactionType
-						.isReactionWithRNAs());
 		treatAsEnzymeReaction = new JCheckBox(
 				"Consider this reaction to be enzyme-catalyzed");
 		treatAsEnzymeReaction.setToolTipText(GUITools
@@ -246,11 +241,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		lh.add(rButtonGlobalParameters, 0, 2, 1, 1, 1, 1);
 		lh.add(rButtonLocalParameters, 1, 2, 1, 1, 1, 1);
 
-		treatAsEnzymeReaction.setSelected(isEnzymeKineticsSelected);
-		if (reactionType.isEnzymeReaction() || nonEnzyme
-				|| reactionType.isReactionWithGenes()
-				|| reactionType.isReactionWithRNAs())
-			treatAsEnzymeReaction.setEnabled(false);
+		checkEnzymeKineticsPossible(true);
 		klg.getSettings().put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 				Boolean.valueOf(treatAsEnzymeReaction.isSelected()));
 		klg.updateEnzymeCatalysis();
@@ -266,6 +257,37 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		rButtonReversible.addItemListener(this);
 		rButtonGlobalParameters.addItemListener(this);
 		rButtonLocalParameters.addItemListener(this);
+	}
+
+	/**
+	 * Check whether or not enzyme kinetics can be applied.
+	 * 
+	 * @throws RateLawNotApplicableException
+	 */
+	private void checkEnzymeKineticsPossible(boolean init)
+			throws RateLawNotApplicableException {
+		ReactionType reactionType = klg.getReactionType(reaction.getId());
+		boolean allEnzyme = ((Boolean) this.klg.getSettings().get(
+				CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED)).booleanValue();
+		boolean nonEnzyme = !reactionType.isEnzymeReaction()
+				&& (reactionType.isNonEnzymeReaction()
+						|| reactionType.isReactionWithGenes()
+						|| reactionType.isReactionWithRNAs() || (rButtonReversible
+						.isSelected() && ReactionType
+						.representsEmptySet(reaction.getListOfProducts())));
+		boolean isEnzymeKineticsSelected = !nonEnzyme
+				|| (allEnzyme && !nonEnzyme);
+		if (reactionType.isEnzymeReaction() || nonEnzyme
+				|| reactionType.isReactionWithGenes()
+				|| reactionType.isReactionWithRNAs()) {
+			treatAsEnzymeReaction.setSelected(isEnzymeKineticsSelected);
+			treatAsEnzymeReaction.setEnabled(false);
+		} else {
+			if (init)
+				treatAsEnzymeReaction.setSelected(isEnzymeKineticsSelected);
+			if (!ReactionType.representsEmptySet(reaction.getListOfReactants()))
+				treatAsEnzymeReaction.setEnabled(true);
+		}
 	}
 
 	/**
@@ -350,10 +372,31 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 					.createKineticLaw(reaction, possibleTypes[i], false);
 			laTeXpreview[i] = new String(kineticLaw.getMath().compile(
 					new LaTeX(klg.getSettings())).toString());
-			toolTips[i] = kineticLaw.isSetSBOTerm() ? "<b>"
-					+ kineticLaw.getSBOTermID() + "</b> " : "";
-			toolTips[i] = GUITools.toHTML(toolTips[i] + kineticLaw.toString(),
-					40);
+			// toolTips[i] = kineticLaw.isSetSBOTerm() ? "<b>"
+			// + kineticLaw.getSBOTermID() + "</b> " : "";
+			toolTips[i] = String.format("<b>%s</b>", StringTools
+					.firstLetterUpperCase(kineticLaw.toString()));
+			if (kineticLaw.isSetSBOTerm()) {
+				Object def = SBO.getTerm(kineticLaw.getSBOTerm())
+						.getAnnotation().getProperty("def");
+				if (def != null) {
+					String definition = def.toString().replace("\\, ", ", ");
+					if (definition.startsWith("\""))
+						definition = definition.substring(1);
+					int pos = definition.length() - 1;
+					String endWords[] = new String[] { "\\n", "xmlns=", "[",
+							"\"" };
+					for (String word : endWords) {
+						int end = definition.indexOf(word);
+						if (0 < end && end < pos)
+							pos = end;
+					}
+					if (pos > 0)
+						definition = definition.subSequence(0, pos).toString();
+					toolTips[i] += String.format(": %s", definition.trim());
+				}
+			}
+			toolTips[i] = GUITools.toHTML(toolTips[i], 60);
 			kineticEquations[i] = GUITools.toHTML(kineticLaw.getSimpleName(),
 					60);
 		}
@@ -425,7 +468,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		if (ie.getSource() instanceof JCheckBox)
 			try {
 				JCheckBox check = (JCheckBox) ie.getSource();
-				setEnzymeKatalysis(check.isSelected());
+				setEnzymeCatalysis(check.isSelected());
 			} catch (Throwable e) {
 				JOptionPane.showMessageDialog(getTopLevelAncestor(), GUITools
 						.toHTML(e.getMessage(), 40), e.getClass()
@@ -504,7 +547,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @param selected
 	 * @throws Throwable
 	 */
-	private void setEnzymeKatalysis(boolean selected) throws Throwable {
+	private void setEnzymeCatalysis(boolean selected) throws Throwable {
 		klg.getSettings().put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 				Boolean.valueOf(selected));
 		klg.updateEnzymeCatalysis();
@@ -563,8 +606,11 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				&& !selected.equals(rButtonsKineticEquations[i].getText())
 				&& !disable)
 			i++;
-		boolean global = !(reaction.isSetKineticLaw() && reaction
-				.getKineticLaw().getNumParameters() > 0);
+		boolean global = !((reaction.isSetKineticLaw() && reaction
+				.getKineticLaw().getNumParameters() > 0) || ((Boolean) klg
+				.getSettings().get(
+						CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
+				.booleanValue());
 		boolean change = disable || isExistingRateLawSelected
 				|| i < rButtonsKineticEquations.length - 1;
 		if (disable) {
@@ -582,11 +628,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			kineticsPanel.add(eqnPrev);
 			GUITools.setAllEnabled(optionsPanel, !disable);
 		}
-		ReactionType reactionType = klg.getReactionType(reaction.getId());
-		if (reactionType.isEnzymeReaction()
-				|| reactionType.isNonEnzymeReaction()
-				|| reactionType.isReactionWithGenes()
-				|| reactionType.isReactionWithRNAs())
-			treatAsEnzymeReaction.setEnabled(false);
+		checkEnzymeKineticsPossible(false);
 	}
 }

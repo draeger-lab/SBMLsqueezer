@@ -54,9 +54,8 @@ public class Weaver extends AdditiveModelNonLinear implements
 							parameterAlpha(rId)), g), new ASTNode(
 							parameterBeta(rId), this)))));
 		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-				.exp(ASTNode.sum(ASTNode.times(ASTNode.uMinus(this,
-						parameterAlpha(rId)), new ASTNode(this)), new ASTNode(
-						parameterBeta(rId), this)))));
+				.exp(ASTNode.sum(ASTNode.uMinus(this, parameterAlpha(rId)),
+						new ASTNode(parameterBeta(rId), this)))));
 	}
 
 	@Override

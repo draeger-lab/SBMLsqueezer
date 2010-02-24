@@ -26,8 +26,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates the direct saturable rate law according to Liebermeister
- * et al. 2009.
+ * This class creates the Direct binding modular rate law (DM) according to
+ * Liebermeister et al. 2010.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -35,10 +35,10 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @date 2009-09-21
  * @since 1.3
  */
-public class DirectBindingModularRateLaw extends PowerLawModularRateLaw implements
-		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
-		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
-		InterfaceModulatedKinetics {
+public class DirectBindingModularRateLaw extends PowerLawModularRateLaw
+		implements InterfaceUniUniKinetics, InterfaceBiUniKinetics,
+		InterfaceBiBiKinetics, InterfaceArbitraryEnzymeKinetics,
+		InterfaceReversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
 	 * 
@@ -49,15 +49,15 @@ public class DirectBindingModularRateLaw extends PowerLawModularRateLaw implemen
 	public DirectBindingModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		unsetSBOTerm();
-		setNotes("direct saturable rate law");
+		setSBOTerm(529); // direct binding modular rate law
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml.Reaction,
-	 *      java.lang.String)
+	 * @see
+	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
+	 * .Reaction, java.lang.String)
 	 */
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = super.denominator(enzyme);
@@ -104,6 +104,6 @@ public class DirectBindingModularRateLaw extends PowerLawModularRateLaw implemen
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Direct binding modular rate law";
+		return "Direct binding modular rate law (DM)";
 	}
 }

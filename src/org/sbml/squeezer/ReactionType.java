@@ -375,9 +375,10 @@ public class ReactionType {
 		nonEnzyme = ((!((Boolean) this.settings
 				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 				.booleanValue() && enzymes.size() == 0)
-				|| nonEnzymeCatalysts.size() > 0
-				|| reaction.getNumProducts() == 0 || (SBO.isEmptySet(reaction
-				.getProduct(0).getSpeciesInstance().getSBOTerm())));
+				|| nonEnzymeCatalysts.size() > 0 || ((reaction.getNumProducts() == 0 || (SBO
+				.isEmptySet(reaction.getProduct(0).getSpeciesInstance()
+						.getSBOTerm()))) && reaction.getReversible()));
+
 		uniUni = stoichiometryLeft == 1d && stoichiometryRight == 1d;
 		biUni = stoichiometryLeft == 2d && stoichiometryRight == 1d;
 		biBi = stoichiometryLeft == 2d && stoichiometryRight == 2d;
@@ -581,6 +582,7 @@ public class ReactionType {
 		Set<String> types = new HashSet<String>();
 		boolean emptyListOfReactants = representsEmptySet(reaction
 				.getListOfReactants());
+		boolean enzymeKinetics = false;
 		if (emptyListOfReactants
 				|| ((reaction.getReversible() || reversibility) && representsEmptySet(reaction
 						.getListOfProducts()))) {
@@ -598,7 +600,7 @@ public class ReactionType {
 						types.add(className);
 				}
 			// Gene-regulation
-			if (reactionWithGenes || reactionWithRNAs)
+			if (reactionWithGenes || reactionWithRNAs) {
 				for (String className : SBMLsqueezer
 						.getKineticsGeneRegulatoryNetworks()) {
 					if ((reaction.getReversible() && !notReversible
@@ -607,68 +609,16 @@ public class ReactionType {
 									.contains(className)))
 						types.add(className);
 				}
+			} else if (!nonEnzyme) {
+				enzymeKinetics = true;
+			}
 
 		} else {
 			if (nonEnzyme) {
 				// non enzyme reactions
 				types.addAll(SBMLsqueezer.getKineticsNonEnzyme());
 			} else {
-				/*
-				 * Enzym-Kinetics: Assign possible rate laws for arbitrary
-				 * enzyme reations.
-				 */
-				for (String className : SBMLsqueezer
-						.getKineticsArbitraryEnzymeMechanism()) {
-					if (checkReversibility(reaction, className)
-							&& (!SBMLsqueezer.getKineticsIntStoichiometry()
-									.contains(className) || integerStoichiometry)
-							&& (SBMLsqueezer.getKineticsModulated().contains(
-									className) || withoutModulation))
-						types.add(className);
-				}
-				if (uniUni
-						|| (stoichiometryLeft == 1d && !(reaction
-								.getReversible() || reversibility))) {
-					Set<String> onlyUniUni = new HashSet<String>();
-					onlyUniUni.addAll(SBMLsqueezer.getKineticsUniUni());
-					onlyUniUni.removeAll(SBMLsqueezer
-							.getKineticsArbitraryEnzymeMechanism());
-					if (!integerStoichiometry)
-						onlyUniUni.removeAll(SBMLsqueezer
-								.getKineticsIntStoichiometry());
-					if (!withoutModulation)
-						onlyUniUni.retainAll(SBMLsqueezer
-								.getKineticsModulated());
-					for (String className : onlyUniUni)
-						if (checkReversibility(reaction, className))
-							types.add(className);
-				} else if (biUni
-						|| (stoichiometryLeft == 2d && !(reaction
-								.getReversible() || reversibility))) {
-					Set<String> onlyBiUni = new HashSet<String>();
-					onlyBiUni.addAll(SBMLsqueezer.getKineticsBiUni());
-					onlyBiUni.removeAll(SBMLsqueezer
-							.getKineticsArbitraryEnzymeMechanism());
-					if (!integerStoichiometry)
-						onlyBiUni.removeAll(SBMLsqueezer
-								.getKineticsIntStoichiometry());
-					if (!withoutModulation)
-						onlyBiUni
-								.retainAll(SBMLsqueezer.getKineticsModulated());
-					for (String className : onlyBiUni)
-						if (checkReversibility(reaction, className))
-							types.add(className);
-				} else if (biBi) {
-					Set<String> onlyBiBi = new HashSet<String>();
-					onlyBiBi.addAll(SBMLsqueezer.getKineticsBiBi());
-					onlyBiBi.removeAll(SBMLsqueezer
-							.getKineticsArbitraryEnzymeMechanism());
-					if (!withoutModulation)
-						onlyBiBi.retainAll(SBMLsqueezer.getKineticsModulated());
-					for (String className : onlyBiBi)
-						if (checkReversibility(reaction, className))
-							types.add(className);
-				}
+				enzymeKinetics = true;
 			}
 
 			/*
@@ -691,6 +641,60 @@ public class ReactionType {
 										.contains(className)))
 							types.add(className);
 					}
+			}
+		}
+		if (enzymeKinetics) {
+			/*
+			 * Enzym-Kinetics: Assign possible rate laws for arbitrary enzyme
+			 * reations.
+			 */
+			for (String className : SBMLsqueezer
+					.getKineticsArbitraryEnzymeMechanism()) {
+				if (checkReversibility(reaction, className)
+						&& (!SBMLsqueezer.getKineticsIntStoichiometry()
+								.contains(className) || integerStoichiometry)
+						&& (SBMLsqueezer.getKineticsModulated().contains(
+								className) || withoutModulation))
+					types.add(className);
+			}
+			if (uniUni
+					|| (stoichiometryLeft == 1d && !(reaction.getReversible() || reversibility))) {
+				Set<String> onlyUniUni = new HashSet<String>();
+				onlyUniUni.addAll(SBMLsqueezer.getKineticsUniUni());
+				onlyUniUni.removeAll(SBMLsqueezer
+						.getKineticsArbitraryEnzymeMechanism());
+				if (!integerStoichiometry)
+					onlyUniUni.removeAll(SBMLsqueezer
+							.getKineticsIntStoichiometry());
+				if (!withoutModulation)
+					onlyUniUni.retainAll(SBMLsqueezer.getKineticsModulated());
+				for (String className : onlyUniUni)
+					if (checkReversibility(reaction, className))
+						types.add(className);
+			} else if (biUni
+					|| (stoichiometryLeft == 2d && !(reaction.getReversible() || reversibility))) {
+				Set<String> onlyBiUni = new HashSet<String>();
+				onlyBiUni.addAll(SBMLsqueezer.getKineticsBiUni());
+				onlyBiUni.removeAll(SBMLsqueezer
+						.getKineticsArbitraryEnzymeMechanism());
+				if (!integerStoichiometry)
+					onlyBiUni.removeAll(SBMLsqueezer
+							.getKineticsIntStoichiometry());
+				if (!withoutModulation)
+					onlyBiUni.retainAll(SBMLsqueezer.getKineticsModulated());
+				for (String className : onlyBiUni)
+					if (checkReversibility(reaction, className))
+						types.add(className);
+			} else if (biBi) {
+				Set<String> onlyBiBi = new HashSet<String>();
+				onlyBiBi.addAll(SBMLsqueezer.getKineticsBiBi());
+				onlyBiBi.removeAll(SBMLsqueezer
+						.getKineticsArbitraryEnzymeMechanism());
+				if (!withoutModulation)
+					onlyBiBi.retainAll(SBMLsqueezer.getKineticsModulated());
+				for (String className : onlyBiBi)
+					if (checkReversibility(reaction, className))
+						types.add(className);
 			}
 		}
 		String t[] = types.toArray(new String[] {});
