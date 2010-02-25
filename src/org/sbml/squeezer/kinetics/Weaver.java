@@ -65,7 +65,7 @@ public class Weaver extends AdditiveModelNonLinear implements
 
 	@Override
 	public String getSimpleName() {
-		return "Additive model: Weaver, Workman & Stormo 1999";
+		return "Non-linear additive model by Weaver et al. (1999)";
 	}
 
 	@Override

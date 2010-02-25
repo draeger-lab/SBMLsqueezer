@@ -93,7 +93,6 @@ public class HSystem extends BasicKineticLaw implements
 	 */
 	ASTNode v() {
 		Reaction r = getParentSBMLObject();
-		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
 		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
 			Species modifierspec = modifier.getSpeciesInstance();
@@ -104,13 +103,13 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterV(modifier.getSpecies(), rId);
-					ASTNode pnode = new ASTNode(p, this);
+					Parameter p = parameterV(modifier.getSpecies(), r.getId());
 					if (node.isUnknown())
-						node = ASTNode.times(pnode, modnode);
+						node = ASTNode.times(new ASTNode(p, this),
+								speciesTerm(modifier));
 					else
-						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
+						node = ASTNode.sum(node, ASTNode.times(new ASTNode(p,
+								this), speciesTerm(modifier)));
 				}
 			}
 		}
@@ -127,7 +126,6 @@ public class HSystem extends BasicKineticLaw implements
 	 */
 	ASTNode w() {
 		Reaction r = getParentSBMLObject();
-		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
 		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
 			Species modifierSpec = modifier.getSpeciesInstance();
@@ -138,13 +136,13 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifier.getSpecies(), rId);
-					ASTNode pnode = new ASTNode(p, this);
+					Parameter p = parameterW(modifier.getSpecies(), r.getId());
 					if (node.isUnknown())
-						node = ASTNode.times(pnode, modnode);
+						node = ASTNode.times(new ASTNode(p, this),
+								speciesTerm(modifier));
 					else
-						node = ASTNode.sum(node, ASTNode.times(pnode, modnode));
+						node = ASTNode.sum(node, ASTNode.times(new ASTNode(p,
+								this), speciesTerm(modifier)));
 				}
 			}
 		}
@@ -152,12 +150,13 @@ public class HSystem extends BasicKineticLaw implements
 	}
 
 	/*
-	 * (Kein Javadoc)
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
-		return "H-System: Non-linear additive equation from K. Hadeler 2003";
+		return "H-system equation by Hadeler (2003)";
 	}
 
 }
