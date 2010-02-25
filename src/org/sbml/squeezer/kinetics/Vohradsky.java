@@ -50,7 +50,7 @@ public class Vohradsky extends AdditiveModelNonLinear implements
 
 	@Override
 	public String getSimpleName() {
-		return "Additive model: Vohradsk\u00fd 2001 and Vu & Vohradsk\u00fd 2007";
+		return "Non-linear additive model by Vohradsk\u00fd (2001)";
 	}
 
 	@Override

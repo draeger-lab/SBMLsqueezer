@@ -43,22 +43,27 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	/**
-	 * @param g
-	 * @return ASTNode
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#activation(org.sbml.jsbml.ASTNode)
 	 */
+	@Override
 	ASTNode activation(ASTNode g) {
-		if (g == null)
+		if (g == null) // unknown exponent
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.uMinus(new ASTNode(1, this))))); // unknown
-																	// exponent
+					.exp(ASTNode.uMinus(new ASTNode(1, this)))));
 		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 				.exp(ASTNode.uMinus(g))));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
+	 */
 	@Override
 	public String getSimpleName() {
-		return "Additive model: non-linear";
+		return "Non-linear additive model, general form";
 	}
 
 }

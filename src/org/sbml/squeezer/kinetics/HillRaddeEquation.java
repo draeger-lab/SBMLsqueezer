@@ -25,7 +25,6 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -40,7 +39,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.3
  * 
  */
-public class RaddeHillEquation extends BasicKineticLaw implements
+public class HillRaddeEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics {
 
 	/**
@@ -48,7 +47,7 @@ public class RaddeHillEquation extends BasicKineticLaw implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public RaddeHillEquation(Reaction parentReaction, Object... typeParameters)
+	public HillRaddeEquation(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
@@ -76,7 +75,7 @@ public class RaddeHillEquation extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Radde-Hill equation";
+		return "Hill-Radde equation";
 	}
 
 	/**
@@ -87,26 +86,6 @@ public class RaddeHillEquation extends BasicKineticLaw implements
 		Reaction r = getParentSBMLObject();
 		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
-
-		if (r.getNumReactants() > 0) {
-			SpeciesReference reactant = r.getReactant(0);
-			if (!SBO.isEmptySet(reactant.getSpeciesInstance().getSBOTerm())) {
-				Parameter preactant = parameterW(reactant.getSpecies(), rId);
-				ASTNode preactantnode = new ASTNode(preactant, this);
-				Parameter thetareactant = parameterTheta(rId, reactant
-						.getSpecies());
-				ASTNode thetareactantnode = new ASTNode(thetareactant, this);
-				Parameter coeffreactant = parameterHillCoefficient(reactant
-						.getSpecies());
-				ASTNode coeffreactantnode = new ASTNode(coeffreactant, this);
-
-				node = ASTNode.frac(ASTNode.times(preactantnode, ASTNode.pow(
-						speciesTerm(reactant), coeffreactantnode)), ASTNode
-						.sum(ASTNode.pow(speciesTerm(reactant),
-								coeffreactantnode), ASTNode.pow(
-								thetareactantnode, coeffreactantnode)));
-			}
-		}
 
 		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
 

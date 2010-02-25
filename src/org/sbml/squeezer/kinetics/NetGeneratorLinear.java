@@ -53,11 +53,11 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 
 	@Override
 	public String getSimpleName() {
-		return "Additive model: NetGenerator linear model";
+		return "Linear additive model, NetGenerator form";
 	}
 
 	@Override
-	ASTNode m_i() {
+	ASTNode m() {
 		return new ASTNode(1, this);
 	}
 }

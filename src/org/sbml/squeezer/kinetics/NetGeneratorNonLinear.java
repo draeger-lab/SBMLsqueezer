@@ -18,13 +18,13 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.util.List;
+
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.ReactionType;
 
 /**
  * This class creates an equation based on an non-linear additive model as
@@ -50,41 +50,34 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	@Override
-	public String getSimpleName() {
-		return "Additive model: NetGenerator non-linear model";
-	}
-
-	/**
-	 * weighted sum over all interacting RNAs
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return ASTNode
+	 * @see
+	 * org.sbml.squeezer.kinetics.AdditiveModelLinear#createKineticEquation(
+	 * java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	@Override
-	ASTNode w() {
+	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
+			List<String> modInhib, List<String> modCat)
+			throws RateLawNotApplicableException {
+		ASTNode m = super.createKineticEquation(modE, modActi, modInhib, modCat);
 		Reaction r = getParentSBMLObject();
-		ASTNode node = new ASTNode(this);
-
-		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
-			Species modifierSpec = r.getModifier(modifierNum)
-					.getSpeciesInstance();
-			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
-
-			if (SBO.isProtein(modifierSpec.getSBOTerm())
-					|| SBO.isGeneric(modifierSpec.getSBOTerm())
-					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
-					|| SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm())
-					modifier.setSBOTerm(19);
-				if (SBO.isModifier(modifier.getSBOTerm())) {
-					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterW(modifier.getSpecies(), r.getId());
-					ASTNode pnode = new ASTNode(p, this);
-					node = node.isUnknown() ? ASTNode.times(pnode, modnode)
-							: ASTNode.sum(node, ASTNode.times(pnode, modnode));
-				}
-			}
+		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
+			Species s = r.getProduct(0).getSpeciesInstance();
+			return ASTNode.sum(m, ASTNode.times(new ASTNode(parameterW(s.getId(),
+					r.getId()), this), speciesTerm(s)));
 		}
-		return node.isUnknown() ? null : node;
+		return m;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
+	 */
+	@Override
+	public String getSimpleName() {
+		return "Non-linear additive model, NetGenerator form";
 	}
 }

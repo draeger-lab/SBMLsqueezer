@@ -55,7 +55,7 @@
       <span style="font-family:Courier">UnitDefinitions</span>, into the given out
       file. Before creating kinetic formulas for the model, the user probably wants
       to adjust SBMLsqueezer's configuration. To this end, the methods <span
-      style="font-family:Courier">set(CfgKey, &lt;boolean|double|int|String&gt;)</span>
+      style="font-family:Courier">set(CfgKey, &#60;boolean|double|int|String&#62;)</span>
       in class <span style="font-family:Courier">SBMLsqueezer</span> allow the
       programmer to set any configuration key and value pair, similar to the command-line
       mode. Here we give a minimal example of how to use this new API:
@@ -106,14 +106,14 @@
     <p>SBMLsqueezer is now fully based on the <a href="http://www.ebi.ac.uk/sbo/">
       Systems Biology Ontology (SBO)</a>. The JSBML copy of CellDesigner's plug-in
       data structures maps all CellDesigner-specific annotations to corresponding
-      SBO terms. Afterwards these are mapped back. SBO term &ldquo;enzymatic 
-      catalyst&rdquo; (<span style="font-family:Courier">SBO:0000460</span>) was 
+      SBO terms. Afterwards these are mapped back. SBO term &#8220;enzymatic 
+      catalyst&#8221; (<span style="font-family:Courier">SBO:0000460</span>) was 
       created because it is required by SBMLsqueezer to distinguish enzymes and other
       catalysts, such as certain anorganic ions. SBMLsqueezer's stand-alone version
       interpretes SBO terms that can be found in the model and changes the annotation
       of <span style="font-family:Courier">ModifierSpeciesReference</span>s from
-      &ldquo;catalyst&rdquo; (<span style="font-family:Courier">SBO:0000013</span>)
-      to &ldquo;enzymatic catalyst&rdquo; if the SBO term of the corresponding <span 
+      &#8220;catalyst&#8221; (<span style="font-family:Courier">SBO:0000013</span>)
+      to &#8220;enzymatic catalyst&#8221; if the SBO term of the corresponding <span 
       style="font-family:Courier">Species</span> is one of those belonging to the
       family of materials considered as enzymes (SBMLsqueezer still offers check
       boxes to indicate certain kinds of species as enzymes).</p>
@@ -178,31 +178,31 @@
     <p>Much effort was put into the extension of SBMLsqueezer with additional rate
       laws for gene-regulatory processes. Earlier versions of SBMLsqueezer only provided
       the Hill equation variant suggested by Hinze et al. 2007. This equation has now
-      been renamed to Hinze-Hill equation to highlight that it is actually a modification
+      been renamed to Hill-Hinze equation to highlight that it is actually a modification
       of the original rate law. Only in special cases this equation equals the traditional
       Hill equation (SBMLsqueezer will highlight these cases). Now nine additional
       rate equations were included:<ul>
       <li>Additive Model Linear: A generalized super class of all other additive rate
         laws for gene-regulatory processes.</li>
-      <li>Additive Model Non-Linear: defined in the paper &ldquo;The NetGenerator 
-        Algorithm: Reconstruction of Gene Regulatory Networks&rdquo; of T&ouml;pfer, 
-        S.; Guthke, R.; Driesch, D.; W&ouml;tzel, D., and Pfaff 2007</li>
+      <li>Additive Model Non-Linear: defined in the paper &#8220;The NetGenerator 
+        Algorithm: Reconstruction of Gene Regulatory Networks&#8221; of T&#246;pfer, 
+        S.; Guthke, R.; Driesch, D.; W&#246;tzel, D., and Pfaff 2007</li>
       <li>H-Systems: Spieth, C.; Hassis, N.; Streichert, F.; Supper, J.; Beyreuther, K.,
-        and Zell, A. &ldquo;Comparing Mathematical Models on the Problem of Network
-        Inference&rdquo;, 2006.</li>
-      <li>NetGenerator Linear Model: &ldquo;The NetGenerator Algorithm: Reconstruction
-        of Gene Regulatory Networks&rdquo; of T&ouml;pfer, S.; Guthke, R.; Driesch, D.;
-        W&ouml;tzel, D., and Pfaff 2007</li>
-      <li>NetGenerator Non-Linear Model: &ldquo;The NetGenerator Algorithm: 
-        Reconstruction of Gene Regulatory Networks&rdquo; of T&ouml;pfer, S.; Guthke,
-        R.; Driesch, D.; W&ouml;tzel, D., and Pfaff 2007</li>
-      <li>S-Systems: Tournier, L.: &ldquo;Approximation of dynamical systems using 
-        S-systems theory: application to biological systems&rdquo;</li>
-      <li>Radde-Hill equation: &ldquo;Modeling Non-Linear Dynamic Phenomena in 
-        Biochemical Networks&ldquo; of Nicole Radde and Lars Kaderali</li>
-      <li>Vohradsky: &ldquo;Neural network model of gene expression.&rdquo; of
-        Vohradsk&yacute;, J. 2001</li>
-      <li>Weaver: &ldquo;Modeling regulatory networks with weight matrices&rdquo; of
+        and Zell, A. &#8220;Comparing Mathematical Models on the Problem of Network
+        Inference&#8221;, 2006.</li>
+      <li>NetGenerator Linear Model: &#8220;The NetGenerator Algorithm: Reconstruction
+        of Gene Regulatory Networks&#8221; of T&#246;pfer, S.; Guthke, R.; Driesch, D.;
+        W&#246;tzel, D., and Pfaff 2007</li>
+      <li>NetGenerator Non-Linear Model: &#8220;The NetGenerator Algorithm: 
+        Reconstruction of Gene Regulatory Networks&#8221; of T&#246;pfer, S.; Guthke,
+        R.; Driesch, D.; W&#246;tzel, D., and Pfaff 2007</li>
+      <li>S-Systems: Tournier, L.: &#8220;Approximation of dynamical systems using 
+        S-systems theory: application to biological systems&#8221;</li>
+      <li>Hill-Radde equation: &#8220;Modeling Non-Linear Dynamic Phenomena in 
+        Biochemical Networks&#8220; of Nicole Radde and Lars Kaderali</li>
+      <li>Vohradsky: &#8220;Neural network model of gene expression.&#8221; of
+        Vohradsk&#253;, J. 2001</li>
+      <li>Weaver: &#8220;Modeling regulatory networks with weight matrices&#8221; of
         Weaver, D.; Workman, C., and Stormo, G. 1999</li>
       </ul></p>
     <p>The following new generalized kinetic equations for metabolic reactions were also
@@ -274,6 +274,6 @@
       href="http://www.ebi.ac.uk/sbo/main/SBO:0000273">SBO:0000273</a> with the enzyme.
       Therfore, it always produced the Vmax version of the equation, but the parameter
       was called kcat.</p>
-    
+      
   </body>
 </html>

@@ -152,6 +152,13 @@ public class SSystem extends BasicKineticLaw implements
 		return prod;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#parameterAlpha(java.lang.String
+	 * )
+	 */
 	@Override
 	Parameter parameterAlpha(String rId) {
 		Parameter p = createOrGetParameter("alpha_", rId);
@@ -167,6 +174,13 @@ public class SSystem extends BasicKineticLaw implements
 		return p;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.BasicKineticLaw#parameterBeta(java.lang.String
+	 * )
+	 */
 	@Override
 	Parameter parameterBeta(String rId) {
 		Parameter p = createOrGetParameter("beta_", rId);
