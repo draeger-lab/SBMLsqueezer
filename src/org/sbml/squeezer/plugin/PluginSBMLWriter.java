@@ -68,12 +68,12 @@ import org.sbml.jsbml.Delay;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.History;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.History;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
@@ -1779,9 +1779,13 @@ public class PluginSBMLWriter implements SBMLWriter {
 			String type = SBO.convertSBO2Alias(modifierSpeciesReference
 					.getSBOTerm());
 			if (type.length() > 0) {
-				msg.logf("setting alias for SBO %d to %s",
-						modifierSpeciesReference.getSBOTerm(), type);
-				pmsr.setModificationType(type);
+				if (pmsr.getModificationType().length() == 0
+						|| modifierSpeciesReference.getSBOTerm() != SBO
+								.convertAlias2SBO(pmsr.getModificationType())) {
+					msg.logf("setting alias for SBO %d to %s",
+							modifierSpeciesReference.getSBOTerm(), type);
+					pmsr.setModificationType(type);
+				}
 			} else {
 				pmsr.setModificationType(PluginReactionSymbolType.MODULATION);
 				msg.logf("no valid type found. Setting alias for SBO %d to %s",
@@ -2041,7 +2045,8 @@ public class PluginSBMLWriter implements SBMLWriter {
 		}
 		if (s.isSetSBOTerm()) {
 			String type = SBO.convertSBO2Alias(s.getSBOTerm());
-			if (type.length() > 0) {
+			String t = spec.getSpeciesAlias(0).getType();
+			if (type.length() > 0 && (t.length() == 0 || s.getSBOTerm() != SBO.convertAlias2SBO(t))) {
 				spec.getSpeciesAlias(0).setType(type);
 				changed = true;
 			}

@@ -25,7 +25,8 @@ import javax.swing.JMenuItem;
 import jp.sbi.celldesigner.plugin.PluginAction;
 
 /**
- * This class starts SBMLsqueezer from as a CellDesigner plug-in.
+ * This class starts SBMLsqueezer from as a CellDesigner plug-in. Actually, this class only
+ * forwards commands from CellDesigner to the plugin class that really starts SBMLsqueezer.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
