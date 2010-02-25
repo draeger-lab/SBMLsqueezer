@@ -26,8 +26,9 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.io.LaTeX;
+import org.sbml.squeezer.ReactionType;
 
 /**
  * This class creates an equation based on a linear additive model.
@@ -76,11 +77,11 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		ASTNode m = m_i();
+		ASTNode m = m();
 		ASTNode a = activation(g(w(), v(), b_i()));
 		if (m.isOne() && a.isOne())
 			return m;
-		return ASTNode.times(m_i(), a);
+		return ASTNode.times(m(), a);
 	}
 
 	/**
@@ -99,13 +100,13 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Additive model: linear";
+		return "Linear additive model, general form";
 	}
 
 	/**
 	 * @return ASTNode
 	 */
-	ASTNode m_i() {
+	ASTNode m() {
 		return new ASTNode(parameterM(getParentSBMLObject().getId()), this);
 	}
 
@@ -145,6 +146,13 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	ASTNode w() {
 		Reaction r = getParentSBMLObject();
 		ASTNode node = new ASTNode(this);
+		if (!ReactionType.representsEmptySet(r.getListOfProducts()))
+			for (SpeciesReference product : r.getListOfProducts()) {
+				Parameter p = parameterW(product.getSpecies(), r.getId());
+				node = node.isUnknown() ? ASTNode.times(new ASTNode(p, this),
+						speciesTerm(product)) : ASTNode.sum(node, ASTNode
+						.times(new ASTNode(p, this), speciesTerm(product)));
+			}
 		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
 			Species modifierSpec = modifier.getSpeciesInstance();
 			if (SBO.isProtein(modifierSpec.getSBOTerm())
@@ -154,11 +162,11 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					ASTNode modnode = speciesTerm(modifier);
 					Parameter p = parameterW(modifier.getSpecies(), r.getId());
-					ASTNode pnode = new ASTNode(p, this);
-					node = node.isUnknown() ? ASTNode.times(pnode, modnode)
-							: ASTNode.sum(node, ASTNode.times(pnode, modnode));
+					node = node.isUnknown() ? ASTNode.times(
+							new ASTNode(p, this), speciesTerm(modifier))
+							: ASTNode.sum(node, ASTNode.times(new ASTNode(p,
+									this), speciesTerm(modifier)));
 				}
 			}
 		}

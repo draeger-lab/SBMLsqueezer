@@ -43,7 +43,7 @@ import org.sbml.squeezer.ReactionType;
  *         Dr&auml;ger</a>
  * @date Aug 7, 2007
  */
-public class HinzeHillEquation extends BasicKineticLaw implements
+public class HillHinzeEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
@@ -53,7 +53,7 @@ public class HinzeHillEquation extends BasicKineticLaw implements
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
 	 */
-	public HinzeHillEquation(Reaction parentReaction, Object... typeParameters)
+	public HillHinzeEquation(Reaction parentReaction, Object... typeParameters)
 			throws RateLawNotApplicableException {
 		super(parentReaction, typeParameters);
 	}
@@ -181,6 +181,6 @@ public class HinzeHillEquation extends BasicKineticLaw implements
 	public String getSimpleName() {
 		if (isSetSBOTerm() && SBO.isHillEquation(getSBOTerm()))
 			return "Hill equation";
-		return "Hinze-Hill equation";
+		return "Hill-Hinze equation";
 	}
 }
