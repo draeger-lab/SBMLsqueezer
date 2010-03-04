@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
@@ -124,6 +123,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	protected Reaction currentReaction;
 
+	/**
+	 * Holds the current time of the simulation
+	 */
 	private double currentTime;
 
 	/**
@@ -133,7 +135,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private boolean[] eventFired;
 
 	/**
-	 * 
+	 * Contains a list of all DESAssignment that emerged due to events and 
+	 * have not been processed so far
 	 */
 	private ArrayList<DESAssignment> events;
 
@@ -159,14 +162,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	protected Model model;
 
 	/**
-	 * This map data structure is necessary to save the index of every species
-	 * within the model system since libSBML doesn't provide the index of a
-	 * species for a given name. This, however, is necessary to work with an
-	 * array containing the concentrations of the species.
-	 */
-	//protected Map<String, Integer> speciesIdIndex;
-
-	/**
 	 * This array is to avoid to allocate memory repeatedly. It stores the
 	 * values computed during the linear combination of velocities. These values
 	 * are passed to the array Y afterwards.
@@ -181,13 +176,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	protected double[] v;
 
 	/**
-	 * Hashes the name of a species to an value object which contains
-	 * the position in the Y vector
+	 * Hashes the name of a species to an value object which contains the
+	 * position in the Y vector
 	 */
 	private HashMap<String, Value> valuesHash;
-	
+
+	/**
+	 * Hashes a DESAssignment to an ASTNode containing the
+	 * mathematical expression of this assignment when the
+	 * mathematical expression of this DESAssignment has to be processed
+	 * at a later timepoint in the simulation
+	 */
 	private HashMap<DESAssignment, ASTNode> eventMath;
-	
 
 	/**
 	 * An array of the current concentration of each species within the model
@@ -210,7 +210,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	public SBMLinterpreter(Model model) {
 		this.model = model;
-		//this.speciesIdIndex = new HashMap<String, Integer>();
+		// this.speciesIdIndex = new HashMap<String, Integer>();
 		this.v = new double[this.model.getListOfReactions().size()];
 		this.init();
 	}
@@ -392,7 +392,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			Species s = (Species) nsb;
 			Value compVal = valuesHash.get(s.getCompartment());
 			speciesVal = valuesHash.get(nsb.getId());
-			if (Y[compVal.getIndex()] == 0)
+			if (Y[compVal.getIndex()] == 0d)
 				return Y[speciesVal.getIndex()];
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
 				return Y[speciesVal.getIndex()] / Y[compVal.getIndex()];
@@ -739,7 +739,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
 
-
 		processVelocities(changeRate);
 
 		processRules(changeRate);
@@ -750,7 +749,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		for (i = 0; i < (int) model.getNumConstraints(); i++)
 			if (evaluateToBoolean(model.getConstraint(i).getMath()))
 				listOfContraintsViolations[i].add(time);
-
 
 		return changeRate;
 	}
@@ -886,6 +884,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
 		this.swap = new double[this.Y.length];
 		this.events = new ArrayList<DESAssignment>();
+		
+		
 
 	}
 
@@ -997,11 +997,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	public Double piecewise(ASTNode... nodes) {
 		int i;
+		System.out.println(nodes.length);
 		for (i = 1; i < nodes.length - 1; i += 2) {
-			if (toBoolean(nodes[i].compile(this)) == getConstantTrue())
+			if (toBoolean(nodes[i].compile(this)) == getConstantTrue()) {
 				return toDouble(nodes[i - 1].compile(this));
+			}
 		}
-
+		
 		return toDouble(nodes[i - 1].compile(this));
 	}
 
@@ -1088,7 +1090,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		double newVal;
 		int index, i;
 		DESAssignment desa;
-		
+
 		Event ev;
 		// number of events = listOfEvents_delay.length
 		for (i = 0; i < model.getNumEvents(); i++) {
@@ -1105,7 +1107,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						variable = ev.getEventAssignment(l)
 								.getVariableInstance();
 						index = valuesHash.get(variable.getId()).getIndex();
-						
+
 						// check conditions of the event
 						if (ev.getDelay() != null) {
 							if (ev.getUseValuesFromTriggerTime()) {
@@ -1113,20 +1115,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 								this.events.add(new DESAssignment(currentTime
 										+ evaluateToDouble(ev.getDelay()
 												.getMath()), index, newVal));
-							} else{
+							} else {
 								desa = new DESAssignment(currentTime
 										+ evaluateToDouble(ev.getDelay()
 												.getMath()), index);
 								this.eventMath.put(desa, assignment_math);
-								this.events.add(desa);								
+								this.events.add(desa);
 							}
-							
-						} else{
+
+						} else {
 							newVal = evaluateToDouble(assignment_math);
 							events.add(new DESAssignment(currentTime, index,
 									newVal));
 						}
-							
+
 					}
 				}
 			}
@@ -1138,23 +1140,22 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 
 		i = 0;
-		
-		
+
 		while (this.events.size() > i) {
 			desa = this.events.get(i);
 			if (desa.getProcessTime() <= currentTime) {
-				//uses value from trigger time
+				// uses value from trigger time
 				if (desa.getValue() != null) {
 					events.add(desa);
 					this.events.remove(desa);
-				} 
-				//don't uses value from trigger time
+				}
+				// don't uses value from trigger time
 				else {
 					desa.setValue(evaluateToDouble(this.eventMath.get(desa)));
 					events.add(desa);
 					this.events.remove(desa);
 					this.eventMath.remove(desa);
-					
+
 				}
 			} else
 				i++;
@@ -1251,6 +1252,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 
 		}
+		
 	}
 
 	/*
@@ -1566,15 +1568,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	public Boolean xor(ASTNode... nodes) {
 		Boolean value = getConstantFalse();
 
-		if (nodes.length > 0) {
-			value = toBoolean(nodes[1].compile(this));
-		}
-
-		for (int i = 1; i < nodes.length; i++) {
-			if (toBoolean(nodes[i].compile(this)) == value)
-				value = getConstantFalse();
-			else
-				value = getConstantTrue();
+		for (int i = 0; i < nodes.length; i++) {
+			if (toBoolean(nodes[i].compile(this)) == getConstantTrue()) {
+				if (value)
+					return getConstantFalse();
+				else
+					value = getConstantTrue();
+			}
 		}
 		return value;
 	}
