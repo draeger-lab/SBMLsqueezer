@@ -392,11 +392,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			Species s = (Species) nsb;
 			Value compVal = valuesHash.get(s.getCompartment());
 			speciesVal = valuesHash.get(nsb.getId());
+			int dim = s.getCompartmentInstance().getSpatialDimensions();
 			if (Y[compVal.getIndex()] == 0d)
 				return Y[speciesVal.getIndex()];
-			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
-				return Y[speciesVal.getIndex()] / Y[compVal.getIndex()];
-			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())
+			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())				
+				return Y[speciesVal.getIndex()] / Functions.root(Y[compVal.getIndex()],dim);
+			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())			
 				return Y[speciesVal.getIndex()] * Y[compVal.getIndex()];
 			return Y[speciesVal.getIndex()];
 		}
@@ -522,9 +523,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	private void evaluateRateRule(RateRule rr, double changeRate[]) {
 		int speciesIndex;
-
+		
+		Value compVal = valuesHash.get(model.getSpecies(rr.getVariable()).getCompartment());
+		
 		speciesIndex = valuesHash.get(rr.getVariable()).getIndex();
 		changeRate[speciesIndex] = evaluateToDouble(rr.getMath());
+		changeRate[speciesIndex] = changeRate[speciesIndex] * Y[compVal.getIndex()];
+
 	}
 
 	/**
@@ -1090,7 +1095,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		double newVal;
 		int index, i;
 		DESAssignment desa;
-
+		Value compVal;
+		
 		Event ev;
 		// number of events = listOfEvents_delay.length
 		for (i = 0; i < model.getNumEvents(); i++) {
@@ -1107,11 +1113,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						variable = ev.getEventAssignment(l)
 								.getVariableInstance();
 						index = valuesHash.get(variable.getId()).getIndex();
-
+						compVal = valuesHash.get(model.getSpecies(variable.getId()).getCompartment());
 						// check conditions of the event
 						if (ev.getDelay() != null) {
 							if (ev.getUseValuesFromTriggerTime()) {
-								newVal = evaluateToDouble(assignment_math);
+								newVal = evaluateToDouble(assignment_math) * Y[compVal.getIndex()];
 								this.events.add(new DESAssignment(currentTime
 										+ evaluateToDouble(ev.getDelay()
 												.getMath()), index, newVal));
@@ -1124,7 +1130,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 							}
 
 						} else {
-							newVal = evaluateToDouble(assignment_math);
+							newVal = evaluateToDouble(assignment_math) * Y[compVal.getIndex()];
 							events.add(new DESAssignment(currentTime, index,
 									newVal));
 						}
@@ -1151,6 +1157,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				}
 				// don't uses value from trigger time
 				else {
+					//Consider Compartment
+					//compVal = valuesHash.get(model.getSpecies(variable.getId()).getCompartment());
 					desa.setValue(evaluateToDouble(this.eventMath.get(desa)));
 					events.add(desa);
 					this.events.remove(desa);
@@ -1358,7 +1366,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * org.sbml.jsbml.ASTNode)
 	 */
 	public Double root(ASTNode nodeleft, ASTNode noderight) {
-		return Functions.log(toDouble(nodeleft.compile(this)),
+		return Functions.root(toDouble(nodeleft.compile(this)),
 				toDouble(noderight.compile(this)));
 
 	}

@@ -23,7 +23,7 @@ import org.sbml.squeezer.io.SBMLio;
 import au.com.bytecode.opencsv.CSVReader;
 
 import eva2.gui.Plot;
-import eva2.tools.math.des.RKSolver;
+import eva2.tools.math.des.RKEventSolver;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -53,7 +53,7 @@ public class SimulationTestAutomatic {
 		double duration = 0d, steps = 0d;
 		BufferedReader reader;
 		BufferedWriter writer;
-		for (modelnr = 26; modelnr <= 26; modelnr++) {
+		for (modelnr = 204; modelnr <= 204; modelnr++) {
 			System.out.println("model " + modelnr);
 			folder = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/semantic/";
 			if (modelnr < 100) {
@@ -88,11 +88,13 @@ public class SimulationTestAutomatic {
 
 				e.printStackTrace();
 			}
-
+			
 			SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 
 			Model model = sbmlIo.readModel(sbmlfile);
-			RKSolver rk = new RKSolver();
+			//RKSolver rk = new RKSolver();
+			RKEventSolver rk = new RKEventSolver();
+			
 			SBMLinterpreter interpreter = new SBMLinterpreter(model);
 			double time = 0;
 
@@ -124,6 +126,7 @@ public class SimulationTestAutomatic {
 			double[][] solutiontrans = new double[input.get(0).length - 1][input
 					.size()];
 			int from = model.getNumCompartments();
+			//from = 0;
 			int to = from + model.getNumSpecies();
 			
 			for (int i = 1; i < data.length + 1; i++) {
@@ -135,14 +138,15 @@ public class SimulationTestAutomatic {
 				}
 			}
 
-			RSE rse = new RSE();
-
+			Distance distance = new RSE();
+			
+			
 			writer = new BufferedWriter(
 					new FileWriter(
 							"C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/results/"+modelnr+"-deviation.txt"));
 			writer.write("relative distance for model-" + modelnr);
 			writer.newLine();
-			writer.write(String.valueOf(rse.distance(data, solutiontrans)));
+			writer.write(String.valueOf(distance.distance(data, solutiontrans)));
 			writer.close();
 
 			if (rk.isUnstable())
@@ -170,6 +174,7 @@ public class SimulationTestAutomatic {
 				 plot.getFunctionArea().paint(img.createGraphics());
 				 ImageIO.write(img, "jpg", new
 				 File("C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/results/"+modelnr+"-graph.jpg"));
+				 
 				 //plot.dispose();
 			}
 		}
