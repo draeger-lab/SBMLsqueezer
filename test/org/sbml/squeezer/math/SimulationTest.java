@@ -3,14 +3,10 @@
  */
 package org.sbml.squeezer.math;
 
-import java.util.Arrays;
-
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
-
-import sun.security.krb5.internal.crypto.Des;
 
 import eva2.gui.Plot;
 import eva2.tools.math.des.RKSolver;
@@ -38,7 +34,7 @@ public class SimulationTest {
 		}
 		String path;
 		path = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/tst suite/sbml-test-cases-2009-09-05/cases/semantic/";
-		path += "00026/00026-sbml-l2v4.xml";
+		path += "00204/00204-sbml-l2v4.xml";
 		SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 		// System.out.println(args[0]);
 		// System.out.println(path);
@@ -49,7 +45,7 @@ public class SimulationTest {
 		double time = 0;
 
 		double solution[][] = rk.solveByStepSize(interpreter, interpreter
-				.getInitialValues(), time, 5);
+				.getInitialValues(), time, 0.1);
 //		rk.solveAtTimePoints(interpreter, interpreter
 //				.getInitialValues(), timePoints)
 //		
