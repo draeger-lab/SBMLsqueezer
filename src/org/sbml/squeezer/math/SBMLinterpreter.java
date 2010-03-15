@@ -396,7 +396,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			if (Y[compVal.getIndex()] == 0d)
 				return Y[speciesVal.getIndex()];
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())				
-				return Y[speciesVal.getIndex()] / Functions.root(Y[compVal.getIndex()],dim);
+				//return Y[speciesVal.getIndex()] / Functions.root(Y[compVal.getIndex()],dim);
+				return Y[speciesVal.getIndex()] / Y[compVal.getIndex()];
 			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())			
 				return Y[speciesVal.getIndex()] * Y[compVal.getIndex()];
 			return Y[speciesVal.getIndex()];
@@ -513,7 +514,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		int speciesIndex;
 		speciesIndex = valuesHash.get(as.getVariable()).getIndex();
 		Y[speciesIndex] = evaluateToDouble(as.getMath());
-		System.out.println(Y[speciesIndex]);
 	}
 
 	/**
@@ -1002,7 +1002,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	public Double piecewise(ASTNode... nodes) {
 		int i;
-		System.out.println(nodes.length);
 		for (i = 1; i < nodes.length - 1; i += 2) {
 			if (toBoolean(nodes[i].compile(this)) == getConstantTrue()) {
 				return toDouble(nodes[i - 1].compile(this));
