@@ -9,7 +9,7 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
 
 import eva2.gui.Plot;
-import eva2.tools.math.des.RKSolver;
+import eva2.tools.math.des.RKEventSolver;
 
 /**
  * @author Andreas Dr&auml;ger <a
@@ -40,12 +40,14 @@ public class SimulationTest {
 		// System.out.println(path);
 		Model model = sbmlIo.readModel(args[0]);
 //		Model model = sbmlIo.readModel(path);
-		RKSolver rk = new RKSolver();
+		RKEventSolver rk = new RKEventSolver();
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		double time = 0;
 
 		double solution[][] = rk.solveByStepSize(interpreter, interpreter
-				.getInitialValues(), time, 0.1);
+				.getInitialValues(), time, 2);
+		rk.setStepSize(0.01);
+		
 //		rk.solveAtTimePoints(interpreter, interpreter
 //				.getInitialValues(), timePoints)
 //		
