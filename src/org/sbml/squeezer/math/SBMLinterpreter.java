@@ -76,7 +76,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		int index;
 		double value;
 
-		public Value(Double value) {
+		public Value(double value) {
 			setValue(value);
 		}
 
