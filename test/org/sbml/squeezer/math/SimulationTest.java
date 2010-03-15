@@ -33,13 +33,13 @@ public class SimulationTest {
 			System.exit(1);
 		}
 		String path;
-		path = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/tst suite/sbml-test-cases-2009-09-05/cases/semantic/";
-		path += "00204/00204-sbml-l2v4.xml";
+		//path = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/tst suite/sbml-test-cases-2009-09-05/cases/semantic/";
+		//path += "00204/00204-sbml-l2v4.xml";
 		SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 		// System.out.println(args[0]);
 		// System.out.println(path);
-		//Model model = sbmlIo.readModel(args[0]);
-		Model model = sbmlIo.readModel(path);
+		Model model = sbmlIo.readModel(args[0]);
+//		Model model = sbmlIo.readModel(path);
 		RKSolver rk = new RKSolver();
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		double time = 0;
