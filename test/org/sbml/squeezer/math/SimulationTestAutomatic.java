@@ -48,14 +48,18 @@ public class SimulationTestAutomatic {
 			System.exit(1);
 		}
 
-		String sbmlfile, folder, csvfile, configfile, line = "";
+		String sbmlfile, folder, resultfolder, csvfile, configfile, line = "";
 		int modelnr, start = 0;
 		double duration = 0d, steps = 0d;
 		BufferedReader reader;
 		BufferedWriter writer;
-		for (modelnr = 204; modelnr <= 204; modelnr++) {
+		
+		folder = args[0];			
+		resultfolder = args[1];
+		
+		for (modelnr = 203; modelnr <= 203; modelnr++) {
 			System.out.println("model " + modelnr);
-			folder = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/semantic/";
+			
 			if (modelnr < 100) {
 				sbmlfile = folder + "000" + modelnr + "/000" + modelnr
 						+ "-sbml-l2v4.xml";
@@ -143,7 +147,7 @@ public class SimulationTestAutomatic {
 			
 			writer = new BufferedWriter(
 					new FileWriter(
-							"C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/results/"+modelnr+"-deviation.txt"));
+							resultfolder+modelnr+"-deviation.txt"));
 			writer.write("relative distance for model-" + modelnr);
 			writer.newLine();
 			writer.write(String.valueOf(distance.distance(data, solutiontrans)));
@@ -173,7 +177,7 @@ public class SimulationTestAutomatic {
 				 BufferedImage.TYPE_INT_RGB);
 				 plot.getFunctionArea().paint(img.createGraphics());
 				 ImageIO.write(img, "jpg", new
-				 File("C:/Dokumente und Einstellungen/radbarbeit11/Desktop/sbml-test-cases-2010-01-17/cases/results/"+modelnr+"-graph.jpg"));
+				 File(resultfolder+modelnr+"-graph.jpg"));
 				 
 				 //plot.dispose();
 			}
