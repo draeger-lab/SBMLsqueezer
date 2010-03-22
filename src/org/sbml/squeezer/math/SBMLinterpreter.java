@@ -394,15 +394,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			//int dim = s.getCompartmentInstance().getSpatialDimensions();
 			if (Y[compVal.getIndex()] == 0d)
 				return Y[speciesVal.getIndex()];
-			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
-				//return Y[speciesVal.getIndex()]	/ Functions.root(Y[compVal.getIndex()], 2);
+			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())				
 				return Y[speciesVal.getIndex()] / Y[compVal.getIndex()];
+				//return Y[speciesVal.getIndex()] / Functions.root(Y[compVal.getIndex()], 2);
 			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())
 				return Y[speciesVal.getIndex()] * Y[compVal.getIndex()];
 
-			// return Y[speciesVal.getIndex()] /
-			// Functions.root(Y[compVal.getIndex()],2);
 			return Y[speciesVal.getIndex()];
+			//return Y[speciesVal.getIndex()] / Functions.root(Y[compVal.getIndex()],2);
 		}
 
 		else if (nsb instanceof Compartment || nsb instanceof Parameter) {
@@ -1119,12 +1118,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						// check conditions of the event
 						if (ev.getDelay() != null) {
 							if (ev.getUseValuesFromTriggerTime()) {
+								
+								if (Y[compVal.getIndex()]==0d)
+									newVal = evaluateToDouble(assignment_math);
+								else
 								newVal = evaluateToDouble(assignment_math)
 										* Y[compVal.getIndex()];
+								
 								this.events.add(new DESAssignment(currentTime
 										+ evaluateToDouble(ev.getDelay()
 												.getMath()), index, newVal));
-							} else {
+								
+							} else {								
 								desa = new DESAssignment(currentTime
 										+ evaluateToDouble(ev.getDelay()
 												.getMath()), index);
