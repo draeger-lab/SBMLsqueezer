@@ -27,3 +27,32 @@ synchronisiert werden.
 Probleme mit UTF-8 in jsbml: libSBML-Parser wandeln alle Zeichen in
 UTF-8 um. Beim Synchronisieren mÃ¼ssen Sonderzeichen wieder zu den Zeichen-
 Codes Ã¼bersetzt werden.
+
+
+Probleme bei der Simulation von Test Suite Modellen
+===================================================
+
+Modelle 203 und 204 vom Aufbau her gleich, aber die Simulation von 204
+liefert nur das richtige Ergebniss, wenn die Quadratwurzel des Compartiments verrechnet
+wird anstelle nur der normale Wert des Compartiments.
+Das gleiche gilt für 373 und 374
+
+Modell 354 wirft einen Fehler aufgrund von Problemen bei der Umsetzung der Funktion add
+im Event Assignment S2 = add(k3, k4) mit 
+Id 	 Arguments 	 Formula
+add 	x, y 	x + y
+
+Modell 355, ähnliches Problem wie bei 354 diesmal beim Auswerten von Trigger lessthan(S1, 0.5) mit
+Id 	 Arguments 	 Formula
+lessthan 	x, y 	x < y
+
+Modell 356 wirft einen Fehler aufgrund von Problemen bei der Umsetzung der Funktionen
+im Event Assignment S2 = add(k3, k4) und S1 = 1 · divide(k3, k4) mit 
+Id 	 Arguments 	 Formula
+add 	x, y 	x + y
+divide 	x, y 	xy
+
+Modell 357, 358 und 359 haben die selben Probleme
+
+
+ 
