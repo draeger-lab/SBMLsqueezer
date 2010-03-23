@@ -43,8 +43,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
 
@@ -407,13 +405,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				return Y[speciesVal.getIndex()];
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
 				return Y[speciesVal.getIndex()]
-						/ processCompartment(speciesVal);
+							/ processCompartment(speciesVal);				
 			// return Y[speciesVal.getIndex()] /
 			// Functions.root(Y[compVal.getIndex()], 2);
 			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())
 				return Y[speciesVal.getIndex()]
-						* processCompartment(speciesVal);
-
+				         * processCompartment(speciesVal);
+		
+			
+			
 			return Y[speciesVal.getIndex()];
 			// return Y[speciesVal.getIndex()] /
 			// Functions.root(Y[compVal.getIndex()],2);
@@ -1296,7 +1296,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						changeRate[speciesIndex] -= speciesRef
 								.getStoichiometry()
 								* v[reactionIndex];
-
 				}
 			}
 
@@ -1315,12 +1314,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						changeRate[speciesIndex] += speciesRef
 								.getStoichiometry()
 								* v[reactionIndex];
-
 				}
 			}
-
 		}
-
 	}
 
 	/*
