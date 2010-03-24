@@ -64,6 +64,25 @@ import eva2.tools.math.des.EventDESystem;
  */
 public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
+	private class SpeciesValue extends Value {
+		int compartment;
+
+		public SpeciesValue(int index) {
+			super(index);
+
+		}
+
+		public SpeciesValue(int index, int compartment) {
+			super(index);
+			this.compartment = compartment;
+		}
+
+		public int getCompartment() {
+			return this.compartment;
+		}
+
+	}
+
 	/**
 	 * Stores initial values of symbols changed due to initial assignments.
 	 * 
@@ -90,25 +109,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		public void setIndex(Integer index) {
 			this.index = index;
-		}
-
-	}
-
-	private class SpeciesValue extends Value {
-		int compartment;
-
-		public SpeciesValue(int index) {
-			super(index);
-
-		}
-
-		public SpeciesValue(int index, int compartment) {
-			super(index);
-			this.compartment = compartment;
-		}
-
-		public int getCompartment() {
-			return this.compartment;
 		}
 
 	}
@@ -442,24 +442,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				return (Double) r.getKineticLaw().getMath().compile(this);
 		}
 		return Double.NaN;
-	}
-
-	/**
-	 * Checks if Value is a SpeciesValue Object and returns the value of its
-	 * compartment or 1d otherwise
-	 * 
-	 * @param val
-	 * @return
-	 */
-	private double processCompartment(Value val) {
-		// Is Specie
-		if (val instanceof SpeciesValue) {
-			return Y[((SpeciesValue) val).getCompartment()];
-		}
-		// Is compartment or parameter
-		else
-			return 1d;
-
 	}
 
 	/*
@@ -831,7 +813,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		int i;
 		valuesHash = new HashMap<String, Value>();
 		int yIndex = 0;
-		Value val = null;
 		currentTime = 0d;
 
 		this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
@@ -874,27 +855,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		}
 
-		for (i = 0; i < model.getListOfInitialAssignments().size(); i++) {
-			InitialAssignment assign = model.getInitialAssignment(i);
-			val = null;
-			if (assign.isSetMath() && assign.isSetSymbol()) {
-				if (model.getSpecies(assign.getSymbol()) != null) {
-					Species s = model.getSpecies(assign.getSymbol());
-					val = valuesHash.get(s.getId());
-				} else if (model.getCompartment(assign.getSymbol()) != null) {
-					Compartment c = model.getCompartment(assign.getSymbol());
-					val = valuesHash.get(c.getId());
-				} else if (model.getParameter(assign.getSymbol()) != null) {
-					Parameter p = model.getParameter(assign.getSymbol());
-					val = valuesHash.get(p.getId());
-				} else
-					System.err
-							.println("The model contains an initial assignment for a "
-									+ "component other than species, compartment or parameter.");
-			}
-			this.Y[val.getIndex()] = evaluateToDouble(assign.getMath());
-		}
-
 		/*
 		 * Evaluate Constraints
 		 */
@@ -924,6 +884,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		 */
 		processRules(Y);
 
+		/*
+		 * Initial assignments
+		 */
+		processInitialAssignments();
+		
 		// save the initial values of this system
 		initialValues = new double[Y.length];
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
@@ -1091,6 +1056,36 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		// }
 		return algebraicRules;
 	}
+	
+	/**
+	 * Processes the initial assignments of the model
+	 */
+	private void processInitialAssignments(){
+		
+		for (int i = 0; i < model.getListOfInitialAssignments().size(); i++) {
+			InitialAssignment iA = model.getInitialAssignment(i);
+			Value val = null;
+			if (iA.isSetMath() && iA.isSetSymbol()) {
+				if (model.getSpecies(iA.getSymbol()) != null) {
+					Species s = model.getSpecies(iA.getSymbol());
+					val = valuesHash.get(s.getId());
+				} else if (model.getCompartment(iA.getSymbol()) != null) {
+					Compartment c = model.getCompartment(iA.getSymbol());
+					val = valuesHash.get(c.getId());
+				} else if (model.getParameter(iA.getSymbol()) != null) {
+					Parameter p = model.getParameter(iA.getSymbol());
+					val = valuesHash.get(p.getId());
+				} else
+					System.err
+							.println("The model contains an initial assignment for a "
+									+ "component other than species, compartment or parameter.");
+			}
+			this.Y[val.getIndex()] = evaluateToDouble(iA.getMath());
+		}
+			
+		
+	
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -1105,7 +1100,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			Rule rule = model.getRule(i);
 			if (rule.isAssignment()) {
 				AssignmentRule as = (AssignmentRule) rule;
-				val = valuesHash.get(as.getVariable());
+				val = valuesHash.get(as.getVariable()) ;
 				assignmentRules.add(new DESAssignment(t, val.getIndex(),
 						evaluateToDouble(as.getMath())));
 
@@ -1113,6 +1108,24 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 
 		return assignmentRules;
+	}
+
+	/**
+	 * Checks if Value is a SpeciesValue Object and returns the value of its
+	 * compartment or 1d otherwise
+	 * 
+	 * @param val
+	 * @return
+	 */
+	private double processCompartment(Value val) {
+		// Is Specie
+		if (val instanceof SpeciesValue) {
+			return Y[((SpeciesValue) val).getCompartment()];
+		}
+		// Is compartment or parameter
+		else
+			return 1d;
+
 	}
 
 	/*
