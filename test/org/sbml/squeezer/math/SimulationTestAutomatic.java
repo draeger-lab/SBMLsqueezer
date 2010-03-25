@@ -54,10 +54,10 @@ public class SimulationTestAutomatic {
 		BufferedReader reader;
 		BufferedWriter writer;
 		
-		folder = args[0];			
+		folder = args[0];
 		resultfolder = args[1];
 		
-		for (modelnr = 203; modelnr <= 203; modelnr++) {
+		for (modelnr = 30; modelnr <= 40; modelnr++) {
 			System.out.println("model " + modelnr);
 			
 			if (modelnr < 100) {
