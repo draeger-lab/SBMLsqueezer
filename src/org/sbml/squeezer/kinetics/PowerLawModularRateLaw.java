@@ -131,7 +131,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 			if (i < modE.size()) {
 				ModifierSpeciesReference enzyme = null;
 				for (int j = 0; j < r.getNumModifiers() && enzyme == null; j++)
-					if (r.getModifier(j).getSpecies().equals(modE.get(j)))
+					if (r.getModifier(j).getSpecies().equals(modE.get(i)))
 						enzyme = r.getModifier(j);
 				numerator[i] = ASTNode.times(speciesTerm(enzyme), numerator[i]);
 			}

@@ -328,8 +328,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (!p.isSetUnits())
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!p.isSetName())
-			p
-					.setName("For the additive Model: weight parameter for the activation function");
+			p.setName("Weight parameter for the activation function");
 		return p;
 	}
 
@@ -405,17 +404,21 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			keq.setName(StringTools.concat("equilibrium constant of reaction ",
 					reactionID).toString());
 		if (!keq.isSetUnits()) {
-			double x = 0;
+			int x = 0;
 			Reaction r = getParentSBMLObject();
 			for (SpeciesReference specRef : r.getListOfReactants())
 				x += specRef.getStoichiometry();
 			if (r.getReversible())
 				for (SpeciesReference specRef : r.getListOfProducts())
 					x -= specRef.getStoichiometry();
-			Model model = getModel();
-			keq.setUnits(unitSubstancePerSize(model
-					.getUnitDefinition("substance"), model
-					.getUnitDefinition("volume"), (int) x));
+			if (x == 0)
+				keq.setUnits(Unit.Kind.DIMENSIONLESS);
+			else {
+				Model model = getModel();
+				keq.setUnits(unitSubstancePerSize(model
+						.getUnitDefinition("substance"), model
+						.getUnitDefinition("volume"), x));
+			}
 		}
 		return keq;
 	}
@@ -957,6 +960,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * For the additive Model: weight parameter
 	 * 
+	 * @param name
+	 * @param rid
 	 * @return weight for the weight matrix
 	 */
 	Parameter parameterV(String name, String rId) {

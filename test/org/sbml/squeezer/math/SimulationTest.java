@@ -32,7 +32,6 @@ public class SimulationTest {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		String path;
 		//path = "C:/Dokumente und Einstellungen/radbarbeit11/Desktop/tst suite/sbml-test-cases-2009-09-05/cases/semantic/";
 		//path += "00204/00204-sbml-l2v4.xml";
 		SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
