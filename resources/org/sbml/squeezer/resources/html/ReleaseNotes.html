@@ -207,21 +207,25 @@
       </ul></p>
     <p>The following new generalized kinetic equations for metabolic reactions were also
       implemented in SBMLsqueezer, which are all defined by Liebermeister et al., 
-      submitted manuscript:<ul>
+      submitted manuscript 2010:<ul>
         <li>Common modular rate law (CM)</li>
         <li>Direct binding modular rate law (DM)</li>
         <li>Force-dependent modular rate law (FM)</li>
         <li>Power-law modular rate law (PM)</li>
-        <li>Simultaneous binding modular rate law (SM)</li>
-      </ul>Each one of these equations is only available in a reversible mode and the
-      user must choose one of the three possible versions that determine
-      the degree of thermodynamic correctnes. The <span 
-      style="font-family:Courier">weg</span> version is the most complicated form but
-      always thermodynamically correct. The <span style="font-family:Courier">hal</span>
-      version ensures thermodynamic correctness in most cases, whereas for the
+        <li>Simultaneous binding modular rate law (SM).</li>
+      </ul>
+      Each one of these equations is only available in a reversible mode and the
+      user must choose one of the three possible versions that determine the degree of
+      thermodynamic correctnes. The <span style="font-family:Courier">weg</span> 
+      version is the most complicated form but always thermodynamically correct. 
+      The <span style="font-family:Courier">hal</span> version ensures thermodynamic
+      correctness in most cases, whereas for the 
       <span style="font-family:Courier">cat</span> version thermodynamic properties
       cannot be guaranteed to be correct. The versions can be selected in the preferences
       dialog or provides as a command-line option.</p>
+    <p>Finally, the generalized form of Hill's equation as proposed by Cornish-Bowden
+      (2004, p. 314 in &#8220;Fundamentals of Enzyme Kinetics&#8221;) has been implemented
+      and is now also available for metabolic reactions.</p>
     <p>If the corresponding flag is set, boundary conditions are also set for species that
       represent empty sets, i.e., degraded species, sources, or sinks in a reaction.</p>
       
