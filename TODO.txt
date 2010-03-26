@@ -67,6 +67,8 @@ Modell 357, 358 und 359 haben die selben Probleme
 Modelle 411 bis 416 haben functions im event trigger oder bei der zuweisung 
 => NullPointerException bei evaluateToDouble
 
+Modell 870 java.lang.StackOverflowError bei uiMinus (Endlosschleife?)
+
 
 Allgemeine Probleme
 ===================
