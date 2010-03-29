@@ -30,11 +30,13 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * W&ouml;tzel, D., and Pfaff 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @since 1.3
  */
 public class NetGeneratorLinear extends AdditiveModelLinear implements
-		InterfaceGeneRegulatoryKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
 	 * @param parentReaction

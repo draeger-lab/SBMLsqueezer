@@ -28,6 +28,11 @@ Probleme mit UTF-8 in jsbml: libSBML-Parser wandeln alle Zeichen in
 UTF-8 um. Beim Synchronisieren müssen Sonderzeichen wieder zu den Zeichen-
 Codes übersetzt werden.
 
+Wenn existierende Kinetik ausgewählt wird, so darf der Schalter für Enzym-
+Kinetik nicht veränderbar sein.
+
+
+
 SBMLsimulator: Probleme bei der Simulation von Test-Suite-Modellen
 ==================================================================
 

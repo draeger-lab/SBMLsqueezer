@@ -31,7 +31,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.3
  */
 public class AdditiveModelNonLinear extends AdditiveModelLinear implements
-		InterfaceGeneRegulatoryKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
 	 * @param parentReaction
@@ -45,7 +46,10 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#activation(org.sbml.jsbml.ASTNode)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.kinetics.AdditiveModelLinear#activation(org.sbml.jsbml
+	 * .ASTNode)
 	 */
 	@Override
 	ASTNode activation(ASTNode g) {
