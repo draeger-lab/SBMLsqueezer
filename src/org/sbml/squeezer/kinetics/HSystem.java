@@ -44,7 +44,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.3
  */
 public class HSystem extends BasicKineticLaw implements
-		InterfaceGeneRegulatoryKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
 	 * @param parentReaction

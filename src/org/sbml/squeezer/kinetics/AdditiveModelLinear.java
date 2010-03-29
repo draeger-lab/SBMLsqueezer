@@ -40,7 +40,8 @@ import org.sbml.squeezer.ReactionType;
  * 
  */
 public class AdditiveModelLinear extends BasicKineticLaw implements
-		InterfaceGeneRegulatoryKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
 	 * @param parentReaction

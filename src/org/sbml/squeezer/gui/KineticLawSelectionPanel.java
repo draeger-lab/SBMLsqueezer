@@ -262,6 +262,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	/**
 	 * Check whether or not enzyme kinetics can be applied.
 	 * 
+	 * @param init
 	 * @throws RateLawNotApplicableException
 	 */
 	private void checkEnzymeKineticsPossible(boolean init)
@@ -285,7 +286,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		} else {
 			if (init)
 				treatAsEnzymeReaction.setSelected(isEnzymeKineticsSelected);
-			if (!ReactionType.representsEmptySet(reaction.getListOfReactants()))
+			if (!ReactionType.representsEmptySet(reaction.getListOfReactants())
+					&& !isExistingRateLawSelected)
 				treatAsEnzymeReaction.setEnabled(true);
 		}
 	}
