@@ -45,7 +45,8 @@ import org.sbml.squeezer.ReactionType;
  */
 public class HillHinzeEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
-		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+		InterfaceZeroReactants {
 
 	/**
 	 * 

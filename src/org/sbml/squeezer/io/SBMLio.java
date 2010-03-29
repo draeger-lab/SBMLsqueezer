@@ -289,12 +289,13 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 				listOfOrigModels.clear();
 			} else {
 				// search for the currently selected model.
-				for (Model m : listOfModels)
+				for (int i = listOfModels.size() - 1; i >= 0; i--) {
+					Model m = listOfModels.get(i);
 					if (m != null) {
 						boolean contains = false;
-						for (int i = 0; i < tabbedPane.getTabCount()
-								&& !contains; i++) {
-							String title = tabbedPane.getTitleAt(i);
+						for (int j = 0; j < tabbedPane.getTabCount()
+								&& !contains; j++) {
+							String title = tabbedPane.getTitleAt(j);
 							if (title.equals(m.getName())
 									|| title.equals(m.getId()))
 								contains = true;
@@ -302,6 +303,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 						if (!contains)
 							listOfModels.remove(m);
 					}
+				}
 				selectedModel = tabbedPane.getSelectedIndex();
 			}
 		}
@@ -319,6 +321,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeModel(org.sbml.jsbml.Model)
 	 */
 	public Object writeModel(Model model) throws SBMLException {

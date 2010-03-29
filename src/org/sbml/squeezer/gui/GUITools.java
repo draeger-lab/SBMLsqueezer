@@ -47,7 +47,7 @@ import org.sbml.squeezer.resources.Resource;
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
  *         andreas.draeger@uni-tuebingen.de</a>
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
- * @since 1.2.2
+ * @since 1.3
  * @date 2009-09-04
  */
 public class GUITools {

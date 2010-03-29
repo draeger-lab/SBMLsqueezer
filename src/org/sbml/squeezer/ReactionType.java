@@ -518,11 +518,17 @@ public class ReactionType {
 	 */
 	public String identifyPossibleKineticLaw() {
 		if (representsEmptySet(reaction.getListOfReactants())) {
-			if (reactionWithGenes || reactionWithRNAs)
+			if (reactionWithGenes || reactionWithRNAs) {
+				if (SBMLsqueezer.getKineticsZeroReactants().contains(
+						settings.get(CfgKeys.KINETICS_GENE_REGULATION)
+								.toString()))
+					return settings.get(CfgKeys.KINETICS_GENE_REGULATION)
+							.toString();
 				for (String kin : SBMLsqueezer
 						.getKineticsGeneRegulatoryNetworks())
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin))
 						return kin;
+			}
 			for (String kin : SBMLsqueezer.getKineticsZeroReactants())
 				return kin;
 		}

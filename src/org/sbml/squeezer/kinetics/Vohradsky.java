@@ -28,15 +28,18 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * papers &ldquo;Neural network model of gene expression.&rdquo; of
  * Vohradsk&yacute;, J. 2001 and &ldquo;Nonlinear differential equation model
  * for quantification of transcriptional regulation applied to microarray data
- * of <i>Saccharomyces cerevisiae</i>.&rdquo; of Vu, T. T. and Vohradsk&yacute;, J.
- * 2007
+ * of <i>Saccharomyces cerevisiae</i>.&rdquo; of Vu, T. T. and Vohradsk&yacute;,
+ * J. 2007
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ *         Dr&auml;ger</a>
  * @since 1.3
  */
 public class Vohradsky extends AdditiveModelNonLinear implements
-		InterfaceGeneRegulatoryKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+		InterfaceZeroReactants {
 
 	/**
 	 * @param parentReaction

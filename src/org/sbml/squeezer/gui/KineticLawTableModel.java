@@ -66,7 +66,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 		int reactionNum, speciesNum;
 		double numReac;
 
-		columnNames = new String[] { "Reaction Identifier", "Kinetic Law",
+		columnNames = new String[] { "Reaction", "Kinetic Law",
 				"SBO", "#Reactants", "Reactants", "Products", "Parameters",
 				"Formula" };
 		data = new Object[klg.getNumCreatedKinetics()][this.columnNames.length];

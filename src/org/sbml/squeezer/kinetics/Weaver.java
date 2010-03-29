@@ -33,7 +33,9 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @since 1.3
  */
 public class Weaver extends AdditiveModelNonLinear implements
-		InterfaceGeneRegulatoryKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+		InterfaceZeroReactants {
 
 	/**
 	 * @param parentReaction

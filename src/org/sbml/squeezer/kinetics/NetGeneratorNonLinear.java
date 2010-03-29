@@ -38,7 +38,9 @@ import org.sbml.squeezer.ReactionType;
  * @since 1.3
  */
 public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
-		InterfaceGeneRegulatoryKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+		InterfaceZeroReactants {
 
 	/**
 	 * @param parentReaction
@@ -61,12 +63,13 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		ASTNode m = super.createKineticEquation(modE, modActi, modInhib, modCat);
+		ASTNode m = super
+				.createKineticEquation(modE, modActi, modInhib, modCat);
 		Reaction r = getParentSBMLObject();
 		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
 			Species s = r.getProduct(0).getSpeciesInstance();
-			return ASTNode.sum(m, ASTNode.times(new ASTNode(parameterW(s.getId(),
-					r.getId()), this), speciesTerm(s)));
+			return ASTNode.sum(m, ASTNode.times(new ASTNode(parameterW(s
+					.getId(), r.getId()), this), speciesTerm(s)));
 		}
 		return m;
 	}

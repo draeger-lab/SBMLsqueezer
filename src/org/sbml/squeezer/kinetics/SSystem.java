@@ -49,12 +49,14 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * </ul>
  * 
  * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @quthor <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
+ * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
  *         Dr&auml;ger</a>
  * @since 1.3
  */
 public class SSystem extends BasicKineticLaw implements
-		InterfaceGeneRegulatoryKinetics {
+		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
+		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics,
+		InterfaceZeroReactants {
 
 	/**
 	 * @param parentReaction

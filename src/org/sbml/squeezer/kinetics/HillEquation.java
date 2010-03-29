@@ -28,7 +28,12 @@ import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * @author draeger
+ * This is the generalized version of Hill's equation as suggested by
+ * Cornish-Bowden (2004, p. 314, &ldquo;Fundamentals of Enzyme Kinetics&rdquo;).
+ * 
+ * @author Andreas Dr&auml;ger
+ * @date 2010-03-25
+ * @since 1.3
  * 
  */
 public class HillEquation extends BasicKineticLaw implements
