@@ -19,13 +19,18 @@
 package org.sbml.squeezer.math;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.tree.TreeNode;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
+import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Event;
@@ -398,22 +403,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	public Double compile(NamedSBase nsb) {
 		Value speciesVal;
 		if (nsb instanceof Species) {
-			Species s = (Species) nsb;			
+			Species s = (Species) nsb;
 			speciesVal = valuesHash.get(nsb.getId());
 			// int dim = s.getCompartmentInstance().getSpatialDimensions();
 			if (processCompartment(speciesVal) == 0d)
 				return Y[speciesVal.getIndex()];
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
 				return Y[speciesVal.getIndex()]
-							/ processCompartment(speciesVal);				
+						/ processCompartment(speciesVal);
 			// return Y[speciesVal.getIndex()] /
 			// Functions.root(Y[compVal.getIndex()], 2);
 			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())
 				return Y[speciesVal.getIndex()]
-				         * processCompartment(speciesVal);
-		
-			
-			
+						* processCompartment(speciesVal);
+
 			return Y[speciesVal.getIndex()];
 			// return Y[speciesVal.getIndex()] /
 			// Functions.root(Y[compVal.getIndex()],2);
@@ -888,7 +891,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		 * Initial assignments
 		 */
 		processInitialAssignments();
-		
+
 		// save the initial values of this system
 		initialValues = new double[Y.length];
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
@@ -1056,12 +1059,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		// }
 		return algebraicRules;
 	}
-	
+
 	/**
 	 * Processes the initial assignments of the model
 	 */
-	private void processInitialAssignments(){
-		
+	private void processInitialAssignments() {
+
 		for (int i = 0; i < model.getListOfInitialAssignments().size(); i++) {
 			InitialAssignment iA = model.getInitialAssignment(i);
 			Value val = null;
@@ -1082,9 +1085,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 			this.Y[val.getIndex()] = evaluateToDouble(iA.getMath());
 		}
-			
-		
-	
+
 	}
 
 	/*
@@ -1100,7 +1101,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			Rule rule = model.getRule(i);
 			if (rule.isAssignment()) {
 				AssignmentRule as = (AssignmentRule) rule;
-				val = valuesHash.get(as.getVariable()) ;
+				val = valuesHash.get(as.getVariable());
 				assignmentRules.add(new DESAssignment(t, val.getIndex(),
 						evaluateToDouble(as.getMath())));
 
@@ -1172,10 +1173,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 								if (compartmentValue == 0d)
 									newVal = evaluateToDouble(assignment_math);
 								else
-									//newVal = evaluateToDouble(assignment_math);
+									// newVal =
+									// evaluateToDouble(assignment_math);
 									newVal = evaluateToDouble(assignment_math)
-									* compartmentValue;
-							
+											* compartmentValue;
 
 								this.events.add(new DESAssignment(currentTime
 										+ evaluateToDouble(ev.getDelay()
@@ -1191,7 +1192,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 							}
 
 						} else {
-							
+
 							newVal = evaluateToDouble(assignment_math);
 							// newVal = evaluateToDouble(assignment_math) *
 							// compartmentValue;
@@ -1213,7 +1214,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		while (this.events.size() > i) {
 			desa = this.events.get(i);
-			
+
 			if (desa.getProcessTime() <= currentTime) {
 				// uses value from trigger time
 				if (desa.getValue() != null) {
@@ -1222,14 +1223,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				}
 				// don't uses value from trigger time
 				else {
-					if (valuesHash.get(this.eventSpecies.get(desa)) instanceof SpeciesValue){
-						
-						//Species s = model.getSpecies(this.eventSpecies.get(desa));
-						desa.setValue(evaluateToDouble(this.eventMath.get(desa)));				
-					}
-					else
-						desa.setValue(evaluateToDouble(this.eventMath.get(desa)));						
-				
+					if (valuesHash.get(this.eventSpecies.get(desa)) instanceof SpeciesValue) {
+
+						// Species s =
+						// model.getSpecies(this.eventSpecies.get(desa));
+						desa
+								.setValue(evaluateToDouble(this.eventMath
+										.get(desa)));
+					} else
+						desa
+								.setValue(evaluateToDouble(this.eventMath
+										.get(desa)));
 
 					events.add(desa);
 					this.events.remove(desa);
@@ -1244,8 +1248,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		return events;
 
 	}
-	
 
+	/**
+	 * 
+	 * @param changeRate
+	 */
 	private void processRules(double[] changeRate) {
 		for (int i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
@@ -1255,6 +1262,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			} else if (currentTime == 0d && rule.isAssignment()) {
 				AssignmentRule as = (AssignmentRule) rule;
 				evaluateAssignmentRule(as, changeRate);
+			} else if (currentTime == 0d && rule.isAlgebraic()) {
+				AlgebraicRule ar = (AlgebraicRule) rule;
+				evaluateAlgebraicRule(ar);
 			}
 
 			else if (rule.isScalar()) {
@@ -1263,6 +1273,21 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 
 	}
+
+	/**
+	 * Evaluates the algebraic rules of a model to assignment rules
+	 * 
+	 * @param ar
+	 * @param changeRate
+	 */
+	private void evaluateAlgebraicRule(AlgebraicRule ar) {
+		
+		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(model);
+		arc.getAssignmentRule(ar);
+
+	}
+
+	
 
 	/**
 	 * This method computes the multiplication of the stoichiometric matrix of
@@ -1630,7 +1655,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#uiMinus(org.sbml.jsbml.ASTNode)
 	 */
 	public Double uiMinus(ASTNode node) {
-		return Double.valueOf(-((Double) node.compile(this)).doubleValue());
+		return Double.valueOf(-((Double) node.getLeftChild().compile(this))
+				.doubleValue());
+		// return Double.valueOf(-((Double) node.compile(this)).doubleValue());
 	}
 
 	/*
