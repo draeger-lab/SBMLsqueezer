@@ -122,9 +122,12 @@ public class HillEquation extends BasicKineticLaw implements
 						new ASTNode(hillCoeff, this));
 				ASTNode modPow = ASTNode.pow(speciesTerm(modifier),
 						new ASTNode(hillCoeff, this));
+				Parameter beta = parameterBeta(r.getId());
+				if (SBO.isInhibitor(modifier.getSBOTerm()))
+					beta.setValue(beta.getValue() * (-1));
 				denominator = ASTNode.frac(kMmPow.clone().plus(modPow.clone()),
-						kMmPow.plus(ASTNode.times(new ASTNode(parameterBeta(r
-								.getId()), this), modPow)));
+						kMmPow.plus(ASTNode.times(new ASTNode(beta, this),
+								modPow)));
 				if (!r.getReversible())
 					denominator.multiplyWith(ASTNode.pow(new ASTNode(
 							kSreactant, this), new ASTNode(hillCoeff, this)));

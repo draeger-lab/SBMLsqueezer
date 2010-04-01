@@ -619,7 +619,7 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(SimpleSpeciesReference ssr) {
 		if (ssr.isSetSpecies()) {
-			lh.add(new JLabel("Species"), 3, row, 1, 1, 1, 1);
+			lh.add(new JLabel("Species"), 1, row, 1, 1, 1, 1);
 			lh.add(new JLabel(ssr.getSpeciesInstance().toString()), 3, row, 1,
 					1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
