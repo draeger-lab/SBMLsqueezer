@@ -21,7 +21,6 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
 
 import au.com.bytecode.opencsv.CSVReader;
-
 import eva2.gui.Plot;
 import eva2.tools.math.des.RKEventSolver;
 
@@ -33,11 +32,7 @@ import eva2.tools.math.des.RKEventSolver;
  */
 public class SimulationTestAutomatic {
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
+	static {
 		try {
 			System.loadLibrary("sbmlj");
 			// Extra check to be sure we have access to libSBML:
@@ -47,58 +42,56 @@ public class SimulationTestAutomatic {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
 
-		String sbmlfile, folder, resultfolder, csvfile, configfile, line = "";
-		int modelnr, start = 0;
+	/**
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException {
+		String sbmlfile, csvfile, configfile;
+		int start = 0;
 		double duration = 0d, steps = 0d;
-		BufferedReader reader;
-		BufferedWriter writer;
-		
-		folder = args[0];
-		resultfolder = args[1];
-		
-		for (modelnr = 30; modelnr <= 40; modelnr++) {
+
+		for (int modelnr = 1; modelnr <= 2; modelnr++) {
 			System.out.println("model " + modelnr);
-			
-			if (modelnr < 100) {
-				sbmlfile = folder + "000" + modelnr + "/000" + modelnr
-						+ "-sbml-l2v4.xml";
-				csvfile = folder + "000" + modelnr + "/000" + modelnr
-						+ "-results.csv";
-				configfile = folder + "000" + modelnr + "/000" + modelnr
-						+ "-settings.txt";
-			} else {
-				sbmlfile = folder + "00" + modelnr + "/00" + modelnr
-						+ "-sbml-l2v4.xml";
-				csvfile = folder + "00" + modelnr + "/00" + modelnr
-						+ "-results.csv";
-				configfile = folder + "00" + modelnr + "/00" + modelnr
-						+ "-settings.txt";
-			}
+
+			StringBuilder modelFile = new StringBuilder();
+			modelFile.append(modelnr);
+			while (modelFile.length() < 5)
+				modelFile.insert(0, '0');
+			String path = modelFile.toString();
+			modelFile.append('/');
+			modelFile.append(path);
+			modelFile.insert(0, args[0]);
+			path = modelFile.toString();
+			sbmlfile = path + "-sbml-l2v4.xml";
+			csvfile = path + "-results.csv";
+			configfile = path + "-settings.txt";
 
 			try {
-				reader = new BufferedReader(new FileReader(configfile));
-				line = reader.readLine();
+				BufferedReader reader = new BufferedReader(new FileReader(
+						configfile));
+				String line = reader.readLine();
 				start = Integer.valueOf(line
-						.substring(line.lastIndexOf(" ") + 1));
+						.substring(line.lastIndexOf(' ') + 1));
 				line = reader.readLine();
 				duration = Double.valueOf(line
-						.substring(line.lastIndexOf(" ") + 1));
+						.substring(line.lastIndexOf(' ') + 1));
 				line = reader.readLine();
 				steps = Double.valueOf(line
-						.substring(line.lastIndexOf(" ") + 1));
+						.substring(line.lastIndexOf(' ') + 1));
 				reader.close();
 			} catch (FileNotFoundException e) {
-
 				e.printStackTrace();
 			}
-			
+
 			SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 
 			Model model = sbmlIo.readModel(sbmlfile);
-			//RKSolver rk = new RKSolver();
+			// RKSolver rk = new RKSolver();
 			RKEventSolver rk = new RKEventSolver();
-			
+
 			SBMLinterpreter interpreter = new SBMLinterpreter(model);
 			double time = 0;
 
@@ -109,48 +102,42 @@ public class SimulationTestAutomatic {
 			double[] timepoints = new double[input.size()];
 			for (int i = 0; i < timepoints.length; i++) {
 				timepoints[i] = Double.valueOf(input.get(i)[0]);
-
 			}
 			csvreader.close();
 
 			// solve By StepSize
 			// rk.setStepSize(duration / steps);
-			// double solution[][] = rk.solveByStepSize(interpreter, interpreter
+			// double solution[][] = rk.solveByStepSize(interpreter,
+			// interpreter
 			// .getInitialValues(), time, duration);
 
 			// solve At StepSize
 
 			double solution[][] = rk.solveAtTimePoints(interpreter, interpreter
 					.getInitialValues(), timepoints);
-
-			csvreader = new CSVReader(new FileReader(csvfile), ',', '\'', 1);
-			input = csvreader.readAll();
-			csvreader.close();
 			double[][] data = new double[input.get(0).length - 1][input.size()];
 			double[][] solutiontrans = new double[input.get(0).length - 1][input
 					.size()];
 			int from = model.getNumCompartments();
-			//from = 0;
+			// from = 0;
 			int to = from + model.getNumSpecies();
-			
+
 			for (int i = 1; i < data.length + 1; i++) {
-
 				for (int j = 0; j < input.size(); j++) {
-
 					data[i - 1][j] = Double.valueOf(input.get(j)[i]);
 					solutiontrans[i - 1][j] = solution[j][i - 1 + from];
 				}
 			}
 
 			Distance distance = new RSE();
-			
-			
-			writer = new BufferedWriter(
-					new FileWriter(
-							resultfolder+modelnr+"-deviation.txt"));
+
+			BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]
+					+ modelnr + "-deviation.txt"));
 			writer.write("relative distance for model-" + modelnr);
 			writer.newLine();
-			writer.write(String.valueOf(distance.distance(data, solutiontrans)));
+			writer
+					.write(String.valueOf(distance
+							.distance(data, solutiontrans)));
 			writer.close();
 
 			if (rk.isUnstable())
@@ -170,16 +157,15 @@ public class SimulationTestAutomatic {
 					time += rk.getStepSize();
 
 				}
-				//save graph as jpg
-				 BufferedImage img = new
-				 BufferedImage(plot.getFunctionArea().getWidth(),
-				 plot.getFunctionArea().getHeight(),
-				 BufferedImage.TYPE_INT_RGB);
-				 plot.getFunctionArea().paint(img.createGraphics());
-				 ImageIO.write(img, "jpg", new
-				 File(resultfolder+modelnr+"-graph.jpg"));
-				 
-				 //plot.dispose();
+				// save graph as jpg
+				BufferedImage img = new BufferedImage(plot.getFunctionArea()
+						.getWidth(), plot.getFunctionArea().getHeight(),
+						BufferedImage.TYPE_INT_RGB);
+				plot.getFunctionArea().paint(img.createGraphics());
+				ImageIO.write(img, "jpg", new File(args[1] + modelnr
+						+ "-graph.jpg"));
+
+				// plot.dispose();
 			}
 		}
 	}
