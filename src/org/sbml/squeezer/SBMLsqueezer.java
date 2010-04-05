@@ -695,6 +695,16 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		// TODO Auto-generated method stub
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
+	 */
+	public void ioProgressOn(Object currObject) {
+		if (currObject != null)
+			msg.log(currObject.toString());
+	}
+
 	/**
 	 * 
 	 * @param sbmlSource
@@ -853,14 +863,5 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				msg.errf("no valid TeX file: %s\n", latexFile);
 		} else
 			msg.errln("no TeX file was provided");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
-	 */
-	public void ioProgressOn(Object currObject) {
-		msg.log(currObject.toString());
 	}
 }
