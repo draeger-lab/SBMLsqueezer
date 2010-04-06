@@ -116,6 +116,10 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon ICON_SAVE = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_DIAGRAM_TINY = null;
 
 	/**
 	 * Generated serial version id.
@@ -125,6 +129,10 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon ICON_OPEN = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_TRASH_TINY = null;
 
 	static {
 		try {
@@ -174,6 +182,10 @@ public class GUITools {
 			if (ICON_OPEN == null)
 				ICON_OPEN = new ImageIcon(Resource.class
 						.getResource("img/folder_16.png"));
+			ICON_DIAGRAM_TINY = new ImageIcon(Resource.class
+					.getResource("img/diagram_16.png"));
+			ICON_TRASH_TINY = new ImageIcon(Resource.class
+					.getResource("img/trash_16.png"));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, toHTML(e.getMessage(), 40), e
 					.getClass().getName(), JOptionPane.ERROR_MESSAGE);
@@ -242,7 +254,7 @@ public class GUITools {
 		chooser.setAcceptAllFileFilterUsed(allFilesAcceptable);
 		chooser.setMultiSelectionEnabled(multiSelectionAllowed);
 		chooser.setFileSelectionMode(mode);
-		int i = filter.length -1;
+		int i = filter.length - 1;
 		while (0 <= i)
 			chooser.addChoosableFileFilter(filter[i--]);
 		if (i >= 0)

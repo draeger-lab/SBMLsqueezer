@@ -19,13 +19,11 @@
 package org.sbml.squeezer;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Properties;
@@ -119,6 +117,17 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	private static Properties settings;
 
 	/**
+	 * The number of the current SBMLsqueezer version.
+	 */
+	private static final String versionNumber = "1.4";
+
+	/**
+	 * Comment to be written into SBMLsqueezer's configuration file.
+	 */
+	private static final String configurationComment = "SBMLsqueezer "
+			+ versionNumber + " configuration. Do not change manually.";
+
+	/**
 	 * The location of the user's configuration file.
 	 */
 	private final static String userConfigFile = System
@@ -126,12 +135,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			+ File.separatorChar
 			+ ".SBMLsqueezer"
 			+ File.separatorChar
-			+ "SBMLsqueezer.cfg";
-
-	/**
-	 * The number of the current SBMLsqueezer version.
-	 */
-	private static final String versionNumber = "1.4";
+			+ "SBMLsqueezer" + versionNumber + ".cfg";
 
 	/**
 	 * Load all available kinetic equations and the user's settings from the
@@ -218,14 +222,14 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		for (String string : args) {
 			while (string.startsWith("-"))
 				string = string.substring(1);
+			Object value = Boolean.TRUE;
 			if (string.contains("=")) {
 				String keyVal[] = string.split("=");
-				p.put(CfgKeys
-						.valueOf(keyVal[0].toUpperCase().replace('-', '_')),
-						keyVal[1]);
-			} else
-				p.put(CfgKeys.valueOf(string.toUpperCase().replace('-', '_')),
-						Boolean.TRUE.toString());
+				string = keyVal[0];
+				value = keyVal[1];
+			}
+			string = string.toUpperCase().replace('-', '_');
+			p.put(CfgKeys.valueOf(string), value);
 		}
 		return correctProperties(p);
 	}
@@ -480,24 +484,20 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	private static Properties initProperties() {
 		Properties properties;
 		try {
-			StringBuilder path = new StringBuilder(System
-					.getProperty("user.home"));
+			StringBuilder path = new StringBuilder();
+			path.append(System.getProperty("user.home"));
 			path.append(File.separatorChar);
 			path.append(".SBMLsqueezer");
 			File f = new File(path.toString());
-			if (!f.exists()) {
+			if (!f.exists())
 				f.mkdir();
-				path.append(File.separatorChar);
-				path.append("SBMLsqueezer.cfg");
-				f = new File(path.toString());
-				if (!f.exists())
-					f.createNewFile();
-			}
 			f = new File(userConfigFile);
+			if (!f.exists())
+				f.createNewFile();
 			if (f.exists() && f.length() == 0) {
 				FileOutputStream os = new FileOutputStream(f);
 				Resource.readProperties(configFile).store(os,
-						"SBMLsqueezer configuration. Do not change manually.");
+						configurationComment);
 				os.close();
 			}
 			properties = correctProperties(Resource
@@ -563,34 +563,19 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	}
 
 	/**
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 * 
 	 */
-	public static void saveProperties(Properties settings) {
-		if (!initProperties().equals(settings))
-			try {
-				RandomAccessFile file = new RandomAccessFile(userConfigFile,
-						"rw");
-				file.setLength(0);
-				file.close();
-				BufferedWriter bw = new BufferedWriter(new FileWriter(
-						userConfigFile));
-				for (Object key : settings.keySet()) {
-					bw.append(key.toString());
-					bw.append('=');
-					String value = settings.get(key).toString();
-					char c;
-					for (int i = 0; i < value.length(); i++) {
-						c = value.charAt(i);
-						if (c == '\\')
-							bw.append('\\');
-						bw.append(c);
-					}
-					bw.newLine();
-				}
-				bw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	public static void saveProperties(Properties settings)
+			throws FileNotFoundException, IOException {
+		if (!initProperties().equals(settings)) {
+			Properties toSave = new Properties();
+			for (Object key : settings.keySet())
+				toSave.put(key.toString(), settings.get(key).toString());
+			toSave.store(new FileOutputStream(userConfigFile),
+					configurationComment);
+		}
 	}
 
 	/**
