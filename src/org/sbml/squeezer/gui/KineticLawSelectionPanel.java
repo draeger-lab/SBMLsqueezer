@@ -269,7 +269,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			throws RateLawNotApplicableException {
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
 		boolean allEnzyme = ((Boolean) this.klg.getSettings().get(
-				CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED)).booleanValue();
+				CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED.toString())).booleanValue();
 		boolean nonEnzyme = !reactionType.isEnzymeReaction()
 				&& (reactionType.isNonEnzymeReaction()
 						|| reactionType.isReactionWithGenes()
