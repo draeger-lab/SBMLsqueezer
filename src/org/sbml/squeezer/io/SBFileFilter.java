@@ -29,45 +29,63 @@ import javax.swing.filechooser.FileFilter;
  * @since 1.0
  * @date 2007-08-03
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  */
 public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 
 	/**
-	 * True if this filter accepts plain ASCII files
+	 * 
+	 * @author Andreas Dr&auml;ger
+	 * @since 1.4
+	 *
 	 */
-	public static final short TEXT_FILES = 0;
+	public static enum FileType {
+		/**
+		 * To be selected if CSV files (comma separated files) can be chosen.
+		 */
+		CSV_FILES,
+		/**
+		 * To be selected if SBML files (XML files) can be chosen.
+		 */
+		SBML_FILES,
+		/**
+		 * True if this filter accepts (La)TeX files.
+		 */
+		TeX_FILES,
+		/**
+		 * True if this filter accepts plain ASCII files
+		 */
+		TEXT_FILES
+	}
 
 	/**
-	 * True if this filter accepts (La)TeX files.
+	 * A filter for CSV files
 	 */
-	public static final short TeX_FILES = 1;
-
-	/**
-	 * To be selected if SBML files (XML files) can be chosen.
-	 */
-	public static final short SBML_FILES = 2;
-
-	/**
-	 * A filter for Text files.
-	 */
-	public static final SBFileFilter TEXT_FILE_FILTER = new SBFileFilter(
-			TEXT_FILES);
-
-	/**
-	 * A filter for TeX files
-	 */
-	public static final SBFileFilter TeX_FILE_FILTER = new SBFileFilter(
-			TeX_FILES);
+	public static SBFileFilter CSV_FILE_FILTER = new SBFileFilter(
+			FileType.CSV_FILES);
 
 	/**
 	 * A filter for SBML files
 	 */
 	public static final SBFileFilter SBML_FILE_FILTER = new SBFileFilter(
-			SBML_FILES);
+			FileType.SBML_FILES);
 
-	private short type;
+	/**
+	 * A filter for TeX files
+	 */
+	public static final SBFileFilter TeX_FILE_FILTER = new SBFileFilter(
+			FileType.TeX_FILES);
+
+	/**
+	 * A filter for Text files.
+	 */
+	public static final SBFileFilter TEXT_FILE_FILTER = new SBFileFilter(
+			FileType.TEXT_FILES);
+
+	/**
+	 * Allowable file type.
+	 */
+	private FileType type;
 
 	/**
 	 * Constructs a file filter that accepts or not accepts the following files
@@ -76,7 +94,7 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 * @param type
 	 *            One of the short numbers defined in this class.
 	 */
-	public SBFileFilter(short type) {
+	public SBFileFilter(FileType type) {
 		this.type = type;
 	}
 
@@ -87,11 +105,20 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 */
 	// @Override
 	public boolean accept(File f) {
-		if ((f.isDirectory() || (type == TEXT_FILES && isTextFile(f)))
-				|| (type == TeX_FILES && isTeXFile(f))
-				|| (type == SBML_FILES && isSBMLFile(f)))
+		if ((f.isDirectory() || (type == FileType.TEXT_FILES && isTextFile(f)))
+				|| (type == FileType.TeX_FILES && isTeXFile(f))
+				|| (type == FileType.SBML_FILES && isSBMLFile(f))
+				|| (type == FileType.CSV_FILES && isCSVFile(f)))
 			return true;
 		return false;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean acceptsCSVFiles() {
+		return type == FileType.CSV_FILES;
 	}
 
 	/**
@@ -100,15 +127,23 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 * @return
 	 */
 	public boolean acceptsSBMLFiles() {
-		return type == SBML_FILES;
+		return type == FileType.SBML_FILES;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean acceptsTeXFiles() {
-		return type == TeX_FILES;
+		return type == FileType.TeX_FILES;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean acceptsTextFiles() {
-		return type == TEXT_FILES;
+		return type == FileType.TEXT_FILES;
 	}
 
 	/*
@@ -125,9 +160,20 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 			return "TeX files (*.tex)";
 		case SBML_FILES:
 			return "SBML files (*.sbml, *.xml)";
+		case CSV_FILES:
+			return "Comma separated files (*.csv)";
 		default:
 			return "";
 		}
+	}
+
+	/**
+	 * 
+	 * @param f
+	 * @return
+	 */
+	public boolean isCSVFile(File f) {
+		return f.getName().toLowerCase().endsWith(".csv");
 	}
 
 	/**

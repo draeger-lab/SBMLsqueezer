@@ -70,9 +70,10 @@ public class TextExport implements DisplaySBML {
 	 */
 	public TextExport(Model model, File file, Properties settings)
 			throws IOException {
-		if ((new SBFileFilter(SBFileFilter.TEXT_FILES)).accept(file)) {
+		if ((new SBFileFilter(SBFileFilter.FileType.TEXT_FILES)).accept(file)) {
 			writeTextFile(model, file);
-		} else if ((new SBFileFilter(SBFileFilter.TeX_FILES)).accept(file)) {
+		} else if ((new SBFileFilter(SBFileFilter.FileType.TeX_FILES))
+				.accept(file)) {
 			LaTeXExport export = new LaTeXExport(settings);
 			export.toLaTeX(model, file);
 		} else
@@ -105,8 +106,7 @@ public class TextExport implements DisplaySBML {
 
 	}
 
-	public void format(Model model, BufferedWriter buffer)
-			throws IOException {
+	public void format(Model model, BufferedWriter buffer) throws IOException {
 		// TODO Auto-generated method stub
 
 	}

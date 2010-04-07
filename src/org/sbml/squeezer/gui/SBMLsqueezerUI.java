@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -518,20 +517,20 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(editMenu.getText().charAt(0));
 
-		editMenu.add(createMenuItem("Squeeze", KeyStroke.getKeyStroke('Q',
-				InputEvent.CTRL_DOWN_MASK), Command.SQUEEZE, this,
+		editMenu.add(GUITools.createMenuItem("Squeeze", KeyStroke.getKeyStroke(
+				'Q', InputEvent.CTRL_DOWN_MASK), Command.SQUEEZE, this,
 				GUITools.ICON_LEMON_TINY));
-		editMenu.add(createMenuItem("Export to LaTeX", KeyStroke.getKeyStroke(
-				'E', InputEvent.CTRL_DOWN_MASK), Command.TO_LATEX, this,
-				GUITools.ICON_LATEX_TINY));
-		editMenu.add(createMenuItem("Analyze Stability",
+		editMenu.add(GUITools.createMenuItem("Export to LaTeX", KeyStroke
+				.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK),
+				Command.TO_LATEX, this, GUITools.ICON_LATEX_TINY));
+		editMenu.add(GUITools.createMenuItem("Analyze Stability",
 				Command.CHECK_STABILITY, this, GUITools.ICON_STABILITY_SMALL));
-		editMenu.add(createMenuItem("Structural Kinetic Modelling",
+		editMenu.add(GUITools.createMenuItem("Structural Kinetic Modelling",
 				Command.STRUCTURAL_KINETIC_MODELLING, this));
-		editMenu.add(createMenuItem("Simulation", Command.SIMULATE, 'S', this,
-				GUITools.ICON_DIAGRAM_TINY));
-		editMenu.add(createMenuItem("Preferences", Command.SET_PREFERENCES,
-				'P', this, GUITools.ICON_TICK_TINY));
+		editMenu.add(GUITools.createMenuItem("Simulation", Command.SIMULATE,
+				'S', this, GUITools.ICON_DIAGRAM_TINY));
+		editMenu.add(GUITools.createMenuItem("Preferences",
+				Command.SET_PREFERENCES, 'P', this, GUITools.ICON_TICK_TINY));
 
 		/*
 		 * Help menu
@@ -558,92 +557,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			mBar.add(helpMenu);
 		}
 		return mBar;
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param com
-	 * @param listener
-	 * @return
-	 */
-	private JMenuItem createMenuItem(String text, Command com,
-			ActionListener listener) {
-		return createMenuItem(text, null, com, listener, null);
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param com
-	 * @param listener
-	 * @param icon
-	 * @return
-	 */
-	private JMenuItem createMenuItem(String text, Command com,
-			ActionListener listener, Icon icon) {
-		return createMenuItem(text, null, com, listener, icon);
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param com
-	 * @param mnemonic
-	 * @param listener
-	 * @param icon
-	 * @return
-	 */
-	private JMenuItem createMenuItem(String text, Command com, char mnemonic,
-			ActionListener listener, Icon icon) {
-		return createMenuItem(text, null, com, mnemonic, listener, icon);
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param ks
-	 * @param com
-	 * @param listener
-	 * @param icon
-	 * @return
-	 */
-	private JMenuItem createMenuItem(String text, KeyStroke ks, Command com,
-			ActionListener listener, Icon icon) {
-		return createMenuItem(text, ks, com, null, listener, icon);
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param ks
-	 * @param com
-	 * @param mnemonic
-	 * @param listener
-	 * @param icon
-	 * @return
-	 */
-	private JMenuItem createMenuItem(String text, KeyStroke ks, Command com,
-			Character mnemonic, ActionListener listener, Icon icon) {
-		JMenuItem item = new JMenuItem();
-		if (text != null)
-			item.setText(text);
-		if (ks != null)
-			item.setAccelerator(ks);
-		if (listener != null)
-			item.addActionListener(listener);
-		if (mnemonic != null)
-			item.setMnemonic(mnemonic.charValue());
-		if (com != null)
-			item.setActionCommand(com.toString());
-		if (icon != null)
-			item.setIcon(icon);
-		return item;
 	}
 
 	/**
@@ -678,24 +591,26 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		toolbar.addSeparator();
 		if (GUITools.ICON_LEMON_TINY != null)
 			toolbar
-					.add(createIconButton(GUITools.ICON_LEMON_TINY, this,
-							Command.SQUEEZE,
-							"Generate kinetic equations for all reactions in this model in one step."));
+					.add(GUITools
+							.createIconButton(GUITools.ICON_LEMON_TINY, this,
+									Command.SQUEEZE,
+									"Generate kinetic equations for all reactions in this model in one step."));
 
 		if (GUITools.ICON_LATEX_TINY != null)
-			toolbar.add(createIconButton(GUITools.ICON_LATEX_TINY, this,
-					Command.TO_LATEX, "Export this model to a LaTeX report."));
+			toolbar.add(GUITools.createIconButton(GUITools.ICON_LATEX_TINY,
+					this, Command.TO_LATEX,
+					"Export this model to a LaTeX report."));
 
 		if (GUITools.ICON_STABILITY_SMALL != null)
-			toolbar.add(createIconButton(GUITools.ICON_STABILITY_SMALL, this,
+			toolbar.add(GUITools.createIconButton(
+					GUITools.ICON_STABILITY_SMALL, this,
 					Command.CHECK_STABILITY,
 					"Analyze the stability properties of the selected model."));
 
 		if (GUITools.ICON_DIAGRAM_TINY != null)
-			toolbar
-					.add(createIconButton(GUITools.ICON_DIAGRAM_TINY, this,
-							Command.SIMULATE,
-							"Dynamically simulate the current model."));
+			toolbar.add(GUITools.createIconButton(GUITools.ICON_DIAGRAM_TINY,
+					this, Command.SIMULATE,
+					"Dynamically simulate the current model."));
 		toolbar.addSeparator();
 		JButton helpButton = new JButton(GUITools.ICON_HELP_TINY);
 		helpButton.addActionListener(this);
@@ -703,25 +618,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		helpButton.setToolTipText(GUITools.toHTML("Open the online help.", 40));
 		toolbar.add(helpButton);
 		return toolbar;
-	}
-
-	/**
-	 * Creates a JButton with the given properties. The tool tip becomes an HTML
-	 * formatted string with a line break after 40 symbols.
-	 * 
-	 * @param icon
-	 * @param listener
-	 * @param com
-	 * @param toolTip
-	 * @return
-	 */
-	private JButton createIconButton(Icon icon, ActionListener listener,
-			Command com, String toolTip) {
-		JButton button = new JButton(icon);
-		button.addActionListener(this);
-		button.setActionCommand(com.toString());
-		button.setToolTipText(GUITools.toHTML(toolTip, 40));
-		return button;
 	}
 
 	/**

@@ -159,22 +159,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		kineticsModulated = new HashSet<String>();
 		kineticsIntStoichiometry = new HashSet<String>();
 		Class<?> classes[] = Reflect.getAllClassesInPackage(KINETICS_PACKAGE,
-				false, true, BasicKineticLaw.class);
-		if (classes == null || classes.length == 0) {
-			HashSet<Class<?>> set = new HashSet<Class<?>>();
-			String jarPath = "plugin" + File.separatorChar;
-			boolean tryDir = true;
-			if (tryDir) {
-				File f = new File(jarPath);
-				if (f.isDirectory()) {
-					String[] pathElements = f.list();
-					for (String entry : pathElements)
-						Reflect.getClassesFromJarFltr(set, jarPath + entry,
-								KINETICS_PACKAGE, true, BasicKineticLaw.class);
-				}
-			}
-			classes = Reflect.hashSetToClassArray(set, true);
-		}
+				false, true, BasicKineticLaw.class, "plugin" + File.separatorChar);
 		for (Class<?> c : classes) {
 			if (!Modifier.isAbstract(c.getModifiers())) {
 				Set<Class<?>> s = new HashSet<Class<?>>();

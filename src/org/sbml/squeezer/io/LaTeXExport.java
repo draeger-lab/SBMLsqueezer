@@ -107,7 +107,8 @@ public class LaTeXExport extends LaTeX {
 	 */
 	public static void writeLaTeX(Model model, File texFile, Properties settings)
 			throws IOException {
-		if (!(new SBFileFilter(SBFileFilter.TeX_FILES)).accept(texFile))
+		if (!(new SBFileFilter(SBFileFilter.FileType.TeX_FILES))
+				.accept(texFile))
 			throw new IllegalArgumentException("File "
 					+ texFile.getAbsolutePath() + " is not a valid LaTeX file.");
 		BufferedWriter buffer = new BufferedWriter(new FileWriter(texFile));
