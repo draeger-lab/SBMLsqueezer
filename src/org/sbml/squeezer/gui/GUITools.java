@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -30,8 +31,11 @@ import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
@@ -55,7 +59,27 @@ public class GUITools {
 	/**
 	 * 
 	 */
+	public static Icon ICON_DELETE = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_DIAGRAM_TINY = null;
+	/**
+	 * 
+	 */
 	public static Icon ICON_DOWN_ARROW = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_GEAR_TINY = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_HELP_TINY = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_INFO_TINY = null;
 	/**
 	 * 
 	 */
@@ -64,6 +88,14 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon ICON_LATEX_TINY = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_LEFT_ARROW = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_LEFT_ARROW_TINY = null;
 	/**
 	 * 
 	 */
@@ -83,7 +115,16 @@ public class GUITools {
 	/**
 	 * 
 	 */
+	public static Icon ICON_OPEN = null;
+	/**
+	 * 
+	 */
 	public static Icon ICON_RIGHT_ARROW = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_SAVE = null;
+
 	/**
 	 * 
 	 */
@@ -91,48 +132,16 @@ public class GUITools {
 	/**
 	 * 
 	 */
-	public static Icon ICON_HELP_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_INFO_TINY = null;
-	/**
-	 * 
-	 */
 	public static Icon ICON_TICK_TINY = null;
 	/**
 	 * 
 	 */
-	public static Icon ICON_LEFT_ARROW = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_LEFT_ARROW_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_DELETE = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_SAVE = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_DIAGRAM_TINY = null;
-
+	public static Icon ICON_TRASH_TINY = null;
+	
 	/**
 	 * Generated serial version id.
 	 */
 	private static final long serialVersionUID = 5662654607939013825L;
-	/**
-	 * 
-	 */
-	public static Icon ICON_OPEN = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_TRASH_TINY = null;
 
 	static {
 		try {
@@ -186,6 +195,8 @@ public class GUITools {
 					.getResource("img/diagram_16.png"));
 			ICON_TRASH_TINY = new ImageIcon(Resource.class
 					.getResource("img/trash_16.png"));
+			ICON_GEAR_TINY = new ImageIcon(Resource.class
+					.getResource("img/gear_16.png"));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, toHTML(e.getMessage(), 40), e
 					.getClass().getName(), JOptionPane.ERROR_MESSAGE);
@@ -233,6 +244,47 @@ public class GUITools {
 	}
 
 	/**
+	 * 
+	 * @param text
+	 * @param icon
+	 * @param listener
+	 * @param command
+	 * @param toolTip
+	 * @return
+	 */
+	public static JButton createButton(String text, Icon icon, ActionListener listener,
+			Object command, String toolTip) {
+		JButton button = createIconButton(icon, listener, command, toolTip);
+		if (text != null)
+			button.setText(text);
+		return button;
+	}
+	
+	/**
+	 * Creates a JButton with the given properties. The tool tip becomes an HTML
+	 * formatted string with a line break after 40 symbols.
+	 * 
+	 * @param icon
+	 * @param listener
+	 * @param com
+	 * @param toolTip
+	 * @return
+	 */
+	public static JButton createIconButton(Icon icon, ActionListener listener,
+			Object command, String toolTip) {
+		JButton button = new JButton();
+		if (icon != null)
+			button.setIcon(icon);
+		if (listener != null)
+			button.addActionListener(listener);
+		if (command != null)
+			button.setActionCommand(command.toString());
+		if (toolTip != null)
+			button.setToolTipText(toHTML(toolTip, 40));
+		return button;
+	}
+
+	/**
 	 * Creates and sets up a JFileFilter.
 	 * 
 	 * @param dir
@@ -262,6 +314,104 @@ public class GUITools {
 		return chooser;
 	}
 
+	/**
+	 * Creates an entry for the menu bar.
+	 * 
+	 * @param text
+	 * @param ks
+	 * @param command
+	 * @param listener
+	 * @param icon
+	 * @return
+	 */
+	public static JMenuItem createMenuItem(String text, KeyStroke ks, Object command,
+			ActionListener listener, Icon icon) {
+		return createMenuItem(text, ks, command, null, listener, icon);
+	}
+
+	/**
+	 * Creates an entry for the menu bar.
+	 * 
+	 * @param text
+	 * @param ks
+	 * @param command
+	 * @param mnemonic
+	 * @param listener
+	 * @param icon
+	 * @return
+	 */
+	public static JMenuItem createMenuItem(String text, KeyStroke ks, Object command,
+			Character mnemonic, ActionListener listener, Icon icon) {
+		JMenuItem item = new JMenuItem();
+		if (text != null)
+			item.setText(text);
+		if (ks != null)
+			item.setAccelerator(ks);
+		if (listener != null)
+			item.addActionListener(listener);
+		if (mnemonic != null)
+			item.setMnemonic(mnemonic.charValue());
+		if (command != null)
+			item.setActionCommand(command.toString());
+		if (icon != null)
+			item.setIcon(icon);
+		return item;
+	}
+
+	/**
+	 * Creates an entry for the menu bar.
+	 * 
+	 * @param text
+	 * @param command
+	 * @param listener
+	 * @return
+	 */
+	public static JMenuItem createMenuItem(String text, Object command,
+			ActionListener listener) {
+		return createMenuItem(text, null, command, listener, null);
+	}
+
+	/**
+	 * Creates an entry for the menu bar.
+	 * 
+	 * @param text
+	 * @param command
+	 * @param listener
+	 * @param icon
+	 * @return
+	 */
+	public static JMenuItem createMenuItem(String text, Object command,
+			ActionListener listener, Icon icon) {
+		return createMenuItem(text, null, command, listener, icon);
+	}
+
+	/**
+	 * Creates an entry for the menu bar.
+	 * 
+	 * @param text
+	 * @param command
+	 * @param mnemonic
+	 * @param listener
+	 * @param icon
+	 * @return
+	 */
+	public static JMenuItem createMenuItem(String text, Object command, char mnemonic,
+			ActionListener listener, Icon icon) {
+		return createMenuItem(text, null, command, mnemonic, listener, icon);
+	}
+
+	/**
+	 * Computes and returns the dimension, i.e., the size of a given icon.
+	 * 
+	 * @param icon
+	 *            an icon whose dimension is required.
+	 * @return The dimension of the given icon.
+	 */
+	public static Dimension getDimension(Icon icon) {
+		return new Dimension(icon.getIconWidth(), icon.getIconHeight());
+	}
+	
+	
 	/**
 	 * Shows a dialog that asks whether or not to overwrite an existing file and
 	 * returns the answer from JOptionPane constants.
@@ -343,16 +493,5 @@ public class GUITools {
 		}
 		sb.append("</body></html>");
 		return sb.toString();
-	}
-
-	/**
-	 * Computes and returns the dimension, i.e., the size of a given icon.
-	 * 
-	 * @param icon
-	 *            an icon whose dimension is required.
-	 * @return The dimension of the given icon.
-	 */
-	public static Dimension getDimension(Icon icon) {
-		return new Dimension(icon.getIconWidth(), icon.getIconHeight());
 	}
 }

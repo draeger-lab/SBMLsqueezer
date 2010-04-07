@@ -31,14 +31,14 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
+
 /**
  * This class loads other classes that implement certain interfaces or extend
  * certain super types. With this method it becomes possible to load and
  * initialize instances of certain classes at runtime.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-09-22
  * @since 1.3
  */
@@ -128,6 +128,47 @@ public class Reflect {
 			boolean includeSubs, boolean bSort, Class<?> superClass) {
 		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg,
 				includeSubs, bSort, superClass);
+	}
+
+	/**
+	 * Determines all classes in the given package (and probably subpackages)
+	 * that inherit from the given superclass. In case of this beeing included
+	 * into a jar file, the path to the jar might be important and can therefore
+	 * be given as an additional argument.
+	 * 
+	 * @param packageName
+	 *            The name of the package of interest.
+	 * @param includeSubs
+	 *            If true, subpackages are also queried.
+	 * @param bSort
+	 *            If true, the classes will be sorted with respect to their
+	 *            name.
+	 * @param superClass
+	 *            The super class whose descendants are to be investigated.
+	 * @param jarPath
+	 *            Path to the jar file where the package is located.
+	 * @return
+	 */
+	public static Class<?>[] getAllClassesInPackage(String packageName,
+			boolean includeSubs, boolean bSort,
+			Class<BasicKineticLaw> superClass, String jarPath) {
+		Class<?> classes[] = Reflect.getAllClassesInPackage(packageName, false,
+				true, superClass);
+		if (classes == null || classes.length == 0) {
+			HashSet<Class<?>> set = new HashSet<Class<?>>();
+			boolean tryDir = true;
+			if (tryDir) {
+				File f = new File(jarPath);
+				if (f.isDirectory()) {
+					String[] pathElements = f.list();
+					for (String entry : pathElements)
+						Reflect.getClassesFromJarFltr(set, jarPath + entry,
+								packageName, true, BasicKineticLaw.class);
+				}
+			}
+			classes = Reflect.hashSetToClassArray(set, true);
+		}
+		return classes;
 	}
 
 	/**
@@ -509,6 +550,12 @@ public class Reflect {
 		return valids;
 	}
 
+	/**
+	 * 
+	 * @param set
+	 * @param bSort
+	 * @return
+	 */
 	public static Class<?>[] hashSetToClassArray(HashSet<Class<?>> set,
 			boolean bSort) {
 		Object[] clsArr = set.toArray();
