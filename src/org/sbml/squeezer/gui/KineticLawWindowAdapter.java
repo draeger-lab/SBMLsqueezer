@@ -28,10 +28,9 @@ import org.sbml.squeezer.io.SBMLio;
  * This class allows SBMLsqueezer to create a kinetic law interactively for just
  * one reaction.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-10-22
+ * @since 1.3
  */
 public class KineticLawWindowAdapter extends WindowAdapter implements
 		ComponentListener, PropertyChangeListener {

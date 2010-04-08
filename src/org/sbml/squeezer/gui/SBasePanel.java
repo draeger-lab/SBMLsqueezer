@@ -34,7 +34,6 @@ import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -143,7 +142,6 @@ public class SBasePanel extends JPanel {
 		if (sbase instanceof NamedSBase)
 			addProperties((NamedSBase) sbase);
 		addProperties(sbase);
-		System.out.println(sbase.getClass().getSimpleName());
 		if (sbase instanceof SimpleSpeciesReference)
 			addProperties((SimpleSpeciesReference) sbase);
 		if (sbase instanceof MathContainer)

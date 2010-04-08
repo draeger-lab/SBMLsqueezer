@@ -46,9 +46,7 @@ import org.sbml.squeezer.SBMLsqueezer;
  * structures and save changes back in CellDesigner or to do the same with
  * models that originate from libSBML.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,

@@ -57,6 +57,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
@@ -326,14 +327,17 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	 */
 	private double maxParameterValue;
 
+	private double maxSpeciesValue;
+
+	private double maxCompartmentValue;
+
 	/**
 	 * 
 	 * @param owner
 	 * @param model
 	 */
 	public SimulationDialog(JFrame owner, Model model) {
-		this(owner, model, 5, 0.1,
-				"files/tests/cases/semantic/00026");
+		this(owner, model, 5, 0.1, "files/tests/cases/semantic/00026");
 		// System.getProperty("user.dir")
 	}
 
@@ -369,6 +373,8 @@ public class SimulationDialog extends JDialog implements ActionListener,
 			this.opendir = openDir;
 			separatorChar = ',';
 			quoteChar = '\'';
+			maxCompartmentValue = 10000;
+			maxSpeciesValue = 10000;
 			maxParameterValue = 10000;
 			paramStepSize = 0.01;
 
@@ -395,36 +401,11 @@ public class SimulationDialog extends JDialog implements ActionListener,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 					BorderLayout.CENTER);
 
-			JPanel parameterPanel = new JPanel();
-			parameterPanel.setLayout(new BoxLayout(parameterPanel,
-					BoxLayout.PAGE_AXIS));
-			if (model.getNumParameters() > 0) {
-				JPanel pPanel = interactiveScanPanel(model
-						.getListOfParameters());
-				pPanel.setBorder(BorderFactory
-						.createTitledBorder(" Global parameters "));
-				parameterPanel.add(pPanel);
-			}
-			for (Reaction r : model.getListOfReactions())
-				if (r.isSetKineticLaw()
-						&& r.getKineticLaw().getNumParameters() > 0) {
-					JPanel pPanel = interactiveScanPanel(r.getKineticLaw()
-							.getListOfParameters());
-					pPanel
-							.setBorder(BorderFactory
-									.createTitledBorder(" Local parameters of reaction "
-											+ r.getId() + " "));
-					parameterPanel.add(pPanel);
-				}
-
-			JSplitPane split = new JSplitPane(
-					JSplitPane.HORIZONTAL_SPLIT,
-					true,
-					new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
-							legendPanel, new JScrollPane(parameterPanel,
-									JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-									JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)),
-					plot);
+			JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+					true, new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
+							legendPanel, interactiveScanPanel(model,
+									maxCompartmentValue, maxSpeciesValue,
+									maxParameterValue, paramStepSize)), plot);
 
 			JTabbedPane tabbedPane = new JTabbedPane();
 			tabbedPane.add("Plot ", split);
@@ -457,26 +438,72 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	/**
 	 * 
 	 * @param model
+	 * @param maxCompartmentValue
+	 * @param maxSpeciesValue
+	 * @param maxParameterValue
+	 * @param paramStepSize
 	 * @return
 	 */
-	private JPanel interactiveScanPanel(ListOf<? extends Symbol> list) {
-		JPanel pPanel = new JPanel();
-		LayoutHelper l = new LayoutHelper(pPanel);
+	private JTabbedPane interactiveScanPanel(Model model,
+			double maxCompartmentValue, double maxSpeciesValue,
+			double maxParameterValue, double paramStepSize) {
+		JTabbedPane tab = new JTabbedPane();
+		JPanel parameterPanel = new JPanel();
+		parameterPanel.setLayout(new BoxLayout(parameterPanel,
+				BoxLayout.PAGE_AXIS));
+		for (Reaction r : model.getListOfReactions())
+			if (r.isSetKineticLaw() && r.getKineticLaw().getNumParameters() > 0) {
+				JPanel panel = interactiveScanTable(r.getKineticLaw()
+						.getListOfParameters(), maxParameterValue,
+						paramStepSize);
+				panel.setBorder(BorderFactory.createTitledBorder(String.format(
+						" Reaction %s ", r.getId())));
+				parameterPanel.add(panel);
+			}
+		tab.add("Compartments", new JScrollPane(interactiveScanTable(model
+				.getListOfCompartments(), maxCompartmentValue, paramStepSize),
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.add("Species", new JScrollPane(interactiveScanTable(model
+				.getListOfSpecies(), maxParameterValue, paramStepSize),
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.add("Global Parameters", new JScrollPane(interactiveScanTable(model
+				.getListOfParameters(), maxSpeciesValue, paramStepSize),
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.add("Local Parameters", new JScrollPane(parameterPanel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		return tab;
+	}
+
+	/**
+	 * 
+	 * @param maxValue
+	 *            , double stepSize
+	 * @param model
+	 * @return
+	 */
+	private JPanel interactiveScanTable(ListOf<? extends Symbol> list,
+			double maxValue, double stepSize) {
+		JPanel panel = new JPanel();
+		LayoutHelper lh = new LayoutHelper(panel);
 		for (int i = 0; i < list.size(); i++) {
 			Symbol p = list.get(i);
-			l.add(new JLabel(p.isSetName() ? p.getName() : p.getId()), 0, i, 1,
-					1, 0, 0);
 			JSpinner spinner = new JSpinner(new SpinnerNumberModel(
-					p.getValue(), 0, maxParameterValue, paramStepSize));
+					p.getValue(), 0d, maxValue, stepSize));
 			spinner.setName(p.getId());
 			spinner.addChangeListener(this);
-			l.add(spinner, 3, i, 1, 1, 0, 0);
-			l.add(new JLabel(GUITools.toHTML(p.isSetUnits() ? p
-					.getUnitsInstance().toHTML() : "")), 5, i, 1, 1, 0, 0);
+			lh.add(new JLabel(GUITools.toHTML(p.toString(), 40)), 0, i, 1, 1,
+					0, 0);
+			lh.add(spinner, 2, i, 1, 1, 0, 0);
+			lh.add(new JLabel(GUITools.toHTML(p.isSetUnits() ? p
+					.getUnitsInstance().toHTML() : "")), 4, i, 1, 1, 0, 0);
 		}
-		l.add(new JPanel(), 1, 0, 1, 1, 0, 0);
-		l.add(new JPanel(), 4, 0, 1, 1, 0, 0);
-		return pPanel;
+		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
+		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
+		return panel;
 	}
 
 	/*
@@ -601,8 +628,8 @@ public class SimulationDialog extends JDialog implements ActionListener,
 		settings.add(new JSpinner(stepsModel), 11, 0, 5, 1, 0, 0);
 		settings.add(new JPanel(), 0, 1, 1, 1, 0, 0);
 		settings.add(new JLabel("ODE Solver: "), 0, 2, 1, 1, 0, 0);
-		settings.add(solvers, 3, 2, 5, 1, 1, 0);
-		settings.add(gridCheckBox, 9, 2, 2, 1, 1, 0);
+		settings.add(solvers, 3, 2, 5, 1, 0, 0);
+		settings.add(gridCheckBox, 9, 2, 2, 1, 0, 0);
 
 		sPanel.setBorder(BorderFactory.createTitledBorder(" Settings "));
 
@@ -648,12 +675,12 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	 * @param model
 	 * @return
 	 */
-	private JTable ledgendTable(final Model model) {
+	private JTable ledgendTable(Model model) {
 		JTable tab = new JTable();
 		tab.setModel(new TableModelLedgend(model));
 		tab.setDefaultEditor(Color.class, new ColorEditor());
-		tab.setDefaultRenderer(Color.class, new TableCellRendererLedgend());
-		tab.setDefaultRenderer(Symbol.class, new TableCellRendererLedgend());
+		tab.setDefaultRenderer(Color.class, new TableCellRendererObjects());
+		tab.setDefaultRenderer(Symbol.class, new TableCellRendererObjects());
 		return tab;
 	}
 
@@ -794,7 +821,7 @@ public class SimulationDialog extends JDialog implements ActionListener,
  * @since 1.4
  * @date 2010-04-07
  */
-class TableCellRendererLedgend extends JLabel implements TableCellRenderer {
+class TableCellRendererObjects extends JLabel implements TableCellRenderer {
 
 	/**
 	 * Generated serial version identifier
@@ -804,7 +831,7 @@ class TableCellRendererLedgend extends JLabel implements TableCellRenderer {
 	/**
 	 * 
 	 */
-	public TableCellRendererLedgend() {
+	public TableCellRendererObjects() {
 		super();
 		setOpaque(true);
 	}
@@ -818,6 +845,7 @@ class TableCellRendererLedgend extends JLabel implements TableCellRenderer {
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
+		setBackground(Color.WHITE);
 		if (value instanceof Color) {
 			Color newColor = (Color) value;
 			setToolTipText("RGB value: " + newColor.getRed() + ", "
@@ -952,5 +980,48 @@ class TableModelLedgend extends AbstractTableModel {
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		data[rowIndex][columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);
+	}
+}
+
+/**
+ * 
+ * @author Andreas Dr&auml;ger
+ * @date 2010-04-08
+ * @since 1.4
+ */
+class MyDefaultTableModel extends DefaultTableModel {
+
+	/**
+	 * Generated serial version identifier
+	 */
+	private static final long serialVersionUID = 6339470859385085061L;
+
+	/**
+	 * 
+	 * @param data
+	 * @param columnNames
+	 */
+	public MyDefaultTableModel(Object[][] data, String[] columnNames) {
+		super(data, columnNames);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+	 */
+	@Override
+	public Class<?> getColumnClass(int c) {
+		return getValueAt(0, c).getClass();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+	 */
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return false;
 	}
 }
