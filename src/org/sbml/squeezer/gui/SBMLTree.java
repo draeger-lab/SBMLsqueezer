@@ -56,6 +56,45 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 
 /**
+ * 
+ * @author Andreas Dr&auml;ger
+ * @since 1.3
+ * 
+ */
+@SuppressWarnings("deprecation")
+class NamedMutableSBMLTreeNode extends DefaultMutableTreeNode {
+
+	/**
+	 * Generatred Serial Version ID.s
+	 */
+	private static final long serialVersionUID = 2647365066465077496L;
+	/**
+	 * 
+	 */
+	private String name;
+
+	/**
+	 * 
+	 * @param name
+	 * @param sbase
+	 */
+	public NamedMutableSBMLTreeNode(String name, SBase sbase) {
+		super(sbase);
+		this.name = name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.tree.DefaultMutableTreeNode#toString()
+	 */
+	@Override
+	public String toString() {
+		return name;
+	}
+}
+
+/**
  * A specialized {@link JTree} that shows the elements of a JSBML model as a
  * hierarchical structure.
  * 
@@ -64,65 +103,13 @@ import org.sbml.jsbml.UnitDefinition;
  * @author Andreas Dr&auml;ger
  * @since 1.3
  */
+@SuppressWarnings("deprecation")
 public class SBMLTree extends JTree implements MouseListener, ActionListener {
-
-	private JPopupMenu popup;
-
-	private JMenuItem squeezeItem;
-
-	private JMenuItem latexItem;
-
-	private SBase currSBase;
-
-	private Set<ActionListener> setOfActionListeners;
 
 	/**
 	 * Generated serial version id
 	 */
 	private static final long serialVersionUID = -3081533906479036522L;
-
-	public SBMLTree(Model m) {
-		super(createNodes(m));
-		init();
-	}
-
-	/**
-	 * Generate a tree that displays an ASTNode tree.
-	 * 
-	 * @param math
-	 */
-	public SBMLTree(ASTNode math) {
-		super(math);
-		init();
-	}
-
-	/**
-	 * Initializes this object.
-	 */
-	private void init() {
-		setOfActionListeners = new HashSet<ActionListener>();
-		popup = new JPopupMenu("SBMLsqueezer");
-		squeezeItem = new JMenuItem("Squeeze kinetic law",
-				GUITools.ICON_LEMON_TINY);
-		squeezeItem.addActionListener(this);
-		squeezeItem.setActionCommand(SBMLsqueezerUI.Command.SQUEEZE.toString());
-		popup.add(squeezeItem);
-		latexItem = new JMenuItem("Export to LaTeX", GUITools.ICON_LATEX_TINY);
-		latexItem.addActionListener(this);
-		latexItem.setActionCommand(SBMLsqueezerUI.Command.TO_LATEX.toString());
-		popup.add(latexItem);
-		popup.setOpaque(true);
-		popup.setLightWeightPopupEnabled(true);
-		addMouseListener(this);
-	}
-
-	/**
-	 * 
-	 * @param al
-	 */
-	public void addActionListener(ActionListener al) {
-		setOfActionListeners.add(al);
-	}
 
 	/**
 	 * 
@@ -146,12 +133,13 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			node = new NamedMutableSBMLTreeNode("Unit Definitions", m
 					.getListOfUnitDefinitions());
 			modelNode.add(node);
-			for (UnitDefinition c : m.getListOfUnitDefinitions()) {
+			for (UnitDefinition ud : m.getListOfUnitDefinitions()) {
 				DefaultMutableTreeNode unitDefNode = new DefaultMutableTreeNode(
-						c);
+						ud);
 				node.add(unitDefNode);
-				for (Unit u : c.getListOfUnits())
+				for (Unit u : ud.getListOfUnits()) {
 					unitDefNode.add(new DefaultMutableTreeNode(u));
+				}
 			}
 		}
 		if (m.getNumCompartmentTypes() > 0) {
@@ -278,6 +266,50 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 		return docNode;
 	}
 
+	/**
+	 * 
+	 */
+	private SBase currSBase;
+
+	/**
+	 * 
+	 */
+	private JMenuItem latexItem;
+
+	/**
+	 * 
+	 */
+	private JPopupMenu popup;
+
+	/**
+	 * 
+	 */
+	private Set<ActionListener> setOfActionListeners;
+
+	/**
+	 * 
+	 */
+	private JMenuItem squeezeItem;
+
+	/**
+	 * Generate a tree that displays an ASTNode tree.
+	 * 
+	 * @param math
+	 */
+	public SBMLTree(ASTNode math) {
+		super(math);
+		init();
+	}
+
+	/**
+	 * 
+	 * @param m
+	 */
+	public SBMLTree(Model m) {
+		super(createNodes(m));
+		init();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -290,6 +322,34 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			e.setSource(currSBase);
 			al.actionPerformed(e);
 		}
+	}
+
+	/**
+	 * 
+	 * @param al
+	 */
+	public void addActionListener(ActionListener al) {
+		setOfActionListeners.add(al);
+	}
+
+	/**
+	 * Initializes this object.
+	 */
+	private void init() {
+		setOfActionListeners = new HashSet<ActionListener>();
+		popup = new JPopupMenu("SBMLsqueezer");
+		squeezeItem = new JMenuItem("Squeeze kinetic law",
+				GUITools.ICON_LEMON_TINY);
+		squeezeItem.addActionListener(this);
+		squeezeItem.setActionCommand(SBMLsqueezerUI.Command.SQUEEZE.toString());
+		popup.add(squeezeItem);
+		latexItem = new JMenuItem("Export to LaTeX", GUITools.ICON_LATEX_TINY);
+		latexItem.addActionListener(this);
+		latexItem.setActionCommand(SBMLsqueezerUI.Command.TO_LATEX.toString());
+		popup.add(latexItem);
+		popup.setOpaque(true);
+		popup.setLightWeightPopupEnabled(true);
+		addMouseListener(this);
 	}
 
 	/*
@@ -376,42 +436,5 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 	 * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	public void mouseReleased(MouseEvent e) {
-	}
-}
-
-/**
- * 
- * @author Andreas Dr&auml;ger
- * 
- */
-class NamedMutableSBMLTreeNode extends DefaultMutableTreeNode {
-
-	/**
-	 * Generatred Serial Version ID.s
-	 */
-	private static final long serialVersionUID = 2647365066465077496L;
-	/**
-	 * 
-	 */
-	private String name;
-
-	/**
-	 * 
-	 * @param name
-	 * @param sbase
-	 */
-	public NamedMutableSBMLTreeNode(String name, SBase sbase) {
-		super(sbase);
-		this.name = name;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.tree.DefaultMutableTreeNode#toString()
-	 */
-	@Override
-	public String toString() {
-		return name;
 	}
 }

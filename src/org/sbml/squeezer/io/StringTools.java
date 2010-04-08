@@ -18,14 +18,12 @@
 package org.sbml.squeezer.io;
 
 /**
- * Provices several methods for {@link String} manipulation.
+ * Provides several methods for {@link String} manipulation.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.1
  */
-public class StringTools {
+public class StringTools extends org.sbml.jsbml.util.StringTools {
 
 	/**
 	 * The file separator of the operating system.
@@ -41,34 +39,6 @@ public class StringTools {
 	 * 
 	 */
 	public static final Character underscore = Character.valueOf('_');
-
-	/**
-	 * Takes the given StringBuffer as input and appends every further Object to
-	 * it.
-	 * 
-	 * @param k
-	 * @param things
-	 * @return
-	 */
-	public static final StringBuffer append(StringBuffer k, Object... things) {
-		for (Object t : things)
-			k.append(t);
-		return k;
-	}
-
-	/**
-	 * This method concatenates two or more object strings into a new
-	 * stringbuffer.
-	 * 
-	 * @param buffers
-	 * @return
-	 */
-	public static final StringBuffer concat(Object... buffers) {
-		StringBuffer res = new StringBuffer();
-		for (Object buffer : buffers)
-			res.append(buffer.toString());
-		return res;
-	}
 
 	/**
 	 * This method introduces left and right quotation marks where we normally
@@ -94,40 +64,6 @@ public class StringTools {
 					opening = true;
 				}
 		return text;
-	}
-
-	/**
-	 * Retunrs a String who's first letter is now in lower case.
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static String firstLetterLowerCase(String name) {
-		char c = name.charAt(0);
-		if (Character.isLetter(c))
-			c = Character.toLowerCase(c);
-		if (name.length() > 1)
-			name = Character.toString(c) + name.substring(1);
-		else
-			return Character.toString(c);
-		return name;
-	}
-
-	/**
-	 * Returns a String who's first letter is now in upper case.
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public static String firstLetterUpperCase(String name) {
-		char c = name.charAt(0);
-		if (Character.isLetter(c))
-			c = Character.toUpperCase(c);
-		if (name.length() > 1)
-			name = Character.toString(c) + name.substring(1);
-		else
-			return Character.toString(c);
-		return name;
 	}
 
 	/**
@@ -237,18 +173,4 @@ public class StringTools {
 		return (c == 'a') || (c == 'e') || (c == 'i') || (c == 'o')
 				|| (c == 'u');
 	}
-
-	/**
-	 * Returns a String from the given value that does not contain a point zero
-	 * at the end.
-	 * 
-	 * @param value
-	 * @return
-	 */
-	public static String toString(double value) {
-		if (((int) value) - value == 0)
-			return Integer.toString((int) value);
-		return Double.toString(value);
-	}
-
 }

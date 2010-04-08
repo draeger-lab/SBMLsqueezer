@@ -198,6 +198,7 @@ public class LaTeXExport extends LaTeX {
 	 * @param u
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	public StringBuffer format(Unit u) {
 		StringBuffer buffer = new StringBuffer();
 		boolean standardScale = (u.getScale() == 18) || (u.getScale() == 12)
@@ -422,7 +423,7 @@ public class LaTeXExport extends LaTeX {
 	public StringBuffer format(UnitDefinition def) {
 		StringBuffer buffer = new StringBuffer();
 		for (int j = 0; j < def.getNumUnits(); j++) {
-			buffer.append(format((Unit) def.getListOfUnits().get(j)));
+			buffer.append(format(def.getListOfUnits().get(j)));
 			if (j < def.getListOfUnits().size() - 1)
 				buffer.append("\\cdot ");
 		}
@@ -683,6 +684,7 @@ public class LaTeXExport extends LaTeX {
 	 * @throws IOException
 	 */
 
+	@SuppressWarnings("deprecation")
 	public StringBuffer toLaTeX(Model model) throws IOException {
 		StringBuffer laTeX;
 		String newLine = System.getProperty("line.separator");

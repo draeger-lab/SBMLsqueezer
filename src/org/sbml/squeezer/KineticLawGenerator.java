@@ -159,7 +159,8 @@ public class KineticLawGenerator {
 							compartment.getId());
 		}
 		if (model.getUnitDefinition(compartment.getUnits()) == null)
-			model.addUnitDefinition(compartment.getUnitsInstance());
+			model.addUnitDefinition((UnitDefinition) compartment
+					.getUnitsInstance());
 	}
 
 	/**
@@ -323,7 +324,7 @@ public class KineticLawGenerator {
 		if (u.isLitre()) {
 			u.setScale(-3);
 			ud.setName("ml");
-		}
+		}		
 		return miniModel;
 	}
 
@@ -341,10 +342,13 @@ public class KineticLawGenerator {
 		Species spec = miniModel.getSpecies(speciesOrig.getId());
 		spec.setCompartment(miniModel.getCompartment(speciesOrig
 				.getCompartment()));
-		if (speciesOrig.isSetSubstanceUnits()) {
-			if (miniModel.getUnitDefinition(speciesOrig.getSubstanceUnits()) == null)
-				miniModel.addUnitDefinition(speciesOrig
-						.getSubstanceUnitsInstance().clone());
+		if (speciesOrig.isSetSubstanceUnits()
+				&& !Unit.isUnitKind(speciesOrig.getUnits(), speciesOrig
+						.getLevel(), speciesOrig.getVersion())) {
+			if (miniModel.getUnitDefinition(speciesOrig.getSubstanceUnits()) == null) {
+				miniModel.addUnitDefinition(((UnitDefinition) speciesOrig
+						.getSubstanceUnitsInstance()).clone());
+			}
 			spec.setSubstanceUnits(miniModel.getUnitDefinition(speciesOrig
 					.getSubstanceUnits()));
 		} else
@@ -364,10 +368,12 @@ public class KineticLawGenerator {
 			miniModel.addCompartment(compartmenOrig.clone());
 		Compartment compartment = miniModel.getCompartment(compartmenOrig
 				.getId());
-		if (compartment.isSetUnits()) {
+		if (compartment.isSetUnits()
+				&& !Unit.isUnitKind(compartment.getUnits(), compartment
+						.getLevel(), compartment.getVersion())) {
 			if (miniModel.getUnitDefinition(compartment.getUnits()) == null)
-				miniModel.addUnitDefinition(compartment.getUnitsInstance()
-						.clone());
+				miniModel.addUnitDefinition(((UnitDefinition) compartment
+						.getUnitsInstance()).clone());
 			compartment.setUnits(miniModel.getUnitDefinition(compartment
 					.getUnits()));
 		} else

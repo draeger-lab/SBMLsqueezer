@@ -34,6 +34,7 @@ import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -86,6 +87,7 @@ import atp.sHotEqn;
  *         andreas.draeger@uni-tuebingen.de</a>
  * @since 1.3
  */
+@SuppressWarnings("deprecation")
 public class SBasePanel extends JPanel {
 
 	/**
@@ -141,6 +143,7 @@ public class SBasePanel extends JPanel {
 		if (sbase instanceof NamedSBase)
 			addProperties((NamedSBase) sbase);
 		addProperties(sbase);
+		System.out.println(sbase.getClass().getSimpleName());
 		if (sbase instanceof SimpleSpeciesReference)
 			addProperties((SimpleSpeciesReference) sbase);
 		if (sbase instanceof MathContainer)
@@ -619,9 +622,20 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(SimpleSpeciesReference ssr) {
 		if (ssr.isSetSpecies()) {
-			lh.add(new JLabel("Species"), 1, row, 1, 1, 1, 1);
-			lh.add(new JLabel(ssr.getSpeciesInstance().toString()), 3, row, 1,
-					1, 1, 1);
+			Model m = ssr.getModel();
+			String idsOrNames[] = new String[m.getNumSpecies()];
+			int index = 0;
+			for (int i = 0; i < m.getNumSpecies(); i++) {
+				Species s = m.getSpecies(i);
+				idsOrNames[i] = s.isSetName() ? s.getName() : s.getId();
+				if (s.getId().equals(ssr.getSpecies()))
+					index = i;
+			}
+			JComboBox combo = new JComboBox(idsOrNames);
+			combo.setSelectedIndex(index);
+			combo.setEnabled(editable);
+			lh.add(new JLabel("Species"), 1, ++row, 1, 1, 1, 1);
+			lh.add(combo, 3, row, 1, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		if (ssr instanceof SpeciesReference)
@@ -747,25 +761,20 @@ public class SBasePanel extends JPanel {
 		laTeXpreview.append(LaTeX.eqBegin);
 		if (s instanceof Parameter) {
 			Parameter p = (Parameter) s;
-			if (p.isSetUnits())
-				laTeXpreview.append((new LaTeXExport(settings)).format(
-						p.getUnitsInstance()).toString().replace("\\up", "\\")
-						.replace("mathrm", "mbox").replace("text", "mbox")
-						.replace("mathtt", "mbox"));
+			if (p.isSetUnits()) {
+				laTeXpreview.append(unitsToLaTeX(p.getUnitsInstance()));
+			}
 		} else if (s instanceof Compartment) {
 			Compartment c = (Compartment) s;
-			if (c.isSetUnits())
-				laTeXpreview.append((new LaTeXExport(settings)).format(
-						c.getUnitsInstance()).toString().replace("\\up", "\\")
-						.replace("mathrm", "mbox").replace("text", "mbox")
-						.replace("mathtt", "mbox"));
+			if (c.isSetUnits()) {
+				laTeXpreview.append(unitsToLaTeX(c.getUnitsInstance()));
+			}
 		} else {// Species
 			Species spec = (Species) s;
-			if (spec.isSetSubstanceUnits())
-				laTeXpreview.append((new LaTeXExport(settings)).format(
-						spec.getSubstanceUnitsInstance()).toString().replace(
-						"\\up", "\\").replace("mathrm", "mbox").replace("text",
-						"mbox").replace("mathtt", "mbox"));
+			if (spec.isSetSubstanceUnits()) {
+				laTeXpreview.append(unitsToLaTeX(spec
+						.getSubstanceUnitsInstance()));
+			}
 		}
 		laTeXpreview.append(LaTeX.eqEnd);
 		JPanel preview = new JPanel(new BorderLayout());
@@ -779,6 +788,18 @@ public class SBasePanel extends JPanel {
 		check.setEnabled(editable);
 		lh.add(check, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+	}
+
+	/**
+	 * Just to convert some unit or unit definition to LaTeX
+	 * 
+	 * @param ud
+	 * @return
+	 */
+	private String unitsToLaTeX(UnitDefinition ud) {
+		return (new LaTeXExport(settings)).format((UnitDefinition) ud)
+				.toString().replace("\\up", "\\").replace("mathrm", "mbox")
+				.replace("text", "mbox").replace("mathtt", "mbox");
 	}
 
 	/**
