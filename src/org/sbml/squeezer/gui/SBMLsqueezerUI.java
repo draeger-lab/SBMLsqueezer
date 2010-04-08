@@ -57,10 +57,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.LaTeXExport;
@@ -123,7 +121,7 @@ class FileReaderThread extends Thread implements Runnable {
  * @since 1.0
  */
 public class SBMLsqueezerUI extends JFrame implements ActionListener,
-		WindowListener, ChangeListener, IOProgressListener {
+		WindowListener, ChangeListener {
 
 	/**
 	 * This is what the graphical user interface of SBMLsqueezer can do...
@@ -252,14 +250,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private Color colorDefault;
 
-	private JLabel label;
-
 	/**
 	 * 
 	 */
 	private JLabel logo;
-
-	private JDialog progressDialog;
 
 	/**
 	 * Manages all models, storage, loading and selecting models.
@@ -290,7 +284,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				+ SBMLsqueezer.getVersionNumber());
 		this.settings = settings;
 		this.sbmlIO = io;
-		this.sbmlIO.addIOProgressListener(this);
+		this.sbmlIO.addIOProgressListener(new ProgressDialog(this,
+				"SBML IO progress"));
 		init();
 		pack();
 		Dimension dim = logo.getPreferredSize();
@@ -653,40 +648,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
-	 */
-	public void ioProgressOn(Object currObject) {
-		if (currObject != null) {
-			if (label == null)
-				label = new JLabel();
-			StringBuilder sb = new StringBuilder();
-			sb.append(currObject.getClass().getSimpleName());
-			if (currObject instanceof NamedSBase) {
-				sb.append(' ');
-				NamedSBase nsb = (NamedSBase) currObject;
-				sb.append(nsb.getId());
-				if (nsb.getName() != null && nsb.getName().length() > 0) {
-					sb.append(' ');
-					sb.append(nsb.getName());
-				}
-			}
-			label.setText(GUITools.toHTML(sb.toString(), 40));
-			if (progressDialog == null) {
-				progressDialog = new JDialog(this, "SBML IO progress");
-				progressDialog.getContentPane().add(label);
-				progressDialog.setSize(200, 150);
-				progressDialog.setLocationRelativeTo(this);
-				progressDialog
-						.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-				progressDialog.setVisible(true);
-			}
-		} else if (progressDialog != null)
-			progressDialog.dispose();
-	}
-
 	/**
 	 * Reads a model from the given file and adds it to the GUI if possible.
 	 * 
@@ -695,7 +656,6 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	void readModel(File file) {
 		try {
 			Model model = sbmlIO.readModel(file.getAbsolutePath());
-			ioProgressOn(null);
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(),
 					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue());

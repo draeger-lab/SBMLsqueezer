@@ -48,20 +48,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
 
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.LawListener;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.SBFileFilter;
@@ -75,13 +71,12 @@ import org.sbml.squeezer.resources.Resource;
  * @since 1.0
  * @version
  * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
  * @date Aug 3, 2007
  */
 public class KineticLawSelectionDialog extends JDialog implements
-		ActionListener, WindowListener, LawListener, IOProgressListener {
+		ActionListener, WindowListener {
 
 	private static final int fullHeight = 720;
 
@@ -101,15 +96,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private KineticLawGenerator klg;
 
-	private JLabel label;
-
 	private int numOfWarnings = 0;
 
 	private JButton options;
-
-	private JProgressBar progressBar;
-
-	private JDialog progressDialog;
 
 	private SBMLio sbmlIO;
 
@@ -219,7 +208,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 		try {
 			// This thing is necessary for CellDesigner!
 			KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
-					settings, sbmlIO, reactionID, this);
+					settings, sbmlIO, reactionID, new ProgressDialog(this,
+							"Saving changes"));
 			pack();
 			setResizable(false);
 			setLocationRelativeTo(owner);
@@ -309,19 +299,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 				}).start();
 			}
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.LawListener#currentState(org.sbml.jsbml.SBase,
-	 * int)
-	 */
-	public void currentState(SBase item, int num) {
-		label.setText(" Done with " + Integer.toString(num) + " ");
-		progressBar.setValue(num);
-		if (num >= progressBar.getMaximum())
-			progressDialog.dispose();
 	}
 
 	/**
@@ -643,44 +620,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 		settingsPanel = getJSettingsPanel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.LawListener#initLawListener(java.lang.String, int)
-	 */
-	public void initLawListener(String className, int count) {
-		if (count > 0) {
-			if (!className.endsWith("s") && count != 1)
-				className += "s";
-			progressBar = new JProgressBar(0, count - 1);
-			progressBar.setToolTipText("Saving changes in " + className);
-			progressBar.setValue(0);
-			progressDialog = new JDialog(this, "Saving changes");
-			progressDialog
-					.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-			JPanel p = new JPanel();
-			LayoutHelper lh = new LayoutHelper(p);
-			String space = " ";
-			for (int i = 0; i < Integer.toString(count).length(); i++)
-				space += ' ';
-			label = new JLabel(" Done with " + Integer.valueOf(0) + space);
-			lh.add(label, 0, 0, 1, 1, 1, 1);
-			JPanel progress = new JPanel();
-			progress.add(progressBar);
-			progress.setBorder(BorderFactory.createLoweredBevelBorder());
-			lh.add(progress, 1, 0, 1, 1, 1, 1);
-			lh.add(new JLabel(" of " + count + ' ' + className), 2, 0, 1, 1, 1,
-					1);
-			JPanel outer = new JPanel();
-			outer.add(p);
-			progressDialog.getContentPane().add(outer);
-			progressDialog.pack();
-			progressDialog.setResizable(false);
-			progressDialog.setLocationRelativeTo(null);
-			progressDialog.setVisible(true);
-		}
-	}
-
 	/**
 	 * Returns a JPanel that displays the user options.
 	 * 
@@ -700,26 +639,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 		options.setBackground(new Color(panel.getBackground().getRGB()));
 		p.add(panel, BorderLayout.NORTH);
 		return p;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
-	 */
-	public void ioProgressOn(Object currObject) {
-		if (currObject == null)
-			progressDialog.dispose();
-		else {
-			StringBuilder sb = new StringBuilder();
-			sb.append("writing ");
-			sb.append(currObject.getClass().getSimpleName());
-			if (currObject instanceof NamedSBase) {
-				sb.append(' ');
-				sb.append(((NamedSBase) currObject).getId());
-			}
-			label.setText(GUITools.toHTML(sb.toString(), 40));
-		}
 	}
 
 	/**
@@ -773,16 +692,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void storeKineticsInOriginalModel() {
 		try {
-			klg.storeKineticLaws(this);
-			progressDialog = new JDialog(this, "Saving changes");
-			progressDialog
-					.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-			label = new JLabel();
-			progressDialog.getContentPane().add(label);
-			progressDialog.setSize(200, 150);
-			progressDialog.setLocationRelativeTo(null);
-			progressDialog.setVisible(true);
-			sbmlIO.saveChanges(this);
+			klg.storeKineticLaws(new ProgressDialog(this,
+			"Saving kinetic laws"));
+			sbmlIO.saveChanges(new ProgressDialog(this,
+			"Saving changes to original model"));
 			SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
 					sbmlIO.getWriteWarnings(), ((Boolean) settings
 							.get(CfgKeys.SHOW_SBML_WARNINGS)).booleanValue());
