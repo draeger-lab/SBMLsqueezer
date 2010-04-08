@@ -36,6 +36,7 @@ import java.util.List;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -60,8 +61,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.Symbol;
 import org.sbml.squeezer.Reflect;
@@ -330,7 +333,7 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	 */
 	public SimulationDialog(JFrame owner, Model model) {
 		this(owner, model, 5, 0.1,
-				"/home/draeger/workspace/SBMLsqueezer/files/tests/cases/semantic/00026");
+				"files/tests/cases/semantic/00026");
 		// System.getProperty("user.dir")
 	}
 
@@ -391,7 +394,29 @@ public class SimulationDialog extends JDialog implements ActionListener,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 					BorderLayout.CENTER);
-			JPanel parameterPanel = parameterPanel(model);
+
+			JPanel parameterPanel = new JPanel();
+			parameterPanel.setLayout(new BoxLayout(parameterPanel,
+					BoxLayout.PAGE_AXIS));
+			if (model.getNumParameters() > 0) {
+				JPanel pPanel = interactiveScanPanel(model
+						.getListOfParameters());
+				pPanel.setBorder(BorderFactory
+						.createTitledBorder(" Global parameters "));
+				parameterPanel.add(pPanel);
+			}
+			for (Reaction r : model.getListOfReactions())
+				if (r.isSetKineticLaw()
+						&& r.getKineticLaw().getNumParameters() > 0) {
+					JPanel pPanel = interactiveScanPanel(r.getKineticLaw()
+							.getListOfParameters());
+					pPanel
+							.setBorder(BorderFactory
+									.createTitledBorder(" Local parameters of reaction "
+											+ r.getId() + " "));
+					parameterPanel.add(pPanel);
+				}
+
 			JSplitPane split = new JSplitPane(
 					JSplitPane.HORIZONTAL_SPLIT,
 					true,
@@ -434,11 +459,11 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	 * @param model
 	 * @return
 	 */
-	private JPanel parameterPanel(Model model) {
+	private JPanel interactiveScanPanel(ListOf<? extends Symbol> list) {
 		JPanel pPanel = new JPanel();
 		LayoutHelper l = new LayoutHelper(pPanel);
-		for (int i = 0; i < model.getNumParameters(); i++) {
-			Parameter p = model.getParameter(i);
+		for (int i = 0; i < list.size(); i++) {
+			Symbol p = list.get(i);
 			l.add(new JLabel(p.isSetName() ? p.getName() : p.getId()), 0, i, 1,
 					1, 0, 0);
 			JSpinner spinner = new JSpinner(new SpinnerNumberModel(
@@ -446,9 +471,11 @@ public class SimulationDialog extends JDialog implements ActionListener,
 			spinner.setName(p.getId());
 			spinner.addChangeListener(this);
 			l.add(spinner, 3, i, 1, 1, 0, 0);
+			l.add(new JLabel(GUITools.toHTML(p.isSetUnits() ? p
+					.getUnitsInstance().toHTML() : "")), 5, i, 1, 1, 0, 0);
 		}
 		l.add(new JPanel(), 1, 0, 1, 1, 0, 0);
-		pPanel.setBorder(BorderFactory.createTitledBorder(" Parameter scan "));
+		l.add(new JPanel(), 4, 0, 1, 1, 0, 0);
 		return pPanel;
 	}
 
@@ -745,10 +772,12 @@ public class SimulationDialog extends JDialog implements ActionListener,
 				stepsModel.setValue(Math.max(Integer.valueOf((int) Math
 						.round((t2 - t1) * stepSize)), ((Integer) stepsModel
 						.getMinimum()).intValue()));
-			} else if (model.getParameter(spin.getName()) != null) {
-				Parameter p = model.getParameter(spin.getName());
-				p.setValue(((SpinnerNumberModel) spin.getModel()).getNumber()
-						.doubleValue());
+			} else {
+				Symbol s = model.findSymbol(spin.getName());
+				if (s != null) {
+					s.setValue(((SpinnerNumberModel) spin.getModel())
+							.getNumber().doubleValue());
+				}
 			}
 		} else if (e.getSource() instanceof JCheckBox) {
 			JCheckBox chck = (JCheckBox) e.getSource();
