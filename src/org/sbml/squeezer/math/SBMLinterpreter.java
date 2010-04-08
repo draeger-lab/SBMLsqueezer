@@ -1065,7 +1065,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	private void processInitialAssignments() {
 
-		for (int i = 0; i < model.getListOfInitialAssignments().size(); i++) {
+		for (int i = 0; i < model.getNumInitialAssignments(); i++) {
 			InitialAssignment iA = model.getInitialAssignment(i);
 			Value val = null;
 			if (iA.isSetMath() && iA.isSetSymbol()) {

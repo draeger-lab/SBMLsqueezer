@@ -1,29 +1,35 @@
 TODO-Liste
 ==========
 
-Edukt- und Produktlisten kÃ¶nnen leer sein. Dieser Spezialfall wird bisher
+Edukt- und Produktlisten können leer sein. Dieser Spezialfall wird bisher
 nicht in den einzelnen Kinetiken behandelt.
 
-Hier wird an vielen Stellen von einer StÃ¶chiometrie ausgegangen.
-Es kÃ¶nnen aber auch komplexe AusdrÃ¼cke vorkommen. Diesen muss
+Hier wird an vielen Stellen von einer Stöchiometrie ausgegangen.
+Es können aber auch komplexe Ausdrücke vorkommen. Diesen muss
 Rechnung getragen werden.
 
 Problem mit logischen UND, ODER etc.
 
-In Hill-Kinetik dafÃ¼r sorgen, dass nicht mit der Gen-Konzentration
+In Hill-Kinetik dafür sorgen, dass nicht mit der Gen-Konzentration
 multipliziert und der Parameter Ks nicht mit dem Hill-Koeffizienten
 potenziert wird (sonst Probleme mit Einheiten).
 
-Direkt am Vorschaufenster fÃ¼r kinetische Gleichungen kÃ¶nnte ein Knopf
+Direkt am Vorschaufenster für kinetische Gleichungen könnte ein Knopf
 sein, mit dem die Gleichung nach LaTeX oder Text gespeichert werden
-kÃ¶nnte.
+könnte.
 
-Problem in jsbml: Ã„nderungen an CVTerms kÃ¶nnen nicht richtig mit libSBML
+Bug erkannt im CellDesigner: Im Biomodell 5 verschwindet bei Anwendung
+der Liebermeister-Kinetiken der Parameter R für die Gaskonstante.
+
+Problem in jsbml: Änderungen an CVTerms können nicht richtig mit libSBML
 synchronisiert werden.
 
 Probleme mit UTF-8 in jsbml: libSBML-Parser wandeln alle Zeichen in
-UTF-8 um. Beim Synchronisieren mÃ¼ssen Sonderzeichen wieder zu den Zeichen-
-Codes Ã¼bersetzt werden.
+UTF-8 um. Beim Synchronisieren müssen Sonderzeichen wieder zu den Zeichen-
+Codes übersetzt werden.
+
+Wenn existierende Kinetik ausgewählt wird, so darf der Schalter fÃ¼r Enzym-
+Kinetik nicht verÃ¤nderbar sein.
 
 
 SBMLsimulator: Probleme bei der Simulation von Test-Suite-Modellen
@@ -43,19 +49,19 @@ Test-Model 359 false Double cannot be cast to java.lang.Boolean
 Modelle 203 und 204 vom Aufbau her gleich, aber die Simulation von 204
 liefert nur das richtige Ergebniss, wenn die Quadratwurzel des Compartiments verrechnet
 wird anstelle nur der normale Wert des Compartiments.
-Das gleiche gilt fï¿½r 373 und 374
+Das gleiche gilt für 373 und 374
 
 Modell 354 wirft einen Fehler aufgrund von Problemen bei der Umsetzung der Funktion add
 im Event Assignment S2 = add(k3, k4) mit 
 Id 	 Arguments 	 Formula
 add 	x, y 	x + y
 
-Modell 355, ï¿½hnliches Problem wie bei 354 diesmal beim Auswerten von Trigger lessthan(S1, 0.5) mit
+Modell 355, ähnliches Problem wie bei 354 diesmal beim Auswerten von Trigger lessthan(S1, 0.5) mit
 Id 	 Arguments 	 Formula
 lessthan 	x, y 	x < y
 
 Modell 356 wirft einen Fehler aufgrund von Problemen bei der Umsetzung der Funktionen
-im Event Assignment S2 = add(k3, k4) und S1 = 1 ï¿½ divide(k3, k4) mit 
+im Event Assignment S2 = add(k3, k4) und S1 = 1 * divide(k3, k4) mit 
 Id 	 Arguments 	 Formula
 add 	x, y 	x + y
 divide 	x, y 	xy
@@ -65,11 +71,12 @@ Modell 357, 358 und 359 haben die selben Probleme
 Modelle 411 bis 416 haben functions im event trigger oder bei der zuweisung 
 => NullPointerException bei evaluateToDouble
 
-Modell 870 java.lang.StackOverflowError bei uiMinus (Endlosschleife?)
+Modell 870 bis 875, es gibt Reaktionen mit fast=true => ungenau Simulation, da diese
+Eigenschaft noch nicht berücksichtigt wird
 
 
 Allgemeine Probleme
 ===================
 
-Events mit delay kï¿½nnen aufgrund der Schrittweite zu spï¿½t verarbeitet werden
+Events mit delay können aufgrund der Schrittweite zu spät verarbeitet werden
 
