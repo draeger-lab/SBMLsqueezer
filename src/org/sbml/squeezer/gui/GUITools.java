@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -32,6 +33,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -509,5 +511,25 @@ public class GUITools {
 		}
 		sb.append("</body></html>");
 		return sb.toString();
+	}
+
+	/**
+	 * Creates and returns a JCheckBox with all the given properties.
+	 * @param label
+	 * @param selected
+	 * @param name
+	 *            The name for the component to be identifiable by the
+	 *            ItemListener
+	 * @param listener
+	 * @param toolTip
+	 * @return
+	 */
+	public static JCheckBox createJCheckBox(String label, boolean selected,
+			String name, ItemListener listener, String toolTip) {
+		JCheckBox chkbx = new JCheckBox(label, selected);
+		chkbx.setName(name);
+		chkbx.addItemListener(listener);
+		chkbx.setToolTipText(toHTML(toolTip, 40));
+		return chkbx;
 	}
 }

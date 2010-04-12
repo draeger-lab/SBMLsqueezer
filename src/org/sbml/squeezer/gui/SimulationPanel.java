@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -82,6 +83,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.Symbol;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.Reflect;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.math.SBMLinterpreter;
@@ -422,6 +424,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	private double t2;
 
 	/**
+	 * Decides whether or not to add a legend to the plot.
+	 */
+	private boolean showLegend;
+
+	/**
 	 * 
 	 * @param owner
 	 * @param model
@@ -469,7 +476,15 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		else {
 			// This should be included into our settings
 			this.model = model;
-			plot = new FunctionArea("time", "value");
+			UnitDefinition timeUnits = this.model.getTimeUnitsInstance();
+			String xLab = "Time";
+			if (timeUnits != null)
+				xLab += " in " + UnitDefinition.printUnits(timeUnits, true);
+			plot = new FunctionArea(xLab, "Value");
+			// get rid of this popup menu.
+			MouseListener listeners[] = plot.getMouseListeners();
+			for (int i = listeners.length - 1; i >= 0; i--)
+				plot.removeMouseListener(listeners[i]);
 			t1 = 0; // always for SBML!
 			t2 = endTime;
 			this.stepSize = stepSize;
@@ -488,6 +503,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			compression = 0.8f;
 			colNames = createColNames(model);
 			logScale = false;
+			showLegend = true;
 
 			JPanel simPanel = new JPanel(new BorderLayout());
 			simTable = new JTable();
@@ -731,20 +747,21 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (solvers.getItemCount() == 1)
 			solvers.setEnabled(false);
 
-		JCheckBox gridCheckBox = new JCheckBox("Grid", showGrid);
-		gridCheckBox.setName("grid");
-		gridCheckBox.addChangeListener(this);
-		gridCheckBox.setToolTipText(GUITools.toHTML(
-				"Decide whether or not to draw a grid in the plot area.", 40));
+		JCheckBox gridCheckBox = GUITools.createJCheckBox("Grid", showGrid,
+				"grid", this,
+				"Decide whether or not to draw a grid in the plot area.");
 
-		JCheckBox logCheckBox = new JCheckBox("log", logScale);
-		logCheckBox.setName("log");
-		logCheckBox.addChangeListener(this);
-		logCheckBox
-				.setToolTipText(GUITools
-						.toHTML(
-								"Select this checkbox if the y-axis should be drawn in a logarithmic scale. This is, however, only possible if all values are greater than zero.",
-								40));
+		JCheckBox logCheckBox = GUITools
+				.createJCheckBox(
+						"Log",
+						logScale,
+						"log",
+						this,
+						"Select this checkbox if the y-axis should be drawn in a logarithmic scale. This is, however, only possible if all values are greater than zero.");
+
+		JCheckBox legendCheckBox = GUITools.createJCheckBox("Legend",
+				showLegend, "legend", this,
+				"Add or remove a legend in the plot.");
 
 		JPanel sPanel = new JPanel();
 		LayoutHelper settings = new LayoutHelper(sPanel);
@@ -764,6 +781,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		settings.add(solvers, 2, 2, 5, 1, 0, 0);
 		settings.add(gridCheckBox, 8, 2, 1, 1, 0, 0);
 		settings.add(logCheckBox, 10, 2, 1, 1, 0, 0);
+		settings.add(new JPanel(), 11, 1, 1, 1, 0, 0);
+		settings.add(legendCheckBox, 12, 2, 1, 1, 0, 0);
 
 		sPanel.setBorder(BorderFactory.createTitledBorder(" Settings "));
 
@@ -887,6 +906,28 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					// been initialized once before.
 					exc.printStackTrace();
 				}
+		} else if (e.getSource() instanceof JCheckBox) {
+			JCheckBox chck = (JCheckBox) e.getSource();
+			if (chck.getName().equals("grid")) {
+				plot.setGridVisible(chck.isSelected());
+			} else if (chck.getName().equals("log")) {
+				if (chck.isSelected() && !plot.checkLoggable()) {
+					chck.setSelected(false);
+					chck.setEnabled(false);
+					JOptionPane
+							.showMessageDialog(
+									this,
+									GUITools
+											.toHTML(
+													"Cannot change to logarithmic scale because at least one value on the y-axis is not greater than zero.",
+													40), "Warning",
+									JOptionPane.WARNING_MESSAGE);
+				}
+				plot.toggleLog(chck.isSelected());
+			} else if (chck.getName().equals("legend")) {
+				showLegend = chck.isSelected();
+				plot.showLegend(showLegend);
+			}
 		}
 	}
 
@@ -929,13 +970,18 @@ public class SimulationPanel extends JPanel implements ActionListener,
 									solution[i][j + 1], j);
 							plot.setGraphColor(j, (Color) legend.getValueAt(j,
 									1));
+							plot.setInfoString(j, legend.getValueAt(j, 2)
+									.toString(), 2);
 						}
 					} else {
 						plot.setUnconnectedPoint(solution[i][0],
 								solution[i][j + 1], colNames.length - 1 + j);
+						plot.setInfoString(j, legend.getValueAt(j, 2)
+								.toString(), 2);
 					}
 				}
 			}
+			plot.showLegend(showLegend);
 		}
 	}
 
@@ -1031,25 +1077,6 @@ public class SimulationPanel extends JPanel implements ActionListener,
 							.getNumber().doubleValue());
 				}
 			}
-		} else if (e.getSource() instanceof JCheckBox) {
-			JCheckBox chck = (JCheckBox) e.getSource();
-			if (chck.getName().equals("grid")) {
-				plot.setGridVisible(chck.isSelected());
-			} else if (chck.getName().equals("log")) {
-				if (chck.isSelected() && !plot.checkLoggable()) {
-					chck.setSelected(false);
-					chck.setEnabled(false);
-					JOptionPane
-							.showMessageDialog(
-									this,
-									GUITools
-											.toHTML(
-													"Cannot change to logarithmic scale because at least one value on the y-axis is not greater than zero.",
-													40), "Warning",
-									JOptionPane.WARNING_MESSAGE);
-				}
-				plot.toggleLog(chck.isSelected());
-			}
 		}
 	}
 
@@ -1068,6 +1095,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				if (expTable.getRowCount() > 0)
 					plot(((TableModelDoubleMatrix) expTable.getModel())
 							.getData(), false);
+				if (showLegend)
+					plot.updateLegend();
 			}
 		}
 	}
