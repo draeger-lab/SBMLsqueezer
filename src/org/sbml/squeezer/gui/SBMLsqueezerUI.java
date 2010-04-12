@@ -70,11 +70,18 @@ import org.sbml.squeezer.resources.Resource;
 /**
  * 
  * @author Andreas Dr&auml;ger
+ * @since 1.3
  * 
  */
 class FileReaderThread extends Thread implements Runnable {
 
+	/**
+	 * 
+	 */
 	private File file;
+	/**
+	 * 
+	 */
 	private SBMLsqueezerUI reader;
 
 	/**
@@ -359,7 +366,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					if (!path.equals(dir))
 						settings.put(CfgKeys.LATEX_DIR, path);
 					if (!out.exists()
-							|| GUITools.overwriteExistingFileDialog(this, out) == JOptionPane.YES_OPTION)
+							|| GUITools.overwriteExistingFile(this, out))
 						writeLaTeX(out);
 				}
 			}
@@ -397,8 +404,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				if (out.getParentFile() != null)
 					settings.put(CfgKeys.SAVE_DIR, out.getParentFile()
 							.getAbsolutePath());
-				if (!out.exists()
-						|| GUITools.overwriteExistingFileDialog(this, out) == JOptionPane.YES_OPTION) {
+				if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
 					if (filterSBML.accept(out))
 						new Thread(new Runnable() {
 							public void run() {
@@ -603,25 +609,24 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		if (GUITools.ICON_LEMON_TINY != null)
 			toolbar
 					.add(GUITools
-							.createIconButton(GUITools.ICON_LEMON_TINY, this,
+							.createButton(GUITools.ICON_LEMON_TINY, this,
 									Command.SQUEEZE,
 									"Generate kinetic equations for all reactions in this model in one step."));
 
 		if (GUITools.ICON_LATEX_TINY != null)
-			toolbar.add(GUITools.createIconButton(GUITools.ICON_LATEX_TINY,
-					this, Command.TO_LATEX,
-					"Export this model to a LaTeX report."));
+			toolbar.add(GUITools.createButton(GUITools.ICON_LATEX_TINY, this,
+					Command.TO_LATEX, "Export this model to a LaTeX report."));
 
 		if (GUITools.ICON_STABILITY_SMALL != null)
-			toolbar.add(GUITools.createIconButton(
-					GUITools.ICON_STABILITY_SMALL, this,
-					Command.CHECK_STABILITY,
+			toolbar.add(GUITools.createButton(GUITools.ICON_STABILITY_SMALL,
+					this, Command.CHECK_STABILITY,
 					"Analyze the stability properties of the selected model."));
 
 		if (GUITools.ICON_DIAGRAM_TINY != null)
-			toolbar.add(GUITools.createIconButton(GUITools.ICON_DIAGRAM_TINY,
-					this, Command.SIMULATE,
-					"Dynamically simulate the current model."));
+			toolbar.add(GUITools
+					.createButton(GUITools.ICON_DIAGRAM_TINY, this,
+							Command.SIMULATE,
+							"Dynamically simulate the current model."));
 		toolbar.addSeparator();
 		JButton helpButton = new JButton(GUITools.ICON_HELP_TINY);
 		helpButton.addActionListener(this);

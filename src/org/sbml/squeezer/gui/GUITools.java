@@ -137,7 +137,11 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon ICON_TRASH_TINY = null;
-	
+	/**
+	 * 
+	 */
+	public static Icon ICON_PICTURE_TINY = null;
+
 	/**
 	 * Generated serial version id.
 	 */
@@ -197,6 +201,8 @@ public class GUITools {
 					.getResource("img/trash_16.png"));
 			ICON_GEAR_TINY = new ImageIcon(Resource.class
 					.getResource("img/gear_16.png"));
+			ICON_PICTURE_TINY = new ImageIcon(Resource.class
+					.getResource("img/camera_16.png"));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, toHTML(e.getMessage(), 40), e
 					.getClass().getName(), JOptionPane.ERROR_MESSAGE);
@@ -252,14 +258,14 @@ public class GUITools {
 	 * @param toolTip
 	 * @return
 	 */
-	public static JButton createButton(String text, Icon icon, ActionListener listener,
-			Object command, String toolTip) {
-		JButton button = createIconButton(icon, listener, command, toolTip);
+	public static JButton createButton(String text, Icon icon,
+			ActionListener listener, Object command, String toolTip) {
+		JButton button = createButton(icon, listener, command, toolTip);
 		if (text != null)
 			button.setText(text);
 		return button;
 	}
-	
+
 	/**
 	 * Creates a JButton with the given properties. The tool tip becomes an HTML
 	 * formatted string with a line break after 40 symbols.
@@ -270,7 +276,7 @@ public class GUITools {
 	 * @param toolTip
 	 * @return
 	 */
-	public static JButton createIconButton(Icon icon, ActionListener listener,
+	public static JButton createButton(Icon icon, ActionListener listener,
 			Object command, String toolTip) {
 		JButton button = new JButton();
 		if (icon != null)
@@ -324,8 +330,8 @@ public class GUITools {
 	 * @param icon
 	 * @return
 	 */
-	public static JMenuItem createMenuItem(String text, KeyStroke ks, Object command,
-			ActionListener listener, Icon icon) {
+	public static JMenuItem createMenuItem(String text, KeyStroke ks,
+			Object command, ActionListener listener, Icon icon) {
 		return createMenuItem(text, ks, command, null, listener, icon);
 	}
 
@@ -340,8 +346,9 @@ public class GUITools {
 	 * @param icon
 	 * @return
 	 */
-	public static JMenuItem createMenuItem(String text, KeyStroke ks, Object command,
-			Character mnemonic, ActionListener listener, Icon icon) {
+	public static JMenuItem createMenuItem(String text, KeyStroke ks,
+			Object command, Character mnemonic, ActionListener listener,
+			Icon icon) {
 		JMenuItem item = new JMenuItem();
 		if (text != null)
 			item.setText(text);
@@ -395,8 +402,8 @@ public class GUITools {
 	 * @param icon
 	 * @return
 	 */
-	public static JMenuItem createMenuItem(String text, Object command, char mnemonic,
-			ActionListener listener, Icon icon) {
+	public static JMenuItem createMenuItem(String text, Object command,
+			char mnemonic, ActionListener listener, Icon icon) {
 		return createMenuItem(text, null, command, mnemonic, listener, icon);
 	}
 
@@ -410,8 +417,7 @@ public class GUITools {
 	public static Dimension getDimension(Icon icon) {
 		return new Dimension(icon.getIconWidth(), icon.getIconHeight());
 	}
-	
-	
+
 	/**
 	 * Shows a dialog that asks whether or not to overwrite an existing file and
 	 * returns the answer from JOptionPane constants.
@@ -425,6 +431,16 @@ public class GUITools {
 				+ " already exists. Do you really want to over write it?", 40),
 				"Over write existing file?", JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
+	}
+
+	/**
+	 * 
+	 * @param parent
+	 * @param out
+	 * @return
+	 */
+	public static boolean overwriteExistingFile(Component parent, File out) {
+		return GUITools.overwriteExistingFileDialog(parent, out) == JOptionPane.YES_OPTION;
 	}
 
 	/**

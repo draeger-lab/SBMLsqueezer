@@ -37,13 +37,21 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 * 
 	 * @author Andreas Dr&auml;ger
 	 * @since 1.4
-	 *
+	 * 
 	 */
 	public static enum FileType {
 		/**
 		 * To be selected if CSV files (comma separated files) can be chosen.
 		 */
 		CSV_FILES,
+		/**
+		 * True if this filter accepts JPEG picture files.
+		 */
+		JPEG_FILES,
+		/**
+		 * True if this filter accepts portable network graphic files.
+		 */
+		PNG_FILES,
 		/**
 		 * To be selected if SBML files (XML files) can be chosen.
 		 */
@@ -63,6 +71,18 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 */
 	public static SBFileFilter CSV_FILE_FILTER = new SBFileFilter(
 			FileType.CSV_FILES);
+
+	/**
+	 * A filter for joint picture expert group files.
+	 */
+	public static FileFilter JPEG_FILE_FILTER = new SBFileFilter(
+			FileType.JPEG_FILES);
+
+	/**
+	 * A filter for portable network graphic files.
+	 */
+	public static SBFileFilter PNG_FILE_FILTER = new SBFileFilter(
+			FileType.PNG_FILES);
 
 	/**
 	 * A filter for SBML files
@@ -108,7 +128,9 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 		if ((f.isDirectory() || (type == FileType.TEXT_FILES && isTextFile(f)))
 				|| (type == FileType.TeX_FILES && isTeXFile(f))
 				|| (type == FileType.SBML_FILES && isSBMLFile(f))
-				|| (type == FileType.CSV_FILES && isCSVFile(f)))
+				|| (type == FileType.CSV_FILES && isCSVFile(f))
+				|| (type == FileType.PNG_FILES && isPNGFile(f))
+				|| (type == FileType.JPEG_FILES && isJPEGFile(f)))
 			return true;
 		return false;
 	}
@@ -119,6 +141,22 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 */
 	public boolean acceptsCSVFiles() {
 		return type == FileType.CSV_FILES;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean acceptsJPEGFiles() {
+		return type == FileType.JPEG_FILES;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean acceptsPNGFiles() {
+		return type == FileType.PNG_FILES;
 	}
 
 	/**
@@ -151,7 +189,6 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 * 
 	 * @see javax.swing.filechooser.FileFilter#getDescription()
 	 */
-	// @Override
 	public String getDescription() {
 		switch (type) {
 		case TEXT_FILES:
@@ -162,6 +199,10 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 			return "SBML files (*.sbml, *.xml)";
 		case CSV_FILES:
 			return "Comma separated files (*.csv)";
+		case JPEG_FILES:
+			return "Joint Photographic Experts Group files (*.jpg, *.jpeg)";
+		case PNG_FILES:
+			return "Portable Network Graphics files (*.png)";
 		default:
 			return "";
 		}
@@ -172,8 +213,28 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 * @param f
 	 * @return
 	 */
-	public boolean isCSVFile(File f) {
+	public static boolean isCSVFile(File f) {
 		return f.getName().toLowerCase().endsWith(".csv");
+	}
+
+	/**
+	 * 
+	 * @param f
+	 * @return
+	 */
+	public static boolean isJPEGFile(File f) {
+		String extension = f.getName().toLowerCase();
+		return extension.endsWith(".jpg") || extension.endsWith(".jpeg");
+	}
+
+	/**
+	 * Returns true if the given file is a portable network graphics file.
+	 * 
+	 * @param f
+	 * @return
+	 */
+	public static boolean isPNGFile(File f) {
+		return f.getName().toLowerCase().endsWith(".png");
 	}
 
 	/**
@@ -182,7 +243,7 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 * @param f
 	 * @return
 	 */
-	public boolean isSBMLFile(File f) {
+	public static boolean isSBMLFile(File f) {
 		String extension = f.getName().toLowerCase();
 		return extension.endsWith(".xml") || extension.endsWith(".sbml");
 	}
@@ -193,7 +254,7 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 * @param f
 	 * @return
 	 */
-	public boolean isTeXFile(File f) {
+	public static boolean isTeXFile(File f) {
 		return f.getName().toLowerCase().endsWith(".tex");
 	}
 
@@ -203,7 +264,7 @@ public class SBFileFilter extends FileFilter implements java.io.FileFilter {
 	 * @param f
 	 * @return
 	 */
-	public boolean isTextFile(File f) {
+	public static boolean isTextFile(File f) {
 		return f.getName().toLowerCase().endsWith(".txt");
 	}
 }
