@@ -38,6 +38,7 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.CfgKeys;
+import org.sbml.squeezer.util.LaTeX;
 
 /**
  * This class is used to export a sbml model as LaTex file.

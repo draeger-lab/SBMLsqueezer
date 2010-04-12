@@ -70,10 +70,11 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.MIRIAMparser;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.util.HTMLFormula;
+import org.sbml.squeezer.util.LaTeX;
 
 import atp.sHotEqn;
 
@@ -722,31 +723,39 @@ public class SBasePanel extends JPanel {
 	 * @param s
 	 */
 	private void addProperties(Symbol s) {
-		String label = null;
 		double val = Double.NaN;
 		double min = 0d;
 		double max = 9999.9;
 		if (s instanceof Species) {
 			Species species = (Species) s;
-			label = "Initial amount: ";
-			if (species.isSetInitialAmount())
+			String types[] = new String[] { "Initial amount",
+					"Initial concentration" };
+			boolean amount = true;
+			if (species.isSetInitialAmount()) {
 				val = species.getInitialAmount();
-			else if (species.isSetInitialConcentration()) {
+			} else if (species.isSetInitialConcentration()) {
 				val = species.getInitialConcentration();
-				label = "Initial concentration: ";
+				amount = false;
 			}
-		} else if (s instanceof Compartment) {
-			Compartment c = (Compartment) s;
-			if (c.isSetSize())
-				val = c.getSize();
-			label = "Size: ";
+			JComboBox type = new JComboBox(types);
+			type.setSelectedIndex(amount ? 0 : 1);
+			type.setEnabled(editable);
+			lh.add(type, 1, ++row, 1, 1, 1, 1);
 		} else {
-			Parameter p = (Parameter) s;
-			if (p.isSetValue())
-				val = p.getValue();
-			label = "Value: ";
+			String label = null;
+			if (s instanceof Compartment) {
+				Compartment c = (Compartment) s;
+				if (c.isSetSize())
+					val = c.getSize();
+				label = "Size: ";
+			} else {
+				Parameter p = (Parameter) s;
+				if (p.isSetValue())
+					val = p.getValue();
+				label = "Value: ";
+			}
+			lh.add(new JLabel(label), 1, ++row, 1, 1, 1, 1);
 		}
-		lh.add(new JLabel(label), 1, ++row, 1, 1, 1, 1);
 		JSpinner spinValue = new JSpinner(new SpinnerNumberModel(val, Math.min(
 				val, min), Math.max(val, max), .1d));
 		spinValue.setEnabled(editable);
@@ -755,49 +764,12 @@ public class SBasePanel extends JPanel {
 		lh
 				.add(new JLabel(s instanceof Species ? "Substance unit: "
 						: "Unit: "), 1, ++row, 1, 1, 1, 1);
-		StringBuffer laTeXpreview = new StringBuffer();
-		laTeXpreview.append(LaTeX.eqBegin);
-		if (s instanceof Parameter) {
-			Parameter p = (Parameter) s;
-			if (p.isSetUnits()) {
-				laTeXpreview.append(unitsToLaTeX(p.getUnitsInstance()));
-			}
-		} else if (s instanceof Compartment) {
-			Compartment c = (Compartment) s;
-			if (c.isSetUnits()) {
-				laTeXpreview.append(unitsToLaTeX(c.getUnitsInstance()));
-			}
-		} else {// Species
-			Species spec = (Species) s;
-			if (spec.isSetSubstanceUnits()) {
-				laTeXpreview.append(unitsToLaTeX(spec
-						.getSubstanceUnitsInstance()));
-			}
-		}
-		laTeXpreview.append(LaTeX.eqEnd);
-		JPanel preview = new JPanel(new BorderLayout());
-		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
-		preview.setBackground(Color.WHITE);
-		preview.setBorder(BorderFactory.createLoweredBevelBorder());
-		preview.setMaximumSize(new Dimension(200, 30));
-		lh.add(preview, 3, row, 1, 1, 1, 1);
+		lh.add(unitPreview(s.getUnitsInstance()), 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		JCheckBox check = new JCheckBox("Constant", s.isConstant());
 		check.setEnabled(editable);
 		lh.add(check, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-	}
-
-	/**
-	 * Just to convert some unit or unit definition to LaTeX
-	 * 
-	 * @param ud
-	 * @return
-	 */
-	private String unitsToLaTeX(UnitDefinition ud) {
-		return (new LaTeXExport(settings)).format((UnitDefinition) ud)
-				.toString().replace("\\up", "\\").replace("mathrm", "mbox")
-				.replace("text", "mbox").replace("mathtt", "mbox");
 	}
 
 	/**
@@ -851,21 +823,24 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(UnitDefinition ud) {
 		lh.add(new JLabel("Definition: "), 1, ++row, 1, 1, 1, 1);
-		StringBuffer laTeXpreview = new StringBuffer();
-		laTeXpreview.append(LaTeX.eqBegin);
-		laTeXpreview.append((new LaTeXExport(settings)).format(ud).toString()
-				.replace("\\up", "\\").replace("mathrm", "mbox").replace(
-						"text", "mbox").replace("mathtt", "mbox"));
-		laTeXpreview.append(LaTeX.eqEnd);
-		JPanel preview = new JPanel(new BorderLayout());
-		preview.add(new sHotEqn(laTeXpreview.toString()), BorderLayout.CENTER);
-		preview.setBackground(Color.WHITE);
-		preview.setBorder(BorderFactory.createLoweredBevelBorder());
-		preview.setMaximumSize(new Dimension(200, 30));
-		lh.add(preview, 3, row, 1, 1, 1, 1);
+		lh.add(unitPreview(ud), 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		for (Unit u : ud.getListOfUnits())
 			lh.add(new SBasePanel(u, settings), 1, ++row, 3, 1, 1, 1);
+	}
+
+	/**
+	 * Creates a JEditorPane that displays the given UnitDefinition as a HTML.
+	 * 
+	 * @param ud
+	 * @return
+	 */
+	private JEditorPane unitPreview(UnitDefinition ud) {
+		JEditorPane preview = new JEditorPane("text/html", GUITools
+				.toHTML(ud != null ? HTMLFormula.toHTML(ud) : ""));
+		preview.setEditable(false);
+		preview.setBorder(BorderFactory.createLoweredBevelBorder());
+		return preview;
 	}
 
 	/**

@@ -16,10 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.io;
+package org.sbml.squeezer.util;
 
 import java.io.PrintStream;
 import java.util.Calendar;
+
 
 /**
  * An implementation of {@link MessageListener} that provides some nice methods

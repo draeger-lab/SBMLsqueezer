@@ -49,8 +49,8 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.io.LaTeX;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.util.LaTeX;
 
 import atp.sHotEqn;
 

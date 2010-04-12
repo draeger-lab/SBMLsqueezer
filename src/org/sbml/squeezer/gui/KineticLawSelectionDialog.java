@@ -512,7 +512,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 		JPanel south = new JPanel(gbl), rightPanel = new JPanel(new FlowLayout(
 				FlowLayout.RIGHT)), leftPanel = new JPanel();
 
-		JButton cancel = new JButton("Cancel", GUITools.ICON_DELETE), apply = new JButton();
+		JButton cancel = new JButton("Cancel", GUITools.ICON_DELETE);
+		JButton apply = new JButton();
 		cancel.setToolTipText(GUITools.toHTML(
 				"Exit SBMLsqueezer without saving changes.", 40));
 		cancel.addActionListener(this);
@@ -692,10 +693,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void storeKineticsInOriginalModel() {
 		try {
-			klg.storeKineticLaws(new ProgressDialog(this,
-			"Saving kinetic laws"));
+			klg
+					.storeKineticLaws(new ProgressDialog(this,
+							"Saving kinetic laws"));
 			sbmlIO.saveChanges(new ProgressDialog(this,
-			"Saving changes to original model"));
+					"Saving changes to original model"));
 			SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
 					sbmlIO.getWriteWarnings(), ((Boolean) settings
 							.get(CfgKeys.SHOW_SBML_WARNINGS)).booleanValue());

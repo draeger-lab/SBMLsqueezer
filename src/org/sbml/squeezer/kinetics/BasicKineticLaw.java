@@ -36,7 +36,7 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
-import org.sbml.squeezer.io.StringTools;
+import org.sbml.squeezer.util.StringTools;
 
 /**
  * An abstract super class of specialized kinetic laws, which provides methods

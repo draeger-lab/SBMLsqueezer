@@ -48,9 +48,9 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
-import org.sbml.squeezer.io.LaTeX;
-import org.sbml.squeezer.io.StringTools;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.util.LaTeX;
+import org.sbml.squeezer.util.StringTools;
 
 import atp.sHotEqn;
 
