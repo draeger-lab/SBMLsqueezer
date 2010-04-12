@@ -18,15 +18,21 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +40,13 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -85,6 +98,9 @@ import eva2.tools.math.des.AbstractDESSolver;
  */
 class ColorEditor extends AbstractCellEditor implements TableCellEditor,
 		ActionListener {
+	/**
+	 * 
+	 */
 	protected static final String EDIT = "edit";
 	/**
 	 * Generated serial version identifier.
@@ -137,6 +153,49 @@ class ColorEditor extends AbstractCellEditor implements TableCellEditor,
 }
 
 /**
+ * 
+ * @author Andreas Dr&auml;ger
+ * @date 2010-04-08
+ * @since 1.4
+ */
+class MyDefaultTableModel extends DefaultTableModel {
+
+	/**
+	 * Generated serial version identifier
+	 */
+	private static final long serialVersionUID = 6339470859385085061L;
+
+	/**
+	 * 
+	 * @param data
+	 * @param columnNames
+	 */
+	public MyDefaultTableModel(Object[][] data, String[] columnNames) {
+		super(data, columnNames);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+	 */
+	@Override
+	public Class<?> getColumnClass(int c) {
+		return getValueAt(0, c).getClass();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+	 */
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return false;
+	}
+}
+
+/**
  * @author Andreas Dr&auml;ger
  * @since 1.4
  * @date 2010-04-06
@@ -157,9 +216,17 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		 */
 		OPEN_DATA,
 		/**
+		 * Save the plot as an image.
+		 */
+		SAVE_PLOT_IMAGE,
+		/**
 		 * Start a new simulation with the current settings.
 		 */
-		SIMULATION_START
+		SIMULATION_START,
+		/**
+		 * Save the results of the simulation to a CSV file.
+		 */
+		SAVE_SIMULATION
 	}
 
 	/**
@@ -236,6 +303,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private String colNames[];
 	/**
+	 * Compression factor for JPEG output
+	 */
+	private float compression;
+
+	/**
 	 * Table for experimental data.
 	 */
 	private JTable expTable;
@@ -249,11 +321,31 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * Table that contains the legend of this plot.
 	 */
 	private JTable legend;
+	/**
+	 * Whether or not to plot in a logarithmic scale.
+	 */
+	private boolean logScale;
+
+	/**
+	 * 
+	 */
+	private double maxCompartmentValue;
+
+	/**
+	 * The maximal allowable parameter value.
+	 */
+	private double maxParameterValue;
+
+	/**
+	 * 
+	 */
+	private double maxSpeciesValue;
 
 	/**
 	 * Maximal allowable number of integration steps per time unit
 	 */
 	private double maxStepsPerUnit;
+
 	/**
 	 * The maximal allowable simulation time
 	 */
@@ -270,6 +362,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	private String opendir;
 
 	/**
+	 * The step size for the spinner in the interactive parameter scan.
+	 */
+	private double paramStepSize;
+
+	/**
 	 * Plot area
 	 */
 	private FunctionArea plot;
@@ -278,6 +375,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * This is the quote character in CSV files
 	 */
 	private char quoteChar;
+
+	/**
+	 * 
+	 */
+	private String saveDir;
 
 	/**
 	 * This is the separator char in CSV files
@@ -318,20 +420,6 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * Simulation end time
 	 */
 	private double t2;
-
-	/**
-	 * The step size for the spinner in the interactive parameter scan.
-	 */
-	private double paramStepSize;
-
-	/**
-	 * The maximal allowable parameter value.
-	 */
-	private double maxParameterValue;
-
-	private double maxSpeciesValue;
-
-	private double maxCompartmentValue;
 
 	/**
 	 * 
@@ -396,8 +484,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			maxSpeciesValue = 10000;
 			maxParameterValue = 10000;
 			paramStepSize = 0.01;
-
+			saveDir = System.getProperty("user.home");
+			compression = 0.8f;
 			colNames = createColNames(model);
+			logScale = false;
 
 			JPanel simPanel = new JPanel(new BorderLayout());
 			simTable = new JTable();
@@ -431,86 +521,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			tabbedPane.add("Simulated data", simPanel);
 			tabbedPane.add("Experimental data", expPanel);
 
-			JToolBar toolbar = new JToolBar("Tools");
-			toolbar.add(GUITools.createIconButton(GUITools.ICON_OPEN, this,
-					Command.OPEN_DATA, "Load  experimental data from file."));
-
 			setLayout(new BorderLayout());
-			add(toolbar, BorderLayout.NORTH);
+			add(createToolBar(), BorderLayout.NORTH);
 			add(tabbedPane, BorderLayout.CENTER);
 			add(createFootPanel(), BorderLayout.SOUTH);
 		}
-	}
-
-	/**
-	 * 
-	 * @param model
-	 * @param maxCompartmentValue
-	 * @param maxSpeciesValue
-	 * @param maxParameterValue
-	 * @param paramStepSize
-	 * @return
-	 */
-	private JTabbedPane interactiveScanPanel(Model model,
-			double maxCompartmentValue, double maxSpeciesValue,
-			double maxParameterValue, double paramStepSize) {
-		JTabbedPane tab = new JTabbedPane();
-		JPanel parameterPanel = new JPanel();
-		parameterPanel.setLayout(new BoxLayout(parameterPanel,
-				BoxLayout.PAGE_AXIS));
-		for (Reaction r : model.getListOfReactions())
-			if (r.isSetKineticLaw() && r.getKineticLaw().getNumParameters() > 0) {
-				JPanel panel = interactiveScanTable(r.getKineticLaw()
-						.getListOfParameters(), maxParameterValue,
-						paramStepSize);
-				panel.setBorder(BorderFactory.createTitledBorder(String.format(
-						" Reaction %s ", r.getId())));
-				parameterPanel.add(panel);
-			}
-		tab.add("Compartments", new JScrollPane(interactiveScanTable(model
-				.getListOfCompartments(), maxCompartmentValue, paramStepSize),
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		tab.add("Species", new JScrollPane(interactiveScanTable(model
-				.getListOfSpecies(), maxParameterValue, paramStepSize),
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		tab.add("Global Parameters", new JScrollPane(interactiveScanTable(model
-				.getListOfParameters(), maxSpeciesValue, paramStepSize),
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		tab.add("Local Parameters", new JScrollPane(parameterPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		return tab;
-	}
-
-	/**
-	 * 
-	 * @param maxValue
-	 *            , double stepSize
-	 * @param model
-	 * @return
-	 */
-	private JPanel interactiveScanTable(ListOf<? extends Symbol> list,
-			double maxValue, double stepSize) {
-		JPanel panel = new JPanel();
-		LayoutHelper lh = new LayoutHelper(panel);
-		for (int i = 0; i < list.size(); i++) {
-			Symbol p = list.get(i);
-			JSpinner spinner = new JSpinner(new SpinnerNumberModel(
-					p.getValue(), 0d, maxValue, stepSize));
-			spinner.setName(p.getId());
-			spinner.addChangeListener(this);
-			lh.add(new JLabel(GUITools.toHTML(p.toString(), 40)), 0, i, 1, 1,
-					0, 0);
-			lh.add(spinner, 2, i, 1, 1, 0, 0);
-			lh.add(new JLabel(GUITools.toHTML(p.isSetUnits() ? HTMLFormula
-					.toHTML(p.getUnitsInstance()) : "")), 4, i, 1, 1, 0, 0);
-		}
-		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
-		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
-		return panel;
 	}
 
 	/*
@@ -538,11 +553,111 @@ public class SimulationPanel extends JPanel implements ActionListener,
 							JOptionPane.ERROR_MESSAGE);
 				}
 			break;
+		case SAVE_PLOT_IMAGE:
+			try {
+				savePlotImage();
+			} catch (Exception exc) {
+				exc.printStackTrace();
+				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			}
+			break;
+		case SAVE_SIMULATION:
+			try {
+				saveSimulationResults();
+			} catch (IOException exc) {
+				exc.printStackTrace();
+				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			}
+			break;
 		default:
 			JOptionPane.showMessageDialog(this, "Invalid option "
 					+ e.getActionCommand(), "Warning",
 					JOptionPane.WARNING_MESSAGE);
 			break;
+		}
+	}
+
+	/**
+	 * @throws IOException
+	 * 
+	 */
+	private void saveSimulationResults() throws IOException {
+		if (simTable.getRowCount() > 0) {
+			JFileChooser fc = GUITools.createJFileChooser(saveDir, false,
+					false, JFileChooser.FILES_ONLY,
+					SBFileFilter.CSV_FILE_FILTER);
+			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+				File out = fc.getSelectedFile();
+				if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
+					BufferedWriter buffer = new BufferedWriter(new FileWriter(
+							out));
+					int i;
+					for (i = 0; i < simTable.getColumnCount(); i++) {
+						buffer.append(simTable.getColumnName(i));
+						if (i < simTable.getColumnCount() - 1)
+							buffer.append(separatorChar);
+					}
+					buffer.newLine();
+					for (double[] row : ((TableModelDoubleMatrix) simTable
+							.getModel()).getData()) {
+						i = 0;
+						for (double value : row) {
+							buffer.append(Double.toString(value));
+							if (i < simTable.getColumnCount() - 1)
+								buffer.append(separatorChar);
+							i++;
+						}
+						buffer.newLine();
+					}
+					buffer.close();
+				}
+			}
+		} else {
+			JOptionPane
+					.showMessageDialog(
+							this,
+							GUITools
+									.toHTML(
+											"No simulation has been performed yet. Please run the simulation first.",
+											40));
+		}
+	}
+
+	/**
+	 * @throws AWTException
+	 * @throws IOException
+	 * 
+	 */
+	private void savePlotImage() throws AWTException, IOException {
+		Rectangle area = plot.getBounds();
+		area.setLocation(plot.getLocationOnScreen());
+		BufferedImage bufferedImage = (new Robot()).createScreenCapture(area);
+		JFileChooser fc = GUITools.createJFileChooser(saveDir, false, false,
+				JFileChooser.FILES_ONLY, SBFileFilter.PNG_FILE_FILTER,
+				SBFileFilter.JPEG_FILE_FILTER);
+		if (fc.showSaveDialog(plot) == JFileChooser.APPROVE_OPTION
+				&& !fc.getSelectedFile().exists()
+				|| (GUITools.overwriteExistingFile(this, fc.getSelectedFile()))) {
+			File file = fc.getSelectedFile();
+			if (SBFileFilter.isPNGFile(file))
+				ImageIO.write(bufferedImage, "png", file);
+			else if (SBFileFilter.isJPEGFile(file)) {
+				FileImageOutputStream out = new FileImageOutputStream(file);
+				ImageWriter encoder = (ImageWriter) ImageIO
+						.getImageWritersByFormatName("JPEG").next();
+				JPEGImageWriteParam param = new JPEGImageWriteParam(null);
+
+				param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+				param.setCompressionQuality(compression);
+
+				encoder.setOutput(out);
+				encoder.write((IIOMetadata) null, new IIOImage(bufferedImage,
+						null, null), param);
+
+				out.close();
+			}
 		}
 	}
 
@@ -619,24 +734,36 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		JCheckBox gridCheckBox = new JCheckBox("Grid", showGrid);
 		gridCheckBox.setName("grid");
 		gridCheckBox.addChangeListener(this);
+		gridCheckBox.setToolTipText(GUITools.toHTML(
+				"Decide whether or not to draw a grid in the plot area.", 40));
+
+		JCheckBox logCheckBox = new JCheckBox("log", logScale);
+		logCheckBox.setName("log");
+		logCheckBox.addChangeListener(this);
+		logCheckBox
+				.setToolTipText(GUITools
+						.toHTML(
+								"Select this checkbox if the y-axis should be drawn in a logarithmic scale. This is, however, only possible if all values are greater than zero.",
+								40));
 
 		JPanel sPanel = new JPanel();
 		LayoutHelper settings = new LayoutHelper(sPanel);
 		settings.add(new JLabel("Start time: "), 0, 0, 1, 1, 0, 0);
 		settings.add(new JPanel(), 1, 0, 1, 1, 0, 0);
-		settings.add(startTime, 3, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 4, 0, 1, 1, 0, 0);
-		settings.add(new JLabel("End time: "), 5, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 6, 0, 1, 1, 0, 0);
-		settings.add(endTime, 7, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 8, 0, 1, 1, 0, 0);
-		settings.add(new JLabel("Steps: "), 9, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 10, 0, 1, 1, 0, 0);
-		settings.add(new JSpinner(stepsModel), 11, 0, 5, 1, 0, 0);
+		settings.add(startTime, 2, 0, 1, 1, 0, 0);
+		settings.add(new JPanel(), 3, 0, 1, 1, 0, 0);
+		settings.add(new JLabel("End time: "), 4, 0, 1, 1, 0, 0);
+		settings.add(new JPanel(), 5, 0, 1, 1, 0, 0);
+		settings.add(endTime, 6, 0, 1, 1, 0, 0);
+		settings.add(new JPanel(), 7, 0, 1, 1, 0, 0);
+		settings.add(new JLabel("Steps: "), 8, 0, 1, 1, 0, 0);
+		settings.add(new JPanel(), 9, 0, 1, 1, 0, 0);
+		settings.add(new JSpinner(stepsModel), 10, 0, 5, 1, 0, 0);
 		settings.add(new JPanel(), 0, 1, 1, 1, 0, 0);
 		settings.add(new JLabel("ODE Solver: "), 0, 2, 1, 1, 0, 0);
-		settings.add(solvers, 3, 2, 5, 1, 0, 0);
-		settings.add(gridCheckBox, 9, 2, 2, 1, 0, 0);
+		settings.add(solvers, 2, 2, 5, 1, 0, 0);
+		settings.add(gridCheckBox, 8, 2, 1, 1, 0, 0);
+		settings.add(logCheckBox, 10, 2, 1, 1, 0, 0);
 
 		sPanel.setBorder(BorderFactory.createTitledBorder(" Settings "));
 
@@ -653,6 +780,92 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		mPanel.add(sPanel, BorderLayout.CENTER);
 		mPanel.add(aPanel, BorderLayout.SOUTH);
 		return mPanel;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private Component createToolBar() {
+		JToolBar toolbar = new JToolBar("Tools");
+		toolbar.add(GUITools.createButton(GUITools.ICON_OPEN, this,
+				Command.OPEN_DATA, "Load  experimental data from file."));
+		toolbar.add(GUITools.createButton(GUITools.ICON_SAVE, this,
+				Command.SAVE_SIMULATION, "Save simulation results to file."));
+		toolbar.add(GUITools.createButton(GUITools.ICON_PICTURE_TINY, this,
+				Command.SAVE_PLOT_IMAGE, "Save plot in an image."));
+		return toolbar;
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param maxCompartmentValue
+	 * @param maxSpeciesValue
+	 * @param maxParameterValue
+	 * @param paramStepSize
+	 * @return
+	 */
+	private JTabbedPane interactiveScanPanel(Model model,
+			double maxCompartmentValue, double maxSpeciesValue,
+			double maxParameterValue, double paramStepSize) {
+		JTabbedPane tab = new JTabbedPane();
+		JPanel parameterPanel = new JPanel();
+		parameterPanel.setLayout(new BoxLayout(parameterPanel,
+				BoxLayout.PAGE_AXIS));
+		for (Reaction r : model.getListOfReactions())
+			if (r.isSetKineticLaw() && r.getKineticLaw().getNumParameters() > 0) {
+				JPanel panel = interactiveScanTable(r.getKineticLaw()
+						.getListOfParameters(), maxParameterValue,
+						paramStepSize);
+				panel.setBorder(BorderFactory.createTitledBorder(String.format(
+						" Reaction %s ", r.getId())));
+				parameterPanel.add(panel);
+			}
+		tab.add("Compartments", new JScrollPane(interactiveScanTable(model
+				.getListOfCompartments(), maxCompartmentValue, paramStepSize),
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.add("Species", new JScrollPane(interactiveScanTable(model
+				.getListOfSpecies(), maxParameterValue, paramStepSize),
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.add("Global Parameters", new JScrollPane(interactiveScanTable(model
+				.getListOfParameters(), maxSpeciesValue, paramStepSize),
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.add("Local Parameters", new JScrollPane(parameterPanel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		return tab;
+	}
+
+	/**
+	 * 
+	 * @param maxValue
+	 *            , double stepSize
+	 * @param model
+	 * @return
+	 */
+	private JPanel interactiveScanTable(ListOf<? extends Symbol> list,
+			double maxValue, double stepSize) {
+		JPanel panel = new JPanel();
+		LayoutHelper lh = new LayoutHelper(panel);
+		for (int i = 0; i < list.size(); i++) {
+			Symbol p = list.get(i);
+			JSpinner spinner = new JSpinner(new SpinnerNumberModel(
+					p.getValue(), 0d, maxValue, stepSize));
+			spinner.setName(p.getId());
+			spinner.addChangeListener(this);
+			lh.add(new JLabel(GUITools.toHTML(p.toString(), 40)), 0, i, 1, 1,
+					0, 0);
+			lh.add(spinner, 2, i, 1, 1, 0, 0);
+			lh.add(new JLabel(GUITools.toHTML(p.isSetUnits() ? HTMLFormula
+					.toHTML(p.getUnitsInstance()) : "")), 4, i, 1, 1, 0, 0);
+		}
+		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
+		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
+		return panel;
 	}
 
 	/*
@@ -822,6 +1035,20 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			JCheckBox chck = (JCheckBox) e.getSource();
 			if (chck.getName().equals("grid")) {
 				plot.setGridVisible(chck.isSelected());
+			} else if (chck.getName().equals("log")) {
+				if (chck.isSelected() && !plot.checkLoggable()) {
+					chck.setSelected(false);
+					chck.setEnabled(false);
+					JOptionPane
+							.showMessageDialog(
+									this,
+									GUITools
+											.toHTML(
+													"Cannot change to logarithmic scale because at least one value on the y-axis is not greater than zero.",
+													40), "Warning",
+									JOptionPane.WARNING_MESSAGE);
+				}
+				plot.toggleLog(chck.isSelected());
 			}
 		}
 	}
@@ -1011,48 +1238,5 @@ class TableModelLedgend extends AbstractTableModel {
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		data[rowIndex][columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);
-	}
-}
-
-/**
- * 
- * @author Andreas Dr&auml;ger
- * @date 2010-04-08
- * @since 1.4
- */
-class MyDefaultTableModel extends DefaultTableModel {
-
-	/**
-	 * Generated serial version identifier
-	 */
-	private static final long serialVersionUID = 6339470859385085061L;
-
-	/**
-	 * 
-	 * @param data
-	 * @param columnNames
-	 */
-	public MyDefaultTableModel(Object[][] data, String[] columnNames) {
-		super(data, columnNames);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
-	 */
-	@Override
-	public Class<?> getColumnClass(int c) {
-		return getValueAt(0, c).getClass();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
-	 */
-	@Override
-	public boolean isCellEditable(int row, int column) {
-		return false;
 	}
 }
