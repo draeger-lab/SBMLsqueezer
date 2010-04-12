@@ -62,7 +62,7 @@ import org.sbml.squeezer.math.GaussianRank;
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
-
+	
 	/**
 	 * The column rank of the soichiometric matrix of the original model.
 	 */
@@ -324,7 +324,7 @@ public class KineticLawGenerator {
 		if (u.isLitre()) {
 			u.setScale(-3);
 			ud.setName("ml");
-		}		
+		}
 		return miniModel;
 	}
 
@@ -954,16 +954,19 @@ public class KineticLawGenerator {
 		l.initLawListener(UnitDefinition.class.getSimpleName(), miniModel
 				.getNumUnitDefinitions());
 		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
+			int units = ud.getNumUnits();
 			if (modelOrig.getUnitDefinition(ud.getId()) == null)
 				modelOrig.addUnitDefinition(ud.clone());
 			else {
 				UnitDefinition orig = modelOrig.getUnitDefinition(ud.getId());
-				orig.setListOfUnits(ud.getListOfUnits());
+				orig.setListOfUnits(ud.getListOfUnits().clone());
 				orig.simplify();
 				if (ud.isSetName())
-					orig.setName(ud.getName());
+					orig.setName(new String(ud.getName()));
 			}
 			l.currentState(ud, ++num);
+			if (units != ud.getNumUnits())
+				System.err.println(ud.getId() + "\t" + units + "\t->\t" + ud.getNumUnits());
 		}
 		num = 0;
 		l.initLawListener(Compartment.class.getSimpleName(), miniModel

@@ -1,3 +1,21 @@
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sbml.squeezer.math;
 
 import java.util.ArrayList;
@@ -20,38 +38,93 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.ASTNode.Type;
 
+/**
+ * 
+ * @author Alexander D&ouml;rr
+ * @since 1.4
+ */
 public class AlgebraicRuleConverter {
 
+	/**
+	 * 
+	 * @author Alexander D&ouml;rr
+	 * @since 1.4
+	 */
 	private interface Node {
+		/**
+		 * 
+		 * @param node
+		 */
 		public void addNode(Node node);
 
+		/**
+		 * 
+		 * @return
+		 */
 		public Node getNextNode();
 
+		/**
+		 * 
+		 * @param node
+		 */
 		public void deleteNode(Node node);
 
+		/**
+		 * 
+		 * @return
+		 */
 		public String getValue();
 	}
 
+	/**
+	 * 
+	 * @author Alexander D&ouml;rr
+	 * @since 1.4
+	 */
 	private class InnerNode implements Node {
+		/**
+		 * 
+		 */
 		private List<Node> nodes;
+		/**
+		 * 
+		 */
 		private String value;
 
+		/**
+		 * 
+		 * @param name
+		 */
 		public InnerNode(String name) {
 			this.nodes = new ArrayList<Node>();
 			this.value = name;
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getValue()
+		 */
 		public String getValue() {
 			return value;
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
+		 * .squeezer.math.AlgebraicRuleConverter.Node)
+		 */
 		public void addNode(Node node) {
 			this.nodes.add(node);
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
+		 */
 		public Node getNextNode() {
 			if (nodes.isEmpty())
 				return null;
@@ -60,7 +133,13 @@ public class AlgebraicRuleConverter {
 
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
+		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
+		 */
 		public void deleteNode(Node node) {
 			nodes.remove(node);
 
@@ -68,14 +147,26 @@ public class AlgebraicRuleConverter {
 
 	}
 
+	/**
+	 * 
+	 * @author Alexander D&ouml;rr
+	 * @since 1.4
+	 */
 	private class StartNode implements Node {
 		private List<Node> nodes;
 
+		/**
+		 * 
+		 */
 		public StartNode() {
 			this.nodes = new ArrayList<Node>();
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
+		 */
 		public Node getNextNode() {
 			if (nodes.isEmpty())
 				return null;
@@ -84,17 +175,33 @@ public class AlgebraicRuleConverter {
 
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getValue()
+		 */
 		public String getValue() {
 			return null;
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
+		 * .squeezer.math.AlgebraicRuleConverter.Node)
+		 */
 		public void addNode(Node node) {
 			this.nodes.add(node);
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
+		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
+		 */
 		public void deleteNode(Node node) {
 			nodes.remove(node);
 
@@ -102,61 +209,143 @@ public class AlgebraicRuleConverter {
 
 	}
 
+	/**
+	 * 
+	 * @author Alexander D&ouml;rr
+	 * @since 1.4
+	 */
 	private class TerminalNode implements Node {
 
+		/**
+		 * 
+		 */
 		public TerminalNode() {
 
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getValue()
+		 */
 		public String getValue() {
 			return null;
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
+		 * .squeezer.math.AlgebraicRuleConverter.Node)
+		 */
 		public void addNode(Node node) {
 
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
+		 */
 		public Node getNextNode() {
 			return null;
 		}
 
-		@Override
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
+		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
+		 */
 		public void deleteNode(Node node) {
 
 		}
 
 	}
 
+	/**
+	 * 
+	 * @authorAlexander D&ouml;rr
+	 * @since 1.4
+	 */
 	private class Match {
-		String reaction;
-		String variable;
+		/**
+		 * 
+		 */
+		private String reaction;
+		/**
+		 * 
+		 */
+		private String variable;
 
+		/**
+		 * 
+		 * @param reaction
+		 * @param variabale
+		 */
 		public Match(String reaction, String variabale) {
 			this.reaction = reaction;
 			this.variable = variabale;
 		}
 
+		/**
+		 * 
+		 * @return
+		 */
 		public String getVariable() {
 			return variable;
 		}
 
+		/**
+		 * 
+		 * @return
+		 */
 		public String getReaction() {
 			return reaction;
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private List<Node> equations;
-	private HashMap<String,Node> variableHash;
+	/**
+	 * 
+	 */
+	private HashMap<String, Node> variableHash;
+	/**
+	 * 
+	 */
 	private List<Node> variables;
+	/**
+	 * 
+	 */
 	private StartNode bipartiteGraph;
+	/**
+	 * 
+	 */
 	private List<Match> matching;
+	/**
+	 * 
+	 */
 	private List<String> svariables;
+	/**
+	 * 
+	 */
 	private Set<String> reactants;
+	/**
+	 * 
+	 */
 	private Model model;
+	/**
+	 * 
+	 */
 	private String symbol;
+	/**
+	 * 
+	 */
 	private ASTNode variableNode;
 
 	/**
@@ -191,78 +380,84 @@ public class AlgebraicRuleConverter {
 		}
 
 		buildGraph();
-		//buildMatching();
+		// buildMatching();
 	}
 
+	/**
+	 * 
+	 */
 	private void buildGraph() {
 		equations = new ArrayList<Node>();
 		variables = new ArrayList<Node>();
 		variableHash = new HashMap<String, Node>();
 		Node equation, variable;
 		int i;
-		
+
 		for (i = 0; i < model.getNumReactions(); i++) {
-			
+
 			for (SpeciesReference sref : model.getReaction(i)
 					.getListOfProducts()) {
 				if (!sref.getSpeciesInstance().isConstant()) {
 					variable = new InnerNode(sref.getSpeciesInstance().getId());
 					variables.add(variable);
 					if (!sref.getSpeciesInstance().getHasOnlySubstanceUnits()) {
-						equation = new InnerNode(sref.getSpeciesInstance().getId());
+						equation = new InnerNode(sref.getSpeciesInstance()
+								.getId());
 						equations.add(equation);
-						//link
+						// link
 						variable.addNode(equation);
 						equation.addNode(variable);
 						variableHash.put(variable.getValue(), variable);
-					}					
+					}
 				}
 			}
 
 			for (SpeciesReference sref : model.getReaction(i)
 					.getListOfReactants()) {
-				
+
 				if (!sref.getSpeciesInstance().isConstant()) {
 					variable = new InnerNode(sref.getSpeciesInstance().getId());
 					variables.add(variable);
 					if (!sref.getSpeciesInstance().getHasOnlySubstanceUnits()) {
-						equation = new InnerNode(sref.getSpeciesInstance().getId());
+						equation = new InnerNode(sref.getSpeciesInstance()
+								.getId());
 						equations.add(equation);
-						//link
+						// link
 						variable.addNode(equation);
 						equation.addNode(variable);
 						variableHash.put(variable.getValue(), variable);
-					}				
-				}		
-			}	
-		}
-		//Restlichen variablen hashen
-		
-		
-		for (i = 0; i < model.getNumRules(); i++) {
-			equation = new InnerNode(model.getRule(i).getMetaId());			
-			equations.add(equation);
-			if (model.getRule(i) instanceof AlgebraicRule) {
-				//all identifiers withn the MathML of this AlgebraicRule
-				svariables.clear();
-				getVariables(model.getRule(i).getMath(), svariables);
-				
-				for (int j = 0; j < svariables.size(); j++) {
-					
+					}
 				}
 			}
-			else{			
-			variable = variableHash.get(model.getRule(i).getMath().getVariable().getId());
-			//link
-			variable.addNode(equation);
-			equation.addNode(variable);
-			
+		}
+		// Restlichen variablen hashen
+
+		for (i = 0; i < model.getNumRules(); i++) {
+			equation = new InnerNode(model.getRule(i).getMetaId());
+			equations.add(equation);
+			if (model.getRule(i) instanceof AlgebraicRule) {
+				// all identifiers withn the MathML of this AlgebraicRule
+				svariables.clear();
+				getVariables(model.getRule(i).getMath(), svariables);
+
+				for (int j = 0; j < svariables.size(); j++) {
+
+				}
+			} else {
+				variable = variableHash.get(model.getRule(i).getMath()
+						.getVariable().getId());
+				// link
+				variable.addNode(equation);
+				equation.addNode(variable);
+
 			}
 		}
-		
 
 	}
 
+	/**
+	 * 
+	 */
 	private void buildMatching() {
 		bipartiteGraph = new StartNode();
 		TerminalNode tnode = new TerminalNode();
@@ -329,7 +524,7 @@ public class AlgebraicRuleConverter {
 
 		boolean stay = chooseSide(ar.getMath());
 
-		//System.out.println(stay);
+		// System.out.println(stay);
 
 		// System.out.println(symbol);
 

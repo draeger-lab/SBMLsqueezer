@@ -43,7 +43,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -56,6 +55,8 @@ import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
@@ -71,6 +72,7 @@ import org.sbml.jsbml.Symbol;
 import org.sbml.squeezer.Reflect;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.math.SBMLinterpreter;
+import org.sbml.squeezer.util.HTMLFormula;
 
 import au.com.bytecode.opencsv.CSVReader;
 import eva2.gui.FunctionArea;
@@ -140,8 +142,8 @@ class ColorEditor extends AbstractCellEditor implements TableCellEditor,
  * @date 2010-04-06
  * 
  */
-public class SimulationDialog extends JDialog implements ActionListener,
-		ChangeListener, ItemListener {
+public class SimulationPanel extends JPanel implements ActionListener,
+		ChangeListener, ItemListener, TableModelListener {
 
 	/**
 	 * Commands that can be understood by this dialog.
@@ -335,9 +337,18 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	 * 
 	 * @param owner
 	 * @param model
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws SecurityException
 	 */
-	public SimulationDialog(JFrame owner, Model model) {
-		this(owner, model, 5, 0.1, "files/tests/cases/semantic/00026");
+	public SimulationPanel(Model model) throws SecurityException,
+			IllegalArgumentException, NoSuchMethodException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+		this(model, 5, 0.1, "files/tests/cases/semantic/00026");
 		// System.getProperty("user.dir")
 	}
 
@@ -348,14 +359,22 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	 * @param endTime
 	 * @param stepSize
 	 * @param openDir
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws SecurityException
 	 */
-	public SimulationDialog(JFrame owner, Model model, double endTime,
-			double stepSize, String openDir) {
-		super(owner);
+	public SimulationPanel(Model model, double endTime, double stepSize,
+			String openDir) throws SecurityException, IllegalArgumentException,
+			NoSuchMethodException, InstantiationException,
+			IllegalAccessException, InvocationTargetException {
+		super();
 		if (AVAILABLE_SOLVERS.length == 0)
 			JOptionPane
 					.showMessageDialog(
-							owner,
+							this,
 							GUITools
 									.toHTML("Could not find any solvers for differential equation systems. A simulation is therefore not possible."),
 							"Warning", JOptionPane.WARNING_MESSAGE);
@@ -395,7 +414,7 @@ public class SimulationDialog extends JDialog implements ActionListener,
 					BorderLayout.CENTER);
 
 			JPanel legendPanel = new JPanel(new BorderLayout());
-			legend = ledgendTable(model);
+			legend = legendTable(model);
 			legendPanel.add(new JScrollPane(legend,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
@@ -416,22 +435,10 @@ public class SimulationDialog extends JDialog implements ActionListener,
 			toolbar.add(GUITools.createIconButton(GUITools.ICON_OPEN, this,
 					Command.OPEN_DATA, "Load  experimental data from file."));
 
-			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-			setTitle("Simulation");
 			setLayout(new BorderLayout());
-			getContentPane().add(toolbar, BorderLayout.NORTH);
-			getContentPane().add(tabbedPane, BorderLayout.CENTER);
-			try {
-				getContentPane().add(createFootPanel(), BorderLayout.SOUTH);
-				pack();
-				setLocationRelativeTo(owner);
-				setVisible(true);
-			} catch (Exception exc) {
-				exc.printStackTrace();
-				JOptionPane.showMessageDialog(getOwner(), exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-				dispose();
-			}
+			add(toolbar, BorderLayout.NORTH);
+			add(tabbedPane, BorderLayout.CENTER);
+			add(createFootPanel(), BorderLayout.SOUTH);
 		}
 	}
 
@@ -498,8 +505,8 @@ public class SimulationDialog extends JDialog implements ActionListener,
 			lh.add(new JLabel(GUITools.toHTML(p.toString(), 40)), 0, i, 1, 1,
 					0, 0);
 			lh.add(spinner, 2, i, 1, 1, 0, 0);
-			lh.add(new JLabel(GUITools.toHTML(p.isSetUnits() ? p
-					.getUnitsInstance().toHTML() : "")), 4, i, 1, 1, 0, 0);
+			lh.add(new JLabel(GUITools.toHTML(p.isSetUnits() ? HTMLFormula
+					.toHTML(p.getUnitsInstance()) : "")), 4, i, 1, 1, 0, 0);
 		}
 		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
 		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
@@ -521,7 +528,7 @@ public class SimulationDialog extends JDialog implements ActionListener,
 			JFileChooser chooser = GUITools.createJFileChooser(opendir, false,
 					false, JFileChooser.FILES_ONLY,
 					SBFileFilter.CSV_FILE_FILTER);
-			if (chooser.showOpenDialog(getOwner()) == JFileChooser.APPROVE_OPTION)
+			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 				try {
 					plot(readCSVFile(chooser.getSelectedFile()), false);
 				} catch (IOException exc) {
@@ -634,7 +641,7 @@ public class SimulationDialog extends JDialog implements ActionListener,
 		sPanel.setBorder(BorderFactory.createTitledBorder(" Settings "));
 
 		// Actions
-		JButton start = GUITools.createButton("Start", GUITools.ICON_GEAR_TINY,
+		JButton start = GUITools.createButton("Run", GUITools.ICON_GEAR_TINY,
 				this, Command.SIMULATION_START,
 				"Perform a simulation run with the current settings.");
 
@@ -675,12 +682,14 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	 * @param model
 	 * @return
 	 */
-	private JTable ledgendTable(Model model) {
+	private JTable legendTable(Model model) {
 		JTable tab = new JTable();
+		tab.setName("legend");
 		tab.setModel(new TableModelLedgend(model));
 		tab.setDefaultEditor(Color.class, new ColorEditor());
 		tab.setDefaultRenderer(Color.class, new TableCellRendererObjects());
 		tab.setDefaultRenderer(Symbol.class, new TableCellRendererObjects());
+		tab.getModel().addTableModelListener(this);
 		return tab;
 	}
 
@@ -697,19 +706,23 @@ public class SimulationDialog extends JDialog implements ActionListener,
 	 */
 	private void plot(double[][] solution, boolean connected) {
 		if (solution.length > 0) {
-			// int from = model.getNumCompartments();
-			// int to = from + model.getNumSpecies();
-			int from = 0, to = solution[0].length - 1;
-			for (int i = 0; i < solution.length; i++)
-				for (int j = from; j < to; j++) {
-					if (connected)
-						plot.setConnectedPoint(solution[i][0],
-								solution[i][j + 1], j);
-					else {
+			for (int i = 0; i < solution.length; i++) {
+				for (int j = 0; j < solution[i].length - 1; j++) {
+					if (connected) {
+						if (legend.getRowCount() == 0
+								|| ((Boolean) legend.getValueAt(j, 0))
+										.booleanValue()) {
+							plot.setConnectedPoint(solution[i][0],
+									solution[i][j + 1], j);
+							plot.setGraphColor(j, (Color) legend.getValueAt(j,
+									1));
+						}
+					} else {
 						plot.setUnconnectedPoint(solution[i][0],
 								solution[i][j + 1], colNames.length - 1 + j);
 					}
 				}
+			}
 		}
 	}
 
@@ -774,9 +787,8 @@ public class SimulationDialog extends JDialog implements ActionListener,
 		double solution[][] = solver.solveByStepSizeIncludingTime(interpreter,
 				interpreter.getInitialValues(), t1, t2);
 		if (solver.isUnstable()) {
-			JOptionPane.showMessageDialog(getOwner(), "Unstable!",
+			JOptionPane.showMessageDialog(this, "Unstable!",
 					"Simulation not possible", JOptionPane.WARNING_MESSAGE);
-			dispose();
 		}
 		return solution;
 	}
@@ -810,6 +822,25 @@ public class SimulationDialog extends JDialog implements ActionListener,
 			JCheckBox chck = (JCheckBox) e.getSource();
 			if (chck.getName().equals("grid")) {
 				plot.setGridVisible(chck.isSelected());
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seejavax.swing.event.TableModelListener#tableChanged(javax.swing.event.
+	 * TableModelEvent)
+	 */
+	public void tableChanged(TableModelEvent e) {
+		if (e.getSource() instanceof TableModelLedgend) {
+			if (e.getColumn() <= 1 && 0 < simTable.getRowCount()) {
+				plot.clearAll();
+				plot(((TableModelDoubleMatrix) simTable.getModel()).getData(),
+						true);
+				if (expTable.getRowCount() > 0)
+					plot(((TableModelDoubleMatrix) expTable.getModel())
+							.getData(), false);
 			}
 		}
 	}
@@ -890,19 +921,19 @@ class TableModelLedgend extends AbstractTableModel {
 		int i, j;
 		for (i = 0; i < model.getNumCompartments(); i++) {
 			data[i][0] = Boolean.TRUE;
-			data[i][1] = SimulationDialog.indexToColor(i);
+			data[i][1] = SimulationPanel.indexToColor(i);
 			data[i][2] = model.getCompartment(i);
 		}
 		j = model.getNumCompartments();
 		for (i = 0; i < model.getNumSpecies(); i++) {
 			data[i + j][0] = Boolean.TRUE;
-			data[i + j][1] = SimulationDialog.indexToColor(i + j);
+			data[i + j][1] = SimulationPanel.indexToColor(i + j);
 			data[i + j][2] = model.getSpecies(i);
 		}
 		j = model.getNumCompartments() + model.getNumSpecies();
 		for (i = 0; i < model.getNumParameters(); i++) {
 			data[i + j][0] = Boolean.TRUE;
-			data[i + j][1] = SimulationDialog.indexToColor(i + j);
+			data[i + j][1] = SimulationPanel.indexToColor(i + j);
 			data[i + j][2] = model.getParameter(i);
 		}
 	}

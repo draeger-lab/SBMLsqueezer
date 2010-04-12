@@ -434,7 +434,23 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		case STRUCTURAL_KINETIC_MODELLING:
 			break;
 		case SIMULATE:
-			new SimulationDialog(this, sbmlIO.getSelectedModel());
+			try {
+				JDialog d = new JDialog(this, "Simulation");
+				d.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+				d.setTitle("Simulation");
+				d.getContentPane().add(
+						new SimulationPanel(sbmlIO.getSelectedModel()));
+				d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				d.pack();
+				d.setLocationRelativeTo(this);
+				d.addWindowListener(this);
+				setEnabled(false, Command.SIMULATE);
+				d.setVisible(true);
+			} catch (Exception exc) {
+				exc.printStackTrace();
+				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			}
 			break;
 		default:
 			break;
@@ -803,13 +819,17 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 	 */
 	public void windowClosed(WindowEvent we) {
-		if (we.getWindow() instanceof KineticLawSelectionDialog) {
-			KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we
-					.getWindow();
-			if (klsd.isKineticsAndParametersStoredInSBML()) {
-				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
-						.getSelectedComponent();
-				split.init(sbmlIO.getSelectedModel(), true);
+		if (we.getWindow() instanceof JDialog) {
+			if (we.getWindow() instanceof KineticLawSelectionDialog) {
+				KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we
+						.getWindow();
+				if (klsd.isKineticsAndParametersStoredInSBML()) {
+					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
+							.getSelectedComponent();
+					split.init(sbmlIO.getSelectedModel(), true);
+				}
+			} else {
+				setEnabled(true, Command.SIMULATE);
 			}
 		}
 	}

@@ -41,8 +41,8 @@ import javax.swing.event.ChangeListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.io.StringTools;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.util.StringTools;
 
 /**
  * A {@link JPanel} to let the user select all default instances of
