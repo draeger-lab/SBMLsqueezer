@@ -192,7 +192,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		 * Convert the current model or the current SBML object into a LaTeX
 		 * report.
 		 */
-		TO_LATEX
+		TO_LATEX,
+		/**
+		 * Display the license of this project to the user.
+		 */
+		LICENSE
 	}
 
 	/**
@@ -242,9 +246,22 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @param wl
 	 */
 	public static void showOnlineHelp(Frame owner, WindowListener wl) {
-		JHelpBrowser helpBrowser = new JHelpBrowser(owner, String.format(
+		showOnlineHelp(owner, wl, String.format(
 				"SBMLsqueezer %s - Online Help", SBMLsqueezer
-						.getVersionNumber()));
+						.getVersionNumber()), "html/help.html");
+	}
+
+	/**
+	 * Shows a dialog window with the online help.
+	 * 
+	 * @param owner
+	 * @param wl
+	 * @param title
+	 * @param fileLocation
+	 */
+	public static void showOnlineHelp(Frame owner, WindowListener wl,
+			String title, String fileLocation) {
+		JHelpBrowser helpBrowser = new JHelpBrowser(owner, title, fileLocation);
 		helpBrowser.addWindowListener(wl);
 		helpBrowser.setLocationRelativeTo(owner);
 		helpBrowser.setSize(640, 640);
@@ -433,6 +450,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			setEnabled(false, Command.ONLINE_HELP);
 			showOnlineHelp(this, this);
 			break;
+		case LICENSE:
+			setEnabled(false, Command.LICENSE);
+			showOnlineHelp(this, this, String.format(
+					"SBMLsqueezer %s - License", SBMLsqueezer
+							.getVersionNumber()), "html/License.html");
+			break;
 		case CHECK_STABILITY:
 			StabilityDialog stabilitydialog = new StabilityDialog(this);
 			stabilitydialog.showStabilityDialog(settings, sbmlIO);
@@ -510,9 +533,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,
 				InputEvent.ALT_DOWN_MASK));
 		fileMenu.add(openItem);
+		fileMenu.addSeparator();
 		fileMenu.add(saveItem);
 		fileMenu.add(closeItem);
 		fileMenu.add(lastOpened);
+		fileMenu.addSeparator();
 		fileMenu.add(exitItem);
 		openItem.addActionListener(this);
 		closeItem.addActionListener(this);
@@ -540,30 +565,32 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		editMenu.add(GUITools.createMenuItem("Export to LaTeX", KeyStroke
 				.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK),
 				Command.TO_LATEX, this, GUITools.ICON_LATEX_TINY));
+		editMenu.addSeparator();
 		editMenu.add(GUITools.createMenuItem("Analyze Stability",
 				Command.CHECK_STABILITY, this, GUITools.ICON_STABILITY_SMALL));
 		editMenu.add(GUITools.createMenuItem("Structural Kinetic Modelling",
-				Command.STRUCTURAL_KINETIC_MODELLING, this));
+				Command.STRUCTURAL_KINETIC_MODELLING, this,
+				GUITools.ICON_STRUCTURAL_MODELING_TINY));
 		editMenu.add(GUITools.createMenuItem("Simulation", Command.SIMULATE,
 				'S', this, GUITools.ICON_DIAGRAM_TINY));
-		editMenu.add(GUITools.createMenuItem("Preferences",
-				Command.SET_PREFERENCES, 'P', this, GUITools.ICON_TICK_TINY));
+		editMenu.addSeparator();
+		editMenu.add(GUITools
+				.createMenuItem("Preferences", Command.SET_PREFERENCES, 'P',
+						this, GUITools.ICON_SETTINGS_TINY));
 
 		/*
 		 * Help menu
 		 */
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic(helpMenu.getText().charAt(0));
-		JMenuItem about = new JMenuItem("About", GUITools.ICON_INFO_TINY);
-		about.setActionCommand(Command.ABOUT.toString());
-		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
-		about.addActionListener(this);
-		JMenuItem help = new JMenuItem("Online help", GUITools.ICON_HELP_TINY);
-		help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-		help.addActionListener(this);
-		help.setActionCommand(Command.ONLINE_HELP.toString());
-		helpMenu.add(help);
-		helpMenu.add(about);
+		helpMenu.add(GUITools.createMenuItem("Online help", KeyStroke
+				.getKeyStroke(KeyEvent.VK_F1, 0), Command.ONLINE_HELP, this,
+				GUITools.ICON_HELP_TINY));
+		helpMenu.add(GUITools.createMenuItem("About", KeyStroke.getKeyStroke(
+				KeyEvent.VK_F2, 0), Command.ABOUT, this,
+				GUITools.ICON_INFO_TINY));
+		helpMenu.add(GUITools.createMenuItem("License", null, Command.LICENSE,
+				'L', this, GUITools.ICON_LICENCE_TINY));
 
 		JMenuBar mBar = new JMenuBar();
 		mBar.add(fileMenu);
@@ -622,11 +649,21 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 					this, Command.CHECK_STABILITY,
 					"Analyze the stability properties of the selected model."));
 
+		if (GUITools.ICON_STRUCTURAL_MODELING_TINY != null)
+			toolbar.add(GUITools.createButton(
+					GUITools.ICON_STRUCTURAL_MODELING_TINY, this,
+					Command.STRUCTURAL_KINETIC_MODELLING,
+					"Identify key reactins with structural kinetic modeling."));
+
 		if (GUITools.ICON_DIAGRAM_TINY != null)
 			toolbar.add(GUITools
 					.createButton(GUITools.ICON_DIAGRAM_TINY, this,
 							Command.SIMULATE,
 							"Dynamically simulate the current model."));
+		if (GUITools.ICON_SETTINGS_TINY != null)
+			toolbar.add(GUITools.createButton(GUITools.ICON_SETTINGS_TINY,
+					this, Command.SET_PREFERENCES, "Adjust your preferences."));
+
 		toolbar.addSeparator();
 		JButton helpButton = new JButton(GUITools.ICON_HELP_TINY);
 		helpButton.addActionListener(this);
@@ -847,7 +884,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	public void windowClosing(WindowEvent we) {
 		if (we.getSource() instanceof JHelpBrowser)
-			setEnabled(true, Command.ONLINE_HELP);
+			setEnabled(true, Command.ONLINE_HELP, Command.LICENSE);
 		else if (we.getSource() instanceof SBMLsqueezerUI)
 			try {
 				SBMLsqueezer.saveProperties(settings);

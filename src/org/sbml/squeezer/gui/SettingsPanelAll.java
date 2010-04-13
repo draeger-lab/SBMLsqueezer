@@ -62,24 +62,59 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	 */
 	private static final long serialVersionUID = 3189416350182046246L;
 
+	/**
+	 * 
+	 */
 	private SettingsPanelKinetics panelKinSettings;
 
+	/**
+	 * 
+	 */
 	private SettingsPanelLaTeX panelLatexSettings;
 
+	/**
+	 * 
+	 */
 	private SettingsPanelDefaultMechanisms panelDefaultMechanisms;
 
+	/**
+	 * 
+	 */
 	private SettingsPanelStability panelStabilitySettings;
+	
+	/**
+	 *
+	 */
+	private SettingsPanelSimulation panelSimulationSettings;
 
+	/**
+	 * 
+	 */
 	private Properties settings;
 
+	/**
+	 * 
+	 */
 	private JTextField tfOpenDir;
 
+	/**
+	 * 
+	 */
 	private JTextField tfSaveDir;
 
+	/**
+	 * 
+	 */
 	private List<KeyListener> keyListeners;
 
+	/**
+	 * 
+	 */
 	private JTabbedPane tab;
 
+	/**
+	 * 
+	 */
 	private boolean reversibility;
 
 	/**
@@ -146,6 +181,13 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 		 */
 		panelStabilitySettings = new SettingsPanelStability(this.settings);
 		tab.addTab("Stability settings", panelStabilitySettings);
+		
+		/*
+		 * Simulation Settings
+		 */
+		panelSimulationSettings = new SettingsPanelSimulation();
+		tab.addTab("Simulation settings", panelSimulationSettings);
+		
 		this.add(tab);
 		addItemListener(this);
 	}

@@ -228,7 +228,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		/**
 		 * Save the results of the simulation to a CSV file.
 		 */
-		SAVE_SIMULATION
+		SAVE_SIMULATION,
+		/**
+		 * Adjust user's preferences
+		 */
+		SETTINGS
 	}
 
 	/**
@@ -587,12 +591,28 @@ public class SimulationPanel extends JPanel implements ActionListener,
 						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
 			}
 			break;
+		case SETTINGS:
+			adjustPreferences();
+			break;
 		default:
 			JOptionPane.showMessageDialog(this, "Invalid option "
 					+ e.getActionCommand(), "Warning",
 					JOptionPane.WARNING_MESSAGE);
 			break;
 		}
+	}
+
+	private void adjustPreferences() {
+		// TODO Auto-generated method stub
+		SettingsPanelSimulation ps = new SettingsPanelSimulation();
+		JDialog d = new JDialog();
+		d.setTitle("Simulatin Preferences");
+		d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		d.getContentPane().add(ps);
+		d.pack();
+		d.setLocationRelativeTo(null);
+		d.setModal(true);
+		d.setVisible(true);
 	}
 
 	/**
@@ -807,12 +827,20 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private Component createToolBar() {
 		JToolBar toolbar = new JToolBar("Tools");
-		toolbar.add(GUITools.createButton(GUITools.ICON_OPEN, this,
-				Command.OPEN_DATA, "Load  experimental data from file."));
-		toolbar.add(GUITools.createButton(GUITools.ICON_SAVE, this,
-				Command.SAVE_SIMULATION, "Save simulation results to file."));
-		toolbar.add(GUITools.createButton(GUITools.ICON_PICTURE_TINY, this,
-				Command.SAVE_PLOT_IMAGE, "Save plot in an image."));
+		if (GUITools.ICON_OPEN != null)
+			toolbar.add(GUITools.createButton(GUITools.ICON_OPEN, this,
+					Command.OPEN_DATA, "Load  experimental data from file."));
+		if (GUITools.ICON_SAVE != null)
+			toolbar.add(GUITools
+					.createButton(GUITools.ICON_SAVE, this,
+							Command.SAVE_SIMULATION,
+							"Save simulation results to file."));
+		if (GUITools.ICON_PICTURE_TINY != null)
+			toolbar.add(GUITools.createButton(GUITools.ICON_PICTURE_TINY, this,
+					Command.SAVE_PLOT_IMAGE, "Save plot in an image."));
+		if (GUITools.ICON_SETTINGS_TINY != null)
+			toolbar.add(GUITools.createButton(GUITools.ICON_SETTINGS_TINY,
+					this, Command.SETTINGS, "Adjust your preferences"));
 		return toolbar;
 	}
 
