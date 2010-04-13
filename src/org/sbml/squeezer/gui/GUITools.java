@@ -143,6 +143,21 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon ICON_PICTURE_TINY = null;
+	
+	/**
+	 * 
+	 */
+	public static Icon ICON_SETTINGS_TINY = null;
+	
+	/**
+	 * 
+	 */
+	public static Icon ICON_STRUCTURAL_MODELING_TINY = null;
+	
+	/**
+	 * 
+	 */
+	public static Icon ICON_LICENCE_TINY = null;
 
 	/**
 	 * Generated serial version id.
@@ -205,6 +220,10 @@ public class GUITools {
 					.getResource("img/gear_16.png"));
 			ICON_PICTURE_TINY = new ImageIcon(Resource.class
 					.getResource("img/camera_16.png"));
+			ICON_SETTINGS_TINY = new ImageIcon(Resource.class
+					.getResource("img/settings_16.png"));
+			ICON_LICENCE_TINY = new ImageIcon(Resource.class
+					.getResource("img/licence_16.png"));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, toHTML(e.getMessage(), 40), e
 					.getClass().getName(), JOptionPane.ERROR_MESSAGE);

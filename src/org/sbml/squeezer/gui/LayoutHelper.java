@@ -23,6 +23,9 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 /**
  * A helper class that provides several methods for working with a
  * {@link GridBagLayout}.
@@ -33,6 +36,34 @@ import java.awt.GridBagLayout;
  * @date 2005-07-29
  */
 public class LayoutHelper {
+
+	/**
+	 * 
+	 * @param cont
+	 * @param gbl
+	 * @param c
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param weightx
+	 * @param weighty
+	 */
+	public static void addComponent(Container cont, GridBagLayout gbl,
+			Component c, int x, int y, int width, int height, double weightx,
+			double weighty) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		addComponent(cont, gbl, c, x, y, width, height, weightx, weighty,
+				gbc.ipadx, gbc.ipady);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getRow() {
+		return row;
+	}
 
 	/**
 	 * TODO
@@ -66,29 +97,21 @@ public class LayoutHelper {
 		cont.add(c);
 	}
 
-	/**
-	 * 
-	 * @param cont
-	 * @param gbl
-	 * @param c
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param weightx
-	 * @param weighty
-	 */
-	public static void addComponent(Container cont, GridBagLayout gbl,
-			Component c, int x, int y, int width, int height, double weightx,
-			double weighty) {
-		GridBagConstraints gbc = new GridBagConstraints();
-		addComponent(cont, gbl, c, x, y, width, height, weightx, weighty,
-				gbc.ipadx, gbc.ipady);
-	}
-
 	private Container cont;
 	private GridBagLayout gbl;
 	private int row;
+
+	/**
+	 * Creates a new GridBaglayout and associates this with the given container.
+	 * 
+	 * @param cont
+	 */
+	public LayoutHelper(Container cont) {
+		this.cont = cont;
+		this.gbl = new GridBagLayout();
+		this.cont.setLayout(gbl);
+		this.row = 0;
+	}
 
 	/**
 	 * 
@@ -103,15 +126,26 @@ public class LayoutHelper {
 	}
 
 	/**
-	 * Creates a new GridBaglayout and associates this with the given container.
+	 * adds this component in the next row.
 	 * 
-	 * @param cont
+	 * @param c
 	 */
-	public LayoutHelper(Container cont) {
-		this.cont = cont;
-		this.gbl = new GridBagLayout();
-		this.cont.setLayout(gbl);
-		this.row = 0;
+	public void add(Component c) {
+		add(c, 0, ++row, 1, 1, 1, 1);
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	public void add(Component c, int x, int y, int width, int height) {
+		LayoutHelper.addComponent(this.cont, this.gbl, c, x, y, width, height,
+				0, 0);
+		row = y;
 	}
 
 	/**
@@ -152,6 +186,45 @@ public class LayoutHelper {
 
 	/**
 	 * 
+	 * @param label
+	 * @param c
+	 */
+	public void add(String label, Component c) {
+		add(label, c, 0, row);
+		row++;
+	}
+
+	/**
+	 * 
+	 * @param label
+	 * @param c
+	 * @param spaceLine
+	 *            If true, a new line with an empty JPanel will be created as a
+	 *            spacer.
+	 */
+	public void add(String label, Component c, boolean spaceLine) {
+		add(label, c, 0, row);
+		row++;
+		add(new JPanel(), 0, row, 3, 1, 0, 0);
+		row++;
+	}
+
+	/**
+	 * Creates a pair of a label and a component separated by a spacing panel.
+	 * 
+	 * @param label
+	 * @param c
+	 * @param x
+	 * @param y
+	 */
+	public void add(String label, Component c, int x, int y) {
+		add(new JLabel(label), x, y, 1, 1, 0, 0);
+		add(new JPanel(), x + 1, y, 1, 1, 0, 0);
+		add(c, x + 2, y, 1, 1);
+	}
+
+	/**
+	 * 
 	 * @return
 	 */
 	public Container getContainer() {
@@ -159,12 +232,19 @@ public class LayoutHelper {
 	}
 
 	/**
-	 * adds this component in the next row.
+	 * A row of components
 	 * 
-	 * @param c
+	 * @param label
+	 * @param components
 	 */
-	public void add(Component c) {
-		add(c, 0, ++row, 1, 1, 1, 1);
+	public void add(String label, Component... components) {
+		int x = 0;
+		add(new JLabel(label), x, row, 1, 1, 0, 0);
+		for (Component component : components) {
+			add(new JPanel(), ++x, row, 1, 1, 0, 0);
+			add(component, ++x, row, 1, 1);
+		}
+		row++;
 	}
 
 }

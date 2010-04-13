@@ -77,7 +77,7 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 	 */
 	public JHelpBrowser(Dialog owner, String title) {
 		super(owner, title);
-		init();
+		init("html/help.html");
 	}
 
 	/**
@@ -89,7 +89,18 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 	 */
 	public JHelpBrowser(Frame owner, String title) {
 		super(owner, title);
-		init();
+		init("html/help.html");
+	}
+	
+	/**
+	 * 
+	 * @param owner
+	 * @param title
+	 * @param helpFile
+	 */
+	public JHelpBrowser(Frame owner, String title, String helpFile) {
+		super(owner, title);
+		init(helpFile);
 	}
 
 	/*
@@ -124,10 +135,11 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 
 	/**
 	 * Initialize this Window.
+	 * @param helpFile 
 	 * 
 	 */
-	private void init() {
-		browser = new JBrowser(Resource.class.getResource("html/help.html"));
+	private void init(String helpFile) {
+		browser = new JBrowser(Resource.class.getResource(helpFile));
 		browser.addHyperlinkListener(this);
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(new JScrollPane(browser,
