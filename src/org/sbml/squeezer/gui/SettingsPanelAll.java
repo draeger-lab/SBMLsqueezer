@@ -23,12 +23,8 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -54,8 +50,7 @@ import org.sbml.squeezer.SBMLsqueezer;
  * @since 1.3
  * @date 2009-09-22
  */
-public class SettingsPanelAll extends JPanel implements KeyListener,
-		ItemListener {
+public class SettingsPanelAll extends SettingsPanel implements ItemListener {
 
 	/**
 	 * Generated serial version uid.
@@ -81,7 +76,7 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	 * 
 	 */
 	private SettingsPanelStability panelStabilitySettings;
-	
+
 	/**
 	 *
 	 */
@@ -105,11 +100,6 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	/**
 	 * 
 	 */
-	private List<KeyListener> keyListeners;
-
-	/**
-	 * 
-	 */
 	private JTabbedPane tab;
 
 	/**
@@ -124,7 +114,6 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 	public SettingsPanelAll(Properties properties) {
 		super(new GridLayout(1, 1));
 		settings = properties;
-		keyListeners = new LinkedList<KeyListener>();
 		reversibility = ((Boolean) properties
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
@@ -172,7 +161,9 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 		 * LaTeX Settings
 		 */
 		this.panelLatexSettings = new SettingsPanelLaTeX(settings, false);
-		tab.addTab("LaTeX output settings", panelLatexSettings);
+		tab.addTab("LaTeX output settings", new JScrollPane(panelLatexSettings,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 		// this.add(tab);
 		// addItemListener(this);
 
@@ -180,49 +171,28 @@ public class SettingsPanelAll extends JPanel implements KeyListener,
 		 * Stability Settings
 		 */
 		panelStabilitySettings = new SettingsPanelStability(this.settings);
-		tab.addTab("Stability settings", panelStabilitySettings);
-		
+		tab.addTab("Stability settings", new JScrollPane(
+				panelStabilitySettings,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+
 		/*
 		 * Simulation Settings
 		 */
-		panelSimulationSettings = new SettingsPanelSimulation();
-		tab.addTab("Simulation settings", panelSimulationSettings);
-		
+		try {
+			panelSimulationSettings = new SettingsPanelSimulation();
+			tab.addTab("Simulation settings", new JScrollPane(
+					panelSimulationSettings,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+		}
+
 		this.add(tab);
 		addItemListener(this);
-	}
-
-	/**
-	 * 
-	 */
-	public void addKeyListener(KeyListener kl) {
-		keyListeners.add(kl);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
-	 */
-	public void keyPressed(KeyEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-	 */
-	public void keyReleased(KeyEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-	 */
-	public void keyTyped(KeyEvent e) {
-		for (KeyListener kl : keyListeners)
-			kl.keyTyped(e);
 	}
 
 	/*

@@ -54,9 +54,12 @@ import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
 import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
+import org.sbml.squeezer.math.Distance;
 import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.MessageListener;
 import org.sbml.squeezer.util.MessageProcessor;
+
+import eva2.tools.math.des.AbstractDESSolver;
 
 /**
  * The main program of SBMLsqueezer. This class initializes all requrired
@@ -159,7 +162,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		kineticsModulated = new HashSet<String>();
 		kineticsIntStoichiometry = new HashSet<String>();
 		Class<?> classes[] = Reflect.getAllClassesInPackage(KINETICS_PACKAGE,
-				false, true, BasicKineticLaw.class, "plugin" + File.separatorChar);
+				false, true, BasicKineticLaw.class, "plugin"
+						+ File.separatorChar);
 		for (Class<?> c : classes) {
 			if (!Modifier.isAbstract(c.getModifiers())) {
 				Set<Class<?>> s = new HashSet<Class<?>>();
@@ -195,6 +199,34 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		msg.log("loading user settings...");
 		settings = initProperties();
 		msg.logln(" done.");
+	}
+	
+	/**
+	 * An array of all available ordinary differential equation solvers.
+	 */
+	private static final Class<AbstractDESSolver> AVAILABLE_SOLVERS[] = Reflect
+			.getAllClassesInPackage("eva2.tools.math.des", true, true,
+					AbstractDESSolver.class, "plugin" + File.separatorChar,
+					true);
+	/**
+	 * An array of all available implementations of distance functions to judge
+	 * the quality of a simulation based on parameter and initial value
+	 * settings.
+	 */
+	private static final Class<Distance> AVAILABLE_DISTANCES[] = Reflect
+			.getAllClassesInPackage("org.sbml.squeezer.math", true, true,
+					Distance.class, "plugin" + File.separatorChar, true);
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static final Class<AbstractDESSolver>[] getAvailableSolvers() {
+		return AVAILABLE_SOLVERS;
+	}
+
+	public static final Class<Distance>[] getAvailableDistances() {
+		return AVAILABLE_DISTANCES;
 	}
 
 	/**

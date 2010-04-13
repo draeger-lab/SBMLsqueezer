@@ -52,12 +52,11 @@ import org.sbml.squeezer.SBMLsqueezer;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @date Nov 15, 2007
  */
-public class SettingsPanelKinetics extends JPanel implements ChangeListener,
-		ItemListener {
+public class SettingsPanelKinetics extends SettingsPanel implements
+		ChangeListener, ItemListener {
 
 	/**
 	 * Generated serial version ID.

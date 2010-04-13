@@ -313,7 +313,7 @@ public class SBasePanel extends JPanel {
 								1, 1, 1);
 			else if (mc instanceof InitialAssignment)
 				lh.add(new SBasePanel(((InitialAssignment) mc)
-						.getSymbolInstance(), settings), 1, ++row, 3, 1, 1, 1);
+						.getStateInstance(), settings), 1, ++row, 3, 1, 1, 1);
 			else if (mc instanceof AssignmentRule)
 				lh
 						.add(new SBasePanel(((AssignmentRule) mc)

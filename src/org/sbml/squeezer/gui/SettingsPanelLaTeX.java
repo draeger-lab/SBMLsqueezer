@@ -47,12 +47,11 @@ import org.sbml.squeezer.io.SBFileFilter;
  * 
  * @since 1.2
  * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @date Jan 2009
  */
-public class SettingsPanelLaTeX extends JPanel implements ActionListener,
-		ItemListener {
+public class SettingsPanelLaTeX extends SettingsPanel implements
+		ActionListener, ItemListener {
 
 	private JTextField fileField;
 	private JComboBox jComboBoxPaperSize;
