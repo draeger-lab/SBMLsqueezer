@@ -224,6 +224,8 @@ public class GUITools {
 					.getResource("img/settings_16.png"));
 			ICON_LICENCE_TINY = new ImageIcon(Resource.class
 					.getResource("img/licence_16.png"));
+			ICON_STRUCTURAL_MODELING_TINY = new ImageIcon(Resource.class
+					.getResource("img/steuer_icon.png"));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, toHTML(e.getMessage(), 40), e
 					.getClass().getName(), JOptionPane.ERROR_MESSAGE);
