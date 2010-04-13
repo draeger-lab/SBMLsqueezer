@@ -27,11 +27,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import eva2.tools.ReflectPackage;
 
 /**
  * This class loads other classes that implement certain interfaces or extend
@@ -86,7 +87,7 @@ public class Reflect {
 	 * @param cls
 	 * @return
 	 */
-	private static int addClass(HashSet<Class<?>> set, Class<?> cls) {
+	private static <T> int addClass(HashSet<Class<T>> set, Class<T> cls) {
 		if (TRACE)
 			System.out.println("adding class " + cls.getName());
 		if (set.contains(cls)) {
@@ -110,9 +111,9 @@ public class Reflect {
 	 * @return An ArrayList of Class objects contained in the package which may
 	 *         be empty if an error occurs.
 	 */
-	public static Class<?>[] getAllClassesInPackage(String pckg,
+	public static <T> Class<T>[] getAllClassesInPackage(String pckg,
 			boolean includeSubs, boolean bSort) {
-		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg,
+		return getClassesInPackageFltr(new HashSet<Class<T>>(), pckg,
 				includeSubs, bSort, null);
 	}
 
@@ -124,9 +125,9 @@ public class Reflect {
 	 * @param superClass
 	 * @return
 	 */
-	public static Class<?>[] getAllClassesInPackage(String pckg,
-			boolean includeSubs, boolean bSort, Class<?> superClass) {
-		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg,
+	public static <T> Class<T>[] getAllClassesInPackage(String pckg,
+			boolean includeSubs, boolean bSort, Class<T> superClass) {
+		return getClassesInPackageFltr(new HashSet<Class<T>>(), pckg,
 				includeSubs, bSort, superClass);
 	}
 
@@ -149,13 +150,13 @@ public class Reflect {
 	 *            Path to the jar file where the package is located.
 	 * @return
 	 */
-	public static Class<?>[] getAllClassesInPackage(String packageName,
-			boolean includeSubs, boolean bSort,
-			Class<BasicKineticLaw> superClass, String jarPath) {
-		Class<?> classes[] = Reflect.getAllClassesInPackage(packageName, false,
+	public static <T> Class<T>[] getAllClassesInPackage(String packageName,
+			boolean includeSubs, boolean bSort, Class<T> superClass,
+			String jarPath) {
+		Class<T> classes[] = Reflect.getAllClassesInPackage(packageName, false,
 				true, superClass);
 		if (classes == null || classes.length == 0) {
-			HashSet<Class<?>> set = new HashSet<Class<?>>();
+			HashSet<Class<T>> set = new HashSet<Class<T>>();
 			boolean tryDir = true;
 			if (tryDir) {
 				File f = new File(jarPath);
@@ -163,7 +164,7 @@ public class Reflect {
 					String[] pathElements = f.list();
 					for (String entry : pathElements)
 						Reflect.getClassesFromJarFltr(set, jarPath + entry,
-								packageName, true, BasicKineticLaw.class);
+								packageName, true, superClass);
 				}
 			}
 			classes = Reflect.hashSetToClassArray(set, true);
@@ -179,12 +180,12 @@ public class Reflect {
 	 * @param reqSuperCls
 	 * @return
 	 */
-	public static Class<?>[] getAssignableClassesInPackage(String pckg,
-			Class<?> reqSuperCls, boolean includeSubs, boolean bSort) {
+	public static <T> Class<T>[] getAssignableClassesInPackage(String pckg,
+			Class<T> reqSuperCls, boolean includeSubs, boolean bSort) {
 		if (TRACE)
 			System.out.println("requesting classes assignable from "
 					+ reqSuperCls.getName());
-		return getClassesInPackageFltr(new HashSet<Class<?>>(), pckg,
+		return getClassesInPackageFltr(new HashSet<Class<T>>(), pckg,
 				includeSubs, bSort, reqSuperCls);
 	}
 
@@ -271,9 +272,10 @@ public class Reflect {
 	 * @param reqSuperCls
 	 * @return
 	 */
-	public static int getClassesFromDirFltr(HashSet<Class<?>> set,
+	@SuppressWarnings("unchecked")
+	public static <T> int getClassesFromDirFltr(HashSet<Class<T>> set,
 			File directory, String pckgname, boolean includeSubs,
-			Class<?> reqSuperCls) {
+			Class<T> reqSuperCls) {
 		int cntAdded = 0;
 		if (directory.exists()) {
 			// Get the list of the files contained in the package
@@ -283,7 +285,7 @@ public class Reflect {
 				if (files[i].endsWith(".class")) {
 					// removes the .class extension
 					try {
-						Class<?> cls = Class.forName(pckgname + '.'
+						Class<T> cls = (Class<T>) Class.forName(pckgname + '.'
 								+ files[i].substring(0, files[i].length() - 6));
 						if (reqSuperCls != null) {
 							if (reqSuperCls.isAssignableFrom(cls)) {
@@ -330,9 +332,9 @@ public class Reflect {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public static int getClassesFromFilesFltr(HashSet<Class<?>> set,
+	public static <T> int getClassesFromFilesFltr(HashSet<Class<T>> set,
 			String path, String pckgname, boolean includeSubs,
-			Class<?> reqSuperCls) {
+			Class<T> reqSuperCls) {
 		try {
 			// Get a File object for the package
 			File directory = null;
@@ -382,9 +384,10 @@ public class Reflect {
 	 * @param packageName
 	 * @return
 	 */
-	public static int getClassesFromJarFltr(HashSet<Class<?>> set,
+	@SuppressWarnings("unchecked")
+	public static <T> int getClassesFromJarFltr(HashSet<Class<T>> set,
 			String jarName, String packageName, boolean includeSubs,
-			Class<?> reqSuperCls) {
+			Class<T> reqSuperCls) {
 		boolean isInSubPackage = true;
 		int cntAdded = 0;
 
@@ -416,7 +419,7 @@ public class Reflect {
 						String clsName = jarEntryName.replace("/", ".");
 						try {
 							// removes the .class extension
-							Class<?> cls = Class.forName(clsName.substring(0,
+							Class<T> cls = (Class<T>) Class.forName(clsName.substring(0,
 									jarEntryName.length() - 6));
 							if (reqSuperCls != null) {
 								if (reqSuperCls.isAssignableFrom(cls)) {
@@ -473,9 +476,9 @@ public class Reflect {
 	 * @param pckg
 	 * @return
 	 */
-	public static Class<?>[] getClassesInPackageFltr(HashSet<Class<?>> set,
+	public static <T> Class<T>[] getClassesInPackageFltr(HashSet<Class<T>> set,
 			String pckg, boolean includeSubs, boolean bSort,
-			Class<?> reqSuperCls) {
+			Class<T> reqSuperCls) {
 		String classPath = null;
 		if (!useFilteredClassPath || (dynCP == null)) {
 			classPath = System.getProperty("java.class.path", ".");
@@ -556,7 +559,8 @@ public class Reflect {
 	 * @param bSort
 	 * @return
 	 */
-	public static Class<?>[] hashSetToClassArray(HashSet<Class<?>> set,
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T>[] hashSetToClassArray(HashSet<Class<T>> set,
 			boolean bSort) {
 		Object[] clsArr = set.toArray();
 		if (bSort) {
@@ -565,7 +569,7 @@ public class Reflect {
 
 		List<Object> list;
 		list = Arrays.asList(clsArr);
-		return list.toArray(new Class[list.size()]);
+		return (Class<T>[]) list.toArray(new Class<?>[list.size()]);
 	}
 
 	/**
@@ -574,5 +578,32 @@ public class Reflect {
 	 */
 	public Reflect() {
 		TRACE = true;
+	}
+
+	/**
+	 * 
+	 * @param oackage
+	 * @param includeSubs
+	 * @param bSort
+	 * @param superClass
+	 * @param jarPath
+	 * @param excludeAbstractClasses
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T>[] getAllClassesInPackage(String oackage,
+			boolean includeSubs, boolean bSort, Class<T> superClass,
+			String jarPath, boolean excludeAbstractClasses) {
+		Class<T> classes[] = getAllClassesInPackage(oackage, includeSubs,
+				bSort, superClass, jarPath);
+		if (excludeAbstractClasses) {
+			List<Class<T>> impl = new LinkedList<Class<T>>();
+			for (Class<T> c : classes)
+				if (!Modifier.isAbstract(c.getModifiers())) {
+					impl.add(c);
+				}
+			return (Class<T>[]) impl.toArray(new Class<?>[0]);
+		}
+		return classes;
 	}
 }

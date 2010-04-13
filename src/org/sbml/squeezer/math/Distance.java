@@ -20,15 +20,15 @@ package org.sbml.squeezer.math;
 
 /**
  * This class is the basis of various implementations of distance functions.
- *
+ * 
  * @version 0.1
  * @since 1.4
- * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
+ * @author Andreas Dr&auml;ger
  * @date 17.04.2007
  */
 public abstract class Distance {
 
-	protected double	root;
+	protected double root;
 
 	/**
 	 * Default constructor. This sets the standard value for the parameter as
@@ -40,9 +40,9 @@ public abstract class Distance {
 
 	/**
 	 * Constructor, which allows setting the parameter value for root.
-	 *
+	 * 
 	 * @param root
-	 *          The parameter for this distance.
+	 *            The parameter for this distance.
 	 */
 	public Distance(double root) {
 		this.root = root;
@@ -51,11 +51,11 @@ public abstract class Distance {
 	/**
 	 * Returns the distance of the two vectors x and y where the currently set
 	 * root is used. This can be obtained by invoking the {@see getRoot} method.
-	 * It is possible that one matrix contains more columns than the other one. If
-	 * so, the additional values in the bigger matrix are ignored and do not
+	 * It is possible that one matrix contains more columns than the other one.
+	 * If so, the additional values in the bigger matrix are ignored and do not
 	 * contribute to the distance. <code>NaN</code> values do also not
 	 * contribute to the distance.
-	 *
+	 * 
 	 * @param x
 	 * @param y
 	 * @return
@@ -71,13 +71,13 @@ public abstract class Distance {
 	 * distance uses a non defined operation. If one array is longer than the
 	 * other one additional values do not contribute to the distance.
 	 * <code>NaN</code> values are also ignored.
-	 *
+	 * 
 	 * @param x
-	 *          an array
+	 *            an array
 	 * @param y
-	 *          another array
+	 *            another array
 	 * @param root
-	 *          Some necessary parameter.
+	 *            Some necessary parameter.
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
@@ -89,7 +89,7 @@ public abstract class Distance {
 	 * one. If so, the additional values in the bigger matrix are ignored and do
 	 * not contribute to the distance. <code>NaN</code> values do also not
 	 * contribute to the distance.
-	 *
+	 * 
 	 * @param x
 	 * @param y
 	 * @return
@@ -108,7 +108,7 @@ public abstract class Distance {
 
 	/**
 	 * The name of this distance measurement.
-	 *
+	 * 
 	 * @return
 	 */
 	public abstract String getName();
@@ -119,8 +119,9 @@ public abstract class Distance {
 	}
 
 	/**
-	 * Returns the currently set root or default value for the distance function.
-	 *
+	 * Returns the currently set root or default value for the distance
+	 * function.
+	 * 
 	 * @return
 	 */
 	public double getRoot() {
@@ -129,7 +130,7 @@ public abstract class Distance {
 
 	/**
 	 * Returns the standard value for the parameter to compute the distance.
-	 *
+	 * 
 	 * @return
 	 */
 	public abstract double getStandardParameter();
@@ -137,7 +138,7 @@ public abstract class Distance {
 	/**
 	 * Set the current root to be used in the distance function to the specified
 	 * value.
-	 *
+	 * 
 	 * @param root
 	 */
 	public void setRoot(double root) {

@@ -55,7 +55,7 @@ import org.sbml.squeezer.util.StringTools;
  * @date 2009-09-22
  * @since 1.3
  */
-public class SettingsPanelDefaultMechanisms extends JPanel implements
+public class SettingsPanelDefaultMechanisms extends SettingsPanel implements
 		ItemListener, ChangeListener {
 
 	/**

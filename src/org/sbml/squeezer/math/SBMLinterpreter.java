@@ -19,14 +19,10 @@
 package org.sbml.squeezer.math;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.tree.TreeNode;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
@@ -46,7 +42,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.Symbol;
+import org.sbml.jsbml.State;
 
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
@@ -1143,7 +1139,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		Value val;
 		ASTNode assignment_math;
-		Symbol variable;
+		State variable;
 		double newVal, compartmentValue;
 		int index, i;
 		DESAssignment desa;

@@ -33,8 +33,8 @@ import org.sbml.squeezer.SBMLsqueezer;
  * @date 2009-12-18
  * @since 1.3
  */
-public class SettingsPanelStability extends JPanel implements ChangeListener,
-		ItemListener, KeyListener {
+public class SettingsPanelStability extends SettingsPanel implements
+		ChangeListener, ItemListener, KeyListener {
 
 	/**
 	 * Generated serial version ID.

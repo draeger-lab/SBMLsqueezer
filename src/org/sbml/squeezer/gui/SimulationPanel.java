@@ -35,10 +35,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.IIOImage;
@@ -82,9 +79,10 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.State;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.squeezer.Reflect;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.math.SBMLinterpreter;
 import org.sbml.squeezer.util.HTMLFormula;
@@ -236,29 +234,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * An array of all available ordinary differential equation solvers.
-	 */
-	private static Class<?> AVAILABLE_SOLVERS[];
-
-	/**
 	 * Generated serial version identifier
 	 */
 	private static final long serialVersionUID = -7278034514446047207L;
-
-	/**
-	 * The java package that contains differential equation solvers.
-	 */
-	private static String SOLVER_PACKAGE = "eva2.tools.math.des";
-	static {
-		Class<?> solvers[] = Reflect.getAllClassesInPackage(SOLVER_PACKAGE,
-				true, true, AbstractDESSolver.class);
-		List<Class<?>> impl = new LinkedList<Class<?>>();
-		for (Class<?> c : solvers)
-			if (!Modifier.isAbstract(c.getModifiers())) {
-				impl.add(c);
-			}
-		AVAILABLE_SOLVERS = impl.toArray(new Class<?>[0]);
-	}
 
 	/**
 	 * 
@@ -470,7 +448,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			NoSuchMethodException, InstantiationException,
 			IllegalAccessException, InvocationTargetException {
 		super();
-		if (AVAILABLE_SOLVERS.length == 0)
+		if (SBMLsqueezer.getAvailableSolvers().length == 0)
 			JOptionPane
 					.showMessageDialog(
 							this,
@@ -602,17 +580,26 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void adjustPreferences() {
-		// TODO Auto-generated method stub
-		SettingsPanelSimulation ps = new SettingsPanelSimulation();
-		JDialog d = new JDialog();
-		d.setTitle("Simulatin Preferences");
-		d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		d.getContentPane().add(ps);
-		d.pack();
-		d.setLocationRelativeTo(null);
-		d.setModal(true);
-		d.setVisible(true);
+		try {
+			// TODO Auto-generated method stub
+			SettingsPanelSimulation ps = new SettingsPanelSimulation();
+			JDialog d = new JDialog();
+			d.setTitle("Simulatin Preferences");
+			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			d.getContentPane().add(ps);
+			d.pack();
+			d.setLocationRelativeTo(null);
+			d.setModal(true);
+			d.setVisible(true);
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	/**
@@ -756,9 +743,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				1);
 
 		JComboBox solvers = new JComboBox();
-		for (Class<?> c : AVAILABLE_SOLVERS) {
-			Constructor<?> constructor = c.getConstructor();
-			solver = (AbstractDESSolver) constructor.newInstance();
+		for (Class<AbstractDESSolver> c : SBMLsqueezer.getAvailableSolvers()) {
+			solver = c.getConstructor().newInstance();
 			solvers.addItem(solver.getName());
 		}
 		solvers.setName("solvers");
@@ -926,9 +912,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			JComboBox box = (JComboBox) e.getSource();
 			if (box.getName().equals("solvers"))
 				try {
-					Constructor<?> constructor = AVAILABLE_SOLVERS[box
-							.getSelectedIndex()].getConstructor();
-					solver = (AbstractDESSolver) constructor.newInstance();
+					solver = SBMLsqueezer.getAvailableSolvers()[box
+							.getSelectedIndex()].getConstructor().newInstance();
 				} catch (Exception exc) {
 					// Can actually not happen, because everything has already
 					// been initialized once before.
@@ -1099,10 +1084,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 						.round((t2 - t1) * stepSize)), ((Integer) stepsModel
 						.getMinimum()).intValue()));
 			} else {
-				Symbol s = model.findSymbol(spin.getName());
-				if (s != null) {
-					s.setValue(((SpinnerNumberModel) spin.getModel())
-							.getNumber().doubleValue());
+				State s = model.findState(spin.getName());
+				if (s != null && s instanceof Symbol) {
+					((Symbol) s)
+							.setValue(((SpinnerNumberModel) spin.getModel())
+									.getNumber().doubleValue());
 				}
 			}
 		}
