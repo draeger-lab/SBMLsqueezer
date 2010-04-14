@@ -92,7 +92,7 @@ import eva2.gui.FunctionArea;
 import eva2.tools.math.des.AbstractDESSolver;
 
 /**
- * 
+ * @author Andreas Dr&auml;ger
  * @since 1.4
  * 
  */
@@ -101,16 +101,31 @@ class ColorEditor extends AbstractCellEditor implements TableCellEditor,
 	/**
 	 * 
 	 */
-	protected static final String EDIT = "edit";
+	public static final String EDIT = "edit";
 	/**
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = -3645125690115981580L;
-	JButton button;
-	JColorChooser colorChooser;
-	Color currentColor;
-	JDialog dialog;
+	/**
+	 * 
+	 */
+	private JButton button;
+	/**
+	 * 
+	 */
+	private JColorChooser colorChooser;
+	/**
+	 * 
+	 */
+	private Color currentColor;
+	/**
+	 * 
+	 */
+	private JDialog dialog;
 
+	/**
+	 * 
+	 */
 	public ColorEditor() {
 		button = new JButton();
 		button.setActionCommand(EDIT);
@@ -119,11 +134,16 @@ class ColorEditor extends AbstractCellEditor implements TableCellEditor,
 
 		// Set up the dialog that the button brings up.
 		colorChooser = new JColorChooser();
-		dialog = JColorChooser.createDialog(button, "Pick a Color", true, // modal
-				colorChooser, this, // OK button handler
-				null); // no CANCEL button handler
+		dialog = JColorChooser.createDialog(button, "Pick a Color", true,
+				colorChooser, this, null);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (EDIT.equals(e.getActionCommand())) {
 			// The user has clicked the cell, so
@@ -139,12 +159,22 @@ class ColorEditor extends AbstractCellEditor implements TableCellEditor,
 		}
 	}
 
-	// Implement the one CellEditor method that AbstractCellEditor doesn't.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.CellEditor#getCellEditorValue()
+	 */
 	public Object getCellEditorValue() {
 		return currentColor;
 	}
 
-	// Implement the one method defined by TableCellEditor.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing
+	 * .JTable, java.lang.Object, boolean, int, int)
+	 */
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		currentColor = (Color) value;
@@ -281,6 +311,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		return c;
 	}
 
+	private int distanceFunc;
+
 	/**
 	 * The names in all tables for the columns (time, compartment, species,
 	 * parameters).
@@ -299,7 +331,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * The index of the class name of the solver to be used
 	 */
-	private int integrator;
+	private JComboBox solvers;
 
 	/**
 	 * Table that contains the legend of this plot.
@@ -308,7 +340,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * Whether or not to plot in a logarithmic scale.
 	 */
-	private boolean logScale;
+	private JCheckBox logScale;
 
 	/**
 	 * 
@@ -328,12 +360,12 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * Maximal allowable number of integration steps per time unit
 	 */
-	private double maxStepsPerUnit;
+	private int maxStepsPerUnit;
 
 	/**
 	 * The maximal allowable simulation time
 	 */
-	private int maxTime;
+	private double maxTime;
 
 	/**
 	 * Model to be simulated
@@ -373,7 +405,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * Decides whether or not a grid should be displayed in the plot.
 	 */
-	private boolean showGrid;
+	private JCheckBox showGrid;
 
 	/**
 	 * Table for the simulation data.
@@ -398,17 +430,20 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * Simulation start time
 	 */
-	private double t1;
+	private SpinnerNumberModel t1;
 
 	/**
 	 * Simulation end time
 	 */
-	private double t2;
+	private SpinnerNumberModel t2;
+
+	private double maxSpinVal = 1E10;
 
 	/**
 	 * Decides whether or not to add a legend to the plot.
 	 */
-	private boolean showLegend;
+	private JCheckBox showLegend;
+	private SpinnerNumberModel[] spinModSymbol;
 
 	/**
 	 * 
@@ -467,12 +502,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			MouseListener listeners[] = plot.getMouseListeners();
 			for (int i = listeners.length - 1; i >= 0; i--)
 				plot.removeMouseListener(listeners[i]);
-			t1 = 0; // always for SBML!
-			t2 = endTime;
-			this.stepSize = stepSize;
 			maxTime = 10000;
-			integrator = 0;
-			showGrid = true;
+			// always for SBML!
+			t1 = new SpinnerNumberModel(0, 0, maxTime, stepSize);
+			t2 = new SpinnerNumberModel(endTime, ((Double) t1.getValue())
+					.doubleValue(), maxTime, stepSize);
+			this.stepSize = stepSize;
+			showGrid = GUITools.createJCheckBox("Grid", true, "grid", this,
+					"Decide whether or not to draw a grid in the plot area.");
 			maxStepsPerUnit = 500;
 			this.opendir = openDir;
 			separatorChar = ',';
@@ -484,8 +521,17 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			saveDir = System.getProperty("user.home");
 			compression = 0.8f;
 			colNames = createColNames(model);
-			logScale = false;
-			showLegend = true;
+			distanceFunc = 0;
+
+			logScale = GUITools
+					.createJCheckBox(
+							"Log",
+							true,
+							"log",
+							this,
+							"Select this checkbox if the y-axis should be drawn in a logarithmic scale. This is, however, only possible if all values are greater than zero.");
+			showLegend = GUITools.createJCheckBox("Legend", true, "legend",
+					this, "Add or remove a legend in the plot.");
 
 			JPanel simPanel = new JPanel(new BorderLayout());
 			simTable = new JTable();
@@ -535,7 +581,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
 		case SIMULATION_START:
-			simulate(model);
+			double t1val = ((Double) t1.getValue()).doubleValue();
+			double t2val = ((Double) t2.getValue()).doubleValue();
+			double stepSize = (t2val - t1val)
+					/ stepsModel.getNumber().doubleValue();
+			simulate(model, t1val, t2val, stepSize);
 			break;
 		case OPEN_DATA:
 			JFileChooser chooser = GUITools.createJFileChooser(opendir, false,
@@ -543,7 +593,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					SBFileFilter.CSV_FILE_FILTER);
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 				try {
-					plot(readCSVFile(chooser.getSelectedFile()), false);
+					plot(readCSVFile(chooser.getSelectedFile()), false,
+							showLegend.isSelected());
 				} catch (IOException exc) {
 					exc.printStackTrace();
 					JOptionPane.showMessageDialog(this, exc.getMessage(), exc
@@ -585,8 +636,34 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private void adjustPreferences() {
 		try {
-			// TODO Auto-generated method stub
 			SettingsPanelSimulation ps = new SettingsPanelSimulation();
+			// Plot
+			ps.setLogScale(logScale.isSelected());
+			ps.setShowGrid(showGrid.isSelected());
+			ps.setShowLegend(showLegend.isSelected());
+
+			// Scan
+			ps.setMaxCompartmentValue(maxCompartmentValue);
+			ps.setMaxParameterValue(maxParameterValue);
+			ps.setMaxSpeciesValue(maxSpeciesValue);
+			ps.setParameterStepSize(paramStepSize);
+
+			// Computing
+			ps.setSolver(solvers.getSelectedIndex());
+			ps.setDistance(distanceFunc);
+			ps.setMaxTime(maxTime);
+			ps.setSimulationStartTime(((Double) t1.getValue()).doubleValue());
+			ps.setSimulationEndTime(((Double) t2.getValue()).doubleValue());
+			ps.setSpinnerMaxValue(maxSpinVal);
+			ps.setStepsPerUnitTime(maxStepsPerUnit);
+			ps.setNumIntegrationSteps(((Integer) stepsModel.getValue())
+					.intValue());
+
+			// Parsing
+			ps.setOpenDir(opendir);
+			ps.setSaveDir(saveDir);
+			ps.setQuoteChar(quoteChar);
+
 			JDialog d = new JDialog();
 			d.setTitle("Simulatin Preferences");
 			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -595,6 +672,45 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			d.setLocationRelativeTo(null);
 			d.setModal(true);
 			d.setVisible(true);
+
+			// Plot
+			logScale.setSelected(ps.getLogScale());
+			showGrid.setSelected(ps.getShowGrid());
+			showLegend.setSelected(ps.getShowLegend());
+
+			// Scan
+			maxCompartmentValue = ps.getMaxCompartmentValue();
+			maxParameterValue = ps.getMaxParameterValue();
+			maxSpeciesValue = ps.getMaxSpeciesValue();
+			paramStepSize = ps.getParameterStepSize();
+			for (int i = 0; i < spinModSymbol.length; i++) {
+				if (i < model.getNumCompartments())
+					spinModSymbol[i].setMaximum(Double
+							.valueOf(maxCompartmentValue));
+				else if (i - model.getNumCompartments() < model.getNumSpecies())
+					spinModSymbol[i]
+							.setMaximum(Double.valueOf(maxSpeciesValue));
+				else
+					spinModSymbol[i].setMaximum(Double
+							.valueOf(maxParameterValue));
+				spinModSymbol[i].setStepSize(Double.valueOf(paramStepSize));
+			}
+
+			// Computing
+			solvers.setSelectedIndex(ps.getSolver());
+			distanceFunc = ps.getDistance();
+			maxTime = ps.getMaxTime();
+			t1.setValue(ps.getSimulationStartTime());
+			t2.setValue(Double.valueOf(ps.getSimulationEndTime()));
+			maxSpinVal = ps.getSpinnerMaxValue();
+			maxStepsPerUnit = ps.getStepsPerUnitTime();
+			stepsModel.setValue(Integer.valueOf(ps.getNumIntegrationSteps()));
+
+			// Parsing
+			opendir = ps.getOpenDir();
+			saveDir = ps.getSaveDir();
+			quoteChar = ps.getQuoteChar();
+
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
@@ -671,14 +787,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				ImageWriter encoder = (ImageWriter) ImageIO
 						.getImageWritersByFormatName("JPEG").next();
 				JPEGImageWriteParam param = new JPEGImageWriteParam(null);
-
 				param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 				param.setCompressionQuality(compression);
-
 				encoder.setOutput(out);
 				encoder.write((IIOMetadata) null, new IIOImage(bufferedImage,
 						null, null), param);
-
 				out.close();
 			}
 		}
@@ -728,47 +841,27 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			InvocationTargetException {
 
 		// Settings
-		JSpinner startTime = new JSpinner(new SpinnerNumberModel(t1, 0,
-				maxTime, stepSize));
+		JSpinner startTime = new JSpinner(t1);
 		startTime.addChangeListener(this);
 		startTime.setName("t1");
 		startTime.setEnabled(false);
-		JSpinner endTime = new JSpinner(new SpinnerNumberModel(t2, t1, maxTime,
-				stepSize));
+		JSpinner endTime = new JSpinner(t2);
 		endTime.addChangeListener(this);
 		endTime.setName("t2");
+		double t1val = ((Double) t1.getValue()).doubleValue();
+		double t2val = ((Double) t2.getValue()).doubleValue();
+		stepsModel = new SpinnerNumberModel((int) Math.round((t2val - t1val)
+				/ stepSize), 1, (int) Math.round((t2val - t1val)
+				* maxStepsPerUnit), 1);
 
-		stepsModel = new SpinnerNumberModel((int) Math.round((t2 - t1)
-				/ stepSize), 1, (int) Math.round((t2 - t1) * maxStepsPerUnit),
-				1);
-
-		JComboBox solvers = new JComboBox();
+		solvers = new JComboBox();
 		for (Class<AbstractDESSolver> c : SBMLsqueezer.getAvailableSolvers()) {
 			solver = c.getConstructor().newInstance();
 			solvers.addItem(solver.getName());
 		}
-		solvers.setName("solvers");
-		solvers.addItemListener(this);
-		solvers.setSelectedIndex(integrator);
+		solvers.setSelectedIndex(0);
 		if (solvers.getItemCount() == 1)
 			solvers.setEnabled(false);
-
-		JCheckBox gridCheckBox = GUITools.createJCheckBox("Grid", showGrid,
-				"grid", this,
-				"Decide whether or not to draw a grid in the plot area.");
-
-		JCheckBox logCheckBox = GUITools
-				.createJCheckBox(
-						"Log",
-						logScale,
-						"log",
-						this,
-						"Select this checkbox if the y-axis should be drawn in a logarithmic scale. This is, however, only possible if all values are greater than zero.");
-
-		JCheckBox legendCheckBox = GUITools.createJCheckBox("Legend",
-				showLegend, "legend", this,
-				"Add or remove a legend in the plot.");
-
 		JPanel sPanel = new JPanel();
 		LayoutHelper settings = new LayoutHelper(sPanel);
 		settings.add(new JLabel("Start time: "), 0, 0, 1, 1, 0, 0);
@@ -785,10 +878,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		settings.add(new JPanel(), 0, 1, 1, 1, 0, 0);
 		settings.add(new JLabel("ODE Solver: "), 0, 2, 1, 1, 0, 0);
 		settings.add(solvers, 2, 2, 5, 1, 0, 0);
-		settings.add(gridCheckBox, 8, 2, 1, 1, 0, 0);
-		settings.add(logCheckBox, 10, 2, 1, 1, 0, 0);
+		settings.add(showGrid, 8, 2, 1, 1, 0, 0);
+		settings.add(logScale, 10, 2, 1, 1, 0, 0);
 		settings.add(new JPanel(), 11, 1, 1, 1, 0, 0);
-		settings.add(legendCheckBox, 12, 2, 1, 1, 0, 0);
+		settings.add(showLegend, 12, 2, 1, 1, 0, 0);
 
 		sPanel.setBorder(BorderFactory.createTitledBorder(" Settings "));
 
@@ -846,8 +939,12 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		JPanel parameterPanel = new JPanel();
 		parameterPanel.setLayout(new BoxLayout(parameterPanel,
 				BoxLayout.PAGE_AXIS));
+		spinModSymbol = new SpinnerNumberModel[model.getNumCompartments()
+				+ model.getNumSpecies() + model.getNumParameters()];
+		boolean hasLocalParameters = false;
 		for (Reaction r : model.getListOfReactions())
 			if (r.isSetKineticLaw() && r.getKineticLaw().getNumParameters() > 0) {
+				hasLocalParameters = true;
 				JPanel panel = interactiveScanTable(r.getKineticLaw()
 						.getListOfParameters(), maxParameterValue,
 						paramStepSize);
@@ -859,17 +956,21 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				.getListOfCompartments(), maxCompartmentValue, paramStepSize),
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.setEnabledAt(0, model.getNumCompartments() > 0);
 		tab.add("Species", new JScrollPane(interactiveScanTable(model
 				.getListOfSpecies(), maxParameterValue, paramStepSize),
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.setEnabledAt(1, model.getNumSpecies() > 0);
 		tab.add("Global Parameters", new JScrollPane(interactiveScanTable(model
 				.getListOfParameters(), maxSpeciesValue, paramStepSize),
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.setEnabledAt(2, model.getNumParameters() > 0);
 		tab.add("Local Parameters", new JScrollPane(parameterPanel,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		tab.setEnabledAt(3, hasLocalParameters);
 		return tab;
 	}
 
@@ -884,10 +985,16 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			double maxValue, double stepSize) {
 		JPanel panel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(panel);
+		int offset = 0;
 		for (int i = 0; i < list.size(); i++) {
 			Symbol p = list.get(i);
-			JSpinner spinner = new JSpinner(new SpinnerNumberModel(
-					p.getValue(), 0d, maxValue, stepSize));
+			if (p instanceof Species)
+				offset = model.getNumCompartments();
+			if (p instanceof Parameter)
+				offset = model.getNumCompartments() + model.getNumSpecies();
+			spinModSymbol[i + offset] = new SpinnerNumberModel(p.getValue(),
+					0d, maxValue, stepSize);
+			JSpinner spinner = new JSpinner(spinModSymbol[i + offset]);
 			spinner.setName(p.getId());
 			spinner.addChangeListener(this);
 			lh.add(new JLabel(GUITools.toHTML(p.toString(), 40)), 0, i, 1, 1,
@@ -908,18 +1015,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getSource() instanceof JComboBox) {
-			JComboBox box = (JComboBox) e.getSource();
-			if (box.getName().equals("solvers"))
-				try {
-					solver = SBMLsqueezer.getAvailableSolvers()[box
-							.getSelectedIndex()].getConstructor().newInstance();
-				} catch (Exception exc) {
-					// Can actually not happen, because everything has already
-					// been initialized once before.
-					exc.printStackTrace();
-				}
-		} else if (e.getSource() instanceof JCheckBox) {
+		if (e.getSource() instanceof JCheckBox) {
 			JCheckBox chck = (JCheckBox) e.getSource();
 			if (chck.getName().equals("grid")) {
 				plot.setGridVisible(chck.isSelected());
@@ -938,8 +1034,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				}
 				plot.toggleLog(chck.isSelected());
 			} else if (chck.getName().equals("legend")) {
-				showLegend = chck.isSelected();
-				plot.showLegend(showLegend);
+				plot.showLegend(chck.isSelected());
 			}
 		}
 	}
@@ -971,7 +1066,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 *            If true, all points will be connected, singular points are
 	 *            plotted for false.
 	 */
-	private void plot(double[][] solution, boolean connected) {
+	private void plot(double[][] solution, boolean connected, boolean showLegend) {
 		if (solution.length > 0) {
 			for (int i = 0; i < solution.length; i++) {
 				for (int j = 0; j < solution[i].length - 1; j++) {
@@ -1036,24 +1131,36 @@ public class SimulationPanel extends JPanel implements ActionListener,
 
 	/**
 	 * 
+	 * @param model
+	 * @param t1val
+	 * @param t2val
+	 * @param stepSize
 	 */
-	private void simulate(Model model) {
-		stepSize = (t2 - t1) / stepsModel.getNumber().doubleValue();
+	private void simulate(Model model, double t1val, double t2val,
+			double stepSize) {
 		TableModelDoubleMatrix tabMod = new TableModelDoubleMatrix(
-				solve(model), createColNames(model));
+				solveByStepSize(model, t1val, t2val, stepSize),
+				createColNames(model));
 		simTable.setModel(tabMod);
 		plot.clearAll();
-		plot(tabMod.getData(), true);
+		plot(tabMod.getData(), true, showLegend.isSelected());
 		if (expTable.getColumnCount() > 0)
 			plot(((TableModelDoubleMatrix) expTable.getModel()).getData(),
-					false);
+					false, showLegend.isSelected());
 	}
 
 	/**
 	 * 
+	 * @param model
+	 * @param t1
+	 *            Time begin
+	 * @param t2
+	 *            Time end
+	 * @param stepSize
 	 * @return
 	 */
-	private double[][] solve(Model model) {
+	private double[][] solveByStepSize(Model model, double t1, double t2,
+			double stepSize) {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
 		double solution[][] = solver.solveByStepSizeIncludingTime(interpreter,
@@ -1076,13 +1183,15 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (e.getSource() instanceof JSpinner) {
 			JSpinner spin = (JSpinner) e.getSource();
 			if (spin.getName() != null && spin.getName().equals("t2")) {
-				t2 = Double.valueOf(spin.getValue().toString()).doubleValue();
+				double t1val = ((Double) t1.getValue()).doubleValue();
+				double t2val = Double.valueOf(spin.getValue().toString())
+						.doubleValue();
 				stepsModel.setMinimum(1);
 				stepsModel.setMaximum(Integer.valueOf((int) Math
-						.round((t2 - t1) * maxStepsPerUnit)));
+						.round((t2val - t1val) * maxStepsPerUnit)));
 				stepsModel.setValue(Math.max(Integer.valueOf((int) Math
-						.round((t2 - t1) * stepSize)), ((Integer) stepsModel
-						.getMinimum()).intValue()));
+						.round((t2val - t1val) * stepSize)),
+						((Integer) stepsModel.getMinimum()).intValue()));
 			} else {
 				State s = model.findState(spin.getName());
 				if (s != null && s instanceof Symbol) {
@@ -1105,11 +1214,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			if (e.getColumn() <= 1 && 0 < simTable.getRowCount()) {
 				plot.clearAll();
 				plot(((TableModelDoubleMatrix) simTable.getModel()).getData(),
-						true);
+						true, showLegend.isSelected());
 				if (expTable.getRowCount() > 0)
 					plot(((TableModelDoubleMatrix) expTable.getModel())
-							.getData(), false);
-				if (showLegend)
+							.getData(), false, showLegend.isSelected());
+				if (showLegend.isSelected())
 					plot.updateLegend();
 			}
 		}

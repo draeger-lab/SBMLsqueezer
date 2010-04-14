@@ -21,8 +21,6 @@ package org.sbml.squeezer.gui;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.BorderFactory;
@@ -46,7 +44,7 @@ import eva2.tools.math.des.AbstractDESSolver;
  * @date 2010-04-13
  */
 public class SettingsPanelSimulation extends SettingsPanel implements
-		ActionListener, ItemListener {
+		ActionListener {
 
 	/**
 	 * 
@@ -70,25 +68,24 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 * Generated serial version identifier
 	 */
 	private static final long serialVersionUID = -618135419544428464L;
-	private boolean logScale;
-	private double maxCompartmentVal;
-	private double maxParameterVal;
-	private double maxSpeciesVal;
-	private double maxTime = 100;
-	private int numSteps = 10;
-	private JTextField openDirTextField;
-	private double parameterStepSize;
+	private JCheckBox ckbxLogScale;
+	private JCheckBox ckbxShowGrid;
+	private JCheckBox ckbxShowLegend;
+	private JComboBox cmbBxDistance;
+	private JComboBox cmbBxSolver;
 	private char quoteChar;
-	private JTextField saveDirTextField;
-	private int selectedDistance;
-	private int selectedSolver;
-	private boolean showGrid;
-	private boolean showLegend;
+	private SpinnerNumberModel spinModMaxCompartmentVal;
+	private SpinnerNumberModel spinModMaxParameterVal;
+	private SpinnerNumberModel spinModMaxSpeciesVal;
+	private SpinnerNumberModel spinModNumSteps;
+	private SpinnerNumberModel spinModParameterStepSize;
+	private SpinnerNumberModel spinModStepsPerUnitTime;
+	private SpinnerNumberModel spinModT1;
+	private SpinnerNumberModel spinModT2;
 	private double spinnerMaxVal = 10000;
-	private int stepsPerUnitTime = 5;
-	private double t1 = 0;
-
-	private double t2 = 5;
+	private JTextField tfOpenDir;
+	private JTextField tfQuoteChar;
+	private JTextField tfSaveDir;
 
 	/**
 	 * @throws NoSuchMethodException
@@ -103,10 +100,10 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 			SecurityException, InstantiationException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
 		super(new GridBagLayout());
-		openDirTextField = new JTextField(System.getProperty("user.home"));
-		saveDirTextField = new JTextField(System.getProperty("user.home"));
-		openDirTextField.addKeyListener(this);
-		saveDirTextField.addKeyListener(this);
+		tfOpenDir = new JTextField(System.getProperty("user.home"));
+		tfSaveDir = new JTextField(System.getProperty("user.home"));
+		tfOpenDir.addKeyListener(this);
+		tfSaveDir.addKeyListener(this);
 		LayoutHelper lh = new LayoutHelper(this);
 		lh.add(computingPanel(), 0, 0, 1, 1, 0, 0);
 		lh.add(new JPanel(), 0, 1, 1, 1, 0, 0);
@@ -125,7 +122,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
 		case OPEN_DIR:
-			openDirTextField.setText(selectOpenDir(openDirTextField.getText()));
+			tfOpenDir.setText(selectOpenDir(tfOpenDir.getText()));
 			break;
 
 		default:
@@ -152,10 +149,8 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 		int i = 0;
 		for (Class<AbstractDESSolver> solver : availableSolvers)
 			solvers[i++] = solver.getConstructor().newInstance().getName();
-		JComboBox solverBox = new JComboBox(solvers);
-		solverBox.setName("solvers");
-		solverBox.addItemListener(this);
-		solverBox.setEnabled(solvers.length > 1);
+		cmbBxSolver = new JComboBox(solvers);
+		cmbBxSolver.setEnabled(solvers.length > 1);
 
 		Class<Distance> availableDistances[] = SBMLsqueezer
 				.getAvailableDistances();
@@ -163,28 +158,41 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 		i = 0;
 		for (Class<Distance> distance : availableDistances)
 			distances[i++] = distance.getConstructor().newInstance().getName();
-		JComboBox distanceBox = new JComboBox(distances);
-		distanceBox.setName("distances");
-		distanceBox.addItemListener(this);
+		cmbBxDistance = new JComboBox(distances);
 
-		JSpinner startTime = new JSpinner(new SpinnerNumberModel(t1, 0,
-				maxTime, stepsPerUnitTime));
+		int maxTime = 100;
+		spinModStepsPerUnitTime = new SpinnerNumberModel(5, 1,
+				(int) spinnerMaxVal, 1);
+		spinModT1 = new SpinnerNumberModel(0d, 0d, maxTime,
+				((Integer) spinModStepsPerUnitTime.getValue()).intValue());
+		JSpinner startTime = new JSpinner(spinModT1);
 		startTime.setEnabled(false);
 		JSpinner maxStepsPerUnitTime = new JSpinner(new SpinnerNumberModel(
-				stepsPerUnitTime, 1, Integer.MAX_VALUE, 1));
-		JSpinner numberOfSteps = new JSpinner(new SpinnerNumberModel(numSteps,
-				1, (int) stepsPerUnitTime * t2, 1));
+				((Integer) spinModStepsPerUnitTime.getValue()).intValue(), 1,
+				Integer.MAX_VALUE, 1));
+		double endT = 5;
+		spinModNumSteps = new SpinnerNumberModel(
+				(int) (((Integer) spinModStepsPerUnitTime.getValue())
+						.intValue()
+						* endT - 1) / 2, 1,
+				(int) (((Integer) spinModStepsPerUnitTime.getValue())
+						.intValue() * endT), 1);
+		spinModT2 = new SpinnerNumberModel(
+				endT,
+				((Double) spinModT1.getValue()).doubleValue(),
+				maxTime,
+				((Integer) spinModNumSteps.getValue()).intValue()
+						* (endT - ((Double) spinModT1.getValue()).doubleValue()));
+		JSpinner numberOfSteps = new JSpinner(spinModNumSteps);
 		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(maxTime, 0,
 				1000, 1d); // Double.MAX_VALUE
 		JSpinner maximalEndTime = new JSpinner(spinnerModel);
-		JSpinner endTime = new JSpinner(new SpinnerNumberModel(t2, t1, maxTime,
-				numSteps * (t2 - t1)));
 
 		LayoutHelper lh = createTitledPanel("Computing");
-		lh.add("ODE Solver", solverBox, true);
-		lh.add("Distance", distanceBox, true);
+		lh.add("ODE Solver", cmbBxSolver, true);
+		lh.add("Distance", cmbBxDistance, true);
 		lh.add("Start time", startTime, true);
-		lh.add("End time", endTime, true);
+		lh.add("End time", new JSpinner(spinModT2), true);
 		lh.add("Maximal end time", maximalEndTime, true);
 		lh.add(GUITools.toHTML("Maximal number of steps per unit time", 20),
 				maxStepsPerUnitTime, true);
@@ -207,59 +215,66 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	}
 
 	/**
+	 * @return the availableDistances
+	 */
+	public int getDistance() {
+		return cmbBxDistance.getSelectedIndex();
+	}
+
+	/**
 	 * @return the logScale
 	 */
 	public boolean getLogScale() {
-		return logScale;
+		return ckbxLogScale.isSelected();
 	}
 
 	/**
 	 * @return the maxCompartmentVal
 	 */
 	public double getMaxCompartmentValue() {
-		return maxCompartmentVal;
+		return ((Double) spinModMaxCompartmentVal.getValue()).doubleValue();
 	}
 
 	/**
 	 * @return the maxParameterVal
 	 */
 	public double getMaxParameterValue() {
-		return maxParameterVal;
+		return ((Double) spinModMaxParameterVal.getValue()).doubleValue();
 	}
 
 	/**
 	 * @return the maxSpeciesVal
 	 */
 	public double getMaxSpeciesValue() {
-		return maxSpeciesVal;
+		return ((Double) spinModMaxSpeciesVal.getValue()).doubleValue();
 	}
 
 	/**
 	 * @return the maxTime
 	 */
 	public double getMaxTime() {
-		return maxTime;
+		return ((Double) spinModT2.getMaximum()).doubleValue();
 	}
 
 	/**
 	 * @return the numSteps
 	 */
 	public int getNumIntegrationSteps() {
-		return numSteps;
+		return ((Integer) spinModNumSteps.getValue()).intValue();
 	}
 
 	/**
 	 * @return the openDir
 	 */
 	public String getOpenDir() {
-		return openDirTextField.getText();
+		return tfOpenDir.getText();
 	}
 
 	/**
 	 * @return the parameterStepSize
 	 */
 	public double getParameterStepSize() {
-		return parameterStepSize;
+		return ((Double) spinModParameterStepSize.getValue()).doubleValue();
 	}
 
 	/**
@@ -273,49 +288,42 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 * @return the saveDir
 	 */
 	public String getSaveDir() {
-		return saveDirTextField.getText();
-	}
-
-	/**
-	 * @return the availableDistances
-	 */
-	public int getSelectedDistance() {
-		return selectedDistance;
-	}
-
-	/**
-	 * @return the availableSolvers
-	 */
-	public int getSelectedSolver() {
-		return selectedSolver;
+		return tfSaveDir.getText();
 	}
 
 	/**
 	 * @return the showGrid
 	 */
 	public boolean getShowGrid() {
-		return showGrid;
+		return ckbxShowGrid.isSelected();
 	}
 
 	/**
 	 * @return the showLegend
 	 */
 	public boolean getShowLegend() {
-		return showLegend;
+		return ckbxShowLegend.isSelected();
 	}
 
 	/**
 	 * @return the t2
 	 */
 	public double getSimulationEndTime() {
-		return t2;
+		return ((Double) spinModT2.getValue()).doubleValue();
 	}
 
 	/**
 	 * @return the t1
 	 */
 	public double getSimulationStartTime() {
-		return t1;
+		return ((Double) spinModT1.getValue()).doubleValue();
+	}
+
+	/**
+	 * @return the availableSolvers
+	 */
+	public int getSolver() {
+		return cmbBxSolver.getSelectedIndex();
 	}
 
 	/**
@@ -329,32 +337,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 * @return the stepsPerUnitTime
 	 */
 	public int getStepsPerUnitTime() {
-		return stepsPerUnitTime;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
-	 */
-	public void itemStateChanged(ItemEvent e) {
-		if (e.getSource() instanceof JComboBox) {
-			JComboBox box = (JComboBox) e.getSource();
-			if (box.getName().equals("solvers"))
-				selectedSolver = box.getSelectedIndex();
-			else if (box.getName().equals("distances"))
-				selectedDistance = box.getSelectedIndex();
-		} else if (e.getSource() instanceof JCheckBox) {
-			JCheckBox box = (JCheckBox) e.getSource();
-			if (box.getName().equals("legend")) {
-				showLegend = box.isSelected();
-			} else if (box.getName().equals("grid")) {
-				showGrid = box.isSelected();
-			} else if (box.getName().equals("logarithm")) {
-				logScale = box.isSelected();
-			}
-		}
+		return ((Integer) spinModStepsPerUnitTime.getValue()).intValue();
 	}
 
 	/**
@@ -366,16 +349,16 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 		JButton button = GUITools
 				.createButton(GUITools.ICON_OPEN, this, Command.OPEN_DIR,
 						"Select the default open directory for experimental data files.");
-		lh.add("Open directory", openDirTextField, button);
+		lh.add("Open directory", tfOpenDir, button);
 		lh.add(new JPanel(), 0, lh.getRow(), 1, 1);
 		button = GUITools
 				.createButton(GUITools.ICON_SAVE, this, Command.SAVE_DIR,
 						"Select the default save directory for simulation data result files.");
-		lh.add("Save directory", saveDirTextField, button);
+		lh.add("Save directory", tfSaveDir, button);
 		lh.add(new JPanel(), 0, lh.getRow(), 1, 1);
 
-		lh.add("Quote character",
-				new JTextField(Character.toString(quoteChar)), true);
+		tfQuoteChar = new JTextField(Character.toString(quoteChar));
+		lh.add("Quote character", tfQuoteChar, true);
 		JComboBox combo = new JComboBox(new String[] { "Linux", "Windows",
 				"Mac OS" });
 		lh.add("Line separator character", combo, true);
@@ -388,15 +371,21 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 * @return
 	 */
 	private JPanel plotPanel() {
+		double prev = 100d;
 		LayoutHelper lh = createTitledPanel("Interactive scan");
-		lh.add("Step size", new JSpinner(new SpinnerNumberModel(
-				parameterStepSize, 0, spinnerMaxVal, 0.01)), true);
-		lh.add("Max. Compartment value", new JSpinner(new SpinnerNumberModel(
-				maxCompartmentVal, 0, spinnerMaxVal, 0.01)), true);
-		lh.add("Max. Species value", new JSpinner(new SpinnerNumberModel(
-				maxSpeciesVal, 0, spinnerMaxVal, 0.01)), true);
-		lh.add("Max. Param value", new JSpinner(new SpinnerNumberModel(
-				maxParameterVal, 0, spinnerMaxVal, 0.01)), true);
+		spinModParameterStepSize = new SpinnerNumberModel(0.1, 0,
+				spinnerMaxVal, 0.01);
+		spinModMaxCompartmentVal = new SpinnerNumberModel(prev, 0,
+				spinnerMaxVal, 0.01);
+		spinModMaxSpeciesVal = new SpinnerNumberModel(prev, 0, spinnerMaxVal,
+				0.01);
+		spinModMaxParameterVal = new SpinnerNumberModel(prev, 0, spinnerMaxVal,
+				0.01);
+		lh.add("Step size", new JSpinner(spinModParameterStepSize), true);
+		lh.add("Max. Compartment value",
+				new JSpinner(spinModMaxCompartmentVal), true);
+		lh.add("Max. Species value", new JSpinner(spinModMaxSpeciesVal), true);
+		lh.add("Max. Param value", new JSpinner(spinModMaxParameterVal), true);
 		return (JPanel) lh.getContainer();
 	}
 
@@ -406,20 +395,14 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 */
 	private JPanel scanPanel() {
 		LayoutHelper lh = createTitledPanel("Plot settings");
-		JCheckBox legend = new JCheckBox("Show legend", showLegend);
-		JCheckBox grid = new JCheckBox("Show grid", showGrid);
-		JCheckBox logarithm = new JCheckBox("Logarithmic scale", logScale);
-		legend.setName("legend");
-		legend.addItemListener(this);
-		grid.setName("grid");
-		grid.addItemListener(this);
-		logarithm.setName("logarithm");
-		logarithm.addItemListener(this);
-		lh.add(legend);
+		ckbxShowLegend = new JCheckBox("Show legend");
+		ckbxShowGrid = new JCheckBox("Show grid");
+		ckbxLogScale = new JCheckBox("Logarithmic scale");
+		lh.add(ckbxShowLegend);
 		lh.add(new JPanel());
-		lh.add(grid);
+		lh.add(ckbxShowGrid);
 		lh.add(new JPanel());
-		lh.add(logarithm);
+		lh.add(ckbxLogScale);
 		return (JPanel) lh.getContainer();
 	}
 
@@ -437,11 +420,19 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	}
 
 	/**
+	 * 
+	 * @param index
+	 */
+	public void setDistance(int index) {
+		cmbBxDistance.setSelectedIndex(index);
+	}
+
+	/**
 	 * @param logScale
 	 *            the logScale to set
 	 */
 	public void setLogScale(boolean logScale) {
-		this.logScale = logScale;
+		this.ckbxLogScale.setSelected(logScale);
 	}
 
 	/**
@@ -449,7 +440,8 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the maxCompartmentVal to set
 	 */
 	public void setMaxCompartmentValue(double maxCompartmentVal) {
-		this.maxCompartmentVal = maxCompartmentVal;
+		this.spinModMaxCompartmentVal.setValue(Double
+				.valueOf(maxCompartmentVal));
 	}
 
 	/**
@@ -457,7 +449,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the maxParameterVal to set
 	 */
 	public void setMaxParameterValue(double maxParameterVal) {
-		this.maxParameterVal = maxParameterVal;
+		this.spinModMaxParameterVal.setValue(Double.valueOf(maxParameterVal));
 	}
 
 	/**
@@ -465,7 +457,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the maxSpeciesVal to set
 	 */
 	public void setMaxSpeciesValue(double maxSpeciesVal) {
-		this.maxSpeciesVal = maxSpeciesVal;
+		this.spinModMaxSpeciesVal.setValue(Double.valueOf(maxSpeciesVal));
 	}
 
 	/**
@@ -473,7 +465,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the maxTime to set
 	 */
 	public void setMaxTime(double maxTime) {
-		this.maxTime = maxTime;
+		this.spinModT2.setMaximum(Double.valueOf(maxTime));
 	}
 
 	/**
@@ -481,7 +473,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the numSteps to set
 	 */
 	public void setNumIntegrationSteps(int numSteps) {
-		this.numSteps = numSteps;
+		this.spinModNumSteps.setValue(Integer.valueOf(numSteps));
 	}
 
 	/**
@@ -489,7 +481,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the openDir to set
 	 */
 	public void setOpenDir(String openDir) {
-		this.openDirTextField.setText(openDir);
+		this.tfOpenDir.setText(openDir);
 	}
 
 	/**
@@ -497,7 +489,16 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the parameterStepSize to set
 	 */
 	public void setParameterStepSize(double parameterStepSize) {
-		this.parameterStepSize = parameterStepSize;
+		this.spinModParameterStepSize.setValue(Double
+				.valueOf(parameterStepSize));
+		this.spinModMaxCompartmentVal.setStepSize(Double
+				.valueOf(parameterStepSize));
+		this.spinModMaxParameterVal.setStepSize(Double
+				.valueOf(parameterStepSize));
+		this.spinModMaxSpeciesVal
+				.setStepSize(Double.valueOf(parameterStepSize));
+		this.spinModT1.setStepSize(Double.valueOf(parameterStepSize));
+		this.spinModT2.setStepSize(Double.valueOf(parameterStepSize));
 	}
 
 	/**
@@ -505,7 +506,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the quoteChar to set
 	 */
 	public void setQuoteChar(char quoteChar) {
-		this.quoteChar = quoteChar;
+		this.tfQuoteChar.setText(Character.toString(quoteChar));
 	}
 
 	/**
@@ -513,7 +514,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the saveDir to set
 	 */
 	public void setSaveDir(String saveDir) {
-		this.saveDirTextField.setText(saveDir);
+		this.tfSaveDir.setText(saveDir);
 	}
 
 	/**
@@ -521,7 +522,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the showGrid to set
 	 */
 	public void setShowGrid(boolean showGrid) {
-		this.showGrid = showGrid;
+		this.ckbxShowGrid.setSelected(showGrid);
 	}
 
 	/**
@@ -529,7 +530,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the showLegend to set
 	 */
 	public void setShowLegend(boolean showLegend) {
-		this.showLegend = showLegend;
+		this.ckbxShowLegend.setSelected(showLegend);
 	}
 
 	/**
@@ -537,7 +538,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the t2 to set
 	 */
 	public void setSimulationEndTime(double t2) {
-		this.t2 = t2;
+		this.spinModT2.setValue(Double.valueOf(t2));
 	}
 
 	/**
@@ -545,7 +546,15 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the t1 to set
 	 */
 	public void setSimulationStartTime(double t1) {
-		this.t1 = t1;
+		this.spinModT1.setValue(Double.valueOf(t1));
+	}
+
+	/**
+	 * 
+	 * @param index
+	 */
+	public void setSolver(int index) {
+		cmbBxSolver.setSelectedIndex(index);
 	}
 
 	/**
@@ -554,6 +563,14 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 */
 	public void setSpinnerMaxValue(double spinnerMaxVal) {
 		this.spinnerMaxVal = spinnerMaxVal;
+		this.spinModMaxCompartmentVal.setMaximum(Double.valueOf(spinnerMaxVal));
+		this.spinModMaxParameterVal.setMaximum(Double.valueOf(spinnerMaxVal));
+		this.spinModMaxSpeciesVal.setMaximum(Double.valueOf(spinnerMaxVal));
+		this.spinModNumSteps.setMaximum(Integer.valueOf((int) spinnerMaxVal));
+		this.spinModParameterStepSize.setMaximum(Double.valueOf(spinnerMaxVal));
+		this.spinModStepsPerUnitTime.setMaximum(Double.valueOf(spinnerMaxVal));
+		this.spinModT1.setMaximum(Double.valueOf(spinnerMaxVal));
+		this.spinModT2.setMaximum(Double.valueOf(spinnerMaxVal));
 	}
 
 	/**
@@ -561,6 +578,6 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 *            the stepsPerUnitTime to set
 	 */
 	public void setStepsPerUnitTime(int stepsPerUnitTime) {
-		this.stepsPerUnitTime = stepsPerUnitTime;
+		this.spinModStepsPerUnitTime.setValue(stepsPerUnitTime);
 	}
 }

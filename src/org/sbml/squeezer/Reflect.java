@@ -39,6 +39,7 @@ import eva2.tools.ReflectPackage;
  * certain super types. With this method it becomes possible to load and
  * initialize instances of certain classes at runtime.
  * 
+ * @author Marcel Kronfeld
  * @author Andreas Dr&auml;ger
  * @date 2009-09-22
  * @since 1.3
@@ -83,6 +84,7 @@ public class Reflect {
 
 	/**
 	 * 
+	 * @param <T>
 	 * @param set
 	 * @param cls
 	 * @return
@@ -91,8 +93,8 @@ public class Reflect {
 		if (TRACE)
 			System.out.println("adding class " + cls.getName());
 		if (set.contains(cls)) {
-			System.err.println("warning, Class " + cls.getName()
-					+ " not added twice!");
+			// System.err.printf("warning, Class %s not added twice!\n", cls
+			// .getName());
 			return 0;
 		} else {
 			set.add(cls);
@@ -104,6 +106,7 @@ public class Reflect {
 	 * Collect all classes from a given package on the classpath. If includeSubs
 	 * is true, the sub-packages are listed as well.
 	 * 
+	 * @param <T>
 	 * @param pckg
 	 * @param includeSubs
 	 * @param bSort
@@ -118,7 +121,7 @@ public class Reflect {
 	}
 
 	/**
-	 * 
+	 * @param <T>
 	 * @param pckg
 	 * @param includeSubs
 	 * @param bSort
@@ -137,6 +140,7 @@ public class Reflect {
 	 * into a jar file, the path to the jar might be important and can therefore
 	 * be given as an additional argument.
 	 * 
+	 * @param <T>
 	 * @param packageName
 	 *            The name of the package of interest.
 	 * @param includeSubs
@@ -175,6 +179,7 @@ public class Reflect {
 	/**
 	 * Retrieve assignable classes of the given package from classpath.
 	 * 
+	 * @param <T>
 	 * @param pckg
 	 *            String denoting the package
 	 * @param reqSuperCls
@@ -264,7 +269,7 @@ public class Reflect {
 	}
 
 	/**
-	 * 
+	 * @param <T>
 	 * @param set
 	 * @param directory
 	 * @param pckgname
@@ -328,6 +333,7 @@ public class Reflect {
 	/**
 	 * Collect classes of a given package from the file system.
 	 * 
+	 * @param <T>
 	 * @param pckgname
 	 * @return
 	 * @throws ClassNotFoundException
@@ -380,6 +386,7 @@ public class Reflect {
 	/**
 	 * Collect classes of a given package from a jar file.
 	 * 
+	 * @param <T>
 	 * @param jarName
 	 * @param packageName
 	 * @return
@@ -393,8 +400,7 @@ public class Reflect {
 
 		packageName = packageName.replaceAll("\\.", "/");
 		if (TRACE)
-			System.out
-					.println("Jar " + jarName + " looking for " + packageName);
+			System.out.printf("Jar %s looking for %s\n", jarName, packageName);
 		try {
 			JarInputStream jarFile = new JarInputStream(new FileInputStream(
 					jarName));
@@ -419,8 +425,8 @@ public class Reflect {
 						String clsName = jarEntryName.replace("/", ".");
 						try {
 							// removes the .class extension
-							Class<T> cls = (Class<T>) Class.forName(clsName.substring(0,
-									jarEntryName.length() - 6));
+							Class<T> cls = (Class<T>) Class.forName(clsName
+									.substring(0, jarEntryName.length() - 6));
 							if (reqSuperCls != null) {
 								if (reqSuperCls.isAssignableFrom(cls)) {
 									cntAdded += addClass(set, cls);
@@ -429,12 +435,14 @@ public class Reflect {
 								cntAdded += addClass(set, cls);
 						} catch (Exception e) {
 							System.err
-									.println("ReflectPackage: Couldnt get Class from jar for "
-											+ clsName + ": " + e.getMessage());
+									.printf(
+											"ReflectPackage: Couldnt get Class from jar for %s: %s\n",
+											clsName, e.getMessage());
 						} catch (Error e) {
 							System.err
-									.println("ReflectPackage: Couldnt get Class from jar for "
-											+ clsName + ": " + e.getMessage());
+									.printf(
+											"ReflectPackage: Couldnt get Class from jar for %s: %s\n",
+											clsName, e.getMessage());
 						}
 					}
 
@@ -461,9 +469,9 @@ public class Reflect {
 	 */
 	public static ArrayList<String> getClassesFromProperties(String className) {
 		if (TRACE)
-			System.out
-					.println("getClassesFromProperties - requesting className: "
-							+ className);
+			System.out.printf(
+					"getClassesFromProperties - requesting className: %s\n",
+					className);
 		return getClassesFromClassPath(className);
 	}
 
@@ -472,6 +480,7 @@ public class Reflect {
 	 * given Class as superclass or superinterface. If includeSubs is true, the
 	 * sub-packages are listed as well.
 	 * 
+	 * @param <T>
 	 * @see Class.assignableFromClass(Class cls)
 	 * @param pckg
 	 * @return
@@ -502,8 +511,8 @@ public class Reflect {
 						reqSuperCls);
 			} else {
 				if (TRACE)
-					System.out.println("reading from files: " + dynCP[i] + " "
-							+ pckg);
+					System.out.printf("reading from files: %s %s\n", dynCP[i],
+							pckg);
 				getClassesFromFilesFltr(set, dynCP[i], pckg, includeSubs,
 						reqSuperCls);
 			}
@@ -554,7 +563,7 @@ public class Reflect {
 	}
 
 	/**
-	 * 
+	 * @param <T>
 	 * @param set
 	 * @param bSort
 	 * @return
@@ -581,7 +590,7 @@ public class Reflect {
 	}
 
 	/**
-	 * 
+	 * @param <T>
 	 * @param oackage
 	 * @param includeSubs
 	 * @param bSort
