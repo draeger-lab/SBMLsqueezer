@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -74,62 +73,108 @@ import eva2.tools.math.des.AbstractDESSolver;
  * @version $Revision: 293$
  */
 public class SBMLsqueezer implements LawListener, IOProgressListener {
-
 	/**
 	 * 
 	 */
 	private final static String configFile = "org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
-
+	/**
+	 * The possible location of this class in a jar file if used in plug-in
+	 * mode.
+	 */
+	public static final String JAR_LOCATION = "plugin" + File.separatorChar;
 	/**
 	 * The package where all kinetic equations are located.
 	 */
 	public static final String KINETICS_PACKAGE = "org.sbml.squeezer.kinetics";
-
 	/**
 	 * enzyme mechanism with an arbitrary number of reactants or products
 	 */
 	private static Set<String> kineticsArbitraryEnzymeMechanism;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsBiBi;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsBiUni;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsGeneRegulatoryNetworks;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsIntStoichiometry;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsIrreversible;
-
 	/**
 	 * Kinetics that do allow for inhibitors or activators
 	 */
 	private static Set<String> kineticsModulated;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsNonEnzyme;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsReversible;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsUniUni;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsZeroProducts;
-
+	/**
+	 * 
+	 */
 	private static Set<String> kineticsZeroReactants;
-
+	/**
+	 * The package where all mathematical functions, in particular distance
+	 * functions, are located.
+	 */
+	public static final String MATH_PACKAGE = "org.sbml.squeezer.math";
+	/**
+	 * 
+	 */
 	private static MessageListener msg;
-
+	/**
+	 * 
+	 */
 	private static Properties settings;
 
+	/**
+	 * The package where all ODE solvers are assumed to be located.
+	 */
+	public static final String SOLVER_PACKAGE = "eva2.tools.math.des";
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.4";
-
+	/**
+	 * An array of all available implementations of distance functions to judge
+	 * the quality of a simulation based on parameter and initial value
+	 * settings.
+	 */
+	private static final Class<Distance> AVAILABLE_DISTANCES[] = Reflect
+			.getAllClassesInPackage(MATH_PACKAGE, true, true, Distance.class,
+					JAR_LOCATION, true);
+	/**
+	 * An array of all available ordinary differential equation solvers.
+	 */
+	private static final Class<AbstractDESSolver> AVAILABLE_SOLVERS[] = Reflect
+			.getAllClassesInPackage(SOLVER_PACKAGE, true, true,
+					AbstractDESSolver.class, JAR_LOCATION, true);
 	/**
 	 * Comment to be written into SBMLsqueezer's configuration file.
 	 */
 	private static final String configurationComment = "SBMLsqueezer "
 			+ versionNumber + " configuration. Do not change manually.";
-
 	/**
 	 * The location of the user's configuration file.
 	 */
@@ -139,7 +184,6 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			+ ".SBMLsqueezer"
 			+ File.separatorChar
 			+ "SBMLsqueezer" + versionNumber + ".cfg";
-
 	/**
 	 * Load all available kinetic equations and the user's settings from the
 	 * configuration file.
@@ -161,72 +205,42 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		kineticsZeroProducts = new HashSet<String>();
 		kineticsModulated = new HashSet<String>();
 		kineticsIntStoichiometry = new HashSet<String>();
-		Class<?> classes[] = Reflect.getAllClassesInPackage(KINETICS_PACKAGE,
-				false, true, BasicKineticLaw.class, "plugin"
-						+ File.separatorChar);
-		for (Class<?> c : classes) {
-			if (!Modifier.isAbstract(c.getModifiers())) {
-				Set<Class<?>> s = new HashSet<Class<?>>();
-				for (Class<?> interf : c.getInterfaces())
-					s.add(interf);
-				if (s.contains(InterfaceIrreversibleKinetics.class))
-					kineticsIrreversible.add(c.getCanonicalName());
-				if (s.contains(InterfaceReversibleKinetics.class))
-					kineticsReversible.add(c.getCanonicalName());
-				if (s.contains(InterfaceUniUniKinetics.class))
-					kineticsUniUni.add(c.getCanonicalName());
-				if (s.contains(InterfaceBiUniKinetics.class))
-					kineticsBiUni.add(c.getCanonicalName());
-				if (s.contains(InterfaceBiBiKinetics.class))
-					kineticsBiBi.add(c.getCanonicalName());
-				if (s.contains(InterfaceArbitraryEnzymeKinetics.class))
-					kineticsArbitraryEnzymeMechanism.add(c.getCanonicalName());
-				if (s.contains(InterfaceGeneRegulatoryKinetics.class))
-					kineticsGeneRegulatoryNetworks.add(c.getCanonicalName());
-				if (s.contains(InterfaceNonEnzymeKinetics.class))
-					kineticsNonEnzyme.add(c.getCanonicalName());
-				if (s.contains(InterfaceZeroReactants.class))
-					kineticsZeroReactants.add(c.getCanonicalName());
-				if (s.contains(InterfaceZeroProducts.class))
-					kineticsZeroProducts.add(c.getCanonicalName());
-				if (s.contains(InterfaceModulatedKinetics.class))
-					kineticsModulated.add(c.getCanonicalName());
-				if (s.contains(InterfaceIntegerStoichiometry.class))
-					kineticsIntStoichiometry.add(c.getCanonicalName());
-			}
+		Class<BasicKineticLaw> classes[] = Reflect.getAllClassesInPackage(
+				KINETICS_PACKAGE, false, true, BasicKineticLaw.class,
+				JAR_LOCATION, true);
+		for (Class<BasicKineticLaw> c : classes) {
+			Set<Class<?>> s = new HashSet<Class<?>>();
+			for (Class<?> interf : c.getInterfaces())
+				s.add(interf);
+			if (s.contains(InterfaceIrreversibleKinetics.class))
+				kineticsIrreversible.add(c.getCanonicalName());
+			if (s.contains(InterfaceReversibleKinetics.class))
+				kineticsReversible.add(c.getCanonicalName());
+			if (s.contains(InterfaceUniUniKinetics.class))
+				kineticsUniUni.add(c.getCanonicalName());
+			if (s.contains(InterfaceBiUniKinetics.class))
+				kineticsBiUni.add(c.getCanonicalName());
+			if (s.contains(InterfaceBiBiKinetics.class))
+				kineticsBiBi.add(c.getCanonicalName());
+			if (s.contains(InterfaceArbitraryEnzymeKinetics.class))
+				kineticsArbitraryEnzymeMechanism.add(c.getCanonicalName());
+			if (s.contains(InterfaceGeneRegulatoryKinetics.class))
+				kineticsGeneRegulatoryNetworks.add(c.getCanonicalName());
+			if (s.contains(InterfaceNonEnzymeKinetics.class))
+				kineticsNonEnzyme.add(c.getCanonicalName());
+			if (s.contains(InterfaceZeroReactants.class))
+				kineticsZeroReactants.add(c.getCanonicalName());
+			if (s.contains(InterfaceZeroProducts.class))
+				kineticsZeroProducts.add(c.getCanonicalName());
+			if (s.contains(InterfaceModulatedKinetics.class))
+				kineticsModulated.add(c.getCanonicalName());
+			if (s.contains(InterfaceIntegerStoichiometry.class))
+				kineticsIntStoichiometry.add(c.getCanonicalName());
 		}
 		msg.logln("done in " + (System.currentTimeMillis() - time) + " ms");
 		msg.log("loading user settings...");
 		settings = initProperties();
 		msg.logln(" done.");
-	}
-	
-	/**
-	 * An array of all available ordinary differential equation solvers.
-	 */
-	private static final Class<AbstractDESSolver> AVAILABLE_SOLVERS[] = Reflect
-			.getAllClassesInPackage("eva2.tools.math.des", true, true,
-					AbstractDESSolver.class, "plugin" + File.separatorChar,
-					true);
-	/**
-	 * An array of all available implementations of distance functions to judge
-	 * the quality of a simulation based on parameter and initial value
-	 * settings.
-	 */
-	private static final Class<Distance> AVAILABLE_DISTANCES[] = Reflect
-			.getAllClassesInPackage("org.sbml.squeezer.math", true, true,
-					Distance.class, "plugin" + File.separatorChar, true);
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static final Class<AbstractDESSolver>[] getAvailableSolvers() {
-		return AVAILABLE_SOLVERS;
-	}
-
-	public static final Class<Distance>[] getAvailableDistances() {
-		return AVAILABLE_DISTANCES;
 	}
 
 	/**
@@ -272,17 +286,30 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				props.put(k, Boolean.parseBoolean(val));
 			else {
 				boolean allDigit = true;
-				short dotCount = 0;
-				for (char c : val.toCharArray()) {
+				short dotCount = 0, eCount = 0;
+				char[] chars = val.toCharArray();
+				for (int pos = 0; pos < chars.length; pos++) {
+					char c = chars[pos];
 					if (c == '.')
 						dotCount++;
-					else
-						allDigit &= Character.isDigit(c);
+					else if (c == 'E' || c == 'e')
+						eCount++;
+					else {
+						allDigit &= Character.isDigit(c)
+								|| (pos == chars.length - 1 && (c == 'd' || c == 'f'));
+					}
 				}
-				if (allDigit && dotCount == 0)
+				if (allDigit && eCount == 0 && dotCount == 0
+						&& chars[chars.length - 1] != 'd'
+						&& chars[chars.length - 1] != 'f')
 					props.put(k, Integer.parseInt(val));
-				else if (allDigit && dotCount == 1)
-					props.put(k, Double.parseDouble(val));
+				else if (allDigit && (dotCount <= 1 || eCount <= 1)) {
+					if (chars[chars.length - 1] == 'f')
+						props.put(k, Float.parseFloat(val));
+					else
+						props.put(k, Double.parseDouble(val));
+				} else if (val.length() == 1)
+					props.put(k, Character.valueOf(val.charAt(0)));
 				else
 					props.put(k, val);
 			}
@@ -340,6 +367,18 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			}
 		}
 		return props;
+	}
+
+	public static final Class<Distance>[] getAvailableDistances() {
+		return AVAILABLE_DISTANCES;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static final Class<AbstractDESSolver>[] getAvailableSolvers() {
+		return AVAILABLE_SOLVERS;
 	}
 
 	/**

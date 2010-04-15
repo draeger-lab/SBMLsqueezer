@@ -468,7 +468,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				d.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				d.setTitle("Simulation");
 				d.getContentPane().add(
-						new SimulationPanel(sbmlIO.getSelectedModel()));
+						new SimulationPanel(sbmlIO.getSelectedModel(), settings));
 				d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				d.pack();
 				d.setLocationRelativeTo(this);

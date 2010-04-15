@@ -37,6 +37,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Properties;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -82,8 +83,10 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.State;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SBFileFilter;
+import org.sbml.squeezer.math.Distance;
 import org.sbml.squeezer.math.SBMLinterpreter;
 import org.sbml.squeezer.util.HTMLFormula;
 
@@ -250,17 +253,17 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		 */
 		SAVE_PLOT_IMAGE,
 		/**
-		 * Start a new simulation with the current settings.
-		 */
-		SIMULATION_START,
-		/**
 		 * Save the results of the simulation to a CSV file.
 		 */
 		SAVE_SIMULATION,
 		/**
 		 * Adjust user's preferences
 		 */
-		SETTINGS
+		SETTINGS,
+		/**
+		 * Start a new simulation with the current settings.
+		 */
+		SIMULATION_START
 	}
 
 	/**
@@ -311,17 +314,17 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		return c;
 	}
 
-	private int distanceFunc;
-
 	/**
 	 * The names in all tables for the columns (time, compartment, species,
 	 * parameters).
 	 */
 	private String colNames[];
+
 	/**
 	 * Compression factor for JPEG output
 	 */
 	private float compression;
+	private int distanceFunc;
 
 	/**
 	 * Table for experimental data.
@@ -329,19 +332,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	private JTable expTable;
 
 	/**
-	 * The index of the class name of the solver to be used
-	 */
-	private JComboBox solvers;
-
-	/**
 	 * Table that contains the legend of this plot.
 	 */
 	private JTable legend;
+
 	/**
 	 * Whether or not to plot in a logarithmic scale.
 	 */
 	private JCheckBox logScale;
-
 	/**
 	 * 
 	 */
@@ -356,6 +354,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * 
 	 */
 	private double maxSpeciesValue;
+
+	private double maxSpinVal = 1E10;
 
 	/**
 	 * Maximal allowable number of integration steps per time unit
@@ -408,14 +408,26 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	private JCheckBox showGrid;
 
 	/**
+	 * Decides whether or not to add a legend to the plot.
+	 */
+	private JCheckBox showLegend;
+
+	/**
 	 * Table for the simulation data.
 	 */
 	private JTable simTable;
 
 	/**
-	 * The integrator
+	 * The integrator for the simulation
 	 */
 	private AbstractDESSolver solver;
+
+	/**
+	 * The index of the class name of the solver to be used
+	 */
+	private JComboBox solvers;
+
+	private SpinnerNumberModel[] spinModSymbol;
 
 	/**
 	 * Step size of the simulator
@@ -426,7 +438,6 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * The spinner to change the number of integration steps.
 	 */
 	private SpinnerNumberModel stepsModel;
-
 	/**
 	 * Simulation start time
 	 */
@@ -437,138 +448,41 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private SpinnerNumberModel t2;
 
-	private double maxSpinVal = 1E10;
-
-	/**
-	 * Decides whether or not to add a legend to the plot.
-	 */
-	private JCheckBox showLegend;
-	private SpinnerNumberModel[] spinModSymbol;
-
 	/**
 	 * 
-	 * @param owner
 	 * @param model
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws IllegalArgumentException
-	 * @throws SecurityException
 	 */
-	public SimulationPanel(Model model) throws SecurityException,
-			IllegalArgumentException, NoSuchMethodException,
-			InstantiationException, IllegalAccessException,
-			InvocationTargetException {
-		this(model, 5, 0.1, "files/tests/cases/semantic/00026");
-		// System.getProperty("user.dir")
+	public SimulationPanel(Model model) {
+		super();
+		if (SBMLsqueezer.getAvailableSolvers().length == 0) {
+			String msg = "Could not find any solvers for differential equation systems. A simulation is therefore not possible.";
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(msg),
+					"No ODE solver available", JOptionPane.WARNING_MESSAGE);
+		} else
+			try {
+				this.model = model;
+				colNames = createColNames(this.model);
+				setProperties(getDefaultProperties());
+			} catch (Exception exc) {
+				exc.printStackTrace();
+				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			}
 	}
 
 	/**
 	 * 
-	 * @param owner
 	 * @param model
-	 * @param endTime
-	 * @param stepSize
-	 * @param openDir
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws NoSuchMethodException
-	 * @throws IllegalArgumentException
-	 * @throws SecurityException
+	 * @param settings
 	 */
-	public SimulationPanel(Model model, double endTime, double stepSize,
-			String openDir) throws SecurityException, IllegalArgumentException,
-			NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException {
-		super();
-		if (SBMLsqueezer.getAvailableSolvers().length == 0)
-			JOptionPane
-					.showMessageDialog(
-							this,
-							GUITools
-									.toHTML("Could not find any solvers for differential equation systems. A simulation is therefore not possible."),
-							"Warning", JOptionPane.WARNING_MESSAGE);
-		else {
-			// This should be included into our settings
-			this.model = model;
-			UnitDefinition timeUnits = this.model.getTimeUnitsInstance();
-			String xLab = "Time";
-			if (timeUnits != null)
-				xLab += " in " + UnitDefinition.printUnits(timeUnits, true);
-			plot = new FunctionArea(xLab, "Value");
-			// get rid of this popup menu.
-			MouseListener listeners[] = plot.getMouseListeners();
-			for (int i = listeners.length - 1; i >= 0; i--)
-				plot.removeMouseListener(listeners[i]);
-			maxTime = 10000;
-			// always for SBML!
-			t1 = new SpinnerNumberModel(0, 0, maxTime, stepSize);
-			t2 = new SpinnerNumberModel(endTime, ((Double) t1.getValue())
-					.doubleValue(), maxTime, stepSize);
-			this.stepSize = stepSize;
-			showGrid = GUITools.createJCheckBox("Grid", true, "grid", this,
-					"Decide whether or not to draw a grid in the plot area.");
-			maxStepsPerUnit = 500;
-			this.opendir = openDir;
-			separatorChar = ',';
-			quoteChar = '\'';
-			maxCompartmentValue = 10000;
-			maxSpeciesValue = 10000;
-			maxParameterValue = 10000;
-			paramStepSize = 0.01;
-			saveDir = System.getProperty("user.home");
-			compression = 0.8f;
-			colNames = createColNames(model);
-			distanceFunc = 0;
-
-			logScale = GUITools
-					.createJCheckBox(
-							"Log",
-							true,
-							"log",
-							this,
-							"Select this checkbox if the y-axis should be drawn in a logarithmic scale. This is, however, only possible if all values are greater than zero.");
-			showLegend = GUITools.createJCheckBox("Legend", true, "legend",
-					this, "Add or remove a legend in the plot.");
-
-			JPanel simPanel = new JPanel(new BorderLayout());
-			simTable = new JTable();
-			simPanel.add(new JScrollPane(simTable,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-					BorderLayout.CENTER);
-
-			JPanel expPanel = new JPanel(new BorderLayout());
-			expTable = new JTable();
-			expPanel.add(new JScrollPane(expTable,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-					BorderLayout.CENTER);
-
-			JPanel legendPanel = new JPanel(new BorderLayout());
-			legend = legendTable(model);
-			legendPanel.add(new JScrollPane(legend,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
-					BorderLayout.CENTER);
-
-			JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					true, new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
-							legendPanel, interactiveScanPanel(model,
-									maxCompartmentValue, maxSpeciesValue,
-									maxParameterValue, paramStepSize)), plot);
-
-			JTabbedPane tabbedPane = new JTabbedPane();
-			tabbedPane.add("Plot ", split);
-			tabbedPane.add("Simulated data", simPanel);
-			tabbedPane.add("Experimental data", expPanel);
-
-			setLayout(new BorderLayout());
-			add(createToolBar(), BorderLayout.NORTH);
-			add(tabbedPane, BorderLayout.CENTER);
-			add(createFootPanel(), BorderLayout.SOUTH);
+	public SimulationPanel(Model model, Properties settings) {
+		this(model);
+		try {
+			setProperties((Properties) settings.clone());
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -719,85 +633,6 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	}
 
 	/**
-	 * @throws IOException
-	 * 
-	 */
-	private void saveSimulationResults() throws IOException {
-		if (simTable.getRowCount() > 0) {
-			JFileChooser fc = GUITools.createJFileChooser(saveDir, false,
-					false, JFileChooser.FILES_ONLY,
-					SBFileFilter.CSV_FILE_FILTER);
-			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-				File out = fc.getSelectedFile();
-				if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
-					BufferedWriter buffer = new BufferedWriter(new FileWriter(
-							out));
-					int i;
-					for (i = 0; i < simTable.getColumnCount(); i++) {
-						buffer.append(simTable.getColumnName(i));
-						if (i < simTable.getColumnCount() - 1)
-							buffer.append(separatorChar);
-					}
-					buffer.newLine();
-					for (double[] row : ((TableModelDoubleMatrix) simTable
-							.getModel()).getData()) {
-						i = 0;
-						for (double value : row) {
-							buffer.append(Double.toString(value));
-							if (i < simTable.getColumnCount() - 1)
-								buffer.append(separatorChar);
-							i++;
-						}
-						buffer.newLine();
-					}
-					buffer.close();
-				}
-			}
-		} else {
-			JOptionPane
-					.showMessageDialog(
-							this,
-							GUITools
-									.toHTML(
-											"No simulation has been performed yet. Please run the simulation first.",
-											40));
-		}
-	}
-
-	/**
-	 * @throws AWTException
-	 * @throws IOException
-	 * 
-	 */
-	private void savePlotImage() throws AWTException, IOException {
-		Rectangle area = plot.getBounds();
-		area.setLocation(plot.getLocationOnScreen());
-		BufferedImage bufferedImage = (new Robot()).createScreenCapture(area);
-		JFileChooser fc = GUITools.createJFileChooser(saveDir, false, false,
-				JFileChooser.FILES_ONLY, SBFileFilter.PNG_FILE_FILTER,
-				SBFileFilter.JPEG_FILE_FILTER);
-		if (fc.showSaveDialog(plot) == JFileChooser.APPROVE_OPTION
-				&& !fc.getSelectedFile().exists()
-				|| (GUITools.overwriteExistingFile(this, fc.getSelectedFile()))) {
-			File file = fc.getSelectedFile();
-			if (SBFileFilter.isPNGFile(file))
-				ImageIO.write(bufferedImage, "png", file);
-			else if (SBFileFilter.isJPEGFile(file)) {
-				FileImageOutputStream out = new FileImageOutputStream(file);
-				ImageWriter encoder = (ImageWriter) ImageIO
-						.getImageWritersByFormatName("JPEG").next();
-				JPEGImageWriteParam param = new JPEGImageWriteParam(null);
-				param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-				param.setCompressionQuality(compression);
-				encoder.setOutput(out);
-				encoder.write((IIOMetadata) null, new IIOImage(bufferedImage,
-						null, null), param);
-				out.close();
-			}
-		}
-	}
-
-	/**
 	 * 
 	 * @param model
 	 * @return
@@ -828,17 +663,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * 
 	 * @return
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws IllegalArgumentException
 	 */
-	private Component createFootPanel() throws SecurityException,
-			NoSuchMethodException, IllegalArgumentException,
-			InstantiationException, IllegalAccessException,
-			InvocationTargetException {
+	private Component createFootPanel() {
 
 		// Settings
 		JSpinner startTime = new JSpinner(t1);
@@ -854,14 +680,6 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				/ stepSize), 1, (int) Math.round((t2val - t1val)
 				* maxStepsPerUnit), 1);
 
-		solvers = new JComboBox();
-		for (Class<AbstractDESSolver> c : SBMLsqueezer.getAvailableSolvers()) {
-			solver = c.getConstructor().newInstance();
-			solvers.addItem(solver.getName());
-		}
-		solvers.setSelectedIndex(0);
-		if (solvers.getItemCount() == 1)
-			solvers.setEnabled(false);
 		JPanel sPanel = new JPanel();
 		LayoutHelper settings = new LayoutHelper(sPanel);
 		settings.add(new JLabel("Start time: "), 0, 0, 1, 1, 0, 0);
@@ -921,6 +739,163 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			toolbar.add(GUITools.createButton(GUITools.ICON_SETTINGS_TINY,
 					this, Command.SETTINGS, "Adjust your preferences"));
 		return toolbar;
+	}
+
+	/**
+	 * 
+	 */
+	private Properties getDefaultProperties() {
+		Properties p = new Properties();
+		Double maxVal = Double.valueOf(1E5);
+		/*
+		 * Simulation
+		 */
+		p.put(CfgKeys.SIM_MAX_TIME, maxVal);
+		p.put(CfgKeys.SIM_START_TIME, Double.valueOf(0));
+		p.put(CfgKeys.SIM_END_TIME, Double.valueOf(5));
+		p.put(CfgKeys.SIM_STEP_SIZE, Double.valueOf(.01));
+		p.put(CfgKeys.SIM_MAX_COMPARTMENT_SIZE, maxVal);
+		p.put(CfgKeys.SIM_MAX_SPECIES_VALUE, maxVal);
+		p.put(CfgKeys.SIM_MAX_PARAMETER_VALUE, maxVal);
+		p.put(CfgKeys.SIM_MAX_STEPS_PER_UNIT_TIME, Integer.valueOf(500));
+		p.put(CfgKeys.SIM_DISTANCE_FUNCTION, SBMLsqueezer
+				.getAvailableDistances()[0].getName());
+		p.put(CfgKeys.SIM_ODE_SOLVER, SBMLsqueezer.getAvailableSolvers()[0]
+				.getName());
+
+		/*
+		 * Plot
+		 */
+		p.put(CfgKeys.PLOT_SHOW_GRID, Boolean.valueOf(true));
+		p.put(CfgKeys.PLOT_SHOW_LEGEND, Boolean.valueOf(true));
+		p.put(CfgKeys.PLOT_LOG_SCALE, Boolean.valueOf(false));
+
+		/*
+		 * CSV file parsing
+		 */
+		p.put(CfgKeys.CSV_FILES_OPEN_DIR, System.getProperty("user.home"));
+		p.put(CfgKeys.CSV_FILES_SEPARATOR_CHAR, Character.valueOf(','));
+		p.put(CfgKeys.CSV_FILES_QUOTE_CHAR, Character.valueOf('\''));
+		p.put(CfgKeys.CSV_FILES_SAVE_DIR, System.getProperty("user.home"));
+
+		/*
+		 * General settings
+		 */
+		p.put(CfgKeys.SPINNER_STEP_SIZE, Double.valueOf(.01));
+		p.put(CfgKeys.JPEG_COMPRESSION_FACTOR, Float.valueOf(.8f));
+
+		return p;
+	}
+
+	/**
+	 * 
+	 */
+	public Properties getProperties() {
+		Properties p = new Properties();
+		/*
+		 * Simulation
+		 */
+		p.put(CfgKeys.SIM_MAX_TIME, this.maxTime);
+		p.put(CfgKeys.SIM_START_TIME, (Double) t1.getValue());
+		p.put(CfgKeys.SIM_END_TIME, (Double) t2.getValue());
+		p.put(CfgKeys.SIM_STEP_SIZE, Double.valueOf(stepSize));
+		p.put(CfgKeys.SIM_MAX_COMPARTMENT_SIZE, Double
+				.valueOf(maxCompartmentValue));
+		p.put(CfgKeys.SIM_MAX_SPECIES_VALUE, Double.valueOf(maxSpeciesValue));
+		p.put(CfgKeys.SIM_MAX_PARAMETER_VALUE, Double
+				.valueOf(maxParameterValue));
+		p.put(CfgKeys.SIM_MAX_STEPS_PER_UNIT_TIME, Integer
+				.valueOf(maxStepsPerUnit));
+		p.put(CfgKeys.SIM_DISTANCE_FUNCTION, SBMLsqueezer
+				.getAvailableDistances()[distanceFunc].getName());
+		p.put(CfgKeys.SIM_ODE_SOLVER,
+				SBMLsqueezer.getAvailableSolvers()[solvers.getSelectedIndex()]
+						.getName());
+
+		/*
+		 * Plot
+		 */
+		p.put(CfgKeys.PLOT_SHOW_GRID, Boolean.valueOf(showGrid.isSelected()));
+		p.put(CfgKeys.PLOT_SHOW_LEGEND, Boolean
+				.valueOf(showLegend.isSelected()));
+		p.put(CfgKeys.PLOT_LOG_SCALE, Boolean.valueOf(logScale.isSelected()));
+
+		/*
+		 * CSV file parsing
+		 */
+		p.put(CfgKeys.CSV_FILES_OPEN_DIR, opendir);
+		p.put(CfgKeys.CSV_FILES_SAVE_DIR, saveDir);
+		p.put(CfgKeys.CSV_FILES_SEPARATOR_CHAR, Character
+				.valueOf(separatorChar));
+		p.put(CfgKeys.CSV_FILES_QUOTE_CHAR, Character.valueOf(quoteChar));
+
+		/*
+		 * General settings
+		 */
+		p.put(CfgKeys.SPINNER_STEP_SIZE, Double.valueOf(paramStepSize));
+		p.put(CfgKeys.JPEG_COMPRESSION_FACTOR, Float.valueOf(compression));
+
+		return p;
+	}
+
+	/***
+	 * Initializes the graphics components of this panel.
+	 * 
+	 * @param settings
+	 */
+	private void init() {
+		try {
+			UnitDefinition timeUnits = this.model.getTimeUnitsInstance();
+			String xLab = "Time";
+			if (timeUnits != null)
+				xLab += " in " + UnitDefinition.printUnits(timeUnits, true);
+			plot = new FunctionArea(xLab, "Value");
+			// get rid of this popup menu.
+			MouseListener listeners[] = plot.getMouseListeners();
+			for (int i = listeners.length - 1; i >= 0; i--)
+				plot.removeMouseListener(listeners[i]);
+
+			JPanel simPanel = new JPanel(new BorderLayout());
+			simTable = new JTable();
+			simPanel.add(new JScrollPane(simTable,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+					BorderLayout.CENTER);
+
+			JPanel expPanel = new JPanel(new BorderLayout());
+			expTable = new JTable();
+			expPanel.add(new JScrollPane(expTable,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+					BorderLayout.CENTER);
+
+			JPanel legendPanel = new JPanel(new BorderLayout());
+			legend = legendTable(model);
+			legendPanel.add(new JScrollPane(legend,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
+					BorderLayout.CENTER);
+
+			JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+					true, new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
+							legendPanel, interactiveScanPanel(model,
+									maxCompartmentValue, maxSpeciesValue,
+									maxParameterValue, paramStepSize)), plot);
+
+			JTabbedPane tabbedPane = new JTabbedPane();
+			tabbedPane.add("Plot ", split);
+			tabbedPane.add("Simulated data", simPanel);
+			tabbedPane.add("Experimental data", expPanel);
+
+			setLayout(new BorderLayout());
+			add(createToolBar(), BorderLayout.NORTH);
+			add(tabbedPane, BorderLayout.CENTER);
+			add(createFootPanel(), BorderLayout.SOUTH);
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	/**
@@ -1127,6 +1102,163 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			return data;
 		}
 		return new double[0][0];
+	}
+
+	/**
+	 * @throws AWTException
+	 * @throws IOException
+	 * 
+	 */
+	private void savePlotImage() throws AWTException, IOException {
+		Rectangle area = plot.getBounds();
+		area.setLocation(plot.getLocationOnScreen());
+		BufferedImage bufferedImage = (new Robot()).createScreenCapture(area);
+		JFileChooser fc = GUITools.createJFileChooser(saveDir, false, false,
+				JFileChooser.FILES_ONLY, SBFileFilter.PNG_FILE_FILTER,
+				SBFileFilter.JPEG_FILE_FILTER);
+		if (fc.showSaveDialog(plot) == JFileChooser.APPROVE_OPTION
+				&& !fc.getSelectedFile().exists()
+				|| (GUITools.overwriteExistingFile(this, fc.getSelectedFile()))) {
+			File file = fc.getSelectedFile();
+			if (SBFileFilter.isPNGFile(file))
+				ImageIO.write(bufferedImage, "png", file);
+			else if (SBFileFilter.isJPEGFile(file)) {
+				FileImageOutputStream out = new FileImageOutputStream(file);
+				ImageWriter encoder = (ImageWriter) ImageIO
+						.getImageWritersByFormatName("JPEG").next();
+				JPEGImageWriteParam param = new JPEGImageWriteParam(null);
+				param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+				param.setCompressionQuality(compression);
+				encoder.setOutput(out);
+				encoder.write((IIOMetadata) null, new IIOImage(bufferedImage,
+						null, null), param);
+				out.close();
+			}
+		}
+	}
+
+	/**
+	 * @throws IOException
+	 * 
+	 */
+	private void saveSimulationResults() throws IOException {
+		if (simTable.getRowCount() > 0) {
+			JFileChooser fc = GUITools.createJFileChooser(saveDir, false,
+					false, JFileChooser.FILES_ONLY,
+					SBFileFilter.CSV_FILE_FILTER);
+			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+				File out = fc.getSelectedFile();
+				if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
+					BufferedWriter buffer = new BufferedWriter(new FileWriter(
+							out));
+					int i;
+					for (i = 0; i < simTable.getColumnCount(); i++) {
+						buffer.append(simTable.getColumnName(i));
+						if (i < simTable.getColumnCount() - 1)
+							buffer.append(separatorChar);
+					}
+					buffer.newLine();
+					for (double[] row : ((TableModelDoubleMatrix) simTable
+							.getModel()).getData()) {
+						i = 0;
+						for (double value : row) {
+							buffer.append(Double.toString(value));
+							if (i < simTable.getColumnCount() - 1)
+								buffer.append(separatorChar);
+							i++;
+						}
+						buffer.newLine();
+					}
+					buffer.close();
+				}
+			}
+		} else {
+			JOptionPane
+					.showMessageDialog(
+							this,
+							GUITools
+									.toHTML(
+											"No simulation has been performed yet. Please run the simulation first.",
+											40));
+		}
+	}
+
+	/**
+	 * Assign properties from the settings
+	 * 
+	 * @param settings
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws SecurityException
+	 * @throws IllegalArgumentException
+	 */
+	public void setProperties(Properties settings)
+			throws IllegalArgumentException, SecurityException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
+		paramStepSize = ((Double) settings.get(CfgKeys.SPINNER_STEP_SIZE))
+				.doubleValue();
+		maxTime = ((Double) settings.get(CfgKeys.SIM_MAX_TIME)).doubleValue();
+		double startTime = ((Double) settings.get(CfgKeys.SIM_START_TIME))
+				.doubleValue();
+		double endTime = ((Double) settings.get(CfgKeys.SIM_END_TIME))
+				.doubleValue();
+		stepSize = ((Double) settings.get(CfgKeys.SIM_STEP_SIZE)).doubleValue();
+		t1 = new SpinnerNumberModel(startTime, 0, maxTime, stepSize);
+		t2 = new SpinnerNumberModel(endTime, ((Double) t1.getValue())
+				.doubleValue(), maxTime, stepSize);
+		showGrid = GUITools.createJCheckBox("Grid", ((Boolean) settings
+				.get(CfgKeys.PLOT_SHOW_GRID)).booleanValue(), "grid", this,
+				"Decide whether or not to draw a grid in the plot area.");
+		String toolTip = "Select this checkbox if the y-axis should be drawn in a logarithmic scale. This is, however, only possible if all values are greater than zero.";
+		logScale = GUITools.createJCheckBox("Log", ((Boolean) settings
+				.get(CfgKeys.PLOT_LOG_SCALE)).booleanValue(), "log", this,
+				toolTip);
+		showLegend = GUITools.createJCheckBox("Legend", ((Boolean) settings
+				.get(CfgKeys.PLOT_SHOW_LEGEND)).booleanValue(), "legend", this,
+				"Add or remove a legend in the plot.");
+		maxStepsPerUnit = ((Integer) settings
+				.get(CfgKeys.SIM_MAX_STEPS_PER_UNIT_TIME)).intValue();
+		opendir = settings.get(CfgKeys.CSV_FILES_OPEN_DIR).toString();
+		separatorChar = ((Character) settings
+				.get(CfgKeys.CSV_FILES_SEPARATOR_CHAR)).charValue();
+		quoteChar = ((Character) settings.get(CfgKeys.CSV_FILES_QUOTE_CHAR))
+				.charValue();
+		maxCompartmentValue = ((Double) settings
+				.get(CfgKeys.SIM_MAX_COMPARTMENT_SIZE)).doubleValue();
+		maxSpeciesValue = ((Double) settings.get(CfgKeys.SIM_MAX_SPECIES_VALUE))
+				.doubleValue();
+		maxParameterValue = ((Double) settings
+				.get(CfgKeys.SIM_MAX_PARAMETER_VALUE)).doubleValue();
+		saveDir = settings.get(CfgKeys.CSV_FILES_SAVE_DIR).toString();
+		compression = Float.parseFloat(settings.get(
+				CfgKeys.JPEG_COMPRESSION_FACTOR).toString());
+		/*
+		 * Solver and distance.
+		 */
+		Class<Distance>[] distFun = SBMLsqueezer.getAvailableDistances();
+		Class<AbstractDESSolver>[] solFun = SBMLsqueezer.getAvailableSolvers();
+		distanceFunc = 0;
+		while (distanceFunc < distFun.length
+				&& !distFun[distanceFunc].getName().equals(
+						settings.get(CfgKeys.SIM_DISTANCE_FUNCTION)))
+			distanceFunc++;
+		solvers = new JComboBox();
+		for (int i = 0; i < solFun.length; i++) {
+			Class<AbstractDESSolver> c = solFun[i];
+			solver = c.getConstructor().newInstance();
+			solvers.addItem(solver.getName());
+			if (c.getName().equals(settings.get(CfgKeys.SIM_ODE_SOLVER)))
+				solvers.setSelectedIndex(i);
+		}
+		solvers.setEnabled(solvers.getItemCount() > 1);
+		if (solvers.getSelectedIndex() != solvers.getItemCount() - 1)
+			solver = solFun[solvers.getSelectedIndex()].getConstructor()
+					.newInstance();
+		removeAll();
+		init();
 	}
 
 	/**
