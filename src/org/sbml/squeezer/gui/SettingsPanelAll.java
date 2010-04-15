@@ -180,7 +180,7 @@ public class SettingsPanelAll extends SettingsPanel implements ItemListener {
 		 * Simulation Settings
 		 */
 		try {
-			panelSimulationSettings = new SettingsPanelSimulation();
+			panelSimulationSettings = new SettingsPanelSimulation(settings);
 			tab.addTab("Simulation settings", new JScrollPane(
 					panelSimulationSettings,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,

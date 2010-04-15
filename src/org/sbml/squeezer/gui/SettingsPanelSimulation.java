@@ -22,6 +22,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -33,6 +34,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.math.Distance;
 
@@ -111,6 +113,56 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
 		lh.add(scanPanel(), 2, 0, 1, 1, 0, 0);
 		lh.add(plotPanel(), 2, 2, 1, 1, 0, 0);
+	}
+
+	/**
+	 * 
+	 * @param settings
+	 * @throws IllegalArgumentException
+	 * @throws SecurityException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 */
+	public SettingsPanelSimulation(Properties settings)
+			throws IllegalArgumentException, SecurityException,
+			InstantiationException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
+		this();
+		setProperties(settings);
+	}
+
+	public void setProperties(Properties settings) {
+		ckbxLogScale.setSelected(((Boolean) settings
+				.get(CfgKeys.PLOT_LOG_SCALE)).booleanValue());
+		ckbxShowGrid.setSelected(((Boolean) settings
+				.get(CfgKeys.PLOT_SHOW_GRID)).booleanValue());
+		ckbxShowLegend.setSelected(((Boolean) settings
+				.get(CfgKeys.PLOT_SHOW_LEGEND)).booleanValue());
+		// int dist = 0;
+		// while (dist < cmbBxDistance.getItemCount() &&
+		// !cmbBxDistance.getSelectedItem())
+		// dist++;
+		// cmbBxDistance.setSelectedIndex(dist);
+		// int solv = 0;
+		// while (solv < cmbBxSolver.getItemCount() &&
+		// !cmbBxSolver.getSelectedItem().equals())
+		// solv++;
+		tfQuoteChar.setText(settings.get(CfgKeys.CSV_FILES_QUOTE_CHAR)
+				.toString());
+		spinModMaxCompartmentVal.setValue(((Double) settings
+				.get(CfgKeys.SIM_MAX_COMPARTMENT_SIZE)).doubleValue());
+		spinModMaxSpeciesVal.setValue(((Double) settings
+				.get(CfgKeys.SIM_MAX_SPECIES_VALUE)).doubleValue());
+		spinModMaxParameterVal.setValue(((Double) settings
+				.get(CfgKeys.SIM_MAX_PARAMETER_VALUE)).doubleValue());
+		spinModT1.setValue(((Double) settings.get(CfgKeys.SIM_START_TIME)).doubleValue());
+		spinModT2.setValue(((Double) settings.get(CfgKeys.SIM_END_TIME)).doubleValue());
+		spinnerMaxVal = ((Double) settings.get(CfgKeys.SPINNER_STEP_SIZE)).doubleValue();
+//		spinModNumSteps.setValue();
+		tfOpenDir.setText(settings.get(CfgKeys.CSV_FILES_OPEN_DIR).toString());
+		tfSaveDir.setText(settings.get(CfgKeys.CSV_FILES_SAVE_DIR).toString());
 	}
 
 	/*
@@ -281,6 +333,8 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 * @return the quoteChar
 	 */
 	public char getQuoteChar() {
+		if (tfQuoteChar.getText().length() > 0)
+			return tfQuoteChar.getText().charAt(0);
 		return quoteChar;
 	}
 

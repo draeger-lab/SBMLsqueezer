@@ -20,63 +20,41 @@ package org.sbml.squeezer;
 
 /**
  * This is a list of possible command line options and configuration of
- * SBMLsqueezer. Each element listed here determins a key for a configuration
+ * SBMLsqueezer. Each element listed here determines a key for a configuration
  * value.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 public enum CfgKeys {
-	/**
-	 * Can be used in combination with = true or = false or just --gui.
-	 */
-	GUI,
-	/**
-	 * SBML input file.
-	 */
-	SBML_FILE,
-	/**
-	 * Specifies the file where SBMLsqueezer writes its SBML output.
-	 */
-	SBML_OUT_FILE,
-	/**
-	 * Standard directory where SBML files can be found.
-	 */
-	OPEN_DIR,
-	/**
-	 * Standard directory where SBML or Text files can be saved.
-	 */
-	SAVE_DIR,
-	/**
-	 * Can be true or false, depending on if the user wants to see SBML
-	 * warnings.
-	 */
-	SHOW_SBML_WARNINGS,
 	/**
 	 * Decide whether or not SBMLsqueezer should search for updates at start-up.
 	 */
 	CHECK_FOR_UPDATES,
 	/**
-	 * Possible values are, for instance,
-	 * <ul>
-	 * <li>generalized mass-action kinetics</li>
-	 * <li>Convenience kinetics</li>
-	 * <li>Michaelis-Menten kinetics</li>
-	 * </ul>
+	 * 
 	 */
-	KINETICS_UNI_UNI_TYPE,
+	CSV_FILES_OPEN_DIR,
 	/**
-	 * Possible values are, e.g.,
-	 * <ul>
-	 * <li>generalized mass-action kinetics</li>
-	 * <li>Convenience kinetics</li>
-	 * <li>Random Order Michealis Menten kinetics</li>
-	 * <li>Ordered</li>
-	 * </ul>
+	 * 
 	 */
-	KINETICS_BI_UNI_TYPE,
+	CSV_FILES_QUOTE_CHAR,
+	/**
+	 * 
+	 */
+	CSV_FILES_SAVE_DIR,
+	/**
+	 * 
+	 */
+	CSV_FILES_SEPARATOR_CHAR,
+	/**
+	 * Can be used in combination with = true or = false or just --gui.
+	 */
+	GUI,
+	/**
+	 * 
+	 */
+	JPEG_COMPRESSION_FACTOR,
 	/**
 	 * Possible values are, among others,
 	 * <ul>
@@ -89,10 +67,15 @@ public enum CfgKeys {
 	 */
 	KINETICS_BI_BI_TYPE,
 	/**
-	 * Determins the key for the standar kinetic law to be applied for reactions
-	 * that are catalyzed by non-enzymes or that are not catalyzed at all.
+	 * Possible values are, e.g.,
+	 * <ul>
+	 * <li>generalized mass-action kinetics</li>
+	 * <li>Convenience kinetics</li>
+	 * <li>Random Order Michealis Menten kinetics</li>
+	 * <li>Ordered</li>
+	 * </ul>
 	 */
-	KINETICS_NONE_ENZYME_REACTIONS,
+	KINETICS_BI_UNI_TYPE,
 	/**
 	 * Determins the key for the standar kinetic law to be applied for reactions
 	 * that are identified to belong to gene-regulatory processes, such as
@@ -101,36 +84,60 @@ public enum CfgKeys {
 	KINETICS_GENE_REGULATION,
 	/**
 	 * Determins the key for the standar kinetic law to be applied for reactions
+	 * that are catalyzed by non-enzymes or that are not catalyzed at all.
+	 */
+	KINETICS_NONE_ENZYME_REACTIONS,
+	/**
+	 * Determins the key for the standar kinetic law to be applied for reactions
 	 * that are identified to be enzyme-catalyzed (with or without explicit
 	 * catalyst) and that do not belong to one of the other standard
 	 * enzyme-catalysis schemes.
 	 */
 	KINETICS_OTHER_ENZYME_REACTIONS,
 	/**
-	 * One of the following values: cat, hal or weg (important for
-	 * Liebermeister's standard kinetics).
+	 * Possible values are, for instance,
+	 * <ul>
+	 * <li>generalized mass-action kinetics</li>
+	 * <li>Convenience kinetics</li>
+	 * <li>Michaelis-Menten kinetics</li>
+	 * </ul>
 	 */
-	TYPE_STANDARD_VERSION,
+	KINETICS_UNI_UNI_TYPE,
 	/**
-	 * How to ensure unit consistency in kinetic equations? One way is to set
-	 * each participating species to an initial amount and to set the unit to
-	 * mmole. The other way is to set the initial concentration of each species,
-	 * set the unit to mmole per l and to multiply the species with the size of
-	 * the surrounding compartment whenever it occurs in a kinetic equation.
-	 * Hence, this type paramter belongs to two values.
+	 * Standard directory where LaTeX files can be stored.
 	 */
-	TYPE_UNIT_CONSISTENCY,
+	LATEX_DIR,
 	/**
-	 * If true, all reactions within the network are considered enzyme
-	 * reactions. If false, an explicit enzymatic catalyst must be assigned to a
-	 * reaction to obtain this status.
+	 * The font size for LaTeX documents.
 	 */
-	OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+	LATEX_FONT_SIZE,
 	/**
-	 * If true a new rate law will be created for each reaction irrespective of
-	 * whether there is already a rate law assigned to this reaction or not.
+	 * Key that decides whether or not identifiers should be written in
+	 * typewriter font when these occur in mathematical equations.
 	 */
-	OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
+	LATEX_IDS_IN_TYPEWRITER_FONT,
+	/**
+	 * Decides whether to set the LaTeX document in landscape or portrait mode.
+	 */
+	LATEX_LANDSCAPE,
+	/**
+	 * Decides whether to write the names or the identifiers of NamedSBase
+	 * object in equations.
+	 */
+	LATEX_NAMES_IN_EQUATIONS,
+	/**
+	 * The paper size for LaTeX documents.
+	 */
+	LATEX_PAPER_SIZE,
+	/**
+	 * Decides whether to create a separate title page instead of a simple
+	 * heading.
+	 */
+	LATEX_TITLE_PAGE,
+	/**
+	 * Standard directory where SBML files can be found.
+	 */
+	OPEN_DIR,
 	/**
 	 * If true all parameters are stored globally for the whole model (default)
 	 * else parameters are stored locally for the respective kinetic equation
@@ -138,15 +145,11 @@ public enum CfgKeys {
 	 */
 	OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
 	/**
-	 * Property that decides whether to set all reactions to reversible before
-	 * creating new kinetic equations.
+	 * If true, all reactions within the network are considered enzyme
+	 * reactions. If false, an explicit enzymatic catalyst must be assigned to a
+	 * reaction to obtain this status.
 	 */
-	OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
-	/**
-	 * The maximal number of reactants so that the reaction is still considered
-	 * plausible.
-	 */
-	OPT_MAX_NUMBER_OF_REACTANTS,
+	OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 	/**
 	 * If not specified the value corresponding to this argument will be used to
 	 * initialize the size of compartments.
@@ -163,18 +166,10 @@ public enum CfgKeys {
 	 */
 	OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS,
 	/**
-	 * If true, warnings will be displayed for too many reactants.
+	 * If true a new rate law will be created for each reaction irrespective of
+	 * whether there is already a rate law assigned to this reaction or not.
 	 */
-	OPT_WARNINGS_FOR_TOO_MANY_REACTANTS,
-	/**
-	 * Decide whether or not to set the boundary condition for genes to true.
-	 */
-	OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
-	/**
-	 * If true parameters and units that are never referenced by any element of
-	 * the model are deleted when creating kinetic equations with SBMLsqueezer.
-	 */
-	OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
+	OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
 	/**
 	 * Allows the user to ignore species that are annotated with the given
 	 * compound identifiers when creating rate laws for reactions that involve
@@ -185,76 +180,141 @@ public enum CfgKeys {
 	 */
 	OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS,
 	/**
-	 * Determins whether or not generic proteins are accepted as enzymes when
-	 * catalyzing a reaction.
+	 * The maximal number of reactants so that the reaction is still considered
+	 * plausible.
 	 */
-	POSSIBLE_ENZYME_GENERIC,
+	OPT_MAX_NUMBER_OF_REACTANTS,
 	/**
-	 * Determins whether or not RNA molecules are accepted as enzymes when
-	 * catalyzing a reaction.
+	 * If true parameters and units that are never referenced by any element of
+	 * the model are deleted when creating kinetic equations with SBMLsqueezer.
 	 */
-	POSSIBLE_ENZYME_RNA,
+	OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
 	/**
-	 * Determins whether or not enzyme complexes are accepted as enzymes when
-	 * catalyzing a reaction.
+	 * Decide whether or not to set the boundary condition for genes to true.
 	 */
-	POSSIBLE_ENZYME_COMPLEX,
+	OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
 	/**
-	 * Determins whether or not trunkated proteins are accepted as enzymes when
-	 * catalyzing a reaction.
+	 * Property that decides whether to set all reactions to reversible before
+	 * creating new kinetic equations.
 	 */
-	POSSIBLE_ENZYME_TRUNCATED,
+	OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 	/**
-	 * Determins whether or not receptors are accepted as enzymes when
-	 * catalyzing a reaction.
+	 * If true, warnings will be displayed for too many reactants.
 	 */
-	POSSIBLE_ENZYME_RECEPTOR,
+	OPT_WARNINGS_FOR_TOO_MANY_REACTANTS,
 	/**
-	 * Determins whether or not unknown molecules are accepted as enzymes when
-	 * catalyzing a reaction.
+	 * 
 	 */
-	POSSIBLE_ENZYME_UNKNOWN,
+	PLOT_LOG_SCALE,
+	/**
+	 * 
+	 */
+	PLOT_SHOW_GRID,
+	/**
+	 * 
+	 */
+	PLOT_SHOW_LEGEND,
 	/**
 	 * Determins whether or not antisense RNA molecules are accepted as enzymes
 	 * when catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_ANTISENSE_RNA,
 	/**
+	 * Determins whether or not enzyme complexes are accepted as enzymes when
+	 * catalyzing a reaction.
+	 */
+	POSSIBLE_ENZYME_COMPLEX,
+	/**
+	 * Determins whether or not generic proteins are accepted as enzymes when
+	 * catalyzing a reaction.
+	 */
+	POSSIBLE_ENZYME_GENERIC,
+	/**
+	 * Determins whether or not receptors are accepted as enzymes when
+	 * catalyzing a reaction.
+	 */
+	POSSIBLE_ENZYME_RECEPTOR,
+	/**
+	 * Determins whether or not RNA molecules are accepted as enzymes when
+	 * catalyzing a reaction.
+	 */
+	POSSIBLE_ENZYME_RNA,
+	/**
 	 * Determins whether or not simple molecules are accepted as enzymes when
 	 * catalyzing a reaction.
 	 */
 	POSSIBLE_ENZYME_SIMPLE_MOLECULE,
 	/**
-	 * Standard directory where LaTeX files can be stored.
+	 * Determins whether or not trunkated proteins are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
-	LATEX_DIR,
+	POSSIBLE_ENZYME_TRUNCATED,
 	/**
-	 * The paper size for LaTeX documents.
+	 * Determins whether or not unknown molecules are accepted as enzymes when
+	 * catalyzing a reaction.
 	 */
-	LATEX_PAPER_SIZE,
+	POSSIBLE_ENZYME_UNKNOWN,
 	/**
-	 * The font size for LaTeX documents.
+	 * Standard directory where SBML or Text files can be saved.
 	 */
-	LATEX_FONT_SIZE,
+	SAVE_DIR,
 	/**
-	 * Key that decides whether or not identifiers should be written in
-	 * typewriter font when these occur in mathematical equations.
+	 * SBML input file.
 	 */
-	LATEX_IDS_IN_TYPEWRITER_FONT,
+	SBML_FILE,
 	/**
-	 * Decides whether to set the LaTeX document in landscape or portrait mode.
+	 * Specifies the file where SBMLsqueezer writes its SBML output.
 	 */
-	LATEX_LANDSCAPE,
+	SBML_OUT_FILE,
 	/**
-	 * Decides whether to create a separate title page instead of a simple
-	 * heading.
+	 * Can be true or false, depending on if the user wants to see SBML
+	 * warnings.
 	 */
-	LATEX_TITLE_PAGE,
+	SHOW_SBML_WARNINGS,
 	/**
-	 * Decides whether to write the names or the identifiers of NamedSBase
-	 * object in equations.
+	 * 
 	 */
-	LATEX_NAMES_IN_EQUATIONS,
+	SIM_DISTANCE_FUNCTION,
+	/**
+	 * 
+	 */
+	SIM_END_TIME,
+	/**
+	 * 
+	 */
+	SIM_MAX_COMPARTMENT_SIZE,
+	/**
+	 * 
+	 */
+	SIM_MAX_PARAMETER_VALUE,
+	/**
+	 * 
+	 */
+	SIM_MAX_SPECIES_VALUE,
+	/**
+	 * 
+	 */
+	SIM_MAX_STEPS_PER_UNIT_TIME,
+	/**
+	 * 
+	 */
+	SIM_MAX_TIME,
+	/**
+	 * 
+	 */
+	SIM_ODE_SOLVER,
+	/**
+	 * 
+	 */
+	SIM_START_TIME,
+	/**
+	 * 
+	 */
+	SIM_STEP_SIZE,
+	/**
+	 * 
+	 */
+	SPINNER_STEP_SIZE,
 	/**
      * 
      */
@@ -262,23 +322,7 @@ public enum CfgKeys {
 	/**
 	 * 
 	 */
-	STEUER_VALUE_OF_N,
-	/**
-	 * 
-	 */
-	STEUER_VALUE_OF_M,
-	/**
-	 * 
-	 */
-	STEUER_NUMBER_OF_RUNS,
-	/**
-	 * 
-	 */
-	STEUER_PC_STEPSIZE,
-	/**
-	 * 
-	 */
-	STEUER_PC_OUTPUT,
+	STEUER_MI_OUTPUT,
 	/**
 	 * 
 	 */
@@ -286,5 +330,35 @@ public enum CfgKeys {
 	/**
 	 * 
 	 */
-	STEUER_MI_OUTPUT
+	STEUER_NUMBER_OF_RUNS,
+	/**
+	 * 
+	 */
+	STEUER_PC_OUTPUT,
+	/**
+	 * 
+	 */
+	STEUER_PC_STEPSIZE,
+	/**
+	 * 
+	 */
+	STEUER_VALUE_OF_M,
+	/**
+	 * 
+	 */
+	STEUER_VALUE_OF_N,
+	/**
+	 * One of the following values: cat, hal or weg (important for
+	 * Liebermeister's standard kinetics).
+	 */
+	TYPE_STANDARD_VERSION,
+	/**
+	 * How to ensure unit consistency in kinetic equations? One way is to set
+	 * each participating species to an initial amount and to set the unit to
+	 * mmole. The other way is to set the initial concentration of each species,
+	 * set the unit to mmole per l and to multiply the species with the size of
+	 * the surrounding compartment whenever it occurs in a kinetic equation.
+	 * Hence, this type paramter belongs to two values.
+	 */
+	TYPE_UNIT_CONSISTENCY
 }
