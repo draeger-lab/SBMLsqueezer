@@ -4,11 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -19,8 +15,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
@@ -29,23 +23,16 @@ import org.sbml.squeezer.SBMLsqueezer;
  * This class is a panel, which contains all necessary options to perform a
  * stability analysis of the given model.
  * 
- * @author <a href="mailto:a.doerr@uni-tuebingen.de">Alexander D&ouml;rr</a>
+ * @author Alexander D&ouml;rr
  * @date 2009-12-18
  * @since 1.3
  */
-public class SettingsPanelStability extends SettingsPanel implements
-		ChangeListener, ItemListener, KeyListener {
+public class SettingsPanelStability extends SettingsPanel {
 
 	/**
 	 * Generated serial version ID.
 	 */
 	private static final long serialVersionUID = 1L;
-
-	private List<ChangeListener> changeListeners;
-
-	private List<ItemListener> itemListeners;
-
-	private List<KeyListener> keyListeners;
 
 	private JTextField jTextFieldDelta;
 
@@ -63,10 +50,9 @@ public class SettingsPanelStability extends SettingsPanel implements
 
 	private JTextField jTextFieldMIOutputLocation;
 
-	private Properties settings;
-
 	public SettingsPanelStability(Properties settings) {
-		super(new GridBagLayout());
+		super();
+		setLayout(new GridBagLayout());
 		this.settings = new Properties();
 
 		for (Object key : settings.keySet()) {
@@ -74,14 +60,13 @@ public class SettingsPanelStability extends SettingsPanel implements
 			if (k.startsWith("STEUER_") || k.startsWith("STABILITY_"))
 				this.settings.put(key, settings.get(key));
 		}
-
-		this.itemListeners = new LinkedList<ItemListener>();
-		this.changeListeners = new LinkedList<ChangeListener>();
-		this.keyListeners = new LinkedList<KeyListener>();
 		init();
 
 	}
 
+	/**
+	 * 
+	 */
 	private void init() {
 		// ButtonGroup buttonGroup;
 		Font titleFont = new Font("Dialog", Font.BOLD, 12);
@@ -221,22 +206,6 @@ public class SettingsPanelStability extends SettingsPanel implements
 
 	/**
 	 * 
-	 * @param l
-	 */
-	public void addChangeListener(ChangeListener l) {
-		changeListeners.add(l);
-	}
-
-	/**
-	 * 
-	 * @param l
-	 */
-	public void addItemListener(ItemListener l) {
-		itemListeners.add(l);
-	}
-
-	/**
-	 * 
 	 */
 	public void restoreDefaults() {
 		String openDir = settings.get(CfgKeys.OPEN_DIR).toString();
@@ -256,13 +225,13 @@ public class SettingsPanelStability extends SettingsPanel implements
 		return settings;
 	}
 
-	public void stateChanged(ChangeEvent e) {
-
-		for (int i = 0; i < changeListeners.size(); i++)
-			changeListeners.get(i).stateChanged(e);
-
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.gui.SettingsPanel#itemStateChanged(java.awt.event.ItemEvent
+	 * )
+	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jSpinnerValueofN)) {
 			settings.put(CfgKeys.STEUER_VALUE_OF_N, Integer
@@ -271,9 +240,7 @@ public class SettingsPanelStability extends SettingsPanel implements
 			settings.put(CfgKeys.STEUER_VALUE_OF_M, Double
 					.valueOf(jSpinnerValueofM.getValue().toString()));
 		}
-		for (ItemListener i : itemListeners)
-			i.itemStateChanged(e);
-
+		super.itemStateChanged(e);
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -281,18 +248,7 @@ public class SettingsPanelStability extends SettingsPanel implements
 			if (!isDouble(jTextFieldDelta.getText()))
 				System.out.println("only double please");
 		}
-
-		for (KeyListener i : keyListeners)
-			i.keyPressed(e);
-
-	}
-
-	public void keyReleased(KeyEvent e) {
-
-	}
-
-	public void keyTyped(KeyEvent e) {
-
+		super.keyPressed(e);
 	}
 
 	/**

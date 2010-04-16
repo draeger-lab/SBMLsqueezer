@@ -312,6 +312,10 @@ public enum CfgKeys {
 	 */
 	SIM_STEP_SIZE,
 	/**
+	 * The maxiaml value for JSpinners in the GUI.
+	 */
+	SPINNER_MAX_VALUE,
+	/**
 	 * 
 	 */
 	SPINNER_STEP_SIZE,

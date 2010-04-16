@@ -464,16 +464,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			break;
 		case SIMULATE:
 			try {
-				JDialog d = new JDialog(this, "Simulation");
-				d.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-				d.setTitle("Simulation");
-				d.getContentPane().add(
-						new SimulationPanel(sbmlIO.getSelectedModel(), settings));
-				d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				d.pack();
-				d.setLocationRelativeTo(this);
-				d.addWindowListener(this);
+				JDialog d = new SimulationDialog(this, sbmlIO
+						.getSelectedModel(), settings);
 				setEnabled(false, Command.SIMULATE);
+				addWindowListener(this);
 				d.setVisible(true);
 			} catch (Exception exc) {
 				exc.printStackTrace();
@@ -897,6 +891,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
 						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
 			}
+			else if (we.getSource() instanceof SimulationDialog)
+				settings.putAll(((SimulationDialog)we.getSource()).getProperties());
 	}
 
 	/*

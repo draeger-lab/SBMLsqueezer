@@ -22,10 +22,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -36,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.ReactionType;
@@ -55,8 +51,7 @@ import org.sbml.squeezer.util.StringTools;
  * @date 2009-09-22
  * @since 1.3
  */
-public class SettingsPanelDefaultMechanisms extends SettingsPanel implements
-		ItemListener, ChangeListener {
+public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 
 	/**
 	 * Generated serial version uid.
@@ -71,19 +66,17 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel implements
 
 	private Properties origSett;
 
-	private List<ItemListener> itemListeners;
-
 	/**
 	 * Reaction Mechanism Panel
 	 * 
 	 * @param properties
 	 */
 	public SettingsPanelDefaultMechanisms(Properties properties) {
+		super(properties);
 		settings = new Properties();
 		for (Object key : properties.keySet())
 			if (key.toString().startsWith("KINETICS_"))
 				settings.put(key, properties.get(key));
-		itemListeners = new LinkedList<ItemListener>();
 		origSett = properties;
 		init(((Boolean) origSett
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
@@ -231,14 +224,6 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel implements
 		return p;
 	}
 
-	/**
-	 * 
-	 * @param l
-	 */
-	public void addItemListener(ItemListener l) {
-		itemListeners.add(l);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -250,8 +235,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel implements
 			JRadioButton rbutton = (JRadioButton) e.getSource();
 			settings.put(CfgKeys.valueOf(rbutton.getActionCommand()),
 					SBMLsqueezer.KINETICS_PACKAGE + '.' + rbutton.getText());
-			for (ItemListener i : itemListeners)
-				i.itemStateChanged(e);
+			super.itemStateChanged(e);
 		}
 	}
 
@@ -276,5 +260,6 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel implements
 			init(((Boolean) e.getSource()).booleanValue());
 			validate();
 		}
+		super.stateChanged(e);
 	}
 }

@@ -22,9 +22,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -36,7 +33,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.io.SBFileFilter;
@@ -50,8 +46,7 @@ import org.sbml.squeezer.io.SBFileFilter;
  * @author Andreas Dr&auml;ger
  * @date Jan 2009
  */
-public class SettingsPanelLaTeX extends SettingsPanel implements
-		ActionListener, ItemListener {
+public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener {
 
 	private JTextField fileField;
 	private JComboBox jComboBoxPaperSize;
@@ -60,9 +55,7 @@ public class SettingsPanelLaTeX extends SettingsPanel implements
 	private JCheckBox jCheckBoxLandscape;
 	private JCheckBox jCheckBoxTitlePage;
 	private JCheckBox jCheckBoxNameInEquations;
-	private Properties settings;
 	private boolean browse;
-	private List<ChangeListener> changeListeners;
 
 	/**
 	 * Generated serial version id.
@@ -101,12 +94,12 @@ public class SettingsPanelLaTeX extends SettingsPanel implements
 	 *            directory for LaTeX files.
 	 */
 	public SettingsPanelLaTeX(Properties properties, boolean browse) {
-		super(new BorderLayout());
+		super(properties);
+		setLayout(new BorderLayout());
 		settings = new Properties();
 		for (Object key : properties.keySet())
 			if (key.toString().startsWith("LATEX_"))
 				settings.put(key, properties.get(key));
-		this.changeListeners = new LinkedList<ChangeListener>();
 		this.browse = browse;
 		JPanel filePanel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(filePanel);
@@ -200,14 +193,6 @@ public class SettingsPanelLaTeX extends SettingsPanel implements
 
 	/**
 	 * 
-	 * @param settingsDialog
-	 */
-	public void addChangeListener(ChangeListener cl) {
-		this.changeListeners.add(cl);
-	}
-
-	/**
-	 * 
 	 * @return
 	 */
 	public Properties getProperties() {
@@ -240,8 +225,7 @@ public class SettingsPanelLaTeX extends SettingsPanel implements
 				fileField.setText(path);
 				if (!browse)
 					settings.put(CfgKeys.LATEX_DIR, path);
-				for (ChangeListener cl : changeListeners)
-					cl.stateChanged(new ChangeEvent(e));
+				super.stateChanged(new ChangeEvent(e));
 			}
 		}
 	}
@@ -283,7 +267,6 @@ public class SettingsPanelLaTeX extends SettingsPanel implements
 				settings.put(CfgKeys.LATEX_NAMES_IN_EQUATIONS, Boolean
 						.valueOf(jCheckBoxNameInEquations.isSelected()));
 		}
-		for (ChangeListener cl : changeListeners)
-			cl.stateChanged(new ChangeEvent(id));
+		super.stateChanged(new ChangeEvent(id));
 	}
 }
