@@ -92,18 +92,19 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		if (ae.getActionCommand().equals(CANCEL)) {
 			dispose();
 		} else if (ae.getActionCommand().equals(DEFAULTS)) {
-			Properties p = (Properties) this.settings.clone();
-			this.settings = SBMLsqueezer.getDefaultSettings();
+			Properties p = (Properties) settings.clone();
+			settings = SBMLsqueezer.getDefaultSettings();
 			int tab = panelAllSettings.getSelectedIndex();
 			getContentPane().removeAll();
 			init();
 			panelAllSettings.setSelectedIndex(tab);
-			this.settings = p;
+			settings = p;
 			apply.setEnabled(true);
 			ok.setEnabled(true);
 			defaults.setEnabled(false);
 			panelAllSettings.addChangeListener(this);
 			panelAllSettings.addItemListener(this);
+			panelAllSettings.addKeyListener(this);
 			validate();
 		} else if (ae.getActionCommand().equals(APPLY)
 				|| ae.getActionCommand().equals(OK)) {
@@ -197,15 +198,15 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 * Initializes this dialog.
 	 */
 	private void init() {
-		panelAllSettings = new SettingsPanelAll(this.settings);
+		panelAllSettings = new SettingsPanelAll(settings);
 		getContentPane().add(panelAllSettings, BorderLayout.CENTER);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		JPanel p = new JPanel();
 		defaults = new JButton("Defaults");
 		defaults.addActionListener(this);
 		defaults.setActionCommand(DEFAULTS);
-		defaults.setEnabled(!this.settings.equals(SBMLsqueezer
-				.getDefaultSettings()));
+		defaults
+				.setEnabled(!settings.equals(SBMLsqueezer.getDefaultSettings()));
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(this);
 		cancel.setActionCommand(CANCEL);

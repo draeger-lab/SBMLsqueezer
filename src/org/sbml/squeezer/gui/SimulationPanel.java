@@ -577,6 +577,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			ps.setOpenDir(opendir);
 			ps.setSaveDir(saveDir);
 			ps.setQuoteChar(quoteChar);
+			ps.setSeparatorChar(separatorChar);
 
 			JDialog d = new JDialog();
 			d.setTitle("Simulatin Preferences");
@@ -624,6 +625,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			opendir = ps.getOpenDir();
 			saveDir = ps.getSaveDir();
 			quoteChar = ps.getQuoteChar();
+			separatorChar = ps.getSeparatorChar();
 
 		} catch (Exception exc) {
 			exc.printStackTrace();
@@ -1173,13 +1175,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				}
 			}
 		} else {
-			JOptionPane
-					.showMessageDialog(
-							this,
-							GUITools
-									.toHTML(
-											"No simulation has been performed yet. Please run the simulation first.",
-											40));
+			String msg = "No simulation has been performed yet. Please run the simulation first.";
+			JOptionPane.showMessageDialog(this, GUITools.toHTML(msg, 40));
 		}
 	}
 

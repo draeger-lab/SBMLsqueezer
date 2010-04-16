@@ -22,9 +22,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -39,7 +36,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
@@ -55,17 +51,12 @@ import org.sbml.squeezer.SBMLsqueezer;
  * @author Andreas Dr&auml;ger
  * @date Nov 15, 2007
  */
-public class SettingsPanelKinetics extends SettingsPanel implements
-		ChangeListener, ItemListener {
+public class SettingsPanelKinetics extends SettingsPanel {
 
 	/**
 	 * Generated serial version ID.
 	 */
 	private static final long serialVersionUID = 5242359204965070649L;
-
-	private List<ChangeListener> changeListeners;
-
-	private List<ItemListener> itemListeners;
 
 	private JCheckBox jCheckBoxAddAllParametersGlobally;
 
@@ -102,9 +93,6 @@ public class SettingsPanelKinetics extends SettingsPanel implements
 	private JRadioButton jRadioButtonGenerateForAllReactions;
 
 	private JSpinner jSpinnerMaxRealisticNumOfReactants;
-
-	private Properties settings;
-
 	/**
 	 * 
 	 */
@@ -123,7 +111,8 @@ public class SettingsPanelKinetics extends SettingsPanel implements
 	 * @param settings
 	 */
 	public SettingsPanelKinetics(Properties settings) {
-		super(new GridBagLayout());
+		super(settings);
+		setLayout(new GridBagLayout());
 		this.settings = new Properties();
 		for (Object key : settings.keySet()) {
 			String k = key.toString();
@@ -131,25 +120,7 @@ public class SettingsPanelKinetics extends SettingsPanel implements
 					|| k.startsWith("TYPE_"))
 				this.settings.put(key, settings.get(key));
 		}
-		this.itemListeners = new LinkedList<ItemListener>();
-		this.changeListeners = new LinkedList<ChangeListener>();
 		init();
-	}
-
-	/**
-	 * 
-	 * @param l
-	 */
-	public void addChangeListener(ChangeListener l) {
-		changeListeners.add(l);
-	}
-
-	/**
-	 * 
-	 * @param l
-	 */
-	public void addItemListener(ItemListener l) {
-		itemListeners.add(l);
 	}
 
 	/**
@@ -560,7 +531,8 @@ public class SettingsPanelKinetics extends SettingsPanel implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * org.sbml.squeezer.gui.SettingsPanel#itemStateChanged(java.awt.event.ItemEvent
+	 * )
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jCheckBoxTreatAllReactionsAsEnzyeReaction)) {
@@ -636,8 +608,7 @@ public class SettingsPanelKinetics extends SettingsPanel implements
 					Boolean.valueOf(jCheckBoxRemoveUnnecessaryPandU
 							.isSelected()));
 		}
-		for (ItemListener i : itemListeners)
-			i.itemStateChanged(e);
+		super.itemStateChanged(e);
 	}
 
 	/**
@@ -701,7 +672,6 @@ public class SettingsPanelKinetics extends SettingsPanel implements
 			settings.put(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS, Double
 					.valueOf(jSpinnerDefaultParamValue.getValue().toString()));
 		}
-		for (int i = 0; i < changeListeners.size(); i++)
-			changeListeners.get(i).stateChanged(e);
+		super.stateChanged(e);
 	}
 }

@@ -50,7 +50,7 @@ import org.sbml.squeezer.SBMLsqueezer;
  * @since 1.3
  * @date 2009-09-22
  */
-public class SettingsPanelAll extends SettingsPanel implements ItemListener {
+public class SettingsPanelAll extends SettingsPanel {
 
 	/**
 	 * Generated serial version uid.
@@ -81,12 +81,6 @@ public class SettingsPanelAll extends SettingsPanel implements ItemListener {
 	 *
 	 */
 	private SettingsPanelSimulation panelSimulationSettings;
-
-	/**
-	 * 
-	 */
-	private Properties settings;
-
 	/**
 	 * 
 	 */
@@ -112,8 +106,8 @@ public class SettingsPanelAll extends SettingsPanel implements ItemListener {
 	 * @param properties
 	 */
 	public SettingsPanelAll(Properties properties) {
-		super(new GridLayout(1, 1));
-		settings = properties;
+		super(properties);
+		setLayout(new GridLayout(1, 1));
 		reversibility = ((Boolean) properties
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
@@ -199,23 +193,31 @@ public class SettingsPanelAll extends SettingsPanel implements ItemListener {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * javax.swing.JTabbedPane#addChangeListener(javax.swing.event.ChangeListener
-	 * )
+	 * org.sbml.squeezer.gui.SettingsPanel#addChangeListener(javax.swing.event
+	 * .ChangeListener)
 	 */
 	public void addChangeListener(ChangeListener listener) {
 		if (panelKinSettings != null)
 			panelKinSettings.addChangeListener(listener);
 		if (panelLatexSettings != null)
 			panelLatexSettings.addChangeListener(listener);
+		if (panelSimulationSettings != null)
+			panelSimulationSettings.addChangeListener(listener);
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param listener
+	 * @seeorg.sbml.squeezer.gui.SettingsPanel#addItemListener(java.awt.event.
+	 * ItemListener)
 	 */
 	public void addItemListener(ItemListener listener) {
-		panelKinSettings.addItemListener(listener);
-		panelDefaultMechanisms.addItemListener(listener);
+		if (panelKinSettings != null)
+			panelKinSettings.addItemListener(listener);
+		if (panelLatexSettings != null)
+			panelDefaultMechanisms.addItemListener(listener);
+		if (panelSimulationSettings != null)
+			panelSimulationSettings.addItemListener(listener);
 	}
 
 	/**
@@ -257,6 +259,9 @@ public class SettingsPanelAll extends SettingsPanel implements ItemListener {
 		}
 		for (Object key : panelLatexSettings.getProperties().keySet())
 			this.settings.put(key, panelLatexSettings.getProperties().get(key));
+		Properties props = panelSimulationSettings.getProperties();
+		for (Object key : props.keySet())
+			this.settings.put(key, props.get(key));
 		return settings;
 	}
 
@@ -278,7 +283,8 @@ public class SettingsPanelAll extends SettingsPanel implements ItemListener {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 * org.sbml.squeezer.gui.SettingsPanel#itemStateChanged(java.awt.event.ItemEvent
+	 * )
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if ((e.getSource() instanceof Container)

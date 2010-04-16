@@ -19,12 +19,17 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.LayoutManager;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -32,7 +37,8 @@ import javax.swing.JPanel;
  * @date 2010-04-13
  * 
  */
-public abstract class SettingsPanel extends JPanel implements KeyListener {
+public abstract class SettingsPanel extends JPanel implements KeyListener,
+		ItemListener, ChangeListener {
 
 	/**
 	 * Generated serial version identifier
@@ -41,14 +47,30 @@ public abstract class SettingsPanel extends JPanel implements KeyListener {
 	/**
 	 * 
 	 */
+	private List<ChangeListener> changeListeners;
+	/**
+	 * 
+	 */
+	private List<ItemListener> itemListeners;
+
+	/**
+	 * 
+	 */
 	private List<KeyListener> keyListeners;
+
+	/**
+	 * 
+	 */
+	Properties settings;
 
 	/**
 	 * 
 	 */
 	public SettingsPanel() {
 		super();
-		init();
+		changeListeners = new LinkedList<ChangeListener>();
+		keyListeners = new LinkedList<KeyListener>();
+		itemListeners = new LinkedList<ItemListener>();
 	}
 
 	/**
@@ -56,15 +78,33 @@ public abstract class SettingsPanel extends JPanel implements KeyListener {
 	 * @param layout
 	 */
 	public SettingsPanel(LayoutManager layout) {
-		super(layout);
-		init();
+		this();
+		setLayout(layout);
 	}
 
 	/**
 	 * 
+	 * @param properties
 	 */
-	private void init() {
-		keyListeners = new LinkedList<KeyListener>();
+	public SettingsPanel(Properties properties) {
+		this();
+		this.settings = properties;
+	}
+
+	/**
+	 * 
+	 * @param listener
+	 */
+	public void addChangeListener(ChangeListener listener) {
+		changeListeners.add(listener);
+	}
+
+	/**
+	 * 
+	 * @param listener
+	 */
+	public void addItemListener(ItemListener listener) {
+		itemListeners.add(listener);
 	}
 
 	/**
@@ -73,6 +113,16 @@ public abstract class SettingsPanel extends JPanel implements KeyListener {
 	public void addKeyListener(KeyListener kl) {
 		keyListeners.add(kl);
 	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
+	public void itemStateChanged(ItemEvent e) {
+		for (ItemListener i : itemListeners)
+			i.itemStateChanged(e);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -80,6 +130,8 @@ public abstract class SettingsPanel extends JPanel implements KeyListener {
 	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
 	 */
 	public void keyPressed(KeyEvent e) {
+		for (KeyListener i : keyListeners)
+			i.keyPressed(e);
 	}
 
 	/*
@@ -98,6 +150,18 @@ public abstract class SettingsPanel extends JPanel implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 		for (KeyListener kl : keyListeners)
 			kl.keyTyped(e);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
+	 * )
+	 */
+	public void stateChanged(ChangeEvent e) {
+		for (ChangeListener cl : changeListeners)
+			cl.stateChanged(e);
 	}
 
 }
