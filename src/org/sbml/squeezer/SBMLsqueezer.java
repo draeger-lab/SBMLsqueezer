@@ -585,24 +585,30 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		final SBMLsqueezer squeezer = new SBMLsqueezer(new LibSBMLReader(),
 				new LibSBMLWriter());
 		msg.log("scanning command line arguments...");
-		Properties p = analyzeCommandLineArguments(args);
+		final Properties p = analyzeCommandLineArguments(args);
 		for (Object key : p.keySet())
 			SBMLsqueezer.getProperties().put(key, p.get(key));
 		msg.logln(" done.\nreading SBO... done.");
 		if (p.containsKey(CfgKeys.GUI)
-				&& Boolean.parseBoolean(p.get(CfgKeys.GUI).toString())) {
+				&& ((Boolean) p.get(CfgKeys.GUI)).booleanValue()) {
 			if (p.containsKey(CfgKeys.SBML_FILE))
 				squeezer.readSBMLSource(p.get(CfgKeys.SBML_FILE).toString());
-			squeezer.checkForUpdate(true);
+			if (((Boolean) p.get(CfgKeys.CHECK_FOR_UPDATES)).booleanValue())
+				squeezer.checkForUpdate(true);
 			msg.log("loading GUI...");
 			new Thread(new Runnable() {
 				public void run() {
-					squeezer.showGUI();
+					msg.logln(" have fun!");
+					if (((Boolean) p.get(CfgKeys.SIMULATION_MODE))
+							.booleanValue())
+						squeezer.showGUISimulation();
+					else
+						squeezer.showGUI();
 				}
 			}).start();
 		} else {
 			if (squeezer.getSBMLIO().getNumErrors() > 0
-					&& ((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+					&& ((Boolean) p.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue())
 				for (SBMLException exc : squeezer.getSBMLIO().getWarnings())
 					msg.err(exc.getMessage());
@@ -716,7 +722,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * int)
 	 */
 	public void currentState(SBase item, int num) {
-		// TODO Auto-generated method stub
+		// nothing to do.
 	}
 
 	/**
@@ -733,7 +739,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * @see org.sbml.squeezer.LawListener#initLawListener(java.lang.String, int)
 	 */
 	public void initLawListener(String className, int numberOfElements) {
-		// TODO Auto-generated method stub
+		// nothing to do.
 	}
 
 	/*
@@ -811,10 +817,26 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * Shows the GUI of SBMLsqueezer stand-alone.
 	 */
 	public void showGUI() {
-		msg.logln(" have fun!");
 		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, settings);
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
+	}
+
+	/**
+	 * Shows the simulation gui.
+	 */
+	public void showGUISimulation() {
+		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, settings);
+		gui.showSimulationControl(true);
+		gui.dispose();
+		try {
+			saveProperties(getProperties());
+		} catch (FileNotFoundException exc) {
+			exc.printStackTrace();
+		} catch (IOException exc) {
+			exc.printStackTrace();
+		}
+		System.exit(0);
 	}
 
 	/**

@@ -463,21 +463,24 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		case STRUCTURAL_KINETIC_MODELLING:
 			break;
 		case SIMULATE:
-			try {
-				JDialog d = new SimulationDialog(this, sbmlIO
-						.getSelectedModel(), settings);
-				setEnabled(false, Command.SIMULATE);
-				addWindowListener(this);
-				d.setVisible(true);
-			} catch (Exception exc) {
-				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-			}
+			showSimulationControl(false);
 			break;
 		default:
 			break;
 		}
+	}
+
+	/**
+	 * Opens and displays a simulation dialog.
+	 */
+	public SimulationDialog showSimulationControl(boolean modal) {
+		SimulationDialog d = new SimulationDialog(this, sbmlIO.getSelectedModel(),
+				settings);
+		setEnabled(false, Command.SIMULATE);
+		d.addWindowListener(this);
+		d.setModal(modal);
+		d.setVisible(true);
+		return d;
 	}
 
 	/**
@@ -891,8 +894,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
 						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
 			}
-			else if (we.getSource() instanceof SimulationDialog)
-				settings.putAll(((SimulationDialog)we.getSource()).getProperties());
+		else if (we.getSource() instanceof SimulationDialog)
+			settings
+					.putAll(((SimulationDialog) we.getSource()).getProperties());
 	}
 
 	/*

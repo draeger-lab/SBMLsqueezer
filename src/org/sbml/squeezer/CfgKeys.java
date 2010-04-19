@@ -32,75 +32,77 @@ public enum CfgKeys {
 	 */
 	CHECK_FOR_UPDATES,
 	/**
-	 * 
+	 * Key to specify the default directory for Comma Separated Value (CSV)
+	 * files.
 	 */
 	CSV_FILES_OPEN_DIR,
 	/**
-	 * 
+	 * The character that is used to quote strings inside of comma separated
+	 * value files.
 	 */
 	CSV_FILES_QUOTE_CHAR,
 	/**
-	 * 
+	 * The default directory where comma separated value files are storted.
 	 */
 	CSV_FILES_SAVE_DIR,
 	/**
-	 * 
+	 * The separator character that is written between the entries of a comma
+	 * separated value file. Not that actually any UTF8 character can be used as
+	 * a separator, not only commas.
 	 */
 	CSV_FILES_SEPARATOR_CHAR,
 	/**
 	 * Can be used in combination with = true or = false or just --gui.
+	 * Specifies whether or not SBMLsqueezer should display its graphical user
+	 * interface.
 	 */
 	GUI,
 	/**
-	 * 
+	 * When storing any GUI elements or other pictures into a JPEG graphics file
+	 * the value associated to this key is used for the degree of compression.
+	 * Expected is a float value between 0 and 1.
 	 */
 	JPEG_COMPRESSION_FACTOR,
 	/**
-	 * Possible values are, among others,
-	 * <ul>
-	 * <li>generalized mass-action kinetics</li>
-	 * <li>Convenience kinetics</li>
-	 * <li>Random Order Michealis Menten kinetics</li>
-	 * <li>Ping-Pong</li>
-	 * <li>Ordered</li>
-	 * </ul>
+	 * The class name of the default kinetic law for bi-bi reactions. This can
+	 * be any class that implements the
+	 * {@link org.sbml.squeezer.kinetics.InterfaceBiBiKinetics}.
 	 */
 	KINETICS_BI_BI_TYPE,
 	/**
-	 * Possible values are, e.g.,
-	 * <ul>
-	 * <li>generalized mass-action kinetics</li>
-	 * <li>Convenience kinetics</li>
-	 * <li>Random Order Michealis Menten kinetics</li>
-	 * <li>Ordered</li>
-	 * </ul>
+	 * The class name of the default kinetic law for bi-uni reactions. This can
+	 * be any class that implements the
+	 * {@link org.sbml.squeezer.kinetics.InterfaceBiUniKinetics}.
 	 */
 	KINETICS_BI_UNI_TYPE,
 	/**
-	 * Determins the key for the standar kinetic law to be applied for reactions
-	 * that are identified to belong to gene-regulatory processes, such as
-	 * transcription or translation.
+	 * Determins the key for the standard kinetic law to be applied for
+	 * reactions that are identified to belong to gene-regulatory processes,
+	 * such as transcription or translation. The value is the class name of any
+	 * class that implements the
+	 * {@link org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryNetworks}.
 	 */
 	KINETICS_GENE_REGULATION,
 	/**
-	 * Determins the key for the standar kinetic law to be applied for reactions
-	 * that are catalyzed by non-enzymes or that are not catalyzed at all.
+	 * Determines the key for the standard kinetic law to be applied for
+	 * reactions that are catalyzed by non-enzymes or that are not catalyzed at
+	 * all. The value may be any rate law that implements
+	 * {@link org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics}.
 	 */
 	KINETICS_NONE_ENZYME_REACTIONS,
 	/**
-	 * Determins the key for the standar kinetic law to be applied for reactions
-	 * that are identified to be enzyme-catalyzed (with or without explicit
-	 * catalyst) and that do not belong to one of the other standard
-	 * enzyme-catalysis schemes.
+	 * Determines the key for the standard kinetic law to be applied for
+	 * reactions that are identified to be enzyme-catalyzed (with or without
+	 * explicit catalyst) and that do not belong to one of the other standard
+	 * enzyme-catalysis schemes. The value can be any rate law that implements
+	 * {@link org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics}.
 	 */
 	KINETICS_OTHER_ENZYME_REACTIONS,
 	/**
-	 * Possible values are, for instance,
-	 * <ul>
-	 * <li>generalized mass-action kinetics</li>
-	 * <li>Convenience kinetics</li>
-	 * <li>Michaelis-Menten kinetics</li>
-	 * </ul>
+	 * This key defines the default kinetic law to be applied to
+	 * enzyme-catalyzed reactions with one reactant and one product. Possible
+	 * values are the names of classes that implement
+	 * {@link org.sbml.squeezer.kinetics.InterfaceUniUniKinetics}.
 	 */
 	KINETICS_UNI_UNI_TYPE,
 	/**
@@ -203,15 +205,18 @@ public enum CfgKeys {
 	 */
 	OPT_WARNINGS_FOR_TOO_MANY_REACTANTS,
 	/**
-	 * 
+	 * This field decides whether or not by default a logarithmic scale should
+	 * be applied when plotting values in a two-dimensional figure.
 	 */
 	PLOT_LOG_SCALE,
 	/**
-	 * 
+	 * With this key it can be specified whether a two-dimensional plot should
+	 * display a grid to highlight the position of points and lines.
 	 */
 	PLOT_SHOW_GRID,
 	/**
-	 * 
+	 * Determines whether or not a legend should be shown by default when
+	 * plotting data into a two-dimensional figure.
 	 */
 	PLOT_SHOW_LEGEND,
 	/**
@@ -272,43 +277,70 @@ public enum CfgKeys {
 	 */
 	SHOW_SBML_WARNINGS,
 	/**
-	 * 
+	 * Boolean argument to specify if SBMLsqueezer should be used as a pure
+	 * simulator for a given SBML file. In this case, the simulation control
+	 * panel will be displayed when launching SBMLsqeeezer. This is only
+	 * possible if the {@link GUI} is set to true and {@link SBML_FILE} is set
+	 * to a valid input file.
+	 */
+	SIMULATION_MODE,
+	/**
+	 * This specifies the class name of the default distance function that
+	 * evaluates the quality of a simulation with respect to given
+	 * (experimental) data.
 	 */
 	SIM_DISTANCE_FUNCTION,
 	/**
-	 * 
+	 * With the associated non-negative double number that has to be greater
+	 * than 0 when simulating SBML models, it is possible to perform a
+	 * simulation.
 	 */
 	SIM_END_TIME,
 	/**
-	 * 
+	 * This is important for the graphical user interface as it defines the
+	 * maximal possible value for compartiments within the input mask. Expected
+	 * is a positive double value.
 	 */
 	SIM_MAX_COMPARTMENT_SIZE,
 	/**
-	 * 
+	 * This is important for the graphical user interface as it defines the
+	 * maximal possible value for parameters within the input mask. Expected is
+	 * a positive double value.
 	 */
 	SIM_MAX_PARAMETER_VALUE,
 	/**
-	 * 
+	 * This is important for the graphical user interface as it defines the
+	 * maximal possible value for species within the input mask. Expected is a
+	 * positive double value.
 	 */
 	SIM_MAX_SPECIES_VALUE,
 	/**
-	 * 
+	 * This key tells the graphical user interface the upper bound for the input
+	 * mask of how many time steps per unit time can maximally be performed when
+	 * simulating a model.
 	 */
 	SIM_MAX_STEPS_PER_UNIT_TIME,
 	/**
-	 * 
+	 * This is important for the graphical user interface as it defines the
+	 * upper bound for the input mask for the simulation time.
 	 */
 	SIM_MAX_TIME,
 	/**
-	 * 
+	 * This gives the class name of the default solver for ordinary differential
+	 * equation systems. The associated class must implement
+	 * {@link eva2.tools.math.des.AbstractDESSolver} and must have a constructor
+	 * without any parameters.
 	 */
 	SIM_ODE_SOLVER,
 	/**
-	 * 
+	 * The double value associated with this key must, in case of SBML equal to
+	 * zero. Generally, any start time would be possible. This is why this key
+	 * exists. But SBML is defined to start its simulation at the time zero.
 	 */
 	SIM_START_TIME,
 	/**
-	 * 
+	 * The greater this value the longer the computation time, but the more
+	 * accurate will be the result.
 	 */
 	SIM_STEP_SIZE,
 	/**
@@ -316,7 +348,8 @@ public enum CfgKeys {
 	 */
 	SPINNER_MAX_VALUE,
 	/**
-	 * 
+	 * This is important for the graphical user interface as it defines the step
+	 * size between two values in input masks.
 	 */
 	SPINNER_STEP_SIZE,
 	/**
