@@ -135,6 +135,19 @@ public class LayoutHelper {
 	}
 
 	/**
+	 * Add one or many components in one line.
+	 * 
+	 * @param c
+	 * @param comps
+	 */
+	public void add(Component c, Component... comps) {
+		add(c, 0, ++row, 1, 1, 0, 0);
+		for (int i = 0; i < comps.length; i++) {
+			add(comps[i], i + 1, row, 1, 1, 0, 0);
+		}
+	}
+
+	/**
 	 * 
 	 * @param c
 	 * @param x

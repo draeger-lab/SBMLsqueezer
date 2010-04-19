@@ -22,6 +22,7 @@ import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.ActionEvent;
@@ -36,6 +37,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -93,140 +97,6 @@ import org.sbml.squeezer.util.HTMLFormula;
 import au.com.bytecode.opencsv.CSVReader;
 import eva2.gui.FunctionArea;
 import eva2.tools.math.des.AbstractDESSolver;
-
-/**
- * @author Andreas Dr&auml;ger
- * @since 1.4
- * 
- */
-class ColorEditor extends AbstractCellEditor implements TableCellEditor,
-		ActionListener {
-	/**
-	 * 
-	 */
-	public static final String EDIT = "edit";
-	/**
-	 * Generated serial version identifier.
-	 */
-	private static final long serialVersionUID = -3645125690115981580L;
-	/**
-	 * 
-	 */
-	private JButton button;
-	/**
-	 * 
-	 */
-	private JColorChooser colorChooser;
-	/**
-	 * 
-	 */
-	private Color currentColor;
-	/**
-	 * 
-	 */
-	private JDialog dialog;
-
-	/**
-	 * 
-	 */
-	public ColorEditor() {
-		button = new JButton();
-		button.setActionCommand(EDIT);
-		button.addActionListener(this);
-		button.setBorderPainted(false);
-
-		// Set up the dialog that the button brings up.
-		colorChooser = new JColorChooser();
-		dialog = JColorChooser.createDialog(button, "Pick a Color", true,
-				colorChooser, this, null);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (EDIT.equals(e.getActionCommand())) {
-			// The user has clicked the cell, so
-			// bring up the dialog.
-			button.setBackground(currentColor);
-			colorChooser.setColor(currentColor);
-			dialog.setVisible(true);
-
-			fireEditingStopped(); // Make the renderer reappear.
-
-		} else { // User pressed dialog's "OK" button.
-			currentColor = colorChooser.getColor();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.CellEditor#getCellEditorValue()
-	 */
-	public Object getCellEditorValue() {
-		return currentColor;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing
-	 * .JTable, java.lang.Object, boolean, int, int)
-	 */
-	public Component getTableCellEditorComponent(JTable table, Object value,
-			boolean isSelected, int row, int column) {
-		currentColor = (Color) value;
-		return button;
-	}
-}
-
-/**
- * 
- * @author Andreas Dr&auml;ger
- * @date 2010-04-08
- * @since 1.4
- */
-class MyDefaultTableModel extends DefaultTableModel {
-
-	/**
-	 * Generated serial version identifier
-	 */
-	private static final long serialVersionUID = 6339470859385085061L;
-
-	/**
-	 * 
-	 * @param data
-	 * @param columnNames
-	 */
-	public MyDefaultTableModel(Object[][] data, String[] columnNames) {
-		super(data, columnNames);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
-	 */
-	@Override
-	public Class<?> getColumnClass(int c) {
-		return getValueAt(0, c).getClass();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
-	 */
-	@Override
-	public boolean isCellEditable(int row, int column) {
-		return false;
-	}
-}
 
 /**
  * @author Andreas Dr&auml;ger
@@ -375,7 +245,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * Standard directory to open data files.
 	 */
-	private String opendir;
+	private String openDir;
 
 	/**
 	 * The step size for the spinner in the interactive parameter scan.
@@ -449,6 +319,74 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	private SpinnerNumberModel t2;
 
 	/**
+	 * This connects the identifiers of elements that can be drawn in the plot
+	 * with the indices in the legend table and in experimental data files.
+	 */
+	private Hashtable<String, Indices> colNames2data;
+
+	/**
+	 * This maps the index in an experimental data file to the name of a
+	 * component in the legend table.
+	 */
+	private Hashtable<Integer, String> experiment2ElementIndex;
+
+	/**
+	 * This class stores the row of an element in the Legend table and the
+	 * column of the same element in the experimental data table.
+	 * 
+	 * @author Andreas Dr&auml;ger
+	 * @since 1.4
+	 * 
+	 */
+	private class Indices {
+		/**
+		 * The row in the legend table
+		 */
+		private int rowLegendTable;
+		/**
+		 * The column in the experiment table
+		 */
+		private int columnExperimentTable;
+
+		/**
+		 * @return the rowLegendTable
+		 */
+		public int getRowLegendTable() {
+			return rowLegendTable;
+		}
+
+		/**
+		 * @return the columnExperimentTable
+		 */
+		public int getColumnExperimentTable() {
+			return columnExperimentTable;
+		}
+
+		/**
+		 * @param columnExperimentTable
+		 *            the columnExperimentTable to set
+		 */
+		public void setColumnExperimentTable(int columnExperimentTable) {
+			this.columnExperimentTable = columnExperimentTable;
+		}
+
+		/**
+		 * 
+		 * @param rowLegendTable
+		 */
+		public Indices(int rowLegendTable) {
+			this.rowLegendTable = rowLegendTable;
+			this.columnExperimentTable = -1;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("[row legend = %d, column experiment = %d]",
+					this.rowLegendTable, this.columnExperimentTable);
+		}
+	}
+
+	/**
 	 * 
 	 * @param model
 	 */
@@ -462,6 +400,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			try {
 				this.model = model;
 				colNames = createColNames(this.model);
+				colNames2data = new Hashtable<String, Indices>();
+				colNames2data.put(colNames[0], new Indices(-1));
+				for (int i = 1; i < colNames.length; i++)
+					colNames2data.put(colNames[i], new Indices(i - 1));
+				experiment2ElementIndex = new Hashtable<Integer, String>();
 				setProperties(getDefaultProperties());
 			} catch (Exception exc) {
 				exc.printStackTrace();
@@ -502,19 +445,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			simulate(model, t1val, t2val, stepSize);
 			break;
 		case OPEN_DATA:
-			JFileChooser chooser = GUITools.createJFileChooser(opendir, false,
-					false, JFileChooser.FILES_ONLY,
-					SBFileFilter.CSV_FILE_FILTER);
-			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-				try {
-					plot(readCSVFile(chooser.getSelectedFile()), false,
-							showLegend.isSelected());
-				} catch (IOException exc) {
-					exc.printStackTrace();
-					JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-							.getClass().getSimpleName(),
-							JOptionPane.ERROR_MESSAGE);
-				}
+			openExperimentalData();
 			break;
 		case SAVE_PLOT_IMAGE:
 			try {
@@ -548,6 +479,24 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * 
 	 */
+	private void openExperimentalData() {
+		JFileChooser chooser = GUITools.createJFileChooser(openDir, false,
+				false, JFileChooser.FILES_ONLY, SBFileFilter.CSV_FILE_FILTER);
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+			try {
+				openDir = chooser.getSelectedFile().getParent();
+				plot(readCSVFile(chooser.getSelectedFile()), false, showLegend
+						.isSelected());
+			} catch (IOException exc) {
+				exc.printStackTrace();
+				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			}
+	}
+
+	/**
+	 * 
+	 */
 	private void adjustPreferences() {
 		try {
 			SettingsPanelSimulation ps = new SettingsPanelSimulation();
@@ -574,7 +523,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					.intValue());
 
 			// Parsing
-			ps.setOpenDir(opendir);
+			ps.setOpenDir(openDir);
 			ps.setSaveDir(saveDir);
 			ps.setQuoteChar(quoteChar);
 			ps.setSeparatorChar(separatorChar);
@@ -622,7 +571,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			stepsModel.setValue(Integer.valueOf(ps.getNumIntegrationSteps()));
 
 			// Parsing
-			opendir = ps.getOpenDir();
+			openDir = ps.getOpenDir();
 			saveDir = ps.getSaveDir();
 			quoteChar = ps.getQuoteChar();
 			separatorChar = ps.getSeparatorChar();
@@ -678,10 +627,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		endTime.setName("t2");
 		double t1val = ((Double) t1.getValue()).doubleValue();
 		double t2val = ((Double) t2.getValue()).doubleValue();
-		stepsModel = new SpinnerNumberModel((int) Math.round((t2val - t1val)
-				/ stepSize), 1, (int) Math.round((t2val - t1val)
-				* maxStepsPerUnit), 1);
-
+		stepsModel = new SpinnerNumberModel((int) Math.max(Math
+				.round((t2val - t1val) / stepSize), 1), 1, (int) Math
+				.round((t2val - t1val) * maxStepsPerUnit), 1);
 		JPanel sPanel = new JPanel();
 		LayoutHelper settings = new LayoutHelper(sPanel);
 		settings.add(new JLabel("Start time: "), 0, 0, 1, 1, 0, 0);
@@ -825,7 +773,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		/*
 		 * CSV file parsing
 		 */
-		p.put(CfgKeys.CSV_FILES_OPEN_DIR, opendir);
+		p.put(CfgKeys.CSV_FILES_OPEN_DIR, openDir);
 		p.put(CfgKeys.CSV_FILES_SAVE_DIR, saveDir);
 		p.put(CfgKeys.CSV_FILES_SEPARATOR_CHAR, Character
 				.valueOf(separatorChar));
@@ -852,6 +800,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			if (timeUnits != null)
 				xLab += " in " + UnitDefinition.printUnits(timeUnits, true);
 			plot = new FunctionArea(xLab, "Value");
+			plot.setGridVisible(showGrid.isSelected());
+			plot.showLegend(showLegend.isSelected());
 			// get rid of this popup menu.
 			MouseListener listeners[] = plot.getMouseListeners();
 			for (int i = listeners.length - 1; i >= 0; i--)
@@ -1051,18 +1001,48 @@ public class SimulationPanel extends JPanel implements ActionListener,
 						if (legend.getRowCount() == 0
 								|| ((Boolean) legend.getValueAt(j, 0))
 										.booleanValue()) {
-							plot.setConnectedPoint(solution[i][0],
-									solution[i][j + 1], j);
 							plot.setGraphColor(j, (Color) legend.getValueAt(j,
 									1));
 							plot.setInfoString(j, legend.getValueAt(j, 2)
 									.toString(), 2);
+							plot.setConnectedPoint(solution[i][0],
+									solution[i][j + 1], j);
 						}
 					} else {
-						plot.setUnconnectedPoint(solution[i][0],
-								solution[i][j + 1], colNames.length - 1 + j);
-						plot.setInfoString(j, legend.getValueAt(j, 2)
-								.toString(), 2);
+						String name = experiment2ElementIndex.get(Integer
+								.valueOf(j + 1));
+						// Plot only data whose corresponding elements could be
+						// identified.
+						if (name != null) {
+							Indices index = colNames2data.get(name);
+							if (index != null
+									&& index.getRowLegendTable() >= 0
+									&& index.getRowLegendTable() < legend
+											.getRowCount()) {
+								if (legend.getRowCount() == 0
+										|| ((Boolean) legend.getValueAt(index
+												.getRowLegendTable(), 0))
+												.booleanValue()) {
+									plot.setGraphColor(colNames.length - 1 + j,
+											(Color) legend.getValueAt(index
+													.getRowLegendTable(), 1));
+									Indices time = colNames2data
+											.get(colNames[0]);
+									plot
+											.setUnconnectedPoint(
+													solution[i][time == null ? 0
+															: time
+																	.getColumnExperimentTable()],
+													solution[i][index
+															.getRowLegendTable()],
+													colNames.length - 1 + j);
+									plot.setInfoString(colNames.length - 1 + j,
+											legend.getValueAt(
+													index.getRowLegendTable(),
+													2).toString(), 2);
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1092,6 +1072,74 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				} catch (NumberFormatException exc) {
 					numNumbers--;
 				}
+			Hashtable<String, Integer> problems = new Hashtable<String, Integer>();
+			for (i = 0; i < names.length; i++) {
+				Indices index = colNames2data.get(names[i]);
+				if (index != null) {
+					experiment2ElementIndex.put(Integer.valueOf(index
+							.getRowLegendTable()), names[i]);
+					index.setColumnExperimentTable(i);
+				} else {
+					problems.put(names[i], Integer.valueOf(i));
+				}
+			}
+
+			if (problems.keySet().size() > 0) {
+				// Show dialog to let the user select what is meant.
+				LinkedList<String> availableEntries = new LinkedList<String>();
+				for (String colName : colNames2data.keySet()) {
+					Indices idx = colNames2data.get(colName);
+					if (idx.getColumnExperimentTable() < 0)
+						availableEntries.add(colName);
+				}
+				String[] avail = availableEntries.toArray(new String[0]);
+				if (avail.length > 0) {
+					String[] probs = problems.keySet().toArray(new String[0]);
+					Arrays.sort(avail);
+					Arrays.sort(probs);
+					LayoutHelper lh = new LayoutHelper(new JPanel());
+					JComboBox combo[] = new JComboBox[probs.length];
+					i = 0;
+					for (String prob : probs) {
+						combo[i] = new JComboBox(avail);
+						combo[i].setSelectedIndex(i);
+						lh.add(new JPanel());
+						lh.add(new JLabel(GUITools.toHTML(prob, 40)),
+								new JPanel(), combo[i++]);
+					}
+					lh.add(new JPanel());
+					JPanel panel = new JPanel(new BorderLayout());
+					String message = "Some data could not be assigned to model values. Please assign experiment names to model components.";
+					panel.add(new JLabel(GUITools.toHTML(message, 40)),
+							BorderLayout.NORTH);
+					JScrollPane scroll = new JScrollPane(lh.getContainer(),
+							JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+					scroll.setPreferredSize(new Dimension(250, Math.min(
+							35 * problems.keySet().size() + 20, 400)));
+					panel.add(scroll, BorderLayout.CENTER);
+					JOptionPane.showMessageDialog(this, panel,
+							"Manual name assignment",
+							JOptionPane.QUESTION_MESSAGE);
+					for (i = 0; i < probs.length; i++) {
+						String newName = combo[i].getSelectedItem().toString();
+						int origIndex = problems.get(probs[i]).intValue();
+						names[origIndex] = newName;
+						Indices index = colNames2data.get(newName);
+						if (index != null) {
+							index.setColumnExperimentTable(origIndex);
+							experiment2ElementIndex.put(Integer.valueOf(index
+									.getRowLegendTable()), newName);
+						}
+					}
+				}
+			}
+			if (names.length > colNames.length) {
+				String message = "The data file contains some elements that do not have a counterpart in the given model. These elements will not occur in the plot and are ignored in the analysis.";
+				JOptionPane.showMessageDialog(this, GUITools
+						.toHTML(message, 40), "Some elements are ignored",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
 			TableModelDoubleMatrix tabModel = new TableModelDoubleMatrix();
 			if (numNumbers == 0)
 				tabModel.setColumnNames(input.remove(0));
@@ -1121,6 +1169,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (fc.showSaveDialog(plot) == JFileChooser.APPROVE_OPTION
 				&& !fc.getSelectedFile().exists()
 				|| (GUITools.overwriteExistingFile(this, fc.getSelectedFile()))) {
+			this.saveDir = fc.getSelectedFile().getParent();
 			File file = fc.getSelectedFile();
 			if (SBFileFilter.isPNGFile(file))
 				ImageIO.write(bufferedImage, "png", file);
@@ -1150,6 +1199,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					SBFileFilter.CSV_FILE_FILTER);
 			if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File out = fc.getSelectedFile();
+				this.saveDir = out.getParent();
 				if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
 					BufferedWriter buffer = new BufferedWriter(new FileWriter(
 							out));
@@ -1218,7 +1268,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				"Add or remove a legend in the plot.");
 		maxStepsPerUnit = ((Integer) settings
 				.get(CfgKeys.SIM_MAX_STEPS_PER_UNIT_TIME)).intValue();
-		opendir = settings.get(CfgKeys.CSV_FILES_OPEN_DIR).toString();
+		openDir = settings.get(CfgKeys.CSV_FILES_OPEN_DIR).toString();
 		separatorChar = ((Character) settings
 				.get(CfgKeys.CSV_FILES_SEPARATOR_CHAR)).charValue();
 		quoteChar = ((Character) settings.get(CfgKeys.CSV_FILES_QUOTE_CHAR))
@@ -1312,15 +1362,22 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (e.getSource() instanceof JSpinner) {
 			JSpinner spin = (JSpinner) e.getSource();
 			if (spin.getName() != null && spin.getName().equals("t2")) {
-				double t1val = ((Double) t1.getValue()).doubleValue();
-				double t2val = Double.valueOf(spin.getValue().toString())
-						.doubleValue();
-				stepsModel.setMinimum(1);
-				stepsModel.setMaximum(Integer.valueOf((int) Math
-						.round((t2val - t1val) * maxStepsPerUnit)));
-				stepsModel.setValue(Math.max(Integer.valueOf((int) Math
-						.round((t2val - t1val) * stepSize)),
-						((Integer) stepsModel.getMinimum()).intValue()));
+//				double t1val = ((Double) t1.getValue()).doubleValue();
+//				double t2val = Double.valueOf(spin.getValue().toString())
+//						.doubleValue();
+//				Integer min = Integer.valueOf(1);
+//				Integer max = Integer.valueOf((int) Math.round((t2val - t1val)
+//						* maxStepsPerUnit));
+//				Integer val = Integer.valueOf((int) Math.max(Math
+//						.round((t2val - t1val) * stepSize),
+//						Math.round((((Integer) stepsModel.getMaximum())
+//								.intValue() - ((Integer) stepsModel
+//								.getMinimum()).intValue()) * .25)));
+//				Integer steps = (Integer) stepsModel.getStepSize();
+//				stepsModel.setMinimum(min);
+//				stepsModel.setMinimum(max);
+//				stepsModel.setValue(val);
+//				stepsModel.setStepSize(steps);
 			} else {
 				State s = model.findState(spin.getName());
 				if (s != null && s instanceof Symbol) {
@@ -1340,7 +1397,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	public void tableChanged(TableModelEvent e) {
 		if (e.getSource() instanceof TableModelLedgend) {
-			if (e.getColumn() <= 1 && 0 < simTable.getRowCount()) {
+			if (e.getColumn() <= 1 && 0 < simTable.getRowCount()
+					&& e.getType() == TableModelEvent.UPDATE) {
 				plot.clearAll();
 				plot(((TableModelDoubleMatrix) simTable.getModel()).getData(),
 						true, showLegend.isSelected());
@@ -1519,5 +1577,139 @@ class TableModelLedgend extends AbstractTableModel {
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		data[rowIndex][columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);
+	}
+}
+
+/**
+ * @author Andreas Dr&auml;ger
+ * @since 1.4
+ * 
+ */
+class ColorEditor extends AbstractCellEditor implements TableCellEditor,
+		ActionListener {
+	/**
+	 * 
+	 */
+	public static final String EDIT = "edit";
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -3645125690115981580L;
+	/**
+	 * 
+	 */
+	private JButton button;
+	/**
+	 * 
+	 */
+	private JColorChooser colorChooser;
+	/**
+	 * 
+	 */
+	private Color currentColor;
+	/**
+	 * 
+	 */
+	private JDialog dialog;
+
+	/**
+	 * 
+	 */
+	public ColorEditor() {
+		button = new JButton();
+		button.setActionCommand(EDIT);
+		button.addActionListener(this);
+		button.setBorderPainted(false);
+
+		// Set up the dialog that the button brings up.
+		colorChooser = new JColorChooser();
+		dialog = JColorChooser.createDialog(button, "Pick a Color", true,
+				colorChooser, this, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (EDIT.equals(e.getActionCommand())) {
+			// The user has clicked the cell, so
+			// bring up the dialog.
+			button.setBackground(currentColor);
+			colorChooser.setColor(currentColor);
+			dialog.setVisible(true);
+
+			fireEditingStopped(); // Make the renderer reappear.
+
+		} else { // User pressed dialog's "OK" button.
+			currentColor = colorChooser.getColor();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.CellEditor#getCellEditorValue()
+	 */
+	public Object getCellEditorValue() {
+		return currentColor;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing
+	 * .JTable, java.lang.Object, boolean, int, int)
+	 */
+	public Component getTableCellEditorComponent(JTable table, Object value,
+			boolean isSelected, int row, int column) {
+		currentColor = (Color) value;
+		return button;
+	}
+}
+
+/**
+ * 
+ * @author Andreas Dr&auml;ger
+ * @date 2010-04-08
+ * @since 1.4
+ */
+class MyDefaultTableModel extends DefaultTableModel {
+
+	/**
+	 * Generated serial version identifier
+	 */
+	private static final long serialVersionUID = 6339470859385085061L;
+
+	/**
+	 * 
+	 * @param data
+	 * @param columnNames
+	 */
+	public MyDefaultTableModel(Object[][] data, String[] columnNames) {
+		super(data, columnNames);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+	 */
+	@Override
+	public Class<?> getColumnClass(int c) {
+		return getValueAt(0, c).getClass();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+	 */
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return false;
 	}
 }

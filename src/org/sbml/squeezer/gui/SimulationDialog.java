@@ -49,8 +49,7 @@ public class SimulationDialog extends JDialog {
 	 * @param settings
 	 */
 	public SimulationDialog(Frame owner, Model model, Properties settings) {
-		super(owner);
-		new JDialog(this, "Simulation");
+		super(owner, "Simulation of model " + model.toString());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		simPanel = new SimulationPanel(model, settings);
 		getContentPane().add(simPanel);
