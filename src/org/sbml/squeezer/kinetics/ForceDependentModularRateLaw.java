@@ -20,7 +20,7 @@ package org.sbml.squeezer.kinetics;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -85,11 +85,11 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
 	 */
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
-		Parameter kM;
+		LocalParameter kM;
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
-		Parameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterReactionCooperativity(enzyme);
 		for (SpeciesReference specRef : listOf) {
 			kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 			curr = ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this));

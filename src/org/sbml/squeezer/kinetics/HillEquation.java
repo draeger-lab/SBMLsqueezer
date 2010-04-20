@@ -21,7 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
@@ -72,8 +72,8 @@ public class HillEquation extends BasicKineticLaw implements
 		for (int enzymeNum = 0; enzymeNum < rates.length; enzymeNum++) {
 			String enzyme = enzymes.size() == 0 ? null : enzymes.get(enzymeNum);
 			Species reactant = r.getReactant(0).getSpeciesInstance();
-			Parameter kSreactant = parameterKS(reactant, enzyme);
-			Parameter hillCoeff = parameterHillCoefficient(enzyme);
+			LocalParameter kSreactant = parameterKS(reactant, enzyme);
+			LocalParameter hillCoeff = parameterHillCoefficient(enzyme);
 
 			rates[enzymeNum] = new ASTNode(parameterKcatOrVmax(enzyme, true),
 					this);
@@ -96,7 +96,7 @@ public class HillEquation extends BasicKineticLaw implements
 				rates[enzymeNum].divideBy(new ASTNode(kSreactant, this));
 				rates[enzymeNum].multiplyWith(prodTerm);
 
-				Parameter kSproduct = parameterKS(product, enzyme);
+				LocalParameter kSproduct = parameterKS(product, enzyme);
 				// S/kS + P/kP
 				specTerm = ASTNode
 						.frac(specTerm, new ASTNode(kSreactant, this));
@@ -116,13 +116,13 @@ public class HillEquation extends BasicKineticLaw implements
 				Species modifier = getModel().getSpecies(
 						activators.isEmpty() ? inhibitors.get(0) : activators
 								.get(0));
-				Parameter kMmodifier = parameterMichaelis(modifier.getId(),
+				LocalParameter kMmodifier = parameterMichaelis(modifier.getId(),
 						enzyme);
 				ASTNode kMmPow = ASTNode.pow(new ASTNode(kMmodifier, this),
 						new ASTNode(hillCoeff, this));
 				ASTNode modPow = ASTNode.pow(speciesTerm(modifier),
 						new ASTNode(hillCoeff, this));
-				Parameter beta = parameterBeta(r.getId());
+				LocalParameter beta = parameterBeta(r.getId());
 				if (SBO.isInhibitor(modifier.getSBOTerm()))
 					beta.setValue(beta.getValue() * (-1));
 				denominator = ASTNode.frac(kMmPow.clone().plus(modPow.clone()),

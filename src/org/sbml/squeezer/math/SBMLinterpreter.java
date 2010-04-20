@@ -34,6 +34,7 @@ import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
@@ -42,7 +43,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.State;
+import org.sbml.jsbml.Variable;
 
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
@@ -418,11 +419,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			// Functions.root(Y[compVal.getIndex()],2);
 		}
 
-		else if (nsb instanceof Compartment || nsb instanceof Parameter) {
-			if (nsb instanceof Parameter) {
-				Parameter p = (Parameter) nsb;
+		else if (nsb instanceof Compartment || nsb instanceof Parameter
+				|| nsb instanceof LocalParameter) {
+			if (nsb instanceof LocalParameter) {
+				LocalParameter p = (LocalParameter) nsb;
 				if (p.getParentSBMLObject() instanceof KineticLaw) {
-					ListOf<Parameter> params = ((KineticLaw) p
+					ListOf<LocalParameter> params = ((KineticLaw) p
 							.getParentSBMLObject()).getListOfParameters();
 					for (int i = 0; i < params.size(); i++) {
 						if (p.getId() == params.get(i).getId())
@@ -1139,7 +1141,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		Value val;
 		ASTNode assignment_math;
-		State variable;
+		Variable variable;
 		double newVal, compartmentValue;
 		int index, i;
 		DESAssignment desa;
@@ -1277,13 +1279,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @param changeRate
 	 */
 	private void evaluateAlgebraicRule(AlgebraicRule ar) {
-		
+
 		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(model);
 		arc.getAssignmentRule(ar);
 
 	}
-
-	
 
 	/**
 	 * This method computes the multiplication of the stoichiometric matrix of

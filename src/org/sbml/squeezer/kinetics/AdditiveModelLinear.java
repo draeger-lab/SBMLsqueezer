@@ -21,8 +21,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
@@ -129,7 +129,8 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
-					Parameter p = parameterV(modifier.getSpecies(), r.getId());
+					LocalParameter p = parameterV(modifier.getSpecies(), r
+							.getId());
 					ASTNode pnode = new ASTNode(p, this);
 					node = node.isUnknown() ? ASTNode.times(pnode, modnode)
 							: ASTNode.sum(node, ASTNode.times(pnode, modnode));
@@ -149,7 +150,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 		ASTNode node = new ASTNode(this);
 		if (!ReactionType.representsEmptySet(r.getListOfProducts()))
 			for (SpeciesReference product : r.getListOfProducts()) {
-				Parameter p = parameterW(product.getSpecies(), r.getId());
+				LocalParameter p = parameterW(product.getSpecies(), r.getId());
 				node = node.isUnknown() ? ASTNode.times(new ASTNode(p, this),
 						speciesTerm(product)) : ASTNode.sum(node, ASTNode
 						.times(new ASTNode(p, this), speciesTerm(product)));
@@ -163,7 +164,8 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					Parameter p = parameterW(modifier.getSpecies(), r.getId());
+					LocalParameter p = parameterW(modifier.getSpecies(), r
+							.getId());
 					node = node.isUnknown() ? ASTNode.times(
 							new ASTNode(p, this), speciesTerm(modifier))
 							: ASTNode.sum(node, ASTNode.times(new ASTNode(p,

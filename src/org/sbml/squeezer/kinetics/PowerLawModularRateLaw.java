@@ -21,6 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
@@ -82,7 +83,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 					curr = ASTNode.frac(speciesTerm(msr), ASTNode.sum(
 							new ASTNode(parameterKa(msr.getSpecies()), this),
 							speciesTerm(msr))); // A / (A + Ka)
-					Parameter rhoA = parameterRhoActivation(msr.getSpecies());
+					LocalParameter rhoA = parameterRhoActivation(msr.getSpecies());
 					curr = ASTNode.sum(new ASTNode(rhoA, this), ASTNode.times(
 							ASTNode.diff(new ASTNode(1, this), new ASTNode(
 									rhoA, this)), curr));
@@ -94,15 +95,15 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 			} else if (SBO.isInhibitor(msr.getSBOTerm())) {
 				ASTNode curr = null;
 				if (SBO.isCompleteInhibitor(msr.getSBOTerm())) {
-					Parameter kI = parameterKi(msr.getSpecies());
+					LocalParameter kI = parameterKi(msr.getSpecies());
 					curr = ASTNode.frac(new ASTNode(kI, this), ASTNode.sum(
 							new ASTNode(kI, this), speciesTerm(msr)));
 				} else if (SBO.isPartialInhibitor(msr.getSBOTerm())) {
 					// partial non-competetive inhibition
-					Parameter kI = parameterKi(msr.getSpecies());
+					LocalParameter kI = parameterKi(msr.getSpecies());
 					curr = ASTNode.frac(new ASTNode(kI, this), ASTNode.sum(
 							new ASTNode(kI, this), speciesTerm(msr)));
-					Parameter rhoI = parameterRhoInhibition(msr.getSpecies());
+					LocalParameter rhoI = parameterRhoInhibition(msr.getSpecies());
 					curr = ASTNode.times(ASTNode.sum(new ASTNode(rhoI, this),
 							ASTNode.diff(new ASTNode(1, this), new ASTNode(
 									rhoI, this))), curr);
@@ -167,7 +168,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		for (ModifierSpeciesReference msr : r.getListOfModifiers())
 			if (SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
 				// specific inhibition
-				Parameter kI = parameterKi(msr.getSpecies(), enzyme);
+				LocalParameter kI = parameterKi(msr.getSpecies(), enzyme);
 				ASTNode curr = ASTNode.frac(speciesTerm(msr), new ASTNode(kI,
 						this));
 				if (inhib == null)
@@ -175,7 +176,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 				else
 					inhib.plus(curr);
 			} else if (SBO.isSpecificActivator(msr.getSBOTerm())) {
-				Parameter kA = parameterKa(msr.getSpecies(), enzyme);
+				LocalParameter kA = parameterKa(msr.getSpecies(), enzyme);
 				ASTNode curr = ASTNode.frac(new ASTNode(kA, this),
 						speciesTerm(msr));
 				if (activ == null)
@@ -202,7 +203,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		ASTNode exponent = null;
 		ASTNode forward = null, backward = null;
 		Parameter mu;
-		Parameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			ASTNode curr = speciesTerm(specRef);
@@ -266,8 +267,8 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 */
 	private ASTNode hal(String enzyme) {
 		ASTNode numerator = new ASTNode(parameterVelocityConstant(enzyme), this);
-		Parameter hr = parameterReactionCooperativity(enzyme);
-		Parameter keq = parameterEquilibriumConstant();
+		LocalParameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter keq = parameterEquilibriumConstant();
 		ASTNode forward = ASTNode.sqrt(ASTNode.pow(new ASTNode(keq, this),
 				new ASTNode(hr, this)));
 		Reaction r = getParentSBMLObject();
@@ -296,8 +297,8 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 */
 	private ASTNode createRoot(String enzyme) {
 		ASTNode root = null, curr = null;
-		Parameter kM = null;
-		Parameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter kM = null;
+		LocalParameter hr = parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			kM = parameterMichaelis(specRef.getSpecies(), enzyme, true);
@@ -349,13 +350,13 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @return
 	 */
 	private ASTNode cat(String enzyme, boolean forward) {
-		Parameter kr = parameterKcatOrVmax(enzyme, forward);
+		LocalParameter kr = parameterKcatOrVmax(enzyme, forward);
 		ASTNode rate = new ASTNode(kr, this);
 		Reaction r = getParentSBMLObject();
-		Parameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterReactionCooperativity(enzyme);
 		for (SpeciesReference specRef : forward ? r.getListOfReactants() : r
 				.getListOfProducts()) {
-			Parameter kM = parameterMichaelis(specRef.getSpecies(), enzyme,
+			LocalParameter kM = parameterMichaelis(specRef.getSpecies(), enzyme,
 					forward);
 			rate.multiplyWith(ASTNode.pow(ASTNode.frac(speciesTerm(specRef),
 					new ASTNode(kM, this)), ASTNode.times(new ASTNode(specRef

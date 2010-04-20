@@ -21,8 +21,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -95,11 +95,11 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 			if (!modifier.isSetSBOTerm())
 				modifier.setSBOTerm(19);
 			if (SBO.isModifier(modifier.getSBOTerm())) {
-				Parameter p = parameterW(modifier.getSpecies(), rId);
+				LocalParameter p = parameterW(modifier.getSpecies(), rId);
 				ASTNode pnode = new ASTNode(p, this);
-				Parameter theta = parameterTheta(rId, modifier.getSpecies());
+				LocalParameter theta = parameterTheta(rId, modifier.getSpecies());
 				ASTNode thetanode = new ASTNode(theta, this);
-				Parameter coeff = parameterHillCoefficient(modifier
+				LocalParameter coeff = parameterHillCoefficient(modifier
 						.getSpecies());
 				ASTNode coeffnode = new ASTNode(coeff, this);
 
@@ -127,7 +127,7 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 	ASTNode synrate() {
 		String rId = getParentSBMLObject().getId();
 
-		Parameter b_i = parameterB(rId);
+		LocalParameter b_i = parameterB(rId);
 		ASTNode b_i_node = new ASTNode(b_i, this);
 		return b_i_node;
 	}

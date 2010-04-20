@@ -36,9 +36,11 @@ import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.QuantityWithDefinedUnit;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
@@ -62,7 +64,7 @@ import org.sbml.squeezer.math.GaussianRank;
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
-	
+
 	/**
 	 * The column rank of the soichiometric matrix of the original model.
 	 */
@@ -859,7 +861,7 @@ public class KineticLawGenerator {
 				for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
 					Reaction r = modelOrig.getReaction(i);
 					if (r.isSetKineticLaw())
-						for (Parameter p : r.getKineticLaw()
+						for (LocalParameter p : r.getKineticLaw()
 								.getListOfParameters()) {
 							if (p.isSetUnits()
 									&& p.getUnits().equals(udef.getId()))
@@ -902,18 +904,18 @@ public class KineticLawGenerator {
 	private void storeParamters(Reaction reaction, LawListener l) {
 		// setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
-		ListOf<Parameter> paramListLocal = kineticLaw.getListOfParameters();
+		ListOf<LocalParameter> paramListLocal = kineticLaw
+				.getListOfParameters();
 		boolean addGlobally = ((Boolean) settings
 				.get(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
 				.booleanValue();
-		Parameter p;
 		for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--) {
 			if (addGlobally) {
-				p = paramListLocal.remove(paramNum);
+				Parameter p = new Parameter(paramListLocal.remove(paramNum));
 				modelOrig.addParameter(p);
+				updateUnitReferences(p);
 			} else
-				p = paramListLocal.get(paramNum);
-			updateUnitReferences(p);
+				updateUnitReferences(paramListLocal.get(paramNum));
 		}
 		for (Parameter parameter : miniModel.getListOfParameters())
 			if (modelOrig.getParameter(parameter.getId()) == null) {
@@ -928,7 +930,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @param p
 	 */
-	private void updateUnitReferences(Parameter p) {
+	private void updateUnitReferences(QuantityWithDefinedUnit p) {
 		if (p.isSetUnits()) {
 			String units = p.getUnits();
 			if (Unit.isUnitKind(units, p.getLevel(), p.getVersion()))
@@ -966,7 +968,8 @@ public class KineticLawGenerator {
 			}
 			l.currentState(ud, ++num);
 			if (units != ud.getNumUnits())
-				System.err.println(ud.getId() + "\t" + units + "\t->\t" + ud.getNumUnits());
+				System.err.println(ud.getId() + "\t" + units + "\t->\t"
+						+ ud.getNumUnits());
 		}
 		num = 0;
 		l.initLawListener(Compartment.class.getSimpleName(), miniModel

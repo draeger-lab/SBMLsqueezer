@@ -21,7 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -82,7 +82,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		ASTNode enzymes[] = new ASTNode[Math.max(1, modE.size())];
 		for (int enzymeNum = 0; enzymeNum < enzymes.length; enzymeNum++) {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			Parameter p_kcat = parameterKcatOrVmax(enzyme, true);
+			LocalParameter p_kcat = parameterKcatOrVmax(enzyme, true);
 			ASTNode numerator = new ASTNode(p_kcat, this);
 
 			ASTNode[] denominator = new ASTNode[reaction.getNumReactants()];
@@ -91,7 +91,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
 					throw new RateLawNotApplicableException(
 							"This rate law can only be applied if all reactants have integer stoichiometries.");
-				Parameter p_kM = parameterMichaelis(si.getSpecies(), enzyme,
+				LocalParameter p_kM = parameterMichaelis(si.getSpecies(), enzyme,
 						true);
 				ASTNode frac = ASTNode.frac(speciesTerm(si), new ASTNode(p_kM,
 						this));

@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
@@ -403,13 +403,13 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					Parameter p_kAn = parameterKa(modifiers.get(i));
+					LocalParameter p_kAn = parameterKa(modifiers.get(i));
 					mods[i] = ASTNode.frac(speciesTerm(modifiers.get(i)),
 							ASTNode.sum(new ASTNode(p_kAn, this),
 									speciesTerm(modifiers.get(i))));
 				} else {
 					// Inhibitor Mod
-					Parameter p_kIn = parameterKi(modifiers.get(i));
+					LocalParameter p_kIn = parameterKi(modifiers.get(i));
 					ASTNode kI = new ASTNode(p_kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI.clone(),
 							speciesTerm(modifiers.get(i))));
@@ -454,7 +454,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
-		Parameter p_kass = parameterAssociationConst(catalysts.size() > 0 ? catalysts
+		LocalParameter p_kass = parameterAssociationConst(catalysts.size() > 0 ? catalysts
 				.get(catNum)
 				: null);
 		ASTNode ass = new ASTNode(p_kass, this);
@@ -508,7 +508,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	ASTNode dissociation(List<String> catalysts, int c) {
 		Reaction r = getParentSBMLObject();
-		Parameter p_kdiss = parameterDissociationConst(catalysts.size() > 0 ? catalysts
+		LocalParameter p_kdiss = parameterDissociationConst(catalysts.size() > 0 ? catalysts
 				.get(c)
 				: null);
 		ASTNode diss = new ASTNode(p_kdiss, this);

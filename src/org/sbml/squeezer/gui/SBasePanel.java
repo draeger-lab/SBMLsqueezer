@@ -330,7 +330,7 @@ public class SBasePanel extends JPanel {
 	 * @param m
 	 */
 	private void addProperties(Model m) {
-		if (m.isSetModelHistory()) {
+		if (m.isSetHistory()) {
 			History hist = m.getModelHistory();
 			lh.add(new JLabel("Model creators: "), 1, ++row, 1, 1, 1, 1);
 			String columnNames[] = new String[] { "Given name", "Family name",

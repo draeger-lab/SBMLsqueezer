@@ -21,7 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -156,10 +156,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			SpeciesReference specRefR2, String enzyme) {
 		Species speciesR1 = specRefR1.getSpeciesInstance();
 		Species speciesR2 = specRefR2.getSpeciesInstance();
-		Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-		Parameter p_kMr1 = parameterMichaelis(speciesR1.getId(), enzyme, true);
-		Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
-		Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+		LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+		LocalParameter p_kMr1 = parameterMichaelis(speciesR1.getId(), enzyme, true);
+		LocalParameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
+		LocalParameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
 		ASTNode numerator = new ASTNode(p_kcatp, this);
 		ASTNode denominator; // II
 		if (enzyme != null)
@@ -197,12 +197,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		Species speciesR1 = specRefR1.getSpeciesInstance();
 		Species speciesR2 = specRefR2.getSpeciesInstance();
 		Species speciesP1 = specRefP1.getSpeciesInstance();
-		Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-		Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-		Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
-		Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme, false);
-		Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
-		Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
+		LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+		LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+		LocalParameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
+		LocalParameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme, false);
+		LocalParameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+		LocalParameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
 
 		ASTNode r1r2 = specRefR1.equals(specRefR2) ? ASTNode.pow(
 				speciesTerm(speciesR1), 2) : ASTNode.times(
@@ -246,14 +246,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		Species speciesR2 = specRefR2.getSpeciesInstance();
 		Species speciesP1 = specRefP1.getSpeciesInstance();
 		Species speciesP2 = specRefP2.getSpeciesInstance();
-		Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-		Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-		Parameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme);
-		Parameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme);
-		Parameter p_kIp1 = parameterKi(speciesP1.getId(), enzyme);
-		Parameter p_kIp2 = parameterKi(speciesP2.getId(), enzyme);
-		Parameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
-		Parameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
+		LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+		LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+		LocalParameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme);
+		LocalParameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme);
+		LocalParameter p_kIp1 = parameterKi(speciesP1.getId(), enzyme);
+		LocalParameter p_kIp2 = parameterKi(speciesP2.getId(), enzyme);
+		LocalParameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
+		LocalParameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
 
 		ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp, this),
 				ASTNode.times(this, p_kIr1, p_kMr2));

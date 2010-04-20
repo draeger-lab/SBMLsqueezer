@@ -41,6 +41,7 @@ import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -235,7 +236,7 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 						NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(
 								"Parameters", kl.getListOfParameters());
 						klNode.add(n);
-						for (Parameter p : kl.getListOfParameters())
+						for (LocalParameter p : kl.getListOfParameters())
 							n.add(new DefaultMutableTreeNode(p));
 					}
 				}
