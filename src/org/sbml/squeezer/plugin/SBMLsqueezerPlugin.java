@@ -20,6 +20,8 @@ package org.sbml.squeezer.plugin;
 
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 import jp.sbi.celldesigner.plugin.PluginMenu;
 import jp.sbi.celldesigner.plugin.PluginMenuItem;
@@ -208,7 +210,6 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 		 * Show the online help.
 		 */
 		ONLINE_HELP;
-		
 
 		/**
 		 * A human-readable label for each mode.
@@ -295,6 +296,12 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			System.err.println("unsuported action");
 			break;
 		}
-		SBMLsqueezer.saveProperties(p);
+		try {
+			SBMLsqueezer.saveProperties(p);
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			JOptionPane.showMessageDialog(null, exc.getMessage(), exc
+					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }
