@@ -21,7 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -115,10 +115,10 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		int enzymeNum = 0;
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-			Parameter p_kMr1 = parameterMichaelis(specRefE1.getSpecies(),
+			LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+			LocalParameter p_kMr1 = parameterMichaelis(specRefE1.getSpecies(),
 					enzyme, true);
-			Parameter p_kMr2 = parameterMichaelis(specRefE2.getSpecies(),
+			LocalParameter p_kMr2 = parameterMichaelis(specRefE2.getSpecies(),
 					enzyme, true);
 			setSBOTerm(436);
 
@@ -150,14 +150,14 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				 * Reversible Reaction
 				 */
 			} else {
-				Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-				Parameter p_kMp1 = parameterMichaelis(specRefP1.getSpecies(),
+				LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+				LocalParameter p_kMp1 = parameterMichaelis(specRefP1.getSpecies(),
 						enzyme, false);
-				Parameter p_kMp2 = parameterMichaelis(specRefP2.getSpecies(),
+				LocalParameter p_kMp2 = parameterMichaelis(specRefP2.getSpecies(),
 						enzyme, false);
-				Parameter p_kIp1 = parameterKi(specRefP1.getSpecies(), enzyme);
-				Parameter p_kIp2 = parameterKi(specRefP2.getSpecies(), enzyme);
-				Parameter p_kIr1 = parameterKi(specRefE1.getSpecies(), enzyme);
+				LocalParameter p_kIp1 = parameterKi(specRefP1.getSpecies(), enzyme);
+				LocalParameter p_kIp2 = parameterKi(specRefP2.getSpecies(), enzyme);
+				LocalParameter p_kIr1 = parameterKi(specRefE1.getSpecies(), enzyme);
 
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));

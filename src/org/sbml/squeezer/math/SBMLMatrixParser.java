@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
@@ -272,7 +273,7 @@ public class SBMLMatrixParser {
 	 * Initializes all parameters in the list of local parameter that haven't
 	 * been initialized yet
 	 */
-	private void initLocalParameter(ListOf<Parameter> lop) {
+	private void initLocalParameter(ListOf<LocalParameter> lop) {
 		for (int i = 0; i < lop.size(); i++) {
 			if (!lop.get(i).isSetValue())
 				lop.get(i).setValue(initvalue);

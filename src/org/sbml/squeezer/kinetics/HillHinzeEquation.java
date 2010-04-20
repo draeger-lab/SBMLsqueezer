@@ -21,7 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
@@ -138,8 +138,8 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		 * if (!model.getSpecies(modTActi.get(i)).getSpeciesAlias(0).getType()
 		 * .toUpperCase().equals("GENE"))
 		 */{
-			Parameter p_hillcoeff = parameterHillCoefficient(modTActi.get(i));
-			Parameter p_kS = parameterKS(
+			LocalParameter p_hillcoeff = parameterHillCoefficient(modTActi.get(i));
+			LocalParameter p_kS = parameterKS(
 					getModel().getSpecies(modTActi.get(i)), modTActi.get(i));
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(
 					speciesTerm(modTActi.get(i)),
@@ -153,15 +153,15 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		 * if (!model.getSpecies(modTInhib.get(i)).getSpeciesAlias(0)
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
-			Parameter p_hillcoeff = parameterHillCoefficient(modTInhib.get(i));
-			Parameter p_kS = parameterKS(getModel()
+			LocalParameter p_hillcoeff = parameterHillCoefficient(modTInhib.get(i));
+			LocalParameter p_kS = parameterKS(getModel()
 					.getSpecies(modTInhib.get(i)), modTInhib.get(i));
 			inhib[i] = ASTNode.frac(ASTNode.pow(speciesTerm(modTInhib.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
 					speciesTerm(modTInhib.get(i)), new ASTNode(p_hillcoeff,
 							this)), ASTNode.pow(this, p_kS, p_hillcoeff)));
 		}
-		Parameter p_kg = parameterVmax(true);
+		LocalParameter p_kg = parameterVmax(true);
 
 		ASTNode formelTxt = new ASTNode(p_kg, this);
 		if (modTActi.size() > 0)

@@ -20,7 +20,7 @@ package org.sbml.squeezer.kinetics;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -81,8 +81,8 @@ public class DirectBindingModularRateLaw extends PowerLawModularRateLaw
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		Reaction r = getParentSBMLObject();
-		Parameter kM;
-		Parameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter kM;
+		LocalParameter hr = parameterReactionCooperativity(enzyme);
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {

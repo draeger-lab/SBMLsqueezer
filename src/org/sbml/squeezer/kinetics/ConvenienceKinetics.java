@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -129,7 +129,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		ASTNode[] reactantsroot = new ASTNode[reaction.getNumReactants()];
 		ASTNode[] productroot = new ASTNode[reaction.getNumProducts()];
 		ASTNode equation;
-		Parameter p_kM;
+		LocalParameter p_kM;
 
 		ListOf<SpeciesReference> listOf = forward ? reaction
 				.getListOfReactants() : reaction.getListOfProducts();
@@ -178,7 +178,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 						.sqrt(ASTNode.frac(proot, rroot)));
 			}
 		} else {
-			Parameter kcat = parameterKcatOrVmax(enzyme, forward);
+			LocalParameter kcat = parameterKcatOrVmax(enzyme, forward);
 			ASTNode curr;
 			equation = new ASTNode(kcat, this);
 			for (SpeciesReference specRef : listOf) {
@@ -216,7 +216,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		for (int i = 0; i < denoms.length; i++) {
 			SpeciesReference ref = forward ? reaction.getReactant(i) : reaction
 					.getProduct(i);
-			Parameter p_kM = parameterMichaelis(ref.getSpecies(), enzyme,
+			LocalParameter p_kM = parameterMichaelis(ref.getSpecies(), enzyme,
 					forward);
 			if (!p_kM.isSetSBOTerm())
 				p_kM.setSBOTerm(forward ? 322 : 323);

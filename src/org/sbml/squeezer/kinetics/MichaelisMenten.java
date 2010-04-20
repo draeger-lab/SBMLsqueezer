@@ -21,7 +21,7 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
@@ -137,8 +137,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		int enzymeNum = 0;
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			Parameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-			Parameter p_kMr = parameterMichaelis(speciesR.getId(), enzyme, true);
+			LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
+			LocalParameter p_kMr = parameterMichaelis(speciesR.getId(), enzyme, true);
 
 			ASTNode currEnzymeKin;
 			if (!reaction.getReversible() || reaction.getNumProducts() == 0) {
@@ -158,8 +158,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 						speciesTerm(speciesR));
 				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(
 						p_kMr, this));
-				Parameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-				Parameter p_kMp = parameterMichaelis(speciesP.getId(), enzyme,
+				LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
+				LocalParameter p_kMp = parameterMichaelis(speciesP.getId(), enzyme,
 						false);
 
 				numerator.minus(ASTNode.times(ASTNode
@@ -213,10 +213,10 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	 * @return
 	 */
 	private ASTNode createInihibitionTerms(List<String> modInhib,
-			Reaction reaction, ASTNode denominator, Parameter mr, String enzyme) {
+			Reaction reaction, ASTNode denominator, LocalParameter mr, String enzyme) {
 		if (modInhib.size() == 1) {
-			Parameter p_kIa = parameterKi(modInhib.get(0), enzyme, 1);
-			Parameter p_kIb = parameterKi(modInhib.get(0), enzyme, 2);
+			LocalParameter p_kIa = parameterKi(modInhib.get(0), enzyme, 1);
+			LocalParameter p_kIb = parameterKi(modInhib.get(0), enzyme, 2);
 			if (reaction.getReversible())
 				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(modInhib
 						.get(0)), new ASTNode(p_kIa, this)), ASTNode.times(
@@ -243,11 +243,11 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			ASTNode sumIb = new ASTNode(1, this);
 			for (int i = 0; i < modInhib.size(); i++) {
 				String inhibitor = modInhib.get(i);
-				Parameter p_kIai = parameterKi(inhibitor, enzyme, 1);
-				Parameter p_kIbi = parameterKi(inhibitor, enzyme, 2);
-				Parameter p_a = parameterCooperativeInhibitorSubstrateCoefficient(
+				LocalParameter p_kIai = parameterKi(inhibitor, enzyme, 1);
+				LocalParameter p_kIbi = parameterKi(inhibitor, enzyme, 2);
+				LocalParameter p_a = parameterCooperativeInhibitorSubstrateCoefficient(
 						'a', inhibitor, enzyme);
-				Parameter p_b = parameterCooperativeInhibitorSubstrateCoefficient(
+				LocalParameter p_b = parameterCooperativeInhibitorSubstrateCoefficient(
 						'b', inhibitor, enzyme);
 				ASTNode specRefI = speciesTerm(inhibitor);
 				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, ASTNode

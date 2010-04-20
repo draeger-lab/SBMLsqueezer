@@ -21,8 +21,8 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
@@ -104,7 +104,7 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					Parameter p = parameterV(modifier.getSpecies(), r.getId());
+					LocalParameter p = parameterV(modifier.getSpecies(), r.getId());
 					if (node.isUnknown())
 						node = ASTNode.times(new ASTNode(p, this),
 								speciesTerm(modifier));
@@ -137,7 +137,7 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					Parameter p = parameterW(modifier.getSpecies(), r.getId());
+					LocalParameter p = parameterW(modifier.getSpecies(), r.getId());
 					if (node.isUnknown())
 						node = ASTNode.times(new ASTNode(p, this),
 								speciesTerm(modifier));

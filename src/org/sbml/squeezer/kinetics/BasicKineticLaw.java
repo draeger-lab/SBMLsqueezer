@@ -25,6 +25,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
@@ -212,7 +213,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param idParts
 	 * @return
 	 */
-	Parameter createOrGetParameter(Object... idParts) {
+	LocalParameter createOrGetParameter(Object... idParts) {
 		return createOrGetParameter(StringTools.concat(idParts).toString());
 	}
 
@@ -226,12 +227,11 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            the identifier of the local parameter.
 	 * @return
 	 */
-	Parameter createOrGetParameter(String id) {
-		Parameter p = getParameter(id);
+	LocalParameter createOrGetParameter(String id) {
+		LocalParameter p = getParameter(id);
 		if (p == null) {
-			p = new Parameter(id, getLevel(), getVersion());
+			p = new LocalParameter(id, getLevel(), getVersion());
 			p.setValue(defaultParamValue);
-			p.setConstant(true);
 			addParameter(p);
 		}
 		return p;
@@ -257,8 +257,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return Parameter
 	 */
-	Parameter parameterAlpha(String rId) {
-		Parameter p = createOrGetParameter("alpha_", rId);
+	LocalParameter parameterAlpha(String rId) {
+		LocalParameter p = createOrGetParameter("alpha_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetUnits())
@@ -277,7 +277,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the catalyst. Can be null.
 	 * @return
 	 */
-	Parameter parameterAssociationConst(String catalyst) {
+	LocalParameter parameterAssociationConst(String catalyst) {
 		boolean zerothOrder = orderReactants == 0d;
 		Reaction r = getParentSBMLObject();
 		StringBuffer kass = StringTools.concat("kass_", r.getId());
@@ -285,7 +285,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			kass.insert(0, 'z');
 		if (catalyst != null)
 			StringTools.append(kass, underscore, catalyst);
-		Parameter p_kass = createOrGetParameter(kass.toString());
+		LocalParameter p_kass = createOrGetParameter(kass.toString());
 		if (!p_kass.isSetName()) {
 			StringBuffer name = StringTools.concat(
 					"ssociation constant of reaction ", r.getId());
@@ -305,8 +305,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return weight for the weight matrix
 	 */
-	Parameter parameterB(String rId) {
-		Parameter p = createOrGetParameter("b_", rId);
+	LocalParameter parameterB(String rId) {
+		LocalParameter p = createOrGetParameter("b_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetUnits())
@@ -321,8 +321,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return Parameter
 	 */
-	Parameter parameterBeta(String rId) {
-		Parameter p = createOrGetParameter("beta_", rId);
+	LocalParameter parameterBeta(String rId) {
+		LocalParameter p = createOrGetParameter("beta_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetUnits())
@@ -344,7 +344,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the catralyzing enzyme. Can be null.
 	 * @return
 	 */
-	Parameter parameterCooperativeInhibitorSubstrateCoefficient(char aORb,
+	LocalParameter parameterCooperativeInhibitorSubstrateCoefficient(char aORb,
 			String inhibitor, String enzyme) {
 		StringBuffer id = new StringBuffer();
 		id.append(aORb);
@@ -352,7 +352,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			StringTools.append(id, underscore, inhibitor);
 		if (enzyme != null)
 			StringTools.append(id, underscore, enzyme);
-		Parameter coeff = createOrGetParameter(id);
+		LocalParameter coeff = createOrGetParameter(id);
 		if (!coeff.isSetSBOTerm())
 			coeff.setSBOTerm(385);
 		if (!coeff.isSetUnits())
@@ -367,7 +367,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the catalyzing species. Can be null.
 	 * @return
 	 */
-	Parameter parameterDissociationConst(String catalyst) {
+	LocalParameter parameterDissociationConst(String catalyst) {
 		boolean zerothOrder = orderProducts == 0;
 		Reaction r = getParentSBMLObject();
 		StringBuffer kdiss = StringTools.concat("kdiss_", r.getId());
@@ -375,7 +375,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			kdiss.insert(0, 'z');
 		if (catalyst != null)
 			StringTools.append(kdiss, underscore, catalyst);
-		Parameter p_kdiss = createOrGetParameter(kdiss.toString());
+		LocalParameter p_kdiss = createOrGetParameter(kdiss.toString());
 		if (!p_kdiss.isSetName()) {
 			StringBuffer name = StringTools.concat(
 					"issociation constant of reaction ", r.getId());
@@ -395,9 +395,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return A new or an existing equilibrium constant for the reaction.
 	 */
-	Parameter parameterEquilibriumConstant() {
+	LocalParameter parameterEquilibriumConstant() {
 		String reactionID = getParentSBMLObject().getId();
-		Parameter keq = createOrGetParameter("keq_", reactionID);
+		LocalParameter keq = createOrGetParameter("keq_", reactionID);
 		if (!keq.isSetSBOTerm())
 			keq.setSBOTerm(281);
 		if (!keq.isSetName())
@@ -446,12 +446,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
-	Parameter parameterHillCoefficient(String enzyme) {
+	LocalParameter parameterHillCoefficient(String enzyme) {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("hic_", reactionID);
 		if (enzyme != null)
 			StringTools.append(id, underscore, enzyme);
-		Parameter hr = createOrGetParameter(id.toString());
+		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm())
 			hr.setSBOTerm(190);
 		if (!hr.isSetName()) {
@@ -471,12 +471,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return Parameter
 	 */
-	Parameter parameterSSystemExponent(String modifier) {
+	LocalParameter parameterSSystemExponent(String modifier) {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("ssexp_", reactionID);
 		if (modifier != null)
 			StringTools.append(id, underscore, modifier);
-		Parameter p = createOrGetParameter(id.toString());
+		LocalParameter p = createOrGetParameter(id.toString());
 		if (!p.isSetName()) {
 			StringBuffer name = StringTools.concat("S-System exponent");
 			if (modifier != null)
@@ -497,13 +497,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param enzyme
 	 * @return
 	 */
-	Parameter parameterKa(String activatorSpecies, String enzyme) {
+	LocalParameter parameterKa(String activatorSpecies, String enzyme) {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer name = StringTools.concat("kac_", reactionID, underscore,
 				activatorSpecies);
 		if (enzyme != null)
 			StringTools.append(name, underscore, enzyme);
-		Parameter kA = createOrGetParameter(name);
+		LocalParameter kA = createOrGetParameter(name);
 		if (!kA.isSetSBOTerm())
 			kA.setSBOTerm(363);
 		if (!kA.isSetName())
@@ -526,7 +526,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the activatory species. Must not be null.
 	 * @return
 	 */
-	Parameter parameterKa(String activatorSpecies) {
+	LocalParameter parameterKa(String activatorSpecies) {
 		return parameterKa(activatorSpecies, null);
 	}
 
@@ -538,9 +538,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @return The parameter vmax if and only if the number of enzymes is zero,
 	 *         otherwise kcat.
 	 */
-	Parameter parameterKcatOrVmax(String enzyme, boolean forward) {
+	LocalParameter parameterKcatOrVmax(String enzyme, boolean forward) {
 		String reactionID = getParentSBMLObject().getId();
-		Parameter kr;
+		LocalParameter kr;
 		if (enzyme != null) {
 			StringBuffer id = new StringBuffer();
 			if (getParentSBMLObject().getReversible()) {
@@ -629,7 +629,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            species that lowers this velocity. Must not be null.
 	 * @return
 	 */
-	Parameter parameterKi(String inhibitorSpecies) {
+	LocalParameter parameterKi(String inhibitorSpecies) {
 		return parameterKi(inhibitorSpecies, null);
 	}
 
@@ -644,7 +644,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            null.
 	 * @return
 	 */
-	Parameter parameterKi(String inhibitorSpecies, String enzyme) {
+	LocalParameter parameterKi(String inhibitorSpecies, String enzyme) {
 		return parameterKi(inhibitorSpecies, enzyme, 0);
 	}
 
@@ -659,7 +659,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            if <= 0 not considered.
 	 * @return
 	 */
-	Parameter parameterKi(String inhibitorSpecies, String enzymeID,
+	LocalParameter parameterKi(String inhibitorSpecies, String enzymeID,
 			int bindingNum) {
 		StringBuffer id = new StringBuffer();
 		id.append("kic_");
@@ -671,7 +671,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			StringTools.append(id, underscore, inhibitorSpecies);
 		if (enzymeID != null)
 			StringTools.append(id, underscore, enzymeID);
-		Parameter kI = createOrGetParameter(id.toString());
+		LocalParameter kI = createOrGetParameter(id.toString());
 		if (!kI.isSetSBOTerm())
 			kI.setSBOTerm(261);
 		if (!kI.isSetName()) {
@@ -707,12 +707,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
-	Parameter parameterKS(Species species, String enzyme) {
+	LocalParameter parameterKS(Species species, String enzyme) {
 		String rid = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("ksp_", rid);
 		if (enzyme != null)
 			StringTools.append(id, underscore, enzyme);
-		Parameter kS = createOrGetParameter(id.toString());
+		LocalParameter kS = createOrGetParameter(id.toString());
 		if (!kS.isSetSBOTerm())
 			kS.setSBOTerm(194);
 		if (!kS.isSetName()) {
@@ -739,8 +739,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return weight for the weight matrix
 	 */
-	Parameter parameterM(String rId) {
-		Parameter p = createOrGetParameter("m_", rId);
+	LocalParameter parameterM(String rId) {
+		LocalParameter p = createOrGetParameter("m_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetUnits())
@@ -759,13 +759,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
-	Parameter parameterMichaelis(String species, String enzyme) {
+	LocalParameter parameterMichaelis(String species, String enzyme) {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("kmc_", reactionID, underscore,
 				species);
 		if (enzyme != null)
 			StringTools.append(id, underscore, enzyme);
-		Parameter kM = createOrGetParameter(id.toString());
+		LocalParameter kM = createOrGetParameter(id.toString());
 		if (kM.isSetSBOTerm())
 			kM.setSBOTerm(27);
 		if (!kM.isSetName()) {
@@ -798,9 +798,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            the Michaelis constant for the product.
 	 * @return
 	 */
-	Parameter parameterMichaelis(String species, String enzyme,
+	LocalParameter parameterMichaelis(String species, String enzyme,
 			boolean substrate) {
-		Parameter kM = parameterMichaelis(species, enzyme);
+		LocalParameter kM = parameterMichaelis(species, enzyme);
 		kM.setSBOTerm(substrate ? 322 : 323);
 		return kM;
 	}
@@ -815,14 +815,14 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the inhibitory species. Can be null.
 	 * @return
 	 */
-	Parameter parameterNumBindingSites(String enzyme, String inhibitor) {
+	LocalParameter parameterNumBindingSites(String enzyme, String inhibitor) {
 		String rid = getParentSBMLObject().getId();
 		StringBuffer exponent = StringTools.concat("m_", rid);
 		if (enzyme != null)
 			StringTools.append(exponent, underscore, enzyme);
 		if (inhibitor != null)
 			StringTools.append(exponent, underscore, inhibitor);
-		Parameter p_exp = createOrGetParameter(exponent.toString());
+		LocalParameter p_exp = createOrGetParameter(exponent.toString());
 		if (!p_exp.isSetSBOTerm())
 			p_exp.setSBOTerm(189);
 		if (!p_exp.isSetName()) {
@@ -847,12 +847,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
-	Parameter parameterReactionCooperativity(String enzyme) {
+	LocalParameter parameterReactionCooperativity(String enzyme) {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("hco_", reactionID);
 		if (enzyme != null)
 			StringTools.append(id, underscore, enzyme);
-		Parameter hr = createOrGetParameter(id.toString());
+		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm())
 			hr.setSBOTerm(382);
 		if (!hr.isSetName())
@@ -870,9 +870,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            created. Must not be null.
 	 * @return
 	 */
-	Parameter parameterRhoActivation(String species) {
+	LocalParameter parameterRhoActivation(String species) {
 		String rid = getParentSBMLObject().getId();
-		Parameter rhoA = createOrGetParameter("rac_", rid, underscore, species);
+		LocalParameter rhoA = createOrGetParameter("rac_", rid, underscore, species);
 		if (!rhoA.isSetName())
 			rhoA.setName(StringTools.concat(
 					"Activation baseline ration of species ", species,
@@ -887,9 +887,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param species
 	 * @return
 	 */
-	Parameter parameterRhoInhibition(String species) {
+	LocalParameter parameterRhoInhibition(String species) {
 		String rid = getParentSBMLObject().getId();
-		Parameter rhoI = createOrGetParameter("ric_", rid, underscore, species);
+		LocalParameter rhoI = createOrGetParameter("ric_", rid, underscore, species);
 		if (!rhoI.isSetUnits())
 			rhoI.setUnits(Unit.Kind.DIMENSIONLESS);
 		if (!rhoI.isSetName())
@@ -944,8 +944,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return Parameter
 	 */
-	Parameter parameterTheta(String rId, String name) {
-		Parameter p = createOrGetParameter("theta_", rId, underscore, name);
+	LocalParameter parameterTheta(String rId, String name) {
+		LocalParameter p = createOrGetParameter("theta_", rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetValue())
@@ -964,8 +964,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param rid
 	 * @return weight for the weight matrix
 	 */
-	Parameter parameterV(String name, String rId) {
-		Parameter p = createOrGetParameter("v_", rId, underscore, name);
+	LocalParameter parameterV(String name, String rId) {
+		LocalParameter p = createOrGetParameter("v_", rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetUnits())
@@ -984,8 +984,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 *            Identifier of the catalyzing enzyme. Can be null.
 	 * @return
 	 */
-	Parameter parameterVelocityConstant(String enzyme) {
-		Parameter kVr;
+	LocalParameter parameterVelocityConstant(String enzyme) {
+		LocalParameter kVr;
 		String reactionID = getParentSBMLObject().getId();
 		Model model = getModel();
 		if (enzyme != null) {
@@ -1025,7 +1025,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @param forward
 	 * @return
 	 */
-	Parameter parameterVmax(boolean forward) {
+	LocalParameter parameterVmax(boolean forward) {
 		return parameterKcatOrVmax(null, forward);
 	}
 
@@ -1034,8 +1034,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @return weight for the weight matrix
 	 */
-	Parameter parameterW(String name, String rId) {
-		Parameter p = createOrGetParameter("w_", rId, underscore, name);
+	LocalParameter parameterW(String name, String rId) {
+		LocalParameter p = createOrGetParameter("w_", rId, underscore, name);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(2);
 		if (!p.isSetUnits())

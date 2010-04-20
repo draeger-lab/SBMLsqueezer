@@ -82,11 +82,12 @@ import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.QuantityWithDefinedUnit;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
-import org.sbml.jsbml.State;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.Variable;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SBFileFilter;
@@ -908,13 +909,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param model
 	 * @return
 	 */
-	private JPanel interactiveScanTable(ListOf<? extends Symbol> list,
-			double maxValue, double stepSize) {
+	private JPanel interactiveScanTable(
+			ListOf<? extends QuantityWithDefinedUnit> list, double maxValue,
+			double stepSize) {
 		JPanel panel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(panel);
 		int offset = 0;
 		for (int i = 0; i < list.size(); i++) {
-			Symbol p = list.get(i);
+			QuantityWithDefinedUnit p = list.get(i);
 			if (p instanceof Species)
 				offset = model.getNumCompartments();
 			if (p instanceof Parameter)
@@ -1362,24 +1364,25 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (e.getSource() instanceof JSpinner) {
 			JSpinner spin = (JSpinner) e.getSource();
 			if (spin.getName() != null && spin.getName().equals("t2")) {
-//				double t1val = ((Double) t1.getValue()).doubleValue();
-//				double t2val = Double.valueOf(spin.getValue().toString())
-//						.doubleValue();
-//				Integer min = Integer.valueOf(1);
-//				Integer max = Integer.valueOf((int) Math.round((t2val - t1val)
-//						* maxStepsPerUnit));
-//				Integer val = Integer.valueOf((int) Math.max(Math
-//						.round((t2val - t1val) * stepSize),
-//						Math.round((((Integer) stepsModel.getMaximum())
-//								.intValue() - ((Integer) stepsModel
-//								.getMinimum()).intValue()) * .25)));
-//				Integer steps = (Integer) stepsModel.getStepSize();
-//				stepsModel.setMinimum(min);
-//				stepsModel.setMinimum(max);
-//				stepsModel.setValue(val);
-//				stepsModel.setStepSize(steps);
+				// double t1val = ((Double) t1.getValue()).doubleValue();
+				// double t2val = Double.valueOf(spin.getValue().toString())
+				// .doubleValue();
+				// Integer min = Integer.valueOf(1);
+				// Integer max = Integer.valueOf((int) Math.round((t2val -
+				// t1val)
+				// * maxStepsPerUnit));
+				// Integer val = Integer.valueOf((int) Math.max(Math
+				// .round((t2val - t1val) * stepSize),
+				// Math.round((((Integer) stepsModel.getMaximum())
+				// .intValue() - ((Integer) stepsModel
+				// .getMinimum()).intValue()) * .25)));
+				// Integer steps = (Integer) stepsModel.getStepSize();
+				// stepsModel.setMinimum(min);
+				// stepsModel.setMinimum(max);
+				// stepsModel.setValue(val);
+				// stepsModel.setStepSize(steps);
 			} else {
-				State s = model.findState(spin.getName());
+				Variable s = model.findVariable(spin.getName());
 				if (s != null && s instanceof Symbol) {
 					((Symbol) s)
 							.setValue(((SpinnerNumberModel) spin.getModel())

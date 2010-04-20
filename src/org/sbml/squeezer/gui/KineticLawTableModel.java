@@ -22,7 +22,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
@@ -77,7 +77,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 		for (reactionNum = 0; reactionNum < klg.getNumCreatedKinetics(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
 			String kinetic = reaction.getKineticLaw().getFormula();
-			ListOf<Parameter> param = reaction.getKineticLaw()
+			ListOf<LocalParameter> param = reaction.getKineticLaw()
 					.getListOfParameters();
 			numReac = 0;
 			for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++)

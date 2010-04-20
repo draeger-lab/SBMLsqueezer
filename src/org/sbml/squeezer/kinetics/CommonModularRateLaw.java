@@ -20,14 +20,14 @@ package org.sbml.squeezer.kinetics;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
- * This class creates the common modular rate law (CM) according to Liebermeister et
- * al. 2010.
+ * This class creates the common modular rate law (CM) according to
+ * Liebermeister et al. 2010.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -80,13 +80,13 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	 */
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode denominator = new ASTNode(this), curr;
-		Parameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			Parameter kM = parameterMichaelis(specRef.getSpecies(), enzyme,
-					forward);
+			LocalParameter kM = parameterMichaelis(specRef.getSpecies(),
+					enzyme, forward);
 			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
 					speciesTerm(specRef), new ASTNode(kM, this)));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef

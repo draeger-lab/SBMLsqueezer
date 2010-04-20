@@ -21,8 +21,10 @@ package org.sbml.squeezer.kinetics;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
 
 /**
@@ -94,7 +96,7 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 					.getReactant(0)));
 
 			ASTNode denominator;
-			Parameter p_kM = parameterMichaelis(reaction.getReactant(0)
+			LocalParameter p_kM = parameterMichaelis(reaction.getReactant(0)
 					.getSpecies(), enzyme, true);
 
 			if (modInhib.size() == 0)
@@ -102,8 +104,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			else {
 				ASTNode factor = new ASTNode(p_kM, this);
 				for (int i = 0; i < modInhib.size(); i++) {
-					Parameter p_kIi = parameterKi(modInhib.get(i), enzyme);
-					Parameter p_exp = parameterNumBindingSites(enzyme, modInhib
+					LocalParameter p_kIi = parameterKi(modInhib.get(i), enzyme);
+					LocalParameter p_exp = parameterNumBindingSites(enzyme, modInhib
 							.get(i));
 					factor.multiplyWith(ASTNode.pow(ASTNode.sum(new ASTNode(1,
 							this), ASTNode.frac(speciesTerm(modInhib.get(i)),

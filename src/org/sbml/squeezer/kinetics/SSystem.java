@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
@@ -95,7 +95,7 @@ public class SSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					Parameter exp = parameterSSystemExponent(modifierspec
+					LocalParameter exp = parameterSSystemExponent(modifierspec
 							.getId());
 					String name = exp.getName();
 					if (SBO.isStimulator(modifier.getSBOTerm())) {
@@ -140,7 +140,7 @@ public class SSystem extends BasicKineticLaw implements
 				: parameterBeta(rID), this);
 		for (SpeciesReference specRef : listOf) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
-				Parameter exponent = parameterSSystemExponent(specRef
+				LocalParameter exponent = parameterSSystemExponent(specRef
 						.getSpecies());
 				ASTNode pow = ASTNode.pow(speciesTerm(specRef), new ASTNode(
 						exponent, this));
@@ -161,8 +161,8 @@ public class SSystem extends BasicKineticLaw implements
 	 * )
 	 */
 	@Override
-	Parameter parameterAlpha(String rId) {
-		Parameter p = createOrGetParameter("alpha_", rId);
+	LocalParameter parameterAlpha(String rId) {
+		LocalParameter p = createOrGetParameter("alpha_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(153);
 		if (!p.isSetUnits()) {
@@ -183,8 +183,8 @@ public class SSystem extends BasicKineticLaw implements
 	 * )
 	 */
 	@Override
-	Parameter parameterBeta(String rId) {
-		Parameter p = createOrGetParameter("beta_", rId);
+	LocalParameter parameterBeta(String rId) {
+		LocalParameter p = createOrGetParameter("beta_", rId);
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(156);
 		if (!p.isSetUnits()) {
