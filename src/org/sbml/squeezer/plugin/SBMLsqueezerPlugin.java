@@ -28,6 +28,7 @@ import jp.sbi.celldesigner.plugin.PluginMenuItem;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSBase;
 
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
@@ -254,8 +255,9 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	 * export.
 	 * 
 	 * @param mode
+	 * @throws SBMLException 
 	 */
-	public void startSBMLsqueezerPlugin(String mode) {
+	public void startSBMLsqueezerPlugin(String mode) throws SBMLException {
 		SBMLio io = sbmlSqueezer.getSBMLIO();
 		Properties p = SBMLsqueezer.getProperties();
 		io.readModel(getSelectedModel());

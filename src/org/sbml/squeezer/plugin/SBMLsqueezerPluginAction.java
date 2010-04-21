@@ -21,12 +21,16 @@ package org.sbml.squeezer.plugin;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
+import org.sbml.jsbml.SBMLException;
 
 import jp.sbi.celldesigner.plugin.PluginAction;
 
 /**
- * This class starts SBMLsqueezer from as a CellDesigner plug-in. Actually, this class only
- * forwards commands from CellDesigner to the plugin class that really starts SBMLsqueezer.
+ * This class starts SBMLsqueezer from as a CellDesigner plug-in. Actually, this
+ * class only forwards commands from CellDesigner to the plugin class that
+ * really starts SBMLsqueezer.
  * 
  * @author Andreas Dr&auml;ger <a
  *         href="mailto:andreas.draeger@uni-tuebingen.de">
@@ -64,7 +68,14 @@ public class SBMLsqueezerPluginAction extends PluginAction {
 			final String item = ((JMenuItem) e.getSource()).getText();
 			new Thread(new Runnable() {
 				public void run() {
-					plugin.startSBMLsqueezerPlugin(item);
+					try {
+						plugin.startSBMLsqueezerPlugin(item);
+					} catch (SBMLException e) {
+						e.printStackTrace();
+						JOptionPane.showMessageDialog(null, e.getMessage(), e
+								.getClass().getSimpleName(),
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}).start();
 		} else
