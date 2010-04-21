@@ -761,11 +761,10 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		msg.log("reading SBML file...");
 		try {
 			sbmlIo.readModel(sbmlSource);
-			msg.logln(" done in " + (System.currentTimeMillis() - time)
-					+ " ms.");
+			msg.logf(" done in %d ms.\n", (System.currentTimeMillis() - time));
 		} catch (Exception exc) {
-			msg.errln(" a problem occured while trying to read the model:"
-					+ exc.getMessage());
+			msg.errf(" A problem occured while trying to read the model: %s\n",
+					exc.getMessage());
 		}
 	}
 

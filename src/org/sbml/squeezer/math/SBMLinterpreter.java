@@ -433,7 +433,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				}
 			}
 			speciesVal = valuesHash.get(nsb.getId());
-			return Y[speciesVal.getIndex()];
+			// TODO: Was ist hier los? Warum wird das null?
+			if (speciesVal == null)
+				System.out.println(nsb.getId());
+			return speciesVal != null ? Y[speciesVal.getIndex()] : Double.NaN;
 
 		} else if (nsb instanceof FunctionDefinition)
 			return function((FunctionDefinition) nsb);

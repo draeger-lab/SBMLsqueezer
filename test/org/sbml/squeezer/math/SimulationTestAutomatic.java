@@ -16,6 +16,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
@@ -88,84 +89,90 @@ public class SimulationTestAutomatic {
 
 			SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 
-			Model model = sbmlIo.readModel(sbmlfile);
-			// RKSolver rk = new RKSolver();
-			RKEventSolver rk = new RKEventSolver();
+			try {
+				Model model = sbmlIo.readModel(sbmlfile);
 
-			SBMLinterpreter interpreter = new SBMLinterpreter(model);
-			double time = 0;
+				// RKSolver rk = new RKSolver();
+				RKEventSolver rk = new RKEventSolver();
 
-			// get timepoints
-			CSVReader csvreader = new CSVReader(new FileReader(csvfile), ',',
-					'\'', 1);
-			List<String[]> input = csvreader.readAll();
-			double[] timepoints = new double[input.size()];
-			for (int i = 0; i < timepoints.length; i++) {
-				timepoints[i] = Double.valueOf(input.get(i)[0]);
-			}
-			csvreader.close();
+				SBMLinterpreter interpreter = new SBMLinterpreter(model);
+				double time = 0;
 
-			// solve By StepSize
-			// rk.setStepSize(duration / steps);
-			// double solution[][] = rk.solveByStepSize(interpreter,
-			// interpreter
-			// .getInitialValues(), time, duration);
-
-			// solve At StepSize
-
-			double solution[][] = rk.solveAtTimePoints(interpreter, interpreter
-					.getInitialValues(), timepoints);
-			double[][] data = new double[input.get(0).length - 1][input.size()];
-			double[][] solutiontrans = new double[input.get(0).length - 1][input
-					.size()];
-			int from = model.getNumCompartments();
-			// from = 0;
-			int to = from + model.getNumSpecies();
-
-			for (int i = 1; i < data.length + 1; i++) {
-				for (int j = 0; j < input.size(); j++) {
-					data[i - 1][j] = Double.valueOf(input.get(j)[i]);
-					solutiontrans[i - 1][j] = solution[j][i - 1 + from];
+				// get timepoints
+				CSVReader csvreader = new CSVReader(new FileReader(csvfile),
+						',', '\'', 1);
+				List<String[]> input = csvreader.readAll();
+				double[] timepoints = new double[input.size()];
+				for (int i = 0; i < timepoints.length; i++) {
+					timepoints[i] = Double.valueOf(input.get(i)[0]);
 				}
-			}
+				csvreader.close();
 
-			Distance distance = new RSE();
+				// solve By StepSize
+				// rk.setStepSize(duration / steps);
+				// double solution[][] = rk.solveByStepSize(interpreter,
+				// interpreter
+				// .getInitialValues(), time, duration);
 
-			BufferedWriter writer = new BufferedWriter(new FileWriter(args[1]
-					+ modelnr + "-deviation.txt"));
-			writer.write("relative distance for model-" + modelnr);
-			writer.newLine();
-			writer
-					.write(String.valueOf(distance
-							.distance(data, solutiontrans)));
-			writer.close();
+				// solve At StepSize
 
-			if (rk.isUnstable())
-				System.err.println("unstable!");
-			else {
-				Plot plot = new Plot("Simulation", "time", "value");
+				double solution[][] = rk.solveAtTimePoints(interpreter,
+						interpreter.getInitialValues(), timepoints);
+				double[][] data = new double[input.get(0).length - 1][input
+						.size()];
+				double[][] solutiontrans = new double[input.get(0).length - 1][input
+						.size()];
+				int from = model.getNumCompartments();
+				// from = 0;
+				int to = from + model.getNumSpecies();
 
-				for (int i = 0; i < solution.length; i++) {
-					for (int j = 0; j < solutiontrans.length; j++) {
+				for (int i = 1; i < data.length + 1; i++) {
+					for (int j = 0; j < input.size(); j++) {
+						data[i - 1][j] = Double.valueOf(input.get(j)[i]);
+						solutiontrans[i - 1][j] = solution[j][i - 1 + from];
+					}
+				}
 
-						double sym = solutiontrans[j][i];
-						double un = data[j][i];
-						plot.setConnectedPoint(time, sym, j);
-						plot.setUnconnectedPoint(time, un, 90 + j);
+				Distance distance = new RSE();
+
+				BufferedWriter writer = new BufferedWriter(new FileWriter(
+						args[1] + modelnr + "-deviation.txt"));
+				writer.write("relative distance for model-" + modelnr);
+				writer.newLine();
+				writer.write(String.valueOf(distance.distance(data,
+						solutiontrans)));
+				writer.close();
+
+				if (rk.isUnstable())
+					System.err.println("unstable!");
+				else {
+					Plot plot = new Plot("Simulation", "time", "value");
+
+					for (int i = 0; i < solution.length; i++) {
+						for (int j = 0; j < solutiontrans.length; j++) {
+
+							double sym = solutiontrans[j][i];
+							double un = data[j][i];
+							plot.setConnectedPoint(time, sym, j);
+							plot.setUnconnectedPoint(time, un, 90 + j);
+
+						}
+						time += rk.getStepSize();
 
 					}
-					time += rk.getStepSize();
+					// save graph as jpg
+					BufferedImage img = new BufferedImage(plot
+							.getFunctionArea().getWidth(), plot
+							.getFunctionArea().getHeight(),
+							BufferedImage.TYPE_INT_RGB);
+					plot.getFunctionArea().paint(img.createGraphics());
+					ImageIO.write(img, "jpg", new File(args[1] + modelnr
+							+ "-graph.jpg"));
 
+					// plot.dispose();
 				}
-				// save graph as jpg
-				BufferedImage img = new BufferedImage(plot.getFunctionArea()
-						.getWidth(), plot.getFunctionArea().getHeight(),
-						BufferedImage.TYPE_INT_RGB);
-				plot.getFunctionArea().paint(img.createGraphics());
-				ImageIO.write(img, "jpg", new File(args[1] + modelnr
-						+ "-graph.jpg"));
-
-				// plot.dispose();
+			} catch (SBMLException e) {
+				e.printStackTrace();
 			}
 		}
 	}
