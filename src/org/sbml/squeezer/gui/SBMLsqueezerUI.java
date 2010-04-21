@@ -472,15 +472,24 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 	/**
 	 * Opens and displays a simulation dialog.
+	 * 
+	 * @param modal
+	 *            If true the dialog will be modal.
+	 * @return If a model has been loaded, a simulation dialog. It should be
+	 *         noted that null will be returned if no model has been loadad yet.
+	 * 
 	 */
 	public SimulationDialog showSimulationControl(boolean modal) {
-		SimulationDialog d = new SimulationDialog(this, sbmlIO.getSelectedModel(),
-				settings);
-		setEnabled(false, Command.SIMULATE);
-		d.addWindowListener(this);
-		d.setModal(modal);
-		d.setVisible(true);
-		return d;
+		Model model = sbmlIO.getSelectedModel();
+		if (model != null) {
+			SimulationDialog d = new SimulationDialog(this, model, settings);
+			setEnabled(false, Command.SIMULATE);
+			d.addWindowListener(this);
+			d.setModal(modal);
+			d.setVisible(true);
+			return d;
+		}
+		return null;
 	}
 
 	/**

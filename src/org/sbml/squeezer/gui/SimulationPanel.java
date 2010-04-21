@@ -829,14 +829,16 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
 					BorderLayout.CENTER);
 
-			JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					true, new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
-							legendPanel, interactiveScanPanel(model,
-									maxCompartmentValue, maxSpeciesValue,
-									maxParameterValue, paramStepSize)), plot);
-
+			JSplitPane topDown = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+					true, legendPanel, interactiveScanPanel(model,
+							maxCompartmentValue, maxSpeciesValue,
+							maxParameterValue, paramStepSize));
+			// topDown.setDividerLocation(1d);
+			JSplitPane leftRight = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+					true, topDown, plot);
+			// leftRight.setDividerLocation(0.3d);
 			JTabbedPane tabbedPane = new JTabbedPane();
-			tabbedPane.add("Plot ", split);
+			tabbedPane.add("Plot ", leftRight);
 			tabbedPane.add("Simulated data", simPanel);
 			tabbedPane.add("Experimental data", expPanel);
 
@@ -915,14 +917,21 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		JPanel panel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(panel);
 		int offset = 0;
+		LinkedList<String> nans = new LinkedList<String>();
 		for (int i = 0; i < list.size(); i++) {
 			QuantityWithDefinedUnit p = list.get(i);
 			if (p instanceof Species)
 				offset = model.getNumCompartments();
 			if (p instanceof Parameter)
 				offset = model.getNumCompartments() + model.getNumSpecies();
-			spinModSymbol[i + offset] = new SpinnerNumberModel(p.getValue(),
-					0d, maxValue, stepSize);
+			double val = p.getValue();
+			if (Double.isNaN(p.getValue())) {
+				val = 0;
+				nans.add(p.getId());
+			}
+			maxValue = Math.max(val, maxValue);
+			spinModSymbol[i + offset] = new SpinnerNumberModel(val, Math.min(
+					0d, val), maxValue, stepSize);
 			JSpinner spinner = new JSpinner(spinModSymbol[i + offset]);
 			spinner.setName(p.getId());
 			spinner.addChangeListener(this);
@@ -934,6 +943,13 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		}
 		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
 		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
+		if (nans.size() > 0) {
+			String msg = "Undefined values for the following elements have been replaced by the default value 0: "
+					+ nans.toString() + ".";
+			JOptionPane.showMessageDialog(this, new JLabel(GUITools.toHTML(msg,
+					60)), "Replacing undefined values",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
 		return panel;
 	}
 
@@ -1104,7 +1120,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					i = 0;
 					for (String prob : probs) {
 						combo[i] = new JComboBox(avail);
-						combo[i].setSelectedIndex(i);
+						combo[i]
+								.setSelectedIndex(Math.min(i, avail.length - 1));
 						lh.add(new JPanel());
 						lh.add(new JLabel(GUITools.toHTML(prob, 40)),
 								new JPanel(), combo[i++]);
@@ -1249,15 +1266,19 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			InvocationTargetException, NoSuchMethodException {
 		paramStepSize = ((Double) settings.get(CfgKeys.SPINNER_STEP_SIZE))
 				.doubleValue();
-		maxTime = ((Double) settings.get(CfgKeys.SIM_MAX_TIME)).doubleValue();
 		double startTime = ((Double) settings.get(CfgKeys.SIM_START_TIME))
 				.doubleValue();
 		double endTime = ((Double) settings.get(CfgKeys.SIM_END_TIME))
 				.doubleValue();
+		startTime = Math.max(0, startTime);
+		if (startTime > endTime)
+			swap(startTime, endTime);
 		stepSize = ((Double) settings.get(CfgKeys.SIM_STEP_SIZE)).doubleValue();
+		maxTime = Math.max(((Double) settings.get(CfgKeys.SIM_MAX_TIME))
+				.doubleValue(), Math.max(startTime, endTime));
 		t1 = new SpinnerNumberModel(startTime, 0, maxTime, stepSize);
-		t2 = new SpinnerNumberModel(endTime, ((Double) t1.getValue())
-				.doubleValue(), maxTime, stepSize);
+		t2 = new SpinnerNumberModel(endTime, Math.min(((Double) t1.getValue())
+				.doubleValue(), endTime), maxTime, stepSize);
 		showGrid = GUITools.createJCheckBox("Grid", ((Boolean) settings
 				.get(CfgKeys.PLOT_SHOW_GRID)).booleanValue(), "grid", this,
 				"Decide whether or not to draw a grid in the plot area.");
@@ -1308,6 +1329,20 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					.newInstance();
 		removeAll();
 		init();
+	}
+
+	/**
+	 * Swaps a and b if a is greater then b.
+	 * 
+	 * @param a
+	 * @param b
+	 */
+	private void swap(double a, double b) {
+		if (a > b) {
+			double swap = b;
+			b = a;
+			a = swap;
+		}
 	}
 
 	/**

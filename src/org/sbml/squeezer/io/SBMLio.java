@@ -33,6 +33,7 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SBaseChangedListener;
+import org.sbml.jsbml.SBMLException.Category;
 import org.sbml.jsbml.io.IOProgressListener;
 import org.sbml.squeezer.SBMLsqueezer;
 
@@ -86,8 +87,10 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	/**
 	 * 
 	 * @param model
+	 * @throws Exception
 	 */
-	public SBMLio(SBMLReader reader, SBMLWriter writer, Object model) {
+	public SBMLio(SBMLReader reader, SBMLWriter writer, Object model)
+			throws Exception {
 		this(reader, writer);
 		this.listOfModels.addLast(reader.readModel(model));
 		this.listOfOrigModels.addLast(model);
@@ -143,7 +146,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @return
 	 */
 	public Model getSelectedModel() {
-		return listOfModels.get(selectedModel);
+		return listOfModels.size() > 0 ? listOfModels.get(selectedModel) : null;
 	}
 
 	/*
@@ -178,7 +181,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 	 * @see org.sbml.SBMLReader#readModel(java.lang.Object)
 	 */
 	// @Override
-	public Model readModel(Object model) {
+	public Model readModel(Object model) throws SBMLException {
 		try {
 			listOfModels.addLast(reader.readModel(model));
 			if (model instanceof String)
@@ -188,8 +191,12 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 			selectedModel = listOfModels.size() - 1;
 			return listOfModels.getLast();
 		} catch (Exception exc) {
+//			exc.fillInStackTrace();
 			exc.printStackTrace();
-			throw new RuntimeException("Could not read model.");
+			SBMLException sbmlExc = new SBMLException("Could not read model.",
+					exc);
+			sbmlExc.setCategory(Category.XML);
+			throw sbmlExc;
 		}
 	}
 
@@ -319,6 +326,7 @@ public class SBMLio implements SBMLReader, SBMLWriter, SBaseChangedListener,
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.SBMLWriter#writeModel(org.sbml.jsbml.Model)
 	 */
 	public Object writeModel(Model model) throws SBMLException {
