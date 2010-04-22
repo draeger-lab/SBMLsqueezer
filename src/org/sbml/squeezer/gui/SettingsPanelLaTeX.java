@@ -95,12 +95,63 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 	 */
 	public SettingsPanelLaTeX(Properties properties, boolean browse) {
 		super(properties);
-		setLayout(new BorderLayout());
+		this.browse = browse;
 		settings = new Properties();
 		for (Object key : properties.keySet())
 			if (key.toString().startsWith("LATEX_"))
 				settings.put(key, properties.get(key));
-		this.browse = browse;
+		init();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() instanceof JButton) {
+			JFileChooser chooser = GUITools.createJFileChooser(fileField
+					.getText(), false, false, JFileChooser.FILES_ONLY);
+			boolean approve = false;
+			if (browse) {
+				chooser.addChoosableFileFilter(SBFileFilter.TeX_FILE_FILTER);
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setAcceptAllFileFilterUsed(false);
+				approve = chooser.showSaveDialog(getParent()) == JFileChooser.APPROVE_OPTION;
+			} else {
+				chooser.setAcceptAllFileFilterUsed(true);
+				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				approve = chooser.showOpenDialog(getParent()) == JFileChooser.APPROVE_OPTION;
+			}
+			if (approve) {
+				String path = chooser.getSelectedFile().getAbsolutePath();
+				fileField.setText(path);
+				if (!browse)
+					settings.put(CfgKeys.LATEX_DIR, path);
+				super.stateChanged(new ChangeEvent(e));
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Properties getProperties() {
+		return settings;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getTeXFile() {
+		return fileField.getText();
+	}
+
+	private void init() {
+		setLayout(new BorderLayout());
 		JPanel filePanel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(filePanel);
 		fileField = new JTextField(15);
@@ -191,53 +242,6 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 		jCheckBoxNameInEquations.addItemListener(this);
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Properties getProperties() {
-		return settings;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() instanceof JButton) {
-			JFileChooser chooser = GUITools.createJFileChooser(fileField
-					.getText(), false, false, JFileChooser.FILES_ONLY);
-			boolean approve = false;
-			if (browse) {
-				chooser.addChoosableFileFilter(SBFileFilter.TeX_FILE_FILTER);
-				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				chooser.setAcceptAllFileFilterUsed(false);
-				approve = chooser.showSaveDialog(getParent()) == JFileChooser.APPROVE_OPTION;
-			} else {
-				chooser.setAcceptAllFileFilterUsed(true);
-				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				approve = chooser.showOpenDialog(getParent()) == JFileChooser.APPROVE_OPTION;
-			}
-			if (approve) {
-				String path = chooser.getSelectedFile().getAbsolutePath();
-				fileField.setText(path);
-				if (!browse)
-					settings.put(CfgKeys.LATEX_DIR, path);
-				super.stateChanged(new ChangeEvent(e));
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String getTeXFile() {
-		return fileField.getText();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -268,5 +272,15 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 						.valueOf(jCheckBoxNameInEquations.isSelected()));
 		}
 		super.stateChanged(new ChangeEvent(id));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
+	 */
+	public void setProperties(Properties settings) {
+		removeAll();
+		this.settings = settings;
+		init();
 	}
 }

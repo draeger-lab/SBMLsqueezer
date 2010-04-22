@@ -123,11 +123,12 @@ public class SettingsPanelKinetics extends SettingsPanel {
 		init();
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
 	 */
-	public Properties getSettings() {
+	public Properties getProperties() {
 		return settings;
 	}
 
@@ -645,6 +646,18 @@ public class SettingsPanelKinetics extends SettingsPanel {
 		init();
 		validate();
 		possibleEnzymeTestAllNotChecked();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
+	 */
+	public void setProperties(Properties settings) {
+		removeAll();
+		this.settings = settings;
+		init();
 	}
 
 	/*
