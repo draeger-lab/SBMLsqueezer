@@ -36,7 +36,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.NamedSBase;
+import org.sbml.jsbml.NamedSBaseWithDerivedUnit;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
@@ -395,9 +395,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.NamedSBase)
+	 * @seeorg.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.
+	 * NamedSBaseWithDerivedUnit)
 	 */
-	public Double compile(NamedSBase nsb) {
+	public Double compile(NamedSBaseWithDerivedUnit nsb) {
 		Value speciesVal;
 		if (nsb instanceof Species) {
 			Species s = (Species) nsb;
@@ -526,6 +527,19 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	}
 
 	/**
+	 * Evaluates the algebraic rules of a model to assignment rules
+	 * 
+	 * @param ar
+	 * @param changeRate
+	 */
+	private void evaluateAlgebraicRule(AlgebraicRule ar) {
+
+		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(model);
+		arc.getAssignmentRule(ar);
+
+	}
+
+	/**
 	 * 
 	 * @param as
 	 * @param Y
@@ -562,7 +576,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @return
 	 */
 	protected boolean evaluateToBoolean(ASTNode ast) {
-		return Boolean.valueOf((Boolean) ast.compile(this));
+		return ((Boolean) ast.compile(this)).booleanValue();
 	}
 
 	/**
@@ -909,7 +923,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private void initEvents() {
 		for (int i = 0; i < eventFired.length; i++) {
 			if (evaluateToBoolean(model.getEvent(i).getTrigger().getMath()))
-				eventFired[i] = this.getConstantTrue();
+				eventFired[i] = true;
 		}
 	}
 
@@ -1059,34 +1073,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		// }
 		// }
 		return algebraicRules;
-	}
-
-	/**
-	 * Processes the initial assignments of the model
-	 */
-	private void processInitialAssignments() {
-
-		for (int i = 0; i < model.getNumInitialAssignments(); i++) {
-			InitialAssignment iA = model.getInitialAssignment(i);
-			Value val = null;
-			if (iA.isSetMath() && iA.isSetSymbol()) {
-				if (model.getSpecies(iA.getSymbol()) != null) {
-					Species s = model.getSpecies(iA.getSymbol());
-					val = valuesHash.get(s.getId());
-				} else if (model.getCompartment(iA.getSymbol()) != null) {
-					Compartment c = model.getCompartment(iA.getSymbol());
-					val = valuesHash.get(c.getId());
-				} else if (model.getParameter(iA.getSymbol()) != null) {
-					Parameter p = model.getParameter(iA.getSymbol());
-					val = valuesHash.get(p.getId());
-				} else
-					System.err
-							.println("The model contains an initial assignment for a "
-									+ "component other than species, compartment or parameter.");
-			}
-			this.Y[val.getIndex()] = evaluateToDouble(iA.getMath());
-		}
-
 	}
 
 	/*
@@ -1251,6 +1237,34 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	}
 
 	/**
+	 * Processes the initial assignments of the model
+	 */
+	private void processInitialAssignments() {
+
+		for (int i = 0; i < model.getNumInitialAssignments(); i++) {
+			InitialAssignment iA = model.getInitialAssignment(i);
+			Value val = null;
+			if (iA.isSetMath() && iA.isSetSymbol()) {
+				if (model.getSpecies(iA.getSymbol()) != null) {
+					Species s = model.getSpecies(iA.getSymbol());
+					val = valuesHash.get(s.getId());
+				} else if (model.getCompartment(iA.getSymbol()) != null) {
+					Compartment c = model.getCompartment(iA.getSymbol());
+					val = valuesHash.get(c.getId());
+				} else if (model.getParameter(iA.getSymbol()) != null) {
+					Parameter p = model.getParameter(iA.getSymbol());
+					val = valuesHash.get(p.getId());
+				} else
+					System.err
+							.println("The model contains an initial assignment for a "
+									+ "component other than species, compartment or parameter.");
+			}
+			this.Y[val.getIndex()] = evaluateToDouble(iA.getMath());
+		}
+
+	}
+
+	/**
 	 * 
 	 * @param changeRate
 	 */
@@ -1272,19 +1286,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 			}
 		}
-
-	}
-
-	/**
-	 * Evaluates the algebraic rules of a model to assignment rules
-	 * 
-	 * @param ar
-	 * @param changeRate
-	 */
-	private void evaluateAlgebraicRule(AlgebraicRule ar) {
-
-		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(model);
-		arc.getAssignmentRule(ar);
 
 	}
 

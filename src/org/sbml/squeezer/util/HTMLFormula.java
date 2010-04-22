@@ -36,7 +36,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.NamedSBase;
+import org.sbml.jsbml.NamedSBaseWithDerivedUnit;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.StringTools;
@@ -277,10 +277,9 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.NamedSBase)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.NamedSBaseWithDerivedUnit)
 	 */
-	public Object compile(NamedSBase variable) {
+	public Object compile(NamedSBaseWithDerivedUnit variable) {
 		// TODO Auto-generated method stub
 		return null;
 	}

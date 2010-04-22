@@ -21,7 +21,7 @@ package org.sbml.squeezer.math;
 /**
  * An implementation of the relative squared error with a default value to avoid
  * division by zero.
- *
+ * 
  * @version 0.1
  * @since 1.4
  * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
@@ -41,7 +41,7 @@ public class RSE extends Distance {
 	/**
 	 * Constructs a new relative squared error object with the specified default
 	 * value do avoid division by zero. The standard value is 10,000.
-	 *
+	 * 
 	 * @param standard
 	 */
 	public RSE(double standard) {
@@ -56,16 +56,16 @@ public class RSE extends Distance {
 	 * array is longer than the other one. If so, the additional values in the
 	 * longer array are ignored and do not contribute to the distance.
 	 * <code>NaN</code> values do also not contribute to the distance.
-	 *
+	 * 
 	 * @param x
-	 *          A vector
+	 *            A vector
 	 * @param y
-	 *          The reference vector
+	 *            The reference vector
 	 * @param def
-	 *          The default value to be use to avoid division by zero.
-	 * @return The relative distance of x to y. If x is shorter than y both arrays
-	 *         are swapped and this method returns the relative distance of y to
-	 *         x.
+	 *            The default value to be use to avoid division by zero.
+	 * @return The relative distance of x to y. If x is shorter than y both
+	 *         arrays are swapped and this method returns the relative distance
+	 *         of y to x.
 	 * @throws Exception
 	 */
 	public double distance(double[] x, double[] y, double def) {
@@ -77,15 +77,23 @@ public class RSE extends Distance {
 		double d = 0;
 		for (int i = 0; i < y.length; i++)
 			if ((y[i] != Double.NaN) && (x[i] != Double.NaN) && (y[i] != x[i]))
-			  d += (y[i] != 0) ? Math.pow((x[i] - y[i]) / y[i], 2) : def;
+				d += (y[i] != 0) ? Math.pow((x[i] - y[i]) / y[i], 2) : def;
 		return d;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.math.Distance#getName()
+	 */
 	@Override
 	public String getName() {
-		return "Relative Squared Error (RSE) with default value " + root;
+		return "Relative Squared Error (RSE)";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.math.Distance#getStandardParameter()
+	 */
 	@Override
 	public double getStandardParameter() {
 		return 10000d;

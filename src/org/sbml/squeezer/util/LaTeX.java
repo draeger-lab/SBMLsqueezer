@@ -24,6 +24,7 @@ import org.sbml.jsbml.ASTNodeCompiler;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.NamedSBase;
+import org.sbml.jsbml.NamedSBaseWithDerivedUnit;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.squeezer.CfgKeys;
@@ -499,9 +500,10 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.NamedSBase)
+	 * @seeorg.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.
+	 * NamedSBaseWithDerivedUnit)
 	 */
-	public StringBuffer compile(NamedSBase variable) {
+	public StringBuffer compile(NamedSBaseWithDerivedUnit variable) {
 		if (variable instanceof Species) {
 			Species species = (Species) variable;
 			Compartment c = species.getCompartmentInstance();
@@ -595,7 +597,8 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(org.sbml.jsbml.ASTNode, double)
 	 */
 	public StringBuffer delay(ASTNode x, double d) {
-		return concat(mathrm("delay"), brackets(concat(x.compile(this), ", ", format(d))));
+		return concat(mathrm("delay"), brackets(concat(x.compile(this), ", ",
+				format(d))));
 	}
 
 	/**
@@ -946,6 +949,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#and(org.sbml.jsbml.ASTNode[])
 	 */
 	public String and(ASTNode... nodes) {
@@ -954,6 +958,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#not(org.sbml.jsbml.ASTNode)
 	 */
 	public Object not(ASTNode node) {
@@ -989,6 +994,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#or(org.sbml.jsbml.ASTNode[])
 	 */
 	public String or(ASTNode... nodes) {
@@ -997,6 +1003,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#xor(org.sbml.jsbml.ASTNode[])
 	 */
 	public String xor(ASTNode... nodes) {

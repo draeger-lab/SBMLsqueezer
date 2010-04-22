@@ -61,15 +61,13 @@ import org.sbml.squeezer.util.MessageProcessor;
 import eva2.tools.math.des.AbstractDESSolver;
 
 /**
- * The main program of SBMLsqueezer. This class initializes all requrired
+ * The main program of SBMLsqueezer. This class initializes all required
  * objects, starts the GUI if desired and loads all settings from the user.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
- * @since 1.3
+ * @author Andreas Dr&auml;ger
+ * @author Nadine Hassis
+ * @author Hannes Borch
+ * @since 1.0
  * @version $Revision: 293$
  */
 public class SBMLsqueezer implements LawListener, IOProgressListener {
@@ -599,8 +597,9 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			new Thread(new Runnable() {
 				public void run() {
 					msg.logln(" have fun!");
-					if (((Boolean) p.get(CfgKeys.SIMULATION_MODE))
-							.booleanValue())
+					if (p.containsKey(CfgKeys.SIMULATION_MODE)
+							&& ((Boolean) p.get(CfgKeys.SIMULATION_MODE))
+									.booleanValue())
 						squeezer.showGUISimulation();
 					else
 						squeezer.showGUI();

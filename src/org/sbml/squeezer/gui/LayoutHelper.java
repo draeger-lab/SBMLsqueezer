@@ -203,8 +203,7 @@ public class LayoutHelper {
 	 * @param c
 	 */
 	public void add(String label, Component c) {
-		add(label, c, 0, row);
-		row++;
+		add(label, c, 0, ++row);
 	}
 
 	/**
@@ -252,12 +251,11 @@ public class LayoutHelper {
 	 */
 	public void add(String label, Component... components) {
 		int x = 0;
-		add(new JLabel(label), x, row, 1, 1, 0, 0);
+		add(new JLabel(label), x, ++row, 1, 1, 0, 0);
 		for (Component component : components) {
 			add(new JPanel(), ++x, row, 1, 1, 0, 0);
 			add(component, ++x, row, 1, 1);
 		}
-		row++;
 	}
 
 }

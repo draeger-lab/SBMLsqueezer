@@ -59,6 +59,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -77,6 +78,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.text.NumberFormatter;
 
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ListOf;
@@ -195,6 +197,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * Compression factor for JPEG output
 	 */
 	private float compression;
+	/**
+	 * The index of the class name of distance function to be applied to compute
+	 * the quality of a simulation.
+	 */
 	private int distanceFunc;
 
 	/**
@@ -330,6 +336,35 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * component in the legend table.
 	 */
 	private Hashtable<Integer, String> experiment2ElementIndex;
+	/**
+	 * Default value to be used for simulation
+	 */
+	private double defaultCompartmentValue;
+	/**
+	 * Default value to be used for simulation
+	 */
+	private double defaultSpeciesValue;
+	/**
+	 * Default value to be used for simulation
+	 */
+	private double defaultParameterValue;
+	/**
+	 * The main tabbed pane showing plot, simulatin and experimental data.
+	 */
+	private JTabbedPane tabbedPane;
+	/**
+	 * The toolbar of this element.
+	 */
+	private JToolBar toolbar;
+	/**
+	 * Text field to display the quality of a simulation with respect to a given
+	 * data set.
+	 */
+	private JFormattedTextField distField;
+	/**
+	 * The currently used distance function.
+	 */
+	private Distance distance;
 
 	/**
 	 * This class stores the row of an element in the Legend table and the
@@ -444,6 +479,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			double stepSize = (t2val - t1val)
 					/ stepsModel.getNumber().doubleValue();
 			simulate(model, t1val, t2val, stepSize);
+			tabbedPane.setEnabledAt(1, true);
+			GUITools.setEnabled(true, toolbar, Command.SAVE_SIMULATION,
+					Command.SAVE_PLOT_IMAGE);
 			break;
 		case OPEN_DATA:
 			openExperimentalData();
@@ -488,6 +526,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				openDir = chooser.getSelectedFile().getParent();
 				plot(readCSVFile(chooser.getSelectedFile()), false, showLegend
 						.isSelected());
+				tabbedPane.setEnabledAt(2, true);
+				GUITools.setEnabled(false, toolbar, Command.OPEN_DATA);
+				distField.setText(Double.toString(computeDistance(model,
+						stepSize)));
 			} catch (IOException exc) {
 				exc.printStackTrace();
 				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
@@ -615,8 +657,16 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	/**
 	 * 
 	 * @return
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws SecurityException
+	 * @throws IllegalArgumentException
 	 */
-	private Component createFootPanel() {
+	private Component createFootPanel() throws IllegalArgumentException,
+			SecurityException, InstantiationException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
 
 		// Settings
 		JSpinner startTime = new JSpinner(t1);
@@ -633,26 +683,46 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				.round((t2val - t1val) * maxStepsPerUnit), 1);
 		JPanel sPanel = new JPanel();
 		LayoutHelper settings = new LayoutHelper(sPanel);
-		settings.add(new JLabel("Start time: "), 0, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 1, 0, 1, 1, 0, 0);
-		settings.add(startTime, 2, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 3, 0, 1, 1, 0, 0);
-		settings.add(new JLabel("End time: "), 4, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 5, 0, 1, 1, 0, 0);
-		settings.add(endTime, 6, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 7, 0, 1, 1, 0, 0);
-		settings.add(new JLabel("Steps: "), 8, 0, 1, 1, 0, 0);
-		settings.add(new JPanel(), 9, 0, 1, 1, 0, 0);
-		settings.add(new JSpinner(stepsModel), 10, 0, 5, 1, 0, 0);
-		settings.add(new JPanel(), 0, 1, 1, 1, 0, 0);
-		settings.add(new JLabel("ODE Solver: "), 0, 2, 1, 1, 0, 0);
-		settings.add(solvers, 2, 2, 5, 1, 0, 0);
-		settings.add(showGrid, 8, 2, 1, 1, 0, 0);
-		settings.add(logScale, 10, 2, 1, 1, 0, 0);
-		settings.add(new JPanel(), 11, 1, 1, 1, 0, 0);
-		settings.add(showLegend, 12, 2, 1, 1, 0, 0);
+		settings.add("Start time: ", startTime, new JLabel("Steps: "),
+				new JSpinner(stepsModel));
+		settings.add(new JPanel());
+		settings
+				.add("End time: ", endTime, new JLabel("ODE Solver: "), solvers);
+		settings.add(new JPanel());
+		sPanel.setBorder(BorderFactory.createTitledBorder(" Integration "));
 
-		sPanel.setBorder(BorderFactory.createTitledBorder(" Settings "));
+		JPanel dPanel = new JPanel();
+		LayoutHelper dSet = new LayoutHelper(dPanel);
+		Class<Distance>[] distFunctions = SBMLsqueezer.getAvailableDistances();
+		String distances[] = new String[distFunctions.length];
+		for (int i = 0; i < distFunctions.length; i++) {
+			Distance dist = distFunctions[i].getConstructor().newInstance();
+			distances[i] = dist.getName();
+			if (i == distanceFunc)
+				distance = dist;
+		}
+		JComboBox distFun = new JComboBox(distances);
+		distFun.setName("distfun");
+		distFun.addItemListener(this);
+		distFun.setSelectedItem(distanceFunc);
+		distField = new JFormattedTextField(new NumberFormatter());
+		distField.setEnabled(false);
+		dSet.add(distFun);
+		dSet.add(new JPanel());
+		dSet.add(distField);
+		dPanel
+				.setBorder(BorderFactory
+						.createTitledBorder(" Distance to data "));
+
+		JPanel pPanel = new JPanel();
+		LayoutHelper pSet = new LayoutHelper(pPanel);
+		pSet.add(showGrid);
+		pSet.add(logScale);
+		pSet.add(showLegend);
+		pPanel.setBorder(BorderFactory.createTitledBorder(" Plot "));
+
+		LayoutHelper aSet = new LayoutHelper(new JPanel());
+		aSet.add(sPanel, dPanel, pPanel);
 
 		// Actions
 		JButton start = GUITools.createButton("Run", GUITools.ICON_GEAR_TINY,
@@ -664,7 +734,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 
 		// Main
 		JPanel mPanel = new JPanel(new BorderLayout());
-		mPanel.add(sPanel, BorderLayout.CENTER);
+		mPanel.add(aSet.getContainer(), BorderLayout.CENTER);
 		mPanel.add(aPanel, BorderLayout.SOUTH);
 		return mPanel;
 	}
@@ -673,7 +743,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * 
 	 * @return
 	 */
-	private Component createToolBar() {
+	private JToolBar createToolBar() {
 		JToolBar toolbar = new JToolBar("Tools");
 		if (GUITools.ICON_OPEN != null)
 			toolbar.add(GUITools.createButton(GUITools.ICON_OPEN, this,
@@ -689,6 +759,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (GUITools.ICON_SETTINGS_TINY != null)
 			toolbar.add(GUITools.createButton(GUITools.ICON_SETTINGS_TINY,
 					this, Command.SETTINGS, "Adjust your preferences"));
+		GUITools.setEnabled(false, toolbar, Command.SAVE_PLOT_IMAGE,
+				Command.SAVE_SIMULATION);
 		return toolbar;
 	}
 
@@ -713,6 +785,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				.getAvailableDistances()[0].getName());
 		p.put(CfgKeys.SIM_ODE_SOLVER, SBMLsqueezer.getAvailableSolvers()[0]
 				.getName());
+		p.put(CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE, Double.valueOf(1d));
+		p.put(CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE, Double.valueOf(1d));
+		p.put(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS, Double.valueOf(1d));
 
 		/*
 		 * Plot
@@ -833,17 +908,21 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					true, legendPanel, interactiveScanPanel(model,
 							maxCompartmentValue, maxSpeciesValue,
 							maxParameterValue, paramStepSize));
-			// topDown.setDividerLocation(1d);
+			topDown.setDividerLocation(topDown.getDividerLocation() + 200);
 			JSplitPane leftRight = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 					true, topDown, plot);
-			// leftRight.setDividerLocation(0.3d);
-			JTabbedPane tabbedPane = new JTabbedPane();
+			leftRight.setDividerLocation(topDown.getDividerLocation() + 200);
+			tabbedPane = new JTabbedPane();
 			tabbedPane.add("Plot ", leftRight);
 			tabbedPane.add("Simulated data", simPanel);
 			tabbedPane.add("Experimental data", expPanel);
+			tabbedPane.setEnabledAt(0, true);
+			tabbedPane.setEnabledAt(1, false);
+			tabbedPane.setEnabledAt(2, false);
 
 			setLayout(new BorderLayout());
-			add(createToolBar(), BorderLayout.NORTH);
+			toolbar = createToolBar();
+			add(toolbar, BorderLayout.NORTH);
 			add(tabbedPane, BorderLayout.CENTER);
 			add(createFootPanel(), BorderLayout.SOUTH);
 		} catch (Exception exc) {
@@ -918,15 +997,22 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		LayoutHelper lh = new LayoutHelper(panel);
 		int offset = 0;
 		LinkedList<String> nans = new LinkedList<String>();
+		double val = 0;
 		for (int i = 0; i < list.size(); i++) {
 			QuantityWithDefinedUnit p = list.get(i);
 			if (p instanceof Species)
 				offset = model.getNumCompartments();
 			if (p instanceof Parameter)
 				offset = model.getNumCompartments() + model.getNumSpecies();
-			double val = p.getValue();
+			val = p.getValue();
 			if (Double.isNaN(p.getValue())) {
-				val = 0;
+				if (p instanceof Compartment)
+					val = defaultCompartmentValue;
+				else if (p instanceof Species)
+					val = defaultSpeciesValue;
+				else if (p instanceof Parameter)
+					val = defaultParameterValue;
+				p.setValue(val);
 				nans.add(p.getId());
 			}
 			maxValue = Math.max(val, maxValue);
@@ -944,8 +1030,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
 		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
 		if (nans.size() > 0) {
-			String msg = "Undefined values for the following elements have been replaced by the default value 0: "
-					+ nans.toString() + ".";
+			String msg = String
+					.format(
+							"Undefined values for the following elements in the %s have been replaced by the default value %.3f: %s.",
+							list.getElementName(), val, nans.toString());
 			JOptionPane.showMessageDialog(this, new JLabel(GUITools.toHTML(msg,
 					60)), "Replacing undefined values",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -968,19 +1056,31 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				if (chck.isSelected() && !plot.checkLoggable()) {
 					chck.setSelected(false);
 					chck.setEnabled(false);
-					JOptionPane
-							.showMessageDialog(
-									this,
-									GUITools
-											.toHTML(
-													"Cannot change to logarithmic scale because at least one value on the y-axis is not greater than zero.",
-													40), "Warning",
-									JOptionPane.WARNING_MESSAGE);
+					String msg = "Cannot change to logarithmic scale because at least one value on the y-axis is not greater than zero.";
+					JOptionPane.showMessageDialog(this, GUITools
+							.toHTML(msg, 40), "Warning",
+							JOptionPane.WARNING_MESSAGE);
 				}
 				plot.toggleLog(chck.isSelected());
 			} else if (chck.getName().equals("legend")) {
 				plot.showLegend(chck.isSelected());
 			}
+		} else if (e.getSource() instanceof JComboBox) {
+			JComboBox comBox = (JComboBox) e.getSource();
+			if (comBox.getName().equals("distfun"))
+				try {
+					distanceFunc = comBox.getSelectedIndex();
+					distance = SBMLsqueezer.getAvailableDistances()[distanceFunc]
+							.getConstructor().newInstance();
+					if (expTable.getRowCount() > 0)
+						distField.setText(Double.toString(computeDistance(
+								model, stepSize)));
+				} catch (Exception exc) {
+					exc.printStackTrace();
+					JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+							.getClass().getSimpleName(),
+							JOptionPane.ERROR_MESSAGE);
+				}
 		}
 	}
 
@@ -1046,14 +1146,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 													.getRowLegendTable(), 1));
 									Indices time = colNames2data
 											.get(colNames[0]);
-									plot
-											.setUnconnectedPoint(
-													solution[i][time == null ? 0
-															: time
-																	.getColumnExperimentTable()],
-													solution[i][index
-															.getRowLegendTable()],
-													colNames.length - 1 + j);
+									int tidx = time == null ? 0 : time
+											.getColumnExperimentTable();
+									if (tidx < 0)
+										tidx = 0;
+									plot.setUnconnectedPoint(solution[i][tidx],
+											solution[i][index
+													.getRowLegendTable()],
+											colNames.length - 1 + j);
 									plot.setInfoString(colNames.length - 1 + j,
 											legend.getValueAt(
 													index.getRowLegendTable(),
@@ -1264,6 +1364,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			throws IllegalArgumentException, SecurityException,
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
+		defaultCompartmentValue = ((Double) settings
+				.get(CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE))
+				.doubleValue();
+		defaultSpeciesValue = ((Double) settings
+				.get(CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE)).doubleValue();
+		defaultParameterValue = ((Double) settings
+				.get(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS))
+				.doubleValue();
 		paramStepSize = ((Double) settings.get(CfgKeys.SPINNER_STEP_SIZE))
 				.doubleValue();
 		double startTime = ((Double) settings.get(CfgKeys.SIM_START_TIME))
@@ -1360,9 +1468,12 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		simTable.setModel(tabMod);
 		plot.clearAll();
 		plot(tabMod.getData(), true, showLegend.isSelected());
-		if (expTable.getColumnCount() > 0)
+		if (expTable.getColumnCount() > 0) {
 			plot(((TableModelDoubleMatrix) expTable.getModel()).getData(),
 					false, showLegend.isSelected());
+			distField
+					.setText(Double.toString(computeDistance(model, stepSize)));
+		}
 	}
 
 	/**
@@ -1381,6 +1492,37 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		solver.setStepSize(stepSize);
 		double solution[][] = solver.solveByStepSizeIncludingTime(interpreter,
 				interpreter.getInitialValues(), t1, t2);
+		if (solver.isUnstable()) {
+			JOptionPane.showMessageDialog(this, "Unstable!",
+					"Simulation not possible", JOptionPane.WARNING_MESSAGE);
+		}
+		return solution;
+	}
+
+	private double computeDistance(Model model, double stepSize) {
+		Indices time = colNames2data.get(colNames[0]);
+		int tidx = time == null ? 0 : time.getColumnExperimentTable();
+		if (tidx < 0)
+			tidx = 0;
+		return distance.distance(solveAtTimePoints(model,
+				((TableModelDoubleMatrix) expTable.getModel())
+						.getColumnData(tidx), stepSize),
+				((TableModelDoubleMatrix) expTable.getModel()).getData());
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param timePoints
+	 * @param stepSize
+	 * @return
+	 */
+	private double[][] solveAtTimePoints(Model model, double times[],
+			double stepSize) {
+		SBMLinterpreter interpreter = new SBMLinterpreter(model);
+		solver.setStepSize(stepSize);
+		double solution[][] = solver.solveAtTimePointsIncludingTime(
+				interpreter, interpreter.getInitialValues(), times);
 		if (solver.isUnstable()) {
 			JOptionPane.showMessageDialog(this, "Unstable!",
 					"Simulation not possible", JOptionPane.WARNING_MESSAGE);
@@ -1573,7 +1715,7 @@ class TableModelLedgend extends AbstractTableModel {
 		if (column == 1)
 			return "Color";
 		if (column == 2)
-			return "State";
+			return "Symbol";
 		throw new IndexOutOfBoundsException("Only " + getColumnCount()
 				+ " columns, no column " + column);
 	}
