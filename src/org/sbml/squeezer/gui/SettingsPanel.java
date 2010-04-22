@@ -164,4 +164,16 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 			cl.stateChanged(e);
 	}
 
+	/**
+	 * 
+	 * @param settings
+	 */
+	public abstract void setProperties(Properties settings);
+
+	/**
+	 * 
+	 * @return
+	 */
+	public abstract Properties getProperties();
+
 }

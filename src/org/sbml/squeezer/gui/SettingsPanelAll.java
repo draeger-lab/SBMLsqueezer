@@ -114,6 +114,20 @@ public class SettingsPanelAll extends SettingsPanel {
 		init();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
+	 */
+	public void setProperties(Properties settings) {
+		int tab = getSelectedIndex();
+		removeAll();
+		this.settings = settings;
+		init();
+		setSelectedIndex(tab);
+	}
+
 	private void init() {
 		tab = new JTabbedPane();
 		/*
@@ -220,11 +234,12 @@ public class SettingsPanelAll extends SettingsPanel {
 			panelSimulationSettings.addItemListener(listener);
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
 	 */
-	public Properties getSettings() {
+	public Properties getProperties() {
 		File f = new File(tfOpenDir.getText());
 		if (f.exists() && f.isDirectory())
 			settings.put(CfgKeys.OPEN_DIR, tfOpenDir.getText());
@@ -243,12 +258,12 @@ public class SettingsPanelAll extends SettingsPanel {
 							40)), "Warning", JOptionPane.WARNING_MESSAGE);
 			tfSaveDir.setText(settings.get(CfgKeys.SAVE_DIR).toString());
 		}
-		for (Object key : panelKinSettings.getSettings().keySet())
-			this.settings.put(key, panelKinSettings.getSettings().get(key));
-		for (Object key : panelDefaultMechanisms.getSettings().keySet()) {
+		for (Object key : panelKinSettings.getProperties().keySet())
+			this.settings.put(key, panelKinSettings.getProperties().get(key));
+		for (Object key : panelDefaultMechanisms.getProperties().keySet()) {
 			try {
 				Class<?> cl = Class.forName(panelDefaultMechanisms
-						.getSettings().get(key).toString());
+						.getProperties().get(key).toString());
 				Set<Class<?>> interfaces = new HashSet<Class<?>>();
 				for (Class<?> c : cl.getInterfaces())
 					interfaces.add(c);
@@ -290,7 +305,7 @@ public class SettingsPanelAll extends SettingsPanel {
 		if ((e.getSource() instanceof Container)
 				&& (GUITools.contains(panelKinSettings, ((Container) e
 						.getSource())))) {
-			if (reversibility != ((Boolean) panelKinSettings.getSettings().get(
+			if (reversibility != ((Boolean) panelKinSettings.getProperties().get(
 					CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue()) {
 				reversibility = !reversibility;
 				panelDefaultMechanisms.stateChanged(new ChangeEvent(Boolean

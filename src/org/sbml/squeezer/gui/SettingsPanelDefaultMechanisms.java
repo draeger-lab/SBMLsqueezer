@@ -84,44 +84,6 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	}
 
 	/**
-	 * Initializes the selection of default mechanisms.
-	 * 
-	 * @param properties
-	 */
-	private void init(boolean treatReactionsReversible) {
-		setLayout(new GridLayout(1, 2));
-
-		JPanel leftMechanismPanel = new JPanel();
-		LayoutHelper lh = new LayoutHelper(leftMechanismPanel);
-
-		lh.add(createButtonGroupPanel(ReactionType
-				.getKineticsNonEnzyme(treatReactionsReversible),
-				CfgKeys.KINETICS_NONE_ENZYME_REACTIONS));
-		lh.add(createButtonGroupPanel(ReactionType
-				.getKineticsUniUni(treatReactionsReversible),
-				CfgKeys.KINETICS_UNI_UNI_TYPE));
-		lh.add(createButtonGroupPanel(ReactionType
-				.getKineticsBiUni(treatReactionsReversible),
-				CfgKeys.KINETICS_BI_UNI_TYPE));
-
-		JPanel rightMechanismPanel = new JPanel();
-		lh = new LayoutHelper(rightMechanismPanel);
-		lh.add(createButtonGroupPanel(ReactionType
-				.getKineticsBiBi(treatReactionsReversible),
-				CfgKeys.KINETICS_BI_BI_TYPE));
-		lh.add(createButtonGroupPanel(ReactionType
-				.getKineticsArbitraryEnzyme(treatReactionsReversible),
-				CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS));
-		lh.add(createButtonGroupPanel(ReactionType
-				.getKineticsGeneRegulation(treatReactionsReversible),
-				CfgKeys.KINETICS_GENE_REGULATION));
-
-		add(leftMechanismPanel);
-		add(rightMechanismPanel);
-		GUITools.setAllBackground(this, Color.WHITE);
-	}
-
-	/**
 	 * Creates a panel that contains radio buttons for the given class of
 	 * kinetic equations.
 	 * 
@@ -227,6 +189,53 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
+	 */
+	public Properties getProperties() {
+		return this.settings;
+	}
+
+	/**
+	 * Initializes the selection of default mechanisms.
+	 * 
+	 * @param properties
+	 */
+	private void init(boolean treatReactionsReversible) {
+		setLayout(new GridLayout(1, 2));
+
+		JPanel leftMechanismPanel = new JPanel();
+		LayoutHelper lh = new LayoutHelper(leftMechanismPanel);
+
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsNonEnzyme(treatReactionsReversible),
+				CfgKeys.KINETICS_NONE_ENZYME_REACTIONS));
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsUniUni(treatReactionsReversible),
+				CfgKeys.KINETICS_UNI_UNI_TYPE));
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsBiUni(treatReactionsReversible),
+				CfgKeys.KINETICS_BI_UNI_TYPE));
+
+		JPanel rightMechanismPanel = new JPanel();
+		lh = new LayoutHelper(rightMechanismPanel);
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsBiBi(treatReactionsReversible),
+				CfgKeys.KINETICS_BI_BI_TYPE));
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsArbitraryEnzyme(treatReactionsReversible),
+				CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS));
+		lh.add(createButtonGroupPanel(ReactionType
+				.getKineticsGeneRegulation(treatReactionsReversible),
+				CfgKeys.KINETICS_GENE_REGULATION));
+
+		add(leftMechanismPanel);
+		add(rightMechanismPanel);
+		GUITools.setAllBackground(this, Color.WHITE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
@@ -239,12 +248,18 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		}
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see
+	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
 	 */
-	public Properties getSettings() {
-		return this.settings;
+	public void setProperties(Properties settings) {
+		removeAll();
+		this.settings = settings;
+		init(((Boolean) settings
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue());
 	}
 
 	/*

@@ -87,7 +87,7 @@ public class RSE extends Distance {
 	 */
 	@Override
 	public String getName() {
-		return "Relative Squared Error (RSE)";
+		return "Relative Squared Error";
 	}
 
 	/*

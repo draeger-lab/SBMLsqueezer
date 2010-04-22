@@ -359,7 +359,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			showSettingsPanel(false);
 			options.setEnabled(false);
 			GUITools.setAllEnabled(footPanel, false);
-			Properties props = settingsPanel.getSettings();
+			Properties props = settingsPanel.getProperties();
 			for (Object key : props.keySet())
 				settings.put(key, props.get(key));
 			Model model = sbmlIO.getSelectedModel();

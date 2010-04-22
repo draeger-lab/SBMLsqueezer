@@ -70,7 +70,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 */
 	private boolean exitStatus;
 	private JButton ok;
-	private SettingsPanelAll panelAllSettings;
+	private SettingsPanel panelAllSettings;
 	private Properties settings;
 
 	/**
@@ -80,6 +80,14 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 */
 	public SettingsDialog(Frame owner) {
 		super(owner, "Preferences");
+	}
+	
+	/**
+	 * 
+	 */
+	public SettingsDialog(String title) {
+		super();
+		setTitle(title);
 	}
 
 	/*
@@ -94,10 +102,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		} else if (ae.getActionCommand().equals(DEFAULTS)) {
 			Properties p = (Properties) settings.clone();
 			settings = SBMLsqueezer.getDefaultSettings();
-			int tab = panelAllSettings.getSelectedIndex();
-			getContentPane().removeAll();
-			init();
-			panelAllSettings.setSelectedIndex(tab);
+			panelAllSettings.setProperties(settings);
 			settings = p;
 			apply.setEnabled(true);
 			ok.setEnabled(true);
@@ -108,7 +113,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 			validate();
 		} else if (ae.getActionCommand().equals(APPLY)
 				|| ae.getActionCommand().equals(OK)) {
-			settings.putAll(panelAllSettings.getSettings());
+			settings.putAll(panelAllSettings.getProperties());
 			apply.setEnabled(false);
 			exitStatus = APPROVE_OPTION;
 			if (ae.getActionCommand().equals(OK))
@@ -168,9 +173,17 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 * @return
 	 */
 	public boolean showSettingsDialog(Properties settings) {
+		return showSettingsDialog(settings, new SettingsPanelAll(settings));
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean showSettingsDialog(Properties settings, SettingsPanel panel) {
 		this.settings = settings;
 		this.exitStatus = CANCEL_OPTION;
-		init();
+		init(panel);
 		pack();
 		setLocationRelativeTo(getOwner());
 		setResizable(false);
@@ -197,8 +210,8 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	/**
 	 * Initializes this dialog.
 	 */
-	private void init() {
-		panelAllSettings = new SettingsPanelAll(settings);
+	private void init(SettingsPanel panel) {
+		panelAllSettings = panel;
 		getContentPane().add(panelAllSettings, BorderLayout.CENTER);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		JPanel p = new JPanel();
