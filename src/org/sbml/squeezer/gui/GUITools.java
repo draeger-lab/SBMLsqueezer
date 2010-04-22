@@ -27,6 +27,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
@@ -35,8 +37,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -143,17 +148,17 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon ICON_PICTURE_TINY = null;
-	
+
 	/**
 	 * 
 	 */
 	public static Icon ICON_SETTINGS_TINY = null;
-	
+
 	/**
 	 * 
 	 */
 	public static Icon ICON_STRUCTURAL_MODELING_TINY = null;
-	
+
 	/**
 	 * 
 	 */
@@ -536,6 +541,7 @@ public class GUITools {
 
 	/**
 	 * Creates and returns a JCheckBox with all the given properties.
+	 * 
 	 * @param label
 	 * @param selected
 	 * @param name
@@ -552,5 +558,86 @@ public class GUITools {
 		chkbx.addItemListener(listener);
 		chkbx.setToolTipText(toHTML(toolTip, 40));
 		return chkbx;
+	}
+
+	/**
+	 * Enables or disables actions that can be performed by SBMLsqueezer, i.e.,
+	 * all menu items and buttons that are associated with the given actions are
+	 * enabled or disabled.
+	 * 
+	 * @param state
+	 *            if true buttons, items etc. are enabled, otherwise disabled.
+	 * @param menuBar
+	 * @param toolbar
+	 * @param commands
+	 */
+	public static void setEnabled(boolean state, JMenuBar menuBar,
+			JToolBar toolbar, Object... commands) {
+		int i, j;
+		Set<String> setOfCommands = new HashSet<String>();
+		for (Object command : commands)
+			setOfCommands.add(command.toString());
+		if (menuBar != null)
+			for (i = 0; i < menuBar.getMenuCount(); i++) {
+				JMenu menu = menuBar.getMenu(i);
+				for (j = 0; j < menu.getItemCount(); j++) {
+					JMenuItem item = menu.getItem(j);
+					if (item instanceof JMenu) {
+						JMenu m = (JMenu) item;
+						boolean containsCommand = false;
+						for (int k = 0; k < m.getItemCount(); k++) {
+							JMenuItem it = m.getItem(k);
+							if (it != null
+									&& it.getActionCommand() != null
+									&& setOfCommands.contains(it
+											.getActionCommand())) {
+								it.setEnabled(state);
+								containsCommand = true;
+							}
+						}
+						if (containsCommand)
+							m.setEnabled(state);
+					}
+					if (item != null && item.getActionCommand() != null
+							&& setOfCommands.contains(item.getActionCommand()))
+						item.setEnabled(state);
+				}
+			}
+		if (toolbar != null)
+			for (i = 0; i < toolbar.getComponentCount(); i++) {
+				Object o = toolbar.getComponent(i);
+				if (o instanceof JButton) {
+					JButton b = (JButton) o;
+					if (setOfCommands.contains(b.getActionCommand())) {
+						b.setEnabled(state);
+						if (b.getIcon() != null
+								&& b.getIcon() instanceof CloseIcon)
+							((CloseIcon) b.getIcon())
+									.setColor(state ? Color.BLACK : Color.GRAY);
+					}
+				}
+			}
+	}
+	
+	/**
+	 * 
+	 * @param state
+	 * @param toolbar
+	 * @param commands
+	 */
+	public static void setEnabled(boolean state, 
+			JToolBar toolbar, Object... commands) {
+		setEnabled(state, null, toolbar, commands);
+	}
+	
+	/**
+	 * 
+	 * @param state
+	 * @param menuBar
+	 * @param commands
+	 */
+	public static void setEnabled(boolean state, 
+			JMenuBar menuBar, Object... commands) {
+		setEnabled(state, menuBar, null, commands);
 	}
 }

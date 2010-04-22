@@ -33,10 +33,8 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -770,48 +768,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 *            if true buttons, items etc. are enabled, otherwise disabled.
 	 * @param commands
 	 */
-	private void setEnabled(boolean state, Command... commands) {
-		int i, j;
-		Set<String> setOfCommands = new HashSet<String>();
-		for (Command command : commands)
-			setOfCommands.add(command.toString());
-		for (i = 0; i < getJMenuBar().getMenuCount(); i++) {
-			JMenu menu = getJMenuBar().getMenu(i);
-			for (j = 0; j < menu.getItemCount(); j++) {
-				JMenuItem item = menu.getItem(j);
-				if (item instanceof JMenu) {
-					JMenu m = (JMenu) item;
-					boolean containsCommand = false;
-					for (int k = 0; k < m.getItemCount(); k++) {
-						JMenuItem it = m.getItem(k);
-						if (it != null
-								&& it.getActionCommand() != null
-								&& setOfCommands
-										.contains(it.getActionCommand())) {
-							it.setEnabled(state);
-							containsCommand = true;
-						}
-					}
-					if (containsCommand)
-						m.setEnabled(state);
-				}
-				if (item != null && item.getActionCommand() != null
-						&& setOfCommands.contains(item.getActionCommand()))
-					item.setEnabled(state);
-			}
-		}
-		for (i = 0; i < toolbar.getComponentCount(); i++) {
-			Object o = toolbar.getComponent(i);
-			if (o instanceof JButton) {
-				JButton b = (JButton) o;
-				if (setOfCommands.contains(b.getActionCommand())) {
-					b.setEnabled(state);
-					if (b.getIcon() != null && b.getIcon() instanceof CloseIcon)
-						((CloseIcon) b.getIcon()).setColor(state ? Color.BLACK
-								: Color.GRAY);
-				}
-			}
-		}
+	private void setEnabled(boolean state, Object... commands) {
+		GUITools.setEnabled(state, getJMenuBar(), toolbar, commands);
 	}
 
 	/**

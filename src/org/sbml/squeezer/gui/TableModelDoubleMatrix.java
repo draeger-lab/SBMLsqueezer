@@ -76,6 +76,19 @@ public class TableModelDoubleMatrix extends AbstractTableModel {
 		return data == null || data.length == 0 ? 0 : data[0].length;
 	}
 
+	/**
+	 * Returns a double array that contains all values of the specified column.
+	 * 
+	 * @param columnIndex
+	 * @return
+	 */
+	public double[] getColumnData(int columnIndex) {
+		double col[] = new double[getRowCount()];
+		for (int i = 0; i < col.length; i++)
+			col[i] = getValueAt(i, columnIndex);
+		return col;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -102,6 +115,16 @@ public class TableModelDoubleMatrix extends AbstractTableModel {
 	 */
 	public int getRowCount() {
 		return data == null ? 0 : data.length;
+	}
+
+	/**
+	 * Returns the specified row in an array.
+	 * 
+	 * @param rowIndex
+	 * @return
+	 */
+	public double[] getRowData(int rowIndex) {
+		return data[rowIndex];
 	}
 
 	/*
