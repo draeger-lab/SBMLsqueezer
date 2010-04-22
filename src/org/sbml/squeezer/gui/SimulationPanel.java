@@ -534,6 +534,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				GUITools.setEnabled(false, toolbar, Command.OPEN_DATA);
 				distField.setText(Double.toString(computeDistance(model,
 						stepSize)));
+				distField.setEditable(false);
+				distField.setEnabled(true);
 			} catch (IOException exc) {
 				exc.printStackTrace();
 				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
@@ -1096,6 +1098,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					if (expTable.getRowCount() > 0)
 						distField.setText(Double.toString(computeDistance(
 								model, stepSize)));
+					distField.setEditable(false);
+					distField.setEnabled(true);
 				} catch (Exception exc) {
 					exc.printStackTrace();
 					JOptionPane.showMessageDialog(this, exc.getMessage(), exc
@@ -1498,6 +1502,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					false, showLegend.isSelected());
 			distField
 					.setText(Double.toString(computeDistance(model, stepSize)));
+			distField.setEditable(false);
+			distField.setEnabled(true);
 		}
 	}
 
