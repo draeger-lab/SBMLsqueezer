@@ -591,7 +591,9 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				&& ((Boolean) p.get(CfgKeys.GUI)).booleanValue()) {
 			if (p.containsKey(CfgKeys.SBML_FILE))
 				squeezer.readSBMLSource(p.get(CfgKeys.SBML_FILE).toString());
-			if (((Boolean) p.get(CfgKeys.CHECK_FOR_UPDATES)).booleanValue())
+			if (p.containsKey(CfgKeys.CHECK_FOR_UPDATES)
+					&& ((Boolean) p.get(CfgKeys.CHECK_FOR_UPDATES))
+							.booleanValue())
 				squeezer.checkForUpdate(true);
 			msg.log("loading GUI...");
 			new Thread(new Runnable() {
