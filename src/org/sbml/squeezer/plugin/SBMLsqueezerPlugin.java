@@ -20,6 +20,7 @@ package org.sbml.squeezer.plugin;
 
 import java.util.Properties;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
@@ -30,6 +31,8 @@ import jp.sbi.celldesigner.plugin.PluginSBase;
 
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.cdplugin.PluginSBMLReader;
+import org.sbml.jsbml.cdplugin.PluginSBMLWriter;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -255,12 +258,12 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 	 * export.
 	 * 
 	 * @param mode
-	 * @throws SBMLException 
+	 * @throws SBMLException
 	 */
 	public void startSBMLsqueezerPlugin(String mode) throws SBMLException {
 		SBMLio io = sbmlSqueezer.getSBMLIO();
 		Properties p = SBMLsqueezer.getProperties();
-		io.readModel(getSelectedModel());
+		io.convert2Model(getSelectedModel());
 		KineticLawSelectionDialog klsd;
 		switch (Mode.getMode(mode)) {
 		case SQUEEZE_ALL:
@@ -272,7 +275,7 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 					((PluginReaction) getSelectedReactionNode().get(0)).getId());
 			break;
 		case CONFIGURE:
-			SettingsDialog dialog = new SettingsDialog(null);
+			SettingsDialog dialog = new SettingsDialog((JFrame) null);
 			if (dialog.showSettingsDialog((Properties) SBMLsqueezer
 					.getProperties().clone()) == SettingsDialog.APPROVE_OPTION)
 				for (Object key : dialog.getSettings().keySet())
