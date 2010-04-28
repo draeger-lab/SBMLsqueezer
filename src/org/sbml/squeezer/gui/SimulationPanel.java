@@ -1389,30 +1389,30 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			throws IllegalArgumentException, SecurityException,
 			InstantiationException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
-		maxSpinVal = ((Double) settings.get(CfgKeys.SPINNER_MAX_VALUE))
+		maxSpinVal = ((Number) settings.get(CfgKeys.SPINNER_MAX_VALUE))
 				.doubleValue();
-		defaultCompartmentValue = ((Double) settings
+		defaultCompartmentValue = ((Number) settings
 				.get(CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE))
 				.doubleValue();
-		defaultSpeciesValue = ((Double) settings
+		defaultSpeciesValue = ((Number) settings
 				.get(CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE)).doubleValue();
-		defaultParameterValue = ((Double) settings
+		defaultParameterValue = ((Number) settings
 				.get(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS))
 				.doubleValue();
-		paramStepSize = ((Double) settings.get(CfgKeys.SPINNER_STEP_SIZE))
+		paramStepSize = ((Number) settings.get(CfgKeys.SPINNER_STEP_SIZE))
 				.doubleValue();
-		double startTime = ((Double) settings.get(CfgKeys.SIM_START_TIME))
+		double startTime = ((Number) settings.get(CfgKeys.SIM_START_TIME))
 				.doubleValue();
-		double endTime = ((Double) settings.get(CfgKeys.SIM_END_TIME))
+		double endTime = ((Number) settings.get(CfgKeys.SIM_END_TIME))
 				.doubleValue();
 		startTime = Math.max(0, startTime);
 		if (startTime > endTime)
 			swap(startTime, endTime);
-		stepSize = ((Double) settings.get(CfgKeys.SIM_STEP_SIZE)).doubleValue();
-		maxTime = Math.max(((Double) settings.get(CfgKeys.SIM_MAX_TIME))
+		stepSize = ((Number) settings.get(CfgKeys.SIM_STEP_SIZE)).doubleValue();
+		maxTime = Math.max(((Number) settings.get(CfgKeys.SIM_MAX_TIME))
 				.doubleValue(), Math.max(startTime, endTime));
 		t1 = new SpinnerNumberModel(startTime, 0, maxTime, stepSize);
-		t2 = new SpinnerNumberModel(endTime, Math.min(((Double) t1.getValue())
+		t2 = new SpinnerNumberModel(endTime, Math.min(((Number) t1.getValue())
 				.doubleValue(), endTime), maxTime, stepSize);
 		showGrid = GUITools.createJCheckBox("Grid", ((Boolean) settings
 				.get(CfgKeys.PLOT_SHOW_GRID)).booleanValue(), "grid", this,
@@ -1431,11 +1431,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				.get(CfgKeys.CSV_FILES_SEPARATOR_CHAR)).charValue();
 		quoteChar = ((Character) settings.get(CfgKeys.CSV_FILES_QUOTE_CHAR))
 				.charValue();
-		maxCompartmentValue = ((Double) settings
+		maxCompartmentValue = ((Number) settings
 				.get(CfgKeys.SIM_MAX_COMPARTMENT_SIZE)).doubleValue();
-		maxSpeciesValue = ((Double) settings.get(CfgKeys.SIM_MAX_SPECIES_VALUE))
+		maxSpeciesValue = ((Number) settings.get(CfgKeys.SIM_MAX_SPECIES_VALUE))
 				.doubleValue();
-		maxParameterValue = ((Double) settings
+		maxParameterValue = ((Number) settings
 				.get(CfgKeys.SIM_MAX_PARAMETER_VALUE)).doubleValue();
 		saveDir = settings.get(CfgKeys.CSV_FILES_SAVE_DIR).toString();
 		compression = Float.parseFloat(settings.get(
@@ -1572,7 +1572,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (e.getSource() instanceof JSpinner) {
 			JSpinner spin = (JSpinner) e.getSource();
 			if (spin.getName() != null && spin.getName().equals("t2")) {
-				// double t1val = ((Double) t1.getValue()).doubleValue();
+				// double t1val = ((Number) t1.getValue()).doubleValue();
 				// double t2val = Double.valueOf(spin.getValue().toString())
 				// .doubleValue();
 				// Integer min = Integer.valueOf(1);

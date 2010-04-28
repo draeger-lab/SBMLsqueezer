@@ -1669,6 +1669,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		return Double.valueOf(Double.NaN);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#xor(org.sbml.jsbml.ASTNode[])
+	 */
 	public Boolean xor(ASTNode... nodes) {
 		Boolean value = getConstantFalse();
 

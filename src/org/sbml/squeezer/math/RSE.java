@@ -22,11 +22,9 @@ package org.sbml.squeezer.math;
  * An implementation of the relative squared error with a default value to avoid
  * division by zero.
  * 
- * @version 0.1
+ * @author Andreas Dr&auml;ger
  * @since 1.4
- * @author Andreas Dr&auml;ger <andreas.draeger@uni-tuebingen.de>
- * @date 17.04.2007
- * @uml.dependency supplier="org.jcell.server.math.Distance"
+ * @date 2007-04-17
  */
 public class RSE extends Distance {
 
@@ -74,15 +72,16 @@ public class RSE extends Distance {
 			x = y;
 			y = swap;
 		}
-		double d = 0;
+		double d = 0d;
 		for (int i = 0; i < y.length; i++)
-			if ((y[i] != Double.NaN) && (x[i] != Double.NaN) && (y[i] != x[i]))
-				d += (y[i] != 0) ? Math.pow((x[i] - y[i]) / y[i], 2) : def;
+			if (!Double.isNaN(y[i]) && !Double.isNaN(x[i]) && (y[i] != x[i]))
+				d += (y[i] != 0d) ? Math.pow((x[i] - y[i]) / y[i], 2d) : def;
 		return d;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.math.Distance#getName()
 	 */
 	@Override
@@ -92,11 +91,12 @@ public class RSE extends Distance {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.math.Distance#getStandardParameter()
 	 */
 	@Override
 	public double getStandardParameter() {
-		return 10000d;
+		return 1E4d;
 	}
 
 }

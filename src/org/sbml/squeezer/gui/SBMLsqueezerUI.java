@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -51,6 +52,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -72,7 +75,6 @@ import org.sbml.squeezer.resources.Resource;
  * 
  */
 class FileReaderThread extends Thread implements Runnable {
-
 	/**
 	 * 
 	 */
@@ -195,6 +197,62 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		 * Display the license of this project to the user.
 		 */
 		LICENSE
+	}
+
+	static {
+		Locale.setDefault(Locale.ENGLISH);
+		// For MacOS X
+		boolean isMacOSX = false;
+		if (System.getProperty("mrj.version") != null) {
+			isMacOSX = true;
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty(
+					"com.apple.mrj.application.apple.menu.about.name",
+					"CellDesigner");
+		}
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			// If Nimbus is not available, you can set the GUI to another look
+			// and feel.
+			// Native look and feel for Windows, MacOS X. GTK look and
+			// feel for Linux, FreeBSD
+			try {
+				UIManager
+						.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
+				String osName = System.getProperty("os.name");
+				if (osName.equals("Linux") || osName.equals("FreeBSD")) {
+					UIManager
+							.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+					// UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+				} else if (isMacOSX) {
+					UIManager
+							.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+				} else if (osName.contains("Windows")) {
+					UIManager
+							.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
+				} else {
+					// UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+					UIManager.setLookAndFeel(UIManager
+							.getSystemLookAndFeelClassName());
+				}
+				// } catch (Exception e) {
+				// }
+				// try {
+				// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception exc) {
+				JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
+						.getMessage(), 40), exc.getClass().getName(),
+						JOptionPane.WARNING_MESSAGE);
+				exc.printStackTrace();
+			}
+		}
+		setDefaultLookAndFeelDecorated(true);
 	}
 
 	/**
@@ -700,7 +758,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.addChangeListener(sbmlIO);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSBMLsqueezerBackground();
-		setIconImage(GUITools.ICON_LEMON);
+		setIconImage(GUITools.IMAGE_LEMON);
 		for (Model m : sbmlIO.getListOfModels()) {
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(),
 					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
@@ -717,7 +775,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	void readModel(File file) {
 		try {
-			Model model = sbmlIO.readModel(file.getAbsolutePath());
+			Model model = sbmlIO.convert2Model(file.getAbsolutePath());
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(),
 					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue());

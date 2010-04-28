@@ -34,6 +34,13 @@ Kinetik nicht veränderbar sein.
 Offenbar hat SBML2LaTeX ein Problem mit Constraints. Vermutlich lösen die
 einen Programmabsturz aus.
 
+Möglicherweise werden globale Parameter nicht gelöscht, wenn es lokale
+Parameter mit identischer ID gibt, die in kinetischen Gleichungen vorkommen.
+Das sollte aber nicht passieren. Es müsste eben überprüft werden, ob ein
+Parameter mit einer bestimmten ID, der in einer kinetischen Gleichung 
+referenziert wird, auch nochmal als lokaler Parameter in dieser Gleichung 
+vorkommt.
+
 
 SBMLsimulator: Probleme bei der Simulation von Test-Suite-Modellen
 ==================================================================

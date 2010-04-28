@@ -29,10 +29,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLReader;
-import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.SBMLInputConverter;
+import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.io.IOProgressListener;
+import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -283,33 +283,22 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 					|| val.equalsIgnoreCase("false"))
 				props.put(k, Boolean.parseBoolean(val));
 			else {
-				boolean allDigit = true;
-				short dotCount = 0, eCount = 0;
-				char[] chars = val.toCharArray();
-				for (int pos = 0; pos < chars.length; pos++) {
-					char c = chars[pos];
-					if (c == '.')
-						dotCount++;
-					else if (c == 'E' || c == 'e')
-						eCount++;
-					else {
-						allDigit &= Character.isDigit(c)
-								|| (pos == chars.length - 1 && (c == 'd' || c == 'f'));
+				try {
+					props.put(k, Integer.valueOf(val));
+				} catch (NumberFormatException e1) {
+					try {
+						props.put(k, Float.valueOf(val));
+					} catch (NumberFormatException e2) {
+						try {
+							props.put(k, Double.valueOf(val));
+						} catch (NumberFormatException e3) {
+							if (val.length() == 1)
+								props.put(k, Character.valueOf(val.charAt(0)));
+							else
+								props.put(k, val);
+						}
 					}
 				}
-				if (allDigit && eCount == 0 && dotCount == 0
-						&& chars[chars.length - 1] != 'd'
-						&& chars[chars.length - 1] != 'f')
-					props.put(k, Integer.parseInt(val));
-				else if (allDigit && (dotCount <= 1 || eCount <= 1)) {
-					if (chars[chars.length - 1] == 'f')
-						props.put(k, Float.parseFloat(val));
-					else
-						props.put(k, Double.parseDouble(val));
-				} else if (val.length() == 1)
-					props.put(k, Character.valueOf(val.charAt(0)));
-				else
-					props.put(k, val);
 			}
 			if (k.toString().startsWith("KINETICS_")) {
 				if (!val.startsWith(KINETICS_PACKAGE)) {
@@ -679,7 +668,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * @param sbmlReader
 	 * @param sbmlWriter
 	 */
-	public SBMLsqueezer(SBMLReader sbmlReader, SBMLWriter sbmlWriter) {
+	public SBMLsqueezer(SBMLInputConverter sbmlReader,
+			SBMLOutputConverter sbmlWriter) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 60; i++)
 			sb.append('-');
@@ -761,7 +751,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		long time = System.currentTimeMillis();
 		msg.log("reading SBML file...");
 		try {
-			sbmlIo.readModel(sbmlSource);
+			sbmlIo.convert2Model(sbmlSource);
 			msg.logf(" done in %d ms.\n", (System.currentTimeMillis() - time));
 		} catch (Exception exc) {
 			msg.errf(" A problem occured while trying to read the model: %s\n",

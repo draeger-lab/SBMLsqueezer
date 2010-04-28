@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -629,7 +630,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private JPanel initOptionsPanel() {
 		JPanel p = new JPanel(new BorderLayout());
 		options = new JButton("show options");
-		options.setIcon(GUITools.ICON_RIGHT_ARROW);
+		Icon icon = GUITools.ICON_RIGHT_ARROW;
+		if (icon != null)
+			options.setIcon(icon);
 		options.setIconTextGap(5);
 		options.setBorderPainted(false);
 		options.setSize(150, 20);

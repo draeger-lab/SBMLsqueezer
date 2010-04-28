@@ -1,13 +1,14 @@
 /*
  * Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
  */
-package org.sbml.squeezer.math;
+package org.sbml.squeezer.test.math;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.math.SBMLinterpreter;
 
 import eva2.gui.Plot;
 import eva2.tools.math.des.RKEventSolver;

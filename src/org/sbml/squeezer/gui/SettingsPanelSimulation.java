@@ -220,10 +220,10 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 						.intValue() * endT), 1);
 		spinModT2 = new SpinnerNumberModel(
 				endT,
-				((Double) spinModT1.getValue()).doubleValue(),
+				((Number) spinModT1.getValue()).doubleValue(),
 				maxTime,
 				((Integer) spinModNumSteps.getValue()).intValue()
-						* (endT - ((Double) spinModT1.getValue()).doubleValue()));
+						* (endT - ((Number) spinModT1.getValue()).doubleValue()));
 		JSpinner numberOfSteps = new JSpinner(spinModNumSteps);
 		numberOfSteps.addChangeListener(this);
 		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(maxTime, 0,
@@ -277,28 +277,28 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 * @return the maxCompartmentVal
 	 */
 	public double getMaxCompartmentValue() {
-		return ((Double) spinModMaxCompartmentVal.getValue()).doubleValue();
+		return ((Number) spinModMaxCompartmentVal.getValue()).doubleValue();
 	}
 
 	/**
 	 * @return the maxParameterVal
 	 */
 	public double getMaxParameterValue() {
-		return ((Double) spinModMaxParameterVal.getValue()).doubleValue();
+		return ((Number) spinModMaxParameterVal.getValue()).doubleValue();
 	}
 
 	/**
 	 * @return the maxSpeciesVal
 	 */
 	public double getMaxSpeciesValue() {
-		return ((Double) spinModMaxSpeciesVal.getValue()).doubleValue();
+		return ((Number) spinModMaxSpeciesVal.getValue()).doubleValue();
 	}
 
 	/**
 	 * @return the maxTime
 	 */
 	public double getMaxTime() {
-		return ((Double) spinModT2.getMaximum()).doubleValue();
+		return ((Number) spinModT2.getMaximum()).doubleValue();
 	}
 
 	/**
@@ -319,7 +319,7 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 * @return the parameterStepSize
 	 */
 	public double getParameterStepSize() {
-		return ((Double) spinModParameterStepSize.getValue()).doubleValue();
+		return ((Number) spinModParameterStepSize.getValue()).doubleValue();
 	}
 
 	public Properties getProperties() {
@@ -425,14 +425,14 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 	 * @return the t2
 	 */
 	public double getSimulationEndTime() {
-		return ((Double) spinModT2.getValue()).doubleValue();
+		return ((Number) spinModT2.getValue()).doubleValue();
 	}
 
 	/**
 	 * @return the t1
 	 */
 	public double getSimulationStartTime() {
-		return ((Double) spinModT1.getValue()).doubleValue();
+		return ((Number) spinModT1.getValue()).doubleValue();
 	}
 
 	/**
@@ -653,13 +653,13 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 		/*
 		 * Scan
 		 */
-		setMaxCompartmentValue(((Double) settings
+		setMaxCompartmentValue(((Number) settings
 				.get(CfgKeys.SIM_MAX_COMPARTMENT_SIZE)).doubleValue());
-		setMaxSpeciesValue(((Double) settings
+		setMaxSpeciesValue(((Number) settings
 				.get(CfgKeys.SIM_MAX_SPECIES_VALUE)).doubleValue());
-		setMaxParameterValue(((Double) settings
+		setMaxParameterValue(((Number) settings
 				.get(CfgKeys.SIM_MAX_PARAMETER_VALUE)).doubleValue());
-		setParameterStepSize(((Double) settings.get(CfgKeys.SPINNER_STEP_SIZE))
+		setParameterStepSize(((Number) settings.get(CfgKeys.SPINNER_STEP_SIZE))
 				.doubleValue());
 		/*
 		 * Computing
@@ -677,18 +677,18 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 				&& !dists[dist].getName().equals(name))
 			dist++;
 		setDistance(dist);
-		setMaxTime((Double) settings.get(CfgKeys.SIM_MAX_TIME));
-		double t1 = ((Double) settings.get(CfgKeys.SIM_START_TIME))
+		setMaxTime(((Number) settings.get(CfgKeys.SIM_MAX_TIME)).doubleValue());
+		double t1 = ((Number) settings.get(CfgKeys.SIM_START_TIME))
 				.doubleValue();
-		double t2 = ((Double) settings.get(CfgKeys.SIM_END_TIME)).doubleValue();
+		double t2 = ((Number) settings.get(CfgKeys.SIM_END_TIME)).doubleValue();
 		setSimulationStartTime(t1);
 		setSimulationEndTime(t2);
-		setSpinnerMaxValue(((Double) settings.get(CfgKeys.SPINNER_MAX_VALUE))
+		setSpinnerMaxValue(((Number) settings.get(CfgKeys.SPINNER_MAX_VALUE))
 				.doubleValue());
 		setStepsPerUnitTime(((Integer) settings
 				.get(CfgKeys.SIM_MAX_STEPS_PER_UNIT_TIME)).intValue());
 		setNumIntegrationSteps((int) Math.round((t2 - t1)
-				/ ((Double) settings.get(CfgKeys.SIM_STEP_SIZE)).doubleValue()));
+				/ ((Number) settings.get(CfgKeys.SIM_STEP_SIZE)).doubleValue()));
 		/*
 		 * Parsing
 		 */
