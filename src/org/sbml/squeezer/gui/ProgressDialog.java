@@ -27,7 +27,7 @@ import javax.swing.JProgressBar;
 
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.io.IOProgressListener;
+import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.squeezer.LawListener;
 
 /**

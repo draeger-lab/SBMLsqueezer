@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
  */
-package org.sbml.squeezer.math;
+package org.sbml.squeezer.test.math;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -20,6 +20,9 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.math.Distance;
+import org.sbml.squeezer.math.RSE;
+import org.sbml.squeezer.math.SBMLinterpreter;
 
 import au.com.bytecode.opencsv.CSVReader;
 import eva2.gui.Plot;

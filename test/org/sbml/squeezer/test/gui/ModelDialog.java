@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package org.sbml.squeezer.test.gui;
 
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -26,6 +26,7 @@ import java.util.Properties;
 import javax.swing.JDialog;
 
 import org.sbml.jsbml.Model;
+import org.sbml.squeezer.gui.SBMLModelSplitPane;
 
 /**
  * A dialog showing the structure of a model. Just for testing purposes.

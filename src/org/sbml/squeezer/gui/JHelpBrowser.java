@@ -21,13 +21,10 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -46,8 +43,7 @@ import org.sbml.squeezer.resources.Resource;
  * with two buttons for jumping forward or backward in the history of visited
  * pages.
  * 
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.0
  */
 public class JHelpBrowser extends JDialog implements ActionListener,
@@ -91,7 +87,7 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 		super(owner, title);
 		init("html/help.html");
 	}
-	
+
 	/**
 	 * 
 	 * @param owner
@@ -135,7 +131,8 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 
 	/**
 	 * Initialize this Window.
-	 * @param helpFile 
+	 * 
+	 * @param helpFile
 	 * 
 	 */
 	private void init(String helpFile) {
@@ -155,16 +152,12 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 		backButton.setEnabled(false);
 		toolbar.add(backButton);
 
-		try {
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/forward.png"));
-			// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-			nextButton = new JButton(new ImageIcon(image));
-			nextButton.setToolTipText("Next Page");
-		} catch (IOException e) {
+		Icon icon = GUITools.ICON_FORWARD;
+		if (icon != null)
+			nextButton = new JButton(icon);
+		else
 			nextButton = new JButton("Next");
-			e.printStackTrace();
-		}
+		nextButton.setToolTipText("Next Page");
 		nextButton.setName("next");
 		nextButton.addActionListener(this);
 		nextButton.setEnabled(false);
@@ -181,6 +174,13 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 		setLocationByPlatform(true);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.swing.event.HyperlinkListener#hyperlinkUpdate(javax.swing.event
+	 * .HyperlinkEvent)
+	 */
 	public void hyperlinkUpdate(HyperlinkEvent event) {
 		if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED
 				&& !backButton.isEnabled())

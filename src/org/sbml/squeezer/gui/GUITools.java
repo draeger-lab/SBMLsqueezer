@@ -27,7 +27,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashSet;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -44,7 +46,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 import org.sbml.squeezer.resources.Resource;
@@ -54,10 +55,8 @@ import org.sbml.squeezer.resources.Resource;
  * graphical user interfaces. It loads all icons that are required by the GUI
  * and provides methods for changing color and state of GUI elements.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @author Andreas Dr&auml;ger
+ * @author Hannes Borch
  * @since 1.3
  * @date 2009-09-04
  */
@@ -106,7 +105,7 @@ public class GUITools {
 	/**
 	 * 
 	 */
-	public static Image ICON_LEMON = null;
+	public static Image IMAGE_LEMON = null;
 	/**
 	 * 
 	 */
@@ -163,6 +162,10 @@ public class GUITools {
 	 * 
 	 */
 	public static Icon ICON_LICENCE_TINY = null;
+	/**
+	 * 
+	 */
+	public static Icon ICON_FORWARD = null;
 
 	/**
 	 * Generated serial version id.
@@ -170,92 +173,7 @@ public class GUITools {
 	private static final long serialVersionUID = 5662654607939013825L;
 
 	static {
-		try {
-			ICON_LEMON_TINY = new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/Lemon_tiny.png")));
-			ICON_LATEX_TINY = new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/SBML2LaTeX_vertical_tiny.png")));
-			ICON_LATEX_SMALL = new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/SBML2LaTeX_vertical_small.png")));
-			ICON_LEMON_SMALL = new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/Lemon_small.png")));
-			ICON_STABILITY_SMALL = new ImageIcon(ImageIO.read(Resource.class
-					.getResource("img/Stability_tiny.png")));
-			// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-			Image image = ImageIO.read(Resource.class
-					.getResource("img/rightarrow.png"));
-			ICON_RIGHT_ARROW = new ImageIcon(image.getScaledInstance(10, 10,
-					Image.SCALE_SMOOTH));
-			image = ImageIO.read(Resource.class
-					.getResource("img/downarrow.png"));
-			ICON_DOWN_ARROW = new ImageIcon(image.getScaledInstance(10, 10,
-					Image.SCALE_SMOOTH));
-			image = ImageIO.read(Resource.class
-					.getResource("img/logo_small.png")); // title_small.jpg
-			// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
-			ICON_LOGO_SMALL = new ImageIcon(image);
-			ICON_LEMON = ImageIO.read(Resource.class
-					.getResource("img/icon.png"));
-			ICON_HELP_TINY = new ImageIcon(Resource.class
-					.getResource("img/help_16.png"));
-			ICON_INFO_TINY = new ImageIcon(Resource.class
-					.getResource("img/info_16.png"));
-			ICON_TICK_TINY = new ImageIcon(Resource.class
-					.getResource("img/tick_16.png"));
-			ICON_LEFT_ARROW = new ImageIcon(Resource.class
-					.getResource("img/back.png"));
-			image = ImageIO.read(Resource.class.getResource("img/back.png"))
-					.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-			ICON_LEFT_ARROW_TINY = new ImageIcon(image);
-			ICON_DELETE = new ImageIcon(Resource.class
-					.getResource("img/delete_16.png"));
-			ICON_SAVE = UIManager.getIcon("FileView.floppyDriveIcon");
-			if (ICON_SAVE == null)
-				ICON_SAVE = new ImageIcon(Resource.class
-						.getResource("img/save_16.png"));
-			ICON_OPEN = UIManager.getIcon("FileView.directoryIcon");
-			if (ICON_OPEN == null)
-				ICON_OPEN = new ImageIcon(Resource.class
-						.getResource("img/folder_16.png"));
-			ICON_DIAGRAM_TINY = new ImageIcon(Resource.class
-					.getResource("img/diagram_16.png"));
-			ICON_TRASH_TINY = new ImageIcon(Resource.class
-					.getResource("img/trash_16.png"));
-			ICON_GEAR_TINY = new ImageIcon(Resource.class
-					.getResource("img/gear_16.png"));
-			ICON_PICTURE_TINY = new ImageIcon(Resource.class
-					.getResource("img/camera_16.png"));
-			ICON_SETTINGS_TINY = new ImageIcon(Resource.class
-					.getResource("img/settings_16.png"));
-			ICON_LICENCE_TINY = new ImageIcon(Resource.class
-					.getResource("img/licence_16.png"));
-			ICON_STRUCTURAL_MODELING_TINY = new ImageIcon(Resource.class
-					.getResource("img/steuer_icon.png"));
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, toHTML(e.getMessage(), 40), e
-					.getClass().getName(), JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
-		}
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException exc) {
-			JOptionPane.showMessageDialog(null, toHTML(exc.getMessage(), 40),
-					exc.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (InstantiationException exc) {
-			JOptionPane.showMessageDialog(null, toHTML(exc.getMessage(), 40),
-					exc.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (IllegalAccessException exc) {
-			JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		} catch (UnsupportedLookAndFeelException exc) {
-			JOptionPane.showMessageDialog(null, toHTML(exc.getMessage(), 40),
-					exc.getClass().getName(), JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
-		}
+		loadImages("org/sbml/squeezer/resources/img/");
 	}
 
 	/**
@@ -275,23 +193,6 @@ public class GUITools {
 					contains |= contains(c1, insight);
 			}
 		return contains;
-	}
-
-	/**
-	 * 
-	 * @param text
-	 * @param icon
-	 * @param listener
-	 * @param command
-	 * @param toolTip
-	 * @return
-	 */
-	public static JButton createButton(String text, Icon icon,
-			ActionListener listener, Object command, String toolTip) {
-		JButton button = createButton(icon, listener, command, toolTip);
-		if (text != null)
-			button.setText(text);
-		return button;
 	}
 
 	/**
@@ -316,6 +217,44 @@ public class GUITools {
 		if (toolTip != null)
 			button.setToolTipText(toHTML(toolTip, 40));
 		return button;
+	}
+
+	/**
+	 * 
+	 * @param text
+	 * @param icon
+	 * @param listener
+	 * @param command
+	 * @param toolTip
+	 * @return
+	 */
+	public static JButton createButton(String text, Icon icon,
+			ActionListener listener, Object command, String toolTip) {
+		JButton button = createButton(icon, listener, command, toolTip);
+		if (text != null)
+			button.setText(text);
+		return button;
+	}
+
+	/**
+	 * Creates and returns a JCheckBox with all the given properties.
+	 * 
+	 * @param label
+	 * @param selected
+	 * @param name
+	 *            The name for the component to be identifiable by the
+	 *            ItemListener
+	 * @param listener
+	 * @param toolTip
+	 * @return
+	 */
+	public static JCheckBox createJCheckBox(String label, boolean selected,
+			String name, ItemListener listener, String toolTip) {
+		JCheckBox chkbx = new JCheckBox(label, selected);
+		chkbx.setName(name);
+		chkbx.addItemListener(listener);
+		chkbx.setToolTipText(toHTML(toolTip, 40));
+		return chkbx;
 	}
 
 	/**
@@ -443,7 +382,117 @@ public class GUITools {
 	 * @return The dimension of the given icon.
 	 */
 	public static Dimension getDimension(Icon icon) {
-		return new Dimension(icon.getIconWidth(), icon.getIconHeight());
+		return icon == null ? new Dimension(0, 0) : new Dimension(icon
+				.getIconWidth(), icon.getIconHeight());
+	}
+
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	private static Icon loadIcon(String path) {
+		Image img = loadImage(path);
+		return img != null ? new ImageIcon(img) : null;
+	}
+
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
+	private static Image loadImage(String path) {
+		try {
+			String p = path.substring(path.indexOf("img"));
+			URL url = Resource.class.getResource(p);
+			return url != null ? ImageIO.read(Resource.class.getResource(path
+					.substring(path.indexOf("img")))) : ImageIO.read(new File(
+					path));
+		} catch (IOException exc) {
+			System.err.printf("Could not load image %s\n", path);
+			return null;
+		}
+	}
+
+	/**
+	 * Loads locale-specific resources: strings, images, et cetera
+	 * 
+	 * @param prefix
+	 * @throws IOException
+	 */
+	private static void loadImages(String prefix) {
+		ICON_FORWARD = loadIcon(prefix + "forward.png");
+		// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
+		ICON_LEMON_TINY = loadIcon(prefix + "Lemon_tiny.png");
+		ICON_LATEX_TINY = loadIcon(prefix + "SBML2LaTeX_vertical_tiny.png");
+		ICON_LATEX_SMALL = loadIcon(prefix + "SBML2LaTeX_vertical_small.png");
+		ICON_LEMON_SMALL = loadIcon(prefix + "Lemon_small.png");
+		ICON_STABILITY_SMALL = loadIcon(prefix + "Stability_tiny.png");
+		// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+		ICON_HELP_TINY = loadIcon(prefix + "help_16.png");
+		ICON_INFO_TINY = loadIcon(prefix + "info_16.png");
+		ICON_TICK_TINY = loadIcon(prefix + "tick_16.png");
+		ICON_LEFT_ARROW = loadIcon(prefix + "back.png");
+		ICON_DELETE = loadIcon(prefix + "delete_16.png");
+		ICON_DIAGRAM_TINY = loadIcon(prefix + "diagram_16.png");
+		ICON_TRASH_TINY = loadIcon(prefix + "trash_16.png");
+		ICON_GEAR_TINY = loadIcon(prefix + "gear_16.png");
+		ICON_PICTURE_TINY = loadIcon(prefix + "camera_16.png");
+		ICON_SETTINGS_TINY = loadIcon(prefix + "settings_16.png");
+		ICON_LICENCE_TINY = loadIcon(prefix + "licence_16.png");
+		ICON_STRUCTURAL_MODELING_TINY = loadIcon(prefix + "steuer_icon.png");
+		/*
+		 * Icons with default from the system
+		 */
+		ICON_SAVE = UIManager.getIcon("FileView.floppyDriveIcon");
+		if (ICON_SAVE == null) {
+			ICON_SAVE = loadIcon(prefix + "save_16.png");
+		}
+
+		try {
+			ResourceBundle resources = ResourceBundle
+					.getBundle("samples.resources.bundles.MetalEditResources");
+			String imagePath = resources.getString("images.path");
+			ICON_OPEN = new ImageIcon(Resource.class.getResource(imagePath
+					+ resources.getString("imageOpen")));
+		} catch (Exception e) {
+		}
+		// UIManager.getIcon("FileView.directoryIcon");
+		if (ICON_OPEN == null) {
+			ICON_OPEN = loadIcon(prefix + "folder_16.png");
+		}
+
+		/*
+		 * Icons to be read from image first.
+		 */
+		Image image = loadImage(prefix + "rightarrow.png");
+		ICON_RIGHT_ARROW = image != null ? new ImageIcon(image
+				.getScaledInstance(10, 10, Image.SCALE_SMOOTH)) : null;
+		image = loadImage(prefix + "downarrow.png");
+		ICON_DOWN_ARROW = image != null ? new ImageIcon(image
+				.getScaledInstance(10, 10, Image.SCALE_SMOOTH)) : null;
+		image = loadImage(prefix + "logo_small.png");
+		// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
+		ICON_LOGO_SMALL = image != null ? new ImageIcon(image) : null;
+		image = loadImage(prefix + "back.png");
+		ICON_LEFT_ARROW_TINY = image != null ? new ImageIcon(image
+				.getScaledInstance(16, 16, Image.SCALE_SMOOTH)) : null;
+
+		/*
+		 * Images
+		 */
+		IMAGE_LEMON = loadImage(prefix + "icon.png");
+	}
+
+	/**
+	 * 
+	 * @param parent
+	 * @param out
+	 * @return
+	 */
+	public static boolean overwriteExistingFile(Component parent, File out) {
+		return GUITools.overwriteExistingFileDialog(parent, out) == JOptionPane.YES_OPTION;
 	}
 
 	/**
@@ -459,16 +508,6 @@ public class GUITools {
 				+ " already exists. Do you really want to over write it?", 40),
 				"Over write existing file?", JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
-	}
-
-	/**
-	 * 
-	 * @param parent
-	 * @param out
-	 * @return
-	 */
-	public static boolean overwriteExistingFile(Component parent, File out) {
-		return GUITools.overwriteExistingFileDialog(parent, out) == JOptionPane.YES_OPTION;
 	}
 
 	/**
@@ -498,66 +537,6 @@ public class GUITools {
 				setAllEnabled((Container) children[i], enabled);
 			children[i].setEnabled(enabled);
 		}
-	}
-
-	/**
-	 * 
-	 * @param string
-	 * @return
-	 */
-	public static String toHTML(String string) {
-		return toHTML(string, Integer.MAX_VALUE);
-	}
-
-	/**
-	 * Returns a HTML formated String, in which each line is at most lineBreak
-	 * symbols long.
-	 * 
-	 * @param string
-	 * @param lineBreak
-	 * @return
-	 */
-	public static String toHTML(String string, int lineBreak) {
-		StringTokenizer st = new StringTokenizer(string != null ? string : "",
-				" ");
-		StringBuilder sb = new StringBuilder();
-		if (st.hasMoreElements())
-			sb.append(st.nextElement().toString());
-		int length = sb.length();
-		sb.insert(0, "<html><body>");
-		while (st.hasMoreElements()) {
-			if (length >= lineBreak && lineBreak < Integer.MAX_VALUE) {
-				sb.append("<br>");
-				length = 0;
-			} else
-				sb.append(' ');
-			String tmp = st.nextElement().toString();
-			length += tmp.length() + 1;
-			sb.append(tmp);
-		}
-		sb.append("</body></html>");
-		return sb.toString();
-	}
-
-	/**
-	 * Creates and returns a JCheckBox with all the given properties.
-	 * 
-	 * @param label
-	 * @param selected
-	 * @param name
-	 *            The name for the component to be identifiable by the
-	 *            ItemListener
-	 * @param listener
-	 * @param toolTip
-	 * @return
-	 */
-	public static JCheckBox createJCheckBox(String label, boolean selected,
-			String name, ItemListener listener, String toolTip) {
-		JCheckBox chkbx = new JCheckBox(label, selected);
-		chkbx.setName(name);
-		chkbx.addItemListener(listener);
-		chkbx.setToolTipText(toHTML(toolTip, 40));
-		return chkbx;
 	}
 
 	/**
@@ -618,26 +597,65 @@ public class GUITools {
 				}
 			}
 	}
-	
-	/**
-	 * 
-	 * @param state
-	 * @param toolbar
-	 * @param commands
-	 */
-	public static void setEnabled(boolean state, 
-			JToolBar toolbar, Object... commands) {
-		setEnabled(state, null, toolbar, commands);
-	}
-	
+
 	/**
 	 * 
 	 * @param state
 	 * @param menuBar
 	 * @param commands
 	 */
-	public static void setEnabled(boolean state, 
-			JMenuBar menuBar, Object... commands) {
+	public static void setEnabled(boolean state, JMenuBar menuBar,
+			Object... commands) {
 		setEnabled(state, menuBar, null, commands);
+	}
+
+	/**
+	 * 
+	 * @param state
+	 * @param toolbar
+	 * @param commands
+	 */
+	public static void setEnabled(boolean state, JToolBar toolbar,
+			Object... commands) {
+		setEnabled(state, null, toolbar, commands);
+	}
+
+	/**
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static String toHTML(String string) {
+		return toHTML(string, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Returns a HTML formated String, in which each line is at most lineBreak
+	 * symbols long.
+	 * 
+	 * @param string
+	 * @param lineBreak
+	 * @return
+	 */
+	public static String toHTML(String string, int lineBreak) {
+		StringTokenizer st = new StringTokenizer(string != null ? string : "",
+				" ");
+		StringBuilder sb = new StringBuilder();
+		if (st.hasMoreElements())
+			sb.append(st.nextElement().toString());
+		int length = sb.length();
+		sb.insert(0, "<html><body>");
+		while (st.hasMoreElements()) {
+			if (length >= lineBreak && lineBreak < Integer.MAX_VALUE) {
+				sb.append("<br>");
+				length = 0;
+			} else
+				sb.append(' ');
+			String tmp = st.nextElement().toString();
+			length += tmp.length() + 1;
+			sb.append(tmp);
+		}
+		sb.append("</body></html>");
+		return sb.toString();
 	}
 }
