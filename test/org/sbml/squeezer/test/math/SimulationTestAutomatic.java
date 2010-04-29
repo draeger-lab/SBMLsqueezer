@@ -93,8 +93,8 @@ public class SimulationTestAutomatic {
 			SBMLio sbmlIo = new SBMLio(new LibSBMLReader(), new LibSBMLWriter());
 
 			try {
-				Model model = sbmlIo.readModel(sbmlfile);
-
+				Model model = sbmlIo.convert2Model(sbmlfile);
+				
 				// RKSolver rk = new RKSolver();
 				RKEventSolver rk = new RKEventSolver();
 
