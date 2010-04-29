@@ -533,9 +533,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @param changeRate
 	 */
 	private void evaluateAlgebraicRule(AlgebraicRule ar) {
+			AlgebraicRuleConverter arc = new AlgebraicRuleConverter(model);
+			arc.getAssignmentRules();
 
-		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(model);
-		arc.getAssignmentRule(ar);
 
 	}
 
