@@ -32,6 +32,8 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.RateRule;
@@ -59,14 +61,15 @@ public class AlgebraicRuleConverter {
 	 */
 	private interface Node {
 		/**
-		 * 
+		 * Adds a node to the list of nodes (creates an edge from this node to
+		 * another one)
 		 * 
 		 * @param node
 		 */
 		public void addNode(Node node);
 
 		/**
-		 * 
+		 * Returns the next node in the list of nodes
 		 * 
 		 * @return
 		 */
@@ -80,6 +83,7 @@ public class AlgebraicRuleConverter {
 		public void deleteNode(Node node);
 
 		/**
+		 * Returns the value of this node
 		 * 
 		 * @return
 		 */
@@ -87,8 +91,8 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * This Class represents an inner node in the bipartite graph, e.g.
-	 * a varibale or an reaction
+	 * This Class represents an inner node in the bipartite graph, e.g. a
+	 * varibale or an reaction
 	 * 
 	 * @author Alexander D&ouml;rr
 	 * @since 1.4
@@ -334,6 +338,10 @@ public class AlgebraicRuleConverter {
 	/**
 	 * 
 	 */
+	private HashMap<String, Node> equationHash;
+	/**
+	 * 
+	 */
 	private List<Node> variables;
 	/**
 	 * 
@@ -374,7 +382,7 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * 
+	 * Initializes the Converter
 	 */
 	private void init() {
 		this.svariables = new ArrayList<String>();
@@ -397,21 +405,17 @@ public class AlgebraicRuleConverter {
 
 		buildGraph();
 		buildMatching();
-		
-		System.out.println(matching.size());
-		
-		for (int i = 0; i < matching.size(); i++) {
-			
-		}
+
 	}
 
 	/**
-	 * 
+	 * Build the bipartite graph
 	 */
 	private void buildGraph() {
 		equations = new ArrayList<Node>();
 		variables = new ArrayList<Node>();
 		variableHash = new HashMap<String, Node>();
+		equationHash = new HashMap<String, Node>();
 		Node equation, variable;
 		int i;
 
@@ -456,12 +460,21 @@ public class AlgebraicRuleConverter {
 					variable = variableHash.get(sref.getSpeciesInstance()
 							.getId());
 					if (!sref.getSpeciesInstance().getHasOnlySubstanceUnits()) {
-						equation = new InnerNode(sref.getSpeciesInstance()
+
+						equation = equationHash.get(sref.getSpeciesInstance()
 								.getId());
-						equations.add(equation);
-						// link
-						variable.addNode(equation);
-						equation.addNode(variable);
+						if (equation == null) {
+							equation = new InnerNode(sref.getSpeciesInstance()
+									.getId());
+							equations.add(equation);
+							equationHash.put(sref.getSpeciesInstance().getId(),
+									equation);
+							// link
+							variable.addNode(equation);
+							equation.addNode(variable);
+							variableHash.put(variable.getValue(), variable);
+
+						}
 
 					}
 				}
@@ -474,17 +487,25 @@ public class AlgebraicRuleConverter {
 					variable = variableHash.get(sref.getSpeciesInstance()
 							.getId());
 					if (!sref.getSpeciesInstance().getHasOnlySubstanceUnits()) {
-						equation = new InnerNode(sref.getSpeciesInstance()
+
+						equation = equationHash.get(sref.getSpeciesInstance()
 								.getId());
-						equations.add(equation);
-						// link
-						variable.addNode(equation);
-						equation.addNode(variable);
-						variableHash.put(variable.getValue(), variable);
+						if (equation == null) {
+							equation = new InnerNode(sref.getSpeciesInstance()
+									.getId());
+							equations.add(equation);
+							equationHash.put(sref.getSpeciesInstance().getId(),
+									equation);
+							// link
+							variable.addNode(equation);
+							equation.addNode(variable);
+							variableHash.put(variable.getValue(), variable);
+
+						}
 					}
 				}
 			}
-
+			// link reaction with its kinetic law
 			equation = new InnerNode(r.getId());
 			equations.add(equation);
 			variable = variableHash.get(equation.getValue());
@@ -494,7 +515,8 @@ public class AlgebraicRuleConverter {
 			equation.addNode(variable);
 
 			svariables.clear();
-			getVariables(r.getKineticLaw().getMath(), svariables);
+			getVariables(r.getKineticLaw().getListOfParameters(), r
+					.getKineticLaw().getMath(), svariables);
 			for (int j = 0; j < svariables.size(); j++) {
 				variable = variableHash.get(svariables.get(j));
 				if (variable != null) {
@@ -505,28 +527,12 @@ public class AlgebraicRuleConverter {
 
 		}
 
-		// Create vertices and edges for rules
+		// Create vertices and edges for assignment and rate rules
 		for (i = 0; i < model.getNumRules(); i++) {
 			equation = new InnerNode(model.getRule(i).getMetaId());
-			equations.add(equation);
 			Rule r = model.getRule(i);
-			if (r instanceof AlgebraicRule) {
-				// all identifiers withn the MathML of this AlgebraicRule
-				svariables.clear();
-				getVariables(model.getRule(i).getMath(), svariables);
-
-				for (int j = 0; j < svariables.size(); j++) {
-					variable = variableHash.get(svariables.get(j));
-					if (variable != null) {
-						variable.addNode(equation);
-						equation.addNode(variable);
-
-					}
-					
-					
-				}
-			} else if (r instanceof RateRule) {
-
+			if (r instanceof RateRule) {
+				equations.add(equation);
 				variable = variableHash.get(((RateRule) r)
 						.getVariableInstance().getId());
 				// link
@@ -535,7 +541,7 @@ public class AlgebraicRuleConverter {
 			}
 
 			else if (r instanceof AssignmentRule) {
-
+				equations.add(equation);
 				variable = variableHash.get(((AssignmentRule) r)
 						.getVariableInstance().getId());
 				// link
@@ -543,7 +549,7 @@ public class AlgebraicRuleConverter {
 				equation.addNode(variable);
 
 				svariables.clear();
-				getVariables(model.getRule(i).getMath(), svariables);
+				getVariables(null, model.getRule(i).getMath(), svariables);
 
 				for (int j = 0; j < svariables.size(); j++) {
 					variable = variableHash.get(svariables.get(j));
@@ -554,12 +560,33 @@ public class AlgebraicRuleConverter {
 					}
 				}
 			}
+		}
 
+		// Create vertices and edges for algebraic rules
+		for (i = 0; i < model.getNumRules(); i++) {
+			equation = new InnerNode(model.getRule(i).getMetaId());
+			Rule r = model.getRule(i);
+			if (r instanceof AlgebraicRule) {
+				equations.add(equation);
+				// all identifiers withn the MathML of this AlgebraicRule
+				svariables.clear();
+				getVariables(null, model.getRule(i).getMath(), svariables);
+
+				for (int j = 0; j < svariables.size(); j++) {
+					variable = variableHash.get(svariables.get(j));
+					if (variable != null) {
+						variable.addNode(equation);
+						equation.addNode(variable);
+
+					}
+
+				}
+			}
 		}
 	}
 
 	/**
-	 * 
+	 * Build the maximum matching
 	 */
 	private void buildMatching() {
 		bipartiteGraph = new StartNode();
@@ -581,9 +608,10 @@ public class AlgebraicRuleConverter {
 		stack.push(bipartiteGraph);
 
 		while (!stack.isEmpty()) {
-			
+
 			if (stack.peek().getNextNode() != null) {
 				first = stack.peek().getNextNode();
+				System.out.println(first.getValue());
 
 				if (!B.contains(first)) {
 
@@ -600,16 +628,17 @@ public class AlgebraicRuleConverter {
 							last = stack.pop();
 							matching.add(new Match(stack.pop().getValue(), last
 									.getValue()));
-
 						}
 					}
 
+				} else {
+
+					stack.peek().deleteNode(first);
+					first.deleteNode(stack.peek());
+
 				}
 
-				else
-					stack.pop();
-			}
-			else
+			} else
 				stack.pop();
 
 		}
@@ -621,20 +650,21 @@ public class AlgebraicRuleConverter {
 	 * @param ar
 	 * @return
 	 */
-	public AssignmentRule getAssignmentRule(AlgebraicRule ar) {
+	public List<AssignmentRule> getAssignmentRules() {
+		if (matching != null) {
+			System.out.println("size: " + matching.size());
 
-		getVariables(ar.getMath(), svariables);
-		this.symbol = getUnknownQuantity(svariables, reactants);
+			for (Match match : matching) {
 
-		boolean stay = chooseSide(ar.getMath());
+				System.out.println(match.getReaction() + " -> "
+						+ match.getVariable());
+			}
+		}
 
-		// System.out.println(stay);
+		else
+			System.out.println("No matching found");
 
-		// System.out.println(symbol);
-
-		AssignmentRule as = new AssignmentRule(new Species(symbol, 1, 1));
-
-		return as;
+		return null;
 	}
 
 	/**
@@ -691,51 +721,32 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * Returns the variables in a MathML object
+	 * Returns the variables in a MathML object without local parameter
+	 * 
+	 * @param param
 	 * 
 	 * @param node
 	 * @param variables
 	 */
-	private void getVariables(ASTNode node, List<String> variables) {
-		if (node.isName()) {
-			variables.add(node.getName());
+	private void getVariables(ListOf<LocalParameter> param, ASTNode node,
+			List<String> variables) {
+		if (node.isName() && !node.isFunction()) {
+			if (param == null)
+				variables.add(node.getName());
+			else {
+				if (!param.contains(node.getName())) {
+					variables.add(node.getName());
+				}
+
+			}
+
 		} else {
 			Enumeration<TreeNode> nodes = node.children();
 			while (nodes.hasMoreElements()) {
-				getVariables((ASTNode) nodes.nextElement(), variables);
+				getVariables(param, (ASTNode) nodes.nextElement(), variables);
 			}
 		}
 
 	}
 
-	/**
-	 * 
-	 * @param variables
-	 * @return
-	 */
-	private String getUnknownQuantity(List<String> variables,
-			Set<String> reactants) {
-		for (String string : variables) {
-			Symbol s;
-			s = model.getSpecies(string);
-
-			if (s instanceof Species) {
-				if (!((Species) s).isSetInitialAmount()
-						&& !((Species) s).isSetInitialConcentration())
-					return string;
-
-				if (!reactants.contains(string))
-					return string;
-
-			}
-
-			if (s instanceof Parameter) {
-				if (!((Parameter) s).isSetValue())
-					return string;
-			}
-
-		}
-
-		return null;
-	}
 }
