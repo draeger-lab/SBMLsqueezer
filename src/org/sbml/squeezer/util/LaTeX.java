@@ -735,13 +735,15 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		if (fun != null) {
 			value.append(mathtt(LaTeX.maskSpecialChars(fun.getId())));
 			length = args.length;
-		} else
+		} else {
 			length = args.length - 1;
+		}
 		StringBuffer argList = new StringBuffer();
 
-		for (int i = 0; i < args.length - 1; i++) {
-			if (i > 0)
+		for (int i = 0; i < length; i++) {
+			if (i > 0) {
 				argList.append(", ");
+			}
 			argList.append(args[i]);
 		}
 		value.append(brackets(argList));

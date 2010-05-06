@@ -37,6 +37,10 @@ public enum CfgKeys {
 	 */
 	CSV_FILES_OPEN_DIR,
 	/**
+	 * A comma-separated file to be opened.
+	 */
+	CSV_FILE,
+	/**
 	 * The character that is used to quote strings inside of comma separated
 	 * value files.
 	 */

@@ -536,9 +536,27 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * 
 	 */
 	public SimulationDialog showSimulationControl(boolean modal) {
+		return showSimulationControl(modal, null);
+	}
+
+	/**
+	 * 
+	 * @param modal
+	 * @param csvFile
+	 */
+	public SimulationDialog showSimulationControl(boolean modal, String csvFile) {
 		Model model = sbmlIO.getSelectedModel();
 		if (model != null) {
 			SimulationDialog d = new SimulationDialog(this, model, settings);
+			if (csvFile != null)
+				try {
+					d.openExperimentalData(csvFile);
+				} catch (IOException exc) {
+					exc.printStackTrace();
+					JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+							.getClass().getSimpleName(),
+							JOptionPane.ERROR_MESSAGE);
+				}
 			setEnabled(false, Command.SIMULATE);
 			d.addWindowListener(this);
 			d.setModal(modal);
