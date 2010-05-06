@@ -32,6 +32,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
@@ -538,6 +539,19 @@ public class AlgebraicRuleConverter {
 				// link
 				variable.addNode(equation);
 				equation.addNode(variable);
+
+				// -- self creation
+				svariables.clear();
+				getVariables(null, model.getRule(i).getMath(), svariables);
+				for (int j = 0; j < svariables.size(); j++) {
+					variable = variableHash.get(svariables.get(j));
+					if (variable != null) {
+						variable.addNode(equation);
+						equation.addNode(variable);
+
+					}
+				}
+				// --
 			}
 
 			else if (r instanceof AssignmentRule) {
@@ -550,7 +564,6 @@ public class AlgebraicRuleConverter {
 
 				svariables.clear();
 				getVariables(null, model.getRule(i).getMath(), svariables);
-
 				for (int j = 0; j < svariables.size(); j++) {
 					variable = variableHash.get(svariables.get(j));
 					if (variable != null) {
@@ -611,8 +624,6 @@ public class AlgebraicRuleConverter {
 
 			if (stack.peek().getNextNode() != null) {
 				first = stack.peek().getNextNode();
-				System.out.println(first.getValue());
-
 				if (!B.contains(first)) {
 
 					stack.peek().deleteNode(first);
@@ -664,7 +675,77 @@ public class AlgebraicRuleConverter {
 		else
 			System.out.println("No matching found");
 
+		System.out.println("--------------------------");
+
+		for (int i = 0; i < model.getNumRules(); i++) {
+			Rule r = model.getRule(i);
+			if (r instanceof AlgebraicRule) {
+				AlgebraicRule ar = (AlgebraicRule) r;
+				System.out.println(ar.getMetaId());
+				System.out.println(ar.getFormula());
+				ASTNode node = ar.getMath().clone();
+				substituteFunctions(node, 0);
+								
+				System.out.println(node.toFormula());		
+				
+				//createAssignmentRule(Node)
+
+			}
+		}
+
 		return null;
+	}
+
+	/**
+	 * Replaces all functions in the given ASTNode with the function definition
+	 * 
+	 * @param node
+	 * @param indexParent
+	 */
+	private void substituteFunctions(ASTNode node, int indexParent) {
+		if (node.isName()) {
+		FunctionDefinition fd = model.getFunctionDefinition(node.getName());
+		if (fd != null) {
+			ASTNode function = fd.getMath();
+			HashMap<String, String> varibales = new HashMap<String, String>();				
+			ASTNode parent;
+			
+			for (int i = 0; i < node.getNumChildren(); i++) {
+				varibales.put(function.getChild(i).getName(), node.getChild(i).getName());				
+				parent = (ASTNode) node.getParent();				
+				parent.replaceChild(indexParent, function.getRightChild().clone());				
+				replaceNames(parent.getChild(indexParent), varibales);	
+			}			
+		}
+
+		} else {
+			for (int i = 0; i < node.getNumChildren(); i++) {	
+				node.getChild(i).setParent(node);
+				substituteFunctions(node.getChild(i), i);
+			}	
+		}
+
+	}
+	
+	/**
+	 * Replaces the names of given ASTNode's childern with the value stored in the given HashMap
+	 * if there is an entry in the HashMap
+	 * 
+	 * 
+	 * @param node
+	 * @param varibales
+	 */
+	private void replaceNames(ASTNode node, HashMap<String, String> varibales ){
+		if (node.isName()) {
+			if (varibales.get(node.getName()) != null) {
+				node.setName(varibales.get(node.getName()));
+			}
+		}
+		
+		for (int i = 0; i < node.getNumChildren(); i++) {	
+			node.getChild(i).setParent(node);
+			replaceNames(node.getChild(i), varibales);
+		}	
 	}
 
 	/**
@@ -731,13 +812,15 @@ public class AlgebraicRuleConverter {
 	private void getVariables(ListOf<LocalParameter> param, ASTNode node,
 			List<String> variables) {
 		if (node.isName() && !node.isFunction()) {
-			if (param == null)
-				variables.add(node.getName());
-			else {
-				if (!param.contains(node.getName())) {
+			if (!node.isConstant()) {
+				if (param == null)
 					variables.add(node.getName());
-				}
+				else {
+					if (!param.contains(node.getName())) {
+						variables.add(node.getName());
+					}
 
+				}
 			}
 
 		} else {
