@@ -231,23 +231,26 @@ public class SBMLMatrixParser {
 
 		iA = m.getSpecies(msr.getSpecies()).getInitialAmount();
 		// evaluate reaction with normal amount
-		normal = sbmli.evaluateToDouble(reac.getKineticLaw().getMath());
+		normal = sbmli.evaluateToDouble(reac.getKineticLaw().getMath().compile(
+				sbmli));
 
 		// evaluate reaction with half of the normal amount
 		m.getSpecies(msr.getSpecies()).setInitialAmount(iA / 2);
 		sbmli = new SBMLinterpreter(m);
-		half = sbmli.evaluateToDouble(reac.getKineticLaw().getMath());
+		half = sbmli.evaluateToDouble(reac.getKineticLaw().getMath().compile(
+				sbmli));
 
 		// evaluate reaction with twice the normal amount
 		m.getSpecies(msr.getSpecies()).setInitialAmount(iA * 2);
 		sbmli = new SBMLinterpreter(m);
-		twice = sbmli.evaluateToDouble(reac.getKineticLaw().getMath());
+		twice = sbmli.evaluateToDouble(reac.getKineticLaw().getMath().compile(
+				sbmli));
 
 		if (half < normal && normal < twice)
 			result = 1;
 		else if (half > normal && normal > twice)
 			result = -1;
-		
+
 		m.getSpecies(msr.getSpecies()).setInitialAmount(iA);
 
 		return result;
@@ -257,7 +260,7 @@ public class SBMLMatrixParser {
 	 * Adds SBOTerms to all modifiers hashed in the HashMap sBOTerms because
 	 * their SBOTerm hasn't been set yet
 	 */
-	//TODO noch n�tig?
+	// TODO noch n�tig?
 	private void setSBOTerms() {
 		HashMap<Integer, Integer> sBOReaction;
 		Model m = doc.getModel();

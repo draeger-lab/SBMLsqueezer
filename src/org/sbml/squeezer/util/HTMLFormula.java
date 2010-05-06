@@ -34,6 +34,7 @@ import java.util.Vector;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
+import org.sbml.jsbml.ASTNodeValue;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.NamedSBaseWithDerivedUnit;
@@ -95,438 +96,7 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return HTMLFormula.pow(times, Integer.valueOf(u.getExponent())).toString();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#abs(org.sbml.jsbml.ASTNode)
-	 */
-	public Object abs(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#and(org.sbml.jsbml.ASTNode[])
-	 */
-	public Object and(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arccos(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arccos(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arccosh(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arccosh(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arccot(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arccot(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arccoth(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arccoth(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsc(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arccsc(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsch(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arccsch(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsec(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arcsec(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsech(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arcsech(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsin(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arcsin(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsinh(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arcsinh(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arctan(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arctan(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#arctanh(org.sbml.jsbml.ASTNode)
-	 */
-	public Object arctanh(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#ceiling(org.sbml.jsbml.ASTNode)
-	 */
-	public Object ceiling(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.Compartment)
-	 */
-	public Object compile(Compartment c) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double)
-	 */
-	public Object compile(double real) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(int)
-	 */
-	public Object compile(int integer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(org.sbml.jsbml.NamedSBaseWithDerivedUnit)
-	 */
-	public Object compile(NamedSBaseWithDerivedUnit variable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(java.lang.String)
-	 */
-	public Object compile(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#cos(org.sbml.jsbml.ASTNode)
-	 */
-	public Object cos(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#cosh(org.sbml.jsbml.ASTNode)
-	 */
-	public Object cosh(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#cot(org.sbml.jsbml.ASTNode)
-	 */
-	public Object cot(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#coth(org.sbml.jsbml.ASTNode)
-	 */
-	public Object coth(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#csc(org.sbml.jsbml.ASTNode)
-	 */
-	public Object csc(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#csch(org.sbml.jsbml.ASTNode)
-	 */
-	public Object csch(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(org.sbml.jsbml.ASTNode, double)
-	 */
-	public Object delay(ASTNode x, double d) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#exp(org.sbml.jsbml.ASTNode)
-	 */
-	public Object exp(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#factorial(org.sbml.jsbml.ASTNode)
-	 */
-	public Object factorial(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#floor(org.sbml.jsbml.ASTNode)
-	 */
-	public Object floor(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Object frac(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(int, int)
-	 */
-	public Object frac(int numerator, int denominator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#function(org.sbml.jsbml.FunctionDefinition
-	 * , org.sbml.jsbml.ASTNode[])
-	 */
-	public Object function(FunctionDefinition namedSBase, ASTNode... args) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantE()
-	 */
-	public Object getConstantE() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantFalse()
-	 */
-	public Object getConstantFalse() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantPi()
-	 */
-	public Object getConstantPi() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantTrue()
-	 */
-	public Object getConstantTrue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#getNegativeInfinity()
-	 */
-	public Object getNegativeInfinity() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#getPositiveInfinity()
-	 */
-	public Object getPositiveInfinity() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#lambda(org.sbml.jsbml.ASTNode[])
-	 */
-	public Object lambda(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNode)
-	 */
-	public Object ln(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode)
-	 */
-	public Object log(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Object log(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -534,259 +104,6 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#minus(org.sbml.jsbml.ASTNode[])
 	 */
 	public Object minus(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#not(org.sbml.jsbml.ASTNode)
-	 */
-	public Object not(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#or(org.sbml.jsbml.ASTNode[])
-	 */
-	public Object or(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#piecewise(org.sbml.jsbml.ASTNode[])
-	 */
-	public Object piecewise(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#plus(org.sbml.jsbml.ASTNode[])
-	 */
-	public Object plus(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Object pow(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#relationEqual(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Object relationEqual(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationGreaterEqual(org.sbml.jsbml.ASTNode
-	 * , org.sbml.jsbml.ASTNode)
-	 */
-	public Object relationGreaterEqual(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationGreaterThan(org.sbml.jsbml.ASTNode
-	 * , org.sbml.jsbml.ASTNode)
-	 */
-	public Object relationGreaterThan(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationLessEqual(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Object relationLessEqual(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationLessThan(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Object relationLessThan(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#relationNotEqual(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Object relationNotEqual(ASTNode left, ASTNode right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#root(org.sbml.jsbml.ASTNode,
-	 * org.sbml.jsbml.ASTNode)
-	 */
-	public Object root(ASTNode rootExponent, ASTNode radiant) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
-	 */
-	public Object sec(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNode)
-	 */
-	public Object sech(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sin(org.sbml.jsbml.ASTNode)
-	 */
-	public Object sin(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sinh(org.sbml.jsbml.ASTNode)
-	 */
-	public Object sinh(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#sqrt(org.sbml.jsbml.ASTNode)
-	 */
-	public Object sqrt(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#symbolTime(java.lang.String)
-	 */
-	public Object symbolTime(String time) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#tan(org.sbml.jsbml.ASTNode)
-	 */
-	public Object tan(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#tanh(org.sbml.jsbml.ASTNode)
-	 */
-	public Object tanh(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#times(org.sbml.jsbml.ASTNode[])
-	 */
-	public Object times(ASTNode... nodes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#uiMinus(org.sbml.jsbml.ASTNode)
-	 */
-	public Object uiMinus(ASTNode node) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#unknownASTNode()
-	 */
-	public Object unknownASTNode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#xor(org.sbml.jsbml.ASTNode[])
-	 */
-	public Object xor(ASTNode... nodes) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -868,6 +185,352 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		for (int count = 1; count < vsb.size(); count++)
 			append(equation, op, vsb.get(count));
 		return equation;
+	}
+
+	public ASTNodeValue abs(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue and(ASTNodeValue... values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arccos(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arccosh(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arccot(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arccoth(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arccsc(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arccsch(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arcsec(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arcsech(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arcsin(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arcsinh(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arctan(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue arctanh(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue ceiling(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue compile(Compartment c) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue compile(double real) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue compile(int integer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue compile(NamedSBaseWithDerivedUnit variable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue compile(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue cos(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue cosh(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue cot(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue coth(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue csc(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue csch(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue delay(ASTNodeValue x, double d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue equal(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue exp(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue factorial(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue floor(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue frac(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue frac(int numerator, int denominator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue function(FunctionDefinition namedSBase,
+			ASTNodeValue... args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue getConstantE() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue getConstantFalse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue getConstantPi() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue getConstantTrue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue getNegativeInfinity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue getPositiveInfinity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue greaterEqual(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue greaterThan(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue lambda(ASTNodeValue... values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue lessEqual(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue lessThan(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue ln(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue log(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue log(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue minus(ASTNodeValue... values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue not(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue notEqual(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue or(ASTNodeValue... values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue piecewise(ASTNodeValue... values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue plus(ASTNodeValue... values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue pow(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue root(ASTNodeValue rootExponent, ASTNodeValue radiant) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue root(double rootExponent, ASTNodeValue radiant) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue sec(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue sech(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue sin(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue sinh(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue sqrt(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue symbolTime(String time) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue tan(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue tanh(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue times(ASTNodeValue... values) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue uiMinus(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue unknownValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue xor(ASTNodeValue... values) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
