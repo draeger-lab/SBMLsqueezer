@@ -232,6 +232,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private double maxSpeciesValue;
 
+	/**
+	 * 
+	 */
 	private double maxSpinVal = 1E10;
 
 	/**
@@ -304,13 +307,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private JComboBox solvers;
 
-	private SpinnerNumberModel[] spinModSymbol;
-
 	/**
-	 * Step size of the simulator
+	 * 
 	 */
-	private double stepSize;
-
+	private SpinnerNumberModel[] spinModSymbol;
 	/**
 	 * The spinner to change the number of integration steps.
 	 */
@@ -533,8 +533,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 						.isSelected());
 				tabbedPane.setEnabledAt(2, true);
 				GUITools.setEnabled(false, toolbar, Command.OPEN_DATA);
-				distField.setText(Double.toString(computeDistance(model,
-						stepSize)));
+				distField.setText(Double.toString(computeDistance(model, solver
+						.getStepSize())));
 				distField.setEditable(false);
 				distField.setEnabled(true);
 			} catch (IOException exc) {
@@ -563,7 +563,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		plot(readCSVFile(file), false, showLegend.isSelected());
 		tabbedPane.setEnabledAt(2, true);
 		GUITools.setEnabled(false, toolbar, Command.OPEN_DATA);
-		distField.setText(Double.toString(computeDistance(model, stepSize)));
+		distField.setText(Double.toString(computeDistance(model, solver
+				.getStepSize())));
 		distField.setEditable(false);
 		distField.setEnabled(true);
 	}
@@ -575,35 +576,6 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		try {
 			SettingsPanelSimulation ps = new SettingsPanelSimulation();
 			ps.setProperties(getProperties());
-			// // Plot
-			// ps.setLogScale(logScale.isSelected());
-			// ps.setShowGrid(showGrid.isSelected());
-			// ps.setShowLegend(showLegend.isSelected());
-			//
-			// // Scan
-			// ps.setMaxCompartmentValue(maxCompartmentValue);
-			// ps.setMaxParameterValue(maxParameterValue);
-			// ps.setMaxSpeciesValue(maxSpeciesValue);
-			// ps.setParameterStepSize(paramStepSize);
-			//
-			// // Computing
-			// ps.setSolver(solvers.getSelectedIndex());
-			// ps.setDistance(distanceFunc);
-			// ps.setMaxTime(maxTime);
-			// ps.setSimulationStartTime(((Double)
-			// t1.getValue()).doubleValue());
-			// ps.setSimulationEndTime(((Double) t2.getValue()).doubleValue());
-			// ps.setSpinnerMaxValue(maxSpinVal);
-			// ps.setStepsPerUnitTime(maxStepsPerUnit);
-			// ps.setNumIntegrationSteps(((Integer) stepsModel.getValue())
-			// .intValue());
-			//
-			// // Parsing
-			// ps.setOpenDir(openDir);
-			// ps.setSaveDir(saveDir);
-			// ps.setQuoteChar(quoteChar);
-			// ps.setSeparatorChar(separatorChar);
-
 			SettingsDialog dialog = new SettingsDialog("Simulatin Preferences");
 			Properties p = new Properties();
 			if (dialog.showSettingsDialog(getProperties(), ps) == SettingsDialog.APPROVE_OPTION) {
@@ -611,46 +583,6 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					p.put(key, dialog.getSettings().get(key));
 				setProperties(p);
 			}
-			//
-			// // Plot
-			// logScale.setSelected(ps.getLogScale());
-			// showGrid.setSelected(ps.getShowGrid());
-			// showLegend.setSelected(ps.getShowLegend());
-			//
-			// // Scan
-			// maxCompartmentValue = ps.getMaxCompartmentValue();
-			// maxParameterValue = ps.getMaxParameterValue();
-			// maxSpeciesValue = ps.getMaxSpeciesValue();
-			// paramStepSize = ps.getParameterStepSize();
-			// for (int i = 0; i < spinModSymbol.length; i++) {
-			// if (i < model.getNumCompartments())
-			// spinModSymbol[i].setMaximum(Double
-			// .valueOf(maxCompartmentValue));
-			// else if (i - model.getNumCompartments() < model.getNumSpecies())
-			// spinModSymbol[i]
-			// .setMaximum(Double.valueOf(maxSpeciesValue));
-			// else
-			// spinModSymbol[i].setMaximum(Double
-			// .valueOf(maxParameterValue));
-			// spinModSymbol[i].setStepSize(Double.valueOf(paramStepSize));
-			// }
-			//
-			// // Computing
-			// solvers.setSelectedIndex(ps.getSolver());
-			// distanceFunc = ps.getDistance();
-			// maxTime = ps.getMaxTime();
-			// t1.setValue(ps.getSimulationStartTime());
-			// t2.setValue(Double.valueOf(ps.getSimulationEndTime()));
-			// maxSpinVal = ps.getSpinnerMaxValue();
-			// maxStepsPerUnit = ps.getStepsPerUnitTime();
-			// stepsModel.setValue(Integer.valueOf(ps.getNumIntegrationSteps()));
-			//
-			// // Parsing
-			// openDir = ps.getOpenDir();
-			// saveDir = ps.getSaveDir();
-			// quoteChar = ps.getQuoteChar();
-			// separatorChar = ps.getSeparatorChar();
-
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
@@ -710,7 +642,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		endTime.setName("t2");
 		double t1val = ((Double) t1.getValue()).doubleValue();
 		double t2val = ((Double) t2.getValue()).doubleValue();
-		int val = (int) Math.round((t2val - t1val) / stepSize);
+		int val = (int) Math.round((t2val - t1val) / solver.getStepSize());
 		int min = 1;
 		int max = (int) Math.round((t2val - t1val) * maxStepsPerUnit);
 		int steps = 1;
@@ -739,8 +671,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		}
 		distFun = new JComboBox(distances);
 		distFun.setName("distfun");
-		distFun.addItemListener(this);
 		distFun.setSelectedItem(distanceFunc);
+		distFun.addItemListener(this);
 		distField = new JFormattedTextField(new NumberFormatter());
 		distField.setEnabled(false);
 		dSet.add(distFun);
@@ -864,7 +796,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		p.put(CfgKeys.SIM_MAX_TIME, this.maxTime);
 		p.put(CfgKeys.SIM_START_TIME, (Double) t1.getValue());
 		p.put(CfgKeys.SIM_END_TIME, (Double) t2.getValue());
-		p.put(CfgKeys.SIM_STEP_SIZE, Double.valueOf(stepSize));
+		p.put(CfgKeys.SIM_STEP_SIZE, Double.valueOf(solver.getStepSize()));
 		p.put(CfgKeys.SIM_MAX_COMPARTMENT_SIZE, Double
 				.valueOf(maxCompartmentValue));
 		p.put(CfgKeys.SIM_MAX_SPECIES_VALUE, Double.valueOf(maxSpeciesValue));
@@ -1122,7 +1054,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 							.getConstructor().newInstance();
 					if (expTable.getRowCount() > 0)
 						distField.setText(Double.toString(computeDistance(
-								model, stepSize)));
+								model, solver.getStepSize())));
 					distField.setEditable(false);
 					distField.setEnabled(true);
 				} catch (Exception exc) {
@@ -1233,21 +1165,35 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			int i, j;
 			short numNumbers = 0;
 			String names[] = input.get(0);
-			for (i = 0; i < names.length; i++)
+			for (i = 0; i < names.length; i++) {
 				try {
 					numNumbers++;
 					Double.parseDouble(names[i]);
 				} catch (NumberFormatException exc) {
 					numNumbers--;
 				}
+			}
 			Hashtable<String, Integer> problems = new Hashtable<String, Integer>();
 			for (i = 0; i < names.length; i++) {
 				Indices index = colNames2data.get(names[i]);
-				if (index != null) {
+				if (index == null) {
+					for (String key : colNames2data.keySet()) {
+						if (key.equalsIgnoreCase(names[i])
+								|| (names[i].startsWith(key) || names[i]
+										.endsWith(key))) {
+							index = colNames2data.get(key);
+							experiment2ElementIndex.put(Integer.valueOf(index
+									.getRowLegendTable()), key);
+							index.setColumnExperimentTable(i);
+							break;
+						}
+					}
+				} else {
 					experiment2ElementIndex.put(Integer.valueOf(index
 							.getRowLegendTable()), names[i]);
 					index.setColumnExperimentTable(i);
-				} else {
+				}
+				if (index == null) {
 					problems.put(names[i], Integer.valueOf(i));
 				}
 			}
@@ -1433,7 +1379,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		startTime = Math.max(0, startTime);
 		if (startTime > endTime)
 			swap(startTime, endTime);
-		stepSize = ((Number) settings.get(CfgKeys.SIM_STEP_SIZE)).doubleValue();
+		double stepSize = ((Number) settings.get(CfgKeys.SIM_STEP_SIZE))
+				.doubleValue();
 		maxTime = Math.max(((Number) settings.get(CfgKeys.SIM_MAX_TIME))
 				.doubleValue(), Math.max(startTime, endTime));
 		t1 = new SpinnerNumberModel(startTime, 0, maxTime, stepSize);

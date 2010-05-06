@@ -47,39 +47,12 @@ SBMLsimulator: Probleme bei der Simulation von Test-Suite-Modellen
 
 Test-Model 204 instabil, Frage: warum?
 
-Test-Modelle 271 & 275: Problem mit function calculate
-
-Test-Model 354 false evaluateToDouble  nullpointer
-Test-Model 355 false classcastexp
-Test-Model 356 false evaluateToDouble  nullpointer
-Test-Model 357 false Double cannot be cast to java.lang.Boolean
-Test-Model 358 false Double cannot be cast to java.lang.Boolean
-Test-Model 359 false Double cannot be cast to java.lang.Boolean
-
 Modelle 203 und 204 vom Aufbau her gleich, aber die Simulation von 204
 liefert nur das richtige Ergebniss, wenn die Quadratwurzel des Compartiments verrechnet
 wird anstelle nur der normale Wert des Compartiments.
 Das gleiche gilt f�r 373 und 374
 
-Modell 354 wirft einen Fehler aufgrund von Problemen bei der Umsetzung der Funktion add
-im Event Assignment S2 = add(k3, k4) mit 
-Id 	 Arguments 	 Formula
-add 	x, y 	x + y
-
-Modell 355, �hnliches Problem wie bei 354 diesmal beim Auswerten von Trigger lessthan(S1, 0.5) mit
-Id 	 Arguments 	 Formula
-lessthan 	x, y 	x < y
-
-Modell 356 wirft einen Fehler aufgrund von Problemen bei der Umsetzung der Funktionen
-im Event Assignment S2 = add(k3, k4) und S1 = 1 * divide(k3, k4) mit 
-Id 	 Arguments 	 Formula
-add 	x, y 	x + y
-divide 	x, y 	xy
-
-Modell 357, 358 und 359 haben die selben Probleme
-
-Modelle 411 bis 416 haben functions im event trigger oder bei der zuweisung 
-=> NullPointerException bei evaluateToDouble
+Modele 658 und 659 lösen Fehler bzw. ClassCastException beim Einlesen aus.
 
 Modell 870 bis 875, es gibt Reaktionen mit fast=true => ungenau Simulation, da diese
 Eigenschaft noch nicht ber�cksichtigt wird

@@ -302,7 +302,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		StringBuffer abs = new StringBuffer("\\left\\lvert");
 		abs.append(value.toString());
 		abs.append("\\right\\rvert");
-		return new ASTNodeValue(abs.toString());
+		return new ASTNodeValue(abs.toString(), this);
 	}
 
 	/*
@@ -320,7 +320,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccos(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arccos(ASTNodeValue value) {
-		return new ASTNodeValue(command("arccos", value).toString());
+		return new ASTNodeValue(command("arccos", value).toString(), this);
 	}
 
 	/*
@@ -329,7 +329,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccosh(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arccosh(ASTNodeValue value) {
-		return new ASTNodeValue(function("arccosh", value).toString());
+		return new ASTNodeValue(function("arccosh", value).toString(), this);
 	}
 
 	/*
@@ -338,7 +338,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccot(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arccot(ASTNodeValue value) {
-		return new ASTNodeValue(function("arcot", value).toString());
+		return new ASTNodeValue(function("arcot", value).toString(), this);
 	}
 
 	/*
@@ -347,7 +347,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccoth(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arccoth(ASTNodeValue value) {
-		return new ASTNodeValue(function("arccoth", value).toString());
+		return new ASTNodeValue(function("arccoth", value).toString(), this);
 	}
 
 	/*
@@ -356,7 +356,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsc(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arccsc(ASTNodeValue value) {
-		return new ASTNodeValue(function("arccsc", value).toString());
+		return new ASTNodeValue(function("arccsc", value).toString(), this);
 	}
 
 	/*
@@ -365,7 +365,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsch(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arccsch(ASTNodeValue value) {
-		return new ASTNodeValue(function("arccsch", value).toString());
+		return new ASTNodeValue(function("arccsch", value).toString(), this);
 	}
 
 	/*
@@ -374,7 +374,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsec(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arcsec(ASTNodeValue value) {
-		return new ASTNodeValue(function("arcsec", value).toString());
+		return new ASTNodeValue(function("arcsec", value).toString(), this);
 	}
 
 	/*
@@ -383,7 +383,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsech(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arcsech(ASTNodeValue value) {
-		return new ASTNodeValue(function("arcsech", value).toString());
+		return new ASTNodeValue(function("arcsech", value).toString(), this);
 	}
 
 	/*
@@ -392,7 +392,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsin(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arcsin(ASTNodeValue value) {
-		return new ASTNodeValue(function("arcsin", value).toString());
+		return new ASTNodeValue(function("arcsin", value).toString(), this);
 	}
 
 	/*
@@ -401,7 +401,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsinh(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arcsinh(ASTNodeValue value) {
-		return new ASTNodeValue(function("arcsinh", value).toString());
+		return new ASTNodeValue(function("arcsinh", value).toString(), this);
 	}
 
 	/*
@@ -410,7 +410,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctan(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arctan(ASTNodeValue value) {
-		return new ASTNodeValue(function("arctan", value).toString());
+		return new ASTNodeValue(function("arctan", value).toString(), this);
 	}
 
 	/*
@@ -419,7 +419,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctanh(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue arctanh(ASTNodeValue value) {
-		return new ASTNodeValue(function("\\arctanh", value).toString());
+		return new ASTNodeValue(function("\\arctanh", value).toString(), this);
 	}
 
 	/**
@@ -444,7 +444,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		StringBuffer ceiling = new StringBuffer("\\left\\lceil ");
 		ceiling.append(value.toString());
 		ceiling.append("\\right\\rceil ");
-		return new ASTNodeValue(ceiling.toString());
+		return new ASTNodeValue(ceiling.toString(), this);
 	}
 
 	/**
@@ -479,7 +479,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			break;
 		}
 		return new ASTNodeValue(mathrm(value.toString()).append(
-				brackets(getNameOrID(c))).toString());
+				brackets(getNameOrID(c))).toString(), this);
 	}
 
 	/*
@@ -488,7 +488,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double)
 	 */
 	public ASTNodeValue compile(double real) {
-		return new ASTNodeValue(format(real).toString());
+		return new ASTNodeValue(format(real).toString(), this);
 	}
 
 	/*
@@ -497,7 +497,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(int)
 	 */
 	public ASTNodeValue compile(int integer) {
-		return new ASTNodeValue(integer);
+		return new ASTNodeValue(integer, this);
 	}
 
 	/*
@@ -518,7 +518,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			value.append(getNameOrID(species));
 			if (concentration)
 				value.append(']');
-			return new ASTNodeValue(value.toString());
+			return new ASTNodeValue(value.toString(), this);
 
 		} else if (variable instanceof Compartment) {
 			Compartment c = (Compartment) variable;
@@ -527,7 +527,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		// TODO: weitere spezialfälle von Namen!!! PARAMETER, FUNCTION DEF,
 		// REACTION.
 		return new ASTNodeValue(mathtt(maskSpecialChars(variable.getId()))
-				.toString());
+				.toString(), this);
 		// else if (variable instanceof Parameter) {
 		// return new StringBuffer("parameter");
 		// }
@@ -540,7 +540,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(java.lang.String)
 	 */
 	public ASTNodeValue compile(String name) {
-		return new ASTNodeValue(maskSpecialChars(name));
+		return new ASTNodeValue(maskSpecialChars(name), this);
 	}
 
 	/*
@@ -549,7 +549,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cos(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue cos(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\cos", node).toString());
+		return new ASTNodeValue(function("\\cos", node).toString(), this);
 	}
 
 	/*
@@ -558,7 +558,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cosh(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue cosh(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\cosh", node).toString());
+		return new ASTNodeValue(function("\\cosh", node).toString(), this);
 	}
 
 	/*
@@ -567,7 +567,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cot(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue cot(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\cot", node).toString());
+		return new ASTNodeValue(function("\\cot", node).toString(), this);
 	}
 
 	/*
@@ -576,7 +576,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#coth(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue coth(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\coth", node).toString());
+		return new ASTNodeValue(function("\\coth", node).toString(), this);
 	}
 
 	/*
@@ -585,7 +585,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csc(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue csc(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\csc", node).toString());
+		return new ASTNodeValue(function("\\csc", node).toString(), this);
 	}
 
 	/*
@@ -594,7 +594,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csch(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue csch(ASTNodeValue node) {
-		return new ASTNodeValue(function("csch", node).toString());
+		return new ASTNodeValue(function("csch", node).toString(), this);
 	}
 
 	/*
@@ -605,7 +605,8 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 */
 	public ASTNodeValue delay(ASTNodeValue x, double d) {
 		return new ASTNodeValue(concat(mathrm("delay"),
-				brackets(concat(x.toString(), ", ", format(d)))).toString());
+				brackets(concat(x.toString(), ", ", format(d)))).toString(),
+				this);
 	}
 
 	/**
@@ -635,7 +636,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue equal(ASTNodeValue left, ASTNodeValue right) {
-		return new ASTNodeValue(relation(left, " = ", right).toString());
+		return new ASTNodeValue(relation(left, " = ", right).toString(), this);
 	}
 
 	/*
@@ -644,7 +645,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#exp(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue exp(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\exp", node).toString());
+		return new ASTNodeValue(function("\\exp", node).toString(), this);
 	}
 
 	/*
@@ -661,7 +662,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			value = new StringBuilder(node.toString());
 		}
 		value.append('!');
-		return new ASTNodeValue(value.toString());
+		return new ASTNodeValue(value.toString(), this);
 	}
 
 	/*
@@ -673,7 +674,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		StringBuilder floor = new StringBuilder("\\left\\lfloor ");
 		floor.append(value.toString());
 		floor.append("\\right\\rfloor ");
-		return new ASTNodeValue(floor.toString());
+		return new ASTNodeValue(floor.toString(), this);
 	}
 
 	/**
@@ -709,7 +710,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 */
 	public ASTNodeValue frac(ASTNodeValue numerator, ASTNodeValue denominator) {
 		return new ASTNodeValue(command("frac", numerator, denominator)
-				.toString());
+				.toString(), this);
 	}
 
 	/*
@@ -719,7 +720,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 */
 	public ASTNodeValue frac(int numerator, int denominator) {
 		return new ASTNodeValue(frac(Integer.valueOf(numerator),
-				Integer.valueOf(denominator)).toString());
+				Integer.valueOf(denominator)).toString(), this);
 	}
 
 	/*
@@ -751,7 +752,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			value.append(" = ");
 			value.append(args[args.length - 1]);
 		}
-		return new ASTNodeValue(value.toString());
+		return new ASTNodeValue(value.toString(), this);
 	}
 
 	/**
@@ -789,7 +790,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantE()
 	 */
 	public ASTNodeValue getConstantE() {
-		return new ASTNodeValue(new String(CONSTANT_E));
+		return new ASTNodeValue(new String(CONSTANT_E), this);
 	}
 
 	/*
@@ -798,7 +799,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantFalse()
 	 */
 	public ASTNodeValue getConstantFalse() {
-		return new ASTNodeValue(new String(CONSTANT_FALSE));
+		return new ASTNodeValue(new String(CONSTANT_FALSE), this);
 	}
 
 	/*
@@ -807,7 +808,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantPi()
 	 */
 	public ASTNodeValue getConstantPi() {
-		return new ASTNodeValue(new String(CONSTANT_PI));
+		return new ASTNodeValue(new String(CONSTANT_PI), this);
 	}
 
 	/*
@@ -816,7 +817,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantTrue()
 	 */
 	public ASTNodeValue getConstantTrue() {
-		return new ASTNodeValue(new String(CONSTANT_TRUE));
+		return new ASTNodeValue(new String(CONSTANT_TRUE), this);
 	}
 
 	/**
@@ -854,7 +855,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getNegativeInfinity()
 	 */
 	public ASTNodeValue getNegativeInfinity() {
-		return new ASTNodeValue(new String(NEGATIVE_ININITY));
+		return new ASTNodeValue(new String(NEGATIVE_ININITY), this);
 	}
 
 	/*
@@ -863,7 +864,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getPositiveInfinity()
 	 */
 	public ASTNodeValue getPositiveInfinity() {
-		return new ASTNodeValue(new String(POSITIVE_INFINITY));
+		return new ASTNodeValue(new String(POSITIVE_INFINITY), this);
 	}
 
 	/*
@@ -874,7 +875,8 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue greaterEqual(ASTNodeValue left, ASTNodeValue right) {
-		return new ASTNodeValue(relation(left, " \\geq ", right).toString());
+		return new ASTNodeValue(relation(left, " \\geq ", right).toString(),
+				this);
 	}
 
 	/*
@@ -885,7 +887,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue greaterThan(ASTNodeValue left, ASTNodeValue right) {
-		return new ASTNodeValue(relation(left, " > ", right).toString());
+		return new ASTNodeValue(relation(left, " > ", right).toString(), this);
 	}
 
 	/**
@@ -946,7 +948,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue lessEqual(ASTNodeValue left, ASTNodeValue right) {
-		return new ASTNodeValue(concat(left, " \\leq ", right).toString());
+		return new ASTNodeValue(concat(left, " \\leq ", right).toString(), this);
 	}
 
 	/*
@@ -956,7 +958,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue lessThan(ASTNodeValue left, ASTNodeValue right) {
-		return new ASTNodeValue(concat(left, " < ", right).toString());
+		return new ASTNodeValue(concat(left, " < ", right).toString(), this);
 	}
 
 	/*
@@ -965,7 +967,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue ln(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\ln", node).toString());
+		return new ASTNodeValue(function("\\ln", node).toString(), this);
 	}
 
 	/*
@@ -993,7 +995,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		value.append('{');
 		value.append(right.isUnary() ? right : brackets(right));
 		value.append('}');
-		return new ASTNodeValue(value.toString());
+		return new ASTNodeValue(value.toString(), this);
 	}
 
 	/**
@@ -1015,7 +1017,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 				value.append(symbol);
 			i++;
 		}
-		return new ASTNodeValue(value.toString());
+		return new ASTNodeValue(value.toString(), this);
 	}
 
 	/**
@@ -1127,7 +1129,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 */
 	public ASTNodeValue minus(ASTNodeValue... nodes) {
 		if (nodes.length == 0)
-			return new ASTNodeValue("");
+			return new ASTNodeValue("", this);
 		StringBuilder value = new StringBuilder();
 		value.append(nodes[0].toString());
 		for (int i = 1; i < nodes.length; i++) {
@@ -1137,7 +1139,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			else
 				value.append(nodes[i]);
 		}
-		return new ASTNodeValue(value.toString());
+		return new ASTNodeValue(value.toString(), this);
 	}
 
 	/*
@@ -1147,7 +1149,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 */
 	public ASTNodeValue not(ASTNodeValue node) {
 		return new ASTNodeValue(concat("\\neg ",
-				node.isUnary() ? node : brackets(node)).toString());
+				node.isUnary() ? node : brackets(node)).toString(), this);
 	}
 
 	/*
@@ -1157,7 +1159,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue notEqual(ASTNodeValue left, ASTNodeValue right) {
-		return new ASTNodeValue(concat(left, " \\neq ", right).toString());
+		return new ASTNodeValue(concat(left, " \\neq ", right).toString(), this);
 	}
 
 	/*
@@ -1188,7 +1190,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			v.append(newLine);
 		}
 		v.append("\\end{dcases}");
-		return new ASTNodeValue(v.toString());
+		return new ASTNodeValue(v.toString(), this);
 	}
 
 	/*
@@ -1211,9 +1213,9 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 						value.append(nodes[i]);
 				}
 			}
-			return new ASTNodeValue(value.toString());
+			return new ASTNodeValue(value.toString(), this);
 		}
-		return new ASTNodeValue();
+		return new ASTNodeValue(this);
 	}
 
 	/*
@@ -1231,7 +1233,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		value.append('{');
 		value.append(right);
 		value.append('}');
-		return new ASTNodeValue(value.toString());
+		return new ASTNodeValue(value.toString(), this);
 	}
 
 	/**
@@ -1262,7 +1264,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 				&& (((Number) rootExponent.getValue()).doubleValue() == 2d))
 			return sqrt(value);
 		return new ASTNodeValue(concat("\\sqrt[", rootExponent, "]{", value,
-				Character.valueOf('}')).toString());
+				Character.valueOf('}')).toString(), this);
 	}
 
 	/*
@@ -1275,7 +1277,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		if (rootExponent == 2d)
 			return sqrt(radiant);
 		return new ASTNodeValue(concat("\\sqrt[", rootExponent, "]{", radiant,
-				Character.valueOf('}')).toString());
+				Character.valueOf('}')).toString(), this);
 	}
 
 	/*
@@ -1284,7 +1286,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue sec(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\sec", node).toString());
+		return new ASTNodeValue(function("\\sec", node).toString(), this);
 	}
 
 	/*
@@ -1293,7 +1295,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue sech(ASTNodeValue node) {
-		return new ASTNodeValue(function("sech", node).toString());
+		return new ASTNodeValue(function("sech", node).toString(), this);
 	}
 
 	/**
@@ -1320,7 +1322,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sin(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue sin(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\sin", node).toString());
+		return new ASTNodeValue(function("\\sin", node).toString(), this);
 	}
 
 	/*
@@ -1329,7 +1331,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sinh(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue sinh(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\sinh", node).toString());
+		return new ASTNodeValue(function("\\sinh", node).toString(), this);
 	}
 
 	/**
@@ -1338,7 +1340,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @return
 	 */
 	public ASTNodeValue sqrt(ASTNodeValue value) {
-		return new ASTNodeValue(command("sqrt", value).toString());
+		return new ASTNodeValue(command("sqrt", value).toString(), this);
 	}
 
 	/**
@@ -1367,7 +1369,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#symbolTime(java.lang.String)
 	 */
 	public ASTNodeValue symbolTime(String time) {
-		return new ASTNodeValue(mathrm(time).toString());
+		return new ASTNodeValue(mathrm(time).toString(), this);
 	}
 
 	/*
@@ -1376,7 +1378,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#tan(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue tan(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\tan", node).toString());
+		return new ASTNodeValue(function("\\tan", node).toString(), this);
 	}
 
 	/*
@@ -1385,7 +1387,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#tanh(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue tanh(ASTNodeValue node) {
-		return new ASTNodeValue(function("\\tanh", node).toString());
+		return new ASTNodeValue(function("\\tanh", node).toString(), this);
 	}
 
 	/**
@@ -1415,7 +1417,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 */
 	public ASTNodeValue times(ASTNodeValue... values) {
 		if (values.length == 0)
-			return new ASTNodeValue("");
+			return new ASTNodeValue("", this);
 		StringBuilder v = new StringBuilder(values[0].toString());
 		if (values[0].isSum()
 				|| (values[0].isDifference() && !values[0].isUMinus()))
@@ -1430,7 +1432,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 				v.append(values[i].toString());
 			}
 		}
-		return new ASTNodeValue(v.toString());
+		return new ASTNodeValue(v.toString(), this);
 	}
 
 	/*
@@ -1443,7 +1445,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		v.append('-');
 		v.append(value.isSum() || value.isDifference() ? brackets(value)
 				: value);
-		return new ASTNodeValue(v.toString());
+		return new ASTNodeValue(v.toString(), this);
 	}
 
 	/*
@@ -1452,7 +1454,7 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#unknownValue()
 	 */
 	public ASTNodeValue unknownValue() {
-		return new ASTNodeValue(mathtext(" unknown ").toString());
+		return new ASTNodeValue(mathtext(" unknown ").toString(), this);
 	}
 
 	/**
