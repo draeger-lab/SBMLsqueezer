@@ -19,6 +19,7 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.Frame;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.JDialog;
@@ -62,12 +63,21 @@ public class SimulationDialog extends JDialog {
 			this.setSize(getWidth(), maxSize);
 		setLocationRelativeTo(owner);
 	}
-
+	
 	/**
 	 * 
 	 * @return
 	 */
 	public Properties getProperties() {
 		return simPanel.getProperties();
+	}
+
+	/**
+	 * 
+	 * @param path
+	 * @throws IOException
+	 */
+	public void openExperimentalData(String path) throws IOException {
+		this.simPanel.openExperimentalData(path);
 	}
 }

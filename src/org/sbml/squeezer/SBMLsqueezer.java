@@ -36,6 +36,7 @@ import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
+import org.sbml.squeezer.gui.SimulationDialog;
 import org.sbml.squeezer.gui.UpdateMessage;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.SBFileFilter;
@@ -817,7 +818,12 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 */
 	public void showGUISimulation() {
 		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, settings);
-		gui.showSimulationControl(true);
+		if (settings.get(CfgKeys.CSV_FILE).toString().length() > 0) {
+			gui.showSimulationControl(true, settings.get(CfgKeys.CSV_FILE)
+					.toString());
+		} else {
+			gui.showSimulationControl(true);
+		}
 		gui.dispose();
 		try {
 			saveProperties(getProperties());

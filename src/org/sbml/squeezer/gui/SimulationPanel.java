@@ -527,6 +527,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				false, JFileChooser.FILES_ONLY, SBFileFilter.CSV_FILE_FILTER);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 			try {
+				openExperimentalData(chooser.getSelectedFile());
 				openDir = chooser.getSelectedFile().getParent();
 				plot(readCSVFile(chooser.getSelectedFile()), false, showLegend
 						.isSelected());
@@ -541,6 +542,30 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
 						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
 			}
+	}
+
+	/**
+	 * 
+	 * @param path
+	 * @throws IOException
+	 */
+	public void openExperimentalData(String path) throws IOException {
+		openExperimentalData(new File(path));
+	}
+
+	/**
+	 * 
+	 * @param file
+	 * @throws IOException
+	 */
+	public void openExperimentalData(File file) throws IOException {
+		openDir = file.getParent();
+		plot(readCSVFile(file), false, showLegend.isSelected());
+		tabbedPane.setEnabledAt(2, true);
+		GUITools.setEnabled(false, toolbar, Command.OPEN_DATA);
+		distField.setText(Double.toString(computeDistance(model, stepSize)));
+		distField.setEditable(false);
+		distField.setEnabled(true);
 	}
 
 	/**
