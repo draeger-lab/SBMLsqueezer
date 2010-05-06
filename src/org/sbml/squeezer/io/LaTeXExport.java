@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.ASTNodeValue;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
@@ -41,15 +42,13 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.util.LaTeX;
 
 /**
- * This class is used to export a sbml model as LaTex file.
+ * This class is used to export a SBML model as LaTeX file.
  * 
  * @since 1.0
  * @version
- * @author Dieudonne Motsou Wouamba <dwouamba@yahoo.fr>
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- *         Copyright (c) ZBiT, University of T&uuml;bingen, Germany Compiler:
- *         JDK 1.6.0
- * @date Dec 4, 2007
+ * @author Dieudonne Motsou Wouamba
+ * @author Andreas Dr&auml;ger
+ * @date 2007-12-04
  */
 public class LaTeXExport extends LaTeX {
 
@@ -200,8 +199,8 @@ public class LaTeXExport extends LaTeX {
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
-	public StringBuffer format(Unit u) {
-		StringBuffer buffer = new StringBuffer();
+	public StringBuilder format(Unit u) {
+		StringBuilder buffer = new StringBuilder();
 		boolean standardScale = (u.getScale() == 18) || (u.getScale() == 12)
 				|| (u.getScale() == 9) || (u.getScale() == 6)
 				|| (u.getScale() == 3) || (u.getScale() == 2)
@@ -964,12 +963,11 @@ public class LaTeXExport extends LaTeX {
 			Event ev;
 			for (i = 0; i < model.getNumEvents(); i++) {
 				ev = model.getEvent(i);
-				LinkedList<StringBuffer> assignments = new LinkedList<StringBuffer>();
-				assignments.add((StringBuffer) ev.getTrigger().getMath()
-						.compile(latex));
+				LinkedList<ASTNodeValue> assignments = new LinkedList<ASTNodeValue>();
+				assignments.add(ev.getTrigger().getMath().compile(latex));
 				for (int j = 0; j < ev.getNumEventAssignments(); j++)
-					assignments.add((StringBuffer) ev.getEventAssignment(j)
-							.getMath().compile(latex));
+					assignments.add(ev.getEventAssignment(j).getMath().compile(
+							latex));
 				events[i] = assignments;
 			}
 			laTeX.append(eventsHead);
