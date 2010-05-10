@@ -723,6 +723,16 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 				Integer.valueOf(denominator)).toString(), this);
 	}
 
+	/**
+	 * 
+	 * @param numerator
+	 * @param denominator
+	 * @return
+	 */
+	public StringBuilder frac(Object numerator, Object denominator) {
+		return command("frac", numerator, denominator);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1114,8 +1124,13 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 		return command("mathtt", new StringBuffer(id));
 	}
 
-	public StringBuffer mbox(String s) {
-		StringBuffer sb = new StringBuffer();
+	/**
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public StringBuilder mbox(String s) {
+		StringBuilder sb = new StringBuilder();
 		sb.append(" \\mbox{");
 		sb.append(s);
 		sb.append("} ");
@@ -1420,14 +1435,16 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 			return new ASTNodeValue("", this);
 		StringBuilder v = new StringBuilder(values[0].toString());
 		if (values[0].isSum()
-				|| (values[0].isDifference() && !values[0].isUMinus()))
+				|| (values[0].isDifference() && !values[0].isUMinus())
+				|| (values[0].isNumber() && values[0].toDouble() < 0)) {
 			v = brackets(v);
+		}
 		for (int i = 1; i < values.length; i++) {
 			v.append("\\cdot");
 			if ((values[i].isDifference() || values[i].isSum())
-					&& !values[i].isUMinus())
+					&& !values[i].isUMinus()) {
 				v.append(brackets(values[i].toString()));
-			else {
+			} else {
 				v.append(' ');
 				v.append(values[i].toString());
 			}
@@ -1499,25 +1516,14 @@ public class LaTeX extends StringTools implements ASTNodeCompiler {
 
 	/**
 	 * 
-	 * @param elem
+	 * @param variable
 	 * @return
 	 */
-	public StringBuilder times(Object... elem) {
-		StringBuilder sb = new StringBuilder();
-		if (elem.length > 0)
-			sb.append(elem[0]);
-		for (int i = 1; i < elem.length; i++)
-			append(sb, "\\cdot ", elem[i]);
-		return sb;
-	}
-
-	/**
-	 * 
-	 * @param numerator
-	 * @param denominator
-	 * @return
-	 */
-	public StringBuilder frac(Object numerator, Object denominator) {
-		return command("frac", numerator, denominator);
+	public String timeDerivative(String variable) {
+		String d = mbox("d").toString();
+		String dt = d + symbolTime("t");
+		StringBuilder sb = frac(d, dt);
+		sb.append(mbox(variable));
+		return sb.toString();
 	}
 }

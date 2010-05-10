@@ -478,14 +478,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
 		case SIMULATION_START:
-			double t1val = ((Double) t1.getValue()).doubleValue();
-			double t2val = ((Double) t2.getValue()).doubleValue();
-			double stepSize = (t2val - t1val)
-					/ stepsModel.getNumber().doubleValue();
-			simulate(model, t1val, t2val, stepSize);
-			tabbedPane.setEnabledAt(1, true);
-			GUITools.setEnabled(true, toolbar, Command.SAVE_SIMULATION,
-					Command.SAVE_PLOT_IMAGE);
+			simulate();
 			break;
 		case OPEN_DATA:
 			openExperimentalData();
@@ -517,6 +510,20 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					JOptionPane.WARNING_MESSAGE);
 			break;
 		}
+	}
+
+	/**
+	 * Conducts the simulation.
+	 */
+	public void simulate() {
+		double t1val = ((Double) t1.getValue()).doubleValue();
+		double t2val = ((Double) t2.getValue()).doubleValue();
+		double stepSize = (t2val - t1val)
+				/ stepsModel.getNumber().doubleValue();
+		simulate(model, t1val, t2val, stepSize);
+		tabbedPane.setEnabledAt(1, true);
+		GUITools.setEnabled(true, toolbar, Command.SAVE_SIMULATION,
+				Command.SAVE_PLOT_IMAGE);
 	}
 
 	/**
@@ -960,6 +967,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 		tab.setEnabledAt(3, hasLocalParameters);
+		for (int i = tab.getTabCount() - 1; i >= 0; i--) {
+			if (tab.isEnabledAt(i)) {
+				tab.setSelectedIndex(i);
+			}
+		}
 		return tab;
 	}
 
@@ -978,6 +990,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		int offset = 0;
 		LinkedList<String> nans = new LinkedList<String>();
 		double val = 0;
+		String name = "";
 		for (int i = 0; i < list.size(); i++) {
 			QuantityWithDefinedUnit p = list.get(i);
 			if (p instanceof Species)
@@ -986,14 +999,19 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				offset = model.getNumCompartments() + model.getNumSpecies();
 			val = p.getValue();
 			if (Double.isNaN(p.getValue())) {
-				if (p instanceof Compartment)
+				name = p.getClass().getSimpleName().toLowerCase();
+				if (p instanceof Compartment) {
 					val = defaultCompartmentValue;
-				else if (p instanceof Species)
+				} else if (p instanceof Species) {
 					val = defaultSpeciesValue;
-				else if (p instanceof Parameter)
+				} else if (p instanceof Parameter) {
 					val = defaultParameterValue;
+				}
 				p.setValue(val);
 				nans.add(p.getId());
+				if (!(p instanceof Species) && (list.size() > 1)) {
+					name += "s";
+				}
 			}
 			maxValue = Math.max(val, maxValue);
 			spinModSymbol[i + offset] = new SpinnerNumberModel(val, Math.min(
@@ -1010,10 +1028,13 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
 		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
 		if (nans.size() > 0) {
+			String l = nans.toString().substring(1);
 			String msg = String
 					.format(
-							"Undefined values for the following elements in the %s have been replaced by the default value %.3f: %s.",
-							list.getElementName(), val, nans.toString());
+							"Undefined value%s for the %s %s ha%s been replaced by its default value %.3f.",
+							nans.size() > 1 ? "s" : "", name, l.substring(0, l
+									.length() - 1), nans.size() > 1 ? "ve"
+									: "s", val);
 			JOptionPane.showMessageDialog(this, new JLabel(GUITools.toHTML(msg,
 					60)), "Replacing undefined values",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -1590,6 +1611,26 @@ public class SimulationPanel extends JPanel implements ActionListener,
 							.getData(), false, showLegend.isSelected());
 				if (showLegend.isSelected())
 					plot.updateLegend();
+			}
+		}
+	}
+
+	/**
+	 * Runs over the legend and sets all variables corresponding to the given
+	 * identifiers as selected. All others will be unselected.
+	 * 
+	 * @param identifiers
+	 *            The identifiers of the variables to be selected and to occur
+	 *            in the plot.
+	 */
+	public void setVariables(String[] identifiers) {
+		for (int i = 0; i < legend.getRowCount(); i++) {
+			legend.setValueAt(Boolean.valueOf(false), i, 0);
+			for (String id : identifiers) {
+				if (legend.getValueAt(i, 2).toString().trim().equals(id.trim())) {
+					legend.setValueAt(Boolean.valueOf(true), i, 0);
+					break;
+				}
 			}
 		}
 	}

@@ -19,10 +19,15 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.KeyStroke;
 
 import org.sbml.jsbml.Model;
 
@@ -32,7 +37,7 @@ import org.sbml.jsbml.Model;
  * @date 2010-04-15
  * 
  */
-public class SimulationDialog extends JDialog {
+public class SimulationDialog extends JDialog implements ActionListener {
 
 	/**
 	 * Generated serial version identifier
@@ -62,8 +67,13 @@ public class SimulationDialog extends JDialog {
 		if (getHeight() > maxSize)
 			this.setSize(getWidth(), maxSize);
 		setLocationRelativeTo(owner);
+
+		final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,
+				0, true);
+		getRootPane().registerKeyboardAction(this, keyStroke,
+				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -79,5 +89,31 @@ public class SimulationDialog extends JDialog {
 	 */
 	public void openExperimentalData(String path) throws IOException {
 		this.simPanel.openExperimentalData(path);
+	}
+
+	/**
+	 * 
+	 * @param identifiers
+	 */
+	public void setVariables(String... identifiers) {
+		simPanel.setVariables(identifiers);
+	}
+
+	/**
+	 * 
+	 */
+	public void simulate() {
+		simPanel.simulate();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		setVisible(false);
+		dispose();
 	}
 }

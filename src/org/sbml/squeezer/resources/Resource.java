@@ -30,9 +30,8 @@ import java.util.Properties;
 /**
  * Loads resource files if required.
  * 
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Hannes Borch
+ * @author Andreas Dr&auml;ger
  * @since 1.1
  * @date 2009-02-05
  */

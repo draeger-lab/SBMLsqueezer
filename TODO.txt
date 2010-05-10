@@ -45,21 +45,62 @@ vorkommt.
 SBMLsimulator: Probleme bei der Simulation von Test-Suite-Modellen
 ==================================================================
 
-Test-Model 204 instabil, Frage: warum?
+Modell 164 konnte nicht simuliert werden. Ewig lange Rechenzeit.
+
+instabile Modelle:
+57, 132, 204, 389, 392, 395, 446, 449, 452, 523, 524, 525, 566, 595,
+831
+=> Frage: warum?
+
+Große Abweichung zwischen Simulation und gegebenen Werten bei Modellen:
+058, 059, 133, 134, 158, 328, 329, 330, 356, 369, 370, 371, 372, 373, 374, 
+397, 398, 402, 404, 453, 454, 455, 459, 460, 461, 526, 531, 533, 534, 535,
+536, 537, 538, 541, 543, 546, 548, 549, 550, 551, 552, 553, 554, 555, 556,
+557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571,
+572, 573, 574, 575, 576, 586, 587, 588, 596, 597, 601, 602, 603, 604, 605,
+606, 607, 608, 611, 612, 613, 614, 615, 628, 629, 630, 658, 659, 661, 662,
+663, 665, 666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678,
+679, 680, 681, 682, 683, 684, 685, 686, 687, 689, 690, 695, 696, 697, 703,
+704, 705, 707, 708, 709, 710, 715, 716, 732, 733, 734, 736, 738, 739, 740,
+741, 742, 743, 744, 745, 746, 747, 748, 750, 763, 764, 765, 766, 767, 768,
+769, 770, 777, 778, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 815,
+816, 817, 830, 844, 860, 861, 862, 870, 871, 872, 874, 875, 876, 884, 891,
+892, 893, 896, 897, 900, 903
+
+Modelle mit algebraischen Regeln:
+39, 40, 531, 536, 537, 538, 541, 543, 548, 549, 550, 551, 552, 553, 554, 555,
+556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571,
+572, 573, 574, 575, 576, 628, 695, 696, 759, 760, 761, 762
+
+Crash in Modellen:
+759, 760, 761, 762
 
 Modelle 203 und 204 vom Aufbau her gleich, aber die Simulation von 204
 liefert nur das richtige Ergebniss, wenn die Quadratwurzel des Compartiments verrechnet
 wird anstelle nur der normale Wert des Compartiments.
-Das gleiche gilt f�r 373 und 374
-
-Modele 658 und 659 lösen Fehler bzw. ClassCastException beim Einlesen aus.
+Das gleiche gilt für 373 und 374
 
 Modell 870 bis 875, es gibt Reaktionen mit fast=true => ungenau Simulation, da diese
-Eigenschaft noch nicht ber�cksichtigt wird
+Eigenschaft noch nicht berücksichtigt wird
+
+
+Im Plot-Dialog:
+- Farbzuordnung der Kurven zu Kreuzen klappt nicht richtig. 
+  Besonders auffällig bei Modell 54, 55, 56, 161
+- Berechnung der Fehlerfunktion darf nur für die Variablen Teile erfolgen.
+- Für das Kompartiment in Modell 104 werden die Punkte nicht geplottet.
+- In Modell 112 werden die Punkte für S1 nicht geplottet.
 
 
 Allgemeine Probleme
 ===================
 
-Events mit delay k�nnen aufgrund der Schrittweite zu sp�t verarbeitet werden
+- Der Progress-Dialog verschwindet manchmalnicht. Beispielsweise 
+  für Testmodell 109
 
+Events mit delay können aufgrund der Schrittweite zu spät verarbeitet werden
+
+Offenbar funktionieren weder die Online-Hilfe noch die Software-Lizenz.
+
+Model 658: Wenn man versucht, eine Kinetik für die Reaktion zu erzeugen, 
+kommt eine NullPointerException. Was ist da los?
