@@ -36,7 +36,6 @@ import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
-import org.sbml.squeezer.gui.SimulationDialog;
 import org.sbml.squeezer.gui.UpdateMessage;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.SBFileFilter;

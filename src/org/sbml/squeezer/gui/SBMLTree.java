@@ -181,21 +181,33 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			node = new NamedMutableSBMLTreeNode("Initial Assignments", m
 					.getListOfInitialAssignments());
 			modelNode.add(node);
-			for (InitialAssignment c : m.getListOfInitialAssignments())
-				node.add(new DefaultMutableTreeNode(c));
+			for (InitialAssignment c : m.getListOfInitialAssignments()) {
+				node.add(new NamedMutableSBMLTreeNode("Initial Assignment", c));
+			}
 		}
 		if (m.getNumRules() > 0) {
 			node = new NamedMutableSBMLTreeNode("Rules", m.getListOfRules());
 			modelNode.add(node);
-			for (Rule c : m.getListOfRules())
-				node.add(new DefaultMutableTreeNode(c));
+			String name;
+			for (Rule c : m.getListOfRules()) {
+				if (c.isAlgebraic()) {
+					name = "Algebraic";
+				} else if (c.isAssignment()) {
+					name = "Assignment";
+				} else {
+					name = "Rate";
+				}
+				node.add(new NamedMutableSBMLTreeNode(name + " Rule", c));
+			}
 		}
 		if (m.getNumConstraints() > 0) {
 			node = new NamedMutableSBMLTreeNode("Constraints", m
 					.getListOfConstraints());
 			modelNode.add(node);
-			for (Constraint c : m.getListOfConstraints())
-				node.add(new DefaultMutableTreeNode(c));
+			for (Constraint c : m.getListOfConstraints()) {
+				node.add(new NamedMutableSBMLTreeNode(c.getClass()
+						.getSimpleName(), c));
+			}
 		}
 		if (m.getNumReactions() > 0) {
 			node = new NamedMutableSBMLTreeNode("Reactions", m
@@ -236,8 +248,9 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 						NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(
 								"Parameters", kl.getListOfParameters());
 						klNode.add(n);
-						for (LocalParameter p : kl.getListOfParameters())
+						for (LocalParameter p : kl.getListOfParameters()) {
 							n.add(new DefaultMutableTreeNode(p));
+						}
 					}
 				}
 			}
@@ -248,18 +261,21 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			for (Event e : m.getListOfEvents()) {
 				DefaultMutableTreeNode eNode = new DefaultMutableTreeNode(e);
 				node.add(eNode);
-				if (e.isSetTrigger())
-					eNode.add(new DefaultMutableTreeNode(e.getTrigger()));
-				if (e.isSetDelay())
-					eNode.add(new DefaultMutableTreeNode(e.getDelay()));
+				if (e.isSetTrigger()) {
+					eNode.add(new NamedMutableSBMLTreeNode(e.getTrigger()
+							.getClass().getSimpleName(), e.getTrigger()));
+				}
+				if (e.isSetDelay()) {
+					eNode.add(new NamedMutableSBMLTreeNode(e.getDelay()
+							.getClass().getSimpleName(), e.getDelay()));
+				}
 				if (e.getNumEventAssignments() > 0) {
-					DefaultMutableTreeNode eas = new DefaultMutableTreeNode(
-							"Event Assignments");
+					DefaultMutableTreeNode eas = new NamedMutableSBMLTreeNode(
+							"Event Assignments", e.getListOfEventAssignments());
 					eNode.add(eas);
 					for (EventAssignment ea : e.getListOfEventAssignments()) {
-						DefaultMutableTreeNode eaNode = new DefaultMutableTreeNode(
-								ea);
-						eas.add(eaNode);
+						eas.add(new NamedMutableSBMLTreeNode(
+								"Event Assignment", ea));
 					}
 				}
 			}

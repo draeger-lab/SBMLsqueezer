@@ -42,11 +42,10 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.ASTNode.Type;
 
 /**
- * This Class converts the algebraic rules of a model to assignment rules using
+ * This class converts the algebraic rules of a model to assignment rules using
  * the Hopcroft-Karp-Algorithm
  * 
  * @author Alexander D&ouml;rr
@@ -92,7 +91,7 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * This Class represents an inner node in the bipartite graph, e.g. a
+	 * This class represents an inner node in the bipartite graph, e.g., a
 	 * varibale or an reaction
 	 * 
 	 * @author Alexander D&ouml;rr
@@ -165,7 +164,7 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * This Class represents the start node in the bipartite graph
+	 * This class represents the start node in the bipartite graph
 	 * 
 	 * @author Alexander D&ouml;rr
 	 * @since 1.4
@@ -228,7 +227,7 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * This Class represents the end node in the bipartite graph
+	 * This class represents the end node in the bipartite graph
 	 * 
 	 * @author Alexander D&ouml;rr
 	 * @since 1.4
@@ -285,7 +284,7 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * This Class represents a calculated matching between vertices of a
+	 * This class represents a calculated matching between vertices of a
 	 * bipartite graph
 	 * 
 	 * @author Alexander D&ouml;rr
@@ -685,10 +684,10 @@ public class AlgebraicRuleConverter {
 				System.out.println(ar.getFormula());
 				ASTNode node = ar.getMath().clone();
 				substituteFunctions(node, 0);
-								
-				System.out.println(node.toFormula());		
-				
-				//createAssignmentRule(Node)
+
+				System.out.println(node.toFormula());
+
+				// createAssignmentRule(Node)
 
 			}
 		}
@@ -704,48 +703,52 @@ public class AlgebraicRuleConverter {
 	 */
 	private void substituteFunctions(ASTNode node, int indexParent) {
 		if (node.isName()) {
-		FunctionDefinition fd = model.getFunctionDefinition(node.getName());
-		if (fd != null) {
-			ASTNode function = fd.getMath();
-			HashMap<String, String> varibales = new HashMap<String, String>();				
-			ASTNode parent;
-			
-			for (int i = 0; i < node.getNumChildren(); i++) {
-				varibales.put(function.getChild(i).getName(), node.getChild(i).getName());				
-				parent = (ASTNode) node.getParent();				
-				parent.replaceChild(indexParent, function.getRightChild().clone());				
-				replaceNames(parent.getChild(indexParent), varibales);	
-			}			
-		}
+			FunctionDefinition fd = model.getFunctionDefinition(node.getName());
+			if (fd != null) {
+				ASTNode function = fd.getMath();
+				HashMap<String, String> varibales = new HashMap<String, String>();
+				ASTNode parent;
+
+				for (int i = 0; i < node.getNumChildren(); i++) {
+					varibales.put(function.getChild(i).getName(), node
+							.getChild(i).getName());
+					parent = (ASTNode) node.getParent();
+					parent.replaceChild(indexParent, function.getRightChild()
+							.clone());
+					replaceNames(parent.getChild(indexParent), varibales);
+				}
+			}
 
 		} else {
-			for (int i = 0; i < node.getNumChildren(); i++) {	
-				node.getChild(i).setParent(node);
+			for (int i = 0; i < node.getNumChildren(); i++) {
+				// TODO!! Bei mir ist diese Funktion nicht verfügbar!
+				// node.getChild(i).setParent(node);
 				substituteFunctions(node.getChild(i), i);
-			}	
+			}
 		}
 
 	}
-	
+
 	/**
-	 * Replaces the names of given ASTNode's childern with the value stored in the given HashMap
-	 * if there is an entry in the HashMap
+	 * Replaces the names of given ASTNode's childern with the value stored in
+	 * the given HashMap if there is an entry in the HashMap
 	 * 
 	 * 
 	 * @param node
 	 * @param varibales
 	 */
-	private void replaceNames(ASTNode node, HashMap<String, String> varibales ){
+	private void replaceNames(ASTNode node, HashMap<String, String> varibales) {
 		if (node.isName()) {
 			if (varibales.get(node.getName()) != null) {
 				node.setName(varibales.get(node.getName()));
 			}
 		}
-		
-		for (int i = 0; i < node.getNumChildren(); i++) {	
-			node.getChild(i).setParent(node);
+
+		for (int i = 0; i < node.getNumChildren(); i++) {
+			// TODO: Bei mir ist diese Funktion nicht verfügbar!
+			// node.getChild(i).setParent(node);
 			replaceNames(node.getChild(i), varibales);
-		}	
+		}
 	}
 
 	/**

@@ -284,9 +284,7 @@ public class SBasePanel extends JPanel {
 				laTeXpreview.append('=');
 			} else if (mc instanceof RateRule) {
 				RateRule rr = (RateRule) mc;
-				String d = latex.mbox("d").toString();
-				laTeXpreview.append(latex.frac(latex.times(d, latex.mbox(rr
-						.getVariable())), d));
+				laTeXpreview.append(latex.timeDerivative(rr.getVariable()));
 				laTeXpreview.append('=');
 			}
 			laTeXpreview.append(mc.getMath().compile(latex).toString().replace(
