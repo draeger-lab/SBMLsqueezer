@@ -31,11 +31,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.CompartmentType;
 import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.Delay;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
@@ -53,6 +55,7 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SpeciesType;
+import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 
@@ -66,7 +69,7 @@ import org.sbml.jsbml.UnitDefinition;
 class NamedMutableSBMLTreeNode extends DefaultMutableTreeNode {
 
 	/**
-	 * Generatred Serial Version ID.s
+	 * Generated Serial Version ID.s
 	 */
 	private static final long serialVersionUID = 2647365066465077496L;
 	/**
@@ -99,8 +102,7 @@ class NamedMutableSBMLTreeNode extends DefaultMutableTreeNode {
  * A specialized {@link JTree} that shows the elements of a JSBML model as a
  * hierarchical structure.
  * 
- * @author <a href="mailto:simon.schaefer@uni-tuebingen.de">Simon
- *         Sch&auml;fer</a>
+ * @author Simon Sch&auml;fer
  * @author Andreas Dr&auml;ger
  * @since 1.3
  */
@@ -127,8 +129,13 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 			node = new NamedMutableSBMLTreeNode("Function Definitions", m
 					.getListOfFunctionDefinitions());
 			modelNode.add(node);
-			for (FunctionDefinition c : m.getListOfFunctionDefinitions())
-				node.add(new DefaultMutableTreeNode(c));
+			for (FunctionDefinition c : m.getListOfFunctionDefinitions()) {
+				DefaultMutableTreeNode n = new DefaultMutableTreeNode(c);
+				node.add(n);
+				if (c.isSetMath()) {
+					n.add(mathTree(c.getMath()));
+				}
+			}
 		}
 		if (m.getNumUnitDefinitions() > 0) {
 			node = new NamedMutableSBMLTreeNode("Unit Definitions", m
@@ -182,7 +189,12 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 					.getListOfInitialAssignments());
 			modelNode.add(node);
 			for (InitialAssignment c : m.getListOfInitialAssignments()) {
-				node.add(new NamedMutableSBMLTreeNode("Initial Assignment", c));
+				NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(
+						"Initial Assignment", c);
+				node.add(n);
+				if (c.isSetMath()) {
+					n.add(mathTree(c.getMath()));
+				}
 			}
 		}
 		if (m.getNumRules() > 0) {
@@ -197,7 +209,12 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				} else {
 					name = "Rate";
 				}
-				node.add(new NamedMutableSBMLTreeNode(name + " Rule", c));
+				NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(name
+						+ " Rule", c);
+				node.add(n);
+				if (c.isSetMath()) {
+					n.add(mathTree(c.getMath()));
+				}
 			}
 		}
 		if (m.getNumConstraints() > 0) {
@@ -205,8 +222,12 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 					.getListOfConstraints());
 			modelNode.add(node);
 			for (Constraint c : m.getListOfConstraints()) {
-				node.add(new NamedMutableSBMLTreeNode(c.getClass()
-						.getSimpleName(), c));
+				NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(c
+						.getClass().getSimpleName(), c);
+				node.add(n);
+				if (c.isSetMath()) {
+					n.add(mathTree(c.getMath()));
+				}
 			}
 		}
 		if (m.getNumReactions() > 0) {
@@ -244,6 +265,9 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 					NamedMutableSBMLTreeNode klNode = new NamedMutableSBMLTreeNode(
 							"Kinetic Law", kl);
 					currReacNode.add(klNode);
+					if (kl.isSetMath()) {
+						klNode.add(mathTree(kl.getMath()));
+					}
 					if (kl.getNumParameters() > 0) {
 						NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(
 								"Parameters", kl.getListOfParameters());
@@ -262,25 +286,53 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 				DefaultMutableTreeNode eNode = new DefaultMutableTreeNode(e);
 				node.add(eNode);
 				if (e.isSetTrigger()) {
-					eNode.add(new NamedMutableSBMLTreeNode(e.getTrigger()
-							.getClass().getSimpleName(), e.getTrigger()));
+					Trigger t = e.getTrigger();
+					NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(t
+							.getClass().getSimpleName(), t);
+					eNode.add(n);
+					if (t.isSetMath()) {
+						n.add(mathTree(t.getMath()));
+					}
 				}
 				if (e.isSetDelay()) {
-					eNode.add(new NamedMutableSBMLTreeNode(e.getDelay()
-							.getClass().getSimpleName(), e.getDelay()));
+					Delay d = e.getDelay();
+					NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(d
+							.getClass().getSimpleName(), d);
+					eNode.add(n);
+					if (d.isSetMath()) {
+						n.add(mathTree(d.getMath()));
+					}
 				}
 				if (e.getNumEventAssignments() > 0) {
 					DefaultMutableTreeNode eas = new NamedMutableSBMLTreeNode(
 							"Event Assignments", e.getListOfEventAssignments());
 					eNode.add(eas);
 					for (EventAssignment ea : e.getListOfEventAssignments()) {
-						eas.add(new NamedMutableSBMLTreeNode(
-								"Event Assignment", ea));
+						NamedMutableSBMLTreeNode n = new NamedMutableSBMLTreeNode(
+								"Event Assignment", ea);
+						eas.add(n);
+						if (ea.isSetMath()) {
+							n.add(mathTree(ea.getMath()));
+						}
 					}
 				}
 			}
 		}
 		return docNode;
+	}
+
+	/**
+	 * Constructs a tree of math objects.
+	 * 
+	 * @param math
+	 * @return
+	 */
+	private static MutableTreeNode mathTree(ASTNode math) {
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(math);
+		for (ASTNode child : math.getListOfNodes()) {
+			node.add(mathTree(child));
+		}
+		return node;
 	}
 
 	/**
