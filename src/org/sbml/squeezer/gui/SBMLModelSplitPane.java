@@ -26,11 +26,13 @@ import java.util.Set;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SBaseChangedListener;
@@ -41,9 +43,7 @@ import org.sbml.jsbml.SBaseChangedListener;
  * {@link SBasePanel} showing details of the active element in the tree on the
  * right hand side.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 public class SBMLModelSplitPane extends JSplitPane implements
@@ -187,8 +187,24 @@ public class SBMLModelSplitPane extends JSplitPane implements
 			int proportionalLocation = getDividerLocation();
 			setRightComponent(createRightComponent((SBase) nodeInfo));
 			setDividerLocation(proportionalLocation);
+		} else if (nodeInfo instanceof ASTNode) {
+			int proportionalLocation = getDividerLocation();
+			setRightComponent(createRightComponent((ASTNode) nodeInfo));
+			setDividerLocation(proportionalLocation);
 		} else {
 			// displayURL(helpURL);
 		}
+	}
+
+	/**
+	 * Function to display the properties of {@link ASTNode} objects.
+	 * 
+	 * @param nodeInfo
+	 * @return
+	 */
+	private JScrollPane createRightComponent(ASTNode node) {
+		return new JScrollPane(new ASTNodePanel(node, settings),
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	}
 }
