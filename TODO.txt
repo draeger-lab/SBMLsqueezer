@@ -95,6 +95,18 @@ Im Plot-Dialog:
 Allgemeine Probleme
 ===================
 
+1) die Methode getIndex scheint nicht richtig zu funktionieren,
+wenn ich von einem Knoten n den Elter hole und prüfe ob dieser Elter den Knoten
+n enthält(was der Fall sein müsste), bekomme ich trotzdem nicht den richtigen 
+Index bzw. -1. Im Debugger konnte ich sehen, dass er bei (node.equals(n)) 
+einmal 2 Knoten mit der gleichen Id, d.h. einen Knoten mit sich selbst vergleich, 
+der Test aber false auswertet. Wenn ich (node.equals(n)) auf == ändere funktioniert 
+es. Allerdings gab es auch Fälle, bei denen die Methode trotzdem funktioniert hat.
+
+2) die Methode node.removeChild(i) stellt mich auch vor ein Rätsel.
+Ich kann die Methode mit Indizes ausführen, die es garnicht gibt. Auch -1 
+wirft keine Fehler. Und bei den gültigen Indizes hat sie keine Auswirkung 
+
 - Der Progress-Dialog verschwindet manchmalnicht. Beispielsweise 
   fÃ¼r Testmodell 109
 
