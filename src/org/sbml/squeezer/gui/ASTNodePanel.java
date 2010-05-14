@@ -30,7 +30,7 @@ import javax.swing.SpinnerNumberModel;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.MathContainer;
-import org.sbml.squeezer.util.LaTeX;
+import org.sbml.jsbml.util.LaTeX;
 
 import atp.sHotEqn;
 

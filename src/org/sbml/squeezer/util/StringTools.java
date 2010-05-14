@@ -31,11 +31,6 @@ public class StringTools extends org.sbml.jsbml.util.StringTools {
 	public static final String fileSeparator = System
 			.getProperty("file.separator");
 	/**
-	 * New line separator of this operating system
-	 */
-	public static final String newLine = System.getProperty("line.separator");
-
-	/**
 	 * 
 	 */
 	public static final Character underscore = Character.valueOf('_');
@@ -117,49 +112,6 @@ public class StringTools extends org.sbml.jsbml.util.StringTools {
 		while (sboString.length() < 7)
 			sboString = '0' + sboString;
 		return sboString;
-	}
-
-	/**
-	 * Returns the number as a word. Zero is converted to "no". Only positive
-	 * numbers from 1 to twelve can be converted. All other numbers are just
-	 * converted to a String containing the number.
-	 * 
-	 * @param number
-	 * @return
-	 */
-	public static String getWordForNumber(long number) {
-		if ((number < Integer.MIN_VALUE) || (Integer.MAX_VALUE < number))
-			return Long.toString(number);
-		switch ((int) number) {
-		case 0:
-			return "no";
-		case 1:
-			return "one";
-		case 2:
-			return "two";
-		case 3:
-			return "three";
-		case 4:
-			return "four";
-		case 5:
-			return "five";
-		case 6:
-			return "six";
-		case 7:
-			return "seven";
-		case 8:
-			return "eight";
-		case 9:
-			return "nine";
-		case 10:
-			return "ten";
-		case 11:
-			return "eleven";
-		case 12:
-			return "twelve";
-		default:
-			return Long.toString(number);
-		}
 	}
 
 	/**

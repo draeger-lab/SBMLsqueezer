@@ -44,12 +44,12 @@ import javax.swing.SwingConstants;
 
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.util.LaTeX;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.util.LaTeX;
 import org.sbml.squeezer.util.StringTools;
 
 import atp.sHotEqn;
@@ -127,7 +127,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			possibleTypesNames[i] = possibleLaws[i].getSimpleName();
 			possibleTypes[i] = possibleLaws[i].getClass().getCanonicalName();
 			laTeXpreview[i] = possibleLaws[i].getMath().compile(
-					new LaTeX(settings)).toString();
+					new LaTeX(((Boolean) klg.getSettings().get(
+							CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue()))
+					.toString();
 		}
 		kineticLawComboBox = new JComboBox(possibleTypesNames);
 		kineticLawComboBox.setEditable(false);
@@ -373,7 +375,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			kineticLaw = klg
 					.createKineticLaw(reaction, possibleTypes[i], false);
 			laTeXpreview[i] = new String(kineticLaw.getMath().compile(
-					new LaTeX(klg.getSettings())).toString());
+					new LaTeX(((Boolean) klg.getSettings().get(
+							CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue()))
+					.toString());
 			// toolTips[i] = kineticLaw.isSetSBOTerm() ? "<b>"
 			// + kineticLaw.getSBOTermID() + "</b> " : "";
 			toolTips[i] = String.format("<b>%s</b>", StringTools
@@ -405,7 +409,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		sort(possibleTypes, kineticEquations, toolTips, laTeXpreview);
 		if (reaction.isSetKineticLaw())
 			laTeXpreview[laTeXpreview.length - 1] = reaction.getKineticLaw()
-					.getMath().compile(new LaTeX(klg.getSettings())).toString();
+					.getMath().compile(
+							new LaTeX(((Boolean) klg.getSettings().get(
+									CfgKeys.LATEX_NAMES_IN_EQUATIONS))
+									.booleanValue())).toString();
 		JPanel kineticsPanel = new JPanel(new GridBagLayout());
 		rButtonsKineticEquations = new JRadioButton[kineticEquations.length + 1];
 		ButtonGroup buttonGroup = new ButtonGroup();

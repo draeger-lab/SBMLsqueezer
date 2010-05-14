@@ -47,10 +47,10 @@ import javax.swing.event.TableModelEvent;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.util.LaTeX;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.util.LaTeX;
 
 import atp.sHotEqn;
 
@@ -133,9 +133,11 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 			if (o instanceof BasicKineticLaw) {
 				BasicKineticLaw kinetic = (BasicKineticLaw) o;
 				String LaTeX = kinetic.getMath().compile(
-						new LaTeX(klg.getSettings())).toString().replace(
-						"text", "mbox").replace("mathrm", "mbox").replace(
-						"mathtt", "mbox");
+						new LaTeX(((Boolean) klg.getSettings().get(
+								CfgKeys.LATEX_NAMES_IN_EQUATIONS))
+								.booleanValue())).toString().replace("text",
+						"mbox").replace("mathrm", "mbox").replace("mathtt",
+						"mbox");
 				JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
 						+ "\\end{equation}");
 				JPanel panel = new JPanel(new BorderLayout());
@@ -160,7 +162,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent )
+	 * @see
+	 * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
+	 * )
 	 */
 	public void mouseDragged(MouseEvent e) {
 	}
@@ -184,7 +188,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 * @see
+	 * java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 	 */
 	public void mouseMoved(MouseEvent e) {
 	}
@@ -215,7 +220,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 * @see
+	 * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	public void mouseReleased(MouseEvent e) {
 	}
