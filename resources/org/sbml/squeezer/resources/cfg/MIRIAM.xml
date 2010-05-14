@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- This file is an export of MIRIAM Database. -->
+<!-- This file is an export of MIRIAM Resources. -->
 <!-- cf. http://www.ebi.ac.uk/miriam/           -->
-<!-- Generated: Mon Feb 22 17:27:55 GMT 2010.   -->
+<!-- Generated: Thu May 13 07:03:03 BST 2010.   -->
 
-<miriam xmlns="http://www.biomodels.net/MIRIAM/" date="2010-02-22T17:27:55+00:00" data-version="2010-02-19T16:30:26+00:00">
+<miriam xmlns="http://www.biomodels.net/MIRIAM/" date="2010-05-13T07:03:03+01:00" data-version="2010-04-29T19:09:46+01:00">
 	<datatype id="MIR:00000001" pattern="^\d+$" obsolete="true" replacement="MIR:00000010">
-		<comment>BIND doesn't exist any more and its successor (BOND) is not open-access.</comment>
+		<comment>BIND doesn&apos;t exist any more and its successor (BOND) is not open-access.</comment>
 		<name>BIND</name>
 		<synonyms>
 			<synonym>Biomolecular Interaction Network Database</synonym>
@@ -41,7 +41,7 @@
 
 	<datatype id="MIR:00000002" pattern="^CHEBI:\d+$">
 		<name>ChEBI</name>
-		<definition>Chemical Entities of Biological Interest (ChEBI) is a freely available dictionary of molecular entities focused on 'small' chemical compounds.</definition>
+		<definition>Chemical Entities of Biological Interest (ChEBI) is a freely available dictionary of molecular entities focused on &apos;small&apos; chemical compounds.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:obo.chebi</uri>
 			<uri type="URL" deprecated="true">http://www.ebi.ac.uk/chebi/</uri>
@@ -185,7 +185,7 @@
 		<synonyms>
 			<synonym>UniProtKB</synonym>
 		</synonyms>
-		<definition>UniProt (Universal Protein Resource) is the world's most comprehensive catalog of information on proteins. It is a central repository of protein sequence and function created by joining the information contained in Swiss-Prot, TrEMBL, and PIR.</definition>
+		<definition>UniProt (Universal Protein Resource) is the world&apos;s most comprehensive catalog of information on proteins. It is a central repository of protein sequence and function created by joining the information contained in Swiss-Prot, TrEMBL, and PIR.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:uniprot</uri>
 			<uri type="URN" deprecated="true">urn:lsid:uniprot.org:uniprot</uri>
@@ -373,7 +373,7 @@
 			<resource id="MIR:00100016">
 				<dataResource>http://www.who.int/classifications/icd/en/</dataResource>
 				<dataEntityExample>C34</dataEntityExample>
-				<dataEntry>http://apps.who.int/classifications/apps/icd/icd10online/index.htm?ga00.htm+$id</dataEntry>
+				<dataEntry>http://apps.who.int/classifications/apps/icd/icd10online/index.htm?navi.htm+$id</dataEntry>
 				<dataInfo>International Statistical Classification of Diseases and Related Health Problems</dataInfo>
 				<dataInstitution>German Institute of Medical Documentation and Information</dataInstitution>
 				<dataLocation>Germany</dataLocation>
@@ -400,15 +400,15 @@
 			<uri type="URL" deprecated="true">http://www.ebi.ac.uk/intact/</uri>
 		</uris>
 		<documentations>
-			<documentation type="PMID">urn:miriam:pubmed:14681455</documentation>
 			<documentation type="PMID">urn:miriam:pubmed:17145710</documentation>
+			<documentation type="PMID">urn:miriam:pubmed:14681455</documentation>
 		</documentations>
 		<resources>
 			<resource id="MIR:00100017">
 				<dataResource>http://www.ebi.ac.uk/intact/</dataResource>
 				<dataEntityExample>EBI-2307691</dataEntityExample>
 				<dataEntry>http://www.ebi.ac.uk/intact/pages/details/details.xhtml?interactionAc=$id</dataEntry>
-				<dataInfo> IntAct</dataInfo>
+				<dataInfo>IntAct</dataInfo>
 				<dataInstitution>European Bioinformatics Institute</dataInstitution>
 				<dataLocation>United Kingdom</dataLocation>
 			</resource>
@@ -629,9 +629,9 @@
 		</documentations>
 		<resources>
 			<resource id="MIR:00100024">
-				<dataResource>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM</dataResource>
+				<dataResource>http://www.ncbi.nlm.nih.gov/omim/</dataResource>
 				<dataEntityExample>603903</dataEntityExample>
-				<dataEntry>http://www.ncbi.nih.gov/entrez/dispomim.cgi?id=$id</dataEntry>
+				<dataEntry>http://www.ncbi.nlm.nih.gov/omim/$id</dataEntry>
 				<dataInfo>Online Mendelian Inheritance in Man(tm)</dataInfo>
 				<dataInstitution>National Center for Biotechnology Information</dataInstitution>
 				<dataLocation>USA</dataLocation>
@@ -1073,22 +1073,6 @@
 				<dataInstitution>Wellcome Trust Sanger Institute</dataInstitution>
 				<dataLocation>United Kingdom</dataLocation>
 			</resource>
-			<resource id="MIR:00100040">
-				<dataResource>http://imbb.wormbase.org/</dataResource>
-				<dataEntityExample>WBGene00000001</dataEntityExample>
-				<dataEntry>http://imbb.wormbase.org/db/gene/gene?name=$id;class=Gene</dataEntry>
-				<dataInfo>WormBase Mirror in Crete</dataInfo>
-				<dataInstitution>Institute of Molecular Biology and Biotechnology</dataInstitution>
-				<dataLocation>Greece</dataLocation>
-			</resource>
-			<resource id="MIR:00100041">
-				<dataResource>http://caltech.wormbase.org/</dataResource>
-				<dataEntityExample>WBGene00000001</dataEntityExample>
-				<dataEntry>http://caltech.wormbase.org/db/gene/gene?name=$id;class=Gene</dataEntry>
-				<dataInfo>Caltech WormBase Mirror</dataInfo>
-				<dataInstitution>California Institute of Technology</dataInstitution>
-				<dataLocation>USA</dataLocation>
-			</resource>
 			<resource id="MIR:00100042">
 				<dataResource>http://crfb-3.univ-mrs.fr/</dataResource>
 				<dataEntityExample>WBGene00000001</dataEntityExample>
@@ -1096,6 +1080,22 @@
 				<dataInfo>WormBase Mirror at Marseille-Nice Genopole</dataInfo>
 				<dataInstitution>Marseille-Nice Genopole</dataInstitution>
 				<dataLocation>France</dataLocation>
+			</resource>
+			<resource id="MIR:00100040" obsolete="true">
+				<dataResource>http://imbb.wormbase.org/</dataResource>
+				<dataEntityExample>WBGene00000001</dataEntityExample>
+				<dataEntry>http://imbb.wormbase.org/db/gene/gene?name=$id;class=Gene</dataEntry>
+				<dataInfo>WormBase Mirror in Crete</dataInfo>
+				<dataInstitution>Institute of Molecular Biology and Biotechnology</dataInstitution>
+				<dataLocation>Greece</dataLocation>
+			</resource>
+			<resource id="MIR:00100041" obsolete="true">
+				<dataResource>http://caltech.wormbase.org/</dataResource>
+				<dataEntityExample>WBGene00000001</dataEntityExample>
+				<dataEntry>http://caltech.wormbase.org/db/gene/gene?name=$id;class=Gene</dataEntry>
+				<dataInfo>Caltech WormBase Mirror</dataInfo>
+				<dataInstitution>California Institute of Technology</dataInstitution>
+				<dataLocation>USA</dataLocation>
 			</resource>
 		</resources>
 		<tags>
@@ -1277,22 +1277,6 @@
 				<dataInstitution>Wellcome Trust Sanger Institute</dataInstitution>
 				<dataLocation>United Kingdom</dataLocation>
 			</resource>
-			<resource id="MIR:00100053">
-				<dataResource>http://imbb.wormbase.org/db/seq/protein</dataResource>
-				<dataEntityExample>CE28239</dataEntityExample>
-				<dataEntry>http://imbb.wormbase.org/db/seq/protein?name=$id</dataEntry>
-				<dataInfo>Wormpep Mirror in Crete</dataInfo>
-				<dataInstitution>Institute of Molecular Biology and Biotechnology</dataInstitution>
-				<dataLocation>Greece</dataLocation>
-			</resource>
-			<resource id="MIR:00100054">
-				<dataResource>http://caltech.wormbase.org/db/seq/protein</dataResource>
-				<dataEntityExample>CE28239</dataEntityExample>
-				<dataEntry>http://caltech.wormbase.org/db/seq/protein?name=$id</dataEntry>
-				<dataInfo>Caltech Wormpep Mirror</dataInfo>
-				<dataInstitution>California Institute of Technology</dataInstitution>
-				<dataLocation>USA</dataLocation>
-			</resource>
 			<resource id="MIR:00100055">
 				<dataResource>http://crfb-3.univ-mrs.fr/db/seq/protein</dataResource>
 				<dataEntityExample>CE28239</dataEntityExample>
@@ -1300,6 +1284,22 @@
 				<dataInfo>Wormpep Mirror at Marseille-Nice Genopole</dataInfo>
 				<dataInstitution>Marseille-Nice Genopole</dataInstitution>
 				<dataLocation>France</dataLocation>
+			</resource>
+			<resource id="MIR:00100053" obsolete="true">
+				<dataResource>http://imbb.wormbase.org/db/seq/protein</dataResource>
+				<dataEntityExample>CE28239</dataEntityExample>
+				<dataEntry>http://imbb.wormbase.org/db/seq/protein?name=$id</dataEntry>
+				<dataInfo>Wormpep Mirror in Crete</dataInfo>
+				<dataInstitution>Institute of Molecular Biology and Biotechnology</dataInstitution>
+				<dataLocation>Greece</dataLocation>
+			</resource>
+			<resource id="MIR:00100054" obsolete="true">
+				<dataResource>http://caltech.wormbase.org/db/seq/protein</dataResource>
+				<dataEntityExample>CE28239</dataEntityExample>
+				<dataEntry>http://caltech.wormbase.org/db/seq/protein?name=$id</dataEntry>
+				<dataInfo>Caltech Wormpep Mirror</dataInfo>
+				<dataInstitution>California Institute of Technology</dataInstitution>
+				<dataLocation>USA</dataLocation>
 			</resource>
 		</resources>
 		<tags>
@@ -1344,7 +1344,7 @@
 
 	<datatype id="MIR:00000033" pattern="^\d+$">
 		<name>PubChem-substance</name>
-		<definition>PubChem provides information on the biological activities of small molecules. It is a component of NIH's Molecular Libraries Roadmap Initiative. PubChem Substance archives chemical substance records.</definition>
+		<definition>PubChem provides information on the biological activities of small molecules. It is a component of NIH&apos;s Molecular Libraries Roadmap Initiative. PubChem Substance archives chemical substance records.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:pubchem.substance</uri>
 			<uri type="URL" deprecated="true">http://www.pubchem.gov/substance/</uri>
@@ -1356,7 +1356,7 @@
 			<resource id="MIR:00100058">
 				<dataResource>http://pubchem.ncbi.nlm.nih.gov/</dataResource>
 				<dataEntityExample>100101</dataEntityExample>
-				<dataEntry>http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid=$id</dataEntry>
+				<dataEntry>http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=search&amp;db=pcsubstance&amp;term=$id</dataEntry>
 				<dataInfo>NCBI PubChem Substance</dataInfo>
 				<dataInstitution>National Center for Biotechnology Information (NCBI)</dataInstitution>
 				<dataLocation>USA</dataLocation>
@@ -1377,7 +1377,7 @@
 
 	<datatype id="MIR:00000034" pattern="^\d+$">
 		<name>PubChem-compound</name>
-		<definition>PubChem provides information on the biological activities of small molecules. It is a component of NIH's Molecular Libraries Roadmap Initiative. PubChem Compound archives chemical structures and records.</definition>
+		<definition>PubChem provides information on the biological activities of small molecules. It is a component of NIH&apos;s Molecular Libraries Roadmap Initiative. PubChem Compound archives chemical structures and records.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:pubchem.compound</uri>
 			<uri type="URL" deprecated="true">http://www.pubchem.gov/compound/</uri>
@@ -1500,7 +1500,7 @@
 		</uris>
 		<documentations>
 			<documentation type="URL">http://www.bioinfo.de/isb/2007/07/S1/05/</documentation>
-			<documentation type="URL">http://www.springerlink.com/content/kw1kv13614272400/?p=9b9a98e3b7c04ec189cd2927fcc83808&amp;pi=8</documentation>
+			<documentation type="URL">http://www.springerlink.com/content/kw1kv13614272400/?p=9b9a98e3b7c04ec189cd2927fcc83808&amp;amp;pi=8</documentation>
 			<documentation type="DOI">urn:miriam:doi:10.1186%2F1752-0509-1-S1-S6</documentation>
 			<documentation type="DOI">urn:miriam:doi:10.1186%2F1752-0509-1-S1-P4</documentation>
 		</documentations>
@@ -1896,7 +1896,7 @@
 
 	<datatype id="MIR:00000052" pattern="^LM(FA|GL|GP|SP|ST|PR|SL|PK)[0-9]{4}([0-9a-zA-Z]{4})?$">
 		<name>LIPID MAPS</name>
-		<definition>The LIPID MAPS Lipid Classification System is comprised of eight lipid categories, each with its own subclassification hierarchy. All lipids in the LIPID MAPS Structure Database (LMSD) have been classified using this system and have been assigned LIPID MAPS ID's which reflects their position in the classification hierarchy.</definition>
+		<definition>The LIPID MAPS Lipid Classification System is comprised of eight lipid categories, each with its own subclassification hierarchy. All lipids in the LIPID MAPS Structure Database (LMSD) have been classified using this system and have been assigned LIPID MAPS ID&apos;s which reflects their position in the classification hierarchy.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:lipidmaps</uri>
 		</uris>
@@ -1976,7 +1976,7 @@
 		<synonyms>
 			<synonym>ECO</synonym>
 		</synonyms>
-		<definition>Evidence codes can be used to specify the type of supporting evidence for a piece of knowledge. This allows inference of a 'level of support' between an entity and an annotation made to an entity.</definition>
+		<definition>Evidence codes can be used to specify the type of supporting evidence for a piece of knowledge. This allows inference of a &apos;level of support&apos; between an entity and an annotation made to an entity.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:obo.eco</uri>
 		</uris>
@@ -2361,7 +2361,7 @@
 
 	<datatype id="MIR:00000069" pattern="^\d+$">
 		<name>Entrez Gene</name>
-		<definition>Entrez Gene is the NCBI's database for gene-specific information, focusing on completely sequenced genomes, those with an active research community to contribute gene-specific information, or those that are scheduled for intense sequence analysis.</definition>
+		<definition>Entrez Gene is the NCBI&apos;s database for gene-specific information, focusing on completely sequenced genomes, those with an active research community to contribute gene-specific information, or those that are scheduled for intense sequence analysis.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:entrez.gene</uri>
 		</uris>
@@ -2444,7 +2444,7 @@
 
 	<datatype id="MIR:00000072" pattern="^\d+$">
 		<name>PubChem-bioassay</name>
-		<definition>PubChem provides information on the biological activities of small molecules. It is a component of NIH's Molecular Libraries Roadmap Initiative. PubChem bioassay archives active compounds and bioassay results.</definition>
+		<definition>PubChem provides information on the biological activities of small molecules. It is a component of NIH&apos;s Molecular Libraries Roadmap Initiative. PubChem bioassay archives active compounds and bioassay results.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:pubchem.bioassay</uri>
 		</uris>
@@ -2455,7 +2455,7 @@
 			<resource id="MIR:00100102">
 				<dataResource>http://www.ncbi.nlm.nih.gov/sites/entrez?db=pcassay </dataResource>
 				<dataEntityExample>1018</dataEntityExample>
-				<dataEntry>http://pubchem.ncbi.nlm.nih.gov/assay/assay.cgi?aid= $id</dataEntry>
+				<dataEntry>http://pubchem.ncbi.nlm.nih.gov/assay/assay.cgi?aid=$id</dataEntry>
 				<dataInfo>PubChem Bioassay at NCBI</dataInfo>
 				<dataInstitution>National Center for Biotechnology Information (NCBI)</dataInstitution>
 				<dataLocation>USA</dataLocation>
@@ -2638,7 +2638,7 @@ All content is under the Creative Commons Attribution 3.0 Unported license.</def
 			<resource id="MIR:00100110">
 				<dataResource>http://zfin.org</dataResource>
 				<dataEntityExample>ZDB-GENE-041118-11</dataEntityExample>
-				<dataEntry>http://zfin.org/cgi-bin/ZFIN_jump?record=$id</dataEntry>
+				<dataEntry>http://zfin.org/cgi-bin/webdriver?MIval=aa-markerview.apg&amp;OID=$id</dataEntry>
 				<dataInfo>The Zebrafish model organism database</dataInfo>
 				<dataInstitution>Zebrafish Information Network, University of Oregon </dataInstitution>
 				<dataLocation>USA</dataLocation>
@@ -2704,7 +2704,7 @@ All content is under the Creative Commons Attribution 3.0 Unported license.</def
 
 	<datatype id="MIR:00000082" pattern="^\d{5}$">
 		<name>Rhea</name>
-		<definition>Rhea is a manually annotated reaction database, where all reaction participants (reactants and products) are linked to the ChEBI database (Chemical Entities of Biological Interest), providing detailed information about structure, formulae and charge. It is populated with the reactions found in the EC list, IntEnz and ENZYME databases), as well as other biochemical reactions, including those that are often termed "spontaneous".</definition>
+		<definition>Rhea is a manually annotated reaction database, where all reaction participants (reactants and products) are linked to the ChEBI database (Chemical Entities of Biological Interest), providing detailed information about structure, formulae and charge. It is populated with the reactions found in the EC list, IntEnz and ENZYME databases), as well as other biochemical reactions, including those that are often termed &quot;spontaneous&quot;.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:rhea</uri>
 		</uris>
@@ -3324,7 +3324,7 @@ PharmGKB Pathways are drug centric, gene based, interactive pathways which focus
 
 	<datatype id="MIR:00000106" pattern="^[\w\d\.-]*$">
 		<name>GeneDB</name>
-		<definition>GeneDB is a genome database for prokaryotic and eukaryotic organisms and provides a portal through which data generated by the "Pathogen Genomics" group at the Wellcome Trust Sanger Institute and other collaborating sequencing centres can be accessed.</definition>
+		<definition>GeneDB is a genome database for prokaryotic and eukaryotic organisms and provides a portal through which data generated by the &quot;Pathogen Genomics&quot; group at the Wellcome Trust Sanger Institute and other collaborating sequencing centres can be accessed.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:genedb</uri>
 		</uris>
@@ -3501,10 +3501,10 @@ PharmGKB Pathways are drug centric, gene based, interactive pathways which focus
 	<datatype id="MIR:00000113" pattern="^\w{3}$">
 		<name>Chemical Component Dictionary</name>
 		<synonyms>
-			<synonym>PDBeChem</synonym>
 			<synonym>PDB-CCD</synonym>
+			<synonym>PDBeChem</synonym>
 		</synonyms>
-		<definition>The Chemical Component Dictionary is as an external reference file describing all residue and small molecule components found in Protein Data Bank entries. It contains detailed chemical descriptions for standard and modified amino acids/nucleotides, small molecule ligands, and solvent molecules. Each chemical definition includes descriptions of chemical properties such as stereochemical assignments, aromatic bond assignments, idealized coordinates, chemical descriptors (SMILES and InChI), and systematic chemical names.</definition>
+		<definition>The Chemical Component Dictionary is as an external reference file describing all residue and small molecule components found in Protein Data Bank entries. It contains detailed chemical descriptions for standard and modified amino acids/nucleotides, small molecule ligands, and solvent molecules. Each chemical definition includes descriptions of chemical properties such as stereochemical assignments, aromatic bond assignments, idealized coordinates, chemical descriptors (SMILES &amp; InChI), and systematic chemical names.</definition>
 		<uris>
 			<uri type="URN">urn:miriam:pdb-ccd</uri>
 		</uris>
@@ -3540,7 +3540,7 @@ PharmGKB Pathways are drug centric, gene based, interactive pathways which focus
 			<resource id="MIR:00100147">
 				<dataResource>http://www.glycome-db.org/showMenu.action?major=database</dataResource>
 				<dataEntityExample>1</dataEntityExample>
-				<dataEntry> http://www.glycome-db.org/database/showStructure.action?glycomeId=$id</dataEntry>
+				<dataEntry>http://www.glycome-db.org/database/showStructure.action?glycomeId=$id</dataEntry>
 				<dataInfo>GlycomeDB carbohydrate structure database</dataInfo>
 				<dataInstitution>German Cancer Research Center, Heidelberg</dataInstitution>
 				<dataLocation>Germany</dataLocation>
@@ -3576,4 +3576,390 @@ PharmGKB Pathways are drug centric, gene based, interactive pathways which focus
 		</tags>
 	</datatype>
 
+	<datatype id="MIR:00000116" pattern="^K\d+$">
+		<name>KEGG Orthology</name>
+		<definition>KEGG Orthology (KO) consists of manually defined, generalised ortholog groups that correspond to KEGG pathway nodes and BRITE hierarchy nodes in all organisms.</definition>
+		<uris>
+			<uri type="URN">urn:miriam:kegg.orthology</uri>
+		</uris>
+		<documentations>
+			<documentation type="URL">http://www.genome.jp/kegg/ko.html</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100149">
+				<dataResource>http://www.genome.jp/kegg/ko.html</dataResource>
+				<dataEntityExample>K00001</dataEntityExample>
+				<dataEntry>http://www.genome.jp/dbget-bin/www_bget?ko+$id</dataEntry>
+				<dataInfo>KEGG Orthology Database</dataInfo>
+				<dataInstitution>Department of Computational Biology, University of Tokyo, Tokyo</dataInstitution>
+				<dataLocation>Japan</dataLocation>
+			</resource>
+		</resources>
+		<tags>
+			<tag>clustering</tag>
+			<tag>pathway</tag>
+		</tags>
+	</datatype>
+
+	<datatype id="MIR:00000117" pattern="^PD\d+$">
+		<name>ProDom</name>
+		<definition>ProDom is a database of protein domain families generated from the global comparison of all available protein sequences.</definition>
+		<uris>
+			<uri type="URN">urn:miriam:prodom</uri>
+		</uris>
+		<documentations>
+			<documentation type="PMID">urn:miriam:pubmed:15608179</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100150">
+				<dataResource>http://prodom.prabi.fr/prodom/current/html/home.php</dataResource>
+				<dataEntityExample>PD10000</dataEntityExample>
+				<dataEntry>http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&amp;query=$id</dataEntry>
+				<dataInfo>ProDom Protein Domain Database</dataInfo>
+				<dataInstitution>Laboratoire des Interactions Plantes-Microorganismes, INRA/CNRS</dataInstitution>
+				<dataLocation>France</dataLocation>
+			</resource>
+		</resources>
+		<tags>
+			<tag>domain</tag>
+			<tag>protein</tag>
+		</tags>
+	</datatype>
+
+	<datatype id="MIR:00000118" pattern="^SM\d{5}$">
+		<name>SMART</name>
+		<definition>The Simple Modular Architecture Research Tool (SMART) is an online tool for the identification and annotation of protein domains, and the analysis of domain architectures.</definition>
+		<uris>
+			<uri type="URN">urn:miriam:smart</uri>
+		</uris>
+		<documentations>
+			<documentation type="PMID">urn:miriam:pubmed:9847187</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100151">
+				<dataResource>http://smart.embl-heidelberg.de/</dataResource>
+				<dataEntityExample>SM00015</dataEntityExample>
+				<dataEntry>http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN=$id</dataEntry>
+				<dataInfo>SMART (Simple Modular Architecture Research Tool)</dataInfo>
+				<dataInstitution>EMBL, Heidelberg</dataInstitution>
+				<dataLocation>Germany</dataLocation>
+			</resource>
+		</resources>
+		<tags>
+			<tag>domain</tag>
+			<tag>gene</tag>
+			<tag>protein</tag>
+		</tags>
+	</datatype>
+
+	<datatype id="MIR:00000119" pattern="^cd\d{5}$">
+		<name>Conserved Domain Database</name>
+		<synonyms>
+			<synonym>CDD</synonym>
+		</synonyms>
+		<definition>The Conserved Domain Database (CDD) is a collection of multiple sequence alignments and derived database search models, which represent protein domains conserved in molecular evolution.</definition>
+		<uris>
+			<uri type="URN">urn:miriam:cdd</uri>
+		</uris>
+		<documentations>
+			<documentation type="PMID">urn:miriam:pubmed:18984618</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100152">
+				<dataResource>http://www.ncbi.nlm.nih.gov/sites/entrez?db=cdd</dataResource>
+				<dataEntityExample>cd00400</dataEntityExample>
+				<dataEntry>http://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=$id</dataEntry>
+				<dataInfo>Conserved Domain Database at NCBI</dataInfo>
+				<dataInstitution>National Library of Medicine, National Institutes of Health, Maryland</dataInstitution>
+				<dataLocation>USA</dataLocation>
+			</resource>
+		</resources>
+		<tags>
+			<tag>domain</tag>
+			<tag>protein</tag>
+		</tags>
+	</datatype>
+
+	<datatype id="MIR:00000120" pattern="^OBO_REL:\w+\_\w+$">
+		<name>Relation Ontology</name>
+		<definition>The OBO Relation Ontology provides consistent and unambiguous formal definitions of the relational expressions used in biomedical ontologies.</definition>
+		<uris>
+			<uri type="URN">urn:miriam:obo.ro</uri>
+		</uris>
+		<documentations>
+			<documentation type="PMID">urn:miriam:pubmed:15892874</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100153">
+				<dataResource>http://www.obofoundry.org/ro/</dataResource>
+				<dataEntityExample>OBO_REL:is_a</dataEntityExample>
+				<dataEntry>http://www.obofoundry.org/ro/#$id</dataEntry>
+				<dataInfo>OBO Relation Ontology</dataInfo>
+				<dataInstitution>Institute for Formal Ontology and Medical Information Science, Saarbr&#252;cken</dataInstitution>
+				<dataLocation>Germany</dataLocation>
+			</resource>
+		</resources>
+		<tags>
+			<tag>ontology</tag>
+		</tags>
+	</datatype>
+
+	<datatype id="MIR:00000121" pattern="^\d{1,5}$">
+		<name>Molecular Modeling Database</name>
+		<synonyms>
+			<synonym>MMDB</synonym>
+			<synonym>Entrez Structure</synonym>
+		</synonyms>
+		<definition>The Molecular Modeling Database (MMDB) is a database of experimentally determined structures obtained from the Protein Data Bank (PDB). Since structures are known for a large fraction of all protein families, structure homologs may facilitate inference of biological function, or the identification of binding or catalytic sites.</definition>
+		<uris>
+			<uri type="URN">urn:miriam:mmdb</uri>
+		</uris>
+		<documentations>
+			<documentation type="PMID">urn:miriam:pubmed:17135201</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100154">
+				<dataResource>http://www.ncbi.nlm.nih.gov/sites/entrez?db=structure</dataResource>
+				<dataEntityExample>50885</dataEntityExample>
+				<dataEntry>http://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=$id</dataEntry>
+				<dataInfo>MMDB at NCBI</dataInfo>
+				<dataInstitution>National Library of Medicine, National Institutes of Health, Maryland</dataInstitution>
+				<dataLocation>USA</dataLocation>
+			</resource>
+		</resources>
+		<tags>
+			<tag>domain</tag>
+			<tag>protein</tag>
+			<tag>structure</tag>
+		</tags>
+	</datatype>
+
+	<datatype id="MIR:00000122" pattern="^IM-\d+(-?)(\d+?)$">
+		<name>IMEx</name>
+		<definition>The International Molecular Exchange (IMEx) is a consortium of molecular interaction databases which collaborate to share manual curation efforts and provide accessibility to multiple information sources.</definition>
+		<uris>
+			<uri type="URN">urn:miriam:imex</uri>
+		</uris>
+		<documentations>
+			<documentation type="PMID">urn:miriam:pubmed:17893861</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100155">
+				<dataResource>http://disber.net/imexdrupal/</dataResource>
+				<dataEntityExample>IM-12080-80</dataEntityExample>
+				<dataEntry>http://www.ebi.ac.uk/intact/imex/main.xhtml?query=$id</dataEntry>
+				<dataInfo>IMEx Consortium running at EBI</dataInfo>
+				<dataInstitution>European Bioinformatics Institute</dataInstitution>
+				<dataLocation>UK</dataLocation>
+			</resource>
+		</resources>
+		<tags>
+			<tag>interaction</tag>
+			<tag>protein</tag>
+		</tags>
+	</datatype>
+
+	<datatype id="MIR:00000123" pattern="^\d+$">
+		<name>iRefWeb</name>
+		<definition>iRefWeb is an interface to a relational database containing the latest build of the interaction Reference Index (iRefIndex) which integrates protein interaction data from ten different interaction databases: BioGRID, BIND, CORUM, DIP, HPRD, INTACT, MINT, MPPI, MPACT and OPHID. In addition, iRefWeb associates interactions with the PubMed record from which they are derived.
+
+</definition>
+		<uris>
+			<uri type="URN">urn:miriam:irefweb</uri>
+		</uris>
+		<documentations>
+			<documentation type="DOI">urn:miriam:doi:10.1186%2F1471-2105-9-405</documentation>
+			<documentation type="URL">http://irefindex.uio.no/wiki/iRefIndex</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100156">
+				<dataResource>http://wodaklab.org/iRefWeb/</dataResource>
+				<dataEntityExample>239002</dataEntityExample>
+				<dataEntry>http://wodaklab.org/iRefWeb/interaction/show/$id</dataEntry>
+				<dataInfo>iRefWeb Protein Interaction Reference Index</dataInfo>
+				<dataInstitution>Wodak Lab, Hospital for Sick Children, Toronto</dataInstitution>
+				<dataLocation>Canada</dataLocation>
+			</resource>
+		</resources>
+		<tags>
+			<tag>interaction</tag>
+			<tag>protein</tag>
+		</tags>
+	</datatype>
+
+	<datatype id="MIR:00000124" pattern="^\d+$">
+		<name>Microbial Protein Interaction Database</name>
+		<synonyms>
+			<synonym>MPID</synonym>
+		</synonyms>
+		<definition>The microbial protein interaction database (MPIDB) provides physical microbial interaction data. The interactions are manually curated from the literature or imported from other databases, and are linked to supporting experimental evidence, as well as evidences based on interaction conservation, protein complex membership, and 3D domain contacts.</definition>
+		<uris>
+			<uri type="URN">urn:miriam:mpid</uri>
+		</uris>
+		<documentations>
+			<documentation type="PMID">urn:miriam:pubmed:18556668</documentation>
+		</documentations>
+		<resources>
+			<resource id="MIR:00100157">
+				<dataResource>http://www.jcvi.org/mpidb/about.php</dataResource>
+				<dataEntityExample>172</dataEntityExample>
+				<dataEntry>http://www.jcvi.org/mpidb/experiment.php?interaction_id=$id</dataEntry>
+				<dataInfo>Microbial Protein Interaction Database</dataInfo>
+				<dataInstitution>J. Craig Venter Institute, Maryland</dataInstitution>
+				<dataLocation>USA</dataLocation>
+			</resource>
+		</resources>
+	</datatype>
+
+	<listOfTags>
+		<tagDefinition>
+			<name>annotation</name>
+			<definition>Descriptive text, usually added by an author or curator, that provides extra information that may be missing or not immediately evident.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>bibliography</name>
+			<definition>A citation list which supports the information provided. This may include books, publications in journal, or URL links.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>chemical</name>
+			<definition>Data types with this tag reference data pertaining to chemical compounds and substances.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>classification</name>
+			<definition>A classification scheme which does not necessarily depict a relationship between different groups, but only between individuals within a group. </definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>clustering</name>
+			<definition>Data types with this tag contain data which has been processed in such a way as to generate subsets (clusters) within which some trait should be shared. </definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>disease</name>
+			<definition>A disease is an abnormal condition of an organism that impairs bodily functions and can be deadly. It is also defined as a way of the body harming itself in an abnormal way, associated with specific symptoms and signs. [wikipedia]</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>disorder</name>
+			<definition>The term &quot;disorder&quot; is often considered more value-neutral than the term &quot;disease&quot; [wikipedia]. Hence it may have no attributable signs or symptoms.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>DNA</name>
+			<definition>Data types with this tag reference data pertaining to deoxyribonucleic acid. </definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>domain</name>
+			<definition>A domain is a protein subsequence that forms a three-dimensional structure, and can provide specific catalytic or binding sites as found in enzymes or regulatory proteins. A specific domain may appear in a variety of evolutionarily related proteins.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>drug</name>
+			<definition>A drug, broadly speaking, is any chemical substance that, when absorbed into the body of a living organism, alters normal bodily function [wikipedia].</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>enzyme</name>
+			<definition>An enzyme is a biological catalyst of a chemical reaction. Most enzymes are proteins.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>eukaryotic</name>
+			<definition>Data type pertaining to eukaryotic cells, which are differentiated from prokaryotic cells by the presence of a nucleus. This group includes human, plant, and fungal cells.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>expression</name>
+			<definition>Data types associated with this tag pertain to the measurement of gene expression, often through the use of microarray techniques, and usually in quantitative fashion.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>gene</name>
+			<definition>Genes are discrete subsequences of genomic DNA and correspond to a unit of inheritance [based on wikipedia]. A data type tagged &apos;gene&apos; should include gene information in addition to purely sequence-oriented data.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>genome</name>
+			<definition>A genome is the full compliment of hereditary information (usually DNA) for a given organism, and includes coding and non-coding sequences where applicable. &apos;Genome&apos; tagged data types are those whose information is derived from genome level sequencing projects.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>human</name>
+			<definition>Data types labelled &apos;human&apos; should contain human centric data.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>interaction</name>
+			<definition>Data types tagged &apos;interaction&apos; should contain information relating to molecular interaction data, often protein-protein.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>kinetics</name>
+			<definition>Kinetics is the study of rates of reactions or chemical processes. Data types tagged &apos;kinetics&apos; should provide information such as rate laws and rate constants.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>lipid</name>
+			<definition>Data type pertaining to lipids, which are lipophilic, naturally-occurring molecules. </definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>mammalian</name>
+			<definition>Data types labelled &apos;mammalian&apos; should contain mammal centric data.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>mass_spectrometry</name>
+			<definition>Mass spectrometry is an analytical technique that identifies the chemical composition of a compound or sample on the basis of the mass-to-charge ratio of charged particles. [Wikipedia]</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>metabolite</name>
+			<definition>Metabolites are the intermediates and products of metabolism. The term metabolite is usually restricted to small molecules. A primary metabolite is directly involved in normal growth, development, and reproduction. A secondary metabolite is not directly involved in those processes, but usually has an important ecological function. Examples include antibiotics and pigments.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>microarray</name>
+			<definition>Microarray is a high-throughput technology often used to measure gene expression.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>model</name>
+			<definition>Data type pertaining to mathematical models,  encoded in a form that allows their use in simulation software.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>neuroscience</name>
+			<definition>Scientific study of the nervous system.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>nucleotide</name>
+			<definition>Data types tagged &apos;nucleotide&apos; refer to DNA and RNA molecules.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>ontology</name>
+			<definition>Data types tagged &apos;ontology&apos; reference those  ontologies that are used in the life sciences.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>pathway</name>
+			<definition>Series of sequential chemical reactions that are referred to collectively.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>pharmacogenomics</name>
+			<definition>Pharmacogenomics is the branch of pharmacology which deals with the influence of genetic variation on drug response in patients by correlating gene expression or single-nucleotide polymorphisms with a drug&apos;s efficacy or toxicity. [wiki] </definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>phenotype</name>
+			<definition>A phenotype is any observable characteristic of an organism, such as its morphology, development, biochemical or physiological properties, or behaviour [wikipedia].</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>polysaccharide</name>
+			<definition>Polysaccharides are polymeric carbohydrate structures, formed of repeating units (either mono- or di-saccharides) joined together by glycosidic bonds. These structures are often linear, but may contain various degrees of branching. Polysaccharides are often quite heterogeneous, containing slight modifications of the repeating unit.
+[http://en.wikipedia.org/wiki/Polysaccharide]</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>protein</name>
+			<definition>Data types with this tag reference data pertaining to proteins.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>reaction</name>
+			<definition>A single chemical reaction which yields products which are, generally, different from the reactants. Data types tagged &apos;reaction&apos; focus on individual chemical reactions.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>registry</name>
+			<definition>A data type within which all other data types are registered, effectively forming a catalogue.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>sequence</name>
+			<definition>Data types tagged &apos;sequence&apos; reference sequence data, such as DNA, RNA or protein.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>structure</name>
+			<definition>Data types with the &apos;structure&apos; tag should reference chemical or 3-dimensional structure.</definition>
+		</tagDefinition>
+		<tagDefinition>
+			<name>taxonomy</name>
+			<definition>A classification scheme, arranged in a hierarchical structure, that depicts parent-child relationships between its members.</definition>
+		</tagDefinition>
+	</listOfTags>
 </miriam>

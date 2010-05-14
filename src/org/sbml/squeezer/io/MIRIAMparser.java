@@ -32,12 +32,10 @@ import org.jdom.input.SAXBuilder;
 import org.xml.sax.SAXException;
 
 /**
- * This class parses MIRIAM uris given in a XML file and links them to the actual
- * internet resources.
+ * This class parses MIRIAM URIs given in a XML file and links them to the
+ * actual internet resources.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2008-12-09
  * @since 1.3
  */
@@ -95,8 +93,15 @@ public class MIRIAMparser {
 			int index = id.indexOf("%3A");
 			id = id.substring(0, index) + ':' + id.substring(index + 3);
 		}
-		Element datatype = identifyDatatype(miriamURI.toString(),
-				new StringBuffer());
+		Element datatype = null;
+		datatype = identifyDatatype(miriamURI.toString(), new StringBuffer());
+		if (datatype == null) {
+			String sub = uri.substring(0, uri.length() - id.length() - 1);
+			miriamURI = new StringBuffer();
+			String id1 = determinIdentifier(sub, miriamURI);
+			id = id1 + ':' + id;
+			datatype = identifyDatatype(miriamURI.toString(), new StringBuffer());
+		}
 		if (datatype != null) {
 			int i = 0;
 			Vector<String> locations = new Vector<String>();
@@ -135,11 +140,13 @@ public class MIRIAMparser {
 	public String getMiriamURI(String uri) {
 		StringBuffer miriamURI = new StringBuffer();
 		String id = determinIdentifier(uri, miriamURI);
-		if (id.contains(":"))
+		if (id.contains(":")) {
 			id = id.substring(0, id.indexOf(':')) + "%3A"
 					+ id.substring(id.indexOf(':') + 1);
-		if (id.length() > 0)
+		}
+		if (id.length() > 0) {
 			id = ":" + id;
+		}
 		StringBuffer urn = new StringBuffer();
 		identifyDatatype(miriamURI.toString(), urn);
 		urn.append(id);
@@ -173,7 +180,7 @@ public class MIRIAMparser {
 	 * @throws IOException
 	 */
 	public void setMIRIAMfile(String path) throws JDOMException, IOException {
-		doc = new SAXBuilder().build(new File(path));
+		doc = (new SAXBuilder()).build(new File(path));
 	}
 
 	/**
@@ -186,7 +193,14 @@ public class MIRIAMparser {
 	private String determinIdentifier(String uri, StringBuffer miriamURI) {
 		String id = "";
 		if (uri.startsWith("urn:")) {
-			id = uri.substring(uri.lastIndexOf(':'));
+			int idx = uri.lastIndexOf(':');
+			if (idx > 0) {
+				char atIdx = uri.charAt(idx - 1);
+				while ((idx > 0) && Character.isUpperCase(atIdx)) {
+					atIdx = uri.charAt(--idx);
+				}
+			}
+			id = uri.substring(idx);
 			miriamURI.append(uri.substring(0, uri.length() - id.length()));
 			id = id.substring(1);
 		} else if (uri.startsWith("http://")) {
@@ -230,8 +244,9 @@ public class MIRIAMparser {
 							urnString = child.getValue();
 					}
 				}
-				if (child.getValue().equalsIgnoreCase(uri))
+				if (child.getValue().equalsIgnoreCase(uri)) {
 					found = true;
+				}
 			}
 			if (found && urnString.length() > 0) {
 				urn.append(urnString);

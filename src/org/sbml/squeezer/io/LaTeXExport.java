@@ -38,8 +38,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.util.LaTeX;
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.util.LaTeX;
 
 /**
  * This class is used to export a SBML model as LaTeX file.
@@ -180,7 +180,8 @@ public class LaTeXExport extends LaTeX {
 	 * (A4 paper, 11pt, portrait, fancy headings, no titlepage).
 	 */
 	public LaTeXExport(Properties settings) {
-		latex = new LaTeX(settings);
+		latex = new LaTeX(((Boolean) settings
+				.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue());
 		setLandscape(((Boolean) settings.get(CfgKeys.LATEX_LANDSCAPE))
 				.booleanValue());
 		setTypeWriter(((Boolean) settings

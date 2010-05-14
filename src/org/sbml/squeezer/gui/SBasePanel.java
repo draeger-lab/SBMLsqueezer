@@ -70,11 +70,13 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.util.LaTeX;
+import org.sbml.jsbml.util.StringTools;
+import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.MIRIAMparser;
 import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.HTMLFormula;
-import org.sbml.squeezer.util.LaTeX;
 
 import atp.sHotEqn;
 
@@ -131,7 +133,8 @@ public class SBasePanel extends JPanel {
 		super();
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
-		latex = new LaTeX(settings);
+		latex = new LaTeX(((Boolean) settings
+				.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue());
 		this.settings = settings;
 		lh = new LayoutHelper(this, gbl);
 		editable = false;
@@ -140,37 +143,41 @@ public class SBasePanel extends JPanel {
 		className = className.substring(className.lastIndexOf('.') + 1);
 		setBorder(BorderFactory.createTitledBorder(" " + className + " "));
 		lh.add(new JPanel(), 0, ++row, 5, 1, 0, 0);
-		if (sbase instanceof NamedSBase)
+		if (sbase instanceof NamedSBase) {
 			addProperties((NamedSBase) sbase);
+		}
 		addProperties(sbase);
-		if (sbase instanceof SimpleSpeciesReference)
+		if (sbase instanceof SimpleSpeciesReference) {
 			addProperties((SimpleSpeciesReference) sbase);
-		if (sbase instanceof MathContainer)
+		}
+		if (sbase instanceof MathContainer) {
 			addProperties((MathContainer) sbase);
+		}
 		if (sbase instanceof ListOf<?>) {
 			addProperties((ListOf<?>) sbase);
 			// ListOf<?> list = (ListOf<?>) sbase;
 			// for (SBase s : list) {
 			// lh.add(new SBasePanel(s, settings));
 			// }
-		} else if (sbase instanceof Model)
+		} else if (sbase instanceof Model) {
 			addProperties((Model) sbase);
-		else if (sbase instanceof UnitDefinition)
+		} else if (sbase instanceof UnitDefinition) {
 			addProperties((UnitDefinition) sbase);
-		else if (sbase instanceof Unit)
+		} else if (sbase instanceof Unit) {
 			addProperties((Unit) sbase);
-		else if (sbase instanceof Compartment)
+		} else if (sbase instanceof Compartment) {
 			addProperties((Compartment) sbase);
-		else if (sbase instanceof Species)
+		} else if (sbase instanceof Species) {
 			addProperties((Species) sbase);
-		else if (sbase instanceof Parameter)
+		} else if (sbase instanceof Parameter) {
 			addProperties((Parameter) sbase);
-		else if (sbase instanceof Constraint)
+		} else if (sbase instanceof Constraint) {
 			addProperties((Constraint) sbase);
-		else if (sbase instanceof Reaction)
+		} else if (sbase instanceof Reaction) {
 			addProperties((Reaction) sbase);
-		else if (sbase instanceof Event)
+		} else if (sbase instanceof Event) {
 			addProperties((Event) sbase);
+		}
 	}
 
 	/**
@@ -328,7 +335,7 @@ public class SBasePanel extends JPanel {
 	 * @param m
 	 */
 	private void addProperties(Model m) {
-		if (m.isSetHistory()) {
+		if (m.isSetModelHistory()) {
 			History hist = m.getModelHistory();
 			lh.add(new JLabel("Model creators: "), 1, ++row, 1, 1, 1, 1);
 			String columnNames[] = new String[] { "Given name", "Family name",
@@ -567,25 +574,24 @@ public class SBasePanel extends JPanel {
 						String split[] = cvtString.split(uri);
 						StringBuilder sbu = new StringBuilder();
 						for (int l = 0; l < split.length - 1; l++) {
-							if (l > 0)
+							if (l > 0) {
 								sbu.append(", ");
-							sbu.append(split[l]);
-							sbu.append("<a href=\"");
-							sbu.append(loc[0]);
-							sbu.append("\">");
-							sbu.append(uri);
-							sbu.append("</a>");
+							}
+							StringTools.append(sbu, split[l], "<a href=\"",
+									loc[0], "\">", uri, "</a>");
 						}
 						sbu.append(split[split.length - 1]);
 						cvtString = sbu.toString();
 					}
 				}
 				sb.append(cvtString);
-				if (sbase.getNumCVTerms() > 1)
+				if (sbase.getNumCVTerms() > 1) {
 					sb.append("</li>");
+				}
 			}
-			if (sbase.getNumCVTerms() > 1)
+			if (sbase.getNumCVTerms() > 1) {
 				sb.append("</ul>");
+			}
 			sb.append("</body></html>");
 			JEditorPane l = new JEditorPane("text/html", sb.toString());
 			l.addHyperlinkListener(new SystemBrowser());
