@@ -51,12 +51,16 @@ import org.sbml.squeezer.resources.Resource;
  * corner of the screen. It notifies the user that a more recent version of
  * SBMLsqueezer is available. The release notes of this version can be shown.
  * 
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @author Hannes Borch
+ * @author Andreas Dr&auml;ger
  * @since 1.2
  */
 
 public class UpdateMessage {
 
+	/**
+	 * 
+	 */
 	private static final String urlPrefix = "http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/";
 
 	/**
@@ -64,6 +68,9 @@ public class UpdateMessage {
 	 */
 	private static final long serialVersionUID = 1923146558856297087L;
 
+	/**
+	 * 
+	 */
 	private static String latestVersion;
 
 	/**
@@ -164,17 +171,25 @@ public class UpdateMessage {
 		 */
 		private static final long serialVersionUID = -6726847840681376184L;
 
+		/**
+		 * 
+		 */
 		private JButton okButton;
 
+		/**
+		 * 
+		 */
 		private JButton showHideButton;
 
+		/**
+		 * 
+		 */
 		private JPanel contentPanel;
 
 		/**
 		 * Adjusts the location of the update message window to it's actual
 		 * size.
 		 */
-
 		private void adjustLocation() {
 			Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 			this.setLocation(d.width - this.getWidth(), d.height
