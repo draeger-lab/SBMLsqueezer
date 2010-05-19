@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -366,11 +367,15 @@ public class AlgebraicRuleConverter {
 	/**
 	 * 
 	 */
-	private String symbol;
+	private ASTNode variableNodeParent, variableNode;
 	/**
 	 * 
 	 */
-	private ASTNode variableNode;
+	private boolean additive = true;
+	/**
+	 * 
+	 */
+	private boolean remainOnSide = true;
 
 	/**
 	 * 
@@ -387,7 +392,7 @@ public class AlgebraicRuleConverter {
 	private void init() {
 		this.svariables = new ArrayList<String>();
 		this.reactants = new HashSet<String>();
-		this.variableNode = null;
+		this.variableNodeParent = null;
 
 		for (int i = 0; i < model.getNumReactions(); i++) {
 
@@ -656,43 +661,174 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
+	 * Creates a list an assignment rule for every algebraic rule
+	 * in the given model
 	 * 
-	 * @param ar
 	 * @return
 	 */
-	public List<AssignmentRule> getAssignmentRules() {
-		if (matching != null) {
-			System.out.println("size: " + matching.size());
-
-			for (Match match : matching) {
-
-				System.out.println(match.getReaction() + " -> "
-						+ match.getVariable());
-			}
-		}
-
-		else
-			System.out.println("No matching found");
-
-		System.out.println("--------------------------");
+	public ArrayList<AssignmentRule> getAssignmentRules() {
+		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
+		AssignmentRule as;
+//		if (matching != null) {
+//			
+//			for (Match match : matching) {
+//
+//				System.out.println(match.getReaction() + " -> "
+//						+ match.getVariable());
+//			}
+//		}
+//
+//		else
+//			System.out.println("No matching found");
 
 		for (int i = 0; i < model.getNumRules(); i++) {
 			Rule r = model.getRule(i);
 			if (r instanceof AlgebraicRule) {
 				AlgebraicRule ar = (AlgebraicRule) r;
-				System.out.println(ar.getMetaId());
-				System.out.println(ar.getFormula());
 				ASTNode node = ar.getMath().clone();
-				substituteFunctions(node, 0);
 
-				System.out.println(node.toFormula());
-
-				// createAssignmentRule(Node)
+				if (model.getNumFunctionDefinitions() > 0) {
+					substituteFunctions(node, 0);
+				}
+				as = createAssignmentRule(node, ar.getMetaId());
+				
+				if (as!=null) {
+					//assignmentRules.add(as);
+					as= null;
+				}
 
 			}
 		}
 
-		return null;
+		return assignmentRules;
+	}
+
+	/**
+	 * Creates an assignment rule out of the given ASTNode and the Id of its
+	 * algebraic rule
+	 * 
+	 * @param node
+	 * @param ruleId
+	 * @return
+	 */
+	private AssignmentRule createAssignmentRule(ASTNode node, String ruleId) {
+		String variable = new String();
+		AssignmentRule as = null;
+
+		for (Match match : matching) {
+			if (match.getReaction() == ruleId)
+				variable = match.getVariable();
+
+		}
+		if (!variable.isEmpty()) {
+			System.out.println("before: " + node.toFormula());
+			System.out.println("Variable: " + variable);
+			as = new AssignmentRule();
+			as.setVariable(variable);
+			setNodeWithVariable(node, variable);
+			evaluateEquation(variableNodeParent);
+			as.setMath(reorganizeEquation(node));			
+			System.out.println("after: "
+					+ as.getMath().toFormula());
+		}
+
+		return as;
+	}
+
+
+	/**
+	 * Takes the equation stored in node an reorganizes it on the basis of
+	 * the evaluation of this equation and the variable
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private ASTNode reorganizeEquation(ASTNode node) {
+		//setParent(node);
+		ASTNode timesNode, valueNode, divideNode, parent, withVariable, rest;
+		int index;
+		System.out.println("reorganizing equation...");
+		System.out.println("additive: " + additive);
+		System.out.println("remainOnSide: " + remainOnSide);
+		if (additive) {
+			if (!remainOnSide) {
+				index = getIndexOfNode(variableNodeParent);
+				parent = (ASTNode) variableNodeParent.getParent();
+				parent.removeChild(index);
+
+				return node;
+
+			} else {
+				index = getIndexOfNode(variableNodeParent);
+				parent = (ASTNode) variableNodeParent.getParent();
+				parent.removeChild(index);
+				timesNode = new ASTNode(Type.TIMES, null);
+				valueNode = new ASTNode(-1, null);
+				timesNode.addChild(node);
+				timesNode.addChild(valueNode);
+
+				return timesNode;
+			}
+		} else {
+			timesNode = new ASTNode(Type.TIMES, null);
+			valueNode = new ASTNode(-1, null);
+			divideNode = new ASTNode(Type.DIVIDE, null);
+			parent = (ASTNode) variableNodeParent.getParent();
+			withVariable = getOtherChild(variableNodeParent);
+			rest = getOtherChild(this.variableNode);
+
+			index = getIndexOfNode(variableNodeParent);
+			parent = (ASTNode) variableNodeParent.getParent();
+			parent.removeChild(index);
+
+			if (remainOnSide) {
+				timesNode.addChild(rest);
+				timesNode.addChild(valueNode);
+				divideNode.addChild(rest);
+				divideNode.addChild(withVariable);
+
+				return divideNode;
+
+			} else {
+				timesNode.addChild(rest);
+				timesNode.addChild(valueNode);
+				divideNode.addChild(withVariable);
+				divideNode.addChild(rest);
+				return divideNode;
+
+			}
+		}
+
+	}
+
+	/**
+	 * Return the other child of the given nodes parent
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private ASTNode getOtherChild(ASTNode node) {
+		ASTNode parent = (ASTNode) node.getParent();
+		if (parent.getLeftChild() == node) {
+			return parent.getLeftChild();
+		} else
+			return parent.getRightChild();
+
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private int getIndexOfNode(ASTNode node) {
+		ASTNode parent = (ASTNode) node.getParent();
+		for (int i = 0; i < parent.getChildCount(); i++) {
+			ASTNode n = parent.getChild(i);
+			if (node == n)
+				return i;
+		}
+		return -1;
 	}
 
 	/**
@@ -706,23 +842,35 @@ public class AlgebraicRuleConverter {
 			FunctionDefinition fd = model.getFunctionDefinition(node.getName());
 			if (fd != null) {
 				ASTNode function = fd.getMath();
-				HashMap<String, String> varibales = new HashMap<String, String>();
+				HashMap<String, String> nameHash = new HashMap<String, String>();
+				HashMap<String, Integer> numberHash = new HashMap<String, Integer>();
+				HashMap<String, ASTNode> nodeHash = new HashMap<String, ASTNode>();
 				ASTNode parent;
 
 				for (int i = 0; i < node.getNumChildren(); i++) {
-					varibales.put(function.getChild(i).getName(), node
-							.getChild(i).getName());
-					parent = (ASTNode) node.getParent();
-					parent.replaceChild(indexParent, function.getRightChild()
-							.clone());
-					replaceNames(parent.getChild(indexParent), varibales);
+					if (node.getChild(i).isName())
+						nameHash.put(function.getChild(i).getName(), node
+								.getChild(i).getName());
+					else if (node.getChild(i).isNumber()) {
+						numberHash.put(function.getChild(i).getName(), node
+								.getChild(i).getInteger());
+					} else if (node.getChild(i).isOperator()) {
+						nodeHash.put(function.getChild(i).getName(), node
+								.getChild(i).clone());
+					}
+
 				}
+				parent = (ASTNode) node.getParent();
+				parent.replaceChild(indexParent, function.getRightChild()
+						.clone());
+				replaceNames(parent.getChild(indexParent), nameHash,
+						numberHash, nodeHash);
 			}
 
 		} else {
+
 			for (int i = 0; i < node.getNumChildren(); i++) {
-				// TODO!! Bei mir ist diese Funktion nicht verfügbar!
-				// node.getChild(i).setParent(node);
+				//node.getChild(i).setParent(node);
 				substituteFunctions(node.getChild(i), i);
 			}
 		}
@@ -731,75 +879,89 @@ public class AlgebraicRuleConverter {
 
 	/**
 	 * Replaces the names of given ASTNode's childern with the value stored in
-	 * the given HashMap if there is an entry in the HashMap
+	 * the given HashMaps if there is an entry in any of the HashMaps
 	 * 
 	 * 
 	 * @param node
 	 * @param varibales
 	 */
-	private void replaceNames(ASTNode node, HashMap<String, String> varibales) {
+	private void replaceNames(ASTNode node, Map<String, String> varibales,
+			Map<String, Integer> numberHash, Map<String, ASTNode> nodeHash) {
+
 		if (node.isName()) {
 			if (varibales.get(node.getName()) != null) {
 				node.setName(varibales.get(node.getName()));
+			} else if (numberHash.get(node.getName()) != null) {
+				node.setValue(numberHash.get(node.getName()));
+			} else if (nodeHash.get(node.getName()) != null) {
+				ASTNode parent = (ASTNode) node.getParent();
+				int index = parent.getIndex(node);
+				parent.replaceChild(index, nodeHash.get(node.getName()));
 			}
 		}
 
 		for (int i = 0; i < node.getNumChildren(); i++) {
-			// TODO: Bei mir ist diese Funktion nicht verfügbar!
-			// node.getChild(i).setParent(node);
-			replaceNames(node.getChild(i), varibales);
+			//node.getChild(i).setParent(node);
+			replaceNames(node.getChild(i), varibales, numberHash, nodeHash);
 		}
 	}
 
 	/**
-	 * 
-	 * @param math
-	 * @return
-	 */
-	private boolean chooseSide(ASTNode math) {
-		getNodeWithVariable(math);
-		Enumeration<TreeNode> nodes;
-		ASTNode subnode;
-
-		if (variableNode.getType() == Type.TIMES) {
-
-			if (variableNode.getNumChildren() == 2) {
-				nodes = variableNode.children();
-				while (nodes.hasMoreElements()) {
-					subnode = (ASTNode) nodes.nextElement();
-					if (subnode.isNumber())
-						return false;
-
-				}
-
-			}
-
-		}
-
-		// System.out.println(variableNode.getCharacter());
-
-		return true;
-
-	}
-
-	/**
+	 * Checks if the Variable has to be moved to the other side of the equation
+	 * or not and if its connection to the eqution is additiv or multiplicativ.
+	 * *
 	 * 
 	 * @param node
+	 * @return
 	 */
-	private void getNodeWithVariable(ASTNode node) {
+	private void evaluateEquation(ASTNode node) {
+		ASTNode subnode;
+		Enumeration<TreeNode> nodes;
+		if (node != null) {
+			if (node.getType() == Type.TIMES) {
+				if (node.getNumChildren() == 2) {
+					nodes = node.children();
+					while (nodes.hasMoreElements()) {
+						subnode = (ASTNode) nodes.nextElement();
+						if (subnode.isNumber()) {
+							remainOnSide = false;
+
+						}
+					}
+				} else
+					additive = false;
+
+			} else if (node.getType() == Type.DIVIDE) {
+				additive = false;
+				remainOnSide = false;
+			}
+
+			evaluateEquation((ASTNode) node.getParent());
+		}
+
+	}
+
+	/**
+	 * Searches in the given ASTNode for a node with the same name as the given
+	 * String. Afterwards the variables variableNode and variable are set.
+	 * 
+	 * @param node
+	 * @param variable
+	 */
+	private void setNodeWithVariable(ASTNode node, String variable) {
 		Enumeration<TreeNode> nodes = node.children();
 		ASTNode subnode;
 
 		while (nodes.hasMoreElements()) {
 			subnode = (ASTNode) nodes.nextElement();
-			if (subnode.isName())
-				if (subnode.getName() == symbol)
-					variableNode = node;
-		}
-
-		nodes = node.children();
-		while (nodes.hasMoreElements()) {
-			getNodeWithVariable((ASTNode) nodes.nextElement());
+			//subnode.setParent(node);
+			if (subnode.isName()) {
+				if (subnode.getName() == variable){
+					variableNodeParent = node;
+					variableNode = subnode;
+				}
+			} else
+				setNodeWithVariable((ASTNode) subnode, variable);
 		}
 
 	}
@@ -822,7 +984,6 @@ public class AlgebraicRuleConverter {
 					if (!param.contains(node.getName())) {
 						variables.add(node.getName());
 					}
-
 				}
 			}
 
@@ -833,6 +994,16 @@ public class AlgebraicRuleConverter {
 			}
 		}
 
+	}
+
+	/**
+	 * Returns a boolean that indicates whether the given model is
+	 * overdetermined or not.
+	 * 
+	 * @return
+	 */
+	public boolean isOverdetermined() {
+		return (equations.size() > matching.size());
 	}
 
 }

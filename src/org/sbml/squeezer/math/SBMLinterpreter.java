@@ -46,6 +46,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
 
+import com.sun.org.apache.bcel.internal.generic.ISHL;
+
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
 import eva2.tools.math.des.RKSolver;
@@ -153,6 +155,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * not been processed so far
 	 */
 	private ArrayList<DESAssignment> events;
+
+	/**
+	 * Contains a list of all algebraic rules transformed to assignment rules
+	 * for further processing
+	 */
+	private ArrayList<AssignmentRule> algebraicRules;
 
 	/**
 	 * An array, which stores all computed initial values of the model. If this
@@ -561,14 +569,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	}
 
 	/**
-	 * Evaluates the algebraic rules of a model to assignment rules
+	 * Evaluates the algebraic rules of the given model to assignment rules
 	 * 
 	 * @param ar
 	 * @param changeRate
 	 */
-	private void evaluateAlgebraicRule(AlgebraicRule ar) {
+	private void evaluateAlgebraicRule() {
 		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(model);
-		arc.getAssignmentRules();
+		algebraicRules = arc.getAssignmentRules();
 
 	}
 
@@ -933,7 +941,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 
 		/*
-		 * Rules
+		 * Algebraic Rules
+		 */
+		for (i = 0; i < (int) model.getNumRules(); i++) {
+			if (model.getRule(i).isAlgebraic()) {
+				evaluateAlgebraicRule();
+				break;
+			}
+
+		}
+
+		/*
+		 * All other rules
 		 */
 		processRules(Y);
 
@@ -1167,7 +1186,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @return
 	 */
 	private double processCompartment(Value val) {
-		// TODO: Wieso heißt diese Funktion processCompartment? Die hat ja damit
+		// TODO: Wieso heißt diese Funktion processCompartment? Die hat ja
+		// damit
 		// eigentlich nicths zu tun.
 		// Is Species
 		if (val instanceof SpeciesValue) {
@@ -1327,16 +1347,22 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			if (rule.isRate() && currentTime > 0d) {
 				RateRule rr = (RateRule) rule;
 				evaluateRateRule(rr, changeRate);
-			} else if (currentTime == 0d && rule.isAssignment()) {
+			} else if (rule.isAssignment()) {
 				AssignmentRule as = (AssignmentRule) rule;
 				evaluateAssignmentRule(as, changeRate);
-			} else if (currentTime == 0d && rule.isAlgebraic()) {
-				AlgebraicRule ar = (AlgebraicRule) rule;
-				evaluateAlgebraicRule(ar);
 			} else if (rule.isScalar()) {
 
 			}
 		}
+		// process list of algebraic rules
+		if (algebraicRules != null) {
+
+			for (AssignmentRule as : algebraicRules) {
+				evaluateAssignmentRule(as, changeRate);
+			}
+
+		}
+
 	}
 
 	/**
