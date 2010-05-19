@@ -21,6 +21,7 @@ package org.sbml.squeezer.gui;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -114,6 +115,13 @@ public class ASTNodePanel extends JPanel {
 			spinner.setEnabled(enabled);
 			lh.add("Exponent", spinner, true);
 		}
+
+		// TODO: The derived unit should also appear here!
+		JCheckBox chck = new JCheckBox("Contains undeclared units", node
+				.containsUndeclaredUnits());
+		chck.setEnabled(enabled);
+		lh.add(chck, 0, lh.getRow() + 1, 3, 1);
+		lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1);
 
 		if (node.isName()) {
 			tf = new JTextField(node.getName());
