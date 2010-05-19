@@ -1,7 +1,6 @@
 package org.sbml.squeezer.test.math;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -53,7 +52,7 @@ public class SimulationModeTest {
 		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, settings);
 
 		// 919
-		for (int modelnr = 899; modelnr < 920; modelnr++)
+		for (int modelnr = 568; modelnr < 569; modelnr++)
 			try {
 				StringBuilder modelFile = new StringBuilder();
 				modelFile.append(modelnr);

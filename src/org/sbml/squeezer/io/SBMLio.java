@@ -116,10 +116,10 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	public Model convert2Model(Object model) throws SBMLException {
 		try {
 			listOfModels.addLast(reader.convert2Model(model));
-			if (model instanceof String)
+			if (model instanceof String){
 				listOfOrigModels.addLast(reader.getOriginalModel());
-			else
-				listOfOrigModels.addLast(model);
+			}else{
+				listOfOrigModels.addLast(model);}
 			selectedModel = listOfModels.size() - 1;
 			return listOfModels.getLast();
 		} catch (Exception exc) {
