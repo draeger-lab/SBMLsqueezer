@@ -18,11 +18,13 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.Component;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -31,6 +33,7 @@ import javax.swing.SpinnerNumberModel;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.MathContainer;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.LaTeX;
 
 import atp.sHotEqn;
@@ -52,7 +55,23 @@ public class ASTNodePanel extends JPanel {
 	 */
 	public ASTNodePanel(ASTNode node, Properties settings) {
 		super();
+
 		LayoutHelper lh = new LayoutHelper(this);
+		lh.add(new JPanel(), 0, 0, 1, 1, 0, 0);
+		lh.add(createPanel(node, settings), 1, 0, 1, 1, 0, 0);
+		lh.add(new JPanel(), 2, 0, 1, 1, 0, 0);
+
+		setBorder(BorderFactory.createTitledBorder(String.format(" %s %s ",
+				node.getClass().getSimpleName(), node.toString())));
+	}
+
+	/**
+	 * @param node
+	 * @param settings
+	 * @return
+	 */
+	private Component createPanel(ASTNode node, Properties settings) {
+		LayoutHelper lh = new LayoutHelper(new JPanel());
 		boolean enabled = false;
 		JSpinner spinner;
 		JTextField tf;
@@ -116,23 +135,36 @@ public class ASTNodePanel extends JPanel {
 			lh.add("Exponent", spinner, true);
 		}
 
-		// TODO: The derived unit should also appear here!
-		JCheckBox chck = new JCheckBox("Contains undeclared units", node
-				.containsUndeclaredUnits());
-		chck.setEnabled(enabled);
-		lh.add(chck, 0, lh.getRow() + 1, 3, 1);
-		lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1);
-
 		if (node.isName()) {
 			tf = new JTextField(node.getName());
 			tf.setEditable(enabled);
 			lh.add("Name", tf, true);
 			if (node.getVariable() != null) {
 				lh.add(new SBasePanel(node.getVariable(), settings), 0, lh
-						.getRow() + 1, 3, 1);
-				lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1);
+						.getRow() + 1, 3, 1, 0, 0);
+				lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1, 0, 0);
 			}
 		}
+
+		/*
+		 * Units
+		 */
+		JPanel unitPanel = new JPanel();
+		LayoutHelper l = new LayoutHelper(unitPanel);
+		JCheckBox chck = new JCheckBox("Contains undeclared units", node
+				.containsUndeclaredUnits());
+		chck.setEnabled(enabled);
+		l.add(chck, 0, 0, 3, 1);
+		JEditorPane unitPane = GUITools
+				.unitPreview(node.deriveUnit() != null ? node.deriveUnit()
+						: new UnitDefinition());
+		unitPane.setBorder(BorderFactory.createLoweredBevelBorder());
+		l.add(new JPanel(), 0, 1, 3, 1);
+		l.add("Derived unit:", unitPane, true);
+		unitPanel
+				.setBorder(BorderFactory.createTitledBorder(" Derived units "));
+		lh.add(unitPanel, 0, lh.getRow() + 1, 3, 1, 0, 0);
+		lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1, 0, 0);
 
 		sHotEqn preview = new sHotEqn(node.compile(new LaTeX()).toString());
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -140,11 +172,9 @@ public class ASTNodePanel extends JPanel {
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroll.setBorder(BorderFactory.createTitledBorder(" Preview "));
-		lh.add(scroll, 0, lh.getRow() + 1, 3, 1);
+		lh.add(scroll, 0, lh.getRow() + 1, 3, 1, 0, 0);
+		lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1, 0, 0);
 
-		setBorder(BorderFactory
-				.createTitledBorder(" " + node.getClass().getSimpleName() + " "
-						+ node.toString() + " "));
+		return lh.getContainer();
 	}
-
 }

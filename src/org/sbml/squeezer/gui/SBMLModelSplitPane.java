@@ -86,14 +86,24 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	}
 
 	/**
+	 * Function to display the properties of {@link ASTNode} objects.
 	 * 
-	 * @param sbase
+	 * @param nodeInfo
 	 * @return
 	 */
-	private JScrollPane createRightComponent(SBase sbase) {
+	private JScrollPane createRightComponent(Object o) {
+		JScrollPane scroll = null;
 		JPanel p = new JPanel();
-		p.add(new SBasePanel(sbase, settings));
-		JScrollPane scroll = new JScrollPane(p,
+		JPanel panel = null;
+		if (o instanceof ASTNode) {
+			panel = new ASTNodePanel((ASTNode) o, settings);
+		} else if (o instanceof SBase) {
+			panel = new SBasePanel((SBase) o, settings);
+		}
+		if (panel != null) {
+			p.add(panel);
+		}
+		scroll = new JScrollPane(p,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		return scroll;
@@ -194,17 +204,5 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		} else {
 			// displayURL(helpURL);
 		}
-	}
-
-	/**
-	 * Function to display the properties of {@link ASTNode} objects.
-	 * 
-	 * @param nodeInfo
-	 * @return
-	 */
-	private JScrollPane createRightComponent(ASTNode node) {
-		return new JScrollPane(new ASTNodePanel(node, settings),
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	}
 }

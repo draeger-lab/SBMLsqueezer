@@ -34,10 +34,12 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -48,7 +50,9 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.util.HTMLFormula;
 
 /**
  * A convenient class that provides several handy methods for working with
@@ -218,7 +222,7 @@ public class GUITools {
 			button.setToolTipText(toHTML(toolTip, 40));
 		return button;
 	}
-
+	
 	/**
 	 * 
 	 * @param text
@@ -657,5 +661,19 @@ public class GUITools {
 		}
 		sb.append("</body></html>");
 		return sb.toString();
+	}
+
+	/**
+	 * Creates a JEditorPane that displays the given UnitDefinition as a HTML.
+	 * 
+	 * @param ud
+	 * @return
+	 */
+	public static JEditorPane unitPreview(UnitDefinition ud) {
+		JEditorPane preview = new JEditorPane("text/html", GUITools
+				.toHTML(ud != null ? HTMLFormula.toHTML(ud) : ""));
+		preview.setEditable(false);
+		preview.setBorder(BorderFactory.createLoweredBevelBorder());
+		return preview;
 	}
 }
