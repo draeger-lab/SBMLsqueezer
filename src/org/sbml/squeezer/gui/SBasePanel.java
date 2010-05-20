@@ -76,7 +76,6 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.MIRIAMparser;
 import org.sbml.squeezer.resources.Resource;
-import org.sbml.squeezer.util.HTMLFormula;
 
 import atp.sHotEqn;
 
@@ -84,9 +83,7 @@ import atp.sHotEqn;
  * A specialized {@link JPanel} that displays all available properties of a
  * given {@link SBase} in a GUI.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 @SuppressWarnings("deprecation")
@@ -96,17 +93,29 @@ public class SBasePanel extends JPanel {
 	 * Generated serial version id.
 	 */
 	private static final long serialVersionUID = -4969096536922920641L;
-
+	/**
+	 * 
+	 */
 	private LayoutHelper lh;
-
+	/**
+	 * 
+	 */
 	private LaTeX latex;
-
+	/**
+	 * 
+	 */
 	private static final int preferedWidth = 450;
-
+	/**
+	 * 
+	 */
 	private boolean editable;
-
+	/**
+	 * 
+	 */
 	private int row;
-
+	/**
+	 * 
+	 */
 	private Properties settings;
 
 	/**
@@ -309,6 +318,16 @@ public class SBasePanel extends JPanel {
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scroll.setPreferredSize(new Dimension((int) d.getWidth() + 10,
 					(int) d.getHeight() + 10));
+			lh.add(new JLabel("Derived unit"), 1, ++row, 1, 1, 0, 0);
+			JEditorPane unitPrev = GUITools.unitPreview(mc.getDerivedUnitDefinition());
+			unitPrev.setBorder(BorderFactory.createLoweredBevelBorder());
+			lh.add(unitPrev, 3, row, 1, 1, 0, 0);
+			lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
+			JCheckBox chck = new JCheckBox("Contains undeclared units", mc.containsUndeclaredUnits());
+			chck.setEnabled(false);
+			lh.add(chck, 1, ++row, 3, 1, 0, 0);
+			lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
+			
 			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 			if (mc instanceof EventAssignment)
@@ -768,7 +787,7 @@ public class SBasePanel extends JPanel {
 		lh
 				.add(new JLabel(s instanceof Species ? "Substance unit: "
 						: "Unit: "), 1, ++row, 1, 1, 1, 1);
-		lh.add(unitPreview(s.getUnitsInstance()), 3, row, 1, 1, 1, 1);
+		lh.add(GUITools.unitPreview(s.getUnitsInstance()), 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		JCheckBox check = new JCheckBox("Constant", s.isConstant());
 		check.setEnabled(editable);
@@ -827,24 +846,10 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(UnitDefinition ud) {
 		lh.add(new JLabel("Definition: "), 1, ++row, 1, 1, 1, 1);
-		lh.add(unitPreview(ud), 3, row, 1, 1, 1, 1);
+		lh.add(GUITools.unitPreview(ud), 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		for (Unit u : ud.getListOfUnits())
 			lh.add(new SBasePanel(u, settings), 1, ++row, 3, 1, 1, 1);
-	}
-
-	/**
-	 * Creates a JEditorPane that displays the given UnitDefinition as a HTML.
-	 * 
-	 * @param ud
-	 * @return
-	 */
-	private JEditorPane unitPreview(UnitDefinition ud) {
-		JEditorPane preview = new JEditorPane("text/html", GUITools
-				.toHTML(ud != null ? HTMLFormula.toHTML(ud) : ""));
-		preview.setEditable(false);
-		preview.setBorder(BorderFactory.createLoweredBevelBorder());
-		return preview;
 	}
 
 	/**

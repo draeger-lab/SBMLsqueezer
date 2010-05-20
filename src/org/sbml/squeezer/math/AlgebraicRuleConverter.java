@@ -720,7 +720,7 @@ public class AlgebraicRuleConverter {
 				variable = match.getVariable();
 
 		}
-		if (!variable.isEmpty()) {
+		if (variable.length() > 0) {
 			System.out.println("before: " + node.toFormula());
 			System.out.println("Variable: " + variable);
 			as = new AssignmentRule();

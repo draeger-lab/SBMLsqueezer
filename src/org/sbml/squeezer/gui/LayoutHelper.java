@@ -31,8 +31,7 @@ import javax.swing.JPanel;
  * {@link GridBagLayout}.
  * 
  * @since 1.0
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @date 2005-07-29
  */
 public class LayoutHelper {
@@ -97,8 +96,17 @@ public class LayoutHelper {
 		cont.add(c);
 	}
 
+	/**
+	 * 
+	 */
 	private Container cont;
+	/**
+	 * 
+	 */
 	private GridBagLayout gbl;
+	/**
+	 * 
+	 */
 	private int row;
 
 	/**
@@ -215,10 +223,10 @@ public class LayoutHelper {
 	 *            spacer.
 	 */
 	public void add(String label, Component c, boolean spaceLine) {
-		add(label, c, 0, row);
-		row++;
-		add(new JPanel(), 0, row, 3, 1, 0, 0);
-		row++;
+		add(label, c, 0, ++row);
+		if (spaceLine) {
+			add(new JPanel(), 0, ++row, 3, 1, 0, 0);
+		}
 	}
 
 	/**
