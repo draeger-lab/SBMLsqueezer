@@ -20,6 +20,7 @@ package org.sbml.squeezer.plugin;
 
 import java.util.Properties;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -35,6 +36,7 @@ import org.sbml.jsbml.cdplugin.PluginSBMLReader;
 import org.sbml.jsbml.cdplugin.PluginSBMLWriter;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
+import org.sbml.squeezer.gui.SBMLModelSplitPane;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.SettingsDialog;
 import org.sbml.squeezer.io.SBMLio;
@@ -88,6 +90,11 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			menu.add(menuItem);
 			// Help
 			menuItem = new PluginMenuItem(Mode.ONLINE_HELP.getText(), action);
+			menu.add(menuItem);
+			addCellDesignerPluginMenu(menu);
+			// Debug
+			menuItem = new PluginMenuItem(Mode.SHOW_JSBML_MODEL.getText(),
+					action);
 			menu.add(menuItem);
 			addCellDesignerPluginMenu(menu);
 
@@ -213,7 +220,11 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 		/**
 		 * Show the online help.
 		 */
-		ONLINE_HELP;
+		ONLINE_HELP,
+		/**
+		 * Just for debugging purposes.
+		 */
+		SHOW_JSBML_MODEL;
 
 		/**
 		 * A human-readable label for each mode.
@@ -234,6 +245,8 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 				return "Export model to other format";
 			case ONLINE_HELP:
 				return "Help";
+			case SHOW_JSBML_MODEL:
+				return "Show the JSBML data structure";
 			default:
 				return "invalid option";
 			}
@@ -246,9 +259,11 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 		 * @return
 		 */
 		public static Mode getMode(String text) {
-			for (Mode m : values())
-				if (text.equals(m.getText()))
+			for (Mode m : values()) {
+				if (text.equals(m.getText())) {
 					return m;
+				}
+			}
 			return null;
 		}
 	}
@@ -297,6 +312,19 @@ public class SBMLsqueezerPlugin extends CellDesignerPlugin {
 			break;
 		case ONLINE_HELP:
 			SBMLsqueezerUI.showOnlineHelp(null, null);
+			break;
+		case SHOW_JSBML_MODEL:
+			JDialog d = new JDialog();
+			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			d.setTitle("Internal JSBML data structure");
+			d.getContentPane().add(
+					new SBMLModelSplitPane(io.getSelectedModel(), SBMLsqueezer
+							.getProperties()));
+			d.pack();
+			d.setLocationRelativeTo(null);
+			d.setModal(true);
+			d.setVisible(true);
+			break;
 		default:
 			System.err.println("unsuported action");
 			break;
