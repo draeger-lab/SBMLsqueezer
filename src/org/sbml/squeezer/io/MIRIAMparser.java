@@ -19,6 +19,7 @@ package org.sbml.squeezer.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -63,7 +64,7 @@ public class MIRIAMparser {
 	 */
 	public MIRIAMparser(File file) throws ParserConfigurationException,
 			SAXException, IOException, JDOMException {
-		doc = new SAXBuilder().build(file);
+		setMIRIAMDocument(file);
 	}
 
 	/**
@@ -77,6 +78,36 @@ public class MIRIAMparser {
 	public MIRIAMparser(String path) throws ParserConfigurationException,
 			SAXException, IOException, JDOMException {
 		this(new File(path));
+	}
+
+	/**
+	 * 
+	 * @param uri
+	 * @param miriamURI
+	 *            an empty String buffer for the result.
+	 * @return
+	 */
+	private String determinIdentifier(String uri, StringBuffer miriamURI) {
+		String id = "";
+		if (uri.startsWith("urn:")) {
+			int idx = uri.lastIndexOf(':');
+			if (idx > 0) {
+				char atIdx = uri.charAt(idx - 1);
+				while ((idx > 0) && Character.isUpperCase(atIdx)) {
+					atIdx = uri.charAt(--idx);
+				}
+			}
+			id = uri.substring(idx);
+			miriamURI.append(uri.substring(0, uri.length() - id.length()));
+			id = id.substring(1);
+		} else if (uri.startsWith("http://")) {
+			id = uri.substring(Math.min(uri.lastIndexOf('/') + 1, uri
+					.indexOf('#')));
+			miriamURI.append(uri.substring(0, uri.length() - id.length()));
+			if (id.startsWith("#"))
+				id = id.substring(1);
+		}
+		return id;
 	}
 
 	/**
@@ -100,7 +131,8 @@ public class MIRIAMparser {
 			miriamURI = new StringBuffer();
 			String id1 = determinIdentifier(sub, miriamURI);
 			id = id1 + ':' + id;
-			datatype = identifyDatatype(miriamURI.toString(), new StringBuffer());
+			datatype = identifyDatatype(miriamURI.toString(),
+					new StringBuffer());
 		}
 		if (datatype != null) {
 			int i = 0;
@@ -157,64 +189,6 @@ public class MIRIAMparser {
 
 	/**
 	 * 
-	 * @param doc
-	 */
-	public void setMIRIAMdocument(Document doc) {
-		this.doc = doc;
-	}
-
-	/**
-	 * 
-	 * @param file
-	 * @throws JDOMException
-	 * @throws IOException
-	 */
-	public void setMIRIAMfile(File file) throws JDOMException, IOException {
-		doc = new SAXBuilder().build(file);
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @throws JDOMException
-	 * @throws IOException
-	 */
-	public void setMIRIAMfile(String path) throws JDOMException, IOException {
-		doc = (new SAXBuilder()).build(new File(path));
-	}
-
-	/**
-	 * 
-	 * @param uri
-	 * @param miriamURI
-	 *            an empty String buffer for the result.
-	 * @return
-	 */
-	private String determinIdentifier(String uri, StringBuffer miriamURI) {
-		String id = "";
-		if (uri.startsWith("urn:")) {
-			int idx = uri.lastIndexOf(':');
-			if (idx > 0) {
-				char atIdx = uri.charAt(idx - 1);
-				while ((idx > 0) && Character.isUpperCase(atIdx)) {
-					atIdx = uri.charAt(--idx);
-				}
-			}
-			id = uri.substring(idx);
-			miriamURI.append(uri.substring(0, uri.length() - id.length()));
-			id = id.substring(1);
-		} else if (uri.startsWith("http://")) {
-			id = uri.substring(Math.min(uri.lastIndexOf('/') + 1, uri
-					.indexOf('#')));
-			miriamURI.append(uri.substring(0, uri.length() - id.length()));
-			if (id.startsWith("#"))
-				id = id.substring(1);
-		}
-		return id;
-	}
-
-	/**
-	 * 
 	 * @param uri
 	 *            an URI without an identifier
 	 * @param urn
@@ -254,6 +228,44 @@ public class MIRIAMparser {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * 
+	 * @param doc
+	 */
+	public void setMIRIAMdocument(Document doc) {
+		this.doc = doc;
+	}
+	
+	/**
+	 * 
+	 * @param file
+	 * @throws JDOMException
+	 * @throws IOException
+	 */
+	public void setMIRIAMDocument(File file) throws JDOMException, IOException {
+		doc = new SAXBuilder().build(file);
+	}
+
+	/**
+	 * 
+	 * @param stream
+	 * @throws JDOMException
+	 * @throws IOException
+	 */
+	public void setMIRIAMDocument(InputStream stream) throws JDOMException, IOException {
+		doc = (new SAXBuilder()).build(stream);
+	}
+
+	/**
+	 * 
+	 * @param path
+	 * @throws JDOMException
+	 * @throws IOException
+	 */
+	public void setMIRIAMDocument(String path) throws JDOMException, IOException {
+		doc = (new SAXBuilder()).build(new File(path));
 	}
 
 }

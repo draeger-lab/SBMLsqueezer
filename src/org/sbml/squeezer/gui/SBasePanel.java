@@ -125,8 +125,9 @@ public class SBasePanel extends JPanel {
 
 	static {
 		try {
-			miriam.setMIRIAMfile(Resource.class.getResource("cfg/MIRIAM.xml")
-					.getPath());
+			miriam.setMIRIAMDocument(Resource.getInstance()
+					.getStreamFromResourceLocation(
+							"org/sbml/squeezer/resources/cfg/MIRIAM.xml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JDOMException e) {
@@ -319,15 +320,17 @@ public class SBasePanel extends JPanel {
 			scroll.setPreferredSize(new Dimension((int) d.getWidth() + 10,
 					(int) d.getHeight() + 10));
 			lh.add(new JLabel("Derived unit"), 1, ++row, 1, 1, 0, 0);
-			JEditorPane unitPrev = GUITools.unitPreview(mc.getDerivedUnitDefinition());
+			JEditorPane unitPrev = GUITools.unitPreview(mc
+					.getDerivedUnitDefinition());
 			unitPrev.setBorder(BorderFactory.createLoweredBevelBorder());
 			lh.add(unitPrev, 3, row, 1, 1, 0, 0);
 			lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
-			JCheckBox chck = new JCheckBox("Contains undeclared units", mc.containsUndeclaredUnits());
+			JCheckBox chck = new JCheckBox("Contains undeclared units", mc
+					.containsUndeclaredUnits());
 			chck.setEnabled(false);
 			lh.add(chck, 1, ++row, 3, 1, 0, 0);
 			lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
-			
+
 			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 			if (mc instanceof EventAssignment)
