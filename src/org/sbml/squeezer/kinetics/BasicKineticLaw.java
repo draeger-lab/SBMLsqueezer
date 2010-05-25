@@ -49,10 +49,9 @@ import org.sbml.squeezer.util.StringTools;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @author Andreas Dr&auml;ger
+ * @author Nadine Hassis
+ * @author Hannes Borch
  * @date Aug 1, 2007
  */
 public abstract class BasicKineticLaw extends KineticLaw {
@@ -92,7 +91,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	private List<String> nonEnzymeCatalysts;
 
 	/**
-	 * 
+	 * Optional parameters needed to initialize subtypes of this object.
 	 */
 	private Object typeParameters[];
 
@@ -139,16 +138,20 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		this.fullRank = true;
 		this.bringToConcentration = false;
 		this.defaultParamValue = 1d;
-		if (typeParameters.length > 0)
+		if (typeParameters.length > 0) {
 			type = Short.parseShort(getTypeParameters()[0].toString());
+		}
 		if (typeParameters.length > 1
-				&& !Boolean.parseBoolean(getTypeParameters()[1].toString()))
+				&& !Boolean.parseBoolean(getTypeParameters()[1].toString())) {
 			fullRank = false;
-		if (typeParameters.length > 2)
+		}
+		if (typeParameters.length > 2) {
 			bringToConcentration = ((Integer) typeParameters[2]).intValue() != 0;
-		if (typeParameters.length > 3)
+		}
+		if (typeParameters.length > 3) {
 			defaultParamValue = Double
 					.parseDouble(typeParameters[3].toString());
+		}
 		enzymes = new LinkedList<String>();
 		activators = new LinkedList<String>();
 		inhibitors = new LinkedList<String>();
@@ -259,13 +262,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterAlpha(String rId) {
 		LocalParameter p = createOrGetParameter("alpha_", rId);
-		if (!p.isSetSBOTerm())
+		if (!p.isSetSBOTerm()) {
 			p.setSBOTerm(2);
-		if (!p.isSetUnits())
+		}
+		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!p.isSetName())
+		}
+		if (!p.isSetName()) {
 			p
 					.setName("For the additive Model: weight parameter for the activation function");
+		}
 		return p;
 	}
 
@@ -281,10 +287,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		boolean zerothOrder = orderReactants == 0d;
 		Reaction r = getParentSBMLObject();
 		StringBuffer kass = StringTools.concat("kass_", r.getId());
-		if (zerothOrder)
+		if (zerothOrder) {
 			kass.insert(0, 'z');
-		if (catalyst != null)
+		}
+		if (catalyst != null) {
 			StringTools.append(kass, underscore, catalyst);
+		}
 		LocalParameter p_kass = createOrGetParameter(kass.toString());
 		if (!p_kass.isSetName()) {
 			StringBuffer name = StringTools.concat(
@@ -292,11 +300,40 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			name.insert(0, zerothOrder ? "Zeroth order a" : "A");
 			p_kass.setName(name.toString());
 		}
-		if (!p_kass.isSetSBOTerm())
+		if (!p_kass.isSetSBOTerm()) {
 			p_kass.setSBOTerm(zerothOrder ? 48 : 153);
-		if (!p_kass.isSetUnits())
+		}
+		if (!p_kass.isSetUnits()) {
 			p_kass.setUnits(unitPerTimeAndConcentrationOrSubstance(r
 					.getListOfReactants(), zerothOrder));
+		}
+		return p_kass;
+	}
+
+	/**
+	 * Parameter for reaction kinetics in restricted spaces.
+	 * 
+	 * @param h
+	 * @return
+	 */
+	LocalParameter parameterSpaceRestrictedAssociationConst(double h) {
+		Reaction r = getParentSBMLObject();
+		StringBuffer kass = StringTools.concat("kar_", r.getId());
+		LocalParameter p_kass = createOrGetParameter(kass.toString());
+		if (!p_kass.isSetName()) {
+			StringBuffer name = StringTools.concat(
+					"Association constant in restrictes spaces of reaction ", r
+							.getId());
+			p_kass.setName(name.toString());
+		}
+		if (!p_kass.isSetSBOTerm()) {
+			// not yet available.
+		}
+		if (!p_kass.isSetUnits()) {
+			p_kass.setUnits(unitPerTimeAndConcentrationOrSubstance(r
+					.getListOfReactants(), h, defaultParamValue,
+					defaultParamValue));
+		}
 		return p_kass;
 	}
 
@@ -307,12 +344,15 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterB(String rId) {
 		LocalParameter p = createOrGetParameter("b_", rId);
-		if (!p.isSetSBOTerm())
+		if (!p.isSetSBOTerm()) {
 			p.setSBOTerm(2);
-		if (!p.isSetUnits())
+		}
+		if (!p.isSetUnits()) {
 			p.setUnits(unitPerTime());
-		if (!p.isSetName())
+		}
+		if (!p.isSetName()) {
 			p.setName("For the additive Model: basis expression level");
+		}
 		return p;
 	}
 
@@ -323,12 +363,15 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterBeta(String rId) {
 		LocalParameter p = createOrGetParameter("beta_", rId);
-		if (!p.isSetSBOTerm())
+		if (!p.isSetSBOTerm()) {
 			p.setSBOTerm(2);
-		if (!p.isSetUnits())
+		}
+		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!p.isSetName())
+		}
+		if (!p.isSetName()) {
 			p.setName("Weight parameter for the activation function");
+		}
 		return p;
 	}
 
@@ -348,15 +391,19 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			String inhibitor, String enzyme) {
 		StringBuffer id = new StringBuffer();
 		id.append(aORb);
-		if (inhibitor != null)
+		if (inhibitor != null) {
 			StringTools.append(id, underscore, inhibitor);
-		if (enzyme != null)
+		}
+		if (enzyme != null) {
 			StringTools.append(id, underscore, enzyme);
+		}
 		LocalParameter coeff = createOrGetParameter(id);
-		if (!coeff.isSetSBOTerm())
+		if (!coeff.isSetSBOTerm()) {
 			coeff.setSBOTerm(385);
-		if (!coeff.isSetUnits())
+		}
+		if (!coeff.isSetUnits()) {
 			coeff.setUnits(Unit.Kind.DIMENSIONLESS);
+		}
 		return coeff;
 	}
 
@@ -371,10 +418,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		boolean zerothOrder = orderProducts == 0;
 		Reaction r = getParentSBMLObject();
 		StringBuffer kdiss = StringTools.concat("kdiss_", r.getId());
-		if (zerothOrder)
+		if (zerothOrder) {
 			kdiss.insert(0, 'z');
-		if (catalyst != null)
+		}
+		if (catalyst != null) {
 			StringTools.append(kdiss, underscore, catalyst);
+		}
 		LocalParameter p_kdiss = createOrGetParameter(kdiss.toString());
 		if (!p_kdiss.isSetName()) {
 			StringBuffer name = StringTools.concat(
@@ -382,11 +431,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			name.insert(0, zerothOrder ? "Zeroth order d" : "D");
 			p_kdiss.setName(name.toString());
 		}
-		if (!p_kdiss.isSetSBOTerm())
+		if (!p_kdiss.isSetSBOTerm()) {
 			p_kdiss.setSBOTerm(156);
-		if (!p_kdiss.isSetUnits())
+		}
+		if (!p_kdiss.isSetUnits()) {
 			p_kdiss.setUnits(unitPerTimeAndConcentrationOrSubstance(r
 					.getListOfProducts(), zerothOrder));
+		}
 		return p_kdiss;
 	}
 
@@ -398,26 +449,31 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	LocalParameter parameterEquilibriumConstant() {
 		String reactionID = getParentSBMLObject().getId();
 		LocalParameter keq = createOrGetParameter("keq_", reactionID);
-		if (!keq.isSetSBOTerm())
+		if (!keq.isSetSBOTerm()) {
 			keq.setSBOTerm(281);
-		if (!keq.isSetName())
+		}
+		if (!keq.isSetName()) {
 			keq.setName(StringTools.concat("equilibrium constant of reaction ",
 					reactionID).toString());
+		}
 		if (!keq.isSetUnits()) {
 			int x = 0;
 			Reaction r = getParentSBMLObject();
-			for (SpeciesReference specRef : r.getListOfReactants())
+			for (SpeciesReference specRef : r.getListOfReactants()) {
 				x += specRef.getStoichiometry();
-			if (r.getReversible())
-				for (SpeciesReference specRef : r.getListOfProducts())
+			}
+			if (r.getReversible()) {
+				for (SpeciesReference specRef : r.getListOfProducts()) {
 					x -= specRef.getStoichiometry();
-			if (x == 0)
+				}
+			}
+			if (x == 0) {
 				keq.setUnits(Unit.Kind.DIMENSIONLESS);
-			else {
+			} else {
 				Model model = getModel();
 				keq.setUnits(unitSubstancePerSize(model
-						.getUnitDefinition("substance"), model
-						.getUnitDefinition("volume"), x));
+						.getSubstanceUnitsInstance(), model
+						.getVolumeUnitsInstance(), x));
 			}
 		}
 		return keq;
@@ -432,10 +488,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	Parameter parameterGasConstant() {
 		Parameter R = createOrGetGlobalParameter("R");
 		R.setValue(8.31447215);
-		if (!R.isSetName())
+		if (!R.isSetName()) {
 			R.setName("Ideal gas constant");
-		if (!R.isSetUnits())
+		}
+		if (!R.isSetUnits()) {
 			R.setUnits(unitJperKandM());
+		}
 		return R;
 	}
 
@@ -449,20 +507,70 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	LocalParameter parameterHillCoefficient(String enzyme) {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("hic_", reactionID);
-		if (enzyme != null)
+		if (enzyme != null) {
 			StringTools.append(id, underscore, enzyme);
+		}
 		LocalParameter hr = createOrGetParameter(id.toString());
-		if (!hr.isSetSBOTerm())
+		if (!hr.isSetSBOTerm()) {
 			hr.setSBOTerm(190);
+		}
 		if (!hr.isSetName()) {
 			StringBuffer name = StringTools.concat("Hill coefficient");
-			if (enzyme != null)
+			if (enzyme != null) {
 				StringTools.append(name, " for enzyme ", enzyme);
+			}
 			StringTools.append(name, " in reaction ", reactionID);
 			hr.setName(name.toString());
 		}
-		if (!hr.isSetUnits())
+		if (!hr.isSetUnits()) {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		}
+		return hr;
+	}
+
+	/**
+	 * For space restricted reactions.
+	 * 
+	 * @param object
+	 * @return
+	 */
+	LocalParameter parameterTimeOrder() {
+		String reactionID = getParentSBMLObject().getId();
+		StringBuffer id = StringTools.concat("hic_", reactionID);
+		LocalParameter hr = createOrGetParameter(id.toString());
+		if (!hr.isSetSBOTerm()) {
+			// not yet available.
+		}
+		if (!hr.isSetName()) {
+			StringBuffer name = StringTools.concat("Time order");
+			StringTools.append(name, " in reaction ", reactionID);
+			hr.setName(name.toString());
+		}
+		if (!hr.isSetUnits()) {
+			hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		}
+		return hr;
+	}
+
+	/**
+	 * @param prefix
+	 * @return
+	 */
+	LocalParameter parameterKineticOrder(String prefix) {
+		String reactionID = getParentSBMLObject().getId();
+		StringBuffer id = StringTools.concat(prefix, reactionID);
+		LocalParameter hr = createOrGetParameter(id.toString());
+		if (!hr.isSetSBOTerm()) {
+			// not yet available.
+		}
+		if (!hr.isSetName()) {
+			StringBuffer name = StringTools.concat("Kinetic order ");
+			StringTools.append(name, " in reaction ", reactionID);
+			hr.setName(name.toString());
+		}
+		if (!hr.isSetUnits()) {
+			hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		}
 		return hr;
 	}
 
@@ -479,13 +587,15 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		LocalParameter p = createOrGetParameter(id.toString());
 		if (!p.isSetName()) {
 			StringBuffer name = StringTools.concat("S-System exponent");
-			if (modifier != null)
+			if (modifier != null) {
 				StringTools.append(name, " for modifier ", modifier);
+			}
 			StringTools.append(name, " in reaction ", reactionID);
 			p.setName(name.toString());
 		}
-		if (!p.isSetUnits())
+		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
+		}
 		return p;
 	}
 
@@ -501,14 +611,17 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer name = StringTools.concat("kac_", reactionID, underscore,
 				activatorSpecies);
-		if (enzyme != null)
+		if (enzyme != null) {
 			StringTools.append(name, underscore, enzyme);
+		}
 		LocalParameter kA = createOrGetParameter(name);
-		if (!kA.isSetSBOTerm())
+		if (!kA.isSetSBOTerm()) {
 			kA.setSBOTerm(363);
-		if (!kA.isSetName())
+		}
+		if (!kA.isSetName()) {
 			kA.setName(StringTools.concat("Activation constant of reaction ",
 					reactionID).toString());
+		}
 		if (!kA.isSetUnits()) {
 			Species species = getModel().getSpecies(activatorSpecies);
 			kA.setUnits(bringToConcentration ? unitSubstancePerSize(species
@@ -542,50 +655,63 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		String reactionID = getParentSBMLObject().getId();
 		LocalParameter kr;
 		if (enzyme != null) {
+			/*
+			 * Catalytic constant
+			 */
 			StringBuffer id = new StringBuffer();
 			if (getParentSBMLObject().getReversible()) {
 				id.append("kcr");
 				StringTools.append(id, forward ? 'f' : 'r', underscore);
-			} else
+			} else {
 				id.append("kcat_");
+			}
 			StringTools.append(id, reactionID, underscore, enzyme);
 			kr = createOrGetParameter(id);
 			if (!kr.isSetSBOTerm()) {
-				if (getParentSBMLObject().getReversible())
+				if (getParentSBMLObject().getReversible()) {
 					kr.setSBOTerm(forward ? 320 : 321);
-				else
+				} else {
 					kr.setSBOTerm(25);
+				}
 			}
 			if (!kr.isSetName()) {
 				StringBuffer name = StringTools
 						.concat("catalytic rate constant of ");
-				if (enzyme != null)
+				if (enzyme != null) {
 					StringTools.append(name, "enzyme ", enzyme, " in ");
+				}
 				StringTools.append(name, "reaction ", reactionID);
 				name.insert(0, forward ? "Substrate " : "Product ");
 				kr.setName(name.toString());
 			}
-			if (!kr.isSetUnits())
+			if (!kr.isSetUnits()) {
 				kr.setUnits(unitPerTimeOrSizePerTime(getModel().getSpecies(
 						enzyme).getCompartmentInstance()));
+			}
 		} else {
+			/*
+			 * Maximal velocity, i.e., limiting rate.
+			 */
 			StringBuffer id = StringTools.concat("vma");
-			if (!getParentSBMLObject().getReversible())
+			if (!getParentSBMLObject().getReversible()) {
 				id.append('x');
-			else
+			} else {
 				id.append(forward ? 'f' : 'r');
+			}
 			StringTools.append(id, underscore, reactionID);
 			kr = createOrGetParameter(id);
 			if (!kr.isSetSBOTerm()) {
-				if (getParentSBMLObject().getReversible())
+				if (getParentSBMLObject().getReversible()) {
 					kr.setSBOTerm(forward ? 324 : 325);
-				else
+				} else {
 					kr.setSBOTerm(186);
+				}
 			}
 			if (!kr.isSetName()) {
 				StringBuffer name = StringTools.concat("maximal velocity of ");
-				if (enzyme != null)
+				if (enzyme != null) {
 					StringTools.append(name, "enzyme ", enzyme, " in ");
+				}
 				StringTools.append(name, "reaction ", reactionID);
 				name.insert(0, forward ? "Forward " : "Reverse ");
 				kr.setName(name.toString());
@@ -596,8 +722,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				 */
 				Model model = getModel();
 				kr.setUnits(unitSubstancePerTime(model
-						.getUnitDefinition("substance"), model
-						.getUnitDefinition("time")));
+						.getSubstanceUnitsInstance(), model
+						.getTimeUnitsInstance()));
 			}
 		}
 		return kr;
@@ -614,11 +740,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	Parameter parameterKG(String species) {
 		Parameter kG = createOrGetGlobalParameter("kG_", species);
-		if (!kG.isSetUnits())
+		if (!kG.isSetUnits()) {
 			kG.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!kG.isSetName())
+		}
+		if (!kG.isSetName()) {
 			kG.setName(StringTools.concat("Energy constant of species ",
 					species).toString());
+		}
 		return kG;
 	}
 
@@ -663,26 +791,33 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			int bindingNum) {
 		StringBuffer id = new StringBuffer();
 		id.append("kic_");
-		if (bindingNum > 0)
+		if (bindingNum > 0) {
 			StringTools.append(id, bindingNum, underscore);
+		}
 		String reactionID = getParentSBMLObject().getId();
 		id.append(reactionID);
-		if (inhibitorSpecies != null)
+		if (inhibitorSpecies != null) {
 			StringTools.append(id, underscore, inhibitorSpecies);
-		if (enzymeID != null)
+		}
+		if (enzymeID != null) {
 			StringTools.append(id, underscore, enzymeID);
+		}
 		LocalParameter kI = createOrGetParameter(id.toString());
-		if (!kI.isSetSBOTerm())
+		if (!kI.isSetSBOTerm()) {
 			kI.setSBOTerm(261);
+		}
 		if (!kI.isSetName()) {
 			StringBuffer name = StringTools.concat("Inhibitory constant");
-			if (inhibitorSpecies != null)
+			if (inhibitorSpecies != null) {
 				StringTools.append(name, " for species ", inhibitorSpecies);
-			if (enzymeID != null)
+			}
+			if (enzymeID != null) {
 				StringTools.append(name, " of enzyme ", enzymeID);
-			if (bindingNum > 0)
+			}
+			if (bindingNum > 0) {
 				StringTools.append(name, " with ",
 						Integer.toString(bindingNum), " binding positions");
+			}
 			StringTools.append(name, " in reaction ", reactionID);
 			kI.setName(name.toString());
 		}
@@ -692,8 +827,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				kI.setUnits(unitSubstancePerSize(spec
 						.getSubstanceUnitsInstance(), spec
 						.getCompartmentInstance().getUnitsInstance()));
-			} else
+			} else {
 				kI.setUnits(spec.getSubstanceUnitsInstance());
+			}
 		}
 		return kI;
 	}
@@ -710,16 +846,19 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	LocalParameter parameterKS(Species species, String enzyme) {
 		String rid = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("ksp_", rid);
-		if (enzyme != null)
+		if (enzyme != null) {
 			StringTools.append(id, underscore, enzyme);
+		}
 		LocalParameter kS = createOrGetParameter(id.toString());
-		if (!kS.isSetSBOTerm())
+		if (!kS.isSetSBOTerm()) {
 			kS.setSBOTerm(194);
+		}
 		if (!kS.isSetName()) {
 			StringBuffer name = StringTools.concat(
 					"Half saturation constant of species ", species);
-			if (enzyme != null)
+			if (enzyme != null) {
 				StringTools.append(name, " and enzyme ", enzyme);
+			}
 			StringTools.append(name, " in reaction ", rid);
 			kS.setName(name.toString());
 		}
@@ -728,8 +867,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				kS.setUnits(unitSubstancePerSize(species
 						.getSubstanceUnitsInstance(), species
 						.getCompartmentInstance().getUnitsInstance()));
-			} else
+			} else {
 				kS.setUnits(species.getSubstanceUnitsInstance());
+			}
 		}
 		return kS;
 	}
@@ -741,12 +881,15 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterM(String rId) {
 		LocalParameter p = createOrGetParameter("m_", rId);
-		if (!p.isSetSBOTerm())
+		if (!p.isSetSBOTerm()) {
 			p.setSBOTerm(2);
-		if (!p.isSetUnits())
+		}
+		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!p.isSetName())
+		}
+		if (!p.isSetName()) {
 			p.setName("For the additive Model: constant / max. expression");
+		}
 		return p;
 	}
 
@@ -763,16 +906,19 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("kmc_", reactionID, underscore,
 				species);
-		if (enzyme != null)
+		if (enzyme != null) {
 			StringTools.append(id, underscore, enzyme);
+		}
 		LocalParameter kM = createOrGetParameter(id.toString());
-		if (kM.isSetSBOTerm())
+		if (kM.isSetSBOTerm()) {
 			kM.setSBOTerm(27);
+		}
 		if (!kM.isSetName()) {
 			StringBuffer name = StringTools.concat(
 					"Michaelis constant of species ", species);
-			if (enzyme != null)
+			if (enzyme != null) {
 				StringTools.append(name, "and enzyme ", enzyme);
+			}
 			StringTools.append(name, " in reaction ", reactionID);
 			kM.setName(name.toString());
 		}
@@ -801,7 +947,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	LocalParameter parameterMichaelis(String species, String enzyme,
 			boolean substrate) {
 		LocalParameter kM = parameterMichaelis(species, enzyme);
-		kM.setSBOTerm(substrate ? 322 : 323);
+		if (!kM.isSetSBOTerm()) {
+			kM.setSBOTerm(substrate ? 322 : 323);
+		}
 		return kM;
 	}
 
@@ -818,20 +966,25 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	LocalParameter parameterNumBindingSites(String enzyme, String inhibitor) {
 		String rid = getParentSBMLObject().getId();
 		StringBuffer exponent = StringTools.concat("m_", rid);
-		if (enzyme != null)
+		if (enzyme != null) {
 			StringTools.append(exponent, underscore, enzyme);
-		if (inhibitor != null)
+		}
+		if (inhibitor != null) {
 			StringTools.append(exponent, underscore, inhibitor);
+		}
 		LocalParameter p_exp = createOrGetParameter(exponent.toString());
-		if (!p_exp.isSetSBOTerm())
+		if (!p_exp.isSetSBOTerm()) {
 			p_exp.setSBOTerm(189);
+		}
 		if (!p_exp.isSetName()) {
 			StringBuffer name = StringTools
 					.concat("Number of binding sites for the inhibitor");
-			if (inhibitor != null)
+			if (inhibitor != null) {
 				StringTools.append(name, " ", inhibitor);
-			if (enzyme != null)
+			}
+			if (enzyme != null) {
 				StringTools.append(name, " on the enzyme ", enzyme);
+			}
 			StringTools.append(name, " of reaction ", rid);
 			p_exp.setName(name.toString());
 		}
@@ -850,15 +1003,19 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	LocalParameter parameterReactionCooperativity(String enzyme) {
 		String reactionID = getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("hco_", reactionID);
-		if (enzyme != null)
+		if (enzyme != null) {
 			StringTools.append(id, underscore, enzyme);
+		}
 		LocalParameter hr = createOrGetParameter(id.toString());
-		if (!hr.isSetSBOTerm())
+		if (!hr.isSetSBOTerm()) {
 			hr.setSBOTerm(382);
-		if (!hr.isSetName())
+		}
+		if (!hr.isSetName()) {
 			hr.setName("Reaction cooperativity");
-		if (!hr.isSetUnits())
+		}
+		if (!hr.isSetUnits()) {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
+		}
 		return hr;
 	}
 
@@ -872,13 +1029,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterRhoActivation(String species) {
 		String rid = getParentSBMLObject().getId();
-		LocalParameter rhoA = createOrGetParameter("rac_", rid, underscore, species);
-		if (!rhoA.isSetName())
+		LocalParameter rhoA = createOrGetParameter("rac_", rid, underscore,
+				species);
+		if (!rhoA.isSetName()) {
 			rhoA.setName(StringTools.concat(
 					"Activation baseline ration of species ", species,
 					" in reaction ", rid).toString());
-		if (!rhoA.isSetUnits())
+		}
+		if (!rhoA.isSetUnits()) {
 			rhoA.setUnits(Unit.Kind.DIMENSIONLESS);
+		}
 		return rhoA;
 	}
 
@@ -889,13 +1049,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterRhoInhibition(String species) {
 		String rid = getParentSBMLObject().getId();
-		LocalParameter rhoI = createOrGetParameter("ric_", rid, underscore, species);
-		if (!rhoI.isSetUnits())
+		LocalParameter rhoI = createOrGetParameter("ric_", rid, underscore,
+				species);
+		if (!rhoI.isSetUnits()) {
 			rhoI.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!rhoI.isSetName())
+		}
+		if (!rhoI.isSetName()) {
 			rhoI.setName(StringTools.concat(
 					"inhibition baseline ratio of species ", species,
 					" in reaction ", rid).toString());
+		}
 		return rhoI;
 	}
 
@@ -909,15 +1072,18 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	Parameter parameterStandardChemicalPotential(String species) {
 		Parameter mu = createOrGetGlobalParameter("scp_", species);
-		if (!mu.isSetName())
+		if (!mu.isSetName()) {
 			mu.setName(StringTools.concat(
 					"Standard chemical potential of species ", species)
 					.toString());
-		if (!mu.isSetSBOTerm())
+		}
+		if (!mu.isSetSBOTerm()) {
 			mu.setSBOTerm(463);
-		if (!mu.isSetUnits())
+		}
+		if (!mu.isSetUnits()) {
 			mu.setUnits(unitkJperSubstance(getModel().getSpecies(species)
 					.getSubstanceUnitsInstance()));
+		}
 		return mu;
 	}
 
@@ -929,13 +1095,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	Parameter parameterTemperature() {
 		Parameter T = createOrGetGlobalParameter("T");
 		T.setValue(298.15);
-		if (!T.isSetSBOTerm())
+		if (!T.isSetSBOTerm()) {
 			T.setSBOTerm(147);
-		if (!T.isSetUnits())
+		}
+		if (!T.isSetUnits()) {
 			T.setUnits(Unit.Kind.KELVIN);
-		if (!T.isSetName())
+		}
+		if (!T.isSetName()) {
 			T.setName("The temperature of reaction system "
 					+ getModel().getId());
+		}
 		return T;
 	}
 
@@ -946,14 +1115,18 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterTheta(String rId, String name) {
 		LocalParameter p = createOrGetParameter("theta_", rId, underscore, name);
-		if (!p.isSetSBOTerm())
+		if (!p.isSetSBOTerm()) {
 			p.setSBOTerm(2);
-		if (!p.isSetValue())
+		}
+		if (!p.isSetValue()) {
 			p.setValue(0);
-		if (!p.isSetUnits())
+		}
+		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
-		if (!p.isSetName())
+		}
+		if (!p.isSetName()) {
 			p.setName("Treshold for the generalized hill function");
+		}
 		return p;
 	}
 
@@ -966,13 +1139,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterV(String name, String rId) {
 		LocalParameter p = createOrGetParameter("v_", rId, underscore, name);
-		if (!p.isSetSBOTerm())
+		if (!p.isSetSBOTerm()) {
 			p.setSBOTerm(2);
-		if (!p.isSetUnits())
+		}
+		if (!p.isSetUnits()) {
 			p.setUnits(unitPerTime());
-		if (!p.isSetName())
+		}
+		if (!p.isSetName()) {
 			p
 					.setName("For the additive Model: weight parameter for the external inputs");
+		}
 		return p;
 	}
 
@@ -990,29 +1166,33 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		Model model = getModel();
 		if (enzyme != null) {
 			kVr = createOrGetParameter("kcrg_", reactionID, underscore, enzyme);
-			if (!kVr.isSetName())
+			if (!kVr.isSetName()) {
 				kVr.setName(StringTools.concat(
 						"Catalytic rate constant geometric mean of reaction ",
 						reactionID).toString());
-			if (!kVr.isSetUnits())
+			}
+			if (!kVr.isSetUnits()) {
 				kVr.setUnits(unitPerTimeOrSizePerTime(model.getSpecies(enzyme)
 						.getCompartmentInstance()));
+			}
 		} else {
 			kVr = createOrGetParameter("vmag_", reactionID);
-			if (!kVr.isSetName())
+			if (!kVr.isSetName()) {
 				kVr.setName(StringTools.concat(
 						"Maximal velocity geometric mean of reaction ",
 						reactionID).toString());
-			if (!kVr.isSetSBOTerm())
+			}
+			if (!kVr.isSetSBOTerm()) {
 				kVr.setSBOTerm(324);
+			}
 			if (!kVr.isSetUnits()) {
 				if (bringToConcentration) {
 					kVr.setUnits(unitSubstancePerSizePerTime(model
-							.getUnitDefinition("volume")));
+							.getVolumeUnitsInstance()));
 				} else {
 					kVr.setUnits(unitSubstancePerTime(model
-							.getUnitDefinition("substance"), model
-							.getUnitDefinition("time")));
+							.getSubstanceUnitsInstance(), model
+							.getTimeUnitsInstance()));
 				}
 			}
 		}
@@ -1036,13 +1216,16 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	LocalParameter parameterW(String name, String rId) {
 		LocalParameter p = createOrGetParameter("w_", rId, underscore, name);
-		if (!p.isSetSBOTerm())
+		if (!p.isSetSBOTerm()) {
 			p.setSBOTerm(2);
-		if (!p.isSetUnits())
+		}
+		if (!p.isSetUnits()) {
 			p.setUnits(unitPerTime());
-		if (!p.isSetName())
+		}
+		if (!p.isSetName()) {
 			p
 					.setName("For the additive Model: weight parameter for the gene products");
+		}
 		return p;
 	}
 
@@ -1052,8 +1235,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @see org.sbml.jsbml.MathContainer#setMath(org.sbml.jsbml.ASTNode)
 	 */
 	public void setMath(ASTNode ast) {
-		if (!isSetMath())
+		if (!isSetMath()) {
 			super.setMath(ast);
+		}
 	}
 
 	/**
@@ -1073,10 +1257,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	ASTNode speciesTerm(Species species) {
 		ASTNode specTerm = new ASTNode(species, this);
 		if (species.getHasOnlySubstanceUnits()) {
-			if (bringToConcentration)
+			if (bringToConcentration) {
 				specTerm.divideBy(species.getCompartmentInstance());
-		} else if (!bringToConcentration)
+			}
+		} else if (!bringToConcentration) {
 			specTerm.multiplyWith(species.getCompartmentInstance());
+		}
 		return specTerm;
 	}
 
@@ -1094,7 +1280,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 * @see org.sbml.MathContainer#toString()
 	 */
-	// @Override
+	@Override
 	public String toString() {
 		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
 				.replace("\\,", ",") : getClass().getSimpleName();
@@ -1119,8 +1305,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				contains = true;
 				break;
 			}
-		if (!contains)
+		if (!contains) {
 			model.addUnitDefinition(unitdef);
+		}
 		return unitdef;
 	}
 
@@ -1170,7 +1357,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	UnitDefinition unitPerTime() {
 		Model model = getModel();
-		UnitDefinition ud = model.getUnitDefinition("time").clone();
+		UnitDefinition ud = model.getTimeUnitsInstance().clone();
 		if (ud.getNumUnits() == 1) {
 			Unit u = ud.getUnit(0);
 			u.setExponent(-1);
@@ -1184,8 +1371,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			ud.setName("per second (Hz)");
 		}
 		UnitDefinition def = model.getUnitDefinition(ud.getId());
-		if (def == null)
+		if (def == null) {
 			ud = checkUnitDefinitions(ud, model);
+		}
 		return model.getUnitDefinition(ud.getId());
 	}
 
@@ -1200,45 +1388,97 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	UnitDefinition unitPerTimeAndConcentrationOrSubstance(
 			ListOf<SpeciesReference> listOf, boolean zerothOrder) {
 		Model model = getModel();
-		UnitDefinition ud = new UnitDefinition("ud", getLevel(), getVersion());
-		ud.divideBy(model.getUnitDefinition("time"));
-		UnitDefinition amount = new UnitDefinition("amount", getLevel(),
-				getVersion());
-		int i;
-		if (!zerothOrder) {
-			UnitDefinition substance;
-			SpeciesReference specRef;
-			Species species;
-			for (i = 0; i < listOf.size(); i++) {
-				specRef = listOf.get(i);
-				species = specRef.getSpeciesInstance();
-				substance = species.getSubstanceUnitsInstance().clone();
-				if (bringToConcentration)
-					substance.divideBy(species.getCompartmentInstance()
-							.getUnitsInstance());
-				for (Unit u : substance.getListOfUnits())
-					u.setExponent(u.getExponent()
-							+ ((int) specRef.getStoichiometry() - 1));
-				amount.multiplyWith(substance);
-			}
-		}
-		ud = ud.divideBy(amount).multiplyWith(
-				model.getUnitDefinition("substance")).simplify();
+		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf,
+				zerothOrder, 0);
 		StringBuilder sb = new StringBuilder();
-		for (i = 0; i < ud.getNumUnits(); i++) {
+		for (int i = 0; i < ud.getNumUnits(); i++) {
 			Unit u = ud.getUnit(i);
-			if (i > 0)
+			if (i > 0) {
 				sb.append('_');
-			if (u.getExponent() < 0)
+			}
+			if (u.getExponent() < 0) {
 				sb.append("per_");
+			}
 			sb.append(u.getPrefix());
 			sb.append(u.getKind().getName());
 		}
 		ud.setId(sb.toString());
 		UnitDefinition def = model.getUnitDefinition(ud.getId());
-		if (def == null)
+		if (def == null) {
 			ud = checkUnitDefinitions(ud, model);
+		}
 		return model.getUnitDefinition(ud.getId());
+	}
+
+	/**
+	 * 
+	 * @param listOf
+	 * @param zerothOrder
+	 * @param h
+	 *            Exponent for the time
+	 * @param x
+	 *            Exponents for the species (parameter value, other than
+	 *            stoichiometry).
+	 * @return
+	 */
+	private UnitDefinition unitPerTimeAndConcentrationOrSubstance(
+			ListOf<SpeciesReference> listOf, boolean zerothOrder, double h,
+			double... x) {
+		Model model = getModel();
+		UnitDefinition ud = new UnitDefinition("ud", getLevel(), getVersion());
+		ud.divideBy(model.getTimeUnitsInstance());
+		if (h != 0) {
+			for (Unit u : ud.getListOfUnits()) {
+				u.setExponent((int) Math.round(u.getExponent() - h));
+			}
+		}
+		UnitDefinition amount = new UnitDefinition("amount", getLevel(),
+				getVersion());
+		if (!zerothOrder) {
+			UnitDefinition substance;
+			SpeciesReference specRef;
+			Species species;
+			for (int i = 0; i < listOf.size(); i++) {
+				specRef = listOf.get(i);
+				species = specRef.getSpeciesInstance();
+				substance = species.getSubstanceUnitsInstance().clone();
+				if (bringToConcentration) {
+					substance.divideBy(species.getCompartmentInstance()
+							.getUnitsInstance());
+				}
+				for (Unit u : substance.getListOfUnits()) {
+					if (specRef.isSetStoichiometry()
+							&& (x.length < listOf.size())) {
+						u.setExponent(u.getExponent()
+								+ ((int) specRef.getStoichiometry() - 1));
+					} else if (x.length == listOf.size()) {
+						u.setExponent((int) Math.round(x[i]));
+					}
+				}
+				amount.multiplyWith(substance);
+			}
+		}
+		ud = ud.divideBy(amount)
+				.multiplyWith(model.getSubstanceUnitsInstance()).simplify();
+		return ud;
+	}
+
+	/**
+	 * @param listOfReactants
+	 * @param h
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	UnitDefinition unitPerTimeAndConcentrationOrSubstance(
+			ListOf<SpeciesReference> listOfReactants, double h, double x,
+			double y) {
+		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(
+				listOfReactants, false, h, x, y);
+		String id = bringToConcentration ? "concentration" : "substance";
+		ud.setId(id + "_pow_" + (x * y) + "_per_time_pow_" + h);
+		ud.simplify();
+		return checkUnitDefinitions(ud, getModel());
 	}
 
 	/**
@@ -1250,22 +1490,24 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		if (bringToConcentration) {
 			Model model = getModel();
 			StringBuilder name = new StringBuilder();
-			if (!c.isSetUnits())
-				c.setUnits(model.getUnitDefinition("volume"));
+			if (!c.isSetUnits()) {
+				c.setUnits(model.getVolumeUnitsInstance());
+			}
 			UnitDefinition sizeUnit = c.getUnitsInstance();
-			if (sizeUnit.isVariantOfVolume())
+			if (sizeUnit.isVariantOfVolume()) {
 				name.append("volume");
-			else if (sizeUnit.isVariantOfArea())
+			} else if (sizeUnit.isVariantOfArea()) {
 				name.append("area");
-			else if (sizeUnit.isVariantOfLength())
+			} else if (sizeUnit.isVariantOfLength()) {
 				name.append("length");
+			}
 			name.append(" per time");
 			String id = name.toString().replace(' ', '_');
 			UnitDefinition ud = model.getUnitDefinition(id);
 			if (ud == null) {
 				ud = new UnitDefinition(sizeUnit);
 				ud.setId(id);
-				ud.divideBy(model.getUnitDefinition("time"));
+				ud.divideBy(model.getTimeUnitsInstance());
 				ud.setName(name.toString());
 				ud = checkUnitDefinitions(ud, model);
 			}
@@ -1328,9 +1570,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		UnitDefinition mMperSecond = model.getUnitDefinition(id);
 		if (mMperSecond == null) {
 			mMperSecond = new UnitDefinition(id, getLevel(), getVersion());
-			mMperSecond.multiplyWith(model.getUnitDefinition("substance"));
-			mMperSecond.setId(id);
-			mMperSecond.divideBy(model.getUnitDefinition("time"));
+			mMperSecond.multiplyWith(model.getSubstanceUnitsInstance());
+			mMperSecond.divideBy(model.getTimeUnitsInstance());
 			mMperSecond = checkUnitDefinitions(mMperSecond, model);
 		}
 		return mMperSecond;

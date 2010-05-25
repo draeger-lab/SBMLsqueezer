@@ -35,9 +35,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Nadine Hassis
+ * @author Andreas Dr&auml;ger
  * @date Aug 1, 2007
  */
 public class MichaelisMenten extends GeneralizedMassAction implements
@@ -138,7 +137,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
 			LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-			LocalParameter p_kMr = parameterMichaelis(speciesR.getId(), enzyme, true);
+			LocalParameter p_kMr = parameterMichaelis(speciesR.getId(), enzyme,
+					true);
 
 			ASTNode currEnzymeKin;
 			if (!reaction.getReversible() || reaction.getNumProducts() == 0) {
@@ -159,8 +159,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(
 						p_kMr, this));
 				LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-				LocalParameter p_kMp = parameterMichaelis(speciesP.getId(), enzyme,
-						false);
+				LocalParameter p_kMp = parameterMichaelis(speciesP.getId(),
+						enzyme, false);
 
 				numerator.minus(ASTNode.times(ASTNode
 						.frac(this, p_kcatn, p_kMp), speciesTerm(speciesP)));
@@ -213,7 +213,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	 * @return
 	 */
 	private ASTNode createInihibitionTerms(List<String> modInhib,
-			Reaction reaction, ASTNode denominator, LocalParameter mr, String enzyme) {
+			Reaction reaction, ASTNode denominator, LocalParameter mr,
+			String enzyme) {
 		if (modInhib.size() == 1) {
 			LocalParameter p_kIa = parameterKi(modInhib.get(0), enzyme, 1);
 			LocalParameter p_kIb = parameterKi(modInhib.get(0), enzyme, 2);

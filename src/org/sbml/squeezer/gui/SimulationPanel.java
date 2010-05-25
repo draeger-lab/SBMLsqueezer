@@ -53,6 +53,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -78,6 +79,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.text.NumberFormatter;
 
 import org.sbml.jsbml.Compartment;
@@ -150,41 +152,29 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @return
 	 */
 	public static Color indexToColor(int index) {
-		Color c = Color.black;
-		int k = index % 10;
-		switch (k) {
+		switch (index % 10) {
 		case 0:
-			c = Color.black;
-			break;
+			return Color.black;
 		case 1:
-			c = Color.red;
-			break;
+			return Color.red;
 		case 2:
-			c = Color.blue;
-			break;
+			return Color.blue;
 		case 3:
-			c = Color.pink;
-			break;
+			return Color.pink;
 		case 4:
-			c = Color.green;
-			break;
+			return Color.green;
 		case 5:
-			c = Color.gray;
-			break;
+			return Color.gray;
 		case 6:
-			c = Color.magenta;
-			break;
+			return Color.magenta;
 		case 7:
-			c = Color.cyan;
-			break;
+			return Color.cyan;
 		case 8:
-			c = Color.orange;
-			break;
+			return Color.orange;
 		case 9:
-			c = Color.darkGray;
-			break;
+			return Color.darkGray;
 		}
-		return c;
+		return Color.black;
 	}
 
 	/**
@@ -197,12 +187,6 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * Compression factor for JPEG output
 	 */
 	private float compression;
-	/**
-	 * The index of the class name of distance function to be applied to compute
-	 * the quality of a simulation.
-	 */
-	private int distanceFunc;
-
 	/**
 	 * Table for experimental data.
 	 */
@@ -366,9 +350,13 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private Distance distance;
 	/**
-	 * The combo box that contains all available distance functions.
+	 * Contains all available distance functions.
 	 */
 	private JComboBox distFun;
+	/**
+	 * Necessary to remember the originally set distance function.
+	 */
+	private int distanceFunc;
 
 	/**
 	 * This class stores the row of an element in the Legend table and the
@@ -419,6 +407,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			this.columnExperimentTable = -1;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#toString()
+		 */
 		@Override
 		public String toString() {
 			return String.format("[row legend = %d, column experiment = %d]",
@@ -447,9 +440,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				experiment2ElementIndex = new Hashtable<Integer, String>();
 				setProperties(getDefaultProperties());
 			} catch (Exception exc) {
-				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+				GUITools.showErrorMessage(this, exc);
 			}
 	}
 
@@ -463,9 +454,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		try {
 			setProperties((Properties) settings.clone());
 		} catch (Exception exc) {
-			exc.printStackTrace();
-			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			GUITools.showErrorMessage(this, exc);
 		}
 	}
 
@@ -487,18 +476,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			try {
 				savePlotImage();
 			} catch (Exception exc) {
-				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+				GUITools.showErrorMessage(this, exc);
 			}
 			break;
 		case SAVE_SIMULATION:
 			try {
 				saveSimulationResults();
 			} catch (IOException exc) {
-				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+				GUITools.showErrorMessage(this, exc);
 			}
 			break;
 		case SETTINGS:
@@ -545,9 +530,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				distField.setEditable(false);
 				distField.setEnabled(true);
 			} catch (IOException exc) {
-				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+				GUITools.showErrorMessage(this, exc);
 			}
 	}
 
@@ -591,9 +574,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				setProperties(p);
 			}
 		} catch (Exception exc) {
-			exc.printStackTrace();
-			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			GUITools.showErrorMessage(this, exc);
 		}
 	}
 
@@ -673,13 +654,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		for (int i = 0; i < distFunctions.length; i++) {
 			Distance dist = distFunctions[i].getConstructor().newInstance();
 			distances[i] = dist.getName();
-			if (i == distanceFunc)
+			if (i == distanceFunc) {
 				distance = dist;
+			}
 		}
 		distFun = new JComboBox(distances);
 		distFun.setName("distfun");
-		distFun.setSelectedItem(distanceFunc);
 		distFun.addItemListener(this);
+		distFun.setSelectedItem(distanceFunc);
 		distField = new JFormattedTextField(new NumberFormatter());
 		distField.setEnabled(false);
 		dSet.add(distFun);
@@ -811,8 +793,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				.valueOf(maxParameterValue));
 		p.put(CfgKeys.SIM_MAX_STEPS_PER_UNIT_TIME, Integer
 				.valueOf(maxStepsPerUnit));
-		p.put(CfgKeys.SIM_DISTANCE_FUNCTION, SBMLsqueezer
-				.getAvailableDistances()[distanceFunc].getName());
+		p.put(CfgKeys.SIM_DISTANCE_FUNCTION, distance.getClass().getName());
 		p.put(CfgKeys.SIM_ODE_SOLVER,
 				SBMLsqueezer.getAvailableSolvers()[solvers.getSelectedIndex()]
 						.getName());
@@ -913,9 +894,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			add(tabbedPane, BorderLayout.CENTER);
 			add(createFootPanel(), BorderLayout.SOUTH);
 		} catch (Exception exc) {
-			exc.printStackTrace();
-			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+			GUITools.showErrorMessage(this, exc);
 		}
 	}
 
@@ -1073,16 +1052,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					distanceFunc = comBox.getSelectedIndex();
 					distance = SBMLsqueezer.getAvailableDistances()[distanceFunc]
 							.getConstructor().newInstance();
-					if (expTable.getRowCount() > 0)
+					if (expTable.getRowCount() > 0) {
 						distField.setText(Double.toString(computeDistance(
 								model, solver.getStepSize())));
+					}
 					distField.setEditable(false);
 					distField.setEnabled(true);
 				} catch (Exception exc) {
-					exc.printStackTrace();
-					JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-							.getClass().getSimpleName(),
-							JOptionPane.ERROR_MESSAGE);
+					GUITools.showErrorMessage(this, exc);
 				}
 		}
 	}
@@ -1172,8 +1149,14 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	}
 
 	/**
+	 * Parses the given file and returns its content as a double matrix.
 	 * 
 	 * @param file
+	 *            The file of comma separated values from the time series data
+	 *            set
+	 * @return A double matrix of the time series values, times in the rows,
+	 *         values in the columns. The first column should contain the time
+	 *         points.
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
@@ -1184,7 +1167,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		csvreader.close();
 		if (input.size() > 0) {
 			int i, j;
+			// Counts the number of numeric values in the first line.
 			short numNumbers = 0;
+			// first line is supposed to be the list of identifiers.
 			String names[] = input.get(0);
 			for (i = 0; i < names.length; i++) {
 				try {
@@ -1206,6 +1191,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 							experiment2ElementIndex.put(Integer.valueOf(index
 									.getRowLegendTable()), key);
 							index.setColumnExperimentTable(i);
+							names[i] = key;
 							break;
 						}
 					}
@@ -1232,23 +1218,26 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					String[] probs = problems.keySet().toArray(new String[0]);
 					Arrays.sort(avail);
 					Arrays.sort(probs);
-					LayoutHelper lh = new LayoutHelper(new JPanel());
-					JComboBox combo[] = new JComboBox[probs.length];
 					i = 0;
+					String propNames[][] = new String[problems.size()][2];
 					for (String prob : probs) {
-						combo[i] = new JComboBox(avail);
-						combo[i]
-								.setSelectedIndex(Math.min(i, avail.length - 1));
-						lh.add(new JPanel());
-						lh.add(new JLabel(GUITools.toHTML(prob, 40)),
-								new JPanel(), combo[i++]);
+						propNames[i][0] = avail[i];
+						propNames[i][1] = prob;
 					}
-					lh.add(new JPanel());
+					MyDefaultTableModel tabModel = new MyDefaultTableModel(
+							propNames, new String[] { "ID in SBML model",
+									"ID in data file" });
+					JTable table = new JTable(tabModel);
+					tabModel.setColumnEditable(1, true);
+					table.setEnabled(true);
+					TableColumn select = table.getColumnModel().getColumn(1);
+					select.setCellEditor(new DefaultCellEditor(new JComboBox(
+							avail)));
 					JPanel panel = new JPanel(new BorderLayout());
 					String message = "Some data could not be assigned to model values. Please assign experiment names to model components.";
 					panel.add(new JLabel(GUITools.toHTML(message, 40)),
 							BorderLayout.NORTH);
-					JScrollPane scroll = new JScrollPane(lh.getContainer(),
+					JScrollPane scroll = new JScrollPane(table,
 							JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 					scroll.setPreferredSize(new Dimension(250, Math.min(
@@ -1258,7 +1247,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 							"Manual name assignment",
 							JOptionPane.QUESTION_MESSAGE);
 					for (i = 0; i < probs.length; i++) {
-						String newName = combo[i].getSelectedItem().toString();
+						String newName = table.getValueAt(i, 1).toString();
 						int origIndex = problems.get(probs[i]).intValue();
 						names[origIndex] = newName;
 						Indices index = colNames2data.get(newName);
@@ -1277,12 +1266,16 @@ public class SimulationPanel extends JPanel implements ActionListener,
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			TableModelDoubleMatrix tabModel = new TableModelDoubleMatrix();
-			if (numNumbers == 0)
+			if (numNumbers == 0) {
 				tabModel.setColumnNames(input.remove(0));
+				tabModel.swapColumns(colNames);
+			}
 			double data[][] = new double[input.size()][input.get(0).length];
-			for (i = 0; i < data.length; i++)
-				for (j = 0; j < data[i].length; j++)
+			for (i = 0; i < data.length; i++) {
+				for (j = 0; j < data[i].length; j++) {
 					data[i][j] = Double.valueOf(input.get(i)[j]).doubleValue();
+				}
+			}
 			tabModel.setData(data);
 			this.expTable.setModel(tabModel);
 			return data;
@@ -1398,8 +1391,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		double endTime = ((Number) settings.get(CfgKeys.SIM_END_TIME))
 				.doubleValue();
 		startTime = Math.max(0, startTime);
-		if (startTime > endTime)
+		if (startTime > endTime) {
 			swap(startTime, endTime);
+		}
 		double stepSize = ((Number) settings.get(CfgKeys.SIM_STEP_SIZE))
 				.doubleValue();
 		maxTime = Math.max(((Number) settings.get(CfgKeys.SIM_MAX_TIME))
@@ -1441,17 +1435,20 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		distanceFunc = 0;
 		while (distanceFunc < distFun.length
 				&& !distFun[distanceFunc].getName().equals(
-						settings.get(CfgKeys.SIM_DISTANCE_FUNCTION)))
+						settings.get(CfgKeys.SIM_DISTANCE_FUNCTION))) {
 			distanceFunc++;
-		if (this.distFun != null)
+		}
+		if (this.distFun != null) {
 			this.distFun.setSelectedIndex(distanceFunc);
+		}
 		solvers = new JComboBox();
 		for (int i = 0; i < solFun.length; i++) {
 			Class<AbstractDESSolver> c = solFun[i];
 			solver = c.getConstructor().newInstance();
 			solvers.addItem(solver.getName());
-			if (c.getName().equals(settings.get(CfgKeys.SIM_ODE_SOLVER)))
+			if (c.getName().equals(settings.get(CfgKeys.SIM_ODE_SOLVER))) {
 				solvers.setSelectedIndex(i);
+			}
 		}
 		solvers.setEnabled(solvers.getItemCount() > 1);
 		if (solvers.getSelectedIndex() != solvers.getItemCount() - 1)
@@ -1523,15 +1520,32 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		return solution;
 	}
 
+	/**
+	 * 
+	 * @param model
+	 * @param stepSize
+	 * @return
+	 */
 	private double computeDistance(Model model, double stepSize) {
 		Indices time = colNames2data.get(colNames[0]);
 		int tidx = time == null ? 0 : time.getColumnExperimentTable();
-		if (tidx < 0)
+		if (tidx < 0) {
 			tidx = 0;
-		return distance.distance(solveAtTimePoints(model,
+		}
+		double simData[][] = solveAtTimePoints(model,
 				((TableModelDoubleMatrix) expTable.getModel())
-						.getColumnData(tidx), stepSize),
-				((TableModelDoubleMatrix) expTable.getModel()).getData());
+						.getColumnData(tidx), stepSize);
+		double expData[][] = ((TableModelDoubleMatrix) expTable.getModel())
+				.getData();
+		double simulation[][] = new double[expData.length][expData[0].length];
+		for (int i = 0; i < simulation.length; i++) {
+			simulation[i][0] = expData[i][0];
+			for (int j = 1; j < simulation[i].length; j++) {
+				simulation[i][j] = simData[i][colNames2data.get(expTable
+						.getColumnName(j)).columnExperimentTable];
+			}
+		}
+		return distance.distance(simulation, expData);
 	}
 
 	/**
@@ -1565,23 +1579,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (e.getSource() instanceof JSpinner) {
 			JSpinner spin = (JSpinner) e.getSource();
 			if (spin.getName() != null && spin.getName().equals("t2")) {
-				// double t1val = ((Number) t1.getValue()).doubleValue();
-				// double t2val = Double.valueOf(spin.getValue().toString())
-				// .doubleValue();
-				// Integer min = Integer.valueOf(1);
-				// Integer max = Integer.valueOf((int) Math.round((t2val -
-				// t1val)
-				// * maxStepsPerUnit));
-				// Integer val = Integer.valueOf((int) Math.max(Math
-				// .round((t2val - t1val) * stepSize),
-				// Math.round((((Integer) stepsModel.getMaximum())
-				// .intValue() - ((Integer) stepsModel
-				// .getMinimum()).intValue()) * .25)));
-				// Integer steps = (Integer) stepsModel.getStepSize();
-				// stepsModel.setMinimum(min);
-				// stepsModel.setMinimum(max);
-				// stepsModel.setValue(val);
-				// stepsModel.setStepSize(steps);
+				// do nothing.
 			} else {
 				Variable s = model.findVariable(spin.getName());
 				if (s != null && s instanceof Symbol) {
@@ -1896,6 +1894,7 @@ class ColorEditor extends AbstractCellEditor implements TableCellEditor,
 }
 
 /**
+ * A table model that allows easy manipulation of the underlying data.
  * 
  * @author Andreas Dr&auml;ger
  * @date 2010-04-08
@@ -1907,6 +1906,10 @@ class MyDefaultTableModel extends DefaultTableModel {
 	 * Generated serial version identifier
 	 */
 	private static final long serialVersionUID = 6339470859385085061L;
+	/**
+	 * Field to indicate columns that are editable.
+	 */
+	private boolean[] colEditable;
 
 	/**
 	 * 
@@ -1915,6 +1918,8 @@ class MyDefaultTableModel extends DefaultTableModel {
 	 */
 	public MyDefaultTableModel(Object[][] data, String[] columnNames) {
 		super(data, columnNames);
+		colEditable = new boolean[columnNames.length];
+		Arrays.fill(colEditable, false);
 	}
 
 	/*
@@ -1934,6 +1939,16 @@ class MyDefaultTableModel extends DefaultTableModel {
 	 */
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		return false;
+		return colEditable[column];
+	}
+
+	/**
+	 * Decide whether or not the column at the given index should be editable.
+	 * 
+	 * @param column
+	 * @param editable
+	 */
+	public void setColumnEditable(int column, boolean editable) {
+		colEditable[column] = editable;
 	}
 }

@@ -29,9 +29,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * This class creates the common modular rate law (CM) according to
  * Liebermeister et al. 2010.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-09-21
  * @since 1.3
  */

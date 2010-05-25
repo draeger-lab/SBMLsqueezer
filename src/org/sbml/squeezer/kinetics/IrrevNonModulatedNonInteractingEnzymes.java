@@ -35,8 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @date Feb 6, 2008
  */
 public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
@@ -91,8 +90,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
 					throw new RateLawNotApplicableException(
 							"This rate law can only be applied if all reactants have integer stoichiometries.");
-				LocalParameter p_kM = parameterMichaelis(si.getSpecies(), enzyme,
-						true);
+				LocalParameter p_kM = parameterMichaelis(si.getSpecies(),
+						enzyme, true);
 				ASTNode frac = ASTNode.frac(speciesTerm(si), new ASTNode(p_kM,
 						this));
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(

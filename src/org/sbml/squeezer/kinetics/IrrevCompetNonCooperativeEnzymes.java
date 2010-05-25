@@ -32,8 +32,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * case of the {@link KineticLaw}s defined by {@link SBO} term identifier 199,
  * 29, 267, or 273 depending on the structure of the reaction.
  * 
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.0
  */
 public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
@@ -90,8 +89,9 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 
 			String enzyme = modE.isEmpty() ? null : modE.get(enzymeNum);
 			numerator = new ASTNode(parameterKcatOrVmax(enzyme, true), this);
-			if (!modE.isEmpty())
+			if (!modE.isEmpty()) {
 				numerator.multiplyWith(speciesTerm(enzyme));
+			}
 			numerator = ASTNode.times(numerator, speciesTerm(reaction
 					.getReactant(0)));
 
@@ -99,14 +99,14 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			LocalParameter p_kM = parameterMichaelis(reaction.getReactant(0)
 					.getSpecies(), enzyme, true);
 
-			if (modInhib.size() == 0)
+			if (modInhib.size() == 0) {
 				denominator = new ASTNode(p_kM, this);
-			else {
+			} else {
 				ASTNode factor = new ASTNode(p_kM, this);
 				for (int i = 0; i < modInhib.size(); i++) {
 					LocalParameter p_kIi = parameterKi(modInhib.get(i), enzyme);
-					LocalParameter p_exp = parameterNumBindingSites(enzyme, modInhib
-							.get(i));
+					LocalParameter p_exp = parameterNumBindingSites(enzyme,
+							modInhib.get(i));
 					factor.multiplyWith(ASTNode.pow(ASTNode.sum(new ASTNode(1,
 							this), ASTNode.frac(speciesTerm(modInhib.get(i)),
 							new ASTNode(p_kIi, this))),

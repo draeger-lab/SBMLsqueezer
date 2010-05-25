@@ -38,9 +38,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * Inference&rdquo;, 2006.</li>
  * </ul>
  * 
- * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Sandra Nitschmann
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 public class HSystem extends BasicKineticLaw implements
@@ -104,7 +103,8 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					LocalParameter p = parameterV(modifier.getSpecies(), r.getId());
+					LocalParameter p = parameterV(modifier.getSpecies(), r
+							.getId());
 					if (node.isUnknown())
 						node = ASTNode.times(new ASTNode(p, this),
 								speciesTerm(modifier));
@@ -137,7 +137,8 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					LocalParameter p = parameterW(modifier.getSpecies(), r.getId());
+					LocalParameter p = parameterW(modifier.getSpecies(), r
+							.getId());
 					if (node.isUnknown())
 						node = ASTNode.times(new ASTNode(p, this),
 								speciesTerm(modifier));

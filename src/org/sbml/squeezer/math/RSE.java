@@ -73,9 +73,11 @@ public class RSE extends Distance {
 			y = swap;
 		}
 		double d = 0d;
-		for (int i = 0; i < y.length; i++)
-			if (!Double.isNaN(y[i]) && !Double.isNaN(x[i]) && (y[i] != x[i]))
+		for (int i = 0; i < y.length; i++) {
+			if (!Double.isNaN(y[i]) && !Double.isNaN(x[i]) && (y[i] != x[i])) {
 				d += (y[i] != 0d) ? Math.pow((x[i] - y[i]) / y[i], 2d) : def;
+			}
+		}
 		return d;
 	}
 

@@ -24,9 +24,7 @@ package org.sbml.squeezer.kinetics;
  * the reaction. In this context, arbitrary means that the stoichiometry of
  * reactants and products can be any real or integer number.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-09-22
  * @since 1.3
  */

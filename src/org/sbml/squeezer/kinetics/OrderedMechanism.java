@@ -31,9 +31,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Nadine Hassis
+ * @author Andreas Dr&auml;ger
  * @date Aug 1, 2007
  */
 public class OrderedMechanism extends GeneralizedMassAction implements
@@ -139,11 +138,12 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			 * Irreversible reaction (bi-bi or bi-uni does not matter)
 			 */
 			if (!reaction.getReversible()) {
-				LocalParameter p_kMr1 = parameterMichaelis(specRefE1.getSpecies(),
-						enzyme, true);
-				LocalParameter p_kMr2 = parameterMichaelis(specRefE2.getSpecies(),
-						enzyme, true);
-				LocalParameter p_kIr1 = parameterKi(specRefE1.getSpecies(), enzyme);
+				LocalParameter p_kMr1 = parameterMichaelis(specRefE1
+						.getSpecies(), enzyme, true);
+				LocalParameter p_kMr2 = parameterMichaelis(specRefE2
+						.getSpecies(), enzyme, true);
+				LocalParameter p_kIr1 = parameterKi(specRefE1.getSpecies(),
+						enzyme);
 
 				numerator = new ASTNode(p_kcatp, this);
 				if (modE.size() > 0)
@@ -174,19 +174,23 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				 * Reversible Bi-Bi reaction.
 				 */
 				setSBOTerm(433);
-				LocalParameter p_kIr2 = parameterKi(specRefE2.getSpecies(), enzyme);
+				LocalParameter p_kIr2 = parameterKi(specRefE2.getSpecies(),
+						enzyme);
 				LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-				LocalParameter p_kMr1 = parameterMichaelis(specRefE1.getSpecies(),
-						enzyme, true);
-				LocalParameter p_kMr2 = parameterMichaelis(specRefE2.getSpecies(),
-						enzyme, true);
-				LocalParameter p_kMp1 = parameterMichaelis(specRefP1.getSpecies(),
-						enzyme, false);
-				LocalParameter p_kMp2 = parameterMichaelis(specRefP2.getSpecies(),
-						enzyme, false);
-				LocalParameter p_kIr1 = parameterKi(specRefE1.getSpecies(), enzyme);
-				LocalParameter p_kIp1 = parameterKi(specRefP1.getSpecies(), enzyme);
-				LocalParameter p_kIp2 = parameterKi(specRefP2.getSpecies(), enzyme);
+				LocalParameter p_kMr1 = parameterMichaelis(specRefE1
+						.getSpecies(), enzyme, true);
+				LocalParameter p_kMr2 = parameterMichaelis(specRefE2
+						.getSpecies(), enzyme, true);
+				LocalParameter p_kMp1 = parameterMichaelis(specRefP1
+						.getSpecies(), enzyme, false);
+				LocalParameter p_kMp2 = parameterMichaelis(specRefP2
+						.getSpecies(), enzyme, false);
+				LocalParameter p_kIr1 = parameterKi(specRefE1.getSpecies(),
+						enzyme);
+				LocalParameter p_kIp1 = parameterKi(specRefP1.getSpecies(),
+						enzyme);
+				LocalParameter p_kIp2 = parameterKi(specRefP2.getSpecies(),
+						enzyme);
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));
 				ASTNode numeratorReverse = ASTNode.frac(new ASTNode(p_kcatn,
@@ -284,14 +288,16 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				 */
 				setSBOTerm(434);
 				LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-				LocalParameter p_kMr1 = parameterMichaelis(specRefE1.getSpecies(),
-						enzyme, true);
-				LocalParameter p_kMr2 = parameterMichaelis(specRefE2.getSpecies(),
-						enzyme, true);
-				LocalParameter p_kMp1 = parameterMichaelis(specRefP1.getSpecies(),
-						enzyme, false);
-				LocalParameter p_kIr1 = parameterKi(specRefE1.getSpecies(), enzyme);
-				LocalParameter p_kIp1 = parameterKi(specRefP1.getSpecies(), enzyme);
+				LocalParameter p_kMr1 = parameterMichaelis(specRefE1
+						.getSpecies(), enzyme, true);
+				LocalParameter p_kMr2 = parameterMichaelis(specRefE2
+						.getSpecies(), enzyme, true);
+				LocalParameter p_kMp1 = parameterMichaelis(specRefP1
+						.getSpecies(), enzyme, false);
+				LocalParameter p_kIr1 = parameterKi(specRefE1.getSpecies(),
+						enzyme);
+				LocalParameter p_kIp1 = parameterKi(specRefP1.getSpecies(),
+						enzyme);
 
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));

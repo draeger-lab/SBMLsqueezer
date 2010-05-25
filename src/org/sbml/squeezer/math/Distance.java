@@ -21,13 +21,15 @@ package org.sbml.squeezer.math;
 /**
  * This class is the basis of various implementations of distance functions.
  * 
- * @version 0.1
  * @since 1.4
  * @author Andreas Dr&auml;ger
  * @date 17.04.2007
  */
 public abstract class Distance {
 
+	/**
+	 * A value to express a parameter of the implementing class.
+	 */
 	protected double root;
 
 	/**
@@ -101,8 +103,9 @@ public abstract class Distance {
 			x = swap;
 		}
 		double d = 0;
-		for (int i = 0; i < x.length; i++)
+		for (int i = 0; i < x.length; i++) {
 			d += distance(x[i], y[i]);
+		}
 		return d;
 	}
 

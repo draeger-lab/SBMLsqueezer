@@ -24,9 +24,7 @@ package org.sbml.squeezer.kinetics;
  * stoichiometry of two and exactly one product with stoichiometry of one. An
  * enzyme can be omitted from the list of modifiers.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-09-22
  * @since 1.3
  */

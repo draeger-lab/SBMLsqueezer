@@ -33,9 +33,8 @@ import org.sbml.squeezer.ReactionType;
 /**
  * This class creates an equation based on a linear additive model.
  * 
- * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Sandra Nitschmann
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  * 
  */

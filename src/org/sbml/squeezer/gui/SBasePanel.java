@@ -54,15 +54,18 @@ import org.sbml.jsbml.History;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.QuantityWithDefinedUnit;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SBaseWithDerivedUnit;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -70,6 +73,7 @@ import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.LaTeX;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.CfgKeys;
@@ -181,6 +185,8 @@ public class SBasePanel extends JPanel {
 			addProperties((Species) sbase);
 		} else if (sbase instanceof Parameter) {
 			addProperties((Parameter) sbase);
+		} else if (sbase instanceof LocalParameter) {
+			addProperties((LocalParameter) sbase);
 		} else if (sbase instanceof Constraint) {
 			addProperties((Constraint) sbase);
 		} else if (sbase instanceof Reaction) {
@@ -188,8 +194,16 @@ public class SBasePanel extends JPanel {
 		} else if (sbase instanceof Event) {
 			addProperties((Event) sbase);
 		}
+		if (sbase instanceof QuantityWithDefinedUnit) {
+			addProperties((QuantityWithDefinedUnit) sbase);
+		} else if (sbase instanceof SBaseWithDerivedUnit) {
+			addProperties((SBaseWithDerivedUnit) sbase);
+		}
+		if (sbase instanceof Variable) {
+			addProperties((Variable) sbase);
+		}
 	}
-
+	
 	/**
 	 * 
 	 * @param c
@@ -276,6 +290,19 @@ public class SBasePanel extends JPanel {
 
 	/**
 	 * 
+	 * @param param
+	 */
+	public void addProperties(LocalParameter param) {
+		lh.add(new JLabel("Value: "), 1, ++row, 1, 1, 1, 1);
+		JSpinner spinner = new JSpinner(new SpinnerNumberModel(
+				param.getValue(), -1E10, 1E10, .1));
+		lh.add(spinner, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
+		param.getValue();
+	}
+
+	/**
+	 * 
 	 * @param mc
 	 */
 	private void addProperties(MathContainer mc) {
@@ -319,18 +346,6 @@ public class SBasePanel extends JPanel {
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scroll.setPreferredSize(new Dimension((int) d.getWidth() + 10,
 					(int) d.getHeight() + 10));
-			lh.add(new JLabel("Derived unit"), 1, ++row, 1, 1, 0, 0);
-			JEditorPane unitPrev = GUITools.unitPreview(mc
-					.getDerivedUnitDefinition());
-			unitPrev.setBorder(BorderFactory.createLoweredBevelBorder());
-			lh.add(unitPrev, 3, row, 1, 1, 0, 0);
-			lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
-			JCheckBox chck = new JCheckBox("Contains undeclared units", mc
-					.containsUndeclaredUnits());
-			chck.setEnabled(false);
-			lh.add(chck, 1, ++row, 3, 1, 0, 0);
-			lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
-
 			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 			if (mc instanceof EventAssignment)
@@ -481,6 +496,18 @@ public class SBasePanel extends JPanel {
 	 */
 	private void addProperties(Parameter p) {
 		addProperties((Symbol) p);
+	}
+
+	/**
+	 * 
+	 * @param q
+	 */
+	public void addProperties(QuantityWithDefinedUnit q) {
+		lh
+				.add(new JLabel(q instanceof Species ? "Substance unit: "
+						: "Unit: "), 1, ++row, 1, 1, 1, 1);
+		lh.add(GUITools.unitPreview(q.getUnitsInstance()), 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 
 	/**
@@ -643,6 +670,24 @@ public class SBasePanel extends JPanel {
 
 	/**
 	 * 
+	 * @param sbase
+	 */
+	private void addProperties(SBaseWithDerivedUnit sbase) {
+		JEditorPane pane = GUITools.unitPreview(sbase
+				.getDerivedUnitDefinition());
+		pane.setBorder(BorderFactory.createLoweredBevelBorder());
+		lh.add(new JLabel("Derived unit: "), 1, ++row, 1, 1, 1, 1);
+		lh.add(pane, 3, row, 1, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 1, 1, 1, 1);
+		JCheckBox chck = new JCheckBox("Contains undeclared units", sbase
+				.containsUndeclaredUnits());
+		chck.setEnabled(false);
+		lh.add(chck, 1, ++row, 3, 1, 0, 0);
+		lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
+	}
+
+	/**
+	 * 
 	 * @param ssr
 	 */
 	private void addProperties(SimpleSpeciesReference ssr) {
@@ -776,8 +821,9 @@ public class SBasePanel extends JPanel {
 				label = "Size: ";
 			} else {
 				Parameter p = (Parameter) s;
-				if (p.isSetValue())
+				if (p.isSetValue()) {
 					val = p.getValue();
+				}
 				label = "Value: ";
 			}
 			lh.add(new JLabel(label), 1, ++row, 1, 1, 1, 1);
@@ -786,15 +832,6 @@ public class SBasePanel extends JPanel {
 				val, min), Math.max(val, max), .1d));
 		spinValue.setEnabled(editable);
 		lh.add(spinValue, 3, row, 1, 1, 0, 1);
-		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-		lh
-				.add(new JLabel(s instanceof Species ? "Substance unit: "
-						: "Unit: "), 1, ++row, 1, 1, 1, 1);
-		lh.add(GUITools.unitPreview(s.getUnitsInstance()), 3, row, 1, 1, 1, 1);
-		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-		JCheckBox check = new JCheckBox("Constant", s.isConstant());
-		check.setEnabled(editable);
-		lh.add(check, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 
@@ -853,6 +890,17 @@ public class SBasePanel extends JPanel {
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		for (Unit u : ud.getListOfUnits())
 			lh.add(new SBasePanel(u, settings), 1, ++row, 3, 1, 1, 1);
+	}
+
+	/**
+	 * 
+	 * @param v
+	 */
+	public void addProperties(Variable v) {
+		JCheckBox check = new JCheckBox("Constant", v.isConstant());
+		check.setEnabled(editable);
+		lh.add(check, 1, ++row, 3, 1, 1, 1);
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 
 	/**

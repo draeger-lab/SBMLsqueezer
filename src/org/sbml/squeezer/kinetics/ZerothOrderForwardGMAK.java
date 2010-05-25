@@ -30,7 +30,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @date Feb 8, 2008
  */
 public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements

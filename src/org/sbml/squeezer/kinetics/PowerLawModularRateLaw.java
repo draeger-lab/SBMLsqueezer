@@ -33,9 +33,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * Represents the power-law modular rate law (PM) from Liebermeister et al.
  * 2010.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  * @date 2009-09-17
  */

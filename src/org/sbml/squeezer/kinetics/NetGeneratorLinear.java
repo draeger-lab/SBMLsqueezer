@@ -29,9 +29,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * Regulatory Networks&rdquo; of T&ouml;pfer, S.; Guthke, R.; Driesch, D.;
  * W&ouml;tzel, D., and Pfaff 2007
  * 
- * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Sandra Nitschmann
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 public class NetGeneratorLinear extends AdditiveModelLinear implements

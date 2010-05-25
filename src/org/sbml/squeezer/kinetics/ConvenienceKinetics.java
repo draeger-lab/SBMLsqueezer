@@ -43,10 +43,9 @@ import org.sbml.squeezer.util.StringTools;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis </a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @author Nadine Hassis
+ * @author Andreas Dr&auml;ger
+ * @author Hannes Borch
  * @date Aug 1, 2007
  */
 public class ConvenienceKinetics extends GeneralizedMassAction implements
@@ -93,16 +92,19 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 				numerator.minus(numeratorElements(enzyme, false));
 				denominator.plus(denominatorElements(enzyme, false));
 				if (reaction.getNumProducts() > 1
-						&& reaction.getNumReactants() > 1)
+						&& reaction.getNumReactants() > 1) {
 					denominator.minus(1);
+				}
 			}
-			if (denominator != null)
+			if (denominator != null) {
 				numerator.divideBy(denominator);
+			}
 			enzymes[i] = !fullRank ? ASTNode.times(new ASTNode(
 					parameterVelocityConstant(enzyme), this), numerator)
 					: numerator;
-			if (enzyme != null)
+			if (enzyme != null) {
 				enzymes[i] = ASTNode.times(speciesTerm(enzyme), enzymes[i]);
+			}
 		}
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(enzymes));
@@ -139,41 +141,48 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			for (i = 0; i < listOf.size(); i++) {
 				SpeciesReference ref = listOf.get(i);
 				p_kM = parameterMichaelis(ref.getSpecies(), enzyme, forward);
-				if (forward)
+				if (forward) {
 					reactants[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM),
 							ref.getStoichiometry());
-				else
+				} else {
 					products[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM),
 							ref.getStoichiometry());
+				}
 			}
 			i = 0;
-			for (SpeciesReference ref : reaction.getListOfReactants())
+			for (SpeciesReference ref : reaction.getListOfReactants()) {
 				reactantsroot[i++] = ASTNode.times(this,
 						parameterKG(ref.getSpecies()),
 						parameterMichaelis(ref.getSpecies(), enzyme, forward))
 						.raiseByThePowerOf(ref.getStoichiometry());
+			}
 			i = 0;
-			for (SpeciesReference ref : reaction.getListOfProducts())
+			for (SpeciesReference ref : reaction.getListOfProducts()) {
 				productroot[i++] = ASTNode.times(this,
 						parameterKG(ref.getSpecies()),
 						parameterMichaelis(ref.getSpecies(), enzyme, forward))
 						.raiseByThePowerOf(ref.getStoichiometry());
+			}
 			if (forward) {
 				ASTNode proot = ASTNode.times(productroot);
-				if (proot == null)
+				if (proot == null) {
 					proot = new ASTNode(1, this);
+				}
 				ASTNode rroot = ASTNode.times(reactantsroot);
-				if (rroot == null)
+				if (rroot == null) {
 					rroot = new ASTNode(1, this);
+				}
 				equation = ASTNode.times(ASTNode.times(reactants), ASTNode
 						.sqrt(ASTNode.frac(rroot, proot)));
 			} else {
 				ASTNode proot = ASTNode.times(productroot);
-				if (proot == null)
+				if (proot == null) {
 					proot = new ASTNode(1, this);
+				}
 				ASTNode rroot = ASTNode.times(reactantsroot);
-				if (rroot == null)
+				if (rroot == null) {
 					rroot = new ASTNode(1, this);
+				}
 				equation = ASTNode.times(ASTNode.times(products), ASTNode
 						.sqrt(ASTNode.frac(proot, rroot)));
 			}
@@ -184,8 +193,9 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			for (SpeciesReference specRef : listOf) {
 				p_kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 				curr = speciesTerm(specRef).divideBy(p_kM);
-				if (specRef.getStoichiometry() != 1d)
+				if (specRef.getStoichiometry() != 1d) {
 					curr.raiseByThePowerOf(specRef.getStoichiometry());
+				}
 				equation.multiplyWith(curr);
 			}
 		}
@@ -218,8 +228,9 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 					.getProduct(i);
 			LocalParameter p_kM = parameterMichaelis(ref.getSpecies(), enzyme,
 					forward);
-			if (!p_kM.isSetSBOTerm())
+			if (!p_kM.isSetSBOTerm()) {
 				p_kM.setSBOTerm(forward ? 322 : 323);
+			}
 			denoms[i] = ASTNode.pow(ASTNode.frac(speciesTerm(ref), new ASTNode(
 					p_kM, this)), (int) ref.getStoichiometry());
 			for (int j = (int) ref.getStoichiometry() - 1; j >= (noOne ? 1 : 0); j--) {
@@ -231,7 +242,12 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		return ASTNode.times(denoms);
 	}
 
-	// @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
+	 */
+	@Override
 	public String getSimpleName() {
 		return getNotesString();
 	}
