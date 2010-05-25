@@ -27,7 +27,6 @@ import java.util.List;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ASTNodeCompiler;
 import org.sbml.jsbml.ASTNodeValue;
-import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Event;
@@ -45,8 +44,6 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
-
-import com.sun.org.apache.bcel.internal.generic.ISHL;
 
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
@@ -428,16 +425,16 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			Species s = (Species) nsb;
 			speciesVal = valuesHash.get(nsb.getId());
 			// int dim = s.getCompartmentInstance().getSpatialDimensions();
-			if (processCompartment(speciesVal) == 0d)
+			if (getCompartmentValueOf(speciesVal) == 0d)
 				return new ASTNodeValue(Y[speciesVal.getIndex()], this);
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits())
 				return new ASTNodeValue(Y[speciesVal.getIndex()]
-						/ processCompartment(speciesVal), this);
+						/ getCompartmentValueOf(speciesVal), this);
 			// return Y[speciesVal.getIndex()] /
 			// Functions.root(Y[compVal.getIndex()], 2);
 			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits())
 				return new ASTNodeValue(Y[speciesVal.getIndex()]
-						* processCompartment(speciesVal), this);
+						* getCompartmentValueOf(speciesVal), this);
 
 			return new ASTNodeValue(Y[speciesVal.getIndex()], this);
 			// return Y[speciesVal.getIndex()] /
@@ -603,10 +600,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		speciesIndex = valuesHash.get(rr.getVariable()).getIndex();
 		changeRate[speciesIndex] = rr.getMath().compile(this).toDouble();
-		compartment = processCompartment(val);
+		compartment = getCompartmentValueOf(val);
 		if (compartment != 0d)
 			changeRate[speciesIndex] = changeRate[speciesIndex]
-					* processCompartment(val);
+					* getCompartmentValueOf(val);
 
 	}
 
@@ -1143,23 +1140,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see eva2.tools.math.des.EventDESystem#processAlgebraicRules(double,
-	 * double[], double[])
-	 */
-	public ArrayList<DESAssignment> processAlgebraicRules(double t, double Y[]) {
-		ArrayList<DESAssignment> algebraicRules = new ArrayList<DESAssignment>();
-		// for (int i = 0; i < model.getNumRules(); i++) {
-		// Rule rule = model.getRule(i);
-		// if (rule.isAlgebraic()()) {
-		//				
-		// }
-		// }
-		return algebraicRules;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see eva2.tools.math.des.EventDESystem#processAssignmentRules(double,
 	 * double[], double[])
 	 */
@@ -1175,6 +1155,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						.getMath().compile(this).toDouble()));
 			}
 		}
+		
+		for (AssignmentRule as : algebraicRules) {
+			val = valuesHash.get(as.getVariable());
+			assignmentRules.add(new DESAssignment(t, val.getIndex(), as
+					.getMath().compile(this).toDouble()));
+			
+		}
+		
 		return assignmentRules;
 	}
 
@@ -1185,10 +1173,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @param val
 	 * @return
 	 */
-	private double processCompartment(Value val) {
-		// TODO: Wieso heißt diese Funktion processCompartment? Die hat ja
-		// damit
-		// eigentlich nicths zu tun.
+	private double getCompartmentValueOf(Value val) {
 		// Is Species
 		if (val instanceof SpeciesValue) {
 			return Y[((SpeciesValue) val).getCompartment()];
@@ -1233,7 +1218,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 								.getVariableInstance();
 						val = valuesHash.get(variable.getId());
 						index = val.getIndex();
-						compartmentValue = processCompartment(val);
+						compartmentValue = getCompartmentValueOf(val);
 
 						// check conditions of the event
 						if (ev.getDelay() != null) {
@@ -1342,12 +1327,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @param changeRate
 	 */
 	private void processRules(double[] changeRate) {
+		//evaluation of assignment rules through the DESystem itself
+		//only at timepoint 0d, at timepoints >=0d the solver carries on
+		//with this task. Assignment rules are only processed during initialization
+		//in this class
+		
 		for (int i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isRate() && currentTime > 0d) {
 				RateRule rr = (RateRule) rule;
 				evaluateRateRule(rr, changeRate);
-			} else if (rule.isAssignment()) {
+			} else if (rule.isAssignment() && currentTime == 0d) {
 				AssignmentRule as = (AssignmentRule) rule;
 				evaluateAssignmentRule(as, changeRate);
 			} else if (rule.isScalar()) {
@@ -1355,8 +1345,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 		}
 		// process list of algebraic rules
-		if (algebraicRules != null) {
-
+		if (algebraicRules != null && currentTime== 0d) {
 			for (AssignmentRule as : algebraicRules) {
 				evaluateAssignmentRule(as, changeRate);
 			}
