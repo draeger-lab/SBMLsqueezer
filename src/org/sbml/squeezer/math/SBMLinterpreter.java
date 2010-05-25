@@ -578,6 +578,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	}
 
 	/**
+	 *  Evaluates the assignment rules of the given model
 	 * 
 	 * @param as
 	 * @param Y
@@ -589,6 +590,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	}
 
 	/**
+	 * Evaluates the rate rules of the given model
 	 * 
 	 * @param rr
 	 * @param res
