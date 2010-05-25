@@ -55,43 +55,6 @@ import org.sbml.jsbml.ASTNode.Type;
 public class AlgebraicRuleConverter {
 
 	/**
-	 * This Interface represents a node in the bipartite graph
-	 * 
-	 * @author Alexander D&ouml;rr
-	 * @since 1.4
-	 */
-	private interface Node {
-		/**
-		 * Adds a node to the list of nodes (creates an edge from this node to
-		 * another one)
-		 * 
-		 * @param node
-		 */
-		public void addNode(Node node);
-
-		/**
-		 * Returns the next node in the list of nodes
-		 * 
-		 * @return
-		 */
-		public Node getNextNode();
-
-		/**
-		 * Deletes node from the list of linked nodes
-		 * 
-		 * @param node
-		 */
-		public void deleteNode(Node node);
-
-		/**
-		 * Returns the value of this node
-		 * 
-		 * @return
-		 */
-		public String getValue();
-	}
-
-	/**
 	 * This class represents an inner node in the bipartite graph, e.g., a
 	 * varibale or an reaction
 	 * 
@@ -120,166 +83,46 @@ public class AlgebraicRuleConverter {
 		/*
 		 * (non-Javadoc)
 		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
+		 * .squeezer.math.AlgebraicRuleConverter.Node)
+		 */
+		public void addNode(Node node) {
+			this.nodes.add(node);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
+		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
+		 */
+		public void deleteNode(Node node) {
+			nodes.remove(node);
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
+		 */
+		public Node getNextNode() {
+			if (nodes.isEmpty())
+				return null;
+			else
+				return nodes.get(0);
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getValue()
 		 */
 		public String getValue() {
 			return value;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
-		 * .squeezer.math.AlgebraicRuleConverter.Node)
-		 */
-		public void addNode(Node node) {
-			this.nodes.add(node);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
-		 */
-		public Node getNextNode() {
-			if (nodes.isEmpty())
-				return null;
-			else
-				return nodes.get(0);
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
-		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
-		 */
-		public void deleteNode(Node node) {
-			nodes.remove(node);
-
-		}
-
-	}
-
-	/**
-	 * This class represents the start node in the bipartite graph
-	 * 
-	 * @author Alexander D&ouml;rr
-	 * @since 1.4
-	 */
-	private class StartNode implements Node {
-		private List<Node> nodes;
-
-		/**
-		 * 
-		 */
-		public StartNode() {
-			this.nodes = new ArrayList<Node>();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
-		 */
-		public Node getNextNode() {
-			if (nodes.isEmpty())
-				return null;
-			else
-				return nodes.get(0);
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getValue()
-		 */
-		public String getValue() {
-			return null;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
-		 * .squeezer.math.AlgebraicRuleConverter.Node)
-		 */
-		public void addNode(Node node) {
-			this.nodes.add(node);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
-		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
-		 */
-		public void deleteNode(Node node) {
-			nodes.remove(node);
-
-		}
-
-	}
-
-	/**
-	 * This class represents the end node in the bipartite graph
-	 * 
-	 * @author Alexander D&ouml;rr
-	 * @since 1.4
-	 */
-	private class TerminalNode implements Node {
-
-		/**
-		 * 
-		 */
-		public TerminalNode() {
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getValue()
-		 */
-		public String getValue() {
-			return null;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
-		 * .squeezer.math.AlgebraicRuleConverter.Node)
-		 */
-		public void addNode(Node node) {
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
-		 */
-		public Node getNextNode() {
-			return null;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
-		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
-		 */
-		public void deleteNode(Node node) {
-
 		}
 
 	}
@@ -315,65 +158,226 @@ public class AlgebraicRuleConverter {
 		 * 
 		 * @return
 		 */
-		public String getVariable() {
-			return variable;
+		public String getReaction() {
+			return reaction;
 		}
 
 		/**
 		 * 
 		 * @return
 		 */
-		public String getReaction() {
-			return reaction;
+		public String getVariable() {
+			return variable;
 		}
 	}
 
 	/**
+	 * This Interface represents a node in the bipartite graph
 	 * 
+	 * @author Alexander D&ouml;rr
+	 * @since 1.4
+	 */
+	private interface Node {
+		/**
+		 * Adds a node to the list of nodes (creates an edge from this node to
+		 * another one)
+		 * 
+		 * @param node
+		 */
+		public void addNode(Node node);
+
+		/**
+		 * Deletes node from the list of linked nodes
+		 * 
+		 * @param node
+		 */
+		public void deleteNode(Node node);
+
+		/**
+		 * Returns the next node in the list of nodes
+		 * 
+		 * @return
+		 */
+		public Node getNextNode();
+
+		/**
+		 * Returns the value of this node
+		 * 
+		 * @return
+		 */
+		public String getValue();
+	}
+
+	/**
+	 * This class represents the start node in the bipartite graph
+	 * 
+	 * @author Alexander D&ouml;rr
+	 * @since 1.4
+	 */
+	private class StartNode implements Node {
+		private List<Node> nodes;
+
+		/**
+		 * 
+		 */
+		public StartNode() {
+			this.nodes = new ArrayList<Node>();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
+		 * .squeezer.math.AlgebraicRuleConverter.Node)
+		 */
+		public void addNode(Node node) {
+			this.nodes.add(node);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
+		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
+		 */
+		public void deleteNode(Node node) {
+			nodes.remove(node);
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
+		 */
+		public Node getNextNode() {
+			if (nodes.isEmpty())
+				return null;
+			else
+				return nodes.get(0);
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getValue()
+		 */
+		public String getValue() {
+			return null;
+		}
+
+	}
+
+	/**
+	 * This class represents the end node in the bipartite graph
+	 * 
+	 * @author Alexander D&ouml;rr
+	 * @since 1.4
+	 */
+	private class TerminalNode implements Node {
+
+		/**
+		 * 
+		 */
+		public TerminalNode() {
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#addNode(org.sbml
+		 * .squeezer.math.AlgebraicRuleConverter.Node)
+		 */
+		public void addNode(Node node) {
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.sbml.squeezer.math.AlgebraicRuleConverter.Node#deleteNode(org
+		 * .sbml.squeezer.math.AlgebraicRuleConverter.Node)
+		 */
+		public void deleteNode(Node node) {
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNextNode()
+		 */
+		public Node getNextNode() {
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getValue()
+		 */
+		public String getValue() {
+			return null;
+		}
+
+	}
+
+	/**
+	 * List with nodes representing an equation in the model
 	 */
 	private List<Node> equations;
 	/**
-	 * 
-	 */
-	private HashMap<String, Node> variableHash;
-	/**
-	 * 
-	 */
-	private HashMap<String, Node> equationHash;
-	/**
-	 * 
+	 * List with nodes representing an variable in the model
 	 */
 	private List<Node> variables;
 	/**
-	 * 
+	 * HashMap with id -> node for variables
+	 */
+	private HashMap<String, Node> variableHash;
+	/**
+	 * HashMap with id -> node for equations
+	 */
+	private HashMap<String, Node> equationHash;
+	/**
+	 * The source node of the bipartite graph
 	 */
 	private StartNode bipartiteGraph;
 	/**
-	 * 
+	 * The matching calculated with this class
 	 */
 	private List<Match> matching;
 	/**
-	 * 
+	 * A list where the ids of all global species in an MathML expression are
+	 * saved temporarily
 	 */
 	private List<String> svariables;
 	/**
-	 * 
+	 * A set with the ids of all reactants in the model
 	 */
 	private Set<String> reactants;
 	/**
-	 * 
+	 * The given SBML model
 	 */
 	private Model model;
 	/**
-	 * 
+	 * ASTNodes for the node of the variable an algebraic refers to and its
+	 * parent
 	 */
 	private ASTNode variableNodeParent, variableNode;
 	/**
-	 * 
+	 * A boolean that states if the variable of an algebraic rule is linked
+	 * additive
 	 */
 	private boolean additive = true;
 	/**
-	 * 
+	 * A boolean that states if the variable of an algebraic rule can remain on
+	 * its side
 	 */
 	private boolean remainOnSide = true;
 
@@ -384,33 +388,6 @@ public class AlgebraicRuleConverter {
 	public AlgebraicRuleConverter(Model model) {
 		this.model = model;
 		init();
-	}
-
-	/**
-	 * Initializes the Converter
-	 */
-	private void init() {
-		this.svariables = new ArrayList<String>();
-		this.reactants = new HashSet<String>();
-		this.variableNodeParent = null;
-
-		for (int i = 0; i < model.getNumReactions(); i++) {
-
-			for (SpeciesReference sref : model.getReaction(i)
-					.getListOfProducts()) {
-				reactants.add(sref.getSpecies());
-			}
-
-			for (SpeciesReference sref : model.getReaction(i)
-					.getListOfReactants()) {
-				reactants.add(sref.getSpecies());
-			}
-
-		}
-
-		buildGraph();
-		buildMatching();
-
 	}
 
 	/**
@@ -456,6 +433,7 @@ public class AlgebraicRuleConverter {
 			variableHash.put(variable.getValue(), variable);
 		}
 
+		// Create edges with reactions
 		for (i = 0; i < model.getNumReactions(); i++) {
 			Reaction r = model.getReaction(i);
 
@@ -515,13 +493,14 @@ public class AlgebraicRuleConverter {
 			equations.add(equation);
 			variable = variableHash.get(equation.getValue());
 
-			// link reation with kinetic law
 			variable.addNode(equation);
 			equation.addNode(variable);
 
 			svariables.clear();
 			getVariables(r.getKineticLaw().getListOfParameters(), r
 					.getKineticLaw().getMath(), svariables);
+
+			// link kinetic law with its variables
 			for (int j = 0; j < svariables.size(); j++) {
 				variable = variableHash.get(svariables.get(j));
 				if (variable != null) {
@@ -547,6 +526,7 @@ public class AlgebraicRuleConverter {
 				// -- self creation
 				svariables.clear();
 				getVariables(null, model.getRule(i).getMath(), svariables);
+				// link rule with its variables
 				for (int j = 0; j < svariables.size(); j++) {
 					variable = variableHash.get(svariables.get(j));
 					if (variable != null) {
@@ -568,6 +548,7 @@ public class AlgebraicRuleConverter {
 
 				svariables.clear();
 				getVariables(null, model.getRule(i).getMath(), svariables);
+				// link rule with its variables
 				for (int j = 0; j < svariables.size(); j++) {
 					variable = variableHash.get(svariables.get(j));
 					if (variable != null) {
@@ -588,15 +569,13 @@ public class AlgebraicRuleConverter {
 				// all identifiers withn the MathML of this AlgebraicRule
 				svariables.clear();
 				getVariables(null, model.getRule(i).getMath(), svariables);
-
+				// link rule with its variables
 				for (int j = 0; j < svariables.size(); j++) {
 					variable = variableHash.get(svariables.get(j));
 					if (variable != null) {
 						variable.addNode(equation);
 						equation.addNode(variable);
-
 					}
-
 				}
 			}
 		}
@@ -606,7 +585,9 @@ public class AlgebraicRuleConverter {
 	 * Build the maximum matching
 	 */
 	private void buildMatching() {
+		// the source node
 		bipartiteGraph = new StartNode();
+		// the sink node
 		TerminalNode tnode = new TerminalNode();
 		matching = new ArrayList<Match>();
 		Set<Node> B = new HashSet<Node>();
@@ -614,31 +595,41 @@ public class AlgebraicRuleConverter {
 		Node first, last;
 		int i;
 
+		// connect equations with source node
 		for (i = 0; i < equations.size(); i++) {
 			bipartiteGraph.addNode(equations.get(i));
 		}
 
+		// connect equations with sink node
 		for (i = 0; i < variables.size(); i++) {
 			variables.get(i).addNode(tnode);
 		}
-
+		// push source node on the stack
 		stack.push(bipartiteGraph);
 
 		while (!stack.isEmpty()) {
 
+			// if node on stack has linked node
 			if (stack.peek().getNextNode() != null) {
+				// get first linked node
 				first = stack.peek().getNextNode();
+				// if node not already in the matching
 				if (!B.contains(first)) {
-
+					// delete connection
 					stack.peek().deleteNode(first);
 					first.deleteNode(stack.peek());
+					// push first on stack
 					stack.push(first);
 
+					// if first not the sink node add to the matching
 					if (!(stack.peek() instanceof TerminalNode)) {
 						B.add(first);
-
-					} else {
+					}// first is sink node
+					else {
+						// remove sink node
 						stack.pop();
+						// build matching between 2 neighbouring in the list and
+						// leave source node on the stack
 						while (stack.size() > 1) {
 							last = stack.pop();
 							matching.add(new Match(stack.pop().getValue(), last
@@ -646,63 +637,18 @@ public class AlgebraicRuleConverter {
 						}
 					}
 
-				} else {
-
+				} // else delete connection
+				else {
 					stack.peek().deleteNode(first);
 					first.deleteNode(stack.peek());
-
 				}
 
-			} else
+			}// else remove from stack
+			else
 				stack.pop();
 
 		}
 
-	}
-
-	/**
-	 * Creates a list an assignment rule for every algebraic rule in the given
-	 * model
-	 * 
-	 * @return
-	 */
-	public ArrayList<AssignmentRule> getAssignmentRules() {
-		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
-		AssignmentRule as;
-		 if (matching != null) {
-					
-		 for (Match match : matching) {
-		
-		 System.out.println(match.getReaction() + " -> "
-		 + match.getVariable());
-		 }
-		 }
-		
-		 else
-		 System.out.println("No matching found");
-
-		for (int i = 0; i < model.getNumRules(); i++) {
-			Rule r = model.getRule(i);
-			if (r instanceof AlgebraicRule) {
-				AlgebraicRule ar = (AlgebraicRule) r;
-				ASTNode node = ar.getMath().clone();
-
-				//substitute function definitions
-				if (model.getNumFunctionDefinitions() > 0) {
-					substituteFunctions(node, 0);
-				}
-
-				as = createAssignmentRule(node, ar.getMetaId());
-				//System.out.println(node.toFormula());
-				if (as != null) {
-					//assignmentRules.add(as);
-					as = null;
-				}
-
-			}
-		}
-
-		return assignmentRules;
 	}
 
 	/**
@@ -717,18 +663,19 @@ public class AlgebraicRuleConverter {
 		String variable = new String();
 		AssignmentRule as = null;
 
+		// search for the corresponding variable in the matching
 		for (Match match : matching) {
 			if (match.getReaction() == ruleId)
 				variable = match.getVariable();
-
 		}
+
+		// evalute and reorganize the equation of the given ASTNode
 		if (variable.length() > 0) {
 			System.out.println("before: " + node.toFormula());
 			System.out.println("Variable: " + variable);
 			as = new AssignmentRule();
 			as.setVariable(variable);
 			setNodeWithVariable(node, variable);
-			
 			evaluateEquation(variableNodeParent);
 			as.setMath(reorganizeEquation(node));
 			System.out.println("after: " + as.getMath().toFormula());
@@ -736,7 +683,183 @@ public class AlgebraicRuleConverter {
 
 		return as;
 	}
-	
+
+	/**
+	 * Checks if the Variable has to be moved to the other side of the equation
+	 * or not and if its connection to the eqution is additiv or multiplicativ.
+	 * *
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private void evaluateEquation(ASTNode node) {
+		if (node != null) {
+			if (node.getType() == Type.TIMES) {
+				if (node.getNumChildren() == 2) {
+					if (node.getLeftChild().isNumber()
+							|| node.getRightChild().isNumber()) {
+						remainOnSide = false;
+					} else
+						additive = false;
+				} else
+					additive = false;
+
+			} else if (node.getType() == Type.DIVIDE) {
+				additive = false;
+				remainOnSide = false;
+			}
+
+			evaluateEquation((ASTNode) node.getParent());
+		}
+
+	}
+
+	/**
+	 * Creates a list an assignment rule for every algebraic rule in the given
+	 * model
+	 * 
+	 * @return
+	 */
+	public ArrayList<AssignmentRule> getAssignmentRules() {
+		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
+		AssignmentRule as;
+		if (matching != null) {
+
+			for (Match match : matching) {
+
+				System.out.println(match.getReaction() + " -> "
+						+ match.getVariable());
+			}
+		}
+
+		else
+			System.out.println("No matching found");
+
+		// create for every algebraic rule an adequate assignment rule
+		for (int i = 0; i < model.getNumRules(); i++) {
+			Rule r = model.getRule(i);
+			if (r instanceof AlgebraicRule) {
+				AlgebraicRule ar = (AlgebraicRule) r;
+				ASTNode node = ar.getMath().clone();
+
+				// substitute function definitions
+				if (model.getNumFunctionDefinitions() > 0) {
+					substituteFunctions(node, 0);
+				}
+
+				as = createAssignmentRule(node, ar.getMetaId());
+
+				// whenn assignment rule created add to the list
+				if (as != null) {
+					//assignmentRules.add(as);
+					as = null;
+				}
+			}
+		}
+
+		return assignmentRules;
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private int getIndexOfNode(ASTNode node) {
+		ASTNode parent = (ASTNode) node.getParent();
+		for (int i = 0; i < parent.getChildCount(); i++) {
+			ASTNode n = parent.getChild(i);
+			if (node == n)
+				return i;
+		}
+		return -1;
+	}
+
+	/**
+	 * Return the other child of the given nodes parent
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private ASTNode getOtherChild(ASTNode node) {
+		ASTNode parent = (ASTNode) node.getParent();
+		if (parent.getLeftChild() == node) {
+			return parent.getRightChild();
+		} else
+			return parent.getLeftChild();
+
+	}
+
+	/**
+	 * Returns the variables in a MathML object without local parameter
+	 * 
+	 * @param param
+	 * 
+	 * @param node
+	 * @param variables
+	 */
+	private void getVariables(ListOf<LocalParameter> param, ASTNode node,
+			List<String> variables) {
+		// found node with species
+		if (node.isName() && !node.isFunction()) {
+			if (!node.isConstant()) {
+				if (param == null)
+					variables.add(node.getName());
+				else {
+					if (!param.contains(node.getName())) {
+						variables.add(node.getName());
+					}
+				}
+			}
+
+		}// else found operator or function
+		else {
+			// carry on with all children
+			Enumeration<TreeNode> nodes = node.children();
+			while (nodes.hasMoreElements()) {
+				getVariables(param, (ASTNode) nodes.nextElement(), variables);
+			}
+		}
+
+	}
+
+	/**
+	 * Initializes the Converter
+	 */
+	private void init() {
+		this.svariables = new ArrayList<String>();
+		this.reactants = new HashSet<String>();
+		this.variableNodeParent = null;
+
+		for (int i = 0; i < model.getNumReactions(); i++) {
+
+			for (SpeciesReference sref : model.getReaction(i)
+					.getListOfProducts()) {
+				reactants.add(sref.getSpecies());
+			}
+
+			for (SpeciesReference sref : model.getReaction(i)
+					.getListOfReactants()) {
+				reactants.add(sref.getSpecies());
+			}
+
+		}
+
+		buildGraph();
+		buildMatching();
+
+	}
+
+	/**
+	 * Returns a boolean that indicates whether the given model is
+	 * overdetermined or not.
+	 * 
+	 * @return
+	 */
+	public boolean isOverdetermined() {
+		return (equations.size() > matching.size());
+	}
+
 	/**
 	 * Takes the equation stored in node an reorganizes it on the basis of the
 	 * evaluation of this equation and the variable
@@ -745,10 +868,9 @@ public class AlgebraicRuleConverter {
 	 * @return
 	 */
 	private ASTNode reorganizeEquation(ASTNode node) {
-		//setParent(node);
 		ASTNode timesNode, valueNode, divideNode, parent, withVariable, rest;
 		int index;
-				
+
 		System.out.println("reorganizing equation...");
 		System.out.println("additive: " + additive);
 		System.out.println("remainOnSide: " + remainOnSide);
@@ -779,8 +901,8 @@ public class AlgebraicRuleConverter {
 			withVariable = getOtherChild(variableNode);
 			rest = getOtherChild(variableNodeParent);
 
-			System.out.println("  "+rest.toFormula());
-			
+			System.out.println("  " + rest.toFormula());
+
 			index = getIndexOfNode(variableNodeParent);
 			parent = (ASTNode) variableNodeParent.getParent();
 			parent.removeChild(index);
@@ -800,83 +922,6 @@ public class AlgebraicRuleConverter {
 				divideNode.addChild(timesNode);
 				return divideNode;
 
-			}
-		}
-
-	}
-
-	/**
-	 * Return the other child of the given nodes parent
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private ASTNode getOtherChild(ASTNode node) {
-		ASTNode parent = (ASTNode) node.getParent();
-		if (parent.getLeftChild() == node) {
-			return parent.getRightChild();
-		} else
-			return parent.getLeftChild();
-
-	}
-
-	/**
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private int getIndexOfNode(ASTNode node) {
-		ASTNode parent = (ASTNode) node.getParent();
-		for (int i = 0; i < parent.getChildCount(); i++) {
-			ASTNode n = parent.getChild(i);
-			if (node == n)
-				return i;
-		}
-		return -1;
-	}
-
-	/**
-	 * Replaces all functions in the given ASTNode with the function definition
-	 * 
-	 * @param node
-	 * @param indexParent
-	 */
-	private void substituteFunctions(ASTNode node, int indexParent) {
-		//check if node is a function
-		if (node.isName()) {
-			FunctionDefinition fd = model.getFunctionDefinition(node.getName());
-			if (fd != null) {
-				ASTNode function = fd.getMath();
-				HashMap<String, String> nameHash = new HashMap<String, String>();
-				HashMap<String, Integer> numberHash = new HashMap<String, Integer>();
-				HashMap<String, ASTNode> nodeHash = new HashMap<String, ASTNode>();
-				ASTNode parent;
-
-				for (int i = 0; i < node.getNumChildren(); i++) {
-					if (node.getChild(i).isName())
-						nameHash.put(function.getChild(i).getName(), node
-								.getChild(i).getName());
-					else if (node.getChild(i).isNumber()) {
-						numberHash.put(function.getChild(i).getName(), node
-								.getChild(i).getInteger());
-					} else if (node.getChild(i).isOperator()) {
-						nodeHash.put(function.getChild(i).getName(), node
-								.getChild(i).clone());
-					}
-
-				}
-				parent = (ASTNode) node.getParent();
-				parent.replaceChild(indexParent, function.getRightChild()
-						.clone());
-				replaceNames(parent.getChild(indexParent), nameHash,
-						numberHash, nodeHash);
-			}
-
-		//else move on with its children
-		} else {
-			for (int i = 0; i < node.getNumChildren(); i++) {
-				//node.getChild(i).setParent(node);
-				substituteFunctions(node.getChild(i), i);
 			}
 		}
 
@@ -903,45 +948,11 @@ public class AlgebraicRuleConverter {
 				int index = parent.getIndex(node);
 				parent.replaceChild(index, nodeHash.get(node.getName()));
 			}
-		}
-
+		}		
+		//proceed  with the children
 		for (int i = 0; i < node.getNumChildren(); i++) {
-			//node.getChild(i).setParent(node);
 			replaceNames(node.getChild(i), varibales, numberHash, nodeHash);
 		}
-	}
-
-	/**
-	 * Checks if the Variable has to be moved to the other side of the equation
-	 * or not and if its connection to the eqution is additiv or multiplicativ.
-	 * *
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private void evaluateEquation(ASTNode node) {
-		ASTNode subnode;
-		Enumeration<TreeNode> nodes;
-		if (node != null) {
-			if (node.getType() == Type.TIMES) {
-				if (node.getNumChildren() == 2) {
-					if (node.getLeftChild().isNumber() || node.getRightChild().isNumber()){
-						remainOnSide = false;
-					}
-					else
-						additive = false;
-					}
-				else
-					additive = false;
-
-			} else if (node.getType() == Type.DIVIDE) {
-				additive = false;
-				remainOnSide = false;
-			}
-
-			evaluateEquation((ASTNode) node.getParent());
-		}
-
 	}
 
 	/**
@@ -957,7 +968,6 @@ public class AlgebraicRuleConverter {
 
 		while (nodes.hasMoreElements()) {
 			subnode = (ASTNode) nodes.nextElement();
-			//subnode.setParent(node);
 			if (subnode.isName()) {
 				if (subnode.getName() == variable) {
 					variableNodeParent = node;
@@ -970,43 +980,54 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * Returns the variables in a MathML object without local parameter
-	 * 
-	 * @param param
+	 * Replaces all functions in the given ASTNode with the function definition
 	 * 
 	 * @param node
-	 * @param variables
+	 * @param indexParent
 	 */
-	private void getVariables(ListOf<LocalParameter> param, ASTNode node,
-			List<String> variables) {
-		if (node.isName() && !node.isFunction()) {
-			if (!node.isConstant()) {
-				if (param == null)
-					variables.add(node.getName());
-				else {
-					if (!param.contains(node.getName())) {
-						variables.add(node.getName());
+	private void substituteFunctions(ASTNode node, int indexParent) {
+		// check if node is a function
+		if (node.isName()) {
+			FunctionDefinition fd = model.getFunctionDefinition(node.getName());
+			// node represents a function definiton in the model
+			if (fd != null) {
+				ASTNode function = fd.getMath();
+				HashMap<String, String> nameHash = new HashMap<String, String>();
+				HashMap<String, Integer> numberHash = new HashMap<String, Integer>();
+				HashMap<String, ASTNode> nodeHash = new HashMap<String, ASTNode>();
+				ASTNode parent;
+
+				// Hash its variables to the parameter
+				for (int i = 0; i < node.getNumChildren(); i++) {
+					if (node.getChild(i).isName())
+						nameHash.put(function.getChild(i).getName(), node
+								.getChild(i).getName());
+					else if (node.getChild(i).isNumber()) {
+						numberHash.put(function.getChild(i).getName(), node
+								.getChild(i).getInteger());
+					} else if (node.getChild(i).isOperator()) {
+						nodeHash.put(function.getChild(i).getName(), node
+								.getChild(i).clone());
 					}
+
 				}
+				parent = (ASTNode) node.getParent();
+				// replace the reference to a function definition with the
+				// function definiton itself
+				parent.replaceChild(indexParent, function.getRightChild()
+						.clone());
+				// substitute the variables with the parameter
+				replaceNames(parent.getChild(indexParent), nameHash,
+						numberHash, nodeHash);
 			}
 
+			// else move on with its children
 		} else {
-			Enumeration<TreeNode> nodes = node.children();
-			while (nodes.hasMoreElements()) {
-				getVariables(param, (ASTNode) nodes.nextElement(), variables);
+			for (int i = 0; i < node.getNumChildren(); i++) {
+				substituteFunctions(node.getChild(i), i);
 			}
 		}
 
-	}
-
-	/**
-	 * Returns a boolean that indicates whether the given model is
-	 * overdetermined or not.
-	 * 
-	 * @return
-	 */
-	public boolean isOverdetermined() {
-		return (equations.size() > matching.size());
 	}
 
 }
