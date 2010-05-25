@@ -14,18 +14,62 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.kinetics;
+package org.sbml.squeezer.util;
 
 /**
- * If a kinetic law object implements this interface, it can be applied to
- * reactions that are catalyzed by species that are not an enzyme.
+ * A pair of two values.
  * 
  * @author Andreas Dr&auml;ger
- * @date 2009-09-22
- * @since 1.3
+ * @date 16:18:26
  */
-public interface InterfaceNonEnzymeKinetics {
+public class ValuePair<S, T> {
+
+	/**
+	 * First value
+	 */
+	private S s;
+	/**
+	 * Second value
+	 */
+	private T t;
+
+	public ValuePair() {
+		this(null, null);
+	}
+	
+	public ValuePair(S s, T t) {
+		this.setFirstValue(s);
+		this.setSecondValue(t);
+	}
+
+	/**
+	 * @return the s
+	 */
+	public S getFirstValue() {
+		return s;
+	}
+
+	/**
+	 * @return the t
+	 */
+	public T getSecondValue() {
+		return t;
+	}
+
+	/**
+	 * @param s the s to set
+	 */
+	public void setFirstValue(S s) {
+		this.s = s;
+	}
+
+	/**
+	 * @param t the t to set
+	 */
+	public void setSecondValue(T t) {
+		this.t = t;
+	}
 
 }

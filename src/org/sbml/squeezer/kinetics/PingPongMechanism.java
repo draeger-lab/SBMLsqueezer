@@ -31,9 +31,9 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas Dr&auml;ger</a>
- * @author <a href="mailto:dwouamba@yahoo.fr">Dieudonn&eacute; Wouamba</a>
+ * @author Nadine Hassis
+ * @author Andreas Dr&auml;ger
+ * @author Dieudonn&eacute; Wouamba
  * 
  * @date Aug 1, 2007
  */

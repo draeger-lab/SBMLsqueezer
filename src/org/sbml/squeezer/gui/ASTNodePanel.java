@@ -155,9 +155,9 @@ public class ASTNodePanel extends JPanel {
 				.containsUndeclaredUnits());
 		chck.setEnabled(enabled);
 		l.add(chck, 0, 0, 3, 1);
-		JEditorPane unitPane = GUITools
-				.unitPreview(node.deriveUnit() != null ? node.deriveUnit()
-						: new UnitDefinition());
+		UnitDefinition ud = node.deriveUnit();
+		JEditorPane unitPane = GUITools.unitPreview(ud != null ? ud
+				: new UnitDefinition());
 		unitPane.setBorder(BorderFactory.createLoweredBevelBorder());
 		l.add(new JPanel(), 0, 1, 3, 1);
 		l.add("Derived unit:", unitPane, true);
@@ -166,7 +166,12 @@ public class ASTNodePanel extends JPanel {
 		lh.add(unitPanel, 0, lh.getRow() + 1, 3, 1, 0, 0);
 		lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1, 0, 0);
 
-		sHotEqn preview = new sHotEqn(node.compile(new LaTeX()).toString());
+		StringBuilder latex = new StringBuilder();
+		latex.append(LaTeX.eqBegin);
+		latex.append(node.compile(new LaTeX()).toString().replace("mathrm",
+				"mbox").replace("text", "mbox").replace("mathtt", "mbox"));
+		latex.append(LaTeX.eqEnd);
+		sHotEqn preview = new sHotEqn(latex.toString());
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
 		JScrollPane scroll = new JScrollPane(preview,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,

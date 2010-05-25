@@ -280,7 +280,11 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			removed.add(sb);
 	}
 
-	private void setSelectedModel(int selectedModel) {
+	/**
+	 * 
+	 * @param selectedModel
+	 */
+	public void setSelectedModel(int selectedModel) {
 		this.selectedModel = selectedModel;
 	}
 
@@ -347,7 +351,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @throws SBMLException
 	 * @throws IOException
 	 */
-	private boolean writeModelToSBML(int model, String filename)
+	public boolean writeModelToSBML(int model, String filename)
 			throws SBMLException, IOException {
 		return writer.writeSBML(listOfOrigModels.get(model), filename);
 	}

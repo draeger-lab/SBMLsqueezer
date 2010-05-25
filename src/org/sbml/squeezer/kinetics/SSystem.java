@@ -48,9 +48,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * models-a review&rdquo;</li>
  * </ul>
  * 
- * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Sandra Nitschmann
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 public class SSystem extends BasicKineticLaw implements

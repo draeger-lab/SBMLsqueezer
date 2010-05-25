@@ -18,6 +18,8 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.util.HashMap;
+
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -154,6 +156,50 @@ public class TableModelDoubleMatrix extends AbstractTableModel {
 		this.data = data;
 		if (colNames != null && colNames.length != getColumnCount())
 			colNames = null;
+	}
+
+	/**
+	 * @param colNames
+	 */
+	public void swapColumns(String[] colNames) {
+		HashMap<Integer, Integer> oldPosNewPos = new HashMap<Integer, Integer>();
+		for (int i = 0; i < this.colNames.length; i++) {
+			for (int j = 0; j < colNames.length; j++) {
+				if (this.colNames[i].equals(colNames[j])) {
+					oldPosNewPos.put(Integer.valueOf(i), Integer.valueOf(j));
+					break;
+				}
+			}
+		}
+		for (Integer key : oldPosNewPos.keySet()) {
+			swap(key.intValue(), oldPosNewPos.get(key).intValue());
+		}
+	}
+
+	/**
+	 * Swaps a and b.
+	 * 
+	 * @param a
+	 * @param b
+	 */
+	private void swap(Object a, Object b) {
+		Object swap = b;
+		b = a;
+		a = swap;
+	}
+
+	/**
+	 * 
+	 * @param fromIdx
+	 * @param toIdx
+	 */
+	public void swapColumn(int fromIdx, int toIdx) {
+		if (fromIdx != toIdx) {
+			for (int i = 0; i < data.length; i++) {
+				swap(data[i][fromIdx], data[i][toIdx]);
+				swap(colNames[fromIdx], colNames[toIdx]);
+			}
+		}
 	}
 
 }

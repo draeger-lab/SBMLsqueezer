@@ -33,9 +33,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * and the paper &ldquo;Modeling Non-Linear Dynamic Phenomena in Biochemical
  * Networks&ldquo; of Nicole Radde and Lars Kaderali.
  * 
- * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Sandra Nitschmann
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  * 
  */
@@ -97,7 +96,8 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 			if (SBO.isModifier(modifier.getSBOTerm())) {
 				LocalParameter p = parameterW(modifier.getSpecies(), rId);
 				ASTNode pnode = new ASTNode(p, this);
-				LocalParameter theta = parameterTheta(rId, modifier.getSpecies());
+				LocalParameter theta = parameterTheta(rId, modifier
+						.getSpecies());
 				ASTNode thetanode = new ASTNode(theta, this);
 				LocalParameter coeff = parameterHillCoefficient(modifier
 						.getSpecies());

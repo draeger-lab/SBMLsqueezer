@@ -35,10 +35,9 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @author Nadine Hassis
+ * @author Andreas Dr&auml;ger
+ * @author Hannes Borch
  * @date Aug 1, 2007
  */
 public class GeneralizedMassAction extends BasicKineticLaw implements
@@ -458,16 +457,18 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				.get(catNum)
 				: null);
 		ASTNode ass = new ASTNode(p_kass, this);
-		for (SpeciesReference specRef : r.getListOfReactants())
+		for (SpeciesReference specRef : r.getListOfReactants()) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
 				ASTNode basis = speciesTerm(specRef);
-				if (specRef.isSetStoichiometryMath())
+				if (specRef.isSetStoichiometryMath()) {
 					basis.raiseByThePowerOf(specRef.getStoichiometryMath()
 							.getMath().clone());
-				else
+				} else {
 					basis.raiseByThePowerOf(specRef.getStoichiometry());
+				}
 				ass.multiplyWith(basis);
 			}
+		}
 		return ass;
 	}
 
@@ -488,10 +489,12 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		Reaction reaction = getParentSBMLObject();
 		for (int c = 0; c < rates.length; c++) {
 			rates[c] = association(catalysts, c);
-			if (reaction.getReversible())
+			if (reaction.getReversible()) {
 				rates[c].minus(dissociation(catalysts, c));
-			if (catalysts.size() > 0)
+			}
+			if (catalysts.size() > 0) {
 				rates[c].multiplyWith(speciesTerm(catalysts.get(c)));
+			}
 		}
 		setSBOTerm();
 		return ASTNode.times(activationFactor(modActi),
@@ -539,7 +542,12 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		return createModificationFactor(modifiers, false);
 	}
 
-	// @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
+	 */
+	@Override
 	public String getSimpleName() {
 		return "Generalized mass-action";
 	}

@@ -21,9 +21,7 @@ package org.sbml.squeezer.kinetics;
 /**
  * Kinetics that allow for an empty list of reactants.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-09-23
  * @since 1.3
  */

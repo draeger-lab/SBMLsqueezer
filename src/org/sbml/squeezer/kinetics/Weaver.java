@@ -27,9 +27,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * paper &ldquo;Modeling regulatory networks with weight matrices&rdquo; of
  * Weaver, D.; Workman, C., and Stormo, G. 1999
  * 
- * @author <a href="mailto:snitschm@gmx.de">Sandra Nitschmann</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Sandra Nitschmann
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 public class Weaver extends AdditiveModelNonLinear implements

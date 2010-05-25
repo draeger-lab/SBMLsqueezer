@@ -62,10 +62,12 @@ public class SimulationDialog extends JDialog implements ActionListener {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		pack();
 		int maxSize = 700;
-		if (getWidth() > 1.5 * maxSize)
+		if (getWidth() > 1.5 * maxSize) {
 			this.setSize((int) Math.round(1.5 * maxSize), getHeight());
-		if (getHeight() > maxSize)
+		}
+		if (getHeight() > maxSize) {
 			this.setSize(getWidth(), maxSize);
+		}
 		setLocationRelativeTo(owner);
 
 		final KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,

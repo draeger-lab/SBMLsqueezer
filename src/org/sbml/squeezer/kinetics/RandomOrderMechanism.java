@@ -33,9 +33,8 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Nadine Hassis
+ * @author Andreas Dr&auml;ger
  * 
  * @date Aug 1, 2007
  */
@@ -157,8 +156,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		Species speciesR1 = specRefR1.getSpeciesInstance();
 		Species speciesR2 = specRefR2.getSpeciesInstance();
 		LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-		LocalParameter p_kMr1 = parameterMichaelis(speciesR1.getId(), enzyme, true);
-		LocalParameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
+		LocalParameter p_kMr1 = parameterMichaelis(speciesR1.getId(), enzyme,
+				true);
+		LocalParameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme,
+				true);
 		LocalParameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
 		ASTNode numerator = new ASTNode(p_kcatp, this);
 		ASTNode denominator; // II
@@ -199,8 +200,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		Species speciesP1 = specRefP1.getSpeciesInstance();
 		LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
 		LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-		LocalParameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme, true);
-		LocalParameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme, false);
+		LocalParameter p_kMr2 = parameterMichaelis(speciesR2.getId(), enzyme,
+				true);
+		LocalParameter p_kMp1 = parameterMichaelis(speciesP1.getId(), enzyme,
+				false);
 		LocalParameter p_kIr1 = parameterKi(speciesR1.getId(), enzyme);
 		LocalParameter p_kIr2 = parameterKi(speciesR2.getId(), enzyme);
 

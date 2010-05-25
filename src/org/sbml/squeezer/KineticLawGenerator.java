@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Constraint;
@@ -39,6 +40,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.NamedSBaseWithDerivedUnit;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.QuantityWithDefinedUnit;
 import org.sbml.jsbml.RateRule;
@@ -49,6 +51,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.Variable;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.math.GaussianRank;
 
@@ -58,9 +61,8 @@ import org.sbml.squeezer.math.GaussianRank;
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Nadine Hassis
+ * @author Andreas Dr&auml;ger
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
@@ -175,6 +177,60 @@ public class KineticLawGenerator {
 				|| !species.getSubstanceUnitsInstance().isVariantOfSubstance())
 			species.setSubstanceUnits(species.getModel().getUnitDefinition(
 					"substance"));
+	}
+
+	/**
+	 * 
+	 * @param compartmenOrig
+	 * @param miniModel
+	 * @return
+	 */
+	private Compartment copyCopmpartment(Compartment compartmenOrig,
+			Model miniModel) {
+		if (miniModel.getCompartment(compartmenOrig.getId()) == null)
+			miniModel.addCompartment(compartmenOrig.clone());
+		Compartment compartment = miniModel.getCompartment(compartmenOrig
+				.getId());
+		if (compartment.isSetUnits()
+				&& !Unit.isUnitKind(compartment.getUnits(), compartment
+						.getLevel(), compartment.getVersion())) {
+			if (miniModel.getUnitDefinition(compartment.getUnits()) == null)
+				miniModel.addUnitDefinition(((UnitDefinition) compartment
+						.getUnitsInstance()).clone());
+			compartment.setUnits(miniModel.getUnitDefinition(compartment
+					.getUnits()));
+		} else {
+			checkUnits(compartment);
+		}
+		return compartment;
+	}
+
+	/**
+	 * 
+	 * @param speciesOrig
+	 * @param miniModel
+	 * @return
+	 */
+	private Species copySpecies(Species speciesOrig, Model miniModel) {
+		if (speciesOrig.isSetCompartment())
+			copyCopmpartment(speciesOrig.getCompartmentInstance(), miniModel);
+		if (miniModel.getSpecies(speciesOrig.getId()) == null)
+			miniModel.addSpecies(speciesOrig.clone());
+		Species spec = miniModel.getSpecies(speciesOrig.getId());
+		spec.setCompartment(miniModel.getCompartment(speciesOrig
+				.getCompartment()));
+		if (speciesOrig.isSetSubstanceUnits()
+				&& !Unit.isUnitKind(speciesOrig.getUnits(), speciesOrig
+						.getLevel(), speciesOrig.getVersion())) {
+			if (miniModel.getUnitDefinition(speciesOrig.getSubstanceUnits()) == null) {
+				miniModel.addUnitDefinition(((UnitDefinition) speciesOrig
+						.getSubstanceUnitsInstance()).clone());
+			}
+			spec.setSubstanceUnits(miniModel.getUnitDefinition(speciesOrig
+					.getSubstanceUnits()));
+		} else
+			checkUnits(spec);
+		return spec;
 	}
 
 	/**
@@ -331,59 +387,6 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * 
-	 * @param speciesOrig
-	 * @param miniModel
-	 * @return
-	 */
-	private Species copySpecies(Species speciesOrig, Model miniModel) {
-		if (speciesOrig.isSetCompartment())
-			copyCopmpartment(speciesOrig.getCompartmentInstance(), miniModel);
-		if (miniModel.getSpecies(speciesOrig.getId()) == null)
-			miniModel.addSpecies(speciesOrig.clone());
-		Species spec = miniModel.getSpecies(speciesOrig.getId());
-		spec.setCompartment(miniModel.getCompartment(speciesOrig
-				.getCompartment()));
-		if (speciesOrig.isSetSubstanceUnits()
-				&& !Unit.isUnitKind(speciesOrig.getUnits(), speciesOrig
-						.getLevel(), speciesOrig.getVersion())) {
-			if (miniModel.getUnitDefinition(speciesOrig.getSubstanceUnits()) == null) {
-				miniModel.addUnitDefinition(((UnitDefinition) speciesOrig
-						.getSubstanceUnitsInstance()).clone());
-			}
-			spec.setSubstanceUnits(miniModel.getUnitDefinition(speciesOrig
-					.getSubstanceUnits()));
-		} else
-			checkUnits(spec);
-		return spec;
-	}
-
-	/**
-	 * 
-	 * @param compartmenOrig
-	 * @param miniModel
-	 * @return
-	 */
-	private Compartment copyCopmpartment(Compartment compartmenOrig,
-			Model miniModel) {
-		if (miniModel.getCompartment(compartmenOrig.getId()) == null)
-			miniModel.addCompartment(compartmenOrig.clone());
-		Compartment compartment = miniModel.getCompartment(compartmenOrig
-				.getId());
-		if (compartment.isSetUnits()
-				&& !Unit.isUnitKind(compartment.getUnits(), compartment
-						.getLevel(), compartment.getVersion())) {
-			if (miniModel.getUnitDefinition(compartment.getUnits()) == null)
-				miniModel.addUnitDefinition(((UnitDefinition) compartment
-						.getUnitsInstance()).clone());
-			compartment.setUnits(miniModel.getUnitDefinition(compartment
-					.getUnits()));
-		} else
-			checkUnits(compartment);
-		return compartment;
-	}
-
-	/**
 	 * @throws Throwable
 	 */
 	private void generateLaws() throws Throwable {
@@ -404,6 +407,17 @@ public class KineticLawGenerator {
 	 */
 	public List<Reaction> getFastReactions() {
 		return listOfFastReactions;
+	}
+
+	/**
+	 * Returns the copy of the model that contains only those reactions together
+	 * with all required species, compartments, species- and compartment types,
+	 * and units for which kinetic equations are to be created.
+	 * 
+	 * @return
+	 */
+	public Model getMiniModel() {
+		return miniModel;
 	}
 
 	/**
@@ -491,22 +505,10 @@ public class KineticLawGenerator {
 			GaussianRank gaussian = new GaussianRank(stoechMatrix(model));
 			columnRank = gaussian.getColumnRank();
 			fullRank = gaussian.hasFullRank();
-		} else if (columnRank == model.getNumReactions())
+		} else if (columnRank == model.getNumReactions()) {
 			fullRank = true;
+		}
 		return fullRank;
-	}
-
-	/**
-	 * load default settings and initialize this object.
-	 * 
-	 * @param reactionID
-	 */
-	private void init(String reactionID) {
-		if (settings == null)
-			settings = SBMLsqueezer.getDefaultSettings();
-		listOfFastReactions = new LinkedList<Reaction>();
-		this.miniModel = createMinimalModel(reactionID);
-		updateEnzymeCatalysis();
 	}
 
 	/**
@@ -523,31 +525,16 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * Sets the initial amounts of all modifiers, reactants and products to the
-	 * specified value.
+	 * load default settings and initialize this object.
 	 * 
-	 * @param reaction
-	 * @param initialValue
-	 * @param sizeValue
+	 * @param reactionID
 	 */
-	private void setInitialConcentrationTo(Reaction reaction,
-			double initialValue, double sizeValue) {
-		Species species;
-		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
-			species = reaction.getReactant(reactant).getSpeciesInstance();
-			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
-					species.getCompartmentInstance(), sizeValue);
-		}
-		for (int product = 0; product < reaction.getNumProducts(); product++) {
-			species = reaction.getProduct(product).getSpeciesInstance();
-			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
-					species.getCompartmentInstance(), sizeValue);
-		}
-		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
-			species = reaction.getModifier(modifier).getSpeciesInstance();
-			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
-					species.getCompartmentInstance(), sizeValue);
-		}
+	private void init(String reactionID) {
+		if (settings == null)
+			settings = SBMLsqueezer.getDefaultSettings();
+		listOfFastReactions = new LinkedList<Reaction>();
+		this.miniModel = createMinimalModel(reactionID);
+		updateEnzymeCatalysis();
 	}
 
 	/**
@@ -561,13 +548,15 @@ public class KineticLawGenerator {
 			double initialValue, Compartment compartment, double sizeValue) {
 		if (!species.isSetInitialAmount()
 				&& !species.isSetInitialConcentration()) {
-			if (species.getHasOnlySubstanceUnits())
+			if (species.getHasOnlySubstanceUnits()) {
 				species.setInitialAmount(initialValue);
-			else
+			} else {
 				species.setInitialConcentration(initialValue);
+			}
 		}
-		if (compartment != null && !compartment.isSetSize())
+		if (compartment != null && !compartment.isSetSize()) {
 			compartment.setSize(sizeValue);
+		}
 	}
 
 	/**
@@ -599,29 +588,34 @@ public class KineticLawGenerator {
 					 * ok, parameter occurs here but there could also be a local
 					 * parameter with the same id.
 					 */
-					if (r.getKineticLaw().getParameter(p.getId()) == null)
+					if (r.getKineticLaw().getParameter(p.getId()) == null) {
 						isNeeded = true;
+					}
 				}
-				if (isNeeded)
+				if (isNeeded) {
 					break;
+				}
 				SpeciesReference specRef;
 				for (k = 0; k < r.getNumReactants(); k++) {
 					specRef = r.getReactant(k);
 					if (specRef.isSetStoichiometryMath()
 							&& specRef.getStoichiometryMath().isSetMath()
 							&& specRef.getStoichiometryMath().getMath()
-									.refersTo(p.getId()))
+									.refersTo(p.getId())) {
 						isNeeded = true;
+					}
 				}
-				if (isNeeded)
+				if (isNeeded) {
 					break;
+				}
 				for (k = 0; k < r.getNumProducts(); k++) {
 					specRef = r.getProduct(k);
 					if (specRef.isSetStoichiometryMath()
 							&& specRef.getStoichiometryMath().isSetMath()
 							&& specRef.getStoichiometryMath().getMath()
-									.refersTo(p.getId()))
+									.refersTo(p.getId())) {
 						isNeeded = true;
+					}
 				}
 			}
 
@@ -629,59 +623,69 @@ public class KineticLawGenerator {
 			for (j = 0; (j < model.getNumRules()) && !isNeeded; j++) {
 				Rule r = model.getRule(j);
 				if (r instanceof AssignmentRule
-						&& ((AssignmentRule) r).getVariable().equals(p.getId()))
+						&& ((AssignmentRule) r).getVariable().equals(p.getId())) {
 					isNeeded = true;
+				}
 				if (r instanceof RateRule
-						&& ((RateRule) r).getVariable().equals(p.getId()))
+						&& ((RateRule) r).getVariable().equals(p.getId())) {
 					isNeeded = true;
-				if (r.isSetMath() && r.getMath().refersTo(p.getId()))
+				}
+				if (r.isSetMath() && r.getMath().refersTo(p.getId())) {
 					isNeeded = true;
+				}
 			}
 
 			// is this parameter necessary for some event?
 			for (j = 0; (j < model.getNumEvents()) && !isNeeded; j++) {
 				Event e = model.getEvent(j);
 				if (e.isSetTrigger() && e.getTrigger().isSetMath()
-						&& e.getTrigger().getMath().refersTo(p.getId()))
+						&& e.getTrigger().getMath().refersTo(p.getId())) {
 					isNeeded = true;
+				}
 				if (e.isSetDelay() && e.getDelay().isSetMath()
-						&& e.getDelay().getMath().refersTo(p.getId()))
+						&& e.getDelay().getMath().refersTo(p.getId())) {
 					isNeeded = true;
+				}
 				for (k = 0; k < model.getEvent(j).getNumEventAssignments()
 						&& !isNeeded; k++) {
 					EventAssignment ea = e.getEventAssignment(k);
 					if ((ea.isSetVariable() && ea.getVariable().equals(
 							p.getId()))
 							|| ea.isSetMath()
-							&& ea.getMath().refersTo(p.getId()))
+							&& ea.getMath().refersTo(p.getId())) {
 						isNeeded = true;
+					}
 				}
 			}
 
 			// is this parameter necessary for some function?
 			for (j = 0; j < model.getNumFunctionDefinitions() && !isNeeded; j++) {
 				FunctionDefinition fd = model.getFunctionDefinition(j);
-				if (fd.isSetMath() && fd.getMath().refersTo(p.getId()))
+				if (fd.isSetMath() && fd.getMath().refersTo(p.getId())) {
 					isNeeded = true;
+				}
 			}
 
 			// is this parameter necessary for some initial assignment?
 			for (j = 0; j < model.getNumInitialAssignments() && !isNeeded; j++) {
 				InitialAssignment ia = model.getInitialAssignment(j);
 				if ((ia.isSetSymbol() && ia.getSymbol().equals(p.getId()))
-						|| ia.isSetMath() && ia.getMath().refersTo(p.getId()))
+						|| ia.isSetMath() && ia.getMath().refersTo(p.getId())) {
 					isNeeded = true;
+				}
 			}
 
 			// is this parameter necessary for some constraint?
 			for (j = 0; j < model.getNumConstraints() && !isNeeded; j++) {
 				Constraint c = model.getConstraint(j);
-				if (c.isSetMath() && c.getMath().refersTo(p.getId()))
+				if (c.isSetMath() && c.getMath().refersTo(p.getId())) {
 					isNeeded = true;
+				}
 			}
 
-			if (!isNeeded) // is this parameter necessary at all?
+			if (!isNeeded) { // is this parameter necessary at all?
 				model.getListOfParameters().remove(i);
+			}
 			l.currentState(p, ++num);
 		}
 		// remove unnecessary local parameters
@@ -695,8 +699,9 @@ public class KineticLawGenerator {
 				for (j = law.getNumParameters() - 1; j >= 0; j--) {
 					if (law.isSetMath()
 							&& !law.getMath().refersTo(
-									law.getParameter(j).getId()))
+									law.getParameter(j).getId())) {
 						law.removeParameter(j);
+					}
 				}
 			}
 			l.currentState(r, ++num);
@@ -713,6 +718,34 @@ public class KineticLawGenerator {
 		if (condition != species.getBoundaryCondition()) {
 			species.setBoundaryCondition(condition);
 			species.stateChanged();
+		}
+	}
+
+	/**
+	 * Sets the initial amounts of all modifiers, reactants and products to the
+	 * specified value.
+	 * 
+	 * @param reaction
+	 * @param initialValue
+	 * @param sizeValue
+	 */
+	private void setInitialConcentrationTo(Reaction reaction,
+			double initialValue, double sizeValue) {
+		Species species;
+		for (int reactant = 0; reactant < reaction.getNumReactants(); reactant++) {
+			species = reaction.getReactant(reactant).getSpeciesInstance();
+			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
+					species.getCompartmentInstance(), sizeValue);
+		}
+		for (int product = 0; product < reaction.getNumProducts(); product++) {
+			species = reaction.getProduct(product).getSpeciesInstance();
+			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
+					species.getCompartmentInstance(), sizeValue);
+		}
+		for (int modifier = 0; modifier < reaction.getNumModifiers(); modifier++) {
+			species = reaction.getModifier(modifier).getSpeciesInstance();
+			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
+					species.getCompartmentInstance(), sizeValue);
 		}
 	}
 
@@ -764,23 +797,6 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * This method stores a kinetic law for the given reaction in the currently
-	 * selected model given by the plugin. The kinetic law is passed as a String
-	 * to this method. A boolean variable tells this method weather the formula
-	 * is for a reversible or for an irreversible reaction. Afterwards all
-	 * parameters within this kinetic law are also stored in the given model.
-	 * There is no need to call the storeParameters method.
-	 * 
-	 * @param kineticLaw
-	 *            A string with the formula to be assigned to the given
-	 *            reaction.
-	 * @param l
-	 */
-	public Reaction storeKineticLaw(KineticLaw kineticLaw, LawListener l) {
-		return storeKineticLaw(kineticLaw, true, l);
-	}
-
-	/**
 	 * 
 	 * @param kineticLaw
 	 * @param removeParametersAndStoreUnits
@@ -797,24 +813,13 @@ public class KineticLawGenerator {
 				.getParentSBMLObject().getId());
 		reaction.setReversible(reversibility || reaction.getReversible());
 		reaction.setKineticLaw(kineticLaw);
+		setPointersToOriginalModel(kineticLaw.getMath());
 		// set the BoundaryCondition to true for Genes if not set anyway:
 		boolean setBoundary = ((Boolean) settings
 				.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
 				.booleanValue();
-		for (i = 0; i < reaction.getNumReactants(); i++) {
-			Species species = reaction.getReactant(i).getSpeciesInstance();
-			if ((SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || SBO
-					.isEmptySet(species.getSBOTerm()))
-					&& setBoundary)
-				setBoundaryCondition(species, true);
-		}
-		for (i = 0; i < reaction.getNumProducts(); i++) {
-			Species species = reaction.getProduct(i).getSpeciesInstance();
-			if ((SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || SBO
-					.isEmptySet(species.getSBOTerm()))
-					&& setBoundary)
-				setBoundaryCondition(species, true);
-		}
+		setBoundaryCondition(reaction.getListOfReactants(), setBoundary);
+		setBoundaryCondition(reaction.getListOfProducts(), setBoundary);
 		setInitialConcentrationTo(reaction, Double.parseDouble(settings.get(
 				CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE).toString()), Double
 				.parseDouble(settings.get(
@@ -824,8 +829,9 @@ public class KineticLawGenerator {
 			storeUnits(l);
 			if (((Boolean) settings
 					.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
-					.booleanValue())
+					.booleanValue()) {
 				removeUnnecessaryParameters(modelOrig, l);
+			}
 		}
 		storeParamters(reaction, l);
 		if (removeParametersAndStoreUnits
@@ -844,19 +850,22 @@ public class KineticLawGenerator {
 						.isBuiltIn(udef.getId(), udef.getLevel());
 				for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
 					Compartment c = modelOrig.getCompartment(i);
-					if (c.isSetUnits() && c.getUnits().equals(udef.getId()))
+					if (c.isSetUnits() && c.getUnits().equals(udef.getId())) {
 						isNeeded = true;
+					}
 				}
 				for (i = 0; i < modelOrig.getNumSpecies() && !isNeeded; i++) {
 					Species s = modelOrig.getSpecies(i);
 					if (s.isSetSubstanceUnits()
-							&& s.getSubstanceUnits().equals(udef.getId()))
+							&& s.getSubstanceUnits().equals(udef.getId())) {
 						isNeeded = true;
+					}
 				}
 				for (i = 0; i < modelOrig.getNumParameters() && !isNeeded; i++) {
 					Parameter p = modelOrig.getParameter(i);
-					if (p.isSetUnits() && p.getUnits().equals(udef.getId()))
+					if (p.isSetUnits() && p.getUnits().equals(udef.getId())) {
 						isNeeded = true;
+					}
 				}
 				for (i = 0; i < modelOrig.getNumReactions() && !isNeeded; i++) {
 					Reaction r = modelOrig.getReaction(i);
@@ -864,16 +873,75 @@ public class KineticLawGenerator {
 						for (LocalParameter p : r.getKineticLaw()
 								.getListOfParameters()) {
 							if (p.isSetUnits()
-									&& p.getUnits().equals(udef.getId()))
+									&& p.getUnits().equals(udef.getId())) {
 								isNeeded = true;
+							}
 						}
 				}
-				if (!isNeeded)
+				if (!isNeeded) {
 					modelOrig.removeUnitDefinition(udef);
+				}
 				l.currentState(udef, ++num);
 			}
 		}
 		return reaction;
+	}
+
+	/**
+	 * Sets the referenced elements in {@link ASTNode}s to the elements in the
+	 * original model.
+	 * 
+	 * @param math
+	 *            The {@link ASTNode}, whose pointers are to be corrected.
+	 */
+	private void setPointersToOriginalModel(ASTNode math) {
+		if (math.isName()) {
+			NamedSBaseWithDerivedUnit nsb = math.getVariable();
+			if (nsb != null) {
+				if (nsb instanceof Variable) {
+					math.setVariable(modelOrig.findVariable(nsb.getId()));
+				}
+			}
+		}
+		for (ASTNode child : math.getListOfNodes()) {
+			setPointersToOriginalModel(child);
+		}
+	}
+
+	/**
+	 * Sets the boundary condition of all species referenced by the list of
+	 * {@link SpeciesReference}s.
+	 * 
+	 * @param numReactants
+	 * @param setBoundary
+	 */
+	private void setBoundaryCondition(ListOf<SpeciesReference> listOf,
+			boolean setBoundary) {
+		for (int i = 0; i < listOf.size(); i++) {
+			Species species = listOf.get(i).getSpeciesInstance();
+			if ((SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || SBO
+					.isEmptySet(species.getSBOTerm()))
+					&& setBoundary) {
+				setBoundaryCondition(species, true);
+			}
+		}
+	}
+
+	/**
+	 * This method stores a kinetic law for the given reaction in the currently
+	 * selected model given by the plugin. The kinetic law is passed as a String
+	 * to this method. A boolean variable tells this method weather the formula
+	 * is for a reversible or for an irreversible reaction. Afterwards all
+	 * parameters within this kinetic law are also stored in the given model.
+	 * There is no need to call the storeParameters method.
+	 * 
+	 * @param kineticLaw
+	 *            A string with the formula to be assigned to the given
+	 *            reaction.
+	 * @param l
+	 */
+	public Reaction storeKineticLaw(KineticLaw kineticLaw, LawListener l) {
+		return storeKineticLaw(kineticLaw, true, l);
 	}
 
 	/**
@@ -890,8 +958,9 @@ public class KineticLawGenerator {
 		storeUnits(l);
 		if (((Boolean) settings
 				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
-				.booleanValue())
+				.booleanValue()) {
 			removeUnnecessaryParameters(modelOrig, l);
+		}
 	}
 
 	/**
@@ -914,14 +983,106 @@ public class KineticLawGenerator {
 				Parameter p = new Parameter(paramListLocal.remove(paramNum));
 				modelOrig.addParameter(p);
 				updateUnitReferences(p);
-			} else
+			} else {
 				updateUnitReferences(paramListLocal.get(paramNum));
+			}
 		}
-		for (Parameter parameter : miniModel.getListOfParameters())
+		for (Parameter parameter : miniModel.getListOfParameters()) {
 			if (modelOrig.getParameter(parameter.getId()) == null) {
 				modelOrig.addParameter(parameter);
 				updateUnitReferences(parameter);
 			}
+		}
+	}
+
+	/**
+	 * Stores all units created in the mini model in the original model.
+	 * 
+	 * @param l
+	 */
+	private void storeUnits(LawListener l) {
+		int num = 0;
+		l.initLawListener(UnitDefinition.class.getSimpleName(), miniModel
+				.getNumUnitDefinitions());
+		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
+			int units = ud.getNumUnits();
+			if (modelOrig.getUnitDefinition(ud.getId()) == null) {
+				modelOrig.addUnitDefinition(ud.clone());
+			} else {
+				UnitDefinition orig = modelOrig.getUnitDefinition(ud.getId());
+				orig.setListOfUnits(ud.getListOfUnits().clone());
+				orig.simplify();
+				if (ud.isSetName()) {
+					orig.setName(new String(ud.getName()));
+				}
+			}
+			l.currentState(ud, ++num);
+			if (units != ud.getNumUnits()) {
+				System.err.println(ud.getId() + "\t" + units + "\t->\t"
+						+ ud.getNumUnits());
+			}
+		}
+		num = 0;
+		l.initLawListener(Compartment.class.getSimpleName(), miniModel
+				.getNumCompartments());
+		for (Compartment c : miniModel.getListOfCompartments()) {
+			Compartment corig = modelOrig.getCompartment(c.getId());
+			corig.setSpatialDimensions(c.getSpatialDimensions());
+			if (c.isSetUnits()) {
+				if (Unit.isUnitKind(c.getUnits(), c.getLevel(), c.getVersion())) {
+					corig.setUnits(Unit.Kind.valueOf(c.getUnits()));
+				} else {
+					corig.setUnits(modelOrig.getUnitDefinition(c.getUnits()));
+				}
+			}
+			checkUnits(corig);
+			l.currentState(c, ++num);
+		}
+		num = 0;
+		l.initLawListener(Species.class.getSimpleName(), miniModel
+				.getNumSpecies());
+		for (Species s : miniModel.getListOfSpecies()) {
+			Species sorig = modelOrig.getSpecies(s.getId());
+			sorig.setHasOnlySubstanceUnits(s.getHasOnlySubstanceUnits());
+			if (s.isSetSubstanceUnits()) {
+				if (Unit.isUnitKind(s.getSubstanceUnits(), s.getLevel(), s
+						.getVersion())) {
+					sorig.setSubstanceUnits(Unit.Kind.valueOf(s
+							.getSubstanceUnits()));
+				} else {
+					sorig.setSubstanceUnits(modelOrig.getUnitDefinition(s
+							.getSubstanceUnits()));
+				}
+			}
+			checkUnits(sorig);
+			l.currentState(s, ++num);
+		}
+	}
+
+	/**
+	 * Sets the SBO annotation of modifiers to more precise values in the local
+	 * mini copy of the model.
+	 * 
+	 * Updates the minimal model so that all possible enzymes are marked as
+	 * enzymatic catalyst.
+	 */
+	public void updateEnzymeCatalysis() {
+		Set<Integer> possibleEnzymes = getPossibleEnzymes();
+		for (Reaction r : miniModel.getListOfReactions()) {
+			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
+				Species species = modifier.getSpeciesInstance();
+				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
+						&& species.isSetSBOTerm()
+						&& !possibleEnzymes.contains(Integer.valueOf(species
+								.getSBOTerm()))) {
+					modifier.setSBOTerm(SBO.getCatalysis());
+				} else if (SBO.isCatalyst(modifier.getSBOTerm())
+						&& (possibleEnzymes.contains(Integer.valueOf(species
+								.getSBOTerm())) || !species.isSetSBOTerm())) {
+					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
+				}
+			}
+		}
 	}
 
 	/**
@@ -944,101 +1105,5 @@ public class KineticLawGenerator {
 				p.setUnits(ud);
 			}
 		}
-	}
-
-	/**
-	 * Stores all units created in the mini model in the original model.
-	 * 
-	 * @param l
-	 */
-	private void storeUnits(LawListener l) {
-		int num = 0;
-		l.initLawListener(UnitDefinition.class.getSimpleName(), miniModel
-				.getNumUnitDefinitions());
-		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
-			int units = ud.getNumUnits();
-			if (modelOrig.getUnitDefinition(ud.getId()) == null)
-				modelOrig.addUnitDefinition(ud.clone());
-			else {
-				UnitDefinition orig = modelOrig.getUnitDefinition(ud.getId());
-				orig.setListOfUnits(ud.getListOfUnits().clone());
-				orig.simplify();
-				if (ud.isSetName())
-					orig.setName(new String(ud.getName()));
-			}
-			l.currentState(ud, ++num);
-			if (units != ud.getNumUnits())
-				System.err.println(ud.getId() + "\t" + units + "\t->\t"
-						+ ud.getNumUnits());
-		}
-		num = 0;
-		l.initLawListener(Compartment.class.getSimpleName(), miniModel
-				.getNumCompartments());
-		for (Compartment c : miniModel.getListOfCompartments()) {
-			Compartment corig = modelOrig.getCompartment(c.getId());
-			corig.setSpatialDimensions(c.getSpatialDimensions());
-			if (c.isSetUnits()) {
-				if (Unit.isUnitKind(c.getUnits(), c.getLevel(), c.getVersion()))
-					corig.setUnits(Unit.Kind.valueOf(c.getUnits()));
-				else
-					corig.setUnits(modelOrig.getUnitDefinition(c.getUnits()));
-			}
-			checkUnits(corig);
-			l.currentState(c, ++num);
-		}
-		num = 0;
-		l.initLawListener(Species.class.getSimpleName(), miniModel
-				.getNumSpecies());
-		for (Species s : miniModel.getListOfSpecies()) {
-			Species sorig = modelOrig.getSpecies(s.getId());
-			sorig.setHasOnlySubstanceUnits(s.getHasOnlySubstanceUnits());
-			if (s.isSetSubstanceUnits()) {
-				if (Unit.isUnitKind(s.getSubstanceUnits(), s.getLevel(), s
-						.getVersion()))
-					sorig.setSubstanceUnits(Unit.Kind.valueOf(s
-							.getSubstanceUnits()));
-				else
-					sorig.setSubstanceUnits(modelOrig.getUnitDefinition(s
-							.getSubstanceUnits()));
-			}
-			checkUnits(sorig);
-			l.currentState(s, ++num);
-		}
-	}
-
-	/**
-	 * Sets the SBO annotation of modifiers to more precise values in the local
-	 * mini copy of the model.
-	 * 
-	 * Updates the minimal model so that all possible enzymes are marked as
-	 * enzymatic catalyst.
-	 */
-	public void updateEnzymeCatalysis() {
-		Set<Integer> possibleEnzymes = getPossibleEnzymes();
-		for (Reaction r : miniModel.getListOfReactions()) {
-			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
-				Species species = modifier.getSpeciesInstance();
-				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
-						&& species.isSetSBOTerm()
-						&& !possibleEnzymes.contains(Integer.valueOf(species
-								.getSBOTerm())))
-					modifier.setSBOTerm(SBO.getCatalysis());
-				else if (SBO.isCatalyst(modifier.getSBOTerm())
-						&& (possibleEnzymes.contains(Integer.valueOf(species
-								.getSBOTerm())) || !species.isSetSBOTerm()))
-					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
-			}
-		}
-	}
-
-	/**
-	 * Returns the copy of the model that contains only those reactions together
-	 * with all required species, compartments, species- and compartment types,
-	 * and units for which kinetic equations are to be created.
-	 * 
-	 * @return
-	 */
-	public Model getMiniModel() {
-		return miniModel;
 	}
 }

@@ -52,7 +52,7 @@ public class SimulationModeTest {
 		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, settings);
 
 		// 919
-		for (int modelnr = 568; modelnr < 569; modelnr++)
+		for (int modelnr = 1; modelnr < 2; modelnr++)
 			try {
 				StringBuilder modelFile = new StringBuilder();
 				modelFile.append(modelnr);

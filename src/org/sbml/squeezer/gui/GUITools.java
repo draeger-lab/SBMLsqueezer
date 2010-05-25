@@ -222,7 +222,7 @@ public class GUITools {
 			button.setToolTipText(toHTML(toolTip, 40));
 		return button;
 	}
-	
+
 	/**
 	 * 
 	 * @param text
@@ -622,6 +622,17 @@ public class GUITools {
 	public static void setEnabled(boolean state, JToolBar toolbar,
 			Object... commands) {
 		setEnabled(state, null, toolbar, commands);
+	}
+
+	/**
+	 * Displayes the error message on a {@link JOptionPane}.
+	 * 
+	 * @param exc
+	 */
+	public static void showErrorMessage(Component parent, Throwable exc) {
+		exc.printStackTrace();
+		JOptionPane.showMessageDialog(parent, exc.getMessage(), exc.getClass()
+				.getSimpleName(), JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**

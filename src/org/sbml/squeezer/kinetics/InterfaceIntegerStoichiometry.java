@@ -23,9 +23,7 @@ package org.sbml.squeezer.kinetics;
  * participating species to take part with integer stoichiometry (reactants and
  * products).
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-09-24
  * @since 1.3
  */
