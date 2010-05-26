@@ -28,13 +28,14 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.util.LaTeX;
+import org.sbml.jsbml.util.compilers.LaTeX;
 
 import atp.sHotEqn;
 
@@ -90,17 +91,21 @@ public class ASTNodePanel extends JPanel {
 			name = parent.getClass().getSimpleName();
 			name += " " + node.getParentSBMLObject().toString();
 		}
-		tf = new JTextField(name);
-		tf.setEditable(enabled);
-		lh.add("Parent SBML object", tf, true);
+		JEditorPane editor = new JEditorPane("text/html", GUITools.toHTML(name, 60));
+		editor.setEditable(enabled);
+		editor.setBorder(BorderFactory.createLoweredBevelBorder());
+		lh.add("Parent SBML object", editor, true);
 
 		tf = new JTextField(Integer.toString(node.getNumChildren()));
 		tf.setEditable(false);
 		lh.add("Number of children", tf, true);
 
-		tf = new JTextField(node.toFormula());
-		tf.setEditable(false);
-		lh.add("Formula", tf, true);
+		JTextArea area = new JTextArea();
+		area.setColumns(60);
+		area.setText(node.toFormula());
+		area.setEditable(false);
+		area.setBorder(BorderFactory.createLoweredBevelBorder());
+		lh.add("Formula", area, true);
 
 		JComboBox opt = new JComboBox();
 		for (ASTNode.Type t : ASTNode.Type.values()) {

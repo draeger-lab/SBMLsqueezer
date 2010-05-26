@@ -44,7 +44,7 @@ import javax.swing.SwingConstants;
 
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.util.LaTeX;
+import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;

@@ -38,7 +38,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.util.LaTeX;
+import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
 
 /**
@@ -519,8 +519,9 @@ public class LaTeXExport extends LaTeX {
 		LaTeX latex = new LaTeX();
 		int count = 0;
 		for (SpeciesReference specRef : reaction.getListOfReactants()) {
-			if (count > 0)
+			if (count > 0) {
 				reactionEqn.append(" + ");
+			}
 			if (specRef.isSetStoichiometryMath())
 				reactionEqn.append(specRef.getStoichiometryMath().getMath()
 						.compile(latex));
@@ -531,8 +532,9 @@ public class LaTeXExport extends LaTeX {
 					.getSpecies())));
 			count++;
 		}
-		if (reaction.getNumReactants() == 0)
+		if (reaction.getNumReactants() == 0) {
 			reactionEqn.append("\\emptyset");
+		}
 		reactionEqn.append(reaction.getReversible() ? " \\leftrightarrow"
 				: " \\rightarrow");
 		// if (reaction.getNumModifiers() > 0) {
@@ -553,20 +555,23 @@ public class LaTeXExport extends LaTeX {
 		reactionEqn.append(' ');
 		count = 0;
 		for (SpeciesReference specRef : reaction.getListOfProducts()) {
-			if (count > 0)
+			if (count > 0) {
 				reactionEqn.append(" + ");
-			if (specRef.isSetStoichiometryMath())
+			}
+			if (specRef.isSetStoichiometryMath()) {
 				reactionEqn.append(specRef.getStoichiometryMath().getMath()
 						.compile(latex));
-			else if (specRef.getStoichiometry() != 1d)
+			} else if (specRef.getStoichiometry() != 1d) {
 				reactionEqn.append(specRef.getStoichiometry());
+			}
 			reactionEqn.append(' ');
 			reactionEqn.append(latex.mbox(LaTeX.maskSpecialChars(specRef
 					.getSpecies())));
 			count++;
 		}
-		if (reaction.getNumProducts() == 0)
+		if (reaction.getNumProducts() == 0) {
 			reactionEqn.append("\\emptyset");
+		}
 		reactionEqn.append(LaTeX.eqEnd);
 		return reactionEqn.toString();
 	}

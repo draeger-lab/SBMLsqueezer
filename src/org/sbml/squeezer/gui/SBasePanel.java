@@ -74,12 +74,12 @@ import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Variable;
-import org.sbml.jsbml.util.LaTeX;
 import org.sbml.jsbml.util.StringTools;
+import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.MIRIAMparser;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.util.HTMLFormula;
 
 import atp.sHotEqn;
 
@@ -203,7 +203,7 @@ public class SBasePanel extends JPanel {
 			addProperties((Variable) sbase);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param c
@@ -292,10 +292,11 @@ public class SBasePanel extends JPanel {
 	 * 
 	 * @param param
 	 */
-	public void addProperties(LocalParameter param) {
+	private void addProperties(LocalParameter param) {
 		lh.add(new JLabel("Value: "), 1, ++row, 1, 1, 1, 1);
 		JSpinner spinner = new JSpinner(new SpinnerNumberModel(
 				param.getValue(), -1E10, 1E10, .1));
+		spinner.setEnabled(editable);
 		lh.add(spinner, 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 0, ++row, 1, 1, 0, 0);
 		param.getValue();
@@ -502,7 +503,7 @@ public class SBasePanel extends JPanel {
 	 * 
 	 * @param q
 	 */
-	public void addProperties(QuantityWithDefinedUnit q) {
+	private void addProperties(QuantityWithDefinedUnit q) {
 		lh
 				.add(new JLabel(q instanceof Species ? "Substance unit: "
 						: "Unit: "), 1, ++row, 1, 1, 1, 1);
@@ -529,14 +530,17 @@ public class SBasePanel extends JPanel {
 				.max(reaction.getNumModifiers(), reaction.getNumProducts()))][3];
 		String colNames[] = new String[] { "Reactants", "Modifiers", "Products" };
 		int count = 0;
-		for (SpeciesReference specRef : reaction.getListOfReactants())
+		for (SpeciesReference specRef : reaction.getListOfReactants()) {
 			rmp[count++][0] = specRef.getSpeciesInstance().toString();
+		}
 		count = 0;
-		for (ModifierSpeciesReference mSpecRef : reaction.getListOfModifiers())
+		for (ModifierSpeciesReference mSpecRef : reaction.getListOfModifiers()) {
 			rmp[count++][1] = mSpecRef.getSpeciesInstance().toString();
+		}
 		count = 0;
-		for (SpeciesReference specRef : reaction.getListOfProducts())
+		for (SpeciesReference specRef : reaction.getListOfProducts()) {
 			rmp[count++][2] = specRef.getSpeciesInstance().toString();
+		}
 		JTable table = new JTable(rmp, colNames);
 		table.setPreferredScrollableViewportSize(new Dimension(200, (table
 				.getRowCount() + 1)
@@ -551,7 +555,7 @@ public class SBasePanel extends JPanel {
 		lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		JPanel rEqPanel = new JPanel(new BorderLayout());
-		sHotEqn rEqn = new sHotEqn((new LaTeXExport(settings))
+		JEditorPane rEqn = new JEditorPane("text/html", (new HTMLFormula())
 				.reactionEquation(reaction));
 		JScrollPane s = new JScrollPane(rEqn,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -563,9 +567,11 @@ public class SBasePanel extends JPanel {
 				.createTitledBorder(" Reaction equation "));
 		lh.add(rEqPanel, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-		if (reaction.isSetKineticLaw())
+		if (reaction.isSetKineticLaw()) {
 			lh.add(new SBasePanel(reaction.getKineticLaw(), settings), 1,
 					++row, 3, 1, 1, 1);
+		}
+		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
 
 	/**
@@ -657,13 +663,16 @@ public class SBasePanel extends JPanel {
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		lh.add(new JLabel("SBO term: "), 1, ++row, 1, 1, 1, 1);
-		JTextField sboTermField = new JTextField();
-		sboTermField.setEditable(editable);
+		String text = "";
 		if (sbase.isSetSBOTerm()) {
-			sboTermField.setText(SBO.getTerm(sbase.getSBOTerm())
-					.getDescription().replace("\\,", ","));
-			sboTermField.setColumns(sboTermField.getText().length());
+			text = SBO.getTerm(sbase.getSBOTerm()).getDescription().replace(
+					"\\,", ",");
 		}
+		JEditorPane sboTermField = new JEditorPane("text/html", GUITools
+				.toHTML(text, 60));
+		sboTermField.setEditable(editable);
+		sboTermField.setBorder(BorderFactory.createLoweredBevelBorder());
+
 		lh.add(sboTermField, 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 	}
@@ -896,7 +905,7 @@ public class SBasePanel extends JPanel {
 	 * 
 	 * @param v
 	 */
-	public void addProperties(Variable v) {
+	private void addProperties(Variable v) {
 		JCheckBox check = new JCheckBox("Constant", v.isConstant());
 		check.setEnabled(editable);
 		lh.add(check, 1, ++row, 3, 1, 1, 1);

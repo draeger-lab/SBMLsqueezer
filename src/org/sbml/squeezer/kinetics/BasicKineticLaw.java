@@ -35,6 +35,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.util.filters.SBOFilter;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.util.StringTools;
@@ -304,8 +305,21 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			p_kass.setSBOTerm(zerothOrder ? 48 : 153);
 		}
 		if (!p_kass.isSetUnits()) {
-			p_kass.setUnits(unitPerTimeAndConcentrationOrSubstance(r
-					.getListOfReactants(), zerothOrder));
+			UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(r
+					.getListOfReactants(), zerothOrder);
+			ListOf<? extends SimpleSpeciesReference> l = r.getListOfModifiers()
+					.filterList(new SBOFilter(SBO.getCatalyst()));
+			for (SimpleSpeciesReference ssr : l) {
+				Species s = ssr.getSpeciesInstance();
+				if (bringToConcentration && s.hasOnlySubstanceUnits()) {
+					ud.multiplyWith(s.getCompartmentInstance()
+							.getUnitsInstance());
+				} else if (!bringToConcentration && !s.hasOnlySubstanceUnits()) {
+					ud.divideBy(s.getCompartmentInstance().getUnitsInstance());
+				}
+				ud.divideBy(s.getUnitsInstance());
+			}
+			p_kass.setUnits(checkUnitDefinitions(ud, getModel()));
 		}
 		return p_kass;
 	}
@@ -330,9 +344,22 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			// not yet available.
 		}
 		if (!p_kass.isSetUnits()) {
-			p_kass.setUnits(unitPerTimeAndConcentrationOrSubstance(r
+			UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(r
 					.getListOfReactants(), h, defaultParamValue,
-					defaultParamValue));
+					defaultParamValue);
+			ListOf<? extends SimpleSpeciesReference> l = r.getListOfModifiers()
+					.filterList(new SBOFilter(SBO.getCatalyst()));
+			for (SimpleSpeciesReference ssr : l) {
+				Species s = ssr.getSpeciesInstance();
+				if (bringToConcentration && s.hasOnlySubstanceUnits()) {
+					ud.multiplyWith(s.getCompartmentInstance()
+							.getUnitsInstance());
+				} else if (!bringToConcentration && !s.hasOnlySubstanceUnits()) {
+					ud.divideBy(s.getCompartmentInstance().getUnitsInstance());
+				}
+				ud.divideBy(s.getUnitsInstance());
+			}
+			p_kass.setUnits(checkUnitDefinitions(ud, getModel()));
 		}
 		return p_kass;
 	}
@@ -1386,7 +1413,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @return
 	 */
 	UnitDefinition unitPerTimeAndConcentrationOrSubstance(
-			ListOf<SpeciesReference> listOf, boolean zerothOrder) {
+			ListOf<? extends SimpleSpeciesReference> listOf, boolean zerothOrder) {
 		Model model = getModel();
 		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf,
 				zerothOrder, 0);
@@ -1422,8 +1449,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * @return
 	 */
 	private UnitDefinition unitPerTimeAndConcentrationOrSubstance(
-			ListOf<SpeciesReference> listOf, boolean zerothOrder, double h,
-			double... x) {
+			ListOf<? extends SimpleSpeciesReference> listOf,
+			boolean zerothOrder, double h, double... x) {
 		Model model = getModel();
 		UnitDefinition ud = new UnitDefinition("ud", getLevel(), getVersion());
 		ud.divideBy(model.getTimeUnitsInstance());
@@ -1436,21 +1463,29 @@ public abstract class BasicKineticLaw extends KineticLaw {
 				getVersion());
 		if (!zerothOrder) {
 			UnitDefinition substance;
-			SpeciesReference specRef;
+			SimpleSpeciesReference specRef;
 			Species species;
 			for (int i = 0; i < listOf.size(); i++) {
 				specRef = listOf.get(i);
 				species = specRef.getSpeciesInstance();
 				substance = species.getSubstanceUnitsInstance().clone();
-				if (bringToConcentration) {
+				if (bringToConcentration && species.hasOnlySubstanceUnits()) {
 					substance.divideBy(species.getCompartmentInstance()
+							.getUnitsInstance());
+				} else if (!bringToConcentration
+						&& !species.hasOnlySubstanceUnits()) {
+					substance.multiplyWith(species.getCompartmentInstance()
 							.getUnitsInstance());
 				}
 				for (Unit u : substance.getListOfUnits()) {
-					if (specRef.isSetStoichiometry()
-							&& (x.length < listOf.size())) {
-						u.setExponent(u.getExponent()
-								+ ((int) specRef.getStoichiometry() - 1));
+					if (specRef instanceof SpeciesReference) {
+						SpeciesReference ref = (SpeciesReference) specRef;
+						if (ref.isSetStoichiometry()
+								&& (x.length < listOf.size())) {
+
+							u.setExponent(u.getExponent()
+									+ ((int) ref.getStoichiometry() - 1));
+						}
 					} else if (x.length == listOf.size()) {
 						u.setExponent((int) Math.round(x[i]));
 					}
@@ -1464,20 +1499,19 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	}
 
 	/**
-	 * @param listOfReactants
+	 * @param listOf
 	 * @param h
 	 * @param x
 	 * @param y
 	 * @return
 	 */
 	UnitDefinition unitPerTimeAndConcentrationOrSubstance(
-			ListOf<SpeciesReference> listOfReactants, double h, double x,
-			double y) {
-		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(
-				listOfReactants, false, h, x, y);
+			ListOf<? extends SimpleSpeciesReference> listOf, double h,
+			double x, double y) {
+		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf,
+				false, h, x, y);
 		String id = bringToConcentration ? "concentration" : "substance";
 		ud.setId(id + "_pow_" + (x * y) + "_per_time_pow_" + h);
-		ud.simplify();
 		return checkUnitDefinitions(ud, getModel());
 	}
 

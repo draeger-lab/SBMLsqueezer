@@ -38,9 +38,12 @@ import org.sbml.jsbml.ASTNodeValue;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.NamedSBaseWithDerivedUnit;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.StringTools;
+import org.sbml.squeezer.gui.GUITools;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -49,7 +52,6 @@ import org.sbml.jsbml.util.StringTools;
  */
 public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 
-	
 	/**
 	 * Creates an HTML string representation of this UnitDefinition.
 	 * 
@@ -66,7 +68,7 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -84,19 +86,31 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 				pow.insert(0, prefix);
 			} else if (u.getScale() != 0) {
 				pow.insert(0, ' ');
-				pow = HTMLFormula.times(HTMLFormula.pow(Integer.valueOf(10),
-						u.getScale()), pow);
+				pow = HTMLFormula.times(HTMLFormula.pow(Integer.valueOf(10), u
+						.getScale()), pow);
 			}
 			times = HTMLFormula.times(times, pow);
 		}
 		if (u.getOffset() != 0) {
-			times = HTMLFormula.sum(StringTools.toString(u.getOffset()),
-					times);
+			times = HTMLFormula.sum(StringTools.toString(u.getOffset()), times);
 		}
-		return HTMLFormula.pow(times, Integer.valueOf(u.getExponent())).toString();
+		return HTMLFormula.pow(times, Integer.valueOf(u.getExponent()))
+				.toString();
 	}
-	
 
+	/**
+	 * HTML code for the empty set symbol.
+	 */
+	private static final String EMPTY_SET = "&#8709;";
+	/**
+	 * HTML code for the right arrow.
+	 */
+	private static final String RIGHT_ARROW = "&#8594;";
+	/**
+	 * HTML code for the reversible reaction arrow whose upper side is directed
+	 * to the right.
+	 */
+	private static final String REVERSIBLE_REACTION_ARROW = "&#x21cc;";
 
 	/*
 	 * (non-Javadoc)
@@ -533,4 +547,52 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
+	/**
+	 * @param reaction
+	 * @return
+	 */
+	public String reactionEquation(Reaction reaction) {
+		StringBuilder reactionEqn = new StringBuilder();
+		int count = 0;
+		for (SpeciesReference reactant : reaction.getListOfReactants()) {
+			if (count > 0) {
+				reactionEqn.append(" + ");
+			}
+			if (reactant.isSetStoichiometryMath()) {
+				reactionEqn.append(reactant.getStoichiometryMath().getMath()
+						.compile(this));
+			} else if (reactant.getStoichiometry() != 1d) {
+				reactionEqn.append(reactant.getStoichiometry());
+			}
+			reactionEqn.append(' ');
+			reactionEqn.append(encodeForHTML(reactant.getSpecies()));
+			count++;
+		}
+		if (reaction.getNumReactants() == 0) {
+			reactionEqn.append(EMPTY_SET);
+		}
+		reactionEqn.append(' ');
+		reactionEqn.append(reaction.getReversible() ? RIGHT_ARROW
+				: REVERSIBLE_REACTION_ARROW);
+		reactionEqn.append(' ');
+		count = 0;
+		for (SpeciesReference product : reaction.getListOfProducts()) {
+			if (count > 0) {
+				reactionEqn.append(" + ");
+			}
+			if (product.isSetStoichiometryMath()) {
+				reactionEqn.append(product.getStoichiometryMath().getMath()
+						.compile(this));
+			} else if (product.getStoichiometry() != 1d) {
+				reactionEqn.append(product.getStoichiometry());
+			}
+			reactionEqn.append(' ');
+			reactionEqn.append(encodeForHTML(product.getSpecies()));
+			count++;
+		}
+		if (reaction.getNumProducts() == 0) {
+			reactionEqn.append(EMPTY_SET);
+		}
+		return GUITools.toHTML(reactionEqn.toString());
+	}
 }
