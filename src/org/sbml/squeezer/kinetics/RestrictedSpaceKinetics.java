@@ -53,9 +53,9 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 	 */
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
-		LocalParameter p_kass = parameterSpaceRestrictedAssociationConst(0);
 		LocalParameter p_h = parameterTimeOrder();
 		// p_h.setValue(0d); // This leads to a crash of libSBML!
+		LocalParameter p_kass = parameterSpaceRestrictedAssociationConst(p_h.getValue());
 		ASTNode ass = new ASTNode(p_kass, this);
 		ass.multiplyWith(ASTNode.pow(new ASTNode(ASTNode.Type.NAME_TIME, this),
 				new ASTNode(p_h, this)));
