@@ -409,7 +409,7 @@ public class LaTeXExport extends LaTeX {
 			buffer = brackets(buffer);
 		if (u.getExponent() != 1) {
 			buffer.append("^{");
-			buffer.append(Integer.toString(u.getExponent()));
+			buffer.append(Double.toString(u.getExponent()));
 			buffer.append('}');
 		}
 		return buffer;

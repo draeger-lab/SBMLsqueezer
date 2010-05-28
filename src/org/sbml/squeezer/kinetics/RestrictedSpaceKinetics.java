@@ -58,7 +58,7 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 		LocalParameter p_kass = parameterSpaceRestrictedAssociationConst(p_h.getValue());
 		ASTNode ass = new ASTNode(p_kass, this);
 		ass.multiplyWith(ASTNode.pow(new ASTNode(ASTNode.Type.NAME_TIME, this),
-				new ASTNode(p_h, this)));
+				ASTNode.uMinus(new ASTNode(p_h, this))));
 		int i = 0;
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {

@@ -94,7 +94,7 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		if (u.getOffset() != 0) {
 			times = HTMLFormula.sum(StringTools.toString(u.getOffset()), times);
 		}
-		return HTMLFormula.pow(times, Integer.valueOf(u.getExponent()))
+		return HTMLFormula.pow(times, Double.valueOf(u.getExponent()))
 				.toString();
 	}
 
