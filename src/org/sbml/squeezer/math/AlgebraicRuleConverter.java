@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.swing.tree.TreeNode;
-
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
@@ -751,7 +749,7 @@ public class AlgebraicRuleConverter {
 
 				// whenn assignment rule created add to the list
 				if (as != null) {
-					//assignmentRules.add(as);
+					// assignmentRules.add(as);
 					as = null;
 				}
 			}
@@ -815,9 +813,9 @@ public class AlgebraicRuleConverter {
 		}// else found operator or function
 		else {
 			// carry on with all children
-			Enumeration<TreeNode> nodes = node.children();
+			Enumeration<ASTNode> nodes = node.children();
 			while (nodes.hasMoreElements()) {
-				getVariables(param, (ASTNode) nodes.nextElement(), variables);
+				getVariables(param, nodes.nextElement(), variables);
 			}
 		}
 
@@ -948,8 +946,8 @@ public class AlgebraicRuleConverter {
 				int index = parent.getIndex(node);
 				parent.replaceChild(index, nodeHash.get(node.getName()));
 			}
-		}		
-		//proceed  with the children
+		}
+		// proceed with the children
 		for (int i = 0; i < node.getNumChildren(); i++) {
 			replaceNames(node.getChild(i), varibales, numberHash, nodeHash);
 		}
@@ -963,7 +961,7 @@ public class AlgebraicRuleConverter {
 	 * @param variable
 	 */
 	private void setNodeWithVariable(ASTNode node, String variable) {
-		Enumeration<TreeNode> nodes = node.children();
+		Enumeration<ASTNode> nodes = node.children();
 		ASTNode subnode;
 
 		while (nodes.hasMoreElements()) {

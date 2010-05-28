@@ -373,60 +373,6 @@ public class SBasePanel extends JPanel {
 	 * @param m
 	 */
 	private void addProperties(Model m) {
-		if (m.isSetModelHistory()) {
-			History hist = m.getModelHistory();
-			lh.add(new JLabel("Model creators: "), 1, ++row, 1, 1, 1, 1);
-			String columnNames[] = new String[] { "Given name", "Family name",
-					"E-mail", "Organization" };
-			String rowData[][] = new String[hist.getNumCreators()][4];
-			int i = 0;
-			for (Creator mc : hist.getListCreators()) {
-				rowData[i][0] = mc.getGivenName();
-				rowData[i][1] = mc.getFamilyName();
-				rowData[i][2] = mc.getEmail();
-				rowData[i][3] = mc.getOrganization();
-				i++;
-			}
-			JTable table = new JTable(rowData, columnNames);
-			table.setEnabled(editable);
-			table.setPreferredScrollableViewportSize(new Dimension(200, (table
-					.getRowCount() + 1)
-					* table.getRowHeight()));
-			JScrollPane scroll = new JScrollPane(table,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			Dimension dim = table.getPreferredScrollableViewportSize();
-			scroll.setPreferredSize(new Dimension((int) dim.getWidth() + 10,
-					(int) dim.getHeight() + 18));
-			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
-			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-			if (hist.isSetCreatedDate()) {
-				lh.add(new JLabel("Model creation: "), 1, ++row, 1, 1, 1, 1);
-				JTextField tf = new JTextField(hist.getCreatedDate().toString());
-				tf.setEditable(editable);
-				lh.add(tf, 3, row, 1, 1, 1, 1);
-				lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-			}
-			Vector<Date> modification = new Vector<Date>();
-			if (hist.isSetModifiedDate())
-				modification.add(hist.getModifiedDate());
-			for (i = 0; i < hist.getNumModifiedDates(); i++)
-				if (!modification.contains(hist.getModifiedDate(i)))
-					modification.add(hist.getModifiedDate(i));
-			if (modification.size() > 0) {
-				lh.add(new JLabel("Modification: "), 1, ++row, 1, 1, 1, 1);
-				JList l = new JList(modification);
-				l.setEnabled(editable);
-				JScrollPane scroll2 = new JScrollPane(l,
-						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				scroll2.setPreferredSize(new Dimension(preferedWidth,
-						modification.size() * 20));
-				scroll2.setBorder(BorderFactory.createLoweredBevelBorder());
-				lh.add(scroll2, 3, row, 1, 1, 1, 1);
-				lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-			}
-		}
 		String columnNames[] = new String[] { "Element", "Quantity" };
 		String rowData[][] = new String[][] {
 				{ "Function definitions",
@@ -582,6 +528,60 @@ public class SBasePanel extends JPanel {
 		lh.add(new JPanel(), 0, row, 1, 1, 0, 0);
 		lh.add(new JPanel(), 4, row, 1, 1, 0, 0);
 		lh.add(new JPanel(), 2, row, 1, 1, 0, 0);
+		if (sbase.isSetHistory()) {
+			History hist = sbase.getHistory();
+			lh.add(new JLabel("Model creators: "), 1, ++row, 1, 1, 1, 1);
+			String columnNames[] = new String[] { "Given name", "Family name",
+					"E-mail", "Organization" };
+			String rowData[][] = new String[hist.getNumCreators()][4];
+			int i = 0;
+			for (Creator mc : hist.getListCreators()) {
+				rowData[i][0] = mc.getGivenName();
+				rowData[i][1] = mc.getFamilyName();
+				rowData[i][2] = mc.getEmail();
+				rowData[i][3] = mc.getOrganization();
+				i++;
+			}
+			JTable table = new JTable(rowData, columnNames);
+			table.setEnabled(editable);
+			table.setPreferredScrollableViewportSize(new Dimension(200, (table
+					.getRowCount() + 1)
+					* table.getRowHeight()));
+			JScrollPane scroll = new JScrollPane(table,
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			Dimension dim = table.getPreferredScrollableViewportSize();
+			scroll.setPreferredSize(new Dimension((int) dim.getWidth() + 10,
+					(int) dim.getHeight() + 18));
+			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
+			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+			if (hist.isSetCreatedDate()) {
+				lh.add(new JLabel("Model creation: "), 1, ++row, 1, 1, 1, 1);
+				JTextField tf = new JTextField(hist.getCreatedDate().toString());
+				tf.setEditable(editable);
+				lh.add(tf, 3, row, 1, 1, 1, 1);
+				lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+			}
+			Vector<Date> modification = new Vector<Date>();
+			if (hist.isSetModifiedDate())
+				modification.add(hist.getModifiedDate());
+			for (i = 0; i < hist.getNumModifiedDates(); i++)
+				if (!modification.contains(hist.getModifiedDate(i)))
+					modification.add(hist.getModifiedDate(i));
+			if (modification.size() > 0) {
+				lh.add(new JLabel("Modification: "), 1, ++row, 1, 1, 1, 1);
+				JList l = new JList(modification);
+				l.setEnabled(editable);
+				JScrollPane scroll2 = new JScrollPane(l,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				scroll2.setPreferredSize(new Dimension(preferedWidth,
+						modification.size() * 20));
+				scroll2.setBorder(BorderFactory.createLoweredBevelBorder());
+				lh.add(scroll2, 3, row, 1, 1, 1, 1);
+				lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
+			}
+		}
 		if (sbase.isSetMetaId() || editable) {
 			lh.add(new JLabel("Meta identifier: "), 1, ++row, 1, 1, 1, 1);
 			JTextField tf = new JTextField(sbase.getMetaId());

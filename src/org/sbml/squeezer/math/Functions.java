@@ -57,8 +57,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double factorial(double n) {
-		if ((n == 0) || (n == 1))
+		if ((n == 0) || (n == 1)) {
 			return 1;
+		}
 		return n * factorial(n - 1);
 	}
 
@@ -70,7 +71,6 @@ public final class Functions extends Mathematics {
 	 */
 	public static final double arccosh(double n) {
 		return Math.log(n + (Math.sqrt(Math.pow(n, 2) - 1)));
-
 	}
 
 	/**
@@ -80,8 +80,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double arccot(double n) {
-		if (n == 0)
+		if (n == 0) {
 			throw new java.lang.ArithmeticException("arccot(0) undefined");
+		}
 		return Math.atan(1 / n);
 	}
 
@@ -92,8 +93,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double arccoth(double n) {
-		if (n == 0)
+		if (n == 0) {
 			throw new java.lang.ArithmeticException("arccoth(0) undefined");
+		}
 		return (Math.log(1 + (1 / n)) - Math.log(1 - (1 / n))) / 2;
 	}
 
@@ -104,8 +106,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double arccsc(double n) {
-		if (Math.asin(n) == 0)
+		if (Math.asin(n) == 0) {
 			throw new java.lang.ArithmeticException("Arccsc undefined");
+		}
 		return 1 / (Math.asin(n));
 	}
 
@@ -116,8 +119,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double arccsch(double n) {
-		if (Math.asin(n) == 0)
+		if (Math.asin(n) == 0) {
 			throw new java.lang.ArithmeticException("arccsch(0) undefined");
+		}
 		return Math.log(1 / n + Math.sqrt(Math.pow(1 / n, 2) + 1));
 	}
 
@@ -128,8 +132,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double arcsec(double n) {
-		if (n == 0)
+		if (n == 0) {
 			throw new java.lang.ArithmeticException("arcsec undefined");
+		}
 		return 1 / n;
 	}
 
@@ -140,8 +145,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double arcsech(double n) {
-		if (n == 0)
+		if (n == 0) {
 			throw new java.lang.ArithmeticException("arcsech(0) undefined");
+		}
 		return Math.log((1 / n) + (Math.sqrt(Math.pow(1 / n, 2) - 1)));
 	}
 
@@ -172,8 +178,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double cot(double n) {
-		if (Math.sin(n) == 0)
+		if (Math.sin(n) == 0) {
 			throw new java.lang.ArithmeticException("cot undefined");
+		}
 		return Math.cos(n) / Math.sin(n);
 	}
 
@@ -184,8 +191,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double coth(double n) {
-		if (Math.sinh(n) == 0)
+		if (Math.sinh(n) == 0) {
 			throw new java.lang.ArithmeticException("coth undefined");
+		}
 		return Math.cosh(n) / Math.sinh(n);
 	}
 
@@ -196,8 +204,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double csc(double n) {
-		if (Math.sin(n) == 0)
+		if (Math.sin(n) == 0) {
 			throw new java.lang.ArithmeticException("Csc undefined");
+		}
 		return 1 / Math.sin(n);
 	}
 
@@ -208,9 +217,10 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double csch(double n) {
-		if (Math.sinh(n) == 0)
+		if (Math.sinh(n) == 0) {
 			throw new java.lang.ArithmeticException(
 					"Csch undefined for argument " + n);
+		}
 		return 1 / Math.sinh(n);
 	}
 
@@ -254,8 +264,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double root(double radiant, double rootExponent) {
-		if (rootExponent != 0)
+		if (rootExponent != 0) {
 			return Math.pow(radiant, 1 / rootExponent);
+		}
 		throw new java.lang.ArithmeticException(
 				"Division by zero: the root exponent must not be zero.");
 	}
@@ -267,8 +278,9 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double sec(double n) {
-		if (n == 0)
+		if (n == 0) {
 			throw new java.lang.ArithmeticException("sec(0) undefined");
+		}
 		return 1 / n;
 	}
 
@@ -279,9 +291,10 @@ public final class Functions extends Mathematics {
 	 * @return
 	 */
 	public static final double sech(double n) {
-		if (Math.cosh(n) == 0)
+		if (Math.cosh(n) == 0) {
 			throw new java.lang.ArithmeticException(
 					"Sech undefined for argument " + n);
+		}
 		return 1 / Math.cosh(n);
 	}
 
