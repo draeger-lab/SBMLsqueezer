@@ -70,6 +70,7 @@ public class AlgebraicRuleConverter {
 		private String value;
 
 		/**
+		 * Creates a new inner node
 		 * 
 		 * @param name
 		 */
@@ -86,7 +87,7 @@ public class AlgebraicRuleConverter {
 		 * .squeezer.math.AlgebraicRuleConverter.Node)
 		 */
 		public void addNode(Node node) {
-			this.nodes.add(node);
+			this.nodes.add(node);			
 		}
 
 		/*
@@ -121,6 +122,27 @@ public class AlgebraicRuleConverter {
 		 */
 		public String getValue() {
 			return value;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNode(int)
+		 */
+		public Node getNode(int i) {
+			if (nodes.size() > i && i >= 0)
+				return nodes.get(i);
+			else
+				return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNodes()
+		 */
+		public List<Node> getNodes() {
+			return this.nodes;
 		}
 
 	}
@@ -199,11 +221,25 @@ public class AlgebraicRuleConverter {
 		public Node getNextNode();
 
 		/**
+		 * Returns the ith node in the list of nodes
+		 * 
+		 * @return
+		 */
+		public Node getNode(int i);
+
+		/**
 		 * Returns the value of this node
 		 * 
 		 * @return
 		 */
 		public String getValue();
+
+		/**
+		 * Returns the list of adjacent nodes
+		 * 
+		 * @return
+		 */
+		public List<Node> getNodes();
 	}
 
 	/**
@@ -216,7 +252,7 @@ public class AlgebraicRuleConverter {
 		private List<Node> nodes;
 
 		/**
-		 * 
+		 * Creates a new start node
 		 */
 		public StartNode() {
 			this.nodes = new ArrayList<Node>();
@@ -267,6 +303,62 @@ public class AlgebraicRuleConverter {
 			return null;
 		}
 
+		/**
+		 * Clones this Graph without terminal node
+		 */
+		@Override
+		public StartNode clone() {
+			StartNode start = new StartNode();
+			Node ln, rn, rnode, lnode;
+			int index;
+			HashMap<String, Node> variables = new HashMap<String, Node>();
+
+			for (int i = 0; i < this.nodes.size(); i++) {
+				lnode = this.getNode(i);
+				ln = new InnerNode(lnode.getValue());
+				start.addNode(ln);
+				index = 0;
+				rnode = lnode.getNode(index);
+				while (rnode != null) {
+					if (variables.get(rnode.getValue()) != null) {
+						rn = variables.get(rnode.getValue());
+					} else {
+						rn = new InnerNode(rnode.getValue());
+						variables.put(rnode.getValue(), rn);
+					}
+
+					ln.addNode(rn);
+					rn.addNode(ln);
+					index++;
+					rnode = lnode.getNode(index);
+				}
+
+			}
+
+			return start;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNode(int)
+		 */
+		public Node getNode(int i) {
+			if (nodes.size() > i && i >= 0)
+				return nodes.get(i);
+			else
+				return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNodes()
+		 */
+		public List<Node> getNodes() {
+			return this.nodes;
+		}
+
 	}
 
 	/**
@@ -278,7 +370,7 @@ public class AlgebraicRuleConverter {
 	private class TerminalNode implements Node {
 
 		/**
-		 * 
+		 * Creates a new terminal node
 		 */
 		public TerminalNode() {
 
@@ -324,6 +416,24 @@ public class AlgebraicRuleConverter {
 			return null;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNode(int)
+		 */
+		public Node getNode(int i) {
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.sbml.squeezer.math.AlgebraicRuleConverter.Node#getNodes()
+		 */
+		public List<Node> getNodes() {
+			return null;
+		}
+
 	}
 
 	/**
@@ -343,6 +453,10 @@ public class AlgebraicRuleConverter {
 	 */
 	private HashMap<String, Node> equationHash;
 	/**
+	 * HashMap with value of the left node -> value of the right node
+	 */
+	private HashMap<String, String> matchingSet;
+	/**
 	 * The source node of the bipartite graph
 	 */
 	private StartNode bipartiteGraph;
@@ -355,6 +469,10 @@ public class AlgebraicRuleConverter {
 	 * saved temporarily
 	 */
 	private List<String> svariables;
+	/**
+	 * A list of all paths of a certain length in the graph
+	 */
+	private ArrayList<ArrayList<Node>> paths;
 	/**
 	 * A set with the ids of all reactants in the model
 	 */
@@ -380,6 +498,7 @@ public class AlgebraicRuleConverter {
 	private boolean remainOnSide = true;
 
 	/**
+	 * Creates a new AlgebraicRuleConverter for the given model
 	 * 
 	 * @param model
 	 */
@@ -440,7 +559,7 @@ public class AlgebraicRuleConverter {
 				if (!sref.getSpeciesInstance().isConstant()) {
 					variable = variableHash.get(sref.getSpeciesInstance()
 							.getId());
-					if (!sref.getSpeciesInstance().getHasOnlySubstanceUnits()) {
+					if (!sref.getSpeciesInstance().getBoundaryCondition()) {
 
 						equation = equationHash.get(sref.getSpeciesInstance()
 								.getId());
@@ -456,7 +575,6 @@ public class AlgebraicRuleConverter {
 							variableHash.put(variable.getValue(), variable);
 
 						}
-
 					}
 				}
 			}
@@ -467,7 +585,7 @@ public class AlgebraicRuleConverter {
 				if (!sref.getSpeciesInstance().isConstant()) {
 					variable = variableHash.get(sref.getSpeciesInstance()
 							.getId());
-					if (!sref.getSpeciesInstance().getHasOnlySubstanceUnits()) {
+					if (!sref.getSpeciesInstance().getBoundaryCondition()) {
 
 						equation = equationHash.get(sref.getSpeciesInstance()
 								.getId());
@@ -493,19 +611,16 @@ public class AlgebraicRuleConverter {
 
 			variable.addNode(equation);
 			equation.addNode(variable);
-
-			svariables.clear();
-			getVariables(r.getKineticLaw().getListOfParameters(), r
-					.getKineticLaw().getMath(), svariables);
-
-			// link kinetic law with its variables
-			for (int j = 0; j < svariables.size(); j++) {
-				variable = variableHash.get(svariables.get(j));
-				if (variable != null) {
-					variable.addNode(equation);
-					equation.addNode(variable);
-				}
-			}
+			/**
+			 * Not in 3.1 // link kinetic law with its variables
+			 * svariables.clear();
+			 * getVariables(r.getKineticLaw().getListOfParameters(), r
+			 * .getKineticLaw().getMath(), svariables);
+			 * 
+			 * for (int j = 0; j < svariables.size(); j++) { variable =
+			 * variableHash.get(svariables.get(j)); if (variable != null) {
+			 * variable.addNode(equation); equation.addNode(variable); } }
+			 */
 
 		}
 
@@ -521,19 +636,16 @@ public class AlgebraicRuleConverter {
 				variable.addNode(equation);
 				equation.addNode(variable);
 
-				// -- self creation
-				svariables.clear();
-				getVariables(null, model.getRule(i).getMath(), svariables);
-				// link rule with its variables
-				for (int j = 0; j < svariables.size(); j++) {
-					variable = variableHash.get(svariables.get(j));
-					if (variable != null) {
-						variable.addNode(equation);
-						equation.addNode(variable);
-
-					}
-				}
-				// --
+				/**
+				 * Not in 3.1 // -- self creation svariables.clear();
+				 * getVariables(null, model.getRule(i).getMath(), svariables);
+				 * // link rule with its variables for (int j = 0; j <
+				 * svariables.size(); j++) { variable =
+				 * variableHash.get(svariables.get(j)); if (variable != null) {
+				 * variable.addNode(equation); equation.addNode(variable);
+				 * 
+				 * } } // --
+				 */
 			}
 
 			else if (r instanceof AssignmentRule) {
@@ -544,17 +656,16 @@ public class AlgebraicRuleConverter {
 				variable.addNode(equation);
 				equation.addNode(variable);
 
-				svariables.clear();
-				getVariables(null, model.getRule(i).getMath(), svariables);
-				// link rule with its variables
-				for (int j = 0; j < svariables.size(); j++) {
-					variable = variableHash.get(svariables.get(j));
-					if (variable != null) {
-						variable.addNode(equation);
-						equation.addNode(variable);
-
-					}
-				}
+				/**
+				 * Not in 3.1 svariables.clear(); getVariables(null,
+				 * model.getRule(i).getMath(), svariables); // link rule with
+				 * its variables for (int j = 0; j < svariables.size(); j++) {
+				 * variable = variableHash.get(svariables.get(j)); if (variable
+				 * != null) { variable.addNode(equation);
+				 * equation.addNode(variable);
+				 * 
+				 * } }
+				 */
 			}
 		}
 
@@ -583,11 +694,13 @@ public class AlgebraicRuleConverter {
 	 * Build the maximum matching
 	 */
 	private void buildMatching() {
+		StartNode matchingGraph;
 		// the source node
-		bipartiteGraph = new StartNode();
+		matchingGraph = new StartNode();
 		// the sink node
 		TerminalNode tnode = new TerminalNode();
 		matching = new ArrayList<Match>();
+		matchingSet = new HashMap<String, String>();
 		Set<Node> B = new HashSet<Node>();
 		Stack<Node> stack = new Stack<Node>();
 		Node first, last;
@@ -595,15 +708,17 @@ public class AlgebraicRuleConverter {
 
 		// connect equations with source node
 		for (i = 0; i < equations.size(); i++) {
-			bipartiteGraph.addNode(equations.get(i));
+			matchingGraph.addNode(equations.get(i));
 		}
-
 		// connect equations with sink node
 		for (i = 0; i < variables.size(); i++) {
 			variables.get(i).addNode(tnode);
 		}
+
+		bipartiteGraph = matchingGraph.clone();
+
 		// push source node on the stack
-		stack.push(bipartiteGraph);
+		stack.push(matchingGraph);
 
 		while (!stack.isEmpty()) {
 
@@ -630,6 +745,8 @@ public class AlgebraicRuleConverter {
 						// leave source node on the stack
 						while (stack.size() > 1) {
 							last = stack.pop();
+							matchingSet.put(stack.peek().getValue(), last
+									.getValue());
 							matching.add(new Match(stack.pop().getValue(), last
 									.getValue()));
 						}
@@ -646,6 +763,8 @@ public class AlgebraicRuleConverter {
 				stack.pop();
 
 		}
+
+		augmentMatching();
 
 	}
 
@@ -898,10 +1017,8 @@ public class AlgebraicRuleConverter {
 			parent = (ASTNode) variableNodeParent.getParent();
 			withVariable = getOtherChild(variableNode);
 			rest = getOtherChild(variableNodeParent);
-
-			System.out.println("  " + rest.toFormula());
-
 			index = getIndexOfNode(variableNodeParent);
+
 			parent = (ASTNode) variableNodeParent.getParent();
 			parent.removeChild(index);
 
@@ -1023,6 +1140,70 @@ public class AlgebraicRuleConverter {
 		} else {
 			for (int i = 0; i < node.getNumChildren(); i++) {
 				substituteFunctions(node.getChild(i), i);
+			}
+		}
+
+	}
+
+	/**
+	 * Improves the matching as far as possible with augmenting paths 
+	 */
+	private void augmentMatching() {
+		paths = new ArrayList<ArrayList<Node>>();
+		int length = 1;
+		System.out.println("Searching path of size: " + length);
+		for (Node node : bipartiteGraph.getNodes()) {
+			findShortestPath(length, node, new ArrayList<Node>());
+
+		}
+
+		for (ArrayList<Node> path : paths) {
+			findAugmentingPath(path);
+		}
+		System.out.println("Found: " + paths.size());
+
+	}
+
+	/**
+	 * Finds an augmenting path with respect to the given path through
+	 * the bipartite graph
+	 *  
+	 * @param path
+	 */
+	private void findAugmentingPath(ArrayList<Node> path) {
+		System.out.println("Searching augmenting path of size: "
+				+ (path.size() + 2));
+
+	}
+
+	/**
+	 * Finds all paths of the length i whose nodes are part of
+	 * the matching
+	 * 
+	 * @param i
+	 * @param node
+	 * @param path
+	 */
+	private void findShortestPath(int i, Node node, ArrayList<Node> path) {
+		String value;
+		if (path.size() == i * 2) {
+			System.out.println(path.size());
+			paths.add(path);
+
+		} else {
+			value = matchingSet.get(node.getValue());
+			for (Node next : node.getNodes()) {
+				if (next.getValue() == value) {
+					path.add(node);
+					path.add(next);
+					for (Node nextnext : next.getNodes()) {
+						if (nextnext.getValue() != node.getValue())
+							findShortestPath(i, nextnext,
+									(ArrayList<Node>) path.clone());
+					}
+
+				}
+
 			}
 		}
 
