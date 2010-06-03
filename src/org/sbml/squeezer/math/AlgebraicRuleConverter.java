@@ -87,7 +87,7 @@ public class AlgebraicRuleConverter {
 		 * .squeezer.math.AlgebraicRuleConverter.Node)
 		 */
 		public void addNode(Node node) {
-			this.nodes.add(node);			
+			this.nodes.add(node);
 		}
 
 		/*
@@ -1146,7 +1146,7 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * Improves the matching as far as possible with augmenting paths 
+	 * Improves the matching as far as possible with augmenting paths
 	 */
 	private void augmentMatching() {
 		paths = new ArrayList<ArrayList<Node>>();
@@ -1156,29 +1156,86 @@ public class AlgebraicRuleConverter {
 			findShortestPath(length, node, new ArrayList<Node>());
 
 		}
-
-		for (ArrayList<Node> path : paths) {
-			findAugmentingPath(path);
-		}
 		System.out.println("Found: " + paths.size());
 
+		augmentPath(length);
+
 	}
 
 	/**
-	 * Finds an augmenting path with respect to the given path through
-	 * the bipartite graph
-	 *  
+	 * Tries augment every path found in the graph to a new path of the given
+	 * length + 1
+	 * 
+	 * @param length
+	 */
+	private void augmentPath(int length) {
+		System.out
+				.println("Searching augmenting path of size: " + (length + 2));
+		Node start = null, end = null;
+		for (ArrayList<Node> path : paths) {
+			for (Node node : path.get(0).getNodes()) {
+				// is one node enough
+				if (!matchingSet.containsKey(node.getValue())
+						&& !matchingSet.containsValue(node.getValue())) {
+					start = node;
+					break;
+				}
+
+			}
+
+			for (Node node : path.get(path.size() - 1).getNodes()) {
+				// is one node enough
+				if (!matchingSet.containsKey(node.getValue())
+						&& !matchingSet.containsValue(node.getValue())) {
+					end = node;
+					break;
+				}
+
+			}
+			if (start != null && end != null) {
+				path.add(0, start);
+				path.add(path.size(), start);
+				updateMatching(path);
+			}
+		}
+	}
+
+	/**
+	 * 
 	 * @param path
 	 */
-	private void findAugmentingPath(ArrayList<Node> path) {
-		System.out.println("Searching augmenting path of size: "
-				+ (path.size() + 2));
+	private void updateMatching(ArrayList<Node> path) {
+		System.out.println("new length: " + (path.size() - 1));
+		boolean added = false;
+		int index = 0;
+		while (path.size() < index) {
+			if (!added) {
+				matchingSet.put(path.get(index).getValue(), path.get(index + 1)
+						.getValue());
+				index++;
+				added = true;
+			} else {
+				matchingSet.remove(path.get(index).getValue());
+				index++;
+				added = false;
+			}
+
+		}
 
 	}
 
 	/**
-	 * Finds all paths of the length i whose nodes are part of
-	 * the matching
+	 * Finds an augmenting path with respect to the given path through the
+	 * bipartite graph
+	 * 
+	 * @param path
+	 */
+	private void findAugmentingPath(int i, Node node, ArrayList<Node> path) {
+
+	}
+
+	/**
+	 * Finds all paths of the length i whose nodes are part of the matching
 	 * 
 	 * @param i
 	 * @param node
@@ -1187,7 +1244,6 @@ public class AlgebraicRuleConverter {
 	private void findShortestPath(int i, Node node, ArrayList<Node> path) {
 		String value;
 		if (path.size() == i * 2) {
-			System.out.println(path.size());
 			paths.add(path);
 
 		} else {
