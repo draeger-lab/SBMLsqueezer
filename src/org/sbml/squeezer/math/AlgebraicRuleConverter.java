@@ -148,50 +148,6 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * This class represents a calculated matching between vertices of a
-	 * bipartite graph
-	 * 
-	 * @author Alexander D&ouml;rr
-	 * @since 1.4
-	 */
-	private class Match {
-		/**
-		 * 
-		 */
-		private String reaction;
-		/**
-		 * 
-		 */
-		private String variable;
-
-		/**
-		 * 
-		 * @param reaction
-		 * @param variabale
-		 */
-		public Match(String reaction, String variabale) {
-			this.reaction = reaction;
-			this.variable = variabale;
-		}
-
-		/**
-		 * 
-		 * @return
-		 */
-		public String getReaction() {
-			return reaction;
-		}
-
-		/**
-		 * 
-		 * @return
-		 */
-		public String getVariable() {
-			return variable;
-		}
-	}
-
-	/**
 	 * This Interface represents a node in the bipartite graph
 	 * 
 	 * @author Alexander D&ouml;rr
@@ -455,15 +411,11 @@ public class AlgebraicRuleConverter {
 	/**
 	 * HashMap with value of the left node -> value of the right node
 	 */
-	private HashMap<String, String> matchingSet;
+	private HashMap<String, String> matching;
 	/**
 	 * The source node of the bipartite graph
 	 */
 	private StartNode bipartiteGraph;
-	/**
-	 * The matching calculated with this class
-	 */
-	private List<Match> matching;
 	/**
 	 * A list where the ids of all global species in an MathML expression are
 	 * saved temporarily
@@ -699,8 +651,7 @@ public class AlgebraicRuleConverter {
 		matchingGraph = new StartNode();
 		// the sink node
 		TerminalNode tnode = new TerminalNode();
-		matching = new ArrayList<Match>();
-		matchingSet = new HashMap<String, String>();
+		matching = new HashMap<String, String>();
 		Set<Node> B = new HashSet<Node>();
 		Stack<Node> stack = new Stack<Node>();
 		Node first, last;
@@ -745,10 +696,8 @@ public class AlgebraicRuleConverter {
 						// leave source node on the stack
 						while (stack.size() > 1) {
 							last = stack.pop();
-							matchingSet.put(stack.peek().getValue(), last
+							matching.put(stack.pop().getValue(), last
 									.getValue());
-							matching.add(new Match(stack.pop().getValue(), last
-									.getValue()));
 						}
 					}
 
@@ -762,6 +711,9 @@ public class AlgebraicRuleConverter {
 			else
 				stack.pop();
 
+		}
+		for (Map.Entry<String, String> entry : matching.entrySet()) {
+			System.out.println(entry.getKey() + " -> " + entry.getValue());
 		}
 
 		augmentMatching();
@@ -781,10 +733,7 @@ public class AlgebraicRuleConverter {
 		AssignmentRule as = null;
 
 		// search for the corresponding variable in the matching
-		for (Match match : matching) {
-			if (match.getReaction() == ruleId)
-				variable = match.getVariable();
-		}
+		variable = matching.get(ruleId);
 
 		// evalute and reorganize the equation of the given ASTNode
 		if (variable.length() > 0) {
@@ -841,15 +790,10 @@ public class AlgebraicRuleConverter {
 		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
 		AssignmentRule as;
 		if (matching != null) {
-
-			for (Match match : matching) {
-
-				System.out.println(match.getReaction() + " -> "
-						+ match.getVariable());
+			for (Map.Entry<String, String> entry : matching.entrySet()) {
+				System.out.println(entry.getKey() + " -> " + entry.getValue());
 			}
-		}
-
-		else
+		} else
 			System.out.println("No matching found");
 
 		// create for every algebraic rule an adequate assignment rule
@@ -1151,14 +1095,22 @@ public class AlgebraicRuleConverter {
 	private void augmentMatching() {
 		paths = new ArrayList<ArrayList<Node>>();
 		int length = 1;
-		System.out.println("Searching path of size: " + length);
-		for (Node node : bipartiteGraph.getNodes()) {
-			findShortestPath(length, node, new ArrayList<Node>());
 
+		while (length < (variables.size() + equations.size())) {
+			System.out.println("Searching path of size: " + length);
+			for (Node node : bipartiteGraph.getNodes()) {
+				findShortestPath(length, node, new ArrayList<Node>());
+
+			}
+			System.out.println("Found: " + paths.size());
+
+			augmentPath(length);
+
+			if (matching.size() == equations.size())
+				break;
+
+			length++;
 		}
-		System.out.println("Found: " + paths.size());
-
-		augmentPath(length);
 
 	}
 
@@ -1172,65 +1124,61 @@ public class AlgebraicRuleConverter {
 		System.out
 				.println("Searching augmenting path of size: " + (length + 2));
 		Node start = null, end = null;
-		for (ArrayList<Node> path : paths) {
+		ArrayList<Node> path;
+
+		while (!paths.isEmpty()) {
+			path = paths.get(0);
+			// search for the start node of the path an unmatched adjacent node
 			for (Node node : path.get(0).getNodes()) {
 				// is one node enough
-				if (!matchingSet.containsKey(node.getValue())
-						&& !matchingSet.containsValue(node.getValue())) {
+				if (!matching.containsKey(node.getValue())
+						&& !matching.containsValue(node.getValue())) {
 					start = node;
 					break;
 				}
-
 			}
 
+			// search for the end node of the path an unmatched adjacent node
 			for (Node node : path.get(path.size() - 1).getNodes()) {
 				// is one node enough
-				if (!matchingSet.containsKey(node.getValue())
-						&& !matchingSet.containsValue(node.getValue())) {
+				if (!matching.containsKey(node.getValue())
+						&& !matching.containsValue(node.getValue())) {
 					end = node;
 					break;
 				}
 
 			}
+			// new start and end node for this path found -> update path
 			if (start != null && end != null) {
 				path.add(0, start);
-				path.add(path.size(), start);
+				path.add(path.size(), end);
+
+				// update matching
 				updateMatching(path);
 			}
+			paths.remove(path);
 		}
 	}
 
 	/**
+	 * Updates the matching of the model on the basis of the found augmented
+	 * path. Please note that because of starting the search for a path through
+	 * the graph at an equation the first node in the augmented path is always a
+	 * variable and the last one an equation
 	 * 
 	 * @param path
 	 */
 	private void updateMatching(ArrayList<Node> path) {
 		System.out.println("new length: " + (path.size() - 1));
-		boolean added = false;
-		int index = 0;
-		while (path.size() < index) {
-			if (!added) {
-				matchingSet.put(path.get(index).getValue(), path.get(index + 1)
-						.getValue());
-				index++;
-				added = true;
-			} else {
-				matchingSet.remove(path.get(index).getValue());
-				index++;
-				added = false;
-			}
+		int index;
+		index = 1;
+		while (path.size() > index) {
+			matching.remove(path.get(index).getValue());
+			matching.put(path.get(index).getValue(), path.get(index - 1)
+					.getValue());
+			index = index + 2;
 
 		}
-
-	}
-
-	/**
-	 * Finds an augmenting path with respect to the given path through the
-	 * bipartite graph
-	 * 
-	 * @param path
-	 */
-	private void findAugmentingPath(int i, Node node, ArrayList<Node> path) {
 
 	}
 
@@ -1247,7 +1195,7 @@ public class AlgebraicRuleConverter {
 			paths.add(path);
 
 		} else {
-			value = matchingSet.get(node.getValue());
+			value = matching.get(node.getValue());
 			for (Node next : node.getNodes()) {
 				if (next.getValue() == value) {
 					path.add(node);
