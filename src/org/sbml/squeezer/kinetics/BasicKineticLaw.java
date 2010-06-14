@@ -1384,7 +1384,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		UnitDefinition ud = model.getUnitDefinition(id);
 		if (ud == null) {
 			ud = new UnitDefinition(id, getLevel(), getVersion());
-			ud.addUnit(new Unit(Unit.Kind.JOULE, getLevel(), getVersion()));
+			ud.addUnit(Unit.Kind.JOULE);
 			ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, getLevel(),
 					getVersion()));
 			ud.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, getLevel(),

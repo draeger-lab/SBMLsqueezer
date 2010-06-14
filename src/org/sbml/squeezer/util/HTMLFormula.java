@@ -336,7 +336,7 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
-	public ASTNodeValue equal(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue eq(ASTNodeValue left, ASTNodeValue right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -402,12 +402,12 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
-	public ASTNodeValue greaterEqual(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue ge(ASTNodeValue left, ASTNodeValue right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public ASTNodeValue greaterThan(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue gt(ASTNodeValue left, ASTNodeValue right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -417,12 +417,12 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
-	public ASTNodeValue lessEqual(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue le(ASTNodeValue left, ASTNodeValue right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public ASTNodeValue lessThan(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue lt(ASTNodeValue left, ASTNodeValue right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -452,7 +452,7 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
-	public ASTNodeValue notEqual(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue ne(ASTNodeValue left, ASTNodeValue right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
