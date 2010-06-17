@@ -30,6 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 
 import org.sbml.jsbml.Model;
+import org.sbml.squeezer.math.ModelOverdeterminedException;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -102,9 +103,10 @@ public class SimulationDialog extends JDialog implements ActionListener {
 	}
 
 	/**
+	 * @throws ModelOverdeterminedException 
 	 * 
 	 */
-	public void simulate() {
+	public void simulate() throws ModelOverdeterminedException {
 		simPanel.simulate();
 	}
 

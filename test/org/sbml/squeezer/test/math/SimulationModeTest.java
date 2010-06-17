@@ -15,6 +15,7 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.SimulationDialog;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.math.ModelOverdeterminedException;
 
 /**
  * @author draeger
@@ -108,6 +109,8 @@ public class SimulationModeTest {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (SBMLException e) {
+				e.printStackTrace();
+			} catch (ModelOverdeterminedException e) {
 				e.printStackTrace();
 			}
 

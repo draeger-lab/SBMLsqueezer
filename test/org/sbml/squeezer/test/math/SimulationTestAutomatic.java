@@ -21,6 +21,7 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.math.Distance;
+import org.sbml.squeezer.math.ModelOverdeterminedException;
 import org.sbml.squeezer.math.RSE;
 import org.sbml.squeezer.math.SBMLinterpreter;
 
@@ -175,6 +176,8 @@ public class SimulationTestAutomatic {
 					// plot.dispose();
 				}
 			} catch (SBMLException e) {
+				e.printStackTrace();
+			} catch (ModelOverdeterminedException e) {
 				e.printStackTrace();
 			}
 		}

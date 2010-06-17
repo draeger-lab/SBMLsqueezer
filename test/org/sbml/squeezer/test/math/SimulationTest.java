@@ -8,6 +8,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.math.ModelOverdeterminedException;
 import org.sbml.squeezer.math.SBMLinterpreter;
 
 import eva2.gui.Plot;
@@ -75,6 +76,8 @@ public class SimulationTest {
 				}
 			}
 		} catch (SBMLException e) {
+			e.printStackTrace();
+		} catch (ModelOverdeterminedException e) {
 			e.printStackTrace();
 		}
 
