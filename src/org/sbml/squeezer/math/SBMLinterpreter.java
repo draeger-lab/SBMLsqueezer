@@ -45,6 +45,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.Maths;
+import org.sbml.jsbml.validator.OverdeterminationValidator;
 
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
@@ -253,8 +254,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * </p>
 	 * 
 	 * @param model
+	 * @throws ModelOverdeterminedException 
 	 */
-	public SBMLinterpreter(Model model) {
+	public SBMLinterpreter(Model model) throws ModelOverdeterminedException {
 		this.model = model;
 		// this.speciesIdIndex = new HashMap<String, Integer>();
 		this.v = new double[this.model.getListOfReactions().size()];
@@ -589,9 +591,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @param ar
 	 * @param changeRate
+	 * @throws ModelOverdeterminedException 
 	 */
-	private void evaluateAlgebraicRule() {
+	private void evaluateAlgebraicRule() throws ModelOverdeterminedException {
 		OverdeterminationValidator odv = new OverdeterminationValidator(model);
+		if (odv.isOverDetermined()) {
+			throw new ModelOverdeterminedException();
+		}
+		
 		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(odv
 				.getMatching(), model);
 		algebraicRules = arc.getAssignmentRules();
@@ -887,9 +894,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 *         this is not necessarily equal to the initial values stored in the
 	 *         SBML file as this method also evaluates initial assignments if
 	 *         there are any.
+	 * @throws ModelOverdeterminedException 
 	 */
 	@SuppressWarnings("unchecked")
-	protected void init() {
+	protected void init() throws ModelOverdeterminedException {
 		int i;
 		valuesHash = new HashMap<String, Value>();
 		int yIndex = 0;
@@ -1541,7 +1549,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				law.getParameter(localPnum).setValue(params[paramNum++]);
 		}
 		if (model.getNumInitialAssignments() > 0 || model.getNumEvents() > 0)
-			init();
+			try {
+				init();
+			} catch (ModelOverdeterminedException e) {
+				// This can never happen
+			}
 
 	}
 

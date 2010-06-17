@@ -21,12 +21,12 @@ package org.sbml.squeezer.math;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.ASTNode.Type;
@@ -41,8 +41,6 @@ import org.sbml.jsbml.ASTNode.Type;
 public class AlgebraicRuleConverter {
 
 	/**
-	 * 
-	 * 
 	 * 
 	 * @author Alexander D&ouml;rr
 	 * @since 1.4
@@ -104,7 +102,10 @@ public class AlgebraicRuleConverter {
 	 * The depth of nesting of the current analysed MathML expression
 	 */
 	private ArrayList<ArrayList<EquationObject>> equationObjects;
-
+	/**
+	 * The container that holds the current rule.
+	 */
+	private MathContainer pso;
 	/**
 	 * Creates a new AlgebraicRuleConverter for the given matching and model
 	 * 
@@ -222,17 +223,17 @@ public class AlgebraicRuleConverter {
 			if (r instanceof AlgebraicRule) {
 				AlgebraicRule ar = (AlgebraicRule) r;
 				ASTNode node = ar.getMath().clone();
-
+			
 				// substitute function definitions
 				if (model.getNumFunctionDefinitions() > 0) {
-					substituteFunctions(node, 0);
+					node = substituteFunctions(node, 0);
 				}
-
+				pso = node.getParentSBMLObject();
 				as = createAssignmentRule(node, ar.getMetaId());
 
 				// whenn assignment rule created add to the list
 				if (as != null) {
-					//assignmentRules.add(as);
+					assignmentRules.add(as);
 					as = null;
 				}
 			}
@@ -428,14 +429,14 @@ public class AlgebraicRuleConverter {
 		System.out.println("remainOnSide: " + remainOnSide);
 		EquationObject eo;
 		ArrayList<EquationObject> addition = equationObjects.get(0);
-		ASTNode add = new ASTNode(Type.PLUS, null);
+		ASTNode add = new ASTNode(Type.PLUS, pso);
 		if (additive) {
 			if (!remainOnSide) {
 				ASTNode minus;
 				for (int i = 0; i < addition.size(); i++) {
 					eo = addition.get(i);
 					if (eo.isNegative()) {
-						minus = new ASTNode(Type.MINUS, null);
+						minus = new ASTNode(Type.MINUS, pso);
 						minus.addChild(eo.getNode());
 						add.addChild(minus);
 					} else {
@@ -451,7 +452,7 @@ public class AlgebraicRuleConverter {
 					if (eo.isNegative()) {
 						add.addChild(eo.getNode());
 					} else {
-						minus = new ASTNode(Type.MINUS, null);
+						minus = new ASTNode(Type.MINUS, pso);
 						minus.addChild(eo.getNode());
 						add.addChild(minus);
 					}
@@ -504,7 +505,7 @@ public class AlgebraicRuleConverter {
 	 * @param node
 	 * @param indexParent
 	 */
-	private void substituteFunctions(ASTNode node, int indexParent) {
+	private ASTNode substituteFunctions(ASTNode node, int indexParent) {
 		// check if node is a function
 		if (node.isName()) {
 			FunctionDefinition fd = model.getFunctionDefinition(node.getName());
@@ -518,35 +519,53 @@ public class AlgebraicRuleConverter {
 
 				// Hash its variables to the parameter
 				for (int i = 0; i < node.getNumChildren(); i++) {
-					if (node.getChild(i).isName())
+					if (node.getChild(i).isFunction()) {
+						nodeHash.put(function.getChild(i).getName(), node
+								.getChild(i).clone());
+					} 
+					else if (node.getChild(i).isOperator()) {
+						nodeHash.put(function.getChild(i).getName(), node
+								.getChild(i).clone());
+					}
+					else if (node.getChild(i).isName())
 						nameHash.put(function.getChild(i).getName(), node
 								.getChild(i).getName());
 					else if (node.getChild(i).isNumber()) {
 						numberHash.put(function.getChild(i).getName(), node
 								.getChild(i).getInteger());
-					} else if (node.getChild(i).isOperator()) {
-						nodeHash.put(function.getChild(i).getName(), node
-								.getChild(i).clone());
-					}
+					} 
 
 				}
 				parent = (ASTNode) node.getParent();
-				// replace the reference to a function definition with the
-				// function definiton itself
-				parent.replaceChild(indexParent, function.getRightChild()
-						.clone());
-				// substitute the variables with the parameter
-				replaceNames(parent.getChild(indexParent), nameHash,
-						numberHash, nodeHash);
+				// function definiton is child
+				if (parent != null) {
+					// replace the reference to a function definition with the
+					// function definiton itself
+					parent.replaceChild(indexParent, function.getRightChild()
+							.clone());
+					// substitute the variables with the parameter
+					replaceNames(parent.getChild(indexParent), nameHash,
+							numberHash, nodeHash);
+
+				}
+				// function definiton is root
+				else {
+					// replace the reference to a function definition with the
+					// function definiton itself
+					node = function.getRightChild().clone();
+					// substitute the variables with the parameter
+					replaceNames(node, nameHash, numberHash, nodeHash);
+				}
 			}
 
-			// else move on with its children
-		} else {
+			// move on with its children
 			for (int i = 0; i < node.getNumChildren(); i++) {
 				substituteFunctions(node.getChild(i), i);
 			}
 		}
+		return node;
 
-	}
+	}	
+	
 
 }
