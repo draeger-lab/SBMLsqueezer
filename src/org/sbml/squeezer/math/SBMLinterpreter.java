@@ -592,7 +592,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	private void evaluateAlgebraicRule() {
 		OverdeterminationValidator odv = new OverdeterminationValidator(model);
-		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(odv.getMatching(),model);
+		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(odv
+				.getMatching(), model);
 		algebraicRules = arc.getAssignmentRules();
 	}
 
@@ -852,8 +853,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * org.sbml.jsbml.ASTNodeCompiler#greaterEqual(org.sbml.jsbml.ASTNodeValue,
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
-	public ASTNodeValue geq(ASTNodeValue nodeleft,
-			ASTNodeValue noderight) {
+	public ASTNodeValue geq(ASTNodeValue nodeleft, ASTNodeValue noderight) {
 		return new ASTNodeValue(nodeleft.toDouble() >= noderight.toDouble(),
 				this);
 	}
@@ -1180,12 +1180,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						.getMath().compile(this).toDouble()));
 			}
 		}
+		if (algebraicRules != null) {
+			for (AssignmentRule as : algebraicRules) {
+				val = valuesHash.get(as.getVariable());
+				assignmentRules.add(new DESAssignment(t, val.getIndex(), as
+						.getMath().compile(this).toDouble()));
 
-		for (AssignmentRule as : algebraicRules) {
-			val = valuesHash.get(as.getVariable());
-			assignmentRules.add(new DESAssignment(t, val.getIndex(), as
-					.getMath().compile(this).toDouble()));
-
+			}
 		}
 
 		return assignmentRules;
@@ -1659,6 +1660,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#toString(org.sbml.jsbml.ASTNodeValue)
 	 */
 	public String toString(ASTNodeValue value) {
