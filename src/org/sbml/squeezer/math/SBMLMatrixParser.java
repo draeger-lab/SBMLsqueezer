@@ -227,8 +227,8 @@ public class SBMLMatrixParser {
 		initLocalParameter(reac.getKineticLaw().getListOfParameters());
 		initGlobalParameter(reac.getKineticLaw().getMath());
 		Model m = doc.getModel();
+		try {
 		sbmli = new SBMLinterpreter(m);
-
 		iA = m.getSpecies(msr.getSpecies()).getInitialAmount();
 		// evaluate reaction with normal amount
 		normal = reac.getKineticLaw().getMath().compile(sbmli).toDouble();
@@ -243,13 +243,18 @@ public class SBMLMatrixParser {
 		sbmli = new SBMLinterpreter(m);
 		twice = reac.getKineticLaw().getMath().compile(sbmli).toDouble();
 
+
+		
 		if (half < normal && normal < twice)
 			result = 1;
 		else if (half > normal && normal > twice)
 			result = -1;
 
 		m.getSpecies(msr.getSpecies()).setInitialAmount(iA);
+		
+		} catch (ModelOverdeterminedException e) {
 
+		}
 		return result;
 	}
 
