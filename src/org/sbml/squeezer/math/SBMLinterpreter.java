@@ -852,7 +852,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * org.sbml.jsbml.ASTNodeCompiler#greaterEqual(org.sbml.jsbml.ASTNodeValue,
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
-	public ASTNodeValue ge(ASTNodeValue nodeleft,
+	public ASTNodeValue geq(ASTNodeValue nodeleft,
 			ASTNodeValue noderight) {
 		return new ASTNodeValue(nodeleft.toDouble() >= noderight.toDouble(),
 				this);
@@ -1026,7 +1026,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * org.sbml.jsbml.ASTNodeCompiler#lessEqual(org.sbml.jsbml.ASTNodeValue,
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
-	public ASTNodeValue le(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue leq(ASTNodeValue left, ASTNodeValue right) {
 		return new ASTNodeValue(left.toDouble() <= right.toDouble(), this);
 	}
 
@@ -1104,7 +1104,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#notEqual(org.sbml.jsbml.ASTNodeValue,
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
-	public ASTNodeValue ne(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue neq(ASTNodeValue left, ASTNodeValue right) {
 		return new ASTNodeValue(left.toDouble() != right.toDouble(), this);
 	}
 
@@ -1655,5 +1655,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 		}
 		return new ASTNodeValue(value, this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#toString(org.sbml.jsbml.ASTNodeValue)
+	 */
+	public String toString(ASTNodeValue value) {
+		return value.toString();
 	}
 }

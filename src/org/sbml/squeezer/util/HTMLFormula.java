@@ -402,7 +402,7 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
-	public ASTNodeValue ge(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue geq(ASTNodeValue left, ASTNodeValue right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -417,7 +417,7 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
-	public ASTNodeValue le(ASTNodeValue left, ASTNodeValue right) {
+	public ASTNodeValue leq(ASTNodeValue left, ASTNodeValue right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -594,5 +594,15 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 			reactionEqn.append(EMPTY_SET);
 		}
 		return GUITools.toHTML(reactionEqn.toString());
+	}
+
+	public ASTNodeValue neq(ASTNodeValue left, ASTNodeValue right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String toString(ASTNodeValue value) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
