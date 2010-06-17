@@ -45,7 +45,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.Maths;
-import org.sbml.jsbml.validator.OverdeterminationValidator;
 
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
@@ -254,7 +253,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * </p>
 	 * 
 	 * @param model
-	 * @throws ModelOverdeterminedException 
+	 * @throws ModelOverdeterminedException
 	 */
 	public SBMLinterpreter(Model model) throws ModelOverdeterminedException {
 		this.model = model;
@@ -418,18 +417,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double, java.lang.String)
 	 */
-	public ASTNodeValue compile(double value) {
+	public ASTNodeValue compile(double value, String units) {
+		// TODO: units!
 		return new ASTNodeValue(value, this);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(int)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(int, java.lang.String)
 	 */
-	public ASTNodeValue compile(int value) {
+	public ASTNodeValue compile(int value, String units) {
+		// TODO: units!
 		return new ASTNodeValue(value, this);
 	}
 
@@ -569,9 +570,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(org.sbml.jsbml.ASTNode, double)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(java.lang.String,
+	 * org.sbml.jsbml.ASTNodeValue, double, java.lang.String)
 	 */
-	public ASTNodeValue delay(ASTNodeValue x, double d) {
+	public ASTNodeValue delay(String delayName, ASTNodeValue x, double time,
+			String timeUnits) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -591,14 +594,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @param ar
 	 * @param changeRate
-	 * @throws ModelOverdeterminedException 
+	 * @throws ModelOverdeterminedException
 	 */
 	private void evaluateAlgebraicRule() throws ModelOverdeterminedException {
 		OverdeterminationValidator odv = new OverdeterminationValidator(model);
-		if (odv.isOverDetermined()) {
+		if (odv.isOverdetermined()) {
 			throw new ModelOverdeterminedException();
 		}
-		
+
 		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(odv
 				.getMatching(), model);
 		algebraicRules = arc.getAssignmentRules();
@@ -856,8 +859,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#greaterEqual(org.sbml.jsbml.ASTNodeValue,
+	 * @see org.sbml.jsbml.ASTNodeCompiler#geq(org.sbml.jsbml.ASTNodeValue,
 	 * org.sbml.jsbml.ASTNodeValue)
 	 */
 	public ASTNodeValue geq(ASTNodeValue nodeleft, ASTNodeValue noderight) {
@@ -894,7 +896,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 *         this is not necessarily equal to the initial values stored in the
 	 *         SBML file as this method also evaluates initial assignments if
 	 *         there are any.
-	 * @throws ModelOverdeterminedException 
+	 * @throws ModelOverdeterminedException
 	 */
 	@SuppressWarnings("unchecked")
 	protected void init() throws ModelOverdeterminedException {

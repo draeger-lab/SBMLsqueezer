@@ -452,11 +452,6 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
-	public ASTNodeValue ne(ASTNodeValue left, ASTNodeValue right) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public ASTNodeValue or(ASTNodeValue... values) {
 		// TODO Auto-generated method stub
 		return null;
@@ -601,8 +596,35 @@ public class HTMLFormula extends StringTools implements ASTNodeCompiler {
 		return null;
 	}
 
-	public String toString(ASTNodeValue value) {
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double, java.lang.String)
+	 */
+	public ASTNodeValue compile(double real, String units) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(int, java.lang.String)
+	 */
+	public ASTNodeValue compile(int integer, String units) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(java.lang.String, org.sbml.jsbml.ASTNodeValue, double, java.lang.String)
+	 */
+	public ASTNodeValue delay(String delayName, ASTNodeValue x, double d,
+			String timeUnits) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#toString(org.sbml.jsbml.ASTNodeValue)
+	 */
+	public String toString(ASTNodeValue value) {
+		return value.toString();
 	}
 }

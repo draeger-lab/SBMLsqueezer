@@ -96,6 +96,7 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.math.Distance;
+import org.sbml.squeezer.math.ModelOverdeterminedException;
 import org.sbml.squeezer.math.SBMLinterpreter;
 import org.sbml.squeezer.util.HTMLFormula;
 
@@ -467,7 +468,12 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
 		case SIMULATION_START:
-			simulate();
+			try {
+				simulate();
+			} catch (ModelOverdeterminedException exc) {
+				exc.printStackTrace();
+				GUITools.showErrorMessage(this, exc);
+			}
 			break;
 		case OPEN_DATA:
 			openExperimentalData();
@@ -499,8 +505,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 
 	/**
 	 * Conducts the simulation.
+	 * @throws ModelOverdeterminedException 
 	 */
-	public void simulate() {
+	public void simulate() throws ModelOverdeterminedException {
 		double t1val = ((Double) t1.getValue()).doubleValue();
 		double t2val = ((Double) t2.getValue()).doubleValue();
 		double stepSize = (t2val - t1val)
@@ -530,6 +537,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				distField.setEditable(false);
 				distField.setEnabled(true);
 			} catch (IOException exc) {
+				exc.printStackTrace();
+				GUITools.showErrorMessage(this, exc);
+			} catch (ModelOverdeterminedException exc) {
+				exc.printStackTrace();
 				GUITools.showErrorMessage(this, exc);
 			}
 	}
@@ -553,8 +564,13 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		plot(readCSVFile(file), false, showLegend.isSelected());
 		tabbedPane.setEnabledAt(2, true);
 		GUITools.setEnabled(false, toolbar, Command.OPEN_DATA);
-		distField.setText(Double.toString(computeDistance(model, solver
-				.getStepSize())));
+		try {
+			distField.setText(Double.toString(computeDistance(model, solver
+					.getStepSize())));
+		} catch (ModelOverdeterminedException exc) {
+			exc.printStackTrace();
+			GUITools.showErrorMessage(this, exc);
+		}
 		distField.setEditable(false);
 		distField.setEnabled(true);
 	}
@@ -1478,9 +1494,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param t1val
 	 * @param t2val
 	 * @param stepSize
+	 * @throws ModelOverdeterminedException 
 	 */
 	private void simulate(Model model, double t1val, double t2val,
-			double stepSize) {
+			double stepSize) throws ModelOverdeterminedException {
 		TableModelDoubleMatrix tabMod = new TableModelDoubleMatrix(
 				solveByStepSize(model, t1val, t2val, stepSize),
 				createColNames(model));
@@ -1506,9 +1523,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 *            Time end
 	 * @param stepSize
 	 * @return
+	 * @throws ModelOverdeterminedException 
 	 */
 	private double[][] solveByStepSize(Model model, double t1, double t2,
-			double stepSize) {
+			double stepSize) throws ModelOverdeterminedException {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
 		double solution[][] = solver.solveByStepSizeIncludingTime(interpreter,
@@ -1525,8 +1543,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param model
 	 * @param stepSize
 	 * @return
+	 * @throws ModelOverdeterminedException 
 	 */
-	private double computeDistance(Model model, double stepSize) {
+	private double computeDistance(Model model, double stepSize) throws ModelOverdeterminedException {
 		Indices time = colNames2data.get(colNames[0]);
 		int tidx = time == null ? 0 : time.getColumnExperimentTable();
 		if (tidx < 0) {
@@ -1554,9 +1573,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param timePoints
 	 * @param stepSize
 	 * @return
+	 * @throws ModelOverdeterminedException 
 	 */
 	private double[][] solveAtTimePoints(Model model, double times[],
-			double stepSize) {
+			double stepSize) throws ModelOverdeterminedException {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
 		double solution[][] = solver.solveAtTimePointsIncludingTime(
