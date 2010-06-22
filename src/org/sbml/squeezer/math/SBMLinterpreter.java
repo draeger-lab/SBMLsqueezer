@@ -1640,7 +1640,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#uiMinus(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue uiMinus(ASTNodeValue node) {
+	public ASTNodeValue uMinus(ASTNodeValue node) {
 		return new ASTNodeValue(-node.toDouble(), this);
 	}
 
@@ -1680,4 +1680,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	public String toString(ASTNodeValue value) {
 		return value.toString();
 	}
+
+	@Override
+	public ASTNodeValue compile(double mantissa, int exponent, String units) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ASTNodeValue getConstantAvogadro(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

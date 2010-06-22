@@ -106,6 +106,7 @@ public class AlgebraicRuleConverter {
 	 * The container that holds the current rule.
 	 */
 	private MathContainer pso;
+
 	/**
 	 * Creates a new AlgebraicRuleConverter for the given matching and model
 	 * 
@@ -144,21 +145,20 @@ public class AlgebraicRuleConverter {
 			evaluateEquation(variableNodeParent);
 			System.out.println("nesting depth: " + nestingDepth);
 
-	
-			//old
-			//as.setMath(reorganizeEquation(node));
-			//----
-			
-			//new
+			// old
+			// as.setMath(reorganizeEquation(node));
+			// ----
+
+			// new
 			equationObjects = new ArrayList<ArrayList<EquationObject>>();
 			equationObjects.add(new ArrayList<EquationObject>());
 			equationObjects.add(new ArrayList<EquationObject>());
-			
+
 			deleteVariable();
 			sortEquationObjects(node, false, false, false);
 			as.setMath(buildEquation());
-			//----
-			
+			// ----
+
 			System.out.println("after: " + as.getMath().toFormula());
 		}
 
@@ -223,7 +223,7 @@ public class AlgebraicRuleConverter {
 			if (r instanceof AlgebraicRule) {
 				AlgebraicRule ar = (AlgebraicRule) r;
 				ASTNode node = ar.getMath().clone();
-			
+
 				// substitute function definitions
 				if (model.getNumFunctionDefinitions() > 0) {
 					node = substituteFunctions(node, 0);
@@ -383,10 +383,12 @@ public class AlgebraicRuleConverter {
 					}
 
 				} else {
-					for (int i = 0; i < node.getNumChildren(); i++) {
-						sortEquationObjects(node.getChild(i), false, true,
-								false);
-					}
+					// for (int i = 0; i < node.getNumChildren(); i++) {
+					// sortEquationObjects(node.getChild(i), false, true,
+					// false);
+					// }
+					equationObjects.get(1).add(
+							new EquationObject(node.clone(), false));
 				}
 
 			}
@@ -397,6 +399,8 @@ public class AlgebraicRuleConverter {
 			} else if (plus) {
 				equationObjects.get(0).add(
 						new EquationObject(node.clone(), false));
+
+			} else if (times) {
 
 			}
 		}
@@ -429,7 +433,11 @@ public class AlgebraicRuleConverter {
 		System.out.println("remainOnSide: " + remainOnSide);
 		EquationObject eo;
 		ArrayList<EquationObject> addition = equationObjects.get(0);
+		ArrayList<EquationObject> multiplication = equationObjects.get(1);
 		ASTNode add = new ASTNode(Type.PLUS, pso);
+		ASTNode multiply = new ASTNode(Type.TIMES, pso);
+		ASTNode divide = new ASTNode(Type.DIVIDE, pso);
+		ASTNode node = null;
 		if (additive) {
 			if (!remainOnSide) {
 				ASTNode minus;
@@ -444,6 +452,15 @@ public class AlgebraicRuleConverter {
 					}
 
 				}
+				node = add;
+				if (multiplication.size() > 0) {
+					for (int i = 0; i < multiplication.size(); i++) {
+						multiply.addChild(multiplication.get(i).getNode());
+					}
+					multiply.addChild(add);
+
+					node = multiply;
+				}
 
 			} else {
 				ASTNode minus;
@@ -456,22 +473,98 @@ public class AlgebraicRuleConverter {
 						minus.addChild(eo.getNode());
 						add.addChild(minus);
 					}
+				}
 
+				node = add;
+				if (multiplication.size() > 0) {
+
+					if (multiplication.size() == 1) {
+
+						for (int i = 0; i < multiplication.size(); i++) {
+							multiply.addChild(multiplication.get(i).getNode());
+						}
+						divide.addChild(add);
+						divide.addChild(multiply);
+					} else {
+						divide.addChild(add);
+						divide.addChild(multiplication.get(0).getNode());
+					}
+
+					node = divide;
 				}
 
 			}
 		} else {
 			if (!remainOnSide) {
+				ASTNode minus;
+				for (int i = 0; i < addition.size(); i++) {
+					eo = addition.get(i);
+					if (eo.isNegative()) {
+						minus = new ASTNode(Type.MINUS, pso);
+						minus.addChild(eo.getNode());
+						add.addChild(minus);
+					} else {
+						add.addChild(eo.getNode());
+					}
+
+				}
+
+				node = add;
+				if (multiplication.size() > 0) {
+
+					if (multiplication.size() == 1) {
+
+						for (int i = 0; i < multiplication.size(); i++) {
+							multiply.addChild(multiplication.get(i).getNode());
+						}
+						divide.addChild(multiplication.get(0).getNode());
+						divide.addChild(add);
+					} else {
+						divide.addChild(multiply);
+						divide.addChild(add);
+
+					}
+
+					node = divide;
+				}
 
 			}
 
 			else {
+				ASTNode minus;
+				for (int i = 0; i < addition.size(); i++) {
+					eo = addition.get(i);
+					if (eo.isNegative()) {
+						add.addChild(eo.getNode());
+					} else {
+						minus = new ASTNode(Type.MINUS, pso);
+						minus.addChild(eo.getNode());
+						add.addChild(minus);
+					}
 
+				}
+				node = add;
+				if (multiplication.size() > 0) {
+
+					if (multiplication.size() == 1) {
+
+						for (int i = 0; i < multiplication.size(); i++) {
+							multiply.addChild(multiplication.get(i).getNode());
+						}
+						divide.addChild(add);
+						divide.addChild(multiply);
+					} else {
+						divide.addChild(add);
+						divide.addChild(multiplication.get(0).getNode());
+					}
+
+					node = divide;
+				}
 			}
 
 		}
 
-		return add;
+		return node;
 
 	}
 
@@ -522,18 +615,16 @@ public class AlgebraicRuleConverter {
 					if (node.getChild(i).isFunction()) {
 						nodeHash.put(function.getChild(i).getName(), node
 								.getChild(i).clone());
-					} 
-					else if (node.getChild(i).isOperator()) {
+					} else if (node.getChild(i).isOperator()) {
 						nodeHash.put(function.getChild(i).getName(), node
 								.getChild(i).clone());
-					}
-					else if (node.getChild(i).isName())
+					} else if (node.getChild(i).isName()) {
 						nameHash.put(function.getChild(i).getName(), node
 								.getChild(i).getName());
-					else if (node.getChild(i).isNumber()) {
+					} else if (node.getChild(i).isNumber()) {
 						numberHash.put(function.getChild(i).getName(), node
 								.getChild(i).getInteger());
-					} 
+					}
 
 				}
 				parent = (ASTNode) node.getParent();
@@ -558,14 +649,15 @@ public class AlgebraicRuleConverter {
 				}
 			}
 
-			// move on with its children
-			for (int i = 0; i < node.getNumChildren(); i++) {
-				substituteFunctions(node.getChild(i), i);
-			}
 		}
+
+		// move on with its children
+		for (int i = 0; i < node.getNumChildren(); i++) {
+			substituteFunctions(node.getChild(i), i);
+		}
+
 		return node;
 
-	}	
-	
+	}
 
 }
