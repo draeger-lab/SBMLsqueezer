@@ -41,17 +41,18 @@ import org.sbml.jsbml.ASTNode.Type;
 public class AlgebraicRuleConverter {
 
 	/**
+	 * This class represents a subterm in the equation of algebraic rules
 	 * 
 	 * @author Alexander D&ouml;rr
 	 * @since 1.4
 	 */
 	private class EquationObject {
 		/**
-		 * 
+		 * Contains the mathematical expression of the subterm
 		 */
 		private ASTNode node;
 		/**
-		 * 
+		 * Indicates whether the subterm has to be negativ or not
 		 */
 		private boolean isNegative;
 
@@ -60,10 +61,20 @@ public class AlgebraicRuleConverter {
 			this.isNegative = isNegative;
 		}
 
+		/**
+		 * Returns the subterm
+		 * 
+		 * @return
+		 */
 		public ASTNode getNode() {
 			return node;
 		}
 
+		/**
+		 * Returns a boolean whether the subterm has to be negativ or not
+		 * 
+		 * @return
+		 */
 		public boolean isNegative() {
 			return isNegative;
 		}
@@ -140,16 +151,12 @@ public class AlgebraicRuleConverter {
 			System.out.println("variable: " + variable);
 			as = new AssignmentRule();
 			as.setVariable(variable);
+			// Set pointer to algebraic rule's variable node and to its parent
 			setNodeWithVariable(node, variable);
 			nestingDepth = 0;
 			evaluateEquation(variableNodeParent);
 			System.out.println("nesting depth: " + nestingDepth);
 
-			// old
-			// as.setMath(reorganizeEquation(node));
-			// ----
-
-			// new
 			equationObjects = new ArrayList<ArrayList<EquationObject>>();
 			equationObjects.add(new ArrayList<EquationObject>());
 			equationObjects.add(new ArrayList<EquationObject>());
@@ -157,7 +164,6 @@ public class AlgebraicRuleConverter {
 			deleteVariable();
 			sortEquationObjects(node, false, false, false);
 			as.setMath(buildEquation());
-			// ----
 
 			System.out.println("after: " + as.getMath().toFormula());
 		}
@@ -166,8 +172,9 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * Checks if the Variable has to be moved to the other side of the equation
-	 * or not and if its connection to the eqution is additiv or multiplicative.
+	 * Checks if the variable of the algebraic equaiton has to be moved to the
+	 * other side of the equation or not and if its connection to the rest of
+	 * the equation is additiv or multiplicative.
 	 * 
 	 * 
 	 * @param node
@@ -243,88 +250,6 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * Return the other child of the given nodes parent
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private ASTNode getOtherChild(ASTNode node) {
-		ASTNode parent = (ASTNode) node.getParent();
-		if (parent.getLeftChild() == node) {
-			return parent.getRightChild();
-		} else
-			return parent.getLeftChild();
-
-	}
-
-	/**
-	 * Takes the equation stored in node an reorganizes it on the basis of the
-	 * evaluation of this equation and the variable
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private ASTNode reorganizeEquation(ASTNode node) {
-		ASTNode timesNode, valueNode, divideNode, parent, withVariable, rest;
-		int index;
-
-		System.out.println("reorganizing equation...");
-		System.out.println("additive: " + additive);
-		System.out.println("remainOnSide: " + remainOnSide);
-
-		if (additive) {
-			if (!remainOnSide) {
-				index = variableNodeParent.getParent().getIndex(
-						variableNodeParent);
-				parent = (ASTNode) variableNodeParent.getParent();
-				parent.removeChild(index);
-
-				return node;
-
-			} else {
-				index = variableNodeParent.getParent().getIndex(
-						variableNodeParent);
-				parent = (ASTNode) variableNodeParent.getParent();
-				parent.removeChild(index);
-				timesNode = new ASTNode(Type.TIMES, null);
-				valueNode = new ASTNode(-1, null);
-				timesNode.addChild(node);
-				timesNode.addChild(valueNode);
-
-				return timesNode;
-			}
-		} else {
-			timesNode = new ASTNode(Type.TIMES, null);
-			valueNode = new ASTNode(-1, null);
-			divideNode = new ASTNode(Type.DIVIDE, null);
-			parent = (ASTNode) variableNodeParent.getParent();
-			withVariable = getOtherChild(variableNode);
-			rest = getOtherChild(variableNodeParent);
-			index = variableNodeParent.getParent().getIndex(variableNodeParent);
-
-			parent = (ASTNode) variableNodeParent.getParent();
-			parent.removeChild(index);
-
-			if (remainOnSide) {
-				timesNode.addChild(rest);
-				timesNode.addChild(valueNode);
-				divideNode.addChild(timesNode);
-				divideNode.addChild(withVariable);
-
-				return divideNode;
-
-			} else {
-				timesNode.addChild(rest);
-				timesNode.addChild(valueNode);
-				divideNode.addChild(withVariable);
-				divideNode.addChild(timesNode);
-				return divideNode;
-
-			}
-		}
-	}
-
-	/**
 	 * Replaces the names of given ASTNode's childern with the value stored in
 	 * the given HashMaps if there is an entry in any of the HashMaps
 	 * 
@@ -352,24 +277,31 @@ public class AlgebraicRuleConverter {
 		}
 	}
 
+	/**
+	 * Creates EquationObjects for subterm of the rules equation and sorts them
+	 * into ArrayLists
+	 * 
+	 * @param node
+	 * @param plus
+	 * @param times
+	 * @param divide
+	 */
 	private void sortEquationObjects(ASTNode node, boolean plus, boolean times,
 			boolean divide) {
 
+		// Reached an opartor
 		if (node.isOperator()) {
 			if (node.getType() == Type.PLUS) {
 
 				for (int i = 0; i < node.getNumChildren(); i++) {
 					sortEquationObjects(node.getChild(i), true, false, false);
 				}
-			}
-			else if (node.getType() == Type.MINUS) {
+			} else if (node.getType() == Type.MINUS) {
 
 				for (int i = 0; i < node.getNumChildren(); i++) {
 					sortEquationObjects(node.getChild(i), true, true, false);
 				}
-			}
-
-			else if (node.getType() == Type.TIMES) {
+			} else if (node.getType() == Type.TIMES) {
 				if (node.getNumChildren() == 2) {
 					if (node.getLeftChild().isMinusOne()
 							&& !node.getRightChild().isMinusOne()) {
@@ -382,57 +314,68 @@ public class AlgebraicRuleConverter {
 						sortEquationObjects(node.getLeftChild(), true, true,
 								false);
 					} else {
-						for (int i = 0; i < node.getNumChildren(); i++) {
-							sortEquationObjects(node.getChild(i), false, true,
-									false);
-						}
+						equationObjects.get(1).add(
+								new EquationObject(node.clone(), false));
 					}
 
 				} else {
-					// for (int i = 0; i < node.getNumChildren(); i++) {
-					// sortEquationObjects(node.getChild(i), false, true,
-					// false);
-					// }
 					equationObjects.get(1).add(
 							new EquationObject(node.clone(), false));
 				}
 
 			}
-		} else {
+
+		}
+		// Reached a variable
+		else {
 			if (plus && times) {
 				equationObjects.get(0).add(
 						new EquationObject(node.clone(), true));
 			} else if (plus) {
 				equationObjects.get(0).add(
 						new EquationObject(node.clone(), false));
-
-			} else if (times) {
-
 			}
 		}
 
 	}
 
+	/**
+	 * Befor sorting the equation of the algebraic rule, the variable of the
+	 * rule has to be deleted.
+	 */
 	private void deleteVariable() {
 		int index;
-		if (variableNodeParent.getNumChildren() == 2 && variableNodeParent.getType() ==  Type.TIMES) {
+		// Node with variable has 2 children
+		if (variableNodeParent.getNumChildren() == 2
+				&& variableNodeParent.getType() == Type.TIMES) {
+			// Variable has a negativ sign / other child is -1
 			if (variableNodeParent.getLeftChild().isMinusOne()
 					|| variableNodeParent.getRightChild().isMinusOne()) {
 
 				index = variableNodeParent.getParent().getIndex(
 						variableNodeParent);
 				variableNodeParent.getParent().removeChild(index);
-			} else {
+			}
+			// Other child is not -1
+			else {
 				index = variableNodeParent.getIndex(variableNode);
 				variableNodeParent.removeChild(index);
 			}
 
-		} else {
+		}
+		// Node with variable has multiple childs
+		else {
 			index = variableNodeParent.getIndex(variableNode);
 			variableNodeParent.removeChild(index);
 		}
 	}
 
+	/**
+	 * Creates an equation for the current algebraic rule on the basis
+	 * of the evaluation and the sorted EquationObjects
+	 * 
+	 * @return
+	 */
 	private ASTNode buildEquation() {
 		System.out.println("rebuilding equation...");
 		System.out.println("additive: " + additive);
@@ -444,6 +387,7 @@ public class AlgebraicRuleConverter {
 		ASTNode multiply = new ASTNode(Type.TIMES, pso);
 		ASTNode divide = new ASTNode(Type.DIVIDE, pso);
 		ASTNode node = null;
+		
 		if (additive) {
 			if (!remainOnSide) {
 				ASTNode minus;
@@ -533,7 +477,6 @@ public class AlgebraicRuleConverter {
 
 					node = divide;
 				}
-
 			}
 
 			else {
@@ -547,10 +490,8 @@ public class AlgebraicRuleConverter {
 						minus.addChild(eo.getNode());
 						add.addChild(minus);
 					}
-
 				}
-		
-				
+
 				node = add;
 				if (multiplication.size() > 0) {
 
@@ -564,13 +505,12 @@ public class AlgebraicRuleConverter {
 						}
 						divide.addChild(add);
 						divide.addChild(multiply);
-			
+
 					}
 
 					node = divide;
 				}
 			}
-
 		}
 
 		return node;
@@ -603,15 +543,16 @@ public class AlgebraicRuleConverter {
 
 	/**
 	 * Replaces all functions in the given ASTNode with the function definition
+	 * and its arguments
 	 * 
 	 * @param node
 	 * @param indexParent
 	 */
 	private ASTNode substituteFunctions(ASTNode node, int indexParent) {
-		// check if node is a function
+		// Check if node is a function
 		if (node.isName()) {
 			FunctionDefinition fd = model.getFunctionDefinition(node.getName());
-			// node represents a function definiton in the model
+			// Node represents a function definiton in the model
 			if (fd != null) {
 				ASTNode function = fd.getMath();
 				HashMap<String, String> nameHash = new HashMap<String, String>();
@@ -633,48 +574,46 @@ public class AlgebraicRuleConverter {
 								.getChild(i).getName());
 					} else if (node.getChild(i).isNumber()) {
 						if (node.getChild(i).isInteger()) {
-							numberHash.put(function.getChild(i).getName(),(double) node
-									.getChild(i).getInteger());
-						}
-						else{
-							numberHash.put(function.getChild(i).getName(),(double) node
-									.getChild(i).getReal());
+							numberHash.put(function.getChild(i).getName(),
+									(double) node.getChild(i).getInteger());
+						} else {
+							numberHash.put(function.getChild(i).getName(),
+									(double) node.getChild(i).getReal());
 						}
 					}
-
 				}
 				parent = (ASTNode) node.getParent();
-				// function definiton is child
+				// Function definiton is child
 				if (parent != null) {
 					System.out.println(parent.getType());
-					// replace the reference to a function definition with the
+					// Replace the reference to a function definition with the
 					// function definiton itself
 					parent.replaceChild(indexParent, function.getRightChild()
 							.clone());
-					// substitute the variables with the parameter
+					// Substitute the variables with the parameter
 					replaceNames(parent.getChild(indexParent), nameHash,
 							numberHash, nodeHash);
-					
+
+					// Replaced arguments could contain additional functions, so
+					// start at the parent again
 					node = parent;
 
 				}
-				// function definiton is root
+				// Function definiton is root
 				else {
-					// replace the reference to a function definition with the
+					// Replace the reference to a function definition with the
 					// function definiton itself
 					node = function.getRightChild().clone();
-					// substitute the variables with the parameter
+					// Substitute the variables with the parameter
 					replaceNames(node, nameHash, numberHash, nodeHash);
 				}
 			}
-
 		}
 
-		// move on with its children
+		// Move on with its children
 		for (int i = 0; i < node.getNumChildren(); i++) {
 			substituteFunctions(node.getChild(i), i);
 		}
-
 		return node;
 
 	}
