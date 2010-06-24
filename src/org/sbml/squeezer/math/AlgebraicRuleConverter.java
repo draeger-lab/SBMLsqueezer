@@ -333,7 +333,7 @@ public class AlgebraicRuleConverter {
 	 * @param varibales
 	 */
 	private void replaceNames(ASTNode node, Map<String, String> varibales,
-			Map<String, Integer> numberHash, Map<String, ASTNode> nodeHash) {
+			Map<String, Double> numberHash, Map<String, ASTNode> nodeHash) {
 
 		if (node.isName()) {
 			if (varibales.get(node.getName()) != null) {
@@ -360,6 +360,12 @@ public class AlgebraicRuleConverter {
 
 				for (int i = 0; i < node.getNumChildren(); i++) {
 					sortEquationObjects(node.getChild(i), true, false, false);
+				}
+			}
+			else if (node.getType() == Type.MINUS) {
+
+				for (int i = 0; i < node.getNumChildren(); i++) {
+					sortEquationObjects(node.getChild(i), true, true, false);
 				}
 			}
 
@@ -409,7 +415,7 @@ public class AlgebraicRuleConverter {
 
 	private void deleteVariable() {
 		int index;
-		if (variableNodeParent.getNumChildren() == 2) {
+		if (variableNodeParent.getNumChildren() == 2 && variableNodeParent.getType() ==  Type.TIMES) {
 			if (variableNodeParent.getLeftChild().isMinusOne()
 					|| variableNodeParent.getRightChild().isMinusOne()) {
 
@@ -508,18 +514,18 @@ public class AlgebraicRuleConverter {
 					}
 
 				}
-
 				node = add;
 				if (multiplication.size() > 0) {
 
 					if (multiplication.size() == 1) {
 
-						for (int i = 0; i < multiplication.size(); i++) {
-							multiply.addChild(multiplication.get(i).getNode());
-						}
 						divide.addChild(multiplication.get(0).getNode());
 						divide.addChild(add);
 					} else {
+
+						for (int i = 0; i < multiplication.size(); i++) {
+							multiply.addChild(multiplication.get(i).getNode());
+						}
 						divide.addChild(multiply);
 						divide.addChild(add);
 
@@ -543,19 +549,22 @@ public class AlgebraicRuleConverter {
 					}
 
 				}
+		
+				
 				node = add;
 				if (multiplication.size() > 0) {
 
 					if (multiplication.size() == 1) {
+						divide.addChild(add);
+						divide.addChild(multiplication.get(0).getNode());
 
+					} else {
 						for (int i = 0; i < multiplication.size(); i++) {
 							multiply.addChild(multiplication.get(i).getNode());
 						}
 						divide.addChild(add);
 						divide.addChild(multiply);
-					} else {
-						divide.addChild(add);
-						divide.addChild(multiplication.get(0).getNode());
+			
 					}
 
 					node = divide;
@@ -606,8 +615,9 @@ public class AlgebraicRuleConverter {
 			if (fd != null) {
 				ASTNode function = fd.getMath();
 				HashMap<String, String> nameHash = new HashMap<String, String>();
-				HashMap<String, Integer> numberHash = new HashMap<String, Integer>();
+				HashMap<String, Double> numberHash = new HashMap<String, Double>();
 				HashMap<String, ASTNode> nodeHash = new HashMap<String, ASTNode>();
+
 				ASTNode parent;
 
 				// Hash its variables to the parameter
@@ -622,14 +632,21 @@ public class AlgebraicRuleConverter {
 						nameHash.put(function.getChild(i).getName(), node
 								.getChild(i).getName());
 					} else if (node.getChild(i).isNumber()) {
-						numberHash.put(function.getChild(i).getName(), node
-								.getChild(i).getInteger());
+						if (node.getChild(i).isInteger()) {
+							numberHash.put(function.getChild(i).getName(),(double) node
+									.getChild(i).getInteger());
+						}
+						else{
+							numberHash.put(function.getChild(i).getName(),(double) node
+									.getChild(i).getReal());
+						}
 					}
 
 				}
 				parent = (ASTNode) node.getParent();
 				// function definiton is child
 				if (parent != null) {
+					System.out.println(parent.getType());
 					// replace the reference to a function definition with the
 					// function definiton itself
 					parent.replaceChild(indexParent, function.getRightChild()
@@ -637,6 +654,8 @@ public class AlgebraicRuleConverter {
 					// substitute the variables with the parameter
 					replaceNames(parent.getChild(indexParent), nameHash,
 							numberHash, nodeHash);
+					
+					node = parent;
 
 				}
 				// function definiton is root
