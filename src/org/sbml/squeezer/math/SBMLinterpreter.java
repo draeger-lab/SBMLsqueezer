@@ -41,6 +41,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
@@ -454,13 +455,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				return new ASTNodeValue(Y[speciesVal.getIndex()]
 						/ getCompartmentValueOf(speciesVal), this);
 			}
-			// return Y[speciesVal.getIndex()] /
-			// Maths.root(Y[compVal.getIndex()], 2);
+			// return new ASTNodeValue(Y[speciesVal.getIndex()] /
+			// Maths.root(getCompartmentValueOf(speciesVal), 2), this);
 			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits()) {
 				return new ASTNodeValue(Y[speciesVal.getIndex()]
 						* getCompartmentValueOf(speciesVal), this);
 			}
-
 			return new ASTNodeValue(Y[speciesVal.getIndex()], this);
 			// return Y[speciesVal.getIndex()] /
 			// Maths.root(Y[compVal.getIndex()],2);
@@ -470,21 +470,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				|| nsb instanceof LocalParameter) {
 			if (nsb instanceof LocalParameter) {
 				LocalParameter p = (LocalParameter) nsb;
-				if (p.getParentSBMLObject() instanceof KineticLaw) {
-					ListOf<LocalParameter> params = ((KineticLaw) p
-							.getParentSBMLObject()).getListOfParameters();
+				// parent: list of parameter; parent of parent: kinetic law
+				SBase parent = p.getParentSBMLObject().getParentSBMLObject();
+				if (parent instanceof KineticLaw) {
+					ListOf<LocalParameter> params = ((KineticLaw) parent)
+							.getListOfParameters();
 					for (int i = 0; i < params.size(); i++) {
-						if (p.getId() == params.get(i).getId())
+						if (p.getId() == params.get(i).getId()) {
 							return new ASTNodeValue(params.get(i).getValue(),
 									this);
+						}
 					}
 				}
 			}
 			speciesVal = valuesHash.get(nsb.getId());
-			// TODO: Was ist hier los? Warum wird das null?
-			if (speciesVal == null) {
-				System.out.println(nsb.getId());
-			}
 			return new ASTNodeValue(speciesVal != null ? Y[speciesVal
 					.getIndex()] : Double.NaN, this);
 
@@ -947,6 +946,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			yIndex++;
 
 		}
+		
+		/*
+		 * Initial assignments
+		 */
+		processInitialAssignments();
 
 		/*
 		 * Evaluate Constraints
@@ -988,10 +992,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		 */
 		processRules(Y);
 
-		/*
-		 * Initial assignments
-		 */
-		processInitialAssignments();
+
 
 		// save the initial values of this system
 		initialValues = new double[Y.length];
@@ -1191,12 +1192,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						.getMath().compile(this).toDouble()));
 			}
 		}
+		
 		if (algebraicRules != null) {
 			for (AssignmentRule as : algebraicRules) {
 				val = valuesHash.get(as.getVariable());
 				assignmentRules.add(new DESAssignment(t, val.getIndex(), as
 						.getMath().compile(this).toDouble()));
-
 			}
 		}
 
@@ -1691,7 +1692,5 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 
 }
