@@ -29,6 +29,7 @@ import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.ASTNode.Type;
 
 /**
@@ -147,7 +148,11 @@ public class AlgebraicRuleConverter {
 		if (variable.length() > 0) {
 			this.variableNodeParent = null;
 			this.variableNode = null;
-			System.out.println("before: " + node.toFormula());
+			try {
+				System.out.println("before: " + node.toFormula());
+			} catch (SBMLException e) {
+				e.printStackTrace();
+			}
 			System.out.println("variable: " + variable);
 			as = new AssignmentRule();
 			as.setVariable(variable);
@@ -165,7 +170,11 @@ public class AlgebraicRuleConverter {
 			sortEquationObjects(node, false, false, false);
 			as.setMath(buildEquation());
 
-			System.out.println("after: " + as.getMath().toFormula());
+			try {
+				System.out.println("after: " + as.getMath().toFormula());
+			} catch (SBMLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return as;

@@ -40,6 +40,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.xml.stream.XMLStreamException;
 
 import org.jdom.JDOMException;
 import org.sbml.jsbml.AssignmentRule;
@@ -63,6 +64,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.QuantityWithDefinedUnit;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SBaseWithDerivedUnit;
@@ -190,7 +192,12 @@ public class SBasePanel extends JPanel {
 		} else if (sbase instanceof Constraint) {
 			addProperties((Constraint) sbase);
 		} else if (sbase instanceof Reaction) {
-			addProperties((Reaction) sbase);
+			try {
+				addProperties((Reaction) sbase);
+			} catch (XMLStreamException exc) {
+				exc.printStackTrace();
+				GUITools.showErrorMessage(this, exc);
+			}
 		} else if (sbase instanceof Event) {
 			addProperties((Event) sbase);
 		}
@@ -332,9 +339,13 @@ public class SBasePanel extends JPanel {
 				laTeXpreview.append(latex.timeDerivative(rr.getVariable()));
 				laTeXpreview.append('=');
 			}
-			laTeXpreview.append(mc.getMath().compile(latex).toString().replace(
-					"mathrm", "mbox").replace("text", "mbox").replace("mathtt",
-					"mbox"));
+			try {
+				laTeXpreview.append(mc.getMath().compile(latex).toString()
+						.replace("mathrm", "mbox").replace("text", "mbox")
+						.replace("mathtt", "mbox"));
+			} catch (SBMLException e) {
+				laTeXpreview.append("invalid");
+			}
 			laTeXpreview.append(LaTeX.eqEnd);
 			JPanel preview = new JPanel(new BorderLayout());
 			preview.add(new sHotEqn(laTeXpreview.toString()),
@@ -460,8 +471,9 @@ public class SBasePanel extends JPanel {
 	/**
 	 * 
 	 * @param sbase
+	 * @throws XMLStreamException
 	 */
-	private void addProperties(Reaction reaction) {
+	private void addProperties(Reaction reaction) throws XMLStreamException {
 		JCheckBox check = new JCheckBox("Reversible", reaction.getReversible());
 		check.setEnabled(editable);
 		lh.add(check, 1, ++row, 3, 1, 1, 1);
@@ -501,8 +513,13 @@ public class SBasePanel extends JPanel {
 		lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		JPanel rEqPanel = new JPanel(new BorderLayout());
-		JEditorPane rEqn = new JEditorPane("text/html", (new HTMLFormula())
-				.reactionEquation(reaction));
+		JEditorPane rEqn;
+		try {
+			rEqn = new JEditorPane("text/html", (new HTMLFormula())
+					.reactionEquation(reaction));
+		} catch (SBMLException e) {
+			rEqn = new JEditorPane("text/html", "invalid");
+		}
 		JScrollPane s = new JScrollPane(rEqn,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -781,8 +798,13 @@ public class SBasePanel extends JPanel {
 			JPanel p = new JPanel(new GridLayout(1, 1));
 			p.setBorder(BorderFactory.createTitledBorder(" "
 					+ sMath.getClass().getCanonicalName() + ' '));
-			sHotEqn eqn = new sHotEqn(sMath.getMath().compile(latex).toString()
-					.replace("\\\\", "\\"));
+			String l;
+			try {
+				l = sMath.getMath().compile(latex).toString().replace("\\\\", "\\");
+			} catch (SBMLException e) {
+				l = "invalid";
+			}
+			sHotEqn eqn = new sHotEqn(l);
 			eqn.setBorder(BorderFactory.createLoweredBevelBorder());
 			p.add(eqn);
 			lh.add(p, 3, ++row, 1, 1, 1, 1);

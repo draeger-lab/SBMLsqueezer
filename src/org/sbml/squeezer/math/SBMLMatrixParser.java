@@ -11,6 +11,7 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
@@ -150,8 +151,9 @@ public class SBMLMatrixParser {
 	 * Builds the modulation matrix for the current model
 	 * 
 	 * @return
+	 * @throws SBMLException 
 	 */
-	public StabilityMatrix getModulation() {
+	public StabilityMatrix getModulation() throws SBMLException {
 
 		StabilityMatrix matrixW = new StabilityMatrix(numSpecies, numReactions,
 				0);
@@ -172,8 +174,9 @@ public class SBMLMatrixParser {
 			for (int m = 0; m < losr.size(); m++) {
 				modSpeciesRef = reac.getModifier(m);
 
-				if (modSpeciesRef.getSBOTerm() == -1)
+				if (modSpeciesRef.getSBOTerm() == -1) {
 					classification = classifyModifier(reac, modSpeciesRef);
+				}
 
 				// potentiator
 				if (classification > 0 || modSpeciesRef.getSBOTerm() == 21) {
@@ -217,8 +220,10 @@ public class SBMLMatrixParser {
 	 * @param reac
 	 * @param msr
 	 * @return
+	 * @throws SBMLException
 	 */
-	private int classifyModifier(Reaction reac, ModifierSpeciesReference msr) {
+	private int classifyModifier(Reaction reac, ModifierSpeciesReference msr)
+			throws SBMLException {
 		SBMLinterpreter sbmli;
 		int result = 0;
 		double normal, half, twice;
@@ -228,30 +233,28 @@ public class SBMLMatrixParser {
 		initGlobalParameter(reac.getKineticLaw().getMath());
 		Model m = doc.getModel();
 		try {
-		sbmli = new SBMLinterpreter(m);
-		iA = m.getSpecies(msr.getSpecies()).getInitialAmount();
-		// evaluate reaction with normal amount
-		normal = reac.getKineticLaw().getMath().compile(sbmli).toDouble();
+			sbmli = new SBMLinterpreter(m);
+			iA = m.getSpecies(msr.getSpecies()).getInitialAmount();
+			// evaluate reaction with normal amount
+			normal = reac.getKineticLaw().getMath().compile(sbmli).toDouble();
 
-		// evaluate reaction with half of the normal amount
-		m.getSpecies(msr.getSpecies()).setInitialAmount(iA / 2);
-		sbmli = new SBMLinterpreter(m);
-		half = reac.getKineticLaw().getMath().compile(sbmli).toDouble();
+			// evaluate reaction with half of the normal amount
+			m.getSpecies(msr.getSpecies()).setInitialAmount(iA / 2);
+			sbmli = new SBMLinterpreter(m);
+			half = reac.getKineticLaw().getMath().compile(sbmli).toDouble();
 
-		// evaluate reaction with twice the normal amount
-		m.getSpecies(msr.getSpecies()).setInitialAmount(iA * 2);
-		sbmli = new SBMLinterpreter(m);
-		twice = reac.getKineticLaw().getMath().compile(sbmli).toDouble();
+			// evaluate reaction with twice the normal amount
+			m.getSpecies(msr.getSpecies()).setInitialAmount(iA * 2);
+			sbmli = new SBMLinterpreter(m);
+			twice = reac.getKineticLaw().getMath().compile(sbmli).toDouble();
 
+			if (half < normal && normal < twice)
+				result = 1;
+			else if (half > normal && normal > twice)
+				result = -1;
 
-		
-		if (half < normal && normal < twice)
-			result = 1;
-		else if (half > normal && normal > twice)
-			result = -1;
+			m.getSpecies(msr.getSpecies()).setInitialAmount(iA);
 
-		m.getSpecies(msr.getSpecies()).setInitialAmount(iA);
-		
 		} catch (ModelOverdeterminedException e) {
 
 		}
@@ -262,7 +265,7 @@ public class SBMLMatrixParser {
 	 * Adds SBOTerms to all modifiers hashed in the HashMap sBOTerms because
 	 * their SBOTerm hasn't been set yet
 	 */
-	// TODO noch n�tig?
+	// TODO noch nötig?
 	private void setSBOTerms() {
 		HashMap<Integer, Integer> sBOReaction;
 		Model m = doc.getModel();
