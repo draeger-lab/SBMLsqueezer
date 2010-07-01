@@ -186,6 +186,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	protected double[] initialValues;
 
 	/**
+	 * A boolean that indicates, whether the intepreter is currently processing
+	 * the reaction velocities or not.
+	 */
+	private boolean isProcessingVelocities;
+
+	/**
 	 * An array, which stores for each constraint the list of times, in which
 	 * the constraint was violated during the simulation.
 	 */
@@ -448,19 +454,26 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			Species s = (Species) nsb;
 			speciesVal = valuesHash.get(nsb.getId());
 			// int dim = s.getCompartmentInstance().getSpatialDimensions();
-			if (getCompartmentValueOf(speciesVal) == 0d) {
-				return new ASTNodeValue(Y[speciesVal.getIndex()], this);
+			if (isProcessingVelocities) {
+
+				if (getCompartmentValueOf(speciesVal) == 0d) {
+					return new ASTNodeValue(Y[speciesVal.getIndex()], this);
+				}
+
+				if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits()) {
+					return new ASTNodeValue(Y[speciesVal.getIndex()]
+							/ getCompartmentValueOf(speciesVal), this);
+				}
+
+				// return new ASTNodeValue(Y[speciesVal.getIndex()] /
+				// Maths.root(getCompartmentValueOf(speciesVal), 2), this);
+				if (s.isSetInitialConcentration()
+						&& s.getHasOnlySubstanceUnits()) {
+					return new ASTNodeValue(Y[speciesVal.getIndex()]
+							* getCompartmentValueOf(speciesVal), this);
+				}
 			}
-			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits()) {
-				return new ASTNodeValue(Y[speciesVal.getIndex()]
-						/ getCompartmentValueOf(speciesVal), this);
-			}
-			// return new ASTNodeValue(Y[speciesVal.getIndex()] /
-			// Maths.root(getCompartmentValueOf(speciesVal), 2), this);
-			if (s.isSetInitialConcentration() && s.getHasOnlySubstanceUnits()) {
-				return new ASTNodeValue(Y[speciesVal.getIndex()]
-						* getCompartmentValueOf(speciesVal), this);
-			}
+
 			return new ASTNodeValue(Y[speciesVal.getIndex()], this);
 			// return Y[speciesVal.getIndex()] /
 			// Maths.root(Y[compVal.getIndex()],2);
@@ -828,7 +841,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
 
+		isProcessingVelocities = true;
 		processVelocities(changeRate);
+		isProcessingVelocities = false;
 
 		processRules(changeRate);
 
@@ -904,6 +919,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		valuesHash = new HashMap<String, Value>();
 		int yIndex = 0;
 		currentTime = 0d;
+		isProcessingVelocities = false;
 
 		this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
 				+ model.getNumParameters()];
@@ -946,7 +962,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			yIndex++;
 
 		}
-		
+
 		/*
 		 * Initial assignments
 		 */
@@ -991,8 +1007,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		 * All other rules
 		 */
 		processRules(Y);
-
-
 
 		// save the initial values of this system
 		initialValues = new double[Y.length];
@@ -1192,7 +1206,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						.getMath().compile(this).toDouble()));
 			}
 		}
-		
+
 		if (algebraicRules != null) {
 			for (AssignmentRule as : algebraicRules) {
 				val = valuesHash.get(as.getVariable());
@@ -1411,6 +1425,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		Species species;
 		SpeciesReference speciesRef;
 		Value val;
+
 		// Velocities of each reaction.
 		for (int i = 0; i < v.length; i++) {
 			currentReaction = model.getReaction(i);
@@ -1441,7 +1456,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 								.getStoichiometry()
 								* v[reactionIndex];
 					}
+					// When the unit of reaction specie is mol/compartment size
+					// then it has to be considered in the change rate
+					if (species.isSetInitialConcentration()) {
+						changeRate[speciesIndex] = changeRate[speciesIndex]
+								/ getCompartmentValueOf(val);
+					}
 				}
+
 			}
 
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
@@ -1460,6 +1482,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						changeRate[speciesIndex] += speciesRef
 								.getStoichiometry()
 								* v[reactionIndex];
+					}
+					// When the unit of reaction specie is mol/compartment size
+					// then it has to be considered in the change rate
+					if (species.isSetInitialConcentration()) {
+						changeRate[speciesIndex] = changeRate[speciesIndex]
+								/ getCompartmentValueOf(val);
 					}
 				}
 			}
