@@ -33,6 +33,7 @@ import org.sbml.jsbml.ASTNodeValue;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.StoichiometryMath;
@@ -46,7 +47,7 @@ import org.sbml.squeezer.CfgKeys;
  * 
  * @since 1.0
  * @version
- * @author Dieudonne Motsou Wouamba
+ * @author Dieudonn&eacute; Motsou Wouamba
  * @author Andreas Dr&auml;ger
  * @date 2007-12-04
  */
@@ -522,11 +523,16 @@ public class LaTeXExport extends LaTeX {
 			if (count > 0) {
 				reactionEqn.append(" + ");
 			}
-			if (specRef.isSetStoichiometryMath())
-				reactionEqn.append(specRef.getStoichiometryMath().getMath()
-						.compile(latex));
-			else if (specRef.getStoichiometry() != 1d)
+			if (specRef.isSetStoichiometryMath()) {
+				try {
+					reactionEqn.append(specRef.getStoichiometryMath().getMath()
+							.compile(latex));
+				} catch (SBMLException e) {
+					reactionEqn.append("invalid");
+				}
+			} else if (specRef.getStoichiometry() != 1d) {
 				reactionEqn.append(specRef.getStoichiometry());
+			}
 			reactionEqn.append(' ');
 			reactionEqn.append(latex.mbox(LaTeX.maskSpecialChars(specRef
 					.getSpecies())));
@@ -559,8 +565,12 @@ public class LaTeXExport extends LaTeX {
 				reactionEqn.append(" + ");
 			}
 			if (specRef.isSetStoichiometryMath()) {
-				reactionEqn.append(specRef.getStoichiometryMath().getMath()
-						.compile(latex));
+				try {
+					reactionEqn.append(specRef.getStoichiometryMath().getMath()
+							.compile(latex));
+				} catch (SBMLException e) {
+					reactionEqn.append("invalid");
+				}
 			} else if (specRef.getStoichiometry() != 1d) {
 				reactionEqn.append(specRef.getStoichiometry());
 			}
@@ -733,13 +743,19 @@ public class LaTeXExport extends LaTeX {
 							+ newLine + begin + "v_{" + latexReactionIndex
 							+ "}=";
 			if (r.getKineticLaw() != null) {
-				if (r.getKineticLaw().getMath() != null)
-					rateLaws[reactionIndex] += r.getKineticLaw().getMath()
-							.compile(latex);
-				else
+				if (r.getKineticLaw().getMath() != null) {
+					try {
+						rateLaws[reactionIndex] += r.getKineticLaw().getMath()
+								.compile(latex);
+					} catch (SBMLException e) {
+						rateLaws[reactionIndex] += "invalid";
+					}
+				} else {
 					rateLaws[reactionIndex] += "\\text{no mathematics specified}";
-			} else
+				}
+			} else {
 				rateLaws[reactionIndex] += "\\text{no kinetic law specified}";
+			}
 			for (speciesIndex = 0; speciesIndex < model.getNumSpecies(); speciesIndex++) {
 				speciesIDandIndex.put(model.getSpecies(speciesIndex).getId(),
 						Integer.valueOf(speciesIndex));
@@ -793,13 +809,21 @@ public class LaTeXExport extends LaTeX {
 						stochMath = ref.getStoichiometryMath();
 						if (stochMath != null && stochMath.isSetMath()) {
 							stoch = stochMath.getMath();
-							sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
-									.getType() == ASTNode.Type.MINUS) ? sEquation += "-\\left("
-									+ stoch.compile(latex)
-									+ "\\right)v_{"
-									+ reactantsReaction.get(k) + "}"
-									: "-" + stoch.compile(latex) + "v_{"
-											+ reactantsReaction.get(k) + "}";
+							String l;
+							try {
+								l = stoch.compile(latex).toString();
+							} catch (SBMLException e) {
+								l = "invalid";
+							}
+							if (stoch.getType() == ASTNode.Type.PLUS
+									|| stoch.getType() == ASTNode.Type.MINUS) {
+								sEquation += sEquation += "-\\left(" + l
+										+ "\\right)v_{"
+										+ reactantsReaction.get(k) + "}";
+							} else {
+								sEquation += "-" + l + "v_{"
+										+ reactantsReaction.get(k) + "}";
+							}
 						} else {
 							double doubleStoch = reactantsStochiometric.get(k)
 									.getStoichiometry();
@@ -830,12 +854,18 @@ public class LaTeXExport extends LaTeX {
 								stoch = stochMath.getMath();
 							if (sEquation == "") {
 								if (stoch != null) {
+									String l;
+									try {
+										l = stoch.compile(latex).toString();
+									} catch (SBMLException e) {
+										l = "invalid";
+									}
 									sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
 											.getType() == ASTNode.Type.MINUS) ? sEquation += "\\left("
-											+ stoch.compile(latex)
+											+ l
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"
-											: stoch.compile(latex) + "v_{"
+											: l + "v_{"
 													+ productsReaction.get(k)
 													+ "}";
 								} else {
@@ -859,13 +889,18 @@ public class LaTeXExport extends LaTeX {
 
 							} else {
 								if (stoch != null) {
+									String l;
+									try {
+										l = stoch.compile(latex).toString();
+									} catch (SBMLException e) {
+										l = "invalid";
+									}
 									sEquation += (stoch.getType() == ASTNode.Type.PLUS || stoch
 											.getType() == ASTNode.Type.MINUS) ? sEquation += "+\\left("
-											+ stoch.compile(latex)
+											+ l
 											+ "\\right)v_{"
 											+ productsReaction.get(k) + "}"
-											: "+" + stoch.compile(latex)
-													+ "v_{"
+											: "+" + l + "v_{"
 													+ productsReaction.get(k)
 													+ "}";
 								} else {
@@ -970,10 +1005,22 @@ public class LaTeXExport extends LaTeX {
 			for (i = 0; i < model.getNumEvents(); i++) {
 				ev = model.getEvent(i);
 				LinkedList<ASTNodeValue> assignments = new LinkedList<ASTNodeValue>();
-				assignments.add(ev.getTrigger().getMath().compile(latex));
-				for (int j = 0; j < ev.getNumEventAssignments(); j++)
-					assignments.add(ev.getEventAssignment(j).getMath().compile(
-							latex));
+				ASTNodeValue value;
+				try {
+					value = ev.getTrigger().getMath().compile(latex);
+				} catch (SBMLException e) {
+					value = new ASTNodeValue(latex);
+				}
+				assignments.add(value);
+				for (int j = 0; j < ev.getNumEventAssignments(); j++) {
+					try {
+						value = ev.getEventAssignment(j).getMath().compile(
+								latex);
+					} catch (SBMLException e) {
+						value = new ASTNodeValue(latex);
+					}
+					assignments.add(value);
+				}
 				events[i] = assignments;
 			}
 			laTeX.append(eventsHead);
@@ -997,9 +1044,15 @@ public class LaTeXExport extends LaTeX {
 								+ "\\texttt{and assigns the following rule: }"
 								+ newLine);
 					else {
+						String l;
+						try {
+							l = ev.getDelay().getMath().compile(latex)
+									.toString();
+						} catch (SBMLException e) {
+							l = "invalid";
+						}
 						laTeX.append(newLine
-								+ "\\texttt{and assigns after a delay of "
-								+ ev.getDelay().getMath().compile(latex));
+								+ "\\texttt{and assigns after a delay of " + l);
 						if (!ev.getTimeUnits().equals(null))
 							laTeX.append(ev.getTimeUnits()
 									+ " the following rules: }" + newLine);
@@ -1019,9 +1072,15 @@ public class LaTeXExport extends LaTeX {
 								+ "\\texttt{and assigns the following rule: }"
 								+ newLine);
 					else {
+						String l;
+						try {
+							l = ev.getDelay().getMath().compile(latex)
+									.toString();
+						} catch (SBMLException e) {
+							l = "invalid";
+						}
 						laTeX.append(newLine
-								+ "\\texttt{and assigns after a delay of "
-								+ ev.getDelay().getMath().compile(latex));
+								+ "\\texttt{and assigns after a delay of " + l);
 						if (!ev.getTimeUnits().equals(null))
 							laTeX.append(ev.getTimeUnits()
 									+ " the following rule: }" + newLine);
@@ -1142,10 +1201,17 @@ public class LaTeXExport extends LaTeX {
 		laTeX.append(name);
 		laTeX.append("}= ");
 		if ((reaction.getKineticLaw() != null)
-				&& (reaction.getKineticLaw().getMath() != null))
-			laTeX.append(reaction.getKineticLaw().getMath().compile(latex));
-		else
+				&& (reaction.getKineticLaw().getMath() != null)) {
+			String l;
+			try {
+				l = reaction.getKineticLaw().getMath().compile(latex).toString();
+			} catch (SBMLException e) {
+				l = "invalid";
+			}
+			laTeX.append(l);
+		} else {
 			laTeX.append(" \\mathrm{undefined} ");
+		}
 		laTeX.append(newLine + "\\end{equation*}");
 		laTeX
 				.append(newLine

@@ -47,6 +47,7 @@ import javax.swing.event.TableModelEvent;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
@@ -132,12 +133,17 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 			Object o = dataModel.getValueAt(rowIndex, 1);
 			if (o instanceof BasicKineticLaw) {
 				BasicKineticLaw kinetic = (BasicKineticLaw) o;
-				String LaTeX = kinetic.getMath().compile(
-						new LaTeX(((Boolean) klg.getSettings().get(
-								CfgKeys.LATEX_NAMES_IN_EQUATIONS))
-								.booleanValue())).toString().replace("text",
-						"mbox").replace("mathrm", "mbox").replace("mathtt",
-						"mbox");
+				String LaTeX;
+				try {
+					LaTeX = kinetic.getMath().compile(
+							new LaTeX(((Boolean) klg.getSettings().get(
+									CfgKeys.LATEX_NAMES_IN_EQUATIONS))
+									.booleanValue())).toString().replace("text",
+							"mbox").replace("mathrm", "mbox").replace("mathtt",
+							"mbox");
+				} catch (SBMLException e1) {
+					LaTeX = "invalid";
+				}
 				JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
 						+ "\\end{equation}");
 				JPanel panel = new JPanel(new BorderLayout());

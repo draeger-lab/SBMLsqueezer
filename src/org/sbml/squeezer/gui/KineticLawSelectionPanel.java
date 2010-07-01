@@ -43,6 +43,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
@@ -126,10 +127,14 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		for (int i = 0; i < possibleTypes.length; i++) {
 			possibleTypesNames[i] = possibleLaws[i].getSimpleName();
 			possibleTypes[i] = possibleLaws[i].getClass().getCanonicalName();
-			laTeXpreview[i] = possibleLaws[i].getMath().compile(
-					new LaTeX(((Boolean) klg.getSettings().get(
-							CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue()))
-					.toString();
+			try {
+				laTeXpreview[i] = possibleLaws[i].getMath().compile(
+						new LaTeX(((Boolean) klg.getSettings().get(
+								CfgKeys.LATEX_NAMES_IN_EQUATIONS))
+								.booleanValue())).toString();
+			} catch (SBMLException e) {
+				laTeXpreview[i] = "invalid";
+			}
 		}
 		kineticLawComboBox = new JComboBox(possibleTypesNames);
 		kineticLawComboBox.setEditable(false);

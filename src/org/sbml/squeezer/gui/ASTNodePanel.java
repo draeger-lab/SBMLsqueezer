@@ -34,6 +34,7 @@ import javax.swing.SpinnerNumberModel;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.MathContainer;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.compilers.LaTeX;
 
@@ -102,7 +103,11 @@ public class ASTNodePanel extends JPanel {
 
 		JTextArea area = new JTextArea();
 		area.setColumns(60);
-		area.setText(node.toFormula());
+		try {
+			area.setText(node.toFormula());
+		} catch (SBMLException e) {
+			area.setText("invalid");
+		}
 		area.setEditable(false);
 		area.setBorder(BorderFactory.createLoweredBevelBorder());
 		lh.add("Formula", area, true);
@@ -160,7 +165,12 @@ public class ASTNodePanel extends JPanel {
 				.containsUndeclaredUnits());
 		chck.setEnabled(enabled);
 		l.add(chck, 0, 0, 3, 1);
-		UnitDefinition ud = node.deriveUnit();
+		UnitDefinition ud;
+		try {
+			ud = node.deriveUnit();
+		} catch (SBMLException e) {
+			ud = new UnitDefinition();
+		}
 		JEditorPane unitPane = GUITools.unitPreview(ud != null ? ud
 				: new UnitDefinition());
 		unitPane.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -173,8 +183,14 @@ public class ASTNodePanel extends JPanel {
 
 		StringBuilder latex = new StringBuilder();
 		latex.append(LaTeX.eqBegin);
-		latex.append(node.compile(new LaTeX()).toString().replace("mathrm",
-				"mbox").replace("text", "mbox").replace("mathtt", "mbox"));
+		String ltx;
+		try {
+			ltx = node.compile(new LaTeX()).toString().replace("mathrm",
+			"mbox").replace("text", "mbox").replace("mathtt", "mbox");
+		} catch (SBMLException e) {
+			ltx = "invalid";
+		}
+		latex.append(ltx);
 		latex.append(LaTeX.eqEnd);
 		sHotEqn preview = new sHotEqn(latex.toString());
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());

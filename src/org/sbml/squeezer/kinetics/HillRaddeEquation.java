@@ -91,8 +91,9 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 
-			if (!modifier.isSetSBOTerm())
+			if (!modifier.isSetSBOTerm()) {
 				modifier.setSBOTerm(19);
+			}
 			if (SBO.isModifier(modifier.getSBOTerm())) {
 				LocalParameter p = parameterW(modifier.getSpecies(), rId);
 				ASTNode pnode = new ASTNode(p, this);
@@ -103,17 +104,18 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 						.getSpecies());
 				ASTNode coeffnode = new ASTNode(coeff, this);
 
-				if (node.isUnknown())
+				if (node.isUnknown()) {
 					node = ASTNode.frac(ASTNode.times(pnode, ASTNode.pow(
 							speciesTerm(modifier), coeffnode)), ASTNode.sum(
 							ASTNode.pow(speciesTerm(modifier), coeffnode),
 							ASTNode.pow(thetanode, coeffnode)));
-				else
+				} else {
 					node = ASTNode.sum(node, ASTNode.frac(ASTNode.times(pnode,
 							ASTNode.pow(speciesTerm(modifier), coeffnode)),
 							ASTNode.sum(ASTNode.pow(speciesTerm(modifier),
 									coeffnode), ASTNode.pow(thetanode,
 									coeffnode))));
+				}
 			}
 		}
 		return node.isUnknown() ? null : node;
