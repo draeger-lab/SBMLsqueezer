@@ -97,7 +97,6 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.math.Distance;
-import org.sbml.squeezer.math.ModelOverdeterminedException;
 import org.sbml.squeezer.math.SBMLinterpreter;
 import org.sbml.squeezer.util.HTMLFormula;
 
@@ -511,11 +510,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 
 	/**
 	 * Conducts the simulation.
-	 * 
-	 * @throws ModelOverdeterminedException
-	 * @throws SBMLException
+	 * @throws Exception 
 	 */
-	public void simulate() throws ModelOverdeterminedException, SBMLException {
+	public void simulate() throws Exception {
 		double t1val = ((Double) t1.getValue()).doubleValue();
 		double t2val = ((Double) t2.getValue()).doubleValue();
 		double stepSize = (t2val - t1val)
@@ -545,10 +542,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 						.getStepSize())));
 				distField.setEditable(false);
 				distField.setEnabled(true);
-			} catch (IOException exc) {
-				exc.printStackTrace();
-				GUITools.showErrorMessage(this, exc);
-			} catch (ModelOverdeterminedException exc) {
+			} catch (Exception exc) {
 				exc.printStackTrace();
 				GUITools.showErrorMessage(this, exc);
 			}
@@ -1503,11 +1497,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param t1val
 	 * @param t2val
 	 * @param stepSize
-	 * @throws ModelOverdeterminedException
-	 * @throws SBMLException
+	 * @throws Exception 
 	 */
 	private void simulate(Model model, double t1val, double t2val,
-			double stepSize) throws ModelOverdeterminedException, SBMLException {
+			double stepSize) throws Exception {
 		TableModelDoubleMatrix tabMod = new TableModelDoubleMatrix(
 				solveByStepSize(model, t1val, t2val, stepSize),
 				createColNames(model));
@@ -1533,11 +1526,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 *            Time end
 	 * @param stepSize
 	 * @return
-	 * @throws ModelOverdeterminedException
-	 * @throws SBMLException
+	 * @throws Exception 
 	 */
 	private double[][] solveByStepSize(Model model, double t1, double t2,
-			double stepSize) throws ModelOverdeterminedException, SBMLException {
+			double stepSize) throws Exception {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
 		double solution[][] = solver.solveByStepSizeIncludingTime(interpreter,
@@ -1554,11 +1546,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param model
 	 * @param stepSize
 	 * @return
-	 * @throws ModelOverdeterminedException
-	 * @throws SBMLException
+	 * @throws Exception 
 	 */
 	private double computeDistance(Model model, double stepSize)
-			throws ModelOverdeterminedException, SBMLException {
+			throws Exception {
 		Indices time = colNames2data.get(colNames[0]);
 		int tidx = time == null ? 0 : time.getColumnExperimentTable();
 		if (tidx < 0) {
@@ -1586,11 +1577,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param timePoints
 	 * @param stepSize
 	 * @return
-	 * @throws ModelOverdeterminedException
-	 * @throws SBMLException
+	 * @throws Exception 
 	 */
 	private double[][] solveAtTimePoints(Model model, double times[],
-			double stepSize) throws ModelOverdeterminedException, SBMLException {
+			double stepSize) throws Exception {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
 		double solution[][] = solver.solveAtTimePointsIncludingTime(
