@@ -6,7 +6,6 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.resources.Resource;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
@@ -15,7 +14,6 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.SimulationDialog;
 import org.sbml.squeezer.io.SBMLio;
-import org.sbml.squeezer.math.ModelOverdeterminedException;
 
 /**
  * @author draeger
@@ -106,11 +104,7 @@ public class SimulationModeTest {
 					d.setVisible(true);
 				}
 
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (SBMLException e) {
-				e.printStackTrace();
-			} catch (ModelOverdeterminedException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 

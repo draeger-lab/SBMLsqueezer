@@ -16,12 +16,10 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.math.Distance;
-import org.sbml.squeezer.math.ModelOverdeterminedException;
 import org.sbml.squeezer.math.RSE;
 import org.sbml.squeezer.math.SBMLinterpreter;
 
@@ -175,9 +173,7 @@ public class SimulationTestAutomatic {
 
 					// plot.dispose();
 				}
-			} catch (SBMLException e) {
-				e.printStackTrace();
-			} catch (ModelOverdeterminedException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
