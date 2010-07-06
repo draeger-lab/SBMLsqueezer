@@ -29,7 +29,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.ASTNodeValue;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
@@ -39,6 +38,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.StoichiometryMath;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.util.compilers.ASTNodeValue;
 import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
 
