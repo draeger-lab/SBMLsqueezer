@@ -25,8 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.ASTNodeCompiler;
-import org.sbml.jsbml.ASTNodeValue;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Event;
@@ -47,6 +45,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.Maths;
+import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
+import org.sbml.jsbml.util.compilers.ASTNodeValue;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 
 import eva2.tools.math.des.DESAssignment;
@@ -263,9 +263,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @param model
 	 * @throws ModelOverdeterminedException
-	 * @throws SBMLException 
+	 * @throws SBMLException
 	 */
-	public SBMLinterpreter(Model model) throws ModelOverdeterminedException, SBMLException {
+	public SBMLinterpreter(Model model) throws ModelOverdeterminedException,
+			SBMLException {
 		this.model = model;
 		// this.speciesIdIndex = new HashMap<String, Integer>();
 		this.v = new double[this.model.getListOfReactions().size()];
@@ -277,18 +278,18 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#abs(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue abs(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.abs(node.toDouble()), this);
+	public ASTNodeValue abs(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.abs(node.compile(this).toDouble()), this);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#and(org.sbml.jsbml.ASTNodeValue[])
+	 * @see org.sbml.jsbml.ASTNodeCompiler#and(org.sbml.jsbml.ASTNode[])
 	 */
-	public ASTNodeValue and(ASTNodeValue... nodes) throws SBMLException {
-		for (ASTNodeValue node : nodes) {
-			if (!node.toBoolean()) {
+	public ASTNodeValue and(List<ASTNode> nodes) throws SBMLException {
+		for (ASTNode node : nodes) {
+			if (!node.compile(this).toBoolean()) {
 				return getConstantFalse();
 			}
 		}
@@ -300,8 +301,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccos(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arccos(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.acos(node.toDouble()), this);
+	public ASTNodeValue arccos(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.acos(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -309,8 +310,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccosh(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arccosh(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arccosh(node.toDouble()), this);
+	public ASTNodeValue arccosh(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arccosh(node.compile(this).toDouble()),
+				this);
 
 	}
 
@@ -319,8 +321,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccot(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arccot(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arccot(node.toDouble()), this);
+	public ASTNodeValue arccot(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arccot(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -328,8 +331,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccoth(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arccoth(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arccoth(node.toDouble()), this);
+	public ASTNodeValue arccoth(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arccoth(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -337,8 +341,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsc(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arccsc(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arccsc(node.toDouble()), this);
+	public ASTNodeValue arccsc(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arccsc(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -346,8 +351,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arccsch(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arccsch(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arccsch(node.toDouble()), this);
+	public ASTNodeValue arccsch(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arccsch(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -355,8 +361,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsec(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arcsec(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arcsec(node.toDouble()), this);
+	public ASTNodeValue arcsec(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arcsec(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -364,8 +371,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsech(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arcsech(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arcsech(node.toDouble()), this);
+	public ASTNodeValue arcsech(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arcsech(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -373,8 +381,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsin(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arcsin(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.asin(node.toDouble()), this);
+	public ASTNodeValue arcsin(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.asin(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -382,8 +390,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arcsinh(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arcsinh(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arcsinh(node.toDouble()), this);
+	public ASTNodeValue arcsinh(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arcsinh(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -391,8 +400,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctan(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arctan(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.atan(node.toDouble()), this);
+	public ASTNodeValue arctan(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.atan(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -400,8 +409,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#arctanh(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue arctanh(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.arctanh(node.toDouble()), this);
+	public ASTNodeValue arctanh(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.arctanh(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -409,8 +419,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#ceiling(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue ceiling(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.ceil(node.toDouble()), this);
+	public ASTNodeValue ceiling(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.ceil(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -424,7 +434,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double, int, java.lang.String)
+	 * 
+	 * @see org.sbml.jsbml.ASTNodeCompiler#compile(double, int,
+	 * java.lang.String)
 	 */
 	public ASTNodeValue compile(double mantissa, int exponent, String units) {
 		return new ASTNodeValue(mantissa * Math.pow(10, exponent), this);
@@ -510,7 +522,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 					.getIndex()] : Double.NaN, this);
 
 		} else if (nsb instanceof FunctionDefinition) {
-			return function((FunctionDefinition) nsb);
+			return function((FunctionDefinition) nsb, new LinkedList<ASTNode>());
 		} else if (nsb instanceof Reaction) {
 			Reaction r = (Reaction) nsb;
 			if (r.isSetKineticLaw()) {
@@ -540,8 +552,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cos(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue cos(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.cos(node.toDouble()), this);
+	public ASTNodeValue cos(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.cos(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -549,8 +561,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cosh(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue cosh(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.cosh(node.toDouble()), this);
+	public ASTNodeValue cosh(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.cosh(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -558,8 +570,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#cot(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue cot(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.cot(node.toDouble()), this);
+	public ASTNodeValue cot(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.cot(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -567,8 +579,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#coth(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue coth(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.coth(node.toDouble()), this);
+	public ASTNodeValue coth(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.coth(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -576,8 +588,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csc(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue csc(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.csc(node.toDouble()), this);
+	public ASTNodeValue csc(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.csc(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -585,17 +597,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#csch(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue csch(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.csch(node.toDouble()), this);
+	public ASTNodeValue csch(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.csch(node.compile(this).toDouble()), this);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(java.lang.String,
-	 * org.sbml.jsbml.ASTNodeValue, double, java.lang.String)
+	 * org.sbml.jsbml.ASTNode, double, java.lang.String)
 	 */
-	public ASTNodeValue delay(String delayName, ASTNodeValue x, double time,
+	public ASTNodeValue delay(String delayName, ASTNode x, double time,
 			String timeUnits) {
 		// TODO Auto-generated method stub
 		return null;
@@ -604,11 +616,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#equal(org.sbml.jsbml.ASTNodeValue,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#equal(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue eq(ASTNodeValue left, ASTNodeValue right) throws SBMLException {
-		return new ASTNodeValue(left.toDouble() == right.toDouble(), this);
+	public ASTNodeValue eq(ASTNode left, ASTNode right) throws SBMLException {
+		return new ASTNodeValue(left.compile(this).toDouble() == right.compile(
+				this).toDouble(), this);
 	}
 
 	/**
@@ -623,7 +636,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		if (odv.isOverdetermined()) {
 			throw new ModelOverdeterminedException();
 		}
-
 		AlgebraicRuleConverter arc = new AlgebraicRuleConverter(odv
 				.getMatching(), model);
 		algebraicRules = arc.getAssignmentRules();
@@ -670,8 +682,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#exp(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue exp(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.exp(node.toDouble()), this);
+	public ASTNodeValue exp(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.exp(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -679,8 +691,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#factorial(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue factorial(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.factorial(node.toDouble()), this);
+	public ASTNodeValue factorial(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.factorial(node.compile(this).toDouble()),
+				this);
 	}
 
 	/*
@@ -688,18 +701,19 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#floor(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue floor(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.floor(node.toDouble()), this);
+	public ASTNodeValue floor(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.floor(node.compile(this).toDouble()), this);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(org.sbml.jsbml.ASTNodeValue,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#frac(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue frac(ASTNodeValue left, ASTNodeValue right) throws SBMLException {
-		return new ASTNodeValue(left.toDouble() / right.toDouble(), this);
+	public ASTNodeValue frac(ASTNode left, ASTNode right) throws SBMLException {
+		return new ASTNodeValue(left.compile(this).toDouble()
+				/ right.compile(this).toDouble(), this);
 	}
 
 	/*
@@ -718,12 +732,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * org.sbml.jsbml.ASTNode[])
 	 */
 	public ASTNodeValue function(FunctionDefinition function,
-			ASTNodeValue... arguments) throws SBMLException {
+			List<ASTNode> arguments) throws SBMLException {
 		ASTNode lambda = function.getMath();
 		funcArgs = new Hashtable<String, Double>();
-		for (int i = 0; i < arguments.length; i++) {
-			funcArgs.put(lambda.getChild(i).compile(this).toString(),
-					arguments[i].toDouble());
+		for (int i = 0; i < arguments.size(); i++) {
+			funcArgs.put(lambda.getChild(i).compile(this).toString(), arguments
+					.get(i).compile(this).toDouble());
 		}
 		ASTNodeValue value = lambda.getRightChild().compile(this);
 		funcArgs = null;
@@ -733,12 +747,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#geq(org.sbml.jsbml.ASTNodeValue,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#geq(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue geq(ASTNodeValue nodeleft, ASTNodeValue noderight) throws SBMLException {
-		return new ASTNodeValue(nodeleft.toDouble() >= noderight.toDouble(),
-				this);
+	public ASTNodeValue geq(ASTNode nodeleft, ASTNode noderight)
+			throws SBMLException {
+		return new ASTNodeValue(nodeleft.compile(this).toDouble() >= noderight
+				.compile(this).toDouble(), this);
 	}
 
 	/**
@@ -759,6 +774,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getConstantAvogadro(java.lang.String)
 	 */
 	public ASTNodeValue getConstantAvogadro(String name) {
@@ -923,12 +939,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#greaterThan(org.sbml.jsbml.ASTNodeValue,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#greaterThan(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue gt(ASTNodeValue left, ASTNodeValue right) throws SBMLException {
-		return new ASTNodeValue(left.toDouble() > right.toDouble(), this);
+	public ASTNodeValue gt(ASTNode left, ASTNode right) throws SBMLException {
+		return new ASTNodeValue(left.compile(this).toDouble() > right.compile(
+				this).toDouble(), this);
 	}
 
 	/**
@@ -1076,25 +1092,25 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#lambda(org.sbml.jsbml.ASTNode[])
 	 */
-	public ASTNodeValue lambda(ASTNodeValue... nodes) throws SBMLException {
-		double d[] = new double[Math.max(0, nodes.length - 1)];
-		ASTNodeValue function = nodes[nodes.length - 1];
-		int i = 0;
-		for (ASTNodeValue node : nodes) {
-			d[i++] = node.toDouble();
+	public ASTNodeValue lambda(List<ASTNode> nodes) throws SBMLException {
+		double d[] = new double[Math.max(0, nodes.size() - 1)];
+		for (int i = 0; i < nodes.size() - 1; i++) {
+			d[i++] = nodes.get(i).compile(this).toDouble();
 		}
+		// TODO: what happens with d?
+		ASTNodeValue function = nodes.get(nodes.size() - 1).compile(this);
 		return function;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.sbml.jsbml.ASTNodeCompiler#lessEqual(org.sbml.jsbml.ASTNodeValue,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#lessEqual(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue leq(ASTNodeValue left, ASTNodeValue right) throws SBMLException {
-		return new ASTNodeValue(left.toDouble() <= right.toDouble(), this);
+	public ASTNodeValue leq(ASTNode left, ASTNode right) throws SBMLException {
+		return new ASTNodeValue(left.compile(this).toDouble() <= right.compile(
+				this).toDouble(), this);
 	}
 
 	/*
@@ -1102,8 +1118,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#ln(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue ln(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.ln(node.toDouble()), this);
+	public ASTNodeValue ln(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.ln(node.compile(this).toDouble()), this);
 
 	}
 
@@ -1112,8 +1128,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue log(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.log(node.toDouble()), this);
+	public ASTNodeValue log(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.log(node.compile(this).toDouble()), this);
 
 	}
 
@@ -1123,21 +1139,22 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#log(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue log(ASTNodeValue left, ASTNodeValue right) throws SBMLException {
-		return new ASTNodeValue(Maths.log(left.toDouble(), right.toDouble()),
-				this);
+	public ASTNodeValue log(ASTNode left, ASTNode right) throws SBMLException {
+		return new ASTNodeValue(Maths.log(left.compile(this).toDouble(), right
+				.compile(this).toDouble()), this);
 
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#lessThan(org.sbml.jsbml.ASTNodeValue,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#lessThan(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue lt(ASTNodeValue nodeleft, ASTNodeValue noderight) throws SBMLException {
-		return new ASTNodeValue(nodeleft.toDouble() < noderight.toDouble(),
-				this);
+	public ASTNodeValue lt(ASTNode nodeleft, ASTNode noderight)
+			throws SBMLException {
+		return new ASTNodeValue(nodeleft.compile(this).toDouble() < noderight
+				.compile(this).toDouble(), this);
 	}
 
 	/*
@@ -1145,13 +1162,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#minus(org.sbml.jsbml.ASTNode[])
 	 */
-	public ASTNodeValue minus(ASTNodeValue... nodes) throws SBMLException {
-		double value = 0.0;
-		if (nodes.length > 0) {
-			value = nodes[0].toDouble();
+	public ASTNodeValue minus(List<ASTNode> nodes) throws SBMLException {
+		double value = 0d;
+		if (nodes.size() > 0) {
+			value = nodes.get(0).compile(this).toDouble();
 		}
-		for (int i = 1; i < nodes.length; i++) {
-			value -= nodes[i].toDouble();
+		for (int i = 1; i < nodes.size(); i++) {
+			value -= nodes.get(i).compile(this).toDouble();
 		}
 		return new ASTNodeValue(value, this);
 	}
@@ -1159,11 +1176,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#notEqual(org.sbml.jsbml.ASTNodeValue,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#notEqual(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue neq(ASTNodeValue left, ASTNodeValue right) throws SBMLException {
-		return new ASTNodeValue(left.toDouble() != right.toDouble(), this);
+	public ASTNodeValue neq(ASTNode left, ASTNode right) throws SBMLException {
+		return new ASTNodeValue(left.compile(this).toDouble() != right.compile(
+				this).toDouble(), this);
 	}
 
 	/*
@@ -1171,8 +1189,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#not(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue not(ASTNodeValue node) throws SBMLException {
-		return node.toBoolean() ? getConstantFalse() : getConstantTrue();
+	public ASTNodeValue not(ASTNode node) throws SBMLException {
+		return node.compile(this).toBoolean() ? getConstantFalse()
+				: getConstantTrue();
 	}
 
 	/*
@@ -1180,9 +1199,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#or(org.sbml.jsbml.ASTNode[])
 	 */
-	public ASTNodeValue or(ASTNodeValue... nodes) throws SBMLException {
-		for (ASTNodeValue node : nodes) {
-			if (node.toBoolean()) {
+	public ASTNodeValue or(List<ASTNode> nodes) throws SBMLException {
+		for (ASTNode node : nodes) {
+			if (node.compile(this).toBoolean()) {
 				return getConstantTrue();
 			}
 		}
@@ -1194,14 +1213,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#piecewise(org.sbml.jsbml.ASTNode[])
 	 */
-	public ASTNodeValue piecewise(ASTNodeValue... nodes) throws SBMLException {
+	public ASTNodeValue piecewise(List<ASTNode> nodes) throws SBMLException {
 		int i;
-		for (i = 1; i < nodes.length - 1; i += 2) {
-			if (nodes[i].toBoolean()) {
-				return new ASTNodeValue(nodes[i - 1].toDouble(), this);
+		for (i = 1; i < nodes.size() - 1; i += 2) {
+			if (nodes.get(i).compile(this).toBoolean()) {
+				return new ASTNodeValue(nodes.get(i - 1).compile(this)
+						.toDouble(), this);
 			}
 		}
-		return new ASTNodeValue(nodes[i - 1].toDouble(), this);
+		return new ASTNodeValue(nodes.get(i - 1).compile(this).toDouble(), this);
 	}
 
 	/*
@@ -1209,10 +1229,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#plus(org.sbml.jsbml.ASTNode[])
 	 */
-	public ASTNodeValue plus(ASTNodeValue... nodes) throws SBMLException {
+	public ASTNodeValue plus(List<ASTNode> nodes) throws SBMLException {
 		double value = 0d;
-		for (ASTNodeValue node : nodes) {
-			value += node.toDouble();
+		for (ASTNode node : nodes) {
+			value += node.compile(this).toDouble();
 		}
 		return new ASTNodeValue(value, this);
 	}
@@ -1220,12 +1240,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNodeValue,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#pow(org.sbml.jsbml.ASTNode,
+	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue pow(ASTNodeValue left, ASTNodeValue right) throws SBMLException {
-		return new ASTNodeValue(Math.pow(left.toDouble(), right.toDouble()),
-				this);
+	public ASTNodeValue pow(ASTNode left, ASTNode right) throws SBMLException {
+		return new ASTNodeValue(Math.pow(left.compile(this).toDouble(), right
+				.compile(this).toDouble()), this);
 
 	}
 
@@ -1266,7 +1286,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @see eva2.tools.math.des.EventDESystem#processEvents(double, double[],
 	 * double[])
 	 */
-	public ArrayList<DESAssignment> processEvents(double t, double[] Y) throws SBMLException {
+	public ArrayList<DESAssignment> processEvents(double t, double[] Y)
+			throws SBMLException {
 		ArrayList<DESAssignment> events = new ArrayList<DESAssignment>();
 		// change point because of different time point due to events
 		this.Y = Y;
@@ -1376,7 +1397,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/**
 	 * Processes the initial assignments of the model
-	 * @throws SBMLException 
+	 * 
+	 * @throws SBMLException
 	 */
 	private void processInitialAssignments() throws SBMLException {
 		for (int i = 0; i < model.getNumInitialAssignments(); i++) {
@@ -1408,10 +1430,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	// * @param d
 	// * @return
 	// */
-	// private ASTNode replace(ASTNodeValue lambda, Hashtable<String, Double>
+	// private ASTNode replace(ASTNode lambda, Hashtable<String, Double>
 	// args) {
 	// String name;
-	// for (ASTNodeValue child : lambda.getListOfNodes())
+	// for (ASTNode child : lambda.getListOfNodes())
 	// if (child.isName() && args.containsKey(child.getName())) {
 	// name = child.getName();
 	// child.setType(ASTNode.Type.REAL);
@@ -1424,7 +1446,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/**
 	 * 
 	 * @param changeRate
-	 * @throws SBMLException 
+	 * @throws SBMLException
 	 */
 	private void processRules(double[] changeRate) throws SBMLException {
 		// evaluation of assignment rules through the DESystem itself
@@ -1467,7 +1489,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @param Y
 	 * @return An array containing the rates of change for each species in the
 	 *         model system of this class.
-	 * @throws SBMLException 
+	 * @throws SBMLException
 	 */
 	protected void processVelocities(double[] changeRate) throws SBMLException {
 		int reactionIndex, sReferenceIndex, speciesIndex;
@@ -1549,19 +1571,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @see org.sbml.jsbml.ASTNodeCompiler#root(org.sbml.jsbml.ASTNode,
 	 * org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue root(ASTNodeValue rootExponent, ASTNodeValue radiant) throws SBMLException {
-		return root(rootExponent.toDouble(), radiant);
+	public ASTNodeValue root(ASTNode rootExponent, ASTNode radiant)
+			throws SBMLException {
+		return root(rootExponent.compile(this).toDouble(), radiant);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#root(double,
-	 * org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#root(double, org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue root(double rootExponent, ASTNodeValue radiant) throws SBMLException {
-		return new ASTNodeValue(Maths.root(radiant.toDouble(), rootExponent),
-				this);
+	public ASTNodeValue root(double rootExponent, ASTNode radiant)
+			throws SBMLException {
+		return new ASTNodeValue(Maths.root(radiant.compile(this).toDouble(),
+				rootExponent), this);
 	}
 
 	/*
@@ -1569,26 +1592,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sec(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue sec(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.sec(node.toDouble()), this);
+	public ASTNodeValue sec(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.sec(node.compile(this).toDouble()), this);
 
 	}
-
-	// ---- Setters ----
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sech(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue sech(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Maths.sech(node.toDouble()), this);
+	public ASTNodeValue sech(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Maths.sech(node.compile(this).toDouble()), this);
 
 	}
-
-	/*
-	 * ---- Getters ----
-	 */
 
 	/**
 	 * This method allows to set the parameters of the model to the specified
@@ -1629,8 +1646,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sin(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue sin(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.sin(node.toDouble()), this);
+	public ASTNodeValue sin(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.sin(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -1638,8 +1655,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sinh(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue sinh(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.sinh(node.toDouble()), this);
+	public ASTNodeValue sinh(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.sinh(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -1647,8 +1664,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#sqrt(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue sqrt(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.sqrt(node.toDouble()), this);
+	public ASTNodeValue sqrt(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.sqrt(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -1665,8 +1682,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#tan(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue tan(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.tan(node.toDouble()), this);
+	public ASTNodeValue tan(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.tan(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -1674,8 +1691,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#tanh(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue tanh(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(Math.tanh(node.toDouble()), this);
+	public ASTNodeValue tanh(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(Math.tanh(node.compile(this).toDouble()), this);
 	}
 
 	/*
@@ -1683,13 +1700,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#times(org.sbml.jsbml.ASTNode[])
 	 */
-	public ASTNodeValue times(ASTNodeValue... nodes) throws SBMLException {
-		if (nodes.length == 0) {
+	public ASTNodeValue times(List<ASTNode> nodes) throws SBMLException {
+		if (nodes.size() == 0) {
 			return new ASTNodeValue(0d, this);
 		}
 		double value = 1d;
-		for (ASTNodeValue node : nodes) {
-			value *= node.toDouble();
+		for (ASTNode node : nodes) {
+			value *= node.compile(this).toDouble();
 		}
 		return new ASTNodeValue(value, this);
 	}
@@ -1697,9 +1714,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#toString(org.sbml.jsbml.ASTNodeValue)
+	 * @see org.sbml.jsbml.ASTNodeCompiler#toString(org.sbml.jsbml.ASTNode)
 	 */
-	public String toString(ASTNodeValue value) {
+	public String toString(ASTNode value) {
 		return value.toString();
 	}
 
@@ -1708,8 +1725,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#uiMinus(org.sbml.jsbml.ASTNode)
 	 */
-	public ASTNodeValue uMinus(ASTNodeValue node) throws SBMLException {
-		return new ASTNodeValue(-node.toDouble(), this);
+	public ASTNodeValue uMinus(ASTNode node) throws SBMLException {
+		return new ASTNodeValue(-node.compile(this).toDouble(), this);
 	}
 
 	/*
@@ -1726,10 +1743,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#xor(org.sbml.jsbml.ASTNode[])
 	 */
-	public ASTNodeValue xor(ASTNodeValue... nodes) throws SBMLException {
+	public ASTNodeValue xor(List<ASTNode> nodes) throws SBMLException {
 		boolean value = false;
-		for (int i = 0; i < nodes.length; i++) {
-			if (nodes[i].toBoolean()) {
+		for (int i = 0; i < nodes.size(); i++) {
+			if (nodes.get(i).compile(this).toBoolean()) {
 				if (value) {
 					return getConstantFalse();
 				} else {
@@ -1739,5 +1756,4 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 		return new ASTNodeValue(value, this);
 	}
-
 }
