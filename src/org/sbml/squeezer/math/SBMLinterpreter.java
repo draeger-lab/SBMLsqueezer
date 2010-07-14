@@ -667,7 +667,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		int speciesIndex;
 		double compartment;
 		Value val = valuesHash.get(model.getSpecies(rr.getVariable()));
-
 		speciesIndex = valuesHash.get(rr.getVariable()).getIndex();
 		changeRate[speciesIndex] = rr.getMath().compile(this).toDouble();
 		compartment = getCompartmentValueOf(val);
@@ -904,12 +903,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		this.currentTime = time;
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
-
+		
 		isProcessingVelocities = true;
-		processVelocities(changeRate);
+		processVelocities(changeRate);	
 		isProcessingVelocities = false;
-
+			
 		processRules(changeRate);
+		
 
 		/*
 		 * Checking the Constraints
@@ -1062,6 +1062,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		 * All other rules
 		 */
 		processRules(Y);
+		
+		
+
+		/*
+		 * Initial assignments
+		 */
+		processInitialAssignments();
 
 		// save the initial values of this system
 		initialValues = new double[Y.length];
@@ -1404,15 +1411,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		for (int i = 0; i < model.getNumInitialAssignments(); i++) {
 			InitialAssignment iA = model.getInitialAssignment(i);
 			Value val = null;
-			if (iA.isSetMath() && iA.isSetSymbol()) {
-				if (model.getSpecies(iA.getSymbol()) != null) {
-					Species s = model.getSpecies(iA.getSymbol());
+			if (iA.isSetMath() && iA.isSetVariable()) {
+				if (model.getSpecies(iA.getVariable()) != null) {
+					Species s = model.getSpecies(iA.getVariable());
 					val = valuesHash.get(s.getId());
-				} else if (model.getCompartment(iA.getSymbol()) != null) {
-					Compartment c = model.getCompartment(iA.getSymbol());
+				} else if (model.getCompartment(iA.getVariable()) != null) {
+					Compartment c = model.getCompartment(iA.getVariable());
 					val = valuesHash.get(c.getId());
-				} else if (model.getParameter(iA.getSymbol()) != null) {
-					Parameter p = model.getParameter(iA.getSymbol());
+				} else if (model.getParameter(iA.getVariable()) != null) {
+					Parameter p = model.getParameter(iA.getVariable());
 					val = valuesHash.get(p.getId());
 				} else {
 					System.err
