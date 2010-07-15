@@ -669,7 +669,7 @@ public class KineticLawGenerator {
 			// is this parameter necessary for some initial assignment?
 			for (j = 0; j < model.getNumInitialAssignments() && !isNeeded; j++) {
 				InitialAssignment ia = model.getInitialAssignment(j);
-				if ((ia.isSetSymbol() && ia.getSymbol().equals(p.getId()))
+				if ((ia.isSetVariable() && ia.getVariable().equals(p.getId()))
 						|| ia.isSetMath() && ia.getMath().refersTo(p.getId())) {
 					isNeeded = true;
 				}
