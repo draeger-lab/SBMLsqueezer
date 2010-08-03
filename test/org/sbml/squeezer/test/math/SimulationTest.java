@@ -10,6 +10,7 @@ import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.math.SBMLinterpreter;
 
 import eva2.gui.Plot;
+import eva2.tools.math.des.AbstractDESSolver;
 import eva2.tools.math.des.RKEventSolver;
 
 /**
@@ -42,7 +43,7 @@ public class SimulationTest {
 		try {
 			Model model = sbmlIo.convert2Model(args[0]);
 			// Model model = sbmlIo.readModel(path);
-			RKEventSolver rk = new RKEventSolver();
+			AbstractDESSolver rk = new RKEventSolver();
 			SBMLinterpreter interpreter = new SBMLinterpreter(model);
 			double time = 0;
 

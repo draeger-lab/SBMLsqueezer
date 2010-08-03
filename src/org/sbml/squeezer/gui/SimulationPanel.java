@@ -510,7 +510,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 
 	/**
 	 * Conducts the simulation.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void simulate() throws Exception {
 		double t1val = ((Double) t1.getValue()).doubleValue();
@@ -1066,7 +1067,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			}
 		} else if (e.getSource() instanceof JComboBox) {
 			JComboBox comBox = (JComboBox) e.getSource();
-			if (comBox.getName().equals("distfun"))
+			if (comBox.getName().equals("distfun")) {
 				try {
 					distanceFunc = comBox.getSelectedIndex();
 					distance = SBMLsqueezer.getAvailableDistances()[distanceFunc]
@@ -1080,6 +1081,22 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				} catch (Exception exc) {
 					GUITools.showErrorMessage(this, exc);
 				}
+			} else if (comBox.getName().equals("solvers")) {
+				Class<AbstractDESSolver>[] solFun = SBMLsqueezer
+						.getAvailableSolvers();
+				for (int i = 0; i < solFun.length; i++) {
+					try {
+						Class<AbstractDESSolver> c = solFun[i];
+						solver = c.getConstructor().newInstance();
+						if (solver.getName().equals(
+								solvers.getSelectedItem().toString())) {
+							break;
+						}
+					} catch (Exception exc) {
+						GUITools.showErrorMessage(this, exc);
+					}
+				}
+			}
 		}
 	}
 
@@ -1470,9 +1487,12 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			}
 		}
 		solvers.setEnabled(solvers.getItemCount() > 1);
-		if (solvers.getSelectedIndex() != solvers.getItemCount() - 1)
+		if (solvers.getSelectedIndex() != solvers.getItemCount() - 1) {
 			solver = solFun[solvers.getSelectedIndex()].getConstructor()
 					.newInstance();
+		}
+		solvers.setName("solvers");
+		solvers.addItemListener(this);
 		removeAll();
 		init();
 	}
@@ -1497,7 +1517,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param t1val
 	 * @param t2val
 	 * @param stepSize
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void simulate(Model model, double t1val, double t2val,
 			double stepSize) throws Exception {
@@ -1526,7 +1546,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 *            Time end
 	 * @param stepSize
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private double[][] solveByStepSize(Model model, double t1, double t2,
 			double stepSize) throws Exception {
@@ -1546,7 +1566,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param model
 	 * @param stepSize
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private double computeDistance(Model model, double stepSize)
 			throws Exception {
@@ -1577,7 +1597,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @param timePoints
 	 * @param stepSize
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private double[][] solveAtTimePoints(Model model, double times[],
 			double stepSize) throws Exception {
