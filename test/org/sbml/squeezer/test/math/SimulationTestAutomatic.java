@@ -25,6 +25,7 @@ import org.sbml.squeezer.math.SBMLinterpreter;
 
 import au.com.bytecode.opencsv.CSVReader;
 import eva2.gui.Plot;
+import eva2.tools.math.des.AbstractDESSolver;
 import eva2.tools.math.des.RKEventSolver;
 
 /**
@@ -95,7 +96,7 @@ public class SimulationTestAutomatic {
 				Model model = sbmlIo.convert2Model(sbmlfile);
 				
 				// RKSolver rk = new RKSolver();
-				RKEventSolver rk = new RKEventSolver();
+				AbstractDESSolver rk = new RKEventSolver();
 
 				SBMLinterpreter interpreter = new SBMLinterpreter(model);
 				double time = 0;
