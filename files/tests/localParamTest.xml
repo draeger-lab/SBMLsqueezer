@@ -1,0 +1,1364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" metaid="metaid_0000001" level="2" version="2">
+  <notes>
+    <body xmlns="http://www.w3.org/1999/xhtml"/>
+  </notes>
+  <model metaid="metaid_0000002" id="Xu2003_Phosphoinositide_turnover" name="Xu2003_Phosphoinositide_turnover">
+    <notes>
+      <p xmlns="http://www.w3.org/1999/xhtml">The model reproduces the percentage change of PIP_PM, PIP2_PM and IP3_Cyt as depicted in Figure 1 of the paper.  The model also contains the equations for the analysis of PH-GFP experiments, however the initial value of PH_GFP has been set to zero to more accurately reproduce Figure 1. For the analysis of PH_GFP experiments, one should plug in the values of PH_GFP, IP3_PHGFP and PIP2_PHGFP from Table AI in the appendix. The &quot;stochiometry&quot; field has been  used to convert fluxes from membrane species to volume species. The value of 0.0009224 is a product of (Surface to Volume_PM/(1-VolFractionNucleus)) *(1/Avagadro&apos;s number)*1E21. 0.5 is the surface to volume ratio of the plasma membrane, 0.1 is the Volume fraction of the nucleus, 1E21 is required for a unit surface to volume ratio and the Avagadro&apos;s number is present in the denominator to convert molecules to moles. The model was successfully tested on MathSBML.</p>
+      <p xmlns="http://www.w3.org/1999/xhtml">This model originates from BioModels Database: A Database of Annotated Published Models. It is copyright (c) 2005-2008 The BioModels Team.
+  
+      
+      <br/> For more information see the 
+  
+      
+      <a href="http://www.ebi.ac.uk/biomodels/legal.html">terms of use</a>.</p>
+    </notes>
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#metaid_0000002">
+          <dc:creator rdf:parseType="Resource">
+            <rdf:Bag>
+              <rdf:li rdf:parseType="Resource">
+                <vCard:N rdf:parseType="Resource">
+                  <vCard:Family>Dharuri</vCard:Family>
+                  <vCard:Given>Harish</vCard:Given>
+                </vCard:N>
+                <vCard:EMAIL>hdharuri@cds.caltech.edu</vCard:EMAIL>
+                <vCard:ORG>
+                  <vCard:Orgname>California Institute of Technology</vCard:Orgname>
+                </vCard:ORG>
+              </rdf:li>
+            </rdf:Bag>
+          </dc:creator>
+          <dcterms:created rdf:parseType="Resource">
+            <dcterms:W3CDTF>2006-11-08T10:52:02Z</dcterms:W3CDTF>
+          </dcterms:created>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2007-09-25T10:00:54Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <bqmodel:is>
+            <rdf:Bag>
+              <rdf:li rdf:resource="urn:miriam:biomodels.db:BIOMD0000000075"/>
+            </rdf:Bag>
+          </bqmodel:is>
+          <bqmodel:isDescribedBy>
+            <rdf:Bag>
+              <rdf:li rdf:resource="urn:miriam:pubmed:12771127"/>
+            </rdf:Bag>
+          </bqmodel:isDescribedBy>
+          <bqbiol:isVersionOf>
+            <rdf:Bag>
+              <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0046488"/>
+            </rdf:Bag>
+          </bqbiol:isVersionOf>
+          <bqbiol:isPartOf>
+            <rdf:Bag>
+              <rdf:li rdf:resource="urn:miriam:kegg.pathway:map04070"/>
+            </rdf:Bag>
+          </bqbiol:isPartOf>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
+    <listOfUnitDefinitions>
+      <unitDefinition metaid="metaid_0000003" id="micromole">
+        <listOfUnits>
+          <unit kind="mole" scale="-6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="metaid_0000004" id="molecules">
+        <listOfUnits>
+          <unit kind="item"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="metaid_0000005" id="um2">
+        <listOfUnits>
+          <unit kind="metre" exponent="2" scale="-6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="metaid_0000006" id="molecules_um_2_s_1">
+        <listOfUnits>
+          <unit kind="item"/>
+          <unit kind="metre" exponent="-2" scale="-6"/>
+          <unit kind="second" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="metaid_0000008" id="s_1">
+        <listOfUnits>
+          <unit kind="second" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="metaid_0000009" id="molecules_um_2">
+        <listOfUnits>
+          <unit kind="item"/>
+          <unit kind="metre" exponent="-2" scale="-6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="metaid_0000011" id="um2_molecules_1_s_1">
+        <listOfUnits>
+          <unit kind="item" exponent="-1"/>
+          <unit kind="metre" exponent="2" scale="-6"/>
+          <unit kind="second" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="metaid_0000013" id="uM_1_s_1">
+        <listOfUnits>
+          <unit kind="litre"/>
+          <unit kind="mole" exponent="-1" scale="-6"/>
+          <unit kind="second" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition metaid="metaid_0000014" id="uM">
+        <listOfUnits>
+          <unit kind="litre" exponent="-1"/>
+          <unit kind="mole" scale="-6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mmolePerSecond">
+        <listOfUnits>
+          <unit kind="mole" scale="-3"/>
+          <unit kind="second" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment metaid="metaid_0000019" id="PM" spatialDimensions="2" size="1" units="area">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000019">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0005886"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </compartment>
+      <compartment metaid="metaid_0000015" id="Cytosol" size="1" units="volume" outside="PM">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000015">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0005737"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="metaid_0000020" id="PIP2_PHGFP_PM" compartment="PM" initialConcentration="1" substanceUnits="molecules" spatialSizeUnits="um2">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000020">
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.chebi:CHEBI%3A18348"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.compound:C04637"/>
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000021" id="PH_GFP_Cyt" compartment="Cytosol" initialConcentration="1" substanceUnits="micromole" spatialSizeUnits="litre"/>
+      <species metaid="metaid_0000022" id="PI_PM" compartment="PM" initialConcentration="142857" substanceUnits="molecules" spatialSizeUnits="um2">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000022">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.chebi:CHEBI%3A16749"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.compound:C01194"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000024" id="IP3_PHGFP_Cyt" compartment="Cytosol" initialConcentration="1" substanceUnits="micromole" spatialSizeUnits="litre">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000024">
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.chebi:CHEBI%3A16595"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.compound:C01245"/>
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000025" id="PIP2_PM" compartment="PM" initialConcentration="4000" substanceUnits="molecules" spatialSizeUnits="um2">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000025">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.chebi:CHEBI%3A18348"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.compound:C04637"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000026" id="PIP_PM" compartment="PM" initialConcentration="2857" substanceUnits="molecules" spatialSizeUnits="um2">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000026">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.chebi:CHEBI%3A17526"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.compound:C01277"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000027" id="DAG_PM" compartment="PM" initialConcentration="2000" substanceUnits="molecules" spatialSizeUnits="um2">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000027">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.chebi:CHEBI%3A18035"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.compound:C00165"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000028" id="hv_Cytosol" compartment="Cytosol" initialConcentration="1" substanceUnits="substance" boundaryCondition="true"/>
+      <species metaid="metaid_0000029" id="IP3X_Cytosol" compartment="Cytosol" initialConcentration="1" substanceUnits="micromole" spatialSizeUnits="litre" boundaryCondition="true">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000029">
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.chebi:CHEBI%3A16595"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.compound:C01245"/>
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000030" id="PLC_PM" compartment="PM" initialConcentration="100" substanceUnits="molecules" spatialSizeUnits="um2"/>
+      <species metaid="metaid_0000031" id="PLC_act_PM" compartment="PM" initialConcentration="1" substanceUnits="molecules" spatialSizeUnits="um2"/>
+      <species metaid="metaid_0000032" id="IP3_Cyt" compartment="Cytosol" initialConcentration="0.16" substanceUnits="micromole" spatialSizeUnits="litre">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000032">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.chebi:CHEBI%3A16595"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.compound:C01245"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter metaid="metaid_0000034" id="PIP_basal" name="PIP_basal" value="2857" units="molecules_um_2"/>
+      <parameter metaid="metaid_0000035" id="PIP2_basal" name="PIP2_basal" value="4000" units="molecules_um_2"/>
+      <parameter metaid="metaid_0000036" id="PIPsynstim_Stimulation" name="PIPsynstim_Stimulation" value="0" units="dimensionless" constant="false"/>
+      <parameter metaid="metaid_0000037" id="PIPsynbasal_Stimulation" name="PIPsynbasal_Stimulation" value="0" units="dimensionless" constant="false"/>
+      <parameter metaid="metaid_0000038" id="PIP2synstim_Stimulation" name="PIP2synstim_Stimulation" value="0" units="dimensionless" constant="false"/>
+      <parameter metaid="metaid_0000039" id="PIP2synbasal_Stimulation" name="PIP2synbasal_Stimulation" value="0" units="dimensionless" constant="false"/>
+      <parameter metaid="metaid_0000040" id="Ratebasal_PIPsyn" name="Ratebasal_PIPsyn" constant="false"/>
+      <parameter metaid="metaid_0000041" id="Ratestim_PIPsyn" name="Ratestim_PIPsyn" constant="false"/>
+      <parameter metaid="metaid_0000042" id="signal" name="signal" constant="false"/>
+      <parameter metaid="metaid_0000043" id="kr_PIP2PH" constant="false"/>
+      <parameter metaid="metaid_0000044" id="Rate_PIP2Synbasal" name="Rate_PIP2Synbasal" constant="false"/>
+      <parameter metaid="metaid_0000045" id="Rate_PIP2SynStim" name="Rate_PIP2SynStim" constant="false"/>
+      <parameter metaid="metaid_0000046" id="kr_IP3PH" name="kr_IP3PH" constant="false"/>
+      <parameter metaid="metaid_0000047" id="kBasalSynPIP" name="kBasalSynPIP" value="0.0055" units="s_1"/>
+      <parameter metaid="metaid_0000048" id="kStimSynPIP" name="kStimSynPIP" value="0.019" units="s_1"/>
+      <parameter metaid="metaid_0000049" id="tauPIPsyn" name="tauPIPsyn" value="0.05" units="second"/>
+      <parameter metaid="metaid_0000050" id="PIPsyndecay" name="PIPsyndecay" value="1" units="second"/>
+      <parameter metaid="metaid_0000051" id="tau0" name="tau0" value="0.05" units="second"/>
+      <parameter metaid="metaid_0000052" id="stimdecay" name="stimdecay" value="1" units="second"/>
+      <parameter metaid="metaid_0000053" id="kf_PIP2PH" name="KdPIP2PH" value="0.12" units="uM_1_s_1"/>
+      <parameter metaid="metaid_0000054" id="KdPIP2PH" name="KdPIP2PH" value="2" units="uM"/>
+      <parameter metaid="metaid_0000055" id="kBasalSynPIP2" name="kBasalSynPIP2" value="0.048" units="s_1"/>
+      <parameter metaid="metaid_0000056" id="kStimSynPIP2" name="kStimSynPIP2" value="0.92" units="s_1"/>
+      <parameter metaid="metaid_0000057" id="tauPIP2syn" name="tauPIP2syn" value="0.05" units="second"/>
+      <parameter metaid="metaid_0000058" id="PIP2syndecay" name="PIP2syndecay" value="1" units="second"/>
+      <parameter metaid="metaid_0000059" id="kf_IP3PH" name="kf_IP3PH" value="10" units="uM_1_s_1"/>
+      <parameter metaid="metaid_0000060" id="KdIP3PH" name="KdIP3PH" value="0.1" units="uM"/>
+      <parameter metaid="metaid_0000077" id="Signal_Stimulation" name="Signal_Stimulation" value="0" units="dimensionless" constant="false"/>
+      <parameter id="kdiss_IP3deg" value="1"/>
+      <parameter id="kass_IP3deg" value="1"/>
+      <parameter id="kM_PIP2_hyd_IP3_Cyt" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="kM_PIP2_hyd_DAG_PM" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="Vn_PIP2_hyd" value="1" sboTerm="SBO:0000325"/>
+      <parameter id="kM_PIP2_hyd_PIP2_PM" value="1" sboTerm="SBO:0000322"/>
+      <parameter id="Vp_PIP2_hyd" value="1" sboTerm="SBO:0000324"/>
+      <parameter id="kM_IP3_uncaging_IP3_Cyt" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="Vn_IP3_uncaging" value="1" sboTerm="SBO:0000325"/>
+      <parameter id="kM_IP3_uncaging_IP3X_Cytosol" value="1" sboTerm="SBO:0000322"/>
+      <parameter id="Vp_IP3_uncaging" value="1" sboTerm="SBO:0000324"/>
+      <parameter id="kM_PLCact_PLC_act_PM" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="Vn_PLCact" value="1" sboTerm="SBO:0000325"/>
+      <parameter id="kM_PLCact_PLC_PM" value="1" sboTerm="SBO:0000322"/>
+      <parameter id="Vp_PLCact" value="1" sboTerm="SBO:0000324"/>
+      <parameter id="kM_PIP2_PH_hyd_DAG_PM" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="kM_PIP2_PH_hyd_IP3_Cyt" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="kM_PIP2_PH_hyd_PH_GFP_Cyt" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="Vn_PIP2_PH_hyd" value="1" sboTerm="SBO:0000325"/>
+      <parameter id="kM_PIP2_PH_hyd_PIP2_PHGFP_PM" value="1" sboTerm="SBO:0000322"/>
+      <parameter id="Vp_PIP2_PH_hyd" value="1" sboTerm="SBO:0000324"/>
+      <parameter id="ki_PIP2_PH_PIP2_PM" value="1" sboTerm="SBO:0000261"/>
+      <parameter id="kM_PIP2_PH_PIP2_PM" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="Vn_PIP2_PH" value="1" sboTerm="SBO:0000325"/>
+      <parameter id="Vp_PIP2_PH" value="1" sboTerm="SBO:0000324"/>
+      <parameter id="kM_PIP2Syn_PIP2_PM" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="Vn_PIP2Syn" value="1" sboTerm="SBO:0000325"/>
+      <parameter id="kM_PIP2Syn_PIP_PM" value="1" sboTerm="SBO:0000322"/>
+      <parameter id="Vp_PIP2Syn" value="1" sboTerm="SBO:0000324"/>
+      <parameter id="ki_IP3_PHGFP_PH_GFP_Cyt" value="1" sboTerm="SBO:0000261"/>
+      <parameter id="kM_IP3_PHGFP_PH_GFP_Cyt" value="1" sboTerm="SBO:0000323"/>
+      <parameter id="Vn_IP3_PHGFP" value="1" sboTerm="SBO:0000325"/>
+      <parameter id="Vp_IP3_PHGFP" value="1" sboTerm="SBO:0000324"/>
+      <parameter id="kdiss_PIPSyn" value="1" sboTerm="SBO:0000352"/>
+      <parameter id="kass_PIPSyn" value="1" sboTerm="SBO:0000153"/>
+    </listOfParameters>
+    <listOfRules>
+      <assignmentRule metaid="metaid_0000033" variable="Ratebasal_PIPsyn">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> 0.581 </cn>
+            <ci> PIPsynbasal_Stimulation </ci>
+            <ci> kBasalSynPIP </ci>
+            <apply>
+              <plus/>
+              <cn type="integer"> -1 </cn>
+              <apply>
+                <exp/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <plus/>
+                    <ci> PIP_basal </ci>
+                    <apply>
+                      <minus/>
+                      <ci> PIP_PM </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <cn type="integer"> 1 </cn>
+                    <ci> PIP_basal </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule metaid="metaid_0000062" variable="Ratestim_PIPsyn">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> kStimSynPIP </ci>
+            <apply>
+              <exp/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <plus/>
+                    <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+                    <apply>
+                      <minus/>
+                      <ci> tauPIPsyn </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <cn type="integer"> 1 </cn>
+                    <ci> PIPsyndecay </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <ci> PIPsynstim_Stimulation </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule metaid="metaid_0000063" variable="signal">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> Signal_Stimulation </ci>
+            <apply>
+              <exp/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <plus/>
+                    <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+                    <apply>
+                      <minus/>
+                      <ci> tau0 </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <cn type="integer"> 1 </cn>
+                    <ci> stimdecay </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule metaid="metaid_0000064" variable="kr_PIP2PH">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> kf_PIP2PH </ci>
+            <ci> KdPIP2PH </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule metaid="metaid_0000065" variable="Rate_PIP2Synbasal">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn> 0.581 </cn>
+            <ci> PIP2synbasal_Stimulation </ci>
+            <ci> kBasalSynPIP2 </ci>
+            <apply>
+              <plus/>
+              <cn type="integer"> -1 </cn>
+              <apply>
+                <exp/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <plus/>
+                    <ci> PIP2_basal </ci>
+                    <apply>
+                      <minus/>
+                      <ci> PIP2_PM </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <cn type="integer"> 1 </cn>
+                    <ci> PIP2_basal </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule metaid="metaid_0000066" variable="Rate_PIP2SynStim">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> kStimSynPIP2 </ci>
+            <apply>
+              <exp/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <plus/>
+                    <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+                    <apply>
+                      <minus/>
+                      <ci> tauPIP2syn </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <cn type="integer"> 1 </cn>
+                    <ci> PIP2syndecay </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <ci> PIP2synstim_Stimulation </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule metaid="metaid_0000067" variable="kr_IP3PH">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> kf_IP3PH </ci>
+            <ci> KdIP3PH </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+    </listOfRules>
+    <listOfReactions>
+      <reaction metaid="metaid_0000068" id="PIPSyn" name="PIPSyn">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000068">
+              <bqbiol:isVersionOf>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:ec-code:2.7.1.67"/>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0004430"/>
+                </rdf:Bag>
+              </bqbiol:isVersionOf>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:kegg.reaction:R03361"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="PI_PM"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PIP_PM"/>
+        </listOfProducts>
+        <kineticLaw sboTerm="SBO:0000326">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_fwd_PIPSyn </ci>
+                    <ci> kM_PIPSyn_PI_PM </ci>
+                  </apply>
+                  <ci> PI_PM </ci>
+                  <ci> PM </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_bwd_PIPSyn </ci>
+                    <ci> kM_PIPSyn_PIP_PM </ci>
+                  </apply>
+                  <ci> PIP_PM </ci>
+                  <ci> PM </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PI_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIPSyn_PI_PM </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PIP_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIPSyn_PIP_PM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="vmax_fwd_PIPSyn" value="1" units="mmolePerSecond" sboTerm="SBO:0000324"/>
+            <parameter id="kM_PIPSyn_PI_PM" name="Michaelis constant of species PI_PM in reaction PIPSyn" value="1" units="substance" sboTerm="SBO:0000322"/>
+            <parameter id="vmax_bwd_PIPSyn" value="1" units="mmolePerSecond" sboTerm="SBO:0000325"/>
+            <parameter id="kM_PIPSyn_PIP_PM" name="Michaelis constant of species PIP_PM in reaction PIPSyn" value="1" units="substance" sboTerm="SBO:0000323"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000069" id="PIP2_hyd" name="PIP2_hyd">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000069">
+              <bqbiol:isVersionOf>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:ec-code:3.1.4.11"/>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0004435"/>
+                </rdf:Bag>
+              </bqbiol:isVersionOf>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:kegg.reaction:R03435"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="PIP2_PM"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="DAG_PM"/>
+          <speciesReference species="IP3_Cyt" stoichiometry="0.0009224"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="PLC_act_PM"/>
+        </listOfModifiers>
+        <kineticLaw sboTerm="SBO:0000429">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <ci> vmax_fwd_PIP2_hyd </ci>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> PIP2_PM </ci>
+                      <ci> PM </ci>
+                    </apply>
+                    <ci> kM_PIP2_hyd_PIP2_PM </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> vmax_bwd_PIP2_hyd </ci>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> DAG_PM </ci>
+                      <ci> PM </ci>
+                    </apply>
+                    <ci> kM_PIP2_hyd_DAG_PM </ci>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <divide/>
+                      <apply>
+                        <times/>
+                        <ci> IP3_Cyt </ci>
+                        <ci> Cytosol </ci>
+                      </apply>
+                      <ci> kM_PIP2_hyd_IP3_Cyt </ci>
+                    </apply>
+                    <cn> 0.0009224 </cn>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PIP2_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIP2_hyd_PIP2_PM </ci>
+                </apply>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> DAG_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIP2_hyd_DAG_PM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="vmax_fwd_PIP2_hyd" value="1" units="mmolePerSecond" sboTerm="SBO:0000324"/>
+            <parameter id="kM_PIP2_hyd_PIP2_PM" name="Michaelis constant of species PIP2_PM in reaction PIP2_hyd" value="1" units="substance" sboTerm="SBO:0000322"/>
+            <parameter id="vmax_bwd_PIP2_hyd" value="1" units="mmolePerSecond" sboTerm="SBO:0000325"/>
+            <parameter id="kM_PIP2_hyd_DAG_PM" name="Michaelis constant of species DAG_PM in reaction PIP2_hyd" value="1" units="substance" sboTerm="SBO:0000323"/>
+            <parameter id="kM_PIP2_hyd_IP3_Cyt" name="Michaelis constant of species IP3_Cyt in reaction PIP2_hyd" value="1" units="substance" sboTerm="SBO:0000323"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000070" id="IP3_uncaging" name="IP3_uncaging">
+        <listOfReactants>
+          <speciesReference species="IP3X_Cytosol"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="IP3_Cyt"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="hv_Cytosol"/>
+        </listOfModifiers>
+        <kineticLaw sboTerm="SBO:0000326">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_fwd_IP3_uncaging </ci>
+                    <ci> kM_IP3_uncaging_IP3X_Cytosol </ci>
+                  </apply>
+                  <ci> IP3X_Cytosol </ci>
+                  <ci> Cytosol </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_bwd_IP3_uncaging </ci>
+                    <ci> kM_IP3_uncaging_IP3_Cyt </ci>
+                  </apply>
+                  <ci> IP3_Cyt </ci>
+                  <ci> Cytosol </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> IP3X_Cytosol </ci>
+                    <ci> Cytosol </ci>
+                  </apply>
+                  <ci> kM_IP3_uncaging_IP3X_Cytosol </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> IP3_Cyt </ci>
+                    <ci> Cytosol </ci>
+                  </apply>
+                  <ci> kM_IP3_uncaging_IP3_Cyt </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="vmax_fwd_IP3_uncaging" value="1" units="mmolePerSecond" sboTerm="SBO:0000324"/>
+            <parameter id="kM_IP3_uncaging_IP3X_Cytosol" name="Michaelis constant of species IP3X_Cytosol in reaction IP3_uncaging" value="1" units="substance" sboTerm="SBO:0000322"/>
+            <parameter id="vmax_bwd_IP3_uncaging" value="1" units="mmolePerSecond" sboTerm="SBO:0000325"/>
+            <parameter id="kM_IP3_uncaging_IP3_Cyt" name="Michaelis constant of species IP3_Cyt in reaction IP3_uncaging" value="1" units="substance" sboTerm="SBO:0000323"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000071" id="PLCact" name="PLCact">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000071">
+              <bqbiol:isVersionOf>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0007202"/>
+                </rdf:Bag>
+              </bqbiol:isVersionOf>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="PLC_PM"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PLC_act_PM"/>
+        </listOfProducts>
+        <kineticLaw sboTerm="SBO:0000326">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_fwd_PLCact </ci>
+                    <ci> kM_PLCact_PLC_PM </ci>
+                  </apply>
+                  <ci> PLC_PM </ci>
+                  <ci> PM </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_bwd_PLCact </ci>
+                    <ci> kM_PLCact_PLC_act_PM </ci>
+                  </apply>
+                  <ci> PLC_act_PM </ci>
+                  <ci> PM </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PLC_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PLCact_PLC_PM </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PLC_act_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PLCact_PLC_act_PM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="vmax_fwd_PLCact" value="1" units="mmolePerSecond" sboTerm="SBO:0000324"/>
+            <parameter id="kM_PLCact_PLC_PM" name="Michaelis constant of species PLC_PM in reaction PLCact" value="1" units="substance" sboTerm="SBO:0000322"/>
+            <parameter id="vmax_bwd_PLCact" value="1" units="mmolePerSecond" sboTerm="SBO:0000325"/>
+            <parameter id="kM_PLCact_PLC_act_PM" name="Michaelis constant of species PLC_act_PM in reaction PLCact" value="1" units="substance" sboTerm="SBO:0000323"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000072" id="PIP2_PH_hyd" name="PIP2_PH_hyd">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000072">
+              <bqbiol:isVersionOf>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:ec-code:3.1.4.11"/>
+                  <rdf:li rdf:resource="urn:miriam:kegg.reaction:R03435"/>
+                </rdf:Bag>
+              </bqbiol:isVersionOf>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="PIP2_PHGFP_PM"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PH_GFP_Cyt" stoichiometry="0.0009224"/>
+          <speciesReference species="IP3_Cyt" stoichiometry="0.0009224"/>
+          <speciesReference species="DAG_PM"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="PLC_act_PM"/>
+        </listOfModifiers>
+        <kineticLaw sboTerm="SBO:0000429">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <ci> vmax_fwd_PIP2_PH_hyd </ci>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> PIP2_PHGFP_PM </ci>
+                      <ci> PM </ci>
+                    </apply>
+                    <ci> kM_PIP2_PH_hyd_PIP2_PHGFP_PM </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> vmax_bwd_PIP2_PH_hyd </ci>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <divide/>
+                      <apply>
+                        <times/>
+                        <ci> PH_GFP_Cyt </ci>
+                        <ci> Cytosol </ci>
+                      </apply>
+                      <ci> kM_PIP2_PH_hyd_PH_GFP_Cyt </ci>
+                    </apply>
+                    <cn> 0.0009224 </cn>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <divide/>
+                      <apply>
+                        <times/>
+                        <ci> IP3_Cyt </ci>
+                        <ci> Cytosol </ci>
+                      </apply>
+                      <ci> kM_PIP2_PH_hyd_IP3_Cyt </ci>
+                    </apply>
+                    <cn> 0.0009224 </cn>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> DAG_PM </ci>
+                      <ci> PM </ci>
+                    </apply>
+                    <ci> kM_PIP2_PH_hyd_DAG_PM </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PIP2_PHGFP_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIP2_PH_hyd_PIP2_PHGFP_PM </ci>
+                </apply>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> DAG_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIP2_PH_hyd_DAG_PM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="vmax_fwd_PIP2_PH_hyd" value="1" units="mmolePerSecond" sboTerm="SBO:0000324"/>
+            <parameter id="kM_PIP2_PH_hyd_PIP2_PHGFP_PM" name="Michaelis constant of species PIP2_PHGFP_PM in reaction PIP2_PH_hyd" value="1" units="substance" sboTerm="SBO:0000322"/>
+            <parameter id="vmax_bwd_PIP2_PH_hyd" value="1" units="mmolePerSecond" sboTerm="SBO:0000325"/>
+            <parameter id="kM_PIP2_PH_hyd_PH_GFP_Cyt" name="Michaelis constant of species PH_GFP_Cyt in reaction PIP2_PH_hyd" value="1" units="substance" sboTerm="SBO:0000323"/>
+            <parameter id="kM_PIP2_PH_hyd_IP3_Cyt" name="Michaelis constant of species IP3_Cyt in reaction PIP2_PH_hyd" value="1" units="substance" sboTerm="SBO:0000323"/>
+            <parameter id="kM_PIP2_PH_hyd_DAG_PM" name="Michaelis constant of species DAG_PM in reaction PIP2_PH_hyd" value="1" units="substance" sboTerm="SBO:0000323"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000073" id="PIP2_PH" name="PIP2_PH">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000073">
+              <bqbiol:isVersionOf>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0005488"/>
+                </rdf:Bag>
+              </bqbiol:isVersionOf>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="PH_GFP_Cyt"/>
+          <speciesReference species="PIP2_PM"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PIP2_PHGFP_PM"/>
+        </listOfProducts>
+        <kineticLaw sboTerm="SBO:0000429">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_fwd_PIP2_PH </ci>
+                    <apply>
+                      <times/>
+                      <ci> ki_PIP2_PH_PH_GFP_Cyt </ci>
+                      <ci> kM_PIP2_PH_PIP2_PM </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> PH_GFP_Cyt </ci>
+                      <ci> Cytosol </ci>
+                      <ci> PIP2_PM </ci>
+                      <ci> PM </ci>
+                    </apply>
+                    <apply>
+                      <times/>
+                      <ci> ki_PIP2_PH_PH_GFP_Cyt </ci>
+                      <ci> kM_PIP2_PH_PIP2_PM </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_bwd_PIP2_PH </ci>
+                    <ci> kM_PIP2_PH_PIP2_PHGFP_PM </ci>
+                  </apply>
+                  <ci> PIP2_PHGFP_PM </ci>
+                  <ci> PM </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PIP2_PHGFP_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIP2_PH_PIP2_PHGFP_PM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="vmax_fwd_PIP2_PH" value="1" units="mmolePerSecond" sboTerm="SBO:0000324"/>
+            <parameter id="vmax_bwd_PIP2_PH" value="1" units="mmolePerSecond" sboTerm="SBO:0000325"/>
+            <parameter id="kM_PIP2_PH_PIP2_PM" name="Michaelis constant of species PIP2_PM in reaction PIP2_PH" value="1" units="substance" sboTerm="SBO:0000322"/>
+            <parameter id="kM_PIP2_PH_PIP2_PHGFP_PM" name="Michaelis constant of species PIP2_PHGFP_PM in reaction PIP2_PH" value="1" units="substance" sboTerm="SBO:0000323"/>
+            <parameter id="ki_PIP2_PH_PH_GFP_Cyt" value="1" sboTerm="SBO:0000261"/>
+            <parameter id="ki_PIP2_PH_PIP2_PM" value="1" sboTerm="SBO:0000261"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000074" id="IP3deg" name="IP3deg">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000074">
+              <bqbiol:isVersionOf>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0030163"/>
+                </rdf:Bag>
+              </bqbiol:isVersionOf>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="IP3_Cyt"/>
+        </listOfReactants>
+        <kineticLaw sboTerm="SBO:0000069">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <ci> kass_IP3deg </ci>
+              <ci> kdiss_IP3deg </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="kass_IP3deg" value="1" sboTerm="SBO:0000048"/>
+            <parameter id="kdiss_IP3deg" name="dissociation constant of reaction IP3deg" value="1" sboTerm="SBO:0000156"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000075" id="PIP2Syn" name="PIP2Syn">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000075">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:kegg.reaction:R03469"/>
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isVersionOf>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:ec-code:2.7.1.68"/>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0016308"/>
+                </rdf:Bag>
+              </bqbiol:isVersionOf>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="PIP_PM"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="PIP2_PM"/>
+        </listOfProducts>
+        <kineticLaw sboTerm="SBO:0000326">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_fwd_PIP2Syn </ci>
+                    <ci> kM_PIP2Syn_PIP_PM </ci>
+                  </apply>
+                  <ci> PIP_PM </ci>
+                  <ci> PM </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_bwd_PIP2Syn </ci>
+                    <ci> kM_PIP2Syn_PIP2_PM </ci>
+                  </apply>
+                  <ci> PIP2_PM </ci>
+                  <ci> PM </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PIP_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIP2Syn_PIP_PM </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> PIP2_PM </ci>
+                    <ci> PM </ci>
+                  </apply>
+                  <ci> kM_PIP2Syn_PIP2_PM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="vmax_fwd_PIP2Syn" value="1" units="mmolePerSecond" sboTerm="SBO:0000324"/>
+            <parameter id="kM_PIP2Syn_PIP_PM" name="Michaelis constant of species PIP_PM in reaction PIP2Syn" value="1" units="substance" sboTerm="SBO:0000322"/>
+            <parameter id="vmax_bwd_PIP2Syn" value="1" units="mmolePerSecond" sboTerm="SBO:0000325"/>
+            <parameter id="kM_PIP2Syn_PIP2_PM" name="Michaelis constant of species PIP2_PM in reaction PIP2Syn" value="1" units="substance" sboTerm="SBO:0000323"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000076" id="IP3_PHGFP" name="IP3_PHGFP">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000076">
+              <bqbiol:isVersionOf>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="urn:miriam:obo.go:GO%3A0005488"/>
+                </rdf:Bag>
+              </bqbiol:isVersionOf>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference species="IP3_Cyt"/>
+          <speciesReference species="PH_GFP_Cyt"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="IP3_PHGFP_Cyt"/>
+        </listOfProducts>
+        <kineticLaw sboTerm="SBO:0000429">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_fwd_IP3_PHGFP </ci>
+                    <apply>
+                      <times/>
+                      <ci> ki_IP3_PHGFP_IP3_Cyt </ci>
+                      <ci> kM_IP3_PHGFP_PH_GFP_Cyt </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> IP3_Cyt </ci>
+                      <ci> Cytosol </ci>
+                      <ci> PH_GFP_Cyt </ci>
+                      <ci> Cytosol </ci>
+                    </apply>
+                    <apply>
+                      <times/>
+                      <ci> ki_IP3_PHGFP_IP3_Cyt </ci>
+                      <ci> kM_IP3_PHGFP_PH_GFP_Cyt </ci>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> vmax_bwd_IP3_PHGFP </ci>
+                    <ci> kM_IP3_PHGFP_IP3_PHGFP_Cyt </ci>
+                  </apply>
+                  <ci> IP3_PHGFP_Cyt </ci>
+                  <ci> Cytosol </ci>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> IP3_PHGFP_Cyt </ci>
+                    <ci> Cytosol </ci>
+                  </apply>
+                  <ci> kM_IP3_PHGFP_IP3_PHGFP_Cyt </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="vmax_fwd_IP3_PHGFP" value="1" units="mmolePerSecond" sboTerm="SBO:0000324"/>
+            <parameter id="vmax_bwd_IP3_PHGFP" value="1" units="mmolePerSecond" sboTerm="SBO:0000325"/>
+            <parameter id="kM_IP3_PHGFP_PH_GFP_Cyt" name="Michaelis constant of species PH_GFP_Cyt in reaction IP3_PHGFP" value="1" units="substance" sboTerm="SBO:0000322"/>
+            <parameter id="kM_IP3_PHGFP_IP3_PHGFP_Cyt" name="Michaelis constant of species IP3_PHGFP_Cyt in reaction IP3_PHGFP" value="1" units="substance" sboTerm="SBO:0000323"/>
+            <parameter id="ki_IP3_PHGFP_IP3_Cyt" value="1" sboTerm="SBO:0000261"/>
+            <parameter id="ki_IP3_PHGFP_PH_GFP_Cyt" value="1" sboTerm="SBO:0000261"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents>
+      <event metaid="metaid_0000078" id="event_0000001">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Stimulating Ratebasal_PIPsyn when PIP_PM is less than PIP_basal</p>
+        </notes>
+        <trigger>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <lt/>
+              <ci> PIP_PM </ci>
+              <ci> PIP_basal </ci>
+            </apply>
+          </math>
+        </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="PIPsynbasal_Stimulation">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <cn type="integer"> 1 </cn>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event metaid="metaid_0000079" id="event_0000002">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Stimulating Ratestim_PIPsyn when time is greater than tauPIPsyn</p>
+        </notes>
+        <trigger>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <gt/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+              <ci> tauPIPsyn </ci>
+            </apply>
+          </math>
+        </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="PIPsynstim_Stimulation">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <cn type="integer"> 1 </cn>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event metaid="metaid_0000080" id="event_0000003">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Stimulating Rate_PIP2Synbasal when PIP2_PM becomes less than PIP2_basal</p>
+        </notes>
+        <trigger>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <lt/>
+              <ci> PIP2_PM </ci>
+              <ci> PIP2_basal </ci>
+            </apply>
+          </math>
+        </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="PIP2synbasal_Stimulation">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <cn type="integer"> 1 </cn>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event metaid="metaid_0000081" id="event_0000004">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Stimulating Rate_PIP2SynStim when time is greater than tauPIP2syn</p>
+        </notes>
+        <trigger>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <gt/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+              <ci> tauPIP2syn </ci>
+            </apply>
+          </math>
+        </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="PIP2synstim_Stimulation">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <cn type="integer"> 1 </cn>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+      <event metaid="metaid_0000082" id="event_0000005">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Triggering the &quot;Signal&quot; for PLC_PM activation when time is greater than tau0</p>
+        </notes>
+        <trigger>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <gt/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> t </csymbol>
+              <ci> tau0 </ci>
+            </apply>
+          </math>
+        </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="Signal_Stimulation">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <cn type="integer"> 1 </cn>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+    </listOfEvents>
+  </model>
+</sbml>

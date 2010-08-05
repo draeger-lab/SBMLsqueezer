@@ -865,8 +865,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				xLab += " in " + UnitDefinition.printUnits(timeUnits, true);
 			plot = new FunctionArea(xLab, "Value");
 			plot.setGridVisible(showGrid.isSelected());
-			plot.showLegend(showLegend.isSelected());
-			// get rid of this popup menu.
+			plot.setShowLegend(showLegend.isSelected());
+			// get rid of this pop-up menu.
 			MouseListener listeners[] = plot.getMouseListeners();
 			for (int i = listeners.length - 1; i >= 0; i--)
 				plot.removeMouseListener(listeners[i]);
@@ -1063,7 +1063,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 				}
 				plot.toggleLog(chck.isSelected());
 			} else if (chck.getName().equals("legend")) {
-				plot.showLegend(chck.isSelected());
+				plot.setShowLegend(chck.isSelected());
 			}
 		} else if (e.getSource() instanceof JComboBox) {
 			JComboBox comBox = (JComboBox) e.getSource();
@@ -1180,7 +1180,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 					}
 				}
 			}
-			plot.showLegend(showLegend);
+			plot.setShowLegend(showLegend);
 		}
 	}
 

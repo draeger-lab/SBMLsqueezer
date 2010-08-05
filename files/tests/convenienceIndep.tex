@@ -1,0 +1,445 @@
+\documentclass[11pt,twoside,a4paper]{scrartcl}
+\usepackage[dvipsnames,svgnames]{xcolor}
+\usepackage{ifpdf}
+\usepackage{scrpage2}
+\usepackage{footmisc}
+\ifpdf
+  \usepackage[pdfpagemode={UseOutlines},
+              pdftitle={Model identifier: "untitled"},
+              pdfauthor={Produced by SBML2LaTeX version 1.0beta},
+              pdfsubject={SBML model summary},
+              pdfkeywords={},
+              pdfview={FitBH},
+              plainpages={false},
+              pdftex,
+              colorlinks=true,
+              pdfdisplaydoctitle=true,
+              linkcolor=royalblue,
+              bookmarks,
+              bookmarksopen,
+              bookmarksnumbered,
+              pdfhighlight={/P},
+              urlcolor={blue}]{hyperref}
+  \usepackage{pdflscape}
+  \pdfcompresslevel=9
+  \usepackage[pdftex]{graphicx}
+\else
+  \usepackage[plainpages={false}]{hyperref}
+  \usepackage{lscape}
+  \usepackage{graphicx}
+  \usepackage{breakurl}
+\fi
+\usepackage{calc}
+\usepackage[paper=a4paper,landscape=false,centering]{geometry}
+\usepackage{mathptmx}
+\usepackage[scaled=.95]{helvet}
+\usepackage[english]{babel}
+\usepackage[english]{rccol}
+\usepackage[version=3]{mhchem}
+\usepackage{relsize}
+\usepackage{pifont}
+\usepackage{textcomp}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{ulem}
+\usepackage{wasysym}
+\usepackage{eurosym}
+\usepackage{rotating}
+\usepackage{upgreek}
+\usepackage{flexisym}
+\usepackage{breqn}
+
+
+\definecolor{royalblue}{cmyk}{.93, .79, 0, 0}
+\definecolor{lightgray}{gray}{0.95}
+\addtokomafont{sectioning}{\color{royalblue}}
+\pagestyle{scrheadings}
+\newcommand{\yes}{\parbox[c]{1.3em}{\Large\Square\hspace{-.65em}\ding{51}}}
+\newcommand{\no}{\parbox[c]{1.3em}{\Large\Square\hspace{-.62em}--}}
+\newcommand{\numero}{N\hspace{-0.075em}\raisebox{0.25em}{\relsize{-2}\b{o}}}
+\newcommand{\reaction}[1]{\begin{equation}\ce{#1}\end{equation}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcommand{\SBMLLaTeX}{{\sffamily\upshape\raisebox{-.35ex}{S\hspace{-.425ex}BML}\hspace{-0.5ex}\begin{rotate}{-17.5}\raisebox{-.1ex}{2}\end{rotate}\hspace{1ex}\LaTeX}}
+\cfoot{\textcolor{gray}{Produced by \SBMLLaTeX}}
+
+\subject{SBML Model Report}
+\title{Model identifier: ``untitled"}
+\date{\today}
+\author{\includegraphics[height=3.5ex]{/local/draeger/workspace/DisplaySBML/./resources/SBML2LaTeX}}
+
+\begin{document}
+\maketitle
+\thispagestyle{scrheadings}
+
+
+\section{General Overview}
+This is a document in SBML Level 2 Version 1 format. Table~\ref{tab:components} provides an overview of the quantities of all components of this model.
+\begin{table}[h!]
+\centering
+\caption{The SBML components in this model.}\label{tab:components}
+All components are described in more detail in the following sections.
+\begin{tabular}{l|r||l|r}
+\toprule
+\multicolumn{1}{c}{Element}&\multicolumn{1}{|c||}{Quantity}&\multicolumn{1}{c|}{Element}&\multicolumn{1}{c}{Quantity}\\
+
+\midrule
+compartment types&0&compartments&1\\
+species types&0&species&5\\
+events&0&constraints&0\\
+reactions&4&function definitions&0\\
+global parameters&0&unit definitions&0\\
+rules&0&initial assignments&0\\
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Unit Definitions}
+This is an overview of five unit definitions.
+All units are predefined by SBML and not mentioned in the model.
+\subsection{Unit \texttt{substance}}
+\begin{description}
+\item[Notes] Mole is the predefined SBML unit for Mole is the predefined SBML unit for Mole is the predefined SBML unit for 
+\item[Definition] $\mathrm{mol}$
+\end{description}
+
+\subsection{Unit \texttt{volume}}
+\begin{description}
+\item[Notes] Litre is the predefined SBML unit for Litre is the predefined SBML unit for Litre is the predefined SBML unit for 
+\item[Definition] $\mathrm{l}$
+\end{description}
+
+\subsection{Unit \texttt{area}}
+\begin{description}
+\item[Notes] Square metre is the predefined SBML unit for Square metre is the predefined SBML unit for Square metre is the predefined SBML unit for 
+\item[Definition] $\mathrm{m}^{2}$
+\end{description}
+
+\subsection{Unit \texttt{length}}
+\begin{description}
+\item[Notes] Metre is the predefined SBML unit for Metre is the predefined SBML unit for Metre is the predefined SBML unit for 
+\item[Definition] $\mathrm{m}$
+\end{description}
+
+\subsection{Unit \texttt{time}}
+\begin{description}
+\item[Notes] Second is the predefined SBML unit for Second is the predefined SBML unit for Second is the predefined SBML unit for 
+\item[Definition] $\mathrm{s}$
+\end{description}
+
+\section{Compartment}
+This model contains one compartment.
+\begin{longtable}[h!]{@{}lllC{2cm}llcl@{}}
+\caption{Properties of all compartments.}\\
+\toprule
+Id&Name&SBO&Spatial Dimensions&Size&Unit&Constant&Outside\\
+\midrule
+\endfirsthead
+\toprule
+Id&Name&SBO&Spatial Dimensions&Size&Unit&Constant&Outside\\
+\midrule
+\endhead
+\texttt{default}&&&3&1&litre&\yes&\texttt{}\\
+\bottomrule\end{longtable}
+
+
+\subsection{Compartment \texttt{default}}
+This is a three-dimensional compartment with a constant size of one\,litre.
+
+\begin{landscape}
+
+\section{Species}
+This model contains five species.
+Section~\ref{sec:DerivedRateEquations} provides further details and the derived rates of change of each species.
+\begin{longtable}[h!]{@{}p{3.5cm}p{6.5cm}p{5cm}p{3cm}C{1.5cm}C{1.5cm}@{}}
+\caption{Properties of each species.}\\
+\toprule
+Id&Name&Compartment&Derived Unit&Constant&Boundary Condition\\
+\midrule
+\endfirsthead
+\toprule
+Id&Name&Compartment&Derived Unit&Constant&Boundary Condition\\
+\midrule
+\endhead
+\texttt{s1}&s1&\texttt{default}&$\mathrm{mol}\cdot \mathrm{l}^{-1}$&\no&\no\\
+\texttt{s2}&s2&\texttt{default}&$\mathrm{mol}\cdot \mathrm{l}^{-1}$&\no&\no\\
+\texttt{s3}&s3&\texttt{default}&$\mathrm{mol}\cdot \mathrm{l}^{-1}$&\no&\no\\
+\texttt{s4}&s4&\texttt{default}&$\mathrm{mol}\cdot \mathrm{l}^{-1}$&\no&\no\\
+\texttt{s5}&s5&\texttt{default}&$\mathrm{mol}\cdot \mathrm{l}^{-1}$&\no&\no\\
+\bottomrule\end{longtable}
+\end{landscape}
+
+
+
+\begin{landscape}
+
+\section{Reactions}
+This model contains four reactions.
+ All reactions are listed in the following table and are subsequently described in detail. If a reaction is affected by one or more modifiers, the  identifiers of the modifier species are written above the reaction arrow.
+\begin{longtable}[h!]{rp{3cm}p{7cm}p{8cm}p{1.5cm}}
+\caption{Overview of all reactions}\\
+\toprule
+\numero&Id&Name&Reaction Equation&SBO\\
+\midrule
+\endfirsthead
+\toprule
+\numero&Id&Name&Reaction Equation&SBO\\
+\midrule
+\endhead
+1&\texttt{re1}&re1&\ce{ $\mathtt{s1}$ +  $\mathtt{s3}$ +  $\mathtt{s4}$ ->  $\mathtt{s2}$ +  $\mathtt{s5}$}&\\
+2&\texttt{re2}&re2&\ce{ $\mathtt{s1}$ ->  $\mathtt{s3}$}&\\
+3&\texttt{re3}&re3&\ce{ $\mathtt{s3}$ ->  $\mathtt{s4}$}&\\
+4&\texttt{re5}&re5&\ce{ $\mathtt{s1}$ ->  $\mathtt{s4}$}&\\
+\bottomrule\end{longtable}
+\end{landscape}
+
+
+\subsection{Reaction \texttt{re1}}
+This is an irreversible reaction of three reactants forming two products.\begin{description}
+\item[Name] re1
+\end{description}
+
+\subsubsection*{Reaction equation}
+\reaction{ $\mathtt{s1}$ +  $\mathtt{s3}$ +  $\mathtt{s4}$ ->  $\mathtt{s2}$ +  $\mathtt{s5}$}
+
+\subsubsection*{Reactants}
+\begin{longtable}[h!]{llc}
+\caption{Properties of each reactant.}\\
+\toprule
+Id & Name & SBO\\
+\midrule
+\endfirsthead
+\toprule
+Id & Name & SBO\\
+\midrule
+\endhead
+\texttt{s1}&s1&\\
+\texttt{s3}&s3&\\
+\texttt{s4}&s4&\\
+\bottomrule\end{longtable}
+
+\subsubsection*{Products}
+\begin{longtable}[h!]{llc}
+\caption{Properties of each product.}\\
+\toprule
+Id & Name & SBO\\
+\midrule
+\endfirsthead
+\toprule
+Id & Name & SBO\\
+\midrule
+\endhead
+\texttt{s2}&s2&\\
+\texttt{s5}&s5&\\
+\bottomrule\end{longtable}
+
+\subsubsection*{Kinetic Law}
+
+\begin{dmath}
+v_{1}=\text{not specified}
+\label{v1}
+\end{dmath}
+
+\subsection{Reaction \texttt{re2}}
+This is an irreversible reaction of one reactant forming one product.\begin{description}
+\item[Name] re2
+\end{description}
+
+\subsubsection*{Reaction equation}
+\reaction{ $\mathtt{s1}$ ->  $\mathtt{s3}$}
+
+\subsubsection*{Reactant}
+\begin{longtable}[h!]{llc}
+\caption{Properties of each reactant.}\\
+\toprule
+Id & Name & SBO\\
+\midrule
+\endfirsthead
+\toprule
+Id & Name & SBO\\
+\midrule
+\endhead
+\texttt{s1}&s1&\\
+\bottomrule\end{longtable}
+
+\subsubsection*{Product}
+\begin{longtable}[h!]{llc}
+\caption{Properties of each product.}\\
+\toprule
+Id & Name & SBO\\
+\midrule
+\endfirsthead
+\toprule
+Id & Name & SBO\\
+\midrule
+\endhead
+\texttt{s3}&s3&\\
+\bottomrule\end{longtable}
+
+\subsubsection*{Kinetic Law}
+
+\begin{dmath}
+v_{2}=\text{not specified}
+\label{v2}
+\end{dmath}
+
+\subsection{Reaction \texttt{re3}}
+This is an irreversible reaction of one reactant forming one product.\begin{description}
+\item[Name] re3
+\end{description}
+
+\subsubsection*{Reaction equation}
+\reaction{ $\mathtt{s3}$ ->  $\mathtt{s4}$}
+
+\subsubsection*{Reactant}
+\begin{longtable}[h!]{llc}
+\caption{Properties of each reactant.}\\
+\toprule
+Id & Name & SBO\\
+\midrule
+\endfirsthead
+\toprule
+Id & Name & SBO\\
+\midrule
+\endhead
+\texttt{s3}&s3&\\
+\bottomrule\end{longtable}
+
+\subsubsection*{Product}
+\begin{longtable}[h!]{llc}
+\caption{Properties of each product.}\\
+\toprule
+Id & Name & SBO\\
+\midrule
+\endfirsthead
+\toprule
+Id & Name & SBO\\
+\midrule
+\endhead
+\texttt{s4}&s4&\\
+\bottomrule\end{longtable}
+
+\subsubsection*{Kinetic Law}
+
+\begin{dmath}
+v_{3}=\text{not specified}
+\label{v3}
+\end{dmath}
+
+\subsection{Reaction \texttt{re5}}
+This is an irreversible reaction of one reactant forming one product.\begin{description}
+\item[Name] re5
+\end{description}
+
+\subsubsection*{Reaction equation}
+\reaction{ $\mathtt{s1}$ ->  $\mathtt{s4}$}
+
+\subsubsection*{Reactant}
+\begin{longtable}[h!]{llc}
+\caption{Properties of each reactant.}\\
+\toprule
+Id & Name & SBO\\
+\midrule
+\endfirsthead
+\toprule
+Id & Name & SBO\\
+\midrule
+\endhead
+\texttt{s1}&s1&\\
+\bottomrule\end{longtable}
+
+\subsubsection*{Product}
+\begin{longtable}[h!]{llc}
+\caption{Properties of each product.}\\
+\toprule
+Id & Name & SBO\\
+\midrule
+\endfirsthead
+\toprule
+Id & Name & SBO\\
+\midrule
+\endhead
+\texttt{s4}&s4&\\
+\bottomrule\end{longtable}
+
+\subsubsection*{Kinetic Law}
+
+\begin{dmath}
+v_{4}=\text{not specified}
+\label{v4}
+\end{dmath}
+
+\section{Derived Rate Equations}
+\label{sec:DerivedRateEquations}
+When interpreted as an ordinary differential equation framework, this model implies the following set of equations for the rates of change of each species. 
+
+The identifiers for reactions, which are not defined properly or which are lacking a kinetic equation, are highlighted in \textcolor{red}{red}. 
+
+\subsection{Species \texttt{s1}}
+\begin{description}
+\item[Name] s1
+\item[Initial amount] $0\;\mathrm{mol}$
+\end{description}
+This species takes part in three reactions (as a reactant in  \hyperref[v1]{\texttt{re1}}, \hyperref[v2]{\texttt{re2}}, \hyperref[v4]{\texttt{re5}}).
+
+\begin{dmath}
+\frac{\mathrm d}{\mathrm dt} \mathtt{s1} = -\hyperref[v1]{\textcolor{red}{v_{1}}}-\hyperref[v2]{\textcolor{red}{v_{2}}}-\hyperref[v4]{\textcolor{red}{v_{4}}}
+\end{dmath}
+
+\subsection{Species \texttt{s2}}
+\begin{description}
+\item[Name] s2
+\item[Initial amount] $0\;\mathrm{mol}$
+\end{description}
+This species takes part in one reaction (as a product in  \hyperref[v1]{\texttt{re1}}).
+
+\begin{dmath}
+\frac{\mathrm d}{\mathrm dt} \mathtt{s2} = \hyperref[v1]{\textcolor{red}{v_{1}}}
+\end{dmath}
+
+\subsection{Species \texttt{s3}}
+\begin{description}
+\item[Name] s3
+\item[Initial amount] $0\;\mathrm{mol}$
+\end{description}
+This species takes part in three reactions (as a reactant in  \hyperref[v1]{\texttt{re1}}, \hyperref[v3]{\texttt{re3}} and as a product in  \hyperref[v2]{\texttt{re2}}).
+
+\begin{dmath}
+\frac{\mathrm d}{\mathrm dt} \mathtt{s3} = \hyperref[v2]{\textcolor{red}{v_{2}}}-\hyperref[v1]{\textcolor{red}{v_{1}}}-\hyperref[v3]{\textcolor{red}{v_{3}}}
+\end{dmath}
+
+\subsection{Species \texttt{s4}}
+\begin{description}
+\item[Name] s4
+\item[Initial amount] $0\;\mathrm{mol}$
+\end{description}
+This species takes part in three reactions (as a reactant in  \hyperref[v1]{\texttt{re1}} and as a product in  \hyperref[v3]{\texttt{re3}}, \hyperref[v4]{\texttt{re5}}).
+
+\begin{dmath}
+\frac{\mathrm d}{\mathrm dt} \mathtt{s4} = \hyperref[v3]{\textcolor{red}{v_{3}}} + \hyperref[v4]{\textcolor{red}{v_{4}}}-\hyperref[v1]{\textcolor{red}{v_{1}}}
+\end{dmath}
+
+\subsection{Species \texttt{s5}}
+\begin{description}
+\item[Name] s5
+\item[Initial amount] $0\;\mathrm{mol}$
+\end{description}
+This species takes part in one reaction (as a product in  \hyperref[v1]{\texttt{re1}}).
+
+\begin{dmath}
+\frac{\mathrm d}{\mathrm dt} \mathtt{s5} = \hyperref[v1]{\textcolor{red}{v_{1}}}
+\end{dmath}
+
+\appendix
+\begin{figure}[b!]
+\setlength{\fboxrule}{.1cm}
+\setlength{\fboxsep}{.3cm}
+\fcolorbox{lightgray}{white}{\begin{minipage}{.945\textwidth}
+% \renewcommand{\footnoterule}{}% \renewcommand{\thempfootnote}{\fnsymbol{mpfootnote}}
+\footnotesize\SBMLLaTeX{} was developed by Andreas Dr\"ager\footnote{Center for Bioinformatics T\"ubingen (ZBIT), Germany}, Hannes Planatscher\mpfootnotemark[1], Dieudonn\'e M Wouamba\mpfootnotemark[1], Adrian Schr\"oder\mpfootnotemark[1], Michael Hucka\footnote{California Institute of Technology, Beckman Institute BNMC, Pasadena, United States of America}, Lukas Endler\footnote{European Bioinformatics Institute, Wellcome Trust Genome Campus, Hinxton, United Kingdom}, Martin Golebiewski\footnote{EML Research gGmbH, Heidelberg, Germany}, Wolfgang M{\"u}ller\mpfootnotemark[4], and Andreas Zell\mpfootnotemark[1]. Please see \url{http://www.ra.cs.uni-tuebingen.de/software/SBML2LaTeX} for more information.
+\end{minipage}}
+\end{figure}
+\end{document}

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created by SBMLsqueezer version 1.2.2 on 2009-09-11 20:05 with libSBML version 4.0.0. -->
+<sbml xmlns="http://www.sbml.org/sbml/level2" level="2" version="1">
+  <model id="untitled">
+    <listOfCompartments>
+      <compartment id="default" size="1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="s1" name="s1" compartment="default" initialAmount="NaN"/>
+      <species id="s2" name="s2" compartment="default" initialAmount="NaN"/>
+      <species id="s3" name="s3" compartment="default" initialAmount="NaN"/>
+      <species id="s4" name="s4" compartment="default" initialAmount="NaN"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="kG_s1" value="1"/>
+      <parameter id="kG_s3" value="1"/>
+      <parameter id="kG_s2" value="1"/>
+      <parameter id="kG_s4" value="1"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="re1" sboTerm="SBO:0000183">
+        <listOfReactants>
+          <speciesReference species="s1" stoichiometry="4"/>
+          <speciesReference species="s3" stoichiometry="2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="s2" stoichiometry="2"/>
+          <speciesReference species="s4" stoichiometry="4"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="re2" reversible="false">
+        <listOfReactants>
+          <speciesReference species="s3"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="s4"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="re3" reversible="false">
+        <listOfReactants>
+          <speciesReference species="s1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="s2"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="re4" reversible="false">
+        <listOfReactants>
+          <speciesReference species="s1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="s3"/>
+        </listOfProducts>
+      </reaction>
+      <reaction id="re5" reversible="false">
+        <listOfReactants>
+          <speciesReference species="s2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="s4"/>
+        </listOfProducts>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
