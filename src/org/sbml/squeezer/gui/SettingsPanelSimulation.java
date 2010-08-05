@@ -184,8 +184,9 @@ public class SettingsPanelSimulation extends SettingsPanel implements
 				.getAvailableSolvers();
 		String solvers[] = new String[availableSolvers.length];
 		int i = 0;
-		for (Class<AbstractDESSolver> solver : availableSolvers)
+		for (Class<AbstractDESSolver> solver : availableSolvers) {
 			solvers[i++] = solver.getConstructor().newInstance().getName();
+		}
 		cmbBxSolver = new JComboBox(solvers);
 		cmbBxSolver.setEnabled(solvers.length > 1);
 		cmbBxSolver.addItemListener(this);

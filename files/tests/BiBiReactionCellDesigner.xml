@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" xmlns:celldesigner="http://www.sbml.org/2001/ns/celldesigner" level="2" version="4">
+<model metaid="untitled" id="untitled">
+<annotation>
+<celldesigner:extension>
+<celldesigner:modelVersion>4.0</celldesigner:modelVersion>
+<celldesigner:modelDisplay sizeX="600" sizeY="400"/>
+<celldesigner:listOfCompartmentAliases/>
+<celldesigner:listOfComplexSpeciesAliases/>
+<celldesigner:listOfSpeciesAliases>
+<celldesigner:speciesAlias id="sa1" species="s1">
+<celldesigner:activity>inactive</celldesigner:activity>
+<celldesigner:bounds x="134.0" y="125.5" w="70.0" h="25.0"/>
+<celldesigner:view state="usual"/>
+<celldesigner:usualView>
+<celldesigner:innerPosition x="0.0" y="0.0"/>
+<celldesigner:boxSize width="70.0" height="25.0"/>
+<celldesigner:singleLine width="1.0"/>
+<celldesigner:paint color="ffccff66" scheme="Color"/>
+</celldesigner:usualView>
+<celldesigner:briefView>
+<celldesigner:innerPosition x="0.0" y="0.0"/>
+<celldesigner:boxSize width="80.0" height="60.0"/>
+<celldesigner:singleLine width="0.0"/>
+<celldesigner:paint color="3fff0000" scheme="Color"/>
+</celldesigner:briefView>
+<celldesigner:info state="empty" angle="-1.5707963267948966"/>
+</celldesigner:speciesAlias>
+<celldesigner:speciesAlias id="sa2" species="s2">
+<celldesigner:activity>inactive</celldesigner:activity>
+<celldesigner:bounds x="94.0" y="223.5" w="70.0" h="25.0"/>
+<celldesigner:view state="usual"/>
+<celldesigner:usualView>
+<celldesigner:innerPosition x="0.0" y="0.0"/>
+<celldesigner:boxSize width="70.0" height="25.0"/>
+<celldesigner:singleLine width="1.0"/>
+<celldesigner:paint color="ffccff66" scheme="Color"/>
+</celldesigner:usualView>
+<celldesigner:briefView>
+<celldesigner:innerPosition x="0.0" y="0.0"/>
+<celldesigner:boxSize width="80.0" height="60.0"/>
+<celldesigner:singleLine width="0.0"/>
+<celldesigner:paint color="3fff0000" scheme="Color"/>
+</celldesigner:briefView>
+<celldesigner:info state="empty" angle="-1.5707963267948966"/>
+</celldesigner:speciesAlias>
+<celldesigner:speciesAlias id="sa3" species="s3">
+<celldesigner:activity>inactive</celldesigner:activity>
+<celldesigner:bounds x="444.0" y="95.5" w="70.0" h="25.0"/>
+<celldesigner:view state="usual"/>
+<celldesigner:usualView>
+<celldesigner:innerPosition x="0.0" y="0.0"/>
+<celldesigner:boxSize width="70.0" height="25.0"/>
+<celldesigner:singleLine width="1.0"/>
+<celldesigner:paint color="ffccff66" scheme="Color"/>
+</celldesigner:usualView>
+<celldesigner:briefView>
+<celldesigner:innerPosition x="0.0" y="0.0"/>
+<celldesigner:boxSize width="80.0" height="60.0"/>
+<celldesigner:singleLine width="0.0"/>
+<celldesigner:paint color="3fff0000" scheme="Color"/>
+</celldesigner:briefView>
+<celldesigner:info state="empty" angle="-1.5707963267948966"/>
+</celldesigner:speciesAlias>
+<celldesigner:speciesAlias id="sa4" species="s4">
+<celldesigner:activity>inactive</celldesigner:activity>
+<celldesigner:bounds x="465.0" y="233.5" w="70.0" h="25.0"/>
+<celldesigner:view state="usual"/>
+<celldesigner:usualView>
+<celldesigner:innerPosition x="0.0" y="0.0"/>
+<celldesigner:boxSize width="70.0" height="25.0"/>
+<celldesigner:singleLine width="1.0"/>
+<celldesigner:paint color="ffccff66" scheme="Color"/>
+</celldesigner:usualView>
+<celldesigner:briefView>
+<celldesigner:innerPosition x="0.0" y="0.0"/>
+<celldesigner:boxSize width="80.0" height="60.0"/>
+<celldesigner:singleLine width="0.0"/>
+<celldesigner:paint color="3fff0000" scheme="Color"/>
+</celldesigner:briefView>
+<celldesigner:info state="empty" angle="-1.5707963267948966"/>
+</celldesigner:speciesAlias>
+</celldesigner:listOfSpeciesAliases>
+<celldesigner:listOfGroups/>
+<celldesigner:listOfProteins/>
+<celldesigner:listOfGenes/>
+<celldesigner:listOfRNAs/>
+<celldesigner:listOfAntisenseRNAs/>
+<celldesigner:listOfLayers/>
+<celldesigner:listOfBlockDiagrams/>
+</celldesigner:extension>
+</annotation>
+<listOfUnitDefinitions>
+<unitDefinition id="substance" name="substance">
+<listOfUnits>
+<unit kind="mole" scale="-3"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="volume" name="volume">
+<listOfUnits>
+<unit kind="litre" scale="-3"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="area" name="area">
+<listOfUnits>
+<unit kind="metre" exponent="2"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="length" name="length">
+<listOfUnits>
+<unit kind="metre"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="time" name="time">
+<listOfUnits>
+<unit kind="second"/>
+</listOfUnits>
+</unitDefinition>
+<unitDefinition id="substance_per_time">
+<listOfUnits>
+<unit kind="mole" scale="-3"/>
+<unit kind="second" exponent="-1"/>
+</listOfUnits>
+</unitDefinition>
+</listOfUnitDefinitions>
+<listOfCompartments>
+<compartment id="default" size="1" units="volume"/>
+</listOfCompartments>
+<listOfSpecies>
+<species id="s1" name="s1" compartment="default" initialAmount="0" substanceUnits="substance" charge="0">
+<annotation>
+<celldesigner:extension>
+<celldesigner:positionToCompartment>inside</celldesigner:positionToCompartment>
+<celldesigner:speciesIdentity>
+<celldesigner:class>SIMPLE_MOLECULE</celldesigner:class>
+<celldesigner:name>s1</celldesigner:name>
+</celldesigner:speciesIdentity>
+</celldesigner:extension>
+</annotation>
+</species>
+<species id="s2" name="s2" compartment="default" initialAmount="0" substanceUnits="substance" charge="0">
+<annotation>
+<celldesigner:extension>
+<celldesigner:positionToCompartment>inside</celldesigner:positionToCompartment>
+<celldesigner:speciesIdentity>
+<celldesigner:class>SIMPLE_MOLECULE</celldesigner:class>
+<celldesigner:name>s2</celldesigner:name>
+</celldesigner:speciesIdentity>
+</celldesigner:extension>
+</annotation>
+</species>
+<species id="s3" name="s3" compartment="default" initialAmount="0" substanceUnits="substance" charge="0">
+<annotation>
+<celldesigner:extension>
+<celldesigner:positionToCompartment>inside</celldesigner:positionToCompartment>
+<celldesigner:speciesIdentity>
+<celldesigner:class>SIMPLE_MOLECULE</celldesigner:class>
+<celldesigner:name>s3</celldesigner:name>
+</celldesigner:speciesIdentity>
+</celldesigner:extension>
+</annotation>
+</species>
+<species id="s4" name="s4" compartment="default" initialAmount="0" substanceUnits="substance" charge="0">
+<annotation>
+<celldesigner:extension>
+<celldesigner:positionToCompartment>inside</celldesigner:positionToCompartment>
+<celldesigner:speciesIdentity>
+<celldesigner:class>SIMPLE_MOLECULE</celldesigner:class>
+<celldesigner:name>s4</celldesigner:name>
+</celldesigner:speciesIdentity>
+</celldesigner:extension>
+</annotation>
+</species>
+</listOfSpecies>
+<listOfReactions>
+<reaction id="re3" fast="false">
+<annotation>
+<celldesigner:extension>
+<celldesigner:reactionType>HETERODIMER_ASSOCIATION</celldesigner:reactionType>
+<celldesigner:baseReactants>
+<celldesigner:baseReactant species="s1" alias="sa1">
+<celldesigner:linkAnchor position="SSE"/>
+</celldesigner:baseReactant>
+<celldesigner:baseReactant species="s2" alias="sa2">
+<celldesigner:linkAnchor position="NNE"/>
+</celldesigner:baseReactant>
+</celldesigner:baseReactants>
+<celldesigner:baseProducts>
+<celldesigner:baseProduct species="s3" alias="sa3">
+<celldesigner:linkAnchor position="SW"/>
+</celldesigner:baseProduct>
+</celldesigner:baseProducts>
+<celldesigner:listOfProductLinks>
+<celldesigner:productLink product="s4" alias="sa4" targetLineIndex="2,1">
+<celldesigner:linkAnchor position="N"/>
+<celldesigner:line width="1.0" color="ff000000" type="Straight"/>
+</celldesigner:productLink>
+</celldesigner:listOfProductLinks>
+<celldesigner:connectScheme connectPolicy="direct">
+<celldesigner:listOfLineDirection>
+<celldesigner:lineDirection arm="0" index="0" value="unknown"/>
+<celldesigner:lineDirection arm="1" index="0" value="unknown"/>
+<celldesigner:lineDirection arm="2" index="0" value="unknown"/>
+</celldesigner:listOfLineDirection>
+</celldesigner:connectScheme>
+<celldesigner:editPoints num0="0" num1="0" num2="0" tShapeIndex="0">0.5343323373537812,0.11215230202235305</celldesigner:editPoints>
+<celldesigner:line width="1.0" color="ff000000"/>
+</celldesigner:extension>
+</annotation>
+<listOfReactants>
+<speciesReference species="s1">
+<annotation>
+<celldesigner:extension>
+<celldesigner:alias>sa1</celldesigner:alias>
+</celldesigner:extension>
+</annotation>
+</speciesReference>
+<speciesReference species="s2">
+<annotation>
+<celldesigner:extension>
+<celldesigner:alias>sa2</celldesigner:alias>
+</celldesigner:extension>
+</annotation>
+</speciesReference>
+</listOfReactants>
+<listOfProducts>
+<speciesReference species="s3">
+<annotation>
+<celldesigner:extension>
+<celldesigner:alias>sa3</celldesigner:alias>
+</celldesigner:extension>
+</annotation>
+</speciesReference>
+<speciesReference species="s4">
+<annotation>
+<celldesigner:extension>
+<celldesigner:alias>sa4</celldesigner:alias>
+</celldesigner:extension>
+</annotation>
+</speciesReference>
+</listOfProducts>
+<kineticLaw>
+<annotation>
+<celldesigner:extension>re3</celldesigner:extension>
+</annotation>
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+<apply>
+<divide/>
+<apply>
+<minus/>
+<apply>
+<times/>
+<ci> vmaf_re3 </ci>
+<apply>
+<power/>
+<apply>
+<divide/>
+<apply>
+<times/>
+<ci> s1 </ci>
+<ci> default </ci>
+</apply>
+<ci> kmc_re3_s1 </ci>
+</apply>
+<ci> hco_re3 </ci>
+</apply>
+<apply>
+<power/>
+<apply>
+<divide/>
+<apply>
+<times/>
+<ci> s2 </ci>
+<ci> default </ci>
+</apply>
+<ci> kmc_re3_s2 </ci>
+</apply>
+<ci> hco_re3 </ci>
+</apply>
+</apply>
+<apply>
+<times/>
+<ci> vmar_re3 </ci>
+<apply>
+<power/>
+<apply>
+<divide/>
+<apply>
+<times/>
+<ci> s1 </ci>
+<ci> default </ci>
+</apply>
+<ci> kmc_re3_s1 </ci>
+</apply>
+<ci> hco_re3 </ci>
+</apply>
+<apply>
+<power/>
+<apply>
+<divide/>
+<apply>
+<times/>
+<ci> s2 </ci>
+<ci> default </ci>
+</apply>
+<ci> kmc_re3_s2 </ci>
+</apply>
+<ci> hco_re3 </ci>
+</apply>
+</apply>
+</apply>
+<apply>
+<plus/>
+<cn type="integer"> 1 </cn>
+<apply>
+<times/>
+<apply>
+<power/>
+<apply>
+<divide/>
+<apply>
+<times/>
+<ci> s1 </ci>
+<ci> default </ci>
+</apply>
+<ci> kmc_re3_s1 </ci>
+</apply>
+<ci> hco_re3 </ci>
+</apply>
+<apply>
+<power/>
+<apply>
+<divide/>
+<apply>
+<times/>
+<ci> s2 </ci>
+<ci> default </ci>
+</apply>
+<ci> kmc_re3_s2 </ci>
+</apply>
+<ci> hco_re3 </ci>
+</apply>
+</apply>
+<apply>
+<times/>
+<apply>
+<power/>
+<apply>
+<divide/>
+<apply>
+<times/>
+<ci> s3 </ci>
+<ci> default </ci>
+</apply>
+<ci> kmc_re3_s3 </ci>
+</apply>
+<ci> hco_re3 </ci>
+</apply>
+<apply>
+<power/>
+<apply>
+<divide/>
+<apply>
+<times/>
+<ci> s4 </ci>
+<ci> default </ci>
+</apply>
+<ci> kmc_re3_s4 </ci>
+</apply>
+<ci> hco_re3 </ci>
+</apply>
+</apply>
+</apply>
+</apply>
+</math>
+<listOfParameters>
+<parameter id="vmaf_re3" name="Forward maximal velocity of reaction re3" value="1" units="substance_per_time"/>
+<parameter id="hco_re3" name="Reaction cooperativity" value="1" units="DIMENSIONLESS"/>
+<parameter id="kmc_re3_s1" name="Michaelis constant of species s1 in reaction re3" value="1" units="substance"/>
+<parameter id="kmc_re3_s2" name="Michaelis constant of species s2 in reaction re3" value="1" units="substance"/>
+<parameter id="vmar_re3" name="Reverse maximal velocity of reaction re3" value="1" units="substance_per_time"/>
+<parameter id="kmc_re3_s3" name="Michaelis constant of species s3 in reaction re3" value="1" units="substance"/>
+<parameter id="kmc_re3_s4" name="Michaelis constant of species s4 in reaction re3" value="1" units="substance"/>
+</listOfParameters>
+</kineticLaw>
+</reaction>
+</listOfReactions>
+</model>
+</sbml>
