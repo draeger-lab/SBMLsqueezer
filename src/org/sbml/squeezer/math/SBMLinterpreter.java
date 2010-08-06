@@ -1470,8 +1470,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			} else if (rule.isAssignment() && currentTime == 0d) {
 				AssignmentRule as = (AssignmentRule) rule;
 				evaluateAssignmentRule(as, changeRate);
-			} else if (rule.isScalar()) {
-
+			} else /*if (rule.isScalar())*/ {
+				// a rule is scalar if it is an assignment rule.
 			}
 		}
 		// process list of algebraic rules
