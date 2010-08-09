@@ -564,8 +564,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			System.loadLibrary("sbmlj");
 			// Extra check to be sure we have access to libSBML:
 			Class.forName("org.sbml.libsbml.libsbml");
-		} catch (Exception e) {
-			msg.err("Error: could not load the libSBML library");
+		} catch (Throwable e) {
+			msg.err("Error: could not load the libSBML library\n");
 			e.printStackTrace();
 			System.exit(1);
 		}

@@ -47,6 +47,7 @@ import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.Maths;
 import org.sbml.jsbml.util.compilers.ASTNodeCompiler;
 import org.sbml.jsbml.util.compilers.ASTNodeValue;
+import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 
 import eva2.tools.math.des.DESAssignment;
@@ -149,7 +150,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * Contains a list of all algebraic rules transformed to assignment rules
 	 * for further processing
 	 */
-	private ArrayList<AssignmentRule> algebraicRules;
+	private List<AssignmentRule> algebraicRules;
 
 	/**
 	 * This field is necessary to also consider local parameters of the current
@@ -181,7 +182,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * Contains a list of all DESAssignment that emerged due to events and have
 	 * not been processed so far
 	 */
-	private ArrayList<DESAssignment> events;
+	private List<DESAssignment> events;
 
 	/**
 	 * Hashes a DESAssignment to an ASTNode containing the mathematical
@@ -903,13 +904,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		this.currentTime = time;
 		double changeRate[] = new double[Y.length];
 		this.Y = Y;
-		
+
 		isProcessingVelocities = true;
-		processVelocities(changeRate);	
+		processVelocities(changeRate);
 		isProcessingVelocities = false;
-			
+
 		processRules(changeRate);
-		
 
 		/*
 		 * Checking the Constraints
@@ -1062,8 +1062,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		 * All other rules
 		 */
 		processRules(Y);
-		
-		
 
 		/*
 		 * Initial assignments
@@ -1470,7 +1468,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			} else if (rule.isAssignment() && currentTime == 0d) {
 				AssignmentRule as = (AssignmentRule) rule;
 				evaluateAssignmentRule(as, changeRate);
-			} else /*if (rule.isScalar())*/ {
+			} else /* if (rule.isScalar()) */{
 				// a rule is scalar if it is an assignment rule.
 			}
 		}
