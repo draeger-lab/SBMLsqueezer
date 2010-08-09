@@ -21,7 +21,9 @@ package org.sbml.squeezer.math;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
@@ -57,6 +59,11 @@ public class AlgebraicRuleConverter {
 		 */
 		private boolean isNegative;
 
+		/**
+		 * 
+		 * @param node
+		 * @param isNegative
+		 */
 		public EquationObject(ASTNode node, boolean isNegative) {
 			this.node = node;
 			this.isNegative = isNegative;
@@ -130,258 +137,8 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * Creates an assignment rule out of the given ASTNode and the Id of its
-	 * algebraic rule
-	 * 
-	 * @param node
-	 * @param ruleId
-	 * @return
-	 */
-	private AssignmentRule createAssignmentRule(ASTNode node, String ruleId) {
-		String variable = new String();
-		AssignmentRule as = null;
-
-		// Search for the corresponding variable in the matching
-		variable = matching.get(ruleId);
-
-		// Evaluate and reorganize the equation of the given ASTNode
-		if (variable.length() > 0) {
-			this.variableNodeParent = null;
-			this.variableNode = null;
-			try {
-				System.out.println("before: " + node.toFormula());
-			} catch (SBMLException e) {
-				e.printStackTrace();
-			}
-			System.out.println("variable: " + variable);
-			as = new AssignmentRule();
-			as.setVariable(variable);
-			// Set pointer to algebraic rule's variable node and to its parent
-			setNodeWithVariable(node, variable);
-			nestingDepth = 0;
-			evaluateEquation(variableNodeParent);
-			System.out.println("nesting depth: " + nestingDepth);
-
-			equationObjects = new ArrayList<ArrayList<EquationObject>>();
-			equationObjects.add(new ArrayList<EquationObject>());
-			equationObjects.add(new ArrayList<EquationObject>());
-
-			deleteVariable();
-			sortEquationObjects(node, false, false, false);
-			as.setMath(buildEquation());
-
-			try {
-				System.out.println("after: " + as.getMath().toFormula());
-			} catch (SBMLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return as;
-	}
-
-	/**
-	 * Checks if the variable of the algebraic equaiton has to be moved to the
-	 * other side of the equation or not and if its connection to the rest of
-	 * the equation is additiv or multiplicative.
-	 * 
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private void evaluateEquation(ASTNode node) {
-		if (node != null) {
-			if (node.getType() == Type.TIMES) {
-				if (node.getNumChildren() == 2) {
-					if (node.getLeftChild().isMinusOne()
-							|| node.getRightChild().isMinusOne()) {
-						remainOnSide = false;
-					} else {
-						additive = false;
-						nestingDepth++;
-					}
-
-				} else {
-					additive = false;
-					nestingDepth++;
-				}
-
-			} else if (node.getType() == Type.DIVIDE) {
-				additive = false;
-				remainOnSide = false;
-				nestingDepth++;
-			}
-
-			evaluateEquation((ASTNode) node.getParent());
-		}
-
-	}
-
-	/**
-	 * Creates a list an assignment rule for every algebraic rule in the given
-	 * model
-	 * 
-	 * @return
-	 */
-	public ArrayList<AssignmentRule> getAssignmentRules() {
-		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
-		AssignmentRule as;
-		if (matching != null) {
-			for (Map.Entry<String, String> entry : matching.entrySet()) {
-				System.out.println(entry.getKey() + " -> " + entry.getValue());
-			}
-		} else
-			System.out.println("no matching found");
-
-		// create for every algebraic rule an adequate assignment rule
-		for (int i = 0; i < model.getNumRules(); i++) {
-			Rule r = model.getRule(i);
-			if (r instanceof AlgebraicRule) {
-				AlgebraicRule ar = (AlgebraicRule) r;
-				ASTNode node = ar.getMath().clone();
-
-				// substitute function definitions
-				if (model.getNumFunctionDefinitions() > 0) {
-					node = substituteFunctions(node, 0);
-				}
-				pso = node.getParentSBMLObject();
-				as = createAssignmentRule(node, ar.getMetaId());
-
-				// whenn assignment rule created add to the list
-				if (as != null) {
-					assignmentRules.add(as);
-					as = null;
-				}
-			}
-		}
-
-		return assignmentRules;
-	}
-
-	/**
-	 * Replaces the names of given ASTNode's childern with the value stored in
-	 * the given HashMaps if there is an entry in any of the HashMaps
-	 * 
-	 * 
-	 * @param node
-	 * @param varibales
-	 */
-	private void replaceNames(ASTNode node, Map<String, String> varibales,
-			Map<String, Double> numberHash, Map<String, ASTNode> nodeHash) {
-
-		if (node.isName()) {
-			if (varibales.get(node.getName()) != null) {
-				node.setName(varibales.get(node.getName()));
-			} else if (numberHash.get(node.getName()) != null) {
-				node.setValue(numberHash.get(node.getName()));
-			} else if (nodeHash.get(node.getName()) != null) {
-				ASTNode parent = (ASTNode) node.getParent();
-				int index = parent.getIndex(node);
-				parent.replaceChild(index, nodeHash.get(node.getName()));
-			}
-		}
-		// proceed with the children
-		for (int i = 0; i < node.getNumChildren(); i++) {
-			replaceNames(node.getChild(i), varibales, numberHash, nodeHash);
-		}
-	}
-
-	/**
-	 * Creates EquationObjects for subterm of the rules equation and sorts them
-	 * into ArrayLists
-	 * 
-	 * @param node
-	 * @param plus
-	 * @param times
-	 * @param divide
-	 */
-	private void sortEquationObjects(ASTNode node, boolean plus, boolean times,
-			boolean divide) {
-
-		// Reached an opartor
-		if (node.isOperator()) {
-			if (node.getType() == Type.PLUS) {
-
-				for (int i = 0; i < node.getNumChildren(); i++) {
-					sortEquationObjects(node.getChild(i), true, false, false);
-				}
-			} else if (node.getType() == Type.MINUS) {
-
-				for (int i = 0; i < node.getNumChildren(); i++) {
-					sortEquationObjects(node.getChild(i), true, true, false);
-				}
-			} else if (node.getType() == Type.TIMES) {
-				if (node.getNumChildren() == 2) {
-					if (node.getLeftChild().isMinusOne()
-							&& !node.getRightChild().isMinusOne()) {
-						sortEquationObjects(node.getRightChild(), true, true,
-								false);
-					}
-
-					else if (node.getLeftChild().isMinusOne()
-							&& !node.getRightChild().isMinusOne()) {
-						sortEquationObjects(node.getLeftChild(), true, true,
-								false);
-					} else {
-						equationObjects.get(1).add(
-								new EquationObject(node.clone(), false));
-					}
-
-				} else {
-					equationObjects.get(1).add(
-							new EquationObject(node.clone(), false));
-				}
-
-			}
-
-		}
-		// Reached a variable
-		else {
-			if (plus && times) {
-				equationObjects.get(0).add(
-						new EquationObject(node.clone(), true));
-			} else if (plus) {
-				equationObjects.get(0).add(
-						new EquationObject(node.clone(), false));
-			}
-		}
-
-	}
-
-	/**
-	 * Befor sorting the equation of the algebraic rule, the variable of the
-	 * rule has to be deleted.
-	 */
-	private void deleteVariable() {
-		int index;
-		// Node with variable has 2 children
-		if (variableNodeParent.getNumChildren() == 2
-				&& variableNodeParent.getType() == Type.TIMES) {
-			// Variable has a negativ sign / other child is -1
-			if (variableNodeParent.getLeftChild().isMinusOne()
-					|| variableNodeParent.getRightChild().isMinusOne()) {
-
-				index = variableNodeParent.getParent().getIndex(
-						variableNodeParent);
-				variableNodeParent.getParent().removeChild(index);
-			}
-			// Other child is not -1
-			else {
-				index = variableNodeParent.getIndex(variableNode);
-				variableNodeParent.removeChild(index);
-			}
-
-		}
-		// Node with variable has multiple childs
-		else {
-			index = variableNodeParent.getIndex(variableNode);
-			variableNodeParent.removeChild(index);
-		}
-	}
-
-	/**
-	 * Creates an equation for the current algebraic rule on the basis
-	 * of the evaluation and the sorted EquationObjects
+	 * Creates an equation for the current algebraic rule on the basis of the
+	 * evaluation and the sorted EquationObjects
 	 * 
 	 * @return
 	 */
@@ -396,7 +153,7 @@ public class AlgebraicRuleConverter {
 		ASTNode multiply = new ASTNode(Type.TIMES, pso);
 		ASTNode divide = new ASTNode(Type.DIVIDE, pso);
 		ASTNode node = null;
-		
+
 		if (additive) {
 			if (!remainOnSide) {
 				ASTNode minus;
@@ -527,6 +284,195 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
+	 * Creates an assignment rule out of the given ASTNode and the Id of its
+	 * algebraic rule
+	 * 
+	 * @param node
+	 * @param ruleId
+	 * @return
+	 */
+	private AssignmentRule createAssignmentRule(ASTNode node, String ruleId) {
+		String variable = new String();
+		AssignmentRule as = null;
+
+		// Search for the corresponding variable in the matching
+		variable = matching.get(ruleId);
+
+		// Evaluate and reorganize the equation of the given ASTNode
+		if (variable.length() > 0) {
+			this.variableNodeParent = null;
+			this.variableNode = null;
+			try {
+				System.out.println("before: " + node.toFormula());
+			} catch (SBMLException e) {
+				e.printStackTrace();
+			}
+			System.out.println("variable: " + variable);
+			as = new AssignmentRule();
+			as.setVariable(variable);
+			// Set pointer to algebraic rule's variable node and to its parent
+			setNodeWithVariable(node, variable);
+			nestingDepth = 0;
+			evaluateEquation(variableNodeParent);
+			System.out.println("nesting depth: " + nestingDepth);
+
+			equationObjects = new ArrayList<ArrayList<EquationObject>>();
+			equationObjects.add(new ArrayList<EquationObject>());
+			equationObjects.add(new ArrayList<EquationObject>());
+
+			deleteVariable();
+			sortEquationObjects(node, false, false, false);
+			as.setMath(buildEquation());
+
+			try {
+				System.out.println("after: " + as.getMath().toFormula());
+			} catch (SBMLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return as;
+	}
+
+	/**
+	 * Befor sorting the equation of the algebraic rule, the variable of the
+	 * rule has to be deleted.
+	 */
+	private void deleteVariable() {
+		int index;
+		// Node with variable has 2 children
+		if (variableNodeParent.getNumChildren() == 2
+				&& variableNodeParent.getType() == Type.TIMES) {
+			// Variable has a negativ sign / other child is -1
+			if (variableNodeParent.getLeftChild().isMinusOne()
+					|| variableNodeParent.getRightChild().isMinusOne()) {
+
+				index = variableNodeParent.getParent().getIndex(
+						variableNodeParent);
+				variableNodeParent.getParent().removeChild(index);
+			}
+			// Other child is not -1
+			else {
+				index = variableNodeParent.getIndex(variableNode);
+				variableNodeParent.removeChild(index);
+			}
+
+		}
+		// Node with variable has multiple childs
+		else {
+			index = variableNodeParent.getIndex(variableNode);
+			variableNodeParent.removeChild(index);
+		}
+	}
+
+	/**
+	 * Checks if the variable of the algebraic equaiton has to be moved to the
+	 * other side of the equation or not and if its connection to the rest of
+	 * the equation is additiv or multiplicative.
+	 * 
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private void evaluateEquation(ASTNode node) {
+		if (node != null) {
+			if (node.getType() == Type.TIMES) {
+				if (node.getNumChildren() == 2) {
+					if (node.getLeftChild().isMinusOne()
+							|| node.getRightChild().isMinusOne()) {
+						remainOnSide = false;
+					} else {
+						additive = false;
+						nestingDepth++;
+					}
+
+				} else {
+					additive = false;
+					nestingDepth++;
+				}
+
+			} else if (node.getType() == Type.DIVIDE) {
+				additive = false;
+				remainOnSide = false;
+				nestingDepth++;
+			}
+
+			evaluateEquation((ASTNode) node.getParent());
+		}
+
+	}
+
+	/**
+	 * Creates a list an assignment rule for every algebraic rule in the given
+	 * model
+	 * 
+	 * @return
+	 */
+	public List<AssignmentRule> getAssignmentRules() {
+		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
+		AssignmentRule as;
+		if (matching != null) {
+			for (Map.Entry<String, String> entry : matching.entrySet()) {
+				System.out.println(entry.getKey() + " -> " + entry.getValue());
+			}
+		} else {
+			System.out.println("no matching found");
+		}
+
+		// create for every algebraic rule an adequate assignment rule
+		for (int i = 0; i < model.getNumRules(); i++) {
+			Rule r = model.getRule(i);
+			if (r instanceof AlgebraicRule) {
+				AlgebraicRule ar = (AlgebraicRule) r;
+				ASTNode node = ar.getMath().clone();
+
+				// substitute function definitions
+				if (model.getNumFunctionDefinitions() > 0) {
+					node = substituteFunctions(node, 0);
+				}
+				pso = node.getParentSBMLObject();
+				as = createAssignmentRule(node, ar.getMetaId());
+
+				// when assignment rule created add to the list
+				if (as != null) {
+					assignmentRules.add(as);
+					as = null;
+				}
+			}
+		}
+
+		return assignmentRules;
+	}
+
+	/**
+	 * Replaces the names of given ASTNode's childern with the value stored in
+	 * the given HashMaps if there is an entry in any of the HashMaps
+	 * 
+	 * 
+	 * @param node
+	 * @param varibales
+	 */
+	private void replaceNames(ASTNode node, Map<String, String> varibales,
+			Map<String, Double> numberHash, Map<String, ASTNode> nodeHash) {
+
+		if (node.isName()) {
+			if (varibales.get(node.getName()) != null) {
+				node.setName(varibales.get(node.getName()));
+			} else if (numberHash.get(node.getName()) != null) {
+				node.setValue(numberHash.get(node.getName()));
+			} else if (nodeHash.get(node.getName()) != null) {
+				ASTNode parent = (ASTNode) node.getParent();
+				int index = parent.getIndex(node);
+				parent.replaceChild(index, nodeHash.get(node.getName()));
+			}
+		}
+		// proceed with the children
+		for (int i = 0; i < node.getNumChildren(); i++) {
+			replaceNames(node.getChild(i), varibales, numberHash, nodeHash);
+		}
+	}
+
+	/**
 	 * Searches in the given ASTNode for a node with the same name as the given
 	 * String. Afterwards the variables variableNode and variable are set.
 	 * 
@@ -546,6 +492,68 @@ public class AlgebraicRuleConverter {
 				}
 			} else
 				setNodeWithVariable((ASTNode) subnode, variable);
+		}
+
+	}
+
+	/**
+	 * Creates EquationObjects for subterm of the rules equation and sorts them
+	 * into ArrayLists
+	 * 
+	 * @param node
+	 * @param plus
+	 * @param times
+	 * @param divide
+	 */
+	private void sortEquationObjects(ASTNode node, boolean plus, boolean times,
+			boolean divide) {
+
+		// Reached an opartor
+		if (node.isOperator()) {
+			if (node.getType() == Type.PLUS) {
+
+				for (int i = 0; i < node.getNumChildren(); i++) {
+					sortEquationObjects(node.getChild(i), true, false, false);
+				}
+			} else if (node.getType() == Type.MINUS) {
+
+				for (int i = 0; i < node.getNumChildren(); i++) {
+					sortEquationObjects(node.getChild(i), true, true, false);
+				}
+			} else if (node.getType() == Type.TIMES) {
+				if (node.getNumChildren() == 2) {
+					if (node.getLeftChild().isMinusOne()
+							&& !node.getRightChild().isMinusOne()) {
+						sortEquationObjects(node.getRightChild(), true, true,
+								false);
+					}
+
+					else if (node.getLeftChild().isMinusOne()
+							&& !node.getRightChild().isMinusOne()) {
+						sortEquationObjects(node.getLeftChild(), true, true,
+								false);
+					} else {
+						equationObjects.get(1).add(
+								new EquationObject(node.clone(), false));
+					}
+
+				} else {
+					equationObjects.get(1).add(
+							new EquationObject(node.clone(), false));
+				}
+
+			}
+
+		}
+		// Reached a variable
+		else {
+			if (plus && times) {
+				equationObjects.get(0).add(
+						new EquationObject(node.clone(), true));
+			} else if (plus) {
+				equationObjects.get(0).add(
+						new EquationObject(node.clone(), false));
+			}
 		}
 
 	}
@@ -623,8 +631,8 @@ public class AlgebraicRuleConverter {
 		for (int i = 0; i < node.getNumChildren(); i++) {
 			substituteFunctions(node.getChild(i), i);
 		}
-		return node;
 
+		return node;
 	}
 
 }
