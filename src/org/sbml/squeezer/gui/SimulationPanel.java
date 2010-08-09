@@ -1588,6 +1588,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 						.getColumnName(j)).columnExperimentTable];
 			}
 		}
+		// TEST! Plots the solution at the given time points...
+//		plot.clearAll();
+//		plot(simulation, true, showLegend.isSelected());
+		// TEST!
 		return distance.distance(simulation, expData);
 	}
 
