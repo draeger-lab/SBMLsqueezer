@@ -72,6 +72,7 @@ public class TestCasesAnalyser {
 		Set<String> withDelayedEvents = new HashSet<String>();
 		Set<String> withFastReactions = new HashSet<String>();
 		Set<String> withReactions = new HashSet<String>();
+		Set<String> withOutReactions = new HashSet<String>();
 		Set<String> withFunctionDefinitions = new HashSet<String>();
 		Set<String> withConstraints = new HashSet<String>();
 		Set<String> withStoichiometricMath = new HashSet<String>();
@@ -128,6 +129,8 @@ public class TestCasesAnalyser {
 							checkDelay(r.getKineticLaw(), dir,
 									withDelayFunctions);
 						}
+					} else {
+						withOutReactions.add(dir.getName());
 					}
 					if (model.getNumFunctionDefinitions() > 0) {
 						withFunctionDefinitions.add(dir.getName());
@@ -163,6 +166,7 @@ public class TestCasesAnalyser {
 		format("Delay", withDelayedEvents, out);
 		format("Fast reactions", withFastReactions, out);
 		format("Reactions", withReactions, out);
+		format("No reactions", withOutReactions, out);
 		format("FunctionDefinitions", withFunctionDefinitions, out);
 		format("Constraints", withConstraints, out);
 		format("StoichiometryMath", withStoichiometricMath, out);
