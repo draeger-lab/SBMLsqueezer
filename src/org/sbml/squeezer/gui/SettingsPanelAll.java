@@ -37,6 +37,8 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.sbml.simulator.gui.SettingsPanelSimulation;
+import org.sbml.simulator.gui.SettingsPanelStability;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 

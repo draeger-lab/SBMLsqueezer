@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package org.sbml.simulator.gui;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
@@ -95,6 +95,10 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Variable;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.gui.GUITools;
+import org.sbml.squeezer.gui.LayoutHelper;
+import org.sbml.squeezer.gui.SettingsDialog;
+import org.sbml.squeezer.gui.TableModelDoubleMatrix;
 import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.math.Distance;
 import org.sbml.squeezer.math.SBMLinterpreter;
@@ -1521,9 +1525,9 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private void simulate(Model model, double t1val, double t2val,
 			double stepSize) throws Exception {
-		TableModelDoubleMatrix tabMod = new TableModelDoubleMatrix(
-				solveByStepSize(model, t1val, t2val, stepSize),
-				createColNames(model));
+		TableModelDoubleMatrix tabMod;
+		tabMod = new TableModelDoubleMatrix(solveByStepSize(model, t1val,
+				t2val, stepSize), createColNames(model));
 		simTable.setModel(tabMod);
 		plot.clearAll();
 		plot(tabMod.getData(), true, showLegend.isSelected());
@@ -1589,8 +1593,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			}
 		}
 		// TEST! Plots the solution at the given time points...
-//		plot.clearAll();
-//		plot(simulation, true, showLegend.isSelected());
+		// plot.clearAll();
+		// plot(simulation, true, showLegend.isSelected());
 		// TEST!
 		return distance.distance(simulation, expData);
 	}

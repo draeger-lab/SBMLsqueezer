@@ -1,4 +1,4 @@
-package org.sbml.squeezer.gui;
+package org.sbml.simulator.gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -18,6 +18,9 @@ import javax.swing.border.TitledBorder;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.gui.GUITools;
+import org.sbml.squeezer.gui.LayoutHelper;
+import org.sbml.squeezer.gui.SettingsPanel;
 
 /**
  * This class is a panel, which contains all necessary options to perform a

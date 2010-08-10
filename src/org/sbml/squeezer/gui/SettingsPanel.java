@@ -61,7 +61,7 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 	/**
 	 * 
 	 */
-	Properties settings;
+	protected Properties settings;
 
 	/**
 	 * 

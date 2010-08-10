@@ -9,10 +9,10 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.resources.Resource;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
+import org.sbml.simulator.gui.SimulationDialog;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
-import org.sbml.squeezer.gui.SimulationDialog;
 import org.sbml.squeezer.io.SBMLio;
 
 /**

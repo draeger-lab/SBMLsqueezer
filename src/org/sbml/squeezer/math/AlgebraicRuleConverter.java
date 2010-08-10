@@ -32,6 +32,8 @@ import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.ASTNode.Type;
 
 /**
@@ -90,10 +92,10 @@ public class AlgebraicRuleConverter {
 	}
 
 	/**
-	 * HashMap representing the current matching with value of the left node ->
-	 * value of the right node
+	 * {@link Map} representing the current matching with value of the left node
+	 * -> value of the right node
 	 */
-	private HashMap<String, String> matching;
+	private Map<SBase, SBase> matching;
 	/**
 	 * The given SBML model
 	 */
@@ -131,8 +133,8 @@ public class AlgebraicRuleConverter {
 	 * 
 	 * @param model
 	 */
-	public AlgebraicRuleConverter(HashMap<String, String> matching, Model model) {
-		this.matching = matching;
+	public AlgebraicRuleConverter(Map<SBase, SBase> map, Model model) {
+		this.matching = map;
 		this.model = model;
 	}
 
@@ -288,18 +290,18 @@ public class AlgebraicRuleConverter {
 	 * algebraic rule
 	 * 
 	 * @param node
-	 * @param ruleId
+	 * @param rule
 	 * @return
 	 */
-	private AssignmentRule createAssignmentRule(ASTNode node, String ruleId) {
-		String variable = new String();
+	private AssignmentRule createAssignmentRule(ASTNode node, Rule rule) {
+		Variable variable;
 		AssignmentRule as = null;
 
 		// Search for the corresponding variable in the matching
-		variable = matching.get(ruleId);
+		variable = (Variable) matching.get(rule);
 
 		// Evaluate and reorganize the equation of the given ASTNode
-		if (variable.length() > 0) {
+		if (variable != null) {
 			this.variableNodeParent = null;
 			this.variableNode = null;
 			try {
@@ -412,7 +414,7 @@ public class AlgebraicRuleConverter {
 		ArrayList<AssignmentRule> assignmentRules = new ArrayList<AssignmentRule>();
 		AssignmentRule as;
 		if (matching != null) {
-			for (Map.Entry<String, String> entry : matching.entrySet()) {
+			for (Map.Entry<SBase, SBase> entry : matching.entrySet()) {
 				System.out.println(entry.getKey() + " -> " + entry.getValue());
 			}
 		} else {
@@ -431,7 +433,7 @@ public class AlgebraicRuleConverter {
 					node = substituteFunctions(node, 0);
 				}
 				pso = node.getParentSBMLObject();
-				as = createAssignmentRule(node, ar.getMetaId());
+				as = createAssignmentRule(node, ar);
 
 				// when assignment rule created add to the list
 				if (as != null) {
@@ -479,19 +481,20 @@ public class AlgebraicRuleConverter {
 	 * @param node
 	 * @param variable
 	 */
-	private void setNodeWithVariable(ASTNode node, String variable) {
+	private void setNodeWithVariable(ASTNode node, Variable variable) {
 		Enumeration<ASTNode> nodes = node.children();
 		ASTNode subnode;
 
 		while (nodes.hasMoreElements()) {
 			subnode = (ASTNode) nodes.nextElement();
 			if (subnode.isName()) {
-				if (subnode.getName() == variable) {
+				if (subnode.getName() == variable.getId()) {
 					variableNodeParent = node;
 					variableNode = subnode;
 				}
-			} else
+			} else {
 				setNodeWithVariable((ASTNode) subnode, variable);
+			}
 		}
 
 	}
