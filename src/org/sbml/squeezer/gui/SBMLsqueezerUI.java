@@ -60,6 +60,8 @@ import javax.swing.event.ChangeListener;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.simulator.gui.SimulationDialog;
+import org.sbml.simulator.gui.StabilityDialog;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.LaTeXExport;

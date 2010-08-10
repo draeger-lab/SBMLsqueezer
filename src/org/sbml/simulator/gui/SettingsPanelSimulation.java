@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package org.sbml.simulator.gui;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -37,6 +37,9 @@ import javax.swing.SpinnerNumberModel;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.gui.GUITools;
+import org.sbml.squeezer.gui.LayoutHelper;
+import org.sbml.squeezer.gui.SettingsPanel;
 import org.sbml.squeezer.math.Distance;
 
 import eva2.tools.math.des.AbstractDESSolver;

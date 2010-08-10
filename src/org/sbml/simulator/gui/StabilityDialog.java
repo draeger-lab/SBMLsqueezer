@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package org.sbml.simulator.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.sbml.squeezer.gui.StabilityPanel;
 import org.sbml.squeezer.io.SBMLio;
 
 /**
