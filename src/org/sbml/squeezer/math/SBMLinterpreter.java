@@ -20,6 +20,7 @@ package org.sbml.squeezer.math;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,84 +69,6 @@ import eva2.tools.math.des.RKSolver;
  * @date 2007-09-06
  */
 public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
-
-	/**
-	 * 
-	 * @author Alexander D&ouml;rr
-	 * 
-	 */
-	private class SpeciesValue extends Index {
-		/**
-		 * The index of the compartment in which the species is located.
-		 */
-		int compartment;
-
-		/**
-		 * 
-		 * @param index
-		 */
-		public SpeciesValue(int index) {
-			super(index);
-
-		}
-
-		/**
-		 * 
-		 * @param index
-		 * @param compartment
-		 */
-		public SpeciesValue(int index, int compartment) {
-			super(index);
-			this.compartment = compartment;
-		}
-
-		/**
-		 * 
-		 * @return
-		 */
-		public int getCompartment() {
-			return this.compartment;
-		}
-
-	}
-
-	/**
-	 * Stores the index of some object.
-	 * 
-	 * @author Andreas Dr&auml;ger
-	 * @author Alexander D&ouml;rr
-	 * 
-	 */
-	private class Index {
-		/**
-		 * 
-		 */
-		int index;
-
-		/**
-		 * 
-		 * @param index
-		 */
-		public Index(int index) {
-			setIndex(Integer.valueOf(index));
-		}
-
-		/**
-		 * 
-		 * @return
-		 */
-		public int getValue() {
-			return index;
-		}
-
-		/**
-		 * 
-		 * @param index
-		 */
-		public void setIndex(Integer index) {
-			this.index = index.intValue();
-		}
-	}
 
 	/**
 	 * Generated serial version UID
@@ -249,7 +172,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * Hashes the name of all compartments, species, and global parameters to an
 	 * value object which contains the position in the Y vector
 	 */
-	private HashMap<String, Index> valuesHash;
+	private HashMap<String, Integer> symbolHash;
+	
+	/**
+	 * Hashes the name of all species located in a compartment to the
+	 * position of their compartment in the Y vector
+	 */
+	private HashMap<String, Integer> compartmentHash;
 
 	/**
 	 * An array of the current concentration of each species within the model
@@ -257,6 +186,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	protected double[] Y;
 
+
+	
 	/**
 	 * <p>
 	 * This constructs a new DifferentialEquationSystem for the given SBML
@@ -477,32 +408,32 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	public ASTNodeValue compile(NamedSBaseWithDerivedUnit nsb)
 			throws SBMLException {
-		Index speciesVal;
+		Integer symbolIndex;
 		if (nsb instanceof Species) {
 			Species s = (Species) nsb;
-			speciesVal = valuesHash.get(nsb.getId());
+			symbolIndex = symbolHash.get(nsb.getId());
 			// int dim = s.getCompartmentInstance().getSpatialDimensions();
 			if (isProcessingVelocities) {
 
-				if (getCompartmentValueOf(speciesVal) == 0d) {
-					return new ASTNodeValue(Y[speciesVal.getValue()], this);
+				if (getCompartmentValueOf(nsb.getId()) == 0d) {
+					return new ASTNodeValue(Y[symbolIndex], this);
 				}
 
 				if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits()) {
-					return new ASTNodeValue(Y[speciesVal.getValue()]
-							/ getCompartmentValueOf(speciesVal), this);
+					return new ASTNodeValue(Y[symbolIndex]
+							/ getCompartmentValueOf(nsb.getId()), this);					
 				}
 
 				// return new ASTNodeValue(Y[speciesVal.getIndex()] /
 				// Maths.root(getCompartmentValueOf(speciesVal), 2), this);
 				if (s.isSetInitialConcentration()
 						&& s.getHasOnlySubstanceUnits()) {
-					return new ASTNodeValue(Y[speciesVal.getValue()]
-							* getCompartmentValueOf(speciesVal), this);
+					return new ASTNodeValue(Y[symbolIndex]
+							* getCompartmentValueOf(nsb.getId()), this);
 				}
 			}
 
-			return new ASTNodeValue(Y[speciesVal.getValue()], this);
+			return new ASTNodeValue(Y[symbolIndex], this);
 			// return Y[speciesVal.getIndex()] /
 			// Maths.root(Y[compVal.getIndex()],2);
 		}
@@ -524,9 +455,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 					}
 				}
 			}
-			speciesVal = valuesHash.get(nsb.getId());
-			return new ASTNodeValue(speciesVal != null ? Y[speciesVal
-					.getValue()] : Double.NaN, this);
+			symbolIndex = symbolHash.get(nsb.getId());
+			return new ASTNodeValue(symbolIndex != null ? Y[symbolIndex] : Double.NaN, this);
 
 		} else if (nsb instanceof FunctionDefinition) {
 			return function((FunctionDefinition) nsb, new LinkedList<ASTNode>());
@@ -548,8 +478,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		if (funcArgs != null && funcArgs.containsKey(name)) {
 			// replace the name by the associated value of the argument
 			return new ASTNodeValue(funcArgs.get(name).doubleValue(), this);
-		} else if (valuesHash.containsKey(name)) {
-			return new ASTNodeValue(Y[valuesHash.get(name).getValue()], this);
+		} else if (symbolHash.containsKey(name)) {
+			return new ASTNodeValue(Y[symbolHash.get(name)], this);
 		}
 		return new ASTNodeValue(String.valueOf(name), this);
 	}
@@ -658,7 +588,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private void evaluateAssignmentRule(AssignmentRule as, double Y[])
 			throws SBMLException {
 		int speciesIndex;
-		speciesIndex = valuesHash.get(as.getVariable()).getValue();
+		speciesIndex = symbolHash.get(as.getVariable());
 		Y[speciesIndex] = as.getMath().compile(this).toDouble();
 	}
 
@@ -672,15 +602,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private void evaluateRateRule(RateRule rr, double changeRate[])
 			throws SBMLException {
 		int speciesIndex;
-		double compartment;
-		Index val = valuesHash.get(model.getSpecies(rr.getVariable()));
-		speciesIndex = valuesHash.get(rr.getVariable()).getValue();
+		
+		speciesIndex = symbolHash.get(rr.getVariable());
 		changeRate[speciesIndex] = rr.getMath().compile(this).toDouble();
-		compartment = getCompartmentValueOf(val);
-		if (compartment != 0d) {
-			changeRate[speciesIndex] = changeRate[speciesIndex]
-					* getCompartmentValueOf(val);
-		}
+		// compartment = getCompartmentValueOf(val);
+
+		// if (compartment != 0d) {
+		// changeRate[speciesIndex] = changeRate[speciesIndex] * compartment;
+		// }
 	}
 
 	/*
@@ -765,17 +694,25 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/**
 	 * Checks if Value is a SpeciesValue Object and returns the value of its
 	 * compartment or 1d otherwise
+	 * @param species 
 	 * 
 	 * @param val
 	 * @return
 	 */
-	private double getCompartmentValueOf(Index val) {
-		// Is Species
-		if (val instanceof SpeciesValue) {
-			return Y[((SpeciesValue) val).getCompartment()];
+	private double getCompartmentValueOf(String species) {
+		Integer compartmentIndex = compartmentHash.get(species);
+		
+		// Is species with compartment
+		if (compartmentIndex != null) {
+			if (Y[compartmentIndex] != 0d) {
+				return Y[compartmentIndex];
+			}
 		}
-		// Is compartment or parameter
+
+		// Is compartment or parameter or there is no compartment for this
+		// species
 		return 1d;
+
 	}
 
 	/*
@@ -832,6 +769,15 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	public int getDESystemDimension() {
 		return this.initialValues.length;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eva2.tools.math.des.EventDESystem#getPositionOfParameters()
+	 */
+	public int getPositionOfParameters() {
+		return model.getNumCompartments() + model.getNumSpecies() - 1;
 	}
 
 	/**
@@ -977,8 +923,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	@SuppressWarnings("unchecked")
 	protected void init() throws ModelOverdeterminedException, SBMLException {
 		int i;
-		valuesHash = new HashMap<String, Index>();
-		int yIndex = 0;
+		symbolHash = new HashMap<String, Integer>();
+		compartmentHash = new HashMap<String, Integer>();
+		Integer compartmentIndex, yIndex = 0;
 		currentTime = 0d;
 		isProcessingVelocities = false;
 
@@ -994,23 +941,25 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				Y[yIndex] = c.getSize();
 			}
 
-			valuesHash.put(c.getId(), new Index(yIndex));
+			symbolHash.put(c.getId(), yIndex);
 			yIndex++;
 
 		}
 
 		for (i = 0; i < model.getNumSpecies(); i++) {
 			Species s = model.getSpecies(i);
-			Index compVal = valuesHash.get(s.getCompartment());
+			compartmentIndex = symbolHash.get(s.getCompartment());
 
 			if (s.isSetInitialAmount()) {
 				Y[yIndex] = s.getInitialAmount();
 			} else {
 				Y[yIndex] = s.getInitialConcentration();
 			}
+			symbolHash.put(s.getId(),yIndex);
 
-			valuesHash.put(s.getId(), new SpeciesValue(yIndex, compVal
-					.getValue()));
+			compartmentHash.put(s.getId(), compartmentIndex);
+	
+			
 			yIndex++;
 
 		}
@@ -1019,7 +968,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			Parameter p = model.getParameter(i);
 
 			Y[yIndex] = p.getValue();
-			valuesHash.put(p.getId(), new Index(yIndex));
+			symbolHash.put(p.getId(), yIndex);
 			yIndex++;
 
 		}
@@ -1269,21 +1218,21 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	public ArrayList<DESAssignment> processAssignmentRules(double t, double Y[])
 			throws SBMLException {
 		ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
-		Index val;
+		Integer symbolIndex;
 		for (int i = 0; i < model.getNumRules(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isAssignment()) {
 				AssignmentRule as = (AssignmentRule) rule;
-				val = valuesHash.get(as.getVariable());
-				assignmentRules.add(new DESAssignment(t, val.getValue(), as
+				symbolIndex = symbolHash.get(as.getVariable());
+				assignmentRules.add(new DESAssignment(t, symbolIndex, as
 						.getMath().compile(this).toDouble()));
 			}
 		}
 
 		if (algebraicRules != null) {
 			for (AssignmentRule as : algebraicRules) {
-				val = valuesHash.get(as.getVariable());
-				assignmentRules.add(new DESAssignment(t, val.getValue(), as
+				symbolIndex = symbolHash.get(as.getVariable());
+				assignmentRules.add(new DESAssignment(t, symbolIndex, as
 						.getMath().compile(this).toDouble()));
 			}
 		}
@@ -1303,19 +1252,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		// change point because of different time point due to events
 		this.Y = Y;
 		this.currentTime = t;
-
-		Index val;
+		Integer symbolIndex;
 		ASTNode assignment_math;
 		Variable variable;
 		double newVal, compartmentValue;
-		int index, i;
+		int i;
 		DESAssignment desa;
 		Event ev;
+		Species sref;
 
 		// number of events = listOfEvents_delay.length
 		for (i = 0; i < model.getNumEvents(); i++) {
 			ev = model.getEvent(i);
 			// check if event triggers
+			isProcessingVelocities = true;
 			if (ev.getTrigger().getMath().compile(this).toBoolean()) {
 				// check if trigger has just become true
 				if (!eventFired[i]) {
@@ -1326,41 +1276,66 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 						assignment_math = ev.getEventAssignment(l).getMath();
 						variable = ev.getEventAssignment(l)
 								.getVariableInstance();
-						val = valuesHash.get(variable.getId());
-						index = val.getValue();
-						compartmentValue = getCompartmentValueOf(val);
+						symbolIndex = symbolHash.get(variable.getId());
+						
+						compartmentValue = getCompartmentValueOf(variable.getId());
 
 						// check conditions of the event
 						if (ev.getDelay() != null) {
 							if (ev.getUseValuesFromTriggerTime()) {
-								if (compartmentValue == 0d) {
+
+								if (compartmentHash.containsKey(variable.getId())) {
+									sref = model.getSpecies(variable.getId());
+									if (sref.isSetInitialAmount()) {
+										newVal = assignment_math.compile(this)
+												.toDouble()
+												* compartmentValue;
+									} else {
+										newVal = assignment_math.compile(this)
+												.toDouble();
+									}
+
+								}
+
+								else {
+
 									newVal = assignment_math.compile(this)
 											.toDouble();
-								} else {
-									// newVal =
-									// evaluateToDouble(assignment_math);
-									newVal = assignment_math.compile(this)
-											.toDouble()
-											* compartmentValue;
 								}
+
 								this.events.add(new DESAssignment(currentTime
 										+ ev.getDelay().getMath().compile(this)
-												.toDouble(), index, newVal));
+												.toDouble(), symbolIndex, newVal));
 
 							} else {
 								desa = new DESAssignment(currentTime
 										+ ev.getDelay().getMath().compile(this)
-												.toDouble(), index);
+												.toDouble(), symbolIndex);
 								this.eventMath.put(desa, assignment_math);
 								this.eventSpecies.put(desa, variable.getId());
 								this.events.add(desa);
 							}
 
 						} else {
-							newVal = assignment_math.compile(this).toDouble();
-							// newVal = evaluateToDouble(assignment_math) *
-							// compartmentValue;
-							events.add(new DESAssignment(currentTime, index,
+
+							if (compartmentHash.containsKey(variable.getId())) {
+								sref = model.getSpecies(variable.getId());
+								if (sref.isSetInitialAmount() && !sref.hasOnlySubstanceUnits()) {
+									newVal = assignment_math.compile(this)
+											.toDouble()
+											* compartmentValue;
+								} else {
+									newVal = assignment_math.compile(this)
+											.toDouble();
+								}
+
+							} else {
+
+								newVal = assignment_math.compile(this)
+										.toDouble();
+							}
+
+							events.add(new DESAssignment(currentTime, symbolIndex,
 									newVal));
 						}
 					}
@@ -1384,11 +1359,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				}
 				// don't uses value from trigger time
 				else {
-					if (valuesHash.get(eventSpecies.get(desa)) instanceof SpeciesValue) {
-						// Species s =
-						// model.getSpecies(this.eventSpecies.get(desa));
-						desa.setValue(eventMath.get(desa).compile(this)
-								.toDouble());
+					if (symbolHash.containsKey(eventSpecies.get(desa))) {
+						sref = model.getSpecies(eventSpecies.get(desa));
+
+						if (sref.isSetInitialAmount()) {
+							symbolIndex = symbolHash.get(sref.getId());
+							compartmentValue = getCompartmentValueOf(sref.getId());
+
+							desa.setValue(eventMath.get(desa).compile(this)
+									.toDouble()
+									* compartmentValue);
+						} else {
+							desa.setValue(eventMath.get(desa).compile(this)
+									.toDouble());
+						}
 					} else {
 						desa.setValue(eventMath.get(desa).compile(this)
 								.toDouble());
@@ -1403,6 +1387,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				i++;
 			}
 		}
+		isProcessingVelocities = false;
+
 		return events;
 	}
 
@@ -1414,23 +1400,25 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private void processInitialAssignments() throws SBMLException {
 		for (int i = 0; i < model.getNumInitialAssignments(); i++) {
 			InitialAssignment iA = model.getInitialAssignment(i);
-			Index val = null;
+			Integer index = null;
 			if (iA.isSetMath() && iA.isSetVariable()) {
 				if (model.getSpecies(iA.getVariable()) != null) {
 					Species s = model.getSpecies(iA.getVariable());
-					val = valuesHash.get(s.getId());
+					index = symbolHash.get(s.getId());
 				} else if (model.getCompartment(iA.getVariable()) != null) {
 					Compartment c = model.getCompartment(iA.getVariable());
-					val = valuesHash.get(c.getId());
+					index = symbolHash.get(c.getId());
 				} else if (model.getParameter(iA.getVariable()) != null) {
 					Parameter p = model.getParameter(iA.getVariable());
-					val = valuesHash.get(p.getId());
+					index = symbolHash.get(p.getId());
 				} else {
 					System.err
 							.println("The model contains an initial assignment for a component other than species, compartment or parameter.");
 				}
 			}
-			this.Y[val.getValue()] = iA.getMath().compile(this).toDouble();
+
+			this.Y[index] = iA.getMath().compile(this).toDouble();
+
 		}
 	}
 
@@ -1506,7 +1494,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		int reactionIndex, sReferenceIndex, speciesIndex;
 		Species species;
 		SpeciesReference speciesRef;
-		Index val;
+		HashSet<String> inConcentration = new HashSet<String>();
 
 		// Velocities of each reaction.
 		for (int i = 0; i < v.length; i++) {
@@ -1524,9 +1512,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumReactants(); sReferenceIndex++) {
 				speciesRef = r.getReactant(sReferenceIndex);
 				species = speciesRef.getSpeciesInstance();
-				val = valuesHash.get(species.getId());
+				
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
-					speciesIndex = val.getValue();
+					speciesIndex = symbolHash.get(species.getId());
 
 					if (speciesRef.isSetStoichiometryMath()) {
 						changeRate[speciesIndex] -= speciesRef
@@ -1538,22 +1526,19 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 								.getStoichiometry()
 								* v[reactionIndex];
 					}
-					// When the unit of reaction specie is mol/compartment size
-					// then it has to be considered in the change rate
+
 					if (species.isSetInitialConcentration()) {
-						changeRate[speciesIndex] = changeRate[speciesIndex]
-								/ getCompartmentValueOf(val);
+						inConcentration.add(species.getId());
 					}
 				}
-
 			}
 
 			for (sReferenceIndex = 0; sReferenceIndex < r.getNumProducts(); sReferenceIndex++) {
 				speciesRef = r.getProduct(sReferenceIndex);
 				species = speciesRef.getSpeciesInstance();
-				val = valuesHash.get(species.getId());
+
 				if (!species.getBoundaryCondition() && !species.getConstant()) {
-					speciesIndex = val.getValue();
+					speciesIndex = symbolHash.get(species.getId());
 
 					if (speciesRef.isSetStoichiometryMath()) {
 						changeRate[speciesIndex] += speciesRef
@@ -1565,15 +1550,22 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 								.getStoichiometry()
 								* v[reactionIndex];
 					}
-					// When the unit of reaction specie is mol/compartment size
-					// then it has to be considered in the change rate
+
 					if (species.isSetInitialConcentration()) {
-						changeRate[speciesIndex] = changeRate[speciesIndex]
-								/ getCompartmentValueOf(val);
+						inConcentration.add(species.getId());
 					}
 				}
 			}
 		}
+
+		// When the unit of reacting specie is mol/compartment
+		// then it has to be considered in the change rate
+		for (String s : inConcentration) {
+			speciesIndex =  symbolHash.get(s);
+			changeRate[speciesIndex] = changeRate[speciesIndex]
+					/ getCompartmentValueOf(s);
+		}
+
 	}
 
 	/*
@@ -1766,5 +1758,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 		}
 		return new ASTNodeValue(value, this);
+	}
+
+	public ASTNodeValue delay(String delayName, ASTNode x, ASTNode delay,
+			String timeUnits) throws SBMLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ASTNodeValue lambdaFunction(List<ASTNode> children)
+			throws SBMLException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
