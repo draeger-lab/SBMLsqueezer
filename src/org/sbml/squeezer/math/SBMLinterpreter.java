@@ -1366,7 +1366,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/**
 	 * Processes the variable of an assignment in terms of determining whether
 	 * the variable references to a species or not and if so accounts the
-	 * compartment in an appropriate way
+	 * compartment in an appropriate way.
 	 * 
 	 * @param variable
 	 * @param math
@@ -1377,22 +1377,21 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			throws SBMLException {
 		double compartmentValue, result = 0d;
 		Species s;
-
 		if (compartmentHash.containsKey(variable)) {
 			s = model.getSpecies(variable);
-
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits()) {
-				compartmentValue = getCompartmentValueOf(s.getId());
-
+				compartmentValue = getCompartmentValueOf(s.getId());				
 				result = math.compile(this).toDouble() * compartmentValue;
 			} else if (s.isSetInitialConcentration()
-					&& s.getHasOnlySubstanceUnits()) {
+					&& s.getHasOnlySubstanceUnits()) {				
 				compartmentValue = getCompartmentValueOf(s.getId());
-
 				result = math.compile(this).toDouble() / compartmentValue;
 			}
+			else{
+				result = math.compile(this).toDouble();
+			}
 
-		} else {
+		} else {			
 			result = math.compile(this).toDouble();
 		}
 
@@ -1412,18 +1411,21 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				if (model.getSpecies(iA.getVariable()) != null) {
 					Species s = model.getSpecies(iA.getVariable());
 					index = symbolHash.get(s.getId());
+					//TODO: consider compartment of the species					
+					this.Y[index] = iA.getMath().compile(this).toDouble();					
 				} else if (model.getCompartment(iA.getVariable()) != null) {
 					Compartment c = model.getCompartment(iA.getVariable());
 					index = symbolHash.get(c.getId());
+					this.Y[index] = iA.getMath().compile(this).toDouble();
 				} else if (model.getParameter(iA.getVariable()) != null) {
 					Parameter p = model.getParameter(iA.getVariable());
 					index = symbolHash.get(p.getId());
+					this.Y[index] = iA.getMath().compile(this).toDouble();
 				} else {
 					System.err
 							.println("The model contains an initial assignment for a component other than species, compartment or parameter.");
 				}
-
-				this.Y[index] = iA.getMath().compile(this).toDouble();
+				
 			}
 		}
 	}
@@ -1563,8 +1565,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 		}
 
-		// When the unit of reacting specie is mol/compartment
-		// then it has to be considered in the change rate
+		// When the unit of reacting specie is given mol/volume
+		// then it has to be considered in the change rate that should
+		// always be only in mol/time
 		for (String s : inConcentration) {
 			speciesIndex = symbolHash.get(s);
 			changeRate[speciesIndex] = changeRate[speciesIndex]
