@@ -97,7 +97,7 @@ public class RSE extends Distance {
 	 * @see org.sbml.squeezer.math.Distance#getStandardParameter()
 	 */
 	@Override
-	public double getStandardParameter() {
+	public double getDefaultParameter() {
 		return 1E4d;
 	}
 

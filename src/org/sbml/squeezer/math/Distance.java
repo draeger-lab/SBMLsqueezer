@@ -37,7 +37,7 @@ public abstract class Distance {
 	 * given by the getStandardParameter() method.
 	 */
 	public Distance() {
-		this.root = getStandardParameter();
+		this.root = getDefaultParameter();
 	}
 
 	/**
@@ -112,10 +112,15 @@ public abstract class Distance {
 	/**
 	 * The name of this distance measurement.
 	 * 
-	 * @return
+	 * @return A human-readable name representing the specific distance measure.
 	 */
 	public abstract String getName();
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return getName() + " with root = " + getRoot();
@@ -132,11 +137,12 @@ public abstract class Distance {
 	}
 
 	/**
-	 * Returns the standard value for the parameter to compute the distance.
+	 * Returns the default value for the parameter to compute the distance.
 	 * 
-	 * @return
+	 * @return The root value of this {@link Distance} measure to be used if no
+	 *         other value has been set.
 	 */
-	public abstract double getStandardParameter();
+	public abstract double getDefaultParameter();
 
 	/**
 	 * Set the current root to be used in the distance function to the specified
