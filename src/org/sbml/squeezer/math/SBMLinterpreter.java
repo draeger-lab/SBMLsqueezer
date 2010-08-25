@@ -672,13 +672,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	public ASTNodeValue function(FunctionDefinition function,
 			List<ASTNode> arguments) throws SBMLException {
 		ASTNode lambda = function.getMath();
-		funcArgs = new Hashtable<String, Double>();
+		Hashtable<String, Double> argValues = new Hashtable<String, Double>();
 		for (int i = 0; i < arguments.size(); i++) {
-			funcArgs.put(lambda.getChild(i).compile(this).toString(), arguments
-					.get(i).compile(this).toDouble());
+			argValues.put(lambda.getChild(i).compile(this).toString(),
+					arguments.get(i).compile(this).toDouble());
 		}
+		funcArgs = argValues;
 		ASTNodeValue value = lambda.getRightChild().compile(this);
-		funcArgs = null;
+		funcArgs.clear();
 		return value;
 	}
 
@@ -928,7 +929,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * @throws SBMLException
 	 */
 	@SuppressWarnings("unchecked")
-	protected void init() throws ModelOverdeterminedException, SBMLException {
+	public void init() throws ModelOverdeterminedException, SBMLException {
 		int i;
 		symbolHash = new HashMap<String, Integer>();
 		compartmentHash = new HashMap<String, Integer>();
@@ -1001,15 +1002,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			this.listOfContraintsViolations = (List<Double>[]) new LinkedList<?>[(int) model
 					.getNumConstraints()];
 			for (i = 0; i < (int) model.getNumConstraints(); i++) {
-				if (listOfContraintsViolations[i] == null)
+				if (listOfContraintsViolations[i] == null) {
 					this.listOfContraintsViolations[i] = new LinkedList<Double>();
-				if (model.getConstraint(i).getMath().compile(this).toBoolean())
+				}
+				if (model.getConstraint(i).getMath().compile(this).toBoolean()) {
 					this.listOfContraintsViolations[i].add(Double.valueOf(0d));
+				}
 			}
 		}
 
 		/*
-		 * Init Events
+		 * Initialize Events
 		 */
 		if (model.getNumEvents() > 0) {
 			this.eventFired = new boolean[model.getNumEvents()];
@@ -1044,7 +1047,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		System.arraycopy(Y, 0, initialValues, 0, initialValues.length);
 		this.swap = new double[this.Y.length];
 		this.events = new ArrayList<DESAssignment>();
-
 	}
 
 	/**
