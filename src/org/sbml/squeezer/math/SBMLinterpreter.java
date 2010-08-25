@@ -51,14 +51,15 @@ import org.sbml.jsbml.util.compilers.ASTNodeValue;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.sbml.jsbml.validator.OverdeterminationValidator;
 
+import eva2.tools.math.des.AbstractDESSolver;
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
-import eva2.tools.math.des.RKSolver;
+import eva2.tools.math.des.IntegrationException;
 
 /**
  * <p>
  * This DifferentialEquationSystem takes a model in SBML format and maps it to a
- * data structure that is understood by the {@link RKSolver} of JavaEvA.
+ * data structure that is understood by the {@link AbstractDESSolver} of EvA2.
  * Therefore, this class implements all necessary functions expected by SBML.
  * </p>
  * 
@@ -767,10 +768,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javaeva.server.oa.go.OptimizationProblems.InferenceRegulatoryNetworks
-	 * .Des.DESystem#getDESystemDimension()
+	 * @see eva2.tools.math.des.DESystem#getDESystemDimension()
 	 */
 	public int getDESystemDimension() {
 		return this.initialValues.length;
@@ -852,48 +850,44 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javaeva.server.oa.go.OptimizationProblems.InferenceRegulatoryNetworks
-	 * .Des.DESystem#getValue(double, double[])
+	 * @see eva2.tools.math.des.DESystem#getValue(double, double[])
 	 */
-	public double[] getValue(double time, double[] Y) throws Exception {
-		int i;
-		this.currentTime = time;
+	public double[] getValue(double time, double[] Y)
+			throws IntegrationException {
 		// create a new array with the same size of Y where the rate of change
 		// is stored for every symbol in the simulation
 		double changeRate[] = new double[Y.length];
-		this.Y = Y;
-
-		isProcessingVelocities = true;
-		processVelocities(changeRate);
-		isProcessingVelocities = false;
-
-		processRules(changeRate);
-
-		/*
-		 * Checking the Constraints
-		 */
-		for (i = 0; i < (int) model.getNumConstraints(); i++) {
-			if (model.getConstraint(i).getMath().compile(this).toBoolean()) {
-				listOfContraintsViolations[i].add(Double.valueOf(time));
-			}
-		}
+		getValue(time, Y, changeRate);
 		return changeRate;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javaeva.server.oa.go.OptimizationProblems.InferenceRegulatoryNetworks
-	 * .Des.DESystem#getValue(double, double[], double[])
+	 * @see eva2.tools.math.des.DESystem#getValue(double, double[], double[])
 	 */
 	public void getValue(double time, double[] Y, double[] changeRate)
-			throws Exception {
-		System
-				.arraycopy(getValue(time, Y), 0, changeRate, 0,
-						changeRate.length);
+			throws IntegrationException {
+		try {
+			int i;
+			this.currentTime = time;
+			this.Y = Y;
+			isProcessingVelocities = true;
+			processVelocities(changeRate);
+			isProcessingVelocities = false;
+
+			processRules(changeRate);
+
+			/*
+			 * Checking the Constraints
+			 */
+			for (i = 0; i < (int) model.getNumConstraints(); i++) {
+				if (model.getConstraint(i).getMath().compile(this).toBoolean()) {
+					listOfContraintsViolations[i].add(Double.valueOf(time));
+				}
+			}
+		} catch (SBMLException exc) {
+			throw new IntegrationException(exc);
+		}
 	}
 
 	/*
@@ -1234,26 +1228,29 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * double[], double[])
 	 */
 	public ArrayList<DESAssignment> processAssignmentRules(double t, double Y[])
-			throws SBMLException {
+			throws IntegrationException {
 		ArrayList<DESAssignment> assignmentRules = new ArrayList<DESAssignment>();
 		Integer symbolIndex;
 
-		for (int i = 0; i < model.getNumRules(); i++) {
-			Rule rule = model.getRule(i);
-			if (rule.isAssignment()) {
-				AssignmentRule as = (AssignmentRule) rule;
-				symbolIndex = symbolHash.get(as.getVariable());
-				assignmentRules.add(new DESAssignment(t, symbolIndex, as
-						.getMath().compile(this).toDouble()));
+		try {
+			for (int i = 0; i < model.getNumRules(); i++) {
+				Rule rule = model.getRule(i);
+				if (rule.isAssignment()) {
+					AssignmentRule as = (AssignmentRule) rule;
+					symbolIndex = symbolHash.get(as.getVariable());
+					assignmentRules.add(new DESAssignment(t, symbolIndex, as
+							.getMath().compile(this).toDouble()));
+				}
 			}
-		}
-
-		if (algebraicRules != null) {
-			for (AssignmentRule as : algebraicRules) {
-				symbolIndex = symbolHash.get(as.getVariable());
-				assignmentRules.add(new DESAssignment(t, symbolIndex, as
-						.getMath().compile(this).toDouble()));
+			if (algebraicRules != null) {
+				for (AssignmentRule as : algebraicRules) {
+					symbolIndex = symbolHash.get(as.getVariable());
+					assignmentRules.add(new DESAssignment(t, symbolIndex, as
+							.getMath().compile(this).toDouble()));
+				}
 			}
+		} catch (SBMLException exc) {
+			throw new IntegrationException(exc);
 		}
 
 		return assignmentRules;
@@ -1266,7 +1263,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * double[])
 	 */
 	public ArrayList<DESAssignment> processEvents(double t, double[] Y)
-			throws SBMLException {
+			throws IntegrationException {
 		ArrayList<DESAssignment> events = new ArrayList<DESAssignment>();
 		// change point because of different time point due to events
 		this.Y = Y;
@@ -1279,89 +1276,97 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		DESAssignment desa;
 		Event ev;
 
-		// number of events = listOfEvents_delay.length
-		for (i = 0; i < model.getNumEvents(); i++) {
-			ev = model.getEvent(i);
-			isProcessingVelocities = true;
-			// check if event triggers
-			if (ev.getTrigger().getMath().compile(this).toBoolean()) {
-				// check if trigger has just become true
-				if (!eventFired[i]) {
+		try {
+			// number of events = listOfEvents_delay.length
+			for (i = 0; i < model.getNumEvents(); i++) {
+				ev = model.getEvent(i);
+				isProcessingVelocities = true;
+				// check if event triggers
+				if (ev.getTrigger().getMath().compile(this).toBoolean()) {
+					// check if trigger has just become true
+					if (!eventFired[i]) {
 
-					// fire event
-					eventFired[i] = true;
-					for (int l = 0; l < ev.getNumEventAssignments(); l++) {
-						assignment_math = ev.getEventAssignment(l).getMath();
-						variable = ev.getEventAssignment(l)
-								.getVariableInstance();
-						symbolIndex = symbolHash.get(variable.getId());
+						// fire event
+						eventFired[i] = true;
+						for (int l = 0; l < ev.getNumEventAssignments(); l++) {
+							assignment_math = ev.getEventAssignment(l)
+									.getMath();
+							variable = ev.getEventAssignment(l)
+									.getVariableInstance();
+							symbolIndex = symbolHash.get(variable.getId());
 
-						// check conditions of the event
-						if (ev.getDelay() != null) {
-							if (ev.getUseValuesFromTriggerTime()) {
+							// check conditions of the event
+							if (ev.getDelay() != null) {
+								if (ev.getUseValuesFromTriggerTime()) {
+
+									newVal = processAssignmentVaribale(variable
+											.getId(), assignment_math);
+
+									this.events.add(new DESAssignment(
+											currentTime
+													+ ev.getDelay().getMath()
+															.compile(this)
+															.toDouble(),
+											symbolIndex, newVal));
+
+								} else {
+									desa = new DESAssignment(currentTime
+											+ ev.getDelay().getMath().compile(
+													this).toDouble(),
+											symbolIndex);
+									this.eventMath.put(desa, assignment_math);
+									this.eventSpecies.put(desa, variable
+											.getId());
+									this.events.add(desa);
+								}
+
+							} else {
 
 								newVal = processAssignmentVaribale(variable
 										.getId(), assignment_math);
 
-								this.events.add(new DESAssignment(currentTime
-										+ ev.getDelay().getMath().compile(this)
-												.toDouble(), symbolIndex,
-										newVal));
-
-							} else {
-								desa = new DESAssignment(currentTime
-										+ ev.getDelay().getMath().compile(this)
-												.toDouble(), symbolIndex);
-								this.eventMath.put(desa, assignment_math);
-								this.eventSpecies.put(desa, variable.getId());
-								this.events.add(desa);
+								events.add(new DESAssignment(currentTime,
+										symbolIndex, newVal));
 							}
-
-						} else {
-
-							newVal = processAssignmentVaribale(
-									variable.getId(), assignment_math);
-
-							events.add(new DESAssignment(currentTime,
-									symbolIndex, newVal));
 						}
 					}
 				}
-			}
-			// trigger is false -> event has not fired recently
-			else {
-				eventFired[i] = false;
-			}
-		}
-
-		i = 0;
-		while (this.events.size() > i) {
-			desa = this.events.get(i);
-
-			if (desa.getProcessTime() <= currentTime) {
-				// uses value from trigger time
-				if (desa.getValue() != null) {
-					events.add(desa);
-					this.events.remove(desa);
-				}
-				// don't uses value from trigger time
+				// trigger is false -> event has not fired recently
 				else {
-
-					desa.setValue(processAssignmentVaribale(eventSpecies
-							.get(desa), eventMath.get(desa)));
-
-					events.add(desa);
-					this.events.remove(desa);
-					this.eventMath.remove(desa);
-					this.eventSpecies.remove(desa);
-
+					eventFired[i] = false;
 				}
-			} else {
-				i++;
 			}
-		}
-		isProcessingVelocities = false;
 
+			i = 0;
+			while (this.events.size() > i) {
+				desa = this.events.get(i);
+
+				if (desa.getProcessTime() <= currentTime) {
+					// uses value from trigger time
+					if (desa.getValue() != null) {
+						events.add(desa);
+						this.events.remove(desa);
+					}
+					// don't uses value from trigger time
+					else {
+
+						desa.setValue(processAssignmentVaribale(eventSpecies
+								.get(desa), eventMath.get(desa)));
+
+						events.add(desa);
+						this.events.remove(desa);
+						this.eventMath.remove(desa);
+						this.eventSpecies.remove(desa);
+
+					}
+				} else {
+					i++;
+				}
+			}
+			isProcessingVelocities = false;
+		} catch (SBMLException exc) {
+			throw new IntegrationException(exc);
+		}
 		return events;
 	}
 
@@ -1382,18 +1387,17 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		if (compartmentHash.containsKey(variable)) {
 			s = model.getSpecies(variable);
 			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits()) {
-				compartmentValue = getCompartmentValueOf(s.getId());				
+				compartmentValue = getCompartmentValueOf(s.getId());
 				result = math.compile(this).toDouble() * compartmentValue;
 			} else if (s.isSetInitialConcentration()
-					&& s.getHasOnlySubstanceUnits()) {				
+					&& s.getHasOnlySubstanceUnits()) {
 				compartmentValue = getCompartmentValueOf(s.getId());
 				result = math.compile(this).toDouble() / compartmentValue;
-			}
-			else{
+			} else {
 				result = math.compile(this).toDouble();
 			}
 
-		} else {			
+		} else {
 			result = math.compile(this).toDouble();
 		}
 
@@ -1413,8 +1417,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				if (model.getSpecies(iA.getVariable()) != null) {
 					Species s = model.getSpecies(iA.getVariable());
 					index = symbolHash.get(s.getId());
-					//TODO: consider compartment of the species					
-					this.Y[index] = iA.getMath().compile(this).toDouble();					
+					// TODO: consider compartment of the species
+					this.Y[index] = iA.getMath().compile(this).toDouble();
 				} else if (model.getCompartment(iA.getVariable()) != null) {
 					Compartment c = model.getCompartment(iA.getVariable());
 					index = symbolHash.get(c.getId());
@@ -1427,7 +1431,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 					System.err
 							.println("The model contains an initial assignment for a component other than species, compartment or parameter.");
 				}
-				
+
 			}
 		}
 	}

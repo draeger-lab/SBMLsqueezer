@@ -74,12 +74,15 @@ public class NMetric extends Distance {
 			x = y;
 			y = swap;
 		}
-		if (root == 0d)
+		if (root == 0d) {
 			throw new IllegalArgumentException("There is no 0-root!");
+		}
 		double d = 0;
-		for (int i = 0; i < x.length; i++)
-			if (!Double.isNaN(y[i]) && !Double.isNaN(x[i]) && (y[i] != x[i]))
+		for (int i = 0; i < x.length; i++) {
+			if (!Double.isNaN(y[i]) && !Double.isNaN(x[i]) && (y[i] != x[i])) {
 				d += Math.pow(Math.abs(x[i] - y[i]), root);
+			}
+		}
 		return Math.pow(d, 1d / root);
 	}
 
@@ -103,7 +106,7 @@ public class NMetric extends Distance {
 	 * @see org.sbml.squeezer.math.Distance#getStandardParameter()
 	 */
 	@Override
-	public double getStandardParameter() {
+	public double getDefaultParameter() {
 		return 2d;
 	}
 
