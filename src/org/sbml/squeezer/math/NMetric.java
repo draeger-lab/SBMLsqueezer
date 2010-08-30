@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.math;
 
+
 /**
  * An implementation of an n-metric. An n-metric is basically the n-th root of
  * the sum of the distances of every single element in two vectors (arrays),
@@ -51,39 +52,41 @@ public class NMetric extends Distance {
 	 * @param root
 	 */
 	public NMetric(double root) {
-		super(root);
+		super(root, Double.NaN);
 	}
 
-	/**
-	 * Computes the root-Distance function. For example root = 2 gives the
-	 * Euclidian Distance. If one array is longer than the other one only the
-	 * first elements contribute to the distance.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param x
-	 *            a vector
-	 * @param y
-	 *            another vector
-	 * @param root
-	 *            what kind of distance function
-	 * @return the distance of x and y
+	 * @see org.sbml.squeezer.math.Distance#additiveTerm(double, double, double,
+	 * double)
 	 */
-	public double distance(double[] x, double[] y, double root)
-			throws IllegalArgumentException {
-		if (x.length > y.length) {
-			double[] swap = x;
-			x = y;
-			y = swap;
-		}
-		if (root == 0d) {
-			throw new IllegalArgumentException("There is no 0-root!");
-		}
-		double d = 0;
-		for (int i = 0; i < x.length; i++) {
-			if (!Double.isNaN(y[i]) && !Double.isNaN(x[i]) && (y[i] != x[i])) {
-				d += Math.pow(Math.abs(x[i] - y[i]), root);
-			}
-		}
-		return Math.pow(d, 1d / root);
+	@Override
+	double additiveTerm(double x_i, double y_i, double root, double defaultValue) {
+		return Math.pow(Math.abs(x_i - y_i), root);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.math.Distance#distance(java.lang.Iterable,
+	 * java.lang.Iterable, double, double)
+	 */
+	@Override
+	public double distance(Iterable<? extends Number> x,
+			Iterable<? extends Number> y, double root, double defaultValue) {
+		return root == 0d ? defaultValue : super.distance(x, y, root,
+				defaultValue);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.math.Distance#getStandardParameter()
+	 */
+	@Override
+	public double getDefaultRoot() {
+		return 2d;
 	}
 
 	/*
@@ -93,21 +96,23 @@ public class NMetric extends Distance {
 	 */
 	@Override
 	public String getName() {
-		if (root == 1d)
+		if (root == 1d) {
 			return "Manhattan";
-		else if (root == 2d)
+		} else if (root == 2d) {
 			return "Euclidean";
+		}
 		return root + "-metric";
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.math.Distance#getStandardParameter()
+	 * @see org.sbml.squeezer.math.Distance#overallDistance(double, double,
+	 * double)
 	 */
 	@Override
-	public double getDefaultParameter() {
-		return 2d;
+	double overallDistance(double d, double root, double defaultValue) {
+		return Math.pow(d, 1d / root);
 	}
 
 }

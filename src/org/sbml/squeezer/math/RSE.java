@@ -20,7 +20,9 @@ package org.sbml.squeezer.math;
 
 /**
  * An implementation of the relative squared error with a default value to avoid
- * division by zero.
+ * division by zero. Actually, the exponent in this error function is 2 (squared
+ * error). Irrespectively, it is possible to set the exponent to different
+ * values.
  * 
  * @author Andreas Dr&auml;ger
  * @since 1.4
@@ -33,7 +35,7 @@ public class RSE extends Distance {
 	 * the root is the default value to be returned by the distance function.
 	 */
 	public RSE() {
-		super();
+		this(1E4d);
 	}
 
 	/**
@@ -43,42 +45,28 @@ public class RSE extends Distance {
 	 * @param standard
 	 */
 	public RSE(double standard) {
-		super(standard);
+		super(2d, standard);
 	}
 
-	/**
-	 * Computes the relative distance of vector x to vector y. Therefore the
-	 * difference of x[i] and y[i] is divided by y[i] for every i. If y[i] is
-	 * zero, the default value <code>def</code> is used instead. The sum of
-	 * these differences gives the distance function. It is possible that one
-	 * array is longer than the other one. If so, the additional values in the
-	 * longer array are ignored and do not contribute to the distance.
-	 * <code>NaN</code> values do also not contribute to the distance.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param x
-	 *            A vector
-	 * @param y
-	 *            The reference vector
-	 * @param def
-	 *            The default value to be use to avoid division by zero.
-	 * @return The relative distance of x to y. If x is shorter than y both
-	 *         arrays are swapped and this method returns the relative distance
-	 *         of y to x.
-	 * @throws Exception
+	 * @see org.sbml.squeezer.math.Distance#additiveTerm(double, double, double,
+	 * double)
 	 */
-	public double distance(double[] x, double[] y, double def) {
-		if (x.length < y.length) {
-			double swap[] = x;
-			x = y;
-			y = swap;
-		}
-		double d = 0d;
-		for (int i = 0; i < y.length; i++) {
-			if (!Double.isNaN(y[i]) && !Double.isNaN(x[i]) && (y[i] != x[i])) {
-				d += (y[i] != 0d) ? Math.pow((x[i] - y[i]) / y[i], 2d) : def;
-			}
-		}
-		return d;
+	@Override
+	double additiveTerm(double x, double y, double root, double defaultValue) {
+		return (y != 0d) ? Math.pow((x - y) / y, root) : defaultValue;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.math.Distance#getStandardParameter()
+	 */
+	@Override
+	public double getDefaultRoot() {
+		return 2d;
 	}
 
 	/*
@@ -88,17 +76,22 @@ public class RSE extends Distance {
 	 */
 	@Override
 	public String getName() {
-		return "Relative Squared Error";
+		String name = "Relative Squared Error";
+		if (getRoot() != 2d) {
+			name += ", exponent = " + getRoot();
+		}
+		return name;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.squeezer.math.Distance#getStandardParameter()
+	 * @see org.sbml.squeezer.math.Distance#overallDistance(double, double,
+	 * double)
 	 */
 	@Override
-	public double getDefaultParameter() {
-		return 1E4d;
+	double overallDistance(double distance, double root, double defaultValue) {
+		return distance;
 	}
 
 }

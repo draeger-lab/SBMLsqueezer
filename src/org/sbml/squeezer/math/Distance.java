@@ -18,6 +18,12 @@
  */
 package org.sbml.squeezer.math;
 
+import java.util.Iterator;
+
+import de.zbit.util.ArrayIterator;
+
+import eva2.tools.math.des.Data;
+
 /**
  * This class is the basis of various implementations of distance functions.
  * 
@@ -33,11 +39,19 @@ public abstract class Distance {
 	protected double root;
 
 	/**
+	 * The return value of the distance function in cases where the distance
+	 * cannot be computed.
+	 */
+	protected double defaultValue;
+
+	/**
 	 * Default constructor. This sets the standard value for the parameter as
-	 * given by the getStandardParameter() method.
+	 * given by the getStandardParameter() method. The default value is set to
+	 * NaN.
 	 */
 	public Distance() {
-		this.root = getDefaultParameter();
+		this.root = getDefaultRoot();
+		this.defaultValue = Double.NaN;
 	}
 
 	/**
@@ -45,9 +59,84 @@ public abstract class Distance {
 	 * 
 	 * @param root
 	 *            The parameter for this distance.
+	 * @param defaultValue
 	 */
-	public Distance(double root) {
+	public Distance(double root, double defaultValue) {
 		this.root = root;
+		this.defaultValue = defaultValue;
+	}
+
+	/**
+	 * The additive term to compute the distance when only two elements are
+	 * given together with all default values.
+	 * 
+	 * @param x_i
+	 * @param y_i
+	 * @param root
+	 * @param defaultValue
+	 * @return
+	 */
+	abstract double additiveTerm(double x_i, double y_i, double root,
+			double defaultValue);
+
+	/**
+	 * This method decides whether or not to consider the given values for the
+	 * computation of a distance. This method checks if both arguments x_i and
+	 * y_i are not {@link Double.NaN} and differ from each other. If other
+	 * conditions should be checked, this method can be overridden.
+	 * 
+	 * @param x_i
+	 * @param y_i
+	 * @param root
+	 * @param defaultValue
+	 * @return True if the given values x_i and y_i are valid and should be
+	 *         considered to compute the distance.
+	 */
+	boolean computeDistanceFor(double x_i, double y_i, double root,
+			double defaultValue) {
+		return !Double.isNaN(y_i) && !Double.isNaN(x_i) && (y_i != x_i);
+	}
+
+	/**
+	 * Computes the distance of two matrices as the sum of the distances of each
+	 * row. It is possible that one matrix contains more columns than the other
+	 * one. If so, the additional values in the bigger matrix are ignored and do
+	 * not contribute to the distance. {@link Double.NaN} values do also not
+	 * contribute to the distance. Only columns with matching identifiers are
+	 * considered for the distance computation.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public double distance(Data x, Data y) {
+		if (x.getColumnCount() > y.getColumnCount()) {
+			Data swap = y;
+			y = x;
+			x = swap;
+		}
+		double d = 0;
+		String identifiers[] = x.getIdentifiers();
+		for (int i = 0; i < identifiers.length; i++) {
+			d += distance(x.getColumn(i), y.getColumn(identifiers[i]));
+		}
+		return d;
+	}
+
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public double distance(Double x[][], Double y[][]) {
+		double d = 0;
+		int j = 0;
+		for (Double[] x_i : x) {
+			d += distance(new ArrayIterator<Double>(x_i),
+					new ArrayIterator<Double>(y[j++]));
+		}
+		return d;
 	}
 
 	/**
@@ -63,8 +152,9 @@ public abstract class Distance {
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
-	public double distance(double[] x, double[] y) {
-		return distance(x, y, root);
+	public double distance(Iterable<? extends Number> x,
+			Iterable<? extends Number> y) {
+		return distance(x, y, root, defaultValue);
 	}
 
 	/**
@@ -72,7 +162,7 @@ public abstract class Distance {
 	 * may be the root in a formal way or a default value to be returned if the
 	 * distance uses a non defined operation. If one array is longer than the
 	 * other one additional values do not contribute to the distance.
-	 * <code>NaN</code> values are also ignored.
+	 * {@link Double.NaN} values are also ignored.
 	 * 
 	 * @param x
 	 *            an array
@@ -80,33 +170,63 @@ public abstract class Distance {
 	 *            another array
 	 * @param root
 	 *            Some necessary parameter.
-	 * @return
+	 * @param defaultValue
+	 *            The value to be returned in cases in which no distance
+	 *            computation is possible.
+	 * @return The distance between the two arrays x and y.
 	 * @throws IllegalArgumentException
 	 */
-	public abstract double distance(double[] x, double[] y, double root);
+	public double distance(Iterable<? extends Number> x,
+			Iterable<? extends Number> y, double root, double defaultValue) {
+		double d = 0;
+		double x_i;
+		double y_i;
+		Iterator<? extends Number> yIterator = y.iterator();
+		for (Number number : x) {
+			if (!yIterator.hasNext()) {
+				break;
+			}
+			x_i = number.doubleValue();
+			y_i = yIterator.next().doubleValue();
+			if (computeDistanceFor(x_i, y_i, root, defaultValue)) {
+				d += additiveTerm(x_i, y_i, root, defaultValue);
+			}
+		}
+		return overallDistance(d, root, defaultValue);
+	}
 
 	/**
-	 * Computes the distance of two matrices as the sum of the distances of each
-	 * row. It is possible that one matrix contains more columns than the other
-	 * one. If so, the additional values in the bigger matrix are ignored and do
-	 * not contribute to the distance. <code>NaN</code> values do also not
-	 * contribute to the distance.
+	 * Computes the distance between two-dimensional {@link Iterable} elements.
 	 * 
 	 * @param x
 	 * @param y
 	 * @return
 	 */
-	public double distance(double[][] x, double[][] y) {
-		if (x.length > y.length) {
-			double[][] swap = y;
-			y = x;
-			x = swap;
-		}
+	public double distance(Iterable<Iterable<? extends Number>> x,
+			Iterator<Iterable<? extends Number>> y) {
 		double d = 0;
-		for (int i = 0; i < x.length; i++) {
-			d += distance(x[i], y[i]);
+		for (Iterable<? extends Number> i : x) {
+			d += distance(i, y.next());
 		}
 		return d;
+	}
+
+	/**
+	 * Returns the default value for the parameter to compute the distance.
+	 * 
+	 * @return The root value of this {@link Distance} measure to be used if no
+	 *         other value has been set.
+	 */
+	public abstract double getDefaultRoot();
+
+	/**
+	 * Returns the default value that is returned by the distance function in
+	 * cases in which the computation of the distance is not possible.
+	 * 
+	 * @return
+	 */
+	public double getDefaultValue() {
+		return defaultValue;
 	}
 
 	/**
@@ -115,16 +235,6 @@ public abstract class Distance {
 	 * @return A human-readable name representing the specific distance measure.
 	 */
 	public abstract String getName();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return getName() + " with root = " + getRoot();
-	}
 
 	/**
 	 * Returns the currently set root or default value for the distance
@@ -137,12 +247,26 @@ public abstract class Distance {
 	}
 
 	/**
-	 * Returns the default value for the parameter to compute the distance.
+	 * This method allows to change the value of an already computed distance
+	 * with the help of the given default values.
 	 * 
-	 * @return The root value of this {@link Distance} measure to be used if no
-	 *         other value has been set.
+	 * @param distance
+	 * @param root
+	 * @param defaultValue
+	 * @return
 	 */
-	public abstract double getDefaultParameter();
+	abstract double overallDistance(double distance, double root,
+			double defaultValue);
+
+	/**
+	 * Set the value to be returned by the distance function in cases, in which
+	 * no distance can be computed.
+	 * 
+	 * @param defaultValue
+	 */
+	public void setDefaultValue(double defaultValue) {
+		this.defaultValue = defaultValue;
+	}
 
 	/**
 	 * Set the current root to be used in the distance function to the specified
@@ -152,6 +276,17 @@ public abstract class Distance {
 	 */
 	public void setRoot(double root) {
 		this.root = root;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("%s, root = %d, default = %d", getName(),
+				getRoot(), getDefaultValue());
 	}
 
 }

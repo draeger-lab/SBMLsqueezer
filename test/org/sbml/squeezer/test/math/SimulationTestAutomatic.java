@@ -23,9 +23,12 @@ import org.sbml.squeezer.math.Distance;
 import org.sbml.squeezer.math.RSE;
 import org.sbml.squeezer.math.SBMLinterpreter;
 
+import de.zbit.util.ArrayIterator;
+
 import au.com.bytecode.opencsv.CSVReader;
 import eva2.gui.Plot;
 import eva2.tools.math.des.AbstractDESSolver;
+import eva2.tools.math.des.Data;
 import eva2.tools.math.des.RKEventSolver;
 
 /**
@@ -94,7 +97,7 @@ public class SimulationTestAutomatic {
 
 			try {
 				Model model = sbmlIo.convert2Model(sbmlfile);
-				
+
 				// RKSolver rk = new RKSolver();
 				AbstractDESSolver rk = new RKEventSolver();
 
@@ -119,11 +122,11 @@ public class SimulationTestAutomatic {
 
 				// solve At StepSize
 
-				double solution[][] = rk.solveAtTimePoints(interpreter,
-						interpreter.getInitialValues(), timepoints);
-				double[][] data = new double[input.get(0).length - 1][input
+				Data solution = rk.solve(interpreter, interpreter
+						.getInitialValues(), timepoints);
+				Double[][] data = new Double[input.get(0).length - 1][input
 						.size()];
-				double[][] solutiontrans = new double[input.get(0).length - 1][input
+				Double[][] solutiontrans = new Double[input.get(0).length - 1][input
 						.size()];
 				int from = model.getNumCompartments();
 				// from = 0;
@@ -132,7 +135,8 @@ public class SimulationTestAutomatic {
 				for (int i = 1; i < data.length + 1; i++) {
 					for (int j = 0; j < input.size(); j++) {
 						data[i - 1][j] = Double.valueOf(input.get(j)[i]);
-						solutiontrans[i - 1][j] = solution[j][i - 1 + from];
+						solutiontrans[i - 1][j] = solution.getValueAt(j, i - 1
+								+ from);
 					}
 				}
 
@@ -151,7 +155,7 @@ public class SimulationTestAutomatic {
 				else {
 					Plot plot = new Plot("Simulation", "time", "value");
 
-					for (int i = 0; i < solution.length; i++) {
+					for (int i = 0; i < solution.getRowCount(); i++) {
 						for (int j = 0; j < solutiontrans.length; j++) {
 
 							double sym = solutiontrans[j][i];
