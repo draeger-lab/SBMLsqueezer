@@ -107,6 +107,7 @@ import org.sbml.squeezer.util.HTMLFormula;
 import au.com.bytecode.opencsv.CSVReader;
 import eva2.gui.FunctionArea;
 import eva2.tools.math.des.AbstractDESSolver;
+import eva2.tools.math.des.Data;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -1131,10 +1132,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 *            If true, all points will be connected, singular points are
 	 *            plotted for false.
 	 */
-	private void plot(double[][] solution, boolean connected, boolean showLegend) {
-		if (solution.length > 0) {
-			for (int i = 0; i < solution.length; i++) {
-				for (int j = 0; j < solution[i].length - 1; j++) {
+	private void plot(Data solution, boolean connected, boolean showLegend) {
+		if (solution.getRowCount() > 0) {
+			for (int i = 0; i < solution.getRowCount(); i++) {
+				for (int j = 0; j < solution.getColumnCount() - 1; j++) {
 					if (connected) {
 						if (legend.getRowCount() == 0
 								|| ((Boolean) legend.getValueAt(j, 0))
@@ -1143,8 +1144,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 									1));
 							plot.setInfoString(j, legend.getValueAt(j, 2)
 									.toString(), 2);
-							plot.setConnectedPoint(solution[i][0],
-									solution[i][j + 1], j);
+							plot.setConnectedPoint(solution.getValueAt(i, 0),
+									solution.getValueAt(i, j + 1), j);
 						}
 					} else {
 						String name = experiment2ElementIndex.get(Integer
@@ -1170,9 +1171,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 											.getColumnExperimentTable();
 									if (tidx < 0)
 										tidx = 0;
-									plot.setUnconnectedPoint(solution[i][tidx],
-											solution[i][index
-													.getRowLegendTable()],
+									plot.setUnconnectedPoint(solution
+											.getValueAt(i, tidx), solution
+											.getValueAt(i, index
+													.getRowLegendTable()),
 											colNames.length - 1 + j);
 									plot.setInfoString(colNames.length - 1 + j,
 											legend.getValueAt(
@@ -1200,7 +1202,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	private double[][] readCSVFile(File file) throws IOException {
+	private Data readCSVFile(File file) throws IOException {
 		CSVReader csvreader = new CSVReader(new FileReader(file),
 				separatorChar, quoteChar, 0);
 		List<String[]> input = csvreader.readAll();
@@ -1305,22 +1307,25 @@ public class SimulationPanel extends JPanel implements ActionListener,
 						.toHTML(message, 40), "Some elements are ignored",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
-			TableModelDoubleMatrix tabModel = new TableModelDoubleMatrix();
+			String columnNames[] = null;
 			if (numNumbers == 0) {
-				tabModel.setColumnNames(input.remove(0));
-				tabModel.swapColumns(colNames);
+				columnNames = input.remove(0);
+				// tabModel.swapColumns(colNames);
 			}
-			double data[][] = new double[input.size()][input.get(0).length];
+			double data[][] = new double[input.size()][input.get(0).length - 1];
+			double timePoints[] = new double[input.size()];
 			for (i = 0; i < data.length; i++) {
+				timePoints[i] = Double.valueOf(input.get(i)[0]).doubleValue();
 				for (j = 0; j < data[i].length; j++) {
-					data[i][j] = Double.valueOf(input.get(i)[j]).doubleValue();
+					data[i][j] = Double.valueOf(input.get(i)[j + 1])
+							.doubleValue();
 				}
 			}
-			tabModel.setData(data);
+			Data tabModel = new Data(timePoints, data, columnNames);
 			this.expTable.setModel(tabModel);
-			return data;
+			return tabModel;
 		}
-		return new double[0][0];
+		return new Data();
 	}
 
 	/**
@@ -1525,15 +1530,12 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 */
 	private void simulate(Model model, double t1val, double t2val,
 			double stepSize) throws Exception {
-		TableModelDoubleMatrix tabMod;
-		tabMod = new TableModelDoubleMatrix(solveByStepSize(model, t1val,
-				t2val, stepSize), createColNames(model));
-		simTable.setModel(tabMod);
+		Data data = solveByStepSize(model, t1val, t2val, stepSize);
+		simTable.setModel(data);
 		plot.clearAll();
-		plot(tabMod.getData(), true, showLegend.isSelected());
+		plot(data, true, showLegend.isSelected());
 		if (expTable.getColumnCount() > 0) {
-			plot(((TableModelDoubleMatrix) expTable.getModel()).getData(),
-					false, showLegend.isSelected());
+			plot((Data) expTable.getModel(), false, showLegend.isSelected());
 			distField
 					.setText(Double.toString(computeDistance(model, stepSize)));
 			distField.setEditable(false);
@@ -1552,12 +1554,12 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @return
 	 * @throws Exception
 	 */
-	private double[][] solveByStepSize(Model model, double t1, double t2,
+	private Data solveByStepSize(Model model, double t1, double t2,
 			double stepSize) throws Exception {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
-		double solution[][] = solver.solveByStepSizeIncludingTime(interpreter,
-				interpreter.getInitialValues(), t1, t2);
+		Data solution = solver.solve(interpreter, interpreter
+				.getInitialValues(), t1, t2);
 		if (solver.isUnstable()) {
 			JOptionPane.showMessageDialog(this, "Unstable!",
 					"Simulation not possible", JOptionPane.WARNING_MESSAGE);
@@ -1579,24 +1581,23 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (tidx < 0) {
 			tidx = 0;
 		}
-		double simData[][] = solveAtTimePoints(model,
-				((TableModelDoubleMatrix) expTable.getModel())
-						.getColumnData(tidx), stepSize);
-		double expData[][] = ((TableModelDoubleMatrix) expTable.getModel())
-				.getData();
-		double simulation[][] = new double[expData.length][expData[0].length];
-		for (int i = 0; i < simulation.length; i++) {
-			simulation[i][0] = expData[i][0];
-			for (int j = 1; j < simulation[i].length; j++) {
-				simulation[i][j] = simData[i][colNames2data.get(expTable
-						.getColumnName(j)).columnExperimentTable];
-			}
-		}
+		Data simData = solveAtTimePoints(model,
+				((Data) expTable.getModel()).getTimePoints(), stepSize);
+		Data expData = (Data) expTable.getModel();
+		// double simulation[][] = new
+		// double[expData.length][expData[0].length];
+		// for (int i = 0; i < simulation.length; i++) {
+		// simulation[i][0] = expData[i][0];
+		// for (int j = 1; j < simulation[i].length; j++) {
+		// simulation[i][j] = simData[i][colNames2data.get(expTable
+		// .getColumnName(j)).columnExperimentTable];
+		// }
+		// }
 		// TEST! Plots the solution at the given time points...
 		// plot.clearAll();
 		// plot(simulation, true, showLegend.isSelected());
 		// TEST!
-		return distance.distance(simulation, expData);
+		return distance.distance(simData, expData);
 	}
 
 	/**
@@ -1607,12 +1608,12 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 * @return
 	 * @throws Exception
 	 */
-	private double[][] solveAtTimePoints(Model model, double times[],
-			double stepSize) throws Exception {
+	private Data solveAtTimePoints(Model model, double times[], double stepSize)
+			throws Exception {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
-		double solution[][] = solver.solveAtTimePointsIncludingTime(
-				interpreter, interpreter.getInitialValues(), times);
+		Data solution = solver.solve(interpreter, interpreter
+				.getInitialValues(), times);
 		if (solver.isUnstable()) {
 			JOptionPane.showMessageDialog(this, "Unstable!",
 					"Simulation not possible", JOptionPane.WARNING_MESSAGE);
@@ -1654,11 +1655,10 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			if (e.getColumn() <= 1 && 0 < simTable.getRowCount()
 					&& e.getType() == TableModelEvent.UPDATE) {
 				plot.clearAll();
-				plot(((TableModelDoubleMatrix) simTable.getModel()).getData(),
-						true, showLegend.isSelected());
+				plot((Data) simTable.getModel(), true, showLegend.isSelected());
 				if (expTable.getRowCount() > 0)
-					plot(((TableModelDoubleMatrix) expTable.getModel())
-							.getData(), false, showLegend.isSelected());
+					plot((Data) expTable.getModel(), false, showLegend
+							.isSelected());
 				if (showLegend.isSelected())
 					plot.updateLegend();
 			}

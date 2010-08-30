@@ -176,6 +176,12 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private HashMap<String, Integer> symbolHash;
 
 	/**
+	 * An array of strings that memorizes at each position the identifier of the
+	 * corresponding element in the Y array.
+	 */
+	private String[] symbolIdentifiers;
+
+	/**
 	 * Hashes the name of all species located in a compartment to the position
 	 * of their compartment in the Y vector. When a species has no compartment,
 	 * it is hashed to null.
@@ -541,10 +547,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.sbml.jsbml.ASTNodeCompiler#delay(java.lang.String,
-	 * org.sbml.jsbml.ASTNode, double, java.lang.String)
+	 * @see
+	 * org.sbml.jsbml.util.compilers.ASTNodeCompiler#delay(java.lang.String,
+	 * org.sbml.jsbml.ASTNode, org.sbml.jsbml.ASTNode, java.lang.String)
 	 */
-	public ASTNodeValue delay(String delayName, ASTNode x, double time,
+	public ASTNodeValue delay(String delayName, ASTNode x, ASTNode delay,
 			String timeUnits) throws SBMLException {
 		// TODO Auto-generated method stub
 		return null;
@@ -768,6 +775,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see eva2.tools.math.des.DESystem#getDESystemDimension()
 	 */
 	public int getDESystemDimension() {
@@ -777,10 +785,10 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see eva2.tools.math.des.EventDESystem#getPositionOfParameters()
+	 * @see eva2.tools.math.des.DESystem#getIdentifiers()
 	 */
-	public int getPositionOfParameters() {
-		return model.getNumCompartments() + model.getNumSpecies() - 1;
+	public String[] getIdentifiers() {
+		return symbolIdentifiers;
 	}
 
 	/**
@@ -810,6 +818,14 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		return new ASTNodeValue(Double.NEGATIVE_INFINITY, this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see eva2.tools.math.des.EventDESystem#getNumEvents()
+	 */
+	public int getNumEvents() {
+		return model.getNumEvents();
+	}
+
 	/**
 	 * This method tells you the complete number of parameters within the model.
 	 * It counts the global model parameters and all local parameters
@@ -832,6 +848,23 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * @see eva2.tools.math.des.EventDESystem#getNumRules()
+	 */
+	public int getNumRules() {
+		return model.getNumRules();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eva2.tools.math.des.EventDESystem#getPositionOfParameters()
+	 */
+	public int getPositionOfParameters() {
+		return model.getNumCompartments() + model.getNumSpecies() - 1;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.sbml.jsbml.ASTNodeCompiler#getPositiveInfinity()
 	 */
@@ -850,6 +883,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see eva2.tools.math.des.DESystem#getValue(double, double[])
 	 */
 	public double[] getValue(double time, double[] Y)
@@ -863,6 +897,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see eva2.tools.math.des.DESystem#getValue(double, double[], double[])
 	 */
 	public void getValue(double time, double[] Y, double[] changeRate)
@@ -933,6 +968,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 		this.Y = new double[model.getNumCompartments() + model.getNumSpecies()
 				+ model.getNumParameters()];
+		this.symbolIdentifiers = new String[Y.length];
 
 		/*
 		 * Save starting values of the model's compartment in Y
@@ -947,6 +983,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 
 			symbolHash.put(c.getId(), yIndex);
+			symbolIdentifiers[yIndex] = c.getId();
 			yIndex++;
 
 		}
@@ -965,11 +1002,9 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				Y[yIndex] = s.getInitialConcentration();
 			}
 			symbolHash.put(s.getId(), yIndex);
-
 			compartmentHash.put(s.getId(), compartmentIndex);
-
+			symbolIdentifiers[yIndex] = s.getId();
 			yIndex++;
-
 		}
 
 		/*
@@ -980,8 +1015,8 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 			Y[yIndex] = p.getValue();
 			symbolHash.put(p.getId(), yIndex);
+			symbolIdentifiers[yIndex] = p.getId();
 			yIndex++;
-
 		}
 
 		/*
@@ -1209,6 +1244,26 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		return new ASTNodeValue(value, this);
 	}
 
+	// /**
+	// *
+	// * @param lambda
+	// * @param names
+	// * @param d
+	// * @return
+	// */
+	// private ASTNode replace(ASTNode lambda, Hashtable<String, Double>
+	// args) {
+	// String name;
+	// for (ASTNode child : lambda.getListOfNodes())
+	// if (child.isName() && args.containsKey(child.getName())) {
+	// name = child.getName();
+	// child.setType(ASTNode.Type.REAL);
+	// child.setValue(args.get(name));
+	// } else if (child.getNumChildren() > 0)
+	// child = replace(child, args);
+	// return lambda;
+	// }
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1254,6 +1309,40 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 
 		return assignmentRules;
+	}
+
+	/**
+	 * Processes the variable of an assignment in terms of determining whether
+	 * the variable references to a species or not and if so accounts the
+	 * compartment in an appropriate way.
+	 * 
+	 * @param variable
+	 * @param math
+	 * @return
+	 * @throws SBMLException
+	 */
+	private double processAssignmentVaribale(String variable, ASTNode math)
+			throws SBMLException {
+		double compartmentValue, result = 0d;
+		Species s;
+		if (compartmentHash.containsKey(variable)) {
+			s = model.getSpecies(variable);
+			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits()) {
+				compartmentValue = getCompartmentValueOf(s.getId());
+				result = math.compile(this).toDouble() * compartmentValue;
+			} else if (s.isSetInitialConcentration()
+					&& s.getHasOnlySubstanceUnits()) {
+				compartmentValue = getCompartmentValueOf(s.getId());
+				result = math.compile(this).toDouble() / compartmentValue;
+			} else {
+				result = math.compile(this).toDouble();
+			}
+
+		} else {
+			result = math.compile(this).toDouble();
+		}
+
+		return result;
 	}
 
 	/*
@@ -1371,40 +1460,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	}
 
 	/**
-	 * Processes the variable of an assignment in terms of determining whether
-	 * the variable references to a species or not and if so accounts the
-	 * compartment in an appropriate way.
-	 * 
-	 * @param variable
-	 * @param math
-	 * @return
-	 * @throws SBMLException
-	 */
-	private double processAssignmentVaribale(String variable, ASTNode math)
-			throws SBMLException {
-		double compartmentValue, result = 0d;
-		Species s;
-		if (compartmentHash.containsKey(variable)) {
-			s = model.getSpecies(variable);
-			if (s.isSetInitialAmount() && !s.getHasOnlySubstanceUnits()) {
-				compartmentValue = getCompartmentValueOf(s.getId());
-				result = math.compile(this).toDouble() * compartmentValue;
-			} else if (s.isSetInitialConcentration()
-					&& s.getHasOnlySubstanceUnits()) {
-				compartmentValue = getCompartmentValueOf(s.getId());
-				result = math.compile(this).toDouble() / compartmentValue;
-			} else {
-				result = math.compile(this).toDouble();
-			}
-
-		} else {
-			result = math.compile(this).toDouble();
-		}
-
-		return result;
-	}
-
-	/**
 	 * Processes the initial assignments of the model
 	 * 
 	 * @throws SBMLException
@@ -1435,26 +1490,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 		}
 	}
-
-	// /**
-	// *
-	// * @param lambda
-	// * @param names
-	// * @param d
-	// * @return
-	// */
-	// private ASTNode replace(ASTNode lambda, Hashtable<String, Double>
-	// args) {
-	// String name;
-	// for (ASTNode child : lambda.getListOfNodes())
-	// if (child.isName() && args.containsKey(child.getName())) {
-	// name = child.getName();
-	// child.setType(ASTNode.Type.REAL);
-	// child.setValue(args.get(name));
-	// } else if (child.getNumChildren() > 0)
-	// child = replace(child, args);
-	// return lambda;
-	// }
 
 	/**
 	 * 
@@ -1772,18 +1807,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 			}
 		}
 		return new ASTNodeValue(value, this);
-	}
-
-	public ASTNodeValue lambdaFunction(List<ASTNode> children)
-			throws SBMLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ASTNodeValue delay(String delayName, ASTNode x, ASTNode delay,
-			String timeUnits) throws SBMLException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

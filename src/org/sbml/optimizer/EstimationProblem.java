@@ -27,6 +27,7 @@ import org.sbml.squeezer.math.SBMLinterpreter;
 
 import eva2.server.go.problems.AbstractProblemDouble;
 import eva2.tools.math.des.DESSolver;
+import eva2.tools.math.des.Data;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -74,14 +75,9 @@ public class EstimationProblem extends AbstractProblemDouble {
 	private SBMLinterpreter interpreter = null;
 
 	/**
-	 * 
+	 * Reference data used to judge the quality of a simulation result.
 	 */
-	private double[][] referenceData = null;
-
-	/**
-	 * The time points at which measurements have been taken.
-	 */
-	private double[] timePoints;
+	private Data referenceData = null;
 
 	/**
 	 * An array to store the fitness of a parameter set to avoid multiple
@@ -95,15 +91,12 @@ public class EstimationProblem extends AbstractProblemDouble {
 	 * @param distance
 	 * @param model
 	 * @param referenceData
-	 *            A matrix whose first column contains the time point at which
-	 *            measurements have been taken. All following columns contain
-	 *            the values of the quantities to be simulated.
 	 * @param quantities
 	 * @throws ModelOverdeterminedException
 	 * @throws SBMLException
 	 */
 	public EstimationProblem(DESSolver solver, Distance distance, Model model,
-			double[][] referenceData, Quantity... quantities)
+			Data referenceData, Quantity... quantities)
 			throws ModelOverdeterminedException, SBMLException {
 		super();
 		setSolver(solver);
@@ -166,9 +159,9 @@ public class EstimationProblem extends AbstractProblemDouble {
 		}
 		try {
 			interpreter.init();
-			fitness[0] = distance.distance(solver.solveAtTimePoints(
-					interpreter, interpreter.getInitialValues(), timePoints),
-					referenceData);
+			fitness[0] = distance.distance(solver.solve(interpreter,
+					interpreter.getInitialValues(), referenceData
+							.getTimePoints()), referenceData);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fitness[0] = Double.POSITIVE_INFINITY;
@@ -224,16 +217,8 @@ public class EstimationProblem extends AbstractProblemDouble {
 	 * 
 	 * @return
 	 */
-	public double[][] getReferenceData() {
-		double data[][] = new double[timePoints.length][referenceData[0].length + 1];
-		int i, j;
-		for (i = 0; i < data.length; i++) {
-			data[i][0] = timePoints[i];
-			for (j = 1; j < data[i].length; j++) {
-				data[i][j] = referenceData[i][j - 1];
-			}
-		}
-		return data;
+	public Data getReferenceData() {
+		return referenceData;
 	}
 
 	/**
@@ -291,23 +276,10 @@ public class EstimationProblem extends AbstractProblemDouble {
 
 	/**
 	 * 
-	 * @param data
-	 * @param quantities
-	 */
-	public void setQuantities(double[][] data, Quantity... quantities) {
-		unsetQuantities();
-		unsetReferenceData();
-		setQuantities(quantities);
-		setReferenceData(data);
-	}
-
-	/**
-	 * 
 	 * @param quantities
 	 */
 	public void setQuantities(Quantity... quantities) {
-		if (check(quantities)
-				&& (!isSetReferenceData() || (isSetReferenceData() && (quantities.length == referenceData[0].length)))) {
+		if (check(quantities)) {
 			this.quantities = quantities;
 			this.originalValues = new double[quantities.length];
 			for (int i = 0; i < originalValues.length; i++) {
@@ -323,24 +295,14 @@ public class EstimationProblem extends AbstractProblemDouble {
 	 * 
 	 * @param referenceData
 	 */
-	public void setReferenceData(double[][] referenceData) {
+	public void setReferenceData(Data referenceData) {
 		if ((referenceData != null)
-				&& (referenceData[0].length != 1 /* time column */+ getModel()
-						.getNumQuantities())) {
+				&& (referenceData.getColumnCount() != 1 /* time column */+ getModel()
+						.getNumSymbols())) {
 			throw new IllegalArgumentException(
-					"unequal number of reference data and quantities in the model");
+					"unequal number of reference data and symbols in the model");
 		}
-		this.timePoints = new double[referenceData.length];
-		int i, j;
-		for (i = 0; i < timePoints.length; i++) {
-			timePoints[i] = referenceData[i][0];
-		}
-		this.referenceData = new double[timePoints.length][referenceData.length - 1];
-		for (i = 0; i < timePoints.length; i++) {
-			for (j = 0; j < this.referenceData.length; j++) {
-				this.referenceData[i][j] = referenceData[i][j + 1];
-			}
-		}
+		this.referenceData = referenceData;
 	}
 
 	/**

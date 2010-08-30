@@ -11,6 +11,7 @@ import org.sbml.squeezer.math.SBMLinterpreter;
 
 import eva2.gui.Plot;
 import eva2.tools.math.des.AbstractDESSolver;
+import eva2.tools.math.des.Data;
 import eva2.tools.math.des.RKEventSolver;
 
 /**
@@ -47,7 +48,7 @@ public class SimulationTest {
 			SBMLinterpreter interpreter = new SBMLinterpreter(model);
 			double time = 0;
 
-			double solution[][] = rk.solveByStepSize(interpreter, interpreter
+			Data solution = rk.solve(interpreter, interpreter
 					.getInitialValues(), time, 2);
 			rk.setStepSize(0.01);
 
@@ -55,15 +56,15 @@ public class SimulationTest {
 			// .getInitialValues(), timePoints)
 			//			
 
-			System.out.println(solution[0].length);
-			if (rk.isUnstable())
+			System.out.println(solution.getColumnCount() - 1);
+			if (rk.isUnstable()) {
 				System.err.println("unstable!");
-			else {
+			} else {
 				int from = model.getNumCompartments();
 				int to = from + model.getNumSpecies();
 				Plot plot = new Plot("Simulation", "time", "value");
-				for (int i = 0; i < solution.length; i++) {
-					double[] symbol = solution[i];
+				for (int i = 0; i < solution.getRowCount(); i++) {
+					double[] symbol = solution.getRow(i);
 					for (int j = from; j < to; j++) {
 
 						double sym = symbol[j];
