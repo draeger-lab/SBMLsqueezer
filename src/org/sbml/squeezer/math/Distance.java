@@ -34,15 +34,15 @@ import eva2.tools.math.des.Data;
 public abstract class Distance {
 
 	/**
-	 * A value to express a parameter of the implementing class.
-	 */
-	protected double root;
-
-	/**
 	 * The return value of the distance function in cases where the distance
 	 * cannot be computed.
 	 */
 	protected double defaultValue;
+
+	/**
+	 * A value to express a parameter of the implementing class.
+	 */
+	protected double root;
 
 	/**
 	 * Default constructor. This sets the standard value for the parameter as
@@ -98,6 +98,25 @@ public abstract class Distance {
 	}
 
 	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public double distance(Data x, Data y) {
+		if (x.getBlockCount() > y.getBlockCount()) {
+			Data swap = y;
+			y = x;
+			x = swap;
+		}
+		double d = 0d;
+		for (int i = 0; i < x.getBlockCount(); i++) {
+			d += distance(x.getBlock(i), y.getBlock(i));
+		}
+		return overallDistance(d, getRoot(), getDefaultValue());
+	}
+
+	/**
 	 * Computes the distance of two matrices as the sum of the distances of each
 	 * row. It is possible that one matrix contains more columns than the other
 	 * one. If so, the additional values in the bigger matrix are ignored and do
@@ -109,13 +128,13 @@ public abstract class Distance {
 	 * @param y
 	 * @return
 	 */
-	public double distance(Data x, Data y) {
+	public double distance(Data.Block x, Data.Block y) {
 		if (x.getColumnCount() > y.getColumnCount()) {
-			Data swap = y;
+			Data.Block swap = y;
 			y = x;
 			x = swap;
 		}
-		double d = 0;
+		double d = 0d;
 		String identifiers[] = x.getIdentifiers();
 		for (int i = 0; i < identifiers.length; i++) {
 			d += distance(x.getColumn(i), y.getColumn(identifiers[i]));
