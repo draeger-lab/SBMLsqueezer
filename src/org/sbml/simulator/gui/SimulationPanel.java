@@ -365,6 +365,11 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	private int distanceFunc;
 
 	/**
+	 * Switches inclusion of reactions in the plot on or off.
+	 */
+	private boolean includeReactions = true;
+
+	/**
 	 * This class stores the row of an element in the Legend table and the
 	 * column of the same element in the experimental data table.
 	 * 
@@ -1113,7 +1118,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	private JTable legendTable(Model model) {
 		JTable tab = new JTable();
 		tab.setName("legend");
-		tab.setModel(new TableModelLedgend(model));
+		tab.setModel(new TableModelLedgend(model, includeReactions));
 		tab.setDefaultEditor(Color.class, new ColorEditor());
 		tab.setDefaultRenderer(Color.class, new TableCellRendererObjects());
 		tab.setDefaultRenderer(Symbol.class, new TableCellRendererObjects());
@@ -1133,61 +1138,56 @@ public class SimulationPanel extends JPanel implements ActionListener,
 	 *            plotted for false.
 	 */
 	private void plot(Data solution, boolean connected, boolean showLegend) {
-		if (solution.getRowCount() > 0) {
-			for (int i = 0; i < solution.getRowCount(); i++) {
-				for (int j = 0; j < solution.getColumnCount() - 1; j++) {
-					if (connected) {
-						if (legend.getRowCount() == 0
-								|| ((Boolean) legend.getValueAt(j, 0))
-										.booleanValue()) {
-							plot.setGraphColor(j, (Color) legend.getValueAt(j,
-									1));
-							plot.setInfoString(j, legend.getValueAt(j, 2)
-									.toString(), 2);
-							plot.setConnectedPoint(solution.getValueAt(i, 0),
-									solution.getValueAt(i, j + 1), j);
-						}
-					} else {
-						String name = experiment2ElementIndex.get(Integer
-								.valueOf(j + 1));
-						// Plot only data whose corresponding elements could be
-						// identified.
-						if (name != null) {
-							Indices index = colNames2data.get(name);
-							if (index != null
-									&& index.getRowLegendTable() >= 0
-									&& index.getRowLegendTable() < legend
-											.getRowCount()) {
-								if (legend.getRowCount() == 0
-										|| ((Boolean) legend.getValueAt(index
-												.getRowLegendTable(), 0))
-												.booleanValue()) {
-									plot.setGraphColor(colNames.length - 1 + j,
-											(Color) legend.getValueAt(index
-													.getRowLegendTable(), 1));
-									Indices time = colNames2data
-											.get(colNames[0]);
-									int tidx = time == null ? 0 : time
-											.getColumnExperimentTable();
-									if (tidx < 0)
-										tidx = 0;
-									plot.setUnconnectedPoint(solution
-											.getValueAt(i, tidx), solution
-											.getValueAt(i, index
-													.getRowLegendTable()),
-											colNames.length - 1 + j);
-									plot.setInfoString(colNames.length - 1 + j,
-											legend.getValueAt(
-													index.getRowLegendTable(),
-													2).toString(), 2);
-								}
+		for (int i = 0; i < solution.getRowCount(); i++) {
+			for (int j = 0; j < solution.getColumnCount() - 1; j++) {
+				if (connected) {
+					if (legend.getRowCount() == 0
+							|| ((Boolean) legend.getValueAt(j, 0))
+									.booleanValue()) {
+						plot.setGraphColor(j, (Color) legend.getValueAt(j, 1));
+						plot.setInfoString(j, legend.getValueAt(j, 2)
+								.toString(), 2);
+						plot.setConnectedPoint(solution.getValueAt(i, 0),
+								solution.getValueAt(i, j + 1), j);
+					}
+				} else {
+					String name = experiment2ElementIndex.get(Integer
+							.valueOf(j + 1));
+					// Plot only data whose corresponding elements could be
+					// identified.
+					if (name != null) {
+						Indices index = colNames2data.get(name);
+						if (index != null
+								&& index.getRowLegendTable() >= 0
+								&& index.getRowLegendTable() < legend
+										.getRowCount()) {
+							if (legend.getRowCount() == 0
+									|| ((Boolean) legend.getValueAt(index
+											.getRowLegendTable(), 0))
+											.booleanValue()) {
+								plot.setGraphColor(colNames.length - 1 + j,
+										(Color) legend.getValueAt(index
+												.getRowLegendTable(), 1));
+								Indices time = colNames2data.get(colNames[0]);
+								int tidx = time == null ? 0 : time
+										.getColumnExperimentTable();
+								if (tidx < 0)
+									tidx = 0;
+								plot.setUnconnectedPoint(solution.getValueAt(i,
+										tidx), solution.getValueAt(i, index
+										.getRowLegendTable()), colNames.length
+										- 1 + j);
+								plot.setInfoString(colNames.length - 1 + j,
+										legend.getValueAt(
+												index.getRowLegendTable(), 2)
+												.toString(), 2);
 							}
 						}
 					}
 				}
 			}
-			plot.setShowLegend(showLegend);
 		}
+		plot.setShowLegend(showLegend);
 	}
 
 	/**
@@ -1558,6 +1558,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			double stepSize) throws Exception {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
+		solver.setIncludeIntermediates(includeReactions);
 		Data solution = solver.solve(interpreter, interpreter
 				.getInitialValues(), t1, t2);
 		if (solver.isUnstable()) {
@@ -1581,8 +1582,8 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		if (tidx < 0) {
 			tidx = 0;
 		}
-		Data simData = solveAtTimePoints(model,
-				((Data) expTable.getModel()).getTimePoints(), stepSize);
+		Data simData = solveAtTimePoints(model, ((Data) expTable.getModel())
+				.getTimePoints(), stepSize);
 		Data expData = (Data) expTable.getModel();
 		// double simulation[][] = new
 		// double[expData.length][expData[0].length];
@@ -1597,7 +1598,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 		// plot.clearAll();
 		// plot(simulation, true, showLegend.isSelected());
 		// TEST!
-		return distance.distance(simData, expData);
+		return distance.distance(simData.getBlock(0), expData.getBlock(0));
 	}
 
 	/**
@@ -1612,6 +1613,7 @@ public class SimulationPanel extends JPanel implements ActionListener,
 			throws Exception {
 		SBMLinterpreter interpreter = new SBMLinterpreter(model);
 		solver.setStepSize(stepSize);
+		solver.setIncludeIntermediates(false);
 		Data solution = solver.solve(interpreter, interpreter
 				.getInitialValues(), times);
 		if (solver.isUnstable()) {
@@ -1756,8 +1758,21 @@ class TableModelLedgend extends AbstractTableModel {
 	 * @param model
 	 */
 	public TableModelLedgend(Model model) {
-		data = new Object[model.getNumCompartments() + model.getNumSpecies()
-				+ model.getNumParameters()][3];
+		this(model, false);
+	}
+
+	/**
+	 * 
+	 * @param model
+	 * @param includeReactions
+	 */
+	public TableModelLedgend(Model model, boolean includeReactions) {
+		int dim = model.getNumCompartments() + model.getNumSpecies()
+				+ model.getNumParameters();
+		if (includeReactions) {
+			dim += model.getNumReactions();
+		}
+		data = new Object[dim][3];
 		int i, j;
 		for (i = 0; i < model.getNumCompartments(); i++) {
 			data[i][0] = Boolean.TRUE;
@@ -1775,6 +1790,14 @@ class TableModelLedgend extends AbstractTableModel {
 			data[i + j][0] = Boolean.TRUE;
 			data[i + j][1] = SimulationPanel.indexToColor(i + j);
 			data[i + j][2] = model.getParameter(i);
+		}
+		if (includeReactions) {
+			j = model.getNumSymbols();
+			for (i = 0; i < model.getNumReactions(); i++) {
+				data[i + j][0] = Boolean.TRUE;
+				data[i + j][1] = SimulationPanel.indexToColor(i + j);
+				data[i + j][2] = model.getReaction(i);
+			}
 		}
 	}
 

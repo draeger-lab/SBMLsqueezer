@@ -19,6 +19,7 @@
 package org.sbml.squeezer.math;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -55,6 +56,7 @@ import eva2.tools.math.des.AbstractDESSolver;
 import eva2.tools.math.des.DESAssignment;
 import eva2.tools.math.des.EventDESystem;
 import eva2.tools.math.des.IntegrationException;
+import eva2.tools.math.des.RichDESystem;
 
 /**
  * <p>
@@ -69,7 +71,8 @@ import eva2.tools.math.des.IntegrationException;
  * @since 1.4
  * @date 2007-09-06
  */
-public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
+public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem,
+		RichDESystem {
 
 	/**
 	 * Generated serial version UID
@@ -81,6 +84,13 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 * for further processing
 	 */
 	private List<AssignmentRule> algebraicRules;
+
+	/**
+	 * Hashes the name of all species located in a compartment to the position
+	 * of their compartment in the Y vector. When a species has no compartment,
+	 * it is hashed to null.
+	 */
+	private HashMap<String, Integer> compartmentHash;
 
 	/**
 	 * This field is necessary to also consider local parameters of the current
@@ -163,13 +173,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	protected double[] swap;
 
 	/**
-	 * An array of the velocities of each reaction within the model system.
-	 * Holding this globally saves many new memory allocations during simulation
-	 * time.
-	 */
-	protected double[] v;
-
-	/**
 	 * Hashes the name of all compartments, species, and global parameters to an
 	 * value object which contains the position in the Y vector
 	 */
@@ -182,11 +185,11 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	private String[] symbolIdentifiers;
 
 	/**
-	 * Hashes the name of all species located in a compartment to the position
-	 * of their compartment in the Y vector. When a species has no compartment,
-	 * it is hashed to null.
+	 * An array of the velocities of each reaction within the model system.
+	 * Holding this globally saves many new memory allocations during simulation
+	 * time.
 	 */
-	private HashMap<String, Integer> compartmentHash;
+	protected double[] v;
 
 	/**
 	 * An array of the current concentration of each species within the model
@@ -800,6 +803,39 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		return this.initialValues;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eva2.tools.math.des.RichDESystem#getIntermediateIds()
+	 */
+	public String[] getIntermediateIds() {
+		String ids[] = new String[v.length];
+		int i = 0;
+		for (Reaction r : model.getListOfReactions()) {
+			ids[i++] = r.getId();
+		}
+		return ids;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eva2.tools.math.des.RichDESystem#getIntermediates(double, double[])
+	 */
+	public double[] getIntermediates(double t, double[] Y)
+			throws IntegrationException {
+		if ((t != currentTime) || ((Y != this.Y) && !Arrays.equals(Y, this.Y))) {
+			/*
+			 * We have to compute the system for the given state. But we are not
+			 * interested in the rates of change, but only in the reaction
+			 * velocities. Therefore, we throw away the results into a
+			 * senseless array.
+			 */
+			getValue(t, Y);
+		}
+		return v;
+	}
+
 	/**
 	 * Returns the model that is used by this object.
 	 * 
@@ -820,10 +856,20 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see eva2.tools.math.des.EventDESystem#getNumEvents()
 	 */
 	public int getNumEvents() {
 		return model.getNumEvents();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eva2.tools.math.des.RichDESystem#getNumIntermediates()
+	 */
+	public int getNumIntermediates() {
+		return v.length;
 	}
 
 	/**
@@ -848,6 +894,7 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see eva2.tools.math.des.EventDESystem#getNumRules()
 	 */
 	public int getNumRules() {
@@ -902,20 +949,30 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 	 */
 	public void getValue(double time, double[] Y, double[] changeRate)
 			throws IntegrationException {
-		try {
-			int i;
-			this.currentTime = time;
-			this.Y = Y;
-			isProcessingVelocities = true;
-			processVelocities(changeRate);
-			isProcessingVelocities = false;
 
+		this.currentTime = time;
+		this.Y = Y;
+
+		// make sure not to have invalid older values in the change rate
+		Arrays.fill(changeRate, 0d);
+
+		try {
+			/*
+			 * Compute changes due to reactions
+			 */
+			this.isProcessingVelocities = true;
+			processVelocities(changeRate);
+			this.isProcessingVelocities = false;
+
+			/*
+			 * Compute changes due to rules
+			 */
 			processRules(changeRate);
 
 			/*
-			 * Checking the Constraints
+			 * Check the model's constraints
 			 */
-			for (i = 0; i < (int) model.getNumConstraints(); i++) {
+			for (int i = 0; i < (int) model.getNumConstraints(); i++) {
 				if (model.getConstraint(i).getMath().compile(this).toBoolean()) {
 					listOfContraintsViolations[i].add(Double.valueOf(time));
 				}
@@ -1201,6 +1258,26 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 				: getConstantTrue();
 	}
 
+	// /**
+	// *
+	// * @param lambda
+	// * @param names
+	// * @param d
+	// * @return
+	// */
+	// private ASTNode replace(ASTNode lambda, Hashtable<String, Double>
+	// args) {
+	// String name;
+	// for (ASTNode child : lambda.getListOfNodes())
+	// if (child.isName() && args.containsKey(child.getName())) {
+	// name = child.getName();
+	// child.setType(ASTNode.Type.REAL);
+	// child.setValue(args.get(name));
+	// } else if (child.getNumChildren() > 0)
+	// child = replace(child, args);
+	// return lambda;
+	// }
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1243,26 +1320,6 @@ public class SBMLinterpreter implements ASTNodeCompiler, EventDESystem {
 		}
 		return new ASTNodeValue(value, this);
 	}
-
-	// /**
-	// *
-	// * @param lambda
-	// * @param names
-	// * @param d
-	// * @return
-	// */
-	// private ASTNode replace(ASTNode lambda, Hashtable<String, Double>
-	// args) {
-	// String name;
-	// for (ASTNode child : lambda.getListOfNodes())
-	// if (child.isName() && args.containsKey(child.getName())) {
-	// name = child.getName();
-	// child.setType(ASTNode.Type.REAL);
-	// child.setValue(args.get(name));
-	// } else if (child.getNumChildren() > 0)
-	// child = replace(child, args);
-	// return lambda;
-	// }
 
 	/*
 	 * (non-Javadoc)
