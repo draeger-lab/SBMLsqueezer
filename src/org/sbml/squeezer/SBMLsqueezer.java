@@ -53,12 +53,9 @@ import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
 import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
-import org.sbml.squeezer.math.Distance;
 import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.MessageListener;
 import org.sbml.squeezer.util.MessageProcessor;
-
-import eva2.tools.math.des.AbstractDESSolver;
 
 /**
  * The main program of SBMLsqueezer. This class initializes all required
@@ -133,11 +130,6 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 */
 	private static Set<String> kineticsZeroReactants;
 	/**
-	 * The package where all mathematical functions, in particular distance
-	 * functions, are located.
-	 */
-	public static final String MATH_PACKAGE = "org.sbml.squeezer.math";
-	/**
 	 * 
 	 */
 	private static MessageListener msg;
@@ -147,27 +139,10 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	private static Properties settings;
 
 	/**
-	 * The package where all ODE solvers are assumed to be located.
-	 */
-	public static final String SOLVER_PACKAGE = "eva2.tools.math.des";
-	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.4";
-	/**
-	 * An array of all available implementations of distance functions to judge
-	 * the quality of a simulation based on parameter and initial value
-	 * settings.
-	 */
-	private static final Class<Distance> AVAILABLE_DISTANCES[] = Reflect
-			.getAllClassesInPackage(MATH_PACKAGE, true, true, Distance.class,
-					JAR_LOCATION, true);
-	/**
-	 * An array of all available ordinary differential equation solvers.
-	 */
-	private static final Class<AbstractDESSolver> AVAILABLE_SOLVERS[] = Reflect
-			.getAllClassesInPackage(SOLVER_PACKAGE, true, true,
-					AbstractDESSolver.class, JAR_LOCATION, true);
+
 	/**
 	 * Comment to be written into SBMLsqueezer's configuration file.
 	 */
@@ -354,18 +329,6 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			}
 		}
 		return props;
-	}
-
-	public static final Class<Distance>[] getAvailableDistances() {
-		return AVAILABLE_DISTANCES;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static final Class<AbstractDESSolver>[] getAvailableSolvers() {
-		return AVAILABLE_SOLVERS;
 	}
 
 	/**
@@ -647,7 +610,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				line = line.replace("&#246;", "\u00f6"); // ö
 				line = line.replace("&#169;", "\u00A9"); // ©
 				line = line.replace("&#228;", "\u00e4"); // ä
-				line = line.replace("&#252;", "\u00fc"); // ü 
+				line = line.replace("&#252;", "\u00fc"); // ü
 				if (line.endsWith("<br>"))
 					line = line.substring(0, line.length() - 4);
 				if (line.contains("<a href"))
@@ -813,15 +776,16 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	}
 
 	/**
-	 * Shows the simulation gui.
+	 * Shows the simulation GUI.
 	 */
 	public void showGUISimulation() {
+		// TODO: Not in this version
 		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, settings);
 		if (settings.get(CfgKeys.CSV_FILE).toString().length() > 0) {
-			gui.showSimulationControl(true, settings.get(CfgKeys.CSV_FILE)
-					.toString());
+			// gui.showSimulationControl(true, settings.get(CfgKeys.CSV_FILE)
+			// .toString());
 		} else {
-			gui.showSimulationControl(true);
+			// gui.showSimulationControl(true);
 		}
 		gui.dispose();
 		try {
