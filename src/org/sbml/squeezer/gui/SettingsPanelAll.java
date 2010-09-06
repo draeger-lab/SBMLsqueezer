@@ -37,8 +37,6 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.sbml.simulator.gui.SettingsPanelSimulation;
-import org.sbml.simulator.gui.SettingsPanelStability;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 
@@ -74,15 +72,10 @@ public class SettingsPanelAll extends SettingsPanel {
 	 */
 	private SettingsPanelDefaultMechanisms panelDefaultMechanisms;
 
-	/**
-	 * 
-	 */
-	private SettingsPanelStability panelStabilitySettings;
-
-	/**
-	 *
-	 */
-	private SettingsPanelSimulation panelSimulationSettings;
+	// TODO: Not in this version
+	// private SettingsPanelStability panelStabilitySettings;
+	// TODO: Not in this version
+	// private SettingsPanelSimulation panelSimulationSettings;
 	/**
 	 * 
 	 */
@@ -180,26 +173,28 @@ public class SettingsPanelAll extends SettingsPanel {
 		/*
 		 * Stability Settings
 		 */
-		panelStabilitySettings = new SettingsPanelStability(this.settings);
-		tab.addTab("Stability settings", new JScrollPane(
-				panelStabilitySettings,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		// TODO: Not in this version
+		// panelStabilitySettings = new SettingsPanelStability(this.settings);
+		// tab.addTab("Stability settings", new JScrollPane(
+		// panelStabilitySettings,
+		// JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		// JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
 		/*
 		 * Simulation Settings
 		 */
-		try {
-			panelSimulationSettings = new SettingsPanelSimulation(settings);
-			tab.addTab("Simulation settings", new JScrollPane(
-					panelSimulationSettings,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		} catch (Exception exc) {
-			exc.printStackTrace();
-			JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-					.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-		}
+		// TODO: Not in this version
+		// try {
+		// panelSimulationSettings = new SettingsPanelSimulation(settings);
+		// tab.addTab("Simulation settings", new JScrollPane(
+		// panelSimulationSettings,
+		// JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		// JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+		// } catch (Exception exc) {
+		// exc.printStackTrace();
+		// JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+		// .getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+		// }
 
 		this.add(tab);
 		addItemListener(this);
@@ -213,12 +208,16 @@ public class SettingsPanelAll extends SettingsPanel {
 	 * .ChangeListener)
 	 */
 	public void addChangeListener(ChangeListener listener) {
-		if (panelKinSettings != null)
+		if (panelKinSettings != null) {
 			panelKinSettings.addChangeListener(listener);
-		if (panelLatexSettings != null)
+		}
+		if (panelLatexSettings != null) {
 			panelLatexSettings.addChangeListener(listener);
-		if (panelSimulationSettings != null)
-			panelSimulationSettings.addChangeListener(listener);
+		}
+		// TODO: Not in this version
+		// if (panelSimulationSettings != null) {
+		// panelSimulationSettings.addChangeListener(listener);
+		// }
 	}
 
 	/*
@@ -228,12 +227,16 @@ public class SettingsPanelAll extends SettingsPanel {
 	 * ItemListener)
 	 */
 	public void addItemListener(ItemListener listener) {
-		if (panelKinSettings != null)
+		if (panelKinSettings != null) {
 			panelKinSettings.addItemListener(listener);
-		if (panelLatexSettings != null)
+		}
+		if (panelLatexSettings != null) {
 			panelDefaultMechanisms.addItemListener(listener);
-		if (panelSimulationSettings != null)
-			panelSimulationSettings.addItemListener(listener);
+		}
+		// TODO: Not in this version
+		// if (panelSimulationSettings != null) {
+		// panelSimulationSettings.addItemListener(listener);
+		// }
 	}
 
 	/*
@@ -260,8 +263,9 @@ public class SettingsPanelAll extends SettingsPanel {
 							40)), "Warning", JOptionPane.WARNING_MESSAGE);
 			tfSaveDir.setText(settings.get(CfgKeys.SAVE_DIR).toString());
 		}
-		for (Object key : panelKinSettings.getProperties().keySet())
+		for (Object key : panelKinSettings.getProperties().keySet()) {
 			this.settings.put(key, panelKinSettings.getProperties().get(key));
+		}
 		for (Object key : panelDefaultMechanisms.getProperties().keySet()) {
 			try {
 				Class<?> cl = Class.forName(panelDefaultMechanisms
@@ -274,11 +278,14 @@ public class SettingsPanelAll extends SettingsPanel {
 				e.printStackTrace();
 			}
 		}
-		for (Object key : panelLatexSettings.getProperties().keySet())
+		for (Object key : panelLatexSettings.getProperties().keySet()) {
 			this.settings.put(key, panelLatexSettings.getProperties().get(key));
-		Properties props = panelSimulationSettings.getProperties();
-		for (Object key : props.keySet())
-			this.settings.put(key, props.get(key));
+		}
+		// TODO: Not in this version
+		// Properties props = panelSimulationSettings.getProperties();
+		// for (Object key : props.keySet()) {
+		// this.settings.put(key, props.get(key));
+		// }
 		return settings;
 	}
 
@@ -307,8 +314,9 @@ public class SettingsPanelAll extends SettingsPanel {
 		if ((e.getSource() instanceof Container)
 				&& (GUITools.contains(panelKinSettings, ((Container) e
 						.getSource())))) {
-			if (reversibility != ((Boolean) panelKinSettings.getProperties().get(
-					CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue()) {
+			if (reversibility != ((Boolean) panelKinSettings.getProperties()
+					.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+					.booleanValue()) {
 				reversibility = !reversibility;
 				panelDefaultMechanisms.stateChanged(new ChangeEvent(Boolean
 						.valueOf(reversibility)));

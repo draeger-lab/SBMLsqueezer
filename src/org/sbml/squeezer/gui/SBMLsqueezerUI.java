@@ -34,7 +34,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -60,8 +59,6 @@ import javax.swing.event.ChangeListener;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.simulator.gui.SimulationDialog;
-import org.sbml.simulator.gui.StabilityDialog;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.LaTeXExport;
@@ -202,7 +199,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	static {
-		Locale.setDefault(Locale.ENGLISH);
+		// Locale.setDefault(Locale.ENGLISH);
 		// For MacOS X
 		boolean isMacOSX = false;
 		if (System.getProperty("mrj.version") != null) {
@@ -210,7 +207,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 			System.setProperty(
 					"com.apple.mrj.application.apple.menu.about.name",
-					"CellDesigner");
+					"SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
 		}
 		try {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -515,58 +512,62 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 							.getVersionNumber()), "html/License.html");
 			break;
 		case CHECK_STABILITY:
-			StabilityDialog stabilitydialog = new StabilityDialog(this);
-			stabilitydialog.showStabilityDialog(settings, sbmlIO);
+			// TODO: Not in this version
+			// StabilityDialog stabilitydialog = new StabilityDialog(this);
+			// stabilitydialog.showStabilityDialog(settings, sbmlIO);
 			break;
 		case STRUCTURAL_KINETIC_MODELLING:
 			break;
 		case SIMULATE:
-			showSimulationControl(false);
+			// TODO: Not in this version
+			// showSimulationControl(false);
 			break;
 		default:
 			break;
 		}
 	}
 
-	/**
-	 * Opens and displays a simulation dialog.
-	 * 
-	 * @param modal
-	 *            If true the dialog will be modal.
-	 * @return If a model has been loaded, a simulation dialog. It should be
-	 *         noted that null will be returned if no model has been loadad yet.
-	 * 
-	 */
-	public SimulationDialog showSimulationControl(boolean modal) {
-		return showSimulationControl(modal, null);
-	}
-
-	/**
-	 * 
-	 * @param modal
-	 * @param csvFile
-	 */
-	public SimulationDialog showSimulationControl(boolean modal, String csvFile) {
-		Model model = sbmlIO.getSelectedModel();
-		if (model != null) {
-			SimulationDialog d = new SimulationDialog(this, model, settings);
-			if (csvFile != null)
-				try {
-					d.openExperimentalData(csvFile);
-				} catch (IOException exc) {
-					exc.printStackTrace();
-					JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-							.getClass().getSimpleName(),
-							JOptionPane.ERROR_MESSAGE);
-				}
-			setEnabled(false, Command.SIMULATE);
-			d.addWindowListener(this);
-			d.setModal(modal);
-			d.setVisible(true);
-			return d;
-		}
-		return null;
-	}
+	// TODO: Not in this version
+	// /**
+	// * Opens and displays a simulation dialog.
+	// *
+	// * @param modal
+	// * If true the dialog will be modal.
+	// * @return If a model has been loaded, a simulation dialog. It should be
+	// * noted that null will be returned if no model has been loadad yet.
+	// *
+	// */
+	// public SimulationDialog showSimulationControl(boolean modal) {
+	// return showSimulationControl(modal, null);
+	// }
+	//
+	// /**
+	// *
+	// * @param modal
+	// * @param csvFile
+	// */
+	// public SimulationDialog showSimulationControl(boolean modal, String
+	// csvFile) {
+	// Model model = sbmlIO.getSelectedModel();
+	// if (model != null) {
+	// SimulationDialog d = new SimulationDialog(this, model, settings);
+	// if (csvFile != null)
+	// try {
+	// d.openExperimentalData(csvFile);
+	// } catch (IOException exc) {
+	// exc.printStackTrace();
+	// JOptionPane.showMessageDialog(this, exc.getMessage(), exc
+	// .getClass().getSimpleName(),
+	// JOptionPane.ERROR_MESSAGE);
+	// }
+	// setEnabled(false, Command.SIMULATE);
+	// d.addWindowListener(this);
+	// d.setModal(modal);
+	// d.setVisible(true);
+	// return d;
+	// }
+	// return null;
+	// }
 
 	/**
 	 * Adds the given new model into the tabbed pane on the main panel.
@@ -647,14 +648,17 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		editMenu.add(GUITools.createMenuItem("Export to LaTeX", KeyStroke
 				.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK),
 				Command.TO_LATEX, this, GUITools.ICON_LATEX_TINY));
-		editMenu.addSeparator();
-		editMenu.add(GUITools.createMenuItem("Analyze Stability",
-				Command.CHECK_STABILITY, this, GUITools.ICON_STABILITY_SMALL));
-		editMenu.add(GUITools.createMenuItem("Structural Kinetic Modelling",
-				Command.STRUCTURAL_KINETIC_MODELLING, this,
-				GUITools.ICON_STRUCTURAL_MODELING_TINY));
-		editMenu.add(GUITools.createMenuItem("Simulation", Command.SIMULATE,
-				'S', this, GUITools.ICON_DIAGRAM_TINY));
+
+		// TODO: Not in this version
+		// editMenu.addSeparator();
+		// editMenu.add(GUITools.createMenuItem("Analyze Stability",
+		// Command.CHECK_STABILITY, this, GUITools.ICON_STABILITY_SMALL));
+		// editMenu.add(GUITools.createMenuItem("Structural Kinetic Modelling",
+		// Command.STRUCTURAL_KINETIC_MODELLING, this,
+		// GUITools.ICON_STRUCTURAL_MODELING_TINY));
+		// editMenu.add(GUITools.createMenuItem("Simulation", Command.SIMULATE,
+		// 'S', this, GUITools.ICON_DIAGRAM_TINY));
+
 		editMenu.addSeparator();
 		editMenu.add(GUITools
 				.createMenuItem("Preferences", Command.SET_PREFERENCES, 'P',
@@ -726,22 +730,22 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			toolbar.add(GUITools.createButton(GUITools.ICON_LATEX_TINY, this,
 					Command.TO_LATEX, "Export this model to a LaTeX report."));
 
-		if (GUITools.ICON_STABILITY_SMALL != null)
-			toolbar.add(GUITools.createButton(GUITools.ICON_STABILITY_SMALL,
-					this, Command.CHECK_STABILITY,
-					"Analyze the stability properties of the selected model."));
+		// TODO: Not in this version
+		// if (GUITools.ICON_STABILITY_SMALL != null)
+		// toolbar.add(GUITools.createButton(GUITools.ICON_STABILITY_SMALL,
+		// this, Command.CHECK_STABILITY,
+		// "Analyze the stability properties of the selected model."));
+		// if (GUITools.ICON_STRUCTURAL_MODELING_TINY != null)
+		// toolbar.add(GUITools.createButton(
+		// GUITools.ICON_STRUCTURAL_MODELING_TINY, this,
+		// Command.STRUCTURAL_KINETIC_MODELLING,
+		// "Identify key reactins with structural kinetic modeling."));
+		// if (GUITools.ICON_DIAGRAM_TINY != null)
+		// toolbar.add(GUITools
+		// .createButton(GUITools.ICON_DIAGRAM_TINY, this,
+		// Command.SIMULATE,
+		// "Dynamically simulate the current model."));
 
-		if (GUITools.ICON_STRUCTURAL_MODELING_TINY != null)
-			toolbar.add(GUITools.createButton(
-					GUITools.ICON_STRUCTURAL_MODELING_TINY, this,
-					Command.STRUCTURAL_KINETIC_MODELLING,
-					"Identify key reactins with structural kinetic modeling."));
-
-		if (GUITools.ICON_DIAGRAM_TINY != null)
-			toolbar.add(GUITools
-					.createButton(GUITools.ICON_DIAGRAM_TINY, this,
-							Command.SIMULATE,
-							"Dynamically simulate the current model."));
 		if (GUITools.ICON_SETTINGS_TINY != null)
 			toolbar.add(GUITools.createButton(GUITools.ICON_SETTINGS_TINY,
 					this, Command.SET_PREFERENCES, "Adjust your preferences."));
@@ -927,7 +931,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	public void windowClosing(WindowEvent we) {
 		if (we.getSource() instanceof JHelpBrowser)
 			setEnabled(true, Command.ONLINE_HELP, Command.LICENSE);
-		else if (we.getSource() instanceof SBMLsqueezerUI)
+		else if (we.getSource() instanceof SBMLsqueezerUI) {
 			try {
 				SBMLsqueezer.saveProperties(settings);
 			} catch (FileNotFoundException exc) {
@@ -939,9 +943,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
 						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
 			}
-		else if (we.getSource() instanceof SimulationDialog)
-			settings
-					.putAll(((SimulationDialog) we.getSource()).getProperties());
+		}
+		// TODO: Not in this version
+		/*
+		 * else if (we.getSource() instanceof SimulationDialog) { settings
+		 * .putAll(((SimulationDialog) we.getSource()).getProperties()); }
+		 */
 	}
 
 	/*
