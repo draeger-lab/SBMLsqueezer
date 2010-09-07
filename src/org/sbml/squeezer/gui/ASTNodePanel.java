@@ -39,6 +39,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.compilers.LaTeX;
 
 import atp.sHotEqn;
+import de.zbit.gui.LayoutHelper;
 
 /**
  * @author Andreas Dr&auml;ger

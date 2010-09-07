@@ -42,6 +42,8 @@ import org.sbml.jsbml.util.compilers.ASTNodeValue;
 import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
 
+import de.zbit.io.SBFileFilter;
+
 /**
  * This class is used to export a SBML model as LaTeX file.
  * 

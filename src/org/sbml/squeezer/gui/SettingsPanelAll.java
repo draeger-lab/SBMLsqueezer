@@ -40,13 +40,13 @@ import javax.swing.event.ChangeListener;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 
+import de.zbit.gui.LayoutHelper;
+
 /**
  * A {@link JPanel} containing a {@link JTabbedPane} with several options for
  * the configuration of {@link SBMLsqueezer} in a GUI.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  * @date 2009-09-22
  */

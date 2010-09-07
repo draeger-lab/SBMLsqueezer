@@ -54,6 +54,7 @@ import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.StringTools;
 
 import atp.sHotEqn;
+import de.zbit.gui.LayoutHelper;
 
 /**
  * A panel, which contains all possible kinetic equations for the current
@@ -62,8 +63,8 @@ import atp.sHotEqn;
  * 
  * @since 1.0
  * @version $Revision: 355$
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- * @author Hannes Borch <hannes.borch@googlemail.com>
+ * @author Andreas Dr&auml;ger
+ * @author Hannes Borch
  * @date Feb 7, 2008
  */
 public class KineticLawSelectionPanel extends JPanel implements ItemListener {

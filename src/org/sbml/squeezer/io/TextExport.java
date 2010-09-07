@@ -33,14 +33,16 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 
+import de.zbit.io.SBFileFilter;
+
 /**
  * This class writes the differential equations given by the {@see
  * KineticLawGenerator} to a plain text file.
  * 
  * @since 1.0
  * @version
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- * @author Nadine Hassis <Nadine.hassis@gmail.com>
+ * @author Andreas Dr&auml;ger
+ * @author Nadine Hassis
  * @date Aug 1, 2007
  */
 public class TextExport implements DisplaySBML {

@@ -30,6 +30,8 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.squeezer.LawListener;
 
+import de.zbit.gui.LayoutHelper;
+
 /**
  * GUI class to visualize the progress when writing SBML or synchronizing rate
  * laws.

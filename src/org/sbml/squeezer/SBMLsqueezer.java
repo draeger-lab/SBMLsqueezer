@@ -38,7 +38,6 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
 import org.sbml.squeezer.io.LaTeXExport;
-import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
@@ -56,6 +55,8 @@ import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.MessageListener;
 import org.sbml.squeezer.util.MessageProcessor;
+
+import de.zbit.io.SBFileFilter;
 
 /**
  * The main program of SBMLsqueezer. This class initializes all required

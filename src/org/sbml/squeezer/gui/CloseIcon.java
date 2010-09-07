@@ -30,8 +30,7 @@ import javax.swing.Icon;
  * an icon which is extra to the 'X' icon, so you can have tabs like in
  * JBuilder. This value is null if no extra icon is required.
  * 
- * @author <a href="mailto:andreas.draeger@uni-tuebingen.de">Andreas
- *         Dr&auml;ger</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  */
 public class CloseIcon implements Icon {
@@ -40,7 +39,7 @@ public class CloseIcon implements Icon {
 	private int width;
 	private int height;
 	private Color color;
-	
+
 	/**
 	 * 
 	 * @return
@@ -58,6 +57,7 @@ public class CloseIcon implements Icon {
 	}
 
 	private boolean border;
+
 	/**
 	 * 
 	 * @return
@@ -108,7 +108,9 @@ public class CloseIcon implements Icon {
 
 	/*
 	 * (non-Javadoc)
-	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
+	 * 
+	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics,
+	 * int, int)
 	 */
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 		this.x_pos = x;
@@ -139,6 +141,7 @@ public class CloseIcon implements Icon {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.Icon#getIconWidth()
 	 */
 	public int getIconWidth() {
@@ -147,6 +150,7 @@ public class CloseIcon implements Icon {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see javax.swing.Icon#getIconHeight()
 	 */
 	public int getIconHeight() {

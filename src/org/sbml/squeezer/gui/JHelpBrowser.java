@@ -38,6 +38,8 @@ import javax.swing.event.HyperlinkListener;
 
 import org.sbml.squeezer.resources.Resource;
 
+import de.zbit.gui.JBrowserPane;
+
 /**
  * This is a specialized dialog that displays HTML pages and contains a toolbar
  * with two buttons for jumping forward or backward in the history of visited
@@ -59,7 +61,7 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 	/**
 	 * The actual browser.
 	 */
-	private JBrowser browser;
+	private JBrowserPane browser;
 
 	/**
 	 * Creates a new JDialog that shows a browser and a toolbar to display a
@@ -136,7 +138,7 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 	 * 
 	 */
 	private void init(String helpFile) {
-		browser = new JBrowser(Resource.class.getResource(helpFile));
+		browser = new JBrowserPane(Resource.class.getResource(helpFile));
 		browser.addHyperlinkListener(this);
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(new JScrollPane(browser,

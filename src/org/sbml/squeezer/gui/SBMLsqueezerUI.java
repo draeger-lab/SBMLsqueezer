@@ -62,10 +62,13 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.LaTeXExport;
-import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.resources.Resource;
+
+import de.zbit.gui.JBrowserPane;
+import de.zbit.gui.SystemBrowser;
+import de.zbit.io.SBFileFilter;
 
 /**
  * 
@@ -395,7 +398,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 			System.exit(0);
 		case ABOUT:
-			JBrowser browser = new JBrowser(Resource.class
+			JBrowserPane browser = new JBrowserPane(Resource.class
 					.getResource("html/about.htm"));
 			browser.removeHyperlinkListener(browser);
 			browser.addHyperlinkListener(new SystemBrowser());
@@ -594,6 +597,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		/*
 		 * File menu
 		 */
+		// TODO: Use methods from GUITools!
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(fileMenu.getText().charAt(0));
 		JMenuItem openItem = new JMenuItem("Open", GUITools.ICON_OPEN);
@@ -642,12 +646,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		JMenu editMenu = new JMenu("Edit");
 		editMenu.setMnemonic(editMenu.getText().charAt(0));
 
-		editMenu.add(GUITools.createMenuItem("Squeeze", KeyStroke.getKeyStroke(
-				'Q', InputEvent.CTRL_DOWN_MASK), Command.SQUEEZE, this,
-				GUITools.ICON_LEMON_TINY));
-		editMenu.add(GUITools.createMenuItem("Export to LaTeX", KeyStroke
-				.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK),
-				Command.TO_LATEX, this, GUITools.ICON_LATEX_TINY));
+		editMenu.add(GUITools.createJMenuItem("Squeeze", this, Command.SQUEEZE,
+				GUITools.ICON_LEMON_TINY, KeyStroke.getKeyStroke('Q',
+						InputEvent.CTRL_DOWN_MASK)));
+		editMenu.add(GUITools.createJMenuItem("Export to LaTeX", this,
+				Command.TO_LATEX, GUITools.ICON_LATEX_TINY, KeyStroke
+						.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK)));
 
 		// TODO: Not in this version
 		// editMenu.addSeparator();
@@ -660,23 +664,22 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		// 'S', this, GUITools.ICON_DIAGRAM_TINY));
 
 		editMenu.addSeparator();
-		editMenu.add(GUITools
-				.createMenuItem("Preferences", Command.SET_PREFERENCES, 'P',
-						this, GUITools.ICON_SETTINGS_TINY));
+		editMenu.add(GUITools.createJMenuItem("Preferences", this,
+				Command.SET_PREFERENCES, GUITools.ICON_SETTINGS_TINY, 'P'));
 
 		/*
 		 * Help menu
 		 */
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic(helpMenu.getText().charAt(0));
-		helpMenu.add(GUITools.createMenuItem("Online help", KeyStroke
-				.getKeyStroke(KeyEvent.VK_F1, 0), Command.ONLINE_HELP, this,
-				GUITools.ICON_HELP_TINY));
-		helpMenu.add(GUITools.createMenuItem("About", KeyStroke.getKeyStroke(
-				KeyEvent.VK_F2, 0), Command.ABOUT, this,
-				GUITools.ICON_INFO_TINY));
-		helpMenu.add(GUITools.createMenuItem("License", null, Command.LICENSE,
-				'L', this, GUITools.ICON_LICENCE_TINY));
+		helpMenu.add(GUITools.createJMenuItem("Online help", this,
+				Command.ONLINE_HELP, GUITools.ICON_HELP_TINY, KeyStroke
+						.getKeyStroke(KeyEvent.VK_F1, 0)));
+		helpMenu.add(GUITools.createJMenuItem("About", this, Command.ABOUT,
+				GUITools.ICON_INFO_TINY, KeyStroke.getKeyStroke(KeyEvent.VK_F2,
+						0)));
+		helpMenu.add(GUITools.createJMenuItem("License", this, Command.LICENSE,
+				GUITools.ICON_LICENCE_TINY, 'L'));
 
 		JMenuBar mBar = new JMenuBar();
 		mBar.add(fileMenu);

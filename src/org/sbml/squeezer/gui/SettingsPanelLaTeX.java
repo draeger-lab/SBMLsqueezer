@@ -35,14 +35,16 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.io.SBFileFilter;
+
+import de.zbit.gui.LayoutHelper;
+import de.zbit.io.SBFileFilter;
 
 /**
  * A {@link JPanel} to configure all necessary options to perform a LaTeX export
  * of a model.
  * 
  * @since 1.2
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @author Hannes Borch
  * @author Andreas Dr&auml;ger
  * @date Jan 2009
  */

@@ -40,6 +40,8 @@ import javax.swing.event.ChangeEvent;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 
+import de.zbit.gui.LayoutHelper;
+
 /**
  * This class is a panel, which contains all necessary options to be specified
  * for an appropriate creation of kinetic laws. It is also a data structure,

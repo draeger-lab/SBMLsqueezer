@@ -61,19 +61,22 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.io.LaTeXExport;
-import org.sbml.squeezer.io.SBFileFilter;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.resources.Resource;
+
+import de.zbit.gui.LayoutHelper;
+import de.zbit.gui.SystemBrowser;
+import de.zbit.io.SBFileFilter;
 
 /**
  * This is the main GUI class.
  * 
  * @since 1.0
  * @version
- * @author <a href="mailto:Nadine.hassis@gmail.com">Nadine Hassis</a>
+ * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
- * @author <a href="mailto:hannes.borch@googlemail.com">Hannes Borch</a>
+ * @author Hannes Borch
  * @date Aug 3, 2007
  */
 public class KineticLawSelectionDialog extends JDialog implements
