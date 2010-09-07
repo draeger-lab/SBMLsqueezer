@@ -84,6 +84,8 @@ import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.HTMLFormula;
 
 import atp.sHotEqn;
+import de.zbit.gui.LayoutHelper;
+import de.zbit.gui.SystemBrowser;
 
 /**
  * A specialized {@link JPanel} that displays all available properties of a

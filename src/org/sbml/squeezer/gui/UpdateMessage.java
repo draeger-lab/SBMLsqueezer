@@ -46,6 +46,8 @@ import javax.swing.border.TitledBorder;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.resources.Resource;
 
+import de.zbit.gui.SystemBrowser;
+
 /**
  * This class implements a JWindow object which is shown on the bottom right
  * corner of the screen. It notifies the user that a more recent version of

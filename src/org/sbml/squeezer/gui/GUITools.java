@@ -19,36 +19,22 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.StringTokenizer;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.filechooser.FileFilter;
 
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.resources.Resource;
@@ -64,7 +50,7 @@ import org.sbml.squeezer.util.HTMLFormula;
  * @since 1.3
  * @date 2009-09-04
  */
-public class GUITools {
+public class GUITools extends de.zbit.gui.GUITools {
 
 	/**
 	 * 
@@ -181,245 +167,6 @@ public class GUITools {
 	}
 
 	/**
-	 * Checks whether the first container contains the second one.
-	 * 
-	 * @param c
-	 * @param insight
-	 * @return True if c contains insight.
-	 */
-	public static boolean contains(Component c, Component insight) {
-		boolean contains = c.equals(insight);
-		if ((c instanceof Container) && !contains)
-			for (Component c1 : ((Container) c).getComponents()) {
-				if (c1.equals(insight))
-					return true;
-				else
-					contains |= contains(c1, insight);
-			}
-		return contains;
-	}
-
-	/**
-	 * Creates a JButton with the given properties. The tool tip becomes an HTML
-	 * formatted string with a line break after 40 symbols.
-	 * 
-	 * @param icon
-	 * @param listener
-	 * @param com
-	 * @param toolTip
-	 * @return
-	 */
-	public static JButton createButton(Icon icon, ActionListener listener,
-			Object command, String toolTip) {
-		JButton button = new JButton();
-		if (icon != null)
-			button.setIcon(icon);
-		if (listener != null)
-			button.addActionListener(listener);
-		if (command != null)
-			button.setActionCommand(command.toString());
-		if (toolTip != null)
-			button.setToolTipText(toHTML(toolTip, 40));
-		return button;
-	}
-
-	/**
-	 * 
-	 * @param text
-	 * @param icon
-	 * @param listener
-	 * @param command
-	 * @param toolTip
-	 * @return
-	 */
-	public static JButton createButton(String text, Icon icon,
-			ActionListener listener, Object command, String toolTip) {
-		JButton button = createButton(icon, listener, command, toolTip);
-		if (text != null)
-			button.setText(text);
-		return button;
-	}
-
-	/**
-	 * Creates and returns a JCheckBox with all the given properties.
-	 * 
-	 * @param label
-	 * @param selected
-	 * @param name
-	 *            The name for the component to be identifiable by the
-	 *            ItemListener
-	 * @param listener
-	 * @param toolTip
-	 * @return
-	 */
-	public static JCheckBox createJCheckBox(String label, boolean selected,
-			String name, ItemListener listener, String toolTip) {
-		JCheckBox chkbx = new JCheckBox(label, selected);
-		chkbx.setName(name);
-		chkbx.addItemListener(listener);
-		chkbx.setToolTipText(toHTML(toolTip, 40));
-		return chkbx;
-	}
-
-	/**
-	 * Creates and sets up a JFileFilter.
-	 * 
-	 * @param dir
-	 *            Start directory
-	 * @param allFilesAcceptable
-	 *            if true, all files are available besides the file filters
-	 * @param multiSelectionAllowed
-	 *            if true more the one file can be selected.
-	 * @param mode
-	 *            one of the Options in JFileChooser
-	 * @param filter
-	 *            no, one or several file filters.
-	 * @return Returns a file filter with the desired properties.
-	 */
-	public static JFileChooser createJFileChooser(String dir,
-			boolean allFilesAcceptable, boolean multiSelectionAllowed,
-			int mode, FileFilter... filter) {
-		JFileChooser chooser = new JFileChooser(dir);
-		chooser.setAcceptAllFileFilterUsed(allFilesAcceptable);
-		chooser.setMultiSelectionEnabled(multiSelectionAllowed);
-		chooser.setFileSelectionMode(mode);
-		int i = filter.length - 1;
-		while (0 <= i)
-			chooser.addChoosableFileFilter(filter[i--]);
-		if (i >= 0)
-			chooser.setFileFilter(filter[i]);
-		return chooser;
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param ks
-	 * @param command
-	 * @param listener
-	 * @param icon
-	 * @return
-	 */
-	public static JMenuItem createMenuItem(String text, KeyStroke ks,
-			Object command, ActionListener listener, Icon icon) {
-		return createMenuItem(text, ks, command, null, listener, icon);
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param ks
-	 * @param command
-	 * @param mnemonic
-	 * @param listener
-	 * @param icon
-	 * @return
-	 */
-	public static JMenuItem createMenuItem(String text, KeyStroke ks,
-			Object command, Character mnemonic, ActionListener listener,
-			Icon icon) {
-		JMenuItem item = new JMenuItem();
-		if (text != null)
-			item.setText(text);
-		if (ks != null)
-			item.setAccelerator(ks);
-		if (listener != null)
-			item.addActionListener(listener);
-		if (mnemonic != null)
-			item.setMnemonic(mnemonic.charValue());
-		if (command != null)
-			item.setActionCommand(command.toString());
-		if (icon != null)
-			item.setIcon(icon);
-		return item;
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param command
-	 * @param listener
-	 * @return
-	 */
-	public static JMenuItem createMenuItem(String text, Object command,
-			ActionListener listener) {
-		return createMenuItem(text, null, command, listener, null);
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param command
-	 * @param listener
-	 * @param icon
-	 * @return
-	 */
-	public static JMenuItem createMenuItem(String text, Object command,
-			ActionListener listener, Icon icon) {
-		return createMenuItem(text, null, command, listener, icon);
-	}
-
-	/**
-	 * Creates an entry for the menu bar.
-	 * 
-	 * @param text
-	 * @param command
-	 * @param mnemonic
-	 * @param listener
-	 * @param icon
-	 * @return
-	 */
-	public static JMenuItem createMenuItem(String text, Object command,
-			char mnemonic, ActionListener listener, Icon icon) {
-		return createMenuItem(text, null, command, mnemonic, listener, icon);
-	}
-
-	/**
-	 * Computes and returns the dimension, i.e., the size of a given icon.
-	 * 
-	 * @param icon
-	 *            an icon whose dimension is required.
-	 * @return The dimension of the given icon.
-	 */
-	public static Dimension getDimension(Icon icon) {
-		return icon == null ? new Dimension(0, 0) : new Dimension(icon
-				.getIconWidth(), icon.getIconHeight());
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
-	 */
-	private static Icon loadIcon(String path) {
-		Image img = loadImage(path);
-		return img != null ? new ImageIcon(img) : null;
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 */
-	private static Image loadImage(String path) {
-		try {
-			String p = path.substring(path.indexOf("img"));
-			URL url = Resource.class.getResource(p);
-			return url != null ? ImageIO.read(Resource.class.getResource(path
-					.substring(path.indexOf("img")))) : ImageIO.read(new File(
-					path));
-		} catch (IOException exc) {
-			System.err.printf("Could not load image %s\n", path);
-			return null;
-		}
-	}
-
-	/**
 	 * Loads locale-specific resources: strings, images, et cetera
 	 * 
 	 * @param prefix
@@ -489,59 +236,8 @@ public class GUITools {
 		IMAGE_LEMON = loadImage(prefix + "icon.png");
 	}
 
-	/**
-	 * 
-	 * @param parent
-	 * @param out
-	 * @return
-	 */
-	public static boolean overwriteExistingFile(Component parent, File out) {
-		return GUITools.overwriteExistingFileDialog(parent, out) == JOptionPane.YES_OPTION;
-	}
 
-	/**
-	 * Shows a dialog that asks whether or not to overwrite an existing file and
-	 * returns the answer from JOptionPane constants.
-	 * 
-	 * @param parent
-	 * @param out
-	 * @return An integer representing the user's choice.
-	 */
-	public static int overwriteExistingFileDialog(Component parent, File out) {
-		return JOptionPane.showConfirmDialog(parent, toHTML(out.getName()
-				+ " already exists. Do you really want to over write it?", 40),
-				"Over write existing file?", JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE);
-	}
 
-	/**
-	 * 
-	 * @param c
-	 * @param color
-	 */
-	public static void setAllBackground(Container c, Color color) {
-		c.setBackground(color);
-		Component children[] = c.getComponents();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof Container)
-				setAllBackground((Container) children[i], color);
-			children[i].setBackground(color);
-		}
-	}
-
-	/**
-	 * 
-	 * @param c
-	 * @param enabled
-	 */
-	public static void setAllEnabled(Container c, boolean enabled) {
-		Component children[] = c.getComponents();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof Container)
-				setAllEnabled((Container) children[i], enabled);
-			children[i].setEnabled(enabled);
-		}
-	}
 
 	/**
 	 * Enables or disables actions that can be performed by SBMLsqueezer, i.e.,
@@ -602,77 +298,6 @@ public class GUITools {
 			}
 	}
 
-	/**
-	 * 
-	 * @param state
-	 * @param menuBar
-	 * @param commands
-	 */
-	public static void setEnabled(boolean state, JMenuBar menuBar,
-			Object... commands) {
-		setEnabled(state, menuBar, null, commands);
-	}
-
-	/**
-	 * 
-	 * @param state
-	 * @param toolbar
-	 * @param commands
-	 */
-	public static void setEnabled(boolean state, JToolBar toolbar,
-			Object... commands) {
-		setEnabled(state, null, toolbar, commands);
-	}
-
-	/**
-	 * Displayes the error message on a {@link JOptionPane}.
-	 * 
-	 * @param exc
-	 */
-	public static void showErrorMessage(Component parent, Throwable exc) {
-		exc.printStackTrace();
-		JOptionPane.showMessageDialog(parent, exc.getMessage(), exc.getClass()
-				.getSimpleName(), JOptionPane.ERROR_MESSAGE);
-	}
-
-	/**
-	 * 
-	 * @param string
-	 * @return
-	 */
-	public static String toHTML(String string) {
-		return toHTML(string, Integer.MAX_VALUE);
-	}
-
-	/**
-	 * Returns a HTML formated String, in which each line is at most lineBreak
-	 * symbols long.
-	 * 
-	 * @param string
-	 * @param lineBreak
-	 * @return
-	 */
-	public static String toHTML(String string, int lineBreak) {
-		StringTokenizer st = new StringTokenizer(string != null ? string : "",
-				" ");
-		StringBuilder sb = new StringBuilder();
-		if (st.hasMoreElements())
-			sb.append(st.nextElement().toString());
-		int length = sb.length();
-		sb.insert(0, "<html><body>");
-		while (st.hasMoreElements()) {
-			if (length >= lineBreak && lineBreak < Integer.MAX_VALUE) {
-				sb.append("<br>");
-				length = 0;
-			} else
-				sb.append(' ');
-			String tmp = st.nextElement().toString();
-			length += tmp.length() + 1;
-			sb.append(tmp);
-		}
-		sb.append("</body></html>");
-		return sb.toString();
-	}
 
 	/**
 	 * Creates a JEditorPane that displays the given UnitDefinition as a HTML.

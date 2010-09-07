@@ -40,14 +40,14 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.StringTools;
 
+import de.zbit.gui.LayoutHelper;
+
 /**
  * A {@link JPanel} to let the user select all default instances of
  * {@link BasicKineticLaw} that implement the designated interfaces to be
  * available for certain reaction types.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-09-22
  * @since 1.3
  */

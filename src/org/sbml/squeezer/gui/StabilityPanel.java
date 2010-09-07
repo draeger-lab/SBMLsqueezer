@@ -28,6 +28,8 @@ import javax.swing.JTextField;
 
 import org.sbml.squeezer.CfgKeys;
 
+import de.zbit.gui.LayoutHelper;
+
 /**
  * @author Alexander D&ouml;rr
  * @date 2009-12-10
