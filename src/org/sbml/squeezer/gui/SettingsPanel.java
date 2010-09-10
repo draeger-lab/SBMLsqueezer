@@ -18,7 +18,6 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.awt.LayoutManager;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -54,41 +53,22 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 	private List<ItemListener> itemListeners;
 
 	/**
-	 * 
+	 * The settings to be changed by the user and the default settings as a
+	 * backup.
 	 */
-	private List<KeyListener> keyListeners;
-
-	/**
-	 * 
-	 */
-	protected Properties settings;
-
-	/**
-	 * 
-	 */
-	public SettingsPanel() {
-		super();
-		changeListeners = new LinkedList<ChangeListener>();
-		keyListeners = new LinkedList<KeyListener>();
-		itemListeners = new LinkedList<ItemListener>();
-	}
-
-	/**
-	 * 
-	 * @param layout
-	 */
-	public SettingsPanel(LayoutManager layout) {
-		this();
-		setLayout(layout);
-	}
+	protected Properties settings, defaultSettings;
 
 	/**
 	 * 
 	 * @param properties
+	 * @param defaultProperties
 	 */
-	public SettingsPanel(Properties properties) {
-		this();
+	public SettingsPanel(Properties properties, Properties defaultProperties) {
+		super();
+		changeListeners = new LinkedList<ChangeListener>();
+		itemListeners = new LinkedList<ItemListener>();
 		this.settings = properties;
+		this.defaultSettings = defaultProperties;
 	}
 
 	/**
@@ -109,10 +89,17 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 
 	/**
 	 * 
+	 * @return
 	 */
-	public void addKeyListener(KeyListener kl) {
-		keyListeners.add(kl);
-	}
+	public abstract Properties getProperties();
+
+	/**
+	 * Returns a meaningful human-readable title for this {@link SettingsPanel}.
+	 * 
+	 * @return A representative title for this element.
+	 */
+	public abstract String getTitle();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -120,8 +107,9 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent e) {
-		for (ItemListener i : itemListeners)
+		for (ItemListener i : itemListeners) {
 			i.itemStateChanged(e);
+		}
 	}
 
 	/*
@@ -130,8 +118,9 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
 	 */
 	public void keyPressed(KeyEvent e) {
-		for (KeyListener i : keyListeners)
+		for (KeyListener i : getKeyListeners()) {
 			i.keyPressed(e);
+		}
 	}
 
 	/*
@@ -140,6 +129,9 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
 	 */
 	public void keyReleased(KeyEvent e) {
+		for (KeyListener kl : getKeyListeners()) {
+			kl.keyReleased(e);
+		}
 	}
 
 	/*
@@ -148,10 +140,35 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
 	 */
 	public void keyTyped(KeyEvent e) {
-		for (KeyListener kl : keyListeners)
+		for (KeyListener kl : getKeyListeners()) {
 			kl.keyTyped(e);
+		}
 	}
 
+	/**
+	 * 
+	 * @param listener
+	 * @return
+	 */
+	public boolean removeChangeListener(ChangeListener listener) {
+		return changeListeners.remove(listener);
+	}
+
+	/**
+	 * 
+	 * @param listener
+	 * @return
+	 */
+	public boolean removeItemListener(ItemListener listener) {
+		return itemListeners.remove(listener);
+	}
+	
+	/**
+	 * 
+	 * @param settings
+	 */
+	public abstract void setProperties(Properties settings);
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -160,20 +177,9 @@ public abstract class SettingsPanel extends JPanel implements KeyListener,
 	 * )
 	 */
 	public void stateChanged(ChangeEvent e) {
-		for (ChangeListener cl : changeListeners)
+		for (ChangeListener cl : changeListeners) {
 			cl.stateChanged(e);
+		}
 	}
-
-	/**
-	 * 
-	 * @param settings
-	 */
-	public abstract void setProperties(Properties settings);
-
-	/**
-	 * 
-	 * @return
-	 */
-	public abstract Properties getProperties();
 
 }

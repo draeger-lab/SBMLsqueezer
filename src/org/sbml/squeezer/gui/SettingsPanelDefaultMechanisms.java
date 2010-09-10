@@ -67,9 +67,11 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	 * Reaction Mechanism Panel
 	 * 
 	 * @param properties
+	 * @param defaults
 	 */
-	public SettingsPanelDefaultMechanisms(Properties properties) {
-		super(properties);
+	public SettingsPanelDefaultMechanisms(Properties properties,
+			Properties defaults) {
+		super(properties, defaults);
 		settings = new Properties();
 		String k;
 		for (Object key : properties.keySet()) {
@@ -422,5 +424,15 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		init(((Boolean) settings
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
+	 */
+	@Override
+	public String getTitle() {
+		return "Reaction mechanisms";
 	}
 }

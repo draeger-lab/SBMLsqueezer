@@ -89,14 +89,26 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 	/**
 	 * 
 	 * @param properties
+	 * @param defaults
+	 */
+	public SettingsPanelLaTeX(Properties properties, Properties defaults) {
+		this(properties, defaults, false);
+	}
+	
+	/**
+	 * 
+	 * @param properties
 	 *            The settings for this panel
+	 * @param the
+	 *            default settings as a backup.
 	 * @param browse
 	 *            if true a browse button will appear that allows to select a
 	 *            LaTeX file. If false this button will only allow to select a
 	 *            directory for LaTeX files.
 	 */
-	public SettingsPanelLaTeX(Properties properties, boolean browse) {
-		super(properties);
+	public SettingsPanelLaTeX(Properties properties, Properties defaults,
+			boolean browse) {
+		super(properties, defaults);
 		this.browse = browse;
 		settings = new Properties();
 		for (Object key : properties.keySet()) {
@@ -288,5 +300,15 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 		removeAll();
 		this.settings = settings;
 		init();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
+	 */
+	@Override
+	public String getTitle() {
+		return "LaTeX output settings";
 	}
 }

@@ -20,6 +20,7 @@ package org.sbml.squeezer.gui;
 
 import java.awt.GridLayout;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -28,6 +29,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.SBMLsqueezer;
+
+import de.zbit.util.Reflect;
 
 /**
  * A {@link JPanel} containing a {@link JTabbedPane} with several options for
@@ -45,38 +48,16 @@ public class SettingsPanelAll extends SettingsPanel {
 	private static final long serialVersionUID = 3189416350182046246L;
 
 	/**
-	 * 
+	 * All available {@link SettingsPanel}s.
 	 */
-	private SettingsPanelKinetics panelKinSettings;
+	private static Class<SettingsPanel> classes[] = Reflect
+			.getAllClassesInPackage("org.sbml.squeezer.gui", true, true,
+					SettingsPanel.class, "plugin" + File.separatorChar, true);;
 
 	/**
-	 * 
-	 */
-	private SettingsPanelLaTeX panelLatexSettings;
-	/**
-	 * 
-	 */
-	private SettingsPanelGeneral panelGeneralSettings;
-
-	/**
-	 * 
-	 */
-	private SettingsPanelDefaultMechanisms panelDefaultMechanisms;
-
-	// TODO: Not in this version
-	// private SettingsPanelStability panelStabilitySettings;
-	// TODO: Not in this version
-	// private SettingsPanelSimulation panelSimulationSettings;
-
-	/**
-	 * 
+	 * Needed to structure this {@link SettingsPanel}.
 	 */
 	private JTabbedPane tab;
-
-	/**
-	 * 
-	 */
-	private Properties defaultSettings;
 
 	/**
 	 * 
@@ -84,9 +65,109 @@ public class SettingsPanelAll extends SettingsPanel {
 	 * @param defaultProperties
 	 */
 	public SettingsPanelAll(Properties properties, Properties defaultProperties) {
-		super(properties);
-		this.defaultSettings = defaultProperties;
+		super(properties, defaultProperties);
 		setLayout(new GridLayout(1, 1));
+		init();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.gui.SettingsPanel#addChangeListener(javax.swing.event
+	 * .ChangeListener)
+	 */
+	public void addChangeListener(ChangeListener listener) {
+		for (int i = 0; i < tab.getComponentCount(); i++) {
+			getSettingsPanelAt(i).addChangeListener(listener);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.sbml.squeezer.gui.SettingsPanel#addItemListener(java.awt.event.
+	 * ItemListener)
+	 */
+	public void addItemListener(ItemListener listener) {
+		for (int i = 0; i < tab.getComponentCount(); i++) {
+			getSettingsPanelAt(i).addItemListener(listener);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
+	 */
+	public Properties getProperties() {
+		for (int i = 0; i < tab.getComponentCount(); i++) {
+			this.settings.putAll(getSettingsPanelAt(i).getProperties());
+		}
+		return settings;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getSelectedIndex() {
+		return tab.getSelectedIndex();
+	}
+
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public SettingsPanel getSettingsPanelAt(int index) {
+		return (SettingsPanel) ((JScrollPane) tab.getComponentAt(index))
+				.getViewport().getComponent(0);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
+	 */
+	@Override
+	public String getTitle() {
+		return "All settings";
+	}
+
+	/**
+	 * Initializes the layout of this {@link SettingsPanel}.
+	 */
+	private void init() {
+		tab = new JTabbedPane();
+		SettingsPanel settingsPanel;
+
+		for (int i = 0; i < classes.length; i++) {
+			if (!classes[i].equals(getClass())) {
+				try {
+					settingsPanel = classes[i].getConstructor(
+							settings.getClass(), defaultSettings.getClass())
+							.newInstance(settings, defaultSettings);
+
+					tab.addTab(settingsPanel.getTitle(), new JScrollPane(
+							settingsPanel,
+							JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+				} catch (Exception exc) {
+					GUITools.showErrorMessage(this, exc);
+				}
+			}
+		}
+		this.add(tab);
+		addItemListener(this);
+	}
+
+	/**
+	 * 
+	 */
+	public void restoreDefaults() {
+		this.settings = (Properties) defaultSettings.clone();
+		removeAll();
 		init();
 	}
 
@@ -104,151 +185,11 @@ public class SettingsPanelAll extends SettingsPanel {
 		setSelectedIndex(tab);
 	}
 
-	private void init() {
-		tab = new JTabbedPane();
-		/*
-		 * Kinetics settings
-		 */
-		panelKinSettings = new SettingsPanelKinetics(this.settings);
-		tab.addTab("Kinetics settings", panelKinSettings);
-
-		/*
-		 * Reaction mechanism settings
-		 */
-		panelDefaultMechanisms = new SettingsPanelDefaultMechanisms(
-				this.settings);
-		tab.addTab("Reaction mechanisms", new JScrollPane(
-				panelDefaultMechanisms,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-
-		/*
-		 * Program settings
-		 */
-		panelGeneralSettings = new SettingsPanelGeneral(settings);
-		tab.addTab("Program settings", new JScrollPane(panelGeneralSettings,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-
-		/*
-		 * LaTeX Settings
-		 */
-		this.panelLatexSettings = new SettingsPanelLaTeX(settings, false);
-		tab.addTab("LaTeX output settings", new JScrollPane(panelLatexSettings,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		// this.add(tab);
-		// addItemListener(this);
-
-		/*
-		 * Stability Settings
-		 */
-		// TODO: Not in this version
-		// panelStabilitySettings = new SettingsPanelStability(this.settings);
-		// tab.addTab("Stability settings", new JScrollPane(
-		// panelStabilitySettings,
-		// JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		// JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-
-		/*
-		 * Simulation Settings
-		 */
-		// TODO: Not in this version
-		// try {
-		// panelSimulationSettings = new SettingsPanelSimulation(settings);
-		// tab.addTab("Simulation settings", new JScrollPane(
-		// panelSimulationSettings,
-		// JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		// JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		// } catch (Exception exc) {
-		// exc.printStackTrace();
-		// JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-		// .getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-		// }
-
-		this.add(tab);
-		addItemListener(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.gui.SettingsPanel#addChangeListener(javax.swing.event
-	 * .ChangeListener)
-	 */
-	public void addChangeListener(ChangeListener listener) {
-		if (panelKinSettings != null) {
-			panelKinSettings.addChangeListener(listener);
-		}
-		if (panelLatexSettings != null) {
-			panelLatexSettings.addChangeListener(listener);
-		}
-		// TODO: Not in this version
-		// if (panelSimulationSettings != null) {
-		// panelSimulationSettings.addChangeListener(listener);
-		// }
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.sbml.squeezer.gui.SettingsPanel#addItemListener(java.awt.event.
-	 * ItemListener)
-	 */
-	public void addItemListener(ItemListener listener) {
-		if (panelKinSettings != null) {
-			panelKinSettings.addItemListener(listener);
-		}
-		if (panelLatexSettings != null) {
-			panelDefaultMechanisms.addItemListener(listener);
-		}
-		// TODO: Not in this version
-		// if (panelSimulationSettings != null) {
-		// panelSimulationSettings.addItemListener(listener);
-		// }
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
-	 */
-	public Properties getProperties() {
-		this.settings.putAll(panelGeneralSettings.getProperties());
-		this.settings.putAll(panelKinSettings.getProperties());
-		this.settings.putAll(panelDefaultMechanisms.getProperties());
-		this.settings.putAll(panelLatexSettings.getProperties());
-		// TODO: Not in this version
-		// Properties props = panelSimulationSettings.getProperties();
-		// for (Object key : props.keySet()) {
-		// this.settings.put(key, props.get(key));
-		// }
-		return settings;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public int getSelectedIndex() {
-		return tab.getSelectedIndex();
-	}
-
 	/**
 	 * 
 	 * @param tab
 	 */
 	public void setSelectedIndex(int tab) {
 		this.tab.setSelectedIndex(tab);
-	}
-
-	/**
-	 * 
-	 */
-	public void restoreDefaults() {
-		this.settings = (Properties) defaultSettings.clone();
-		removeAll();
-		init();
 	}
 }

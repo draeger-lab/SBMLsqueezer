@@ -80,53 +80,13 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 */
 	public static final String KINETICS_PACKAGE = "org.sbml.squeezer.kinetics";
 	/**
-	 * enzyme mechanism with an arbitrary number of reactants or products
+	 * {@link Set}s of kinetics with certain characteristics.
 	 */
-	private static Set<String> kineticsArbitraryEnzymeMechanism;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsBiBi;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsBiUni;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsGeneRegulatoryNetworks;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsIntStoichiometry;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsIrreversible;
-	/**
-	 * Kinetics that do allow for inhibitors or activators
-	 */
-	private static Set<String> kineticsModulated;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsNonEnzyme;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsReversible;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsUniUni;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsZeroProducts;
-	/**
-	 * 
-	 */
-	private static Set<String> kineticsZeroReactants;
+	private static Set<String> kineticsArbitraryEnzymeMechanism, kineticsBiBi,
+			kineticsBiUni, kineticsGeneRegulatoryNetworks,
+			kineticsIntStoichiometry, kineticsIrreversible, kineticsModulated,
+			kineticsNonEnzyme, kineticsReversible, kineticsUniUni,
+			kineticsZeroProducts, kineticsZeroReactants;
 	/**
 	 * 
 	 */
@@ -181,32 +141,45 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				JAR_LOCATION, true);
 		for (Class<BasicKineticLaw> c : classes) {
 			Set<Class<?>> s = new HashSet<Class<?>>();
-			for (Class<?> interf : c.getInterfaces())
+			for (Class<?> interf : c.getInterfaces()) {
 				s.add(interf);
-			if (s.contains(InterfaceIrreversibleKinetics.class))
+			}
+			if (s.contains(InterfaceIrreversibleKinetics.class)) {
 				kineticsIrreversible.add(c.getCanonicalName());
-			if (s.contains(InterfaceReversibleKinetics.class))
+			}
+			if (s.contains(InterfaceReversibleKinetics.class)) {
 				kineticsReversible.add(c.getCanonicalName());
-			if (s.contains(InterfaceUniUniKinetics.class))
+			}
+			if (s.contains(InterfaceUniUniKinetics.class)) {
 				kineticsUniUni.add(c.getCanonicalName());
-			if (s.contains(InterfaceBiUniKinetics.class))
+			}
+			if (s.contains(InterfaceBiUniKinetics.class)) {
 				kineticsBiUni.add(c.getCanonicalName());
-			if (s.contains(InterfaceBiBiKinetics.class))
+			}
+			if (s.contains(InterfaceBiBiKinetics.class)) {
 				kineticsBiBi.add(c.getCanonicalName());
-			if (s.contains(InterfaceArbitraryEnzymeKinetics.class))
+			}
+			if (s.contains(InterfaceArbitraryEnzymeKinetics.class)) {
 				kineticsArbitraryEnzymeMechanism.add(c.getCanonicalName());
-			if (s.contains(InterfaceGeneRegulatoryKinetics.class))
+			}
+			if (s.contains(InterfaceGeneRegulatoryKinetics.class)) {
 				kineticsGeneRegulatoryNetworks.add(c.getCanonicalName());
-			if (s.contains(InterfaceNonEnzymeKinetics.class))
+			}
+			if (s.contains(InterfaceNonEnzymeKinetics.class)) {
 				kineticsNonEnzyme.add(c.getCanonicalName());
-			if (s.contains(InterfaceZeroReactants.class))
+			}
+			if (s.contains(InterfaceZeroReactants.class)) {
 				kineticsZeroReactants.add(c.getCanonicalName());
-			if (s.contains(InterfaceZeroProducts.class))
+			}
+			if (s.contains(InterfaceZeroProducts.class)) {
 				kineticsZeroProducts.add(c.getCanonicalName());
-			if (s.contains(InterfaceModulatedKinetics.class))
+			}
+			if (s.contains(InterfaceModulatedKinetics.class)) {
 				kineticsModulated.add(c.getCanonicalName());
-			if (s.contains(InterfaceIntegerStoichiometry.class))
+			}
+			if (s.contains(InterfaceIntegerStoichiometry.class)) {
 				kineticsIntStoichiometry.add(c.getCanonicalName());
+			}
 		}
 		msg.logln("done in " + (System.currentTimeMillis() - time) + " ms");
 		msg.log("loading user settings...");
@@ -336,7 +309,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * 
 	 */
 	private final static String configFile = "org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
-	
+
 	/**
 	 * Reads the default configuration file and returns a properties hash map
 	 * that contains pairs of configuration keys and the entries from the file.
@@ -353,7 +326,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		}
 		return correctProperties(defaults);
 	}
-	
+
 	/**
 	 * Returns the location of the default configuration file.
 	 * 
