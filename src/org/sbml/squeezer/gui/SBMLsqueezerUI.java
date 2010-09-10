@@ -447,10 +447,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 			break;
 		case SET_PREFERENCES:
-			SettingsDialog dialog = new SettingsDialog(this);
-			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION)
-				for (Object key : dialog.getSettings().keySet())
+			SettingsDialog dialog = new SettingsDialog(this, SBMLsqueezer
+					.getDefaultSettings());
+			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION) {
+				for (Object key : dialog.getSettings().keySet()) {
 					settings.put(key, dialog.getSettings().get(key));
+				}
+			}
 			break;
 		case OPEN_FILE:
 			chooser = GUITools.createJFileChooser(settings
@@ -775,8 +778,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		Icon icon = GUITools.ICON_LOGO_SMALL;
 		logo = new JLabel(GUITools.toHTML("<br><br><br><br><br>Version: "
 				+ SBMLsqueezer.getVersionNumber()), icon, JLabel.CENTER);
-		logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
-				.getIconHeight() + 75));
+		if (icon != null) {
+			logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
+					.getIconHeight() + 75));
+		}
 		setEnabled(false, Command.SAVE_FILE, Command.CLOSE_FILE,
 				Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
 				Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);

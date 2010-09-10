@@ -69,10 +69,7 @@ import de.zbit.io.SBFileFilter;
  * @version $Revision: 293$
  */
 public class SBMLsqueezer implements LawListener, IOProgressListener {
-	/**
-	 * 
-	 */
-	private final static String configFile = "org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
+
 	/**
 	 * The possible location of this class in a jar file if used in plug-in
 	 * mode.
@@ -305,24 +302,27 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				}
 				boolean allReversible = properties
 						.containsKey(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-				if (allReversible)
+				if (allReversible) {
 					allReversible &= Boolean.parseBoolean(properties.get(
 							CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)
 							.toString());
-				else if (settings != null) {
+				} else if (settings != null) {
 					allReversible = settings
 							.containsKey(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-					if (allReversible)
+					if (allReversible) {
 						allReversible &= Boolean.parseBoolean(settings.get(
 								CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)
 								.toString());
+					}
 				}
-				if (!kineticsIrreversible.contains(val) && !allReversible)
+				if (!kineticsIrreversible.contains(val) && !allReversible) {
 					invalid = false;
+				}
 				if (invalid) {
 					String defaultKin = getDefaultSettings().get(k).toString();
-					if (!defaultKin.startsWith(KINETICS_PACKAGE))
+					if (!defaultKin.startsWith(KINETICS_PACKAGE)) {
 						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
+					}
 					props.put(k, defaultKin);
 					msg.errf("Invalid %s %s; using default %s.", k.toString(),
 							val, defaultKin);
@@ -333,14 +333,10 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	}
 
 	/**
-	 * Returns the location of the default configuration file.
 	 * 
-	 * @return the configFile
 	 */
-	public static String getConfigFile() {
-		return configFile;
-	}
-
+	private final static String configFile = "org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
+	
 	/**
 	 * Reads the default configuration file and returns a properties hash map
 	 * that contains pairs of configuration keys and the entries from the file.
@@ -356,6 +352,15 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			e.printStackTrace();
 		}
 		return correctProperties(defaults);
+	}
+	
+	/**
+	 * Returns the location of the default configuration file.
+	 * 
+	 * @return the configFile
+	 */
+	public static String getConfigFile() {
+		return configFile;
 	}
 
 	/**

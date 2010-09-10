@@ -99,9 +99,11 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 		super(properties);
 		this.browse = browse;
 		settings = new Properties();
-		for (Object key : properties.keySet())
-			if (key.toString().startsWith("LATEX_"))
+		for (Object key : properties.keySet()) {
+			if (key.toString().startsWith("LATEX_")) {
 				settings.put(key, properties.get(key));
+			}
+		}
 		init();
 	}
 
@@ -278,7 +280,9 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
+	 * 
+	 * @see
+	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
 	 */
 	public void setProperties(Properties settings) {
 		removeAll();
