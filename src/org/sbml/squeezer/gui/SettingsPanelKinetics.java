@@ -19,7 +19,6 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.util.Properties;
@@ -27,14 +26,12 @@ import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 
 import org.sbml.squeezer.CfgKeys;
@@ -60,53 +57,30 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 */
 	private static final long serialVersionUID = 5242359204965070649L;
 
-	private JCheckBox jCheckBoxAddAllParametersGlobally;
-
-	private JCheckBox jCheckBoxPossibleEnzymeAsRNA;
-
-	private JCheckBox jCheckBoxPossibleEnzymeComplex;
-
-	private JCheckBox jCheckBoxPossibleEnzymeGenericProtein;
-
-	private JCheckBox jCheckBoxPossibleEnzymeReceptor;
-
-	private JCheckBox jCheckBoxPossibleEnzymeRNA;
-
-	private JCheckBox jCheckBoxPossibleEnzymeSimpleMolecule;
-
-	private JCheckBox jCheckBoxPossibleEnzymeTruncatedProtein;
-
-	private JCheckBox jCheckBoxPossibleEnzymeUnknown;
-
-	private JCheckBox jCheckBoxTreatAllReactionsAsEnzyeReaction;
-
-	private JRadioButton jRadioButtonTypeUnitConsistency;
-
-	private JCheckBox jCheckBoxSetBoundaryCondition;
-
-	private JCheckBox jCheckBoxRemoveUnnecessaryPandU;
-
-	private JCheckBox jCheckBoxWarnings;
-
-	private JComboBox jComboBoxTypeStandardVersion;
-
-	private JRadioButton jRadioButtonForceReacRev;
-
-	private JRadioButton jRadioButtonGenerateForAllReactions;
-
-	private JSpinner jSpinnerMaxRealisticNumOfReactants;
 	/**
 	 * 
 	 */
-	private JSpinner jSpinnerDefaultParamValue;
+	private JCheckBox jCheckBoxAddAllParametersGlobally,
+			jCheckBoxPossibleEnzymeAsRNA, jCheckBoxPossibleEnzymeComplex,
+			jCheckBoxPossibleEnzymeGenericProtein,
+			jCheckBoxPossibleEnzymeReceptor, jCheckBoxPossibleEnzymeRNA,
+			jCheckBoxPossibleEnzymeSimpleMolecule,
+			jCheckBoxPossibleEnzymeTruncatedProtein,
+			jCheckBoxPossibleEnzymeUnknown,
+			jCheckBoxTreatAllReactionsAsEnzyeReaction,
+			jCheckBoxSetBoundaryCondition, jCheckBoxRemoveUnnecessaryPandU,
+			jCheckBoxWarnings;
 	/**
 	 * 
 	 */
-	private JSpinner jSpinnerDefaultSpeciesValue;
+	private JRadioButton jRadioButtonTypeUnitConsistency,
+			jRadioButtonGenerateForAllReactions;
 	/**
 	 * 
 	 */
-	private JSpinner jSpinnerDefaultCompartmentSize;
+	private JSpinner jSpinnerMaxRealisticNumOfReactants,
+			jSpinnerDefaultParamValue, jSpinnerDefaultSpeciesValue,
+			jSpinnerDefaultCompartmentSize;
 
 	/**
 	 * 
@@ -114,12 +88,13 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 */
 	public SettingsPanelKinetics(Properties settings) {
 		super(settings);
-		setLayout(new GridBagLayout());
 		this.settings = new Properties();
 		for (Object key : settings.keySet()) {
 			String k = key.toString();
-			if (k.startsWith("OPT_") || k.startsWith("POSSIBLE_ENZYME_")
-					|| k.startsWith("TYPE_")) {
+			if (!k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
+					&& (k.startsWith("OPT_")
+							|| k.startsWith("POSSIBLE_ENZYME_") || k
+							.equals("TYPE_UNIT_CONSISTENCY"))) {
 				this.settings.put(key, settings.get(key));
 			}
 		}
@@ -140,15 +115,12 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 */
 	private void init() {
 		ButtonGroup buttonGroup;
-		Font titleFont = new Font("Dialog", Font.BOLD, 12);
-		Color borderColor = new Color(51, 51, 51);
 
 		// Top Panel
 		GridBagLayout layout = new GridBagLayout();
 		JPanel jPanelGeneralOptions = new JPanel(layout);
-		jPanelGeneralOptions.setBorder(BorderFactory.createTitledBorder(null,
-				" General options ", TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
+		jPanelGeneralOptions.setBorder(BorderFactory
+				.createTitledBorder(" General options "));
 		jCheckBoxSetBoundaryCondition = new JCheckBox(GUITools.toHTML(
 				"Set boundary condition for gene coding species", 25),
 				((Boolean) settings
@@ -295,49 +267,14 @@ public class SettingsPanelKinetics extends SettingsPanel {
 				.setSelected(!jRadioButtonGenerateForAllReactions.isSelected());
 		layout = new GridBagLayout();
 		JPanel jPanelGenerateNewKinetics = new JPanel(layout);
-		jPanelGenerateNewKinetics.setBorder(BorderFactory.createTitledBorder(
-				null, " Generate new kinetics ",
-				TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
+		jPanelGenerateNewKinetics.setBorder(BorderFactory
+				.createTitledBorder(" Generate new kinetics "));
 		LayoutHelper.addComponent(jPanelGenerateNewKinetics, layout,
 				jRadioButtonGenerateOnlyMissingKinetics, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGenerateNewKinetics, layout,
 				jRadioButtonGenerateForAllReactions, 0, 1, 1, 1, 1, 1);
 
 		// Third Panel
-		jRadioButtonForceReacRev = new JRadioButton(
-				"Model all reactions in a reversible manner");
-		jRadioButtonForceReacRev.setSelected(((Boolean) settings
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue());
-		jRadioButtonForceReacRev
-				.setToolTipText(GUITools
-						.toHTML(
-								"If checked, all reactions will be set to reversible no matter what is given by the SBML file.",
-								40));
-		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(
-				"Use information from SBML");
-		jRadioButtonSettingsFrameForceRevAsCD.setSelected(!((Boolean) settings
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue());
-		jRadioButtonSettingsFrameForceRevAsCD
-				.setToolTipText(GUITools
-						.toHTML(
-								"If checked, the information about reversiblity will be left unchanged.",
-								40));
-		buttonGroup = new ButtonGroup();
-		buttonGroup.add(jRadioButtonSettingsFrameForceRevAsCD);
-		buttonGroup.add(jRadioButtonForceReacRev);
-		layout = new GridBagLayout();
-		JPanel jPanelSettingsReversibility = new JPanel();
-		jPanelSettingsReversibility.setLayout(layout);
-		jPanelSettingsReversibility.setBorder(BorderFactory.createTitledBorder(
-				null, " Reversibility ", TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-		LayoutHelper.addComponent(jPanelSettingsReversibility, layout,
-				jRadioButtonSettingsFrameForceRevAsCD, 0, 0, 1, 1, 1, 1);
-		LayoutHelper.addComponent(jPanelSettingsReversibility, layout,
-				jRadioButtonForceReacRev, 0, 1, 1, 1, 1, 1);
 
 		// Fourth Panel
 		jCheckBoxPossibleEnzymeGenericProtein = new JCheckBox("Generic protein");
@@ -408,10 +345,8 @@ public class SettingsPanelKinetics extends SettingsPanel {
 		layout = new GridBagLayout();
 		JPanel jPanelSettingsEnzymes = new JPanel();
 		jPanelSettingsEnzymes.setLayout(layout);
-		jPanelSettingsEnzymes.setBorder(BorderFactory.createTitledBorder(null,
-				" Species to be treated as enzymes ",
-				TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
+		jPanelSettingsEnzymes.setBorder(BorderFactory
+				.createTitledBorder(" Species to be treated as enzymes "));
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
 				jCheckBoxPossibleEnzymeGenericProtein, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
@@ -454,52 +389,16 @@ public class SettingsPanelKinetics extends SettingsPanel {
 		buttonGroup.add(jRadioButtonTypeUnitsCompVol);
 		unitConsistency.add(jRadioButtonTypeUnitConsistency);
 		unitConsistency.add(jRadioButtonTypeUnitsCompVol);
-		jPanelTypeUnitConsistency.setBorder(BorderFactory.createTitledBorder(
-				null, " How to ensure unit consistency ",
-				TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
-
-		JPanel jPanelStandardVersions = new JPanel();
-		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
-				"hal", "weg" });
-		jComboBoxTypeStandardVersion.setSelectedIndex(((Integer) this.settings
-				.get(CfgKeys.TYPE_STANDARD_VERSION)).intValue());
-		jComboBoxTypeStandardVersion
-				.setToolTipText(GUITools
-						.toHTML(
-								"Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.",
-								40));
-		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
-		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
-		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);
-		helper.add(new JLabel(GUITools.toHTML(
-				"Choose the version of modular rate laws:", 20)), 1, 1, 1, 1,
-				0, 1);
-		helper.add(new JPanel(), 2, 1, 1, 1, 1, 1);
-		helper.add(jComboBoxTypeStandardVersion, 3, 1, 1, 1, 1, 0);
-		helper.add(new JPanel(), 4, 1, 1, 1, 1, 1);
-		helper.add(new JPanel(), 0, 2, 5, 1, 1, 1);
-		jPanelStandardVersions.setBorder(BorderFactory.createTitledBorder(null,
-				" Version of modular rate laws ",
-				TitledBorder.DEFAULT_JUSTIFICATION,
-				TitledBorder.DEFAULT_POSITION, titleFont, borderColor));
+		jPanelTypeUnitConsistency.setBorder(BorderFactory
+				.createTitledBorder(" How to ensure unit consistency "));
 
 		// Add all panels to this settings panel:
-		layout = (GridBagLayout) this.getLayout();
-		LayoutHelper.addComponent(this, layout, jPanelGeneralOptions, 0, 0, 2,
-				1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelGenerateNewKinetics, 0,
-				1, 1, 1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelSettingsReversibility, 1,
-				1, 1, 1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelTypeUnitConsistency, 0,
-				2, 1, 1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelStandardVersions, 1, 2,
-				1, 1, 1, 1);
-		LayoutHelper.addComponent(this, layout, jPanelSettingsEnzymes, 0, 3, 2,
-				1, 1, 1);
+		LayoutHelper lh = new LayoutHelper(this);
+		lh.add(jPanelGeneralOptions, 0, 0, 2, 1, 1, 1);
+		lh.add(jPanelGenerateNewKinetics, 0, 1, 1, 1, 1, 1);
+		lh.add(jPanelTypeUnitConsistency, 1, 1, 1, 1, 1, 1);
+		lh.add(jPanelSettingsEnzymes, 0, 2, 2, 1, 1, 1);
 
-		GUITools.setAllBackground(this, Color.WHITE);
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 
 		// Add change listener
@@ -511,7 +410,6 @@ public class SettingsPanelKinetics extends SettingsPanel {
 		jSpinnerDefaultSpeciesValue.addChangeListener(this);
 		jSpinnerDefaultParamValue.addChangeListener(this);
 		jRadioButtonGenerateForAllReactions.addItemListener(this);
-		jRadioButtonForceReacRev.addItemListener(this);
 		jCheckBoxPossibleEnzymeGenericProtein.addItemListener(this);
 		jCheckBoxPossibleEnzymeRNA.addItemListener(this);
 		jCheckBoxPossibleEnzymeComplex.addItemListener(this);
@@ -521,13 +419,10 @@ public class SettingsPanelKinetics extends SettingsPanel {
 		jCheckBoxPossibleEnzymeAsRNA.addItemListener(this);
 		jCheckBoxPossibleEnzymeSimpleMolecule.addItemListener(this);
 		jRadioButtonTypeUnitConsistency.addItemListener(this);
-		jComboBoxTypeStandardVersion.addItemListener(this);
 		jCheckBoxSetBoundaryCondition.addItemListener(this);
 		jCheckBoxRemoveUnnecessaryPandU.addItemListener(this);
 
 		jSpinnerMaxRealisticNumOfReactants.setEnabled(jCheckBoxWarnings
-				.isSelected());
-		jComboBoxTypeStandardVersion.setEnabled(jRadioButtonForceReacRev
 				.isSelected());
 	}
 
@@ -556,11 +451,6 @@ public class SettingsPanelKinetics extends SettingsPanel {
 			settings.put(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
 					Boolean.valueOf(jRadioButtonGenerateForAllReactions
 							.isSelected()));
-		} else if (e.getSource().equals(jRadioButtonForceReacRev)) {
-			settings.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE, Boolean
-					.valueOf(jRadioButtonForceReacRev.isSelected()));
-			jComboBoxTypeStandardVersion.setEnabled(jRadioButtonForceReacRev
-					.isSelected());
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeRNA)) {
 			settings.put(CfgKeys.POSSIBLE_ENZYME_RNA, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeRNA.isSelected()));
@@ -601,9 +491,6 @@ public class SettingsPanelKinetics extends SettingsPanel {
 			settings.put(CfgKeys.TYPE_UNIT_CONSISTENCY, Integer
 					.valueOf(jRadioButtonTypeUnitConsistency.isSelected() ? 0
 							: 1));
-		} else if (e.getSource().equals(jComboBoxTypeStandardVersion)) {
-			settings.put(CfgKeys.TYPE_STANDARD_VERSION, Integer
-					.valueOf(jComboBoxTypeStandardVersion.getSelectedIndex()));
 		} else if (e.getSource().equals(jCheckBoxSetBoundaryCondition)) {
 			settings.put(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, Boolean
 					.valueOf(jCheckBoxSetBoundaryCondition.isSelected()));

@@ -579,7 +579,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private SettingsPanelAll getJSettingsPanel() {
 		if (settingsPanel == null) {
-			settingsPanel = new SettingsPanelAll(settings);
+			settingsPanel = new SettingsPanelAll(settings, SBMLsqueezer.getDefaultSettings());
 			// settingsPanel.setBackground(Color.WHITE);
 		}
 		return settingsPanel;
