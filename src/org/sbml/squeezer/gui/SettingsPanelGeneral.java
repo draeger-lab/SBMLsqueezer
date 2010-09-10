@@ -77,10 +77,12 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	private static final String toolTipButtons = "Select the default directory to %s various kinds of files.";
 
 	/**
+	 * 
 	 * @param properties
+	 * @param defaults
 	 */
-	public SettingsPanelGeneral(Properties properties) {
-		super(properties);
+	public SettingsPanelGeneral(Properties properties, Properties defaults) {
+		super(properties, defaults);
 		setProperties(properties);
 	}
 
@@ -229,6 +231,16 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 			}
 		}
 		init();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
+	 */
+	@Override
+	public String getTitle() {
+		return "Program settings";
 	}
 
 }

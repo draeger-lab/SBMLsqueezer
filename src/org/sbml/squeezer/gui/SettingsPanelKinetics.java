@@ -85,9 +85,10 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	/**
 	 * 
 	 * @param settings
+	 * @param defaults
 	 */
-	public SettingsPanelKinetics(Properties settings) {
-		super(settings);
+	public SettingsPanelKinetics(Properties settings, Properties defaults) {
+		super(settings, defaults);
 		this.settings = new Properties();
 		for (Object key : settings.keySet()) {
 			String k = key.toString();
@@ -576,5 +577,15 @@ public class SettingsPanelKinetics extends SettingsPanel {
 					.valueOf(jSpinnerDefaultParamValue.getValue().toString()));
 		}
 		super.stateChanged(e);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
+	 */
+	@Override
+	public String getTitle() {
+		return "Kinetics settings";
 	}
 }
