@@ -156,11 +156,11 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		ok.setActionCommand(OK);
 		ok.setSize(defaults.getSize());
 		ok.setEnabled(false);
-		
+
 		cancel.setPreferredSize(defaults.getPreferredSize());
 		apply.setPreferredSize(defaults.getPreferredSize());
 		ok.setPreferredSize(defaults.getPreferredSize());
-		
+
 		p.add(cancel);
 		p.add(defaults);
 		p.add(apply);
@@ -212,7 +212,8 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 * @return
 	 */
 	public boolean showSettingsDialog(Properties settings) {
-		return showSettingsDialog(settings, new SettingsPanelAll(settings));
+		return showSettingsDialog(settings, new SettingsPanelAll(settings,
+				defaultSettings));
 	}
 
 	/**

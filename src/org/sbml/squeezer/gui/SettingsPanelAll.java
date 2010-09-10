@@ -18,21 +18,15 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.awt.Container;
 import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
 
 /**
@@ -73,7 +67,7 @@ public class SettingsPanelAll extends SettingsPanel {
 	// private SettingsPanelStability panelStabilitySettings;
 	// TODO: Not in this version
 	// private SettingsPanelSimulation panelSimulationSettings;
-	
+
 	/**
 	 * 
 	 */
@@ -82,18 +76,17 @@ public class SettingsPanelAll extends SettingsPanel {
 	/**
 	 * 
 	 */
-	private boolean reversibility;
+	private Properties defaultSettings;
 
 	/**
 	 * 
 	 * @param properties
+	 * @param defaultProperties
 	 */
-	public SettingsPanelAll(Properties properties) {
+	public SettingsPanelAll(Properties properties, Properties defaultProperties) {
 		super(properties);
+		this.defaultSettings = defaultProperties;
 		setLayout(new GridLayout(1, 1));
-		reversibility = ((Boolean) properties
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue();
 		init();
 	}
 
@@ -133,8 +126,7 @@ public class SettingsPanelAll extends SettingsPanel {
 		 * Program settings
 		 */
 		panelGeneralSettings = new SettingsPanelGeneral(settings);
-		tab.addTab("Program settings", new JScrollPane(
-				panelGeneralSettings,
+		tab.addTab("Program settings", new JScrollPane(panelGeneralSettings,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
@@ -225,18 +217,7 @@ public class SettingsPanelAll extends SettingsPanel {
 	public Properties getProperties() {
 		this.settings.putAll(panelGeneralSettings.getProperties());
 		this.settings.putAll(panelKinSettings.getProperties());
-		for (Object key : panelDefaultMechanisms.getProperties().keySet()) {
-			try {
-				Class<?> cl = Class.forName(panelDefaultMechanisms
-						.getProperties().get(key).toString());
-				Set<Class<?>> interfaces = new HashSet<Class<?>>();
-				for (Class<?> c : cl.getInterfaces())
-					interfaces.add(c);
-				this.settings.put(key, cl.getCanonicalName());
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
+		this.settings.putAll(panelDefaultMechanisms.getProperties());
 		this.settings.putAll(panelLatexSettings.getProperties());
 		// TODO: Not in this version
 		// Properties props = panelSimulationSettings.getProperties();
@@ -246,38 +227,28 @@ public class SettingsPanelAll extends SettingsPanel {
 		return settings;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getSelectedIndex() {
 		return tab.getSelectedIndex();
 	}
 
+	/**
+	 * 
+	 * @param tab
+	 */
 	public void setSelectedIndex(int tab) {
 		this.tab.setSelectedIndex(tab);
 	}
 
+	/**
+	 * 
+	 */
 	public void restoreDefaults() {
-		this.settings = SBMLsqueezer.getDefaultSettings();
+		this.settings = (Properties) defaultSettings.clone();
 		removeAll();
 		init();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.gui.SettingsPanel#itemStateChanged(java.awt.event.ItemEvent
-	 * )
-	 */
-	public void itemStateChanged(ItemEvent e) {
-		if ((e.getSource() instanceof Container)
-				&& (GUITools.contains(panelKinSettings, ((Container) e
-						.getSource())))) {
-			if (reversibility != ((Boolean) panelKinSettings.getProperties()
-					.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-					.booleanValue()) {
-				reversibility = !reversibility;
-				panelDefaultMechanisms.stateChanged(new ChangeEvent(Boolean
-						.valueOf(reversibility)));
-			}
-		}
 	}
 }
