@@ -20,11 +20,14 @@ package org.sbml.squeezer.gui;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -167,6 +170,37 @@ public class GUITools extends de.zbit.gui.GUITools {
 	}
 
 	/**
+	 * 
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	public static Icon loadIcon(String path) {
+		Image img = loadImage(path);
+		return img != null ? new ImageIcon(img) : null;
+	}
+
+
+
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static Image loadImage(String path) {
+		try {
+			String p = path.substring(path.indexOf("img"));
+			URL url = Resource.class.getResource(p);
+			return url != null ? ImageIO.read(Resource.class.getResource(path
+					.substring(path.indexOf("img")))) : ImageIO.read(new File(
+					path));
+		} catch (IOException exc) {
+			System.err.printf("Could not load image %s\n", path);
+			return null;
+		}
+	}
+	
+	/**
 	 * Loads locale-specific resources: strings, images, et cetera
 	 * 
 	 * @param prefix
@@ -235,9 +269,7 @@ public class GUITools extends de.zbit.gui.GUITools {
 		 */
 		IMAGE_LEMON = loadImage(prefix + "icon.png");
 	}
-
-
-
+	
 
 	/**
 	 * Enables or disables actions that can be performed by SBMLsqueezer, i.e.,

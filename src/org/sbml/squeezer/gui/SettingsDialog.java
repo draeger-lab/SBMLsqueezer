@@ -39,13 +39,11 @@ import org.sbml.squeezer.SBMLsqueezer;
 
 /**
  * A specialized {@link JDialog} that shows several configuration options in a
- * {@link JTabbedPane}, provides a button for applying the choosed selection and
+ * {@link JTabbedPane}, provides a button for applying the choosen selection and
  * also to restore the default settings. All settings are synchronized with the
- * central configuration of SBMLsqueezer.
+ * central configuration of {@link SBMLsqueezer}.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @since 1.3
  * @date 2009-09-06
  * @version
@@ -72,22 +70,25 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	private JButton ok;
 	private SettingsPanel panelAllSettings;
 	private Properties settings;
+	private Properties defaultSettings;
 
 	/**
 	 * 
 	 * @param owner
 	 * @param settings
 	 */
-	public SettingsDialog(Frame owner) {
+	public SettingsDialog(Frame owner, Properties defaultSettings) {
 		super(owner, "Preferences");
+		this.defaultSettings = defaultSettings;
 	}
-	
+
 	/**
 	 * 
 	 */
-	public SettingsDialog(String title) {
+	public SettingsDialog(String title, Properties defaultSettings) {
 		super();
 		setTitle(title);
+		this.defaultSettings = defaultSettings;
 	}
 
 	/*
@@ -101,7 +102,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 			dispose();
 		} else if (ae.getActionCommand().equals(DEFAULTS)) {
 			Properties p = (Properties) settings.clone();
-			settings = SBMLsqueezer.getDefaultSettings();
+			settings = defaultSettings;
 			panelAllSettings.setProperties(settings);
 			settings = p;
 			apply.setEnabled(true);
@@ -127,6 +128,44 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	 */
 	public Properties getSettings() {
 		return settings;
+	}
+
+	/**
+	 * Initializes this dialog.
+	 */
+	private void init(SettingsPanel panel) {
+		panelAllSettings = panel;
+		getContentPane().add(panelAllSettings, BorderLayout.CENTER);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		JPanel p = new JPanel();
+		defaults = new JButton("Defaults");
+		defaults.addActionListener(this);
+		defaults.setActionCommand(DEFAULTS);
+		defaults.setEnabled(!settings.equals(defaultSettings));
+		JButton cancel = new JButton("Cancel");
+		cancel.addActionListener(this);
+		cancel.setActionCommand(CANCEL);
+		cancel.setSize(defaults.getSize());
+		apply = new JButton("Apply");
+		apply.setSize(defaults.getSize());
+		apply.addActionListener(this);
+		apply.setActionCommand(APPLY);
+		apply.setEnabled(false);
+		ok = new JButton("OK");
+		ok.addActionListener(this);
+		ok.setActionCommand(OK);
+		ok.setSize(defaults.getSize());
+		ok.setEnabled(false);
+		
+		cancel.setPreferredSize(defaults.getPreferredSize());
+		apply.setPreferredSize(defaults.getPreferredSize());
+		ok.setPreferredSize(defaults.getPreferredSize());
+		
+		p.add(cancel);
+		p.add(defaults);
+		p.add(apply);
+		p.add(ok);
+		add(p, BorderLayout.SOUTH);
 	}
 
 	/*
@@ -175,7 +214,7 @@ public class SettingsDialog extends JDialog implements ActionListener,
 	public boolean showSettingsDialog(Properties settings) {
 		return showSettingsDialog(settings, new SettingsPanelAll(settings));
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -205,39 +244,5 @@ public class SettingsDialog extends JDialog implements ActionListener,
 		apply.setEnabled(true);
 		defaults.setEnabled(true);
 		ok.setEnabled(true);
-	}
-
-	/**
-	 * Initializes this dialog.
-	 */
-	private void init(SettingsPanel panel) {
-		panelAllSettings = panel;
-		getContentPane().add(panelAllSettings, BorderLayout.CENTER);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		JPanel p = new JPanel();
-		defaults = new JButton("Defaults");
-		defaults.addActionListener(this);
-		defaults.setActionCommand(DEFAULTS);
-		defaults
-				.setEnabled(!settings.equals(SBMLsqueezer.getDefaultSettings()));
-		JButton cancel = new JButton("Cancel");
-		cancel.addActionListener(this);
-		cancel.setActionCommand(CANCEL);
-		cancel.setSize(defaults.getSize());
-		apply = new JButton("Apply");
-		apply.setSize(defaults.getSize());
-		apply.addActionListener(this);
-		apply.setActionCommand(APPLY);
-		apply.setEnabled(false);
-		ok = new JButton("OK");
-		ok.addActionListener(this);
-		ok.setActionCommand(OK);
-		ok.setSize(defaults.getSize());
-		ok.setEnabled(false);
-		p.add(cancel);
-		p.add(defaults);
-		p.add(apply);
-		p.add(ok);
-		add(p, BorderLayout.SOUTH);
 	}
 }

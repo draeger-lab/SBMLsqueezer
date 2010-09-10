@@ -18,29 +18,22 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
-
-import de.zbit.gui.LayoutHelper;
 
 /**
  * A {@link JPanel} containing a {@link JTabbedPane} with several options for
@@ -66,6 +59,10 @@ public class SettingsPanelAll extends SettingsPanel {
 	 * 
 	 */
 	private SettingsPanelLaTeX panelLatexSettings;
+	/**
+	 * 
+	 */
+	private SettingsPanelGeneral panelGeneralSettings;
 
 	/**
 	 * 
@@ -76,16 +73,7 @@ public class SettingsPanelAll extends SettingsPanel {
 	// private SettingsPanelStability panelStabilitySettings;
 	// TODO: Not in this version
 	// private SettingsPanelSimulation panelSimulationSettings;
-	/**
-	 * 
-	 */
-	private JTextField tfOpenDir;
-
-	/**
-	 * 
-	 */
-	private JTextField tfSaveDir;
-
+	
 	/**
 	 * 
 	 */
@@ -144,21 +132,11 @@ public class SettingsPanelAll extends SettingsPanel {
 		/*
 		 * Program settings
 		 */
-		tfOpenDir = new JTextField();
-		tfSaveDir = new JTextField();
-		tfOpenDir.addKeyListener(this);
-		tfSaveDir.addKeyListener(this);
-		LayoutHelper lh = new LayoutHelper(new JPanel());
-		lh.add(new JLabel("Open directory:"), 0, 0, 1, 1, 1, 0);
-		lh.add(new JPanel(), 0, 1, 1, 1, 0, 0);
-		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
-		tfOpenDir.setText(this.settings.get(CfgKeys.OPEN_DIR).toString());
-		lh.add(tfOpenDir, 2, 0, 1, 1, 1, 0);
-		lh.add(new JLabel("Save directory:"), 0, 2, 1, 1, 1, 0);
-		tfSaveDir.setText(this.settings.get(CfgKeys.SAVE_DIR).toString());
-		lh.add(tfSaveDir, 2, 2, 1, 1, 1, 0);
-		tab.addTab("Program settings", lh.getContainer());
-		setLayout(new BorderLayout());
+		panelGeneralSettings = new SettingsPanelGeneral(settings);
+		tab.addTab("Program settings", new JScrollPane(
+				panelGeneralSettings,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
 		/*
 		 * LaTeX Settings
@@ -245,27 +223,8 @@ public class SettingsPanelAll extends SettingsPanel {
 	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
 	 */
 	public Properties getProperties() {
-		File f = new File(tfOpenDir.getText());
-		if (f.exists() && f.isDirectory())
-			settings.put(CfgKeys.OPEN_DIR, tfOpenDir.getText());
-		else {
-			JOptionPane.showMessageDialog(getTopLevelAncestor(), new JLabel(
-					GUITools.toHTML("No such directory " + f.getPath() + '.',
-							40)), "Warning", JOptionPane.WARNING_MESSAGE);
-			tfOpenDir.setText(settings.get(CfgKeys.OPEN_DIR).toString());
-		}
-		f = new File(tfSaveDir.getText());
-		if (f.exists() && f.isDirectory())
-			settings.put(CfgKeys.SAVE_DIR, tfSaveDir.getText());
-		else {
-			JOptionPane.showMessageDialog(getTopLevelAncestor(), new JLabel(
-					GUITools.toHTML("No such directory " + f.getPath() + '.',
-							40)), "Warning", JOptionPane.WARNING_MESSAGE);
-			tfSaveDir.setText(settings.get(CfgKeys.SAVE_DIR).toString());
-		}
-		for (Object key : panelKinSettings.getProperties().keySet()) {
-			this.settings.put(key, panelKinSettings.getProperties().get(key));
-		}
+		this.settings.putAll(panelGeneralSettings.getProperties());
+		this.settings.putAll(panelKinSettings.getProperties());
 		for (Object key : panelDefaultMechanisms.getProperties().keySet()) {
 			try {
 				Class<?> cl = Class.forName(panelDefaultMechanisms
@@ -278,9 +237,7 @@ public class SettingsPanelAll extends SettingsPanel {
 				e.printStackTrace();
 			}
 		}
-		for (Object key : panelLatexSettings.getProperties().keySet()) {
-			this.settings.put(key, panelLatexSettings.getProperties().get(key));
-		}
+		this.settings.putAll(panelLatexSettings.getProperties());
 		// TODO: Not in this version
 		// Properties props = panelSimulationSettings.getProperties();
 		// for (Object key : props.keySet()) {

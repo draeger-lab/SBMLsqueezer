@@ -63,10 +63,10 @@ public final class Resource {
 			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 			prop.load(bais);
 		}
-		if (prop != null)
+		if (prop != null) {
 			return prop;
+		}
 		// ///////////
-
 		int slInd = resourceName.lastIndexOf('/');
 		if (slInd != -1) {
 			resourceName = resourceName.substring(slInd + 1);
@@ -92,8 +92,9 @@ public final class Resource {
 	 */
 	public byte[] getBytesFromResourceLocation(String rawResrcLoc) {
 		InputStream in = getStreamFromResourceLocation(rawResrcLoc);
-		if (in == null)
+		if (in == null) {
 			return null;
+		}
 		return getBytesFromStream(in);
 	}
 
@@ -105,8 +106,9 @@ public final class Resource {
 	 * @return the byte array of the file.
 	 */
 	private byte[] getBytesFromStream(InputStream stream) {
-		if (stream == null)
+		if (stream == null) {
 			return null;
+		}
 		BufferedInputStream bis = new BufferedInputStream(stream);
 		try {
 			int size = (int) bis.available();

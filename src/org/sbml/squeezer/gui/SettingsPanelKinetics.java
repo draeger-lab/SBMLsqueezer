@@ -119,8 +119,9 @@ public class SettingsPanelKinetics extends SettingsPanel {
 		for (Object key : settings.keySet()) {
 			String k = key.toString();
 			if (k.startsWith("OPT_") || k.startsWith("POSSIBLE_ENZYME_")
-					|| k.startsWith("TYPE_"))
+					|| k.startsWith("TYPE_")) {
 				this.settings.put(key, settings.get(key));
+			}
 		}
 		init();
 	}

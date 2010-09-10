@@ -76,6 +76,7 @@ public class TestCasesAnalyser {
 		Set<String> withFunctionDefinitions = new HashSet<String>();
 		Set<String> withConstraints = new HashSet<String>();
 		Set<String> withStoichiometricMath = new HashSet<String>();
+		Set<String> withLocalParameters = new HashSet<String>();
 
 		for (File dir : f.listFiles()) {
 			if (dir.isDirectory())
@@ -119,6 +120,9 @@ public class TestCasesAnalyser {
 							if (r.isFast()) {
 								withFastReactions.add(dir.getName());
 								break;
+							}
+							if (r.isSetKineticLaw() && (r.getKineticLaw().getNumParameters() > 0)) {
+								withLocalParameters.add(dir.getName());
 							}
 							checkForStoichiometryMath(r.getListOfReactants(),
 									dir, withStoichiometricMath,
@@ -166,6 +170,7 @@ public class TestCasesAnalyser {
 		format("Delay", withDelayedEvents, out);
 		format("Fast reactions", withFastReactions, out);
 		format("Reactions", withReactions, out);
+		format("Local parameters", withLocalParameters, out);
 		format("No reactions", withOutReactions, out);
 		format("FunctionDefinitions", withFunctionDefinitions, out);
 		format("Constraints", withConstraints, out);
