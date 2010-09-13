@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package de.zbit.gui.cfg;
 
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -38,6 +38,7 @@ import javax.swing.JTabbedPane;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.StringTools;
 
@@ -58,10 +59,26 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	 * Generated serial version uid.
 	 */
 	private static final long serialVersionUID = 243553812503691739L;
+
 	/**
 	 * 
 	 */
-	private Properties settings, origSett;
+	private JComboBox jComboBoxTypeStandardVersion;
+
+	/**
+	 * 
+	 */
+	private JRadioButton jRadioButtonForceReacRev;
+
+	/**
+	 * 
+	 */
+	private JTabbedPane tabs;
+
+	/**
+	 * 
+	 */
+	private JPanel tabsPanel;
 
 	/**
 	 * Reaction Mechanism Panel
@@ -72,20 +89,6 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	public SettingsPanelDefaultMechanisms(Properties properties,
 			Properties defaults) {
 		super(properties, defaults);
-		settings = new Properties();
-		String k;
-		for (Object key : properties.keySet()) {
-			k = key.toString();
-			if (k.startsWith("KINETICS_")
-					|| k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
-					|| k.equals("TYPE_STANDARD_VERSION")) {
-				settings.put(key, properties.get(key));
-			}
-		}
-		origSett = properties;
-		init(((Boolean) origSett
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue());
 	}
 
 	/**
@@ -155,7 +158,8 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		for (JRadioButton radioButton : jRButton) {
 			if (radioButton.isSelected())
 				oneIsSelected = true;
-			if (origSett.get(key).toString().endsWith(radioButton.getText()))
+			if (defaultSettings.get(key).toString().endsWith(
+					radioButton.getText()))
 				pos = i;
 			i++;
 		}
@@ -164,167 +168,6 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		}
 		// p.setBackground(Color.WHITE);
 		return p;
-	}
-
-	/**
-	 * 
-	 * @param key
-	 * @return
-	 */
-	private String createTitleFor(CfgKeys key) {
-		StringTokenizer st = new StringTokenizer(key.toString().substring(8)
-				.toLowerCase().replace('_', ' '));
-		StringBuilder title = new StringBuilder();
-		while (st.hasMoreElements()) {
-			title.append(' ');
-			title.append(StringTools.firstLetterUpperCase(st.nextElement()
-					.toString()));
-		}
-		title.append(' ');
-		return title.toString();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
-	 */
-	public Properties getProperties() {
-		Properties p = new Properties();
-		Object value;
-		for (Object key : settings.keySet()) {
-			value = settings.get(key);
-			try {
-				Class<?> cl = Class.forName(value.toString());
-				Set<Class<?>> interfaces = new HashSet<Class<?>>();
-				for (Class<?> c : cl.getInterfaces()) {
-					interfaces.add(c);
-				}
-				p.put(key, cl.getCanonicalName());
-			} catch (ClassNotFoundException e) {
-				p.put(key, value);
-			}
-		}
-		return this.settings;
-	}
-
-	/**
-	 * Initializes the selection of default mechanisms.
-	 * 
-	 * @param properties
-	 */
-	private void init(boolean treatReactionsReversible) {
-		// setLayout(new GridLayout(1, 2));
-		// JPanel leftMechanismPanel = new JPanel();
-		// LayoutHelper lh = new LayoutHelper(leftMechanismPanel);
-		// lh.add(createButtonGroupPanel(ReactionType
-		// .getKineticsNonEnzyme(treatReactionsReversible),
-		// CfgKeys.KINETICS_NONE_ENZYME_REACTIONS));
-		// lh.add(createButtonGroupPanel(ReactionType
-		// .getKineticsUniUni(treatReactionsReversible),
-		// CfgKeys.KINETICS_UNI_UNI_TYPE));
-		// lh.add(createButtonGroupPanel(ReactionType
-		// .getKineticsBiUni(treatReactionsReversible),
-		// CfgKeys.KINETICS_BI_UNI_TYPE));
-
-		// JPanel rightMechanismPanel = new JPanel();
-		// lh = new LayoutHelper(rightMechanismPanel);
-		// lh.add(createButtonGroupPanel(ReactionType
-		// .getKineticsBiBi(treatReactionsReversible),
-		// CfgKeys.KINETICS_BI_BI_TYPE));
-		// lh.add(createButtonGroupPanel(ReactionType
-		// .getKineticsArbitraryEnzyme(treatReactionsReversible),
-		// CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS));
-		// lh.add(createButtonGroupPanel(ReactionType
-		// .getKineticsGeneRegulation(treatReactionsReversible),
-		// CfgKeys.KINETICS_GENE_REGULATION));
-
-		// add(leftMechanismPanel);
-		// add(rightMechanismPanel);
-		// GUITools.setAllBackground(this, Color.WHITE);
-		LayoutHelper lh = new LayoutHelper(this);
-		lh.add(createJPanelSettingsReversibility(),
-				createJPanelStandarVersions());
-		tabs = createMechanismTabs(treatReactionsReversible);
-		tabsPanel = new JPanel(new GridLayout(1, 1));
-		tabsPanel.add(tabs);
-		tabsPanel
-				.setBorder(BorderFactory
-						.createTitledBorder(" Select the default rate law for each mechanism "));
-		lh.add(tabsPanel, 2);
-	}
-
-	/**
-	 * 
-	 * @param treatReactionsReversible
-	 * @return
-	 */
-	private JTabbedPane createMechanismTabs(boolean treatReactionsReversible) {
-		JTabbedPane tabs = new JTabbedPane(JTabbedPane.LEFT);
-		CfgKeys curr = CfgKeys.KINETICS_NONE_ENZYME_REACTIONS;
-		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
-				.getKineticsNonEnzyme(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_UNI_UNI_TYPE;
-		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
-				.getKineticsUniUni(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_BI_UNI_TYPE;
-		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
-				.getKineticsBiUni(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_BI_BI_TYPE;
-		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
-				.getKineticsBiBi(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS;
-		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
-				.getKineticsArbitraryEnzyme(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_GENE_REGULATION;
-		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
-				.getKineticsGeneRegulation(treatReactionsReversible), curr));
-		return tabs;
-	}
-
-	/**
-	 * 
-	 */
-	private JPanel tabsPanel;
-	private JTabbedPane tabs;
-	/**
-	 * 
-	 */
-	private JComboBox jComboBoxTypeStandardVersion;
-
-	/**
-	 * 
-	 * @return
-	 */
-	private JPanel createJPanelStandarVersions() {
-		JPanel jPanelStandardVersions = new JPanel();
-		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
-				"hal", "weg" });
-		jComboBoxTypeStandardVersion.setSelectedIndex(((Integer) this.settings
-				.get(CfgKeys.TYPE_STANDARD_VERSION)).intValue());
-		jComboBoxTypeStandardVersion
-				.setToolTipText(GUITools
-						.toHTML(
-								"Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.",
-								40));
-		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
-		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
-		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);
-		helper.add(new JLabel(GUITools.toHTML(
-				"Choose the version of modular rate laws:", 20)), 1, 1, 1, 1,
-				0, 1);
-		helper.add(new JPanel(), 2, 1, 1, 1, 1, 1);
-		helper.add(jComboBoxTypeStandardVersion, 3, 1, 1, 1, 1, 0);
-		helper.add(new JPanel(), 4, 1, 1, 1, 1, 1);
-		helper.add(new JPanel(), 0, 2, 5, 1, 1, 1);
-		jPanelStandardVersions.setBorder(BorderFactory
-				.createTitledBorder(" Version of modular rate laws "));
-
-		jComboBoxTypeStandardVersion.addItemListener(this);
-		jComboBoxTypeStandardVersion.setEnabled(jRadioButtonForceReacRev
-				.isSelected());
-
-		return jPanelStandardVersions;
 	}
 
 	/**
@@ -368,11 +211,140 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 
 		return jPanelSettingsReversibility;
 	}
+	/**
+	 * 
+	 * @return
+	 */
+	private JPanel createJPanelStandarVersions() {
+		JPanel jPanelStandardVersions = new JPanel();
+		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
+				"hal", "weg" });
+		jComboBoxTypeStandardVersion.setSelectedIndex(((Integer) this.settings
+				.get(CfgKeys.TYPE_STANDARD_VERSION)).intValue());
+		jComboBoxTypeStandardVersion
+				.setToolTipText(GUITools
+						.toHTML(
+								"Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.",
+								40));
+		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
+		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
+		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);
+		helper.add(new JLabel(GUITools.toHTML(
+				"Choose the version of modular rate laws:", 20)), 1, 1, 1, 1,
+				0, 1);
+		helper.add(new JPanel(), 2, 1, 1, 1, 1, 1);
+		helper.add(jComboBoxTypeStandardVersion, 3, 1, 1, 1, 1, 0);
+		helper.add(new JPanel(), 4, 1, 1, 1, 1, 1);
+		helper.add(new JPanel(), 0, 2, 5, 1, 1, 1);
+		jPanelStandardVersions.setBorder(BorderFactory
+				.createTitledBorder(" Version of modular rate laws "));
+
+		jComboBoxTypeStandardVersion.addItemListener(this);
+		jComboBoxTypeStandardVersion.setEnabled(jRadioButtonForceReacRev
+				.isSelected());
+
+		return jPanelStandardVersions;
+	}
+	/**
+	 * 
+	 * @param treatReactionsReversible
+	 * @return
+	 */
+	private JTabbedPane createMechanismTabs() {
+		boolean treatReactionsReversible = ((Boolean) settings
+				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.booleanValue();
+		JTabbedPane tabs = new JTabbedPane(JTabbedPane.LEFT);
+		CfgKeys curr = CfgKeys.KINETICS_NONE_ENZYME_REACTIONS;
+		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
+				.getKineticsNonEnzyme(treatReactionsReversible), curr));
+		curr = CfgKeys.KINETICS_UNI_UNI_TYPE;
+		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
+				.getKineticsUniUni(treatReactionsReversible), curr));
+		curr = CfgKeys.KINETICS_BI_UNI_TYPE;
+		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
+				.getKineticsBiUni(treatReactionsReversible), curr));
+		curr = CfgKeys.KINETICS_BI_BI_TYPE;
+		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
+				.getKineticsBiBi(treatReactionsReversible), curr));
+		curr = CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS;
+		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
+				.getKineticsArbitraryEnzyme(treatReactionsReversible), curr));
+		curr = CfgKeys.KINETICS_GENE_REGULATION;
+		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
+				.getKineticsGeneRegulation(treatReactionsReversible), curr));
+		return tabs;
+	}
 
 	/**
 	 * 
+	 * @param key
+	 * @return
 	 */
-	private JRadioButton jRadioButtonForceReacRev;
+	private String createTitleFor(CfgKeys key) {
+		StringTokenizer st = new StringTokenizer(key.toString().substring(8)
+				.toLowerCase().replace('_', ' '));
+		StringBuilder title = new StringBuilder();
+		while (st.hasMoreElements()) {
+			title.append(' ');
+			title.append(StringTools.firstLetterUpperCase(st.nextElement()
+					.toString()));
+		}
+		title.append(' ');
+		return title.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
+	 */
+	@Override
+	public Properties getProperties() {
+		Properties p = new Properties();
+		Object value;
+		for (Object key : settings.keySet()) {
+			value = settings.get(key);
+			try {
+				Class<?> cl = Class.forName(value.toString());
+				Set<Class<?>> interfaces = new HashSet<Class<?>>();
+				for (Class<?> c : cl.getInterfaces()) {
+					interfaces.add(c);
+				}
+				p.put(key, cl.getCanonicalName());
+			} catch (ClassNotFoundException e) {
+				p.put(key, value);
+			}
+		}
+		return this.settings;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
+	 */
+	@Override
+	public String getTitle() {
+		return "Reaction mechanisms";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.gui.SettingsPanel#init()
+	 */
+	@Override
+	public void init() {
+		LayoutHelper lh = new LayoutHelper(this);
+		lh.add(createJPanelSettingsReversibility(),
+				createJPanelStandarVersions());
+		tabs = createMechanismTabs();
+		tabsPanel = new JPanel(new GridLayout(1, 1));
+		tabsPanel.add(tabs);
+		String msg = " Select the default rate law for each mechanism ";
+		tabsPanel.setBorder(BorderFactory.createTitledBorder(msg));
+		lh.add(tabsPanel, 2);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -380,6 +352,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	 * @see
 	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
+	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() == null) {
 			return;
@@ -393,8 +366,9 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 						.setEnabled(jRadioButtonForceReacRev.isSelected());
 				int selected = tabs.getSelectedIndex();
 				tabsPanel.removeAll();
-				tabs = createMechanismTabs(jRadioButtonForceReacRev
-						.isSelected());
+				settings.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+						Boolean.valueOf(jRadioButtonForceReacRev.isSelected()));
+				tabs = createMechanismTabs();
 				tabs.setSelectedIndex(selected);
 				tabsPanel.add(tabs);
 				// init(jRadioButtonForceReacRev.isSelected());
@@ -418,21 +392,19 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	 * @see
 	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
 	 */
-	public void setProperties(Properties settings) {
-		removeAll();
-		this.settings = settings;
-		init(((Boolean) settings
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
-	 */
 	@Override
-	public String getTitle() {
-		return "Reaction mechanisms";
+	public void setProperties(Properties properties) {
+		removeAll();
+		settings = new Properties();
+		String k;
+		for (Object key : properties.keySet()) {
+			k = key.toString();
+			if (k.startsWith("KINETICS_")
+					|| k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
+					|| k.equals("TYPE_STANDARD_VERSION")) {
+				settings.put(key, properties.get(key));
+			}
+		}
+		init();
 	}
 }

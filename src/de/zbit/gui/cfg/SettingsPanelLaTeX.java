@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package de.zbit.gui.cfg;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 
 import org.sbml.squeezer.CfgKeys;
+import org.sbml.squeezer.gui.GUITools;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.io.SBFileFilter;
@@ -50,31 +51,19 @@ import de.zbit.io.SBFileFilter;
  */
 public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener {
 
-	private JTextField fileField;
-	private JComboBox jComboBoxPaperSize;
-	private JComboBox jComboBoxFontSize;
-	private JCheckBox jCheckBoxIDsInTWFont;
-	private JCheckBox jCheckBoxLandscape;
-	private JCheckBox jCheckBoxTitlePage;
-	private JCheckBox jCheckBoxNameInEquations;
-	private boolean browse;
-
-	/**
-	 * Generated serial version id.
-	 */
-	private static final long serialVersionUID = 5056629254462180004L;
-
-	/**
-	 * 
-	 */
-	private static String[] paperSizes;
-
 	/**
 	 * 
 	 */
 	private static final Short[] fontSizes = new Short[] { 8, 9, 10, 11, 12,
 			14, 17 };
-
+	/**
+	 * 
+	 */
+	private static String[] paperSizes;
+	/**
+	 * Generated serial version id.
+	 */
+	private static final long serialVersionUID = 5056629254462180004L;
 	static {
 		paperSizes = new String[43];
 		paperSizes[0] = "letter";
@@ -85,6 +74,18 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 			for (int j = 0; j < 10; j++)
 				paperSizes[3 + i * 10 + j] = prefixes[i] + String.valueOf(j);
 	}
+	private boolean browse;
+	private JTextField fileField;
+	private JCheckBox jCheckBoxIDsInTWFont;
+	private JCheckBox jCheckBoxLandscape;
+
+	private JCheckBox jCheckBoxNameInEquations;
+
+	private JCheckBox jCheckBoxTitlePage;
+
+	private JComboBox jComboBoxFontSize;
+
+	private JComboBox jComboBoxPaperSize;
 
 	/**
 	 * 
@@ -94,7 +95,7 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 	public SettingsPanelLaTeX(Properties properties, Properties defaults) {
 		this(properties, defaults, false);
 	}
-	
+
 	/**
 	 * 
 	 * @param properties
@@ -110,13 +111,7 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 			boolean browse) {
 		super(properties, defaults);
 		this.browse = browse;
-		settings = new Properties();
-		for (Object key : properties.keySet()) {
-			if (key.toString().startsWith("LATEX_")) {
-				settings.put(key, properties.get(key));
-			}
-		}
-		init();
+		setProperties(properties);
 	}
 
 	/*
@@ -166,7 +161,23 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 		return fileField.getText();
 	}
 
-	private void init() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
+	 */
+	@Override
+	public String getTitle() {
+		return "LaTeX output settings";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#init()
+	 */
+	@Override
+	public void init() {
 		setLayout(new BorderLayout());
 		JPanel filePanel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(filePanel);
@@ -264,6 +275,7 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 	 * @see
 	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
+	@Override
 	public void itemStateChanged(ItemEvent id) {
 		if (id.getSource() instanceof JComboBox) {
 			if (id.getSource().equals(jComboBoxPaperSize))
@@ -296,19 +308,15 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 	 * @see
 	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
 	 */
-	public void setProperties(Properties settings) {
-		removeAll();
-		this.settings = settings;
-		init();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
-	 */
 	@Override
-	public String getTitle() {
-		return "LaTeX output settings";
+	public void setProperties(Properties properties) {
+		removeAll();
+		settings = new Properties();
+		for (Object key : properties.keySet()) {
+			if (key.toString().startsWith("LATEX_")) {
+				settings.put(key, properties.get(key));
+			}
+		}
+		init();
 	}
 }

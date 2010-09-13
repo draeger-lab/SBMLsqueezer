@@ -68,6 +68,7 @@ import org.sbml.squeezer.resources.Resource;
 
 import de.zbit.gui.JBrowserPane;
 import de.zbit.gui.SystemBrowser;
+import de.zbit.gui.cfg.SettingsDialog;
 import de.zbit.io.SBFileFilter;
 
 /**
@@ -450,8 +451,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			SettingsDialog dialog = new SettingsDialog(this, SBMLsqueezer
 					.getDefaultSettings());
 			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION) {
-				for (Object key : dialog.getSettings().keySet()) {
-					settings.put(key, dialog.getSettings().get(key));
+				for (Object key : dialog.getProperties().keySet()) {
+					settings.put(key, dialog.getProperties().get(key));
 				}
 			}
 			break;

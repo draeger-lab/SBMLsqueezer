@@ -67,6 +67,8 @@ import org.sbml.squeezer.resources.Resource;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;
+import de.zbit.gui.cfg.SettingsPanelAll;
+import de.zbit.gui.cfg.SettingsPanelLaTeX;
 import de.zbit.io.SBFileFilter;
 
 /**

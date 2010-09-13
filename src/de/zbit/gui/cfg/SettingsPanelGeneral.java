@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package de.zbit.gui.cfg;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.sbml.squeezer.CfgKeys;
+import org.sbml.squeezer.gui.GUITools;
 
 import de.zbit.gui.LayoutHelper;
 
@@ -45,6 +46,11 @@ import de.zbit.gui.LayoutHelper;
 public class SettingsPanelGeneral extends SettingsPanel implements
 		ActionListener {
 
+	/**
+	 * 
+	 * @author Andreas Dr&auml;ger
+	 * @date 2010-09-10
+	 */
 	public enum Command {
 		/**
 		 * 
@@ -62,9 +68,9 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	private static final long serialVersionUID = -5344644880108822465L;
 
 	/**
-	 * 
+	 * Explaining text for the buttons.
 	 */
-	private JTextField tfOpenDir, tfSaveDir;
+	private static final String toolTipButtons = "Select the default directory to %s various kinds of files.";
 
 	/**
 	 * 
@@ -72,9 +78,9 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	private JSpinner stepSize, maxSpinnerValue;
 
 	/**
-	 * Explaining text for the buttons.
+	 * 
 	 */
-	private static final String toolTipButtons = "Select the default directory to %s various kinds of files.";
+	private JTextField tfOpenDir, tfSaveDir;
 
 	/**
 	 * 
@@ -83,7 +89,6 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	 */
 	public SettingsPanelGeneral(Properties properties, Properties defaults) {
 		super(properties, defaults);
-		setProperties(properties);
 	}
 
 	/*
@@ -164,10 +169,22 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 		return settings;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
 	 */
-	private void init() {
+	@Override
+	public String getTitle() {
+		return "Program settings";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.gui.SettingsPanel#init()
+	 */
+	@Override
+	public void init() {
 
 		/*
 		 * Default directories
@@ -231,16 +248,6 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 			}
 		}
 		init();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
-	 */
-	@Override
-	public String getTitle() {
-		return "Program settings";
 	}
 
 }
