@@ -846,8 +846,8 @@ public class KineticLawGenerator {
 					.getNumUnitDefinitions());
 			for (int j = modelOrig.getNumUnitDefinitions() - 1; j >= 0; j--) {
 				UnitDefinition udef = modelOrig.getUnitDefinition(j);
-				boolean isNeeded = Unit
-						.isBuiltIn(udef.getId(), udef.getLevel());
+				boolean isNeeded = Unit.isPredefined(udef.getId(), udef
+						.getLevel());
 				for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
 					Compartment c = modelOrig.getCompartment(i);
 					if (c.isSetUnits() && c.getUnits().equals(udef.getId())) {

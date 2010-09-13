@@ -57,6 +57,7 @@ import org.sbml.squeezer.util.MessageListener;
 import org.sbml.squeezer.util.MessageProcessor;
 
 import de.zbit.io.SBFileFilter;
+import de.zbit.util.Reflect;
 
 /**
  * The main program of SBMLsqueezer. This class initializes all required
@@ -503,6 +504,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 */
 	public static void main(String[] args) {
 		try {
+			System.out.println(System.getProperty("java.library.path"));
 			System.loadLibrary("sbmlj");
 			// Extra check to be sure we have access to libSBML:
 			Class.forName("org.sbml.libsbml.libsbml");
@@ -532,10 +534,11 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 					msg.logln(" have fun!");
 					if (p.containsKey(CfgKeys.SIMULATION_MODE)
 							&& ((Boolean) p.get(CfgKeys.SIMULATION_MODE))
-									.booleanValue())
+									.booleanValue()) {
 						squeezer.showGUISimulation();
-					else
+					} else {
 						squeezer.showGUI();
+					}
 				}
 			}).start();
 		} else {

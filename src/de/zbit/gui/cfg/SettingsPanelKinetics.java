@@ -16,9 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sbml.squeezer.gui;
+package de.zbit.gui.cfg;
 
-import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.util.Properties;
@@ -36,6 +35,7 @@ import javax.swing.event.ChangeEvent;
 
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.gui.GUITools;
 
 import de.zbit.gui.LayoutHelper;
 
@@ -89,17 +89,6 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 */
 	public SettingsPanelKinetics(Properties settings, Properties defaults) {
 		super(settings, defaults);
-		this.settings = new Properties();
-		for (Object key : settings.keySet()) {
-			String k = key.toString();
-			if (!k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
-					&& (k.startsWith("OPT_")
-							|| k.startsWith("POSSIBLE_ENZYME_") || k
-							.equals("TYPE_UNIT_CONSISTENCY"))) {
-				this.settings.put(key, settings.get(key));
-			}
-		}
-		init();
 	}
 
 	/*
@@ -107,14 +96,28 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 * 
 	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
 	 */
+	@Override
 	public Properties getProperties() {
 		return settings;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
 	 */
-	private void init() {
+	@Override
+	public String getTitle() {
+		return "Kinetics settings";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.sbml.squeezer.gui.SettingsPanel#init()
+	 */
+	@Override
+	public void init() {
 		ButtonGroup buttonGroup;
 
 		// Top Panel
@@ -292,7 +295,6 @@ public class SettingsPanelKinetics extends SettingsPanel {
 				"If checked, RNA is treated as an enzyme. "
 						+ "Otherwise RNA catalyzed reactions are not "
 						+ "considered to be enzyme-catalyzed reactions.", 40));
-		jCheckBoxPossibleEnzymeRNA.setBackground(Color.WHITE);
 		jCheckBoxPossibleEnzymeComplex = new JCheckBox("Complex");
 		jCheckBoxPossibleEnzymeComplex.setSelected(((Boolean) settings
 				.get(CfgKeys.POSSIBLE_ENZYME_COMPLEX)).booleanValue());
@@ -434,6 +436,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 * org.sbml.squeezer.gui.SettingsPanel#itemStateChanged(java.awt.event.ItemEvent
 	 * )
 	 */
+	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jCheckBoxTreatAllReactionsAsEnzyeReaction)) {
 			settings.put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
@@ -518,16 +521,19 @@ public class SettingsPanelKinetics extends SettingsPanel {
 				&& !jCheckBoxPossibleEnzymeComplex.isSelected()
 				&& !jCheckBoxPossibleEnzymeReceptor.isSelected()
 				&& !jCheckBoxPossibleEnzymeUnknown.isSelected()
-				&& !jCheckBoxTreatAllReactionsAsEnzyeReaction.isSelected())
+				&& !jCheckBoxTreatAllReactionsAsEnzyeReaction.isSelected()) {
 			possibleEnzymeAllNotChecked = true;
-		else
+		} else {
 			possibleEnzymeAllNotChecked = false;
+		}
 		return possibleEnzymeAllNotChecked;
 	}
 
-	/**
-	 * 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.gui.SettingsPanel#restoreDefaults()
 	 */
+	@Override
 	public void restoreDefaults() {
 		String openDir = settings.get(CfgKeys.OPEN_DIR).toString();
 		String saveDir = settings.get(CfgKeys.SAVE_DIR).toString();
@@ -545,9 +551,19 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 * @see
 	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
 	 */
+	@Override
 	public void setProperties(Properties settings) {
 		removeAll();
-		this.settings = settings;
+		this.settings = new Properties();
+		for (Object key : settings.keySet()) {
+			String k = key.toString();
+			if (!k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
+					&& (k.startsWith("OPT_")
+							|| k.startsWith("POSSIBLE_ENZYME_") || k
+							.equals("TYPE_UNIT_CONSISTENCY"))) {
+				this.settings.put(key, settings.get(key));
+			}
+		}
 		init();
 	}
 
@@ -558,6 +574,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
 	 * )
 	 */
+	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(jSpinnerMaxRealisticNumOfReactants)) {
 			settings.put(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS, Integer
@@ -577,15 +594,5 @@ public class SettingsPanelKinetics extends SettingsPanel {
 					.valueOf(jSpinnerDefaultParamValue.getValue().toString()));
 		}
 		super.stateChanged(e);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
-	 */
-	@Override
-	public String getTitle() {
-		return "Kinetics settings";
 	}
 }
