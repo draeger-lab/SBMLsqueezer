@@ -18,6 +18,13 @@
  */
 package org.sbml.squeezer;
 
+import java.io.IOException;
+import java.util.Properties;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+import org.sbml.squeezer.resources.Resource;
+
 /**
  * This is a list of possible command line options and configuration of
  * SBMLsqueezer. Each element listed here determines a key for a configuration
@@ -401,5 +408,250 @@ public enum CfgKeys {
 	 * the surrounding compartment whenever it occurs in a kinetic equation.
 	 * Hence, this type paramter belongs to two values.
 	 */
-	TYPE_UNIT_CONSISTENCY
+	TYPE_UNIT_CONSISTENCY;
+
+	/**
+	 * Path to the configuration file with default properties.
+	 */
+	private static String defaultsCfgFile;
+	/**
+	 * Path to the user's configuration file.
+	 */
+	private static String userCfgFile;
+	/**
+	 * The root node for the user's preferences.
+	 */
+	private static String userRootNode;
+
+	/**
+	 * An optional comment for the configuration file.
+	 */
+	private static String commentCfgFile = null;
+
+	/**
+	 * A hastable of key value pairs representing the user's program
+	 * configuration.
+	 */
+	private static Properties properties;
+
+	/**
+	 * 
+	 * @param args
+	 * @return
+	 */
+	public static Properties analyzeCommandLineArguments(String[] args) {
+		Properties p = new Properties();
+		for (String string : args) {
+			while (string.startsWith("-")) {
+				string = string.substring(1);
+			}
+			Object value = Boolean.TRUE;
+			if (string.contains("=")) {
+				String keyVal[] = string.split("=");
+				string = keyVal[0];
+				value = keyVal[1];
+			}
+			string = string.toUpperCase().replace('-', '_');
+			p.put(CfgKeys.valueOf(string), value);
+		}
+		return correctProperties(p);
+	}
+
+	/**
+	 * Creates an instance of the given properties, in which all keys are
+	 * literals from the configuration enum and all values are objects such as
+	 * Boolean, Integer, Double, Kinetics and so on.
+	 * 
+	 * @param properties
+	 * @return
+	 */
+	public static Properties correctProperties(Properties properties) {
+		Object k[] = properties.keySet().toArray();
+		Properties props = new Properties();
+		for (int i = k.length - 1; i >= 0; i--) {
+			String val = properties.get(k[i]).toString();
+
+			if (val.startsWith("user.")) {
+				props.put(valueOf(k[i].toString()), System.getProperty(val));
+			} else if (val.equalsIgnoreCase("true")
+					|| val.equalsIgnoreCase("false")) {
+				props.put(valueOf(k[i].toString()), Boolean.parseBoolean(val));
+			} else {
+				try {
+					props.put(valueOf(k[i].toString()), Integer.valueOf(val));
+				} catch (NumberFormatException e1) {
+					try {
+						props.put(valueOf(k[i].toString()), Float.valueOf(val));
+					} catch (NumberFormatException e2) {
+						try {
+							props.put(valueOf(k[i].toString()), Double
+									.valueOf(val));
+						} catch (NumberFormatException e3) {
+							if (val.length() == 1) {
+								props.put(valueOf(k[i].toString()), Character
+										.valueOf(val.charAt(0)));
+							} else {
+								props.put(valueOf(k[i].toString()), val);
+							}
+						}
+					}
+				}
+			}
+		}
+		return props;
+	}
+
+	/**
+	 * @return the commentCfgFile
+	 */
+	public static String getCommentCfgFile() {
+		return commentCfgFile;
+	}
+
+	/**
+	 * Reads the default configuration file and returns a properties hash map
+	 * that contains pairs of configuration keys and the entries from the file.
+	 * 
+	 * @return
+	 */
+	public static Properties getDefaultProperties() {
+		Properties defaults;
+		try {
+			defaults = Resource.readProperties(defaultsCfgFile);
+		} catch (IOException e) {
+			defaults = new Properties();
+			e.printStackTrace();
+		}
+		return correctProperties(defaults);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static String getDefaultsCfgFile() {
+		return defaultsCfgFile;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Properties getProperties() {
+		return properties;
+	}
+
+	/**
+	 * @return the userConfigFile
+	 */
+	public static String getUserConfigFile() {
+		return userCfgFile;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws BackingStoreException
+	 */
+	public static Properties initProperties() throws BackingStoreException {
+		Preferences prefs = Preferences.userRoot().node(userRootNode);
+		if (prefs.keys().length == 0) {
+			Properties defaults = getDefaultProperties();
+			for (Object k : defaults.keySet()) {
+				Object v = defaults.get(k);
+				put(prefs, k, v);
+			}
+			prefs.flush();
+		}
+		Properties props = convert(prefs);
+		properties = props;
+		return properties;
+	}
+
+	/**
+	 * 
+	 * @param prefs
+	 * @param k
+	 * @param v
+	 */
+	private static void put(Preferences prefs, Object k, Object v) {
+		if (v instanceof Boolean) {
+			prefs.putBoolean(k.toString(), ((Boolean) v).booleanValue());
+		} else if (v instanceof Double) {
+			prefs.putDouble(k.toString(), ((Double) v).doubleValue());
+		} else if (v instanceof Float) {
+			prefs.putFloat(k.toString(), ((Float) v).floatValue());
+		} else if (v instanceof Integer) {
+			prefs.putInt(k.toString(), ((Integer) v).intValue());
+		} else if (v instanceof Long) {
+			prefs.putLong(k.toString(), ((Long) v).longValue());
+		} else {
+			prefs.put(k.toString(), v.toString());
+		}
+	}
+
+	/**
+	 * 
+	 * @param prefs
+	 * @return
+	 * @throws BackingStoreException
+	 */
+	public static Properties convert(Preferences prefs)
+			throws BackingStoreException {
+		Properties p = new Properties();
+		for (String key : prefs.keys()) {
+			CfgKeys k = valueOf(key);
+			p.put(k, prefs.get(key, "null"));
+		}
+		return correctProperties(p);
+	}
+
+	/**
+	 * 
+	 * @param settings
+	 * @throws BackingStoreException
+	 */
+	public static void saveProperties(Properties settings)
+			throws BackingStoreException {
+		if (!CfgKeys.initProperties().equals(settings)) {
+			Preferences pref = Preferences.userRoot().node(userRootNode);
+			for (Object key : settings.keySet()) {
+				put(pref, key, settings.get(key));
+			}
+			pref.flush();
+		}
+	}
+
+	/**
+	 * @param commentCfgFile
+	 *            the commentCfgFile to set
+	 */
+	public static void setCommentCfgFile(String commentCfgFile) {
+		CfgKeys.commentCfgFile = commentCfgFile;
+	}
+
+	/**
+	 * 
+	 * @param defaultsCfgFile
+	 */
+	public static void setDefaultsCfgFile(String defaultsCfgFile) {
+		CfgKeys.defaultsCfgFile = defaultsCfgFile;
+	}
+
+	/**
+	 * 
+	 * @param usrPrefNode
+	 */
+	public static void setUserPrefNode(String usrPrefNode) {
+		userRootNode = usrPrefNode;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static String getUserPrefNode() {
+		return userRootNode;
+	}
+
 }

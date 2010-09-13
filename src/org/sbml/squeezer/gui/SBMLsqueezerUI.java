@@ -31,7 +31,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -387,15 +386,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		switch (Command.valueOf(e.getActionCommand())) {
 		case EXIT:
 			try {
-				SBMLsqueezer.saveProperties(settings);
-			} catch (FileNotFoundException exc) {
+				CfgKeys.saveProperties(settings);
+			} catch (Exception exc) {
 				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-			} catch (IOException exc) {
-				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+				GUITools.showErrorMessage(this, exc);
 			}
 			System.exit(0);
 		case ABOUT:
@@ -448,8 +442,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 			break;
 		case SET_PREFERENCES:
-			SettingsDialog dialog = new SettingsDialog(this, SBMLsqueezer
-					.getDefaultSettings());
+			SettingsDialog dialog = new SettingsDialog(this, CfgKeys
+					.getDefaultProperties());
 			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION) {
 				for (Object key : dialog.getProperties().keySet()) {
 					settings.put(key, dialog.getProperties().get(key));
@@ -942,15 +936,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			setEnabled(true, Command.ONLINE_HELP, Command.LICENSE);
 		else if (we.getSource() instanceof SBMLsqueezerUI) {
 			try {
-				SBMLsqueezer.saveProperties(settings);
-			} catch (FileNotFoundException exc) {
+				CfgKeys.saveProperties(settings);
+			} catch (Exception exc) {
 				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-			} catch (IOException exc) {
-				exc.printStackTrace();
-				JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-						.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+				GUITools.showErrorMessage(this, exc);
 			}
 		}
 		// TODO: Not in this version

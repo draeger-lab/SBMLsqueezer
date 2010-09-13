@@ -518,7 +518,7 @@ public class KineticLawGenerator {
 	 */
 	private void init() {
 		if (settings == null)
-			settings = SBMLsqueezer.getDefaultSettings();
+			settings = CfgKeys.getDefaultProperties();
 		listOfFastReactions = new LinkedList<Reaction>();
 		this.miniModel = createMinimalModel();
 		updateEnzymeCatalysis();
@@ -531,7 +531,7 @@ public class KineticLawGenerator {
 	 */
 	private void init(String reactionID) {
 		if (settings == null)
-			settings = SBMLsqueezer.getDefaultSettings();
+			settings = CfgKeys.getDefaultProperties();
 		listOfFastReactions = new LinkedList<Reaction>();
 		this.miniModel = createMinimalModel(reactionID);
 		updateEnzymeCatalysis();
@@ -993,6 +993,7 @@ public class KineticLawGenerator {
 				updateUnitReferences(parameter);
 			}
 		}
+		kineticLaw.getMath().updateVariables();
 	}
 
 	/**
@@ -1094,9 +1095,9 @@ public class KineticLawGenerator {
 	private void updateUnitReferences(QuantityWithDefinedUnit p) {
 		if (p.isSetUnits()) {
 			String units = p.getUnits();
-			if (Unit.isUnitKind(units, p.getLevel(), p.getVersion()))
+			if (Unit.isUnitKind(units, p.getLevel(), p.getVersion())) {
 				p.setUnits(Unit.Kind.valueOf(units));
-			else {
+			} else {
 				UnitDefinition ud = modelOrig.getUnitDefinition(p.getUnits());
 				if (ud == null) {
 					ud = miniModel.getUnitDefinition(p.getUnits()).clone();

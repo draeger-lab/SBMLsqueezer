@@ -34,7 +34,6 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.GUITools;
 
 import de.zbit.gui.LayoutHelper;
@@ -537,7 +536,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	public void restoreDefaults() {
 		String openDir = settings.get(CfgKeys.OPEN_DIR).toString();
 		String saveDir = settings.get(CfgKeys.SAVE_DIR).toString();
-		settings = SBMLsqueezer.getDefaultSettings();
+		settings = CfgKeys.getDefaultProperties();
 		settings.put(CfgKeys.OPEN_DIR, openDir);
 		settings.put(CfgKeys.SAVE_DIR, saveDir);
 		init();
