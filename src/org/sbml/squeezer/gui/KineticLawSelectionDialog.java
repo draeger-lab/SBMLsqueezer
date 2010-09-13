@@ -137,8 +137,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	public KineticLawSelectionDialog(Frame owner, Properties settings,
 			SBase sbase) {
 		this(owner, settings);
-		SettingsPanelLaTeX panel = new SettingsPanelLaTeX(settings,
-				SBMLsqueezer.getDefaultSettings(), true);
+		SettingsPanelLaTeX panel = new SettingsPanelLaTeX(settings, CfgKeys
+				.getDefaultProperties(), true);
 		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 				GUITools.ICON_LATEX_SMALL) == JOptionPane.OK_OPTION) {
@@ -582,8 +582,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private SettingsPanelAll getJSettingsPanel() {
 		if (settingsPanel == null) {
-			settingsPanel = new SettingsPanelAll(settings, SBMLsqueezer
-					.getDefaultSettings());
+			settingsPanel = new SettingsPanelAll(settings, CfgKeys
+					.getDefaultProperties());
 			// settingsPanel.setBackground(Color.WHITE);
 		}
 		return settingsPanel;

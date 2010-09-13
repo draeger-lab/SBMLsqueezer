@@ -1464,12 +1464,28 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			sb.append(u.getPrefix());
 			sb.append(u.getKind().getName());
 		}
-		ud.setId(sb.toString());
+		ud.setId(checkId(sb.toString()));
 		UnitDefinition def = model.getUnitDefinition(ud.getId());
 		if (def == null) {
 			ud = checkUnitDefinitions(ud, model);
 		}
 		return model.getUnitDefinition(ud.getId());
+	}
+
+	private String checkId(String id) {
+		StringBuilder sb = new StringBuilder();
+		char c;
+		for (int i = 0; i < id.length(); i++) {
+			c = id.charAt(i);
+			if (c == '^') {
+				sb.append("pow");
+			} else if (Character.isDigit(c) || Character.isLetter(c)) {
+				sb.append(c);
+			} else {
+				sb.append('_');
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -1546,7 +1562,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf,
 				false, h, x, y);
 		String id = bringToConcentration ? "concentration" : "substance";
-		ud.setId(id + "_pow_" + (x * y) + "_per_time_pow_" + h);
+		ud.setId(checkId(id + "_pow_" + (x * y) + "_per_time_pow_" + h));
 		return checkUnitDefinitions(ud, getModel());
 	}
 

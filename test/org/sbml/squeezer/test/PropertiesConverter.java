@@ -21,7 +21,7 @@ package org.sbml.squeezer.test;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.CfgKeys;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -34,7 +34,7 @@ public class PropertiesConverter {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		Properties p = SBMLsqueezer.getDefaultSettings();
+		Properties p = CfgKeys.getDefaultProperties();
 		
 		Properties s = new Properties();
 		for (Object key : p.keySet()) {
