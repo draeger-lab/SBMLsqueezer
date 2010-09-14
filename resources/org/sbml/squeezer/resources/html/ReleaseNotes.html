@@ -1,43 +1,47 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-  <head>
-    <title>Release Notes of SBMLsqueezer version 1.4</title>
-  </head>
-  <body>
-    <h1>Release Notes of SBMLsqueezer version 1.4</h1>
-    <h2>Download of SBMLsquezeezer</h2>
-    You can always download the latest version of SBMLsqueezer at
-    <a href="http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads">
-    http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads</a>.
-    
-    <h2>New Features</h2>
-          
-    <ul>
-      <li>Simulator for SBML</li>
-      <li>Based on official JSBML</li>
-      <li>New rate law for crowded reaction spaces</li>
-      <li>Improved user preferences menu and management</li>
-    </ul>
-    
-    <h2>Bug Fixes</h2>
-    
-    <p>Sometimes SBMLsqueezer created invalid identifiers for newly introduced units.</p>
-    
-    <p>
-      The units of the association and dissociation constant in generalized
-      mass action kinetics could not be derived correctly if a catalyst interfered
-      with the reaction, because the units of the catalyst were not taken into
-      account.
-    </p>
-    <p>
-      The units of the half saturation constant in the (generalized) Hill equation
-      were not correctly derived.
-    </p>
-    
-    <p>
-      In GUI, species tag was not visible for SimpleSpeciesReferences
-      due to an incorrect positioning of the GUI element.
-    </p>
-    
-  </body>
+<head>
+<title>Release Notes of SBMLsqueezer version 1.4</title>
+</head>
+<body>
+<h1>Release Notes of SBMLsqueezer version 1.4</h1>
+<h2>Download of SBMLsquezeezer</h2>
+You can always download the latest version of SBMLsqueezer at
+<a
+	href="http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads">
+http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads</a>
+.
+
+<h2>New Features</h2>
+
+<ul>
+	<li>Simulator for SBML</li>
+	<li>Based on official JSBML</li>
+	<li>New rate law for crowded reaction spaces</li>
+	<li>Improved user preferences menu and management:
+	<ol>
+		<li>Use of user Preferences, i.e., platform-dependent storage of
+		user settings</li>
+		<li>Generic menu for easier navigation and simpler software
+		mainannence.</li>
+	</ol>
+	</li>
+</ul>
+
+<h2>Bug Fixes</h2>
+
+<p>Sometimes SBMLsqueezer created invalid identifiers for newly
+introduced units.</p>
+
+<p>The units of the association and dissociation constant in
+generalized mass action kinetics could not be derived correctly if a
+catalyst interfered with the reaction, because the units of the catalyst
+were not taken into account.</p>
+<p>The units of the half saturation constant in the (generalized)
+Hill equation were not correctly derived.</p>
+
+<p>In GUI, species tag was not visible for SimpleSpeciesReferences
+due to an incorrect positioning of the GUI element.</p>
+
+</body>
 </html>

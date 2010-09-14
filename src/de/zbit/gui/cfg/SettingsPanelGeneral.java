@@ -33,10 +33,12 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
 
+import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.gui.GUITools;
 
+import de.zbit.gui.GUITools;
 import de.zbit.gui.LayoutHelper;
 
 /**
@@ -149,8 +151,9 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 			settings.put(CfgKeys.OPEN_DIR, tfOpenDir.getText());
 		} else {
 			JOptionPane.showMessageDialog(getTopLevelAncestor(), new JLabel(
-					GUITools.toHTML("No such directory " + f.getPath() + '.',
-							40)), "Warning", JOptionPane.WARNING_MESSAGE);
+					GUITools.toHTML(StringTools.concat("No such directory ",
+							f.getPath(), '.').toString(), 40)), "Warning",
+					JOptionPane.WARNING_MESSAGE);
 			tfOpenDir.setText(settings.get(CfgKeys.OPEN_DIR).toString());
 		}
 		f = new File(tfSaveDir.getText());
@@ -158,8 +161,9 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 			settings.put(CfgKeys.SAVE_DIR, tfSaveDir.getText());
 		} else {
 			JOptionPane.showMessageDialog(getTopLevelAncestor(), new JLabel(
-					GUITools.toHTML("No such directory " + f.getPath() + '.',
-							40)), "Warning", JOptionPane.WARNING_MESSAGE);
+					GUITools.toHTML(StringTools.concat("No such directory ",
+							f.getPath(), '.').toString(), 40)), "Warning",
+					JOptionPane.WARNING_MESSAGE);
 			tfSaveDir.setText(settings.get(CfgKeys.SAVE_DIR).toString());
 		}
 		settings.put(CfgKeys.SPINNER_STEP_SIZE, ((Double) stepSize.getValue())
@@ -181,6 +185,7 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.gui.SettingsPanel#init()
 	 */
 	@Override
@@ -195,16 +200,26 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 		tfSaveDir.addKeyListener(this);
 		tfOpenDir.setText(this.settings.get(CfgKeys.OPEN_DIR).toString());
 		tfSaveDir.setText(this.settings.get(CfgKeys.SAVE_DIR).toString());
-		JButton openButton = GUITools.createButton(GUITools.ICON_OPEN, this,
-				Command.OPEN, String.format(toolTipButtons, "open"));
-		JButton saveButton = GUITools.createButton(GUITools.ICON_SAVE, this,
-				Command.SAVE, String.format(toolTipButtons, "save"));
+		JButton openButton = GUITools.createButton(UIManager
+				.getIcon("ICON_OPEN"), this, Command.OPEN, String.format(
+				toolTipButtons, "open"));
+		JButton saveButton = GUITools.createButton(UIManager
+				.getIcon("ICON_SAVE"), this, Command.SAVE, String.format(
+				toolTipButtons, "save"));
 		JPanel dirPanel = new JPanel();
+
+		JLabel labelOpenDir = new JLabel("Open directory:");
+		JLabel labelSaveDir = new JLabel("Save directory:");
+
 		LayoutHelper lh = new LayoutHelper(dirPanel);
-		lh.add(new JLabel("Open directory:"), new JPanel(), tfOpenDir,
-				new JPanel(), openButton);
-		lh.add(new JLabel("Save directory:"), new JPanel(), tfSaveDir,
-				new JPanel(), saveButton);
+		lh.add(labelOpenDir, 0, 0, 1, 1, 0, 0);
+		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
+		lh.add(tfOpenDir, 2, 0, 1, 1, 1, 0);
+		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
+		lh.add(openButton, 4, 0, 1, 1, 0, 0);
+		lh.add(labelSaveDir, 0, 1, 1, 1, 0, 0);
+		lh.add(tfSaveDir, 2, 1, 1, 1, 1, 0);
+		lh.add(saveButton, 4, 1, 1, 1, 0, 0);
 		dirPanel.setBorder(BorderFactory
 				.createTitledBorder(" Default directories "));
 
@@ -215,13 +230,18 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 				CfgKeys.SPINNER_STEP_SIZE).toString());
 		stepSize = new JSpinner(new SpinnerNumberModel(theStepSize, 1E-20,
 				1E20, theStepSize));
+		stepSize.addChangeListener(this);
 		maxSpinnerValue = new JSpinner(new SpinnerNumberModel(Double
 				.parseDouble(this.settings.get(CfgKeys.SPINNER_MAX_VALUE)
 						.toString()), 1E-20, 1E20, theStepSize));
+		maxSpinnerValue.addChangeListener(this);
 		JPanel spinnerPanel = new JPanel();
 		lh = new LayoutHelper(spinnerPanel);
-		lh.add(new JLabel("Maximal value:"), new JPanel(), maxSpinnerValue);
-		lh.add(new JLabel("Step size:"), new JPanel(), stepSize);
+		lh.add(new JLabel("Maximal value:"), 0, 0, 1, 1, 0, 0);
+		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
+		lh.add(maxSpinnerValue, 2, 0, 1, 1, 1, 0);
+		lh.add(new JLabel("Step size:"), 0, 1, 1, 1, 0, 0);
+		lh.add(stepSize, 2, 1, 1, 1, 1, 0);
 		spinnerPanel.setBorder(BorderFactory
 				.createTitledBorder(" Default values for spinners "));
 

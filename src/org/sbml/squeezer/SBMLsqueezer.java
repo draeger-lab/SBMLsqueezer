@@ -113,7 +113,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	/**
 	 * 
 	 */
-	private final static String configFile = "org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
+	private final static String configFile = "/org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
 
 	/**
 	 * Load all available kinetic equations and the user's settings from the

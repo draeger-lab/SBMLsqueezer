@@ -23,8 +23,6 @@ import java.util.Properties;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.sbml.squeezer.resources.Resource;
-
 /**
  * This is a list of possible command line options and configuration of
  * SBMLsqueezer. Each element listed here determines a key for a configuration
@@ -230,6 +228,10 @@ public enum CfgKeys {
 	 * plotting data into a two-dimensional figure.
 	 */
 	PLOT_SHOW_LEGEND,
+	/**
+	 * Decides whether or not plots should display tooltips next to each curve.
+	 */
+	PLOT_SHOW_TOOLTIPS,
 	/**
 	 * Determins whether or not antisense RNA molecules are accepted as enzymes
 	 * when catalyzing a reaction.
@@ -515,12 +517,18 @@ public enum CfgKeys {
 	 * @return
 	 */
 	public static Properties getDefaultProperties() {
-		Properties defaults;
+		Properties defaults = new Properties();
 		try {
-			defaults = Resource.readProperties(defaultsCfgFile);
-		} catch (IOException e) {
-			defaults = new Properties();
-			e.printStackTrace();
+			defaults.loadFromXML(defaults.getClass().getResourceAsStream(
+					defaultsCfgFile));
+		} catch (Exception exc) {
+			try {
+				defaults.load(defaults.getClass().getResourceAsStream(
+						defaultsCfgFile));
+				// defaults = Resource.readProperties(defaultsCfgFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return correctProperties(defaults);
 	}
