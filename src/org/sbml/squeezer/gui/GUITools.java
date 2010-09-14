@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -36,8 +37,10 @@ import javax.swing.JEditorPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.resources.Resource;
@@ -180,8 +183,6 @@ public class GUITools extends de.zbit.gui.GUITools {
 		return img != null ? new ImageIcon(img) : null;
 	}
 
-
-
 	/**
 	 * 
 	 * @param path
@@ -199,7 +200,7 @@ public class GUITools extends de.zbit.gui.GUITools {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Loads locale-specific resources: strings, images, et cetera
 	 * 
@@ -234,6 +235,7 @@ public class GUITools extends de.zbit.gui.GUITools {
 		if (ICON_SAVE == null) {
 			ICON_SAVE = loadIcon(prefix + "save_16.png");
 		}
+		UIManager.put("ICON_SAVE", ICON_SAVE);
 
 		try {
 			ResourceBundle resources = ResourceBundle
@@ -246,6 +248,7 @@ public class GUITools extends de.zbit.gui.GUITools {
 		// UIManager.getIcon("FileView.directoryIcon");
 		if (ICON_OPEN == null) {
 			ICON_OPEN = loadIcon(prefix + "folder_16.png");
+			UIManager.put("ICON_OPEN", ICON_OPEN);
 		}
 
 		/*
@@ -269,7 +272,6 @@ public class GUITools extends de.zbit.gui.GUITools {
 		 */
 		IMAGE_LEMON = loadImage(prefix + "icon.png");
 	}
-	
 
 	/**
 	 * Enables or disables actions that can be performed by SBMLsqueezer, i.e.,
@@ -330,7 +332,6 @@ public class GUITools extends de.zbit.gui.GUITools {
 			}
 	}
 
-
 	/**
 	 * Creates a JEditorPane that displays the given UnitDefinition as a HTML.
 	 * 
@@ -343,5 +344,64 @@ public class GUITools extends de.zbit.gui.GUITools {
 		preview.setEditable(false);
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
 		return preview;
+	}
+
+	/**
+	 * Initializes the look and feel.
+	 * 
+	 * @param title
+	 */
+	public static void initLaf(String title) {
+		Locale.setDefault(Locale.ENGLISH);
+		// For MacOS X
+		boolean isMacOSX = false;
+		if (System.getProperty("mrj.version") != null) {
+			isMacOSX = true;
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty(
+					"com.apple.mrj.application.apple.menu.about.name", title);
+		}
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			// If Nimbus is not available, you can set the GUI to another look
+			// and feel.
+			// Native look and feel for Windows, MacOS X. GTK look and
+			// feel for Linux, FreeBSD
+			try {
+				UIManager
+						.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
+				String osName = System.getProperty("os.name");
+				if (osName.equals("Linux") || osName.equals("FreeBSD")) {
+					UIManager
+							.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+					// UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+				} else if (isMacOSX) {
+					UIManager
+							.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+				} else if (osName.contains("Windows")) {
+					UIManager
+							.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
+				} else {
+					// UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+					UIManager.setLookAndFeel(UIManager
+							.getSystemLookAndFeelClassName());
+				}
+				// } catch (Exception e) {
+				// }
+				// try {
+				// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception exc) {
+				JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
+						.getMessage(), 40), exc.getClass().getName(),
+						JOptionPane.WARNING_MESSAGE);
+				exc.printStackTrace();
+			}
+		}
 	}
 }
