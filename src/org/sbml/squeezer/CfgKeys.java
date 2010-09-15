@@ -61,6 +61,62 @@ public enum CfgKeys {
 	 */
 	CSV_FILES_SEPARATOR_CHAR,
 	/**
+	 * The minimal value of the initialization range in a parameter estimation
+	 * procedure.
+	 */
+	EST_INIT_MIN_VALUE,
+	/**
+	 * The maximal value of the initialization range in a parameter estimation
+	 * procedure.
+	 */
+	EST_INIT_MAX_VALUE,
+	/**
+	 * The minimal value in the absolute allowable range in a parameter
+	 * estimation procedure.
+	 */
+	EST_MIN_VALUE,
+	/**
+	 * The maximal value in the absolute allowable range in a parameter
+	 * estimation procedure.
+	 */
+	EST_MAX_VALUE,
+	/**
+	 * Boolean field to decide whether or not by default all local parameters in
+	 * a model should be considered the target of an optimization, i.e., value
+	 * estimation.
+	 */
+	EST_ALL_LOCAL_PARAMETERS,
+	/**
+	 * Boolean field to decide whether or not by default all global parameters
+	 * in a model should be considered the target of an optimization, i.e.,
+	 * value estimation.
+	 */
+	EST_ALL_GLOBAL_PARAMETERS,
+	/**
+	 * Boolean field to decide whether or not by default all compartments in a
+	 * model should be considered the target of an optimization, i.e., value
+	 * estimation.
+	 */
+	EST_ALL_COMPARTMENTS,
+	/**
+	 * Boolean field to decide whether or not by default all species in a model
+	 * should be considered the target of an optimization, i.e., value
+	 * estimation.
+	 */
+	EST_ALL_SPECIES,
+	/**
+	 * Boolean field to decide whether a model calibration should be done using
+	 * multiple shoot technique. This should be the default. The other
+	 * possibility is the so-called single shoot technique. This means that only
+	 * one initial value is taken to integrate the ordinary differential
+	 * equation system, whereas the multiple shoot technique restarts the
+	 * integration in each time step given the values in this step. The aim is
+	 * then to come as close as possible to the start value in the next time
+	 * step. In many cases the fitness landscape becomes much more friendly when
+	 * using a multiple shoot strategy.
+	 */
+	EST_MULTI_SHOOT,
+	/**
 	 * Can be used in combination with = true or = false or just --gui.
 	 * Specifies whether or not SBMLsqueezer should display its graphical user
 	 * interface.
@@ -233,6 +289,10 @@ public enum CfgKeys {
 	 */
 	PLOT_SHOW_TOOLTIPS,
 	/**
+	 * The default save directory for graphics files as a result of a plot.
+	 */
+	PLOT_SAVE_DIR,
+	/**
 	 * Determins whether or not antisense RNA molecules are accepted as enzymes
 	 * when catalyzing a reaction.
 	 */
@@ -304,6 +364,19 @@ public enum CfgKeys {
 	 */
 	SIM_DISTANCE_FUNCTION,
 	/**
+	 * The default return value of a distance function that can be used if for
+	 * some reason a distance cannot be computed.
+	 */
+	SIM_DISTANCE_DEFAULT_VALUE,
+	/**
+	 * The root parameter in the distance function: in case of the n-norm this
+	 * is at the same time also the exponent. For instance, the Eulidean
+	 * distance has a root value of two, whereas the Manhattan norm has a root
+	 * of one. In the RSE, the default root is also two, but this value may be
+	 * changed.
+	 */
+	SIM_DISTANCE_ROOT,
+	/**
 	 * With the associated non-negative double number that has to be greater
 	 * than 0 when simulating SBML models, it is possible to perform a
 	 * simulation.
@@ -357,7 +430,11 @@ public enum CfgKeys {
 	 */
 	SIM_STEP_SIZE,
 	/**
-	 * The maxiaml value for JSpinners in the GUI.
+	 * The minimal value for JSpinners in the GUI.
+	 */
+	SPINNER_MIN_VALUE,
+	/**
+	 * The maximal value for JSpinners in the GUI.
 	 */
 	SPINNER_MAX_VALUE,
 	/**
@@ -616,16 +693,17 @@ public enum CfgKeys {
 
 	/**
 	 * 
-	 * @param settings
+	 * @param props
 	 * @throws BackingStoreException
 	 */
-	public static void saveProperties(Properties settings)
+	public static void saveProperties(Properties props)
 			throws BackingStoreException {
-		if (!CfgKeys.initProperties().equals(settings)) {
+		if (!CfgKeys.initProperties().equals(props)) {
 			Preferences pref = Preferences.userRoot().node(userRootNode);
-			for (Object key : settings.keySet()) {
-				put(pref, key, settings.get(key));
+			for (Object key : props.keySet()) {
+				put(pref, key, props.get(key));
 			}
+			properties = props;
 			pref.flush();
 		}
 	}

@@ -19,50 +19,24 @@
 package de.zbit.gui.cfg;
 
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
 
-import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.CfgKeys;
 
-import de.zbit.gui.GUITools;
 import de.zbit.gui.LayoutHelper;
 
 /**
  * @author Andreas Dr&auml;ger
  * @date 2010-09-10
  */
-public class SettingsPanelGeneral extends SettingsPanel implements
-		ActionListener {
-
-	/**
-	 * 
-	 * @author Andreas Dr&auml;ger
-	 * @date 2010-09-10
-	 */
-	public enum Command {
-		/**
-		 * 
-		 */
-		OPEN,
-		/**
-		 * 
-		 */
-		SAVE
-	}
+public class SettingsPanelGeneral extends SettingsPanel {
 
 	/**
 	 * Generated serial version identifier.
@@ -70,19 +44,14 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	private static final long serialVersionUID = -5344644880108822465L;
 
 	/**
-	 * Explaining text for the buttons.
+	 * 
 	 */
-	private static final String toolTipButtons = "Select the default directory to %s various kinds of files.";
+	private JSpinner minSpinnerValue, maxSpinnerValue, stepSize;
 
 	/**
 	 * 
 	 */
-	private JSpinner stepSize, maxSpinnerValue;
-
-	/**
-	 * 
-	 */
-	private JTextField tfOpenDir, tfSaveDir;
+	private DirectoryChooser chooser;
 
 	/**
 	 * 
@@ -96,47 +65,13 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 * @see de.zbit.gui.cfg.SettingsPanel#accepts(java.lang.Object)
 	 */
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand() != null) {
-			switch (Command.valueOf(e.getActionCommand())) {
-			case OPEN:
-				chooseDirectory(tfOpenDir, Command.OPEN);
-				break;
-			case SAVE:
-				chooseDirectory(tfSaveDir, Command.SAVE);
-				break;
-			default:
-				break;
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @param tf
-	 * @param com
-	 */
-	private void chooseDirectory(JTextField tf, Command com) {
-		JFileChooser chooser = GUITools.createJFileChooser(tf.getText(), false,
-				false, JFileChooser.DIRECTORIES_ONLY);
-		int returnType;
-		switch (com) {
-		case OPEN:
-			returnType = chooser.showOpenDialog(this);
-			break;
-		case SAVE:
-			returnType = chooser.showSaveDialog(this);
-			break;
-		default:
-			returnType = JFileChooser.CANCEL_OPTION;
-			break;
-		}
-		if (returnType == JFileChooser.APPROVE_OPTION) {
-			tf.setText(chooser.getSelectedFile().getAbsolutePath());
-		}
+	@Override
+	public boolean accepts(Object key) {
+		String k = key.toString();
+		return k.startsWith("SPINNER_")
+				|| (k.equals("OPEN_DIR") || (k.equals("SAVE_DIR")));
 	}
 
 	/*
@@ -146,31 +81,17 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	 */
 	@Override
 	public Properties getProperties() {
-		File f = new File(tfOpenDir.getText());
-		if (f.exists() && f.isDirectory()) {
-			settings.put(CfgKeys.OPEN_DIR, tfOpenDir.getText());
-		} else {
-			JOptionPane.showMessageDialog(getTopLevelAncestor(), new JLabel(
-					GUITools.toHTML(StringTools.concat("No such directory ",
-							f.getPath(), '.').toString(), 40)), "Warning",
-					JOptionPane.WARNING_MESSAGE);
-			tfOpenDir.setText(settings.get(CfgKeys.OPEN_DIR).toString());
+		if (chooser.checkOpenDir()) {
+			properties.put(CfgKeys.OPEN_DIR, chooser.getOpenDir());
 		}
-		f = new File(tfSaveDir.getText());
-		if (f.exists() && f.isDirectory()) {
-			settings.put(CfgKeys.SAVE_DIR, tfSaveDir.getText());
-		} else {
-			JOptionPane.showMessageDialog(getTopLevelAncestor(), new JLabel(
-					GUITools.toHTML(StringTools.concat("No such directory ",
-							f.getPath(), '.').toString(), 40)), "Warning",
-					JOptionPane.WARNING_MESSAGE);
-			tfSaveDir.setText(settings.get(CfgKeys.SAVE_DIR).toString());
+		if (chooser.checkSaveDir()) {
+			properties.put(CfgKeys.SAVE_DIR, chooser.getSaveDir());
 		}
-		settings.put(CfgKeys.SPINNER_STEP_SIZE, ((Double) stepSize.getValue())
-				.doubleValue());
-		settings.put(CfgKeys.SPINNER_MAX_VALUE, ((Double) maxSpinnerValue
+		properties.put(CfgKeys.SPINNER_STEP_SIZE,
+				((Double) stepSize.getValue()).doubleValue());
+		properties.put(CfgKeys.SPINNER_MAX_VALUE, ((Double) maxSpinnerValue
 				.getValue()).doubleValue());
-		return settings;
+		return properties;
 	}
 
 	/*
@@ -190,63 +111,42 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	 */
 	@Override
 	public void init() {
-
-		/*
-		 * Default directories
-		 */
-		tfOpenDir = new JTextField();
-		tfSaveDir = new JTextField();
-		tfOpenDir.addKeyListener(this);
-		tfSaveDir.addKeyListener(this);
-		tfOpenDir.setText(this.settings.get(CfgKeys.OPEN_DIR).toString());
-		tfSaveDir.setText(this.settings.get(CfgKeys.SAVE_DIR).toString());
-		JButton openButton = GUITools.createButton(UIManager
-				.getIcon("ICON_OPEN"), this, Command.OPEN, String.format(
-				toolTipButtons, "open"));
-		JButton saveButton = GUITools.createButton(UIManager
-				.getIcon("ICON_SAVE"), this, Command.SAVE, String.format(
-				toolTipButtons, "save"));
-		JPanel dirPanel = new JPanel();
-
-		JLabel labelOpenDir = new JLabel("Open directory:");
-		JLabel labelSaveDir = new JLabel("Save directory:");
-
-		LayoutHelper lh = new LayoutHelper(dirPanel);
-		lh.add(labelOpenDir, 0, 0, 1, 1, 0, 0);
-		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
-		lh.add(tfOpenDir, 2, 0, 1, 1, 1, 0);
-		lh.add(new JPanel(), 3, 0, 1, 1, 0, 0);
-		lh.add(openButton, 4, 0, 1, 1, 0, 0);
-		lh.add(labelSaveDir, 0, 1, 1, 1, 0, 0);
-		lh.add(tfSaveDir, 2, 1, 1, 1, 1, 0);
-		lh.add(saveButton, 4, 1, 1, 1, 0, 0);
-		dirPanel.setBorder(BorderFactory
+		chooser = new DirectoryChooser(properties.get(CfgKeys.OPEN_DIR)
+				.toString(), properties.get(CfgKeys.SAVE_DIR).toString(), true);
+		chooser.setBorder(BorderFactory
 				.createTitledBorder(" Default directories "));
-
 		/*
 		 * Default values for JSpinners:
 		 */
-		double theStepSize = Double.parseDouble(this.settings.get(
+		double theStepSize = Double.parseDouble(this.properties.get(
 				CfgKeys.SPINNER_STEP_SIZE).toString());
 		stepSize = new JSpinner(new SpinnerNumberModel(theStepSize, 1E-20,
 				1E20, theStepSize));
 		stepSize.addChangeListener(this);
+		minSpinnerValue = new JSpinner(new SpinnerNumberModel(Double
+				.parseDouble(this.properties.get(CfgKeys.SPINNER_MIN_VALUE)
+						.toString()), -1E20, 1E20, theStepSize));
+		minSpinnerValue.addChangeListener(this);
 		maxSpinnerValue = new JSpinner(new SpinnerNumberModel(Double
-				.parseDouble(this.settings.get(CfgKeys.SPINNER_MAX_VALUE)
+				.parseDouble(this.properties.get(CfgKeys.SPINNER_MAX_VALUE)
 						.toString()), 1E-20, 1E20, theStepSize));
 		maxSpinnerValue.addChangeListener(this);
 		JPanel spinnerPanel = new JPanel();
-		lh = new LayoutHelper(spinnerPanel);
-		lh.add(new JLabel("Maximal value:"), 0, 0, 1, 1, 0, 0);
+		LayoutHelper lh = new LayoutHelper(spinnerPanel);
+		lh.add(new JLabel("Minimal value:"), 0, 0, 1, 1, 0, 0);
 		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
-		lh.add(maxSpinnerValue, 2, 0, 1, 1, 1, 0);
-		lh.add(new JLabel("Step size:"), 0, 1, 1, 1, 0, 0);
-		lh.add(stepSize, 2, 1, 1, 1, 1, 0);
+		lh.add(minSpinnerValue, 2, 0, 1, 1, 1, 0);
+		lh.add(new JPanel(), 0, 1, 3, 1, 1, 0);
+		lh.add(new JLabel("Maximal value:"), 0, 2, 1, 1, 0, 0);
+		lh.add(maxSpinnerValue, 2, 2, 1, 1, 1, 0);
+		lh.add(new JPanel(), 0, 3, 3, 1, 1, 0);
+		lh.add(new JLabel("Step size:"), 0, 4, 1, 1, 0, 0);
+		lh.add(stepSize, 2, 4, 1, 1, 1, 0);
 		spinnerPanel.setBorder(BorderFactory
 				.createTitledBorder(" Default values for spinners "));
 
 		setLayout(new GridLayout(2, 1));
-		add(dirPanel);
+		add(chooser);
 		add(spinnerPanel);
 	}
 
@@ -254,20 +154,21 @@ public class SettingsPanelGeneral extends SettingsPanel implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
+	 * de.zbit.gui.cfg.SettingsPanel#stateChanged(javax.swing.event.ChangeEvent)
 	 */
 	@Override
-	public void setProperties(Properties properties) {
-		this.settings = new Properties();
-		String k;
-		for (Object key : properties.keySet()) {
-			k = key.toString();
-			if (k.startsWith("SPINNER_")
-					|| (k.equals("OPEN_DIR") || (k.equals("SAVE_DIR")))) {
-				settings.put(key, properties.get(key));
-			}
+	public void stateChanged(ChangeEvent e) {
+		if (e.getSource().equals(minSpinnerValue)) {
+			properties.put(CfgKeys.SPINNER_MIN_VALUE, (Double) minSpinnerValue
+					.getValue());
+		} else if (e.getSource().equals(maxSpinnerValue)) {
+			properties.put(CfgKeys.SPINNER_MAX_VALUE, (Double) maxSpinnerValue
+					.getValue());
+		} else if (e.getSource().equals(stepSize)) {
+			properties.put(CfgKeys.SPINNER_STEP_SIZE, (Double) stepSize
+					.getValue());
 		}
-		init();
+		super.stateChanged(e);
 	}
 
 }
