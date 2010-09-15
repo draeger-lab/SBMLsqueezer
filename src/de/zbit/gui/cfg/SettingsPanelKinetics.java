@@ -92,12 +92,15 @@ public class SettingsPanelKinetics extends SettingsPanel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
+	 * @see de.zbit.gui.cfg.SettingsPanel#accepts(java.lang.Object)
 	 */
 	@Override
-	public Properties getProperties() {
-		return settings;
+	public boolean accepts(Object key) {
+		String k = key.toString();
+		return !k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
+				&& (k.startsWith("OPT_")
+						|| k.startsWith("POSSIBLE_ENZYME_") || k
+						.equals("TYPE_UNIT_CONSISTENCY"));
 	}
 
 	/*
@@ -126,7 +129,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 				.createTitledBorder(" General options "));
 		jCheckBoxSetBoundaryCondition = new JCheckBox(GUITools.toHTML(
 				"Set boundary condition for gene coding species", 25),
-				((Boolean) settings
+				((Boolean) properties
 						.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
 						.booleanValue());
 		jCheckBoxSetBoundaryCondition
@@ -136,7 +139,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 								40));
 		jCheckBoxRemoveUnnecessaryPandU = new JCheckBox(
 				GUITools.toHTML("Remove uneccessary parameters and units", 25),
-				((Boolean) settings
+				((Boolean) properties
 						.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 						.booleanValue());
 		jCheckBoxRemoveUnnecessaryPandU
@@ -146,7 +149,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 								40));
 		jCheckBoxTreatAllReactionsAsEnzyeReaction = new JCheckBox(GUITools
 				.toHTML("Consider all reactions to be enzyme-catalyzed", 25),
-				((Boolean) settings
+				((Boolean) properties
 						.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 						.booleanValue());
 		jCheckBoxTreatAllReactionsAsEnzyeReaction
@@ -163,18 +166,18 @@ public class SettingsPanelKinetics extends SettingsPanel {
 										+ "globally in the model. Otherwise SBMLsqueezer only stores most "
 										+ "parameters locally in the respective rate law.",
 								40));
-		jCheckBoxAddAllParametersGlobally.setSelected(((Boolean) settings
+		jCheckBoxAddAllParametersGlobally.setSelected(((Boolean) properties
 				.get(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
 				.booleanValue());
 		jCheckBoxWarnings = new JCheckBox("Warnings for too many reactants:");
-		jCheckBoxWarnings.setSelected(((Boolean) settings
+		jCheckBoxWarnings.setSelected(((Boolean) properties
 				.get(CfgKeys.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS))
 				.booleanValue());
 		jCheckBoxWarnings.setToolTipText(GUITools.toHTML(
 				"If checked, warnings will be shown for reactions "
 						+ "with more reactants than specified here.", 40));
 		jSpinnerMaxRealisticNumOfReactants = new JSpinner(
-				new SpinnerNumberModel(((Integer) settings
+				new SpinnerNumberModel(((Integer) properties
 						.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS)).intValue(),
 						2, 10, 1));
 		jSpinnerMaxRealisticNumOfReactants
@@ -183,7 +186,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 								"Specifiy how many reactants are at most likely to collide. This option is only available if warnings should be displayed at all.",
 								40));
 		jSpinnerDefaultCompartmentSize = new JSpinner(new SpinnerNumberModel(
-				Double.parseDouble(settings.get(
+				Double.parseDouble(properties.get(
 						CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE)
 						.toString()), 0, 9999.9, .1));
 		jSpinnerDefaultCompartmentSize
@@ -192,7 +195,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 								"For compartments that are not yet initialized, SBMLsqueezer will use this value as the default initial size.",
 								40));
 		jSpinnerDefaultSpeciesValue = new JSpinner(new SpinnerNumberModel(
-				Double.parseDouble(settings.get(
+				Double.parseDouble(properties.get(
 						CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE).toString()),
 				0, 9999.9, .1));
 		jSpinnerDefaultSpeciesValue
@@ -202,7 +205,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 								40));
 		jSpinnerDefaultParamValue = new JSpinner(new SpinnerNumberModel(
 				Double
-						.parseDouble(settings.get(
+						.parseDouble(properties.get(
 								CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS)
 								.toString()), 0, 9999.9, .1));
 		jSpinnerDefaultParamValue
@@ -263,7 +266,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonGenerateForAllReactions);
 		buttonGroup.add(jRadioButtonGenerateOnlyMissingKinetics);
-		jRadioButtonGenerateForAllReactions.setSelected(((Boolean) settings
+		jRadioButtonGenerateForAllReactions.setSelected(((Boolean) properties
 				.get(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 				.booleanValue());
 		jRadioButtonGenerateOnlyMissingKinetics
@@ -281,21 +284,21 @@ public class SettingsPanelKinetics extends SettingsPanel {
 
 		// Fourth Panel
 		jCheckBoxPossibleEnzymeGenericProtein = new JCheckBox("Generic protein");
-		jCheckBoxPossibleEnzymeGenericProtein.setSelected(((Boolean) settings
+		jCheckBoxPossibleEnzymeGenericProtein.setSelected(((Boolean) properties
 				.get(CfgKeys.POSSIBLE_ENZYME_GENERIC)).booleanValue());
 		jCheckBoxPossibleEnzymeGenericProtein.setToolTipText(GUITools.toHTML(
 				"If checked, generic proteins are treated as enzymes. "
 						+ "Otherwise, generic protein-catalyzed reactions are "
 						+ "not considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeRNA = new JCheckBox("RNA");
-		jCheckBoxPossibleEnzymeRNA.setSelected(((Boolean) settings
+		jCheckBoxPossibleEnzymeRNA.setSelected(((Boolean) properties
 				.get(CfgKeys.POSSIBLE_ENZYME_RNA)).booleanValue());
 		jCheckBoxPossibleEnzymeRNA.setToolTipText(GUITools.toHTML(
 				"If checked, RNA is treated as an enzyme. "
 						+ "Otherwise RNA catalyzed reactions are not "
 						+ "considered to be enzyme-catalyzed reactions.", 40));
 		jCheckBoxPossibleEnzymeComplex = new JCheckBox("Complex");
-		jCheckBoxPossibleEnzymeComplex.setSelected(((Boolean) settings
+		jCheckBoxPossibleEnzymeComplex.setSelected(((Boolean) properties
 				.get(CfgKeys.POSSIBLE_ENZYME_COMPLEX)).booleanValue());
 		jCheckBoxPossibleEnzymeComplex.setToolTipText(GUITools.toHTML(
 				"If checked, complex molecules are treated as enzymes. "
@@ -303,21 +306,21 @@ public class SettingsPanelKinetics extends SettingsPanel {
 						+ "considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeTruncatedProtein = new JCheckBox(
 				"Truncated protein");
-		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(((Boolean) settings
+		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(((Boolean) properties
 				.get(CfgKeys.POSSIBLE_ENZYME_TRUNCATED)).booleanValue());
 		jCheckBoxPossibleEnzymeTruncatedProtein.setToolTipText(GUITools.toHTML(
 				"If checked, truncated proteins are treated as enzymes. "
 						+ "Otherwise, truncated protein catalized reactions "
 						+ "are not considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeReceptor = new JCheckBox("Receptor");
-		jCheckBoxPossibleEnzymeReceptor.setSelected(((Boolean) settings
+		jCheckBoxPossibleEnzymeReceptor.setSelected(((Boolean) properties
 				.get(CfgKeys.POSSIBLE_ENZYME_RECEPTOR)).booleanValue());
 		jCheckBoxPossibleEnzymeReceptor.setToolTipText(GUITools.toHTML(
 				"If checked, receptors are treated as enzymes. "
 						+ "Otherwise, receptor catalized reactions are not "
 						+ "considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeUnknown = new JCheckBox("Unknown");
-		jCheckBoxPossibleEnzymeUnknown.setSelected(((Boolean) settings
+		jCheckBoxPossibleEnzymeUnknown.setSelected(((Boolean) properties
 				.get(CfgKeys.POSSIBLE_ENZYME_UNKNOWN)).booleanValue());
 		jCheckBoxPossibleEnzymeUnknown
 				.setToolTipText(GUITools
@@ -327,14 +330,14 @@ public class SettingsPanelKinetics extends SettingsPanel {
 										+ "considered to be enzyme reactions.",
 								40));
 		jCheckBoxPossibleEnzymeAsRNA = new JCheckBox("asRNA");
-		jCheckBoxPossibleEnzymeAsRNA.setSelected(((Boolean) settings
+		jCheckBoxPossibleEnzymeAsRNA.setSelected(((Boolean) properties
 				.get(CfgKeys.POSSIBLE_ENZYME_ANTISENSE_RNA)).booleanValue());
 		jCheckBoxPossibleEnzymeAsRNA.setToolTipText(GUITools.toHTML(
 				"If checked, asRNA is treated as an enzyme. "
 						+ "Otherwise asRNA catalized reactions are not "
 						+ "considered to be enzyme-catalyzed reactions.", 40));
 		jCheckBoxPossibleEnzymeSimpleMolecule = new JCheckBox("Simple molecule");
-		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(((Boolean) settings
+		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(((Boolean) properties
 				.get(CfgKeys.POSSIBLE_ENZYME_SIMPLE_MOLECULE)).booleanValue());
 		jCheckBoxPossibleEnzymeSimpleMolecule
 				.setToolTipText(GUITools
@@ -371,7 +374,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 				jPanelTypeUnitConsistency);
 		jRadioButtonTypeUnitConsistency = new JRadioButton(GUITools.toHTML(
 				"Bring species to substance units", 30),
-				((Integer) this.settings.get(CfgKeys.TYPE_UNIT_CONSISTENCY))
+				((Integer) this.properties.get(CfgKeys.TYPE_UNIT_CONSISTENCY))
 						.intValue() == 0);
 		jRadioButtonTypeUnitConsistency
 				.setToolTipText(GUITools
@@ -438,67 +441,67 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource().equals(jCheckBoxTreatAllReactionsAsEnzyeReaction)) {
-			settings.put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+			properties.put(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 					Boolean.valueOf(jCheckBoxTreatAllReactionsAsEnzyeReaction
 							.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxAddAllParametersGlobally)) {
-			settings.put(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+			properties.put(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
 					Boolean.valueOf(jCheckBoxAddAllParametersGlobally
 							.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxWarnings)) {
-			settings.put(CfgKeys.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS, Boolean
+			properties.put(CfgKeys.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS, Boolean
 					.valueOf(jCheckBoxWarnings.isSelected()));
 			jSpinnerMaxRealisticNumOfReactants.setEnabled(jCheckBoxWarnings
 					.isSelected());
 		} else if (e.getSource().equals(jRadioButtonGenerateForAllReactions)) {
-			settings.put(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
+			properties.put(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
 					Boolean.valueOf(jRadioButtonGenerateForAllReactions
 							.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeRNA)) {
-			settings.put(CfgKeys.POSSIBLE_ENZYME_RNA, Boolean
+			properties.put(CfgKeys.POSSIBLE_ENZYME_RNA, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeRNA.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeAsRNA)) {
-			settings.put(CfgKeys.POSSIBLE_ENZYME_ANTISENSE_RNA, Boolean
+			properties.put(CfgKeys.POSSIBLE_ENZYME_ANTISENSE_RNA, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeAsRNA.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeGenericProtein)) {
-			settings.put(CfgKeys.POSSIBLE_ENZYME_GENERIC,
+			properties.put(CfgKeys.POSSIBLE_ENZYME_GENERIC,
 					Boolean.valueOf(jCheckBoxPossibleEnzymeGenericProtein
 							.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource()
 				.equals(jCheckBoxPossibleEnzymeTruncatedProtein)) {
-			settings.put(CfgKeys.POSSIBLE_ENZYME_TRUNCATED, Boolean
+			properties.put(CfgKeys.POSSIBLE_ENZYME_TRUNCATED, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeTruncatedProtein
 							.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeSimpleMolecule)) {
-			settings.put(CfgKeys.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
+			properties.put(CfgKeys.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
 					Boolean.valueOf(jCheckBoxPossibleEnzymeSimpleMolecule
 							.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeComplex)) {
-			settings.put(CfgKeys.POSSIBLE_ENZYME_COMPLEX, Boolean
+			properties.put(CfgKeys.POSSIBLE_ENZYME_COMPLEX, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeComplex.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeReceptor)) {
-			settings.put(CfgKeys.POSSIBLE_ENZYME_RECEPTOR, Boolean
+			properties.put(CfgKeys.POSSIBLE_ENZYME_RECEPTOR, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeReceptor.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource().equals(jCheckBoxPossibleEnzymeUnknown)) {
-			settings.put(CfgKeys.POSSIBLE_ENZYME_UNKNOWN, Boolean
+			properties.put(CfgKeys.POSSIBLE_ENZYME_UNKNOWN, Boolean
 					.valueOf(jCheckBoxPossibleEnzymeUnknown.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource().equals(jRadioButtonTypeUnitConsistency)) {
-			settings.put(CfgKeys.TYPE_UNIT_CONSISTENCY, Integer
+			properties.put(CfgKeys.TYPE_UNIT_CONSISTENCY, Integer
 					.valueOf(jRadioButtonTypeUnitConsistency.isSelected() ? 0
 							: 1));
 		} else if (e.getSource().equals(jCheckBoxSetBoundaryCondition)) {
-			settings.put(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, Boolean
+			properties.put(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, Boolean
 					.valueOf(jCheckBoxSetBoundaryCondition.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxRemoveUnnecessaryPandU)) {
-			settings.put(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
+			properties.put(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
 					Boolean.valueOf(jCheckBoxRemoveUnnecessaryPandU
 							.isSelected()));
 		}
@@ -534,36 +537,14 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	 */
 	@Override
 	public void restoreDefaults() {
-		String openDir = settings.get(CfgKeys.OPEN_DIR).toString();
-		String saveDir = settings.get(CfgKeys.SAVE_DIR).toString();
-		settings = CfgKeys.getDefaultProperties();
-		settings.put(CfgKeys.OPEN_DIR, openDir);
-		settings.put(CfgKeys.SAVE_DIR, saveDir);
+		String openDir = properties.get(CfgKeys.OPEN_DIR).toString();
+		String saveDir = properties.get(CfgKeys.SAVE_DIR).toString();
+		properties = CfgKeys.getDefaultProperties();
+		properties.put(CfgKeys.OPEN_DIR, openDir);
+		properties.put(CfgKeys.SAVE_DIR, saveDir);
 		init();
 		validate();
 		possibleEnzymeTestAllNotChecked();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
-	 */
-	@Override
-	public void setProperties(Properties settings) {
-		removeAll();
-		this.settings = new Properties();
-		for (Object key : settings.keySet()) {
-			String k = key.toString();
-			if (!k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
-					&& (k.startsWith("OPT_")
-							|| k.startsWith("POSSIBLE_ENZYME_") || k
-							.equals("TYPE_UNIT_CONSISTENCY"))) {
-				this.settings.put(key, settings.get(key));
-			}
-		}
-		init();
 	}
 
 	/*
@@ -576,20 +557,20 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(jSpinnerMaxRealisticNumOfReactants)) {
-			settings.put(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS, Integer
+			properties.put(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS, Integer
 					.parseInt(jSpinnerMaxRealisticNumOfReactants.getValue()
 							.toString()));
 		} else if (e.getSource().equals(jSpinnerDefaultCompartmentSize)) {
-			settings.put(CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE, Double
+			properties.put(CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE, Double
 					.valueOf(jSpinnerDefaultCompartmentSize.getValue()
 							.toString()));
 		} else if (e.getSource().equals(jSpinnerDefaultSpeciesValue)) {
-			settings
+			properties
 					.put(CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE, Double
 							.valueOf(jSpinnerDefaultSpeciesValue.getValue()
 									.toString()));
 		} else if (e.getSource().equals(jSpinnerDefaultParamValue)) {
-			settings.put(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS, Double
+			properties.put(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS, Double
 					.valueOf(jSpinnerDefaultParamValue.getValue().toString()));
 		}
 		super.stateChanged(e);

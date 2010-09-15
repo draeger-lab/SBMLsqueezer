@@ -67,7 +67,7 @@ import org.sbml.squeezer.resources.Resource;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;
-import de.zbit.gui.cfg.SettingsPanelAll;
+import de.zbit.gui.cfg.SettingsTabbedPane;
 import de.zbit.gui.cfg.SettingsPanelLaTeX;
 import de.zbit.io.SBFileFilter;
 
@@ -110,7 +110,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private Properties settings;
 
-	private SettingsPanelAll settingsPanel;
+	private SettingsTabbedPane settingsPanel;
 
 	/**
 	 * Creates an empty dialog with the given settings and sbml io object.
@@ -580,9 +580,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @return javax.swing.JPanelsb.append("<br>
 	 *         ");
 	 */
-	private SettingsPanelAll getJSettingsPanel() {
+	private SettingsTabbedPane getJSettingsPanel() {
 		if (settingsPanel == null) {
-			settingsPanel = new SettingsPanelAll(settings, CfgKeys
+			settingsPanel = new SettingsTabbedPane(settings, CfgKeys
 					.getDefaultProperties());
 			// settingsPanel.setBackground(Color.WHITE);
 		}

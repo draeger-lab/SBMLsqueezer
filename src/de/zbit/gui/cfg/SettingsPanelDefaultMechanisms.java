@@ -91,6 +91,18 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		super(properties, defaults);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.cfg.SettingsPanel#accepts(java.lang.Object)
+	 */
+	@Override
+	public boolean accepts(Object key) {
+		String k = key.toString();
+		return k.startsWith("KINETICS_")
+				|| k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
+				|| k.equals("TYPE_STANDARD_VERSION");
+	}
+
 	/**
 	 * Creates a panel that contains radio buttons for the given class of
 	 * kinetic equations.
@@ -113,7 +125,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 			String type = className.substring(className.lastIndexOf('.') + 1);
 			jRButton[i] = new JRadioButton(className.substring(className
 					.lastIndexOf('.') + 1));
-			jRButton[i].setSelected(settings.get(key).toString().equals(
+			jRButton[i].setSelected(properties.get(key).toString().equals(
 					className));
 			StringBuilder toolTip = new StringBuilder();
 			String msg;
@@ -158,7 +170,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		for (JRadioButton radioButton : jRButton) {
 			if (radioButton.isSelected())
 				oneIsSelected = true;
-			if (defaultSettings.get(key).toString().endsWith(
+			if (defaultProperties.get(key).toString().endsWith(
 					radioButton.getText()))
 				pos = i;
 			i++;
@@ -177,7 +189,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	private JPanel createJPanelSettingsReversibility() {
 		jRadioButtonForceReacRev = new JRadioButton(
 				"Model all reactions in a reversible manner");
-		jRadioButtonForceReacRev.setSelected(((Boolean) settings
+		jRadioButtonForceReacRev.setSelected(((Boolean) properties
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue());
 		jRadioButtonForceReacRev
@@ -187,9 +199,10 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 								40));
 		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(
 				"Use information from SBML");
-		jRadioButtonSettingsFrameForceRevAsCD.setSelected(!((Boolean) settings
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue());
+		jRadioButtonSettingsFrameForceRevAsCD
+				.setSelected(!((Boolean) properties
+						.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+						.booleanValue());
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setToolTipText(GUITools
 						.toHTML(
@@ -211,6 +224,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 
 		return jPanelSettingsReversibility;
 	}
+
 	/**
 	 * 
 	 * @return
@@ -219,8 +233,9 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		JPanel jPanelStandardVersions = new JPanel();
 		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
 				"hal", "weg" });
-		jComboBoxTypeStandardVersion.setSelectedIndex(((Integer) this.settings
-				.get(CfgKeys.TYPE_STANDARD_VERSION)).intValue());
+		jComboBoxTypeStandardVersion
+				.setSelectedIndex(((Integer) this.properties
+						.get(CfgKeys.TYPE_STANDARD_VERSION)).intValue());
 		jComboBoxTypeStandardVersion
 				.setToolTipText(GUITools
 						.toHTML(
@@ -245,13 +260,14 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 
 		return jPanelStandardVersions;
 	}
+
 	/**
 	 * 
 	 * @param treatReactionsReversible
 	 * @return
 	 */
 	private JTabbedPane createMechanismTabs() {
-		boolean treatReactionsReversible = ((Boolean) settings
+		boolean treatReactionsReversible = ((Boolean) properties
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
 		JTabbedPane tabs = new JTabbedPane(JTabbedPane.LEFT);
@@ -303,8 +319,8 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	public Properties getProperties() {
 		Properties p = new Properties();
 		Object value;
-		for (Object key : settings.keySet()) {
-			value = settings.get(key);
+		for (Object key : properties.keySet()) {
+			value = properties.get(key);
 			try {
 				Class<?> cl = Class.forName(value.toString());
 				Set<Class<?>> interfaces = new HashSet<Class<?>>();
@@ -316,7 +332,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 				p.put(key, value);
 			}
 		}
-		return this.settings;
+		return this.properties;
 	}
 
 	/*
@@ -331,6 +347,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.gui.SettingsPanel#init()
 	 */
 	@Override
@@ -360,13 +377,13 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		if (e.getSource() instanceof JRadioButton) {
 			JRadioButton rbutton = (JRadioButton) e.getSource();
 			if (rbutton.equals(jRadioButtonForceReacRev)) {
-				settings.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+				properties.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 						Boolean.valueOf(jRadioButtonForceReacRev.isSelected()));
 				jComboBoxTypeStandardVersion
 						.setEnabled(jRadioButtonForceReacRev.isSelected());
 				int selected = tabs.getSelectedIndex();
 				tabsPanel.removeAll();
-				settings.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+				properties.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 						Boolean.valueOf(jRadioButtonForceReacRev.isSelected()));
 				tabs = createMechanismTabs();
 				tabs.setSelectedIndex(selected);
@@ -374,37 +391,15 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 				// init(jRadioButtonForceReacRev.isSelected());
 				validate();
 			} else {
-				settings
+				properties
 						.put(CfgKeys.valueOf(rbutton.getActionCommand()),
 								SBMLsqueezer.KINETICS_PACKAGE + '.'
 										+ rbutton.getText());
 			}
 		} else if (e.getSource().equals(jComboBoxTypeStandardVersion)) {
-			settings.put(CfgKeys.TYPE_STANDARD_VERSION, Integer
+			properties.put(CfgKeys.TYPE_STANDARD_VERSION, Integer
 					.valueOf(jComboBoxTypeStandardVersion.getSelectedIndex()));
 		}
 		super.itemStateChanged(e);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.gui.SettingsPanel#setProperties(java.util.Properties)
-	 */
-	@Override
-	public void setProperties(Properties properties) {
-		removeAll();
-		settings = new Properties();
-		String k;
-		for (Object key : properties.keySet()) {
-			k = key.toString();
-			if (k.startsWith("KINETICS_")
-					|| k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
-					|| k.equals("TYPE_STANDARD_VERSION")) {
-				settings.put(key, properties.get(key));
-			}
-		}
-		init();
 	}
 }
