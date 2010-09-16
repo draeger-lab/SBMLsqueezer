@@ -145,9 +145,9 @@ public class SettingsPanelGeneral extends SettingsPanel {
 		spinnerPanel.setBorder(BorderFactory
 				.createTitledBorder(" Default values for spinners "));
 
-		setLayout(new GridLayout(2, 1));
-		add(chooser);
-		add(spinnerPanel);
+		lh = new LayoutHelper(this);
+		lh.add(chooser, 0, 0, 1, 1, 0, 0);
+		lh.add(spinnerPanel, 0, 0, 1, 1, 0, 0);
 	}
 
 	/*
