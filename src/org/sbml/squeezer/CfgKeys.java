@@ -23,6 +23,8 @@ import java.util.Properties;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import com.sun.xml.internal.bind.v2.runtime.property.Property;
+
 /**
  * This is a list of possible command line options and configuration of
  * SBMLsqueezer. Each element listed here determines a key for a configuration
@@ -511,7 +513,7 @@ public enum CfgKeys {
 	 * A hastable of key value pairs representing the user's program
 	 * configuration.
 	 */
-	private static Properties properties;
+	private static Properties properties = null;
 
 	/**
 	 * 
@@ -532,6 +534,22 @@ public enum CfgKeys {
 			}
 			string = string.toUpperCase().replace('-', '_');
 			p.put(CfgKeys.valueOf(string), value);
+		}
+		return correctProperties(p);
+	}
+
+	/**
+	 * 
+	 * @param prefs
+	 * @return
+	 * @throws BackingStoreException
+	 */
+	public static Properties convert(Preferences prefs)
+			throws BackingStoreException {
+		Properties p = new Properties();
+		for (String key : prefs.keys()) {
+			CfgKeys k = valueOf(key);
+			p.put(k, prefs.get(key, "null"));
 		}
 		return correctProperties(p);
 	}
@@ -623,6 +641,13 @@ public enum CfgKeys {
 	 * @return
 	 */
 	public static Properties getProperties() {
+		if (properties == null) {
+			try {
+				initProperties();
+			} catch (BackingStoreException e) {
+				properties = new Properties();
+			}
+		}
 		return properties;
 	}
 
@@ -636,16 +661,28 @@ public enum CfgKeys {
 	/**
 	 * 
 	 * @return
+	 */
+	public static String getUserPrefNode() {
+		return userRootNode;
+	}
+
+	/**
+	 * 
+	 * @return
 	 * @throws BackingStoreException
 	 */
 	public static Properties initProperties() throws BackingStoreException {
 		Preferences prefs = Preferences.userRoot().node(userRootNode);
-		if (prefs.keys().length == 0) {
-			Properties defaults = getDefaultProperties();
-			for (Object k : defaults.keySet()) {
-				Object v = defaults.get(k);
+		Properties defaults = getDefaultProperties();
+		boolean change = false;
+		for (Object k : defaults.keySet()) {
+			Object v = defaults.get(k);
+			if (prefs.get(k.toString(), "null").equals("null")) {
 				put(prefs, k, v);
+				change = true;
 			}
+		}
+		if (change) {
 			prefs.flush();
 		}
 		Properties props = convert(prefs);
@@ -677,22 +714,6 @@ public enum CfgKeys {
 
 	/**
 	 * 
-	 * @param prefs
-	 * @return
-	 * @throws BackingStoreException
-	 */
-	public static Properties convert(Preferences prefs)
-			throws BackingStoreException {
-		Properties p = new Properties();
-		for (String key : prefs.keys()) {
-			CfgKeys k = valueOf(key);
-			p.put(k, prefs.get(key, "null"));
-		}
-		return correctProperties(p);
-	}
-
-	/**
-	 * 
 	 * @param props
 	 * @throws BackingStoreException
 	 */
@@ -706,6 +727,16 @@ public enum CfgKeys {
 			properties = props;
 			pref.flush();
 		}
+	}
+
+	/**
+	 * Saves the currently valid {@link Properties}.
+	 * 
+	 * @see #saveProperties(Properties)
+	 * @throws BackingStoreException
+	 */
+	public static void saveProperties() throws BackingStoreException {
+		saveProperties(CfgKeys.properties);
 	}
 
 	/**
@@ -733,11 +764,23 @@ public enum CfgKeys {
 	}
 
 	/**
+	 * Returns the property associated to this enum element.
 	 * 
 	 * @return
 	 */
-	public static String getUserPrefNode() {
-		return userRootNode;
+	public Object getProperty() {
+		return properties.get(this);
+	}
+
+	/**
+	 * 
+	 * @param value
+	 *            The new {@link Property} value for this key.
+	 * @return the previous value belonging to this key or null if there was no
+	 *         other value.
+	 */
+	public Object putProperty(Object value) {
+		return properties.put(this, value);
 	}
 
 }
