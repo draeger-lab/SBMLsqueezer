@@ -411,12 +411,14 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		msg.logln(" done.\nreading SBO... done.");
 		if (p.containsKey(CfgKeys.GUI)
 				&& ((Boolean) p.get(CfgKeys.GUI)).booleanValue()) {
-			if (p.containsKey(CfgKeys.SBML_FILE))
+			if (p.containsKey(CfgKeys.SBML_FILE)) {
 				squeezer.readSBMLSource(p.get(CfgKeys.SBML_FILE).toString());
+			}
 			if (p.containsKey(CfgKeys.CHECK_FOR_UPDATES)
 					&& ((Boolean) p.get(CfgKeys.CHECK_FOR_UPDATES))
-							.booleanValue())
+							.booleanValue()) {
 				squeezer.checkForUpdate(true);
+			}
 			msg.log("loading GUI...");
 			new Thread(new Runnable() {
 				public void run() {
@@ -700,8 +702,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			time = System.currentTimeMillis();
 			msg.log("Saving changes and writing SBML file... ");
 			sbmlIo.saveChanges(this);
-			if (outFile != null
-					&& SBFileFilter.SBML_FILE_FILTER.accept(outFile)) {
+			if ((outFile != null)
+					&& (SBFileFilter.SBML_FILE_FILTER.accept(outFile))) {
 				sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
 				msg.logln(" done in " + (System.currentTimeMillis() - time)
 						+ " ms");
