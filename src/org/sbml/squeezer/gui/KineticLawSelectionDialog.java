@@ -128,66 +128,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 	}
 
 	/**
-	 * This constructor allows us to store the given model or the given reaction
-	 * in a text file. This can be a LaTeX or another format.
-	 * 
-	 * @param sbase
-	 *            allowed are a reaction or a model instance.
-	 */
-	public KineticLawSelectionDialog(Frame owner, Properties settings,
-			SBase sbase) {
-		this(owner, settings);
-		SettingsPanelLaTeX panel = new SettingsPanelLaTeX(settings, CfgKeys
-				.getDefaultProperties(), true);
-		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				GUITools.ICON_LATEX_SMALL) == JOptionPane.OK_OPTION) {
-			for (Object key : panel.getProperties().keySet())
-				settings.put(key, panel.getProperties().get(key));
-			try {
-				final File f = new File(panel.getTeXFile());
-				if (f.exists() && f.isDirectory())
-					JOptionPane
-							.showMessageDialog(
-									this,
-									GUITools
-											.toHTML(
-													"No appropriate file was selected and therefore no TeX file was created.",
-													40), "Warning",
-									JOptionPane.WARNING_MESSAGE);
-				else if (!f.exists()
-						|| GUITools.overwriteExistingFileDialog(owner, f) == JOptionPane.YES_OPTION) {
-					BufferedWriter buffer = new BufferedWriter(
-							new FileWriter(f));
-					LaTeXExport exporter = new LaTeXExport(panel
-							.getProperties());
-					if (sbase instanceof Model)
-						buffer
-								.write(exporter.toLaTeX((Model) sbase)
-										.toString());
-					else if (sbase instanceof Reaction)
-						buffer.write(exporter.toLaTeX((Reaction) sbase)
-								.toString());
-					buffer.close();
-					// new Thread(new Runnable() {
-					//
-					// public void run() {
-					// try {
-					// Desktop.getDesktop().open(f);
-					// } catch (IOException e) {
-					// // e.printStackTrace();
-					// }
-					// }
-					// }).start();
-				}
-				dispose();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-
-	/**
 	 * Creates a kinetic law selection dialog to create kinetic equations for a
 	 * whole model.
 	 * 

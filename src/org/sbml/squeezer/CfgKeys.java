@@ -477,6 +477,11 @@ public enum CfgKeys {
 	 */
 	STEUER_VALUE_OF_N,
 	/**
+	 * Path to a file with a time series of species/compartment/parameter
+	 * values.
+	 */
+	TIME_SERIES_FILE,
+	/**
 	 * One of the following values: cat, hal or weg (important for
 	 * Liebermeister's standard kinetics).
 	 */

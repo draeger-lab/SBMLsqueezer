@@ -368,23 +368,22 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			break;
 		case TO_LATEX:
 			if (e.getSource() instanceof Reaction) {
-				new KineticLawSelectionDialog(this, settings, (Reaction) e
-						.getSource());
+				new LaTeXExportDialog(this, settings, (Reaction) e.getSource());
 			} else if (e.getSource() instanceof Model) {
-				new KineticLawSelectionDialog(this, settings, (Model) e
-						.getSource());
+				new LaTeXExportDialog(this, settings, (Model) e.getSource());
 			} else {
 				String dir = settings.get(CfgKeys.LATEX_DIR).toString();
-				chooser = GUITools.createJFileChooser(dir, false, false,
+				File out = GUITools.saveFileDialog(this, dir, false, false,
 						JFileChooser.FILES_ONLY, SBFileFilter.TeX_FILE_FILTER);
-				if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-					File out = chooser.getSelectedFile();
+				if (out != null) {
 					String path = out.getParent();
-					if (!path.equals(dir))
+					if (!path.equals(dir)) {
 						settings.put(CfgKeys.LATEX_DIR, path);
+					}
 					if (!out.exists()
-							|| GUITools.overwriteExistingFile(this, out))
+							|| GUITools.overwriteExistingFile(this, out)) {
 						writeLaTeX(out);
+					}
 				}
 			}
 			break;
