@@ -41,6 +41,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.event.MouseInputListener;
 import javax.swing.event.TableModelEvent;
 
@@ -271,7 +272,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						possibleLaws, klg.getSettings(), selected);
 				final JOptionPane pane = new JOptionPane(klsp,
 						JOptionPane.QUESTION_MESSAGE,
-						JOptionPane.OK_CANCEL_OPTION, GUITools.ICON_LEMON_SMALL);
+						JOptionPane.OK_CANCEL_OPTION, UIManager.getIcon("ICON_LEMON_SMALL"));
 				pane.selectInitialValue();
 				Container container = getTopLevelAncestor();
 				final JDialog dialog;

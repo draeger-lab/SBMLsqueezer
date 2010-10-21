@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -37,10 +36,8 @@ import javax.swing.JEditorPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.resources.Resource;
@@ -59,129 +56,9 @@ import org.sbml.squeezer.util.HTMLFormula;
 public class GUITools extends de.zbit.gui.GUITools {
 
 	/**
-	 * 
-	 */
-	public static Icon ICON_DELETE = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_DIAGRAM_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_DOWN_ARROW = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_GEAR_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_HELP_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_INFO_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_LATEX_SMALL = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_LATEX_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_LEFT_ARROW = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_LEFT_ARROW_TINY = null;
-	/**
-	 * 
-	 */
-	public static Image IMAGE_LEMON = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_LEMON_SMALL = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_LEMON_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_LOGO_SMALL = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_OPEN = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_RIGHT_ARROW = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_SAVE = null;
-
-	/**
-	 * 
-	 */
-	public static Icon ICON_STABILITY_SMALL = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_TICK_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_TRASH_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_PICTURE_TINY = null;
-
-	/**
-	 * 
-	 */
-	public static Icon ICON_SETTINGS_TINY = null;
-
-	/**
-	 * 
-	 */
-	public static Icon ICON_STRUCTURAL_MODELING_TINY = null;
-
-	/**
-	 * 
-	 */
-	public static Icon ICON_LICENCE_TINY = null;
-	/**
-	 * 
-	 */
-	public static Icon ICON_FORWARD = null;
-
-	/**
 	 * Generated serial version id.
 	 */
 	private static final long serialVersionUID = 5662654607939013825L;
-
-	static {
-		loadImages("org/sbml/squeezer/resources/img/");
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
-	 */
-	public static Icon loadIcon(String path) {
-		Image img = loadImage(path);
-		return img != null ? new ImageIcon(img) : null;
-	}
 
 	/**
 	 * 
@@ -196,9 +73,20 @@ public class GUITools extends de.zbit.gui.GUITools {
 					.substring(path.indexOf("img")))) : ImageIO.read(new File(
 					path));
 		} catch (IOException exc) {
-			System.err.printf("Could not load image %s\n", path);
+			System.err.printf("Could not load image %s.\n", path);
 			return null;
 		}
+	}
+
+	/**
+	 * 
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	public static Icon loadIcon(String path) {
+		Image img = loadImage(path);
+		return img != null ? new ImageIcon(img) : null;
 	}
 
 	/**
@@ -207,70 +95,76 @@ public class GUITools extends de.zbit.gui.GUITools {
 	 * @param prefix
 	 * @throws IOException
 	 */
-	private static void loadImages(String prefix) {
-		ICON_FORWARD = loadIcon(prefix + "forward.png");
+	public static void loadImages(String prefix) {
+		UIManager.put("ICON_FORWARD", loadIcon(prefix + "forward.png"));
 		// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-		ICON_LEMON_TINY = loadIcon(prefix + "Lemon_tiny.png");
-		ICON_LATEX_TINY = loadIcon(prefix + "SBML2LaTeX_vertical_tiny.png");
-		ICON_LATEX_SMALL = loadIcon(prefix + "SBML2LaTeX_vertical_small.png");
-		ICON_LEMON_SMALL = loadIcon(prefix + "Lemon_small.png");
-		ICON_STABILITY_SMALL = loadIcon(prefix + "Stability_tiny.png");
+		UIManager.put("ICON_LEMON_TINY", loadIcon(prefix + "Lemon_tiny.png"));
+		UIManager.put("ICON_LATEX_TINY", loadIcon(prefix
+				+ "SBML2LaTeX_vertical_tiny.png"));
+		UIManager.put("ICON_LATEX_SMALL", loadIcon(prefix
+				+ "SBML2LaTeX_vertical_small.png"));
+		UIManager.put("ICON_LEMON_SMALL", loadIcon(prefix + "Lemon_small.png"));
+		UIManager.put("ICON_STABILITY_SMALL", loadIcon(prefix
+				+ "Stability_tiny.png"));
 		// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-		ICON_HELP_TINY = loadIcon(prefix + "help_16.png");
-		ICON_INFO_TINY = loadIcon(prefix + "info_16.png");
-		ICON_TICK_TINY = loadIcon(prefix + "tick_16.png");
-		ICON_LEFT_ARROW = loadIcon(prefix + "back.png");
-		ICON_DELETE = loadIcon(prefix + "delete_16.png");
-		ICON_DIAGRAM_TINY = loadIcon(prefix + "diagram_16.png");
-		ICON_TRASH_TINY = loadIcon(prefix + "trash_16.png");
-		ICON_GEAR_TINY = loadIcon(prefix + "gear_16.png");
-		ICON_PICTURE_TINY = loadIcon(prefix + "camera_16.png");
-		ICON_SETTINGS_TINY = loadIcon(prefix + "settings_16.png");
-		ICON_LICENCE_TINY = loadIcon(prefix + "licence_16.png");
-		ICON_STRUCTURAL_MODELING_TINY = loadIcon(prefix + "steuer_icon.png");
-		/*
-		 * Icons with default from the system
-		 */
-		ICON_SAVE = UIManager.getIcon("FileView.floppyDriveIcon");
-		if (ICON_SAVE == null) {
-			ICON_SAVE = loadIcon(prefix + "save_16.png");
+		UIManager.put("ICON_HELP_TINY", loadIcon(prefix + "help_16.png"));
+		UIManager.put("ICON_INFO_TINY", loadIcon(prefix + "info_16.png"));
+		UIManager.put("ICON_TICK_TINY", loadIcon(prefix + "tick_16.png"));
+		UIManager.put("ICON_LEFT_ARROW", loadIcon(prefix + "back.png"));
+		UIManager.put("ICON_DELETE", loadIcon(prefix + "delete_16.png"));
+		UIManager.put("ICON_DIAGRAM_TINY", loadIcon(prefix + "diagram_16.png"));
+		UIManager.put("ICON_TRASH_TINY", loadIcon(prefix + "trash_16.png"));
+		UIManager.put("ICON_GEAR_TINY", loadIcon(prefix + "gear_16.png"));
+		UIManager.put("ICON_PICTURE_TINY", loadIcon(prefix + "camera_16.png"));
+		UIManager.put("ICON_SETTINGS_TINY",
+				loadIcon(prefix + "settings_16.png"));
+		UIManager.put("ICON_LICENCE_TINY", loadIcon(prefix + "licence_16.png"));
+		UIManager.put("ICON_STRUCTURAL_MODELING_TINY", loadIcon(prefix
+				+ "steuer_icon.png"));
+		Icon icon = UIManager.getIcon("FileView.floppyDriveIcon");
+		if (icon != null) {
+			UIManager.put("ICON_SAVE", icon);
+		} else {
+			UIManager.put("ICON_SAVE", loadIcon(prefix + "save_16.png"));
 		}
-		UIManager.put("ICON_SAVE", ICON_SAVE);
 
 		try {
 			ResourceBundle resources = ResourceBundle
 					.getBundle("samples.resources.bundles.MetalEditResources");
 			String imagePath = resources.getString("images.path");
-			ICON_OPEN = new ImageIcon(Resource.class.getResource(imagePath
-					+ resources.getString("imageOpen")));
+			UIManager
+					.put("ICON_OPEN", new ImageIcon(Resource.class
+							.getResource(imagePath
+									+ resources.getString("imageOpen"))));
+			System.out.println(UIManager.getIcon("ICON_OPEN"));
 		} catch (Exception e) {
 		}
 		// UIManager.getIcon("FileView.directoryIcon");
-		if (ICON_OPEN == null) {
-			ICON_OPEN = loadIcon(prefix + "folder_16.png");
-			UIManager.put("ICON_OPEN", ICON_OPEN);
-		}
+		// if (ICON_OPEN == null) {
+		UIManager.put("ICON_OPEN", loadIcon(prefix + "folder_16.png"));
+		// }
 
 		/*
 		 * Icons to be read from image first.
 		 */
 		Image image = loadImage(prefix + "rightarrow.png");
-		ICON_RIGHT_ARROW = image != null ? new ImageIcon(image
-				.getScaledInstance(10, 10, Image.SCALE_SMOOTH)) : null;
+		UIManager.put("ICON_RIGHT_ARROW", image != null ? new ImageIcon(image
+				.getScaledInstance(10, 10, Image.SCALE_SMOOTH)) : null);
 		image = loadImage(prefix + "downarrow.png");
-		ICON_DOWN_ARROW = image != null ? new ImageIcon(image
-				.getScaledInstance(10, 10, Image.SCALE_SMOOTH)) : null;
+		UIManager.put("ICON_DOWN_ARROW", image != null ? new ImageIcon(image
+				.getScaledInstance(10, 10, Image.SCALE_SMOOTH)) : null);
 		image = loadImage(prefix + "logo_small.png");
 		// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
-		ICON_LOGO_SMALL = image != null ? new ImageIcon(image) : null;
+		UIManager.put("ICON_LOGO_SMALL", image != null ? new ImageIcon(image)
+				: null);
 		image = loadImage(prefix + "back.png");
-		ICON_LEFT_ARROW_TINY = image != null ? new ImageIcon(image
-				.getScaledInstance(16, 16, Image.SCALE_SMOOTH)) : null;
+		UIManager.put("ICON_LEFT_ARROW_TINY", image != null ? new ImageIcon(
+				image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)) : null);
 
 		/*
 		 * Images
 		 */
-		IMAGE_LEMON = loadImage(prefix + "icon.png");
+		UIManager.put("IMAGE_LEMON", loadImage(prefix + "icon.png"));
 	}
 
 	/**
@@ -288,9 +182,10 @@ public class GUITools extends de.zbit.gui.GUITools {
 			JToolBar toolbar, Object... commands) {
 		int i, j;
 		Set<String> setOfCommands = new HashSet<String>();
-		for (Object command : commands)
+		for (Object command : commands) {
 			setOfCommands.add(command.toString());
-		if (menuBar != null)
+		}
+		if (menuBar != null) {
 			for (i = 0; i < menuBar.getMenuCount(); i++) {
 				JMenu menu = menuBar.getMenu(i);
 				for (j = 0; j < menu.getItemCount(); j++) {
@@ -316,7 +211,8 @@ public class GUITools extends de.zbit.gui.GUITools {
 						item.setEnabled(state);
 				}
 			}
-		if (toolbar != null)
+		}
+		if (toolbar != null) {
 			for (i = 0; i < toolbar.getComponentCount(); i++) {
 				Object o = toolbar.getComponent(i);
 				if (o instanceof JButton) {
@@ -330,6 +226,7 @@ public class GUITools extends de.zbit.gui.GUITools {
 					}
 				}
 			}
+		}
 	}
 
 	/**
@@ -344,64 +241,5 @@ public class GUITools extends de.zbit.gui.GUITools {
 		preview.setEditable(false);
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
 		return preview;
-	}
-
-	/**
-	 * Initializes the look and feel.
-	 * 
-	 * @param title
-	 */
-	public static void initLaf(String title) {
-		Locale.setDefault(Locale.ENGLISH);
-		// For MacOS X
-		boolean isMacOSX = false;
-		if (System.getProperty("mrj.version") != null) {
-			isMacOSX = true;
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty(
-					"com.apple.mrj.application.apple.menu.about.name", title);
-		}
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (Exception e) {
-			// If Nimbus is not available, you can set the GUI to another look
-			// and feel.
-			// Native look and feel for Windows, MacOS X. GTK look and
-			// feel for Linux, FreeBSD
-			try {
-				UIManager
-						.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
-				String osName = System.getProperty("os.name");
-				if (osName.equals("Linux") || osName.equals("FreeBSD")) {
-					UIManager
-							.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-					// UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-				} else if (isMacOSX) {
-					UIManager
-							.setLookAndFeel("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-				} else if (osName.contains("Windows")) {
-					UIManager
-							.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
-				} else {
-					// UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-					UIManager.setLookAndFeel(UIManager
-							.getSystemLookAndFeelClassName());
-				}
-				// } catch (Exception e) {
-				// }
-				// try {
-				// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (Exception exc) {
-				JOptionPane.showMessageDialog(null, GUITools.toHTML(exc
-						.getMessage(), 40), exc.getClass().getName(),
-						JOptionPane.WARNING_MESSAGE);
-				exc.printStackTrace();
-			}
-		}
 	}
 }

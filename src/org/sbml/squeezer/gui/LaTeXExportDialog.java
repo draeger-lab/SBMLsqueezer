@@ -18,6 +18,7 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.Dialog;
 import java.awt.Frame;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -27,6 +28,7 @@ import java.util.Properties;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
@@ -34,6 +36,7 @@ import org.sbml.jsbml.SBase;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.io.LaTeXExport;
 
+import de.zbit.gui.GUITools;
 import de.zbit.gui.cfg.SettingsPanelLaTeX;
 
 /**
@@ -61,6 +64,18 @@ public class LaTeXExportDialog extends JDialog {
 					40);
 
 	/**
+	 * 
+	 * @param owner
+	 * @param settings
+	 * @param sbase
+	 */
+	public LaTeXExportDialog(Dialog owner, Properties settings, SBase sbase) {
+		super(owner, "SBML2LaTeX", true);
+		this.properties = settings;
+		init(sbase);
+	}
+
+	/**
 	 * This constructor allows us to store the given model or the given reaction
 	 * in a text file. This can be a LaTeX or another format.
 	 * 
@@ -70,11 +85,19 @@ public class LaTeXExportDialog extends JDialog {
 	public LaTeXExportDialog(Frame owner, Properties settings, SBase sbase) {
 		super(owner, "SBML2LaTeX", true);
 		this.properties = settings;
+		init(sbase);
+	}
+
+	/**
+	 * 
+	 * @param sbase
+	 */
+	private void init(SBase sbase) {
 		SettingsPanelLaTeX panel = new SettingsPanelLaTeX(properties, CfgKeys
 				.getDefaultProperties(), true);
 		if (JOptionPane.showConfirmDialog(this, panel, "LaTeX export",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				GUITools.ICON_LATEX_SMALL) == JOptionPane.OK_OPTION) {
+				UIManager.getIcon("ICON_LATEX_SMALL")) == JOptionPane.OK_OPTION) {
 			for (Object key : panel.getProperties().keySet()) {
 				properties.put(key, panel.getProperties().get(key));
 			}
@@ -85,7 +108,7 @@ public class LaTeXExportDialog extends JDialog {
 							NO_FILE_SELECTED_WARNING, "Warning",
 							JOptionPane.WARNING_MESSAGE);
 				} else if (!f.exists()
-						|| GUITools.overwriteExistingFileDialog(owner, f) == JOptionPane.YES_OPTION) {
+						|| GUITools.overwriteExistingFileDialog(getParent(), f) == JOptionPane.YES_OPTION) {
 					BufferedWriter buffer = new BufferedWriter(
 							new FileWriter(f));
 					LaTeXExport exporter = new LaTeXExport(panel

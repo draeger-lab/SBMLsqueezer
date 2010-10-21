@@ -33,9 +33,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -51,12 +49,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBase;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
@@ -68,7 +65,6 @@ import org.sbml.squeezer.resources.Resource;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.gui.cfg.SettingsTabbedPane;
-import de.zbit.gui.cfg.SettingsPanelLaTeX;
 import de.zbit.io.SBFileFilter;
 
 /**
@@ -459,7 +455,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		JPanel south = new JPanel(gbl), rightPanel = new JPanel(new FlowLayout(
 				FlowLayout.RIGHT)), leftPanel = new JPanel();
 
-		JButton cancel = new JButton("Cancel", GUITools.ICON_DELETE);
+		JButton cancel = new JButton("Cancel", UIManager.getIcon("ICON_DELETE"));
 		JButton apply = new JButton();
 		cancel.setToolTipText(GUITools.toHTML(
 				"Exit SBMLsqueezer without saving changes.", 40));
@@ -475,8 +471,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 									"Start generating an ordinary differential equation system.",
 									40));
 			apply.setText("Generate");
-			apply.setIcon(GUITools.ICON_LEMON_TINY);
-			helpButton = new JButton("Help", GUITools.ICON_HELP_TINY);
+			apply.setIcon(UIManager.getIcon("ICON_LEMON_TINY"));
+			helpButton = new JButton("Help",UIManager.getIcon("ICON_HELP_TINY"));
 			helpButton.addActionListener(this);
 			leftPanel.add(helpButton);
 			break;
@@ -487,7 +483,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 									"Write the generated kinetics and parameters to the SBML file.",
 									40));
 			apply.setText("Apply");
-			apply.setIcon(GUITools.ICON_TICK_TINY);
+			apply.setIcon(UIManager.getIcon("ICON_TICK_TINY"));
 
 			JButton jButtonReactionsFrameSave = new JButton();
 			jButtonReactionsFrameSave.setEnabled(true);
@@ -498,10 +494,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 									"Allowes yout to save the generated differential equations as *.txt or *.tex files. Note that this export only contains those reactions together with referenced, species, compartments, compartment- and species-types, units, and parameters for which new kinetic equations have been generated. If you wish to obtain a complete model report, please choose the \"save as\" function in the main menu.",
 									40));
 			jButtonReactionsFrameSave.setText("Export changes");
-			jButtonReactionsFrameSave.setIcon(GUITools.ICON_LATEX_TINY);
+			jButtonReactionsFrameSave.setIcon(UIManager.getIcon("ICON_LATEX_TINY"));
 			jButtonReactionsFrameSave.addActionListener(this);
 			leftPanel.add(jButtonReactionsFrameSave);
-			JButton back = new JButton("Back", GUITools.ICON_LEFT_ARROW_TINY);
+			JButton back = new JButton("Back", UIManager.getIcon("ICON_LEFT_ARROW_TINY"));
 			back.addActionListener(this);
 			rightPanel.add(back);
 			break;
@@ -536,11 +532,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 		centralPanel = initOptionsPanel();
 		setLayout(new BorderLayout());
 		getContentPane().add(centralPanel, BorderLayout.CENTER);
-		JLabel label = new JLabel(GUITools.ICON_LOGO_SMALL);
+		JLabel label = new JLabel(UIManager.getIcon("ICON_LOGO_SMALL"));
 		label.setBackground(Color.WHITE);
 		label.setText("<html><body><br><br><br><br><br><br>Version "
 				+ SBMLsqueezer.getVersionNumber() + "</body></html>");
-		Dimension d = GUITools.getDimension(GUITools.ICON_LOGO_SMALL);
+		Dimension d = GUITools.getDimension(UIManager.getIcon("ICON_LOGO_SMALL"));
 		d.setSize(d.getWidth() + 125, d.getHeight() + 10);
 		label.setPreferredSize(new Dimension(d));
 		JPanel p = new JPanel();
@@ -577,7 +573,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private JPanel initOptionsPanel() {
 		JPanel p = new JPanel(new BorderLayout());
 		options = new JButton("show options");
-		Icon icon = GUITools.ICON_RIGHT_ARROW;
+		Icon icon = UIManager.getIcon("ICON_RIGHT_ARROW");
 		if (icon != null)
 			options.setIcon(icon);
 		options.setIconTextGap(5);
@@ -609,7 +605,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void showSettingsPanel(boolean show) {
 		if (show) {
-			options.setIcon(GUITools.ICON_DOWN_ARROW);
+			options.setIcon(UIManager.getIcon("ICON_DOWN_ARROW"));
 			options.setIconTextGap(5);
 			options.setToolTipText("<html>Hide detailed options</html>");
 			options.setText("hide options");
@@ -621,7 +617,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			centralPanel.add(scroll, BorderLayout.CENTER);
 			centralPanel.validate();
 		} else {
-			options.setIcon(GUITools.ICON_RIGHT_ARROW);
+			options.setIcon(UIManager.getIcon("ICON_RIGHT_ARROW"));
 			options.setIconTextGap(5);
 			options.setText("show options");
 			options.setToolTipText(GUITools
