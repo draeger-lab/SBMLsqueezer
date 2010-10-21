@@ -32,11 +32,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.gui.GUITools;
 
+import de.zbit.gui.GUITools;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.io.SBFileFilter;
 
@@ -64,28 +65,25 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 	 * Generated serial version id.
 	 */
 	private static final long serialVersionUID = 5056629254462180004L;
+
 	static {
 		paperSizes = new String[43];
 		paperSizes[0] = "letter";
 		paperSizes[1] = "legal";
 		paperSizes[2] = "executive";
 		char[] prefixes = new char[] { 'a', 'b', 'c', 'd' };
-		for (int i = 0; i < prefixes.length; i++)
-			for (int j = 0; j < 10; j++)
+		for (int i = 0; i < prefixes.length; i++) {
+			for (int j = 0; j < 10; j++) {
 				paperSizes[3 + i * 10 + j] = prefixes[i] + String.valueOf(j);
+			}
+		}
 	}
+
 	private boolean browse;
 	private JTextField fileField;
-	private JCheckBox jCheckBoxIDsInTWFont;
-	private JCheckBox jCheckBoxLandscape;
-
-	private JCheckBox jCheckBoxNameInEquations;
-
-	private JCheckBox jCheckBoxTitlePage;
-
-	private JComboBox jComboBoxFontSize;
-
-	private JComboBox jComboBoxPaperSize;
+	private JCheckBox jCheckBoxIDsInTWFont, jCheckBoxLandscape,
+			jCheckBoxNameInEquations, jCheckBoxTitlePage;
+	private JComboBox jComboBoxFontSize, jComboBoxPaperSize;
 
 	/**
 	 * 
@@ -116,6 +114,7 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.zbit.gui.cfg.SettingsPanel#accepts(java.lang.Object)
 	 */
 	@Override
@@ -147,8 +146,9 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 			if (approve) {
 				String path = chooser.getSelectedFile().getAbsolutePath();
 				fileField.setText(path);
-				if (!browse)
+				if (!browse) {
 					properties.put(CfgKeys.LATEX_DIR, path);
+				}
 				super.stateChanged(new ChangeEvent(e));
 			}
 		}
@@ -194,12 +194,14 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 			filePanel
 					.setBorder(BorderFactory
 							.createTitledBorder(" Select a LaTeX file for the output "));
-			jButtonTeXFile = new JButton("Browse", GUITools.ICON_SAVE);
+			jButtonTeXFile = new JButton("Browse", UIManager
+					.getIcon("ICON_SAVE"));
 		} else {
 			filePanel
 					.setBorder(BorderFactory
 							.createTitledBorder(" Select the standard directory for LaTeX files "));
-			jButtonTeXFile = new JButton("Browse", GUITools.ICON_OPEN);
+			jButtonTeXFile = new JButton("Browse", UIManager
+					.getIcon("ICON_OPEN"));
 		}
 		jButtonTeXFile.addActionListener(this);
 		lh.add(jButtonTeXFile, 3, 1, 1, 1, 0, .8);
@@ -209,16 +211,18 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 
 		int i = 0;
 		while (i < paperSizes.length
-				&& !paperSizes[i].equals(properties.get(CfgKeys.LATEX_PAPER_SIZE)
-						.toString()))
+				&& !paperSizes[i].equals(properties.get(
+						CfgKeys.LATEX_PAPER_SIZE).toString())) {
 			i++;
+		}
 		jComboBoxPaperSize = new JComboBox(paperSizes);
 		jComboBoxPaperSize.setSelectedIndex(i);
 		i = 0;
 		while (i < fontSizes.length
-				&& fontSizes[i].shortValue() != Short.parseShort(properties.get(
-						CfgKeys.LATEX_FONT_SIZE).toString()))
+				&& fontSizes[i].shortValue() != Short.parseShort(properties
+						.get(CfgKeys.LATEX_FONT_SIZE).toString())) {
 			i++;
+		}
 		jComboBoxFontSize = new JComboBox(fontSizes);
 		jComboBoxFontSize.setSelectedIndex(i);
 		int row = -1;
@@ -237,7 +241,8 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 		lh.add(jComboBoxFontSize, 3, row, 1, 1, 1, 0);
 		lh.add(new JPanel(), 0, ++row, 5, 1, 0, 0);
 
-		jCheckBoxIDsInTWFont = new JCheckBox("IDs in typewriter font",
+		jCheckBoxIDsInTWFont = new JCheckBox(
+				"IDs in typewriter font",
 				((Boolean) properties.get(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT))
 						.booleanValue());
 		jCheckBoxLandscape = new JCheckBox("Landscape", ((Boolean) properties
@@ -252,7 +257,8 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 		if (!browse) {
 			JPanel panel = new JPanel(new BorderLayout());
 			JPanel p = new JPanel(new BorderLayout());
-			p.add(new JLabel(GUITools.ICON_LATEX_SMALL), BorderLayout.SOUTH);
+			p.add(new JLabel(UIManager.getIcon("ICON_LATEX_SMALL")),
+					BorderLayout.SOUTH);
 			panel.add(p, BorderLayout.EAST);
 			lh.add(panel, 3, row, 2, 4, 1, 1);
 		}
@@ -279,26 +285,28 @@ public class SettingsPanelLaTeX extends SettingsPanel implements ActionListener 
 	@Override
 	public void itemStateChanged(ItemEvent id) {
 		if (id.getSource() instanceof JComboBox) {
-			if (id.getSource().equals(jComboBoxPaperSize))
+			if (id.getSource().equals(jComboBoxPaperSize)) {
 				properties.put(CfgKeys.LATEX_PAPER_SIZE, jComboBoxPaperSize
 						.getSelectedItem().toString());
-			else if (id.getSource().equals(jComboBoxFontSize))
+			} else if (id.getSource().equals(jComboBoxFontSize)) {
 				properties.put(CfgKeys.LATEX_FONT_SIZE, Integer
 						.parseInt(jComboBoxFontSize.getSelectedItem()
 								.toString()));
+			}
 		} else if (id.getSource() instanceof JCheckBox) {
-			if (id.getSource().equals(jCheckBoxIDsInTWFont))
+			if (id.getSource().equals(jCheckBoxIDsInTWFont)) {
 				properties.put(CfgKeys.LATEX_IDS_IN_TYPEWRITER_FONT, Boolean
 						.valueOf(jCheckBoxIDsInTWFont.isSelected()));
-			else if (id.getSource().equals(jCheckBoxLandscape))
+			} else if (id.getSource().equals(jCheckBoxLandscape)) {
 				properties.put(CfgKeys.LATEX_LANDSCAPE, Boolean
 						.valueOf(jCheckBoxLandscape.isSelected()));
-			else if (id.getSource().equals(jCheckBoxTitlePage))
+			} else if (id.getSource().equals(jCheckBoxTitlePage)) {
 				properties.put(CfgKeys.LATEX_TITLE_PAGE, Boolean
 						.valueOf(jCheckBoxTitlePage.isSelected()));
-			else if (id.getSource().equals(jCheckBoxNameInEquations))
+			} else if (id.getSource().equals(jCheckBoxNameInEquations)) {
 				properties.put(CfgKeys.LATEX_NAMES_IN_EQUATIONS, Boolean
 						.valueOf(jCheckBoxNameInEquations.isSelected()));
+			}
 		}
 		super.stateChanged(new ChangeEvent(id));
 	}

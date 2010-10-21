@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -50,6 +51,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -200,7 +202,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	static {
-		GUITools.initLaf("SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
+		GUITools.loadImages("org/sbml/squeezer/resources/img/");
+		GUITools.initLaF("SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
 		setDefaultLookAndFeelDecorated(true);
 	}
 
@@ -544,11 +547,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		// TODO: Use methods from GUITools!
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(fileMenu.getText().charAt(0));
-		JMenuItem openItem = new JMenuItem("Open", GUITools.ICON_OPEN);
+		JMenuItem openItem = new JMenuItem("Open", UIManager
+				.getIcon("ICON_OPEN"));
 		openItem.setActionCommand(Command.OPEN_FILE.toString());
 		openItem.setAccelerator(KeyStroke.getKeyStroke('O',
 				InputEvent.CTRL_DOWN_MASK));
-		JMenuItem saveItem = new JMenuItem("Save as", GUITools.ICON_SAVE);
+		JMenuItem saveItem = new JMenuItem("Save as", UIManager
+				.getIcon("ICON_SAVE"));
 		saveItem.addActionListener(this);
 		saveItem.setActionCommand(Command.SAVE_FILE.toString());
 		saveItem.setAccelerator(KeyStroke.getKeyStroke('S',
@@ -591,11 +596,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		editMenu.setMnemonic(editMenu.getText().charAt(0));
 
 		editMenu.add(GUITools.createJMenuItem("Squeeze", this, Command.SQUEEZE,
-				GUITools.ICON_LEMON_TINY, KeyStroke.getKeyStroke('Q',
-						InputEvent.CTRL_DOWN_MASK)));
+				UIManager.getIcon("ICON_LEMON_TINY"), KeyStroke.getKeyStroke(
+						'Q', InputEvent.CTRL_DOWN_MASK)));
 		editMenu.add(GUITools.createJMenuItem("Export to LaTeX", this,
-				Command.TO_LATEX, GUITools.ICON_LATEX_TINY, KeyStroke
-						.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK)));
+				Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_TINY"),
+				KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK)));
 
 		// TODO: Not in this version
 		// editMenu.addSeparator();
@@ -609,7 +614,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 
 		editMenu.addSeparator();
 		editMenu.add(GUITools.createJMenuItem("Preferences", this,
-				Command.SET_PREFERENCES, GUITools.ICON_SETTINGS_TINY, 'P'));
+				Command.SET_PREFERENCES, UIManager
+						.getIcon("ICON_SETTINGS_TINY"), 'P'));
 
 		/*
 		 * Help menu
@@ -617,13 +623,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic(helpMenu.getText().charAt(0));
 		helpMenu.add(GUITools.createJMenuItem("Online help", this,
-				Command.ONLINE_HELP, GUITools.ICON_HELP_TINY, KeyStroke
-						.getKeyStroke(KeyEvent.VK_F1, 0)));
+				Command.ONLINE_HELP, UIManager.getIcon("ICON_HELP_TINY"),
+				KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)));
 		helpMenu.add(GUITools.createJMenuItem("About", this, Command.ABOUT,
-				GUITools.ICON_INFO_TINY, KeyStroke.getKeyStroke(KeyEvent.VK_F2,
-						0)));
+				UIManager.getIcon("ICON_INFO_TINY"), KeyStroke.getKeyStroke(
+						KeyEvent.VK_F2, 0)));
 		helpMenu.add(GUITools.createJMenuItem("License", this, Command.LICENSE,
-				GUITools.ICON_LICENCE_TINY, 'L'));
+				UIManager.getIcon("ICON_LICENCE_TINY"), 'L'));
 
 		JMenuBar mBar = new JMenuBar();
 		mBar.add(fileMenu);
@@ -643,13 +649,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private JToolBar createToolBar() {
 		toolbar = new JToolBar("Edit", JToolBar.HORIZONTAL);
-		JButton openButton = new JButton(GUITools.ICON_OPEN);
+		System.out.println(UIManager.getIcon("ICON_OPEN"));
+		JButton openButton = new JButton(UIManager.getIcon("ICON_OPEN"));
 		openButton.addActionListener(this);
 		openButton.setActionCommand(Command.OPEN_FILE.toString());
 		openButton.setToolTipText(GUITools.toHTML(
 				"Opens a file in SBML format.", 40));
 		toolbar.add(openButton);
-		JButton saveButton = new JButton(GUITools.ICON_SAVE);
+		JButton saveButton = new JButton(UIManager.getIcon("ICON_SAVE"));
 		saveButton.addActionListener(this);
 		saveButton.setActionCommand(Command.SAVE_FILE.toString());
 		saveButton
@@ -658,7 +665,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 								"Save the current version of the model in SBML format or export it to a text or LaTeX report.",
 								40));
 		toolbar.add(saveButton);
-		JButton closeButton = new JButton(GUITools.ICON_TRASH_TINY); // new
+		JButton closeButton = new JButton(UIManager.getIcon("ICON_TRASH_TINY")); // new
 		// CloseIcon(false)
 		closeButton.setActionCommand(Command.CLOSE_FILE.toString());
 		closeButton.addActionListener(this);
@@ -666,17 +673,18 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 				"Close the current model without saving.", 40));
 		toolbar.add(closeButton);
 		toolbar.addSeparator();
-		if (GUITools.ICON_LEMON_TINY != null)
+		if (UIManager.getIcon("ICON_LEMON_TINY") != null) {
 			toolbar
 					.add(GUITools
-							.createButton(GUITools.ICON_LEMON_TINY, this,
-									Command.SQUEEZE,
+							.createButton(UIManager.getIcon("ICON_LEMON_TINY"),
+									this, Command.SQUEEZE,
 									"Generate kinetic equations for all reactions in this model in one step."));
-
-		if (GUITools.ICON_LATEX_TINY != null)
-			toolbar.add(GUITools.createButton(GUITools.ICON_LATEX_TINY, this,
-					Command.TO_LATEX, "Export this model to a LaTeX report."));
-
+		}
+		if (UIManager.getIcon("ICON_LATEX_TINY") != null) {
+			toolbar.add(GUITools.createButton(UIManager
+					.getIcon("ICON_LATEX_TINY"), this, Command.TO_LATEX,
+					"Export this model to a LaTeX report."));
+		}
 		// TODO: Not in this version
 		// if (GUITools.ICON_STABILITY_SMALL != null)
 		// toolbar.add(GUITools.createButton(GUITools.ICON_STABILITY_SMALL,
@@ -693,12 +701,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		// Command.SIMULATE,
 		// "Dynamically simulate the current model."));
 
-		if (GUITools.ICON_SETTINGS_TINY != null)
-			toolbar.add(GUITools.createButton(GUITools.ICON_SETTINGS_TINY,
+		if (UIManager.getIcon("ICON_SETTINGS_TINY") != null) {
+			toolbar.add(GUITools.createButton(UIManager.getIcon("ICON_SETTINGS_TINY"),
 					this, Command.SET_PREFERENCES, "Adjust your preferences."));
-
+		}
 		toolbar.addSeparator();
-		JButton helpButton = new JButton(GUITools.ICON_HELP_TINY);
+		JButton helpButton = new JButton(UIManager.getIcon("ICON_HELP_TINY"));
 		helpButton.addActionListener(this);
 		helpButton.setActionCommand(Command.ONLINE_HELP.toString());
 		helpButton.setToolTipText(GUITools.toHTML("Open the online help.", 40));
@@ -716,7 +724,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(createToolBar(), BorderLayout.NORTH);
 		colorDefault = getContentPane().getBackground();
-		Icon icon = GUITools.ICON_LOGO_SMALL;
+		Icon icon = UIManager.getIcon("ICON_LOGO_SMALL");
 		logo = new JLabel(GUITools.toHTML("<br><br><br><br><br>Version: "
 				+ SBMLsqueezer.getVersionNumber()), icon, JLabel.CENTER);
 		if (icon != null) {
@@ -731,7 +739,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.addChangeListener(sbmlIO);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSBMLsqueezerBackground();
-		setIconImage(GUITools.IMAGE_LEMON);
+		setIconImage((Image) UIManager.getIcon("IMAGE_LEMON"));
 		for (Model m : sbmlIO.getListOfModels()) {
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(),
 					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))

@@ -147,18 +147,19 @@ public class JHelpBrowser extends JDialog implements ActionListener,
 				BorderLayout.CENTER);
 		JToolBar toolbar = new JToolBar();
 		// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-		backButton = new JButton(GUITools.ICON_LEFT_ARROW);
+		backButton = new JButton(UIManager.getIcon("ICON_LEFT_ARROW"));
 		backButton.setToolTipText("Last Page");
 		backButton.setName("back");
 		backButton.addActionListener(this);
 		backButton.setEnabled(false);
 		toolbar.add(backButton);
 
-		Icon icon = GUITools.ICON_FORWARD;
-		if (icon != null)
+		Icon icon = UIManager.getIcon("ICON_FORWARD");
+		if (icon != null) {
 			nextButton = new JButton(icon);
-		else
+		} else {
 			nextButton = new JButton("Next");
+		}
 		nextButton.setToolTipText("Next Page");
 		nextButton.setName("next");
 		nextButton.addActionListener(this);

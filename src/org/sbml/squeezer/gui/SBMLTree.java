@@ -30,6 +30,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
@@ -407,12 +408,13 @@ public class SBMLTree extends JTree implements MouseListener, ActionListener {
 	private void init() {
 		setOfActionListeners = new HashSet<ActionListener>();
 		popup = new JPopupMenu("SBMLsqueezer");
-		squeezeItem = new JMenuItem("Squeeze kinetic law",
-				GUITools.ICON_LEMON_TINY);
+		squeezeItem = new JMenuItem("Squeeze kinetic law", UIManager
+				.getIcon("ICON_LEMON_TINY"));
 		squeezeItem.addActionListener(this);
 		squeezeItem.setActionCommand(SBMLsqueezerUI.Command.SQUEEZE.toString());
 		popup.add(squeezeItem);
-		latexItem = new JMenuItem("Export to LaTeX", GUITools.ICON_LATEX_TINY);
+		latexItem = new JMenuItem("Export to LaTeX", UIManager
+				.getIcon("ICON_LATEX_TINY"));
 		latexItem.addActionListener(this);
 		latexItem.setActionCommand(SBMLsqueezerUI.Command.TO_LATEX.toString());
 		popup.add(latexItem);
