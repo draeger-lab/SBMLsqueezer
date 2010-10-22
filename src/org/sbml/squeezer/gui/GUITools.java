@@ -40,8 +40,8 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.util.HTMLFormula;
 import org.sbml.squeezer.resources.Resource;
-import org.sbml.squeezer.util.HTMLFormula;
 
 /**
  * A convenient class that provides several handy methods for working with
@@ -60,112 +60,16 @@ public class GUITools extends de.zbit.gui.GUITools {
 	 */
 	private static final long serialVersionUID = 5662654607939013825L;
 
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 */
-	public static Image loadImage(String path) {
-		try {
-			String p = path.substring(path.indexOf("img"));
-			URL url = Resource.class.getResource(p);
-			return url != null ? ImageIO.read(Resource.class.getResource(path
-					.substring(path.indexOf("img")))) : ImageIO.read(new File(
-					path));
-		} catch (IOException exc) {
-			System.err.printf("Could not load image %s.\n", path);
-			return null;
-		}
-	}
-
-	/**
-	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
-	 */
-	public static Icon loadIcon(String path) {
-		Image img = loadImage(path);
-		return img != null ? new ImageIcon(img) : null;
-	}
-
-	/**
-	 * Loads locale-specific resources: strings, images, et cetera
-	 * 
-	 * @param prefix
-	 * @throws IOException
-	 */
-	public static void loadImages(String prefix) {
-		UIManager.put("ICON_FORWARD", loadIcon(prefix + "forward.png"));
-		// image = image.getScaledInstance(22, 22, Image.SCALE_SMOOTH);
-		UIManager.put("ICON_LEMON_TINY", loadIcon(prefix + "Lemon_tiny.png"));
-		UIManager.put("ICON_LATEX_TINY", loadIcon(prefix
-				+ "SBML2LaTeX_vertical_tiny.png"));
-		UIManager.put("ICON_LATEX_SMALL", loadIcon(prefix
-				+ "SBML2LaTeX_vertical_small.png"));
-		UIManager.put("ICON_LEMON_SMALL", loadIcon(prefix + "Lemon_small.png"));
-		UIManager.put("ICON_STABILITY_SMALL", loadIcon(prefix
-				+ "Stability_tiny.png"));
-		// .getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-		UIManager.put("ICON_HELP_TINY", loadIcon(prefix + "help_16.png"));
-		UIManager.put("ICON_INFO_TINY", loadIcon(prefix + "info_16.png"));
-		UIManager.put("ICON_TICK_TINY", loadIcon(prefix + "tick_16.png"));
-		UIManager.put("ICON_LEFT_ARROW", loadIcon(prefix + "back.png"));
-		UIManager.put("ICON_DELETE", loadIcon(prefix + "delete_16.png"));
-		UIManager.put("ICON_DIAGRAM_TINY", loadIcon(prefix + "diagram_16.png"));
-		UIManager.put("ICON_TRASH_TINY", loadIcon(prefix + "trash_16.png"));
-		UIManager.put("ICON_GEAR_TINY", loadIcon(prefix + "gear_16.png"));
-		UIManager.put("ICON_PICTURE_TINY", loadIcon(prefix + "camera_16.png"));
-		UIManager.put("ICON_SETTINGS_TINY",
-				loadIcon(prefix + "settings_16.png"));
-		UIManager.put("ICON_LICENCE_TINY", loadIcon(prefix + "licence_16.png"));
-		UIManager.put("ICON_STRUCTURAL_MODELING_TINY", loadIcon(prefix
-				+ "steuer_icon.png"));
-		Icon icon = UIManager.getIcon("FileView.floppyDriveIcon");
-		if (icon != null) {
-			UIManager.put("ICON_SAVE", icon);
-		} else {
-			UIManager.put("ICON_SAVE", loadIcon(prefix + "save_16.png"));
-		}
-
-		try {
-			ResourceBundle resources = ResourceBundle
-					.getBundle("samples.resources.bundles.MetalEditResources");
-			String imagePath = resources.getString("images.path");
-			UIManager
-					.put("ICON_OPEN", new ImageIcon(Resource.class
-							.getResource(imagePath
-									+ resources.getString("imageOpen"))));
-			System.out.println(UIManager.getIcon("ICON_OPEN"));
-		} catch (Exception e) {
-		}
-		// UIManager.getIcon("FileView.directoryIcon");
-		// if (ICON_OPEN == null) {
-		UIManager.put("ICON_OPEN", loadIcon(prefix + "folder_16.png"));
-		// }
-
-		/*
-		 * Icons to be read from image first.
-		 */
-		Image image = loadImage(prefix + "rightarrow.png");
-		UIManager.put("ICON_RIGHT_ARROW", image != null ? new ImageIcon(image
-				.getScaledInstance(10, 10, Image.SCALE_SMOOTH)) : null);
-		image = loadImage(prefix + "downarrow.png");
-		UIManager.put("ICON_DOWN_ARROW", image != null ? new ImageIcon(image
-				.getScaledInstance(10, 10, Image.SCALE_SMOOTH)) : null);
-		image = loadImage(prefix + "logo_small.png");
-		// image = image.getScaledInstance(490, 150, Image.SCALE_SMOOTH);
-		UIManager.put("ICON_LOGO_SMALL", image != null ? new ImageIcon(image)
-				: null);
-		image = loadImage(prefix + "back.png");
-		UIManager.put("ICON_LEFT_ARROW_TINY", image != null ? new ImageIcon(
-				image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)) : null);
-
-		/*
-		 * Images
-		 */
-		UIManager.put("IMAGE_LEMON", loadImage(prefix + "icon.png"));
-	}
+//	/**
+//	 * Loads locale-specific resources: strings, images, et cetera
+//	 * 
+//	 * @param prefix
+//	 * @throws IOException
+//	 */
+//	public static void loadImages(String prefix) {
+//		UIManager.put("ICON_LEFT_ARROW_TINY", image != null ? new ImageIcon(
+//				image.getScaledInstance(16, 16, Image.SCALE_SMOOTH)) : null);
+//	}
 
 	/**
 	 * Enables or disables actions that can be performed by SBMLsqueezer, i.e.,

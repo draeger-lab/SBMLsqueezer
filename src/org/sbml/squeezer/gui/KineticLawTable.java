@@ -139,9 +139,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 					LaTeX = kinetic.getMath().compile(
 							new LaTeX(((Boolean) klg.getSettings().get(
 									CfgKeys.LATEX_NAMES_IN_EQUATIONS))
-									.booleanValue())).toString().replace("text",
-							"mbox").replace("mathrm", "mbox").replace("mathtt",
-							"mbox");
+									.booleanValue())).toString().replace(
+							"text", "mbox").replace("mathrm", "mbox").replace(
+							"mathtt", "mbox");
 				} catch (SBMLException e1) {
 					LaTeX = "invalid";
 				}
@@ -272,7 +272,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						possibleLaws, klg.getSettings(), selected);
 				final JOptionPane pane = new JOptionPane(klsp,
 						JOptionPane.QUESTION_MESSAGE,
-						JOptionPane.OK_CANCEL_OPTION, UIManager.getIcon("ICON_LEMON_SMALL"));
+						JOptionPane.OK_CANCEL_OPTION, UIManager
+								.getIcon("ICON_LEMON_SMALL"));
 				pane.selectInitialValue();
 				Container container = getTopLevelAncestor();
 				final JDialog dialog;

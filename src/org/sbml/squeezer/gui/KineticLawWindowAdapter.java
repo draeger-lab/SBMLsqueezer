@@ -12,7 +12,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Properties;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -24,6 +23,8 @@ import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.LawListener;
 import org.sbml.squeezer.io.SBMLio;
+
+import de.zbit.util.SBProperties;
 
 /**
  * This class allows SBMLsqueezer to create a kinetic law interactively for just
@@ -44,7 +45,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	private KineticLawGenerator klg;
 	private KineticLawSelectionPanel messagePanel;
 	private Reaction reaction;
-	private Properties settings;
+	private SBProperties settings;
 	private int value;
 	private LawListener lawListener;
 
@@ -56,7 +57,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 * @param reactionID
 	 * @throws Throwable
 	 */
-	public KineticLawWindowAdapter(JDialog dialog, Properties settings,
+	public KineticLawWindowAdapter(JDialog dialog, SBProperties settings,
 			SBMLio sbmlIO, String reactionID, LawListener l) throws Throwable {
 		super();
 		this.value = JOptionPane.CLOSED_OPTION;
