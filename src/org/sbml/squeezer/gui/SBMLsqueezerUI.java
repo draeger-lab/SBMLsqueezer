@@ -23,8 +23,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -34,7 +32,6 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -70,6 +67,7 @@ import de.zbit.gui.JBrowserPane;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.gui.cfg.SettingsDialog;
 import de.zbit.io.SBFileFilter;
+import de.zbit.util.SBProperties;
 
 /**
  * 
@@ -203,7 +201,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	}
 
 	static {
-		GUITools.loadImages("org/sbml/squeezer/resources/img/");
+		GUITools.initImages(Resource.class.getResource("img"));
 		GUITools.initLaF("SBMLsqueezer " + SBMLsqueezer.getVersionNumber());
 		setDefaultLookAndFeelDecorated(true);
 	}
@@ -292,11 +290,10 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * Manages all models, storage, loading and selecting models.
 	 */
 	private SBMLio sbmlIO;
-
 	/**
 	 * 
 	 */
-	private Properties settings;
+	private SBProperties properties;
 
 	/**
 	 * 
@@ -309,13 +306,14 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	private JToolBar toolbar;
 
 	/**
-	 * @throws HeadlessException
+	 * 
+	 * @param io
+	 * @param properties
 	 */
-	public SBMLsqueezerUI(SBMLio io, Properties settings)
-			throws HeadlessException {
+	public SBMLsqueezerUI(SBMLio io, SBProperties properties) {
 		super(SBMLsqueezer.class.getSimpleName() + ' '
 				+ SBMLsqueezer.getVersionNumber());
-		this.settings = settings;
+		this.properties = properties;
 		this.sbmlIO = io;
 		this.sbmlIO.addIOProgressListener(new ProgressDialog(this,
 				"SBML IO progress"));
@@ -337,7 +335,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		switch (Command.valueOf(e.getActionCommand())) {
 		case EXIT:
 			try {
-				CfgKeys.saveProperties(settings);
+				SBMLsqueezer.saveProperties();
 			} catch (Exception exc) {
 				exc.printStackTrace();
 				GUITools.showErrorMessage(this, exc);
@@ -356,11 +354,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			KineticLawSelectionDialog klsd;
 			if (e.getSource() instanceof Reaction) {
 				// just one reaction
-				klsd = new KineticLawSelectionDialog(this, settings, sbmlIO,
+				klsd = new KineticLawSelectionDialog(this, properties, sbmlIO,
 						((Reaction) e.getSource()).getId());
 			} else {
 				// whole model
-				klsd = new KineticLawSelectionDialog(this, settings, sbmlIO);
+				klsd = new KineticLawSelectionDialog(this, properties, sbmlIO);
 				klsd.addWindowListener(this);
 				klsd.setVisible(true);
 			}
@@ -372,17 +370,18 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			break;
 		case TO_LATEX:
 			if (e.getSource() instanceof Reaction) {
-				new LaTeXExportDialog(this, settings, (Reaction) e.getSource());
+				new LaTeXExportDialog(this, properties, (Reaction) e
+						.getSource());
 			} else if (e.getSource() instanceof Model) {
-				new LaTeXExportDialog(this, settings, (Model) e.getSource());
+				new LaTeXExportDialog(this, properties, (Model) e.getSource());
 			} else {
-				String dir = settings.get(CfgKeys.LATEX_DIR).toString();
+				String dir = properties.get(CfgKeys.LATEX_DIR).toString();
 				File out = GUITools.saveFileDialog(this, dir, false, false,
 						JFileChooser.FILES_ONLY, SBFileFilter.TeX_FILE_FILTER);
 				if (out != null) {
 					String path = out.getParent();
 					if (!path.equals(dir)) {
-						settings.put(CfgKeys.LATEX_DIR, path);
+						properties.put(CfgKeys.LATEX_DIR, path);
 					}
 					if (!out.exists()
 							|| GUITools.overwriteExistingFile(this, out)) {
@@ -392,24 +391,23 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 			break;
 		case SET_PREFERENCES:
-			SettingsDialog dialog = new SettingsDialog(this, CfgKeys
-					.getDefaultProperties());
-			if (dialog.showSettingsDialog((Properties) settings.clone()) == SettingsDialog.APPROVE_OPTION) {
+			SettingsDialog dialog = new SettingsDialog(this);
+			if (dialog.showSettingsDialog((SBProperties) properties.clone()) == SettingsDialog.APPROVE_OPTION) {
 				for (Object key : dialog.getProperties().keySet()) {
-					settings.put(key, dialog.getProperties().get(key));
+					properties.put(key, dialog.getProperties().get(key));
 				}
 			}
 			break;
 		case OPEN_FILE:
-			chooser = GUITools.createJFileChooser(settings
-					.get(CfgKeys.OPEN_DIR).toString(), false, false,
+			chooser = GUITools.createJFileChooser(properties.get(
+					CfgKeys.OPEN_DIR).toString(), false, false,
 					JFileChooser.FILES_ONLY, SBFileFilter.SBML_FILE_FILTER);
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				new FileReaderThread(this, chooser.getSelectedFile());
 			}
 			break;
 		case OPEN_LAST_FILE:
-			File f = new File(settings.get(CfgKeys.SBML_FILE).toString());
+			File f = new File(properties.get(CfgKeys.SBML_FILE).toString());
 			if (f.exists() && f.isFile()) {
 				new FileReaderThread(this, f);
 				setEnabled(false, Command.OPEN_LAST_FILE);
@@ -419,13 +417,13 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			SBFileFilter filterText = SBFileFilter.TEXT_FILE_FILTER;
 			SBFileFilter filterTeX = SBFileFilter.TeX_FILE_FILTER;
 			SBFileFilter filterSBML = SBFileFilter.SBML_FILE_FILTER;
-			chooser = GUITools.createJFileChooser(settings
-					.get(CfgKeys.SAVE_DIR).toString(), false, false,
+			chooser = GUITools.createJFileChooser(properties.get(
+					CfgKeys.SAVE_DIR).toString(), false, false,
 					JFileChooser.FILES_ONLY, filterText, filterTeX, filterSBML);
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				final File out = chooser.getSelectedFile();
 				if (out.getParentFile() != null)
-					settings.put(CfgKeys.SAVE_DIR, out.getParentFile()
+					properties.put(CfgKeys.SAVE_DIR, out.getParentFile()
 							.getAbsolutePath());
 				if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
 					if (filterSBML.accept(out))
@@ -526,7 +524,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 * @param model
 	 */
 	private void addModel(Model model) {
-		SBMLModelSplitPane split = new SBMLModelSplitPane(model, settings);
+		SBMLModelSplitPane split = new SBMLModelSplitPane(model, properties);
 		split.addActionListener(this);
 		tabbedPane.add(model.getId(), split);
 		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
@@ -580,7 +578,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		closeItem.addActionListener(this);
 		exitItem.addActionListener(this);
 
-		Object path = settings.get(CfgKeys.SBML_FILE);
+		Object path = properties.get(CfgKeys.SBML_FILE);
 		File sbmlFile = new File(path == null ? "" : path.toString());
 		if (sbmlFile.exists() && sbmlFile.isFile()) {
 			JMenuItem lastSBMLFile = new JMenuItem(sbmlFile.getName());
@@ -703,8 +701,9 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		// "Dynamically simulate the current model."));
 
 		if (UIManager.getIcon("ICON_SETTINGS_TINY") != null) {
-			toolbar.add(GUITools.createButton(UIManager.getIcon("ICON_SETTINGS_TINY"),
-					this, Command.SET_PREFERENCES, "Adjust your preferences."));
+			toolbar.add(GUITools.createButton(UIManager
+					.getIcon("ICON_SETTINGS_TINY"), this,
+					Command.SET_PREFERENCES, "Adjust your preferences."));
 		}
 		toolbar.addSeparator();
 		JButton helpButton = new JButton(UIManager.getIcon("ICON_HELP_TINY"));
@@ -740,13 +739,15 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		tabbedPane.addChangeListener(sbmlIO);
 		getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		setSBMLsqueezerBackground();
-		setIconImage((Image) UIManager.getIcon("IMAGE_LEMON"));
+		// TODO
+//		setIconImage(UIManager.getIcon("IMAGE_LEMON"));
 		for (Model m : sbmlIO.getListOfModels()) {
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(),
-					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+					((Boolean) properties.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue());
-			if (m != null)
+			if (m != null) {
 				addModel(m);
+			}
 		}
 	}
 
@@ -759,12 +760,12 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 		try {
 			Model model = sbmlIO.convert2Model(file.getAbsolutePath());
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(),
-					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+					((Boolean) properties.get(CfgKeys.SHOW_SBML_WARNINGS))
 							.booleanValue());
 			if (model != null) {
 				addModel(model);
 				String path = file.getAbsolutePath();
-				String oldPath = settings.get(CfgKeys.SBML_FILE).toString();
+				String oldPath = properties.get(CfgKeys.SBML_FILE).toString();
 				if (!path.equals(oldPath)) {
 					for (int i = 0; i < getJMenuBar().getMenuCount(); i++) {
 						JMenu menu = getJMenuBar().getMenu(i);
@@ -785,11 +786,11 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 							}
 						}
 					}
-					settings.put(CfgKeys.SBML_FILE, path);
+					properties.put(CfgKeys.SBML_FILE, path);
 				}
 				if (!file.getParentFile().equals(
-						settings.get(CfgKeys.OPEN_DIR).toString()))
-					settings.put(CfgKeys.OPEN_DIR, file.getParentFile());
+						properties.get(CfgKeys.OPEN_DIR).toString()))
+					properties.put(CfgKeys.OPEN_DIR, file.getParentFile());
 			}
 		} catch (Exception exc) {
 			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
@@ -842,7 +843,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 						Command.SQUEEZE, Command.TO_LATEX,
 						Command.CHECK_STABILITY,
 						Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
-				if (settings.get(CfgKeys.SBML_FILE).toString().length() > 0)
+				if (properties.get(CfgKeys.SBML_FILE).toString().length() > 0)
 					setEnabled(true, Command.OPEN_LAST_FILE);
 			}
 			setSBMLsqueezerBackground();
@@ -891,7 +892,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			setEnabled(true, Command.ONLINE_HELP, Command.LICENSE);
 		else if (we.getSource() instanceof SBMLsqueezerUI) {
 			try {
-				CfgKeys.saveProperties(settings);
+				SBMLsqueezer.saveProperties(properties);
 			} catch (Exception exc) {
 				exc.printStackTrace();
 				GUITools.showErrorMessage(this, exc);
@@ -949,7 +950,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private void writeLaTeX(final File out) {
 		try {
-			LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), out, settings);
+			LaTeXExport.writeLaTeX(sbmlIO.getSelectedModel(), out, properties);
 			// new Thread(new Runnable() {
 			//
 			// public void run() {
@@ -995,7 +996,7 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 	 */
 	private void writeText(final File out) {
 		try {
-			new TextExport(sbmlIO.getSelectedModel(), out, settings);
+			new TextExport(sbmlIO.getSelectedModel(), out, properties);
 			// new Thread(new Runnable() {
 			//
 			// public void run() {

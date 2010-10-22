@@ -34,6 +34,7 @@ import org.sbml.jsbml.util.filters.SBOFilter;
 import org.sbml.squeezer.util.StringTools;
 
 /**
+ * 
  * @author Andreas Dr&auml;ger
  * @date 2010-10-22
  * 
@@ -957,9 +958,9 @@ public class ParameterFactory {
 			p.setSBOTerm(153);
 		}
 		if (!p.isSetUnits()) {
-			p.setUnits(unitFactory.unitSubstancePerTime(
-					model.getUnitDefinition("substance"),
-					model.getUnitDefinition("time")));
+			p.setUnits(unitFactory.unitSubstancePerTime(model
+					.getUnitDefinition("substance"), model
+					.getUnitDefinition("time")));
 		}
 		if (!p.isSetName())
 			p.setName("rate constant for synthesis");
@@ -976,9 +977,9 @@ public class ParameterFactory {
 		if (!p.isSetSBOTerm())
 			p.setSBOTerm(156);
 		if (!p.isSetUnits()) {
-			p.setUnits(unitFactory.unitSubstancePerTime(
-					model.getUnitDefinition("substance"),
-					model.getUnitDefinition("time")));
+			p.setUnits(unitFactory.unitSubstancePerTime(model
+					.getUnitDefinition("substance"), model
+					.getUnitDefinition("time")));
 		}
 		if (!p.isSetName())
 			p.setName("rate constant for degradation");
@@ -1171,7 +1172,7 @@ public class ParameterFactory {
 		}
 		return kVr;
 	}
-	
+
 	/**
 	 * Limiting rate
 	 * 
@@ -1181,7 +1182,7 @@ public class ParameterFactory {
 	public LocalParameter parameterVmax(boolean forward) {
 		return parameterKcatOrVmax(null, forward);
 	}
-	
+
 	/**
 	 * For the additive Model: weight parameter
 	 * 

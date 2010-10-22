@@ -74,12 +74,11 @@ import org.sbml.jsbml.Symbol;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Variable;
+import org.sbml.jsbml.util.HTMLFormula;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.resources.Resource;
-import org.sbml.squeezer.util.HTMLFormula;
-import org.sbml.tolatex.io.MIRIAMparser;
+import org.sbml.tolatex.SBML2LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
@@ -123,21 +122,6 @@ public class SBasePanel extends JPanel {
 	 * 
 	 */
 	private Properties settings;
-
-	/**
-	 * 
-	 */
-	private static final MIRIAMparser miriam = new MIRIAMparser();
-
-	static {
-		try {
-			miriam.setMIRIAMDocument(Resource.getInstance()
-					.getStreamFromResourceLocation(
-							"org/sbml/squeezer/resources/cfg/MIRIAM.xml"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * 
@@ -364,8 +348,10 @@ public class SBasePanel extends JPanel {
 								.getVariableInstance(), settings), 1, ++row, 3,
 								1, 1, 1);
 			else if (mc instanceof InitialAssignment)
-				lh.add(new SBasePanel(((InitialAssignment) mc)
-						.getVariableInstance(), settings), 1, ++row, 3, 1, 1, 1);
+				lh
+						.add(new SBasePanel(((InitialAssignment) mc)
+								.getVariableInstance(), settings), 1, ++row, 3,
+								1, 1, 1);
 			else if (mc instanceof AssignmentRule)
 				lh
 						.add(new SBasePanel(((AssignmentRule) mc)
@@ -639,7 +625,7 @@ public class SBasePanel extends JPanel {
 				String cvtString = cvt.toString();
 				for (int k = 0; k < cvt.getNumResources(); k++) {
 					String uri = cvt.getResourceURI(k);
-					String loc[] = miriam.getLocations(uri);
+					String loc[] = SBML2LaTeX.getMIRIAMparser().getLocations(uri);
 					if (loc.length > 0) {
 						String split[] = cvtString.split(uri);
 						StringBuilder sbu = new StringBuilder();
@@ -798,7 +784,8 @@ public class SBasePanel extends JPanel {
 					+ sMath.getClass().getCanonicalName() + ' '));
 			String l;
 			try {
-				l = sMath.getMath().compile(latex).toString().replace("\\\\", "\\");
+				l = sMath.getMath().compile(latex).toString().replace("\\\\",
+						"\\");
 			} catch (SBMLException e) {
 				l = "invalid";
 			}

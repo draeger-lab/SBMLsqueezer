@@ -66,6 +66,7 @@ import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.gui.cfg.SettingsTabbedPane;
 import de.zbit.io.SBFileFilter;
+import de.zbit.util.SBProperties;
 
 /**
  * This is the main GUI class.
@@ -104,7 +105,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private SBMLio sbmlIO;
 
-	private Properties settings;
+	private SBProperties settings;
 
 	private SettingsTabbedPane settingsPanel;
 
@@ -114,7 +115,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param owner
 	 * @param settings
 	 */
-	private KineticLawSelectionDialog(Frame owner, Properties settings) {
+	private KineticLawSelectionDialog(Frame owner, SBProperties settings) {
 		super(owner, "SBMLsqueezer", true);
 		// if (owner == null)
 		// setIconImage(GUITools.ICON_LEMON);
@@ -131,7 +132,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param settings
 	 * @param sbmlIO
 	 */
-	public KineticLawSelectionDialog(Frame owner, Properties settings,
+	public KineticLawSelectionDialog(Frame owner, SBProperties settings,
 			SBMLio sbmlIO) {
 		this(owner, settings);
 		this.sbmlIO = sbmlIO;
@@ -145,7 +146,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param sbmlIO
 	 * @param reaction
 	 */
-	public KineticLawSelectionDialog(Frame owner, Properties settings,
+	public KineticLawSelectionDialog(Frame owner, SBProperties settings,
 			SBMLio sbmlIO, String reactionID) {
 		this(owner, settings);
 		try {
@@ -472,7 +473,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 									40));
 			apply.setText("Generate");
 			apply.setIcon(UIManager.getIcon("ICON_LEMON_TINY"));
-			helpButton = new JButton("Help",UIManager.getIcon("ICON_HELP_TINY"));
+			helpButton = new JButton("Help", UIManager
+					.getIcon("ICON_HELP_TINY"));
 			helpButton.addActionListener(this);
 			leftPanel.add(helpButton);
 			break;
@@ -494,10 +496,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 									"Allowes yout to save the generated differential equations as *.txt or *.tex files. Note that this export only contains those reactions together with referenced, species, compartments, compartment- and species-types, units, and parameters for which new kinetic equations have been generated. If you wish to obtain a complete model report, please choose the \"save as\" function in the main menu.",
 									40));
 			jButtonReactionsFrameSave.setText("Export changes");
-			jButtonReactionsFrameSave.setIcon(UIManager.getIcon("ICON_LATEX_TINY"));
+			jButtonReactionsFrameSave.setIcon(UIManager
+					.getIcon("ICON_LATEX_TINY"));
 			jButtonReactionsFrameSave.addActionListener(this);
 			leftPanel.add(jButtonReactionsFrameSave);
-			JButton back = new JButton("Back", UIManager.getIcon("ICON_LEFT_ARROW_TINY"));
+			JButton back = new JButton("Back", UIManager
+					.getIcon("ICON_LEFT_ARROW_TINY"));
 			back.addActionListener(this);
 			rightPanel.add(back);
 			break;
@@ -518,8 +522,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private SettingsTabbedPane getJSettingsPanel() {
 		if (settingsPanel == null) {
-			settingsPanel = new SettingsTabbedPane(settings, CfgKeys
-					.getDefaultProperties());
+			settingsPanel = new SettingsTabbedPane(settings);
 			// settingsPanel.setBackground(Color.WHITE);
 		}
 		return settingsPanel;
@@ -536,7 +539,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 		label.setBackground(Color.WHITE);
 		label.setText("<html><body><br><br><br><br><br><br>Version "
 				+ SBMLsqueezer.getVersionNumber() + "</body></html>");
-		Dimension d = GUITools.getDimension(UIManager.getIcon("ICON_LOGO_SMALL"));
+		Dimension d = GUITools.getDimension(UIManager
+				.getIcon("ICON_LOGO_SMALL"));
 		d.setSize(d.getWidth() + 125, d.getHeight() + 10);
 		label.setPreferredSize(new Dimension(d));
 		JPanel p = new JPanel();

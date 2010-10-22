@@ -23,7 +23,6 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -43,6 +42,7 @@ import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.StringTools;
 
 import de.zbit.gui.LayoutHelper;
+import de.zbit.util.SBProperties;
 
 /**
  * A {@link JPanel} to let the user select all default instances of
@@ -84,15 +84,14 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	 * Reaction Mechanism Panel
 	 * 
 	 * @param properties
-	 * @param defaults
 	 */
-	public SettingsPanelDefaultMechanisms(Properties properties,
-			Properties defaults) {
-		super(properties, defaults);
+	public SettingsPanelDefaultMechanisms(SBProperties properties) {
+		super(properties);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.zbit.gui.cfg.SettingsPanel#accepts(java.lang.Object)
 	 */
 	@Override
@@ -111,7 +110,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	 * @param key
 	 * @return
 	 */
-	private JPanel createButtonGroupPanel(Set<String> classes, CfgKeys key) {
+	private JPanel createButtonGroupPanel(Set<String> classes, String key) {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		JPanel p = new JPanel();
 		LayoutHelper helper = new LayoutHelper(p);
@@ -129,32 +128,25 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 					className));
 			StringBuilder toolTip = new StringBuilder();
 			String msg;
-			switch (key) {
-			case KINETICS_GENE_REGULATION:
+			if (key.equals(CfgKeys.KINETICS_GENE_REGULATION)) {
 				msg = "Check this box if you want %s  as reaction scheme for gene regulation (reactions involving genes, RNA and proteins)";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-				break;
-			case KINETICS_UNI_UNI_TYPE:
+			} else if (key.equals(CfgKeys.KINETICS_UNI_UNI_TYPE)) {
 				msg = "Check this box if %s is to be applied for uni-uni reactions (one reactant, one product).";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-				break;
-			case KINETICS_BI_UNI_TYPE:
+			} else if (key.equals(CfgKeys.KINETICS_BI_UNI_TYPE)) {
 				msg = "Check this box if you want the %s scheme as reaction scheme for bi-uni reactions (two reactant, one product).";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-				break;
-			case KINETICS_BI_BI_TYPE:
+			} else if (key.equals(CfgKeys.KINETICS_BI_BI_TYPE)) {
 				msg = "Check this box if you want the %s to be applied to all bi-bi reactions (two reactants, two products).";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-				break;
-			case KINETICS_OTHER_ENZYME_REACTIONS:
+			} else if (key.equals(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS)) {
 				msg = "Reactions, which are enzyme-catalyzed, and follow none of the schemes uni-uni, bi-uni and bi-bi can be modeled using %s.";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-				break;
-			default:
+			} else {
 				msg = "Reactions, which are %s, can be described using %s.";
 				toolTip.append(String.format(msg, key.toString().toLowerCase()
 						.replace('_', ' '), type));
-				break;
 			}
 			jRButton[i].setToolTipText(GUITools.toHTML(toolTip.toString(), 40));
 			jRButton[i].setEnabled(true);
@@ -168,11 +160,13 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 		int pos = 0;
 		boolean oneIsSelected = false;
 		for (JRadioButton radioButton : jRButton) {
-			if (radioButton.isSelected())
+			if (radioButton.isSelected()) {
 				oneIsSelected = true;
-			if (defaultProperties.get(key).toString().endsWith(
-					radioButton.getText()))
+			}
+			if (properties.getDefaults().get(key).toString().endsWith(
+					radioButton.getText())) {
 				pos = i;
+			}
 			i++;
 		}
 		if (!oneIsSelected) {// no one is selected
@@ -271,7 +265,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
 		JTabbedPane tabs = new JTabbedPane(JTabbedPane.LEFT);
-		CfgKeys curr = CfgKeys.KINETICS_NONE_ENZYME_REACTIONS;
+		String curr = CfgKeys.KINETICS_NONE_ENZYME_REACTIONS;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsNonEnzyme(treatReactionsReversible), curr));
 		curr = CfgKeys.KINETICS_UNI_UNI_TYPE;
@@ -297,9 +291,9 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	 * @param key
 	 * @return
 	 */
-	private String createTitleFor(CfgKeys key) {
-		StringTokenizer st = new StringTokenizer(key.toString().substring(8)
-				.toLowerCase().replace('_', ' '));
+	private String createTitleFor(String key) {
+		StringTokenizer st = new StringTokenizer(key.substring(8).toLowerCase()
+				.replace('_', ' '));
 		StringBuilder title = new StringBuilder();
 		while (st.hasMoreElements()) {
 			title.append(' ');
@@ -316,8 +310,8 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
 	 */
 	@Override
-	public Properties getProperties() {
-		Properties p = new Properties();
+	public SBProperties getProperties() {
+		SBProperties p = new SBProperties();
 		Object value;
 		for (Object key : properties.keySet()) {
 			value = properties.get(key);
@@ -392,7 +386,7 @@ public class SettingsPanelDefaultMechanisms extends SettingsPanel {
 				validate();
 			} else {
 				properties
-						.put(CfgKeys.valueOf(rbutton.getActionCommand()),
+						.put(rbutton.getActionCommand(),
 								SBMLsqueezer.KINETICS_PACKAGE + '.'
 										+ rbutton.getText());
 			}

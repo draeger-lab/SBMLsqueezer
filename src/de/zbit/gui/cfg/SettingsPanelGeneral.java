@@ -18,9 +18,6 @@
  */
 package de.zbit.gui.cfg;
 
-import java.awt.GridLayout;
-import java.util.Properties;
-
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,6 +28,7 @@ import javax.swing.event.ChangeEvent;
 import org.sbml.squeezer.CfgKeys;
 
 import de.zbit.gui.LayoutHelper;
+import de.zbit.util.SBProperties;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -56,10 +54,9 @@ public class SettingsPanelGeneral extends SettingsPanel {
 	/**
 	 * 
 	 * @param properties
-	 * @param defaults
 	 */
-	public SettingsPanelGeneral(Properties properties, Properties defaults) {
-		super(properties, defaults);
+	public SettingsPanelGeneral(SBProperties properties) {
+		super(properties);
 	}
 
 	/*
@@ -80,7 +77,7 @@ public class SettingsPanelGeneral extends SettingsPanel {
 	 * @see org.sbml.squeezer.gui.SettingsPanel#getProperties()
 	 */
 	@Override
-	public Properties getProperties() {
+	public SBProperties getProperties() {
 		if (chooser.checkOpenDir()) {
 			properties.put(CfgKeys.OPEN_DIR, chooser.getOpenDir());
 		}

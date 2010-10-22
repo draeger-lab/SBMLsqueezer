@@ -20,7 +20,6 @@ package de.zbit.gui.cfg;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -34,9 +33,11 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 
 import org.sbml.squeezer.CfgKeys;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.GUITools;
 
 import de.zbit.gui.LayoutHelper;
+import de.zbit.util.SBProperties;
 
 /**
  * This class is a panel, which contains all necessary options to be specified
@@ -84,10 +85,9 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	/**
 	 * 
 	 * @param settings
-	 * @param defaults
 	 */
-	public SettingsPanelKinetics(Properties settings, Properties defaults) {
-		super(settings, defaults);
+	public SettingsPanelKinetics(SBProperties settings) {
+		super(settings);
 	}
 
 	/*
@@ -539,7 +539,7 @@ public class SettingsPanelKinetics extends SettingsPanel {
 	public void restoreDefaults() {
 		String openDir = properties.get(CfgKeys.OPEN_DIR).toString();
 		String saveDir = properties.get(CfgKeys.SAVE_DIR).toString();
-		properties = CfgKeys.getDefaultProperties();
+		properties = SBMLsqueezer.getConfiguration().getProperties();
 		properties.put(CfgKeys.OPEN_DIR, openDir);
 		properties.put(CfgKeys.SAVE_DIR, saveDir);
 		init();
