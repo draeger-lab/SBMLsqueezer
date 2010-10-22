@@ -57,10 +57,10 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.SBMLio;
-import org.sbml.squeezer.io.TextExport;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.tolatex.io.LaTeXExport;
+import org.sbml.tolatex.io.TextExport;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;

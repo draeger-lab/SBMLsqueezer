@@ -38,6 +38,11 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 7794507034989326338L;
+
+	/**
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException

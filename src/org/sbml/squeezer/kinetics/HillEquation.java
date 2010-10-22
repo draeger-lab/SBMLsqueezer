@@ -42,6 +42,11 @@ public class HillEquation extends BasicKineticLaw implements
 		InterfaceIntegerStoichiometry {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -3319749306692986819L;
+
+	/**
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -72,13 +77,16 @@ public class HillEquation extends BasicKineticLaw implements
 		for (int enzymeNum = 0; enzymeNum < rates.length; enzymeNum++) {
 			String enzyme = enzymes.size() == 0 ? null : enzymes.get(enzymeNum);
 			Species reactant = r.getReactant(0).getSpeciesInstance();
-			LocalParameter kSreactant = parameterKS(reactant, enzyme);
-			LocalParameter hillCoeff = parameterHillCoefficient(enzyme);
+			LocalParameter kSreactant = parameterFactory.parameterKS(reactant,
+					enzyme);
+			LocalParameter hillCoeff = parameterFactory
+					.parameterHillCoefficient(enzyme);
 
-			rates[enzymeNum] = new ASTNode(parameterKcatOrVmax(enzyme, true),
-					this);
-			if (enzyme != null)
+			rates[enzymeNum] = new ASTNode(parameterFactory
+					.parameterKcatOrVmax(enzyme, true), this);
+			if (enzyme != null) {
 				rates[enzymeNum].multiplyWith(speciesTerm(enzyme));
+			}
 
 			ASTNode specTerm = speciesTerm(reactant);
 			ASTNode denominator = null;
@@ -88,15 +96,16 @@ public class HillEquation extends BasicKineticLaw implements
 
 				ASTNode prodTerm = new ASTNode(1, this);
 				prodTerm.minus(ASTNode.frac(speciesTerm(product), ASTNode
-						.times(
-								new ASTNode(parameterEquilibriumConstant(),
-										this), speciesTerm(reactant))));
+						.times(new ASTNode(parameterFactory
+								.parameterEquilibriumConstant(), this),
+								speciesTerm(reactant))));
 
 				rates[enzymeNum].multiplyWith(speciesTerm(reactant));
 				rates[enzymeNum].divideBy(new ASTNode(kSreactant, this));
 				rates[enzymeNum].multiplyWith(prodTerm);
 
-				LocalParameter kSproduct = parameterKS(product, enzyme);
+				LocalParameter kSproduct = parameterFactory.parameterKS(
+						product, enzyme);
 				// S/kS + P/kP
 				specTerm = ASTNode
 						.frac(specTerm, new ASTNode(kSreactant, this));
@@ -116,13 +125,13 @@ public class HillEquation extends BasicKineticLaw implements
 				Species modifier = getModel().getSpecies(
 						activators.isEmpty() ? inhibitors.get(0) : activators
 								.get(0));
-				LocalParameter kMmodifier = parameterMichaelis(modifier.getId(),
-						enzyme);
+				LocalParameter kMmodifier = parameterFactory
+						.parameterMichaelis(modifier.getId(), enzyme);
 				ASTNode kMmPow = ASTNode.pow(new ASTNode(kMmodifier, this),
 						new ASTNode(hillCoeff, this));
 				ASTNode modPow = ASTNode.pow(speciesTerm(modifier),
 						new ASTNode(hillCoeff, this));
-				LocalParameter beta = parameterBeta(r.getId());
+				LocalParameter beta = parameterFactory.parameterBeta(r.getId());
 				if (SBO.isInhibitor(modifier.getSBOTerm()))
 					beta.setValue(beta.getValue() * (-1));
 				denominator = ASTNode.frac(kMmPow.clone().plus(modPow.clone()),

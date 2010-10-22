@@ -35,6 +35,11 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 		InterfaceIrreversibleKinetics, InterfaceBiUniKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -3578530408534473577L;
+
+	/**
 	 * @param parentReaction
 	 * @param types
 	 * @throws RateLawNotApplicableException
@@ -53,9 +58,10 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 	 */
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
-		LocalParameter p_h = parameterTimeOrder();
+		LocalParameter p_h = parameterFactory.parameterTimeOrder();
 		// p_h.setValue(0d); // This leads to a crash of libSBML!
-		LocalParameter p_kass = parameterSpaceRestrictedAssociationConst(p_h.getValue());
+		LocalParameter p_kass = parameterFactory
+				.parameterSpaceRestrictedAssociationConst(p_h.getValue());
 		ASTNode ass = new ASTNode(p_kass, this);
 		ass.multiplyWith(ASTNode.pow(new ASTNode(ASTNode.Type.NAME_TIME, this),
 				ASTNode.uMinus(new ASTNode(p_h, this))));
@@ -63,8 +69,8 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
 				ASTNode basis = speciesTerm(specRef);
-				basis.raiseByThePowerOf(parameterKineticOrder(i == 0 ? "x"
-						: "y"));
+				basis.raiseByThePowerOf(parameterFactory
+						.parameterKineticOrder(i == 0 ? "x" : "y"));
 				ass.multiplyWith(basis);
 			}
 			i++;

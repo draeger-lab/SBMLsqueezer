@@ -39,6 +39,11 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		InterfaceModulatedKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -2058956774794592395L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param types
@@ -78,21 +83,23 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	 */
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode denominator = new ASTNode(this), curr;
-		LocalParameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterFactory
+				.parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			LocalParameter kM = parameterMichaelis(specRef.getSpecies(),
-					enzyme, forward);
+			LocalParameter kM = parameterFactory.parameterMichaelis(specRef
+					.getSpecies(), enzyme, forward);
 			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
 					speciesTerm(specRef), new ASTNode(kM, this)));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
 					.getStoichiometry(), this), new ASTNode(hr, this)));
-			if (denominator.isUnknown())
+			if (denominator.isUnknown()) {
 				denominator = curr;
-			else
+			} else {
 				denominator.multiplyWith(curr);
+			}
 		}
 		return denominator;
 	}

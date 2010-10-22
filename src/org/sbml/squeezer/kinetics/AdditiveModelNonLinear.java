@@ -34,6 +34,11 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 7012411486160642421L;
+
+	/**
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException

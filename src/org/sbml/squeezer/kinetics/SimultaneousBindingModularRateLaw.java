@@ -39,6 +39,11 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 		InterfaceReversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -2477205847639987264L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param types
@@ -85,12 +90,14 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		LocalParameter kM;
-		LocalParameter hr = parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterFactory
+				.parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
 				.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
+			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(),
+					enzyme, forward);
 			curr = new ASTNode(1, this);
 			curr.plus(speciesTerm(specRef).divideBy(kM));
 			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef

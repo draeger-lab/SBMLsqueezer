@@ -39,6 +39,11 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 		InterfaceZeroProducts, InterfaceModulatedKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -4541288426574964182L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param typeParameters
@@ -56,13 +61,12 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util
 	 * .List, int)
 	 */
-	// @Override
+	@Override
 	final ASTNode association(List<String> catalysts, int catNum) {
 		orderReactants = 0;
 		orderProducts = Double.NaN;
-		return new ASTNode(
-				parameterAssociationConst(catalysts.size() == 0 ? null
-						: catalysts.get(catNum)), this);
+		return new ASTNode(parameterFactory.parameterAssociationConst(catalysts
+				.size() == 0 ? null : catalysts.get(catNum)), this);
 	}
 
 	/*

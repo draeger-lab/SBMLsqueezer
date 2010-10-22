@@ -41,6 +41,11 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 641441833130051384L;
+
+	/**
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -66,8 +71,8 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 		Reaction r = getParentSBMLObject();
 		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
 			Species s = r.getProduct(0).getSpeciesInstance();
-			return ASTNode.sum(m, ASTNode.times(new ASTNode(parameterW(s
-					.getId(), r.getId()), this), speciesTerm(s)));
+			return ASTNode.sum(m, ASTNode.times(new ASTNode(parameterFactory
+					.parameterW(s.getId(), r.getId()), this), speciesTerm(s)));
 		}
 		return m;
 	}

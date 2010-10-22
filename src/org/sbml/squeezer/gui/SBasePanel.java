@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
@@ -42,7 +41,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.xml.stream.XMLStreamException;
 
-import org.jdom.JDOMException;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.Compartment;
@@ -79,9 +77,9 @@ import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.compilers.LaTeX;
 import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.io.MIRIAMparser;
 import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.HTMLFormula;
+import org.sbml.tolatex.io.MIRIAMparser;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
@@ -136,9 +134,7 @@ public class SBasePanel extends JPanel {
 			miriam.setMIRIAMDocument(Resource.getInstance()
 					.getStreamFromResourceLocation(
 							"org/sbml/squeezer/resources/cfg/MIRIAM.xml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JDOMException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

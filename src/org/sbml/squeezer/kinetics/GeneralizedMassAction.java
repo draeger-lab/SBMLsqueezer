@@ -45,6 +45,11 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 3636228520951145401L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param types
@@ -402,13 +407,15 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			for (int i = 0; i < mods.length; i++) {
 				if (type) {
 					// Activator Mod
-					LocalParameter p_kAn = parameterKa(modifiers.get(i));
+					LocalParameter p_kAn = parameterFactory
+							.parameterKa(modifiers.get(i));
 					mods[i] = ASTNode.frac(speciesTerm(modifiers.get(i)),
 							ASTNode.sum(new ASTNode(p_kAn, this),
 									speciesTerm(modifiers.get(i))));
 				} else {
 					// Inhibitor Mod
-					LocalParameter p_kIn = parameterKi(modifiers.get(i));
+					LocalParameter p_kIn = parameterFactory
+							.parameterKi(modifiers.get(i));
 					ASTNode kI = new ASTNode(p_kIn, this);
 					mods[i] = ASTNode.frac(kI, ASTNode.sum(kI.clone(),
 							speciesTerm(modifiers.get(i))));
@@ -451,11 +458,12 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 * @return A formula consisting of a constant multiplied with the product
 	 *         over all reactants.
 	 */
+	@SuppressWarnings("deprecation")
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
-		LocalParameter p_kass = parameterAssociationConst(catalysts.size() > 0 ? catalysts
-				.get(catNum)
-				: null);
+		LocalParameter p_kass = parameterFactory
+				.parameterAssociationConst(catalysts.size() > 0 ? catalysts
+						.get(catNum) : null);
 		ASTNode ass = new ASTNode(p_kass, this);
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
@@ -511,14 +519,16 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	ASTNode dissociation(List<String> catalysts, int c) {
 		Reaction r = getParentSBMLObject();
-		LocalParameter p_kdiss = parameterDissociationConst(catalysts.size() > 0 ? catalysts
-				.get(c)
-				: null);
+		LocalParameter p_kdiss = parameterFactory
+				.parameterDissociationConst(catalysts.size() > 0 ? catalysts
+						.get(c) : null);
 		ASTNode diss = new ASTNode(p_kdiss, this);
-		for (SpeciesReference specRef : r.getListOfProducts())
-			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm()))
+		for (SpeciesReference specRef : r.getListOfProducts()) {
+			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
 				diss.multiplyWith(ASTNode.pow(speciesTerm(specRef),
 						new ASTNode(specRef.getStoichiometry(), this)));
+			}
+		}
 		return diss;
 	}
 

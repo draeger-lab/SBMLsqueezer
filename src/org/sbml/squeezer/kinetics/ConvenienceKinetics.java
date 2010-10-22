@@ -54,6 +54,11 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 8622041794368325382L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param types
@@ -99,8 +104,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			if (denominator != null) {
 				numerator.divideBy(denominator);
 			}
-			enzymes[i] = !fullRank ? ASTNode.times(new ASTNode(
-					parameterVelocityConstant(enzyme), this), numerator)
+			enzymes[i] = !fullRank ? ASTNode.times(new ASTNode(parameterFactory
+					.parameterVelocityConstant(enzyme), this), numerator)
 					: numerator;
 			if (enzyme != null) {
 				enzymes[i] = ASTNode.times(speciesTerm(enzyme), enzymes[i]);
@@ -140,7 +145,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			int i;
 			for (i = 0; i < listOf.size(); i++) {
 				SpeciesReference ref = listOf.get(i);
-				p_kM = parameterMichaelis(ref.getSpecies(), enzyme, forward);
+				p_kM = parameterFactory.parameterMichaelis(ref.getSpecies(),
+						enzyme, forward);
 				if (forward) {
 					reactants[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM),
 							ref.getStoichiometry());
@@ -151,17 +157,21 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			}
 			i = 0;
 			for (SpeciesReference ref : reaction.getListOfReactants()) {
-				reactantsroot[i++] = ASTNode.times(this,
-						parameterKG(ref.getSpecies()),
-						parameterMichaelis(ref.getSpecies(), enzyme, forward))
-						.raiseByThePowerOf(ref.getStoichiometry());
+				reactantsroot[i++] = ASTNode.times(
+						this,
+						parameterFactory.parameterKG(ref.getSpecies()),
+						parameterFactory.parameterMichaelis(ref.getSpecies(),
+								enzyme, forward)).raiseByThePowerOf(
+						ref.getStoichiometry());
 			}
 			i = 0;
 			for (SpeciesReference ref : reaction.getListOfProducts()) {
-				productroot[i++] = ASTNode.times(this,
-						parameterKG(ref.getSpecies()),
-						parameterMichaelis(ref.getSpecies(), enzyme, forward))
-						.raiseByThePowerOf(ref.getStoichiometry());
+				productroot[i++] = ASTNode.times(
+						this,
+						parameterFactory.parameterKG(ref.getSpecies()),
+						parameterFactory.parameterMichaelis(ref.getSpecies(),
+								enzyme, forward)).raiseByThePowerOf(
+						ref.getStoichiometry());
 			}
 			if (forward) {
 				ASTNode proot = ASTNode.times(productroot);
@@ -187,11 +197,13 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 						.sqrt(ASTNode.frac(proot, rroot)));
 			}
 		} else {
-			LocalParameter kcat = parameterKcatOrVmax(enzyme, forward);
+			LocalParameter kcat = parameterFactory.parameterKcatOrVmax(enzyme,
+					forward);
 			ASTNode curr;
 			equation = new ASTNode(kcat, this);
 			for (SpeciesReference specRef : listOf) {
-				p_kM = parameterMichaelis(specRef.getSpecies(), enzyme, forward);
+				p_kM = parameterFactory.parameterMichaelis(
+						specRef.getSpecies(), enzyme, forward);
 				curr = speciesTerm(specRef).divideBy(p_kM);
 				if (specRef.getStoichiometry() != 1d) {
 					curr.raiseByThePowerOf(specRef.getStoichiometry());
@@ -226,8 +238,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		for (int i = 0; i < denoms.length; i++) {
 			SpeciesReference ref = forward ? reaction.getReactant(i) : reaction
 					.getProduct(i);
-			LocalParameter p_kM = parameterMichaelis(ref.getSpecies(), enzyme,
-					forward);
+			LocalParameter p_kM = parameterFactory.parameterMichaelis(ref
+					.getSpecies(), enzyme, forward);
 			if (!p_kM.isSetSBOTerm()) {
 				p_kM.setSBOTerm(forward ? 322 : 323);
 			}

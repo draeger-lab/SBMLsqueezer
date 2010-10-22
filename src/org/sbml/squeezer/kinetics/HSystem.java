@@ -47,6 +47,11 @@ public class HSystem extends BasicKineticLaw implements
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -5341622709394468145L;
+
+	/**
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -60,7 +65,8 @@ public class HSystem extends BasicKineticLaw implements
 	 * @return ASTNode
 	 */
 	ASTNode b_i() {
-		return new ASTNode(parameterB(getParentSBMLObject().getId()), this);
+		return new ASTNode(parameterFactory.parameterB(getParentSBMLObject()
+				.getId()), this);
 	}
 
 	/*
@@ -103,8 +109,8 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					LocalParameter p = parameterV(modifier.getSpecies(), r
-							.getId());
+					LocalParameter p = parameterFactory.parameterV(modifier
+							.getSpecies(), r.getId());
 					if (node.isUnknown())
 						node = ASTNode.times(new ASTNode(p, this),
 								speciesTerm(modifier));
@@ -137,8 +143,8 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					modifier.setSBOTerm(19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					LocalParameter p = parameterW(modifier.getSpecies(), r
-							.getId());
+					LocalParameter p = parameterFactory.parameterW(modifier
+							.getSpecies(), r.getId());
 					if (node.isUnknown())
 						node = ASTNode.times(new ASTNode(p, this),
 								speciesTerm(modifier));

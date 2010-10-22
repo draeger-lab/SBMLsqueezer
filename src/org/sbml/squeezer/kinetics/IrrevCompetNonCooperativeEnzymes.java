@@ -40,6 +40,11 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		InterfaceUniUniKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -7128200927307678571L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param typeParameters
@@ -88,7 +93,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			ASTNode numerator;
 
 			String enzyme = modE.isEmpty() ? null : modE.get(enzymeNum);
-			numerator = new ASTNode(parameterKcatOrVmax(enzyme, true), this);
+			numerator = new ASTNode(parameterFactory.parameterKcatOrVmax(
+					enzyme, true), this);
 			if (!modE.isEmpty()) {
 				numerator.multiplyWith(speciesTerm(enzyme));
 			}
@@ -96,17 +102,18 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 					.getReactant(0)));
 
 			ASTNode denominator;
-			LocalParameter p_kM = parameterMichaelis(reaction.getReactant(0)
-					.getSpecies(), enzyme, true);
+			LocalParameter p_kM = parameterFactory.parameterMichaelis(reaction
+					.getReactant(0).getSpecies(), enzyme, true);
 
 			if (modInhib.size() == 0) {
 				denominator = new ASTNode(p_kM, this);
 			} else {
 				ASTNode factor = new ASTNode(p_kM, this);
 				for (int i = 0; i < modInhib.size(); i++) {
-					LocalParameter p_kIi = parameterKi(modInhib.get(i), enzyme);
-					LocalParameter p_exp = parameterNumBindingSites(enzyme,
-							modInhib.get(i));
+					LocalParameter p_kIi = parameterFactory.parameterKi(
+							modInhib.get(i), enzyme);
+					LocalParameter p_exp = parameterFactory
+							.parameterNumBindingSites(enzyme, modInhib.get(i));
 					factor.multiplyWith(ASTNode.pow(ASTNode.sum(new ASTNode(1,
 							this), ASTNode.frac(speciesTerm(modInhib.get(i)),
 							new ASTNode(p_kIi, this))),

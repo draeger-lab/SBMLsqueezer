@@ -47,6 +47,11 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 5440459069184360541L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param typeParameters
@@ -137,10 +142,10 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		 * if (!model.getSpecies(modTActi.get(i)).getSpeciesAlias(0).getType()
 		 * .toUpperCase().equals("GENE"))
 		 */{
-			LocalParameter p_hillcoeff = parameterHillCoefficient(modTActi
-					.get(i));
-			LocalParameter p_kS = parameterKS(getModel().getSpecies(
-					modTActi.get(i)), modTActi.get(i));
+			LocalParameter p_hillcoeff = parameterFactory
+					.parameterHillCoefficient(modTActi.get(i));
+			LocalParameter p_kS = parameterFactory.parameterKS(getModel()
+					.getSpecies(modTActi.get(i)), modTActi.get(i));
 			acti[i] = ASTNode.times(ASTNode.frac(ASTNode.pow(
 					speciesTerm(modTActi.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
@@ -153,16 +158,16 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		 * if (!model.getSpecies(modTInhib.get(i)).getSpeciesAlias(0)
 		 * .getType().toUpperCase().equals("GENE"))
 		 */{
-			LocalParameter p_hillcoeff = parameterHillCoefficient(modTInhib
-					.get(i));
-			LocalParameter p_kS = parameterKS(getModel().getSpecies(
-					modTInhib.get(i)), modTInhib.get(i));
+			LocalParameter p_hillcoeff = parameterFactory
+					.parameterHillCoefficient(modTInhib.get(i));
+			LocalParameter p_kS = parameterFactory.parameterKS(getModel()
+					.getSpecies(modTInhib.get(i)), modTInhib.get(i));
 			inhib[i] = ASTNode.frac(ASTNode.pow(speciesTerm(modTInhib.get(i)),
 					new ASTNode(p_hillcoeff, this)), ASTNode.sum(ASTNode.pow(
 					speciesTerm(modTInhib.get(i)), new ASTNode(p_hillcoeff,
 							this)), ASTNode.pow(this, p_kS, p_hillcoeff)));
 		}
-		LocalParameter p_kg = parameterVmax(true);
+		LocalParameter p_kg = parameterFactory.parameterVmax(true);
 
 		ASTNode formelTxt = new ASTNode(p_kg, this);
 		if (modTActi.size() > 0)
