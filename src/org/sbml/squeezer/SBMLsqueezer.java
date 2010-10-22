@@ -36,7 +36,6 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.gui.UpdateMessage;
-import org.sbml.squeezer.io.LaTeXExport;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
@@ -54,6 +53,7 @@ import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.MessageListener;
 import org.sbml.squeezer.util.MessageProcessor;
+import org.sbml.tolatex.io.LaTeXExport;
 
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.Reflect;
@@ -404,7 +404,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				new LibSBMLWriter());
 		msg.log("scanning command line arguments...");
 		final Properties p = correctProperties(CfgKeys
-				.analyzeCommandLineArguments(args));
+				.analyzeCommandLineArguments(args, CfgKeys.class));
 		for (Object key : p.keySet()) {
 			CfgKeys.getProperties().put(key, p.get(key));
 		}

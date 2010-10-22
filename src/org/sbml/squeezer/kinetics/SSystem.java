@@ -23,7 +23,6 @@ import java.util.List;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
-import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
@@ -55,6 +54,11 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class SSystem extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -1324851161924978070L;
 
 	/**
 	 * @param parentReaction
@@ -91,11 +95,12 @@ public class SSystem extends BasicKineticLaw implements
 					|| SBO.isGeneric(modifierspec.getSBOTerm())
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierspec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm())
+				if (!modifier.isSetSBOTerm()) {
 					modifier.setSBOTerm(19);
+				}
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					LocalParameter exp = parameterSSystemExponent(modifierspec
-							.getId());
+					LocalParameter exp = parameterFactory
+							.parameterSSystemExponent(modifierspec.getId());
 					String name = exp.getName();
 					if (SBO.isStimulator(modifier.getSBOTerm())) {
 						name.concat("_sti");
@@ -135,12 +140,12 @@ public class SSystem extends BasicKineticLaw implements
 	 */
 	private ASTNode prod(ListOf<SpeciesReference> listOf, boolean forward) {
 		String rID = getParentSBMLObject().getId();
-		ASTNode prod = new ASTNode(forward ? parameterAlpha(rID)
-				: parameterBeta(rID), this);
+		ASTNode prod = new ASTNode(forward ? parameterFactory.parameterSSystemAlpha(rID)
+				: parameterFactory.parameterSSystemBeta(rID), this);
 		for (SpeciesReference specRef : listOf) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
-				LocalParameter exponent = parameterSSystemExponent(specRef
-						.getSpecies());
+				LocalParameter exponent = parameterFactory
+						.parameterSSystemExponent(specRef.getSpecies());
 				ASTNode pow = ASTNode.pow(speciesTerm(specRef), new ASTNode(
 						exponent, this));
 				if (prod.isUnknown())
@@ -150,49 +155,5 @@ public class SSystem extends BasicKineticLaw implements
 			}
 		}
 		return prod;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#parameterAlpha(java.lang.String
-	 * )
-	 */
-	@Override
-	LocalParameter parameterAlpha(String rId) {
-		LocalParameter p = createOrGetParameter("alpha_", rId);
-		if (!p.isSetSBOTerm())
-			p.setSBOTerm(153);
-		if (!p.isSetUnits()) {
-			Model m = getModel();
-			p.setUnits(unitSubstancePerTime(m.getUnitDefinition("substance"), m
-					.getUnitDefinition("time")));
-		}
-		if (!p.isSetName())
-			p.setName("rate constant for synthesis");
-		return p;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#parameterBeta(java.lang.String
-	 * )
-	 */
-	@Override
-	LocalParameter parameterBeta(String rId) {
-		LocalParameter p = createOrGetParameter("beta_", rId);
-		if (!p.isSetSBOTerm())
-			p.setSBOTerm(156);
-		if (!p.isSetUnits()) {
-			Model m = getModel();
-			p.setUnits(unitSubstancePerTime(m.getUnitDefinition("substance"), m
-					.getUnitDefinition("time")));
-		}
-		if (!p.isSetName())
-			p.setName("rate constant for degradation");
-		return p;
 	}
 }

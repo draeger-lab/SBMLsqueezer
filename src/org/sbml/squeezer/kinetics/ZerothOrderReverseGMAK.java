@@ -38,6 +38,11 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
 		InterfaceZeroProducts, InterfaceModulatedKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 327453598422460479L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param typeParameters
@@ -55,12 +60,12 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
 	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#dissociation(java.util
 	 * .List, int)
 	 */
-	// @Override
+	@Override
 	ASTNode dissociation(List<String> catalysts, int c) {
 		orderReactants = Double.NaN;
 		orderProducts = 0;
-		return new ASTNode(
-				parameterDissociationConst(catalysts.size() == 0 ? null
+		return new ASTNode(parameterFactory
+				.parameterDissociationConst(catalysts.size() == 0 ? null
 						: catalysts.get(c)), this);
 	}
 

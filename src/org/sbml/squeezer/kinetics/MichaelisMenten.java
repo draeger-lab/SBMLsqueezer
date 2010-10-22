@@ -44,6 +44,11 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 1773589374066138555L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param typeParameters
@@ -136,9 +141,10 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		int enzymeNum = 0;
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-			LocalParameter p_kMr = parameterMichaelis(speciesR.getId(), enzyme,
-					true);
+			LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(
+					enzyme, true);
+			LocalParameter p_kMr = parameterFactory.parameterMichaelis(speciesR
+					.getId(), enzyme, true);
 
 			ASTNode currEnzymeKin;
 			if (!reaction.getReversible() || reaction.getNumProducts() == 0) {
@@ -158,9 +164,10 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 						speciesTerm(speciesR));
 				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(
 						p_kMr, this));
-				LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-				LocalParameter p_kMp = parameterMichaelis(speciesP.getId(),
+				LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(
 						enzyme, false);
+				LocalParameter p_kMp = parameterFactory.parameterMichaelis(
+						speciesP.getId(), enzyme, false);
 
 				numerator.minus(ASTNode.times(ASTNode
 						.frac(this, p_kcatn, p_kMp), speciesTerm(speciesP)));
@@ -216,8 +223,10 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			Reaction reaction, ASTNode denominator, LocalParameter mr,
 			String enzyme) {
 		if (modInhib.size() == 1) {
-			LocalParameter p_kIa = parameterKi(modInhib.get(0), enzyme, 1);
-			LocalParameter p_kIb = parameterKi(modInhib.get(0), enzyme, 2);
+			LocalParameter p_kIa = parameterFactory.parameterKi(
+					modInhib.get(0), enzyme, 1);
+			LocalParameter p_kIb = parameterFactory.parameterKi(
+					modInhib.get(0), enzyme, 2);
 			if (reaction.getReversible())
 				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(modInhib
 						.get(0)), new ASTNode(p_kIa, this)), ASTNode.times(
@@ -244,12 +253,16 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			ASTNode sumIb = new ASTNode(1, this);
 			for (int i = 0; i < modInhib.size(); i++) {
 				String inhibitor = modInhib.get(i);
-				LocalParameter p_kIai = parameterKi(inhibitor, enzyme, 1);
-				LocalParameter p_kIbi = parameterKi(inhibitor, enzyme, 2);
-				LocalParameter p_a = parameterCooperativeInhibitorSubstrateCoefficient(
-						'a', inhibitor, enzyme);
-				LocalParameter p_b = parameterCooperativeInhibitorSubstrateCoefficient(
-						'b', inhibitor, enzyme);
+				LocalParameter p_kIai = parameterFactory.parameterKi(inhibitor,
+						enzyme, 1);
+				LocalParameter p_kIbi = parameterFactory.parameterKi(inhibitor,
+						enzyme, 2);
+				LocalParameter p_a = parameterFactory
+						.parameterCooperativeInhibitorSubstrateCoefficient('a',
+								inhibitor, enzyme);
+				LocalParameter p_b = parameterFactory
+						.parameterCooperativeInhibitorSubstrateCoefficient('b',
+								inhibitor, enzyme);
 				ASTNode specRefI = speciesTerm(inhibitor);
 				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, ASTNode
 						.times(this, p_a, p_kIai)));

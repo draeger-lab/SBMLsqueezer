@@ -36,6 +36,11 @@ public class Weaver extends AdditiveModelNonLinear implements
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 8438865854245165600L;
+
+	/**
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -48,26 +53,41 @@ public class Weaver extends AdditiveModelNonLinear implements
 	@Override
 	ASTNode activation(ASTNode g) {
 		String rId = getParentSBMLObject().getId();
-		if (g != null)
+		if (g != null) {
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 					.exp(ASTNode.sum(ASTNode.times(ASTNode.uMinus(this,
-							parameterAlpha(rId)), g), new ASTNode(
-							parameterBeta(rId), this)))));
+							parameterFactory.parameterSSystemAlpha(rId)), g),
+							new ASTNode(parameterFactory
+									.parameterSSystemBeta(rId), this)))));
+		}
 		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-				.exp(ASTNode.sum(ASTNode.uMinus(this, parameterAlpha(rId)),
-						new ASTNode(parameterBeta(rId), this)))));
+				.exp(ASTNode.sum(ASTNode.uMinus(this, parameterFactory
+						.parameterSSystemAlpha(rId)), new ASTNode(
+						parameterFactory.parameterSSystemBeta(rId), this)))));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
+	 */
 	@Override
 	ASTNode b_i() {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
+	 */
 	@Override
 	public String getSimpleName() {
 		return "Non-linear additive model by Weaver et al. (1999)";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#v()
+	 */
 	@Override
 	ASTNode v() {
 		return null;

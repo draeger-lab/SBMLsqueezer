@@ -42,6 +42,11 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -8990273178790093314L;
+
+	/**
 	 * 
 	 * @param parentReaction
 	 * @param typeParameters
@@ -115,11 +120,12 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		int enzymeNum = 0;
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			LocalParameter p_kcatp = parameterKcatOrVmax(enzyme, true);
-			LocalParameter p_kMr1 = parameterMichaelis(specRefE1.getSpecies(),
+			LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(
 					enzyme, true);
-			LocalParameter p_kMr2 = parameterMichaelis(specRefE2.getSpecies(),
-					enzyme, true);
+			LocalParameter p_kMr1 = parameterFactory.parameterMichaelis(
+					specRefE1.getSpecies(), enzyme, true);
+			LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(
+					specRefE2.getSpecies(), enzyme, true);
 			setSBOTerm(436);
 
 			/*
@@ -150,14 +156,18 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				 * Reversible Reaction
 				 */
 			} else {
-				LocalParameter p_kcatn = parameterKcatOrVmax(enzyme, false);
-				LocalParameter p_kMp1 = parameterMichaelis(specRefP1.getSpecies(),
+				LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(
 						enzyme, false);
-				LocalParameter p_kMp2 = parameterMichaelis(specRefP2.getSpecies(),
-						enzyme, false);
-				LocalParameter p_kIp1 = parameterKi(specRefP1.getSpecies(), enzyme);
-				LocalParameter p_kIp2 = parameterKi(specRefP2.getSpecies(), enzyme);
-				LocalParameter p_kIr1 = parameterKi(specRefE1.getSpecies(), enzyme);
+				LocalParameter p_kMp1 = parameterFactory.parameterMichaelis(
+						specRefP1.getSpecies(), enzyme, false);
+				LocalParameter p_kMp2 = parameterFactory.parameterMichaelis(
+						specRefP2.getSpecies(), enzyme, false);
+				LocalParameter p_kIp1 = parameterFactory.parameterKi(specRefP1
+						.getSpecies(), enzyme);
+				LocalParameter p_kIp2 = parameterFactory.parameterKi(specRefP2
+						.getSpecies(), enzyme);
+				LocalParameter p_kIr1 = parameterFactory.parameterKi(specRefE1
+						.getSpecies(), enzyme);
 
 				ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp,
 						this), ASTNode.times(this, p_kIr1, p_kMr2));

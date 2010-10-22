@@ -43,6 +43,11 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
 	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -2127004439071244185L;
+
+	/**
 	 * @param parentReaction
 	 * @param typeParameters
 	 * @throws RateLawNotApplicableException
@@ -95,13 +100,14 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 				modifier.setSBOTerm(19);
 			}
 			if (SBO.isModifier(modifier.getSBOTerm())) {
-				LocalParameter p = parameterW(modifier.getSpecies(), rId);
+				LocalParameter p = parameterFactory.parameterW(modifier
+						.getSpecies(), rId);
 				ASTNode pnode = new ASTNode(p, this);
-				LocalParameter theta = parameterTheta(rId, modifier
-						.getSpecies());
+				LocalParameter theta = parameterFactory.parameterTheta(rId,
+						modifier.getSpecies());
 				ASTNode thetanode = new ASTNode(theta, this);
-				LocalParameter coeff = parameterHillCoefficient(modifier
-						.getSpecies());
+				LocalParameter coeff = parameterFactory
+						.parameterHillCoefficient(modifier.getSpecies());
 				ASTNode coeffnode = new ASTNode(coeff, this);
 
 				if (node.isUnknown()) {
@@ -129,7 +135,7 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 	ASTNode synrate() {
 		String rId = getParentSBMLObject().getId();
 
-		LocalParameter b_i = parameterB(rId);
+		LocalParameter b_i = parameterFactory.parameterB(rId);
 		ASTNode b_i_node = new ASTNode(b_i, this);
 		return b_i_node;
 	}

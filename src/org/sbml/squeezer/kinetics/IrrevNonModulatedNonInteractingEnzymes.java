@@ -43,6 +43,13 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceIntegerStoichiometry {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -7008903900757040218L;
+	/**
+	 * 
+	 */
 	private int numOfEnzymes;
 
 	/**
@@ -81,7 +88,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		ASTNode enzymes[] = new ASTNode[Math.max(1, modE.size())];
 		for (int enzymeNum = 0; enzymeNum < enzymes.length; enzymeNum++) {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			LocalParameter p_kcat = parameterKcatOrVmax(enzyme, true);
+			LocalParameter p_kcat = parameterFactory.parameterKcatOrVmax(
+					enzyme, true);
 			ASTNode numerator = new ASTNode(p_kcat, this);
 
 			ASTNode[] denominator = new ASTNode[reaction.getNumReactants()];
@@ -90,8 +98,8 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
 					throw new RateLawNotApplicableException(
 							"This rate law can only be applied if all reactants have integer stoichiometries.");
-				LocalParameter p_kM = parameterMichaelis(si.getSpecies(),
-						enzyme, true);
+				LocalParameter p_kM = parameterFactory.parameterMichaelis(si
+						.getSpecies(), enzyme, true);
 				ASTNode frac = ASTNode.frac(speciesTerm(si), new ASTNode(p_kM,
 						this));
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
