@@ -40,7 +40,7 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.util.HTMLFormula;
+import org.sbml.jsbml.util.compilers.HTMLFormula;
 import org.sbml.squeezer.resources.Resource;
 
 /**
