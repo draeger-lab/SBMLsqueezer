@@ -53,7 +53,7 @@ import de.zbit.util.SBProperties;
  * @date 2009-09-22
  * @since 1.3
  */
-public class SettingsPanelDefaultMechanisms extends SettingsPanel {
+public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 
 	/**
 	 * Generated serial version uid.

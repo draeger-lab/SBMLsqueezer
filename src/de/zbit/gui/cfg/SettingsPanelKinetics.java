@@ -50,7 +50,7 @@ import de.zbit.util.SBProperties;
  * @author Andreas Dr&auml;ger
  * @date Nov 15, 2007
  */
-public class SettingsPanelKinetics extends SettingsPanel {
+public class SettingsPanelKinetics extends PreferencesPanel {
 
 	/**
 	 * Generated serial version ID.

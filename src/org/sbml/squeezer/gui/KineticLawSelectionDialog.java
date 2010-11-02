@@ -64,7 +64,7 @@ import org.sbml.tolatex.io.TextExport;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;
-import de.zbit.gui.cfg.SettingsTabbedPane;
+import de.zbit.gui.cfg.MultiplePreferencesPanel;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.SBProperties;
 
@@ -107,7 +107,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private SBProperties settings;
 
-	private SettingsTabbedPane settingsPanel;
+	private MultiplePreferencesPanel settingsPanel;
 
 	/**
 	 * Creates an empty dialog with the given settings and sbml io object.
@@ -520,9 +520,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @return javax.swing.JPanelsb.append("<br>
 	 *         ");
 	 */
-	private SettingsTabbedPane getJSettingsPanel() {
+	private MultiplePreferencesPanel getJSettingsPanel() {
 		if (settingsPanel == null) {
-			settingsPanel = new SettingsTabbedPane(settings);
+			settingsPanel = new MultiplePreferencesPanel(settings);
 			// settingsPanel.setBackground(Color.WHITE);
 		}
 		return settingsPanel;
