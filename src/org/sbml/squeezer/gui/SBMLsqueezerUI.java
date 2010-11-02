@@ -65,7 +65,7 @@ import org.sbml.tolatex.io.TextExport;
 
 import de.zbit.gui.JBrowserPane;
 import de.zbit.gui.SystemBrowser;
-import de.zbit.gui.cfg.SettingsDialog;
+import de.zbit.gui.cfg.PreferencesDialog;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.SBProperties;
 
@@ -391,8 +391,8 @@ public class SBMLsqueezerUI extends JFrame implements ActionListener,
 			}
 			break;
 		case SET_PREFERENCES:
-			SettingsDialog dialog = new SettingsDialog(this);
-			if (dialog.showSettingsDialog((SBProperties) properties.clone()) == SettingsDialog.APPROVE_OPTION) {
+			PreferencesDialog dialog = new PreferencesDialog(this);
+			if (dialog.showPrefsDialog((SBProperties) properties.clone()) == PreferencesDialog.APPROVE_OPTION) {
 				for (Object key : dialog.getProperties().keySet()) {
 					properties.put(key, dialog.getProperties().get(key));
 				}
