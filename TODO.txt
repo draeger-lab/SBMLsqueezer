@@ -1,6 +1,40 @@
 TODO-Liste
 ==========
 
+==========================================================================
+
+Release-Plan
+============
+
+
+Version 1.3 
+- schon da.
+
+Version 1.4
+- Haupt-Problem: Wechselspiel mit CellDesigner: Schon gelöst.
+- Umstellung auf neues SysBio-Projekt (bin ich grad dran)
+- Aussuchen, ob kinetische Gleichungen
+- Test-Cases!
+- Umstellung auf neues JSBML und libSBML 4.*
+- Trac-System nutzen
+
+Klaus ansprechen wegen Bug-Report für nicht-RA-Leute
+
+Version 1.5:
+
+- KEGGtranslator enthalten
+- SBML2LaTeX
+- SBMLsimulator
+
+- Test-Cases!
+- Editierbarkeit von kinetischen Gleichungen
+- Gleichungen wahlweise auch als Funktionen einbauen
+- Publikation
+
+
+==========================================================================
+
+
 Edukt- und Produktlisten k�nnen leer sein. Dieser Spezialfall wird bisher
 nicht in den einzelnen Kinetiken behandelt.
 

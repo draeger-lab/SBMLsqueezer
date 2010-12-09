@@ -16,7 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.zbit.gui.cfg;
+package de.zbit.gui.prefs;
+
+import java.io.IOException;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -25,10 +28,9 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 
-import org.sbml.squeezer.CfgKeys;
-
 import de.zbit.gui.LayoutHelper;
-import de.zbit.util.SBProperties;
+import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.prefs.SBProperties;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -79,14 +81,14 @@ public class SettingsPanelGeneral extends PreferencesPanel {
 	@Override
 	public SBProperties getProperties() {
 		if (chooser.checkOpenDir()) {
-			properties.put(CfgKeys.OPEN_DIR, chooser.getOpenDir());
+			properties.put(CfgKeys.SqueezerOptions, chooser.getOpenDir());
 		}
 		if (chooser.checkSaveDir()) {
-			properties.put(CfgKeys.SAVE_DIR, chooser.getSaveDir());
+			properties.put(CfgKeys.SqueezerOptions, chooser.getSaveDir());
 		}
-		properties.put(CfgKeys.SPINNER_STEP_SIZE,
+		properties.put(CfgKeys.SqueezerOptions,
 				((Double) stepSize.getValue()).doubleValue());
-		properties.put(CfgKeys.SPINNER_MAX_VALUE, ((Double) maxSpinnerValue
+		properties.put(CfgKeys.SqueezerOptions, ((Double) maxSpinnerValue
 				.getValue()).doubleValue());
 		return properties;
 	}
@@ -108,27 +110,28 @@ public class SettingsPanelGeneral extends PreferencesPanel {
 	 */
 	@Override
 	public void init() {
-		chooser = new DirectoryChooser(properties.get(CfgKeys.OPEN_DIR)
-				.toString(), properties.get(CfgKeys.SAVE_DIR).toString(), true);
+		chooser = new DirectoryChooser(properties.get(CfgKeys.SqueezerOptions)
+				.toString(), properties.get(CfgKeys.SqueezerOptions).toString(), true);
 		chooser.setBorder(BorderFactory
 				.createTitledBorder(" Default directories "));
 		/*
 		 * Default values for JSpinners:
 		 */
 		double theStepSize = Double.parseDouble(this.properties.get(
-				CfgKeys.SPINNER_STEP_SIZE).toString());
+				CfgKeys.SqueezerOptions).toString());
 		stepSize = new JSpinner(new SpinnerNumberModel(theStepSize, 1E-20,
 				1E20, theStepSize));
 		stepSize.addChangeListener(this);
 		minSpinnerValue = new JSpinner(new SpinnerNumberModel(Double
-				.parseDouble(this.properties.get(CfgKeys.SPINNER_MIN_VALUE)
+				.parseDouble(this.properties.get(CfgKeys.SqueezerOptions)
 						.toString()), -1E20, 1E20, theStepSize));
 		minSpinnerValue.addChangeListener(this);
 		maxSpinnerValue = new JSpinner(new SpinnerNumberModel(Double
-				.parseDouble(this.properties.get(CfgKeys.SPINNER_MAX_VALUE)
+				.parseDouble(this.properties.get(CfgKeys.SqueezerOptions)
 						.toString()), 1E-20, 1E20, theStepSize));
 		maxSpinnerValue.addChangeListener(this);
 		JPanel spinnerPanel = new JPanel();
+		
 		LayoutHelper lh = new LayoutHelper(spinnerPanel);
 		lh.add(new JLabel("Minimal value:"), 0, 0, 1, 1, 0, 0);
 		lh.add(new JPanel(), 1, 0, 1, 1, 0, 0);
@@ -144,7 +147,7 @@ public class SettingsPanelGeneral extends PreferencesPanel {
 
 		lh = new LayoutHelper(this);
 		lh.add(chooser, 0, 0, 1, 1, 0, 0);
-		lh.add(spinnerPanel, 0, 0, 1, 1, 0, 0);
+		lh.add(spinnerPanel, 0, 1, 1, 1, 0, 0);
 	}
 
 	/*
@@ -156,16 +159,28 @@ public class SettingsPanelGeneral extends PreferencesPanel {
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(minSpinnerValue)) {
-			properties.put(CfgKeys.SPINNER_MIN_VALUE, (Double) minSpinnerValue
+			properties.put(CfgKeys.SqueezerOptions, (Double) minSpinnerValue
 					.getValue());
 		} else if (e.getSource().equals(maxSpinnerValue)) {
-			properties.put(CfgKeys.SPINNER_MAX_VALUE, (Double) maxSpinnerValue
+			properties.put(CfgKeys.SqueezerOptions, (Double) maxSpinnerValue
 					.getValue());
 		} else if (e.getSource().equals(stepSize)) {
-			properties.put(CfgKeys.SPINNER_STEP_SIZE, (Double) stepSize
+			properties.put(CfgKeys.SqueezerOptions, (Double) stepSize
 					.getValue());
 		}
 		super.stateChanged(e);
+	}
+
+	@Override
+	public List<String> checkPreferences() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected SBPreferences loadPreferences() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

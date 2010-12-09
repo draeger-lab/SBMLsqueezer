@@ -54,19 +54,20 @@ import javax.swing.border.BevelBorder;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
-import org.sbml.tolatex.io.LaTeXExport;
+import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;
-import de.zbit.gui.cfg.MultiplePreferencesPanel;
+import de.zbit.gui.prefs.MultiplePreferencesPanel;
 import de.zbit.io.SBFileFilter;
-import de.zbit.util.SBProperties;
+import de.zbit.util.StringUtil;
+import de.zbit.util.prefs.SBProperties;
 
 /**
  * This is the main GUI class.
@@ -162,10 +163,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					.isKineticsAndParametersStoredInSBML();
 			dispose();
 		} catch (Throwable exc) {
-			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getSimpleName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
+			GUITools.showErrorMessage(this, exc);
 		}
 	}
 
@@ -251,17 +249,17 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void exportKineticEquations() {
 		if (klg != null) {
-			SBFileFilter ff1 = SBFileFilter.TeX_FILE_FILTER;
-			SBFileFilter ff2 = SBFileFilter.TEXT_FILE_FILTER;
+			SBFileFilter ff1 = SBFileFilter.createTeXFileFilter();
+			SBFileFilter ff2 = SBFileFilter.createTextFileFilter();
 			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
-					CfgKeys.SAVE_DIR).toString(), false, false,
+					CfgKeys.SqueezerOptions).toString(), false, false,
 					JFileChooser.FILES_ONLY, ff1, ff2);
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 				try {
 					final File f = chooser.getSelectedFile();
 					if (ff1.accept(f)) {
-						LaTeXExport.writeLaTeX(klg.getMiniModel(), f, settings);
-						settings.put(CfgKeys.LATEX_DIR, f.getParentFile());
+						LaTeXReportGenerator.writeLaTeX(klg.getMiniModel(), f);
+						settings.put(CfgKeys.SqueezerOptions, f.getParentFile());
 						// new Thread(new Runnable() {
 						// public void run() {
 						// try {
@@ -273,8 +271,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 						// }).start();
 					}
 					if (ff2.accept(f)) {
-						new TextExport(klg.getMiniModel(), f, settings);
-						settings.put(CfgKeys.SAVE_DIR, f.getParentFile());
+						new TextExport(klg.getMiniModel(), f);
+						settings.put(CfgKeys.SqueezerOptions, f.getParentFile());
 						// new Thread(new Runnable() {
 						//
 						// public void run() {
@@ -287,10 +285,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						// }).start();
 					}
 				} catch (IOException exc) {
-					JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-							.getMessage(), 40), exc.getClass()
-							.getCanonicalName(), JOptionPane.WARNING_MESSAGE);
-					exc.printStackTrace();
+					GUITools.showErrorMessage(this, exc);
 				}
 		}
 	}
@@ -332,7 +327,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					message.append("</ul>");
 				} else
 					message.append("is beeing ignored.");
-				final JOptionPane pane = new JOptionPane(GUITools.toHTML(
+				final JOptionPane pane = new JOptionPane(StringUtil.toHTML(
 						message.toString(), 40), JOptionPane.WARNING_MESSAGE);
 				final JDialog d = new JDialog();
 				d.setTitle("Fast Reactions");
@@ -416,8 +411,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 							+ "<td>Number of warnings (red): " + numOfWarnings
 							+ "</td></tr></table></htlm>");
 			numberOfWarnings
-					.setToolTipText(GUITools
-							.toHTML(
+					.setToolTipText(StringUtil.toHTML(
 									"The number of reactions an unlikely number of reactants. These are also highlighted in red in the table.",
 									40));
 			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
@@ -434,10 +428,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			validate();
 
 		} catch (Throwable exc) {
-			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getSimpleName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
+			GUITools.showErrorMessage(this, exc);
 		}
 
 	}
@@ -458,7 +449,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 		JButton cancel = new JButton("Cancel", UIManager.getIcon("ICON_DELETE"));
 		JButton apply = new JButton();
-		cancel.setToolTipText(GUITools.toHTML(
+		cancel.setToolTipText(StringUtil.toHTML(
 				"Exit SBMLsqueezer without saving changes.", 40));
 		cancel.addActionListener(this);
 		apply.addActionListener(this);
@@ -466,9 +457,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		rightPanel.add(cancel);
 		switch (type) {
 		case 0:
-			apply
-					.setToolTipText(GUITools
-							.toHTML(
+			apply.setToolTipText(StringUtil.toHTML(
 									"Start generating an ordinary differential equation system.",
 									40));
 			apply.setText("Generate");
@@ -479,9 +468,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			leftPanel.add(helpButton);
 			break;
 		default:
-			apply
-					.setToolTipText(GUITools
-							.toHTML(
+			apply.setToolTipText(StringUtil.toHTML(
 									"Write the generated kinetics and parameters to the SBML file.",
 									40));
 			apply.setText("Apply");
@@ -490,9 +477,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			JButton jButtonReactionsFrameSave = new JButton();
 			jButtonReactionsFrameSave.setEnabled(true);
 			jButtonReactionsFrameSave.setBounds(35, 285, 100, 25);
-			jButtonReactionsFrameSave
-					.setToolTipText(GUITools
-							.toHTML(
+			jButtonReactionsFrameSave.setToolTipText(StringUtil.toHTML(
 									"Allowes yout to save the generated differential equations as *.txt or *.tex files. Note that this export only contains those reactions together with referenced, species, compartments, compartment- and species-types, units, and parameters for which new kinetic equations have been generated. If you wish to obtain a complete model report, please choose the \"save as\" function in the main menu.",
 									40));
 			jButtonReactionsFrameSave.setText("Export changes");
@@ -624,8 +609,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			options.setIcon(UIManager.getIcon("ICON_RIGHT_ARROW"));
 			options.setIconTextGap(5);
 			options.setText("show options");
-			options.setToolTipText(GUITools
-					.toHTML("Customize the advanced settings."));
+			options.setToolTipText(StringUtil.toHTML("Customize the advanced settings."));
 			centralPanel.removeAll();
 			JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			panel.add(options);
@@ -650,13 +634,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 					"Saving changes to original model"));
 			SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
 					sbmlIO.getWriteWarnings(), ((Boolean) settings
-							.get(CfgKeys.SHOW_SBML_WARNINGS)).booleanValue());
+							.get(SqueezerOptions.SHOW_SBML_WARNINGS)).booleanValue());
 			KineticsAndParametersStoredInSBML = true;
 		} catch (SBMLException exc) {
-			JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-					.getMessage(), 40), exc.getClass().getCanonicalName(),
-					JOptionPane.WARNING_MESSAGE);
-			exc.printStackTrace();
+			GUITools.showErrorMessage(this, exc);
 		}
 	}
 

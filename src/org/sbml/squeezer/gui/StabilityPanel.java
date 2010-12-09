@@ -26,9 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.squeezer.CfgKeys;
-
 import de.zbit.gui.LayoutHelper;
+import de.zbit.util.StringUtil;
 
 /**
  * @author Alexander D&ouml;rr
@@ -78,7 +77,7 @@ public class StabilityPanel extends JPanel {
 	private void init() {		
 		GridBagLayout layout = new GridBagLayout();
 		jTextFieldDelta = new JTextField();
-		jTextFieldDelta.setText(settings.get(CfgKeys.STABILITY_VALUE_OF_DELTA)
+		jTextFieldDelta.setText(settings.get(CfgKeys.SqueezerOptions)
 				.toString());
 		jTextFieldDelta.setEnabled(false);
 		jTextFieldStable = new JTextField("Stability undefined");
@@ -86,7 +85,7 @@ public class StabilityPanel extends JPanel {
 		jTextFieldStable.setBackground(Color.gray);
 		
 		LayoutHelper.addComponent(this, layout, new JLabel(
-				GUITools.toHTML("Value for numerical differentiation:", 30)),
+				StringUtil.toHTML("Value for numerical differentiation:", 30)),
 				0, 0, 1, 1, 1, 0);
 		LayoutHelper.addComponent(this, layout,
 				jTextFieldDelta, 1, 0, 1, 1, 1, 0);

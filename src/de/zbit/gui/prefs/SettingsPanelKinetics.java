@@ -16,10 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.zbit.gui.cfg;
+package de.zbit.gui.prefs;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
+import java.io.IOException;
+import java.util.InvalidPropertiesFormatException;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -32,12 +35,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 
-import org.sbml.squeezer.CfgKeys;
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.GUITools;
 
 import de.zbit.gui.LayoutHelper;
-import de.zbit.util.SBProperties;
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * This class is a panel, which contains all necessary options to be specified
@@ -83,23 +84,25 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 			jSpinnerDefaultCompartmentSize;
 
 	/**
+	 * @throws IOException
+	 * @throws InvalidPropertiesFormatException
 	 * 
-	 * @param settings
 	 */
-	public SettingsPanelKinetics(SBProperties settings) {
-		super(settings);
+	public SettingsPanelKinetics() throws InvalidPropertiesFormatException,
+			IOException {
+		super();
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.zbit.gui.cfg.SettingsPanel#accepts(java.lang.Object)
 	 */
 	@Override
 	public boolean accepts(Object key) {
 		String k = key.toString();
 		return !k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
-				&& (k.startsWith("OPT_")
-						|| k.startsWith("POSSIBLE_ENZYME_") || k
+				&& (k.startsWith("OPT_") || k.startsWith("POSSIBLE_ENZYME_") || k
 						.equals("TYPE_UNIT_CONSISTENCY"));
 	}
 
@@ -306,8 +309,9 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 						+ "considered to be enzyme reactions.", 40));
 		jCheckBoxPossibleEnzymeTruncatedProtein = new JCheckBox(
 				"Truncated protein");
-		jCheckBoxPossibleEnzymeTruncatedProtein.setSelected(((Boolean) properties
-				.get(CfgKeys.POSSIBLE_ENZYME_TRUNCATED)).booleanValue());
+		jCheckBoxPossibleEnzymeTruncatedProtein
+				.setSelected(((Boolean) properties
+						.get(CfgKeys.POSSIBLE_ENZYME_TRUNCATED)).booleanValue());
 		jCheckBoxPossibleEnzymeTruncatedProtein.setToolTipText(GUITools.toHTML(
 				"If checked, truncated proteins are treated as enzymes. "
 						+ "Otherwise, truncated protein catalized reactions "
@@ -498,8 +502,10 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 					.valueOf(jRadioButtonTypeUnitConsistency.isSelected() ? 0
 							: 1));
 		} else if (e.getSource().equals(jCheckBoxSetBoundaryCondition)) {
-			properties.put(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, Boolean
-					.valueOf(jCheckBoxSetBoundaryCondition.isSelected()));
+			properties
+					.put(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
+							Boolean.valueOf(jCheckBoxSetBoundaryCondition
+									.isSelected()));
 		} else if (e.getSource().equals(jCheckBoxRemoveUnnecessaryPandU)) {
 			properties.put(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
 					Boolean.valueOf(jCheckBoxRemoveUnnecessaryPandU
@@ -533,17 +539,12 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.sbml.squeezer.gui.SettingsPanel#restoreDefaults()
 	 */
 	@Override
 	public void restoreDefaults() {
-		String openDir = properties.get(CfgKeys.OPEN_DIR).toString();
-		String saveDir = properties.get(CfgKeys.SAVE_DIR).toString();
-		properties = SBMLsqueezer.getConfiguration().getProperties();
-		properties.put(CfgKeys.OPEN_DIR, openDir);
-		properties.put(CfgKeys.SAVE_DIR, saveDir);
-		init();
-		validate();
+		super.restoreDefaults();
 		possibleEnzymeTestAllNotChecked();
 	}
 
@@ -574,5 +575,22 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 					.valueOf(jSpinnerDefaultParamValue.getValue().toString()));
 		}
 		super.stateChanged(e);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.zbit.gui.cfg.SettingsPanel#loadPreferences()
+	 */
+	@Override
+	protected SBPreferences loadPreferences()
+			throws InvalidPropertiesFormatException, IOException {
+		return SBPreferences.getPreferencesFor(CfgKeys.class, CfgKeys.);
+	}
+
+	@Override
+	public List<String> checkPreferences() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

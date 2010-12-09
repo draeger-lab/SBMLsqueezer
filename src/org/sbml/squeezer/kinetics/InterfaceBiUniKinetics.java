@@ -28,6 +28,6 @@ package org.sbml.squeezer.kinetics;
  * @date 2009-09-22
  * @since 1.3
  */
-public interface InterfaceBiUniKinetics {
+public interface InterfaceBiUniKinetics extends InterfaceKinteticsType {
 
 }
