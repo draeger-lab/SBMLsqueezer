@@ -40,6 +40,7 @@ import org.sbml.jsbml.util.compilers.LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
+import de.zbit.util.StringUtil;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -93,7 +94,7 @@ public class ASTNodePanel extends JPanel {
 			name = parent.getClass().getSimpleName();
 			name += " " + node.getParentSBMLObject().toString();
 		}
-		JEditorPane editor = new JEditorPane("text/html", GUITools.toHTML(name, 60));
+		JEditorPane editor = new JEditorPane("text/html", StringUtil.toHTML(name, 60));
 		editor.setEditable(enabled);
 		editor.setBorder(BorderFactory.createLoweredBevelBorder());
 		lh.add("Parent SBML object", editor, true);

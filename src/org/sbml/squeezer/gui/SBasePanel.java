@@ -77,7 +77,7 @@ import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.compilers.HTMLFormula;
 import org.sbml.jsbml.util.compilers.LaTeX;
-import org.sbml.squeezer.CfgKeys;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.tolatex.SBML2LaTeX;
 
 import atp.sHotEqn;
@@ -132,7 +132,7 @@ public class SBasePanel extends JPanel {
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
 		latex = new LaTeX(((Boolean) settings
-				.get(CfgKeys.LATEX_NAMES_IN_EQUATIONS)).booleanValue());
+				.get(CfgKeys.SqueezerOptions)).booleanValue());
 		this.settings = settings;
 		lh = new LayoutHelper(this, gbl);
 		editable = false;

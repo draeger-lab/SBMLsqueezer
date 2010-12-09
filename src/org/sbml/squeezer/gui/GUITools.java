@@ -19,29 +19,21 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.Color;
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashSet;
-import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
-import javax.swing.UIManager;
 
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.compilers.HTMLFormula;
-import org.sbml.squeezer.resources.Resource;
+
+import de.zbit.util.StringUtil;
 
 /**
  * A convenient class that provides several handy methods for working with
@@ -99,7 +91,7 @@ public class GUITools extends de.zbit.gui.GUITools {
 						boolean containsCommand = false;
 						for (int k = 0; k < m.getItemCount(); k++) {
 							JMenuItem it = m.getItem(k);
-							if (it != null
+							if ((it != null)
 									&& it.getActionCommand() != null
 									&& setOfCommands.contains(it
 											.getActionCommand())) {
@@ -140,7 +132,7 @@ public class GUITools extends de.zbit.gui.GUITools {
 	 * @return
 	 */
 	public static JEditorPane unitPreview(UnitDefinition ud) {
-		JEditorPane preview = new JEditorPane("text/html", GUITools
+		JEditorPane preview = new JEditorPane("text/html", StringUtil
 				.toHTML(ud != null ? HTMLFormula.toHTML(ud) : ""));
 		preview.setEditable(false);
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());

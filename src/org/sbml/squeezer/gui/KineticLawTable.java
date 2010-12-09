@@ -50,11 +50,14 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.util.compilers.LaTeX;
-import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.tolatex.LaTeXOptions;
 
 import atp.sHotEqn;
+import de.zbit.util.StringUtil;
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * Creates a table that displays all created kinetic equationns.
@@ -90,15 +93,15 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		super(new KineticLawTableModel(klg));
 		this.klg = klg;
 		this.reversibility = ((Boolean) klg.getSettings().get(
-				CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
+				SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
 		getModel().addTableModelListener(this);
 		setColumnWidthAppropriately();
 		setRowHeightAppropriately();
 		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer(
 				((Integer) (klg.getSettings()
-						.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue()));
+						.get(SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS))).intValue()));
 		getTableHeader().setToolTipText(
-				GUITools.toHTML("Double click on the kinetic "
+				StringUtil.toHTML("Double click on the kinetic "
 						+ "law to apply another formalism. "
 						+ "Single click on any other "
 						+ "column to get a formatted equation preview.", 40));
@@ -136,12 +139,12 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				BasicKineticLaw kinetic = (BasicKineticLaw) o;
 				String LaTeX;
 				try {
-					LaTeX = kinetic.getMath().compile(
-							new LaTeX(((Boolean) klg.getSettings().get(
-									CfgKeys.LATEX_NAMES_IN_EQUATIONS))
-									.booleanValue())).toString().replace(
-							"text", "mbox").replace("mathrm", "mbox").replace(
-							"mathtt", "mbox");
+					SBPreferences prefs = SBPreferences
+							.getPreferencesFor(LaTeXOptions.class);
+					LaTeX = kinetic.getMath().compile(new LaTeX(
+											prefs.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS)))
+							.toString().replace("text", "mbox").replace(
+									"mathrm", "mbox").replace("mathtt", "mbox");
 				} catch (SBMLException e1) {
 					LaTeX = "invalid";
 				}
@@ -216,10 +219,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 			try {
 				setCellEditor(rowIndex);
 			} catch (Exception exc) {
-				JOptionPane.showMessageDialog(this, GUITools.toHTML(exc
-						.getMessage(), 40), exc.getClass().getName(),
-						JOptionPane.WARNING_MESSAGE);
-				exc.printStackTrace();
+				GUITools.showErrorMessage(this, exc);
 			}
 		}
 	}
@@ -390,8 +390,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		// Reactants, Products, Parameters, Formula
 		int i;
 		StringBuffer params = new StringBuffer();
-		for (i = kineticLaw.getNumParameters() - 1; i > 0; i--) {
-			params.append(kineticLaw.getParameter(i));
+		for (i = kineticLaw.getNumLocalParameters() - 1; i > 0; i--) {
+			params.append(kineticLaw.getLocalParameter(i));
 			if (i > 0)
 				params.append(", ");
 		}

@@ -293,9 +293,9 @@ public class ReactionType {
 		this.reaction = r; // .clone();
 		// Check ignore list:
 		if (settings
-				.containsKey(CfgKeys.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)) {
+				.containsKey(SqueezerOptions.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)) {
 			String ignoreList[] = settings.get(
-					CfgKeys.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)
+					SqueezerOptions.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)
 					.toString().split(",");
 			if (ignoreList != null && ignoreList.length >= 0) {
 				Species spec;
@@ -322,7 +322,7 @@ public class ReactionType {
 
 		this.settings = settings;
 		this.reversibility = ((Boolean) settings
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
 
 		/*
@@ -373,7 +373,7 @@ public class ReactionType {
 			identifyModifers(reaction, enzymes, activators, inhibitors,
 					nonEnzymeCatalysts);
 		nonEnzyme = ((!((Boolean) this.settings
-				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+				.get(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 				.booleanValue() && enzymes.size() == 0)
 				|| nonEnzymeCatalysts.size() > 0 || ((reaction.getNumProducts() == 0 || (SBO
 				.isEmptySet(reaction.getProduct(0).getSpeciesInstance()
@@ -422,7 +422,7 @@ public class ReactionType {
 			Species species = reaction.getReactant(0).getSpeciesInstance();
 			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 				if (((Boolean) settings
-						.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
+						.get(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
 						.booleanValue())
 					setBoundaryCondition(species, true);
 				if (SBO.isTranslation(reaction.getSBOTerm()))
@@ -520,9 +520,9 @@ public class ReactionType {
 		if (representsEmptySet(reaction.getListOfReactants())) {
 			if (reactionWithGenes || reactionWithRNAs) {
 				if (SBMLsqueezer.getKineticsZeroReactants().contains(
-						settings.get(CfgKeys.KINETICS_GENE_REGULATION)
+						settings.get(SqueezerOptions.KINETICS_GENE_REGULATION)
 								.toString()))
-					return settings.get(CfgKeys.KINETICS_GENE_REGULATION)
+					return settings.get(SqueezerOptions.KINETICS_GENE_REGULATION)
 							.toString();
 				for (String kin : SBMLsqueezer
 						.getKineticsGeneRegulatoryNetworks())
@@ -544,13 +544,13 @@ public class ReactionType {
 		}
 
 		boolean enzymeCatalyzed = ((Boolean) settings
-				.get(CfgKeys.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
+				.get(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED))
 				.booleanValue()
 				|| enzymes.size() > 0;
-		Object whichkin = settings.get(CfgKeys.KINETICS_NONE_ENZYME_REACTIONS);
+		Object whichkin = settings.get(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS);
 
 		if (enzymeCatalyzed)
-			whichkin = settings.get(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS);
+			whichkin = settings.get(SqueezerOptions.KINETICS_OTHER_ENZYME_REACTIONS);
 		if (stoichiometryLeft == 1d) {
 			Species reactant = reaction.getReactant(0).getSpeciesInstance();
 			if (stoichiometryRight == 1d) {
@@ -562,17 +562,17 @@ public class ReactionType {
 						|| SBO.isGeneric(product.getSBOTerm()) || SBO
 						.isRNAOrMessengerRNA(product.getSBOTerm()))))
 						&& !(SBO.isEmptySet(product.getSBOTerm()))))
-					whichkin = settings.get(CfgKeys.KINETICS_GENE_REGULATION);
+					whichkin = settings.get(SqueezerOptions.KINETICS_GENE_REGULATION);
 			}
 			if (!whichkin.toString().equals(
-					settings.get(CfgKeys.KINETICS_GENE_REGULATION).toString())
+					settings.get(SqueezerOptions.KINETICS_GENE_REGULATION).toString())
 					&& ((enzymes.size() > 0 || enzymeCatalyzed) && (stoichiometryRight == 1d || !(reaction
 							.getReversible() || reversibility))))
-				whichkin = settings.get(CfgKeys.KINETICS_UNI_UNI_TYPE);
+				whichkin = settings.get(SqueezerOptions.KINETICS_UNI_UNI_TYPE);
 		} else if (biUni && enzymeCatalyzed) {
-			whichkin = settings.get(CfgKeys.KINETICS_BI_UNI_TYPE);
+			whichkin = settings.get(SqueezerOptions.KINETICS_BI_UNI_TYPE);
 		} else if (biBi && enzymeCatalyzed) {
-			whichkin = settings.get(CfgKeys.KINETICS_BI_BI_TYPE);
+			whichkin = settings.get(SqueezerOptions.KINETICS_BI_BI_TYPE);
 		}
 		return whichkin.toString();
 	}

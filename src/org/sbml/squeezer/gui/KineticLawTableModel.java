@@ -24,7 +24,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.squeezer.CfgKeys;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
@@ -73,7 +73,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 		numOfWarnings = 0;
 
 		int maxNumReactants = ((Integer) (klg.getSettings()
-				.get(CfgKeys.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
+				.get(SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
 		for (reactionNum = 0; reactionNum < klg.getNumCreatedKinetics(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
 			String kinetic = reaction.getKineticLaw().getFormula();

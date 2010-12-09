@@ -263,10 +263,10 @@ public class KineticLawGenerator {
 						+ kineticsClassName;
 			Class<?> kinCls = Class.forName(kineticsClassName);
 			Object typeParameters[] = new Object[] {
-					properties.get(CfgKeys.TYPE_STANDARD_VERSION),
+					properties.get(SqueezerOptions.TYPE_STANDARD_VERSION),
 					Boolean.valueOf(hasFullColumnRank(modelOrig)),
-					properties.get(CfgKeys.TYPE_UNIT_CONSISTENCY),
-					properties.get(CfgKeys.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS) };
+					properties.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY),
+					properties.get(SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS) };
 			Constructor<?> constructor = kinCls.getConstructor(reaction
 					.getClass(), typeParameters.getClass());
 			return (BasicKineticLaw) constructor.newInstance(reaction,
@@ -295,7 +295,7 @@ public class KineticLawGenerator {
 		Model miniModel = new Model(modelOrig.getId(), modelOrig.getLevel(),
 				modelOrig.getVersion());
 		boolean create = ((Boolean) properties
-				.get(CfgKeys.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
+				.get(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION))
 				.booleanValue();
 		/*
 		 * Copy needed species and reactions.
@@ -385,7 +385,7 @@ public class KineticLawGenerator {
 	 */
 	private void generateLaws() throws Throwable {
 		boolean reversibility = ((Boolean) properties
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
 		for (Reaction r : miniModel.getListOfReactions()) {
 			ReactionType rt = new ReactionType(r, properties);
@@ -799,7 +799,7 @@ public class KineticLawGenerator {
 			boolean removeParametersAndStoreUnits, LawListener l) {
 		int i;
 		boolean reversibility = ((Boolean) properties
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
 		Reaction reaction = modelOrig.getReaction(kineticLaw
 				.getParentSBMLObject().getId());
@@ -808,19 +808,19 @@ public class KineticLawGenerator {
 		setPointersToOriginalModel(kineticLaw.getMath());
 		// set the BoundaryCondition to true for Genes if not set anyway:
 		boolean setBoundary = ((Boolean) properties
-				.get(CfgKeys.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
+				.get(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES))
 				.booleanValue();
 		setBoundaryCondition(reaction.getListOfReactants(), setBoundary);
 		setBoundaryCondition(reaction.getListOfProducts(), setBoundary);
 		setInitialConcentrationTo(reaction, Double.parseDouble(properties.get(
-				CfgKeys.OPT_DEFAULT_SPECIES_INITIAL_VALUE).toString()), Double
+				SqueezerOptions.OPT_DEFAULT_SPECIES_INITIAL_VALUE).toString()), Double
 				.parseDouble(properties.get(
-						CfgKeys.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE)
+						SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE)
 						.toString()));
 		if (removeParametersAndStoreUnits) {
 			storeUnits(l);
 			if (((Boolean) properties
-					.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
+					.get(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 					.booleanValue()) {
 				removeUnnecessaryParameters(modelOrig, l);
 			}
@@ -828,7 +828,7 @@ public class KineticLawGenerator {
 		storeParamters(reaction, l);
 		if (removeParametersAndStoreUnits
 				&& ((Boolean) properties
-						.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
+						.get(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 						.booleanValue()) {
 			/*
 			 * delete unnecessary units.
@@ -949,7 +949,7 @@ public class KineticLawGenerator {
 		}
 		storeUnits(l);
 		if (((Boolean) properties
-				.get(CfgKeys.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
+				.get(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS))
 				.booleanValue()) {
 			removeUnnecessaryParameters(modelOrig, l);
 		}
@@ -968,7 +968,7 @@ public class KineticLawGenerator {
 		ListOf<LocalParameter> paramListLocal = kineticLaw
 				.getListOfParameters();
 		boolean addGlobally = ((Boolean) properties
-				.get(CfgKeys.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
+				.get(SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
 				.booleanValue();
 		for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--) {
 			if (addGlobally) {

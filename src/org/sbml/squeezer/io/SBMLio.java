@@ -32,6 +32,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SBaseChangedEvent;
 import org.sbml.jsbml.SBaseChangedListener;
 import org.sbml.jsbml.SBMLException.Category;
 import org.sbml.jsbml.util.IOProgressListener;
@@ -92,7 +93,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	public SBMLio(SBMLInputConverter reader, SBMLOutputConverter writer,
 			Object model) throws Exception {
 		this(reader, writer);
-		this.listOfModels.addLast(reader.convert2Model(model));
+		this.listOfModels.addLast(reader.convertModel(model));
 		this.listOfOrigModels.addLast(model);
 	}
 
@@ -110,12 +111,11 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.SBMLInputConverter#convert2Model(java.lang.Object)
+	 * @see org.sbml.jsbml.SBMLInputConverter#convertModel(java.lang.Object)
 	 */
-	public Model convert2Model(Object model) throws SBMLException {
+	public Model convertModel(Object model) throws SBMLException {
 		try {
-			listOfModels.addLast(reader.convert2Model(model));
+			listOfModels.addLast(reader.convertModel(model));
 			if (model instanceof String) {
 				listOfOrigModels.addLast(reader.getOriginalModel());
 			} else {
@@ -326,13 +326,12 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.SBaseChangedListener#stateChanged(org.sbml.jsbml.SBase)
+	 * @see org.sbml.jsbml.SBaseChangedListener#stateChanged(org.sbml.jsbml.SBaseChangedEvent)
 	 */
-	public void stateChanged(SBase sb) {
-		if (!changed.contains(sb))
-			changed.add(sb);
+	public void stateChanged(SBaseChangedEvent ev) {
+		if (!changed.contains(ev.getSource())) {
+			changed.add(ev.getSource());
+		}
 	}
 
 	/*

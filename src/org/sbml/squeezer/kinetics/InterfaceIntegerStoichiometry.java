@@ -27,6 +27,6 @@ package org.sbml.squeezer.kinetics;
  * @date 2009-09-24
  * @since 1.3
  */
-public interface InterfaceIntegerStoichiometry {
+public interface InterfaceIntegerStoichiometry extends InterfaceKinteticsType {
 
 }

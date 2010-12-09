@@ -81,7 +81,7 @@ public class TestCasesAnalyser {
 		for (File dir : f.listFiles()) {
 			if (dir.isDirectory())
 				try {
-					Model model = sbmlIo.convert2Model(f.getAbsolutePath()
+					Model model = sbmlIo.convertModel(f.getAbsolutePath()
 							+ "/" + dir.getName() + "/" + dir.getName()
 							+ "-sbml-l2v4.xml");
 					if (model.getNumEvents() > 0) {
@@ -121,7 +121,7 @@ public class TestCasesAnalyser {
 								withFastReactions.add(dir.getName());
 								break;
 							}
-							if (r.isSetKineticLaw() && (r.getKineticLaw().getNumParameters() > 0)) {
+							if (r.isSetKineticLaw() && (r.getKineticLaw().getNumLocalParameters() > 0)) {
 								withLocalParameters.add(dir.getName());
 							}
 							checkForStoichiometryMath(r.getListOfReactants(),
@@ -211,6 +211,7 @@ public class TestCasesAnalyser {
 	 * @param withStoichiometryMath
 	 * @param withDelayFunctions
 	 */
+	@SuppressWarnings("deprecation")
 	private static void checkForStoichiometryMath(
 			ListOf<SpeciesReference> list, File dir,
 			Set<String> withStoichiometryMath, Set<String> withDelayFunctions) {

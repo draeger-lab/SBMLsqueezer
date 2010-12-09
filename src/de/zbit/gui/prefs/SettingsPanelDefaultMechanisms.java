@@ -16,13 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.zbit.gui.cfg;
+package de.zbit.gui.prefs;
 
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -34,15 +36,17 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 
-import org.sbml.squeezer.CfgKeys;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.StringTools;
 
 import de.zbit.gui.LayoutHelper;
-import de.zbit.util.SBProperties;
+import de.zbit.util.StringUtil;
+import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.prefs.SBProperties;
 
 /**
  * A {@link JPanel} to let the user select all default instances of
@@ -84,9 +88,10 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 * Reaction Mechanism Panel
 	 * 
 	 * @param properties
+	 * @throws IOException
 	 */
-	public SettingsPanelDefaultMechanisms(SBProperties properties) {
-		super(properties);
+	public SettingsPanelDefaultMechanisms() throws IOException {
+		super();
 	}
 
 	/*
@@ -128,19 +133,19 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 					className));
 			StringBuilder toolTip = new StringBuilder();
 			String msg;
-			if (key.equals(CfgKeys.KINETICS_GENE_REGULATION)) {
+			if (key.equals(SqueezerOptions.KINETICS_GENE_REGULATION)) {
 				msg = "Check this box if you want %s  as reaction scheme for gene regulation (reactions involving genes, RNA and proteins)";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-			} else if (key.equals(CfgKeys.KINETICS_UNI_UNI_TYPE)) {
+			} else if (key.equals(SqueezerOptions.KINETICS_UNI_UNI_TYPE)) {
 				msg = "Check this box if %s is to be applied for uni-uni reactions (one reactant, one product).";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-			} else if (key.equals(CfgKeys.KINETICS_BI_UNI_TYPE)) {
+			} else if (key.equals(SqueezerOptions.KINETICS_BI_UNI_TYPE)) {
 				msg = "Check this box if you want the %s scheme as reaction scheme for bi-uni reactions (two reactant, one product).";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-			} else if (key.equals(CfgKeys.KINETICS_BI_BI_TYPE)) {
+			} else if (key.equals(SqueezerOptions.KINETICS_BI_BI_TYPE)) {
 				msg = "Check this box if you want the %s to be applied to all bi-bi reactions (two reactants, two products).";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-			} else if (key.equals(CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS)) {
+			} else if (key.equals(SqueezerOptions.KINETICS_OTHER_ENZYME_REACTIONS)) {
 				msg = "Reactions, which are enzyme-catalyzed, and follow none of the schemes uni-uni, bi-uni and bi-bi can be modeled using %s.";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
 			} else {
@@ -148,7 +153,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 				toolTip.append(String.format(msg, key.toString().toLowerCase()
 						.replace('_', ' '), type));
 			}
-			jRButton[i].setToolTipText(GUITools.toHTML(toolTip.toString(), 40));
+			jRButton[i].setToolTipText(StringUtil.toHTML(toolTip.toString(), 40));
 			jRButton[i].setEnabled(true);
 			// jRButton[i].setBackground(Color.WHITE);
 			jRButton[i].addItemListener(this);
@@ -184,7 +189,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		jRadioButtonForceReacRev = new JRadioButton(
 				"Model all reactions in a reversible manner");
 		jRadioButtonForceReacRev.setSelected(((Boolean) properties
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue());
 		jRadioButtonForceReacRev
 				.setToolTipText(GUITools
@@ -195,7 +200,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 				"Use information from SBML");
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setSelected(!((Boolean) properties
-						.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+						.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 						.booleanValue());
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setToolTipText(GUITools
@@ -229,16 +234,15 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 				"hal", "weg" });
 		jComboBoxTypeStandardVersion
 				.setSelectedIndex(((Integer) this.properties
-						.get(CfgKeys.TYPE_STANDARD_VERSION)).intValue());
+						.get(SqueezerOptions.TYPE_STANDARD_VERSION)).intValue());
 		jComboBoxTypeStandardVersion
-				.setToolTipText(GUITools
-						.toHTML(
+				.setToolTipText(StringUtil.toHTML(
 								"Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.",
 								40));
 		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
 		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
 		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);
-		helper.add(new JLabel(GUITools.toHTML(
+		helper.add(new JLabel(StringUtil.toHTML(
 				"Choose the version of modular rate laws:", 20)), 1, 1, 1, 1,
 				0, 1);
 		helper.add(new JPanel(), 2, 1, 1, 1, 1, 1);
@@ -262,25 +266,25 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 */
 	private JTabbedPane createMechanismTabs() {
 		boolean treatReactionsReversible = ((Boolean) properties
-				.get(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
+				.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
 				.booleanValue();
 		JTabbedPane tabs = new JTabbedPane(JTabbedPane.LEFT);
-		String curr = CfgKeys.KINETICS_NONE_ENZYME_REACTIONS;
+		String curr = SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsNonEnzyme(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_UNI_UNI_TYPE;
+		curr = SqueezerOptions.KINETICS_UNI_UNI_TYPE;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsUniUni(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_BI_UNI_TYPE;
+		curr = SqueezerOptions.KINETICS_BI_UNI_TYPE;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsBiUni(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_BI_BI_TYPE;
+		curr = SqueezerOptions.KINETICS_BI_BI_TYPE;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsBiBi(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_OTHER_ENZYME_REACTIONS;
+		curr = SqueezerOptions.KINETICS_OTHER_ENZYME_REACTIONS;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsArbitraryEnzyme(treatReactionsReversible), curr));
-		curr = CfgKeys.KINETICS_GENE_REGULATION;
+		curr = SqueezerOptions.KINETICS_GENE_REGULATION;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsGeneRegulation(treatReactionsReversible), curr));
 		return tabs;
@@ -371,13 +375,13 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		if (e.getSource() instanceof JRadioButton) {
 			JRadioButton rbutton = (JRadioButton) e.getSource();
 			if (rbutton.equals(jRadioButtonForceReacRev)) {
-				properties.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+				properties.put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 						Boolean.valueOf(jRadioButtonForceReacRev.isSelected()));
 				jComboBoxTypeStandardVersion
 						.setEnabled(jRadioButtonForceReacRev.isSelected());
 				int selected = tabs.getSelectedIndex();
 				tabsPanel.removeAll();
-				properties.put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+				properties.put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 						Boolean.valueOf(jRadioButtonForceReacRev.isSelected()));
 				tabs = createMechanismTabs();
 				tabs.setSelectedIndex(selected);
@@ -391,9 +395,21 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 										+ rbutton.getText());
 			}
 		} else if (e.getSource().equals(jComboBoxTypeStandardVersion)) {
-			properties.put(CfgKeys.TYPE_STANDARD_VERSION, Integer
+			properties.put(SqueezerOptions.TYPE_STANDARD_VERSION, Integer
 					.valueOf(jComboBoxTypeStandardVersion.getSelectedIndex()));
 		}
 		super.itemStateChanged(e);
+	}
+
+	@Override
+	protected SBPreferences loadPreferences() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> checkPreferences() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

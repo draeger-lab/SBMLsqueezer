@@ -19,7 +19,7 @@ import javax.swing.UIManager;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
-import org.sbml.squeezer.CfgKeys;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.LawListener;
 import org.sbml.squeezer.io.SBMLio;
@@ -142,7 +142,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			String equationType = messagePanel.getSelectedKinetic();
 			reaction.setReversible(messagePanel.getReversible());
 			sbmlio.stateChanged(reaction);
-			klg.getSettings().put(CfgKeys.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+			klg.getSettings().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 					Boolean.valueOf(messagePanel.getReversible()));
 			try {
 				klg.storeKineticLaw(klg.createKineticLaw(reaction,
@@ -154,7 +154,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			}
 			SBMLsqueezerUI.checkForSBMLErrors(dialog,
 					sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(),
-					((Boolean) settings.get(CfgKeys.SHOW_SBML_WARNINGS))
+					((Boolean) settings.get(SqueezerOptions.SHOW_SBML_WARNINGS))
 							.booleanValue());
 			KineticsAndParametersStoredInSBML = true;
 		} else

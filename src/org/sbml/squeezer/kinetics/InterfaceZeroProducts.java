@@ -25,6 +25,6 @@ package org.sbml.squeezer.kinetics;
  * @date 2009-09-23
  * @since 1.3
  */
-public interface InterfaceZeroProducts {
+public interface InterfaceZeroProducts extends InterfaceKinteticsType {
 
 }
