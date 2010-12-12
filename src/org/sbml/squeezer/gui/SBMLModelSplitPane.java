@@ -20,7 +20,6 @@ package org.sbml.squeezer.gui;
 
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -35,6 +34,7 @@ import javax.swing.tree.TreePath;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.SBaseChangedEvent;
 import org.sbml.jsbml.SBaseChangedListener;
 
 /**
@@ -57,7 +57,6 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * 
 	 */
 	private Set<ActionListener> actionListeners;
-	private Properties settings;
 
 	/**
 	 * 
@@ -68,10 +67,9 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * 
 	 * @param model
 	 */
-	public SBMLModelSplitPane(Model model, Properties settings) {
+	public SBMLModelSplitPane(Model model) {
 		super(JSplitPane.HORIZONTAL_SPLIT, true);
 		actionListeners = new HashSet<ActionListener>();
-		this.settings = settings;
 		model.addChangeListener(this);
 		init(model, false);
 	}
@@ -96,9 +94,9 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		JPanel p = new JPanel();
 		JPanel panel = null;
 		if (o instanceof ASTNode) {
-			panel = new ASTNodePanel((ASTNode) o, settings);
+			panel = new ASTNodePanel((ASTNode) o);
 		} else if (o instanceof SBase) {
-			panel = new SBasePanel((SBase) o, settings);
+			panel = new SBasePanel((SBase) o);
 		}
 		if (panel != null) {
 			p.add(panel);
@@ -168,12 +166,9 @@ public class SBMLModelSplitPane extends JSplitPane implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.io.SBaseChangedListener#stateChanged(org.sbml.jlibsbml
-	 * .SBase)
+	 * @see org.sbml.jsbml.SBaseChangedListener#stateChanged(org.sbml.jsbml.SBaseChangedEvent)
 	 */
-	public void stateChanged(SBase sb) {
+	public void stateChanged(SBaseChangedEvent ev) {
 		// TreePath path = tree.getSelectionPath();
 		// init(sb.getModel(), true);
 		// tree.setSelectionPath(path);

@@ -19,12 +19,12 @@ import javax.swing.UIManager;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
-import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.LawListener;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 
-import de.zbit.util.SBProperties;
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * This class allows SBMLsqueezer to create a kinetic law interactively for just
@@ -45,7 +45,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	private KineticLawGenerator klg;
 	private KineticLawSelectionPanel messagePanel;
 	private Reaction reaction;
-	private SBProperties settings;
+	private SBPreferences prefs;
 	private int value;
 	private LawListener lawListener;
 
@@ -57,20 +57,19 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 * @param reactionID
 	 * @throws Throwable
 	 */
-	public KineticLawWindowAdapter(JDialog dialog, SBProperties settings,
-			SBMLio sbmlIO, String reactionID, LawListener l) throws Throwable {
+	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID, LawListener l) throws Throwable {
 		super();
+		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.value = JOptionPane.CLOSED_OPTION;
 		this.dialog = dialog;
 		this.sbmlio = sbmlIO;
 		this.gotFocus = false;
 		this.KineticsAndParametersStoredInSBML = false;
-		this.settings = settings;
 		this.lawListener = l;
 
 		Model model = sbmlIO.getSelectedModel();
 		reaction = model.getReaction(reactionID);
-		klg = new KineticLawGenerator(model, reactionID, settings);
+		klg = new KineticLawGenerator(model, reactionID);
 		messagePanel = new KineticLawSelectionPanel(klg, reaction);
 
 		pane = new JOptionPane(messagePanel, JOptionPane.QUESTION_MESSAGE,
@@ -140,8 +139,8 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		if (value == JOptionPane.OK_OPTION
 				&& !messagePanel.getExistingRateLawSelected()) {
 			String equationType = messagePanel.getSelectedKinetic();
+			reaction.addChangeListener(sbmlio);
 			reaction.setReversible(messagePanel.getReversible());
-			sbmlio.stateChanged(reaction);
 			klg.getSettings().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 					Boolean.valueOf(messagePanel.getReversible()));
 			try {
@@ -153,9 +152,8 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 				e1.printStackTrace();
 			}
 			SBMLsqueezerUI.checkForSBMLErrors(dialog,
-					sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(),
-					((Boolean) settings.get(SqueezerOptions.SHOW_SBML_WARNINGS))
-							.booleanValue());
+					sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
+							.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			KineticsAndParametersStoredInSBML = true;
 		} else
 			KineticsAndParametersStoredInSBML = false;

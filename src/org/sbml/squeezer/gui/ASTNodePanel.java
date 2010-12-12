@@ -19,7 +19,6 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.Component;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -57,12 +56,12 @@ public class ASTNodePanel extends JPanel {
 	 * 
 	 * @param node
 	 */
-	public ASTNodePanel(ASTNode node, Properties settings) {
+	public ASTNodePanel(ASTNode node) {
 		super();
 
 		LayoutHelper lh = new LayoutHelper(this);
 		lh.add(new JPanel(), 0, 0, 1, 1, 0, 0);
-		lh.add(createPanel(node, settings), 1, 0, 1, 1, 0, 0);
+		lh.add(createPanel(node), 1, 0, 1, 1, 0, 0);
 		lh.add(new JPanel(), 2, 0, 1, 1, 0, 0);
 
 		setBorder(BorderFactory.createTitledBorder(String.format(" %s %s ",
@@ -74,7 +73,7 @@ public class ASTNodePanel extends JPanel {
 	 * @param settings
 	 * @return
 	 */
-	private Component createPanel(ASTNode node, Properties settings) {
+	private Component createPanel(ASTNode node) {
 		LayoutHelper lh = new LayoutHelper(new JPanel());
 		boolean enabled = false;
 		JSpinner spinner;
@@ -152,7 +151,7 @@ public class ASTNodePanel extends JPanel {
 			tf.setEditable(enabled);
 			lh.add("Name", tf, true);
 			if (node.getVariable() != null) {
-				lh.add(new SBasePanel(node.getVariable(), settings), 0, lh
+				lh.add(new SBasePanel(node.getVariable()), 0, lh
 						.getRow() + 1, 3, 1, 0, 0);
 				lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1, 0, 0);
 			}

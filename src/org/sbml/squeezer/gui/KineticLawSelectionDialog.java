@@ -59,15 +59,18 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
 
+import de.zbit.gui.GUIOptions;
+import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.gui.prefs.MultiplePreferencesPanel;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.StringUtil;
-import de.zbit.util.prefs.SBProperties;
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * This is the main GUI class.
@@ -106,22 +109,21 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 	private SBMLio sbmlIO;
 
-	private SBProperties settings;
-
 	private MultiplePreferencesPanel settingsPanel;
+	
+	SBPreferences prefs;
 
 	/**
 	 * Creates an empty dialog with the given settings and sbml io object.
 	 * 
 	 * @param owner
-	 * @param settings
 	 */
-	private KineticLawSelectionDialog(Frame owner, SBProperties settings) {
+	private KineticLawSelectionDialog(Frame owner) {
 		super(owner, "SBMLsqueezer", true);
 		// if (owner == null)
 		// setIconImage(GUITools.ICON_LEMON);
-		this.settings = settings;
 		this.sbmlIO = null;
+		this.prefs = new SBPreferences(SqueezerOptions.class);
 		// setAlwaysOnTop(true);
 	}
 
@@ -130,12 +132,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * whole model.
 	 * 
 	 * @param owner
-	 * @param settings
 	 * @param sbmlIO
 	 */
-	public KineticLawSelectionDialog(Frame owner, SBProperties settings,
-			SBMLio sbmlIO) {
-		this(owner, settings);
+	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO) {
+		this(owner);
 		this.sbmlIO = sbmlIO;
 		init();
 	}
@@ -147,13 +147,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param sbmlIO
 	 * @param reaction
 	 */
-	public KineticLawSelectionDialog(Frame owner, SBProperties settings,
-			SBMLio sbmlIO, String reactionID) {
-		this(owner, settings);
+	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID) {
+		this(owner);
 		try {
 			// This thing is necessary for CellDesigner!
 			KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
-					settings, sbmlIO, reactionID, new ProgressDialog(this,
+					sbmlIO, reactionID, new ProgressDialog(this,
 							"Saving changes"));
 			pack();
 			setResizable(false);
@@ -184,7 +183,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 			} else if (text.equals("Help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
 						"SBMLsqueezer " + SBMLsqueezer.getVersionNumber()
-								+ " - Online Help");
+								+ " - Online Help", getClass().getResource(
+								"../resources/html/help.html"));
 				helpBrowser.addWindowListener(this);
 				helpBrowser.setLocationRelativeTo(this);
 				helpBrowser.setSize(640, 640);
@@ -251,15 +251,27 @@ public class KineticLawSelectionDialog extends JDialog implements
 		if (klg != null) {
 			SBFileFilter ff1 = SBFileFilter.createTeXFileFilter();
 			SBFileFilter ff2 = SBFileFilter.createTextFileFilter();
-			JFileChooser chooser = GUITools.createJFileChooser(settings.get(
-					CfgKeys.SqueezerOptions).toString(), false, false,
+			SBPreferences guiPrefs = SBPreferences
+					.getPreferencesFor(GUIOptions.class);
+			JFileChooser chooser = GUITools.createJFileChooser(guiPrefs
+					.get(GUIOptions.OPEN_DIR), false, false,
 					JFileChooser.FILES_ONLY, ff1, ff2);
 			if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 				try {
 					final File f = chooser.getSelectedFile();
 					if (ff1.accept(f)) {
-						LaTeXReportGenerator.writeLaTeX(klg.getMiniModel(), f);
-						settings.put(CfgKeys.SqueezerOptions, f.getParentFile());
+						SBPreferences lprefs = SBPreferences
+								.getPreferencesFor(LaTeXOptions.class);
+						LaTeXReportGenerator export = new LaTeXReportGenerator(
+								lprefs.getBoolean(LaTeXOptions.LATEX_LANDSCAPE),
+								lprefs.getBoolean(LaTeXOptions.LATEX_IDS_IN_TYPEWRITER_FONT),
+								lprefs.getShort(LaTeXOptions.LATEX_FONT_SIZE),
+								lprefs.get(LaTeXOptions.LATEX_PAPER_SIZE),
+								lprefs.getBoolean(LaTeXOptions.SHOW_PREDEFINED_UNITS),
+								lprefs.getBoolean(LaTeXOptions.LATEX_TITLE_PAGE),
+								lprefs.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS));
+						export.toLaTeX(klg.getMiniModel(), f);
+						guiPrefs.put(GUIOptions.OPEN_DIR, f.getParentFile());
 						// new Thread(new Runnable() {
 						// public void run() {
 						// try {
@@ -272,7 +284,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					}
 					if (ff2.accept(f)) {
 						new TextExport(klg.getMiniModel(), f);
-						settings.put(CfgKeys.SqueezerOptions, f.getParentFile());
+						guiPrefs.put(GUIOptions.OPEN_DIR, f.getParentFile());
 						// new Thread(new Runnable() {
 						//
 						// public void run() {
@@ -284,7 +296,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 						// }
 						// }).start();
 					}
-				} catch (IOException exc) {
+					guiPrefs.flush();
+				} catch (Exception exc) {
 					GUITools.showErrorMessage(this, exc);
 				}
 		}
@@ -299,10 +312,12 @@ public class KineticLawSelectionDialog extends JDialog implements
 			options.setEnabled(false);
 			GUITools.setAllEnabled(footPanel, false);
 			Properties props = settingsPanel.getProperties();
-			for (Object key : props.keySet())
-				settings.put(key, props.get(key));
+			for (Object key : props.keySet()) {
+				prefs.put(key, props.get(key));
+			}
+			prefs.flush();
 			Model model = sbmlIO.getSelectedModel();
-			klg = new KineticLawGenerator(model, settings);
+			klg = new KineticLawGenerator(model);
 			if (klg.getFastReactions().size() > 0) {
 				StringBuilder message = new StringBuilder();
 				message.append("The model contains ");
@@ -507,7 +522,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private MultiplePreferencesPanel getJSettingsPanel() {
 		if (settingsPanel == null) {
-			settingsPanel = new MultiplePreferencesPanel(settings);
+			try {
+				settingsPanel = new MultiplePreferencesPanel();
+			} catch (IOException exc) {
+				GUITools.showErrorMessage(this, exc);
+			}
 			// settingsPanel.setBackground(Color.WHITE);
 		}
 		return settingsPanel;
@@ -633,8 +652,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 			sbmlIO.saveChanges(new ProgressDialog(this,
 					"Saving changes to original model"));
 			SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
-					sbmlIO.getWriteWarnings(), ((Boolean) settings
-							.get(SqueezerOptions.SHOW_SBML_WARNINGS)).booleanValue());
+					sbmlIO.getWriteWarnings(), prefs
+							.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			KineticsAndParametersStoredInSBML = true;
 		} catch (SBMLException exc) {
 			GUITools.showErrorMessage(this, exc);

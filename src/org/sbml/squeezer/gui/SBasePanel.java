@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
@@ -77,12 +78,14 @@ import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.compilers.HTMLFormula;
 import org.sbml.jsbml.util.compilers.LaTeX;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.SystemBrowser;
+import de.zbit.util.StringUtil;
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * A specialized {@link JPanel} that displays all available properties of a
@@ -121,19 +124,18 @@ public class SBasePanel extends JPanel {
 	/**
 	 * 
 	 */
-	private Properties settings;
+	private SBPreferences prefs;
 
 	/**
 	 * 
 	 * @param sbase
 	 */
-	public SBasePanel(SBase sbase, Properties settings) {
+	public SBasePanel(SBase sbase) {
 		super();
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
-		latex = new LaTeX(((Boolean) settings
-				.get(CfgKeys.SqueezerOptions)).booleanValue());
-		this.settings = settings;
+		prefs = SBPreferences.getPreferencesFor(LaTeXOptions.class);
+		latex = new LaTeX(prefs.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS));
 		lh = new LayoutHelper(this, gbl);
 		editable = false;
 		row = -1;
@@ -229,7 +231,7 @@ public class SBasePanel extends JPanel {
 	private void addProperties(Constraint c) {
 		if (c.isSetMessage() || editable) {
 			lh.add(new JLabel("Message: "), 1, ++row, 1, 1, 1, 1);
-			JTextField tf = new JTextField(c.getMessage());
+			JTextField tf = new JTextField(c.getMessageString());
 			tf.setEditable(editable);
 			lh.add(tf, 3, ++row, 1, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
@@ -624,6 +626,7 @@ public class SBasePanel extends JPanel {
 					sb.append("<li>");
 				String cvtString = cvt.toString();
 				for (int k = 0; k < cvt.getNumResources(); k++) {
+					try {
 					String uri = cvt.getResourceURI(k);
 					String loc[] = SBML2LaTeX.getMIRIAMparser().getLocations(uri);
 					if (loc.length > 0) {
@@ -638,6 +641,9 @@ public class SBasePanel extends JPanel {
 						}
 						sbu.append(split[split.length - 1]);
 						cvtString = sbu.toString();
+					}
+					} catch (Exception exc) {
+						GUITools.showErrorMessage(this, exc);
 					}
 				}
 				sb.append(cvtString);
@@ -666,10 +672,10 @@ public class SBasePanel extends JPanel {
 		lh.add(new JLabel("SBO term: "), 1, ++row, 1, 1, 1, 1);
 		String text = "";
 		if (sbase.isSetSBOTerm()) {
-			text = SBO.getTerm(sbase.getSBOTerm()).getDescription().replace(
+			text = SBO.getTerm(sbase.getSBOTerm()).getDefinition().replace(
 					"\\,", ",");
 		}
-		JEditorPane sboTermField = new JEditorPane("text/html", GUITools
+		JEditorPane sboTermField = new JEditorPane("text/html", StringUtil
 				.toHTML(text, 60));
 		sboTermField.setEditable(editable);
 		sboTermField.setBorder(BorderFactory.createLoweredBevelBorder());

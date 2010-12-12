@@ -803,7 +803,7 @@ public class ReactionType {
 	public void setBoundaryCondition(Species species, boolean condition) {
 		if (condition != species.getBoundaryCondition()) {
 			species.setBoundaryCondition(condition);
-			species.stateChanged();
+			species.firePropertyChange();
 		}
 	}
 
