@@ -250,7 +250,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	@Override
 	public String toString() {
-		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDescription()
+		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getDefinition()
 				.replace("\\,", ",") : getClass().getSimpleName();
 	}
 }
