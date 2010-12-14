@@ -31,6 +31,7 @@ import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.squeezer.LawListener;
 
 import de.zbit.gui.LayoutHelper;
+import de.zbit.util.StringUtil;
 
 /**
  * GUI class to visualize the progress when writing SBML or synchronizing rate
@@ -154,7 +155,7 @@ public class ProgressDialog extends JDialog implements IOProgressListener,
 				sb.append(' ');
 				sb.append(((NamedSBase) currObject).getId());
 			}
-			label.setText(GUITools.toHTML(sb.toString(), 40));
+			label.setText(StringUtil.toHTML(sb.toString(), GUITools.TOOLTIP_LINE_LENGTH));
 		}
 	}
 }

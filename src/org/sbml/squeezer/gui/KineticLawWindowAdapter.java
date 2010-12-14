@@ -141,7 +141,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			String equationType = messagePanel.getSelectedKinetic();
 			reaction.addChangeListener(sbmlio);
 			reaction.setReversible(messagePanel.getReversible());
-			klg.getSettings().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+			klg.getPreferences().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 					Boolean.valueOf(messagePanel.getReversible()));
 			try {
 				klg.storeKineticLaw(klg.createKineticLaw(reaction,
@@ -155,8 +155,9 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 					sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
 							.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			KineticsAndParametersStoredInSBML = true;
-		} else
+		} else {
 			KineticsAndParametersStoredInSBML = false;
+		}
 		return KineticsAndParametersStoredInSBML;
 	}
 

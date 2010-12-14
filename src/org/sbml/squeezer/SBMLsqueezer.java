@@ -22,8 +22,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
-import java.util.Properties;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 
@@ -49,16 +52,20 @@ import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
 import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
+import org.sbml.squeezer.math.StabilityOptions;
 import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.MessageListener;
 import org.sbml.squeezer.util.MessageProcessor;
-import org.sbml.tolatex.io.LaTeXReportGenerator;
+import org.sbml.tolatex.LaTeXOptions;
+import org.sbml.tolatex.SBML2LaTeX;
+import org.sbml.tolatex.io.LaTeXOptionsIO;
 
+import de.zbit.gui.GUIOptions;
 import de.zbit.gui.UpdateMessage;
-import de.zbit.gui.prefs.FileSelector.Configuration;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.Reflect;
 import de.zbit.util.prefs.KeyProvider;
+import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.prefs.SBProperties;
 
 /**
@@ -72,15 +79,10 @@ import de.zbit.util.prefs.SBProperties;
  * @version $Revision: 293$
  */
 public class SBMLsqueezer implements LawListener, IOProgressListener {
-
 	/**
 	 * 
 	 */
-	private final static String configFile = "/org/sbml/squeezer/resources/cfg/SBMLsqueezer.cfg";
-	/**
-	 * 
-	 */
-	private static Configuration configuration;
+	private static SBPreferences preferences;
 	/**
 	 * The possible location of this class in a jar file if used in plug-in
 	 * mode.
@@ -103,20 +105,10 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * 
 	 */
 	private static MessageListener msg;
-
-	/**
-	 * The directory within the user's preferences
-	 */
-	private static final String userPrefDir = "/org/sbml/squeezer";
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
 	private static final String versionNumber = "1.4";
-	/**
-	 * Comment to be written into SBMLsqueezer's configuration file.
-	 */
-	private static final String configurationComment = "SBMLsqueezer "
-			+ versionNumber + " configuration. Do not change manually.";
 
 	/**
 	 * Load all available kinetic equations and the user's settings from the
@@ -187,8 +179,12 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		msg.logln("done in " + (System.currentTimeMillis() - time) + " ms");
 		msg.log("loading user settings...");
 
-		configuration = new Configuration(SqueezerOptions.class, userPrefDir,
-				configFile, configurationComment);
+		try {
+			preferences = new SBPreferences(SqueezerOptions.class, SqueezerOptions.CONFIG_FILE_LOCATION);
+		} catch (IOException exc) {
+			exc.printStackTrace();
+			System.exit(1);
+		}
 
 		msg.logln(" done.");
 	}
@@ -199,20 +195,19 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * @return
 	 */
 	private static SBProperties correctProperties(SBProperties p) {
-		p = configuration.correctProperties(p);
 		String val;
 		boolean allReversible = p
 				.containsKey(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
 		if (allReversible) {
-			allReversible &= Boolean.parseBoolean(p.get(
-					SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE).toString());
+			allReversible &= p.getBoolean(
+					SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
 		} else {
-			SBProperties properties = configuration.getProperties();
+			SBProperties properties = preferences.toProperties();
 			allReversible = properties
 					.containsKey(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
 			if (allReversible) {
-				allReversible &= Boolean.parseBoolean(properties.get(
-						SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE).toString());
+				allReversible &= properties.getBoolean(
+						SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
 			}
 		}
 		String key;
@@ -243,8 +238,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 					invalid = false;
 				}
 				if (invalid) {
-					String defaultKin = configuration.getDefaultProperties()
-							.get(k).toString();
+					String defaultKin = preferences.getDefaults().get(k).toString();
 					if (!defaultKin.startsWith(KINETICS_PACKAGE)) {
 						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
 					}
@@ -255,15 +249,6 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			}
 		}
 		return p;
-	}
-
-	/**
-	 * Returns the location of the default configuration file.
-	 * 
-	 * @return the configFile
-	 */
-	public static String getConfigFile() {
-		return configFile;
 	}
 
 	/**
@@ -361,10 +346,9 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	public static String[] getPossibleEnzymeTypes() {
 		Set<String> enzymeTypes = new HashSet<String>();
 		String prefix = "POSSIBLE_ENZYME_";
-		SBProperties properties = configuration.getProperties();
-		for (Object key : properties.keySet()) {
+		for (Object key : preferences.keySet()) {
 			if (key.toString().startsWith(prefix)) {
-				if (((Boolean) properties.get(key)).booleanValue()) {
+				if (preferences.getBoolean(key)) {
 					enzymeTypes.add(key.toString().substring(prefix.length()));
 				}
 			}
@@ -398,21 +382,26 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		final SBMLsqueezer squeezer = new SBMLsqueezer(new LibSBMLReader(),
 				new LibSBMLWriter());
 		msg.log("scanning command line arguments...");
-		final SBProperties p = correctProperties(configuration
-				.analyzeCommandLineArguments(args));
-		for (Object key : p.keySet()) {
-			configuration.getProperties().put(key, p.get(key));
+		final SBProperties p = SBPreferences.analyzeCommandLineArguments(getListOfCommandLineOptions(), args);
+		for (Class<? extends KeyProvider> keyProvider : getListOfCommandLineOptions()) {
+			SBPreferences prefs = keyProvider != SqueezerOptions.class ? SBPreferences
+					.getPreferencesFor(keyProvider)
+					: preferences;
+			for (Object key : p.keySet()) {
+				if (KeyProvider.Tools.providesOption(keyProvider, key
+						.toString()))
+					prefs.put(key, p.get(key));
+			}
+			try {
+				prefs.flush();
+			} catch (BackingStoreException exc) {
+				exc.printStackTrace();
+			}
 		}
 		msg.logln(" done.\nreading SBO... done.");
-		if (p.containsKey(CfgKeys.SqueezerOptions)
-				&& ((Boolean) p.get(CfgKeys.SqueezerOptions)).booleanValue()) {
+		if (p.getBooleanProperty(GUIOptions.GUI)) {
 			if (p.containsKey(SqueezerOptions.SBML_FILE)) {
 				squeezer.readSBMLSource(p.get(SqueezerOptions.SBML_FILE).toString());
-			}
-			if (p.containsKey(CfgKeys.SqueezerOptions)
-					&& ((Boolean) p.get(CfgKeys.SqueezerOptions))
-							.booleanValue()) {
-				squeezer.checkForUpdate(true);
 			}
 			msg.log("loading GUI...");
 			new Thread(new Runnable() {
@@ -429,20 +418,22 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				}
 			}).start();
 		} else {
-			if (squeezer.getSBMLIO().getNumErrors() > 0
-					&& ((Boolean) p.get(SqueezerOptions.SHOW_SBML_WARNINGS))
-							.booleanValue())
-				for (SBMLException exc : squeezer.getSBMLIO().getWarnings())
+			if ((squeezer.getSBMLIO().getNumErrors() > 0)
+					&& p.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
+				for (SBMLException exc : squeezer.getSBMLIO().getWarnings()) {
 					msg.err(exc.getMessage());
+				}
+			}
 			// Do a lot of other stuff...
 			squeezer.checkForUpdate(false);
-			if (p.containsKey(SqueezerOptions.SBML_OUT_FILE))
+			if (p.containsKey(SqueezerOptions.SBML_OUT_FILE)) {
 				try {
 					squeezer.squeeze(p.get(SqueezerOptions.SBML_FILE).toString(), p
 							.get(SqueezerOptions.SBML_OUT_FILE).toString());
 				} catch (Throwable e) {
 					e.printStackTrace();
 				}
+			}
 		}
 	}
 
@@ -454,7 +445,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 */
 	public static void saveProperties(SBProperties properties)
 			throws BackingStoreException {
-		configuration.saveProperties(properties);
+		preferences.putAll(properties);
+		preferences.flush();
 	}
 
 	/**
@@ -520,32 +512,21 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 *            otherwise.
 	 */
 	public void checkForUpdate(final boolean gui) {
-		Properties properties = configuration.getProperties();
-		if (((Boolean) properties.get(CfgKeys.SqueezerOptions))
-				.booleanValue()) {
-			final SBMLsqueezer squeezer = this;
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						UpdateMessage.checkForUpdate(gui, squeezer);
-					} catch (IOException exc) {
-						// Don't annoy people
-						// JOptionPane.showMessageDialog(squeezer,
-						// exc.getMessage());
-						// exc.printStackTrace();
-					}
+		final SBMLsqueezer squeezer = this;
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					UpdateMessage update = new UpdateMessage(squeezer
+							.getClass().getSimpleName(), getURLOnlineUpdate());
+					update.checkForUpdate(gui, getVersionNumber());
+				} catch (IOException exc) {
+					// Don't annoy people
+					// JOptionPane.showMessageDialog(squeezer,
+					// exc.getMessage());
+					// exc.printStackTrace();
 				}
-			}).start();
-		}
-	}
-
-	/**
-	 * 
-	 * @param keys
-	 * @return
-	 */
-	public static Configuration getConfiguration() {
-		return configuration;
+			}
+		}).start();
 	}
 
 	/*
@@ -602,59 +583,10 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	}
 
 	/**
-	 * Change the configuration of SBMLsqueezer.
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public Object set(String key, boolean value) {
-		Properties properties = configuration.getProperties();
-		return properties.put(key, Boolean.valueOf(value));
-	}
-
-	/**
-	 * Change the configuration of SBMLsqueezer.
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public Object set(String key, double value) {
-		Properties properties = configuration.getProperties();
-		return properties.put(key, Double.valueOf(value));
-	}
-
-	/**
-	 * Change the configuration of SBMLsqueezer.
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public Object set(String key, int value) {
-		Properties properties = configuration.getProperties();
-		return properties.put(key, Integer.valueOf(value));
-	}
-
-	/**
-	 * Change the configuration of SBMLsqueezer.
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public Object set(String key, String value) {
-		Properties properties = configuration.getProperties();
-		return properties.put(key, value);
-	}
-
-	/**
 	 * Shows the GUI of SBMLsqueezer stand-alone.
 	 */
 	public void showGUI() {
-		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, configuration
-				.getProperties());
+		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo);
 		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
 	}
@@ -665,21 +597,14 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	public void showGUISimulation() {
 		// TODO: Not in this version
 		// SBProperties properties = configuration.getProperties();
-		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo, configuration
-				.getProperties());
+		//SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo);
 		// if (properties.get(CfgKeys.CSV_FILE).toString().length() > 0) {
 		// // gui.showSimulationControl(true, settings.get(CfgKeys.CSV_FILE)
 		// // .toString());
 		// } else {
 		// // gui.showSimulationControl(true);
 		// }
-		gui.dispose();
-		try {
-			configuration.saveProperties();
-		} catch (BackingStoreException exc) {
-			exc.printStackTrace();
-		}
-		System.exit(0);
+		showGUI();
 	}
 
 	/**
@@ -712,7 +637,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			long time = System.currentTimeMillis();
 			msg.log("Generating kinetic equations...");
 			KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
-					.getSelectedModel(), configuration.getProperties());
+					.getSelectedModel());
 			if (klg.getFastReactions().size() > 0) {
 				msg.err("Model " + sbmlIo.getSelectedModel().getId()
 						+ " contains " + klg.getFastReactions().size()
@@ -727,13 +652,11 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			msg.log("Saving changes and writing SBML file... ");
 			sbmlIo.saveChanges(this);
 			if ((outFile != null)
-					&& (SBFileFilter.SBML_FILE_FILTER.accept(outFile))) {
+					&& (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
 				sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
 				msg.logln(" done in " + (System.currentTimeMillis() - time)
 						+ " ms");
-				Properties properties = configuration.getProperties();
-				if (((Boolean) properties.get(SqueezerOptions.SHOW_SBML_WARNINGS))
-						.booleanValue()) {
+				if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
 					for (SBMLException exc : sbmlIo.getWriteWarnings()) {
 						msg.errln(exc.getMessage());
 					}
@@ -752,22 +675,23 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * @param sbmlInfile
 	 * @param latexFile
 	 * @throws IOException
+	 * @throws SBMLException 
 	 */
-	public void toLaTeX(Object sbmlSource, String latexFile) throws IOException {
+	public void toLaTeX(Object sbmlSource, String latexFile) throws IOException, SBMLException {
 		readSBMLSource(sbmlSource);
-		Properties properties = configuration.getProperties();
-		String dir = properties.get(LaTeXCfgKeys.LATEX_DIR).toString();
+		SBPreferences prefsLaTeX = SBPreferences.getPreferencesFor(LaTeXOptionsIO.class);
+		String dir = prefsLaTeX.get(LaTeXOptionsIO.LATEX_DIR).toString();
 		if (latexFile != null) {
 			File out = new File(latexFile);
-			if (SBFileFilter.TeX_FILE_FILTER.accept(out)) {
+			if (SBFileFilter.createTeXFileFilter().accept(out)) {
 				String path = out.getParent();
 				if (!path.equals(dir)) {
-					properties.put(LaTeXCfgKeys.LATEX_DIR, path);
+					prefsLaTeX.put(LaTeXOptionsIO.LATEX_DIR, path);
 				}
 				if (!out.exists()) {
 					long time = System.currentTimeMillis();
 					msg.log("writing LaTeX output...");
-					LaTeXReportGenerator.writeLaTeX(sbmlIo.getSelectedModel(), out);
+					SBML2LaTeX.convert(sbmlIo.getSelectedModel(), out);
 					msg.logf(" done in %d ms\n",
 							(System.currentTimeMillis() - time));
 				}
@@ -784,15 +708,36 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * 
 	 */
 	public static void saveProperties() throws BackingStoreException {
-		configuration.saveProperties();
+		preferences.flush();
 	}
 
 	/**
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static Class<? extends KeyProvider>[] getCommandLineOptions() {
-		// TODO Auto-generated method stub
-		return null;
+		return getListOfCommandLineOptions().toArray(new Class[0]);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static List<Class<? extends KeyProvider>> getListOfCommandLineOptions() {
+		List<Class<? extends KeyProvider>> list = new LinkedList<Class<? extends KeyProvider>>();
+		list.add(SqueezerOptions.class);
+		list.add(StabilityOptions.class);
+		list.add(GUIOptions.class);
+		list.add(LaTeXOptions.class);
+		return list;
+	}
+
+	/**
+	 * @throws MalformedURLException 
+	 * 
+	 */
+	public static URL getURLOnlineUpdate() throws MalformedURLException {
+		return new URL("http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/");
 	}
 }

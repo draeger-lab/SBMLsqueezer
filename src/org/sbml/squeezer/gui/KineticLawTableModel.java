@@ -35,9 +35,9 @@ import org.sbml.squeezer.kinetics.BasicKineticLaw;
  * 
  * @since 1.0
  * @version
- * @author Nadine Hassis <Nadine.hassis@gmail.com>
- * @author Andreas Dr&auml;ger (draeger) <andreas.draeger@uni-tuebingen.de>
- * @date Aug 1, 2007
+ * @author Nadine Hassis
+ * @author Andreas Dr&auml;ger
+ * @date 2007-08-01
  */
 public class KineticLawTableModel extends AbstractTableModel {
 	/**
@@ -62,6 +62,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * @param reactionNumAndKineticBezeichnung
 	 * @param model
 	 */
+	@SuppressWarnings("deprecation")
 	public KineticLawTableModel(KineticLawGenerator klg) {
 		int reactionNum, speciesNum;
 		double numReac;
@@ -72,13 +73,13 @@ public class KineticLawTableModel extends AbstractTableModel {
 		data = new Object[klg.getNumCreatedKinetics()][this.columnNames.length];
 		numOfWarnings = 0;
 
-		int maxNumReactants = ((Integer) (klg.getSettings()
-				.get(SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS))).intValue();
+		int maxNumReactants = klg.getPreferences().getInt(
+				SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS);
 		for (reactionNum = 0; reactionNum < klg.getNumCreatedKinetics(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
 			String kinetic = reaction.getKineticLaw().getFormula();
 			ListOf<LocalParameter> param = reaction.getKineticLaw()
-					.getListOfParameters();
+					.getListOfLocalParameters();
 			numReac = 0;
 			for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++)
 				numReac += reaction.getReactant(speciesNum).getStoichiometry();

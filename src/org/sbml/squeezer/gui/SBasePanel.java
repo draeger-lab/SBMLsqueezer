@@ -23,9 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.io.IOException;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -249,23 +247,22 @@ public class SBasePanel extends JPanel {
 		lh.add(check, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		if (e.isSetTrigger()) {
-			lh.add(new SBasePanel(e.getTrigger(), settings), 1, ++row, 3, 1, 1,
+			lh.add(new SBasePanel(e.getTrigger()), 1, ++row, 3, 1, 1,
 					1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		if (e.isSetDelay()) {
-			lh
-					.add(new SBasePanel(e.getDelay(), settings), 1, ++row, 3,
+			lh.add(new SBasePanel(e.getDelay()), 1, ++row, 3,
 							1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		if (e.isSetTimeUnits()) {
-			lh.add(new SBasePanel(e.getTimeUnitsInstance(), settings), 1,
+			lh.add(new SBasePanel(e.getTimeUnitsInstance()), 1,
 					++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 		for (EventAssignment ea : e.getListOfEventAssignments()) {
-			lh.add(new SBasePanel(ea, settings), 1, ++row, 3, 1, 1, 1);
+			lh.add(new SBasePanel(ea), 1, ++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		}
 	}
@@ -344,24 +341,21 @@ public class SBasePanel extends JPanel {
 					(int) d.getHeight() + 10));
 			lh.add(scroll, 1, ++row, 3, 1, 1, 1);
 			lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-			if (mc instanceof EventAssignment)
-				lh
-						.add(new SBasePanel(((EventAssignment) mc)
-								.getVariableInstance(), settings), 1, ++row, 3,
+			if (mc instanceof EventAssignment) {
+				lh.add(new SBasePanel(((EventAssignment) mc)
+								.getVariableInstance()), 1, ++row, 3,
 								1, 1, 1);
-			else if (mc instanceof InitialAssignment)
-				lh
-						.add(new SBasePanel(((InitialAssignment) mc)
-								.getVariableInstance(), settings), 1, ++row, 3,
+			} else if (mc instanceof InitialAssignment) {
+				lh.add(new SBasePanel(((InitialAssignment) mc)
+								.getVariableInstance()), 1, ++row, 3,
 								1, 1, 1);
-			else if (mc instanceof AssignmentRule)
-				lh
-						.add(new SBasePanel(((AssignmentRule) mc)
-								.getVariableInstance(), settings), 1, ++row, 3,
+			} else if (mc instanceof AssignmentRule) {
+				lh.add(new SBasePanel(((AssignmentRule) mc)
+								.getVariableInstance()), 1, ++row, 3,
 								1, 1, 1);
-			else if (mc instanceof RateRule)
-				lh.add(new SBasePanel(((RateRule) mc).getVariableInstance(),
-						settings), 1, ++row, 3, 1, 1, 1);
+			} else if (mc instanceof RateRule) {
+				lh.add(new SBasePanel(((RateRule) mc).getVariableInstance()), 1, ++row, 3, 1, 1, 1);
+			}
 		}
 	}
 
@@ -517,7 +511,7 @@ public class SBasePanel extends JPanel {
 		lh.add(rEqPanel, 1, ++row, 3, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
 		if (reaction.isSetKineticLaw()) {
-			lh.add(new SBasePanel(reaction.getKineticLaw(), settings), 1,
+			lh.add(new SBasePanel(reaction.getKineticLaw()), 1,
 					++row, 3, 1, 1, 1);
 		}
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
@@ -729,7 +723,7 @@ public class SBasePanel extends JPanel {
 		else if (ssr instanceof ModifierSpeciesReference)
 			addProperties((ModifierSpeciesReference) ssr);
 		if (ssr.isSetSpecies())
-			lh.add(new SBasePanel(ssr.getSpeciesInstance(), settings), 1,
+			lh.add(new SBasePanel(ssr.getSpeciesInstance()), 1,
 					++row, 3, 1, 1, 1);
 	}
 
@@ -910,8 +904,9 @@ public class SBasePanel extends JPanel {
 		lh.add(new JLabel("Definition: "), 1, ++row, 1, 1, 1, 1);
 		lh.add(GUITools.unitPreview(ud), 3, row, 1, 1, 1, 1);
 		lh.add(new JPanel(), 1, ++row, 5, 1, 0, 0);
-		for (Unit u : ud.getListOfUnits())
-			lh.add(new SBasePanel(u, settings), 1, ++row, 3, 1, 1, 1);
+		for (Unit u : ud.getListOfUnits()) {
+			lh.add(new SBasePanel(u), 1, ++row, 3, 1, 1, 1);
+		}
 	}
 
 	/**

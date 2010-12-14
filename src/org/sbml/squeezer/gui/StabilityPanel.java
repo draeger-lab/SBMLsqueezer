@@ -77,8 +77,9 @@ public class StabilityPanel extends JPanel {
 	private void init() {		
 		GridBagLayout layout = new GridBagLayout();
 		jTextFieldDelta = new JTextField();
-		jTextFieldDelta.setText(settings.get(CfgKeys.SqueezerOptions)
-				.toString());
+		// TODO!!!
+//		jTextFieldDelta.setText(settings.get(CfgKeys.SqueezerOptions)
+//				.toString());
 		jTextFieldDelta.setEnabled(false);
 		jTextFieldStable = new JTextField("Stability undefined");
 		jTextFieldStable.setEnabled(false);

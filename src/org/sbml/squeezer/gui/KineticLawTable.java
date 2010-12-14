@@ -74,11 +74,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	 */
 	private static final long serialVersionUID = -1575566223506382693L;
 
-	private boolean editing;
+	private boolean editing, reversibility;
 
 	private KineticLawGenerator klg;
-
-	private boolean reversibility;
 
 	// private static final int widthMultiplier = 7;
 
@@ -92,14 +90,14 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	public KineticLawTable(KineticLawGenerator klg) {
 		super(new KineticLawTableModel(klg));
 		this.klg = klg;
-		this.reversibility = ((Boolean) klg.getSettings().get(
-				SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)).booleanValue();
+		this.reversibility = klg.getPreferences().getBoolean(
+				SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
 		getModel().addTableModelListener(this);
 		setColumnWidthAppropriately();
 		setRowHeightAppropriately();
-		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer(
-				((Integer) (klg.getSettings()
-						.get(SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS))).intValue()));
+		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer(klg
+				.getPreferences().getInt(
+						SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS)));
 		getTableHeader().setToolTipText(
 				StringUtil.toHTML("Double click on the kinetic "
 						+ "law to apply another formalism. "
@@ -267,9 +265,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 							oldLaw.getSimpleName()))
 						selected = i;
 				}
-
+				klg.getPreferences().flush();
 				final KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
-						possibleLaws, klg.getSettings(), selected);
+						possibleLaws, selected);
 				final JOptionPane pane = new JOptionPane(klsp,
 						JOptionPane.QUESTION_MESSAGE,
 						JOptionPane.OK_CANCEL_OPTION, UIManager
@@ -385,6 +383,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	 * @param selectedKinetic
 	 * @param possibleLaws
 	 */
+	@SuppressWarnings("deprecation")
 	public void updateTable(KineticLaw kineticLaw) {
 		// Reaction Identifier, Kinetic Law, SBO, #Reactants,
 		// Reactants, Products, Parameters, Formula
@@ -414,8 +413,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		i = 0;
 		while ((i < klg.getModel().getNumReactions())
 				&& (!klg.getModel().getReaction(i).getId().equals(
-						kineticLaw.getParentSBMLObject().getId())))
+						kineticLaw.getParentSBMLObject().getId()))) {
 			i++;
+		}
 		kineticLaw.getParentSBMLObject().setKineticLaw(kineticLaw);
 		setColumnWidthAppropriately();
 		editing = false;
@@ -428,9 +428,11 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		for (int col = 0; col < getColumnCount(); col++) {
 			int maxLength = getColumnModel().getColumn(col).getHeaderValue()
 					.toString().length();
-			for (int row = 0; row < getRowCount(); row++)
-				if (maxLength < getValueAt(row, col).toString().length())
+			for (int row = 0; row < getRowCount(); row++) {
+				if (maxLength < getValueAt(row, col).toString().length()) {
 					maxLength = getValueAt(row, col).toString().length();
+				}
+			}
 			getColumnModel().getColumn(col).setPreferredWidth(
 					3 * getFont().getSize() / 5 * maxLength + 10);
 		}
