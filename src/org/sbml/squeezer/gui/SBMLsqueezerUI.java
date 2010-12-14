@@ -797,8 +797,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public URL getURLOnlineUpdate() {
 		try {
-			return new URL(
-					"http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/");
+			SBMLsqueezer.getURLOnlineUpdate();
 		} catch (MalformedURLException exc) {
 			GUITools.showErrorMessage(this, exc);
 		}

@@ -26,7 +26,6 @@ import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -52,10 +51,13 @@ import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.StringTools;
+import org.sbml.tolatex.LaTeXOptions;
+import org.sbml.tolatex.io.SBOTermFormatter;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.util.StringUtil;
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * A panel, which contains all possible kinetic equations for the current
@@ -79,7 +81,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	private static final int width = 310, height = 175;
 
-	private JPanel eqnPrev;
+	private JPanel eqnPrev, optionsPanel;
 
 	private boolean isExistingRateLawSelected;
 
@@ -89,23 +91,15 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	private KineticLawGenerator klg;
 
-	private String laTeXpreview[];
+	private String selected, laTeXpreview[], possibleTypes[];
 
-	private JPanel optionsPanel;
-
-	private String possibleTypes[];
-
-	private JRadioButton rButtonGlobalParameters;
-
-	private JRadioButton rButtonReversible;
-
-	private JRadioButton rButtonsKineticEquations[];
+	private JRadioButton rButtonGlobalParameters, rButtonReversible, rButtonsKineticEquations[];
 
 	private Reaction reaction;
 
-	private String selected;
-
 	private JCheckBox treatAsEnzymeReaction;
+	
+	private SBPreferences prefsLaTeX;
 
 	/**
 	 * 
@@ -115,9 +109,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @throws RateLawNotApplicableException
 	 */
 	public KineticLawSelectionPanel(BasicKineticLaw[] possibleLaws,
-			Properties settings, int selected)
+			int selected)
 			throws RateLawNotApplicableException {
 		super(new BorderLayout());
+		prefsLaTeX = SBPreferences.getPreferencesFor(LaTeXOptions.class);
 		if (possibleLaws == null || selected < 0
 				|| selected > possibleLaws.length || possibleLaws.length < 1)
 			throw new IllegalArgumentException(
@@ -131,9 +126,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			possibleTypes[i] = possibleLaws[i].getClass().getCanonicalName();
 			try {
 				laTeXpreview[i] = possibleLaws[i].getMath().compile(
-						new LaTeX(((Boolean) klg.getSettings().get(
-								CfgKeys.SqueezerOptions))
-								.booleanValue())).toString();
+								new LaTeX(prefsLaTeX
+												.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS)))
+						.toString();
 			} catch (SBMLException e) {
 				laTeXpreview[i] = "invalid";
 			}
@@ -157,10 +152,11 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	public KineticLawSelectionPanel(KineticLawGenerator klg, Reaction reaction)
 			throws Throwable {
 		super(new GridBagLayout());
+		prefsLaTeX = SBPreferences.getPreferencesFor(LaTeXOptions.class);
 		this.selected = "";
 		this.klg = klg;
 		this.reaction = reaction;
-		this.klg.getSettings().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+		this.klg.getPreferences().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 				Boolean.valueOf(this.reaction.getReversible()));
 		StringBuilder label = new StringBuilder("<html><body>");
 		double stoichiometry = 0;
@@ -231,17 +227,14 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		lh.add(rButtonReversible, 0, 1, 1, 1, 1, 1);
 		lh.add(rButtonIrreversible, 1, 1, 1, 1, 1, 1);
 		JRadioButton rButtonLocalParameters = new JRadioButton(
-				"Local parameters", !((Boolean) this.klg.getSettings().get(
-						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
-						.booleanValue());
+				"Local parameters", !this.klg.getPreferences().getBoolean(
+						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
 		rButtonGlobalParameters = new JRadioButton("Global parameters",
 				!rButtonLocalParameters.isSelected());
 		rButtonGlobalParameters.setToolTipText(StringUtil.toHTML(
-				"If selected, newly created parameters will "
-						+ "be stored globally in the model.", 40));
+				"If selected, newly created parameters will be stored globally in the model.", 40));
 		rButtonLocalParameters.setToolTipText(StringUtil.toHTML(
-				"If selected, newly created parameters will "
-						+ "be stored locally in this reaction.", 40));
+				"If selected, newly created parameters will be stored locally in this reaction.", 40));
 		ButtonGroup paramGroup = new ButtonGroup();
 		paramGroup.add(rButtonGlobalParameters);
 		paramGroup.add(rButtonLocalParameters);
@@ -249,7 +242,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		lh.add(rButtonLocalParameters, 1, 2, 1, 1, 1, 1);
 
 		checkEnzymeKineticsPossible(true);
-		klg.getSettings().put(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+		klg.getPreferences().put(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 				Boolean.valueOf(treatAsEnzymeReaction.isSelected()));
 		klg.updateEnzymeCatalysis();
 		kineticsPanel = initKineticsPanel();
@@ -275,8 +268,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	private void checkEnzymeKineticsPossible(boolean init)
 			throws RateLawNotApplicableException {
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
-		boolean allEnzyme = ((Boolean) this.klg.getSettings().get(
-				SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED)).booleanValue();
+		boolean allEnzyme = this.klg.getPreferences().getBoolean(
+				SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED);
 		boolean nonEnzyme = !reactionType.isEnzymeReaction()
 				&& (reactionType.isNonEnzymeReaction()
 						|| reactionType.isReactionWithGenes()
@@ -291,11 +284,13 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			treatAsEnzymeReaction.setSelected(isEnzymeKineticsSelected);
 			treatAsEnzymeReaction.setEnabled(false);
 		} else {
-			if (init)
+			if (init) {
 				treatAsEnzymeReaction.setSelected(isEnzymeKineticsSelected);
+			}
 			if (!ReactionType.representsEmptySet(reaction.getListOfReactants())
-					&& !isExistingRateLawSelected)
+					&& !isExistingRateLawSelected) {
 				treatAsEnzymeReaction.setEnabled(true);
+			}
 		}
 	}
 
@@ -380,31 +375,17 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			kineticLaw = klg
 					.createKineticLaw(reaction, possibleTypes[i], false);
 			laTeXpreview[i] = new String(kineticLaw.getMath().compile(
-					new LaTeX(((Boolean) klg.getSettings().get(
-							CfgKeys.SqueezerOptions)).booleanValue()))
+					new LaTeX(prefsLaTeX.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS)))
 					.toString());
 			// toolTips[i] = kineticLaw.isSetSBOTerm() ? "<b>"
 			// + kineticLaw.getSBOTermID() + "</b> " : "";
 			toolTips[i] = String.format("<b>%s</b>", StringTools
 					.firstLetterUpperCase(kineticLaw.toString()));
 			if (kineticLaw.isSetSBOTerm()) {
-				Object def = SBO.getTerm(kineticLaw.getSBOTerm())
-						.getAnnotation().getProperty("def");
-				if (def != null) {
-					String definition = def.toString().replace("\\, ", ", ");
-					if (definition.startsWith("\""))
-						definition = definition.substring(1);
-					int pos = definition.length() - 1;
-					String endWords[] = new String[] { "\\n", "xmlns=", "[",
-							"\"" };
-					for (String word : endWords) {
-						int end = definition.indexOf(word);
-						if (0 < end && end < pos)
-							pos = end;
-					}
-					if (pos > 0)
-						definition = definition.subSequence(0, pos).toString();
-					toolTips[i] += String.format(": %s", definition.trim());
+				String definition = SBOTermFormatter.getShortDefinition(SBO
+						.getTerm(kineticLaw.getSBOTerm()));
+				if (definition != null) {
+					toolTips[i] += String.format(": %s", definition);
 				}
 			}
 			toolTips[i] = StringUtil.toHTML(toolTips[i], 60);
@@ -412,12 +393,13 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 					60);
 		}
 		sort(possibleTypes, kineticEquations, toolTips, laTeXpreview);
-		if (reaction.isSetKineticLaw())
-			laTeXpreview[laTeXpreview.length - 1] = reaction.getKineticLaw()
-					.getMath().compile(
-							new LaTeX(((Boolean) klg.getSettings().get(
-									CfgKeys.SqueezerOptions))
-									.booleanValue())).toString();
+		if (reaction.isSetKineticLaw()) {
+			laTeXpreview[laTeXpreview.length - 1] = reaction
+					.getKineticLaw().getMath().compile(
+							new LaTeX(prefsLaTeX
+											.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS)))
+					.toString();
+		}
 		JPanel kineticsPanel = new JPanel(new GridBagLayout());
 		rButtonsKineticEquations = new JRadioButton[kineticEquations.length + 1];
 		ButtonGroup buttonGroup = new ButtonGroup();
@@ -503,7 +485,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 								selected = rButtonsKineticEquations[i]
 										.getText();
 						klg.setReversible(reaction.getId(), getReversible());
-						klg.getSettings().put(
+						klg.getPreferences().put(
 								SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 								Boolean.valueOf(getReversible()));
 						remove(kineticsPanel);
@@ -521,7 +503,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 						throw new RuntimeException(exc.getMessage(), exc);
 					}
 				} else {
-					klg.getSettings().put(
+					klg.getPreferences().put(
 							SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
 							Boolean.valueOf(rButtonGlobalParameters
 									.isSelected()));
@@ -529,8 +511,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			} else {
 				int i = 0;
 				while ((i < rButtonsKineticEquations.length)
-						&& (!rbutton.equals(rButtonsKineticEquations[i])))
+						&& (!rbutton.equals(rButtonsKineticEquations[i]))) {
 					i++;
+				}
 				selected = rButtonsKineticEquations[i].getText();
 				try {
 					updateView();
@@ -562,7 +545,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @throws Throwable
 	 */
 	private void setEnzymeCatalysis(boolean selected) throws Throwable {
-		klg.getSettings().put(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+		klg.getPreferences().put(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
 				Boolean.valueOf(selected));
 		klg.updateEnzymeCatalysis();
 		remove(kineticsPanel);
@@ -621,10 +604,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				&& !disable)
 			i++;
 		boolean global = !((reaction.isSetKineticLaw() && reaction
-				.getKineticLaw().getNumParameters() > 0) || ((Boolean) klg
-				.getSettings().get(
-						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY))
-				.booleanValue());
+				.getKineticLaw().getNumLocalParameters() > 0) || klg
+				.getPreferences().getBoolean(
+						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
 		boolean change = disable || isExistingRateLawSelected
 				|| i < rButtonsKineticEquations.length - 1;
 		if (disable) {

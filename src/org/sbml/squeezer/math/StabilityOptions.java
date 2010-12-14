@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.sbml.squeezer;
+package org.sbml.squeezer.math;
 
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;

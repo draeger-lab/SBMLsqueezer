@@ -146,7 +146,7 @@ public class ASTNodePanel extends JPanel {
 			lh.add("Exponent", spinner, true);
 		}
 
-		if (node.isName()) {
+		if (node.isString()) {
 			tf = new JTextField(node.getName());
 			tf.setEditable(enabled);
 			lh.add("Name", tf, true);
