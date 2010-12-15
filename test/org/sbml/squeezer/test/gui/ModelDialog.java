@@ -21,7 +21,6 @@ package org.sbml.squeezer.test.gui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.HeadlessException;
-import java.util.Properties;
 
 import javax.swing.JDialog;
 
@@ -47,13 +46,12 @@ public class ModelDialog extends JDialog {
 	 * 
 	 * @param owner
 	 * @param model
-	 * @param settings
 	 * @throws HeadlessException
 	 */
-	public ModelDialog(Dialog owner, Model model, Properties settings)
+	public ModelDialog(Dialog owner, Model model)
 			throws HeadlessException {
 		super(owner);
-		init(model, settings);
+		init(model);
 		setVisible(true);
 	}
 
@@ -61,35 +59,32 @@ public class ModelDialog extends JDialog {
 	 * 
 	 * @param owner
 	 * @param model
-	 * @param settings
 	 * @throws HeadlessException
 	 */
-	public ModelDialog(Frame owner, Model model, Properties settings)
+	public ModelDialog(Frame owner, Model model)
 			throws HeadlessException {
 		super(owner);
-		init(model, settings);
+		init(model);
 		setVisible(true);
 	}
 
 	/**
 	 * 
 	 * @param miniModel
-	 * @param settings
 	 */
-	public ModelDialog(Model model, Properties settings) {
+	public ModelDialog(Model model) {
 		super();
-		init(model, settings);
+		init(model);
 		setVisible(true);
 	}
 	
 	/**
 	 * 
 	 * @param miniModel
-	 * @param settings
 	 */
-	public ModelDialog(String title, Model model, Properties settings) {
+	public ModelDialog(String title, Model model) {
 		super();
-		init(model, settings);
+		init(model);
 		setTitle(title);
 		setVisible(true);
 	}
@@ -99,11 +94,11 @@ public class ModelDialog extends JDialog {
 	 * @param model
 	 * @param settings
 	 */
-	private void init(Model model, Properties settings) {
+	private void init(Model model) {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setModal(true);
 		setTitle("JSBML Model structure");
-		getContentPane().add(new SBMLModelSplitPane(model, settings));
+		getContentPane().add(new SBMLModelSplitPane(model));
 		pack();
 		setLocationRelativeTo(getOwner());
 	}
