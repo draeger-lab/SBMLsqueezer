@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -181,8 +180,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	}
 
 	static {
-		ImageTools.initImages(SBMLsqueezer.class
-				.getResource("../resources/img"));
+		ImageTools.initImages(LaTeXExportDialog.class.getResource("img"));
+		ImageTools.initImages(SBMLsqueezer.class.getResource("resources/img"));
 	}
 
 	/**
@@ -247,8 +246,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	/**
 	 * 
 	 */
-	private JToolBar toolbar;
-
 	private SBPreferences prefs;
 
 	/**
@@ -426,7 +423,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 						.getIcon("ICON_LEMON_TINY"), KeyStroke.getKeyStroke(
 						'Q', InputEvent.CTRL_DOWN_MASK)),
 				GUITools.createJMenuItem(this, Command.TO_LATEX, UIManager
-						.getIcon("ICON_LATEX_TINY"), KeyStroke.getKeyStroke(
+						.getIcon("ICON_LATEX_16"), KeyStroke.getKeyStroke(
 						'E', InputEvent.CTRL_DOWN_MASK)) };
 	}
 
@@ -465,7 +462,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @param commands
 	 */
 	private void setEnabled(boolean state, Object... commands) {
-		GUITools.setEnabled(state, getJMenuBar(), toolbar, commands);
+		GUITools.setEnabled(state, getJMenuBar(), toolBar, commands);
 	}
 
 	/**
@@ -629,72 +626,72 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#createJToolBar()
 	 */
 	protected JToolBar createJToolBar() {
-		toolbar = new JToolBar("Edit", JToolBar.HORIZONTAL);
-		System.out.println(UIManager.getIcon("ICON_OPEN"));
-		JButton openButton = new JButton(UIManager.getIcon("ICON_OPEN"));
-		openButton.addActionListener(this);
-		openButton.setActionCommand(BaseAction.FILE_OPEN.toString());
-		openButton.setToolTipText(StringUtil.toHTML(
-				"Opens a file in SBML format.", 40));
-		toolbar.add(openButton);
-		JButton saveButton = new JButton(UIManager.getIcon("ICON_SAVE"));
-		saveButton.addActionListener(this);
-		saveButton.setActionCommand(BaseAction.FILE_SAVE.toString());
-		saveButton
-				.setToolTipText(StringUtil
-						.toHTML(
-								"Save the current version of the model in SBML format or export it to a text or LaTeX report.",
-								40));
-		toolbar.add(saveButton);
-		JButton closeButton = new JButton(UIManager.getIcon("ICON_TRASH_TINY")); // new
-		// CloseIcon(false)
-		closeButton.setActionCommand(BaseAction.FILE_CLOSE.toString());
-		closeButton.addActionListener(this);
-		closeButton.setToolTipText(StringUtil.toHTML(
-				"Close the current model without saving.", 40));
-		toolbar.add(closeButton);
-		toolbar.addSeparator();
-		if (UIManager.getIcon("ICON_LEMON_TINY") != null) {
-			toolbar
-					.add(GUITools
-							.createButton(UIManager.getIcon("ICON_LEMON_TINY"),
-									this, Command.SQUEEZE,
-									"Generate kinetic equations for all reactions in this model in one step."));
-		}
-		if (UIManager.getIcon("ICON_LATEX_TINY") != null) {
-			toolbar.add(GUITools.createButton(UIManager
-					.getIcon("ICON_LATEX_TINY"), this, Command.TO_LATEX,
-					"Export this model to a LaTeX report."));
-		}
-		// TODO: Not in this version
-		// if (GUITools.ICON_STABILITY_SMALL != null)
-		// toolbar.add(GUITools.createButton(GUITools.ICON_STABILITY_SMALL,
-		// this, Command.CHECK_STABILITY,
-		// "Analyze the stability properties of the selected model."));
-		// if (GUITools.ICON_STRUCTURAL_MODELING_TINY != null)
-		// toolbar.add(GUITools.createButton(
-		// GUITools.ICON_STRUCTURAL_MODELING_TINY, this,
-		// Command.STRUCTURAL_KINETIC_MODELLING,
-		// "Identify key reactins with structural kinetic modeling."));
-		// if (GUITools.ICON_DIAGRAM_TINY != null)
-		// toolbar.add(GUITools
-		// .createButton(GUITools.ICON_DIAGRAM_TINY, this,
-		// Command.SIMULATE,
-		// "Dynamically simulate the current model."));
-
-		if (UIManager.getIcon("ICON_SETTINGS_TINY") != null) {
-			toolbar.add(GUITools.createButton(UIManager
-					.getIcon("ICON_SETTINGS_TINY"), this,
-					BaseAction.EDIT_PREFERENCES, "Adjust your preferences."));
-		}
-		toolbar.addSeparator();
-		JButton helpButton = new JButton(UIManager.getIcon("ICON_HELP_TINY"));
-		helpButton.addActionListener(this);
-		helpButton.setActionCommand(BaseAction.HELP_ONLINE.toString());
-		helpButton.setToolTipText(StringUtil
-				.toHTML("Open the online help.", 40));
-		toolbar.add(helpButton);
-		return toolbar;
+//		toolbar = new JToolBar("Edit", JToolBar.HORIZONTAL);
+//		System.out.println(UIManager.getIcon("ICON_OPEN"));
+//		JButton openButton = new JButton(UIManager.getIcon("ICON_OPEN"));
+//		openButton.addActionListener(this);
+//		openButton.setActionCommand(BaseAction.FILE_OPEN.toString());
+//		openButton.setToolTipText(StringUtil.toHTML(
+//				"Opens a file in SBML format.", 40));
+//		toolbar.add(openButton);
+//		JButton saveButton = new JButton(UIManager.getIcon("ICON_SAVE"));
+//		saveButton.addActionListener(this);
+//		saveButton.setActionCommand(BaseAction.FILE_SAVE.toString());
+//		saveButton
+//				.setToolTipText(StringUtil
+//						.toHTML(
+//								"Save the current version of the model in SBML format or export it to a text or LaTeX report.",
+//								40));
+//		toolbar.add(saveButton);
+//		JButton closeButton = new JButton(UIManager.getIcon("ICON_TRASH_TINY")); // new
+//		// CloseIcon(false)
+//		closeButton.setActionCommand(BaseAction.FILE_CLOSE.toString());
+//		closeButton.addActionListener(this);
+//		closeButton.setToolTipText(StringUtil.toHTML(
+//				"Close the current model without saving.", 40));
+//		toolbar.add(closeButton);
+//		toolbar.addSeparator();
+//		if (UIManager.getIcon("ICON_LEMON_TINY") != null) {
+//			toolbar
+//					.add(GUITools
+//							.createButton(UIManager.getIcon("ICON_LEMON_TINY"),
+//									this, Command.SQUEEZE,
+//									"Generate kinetic equations for all reactions in this model in one step."));
+//		}
+//		if (UIManager.getIcon("ICON_LATEX_TINY") != null) {
+//			toolbar.add(GUITools.createButton(UIManager
+//					.getIcon("ICON_LATEX_TINY"), this, Command.TO_LATEX,
+//					"Export this model to a LaTeX report."));
+//		}
+//		// TODO: Not in this version
+//		// if (GUITools.ICON_STABILITY_SMALL != null)
+//		// toolbar.add(GUITools.createButton(GUITools.ICON_STABILITY_SMALL,
+//		// this, Command.CHECK_STABILITY,
+//		// "Analyze the stability properties of the selected model."));
+//		// if (GUITools.ICON_STRUCTURAL_MODELING_TINY != null)
+//		// toolbar.add(GUITools.createButton(
+//		// GUITools.ICON_STRUCTURAL_MODELING_TINY, this,
+//		// Command.STRUCTURAL_KINETIC_MODELLING,
+//		// "Identify key reactins with structural kinetic modeling."));
+//		// if (GUITools.ICON_DIAGRAM_TINY != null)
+//		// toolbar.add(GUITools
+//		// .createButton(GUITools.ICON_DIAGRAM_TINY, this,
+//		// Command.SIMULATE,
+//		// "Dynamically simulate the current model."));
+//
+//		if (UIManager.getIcon("ICON_SETTINGS_TINY") != null) {
+//			toolbar.add(GUITools.createButton(UIManager
+//					.getIcon("ICON_SETTINGS_TINY"), this,
+//					BaseAction.EDIT_PREFERENCES, "Adjust your preferences."));
+//		}
+//		toolbar.addSeparator();
+//		JButton helpButton = new JButton(UIManager.getIcon("ICON_HELP_TINY"));
+//		helpButton.addActionListener(this);
+//		helpButton.setActionCommand(BaseAction.HELP_ONLINE.toString());
+//		helpButton.setToolTipText(StringUtil
+//				.toHTML("Open the online help.", 40));
+//		toolbar.add(helpButton);
+		return  createDefaultToolBar();
 	}
 
 	/*

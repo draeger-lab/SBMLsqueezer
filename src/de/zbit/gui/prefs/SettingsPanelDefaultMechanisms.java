@@ -24,7 +24,6 @@ import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -45,6 +44,7 @@ import org.sbml.squeezer.util.StringTools;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.util.StringUtil;
+import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.prefs.SBProperties;
 
@@ -115,7 +115,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 * @param key
 	 * @return
 	 */
-	private JPanel createButtonGroupPanel(Set<String> classes, String key) {
+	private JPanel createButtonGroupPanel(Set<String> classes, Option<?> key) {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		JPanel p = new JPanel();
 		LayoutHelper helper = new LayoutHelper(p);
@@ -188,25 +188,21 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	private JPanel createJPanelSettingsReversibility() {
 		jRadioButtonForceReacRev = new JRadioButton(
 				"Model all reactions in a reversible manner");
-		jRadioButtonForceReacRev.setSelected(((Boolean) properties
-				.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue());
+		jRadioButtonForceReacRev.setSelected(properties
+				.getBooleanProperty(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE));
 		jRadioButtonForceReacRev
-				.setToolTipText(GUITools
-						.toHTML(
+				.setToolTipText(StringUtil.toHTML(
 								"If checked, all reactions will be set to reversible no matter what is given by the SBML file.",
-								40));
+								GUITools.TOOLTIP_LINE_LENGTH));
 		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(
 				"Use information from SBML");
 		jRadioButtonSettingsFrameForceRevAsCD
-				.setSelected(!((Boolean) properties
-						.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-						.booleanValue());
+				.setSelected(!(properties
+						.getBooleanProperty(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)));
 		jRadioButtonSettingsFrameForceRevAsCD
-				.setToolTipText(GUITools
-						.toHTML(
+				.setToolTipText(StringUtil.toHTML(
 								"If checked, the information about reversiblity will be left unchanged.",
-								40));
+								GUITools.TOOLTIP_LINE_LENGTH));
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonSettingsFrameForceRevAsCD);
 		buttonGroup.add(jRadioButtonForceReacRev);
@@ -232,13 +228,11 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		JPanel jPanelStandardVersions = new JPanel();
 		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
 				"hal", "weg" });
-		jComboBoxTypeStandardVersion
-				.setSelectedIndex(((Integer) this.properties
-						.get(SqueezerOptions.TYPE_STANDARD_VERSION)).intValue());
-		jComboBoxTypeStandardVersion
-				.setToolTipText(StringUtil.toHTML(
+		jComboBoxTypeStandardVersion.setSelectedIndex(properties
+						.getIntProperty(SqueezerOptions.TYPE_STANDARD_VERSION));
+		jComboBoxTypeStandardVersion.setToolTipText(StringUtil.toHTML(
 								"Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.",
-								40));
+								GUITools.TOOLTIP_LINE_LENGTH));
 		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
 		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
 		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);
@@ -265,11 +259,10 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 * @return
 	 */
 	private JTabbedPane createMechanismTabs() {
-		boolean treatReactionsReversible = ((Boolean) properties
-				.get(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE))
-				.booleanValue();
+		boolean treatReactionsReversible = properties
+				.getBooleanProperty(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
 		JTabbedPane tabs = new JTabbedPane(JTabbedPane.LEFT);
-		String curr = SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS;
+		Option<?> curr = SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsNonEnzyme(treatReactionsReversible), curr));
 		curr = SqueezerOptions.KINETICS_UNI_UNI_TYPE;
@@ -295,9 +288,8 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 * @param key
 	 * @return
 	 */
-	private String createTitleFor(String key) {
-		StringTokenizer st = new StringTokenizer(key.substring(8).toLowerCase()
-				.replace('_', ' '));
+	private String createTitleFor(Option<?> key) {
+		StringTokenizer st = new StringTokenizer(key.formatOptionName());
 		StringBuilder title = new StringBuilder();
 		while (st.hasMoreElements()) {
 			title.append(' ');
@@ -401,15 +393,11 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		super.itemStateChanged(e);
 	}
 
-	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.prefs.PreferencesPanel#loadPreferences()
+	 */
 	protected SBPreferences loadPreferences() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<String> checkPreferences() {
-		// TODO Auto-generated method stub
-		return null;
+		return SBPreferences.getPreferencesFor(SqueezerOptions.class, SqueezerOptions.CONFIG_FILE_LOCATION);
 	}
 }
