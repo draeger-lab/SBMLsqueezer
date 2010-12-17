@@ -58,7 +58,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.QuantityWithDefinedUnit;
+import org.sbml.jsbml.QuantityWithUnit;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
@@ -183,8 +183,8 @@ public class SBasePanel extends JPanel {
 		} else if (sbase instanceof Event) {
 			addProperties((Event) sbase);
 		}
-		if (sbase instanceof QuantityWithDefinedUnit) {
-			addProperties((QuantityWithDefinedUnit) sbase);
+		if (sbase instanceof QuantityWithUnit) {
+			addProperties((QuantityWithUnit) sbase);
 		} else if (sbase instanceof SBaseWithDerivedUnit) {
 			addProperties((SBaseWithDerivedUnit) sbase);
 		}
@@ -440,7 +440,7 @@ public class SBasePanel extends JPanel {
 	 * 
 	 * @param q
 	 */
-	private void addProperties(QuantityWithDefinedUnit q) {
+	private void addProperties(QuantityWithUnit q) {
 		lh
 				.add(new JLabel(q instanceof Species ? "Substance unit: "
 						: "Unit: "), 1, ++row, 1, 1, 1, 1);
