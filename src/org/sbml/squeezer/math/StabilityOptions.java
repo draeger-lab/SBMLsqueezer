@@ -4,6 +4,7 @@
 package org.sbml.squeezer.math;
 
 import de.zbit.util.prefs.KeyProvider;
+import de.zbit.util.prefs.Option;
 
 /**
  * @author draeger
@@ -55,7 +56,7 @@ public interface StabilityOptions extends KeyProvider {
 //	/**
 //	 * 
 //	 */
-//	public static final Option STEUER_VALUE_OF_N = new Option(
-//			"STEUER_VALUE_OF_N");
+	public static final Option<Double> STEUER_VALUE_OF_N = new Option<Double>(
+			"STEUER_VALUE_OF_N", Double.class, "Explanation...", Double.valueOf(0d));
 
 }

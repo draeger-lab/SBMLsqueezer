@@ -41,7 +41,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.NamedSBaseWithDerivedUnit;
 import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.QuantityWithDefinedUnit;
+import org.sbml.jsbml.QuantityWithUnit;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
@@ -1077,7 +1077,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @param p
 	 */
-	private void updateUnitReferences(QuantityWithDefinedUnit p) {
+	private void updateUnitReferences(QuantityWithUnit p) {
 		if (p.isSetUnits()) {
 			String units = p.getUnits();
 			if (Unit.isUnitKind(units, p.getLevel(), p.getVersion())) {
