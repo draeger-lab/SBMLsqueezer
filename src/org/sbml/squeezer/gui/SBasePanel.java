@@ -133,7 +133,7 @@ public class SBasePanel extends JPanel {
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
 		prefs = SBPreferences.getPreferencesFor(LaTeXOptions.class);
-		latex = new LaTeX(prefs.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS));
+		latex = new LaTeX(prefs.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE));
 		lh = new LayoutHelper(this, gbl);
 		editable = false;
 		row = -1;
