@@ -127,7 +127,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			try {
 				laTeXpreview[i] = possibleLaws[i].getMath().compile(
 								new LaTeX(prefsLaTeX
-												.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS)))
+												.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 						.toString();
 			} catch (SBMLException e) {
 				laTeXpreview[i] = "invalid";
@@ -375,7 +375,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			kineticLaw = klg
 					.createKineticLaw(reaction, possibleTypes[i], false);
 			laTeXpreview[i] = new String(kineticLaw.getMath().compile(
-					new LaTeX(prefsLaTeX.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS)))
+					new LaTeX(prefsLaTeX.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 					.toString());
 			// toolTips[i] = kineticLaw.isSetSBOTerm() ? "<b>"
 			// + kineticLaw.getSBOTermID() + "</b> " : "";
@@ -397,7 +397,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			laTeXpreview[laTeXpreview.length - 1] = reaction
 					.getKineticLaw().getMath().compile(
 							new LaTeX(prefsLaTeX
-											.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS)))
+											.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 					.toString();
 		}
 		JPanel kineticsPanel = new JPanel(new GridBagLayout());

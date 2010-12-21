@@ -140,7 +140,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 					SBPreferences prefs = SBPreferences
 							.getPreferencesFor(LaTeXOptions.class);
 					LaTeX = kinetic.getMath().compile(new LaTeX(
-											prefs.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS)))
+											prefs.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 							.toString().replace("text", "mbox").replace(
 									"mathrm", "mbox").replace("mathtt", "mbox");
 				} catch (SBMLException e1) {

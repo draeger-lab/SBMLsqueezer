@@ -263,13 +263,13 @@ public class KineticLawSelectionDialog extends JDialog implements
 						SBPreferences lprefs = SBPreferences
 								.getPreferencesFor(LaTeXOptions.class);
 						LaTeXReportGenerator export = new LaTeXReportGenerator(
-								lprefs.getBoolean(LaTeXOptions.LATEX_LANDSCAPE),
-								lprefs.getBoolean(LaTeXOptions.LATEX_IDS_IN_TYPEWRITER_FONT),
-								lprefs.getShort(LaTeXOptions.LATEX_FONT_SIZE),
-								lprefs.get(LaTeXOptions.LATEX_PAPER_SIZE),
+								lprefs.getBoolean(LaTeXOptions.LANDSCAPE),
+								lprefs.getBoolean(LaTeXOptions.TYPEWRITER),
+								lprefs.getShort(LaTeXOptions.FONT_SIZE),
+								lprefs.get(LaTeXOptions.PAPER_SIZE),
 								lprefs.getBoolean(LaTeXOptions.SHOW_PREDEFINED_UNITS),
-								lprefs.getBoolean(LaTeXOptions.LATEX_TITLE_PAGE),
-								lprefs.getBoolean(LaTeXOptions.LATEX_NAMES_IN_EQUATIONS));
+								lprefs.getBoolean(LaTeXOptions.TITLE_PAGE),
+								lprefs.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE));
 						export.toLaTeX(klg.getMiniModel(), f);
 						guiPrefs.put(GUIOptions.OPEN_DIR, f.getParentFile());
 						// new Thread(new Runnable() {
