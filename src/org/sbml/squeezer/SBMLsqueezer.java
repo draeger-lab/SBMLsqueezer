@@ -366,8 +366,9 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 
 	/**
 	 * @param args
+	 * @throws MalformedURLException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MalformedURLException {
 		try {
 			System.out.println(System.getProperty("java.library.path"));
 			System.loadLibrary("sbmlj");
@@ -510,23 +511,13 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 *            Decides whether or not the update message should appear in a
 	 *            graphical mode (gui = true) or as a text on the console
 	 *            otherwise.
+	 * @throws MalformedURLException 
 	 */
-	public void checkForUpdate(final boolean gui) {
-		final SBMLsqueezer squeezer = this;
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					UpdateMessage update = new UpdateMessage(squeezer
-							.getClass().getSimpleName(), getURLOnlineUpdate());
-					update.checkForUpdate(gui, getVersionNumber());
-				} catch (IOException exc) {
-					// Don't annoy people
-					// JOptionPane.showMessageDialog(squeezer,
-					// exc.getMessage());
-					// exc.printStackTrace();
-				}
-			}
-		}).start();
+	public void checkForUpdate(final boolean gui) throws MalformedURLException {
+		UpdateMessage update = new UpdateMessage(false, getClass()
+				.getSimpleName(), getURLOnlineUpdate(), getVersionNumber(),
+				true);
+		update.execute();
 	}
 
 	/*
