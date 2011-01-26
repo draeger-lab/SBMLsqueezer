@@ -35,7 +35,8 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.util.compilers.LaTeX;
+import org.sbml.jsbml.util.compilers.LaTeXCompiler;
+import org.sbml.tolatex.util.LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
@@ -186,7 +187,7 @@ public class ASTNodePanel extends JPanel {
 		latex.append(LaTeX.eqBegin);
 		String ltx;
 		try {
-			ltx = node.compile(new LaTeX()).toString().replace("mathrm",
+			ltx = node.compile(new LaTeXCompiler()).toString().replace("mathrm",
 			"mbox").replace("text", "mbox").replace("mathtt", "mbox");
 		} catch (SBMLException e) {
 			ltx = "invalid";
