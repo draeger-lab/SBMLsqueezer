@@ -44,7 +44,7 @@ import javax.swing.SwingConstants;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.util.compilers.LaTeX;
+import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
@@ -126,7 +126,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			possibleTypes[i] = possibleLaws[i].getClass().getCanonicalName();
 			try {
 				laTeXpreview[i] = possibleLaws[i].getMath().compile(
-								new LaTeX(prefsLaTeX
+								new LaTeXCompiler(prefsLaTeX
 												.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 						.toString();
 			} catch (SBMLException e) {
@@ -375,7 +375,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			kineticLaw = klg
 					.createKineticLaw(reaction, possibleTypes[i], false);
 			laTeXpreview[i] = new String(kineticLaw.getMath().compile(
-					new LaTeX(prefsLaTeX.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
+					new LaTeXCompiler(prefsLaTeX.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 					.toString());
 			// toolTips[i] = kineticLaw.isSetSBOTerm() ? "<b>"
 			// + kineticLaw.getSBOTermID() + "</b> " : "";
@@ -396,7 +396,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		if (reaction.isSetKineticLaw()) {
 			laTeXpreview[laTeXpreview.length - 1] = reaction
 					.getKineticLaw().getMath().compile(
-							new LaTeX(prefsLaTeX
+							new LaTeXCompiler(prefsLaTeX
 											.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 					.toString();
 		}

@@ -49,7 +49,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.util.compilers.LaTeX;
+import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
@@ -139,7 +139,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				try {
 					SBPreferences prefs = SBPreferences
 							.getPreferencesFor(LaTeXOptions.class);
-					LaTeX = kinetic.getMath().compile(new LaTeX(
+					LaTeX = kinetic.getMath().compile(new LaTeXCompiler(
 											prefs.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 							.toString().replace("text", "mbox").replace(
 									"mathrm", "mbox").replace("mathtt", "mbox");

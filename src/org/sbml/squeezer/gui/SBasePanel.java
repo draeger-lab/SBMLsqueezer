@@ -75,9 +75,10 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Variable;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.compilers.HTMLFormula;
-import org.sbml.jsbml.util.compilers.LaTeX;
+import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
+import org.sbml.tolatex.util.LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
@@ -106,7 +107,7 @@ public class SBasePanel extends JPanel {
 	/**
 	 * 
 	 */
-	private LaTeX latex;
+	private LaTeXCompiler latex;
 	/**
 	 * 
 	 */
@@ -133,7 +134,7 @@ public class SBasePanel extends JPanel {
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
 		prefs = SBPreferences.getPreferencesFor(LaTeXOptions.class);
-		latex = new LaTeX(prefs.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE));
+		latex = new LaTeXCompiler(prefs.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE));
 		lh = new LayoutHelper(this, gbl);
 		editable = false;
 		row = -1;
