@@ -36,7 +36,6 @@ import org.sbml.jsbml.MathContainer;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.compilers.LaTeXCompiler;
-import org.sbml.tolatex.util.LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
@@ -184,7 +183,7 @@ public class ASTNodePanel extends JPanel {
 		lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1, 0, 0);
 
 		StringBuilder latex = new StringBuilder();
-		latex.append(LaTeX.eqBegin);
+		latex.append(LaTeXCompiler.eqBegin);
 		String ltx;
 		try {
 			ltx = node.compile(new LaTeXCompiler()).toString().replace("mathrm",
@@ -193,7 +192,7 @@ public class ASTNodePanel extends JPanel {
 			ltx = "invalid";
 		}
 		latex.append(ltx);
-		latex.append(LaTeX.eqEnd);
+		latex.append(LaTeXCompiler.eqEnd);
 		sHotEqn preview = new sHotEqn(latex.toString());
 		preview.setBorder(BorderFactory.createLoweredBevelBorder());
 		JScrollPane scroll = new JScrollPane(preview,

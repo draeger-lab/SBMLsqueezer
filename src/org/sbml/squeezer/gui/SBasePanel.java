@@ -298,7 +298,7 @@ public class SBasePanel extends JPanel {
 	private void addProperties(MathContainer mc) {
 		if (mc.isSetMath()) {
 			StringBuffer laTeXpreview = new StringBuffer();
-			laTeXpreview.append(LaTeX.eqBegin);
+			laTeXpreview.append(LaTeXCompiler.eqBegin);
 			if (mc instanceof KineticLaw) {
 				KineticLaw k = (KineticLaw) mc;
 				laTeXpreview.append("v_");
@@ -328,7 +328,7 @@ public class SBasePanel extends JPanel {
 			} catch (SBMLException e) {
 				laTeXpreview.append("invalid");
 			}
-			laTeXpreview.append(LaTeX.eqEnd);
+			laTeXpreview.append(LaTeXCompiler.eqEnd);
 			JPanel preview = new JPanel(new BorderLayout());
 			preview.add(new sHotEqn(laTeXpreview.toString()),
 					BorderLayout.CENTER);

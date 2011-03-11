@@ -138,8 +138,10 @@ public class KineticLawGenerator {
 		Model model = compartment.getModel();
 		if (!compartment.isSetSize())
 			compartment.setSize(1d);
-		if (!compartment.isSetUnits()) {
-			switch (compartment.getSpatialDimensions()) {
+		if (!compartment.isSetUnits()
+				&& (((short) compartment.getSpatialDimensions())
+						- compartment.getSpatialDimensions() == 0d)) {
+			switch ((short) compartment.getSpatialDimensions()) {
 			case 1:
 				compartment.setUnits(model.getUnitDefinition("length"));
 				break;
