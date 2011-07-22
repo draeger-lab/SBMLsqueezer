@@ -32,10 +32,10 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.SBaseChangedEvent;
-import org.sbml.jsbml.SBaseChangedListener;
 import org.sbml.jsbml.SBMLException.Category;
 import org.sbml.jsbml.util.IOProgressListener;
+import org.sbml.jsbml.util.SBaseChangeEvent;
+import org.sbml.jsbml.util.SBaseChangeListener;
 import org.sbml.squeezer.SBMLsqueezer;
 
 /**
@@ -52,7 +52,7 @@ import org.sbml.squeezer.SBMLsqueezer;
  * @since 1.3
  */
 public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
-		SBaseChangedListener, ChangeListener {
+		SBaseChangeListener, ChangeListener {
 
 	private List<SBase> added;
 
@@ -328,7 +328,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * (non-Javadoc)
 	 * @see org.sbml.jsbml.SBaseChangedListener#stateChanged(org.sbml.jsbml.SBaseChangedEvent)
 	 */
-	public void stateChanged(SBaseChangedEvent ev) {
+	public void stateChanged(SBaseChangeEvent ev) {
 		if (!changed.contains(ev.getSource())) {
 			changed.add(ev.getSource());
 		}
