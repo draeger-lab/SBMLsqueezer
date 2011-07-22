@@ -533,7 +533,7 @@ public class SBasePanel extends JPanel {
 					"E-mail", "Organization" };
 			String rowData[][] = new String[hist.getNumCreators()][4];
 			int i = 0;
-			for (Creator mc : hist.getListCreators()) {
+			for (Creator mc : hist.getListOfCreators()) {
 				rowData[i][0] = mc.getGivenName();
 				rowData[i][1] = mc.getFamilyName();
 				rowData[i][2] = mc.getEmail();

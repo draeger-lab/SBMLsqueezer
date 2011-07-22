@@ -34,8 +34,8 @@ import javax.swing.tree.TreePath;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.SBaseChangedEvent;
-import org.sbml.jsbml.SBaseChangedListener;
+import org.sbml.jsbml.util.SBaseChangeEvent;
+import org.sbml.jsbml.util.SBaseChangeListener;
 
 /**
  * A specialized {@link JSplitPane} that displays a {@link JTree} containing all
@@ -47,7 +47,7 @@ import org.sbml.jsbml.SBaseChangedListener;
  * @since 1.3
  */
 public class SBMLModelSplitPane extends JSplitPane implements
-		TreeSelectionListener, SBaseChangedListener {
+		TreeSelectionListener, SBaseChangeListener {
 
 	/**
 	 * Generated serial version id.
@@ -168,7 +168,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	 * (non-Javadoc)
 	 * @see org.sbml.jsbml.SBaseChangedListener#stateChanged(org.sbml.jsbml.SBaseChangedEvent)
 	 */
-	public void stateChanged(SBaseChangedEvent ev) {
+	public void stateChanged(SBaseChangeEvent ev) {
 		// TreePath path = tree.getSelectionPath();
 		// init(sb.getModel(), true);
 		// tree.setSelectionPath(path);
