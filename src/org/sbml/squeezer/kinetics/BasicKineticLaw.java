@@ -29,10 +29,10 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.ParameterFactory;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
-import org.sbml.squeezer.util.StringTools;
 
 /**
  * An abstract super class of specialized kinetic laws, which provides methods

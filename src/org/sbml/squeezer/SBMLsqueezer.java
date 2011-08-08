@@ -55,8 +55,6 @@ import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
 import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.math.StabilityOptions;
 import org.sbml.squeezer.resources.Resource;
-import org.sbml.squeezer.util.MessageListener;
-import org.sbml.squeezer.util.MessageProcessor;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
 import org.sbml.tolatex.io.LaTeXOptionsIO;
@@ -106,11 +104,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	/**
 	 * 
 	 */
-	private static MessageListener msg;
-	/**
-	 * 
-	 */
-	private static final Logger logger = Logger.getLogger(SBMLsqueezer.class.getName());
+	private static final Logger logger;
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
@@ -121,10 +115,9 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * configuration file.
 	 */
 	static {
-		msg = new MessageProcessor();
-		msg.setWriteTime(false);
+		logger = Logger.getLogger(SBMLsqueezer.class.getName());
 		long time = System.currentTimeMillis();
-		msg.log("Loading kinetic equations... ");
+		logger.info("Loading kinetic equations... ");
 		kineticsBiBi = new HashSet<String>();
 		kineticsBiUni = new HashSet<String>();
 		kineticsGeneRegulatoryNetworks = new HashSet<String>();
@@ -182,8 +175,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				kineticsIntStoichiometry.add(c.getCanonicalName());
 			}
 		}
-		msg.logln("done in " + (System.currentTimeMillis() - time) + " ms");
-		msg.log("loading user settings...");
+		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
+		logger.info("loading user settings...");
 
 		try {
 			preferences = new SBPreferences(SqueezerOptions.class, SqueezerOptions.CONFIG_FILE_LOCATION);
@@ -192,7 +185,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			System.exit(1);
 		}
 
-		msg.logln(" done.");
+		logger.info("    done.");
 	}
 
 	/**
@@ -249,8 +242,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
 					}
 					p.put(k, defaultKin);
-					msg.errf("Invalid %s %s; using default %s.", k.toString(),
-							val, defaultKin);
+					logger.error(String.format(	"Invalid %s %s; using default %s.", 
+												k.toString(),val, defaultKin) );
 				}
 			}
 		}
@@ -381,14 +374,14 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			// Extra check to be sure we have access to libSBML:
 			Class.forName("org.sbml.libsbml.libsbml");
 		} catch (Throwable e) {
-			msg.err("Error: could not load the libSBML library\n");
+			logger.error("Error: could not load the libSBML library\n");
 			e.printStackTrace();
 			System.exit(1);
 		}
 
 		final SBMLsqueezer squeezer = new SBMLsqueezer(new LibSBMLReader(),
 				new LibSBMLWriter());
-		msg.log("scanning command line arguments...");
+		logger.info("scanning command line arguments...");
 		final SBProperties p = SBPreferences.analyzeCommandLineArguments(getListOfCommandLineOptions(), args);
 		for (Class<? extends KeyProvider> keyProvider : getListOfCommandLineOptions()) {
 			SBPreferences prefs = keyProvider != SqueezerOptions.class ? SBPreferences
@@ -405,15 +398,15 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				exc.printStackTrace();
 			}
 		}
-		msg.logln(" done.\nreading SBO... done.");
+		logger.info("   done.\nreading SBO... done.");
 		if (p.getBooleanProperty(GUIOptions.GUI)) {
 			if (p.containsKey(SqueezerOptions.SBML_FILE)) {
 				squeezer.readSBMLSource(p.get(SqueezerOptions.SBML_FILE));
 			}
-			msg.log("loading GUI...");
+			logger.info("loading GUI...");
 			new Thread(new Runnable() {
 				public void run() {
-					msg.logln(" have fun!");
+					logger.info("   have fun!");
 					// TODO: Not in this version.
 					// if (p.containsKey(CfgKeys.SIMULATION_MODE)
 					// && ((Boolean) p.get(CfgKeys.SIMULATION_MODE))
@@ -428,7 +421,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			if ((squeezer.getSBMLIO().getNumErrors() > 0)
 					&& p.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
 				for (SBMLException exc : squeezer.getSBMLIO().getWarnings()) {
-					msg.err(exc.getMessage());
+					logger.error(exc.getMessage());
 				}
 			}
 			// Do a lot of other stuff...
@@ -477,9 +470,9 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				if (line.endsWith("<br>"))
 					line = line.substring(0, line.length() - 4);
 				if (line.contains("<a href"))
-					msg.logln(line.substring(0, line.indexOf('<') - 1) + ' ');
+					logger.info(line.substring(0, line.indexOf('<') - 1) + ' ');
 				else
-					msg.logln(line);
+					logger.info(line);
 			}
 		} catch (Exception e) {
 		}
@@ -503,9 +496,9 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		for (int i = 0; i < 60; i++) {
 			sb.append('-');
 		}
-		msg.logln(sb.toString());
+		logger.info(sb.toString());
 		showAboutMsg();
-		msg.logln(sb.toString());
+		logger.info(sb.toString());
 		sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
 		// sbmlIo.addIOProgressListener(this);
 	}
@@ -560,7 +553,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 */
 	public void ioProgressOn(Object currObject) {
 		if (currObject != null)
-			msg.log(currObject.toString());
+			logger.info(currObject.toString());
 	}
 
 	/**
@@ -569,13 +562,14 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 */
 	public void readSBMLSource(Object sbmlSource) {
 		long time = System.currentTimeMillis();
-		msg.log("reading SBML file...");
+		logger.info("reading SBML file...");
 		try {
 			sbmlIo.convertModel(sbmlSource);
-			msg.logf(" done in %d ms.\n", (System.currentTimeMillis() - time));
+			logger.info(String.format("    done in %d ms.\n", 
+							(System.currentTimeMillis() - time)) );
 		} catch (Exception exc) {
-			msg.errf(" A problem occured while trying to read the model: %s\n",
-					exc.getMessage());
+			logger.error(String.format("A problem occured while trying to read the model: %s\n",
+							exc.getMessage() ));
 		}
 	}
 
@@ -632,37 +626,35 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			throw new SBMLException(exception);
 		else if (!sbmlIo.getListOfModels().isEmpty()) {
 			long time = System.currentTimeMillis();
-			msg.log("Generating kinetic equations...");
+			logger.info("Generating kinetic equations...");
+			
 			KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
 					.getSelectedModel());
 			if (klg.getFastReactions().size() > 0) {
-				msg.err("Model " + sbmlIo.getSelectedModel().getId()
+				logger.warn("Model " + sbmlIo.getSelectedModel().getId()
 						+ " contains " + klg.getFastReactions().size()
 						+ " fast reaction. This feature is currently"
 						+ "ignored by SBMLsqueezer.");
 			}
 			klg.storeKineticLaws(this);
-			msg
-					.logln(" done in " + (System.currentTimeMillis() - time)
-							+ " ms");
+			logger.info("    done in " + (System.currentTimeMillis() - time) + " ms");
 			time = System.currentTimeMillis();
-			msg.log("Saving changes and writing SBML file... ");
+			logger.info("Saving changes and writing SBML file... ");
 			sbmlIo.saveChanges(this);
 			if ((outFile != null)
 					&& (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
 				sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
-				msg.logln(" done in " + (System.currentTimeMillis() - time)
-						+ " ms");
+				logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
 				if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
 					for (SBMLException exc : sbmlIo.getWriteWarnings()) {
-						msg.errln(exc.getMessage());
+						logger.error(exc.getMessage());
 					}
 				}
 			} else {
-				msg.errln("Could not write output to SBML.");
+				logger.error("Could not write output to SBML.");
 			}
 		} else {
-			msg.errln("File contains no model. Nothing to do.");
+			logger.error("File contains no model. Nothing to do.");
 		}
 	}
 
@@ -687,16 +679,16 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				}
 				if (!out.exists()) {
 					long time = System.currentTimeMillis();
-					msg.log("writing LaTeX output...");
+					logger.info("writing LaTeX output...");
 					SBML2LaTeX.convert(sbmlIo.getSelectedModel(), out);
-					msg.logf(" done in %d ms\n",
-							(System.currentTimeMillis() - time));
+					logger.info(String.format("    done in %d ms\n",
+							(System.currentTimeMillis() - time)) );
 				}
 			} else {
-				msg.errf("no valid TeX file: %s\n", latexFile);
+				logger.error(String.format("no valid TeX file: %s\n", latexFile) );
 			}
 		} else {
-			msg.errln("no TeX file was provided");
+			logger.error("no TeX file was provided");
 		}
 	}
 

@@ -35,12 +35,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 
+import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.util.StringTools;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.util.StringUtil;

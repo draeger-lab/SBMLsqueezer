@@ -25,8 +25,8 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.RateLawNotApplicableException;
-import org.sbml.squeezer.util.StringTools;
 
 /**
  * <p>
