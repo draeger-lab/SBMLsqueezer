@@ -44,13 +44,13 @@ import javax.swing.SwingConstants;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.util.StringTools;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.io.SBOTermFormatter;
 

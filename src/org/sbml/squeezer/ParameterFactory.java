@@ -30,8 +30,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.filters.SBOFilter;
-import org.sbml.squeezer.util.StringTools;
 
 /**
  * 
