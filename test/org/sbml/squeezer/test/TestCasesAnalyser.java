@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.ListOf;
@@ -42,6 +43,7 @@ import org.sbml.squeezer.io.SBMLio;
  * @author draeger
  * 
  */
+@Ignore
 public class TestCasesAnalyser {
 
 	/**
