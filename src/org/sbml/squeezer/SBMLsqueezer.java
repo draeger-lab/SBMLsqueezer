@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 
+import org.apache.log4j.Logger;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
@@ -75,6 +76,7 @@ import de.zbit.util.prefs.SBProperties;
  * @author Andreas Dr&auml;ger
  * @author Nadine Hassis
  * @author Hannes Borch
+ * @author Sarah M&uuml;ller vom Hagen
  * @since 1.0
  * @version $Revision: 293$
  */
@@ -105,6 +107,10 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * 
 	 */
 	private static MessageListener msg;
+	/**
+	 * 
+	 */
+	private static final Logger logger = Logger.getLogger(SBMLsqueezer.class.getName());
 	/**
 	 * The number of the current SBMLsqueezer version.
 	 */
