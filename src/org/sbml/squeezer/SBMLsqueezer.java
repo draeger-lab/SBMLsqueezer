@@ -63,6 +63,7 @@ import de.zbit.gui.GUIOptions;
 import de.zbit.gui.UpdateMessage;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.Reflect;
+import de.zbit.util.logging.LogUtil;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.prefs.SBProperties;
@@ -367,20 +368,32 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	 * @param args
 	 * @throws MalformedURLException 
 	 */
-	public static void main(String[] args) throws MalformedURLException {
-		try {
-			System.out.println(System.getProperty("java.library.path"));
-			System.loadLibrary("sbmlj");
-			// Extra check to be sure we have access to libSBML:
-			Class.forName("org.sbml.libsbml.libsbml");
-		} catch (Throwable e) {
-			logger.error("Error: could not load the libSBML library\n");
-			e.printStackTrace();
-			System.exit(1);
-		}
+    public static void main(String[] args) throws MalformedURLException {
+	LogUtil.initializeLogging("org.sbml");
+	boolean libSBMLAvailable = false;
+	try {
+	    // In order to initialize libSBML, check the java.library.path.
+	    System.loadLibrary("sbmlj");
+	    // Extra check to be sure we have access to libSBML:
+	    Class.forName("org.sbml.libsbml.libsbml");
+	    libSBMLAvailable = true;
+	} catch (Error e) {
+	} catch (Throwable e) {
+	} 
+	SBMLInputConverter reader = null;
+	SBMLOutputConverter writer = null;
+	if (!libSBMLAvailable) {
+	    logger.error("Error: could not load the libSBML library\n");
+	    // TODO
+//	    reader = ... ;
+//	    writer = ... ;
+	} else {
+	    reader = new LibSBMLReader();
+	    writer = new LibSBMLWriter();
+	}
 
-		final SBMLsqueezer squeezer = new SBMLsqueezer(new LibSBMLReader(),
-				new LibSBMLWriter());
+		final SBMLsqueezer squeezer = new SBMLsqueezer(reader,
+				writer);
 		logger.info("scanning command line arguments...");
 		final SBProperties p = SBPreferences.analyzeCommandLineArguments(getListOfCommandLineOptions(), args);
 		for (Class<? extends KeyProvider> keyProvider : getListOfCommandLineOptions()) {
