@@ -37,41 +37,54 @@ import de.zbit.util.prefs.Range;
  * @since 1.4
  */
 public interface SqueezerOptions extends KeyProvider {
+    /**
+     * The possible selections for the three versions of modular rate laws (cf.
+     * <a href=
+     * "http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btq141v1"
+     * >Liebermeister et al. (2010), Modular rate laws for enzymatic reactions:
+     * thermodynamics, elasticities,
+     * and implementation</a>)
+     * 
+     * @author Andreas Dr&auml;ger
+     * @date 2010-10-29
+     */
+    public static enum TypeStandardVersion {
 	/**
-	 * 
-	 * @author draeger
-	 * @date 2010-10-29
+	 * The most simple version.
 	 */
-	public static enum TypeStandardVersion {
-		CAT, HAL, WEG;
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Enum#toString()
-		 */
-		@Override
-		public String toString() {
-			return super.toString().toLowerCase();
-		}
-	}
+	cat,
+	/**
+	 * The more complicated version in which all parameters fulfill the
+	 * Haldane relationship.
+	 */
+	hal,
+	/**
+	 * The most sophisticated version in which all parameters fulfill
+	 * Wegscheider's condition.
+	 */
+	weg;
+    }
 
+    /**
+     * This is an enumeration of the two possible ways of how to ensure
+     * consistent units within
+     * an SBML model; reacting species might either be given in molecule counts
+     * ({@link #amount}) or
+     * their {@link #concentration}.
+     * 
+     * @author Andreas Dr&auml;ger
+     * @date 2010-10-29
+     */
+    public static enum TypeUnitConsistency {
 	/**
 	 * 
-	 * @author draeger
-	 * @date 2010-10-29
 	 */
-	public static enum TypeUnitConsistency {
-		AMOUNT, CONCENTRATION;
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Enum#toString()
-		 */
-		@Override
-		public String toString() {
-			return super.toString().toLowerCase();
-		}
-	}
+	amount,
+	/**
+	 * 
+	 */
+	concentration;
+    }
 
 	/**
 	 * The path to the associated configuration file, which contains one default
