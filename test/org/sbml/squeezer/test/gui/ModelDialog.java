@@ -24,6 +24,7 @@ import java.awt.HeadlessException;
 
 import javax.swing.JDialog;
 
+import org.junit.Ignore;
 import org.sbml.jsbml.Model;
 import org.sbml.squeezer.gui.SBMLModelSplitPane;
 
@@ -35,6 +36,7 @@ import org.sbml.squeezer.gui.SBMLModelSplitPane;
  * @date 2010-04-09
  * 
  */
+@Ignore
 public class ModelDialog extends JDialog {
 
 	/**

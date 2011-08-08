@@ -21,10 +21,13 @@ package org.sbml.squeezer.test;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import org.junit.Ignore;
+
 /**
  * @author Andreas Dr&auml;ger
  * 
  */
+@Ignore
 public class PreferencesTest {
 
 	Preferences prefs = Preferences.userRoot().node("/org/sbml/squeezer");
