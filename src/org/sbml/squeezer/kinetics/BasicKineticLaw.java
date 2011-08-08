@@ -29,7 +29,6 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.ParameterFactory;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
@@ -123,11 +122,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 */
 	ParameterFactory parameterFactory;
-
-	/**
-	 * 
-	 */
-	final Character underscore = StringTools.underscore;
 
 	/**
 	 * 
