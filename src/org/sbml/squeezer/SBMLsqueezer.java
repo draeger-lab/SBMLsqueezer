@@ -385,8 +385,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	if (!libSBMLAvailable) {
 	    logger.error("Error: could not load the libSBML library\n");
 	    // TODO
-//	    reader = ... ;
-//	    writer = ... ;
+	    reader = new SqSBMLReader() ;
+	    writer = new SqSBMLWriter() ;
 	} else {
 	    reader = new LibSBMLReader();
 	    writer = new LibSBMLWriter();
