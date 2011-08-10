@@ -1,7 +1,9 @@
 /*
+ *  $Id$
+ *  $URL$
  *  SBMLsqueezer creates rate equations for reactions in SBML files
  *  (http://sbml.org).
- *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *  Copyright (C) 2006-2011 ZBIT, University of Tuebingen, Andreas Dräger
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,7 +22,12 @@ package org.sbml.squeezer;
 
 import java.io.File;
 
-import org.sbml.squeezer.kinetics.InterfaceKinteticsType;
+import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
+import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
+import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
+import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
@@ -34,7 +41,9 @@ import de.zbit.util.prefs.Range;
  * value.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.4
+ * @version $Rev$
  */
 public interface SqueezerOptions extends KeyProvider {
     /**
@@ -96,18 +105,20 @@ public interface SqueezerOptions extends KeyProvider {
 	 * be any class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiBiKinetics}.
 	 */
-	public static final Option<InterfaceKinteticsType> KINETICS_BI_BI_TYPE = new Option<InterfaceKinteticsType>(
-			"KINETICS_BI_BI_TYPE",
-			InterfaceKinteticsType.class,
-			" The class name of the default kinetic law for bi-bi reactions. This can be any class that implements InterfaceBiBiKinetics");
+    public static final Option<String> KINETICS_BI_BI_TYPE = new Option<String>(
+	"KINETICS_BI_BI_TYPE",
+	String.class,
+	"The class name of the default kinetic law for bi-bi reactions. This can be any class that implements InterfaceBiBiKinetics",
+	new Range<String>(String.class, SBMLsqueezer.getKineticsBiBi()),
+	RandomOrderMechanism.class.getName());
 	/**
 	 * The class name of the default kinetic law for bi-uni reactions. This can
 	 * be any class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiUniKinetics}.
 	 */
-	public static final Option<InterfaceKinteticsType> KINETICS_BI_UNI_TYPE = new Option<InterfaceKinteticsType>(
+	public static final Option<InterfaceBiUniKinetics> KINETICS_BI_UNI_TYPE = new Option<InterfaceBiUniKinetics>(
 			"KINETICS_BI_UNI_TYPE",
-			InterfaceKinteticsType.class,
+			InterfaceBiUniKinetics.class,
 			"The class name of the default kinetic law for bi-uni reactions. This can be any class that implements InterfaceBiUniKinetics");
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
@@ -116,9 +127,9 @@ public interface SqueezerOptions extends KeyProvider {
 	 * class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryNetworks}.
 	 */
-	public static final Option<InterfaceKinteticsType> KINETICS_GENE_REGULATION = new Option<InterfaceKinteticsType>(
+	public static final Option<InterfaceGeneRegulatoryKinetics> KINETICS_GENE_REGULATION = new Option<InterfaceGeneRegulatoryKinetics>(
 			"KINETICS_GENE_REGULATION",
-			InterfaceKinteticsType.class,
+			InterfaceGeneRegulatoryKinetics.class,
 			"Determines the key for the standard kinetic law to be applied for reactions that are identified to belong to gene-regulatory processes,such as transcription or translation. The value is the class name of any class that implements InterfaceGeneRegulatoryNetworks");
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
@@ -126,9 +137,9 @@ public interface SqueezerOptions extends KeyProvider {
 	 * all. The value may be any rate law that implements
 	 * {@link org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics}.
 	 */
-	public static final Option<InterfaceKinteticsType> KINETICS_NONE_ENZYME_REACTIONS = new Option<InterfaceKinteticsType>(
+	public static final Option<InterfaceNonEnzymeKinetics> KINETICS_NONE_ENZYME_REACTIONS = new Option<InterfaceNonEnzymeKinetics>(
 			"KINETICS_NONE_ENZYME_REACTIONS",
-			InterfaceKinteticsType.class,
+			InterfaceNonEnzymeKinetics.class,
 			"Determines the key for the standard kinetic law to be applied for reactions that are catalyzed by non-enzymes or that are not catalyzed at all. The value may be any rate law that implements InterfaceNonEnzymeKinetics");
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
@@ -137,9 +148,9 @@ public interface SqueezerOptions extends KeyProvider {
 	 * enzyme-catalysis schemes. The value can be any rate law that implements
 	 * {@link org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics}.
 	 */
-	public static final Option<InterfaceKinteticsType> KINETICS_OTHER_ENZYME_REACTIONS = new Option<InterfaceKinteticsType>(
-			"KINETICS_OTHER_ENZYME_REACTIONS",
-			InterfaceKinteticsType.class,
+	public static final Option<InterfaceArbitraryEnzymeKinetics> KINETICS_ARBITRARY_ENZYME_REACTIONS = new Option<InterfaceArbitraryEnzymeKinetics>(
+			"KINETICS_ARBITRARY_ENZYME_REACTIONS",
+			InterfaceArbitraryEnzymeKinetics.class,
 			"Determines the key for the standard kinetic law to be applied for reactions that are identified to be enzyme-catalyzed (with or without explicit catalyst) and that do not belong to one of the other standard enzyme-catalysis schemes. The value can be any rate law that implements InterfaceArbitraryEnzymeKinetics.");
 	/**
 	 * This key defines the default kinetic law to be applied to
@@ -147,9 +158,9 @@ public interface SqueezerOptions extends KeyProvider {
 	 * values are the names of classes that implement
 	 * {@link org.sbml.squeezer.kinetics.InterfaceUniUniKinetics}.
 	 */
-	public static final Option<InterfaceKinteticsType> KINETICS_UNI_UNI_TYPE = new Option<InterfaceKinteticsType>(
+	public static final Option<InterfaceUniUniKinetics> KINETICS_UNI_UNI_TYPE = new Option<InterfaceUniUniKinetics>(
 			"KINETICS_UNI_UNI_TYPE",
-			InterfaceKinteticsType.class,
+			InterfaceUniUniKinetics.class,
 			"This key defines the default kinetic law to be applied to enzyme-catalyzed reactions with one reactant and one product. Possible values are the names of classes that implement InterfaceUniUniKinetics.");
 	/**
 	 * If true all parameters are stored globally for the whole model (default)
@@ -335,12 +346,13 @@ public interface SqueezerOptions extends KeyProvider {
 	 * One of the following values: cat, hal or weg (important for
 	 * Liebermeister's standard kinetics).
 	 */
-	public static final Option<TypeStandardVersion> TYPE_STANDARD_VERSION = new Option<TypeStandardVersion>(
-			"TYPE_STANDARD_VERSION",
-			TypeStandardVersion.class,
-			"One of the following values: cat, hal or weg (important for Liebermeister's standard kinetics).",
-			new Range<TypeStandardVersion>(TypeStandardVersion.class,
-					Range.toRangeString(TypeStandardVersion.class)));
+    public static final Option<TypeStandardVersion> TYPE_STANDARD_VERSION = new Option<TypeStandardVersion>(
+	"TYPE_STANDARD_VERSION",
+	TypeStandardVersion.class,
+	"One of the following values: cat, hal or weg (important for Liebermeister's standard kinetics).",
+	new Range<TypeStandardVersion>(TypeStandardVersion.class, Range
+		.toRangeString(TypeStandardVersion.class)), (short) 2,
+	TypeStandardVersion.cat, "Type standard version");
 
 	/**
 	 * How to ensure unit consistency in kinetic equations? One way is to set
@@ -350,11 +362,12 @@ public interface SqueezerOptions extends KeyProvider {
 	 * the surrounding compartment whenever it occurs in a kinetic equation.
 	 * Hence, this type parameter belongs to two values.
 	 */
-	public static final Option<TypeUnitConsistency> TYPE_UNIT_CONSISTENCY = new Option<TypeUnitConsistency>(
-			"TYPE_UNIT_CONSISTENCY",
-			TypeUnitConsistency.class,
-			"How to ensure unit consistency in kinetic equations? One way is to set each participating species to an initial amount and to set the unit to mmole. The other way is to set the initial concentration of each species, set the unit to mmole per l and to multiply the species with the size of the surrounding compartment whenever it occurs in a kinetic equation. Hence, this type parameter belongs to two values.",
-			new Range<TypeUnitConsistency>(TypeUnitConsistency.class,
-					Range.toRangeString(TypeUnitConsistency.class)));
+    public static final Option<TypeUnitConsistency> TYPE_UNIT_CONSISTENCY = new Option<TypeUnitConsistency>(
+	"TYPE_UNIT_CONSISTENCY",
+	TypeUnitConsistency.class,
+	"How to ensure unit consistency in kinetic equations? One way is to set each participating species to an initial amount and to set the unit to mmole. The other way is to set the initial concentration of each species, set the unit to mmole per l and to multiply the species with the size of the surrounding compartment whenever it occurs in a kinetic equation. Hence, this type parameter belongs to two values.",
+	new Range<TypeUnitConsistency>(TypeUnitConsistency.class, Range
+		.toRangeString(TypeUnitConsistency.class)), (short) 2,
+	TypeUnitConsistency.amount, "Type of unit consistency");
 
 }

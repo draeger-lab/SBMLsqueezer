@@ -145,7 +145,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 			} else if (key.equals(SqueezerOptions.KINETICS_BI_BI_TYPE)) {
 				msg = "Check this box if you want the %s to be applied to all bi-bi reactions (two reactants, two products).";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
-			} else if (key.equals(SqueezerOptions.KINETICS_OTHER_ENZYME_REACTIONS)) {
+			} else if (key.equals(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS)) {
 				msg = "Reactions, which are enzyme-catalyzed, and follow none of the schemes uni-uni, bi-uni and bi-bi can be modeled using %s.";
 				toolTip.append(String.format(msg, jRButton[i].getText()));
 			} else {
@@ -274,7 +274,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		curr = SqueezerOptions.KINETICS_BI_BI_TYPE;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsBiBi(treatReactionsReversible), curr));
-		curr = SqueezerOptions.KINETICS_OTHER_ENZYME_REACTIONS;
+		curr = SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsArbitraryEnzyme(treatReactionsReversible), curr));
 		curr = SqueezerOptions.KINETICS_GENE_REGULATION;

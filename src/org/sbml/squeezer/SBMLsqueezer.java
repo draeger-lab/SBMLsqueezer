@@ -229,7 +229,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 					invalid = !kineticsGeneRegulatoryNetworks.contains(val);
 				} else if (key.equals(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS)) {
 					invalid = !kineticsNonEnzyme.contains(val);
-				} else if (key.equals(SqueezerOptions.KINETICS_OTHER_ENZYME_REACTIONS)) {
+				} else if (key.equals(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS)) {
 					invalid = !kineticsArbitraryEnzymeMechanism.contains(val);
 				} else if (key.equals(SqueezerOptions.KINETICS_UNI_UNI_TYPE)) {
 					invalid = !kineticsUniUni.contains(val);

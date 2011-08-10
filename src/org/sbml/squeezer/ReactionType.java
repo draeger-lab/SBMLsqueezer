@@ -45,9 +45,7 @@ import de.zbit.util.prefs.SBPreferences;
  * reaction, for instance, whether a reaction is follows a bi-bi mechanism. This
  * can be used for GUIs to display reaction properties to a user.
  * 
- * @author Andreas Dr&auml;ger <a
- *         href="mailto:andreas.draeger@uni-tuebingen.de">
- *         andreas.draeger@uni-tuebingen.de</a>
+ * @author Andreas Dr&auml;ger
  * @date 2009-10-01
  * @since 1.3
  */
@@ -523,7 +521,7 @@ public class ReactionType {
 		String whichkin = prefs.get(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS);
 
 		if (enzymeCatalyzed) {
-			whichkin = prefs.get(SqueezerOptions.KINETICS_OTHER_ENZYME_REACTIONS);
+			whichkin = prefs.get(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS);
 		}
 		if (stoichiometryLeft == 1d) {
 			Species reactant = reaction.getReactant(0).getSpeciesInstance();
@@ -674,9 +672,11 @@ public class ReactionType {
 						.getKineticsArbitraryEnzymeMechanism());
 				if (!withoutModulation)
 					onlyBiBi.retainAll(SBMLsqueezer.getKineticsModulated());
-				for (String className : onlyBiBi)
-					if (checkReversibility(reaction, className))
+				for (String className : onlyBiBi) {
+					if (checkReversibility(reaction, className)) {
 						types.add(className);
+					}
+				}
 			}
 		}
 		String t[] = types.toArray(new String[] {});
