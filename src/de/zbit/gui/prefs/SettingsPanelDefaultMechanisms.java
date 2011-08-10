@@ -54,6 +54,7 @@ import de.zbit.util.prefs.SBProperties;
  * available for certain reaction types.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date 2009-09-22
  * @since 1.3
  */
@@ -398,6 +399,6 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 * @see de.zbit.gui.prefs.PreferencesPanel#loadPreferences()
 	 */
 	protected SBPreferences loadPreferences() throws IOException {
-		return SBPreferences.getPreferencesFor(SqueezerOptions.class, SqueezerOptions.CONFIG_FILE_LOCATION);
+		return SBPreferences.getPreferencesFor(SqueezerOptions.class);
 	}
 }

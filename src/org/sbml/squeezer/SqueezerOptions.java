@@ -22,11 +22,10 @@ package org.sbml.squeezer;
 
 import java.io.File;
 
-import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
-import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
-import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
+import org.sbml.squeezer.kinetics.ConvenienceKinetics;
+import org.sbml.squeezer.kinetics.GeneralizedMassAction;
+import org.sbml.squeezer.kinetics.HillHinzeEquation;
+import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
@@ -46,6 +45,34 @@ import de.zbit.util.prefs.Range;
  * @version $Rev$
  */
 public interface SqueezerOptions extends KeyProvider {
+	
+	/*
+	 * TODO: unimplemented options and their default values
+	 * #######################################
+	 * #                                     #
+	 * # Basic configuration of SBMLsqueezer #
+	 * #                                     #
+	 * #######################################
+	 * 
+	 * #
+	 * # Directories for convenient access to files:
+	 * #
+	 * OPEN_DIR                                   =  user.home
+	 * SAVE_DIR                                   =  user.home
+	 * GUI                                        =  false
+	 * TIME_SERIES_FILE                           =  ""
+	 * CHECK_FOR_UPDATES                          =  true
+	 * SIMULATION_MODE                            =  false
+	 * 
+	 * #
+	 * # Settings for file export and the user interface
+	 * #
+	 * SPINNER_STEP_SIZE                          =  0.01d
+	 * SPINNER_MIN_VALUE                          =  -1E5d
+	 * SPINNER_MAX_VALUE                          =  1E5d
+	 * JPEG_COMPRESSION_FACTOR                    =  0.8f
+	 */
+	
     /**
      * The possible selections for the three versions of modular rate laws (cf.
      * <a href=
@@ -96,30 +123,27 @@ public interface SqueezerOptions extends KeyProvider {
     }
 
 	/**
-	 * The path to the associated configuration file, which contains one default
-	 * value for each option defined in this interface.
-	 */
-	public static final String CONFIG_FILE_LOCATION = "resources/cfg/SBMLsqueezer.xml";
-	/**
 	 * The class name of the default kinetic law for bi-bi reactions. This can
 	 * be any class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiBiKinetics}.
 	 */
     public static final Option<String> KINETICS_BI_BI_TYPE = new Option<String>(
-	"KINETICS_BI_BI_TYPE",
-	String.class,
-	"The class name of the default kinetic law for bi-bi reactions. This can be any class that implements InterfaceBiBiKinetics",
-	new Range<String>(String.class, SBMLsqueezer.getKineticsBiBi()),
-	RandomOrderMechanism.class.getName());
+    		"KINETICS_BI_BI_TYPE",
+    		String.class,
+    		"The class name of the default kinetic law for bi-bi reactions. This can be any class that implements InterfaceBiBiKinetics",
+    		new Range<String>(String.class, SBMLsqueezer.getKineticsBiBi()),
+    		RandomOrderMechanism.class.getName());
 	/**
 	 * The class name of the default kinetic law for bi-uni reactions. This can
 	 * be any class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiUniKinetics}.
 	 */
-	public static final Option<InterfaceBiUniKinetics> KINETICS_BI_UNI_TYPE = new Option<InterfaceBiUniKinetics>(
+	public static final Option<String> KINETICS_BI_UNI_TYPE = new Option<String>(
 			"KINETICS_BI_UNI_TYPE",
-			InterfaceBiUniKinetics.class,
-			"The class name of the default kinetic law for bi-uni reactions. This can be any class that implements InterfaceBiUniKinetics");
+			String.class,
+			"The class name of the default kinetic law for bi-uni reactions. This can be any class that implements InterfaceBiUniKinetics",
+			new Range<String>(String.class, SBMLsqueezer.getKineticsBiUni()),
+			RandomOrderMechanism.class.getName());
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
 	 * reactions that are identified to belong to gene-regulatory processes,
@@ -127,20 +151,24 @@ public interface SqueezerOptions extends KeyProvider {
 	 * class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryNetworks}.
 	 */
-	public static final Option<InterfaceGeneRegulatoryKinetics> KINETICS_GENE_REGULATION = new Option<InterfaceGeneRegulatoryKinetics>(
+	public static final Option<String> KINETICS_GENE_REGULATION = new Option<String>(
 			"KINETICS_GENE_REGULATION",
-			InterfaceGeneRegulatoryKinetics.class,
-			"Determines the key for the standard kinetic law to be applied for reactions that are identified to belong to gene-regulatory processes,such as transcription or translation. The value is the class name of any class that implements InterfaceGeneRegulatoryNetworks");
+			String.class,
+			"Determines the key for the standard kinetic law to be applied for reactions that are identified to belong to gene-regulatory processes,such as transcription or translation. The value is the class name of any class that implements InterfaceGeneRegulatoryNetworks",
+			new Range<String>(String.class, SBMLsqueezer.getKineticsGeneRegulatoryNetworks()),
+			HillHinzeEquation.class.getName());
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
 	 * reactions that are catalyzed by non-enzymes or that are not catalyzed at
 	 * all. The value may be any rate law that implements
 	 * {@link org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics}.
 	 */
-	public static final Option<InterfaceNonEnzymeKinetics> KINETICS_NONE_ENZYME_REACTIONS = new Option<InterfaceNonEnzymeKinetics>(
+	public static final Option<String> KINETICS_NONE_ENZYME_REACTIONS = new Option<String>(
 			"KINETICS_NONE_ENZYME_REACTIONS",
-			InterfaceNonEnzymeKinetics.class,
-			"Determines the key for the standard kinetic law to be applied for reactions that are catalyzed by non-enzymes or that are not catalyzed at all. The value may be any rate law that implements InterfaceNonEnzymeKinetics");
+			String.class,
+			"Determines the key for the standard kinetic law to be applied for reactions that are catalyzed by non-enzymes or that are not catalyzed at all. The value may be any rate law that implements InterfaceNonEnzymeKinetics",
+			new Range<String>(String.class, SBMLsqueezer.getKineticsNonEnzyme()),
+			GeneralizedMassAction.class.getName());
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
 	 * reactions that are identified to be enzyme-catalyzed (with or without
@@ -148,20 +176,24 @@ public interface SqueezerOptions extends KeyProvider {
 	 * enzyme-catalysis schemes. The value can be any rate law that implements
 	 * {@link org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics}.
 	 */
-	public static final Option<InterfaceArbitraryEnzymeKinetics> KINETICS_ARBITRARY_ENZYME_REACTIONS = new Option<InterfaceArbitraryEnzymeKinetics>(
+	public static final Option<String> KINETICS_ARBITRARY_ENZYME_REACTIONS = new Option<String>(
 			"KINETICS_ARBITRARY_ENZYME_REACTIONS",
-			InterfaceArbitraryEnzymeKinetics.class,
-			"Determines the key for the standard kinetic law to be applied for reactions that are identified to be enzyme-catalyzed (with or without explicit catalyst) and that do not belong to one of the other standard enzyme-catalysis schemes. The value can be any rate law that implements InterfaceArbitraryEnzymeKinetics.");
+			String.class,
+			"Determines the key for the standard kinetic law to be applied for reactions that are identified to be enzyme-catalyzed (with or without explicit catalyst) and that do not belong to one of the other standard enzyme-catalysis schemes. The value can be any rate law that implements InterfaceArbitraryEnzymeKinetics.",
+			new Range<String>(String.class, SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
+			ConvenienceKinetics.class.getName());
 	/**
 	 * This key defines the default kinetic law to be applied to
 	 * enzyme-catalyzed reactions with one reactant and one product. Possible
 	 * values are the names of classes that implement
 	 * {@link org.sbml.squeezer.kinetics.InterfaceUniUniKinetics}.
 	 */
-	public static final Option<InterfaceUniUniKinetics> KINETICS_UNI_UNI_TYPE = new Option<InterfaceUniUniKinetics>(
+	public static final Option<String> KINETICS_UNI_UNI_TYPE = new Option<String>(
 			"KINETICS_UNI_UNI_TYPE",
-			InterfaceUniUniKinetics.class,
-			"This key defines the default kinetic law to be applied to enzyme-catalyzed reactions with one reactant and one product. Possible values are the names of classes that implement InterfaceUniUniKinetics.");
+			String.class,
+			"This key defines the default kinetic law to be applied to enzyme-catalyzed reactions with one reactant and one product. Possible values are the names of classes that implement InterfaceUniUniKinetics.",
+			new Range<String>(String.class, SBMLsqueezer.getKineticsUniUni()),
+			MichaelisMenten.class.getName());
 	/**
 	 * If true all parameters are stored globally for the whole model (default)
 	 * else parameters are stored locally for the respective kinetic equation
@@ -170,7 +202,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY = new Option<Boolean>(
 			"OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY",
 			Boolean.class,
-			"If true all parameters are stored globally for the whole model (default) else parameters are stored locally for the respective kinetic equation they belong to.");
+			"If true all parameters are stored globally for the whole model (default) else parameters are stored locally for the respective kinetic equation they belong to.",
+			true);
 	/**
 	 * If true, all reactions within the network are considered enzyme
 	 * reactions. If false, an explicit enzymatic catalyst must be assigned to a
@@ -179,7 +212,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED = new Option<Boolean>(
 			"OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED",
 			Boolean.class,
-			" If true, all reactions within the network are considered enzyme reactions. If false, an explicit enzymatic catalyst must be assigned to a reaction to obtain this status.");
+			" If true, all reactions within the network are considered enzyme reactions. If false, an explicit enzymatic catalyst must be assigned to a reaction to obtain this status.",
+			false);
 	/**
 	 * If not specified the value corresponding to this argument will be used to
 	 * initialize the size of compartments.
@@ -187,7 +221,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Double> OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE = new Option<Double>(
 			"OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE",
 			Double.class,
-			" If not specified the value corresponding to this argument will be used to initialize the size of compartments.");
+			" If not specified the value corresponding to this argument will be used to initialize the size of compartments.",
+			1.0d);
 	/**
 	 * If not specified the value corresponding to this argument will be used to
 	 * initialize species depending on their hasOnlySubstanceUnits property as
@@ -196,13 +231,16 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Double> OPT_DEFAULT_SPECIES_INITIAL_VALUE = new Option<Double>(
 			"OPT_DEFAULT_SPECIES_INITIAL_VALUE",
 			Double.class,
-			"If not specified the value corresponding to this argument will be used to initialize species depending on their hasOnlySubstanceUnits property as initial amount or initial concentration.");
+			"If not specified the value corresponding to this argument will be used to initialize species depending on their hasOnlySubstanceUnits property as initial amount or initial concentration.",
+			1.0d);
 	/**
 	 * The value that is set for newly created parameters.
 	 */
 	public static final Option<Double> OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS = new Option<Double>(
-			"OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS", Double.class,
-			"The value that is set for newly created parameters.");
+			"OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS", 
+			Double.class,
+			"The value that is set for newly created parameters.",
+			1.0d);
 	/**
 	 * If true a new rate law will be created for each reaction irrespective of
 	 * whether there is already a rate law assigned to this reaction or not.
@@ -210,7 +248,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION = new Option<Boolean>(
 			"OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION",
 			Boolean.class,
-			"If true a new rate law will be created for each reaction irrespective of whether there is already a rate law assigned to this reaction or not.");
+			"If true a new rate law will be created for each reaction irrespective of whether there is already a rate law assigned to this reaction or not.",
+			false);
 	/**
 	 * Allows the user to ignore species that are annotated with the given
 	 * compound identifiers when creating rate laws for reactions that involve
@@ -222,7 +261,12 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<List> OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS = new Option<List>(
 			"OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS",
 			List.class,
-			"Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons.");
+			"Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons."
+			// TODO
+			//"C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819"
+			//"C00001","C00038","C00070","C00076","C00080","C00175","C00238","C00282","C00291","C01327","C01528","C14818","C14819"
+			);
+			
 	/**
 	 * The maximal number of reactants so that the reaction is still considered
 	 * plausible.
@@ -230,7 +274,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Integer> OPT_MAX_NUMBER_OF_REACTANTS = new Option<Integer>(
 			"OPT_MAX_NUMBER_OF_REACTANTS",
 			Integer.class,
-			"The maximal number of reactants so that the reaction is still considered plausible.");
+			"The maximal number of reactants so that the reaction is still considered plausible.",
+			3);
 	/**
 	 * If true parameters and units that are never referenced by any element of
 	 * the model are deleted when creating kinetic equations with SBMLsqueezer.
@@ -238,13 +283,16 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS = new Option<Boolean>(
 			"OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS",
 			Boolean.class,
-			"If true parameters and units that are never referenced by any element of the model are deleted when creating kinetic equations with SBMLsqueezer.");
+			"If true parameters and units that are never referenced by any element of the model are deleted when creating kinetic equations with SBMLsqueezer.",
+			true);
 	/**
 	 * Decide whether or not to set the boundary condition for genes to true.
 	 */
 	public static final Option<Boolean> OPT_SET_BOUNDARY_CONDITION_FOR_GENES = new Option<Boolean>(
-			"OPT_SET_BOUNDARY_CONDITION_FOR_GENES", Boolean.class,
-			"Decide whether or not to set the boundary condition for genes to true.");
+			"OPT_SET_BOUNDARY_CONDITION_FOR_GENES", 
+			Boolean.class,
+			"Decide whether or not to set the boundary condition for genes to true.",
+			true);
 	/**
 	 * Property that decides whether to set all reactions to reversible before
 	 * creating new kinetic equations.
@@ -252,13 +300,16 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> OPT_TREAT_ALL_REACTIONS_REVERSIBLE = new Option<Boolean>(
 			"OPT_TREAT_ALL_REACTIONS_REVERSIBLE",
 			Boolean.class,
-			"Property that decides whether to set all reactions to reversible before creating new kinetic equations.");
+			"Property that decides whether to set all reactions to reversible before creating new kinetic equations.",
+			true);
 	/**
 	 * If true, warnings will be displayed for too many reactants.
 	 */
 	public static final Option<Boolean> OPT_WARNINGS_FOR_TOO_MANY_REACTANTS = new Option<Boolean>(
-			"OPT_WARNINGS_FOR_TOO_MANY_REACTANTS", Boolean.class,
-			"If true, warnings will be displayed for too many reactants.");
+			"OPT_WARNINGS_FOR_TOO_MANY_REACTANTS", 
+			Boolean.class,
+			"If true, warnings will be displayed for too many reactants.",
+			true);
 	/**
 	 * Determines whether or not antisense RNA molecules are accepted as enzymes
 	 * when catalyzing a reaction.
@@ -266,7 +317,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> POSSIBLE_ENZYME_ANTISENSE_RNA = new Option<Boolean>(
 			"POSSIBLE_ENZYME_ANTISENSE_RNA",
 			Boolean.class,
-			"Determines whether or not antisense RNA molecules are accepted as enzymes when catalyzing a reaction.");
+			"Determines whether or not antisense RNA molecules are accepted as enzymes when catalyzing a reaction.",
+			false);
 	/**
 	 * Determines whether or not enzyme complexes are accepted as enzymes when
 	 * catalyzing a reaction.
@@ -274,7 +326,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> POSSIBLE_ENZYME_COMPLEX = new Option<Boolean>(
 			"POSSIBLE_ENZYME_COMPLEX",
 			Boolean.class,
-			"Determines whether or not enzyme complexes are accepted as enzymes when catalyzing a reaction.");
+			"Determines whether or not enzyme complexes are accepted as enzymes when catalyzing a reaction.",
+			true);
 	/**
 	 * Determines whether or not generic proteins are accepted as enzymes when
 	 * catalyzing a reaction.
@@ -282,7 +335,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> POSSIBLE_ENZYME_GENERIC = new Option<Boolean>(
 			"POSSIBLE_ENZYME_GENERIC",
 			Boolean.class,
-			"Determines whether or not generic proteins are accepted as enzymes when catalyzing a reaction.");
+			"Determines whether or not generic proteins are accepted as enzymes when catalyzing a reaction.",
+			true);
 	/**
 	 * Determines whether or not receptors are accepted as enzymes when
 	 * catalyzing a reaction.
@@ -290,7 +344,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> POSSIBLE_ENZYME_RECEPTOR = new Option<Boolean>(
 			"POSSIBLE_ENZYME_RECEPTOR",
 			Boolean.class,
-			"Determines whether or not receptors are accepted as enzymes when catalyzing a reaction.");
+			"Determines whether or not receptors are accepted as enzymes when catalyzing a reaction.",
+			false);
 	/**
 	 * Determines whether or not RNA molecules are accepted as enzymes when
 	 * catalyzing a reaction.
@@ -298,7 +353,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> POSSIBLE_ENZYME_RNA = new Option<Boolean>(
 			"POSSIBLE_ENZYME_RNA",
 			Boolean.class,
-			"Determines whether or not RNA molecules are accepted as enzymes when catalyzing a reaction.");
+			"Determines whether or not RNA molecules are accepted as enzymes when catalyzing a reaction.",
+			true);
 	/**
 	 * Determines whether or not simple molecules are accepted as enzymes when
 	 * catalyzing a reaction.
@@ -306,7 +362,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> POSSIBLE_ENZYME_SIMPLE_MOLECULE = new Option<Boolean>(
 			"POSSIBLE_ENZYME_SIMPLE_MOLECULE",
 			Boolean.class,
-			"Determines whether or not simple molecules are accepted as enzymes when catalyzing a reaction.");
+			"Determines whether or not simple molecules are accepted as enzymes when catalyzing a reaction.",
+			false);
 	/**
 	 * Determines whether or not trunkated proteins are accepted as enzymes when
 	 * catalyzing a reaction.
@@ -314,7 +371,8 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> POSSIBLE_ENZYME_TRUNCATED = new Option<Boolean>(
 			"POSSIBLE_ENZYME_TRUNCATED",
 			Boolean.class,
-			"Determines whether or not trunkated proteins are accepted as enzymes when catalyzing a reaction.");
+			"Determines whether or not trunkated proteins are accepted as enzymes when catalyzing a reaction.",
+			true);
 	/**
 	 * Determines whether or not unknown molecules are accepted as enzymes when
 	 * catalyzing a reaction.
@@ -322,37 +380,48 @@ public interface SqueezerOptions extends KeyProvider {
 	public static final Option<Boolean> POSSIBLE_ENZYME_UNKNOWN = new Option<Boolean>(
 			"POSSIBLE_ENZYME_UNKNOWN",
 			Boolean.class,
-			"Determines whether or not unknown molecules are accepted as enzymes when catalyzing a reaction.");
+			"Determines whether or not unknown molecules are accepted as enzymes when catalyzing a reaction.",
+			false);
 	/**
 	 * SBML input file.
 	 */
-	public static final Option<File> SBML_FILE = new Option<File>("SBML_FILE",
-			File.class, "SBML input file.");
+	public static final Option<File> SBML_FILE = new Option<File>(
+			"SBML_FILE",
+			File.class, 
+			"SBML input file.",
+			new File(""));
 	/**
 	 * Specifies the file where SBMLsqueezer writes its SBML output.
 	 */
 	public static final Option<File> SBML_OUT_FILE = new Option<File>(
-			"SBML_OUT_FILE", File.class,
-			"Specifies the file where SBMLsqueezer writes its SBML output.");
+			"SBML_OUT_FILE", 
+			File.class,
+			"Specifies the file where SBMLsqueezer writes its SBML output.",
+			new File(""));
 	/**
 	 * Can be true or false, depending on if the user wants to see SBML
 	 * warnings.
 	 */
 	public static final Option<Boolean> SHOW_SBML_WARNINGS = new Option<Boolean>(
-			"SHOW_SBML_WARNINGS", Boolean.class,
-			"Can be true or false, depending on if the user wants to see SBML warnings.");
+			"SHOW_SBML_WARNINGS", 
+			Boolean.class,
+			"Can be true or false, depending on if the user wants to see SBML warnings.",
+			true);
 
 	/**
 	 * One of the following values: cat, hal or weg (important for
 	 * Liebermeister's standard kinetics).
 	 */
     public static final Option<TypeStandardVersion> TYPE_STANDARD_VERSION = new Option<TypeStandardVersion>(
-	"TYPE_STANDARD_VERSION",
-	TypeStandardVersion.class,
-	"One of the following values: cat, hal or weg (important for Liebermeister's standard kinetics).",
-	new Range<TypeStandardVersion>(TypeStandardVersion.class, Range
-		.toRangeString(TypeStandardVersion.class)), (short) 2,
-	TypeStandardVersion.cat, "Type standard version");
+    		"TYPE_STANDARD_VERSION",
+    		TypeStandardVersion.class,
+    		"One of the following values: cat, hal or weg (important for Liebermeister's standard kinetics).",
+    		new Range<TypeStandardVersion>(
+    				TypeStandardVersion.class, 
+    				Range.toRangeString(TypeStandardVersion.class)), 
+    				(short) 2,
+    				TypeStandardVersion.cat, 
+    				"Type standard version");
 
 	/**
 	 * How to ensure unit consistency in kinetic equations? One way is to set
@@ -363,11 +432,14 @@ public interface SqueezerOptions extends KeyProvider {
 	 * Hence, this type parameter belongs to two values.
 	 */
     public static final Option<TypeUnitConsistency> TYPE_UNIT_CONSISTENCY = new Option<TypeUnitConsistency>(
-	"TYPE_UNIT_CONSISTENCY",
-	TypeUnitConsistency.class,
-	"How to ensure unit consistency in kinetic equations? One way is to set each participating species to an initial amount and to set the unit to mmole. The other way is to set the initial concentration of each species, set the unit to mmole per l and to multiply the species with the size of the surrounding compartment whenever it occurs in a kinetic equation. Hence, this type parameter belongs to two values.",
-	new Range<TypeUnitConsistency>(TypeUnitConsistency.class, Range
-		.toRangeString(TypeUnitConsistency.class)), (short) 2,
-	TypeUnitConsistency.amount, "Type of unit consistency");
+    		"TYPE_UNIT_CONSISTENCY",
+    		TypeUnitConsistency.class,
+    		"How to ensure unit consistency in kinetic equations? One way is to set each participating species to an initial amount and to set the unit to mmole. The other way is to set the initial concentration of each species, set the unit to mmole per l and to multiply the species with the size of the surrounding compartment whenever it occurs in a kinetic equation. Hence, this type parameter belongs to two values.",
+    		new Range<TypeUnitConsistency>(
+    				TypeUnitConsistency.class, 
+    				Range.toRangeString(TypeUnitConsistency.class)), 
+    				(short) 2,
+    				TypeUnitConsistency.amount, 
+    				"Type of unit consistency");
 
 }

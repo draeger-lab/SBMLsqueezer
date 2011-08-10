@@ -32,6 +32,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.ParameterFactory;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
+import org.sbml.squeezer.SqueezerOptions;
 
 /**
  * An abstract super class of specialized kinetic laws, which provides methods
@@ -46,6 +47,7 @@ import org.sbml.squeezer.ReactionType;
  * @author Andreas Dr&auml;ger
  * @author Nadine Hassis
  * @author Hannes Borch
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 1, 2007
  */
 public abstract class BasicKineticLaw extends KineticLaw {
@@ -117,7 +119,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * <li>weg</li>
 	 * </ol>
 	 */
-	short type;
+	SqueezerOptions.TypeStandardVersion type;
 	/**
 	 * 
 	 */
@@ -137,7 +139,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		this.bringToConcentration = false;
 		this.defaultParamValue = 1d;
 		if (typeParameters.length > 0) {
-			type = Short.parseShort(getTypeParameters()[0].toString());
+			//if(getTypeParameters()[0].toString() == ""){
+				//type = SqueezerOptions.TYPE_STANDARD_VERSION.getDefaultValue();
+			//}else{
+				type = SqueezerOptions.TypeStandardVersion.valueOf(getTypeParameters()[0].toString());
+			//}
+			
+			//type = Short.parseShort(getTypeParameters()[0].toString());
 		}
 		if (typeParameters.length > 1
 				&& !Boolean.parseBoolean(getTypeParameters()[1].toString())) {

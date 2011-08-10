@@ -75,7 +75,7 @@ import de.zbit.util.prefs.SBProperties;
  * @author Andreas Dr&auml;ger
  * @author Nadine Hassis
  * @author Hannes Borch
- * @author Sarah M&uuml;ller vom Hagen
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.0
  * @version $Revision: 293$
  */
@@ -176,16 +176,10 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				kineticsIntStoichiometry.add(c.getCanonicalName());
 			}
 		}
-		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
+		logger.info("    done in " + (System.currentTimeMillis() - time)
+				+ " ms.");
 		logger.info("loading user settings...");
-
-		try {
-			preferences = new SBPreferences(SqueezerOptions.class, SqueezerOptions.CONFIG_FILE_LOCATION);
-		} catch (IOException exc) {
-			exc.printStackTrace();
-			System.exit(1);
-		}
-
+		preferences = new SBPreferences(SqueezerOptions.class);
 		logger.info("    done.");
 	}
 
