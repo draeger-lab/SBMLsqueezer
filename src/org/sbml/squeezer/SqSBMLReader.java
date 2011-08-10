@@ -52,14 +52,12 @@ public class SqSBMLReader implements SBMLInputConverter {
 		this();
 		this.model = convertModel(model);
 	}
-	
-	@Override
+
 	public void addIOProgressListener(IOProgressListener listener) {
 		setOfIOListeners.add(listener);
 
 	}
 
-	@Override
 	public Model convertModel(Object model) throws IllegalArgumentException, IOException, XMLStreamException {
 		if (model instanceof java.lang.String){
 			// file name or XML given; create SBML Document
@@ -117,17 +115,14 @@ public class SqSBMLReader implements SBMLInputConverter {
 		return this.model;
 	}
 	
-	@Override
 	public int getNumErrors() {
 		return 0;
 	}
 
-	@Override
 	public Object getOriginalModel() {
 		return originalModel;
 	}
 
-	@Override
 	public List<SBMLException> getWarnings() {
 		List<SBMLException> excl = new LinkedList<SBMLException>();
 		return excl;

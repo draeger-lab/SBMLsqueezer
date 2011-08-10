@@ -29,28 +29,25 @@ import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.IOProgressListener;
 
+@SuppressWarnings("deprecation")
 public class SqSBMLWriter implements SBMLOutputConverter{
 
 	private Set<IOProgressListener> setOfIOListeners = new HashSet<IOProgressListener>();
 	private org.sbml.jsbml.Model originalModel;
 	
-	@Override
 	public void addIOProgressListener(IOProgressListener listener) {
 		setOfIOListeners.add(listener);
 	}
 
-	@Override
 	public int getNumErrors(Object sbase) {
 		return 0;
 	}
 
-	@Override
 	public List<SBMLException> getWriteWarnings(Object sbase) {
 		List<SBMLException> excl = new LinkedList<SBMLException>();
 		return excl;
 	}
 
-	@Override
 	public void removeUnneccessaryElements(Model model, Object orig) {
 		// TODO Auto-generated method stub
 		
@@ -65,7 +62,6 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 		}
 	}
 	@SuppressWarnings("deprecation")
-	@Override
 	public boolean saveChanges(Model model, Object object) throws SBMLException {
 		if (!(object instanceof org.sbml.jsbml.Model))
 			throw new IllegalArgumentException(
@@ -291,7 +287,6 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 		return true;
 	}
 
-	@Override
 	public boolean saveChanges(Reaction reaction, Object model)
 			throws SBMLException {
 		boolean success = false;
@@ -316,7 +311,6 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 		return true;
 	}
 
-	@Override
 	public Object writeModel(Model model) throws SBMLException {
 		// TODO Auto-generated method stub
 		org.sbml.jsbml.Model m = new org.sbml.jsbml.Model(model);
@@ -324,13 +318,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 		return m;
 	}
 
-	@Override
 	public boolean writeSBML(Object sbmlDocument, String filename)
 			throws SBMLException, IOException {
 		return writeSBML(sbmlDocument, filename, null, null);
 	}
 
-	@Override
 	public boolean writeSBML(Object object, String filename,
 			String programName, String versionNumber) throws SBMLException,
 			IOException {
