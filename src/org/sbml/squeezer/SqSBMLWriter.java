@@ -1,3 +1,21 @@
+/*
+ *  SBMLsqueezer creates rate equations for reactions in SBML files
+ *  (http://sbml.org).
+ *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sbml.squeezer;
 
 import java.io.IOException;
@@ -29,6 +47,13 @@ import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.IOProgressListener;
 
+/**
+ * This class is a libSBML independent converter for JSBML models.
+ * 
+ * @version
+ * @author Sarah R. M&uuml;ller vom Hagen
+ * @date Aug 9, 2011
+ */
 @SuppressWarnings("deprecation")
 public class SqSBMLWriter implements SBMLOutputConverter{
 
@@ -75,13 +100,12 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			if (fd1 == null) {
 				// new function definition
 				originalModel.addFunctionDefinition(fd2);
-				fireIOEvent(fd2);
 			} else if(!fd1.equals(fd2)){
 				// changed function definition
 				originalModel.removeFunctionDefinition(fd2.getId());
 				originalModel.addFunctionDefinition(fd2);
-				fireIOEvent(fd2);
 			}
+			fireIOEvent(fd2);
 		}
 
 		// Unit definitions
@@ -91,13 +115,12 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			if(ud1 == null){
 				// new unit definition
 				originalModel.addUnitDefinition(ud2);
-				fireIOEvent(ud2);
 			} else if(!UnitDefinition.areIdentical(ud1, ud2)){
 				// changed unit definition
 				originalModel.removeUnitDefinition(ud1);
 				originalModel.addUnitDefinition(ud2);
-				fireIOEvent(ud2);
 			}
+			fireIOEvent(ud2);
 		}
 		
 		// Compartment types
@@ -106,12 +129,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			ct1 = originalModel.getCompartmentType(ct2.getId());
 			if (ct1 == null){
 				originalModel.addCompartmentType(ct2);
-				fireIOEvent(ct2);
 			}else if(!ct1.equals(ct2)){
 				originalModel.removeCompartmentType(ct1.getId());
 				originalModel.addCompartmentType(ct2);
-				fireIOEvent(ct2);
 			}
+			fireIOEvent(ct2);
 		}
 
 		// Species types
@@ -120,12 +142,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			st1 = originalModel.getSpeciesType(st2.getId());
 			if (st1 == null) {
 				originalModel.addSpeciesType(st2);
-				fireIOEvent(st2);
 			} else if(!st1.equals(st2)){
 				originalModel.removeSpeciesType(st1.getId());
 				originalModel.addSpeciesType(st2);
-				fireIOEvent(st2);
 			}
+			fireIOEvent(st2);
 		}
 
 		// Compartments
@@ -134,12 +155,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			cm1 = originalModel.getCompartment(cm2.getId());
 			if (cm1 == null) {
 				originalModel.addCompartment(cm2);
-				fireIOEvent(cm2);
 			} else if(!cm1.equals(cm2)){
 				originalModel.removeCompartment(cm1.getId());
 				originalModel.addCompartment(cm2);
-				fireIOEvent(cm2);
 			}
+			fireIOEvent(cm2);
 		}
 
 		// Species
@@ -153,6 +173,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 				originalModel.addSpecies(sp2);
 				fireIOEvent(sp2);
 			}
+			fireIOEvent(sp2);
 		}
 
 		// add or change parameters
@@ -161,12 +182,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			pa1 = originalModel.getParameter(pa2.getId());
 			if (pa1 == null) {
 				originalModel.addParameter(pa2);
-				fireIOEvent(pa2);
 			} else if(!pa1.equals(pa2)){
 				originalModel.removeParameter(pa1);
 				originalModel.addParameter(pa2);
-				fireIOEvent(pa2);
 			}
+			fireIOEvent(pa2);
 		}
 
 		// initial assignments
@@ -182,12 +202,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			}
 			if (contains < 0) {
 				originalModel.addInitialAssignment(ia2);
-				fireIOEvent(ia2);
 			} else if(!originalModel.getInitialAssignment(contains).equals(ia2)){
 				originalModel.removeInitialAssignment(contains);
 				originalModel.addInitialAssignment(ia2);
-				fireIOEvent(ia2);
-			}			
+			}
+			fireIOEvent(ia2);		
 		}	
 
 		// rules
@@ -225,13 +244,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			}
 			if (contains < 0) {
 				originalModel.addRule(ru2);
-				fireIOEvent(ru2);
 			} else if(!originalModel.getRule(contains).equals(ru2)){
 				originalModel.removeRule(contains);
 				originalModel.addRule(ru2);
-				fireIOEvent(ru2);
-				
-			}			
+			}
+			fireIOEvent(ru2);
 		}	
 
 		// constraints
@@ -245,12 +262,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			}
 			if (contains < 0) {
 				originalModel.addConstraint(cn2);
-				fireIOEvent(cn2);
 			} else {
 				originalModel.removeConstraint(contains);
 				originalModel.addConstraint(cn2);
-				fireIOEvent(cn2);
 			}
+			fireIOEvent(cn2);
 		}
 
 		// add or change reactions
@@ -259,12 +275,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			re1 = originalModel.getReaction(re2.getId());
 			if (re1 == null) {
 				originalModel.addReaction(re2);
-				fireIOEvent(re2);
 			} else if(!re1.equals(re2)){
 				originalModel.removeReaction(re1.getId());
 				originalModel.addReaction(re2);
-				fireIOEvent(re2);
 			}
+			fireIOEvent(re2);
 		}
 
 		// events
@@ -273,12 +288,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			ev1 = originalModel.getEvent(ev2.getId());
 			if (ev1 == null) {
 				originalModel.addEvent(ev2);
-				fireIOEvent(ev2);
 			} else if(!ev1.equals(ev2)){
 				originalModel.removeEvent(ev1.getId());
 				originalModel.addEvent(ev2);
-				fireIOEvent(ev2);
 			}
+			fireIOEvent(ev2);
 		}
 		
 		removeUnneccessaryElements(model, object);

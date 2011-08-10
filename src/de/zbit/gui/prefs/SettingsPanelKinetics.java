@@ -50,6 +50,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @since 1.0
  * @version
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Nov 15, 2007
  */
 public class SettingsPanelKinetics extends PreferencesPanel {
@@ -560,6 +561,6 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 	 */
 	protected SBPreferences loadPreferences()
 			throws InvalidPropertiesFormatException, IOException {
-		return SBPreferences.getPreferencesFor(SqueezerOptions.class, SqueezerOptions.CONFIG_FILE_LOCATION);
+		return SBPreferences.getPreferencesFor(SqueezerOptions.class);
 	}
 }

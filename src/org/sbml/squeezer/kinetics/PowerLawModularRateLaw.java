@@ -28,12 +28,14 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.SqueezerOptions.TypeStandardVersion;
 
 /**
  * Represents the power-law modular rate law (PM) from Liebermeister et al.
  * 2010.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.3
  * @date 2009-09-17
  */
@@ -133,10 +135,10 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		for (i = 0; i < numerator.length; i++) {
 			String enzymeID = modE.size() <= i ? null : modE.get(i);
 			switch (type) {
-			case 0: // CAT
+			case cat: // CAT
 				numerator[i] = cat(enzymeID);
 				break;
-			case 1: // HAL
+			case hal: // HAL
 				numerator[i] = hal(enzymeID);
 				break;
 			default: // WEG
