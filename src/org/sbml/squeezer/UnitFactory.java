@@ -1,20 +1,25 @@
 /*
- *  SBMLsqueezer creates rate equations for reactions in SBML files
- *  (http://sbml.org).
- *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ * $Id$
+ * $URL$
+ * ---------------------------------------------------------------------
+ * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * equations for reactions in SBML files (http://sbml.org).
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (C) 2006-2011 by the University of Tuebingen, Germany.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * ---------------------------------------------------------------------
  */
 package org.sbml.squeezer;
 
@@ -34,7 +39,7 @@ import org.sbml.jsbml.util.filters.SBOFilter;
 /**
  * @author Andreas Dr&auml;ger
  * @date 2010-10-22
- * 
+ * @version $Rev$
  */
 public class UnitFactory {
 
@@ -153,7 +158,7 @@ public class UnitFactory {
 		UnitDefinition ud = model.getTimeUnitsInstance().clone();
 		if (ud.getNumUnits() == 1) {
 			Unit u = ud.getUnit(0);
-			u.setExponent(-1);
+			u.setExponent(-1d);
 			ud.setId("per_" + u.getKind().toString().toLowerCase());
 			ud.setName("per time");
 		} else {
@@ -221,7 +226,7 @@ public class UnitFactory {
 		ud.divideBy(model.getTimeUnitsInstance());
 		if (h != 0) {
 			for (Unit u : ud.getListOfUnits()) {
-				u.setExponent((int) Math.round(u.getExponent() - h));
+				u.setExponent(u.getExponent() - h);
 			}
 		}
 		UnitDefinition amount = new UnitDefinition("amount", model.getLevel(),
@@ -252,7 +257,7 @@ public class UnitFactory {
 									+ ((int) ref.getStoichiometry() - 1));
 						}
 					} else if (x.length == listOf.size()) {
-						u.setExponent((int) Math.round(x[i]));
+						u.setExponent(x[i]);
 					}
 				}
 				amount.multiplyWith(substance);
