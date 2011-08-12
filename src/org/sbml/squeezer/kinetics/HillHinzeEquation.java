@@ -1,20 +1,25 @@
 /*
- *  SBMLsqueezer creates rate equations for reactions in SBML files
- *  (http://sbml.org).
- *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ * $Id$
+ * $URL$
+ * ---------------------------------------------------------------------
+ * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * equations for reactions in SBML files (http://sbml.org).
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (C) 2006-2011 by the University of Tuebingen, Germany.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * ---------------------------------------------------------------------
  */
 package org.sbml.squeezer.kinetics;
 
@@ -35,12 +40,12 @@ import org.sbml.squeezer.ReactionType;
  * Computing Agents in silico and in vivo&rdquo; of Hinze, T.; Hayat, S.;
  * Lenser, T.; Matsumaru, N., and Dittrich, P., 2007.
  * 
- * @since 1.0
- * @version
  * @author Jochen Supper
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @date Aug 7, 2007
+ * @since 1.0
+ * @version $Rev$
  */
 public class HillHinzeEquation extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,

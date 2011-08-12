@@ -1,4 +1,0 @@
-1. no stoichometricmath objects
-2. no cvterms 
-3. no dates
-4. no historydocument(errors,warnings)

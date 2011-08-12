@@ -1,20 +1,25 @@
 /*
- *  SBMLsqueezer creates rate equations for reactions in SBML files
- *  (http://sbml.org).
- *  Copyright (C) 2009 ZBIT, University of Tübingen, Andreas Dräger
+ * $Id$
+ * $URL$
+ * ---------------------------------------------------------------------
+ * This file is part of SBMLsqueezer, a Java program that creates rate 
+ * equations for reactions in SBML files (http://sbml.org).
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * Copyright (C) 2006-2011 by the University of Tuebingen, Germany.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * ---------------------------------------------------------------------
  */
 package org.sbml.squeezer;
 
@@ -40,6 +45,8 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.io.SqSBMLReader;
+import org.sbml.squeezer.io.SqSBMLWriter;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
 import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
@@ -77,7 +84,7 @@ import de.zbit.util.prefs.SBProperties;
  * @author Hannes Borch
  * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.0
- * @version $Revision: 293$
+ * @version $Rev$
  */
 public class SBMLsqueezer implements LawListener, IOProgressListener {
 	/**
@@ -181,68 +188,6 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		logger.info("loading user settings...");
 		preferences = new SBPreferences(SqueezerOptions.class);
 		logger.info("    done.");
-	}
-
-	/**
-	 * 
-	 * @param p
-	 * @return
-	 */
-	private static SBProperties correctProperties(SBProperties p) {
-		String val;
-		boolean allReversible = p
-				.containsKey(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-		if (allReversible) {
-			allReversible &= p.getBoolean(
-					SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-		} else {
-			SBProperties properties = preferences.toProperties();
-			allReversible = properties
-					.containsKey(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-			if (allReversible) {
-				allReversible &= properties.getBoolean(
-						SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-			}
-		}
-		String key;
-		for (Object k : p.keySet()) {
-			key = k.toString();
-			if (key.startsWith("KINETICS_")) {
-				val = p.get(k).toString();
-				if (!val.startsWith(KINETICS_PACKAGE)) {
-					val = KINETICS_PACKAGE + '.' + val;
-					p.put(k, val);
-				}
-				boolean invalid = false;
-				// check if valid default kinetics are given.
-				if (key.equals(SqueezerOptions.KINETICS_BI_BI_TYPE)) {
-					invalid = !kineticsBiBi.contains(val);
-				} else if (key.equals(SqueezerOptions.KINETICS_BI_UNI_TYPE)) {
-					invalid = !kineticsBiUni.contains(val);
-				} else if (key.equals(SqueezerOptions.KINETICS_GENE_REGULATION)) {
-					invalid = !kineticsGeneRegulatoryNetworks.contains(val);
-				} else if (key.equals(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS)) {
-					invalid = !kineticsNonEnzyme.contains(val);
-				} else if (key.equals(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS)) {
-					invalid = !kineticsArbitraryEnzymeMechanism.contains(val);
-				} else if (key.equals(SqueezerOptions.KINETICS_UNI_UNI_TYPE)) {
-					invalid = !kineticsUniUni.contains(val);
-				}
-				if (!kineticsIrreversible.contains(val) && !allReversible) {
-					invalid = false;
-				}
-				if (invalid) {
-					String defaultKin = preferences.getDefaults().get(k).toString();
-					if (!defaultKin.startsWith(KINETICS_PACKAGE)) {
-						defaultKin = KINETICS_PACKAGE + '.' + defaultKin;
-					}
-					p.put(k, defaultKin);
-					logger.error(String.format(	"Invalid %s %s; using default %s.", 
-												k.toString(),val, defaultKin) );
-				}
-			}
-		}
-		return p;
 	}
 
 	/**
