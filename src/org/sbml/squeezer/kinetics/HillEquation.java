@@ -166,9 +166,13 @@ public class HillEquation extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		if (!isSetSBOTerm())
+		/*
+		if (!isSetSBOTerm()){
 			return "Generalized Hill equation";
+		}
 		return SBO.getTerm(getSBOTerm()).getDefinition().replace("\\,", ",");
+		*/
+		return "Generalized Hill equation";
 	}
 
 }
