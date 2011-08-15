@@ -40,6 +40,7 @@ import org.sbml.squeezer.ReactionType;
  * 
  * @author Sandra Nitschmann
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.3
  * @version $Rev$
  */
@@ -137,7 +138,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm()) || SBO
 					.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm()))) {
 				if (!modifier.isSetSBOTerm())
-					modifier.setSBOTerm(19);
+					BasicKineticLaw.setSBOTerm(modifier,19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
 					LocalParameter p = parameterFactory.parameterV(modifier
@@ -174,7 +175,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm())
-					modifier.setSBOTerm(19);
+					BasicKineticLaw.setSBOTerm(modifier,19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					LocalParameter p = parameterFactory.parameterW(modifier
 							.getSpecies(), r.getId());

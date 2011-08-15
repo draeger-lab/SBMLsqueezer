@@ -40,6 +40,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @author Sandra Nitschmann
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.3
  * @version $Rev$
  */
@@ -102,7 +103,7 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 
 			if (!modifier.isSetSBOTerm()) {
-				modifier.setSBOTerm(19);
+				BasicKineticLaw.setSBOTerm(modifier,19);
 			}
 			if (SBO.isModifier(modifier.getSBOTerm())) {
 				LocalParameter p = parameterFactory.parameterW(modifier

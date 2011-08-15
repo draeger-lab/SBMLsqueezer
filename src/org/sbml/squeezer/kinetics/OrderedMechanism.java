@@ -36,6 +36,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
@@ -72,15 +73,15 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
-		setSBOTerm(429);
+		BasicKineticLaw.setSBOTerm(this,429);
 		double stoichiometryRight = 0;
 		for (int i = 0; i < reaction.getNumProducts(); i++)
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
 		// compulsory-order ternary-complex mechanism (Cornish-Bowden)
 		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
-			setSBOTerm(433);
+			BasicKineticLaw.setSBOTerm(this,433);
 		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
-			setSBOTerm(434);
+			BasicKineticLaw.setSBOTerm(this,434);
 
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		StringBuilder notes = new StringBuilder("compulsory-order");
@@ -184,7 +185,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				/*
 				 * Reversible Bi-Bi reaction.
 				 */
-				setSBOTerm(433);
+				BasicKineticLaw.setSBOTerm(this, 433);
 				LocalParameter p_kIr2 = parameterFactory.parameterKi(specRefE2
 						.getSpecies(), enzyme);
 				LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(
@@ -298,7 +299,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				/*
 				 * Reversible bi-uni reaction
 				 */
-				setSBOTerm(434);
+				BasicKineticLaw.setSBOTerm(this,434);
 				LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(
 						enzyme, false);
 				LocalParameter p_kMr1 = parameterFactory.parameterMichaelis(

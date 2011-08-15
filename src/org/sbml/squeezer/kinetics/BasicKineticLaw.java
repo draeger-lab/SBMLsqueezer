@@ -25,12 +25,15 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
@@ -129,6 +132,24 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * 
 	 */
 	ParameterFactory parameterFactory;
+	
+	private static Logger logger = Logger.getLogger(BasicKineticLaw.class.getSimpleName());
+	
+	/**
+	 * 
+	 * @param sbase
+	 * @param term
+	 */
+	public static final void setSBOTerm(SBase sbase, int term) {
+		if (-1 < sbase.getLevelAndVersion().compareTo(Integer.valueOf(2),
+				Integer.valueOf(2))) {
+			sbase.setSBOTerm(term);
+		} else {
+			logger.log(Level.FINE, String.format(
+					"Could not set SBO term %s for %s with Level = %d and Version = %d.", 
+					SBO.sboNumberString(term), sbase.getElementName(), sbase.getLevel(), sbase.getVersion()));
+		}
+	}
 
 	/**
 	 * 
@@ -157,7 +178,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			fullRank = false;
 		}
 		if (typeParameters.length > 2) {
-			bringToConcentration = ((Integer) typeParameters[2]).intValue() != 0;
+			bringToConcentration = SqueezerOptions.TypeUnitConsistency.valueOf(typeParameters[2].toString()) == SqueezerOptions.TypeUnitConsistency.concentration;
 		}
 		if (typeParameters.length > 3) {
 			defaultParamValue = Double

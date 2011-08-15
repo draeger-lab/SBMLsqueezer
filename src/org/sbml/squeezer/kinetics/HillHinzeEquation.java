@@ -43,6 +43,7 @@ import org.sbml.squeezer.ReactionType;
  * @author Jochen Supper
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 7, 2007
  * @since 1.0
  * @version $Rev$
@@ -88,19 +89,19 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		Reaction reaction = getParentSBMLObject();
 
 		if (reaction.getNumReactants() == 0 || reaction.getNumModifiers() == 0)
-			setSBOTerm(47);
+			BasicKineticLaw.setSBOTerm(this,47);
 		else if (reaction.getNumReactants() == 1) {
 			if (ReactionType.representsEmptySet(reaction.getListOfReactants())) {
 				if (reaction.getNumModifiers() == 1
 						&& !SBO.isInhibitor(reaction.getModifier(0)
 								.getSBOTerm()))
-					setSBOTerm(195);
+					BasicKineticLaw.setSBOTerm(this,195);
 			} else if (reaction.getNumModifiers() == 0)
-				setSBOTerm(195);
+				BasicKineticLaw.setSBOTerm(this,195);
 		} else if (reaction.getNumReactants() == 0
 				&& reaction.getNumModifiers() == 1
 				&& !SBO.isInhibitor(reaction.getModifier(0).getSBOTerm()))
-			setSBOTerm(195);
+			BasicKineticLaw.setSBOTerm(this,195);
 
 		if (SBO.isTranslation(reaction.getSBOTerm())
 				|| SBO.isTranscription(reaction.getSBOTerm()))

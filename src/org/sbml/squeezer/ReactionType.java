@@ -51,6 +51,7 @@ import de.zbit.util.prefs.SBPreferences;
  * can be used for GUIs to display reaction properties to a user.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date 2009-10-01
  * @since 1.3
  * @version $Rev$
@@ -274,6 +275,7 @@ public class ReactionType {
 		int i;
 		this.reaction = r; // .clone();
 		// Check ignore list:
+		prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		if (prefs
 				.containsKey(SqueezerOptions.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)) {
 			String ignoreList[] = prefs.get(

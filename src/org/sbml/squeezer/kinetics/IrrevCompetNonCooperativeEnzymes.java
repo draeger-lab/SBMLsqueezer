@@ -38,6 +38,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 29, 267, or 273 depending on the structure of the reaction.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.0
  * @version $Rev$
  */
@@ -84,11 +85,11 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 
 		switch (modInhib.size()) {
 		case 0:
-			setSBOTerm(modE.size() == 0 ? 199 : 29);
+			BasicKineticLaw.setSBOTerm(this, modE.size() == 0 ? 199 : 29);
 		case 1:
-			setSBOTerm(267);
+			BasicKineticLaw.setSBOTerm(this, 267);
 		default:
-			setSBOTerm(273);
+			BasicKineticLaw.setSBOTerm(this, 273);
 		}
 
 		ASTNode[] formula = new ASTNode[Math.max(1, modE.size())];

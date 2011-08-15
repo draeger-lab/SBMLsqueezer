@@ -37,6 +37,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * Cornish-Bowden (2004, p. 314, &ldquo;Fundamentals of Enzyme Kinetics&rdquo;).
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date 2010-03-25
  * @since 1.3
  * @version $Rev$
@@ -76,7 +77,7 @@ public class HillEquation extends BasicKineticLaw implements
 		Reaction r = getParentSBMLObject();
 
 		if (activators.isEmpty() && inhibitors.isEmpty() && !r.getReversible())
-			setSBOTerm(195);
+			BasicKineticLaw.setSBOTerm(this,195);
 
 		ASTNode rates[] = new ASTNode[Math.max(1, enzymes.size())];
 		for (int enzymeNum = 0; enzymeNum < rates.length; enzymeNum++) {

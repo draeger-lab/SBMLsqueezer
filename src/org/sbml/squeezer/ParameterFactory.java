@@ -37,10 +37,12 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.filters.SBOFilter;
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
 /**
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date 2010-10-22
  * @version $Rev$
  */
@@ -169,7 +171,7 @@ public class ParameterFactory {
 	public LocalParameter parameterAlpha(String rId) {
 		LocalParameter p = createOrGetParameter("alpha_", rId);
 		if (!p.isSetSBOTerm()) {
-			p.setSBOTerm(2);
+			BasicKineticLaw.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -207,7 +209,7 @@ public class ParameterFactory {
 			p_kass.setName(name.toString());
 		}
 		if (!p_kass.isSetSBOTerm()) {
-			p_kass.setSBOTerm(zerothOrder ? 48 : 153);
+			BasicKineticLaw.setSBOTerm(p_kass,zerothOrder ? 48 : 153);
 		}
 		if (!p_kass.isSetUnits()) {
 			p_kass.setUnits(unitFactory
@@ -226,7 +228,7 @@ public class ParameterFactory {
 	public LocalParameter parameterB(String rId) {
 		LocalParameter p = createOrGetParameter("b_", rId);
 		if (!p.isSetSBOTerm()) {
-			p.setSBOTerm(2);
+			BasicKineticLaw.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitPerTime());
@@ -245,7 +247,7 @@ public class ParameterFactory {
 	public LocalParameter parameterBeta(String rId) {
 		LocalParameter p = createOrGetParameter("beta_", rId);
 		if (!p.isSetSBOTerm()) {
-			p.setSBOTerm(2);
+			BasicKineticLaw.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -280,7 +282,7 @@ public class ParameterFactory {
 		}
 		LocalParameter coeff = createOrGetParameter(id);
 		if (!coeff.isSetSBOTerm()) {
-			coeff.setSBOTerm(385);
+			BasicKineticLaw.setSBOTerm(coeff,385);
 		}
 		if (!coeff.isSetUnits()) {
 			coeff.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -313,7 +315,7 @@ public class ParameterFactory {
 			p_kdiss.setName(name.toString());
 		}
 		if (!p_kdiss.isSetSBOTerm()) {
-			p_kdiss.setSBOTerm(156);
+			BasicKineticLaw.setSBOTerm(p_kdiss,156);
 		}
 		if (!p_kdiss.isSetUnits()) {
 			p_kdiss.setUnits(unitFactory
@@ -333,7 +335,7 @@ public class ParameterFactory {
 		String reactionID = kineticLaw.getParentSBMLObject().getId();
 		LocalParameter keq = createOrGetParameter("keq_", reactionID);
 		if (!keq.isSetSBOTerm()) {
-			keq.setSBOTerm(281);
+			BasicKineticLaw.setSBOTerm(keq,281);
 		}
 		if (!keq.isSetName()) {
 			keq.setName(StringTools.concat("equilibrium constant of reaction ",
@@ -394,7 +396,7 @@ public class ParameterFactory {
 		}
 		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm()) {
-			hr.setSBOTerm(190);
+			BasicKineticLaw.setSBOTerm(hr,190);
 		}
 		if (!hr.isSetName()) {
 			StringBuffer name = StringTools.concat("Hill coefficient");
@@ -438,7 +440,7 @@ public class ParameterFactory {
 		}
 		LocalParameter kA = createOrGetParameter(name);
 		if (!kA.isSetSBOTerm()) {
-			kA.setSBOTerm(363);
+			BasicKineticLaw.setSBOTerm(kA,363);
 		}
 		if (!kA.isSetName()) {
 			kA.setName(StringTools.concat("Activation constant of reaction ",
@@ -484,9 +486,9 @@ public class ParameterFactory {
 			kr = createOrGetParameter(id);
 			if (!kr.isSetSBOTerm()) {
 				if (kineticLaw.getParentSBMLObject().getReversible()) {
-					kr.setSBOTerm(forward ? 320 : 321);
+					BasicKineticLaw.setSBOTerm(kr,forward ? 320 : 321);
 				} else {
-					kr.setSBOTerm(25);
+					BasicKineticLaw.setSBOTerm(kr,25);
 				}
 			}
 			if (!kr.isSetName()) {
@@ -517,9 +519,9 @@ public class ParameterFactory {
 			kr = createOrGetParameter(id);
 			if (!kr.isSetSBOTerm()) {
 				if (kineticLaw.getParentSBMLObject().getReversible()) {
-					kr.setSBOTerm(forward ? 324 : 325);
+					BasicKineticLaw.setSBOTerm(kr,forward ? 324 : 325);
 				} else {
-					kr.setSBOTerm(186);
+					BasicKineticLaw.setSBOTerm(kr,186);
 				}
 			}
 			if (!kr.isSetName()) {
@@ -618,7 +620,7 @@ public class ParameterFactory {
 		}
 		LocalParameter kI = createOrGetParameter(id.toString());
 		if (!kI.isSetSBOTerm()) {
-			kI.setSBOTerm(261);
+			BasicKineticLaw.setSBOTerm(kI,261);
 		}
 		if (!kI.isSetName()) {
 			StringBuffer name = StringTools.concat("Inhibitory constant");
@@ -687,7 +689,7 @@ public class ParameterFactory {
 		}
 		LocalParameter kS = createOrGetParameter(id.toString());
 		if (!kS.isSetSBOTerm()) {
-			kS.setSBOTerm(194);
+			BasicKineticLaw.setSBOTerm(kS,194);
 		}
 		if (!kS.isSetName()) {
 			StringBuffer name = StringTools.concat(
@@ -728,7 +730,7 @@ public class ParameterFactory {
 	public LocalParameter parameterM(String rId) {
 		LocalParameter p = createOrGetParameter("m_", rId);
 		if (!p.isSetSBOTerm()) {
-			p.setSBOTerm(2);
+			BasicKineticLaw.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -757,7 +759,7 @@ public class ParameterFactory {
 		}
 		LocalParameter kM = createOrGetParameter(id.toString());
 		if (kM.isSetSBOTerm()) {
-			kM.setSBOTerm(27);
+			BasicKineticLaw.setSBOTerm(kM,27);
 		}
 		if (!kM.isSetName()) {
 			StringBuffer name = StringTools.concat(
@@ -794,7 +796,7 @@ public class ParameterFactory {
 			boolean substrate) {
 		LocalParameter kM = parameterMichaelis(species, enzyme);
 		if (!kM.isSetSBOTerm()) {
-			kM.setSBOTerm(substrate ? 322 : 323);
+			BasicKineticLaw.setSBOTerm(kM,substrate ? 322 : 323);
 		}
 		return kM;
 	}
@@ -821,7 +823,7 @@ public class ParameterFactory {
 		}
 		LocalParameter p_exp = createOrGetParameter(exponent.toString());
 		if (!p_exp.isSetSBOTerm()) {
-			p_exp.setSBOTerm(189);
+			BasicKineticLaw.setSBOTerm(p_exp,189);
 		}
 		if (!p_exp.isSetName()) {
 			StringBuffer name = StringTools
@@ -855,7 +857,7 @@ public class ParameterFactory {
 		}
 		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm()) {
-			hr.setSBOTerm(382);
+			BasicKineticLaw.setSBOTerm(hr,382);
 		}
 		if (!hr.isSetName()) {
 			hr.setName("Reaction cooperativity");
@@ -960,7 +962,7 @@ public class ParameterFactory {
 	public LocalParameter parameterSSystemAlpha(String rId) {
 		LocalParameter p = createOrGetParameter("alpha_", rId);
 		if (!p.isSetSBOTerm()) {
-			p.setSBOTerm(153);
+			BasicKineticLaw.setSBOTerm(p,153);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitSubstancePerTime(model
@@ -980,7 +982,7 @@ public class ParameterFactory {
 	public LocalParameter parameterSSystemBeta(String rId) {
 		LocalParameter p = createOrGetParameter("beta_", rId);
 		if (!p.isSetSBOTerm())
-			p.setSBOTerm(156);
+			BasicKineticLaw.setSBOTerm(p,156);
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitSubstancePerTime(model
 					.getUnitDefinition("substance"), model
@@ -1032,7 +1034,7 @@ public class ParameterFactory {
 					.toString());
 		}
 		if (!mu.isSetSBOTerm()) {
-			mu.setSBOTerm(463);
+			BasicKineticLaw.setSBOTerm(mu,463);
 		}
 		if (!mu.isSetUnits()) {
 			mu.setUnits(unitFactory.unitkJperSubstance(model
@@ -1050,7 +1052,7 @@ public class ParameterFactory {
 		Parameter T = createOrGetGlobalParameter("T");
 		T.setValue(298.15);
 		if (!T.isSetSBOTerm()) {
-			T.setSBOTerm(147);
+			BasicKineticLaw.setSBOTerm(T,147);
 		}
 		if (!T.isSetUnits()) {
 			T.setUnits(Unit.Kind.KELVIN);
@@ -1070,7 +1072,7 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter("theta_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
-			p.setSBOTerm(2);
+			BasicKineticLaw.setSBOTerm(p,2);
 		}
 		if (!p.isSetValue()) {
 			p.setValue(0);
@@ -1119,7 +1121,7 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter("v_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
-			p.setSBOTerm(2);
+			BasicKineticLaw.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitPerTime());
@@ -1162,7 +1164,7 @@ public class ParameterFactory {
 						reactionID).toString());
 			}
 			if (!kVr.isSetSBOTerm()) {
-				kVr.setSBOTerm(324);
+				BasicKineticLaw.setSBOTerm(kVr,324);
 			}
 			if (!kVr.isSetUnits()) {
 				if (unitFactory.getBringToConcentration()) {
@@ -1197,7 +1199,7 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter("w_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
-			p.setSBOTerm(2);
+			BasicKineticLaw.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitPerTime());

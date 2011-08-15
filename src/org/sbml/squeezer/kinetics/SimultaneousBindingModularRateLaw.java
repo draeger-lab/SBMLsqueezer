@@ -35,6 +35,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * to Liebermeister et al. 2010.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date 2009-09-21
  * @since 1.3
  * @version $Rev$
@@ -58,7 +59,7 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 	public SimultaneousBindingModularRateLaw(Reaction parentReaction,
 			Object... types) throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		setSBOTerm(530); // simultaneous binding modular rate law
+		BasicKineticLaw.setSBOTerm(this,530); // simultaneous binding modular rate law
 	}
 
 	/*

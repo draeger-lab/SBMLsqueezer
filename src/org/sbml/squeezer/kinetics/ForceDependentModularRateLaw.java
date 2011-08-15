@@ -34,6 +34,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * Force-dependent modular rate law (FM) according to Liebermeister et al. 2010.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date 2009-09-21
  * @since 1.3
  * @version $Rev$
@@ -57,7 +58,7 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
 	public ForceDependentModularRateLaw(Reaction parentReaction,
 			Object... types) throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		setSBOTerm(532); // force-dependent modular rate law
+		BasicKineticLaw.setSBOTerm(this,532); // force-dependent modular rate law
 	}
 
 	/*

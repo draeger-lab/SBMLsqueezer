@@ -235,8 +235,8 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		JPanel jPanelStandardVersions = new JPanel();
 		jComboBoxTypeStandardVersion = new JComboBox(new String[] { "cat",
 				"hal", "weg" });
-		jComboBoxTypeStandardVersion.setSelectedIndex(properties
-						.getIntProperty(SqueezerOptions.TYPE_STANDARD_VERSION));
+		jComboBoxTypeStandardVersion.setSelectedIndex(
+				SqueezerOptions.TYPE_STANDARD_VERSION.getValue(properties).ordinal());
 		jComboBoxTypeStandardVersion.setToolTipText(StringUtil.toHTML(
 								"Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.",
 								GUITools.TOOLTIP_LINE_LENGTH));
