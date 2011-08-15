@@ -269,6 +269,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return getNotesString();
+		//return getNotesString();
+		return "Convenience Kinetics";
 	}
 }
