@@ -39,6 +39,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
@@ -89,7 +90,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 							+ "Michaelis-Menten kinetics to reaction "
 							+ reaction.getId());
 
-		setSBOTerm(429);
+		BasicKineticLaw.setSBOTerm(this,429);
 		double stoichiometryRight = 0;
 		for (int i = 0; i < reaction.getNumProducts(); i++)
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
@@ -97,7 +98,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		// rapid-equilibrium random order ternary-complex mechanism
 		if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1d)
 				&& !reaction.getReversible())
-			setSBOTerm(432);
+			BasicKineticLaw.setSBOTerm(this,432);
 
 		StringBuilder notes = new StringBuilder("rapid-equilibrium random ");
 		notes.append("order ternary-complex mechanism");

@@ -37,6 +37,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Dieudonn&eacute; Wouamba
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
@@ -81,7 +82,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 			notes.insert(0, "ir");
 		setNotes(notes.toString());
 
-		setSBOTerm(436);
+		BasicKineticLaw.setSBOTerm(this,436);
 
 		ASTNode numerator;// I
 		ASTNode denominator; // II
@@ -130,7 +131,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 					specRefE1.getSpecies(), enzyme, true);
 			LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(
 					specRefE2.getSpecies(), enzyme, true);
-			setSBOTerm(436);
+			BasicKineticLaw.setSBOTerm(this,436);
 
 			/*
 			 * Irreversible Reaction

@@ -31,8 +31,6 @@ import org.sbml.squeezer.kinetics.HillHinzeEquation;
 import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
-
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.Range;
@@ -48,33 +46,6 @@ import de.zbit.util.prefs.Range;
  * @version $Rev$
  */
 public interface SqueezerOptions extends KeyProvider {
-	
-	/*
-	 * TODO: unimplemented options and their default values
-	 * #######################################
-	 * #                                     #
-	 * # Basic configuration of SBMLsqueezer #
-	 * #                                     #
-	 * #######################################
-	 * 
-	 * #
-	 * # Directories for convenient access to files:
-	 * #
-	 * OPEN_DIR                                   =  user.home
-	 * SAVE_DIR                                   =  user.home
-	 * GUI                                        =  false
-	 * TIME_SERIES_FILE                           =  ""
-	 * CHECK_FOR_UPDATES                          =  true
-	 * SIMULATION_MODE                            =  false
-	 * 
-	 * #
-	 * # Settings for file export and the user interface
-	 * #
-	 * SPINNER_STEP_SIZE                          =  0.01d
-	 * SPINNER_MIN_VALUE                          =  -1E5d
-	 * SPINNER_MAX_VALUE                          =  1E5d
-	 * JPEG_COMPRESSION_FACTOR                    =  0.8f
-	 */
 	
     /**
      * The possible selections for the three versions of modular rate laws (cf.
@@ -261,13 +232,11 @@ public interface SqueezerOptions extends KeyProvider {
 	 * equations. Preselected are the KEGG compound identifiers for water and
 	 * protons
 	 */
-	public static final Option<List> OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS = new Option<List>(
+	public static final Option<String> OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS = new Option<String>(
 			"OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS",
-			List.class,
-			"Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons."
-			// TODO
-			//"C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819"
-			//"C00001","C00038","C00070","C00076","C00080","C00175","C00238","C00282","C00291","C01327","C01528","C14818","C14819"
+			String.class,
+			"Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons.",
+			"C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819"
 			);
 			
 	/**

@@ -54,6 +54,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * 
  * @author Sandra Nitschmann
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @since 1.3
  * @version $Rev$
  */
@@ -102,7 +103,7 @@ public class SSystem extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierspec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm()) {
-					modifier.setSBOTerm(19);
+					BasicKineticLaw.setSBOTerm(modifier,19);
 				}
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					LocalParameter exp = parameterFactory

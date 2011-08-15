@@ -63,7 +63,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	public PowerLawModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		setSBOTerm(531); // power law modular rate law
+		BasicKineticLaw.setSBOTerm(this,531); // power law modular rate law
 	}
 
 	/*

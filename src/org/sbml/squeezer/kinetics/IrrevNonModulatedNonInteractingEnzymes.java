@@ -39,6 +39,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * The enzymes do not catalyse the reactions in both directions.
  * 
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Feb 6, 2008
  * @since 1.0
  * @version $Rev$
@@ -126,13 +127,13 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 					.getStoichiometry();
 		switch ((int) Math.round(stoichiometry)) {
 		case 1:
-			setSBOTerm(numOfEnzymes == 0 ? 199 : 29);
+			BasicKineticLaw.setSBOTerm(this, numOfEnzymes == 0 ? 199 : 29);
 		case 2:
-			setSBOTerm(151);
+			BasicKineticLaw.setSBOTerm(this, 151);
 		case 3:
-			setSBOTerm(152);
+			BasicKineticLaw.setSBOTerm(this, 152);
 		default:
-			setSBOTerm(150);
+			BasicKineticLaw.setSBOTerm(this, 150);
 		}
 
 		return ASTNode.sum(enzymes);

@@ -69,6 +69,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
@@ -333,7 +334,7 @@ public class KineticLawGenerator {
 				Reaction reac = new Reaction(reacOrig.getId(), reacOrig
 						.getLevel(), reacOrig.getVersion());
 				if (reacOrig.isSetSBOTerm()) {
-					reac.setSBOTerm(reacOrig.getSBOTerm());
+					BasicKineticLaw.setSBOTerm(reac,reacOrig.getSBOTerm());
 				}
 				miniModel.addReaction(reac);
 				reac.setFast(reacOrig.getFast());
@@ -1068,11 +1069,11 @@ public class KineticLawGenerator {
 						&& species.isSetSBOTerm()
 						&& !possibleEnzymes.contains(Integer.valueOf(species
 								.getSBOTerm()))) {
-					modifier.setSBOTerm(SBO.getCatalysis());
+					BasicKineticLaw.setSBOTerm(modifier,SBO.getCatalysis());
 				} else if (SBO.isCatalyst(modifier.getSBOTerm())
 						&& (possibleEnzymes.contains(Integer.valueOf(species
 								.getSBOTerm())) || !species.isSetSBOTerm())) {
-					modifier.setSBOTerm(SBO.getEnzymaticCatalysis());
+					BasicKineticLaw.setSBOTerm(modifier,SBO.getEnzymaticCatalysis());
 				}
 			}
 		}

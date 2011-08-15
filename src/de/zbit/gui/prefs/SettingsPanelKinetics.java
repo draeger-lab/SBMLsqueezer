@@ -361,7 +361,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 				jPanelTypeUnitConsistency);
 		jRadioButtonTypeUnitConsistency = new JRadioButton(StringUtil.toHTML(
 				"Bring species to substance units", 30),
-				properties.getIntProperty(SqueezerOptions.TYPE_UNIT_CONSISTENCY) == 0);
+				SqueezerOptions.TYPE_UNIT_CONSISTENCY.getValue(properties).ordinal() == 0);
 		jRadioButtonTypeUnitConsistency
 				.setToolTipText(StringUtil
 						.toHTML(

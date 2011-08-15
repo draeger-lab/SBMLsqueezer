@@ -41,6 +41,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Hannes Borch
+ * @author Sarah R. M&uuml;ller vom Hagen
  * @date Aug 1, 2007
  * @since 1.0
  * @version $Rev$
@@ -70,7 +71,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	private void setSBOTerm() {
 		Reaction r = getParentSBMLObject();
-		setSBOTerm(12);
+		BasicKineticLaw.setSBOTerm(this,12);
 		double stoichiometryLeft = 0;
 		double stoichiometryRight = 0;
 		for (SpeciesReference specRef : r.getListOfReactants())
@@ -81,142 +82,142 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				stoichiometryRight += specRef.getStoichiometry();
 
 		if (r.getReversible()) {
-			setSBOTerm(42);
+			BasicKineticLaw.setSBOTerm(this,42);
 			if (orderReactants == 0) {
 				// mass action rate law for zeroth order reversible reactions
-				setSBOTerm(69);
+				BasicKineticLaw.setSBOTerm(this,69);
 				if (stoichiometryRight == 1d && r.getNumProducts() == 1)
-					setSBOTerm(70);
+					BasicKineticLaw.setSBOTerm(this,70);
 				else if (stoichiometryRight == 2d)
 					switch (r.getNumProducts()) {
 					case 1:
-						setSBOTerm(72);
+						BasicKineticLaw.setSBOTerm(this,72);
 						break;
 					case 2:
-						setSBOTerm(73);
+						BasicKineticLaw.setSBOTerm(this,73);
 					default:
-						setSBOTerm(71);
+						BasicKineticLaw.setSBOTerm(this,71);
 						break;
 					}
 				else if (stoichiometryRight == 3d)
 					switch (r.getNumProducts()) {
 					case 1:
-						setSBOTerm(75);
+						BasicKineticLaw.setSBOTerm(this,75);
 						break;
 					case 2:
-						setSBOTerm(76);
+						BasicKineticLaw.setSBOTerm(this,76);
 						break;
 					case 3:
-						setSBOTerm(77);
+						BasicKineticLaw.setSBOTerm(this,77);
 						break;
 					default:
-						setSBOTerm(74);
+						BasicKineticLaw.setSBOTerm(this,74);
 						break;
 					}
 			} else if (stoichiometryLeft == 1d) {
 				// mass action rate law for first order reversible reactions
-				setSBOTerm(78);
+				BasicKineticLaw.setSBOTerm(this,78);
 				if (orderProducts == 0)
-					setSBOTerm(79);
+					BasicKineticLaw.setSBOTerm(this,79);
 				else if (stoichiometryRight == 1d && r.getNumProducts() == 1)
-					setSBOTerm(80);
+					BasicKineticLaw.setSBOTerm(this,80);
 				else if (stoichiometryRight == 2d)
 					switch (r.getNumProducts()) {
 					case 1:
-						setSBOTerm(82);
+						BasicKineticLaw.setSBOTerm(this,82);
 						break;
 					case 2:
-						setSBOTerm(83);
+						BasicKineticLaw.setSBOTerm(this,83);
 						break;
 					default:
-						setSBOTerm(81);
+						BasicKineticLaw.setSBOTerm(this,81);
 						break;
 					}
 				else if (stoichiometryRight == 3d)
 					switch (r.getNumProducts()) {
 					case 1:
-						setSBOTerm(85);
+						BasicKineticLaw.setSBOTerm(this,85);
 						break;
 					case 2:
-						setSBOTerm(86);
+						BasicKineticLaw.setSBOTerm(this,86);
 						break;
 					case 3:
-						setSBOTerm(87);
+						BasicKineticLaw.setSBOTerm(this,87);
 						break;
 					default:
-						setSBOTerm(84);
+						BasicKineticLaw.setSBOTerm(this,84);
 						break;
 					}
 			} else if (stoichiometryLeft == 2d) {
 				// mass action rate law for second order reversible reactions
-				setSBOTerm(88);
+				BasicKineticLaw.setSBOTerm(this,88);
 				if (r.getNumReactants() == 1) {
 					if (orderProducts == 0)
-						setSBOTerm(90);
+						BasicKineticLaw.setSBOTerm(this,90);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
-						setSBOTerm(91);
+						BasicKineticLaw.setSBOTerm(this,91);
 					else if (stoichiometryRight == 2d) {
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(93);
+							BasicKineticLaw.setSBOTerm(this,93);
 							break;
 						case 2:
-							setSBOTerm(94);
+							BasicKineticLaw.setSBOTerm(this,94);
 							break;
 						default:
-							setSBOTerm(92);
+							BasicKineticLaw.setSBOTerm(this,92);
 							break;
 						}
 					} else if (stoichiometryRight == 3d) {
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(96);
+							BasicKineticLaw.setSBOTerm(this,96);
 							break;
 						case 2:
-							setSBOTerm(97);
+							BasicKineticLaw.setSBOTerm(this,97);
 							break;
 						case 3:
-							setSBOTerm(98);
+							BasicKineticLaw.setSBOTerm(this,98);
 							break;
 						default:
-							setSBOTerm(95);
+							BasicKineticLaw.setSBOTerm(this,95);
 							break;
 						}
 					} else
-						setSBOTerm(89);
+						BasicKineticLaw.setSBOTerm(this,89);
 				} else if (r.getNumReactants() == 2) {
-					setSBOTerm(99);
+					BasicKineticLaw.setSBOTerm(this,99);
 					if (orderProducts == 0)
-						setSBOTerm(100);
+						BasicKineticLaw.setSBOTerm(this,100);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
-						setSBOTerm(101);
+						BasicKineticLaw.setSBOTerm(this,101);
 					else if (stoichiometryRight == 2d) {
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(103);
+							BasicKineticLaw.setSBOTerm(this,103);
 							break;
 						case 2:
-							setSBOTerm(104);
+							BasicKineticLaw.setSBOTerm(this,104);
 							break;
 						default:
-							setSBOTerm(102);
+							BasicKineticLaw.setSBOTerm(this,102);
 							break;
 						}
 					} else if (stoichiometryRight == 3d) {
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(106);
+							BasicKineticLaw.setSBOTerm(this,106);
 							break;
 						case 2:
-							setSBOTerm(107);
+							BasicKineticLaw.setSBOTerm(this,107);
 							break;
 						case 3:
-							setSBOTerm(108);
+							BasicKineticLaw.setSBOTerm(this,108);
 							break;
 						default:
-							setSBOTerm(105);
+							BasicKineticLaw.setSBOTerm(this,105);
 							break;
 						}
 					}
@@ -225,165 +226,165 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				// mass action rate law for third order reversible reactions
 				switch (r.getNumReactants()) {
 				case 1:
-					setSBOTerm(130);
+					BasicKineticLaw.setSBOTerm(this,130);
 					if (orderProducts == 0)
-						setSBOTerm(131);
+						BasicKineticLaw.setSBOTerm(this,131);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
-						setSBOTerm(132);
+						BasicKineticLaw.setSBOTerm(this,132);
 					else if (stoichiometryRight == 2d) {
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(134);
+							BasicKineticLaw.setSBOTerm(this,134);
 							break;
 						case 2:
-							setSBOTerm(135);
+							BasicKineticLaw.setSBOTerm(this,135);
 							break;
 						default:
-							setSBOTerm(133);
+							BasicKineticLaw.setSBOTerm(this,133);
 							break;
 						}
 					} else if (stoichiometryRight == 3d) {
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(137);
+							BasicKineticLaw.setSBOTerm(this,137);
 							break;
 						case 2:
-							setSBOTerm(138);
+							BasicKineticLaw.setSBOTerm(this,138);
 							break;
 						case 3:
-							setSBOTerm(139);
+							BasicKineticLaw.setSBOTerm(this,139);
 							break;
 						default:
-							setSBOTerm(136);
+							BasicKineticLaw.setSBOTerm(this,136);
 							break;
 						}
 					}
 					break;
 				case 2:
-					setSBOTerm(110);
+					BasicKineticLaw.setSBOTerm(this,110);
 					if (orderProducts == 0)
-						setSBOTerm(111);
+						BasicKineticLaw.setSBOTerm(this,111);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
-						setSBOTerm(112);
+						BasicKineticLaw.setSBOTerm(this,112);
 					else if (stoichiometryRight == 2d)
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(114);
+							BasicKineticLaw.setSBOTerm(this,114);
 							break;
 						case 2:
-							setSBOTerm(115);
+							BasicKineticLaw.setSBOTerm(this,115);
 							break;
 						default:
-							setSBOTerm(116);
+							BasicKineticLaw.setSBOTerm(this,116);
 							break;
 						}
 					else if (stoichiometryRight == 3d)
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(117);
+							BasicKineticLaw.setSBOTerm(this,117);
 							break;
 						case 2:
-							setSBOTerm(118);
+							BasicKineticLaw.setSBOTerm(this,118);
 							break;
 						case 3:
-							setSBOTerm(119);
+							BasicKineticLaw.setSBOTerm(this,119);
 							break;
 						default:
-							setSBOTerm(113);
+							BasicKineticLaw.setSBOTerm(this,113);
 							break;
 						}
 					break;
 				case 3:
-					setSBOTerm(120);
+					BasicKineticLaw.setSBOTerm(this,120);
 					if (orderProducts == 0)
-						setSBOTerm(121);
+						BasicKineticLaw.setSBOTerm(this,121);
 					else if (stoichiometryRight == 1d
 							&& r.getNumProducts() == 1)
-						setSBOTerm(122);
+						BasicKineticLaw.setSBOTerm(this,122);
 					else if (stoichiometryRight == 2d)
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(124);
+							BasicKineticLaw.setSBOTerm(this,124);
 							break;
 						case 2:
-							setSBOTerm(125);
+							BasicKineticLaw.setSBOTerm(this,125);
 							break;
 						default:
-							setSBOTerm(123);
+							BasicKineticLaw.setSBOTerm(this,123);
 							break;
 						}
 					else if (stoichiometryRight == 3d)
 						switch (r.getNumProducts()) {
 						case 1:
-							setSBOTerm(127);
+							BasicKineticLaw.setSBOTerm(this,127);
 							break;
 						case 2:
-							setSBOTerm(128);
+							BasicKineticLaw.setSBOTerm(this,128);
 							break;
 						case 3:
-							setSBOTerm(129);
+							BasicKineticLaw.setSBOTerm(this,129);
 							break;
 						default:
-							setSBOTerm(126);
+							BasicKineticLaw.setSBOTerm(this,126);
 							break;
 						}
 					break;
 				default:
 					// mass action rate law for third order reversible reactions
-					setSBOTerm(109);
+					BasicKineticLaw.setSBOTerm(this,109);
 					break;
 				}
 			}
 		} else {
 			// irreversible
-			setSBOTerm(41);
+			BasicKineticLaw.setSBOTerm(this,41);
 			if (orderReactants == 0) {
-				// setSBOTerm(43);
+				// BasicKineticLaw.setSBOTerm(this,43);
 				// if continuous
-				setSBOTerm(47);
+				BasicKineticLaw.setSBOTerm(this,47);
 				// else 140
 			} else if (stoichiometryLeft == 1d && r.getNumReactants() == 1) {
-				// setSBOTerm(44);
-				setSBOTerm(49);
+				// BasicKineticLaw.setSBOTerm(this,44);
+				BasicKineticLaw.setSBOTerm(this,49);
 				// monoexponential decay rate law
 				// mass action rate law for first order irreversible reactions,
 				// discrete scheme
 			} else if (stoichiometryLeft == 2d)
 				switch (r.getNumReactants()) {
 				case 1:
-					// setSBOTerm(50);
-					setSBOTerm(52); // continuous
+					// BasicKineticLaw.setSBOTerm(this,50);
+					BasicKineticLaw.setSBOTerm(this,52); // continuous
 					// 142 discrete
 					break;
 				case 2:
-					// setSBOTerm(53);
-					setSBOTerm(54);
+					// BasicKineticLaw.setSBOTerm(this,53);
+					BasicKineticLaw.setSBOTerm(this,54);
 					// 143 discrete
 					break;
 				default:
-					setSBOTerm(45);
+					BasicKineticLaw.setSBOTerm(this,45);
 					break;
 				}
 			else if (stoichiometryLeft == 3d) {
 				switch (r.getNumReactants()) {
 				case 1:
 					// 56
-					setSBOTerm(57);
+					BasicKineticLaw.setSBOTerm(this,57);
 					// 144 discrete
 					break;
 				case 2:
 					// 58
-					setSBOTerm(59);
+					BasicKineticLaw.setSBOTerm(this,59);
 					// 145 discrete
 				case 3:
 					// 60
-					setSBOTerm(61);
+					BasicKineticLaw.setSBOTerm(this,61);
 					// 146 discrete
 					break;
 				default:
-					setSBOTerm(55);
+					BasicKineticLaw.setSBOTerm(this,55);
 					break;
 				}
 			} else {
