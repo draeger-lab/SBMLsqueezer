@@ -30,6 +30,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.util.Date;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -105,6 +107,10 @@ public class SBasePanel extends JPanel {
 	 * Generated serial version id.
 	 */
 	private static final long serialVersionUID = -4969096536922920641L;
+	/**
+	 * A logger for user-messages.
+	 */
+	private static final Logger logger = Logger.getLogger(SBasePanel.class.getName());
 	/**
 	 * 
 	 */
@@ -330,7 +336,8 @@ public class SBasePanel extends JPanel {
 				laTeXpreview.append(mc.getMath().compile(latex).toString()
 						.replace("mathrm", "mbox").replace("text", "mbox")
 						.replace("mathtt", "mbox"));
-			} catch (SBMLException e) {
+			} catch (Throwable e) {
+			  logger.log(Level.FINE, "Could not create LaTeX code from syntax tree.", e);
 				laTeXpreview.append("invalid");
 			}
 			laTeXpreview.append(LaTeXCompiler.eqEnd);

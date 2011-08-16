@@ -58,6 +58,7 @@ import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.io.SBOTermFormatter;
+import org.sbml.tolatex.util.LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
@@ -399,11 +400,15 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		}
 		sort(possibleTypes, kineticEquations, toolTips, laTeXpreview);
 		if (reaction.isSetKineticLaw()) {
+		  try {
 			laTeXpreview[laTeXpreview.length - 1] = reaction
 					.getKineticLaw().getMath().compile(
 							new LaTeXCompiler(prefsLaTeX
 											.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 					.toString();
+		  } catch (Throwable e) {
+		    laTeXpreview[laTeXpreview.length - 1] = LaTeX.mathrm("invalid").toString();
+		  }
 		}
 		JPanel kineticsPanel = new JPanel(new GridBagLayout());
 		rButtonsKineticEquations = new JRadioButton[kineticEquations.length + 1];

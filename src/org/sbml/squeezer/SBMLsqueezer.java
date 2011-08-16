@@ -421,12 +421,16 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 				line = line.replace("&#169;", "\u00A9"); // ©
 				line = line.replace("&#228;", "\u00e4"); // ä
 				line = line.replace("&#252;", "\u00fc"); // ü
-				if (line.endsWith("<br>"))
+				if (line.endsWith("<br>")) {
 					line = line.substring(0, line.length() - 4);
-				if (line.contains("<a href"))
+				} else if (line.endsWith("<br/>")) {
+				  line = line.substring(0, line.length() - 5);
+				}
+				if (line.contains("<a href")) {
 					logger.info(line.substring(0, line.indexOf('<') - 1) + ' ');
-				else
+				} else {
 					logger.info(line);
+				}
 			}
 		} catch (Exception e) {
 		}
