@@ -6,7 +6,10 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.sbml.jsbml.Model;
@@ -14,34 +17,44 @@ import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
-import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
 
 import de.zbit.io.SBFileFilter;
 
-import junit.framework.TestCase;
-
 public class SqueezerTests extends TestCase{
-	//String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15/cases/semantic/00001";
+
+  //String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15/cases/semantic/00001";
 	//String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15";
-	String testPath = System.getProperty("user.dir") + "/files/tests";
+  private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases";
 	/**
 	 * List of test files
 	 */
-	List<File> listOfFiles = new LinkedList<File>();
+	private List<File> listOfFiles;
 	/**
 	 * List of all models
 	 */
-	List<Model> listOfModels = new LinkedList<Model>();
+	private List<Model> listOfModels = new LinkedList<Model>();
 	
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
 	
 	public SqueezerTests(){
-		SqueezerTestFunctions.getAllXMLFiles(testPath, listOfFiles);
+	  List<File> tempList = new LinkedList<File>();
+    tempList.add(new File(testPath));
+    listOfFiles = new LinkedList<File>();
+    File f = null;
+    while (!tempList.isEmpty()) {
+      f = tempList.remove(0);
+      if (f.isFile()) {
+        if (SBFileFilter.isSBMLFile(f) && !(f.getName().contains("sedml"))) {
+          listOfFiles.add(f);
+        }
+      } else if (f.isDirectory()) {
+        tempList.addAll(Arrays.asList(f.listFiles()));
+      }
+    }
 	}
 	
 	/**
@@ -86,31 +99,17 @@ public class SqueezerTests extends TestCase{
 		
 		
 		logger.info("test file import.");
-		for(int i=0; i < listOfFiles.size(); i++){
+		SBMLsqueezer squeezer = new SBMLsqueezer(reader, writer);
+		for(File file : listOfFiles) {
 			// test file import
-			Model model;
 			try {
-				logger.info("import file " + listOfFiles.get(i).getName());
-				model = io.convertModel(listOfFiles.get(i).getAbsolutePath());
-				listOfModels.add(model);
-			} catch (Exception e) {
-				fail();
-				logger.warning("failed to import file " + listOfFiles.get(i).getName());
-				e.printStackTrace();
-			}
-			// test models
-			KineticLawGenerator klg;
-			try {
-				model = listOfModels.get(i);
-				// try to generate laws for all reactions 
-				klg = new KineticLawGenerator(model);
-			} catch (Throwable e) {
-				fail();
-				logger.warning("failed to generate laws for the reaction of the model corresponding to file " + listOfFiles.get(i).getName());
-				e.printStackTrace();
-			}
-		}
-		
+			  logger.info("file: " + file.getAbsolutePath());
+        squeezer.squeeze(file.getAbsolutePath(), System.getProperty("user.home") + "/test.xml");
+      } catch (Throwable e) {
+        logger.log(Level.WARNING, file.getAbsolutePath(), e);
+        fail();
+      }
+		}		
 	}
 	
 	/**

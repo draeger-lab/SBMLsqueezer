@@ -317,6 +317,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	    System.loadLibrary("sbmlj");
 	    // Extra check to be sure we have access to libSBML:
 	    Class.forName("org.sbml.libsbml.libsbml");
+	    logger.log(Level.INFO, "Loading libSBML\n");
 	    libSBMLAvailable = true;
 	} catch (Error e) {
 	} catch (Throwable e) {
@@ -324,7 +325,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	SBMLInputConverter reader = null;
 	SBMLOutputConverter writer = null;
 	if (!libSBMLAvailable) {
-	    logger.log(Level.WARNING, "Error: could not load the libSBML library\n");
+	    logger.log(Level.INFO, "Loading JSBML\n");
 	    // TODO
 	    reader = new SqSBMLReader() ;
 	    writer = new SqSBMLWriter() ;

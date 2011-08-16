@@ -31,6 +31,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This is the generalized version of Hill's equation as suggested by
@@ -77,7 +78,7 @@ public class HillEquation extends BasicKineticLaw implements
 		Reaction r = getParentSBMLObject();
 
 		if (activators.isEmpty() && inhibitors.isEmpty() && !r.getReversible())
-			BasicKineticLaw.setSBOTerm(this,195);
+			SBMLtools.setSBOTerm(this,195);
 
 		ASTNode rates[] = new ASTNode[Math.max(1, enzymes.size())];
 		for (int enzymeNum = 0; enzymeNum < rates.length; enzymeNum++) {

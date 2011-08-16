@@ -33,6 +33,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * Represents the power-law modular rate law (PM) from Liebermeister et al.
@@ -63,7 +64,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	public PowerLawModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		BasicKineticLaw.setSBOTerm(this,531); // power law modular rate law
+		SBMLtools.setSBOTerm(this,531); // power law modular rate law
 	}
 
 	/*

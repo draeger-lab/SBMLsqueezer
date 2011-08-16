@@ -31,6 +31,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This is the well-known (Henry-) Michaelis-Menten equation and can be found in
@@ -97,27 +98,27 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 									getClass().getSimpleName(), reaction
 											.getId()));
 
-		BasicKineticLaw.setSBOTerm(this,269); // enzymatic rate law for unireactant enzymes
+		SBMLtools.setSBOTerm(this,269); // enzymatic rate law for unireactant enzymes
 		switch (modE.size()) {
 		case 0: // no enzyme, irreversible
 			if (!getParentSBMLObject().getReversible() && (modActi.size() == 0)
 					&& (modInhib.size() == 0))
-				BasicKineticLaw.setSBOTerm(this,199); // normalised enzymatic rate law for
+				SBMLtools.setSBOTerm(this,199); // normalised enzymatic rate law for
 			// unireactant enzymes
 			else if ((modActi.size() == 0) && (modInhib.size() == 0))
-				BasicKineticLaw.setSBOTerm(this,326); // enzymatic rate law for non-modulated
+				SBMLtools.setSBOTerm(this,326); // enzymatic rate law for non-modulated
 			// unireactant enzymes
 			break;
 		case 1: // one enzmye
 			if (getParentSBMLObject().getReversible()) {
 				if ((modActi.size() == 0) && (modInhib.size() == 0))
-					BasicKineticLaw.setSBOTerm(this,326); // enzymatic rate law for non-modulated
+					SBMLtools.setSBOTerm(this,326); // enzymatic rate law for non-modulated
 				// unireactant enzymes
 			} else if ((modActi.size() == 0) && (modInhib.size() == 0))
 				// irreversible equivalents: Briggs-Haldane equation (31) or
 				// Van Slyke-Cullen equation (30)
 				// 29 = Henri-Michaelis-Menten
-				BasicKineticLaw.setSBOTerm(this,28); // enzymatic rate law for irreversible
+				SBMLtools.setSBOTerm(this,28); // enzymatic rate law for irreversible
 			// non-modulated non-interacting unireactant
 			// enzymes
 			break;
@@ -125,17 +126,17 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		if (!getParentSBMLObject().getReversible())
 			switch (modInhib.size()) {
 			case 1:
-				BasicKineticLaw.setSBOTerm(this,265); // enzymatic rate law for simple mixed-type
+				SBMLtools.setSBOTerm(this,265); // enzymatic rate law for simple mixed-type
 				// inhibition of irreversible unireactant
 				// enzymes
 				break;
 			case 2:
-				BasicKineticLaw.setSBOTerm(this,276); // enzymatic rate law for mixed-type inhibition
+				SBMLtools.setSBOTerm(this,276); // enzymatic rate law for mixed-type inhibition
 				// of irreversible unireactant enzymes by
 				// two inhibitors
 				break;
 			default:
-				BasicKineticLaw.setSBOTerm(this,275); // enzymatic rate law for mixed-type inhibition
+				SBMLtools.setSBOTerm(this,275); // enzymatic rate law for mixed-type inhibition
 				// of irreversible enzymes by mutually
 				// exclusive inhibitors
 				break;

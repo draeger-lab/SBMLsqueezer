@@ -31,6 +31,7 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates Hill equation as defined in the PhD thesis &ldquo;Modeling
@@ -103,7 +104,7 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 
 			if (!modifier.isSetSBOTerm()) {
-				BasicKineticLaw.setSBOTerm(modifier,19);
+				SBMLtools.setSBOTerm(modifier,19);
 			}
 			if (SBO.isModifier(modifier.getSBOTerm())) {
 				LocalParameter p = parameterFactory.parameterW(modifier

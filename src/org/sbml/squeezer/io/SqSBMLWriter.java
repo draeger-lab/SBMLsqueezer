@@ -102,7 +102,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			throw new IllegalArgumentException(
 					"only instances of org.sbml.jsbml.Model can be considered.");
 		originalModel = (org.sbml.jsbml.Model) object;
-
+/*
 		// Function definitions
 		FunctionDefinition fd1;
 		for (FunctionDefinition fd2 : model.getListOfFunctionDefinitions()) {
@@ -308,6 +308,9 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 		removeUnneccessaryElements(model, object);
 		fireIOEvent(null);
 		//saveNamedSBaseProperties(model, originalModel);
+		
+		*/
+		
 		return true;
 	}
 

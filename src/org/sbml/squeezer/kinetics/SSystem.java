@@ -34,6 +34,7 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * 
@@ -103,7 +104,7 @@ public class SSystem extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierspec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm()) {
-					BasicKineticLaw.setSBOTerm(modifier,19);
+					SBMLtools.setSBOTerm(modifier,19);
 				}
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					LocalParameter exp = parameterFactory

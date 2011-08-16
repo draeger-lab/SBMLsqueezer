@@ -29,6 +29,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates the simultaneous binding modular rate law (SM) according
@@ -59,7 +60,7 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 	public SimultaneousBindingModularRateLaw(Reaction parentReaction,
 			Object... types) throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		BasicKineticLaw.setSBOTerm(this,530); // simultaneous binding modular rate law
+		SBMLtools.setSBOTerm(this,530); // simultaneous binding modular rate law
 	}
 
 	/*

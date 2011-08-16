@@ -32,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates a non-linear additive equation form
@@ -114,7 +115,7 @@ public class HSystem extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierspec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm())
-					BasicKineticLaw.setSBOTerm(modifier,19);
+					SBMLtools.setSBOTerm(modifier,19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					LocalParameter p = parameterFactory.parameterV(modifier
 							.getSpecies(), r.getId());
@@ -148,7 +149,7 @@ public class HSystem extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm())
-					BasicKineticLaw.setSBOTerm(modifier,19);
+					SBMLtools.setSBOTerm(modifier,19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					LocalParameter p = parameterFactory.parameterW(modifier
 							.getSpecies(), r.getId());
