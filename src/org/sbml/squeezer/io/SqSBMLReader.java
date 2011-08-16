@@ -115,8 +115,8 @@ public class SqSBMLReader implements SBMLInputConverter {
 	 */
 	private org.sbml.jsbml.SBMLDocument model2SBML(String model)
 	throws IOException, XMLStreamException {
-		File file = new File((String) model);
-		org.sbml.jsbml.SBMLDocument doc = null;
+		File file = new File(model.toString());
+		SBMLDocument doc = null;
 		if (!file.exists() || !file.isFile() || !file.canRead()) {
 			// XML
 			doc = SBMLReader.read((String) model);
@@ -140,8 +140,9 @@ public class SqSBMLReader implements SBMLInputConverter {
 		// copy the original model to working copy
 		this.model = new Model(originalModel);
 		// add all SBaseChangeListeners to model
-		for (SBaseChangeListener listener : listOfSBaseChangeListeners)
+		for (SBaseChangeListener listener : listOfSBaseChangeListeners) {
 			this.model.addChangeListener(listener);
+		}
 		// return working copy
 		return this.model;
 	}
