@@ -586,9 +586,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private JPanel initOptionsPanel() {
 		JPanel p = new JPanel(new BorderLayout());
 		options = new JButton("show options");
-		Icon icon = UIManager.getIcon("ICON_RIGHT_ARROW");
-		if (icon != null)
+		Icon icon = UIManager.getIcon("ICON_RIGHT_ARROW_TINY");
+		if (icon != null) {
 			options.setIcon(icon);
+		}
 		options.setIconTextGap(5);
 		options.setBorderPainted(false);
 		options.setSize(150, 20);
@@ -618,7 +619,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void showSettingsPanel(boolean show) {
 		if (show) {
-			options.setIcon(UIManager.getIcon("ICON_DOWN_ARROW"));
+			options.setIcon(UIManager.getIcon("ICON_DOWN_ARROW_TINY"));
 			options.setIconTextGap(5);
 			options.setToolTipText("<html>Hide detailed options</html>");
 			options.setText("hide options");
@@ -630,7 +631,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			centralPanel.add(scroll, BorderLayout.CENTER);
 			centralPanel.validate();
 		} else {
-			options.setIcon(UIManager.getIcon("ICON_RIGHT_ARROW"));
+			options.setIcon(UIManager.getIcon("ICON_RIGHT_ARROW_TINY"));
 			options.setIconTextGap(5);
 			options.setText("show options");
 			options.setToolTipText(StringUtil.toHTML("Customize the advanced settings."));
