@@ -34,6 +34,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates an equation based on a linear additive model.
@@ -138,7 +139,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm()) || SBO
 					.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm()))) {
 				if (!modifier.isSetSBOTerm())
-					BasicKineticLaw.setSBOTerm(modifier,19);
+					SBMLtools.setSBOTerm(modifier,19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					ASTNode modnode = speciesTerm(modifier);
 					LocalParameter p = parameterFactory.parameterV(modifier
@@ -175,7 +176,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm())
-					BasicKineticLaw.setSBOTerm(modifier,19);
+					SBMLtools.setSBOTerm(modifier,19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					LocalParameter p = parameterFactory.parameterW(modifier
 							.getSpecies(), r.getId());

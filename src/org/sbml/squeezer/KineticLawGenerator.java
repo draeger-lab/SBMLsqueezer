@@ -58,6 +58,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Variable;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.math.GaussianRank;
+import org.sbml.squeezer.util.SBMLtools;
 
 import de.zbit.util.prefs.SBPreferences;
 
@@ -149,13 +150,13 @@ public class KineticLawGenerator {
 						- compartment.getSpatialDimensions() == 0d)) {
 			switch ((short) compartment.getSpatialDimensions()) {
 			case 1:
-				compartment.setUnits(model.getUnitDefinition("length"));
+				compartment.setUnits(model.getUnitDefinition(UnitDefinition.LENGTH));
 				break;
 			case 2:
-				compartment.setUnits(model.getUnitDefinition("area"));
+				compartment.setUnits(model.getUnitDefinition(UnitDefinition.AREA));
 				break;
 			case 3:
-				compartment.setUnits(model.getUnitDefinition("volume"));
+				compartment.setUnits(model.getUnitDefinition(UnitDefinition.VOLUME));
 				break;
 			default:
 				break;
@@ -164,7 +165,7 @@ public class KineticLawGenerator {
 		if (compartment.getSpatialDimensions() == 0
 				|| compartment.getSpatialDimensions() > 3) {
 			compartment.setSpatialDimensions((short) 3);
-			compartment.setUnits(model.getUnitDefinition("volume"));
+			compartment.setUnits(model.getUnitDefinition(UnitDefinition.VOLUME));
 			System.err
 					.printf(
 							"Compartment %s had an invalid spacial dimension and was therefore set to a volume.\n",
@@ -184,7 +185,7 @@ public class KineticLawGenerator {
 		if (!species.isSetSubstanceUnits()
 				|| !species.getSubstanceUnitsInstance().isVariantOfSubstance())
 			species.setSubstanceUnits(species.getModel().getUnitDefinition(
-					"substance"));
+					UnitDefinition.SUBSTANCE));
 	}
 
 	/**
@@ -334,7 +335,7 @@ public class KineticLawGenerator {
 				Reaction reac = new Reaction(reacOrig.getId(), reacOrig
 						.getLevel(), reacOrig.getVersion());
 				if (reacOrig.isSetSBOTerm()) {
-					BasicKineticLaw.setSBOTerm(reac,reacOrig.getSBOTerm());
+					SBMLtools.setSBOTerm(reac,reacOrig.getSBOTerm());
 				}
 				miniModel.addReaction(reac);
 				reac.setFast(reacOrig.getFast());
@@ -376,13 +377,23 @@ public class KineticLawGenerator {
 				}
 			}
 		}
-		UnitDefinition ud = miniModel.getUnitDefinition("substance");
+		UnitDefinition ud = miniModel.getUnitDefinition(UnitDefinition.SUBSTANCE);
+		if (ud == null) {
+		  ud = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
+		  SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
+		  miniModel.setSubstanceUnits(ud);
+		}
 		Unit u = ud.getListOfUnits().getFirst();
 		if (u.isMole()) {
 			u.setScale(-3);
 			ud.setName("mmole");
 		}
-		ud = miniModel.getUnitDefinition("volume");
+		ud = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
+		if (ud == null) {
+		  ud = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
+		  SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
+      miniModel.setVolumeUnits(ud);
+		}
 		u = ud.getListOfUnits().getFirst();
 		if (u.isLitre()) {
 			u.setScale(-3);
@@ -1069,11 +1080,11 @@ public class KineticLawGenerator {
 						&& species.isSetSBOTerm()
 						&& !possibleEnzymes.contains(Integer.valueOf(species
 								.getSBOTerm()))) {
-					BasicKineticLaw.setSBOTerm(modifier,SBO.getCatalysis());
+					SBMLtools.setSBOTerm(modifier,SBO.getCatalysis());
 				} else if (SBO.isCatalyst(modifier.getSBOTerm())
 						&& (possibleEnzymes.contains(Integer.valueOf(species
 								.getSBOTerm())) || !species.isSetSBOTerm())) {
-					BasicKineticLaw.setSBOTerm(modifier,SBO.getEnzymaticCatalysis());
+					SBMLtools.setSBOTerm(modifier,SBO.getEnzymaticCatalysis());
 				}
 			}
 		}

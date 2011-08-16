@@ -30,6 +30,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * Kinetic law that describes the ping-pong reaction mechanism.
@@ -82,7 +83,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 			notes.insert(0, "ir");
 		setNotes(notes.toString());
 
-		BasicKineticLaw.setSBOTerm(this,436);
+		SBMLtools.setSBOTerm(this,436);
 
 		ASTNode numerator;// I
 		ASTNode denominator; // II
@@ -131,7 +132,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 					specRefE1.getSpecies(), enzyme, true);
 			LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(
 					specRefE2.getSpecies(), enzyme, true);
-			BasicKineticLaw.setSBOTerm(this,436);
+			SBMLtools.setSBOTerm(this,436);
 
 			/*
 			 * Irreversible Reaction

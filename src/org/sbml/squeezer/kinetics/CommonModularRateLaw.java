@@ -29,6 +29,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates the common modular rate law (CM) according to
@@ -59,7 +60,7 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	public CommonModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		BasicKineticLaw.setSBOTerm(this,528); // common modular rate law
+		SBMLtools.setSBOTerm(this,528); // common modular rate law
 	}
 
 	/*

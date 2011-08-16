@@ -31,6 +31,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * Irreversible non-exclusive non-cooperative competitive inihibition, a special
@@ -85,11 +86,11 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 
 		switch (modInhib.size()) {
 		case 0:
-			BasicKineticLaw.setSBOTerm(this, modE.size() == 0 ? 199 : 29);
+			SBMLtools.setSBOTerm(this, modE.size() == 0 ? 199 : 29);
 		case 1:
-			BasicKineticLaw.setSBOTerm(this, 267);
+			SBMLtools.setSBOTerm(this, 267);
 		default:
-			BasicKineticLaw.setSBOTerm(this, 273);
+			SBMLtools.setSBOTerm(this, 273);
 		}
 
 		ASTNode[] formula = new ASTNode[Math.max(1, modE.size())];

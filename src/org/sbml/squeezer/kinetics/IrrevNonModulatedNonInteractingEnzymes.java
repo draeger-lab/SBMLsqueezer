@@ -30,6 +30,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class implements SBO:0000150 and all of its special cases. It is an
@@ -127,13 +128,13 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 					.getStoichiometry();
 		switch ((int) Math.round(stoichiometry)) {
 		case 1:
-			BasicKineticLaw.setSBOTerm(this, numOfEnzymes == 0 ? 199 : 29);
+			SBMLtools.setSBOTerm(this, numOfEnzymes == 0 ? 199 : 29);
 		case 2:
-			BasicKineticLaw.setSBOTerm(this, 151);
+			SBMLtools.setSBOTerm(this, 151);
 		case 3:
-			BasicKineticLaw.setSBOTerm(this, 152);
+			SBMLtools.setSBOTerm(this, 152);
 		default:
-			BasicKineticLaw.setSBOTerm(this, 150);
+			SBMLtools.setSBOTerm(this, 150);
 		}
 
 		return ASTNode.sum(enzymes);

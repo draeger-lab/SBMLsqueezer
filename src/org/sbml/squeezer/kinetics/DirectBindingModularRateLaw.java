@@ -29,6 +29,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates the Direct binding modular rate law (DM) according to
@@ -59,7 +60,7 @@ public class DirectBindingModularRateLaw extends PowerLawModularRateLaw
 	public DirectBindingModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		BasicKineticLaw.setSBOTerm(this,529); // direct binding modular rate law
+		SBMLtools.setSBOTerm(this,529); // direct binding modular rate law
 	}
 
 	/*

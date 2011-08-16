@@ -134,22 +134,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	ParameterFactory parameterFactory;
 	
 	private static Logger logger = Logger.getLogger(BasicKineticLaw.class.getSimpleName());
-	
-	/**
-	 * 
-	 * @param sbase
-	 * @param term
-	 */
-	public static final void setSBOTerm(SBase sbase, int term) {
-		if (-1 < sbase.getLevelAndVersion().compareTo(Integer.valueOf(2),
-				Integer.valueOf(2))) {
-			sbase.setSBOTerm(term);
-		} else {
-			logger.log(Level.FINE, String.format(
-					"Could not set SBO term %s for %s with Level = %d and Version = %d.", 
-					SBO.sboNumberString(term), sbase.getElementName(), sbase.getLevel(), sbase.getVersion()));
-		}
-	}
 
 	/**
 	 * 

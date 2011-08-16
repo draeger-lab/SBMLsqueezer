@@ -32,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * <p>
@@ -87,7 +88,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
-		BasicKineticLaw.setSBOTerm(this,429);
+		SBMLtools.setSBOTerm(this,429);
 		StringBuilder name = new StringBuilder();
 		if (!fullRank) {
 			name.append("thermodynamically independent ");
@@ -249,7 +250,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			LocalParameter p_kM = parameterFactory.parameterMichaelis(ref
 					.getSpecies(), enzyme, forward);
 			if (!p_kM.isSetSBOTerm()) {
-				BasicKineticLaw.setSBOTerm(p_kM,forward ? 322 : 323);
+				SBMLtools.setSBOTerm(p_kM,forward ? 322 : 323);
 			}
 			denoms[i] = ASTNode.pow(ASTNode.frac(speciesTerm(ref), new ASTNode(
 					p_kM, this)), (int) ref.getStoichiometry());

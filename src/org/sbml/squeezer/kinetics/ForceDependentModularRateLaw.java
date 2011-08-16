@@ -29,6 +29,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * Force-dependent modular rate law (FM) according to Liebermeister et al. 2010.
@@ -58,7 +59,7 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
 	public ForceDependentModularRateLaw(Reaction parentReaction,
 			Object... types) throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		BasicKineticLaw.setSBOTerm(this,532); // force-dependent modular rate law
+		SBMLtools.setSBOTerm(this,532); // force-dependent modular rate law
 	}
 
 	/*

@@ -31,6 +31,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates a kinetic equation according to the random order mechanism
@@ -90,7 +91,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 							+ "Michaelis-Menten kinetics to reaction "
 							+ reaction.getId());
 
-		BasicKineticLaw.setSBOTerm(this,429);
+		SBMLtools.setSBOTerm(this,429);
 		double stoichiometryRight = 0;
 		for (int i = 0; i < reaction.getNumProducts(); i++)
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
@@ -98,7 +99,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		// rapid-equilibrium random order ternary-complex mechanism
 		if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1d)
 				&& !reaction.getReversible())
-			BasicKineticLaw.setSBOTerm(this,432);
+			SBMLtools.setSBOTerm(this,432);
 
 		StringBuilder notes = new StringBuilder("rapid-equilibrium random ");
 		notes.append("order ternary-complex mechanism");

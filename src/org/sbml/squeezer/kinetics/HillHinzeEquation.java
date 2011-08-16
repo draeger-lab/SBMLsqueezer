@@ -33,6 +33,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
+import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates a Hill equation as defined in the paper &ldquo;Hill
@@ -89,19 +90,19 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		Reaction reaction = getParentSBMLObject();
 
 		if (reaction.getNumReactants() == 0 || reaction.getNumModifiers() == 0)
-			BasicKineticLaw.setSBOTerm(this,47);
+			SBMLtools.setSBOTerm(this,47);
 		else if (reaction.getNumReactants() == 1) {
 			if (ReactionType.representsEmptySet(reaction.getListOfReactants())) {
 				if (reaction.getNumModifiers() == 1
 						&& !SBO.isInhibitor(reaction.getModifier(0)
 								.getSBOTerm()))
-					BasicKineticLaw.setSBOTerm(this,195);
+					SBMLtools.setSBOTerm(this,195);
 			} else if (reaction.getNumModifiers() == 0)
-				BasicKineticLaw.setSBOTerm(this,195);
+				SBMLtools.setSBOTerm(this,195);
 		} else if (reaction.getNumReactants() == 0
 				&& reaction.getNumModifiers() == 1
 				&& !SBO.isInhibitor(reaction.getModifier(0).getSBOTerm()))
-			BasicKineticLaw.setSBOTerm(this,195);
+			SBMLtools.setSBOTerm(this,195);
 
 		if (SBO.isTranslation(reaction.getSBOTerm())
 				|| SBO.isTranscription(reaction.getSBOTerm()))
