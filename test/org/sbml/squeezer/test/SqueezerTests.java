@@ -29,9 +29,9 @@ import de.zbit.io.SBFileFilter;
 
 public class SqueezerTests extends TestCase{
 
-  private String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15/cases/semantic/00002";
+  //private String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15/cases/semantic/00002";
 	//String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15";
-  //private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases";
+  private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases/cases/semantic/00001";
 	/**
 	 * List of test files
 	 */

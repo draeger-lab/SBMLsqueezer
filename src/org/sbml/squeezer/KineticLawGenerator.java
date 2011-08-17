@@ -196,16 +196,18 @@ public class KineticLawGenerator {
 	 */
 	private Compartment copyCopmpartment(Compartment compartmenOrig,
 			Model miniModel) {
-		if (miniModel.getCompartment(compartmenOrig.getId()) == null)
+		if (miniModel.getCompartment(compartmenOrig.getId()) == null) {
 			miniModel.addCompartment(compartmenOrig.clone());
+		}
 		Compartment compartment = miniModel.getCompartment(compartmenOrig
 				.getId());
 		if (compartment.isSetUnits()
 				&& !Unit.isUnitKind(compartment.getUnits(), compartment
 						.getLevel(), compartment.getVersion())) {
-			if (miniModel.getUnitDefinition(compartment.getUnits()) == null)
+			if (miniModel.getUnitDefinition(compartment.getUnits()) == null) {
 				miniModel.addUnitDefinition(((UnitDefinition) compartment
 						.getUnitsInstance()).clone());
+			}
 			compartment.setUnits(miniModel.getUnitDefinition(compartment
 					.getUnits()));
 		} else {
@@ -300,10 +302,38 @@ public class KineticLawGenerator {
 	 */
 	@SuppressWarnings("deprecation")
 	private Model createMinimalModel(String reactionID) {
-		Model miniModel = new Model(modelOrig.getId(), modelOrig.getLevel(),
+    boolean create = (prefs
+        .getBoolean(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION));
+	  Model miniModel = new Model(modelOrig.getId(), modelOrig.getLevel(),
 				modelOrig.getVersion());
-		boolean create = (prefs
-				.getBoolean(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION));
+	  
+	  /*
+	   * Create and/or re-scale default units for substance and volume 
+	   */	  
+    UnitDefinition ud = miniModel.getUnitDefinition(UnitDefinition.SUBSTANCE);
+    if (ud == null) {
+      ud = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
+      SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
+      miniModel.setSubstanceUnits(ud);
+    }
+    // TODO: Check user option whether re-scaling of units should be performed or not.
+    Unit u = ud.getListOfUnits().getFirst();
+    if (u.isMole()) {
+      u.setScale(-3);
+      ud.setName("mmole");
+    }
+    ud = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
+    if (ud == null) {
+      ud = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
+      SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
+      miniModel.setVolumeUnits(ud);
+    }
+    u = ud.getListOfUnits().getFirst();
+    if (u.isLitre()) {
+      u.setScale(-3);
+      ud.setName("ml");
+    }
+    
 		/*
 		 * Copy needed species and reactions.
 		 */
@@ -376,28 +406,6 @@ public class KineticLawGenerator {
 					reac.setKineticLaw(l.clone());
 				}
 			}
-		}
-		UnitDefinition ud = miniModel.getUnitDefinition(UnitDefinition.SUBSTANCE);
-		if (ud == null) {
-		  ud = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
-		  SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
-		  miniModel.setSubstanceUnits(ud);
-		}
-		Unit u = ud.getListOfUnits().getFirst();
-		if (u.isMole()) {
-			u.setScale(-3);
-			ud.setName("mmole");
-		}
-		ud = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
-		if (ud == null) {
-		  ud = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
-		  SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
-      miniModel.setVolumeUnits(ud);
-		}
-		u = ud.getListOfUnits().getFirst();
-		if (u.isLitre()) {
-			u.setScale(-3);
-			ud.setName("ml");
 		}
 		return miniModel;
 	}

@@ -1,6 +1,6 @@
 /*
  * $Id:  SBMLtools.java 17:32:00 draeger$
- * $URL: SBMLtools.java $
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
