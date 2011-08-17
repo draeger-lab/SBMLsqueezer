@@ -118,7 +118,9 @@ public class ParameterFactory {
 		if (p == null) {
 			p = new Parameter(id, model.getLevel(), model.getVersion());
 			p.setValue(defaultParamValue);
-			p.setConstant(true);
+			if (1 < model.getLevel()) {
+				p.setConstant(true);
+			}
 			model.addParameter(p);
 		}
 		return p;
