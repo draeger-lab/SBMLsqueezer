@@ -33,6 +33,7 @@ import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
+import de.zbit.util.prefs.OptionGroup;
 import de.zbit.util.prefs.Range;
 
 /**
@@ -97,6 +98,19 @@ public interface SqueezerOptions extends KeyProvider {
     }
 
 	/**
+	 * Determines the key for the standard kinetic law to be applied for
+	 * reactions that are identified to be enzyme-catalyzed (with or without
+	 * explicit catalyst) and that do not belong to one of the other standard
+	 * enzyme-catalysis schemes. The value can be any rate law that implements
+	 * {@link org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics}.
+	 */
+	public static final Option<String> KINETICS_ARBITRARY_ENZYME_REACTIONS = new Option<String>(
+			"KINETICS_ARBITRARY_ENZYME_REACTIONS",
+			String.class,
+			"Determines the key for the standard kinetic law to be applied for reactions that are identified to be enzyme-catalyzed (with or without explicit catalyst) and that do not belong to one of the other standard enzyme-catalysis schemes. The value can be any rate law that implements InterfaceArbitraryEnzymeKinetics.",
+			new Range<String>(String.class, SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
+			ConvenienceKinetics.class.getName());
+	/**
 	 * The class name of the default kinetic law for bi-bi reactions. This can
 	 * be any class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiBiKinetics}.
@@ -143,19 +157,6 @@ public interface SqueezerOptions extends KeyProvider {
 			"Determines the key for the standard kinetic law to be applied for reactions that are catalyzed by non-enzymes or that are not catalyzed at all. The value may be any rate law that implements InterfaceNonEnzymeKinetics",
 			new Range<String>(String.class, SBMLsqueezer.getKineticsNonEnzyme()),
 			GeneralizedMassAction.class.getName());
-	/**
-	 * Determines the key for the standard kinetic law to be applied for
-	 * reactions that are identified to be enzyme-catalyzed (with or without
-	 * explicit catalyst) and that do not belong to one of the other standard
-	 * enzyme-catalysis schemes. The value can be any rate law that implements
-	 * {@link org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics}.
-	 */
-	public static final Option<String> KINETICS_ARBITRARY_ENZYME_REACTIONS = new Option<String>(
-			"KINETICS_ARBITRARY_ENZYME_REACTIONS",
-			String.class,
-			"Determines the key for the standard kinetic law to be applied for reactions that are identified to be enzyme-catalyzed (with or without explicit catalyst) and that do not belong to one of the other standard enzyme-catalysis schemes. The value can be any rate law that implements InterfaceArbitraryEnzymeKinetics.",
-			new Range<String>(String.class, SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
-			ConvenienceKinetics.class.getName());
 	/**
 	 * This key defines the default kinetic law to be applied to
 	 * enzyme-catalyzed reactions with one reactant and one product. Possible
@@ -224,6 +225,7 @@ public interface SqueezerOptions extends KeyProvider {
 			Boolean.class,
 			"If true a new rate law will be created for each reaction irrespective of whether there is already a rate law assigned to this reaction or not.",
 			false);
+			
 	/**
 	 * Allows the user to ignore species that are annotated with the given
 	 * compound identifiers when creating rate laws for reactions that involve
@@ -238,7 +240,6 @@ public interface SqueezerOptions extends KeyProvider {
 			"Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons.",
 			"C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819"
 			);
-			
 	/**
 	 * The maximal number of reactants so that the reaction is still considered
 	 * plausible.
@@ -257,7 +258,8 @@ public interface SqueezerOptions extends KeyProvider {
 			Boolean.class,
 			"If true parameters and units that are never referenced by any element of the model are deleted when creating kinetic equations with SBMLsqueezer.",
 			true);
-	/**
+	
+  /**
 	 * Decide whether or not to set the boundary condition for genes to true.
 	 */
 	public static final Option<Boolean> OPT_SET_BOUNDARY_CONDITION_FOR_GENES = new Option<Boolean>(
@@ -265,6 +267,7 @@ public interface SqueezerOptions extends KeyProvider {
 			Boolean.class,
 			"Decide whether or not to set the boundary condition for genes to true.",
 			true);
+	
 	/**
 	 * Property that decides whether to set all reactions to reversible before
 	 * creating new kinetic equations.
@@ -413,5 +416,16 @@ public interface SqueezerOptions extends KeyProvider {
     				(short) 2,
     				TypeUnitConsistency.amount, 
     				"Type of unit consistency");
+    
+    /**
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    public static final OptionGroup<Boolean> GENERAL_OPTIONS = new OptionGroup<Boolean>(
+      "General Options", "Tooltip", true, true,
+      OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
+      OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+      OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
+      OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY);
 
 }
