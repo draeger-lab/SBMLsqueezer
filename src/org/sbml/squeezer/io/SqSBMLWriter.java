@@ -45,8 +45,10 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLOutputConverter;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.UnitDefinition;
@@ -64,7 +66,7 @@ import org.sbml.jsbml.util.IOProgressListener;
 public class SqSBMLWriter implements SBMLOutputConverter{
 
 	private Set<IOProgressListener> setOfIOListeners = new HashSet<IOProgressListener>();
-	private org.sbml.jsbml.Model originalModel;
+	private Model originalModel;
 	
 	public void addIOProgressListener(IOProgressListener listener) {
 		setOfIOListeners.add(listener);
@@ -98,10 +100,10 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	 * @see org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Model, java.lang.Object)
 	 */
 	public boolean saveChanges(Model model, Object object) throws SBMLException {
-		if (!(object instanceof org.sbml.jsbml.Model))
+		if (!(object instanceof Model))
 			throw new IllegalArgumentException(
 					"only instances of org.sbml.jsbml.Model can be considered.");
-		originalModel = (org.sbml.jsbml.Model) object;
+		originalModel = (Model) object;
 /*
 		// Function definitions
 		FunctionDefinition fd1;
@@ -317,11 +319,11 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	public boolean saveChanges(Reaction reaction, Object model)
 			throws SBMLException {
 		boolean success = false;
-		if (!(model instanceof org.sbml.jsbml.Model)){
+		if (!(model instanceof Model)){
 			throw new IllegalArgumentException("model must be an instance of org.sbml.jsbml.Model");
 		}
 		// convert to Model
-		org.sbml.jsbml.Model m = (org.sbml.jsbml.Model) model;
+		Model m = (Model) model;
 		// get old reaction
 		Reaction old = m.getReaction(reaction.getId());
 		// remove old reaction
@@ -340,7 +342,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 
 	public Object writeModel(Model model) throws SBMLException {
 		// TODO Auto-generated method stub
-		org.sbml.jsbml.Model m = new org.sbml.jsbml.Model(model);
+		Model m = new Model(model);
 		
 		return m;
 	}
@@ -354,21 +356,21 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			String programName, String versionNumber) throws SBMLException,
 			IOException {
 		// check arguments
-		if (!(object instanceof org.sbml.jsbml.SBMLDocument) 
-				&& !(object instanceof org.sbml.jsbml.Model)){
+		if (!(object instanceof SBMLDocument) 
+				&& !(object instanceof Model)){
 			throw new IllegalArgumentException(
 			"object must be an instance of org.sbml.jsbml.SBMLDocument or org.sbml.jsbml.Model");
 		}
 		// convert to SBML
-		org.sbml.jsbml.SBMLDocument sbmlDocument;
-		if (object instanceof org.sbml.jsbml.SBMLDocument)
-			sbmlDocument = (org.sbml.jsbml.SBMLDocument) object;
+		SBMLDocument sbmlDocument;
+		if (object instanceof SBMLDocument)
+			sbmlDocument = (SBMLDocument) object;
 		else
-			sbmlDocument = ((org.sbml.jsbml.Model) object).getSBMLDocument();
+			sbmlDocument = ((Model) object).getSBMLDocument();
 		// write SBML to file
 		boolean success = true; 
 		try {
-			org.sbml.jsbml.SBMLWriter.write(sbmlDocument, filename, programName, versionNumber);
+			SBMLWriter.write(sbmlDocument, filename, programName, versionNumber);
 		} catch (XMLStreamException e) {
 			success = false;
 		}
