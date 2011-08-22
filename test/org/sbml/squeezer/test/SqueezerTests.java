@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 
 import junit.framework.TestCase;
 
@@ -21,17 +22,21 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
 
 import de.zbit.io.SBFileFilter;
+import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.prefs.SBProperties;
 
 public class SqueezerTests extends TestCase{
 
-  //private String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15/cases/semantic/00002";
+	private String testPath = System.getProperty("user.dir") + "/files/tests/SBML_test_cases/cases/semantic/001-100";
+
 	//String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15";
-  private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases/cases/semantic/00001";
+	//private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases/cases/semantic/00001";
 	/**
 	 * List of test files
 	 */
@@ -44,11 +49,11 @@ public class SqueezerTests extends TestCase{
 	 * List of all sBMLsqueezers
 	 */
 	private List<SBMLsqueezer> listOfsqueezers = new LinkedList<SBMLsqueezer>();
-	
+
 	private List<KineticLawGenerator> listOfKineticLawGenerators = new LinkedList<KineticLawGenerator>();
-	
+
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
-	
+
 	public SqueezerTests(){
 		long time = System.currentTimeMillis();
 		logger.info("search for files...");
@@ -68,7 +73,7 @@ public class SqueezerTests extends TestCase{
 		}
 		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
 	}
-	
+
 	/**
 	 * test if the given directory contains XML Files, if not, then the 
 	 * results of the import and export tests can be ignored
@@ -81,7 +86,7 @@ public class SqueezerTests extends TestCase{
 		assertTrue(numberOfFiles > 0);	
 		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
 	}
-	
+
 	/**
 	 * - tests the files can be imported as models
 	 * - 
@@ -110,19 +115,18 @@ public class SqueezerTests extends TestCase{
 			writer = new LibSBMLWriter();
 		}
 		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
-		
-		
-		
+
+
+
 		time = System.currentTimeMillis();
 		logger.info("Generate SBMLio and SBMLsqueezerUI.");
 		SBMLio io = new SBMLio(reader,writer);
 		logger.info("Test file import and model conversion.");
-		boolean failed;
+		boolean failed = false;
 		Model model;
 		KineticLawGenerator klg;
 		for(int i=0; i<listOfFiles.size(); i++){
 			// try to extract models from files
-			failed = false;
 			File f = listOfFiles.get(i);
 			try {
 				logger.info("(file to model): " + f.getAbsolutePath());
@@ -131,11 +135,11 @@ public class SqueezerTests extends TestCase{
 			} catch (Throwable e) {
 				logger.log(Level.WARNING, "failed to convert Model: ");
 				logger.log(Level.WARNING, f.getAbsolutePath(), e);
-				failed = true;
+				failed = true; // other tests on model cannot be performed
 				fail();
 			}
-			// try to generate kinetic laws for a model
 			if(!failed){
+				// try to generate kinetic laws for a model
 				try {
 					logger.info("(KineticLawGenerator for a model): " + f.getAbsolutePath());
 					klg = new KineticLawGenerator(listOfModels.get(i));
@@ -143,45 +147,43 @@ public class SqueezerTests extends TestCase{
 				} catch (Throwable e) {
 					logger.log(Level.WARNING, "failed to generate kinetic equations: ");
 					logger.log(Level.WARNING, f.getAbsolutePath(), e);
-					failed = true;
+					failed = true; // the following tests would also fail
 					fail();
 				}
 			}
-			// try to generate kinetic laws for the reactions
 			if(!failed){
+				// try to generate kinetic laws for the reactions
 				logger.info("(KineticLawGenerator for reaction)"+ f.getAbsolutePath());
 				for(Reaction reac : listOfModels.get(i).getListOfReactions()){
 					try {
 						logger.info("    (Reaction): "+reac.getId());
 						new KineticLawGenerator(listOfModels.get(i),reac.getId());
-					} catch (Throwable e) {
+					} catch (Exception e) {
 						logger.log(Level.WARNING, "failed to generate kinetic equation for reaction: ");
 						logger.log(Level.WARNING, "file: "+f.getAbsolutePath());
 						logger.log(Level.WARNING, "id: "+reac.getId(), e);
-						failed = true;
 						fail();
 					}
-				}
-			}			
-			// try to get the miniModels
+				}	
+			}
 			if(!failed){
+				// try to get the miniModels
 				try {
 					logger.info("(get MiniModel for a model): " + f.getAbsolutePath());
 					listOfKineticLawGenerators.get(i).getMiniModel();
 				} catch (Throwable e) {
 					logger.log(Level.WARNING, "failed to generate the MiniModel: ");
 					logger.log(Level.WARNING, f.getAbsolutePath(), e);
-					failed = true;
 					fail();
 				}
 			}
-			
-			
-			
+
+
+
 		}
 		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
-		
-		
+
+
 		/*
 		//time = System.currentTimeMillis();
 		logger.info("test squeezer.");
@@ -192,17 +194,17 @@ public class SqueezerTests extends TestCase{
 				listOfsqueezers.add(squeezer);
 				logger.info("(squeeze file): " + file.getAbsolutePath());
 				squeezer.squeeze(file.getAbsolutePath(), System.getProperty("user.home") + "/test.xml");
-				
+
 			} catch (Throwable e) {
 				logger.log(Level.WARNING, file.getAbsolutePath(), e);
 				fail();
 			}
 		}
 		//logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
-		*/
-		
+		 */
+
 	}
-	
+
 	/**
 	 * test, if the libSBML is available.
 	 * Note that a failure of this test does not lead to any problems
@@ -211,6 +213,7 @@ public class SqueezerTests extends TestCase{
 	 */
 	@Test
 	public void testLibSBML() {
+
 		boolean libSBMLAvailable = false;
 		try {
 			// In order to initialize libSBML, check the java.library.path.
@@ -222,23 +225,40 @@ public class SqueezerTests extends TestCase{
 		} catch (Throwable e) {
 		} 
 		assertTrue(libSBMLAvailable);
+
 	}
-	
+
 	/**
 	 * test if the program can be started with default settings
 	 * @throws MalformedURLException 
 	 */
 	@Test
 	public void testProgramStart() {
-		/*
+
 		try {
 			SBMLsqueezer.main(new String[]{});
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			fail();
 		}
-		*/
+
 	}
-	
-	
+
+	public void testPreferences() {
+
+		long time = System.currentTimeMillis();
+		logger.info("test default settings of SBPreferences");
+
+		SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
+		try {
+			preferences.checkPrefs();
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error in the preferences settings: ", e);
+			fail();
+		}
+		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
+
+	}
+
+
 }
