@@ -2,6 +2,7 @@ package org.sbml.squeezer.test;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
@@ -30,10 +32,10 @@ import de.zbit.util.prefs.SBPreferences;
 
 public class SqueezerTests extends TestCase{
 
-	//private String testPath = System.getProperty("user.dir") + "/files/tests/SBML_test_cases/cases/semantic/001-100";
+	private String testPath = System.getProperty("user.dir") + "/files/tests/SBML_test_cases/cases/semantic/001-100/00001";
 
 	//String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15";
-	private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases/cases/semantic/00001";
+	//private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases/cases/semantic/00001";
 	/**
 	 * List of test files
 	 */
@@ -42,12 +44,9 @@ public class SqueezerTests extends TestCase{
 	 * List of all models
 	 */
 	private Model currentModel;
-	/**
-	 * List of all sBMLsqueezers
-	 */
-	private List<SBMLsqueezer> listOfsqueezers = new LinkedList<SBMLsqueezer>();
-
-	private List<KineticLawGenerator> listOfKineticLawGenerators = new LinkedList<KineticLawGenerator>();
+	
+	
+	private KineticLawGenerator klg;
 
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
 
@@ -120,15 +119,17 @@ public class SqueezerTests extends TestCase{
 		SBMLio io = new SBMLio(reader,writer);
 		logger.info("Test file import and model conversion.");
 		boolean failed = false;
-		Model model;
-		KineticLawGenerator klg;
+		Model miniModel;
+		Model newModel; // model after saving ind importing the old model
+		SBMLsqueezer squeezer;
+		String safePath = testPath;
+		
 		for(int i=0; i<listOfFiles.size(); i++){
 			// try to extract models from files
 			File f = listOfFiles.get(i);
 			try {
 				logger.info("(file to model): " + f.getAbsolutePath());
-				model = io.convertModel(f.getAbsolutePath());
-				currentModel = model;
+				currentModel = io.convertModel(f.getAbsolutePath());
 			} catch (Throwable e) {
 				logger.log(Level.WARNING, "failed to convert Model: ");
 				logger.log(Level.WARNING, f.getAbsolutePath(), e);
@@ -140,7 +141,6 @@ public class SqueezerTests extends TestCase{
 				try {
 					logger.info("(KineticLawGenerator for a model): " + f.getAbsolutePath());
 					klg = new KineticLawGenerator(currentModel);
-					listOfKineticLawGenerators.add(klg);
 				} catch (Throwable e) {
 					logger.log(Level.WARNING, "failed to generate kinetic equations: ");
 					logger.log(Level.WARNING, f.getAbsolutePath(), e);
@@ -167,15 +167,60 @@ public class SqueezerTests extends TestCase{
 				// try to get the miniModels
 				try {
 					logger.info("(get MiniModel for a model): " + f.getAbsolutePath());
-					listOfKineticLawGenerators.get(i).getMiniModel();
+					miniModel = klg.getMiniModel();
 				} catch (Throwable e) {
 					logger.log(Level.WARNING, "failed to generate the MiniModel: ");
 					logger.log(Level.WARNING, f.getAbsolutePath(), e);
 					fail();
 				}
 			}
+			
+			if(!failed){
+				logger.info("(store kinetic laws): " + f.getAbsolutePath());
+				try {
+					squeezer = new SBMLsqueezer(reader, writer);
+					klg.storeKineticLaws(squeezer);
+				} catch (Exception e) {
+					logger.log(Level.WARNING, "failed to store kinetic laws: ");
+					logger.log(Level.WARNING, f.getAbsolutePath(), e);
+					failed = true;
+					fail();
+				}
+			}
 
-
+			if(!failed){
+				// try to safe the model in the folder given by testPath
+				logger.info("(write model to file): " + f.getAbsolutePath());
+				File testFile = new File(safePath);
+				if(testFile.isDirectory()){
+					safePath += "/test.xml";
+				}else if(testFile.isFile()){
+					safePath = testFile.getParent() + "/test.xml";
+				}
+				try {
+					io.writeSelectedModelToSBML(safePath);
+				} catch (Exception e) {
+					logger.log(Level.WARNING, "failed to write model to file: ");
+					logger.log(Level.WARNING, f.getAbsolutePath(), e);
+					failed = true;
+					fail();
+				}
+			}
+			
+			if(!failed){
+				// try to compare the new model (after saving) and the old model (before saving)
+				logger.info("(compare models): " + f.getAbsolutePath());
+				File fnew = new File(safePath);
+				try {
+					newModel = io.convertModel(fnew.getAbsolutePath());
+					assertTrue(currentModel.equals(newModel));
+				} catch (Throwable e) {
+					logger.log(Level.WARNING, "failed to compare models.");
+					logger.log(Level.WARNING, f.getAbsolutePath(), e);
+					failed = true; // other tests on model cannot be performed
+					fail();
+				}
+			}
 
 		}
 		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
@@ -187,8 +232,6 @@ public class SqueezerTests extends TestCase{
 		for(File file : listOfFiles) {
 			// test models
 			try {
-				SBMLsqueezer squeezer = new SBMLsqueezer(reader, writer);
-				listOfsqueezers.add(squeezer);
 				logger.info("(squeeze file): " + file.getAbsolutePath());
 				squeezer.squeeze(file.getAbsolutePath(), System.getProperty("user.home") + "/test.xml");
 
