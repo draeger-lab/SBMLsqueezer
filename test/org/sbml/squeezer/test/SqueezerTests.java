@@ -211,10 +211,13 @@ public class SqueezerTests extends TestCase{
 				// try to compare the new model (after saving) and the old model (before saving)
 				logger.info("(compare models): " + f.getAbsolutePath());
 				File fnew = new File(safePath);
+				
 				try {
 					newModel = io.convertModel(fnew.getAbsolutePath());
+					newModel.setId(currentModel.getId());
+					newModel.setName(currentModel.getName());
 					assertTrue(currentModel.equals(newModel));
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					logger.log(Level.WARNING, "failed to compare models.");
 					logger.log(Level.WARNING, f.getAbsolutePath(), e);
 					failed = true; // other tests on model cannot be performed
