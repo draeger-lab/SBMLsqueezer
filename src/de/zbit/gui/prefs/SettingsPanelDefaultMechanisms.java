@@ -394,8 +394,9 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 										+ rbutton.getText());
 			}
 		} else if (e.getSource().equals(jComboBoxTypeStandardVersion)) {
-			properties.put(SqueezerOptions.TYPE_STANDARD_VERSION, Integer
-					.valueOf(jComboBoxTypeStandardVersion.getSelectedIndex()));
+      properties.put(SqueezerOptions.TYPE_STANDARD_VERSION,
+            SqueezerOptions.TypeStandardVersion.valueOf(
+              jComboBoxTypeStandardVersion.getSelectedItem().toString()));
 		}
 		super.itemStateChanged(e);
 	}

@@ -480,9 +480,9 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 					.valueOf(jCheckBoxPossibleEnzymeUnknown.isSelected()));
 			possibleEnzymeTestAllNotChecked();
 		} else if (e.getSource().equals(jRadioButtonTypeUnitConsistency)) {
-			properties.put(SqueezerOptions.TYPE_UNIT_CONSISTENCY, Integer
-					.valueOf(jRadioButtonTypeUnitConsistency.isSelected() ? 0
-							: 1));
+      properties.put(SqueezerOptions.TYPE_UNIT_CONSISTENCY,
+            jRadioButtonTypeUnitConsistency.isSelected() ? SqueezerOptions.TypeUnitConsistency.amount
+                : SqueezerOptions.TypeUnitConsistency.concentration);
 		} else if (e.getSource().equals(jCheckBoxSetBoundaryCondition)) {
 			properties
 					.put(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
