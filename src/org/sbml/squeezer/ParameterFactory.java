@@ -539,9 +539,9 @@ public class ParameterFactory {
 				/*
 				 * bringToConcentration ? unitmMperSecond() :
 				 */
-				kr.setUnits(unitFactory.unitSubstancePerTime(model
-						.getSubstanceUnitsInstance(), model
-						.getTimeUnitsInstance()));
+				kr.setUnits(unitFactory.unitSubstancePerTime(
+						model.getUnitDefinition(UnitDefinition.SUBSTANCE), 
+						model.getUnitDefinition(UnitDefinition.TIME)));
 			}
 		}
 		return kr;
