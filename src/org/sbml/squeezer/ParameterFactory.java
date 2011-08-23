@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer;
 
+import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
@@ -774,10 +775,23 @@ public class ParameterFactory {
 		}
 		if (!kM.isSetUnits()) {
 			Species spec = model.getSpecies(species);
-			kM.setUnits(unitFactory.getBringToConcentration() ? unitFactory
-					.unitSubstancePerSize(spec.getSubstanceUnitsInstance(),
-							spec.getCompartmentInstance().getUnitsInstance())
-					: spec.getSubstanceUnitsInstance());
+			if (unitFactory.getBringToConcentration()) {
+			  Compartment compartment = spec.getCompartmentInstance();
+			  if (compartment == null) {
+          throw new NullPointerException(String.format(
+            "The compartment of species \"%s\" is undefined.", spec.toString()));
+			  }
+        UnitDefinition specUnit = spec.getSubstanceUnitsInstance();
+			  UnitDefinition compUnit = compartment.getUnitsInstance();
+			  if ((specUnit == null) || (compUnit == null)) {
+          throw new NullPointerException(String.format(
+                  "Could not assign units to parameter \"%s\" due to undefined units of species \"%s\".",
+                  kM.toString(), spec.toString()));
+			  }
+        kM.setUnits(unitFactory.unitSubstancePerSize(specUnit, compUnit)); 
+			} else {
+			  kM.setUnits(spec.getSubstanceUnitsInstance()); 
+			}
 		}
 		return kM;
 	}
