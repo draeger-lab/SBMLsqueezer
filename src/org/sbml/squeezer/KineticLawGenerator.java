@@ -31,6 +31,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
@@ -269,8 +273,13 @@ public class KineticLawGenerator {
 			miniModel.addSpecies(speciesOrig.clone());
 		}
 		Species spec = miniModel.getSpecies(speciesOrig.getId());
-		spec.setCompartment(miniModel.getCompartment(speciesOrig
-				.getCompartment()));
+		Compartment compartment = miniModel.getCompartment(speciesOrig
+      .getCompartment());
+    if (compartment == null) {
+      compartment = copyCopmpartment(speciesOrig.getCompartmentInstance(),
+        miniModel);
+    }
+		spec.setCompartment(compartment);
 
 		if (spec.isSetSubstanceUnits()
 				&& !Unit.isUnitKind(spec.getUnits(), spec
