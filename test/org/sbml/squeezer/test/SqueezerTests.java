@@ -40,13 +40,6 @@ public class SqueezerTests extends TestCase{
 	 * List of test files
 	 */
 	private List<File> listOfFiles;
-	/**
-	 * List of all models
-	 */
-	private Model currentModel;
-	
-	
-	private KineticLawGenerator klg;
 
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
 
@@ -115,50 +108,71 @@ public class SqueezerTests extends TestCase{
 
 
 		time = System.currentTimeMillis();
-		logger.info("Generate SBMLio and SBMLsqueezerUI.");
-		SBMLio io = new SBMLio(reader,writer);
-		logger.info("Test file import and model conversion.");
+		
 		boolean failed = false;
-		Model miniModel;
-		Model newModel; // model after saving ind importing the old model
+		String safePath = testPath;		
+		
+		logger.info("Generate SBMLio and SBMLsqueezer.");
+		
+		SBMLio io = new SBMLio(reader,writer);	
 		SBMLsqueezer squeezer;
-		String safePath = testPath;
+		
+		logger.info("Test files.");
+		
+		Model currentModel = null;	// current model extracted from the current file
+		Model miniModel = null;		// miniModel of the current model
+		Model newModel = null;		// model after saving and importing the old model
+		Model newMiniModel = null;	// miniModel of the new model
+		boolean areEqual;			// result of comparing the current and new model
+		
+		KineticLawGenerator klg = null;		// KineticLawGenerator for the current model
+		KineticLawGenerator newKLG = null;	// KineticLawGenerator for the new model
 		
 		for(int i=0; i<listOfFiles.size(); i++){
 			// try to extract models from files
 			File f = listOfFiles.get(i);
+			
+			logger.info(
+					"\n########################################################\n" + 
+					"#          test file " + (i+1) + " of " + listOfFiles.size() + "\n" +
+					"#          file: " +  f.getAbsolutePath() +
+					"\n########################################################\n");
+			
 			try {
-				logger.info("(file to model): " + f.getAbsolutePath());
+				logger.info("\n----------------------------------------------\n"+
+						"           file to model"+
+						"\n----------------------------------------------");
 				currentModel = io.convertModel(f.getAbsolutePath());
 			} catch (Throwable e) {
-				logger.log(Level.WARNING, "failed to convert Model: ");
-				logger.log(Level.WARNING, f.getAbsolutePath(), e);
+				logger.log(Level.WARNING, "failed to convert Model: ", e);
 				failed = true; // other tests on model cannot be performed
 				fail();
 			}
 			if(!failed){
 				// try to generate kinetic laws for a model
 				try {
-					logger.info("(KineticLawGenerator for a model): " + f.getAbsolutePath());
+					logger.info("\n----------------------------------------------\n"+
+							"           KineticLawGenerator for a model"+
+							"\n----------------------------------------------");
 					klg = new KineticLawGenerator(currentModel);
 				} catch (Throwable e) {
-					logger.log(Level.WARNING, "failed to generate kinetic equations: ");
-					logger.log(Level.WARNING, f.getAbsolutePath(), e);
+					logger.log(Level.WARNING, "failed to generate kinetic equations: ", e);
 					failed = true; // the following tests would also fail
 					fail();
 				}
 			}
 			if(!failed){
 				// try to generate kinetic laws for the reactions
-				logger.info("(KineticLawGenerator for reaction)"+ f.getAbsolutePath());
+				logger.info("\n----------------------------------------------\n"+
+						"           KineticLawGenerator for reactions"+
+						"\n----------------------------------------------");
 				for(Reaction reac : currentModel.getListOfReactions()){
 					try {
-						logger.info("    (Reaction): "+reac.getId());
+						logger.info("\n                Reaction: "+reac.getId()+
+								"\n----------------------------------------------");
 						new KineticLawGenerator(currentModel,reac.getId());
 					} catch (Exception e) {
-						logger.log(Level.WARNING, "failed to generate kinetic equation for reaction: ");
-						logger.log(Level.WARNING, "file: "+f.getAbsolutePath());
-						logger.log(Level.WARNING, "id: "+reac.getId(), e);
+						logger.log(Level.WARNING, "failed to generate kinetic equation for reaction with id: "+reac.getId(), e);
 						fail();
 					}
 				}	
@@ -166,23 +180,25 @@ public class SqueezerTests extends TestCase{
 			if(!failed){
 				// try to get the miniModels
 				try {
-					logger.info("(get MiniModel for a model): " + f.getAbsolutePath());
+					logger.info("\n----------------------------------------------\n"+
+							"           get MiniModel for a model"+
+							"\n----------------------------------------------");
 					miniModel = klg.getMiniModel();
 				} catch (Throwable e) {
-					logger.log(Level.WARNING, "failed to generate the MiniModel: ");
-					logger.log(Level.WARNING, f.getAbsolutePath(), e);
+					logger.log(Level.WARNING, "failed to generate the MiniModel: ", e);
 					fail();
 				}
 			}
 			
 			if(!failed){
-				logger.info("(store kinetic laws): " + f.getAbsolutePath());
+				logger.info("\n----------------------------------------------\n"+
+						"           store kinetic laws"+
+						"\n----------------------------------------------");
 				try {
 					squeezer = new SBMLsqueezer(reader, writer);
 					klg.storeKineticLaws(squeezer);
 				} catch (Exception e) {
-					logger.log(Level.WARNING, "failed to store kinetic laws: ");
-					logger.log(Level.WARNING, f.getAbsolutePath(), e);
+					logger.log(Level.WARNING, "failed to store kinetic laws: ", e);
 					failed = true;
 					fail();
 				}
@@ -190,7 +206,9 @@ public class SqueezerTests extends TestCase{
 
 			if(!failed){
 				// try to safe the model in the folder given by testPath
-				logger.info("(write model to file): " + f.getAbsolutePath());
+				logger.info("\n----------------------------------------------\n"+
+						"           write model to file"+
+						"\n----------------------------------------------");
 				File testFile = new File(safePath);
 				if(testFile.isDirectory()){
 					safePath += "/test.xml";
@@ -200,8 +218,7 @@ public class SqueezerTests extends TestCase{
 				try {
 					io.writeSelectedModelToSBML(safePath);
 				} catch (Exception e) {
-					logger.log(Level.WARNING, "failed to write model to file: ");
-					logger.log(Level.WARNING, f.getAbsolutePath(), e);
+					logger.log(Level.WARNING, "failed to write model to file: ", e);
 					failed = true;
 					fail();
 				}
@@ -209,22 +226,36 @@ public class SqueezerTests extends TestCase{
 			
 			if(!failed){
 				// try to compare the new model (after saving) and the old model (before saving)
-				logger.info("(compare models): " + f.getAbsolutePath());
+				logger.info("\n----------------------------------------------\n"+
+						"           compare models"+
+						"\n----------------------------------------------");
 				File fnew = new File(safePath);
-				
+				areEqual = true;
 				try {
 					newModel = io.convertModel(fnew.getAbsolutePath());
-					newModel.setId(currentModel.getId());
-					newModel.setName(currentModel.getName());
-					assertTrue(currentModel.equals(newModel));
+					// get new miniModel
+					try {
+						newKLG = new KineticLawGenerator(currentModel);
+						newMiniModel = newKLG.getMiniModel();
+					} catch (Throwable e) {
+						logger.log(Level.WARNING, "failed to generate kinetic equations or miniModel for new model: ", e);
+						failed = true; 
+						fail();
+					}
+					// compare models 
+					areEqual = miniModel.equals(newMiniModel);
+					if(areEqual){
+						logger.info("    models are equal"+
+						"\n----------------------------------------------");
+					}else{
+						logger.log(Level.WARNING, "model before and after file export are unequal!");
+					}
 				} catch (Exception e) {
-					logger.log(Level.WARNING, "failed to compare models.");
-					logger.log(Level.WARNING, f.getAbsolutePath(), e);
+					logger.log(Level.WARNING, "failed to compare models.", e);
 					failed = true; // other tests on model cannot be performed
 					fail();
 				}
 			}
-
 		}
 		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
 
