@@ -58,6 +58,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Variable;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.math.GaussianRank;
+import org.sbml.squeezer.util.ModelChangeListener;
 import org.sbml.squeezer.util.SBMLtools;
 
 import de.zbit.util.prefs.SBPreferences;
@@ -1032,6 +1033,8 @@ public class KineticLawGenerator {
 	public void storeKineticLaws(LawListener l) {
 		l.initLawListener(Reaction.class.getSimpleName(), miniModel
 				.getNumReactions());
+		ModelChangeListener chl = new ModelChangeListener();
+		modelOrig.addChangeListener(chl);
 		for (int i = 0; i < miniModel.getNumReactions(); i++) {
 			Reaction r = miniModel.getReaction(i);
 			storeKineticLaw(r.getKineticLaw(), false, l);
@@ -1041,6 +1044,7 @@ public class KineticLawGenerator {
 		if (prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
 			removeUnnecessaryParameters(modelOrig, l);
 		}
+		modelOrig.removeChangeListener(chl);
 	}
 
 	/**
