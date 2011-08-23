@@ -652,8 +652,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void storeKineticsInOriginalModel() {
 		try {
-			klg
-					.storeKineticLaws(new ProgressDialog(this,
+			klg.storeKineticLaws(new ProgressDialog(this,
 							"Saving kinetic laws"));
 			sbmlIO.saveChanges(new ProgressDialog(this,
 					"Saving changes to original model"));

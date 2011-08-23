@@ -445,10 +445,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			if (model != null) {
 				addModel(model);
 				String path = file.getAbsolutePath();
-				String oldPath = prefs.get(SqueezerOptions.SBML_FILE)
+				String oldPath = prefs.get(SqueezerOptions.SBML_IN_FILE)
 						.toString();
 				if (!path.equals(oldPath)) {
-					prefs.put(SqueezerOptions.SBML_FILE, path);
+					prefs.put(SqueezerOptions.SBML_IN_FILE, path);
 					prefs.flush();
 				}
 			}

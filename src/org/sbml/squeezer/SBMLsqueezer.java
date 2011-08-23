@@ -355,8 +355,8 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		}
 		logger.info("   done.\nreading SBO... done.");
 		if (p.getBooleanProperty(GUIOptions.GUI)) {
-			if (p.containsKey(SqueezerOptions.SBML_FILE)) {
-				squeezer.readSBMLSource(p.get(SqueezerOptions.SBML_FILE));
+			if (p.containsKey(SqueezerOptions.SBML_IN_FILE)) {
+				squeezer.readSBMLSource(p.get(SqueezerOptions.SBML_IN_FILE));
 			}
 			logger.info("loading GUI...");
 			new Thread(new Runnable() {
@@ -383,7 +383,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 			squeezer.checkForUpdate(false);
 			if (p.containsKey(SqueezerOptions.SBML_OUT_FILE)) {
 				try {
-					squeezer.squeeze(p.get(SqueezerOptions.SBML_FILE).toString(), p
+					squeezer.squeeze(p.get(SqueezerOptions.SBML_IN_FILE).toString(), p
 							.get(SqueezerOptions.SBML_OUT_FILE).toString());
 				} catch (Throwable e) {
 					e.printStackTrace();
