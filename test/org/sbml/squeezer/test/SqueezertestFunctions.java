@@ -59,11 +59,6 @@ public class SqueezertestFunctions {
 						areEqual = false; 
 					}if(!modelOrig.getListOfReactions().equals(model.getListOfReactions())){
 						logger.warning("-> unequal List of reactions");
-						for(int i = 0; i < modelOrig.getListOfReactions().size(); i++){
-							if(modelOrig.getListOfReactions().get(i) != model.getListOfReactions().get(i)){
-								logger.warning("-> reactions " + modelOrig.getListOfReactions().get(i).toString());
-							}
-						}
 						areEqual = false; 
 					}if(!modelOrig.getListOfRules().equals(model.getListOfRules())){
 						logger.warning("-> unequal List of rules");

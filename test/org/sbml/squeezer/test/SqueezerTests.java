@@ -39,7 +39,7 @@ import de.zbit.util.prefs.SBPreferences;
 
 public class SqueezerTests extends TestCase{
 
-	private String testPath = System.getProperty("user.dir") + "/files/tests/SBML_test_cases/cases/semantic/001-100/00048/00048-sbml-l3v1.xml";
+	private String testPath = System.getProperty("user.dir") + "/files/tests/SBML_test_cases/cases/semantic/001-100";
 
 	//String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15";
 	//private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases/cases/semantic/00001";
@@ -156,7 +156,7 @@ public class SqueezerTests extends TestCase{
 				failed = true; // other tests on model cannot be performed
 				fail();
 			}
-
+			
 			if(!failed){
 				// try to generate kinetic laws for a model
 				try {
@@ -170,7 +170,7 @@ public class SqueezerTests extends TestCase{
 					fail();
 				}
 			}
-
+			
 			if(!failed){
 				// try to generate kinetic laws for the reactions
 				logger.info("\n----------------------------------------------\n"+
@@ -187,7 +187,7 @@ public class SqueezerTests extends TestCase{
 					}
 				}	
 			}
-
+			
 			if(!failed){
 				// try to get the miniModels
 				try {
@@ -245,7 +245,7 @@ public class SqueezerTests extends TestCase{
 					newModel = io.convertModel(fnew.getAbsolutePath());
 					// get new miniModel
 					try {
-						newKLG = new KineticLawGenerator(currentModel);
+						newKLG = new KineticLawGenerator(newModel);
 						newMiniModel = newKLG.getMiniModel();
 					} catch (Throwable e) {
 						logger.log(Level.WARNING, "failed to generate kinetic equations or miniModel for new model: ", e);
@@ -265,15 +265,13 @@ public class SqueezerTests extends TestCase{
 					}else{
 						logger.info("    models are unequal!!!"+
 						"\n----------------------------------------------");
-						fnew.deleteOnExit();
-						//fail();
+						fail();
 					}
 					
 					
 				} catch (Exception e) {
 					logger.log(Level.WARNING, "failed to compare models.", e);
 					failed = true; 
-					fnew.deleteOnExit();
 					fail();
 				}
 			}
