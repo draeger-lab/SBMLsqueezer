@@ -152,8 +152,9 @@ public class KineticLawGenerator {
 	/**
 	 * 
 	 * @param compartment
+	 * @param modelToWrite
 	 */
-	private void checkUnits(Compartment compartment, Model miniModel) {
+	private void checkUnits(Compartment compartment, Model modelToWrite) {
 		Model model = compartment.getModel();
 		/*
 		 *  for level 2 and 3 the compartment size does not have to be set when 
@@ -161,7 +162,7 @@ public class KineticLawGenerator {
 		 */
 		double spatialD = compartment.getSpatialDimensions();
 		if (!compartment.isSetSize() && 
-				(spatialD != 0) || (miniModel.getLevel() < 2)) {
+				(spatialD != 0) || (modelToWrite.getLevel() < 2)) {
 			//TODO: Option for setting the initial compartment size
 			compartment.setValue(1d);
 		}
@@ -175,9 +176,9 @@ public class KineticLawGenerator {
 				if(ud == null){
 					ud = UnitDefinition.getPredefinedUnit(
 							UnitDefinition.LENGTH, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(),
-							miniModel.getVersion());
-					miniModel.setLengthUnits(ud);
+					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(),
+							modelToWrite.getVersion());
+					modelToWrite.setLengthUnits(ud);
 				}
 				compartment.setUnits(model.getUnitDefinition(UnitDefinition.LENGTH));
 				break;
@@ -186,9 +187,9 @@ public class KineticLawGenerator {
 				if(ud == null){
 					ud = UnitDefinition.getPredefinedUnit(
 							UnitDefinition.AREA, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(),
-							miniModel.getVersion());
-					miniModel.setAreaUnits(ud);
+					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(),
+							modelToWrite.getVersion());
+					modelToWrite.setAreaUnits(ud);
 				}
 				compartment.setUnits(ud);
 				break;
@@ -197,9 +198,9 @@ public class KineticLawGenerator {
 				if (ud == null) {
 					ud = UnitDefinition.getPredefinedUnit(
 							UnitDefinition.VOLUME, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(),
-							miniModel.getVersion());
-					miniModel.setVolumeUnits(ud);
+					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(),
+							modelToWrite.getVersion());
+					modelToWrite.setVolumeUnits(ud);
 				}
 				compartment.setUnits(ud);
 				break;
@@ -1145,7 +1146,7 @@ public class KineticLawGenerator {
 					corig.setUnits(modelOrig.getUnitDefinition(c.getUnits()));
 				}
 			}
-			checkUnits(corig, this.miniModel);
+			checkUnits(corig, modelOrig);
 			l.currentState(c, ++num);
 		}
 		num = 0;
@@ -1168,7 +1169,7 @@ public class KineticLawGenerator {
 							.getSubstanceUnits()));
 				}
 			}
-			checkUnits(sorig, this.miniModel);
+			checkUnits(sorig, modelOrig);
 			l.currentState(s, ++num);
 		}
 	}
