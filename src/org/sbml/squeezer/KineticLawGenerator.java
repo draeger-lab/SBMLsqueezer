@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -111,6 +113,11 @@ public class KineticLawGenerator {
 	 * equations.
 	 */
 	private SBPreferences prefs;
+	
+	/**
+	 * 
+	 */
+	private final Logger logger = Logger.getLogger(KineticLawGenerator.class.getName());
 
 	/**
 	 * Takes a model and settings for kinetic law generation as input, creates a
@@ -148,15 +155,21 @@ public class KineticLawGenerator {
 	 */
 	private void checkUnits(Compartment compartment, Model miniModel) {
 		Model model = compartment.getModel();
-		if (!compartment.isSetSize()) {
-			compartment.setSize(1d);
+		/*
+		 *  for level 2 and 3 the compartment size does not have to be set when 
+		 *  the spatialDimensions field is 0.  
+		 */
+		double spatialD = compartment.getSpatialDimensions();
+		if (!compartment.isSetSize() && 
+				(spatialD != 0) || (miniModel.getLevel() < 2)) {
+			//TODO: Option for setting the initial compartment size
+			compartment.setValue(1d);
 		}
 		if (!compartment.isSetUnits()
-				&& (((short) compartment.getSpatialDimensions())
-						- compartment.getSpatialDimensions() == 0d)) {
-			// TODO: Create units if missing
+				&& (((short) spatialD)
+						- spatialD == 0d)) {
 			UnitDefinition ud;
-			switch ((short) compartment.getSpatialDimensions()) {
+			switch ((short) spatialD) {
 			case 1:
 				ud = model.getUnitDefinition(UnitDefinition.LENGTH);
 				if(ud == null){
@@ -194,18 +207,14 @@ public class KineticLawGenerator {
 				break;
 			}
 		}
-		if (compartment.getSpatialDimensions() == 0
-				|| compartment.getSpatialDimensions() > 3) {
-			compartment.setSpatialDimensions((short) 3);
+		if (((spatialD <= 0d) || (spatialD > 3d))
+				&& (1 < compartment.getLevel())) {
+			compartment.setSpatialDimensions(3d);
 			compartment.setUnits(model.getUnitDefinition(UnitDefinition.VOLUME));
-			System.err
-			.printf(
-					"Compartment %s had an invalid spacial dimension and was therefore set to a volume.\n",
-					compartment.getId());
+			logger.log(Level.WARNING, String.format(
+				"Compartment %s had an invalid spacial dimension and was therefore set to a volume.\n",
+				compartment.getId()));
 		}
-		if (model.getUnitDefinition(compartment.getUnits()) == null)
-			model.addUnitDefinition((UnitDefinition) compartment
-					.getUnitsInstance());
 	}
 
 	/**
@@ -375,7 +384,11 @@ public class KineticLawGenerator {
 				.getBoolean(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION));
 		Model miniModel = new Model(modelOrig.getId(), modelOrig.getLevel(),
 				modelOrig.getVersion());	  
+		//miniModel.addChangeListener(new ModelChangeListener());
 
+		/*
+		 * Create and/or re-scale default units for time, substance and volume 
+		 */	  
 		// set time unit definition if it is not already set
 		UnitDefinition timeUD = miniModel.getUnitDefinition(UnitDefinition.TIME);
 		if(timeUD == null){
@@ -384,6 +397,27 @@ public class KineticLawGenerator {
 			SBMLtools.setLevelAndVersion(timeUD, miniModel.getLevel(),
 					miniModel.getVersion());
 			miniModel.setTimeUnits(timeUD);
+		}	
+		// set substance unit definition if it is not already set
+		UnitDefinition ud = miniModel.getUnitDefinition(UnitDefinition.SUBSTANCE);
+		if (ud == null) {
+			ud = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
+			SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
+			miniModel.setSubstanceUnits(ud);
+		}
+		// TODO: Check user option whether re-scaling of units should be performed or not.
+		Unit u = ud.getListOfUnits().getFirst();
+		if (u.isMole()) {
+			u.setScale(-3);
+			ud.setName("mmole");
+		}
+		ud = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
+		if (ud != null) {
+			u = ud.getListOfUnits().getFirst();
+			if (u.isLitre()) {
+				u.setScale(-3);
+				ud.setName("ml");
+			}
 		}
 
 		/*
@@ -457,30 +491,6 @@ public class KineticLawGenerator {
 					}
 					reac.setKineticLaw(l.clone());
 				}
-			}
-		}
-
-		/*
-		 * Create and/or re-scale default units for substance and volume 
-		 */	  
-		UnitDefinition ud = miniModel.getUnitDefinition(UnitDefinition.SUBSTANCE);
-		if (ud == null) {
-			ud = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
-			SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
-			miniModel.setSubstanceUnits(ud);
-		}
-		// TODO: Check user option whether re-scaling of units should be performed or not.
-		Unit u = ud.getListOfUnits().getFirst();
-		if (u.isMole()) {
-			u.setScale(-3);
-			ud.setName("mmole");
-		}
-		ud = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
-		if (ud != null) {
-			u = ud.getListOfUnits().getFirst();
-			if (u.isLitre()) {
-				u.setScale(-3);
-				ud.setName("ml");
 			}
 		}
 
@@ -651,7 +661,10 @@ public class KineticLawGenerator {
 			}
 		}
 		if (compartment != null && !compartment.isSetSize()) {
-			compartment.setSize(sizeValue);
+			// set size, if the spatialDimension Property is set and > 0
+			if(compartment.isSetSpatialDimensions() && compartment.getSpatialDimensions() > 0){
+				compartment.setSize(sizeValue);
+			}
 		}
 	}
 
@@ -1120,7 +1133,11 @@ public class KineticLawGenerator {
 				.getNumCompartments());
 		for (Compartment c : miniModel.getListOfCompartments()) {
 			Compartment corig = modelOrig.getCompartment(c.getId());
-			corig.setSpatialDimensions(c.getSpatialDimensions());
+			// if level > 1, set spatialDimension
+			// the property spatialDimension is available since l2v1
+			if(miniModel.getLevel() > 1){
+				corig.setSpatialDimensions(c.getSpatialDimensions());
+			}
 			if (c.isSetUnits()) {
 				if (Unit.isUnitKind(c.getUnits(), c.getLevel(), c.getVersion())) {
 					corig.setUnits(Unit.Kind.valueOf(c.getUnits()));
@@ -1136,7 +1153,11 @@ public class KineticLawGenerator {
 				.getNumSpecies());
 		for (Species s : miniModel.getListOfSpecies()) {
 			Species sorig = modelOrig.getSpecies(s.getId());
-			sorig.setHasOnlySubstanceUnits(s.getHasOnlySubstanceUnits());
+			// if level > 1, set hasOnlySubstanceUnits
+			// the hasOnlySubstanceUnits property is available since l2v1
+			if(miniModel.getLevel() > 1){
+				sorig.setHasOnlySubstanceUnits(s.getHasOnlySubstanceUnits());
+			}
 			if (s.isSetSubstanceUnits()) {
 				if (Unit.isUnitKind(s.getSubstanceUnits(), s.getLevel(), s
 						.getVersion())) {
