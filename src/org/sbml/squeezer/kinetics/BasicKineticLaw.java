@@ -194,6 +194,15 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			List<String> nonEnzymeCatalysts)
 			throws RateLawNotApplicableException;
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.AbstractSBase#getElementName()
+	 */
+	@Override
+	public String getElementName() {
+		return "kineticLaw";
+	}
+
 	/**
 	 * Returns a string that gives a simple description of this rate equation.
 	 * 

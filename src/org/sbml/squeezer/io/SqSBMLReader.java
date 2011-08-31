@@ -37,7 +37,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.util.IOProgressListener;
-import org.sbml.jsbml.util.SBaseChangeListener;
+import org.sbml.jsbml.util.TreeNodeChangeListener;
 
 /**
  * This class provides methods to create JSBML models independently from libSBML.
@@ -62,14 +62,14 @@ public class SqSBMLReader implements SBMLInputConverter {
 	
 	private HashSet<IOProgressListener> setOfIOListeners;
 	
-	private LinkedList<SBaseChangeListener> listOfSBaseChangeListeners;
+	private LinkedList<TreeNodeChangeListener> listOfTreeNodeChangeListeners;
 
 	
 	/**
 	 * 
 	 */
 	public SqSBMLReader() {
-		listOfSBaseChangeListeners = new LinkedList<SBaseChangeListener>();
+		listOfTreeNodeChangeListeners = new LinkedList<TreeNodeChangeListener>();
 		setOfDocuments = new HashSet<SBMLDocument>();
 		setOfIOListeners = new HashSet<IOProgressListener>();
 	}
@@ -140,9 +140,7 @@ public class SqSBMLReader implements SBMLInputConverter {
 		// copy the original model to working copy
 		this.model = new Model(originalModel);
 		// add all SBaseChangeListeners to model
-		for (SBaseChangeListener listener : listOfSBaseChangeListeners) {
-			this.model.addChangeListener(listener);
-		}
+		this.model.addAllChangeListeners(listOfTreeNodeChangeListeners);
 		// return working copy
 		return this.model;
 	}

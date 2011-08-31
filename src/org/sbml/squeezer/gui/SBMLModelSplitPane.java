@@ -24,6 +24,7 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,13 +35,13 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.util.SBaseChangeEvent;
-import org.sbml.jsbml.util.SBaseChangeListener;
+import org.sbml.jsbml.util.TreeNodeChangeListener;
 
 /**
  * A specialized {@link JSplitPane} that displays a {@link JTree} containing all
@@ -53,7 +54,7 @@ import org.sbml.jsbml.util.SBaseChangeListener;
  * @version $Rev$
  */
 public class SBMLModelSplitPane extends JSplitPane implements
-		TreeSelectionListener, SBaseChangeListener {
+		TreeSelectionListener, TreeNodeChangeListener {
 
 	/**
 	 * Generated serial version id.
@@ -76,7 +77,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 	public SBMLModelSplitPane(Model model) {
 		super(JSplitPane.HORIZONTAL_SPLIT, true);
 		actionListeners = new HashSet<ActionListener>();
-		model.addChangeListener(this);
+		model.addTreeNodeChangeListener(this);
 		init(model, false);
 	}
 
@@ -144,40 +145,31 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		validate();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseAdded(org.sbml.jlibsbml
-	 * .SBase)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
 	 */
-	public void sbaseAdded(SBase sb) {
+	public void nodeAdded(TreeNode node) {
+		// TODO
 		// TreePath path = tree.getSelectionPath();
-		// init(sb.getModel(), true);
+		// init(node.getModel(), true);
 		// tree.setSelectionPath(path);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.io.SBaseChangedListener#sbaseRemoved(org.sbml.jlibsbml
-	 * .SBase)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
 	 */
-	public void sbaseRemoved(SBase sb) {
+	public void nodeRemoved(TreeNode node) {
+		// TODO
 		// TreePath path = tree.getSelectionPath();
-		// init(sb.getModel(), true);
+		// init(node.getModel(), true);
 		// tree.setSelectionPath(path);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBaseChangedListener#stateChanged(org.sbml.jsbml.SBaseChangedEvent)
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
-	public void stateChanged(SBaseChangeEvent ev) {
-		// TreePath path = tree.getSelectionPath();
-		// init(sb.getModel(), true);
-		// tree.setSelectionPath(path);
+	public void propertyChange(PropertyChangeEvent evt) {
+		// TODO
 	}
 
 	/*

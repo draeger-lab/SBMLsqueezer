@@ -24,40 +24,40 @@
 
 package org.sbml.squeezer.util;
 
+import java.beans.PropertyChangeEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.util.SBaseChangeEvent;
-import org.sbml.jsbml.util.SBaseChangeListener;
+import javax.swing.tree.TreeNode;
+import org.sbml.jsbml.util.TreeNodeChangeListener;
 
 /**
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.4
  */
-public class ModelChangeListener implements SBaseChangeListener {
+public class ModelChangeListener implements TreeNodeChangeListener {
   
   private Logger logger = Logger.getLogger(ModelChangeListener.class.getName());
   
-  /* (non-Javadoc)
-   * @see org.sbml.jsbml.util.SBaseChangeListener#sbaseAdded(org.sbml.jsbml.SBase)
-   */
-  public void sbaseAdded(SBase sb) {
-    logger.log(Level.INFO, "[ADD] " + sb.toString());
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
+	 */
+	public void nodeAdded(TreeNode node) {
+    logger.log(Level.INFO, "[ADD] " + node.toString());
   }
   
-  /* (non-Javadoc)
-   * @see org.sbml.jsbml.util.SBaseChangeListener#sbaseRemoved(org.sbml.jsbml.SBase)
-   */
-  public void sbaseRemoved(SBase sb) {
-    logger.log(Level.INFO, "[DEL] " + sb.toString());
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
+	 */
+	public void nodeRemoved(TreeNode node) {
+    logger.log(Level.INFO, "[DEL] " + node.toString());
   }
   
-  /* (non-Javadoc)
-   * @see org.sbml.jsbml.util.ChangeListener#stateChanged(org.sbml.jsbml.util.ChangeEvent)
-   */
-  public void stateChanged(SBaseChangeEvent event) {
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
     logger.log(Level.INFO, "[CHG] " + event.toString());    
   }
   
