@@ -160,7 +160,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		if (value == JOptionPane.OK_OPTION
 				&& !messagePanel.getExistingRateLawSelected()) {
 			String equationType = messagePanel.getSelectedKinetic();
-			reaction.addChangeListener(sbmlio);
+			reaction.addTreeNodeChangeListener(sbmlio);
 			reaction.setReversible(messagePanel.getReversible());
 			klg.getPreferences().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 					Boolean.valueOf(messagePanel.getReversible()));

@@ -359,7 +359,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 		if (!(object instanceof SBMLDocument) 
 				&& !(object instanceof Model)){
 			throw new IllegalArgumentException(
-			"object must be an instance of org.sbml.jsbml.SBMLDocument or org.sbml.jsbml.Model");
+			"object must be an instance of org.sbml.jsbml.SBMLDocument or org.sbml.jsbml.Model.");
 		}
 		// convert to SBML
 		SBMLDocument sbmlDocument;
