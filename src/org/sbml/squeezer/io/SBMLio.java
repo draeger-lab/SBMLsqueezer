@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.io;
 
+import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,17 +31,16 @@ import java.util.List;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.tree.TreeNode;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SBMLException.Category;
 import org.sbml.jsbml.util.IOProgressListener;
-import org.sbml.jsbml.util.SBaseChangeEvent;
-import org.sbml.jsbml.util.SBaseChangeListener;
+import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.SBMLsqueezer;
 
 /**
@@ -58,23 +58,23 @@ import org.sbml.squeezer.SBMLsqueezer;
  * @version $Rev$
  */
 public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
-		SBaseChangeListener, ChangeListener {
+		TreeNodeChangeListener, ChangeListener {
 
-	private List<SBase> added;
+	private List<TreeNode> added;
 
-	private List<SBase> changed;
+	private List<TreeNode> changed;
+
+	protected LinkedList<Model> listOfModels;
 
 	private LinkedList<Object> listOfOrigModels;
 
 	private SBMLInputConverter reader;
 
-	private List<SBase> removed;
+	private List<TreeNode> removed;
 
 	private int selectedModel;
 
 	private SBMLOutputConverter writer;
-
-	protected LinkedList<Model> listOfModels;
 
 	/**
 	 * 
@@ -86,9 +86,9 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		listOfModels = new LinkedList<Model>();
 		listOfOrigModels = new LinkedList<Object>();
 		selectedModel = -1;
-		added = new LinkedList<SBase>();
-		removed = new LinkedList<SBase>();
-		changed = new LinkedList<SBase>();
+		added = new LinkedList<TreeNode>();
+		removed = new LinkedList<TreeNode>();
+		changed = new LinkedList<TreeNode>();
 	}
 
 	/**
@@ -212,6 +212,38 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.sbml.jsbml.SBaseChangedListener#sbaseAdded(org.sbml.jsbml.SBase)
+	 */
+	public void nodeAdded(TreeNode sb) {
+		if (!added.contains(sb)) {
+			added.add(sb);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
+	 */
+  public void nodeRemoved(TreeNode node) {
+    if (!removed.contains(node)) {
+      removed.add(node);
+    }
+  }
+
+	/*
+   * (non-Javadoc)
+   * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+   */
+  public void propertyChange(PropertyChangeEvent evt) {
+    Object src = evt.getSource();
+    if (!changed.contains(src) && (src instanceof TreeNode)) {
+      changed.add((TreeNode) src);
+    }
+  }
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * org.sbml.jsbml.SBMLOutputConverter#removeUnneccessaryElements(org.sbml
 	 * .jsbml.Model, java.lang.Object)
@@ -266,27 +298,6 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return writer.saveChanges(reaction, model);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.SBaseChangedListener#sbaseAdded(org.sbml.jsbml.SBase)
-	 */
-	public void sbaseAdded(SBase sb) {
-		if (!added.contains(sb))
-			added.add(sb);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.SBaseChangedListener#sbaseRemoved(org.sbml.jsbml.SBase)
-	 */
-	public void sbaseRemoved(SBase sb) {
-		if (!removed.contains(sb))
-			removed.add(sb);
-	}
-
 	/**
 	 * 
 	 * @param selectedModel
@@ -327,16 +338,6 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 				}
 				selectedModel = tabbedPane.getSelectedIndex();
 			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBaseChangedListener#stateChanged(org.sbml.jsbml.SBaseChangedEvent)
-	 */
-	public void stateChanged(SBaseChangeEvent ev) {
-		if (!changed.contains(ev.getSource())) {
-			changed.add(ev.getSource());
 		}
 	}
 
@@ -385,7 +386,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return writer.writeSBML(object, filename, programName, versionNumber);
 	}
 
-	/**
+  /**
 	 * 
 	 * @param filename
 	 * @return
