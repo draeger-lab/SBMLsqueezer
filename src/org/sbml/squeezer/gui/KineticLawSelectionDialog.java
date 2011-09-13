@@ -157,8 +157,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		try {
 			// This thing is necessary for CellDesigner!
 			KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
-					sbmlIO, reactionID, new ProgressDialog(this,
-							"Saving changes"));
+					sbmlIO, reactionID);
 			pack();
 			setResizable(false);
 			setLocationRelativeTo(owner);
@@ -652,8 +651,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void storeKineticsInOriginalModel() {
 		try {
-			klg.storeKineticLaws(new ProgressDialog(this,
-							"Saving kinetic laws"));
+			klg.storeKineticLaws();
 			sbmlIO.saveChanges(new ProgressDialog(this,
 					"Saving changes to original model"));
 			SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),

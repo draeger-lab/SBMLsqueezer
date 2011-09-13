@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.util.EventListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -33,7 +35,6 @@ import javax.swing.JProgressBar;
 import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.util.IOProgressListener;
-import org.sbml.squeezer.LawListener;
 
 import de.zbit.gui.LayoutHelper;
 import de.zbit.util.StringUtil;
@@ -48,7 +49,7 @@ import de.zbit.util.StringUtil;
  * @version $Rev$
  */
 public class ProgressDialog extends JDialog implements IOProgressListener,
-		LawListener {
+		EventListener {
 
 	/**
 	 * 
