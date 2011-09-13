@@ -25,8 +25,6 @@ package org.sbml.squeezer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -60,7 +58,6 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Variable;
-import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.math.GaussianRank;
 import org.sbml.squeezer.util.ModelChangeListener;
@@ -676,15 +673,18 @@ public class KineticLawGenerator {
 	 * @param selectedModel
 	 */
 	@SuppressWarnings("deprecation")
-	private void removeUnnecessaryParameters(Model model, LawListener l) {
+	private void removeUnnecessaryParameters(Model model) {
 		boolean isNeeded;
-		int i, j, k, num = 0;
+		int i, j, k = 0;
+//TODO 	int num = 0;
 		Parameter p;
 		// remove unnecessary global parameters
+/* TODO
 		if(l != null){
 			l.initLawListener(Parameter.class.getSimpleName(), model
 					.getNumParameters());
-		}
+		}		
+*/
 		for (i = model.getNumParameters() - 1; i >= 0; i--) {
 			isNeeded = false;
 			p = model.getParameter(i);
@@ -798,16 +798,21 @@ public class KineticLawGenerator {
 			if (!isNeeded) { // is this parameter necessary at all?
 				model.getListOfParameters().remove(i);
 			}
+/*TODO
 			if(l != null){
 				l.currentState(p, ++num);
 			}
+*/
 		}
 		// remove unnecessary local parameters
+		
+/*TODO		
 		num = 0;
 		if(l != null){
 		l.initLawListener(Reaction.class.getSimpleName(), model
 				.getNumReactions());
 		}
+*/
 		for (i = 0; i < model.getNumReactions(); i++) {
 			Reaction r = model.getReaction(i);
 			if (r.isSetKineticLaw()) {
@@ -820,9 +825,11 @@ public class KineticLawGenerator {
 					}
 				}
 			}
+/*TODO
 			if(l != null){
 				l.currentState(r, ++num);
 			}
+*/
 		}
 	}
 
@@ -961,7 +968,7 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	private Reaction storeKineticLaw(KineticLaw kineticLaw,
-			boolean removeParametersAndStoreUnits, LawListener l) {
+			boolean removeParametersAndStoreUnits) {
 		int i;
 		boolean reversibility = prefs
 		.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
@@ -981,23 +988,26 @@ public class KineticLawGenerator {
 						SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE)
 						.toString()));
 		if (removeParametersAndStoreUnits) {
-			storeUnits(l);
+			storeUnits();
 			if (prefs
 					.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
-				removeUnnecessaryParameters(modelOrig, l);
+				removeUnnecessaryParameters(modelOrig);
 			}
 		}
-		storeParamters(reaction, l);
+		storeParamters(reaction);
 		if (removeParametersAndStoreUnits
 				&& prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
 			/*
 			 * delete unnecessary units.
 			 */
+			
+/*TODO
 			int num = 0;
 			if (l != null) {
 				l.initLawListener(UnitDefinition.class.getSimpleName(),
 						modelOrig.getNumUnitDefinitions());
 			}
+*/
 			for (int j = modelOrig.getNumUnitDefinitions() - 1; j >= 0; j--) {
 				UnitDefinition udef = modelOrig.getUnitDefinition(j);
 				boolean isNeeded = Unit.isPredefined(udef.getId(), udef
@@ -1036,9 +1046,11 @@ public class KineticLawGenerator {
 				if (!isNeeded) {
 					modelOrig.removeUnitDefinition(udef);
 				}
+/*TODO
 				if (l != null) {
 					l.currentState(udef, ++num);
 				}
+*/
 			}
 		}
 		return reaction;
@@ -1057,30 +1069,34 @@ public class KineticLawGenerator {
 	 *            reaction.
 	 * @param l
 	 */
-	public Reaction storeKineticLaw(KineticLaw kineticLaw, LawListener l) {
-		return storeKineticLaw(kineticLaw, true, l);
+	public Reaction storeKineticLaw(KineticLaw kineticLaw) {
+		return storeKineticLaw(kineticLaw, true);
 	}
 
 	/**
 	 * store the generated Kinetics in SBML-File as MathML.
 	 */
-	public void storeKineticLaws(LawListener l) {
+	public void storeKineticLaws() {
+/*TODO
 		if (l != null) {
 			l.initLawListener(Reaction.class.getSimpleName(), miniModel
 					.getNumReactions());
 		}
+*/
 		ModelChangeListener chl = new ModelChangeListener();
 		modelOrig.addTreeNodeChangeListener(chl);
 		for (int i = 0; i < miniModel.getNumReactions(); i++) {
 			Reaction r = miniModel.getReaction(i);
-			storeKineticLaw(r.getKineticLaw(), false, l);
+			storeKineticLaw(r.getKineticLaw(), false);
+/*TODO
 			if (l != null) {
 				l.currentState(r, i);
 			}
+*/
 		}
-		storeUnits(l);
+		storeUnits();
 		if (prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
-			removeUnnecessaryParameters(modelOrig, l);
+			removeUnnecessaryParameters(modelOrig);
 		}
 		modelOrig.removeTreeNodeChangeListener(chl);
 	}
@@ -1092,7 +1108,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @param reaction
 	 */
-	private void storeParamters(Reaction reaction, LawListener l) {
+	private void storeParamters(Reaction reaction) {
 		// setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
 		ListOf<LocalParameter> paramListLocal = kineticLaw
@@ -1122,12 +1138,14 @@ public class KineticLawGenerator {
 	 * 
 	 * @param l
 	 */
-	private void storeUnits(LawListener l) {
+	private void storeUnits() {
+/*TODO		
 		int num = 0;
 		if (l != null) {
 			l.initLawListener(UnitDefinition.class.getSimpleName(), miniModel
 					.getNumUnitDefinitions());
 		}
+*/
 		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
 			int units = ud.getNumUnits();
 			if (modelOrig.getUnitDefinition(ud.getId()) == null) {
@@ -1140,19 +1158,24 @@ public class KineticLawGenerator {
 					orig.setName(new String(ud.getName()));
 				}
 			}
+/*TODO
 			if (l != null) {
 				l.currentState(ud, ++num);
 			}
+*/
 			if (units != ud.getNumUnits()) {
 				System.err.println(ud.getId() + "\t" + units + "\t->\t"
 						+ ud.getNumUnits());
 			}
 		}
+		
+/*TODO
 		num = 0;
 		if (l != null) {
 			l.initLawListener(Compartment.class.getSimpleName(), miniModel
 					.getNumCompartments());
 		}
+*/
 		for (Compartment c : miniModel.getListOfCompartments()) {
 			Compartment corig = modelOrig.getCompartment(c.getId());
 			// if level > 1, set spatialDimension
@@ -1168,15 +1191,19 @@ public class KineticLawGenerator {
 				}
 			}
 			checkUnits(corig, modelOrig);
+/*TODO			
 			if (l != null) {
 				l.currentState(c, ++num);
 			}
+*/
 		}
+/*TODO
 		num = 0;
 		if (l != null) {
 			l.initLawListener(Species.class.getSimpleName(), miniModel
 					.getNumSpecies());
 		}
+*/
 		for (Species s : miniModel.getListOfSpecies()) {
 			Species sorig = modelOrig.getSpecies(s.getId());
 			// if level > 1, set hasOnlySubstanceUnits
@@ -1195,9 +1222,11 @@ public class KineticLawGenerator {
 				}
 			}
 			checkUnits(sorig, modelOrig);
+/*TODO
 			if (l != null) {
 				l.currentState(s, ++num);
 			}
+*/
 		}
 	}
 

@@ -88,7 +88,7 @@ import de.zbit.util.prefs.SBProperties;
  * @since 1.0
  * @version $Rev$
  */
-public class SBMLsqueezer implements LawListener, IOProgressListener {
+public class SBMLsqueezer implements IOProgressListener {
 	/**
 	 * 
 	 */
@@ -326,7 +326,6 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 	SBMLOutputConverter writer = null;
 	if (!libSBMLAvailable) {
 	    logger.log(Level.INFO, "Loading JSBML\n");
-	    // TODO
 	    reader = new SqSBMLReader() ;
 	    writer = new SqSBMLWriter() ;
 	} else {
@@ -478,31 +477,12 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 		update.execute();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.LawListener#currentState(org.sbml.jsbml.SBase,
-	 * int)
-	 */
-	public void currentState(SBase item, int num) {
-		// nothing to do.
-	}
-
 	/**
 	 * 
 	 * @return
 	 */
 	public SBMLio getSBMLIO() {
 		return sbmlIo;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.squeezer.LawListener#initLawListener(java.lang.String, int)
-	 */
-	public void initLawListener(String className, int numberOfElements) {
-		// nothing to do.
 	}
 
 	/*
@@ -595,7 +575,7 @@ public class SBMLsqueezer implements LawListener, IOProgressListener {
 						+ " fast reaction. This feature is currently"
 						+ "ignored by SBMLsqueezer.");
 			}
-			klg.storeKineticLaws(this);
+			klg.storeKineticLaws();
 			logger.info("    done in " + (System.currentTimeMillis() - time) + " ms");
 			time = System.currentTimeMillis();
 			logger.info("Saving changes and writing SBML file... ");

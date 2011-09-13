@@ -40,7 +40,6 @@ import javax.swing.UIManager;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.LawListener;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 
@@ -68,7 +67,6 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	private Reaction reaction;
 	private SBPreferences prefs;
 	private int value;
-	private LawListener lawListener;
 
 	/**
 	 * 
@@ -78,7 +76,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 * @param reactionID
 	 * @throws Throwable
 	 */
-	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID, LawListener l) throws Throwable {
+	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID) throws Throwable {
 		super();
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.value = JOptionPane.CLOSED_OPTION;
@@ -86,7 +84,6 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		this.sbmlio = sbmlIO;
 		this.gotFocus = false;
 		this.KineticsAndParametersStoredInSBML = false;
-		this.lawListener = l;
 
 		Model model = sbmlIO.getSelectedModel();
 		reaction = model.getReaction(reactionID);
@@ -166,8 +163,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 					Boolean.valueOf(messagePanel.getReversible()));
 			try {
 				klg.storeKineticLaw(klg.createKineticLaw(reaction,
-						equationType, messagePanel.getReversible()),
-						lawListener);
+						equationType, messagePanel.getReversible()));
 				sbmlio.saveChanges(reaction);
 			} catch (Throwable e1) {
 				e1.printStackTrace();
