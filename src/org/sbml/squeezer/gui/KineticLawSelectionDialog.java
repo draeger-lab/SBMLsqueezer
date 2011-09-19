@@ -52,18 +52,19 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
@@ -71,9 +72,12 @@ import org.sbml.tolatex.io.TextExport;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.LayoutHelper;
+import de.zbit.gui.ProgressBarSwing;
+import de.zbit.gui.StatusBar;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.gui.prefs.MultiplePreferencesPanel;
 import de.zbit.io.SBFileFilter;
+import de.zbit.util.AbstractProgressBar;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -118,15 +122,19 @@ public class KineticLawSelectionDialog extends JDialog implements
 	
 	SBPreferences prefs;
 
+	private StatusBar statusBar;
+
 	/**
 	 * Creates an empty dialog with the given settings and sbml io object.
 	 * 
 	 * @param owner
+	 * @param progressListener 
 	 */
-	private KineticLawSelectionDialog(Frame owner) {
+	private KineticLawSelectionDialog(Frame owner, StatusBar statusBar) {
 		super(owner, "SBMLsqueezer", true);
 		// if (owner == null)
 		// setIconImage(GUITools.ICON_LEMON);
+		this.statusBar = statusBar;
 		this.sbmlIO = null;
 		this.prefs = new SBPreferences(SqueezerOptions.class);
 		// setAlwaysOnTop(true);
@@ -139,8 +147,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param owner
 	 * @param sbmlIO
 	 */
-	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO) {
-		this(owner);
+	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, StatusBar statusBar) {
+		this(owner, statusBar);
 		this.sbmlIO = sbmlIO;
 		init();
 	}
@@ -152,8 +160,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param sbmlIO
 	 * @param reaction
 	 */
-	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID) {
-		this(owner);
+	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID, StatusBar statusBar) {
+		this(owner, statusBar);
 		try {
 			// This thing is necessary for CellDesigner!
 			KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
@@ -205,14 +213,17 @@ public class KineticLawSelectionDialog extends JDialog implements
 				setLocationRelativeTo(null);
 
 			} else if (text.equals("Generate")) {
-				if (sbmlIO != null)
+
+				if (sbmlIO != null){//TODO
 					new Thread(new Runnable() {
 						public void run() {
 							generateKineticLaws();
 						}
 					}).start();
-				else
+				}
+				else {
 					klg = null;
+				}
 
 			} else if (text.equals("Back")) {
 				getContentPane().remove(footPanel);
@@ -312,6 +323,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void generateKineticLaws() {
 		try {
+			
 			showSettingsPanel(false);
 			options.setEnabled(false);
 			GUITools.setAllEnabled(footPanel, false);
@@ -322,6 +334,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 			prefs.flush();
 			Model model = sbmlIO.getSelectedModel();
 			klg = new KineticLawGenerator(model);
+			//TODO
+			AbstractProgressBar progressBar = statusBar.showProgress();
+			klg.setProgressBar(progressBar);
+			
 			if (klg.getFastReactions().size() > 0) {
 				StringBuilder message = new StringBuilder();
 				message.append("The model contains ");
@@ -611,7 +627,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 	public boolean isKineticsAndParametersStoredInSBML() {
 		return KineticsAndParametersStoredInSBML;
 	}
-
+	
 	/**
 	 * 
 	 * @param show
@@ -650,17 +666,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * 
 	 */
 	private void storeKineticsInOriginalModel() {
-		try {
-			klg.storeKineticLaws();
-			sbmlIO.saveChanges(new ProgressDialog(this,
-					"Saving changes to original model"));
-			SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
-					sbmlIO.getWriteWarnings(), prefs
-							.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
-			KineticsAndParametersStoredInSBML = true;
-		} catch (SBMLException exc) {
-			GUITools.showErrorMessage(this, exc);
-		}
+		klg.storeKineticLaws();
+		SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
+				sbmlIO.getWriteWarnings(), prefs
+						.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
+		KineticsAndParametersStoredInSBML = true;
 	}
 
 	/*

@@ -43,6 +43,8 @@ import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.SBMLsqueezer;
 
+import de.zbit.util.AbstractProgressBar;
+
 /**
  * A manager class for reading and writing models from some source into JSBML
  * data objects and to synchronize the model with the original data structure
@@ -75,6 +77,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	private int selectedModel;
 
 	private SBMLOutputConverter writer;
+	
+	protected AbstractProgressBar progress;
 
 	/**
 	 * 

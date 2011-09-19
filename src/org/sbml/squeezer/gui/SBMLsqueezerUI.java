@@ -32,13 +32,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
@@ -54,16 +51,13 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.tree.TreeNode;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
-import org.sbml.squeezer.util.ModelChangeListener;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.gui.LaTeXExportDialog;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
@@ -267,8 +261,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		super();
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.sbmlIO = io;
-		this.sbmlIO.addIOProgressListener(new ProgressDialog(this,
-				"SBML IO progress"));
 		setEnabled(false, Command.SQUEEZE, Command.TO_LATEX,
 				Command.CHECK_STABILITY, Command.STRUCTURAL_KINETIC_MODELLING,
 				Command.SIMULATE);
@@ -293,14 +285,17 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
 		case SQUEEZE:
+			this.statusBar.reset();
+			//TODO: change ProgressDialog 
 			KineticLawSelectionDialog klsd;
+			//TODO
 			if (e.getSource() instanceof Reaction) {
 				// just one reaction
 				klsd = new KineticLawSelectionDialog(this, sbmlIO,
-						((Reaction) e.getSource()).getId());
+						((Reaction) e.getSource()).getId(), statusBar);
 			} else {
 				// whole model
-				klsd = new KineticLawSelectionDialog(this, sbmlIO);
+				klsd = new KineticLawSelectionDialog(this, sbmlIO, statusBar);
 				klsd.addWindowListener(this);
 				klsd.setVisible(true);
 			}
