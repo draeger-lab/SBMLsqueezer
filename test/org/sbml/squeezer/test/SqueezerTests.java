@@ -196,7 +196,7 @@ public class SqueezerTests extends TestCase{
 						"           store kinetic laws (model)"+
 				"\n----------------------------------------------");
 				try {
-					klg.storeKineticLaws(squeezer);
+					klg.storeKineticLaws();
 					squeezer.getSBMLIO().saveChanges(squeezer);
 				} catch (Exception e) {
 					logger.log(Level.WARNING, "failed to store kinetic laws: ", e);
@@ -236,7 +236,7 @@ public class SqueezerTests extends TestCase{
 						"           store kinetic laws (reactions)"+
 				"\n----------------------------------------------");
 				try {
-					klg.storeKineticLaws(squeezer);
+					klg.storeKineticLaws();
 					squeezer.getSBMLIO().saveChanges(squeezer);
 				} catch (Exception e) {
 					logger.log(Level.WARNING, "failed to store kinetic laws: ", e);

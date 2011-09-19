@@ -42,7 +42,9 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.util.ProgressAdapter;
 
+import de.zbit.util.ProgressListener;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -74,6 +76,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 * @param settings
 	 * @param sbmlIO
 	 * @param reactionID
+	 * @param progressListener 
 	 * @throws Throwable
 	 */
 	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID) throws Throwable {
