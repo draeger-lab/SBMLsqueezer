@@ -25,7 +25,6 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
@@ -33,7 +32,6 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;

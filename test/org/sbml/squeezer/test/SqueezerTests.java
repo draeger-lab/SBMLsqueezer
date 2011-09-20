@@ -180,6 +180,7 @@ public class SqueezerTests extends TestCase{
 							"           KineticLawGenerator for a model"+
 					"\n----------------------------------------------");
 					klg = new KineticLawGenerator(squeezer.getSBMLIO().getSelectedModel());
+					klg.generateLaws();
 				} catch (Throwable e) {
 					logger.log(Level.WARNING, "failed to generate kinetic equations: ", e);
 					failed = true;

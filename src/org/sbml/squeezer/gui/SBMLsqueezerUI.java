@@ -285,10 +285,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
 		case SQUEEZE:
-			this.statusBar.reset();
-			//TODO: change ProgressDialog 
+			statusBar = initializeStatusBar();
+			statusBar.hideProgress();
 			KineticLawSelectionDialog klsd;
-			//TODO
 			if (e.getSource() instanceof Reaction) {
 				// just one reaction
 				klsd = new KineticLawSelectionDialog(this, sbmlIO,

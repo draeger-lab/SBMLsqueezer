@@ -41,6 +41,8 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -52,7 +54,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -64,7 +65,6 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
-import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
@@ -72,7 +72,6 @@ import org.sbml.tolatex.io.TextExport;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.LayoutHelper;
-import de.zbit.gui.ProgressBarSwing;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.gui.prefs.MultiplePreferencesPanel;
@@ -111,6 +110,11 @@ public class KineticLawSelectionDialog extends JDialog implements
 	private boolean KineticsAndParametersStoredInSBML = false;
 
 	private KineticLawGenerator klg;
+	
+	/**
+	 * 
+	 */
+	private final Logger logger = Logger.getLogger(KineticLawSelectionDialog.class.getName());
 
 	private int numOfWarnings = 0;
 
@@ -160,19 +164,37 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 * @param sbmlIO
 	 * @param reaction
 	 */
-	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID, StatusBar statusBar) {
+	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID, final StatusBar statusBar) {
 		this(owner, statusBar);
+		
 		try {
+			
 			// This thing is necessary for CellDesigner!
-			KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
+			final KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
 					sbmlIO, reactionID);
 			pack();
 			setResizable(false);
 			setLocationRelativeTo(owner);
 			setVisible(true);
-			KineticsAndParametersStoredInSBML = adapter
+			
+			
+			
+			new Thread(new Runnable() {
+				public void run() {
+					AbstractProgressBar progressBar = statusBar.showProgress();
+					adapter.showProgress(progressBar);
+					KineticsAndParametersStoredInSBML = adapter
 					.isKineticsAndParametersStoredInSBML();
-			dispose();
+					dispose();
+					statusBar.hideProgress();
+					logger.log(Level.INFO, "Ready.");
+				}
+			}).start();
+			
+			
+			
+			
+			
 		} catch (Throwable exc) {
 			GUITools.showErrorMessage(this, exc);
 		}
@@ -205,6 +227,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 			} else if (text.equals("Cancel")) {
 				dispose();
+				statusBar.hideProgress();
+				logger.log(Level.INFO, "Ready.");
 				klg = null;
 			} else if (text.equals("Restore")) {
 				settingsPanel.restoreDefaults();
@@ -213,13 +237,15 @@ public class KineticLawSelectionDialog extends JDialog implements
 				setLocationRelativeTo(null);
 
 			} else if (text.equals("Generate")) {
-
-				if (sbmlIO != null){//TODO
+				
+				if (sbmlIO != null){
+					
 					new Thread(new Runnable() {
 						public void run() {
 							generateKineticLaws();
 						}
 					}).start();
+					
 				}
 				else {
 					klg = null;
@@ -252,6 +278,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 						setVisible(false);
 						storeKineticsInOriginalModel();
 						dispose();
+						statusBar.hideProgress();
+						logger.log(Level.INFO, "Ready.");
 					}
 				}).start();
 			}
@@ -334,7 +362,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 			prefs.flush();
 			Model model = sbmlIO.getSelectedModel();
 			klg = new KineticLawGenerator(model);
-			//TODO
+			klg.generateLaws();
 			AbstractProgressBar progressBar = statusBar.showProgress();
 			klg.setProgressBar(progressBar);
 			
@@ -405,6 +433,8 @@ public class KineticLawSelectionDialog extends JDialog implements
 				});
 				d.setVisible(true);
 				d.dispose();
+				statusBar.hideProgress();
+				logger.log(Level.INFO, "Ready.");
 				// JOptionPane.showMessageDialog(null, GUITools.toHTML(message
 				// .toString(), 40), "Fast Reactions",
 				// JOptionPane.WARNING_MESSAGE);

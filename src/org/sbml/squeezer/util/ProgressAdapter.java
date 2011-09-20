@@ -59,7 +59,7 @@ public class ProgressAdapter {
 		if (numberOfTotalCalls > 0) {
 			callNr++;
 			double curPercent = ((double) 100 * callNr) / numberOfTotalCalls;
-			if(percent < curPercent){
+			if((percent < curPercent) && (curPercent <= 100)){
 				percent = curPercent;
 			}
 			double remainingTime = 100 * ((System.currentTimeMillis()-startTime)/percent);
@@ -87,20 +87,15 @@ public class ProgressAdapter {
 			numberOfTotalCalls += miniModel.getNumUnitDefinitions() + 
 			miniModel.getNumCompartments() + 
 			miniModel.getNumSpecies();	
+			// storeParameters loops
+			numberOfTotalCalls += miniModel.getNumParameters();
 			if(prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
 				// storekineticLaw loops
-				numberOfTotalCalls += modelOrig.getNumUnitDefinitions() * 
-				(	modelOrig.getNumReactions() +
-						modelOrig.getNumParameters() + 
-						modelOrig.getNumSpecies() + 
-						modelOrig.getNumCompartments()	);
-
+				numberOfTotalCalls += modelOrig.getNumUnitDefinitions();
 				// removeUnnecessaryParameters loops
 				numberOfTotalCalls += modelOrig.getNumParameters() + 
 				modelOrig.getNumReactions();			
 			}
-			// storeParameters loops
-			numberOfTotalCalls += miniModel.getNumParameters();
 			break;
 		case storeKineticLaws:	
 			numberOfTotalCalls = 0;

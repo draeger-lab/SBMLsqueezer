@@ -104,7 +104,7 @@ public class ASTNodePanel extends JPanel {
 		editor.setBorder(BorderFactory.createLoweredBevelBorder());
 		lh.add("Parent SBML object", editor, true);
 
-		tf = new JTextField(Integer.toString(node.getNumChildren()));
+		tf = new JTextField(Integer.toString(node.getChildCount()));
 		tf.setEditable(false);
 		lh.add("Number of children", tf, true);
 
