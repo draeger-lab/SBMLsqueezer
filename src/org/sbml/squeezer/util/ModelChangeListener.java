@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 import javax.swing.tree.TreeNode;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 
-import de.zbit.gui.BaseFrame;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -46,21 +45,21 @@ public class ModelChangeListener implements TreeNodeChangeListener {
 	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)
 	 */
 	public void nodeAdded(TreeNode node) {
-		logger.log(Level.INFO, "[ADD] " + node.toString());
+		logger.log(Level.FINE, "[ADD] " + node.toString());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
 	 */
 	public void nodeRemoved(TreeNode node) {
-		logger.log(Level.INFO, "[DEL] " + node.toString());
+		logger.log(Level.FINE, "[DEL] " + node.toString());
 	}
 
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		logger.log(Level.INFO, "[CHG] " + event.toString());    
+		logger.log(Level.FINE, "[CHG] " + event.toString());    
 	}
 
 }

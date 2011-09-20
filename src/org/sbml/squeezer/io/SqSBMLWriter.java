@@ -31,27 +31,12 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.sbml.jsbml.AlgebraicRule;
-import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.CompartmentType;
-import org.sbml.jsbml.Constraint;
-import org.sbml.jsbml.Event;
-import org.sbml.jsbml.ExplicitRule;
-import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.Species;
-import org.sbml.jsbml.SpeciesType;
-import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.IOProgressListener;
 
 /**
@@ -62,7 +47,6 @@ import org.sbml.jsbml.util.IOProgressListener;
  * @since 1.4
  * @version $Rev$
  */
-@SuppressWarnings("deprecation")
 public class SqSBMLWriter implements SBMLOutputConverter{
 
 	private Set<IOProgressListener> setOfIOListeners = new HashSet<IOProgressListener>();

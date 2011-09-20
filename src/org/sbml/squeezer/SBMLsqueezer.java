@@ -41,7 +41,6 @@ import java.util.prefs.BackingStoreException;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
@@ -564,20 +563,13 @@ public class SBMLsqueezer implements IOProgressListener {
 		if (errorFatal)
 			throw new SBMLException(exception);
 		else if (!sbmlIo.getListOfModels().isEmpty()) {
-			long time = System.currentTimeMillis();
-			logger.info("Generating kinetic equations...");
 			
 			KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
 					.getSelectedModel());
-			if (klg.getFastReactions().size() > 0) {
-				logger.log(Level.FINE, "Model " + sbmlIo.getSelectedModel().getId()
-						+ " contains " + klg.getFastReactions().size()
-						+ " fast reaction. This feature is currently"
-						+ "ignored by SBMLsqueezer.");
-			}
+			klg.generateLaws();
+			
 			klg.storeKineticLaws();
-			logger.info("    done in " + (System.currentTimeMillis() - time) + " ms");
-			time = System.currentTimeMillis();
+			long time = System.currentTimeMillis();
 			logger.info("Saving changes and writing SBML file... ");
 			sbmlIo.saveChanges(this);
 			if ((outFile != null)
