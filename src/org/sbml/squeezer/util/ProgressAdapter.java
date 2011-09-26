@@ -23,7 +23,11 @@
  */
 package org.sbml.squeezer.util;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.sbml.jsbml.Model;
+import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptions;
 
 import de.zbit.util.AbstractProgressBar;
@@ -45,15 +49,20 @@ public class ProgressAdapter {
 		/**
 		 * store all kinetic Laws of a Model
 		 */
-		storeKineticLaws;
+		storeKineticLaws,
+		/**
+		 * generate kinetic Laws
+		 */
+		generateLaws;
 	}
 
-	private long startTime = System.currentTimeMillis();
+	private long startTime = 0;
 	private int numberOfTotalCalls = 0;
 	private int callNr = 0;
 	private double percent = 0;
 	AbstractProgressBar progressBar;
 	TypeOfProgress progressType;
+	private final Logger logger = Logger.getLogger(ProgressAdapter.class.getName());
 
 	public void progressOn() {
 		if (numberOfTotalCalls > 0) {
@@ -73,13 +82,31 @@ public class ProgressAdapter {
 	public ProgressAdapter(AbstractProgressBar progressBar, TypeOfProgress progressType) {
 		this.progressBar = progressBar;
 		this.progressType = progressType;
+		
+		startTime = System.currentTimeMillis();
+		switch(progressType){
+		case storeKineticLaw:
+			logger.log(Level.INFO, "Store kinetic equation...");
+			break;
+		case storeKineticLaws:	
+			logger.log(Level.INFO, "Store kinetic equations...");
+			break;
+		case generateLaws:
+			logger.log(Level.INFO, "Generate kinetic equation...");
+			break;
+		}
 	}
 	
 	public void finished(){
 		this.progressBar.finished();
+		
+		logger.info("    done in " + (System.currentTimeMillis() - startTime) + " ms");
+		
+		logger.log(Level.INFO, "Ready.");
 	}
-
-	public void setNumberofTags(Model modelOrig, Model miniModel, SBPreferences prefs){
+	
+	
+	public void setNumberOfTags(Model modelOrig, Model miniModel, SBPreferences prefs){
 		switch(progressType){
 		case storeKineticLaw:
 			numberOfTotalCalls = 0;
@@ -111,6 +138,10 @@ public class ProgressAdapter {
 				numberOfTotalCalls += modelOrig.getNumParameters() + 
 				modelOrig.getNumReactions();			
 			}
+			break;
+		case generateLaws:
+			numberOfTotalCalls = 0;
+			numberOfTotalCalls += (2 * miniModel.getNumReactions());
 			break;
 		}
 	}
