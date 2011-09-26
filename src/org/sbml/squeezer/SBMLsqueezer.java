@@ -338,12 +338,11 @@ public class SBMLsqueezer implements IOProgressListener {
 		final SBProperties p = SBPreferences.analyzeCommandLineArguments(getListOfCommandLineOptions(), args);
 		for (Class<? extends KeyProvider> keyProvider : getListOfCommandLineOptions()) {
 			SBPreferences prefs = keyProvider != SqueezerOptions.class ? SBPreferences
-					.getPreferencesFor(keyProvider)
-					: preferences;
+					.getPreferencesFor(keyProvider) : preferences;
 			for (Object key : p.keySet()) {
-				if (KeyProvider.Tools.providesOption(keyProvider, key
-						.toString()))
+				if (KeyProvider.Tools.providesOption(keyProvider, key.toString())) {
 					prefs.put(key, p.get(key));
+				}
 			}
 			try {
 				prefs.flush();
@@ -388,18 +387,6 @@ public class SBMLsqueezer implements IOProgressListener {
 				}
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * @param keys
-	 * @param properties
-	 * @throws BackingStoreException
-	 */
-	public static void saveProperties(SBProperties properties)
-			throws BackingStoreException {
-		preferences.putAll(properties);
-		preferences.flush();
 	}
 
 	/**
@@ -490,8 +477,9 @@ public class SBMLsqueezer implements IOProgressListener {
 	 * @see org.sbml.jsbml.io.IOProgressListener#progress(java.lang.Object)
 	 */
 	public void ioProgressOn(Object currObject) {
-		if (currObject != null)
+		if (currObject != null) {
 			logger.info(currObject.toString());
+		}
 	}
 
 	/**
@@ -520,21 +508,21 @@ public class SBMLsqueezer implements IOProgressListener {
 		gui.setVisible(true);
 	}
 
-	/**
-	 * Shows the simulation GUI.
-	 */
-	public void showGUISimulation() {
-		// TODO: Not in this version
-		// SBProperties properties = configuration.getProperties();
-		//SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo);
-		// if (properties.get(CfgKeys.CSV_FILE).toString().length() > 0) {
-		// // gui.showSimulationControl(true, settings.get(CfgKeys.CSV_FILE)
-		// // .toString());
-		// } else {
-		// // gui.showSimulationControl(true);
-		// }
-		showGUI();
-	}
+//	/**
+//	 * Shows the simulation GUI.
+//	 */
+//	public void showGUISimulation() {
+//		 TODO: Not in this version
+//		 SBProperties properties = configuration.getProperties();
+//		SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo);
+//		 if (properties.get(CfgKeys.CSV_FILE).toString().length() > 0) {
+//		 // gui.showSimulationControl(true, settings.get(CfgKeys.CSV_FILE)
+//		 // .toString());
+//		 } else {
+//		 // gui.showSimulationControl(true);
+//		 }
+//		showGUI();
+//	}
 
 	/**
 	 * Reads in the given SBML file, squeezes kinetic equations in and writes
@@ -658,6 +646,6 @@ public class SBMLsqueezer implements IOProgressListener {
 	 * 
 	 */
 	public static URL getURLOnlineUpdate() throws MalformedURLException {
-		return new URL("http://www.ra.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/");
+		return new URL("http://www.cogsys.cs.uni-tuebingen.de/software/SBMLsqueezer/downloads/");
 	}
 }

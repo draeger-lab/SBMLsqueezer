@@ -95,13 +95,13 @@ public class SqSBMLReader implements SBMLInputConverter {
 			org.sbml.jsbml.SBMLDocument doc = model2SBML(model.toString());
 			// construct and return model
 			return readModelFromSBML(doc);
-		}else if(model instanceof org.sbml.jsbml.Model){
+		} else if (model instanceof org.sbml.jsbml.Model){
 			// JSBML model given; return model
 			return (org.sbml.jsbml.Model) model;
-		}else if(model instanceof org.sbml.jsbml.SBMLDocument){
+		} else if (model instanceof org.sbml.jsbml.SBMLDocument){
 			// SBMLDocument given; construct and return model
 			return readModelFromSBML((org.sbml.jsbml.SBMLDocument) model);
-		}else{
+		} else {
 			throw new IllegalArgumentException("model must be an instance of java.lang.String, org.sbml.jsbml.Model or org.sbml.jsbml.SBMLDocument");
 		}
 	}
@@ -120,7 +120,7 @@ public class SqSBMLReader implements SBMLInputConverter {
 		if (!file.exists() || !file.isFile() || !file.canRead()) {
 			// XML
 			doc = SBMLReader.read((String) model);
-		}else{
+		} else {
 			// File name
 			doc = SBMLReader.read(file);
 		}
@@ -137,10 +137,12 @@ public class SqSBMLReader implements SBMLInputConverter {
 	private Model readModelFromSBML(SBMLDocument sbmldoc) {
 		// set original model
 		this.originalModel = sbmldoc.getModel();
-		// copy the original model to working copy
-		this.model = new Model(originalModel);
+		// We can directly work with the original model, no copy needed here:
+		this.model = this.originalModel;
 		// add all SBaseChangeListeners to model
-		this.model.addAllChangeListeners(listOfTreeNodeChangeListeners);
+    if (model != null) {
+      this.model.addAllChangeListeners(listOfTreeNodeChangeListeners);
+    }
 		// return working copy
 		return this.model;
 	}
