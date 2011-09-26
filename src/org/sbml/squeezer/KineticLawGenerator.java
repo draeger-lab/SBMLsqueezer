@@ -346,9 +346,10 @@ public class KineticLawGenerator {
 			reaction = r;
 		reaction.setReversible(reversibility || reaction.getReversible());
 		try {
-			if (!kineticsClassName.startsWith(SBMLsqueezer.KINETICS_PACKAGE))
+			if (!kineticsClassName.startsWith(SBMLsqueezer.KINETICS_PACKAGE)){
 				kineticsClassName = SBMLsqueezer.KINETICS_PACKAGE + '.'
 				+ kineticsClassName;
+			}
 			Class<?> kinCls = Class.forName(kineticsClassName);
 			Object typeParameters[] = new Object[] {
 					prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION),
@@ -502,11 +503,34 @@ public class KineticLawGenerator {
 	 * @throws Throwable
 	 */
 	public void generateLaws() throws Throwable {
+		
+		if(progressBar != null){
+			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.generateLaws);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+		}
+		
 		boolean reversibility = prefs
 		.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
 		for (Reaction r : miniModel.getListOfReactions()) {
 			ReactionType rt = new ReactionType(r);
-			createKineticLaw(r, rt.identifyPossibleKineticLaw(), reversibility);
+			
+			String kineticsClassName = rt.identifyPossibleKineticLaw();
+			
+			if(progressAdapter != null){
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+				progressAdapter.progressOn();
+			}
+			
+			createKineticLaw(r, kineticsClassName, reversibility);
+			
+			if(progressAdapter != null){
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+				progressAdapter.progressOn();
+			}
+		}
+		
+		if(progressAdapter != null){
+			progressAdapter.finished();
 		}
 	}
 
@@ -1053,12 +1077,10 @@ public class KineticLawGenerator {
 	 * @param l
 	 */
 	public Reaction storeKineticLaw(KineticLaw kineticLaw) {
-		long time = System.currentTimeMillis();
-		logger.log(Level.INFO, "Generate kinetic equation...");
 		
 		if(progressBar != null){
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaw);
-			progressAdapter.setNumberofTags(modelOrig, miniModel, prefs);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 		}
 		
 		Reaction r =  storeKineticLaw(kineticLaw, true);
@@ -1067,7 +1089,6 @@ public class KineticLawGenerator {
 			progressAdapter.finished();
 		}
 		
-		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms");
 		return r;
 	}
 
@@ -1075,8 +1096,6 @@ public class KineticLawGenerator {
 	 * store the generated Kinetics in SBML-File as MathML.
 	 */
 	public void storeKineticLaws() {
-		long time = System.currentTimeMillis();
-		logger.log(Level.INFO, "Generate kinetic equations...");
 		
 		if (getFastReactions().size() > 0) {
 			logger.log(Level.FINE, "Model " + modelOrig.getId()
@@ -1087,7 +1106,7 @@ public class KineticLawGenerator {
 		
 		if(progressBar != null){
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaws);
-			progressAdapter.setNumberofTags(modelOrig, miniModel, prefs);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 		}
 
 		ModelChangeListener chl = new ModelChangeListener();
@@ -1107,8 +1126,6 @@ public class KineticLawGenerator {
 		if(progressAdapter != null){
 			progressAdapter.finished();
 		}
-		
-		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms");
 	}
 
 	/**
@@ -1143,7 +1160,7 @@ public class KineticLawGenerator {
 		}
 		kineticLaw.getMath().updateVariables();
 		if(progressAdapter != null){
-			progressAdapter.setNumberofTags(modelOrig, miniModel, prefs);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 			progressAdapter.progressOn();
 		}
 	}
@@ -1154,7 +1171,6 @@ public class KineticLawGenerator {
 	 * @param l
 	 */
 	private void storeUnits() {
-
 		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
 			int units = ud.getNumUnits();
 			if (modelOrig.getUnitDefinition(ud.getId()) == null) {
@@ -1168,11 +1184,11 @@ public class KineticLawGenerator {
 				}
 			}
 			if(progressAdapter != null){
-				progressAdapter.setNumberofTags(modelOrig, miniModel, prefs);
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 				progressAdapter.progressOn();
 			}
 			if (units != ud.getNumUnits()) {
-				System.err.println(ud.getId() + "\t" + units + "\t->\t"
+				logger.log(Level.WARNING, ud.getId() + "\t" + units + "\t->\t"
 						+ ud.getNumUnits());
 			}
 		}
@@ -1193,7 +1209,7 @@ public class KineticLawGenerator {
 			}
 			checkUnits(corig, modelOrig);
 			if(progressAdapter != null){
-				progressAdapter.setNumberofTags(modelOrig, miniModel, prefs);
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 				progressAdapter.progressOn();
 			}
 		}
@@ -1218,7 +1234,7 @@ public class KineticLawGenerator {
 			checkUnits(sorig, modelOrig);
 			
 			if(progressAdapter != null){
-				progressAdapter.setNumberofTags(modelOrig, miniModel, prefs);
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 				progressAdapter.progressOn();
 			}
 		}
