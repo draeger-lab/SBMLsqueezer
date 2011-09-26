@@ -1186,7 +1186,7 @@ public class KineticLawGenerator {
 			}
 			if (c.isSetUnits()) {
 				if (Unit.isUnitKind(c.getUnits(), c.getLevel(), c.getVersion())) {
-					corig.setUnits(Unit.Kind.valueOf(c.getUnits()));
+					corig.setUnits(Unit.Kind.valueOf(c.getUnits().toUpperCase()));
 				} else {
 					corig.setUnits(modelOrig.getUnitDefinition(c.getUnits()));
 				}
@@ -1209,7 +1209,7 @@ public class KineticLawGenerator {
 				if (Unit.isUnitKind(s.getSubstanceUnits(), s.getLevel(), s
 						.getVersion())) {
 					sorig.setSubstanceUnits(Unit.Kind.valueOf(s
-							.getSubstanceUnits()));
+							.getSubstanceUnits().toUpperCase()));
 				} else {
 					sorig.setSubstanceUnits(modelOrig.getUnitDefinition(s
 							.getSubstanceUnits()));
