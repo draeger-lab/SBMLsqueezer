@@ -437,6 +437,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	void readModel(File file) {
 		try {
+			// TODO: initialize statusBar and hide it again
 			Model model = sbmlIO.convertModel(file.getAbsolutePath());
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(), prefs
 					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
