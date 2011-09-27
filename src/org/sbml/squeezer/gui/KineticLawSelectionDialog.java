@@ -154,6 +154,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 		this(owner);
 		this.sbmlIO = sbmlIO;
 		init();
+		// get new statusbar and limit the log message length
+		statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
+		statusBar.limitLogMessageLength(this.getWidth()-130);
 	}
 
 	/**
@@ -176,7 +179,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 			setLocationRelativeTo(owner);
 			setVisible(true);
 			
-			
+			// get new statusbar and limit the log message length
+			statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
+			statusBar.limitLogMessageLength(this.getWidth()-130);
 			
 			new Thread(new Runnable() {
 				public void run() {
@@ -186,6 +191,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 					.isKineticsAndParametersStoredInSBML();
 					dispose();
 					statusBar.hideProgress();
+					statusBar.unsetLogMessageLimit();
 					logger.log(Level.INFO, "Ready.");
 				}
 			}).start();
@@ -226,7 +232,6 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 			} else if (text.equals("Cancel")) {
 				dispose();
-				statusBar.hideProgress();
 				logger.log(Level.INFO, "Ready.");
 				klg = null;
 			} else if (text.equals("Restore")) {
@@ -236,6 +241,10 @@ public class KineticLawSelectionDialog extends JDialog implements
 				setLocationRelativeTo(null);
 
 			} else if (text.equals("Generate")) {
+				// show statusBar for the law generation, generate kinetic laws
+				// get new statusbar and limit the log message length
+				statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
+				statusBar.limitLogMessageLength(this.getWidth()-130);
 				
 				if (sbmlIO != null){
 					
@@ -278,6 +287,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						storeKineticsInOriginalModel();
 						dispose();
 						statusBar.hideProgress();
+						statusBar.unsetLogMessageLimit();
 						logger.log(Level.INFO, "Ready.");
 					}
 				}).start();
@@ -362,12 +372,13 @@ public class KineticLawSelectionDialog extends JDialog implements
 			
 			klg = new KineticLawGenerator(model);
 			
-			// show statusBar for the law generation, generate kinetic laws
-			statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
 			AbstractProgressBar progressBar = statusBar.showProgress();
+			
 			klg.setProgressBar(progressBar);
 			klg.generateLaws();
+			//TODO: is this needed?
 			statusBar.hideProgress();
+			statusBar.unsetLogMessageLimit();
 			
 			if (klg.getFastReactions().size() > 0) {
 				StringBuilder message = new StringBuilder();
@@ -700,7 +711,9 @@ public class KineticLawSelectionDialog extends JDialog implements
 	 */
 	private void storeKineticsInOriginalModel() {
 		// show statusBar for the synchronization
+		// get new statusbar and limit the log message length
 		statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
+		statusBar.limitLogMessageLength(this.getWidth()-130);
 		AbstractProgressBar progressBar = statusBar.showProgress();
 		klg.setProgressBar(progressBar);
 		
@@ -711,6 +724,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		KineticsAndParametersStoredInSBML = true;
 		
 		statusBar.hideProgress();
+		statusBar.unsetLogMessageLimit();
 	}
 
 	/*
