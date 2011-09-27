@@ -37,7 +37,6 @@ import de.zbit.util.prefs.SBPreferences;
 public class SqueezerTests extends TestCase{
 
 	private String testPath = System.getProperty("user.dir") + "/files/tests/SBML_test_cases/cases/semantic/001-100";
-
 	//String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15";
 	//private String testPath = System.getProperty("user.home") + "/workspace/SBMLsimulatorCore/files/SBML_test_cases/cases/semantic/00001";
 	/**
@@ -54,7 +53,7 @@ public class SqueezerTests extends TestCase{
 	 * If set to false, the testing will be aborted as soon as a test fails. if the output file
 	 * has already been written, it will not be deleted! 
 	 */
-	private boolean continueAfterError = true;
+	private boolean continueAfterError = false;
 
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
 
@@ -363,24 +362,6 @@ public class SqueezerTests extends TestCase{
 			}
 			fail();
 		}
-		
-		
-		/*
-		//time = System.currentTimeMillis();
-		logger.info("test squeezer.");
-		for(File file : listOfFiles) {
-			// test models
-			try {
-				logger.info("(squeeze file): " + file.getAbsolutePath());
-				squeezer.squeeze(file.getAbsolutePath(), System.getProperty("user.home") + "/test.xml");
-
-			} catch (Throwable e) {
-				logger.log(Level.WARNING, file.getAbsolutePath(), e);
-				fail();
-			}
-		}
-		//logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
-		 */
 
 	}
 
@@ -436,6 +417,59 @@ public class SqueezerTests extends TestCase{
 		}
 		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
 
+	}
+	
+	public void testProgramLineSqueezing(){
+		
+		long time = System.currentTimeMillis();
+		logger.info("Generate SBMLreader and SBMLwriter.");
+		boolean libSBMLAvailable = false;
+		try {
+			// In order to initialize libSBML, check the java.library.path.
+			System.loadLibrary("sbmlj");
+			// Extra check to be sure we have access to libSBML:
+			Class.forName("org.sbml.libsbml.libsbml");
+			libSBMLAvailable = true;
+		} catch (Error e) {
+		} catch (Throwable e) {
+		} 
+		SBMLInputConverter reader = null;
+		SBMLOutputConverter writer = null;
+		if (!libSBMLAvailable) {
+			reader = new SqSBMLReader() ;
+			writer = new SqSBMLWriter() ;
+		} else {
+			reader = new LibSBMLReader();
+			writer = new LibSBMLWriter();
+		}
+		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
+
+
+
+		time = System.currentTimeMillis();
+
+		logger.info("Generate SBMLsqueezer.");
+	
+		SBMLsqueezer squeezer = new SBMLsqueezer(reader, writer);		
+		
+		logger.info("test squeezer.");
+		for(File file : listOfFiles) {
+			// test models
+			try {
+				logger.info("(squeeze file): " + file.getAbsolutePath());
+				squeezer.squeeze(file.getAbsolutePath(), System.getProperty("user.home") + "/test.xml");
+
+			} catch (Throwable e) {
+				logger.log(Level.WARNING, file.getAbsolutePath(), e);
+				fail();
+			}
+		}
+		
+		File fnew = new File(System.getProperty("user.home") + "/test.xml");
+		fnew.deleteOnExit();
+		
+		logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
+		
 	}
 
 

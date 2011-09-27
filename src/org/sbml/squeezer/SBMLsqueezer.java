@@ -70,6 +70,7 @@ import org.sbml.tolatex.io.LaTeXOptionsIO;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.UpdateMessage;
 import de.zbit.io.SBFileFilter;
+import de.zbit.util.ProgressBar;
 import de.zbit.util.Reflect;
 import de.zbit.util.logging.LogUtil;
 import de.zbit.util.prefs.KeyProvider;
@@ -554,7 +555,14 @@ public class SBMLsqueezer implements IOProgressListener {
 			
 			KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
 					.getSelectedModel());
+			
+			ProgressBar progressBar = new ProgressBar(0);
+			klg.setProgressBar(progressBar);
+			
 			klg.generateLaws();
+			
+			progressBar = new ProgressBar(0);
+			klg.setProgressBar(progressBar);
 			
 			klg.storeKineticLaws();
 			long time = System.currentTimeMillis();
