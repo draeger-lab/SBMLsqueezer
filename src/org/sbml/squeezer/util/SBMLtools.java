@@ -29,8 +29,11 @@ import java.util.logging.Logger;
 
 import javax.swing.tree.TreeNode;
 
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.NamedSBase;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.util.filters.NameFilter;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -40,6 +43,9 @@ import org.sbml.jsbml.SBase;
  */
 public class SBMLtools {
   
+  /**
+   * Logger
+   */
   private static final Logger logger = Logger.getLogger(SBMLtools.class.getName());
   
   /**
@@ -56,6 +62,20 @@ public class SBMLtools {
           "Could not set SBO term %s for %s with Level = %d and Version = %d.", 
           SBO.sboNumberString(term), sbase.getElementName(), sbase.getLevel(), sbase.getVersion()));
     }
+  }
+  
+  /**
+   * 
+   * @param <T>
+   * @param listOf
+   * @param element
+   */
+  public static final <T extends NamedSBase> void addOrReplace(ListOf<T> listOf, T element) {
+    T prev = listOf.firstHit(new NameFilter(element.getId()));
+    if (prev != null) {
+      listOf.remove(prev);
+    }
+    listOf.add(element);
   }
   
   /**

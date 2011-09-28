@@ -488,7 +488,8 @@ public class KineticLawGenerator {
 					if (l.isSetMath()) {
 						for (Parameter parameter : modelOrig
 								.getListOfParameters()) {
-							if (l.getMath().refersTo(parameter.getId())) {
+              if (l.getMath().refersTo(parameter.getId())
+                  && (miniModel.getParameter(parameter.getId()) != null)) {
 								miniModel.addParameter(parameter.clone());
 							}
 						}
