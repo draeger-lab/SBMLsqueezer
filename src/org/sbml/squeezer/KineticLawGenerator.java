@@ -52,6 +52,7 @@ import org.sbml.jsbml.QuantityWithUnit;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -384,8 +385,9 @@ public class KineticLawGenerator {
 	private Model createMinimalModel(String reactionID) {
 		boolean create = (prefs
 				.getBoolean(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION));
-		Model miniModel = new Model(modelOrig.getId(), modelOrig.getLevel(),
-				modelOrig.getVersion());	  
+		SBMLDocument miniDoc = new SBMLDocument(modelOrig.getLevel(),
+				modelOrig.getVersion());
+		Model miniModel = miniDoc.createModel(modelOrig.getId());	  
 		//miniModel.addChangeListener(new ModelChangeListener());
 
 		/*
