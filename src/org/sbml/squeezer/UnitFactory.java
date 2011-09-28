@@ -65,10 +65,12 @@ public class UnitFactory {
 			}
 		}
 		if (!contains) {
+			updateAnnotation(unitdef);
 			model.addUnitDefinition(unitdef);
 		}
 		return unitdef;
 	}
+	
 	private boolean bringToConcentration;
 
 	/**
@@ -265,7 +267,26 @@ public class UnitFactory {
 		}
 		ud = ud.divideBy(amount)
 				.multiplyWith(model.getSubstanceUnitsInstance()).simplify();
+		checkUnitDefinitions(ud, model);
 		return ud;
+	}
+
+	/**
+	 * 
+	 * @param ud
+	 */
+	private static void updateAnnotation(UnitDefinition ud) {
+		int hashCode = ud.hashCode();
+		for (int i=0; i<ud.getNumUnits(); i++) {
+			Unit unit = ud.getUnit(i);
+			if (unit.isSetMetaId()) {
+				// TODO: Create different metaid.
+				unit.setMetaId(unit.getMetaId() + "_" + hashCode);
+				if (unit.isSetAnnotation()) {
+					unit.getAnnotation().setAbout('#' + unit.getMetaId());
+				}
+			}
+		}
 	}
 
 	/**
