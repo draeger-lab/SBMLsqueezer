@@ -68,6 +68,7 @@ import org.sbml.jsbml.UnitDefinition;
 /**
  * 
  * @author Andreas Dr&auml;ger
+ * @author Simon Sch&auml;fer
  * @since 1.3
  * @version $Rev$
  */

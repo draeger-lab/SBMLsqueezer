@@ -84,7 +84,6 @@ import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.compilers.HTMLFormula;
 import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.tolatex.LaTeXOptions;
-import org.sbml.tolatex.SBML2LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
@@ -628,31 +627,35 @@ public class SBasePanel extends JPanel {
 			sb.append("<html><body>");
 			if (sbase.getNumCVTerms() > 1)
 				sb.append("<ul>");
-			for (CVTerm cvt : sbase.getCVTerms()) {
-				if (sbase.getNumCVTerms() > 1)
-					sb.append("<li>");
-				String cvtString = cvt.toString();
-				for (int k = 0; k < cvt.getNumResources(); k++) {
-					try {
-					String uri = cvt.getResourceURI(k);
-					String loc[] = SBML2LaTeX.getMIRIAMparser().getLocations(uri);
-					if (loc.length > 0) {
-						String split[] = cvtString.split(uri);
-						StringBuilder sbu = new StringBuilder();
-						for (int l = 0; l < split.length - 1; l++) {
-							if (l > 0) {
-								sbu.append(", ");
-							}
-							StringTools.append(sbu, split[l], "<a href=\"",
-									loc[0], "\">", uri, "</a>");
-						}
-						sbu.append(split[split.length - 1]);
-						cvtString = sbu.toString();
-					}
-					} catch (Exception exc) {
-						GUITools.showErrorMessage(this, exc);
-					}
-				}
+      for (CVTerm cvt : sbase.getCVTerms()) {
+        if (sbase.getNumCVTerms() > 1)
+          sb.append("<li>");
+        String cvtString = cvt.toString();
+        for (int k = 0; k < cvt.getNumResources(); k++) {
+          try {
+            String uri = cvt.getResourceURI(k);
+            String url;
+            if (!uri.startsWith("urn")) {
+              url = uri;
+            } else {
+              url = "http://identifiers.org/"
+                  + uri.substring(11).replace(':', '/');
+            }
+            String split[] = cvtString.split(uri);
+            StringBuilder sbu = new StringBuilder();
+            for (int l = 0; l < split.length - 1; l++) {
+              if (l > 0) {
+                sbu.append(", ");
+              }
+              StringTools.append(sbu, split[l], "<a href=\"", url, "\">", uri,
+                "</a>");
+            }
+            sbu.append(split[split.length - 1]);
+            cvtString = sbu.toString();
+          } catch (Exception exc) {
+            GUITools.showErrorMessage(this, exc);
+          }
+        }
 				sb.append(cvtString);
 				if (sbase.getNumCVTerms() > 1) {
 					sb.append("</li>");
