@@ -27,6 +27,7 @@ import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
@@ -65,7 +66,7 @@ public class UnitFactory {
 			}
 		}
 		if (!contains) {
-			updateAnnotation(unitdef);
+			updateAnnotation(unitdef, model.getSBMLDocument());
 			model.addUnitDefinition(unitdef);
 		}
 		return unitdef;
@@ -274,14 +275,13 @@ public class UnitFactory {
 	/**
 	 * 
 	 * @param ud
+	 * @param sbmlDocument 
 	 */
-	private static void updateAnnotation(UnitDefinition ud) {
-		int hashCode = ud.hashCode();
+	private static void updateAnnotation(UnitDefinition ud, SBMLDocument doc) {
 		for (int i=0; i<ud.getNumUnits(); i++) {
 			Unit unit = ud.getUnit(i);
 			if (unit.isSetMetaId()) {
-				// TODO: Create different metaid.
-				unit.setMetaId(unit.getMetaId() + "_" + hashCode);
+				unit.setMetaId(doc.nextMetaId());
 				if (unit.isSetAnnotation()) {
 					unit.getAnnotation().setAbout('#' + unit.getMetaId());
 				}

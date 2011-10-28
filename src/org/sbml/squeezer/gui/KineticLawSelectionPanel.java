@@ -57,11 +57,11 @@ import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.tolatex.LaTeXOptions;
-import org.sbml.tolatex.io.SBOTermFormatter;
 import org.sbml.tolatex.util.LaTeX;
 
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
+import de.zbit.sbml.io.SBOTermFormatter;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -614,7 +614,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				&& !disable)
 			i++;
 		boolean global = !((reaction.isSetKineticLaw() && reaction
-				.getKineticLaw().getNumLocalParameters() > 0) || klg
+				.getKineticLaw().getLocalParameterCount() > 0) || klg
 				.getPreferences().getBoolean(
 						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
 		boolean change = disable || isExistingRateLawSelected

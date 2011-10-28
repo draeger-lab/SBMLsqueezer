@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
-import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptions;
 
 import de.zbit.util.AbstractProgressBar;
@@ -41,6 +40,12 @@ import de.zbit.util.prefs.SBPreferences;
  */
 public class ProgressAdapter {
 
+  /**
+   * 
+   * @author Sarah R. M&uuml;ller vom Hagen
+   * @version $Rev$
+   * @since 1.4
+   */
 	public static enum TypeOfProgress {
 		/**
 		 * store a single kinetic law
@@ -64,6 +69,9 @@ public class ProgressAdapter {
 	TypeOfProgress progressType;
 	private final Logger logger = Logger.getLogger(ProgressAdapter.class.getName());
 
+	/**
+	 * 
+	 */
 	public void progressOn() {
 		if (numberOfTotalCalls > 0) {
 			callNr++;
@@ -97,15 +105,21 @@ public class ProgressAdapter {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void finished(){
 		this.progressBar.finished();
-		
 		logger.info("    done in " + (System.currentTimeMillis() - startTime) + " ms");
-		
 		logger.log(Level.INFO, "Ready.");
 	}
 	
-	
+	/**
+	 * 
+	 * @param modelOrig
+	 * @param miniModel
+	 * @param prefs
+	 */
 	public void setNumberOfTags(Model modelOrig, Model miniModel, SBPreferences prefs){
 		switch(progressType){
 		case storeKineticLaw:

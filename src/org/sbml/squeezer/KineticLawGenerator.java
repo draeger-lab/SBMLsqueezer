@@ -512,8 +512,8 @@ public class KineticLawGenerator {
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 		}
 		
-		boolean reversibility = prefs
-		.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+    boolean reversibility = prefs
+        .getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
 		for (Reaction r : miniModel.getListOfReactions()) {
 			ReactionType rt = new ReactionType(r);
 			
