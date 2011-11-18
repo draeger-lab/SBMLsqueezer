@@ -29,7 +29,7 @@ package org.sbml.squeezer;
  * {@link RateLawNotApplicableException}.
  * 
  * @since 1.0
- * @version
+ * @version $Rev$
  * @author Andreas Dr&auml;ger
  * @date Aug 13, 2007
  */
