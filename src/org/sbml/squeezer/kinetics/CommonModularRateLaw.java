@@ -33,7 +33,8 @@ import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * This class creates the common modular rate law (CM) according to
- * Liebermeister et al. 2010.
+ * Liebermeister et al. 2010: &ldquo;Modular rate laws for enzymatic reactions:
+ * thermodynamics, elasticities, and implementation&rdquo;.
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen

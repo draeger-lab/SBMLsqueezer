@@ -34,6 +34,7 @@ import org.sbml.squeezer.util.SBMLtools;
 
 /**
  * Kinetic law that describes the ping-pong reaction mechanism.
+ * Also known as substituted enzyme mechanism.
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
