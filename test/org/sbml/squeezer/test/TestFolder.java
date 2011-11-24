@@ -24,6 +24,20 @@
 
 package org.sbml.squeezer.test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.sbml.jsbml.SBMLInputConverter;
+import org.sbml.jsbml.SBMLOutputConverter;
+import org.sbml.squeezer.SBMLsqueezer;
+
+import de.zbit.io.GeneralFileFilter;
+import de.zbit.io.SBFileFilter;
+
 /**
  * @author Julianus Pfeuffer
  * @version $Rev$
@@ -31,5 +45,55 @@ package org.sbml.squeezer.test;
  */
 
 public class TestFolder {
+	
+	private static String foldername = "";
+	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
+	
+	public static void main (String[] args){
+		foldername = args[0];
+		TraverseFolder traverser = new TraverseFolder();
+		try {
+			traverser.traverse(new File(foldername));
+		} catch (FileNotFoundException e1) {
+			logger.log(Level.WARNING, "Couldn't open a File.");
+		}
+		ArrayList<File> filesToCheck = traverser.getFiles();
+		SBFileFilter[] filterArray = 
+				{
+				SBFileFilter.createSBMLFileFilterL1V1(),
+				SBFileFilter.createSBMLFileFilterL1V2(),
+				SBFileFilter.createSBMLFileFilterL2V1(),
+				SBFileFilter.createSBMLFileFilterL2V2(),
+				SBFileFilter.createSBMLFileFilterL2V3(),
+				SBFileFilter.createSBMLFileFilterL2V4(),
+				SBFileFilter.createSBMLFileFilterL3V1()
+				};
+
+		SBMLsqueezer squeezer  = SBMLsqueezer.initializeSqueezer();
+		logger.info("Starting Tests...");
+		for (SBFileFilter filter:filterArray){
+			for(int i = 0; i< filesToCheck.size(); i++){
+				File currentFile = filesToCheck.get(i);
+				String currentFilename = currentFile.getName();
+				if(filter.accept(currentFile)){
+					File outputFile = new File(System.getProperty("user.home") + "/tests/" + currentFilename.substring(0,currentFilename.length()-4) +"_result.xml");
+					try {
+						outputFile.createNewFile();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					String outputPath = outputFile.getAbsolutePath();
+						try {
+							logger.info("(Squeezing file): " + currentFile.getAbsolutePath());
+							squeezer.squeeze(currentFile.getAbsolutePath(),outputPath);
+
+						} catch (Throwable e) {
+							logger.log(Level.WARNING, currentFile.getAbsolutePath(), e);
+						}
+				}
+			}
+		}
+	}
 
 }

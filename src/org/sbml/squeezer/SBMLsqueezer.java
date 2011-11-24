@@ -304,37 +304,50 @@ public class SBMLsqueezer implements IOProgressListener {
 	public static final String getVersionNumber() {
 		return versionNumber;
 	}
+	
+	/**
+	 * Does initialization for creating a SBMLsqueezer Object.
+	 * Checks if libSBML is available and initializes the Reader/Writer.
+	 * @param reader
+	 * @param writer
+	 */
+	public static SBMLsqueezer initializeSqueezer(){
+		LogUtil.initializeLogging("org.sbml");
+		boolean libSBMLAvailable = false;
+		try {
+		    // In order to initialize libSBML, check the java.library.path.
+		    System.loadLibrary("sbmlj");
+		    // Extra check to be sure we have access to libSBML:
+		    Class.forName("org.sbml.libsbml.libsbml");
+		    logger.log(Level.INFO, "Loading libSBML\n");
+		    libSBMLAvailable = true;
+		} catch (Error e) {
+		} catch (Throwable e) {
+		} 
+
+		SBMLInputConverter reader = null;
+		SBMLOutputConverter writer = null;
+		if (!libSBMLAvailable) {
+		    logger.log(Level.INFO, "Loading JSBML\n");
+		    reader = new SqSBMLReader() ;
+		    writer = new SqSBMLWriter() ;
+		} else {
+		    reader = new LibSBMLReader();
+		    writer = new LibSBMLWriter();
+		}
+		
+		return new SBMLsqueezer(reader,
+				writer);
+	}
 
 	/**
 	 * @param args
 	 * @throws MalformedURLException 
 	 */
     public static void main(String[] args) throws MalformedURLException {
-	LogUtil.initializeLogging("org.sbml");
-	boolean libSBMLAvailable = false;
-	try {
-	    // In order to initialize libSBML, check the java.library.path.
-	    System.loadLibrary("sbmlj");
-	    // Extra check to be sure we have access to libSBML:
-	    Class.forName("org.sbml.libsbml.libsbml");
-	    logger.log(Level.INFO, "Loading libSBML\n");
-	    libSBMLAvailable = true;
-	} catch (Error e) {
-	} catch (Throwable e) {
-	} 
-	SBMLInputConverter reader = null;
-	SBMLOutputConverter writer = null;
-	if (!libSBMLAvailable) {
-	    logger.log(Level.INFO, "Loading JSBML\n");
-	    reader = new SqSBMLReader() ;
-	    writer = new SqSBMLWriter() ;
-	} else {
-	    reader = new LibSBMLReader();
-	    writer = new LibSBMLWriter();
-	}
 
-		final SBMLsqueezer squeezer = new SBMLsqueezer(reader,
-				writer);
+    	final SBMLsqueezer squeezer = initializeSqueezer();
+    	
 		logger.info("scanning command line arguments...");
 		final SBProperties p = SBPreferences.analyzeCommandLineArguments(getListOfCommandLineOptions(), args);
 		for (Class<? extends KeyProvider> keyProvider : getListOfCommandLineOptions()) {
