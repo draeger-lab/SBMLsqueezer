@@ -69,7 +69,7 @@ public class TestFolder {
 				SBFileFilter.createSBMLFileFilterL3V1()
 				};
 
-		SBMLsqueezer squeezer  = SBMLsqueezer.initializeSqueezer();
+		SBMLsqueezer squeezer  = new SBMLsqueezer();
 		logger.info("Starting Tests...");
 		for (SBFileFilter filter:filterArray){
 			for(int i = 0; i< filesToCheck.size(); i++){

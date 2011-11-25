@@ -396,7 +396,7 @@ public class SqueezerTests extends TestCase{
 
 		try {
 			SBMLsqueezer.main(new String[]{});
-		} catch (MalformedURLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
 		}

@@ -221,7 +221,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 
 			} else if (text.equals("Help")) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
-						"SBMLsqueezer " + SBMLsqueezer.getVersionNumber()
+						"SBMLsqueezer " + System.getProperty("app.version")
 								+ " - Online Help", getClass().getResource(
 								"../resources/html/help.html"));
 				helpBrowser.addWindowListener(this);
@@ -606,7 +606,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 		JLabel label = new JLabel(UIManager.getIcon("ICON_LOGO_SMALL"));
 		label.setBackground(Color.WHITE);
 		label.setText("<html><body><br><br><br><br><br><br>Version "
-				+ SBMLsqueezer.getVersionNumber() + "</body></html>");
+				+ System.getProperty("app.version") + "</body></html>");
 		Dimension d = GUITools.getDimension(UIManager
 				.getIcon("ICON_LOGO_SMALL"));
 		d.setSize(d.getWidth() + 125, d.getHeight() + 10);
