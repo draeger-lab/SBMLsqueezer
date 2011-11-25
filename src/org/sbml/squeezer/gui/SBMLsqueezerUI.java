@@ -33,7 +33,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
@@ -642,7 +641,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		colorDefault = getContentPane().getBackground();
 		Icon icon = UIManager.getIcon("ICON_LOGO_SMALL");
 		logo = new JLabel(StringUtil.toHTML("<br><br><br><br><br>Version: "
-				+ SBMLsqueezer.getVersionNumber()), icon, JLabel.CENTER);
+				+ System.getProperty("app.version")), icon, JLabel.CENTER);
 		if (icon != null) {
 			logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
 					.getIconHeight() + 75));
@@ -659,44 +658,20 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#exit()
 	 */
 	public void exit() {
-		try {
-			SBMLsqueezer.saveProperties();
-		} catch (Exception exc) {
-			GUITools.showErrorMessage(this, exc);
-		}
-		// TODO: Not in this version
-		/*
-		 * else if (we.getSource() instanceof SimulationDialog) { settings
-		 * .putAll(((SimulationDialog) we.getSource()).getProperties()); }
-		 */
-		System.exit(0);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.zbit.gui.BaseFrame#getApplicationName()
-	 */
-	public String getApplicationName() {
-		return "SBMLsqueezer";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.zbit.gui.BaseFrame#getCommandLineOptions()
-	 */
-	public Class<? extends KeyProvider>[] getCommandLineOptions() {
-		return SBMLsqueezer.getCommandLineOptions();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.zbit.gui.BaseFrame#getDottedVersionNumber()
-	 */
-	public String getDottedVersionNumber() {
-		return SBMLsqueezer.getVersionNumber();
+    StringBuilder exception = new StringBuilder();
+    for (Class<? extends KeyProvider> clazz : appConf.getInteractiveOptions()) {
+      SBPreferences prefs = SBPreferences.getPreferencesFor(clazz);
+      try {
+        prefs.flush();
+      } catch (Exception exc) {
+        exception.append(exc.getLocalizedMessage());
+        exception.append('\n');
+      }
+    }
+    if (exception.length() > 0) {
+      GUITools.showErrorMessage(this, exception.toString());
+    }
+    System.exit(0);
 	}
 
 	/*
@@ -724,20 +699,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public URL getURLOnlineHelp() {
 		return getClass().getResource("../resources/html/help.html");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.zbit.gui.BaseFrame#getURLOnlineUpdate()
-	 */
-	public URL getURLOnlineUpdate() {
-		try {
-			SBMLsqueezer.getURLOnlineUpdate();
-		} catch (MalformedURLException exc) {
-			GUITools.showErrorMessage(this, exc);
-		}
-		return null;
 	}
 
 	/*

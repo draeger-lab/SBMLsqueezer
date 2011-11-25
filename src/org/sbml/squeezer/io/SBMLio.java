@@ -400,7 +400,6 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	public boolean writeSelectedModelToSBML(String filename)
 			throws SBMLException, IOException {
 		return writer.writeSBML(listOfOrigModels.get(selectedModel), filename,
-				SBMLsqueezer.class.getSimpleName(), SBMLsqueezer
-						.getVersionNumber());
+				SBMLsqueezer.class.getSimpleName(), System.getProperty("app.version"));
 	}
 }
