@@ -510,8 +510,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     if (properties.containsKey(SqueezerOptions.SBML_IN_FILE)) {
       readSBMLSource(properties.get(SqueezerOptions.SBML_IN_FILE));
     }
-    SBMLsqueezerUI gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
-    return gui;
+    return new SBMLsqueezerUI(getSBMLIO(), appConf);
   }
   
   /*

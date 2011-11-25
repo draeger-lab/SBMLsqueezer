@@ -26,16 +26,13 @@ package org.sbml.squeezer.test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.sbml.jsbml.SBMLInputConverter;
-import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.squeezer.SBMLsqueezer;
 
-import de.zbit.io.GeneralFileFilter;
+import de.zbit.io.OpenFile;
 import de.zbit.io.SBFileFilter;
 
 /**
@@ -50,7 +47,7 @@ public class TestFolder {
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
 	
 	public static void main (String[] args){
-		foldername = args[0];
+		foldername = OpenFile.doDownload(TestFolder.class.getResource("data/").getPath());
 		TraverseFolder traverser = new TraverseFolder();
 		try {
 			traverser.traverse(new File(foldername));
@@ -77,17 +74,10 @@ public class TestFolder {
 				String currentFilename = currentFile.getName();
 				if(filter.accept(currentFile)){
 					File outputFile = new File(System.getProperty("user.home") + "/tests/" + currentFilename.substring(0,currentFilename.length()-4) +"_result.xml");
-					try {
-						outputFile.createNewFile();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
 					String outputPath = outputFile.getAbsolutePath();
 						try {
 							logger.info("(Squeezing file): " + currentFile.getAbsolutePath());
 							squeezer.squeeze(currentFile.getAbsolutePath(),outputPath);
-
 						} catch (Throwable e) {
 							logger.log(Level.WARNING, currentFile.getAbsolutePath(), e);
 						}
