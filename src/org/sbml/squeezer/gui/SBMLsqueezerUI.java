@@ -62,6 +62,7 @@ import org.sbml.tolatex.gui.LaTeXExportDialog;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
 
+import de.zbit.AppConf;
 import de.zbit.gui.ActionCommand;
 import de.zbit.gui.BaseFrame;
 import de.zbit.gui.GUIOptions;
@@ -255,9 +256,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	/**
 	 * 
 	 * @param io
+	 * @param appConf 
 	 */
-	public SBMLsqueezerUI(SBMLio io) {
-		super();
+	public SBMLsqueezerUI(SBMLio io, AppConf appConf) {
+		super(appConf);
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.sbmlIO = io;
 		setEnabled(false, Command.SQUEEZE, Command.TO_LATEX,
@@ -275,7 +277,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 	}
 
-	/*
+  /*
 	 * (non-Javadoc)
 	 * 
 	 * @see
