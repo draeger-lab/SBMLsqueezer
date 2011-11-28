@@ -25,6 +25,7 @@ package org.sbml.squeezer.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,10 +59,19 @@ public class SqSBMLReader implements SBMLInputConverter {
 	 */
 	Model originalModel;
 
+	/**
+	 * 
+	 */
 	private HashSet<SBMLDocument> setOfDocuments;
 	
+	/**
+	 * 
+	 */
 	private HashSet<IOProgressListener> setOfIOListeners;
 	
+	/**
+	 * 
+	 */
 	private LinkedList<TreeNodeChangeListener> listOfTreeNodeChangeListeners;
 
 	
@@ -84,11 +94,19 @@ public class SqSBMLReader implements SBMLInputConverter {
 		this.model = convertModel(model);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#addIOProgressListener(org.sbml.jsbml.util.IOProgressListener)
+	 */
 	public void addIOProgressListener(IOProgressListener listener) {
 		setOfIOListeners.add(listener);
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#convertModel(java.lang.Object)
+	 */
 	public Model convertModel(Object model) throws IllegalArgumentException, IOException, XMLStreamException {
 		if (model instanceof String){
 			// file name or XML given; create SBML Document
@@ -147,17 +165,28 @@ public class SqSBMLReader implements SBMLInputConverter {
 		return this.model;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#getNumErrors()
+	 */
 	public int getNumErrors() {
 		return 0;
 	}
 
-	public Object getOriginalModel() {
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#getOriginalModel()
+	 */
+	public Model getOriginalModel() {
 		return originalModel;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#getWarnings()
+	 */
 	public List<SBMLException> getWarnings() {
-		List<SBMLException> excl = new LinkedList<SBMLException>();
-		return excl;
+		return new ArrayList<SBMLException>(0);
 	}
 
 }
