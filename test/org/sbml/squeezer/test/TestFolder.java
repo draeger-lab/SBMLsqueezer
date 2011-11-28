@@ -47,7 +47,7 @@ public class TestFolder {
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
 	
 	public static void main (String[] args){
-		foldername = OpenFile.doDownload(TestFolder.class.getResource("data/").getPath());
+		foldername = TestFolder.class.getResource("data/").getPath();
 		TraverseFolder traverser = new TraverseFolder();
 		try {
 			traverser.traverse(new File(foldername));
@@ -68,16 +68,21 @@ public class TestFolder {
 
 		SBMLsqueezer squeezer  = new SBMLsqueezer();
 		logger.info("Starting Tests...");
+		File tmpDir = new File(System.getProperty("user.dir") + "/files/tests/tmp");
+		if (!tmpDir.exists()) {
+		  tmpDir.mkdir();
+		}
 		for (SBFileFilter filter:filterArray){
-			for(int i = 0; i< filesToCheck.size(); i++){
+			for (int i = 0; i< filesToCheck.size(); i++){
 				File currentFile = filesToCheck.get(i);
 				String currentFilename = currentFile.getName();
-				if(filter.accept(currentFile)){
-					File outputFile = new File(System.getProperty("user.home") + "/tests/" + currentFilename.substring(0,currentFilename.length()-4) +"_result.xml");
-					String outputPath = outputFile.getAbsolutePath();
+				if (filter.accept(currentFile)) {
+          String outputPath = tmpDir.getAbsolutePath() + '/'
+              + currentFilename.substring(0, currentFilename.lastIndexOf('.'))
+              + "_result.xml";
 						try {
-							logger.info("(Squeezing file): " + currentFile.getAbsolutePath());
-							squeezer.squeeze(currentFile.getAbsolutePath(),outputPath);
+							logger.info(String.format("Squeezing file: %s", currentFile.getAbsolutePath()));
+							squeezer.squeeze(currentFile.getAbsolutePath(), outputPath);
 						} catch (Throwable e) {
 							logger.log(Level.WARNING, currentFile.getAbsolutePath(), e);
 						}
