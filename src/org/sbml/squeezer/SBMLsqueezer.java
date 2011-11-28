@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
 
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
@@ -134,7 +133,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   static {
     initializeReaderAndWriter();
     long time = System.currentTimeMillis();
-    logger.info("Loading kinetic equations... ");
+    logger.info("Loading kinetic equations...");
     kineticsBiBi = new HashSet<String>();
     kineticsBiUni = new HashSet<String>();
     kineticsGeneRegulatoryNetworks = new HashSet<String>();
@@ -192,8 +191,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         kineticsIntStoichiometry.add(c.getCanonicalName());
       }
     }
-    logger.log(Level.INFO, "    done in " + (System.currentTimeMillis() - time)
-        + " ms.");
+    logger.info(String.format("done in %d ms.",
+      (System.currentTimeMillis() - time)));
   }
   
   /**
@@ -318,18 +317,18 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         System.loadLibrary("sbmlj");
         // Extra check to be sure we have access to libSBML:
         Class.forName("org.sbml.libsbml.libsbml");
-        logger.log(Level.INFO, "Loading libSBML\n");
+        logger.info("Loading library libSBML");
         libSBMLAvailable = true;
     } catch (Error e) {
     } catch (Throwable e) {
     } 
-    if (!libSBMLAvailable) {
-        logger.log(Level.INFO, "Loading JSBML\n");
-        reader = new SqSBMLReader() ;
-        writer = new SqSBMLWriter() ;
+    if (libSBMLAvailable) {
+      reader = new LibSBMLReader();
+      writer = new LibSBMLWriter();
     } else {
-        reader = new LibSBMLReader();
-        writer = new LibSBMLWriter();
+      logger.info("Loading library JSBML");
+      reader = new SqSBMLReader();
+      writer = new SqSBMLWriter();
     }
   }
 
@@ -343,13 +342,15 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * 
    */
-  private SBPreferences preferences;
+  private SBMLio sbmlIo;
 
   /**
    * 
    */
-  private SBMLio sbmlIo;
-
+  public SBMLsqueezer() {
+    super();
+  }
+  
   /**
    * This constructor allows the integration of SBMLsqueezer into third-party
    * programs, i.e., as a CellDesigner plug-in.
@@ -362,20 +363,13 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
     // sbmlIo.addIOProgressListener(this);
   }
-  
+
   /**
    * 
    * @param args
    */
   public SBMLsqueezer(String[] args) {
     super(args);
-  }
-
-  /**
-   * 
-   */
-  public SBMLsqueezer() {
-    super();
   }
 
 
@@ -437,7 +431,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public String[] getLogPackages() {
     return new String[] {"org.sbml", "de.zbit"};
   }
-
+  
   /**
    * 
    * @return
@@ -531,21 +525,14 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     long time = System.currentTimeMillis();
     logger.info("reading SBML file...");
     try {
-      sbmlIo.convertModel(sbmlSource);
-      logger.info(String.format("    done in %d ms.\n", 
-              (System.currentTimeMillis() - time)) );
+      getSBMLIO().convertModel(sbmlSource);
+      logger.info(String.format("done in %d ms.", 
+              (System.currentTimeMillis() - time)));
     } catch (Exception exc) {
-      logger.log(Level.WARNING, String.format("A problem occured while trying to read the model: %s\n",
-              exc.getMessage() ));
+      logger.log(Level.WARNING, String.format(
+        "A problem occured while trying to read the model: %s", exc
+            .getLocalizedMessage()));
     }
-  }
-  
-  /**
-   * @throws BackingStoreException
-   * 
-   */
-  public void saveProperties() throws BackingStoreException {
-    preferences.flush();
   }
   
   /**
@@ -594,7 +581,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
       if ((outFile != null)
           && (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
         sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
-        logger.info("    done in " + (System.currentTimeMillis() - time) + " ms.");
+        logger.info(String.format("done in %d ms.", (System.currentTimeMillis() - time)));
+        SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
         if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
           for (SBMLException exc : sbmlIo.getWriteWarnings()) {
             logger.log(Level.WARNING, exc.getMessage());
@@ -607,6 +595,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
       logger.log(Level.WARNING, "File contains no model. Nothing to do.");
     }
   }
+
 
   /**
    * Convenient method that writes a LaTeX file from the given SBML source.
