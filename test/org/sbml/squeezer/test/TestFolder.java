@@ -26,7 +26,9 @@ package org.sbml.squeezer.test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,12 +44,34 @@ import de.zbit.io.SBFileFilter;
  */
 
 public class TestFolder {
-	
+
 	private static String foldername = "";
-	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
-	
-	public static void main (String[] args){
-		foldername = TestFolder.class.getResource("data/").getPath();
+	private static final Logger logger = Logger.getLogger(SqueezerTests.class
+			.getName());
+
+	public static void main(String[] args) {
+		
+		// Creating output folder at /workspace/SBMLSqueezer/files/tests/tmp
+		File tmpDir = new File(System.getProperty("user.dir")
+				+ "/files/tests/tmp");
+		if (!tmpDir.exists()) {
+			tmpDir.mkdir();
+		}
+		
+		//Writing log-file
+		try {
+		    
+		    FileHandler handler = new FileHandler(tmpDir.getAbsolutePath()
+					+ '/' + "tests.log");
+		    logger.addHandler(handler);
+		} catch (IOException e) {
+		}
+
+		// Test data to be put in org.sbml.squeezer.test.data
+		//foldername = TestFolder.class.getResource("data/").getPath();
+		foldername = args[0];
+
+		// Looking up all Files in this folder and subfolders
 		TraverseFolder traverser = new TraverseFolder();
 		try {
 			traverser.traverse(new File(foldername));
@@ -55,39 +79,48 @@ public class TestFolder {
 			logger.log(Level.WARNING, "Couldn't open a File.");
 		}
 		ArrayList<File> filesToCheck = traverser.getFiles();
-		SBFileFilter[] filterArray = 
-				{
-				SBFileFilter.createSBMLFileFilterL1V1(),
+
+		// Different Levels/Versions to test
+		SBFileFilter[] filterArray = { SBFileFilter.createSBMLFileFilterL1V1(),
 				SBFileFilter.createSBMLFileFilterL1V2(),
 				SBFileFilter.createSBMLFileFilterL2V1(),
 				SBFileFilter.createSBMLFileFilterL2V2(),
 				SBFileFilter.createSBMLFileFilterL2V3(),
 				SBFileFilter.createSBMLFileFilterL2V4(),
-				SBFileFilter.createSBMLFileFilterL3V1()
-				};
+				SBFileFilter.createSBMLFileFilterL3V1() };
 
-		SBMLsqueezer squeezer  = new SBMLsqueezer();
+		// Initializing squeezer
+		SBMLsqueezer squeezer = new SBMLsqueezer();
 		logger.info("Starting Tests...");
-		File tmpDir = new File(System.getProperty("user.dir") + "/files/tests/tmp");
-		if (!tmpDir.exists()) {
-		  tmpDir.mkdir();
-		}
-		for (SBFileFilter filter:filterArray){
-			for (int i = 0; i< filesToCheck.size(); i++){
+
+		ArrayList<String> failures = new ArrayList<String>();
+		// iterating over all Levels/Versions and files and squeezing them
+		for (SBFileFilter filter : filterArray) {
+			for (int i = 0; i < filesToCheck.size(); i++) {
 				File currentFile = filesToCheck.get(i);
 				String currentFilename = currentFile.getName();
 				if (filter.accept(currentFile)) {
-          String outputPath = tmpDir.getAbsolutePath() + '/'
-              + currentFilename.substring(0, currentFilename.lastIndexOf('.'))
-              + "_result.xml";
-						try {
-							logger.info(String.format("Squeezing file: %s", currentFile.getAbsolutePath()));
-							squeezer.squeeze(currentFile.getAbsolutePath(), outputPath);
-						} catch (Throwable e) {
-							logger.log(Level.WARNING, currentFile.getAbsolutePath(), e);
-						}
+					String outputPath = tmpDir.getAbsolutePath()
+							+ '/'
+							+ currentFilename.substring(0,
+									currentFilename.lastIndexOf('.'))
+							+ "_result.xml";
+					try {
+						logger.info(String.format("Squeezing file: %s",
+								currentFile.getAbsolutePath()));
+						squeezer.squeeze(currentFile.getAbsolutePath(),
+								outputPath);
+					} catch (Throwable e) {
+						logger.log(Level.WARNING,
+								currentFile.getAbsolutePath(), e);
+						failures.add(currentFile.getAbsolutePath());
+					}
 				}
 			}
+		}
+
+		for (String path : failures) {
+			System.out.println(path);
 		}
 	}
 
