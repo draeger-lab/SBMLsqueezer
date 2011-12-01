@@ -31,11 +31,14 @@ import java.util.ArrayList;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.PreferencesFactory;
 
 import org.sbml.squeezer.SBMLsqueezer;
 
 import de.zbit.io.OpenFile;
 import de.zbit.io.SBFileFilter;
+import de.zbit.util.prefs.Option;
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * @author Julianus Pfeuffer
@@ -91,6 +94,10 @@ public class TestFolder {
 
 		// Initializing squeezer
 		SBMLsqueezer squeezer = new SBMLsqueezer();
+		
+		//Shouldn't I edit the preferences?
+		/*SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+		prefs.put(myoption, true);*/
 		logger.info("Starting Tests...");
 
 		ArrayList<String> failures = new ArrayList<String>();
