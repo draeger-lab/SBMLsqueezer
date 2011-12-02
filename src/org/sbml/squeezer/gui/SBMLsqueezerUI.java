@@ -673,7 +673,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
     if (exception.length() > 0) {
       GUITools.showErrorMessage(this, exception.toString());
     }
-    System.exit(0);
+    dispose();
 	}
 
 	/*
