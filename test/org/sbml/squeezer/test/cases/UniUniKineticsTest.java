@@ -57,7 +57,7 @@ public class UniUniKineticsTest {
 		r1.createReactant(s1);
 		r1.createProduct(p1);
 		ModifierSpeciesReference mod = r1.createModifier(i1);
-		mod.setSBOTerm(20);
+		mod.setSBOTerm(20); // inhibitor
 		r1.setReversible(true);
 		
 		KineticLawGenerator klg = new KineticLawGenerator(model);
@@ -65,6 +65,8 @@ public class UniUniKineticsTest {
 		klg.storeKineticLaws();
 		File store = new File("test.sbml");
 		SBMLWriter.write(doc, store, ' ', (short) 2);
-		SBML2LaTeX.convert(model, new File("/home/jpfeuffer/workspace/test.tex"));
+		SBMLWriter.write(doc, System.out, ' ', (short) 2);
+		System.out.println();
+		SBML2LaTeX.convert(doc, new File(System.getProperty("user.dir") + "/test.pdf"));
 	}
 }
