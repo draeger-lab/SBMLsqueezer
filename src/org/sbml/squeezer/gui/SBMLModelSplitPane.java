@@ -43,6 +43,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 
+import de.zbit.sbml.gui.SBasePanel;
+
 /**
  * A specialized {@link JSplitPane} that displays a {@link JTree} containing all
  * model elements of a JSBML model on the left hand side and an
@@ -103,7 +105,7 @@ public class SBMLModelSplitPane extends JSplitPane implements
 		if (o instanceof ASTNode) {
 			panel = new ASTNodePanel((ASTNode) o);
 		} else if (o instanceof SBase) {
-			panel = new SBasePanel((SBase) o);
+			panel = new SBasePanel((SBase) o, true, new EquationRenderer());
 		}
 		if (panel != null) {
 			p.add(panel);
