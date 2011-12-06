@@ -45,6 +45,7 @@ import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.util.StringUtil;
+import de.zbit.sbml.gui.SBasePanel;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -157,7 +158,7 @@ public class ASTNodePanel extends JPanel {
 			tf.setEditable(enabled);
 			lh.add("Name", tf, true);
 			if (node.getVariable() != null) {
-				lh.add(new SBasePanel(node.getVariable()), 0, lh
+				lh.add(new SBasePanel(node.getVariable(),true, new EquationRenderer()), 0, lh
 						.getRow() + 1, 3, 1, 0, 0);
 				lh.add(new JPanel(), 0, lh.getRow() + 1, 3, 1, 0, 0);
 			}
