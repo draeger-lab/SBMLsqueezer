@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
@@ -51,7 +52,7 @@ public class TestFolder {
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class
 			.getName());
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws BackingStoreException {
 		
 		// Creating output folder at /workspace/SBMLSqueezer/files/tests/tmp
 		File tmpDir = new File(System.getProperty("user.dir")
@@ -94,10 +95,11 @@ public class TestFolder {
 		// Initializing squeezer
 		SBMLsqueezer squeezer = new SBMLsqueezer();
 		
-		//Shouldn't I edit the preferences?
+		//Try for reversible and irreversible reactions!
 		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		prefs.put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 			Boolean.valueOf(true));
+		prefs.flush();
 		
 		logger.info("Starting Tests...");
 
