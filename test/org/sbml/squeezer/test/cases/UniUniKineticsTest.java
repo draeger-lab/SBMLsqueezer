@@ -24,9 +24,16 @@
 
 package org.sbml.squeezer.test.cases;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
@@ -36,6 +43,10 @@ import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.Unit.Kind;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.io.SqSBMLWriter;
+import org.sbml.squeezer.kinetics.HillEquation;
+import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.tolatex.SBML2LaTeX;
 
 /**
@@ -45,28 +56,46 @@ import org.sbml.tolatex.SBML2LaTeX;
  */
 
 public class UniUniKineticsTest {
-
-	public static void main(String[] args) throws Throwable{
-		SBMLDocument doc = new SBMLDocument(3, 1);
+	static Reaction r1;
+	static KineticLawGenerator klg;
+	
+	@BeforeClass
+	public static void initTest() throws Throwable{
+		SBMLDocument doc = new SBMLDocument(2, 4);
 		Model model = doc.createModel("uniuni_model");
 		Compartment c = model.createCompartment("c1");
 		Species s1 = model.createSpecies("s1", c);
 		Species p1 = model.createSpecies("p1", c);
-		Species i1 = model.createSpecies("i1", c);
-		Reaction r1 = model.createReaction("r1");
+		//Species i1 = model.createSpecies("i1", c);
+		r1 = model.createReaction("r1");
+		r1.setReversible(false);
 		r1.createReactant(s1);
 		r1.createProduct(p1);
-		ModifierSpeciesReference mod = r1.createModifier(i1);
-		mod.setSBOTerm(20); // inhibitor
-		r1.setReversible(true);
+
+		//ModifierSpeciesReference mod = r1.createModifier(i1);
+		//mod.setSBOTerm(20); // inhibitor
 		
-		KineticLawGenerator klg = new KineticLawGenerator(model);
-		klg.generateLaws();
-		klg.storeKineticLaws();
+		klg = new KineticLawGenerator(model);
+	}
+	@Test
+	public void testMichMent() throws Throwable{
+		//klg.generateLaws();
+		//klg.storeKineticLaws();
+		//KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class.getName(), false);
+		KineticLaw kl1 = klg.createKineticLaw(r1, "MichaelisMenten", false);
+		assertEquals("vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)",kl1.getMath().toFormula());
+	}
+	
+	@Test
+	public void testMichMentRev() throws Throwable{
+		KineticLaw kl2 = klg.createKineticLaw(r1, "MichaelisMenten", true);
+		assertEquals("vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)",kl2.getMath().toFormula());
+		/*
 		File store = new File("test.sbml");
 		SBMLWriter.write(doc, store, ' ', (short) 2);
 		SBMLWriter.write(doc, System.out, ' ', (short) 2);
 		System.out.println();
-		SBML2LaTeX.convert(doc, new File(System.getProperty("user.dir") + "/test.pdf"));
+		SBML2LaTeX.convert(doc, new File(System.getProperty("user.dir") + "test.pdf"));
+		*/
 	}
 }
