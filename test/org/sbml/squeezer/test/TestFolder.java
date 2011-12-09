@@ -38,6 +38,7 @@ import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 
 import de.zbit.io.SBFileFilter;
+import de.zbit.util.logging.LogUtil;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -53,7 +54,7 @@ public class TestFolder {
 			.getName());
 
 	public static void main(String[] args) throws BackingStoreException {
-		
+		LogUtil.initializeLogging(Level.SEVERE, "org.sbml", "de.zbit");
 		// Creating output folder at /workspace/SBMLSqueezer/files/tests/tmp
 		File tmpDir = new File(System.getProperty("user.dir")
 				+ "/files/tests/tmp");
@@ -121,8 +122,7 @@ public class TestFolder {
 						squeezer.squeeze(currentFile.getAbsolutePath(),
 								outputPath);
 					} catch (Throwable e) {
-						logger.log(Level.WARNING,
-								currentFile.getAbsolutePath(), e);
+						logger.log(Level.SEVERE, currentFile.getAbsolutePath(), e);
 						failures.add(currentFile.getAbsolutePath());
 					}
 				}
