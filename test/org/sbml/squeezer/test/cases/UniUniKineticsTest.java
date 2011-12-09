@@ -44,10 +44,13 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.Unit.Kind;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SqSBMLWriter;
 import org.sbml.squeezer.kinetics.HillEquation;
 import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.tolatex.SBML2LaTeX;
+
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * @author Julianus Pfeuffer
@@ -82,6 +85,8 @@ public class UniUniKineticsTest {
 		//klg.generateLaws();
 		//klg.storeKineticLaws();
 		//KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class.getName(), false);
+//		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+//		prefs.put(SqueezerOptions., value)
 		KineticLaw kl1 = klg.createKineticLaw(r1, "MichaelisMenten", false);
 		assertEquals("vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)",kl1.getMath().toFormula());
 	}

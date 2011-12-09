@@ -56,11 +56,11 @@ public class EquationRenderer implements Renderer{
 		return LaTeXOptions.PRINT_NAMES_IF_AVAILABLE;
 	}
 	
-	public Component getEquation(String equation){
+	public Component renderEquation(String equation){
 		return new sHotEqn(equation);
 	}
 	
-	public Component setBorder(String equation, Border border) {
+	public Component renderEquation(String equation, Border border) {
 		sHotEqn eqn = new sHotEqn(equation);
 		eqn.setBorder(border);
 		return eqn;
