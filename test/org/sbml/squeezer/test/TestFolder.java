@@ -27,18 +27,21 @@ package org.sbml.squeezer.test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
-import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.logging.LogUtil;
+import de.zbit.util.logging.OneLineFormatter;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -47,91 +50,114 @@ import de.zbit.util.prefs.SBPreferences;
  * @since 1.4
  */
 
-public class TestFolder {
+public class TestFolder extends Handler {
 
 	private static String foldername = "";
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class
 			.getName());
 
-	public static void main(String[] args) throws BackingStoreException {
-		LogUtil.initializeLogging(Level.SEVERE, "org.sbml", "de.zbit");
-		// Creating output folder at /workspace/SBMLSqueezer/files/tests/tmp
-		File tmpDir = new File(System.getProperty("user.dir")
-				+ "/files/tests/tmp");
-		if (!tmpDir.exists()) {
-			tmpDir.mkdir();
-		}
-		
-		//Writing log-file
-		try {
-		    
-		    FileHandler handler = new FileHandler(tmpDir.getAbsolutePath()
-					+ '/' + "tests.log");
-		    logger.addHandler(handler);
-		} catch (IOException e) {
-		}
+	public TestFolder(String[] args) throws BackingStoreException, FileNotFoundException {
+    // Creating output folder at /workspace/SBMLSqueezer/files/tests/tmp
+    File tmpDir = new File(System.getProperty("user.dir")
+        + "/files/tests/tmp");
+    if (!tmpDir.exists()) {
+      tmpDir.mkdir();
+    }
+    
+    //Writing log-file
+    try {
+        FileHandler handler = new FileHandler(tmpDir.getAbsolutePath()
+          + '/' + "tests.log");
+        logger.addHandler(handler);
+    } catch (IOException e) {
+    }
 
-		// Test data to be put in org.sbml.squeezer.test.data
-		foldername = (args.length > 0) ? args[0] : TestFolder.class.getResource(
-			"data/").getPath();
+    // Test data to be put in org.sbml.squeezer.test.data
+    foldername = (args.length > 0) ? args[0] : TestFolder.class.getResource(
+      "data/").getPath();
 
-		// Looking up all Files in this folder and subfolders
-		TraverseFolder traverser = new TraverseFolder();
-		try {
-			traverser.traverse(new File(foldername));
-		} catch (FileNotFoundException e1) {
-			logger.log(Level.WARNING, "Couldn't open a File.");
-		}
-		ArrayList<File> filesToCheck = traverser.getFiles();
+    // Looking up all Files in this folder and subfolders
+    TraverseFolder traverser = new TraverseFolder();
+    try {
+      traverser.traverse(new File(foldername));
+    } catch (FileNotFoundException e1) {
+      logger.log(Level.WARNING, "Couldn't open a File.");
+    }
+    ArrayList<File> filesToCheck = traverser.getFiles();
 
-		// Different Levels/Versions to test
-		SBFileFilter[] filterArray = { SBFileFilter.createSBMLFileFilterL1V1(),
-				SBFileFilter.createSBMLFileFilterL1V2(),
-				SBFileFilter.createSBMLFileFilterL2V1(),
-				SBFileFilter.createSBMLFileFilterL2V2(),
-				SBFileFilter.createSBMLFileFilterL2V3(),
-				SBFileFilter.createSBMLFileFilterL2V4(),
-				SBFileFilter.createSBMLFileFilterL3V1() };
+    // Different Levels/Versions to test
+    SBFileFilter[] filterArray = { SBFileFilter.createSBMLFileFilterL1V1(),
+        SBFileFilter.createSBMLFileFilterL1V2(),
+        SBFileFilter.createSBMLFileFilterL2V1(),
+        SBFileFilter.createSBMLFileFilterL2V2(),
+        SBFileFilter.createSBMLFileFilterL2V3(),
+        SBFileFilter.createSBMLFileFilterL2V4(),
+        SBFileFilter.createSBMLFileFilterL3V1() };
 
-		// Initializing squeezer
-		SBMLsqueezer squeezer = new SBMLsqueezer();
-		
-		//Try for reversible and irreversible reactions!
-		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		prefs.put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
-			Boolean.valueOf(true));
-		prefs.flush();
-		
-		logger.info("Starting Tests...");
+    // Initializing squeezer
+    SBMLsqueezer squeezer = new SBMLsqueezer();
+    LogUtil.addHandler(this, "org.sbml");
+    LogUtil.initializeLogging(Level.WARNING, "org.sbml");
+    // TODO: This won't work on Windows, so create a temporary file for this.
+    System.setOut(new PrintStream("/dev/null"));
+    
+    //Try for reversible and irreversible reactions!
+    SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+    prefs.put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+      Boolean.valueOf(true));
+    prefs.flush();
+    
+    logger.info("Starting Tests...");
 
-		ArrayList<String> failures = new ArrayList<String>();
-		// iterating over all Levels/Versions and files and squeezing them
-		for (SBFileFilter filter : filterArray) {
-			for (int i = 0; i < filesToCheck.size(); i++) {
-				File currentFile = filesToCheck.get(i);
-				String currentFilename = currentFile.getName();
-				if (filter.accept(currentFile)) {
-					String outputPath = tmpDir.getAbsolutePath()
-							+ '/'
-							+ currentFilename.substring(0,
-									currentFilename.lastIndexOf('.'))
-							+ "_result.xml";
-					try {
-						logger.info(String.format("Squeezing file: %s",
-								currentFile.getAbsolutePath()));
-						squeezer.squeeze(currentFile.getAbsolutePath(),
-								outputPath);
-					} catch (Throwable e) {
-						logger.log(Level.SEVERE, currentFile.getAbsolutePath(), e);
-						failures.add(currentFile.getAbsolutePath());
-					}
-				}
-			}
-		}
+    // iterating over all Levels/Versions and files and squeezing them
+    for (SBFileFilter filter : filterArray) {
+      for (int i = 0; i < filesToCheck.size(); i++) {
+        File currentFile = filesToCheck.get(i);
+        String currentFilename = currentFile.getName();
+        if (filter.accept(currentFile)) {
+          String outputPath = tmpDir.getAbsolutePath()
+              + '/'
+              + currentFilename.substring(0,
+                  currentFilename.lastIndexOf('.'))
+              + "_result.xml";
+          try {
+            logger.info(String.format("Squeezing file: %s",
+                currentFile.getAbsolutePath()));
+            squeezer.squeeze(currentFile.getAbsolutePath(),
+                outputPath);
+          } catch (Throwable e) {
+            logger.log(Level.SEVERE, currentFile.getAbsolutePath(), e);
+            System.exit(1);
+          }
+        }
+      }
+    }
 
-		for (String path : failures) {
-			System.out.println(path);
-		}
+  }
+
+  public static void main(String[] args) throws BackingStoreException, FileNotFoundException {
+	  new TestFolder(args);
 	}
+
+  /* (non-Javadoc)
+   * @see java.util.logging.Handler#close()
+   */
+  public void close() throws SecurityException {
+  }
+
+  /* (non-Javadoc)
+   * @see java.util.logging.Handler#flush()
+   */
+  public void flush() {
+  }
+
+  /* (non-Javadoc)
+   * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
+   */
+  public void publish(LogRecord record) {
+    if (record.getLevel().intValue() < Level.FINE.intValue()) {
+      System.err.print(record.getMessage());
+    }
+  }
 
 }
