@@ -79,11 +79,13 @@ public class UniUniKineticsTest {
 		//mod.setSBOTerm(20); // inhibitor
 		
 		klg = new KineticLawGenerator(model);
+		
+		//klg.generateLaws();
+		//klg.storeKineticLaws();
 	}
 	@Test
 	public void testMichMent() throws Throwable{
-		//klg.generateLaws();
-		//klg.storeKineticLaws();
+		
 		//KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class.getName(), false);
 //		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 //		prefs.put(SqueezerOptions., value)
@@ -94,13 +96,14 @@ public class UniUniKineticsTest {
 	@Test
 	public void testMichMentRev() throws Throwable{
 		KineticLaw kl2 = klg.createKineticLaw(r1, "MichaelisMenten", true);
-		assertEquals("vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)",kl2.getMath().toFormula());
-		/*
-		File store = new File("test.sbml");
-		SBMLWriter.write(doc, store, ' ', (short) 2);
-		SBMLWriter.write(doc, System.out, ' ', (short) 2);
-		System.out.println();
-		SBML2LaTeX.convert(doc, new File(System.getProperty("user.dir") + "test.pdf"));
-		*/
+		assertEquals("TODO!",kl2.getMath().toFormula());
 	}
+	
+	/*
+	File store = new File("test.sbml");
+	SBMLWriter.write(doc, store, ' ', (short) 2);
+	SBMLWriter.write(doc, System.out, ' ', (short) 2);
+	System.out.println();
+	SBML2LaTeX.convert(doc, new File(System.getProperty("user.dir") + "test.pdf"));
+	*/
 }
