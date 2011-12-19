@@ -24,17 +24,10 @@
 
 package org.sbml.squeezer.gui;
 
-import java.awt.Component;
-
-import javax.swing.border.Border;
-
-import de.zbit.sbml.gui.Renderer;
-import de.zbit.util.prefs.KeyProvider;
-import de.zbit.util.prefs.Option;
+import javax.swing.JComponent;
 
 import atp.sHotEqn;
-
-import org.sbml.tolatex.LaTeXOptions;
+import de.zbit.sbml.gui.Renderer;
 
 /**
  * Provide all needed functions for the sHotEqn latex renderer.
@@ -44,25 +37,19 @@ import org.sbml.tolatex.LaTeXOptions;
  * @version $Rev: 716 $
  */
 public class EquationRenderer implements Renderer{
+	
 	public EquationRenderer() {
-		
+	  super();
 	}
 	
-	public Class<? extends KeyProvider> getLaTeXOptions() {
-		return LaTeXOptions.class;
-	}
-	
-	public Option<Boolean> printNamesIfAvailable() {
-		return LaTeXOptions.PRINT_NAMES_IF_AVAILABLE;
-	}
-	
-	public Component renderEquation(String equation){
+	public JComponent renderEquation(String equation){
 		return new sHotEqn(equation);
 	}
-	
-	public Component renderEquation(String equation, Border border) {
-		sHotEqn eqn = new sHotEqn(equation);
-		eqn.setBorder(border);
-		return eqn;
+
+	/* (non-Javadoc)
+	 * @see de.zbit.sbml.gui.Renderer#printNamesIfAvailable()
+	 */
+	public boolean printNamesIfAvailable() {
+		return true;
 	}
 }
