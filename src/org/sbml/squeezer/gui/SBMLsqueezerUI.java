@@ -400,7 +400,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		split.addActionListener(this);
 		tabbedPane.add(model.getId(), split);
 		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
-		setEnabled(true, BaseAction.FILE_SAVE, BaseAction.FILE_CLOSE,
+		setEnabled(true, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 				Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
 				Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
 	}
@@ -496,7 +496,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(tabbedPane)) {
 			if (tabbedPane.getComponentCount() == 0) {
-				setEnabled(false, BaseAction.FILE_SAVE, BaseAction.FILE_CLOSE,
+				setEnabled(false, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 						Command.SQUEEZE, Command.TO_LATEX,
 						Command.CHECK_STABILITY,
 						Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
@@ -618,7 +618,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			change = true;
 		}
 		if (tabbedPane.getComponentCount() == 0) {
-			setEnabled(false, BaseAction.FILE_SAVE, BaseAction.FILE_CLOSE,
+			setEnabled(false, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 					Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
 					Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
 		}
