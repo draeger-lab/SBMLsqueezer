@@ -57,9 +57,12 @@ public class TestFolder extends Handler {
 
 	public TestFolder(String[] args) throws BackingStoreException, IOException {
 	
+		
+	//To set the properties of the log4j logger to specifiy the levels it logs,
+	//where to set the output.
 	String propertiespath = TestFolder.class.getResource(
 			      "data/log4j.properties").getPath();
-	System.setProperty("log4j.configuration", propertiespath);
+	System.setProperty("log4j.configuration", "file:"+propertiespath);
 
 		
     // Creating output folder at /workspace/SBMLSqueezer/files/tests/tmp
@@ -105,6 +108,7 @@ public class TestFolder extends Handler {
     LogUtil.addHandler(this, "org.sbml");
     LogUtil.initializeLogging(Level.WARNING, "org.sbml");
  
+    //directs all logs to a temporary file, that is deleted in the end
     File temp = File.createTempFile("SBMLSqueezerLoggerOutput", ".log"); 
     System.setOut(new PrintStream(temp));
     
