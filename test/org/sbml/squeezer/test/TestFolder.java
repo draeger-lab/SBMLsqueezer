@@ -41,7 +41,6 @@ import org.sbml.squeezer.SqueezerOptions;
 
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.logging.LogUtil;
-import de.zbit.util.logging.OneLineFormatter;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -56,7 +55,13 @@ public class TestFolder extends Handler {
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class
 			.getName());
 
-	public TestFolder(String[] args) throws BackingStoreException, FileNotFoundException {
+	public TestFolder(String[] args) throws BackingStoreException, IOException {
+	
+	String propertiespath = TestFolder.class.getResource(
+			      "data/log4j.properties").getPath();
+	System.setProperty("log4j.configuration", propertiespath);
+
+		
     // Creating output folder at /workspace/SBMLSqueezer/files/tests/tmp
     File tmpDir = new File(System.getProperty("user.dir")
         + "/files/tests/tmp");
@@ -95,11 +100,13 @@ public class TestFolder extends Handler {
         SBFileFilter.createSBMLFileFilterL3V1() };
 
     // Initializing squeezer
+    //String[] arg = {"-Dlog4j.configuration=/home/user/myLog4j.properties"};
     SBMLsqueezer squeezer = new SBMLsqueezer();
     LogUtil.addHandler(this, "org.sbml");
     LogUtil.initializeLogging(Level.WARNING, "org.sbml");
-    // TODO: This won't work on Windows, so create a temporary file for this.
-    System.setOut(new PrintStream("/dev/null"));
+ 
+    File temp = File.createTempFile("SBMLSqueezerLoggerOutput", ".log"); 
+    System.setOut(new PrintStream(temp));
     
     //Try for reversible and irreversible reactions!
     SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
@@ -132,10 +139,13 @@ public class TestFolder extends Handler {
         }
       }
     }
+    
+    //Cleanup
+    temp.delete();
 
   }
 
-  public static void main(String[] args) throws BackingStoreException, FileNotFoundException {
+  public static void main(String[] args) throws BackingStoreException, IOException {
 	  new TestFolder(args);
 	}
 

@@ -96,7 +96,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testMichMentRev() throws Throwable{
 		KineticLaw kl2 = klg.createKineticLaw(r1, "MichaelisMenten", true);
-		assertEquals("TODO!",kl2.getMath().toFormula());
+		assertEquals("(vmaf_r1/kmc_r1_s1*s1*c1-vmar_r1/kmc_r1_p1*p1*c1)/(1+(s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1))",kl2.getMath().toFormula());
 	}
 	
 	/*
