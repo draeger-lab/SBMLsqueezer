@@ -130,18 +130,4 @@ public class GUITools extends de.zbit.gui.GUITools {
 			}
 		}
 	}
-
-	/**
-	 * Creates a JEditorPane that displays the given UnitDefinition as a HTML.
-	 * 
-	 * @param ud
-	 * @return
-	 */
-	public static JEditorPane unitPreview(UnitDefinition ud) {
-		JEditorPane preview = new JEditorPane("text/html", StringUtil
-				.toHTML(ud != null ? HTMLFormula.toHTML(ud) : ""));
-		preview.setEditable(false);
-		preview.setBorder(BorderFactory.createLoweredBevelBorder());
-		return preview;
-	}
 }

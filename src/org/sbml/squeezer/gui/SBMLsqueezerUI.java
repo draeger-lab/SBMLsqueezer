@@ -33,6 +33,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
@@ -298,9 +299,13 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				klsd.setVisible(true);
 			}
 			if (klsd.isKineticsAndParametersStoredInSBML()) {
-				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
+				SBMLModelSplitPaneExtended split = (SBMLModelSplitPaneExtended) tabbedPane
 						.getSelectedComponent();
-				split.init(sbmlIO.getSelectedModel(), true);
+				try {
+					split.init(sbmlIO.getSelectedModel(), true);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 			break;
 		case TO_LATEX:
@@ -396,13 +401,18 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @param model
 	 */
 	private void addModel(Model model) {
-		SBMLModelSplitPane split = new SBMLModelSplitPane(model);
-		split.addActionListener(this);
-		tabbedPane.add(model.getId(), split);
-		tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
-		setEnabled(true, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
-				Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
-				Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+		SBMLModelSplitPaneExtended split;
+		try {
+			split = new SBMLModelSplitPaneExtended(model);
+			split.addActionListener(this);
+			tabbedPane.add(model.getId(), split);
+			tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
+			setEnabled(true, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
+					Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
+					Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -526,9 +536,13 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we
 						.getWindow();
 				if (klsd.isKineticsAndParametersStoredInSBML()) {
-					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
+					SBMLModelSplitPaneExtended split = (SBMLModelSplitPaneExtended) tabbedPane
 							.getSelectedComponent();
-					split.init(sbmlIO.getSelectedModel(), true);
+					try {
+						split.init(sbmlIO.getSelectedModel(), true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			} else {
 				setEnabled(true, Command.SIMULATE);
