@@ -21,12 +21,14 @@ package org.sbml.squeezer.test.gui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.HeadlessException;
+import java.io.IOException;
 
 import javax.swing.JDialog;
 
 import org.junit.Ignore;
 import org.sbml.jsbml.Model;
-import org.sbml.squeezer.gui.SBMLModelSplitPane;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.squeezer.gui.SBMLModelSplitPaneExtended;
 
 /**
  * A dialog showing the structure of a model. Just for testing purposes.
@@ -100,7 +102,11 @@ public class ModelDialog extends JDialog {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setModal(true);
 		setTitle("JSBML Model structure");
-		getContentPane().add(new SBMLModelSplitPane(model));
+		try {
+			getContentPane().add(new SBMLModelSplitPaneExtended(model));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		pack();
 		setLocationRelativeTo(getOwner());
 	}
