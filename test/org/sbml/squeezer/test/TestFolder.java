@@ -94,13 +94,15 @@ public class TestFolder extends Handler {
     ArrayList<File> filesToCheck = traverser.getFiles();
 
     // Different Levels/Versions to test
-    SBFileFilter[] filterArray = { SBFileFilter.createSBMLFileFilterL1V1(),
-        SBFileFilter.createSBMLFileFilterL1V2(),
-        SBFileFilter.createSBMLFileFilterL2V1(),
-        SBFileFilter.createSBMLFileFilterL2V2(),
-        SBFileFilter.createSBMLFileFilterL2V3(),
-        SBFileFilter.createSBMLFileFilterL2V4(),
-        SBFileFilter.createSBMLFileFilterL3V1() };
+    SBFileFilter[] filterArray = {
+       // SBFileFilter.createSBMLFileFilterL1V1(),
+       // SBFileFilter.createSBMLFileFilterL1V2(),
+       // SBFileFilter.createSBMLFileFilterL2V1(), viele!
+       // SBFileFilter.createSBMLFileFilterL2V2(),
+       // SBFileFilter.createSBMLFileFilterL2V3(),
+        SBFileFilter.createSBMLFileFilterL2V4()
+       // SBFileFilter.createSBMLFileFilterL3V1() 
+        };
 
     // Initializing squeezer
     //String[] arg = {"-Dlog4j.configuration=/home/user/myLog4j.properties"};
@@ -134,6 +136,7 @@ public class TestFolder extends Handler {
           try {
             logger.info(String.format("Squeezing file: %s",
                 currentFile.getAbsolutePath()));
+            System.err.println("Processing:" + currentFilename);
             squeezer.squeeze(currentFile.getAbsolutePath(),
                 outputPath);
           } catch (Throwable e) {
