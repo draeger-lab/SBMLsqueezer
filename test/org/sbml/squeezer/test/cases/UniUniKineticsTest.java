@@ -60,45 +60,83 @@ import de.zbit.util.prefs.SBPreferences;
 
 public class UniUniKineticsTest {
 	static Reaction r1;
+	static Reaction r2;
 	static KineticLawGenerator klg;
+	static SBMLDocument doc = new SBMLDocument(2, 4);
+	static Model model = doc.createModel("uniuni_model");
 	
 	@BeforeClass
 	public static void initTest() throws Throwable{
-		SBMLDocument doc = new SBMLDocument(2, 4);
-		Model model = doc.createModel("uniuni_model");
+		
 		Compartment c = model.createCompartment("c1");
 		Species s1 = model.createSpecies("s1", c);
 		Species p1 = model.createSpecies("p1", c);
-		//Species i1 = model.createSpecies("i1", c);
+		Species i1 = model.createSpecies("i1", c);
 		r1 = model.createReaction("r1");
 		r1.setReversible(false);
 		r1.createReactant(s1);
 		r1.createProduct(p1);
-
-		//ModifierSpeciesReference mod = r1.createModifier(i1);
-		//mod.setSBOTerm(20); // inhibitor
 		
-		klg = new KineticLawGenerator(model);
+		r2 = model.createReaction("r2");
+		r2.setReversible(false);
+		ModifierSpeciesReference mod = r2.createModifier(i1);
+		mod.setSBOTerm(20); // inhibitor
+		r2.createReactant(s1);
+		r2.createProduct(p1);
+		
 		
 		//klg.generateLaws();
 		//klg.storeKineticLaws();
 	}
 	@Test
 	public void testMichMent() throws Throwable{
-		
+		klg = new KineticLawGenerator(model);
 		//KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class.getName(), false);
 //		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 //		prefs.put(SqueezerOptions., value)
-		KineticLaw kl1 = klg.createKineticLaw(r1, "MichaelisMenten", false);
-		assertEquals("vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)",kl1.getMath().toFormula());
+		KineticLaw kl = klg.createKineticLaw(r1, "MichaelisMenten", false);
+		assertEquals("vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)",kl.getMath().toFormula());
+	}
+	
+	
+	
+	@Test
+	public void testHill() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, "HillEquation", false);
+		assertEquals("vmax_r1*(s1*c1)^(hic_r1)/(ksp_r1^(hic_r1)+(s1*c1)^(hic_r1))",kl.getMath().toFormula());
+	}
+	
+	@Test
+	public void testHillMod() throws Throwable{
+		klg = new KineticLawGenerator(model);
+		KineticLaw kl = klg.createKineticLaw(r2, "HillEquation", true);
+		assertEquals("",kl.getMath().toFormula());
+	}
+	
+	@Test
+	public void testHillModRev() throws Throwable{
+		klg = new KineticLawGenerator(model);
+		KineticLaw kl = klg.createKineticLaw(r2, "HillEquation", true);
+		assertEquals("vmaf_r2*s1*c1/ksp_r2*(1-p1*c1/(keq_r2*s1*c1))*(s1*c1/ksp_r2+p1*c1/ksp_r2)^(hic_r2-1)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))+(s1*c1/ksp_r2+p1*c1/ksp_r2)^(hic_r2))",kl.getMath().toFormula());
+	}
+	
+	@Test
+	public void testHillRev() throws Throwable{
+		klg = new KineticLawGenerator(model);
+		KineticLaw kl = klg.createKineticLaw(r1, "HillEquation", true);
+		assertEquals("vmaf_r1*s1*c1/ksp_r1*(1-p1*c1/(keq_r1*s1*c1))*(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1-1)/(1+(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1))",kl.getMath().toFormula());
 	}
 	
 	@Test
 	public void testMichMentRev() throws Throwable{
-		KineticLaw kl2 = klg.createKineticLaw(r1, "MichaelisMenten", true);
-		assertEquals("(vmaf_r1/kmc_r1_s1*s1*c1-vmar_r1/kmc_r1_p1*p1*c1)/(1+(s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1))",kl2.getMath().toFormula());
+		klg = new KineticLawGenerator(model);
+		KineticLaw kl = klg.createKineticLaw(r1, "MichaelisMenten", true);
+		assertEquals("(vmaf_r1/kmc_r1_s1*s1*c1-vmar_r1/kmc_r1_p1*p1*c1)/(1+(s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1))",kl.getMath().toFormula());
 	}
+
 	
+	
+
 	/*
 	File store = new File("test.sbml");
 	SBMLWriter.write(doc, store, ' ', (short) 2);
