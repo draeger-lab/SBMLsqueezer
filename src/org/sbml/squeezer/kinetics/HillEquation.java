@@ -153,6 +153,8 @@ public class HillEquation extends BasicKineticLaw implements
 				denominator.plus(ASTNode.pow(specTerm, new ASTNode(hillCoeff,
 						this)));
 			else
+				
+				//Hier noch 1+... ???
 				denominator = ASTNode.pow(specTerm,
 						new ASTNode(hillCoeff, this));
 
