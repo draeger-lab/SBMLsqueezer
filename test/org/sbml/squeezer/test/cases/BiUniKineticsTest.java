@@ -34,6 +34,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.KineticLawGenerator;
 
 /**
@@ -45,36 +46,60 @@ import org.sbml.squeezer.KineticLawGenerator;
 public class BiUniKineticsTest {
 		static Reaction r1;
 		static KineticLawGenerator klg;
+		static SpeciesReference s1ref;
+		static Model model;
 		
 		@BeforeClass
 		public static void initTest() throws Throwable{
 			SBMLDocument doc = new SBMLDocument(2, 4);
-			Model model = doc.createModel("biuni_model");
+			model = doc.createModel("biuni_model");
 			Compartment c = model.createCompartment("c1");
+			System.out.println(model.getNumSpeciesReferences());
 			Species s1 = model.createSpecies("s1", c);
 			Species s2 = model.createSpecies("s2", c);
 			Species p1 = model.createSpecies("p1", c);
+
 			r1 = model.createReaction("r1");
 			r1.setReversible(false);
-			r1.createReactant(s1);
+			s1ref = r1.createReactant(s1);
+			
 			r1.createReactant(s2);
 			r1.createProduct(p1);
-			
+			System.out.println(model.getNumSpeciesReferences());
 			klg = new KineticLawGenerator(model);
 
 		}
 		@Test
 		public void testCommonModularRateLaw() throws Throwable{
 
-			KineticLaw kl1 = klg.createKineticLaw(r1, "CommonModularRateLaw", false);
-			assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl1.getMath().toFormula());
+			KineticLaw kl = klg.createKineticLaw(r1, "CommonModularRateLaw", false);
+			assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl.getMath().toFormula());
 		}
 		
 		@Test
 		public void testCommonModularRateLawRev() throws Throwable{
-			KineticLaw kl2 = klg.createKineticLaw(r1, "CommonModularRateLaw", true);
-			assertEquals("(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl2.getMath().toFormula());
+			KineticLaw kl = klg.createKineticLaw(r1, "CommonModularRateLaw", true);
+			assertEquals("(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl.getMath().toFormula());
 		}
+		
+		@Test
+		public void testStoch2CommonModularRateLaw() throws Throwable{
+			r1.removeReactant("s2");
+			s1ref.setStoichiometry(2.0);
+			r1.setReversible(false);
+			klg = new KineticLawGenerator(model);
+			KineticLaw kl = klg.createKineticLaw(r1, "CommonModularRateLaw", false);
+			assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(2*hco_r1)/((1+s1*c1/kmc_r1_s1)^(2*hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl.getMath().toFormula());
+		}
+		
+		@Test
+		public void testStoch2CommonModularRateLawRev() throws Throwable{
+
+			klg = new KineticLawGenerator(model);
+			KineticLaw kl = klg.createKineticLaw(r1, "CommonModularRateLaw", true);
+			assertEquals("(vmaf_r1*(s1*c1/kmc_r1_s1)^(2*hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(2*hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl.getMath().toFormula());
+		}
+
 
 
 }
