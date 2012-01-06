@@ -23,7 +23,11 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.util.HashSet;
@@ -34,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
@@ -49,6 +54,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 
+import de.zbit.gui.LayoutHelper;
 import de.zbit.sbml.gui.SBasePanel;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLTree;
@@ -118,11 +124,25 @@ public class SBMLModelSplitPaneExtended extends SBMLModelSplitPane implements Tr
 	 */
 	public void init(Model model, boolean keepDivider) throws SBMLException, IOException {
 		int proportionalLocation = getDividerLocation();
-		TreePath path = null;
-		if (this.getTree() != null){
-			path = (TreePath) this.getTree().getSelectionPath();
-		}
-		SBMLTree tree = new SBMLTree(model);
+		
+		sbmlDoc = model.getSBMLDocument();
+		tree = new SBMLTree(model);
+		initTree();
+		tree.setPopupMenu(createPopup());
+
+		setLeftComponent(createLeftComponent());
+		setRightComponent(createRightComponent(model));
+		if (keepDivider)
+			setDividerLocation(proportionalLocation);
+		
+		validate();
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private JPopupMenu createPopup () {
 		JPopupMenu popup = new JPopupMenu("SBMLsqueezer");
 		JMenuItem squeezeItem = new JMenuItem("Squeeze kinetic law", UIManager
 				.getIcon("ICON_LEMON_TINY"));
@@ -136,30 +156,8 @@ public class SBMLModelSplitPaneExtended extends SBMLModelSplitPane implements Tr
 		popup.add(latexItem);
 		popup.setOpaque(true);
 		popup.setLightWeightPopupEnabled(true);
-
-		tree.setPopupMenu(popup);
 		
-		tree.setShowsRootHandles(true);
-		tree.setScrollsOnExpand(true);
-		for (ActionListener al : this.getActionListeners())
-			tree.addActionListener(al);
-		if (path != null) {
-			// tree.setSelectionPath(path);
-			tree.setExpandsSelectedPaths(true);
-			tree.expandPath(path);
-		}
-		tree.addTreeSelectionListener(this);
-		tree.setSelectionRow(0);
-		setLeftComponent(new JScrollPane(tree,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
-		setRightComponent(createRightComponent(model));
-		if (keepDivider)
-			setDividerLocation(proportionalLocation);
-		
-		this.setTree(tree);
-		
-		validate();
+		return popup;
 	}
 	
 	/* (non-Javadoc)
