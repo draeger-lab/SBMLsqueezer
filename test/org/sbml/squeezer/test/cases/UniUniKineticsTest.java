@@ -104,7 +104,11 @@ public class UniUniKineticsTest {
 		assertEquals("vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)",kl.getMath().toFormula());
 	}
 	
-	
+	@Test
+	public void testCMRL() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, "CommonModularRateLaw", false);
+		assertEquals("vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))",kl.getMath().toFormula());
+	}
 	
 	@Test
 	public void testHill() throws Throwable{
