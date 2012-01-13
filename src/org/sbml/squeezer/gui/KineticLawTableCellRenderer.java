@@ -31,6 +31,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableCellRenderer;
 
+import de.zbit.gui.ColorPalette;
+
 /**
  * A renderer that paints the background of every second row white or in light
  * blue. For rows containing errors the background is set to a light red.
@@ -51,10 +53,6 @@ public class KineticLawTableCellRenderer extends JTextArea implements
 
 	private int maxNumberOfSpecies;
 
-	public static final Color lightBlue = new Color(205, 225, 255, 50);
-	public static final Color lightRed = new Color(255, 85, 85);
-	public static final Color slateGray3 = new Color(159, 182, 205);
-
 	/**
 	 * TODO: Comment is missing
 	 * 
@@ -73,7 +71,7 @@ public class KineticLawTableCellRenderer extends JTextArea implements
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
-		table.setGridColor(slateGray3);
+		table.setGridColor(ColorPalette.slateGray3);
 		table.setBackground(Color.WHITE);
 		int eductCol = 0;
 		while ((eductCol < table.getColumnCount())
@@ -82,14 +80,14 @@ public class KineticLawTableCellRenderer extends JTextArea implements
 		double numEducts = ((Double) table.getModel().getValueAt(row, eductCol))
 				.doubleValue();
 		if (numEducts >= maxNumberOfSpecies) {
-			setBackground(lightRed);
+			setBackground(ColorPalette.lightRed);
 			setForeground(Color.WHITE);
 			setFont(getFont().deriveFont(Font.PLAIN));
 		} else {
 			if (row % 2 == 0)
 				setBackground(Color.WHITE);
 			else
-				setBackground(lightBlue);
+				setBackground(ColorPalette.lightBlue);
 			setForeground(Color.BLACK);
 			setFont(getFont().deriveFont(Font.PLAIN));
 		}

@@ -44,7 +44,6 @@ import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
-import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 
 import de.zbit.gui.LayoutHelper;
@@ -200,7 +199,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		jRadioButtonForceReacRev
 				.setToolTipText(StringUtil.toHTML(
 								"If checked, all reactions will be set to reversible no matter what is given by the SBML file.",
-								GUITools.TOOLTIP_LINE_LENGTH));
+								StringUtil.TOOLTIP_LINE_LENGTH));
 		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(
 				"Use information from SBML");
 		jRadioButtonSettingsFrameForceRevAsCD
@@ -209,7 +208,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setToolTipText(StringUtil.toHTML(
 								"If checked, the information about reversiblity will be left unchanged.",
-								GUITools.TOOLTIP_LINE_LENGTH));
+								StringUtil.TOOLTIP_LINE_LENGTH));
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonSettingsFrameForceRevAsCD);
 		buttonGroup.add(jRadioButtonForceReacRev);
@@ -239,7 +238,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 				SqueezerOptions.TYPE_STANDARD_VERSION.getValue(properties).ordinal());
 		jComboBoxTypeStandardVersion.setToolTipText(StringUtil.toHTML(
 								"Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.",
-								GUITools.TOOLTIP_LINE_LENGTH));
+								StringUtil.TOOLTIP_LINE_LENGTH));
 		LayoutHelper helper = new LayoutHelper(jPanelStandardVersions);
 		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
 		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);

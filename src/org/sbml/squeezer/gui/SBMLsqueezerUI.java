@@ -33,7 +33,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
@@ -70,6 +69,7 @@ import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
 import de.zbit.io.SBFileFilter;
+import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
@@ -738,12 +738,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		return files;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#saveFile()
 	 */
-	public void saveFile() {
+	public File saveFile() {
 		SBPreferences prefs = SBPreferences.getPreferencesFor(GUIOptions.class);
 		SBFileFilter filterText = SBFileFilter.createTextFileFilter();
 		SBFileFilter filterTeX = SBFileFilter.createTeXFileFilter();
@@ -781,6 +779,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				}
 			}
 		}
+		return null;
 	}
 
 	/*
