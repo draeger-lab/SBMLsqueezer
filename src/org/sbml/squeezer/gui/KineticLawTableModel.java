@@ -145,7 +145,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * 
 	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 */
-	// @Override
+	@Override
 	public String getColumnName(int column) {
 		return columnNames[column];
 	}
@@ -183,7 +183,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * 
 	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 */
-	// @Override
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		if (col == 1)
 			return true;
@@ -196,7 +196,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object,
 	 * int, int)
 	 */
-	// @Override
+	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		data[rowIndex][columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);
