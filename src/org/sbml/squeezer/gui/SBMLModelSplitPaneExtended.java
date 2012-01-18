@@ -87,6 +87,7 @@ public class SBMLModelSplitPaneExtended extends SBMLModelSplitPane implements Tr
 		super(model.getSBMLDocument(), true);
 		
 		init(model, false);
+		initTree();
 	}
 	
 	/**
@@ -127,7 +128,7 @@ public class SBMLModelSplitPaneExtended extends SBMLModelSplitPane implements Tr
 		
 		sbmlDoc = model.getSBMLDocument();
 		tree = new SBMLTree(model);
-		initTree();
+
 		tree.setPopupMenu(createPopup());
 
 		setLeftComponent(createLeftComponent());
