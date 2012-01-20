@@ -50,6 +50,7 @@ public class UniUniKineticsTest {
 	static Reaction r1;
 	static Reaction r2;
 	static Reaction r3;
+	static Reaction r4;
 	static KineticLawGenerator klg;
 	static SBMLDocument doc = new SBMLDocument(2, 4);
 	static Model model = doc.createModel("uniuni_model");
@@ -66,6 +67,7 @@ public class UniUniKineticsTest {
 		Species p1 = model.createSpecies("p1", c);
 		Species i1 = model.createSpecies("i1", c);
 		Species k1 = model.createSpecies("k1", c);
+		Species a1 = model.createSpecies("a1", c);
 		r1 = model.createReaction("r1");
 		r1.setReversible(false);
 		SpeciesReference s1ref = r1.createReactant(s1);
@@ -76,18 +78,24 @@ public class UniUniKineticsTest {
 		
 		r2 = model.createReaction("r2");
 		r2.setReversible(false);
-		ModifierSpeciesReference mod = r2.createModifier(i1);
-		mod.setSBOTerm(20); // inhibitor
+		ModifierSpeciesReference inh = r2.createModifier(i1);
+		inh.setSBOTerm(20); // inhibitor
 		r2.createReactant(s1);
 		r2.createProduct(p1);
 		
 		r3 = model.createReaction("r3");
 		r3.setReversible(false);
 		ModifierSpeciesReference kat = r3.createModifier(k1);
-		kat.setSBOTerm(460); //534
+		kat.setSBOTerm(460);
 		r3.createReactant(s1);
 		r3.createProduct(p1);
 		
+		r4 = model.createReaction("r4");
+		r4.setReversible(false);
+		ModifierSpeciesReference act = r4.createModifier(a1);
+		act.setSBOTerm(462);
+		r4.createReactant(s1);
+		r4.createProduct(p1);
 		//klg.generateLaws();
 		//klg.storeKineticLaws();
 	}
@@ -199,10 +207,10 @@ public class UniUniKineticsTest {
 	}
 	
 	/**
-	 * From here on, the Kinetic Laws for irreversible reactions with a modifier
+	 * From here on, the Kinetic Laws for irreversible reactions with an inhibitor
 	 */
 	@Test
-	public void testHillMod() throws Throwable{
+	public void testHillInh() throws Throwable{
 		//Modifier added!
 		klg = new KineticLawGenerator(model);
 		//use reaction r2
@@ -210,23 +218,62 @@ public class UniUniKineticsTest {
 		assertEquals("vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))",kl.getMath().toFormula());
 	}
 	
-	/*@Test
-	public void testConvMod() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r2, "ConvenienceKinetics", true);
-		assertEquals("vmag_r1*s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)/(1+s1*c1/kmc_r1_s1)",kl.getMath().toFormula());
-	}*/
+	@Test
+	public void testConvInh() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r2, "ConvenienceKinetics", false);
+		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)",kl.getMath().toFormula());
+	}
 	
 	/**
-	 * From here on, the Kinetic Laws for reversible reactions with a modifier
+	 * From here on, the Kinetic Laws for reversible reactions with an inhibitor
 	 */
 	@Test
-	public void testHillModRev() throws Throwable{
+	public void testHillInhRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r2, "HillEquation", true);
 		assertEquals("vmaf_r2*s1*c1/ksp_r2*(1-p1*c1/(keq_r2*s1*c1))*(s1*c1/ksp_r2+p1*c1/ksp_r2)^(hic_r2-1)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))+(s1*c1/ksp_r2+p1*c1/ksp_r2)^(hic_r2))",kl.getMath().toFormula());
 	}
 	
+	@Test
+	public void testConvInhRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r2, "ConvenienceKinetics", true);
+		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*(s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)-p1*c1/kmc_r2_p1*(kG_p1*kmc_r2_p1/(kG_s1*kmc_r2_s1))^(0.5))/(1+s1*c1/kmc_r2_s1+p1*c1/kmc_r2_p1)",kl.getMath().toFormula());
+	}
+	
 	/**
-	 * From here on, the Kinetic Laws for irreversible reactions with a modifier
+	 * From here on, the Kinetic Laws for irreversible reactions with an activator
+	 */
+	@Test
+	public void testHillAct() throws Throwable{
+		//Modifier added!
+		klg = new KineticLawGenerator(model);
+		//use reaction r2
+		KineticLaw kl = klg.createKineticLaw(r2, "HillEquation", false);
+		assertEquals("vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))",kl.getMath().toFormula());
+	}
+	
+	@Test
+	public void testConvAct() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r2, "ConvenienceKinetics", false);
+		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)",kl.getMath().toFormula());
+	}
+	
+	/**
+	 * From here on, the Kinetic Laws for reversible reactions with an activator
+	 */
+	@Test
+	public void testHillActRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r4, "HillEquation", true);
+		assertEquals("vmaf_r4*s1*c1/ksp_r4*(1-p1*c1/(keq_r4*s1*c1))*(s1*c1/ksp_r4+p1*c1/ksp_r4)^(hic_r4-1)/((kmc_r4_a1^(hic_r4)+(a1*c1)^(hic_r4))/(kmc_r4_a1^(hic_r4)+beta_r4*(a1*c1)^(hic_r4))+(s1*c1/ksp_r4+p1*c1/ksp_r4)^(hic_r4))",kl.getMath().toFormula());
+	}
+	
+	@Test
+	public void testConvActRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r4, "ConvenienceKinetics", true);
+		assertEquals("a1*c1/(kac_r4_a1+a1*c1)*vmag_r4*(s1*c1/kmc_r4_s1*(kG_s1*kmc_r4_s1/(kG_p1*kmc_r4_p1))^(0.5)-p1*c1/kmc_r4_p1*(kG_p1*kmc_r4_p1/(kG_s1*kmc_r4_s1))^(0.5))/(1+s1*c1/kmc_r4_s1+p1*c1/kmc_r4_p1)",kl.getMath().toFormula());
+	}
+	
+	/**
+	 * From here on, the Kinetic Laws for irreversible reactions with a catalysator
 	 */
 	@Test
 	public void testHillKat() throws Throwable{
@@ -235,6 +282,12 @@ public class UniUniKineticsTest {
 		//use reaction r3
 		KineticLaw kl = klg.createKineticLaw(r3, "HillEquation", false);
 		assertEquals("vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))",kl.getMath().toFormula());
+	}
+	
+	@Test
+	public void testConvKat() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r3, "ConvenienceKinetics", false);
+		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)",kl.getMath().toFormula());
 	}
 
 	
