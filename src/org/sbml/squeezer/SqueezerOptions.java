@@ -95,6 +95,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 * 
 	 */
 	concentration;
+	
     }
 
 	/**

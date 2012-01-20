@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <comment>
+	This configuration describes the labels of buttons and menu items or 
+	some important user messages in SBMLsqueezer-related graphical user interfaces.
+	Although the preferred way would be to have separate key-value pairs for
+	actual labels and their corresponding tooltips, you may want to use just 
+	one key-value pair, in which the tooltip is located after the separator 
+	";". Otherwise, please use the suffix "_TOOLTIP" to indicate a tooltip 
+	for some label.
+	
+	Please see the JavaDoc for MessageFormatter and Formatter. 
+  </comment>
+  <entry key="SAMPLE_ENTRY">Delete me</entry>
+</properties>

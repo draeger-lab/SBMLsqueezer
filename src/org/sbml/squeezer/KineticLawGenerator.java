@@ -1280,7 +1280,7 @@ public class KineticLawGenerator {
 		if (p.isSetUnits()) {
 			String units = p.getUnits();
 			if (Unit.isUnitKind(units, p.getLevel(), p.getVersion())) {
-				p.setUnits(Unit.Kind.valueOf(units));
+				p.setUnits(Unit.Kind.valueOf(units.toUpperCase()));
 			} else {
 				UnitDefinition ud = modelOrig.getUnitDefinition(p.getUnits());
 				if (ud == null) {

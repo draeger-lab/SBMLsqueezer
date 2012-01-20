@@ -23,42 +23,27 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.UIManager;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 
-import de.zbit.gui.LayoutHelper;
-import de.zbit.sbml.gui.SBasePanel;
-import de.zbit.sbml.gui.SBMLModelSplitPane;
-import de.zbit.sbml.gui.SBMLTree;
 import de.zbit.sbml.gui.ASTNodePanel;
+import de.zbit.sbml.gui.SBMLModelSplitPane;
+import de.zbit.sbml.gui.SBasePanel;
 
 /**
  * A specialized {@link JSplitPane} that displays a {@link JTree} containing all
@@ -110,9 +95,7 @@ public class SBMLModelSplitPaneExtended extends SBMLModelSplitPane implements Tr
 		if (panel != null) {
 			p.add(panel);
 		}
-		scroll = new JScrollPane(p,
-				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scroll = new JScrollPane(p);
 		return scroll;
 	}
 
@@ -126,8 +109,8 @@ public class SBMLModelSplitPaneExtended extends SBMLModelSplitPane implements Tr
 	public void init(Model model, boolean keepDivider) throws SBMLException, IOException {
 		int proportionalLocation = getDividerLocation();
 		
-		sbmlDoc = model.getSBMLDocument();
-		tree = new SBMLTree(model);
+//		sbmlDoc = model.getSBMLDocument();
+//		tree = new SBMLTree(model);
 
 		tree.setPopupMenu(createPopup());
 

@@ -406,7 +406,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			split = new SBMLModelSplitPaneExtended(model);
 			split.addActionListener(this);
 			tabbedPane.add(model.getId(), split);
-			tabbedPane.setSelectedIndex(tabbedPane.getComponentCount() - 1);
+			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 			setEnabled(true, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 					Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
 					Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
@@ -780,15 +780,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			}
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.zbit.gui.BaseFrame#getMaximalFileHistorySize()
-	 */
-	public short getMaximalFileHistorySize() {
-		return 10;
 	}
 
 	/*
