@@ -53,6 +53,7 @@ import javax.swing.event.ChangeListener;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
@@ -299,10 +300,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				klsd.setVisible(true);
 			}
 			if (klsd.isKineticsAndParametersStoredInSBML()) {
-				SBMLModelSplitPaneExtended split = (SBMLModelSplitPaneExtended) tabbedPane
+				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
 						.getSelectedComponent();
 				try {
-					split.init(sbmlIO.getSelectedModel(), true);
+					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -401,9 +402,22 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @param model
 	 */
 	private void addModel(Model model) {
-		SBMLModelSplitPaneExtended split;
+		SBMLModelSplitPane split;
 		try {
-			split = new SBMLModelSplitPaneExtended(model);
+			split = new SBMLModelSplitPane(model.getSBMLDocument(),true);
+			
+			JMenuItem squeezeItem = new JMenuItem("Squeeze kinetic law", UIManager
+					.getIcon("ICON_LEMON_TINY"));
+			squeezeItem.addActionListener(split.getTree());
+			squeezeItem.setActionCommand(Command.SQUEEZE.toString());
+			split.getTree().addPopupMenuItem(squeezeItem, Reaction.class, Model.class, SBMLDocument.class);
+			
+			JMenuItem latexItem = new JMenuItem("Export to LaTeX", UIManager
+					.getIcon("ICON_LATEX_TINY"));
+			latexItem.addActionListener(split.getTree());
+			latexItem.setActionCommand(Command.TO_LATEX.toString());
+			split.getTree().addPopupMenuItem(latexItem, Reaction.class, Model.class, SBMLDocument.class);
+			
 			split.addActionListener(this);
 			tabbedPane.add(model.getId(), split);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
@@ -536,10 +550,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we
 						.getWindow();
 				if (klsd.isKineticsAndParametersStoredInSBML()) {
-					SBMLModelSplitPaneExtended split = (SBMLModelSplitPaneExtended) tabbedPane
+					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
 							.getSelectedComponent();
 					try {
-						split.init(sbmlIO.getSelectedModel(), true);
+						split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
