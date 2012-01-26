@@ -69,6 +69,7 @@ import de.zbit.gui.BaseFrame;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
+import de.zbit.gui.StatusBar;
 import de.zbit.io.SBFileFilter;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.util.StringUtil;
@@ -404,7 +405,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	private void addModel(Model model) {
 		SBMLModelSplitPane split;
 		try {
-			split = new SBMLModelSplitPane(this,model.getSBMLDocument(),true);
+			split = new SBMLModelSplitPane(model.getSBMLDocument(),true);
+			split.setProgressBar(StatusBar.addStatusBar(this).getProgressBar());
 			
 			JMenuItem squeezeItem = new JMenuItem("Squeeze kinetic law", UIManager
 					.getIcon("ICON_LEMON_TINY"));
