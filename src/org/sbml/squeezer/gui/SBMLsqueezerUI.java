@@ -404,7 +404,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	private void addModel(Model model) {
 		SBMLModelSplitPane split;
 		try {
-			split = new SBMLModelSplitPane(model.getSBMLDocument(),true);
+			split = new SBMLModelSplitPane(this,model.getSBMLDocument(),true);
 			
 			JMenuItem squeezeItem = new JMenuItem("Squeeze kinetic law", UIManager
 					.getIcon("ICON_LEMON_TINY"));
