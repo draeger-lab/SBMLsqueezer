@@ -31,6 +31,7 @@ import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -150,6 +151,11 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	}
 
 	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(KineticLawSelectionPanel.class.getName());
+	
+	/**
 	 * @param plugin
 	 * @param model
 	 * @param reaction
@@ -168,19 +174,19 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		double stoichiometry = 0;
 		for (int i = 0; i < reaction.getNumReactants(); i++)
 			stoichiometry += reaction.getReactant(i).getStoichiometry();
-		if (stoichiometry > 2) {
+		if (stoichiometry > 2d) {
+		  String message = String.format("%s species are unlikely to collide spontainously.", StringUtil.toString(stoichiometry));
 			label.append("<p><span color=\"red\">" + "Warning: ");
-			if (stoichiometry - ((int) stoichiometry) == 0)
-				label.append(Integer.toString((int) stoichiometry));
-			else
-				label.append(stoichiometry);
-			label.append(" species are unlikely ");
-			label.append("to collide spontainously.</span></p>");
+			label.append(message);
+			label.append("</span></p>");
+			logger.warning(message);
 		}
 		if (reaction.getFast()) {
+		  String message = String.format("Reaction %s proceeds on a fast time scale. Note that this attribute is currently ignored.", reaction.isSetName() ? reaction.getName() : reaction.getId());
 			label.append("<p><span color=\"#505050\">");
-			label.append("This is a fast reaction. Note that this ");
-			label.append("attribute is currently ignored.</span></p>");
+			label.append(message);
+			label.append("</span></p>");
+			logger.warning(message);
 		}
 		label.append("</body></html>");
 		if (reaction.getFast() || (stoichiometry > 2)) {
@@ -190,10 +196,11 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			p.setBorder(BorderFactory.createRaisedBevelBorder());
 			LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 					p, 0, 0, 1, 1, 1, 1);
-		} else
+		} else {
 			LayoutHelper.addComponent(this, (GridBagLayout) this.getLayout(),
 					new JLabel(label.toString(), SwingConstants.LEFT), 0, 0, 1,
 					1, 1, 1);
+		}
 
 		/*
 		 * A panel, which contains the question, weather the reaction should be
