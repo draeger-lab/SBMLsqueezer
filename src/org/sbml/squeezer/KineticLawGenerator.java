@@ -26,10 +26,11 @@ package org.sbml.squeezer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,11 +63,12 @@ import org.sbml.jsbml.Variable;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.math.GaussianRank;
 import org.sbml.squeezer.util.ModelChangeListener;
-import org.sbml.squeezer.util.SBMLtools;
 import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
+import org.sbml.squeezer.util.SBMLtools;
 
 import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -594,15 +596,30 @@ public class KineticLawGenerator {
 	 * 
 	 * @return
 	 */
-	public Set<Integer> getPossibleEnzymes() {
-		Set<Integer> possibleEnzymes = new HashSet<Integer>();
-		String prefix = "POSSIBLE_ENZYME_", k;
-		for (Object key : prefs.keySet()) {
-			k = key.toString();
-			if (k.startsWith(prefix) && prefs.getBoolean(key)) {
-				possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO(k
-						.substring(prefix.length()))));
+	@SuppressWarnings("unchecked")
+	public SortedSet<Integer> getPossibleEnzymes() {
+		SortedSet<Integer> possibleEnzymes = new TreeSet<Integer>();
+		String name;
+		Option<Boolean> options[] = (Option<Boolean>[]) new Option[] {
+				SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA,
+				SqueezerOptions.POSSIBLE_ENZYME_COMPLEX,
+				SqueezerOptions.POSSIBLE_ENZYME_GENERIC,
+				SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR,
+				SqueezerOptions.POSSIBLE_ENZYME_RNA,
+				SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
+				SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED,
+				SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN 
+		};
+		for (Option<Boolean> option : options) {
+			name = option.getName();
+			if (prefs.getBoolean(option)) {
+				possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO(name.substring(name.lastIndexOf('_') + 1))));
 			}
+		}
+		// One more enzyme type that is not reflected in CellDesigner:
+		if (prefs.getBoolean(SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE)) {
+			name = SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE.getName();
+			possibleEnzymes.add(Integer.valueOf(245));
 		}
 		return possibleEnzymes;
 	}

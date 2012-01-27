@@ -24,6 +24,7 @@
 package org.sbml.squeezer;
 
 import java.io.File;
+import java.util.ResourceBundle;
 
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
@@ -31,6 +32,7 @@ import org.sbml.squeezer.kinetics.HillHinzeEquation;
 import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 
+import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.OptionGroup;
@@ -47,6 +49,11 @@ import de.zbit.util.prefs.Range;
  * @version $Rev$
  */
 public interface SqueezerOptions extends KeyProvider {
+	
+	/**
+	 * for localization support.
+	 */
+	public static final ResourceBundle bundle = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Options");
 	
     /**
      * The possible selections for the three versions of modular rate laws (cf.
@@ -346,6 +353,19 @@ public interface SqueezerOptions extends KeyProvider {
 			"If true (default), generic proteins are treated as enzymes when catalyzing a reaction. Otherwise, " +
 			"generic protein-catalyzed reactions are not considered to be enzyme reactions.",
 			true);
+	
+	/**
+	 * If this options is selected, species that are annotated as macromolecules
+	 * are treated as enzymes when catalyzing a reaction. Otherwise,
+	 * macormolecule-catalyzed reactions are not considered enzyme reactions. If
+	 * a modifier of a reaction that is annotated as an enzymatic catalyst
+	 * refers to a macromolecule but this option is not active, SBMLsqueezer
+	 * will reduce the modifier to a simple catalyst.
+	 */
+	public static final Option<Boolean> POSSIBLE_ENZYME_MACROMOLECULE = new Option<Boolean>(
+			"POSSIBLE_ENZYME_MACROMOLECULE", Boolean.class, bundle,
+			Boolean.TRUE);
+	
 	/**
 	 * Determines whether or not receptors are accepted as enzymes when
 	 * catalyzing a reaction.

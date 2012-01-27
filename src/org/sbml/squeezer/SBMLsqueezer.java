@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,6 +67,7 @@ import org.sbml.tolatex.io.LaTeXOptionsIO;
 import de.zbit.AppConf;
 import de.zbit.Launcher;
 import de.zbit.gui.GUIOptions;
+import de.zbit.io.FileWalker;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.ProgressBar;
 import de.zbit.util.Reflect;
@@ -550,50 +552,73 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @throws Throwable
    */
   public void squeeze(Object sbmlSource, String outfile) throws Throwable {
-    File outFile = outfile != null ? new File(outfile) : null;
-    readSBMLSource(sbmlSource);
-    boolean errorFatal = false;
-    SBMLException exception = null;
-    for (SBMLException exc : sbmlIo.getWarnings())
-      if (exc.isFatal() || exc.isXML() || exc.isError()) {
-        errorFatal = true;
-        exception = exc;
-      }
-    if (errorFatal) {
-      throw new SBMLException(exception);
-    } else if (!sbmlIo.getListOfModels().isEmpty()) {
-      
-      KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
-          .getSelectedModel());
-      
-      ProgressBar progressBar = new ProgressBar(0);
-      klg.setProgressBar(progressBar);
-      
-      klg.generateLaws();
-      
-      progressBar = new ProgressBar(0);
-      klg.setProgressBar(progressBar);
-      
-      klg.storeKineticLaws();
-      long time = System.currentTimeMillis();
-      logger.info("Saving changes and writing SBML file... ");
-      sbmlIo.saveChanges(this);
-      if ((outFile != null)
-          && (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
-        sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
-        logger.info(String.format("done in %d ms.", (System.currentTimeMillis() - time)));
-        SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
-        if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
-          for (SBMLException exc : sbmlIo.getWriteWarnings()) {
-            logger.log(Level.WARNING, exc.getMessage());
-          }
-        }
-      } else {
-        logger.log(Level.WARNING, "Could not write output to SBML.");
-      }
+	File outFile = outfile != null ? new File(outfile) : null;
+    File inFile = sbmlSource != null ? new File(sbmlSource.toString()) : null;
+
+    Map<File, String> ioPairs = FileWalker.filterAndCreate(inFile, outFile, SBFileFilter.createSBMLFileFilter(), true);
+    if (ioPairs.size() == 0) {
+    	logger.info("Empty list of input files. Nothing to do.");
     } else {
-      logger.log(Level.WARNING, "File contains no model. Nothing to do.");
+    	for (Map.Entry<File, String> entry : ioPairs.entrySet()) {
+    		try {
+    			squeeze(entry.getKey(), new File(entry.getValue()));
+    		} catch (Throwable t) {
+    			logger.log(Level.SEVERE, String.format("input: %s, output: %s", entry.getKey().getAbsolutePath(), entry.getValue()), t);
+    		}
+    	}
     }
+  }
+  
+  /**
+   * 
+   * @param source
+   * @param outFile
+   * @throws Throwable
+   */
+  public void squeeze(File source, File outFile) throws Throwable {
+	  readSBMLSource(source.getAbsolutePath());
+	    boolean errorFatal = false;
+	    SBMLException exception = null;
+	    for (SBMLException exc : sbmlIo.getWarnings())
+	      if (exc.isFatal() || exc.isXML() || exc.isError()) {
+	        errorFatal = true;
+	        exception = exc;
+	      }
+	    if (errorFatal) {
+	      throw new SBMLException(exception);
+	    } else if (!sbmlIo.getListOfModels().isEmpty()) {
+	      
+	      KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
+	          .getSelectedModel());
+	      
+	      ProgressBar progressBar = new ProgressBar(0);
+	      klg.setProgressBar(progressBar);
+	      
+	      klg.generateLaws();
+	      
+	      progressBar = new ProgressBar(0);
+	      klg.setProgressBar(progressBar);
+	      
+	      klg.storeKineticLaws();
+	      long time = System.currentTimeMillis();
+	      logger.info("Saving changes and writing SBML file... ");
+	      sbmlIo.saveChanges(this);
+	      if ((outFile != null)
+	          && (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
+	        sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
+	        logger.info(String.format("done in %d ms.", (System.currentTimeMillis() - time)));
+	        SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
+	        if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
+	          for (SBMLException exc : sbmlIo.getWriteWarnings()) {
+	            logger.log(Level.WARNING, exc.getMessage());
+	          }
+	        }
+	      } else {
+	        logger.log(Level.WARNING, "Could not write output to SBML.");
+	      }
+	    } else {
+	      logger.log(Level.WARNING, "File contains no model. Nothing to do.");
+	    }
   }
 
 
