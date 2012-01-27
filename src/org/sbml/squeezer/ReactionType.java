@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -58,6 +59,11 @@ import de.zbit.util.prefs.SBPreferences;
  */
 public class ReactionType {
 
+  /**
+   * A {@link Logger} for this class.
+   */
+  private static final transient Logger logger = Logger.getLogger(ReactionType.class.getName());
+  
 	/**
 	 * Set of those kinetic equations that can only be reversible.
 	 */
@@ -95,8 +101,9 @@ public class ReactionType {
 		Set<String> kinetics = new HashSet<String>();
 		kinetics.addAll(allKinetics);
 		kinetics.removeAll(notReversible);
-		if (!treatReactionsReversible)
+		if (!treatReactionsReversible) {
 			kinetics.removeAll(notIrreversible);
+		}
 		/*
 		 * else kinetics.retainAll(notIrreversible);
 		 */
@@ -187,21 +194,28 @@ public class ReactionType {
 			// activators.add(modifier.getSpecies());
 			// }
 			if (SBO.isCatalyst(type)) {
-				if (SBO.isEnzymaticCatalysis(type))
+				if (SBO.isEnzymaticCatalysis(type)) {
+				  logger.fine(modifier + "is an enzymatic catalyst");
 					enzymes.add(modifier.getSpecies());
-				else
+				} else {
+				  logger.fine(modifier + "is a non-enzymatic catalyst");
 					nonEnzymeCatalysts.add(modifier.getSpecies());
+				}
 			} else if (SBO.isTranscriptionalInhibitor(type)
-					|| SBO.isTranslationalInhibitor(type))
+					|| SBO.isTranslationalInhibitor(type)) {
+			  logger.fine(modifier + "is a transcriptional or translational inhibitor");
 				inhibitors.add(modifier.getSpecies());
-			else if (SBO.isInhibitor(type))
+			} else if (SBO.isInhibitor(type)) {
+			  logger.fine(modifier + "is an inhibitor");
 				inhibitors.add(modifier.getSpecies());
-			else if (SBO.isTranscriptionalActivation(type)
-					|| SBO.isTranslationalActivation(type))
+			} else if (SBO.isTranscriptionalActivation(type)
+					|| SBO.isTranslationalActivation(type)) {
+			  logger.fine(modifier + "is a transcriptional or translational activator");
 				activators.add(modifier.getSpecies());
-			else if (SBO.isTrigger(type) || SBO.isStimulator(type)) {
+			} else if (SBO.isTrigger(type) || SBO.isStimulator(type)) {
 				// no extra support for unknown catalysis anymore...
 				// physical stimulation is now also a stimulator.
+			  logger.fine(modifier + "is an activator");
 				activators.add(modifier.getSpecies());
 			}
 		}

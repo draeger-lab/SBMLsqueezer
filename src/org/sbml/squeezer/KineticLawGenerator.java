@@ -168,9 +168,7 @@ public class KineticLawGenerator {
 			//TODO: Option for setting the initial compartment size
 			compartment.setValue(1d);
 		}
-		if (!compartment.isSetUnits()
-				&& (((short) spatialD)
-						- spatialD == 0d)) {
+    if (!compartment.isSetUnits() && (((short) spatialD) - spatialD == 0d)) {
 			UnitDefinition ud;
 			switch ((short) spatialD) {
 			case 1:
@@ -280,7 +278,7 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	private Species copySpecies(Species speciesOrig, Model miniModel) {
-		if (miniModel.getSpecies(speciesOrig.getId()) == null){
+		if (miniModel.getSpecies(speciesOrig.getId()) == null) {
 			miniModel.addSpecies(speciesOrig.clone());
 		}
 		Species spec = miniModel.getSpecies(speciesOrig.getId());
@@ -445,9 +443,9 @@ public class KineticLawGenerator {
 			if (reacOrig.isSetKineticLaw()) {
 				String formula = reacOrig.getKineticLaw().getFormula();
 				if (formula.equals("") || formula.equals(" ")) {
-					System.err.printf(
+					logger.warning(String.format(
 							"Reaction %s in the model has an incorrect format. This means there is either an empty kinetic law in this reaction or a kinetic law that only consists of a white space. If you decide not to save this generated model, there is only one solution: open this SBML file in an editor and delete the whole kinetic law. SBMLsqueezer ignores this misstake and generates a proper equation. Therfore we recomment that you save this generated model.\n",
-							reacOrig.getId());
+							reacOrig.getId()));
 					create = true;
 				}
 			}
@@ -473,11 +471,11 @@ public class KineticLawGenerator {
 					sr.setSpecies(copySpecies(speciesOrig, miniModel));
 					reac.addProduct(sr);
 				}
-				for (ModifierSpeciesReference s : reacOrig.getListOfModifiers()) {
-					Species speciesOrig = s.getSpeciesInstance();
-					ModifierSpeciesReference sr = s.clone();
-					sr.setSpecies(copySpecies(speciesOrig, miniModel));
-					reac.addModifier(sr);
+				for (ModifierSpeciesReference modifierReferenceOrig : reacOrig.getListOfModifiers()) {
+					Species speciesOrig = modifierReferenceOrig.getSpeciesInstance();
+					ModifierSpeciesReference modifierReference = modifierReferenceOrig.clone();
+					modifierReference.setSpecies(copySpecies(speciesOrig, miniModel));
+					reac.addModifier(modifierReference);
 				}
 				/*
 				 * This will be over written later on anyway but ignoring it
@@ -1259,11 +1257,11 @@ public class KineticLawGenerator {
 						&& species.isSetSBOTerm()
 						&& !possibleEnzymes.contains(Integer.valueOf(species
 								.getSBOTerm()))) {
-					SBMLtools.setSBOTerm(modifier,SBO.getCatalysis());
+					SBMLtools.setSBOTerm(modifier, SBO.getCatalysis());
 				} else if (SBO.isCatalyst(modifier.getSBOTerm())
 						&& (possibleEnzymes.contains(Integer.valueOf(species
 								.getSBOTerm())) || !species.isSetSBOTerm())) {
-					SBMLtools.setSBOTerm(modifier,SBO.getEnzymaticCatalysis());
+					SBMLtools.setSBOTerm(modifier, SBO.getEnzymaticCatalysis());
 				}
 			}
 		}
