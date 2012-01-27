@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <comment>
+	This configuration describes the labels of options in SBMLsqueezer-related 
+	(graphical) user interfaces.
+	Although the preferred way would be to have separate key-value pairs for
+	actual labels and their corresponding tooltips, you may want to use just 
+	one key-value pair, in which the tooltip is located after the separator 
+	";". Otherwise, please use the suffix "_TOOLTIP" to indicate a tooltip 
+	for some label.
+	
+	Please see the JavaDoc for MessageFormatter and Formatter. 
+  </comment>
+  <entry key="SqueezerOptions">SBMLsqueezer Options</entry>
+  <entry key="POSSIBLE_ENZYME_MACROMOLECULE">Macromolecule</entry>
+  <entry key="POSSIBLE_ENZYME_MACROMOLECULE_TOOLTIP">If this options is selected, species that are annotated as macromolecules are treated as enzymes when catalyzing a reaction. Otherwise, macormolecule-catalyzed reactions are not considered enzyme reactions. If a modifier of a reaction that is annotated as an enzymatic catalyst refers to a macromolecule but this option is not active, SBMLsqueezer will reduce the modifier to a simple catalyst.</entry>
+</properties>
