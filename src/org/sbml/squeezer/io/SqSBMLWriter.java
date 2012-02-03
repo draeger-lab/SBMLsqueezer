@@ -50,7 +50,6 @@ import org.sbml.jsbml.util.IOProgressListener;
 public class SqSBMLWriter implements SBMLOutputConverter{
 
 	private Set<IOProgressListener> setOfIOListeners = new HashSet<IOProgressListener>();
-	private Model originalModel;
 	
 	public void addIOProgressListener(IOProgressListener listener) {
 		setOfIOListeners.add(listener);
@@ -66,60 +65,32 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	}
 
 	public void removeUnneccessaryElements(Model model, Object orig) {
-		// TODO Auto-generated method stub
-		
-	}
-	/**
-	 * 
-	 * @param currObject
-	 */
-	private void fireIOEvent(Object currObject) {
-		for (IOProgressListener iopl : setOfIOListeners) {
-			iopl.ioProgressOn(currObject);
-		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Model, java.lang.Object)
 	 */
 	public boolean saveChanges(Model model, Object object) throws SBMLException {
 		if (!(object instanceof Model))
 			throw new IllegalArgumentException(
 					"only instances of org.sbml.jsbml.Model can be considered.");
-		originalModel = (Model) object;
-		
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Reaction, java.lang.Object)
+	 */
 	public boolean saveChanges(Reaction reaction, Object model)
 			throws SBMLException {
-		boolean success = false;
-		if (!(model instanceof Model)){
+		if (!(model instanceof Model)) {
 			throw new IllegalArgumentException("model must be an instance of org.sbml.jsbml.Model");
 		}
-		// convert to Model
-		Model m = (Model) model;
-		// get old reaction
-		Reaction old = m.getReaction(reaction.getId());
-		// remove old reaction
-		success = m.removeReaction(reaction);
-		// if reaction was removed successfully, add the new reaction
-		if(success){
-			success = m.addReaction(reaction);
-			if(!success){
-				// add old reaction again
-				m.addReaction(old);
-			}
-		}
-		
 		return true;
 	}
 
 	public Object writeModel(Model model) throws SBMLException {
 		// TODO Auto-generated method stub
 		Model m = new Model(model);
-		
 		return m;
 	}
 
@@ -132,17 +103,17 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			String programName, String versionNumber) throws SBMLException,
 			IOException {
 		// check arguments
-		if (!(object instanceof SBMLDocument) 
-				&& !(object instanceof Model)){
+		if (!(object instanceof SBMLDocument) && !(object instanceof Model)) {
 			throw new IllegalArgumentException(
 			"object must be an instance of org.sbml.jsbml.SBMLDocument or org.sbml.jsbml.Model.");
 		}
 		// convert to SBML
 		SBMLDocument sbmlDocument;
-		if (object instanceof SBMLDocument)
+		if (object instanceof SBMLDocument) {
 			sbmlDocument = (SBMLDocument) object;
-		else
+		} else {
 			sbmlDocument = ((Model) object).getSBMLDocument();
+		}
 		// write SBML to file
 		boolean success = true; 
 		try {

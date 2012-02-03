@@ -112,11 +112,8 @@ public class CloseIcon implements Icon {
 		color = Color.black;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics,
-	 * int, int)
+	/* (non-Javadoc)
+	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int)
 	 */
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 		this.x_pos = x;
@@ -145,26 +142,23 @@ public class CloseIcon implements Icon {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.Icon#getIconWidth()
 	 */
 	public int getIconWidth() {
 		return width + (fileIcon != null ? fileIcon.getIconWidth() : 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.Icon#getIconHeight()
 	 */
 	public int getIconHeight() {
 		return height;
 	}
 
-	/*
+	/**
 	 * 
+	 * @return
 	 */
 	public Rectangle getBounds() {
 		return new Rectangle(x_pos, y_pos, width, height);

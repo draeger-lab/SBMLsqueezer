@@ -27,6 +27,7 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.EventHandler;
 
 import javax.swing.Icon;
 import javax.swing.JTabbedPane;
@@ -38,33 +39,49 @@ import javax.swing.event.ChangeListener;
  * 
  * To add a tab, use the method addTab(String, Component)
  * 
- * To have an extra icon on each tab (e.g. like in JBuilder, showing the file
+ * To have an extra icon on each tab (e.g., like in JBuilder, showing the file
  * type) use the method addTab(String, Component, Icon). Only clicking the 'X'
  * closes the tab.
  * 
  * @since 1.3
  * @version $Rev$
  */
-public class JTabbedPaneWithCloseIcons extends JTabbedPane implements
-		MouseListener {
+public class JTabbedPaneWithCloseIcons extends JTabbedPane {
+	
 	/**
 	 * Generated serial version id
 	 */
 	private static final long serialVersionUID = -7618281593485131907L;
 
+	/**
+	 * 
+	 */
 	public JTabbedPaneWithCloseIcons() {
 		super();
-		addMouseListener(this);
+		addMouseListener(EventHandler.create(MouseListener.class, this, "mouseClicked", ""));
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.JTabbedPane#addTab(java.lang.String, java.awt.Component)
+	 */
+	@Override
 	public void addTab(String title, Component component) {
 		this.addTab(title, component, null);
 	}
 
+	/**
+	 * 
+	 * @param title
+	 * @param component
+	 * @param extraIcon
+	 */
 	public void addTab(String title, Component component, Icon extraIcon) {
 		super.addTab(title, new CloseIcon(extraIcon), component);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
 	public void mouseClicked(MouseEvent e) {
 		int tabNumber = getUI().tabForCoordinate(this, e.getX(), e.getY());
 		if (tabNumber < 0)
@@ -77,16 +94,5 @@ public class JTabbedPaneWithCloseIcons extends JTabbedPane implements
 				cl.stateChanged(new ChangeEvent(this));
 		}
 	}
-
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	public void mouseExited(MouseEvent e) {
-	}
-
-	public void mousePressed(MouseEvent e) {
-	}
-
-	public void mouseReleased(MouseEvent e) {
-	}
+	
 }

@@ -107,20 +107,15 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		this.listOfOrigModels.addLast(model);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.SBMLInputConverter#addIOProgressListener(org.sbml.jsbml
-	 * .io.IOProgressListener)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#addIOProgressListener(org.sbml.jsbml.io.IOProgressListener)
 	 */
 	public void addIOProgressListener(IOProgressListener listener) {
 		reader.addIOProgressListener(listener);
 		writer.addIOProgressListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLInputConverter#convertModel(java.lang.Object)
 	 */
 	public Model convertModel(Object model) throws SBMLException {
@@ -151,27 +146,21 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return listOfModels;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLInputConverter#getNumErrors()
 	 */
 	public int getNumErrors() {
 		return listOfModels.size() > 0 ? reader.getNumErrors() : 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#getNumErrors(java.lang.Object)
 	 */
 	public int getNumErrors(Object sbase) {
 		return writer.getNumErrors(sbase);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLInputConverter#getOriginalModel()
 	 */
 	public Object getOriginalModel() {
@@ -186,9 +175,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return listOfModels.size() > 0 ? listOfModels.get(selectedModel) : null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLInputConverter#getWarnings()
 	 */
 	public List<SBMLException> getWarnings() {
@@ -203,19 +190,14 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return writer.getWriteWarnings(listOfOrigModels.get(selectedModel));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.SBMLOutputConverter#getWriteWarnings(java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#getWriteWarnings(java.lang.Object)
 	 */
 	public List<SBMLException> getWriteWarnings(Object sbase) {
 		return writer.getWriteWarnings(sbase);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBaseChangedListener#sbaseAdded(org.sbml.jsbml.SBase)
 	 */
 	public void nodeAdded(TreeNode sb) {
@@ -224,8 +206,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
 	 */
   public void nodeRemoved(TreeNode node) {
@@ -234,8 +215,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
     }
   }
 
-	/*
-   * (non-Javadoc)
+	/* (non-Javadoc)
    * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
    */
   public void propertyChange(PropertyChangeEvent evt) {
@@ -245,12 +225,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
     }
   }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.SBMLOutputConverter#removeUnneccessaryElements(org.sbml
-	 * .jsbml.Model, java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#removeUnneccessaryElements(org.sbml.jsbml.Model, java.lang.Object)
 	 */
 	public void removeUnneccessaryElements(Model model, Object orig) {
 		writer.removeUnneccessaryElements(model, orig);
@@ -270,11 +246,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		listener.ioProgressOn(null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Model,
-	 * java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Model, java.lang.Object)
 	 */
 	public boolean saveChanges(Model model, Object object) throws SBMLException {
 		return writer.saveChanges(model, object);
@@ -286,16 +259,11 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @throws SBMLException
 	 */
 	public boolean saveChanges(Reaction reaction) throws SBMLException {
-		return writer
-				.saveChanges(reaction, listOfOrigModels.get(selectedModel));
+		return writer.saveChanges(reaction, listOfOrigModels.get(selectedModel));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Reaction,
-	 * java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#saveChanges(org.sbml.jsbml.Reaction, java.lang.Object)
 	 */
 	public boolean saveChanges(Reaction reaction, Object model)
 			throws SBMLException {
@@ -310,12 +278,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		this.selectedModel = selectedModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-	 * )
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() instanceof JTabbedPane) {
@@ -345,9 +309,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#writeModel(org.sbml.jsbml.Model)
 	 */
 	public Object writeModel(Model model) throws SBMLException {
@@ -367,22 +329,16 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return writer.writeSBML(listOfOrigModels.get(model), filename);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object,
-	 * java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String)
 	 */
 	public boolean writeSBML(Object sbmlDocument, String filename)
 			throws SBMLException, IOException {
 		return writer.writeSBML(sbmlDocument, filename);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object,
-	 * java.lang.String, java.lang.String, java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean writeSBML(Object object, String filename,
 			String programName, String versionNumber) throws SBMLException,

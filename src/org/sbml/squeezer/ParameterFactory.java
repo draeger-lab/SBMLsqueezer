@@ -529,9 +529,8 @@ public class ParameterFactory {
 			}
 			if (!kr.isSetName()) {
 				StringBuffer name = StringTools.concat("maximal velocity of ");
-				if (enzyme != null) {
-					StringTools.append(name, "enzyme ", enzyme, " in ");
-				}
+				// Since enzyme is null, do not append the enzmye here!
+				// StringTools.append(name, "enzyme ", enzyme, " in ");
 				StringTools.append(name, "reaction ", reactionID);
 				name.insert(0, forward ? "Forward " : "Reverse ");
 				kr.setName(name.toString());

@@ -122,7 +122,7 @@ public class GUITools extends de.zbit.gui.GUITools {
 					if (setOfCommands.contains(b.getActionCommand())) {
 						b.setEnabled(state);
 						if (b.getIcon() != null
-								&& b.getIcon() instanceof CloseIcon)
+								&& (b.getIcon() instanceof CloseIcon))
 							((CloseIcon) b.getIcon())
 									.setColor(state ? Color.BLACK : Color.GRAY);
 					}

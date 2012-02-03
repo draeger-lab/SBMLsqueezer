@@ -131,6 +131,9 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 */
 	ParameterFactory parameterFactory;
 	
+	/**
+	 * A {@link Logger} for this class.
+	 */
 	private static Logger logger = Logger.getLogger(BasicKineticLaw.class.getSimpleName());
 
 	/**
@@ -192,8 +195,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			List<String> nonEnzymeCatalysts)
 			throws RateLawNotApplicableException;
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.AbstractSBase#getElementName()
 	 */
 	@Override
@@ -216,9 +218,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		return typeParameters;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.MathContainer#setMath(org.sbml.jsbml.ASTNode)
 	 */
 	public void setMath(ASTNode ast) {
@@ -262,9 +262,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		return speciesTerm(getModel().getSpecies(species));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.MathContainer#toString()
 	 */
 	@Override

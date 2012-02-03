@@ -37,12 +37,14 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 
+import de.zbit.gui.GUITools;
 import de.zbit.util.AbstractProgressBar;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -111,52 +113,38 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		pane.addPropertyChangeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seejava.awt.event.ComponentListener#componentHidden(java.awt.event.
-	 * ComponentEvent)
+	/* (non-Javadoc)
+	 * @seejava.awt.event.ComponentListener#componentHidden(java.awt.event.ComponentEvent)
 	 */
 	public void componentHidden(ComponentEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ComponentListener#componentMoved(java.awt.event.ComponentEvent
-	 * )
+	/* (non-Javadoc)
+	 * @see java.awt.event.ComponentListener#componentMoved(java.awt.event.ComponentEvent)
 	 */
 	public void componentMoved(ComponentEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seejava.awt.event.ComponentListener#componentResized(java.awt.event.
-	 * ComponentEvent)
+	/* (non-Javadoc)
+	 * @seejava.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
 	 */
 	public void componentResized(ComponentEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent
-	 * )
+	/* (non-Javadoc)
+	 * @see java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent)
 	 */
 	public void componentShown(ComponentEvent e) {
 		// reset value to ensure closing works properly
 		pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 	}
-
+	
 	/**
 	 * 
 	 * @return
 	 */
 	public boolean isKineticsAndParametersStoredInSBML() {
-		if (value == JOptionPane.OK_OPTION
+		if ((value == JOptionPane.OK_OPTION)
 				&& !messagePanel.getExistingRateLawSelected()) {
 			String equationType = messagePanel.getSelectedKinetic();
 			reaction.addTreeNodeChangeListener(sbmlio);
@@ -164,11 +152,13 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			klg.getPreferences().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 					Boolean.valueOf(messagePanel.getReversible()));
 			try {
-				klg.storeKineticLaw(klg.createKineticLaw(reaction,
-						equationType, messagePanel.getReversible()));
+				// TODO: Do this in background using SwingWorker!
+				KineticLaw kineticLaw = klg.createKineticLaw(reaction,
+					equationType, messagePanel.getReversible());
+				klg.storeKineticLaw(kineticLaw);
 				sbmlio.saveChanges(reaction);
-			} catch (Throwable e1) {
-				e1.printStackTrace();
+			} catch (Throwable exc) {
+				GUITools.showErrorMessage(dialog, exc);
 			}
 			SBMLsqueezerUI.checkForSBMLErrors(dialog,
 					sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
@@ -184,11 +174,8 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		klg.setProgressBar(progressBar);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowAdapter#windowClosed(java.awt.event.WindowEvent)
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowAdapter#windowClosed(java.awt.event.WindowEvent)
 	 */
 	@Override
 	public void windowClosed(WindowEvent we) {
@@ -196,24 +183,19 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		super.windowClosed(we);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
 	 */
+	@Override
 	public void windowClosing(WindowEvent we) {
 		pane.setValue(null);
 		// setParentEnabled(we, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowAdapter#windowGainedFocus(java.awt.event.WindowEvent
-	 * )
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowAdapter#windowGainedFocus(java.awt.event.WindowEvent)
 	 */
+	@Override
 	public void windowGainedFocus(WindowEvent we) {
 		// Once window gets focus, set initial focus
 		if (!gotFocus) {
@@ -222,21 +204,18 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seejava.beans.PropertyChangeListener#propertyChange(java.beans.
-	 * PropertyChangeEvent)
+	/* (non-Javadoc)
+	 * @seejava.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		// Let the defaultCloseOperation handle the closing
 		// if the user closed the window without selecting a button
 		// (newValue = null in that case). Otherwise, close the
 		// dialog.
-		if (dialog.isVisible() && event.getSource() == pane
-				&& (event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY))
-				&& event.getNewValue() != null
-				&& event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE) {
+		if (dialog.isVisible() && (event.getSource() == pane)
+				&& event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY)
+				&& (event.getNewValue() != null)
+				&& (event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)) {
 			Object selectedValue = pane.getValue();
 			value = JOptionPane.CLOSED_OPTION;
 			if (pane.getOptions() == null && selectedValue instanceof Integer)

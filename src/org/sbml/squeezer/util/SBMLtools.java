@@ -84,7 +84,7 @@ public class SBMLtools {
    * @param level
    * @param version
    */
-  public static final void setLevelAndVersion(SBase sbase, int level, int version){
+  public static final void setLevelAndVersion(SBase sbase, int level, int version) {
     sbase.setVersion(version);
     sbase.setLevel(level);
     for (int i=0; i<sbase.getChildCount(); i++) {

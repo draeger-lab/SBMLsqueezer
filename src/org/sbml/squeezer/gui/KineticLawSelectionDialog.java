@@ -36,6 +36,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.EventHandler;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -61,7 +62,6 @@ import javax.swing.border.BevelBorder;
 
 import org.sbml.jsbml.Model;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
@@ -90,8 +90,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @since 1.0
  * @version $Rev$
  */
-public class KineticLawSelectionDialog extends JDialog implements
-		ActionListener, WindowListener {
+public class KineticLawSelectionDialog extends JDialog implements ActionListener {
 
 	private static final int fullHeight = 720;
 
@@ -182,34 +181,22 @@ public class KineticLawSelectionDialog extends JDialog implements
 			// get new statusbar and limit the log message length
 			statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
 			statusBar.limitLogMessageLength(this.getWidth()-130);
-			
-			new Thread(new Runnable() {
-				public void run() {
-					AbstractProgressBar progressBar = statusBar.showProgress();
-					adapter.showProgress(progressBar);
-					KineticsAndParametersStoredInSBML = adapter
-					.isKineticsAndParametersStoredInSBML();
-					dispose();
-					statusBar.hideProgress();
-					statusBar.unsetLogMessageLimit();
-					logger.log(Level.INFO, "Ready.");
-				}
-			}).start();
-			
-			
-			
-			
+
+			AbstractProgressBar progressBar = statusBar.showProgress();
+			adapter.showProgress(progressBar);
+			KineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
+			dispose();
+			statusBar.hideProgress();
+			statusBar.unsetLogMessageLimit();
+			logger.log(Level.INFO, "Ready.");
 			
 		} catch (Throwable exc) {
 			GUITools.showErrorMessage(this, exc);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
@@ -224,7 +211,7 @@ public class KineticLawSelectionDialog extends JDialog implements
 						"SBMLsqueezer " + System.getProperty("app.version")
 								+ " - Online Help", getClass().getResource(
 								"../resources/html/help.html"));
-				helpBrowser.addWindowListener(this);
+				helpBrowser.addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosing", ""));
 				helpBrowser.setLocationRelativeTo(this);
 				helpBrowser.setSize(640, 640);
 				helpButton.setEnabled(false);
@@ -727,70 +714,13 @@ public class KineticLawSelectionDialog extends JDialog implements
 		statusBar.unsetLogMessageLimit();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	public void windowActivated(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
-	 */
-	public void windowClosed(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
 	 */
 	public void windowClosing(WindowEvent e) {
-		if (e.getSource() instanceof JHelpBrowser)
+		if (e.getSource() instanceof JHelpBrowser) {
 			helpButton.setEnabled(true);
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeactivated(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
-	 */
-	public void windowIconified(WindowEvent e) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
-	 */
-	public void windowOpened(WindowEvent e) {
-	}
 }

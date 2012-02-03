@@ -69,7 +69,7 @@ public final class Resource extends de.zbit.resources.Resource {
 			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 			prop.load(bais);
 		}
-		if (prop != null) {
+		if (prop.size() > 0) {
 			return prop;
 		}
 		// ///////////

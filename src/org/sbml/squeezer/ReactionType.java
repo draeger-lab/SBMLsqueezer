@@ -287,36 +287,11 @@ public class ReactionType {
 	public ReactionType(Reaction r)
 			throws RateLawNotApplicableException {
 		int i;
-		this.reaction = r; // .clone();
+		this.reaction = r;
 		// Check ignore list:
 		prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		if (prefs
-				.containsKey(SqueezerOptions.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)) {
-			String ignoreList[] = prefs.get(
-					SqueezerOptions.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS)
-					.split(",");
-			if (ignoreList != null && ignoreList.length >= 0) {
-				Species spec;
-				for (i = reaction.getNumReactants() - 1; i >= 0; i--) {
-					spec = reaction.getReactant(i).getSpeciesInstance();
-					for (String string : ignoreList) {
-						if (spec.filterCVTerms(Qualifier.BQB_IS, string).size() > 0) {
-							reaction.removeReactant(i);
-							break;
-						}
-					}
-				}
-				for (i = reaction.getNumProducts() - 1; i >= 0; i--) {
-					spec = reaction.getProduct(i).getSpeciesInstance();
-					for (String string : ignoreList) {
-						if (spec.filterCVTerms(Qualifier.BQB_IS, string).size() > 0) {
-							reaction.removeProduct(i);
-							break;
-						}
-					}
-				}
-			}
-		}
+		String ignore = prefs.get(SqueezerOptions.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
+		removeSpeciesAccordingToIgnoreList(reaction, ignore.contains(",") ? ignore.split(",") : new String[] {ignore});
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.reversibility = prefs
 				.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
@@ -438,6 +413,38 @@ public class ReactionType {
 			throw new RateLawNotApplicableException("Reaction "
 					+ reaction.getId() + " must be a state transition.");
 		}
+	}
+
+	/**
+	 * 
+	 * @param r
+	 * @param ignoreList
+	 */
+	public void removeSpeciesAccordingToIgnoreList(
+		Reaction r, String... ignoreList) {
+		if ((ignoreList != null) && (ignoreList.length >= 0)) {
+			removeSpeciesAccordingToIgnoreList(r.getListOfReactants(), ignoreList);
+			removeSpeciesAccordingToIgnoreList(r.getListOfProducts(), ignoreList);
+		}
+	}
+
+	/**
+	 * 
+	 * @param listOfParticipants
+	 * @param ignoreList
+	 */
+	private void removeSpeciesAccordingToIgnoreList(
+		ListOf<SpeciesReference> listOfParticipants, String... ignoreList) {
+			Species spec;
+			for (int i = listOfParticipants.size() - 1; i >= 0; i--) {
+				spec = listOfParticipants.get(i).getSpeciesInstance();
+				for (String string : ignoreList) {
+					if (spec.filterCVTerms(Qualifier.BQB_IS, string).size() > 0) {
+						listOfParticipants.remove(i);
+						break;
+					}
+				}
+			}
 	}
 
 	/**
