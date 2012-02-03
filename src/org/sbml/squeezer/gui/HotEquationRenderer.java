@@ -27,22 +27,28 @@ package org.sbml.squeezer.gui;
 import javax.swing.JComponent;
 
 import atp.sHotEqn;
-import de.zbit.sbml.gui.Renderer;
+import de.zbit.sbml.gui.EquationRenderer;
 
 /**
- * Provide all needed functions for the sHotEqn latex renderer.
+ * Provide all needed functions for the {@link sHotEqn} latex renderer.
  * 
  * @author Sebastian Nagel
  * @since 1.4
  * @version $Rev: 716 $
  */
-public class EquationRenderer implements Renderer{
+public class HotEquationRenderer implements EquationRenderer {
 	
-	public EquationRenderer() {
+	/**
+	 * 
+	 */
+	public HotEquationRenderer() {
 	  super();
 	}
 	
-	public JComponent renderEquation(String equation){
+	/* (non-Javadoc)
+	 * @see de.zbit.sbml.gui.Renderer#renderEquation(java.lang.String)
+	 */
+	public JComponent renderEquation(String equation) {
 		return new sHotEqn(equation);
 	}
 
@@ -52,4 +58,5 @@ public class EquationRenderer implements Renderer{
 	public boolean printNamesIfAvailable() {
 		return true;
 	}
+
 }

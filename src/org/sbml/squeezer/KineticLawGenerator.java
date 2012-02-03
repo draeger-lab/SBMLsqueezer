@@ -34,7 +34,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Constraint;
@@ -47,7 +46,6 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.NamedSBaseWithDerivedUnit;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.QuantityWithUnit;
 import org.sbml.jsbml.RateRule;
@@ -59,7 +57,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.Variable;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.math.GaussianRank;
 import org.sbml.squeezer.util.ModelChangeListener;
@@ -334,7 +331,7 @@ public class KineticLawGenerator {
 	 *            If true this reaction will be set to reversible and the
 	 *            kinetic equation will be created accordingly. If this
 	 *            parameter is false, the reversibility property of this
-	 *            reaction will not be chaged.
+	 *            reaction will not be changed.
 	 * @param kinetic
 	 *            an element from the Kinetics enum.
 	 * @return A kinetic law for the given reaction.
@@ -343,13 +340,13 @@ public class KineticLawGenerator {
 	public BasicKineticLaw createKineticLaw(Reaction r,
 			String kineticsClassName, boolean reversibility) throws Throwable {
 		Reaction reaction = miniModel.getReaction(r.getId());
-		if (reaction == null)
+		if (reaction == null) {
 			reaction = r;
+		}
 		reaction.setReversible(reversibility || reaction.getReversible());
 		try {
-			if (!kineticsClassName.startsWith(SBMLsqueezer.KINETICS_PACKAGE)){
-				kineticsClassName = SBMLsqueezer.KINETICS_PACKAGE + '.'
-				+ kineticsClassName;
+			if (!kineticsClassName.startsWith(SBMLsqueezer.KINETICS_PACKAGE)) {
+				kineticsClassName = SBMLsqueezer.KINETICS_PACKAGE + '.' + kineticsClassName;
 			}
 			Class<?> kinCls = Class.forName(kineticsClassName);
 			Object typeParameters[] = new Object[] {
@@ -357,18 +354,18 @@ public class KineticLawGenerator {
 					Boolean.valueOf(hasFullColumnRank(modelOrig)),
 					prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY),
 					prefs.get(SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS) };
-			Constructor<?> constructor = kinCls.getConstructor(reaction
-					.getClass(), typeParameters.getClass());
+			Constructor<?> constructor = kinCls.getConstructor(reaction.getClass(), 
+			    typeParameters.getClass());
 			return (BasicKineticLaw) constructor.newInstance(reaction,
 					typeParameters);
 		} catch (InstantiationException e) {
-			e.printStackTrace();
+			logger.warning(e.getLocalizedMessage());
 			throw e.getCause();
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		  logger.warning(e.getLocalizedMessage());
 			throw e.getCause();
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		  logger.warning(e.getLocalizedMessage());
 			throw e.getCause();
 		}
 	}
@@ -460,8 +457,7 @@ public class KineticLawGenerator {
 				miniModel.addReaction(reac);
 				reac.setFast(reacOrig.getFast());
 				reac.setReversible(reacOrig.getReversible());
-				for (SpeciesReference specRefOrig : reacOrig
-						.getListOfReactants()) {
+				for (SpeciesReference specRefOrig : reacOrig.getListOfReactants()) {
 					Species speciesOrig = specRefOrig.getSpeciesInstance();
 					SpeciesReference sr = specRefOrig.clone();
 					sr.setSpecies(copySpecies(speciesOrig, miniModel));
@@ -923,27 +919,10 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * Sets the referenced elements in {@link ASTNode}s to the elements in the
-	 * original model.
 	 * 
-	 * @param math
-	 *            The {@link ASTNode}, whose pointers are to be corrected.
+	 * @param progressBar
 	 */
-	private void setPointersToOriginalModel(ASTNode math) {
-		if (math.isString()) {
-			NamedSBaseWithDerivedUnit nsb = math.getVariable();
-			if (nsb != null) {
-				if (nsb instanceof Variable) {
-					math.setVariable(modelOrig.findVariable(nsb.getId()));
-				}
-			}
-		}
-		for (ASTNode child : math.getListOfNodes()) {
-			setPointersToOriginalModel(child);
-		}
-	}
-
-	public void setProgressBar(AbstractProgressBar progressBar){
+	public void setProgressBar(AbstractProgressBar progressBar) {
 		this.progressBar = progressBar;
 	}
 
@@ -956,12 +935,13 @@ public class KineticLawGenerator {
 	 */
 	public void setReversible(String reactionID, boolean reversible) {
 		Reaction r = miniModel.getReaction(reactionID);
-		if (r != null)
+		if (r != null) {
 			r.setReversible(reversible);
-		else
+		} else {
 			throw new IllegalArgumentException(
 					reactionID
 					+ " is not the id of a reaction for which rate laws are to be created.");
+		}
 	}
 
 
@@ -1005,23 +985,17 @@ public class KineticLawGenerator {
 	private Reaction storeKineticLaw(KineticLaw kineticLaw,
 			boolean removeParametersAndStoreUnits) {
 		int i;
-		boolean reversibility = prefs
-		.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
-		Reaction reaction = modelOrig.getReaction(kineticLaw
-				.getParentSBMLObject().getId());
+		boolean reversibility = prefs.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+		Reaction reaction = modelOrig.getReaction(kineticLaw.getParentSBMLObject().getId());
 		reaction.setReversible(reversibility || reaction.getReversible());
 		reaction.setKineticLaw(kineticLaw);
-		setPointersToOriginalModel(kineticLaw.getMath());
-		// set the BoundaryCondition to true for Genes if not set anyway:
-		boolean setBoundary = prefs
-		.getBoolean(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES);
+		// set the BoundaryCondition to true for genes if not set anyway:
+		boolean setBoundary = prefs.getBoolean(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES);
 		setBoundaryCondition(reaction.getListOfReactants(), setBoundary);
 		setBoundaryCondition(reaction.getListOfProducts(), setBoundary);
-		setInitialConcentrationTo(reaction, Double.parseDouble(prefs.get(
-				SqueezerOptions.OPT_DEFAULT_SPECIES_INITIAL_VALUE).toString()), Double
-				.parseDouble(prefs.get(
-						SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE)
-						.toString()));
+		setInitialConcentrationTo(reaction, 
+		    prefs.getDouble(SqueezerOptions.OPT_DEFAULT_SPECIES_INITIAL_VALUE), 
+				prefs.getDouble(SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE));
 		if (removeParametersAndStoreUnits) {
 			storeUnits();
 		}
@@ -1035,8 +1009,7 @@ public class KineticLawGenerator {
 
 			for (int j = modelOrig.getNumUnitDefinitions() - 1; j >= 0; j--) {
 				UnitDefinition udef = modelOrig.getUnitDefinition(j);
-				boolean isNeeded = Unit.isPredefined(udef.getId(), udef
-						.getLevel());
+				boolean isNeeded = Unit.isPredefined(udef.getId(), udef.getLevel());
 				for (i = 0; i < modelOrig.getNumCompartments() && !isNeeded; i++) {
 					Compartment c = modelOrig.getCompartment(i);
 					if (c.isSetUnits() && c.getUnits().equals(udef.getId())) {
@@ -1045,8 +1018,7 @@ public class KineticLawGenerator {
 				}
 				for (i = 0; i < modelOrig.getNumSpecies() && !isNeeded; i++) {
 					Species s = modelOrig.getSpecies(i);
-					if (s.isSetSubstanceUnits()
-							&& s.getSubstanceUnits().equals(udef.getId())) {
+					if (s.isSetSubstanceUnits() && s.getSubstanceUnits().equals(udef.getId())) {
 						isNeeded = true;
 					}
 				}
@@ -1061,8 +1033,7 @@ public class KineticLawGenerator {
 					if (r.isSetKineticLaw()) {
 						for (LocalParameter p : r.getKineticLaw()
 								.getListOfLocalParameters()) {
-							if (p.isSetUnits()
-									&& p.getUnits().equals(udef.getId())) {
+							if (p.isSetUnits() && p.getUnits().equals(udef.getId())) {
 								isNeeded = true;
 							}
 						}
@@ -1071,7 +1042,7 @@ public class KineticLawGenerator {
 				if (!isNeeded) {
 					modelOrig.removeUnitDefinition(udef);
 				}
-				if(progressAdapter != null){
+				if (progressAdapter != null) {
 					progressAdapter.progressOn();
 				}
 			}
@@ -1095,18 +1066,16 @@ public class KineticLawGenerator {
 	 * @param l
 	 */
 	public Reaction storeKineticLaw(KineticLaw kineticLaw) {
-		
-		if(progressBar != null){
+		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaw);
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 		}
 		
 		Reaction r =  storeKineticLaw(kineticLaw, true);
 		
-		if(progressAdapter != null){
+		if (progressAdapter != null) {
 			progressAdapter.finished();
 		}
-		
 		return r;
 	}
 
@@ -1156,10 +1125,8 @@ public class KineticLawGenerator {
 	private void storeParamters(Reaction reaction) {
 		// setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
-		ListOf<LocalParameter> paramListLocal = kineticLaw
-		.getListOfLocalParameters();
-		boolean addGlobally = prefs
-		.getBoolean(SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY);
+		ListOf<LocalParameter> paramListLocal = kineticLaw.getListOfLocalParameters();
+		boolean addGlobally = prefs.getBoolean(SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY);
 		for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--) {
 			if (addGlobally) {
 				Parameter p = new Parameter(paramListLocal.remove(paramNum));
@@ -1177,7 +1144,7 @@ public class KineticLawGenerator {
 			
 		}
 		kineticLaw.getMath().updateVariables();
-		if(progressAdapter != null){
+		if (progressAdapter != null) {
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 			progressAdapter.progressOn();
 		}

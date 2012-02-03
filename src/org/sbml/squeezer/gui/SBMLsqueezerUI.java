@@ -32,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.EventHandler;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -71,7 +72,9 @@ import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
 import de.zbit.gui.StatusBar;
 import de.zbit.io.SBFileFilter;
+import de.zbit.sbml.gui.ASTNodeSplitPane;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
+import de.zbit.sbml.gui.SBMLTree;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
@@ -104,9 +107,7 @@ class FileReaderThread extends Thread implements Runnable {
 		start();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
 	public void run() {
@@ -134,7 +135,7 @@ class FileReaderThread extends Thread implements Runnable {
  * @since 1.0
  */
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
-		ChangeListener, WindowListener {
+		ChangeListener {
 
 	/**
 	 * This is what the graphical user interface of SBMLsqueezer can do...
@@ -167,9 +168,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		 */
 		TO_LATEX;
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/* (non-Javadoc)
 		 * @see de.zbit.gui.ActionCommand#getName()
 		 */
 		public String getName() {
@@ -177,9 +176,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					.replace('_', ' '));
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/* (non-Javadoc)
 		 * @see de.zbit.gui.ActionCommand#getToolTip()
 		 */
 		public String getToolTip() {
@@ -280,11 +277,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 	}
 
-  /*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+  /* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
@@ -297,16 +291,28 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			} else {
 				// whole model
 				klsd = new KineticLawSelectionDialog(this, sbmlIO);
-				klsd.addWindowListener(this);
+				klsd.addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosed", ""));
 				klsd.setVisible(true);
 			}
 			if (klsd.isKineticsAndParametersStoredInSBML()) {
-				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
-						.getSelectedComponent();
+				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
+        ///////////////////////////////////////////
+				// TODO: DEBUG-Mode only!
+				if (e.getSource() instanceof Reaction) {
+					JDialog d = new JDialog(this);
+					d.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+					ASTNodeSplitPane pane = new ASTNodeSplitPane(((Reaction) e.getSource()).getKineticLaw().getMath());
+					pane.setEquationRenderer(new HotEquationRenderer());
+					d.getContentPane().add(pane);
+					d.pack();
+					d.setLocationRelativeTo(null);
+					d.setVisible(true);
+				}
+				///////////////////////////////////////////
 				try {
 					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
-				} catch (Exception e1) {
-					e1.printStackTrace();
+				} catch (Exception exc) {
+					exc.printStackTrace();
 				}
 			}
 			break;
@@ -402,25 +408,22 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * 
 	 * @param model
 	 */
+	@SuppressWarnings("unchecked")
 	private void addModel(Model model) {
 		SBMLModelSplitPane split;
 		try {
-			split = new SBMLModelSplitPane(model.getSBMLDocument(),true);
+			split = new SBMLModelSplitPane(model.getSBMLDocument(), true);
+			split.setEquationRenderer(new HotEquationRenderer());
 			split.setProgressBar(StatusBar.addStatusBar(this).getProgressBar());
 			
-			JMenuItem squeezeItem = new JMenuItem("Squeeze kinetic law", UIManager
-					.getIcon("ICON_LEMON_TINY"));
-			squeezeItem.addActionListener(split.getTree());
-			squeezeItem.setActionCommand(Command.SQUEEZE.toString());
-			split.getTree().addPopupMenuItem(squeezeItem, Reaction.class, Model.class, SBMLDocument.class);
+			SBMLTree tree = split.getTree();
+			tree.addActionListener(this);
+			JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("ICON_LEMON_TINY")); 
+			JMenuItem latexItem = GUITools.createJMenuItem(tree,  Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_TINY"));
 			
-			JMenuItem latexItem = new JMenuItem("Export to LaTeX", UIManager
-					.getIcon("ICON_LATEX_TINY"));
-			latexItem.addActionListener(split.getTree());
-			latexItem.setActionCommand(Command.TO_LATEX.toString());
-			split.getTree().addPopupMenuItem(latexItem, Reaction.class, Model.class, SBMLDocument.class);
+			tree.addPopupMenuItem(squeezeItem, Reaction.class, Model.class, SBMLDocument.class);
+			tree.addPopupMenuItem(latexItem, Reaction.class, Model.class, SBMLDocument.class);
 			
-			split.addActionListener(this);
 			tabbedPane.add(model.getId(), split);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 			setEnabled(true, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
@@ -431,9 +434,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#additionalEditMenuItems()
 	 */
 	@Override
@@ -512,12 +513,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		getContentPane().validate();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent
-	 * )
+	/* (non-Javadoc)
+	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(tabbedPane)) {
@@ -531,29 +528,15 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
-	 */
-	public void windowActivated(WindowEvent arg0) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	/* (non-Javadoc)
+	 * @see  java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
 	 */
 	public void windowClosed(WindowEvent we) {
 		if (we.getWindow() instanceof JDialog) {
 			if (we.getWindow() instanceof KineticLawSelectionDialog) {
-				KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we
-						.getWindow();
+				KineticLawSelectionDialog klsd = (KineticLawSelectionDialog) we.getWindow();
 				if (klsd.isKineticsAndParametersStoredInSBML()) {
-					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane
-							.getSelectedComponent();
+					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
 					try {
 						split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
 					} catch (Exception e) {
@@ -636,9 +619,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#closeFile()
 	 */
 	public boolean closeFile() {
@@ -655,18 +636,14 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		return change;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#createJToolBar()
 	 */
 	protected JToolBar createJToolBar() {
 		return  createDefaultToolBar();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#createMainComponent()
 	 */
 	protected Component createMainComponent() {
@@ -684,11 +661,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		return tabbedPane;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#exit()
 	 */
+	@Override
 	public void exit() {
     StringBuilder exception = new StringBuilder();
     for (Class<? extends KeyProvider> clazz : appConf.getInteractiveOptions()) {
@@ -706,36 +682,28 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
     dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#getURLAboutMessage()
 	 */
 	public URL getURLAboutMessage() {
 		return getClass().getResource("../resources/html/about.htm");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#getURLLicense()
 	 */
 	public URL getURLLicense() {
 		return getClass().getResource("../resources/html/License.html");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#getURLOnlineHelp()
 	 */
 	public URL getURLOnlineHelp() {
 		return getClass().getResource("../resources/html/help.html");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#openFile(java.io.File[])
 	 */
 	public File[] openFile(File... files) {
@@ -779,9 +747,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
         if (SBFileFilter.hasFileType(out, SBFileFilter.FileType.SBML_FILES)) {
           new Thread(new Runnable() {
-            /*
-             * (non-Javadoc)
-             * 
+            /* (non-Javadoc)
              * @see java.lang.Runnable#run()
              */
             public void run() {
@@ -796,62 +762,5 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			}
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-	 */
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent
-	 * )
-	 */
-	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
-	 */
-	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
-	 */
-	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 }
