@@ -27,6 +27,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -42,6 +43,7 @@ import javax.swing.event.ChangeEvent;
 import org.sbml.squeezer.SqueezerOptions;
 
 import de.zbit.gui.LayoutHelper;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -55,6 +57,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
+ * @author Sebastian Nagel
  * @date Nov 15, 2007
  */
 public class SettingsPanelKinetics extends PreferencesPanel {
@@ -88,6 +91,11 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 	private JSpinner jSpinnerMaxRealisticNumOfReactants,
 			jSpinnerDefaultParamValue, jSpinnerDefaultSpeciesValue,
 			jSpinnerDefaultCompartmentSize;
+	
+	/**
+	 * 
+	 */
+	private static final transient ResourceBundle messagesBundle = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Messages");
 
 	/**
 	 * @throws IOException
@@ -132,60 +140,57 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		GridBagLayout layout = new GridBagLayout();
 		JPanel jPanelGeneralOptions = new JPanel(layout);
 		jPanelGeneralOptions.setBorder(BorderFactory
-				.createTitledBorder(" General options "));
+				.createTitledBorder(" "+messagesBundle.getString("GENERAL_OPTIONS")+" "));
 		jCheckBoxSetBoundaryCondition = new JCheckBox(StringUtil.toHTML(
-				"Set boundary condition for gene coding species", 25),
+				SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES.getDisplayName(), 25),
 				properties
 						.getBooleanProperty(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES));
 		jCheckBoxSetBoundaryCondition
 				.setToolTipText(StringUtil.toHTML(
-								"If selected, the boundary condition of all species that represent gene coding elements, such as genes or gene coding regions will be set to true.",
+								SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jCheckBoxRemoveUnnecessaryPandU = new JCheckBox(
-				StringUtil.toHTML("Remove uneccessary parameters and units", 25),
+				StringUtil.toHTML(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS.getDisplayName(), 25),
 				properties.getBooleanProperty(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
 		jCheckBoxRemoveUnnecessaryPandU
 				.setToolTipText(StringUtil.toHTML(
-								"If selected parameters and unit definitions that are never referenced in the model are automatically deleted when creating new kinetic laws.",
+								SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jCheckBoxTreatAllReactionsAsEnzyeReaction = new JCheckBox(StringUtil.toHTML(
-				"Consider all reactions to be enzyme-catalyzed", 25),
+				SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED.getDisplayName(), 25),
 				properties
 						.getBooleanProperty(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED));
 		jCheckBoxTreatAllReactionsAsEnzyeReaction
 				.setToolTipText(StringUtil.toHTML(
-								"If checked, all reactions are considered to be enzyme-catalyzed.",
+								SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jCheckBoxAddAllParametersGlobally = new JCheckBox(StringUtil.toHTML(
-				"Add all new parameters globally", 25));
+				SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY.getDisplayName(), 25));
 		jCheckBoxAddAllParametersGlobally
 				.setToolTipText(StringUtil.toHTML(
-								"If selected, all newly created parameters are stored "
-										+ "globally in the model. Otherwise SBMLsqueezer only stores most "
-										+ "parameters locally in the respective rate law.",
+								SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jCheckBoxAddAllParametersGlobally.setSelected(properties
 				.getBooleanProperty(SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
-		jCheckBoxWarnings = new JCheckBox("Warnings for too many reactants:");
+		jCheckBoxWarnings = new JCheckBox(SqueezerOptions.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS.getDisplayName());
 		jCheckBoxWarnings.setSelected(properties
 				.getBooleanProperty(SqueezerOptions.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS));
 		jCheckBoxWarnings.setToolTipText(StringUtil.toHTML(
-				"If checked, warnings will be shown for reactions "
-						+ "with more reactants than specified here.", StringUtil.TOOLTIP_LINE_LENGTH));
+				SqueezerOptions.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS.getDescription(), StringUtil.TOOLTIP_LINE_LENGTH));
 		jSpinnerMaxRealisticNumOfReactants = new JSpinner(
 				new SpinnerNumberModel(properties
 						.getIntProperty(SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS),
 						2, 10, 1));
 		jSpinnerMaxRealisticNumOfReactants
 				.setToolTipText(StringUtil.toHTML(
-								"Specifiy how many reactants are at most likely to collide. This option is only available if warnings should be displayed at all.",
+								SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jSpinnerDefaultCompartmentSize = new JSpinner(new SpinnerNumberModel(
 				properties.getDoubleProperty(
 						SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE), 0, 9999.9, .1));
 		jSpinnerDefaultCompartmentSize
 				.setToolTipText(StringUtil.toHTML(
-								"For compartments that are not yet initialized, SBMLsqueezer will use this value as the default initial size.",
+								SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jSpinnerDefaultSpeciesValue = new JSpinner(new SpinnerNumberModel(
 				properties.getDoubleProperty(
@@ -193,13 +198,13 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 				0, 9999.9, .1));
 		jSpinnerDefaultSpeciesValue
 				.setToolTipText(StringUtil.toHTML(
-								"If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species depending on its hasOnlySubstanceUnits value, i.e., for species that are interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts.",
+								SqueezerOptions.OPT_DEFAULT_SPECIES_INITIAL_VALUE.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jSpinnerDefaultParamValue = new JSpinner(new SpinnerNumberModel(properties.getDoubleProperty(
 								SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS), 0, 9999.9, .1));
 		jSpinnerDefaultParamValue
 				.setToolTipText(StringUtil.toHTML(
-								"Specifiy the default value for newly created parameters.",
+								SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jCheckBoxSetBoundaryCondition, 0, 0, 1, 1, 1, 1);
@@ -216,7 +221,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JPanel(),
 				0, 3, 2, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
-				StringUtil.toHTML("Default initial size for compartments:", 30)),
+				StringUtil.toHTML(messagesBundle.getString("COMPARTMENTS_DEFAULT_INITIAL_SIZE"), 30)),
 				0, 4, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerDefaultCompartmentSize, 1, 4, 1, 1, 1, 1);
@@ -224,30 +229,30 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 				0, 5, 2, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
 				StringUtil.toHTML(
-						"Default initial amount or concentration for species:",
+						messagesBundle.getString("SPECIES_DEFAULT_INITIAL_AMOUNT_OR_CONCENTRATION"),
 						30)), 0, 6, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerDefaultSpeciesValue, 1, 6, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JPanel(),
 				0, 7, 2, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
-				StringUtil.toHTML("Default value for new parameters:", 30)), 0,
+				StringUtil.toHTML(messagesBundle.getString("NEW_PARAMETER_DEFAULT_VALUE"), 30)), 0,
 				8, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerDefaultParamValue, 1, 8, 1, 1, 1, 1);
 
 		// Second Panel
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
-				"Only when missing");
+				messagesBundle.getString("ONLY_WHEN_MISSING"));
 		jRadioButtonGenerateOnlyMissingKinetics
 				.setToolTipText(StringUtil.toHTML(
-								"If checked, kinetics are only generated if missing in the SBML file.",
+								messagesBundle.getString("ONLY_WHEN_MISSING_TOOLTIP"),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jRadioButtonGenerateForAllReactions = new JRadioButton(
-				"For all reactions");
+				SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION.getDisplayName());
 		jRadioButtonGenerateForAllReactions
 				.setToolTipText(StringUtil.toHTML(
-								"If checked, already existing kinetic laws will be overwritten.",
+								SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonGenerateForAllReactions);
@@ -259,7 +264,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		layout = new GridBagLayout();
 		JPanel jPanelGenerateNewKinetics = new JPanel(layout);
 		jPanelGenerateNewKinetics.setBorder(BorderFactory
-				.createTitledBorder(" Generate new kinetics "));
+				.createTitledBorder(" "+messagesBundle.getString("GENERATE_NEW_KINETICS")+" "));
 		LayoutHelper.addComponent(jPanelGenerateNewKinetics, layout,
 				jRadioButtonGenerateOnlyMissingKinetics, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGenerateNewKinetics, layout,
@@ -268,76 +273,60 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		// Third Panel
 
 		// Fourth Panel
-		jCheckBoxPossibleEnzymeGenericProtein = new JCheckBox("Generic protein");
+		jCheckBoxPossibleEnzymeGenericProtein = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_GENERIC.getDisplayName());
 		jCheckBoxPossibleEnzymeGenericProtein.setSelected(properties
 				.getBoolean(SqueezerOptions.POSSIBLE_ENZYME_GENERIC));
 		jCheckBoxPossibleEnzymeGenericProtein.setToolTipText(StringUtil.toHTML(
-				"If checked, generic proteins are treated as enzymes. "
-						+ "Otherwise, generic protein-catalyzed reactions are "
-						+ "not considered to be enzyme reactions.", StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeRNA = new JCheckBox("RNA");
+				SqueezerOptions.POSSIBLE_ENZYME_GENERIC.getDescription(), 
+				StringUtil.TOOLTIP_LINE_LENGTH));
+		jCheckBoxPossibleEnzymeRNA = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_RNA.getDisplayName());
 		jCheckBoxPossibleEnzymeRNA.setSelected(properties
 				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_RNA));
 		jCheckBoxPossibleEnzymeRNA.setToolTipText(StringUtil.toHTML(
-				"If checked, RNA is treated as an enzyme. "
-						+ "Otherwise RNA catalyzed reactions are not "
-						+ "considered to be enzyme-catalyzed reactions.",StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeComplex = new JCheckBox("Complex");
+				SqueezerOptions.POSSIBLE_ENZYME_RNA.getDescription(),
+				StringUtil.TOOLTIP_LINE_LENGTH));
+		jCheckBoxPossibleEnzymeComplex = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_COMPLEX.getDisplayName());
 		jCheckBoxPossibleEnzymeComplex.setSelected(properties
 				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_COMPLEX));
 		jCheckBoxPossibleEnzymeComplex.setToolTipText(StringUtil.toHTML(
-				"If checked, complex molecules are treated as enzymes. "
-						+ "Otherwise, complex catalized reactions are not "
-						+ "considered to be enzyme reactions.", StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeTruncatedProtein = new JCheckBox(
-				"Truncated protein");
+				SqueezerOptions.POSSIBLE_ENZYME_COMPLEX.getDescription(), StringUtil.TOOLTIP_LINE_LENGTH));
+		jCheckBoxPossibleEnzymeTruncatedProtein = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED.getDisplayName());
 		jCheckBoxPossibleEnzymeTruncatedProtein
 				.setSelected(properties
 						.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED));
 		jCheckBoxPossibleEnzymeTruncatedProtein.setToolTipText(StringUtil.toHTML(
-				"If checked, truncated proteins are treated as enzymes. "
-						+ "Otherwise, truncated protein catalized reactions "
-						+ "are not considered to be enzyme reactions.", StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeReceptor = new JCheckBox("Receptor");
+				SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED.getDescription(),
+				StringUtil.TOOLTIP_LINE_LENGTH));
+		jCheckBoxPossibleEnzymeReceptor = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR.getDisplayName());
 		jCheckBoxPossibleEnzymeReceptor.setSelected(properties
 				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR));
 		jCheckBoxPossibleEnzymeReceptor.setToolTipText(StringUtil.toHTML(
-				"If checked, receptors are treated as enzymes. "
-						+ "Otherwise, receptor catalized reactions are not "
-						+ "considered to be enzyme reactions.", StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeUnknown = new JCheckBox("Unknown");
+				SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR.getDescription(),
+				StringUtil.TOOLTIP_LINE_LENGTH));
+		jCheckBoxPossibleEnzymeUnknown = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN.getDisplayName());
 		jCheckBoxPossibleEnzymeUnknown.setSelected(properties
 				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN));
-		jCheckBoxPossibleEnzymeUnknown
-				.setToolTipText(StringUtil
-						.toHTML(
-								"If checked, unknown molecules are treated as enzymes. "
-										+ "Otherwise, unknown molecule catalized reactions are not "
-										+ "considered to be enzyme reactions.",
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeAsRNA = new JCheckBox("asRNA");
+		jCheckBoxPossibleEnzymeUnknown.setToolTipText(StringUtil.toHTML(
+				SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN.getDescription(),
+				StringUtil.TOOLTIP_LINE_LENGTH));
+		jCheckBoxPossibleEnzymeAsRNA = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA.getDisplayName());
 		jCheckBoxPossibleEnzymeAsRNA.setSelected(properties
 				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA));
 		jCheckBoxPossibleEnzymeAsRNA.setToolTipText(StringUtil.toHTML(
-				"If checked, asRNA is treated as an enzyme. "
-						+ "Otherwise asRNA catalized reactions are not "
-						+ "considered to be enzyme-catalyzed reactions.", StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeSimpleMolecule = new JCheckBox("Simple molecule");
+				SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA.getDescription(),
+				StringUtil.TOOLTIP_LINE_LENGTH));
+		jCheckBoxPossibleEnzymeSimpleMolecule = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE.getDisplayName());
 		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(properties
 				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE));
-		jCheckBoxPossibleEnzymeSimpleMolecule
-				.setToolTipText(StringUtil
-						.toHTML(
-								"If checked, simple molecules are treated as enzymes. "
-										+ "Otherwise, simple molecule catalized reactions are not "
-										+ "considered to be enzyme reactions.",
-								StringUtil.TOOLTIP_LINE_LENGTH));
+		jCheckBoxPossibleEnzymeSimpleMolecule.setToolTipText(StringUtil.toHTML(
+				SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE.getDescription(),
+				StringUtil.TOOLTIP_LINE_LENGTH));
 
 		layout = new GridBagLayout();
 		JPanel jPanelSettingsEnzymes = new JPanel();
 		jPanelSettingsEnzymes.setLayout(layout);
 		jPanelSettingsEnzymes.setBorder(BorderFactory
-				.createTitledBorder(" Species to be treated as enzymes "));
+				.createTitledBorder(" "+messagesBundle.getString("SPECIES_TO_BE_TREATED_AS_ENZYMS")+" "));
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
 				jCheckBoxPossibleEnzymeGenericProtein, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
@@ -359,21 +348,17 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		LayoutHelper unitConsistency = new LayoutHelper(
 				jPanelTypeUnitConsistency);
 		jRadioButtonTypeUnitConsistency = new JRadioButton(StringUtil.toHTML(
-				"Bring species to substance units", 30),
+				SqueezerOptions.TYPE_UNIT_CONSISTENCY.getDisplayName(), 30),
 				SqueezerOptions.TYPE_UNIT_CONSISTENCY.getValue(properties).ordinal() == 0);
-		jRadioButtonTypeUnitConsistency
-				.setToolTipText(StringUtil
-						.toHTML(
-								"If this option is selected, species occuring in kinetic equations are multiplyed with the size of the surrounding compartment if their hasOnlySubstanceUnits attribute is set to false. The units of parameters are set accordingly.",
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(StringUtil
-				.toHTML("Bring species to concentration units", 30),
+		jRadioButtonTypeUnitConsistency.setToolTipText(StringUtil.toHTML(
+				SqueezerOptions.TYPE_UNIT_CONSISTENCY.getDescription(),
+				StringUtil.TOOLTIP_LINE_LENGTH));
+		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(StringUtil.toHTML(
+				messagesBundle.getString("TYPE_UNIT_COMPARTMENT"), 30),
 				!jRadioButtonTypeUnitConsistency.isSelected());
-		jRadioButtonTypeUnitsCompVol
-				.setToolTipText(StringUtil
-						.toHTML(
-								"If this option is selected, species are interpreted in terms of concentration and are therefore divided by their surrounding compartment size when these occur in kinetic equations and their hasOnlySubstanceUnits attribute is false. The units of parameters are set accordingly.",
-								StringUtil.TOOLTIP_LINE_LENGTH));
+		jRadioButtonTypeUnitsCompVol.setToolTipText(StringUtil.toHTML(
+				messagesBundle.getString("TYPE_UNIT_COMPARTMENT_TOOLTIP"),
+				StringUtil.TOOLTIP_LINE_LENGTH));
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonTypeUnitConsistency);
 		buttonGroup.add(jRadioButtonTypeUnitsCompVol);

@@ -23,16 +23,24 @@
  */
 package org.sbml.squeezer.math;
 
+import java.util.ResourceBundle;
+
+import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
 
 /**
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
+ * @author Sebastian Nagel
  * @date 2010-10-28
  * @version $Rev$
  */
 public interface StabilityOptions extends KeyProvider {
+	/**
+	 * for localization support.
+	 */
+	public static final ResourceBundle bundle = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Options");
 	
 //	// TODO!!
 //	
@@ -104,7 +112,7 @@ public interface StabilityOptions extends KeyProvider {
 	public static final Option<Double> STEUER_VALUE_OF_N = new Option<Double>(
 			"STEUER_VALUE_OF_N", 
 			Double.class, 
-			"Explanation...", 
+			bundle, 
 			//Double.valueOf(0d)
 			4.0);
 
