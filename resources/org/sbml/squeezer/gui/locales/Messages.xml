@@ -12,5 +12,26 @@
 	
 	Please see the JavaDoc for MessageFormatter and Formatter. 
   </comment>
-  <entry key="SAMPLE_ENTRY">Delete me</entry>
+  
+  <!-- SettingsPanelDefaultMechanisms -->
+  <entry key="DEFAULT_REACTION_TOOLTIP">Reactions, which are {0}, can be described using {1}.</entry>
+  <entry key="SETTINGS_FRAME_FORCE_REVERSIBLE">Use information from SBML</entry>
+  <entry key="SETTINGS_FRAME_FORCE_REVERSIBLE_TOOLTIP">If checked, the information about reversiblity will be left unchanged.</entry>
+  <entry key="REVERSIBILITY">Reversibility</entry>
+  <entry key="CHOOSE_TYPE_STANDARD_VERSION">Choose the version of modular rate laws:</entry>
+  <entry key="DEFAULT_RATE_LAW_SELECT">Select the default rate law for each mechanism</entry>
+  <entry key="REACTION_MECHANISMS">Reaction mechanisms</entry>
+  
+  <!-- SettingsPanelKinetics -->
+  <entry key="GENERAL_OPTIONS">General options</entry>
+  <entry key="COMPARTMENTS_DEFAULT_INITIAL_SIZE">Default initial size for compartments:</entry>
+  <entry key="SPECIES_DEFAULT_INITIAL_AMOUNT_OR_CONCENTRATION">Default initial amount or concentration for species:</entry>
+  <entry key="NEW_PARAMETER_DEFAULT_VALUE">Default value for new parameters:</entry>
+  <entry key="ONLY_WHEN_MISSING">Only when missing</entry>
+  <entry key="ONLY_WHEN_MISSING_TOOLTIP">If checked, kinetics are only generated if missing in the SBML file.</entry>
+  <entry key="GENERATE_NEW_KINETICS">Generate new kinetics</entry>
+  <entry key="SPECIES_TO_BE_TREATED_AS_ENZYMS">Species to be treated as enzymes</entry>
+  <entry key="TYPE_UNIT_COMPARTMENT">Bring species to concentration units</entry>
+  <entry key="TYPE_UNIT_COMPARTMENT_TOOLTIP">If this option is selected, species are interpreted in terms of concentration and are therefore divided by their surrounding compartment size when these occur in kinetic equations and their hasOnlySubstanceUnits attribute is false. The units of parameters are set accordingly.</entry>
+  
 </properties>
