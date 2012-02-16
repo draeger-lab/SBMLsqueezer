@@ -276,8 +276,8 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsBiUni(treatReactionsReversible), curr));
 		curr = SqueezerOptions.KINETICS_BI_BI_TYPE;
-		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
-				.getKineticsBiBi(treatReactionsReversible), curr));
+//		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
+//				.getKineticsBiBi(treatReactionsReversible), curr));
 		curr = SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsArbitraryEnzyme(treatReactionsReversible), curr));

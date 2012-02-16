@@ -52,7 +52,7 @@
   <entry key="OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION_TOOLTIP_TO_BE_MERGED">If checked, already existing kinetic laws will be overwritten.</entry>
   <entry key="OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING">Only when missing</entry>
   <entry key="OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING_TOOLTIP">If checked, kinetics are only generated if missing in the SBML file.</entry>
-  <entry key="OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS"></entry>
+  <entry key="OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS">Ignore these species when creating laws</entry>
   <entry key="OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS_TOOLTIP">Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons.</entry>
   <entry key="OPT_MAX_NUMBER_OF_REACTANTS"></entry>
   <entry key="OPT_MAX_NUMBER_OF_REACTANTS_TOOLTIP">The maximal number of reactants so that the reaction is still considered plausible. By default this value is set to 3.</entry>

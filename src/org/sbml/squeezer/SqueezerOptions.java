@@ -33,6 +33,7 @@ import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 
 import de.zbit.util.ResourceManager;
+import de.zbit.util.ValuePairUncomparable;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.OptionGroup;
@@ -125,12 +126,13 @@ public interface SqueezerOptions extends KeyProvider {
 	 * be any class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiBiKinetics}.
 	 */
-    public static final Option<String> KINETICS_BI_BI_TYPE = new Option<String>(
+    @SuppressWarnings("rawtypes")
+		public static final Option<Class> KINETICS_BI_BI_TYPE = new Option<Class>(
     		"KINETICS_BI_BI_TYPE",
-    		String.class,
+    		Class.class,
     		bundle,
-    		new Range<String>(String.class, SBMLsqueezer.getKineticsBiBi()),
-    		RandomOrderMechanism.class.getName());
+    		new Range<Class>(Class.class, SBMLsqueezer.getKineticsBiBi()),
+    		RandomOrderMechanism.class);
 	/**
 	 * The class name of the default kinetic law for bi-uni reactions. This can
 	 * be any class that implements the
@@ -251,7 +253,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 * these species. For instance, water or single protons can often be ignored
 	 * when creating rate equations, hence simplifying the resulting rate
 	 * equations. Preselected are the KEGG compound identifiers for water and
-	 * protons
+	 * protons.
 	 */
 	public static final Option<String> OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS = new Option<String>(
 			"OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS",
@@ -286,6 +288,11 @@ public interface SqueezerOptions extends KeyProvider {
 			Boolean.class,
 			bundle,
 			true);
+	
+	/**
+	 * 
+	 */
+	public static final Range<Boolean> RANGE_BOOLEAN = new Range<Boolean>(Boolean.class, Boolean.TRUE);
 	
 	/**
 	 * If true the information about reversiblity will be left unchanged.
@@ -412,16 +419,16 @@ public interface SqueezerOptions extends KeyProvider {
 	 * One of the following values: cat, hal or weg (important for
 	 * Liebermeister's standard kinetics).
 	 */
-    public static final Option<TypeStandardVersion> TYPE_STANDARD_VERSION = new Option<TypeStandardVersion>(
+    @SuppressWarnings("unchecked")
+		public static final Option<TypeStandardVersion> TYPE_STANDARD_VERSION = new Option<TypeStandardVersion>(
     		"TYPE_STANDARD_VERSION",
     		TypeStandardVersion.class,
     		bundle,
     		new Range<TypeStandardVersion>(
     				TypeStandardVersion.class, 
-    				Range.toRangeString(TypeStandardVersion.class)), 
-			(short) 2,
+    				Range.toRangeString(TypeStandardVersion.class)),
 			TypeStandardVersion.cat, 
-			"Type standard version");
+			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(OPT_TREAT_ALL_REACTIONS_REVERSIBLE, RANGE_BOOLEAN));
 
 	/**
 	 * How to ensure unit consistency in kinetic equations? One way is to set

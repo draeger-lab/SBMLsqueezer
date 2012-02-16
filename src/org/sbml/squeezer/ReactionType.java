@@ -126,7 +126,7 @@ public class ReactionType {
 	 * @param treatReactionsReversible
 	 * @return
 	 */
-	public static Set<String> getKineticsBiBi(boolean treatReactionsReversible) {
+	public static Set<Class> getKineticsBiBi(boolean treatReactionsReversible) {
 		return checkReactions(treatReactionsReversible, SBMLsqueezer
 				.getKineticsBiBi());
 	}

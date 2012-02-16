@@ -102,11 +102,13 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * {@link Set}s of kinetics with certain characteristics.
    */
-  private static Set<String> kineticsArbitraryEnzymeMechanism, kineticsBiBi,
+  private static Set<String> kineticsArbitraryEnzymeMechanism,
       kineticsBiUni, kineticsGeneRegulatoryNetworks,
       kineticsIntStoichiometry, kineticsIrreversible, kineticsModulated,
       kineticsNonEnzyme, kineticsReversible, kineticsUniUni,
       kineticsZeroProducts, kineticsZeroReactants;
+  
+  private static Set<Class> kineticsBiBi;
 
   /**
    * The {@link Logger} for this class.
@@ -136,7 +138,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     initializeReaderAndWriter();
     long time = System.currentTimeMillis();
     logger.info("Loading kinetic equations...");
-    kineticsBiBi = new HashSet<String>();
+    kineticsBiBi = new HashSet<Class>();
     kineticsBiUni = new HashSet<String>();
     kineticsGeneRegulatoryNetworks = new HashSet<String>();
     kineticsNonEnzyme = new HashSet<String>();
@@ -169,7 +171,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         kineticsBiUni.add(c.getCanonicalName());
       }
       if (s.contains(InterfaceBiBiKinetics.class)) {
-        kineticsBiBi.add(c.getCanonicalName());
+        kineticsBiBi.add(c);
       }
       if (s.contains(InterfaceArbitraryEnzymeKinetics.class)) {
         kineticsArbitraryEnzymeMechanism.add(c.getCanonicalName());
@@ -208,7 +210,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * @return the kineticsBiBi
    */
-  public static Set<String> getKineticsBiBi() {
+  public static Set<Class> getKineticsBiBi() {
     return kineticsBiBi;
   }
 
@@ -412,7 +414,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public List<Class<? extends KeyProvider>> getCmdLineOptions() {
     List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
     list.add(SqueezerOptions.class);
-    list.add(StabilityOptions.class);
+//    list.add(StabilityOptions.class);
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
     return list;
@@ -423,7 +425,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @see de.zbit.Launcher#getInteractiveOptions()
    */
   public List<Class<? extends KeyProvider>> getInteractiveOptions() {
-    return getCmdLineOptions();
+    List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
+    list.add(SqueezerOptions.class);
+    list.add(LaTeXOptions.class);
+    return list;
   }
 
   /*
