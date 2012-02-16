@@ -235,6 +235,15 @@ public interface SqueezerOptions extends KeyProvider {
 			Boolean.class,
 			bundle,
 			false);
+	
+	/**
+	 * If true kinetics are only generated if missing in the SBML file.
+	 */
+	public static final Option<Boolean> OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING = new Option<Boolean>(
+ 			"OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING",
+ 			Boolean.class,
+ 			bundle,
+ 			false);
 			
 	/**
 	 * Allows the user to ignore species that are annotated with the given
@@ -277,6 +286,15 @@ public interface SqueezerOptions extends KeyProvider {
 			Boolean.class,
 			bundle,
 			true);
+	
+	/**
+	 * If true the information about reversiblity will be left unchanged.
+	 */
+	public static final Option<Boolean> OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD = new Option<Boolean>(
+ 			"OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD",
+ 			Boolean.class,
+ 			bundle,
+ 			false);
 	
 	/**
 	 * Property that decides whether to set all reactions to reversible before
@@ -423,6 +441,20 @@ public interface SqueezerOptions extends KeyProvider {
 			(short) 2,
 			TypeUnitConsistency.amount, 
 			"Type of unit consistency");
+    
+    /**
+     * If true, species are interpreted in terms of 
+     * concentration and are therefore divided by their surrounding compartment 
+     * size when these occur in kinetic equations and their hasOnlySubstanceUnits
+     * attribute is false. The units of parameters are set accordingly
+     * 
+     */
+    public static final Option<Boolean> TYPE_UNITS_COMPARTMENT = new Option<Boolean>(
+			"TYPE_UNITS_COMPARTMENT",
+			Boolean.class,
+			bundle,
+			false);
+     
     
     /**
      * 

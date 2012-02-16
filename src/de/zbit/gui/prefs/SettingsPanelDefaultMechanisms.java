@@ -199,13 +199,13 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 				.setToolTipText(StringUtil.toHTML(
 								SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
-		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(messagesBundle.getString("SETTINGS_FRAME_FORCE_REVERSIBLE"));
+		JRadioButton jRadioButtonSettingsFrameForceRevAsCD = new JRadioButton(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD.getDisplayName());
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setSelected(!(properties
 						.getBooleanProperty(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE)));
 		jRadioButtonSettingsFrameForceRevAsCD
 				.setToolTipText(StringUtil.toHTML(
-								messagesBundle.getString("SETTINGS_FRAME_FORCE_REVERSIBLE_TOOLTIP"),
+								SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonSettingsFrameForceRevAsCD);
