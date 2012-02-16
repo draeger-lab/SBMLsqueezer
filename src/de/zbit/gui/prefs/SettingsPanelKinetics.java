@@ -243,10 +243,10 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 
 		// Second Panel
 		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
-				messagesBundle.getString("ONLY_WHEN_MISSING"));
+				SqueezerOptions.OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING.getDisplayName());
 		jRadioButtonGenerateOnlyMissingKinetics
 				.setToolTipText(StringUtil.toHTML(
-								messagesBundle.getString("ONLY_WHEN_MISSING_TOOLTIP"),
+								SqueezerOptions.OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING.getDescription(),
 								StringUtil.TOOLTIP_LINE_LENGTH));
 		jRadioButtonGenerateForAllReactions = new JRadioButton(
 				SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION.getDisplayName());
@@ -354,10 +354,10 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 				SqueezerOptions.TYPE_UNIT_CONSISTENCY.getDescription(),
 				StringUtil.TOOLTIP_LINE_LENGTH));
 		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(StringUtil.toHTML(
-				messagesBundle.getString("TYPE_UNIT_COMPARTMENT"), 30),
+				SqueezerOptions.TYPE_UNITS_COMPARTMENT.getDisplayName(), 30),
 				!jRadioButtonTypeUnitConsistency.isSelected());
 		jRadioButtonTypeUnitsCompVol.setToolTipText(StringUtil.toHTML(
-				messagesBundle.getString("TYPE_UNIT_COMPARTMENT_TOOLTIP"),
+				SqueezerOptions.TYPE_UNITS_COMPARTMENT.getDescription(),
 				StringUtil.TOOLTIP_LINE_LENGTH));
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonTypeUnitConsistency);

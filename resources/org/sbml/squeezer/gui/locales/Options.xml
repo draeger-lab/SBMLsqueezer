@@ -50,6 +50,8 @@
   <entry key="OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION">For all reactions</entry>
   <entry key="OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION_TOOLTIP">If true, a new rate law will be created for each reaction irrespective of whether there is already a rate law assigned to this reaction or not. If false (default), new rate laws are only generated if missing in the SBML file.</entry>
   <entry key="OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION_TOOLTIP_TO_BE_MERGED">If checked, already existing kinetic laws will be overwritten.</entry>
+  <entry key="OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING">Only when missing</entry>
+  <entry key="OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING_TOOLTIP">If checked, kinetics are only generated if missing in the SBML file.</entry>
   <entry key="OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS"></entry>
   <entry key="OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS_TOOLTIP">Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons.</entry>
   <entry key="OPT_MAX_NUMBER_OF_REACTANTS"></entry>
@@ -64,6 +66,8 @@
   <entry key="OPT_TREAT_ALL_REACTIONS_REVERSIBLE">Model all reactions in a reversible manner</entry>
   <entry key="OPT_TREAT_ALL_REACTIONS_REVERSIBLE_TOOLTIP">If true (default), all reactions are set to reversible before creating new kinetic equations. Otherwise the information given by the SBML file will be left unchanged.</entry>
   <entry key="OPT_TREAT_ALL_REACTIONS_REVERSIBLE_TOOLTIP_TO_BE_MERGED">If checked, all reactions will be set to reversible no matter what is given by the SBML file.</entry>
+  <entry key="OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD">Use information from SBML</entry>
+  <entry key="OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD_TOOLTIP">If checked, the information about reversiblity will be left unchanged.</entry>
   <entry key="OPT_WARNINGS_FOR_TOO_MANY_REACTANTS">Warnings for too many reactants:</entry>
   <entry key="OPT_WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP">If true (default), warnings will be displayed for reactions with more reactants than specified by the opt-max-number-of-reactants option.</entry>
   <entry key="OPT_WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP_TO_BE_MERGED">If checked, warnings will be shown for reactions with more reactants than specified here.</entry>
@@ -105,6 +109,8 @@
   <entry key="TYPE_UNIT_CONSISTENCY">Bring species to substance units</entry>
   <entry key="TYPE_UNIT_CONSISTENCY_TOOLTIP">This option ensures unit consistency and can attain two different values: Choose amount to set each participating species to an initial amount with the unit mmole. If the hasOnlySubstanceUnits option is set to false the species will then be multiplied with the size of the surrounding compartment whenever it occurs in a kinetic equation. Choose concentration to set each participating species to an initial concentration with the unit mmole per l. In this case the species will be divided by the surrounding compartment size when it occurs in a kinetic equation, and if its hasOnlySubstanceUnits attribute is set to false. The units of parameters are set accordingly.</entry>
   <entry key="TYPE_UNIT_CONSISTENCY_TOOLTIP_TO_BE_MERGED">If this option is selected, species occuring in kinetic equations are multiplyed with the size of the surrounding compartment if their hasOnlySubstanceUnits attribute is set to false. The units of parameters are set accordingly.</entry>
+  <entry key="TYPE_UNITS_COMPARTMENT">Bring species to concentration units</entry>
+  <entry key="TYPE_UNITS_COMPARTMENT_TOOLTIP">If this option is selected, species are interpreted in terms of concentration and are therefore divided by their surrounding compartment size when these occur in kinetic equations and their hasOnlySubstanceUnits attribute is false. The units of parameters are set accordingly.</entry>
   
   <!-- StabilityOptions -->
   <entry key="STEUER_VALUE_OF_N"></entry>
