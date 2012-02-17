@@ -115,12 +115,13 @@ public interface SqueezerOptions extends KeyProvider {
 	 * enzyme-catalysis schemes. The value can be any rate law that implements
 	 * {@link org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics}.
 	 */
-	public static final Option<String> KINETICS_ARBITRARY_ENZYME_REACTIONS = new Option<String>(
+	@SuppressWarnings("rawtypes")
+	public static final Option<Class> KINETICS_ARBITRARY_ENZYME_REACTIONS = new Option<Class>(
 			"KINETICS_ARBITRARY_ENZYME_REACTIONS",
-			String.class,
+			Class.class,
 			bundle,
-			new Range<String>(String.class, SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
-			ConvenienceKinetics.class.getName());
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
+			ConvenienceKinetics.class);
 	/**
 	 * The class name of the default kinetic law for bi-bi reactions. This can
 	 * be any class that implements the
@@ -138,12 +139,12 @@ public interface SqueezerOptions extends KeyProvider {
 	 * be any class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiUniKinetics}.
 	 */
-	public static final Option<String> KINETICS_BI_UNI_TYPE = new Option<String>(
+	public static final Option<Class> KINETICS_BI_UNI_TYPE = new Option<Class>(
 			"KINETICS_BI_UNI_TYPE",
-			String.class,
+			Class.class,
 			bundle,
-			new Range<String>(String.class, SBMLsqueezer.getKineticsBiUni()),
-			RandomOrderMechanism.class.getName());
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsBiUni()),
+			RandomOrderMechanism.class);
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
 	 * reactions that are identified to belong to gene-regulatory processes,
@@ -151,36 +152,36 @@ public interface SqueezerOptions extends KeyProvider {
 	 * class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryNetworks}.
 	 */
-	public static final Option<String> KINETICS_GENE_REGULATION = new Option<String>(
+	public static final Option<Class> KINETICS_GENE_REGULATION = new Option<Class>(
 			"KINETICS_GENE_REGULATION",
-			String.class,
+			Class.class,
 			bundle,
-			new Range<String>(String.class, SBMLsqueezer.getKineticsGeneRegulatoryNetworks()),
-			HillHinzeEquation.class.getName());
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsGeneRegulatoryNetworks()),
+			HillHinzeEquation.class);
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
 	 * reactions that are catalyzed by non-enzymes or that are not catalyzed at
 	 * all. The value may be any rate law that implements
 	 * {@link org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics}.
 	 */
-	public static final Option<String> KINETICS_NONE_ENZYME_REACTIONS = new Option<String>(
+	public static final Option<Class> KINETICS_NONE_ENZYME_REACTIONS = new Option<Class>(
 			"KINETICS_NONE_ENZYME_REACTIONS",
-			String.class,
+			Class.class,
 			bundle,
-			new Range<String>(String.class, SBMLsqueezer.getKineticsNonEnzyme()),
-			GeneralizedMassAction.class.getName());
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsNonEnzyme()),
+			GeneralizedMassAction.class);
 	/**
 	 * This key defines the default kinetic law to be applied to
 	 * enzyme-catalyzed reactions with one reactant and one product. Possible
 	 * values are the names of classes that implement
 	 * {@link org.sbml.squeezer.kinetics.InterfaceUniUniKinetics}.
 	 */
-	public static final Option<String> KINETICS_UNI_UNI_TYPE = new Option<String>(
+	public static final Option<Class> KINETICS_UNI_UNI_TYPE = new Option<Class>(
 			"KINETICS_UNI_UNI_TYPE",
-			String.class,
+			Class.class,
 			bundle,
-			new Range<String>(String.class, SBMLsqueezer.getKineticsUniUni()),
-			MichaelisMenten.class.getName());
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsUniUni()),
+			MichaelisMenten.class);
 	/**
 	 * If true all parameters are stored globally for the whole model (default)
 	 * else parameters are stored locally for the respective kinetic equation
