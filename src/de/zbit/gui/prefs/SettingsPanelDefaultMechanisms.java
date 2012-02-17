@@ -351,7 +351,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 */
 	@Override
 	public String getTitle() {
-		return messagesBundle.getString("REACTION_MECHANISMS");
+		return messagesBundle.getString("TITLE_DEFAULT_MECHANISMS");
 	}
 
 	/*

@@ -267,11 +267,11 @@ public interface SqueezerOptions extends KeyProvider {
 	 * The maximal number of reactants so that the reaction is still considered
 	 * plausible.
 	 */
-	public static final Option<Double> OPT_MAX_NUMBER_OF_REACTANTS = new Option<Double>(
+	public static final Option<Integer> OPT_MAX_NUMBER_OF_REACTANTS = new Option<Integer>(
 			"OPT_MAX_NUMBER_OF_REACTANTS",
-			Double.class,
+			Integer.class,
 			bundle,
-			3.0d);
+			3);
 	/**
 	 * If true parameters and units that are never referenced by any element of
 	 * the model are deleted when creating kinetic equations with SBMLsqueezer.

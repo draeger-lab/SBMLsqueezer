@@ -45,6 +45,7 @@ import org.sbml.squeezer.SqueezerOptions;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
+import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -125,7 +126,130 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
 	 */
 	public String getTitle() {
-		return "Kinetics settings";
+		return messagesBundle.getString("TITLE_KINETICS");
+	}
+	
+	/**
+	 * 
+	 * @param option
+	 * @param toHTML
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private JCheckBox createCheckBox(Option option, boolean toHTML){
+		return createCheckBox(option, toHTML, properties.getBooleanProperty(option));
+	}
+	
+	/**
+	 * 
+	 * @param option
+	 * @param toHTML
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private JCheckBox createCheckBox(Option option, boolean toHTML, boolean selected){
+		String displayName = (toHTML) ? StringUtil.toHTML(option.getDisplayName(), 25) : option.getDisplayName();
+		String description = (toHTML) ? StringUtil.toHTML(option.getDescription(), StringUtil.TOOLTIP_LINE_LENGTH) 
+										: option.getDescription();
+		
+		JCheckBox checkBox = new JCheckBox(displayName);
+		checkBox.setToolTipText(description);
+		checkBox.setSelected(selected);
+		
+		return checkBox;
+	}
+	
+	/**
+	 * 
+	 * @param option
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private JSpinner createSpinner(Option option, double minimum, double maximum, double stepSize){
+		return createSpinner(option, minimum, maximum, stepSize, false);
+	}
+	
+	/**
+	 * 
+	 * @param option
+	 * @param minimum
+	 * @param maximum
+	 * @param stepSize
+	 * @param toHTML
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private JSpinner createSpinner(Option option, int minimum, int maximum, int stepSize, boolean toHTML){
+		//String displayName = (toHTML) ? StringUtil.toHTML(option.getDisplayName(), 25) : option.getDisplayName();
+		String description = (toHTML) ? StringUtil.toHTML(option.getDescription(), StringUtil.TOOLTIP_LINE_LENGTH) 
+										: option.getDescription();
+		
+		JSpinner spinner = new JSpinner(new SpinnerNumberModel(properties.getIntProperty(option), minimum, maximum, stepSize));
+		spinner.setToolTipText(description);
+		
+		return spinner;
+	}
+	
+	/**
+	 * 
+	 * @param option
+	 * @param minimum
+	 * @param maximum
+	 * @param stepSize
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private JSpinner createSpinner(Option option, int minimum, int maximum, int stepSize){
+		return createSpinner(option, minimum, maximum, stepSize, false);
+	}
+	
+	/**
+	 * 
+	 * @param option
+	 * @param toHTML
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private JSpinner createSpinner(Option option, double minimum, double maximum, double stepSize, boolean toHTML){
+		//String displayName = (toHTML) ? StringUtil.toHTML(option.getDisplayName(), 25) : option.getDisplayName();
+		String description = (toHTML) ? StringUtil.toHTML(option.getDescription(), StringUtil.TOOLTIP_LINE_LENGTH) 
+										: option.getDescription();
+		
+		JSpinner spinner = new JSpinner(new SpinnerNumberModel(properties.getDoubleProperty(option), minimum, maximum, stepSize));
+		spinner.setToolTipText(description);
+		
+		return spinner;
+	}
+	
+	/**
+	 * 
+	 * @param option
+	 * @param toHTML
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private JRadioButton createRadioButton(Option option, boolean toHTML){
+		return createRadioButton(option, toHTML, properties.getBooleanProperty(option));
+	}
+	
+	/**
+	 * 
+	 * @param option
+	 * @param toHTML
+	 * @param selected
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private JRadioButton createRadioButton(Option option, boolean toHTML, boolean selected){
+		String displayName = (toHTML) ? StringUtil.toHTML(option.getDisplayName(), 25) : option.getDisplayName();
+		String description = (toHTML) ? StringUtil.toHTML(option.getDescription(), StringUtil.TOOLTIP_LINE_LENGTH) 
+										: option.getDescription();
+		
+		JRadioButton radioButton = new JRadioButton(displayName);
+		radioButton.setToolTipText(description);
+		radioButton.setSelected(selected);
+		
+		return radioButton;
 	}
 
 	/*
@@ -141,71 +265,18 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		JPanel jPanelGeneralOptions = new JPanel(layout);
 		jPanelGeneralOptions.setBorder(BorderFactory
 				.createTitledBorder(" "+messagesBundle.getString("GENERAL_OPTIONS")+" "));
-		jCheckBoxSetBoundaryCondition = new JCheckBox(StringUtil.toHTML(
-				SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES.getDisplayName(), 25),
-				properties
-						.getBooleanProperty(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES));
-		jCheckBoxSetBoundaryCondition
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxRemoveUnnecessaryPandU = new JCheckBox(
-				StringUtil.toHTML(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS.getDisplayName(), 25),
-				properties.getBooleanProperty(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
-		jCheckBoxRemoveUnnecessaryPandU
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxTreatAllReactionsAsEnzyeReaction = new JCheckBox(StringUtil.toHTML(
-				SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED.getDisplayName(), 25),
-				properties
-						.getBooleanProperty(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED));
-		jCheckBoxTreatAllReactionsAsEnzyeReaction
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxAddAllParametersGlobally = new JCheckBox(StringUtil.toHTML(
-				SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY.getDisplayName(), 25));
-		jCheckBoxAddAllParametersGlobally
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxAddAllParametersGlobally.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
-		jCheckBoxWarnings = new JCheckBox(SqueezerOptions.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS.getDisplayName());
-		jCheckBoxWarnings.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS));
-		jCheckBoxWarnings.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS.getDescription(), StringUtil.TOOLTIP_LINE_LENGTH));
-		jSpinnerMaxRealisticNumOfReactants = new JSpinner(
-				new SpinnerNumberModel(properties
-						.getIntProperty(SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS),
-						2, 10, 1));
-		jSpinnerMaxRealisticNumOfReactants
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jSpinnerDefaultCompartmentSize = new JSpinner(new SpinnerNumberModel(
-				properties.getDoubleProperty(
-						SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE), 0, 9999.9, .1));
-		jSpinnerDefaultCompartmentSize
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jSpinnerDefaultSpeciesValue = new JSpinner(new SpinnerNumberModel(
-				properties.getDoubleProperty(
-						SqueezerOptions.OPT_DEFAULT_SPECIES_INITIAL_VALUE),
-				0, 9999.9, .1));
-		jSpinnerDefaultSpeciesValue
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_DEFAULT_SPECIES_INITIAL_VALUE.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jSpinnerDefaultParamValue = new JSpinner(new SpinnerNumberModel(properties.getDoubleProperty(
-								SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS), 0, 9999.9, .1));
-		jSpinnerDefaultParamValue
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
+		
+		jCheckBoxSetBoundaryCondition = createCheckBox(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, true);
+		jCheckBoxRemoveUnnecessaryPandU = createCheckBox(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS, true);
+		jCheckBoxTreatAllReactionsAsEnzyeReaction = createCheckBox(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED, true);
+		jCheckBoxAddAllParametersGlobally = createCheckBox(SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY, true);
+		jCheckBoxWarnings = createCheckBox(SqueezerOptions.OPT_WARNINGS_FOR_TOO_MANY_REACTANTS, true);
+
+		jSpinnerMaxRealisticNumOfReactants = createSpinner(SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS, 2, 10, 1);
+		jSpinnerDefaultCompartmentSize = createSpinner(SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE, 0.0, 9999.9, .1);
+		jSpinnerDefaultSpeciesValue = createSpinner(SqueezerOptions.OPT_DEFAULT_SPECIES_INITIAL_VALUE,	0.0, 9999.9, .1);
+		jSpinnerDefaultParamValue = createSpinner(SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS, 0.0, 9999.9, .1);
+		
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jCheckBoxSetBoundaryCondition, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
@@ -242,25 +313,14 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 				jSpinnerDefaultParamValue, 1, 8, 1, 1, 1, 1);
 
 		// Second Panel
-		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = new JRadioButton(
-				SqueezerOptions.OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING.getDisplayName());
-		jRadioButtonGenerateOnlyMissingKinetics
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
-		jRadioButtonGenerateForAllReactions = new JRadioButton(
-				SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION.getDisplayName());
-		jRadioButtonGenerateForAllReactions
-				.setToolTipText(StringUtil.toHTML(
-								SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION.getDescription(),
-								StringUtil.TOOLTIP_LINE_LENGTH));
+		JRadioButton jRadioButtonGenerateOnlyMissingKinetics = createRadioButton(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING, true);
+		jRadioButtonGenerateForAllReactions = createRadioButton(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION, true);
+		
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonGenerateForAllReactions);
 		buttonGroup.add(jRadioButtonGenerateOnlyMissingKinetics);
-		jRadioButtonGenerateForAllReactions.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION));
-		jRadioButtonGenerateOnlyMissingKinetics
-				.setSelected(!jRadioButtonGenerateForAllReactions.isSelected());
+		
+		
 		layout = new GridBagLayout();
 		JPanel jPanelGenerateNewKinetics = new JPanel(layout);
 		jPanelGenerateNewKinetics.setBorder(BorderFactory
@@ -273,55 +333,15 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		// Third Panel
 
 		// Fourth Panel
-		jCheckBoxPossibleEnzymeGenericProtein = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_GENERIC.getDisplayName());
-		jCheckBoxPossibleEnzymeGenericProtein.setSelected(properties
-				.getBoolean(SqueezerOptions.POSSIBLE_ENZYME_GENERIC));
-		jCheckBoxPossibleEnzymeGenericProtein.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.POSSIBLE_ENZYME_GENERIC.getDescription(), 
-				StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeRNA = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_RNA.getDisplayName());
-		jCheckBoxPossibleEnzymeRNA.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_RNA));
-		jCheckBoxPossibleEnzymeRNA.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.POSSIBLE_ENZYME_RNA.getDescription(),
-				StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeComplex = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_COMPLEX.getDisplayName());
-		jCheckBoxPossibleEnzymeComplex.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_COMPLEX));
-		jCheckBoxPossibleEnzymeComplex.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.POSSIBLE_ENZYME_COMPLEX.getDescription(), StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeTruncatedProtein = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED.getDisplayName());
-		jCheckBoxPossibleEnzymeTruncatedProtein
-				.setSelected(properties
-						.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED));
-		jCheckBoxPossibleEnzymeTruncatedProtein.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED.getDescription(),
-				StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeReceptor = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR.getDisplayName());
-		jCheckBoxPossibleEnzymeReceptor.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR));
-		jCheckBoxPossibleEnzymeReceptor.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR.getDescription(),
-				StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeUnknown = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN.getDisplayName());
-		jCheckBoxPossibleEnzymeUnknown.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN));
-		jCheckBoxPossibleEnzymeUnknown.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN.getDescription(),
-				StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeAsRNA = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA.getDisplayName());
-		jCheckBoxPossibleEnzymeAsRNA.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA));
-		jCheckBoxPossibleEnzymeAsRNA.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA.getDescription(),
-				StringUtil.TOOLTIP_LINE_LENGTH));
-		jCheckBoxPossibleEnzymeSimpleMolecule = new JCheckBox(SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE.getDisplayName());
-		jCheckBoxPossibleEnzymeSimpleMolecule.setSelected(properties
-				.getBooleanProperty(SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE));
-		jCheckBoxPossibleEnzymeSimpleMolecule.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE.getDescription(),
-				StringUtil.TOOLTIP_LINE_LENGTH));
-
+		jCheckBoxPossibleEnzymeGenericProtein = createCheckBox(SqueezerOptions.POSSIBLE_ENZYME_GENERIC, true);
+		jCheckBoxPossibleEnzymeRNA = createCheckBox(SqueezerOptions.POSSIBLE_ENZYME_RNA, true);
+		jCheckBoxPossibleEnzymeComplex = createCheckBox(SqueezerOptions.POSSIBLE_ENZYME_COMPLEX, true);
+		jCheckBoxPossibleEnzymeTruncatedProtein = createCheckBox(SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED, true);
+		jCheckBoxPossibleEnzymeReceptor = createCheckBox(SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR, true);
+		jCheckBoxPossibleEnzymeUnknown = createCheckBox(SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN, true);
+		jCheckBoxPossibleEnzymeAsRNA = createCheckBox(SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA, true);
+		jCheckBoxPossibleEnzymeSimpleMolecule = createCheckBox(SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE, true);
+		
 		layout = new GridBagLayout();
 		JPanel jPanelSettingsEnzymes = new JPanel();
 		jPanelSettingsEnzymes.setLayout(layout);
@@ -347,25 +367,21 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		JPanel jPanelTypeUnitConsistency = new JPanel();
 		LayoutHelper unitConsistency = new LayoutHelper(
 				jPanelTypeUnitConsistency);
-		jRadioButtonTypeUnitConsistency = new JRadioButton(StringUtil.toHTML(
-				SqueezerOptions.TYPE_UNIT_CONSISTENCY.getDisplayName(), 30),
+		
+		jRadioButtonTypeUnitConsistency = createRadioButton(
+				SqueezerOptions.TYPE_UNIT_CONSISTENCY, true,
 				SqueezerOptions.TYPE_UNIT_CONSISTENCY.getValue(properties).ordinal() == 0);
-		jRadioButtonTypeUnitConsistency.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.TYPE_UNIT_CONSISTENCY.getDescription(),
-				StringUtil.TOOLTIP_LINE_LENGTH));
-		JRadioButton jRadioButtonTypeUnitsCompVol = new JRadioButton(StringUtil.toHTML(
-				SqueezerOptions.TYPE_UNITS_COMPARTMENT.getDisplayName(), 30),
+		JRadioButton jRadioButtonTypeUnitsCompVol = createRadioButton(
+				SqueezerOptions.TYPE_UNITS_COMPARTMENT, true,
 				!jRadioButtonTypeUnitConsistency.isSelected());
-		jRadioButtonTypeUnitsCompVol.setToolTipText(StringUtil.toHTML(
-				SqueezerOptions.TYPE_UNITS_COMPARTMENT.getDescription(),
-				StringUtil.TOOLTIP_LINE_LENGTH));
+
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(jRadioButtonTypeUnitConsistency);
 		buttonGroup.add(jRadioButtonTypeUnitsCompVol);
 		unitConsistency.add(jRadioButtonTypeUnitConsistency);
 		unitConsistency.add(jRadioButtonTypeUnitsCompVol);
 		jPanelTypeUnitConsistency.setBorder(BorderFactory
-				.createTitledBorder(" How to ensure unit consistency "));
+				.createTitledBorder(" "+messagesBundle.getString("HOW_TO_ENSURE_UNIT_CONSISTENCY")+" "));
 
 		// Add all panels to this settings panel:
 		LayoutHelper lh = new LayoutHelper(this);
