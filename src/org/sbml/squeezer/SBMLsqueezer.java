@@ -59,7 +59,6 @@ import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
 import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
-import org.sbml.squeezer.math.StabilityOptions;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
 import org.sbml.tolatex.io.LaTeXOptionsIO;
@@ -414,7 +413,6 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public List<Class<? extends KeyProvider>> getCmdLineOptions() {
     List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
     list.add(SqueezerOptions.class);
-//    list.add(StabilityOptions.class);
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
     return list;
