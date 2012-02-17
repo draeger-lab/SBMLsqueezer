@@ -1,6 +1,6 @@
 /*
- * $Id: SBMLio.java 800 2012-02-03 13:53:59Z draeger $
- * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/io/SBMLio.java $
+ * $Id: IOOptions.java 808 2012-02-03 13:53:59Z snagel $
+ * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/io/IOOptions.java $
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -36,7 +36,7 @@ import de.zbit.util.prefs.Option;
  * 
  * @author Sebastian Nagel
  * @since 1.4
- * @version $Rev: 807 $
+ * @version $Rev: 808 $
  */
 
 public interface IOOptions extends KeyProvider {
