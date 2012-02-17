@@ -58,6 +58,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.gui.LaTeXExportDialog;
@@ -472,10 +473,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			if (model != null) {
 				addModel(model);
 				String path = file.getAbsolutePath();
-				String oldPath = prefs.get(SqueezerOptions.SBML_IN_FILE)
+				String oldPath = prefs.get(IOOptions.SBML_IN_FILE)
 						.toString();
 				if (!path.equals(oldPath)) {
-					prefs.put(SqueezerOptions.SBML_IN_FILE, path);
+					prefs.put(IOOptions.SBML_IN_FILE, path);
 					prefs.flush();
 				}
 			}

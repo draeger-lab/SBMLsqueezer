@@ -43,6 +43,7 @@ import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
+import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
@@ -388,10 +389,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         logger.log(Level.WARNING, exc.getMessage());
       }
     }
-    if (properties.containsKey(SqueezerOptions.SBML_OUT_FILE)) {
+    if (properties.containsKey(IOOptions.SBML_OUT_FILE)) {
       try {
-        squeeze(properties.get(SqueezerOptions.SBML_IN_FILE).toString(),
-          properties.get(SqueezerOptions.SBML_OUT_FILE).toString());
+        squeeze(properties.get(IOOptions.SBML_IN_FILE).toString(),
+          properties.get(IOOptions.SBML_OUT_FILE).toString());
       } catch (Throwable e) {
         e.printStackTrace();
       }
@@ -412,6 +413,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    */
   public List<Class<? extends KeyProvider>> getCmdLineOptions() {
     List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
+    list.add(IOOptions.class);
     list.add(SqueezerOptions.class);
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
@@ -506,8 +508,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    */
   public Window initGUI(AppConf appConf) {
     SBProperties properties = appConf.getCmdArgs();
-    if (properties.containsKey(SqueezerOptions.SBML_IN_FILE)) {
-      readSBMLSource(properties.get(SqueezerOptions.SBML_IN_FILE));
+    if (properties.containsKey(IOOptions.SBML_IN_FILE)) {
+      readSBMLSource(properties.get(IOOptions.SBML_IN_FILE));
     }
     return new SBMLsqueezerUI(getSBMLIO(), appConf);
   }
