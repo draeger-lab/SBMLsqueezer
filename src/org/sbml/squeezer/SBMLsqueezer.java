@@ -101,7 +101,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * {@link Set}s of kinetics with certain characteristics.
    */
-  private static Set<String> kineticsArbitraryEnzymeMechanism,
+  private static Set<Class> kineticsArbitraryEnzymeMechanism,
       kineticsBiUni, kineticsGeneRegulatoryNetworks,
       kineticsIntStoichiometry, kineticsIrreversible, kineticsModulated,
       kineticsNonEnzyme, kineticsReversible, kineticsUniUni,
@@ -138,17 +138,17 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     long time = System.currentTimeMillis();
     logger.info("Loading kinetic equations...");
     kineticsBiBi = new HashSet<Class>();
-    kineticsBiUni = new HashSet<String>();
-    kineticsGeneRegulatoryNetworks = new HashSet<String>();
-    kineticsNonEnzyme = new HashSet<String>();
-    kineticsArbitraryEnzymeMechanism = new HashSet<String>();
-    kineticsUniUni = new HashSet<String>();
-    kineticsReversible = new HashSet<String>();
-    kineticsIrreversible = new HashSet<String>();
-    kineticsZeroReactants = new HashSet<String>();
-    kineticsZeroProducts = new HashSet<String>();
-    kineticsModulated = new HashSet<String>();
-    kineticsIntStoichiometry = new HashSet<String>();
+    kineticsBiUni = new HashSet<Class>();
+    kineticsGeneRegulatoryNetworks = new HashSet<Class>();
+    kineticsNonEnzyme = new HashSet<Class>();
+    kineticsArbitraryEnzymeMechanism = new HashSet<Class>();
+    kineticsUniUni = new HashSet<Class>();
+    kineticsReversible = new HashSet<Class>();
+    kineticsIrreversible = new HashSet<Class>();
+    kineticsZeroReactants = new HashSet<Class>();
+    kineticsZeroProducts = new HashSet<Class>();
+    kineticsModulated = new HashSet<Class>();
+    kineticsIntStoichiometry = new HashSet<Class>();
     Class<BasicKineticLaw> classes[] = Reflect.getAllClassesInPackage(
         KINETICS_PACKAGE, false, true, BasicKineticLaw.class,
         JAR_LOCATION, true);
@@ -158,40 +158,40 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         s.add(interf);
       }
       if (s.contains(InterfaceIrreversibleKinetics.class)) {
-        kineticsIrreversible.add(c.getCanonicalName());
+        kineticsIrreversible.add(c);
       }
       if (s.contains(InterfaceReversibleKinetics.class)) {
-        kineticsReversible.add(c.getCanonicalName());
+        kineticsReversible.add(c);
       }
       if (s.contains(InterfaceUniUniKinetics.class)) {
-        kineticsUniUni.add(c.getCanonicalName());
+        kineticsUniUni.add(c);
       }
       if (s.contains(InterfaceBiUniKinetics.class)) {
-        kineticsBiUni.add(c.getCanonicalName());
+        kineticsBiUni.add(c);
       }
       if (s.contains(InterfaceBiBiKinetics.class)) {
         kineticsBiBi.add(c);
       }
       if (s.contains(InterfaceArbitraryEnzymeKinetics.class)) {
-        kineticsArbitraryEnzymeMechanism.add(c.getCanonicalName());
+        kineticsArbitraryEnzymeMechanism.add(c);
       }
       if (s.contains(InterfaceGeneRegulatoryKinetics.class)) {
-        kineticsGeneRegulatoryNetworks.add(c.getCanonicalName());
+        kineticsGeneRegulatoryNetworks.add(c);
       }
       if (s.contains(InterfaceNonEnzymeKinetics.class)) {
-        kineticsNonEnzyme.add(c.getCanonicalName());
+        kineticsNonEnzyme.add(c);
       }
       if (s.contains(InterfaceZeroReactants.class)) {
-        kineticsZeroReactants.add(c.getCanonicalName());
+        kineticsZeroReactants.add(c);
       }
       if (s.contains(InterfaceZeroProducts.class)) {
-        kineticsZeroProducts.add(c.getCanonicalName());
+        kineticsZeroProducts.add(c);
       }
       if (s.contains(InterfaceModulatedKinetics.class)) {
-        kineticsModulated.add(c.getCanonicalName());
+        kineticsModulated.add(c);
       }
       if (s.contains(InterfaceIntegerStoichiometry.class)) {
-        kineticsIntStoichiometry.add(c.getCanonicalName());
+        kineticsIntStoichiometry.add(c);
       }
     }
     logger.info(String.format("done in %d ms.",
@@ -201,7 +201,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * @return the kineticsArbitraryEnzymeMechanism
    */
-  public static Set<String> getKineticsArbitraryEnzymeMechanism() {
+  public static Set<Class> getKineticsArbitraryEnzymeMechanism() {
     return kineticsArbitraryEnzymeMechanism;
   }
 
@@ -216,70 +216,70 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * @return the kineticsBiUni
    */
-  public static Set<String> getKineticsBiUni() {
+  public static Set<Class> getKineticsBiUni() {
     return kineticsBiUni;
   }
 
   /**
    * @return the kineticsGeneRegulatoryNetworks
    */
-  public static Set<String> getKineticsGeneRegulatoryNetworks() {
+  public static Set<Class> getKineticsGeneRegulatoryNetworks() {
     return kineticsGeneRegulatoryNetworks;
   }
 
   /**
    * @return the kineticsIntStoichiometry
    */
-  public static Set<String> getKineticsIntStoichiometry() {
+  public static Set<Class> getKineticsIntStoichiometry() {
     return kineticsIntStoichiometry;
   }
 
   /**
    * @return the kineticsIrreversible
    */
-  public static Set<String> getKineticsIrreversible() {
+  public static Set<Class> getKineticsIrreversible() {
     return kineticsIrreversible;
   }
 
   /**
    * @return the kineticsModulated
    */
-  public static Set<String> getKineticsModulated() {
+  public static Set<Class> getKineticsModulated() {
     return kineticsModulated;
   }
 
   /**
    * @return the kineticsNonEnzyme
    */
-  public static Set<String> getKineticsNonEnzyme() {
+  public static Set<Class> getKineticsNonEnzyme() {
     return kineticsNonEnzyme;
   }
 
   /**
    * @return the kineticsReversible
    */
-  public static Set<String> getKineticsReversible() {
+  public static Set<Class> getKineticsReversible() {
     return kineticsReversible;
   }
 
   /**
    * @return the kineticsUniUni
    */
-  public static Set<String> getKineticsUniUni() {
+  public static Set<Class> getKineticsUniUni() {
     return kineticsUniUni;
   }
 
   /**
    * @return the kineticsZeroProducts
    */
-  public static Set<String> getKineticsZeroProducts() {
+  public static Set<Class> getKineticsZeroProducts() {
     return kineticsZeroProducts;
   }
   
   /**
    * @return the kineticsZeroReactants
    */
-  public static Set<String> getKineticsZeroReactants() {
+  public static Set<Class> getKineticsZeroReactants() {
     return kineticsZeroReactants;
   }
   

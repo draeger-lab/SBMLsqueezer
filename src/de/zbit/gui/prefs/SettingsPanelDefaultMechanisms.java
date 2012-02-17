@@ -121,6 +121,21 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 				|| k.equals("OPT_TREAT_ALL_REACTIONS_REVERSIBLE")
 				|| k.equals("TYPE_STANDARD_VERSION");
 	}
+	
+	/**
+	 * return set of class names from set of classes
+	 * 
+	 * @param classes
+	 * @return
+	 */
+	@SuppressWarnings("unused")
+	private Set<String> getSetOfStringsFromSetOfClass(Set<Class> classes){
+		Set<String> strings = new HashSet<String>();
+		for (Class className : classes) {
+			strings.add(className.getName());
+		}
+		return strings;
+	}
 
 	/**
 	 * Creates a panel that contains radio buttons for the given class of
@@ -130,13 +145,13 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 * @param key
 	 * @return
 	 */
-	private JPanel createButtonGroupPanel(Set<String> classes, Option<?> key) {
+	private JPanel createButtonGroupPanel(Set<Class> classes, Option<?> key) {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		JPanel p = new JPanel();
 		LayoutHelper helper = new LayoutHelper(p);
 		// p.setBorder(BorderFactory.createTitledBorder(createTitleFor(key)));
 		JRadioButton jRButton[] = new JRadioButton[classes.size()];
-		String cl[] = classes.toArray(new String[] {});
+		String cl[] = getSetOfStringsFromSetOfClass(classes).toArray(new String[] {});
 		Arrays.sort(cl);
 		int i;
 		for (i = 0; i < jRButton.length; i++) {
@@ -276,8 +291,8 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsBiUni(treatReactionsReversible), curr));
 		curr = SqueezerOptions.KINETICS_BI_BI_TYPE;
-//		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
-//				.getKineticsBiBi(treatReactionsReversible), curr));
+		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
+				.getKineticsBiBi(treatReactionsReversible), curr));
 		curr = SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS;
 		tabs.addTab(createTitleFor(curr), createButtonGroupPanel(ReactionType
 				.getKineticsArbitraryEnzyme(treatReactionsReversible), curr));

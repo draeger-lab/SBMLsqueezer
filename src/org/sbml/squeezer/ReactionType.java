@@ -67,23 +67,23 @@ public class ReactionType {
 	/**
 	 * Set of those kinetic equations that can only be reversible.
 	 */
-	private static Set<String> notIrreversible;
+	private static Set<Class> notIrreversible;
 
 	/**
 	 * Set of kinetic equations that can only be applied to irreversible
 	 * reactions.
 	 */
-	private static Set<String> notReversible;
+	private static Set<Class> notReversible;
 
 	/**
 	 * Initializes the sets of not reversible and not irreversible kinetic
 	 * equations.
 	 */
 	static {
-		notIrreversible = new HashSet<String>();
+		notIrreversible = new HashSet<Class>();
 		notIrreversible.addAll(SBMLsqueezer.getKineticsReversible());
 		notIrreversible.removeAll(SBMLsqueezer.getKineticsIrreversible());
-		notReversible = new HashSet<String>();
+		notReversible = new HashSet<Class>();
 		notReversible.addAll(SBMLsqueezer.getKineticsIrreversible());
 		notReversible.removeAll(SBMLsqueezer.getKineticsReversible());
 	}
@@ -93,13 +93,13 @@ public class ReactionType {
 	 * reactions should be treated reversibly.
 	 * 
 	 * @param treatReactionsReversible
-	 * @param allKinetics
+	 * @param set
 	 * @return A set of kinetics that can be used given the reversible property.
 	 */
-	private static Set<String> checkReactions(boolean treatReactionsReversible,
-			Set<String> allKinetics) {
-		Set<String> kinetics = new HashSet<String>();
-		kinetics.addAll(allKinetics);
+	private static Set<Class> checkReactions(boolean treatReactionsReversible,
+			Set<Class> set) {
+		Set<Class> kinetics = new HashSet<Class>();
+		kinetics.addAll(set);
 		kinetics.removeAll(notReversible);
 		if (!treatReactionsReversible) {
 			kinetics.removeAll(notIrreversible);
@@ -115,7 +115,7 @@ public class ReactionType {
 	 * @param treatReactionsReversible
 	 * @return
 	 */
-	public static Set<String> getKineticsArbitraryEnzyme(
+	public static Set<Class> getKineticsArbitraryEnzyme(
 			boolean treatReactionsReversible) {
 		return checkReactions(treatReactionsReversible, SBMLsqueezer
 				.getKineticsArbitraryEnzymeMechanism());
@@ -136,7 +136,7 @@ public class ReactionType {
 	 * @param treatReactionsReversible
 	 * @return
 	 */
-	public static Set<String> getKineticsBiUni(boolean treatReactionsReversible) {
+	public static Set<Class> getKineticsBiUni(boolean treatReactionsReversible) {
 		return checkReactions(treatReactionsReversible, SBMLsqueezer
 				.getKineticsBiUni());
 	}
@@ -146,7 +146,7 @@ public class ReactionType {
 	 * @param treatReactionsReversible
 	 * @return
 	 */
-	public static Set<String> getKineticsGeneRegulation(
+	public static Set<Class> getKineticsGeneRegulation(
 			boolean treatReactionsReversible) {
 		return checkReactions(treatReactionsReversible, SBMLsqueezer
 				.getKineticsGeneRegulatoryNetworks());
@@ -157,7 +157,7 @@ public class ReactionType {
 	 * @param treatReactionsReversible
 	 * @return
 	 */
-	public static Set<String> getKineticsNonEnzyme(
+	public static Set<Class> getKineticsNonEnzyme(
 			boolean treatReactionsReversible) {
 		return checkReactions(treatReactionsReversible, SBMLsqueezer
 				.getKineticsNonEnzyme());
@@ -168,7 +168,7 @@ public class ReactionType {
 	 * @param treatReactionsReversible
 	 * @return
 	 */
-	public static Set<String> getKineticsUniUni(boolean treatReactionsReversible) {
+	public static Set<Class> getKineticsUniUni(boolean treatReactionsReversible) {
 		return checkReactions(treatReactionsReversible, SBMLsqueezer
 				.getKineticsUniUni());
 	}
@@ -455,7 +455,7 @@ public class ReactionType {
 	 * @param className
 	 * @return
 	 */
-	private boolean checkReversibility(Reaction reaction, String className) {
+	private boolean checkReversibility(Reaction reaction, Class className) {
 		return (reaction.getReversible() && SBMLsqueezer
 				.getKineticsReversible().contains(className))
 				|| (!reaction.getReversible() && SBMLsqueezer
@@ -522,26 +522,26 @@ public class ReactionType {
 						prefs.get(SqueezerOptions.KINETICS_GENE_REGULATION))) {
 					return prefs.get(SqueezerOptions.KINETICS_GENE_REGULATION);
 				}
-				for (String kin : SBMLsqueezer
+				for (Class kin : SBMLsqueezer
 						.getKineticsGeneRegulatoryNetworks()) {
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
-						return kin;
+						return kin.getName();
 					}
 				}
 			}
-			for (String kin : SBMLsqueezer.getKineticsZeroReactants()) {
-				return kin;
+			for (Class kin : SBMLsqueezer.getKineticsZeroReactants()) {
+				return kin.getName();
 			}
 		}
 		if (representsEmptySet(reaction.getListOfProducts())
 				&& (reversibility || reaction.getReversible())) {
 			if (reactionWithGenes || reactionWithRNAs)
-				for (String kin : SBMLsqueezer
+				for (Class kin : SBMLsqueezer
 						.getKineticsGeneRegulatoryNetworks())
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin))
-						return kin;
-			for (String kin : SBMLsqueezer.getKineticsZeroProducts())
-				return kin;
+						return kin.getName();
+			for (Class kin : SBMLsqueezer.getKineticsZeroProducts())
+				return kin.getName();
 		}
 
 		boolean enzymeCatalyzed = prefs
@@ -588,7 +588,7 @@ public class ReactionType {
 	 * @throws RateLawNotApplicableException
 	 */
 	public String[] identifyPossibleKineticLaws() {
-		Set<String> types = new HashSet<String>();
+		Set<Class> types = new HashSet<Class>();
 		boolean emptyListOfReactants = representsEmptySet(reaction
 				.getListOfReactants());
 		boolean enzymeKinetics = false;
@@ -600,17 +600,17 @@ public class ReactionType {
 			 * species references.
 			 */
 			if (emptyListOfReactants)
-				for (String className : SBMLsqueezer.getKineticsZeroReactants())
+				for (Class className : SBMLsqueezer.getKineticsZeroReactants())
 					types.add(className);
 			else
-				for (String className : SBMLsqueezer.getKineticsZeroProducts()) {
+				for (Class className : SBMLsqueezer.getKineticsZeroProducts()) {
 					if (SBMLsqueezer.getKineticsReversible()
 							.contains(className))
 						types.add(className);
 				}
 			// Gene-regulation
 			if (reactionWithGenes || reactionWithRNAs) {
-				for (String className : SBMLsqueezer
+				for (Class className : SBMLsqueezer
 						.getKineticsGeneRegulatoryNetworks()) {
 					if ((reaction.getReversible() && !notReversible
 							.contains(className))
@@ -642,7 +642,7 @@ public class ReactionType {
 						.isRNAOrMessengerRNA(product.getSBOTerm())
 						|| SBO.isProtein(product.getSBOTerm()) || SBO
 						.isGeneric(product.getSBOTerm()))))))
-					for (String className : SBMLsqueezer
+					for (Class className : SBMLsqueezer
 							.getKineticsGeneRegulatoryNetworks()) {
 						if ((reaction.getReversible() && !notReversible
 								.contains(className))
@@ -657,7 +657,7 @@ public class ReactionType {
 			 * Enzym-Kinetics: Assign possible rate laws for arbitrary enzyme
 			 * reations.
 			 */
-			for (String className : SBMLsqueezer
+			for (Class className : SBMLsqueezer
 					.getKineticsArbitraryEnzymeMechanism()) {
 				if (checkReversibility(reaction, className)
 						&& (!SBMLsqueezer.getKineticsIntStoichiometry()
@@ -668,7 +668,7 @@ public class ReactionType {
 			}
 			if (uniUni
 					|| (stoichiometryLeft == 1d && !(reaction.getReversible() || reversibility))) {
-				Set<String> onlyUniUni = new HashSet<String>();
+				Set<Class> onlyUniUni = new HashSet<Class>();
 				onlyUniUni.addAll(SBMLsqueezer.getKineticsUniUni());
 				onlyUniUni.removeAll(SBMLsqueezer
 						.getKineticsArbitraryEnzymeMechanism());
@@ -677,12 +677,12 @@ public class ReactionType {
 							.getKineticsIntStoichiometry());
 				if (!withoutModulation)
 					onlyUniUni.retainAll(SBMLsqueezer.getKineticsModulated());
-				for (String className : onlyUniUni)
+				for (Class className : onlyUniUni)
 					if (checkReversibility(reaction, className))
 						types.add(className);
 			} else if (biUni
 					|| (stoichiometryLeft == 2d && !(reaction.getReversible() || reversibility))) {
-				Set<String> onlyBiUni = new HashSet<String>();
+				Set<Class> onlyBiUni = new HashSet<Class>();
 				onlyBiUni.addAll(SBMLsqueezer.getKineticsBiUni());
 				onlyBiUni.removeAll(SBMLsqueezer
 						.getKineticsArbitraryEnzymeMechanism());
@@ -691,17 +691,17 @@ public class ReactionType {
 							.getKineticsIntStoichiometry());
 				if (!withoutModulation)
 					onlyBiUni.retainAll(SBMLsqueezer.getKineticsModulated());
-				for (String className : onlyBiUni)
+				for (Class className : onlyBiUni)
 					if (checkReversibility(reaction, className))
 						types.add(className);
 			} else if (biBi) {
-				Set<String> onlyBiBi = new HashSet<String>();
+				Set<Class> onlyBiBi = new HashSet<Class>();
 				onlyBiBi.addAll(SBMLsqueezer.getKineticsBiBi());
 				onlyBiBi.removeAll(SBMLsqueezer
 						.getKineticsArbitraryEnzymeMechanism());
 				if (!withoutModulation)
 					onlyBiBi.retainAll(SBMLsqueezer.getKineticsModulated());
-				for (String className : onlyBiBi) {
+				for (Class className : onlyBiBi) {
 					if (checkReversibility(reaction, className)) {
 						types.add(className);
 					}
