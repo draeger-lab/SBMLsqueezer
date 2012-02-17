@@ -397,18 +397,6 @@ public interface SqueezerOptions extends KeyProvider {
 			"POSSIBLE_ENZYME_UNKNOWN", Boolean.class, bundle,
 			false);
 	/**
-	 * SBML input file.
-	 */
-	public static final Option<File> SBML_IN_FILE = new Option<File>(
-			"SBML_IN_FILE", File.class, bundle,
-			new File(""));
-	/**
-	 * Specifies the file where SBMLsqueezer writes its SBML output.
-	 */
-	public static final Option<File> SBML_OUT_FILE = new Option<File>(
-			"SBML_OUT_FILE", File.class, bundle,
-			new File(""));
-	/**
 	 * Can be true or false, depending on if the user wants to see SBML
 	 * warnings.
 	 */
