@@ -182,6 +182,7 @@ public interface SqueezerOptions extends KeyProvider {
 			bundle,
 			new Range<Class>(Class.class, SBMLsqueezer.getKineticsUniUni()),
 			MichaelisMenten.class);
+	
 	/**
 	 * If true all parameters are stored globally for the whole model (default)
 	 * else parameters are stored locally for the respective kinetic equation
@@ -266,11 +267,11 @@ public interface SqueezerOptions extends KeyProvider {
 	 * The maximal number of reactants so that the reaction is still considered
 	 * plausible.
 	 */
-	public static final Option<Integer> OPT_MAX_NUMBER_OF_REACTANTS = new Option<Integer>(
+	public static final Option<Double> OPT_MAX_NUMBER_OF_REACTANTS = new Option<Double>(
 			"OPT_MAX_NUMBER_OF_REACTANTS",
-			Integer.class,
+			Double.class,
 			bundle,
-			3);
+			3.0d);
 	/**
 	 * If true parameters and units that are never referenced by any element of
 	 * the model are deleted when creating kinetic equations with SBMLsqueezer.
@@ -457,10 +458,74 @@ public interface SqueezerOptions extends KeyProvider {
      */
     @SuppressWarnings("unchecked")
     public static final OptionGroup<Boolean> GENERAL_OPTIONS = new OptionGroup<Boolean>(
-      "General Options", "Tooltip", true, true,
+      "General Options", "",
       OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
       OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
       OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
-      OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY);
+      OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+      SHOW_SBML_WARNINGS);
+    
+    /**
+     * 
+     */
+  	@SuppressWarnings("unchecked")
+  	public static final OptionGroup<Class> KINETICS_OPTIONS = new OptionGroup<Class>(
+  			"Kinetic Options","",
+  			KINETICS_ARBITRARY_ENZYME_REACTIONS,
+  			KINETICS_BI_BI_TYPE,
+  			KINETICS_BI_UNI_TYPE,
+  			KINETICS_GENE_REGULATION,
+  			KINETICS_NONE_ENZYME_REACTIONS,
+  			KINETICS_UNI_UNI_TYPE);
+  	
+  	/**
+     * 
+     */
+  	@SuppressWarnings("unchecked")
+  	public static final OptionGroup<?> DEFAULT_OPTIONS = new OptionGroup(
+  			"Default Values","",
+  			OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE,
+  			OPT_DEFAULT_SPECIES_INITIAL_VALUE,
+  			OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS,
+  			OPT_MAX_NUMBER_OF_REACTANTS,
+  			OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
+  	
+  	/**
+     * 
+     */
+  	@SuppressWarnings("unchecked")
+  	public static final OptionGroup<?> TYPE_OPTIONS = new OptionGroup(
+  			"Type Options","",
+  			TYPE_STANDARD_VERSION,
+  			TYPE_UNIT_CONSISTENCY,
+  			TYPE_UNITS_COMPARTMENT);
+  	
 
+  	/**
+     * 
+     */
+  	@SuppressWarnings("unchecked")
+  	public static final OptionGroup<Boolean> REACTION_OPTIONS = new OptionGroup<Boolean>(
+  			"Reaction Options","",
+  			OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
+  			OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING,
+  			OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+  			OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD,
+  			OPT_WARNINGS_FOR_TOO_MANY_REACTANTS);
+  	
+  	/**
+     * 
+     */
+  	@SuppressWarnings("unchecked")
+  	public static final OptionGroup<Boolean> ENZYME_OPTIONS = new OptionGroup<Boolean>(
+  			"Enzyme Options","",
+  			POSSIBLE_ENZYME_ANTISENSE_RNA,
+  			POSSIBLE_ENZYME_COMPLEX,
+  			POSSIBLE_ENZYME_GENERIC,
+  			POSSIBLE_ENZYME_MACROMOLECULE,
+  			POSSIBLE_ENZYME_RECEPTOR,
+  			POSSIBLE_ENZYME_RNA,
+  			POSSIBLE_ENZYME_SIMPLE_MOLECULE,
+  			POSSIBLE_ENZYME_TRUNCATED,
+  			POSSIBLE_ENZYME_UNKNOWN);
 }
