@@ -26,6 +26,7 @@ package org.sbml.squeezer.kinetics;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 
 /**
  * This class creates an equation based on a non-linear additive model.
@@ -77,7 +78,7 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return "Non-linear additive model, general form";
+		return Bundles.MESSAGES.getString("ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME");
 	}
 
 }

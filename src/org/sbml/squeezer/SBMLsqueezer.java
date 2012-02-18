@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +61,7 @@ import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
 import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
 import org.sbml.tolatex.io.LaTeXOptionsIO;
@@ -87,7 +89,6 @@ import de.zbit.util.prefs.SBProperties;
  * @version $Rev$
  */
 public class SBMLsqueezer extends Launcher implements IOProgressListener {
-
   /**
    * The possible location of this class in a jar file if used in plug-in
    * mode.
@@ -195,8 +196,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         kineticsIntStoichiometry.add(c);
       }
     }
-    logger.info(String.format("done in %d ms.",
-      (System.currentTimeMillis() - time)));
+    logger.info(MessageFormat.format(Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
   }
   
   /**
@@ -293,9 +293,9 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @return
    */
   public static String[] getPossibleEnzymeTypes() {
-    logger.log(Level.INFO, "loading user settings...");
+    logger.log(Level.INFO, Bundles.MESSAGES.getString("LOADING_USER_SETTINGS"));
     SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
-    logger.log(Level.INFO, "    done.");
+    logger.log(Level.INFO, "    " + Bundles.MESSAGES.getString("DONE"));
     Set<String> enzymeTypes = new HashSet<String>();
     String prefix = "POSSIBLE_ENZYME_";
     for (Object key : preferences.keySet()) {
@@ -321,7 +321,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         System.loadLibrary("sbmlj");
         // Extra check to be sure we have access to libSBML:
         Class.forName("org.sbml.libsbml.libsbml");
-        logger.info("Loading library libSBML");
+        logger.info(Bundles.MESSAGES.getString("LOADING_LIBSBML"));
         libSBMLAvailable = true;
     } catch (Error e) {
     } catch (Throwable e) {
@@ -330,7 +330,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
       reader = new LibSBMLReader();
       writer = new LibSBMLWriter();
     } else {
-      logger.info("Loading library JSBML");
+      logger.info(Bundles.MESSAGES.getString("LOADING_JSBML"));
       reader = new SqSBMLReader();
       writer = new SqSBMLWriter();
     }
@@ -530,15 +530,12 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    */
   public void readSBMLSource(Object sbmlSource) {
     long time = System.currentTimeMillis();
-    logger.info("reading SBML file...");
+    logger.info(Bundles.MESSAGES.getString("READING_SBML_FILE"));
     try {
       getSBMLIO().convertModel(sbmlSource);
-      logger.info(String.format("done in %d ms.", 
-              (System.currentTimeMillis() - time)));
+      logger.info(MessageFormat.format(Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
     } catch (Exception exc) {
-      logger.log(Level.WARNING, String.format(
-        "A problem occured while trying to read the model: %s", exc
-            .getLocalizedMessage()));
+      logger.log(Level.WARNING, String.format(Bundles.WARNINGS.getString("CANT_READ_MODEL"), exc.getLocalizedMessage()));
     }
   }
   
@@ -562,13 +559,15 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 
     Map<File, String> ioPairs = FileWalker.filterAndCreate(inFile, outFile, SBFileFilter.createSBMLFileFilter(), true);
     if (ioPairs.size() == 0) {
-    	logger.info("Empty list of input files. Nothing to do.");
+    	logger.info(Bundles.MESSAGES.getString("EMPTY_INPUT_FILE_LIST"));
     } else {
     	for (Map.Entry<File, String> entry : ioPairs.entrySet()) {
     		try {
     			squeeze(entry.getKey(), new File(entry.getValue()));
     		} catch (Throwable t) {
-    			logger.log(Level.SEVERE, String.format("input: %s, output: %s", entry.getKey().getAbsolutePath(), entry.getValue()), t);
+    			logger.log(Level.SEVERE, MessageFormat.format(
+    					Bundles.WARNINGS.getString("SQUEEZE_ERROR"),
+    					entry.getKey().getAbsolutePath(), entry.getValue()), t);
     		}
     	}
     }
@@ -606,12 +605,12 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	      
 	      klg.storeKineticLaws();
 	      long time = System.currentTimeMillis();
-	      logger.info("Saving changes and writing SBML file... ");
+	      logger.info(Bundles.MESSAGES.getString("SAVING_TO_FILE"));
 	      sbmlIo.saveChanges(this);
 	      if ((outFile != null)
 	          && (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
 	        sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
-	        logger.info(String.format("done in %d ms.", (System.currentTimeMillis() - time)));
+	        logger.info(MessageFormat.format(Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
 	        SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
 	        if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
 	          for (SBMLException exc : sbmlIo.getWriteWarnings()) {
@@ -619,10 +618,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	          }
 	        }
 	      } else {
-	        logger.log(Level.WARNING, "Could not write output to SBML.");
+	        logger.log(Level.WARNING, Bundles.WARNINGS.getString("OUTPUT_ERROR"));
 	      }
 	    } else {
-	      logger.log(Level.WARNING, "File contains no model. Nothing to do.");
+	      logger.log(Level.WARNING, Bundles.WARNINGS.getString("FILE_CONTAINS_NO_MODEL"));
 	    }
   }
 
@@ -648,16 +647,17 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         }
         if (!out.exists()) {
           long time = System.currentTimeMillis();
-          logger.info("writing LaTeX output...");
+          logger.info(Bundles.MESSAGES.getString("WRITING_LATEX_OUTPUT"));
           SBML2LaTeX.convert(sbmlIo.getSelectedModel(), out);
-          logger.info(String.format("    done in %d ms\n",
-              (System.currentTimeMillis() - time)) );
+          logger.info("    " + MessageFormat.format(
+        		  Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)) + "\n");
         }
       } else {
-        logger.log(Level.WARNING, String.format("no valid TeX file: %s\n", latexFile) );
+        logger.log(Level.WARNING, MessageFormat.format(
+        		Bundles.WARNINGS.getString("INVALID_TEX_FILE"), latexFile) +"\n");
       }
     } else {
-      logger.log(Level.WARNING, "no TeX file was provided");
+      logger.log(Level.WARNING, Bundles.WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
     }
   }
   

@@ -26,6 +26,7 @@ package org.sbml.squeezer.kinetics;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 
 /**
  * 
@@ -65,7 +66,7 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 
 	@Override
 	public String getSimpleName() {
-		return "Linear additive model, NetGenerator form";
+		return Bundles.MESSAGES.getString("NET_GENERATOR_LINEAR_SIMPLE_NAME");
 	}
 
 	@Override

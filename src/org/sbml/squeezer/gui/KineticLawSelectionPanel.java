@@ -30,6 +30,7 @@ import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -57,6 +58,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.util.LaTeX;
 
@@ -78,8 +80,10 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
 */
 public class KineticLawSelectionPanel extends JPanel implements ItemListener {
-
-	private static final String EXISTING_RATE_LAW = "Existing rate law";
+	/**
+	 * 
+	 */
+	private static final String EXISTING_RATE_LAW = Bundles.MESSAGES.getString("EXISTING_RATE_LAW");
 
 	/**
 	 * Generated Serial ID.
@@ -122,8 +126,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		prefsLaTeX = SBPreferences.getPreferencesFor(LaTeXOptions.class);
 		if (possibleLaws == null || selected < 0
 				|| selected > possibleLaws.length || possibleLaws.length < 1)
-			throw new IllegalArgumentException(
-					"at least one rate law must be given and the index must be between zero and the number of rate laws.");
+			throw new IllegalArgumentException(Bundles.WARNINGS.getString("INVALID_RATE_LAW_COUNT"));
 		this.reaction = possibleLaws[0].getParentSBMLObject();
 		this.possibleTypes = new String[possibleLaws.length];
 		String[] possibleTypesNames = new String[possibleLaws.length];
@@ -175,14 +178,16 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		for (int i = 0; i < reaction.getNumReactants(); i++)
 			stoichiometry += reaction.getReactant(i).getStoichiometry();
 		if (stoichiometry > 2d) {
-		  String message = String.format("%s species are unlikely to collide spontainously.", StringUtil.toString(stoichiometry));
-			label.append("<p><span color=\"red\">" + "Warning: ");
+		  String message = MessageFormat.format(Bundles.MESSAGES.getString("SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY"), StringUtil.toString(stoichiometry));
+			label.append("<p><span color=\"red\">" + Bundles.WARNINGS.getString("WARNING") +": ");
 			label.append(message);
 			label.append("</span></p>");
 			logger.warning(message);
 		}
 		if (reaction.getFast()) {
-		  String message = String.format("Reaction %s proceeds on a fast time scale. Note that this attribute is currently ignored.", reaction.isSetName() ? reaction.getName() : reaction.getId());
+		  String message = MessageFormat.format(Bundles.MESSAGES.getString("REACTION_PROCEEDS_ON_FAST_TIME_SCALE")
+				  									+ " " + Bundles.MESSAGES.getString("ATTRIBUTE_IGNORED"), 
+				  								reaction.isSetName() ? reaction.getName() : reaction.getId());
 			label.append("<p><span color=\"#505050\">");
 			label.append(message);
 			label.append("</span></p>");
@@ -210,44 +215,32 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		optionsPanel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(optionsPanel);
 		optionsPanel.setBorder(BorderFactory
-				.createTitledBorder("Reaction options"));
+				.createTitledBorder(Bundles.MESSAGES.getString("REACTION_OPTIONS")));
 
-		rButtonReversible = new JRadioButton("Reversible", reaction
-				.getReversible());
-		rButtonReversible
-				.setToolTipText(StringUtil.toHTML(
-								"If selected, SBMLsqueezer will take the effects of "
-										+ "the products into account when creating rate equations.",
-								40));
-		JRadioButton rButtonIrreversible = new JRadioButton("Irreversible",
-				!reaction.getReversible());
-		rButtonIrreversible.setToolTipText(StringUtil.toHTML(
-				"If selected, SBMLsqueezer will not take effects of products into "
-						+ "account when creating rate equations.", 40));
+		rButtonReversible = new JRadioButton(Bundles.MESSAGES.getString("REVERSIBLE"), 
+											reaction.getReversible());
+		rButtonReversible.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("REVERSIBLE_TOOLTIP"), 40));
+		
+		JRadioButton rButtonIrreversible = new JRadioButton(Bundles.MESSAGES.getString("IRREVERSIBLE"),
+															!reaction.getReversible());
+		rButtonIrreversible.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("IRREVERSIBLE_TOOLTIP"), 40));
+		
 		ButtonGroup revGroup = new ButtonGroup();
-		treatAsEnzymeReaction = new JCheckBox(
-				"Consider this reaction to be enzyme-catalyzed");
-		treatAsEnzymeReaction.setToolTipText(StringUtil.toHTML(
-						"Allows you to decide whether "
-								+ "or not this reaction should be"
-								+ "interpreted as being enzyme-catalyzed. "
-								+ "If an enzyme catalyst exists for this "
-								+ "reaction, this feature cannot be switched "
-								+ "off.", 40));
+		treatAsEnzymeReaction = new JCheckBox(Bundles.MESSAGES.getString("ENZYME_CATALYSED"));
+		treatAsEnzymeReaction.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("ENZYME_CATALYSED_TOOLTIP"), 40));
 		lh.add(treatAsEnzymeReaction, 0, 0, 2, 1, 1, 1);
 		revGroup.add(rButtonReversible);
 		revGroup.add(rButtonIrreversible);
 		lh.add(rButtonReversible, 0, 1, 1, 1, 1, 1);
 		lh.add(rButtonIrreversible, 1, 1, 1, 1, 1, 1);
 		JRadioButton rButtonLocalParameters = new JRadioButton(
-				"Local parameters", !this.klg.getPreferences().getBoolean(
+				Bundles.MESSAGES.getString("LOCAL_PARAMETERS"), !this.klg.getPreferences().getBoolean(
 						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
-		rButtonGlobalParameters = new JRadioButton("Global parameters",
+		rButtonLocalParameters.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("LOCAL_PARAMETERS_TOOLTIP"), 40));
+		
+		rButtonGlobalParameters = new JRadioButton(Bundles.MESSAGES.getString("GLOBAL_PARAMETERS"),
 				!rButtonLocalParameters.isSelected());
-		rButtonGlobalParameters.setToolTipText(StringUtil.toHTML(
-				"If selected, newly created parameters will be stored globally in the model.", 40));
-		rButtonLocalParameters.setToolTipText(StringUtil.toHTML(
-				"If selected, newly created parameters will be stored locally in this reaction.", 40));
+		rButtonGlobalParameters.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("GLOBAL_PARAMETERS_TOOLTIP"), 40));
 		ButtonGroup paramGroup = new ButtonGroup();
 		paramGroup.add(rButtonGlobalParameters);
 		paramGroup.add(rButtonLocalParameters);
@@ -323,8 +316,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		preview.add(new sHotEqn(sb.toString()), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel();
-		eqnPrev.setBorder(BorderFactory
-				.createTitledBorder(" Equation Preview "));
+		eqnPrev.setBorder(BorderFactory.createTitledBorder(" "+Bundles.MESSAGES.getString("EQUATION_PREVIEW")+" "));
 		eqnPrev.setLayout(new BorderLayout());
 		Dimension dim = new Dimension(width, height);
 		/*
@@ -441,7 +433,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 							reaction.getNotesString(), 40));
 				else
 					rButtonsKineticEquations[i]
-							.setToolTipText("<html> This rate law is currently assigned to this reaction.</html>");
+							.setToolTipText("<html>"+Bundles.MESSAGES.getString("RATE_LAW_ASSIGNED_TO_REACTION")+"</html>");
 			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
 			if (i < rButtonsKineticEquations.length - 1
@@ -456,7 +448,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		}
 
 		kineticsPanel.setBorder(BorderFactory
-				.createTitledBorder(" Please choose one kinetic law "));
+				.createTitledBorder(" "+Bundles.MESSAGES.getString("CHOOSE_KINETIC_LAW")+" "));
 		createPreviewPanel(kinSelected);
 		Box info = new Box(BoxLayout.Y_AXIS);
 		info.add(kineticsPanel);
@@ -491,7 +483,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		else if (ie.getSource() instanceof JRadioButton) {
 			JRadioButton rbutton = (JRadioButton) ie.getSource();
 			if (rbutton.getParent().equals(optionsPanel)) {
-				if (rbutton.getText().contains("eversible")) {
+				if (rbutton.getText().toLowerCase().contains(Bundles.MESSAGES.getString("REVERSIBLE").toLowerCase())) {
 					try {
 						// reversible property was changed.
 						selected = "";

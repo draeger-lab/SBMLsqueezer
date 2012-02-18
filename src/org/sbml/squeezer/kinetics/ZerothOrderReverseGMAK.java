@@ -28,6 +28,7 @@ import java.util.List;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 
 /**
  * Mass action rate law for zeroth order reverse reactions.
@@ -80,6 +81,6 @@ public class ZerothOrderReverseGMAK extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Zeroth order reverse mass action kinetics";
+		return Bundles.MESSAGES.getString("ZEROTH_ORDER_REVERSE_GMAK_SIMPLE_NAME");
 	}
 }

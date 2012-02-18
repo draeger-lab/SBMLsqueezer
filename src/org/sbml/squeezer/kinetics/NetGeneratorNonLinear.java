@@ -30,6 +30,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
+import org.sbml.squeezer.util.Bundles;
 
 /**
  * This class creates an equation based on an non-linear additive model as
@@ -90,6 +91,6 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return "Non-linear additive model, NetGenerator form";
+		return Bundles.MESSAGES.getString("NET_GENERATOR_NON_LINEAR_SIMPLE_NAME");
 	}
 }

@@ -34,6 +34,7 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -136,7 +137,7 @@ public class SSystem extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "S-System based kinetic";
+		return Bundles.MESSAGES.getString("SSYSTEM_SIMPLE_NAME");
 	}
 
 	/**

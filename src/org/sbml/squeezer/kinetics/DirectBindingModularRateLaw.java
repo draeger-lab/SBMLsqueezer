@@ -29,6 +29,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -117,6 +118,6 @@ public class DirectBindingModularRateLaw extends PowerLawModularRateLaw
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Direct binding modular rate law (DM)";
+		return Bundles.MESSAGES.getString("DIRECT_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
 }

@@ -24,6 +24,7 @@
 
 package org.sbml.squeezer.util;
 
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,8 +59,8 @@ public class SBMLtools {
       Integer.valueOf(2))) {
       sbase.setSBOTerm(term);
     } else {
-      logger.log(Level.FINER, String.format(
-          "Could not set SBO term %s for %s with Level = %d and Version = %d.", 
+      logger.log(Level.FINER, MessageFormat.format(
+          Bundles.WARNINGS.getString("COULD_NOT_SET_SBO_TERM"), 
           SBO.sboNumberString(term), sbase.getElementName(), sbase.getLevel(), sbase.getVersion()));
     }
   }

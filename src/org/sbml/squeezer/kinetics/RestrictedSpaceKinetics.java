@@ -31,6 +31,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -115,6 +116,6 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return "Reaction kinetics in restricted spaces";
+		return Bundles.MESSAGES.getString("RESTRICTED_SPACE_KINETICS_SIMPLE_NAME");
 	}
 }

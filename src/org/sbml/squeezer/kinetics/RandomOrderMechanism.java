@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -31,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -87,9 +89,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			specRefR2 = specRefR1;
 		else
 			throw new RateLawNotApplicableException(
-					"Number of reactants must equal two to apply random order "
-							+ "Michaelis-Menten kinetics to reaction "
-							+ reaction.getId());
+					MessageFormat.format(
+							Bundles.WARNINGS.getString("RANDOM_ORDER_NUM_OF_REACTANTS_MUST_EQUAL"), 
+							reaction.getId()));
 
 		SBMLtools.setSBOTerm(this,429);
 		double stoichiometryRight = 0;
@@ -101,16 +103,16 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 				&& !reaction.getReversible())
 			SBMLtools.setSBOTerm(this,432);
 
-		StringBuilder notes = new StringBuilder("rapid-equilibrium random ");
-		notes.append("order ternary-complex mechanism");
+		String numProd = "";
 		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
-			notes.append(" with two products");
+			numProd = ", " + Bundles.MESSAGES.getString("TWO_PRODUCTS");
 		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
-			notes.append(" with one product");
-		notes.insert(0, "reversible ");
-		if (!reaction.getReversible())
-			notes.insert(0, "ir");
-		setNotes(notes.toString());
+			numProd = ", " + Bundles.MESSAGES.getString("ONE_PRODUCT");
+		
+		setNotes(MessageFormat.format(
+				Bundles.MESSAGES.getString("RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM"),
+				Bundles.MESSAGES.getString(!reaction.getReversible() ? "IRREVERSIBLE" : "REVERSIBLE"),
+				numProd));
 
 		boolean exception = false;
 		boolean biuni = false;
@@ -132,10 +134,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		}
 		if (exception && reaction.getReversible())
 			throw new RateLawNotApplicableException(
-					String
-							.format(
-									"For reversible reactions the number of products must equal either one or two to apply random order Michaelis-Menten kinetics to reaction %s.",
-									reaction.getId()));
+					MessageFormat.format(
+							Bundles.WARNINGS.getString("RANDOM_ORDER_NUM_OF_PRODUCTS_MUST_EQUAL"), 
+							reaction.getId()));
+		
 		/*
 		 * If modE is empty there was no enzyme sined to the reaction. Thus we
 		 * do not want anything in modE to occur in the kinetic equation.
@@ -322,6 +324,6 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Random order mechanism";
+		return Bundles.MESSAGES.getString("RANDOM_ORDER_MEACHANISM_SIMPLE_NAME");
 	}
 }

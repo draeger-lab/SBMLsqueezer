@@ -34,6 +34,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -113,7 +114,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Linear additive model, general form";
+		return Bundles.MESSAGES.getString("ADDITIVE_MODEL_LINEAR_SIMPLE_NAME");
 	}
 
 	/**

@@ -33,6 +33,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -410,6 +411,6 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 */
 	// @Override
 	public String getSimpleName() {
-		return "Power-law modular rate law (PM)";
+		return Bundles.MESSAGES.getString("POWER_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
 }

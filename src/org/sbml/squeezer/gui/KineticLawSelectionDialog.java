@@ -41,6 +41,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +66,7 @@ import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
@@ -127,6 +129,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 
 	private StatusBar statusBar;
 
+
 	/**
 	 * Creates an empty dialog with the given settings and sbml io object.
 	 * 
@@ -134,7 +137,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 	 * @param progressListener 
 	 */
 	private KineticLawSelectionDialog(Frame owner) {
-		super(owner, "SBMLsqueezer", true);
+		super(owner, Bundles.MESSAGES.getString("SBMLSQUEEZER"), true);
 		// if (owner == null)
 		// setIconImage(GUITools.ICON_LEMON);
 		this.sbmlIO = null;
@@ -188,7 +191,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 			dispose();
 			statusBar.hideProgress();
 			statusBar.unsetLogMessageLimit();
-			logger.log(Level.INFO, "Ready.");
+			logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
 			
 		} catch (Throwable exc) {
 			GUITools.showErrorMessage(this, exc);
@@ -201,33 +204,34 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			String text = ((JButton) e.getSource()).getText();
-			if (text.equals("show options")) {
+			if (text.equals(Bundles.MESSAGES.getString("SHOW_OPTIONS"))) {
 				showSettingsPanel(true);
-			} else if (text.equals("hide options")) {
+			} else if (text.equals(Bundles.MESSAGES.getString("HIDE_OPTIONS"))) {
 				showSettingsPanel(false);
 
-			} else if (text.equals("Help")) {
+			} else if (text.equals(Bundles.BASE.getString("HELP"))) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
-						"SBMLsqueezer " + System.getProperty("app.version")
-								+ " - Online Help", getClass().getResource(
-								"../resources/html/help.html"));
+						Bundles.MESSAGES.getString("SBMLSQUEEZER") 
+							+ " " + String.format(Bundles.LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+													System.getProperty("app.version")), 
+						getClass().getResource("../resources/html/help.html"));
 				helpBrowser.addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosing", ""));
 				helpBrowser.setLocationRelativeTo(this);
 				helpBrowser.setSize(640, 640);
 				helpButton.setEnabled(false);
 				helpBrowser.setVisible(true);
 
-			} else if (text.equals("Cancel")) {
+			} else if (text.equals(Bundles.LABELS.getString("WIZARD_CANCEL"))) {
 				dispose();
-				logger.log(Level.INFO, "Ready.");
+				logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
 				klg = null;
-			} else if (text.equals("Restore")) {
+			} else if (text.equals(Bundles.MESSAGES.getString("RESTORE"))) {
 				settingsPanel.restoreDefaults();
 				getContentPane().remove(settingsPanel);
 				pack();
 				setLocationRelativeTo(null);
 
-			} else if (text.equals("Generate")) {
+			} else if (text.equals(Bundles.MESSAGES.getString("GENERATE"))) {
 				// show statusBar for the law generation, generate kinetic laws
 				// get new statusbar and limit the log message length
 				statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
@@ -246,7 +250,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 					klg = null;
 				}
 
-			} else if (text.equals("Back")) {
+			} else if (text.equals(Bundles.LABELS.getString("WIZARD_BACK"))) {
 				getContentPane().remove(footPanel);
 				getContentPane().add(footPanel = getFootPanel(0),
 						BorderLayout.SOUTH);
@@ -255,7 +259,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 						BorderLayout.CENTER);
 				setResizable(false);
 				showSettingsPanel(true);
-			} else if (text.equals("Export changes")) {
+			} else if (text.equals(Bundles.MESSAGES.getString("EXPORT_CHANGES"))) {
 				/*
 				 * new Thread(new Runnable() { public void run() {//
 				 */
@@ -264,7 +268,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 				 * } }).start();/
 				 */
 
-			} else if (text.equals("Apply")
+			} else if (text.equals(Bundles.LABELS.getString("APPLY").split(";")[0])
 					&& !KineticsAndParametersStoredInSBML && klg != null
 					&& sbmlIO != null) {
 				// GUITools.setAllEnabled(this, false);
@@ -275,7 +279,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 						dispose();
 						statusBar.hideProgress();
 						statusBar.unsetLogMessageLimit();
-						logger.log(Level.INFO, "Ready.");
+						logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
 					}
 				}).start();
 			}
@@ -369,19 +373,17 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 			
 			if (klg.getFastReactions().size() > 0) {
 				StringBuilder message = new StringBuilder();
-				message.append("The model contains ");
+				String modelContains = Bundles.MESSAGES.getString("THE_MODEL_CONTAINS")+" ";
 				if (klg.getFastReactions().size() > 1)
-					message.append("fast reactions");
+					message.append(MessageFormat.format(modelContains, Bundles.MESSAGES.getString("FAST_REACTIONS")));
 				else {
-					message.append("the fast reaction ");
+					message.append(MessageFormat.format(modelContains, Bundles.MESSAGES.getString("THE_FAST_REACTION"))+" ");
 					message.append(klg.getFastReactions().get(0).getId());
 				}
-				message.append(". This feature is currently not supported ");
-				message.append("by SBMLsqueezer. Rate laws can still ");
-				message.append("be generated properly but the fast attribute ");
+				message.append(". ");
+				message.append(Bundles.MESSAGES.getString("NOT_SUPPORTED"));
 				if (klg.getFastReactions().size() > 1) {
-					message
-							.append("of the following reactions is beeing ignored:");
+					message.append(Bundles.MESSAGES.getString("ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED"));
 					message.append("<ul type=\"disc\">");
 					for (int i = 0; i < klg.getFastReactions().size(); i++) {
 						message.append("<li>");
@@ -390,11 +392,11 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 					}
 					message.append("</ul>");
 				} else
-					message.append("is beeing ignored.");
+					message.append(Bundles.MESSAGES.getString("ATTRIBUTE_BEEING_IGNORED"));
 				final JOptionPane pane = new JOptionPane(StringUtil.toHTML(
 						message.toString(), 40), JOptionPane.WARNING_MESSAGE);
 				final JDialog d = new JDialog();
-				d.setTitle("Fast Reactions");
+				d.setTitle(Bundles.MESSAGES.getString("FAST_REACTIONS"));
 				d.setModal(true);
 				d.getContentPane().add(pane);
 				d.pack();
@@ -435,7 +437,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 				d.setVisible(true);
 				d.dispose();
 				statusBar.hideProgress();
-				logger.log(Level.INFO, "Ready.");
+				logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
 				// JOptionPane.showMessageDialog(null, GUITools.toHTML(message
 				// .toString(), 40), "Fast Reactions",
 				// JOptionPane.WARNING_MESSAGE);
@@ -473,12 +475,13 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 
 			JLabel numberOfWarnings = new JLabel(
 					"<html><table align=left width=500 cellspacing=10><tr><td>"
-							+ "<b>Kinetic Equations</b></td><td>"
-							+ "<td>Number of warnings (red): " + numOfWarnings
+							+ "<b>" + Bundles.MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
+							+ "<td>" + Bundles.MESSAGES.getString("NUMBER_OF_WARNINGS")
+							+ " " + "("+Bundles.MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
 							+ "</td></tr></table></htlm>");
 			numberOfWarnings
 					.setToolTipText(StringUtil.toHTML(
-									"The number of reactions an unlikely number of reactants. These are also highlighted in red in the table.",
+									Bundles.MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
 									40));
 			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
 
@@ -513,45 +516,38 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 		JPanel south = new JPanel(gbl), rightPanel = new JPanel(new FlowLayout(
 				FlowLayout.RIGHT)), leftPanel = new JPanel();
 
-		JButton cancel = new JButton("Cancel", UIManager.getIcon("ICON_DELETE"));
+		JButton cancel = new JButton(Bundles.LABELS.getString("WIZARD_CANCEL"), UIManager.getIcon("ICON_DELETE"));
 		JButton apply = new JButton();
-		cancel.setToolTipText(StringUtil.toHTML(
-				"Exit SBMLsqueezer without saving changes.", 40));
+		cancel.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("EXIT_WITHOUT_SAVING"), 40));
 		cancel.addActionListener(this);
 		apply.addActionListener(this);
 
 		rightPanel.add(cancel);
 		switch (type) {
 		case 0:
-			apply.setToolTipText(StringUtil.toHTML(
-									"Start generating an ordinary differential equation system.",
-									40));
-			apply.setText("Generate");
+			apply.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("GENERATE_TOOLTIP"), 40));
+			apply.setText(Bundles.MESSAGES.getString("GENERATE"));
 			apply.setIcon(UIManager.getIcon("ICON_LEMON_TINY"));
-			helpButton = new JButton("Help", UIManager
+			helpButton = new JButton(Bundles.BASE.getString("HELP"), UIManager
 					.getIcon("ICON_HELP_TINY"));
 			helpButton.addActionListener(this);
 			leftPanel.add(helpButton);
 			break;
 		default:
-			apply.setToolTipText(StringUtil.toHTML(
-									"Write the generated kinetics and parameters to the SBML file.",
-									40));
-			apply.setText("Apply");
+			apply.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("WRITE_KINETICS_TO_SBML_FILE"), 40));
+			apply.setText(Bundles.LABELS.getString("APPLY").split(";")[0]);
 			apply.setIcon(UIManager.getIcon("ICON_TICK_TINY"));
 
 			JButton jButtonReactionsFrameSave = new JButton();
 			jButtonReactionsFrameSave.setEnabled(true);
 			jButtonReactionsFrameSave.setBounds(35, 285, 100, 25);
-			jButtonReactionsFrameSave.setToolTipText(StringUtil.toHTML(
-									"Allowes yout to save the generated differential equations as *.txt or *.tex files. Note that this export only contains those reactions together with referenced, species, compartments, compartment- and species-types, units, and parameters for which new kinetic equations have been generated. If you wish to obtain a complete model report, please choose the \"save as\" function in the main menu.",
-									40));
-			jButtonReactionsFrameSave.setText("Export changes");
+			jButtonReactionsFrameSave.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("EXPORT_CHANGES_TOOLTIP"), 40));
+			jButtonReactionsFrameSave.setText(Bundles.MESSAGES.getString("EXPORT_CHANGES"));
 			jButtonReactionsFrameSave.setIcon(UIManager
 					.getIcon("ICON_LATEX_TINY"));
 			jButtonReactionsFrameSave.addActionListener(this);
 			leftPanel.add(jButtonReactionsFrameSave);
-			JButton back = new JButton("Back", UIManager
+			JButton back = new JButton(Bundles.LABELS.getString("WIZARD_BACK"), UIManager
 					.getIcon("ICON_LEFT_ARROW_TINY"));
 			back.addActionListener(this);
 			rightPanel.add(back);
@@ -592,8 +588,9 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 		getContentPane().add(centralPanel, BorderLayout.CENTER);
 		JLabel label = new JLabel(UIManager.getIcon("ICON_LOGO_SMALL"));
 		label.setBackground(Color.WHITE);
-		label.setText("<html><body><br><br><br><br><br><br>Version "
-				+ System.getProperty("app.version") + "</body></html>");
+		label.setText("<html><body><br><br><br><br><br><br>"
+						+ Bundles.MESSAGES.getString("VERSION") + " "
+						+ System.getProperty("app.version") + "</body></html>");
 		Dimension d = GUITools.getDimension(UIManager
 				.getIcon("ICON_LOGO_SMALL"));
 		d.setSize(d.getWidth() + 125, d.getHeight() + 10);
@@ -631,7 +628,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 	 */
 	private JPanel initOptionsPanel() {
 		JPanel p = new JPanel(new BorderLayout());
-		options = new JButton("show options");
+		options = new JButton(Bundles.MESSAGES.getString("SHOW_OPTIONS"));
 		Icon icon = UIManager.getIcon("ICON_RIGHT_ARROW_TINY");
 		if (icon != null) {
 			options.setIcon(icon);
@@ -639,7 +636,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 		options.setIconTextGap(5);
 		options.setBorderPainted(false);
 		options.setSize(150, 20);
-		options.setToolTipText("Customize the advanced settings.");
+		options.setToolTipText(Bundles.MESSAGES.getString("SHOW_OPTIONS_TOOLTIP"));
 		options.addActionListener(this);
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		panel.add(options);
@@ -667,8 +664,8 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 		if (show) {
 			options.setIcon(UIManager.getIcon("ICON_DOWN_ARROW_TINY"));
 			options.setIconTextGap(5);
-			options.setToolTipText("<html>Hide detailed options</html>");
-			options.setText("hide options");
+			options.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("HIDE_OPTIONS_TOOLTIP")));
+			options.setText(Bundles.MESSAGES.getString("HIDE_OPTIONS"));
 			settingsPanel = getJSettingsPanel();
 			JScrollPane scroll = new JScrollPane(settingsPanel,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -679,8 +676,8 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 		} else {
 			options.setIcon(UIManager.getIcon("ICON_RIGHT_ARROW_TINY"));
 			options.setIconTextGap(5);
-			options.setText("show options");
-			options.setToolTipText(StringUtil.toHTML("Customize the advanced settings."));
+			options.setText(Bundles.MESSAGES.getString("SHOW_OPTIONS"));
+			options.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("SHOW_OPTIONS_TOOLTIP")));
 			centralPanel.removeAll();
 			JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			panel.add(options);

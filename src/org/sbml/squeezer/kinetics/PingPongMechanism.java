@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -30,6 +31,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -99,9 +101,9 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 			specRefE2 = specRefE1;
 		else
 			throw new RateLawNotApplicableException(
-					"Number of reactants must equal two to apply ping-pong "
-							+ "Michaelis-Menten kinetics to reaction "
-							+ reaction.getId());
+					MessageFormat.format(
+							Bundles.WARNINGS.getString("PING_PONG_NUM_OF_REACTANTS_MUST_EQUAL"), 
+							reaction.getId()));
 
 		boolean exception = false;
 		switch (reaction.getNumProducts()) {
@@ -120,9 +122,9 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		}
 		if (exception)
 			throw new RateLawNotApplicableException(
-					"Number of products must equal two to apply ping-pong"
-							+ "Michaelis-Menten kinetics to reaction "
-							+ reaction.getId());
+					MessageFormat.format(
+							Bundles.WARNINGS.getString("PING_PONG_NUM_OF_PRODUCTS_MUST_EQUAL"), 
+							reaction.getId()));
 
 		int enzymeNum = 0;
 		do {
@@ -248,6 +250,6 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Ping-Pong mechanism";
+		return Bundles.MESSAGES.getString("PING_PONG_MEACHANISM_SIMPLE_NAME");
 	}
 }

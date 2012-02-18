@@ -32,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -172,7 +173,7 @@ public class HSystem extends BasicKineticLaw implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return "H-system equation by Hadeler (2003)";
+		return Bundles.MESSAGES.getString("HSYSTEM_SIMPLE_NAME");
 	}
 
 }

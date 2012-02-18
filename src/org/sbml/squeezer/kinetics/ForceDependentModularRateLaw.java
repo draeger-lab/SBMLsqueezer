@@ -29,6 +29,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -122,6 +123,6 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Force-dependent modular rate law (FM)";
+		return Bundles.MESSAGES.getString("FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
 }

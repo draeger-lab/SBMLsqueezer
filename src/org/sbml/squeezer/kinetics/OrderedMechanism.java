@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -30,6 +31,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -85,16 +87,17 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			SBMLtools.setSBOTerm(this,434);
 
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
-		StringBuilder notes = new StringBuilder("compulsory-order");
-		notes.append(" ternary-complex mechanism");
+		String numProd = "";
 		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
-			notes.append(", two products");
+			numProd = ", " + Bundles.MESSAGES.getString("TWO_PRODUCTS");
 		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
-			notes.append(", one product");
-		notes.insert(0, "reversible ");
-		if (!reaction.getReversible())
-			notes.insert(0, "ir");
-		setNotes(notes.toString());
+			numProd = ", " + Bundles.MESSAGES.getString("ONE_PRODUCT");
+
+		setNotes(MessageFormat.format(
+				Bundles.MESSAGES.getString("COMPULSORY_ORDER_TERNARY_COMPLEY_MEACHANISM"),
+				(!reaction.getReversible() ? Bundles.MESSAGES.getStringArray("IRREVERSIBLE")
+						: Bundles.MESSAGES.getStringArray("REVERSIBLE")),
+				numProd));
 
 		ASTNode numerator;// I
 		ASTNode denominator; // II
@@ -109,9 +112,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			specRefE2 = specRefE1;
 		else
 			throw new RateLawNotApplicableException(
-					"Number of reactants must equal two to apply ordered "
-							+ "Michaelis-Menten kinetics to reaction "
-							+ reaction.getId());
+					MessageFormat.format(Bundles.WARNINGS.getString("ORDERED_NUM_OF_REACTANTS_MUST_EQUAL"), reaction.getId()));
 
 		boolean exception = false, biuni = false;
 		switch (reaction.getNumProducts()) {
@@ -132,10 +133,9 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		}
 		if (exception && reaction.getReversible())
 			throw new RateLawNotApplicableException(
-					String
-							.format(
-									"For reversible reactions the number of products must equal either one or two to apply ordered kinetics to reaction %s.",
-									reaction.getId()));
+					MessageFormat.format(
+							Bundles.WARNINGS.getString("ORDERED_NUM_OF_PRODUCTS_MUST_EQUAL"),
+							reaction.getId()));
 
 		int enzymeNum = 0;
 		do {
@@ -374,6 +374,6 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Ordered mechanism";
+		return Bundles.MESSAGES.getString("ORDERED_MECHANISM_SIMPLE_NAME");
 	}
 }

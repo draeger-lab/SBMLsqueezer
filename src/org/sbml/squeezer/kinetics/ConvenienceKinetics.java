@@ -32,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -89,12 +90,9 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
 		SBMLtools.setSBOTerm(this,429);
-		StringBuilder name = new StringBuilder();
-		if (!fullRank) {
-			name.append("thermodynamically independent ");
-		}
-		name.append("convenience kinetics");
-		setNotes(StringTools.firstLetterUpperCase(name.toString()));
+		setNotes(StringTools.firstLetterUpperCase((!fullRank) ?
+				Bundles.MESSAGES.getString("THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS") :
+				Bundles.MESSAGES.getString("CONVENIENCE_KINETICS")));
 
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		for (int i = 0; i < enzymes.length; i++) {
@@ -271,6 +269,6 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	@Override
 	public String getSimpleName() {
 		//return getNotesString();
-		return "Convenience Kinetics";
+		return Bundles.MESSAGES.getString("CONVENIENCE_KINETICS_SIMPLE_NAME");
 	}
 }

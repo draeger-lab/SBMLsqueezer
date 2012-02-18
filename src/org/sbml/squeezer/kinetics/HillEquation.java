@@ -31,6 +31,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -175,7 +176,7 @@ public class HillEquation extends BasicKineticLaw implements
 		}
 		return SBO.getTerm(getSBOTerm()).getDefinition().replace("\\,", ",");
 		*/
-		return "Generalized Hill equation";
+		return Bundles.MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
 	}
 
 }

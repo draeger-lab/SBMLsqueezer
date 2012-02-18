@@ -32,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.util.Bundles;
 
 /**
  * Data model for the {@link KineticLawTable} that determins, which information
@@ -72,9 +73,15 @@ public class KineticLawTableModel extends AbstractTableModel {
 		int reactionNum, speciesNum;
 		double numReac;
 
-		columnNames = new String[] { "Reaction", "Kinetic Law",
-				"SBO", "#Reactants", "Reactants", "Products", "Parameters",
-				"Formula" };
+		columnNames = new String[] { 
+				Bundles.MESSAGES.getString("COL_REACTION"),
+				Bundles.MESSAGES.getString("COL_KINETIC_LAW"),
+				Bundles.MESSAGES.getString("COL_SBO"),
+				Bundles.MESSAGES.getString("COL_NUM_REACTANTS"),
+				Bundles.MESSAGES.getString("COL_REACTANTS"),
+				Bundles.MESSAGES.getString("COL_PRODUCTS"),
+				Bundles.MESSAGES.getString("COL_PARAMETERS"),
+				Bundles.MESSAGES.getString("COL_FORMULA")};
 		data = new Object[klg.getNumCreatedKinetics()][this.columnNames.length];
 		numOfWarnings = 0;
 

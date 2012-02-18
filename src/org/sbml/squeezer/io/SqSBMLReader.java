@@ -1,4 +1,5 @@
 /*
+
  * $Id$
  * $URL$
  * ---------------------------------------------------------------------
@@ -39,6 +40,8 @@ import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
+import org.sbml.squeezer.util.Bundles;
+
 
 /**
  * This class provides methods to create JSBML models independently from libSBML.
@@ -73,7 +76,6 @@ public class SqSBMLReader implements SBMLInputConverter {
 	 * 
 	 */
 	private LinkedList<TreeNodeChangeListener> listOfTreeNodeChangeListeners;
-
 	
 	/**
 	 * 
@@ -120,7 +122,7 @@ public class SqSBMLReader implements SBMLInputConverter {
 			// SBMLDocument given; construct and return model
 			return readModelFromSBML((SBMLDocument) model);
 		} else {
-			throw new IllegalArgumentException("model must be an instance of java.lang.String, org.sbml.jsbml.Model or org.sbml.jsbml.SBMLDocument");
+			throw new IllegalArgumentException(Bundles.WARNINGS.getString("WRONG_MODEL_INSTANCE"));
 		}
 	}
 

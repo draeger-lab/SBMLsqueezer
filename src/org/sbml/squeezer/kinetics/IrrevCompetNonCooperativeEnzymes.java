@@ -31,6 +31,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -74,13 +75,11 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		if (modCat.size() > 0)
-			throw new RateLawNotApplicableException(
-					"This rate law can only be applied to enzyme-catalyzed reactions.");
+			throw new RateLawNotApplicableException(Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS"));
 		Reaction reaction = getParentSBMLObject();
 		if ((reaction.getNumReactants() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1d))
-			throw new RateLawNotApplicableException(
-					"This rate law can only be applied to reactions with exactly one substrate species.");
+			throw new RateLawNotApplicableException(Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_REACTIONS_WITH_EXACTLY_ONE_SUBSTRATE_SPECIES"));
 		if (reaction.getReversible())
 			reaction.setReversible(false);
 
@@ -142,6 +141,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Irreversible non-exclusive non-cooperative competitive inihibition";
+		return Bundles.MESSAGES.getString("IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME");
 	}
 }

@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -47,9 +46,9 @@ import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.gui.LayoutHelper;
-import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.SBPreferences;
@@ -94,11 +93,6 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 */
 	private JPanel tabsPanel;
 	
-	/**
-	 * 
-	 */
-	private static final transient ResourceBundle messagesBundle = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Messages");
-
 	/**
 	 * Reaction Mechanism Panel
 	 * 
@@ -170,7 +164,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 					key.equals(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS)) {
 				toolTip.append(MessageFormat.format(key.getDescription(), jRButton[i].getText()));
 			} else {
-				toolTip.append(String.format(messagesBundle.getString("DEFAULT_REACTION_TOOLTIP"), 
+				toolTip.append(String.format(Bundles.MESSAGES.getString("DEFAULT_REACTION_TOOLTIP"), 
 											key.toString().toLowerCase().replace('_', ' '),
 											type));
 			}
@@ -229,7 +223,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		JPanel jPanelSettingsReversibility = new JPanel();
 		jPanelSettingsReversibility.setLayout(layout);
 		jPanelSettingsReversibility.setBorder(BorderFactory
-				.createTitledBorder(" "+ messagesBundle.getString("REVERSIBILITY") +" "));
+				.createTitledBorder(" "+ Bundles.MESSAGES.getString("REVERSIBILITY") +" "));
 		LayoutHelper.addComponent(jPanelSettingsReversibility, layout,
 				jRadioButtonSettingsFrameForceRevAsCD, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsReversibility, layout,
@@ -256,7 +250,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		helper.add(new JPanel(), 0, 0, 5, 1, 1, 1);
 		helper.add(new JPanel(), 0, 1, 1, 1, 1, 1);
 		helper.add(new JLabel(StringUtil.toHTML(
-				messagesBundle.getString("CHOOSE_TYPE_STANDARD_VERSION"), 20)), 1, 1, 1, 1,
+				Bundles.MESSAGES.getString("CHOOSE_TYPE_STANDARD_VERSION"), 20)), 1, 1, 1, 1,
 				0, 1);
 		helper.add(new JPanel(), 2, 1, 1, 1, 1, 1);
 		helper.add(jComboBoxTypeStandardVersion, 3, 1, 1, 1, 1, 0);
@@ -351,7 +345,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 	 */
 	@Override
 	public String getTitle() {
-		return messagesBundle.getString("TITLE_DEFAULT_MECHANISMS");
+		return Bundles.MESSAGES.getString("TITLE_DEFAULT_MECHANISMS");
 	}
 
 	/*
@@ -367,7 +361,7 @@ public class SettingsPanelDefaultMechanisms extends PreferencesPanel {
 		tabs = createMechanismTabs();
 		tabsPanel = new JPanel(new GridLayout(1, 1));
 		tabsPanel.add(tabs);
-		tabsPanel.setBorder(BorderFactory.createTitledBorder(" " + messagesBundle.getString("DEFAULT_RATE_LAW_SELECT") + " "));
+		tabsPanel.setBorder(BorderFactory.createTitledBorder(" " + Bundles.MESSAGES.getString("DEFAULT_RATE_LAW_SELECT") + " "));
 		lh.add(tabsPanel, 2);
 	}
 
