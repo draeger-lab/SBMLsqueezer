@@ -29,6 +29,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -119,6 +120,6 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Common modular rate law (CM)";
+		return Bundles.MESSAGES.getString("COMMON_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
 }

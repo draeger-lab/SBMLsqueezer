@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.util;
 
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -94,13 +95,13 @@ public class ProgressAdapter {
 		startTime = System.currentTimeMillis();
 		switch(progressType){
 		case storeKineticLaw:
-			logger.log(Level.INFO, "Store kinetic equation...");
+			logger.log(Level.INFO, Bundles.MESSAGES.getString("STORE_KINETIC_EQUATION"));
 			break;
 		case storeKineticLaws:	
-			logger.log(Level.INFO, "Store kinetic equations...");
+			logger.log(Level.INFO, Bundles.MESSAGES.getString("STORE_KINETIC_EQUATIONS"));
 			break;
 		case generateLaws:
-			logger.log(Level.INFO, "Generate kinetic equation...");
+			logger.log(Level.INFO, Bundles.MESSAGES.getString("GENERATE_KINETIC_EQUATION"));
 			break;
 		}
 	}
@@ -110,8 +111,8 @@ public class ProgressAdapter {
 	 */
 	public void finished(){
 		this.progressBar.finished();
-		logger.info("    done in " + (System.currentTimeMillis() - startTime) + " ms");
-		logger.log(Level.INFO, "Ready.");
+		logger.info("    "+MessageFormat.format(Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - startTime)));
+		logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
 	}
 	
 	/**

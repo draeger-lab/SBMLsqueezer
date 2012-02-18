@@ -38,6 +38,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -58,6 +59,7 @@ import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 
 import atp.sHotEqn;
@@ -104,10 +106,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				.getPreferences().getInt(
 						SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS)));
 		getTableHeader().setToolTipText(
-				StringUtil.toHTML("Double click on the kinetic "
-						+ "law to apply another formalism. "
-						+ "Single click on any other "
-						+ "column to get a formatted equation preview.", 40));
+				StringUtil.toHTML(Bundles.MESSAGES.getString("KINTEIC_LAW_TABLE_HEADER_TOOLTIP"), 40));
 		setCellSelectionEnabled(true);
 		setEnabled(true);
 		addMouseListener(this);
@@ -162,8 +161,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						- this.getTopLevelAncestor().getX(), this.getY() + 10);
 				panel.setBorder(BorderFactory.createLoweredBevelBorder());
 				JOptionPane.showMessageDialog(this, panel,
-						"Rate Law of Reaction "
-								+ kinetic.getParentSBMLObject().getId(),
+						MessageFormat.format(Bundles.MESSAGES.getString("RATE_LAW_OF_REACTION"), 
+								kinetic.getParentSBMLObject().getId()),
 						JOptionPane.INFORMATION_MESSAGE);
 				// JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
 				// JLayeredPane.POPUP_LAYER);
@@ -282,17 +281,16 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				final JDialog dialog;
 				if (container instanceof Frame)
 					dialog = new JDialog((Frame) container,
-							"Choose an alternative kinetic law for reaction "
-									+ reaction.getId());
+							MessageFormat.format(Bundles.MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
+									reaction.getId()));
 				else if (container instanceof Dialog)
 					dialog = new JDialog((Dialog) container,
-							"Choose an alternative kinetic law for reaction "
-									+ reaction.getId());
+							MessageFormat.format(Bundles.MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
+									reaction.getId()));
 				else {
 					dialog = new JDialog();
-					dialog
-							.setTitle("Choose an alternative kinetic law for reaction "
-									+ reaction.getId());
+					dialog.setTitle(MessageFormat.format(Bundles.MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
+							reaction.getId()));
 				}
 				Container content = dialog.getContentPane();
 				content.setLayout(new BorderLayout());

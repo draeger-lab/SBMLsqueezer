@@ -26,6 +26,7 @@ package org.sbml.squeezer.kinetics;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 
 /**
  * 
@@ -62,7 +63,7 @@ public class Vohradsky extends AdditiveModelNonLinear implements
 
 	@Override
 	public String getSimpleName() {
-		return "Non-linear additive model by Vohradsk\u00fd (2001)";
+		return Bundles.MESSAGES.getString("VOHRADSKY_SIMPLE_NAME");
 	}
 
 	@Override

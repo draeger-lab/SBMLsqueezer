@@ -25,6 +25,7 @@ package org.sbml.squeezer.io;
 
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import org.sbml.jsbml.SBMLException.Category;
 import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.AbstractProgressBar;
 
@@ -79,7 +81,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	private SBMLOutputConverter writer;
 	
 	protected AbstractProgressBar progress;
-
+	
 	/**
 	 * 
 	 */
@@ -131,7 +133,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		} catch (Exception exc) {
 			// exc.fillInStackTrace();
 			exc.printStackTrace();
-			SBMLException sbmlExc = new SBMLException("Could not read model.",
+			SBMLException sbmlExc = new SBMLException(
+					MessageFormat.format(Bundles.WARNINGS.getString("CANT_READ_MODEL"), ""),
 					exc);
 			sbmlExc.setCategory(Category.XML);
 			throw sbmlExc;

@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.sbml.jsbml.ASTNode;
@@ -31,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -83,20 +85,18 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		if ((reaction.getNumReactants() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1d))
 			throw new RateLawNotApplicableException(
-					String
-							.format(
-									"%s cannot be applied to reaction %s  because the stoichiometry of the reactant species does not sum up to 1.0.",
-									getClass().getSimpleName(), reaction
-											.getId()));
+					MessageFormat.format(
+							Bundles.WARNINGS.getString("INCORRECT_STOICHIOMETRY_OF_REACTANT_SPECIES"),
+							getClass().getSimpleName(), 
+							reaction.getId()));
 		if (((reaction.getNumProducts() != 1) || (reaction.getProduct(0)
 				.getStoichiometry() != 1d))
 				&& reaction.getReversible())
 			throw new RateLawNotApplicableException(
-					String
-							.format(
-									"Reversible %s cannot be applied to reaction %s because the stoichiometry of the product species does not sum up to 1.0.",
-									getClass().getSimpleName(), reaction
-											.getId()));
+					MessageFormat.format(
+							Bundles.WARNINGS.getString("INCORRECT_STOICHIOMETRY_OF_PRODUCT_SPECIES"),
+							getClass().getSimpleName(), 
+							reaction.getId()));
 
 		SBMLtools.setSBOTerm(this,269); // enzymatic rate law for unireactant enzymes
 		switch (modE.size()) {
@@ -288,6 +288,6 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Michaelis-Menten";
+		return Bundles.MESSAGES.getString("MICHAELIS_MENTEN_SIMPLE_NAME");
 	}
 }

@@ -27,7 +27,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -41,9 +40,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 
 import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.gui.LayoutHelper;
-import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.SBPreferences;
@@ -92,11 +91,6 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 	private JSpinner jSpinnerMaxRealisticNumOfReactants,
 			jSpinnerDefaultParamValue, jSpinnerDefaultSpeciesValue,
 			jSpinnerDefaultCompartmentSize;
-	
-	/**
-	 * 
-	 */
-	private static final transient ResourceBundle messagesBundle = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Messages");
 
 	/**
 	 * @throws IOException
@@ -126,7 +120,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 	 * @see org.sbml.squeezer.gui.SettingsPanel#getTitle()
 	 */
 	public String getTitle() {
-		return messagesBundle.getString("TITLE_KINETICS");
+		return Bundles.MESSAGES.getString("TITLE_KINETICS");
 	}
 	
 	/**
@@ -264,7 +258,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		GridBagLayout layout = new GridBagLayout();
 		JPanel jPanelGeneralOptions = new JPanel(layout);
 		jPanelGeneralOptions.setBorder(BorderFactory
-				.createTitledBorder(" "+messagesBundle.getString("GENERAL_OPTIONS")+" "));
+				.createTitledBorder(" "+Bundles.MESSAGES.getString("GENERAL_OPTIONS")+" "));
 		
 		jCheckBoxSetBoundaryCondition = createCheckBox(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES, true);
 		jCheckBoxRemoveUnnecessaryPandU = createCheckBox(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS, true);
@@ -292,7 +286,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JPanel(),
 				0, 3, 2, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
-				StringUtil.toHTML(messagesBundle.getString("COMPARTMENTS_DEFAULT_INITIAL_SIZE"), 30)),
+				StringUtil.toHTML(Bundles.MESSAGES.getString("COMPARTMENTS_DEFAULT_INITIAL_SIZE"), 30)),
 				0, 4, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerDefaultCompartmentSize, 1, 4, 1, 1, 1, 1);
@@ -300,14 +294,14 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 				0, 5, 2, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
 				StringUtil.toHTML(
-						messagesBundle.getString("SPECIES_DEFAULT_INITIAL_AMOUNT_OR_CONCENTRATION"),
+						Bundles.MESSAGES.getString("SPECIES_DEFAULT_INITIAL_AMOUNT_OR_CONCENTRATION"),
 						30)), 0, 6, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerDefaultSpeciesValue, 1, 6, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JPanel(),
 				0, 7, 2, 1, 1, 0);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout, new JLabel(
-				StringUtil.toHTML(messagesBundle.getString("NEW_PARAMETER_DEFAULT_VALUE"), 30)), 0,
+				StringUtil.toHTML(Bundles.MESSAGES.getString("NEW_PARAMETER_DEFAULT_VALUE"), 30)), 0,
 				8, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGeneralOptions, layout,
 				jSpinnerDefaultParamValue, 1, 8, 1, 1, 1, 1);
@@ -324,7 +318,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		layout = new GridBagLayout();
 		JPanel jPanelGenerateNewKinetics = new JPanel(layout);
 		jPanelGenerateNewKinetics.setBorder(BorderFactory
-				.createTitledBorder(" "+messagesBundle.getString("GENERATE_NEW_KINETICS")+" "));
+				.createTitledBorder(" "+Bundles.MESSAGES.getString("GENERATE_NEW_KINETICS")+" "));
 		LayoutHelper.addComponent(jPanelGenerateNewKinetics, layout,
 				jRadioButtonGenerateOnlyMissingKinetics, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelGenerateNewKinetics, layout,
@@ -346,7 +340,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		JPanel jPanelSettingsEnzymes = new JPanel();
 		jPanelSettingsEnzymes.setLayout(layout);
 		jPanelSettingsEnzymes.setBorder(BorderFactory
-				.createTitledBorder(" "+messagesBundle.getString("SPECIES_TO_BE_TREATED_AS_ENZYMS")+" "));
+				.createTitledBorder(" "+Bundles.MESSAGES.getString("SPECIES_TO_BE_TREATED_AS_ENZYMS")+" "));
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
 				jCheckBoxPossibleEnzymeGenericProtein, 0, 0, 1, 1, 1, 1);
 		LayoutHelper.addComponent(jPanelSettingsEnzymes, layout,
@@ -381,7 +375,7 @@ public class SettingsPanelKinetics extends PreferencesPanel {
 		unitConsistency.add(jRadioButtonTypeUnitConsistency);
 		unitConsistency.add(jRadioButtonTypeUnitsCompVol);
 		jPanelTypeUnitConsistency.setBorder(BorderFactory
-				.createTitledBorder(" "+messagesBundle.getString("HOW_TO_ENSURE_UNIT_CONSISTENCY")+" "));
+				.createTitledBorder(" "+Bundles.MESSAGES.getString("HOW_TO_ENSURE_UNIT_CONSISTENCY")+" "));
 
 		// Add all panels to this settings panel:
 		LayoutHelper lh = new LayoutHelper(this);

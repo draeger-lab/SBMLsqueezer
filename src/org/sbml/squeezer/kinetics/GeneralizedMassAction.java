@@ -32,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -566,6 +567,6 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return "Generalized mass-action";
+		return Bundles.MESSAGES.getString("GENERALIZED_MASS_ACTION_SIMPLE_NAME");
 	}
 }

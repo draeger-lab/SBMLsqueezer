@@ -60,6 +60,7 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.gui.LaTeXExportDialog;
 import org.sbml.tolatex.io.LaTeXReportGenerator;
@@ -217,15 +218,11 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scroll.setPreferredSize(new Dimension(450, 200));
-			JOptionPane.showMessageDialog(parent, scroll, "SBML warnings",
+			JOptionPane.showMessageDialog(parent, scroll, Bundles.WARNINGS.getString("SBML_WARNINGS"),
 					JOptionPane.WARNING_MESSAGE);
 			if (m == null) {
-				String message = "Unable to load this model "
-						+ "due to one or several errors. "
-						+ "Please use the SBML online validator "
-						+ "to check why this model is not correct.";
 				JOptionPane.showMessageDialog(parent, StringUtil.toHTML(
-						message, 40), "Error", JOptionPane.ERROR_MESSAGE);
+						Bundles.WARNINGS.getString("UNABLE_TO_LOAD_MODEL"), 40), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -650,7 +647,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	protected Component createMainComponent() {
 		colorDefault = getContentPane().getBackground();
 		Icon icon = UIManager.getIcon("ICON_LOGO_SMALL");
-		logo = new JLabel(StringUtil.toHTML("<br><br><br><br><br>Version: "
+		logo = new JLabel(StringUtil.toHTML("<br><br><br><br><br>"+Bundles.MESSAGES.getString("VERSION")+": "
 				+ System.getProperty("app.version")), icon, JLabel.CENTER);
 		if (icon != null) {
 			logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon

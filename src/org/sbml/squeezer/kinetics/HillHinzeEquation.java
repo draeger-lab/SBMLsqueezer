@@ -33,6 +33,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -193,7 +194,7 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 	// @Override
 	public String getSimpleName() {
 		if (isSetSBOTerm() && SBO.isHillEquation(getSBOTerm()))
-			return "Hill equation";
-		return "Hill-Hinze equation";
+			return Bundles.MESSAGES.getString("HILL_EQUATION_SIMPLE_NAME");
+		return Bundles.MESSAGES.getString("HILL_HINZE_EQUATION_SIMPLE_NAME");
 	}
 }

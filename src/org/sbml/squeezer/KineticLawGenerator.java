@@ -25,6 +25,7 @@ package org.sbml.squeezer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +60,7 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.math.GaussianRank;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.ModelChangeListener;
 import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
@@ -80,7 +82,6 @@ import de.zbit.util.prefs.SBPreferences;
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
-
 	/**
 	 * The column rank of the soichiometric matrix of the original model.
 	 */
@@ -211,9 +212,9 @@ public class KineticLawGenerator {
 				&& (1 < compartment.getLevel())) {
 			compartment.setSpatialDimensions(3d);
 			compartment.setUnits(model.getUnitDefinition(UnitDefinition.VOLUME));
-			logger.log(Level.WARNING, String.format(
-					"Compartment %s had an invalid spacial dimension and was therefore set to a volume.\n",
-					compartment.getId()));
+			logger.log(Level.WARNING,
+					MessageFormat.format(Bundles.WARNINGS.getString("INVALID_COMPARTMENT_DIMENSION")+"\n",
+							compartment.getId()));
 		}
 	}
 
@@ -442,8 +443,7 @@ public class KineticLawGenerator {
 			if (reacOrig.isSetKineticLaw()) {
 				String formula = reacOrig.getKineticLaw().getFormula();
 				if (formula.equals("") || formula.equals(" ")) {
-					logger.warning(String.format(
-							"Reaction %s in the model has an incorrect format. This means there is either an empty kinetic law in this reaction or a kinetic law that only consists of a white space. If you decide not to save this generated model, there is only one solution: open this SBML file in an editor and delete the whole kinetic law. SBMLsqueezer ignores this misstake and generates a proper equation. Therfore we recomment that you save this generated model.\n",
+					logger.warning(MessageFormat.format(Bundles.WARNINGS.getString("INVALID_REACTION_FORMAT") + "\n",
 							reacOrig.getId()));
 					create = true;
 				}
@@ -938,9 +938,8 @@ public class KineticLawGenerator {
 		if (r != null) {
 			r.setReversible(reversible);
 		} else {
-			throw new IllegalArgumentException(
-					reactionID
-					+ " is not the id of a reaction for which rate laws are to be created.");
+			throw new IllegalArgumentException(MessageFormat.format(
+					Bundles.WARNINGS.getString("INVALID_REACTION_ID_FOR_RATE_LAW_CREATION"), reactionID));
 		}
 	}
 
@@ -1085,10 +1084,10 @@ public class KineticLawGenerator {
 	public void storeKineticLaws() {
 		
 		if (getFastReactions().size() > 0) {
-			logger.log(Level.FINE, "Model " + modelOrig.getId()
-					+ " contains " + getFastReactions().size()
-					+ " fast reaction. This feature is currently"
-					+ "ignored by SBMLsqueezer.");
+			logger.log(Level.FINE, MessageFormat.format(Bundles.MESSAGES.getString("THE_MODEL_CONTAINS"), 
+											getFastReactions().size(), modelOrig.getId())
+									+ " " + Bundles.MESSAGES.getString("FAST_REACTIONS") + "."
+									+ " " + Bundles.MESSAGES.getString("NOT_SUPPORTED"));
 		}
 		
 		if(progressBar != null){

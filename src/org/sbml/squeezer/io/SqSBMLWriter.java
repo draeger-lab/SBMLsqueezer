@@ -38,6 +38,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.util.IOProgressListener;
+import org.sbml.squeezer.util.Bundles;
 
 /**
  * This class is a libSBML independent converter for JSBML models.
@@ -72,8 +73,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	 */
 	public boolean saveChanges(Model model, Object object) throws SBMLException {
 		if (!(object instanceof Model))
-			throw new IllegalArgumentException(
-					"only instances of org.sbml.jsbml.Model can be considered.");
+			throw new IllegalArgumentException(Bundles.WARNINGS.getString("NO_JSBML_MODEL"));
 		return true;
 	}
 
@@ -83,7 +83,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	public boolean saveChanges(Reaction reaction, Object model)
 			throws SBMLException {
 		if (!(model instanceof Model)) {
-			throw new IllegalArgumentException("model must be an instance of org.sbml.jsbml.Model");
+			throw new IllegalArgumentException(Bundles.WARNINGS.getString("NO_JSBML_MODEL"));
 		}
 		return true;
 	}
@@ -104,8 +104,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			IOException {
 		// check arguments
 		if (!(object instanceof SBMLDocument) && !(object instanceof Model)) {
-			throw new IllegalArgumentException(
-			"object must be an instance of org.sbml.jsbml.SBMLDocument or org.sbml.jsbml.Model.");
+			throw new IllegalArgumentException(Bundles.WARNINGS.getString("NO_JSBML_MODEL_OR_SBMLDOCUMENT"));
 		}
 		// convert to SBML
 		SBMLDocument sbmlDocument;

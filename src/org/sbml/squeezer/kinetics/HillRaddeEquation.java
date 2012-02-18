@@ -31,6 +31,7 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
 /**
@@ -87,7 +88,7 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return "Hill-Radde equation";
+		return Bundles.MESSAGES.getString("HILL_RADDE_EQUATION");
 	}
 
 	/**
