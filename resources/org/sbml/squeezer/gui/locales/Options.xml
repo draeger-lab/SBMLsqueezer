@@ -42,7 +42,7 @@
   <entry key="OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE_TOOLTIP">For compartments that are not yet initialized, SBMLsqueezer will use this value as the default initial size. By default this value is set to 1.0d.</entry>
   <entry key="OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE_TOOLTIP_TO_BE_MERGED">For compartments that are not yet initialized, SBMLsqueezer will use this value as the default initial size.</entry>
   <entry key="OPT_DEFAULT_SPECIES_INITIAL_VALUE">Default species initial value</entry>
-  <entry key="OPT_DEFAULT_SPECIES_INITIAL_VALUE_TOOLTIP">"If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species depending on their hasOnlySubstanceUnits property, i.e., for species that are interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts. By default this value is set to 1.0d.</entry>
+  <entry key="OPT_DEFAULT_SPECIES_INITIAL_VALUE_TOOLTIP">If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species depending on their hasOnlySubstanceUnits property, i.e., for species that are interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts. By default this value is set to 1.0d.</entry>
   <entry key="OPT_DEFAULT_SPECIES_INITIAL_VALUE_TOOLTIP_TO_BE_MERGED">If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species depending on its hasOnlySubstanceUnits value, i.e., for species that are interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts.</entry>
   <entry key="OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS">Default value of new parameters</entry>
   <entry key="OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS_TOOLTIP">The default value that is set for newly created parameters. By default this value is 1.0d.</entry>
@@ -68,7 +68,7 @@
   <entry key="OPT_TREAT_ALL_REACTIONS_REVERSIBLE_TOOLTIP_TO_BE_MERGED">If checked, all reactions will be set to reversible no matter what is given by the SBML file.</entry>
   <entry key="OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD">Use information from SBML</entry>
   <entry key="OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD_TOOLTIP">If checked, the information about reversiblity will be left unchanged.</entry>
-  <entry key="OPT_WARNINGS_FOR_TOO_MANY_REACTANTS">Warnings for too many reactants:</entry>
+  <entry key="OPT_WARNINGS_FOR_TOO_MANY_REACTANTS">Warnings for too many reactants</entry>
   <entry key="OPT_WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP">If true (default), warnings will be displayed for reactions with more reactants than specified by the opt-max-number-of-reactants option.</entry>
   <entry key="OPT_WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP_TO_BE_MERGED">If checked, warnings will be shown for reactions with more reactants than specified here.</entry>
   <entry key="POSSIBLE_ENZYME_ANTISENSE_RNA">asRNA</entry>
@@ -103,7 +103,7 @@
   <entry key="SBML_OUT_FILE_TOOLTIP">Specifies the file where SBMLsqueezer writes its SBML output.</entry>
   <entry key="SHOW_SBML_WARNINGS">Show SBML warnings</entry>
   <entry key="SHOW_SBML_WARNINGS_TOOLTIP">If true (default), SBML warnings are displayed.</entry>
-  <entry key="TYPE_STANDARD_VERSION">Version of modular rate laws</entry>
+  <entry key="TYPE_STANDARD_VERSION">Choose version of modular rate laws</entry>
   <entry key="TYPE_STANDARD_VERSION_TOOLTIP">This option declares the version of the modular rate laws and can attain the three different values cat, hal and weg as described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.</entry>
   <entry key="TYPE_STANDARD_VERSION_TOOLTIP_TO_BE_MERGED">Select the version of the modular rate laws. These options are described in the publications of Liebermeister et al. 2010. This option can only be accessed if all reactions are modeled reversibly.</entry>
   <entry key="TYPE_UNIT_CONSISTENCY">Bring species to substance units</entry>
@@ -111,6 +111,23 @@
   <entry key="TYPE_UNIT_CONSISTENCY_TOOLTIP_TO_BE_MERGED">If this option is selected, species occuring in kinetic equations are multiplyed with the size of the surrounding compartment if their hasOnlySubstanceUnits attribute is set to false. The units of parameters are set accordingly.</entry>
   <entry key="TYPE_UNITS_COMPARTMENT">Bring species to concentration units</entry>
   <entry key="TYPE_UNITS_COMPARTMENT_TOOLTIP">If this option is selected, species are interpreted in terms of concentration and are therefore divided by their surrounding compartment size when these occur in kinetic equations and their hasOnlySubstanceUnits attribute is false. The units of parameters are set accordingly.</entry>
+  
+  <entry key="GROUP_GENERATE_KINETIC_LAWS">Generate new kinetics</entry>
+  <entry key="GROUP_GENERATE_KINETIC_LAWS_TOOLTIP"></entry>
+  <entry key="GROUP_KINETICS">Select the default rate law for each meachanism</entry>
+  <entry key="GROUP_KINETICS_TOOLTIP"></entry>
+  <entry key="GROUP_GENERAL">General Options</entry>
+  <entry key="GROUP_GENERAL_TOOLTIP"></entry>
+  <entry key="GROUP_DEFAULT_VALUES">Default values</entry>
+  <entry key="GROUP_DEFAULT_VALUES_TOOLTIP"></entry>
+  <entry key="GROUP_STANDARD_VERSION">Version of modular rate laws</entry>
+  <entry key="GROUP_STANDARD_VERSION_TOOLTIP"></entry>
+  <entry key="GROUP_UNIT_CONSISTENCY">How to ensure unit consistency</entry>
+  <entry key="GROUP_UNIT_CONSISTENCY_TOOLTIP"></entry>
+  <entry key="GROUP_REVERSIBILITY">Reversibility</entry>
+  <entry key="GROUP_REVERSIBILITY_TOOLTIP"></entry>
+  <entry key="GROUP_ENZYMES">Species to be treated as enzymes</entry>
+  <entry key="GROUP_ENZYMES_TOOLTIP"></entry>
   
   <!-- StabilityOptions -->
   <entry key="STEUER_VALUE_OF_N"></entry>
