@@ -24,13 +24,6 @@
   
   <!-- SettingsPanelKinetics -->
   <entry key="TITLE_KINETICS">Kinetics settings</entry>
-  <entry key="GENERAL_OPTIONS">General options</entry>
-  <entry key="COMPARTMENTS_DEFAULT_INITIAL_SIZE">Default initial size for compartments:</entry>
-  <entry key="SPECIES_DEFAULT_INITIAL_AMOUNT_OR_CONCENTRATION">Default initial amount or concentration for species:</entry>
-  <entry key="NEW_PARAMETER_DEFAULT_VALUE">Default value for new parameters:</entry>
-  <entry key="GENERATE_NEW_KINETICS">Generate new kinetics</entry>
-  <entry key="SPECIES_TO_BE_TREATED_AS_ENZYMS">Species to be treated as enzymes</entry>
-  <entry key="HOW_TO_ENSURE_UNIT_CONSISTENCY">How to ensure unit consistency</entry>
   
   <!-- KineticLawSelectionDialog -->
   <entry key="KINETIC_EQUATIONS">Kinetic Equations</entry>
@@ -41,7 +34,7 @@
   <entry key="RESTORE">Restore</entry>
   <entry key="HIDE_OPTIONS">hide options</entry>
   <entry key="HIDE_OPTIONS_TOOLTIP">Hide detailed options</entry>
-  <entry key="SHOW_OPTIONS">show options</entry>
+  <entry key="SHOW_OPTIONS">Show options</entry>
   <entry key="SHOW_OPTIONS_TOOLTIP">Show options to customize the advanced settings.</entry>
   <entry key="THE_MODEL_CONTAINS">The model {1} contains {0}</entry>
   <entry key="FAST_REACTIONS">fast reactions</entry>

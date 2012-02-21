@@ -23,9 +23,6 @@
  */
 package org.sbml.squeezer;
 
-import java.io.File;
-import java.util.ResourceBundle;
-
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillHinzeEquation;
@@ -33,7 +30,6 @@ import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 import org.sbml.squeezer.util.Bundles;
 
-import de.zbit.util.ResourceManager;
 import de.zbit.util.ValuePairUncomparable;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
@@ -135,6 +131,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 * be any class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiUniKinetics}.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static final Option<Class> KINETICS_BI_UNI_TYPE = new Option<Class>(
 			"KINETICS_BI_UNI_TYPE",
 			Class.class,
@@ -148,6 +145,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 * class that implements the
 	 * {@link org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryNetworks}.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static final Option<Class> KINETICS_GENE_REGULATION = new Option<Class>(
 			"KINETICS_GENE_REGULATION",
 			Class.class,
@@ -160,6 +158,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 * all. The value may be any rate law that implements
 	 * {@link org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics}.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static final Option<Class> KINETICS_NONE_ENZYME_REACTIONS = new Option<Class>(
 			"KINETICS_NONE_ENZYME_REACTIONS",
 			Class.class,
@@ -172,6 +171,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 * values are the names of classes that implement
 	 * {@link org.sbml.squeezer.kinetics.InterfaceUniUniKinetics}.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static final Option<Class> KINETICS_UNI_UNI_TYPE = new Option<Class>(
 			"KINETICS_UNI_UNI_TYPE",
 			Class.class,
@@ -259,15 +259,7 @@ public interface SqueezerOptions extends KeyProvider {
 			Bundles.OPTIONS,
 			"C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819"
 			);
-	/**
-	 * The maximal number of reactants so that the reaction is still considered
-	 * plausible.
-	 */
-	public static final Option<Integer> OPT_MAX_NUMBER_OF_REACTANTS = new Option<Integer>(
-			"OPT_MAX_NUMBER_OF_REACTANTS",
-			Integer.class,
-			Bundles.OPTIONS,
-			3);
+	
 	/**
 	 * If true parameters and units that are never referenced by any element of
 	 * the model are deleted when creating kinetic equations with SBMLsqueezer.
@@ -318,6 +310,19 @@ public interface SqueezerOptions extends KeyProvider {
 			Boolean.class,
 			Bundles.OPTIONS,
 			true);
+	
+	/**
+	 * The maximal number of reactants so that the reaction is still considered
+	 * plausible.
+	 */
+	@SuppressWarnings("unchecked")
+	public static final Option<Integer> OPT_MAX_NUMBER_OF_REACTANTS = new Option<Integer>(
+			"OPT_MAX_NUMBER_OF_REACTANTS",
+			Integer.class,
+			Bundles.OPTIONS,
+			3,
+			new ValuePairUncomparable<Option<Boolean>, 
+			Range<Boolean>>(OPT_WARNINGS_FOR_TOO_MANY_REACTANTS, RANGE_BOOLEAN));
 	/**
 	 * Determines whether or not antisense RNA molecules are accepted as enzymes
 	 * when catalyzing a reaction.
@@ -432,8 +437,7 @@ public interface SqueezerOptions extends KeyProvider {
     				TypeUnitConsistency.class, 
     				Range.toRangeString(TypeUnitConsistency.class)), 
 			(short) 2,
-			TypeUnitConsistency.amount, 
-			"Type of unit consistency");
+			TypeUnitConsistency.amount);
     
     /**
      * If true, species are interpreted in terms of 
@@ -453,20 +457,36 @@ public interface SqueezerOptions extends KeyProvider {
      * 
      */
     @SuppressWarnings("unchecked")
-    public static final OptionGroup<Boolean> GENERAL_OPTIONS = new OptionGroup<Boolean>(
-      "General Options", "",
-      OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
-      OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
-      OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
-      OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
-      SHOW_SBML_WARNINGS);
+    public static final OptionGroup<Boolean> GROUP_GENERAL = new OptionGroup<Boolean>(
+    		"GROUP_GENERAL",
+    		Bundles.OPTIONS,
+			OPT_SET_BOUNDARY_CONDITION_FOR_GENES,
+			OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+			OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
+			OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+			OPT_WARNINGS_FOR_TOO_MANY_REACTANTS,
+			SHOW_SBML_WARNINGS);
+  	
+  	/**
+     * 
+     */
+  	@SuppressWarnings({ "unchecked", "rawtypes" })
+  	public static final OptionGroup<?> GROUP_DEFAULT_VALUES = new OptionGroup(
+  			"GROUP_DEFAULT_VALUES",
+  			Bundles.OPTIONS,
+  			OPT_MAX_NUMBER_OF_REACTANTS,
+  			OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE,
+  			OPT_DEFAULT_SPECIES_INITIAL_VALUE,
+  			OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS,
+  			OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
     
     /**
      * 
      */
-  	@SuppressWarnings("unchecked")
-  	public static final OptionGroup<Class> KINETICS_OPTIONS = new OptionGroup<Class>(
-  			"Kinetic Options","",
+  	@SuppressWarnings({ "unchecked", "rawtypes" })
+  	public static final OptionGroup<Class> GROUP_KINETICS = new OptionGroup<Class>(
+  			"GROUP_KINETICS",
+  			Bundles.OPTIONS,
   			KINETICS_ARBITRARY_ENZYME_REACTIONS,
   			KINETICS_BI_BI_TYPE,
   			KINETICS_BI_UNI_TYPE,
@@ -474,47 +494,14 @@ public interface SqueezerOptions extends KeyProvider {
   			KINETICS_NONE_ENZYME_REACTIONS,
   			KINETICS_UNI_UNI_TYPE);
   	
-  	/**
-     * 
-     */
-  	@SuppressWarnings("unchecked")
-  	public static final OptionGroup<?> DEFAULT_OPTIONS = new OptionGroup(
-  			"Default Values","",
-  			OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE,
-  			OPT_DEFAULT_SPECIES_INITIAL_VALUE,
-  			OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS,
-  			OPT_MAX_NUMBER_OF_REACTANTS,
-  			OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
-  	
-  	/**
-     * 
-     */
-  	@SuppressWarnings("unchecked")
-  	public static final OptionGroup<?> TYPE_OPTIONS = new OptionGroup(
-  			"Type Options","",
-  			TYPE_STANDARD_VERSION,
-  			TYPE_UNIT_CONSISTENCY,
-  			TYPE_UNITS_COMPARTMENT);
-  	
 
   	/**
      * 
      */
   	@SuppressWarnings("unchecked")
-  	public static final OptionGroup<Boolean> REACTION_OPTIONS = new OptionGroup<Boolean>(
-  			"Reaction Options","",
-  			OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
-  			OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING,
-  			OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
-  			OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD,
-  			OPT_WARNINGS_FOR_TOO_MANY_REACTANTS);
-  	
-  	/**
-     * 
-     */
-  	@SuppressWarnings("unchecked")
-  	public static final OptionGroup<Boolean> ENZYME_OPTIONS = new OptionGroup<Boolean>(
-  			"Enzyme Options","",
+  	public static final OptionGroup<Boolean> GROUP_ENZYMES = new OptionGroup<Boolean>(
+  			"GROUP_ENZYMES",
+  			Bundles.OPTIONS,
   			POSSIBLE_ENZYME_ANTISENSE_RNA,
   			POSSIBLE_ENZYME_COMPLEX,
   			POSSIBLE_ENZYME_GENERIC,
@@ -524,4 +511,46 @@ public interface SqueezerOptions extends KeyProvider {
   			POSSIBLE_ENZYME_SIMPLE_MOLECULE,
   			POSSIBLE_ENZYME_TRUNCATED,
   			POSSIBLE_ENZYME_UNKNOWN);
+  	
+  	/**
+     * 
+     */
+  	@SuppressWarnings("unchecked")
+  	public static final OptionGroup<Boolean> GROUP_REVERSIBILITY = new OptionGroup<Boolean>(
+  			"GROUP_REVERSIBILITY",
+  			Bundles.OPTIONS,
+  			OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+  			OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD);
+  	
+  	/**
+     * 
+     */
+  	@SuppressWarnings({ "unchecked", "rawtypes" })
+  	public static final OptionGroup<?> GROUP_STANDARD_VERSION = new OptionGroup(
+  			"GROUP_STANDARD_VERSION",
+  			Bundles.OPTIONS,
+  			TYPE_STANDARD_VERSION);
+  	
+  	/**
+     * 
+     */
+  	@SuppressWarnings({ "unchecked", "rawtypes" })
+  	public static final OptionGroup<?> GROUP_UNIT_CONSISTENCY = new OptionGroup(
+  			"GROUP_UNIT_CONSISTENCY",
+  			Bundles.OPTIONS,
+  			TYPE_UNIT_CONSISTENCY,
+  			TYPE_UNITS_COMPARTMENT);
+  	
+
+  	/**
+     * 
+     */
+  	@SuppressWarnings("unchecked")
+  	public static final OptionGroup<Boolean> GROUP_GENERATE_KINETIC_LAWS = new OptionGroup<Boolean>(
+  			"GROUP_GENERATE_KINETIC_LAWS",
+  			Bundles.OPTIONS,
+  			OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
+  			OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING);
+  	
+  	
 }

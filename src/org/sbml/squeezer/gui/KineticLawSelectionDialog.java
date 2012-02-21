@@ -40,9 +40,7 @@ import java.beans.EventHandler;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,7 +74,7 @@ import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.SystemBrowser;
-import de.zbit.gui.prefs.MultiplePreferencesPanel;
+import de.zbit.gui.prefs.PreferencesDialog;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.AbstractProgressBar;
 import de.zbit.util.StringUtil;
@@ -122,8 +120,6 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 	private JButton options;
 
 	private SBMLio sbmlIO;
-
-	private MultiplePreferencesPanel settingsPanel;
 	
 	SBPreferences prefs;
 
@@ -201,14 +197,12 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
+	@SuppressWarnings("unchecked")
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			String text = ((JButton) e.getSource()).getText();
 			if (text.equals(Bundles.MESSAGES.getString("SHOW_OPTIONS"))) {
-				showSettingsPanel(true);
-			} else if (text.equals(Bundles.MESSAGES.getString("HIDE_OPTIONS"))) {
-				showSettingsPanel(false);
-
+				PreferencesDialog.showPreferencesDialog(this, SqueezerOptions.class);
 			} else if (text.equals(Bundles.BASE.getString("HELP"))) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this,
 						Bundles.MESSAGES.getString("SBMLSQUEEZER") 
@@ -226,8 +220,6 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 				logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
 				klg = null;
 			} else if (text.equals(Bundles.MESSAGES.getString("RESTORE"))) {
-				settingsPanel.restoreDefaults();
-				getContentPane().remove(settingsPanel);
 				pack();
 				setLocationRelativeTo(null);
 
@@ -258,7 +250,6 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 				getContentPane().add(centralPanel = initOptionsPanel(),
 						BorderLayout.CENTER);
 				setResizable(false);
-				showSettingsPanel(true);
 			} else if (text.equals(Bundles.MESSAGES.getString("EXPORT_CHANGES"))) {
 				/*
 				 * new Thread(new Runnable() { public void run() {//
@@ -350,14 +341,9 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 	 * 
 	 */
 	private void generateKineticLaws() {
-		try {			
-			showSettingsPanel(false);
+		try {
 			options.setEnabled(false);
 			GUITools.setAllEnabled(footPanel, false);
-			Properties props = settingsPanel.getProperties();
-			for (Object key : props.keySet()) {
-				prefs.put(key, props.get(key));
-			}
 			prefs.flush();
 			Model model = sbmlIO.getSelectedModel();
 			
@@ -561,25 +547,6 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 	}
 
 	/**
-	 * This method initializes a Panel that shows all possible settings of the
-	 * program.
-	 * 
-	 * @return javax.swing.JPanelsb.append("<br>
-	 *         ");
-	 */
-	private MultiplePreferencesPanel getJSettingsPanel() {
-		if (settingsPanel == null) {
-			try {
-				settingsPanel = new MultiplePreferencesPanel();
-			} catch (IOException exc) {
-				GUITools.showErrorMessage(this, exc);
-			}
-			// settingsPanel.setBackground(Color.WHITE);
-		}
-		return settingsPanel;
-	}
-
-	/**
 	 * This method actually initializes the GUI.
 	 */
 	private void init() {
@@ -618,7 +585,6 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 		setSize(getWidth(), fullHeight);
 		setLocationRelativeTo(null);
 		setSize(getWidth(), height);
-		settingsPanel = getJSettingsPanel();
 	}
 
 	/**
@@ -629,7 +595,7 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 	private JPanel initOptionsPanel() {
 		JPanel p = new JPanel(new BorderLayout());
 		options = new JButton(Bundles.MESSAGES.getString("SHOW_OPTIONS"));
-		Icon icon = UIManager.getIcon("ICON_RIGHT_ARROW_TINY");
+		Icon icon = UIManager.getIcon("ICON_PREFS_16");
 		if (icon != null) {
 			options.setIcon(icon);
 		}
@@ -656,40 +622,6 @@ public class KineticLawSelectionDialog extends JDialog implements ActionListener
 		return KineticsAndParametersStoredInSBML;
 	}
 	
-	/**
-	 * 
-	 * @param show
-	 */
-	private void showSettingsPanel(boolean show) {
-		if (show) {
-			options.setIcon(UIManager.getIcon("ICON_DOWN_ARROW_TINY"));
-			options.setIconTextGap(5);
-			options.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("HIDE_OPTIONS_TOOLTIP")));
-			options.setText(Bundles.MESSAGES.getString("HIDE_OPTIONS"));
-			settingsPanel = getJSettingsPanel();
-			JScrollPane scroll = new JScrollPane(settingsPanel,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scroll.setBackground(Color.WHITE);
-			centralPanel.add(scroll, BorderLayout.CENTER);
-			centralPanel.validate();
-		} else {
-			options.setIcon(UIManager.getIcon("ICON_RIGHT_ARROW_TINY"));
-			options.setIconTextGap(5);
-			options.setText(Bundles.MESSAGES.getString("SHOW_OPTIONS"));
-			options.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("SHOW_OPTIONS_TOOLTIP")));
-			centralPanel.removeAll();
-			JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			panel.add(options);
-			centralPanel.add(panel, BorderLayout.NORTH);
-		}
-		pack();
-		// setSize(getWidth(), (int) Math.min(fullHeight, GraphicsEnvironment
-		// .getLocalGraphicsEnvironment().getMaximumWindowBounds()
-		// .getHeight()));
-		validate();
-	}
-
 	/**
 	 * 
 	 */

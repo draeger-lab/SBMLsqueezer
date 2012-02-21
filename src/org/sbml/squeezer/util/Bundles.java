@@ -33,29 +33,29 @@ import de.zbit.util.ResourceManager;
  * @version $Rev: 815 $
  * @since 1.4
  */
-public interface Bundles {
+public class Bundles {
 	/**
 	 * 
 	 */
-	public static final ResourceBundle MESSAGES = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Messages");
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Messages");
 
 	/**
 	 * 
 	 */
-	public static final ResourceBundle OPTIONS = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Options");
+	public static final transient ResourceBundle OPTIONS = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Options");
 	
 	/**
 	 * 
 	 */
-	public static final ResourceBundle WARNINGS = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Warnings");
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Warnings");
 
 	/**
 	 * 
 	 */
-	public static final ResourceBundle LABELS = ResourceManager.getBundle("de.zbit.locales.Labels");
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle("de.zbit.locales.Labels");
 	
 	/**
 	 * 
 	 */
-	public static final ResourceBundle BASE = ResourceManager.getBundle("de.zbit.locales.BaseAction");
+	public static final transient ResourceBundle BASE = ResourceManager.getBundle("de.zbit.locales.BaseAction");
 }
