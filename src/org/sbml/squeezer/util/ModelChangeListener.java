@@ -1,11 +1,11 @@
 /*
  * $Id:  ModelChangeListener.java 13:43:19 draeger$
- * $URL: ModelChangeListener.java $
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2011 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
