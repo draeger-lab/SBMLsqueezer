@@ -1156,8 +1156,7 @@ public class ParameterFactory {
 			}
 			if (!kVr.isSetUnits()) {
 				if (unitFactory.getBringToConcentration()) {
-					kVr.setUnits(unitFactory.unitSubstancePerSizePerTime(model
-							.getVolumeUnitsInstance()));
+					kVr.setUnits(unitFactory.unitSubstancePerSizePerTime(model.getVolumeUnitsInstance()));
 				} else {
 					kVr.setUnits(unitFactory.unitSubstancePerTime(model
 							.getSubstanceUnitsInstance(), model

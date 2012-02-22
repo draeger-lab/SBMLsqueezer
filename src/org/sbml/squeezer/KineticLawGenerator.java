@@ -34,6 +34,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
@@ -352,10 +353,8 @@ public class KineticLawGenerator {
 					Boolean.valueOf(hasFullColumnRank(modelOrig)),
 					prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY),
 					prefs.get(SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS) };
-			Constructor<?> constructor = kineticsClass.getConstructor(reaction.getClass(), 
-			    typeParameters.getClass());
-			return (BasicKineticLaw) constructor.newInstance(reaction,
-					typeParameters);
+			Constructor<?> constructor = kineticsClass.getConstructor(reaction.getClass(), typeParameters.getClass());
+			return (BasicKineticLaw) constructor.newInstance(reaction, typeParameters);
 		} catch (InstantiationException e) {
 			logger.warning(e.getLocalizedMessage());
 			throw e.getCause();
@@ -479,8 +478,7 @@ public class KineticLawGenerator {
 				if (reacOrig.isSetKineticLaw()) {
 					KineticLaw l = reacOrig.getKineticLaw();
 					if (l.isSetMath()) {
-						for (Parameter parameter : modelOrig
-								.getListOfParameters()) {
+						for (Parameter parameter : modelOrig.getListOfParameters()) {
               if (l.getMath().refersTo(parameter.getId())
                   && (miniModel.getParameter(parameter.getId()) != null)) {
 								miniModel.addParameter(parameter.clone());
@@ -1049,16 +1047,17 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * This method stores a kinetic law for the given reaction in the currently
-	 * selected model given by the plugin. The kinetic law is passed as a String
-	 * to this method. A boolean variable tells this method weather the formula
-	 * is for a reversible or for an irreversible reaction. Afterwards all
-	 * parameters within this kinetic law are also stored in the given model.
-	 * There is no need to call the storeParameters method.
+	 * This method stores a {@link KineticLaw} for the given {@link Reaction} in
+	 * the currently selected {@link Model} given by the user. The
+	 * {@link KineticLaw} is passed to this method. A boolean variable tells this
+	 * method weather the formula is for a reversible or for an irreversible
+	 * {@link Reaction} (in the user's {@link Preferences}). Afterwards all
+	 * parameters within this {@link KineticLaw} are also stored in the given
+	 * {@link Model}. There is no need to call the
+	 * {@link #storeParamters(Reaction)} method.
 	 * 
 	 * @param kineticLaw
-	 *            A string with the formula to be assigned to the given
-	 *            reaction.
+	 *        A string with the formula to be assigned to the given reaction.
 	 * @param l
 	 */
 	public Reaction storeKineticLaw(KineticLaw kineticLaw) {
