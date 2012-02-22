@@ -35,7 +35,9 @@ import java.awt.event.WindowListener;
 import java.beans.EventHandler;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
@@ -51,6 +53,8 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
@@ -76,8 +80,10 @@ import de.zbit.gui.StatusBar;
 import de.zbit.io.SBFileFilter;
 import de.zbit.sbml.gui.ASTNodeSplitPane;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
+import de.zbit.sbml.gui.SBMLNode;
 import de.zbit.sbml.gui.SBMLTree;
 import de.zbit.util.StringUtil;
+import de.zbit.util.logging.LogUtil;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -295,8 +301,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			if (klsd.isKineticsAndParametersStoredInSBML()) {
 				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
         ///////////////////////////////////////////
-				// TODO: DEBUG-Mode only!
-				if (e.getSource() instanceof Reaction) {
+				// DEBUG mode
+				if ((LogUtil.getCurrentLogLevel().intValue() < Level.INFO.intValue()) && (e.getSource() instanceof Reaction)) {
 					JDialog d = new JDialog(this);
 					d.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 					ASTNodeSplitPane pane = new ASTNodeSplitPane(((Reaction) e.getSource()).getKineticLaw().getMath());
@@ -308,7 +314,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				}
 				///////////////////////////////////////////
 				try {
+					TreePath path = split.getTree().getSelectionPath();
 					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
+					setupContextMenu(split, path);
 				} catch (Exception exc) {
 					exc.printStackTrace();
 				}
@@ -406,21 +414,14 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * 
 	 * @param model
 	 */
-	@SuppressWarnings("unchecked")
 	private void addModel(Model model) {
 		SBMLModelSplitPane split;
 		try {
 			split = new SBMLModelSplitPane(model.getSBMLDocument(), true);
 			split.setEquationRenderer(new HotEquationRenderer());
 			split.setProgressBar(StatusBar.addStatusBar(this).getProgressBar());
-			
-			SBMLTree tree = split.getTree();
-			tree.addActionListener(this);
-			JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("ICON_LEMON_TINY")); 
-			JMenuItem latexItem = GUITools.createJMenuItem(tree,  Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_TINY"));
-			
-			tree.addPopupMenuItem(squeezeItem, Reaction.class, Model.class, SBMLDocument.class);
-			tree.addPopupMenuItem(latexItem, Reaction.class, Model.class, SBMLDocument.class);
+
+			setupContextMenu(split, null);
 			
 			tabbedPane.add(model.getId(), split);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
@@ -430,6 +431,32 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 
+	 * @param split
+	 */
+	@SuppressWarnings("unchecked")
+	private void setupContextMenu(SBMLModelSplitPane split, TreePath path) {
+		SBMLTree tree = split.getTree();
+		
+		if (path != null) {
+			ArrayList<TreeNode> p = new ArrayList<TreeNode>(path.getPathCount());
+			for (int i = 0; i < path.getPathCount(); i++) {
+				SBMLNode node = (SBMLNode) path.getPathComponent(i);
+				p.add(node.getUserObject());
+			}
+			// TODO: Expand tree at the previous selection without changing the font of the nodes and so on.
+			// tree.expandAll(p, true, null);
+		}
+		
+		tree.addActionListener(this);
+		JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("ICON_LEMON_TINY")); 
+		JMenuItem latexItem = GUITools.createJMenuItem(tree,  Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_TINY"));
+		
+		tree.addPopupMenuItem(squeezeItem, Reaction.class, Model.class, SBMLDocument.class);
+		tree.addPopupMenuItem(latexItem, Reaction.class, Model.class, SBMLDocument.class);
 	}
 
 	/* (non-Javadoc)
