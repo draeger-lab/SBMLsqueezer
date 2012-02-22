@@ -25,19 +25,20 @@ package org.sbml.squeezer;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.sbml.jsbml.CVTerm.Qualifier;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.CVTerm.Qualifier;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.prefs.SBPreferences;
@@ -346,16 +347,14 @@ public class ReactionType {
 		if (reaction.getNumModifiers() > 0)
 			identifyModifers(reaction, enzymes, activators, inhibitors,
 					nonEnzymeCatalysts);
-		nonEnzyme = ((!prefs
-				.getBoolean(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED) && enzymes
-				.size() == 0)
-				|| nonEnzymeCatalysts.size() > 0 || ((reaction.getNumProducts() == 0 || (SBO
-				.isEmptySet(reaction.getProduct(0).getSpeciesInstance()
-						.getSBOTerm()))) && reaction.getReversible()));
+		nonEnzyme = ((!prefs.getBoolean(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED) && enzymes.size() == 0)
+				|| (nonEnzymeCatalysts.size() > 0) 
+				|| (((reaction.getNumProducts() == 0)
+						|| (SBO.isEmptySet(reaction.getProduct(0).getSpeciesInstance().getSBOTerm()))) && reaction.isReversible()));
 
-		uniUni = stoichiometryLeft == 1d && stoichiometryRight == 1d;
-		biUni = stoichiometryLeft == 2d && stoichiometryRight == 1d;
-		biBi = stoichiometryLeft == 2d && stoichiometryRight == 2d;
+		uniUni = (stoichiometryLeft == 1d) && (stoichiometryRight == 1d);
+		biUni = (stoichiometryLeft == 2d) && (stoichiometryRight == 1d);
+		biBi = (stoichiometryLeft == 2d) && (stoichiometryRight == 2d);
 		integerStoichiometry = stoichiometryIntLeft;
 		withoutModulation = inhibitors.size() == 0 && activators.size() == 0;
 
@@ -410,8 +409,7 @@ public class ReactionType {
 				}
 			}
 		}
-		if ((SBO.isTranslation(reaction.getSBOTerm()) || SBO
-				.isTranscription(reaction.getSBOTerm()))
+		if ((SBO.isTranslation(reaction.getSBOTerm()) || SBO.isTranscription(reaction.getSBOTerm()))
 				&& !(reactionWithGenes || reactionWithRNAs)) {
 			throw new RateLawNotApplicableException(MessageFormat.format(
 					Bundles.WARNINGS.getString("REACTION_MUST_BE_TRANSITION"), reaction.getId()));
@@ -516,44 +514,45 @@ public class ReactionType {
 
 	/**
 	 * identify the reactionType for generating the kinetics
+	 * @throws ClassNotFoundException 
 	 * 
 	 */
-	public String identifyPossibleKineticLaw() {
+	public Class<?> identifyPossibleKineticLaw() throws ClassNotFoundException {
 		if (representsEmptySet(reaction.getListOfReactants())) {
 			if (reactionWithGenes || reactionWithRNAs) {
 				if (SBMLsqueezer.getKineticsZeroReactants().contains(
 						prefs.get(SqueezerOptions.KINETICS_GENE_REGULATION))) {
-					return prefs.get(SqueezerOptions.KINETICS_GENE_REGULATION);
+					return prefs.getClass(SqueezerOptions.KINETICS_GENE_REGULATION);
 				}
-				for (Class kin : SBMLsqueezer
-						.getKineticsGeneRegulatoryNetworks()) {
+				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
-						return kin.getName();
+						return kin;
 					}
 				}
 			}
-			for (Class kin : SBMLsqueezer.getKineticsZeroReactants()) {
-				return kin.getName();
+			for (Class<?> kin : SBMLsqueezer.getKineticsZeroReactants()) {
+				return kin;
 			}
 		}
 		if (representsEmptySet(reaction.getListOfProducts())
 				&& (reversibility || reaction.getReversible())) {
 			if (reactionWithGenes || reactionWithRNAs)
-				for (Class kin : SBMLsqueezer
-						.getKineticsGeneRegulatoryNetworks())
-					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin))
-						return kin.getName();
-			for (Class kin : SBMLsqueezer.getKineticsZeroProducts())
-				return kin.getName();
+				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks())
+					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
+						return kin;
+					}
+			for (Class<?> kin : SBMLsqueezer.getKineticsZeroProducts()) {
+				return kin;
+			}
 		}
 
 		boolean enzymeCatalyzed = prefs
 				.getBoolean(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED)
 				|| enzymes.size() > 0;
-		String whichkin = prefs.get(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS);
+		Class<?> whichkin = prefs.getClass(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS);
 
 		if (enzymeCatalyzed) {
-			whichkin = prefs.get(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS);
+			whichkin = prefs.getClass(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS);
 		}
 		if (stoichiometryLeft == 1d) {
 			Species reactant = reaction.getReactant(0).getSpeciesInstance();
@@ -566,21 +565,21 @@ public class ReactionType {
 						|| SBO.isGeneric(product.getSBOTerm()) || SBO
 						.isRNAOrMessengerRNA(product.getSBOTerm()))))
 						&& !(SBO.isEmptySet(product.getSBOTerm())))) {
-					whichkin = prefs.get(SqueezerOptions.KINETICS_GENE_REGULATION);
+					whichkin = prefs.getClass(SqueezerOptions.KINETICS_GENE_REGULATION);
 				}
 			}
 			if (!whichkin.equals(prefs
 					.get(SqueezerOptions.KINETICS_GENE_REGULATION))
 					&& (((enzymes.size() > 0) || enzymeCatalyzed) && ((stoichiometryRight == 1d) || !(reaction
 							.getReversible() || reversibility)))) {
-				whichkin = prefs.get(SqueezerOptions.KINETICS_UNI_UNI_TYPE);
+				whichkin = prefs.getClass(SqueezerOptions.KINETICS_UNI_UNI_TYPE);
 			}
 		} else if (biUni && enzymeCatalyzed) {
-			whichkin = prefs.get(SqueezerOptions.KINETICS_BI_UNI_TYPE);
+			whichkin = prefs.getClass(SqueezerOptions.KINETICS_BI_UNI_TYPE);
 		} else if (biBi && enzymeCatalyzed) {
-			whichkin = prefs.get(SqueezerOptions.KINETICS_BI_BI_TYPE);
+			whichkin = prefs.getClass(SqueezerOptions.KINETICS_BI_BI_TYPE);
 		}
-		return whichkin.toString();
+		return whichkin;
 	}
 
 	/**
@@ -590,7 +589,7 @@ public class ReactionType {
 	 *         classes).
 	 * @throws RateLawNotApplicableException
 	 */
-	public String[] identifyPossibleKineticLaws() {
+	public Class<?>[] identifyPossibleKineticLaws() {
 		Set<Class> types = new HashSet<Class>();
 		boolean emptyListOfReactants = representsEmptySet(reaction
 				.getListOfReactants());
@@ -602,24 +601,26 @@ public class ReactionType {
 			 * Special case that occurs if we have at least one empty list of
 			 * species references.
 			 */
-			if (emptyListOfReactants)
-				for (Class className : SBMLsqueezer.getKineticsZeroReactants())
+			if (emptyListOfReactants) {
+				for (Class<?> className : SBMLsqueezer.getKineticsZeroReactants()) {
 					types.add(className);
-			else
-				for (Class className : SBMLsqueezer.getKineticsZeroProducts()) {
-					if (SBMLsqueezer.getKineticsReversible()
-							.contains(className))
-						types.add(className);
 				}
+			} else {
+				for (Class<?> className : SBMLsqueezer.getKineticsZeroProducts()) {
+					if (SBMLsqueezer.getKineticsReversible().contains(className)) {
+						types.add(className);
+					}
+				}
+			}
 			// Gene-regulation
 			if (reactionWithGenes || reactionWithRNAs) {
-				for (Class className : SBMLsqueezer
-						.getKineticsGeneRegulatoryNetworks()) {
+				for (Class<?> className : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
 					if ((reaction.getReversible() && !notReversible
 							.contains(className))
 							|| (!reaction.getReversible() && !notIrreversible
-									.contains(className)))
+									.contains(className))) {
 						types.add(className);
+					}
 				}
 			} else if (!nonEnzyme) {
 				enzymeKinetics = true;
@@ -645,13 +646,12 @@ public class ReactionType {
 						.isRNAOrMessengerRNA(product.getSBOTerm())
 						|| SBO.isProtein(product.getSBOTerm()) || SBO
 						.isGeneric(product.getSBOTerm()))))))
-					for (Class className : SBMLsqueezer
-							.getKineticsGeneRegulatoryNetworks()) {
-						if ((reaction.getReversible() && !notReversible
-								.contains(className))
+					for (Class<?> className : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
+						if ((reaction.getReversible() && !notReversible.contains(className))
 								|| (!reaction.getReversible() && !notIrreversible
-										.contains(className)))
+										.contains(className))) {
 							types.add(className);
+						}
 					}
 			}
 		}
@@ -660,31 +660,29 @@ public class ReactionType {
 			 * Enzym-Kinetics: Assign possible rate laws for arbitrary enzyme
 			 * reations.
 			 */
-			for (Class className : SBMLsqueezer
-					.getKineticsArbitraryEnzymeMechanism()) {
+			for (Class<?> className : SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()) {
 				if (checkReversibility(reaction, className)
-						&& (!SBMLsqueezer.getKineticsIntStoichiometry()
-								.contains(className) || integerStoichiometry)
-						&& (SBMLsqueezer.getKineticsModulated().contains(
-								className) || withoutModulation))
+						&& (!SBMLsqueezer.getKineticsIntStoichiometry().contains(className) || integerStoichiometry)
+						&& (SBMLsqueezer.getKineticsModulated().contains(className) || withoutModulation)) {
 					types.add(className);
+				}
 			}
-			if (uniUni
-					|| (stoichiometryLeft == 1d && !(reaction.getReversible() || reversibility))) {
+			if (uniUni || ((stoichiometryLeft == 1d) && !(reaction.getReversible() || reversibility))) {
 				Set<Class> onlyUniUni = new HashSet<Class>();
 				onlyUniUni.addAll(SBMLsqueezer.getKineticsUniUni());
-				onlyUniUni.removeAll(SBMLsqueezer
-						.getKineticsArbitraryEnzymeMechanism());
-				if (!integerStoichiometry)
-					onlyUniUni.removeAll(SBMLsqueezer
-							.getKineticsIntStoichiometry());
-				if (!withoutModulation)
+				onlyUniUni.removeAll(SBMLsqueezer.getKineticsArbitraryEnzymeMechanism());
+				if (!integerStoichiometry) {
+					onlyUniUni.removeAll(SBMLsqueezer.getKineticsIntStoichiometry());
+				}
+				if (!withoutModulation) {
 					onlyUniUni.retainAll(SBMLsqueezer.getKineticsModulated());
-				for (Class className : onlyUniUni)
-					if (checkReversibility(reaction, className))
+				}
+				for (Class<?> className : onlyUniUni) {
+					if (checkReversibility(reaction, className)) {
 						types.add(className);
-			} else if (biUni
-					|| (stoichiometryLeft == 2d && !(reaction.getReversible() || reversibility))) {
+					}
+				}
+			} else if (biUni || ((stoichiometryLeft == 2d) && !(reaction.getReversible() || reversibility))) {
 				Set<Class> onlyBiUni = new HashSet<Class>();
 				onlyBiUni.addAll(SBMLsqueezer.getKineticsBiUni());
 				onlyBiUni.removeAll(SBMLsqueezer
@@ -694,25 +692,37 @@ public class ReactionType {
 							.getKineticsIntStoichiometry());
 				if (!withoutModulation)
 					onlyBiUni.retainAll(SBMLsqueezer.getKineticsModulated());
-				for (Class className : onlyBiUni)
-					if (checkReversibility(reaction, className))
+				for (Class<?> className : onlyBiUni) {
+					if (checkReversibility(reaction, className)) {
 						types.add(className);
+					}
+				}
 			} else if (biBi) {
 				Set<Class> onlyBiBi = new HashSet<Class>();
 				onlyBiBi.addAll(SBMLsqueezer.getKineticsBiBi());
 				onlyBiBi.removeAll(SBMLsqueezer
 						.getKineticsArbitraryEnzymeMechanism());
-				if (!withoutModulation)
+				if (!withoutModulation) {
 					onlyBiBi.retainAll(SBMLsqueezer.getKineticsModulated());
-				for (Class className : onlyBiBi) {
+				}
+				for (Class<?> className : onlyBiBi) {
 					if (checkReversibility(reaction, className)) {
 						types.add(className);
 					}
 				}
 			}
 		}
-		String t[] = types.toArray(new String[] {});
-		Arrays.sort(t);
+		Class<?> t[] = types.toArray(new Class[] {});
+		Arrays.sort(t, new Comparator<Class<?>>() {
+
+			/* (non-Javadoc)
+       * @see java.util.Comparator#compare(T, T)
+       */
+			public int compare(Class<?> clazz1, Class<?> clazz2) {
+				return clazz1.getName().compareTo(clazz2.getName());
+			}
+			
+		});
 		return t;
 	}
 

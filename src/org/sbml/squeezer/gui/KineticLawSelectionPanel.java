@@ -102,7 +102,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	private KineticLawGenerator klg;
 
-	private String selected, laTeXpreview[], possibleTypes[];
+	private String selected, laTeXpreview[];
+	
+	private Class<?> possibleTypes[];
 
 	private JRadioButton rButtonGlobalParameters, rButtonReversible, rButtonsKineticEquations[];
 
@@ -128,12 +130,12 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				|| selected > possibleLaws.length || possibleLaws.length < 1)
 			throw new IllegalArgumentException(Bundles.WARNINGS.getString("INVALID_RATE_LAW_COUNT"));
 		this.reaction = possibleLaws[0].getParentSBMLObject();
-		this.possibleTypes = new String[possibleLaws.length];
+		this.possibleTypes = new Class[possibleLaws.length];
 		String[] possibleTypesNames = new String[possibleLaws.length];
 		laTeXpreview = new String[possibleTypes.length];
 		for (int i = 0; i < possibleTypes.length; i++) {
 			possibleTypesNames[i] = possibleLaws[i].getSimpleName();
-			possibleTypes[i] = possibleLaws[i].getClass().getCanonicalName();
+			possibleTypes[i] = possibleLaws[i].getClass();
 			try {
 				laTeXpreview[i] = possibleLaws[i].getMath().compile(
 								new LaTeXCompiler(prefsLaTeX
@@ -352,14 +354,16 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * 
 	 * @return
 	 */
-	public String getSelectedKinetic() {
+	public Class<?> getSelectedKinetic() {
 		int i = 0;
 		if (rButtonsKineticEquations != null) {
 			while ((i < rButtonsKineticEquations.length)
-					&& (!rButtonsKineticEquations[i].isSelected()))
+					&& (!rButtonsKineticEquations[i].isSelected())) {
 				i++;
-		} else if (kineticLawComboBox != null)
+			}
+		} else if (kineticLawComboBox != null) {
 			i = kineticLawComboBox.getSelectedIndex();
+		}
 		return possibleTypes[i];
 	}
 
@@ -377,8 +381,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		laTeXpreview = new String[possibleTypes.length + 1];
 		int i;
 		for (i = 0; i < possibleTypes.length; i++) {
-			kineticLaw = klg
-					.createKineticLaw(reaction, possibleTypes[i], false);
+			kineticLaw = klg.createKineticLaw(reaction, possibleTypes[i], false);
 			laTeXpreview[i] = new String(kineticLaw.getMath().compile(
 					new LaTeXCompiler(prefsLaTeX.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE)))
 					.toString());
@@ -574,7 +577,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @param toolTips
 	 * @param laTeX
 	 */
-	private void sort(String[] typeNames, String[] simpleNames,
+	private void sort(Class<?>[] classes, String[] simpleNames,
 			String[] toolTips, String[] laTeX) {
 		String names[] = new String[simpleNames.length];
 		System.arraycopy(simpleNames, 0, names, 0, simpleNames.length);
@@ -583,18 +586,19 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		int i = 0, pos;
 		for (String name : simpleNames) {
 			pos = 0;
-			while (!name.equals(names[pos]))
+			while (!name.equals(names[pos])) {
 				pos++;
+			}
 			indices[i++] = pos;
 		}
-		String types[] = new String[indices.length];
+		Class<?> types[] = new Class[indices.length];
 		String tipps[] = new String[indices.length];
 		String lt[] = new String[indices.length];
-		System.arraycopy(typeNames, 0, types, 0, types.length);
+		System.arraycopy(classes, 0, types, 0, types.length);
 		System.arraycopy(toolTips, 0, tipps, 0, tipps.length);
 		System.arraycopy(laTeX, 0, lt, 0, lt.length);
 		for (i = 0; i < indices.length; i++) {
-			typeNames[i] = types[indices[i]];
+			classes[i] = types[indices[i]];
 			toolTips[i] = tipps[indices[i]];
 			laTeX[i] = lt[indices[i]];
 		}
