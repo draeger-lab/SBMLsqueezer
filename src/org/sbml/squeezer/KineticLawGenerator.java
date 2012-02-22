@@ -323,39 +323,36 @@ public class KineticLawGenerator {
 	}
 
 	/**
-	 * Creates a kinetic law for the given reaction, which can be assigned to
-	 * the given reaction.
+	 * Creates a kinetic law for the given reaction, which can be assigned to the
+	 * given reaction.
 	 * 
 	 * @param r
-	 *            The reaction for which a kinetic law is to be created.
+	 *        The reaction for which a kinetic law is to be created.
+	 * @param kineticsClass
+	 *        The type of rate law to be used.
 	 * @param reversibility
-	 *            If true this reaction will be set to reversible and the
-	 *            kinetic equation will be created accordingly. If this
-	 *            parameter is false, the reversibility property of this
-	 *            reaction will not be changed.
+	 *        If true this reaction will be set to reversible and the kinetic
+	 *        equation will be created accordingly. If this parameter is false,
+	 *        the reversibility property of this reaction will not be changed.
 	 * @param kinetic
-	 *            an element from the Kinetics enum.
+	 *        an element from the Kinetics enum.
 	 * @return A kinetic law for the given reaction.
 	 * @throws Throwable
 	 */
-	public BasicKineticLaw createKineticLaw(Reaction r,
-			String kineticsClassName, boolean reversibility) throws Throwable {
+	public BasicKineticLaw createKineticLaw(Reaction r, Class<?> kineticsClass,
+		boolean reversibility) throws Throwable {
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null) {
 			reaction = r;
 		}
 		reaction.setReversible(reversibility || reaction.getReversible());
 		try {
-			if (!kineticsClassName.startsWith(SBMLsqueezer.KINETICS_PACKAGE)) {
-				kineticsClassName = SBMLsqueezer.KINETICS_PACKAGE + '.' + kineticsClassName;
-			}
-			Class<?> kinCls = Class.forName(kineticsClassName);
 			Object typeParameters[] = new Object[] {
 					prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION),
 					Boolean.valueOf(hasFullColumnRank(modelOrig)),
 					prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY),
 					prefs.get(SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS) };
-			Constructor<?> constructor = kinCls.getConstructor(reaction.getClass(), 
+			Constructor<?> constructor = kineticsClass.getConstructor(reaction.getClass(), 
 			    typeParameters.getClass());
 			return (BasicKineticLaw) constructor.newInstance(reaction,
 					typeParameters);
@@ -513,14 +510,14 @@ public class KineticLawGenerator {
 		for (Reaction r : miniModel.getListOfReactions()) {
 			ReactionType rt = new ReactionType(r);
 			
-			String kineticsClassName = rt.identifyPossibleKineticLaw();
+			Class<?> kineticsClass = rt.identifyPossibleKineticLaw();
 			
 			if(progressAdapter != null){
 				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 				progressAdapter.progressOn();
 			}
 			
-			createKineticLaw(r, kineticsClassName, reversibility);
+			createKineticLaw(r, kineticsClass, reversibility);
 			
 			if(progressAdapter != null){
 				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);

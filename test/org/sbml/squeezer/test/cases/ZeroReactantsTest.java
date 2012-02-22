@@ -1,6 +1,6 @@
 /*
  * $Id:  ZeroReactantsTest.java 3:58:03 PM jpfeuffer$
- * $URL: ZeroReactantsTest.java $
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -21,7 +21,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-
 package org.sbml.squeezer.test.cases;
 
 import static org.junit.Assert.assertEquals;
@@ -35,24 +34,42 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
+import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 
 /**
  * @author Julianus Pfeuffer
  * @version $Rev$
  * @since 1.4
  */
-
 public class ZeroReactantsTest {
+	
+	/**
+	 * 
+	 */
 	static Reaction r1;
+	/**
+	 * 
+	 */
 	static KineticLawGenerator klg;
+	/**
+	 * 
+	 */
 	static SBMLDocument doc = new SBMLDocument(2, 4);
+	/**
+	 * 
+	 */
 	static Model model = doc.createModel("uniuni_model");
 	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
 	@BeforeClass
 	public static void initTest() throws Throwable{
 		
 		Compartment c = model.createCompartment("c1");
-		Species p1 = model.createSpecies("p1", c);
+		Species p1 = model.createSpecies("p1.class", c);
 	
 		r1 = model.createReaction("r1");
 		r1.createProduct(p1);
@@ -61,27 +78,44 @@ public class ZeroReactantsTest {
 		klg = new KineticLawGenerator(model);
 	}
 	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
 	@Test
 	public void testGMAK() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, "ZerothOrderForwardGMAK", false);
+		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, false);
 		assertEquals("zkass_r1",kl.getMath().toFormula());
 	}
 	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
 	@Test
 	public void testRevGMAK() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, "ZerothOrderReverseGMAK", false);
+		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, false);
 		assertEquals("zkass_r1",kl.getMath().toFormula());
 	}
 	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
 	@Test
 	public void testGMAKRev() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, "ZerothOrderForwardGMAK", true);
+		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, true);
 		assertEquals("zkass_r1-zkdiss_r1*p1*c1",kl.getMath().toFormula());
 	}
 	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
 	@Test
 	public void testRevGMAKRev() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, "ZerothOrderReverseGMAK", true);
+		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, true);
 		assertEquals("zkass_r1-zkdiss_r1",kl.getMath().toFormula());
 	}
+
 }

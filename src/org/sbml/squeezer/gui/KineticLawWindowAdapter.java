@@ -146,7 +146,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	public boolean isKineticsAndParametersStoredInSBML() {
 		if ((value == JOptionPane.OK_OPTION)
 				&& !messagePanel.getExistingRateLawSelected()) {
-			String equationType = messagePanel.getSelectedKinetic();
+			Class<?> equationType = messagePanel.getSelectedKinetic();
 			reaction.addTreeNodeChangeListener(sbmlio);
 			reaction.setReversible(messagePanel.getReversible());
 			klg.getPreferences().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,

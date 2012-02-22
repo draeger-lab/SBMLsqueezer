@@ -98,7 +98,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * The package where all kinetic equations are located.
    */
-  public static final String KINETICS_PACKAGE = "org.sbml.squeezer.kinetics";
+  public static final Package KINETICS_PACKAGE = BasicKineticLaw.class.getPackage();
 
   /**
    * {@link Set}s of kinetics with certain characteristics.
@@ -152,7 +152,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     kineticsModulated = new HashSet<Class>();
     kineticsIntStoichiometry = new HashSet<Class>();
     Class<BasicKineticLaw> classes[] = Reflect.getAllClassesInPackage(
-        KINETICS_PACKAGE, false, true, BasicKineticLaw.class,
+        KINETICS_PACKAGE.getName(), false, true, BasicKineticLaw.class,
         JAR_LOCATION, true);
     for (Class<BasicKineticLaw> c : classes) {
       Set<Class<?>> s = new HashSet<Class<?>>();
@@ -491,7 +491,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @see de.zbit.Launcher#getYearOfProgramRelease()
    */
   public short getYearOfProgramRelease() {
-    return (short) 2011;
+    return (short) 2012;
   }
   
   /*
