@@ -62,6 +62,8 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.gui.wizard.KineticLawSelectionOptionPanelDescriptor;
+import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
@@ -77,6 +79,11 @@ import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
 import de.zbit.gui.StatusBar;
+import de.zbit.gui.wizard.TestPanel1Descriptor;
+import de.zbit.gui.wizard.TestPanel2Descriptor;
+import de.zbit.gui.wizard.TestPanel3Descriptor;
+import de.zbit.gui.wizard.Wizard;
+import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.io.SBFileFilter;
 import de.zbit.sbml.gui.ASTNodeSplitPane;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
@@ -287,18 +294,19 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
 		case SQUEEZE:
-			KineticLawSelectionDialog klsd;
+			KineticLawSelectionWizard wizard;
+			boolean KineticsAndParametersStoredInSBML = false;
 			if (e.getSource() instanceof Reaction) {
-				// just one reaction
-				klsd = new KineticLawSelectionDialog(this, sbmlIO,
-						((Reaction) e.getSource()).getId());
+				KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(this, sbmlIO, ((Reaction) e.getSource()).getId());
+				KineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
 			} else {
 				// whole model
-				klsd = new KineticLawSelectionDialog(this, sbmlIO);
-				klsd.addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosed", ""));
-				klsd.setVisible(true);
+				wizard = new KineticLawSelectionWizard(this, sbmlIO);
+				wizard.getDialog().addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosed", ""));
+			    int ret = wizard.showModalDialog();
+			    KineticsAndParametersStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
 			}
-			if (klsd.isKineticsAndParametersStoredInSBML()) {
+			if (KineticsAndParametersStoredInSBML) {
 				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
         ///////////////////////////////////////////
 				// DEBUG mode

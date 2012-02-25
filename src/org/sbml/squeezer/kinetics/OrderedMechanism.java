@@ -95,8 +95,8 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 
 		setNotes(MessageFormat.format(
 				Bundles.MESSAGES.getString("COMPULSORY_ORDER_TERNARY_COMPLEY_MEACHANISM"),
-				(!reaction.getReversible() ? Bundles.MESSAGES.getStringArray("IRREVERSIBLE")
-						: Bundles.MESSAGES.getStringArray("REVERSIBLE")),
+				(!reaction.getReversible() ? Bundles.MESSAGES.getString("IRREVERSIBLE")
+						: Bundles.MESSAGES.getString("REVERSIBLE")),
 				numProd));
 
 		ASTNode numerator;// I
