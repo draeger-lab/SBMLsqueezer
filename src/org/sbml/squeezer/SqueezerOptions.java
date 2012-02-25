@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer;
 
+import javax.swing.ButtonGroup;
+
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillHinzeEquation;
@@ -226,6 +228,7 @@ public interface SqueezerOptions extends KeyProvider {
 			Double.class,
 			Bundles.OPTIONS,
 			1.0d);
+	
 	/**
 	 * If true a new rate law will be created for each reaction irrespective of
 	 * whether there is already a rate law assigned to this reaction or not.
@@ -234,7 +237,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION",
 			Boolean.class,
 			Bundles.OPTIONS,
-			false);
+			true);
 	
 	/**
 	 * If true kinetics are only generated if missing in the SBML file.
@@ -283,6 +286,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 * 
 	 */
 	public static final Range<Boolean> RANGE_BOOLEAN = new Range<Boolean>(Boolean.class, Boolean.TRUE);
+	
 	
 	/**
 	 * If true the information about reversiblity will be left unchanged.
@@ -421,6 +425,7 @@ public interface SqueezerOptions extends KeyProvider {
 			TypeStandardVersion.cat, 
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(OPT_TREAT_ALL_REACTIONS_REVERSIBLE, RANGE_BOOLEAN));
 
+	
 	/**
 	 * How to ensure unit consistency in kinetic equations? One way is to set
 	 * each participating species to an initial amount and to set the unit to
@@ -519,6 +524,7 @@ public interface SqueezerOptions extends KeyProvider {
   	public static final OptionGroup<Boolean> GROUP_REVERSIBILITY = new OptionGroup<Boolean>(
   			"GROUP_REVERSIBILITY",
   			Bundles.OPTIONS,
+  			true,
   			OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
   			OPT_TREAT_ALL_REACTIONS_REVERSIBLE_AS_CD);
   	
@@ -537,7 +543,8 @@ public interface SqueezerOptions extends KeyProvider {
   	@SuppressWarnings({ "unchecked", "rawtypes" })
   	public static final OptionGroup<?> GROUP_UNIT_CONSISTENCY = new OptionGroup(
   			"GROUP_UNIT_CONSISTENCY",
-  			Bundles.OPTIONS,
+  			Bundles.OPTIONS, 
+  			true,
   			TYPE_UNIT_CONSISTENCY,
   			TYPE_UNITS_COMPARTMENT);
   	
@@ -549,6 +556,7 @@ public interface SqueezerOptions extends KeyProvider {
   	public static final OptionGroup<Boolean> GROUP_GENERATE_KINETIC_LAWS = new OptionGroup<Boolean>(
   			"GROUP_GENERATE_KINETIC_LAWS",
   			Bundles.OPTIONS,
+  			true,
   			OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION,
   			OPT_GENERATE_KINETIC_LAW_ONLY_WHEN_MISSING);
   	
