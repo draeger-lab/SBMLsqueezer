@@ -94,7 +94,6 @@ public class KineticLawSelectionDialog extends JDialog{
 		this(owner);
 		
 		try {
-			
 			// This thing is necessary for CellDesigner!
 			final KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
 					sbmlIO, reactionID);

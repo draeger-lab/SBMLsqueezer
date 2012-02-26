@@ -37,6 +37,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,6 +56,7 @@ import javax.swing.border.BevelBorder;
 
 import org.sbml.jsbml.Model;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.KineticLawGeneratorWorker;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.gui.KineticLawTable;
@@ -118,6 +120,9 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		init();
 	}
 	
+	/**
+	 * 
+	 */
 	private void init() {
 		JButton jButtonReactionsFrameSave = new JButton();
 		jButtonReactionsFrameSave.setEnabled(true);
@@ -133,26 +138,32 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		add(buttonPanel, BorderLayout.SOUTH);
 	}
 
+	/**
+	 * 
+	 */
 	public void generateKineticLaw() {
 		try {
 			prefs.flush();
-			Model model = sbmlIO.getSelectedModel();
-			
-			klg = new KineticLawGenerator(model);
-			
-			if (statusBar != null) {
-				AbstractProgressBar progressBar = statusBar.showProgress();
-				klg.setProgressBar(progressBar);
-			}
+
+			klg = new KineticLawGenerator(sbmlIO.getSelectedModel());
 			
 			klg.generateLaws();
 			
-			//TODO: is this needed?
-			if (statusBar != null) {
-				statusBar.hideProgress();
-				statusBar.unsetLogMessageLimit();
-			}
+			generateKineticLawDone();
 			
+			logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
+			firePropertyChange("done", null, null);
+			
+		} catch (Throwable exc) {
+			GUITools.showErrorMessage(this, exc);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void generateKineticLawDone() {
+		try {
 			if (klg.getFastReactions().size() > 0) {
 				StringBuilder message = new StringBuilder();
 				String modelContains = Bundles.MESSAGES.getString("THE_MODEL_CONTAINS")+" ";
@@ -185,11 +196,11 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 				d.setResizable(false);
 				WindowAdapter adapter = new WindowAdapter() {
 					private boolean gotFocus = false;
-
+	
 					public void windowClosing(WindowEvent we) {
 						pane.setValue(null);
 					}
-
+	
 					public void windowGainedFocus(WindowEvent we) {
 						if (!gotFocus) {
 							pane.selectInitialValue();
@@ -224,15 +235,15 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 				// .toString(), 40), "Fast Reactions",
 				// JOptionPane.WARNING_MESSAGE);
 			}
-
+	
 			JPanel reactionsPanel = new JPanel(new BorderLayout());
 			JTable tableOfKinetics = new KineticLawTable(klg);
 			numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
 					.getNumOfWarnings();
 			tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
+	
 			JScrollPane scroll;
-
+	
 			if (tableOfKinetics.getRowCount() == 0) {
 				JEditorPane pane = new JEditorPane(
 						sbmlIO.getSelectedModel().getNumReactions() > 0 ? Resource.class
@@ -254,7 +265,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 					.createBevelBorder(BevelBorder.LOWERED));
 			scroll.setBackground(Color.WHITE);
 			reactionsPanel.add(scroll, BorderLayout.CENTER);
-
+	
 			JLabel numberOfWarnings = new JLabel(
 					"<html><table align=left width=500 cellspacing=10><tr><td>"
 							+ "<b>" + Bundles.MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
@@ -266,9 +277,9 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 									Bundles.MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
 									40));
 			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
-
+	
 			add(reactionsPanel, BorderLayout.CENTER);
-
+	
 			validate();
 		} catch (Throwable exc) {
 			GUITools.showErrorMessage(this, exc);
