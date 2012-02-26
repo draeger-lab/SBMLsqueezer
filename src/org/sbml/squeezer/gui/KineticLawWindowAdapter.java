@@ -32,6 +32,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -41,6 +42,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.KineticLawGeneratorWorker;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 
@@ -151,18 +153,30 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			reaction.setReversible(messagePanel.getReversible());
 			klg.getPreferences().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
 					Boolean.valueOf(messagePanel.getReversible()));
-			try {
-				// TODO: Do this in background using SwingWorker!
-				KineticLaw kineticLaw = klg.createKineticLaw(reaction,
-					equationType, messagePanel.getReversible());
-				klg.storeKineticLaw(kineticLaw);
-				sbmlio.saveChanges(reaction);
-			} catch (Throwable exc) {
-				GUITools.showErrorMessage(dialog, exc);
-			}
-			SBMLsqueezerUI.checkForSBMLErrors(dialog,
-					sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
-							.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
+			
+			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(klg, reaction,
+					equationType, messagePanel.getReversible()) {
+				/* (non-Javadoc)
+				 * @see javax.swing.SwingWorker#done()
+				 */
+				@Override
+				protected void done() {
+					KineticLaw kineticLaw;
+					try {
+						kineticLaw = get();
+						klg.storeKineticLaw(kineticLaw);
+						sbmlio.saveChanges(reaction);
+						SBMLsqueezerUI.checkForSBMLErrors(dialog,
+								sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
+										.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
+					} catch (Throwable exc) {
+						GUITools.showErrorMessage(dialog, exc);
+					}
+				}
+			};
+			
+			klgw.run();
+			
 			KineticsAndParametersStoredInSBML = true;
 		} else {
 			KineticsAndParametersStoredInSBML = false;
