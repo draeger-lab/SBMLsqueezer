@@ -81,7 +81,6 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 			options.setIcon(icon);
 		}
 		options.setIconTextGap(5);
-		options.setBorderPainted(false);
 		options.setSize(150, 20);
 		options.setToolTipText(Bundles.MESSAGES.getString("SHOW_OPTIONS_TOOLTIP"));
 		options.addActionListener(this);
