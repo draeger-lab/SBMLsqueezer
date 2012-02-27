@@ -386,9 +386,10 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 					setVisible(false);
 					storeKineticsInOriginalModel();
 					//dispose();
-					// FIXME: NullPointerException!
-					statusBar.hideProgress();
-					statusBar.unsetLogMessageLimit();
+					if (statusBar != null) {
+						statusBar.hideProgress();
+						statusBar.unsetLogMessageLimit();
+					}
 					logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
 				}
 			}).start();
