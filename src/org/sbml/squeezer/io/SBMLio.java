@@ -72,15 +72,15 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 
 	private LinkedList<Object> listOfOrigModels;
 
+	protected AbstractProgressBar progress;
+
 	private SBMLInputConverter reader;
 
 	private List<TreeNode> removed;
 
 	private int selectedModel;
-
-	private SBMLOutputConverter writer;
 	
-	protected AbstractProgressBar progress;
+	private SBMLOutputConverter writer;
 	
 	/**
 	 * 
@@ -141,6 +141,14 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		}
 	}
 
+	public int getErrorCount() {
+		return getNumErrors();
+	}
+
+	public int getErrorCount(Object sbase) {
+		return getNumErrors(sbase);
+	}
+
 	/**
 	 * 
 	 * @return
@@ -153,14 +161,14 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @see org.sbml.jsbml.SBMLInputConverter#getNumErrors()
 	 */
 	public int getNumErrors() {
-		return listOfModels.size() > 0 ? reader.getNumErrors() : 0;
+		return listOfModels.size() > 0 ? reader.getErrorCount() : 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#getNumErrors(java.lang.Object)
 	 */
 	public int getNumErrors(Object sbase) {
-		return writer.getNumErrors(sbase);
+		return writer.getErrorCount(sbase);
 	}
 
 	/* (non-Javadoc)
@@ -273,14 +281,6 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return writer.saveChanges(reaction, model);
 	}
 
-	/**
-	 * 
-	 * @param selectedModel
-	 */
-	public void setSelectedModel(int selectedModel) {
-		this.selectedModel = selectedModel;
-	}
-
 	/* (non-Javadoc)
 	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 	 */
@@ -332,7 +332,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return writer.writeSBML(listOfOrigModels.get(model), filename);
 	}
 
-	/* (non-Javadoc)
+  /* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String)
 	 */
 	public boolean writeSBML(Object sbmlDocument, String filename)
@@ -349,7 +349,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return writer.writeSBML(object, filename, programName, versionNumber);
 	}
 
-  /**
+	/**
 	 * 
 	 * @param filename
 	 * @return

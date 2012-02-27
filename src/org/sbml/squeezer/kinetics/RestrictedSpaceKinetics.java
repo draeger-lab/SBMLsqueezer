@@ -56,12 +56,8 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 		super(parentReaction, types);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util
-	 * .List, int)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util.List, int)
 	 */
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
@@ -85,33 +81,23 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 		return ass;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#inhibitionFactor(java
-	 * .util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#inhibitionFactor(java.util.List)
 	 */
 	@Override
 	ASTNode inhibitionFactor(List<String> modifiers) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#activationFactor(java
-	 * .util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#activationFactor(java.util.List)
 	 */
 	@Override
 	ASTNode activationFactor(List<String> activators) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	@Override

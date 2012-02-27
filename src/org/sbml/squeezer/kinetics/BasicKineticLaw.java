@@ -59,6 +59,11 @@ import org.sbml.squeezer.SqueezerOptions;
 public abstract class BasicKineticLaw extends KineticLaw {
 
 	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static Logger logger = Logger.getLogger(BasicKineticLaw.class.getSimpleName());
+
+	/**
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = -7857020266193305483L;
@@ -88,6 +93,12 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	private List<String> enzymes;
 
 	/**
+	 * True if the reaction system to which the parent reaction belongs has a
+	 * full collumn rank.
+	 */
+	boolean fullRank;
+
+	/**
 	 * Ids of inhibitors that lower the velocity of this rate law.
 	 */
 	private List<String> inhibitors;
@@ -96,17 +107,6 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * The ids of catalysts that are no enzymes.
 	 */
 	private List<String> nonEnzymeCatalysts;
-
-	/**
-	 * Optional parameters needed to initialize subtypes of this object.
-	 */
-	private Object typeParameters[];
-
-	/**
-	 * True if the reaction system to which the parent reaction belongs has a
-	 * full collumn rank.
-	 */
-	boolean fullRank;
 
 	/**
 	 * Allows for zeroth order reverse kinetics.
@@ -119,6 +119,10 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	double orderReactants;
 
 	/**
+	 * 
+	 */
+	ParameterFactory parameterFactory;
+	/**
 	 * <ol>
 	 * <li>cat</li>
 	 * <li>hal</li>
@@ -126,15 +130,11 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * </ol>
 	 */
 	SqueezerOptions.TypeStandardVersion type;
-	/**
-	 * 
-	 */
-	ParameterFactory parameterFactory;
 	
 	/**
-	 * A {@link Logger} for this class.
+	 * Optional parameters needed to initialize subtypes of this object.
 	 */
-	private static Logger logger = Logger.getLogger(BasicKineticLaw.class.getSimpleName());
+	private Object typeParameters[];
 
 	/**
 	 * 
@@ -158,12 +158,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			
 			//type = Short.parseShort(getTypeParameters()[0].toString());
 		}
-		if (typeParameters.length > 1
+		if ((typeParameters.length > 1)
 				&& !Boolean.parseBoolean(getTypeParameters()[1].toString())) {
 			fullRank = false;
 		}
 		if (typeParameters.length > 2) {
-			bringToConcentration = SqueezerOptions.TypeUnitConsistency.valueOf(typeParameters[2].toString()) == SqueezerOptions.TypeUnitConsistency.concentration;
+			bringToConcentration = SqueezerOptions.TypeUnitConsistency
+					.valueOf(typeParameters[2].toString()) == SqueezerOptions.TypeUnitConsistency.concentration;
 		}
 		if (typeParameters.length > 3) {
 			defaultParamValue = Double
@@ -173,6 +174,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		activators = new LinkedList<String>();
 		inhibitors = new LinkedList<String>();
 		nonEnzymeCatalysts = new LinkedList<String>();
+		orderReactants = getOrderReactants();
+		orderProducts = getOrderProducts();
 		ReactionType.identifyModifers(parentReaction, enzymes, activators,
 				inhibitors, nonEnzymeCatalysts);
 		this.parameterFactory = new ParameterFactory(this, defaultParamValue,
@@ -201,6 +204,22 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	@Override
 	public String getElementName() {
 		return "kineticLaw";
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	double getOrderProducts() {
+		return ReactionType.productOrder(getParent());
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	double getOrderReactants() {
+		return ReactionType.reactantOrder(getParent());
 	}
 
 	/**

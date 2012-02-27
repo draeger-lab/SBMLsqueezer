@@ -54,14 +54,19 @@ import org.sbml.squeezer.util.Bundles;
 public class SqSBMLReader implements SBMLInputConverter {
 
 	/**
+	 * 
+	 */
+	private LinkedList<TreeNodeChangeListener> listOfTreeNodeChangeListeners;
+	/**
 	 * working copy of the original JSBL model
 	 */
 	Model model;
+
 	/**
 	 * original JSBML model
 	 */
 	Model originalModel;
-
+	
 	/**
 	 * 
 	 */
@@ -71,11 +76,6 @@ public class SqSBMLReader implements SBMLInputConverter {
 	 * 
 	 */
 	private HashSet<IOProgressListener> setOfIOListeners;
-	
-	/**
-	 * 
-	 */
-	private LinkedList<TreeNodeChangeListener> listOfTreeNodeChangeListeners;
 	
 	/**
 	 * 
@@ -96,8 +96,7 @@ public class SqSBMLReader implements SBMLInputConverter {
 		this.model = convertModel(model);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLInputConverter#addIOProgressListener(org.sbml.jsbml.util.IOProgressListener)
 	 */
 	public void addIOProgressListener(IOProgressListener listener) {
@@ -105,8 +104,7 @@ public class SqSBMLReader implements SBMLInputConverter {
 
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLInputConverter#convertModel(java.lang.Object)
 	 */
 	public Model convertModel(Object model) throws IllegalArgumentException, IOException, XMLStreamException {
@@ -124,6 +122,35 @@ public class SqSBMLReader implements SBMLInputConverter {
 		} else {
 			throw new IllegalArgumentException(Bundles.WARNINGS.getString("WRONG_MODEL_INSTANCE"));
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#getErrorCount()
+	 */
+	public int getErrorCount() {
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#getNumErrors()
+	 */
+	@Deprecated
+	public int getNumErrors() {
+		return getErrorCount();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#getOriginalModel()
+	 */
+	public Model getOriginalModel() {
+		return originalModel;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLInputConverter#getWarnings()
+	 */
+	public List<SBMLException> getWarnings() {
+		return new ArrayList<SBMLException>(0);
 	}
 
 	/**
@@ -165,30 +192,6 @@ public class SqSBMLReader implements SBMLInputConverter {
     }
 		// return working copy
 		return this.model;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLInputConverter#getNumErrors()
-	 */
-	public int getNumErrors() {
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLInputConverter#getOriginalModel()
-	 */
-	public Model getOriginalModel() {
-		return originalModel;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.sbml.jsbml.SBMLInputConverter#getWarnings()
-	 */
-	public List<SBMLException> getWarnings() {
-		return new ArrayList<SBMLException>(0);
 	}
 
 }

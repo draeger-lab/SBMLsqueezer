@@ -32,7 +32,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;

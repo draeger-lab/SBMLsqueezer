@@ -60,24 +60,24 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util
-	 * .List, int)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#association(java.util.List, int)
 	 */
 	@Override
 	final ASTNode association(List<String> catalysts, int catNum) {
-		orderReactants = 0;
-		orderProducts = Double.NaN;
 		return new ASTNode(parameterFactory.parameterAssociationConst(catalysts
 				.size() == 0 ? null : catalysts.get(catNum)), this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getOrderReactants()
+	 */
+	@Override
+	double getOrderReactants() {
+		return 0d;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {

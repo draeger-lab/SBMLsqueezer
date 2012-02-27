@@ -82,18 +82,18 @@ public class KineticLawTableModel extends AbstractTableModel {
 				Bundles.MESSAGES.getString("COL_PRODUCTS"),
 				Bundles.MESSAGES.getString("COL_PARAMETERS"),
 				Bundles.MESSAGES.getString("COL_FORMULA")};
-		data = new Object[klg.getNumCreatedKinetics()][this.columnNames.length];
+		data = new Object[klg.getCreatedKineticsCount()][this.columnNames.length];
 		numOfWarnings = 0;
 
 		int maxNumReactants = klg.getPreferences().getInt(
 				SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS);
-		for (reactionNum = 0; reactionNum < klg.getNumCreatedKinetics(); reactionNum++) {
+		for (reactionNum = 0; reactionNum < klg.getCreatedKineticsCount(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
 			String kinetic = reaction.getKineticLaw().getFormula();
 			ListOf<LocalParameter> param = reaction.getKineticLaw()
 					.getListOfLocalParameters();
 			numReac = 0;
-			for (speciesNum = 0; speciesNum < reaction.getNumReactants(); speciesNum++)
+			for (speciesNum = 0; speciesNum < reaction.getReactantCount(); speciesNum++)
 				numReac += reaction.getReactant(speciesNum).getStoichiometry();
 			if (numReac >= maxNumReactants)
 				numOfWarnings++;
@@ -101,14 +101,16 @@ public class KineticLawTableModel extends AbstractTableModel {
 			String pro = "";
 			String para = "";
 
-			if (reaction.getNumReactants() > 0)
+			if (reaction.getReactantCount() > 0) {
 				reac += reaction.getReactant(0).getSpecies();
-			for (speciesNum = 1; speciesNum < reaction.getNumReactants(); speciesNum++)
+			}
+			for (speciesNum = 1; speciesNum < reaction.getReactantCount(); speciesNum++)
 				reac += ", " + reaction.getReactant(speciesNum).getSpecies();
 
-			if (reaction.getNumProducts() > 0)
+			if (reaction.getProductCount() > 0) {
 				pro += reaction.getProduct(0).getSpecies();
-			for (speciesNum = 1; speciesNum < reaction.getNumProducts(); speciesNum++)
+			}
+			for (speciesNum = 1; speciesNum < reaction.getProductCount(); speciesNum++)
 				pro += ", " + reaction.getProduct(speciesNum).getSpecies();
 
 			for (int j = 0; j < param.size() - 1; j++)
@@ -138,18 +140,14 @@ public class KineticLawTableModel extends AbstractTableModel {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#getColumnName(int)
 	 */
 	@Override
@@ -163,31 +161,25 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * 
 	 * @return
 	 */
-	public int getNumOfWarnings() {
+	public int getWarningCount() {
 		return numOfWarnings;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
 	public int getRowCount() {
 		return data.length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int row, int column) {
 		return data[row][column];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 */
 	@Override
@@ -197,15 +189,13 @@ public class KineticLawTableModel extends AbstractTableModel {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object,
-	 * int, int)
+	/* (non-Javadoc)
+	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
 	 */
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		data[rowIndex][columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);
 	}
+
 }

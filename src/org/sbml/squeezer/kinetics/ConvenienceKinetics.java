@@ -77,12 +77,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		super(parentReaction, types);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
@@ -100,12 +96,14 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			String enzyme = modE.size() > 0 ? modE.get(i) : null;
 			numerator = numeratorElements(enzyme, true);
 			denominator = denominatorElements(enzyme, true);
-			if (reaction.getReversible() && reaction.getNumProducts() > 0) {
+			if (reaction.isReversible() && (reaction.getProductCount() > 0)) {
 				numerator.minus(numeratorElements(enzyme, false));
-				denominator.plus(denominatorElements(enzyme, false));
-				if (reaction.getNumProducts() > 1
-						&& reaction.getNumReactants() > 1) {
-					denominator.minus(1);
+				if (denominator != null) {
+					denominator.plus(denominatorElements(enzyme, false));
+					if ((reaction.getProductCount() > 1)
+							&& (reaction.getReactantCount() > 1)) {
+						denominator.minus(1);
+					}
 				}
 			}
 			if (denominator != null) {
@@ -138,10 +136,10 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	private ASTNode numeratorElements(String enzyme, boolean forward) {
 		Reaction reaction = getParentSBMLObject();
 
-		ASTNode[] reactants = new ASTNode[reaction.getNumReactants()];
-		ASTNode[] products = new ASTNode[reaction.getNumProducts()];
-		ASTNode[] reactantsroot = new ASTNode[reaction.getNumReactants()];
-		ASTNode[] productroot = new ASTNode[reaction.getNumProducts()];
+		ASTNode[] reactants = new ASTNode[reaction.getReactantCount()];
+		ASTNode[] products = new ASTNode[reaction.getProductCount()];
+		ASTNode[] reactantsroot = new ASTNode[reaction.getReactantCount()];
+		ASTNode[] productroot = new ASTNode[reaction.getProductCount()];
 		ASTNode equation;
 		LocalParameter p_kM;
 
@@ -237,16 +235,13 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	 */
 	private ASTNode denominatorElements(String enzyme, boolean forward) {
 		Reaction reaction = getParentSBMLObject();
-		ASTNode[] denoms = new ASTNode[forward ? reaction.getNumReactants()
-				: reaction.getNumProducts()];
+		ASTNode denoms[] = new ASTNode[forward ? reaction.getReactantCount() : reaction.getProductCount()];
 		boolean noOne = (denoms.length == 1)
 				&& (!forward || (forward && reaction.getReversible() && reaction
-						.getNumProducts() > 1));
+						.getProductCount() > 1));
 		for (int i = 0; i < denoms.length; i++) {
-			SpeciesReference ref = forward ? reaction.getReactant(i) : reaction
-					.getProduct(i);
-			LocalParameter p_kM = parameterFactory.parameterMichaelis(ref
-					.getSpecies(), enzyme, forward);
+			SpeciesReference ref = forward ? reaction.getReactant(i) : reaction.getProduct(i);
+			LocalParameter p_kM = parameterFactory.parameterMichaelis(ref.getSpecies(), enzyme, forward);
 			if (!p_kM.isSetSBOTerm()) {
 				SBMLtools.setSBOTerm(p_kM,forward ? 322 : 323);
 			}
@@ -258,12 +253,10 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 						denoms[i]);
 			}
 		}
-		return ASTNode.times(denoms);
+		return ASTNode.times(denoms); 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	@Override

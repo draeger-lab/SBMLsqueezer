@@ -23,11 +23,7 @@
   <entry key="INVALID_COMPARTMENT_DIMENSION">Compartment {0} had an invalid spacial dimension and was therefore set to a volume.</entry>
   <entry key="INVALID_REACTION_FORMAT">Reaction {0} in the model has an incorrect format. This means there is either an empty kinetic law in this reaction or a kinetic law that only consists of a white space. If you decide not to save this generated model, there is only one solution: open this SBML file in an editor and delete the whole kinetic law. SBMLsqueezer ignores this misstake and generates a proper equation. Therfore we recomment that you save this generated model.</entry>
   <entry key="INVALID_REACTION_ID_FOR_RATE_LAW_CREATION">{0} is not the id of a reaction for which rate laws are to be created.</entry>
-  
-  <!-- ParameterFactory -->
-  <entry key="UNDEFINED_COMPARTMENT_OF_SPECIES">The compartment of species "{0}" is undefined.</entry>
-  <entry key="UNDEFINED_UNIT_OF_SPECIES">Could not assign units to parameter "{0}" due to undefined units of species "{1}".</entry>
-  
+
   <!-- ReactionType -->
   <entry key="REACTION_MUST_BE_TRANSRIPTION">Reaction {0} must be a transcription.</entry>
   <entry key="REACTION_MUST_BE_TRANSLATION">Reaction {0} must be a tranlation.</entry>
@@ -78,5 +74,9 @@
   
   <!-- SBMLtools -->
   <entry key="COULD_NOT_SET_SBO_TERM">Could not set SBO term {0} for {1} with Level = {2} and Version = {3}.</entry>
+  
+  <!-- UnitFactory -->
+  <entry key="UNDEFINED_COMPARTMENT_OF_SPECIES">The compartment of species "{0}" is undefined.</entry>
+  <entry key="UNDEFINED_UNIT_OF_SPECIES">Undefined units of species "{0}".</entry>
 
 </properties>

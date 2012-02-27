@@ -86,7 +86,7 @@ public class TestCasesAnalyser {
 					Model model = sbmlIo.convertModel(f.getAbsolutePath()
 							+ "/" + dir.getName() + "/" + dir.getName()
 							+ "-sbml-l2v4.xml");
-					if (model.getNumEvents() > 0) {
+					if (model.getEventCount() > 0) {
 						withEvents.add(dir.getName());
 						for (Event e : model.getListOfEvents()) {
 							if (e.isSetDelay()) {
@@ -99,7 +99,7 @@ public class TestCasesAnalyser {
 							checkDelay(e.getTrigger(), dir, withDelayFunctions);
 						}
 					}
-					if (model.getNumRules() > 0) {
+					if (model.getRuleCount() > 0) {
 						for (Rule r : model.getListOfRules()) {
 							if (r.isAlgebraic()) {
 								withAlgebraicRules.add(dir.getName());
@@ -111,19 +111,19 @@ public class TestCasesAnalyser {
 							checkDelay(r, dir, withDelayFunctions);
 						}
 					}
-					if (model.getNumInitialAssignments() > 0) {
+					if (model.getInitialAssignmentCount() > 0) {
 						withInitialAssignments.add(dir.getName());
 						checkDelay(model.getListOfInitialAssignments(), dir,
 								withDelayFunctions);
 					}
-					if (model.getNumReactions() > 0) {
+					if (model.getReactionCount() > 0) {
 						withReactions.add(dir.getName());
 						for (Reaction r : model.getListOfReactions()) {
 							if (r.isFast()) {
 								withFastReactions.add(dir.getName());
 								break;
 							}
-							if (r.isSetKineticLaw() && (r.getKineticLaw().getNumLocalParameters() > 0)) {
+							if (r.isSetKineticLaw() && (r.getKineticLaw().getLocalParameterCount() > 0)) {
 								withLocalParameters.add(dir.getName());
 							}
 							checkForStoichiometryMath(r.getListOfReactants(),
@@ -138,12 +138,12 @@ public class TestCasesAnalyser {
 					} else {
 						withOutReactions.add(dir.getName());
 					}
-					if (model.getNumFunctionDefinitions() > 0) {
+					if (model.getFunctionDefinitionCount() > 0) {
 						withFunctionDefinitions.add(dir.getName());
 						checkDelay(model.getListOfFunctionDefinitions(), dir,
 								withDelayFunctions);
 					}
-					if (model.getNumConstraints() > 0) {
+					if (model.getConstraintCount() > 0) {
 						withConstraints.add(dir.getName());
 						checkDelay(model.getListOfConstraints(), dir,
 								withDelayFunctions);

@@ -23,6 +23,9 @@
  */
 package org.sbml.squeezer;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
@@ -36,8 +39,14 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.filters.SBOFilter;
+import org.sbml.squeezer.util.Bundles;
 
 /**
+ * A factory class that creates frequently used instances of {@link Unit} and
+ * {@link UnitDefinition} if these are not yet present in a {@link Model}. To
+ * this end, it always checks the {@link Model} and tries to obtain existing
+ * {@link UnitDefinition}s from the {@link Model} wheneer this is possible.
+ * 
  * @author Andreas Dr&auml;ger
  * @date 2010-10-22
  * @version $Rev$
@@ -72,6 +81,23 @@ public class UnitFactory {
 		return unitdef;
 	}
 	
+	/**
+	 * 
+	 * @param ud
+	 * @param sbmlDocument 
+	 */
+	private static void updateAnnotation(UnitDefinition ud, SBMLDocument doc) {
+		for (int i=0; i<ud.getUnitCount(); i++) {
+			Unit unit = ud.getUnit(i);
+			if (unit.isSetMetaId()) {
+				unit.setMetaId(doc.nextMetaId());
+				if (unit.isSetAnnotation()) {
+					unit.getAnnotation().setAbout('#' + unit.getMetaId());
+				}
+			}
+		}
+	}
+
 	private boolean bringToConcentration;
 
 	/**
@@ -90,9 +116,16 @@ public class UnitFactory {
 		this.bringToConcentration = bringToConcentration;
 	}
 
+	/**
+	 * @param id
+	 * @return
+	 */
 	private String checkId(String id) {
 		StringBuilder sb = new StringBuilder();
 		char c;
+		if (Character.isDigit(id.charAt(0))) {
+			sb.append('_');
+		}
 		for (int i = 0; i < id.length(); i++) {
 			c = id.charAt(i);
 			if (c == '^') {
@@ -112,6 +145,57 @@ public class UnitFactory {
 	 */
 	public boolean getBringToConcentration() {
 		return bringToConcentration;
+	}
+
+	/**
+	 * 
+	 * @param listOf
+	 * @param zerothOrder
+	 * @param x
+	 * @return
+	 */
+	private UnitDefinition unitConcentrationOrSubstance(
+		List<? extends SimpleSpeciesReference> listOf, boolean zerothOrder,
+		double... x) {
+		UnitDefinition amount = new UnitDefinition("amount", model.getLevel(),
+			model.getVersion());
+		if (!zerothOrder) {
+			UnitDefinition substance;
+			SimpleSpeciesReference specRef;
+			Species species;
+			for (int i = 0; i < listOf.size(); i++) {
+				specRef = listOf.get(i);
+				species = specRef.getSpeciesInstance();
+				substance = species.getSubstanceUnitsInstance().clone();
+				if (bringToConcentration) {
+					if (species.hasOnlySubstanceUnits()) {
+						substance.divideBy(species.getSpatialSizeUnitsInstance());
+						substance.multiplyWith(species.getSpatialSizeUnitsInstance());
+					} else {
+						substance.divideBy(species.getSpatialSizeUnitsInstance());
+					}
+				} else {
+					if (species.hasOnlySubstanceUnits()) {
+						substance.multiplyWith(species.getSpatialSizeUnitsInstance());
+					} else {
+						substance.multiplyWith(species.getSpatialSizeUnitsInstance());
+						substance.divideBy(species.getSpatialSizeUnitsInstance());
+					}
+				}
+				for (Unit u : substance.getListOfUnits()) {
+					if (specRef instanceof SpeciesReference) {
+						SpeciesReference ref = (SpeciesReference) specRef;
+						if (ref.isSetStoichiometry() && (x.length < listOf.size())) {
+							u.setExponent(u.getExponent() + (ref.getStoichiometry() - 1));
+						}
+					} else if (x.length == listOf.size()) {
+						u.setExponent(x[i]);
+					}
+				}
+				amount.multiplyWith(substance);
+			}
+		}
+		return amount;
 	}
 
 	/**
@@ -182,6 +266,34 @@ public class UnitFactory {
 	 * 
 	 * @param listOf
 	 * @param zerothOrder
+	 * @param h
+	 *            Exponent for the time
+	 * @param x
+	 *            Exponents for the species (parameter value, other than
+	 *            stoichiometry).
+	 * @return
+	 */
+	private UnitDefinition unitPerTimeAndConcentrationOrSubstance(
+		List<? extends SimpleSpeciesReference> listOf, boolean zerothOrder,
+		double h, double... x) {
+		int level = model.getLevel(), version = model.getVersion();
+		UnitDefinition ud = new UnitDefinition("ud", level, version);
+		ud.divideBy(model.getTimeUnitsInstance());
+		if (h != 0d) {
+			for (Unit u : ud.getListOfUnits()) {
+				u.setExponent(u.getExponent() - h);
+			}
+		}
+		UnitDefinition amount = unitConcentrationOrSubstance(listOf, zerothOrder);
+		ud = ud.divideBy(amount).multiplyWith(model.getSubstanceUnitsInstance()).simplify();
+		checkUnitDefinitions(ud, model);
+		return ud;
+	}
+
+	/**
+	 * 
+	 * @param listOf
+	 * @param zerothOrder
 	 *            if true this unit will be created for a zeroth order rate
 	 *            constant.
 	 * @return
@@ -189,7 +301,7 @@ public class UnitFactory {
 	public UnitDefinition unitPerTimeAndConcentrationOrSubstance(
 			ListOf<? extends SimpleSpeciesReference> listOf, boolean zerothOrder) {
 		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf,
-				zerothOrder, 0);
+				zerothOrder, 0d);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < ud.getNumUnits(); i++) {
 			Unit u = ud.getUnit(i);
@@ -208,85 +320,6 @@ public class UnitFactory {
 			ud = checkUnitDefinitions(ud, model);
 		}
 		return model.getUnitDefinition(ud.getId());
-	}
-
-	/**
-	 * 
-	 * @param listOf
-	 * @param zerothOrder
-	 * @param h
-	 *            Exponent for the time
-	 * @param x
-	 *            Exponents for the species (parameter value, other than
-	 *            stoichiometry).
-	 * @return
-	 */
-	private UnitDefinition unitPerTimeAndConcentrationOrSubstance(
-			ListOf<? extends SimpleSpeciesReference> listOf,
-			boolean zerothOrder, double h, double... x) {
-		UnitDefinition ud = new UnitDefinition("ud", model.getLevel(), model
-				.getVersion());
-		ud.divideBy(model.getTimeUnitsInstance());
-		if (h != 0) {
-			for (Unit u : ud.getListOfUnits()) {
-				u.setExponent(u.getExponent() - h);
-			}
-		}
-		UnitDefinition amount = new UnitDefinition("amount", model.getLevel(),
-				model.getVersion());
-		if (!zerothOrder) {
-			UnitDefinition substance;
-			SimpleSpeciesReference specRef;
-			Species species;
-			for (int i = 0; i < listOf.size(); i++) {
-				specRef = listOf.get(i);
-				species = specRef.getSpeciesInstance();
-				substance = species.getSubstanceUnitsInstance().clone();
-				if (bringToConcentration && species.hasOnlySubstanceUnits()) {
-					substance.divideBy(species.getCompartmentInstance()
-							.getUnitsInstance());
-				} else if (!bringToConcentration
-						&& !species.hasOnlySubstanceUnits()) {
-					substance.multiplyWith(species.getCompartmentInstance()
-							.getUnitsInstance());
-				}
-				for (Unit u : substance.getListOfUnits()) {
-					if (specRef instanceof SpeciesReference) {
-						SpeciesReference ref = (SpeciesReference) specRef;
-						if (ref.isSetStoichiometry()
-								&& (x.length < listOf.size())) {
-
-							u.setExponent(u.getExponent()
-									+ ((int) ref.getStoichiometry() - 1));
-						}
-					} else if (x.length == listOf.size()) {
-						u.setExponent(x[i]);
-					}
-				}
-				amount.multiplyWith(substance);
-			}
-		}
-		ud = ud.divideBy(amount)
-				.multiplyWith(model.getSubstanceUnitsInstance()).simplify();
-		checkUnitDefinitions(ud, model);
-		return ud;
-	}
-
-	/**
-	 * 
-	 * @param ud
-	 * @param sbmlDocument 
-	 */
-	private static void updateAnnotation(UnitDefinition ud, SBMLDocument doc) {
-		for (int i=0; i<ud.getNumUnits(); i++) {
-			Unit unit = ud.getUnit(i);
-			if (unit.isSetMetaId()) {
-				unit.setMetaId(doc.nextMetaId());
-				if (unit.isSetAnnotation()) {
-					unit.getAnnotation().setAbout('#' + unit.getMetaId());
-				}
-			}
-		}
 	}
 
 	/**
@@ -324,8 +357,7 @@ public class UnitFactory {
 			ud = ud.clone();
 			for (SimpleSpeciesReference ssr : l) {
 				Species s = ssr.getSpeciesInstance();
-				UnitDefinition compUD = s.getCompartmentInstance()
-						.getUnitsInstance();
+				UnitDefinition compUD = s.getCompartmentInstance().getUnitsInstance();
 				if (bringToConcentration && s.hasOnlySubstanceUnits()) {
 					ud.multiplyWith(compUD);
 					ud.setId(ud.getId() + "_times_" + compUD.getId());
@@ -377,13 +409,33 @@ public class UnitFactory {
 
 	/**
 	 * 
-	 * @param substance
-	 * @param size
+	 * @param species
 	 * @return
 	 */
-	public UnitDefinition unitSubstancePerSize(UnitDefinition substance,
-			UnitDefinition size) {
-		return unitSubstancePerSize(substance, size, 1);
+	public UnitDefinition unitSubstancePerSize(Species species) {
+		Compartment compartment = species.getCompartmentInstance();
+		if (compartment == null) { throw new NullPointerException(
+			MessageFormat.format(
+				Bundles.WARNINGS.getString("UNDEFINED_COMPARTMENT_OF_SPECIES"),
+				species.toString())); }
+		UnitDefinition substanceUnit = species.getSubstanceUnitsInstance();
+		UnitDefinition sizeUnit = compartment.getUnitsInstance();
+		if ((substanceUnit == null) || (sizeUnit == null)) { throw new NullPointerException(
+			MessageFormat.format(
+				Bundles.WARNINGS.getString("UNDEFINED_UNIT_OF_SPECIES"),
+				species.toString())); }
+		return unitSubstancePerSize(substanceUnit, sizeUnit);
+	}
+	
+	/**
+	 * 
+	 * @param substanceUnit
+	 * @param sizeUnit
+	 * @return
+	 */
+	public UnitDefinition unitSubstancePerSize(UnitDefinition substanceUnit,
+			UnitDefinition sizeUnit) {
+		return unitSubstancePerSize(substanceUnit, sizeUnit, 1d);
 	}
 
 	/**
@@ -394,15 +446,13 @@ public class UnitFactory {
 	 * @return
 	 */
 	public UnitDefinition unitSubstancePerSize(UnitDefinition substance,
-			UnitDefinition size, int exponent) {
-		StringBuffer id = StringTools.concat(substance.getId(), "_per_", size
-				.getId());
-		if (exponent != 1) {
+			UnitDefinition size, double exponent) {
+		StringBuffer id = StringTools.concat(substance.getId(), "_per_", size.getId());
+		if (exponent != 1d) {
 			id.append("_raised_by_");
 			id.append(exponent);
 		}
-		UnitDefinition substancePerSize = model
-				.getUnitDefinition(id.toString());
+		UnitDefinition substancePerSize = model.getUnitDefinition(id.toString());
 		if (substancePerSize == null) {
 			substancePerSize = new UnitDefinition(id.toString(), model
 					.getLevel(), model.getVersion());
@@ -412,6 +462,15 @@ public class UnitFactory {
 			substancePerSize = checkUnitDefinitions(substancePerSize, model);
 		}
 		return substancePerSize;
+	}
+
+	/**
+	 * 
+	 * @param species
+	 * @return
+	 */
+	public UnitDefinition unitSubstancePerSizeOrSubstance(Species species) {
+		return bringToConcentration ? unitSubstancePerSize(species) : species.getSubstanceUnitsInstance();
 	}
 
 	/**
@@ -445,8 +504,7 @@ public class UnitFactory {
 		String id = substance.getId() + "_per_" + time.getId();
 		UnitDefinition substancePerTime = model.getUnitDefinition(id);
 		if (substancePerTime == null) {
-			substancePerTime = new UnitDefinition(id, model.getLevel(), model
-					.getVersion());
+			substancePerTime = new UnitDefinition(id, model.getLevel(), model.getVersion());
 			substancePerTime.multiplyWith(substance);
 			substancePerTime.divideBy(time);
 			substancePerTime = checkUnitDefinitions(substancePerTime, model);

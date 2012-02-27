@@ -78,13 +78,8 @@ public class HSystem extends BasicKineticLaw implements
 				.getId()), this);
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List,
-	 * java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
@@ -129,11 +124,12 @@ public class HSystem extends BasicKineticLaw implements
 				}
 			}
 		}
-		if (r.getNumProducts() > 0
+		if ((r.getProductCount() > 0)
 				&& !SBO.isEmptySet(r.getProduct(0).getSpeciesInstance()
-						.getSBOTerm()))
+						.getSBOTerm())) {
 			return node.isUnknown() ? speciesTerm(r.getProduct(0)) : ASTNode
 					.times(speciesTerm(r.getProduct(0)), node);
+		}
 		return node.isUnknown() ? null : node;
 	}
 
@@ -166,9 +162,7 @@ public class HSystem extends BasicKineticLaw implements
 		return node.isUnknown() ? null : node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	@Override

@@ -64,12 +64,8 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
@@ -77,11 +73,12 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		if (modCat.size() > 0)
 			throw new RateLawNotApplicableException(Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS"));
 		Reaction reaction = getParentSBMLObject();
-		if ((reaction.getNumReactants() > 1)
+		if ((reaction.getReactantCount() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1d))
 			throw new RateLawNotApplicableException(Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_REACTIONS_WITH_EXACTLY_ONE_SUBSTRATE_SPECIES"));
-		if (reaction.getReversible())
+		if (reaction.getReversible()) {
 			reaction.setReversible(false);
+		}
 
 		switch (modInhib.size()) {
 		case 0:

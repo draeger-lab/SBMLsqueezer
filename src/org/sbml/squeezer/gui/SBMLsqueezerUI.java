@@ -37,7 +37,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
@@ -62,7 +61,6 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
-import org.sbml.squeezer.gui.wizard.KineticLawSelectionOptionPanelDescriptor;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
@@ -79,18 +77,11 @@ import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
 import de.zbit.gui.StatusBar;
-import de.zbit.gui.wizard.TestPanel1Descriptor;
-import de.zbit.gui.wizard.TestPanel2Descriptor;
-import de.zbit.gui.wizard.TestPanel3Descriptor;
-import de.zbit.gui.wizard.Wizard;
-import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.io.SBFileFilter;
-import de.zbit.sbml.gui.ASTNodeSplitPane;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
 import de.zbit.sbml.gui.SBMLTree;
 import de.zbit.util.StringUtil;
-import de.zbit.util.logging.LogUtil;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -279,6 +270,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		setSBMLsqueezerBackground();
 		// TODO
 		// setIconImage(UIManager.getIcon("IMAGE_LEMON"));
+		tabbedPane.addChangeListener(sbmlIO);
 		for (Model m : sbmlIO.getListOfModels()) {
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(), prefs
 					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
@@ -309,24 +301,15 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			}
 			if (KineticsAndParametersStoredInSBML) {
 				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
-        ///////////////////////////////////////////
-				// DEBUG mode
-				if ((LogUtil.getCurrentLogLevel().intValue() < Level.INFO.intValue()) && (e.getSource() instanceof Reaction)) {
-					JDialog d = new JDialog(this);
-					d.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-					ASTNodeSplitPane pane = new ASTNodeSplitPane(((Reaction) e.getSource()).getKineticLaw().getMath());
-					pane.setEquationRenderer(new HotEquationRenderer());
-					d.getContentPane().add(pane);
-					d.pack();
-					d.setLocationRelativeTo(null);
-					d.setVisible(true);
-				}
-				///////////////////////////////////////////
 				try {
-					split.getTree().saveSelectionPath();
-					TreePath path = split.getTree().getSelectionPath();
-					setupContextMenu(split, path);
-					split.getTree().restoreSelectionPath();
+					// TODO: use paths to all expanded nodes plus the paths to all selected nodes!
+					SBMLTree tree = split.getTree();
+//					tree.saveSelectionPath();
+					TreePath path = tree.getSelectionPath();
+					TreePath selectionPath = tree.getSelectionModel().getSelectionPath();
+					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
+					setupContextMenu(split, path, selectionPath);
+//					split.getTree().restoreSelectionPath();
 				} catch (Exception exc) {
 					exc.printStackTrace();
 				}
@@ -431,7 +414,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			split.setEquationRenderer(new HotEquationRenderer());
 			split.setProgressBar(StatusBar.addStatusBar(this).getProgressBar());
 
-			setupContextMenu(split, null);
+			setupContextMenu(split, null, null);
 			
 			tabbedPane.add(model.getId(), split);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
@@ -448,17 +431,22 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @param split
 	 */
 	@SuppressWarnings("unchecked")
-	private void setupContextMenu(SBMLModelSplitPane split, TreePath path) {
+	private void setupContextMenu(SBMLModelSplitPane split, TreePath path, TreePath selectionPath) {
 		SBMLTree tree = split.getTree();
 		
 		if (path != null) {
+			int i;
 			ArrayList<TreeNode> p = new ArrayList<TreeNode>(path.getPathCount());
-			for (int i = 0; i < path.getPathCount(); i++) {
+			for (i = 0; i < path.getPathCount(); i++) {
 				SBMLNode node = (SBMLNode) path.getPathComponent(i);
 				p.add(node.getUserObject());
 			}
-			// TODO: Expand tree at the previous selection without changing the font of the nodes and so on.
-			// tree.expandAll(p, true, null);
+			ArrayList<TreeNode> selected = new ArrayList<TreeNode>(selectionPath.getPathCount());
+			for (i = 0; i < selectionPath.getPathCount(); i++) {
+				SBMLNode node = (SBMLNode) selectionPath.getPathComponent(i);
+				selected.add(node.getUserObject());
+			}
+			tree.expandAll(p, true, null, false, false, selected);
 		}
 		
 		tree.addActionListener(this);
@@ -692,7 +680,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 		tabbedPane = new JTabbedPaneWithCloseIcons();
 		tabbedPane.addChangeListener(this);
-		tabbedPane.addChangeListener(sbmlIO);
 		return tabbedPane;
 	}
 

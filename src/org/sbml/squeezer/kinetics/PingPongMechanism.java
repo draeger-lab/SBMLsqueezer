@@ -66,12 +66,8 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
@@ -95,7 +91,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		SpeciesReference specRefP1 = reaction.getProduct(0);
 		SpeciesReference specRefE2 = null, specRefP2 = null;
 
-		if (reaction.getNumReactants() == 2)
+		if (reaction.getReactantCount() == 2)
 			specRefE2 = reaction.getReactant(1);
 		else if (specRefE1.getStoichiometry() == 2d)
 			specRefE2 = specRefE1;
@@ -106,7 +102,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 							reaction.getId()));
 
 		boolean exception = false;
-		switch (reaction.getNumProducts()) {
+		switch (reaction.getProductCount()) {
 		case 1:
 			if (specRefP1.getStoichiometry() == 2d)
 				specRefP2 = specRefP1;
@@ -244,12 +240,11 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return Bundles.MESSAGES.getString("PING_PONG_MEACHANISM_SIMPLE_NAME");
 	}
+
 }

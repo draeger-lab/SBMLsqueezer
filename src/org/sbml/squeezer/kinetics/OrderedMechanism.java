@@ -65,12 +65,8 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
@@ -78,19 +74,19 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		Reaction reaction = getParentSBMLObject();
 		SBMLtools.setSBOTerm(this,429);
 		double stoichiometryRight = 0;
-		for (int i = 0; i < reaction.getNumProducts(); i++)
+		for (int i = 0; i < reaction.getProductCount(); i++)
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
 		// compulsory-order ternary-complex mechanism (Cornish-Bowden)
-		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
+		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2))
 			SBMLtools.setSBOTerm(this,433);
-		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
+		else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1))
 			SBMLtools.setSBOTerm(this,434);
 
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		String numProd = "";
-		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
+		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2))
 			numProd = ", " + Bundles.MESSAGES.getString("TWO_PRODUCTS");
-		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
+		else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1))
 			numProd = ", " + Bundles.MESSAGES.getString("ONE_PRODUCT");
 
 		setNotes(MessageFormat.format(
@@ -106,7 +102,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		SpeciesReference specRefE1 = reaction.getReactant(0), specRefE2 = null;
 		SpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
-		if (reaction.getNumReactants() == 2)
+		if (reaction.getReactantCount() == 2)
 			specRefE2 = reaction.getReactant(1);
 		else if (specRefE1.getStoichiometry() == 2f)
 			specRefE2 = specRefE1;
@@ -115,7 +111,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 					MessageFormat.format(Bundles.WARNINGS.getString("ORDERED_NUM_OF_REACTANTS_MUST_EQUAL"), reaction.getId()));
 
 		boolean exception = false, biuni = false;
-		switch (reaction.getNumProducts()) {
+		switch (reaction.getProductCount()) {
 		case 1:
 			if (specRefP1.getStoichiometry() == 1f)
 				biuni = true;
@@ -368,12 +364,11 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return Bundles.MESSAGES.getString("ORDERED_MECHANISM_SIMPLE_NAME");
 	}
+
 }

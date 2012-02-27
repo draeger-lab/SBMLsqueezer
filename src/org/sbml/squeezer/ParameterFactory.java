@@ -25,7 +25,6 @@ package org.sbml.squeezer;
 
 import java.text.MessageFormat;
 
-import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
@@ -216,10 +215,8 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(p_kass,zerothOrder ? 48 : 153);
 		}
 		if (!p_kass.isSetUnits()) {
-			p_kass.setUnits(unitFactory
-					.unitPerTimeAndConcentrationOrSubstance(r
-							.getListOfReactants(), r.getListOfModifiers(),
-							zerothOrder));
+			p_kass.setUnits(unitFactory.unitPerTimeAndConcentrationOrSubstance(
+				r.getListOfReactants(), r.getListOfModifiers(), zerothOrder));
 		}
 		return p_kass;
 	}
@@ -303,7 +300,7 @@ public class ParameterFactory {
 	 * @return
 	 */
 	public LocalParameter parameterDissociationConst(String catalyst) {
-		boolean zerothOrder = orderProducts == 0;
+		boolean zerothOrder = orderProducts == 0d;
 		Reaction r = kineticLaw.getParentSBMLObject();
 		StringBuffer kdiss = StringTools.concat("kdiss_", r.getId());
 		if (zerothOrder) {
@@ -321,10 +318,8 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(p_kdiss,156);
 		}
 		if (!p_kdiss.isSetUnits()) {
-			p_kdiss.setUnits(unitFactory
-					.unitPerTimeAndConcentrationOrSubstance(r
-							.getListOfReactants(), r.getListOfModifiers(),
-							zerothOrder));
+			p_kdiss.setUnits(unitFactory.unitPerTimeAndConcentrationOrSubstance(
+				r.getListOfProducts(), r.getListOfModifiers(), zerothOrder));
 		}
 		return p_kdiss;
 	}
@@ -446,13 +441,7 @@ public class ParameterFactory {
 		}
 		if (!kA.isSetUnits()) {
 			Species species = model.getSpecies(activatorSpecies);
-			kA
-					.setUnits(unitFactory.getBringToConcentration() ? unitFactory
-							.unitSubstancePerSize(species
-									.getSubstanceUnitsInstance(), species
-									.getCompartmentInstance()
-									.getUnitsInstance())
-							: species.getSubstanceUnitsInstance());
+			kA.setUnits(unitFactory.unitSubstancePerSizeOrSubstance(species));
 		}
 		return kA;
 	}
@@ -634,14 +623,7 @@ public class ParameterFactory {
 			kI.setName(MessageFormat.format(Bundles.MESSAGES.getString("INHIBITIORY_CONSTANT_OF_REACTION"), temp, reactionID));
 		}
 		if (!kI.isSetUnits()) {
-			Species spec = model.getSpecies(inhibitorSpecies);
-			if (unitFactory.getBringToConcentration()) {
-				kI.setUnits(unitFactory.unitSubstancePerSize(spec
-						.getSubstanceUnitsInstance(), spec
-						.getCompartmentInstance().getUnitsInstance()));
-			} else {
-				kI.setUnits(spec.getSubstanceUnitsInstance());
-			}
+			kI.setUnits(unitFactory.unitSubstancePerSizeOrSubstance(model.getSpecies(inhibitorSpecies)));
 		}
 		return kI;
 	}
@@ -683,7 +665,7 @@ public class ParameterFactory {
 		}
 		LocalParameter kS = createOrGetParameter(id.toString());
 		if (!kS.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(kS,194);
+			SBMLtools.setSBOTerm(kS, 194);
 		}
 		if (!kS.isSetName()) {
 			kS.setName((enzyme != null) ?
@@ -693,22 +675,10 @@ public class ParameterFactory {
 							species, rid));
 		}
 		if (!kS.isSetUnits()) {
-			if (unitFactory.getBringToConcentration()
-					&& species.hasOnlySubstanceUnits()) {
-				kS.setUnits(unitFactory.unitSubstancePerSize(species
-						.getSubstanceUnitsInstance(), species
-						.getCompartmentInstance().getUnitsInstance()));
-			} else if (!unitFactory.getBringToConcentration()
-					&& !species.hasOnlySubstanceUnits()) {
-				UnitDefinition substance = species.getSubstanceUnitsInstance()
-						.clone();
-				UnitDefinition size = species.getCompartmentInstance()
-						.getUnitsInstance();
-				substance.multiplyWith(size);
-				substance.setId(substance.getId() + "_times_" + size.getId());
-				kS.setUnits(UnitFactory.checkUnitDefinitions(substance, model));
+			if (unitFactory.getBringToConcentration()) {
+				kS.setUnits(unitFactory.unitSubstancePerSize(species));
 			} else {
-				kS.setUnits(species.getUnitsInstance());
+				kS.setUnits(species.getSubstanceUnits());
 			}
 		}
 		return kS;
@@ -752,7 +722,7 @@ public class ParameterFactory {
 		}
 		LocalParameter kM = createOrGetParameter(id.toString());
 		if (kM.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(kM,27);
+			SBMLtools.setSBOTerm(kM, 27);
 		}
 		if (!kM.isSetName()) {
 			kM.setName((enzyme != null) ?
@@ -761,44 +731,31 @@ public class ParameterFactory {
 		}
 		if (!kM.isSetUnits()) {
 			Species spec = model.getSpecies(species);
-			if (unitFactory.getBringToConcentration()) {
-			  Compartment compartment = spec.getCompartmentInstance();
-			  if (compartment == null) {
-          throw new NullPointerException(MessageFormat.format(
-            Bundles.WARNINGS.getString("UNDEFINED_COMPARTMENT_OF_SPECIES"), spec.toString()));
-			  }
-        UnitDefinition specUnit = spec.getSubstanceUnitsInstance();
-			  UnitDefinition compUnit = compartment.getUnitsInstance();
-			  if ((specUnit == null) || (compUnit == null)) {
-          throw new NullPointerException(MessageFormat.format(
-                  Bundles.WARNINGS.getString("UNDEFINED_UNIT_OF_SPECIES"),
-                  kM.toString(), spec.toString()));
-			  }
-        kM.setUnits(unitFactory.unitSubstancePerSize(specUnit, compUnit)); 
-			} else {
-			  kM.setUnits(spec.getSubstanceUnitsInstance()); 
-			}
+			kM.setUnits(unitFactory.unitSubstancePerSizeOrSubstance(spec));
 		}
 		return kM;
 	}
 
 	/**
-	 * Michaelis constant.
+	 * Michaelis constant. See the SBO terms <a
+	 * href="http://identifiers.org/biomodels.sbo/SBO:0000322">322</a> and <a
+	 * href="http://identifiers.org/biomodels.sbo/SBO:0000322">322</a> for
+	 * details.
 	 * 
 	 * @param species
-	 *            Must not be null.
+	 *        Must not be <code>null</code>.
 	 * @param enzyme
-	 *            identifier of the catalyzing enzyme. Can be null.
+	 *        identifier of the catalyzing enzyme. Can be <code>null</code>.
 	 * @param substrate
-	 *            If true it returns the Michaels constant for substrate, else
-	 *            the Michaelis constant for the product.
+	 *        If <code>true</code> it returns the Michaels constant for substrate, else the
+	 *        Michaelis constant for the product.
 	 * @return
 	 */
 	public LocalParameter parameterMichaelis(String species, String enzyme,
 			boolean substrate) {
 		LocalParameter kM = parameterMichaelis(species, enzyme);
 		if (!kM.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(kM,substrate ? 322 : 323);
+			SBMLtools.setSBOTerm(kM, substrate ? 322 : 323);
 		}
 		return kM;
 	}

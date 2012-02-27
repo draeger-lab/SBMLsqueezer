@@ -38,8 +38,14 @@ import org.sbml.squeezer.util.SBMLtools;
 /**
  * This is the well-known (Henry-) Michaelis-Menten equation and can be found in
  * the {@link SBO} under one of the following terms (depending on the specific
- * structure of the underlying {@link Reaction}): 28, 199, 266, 269, 275, 276,
- * or 326.
+ * structure of the underlying {@link Reaction}): <a
+ * href="http://identifiers.org/biomodels.sbo/SBO:0000028">28</a>, <a
+ * href="http://identifiers.org/biomodels.sbo/SBO:0000199">199</a>, <a
+ * href="http://identifiers.org/biomodels.sbo/SBO:0000266">266</a>, <a
+ * href="http://identifiers.org/biomodels.sbo/SBO:0000269">269</a>, <a
+ * href="http://identifiers.org/biomodels.sbo/SBO:0000275">275</a>, <a
+ * href="http://identifiers.org/biomodels.sbo/SBO:0000276">276</a>, or <a
+ * href="http://identifiers.org/biomodels.sbo/SBO:0000326">326</a>.
  * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
@@ -68,12 +74,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
@@ -82,48 +84,49 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		ASTNode numerator;
 		ASTNode denominator;
 
-		if ((reaction.getNumReactants() > 1)
-				|| (reaction.getReactant(0).getStoichiometry() != 1d))
+		if ((reaction.getReactantCount() > 1)
+				|| (reaction.getReactant(0).getStoichiometry() != 1d)) { 
 			throw new RateLawNotApplicableException(
-					MessageFormat.format(
-							Bundles.WARNINGS.getString("INCORRECT_STOICHIOMETRY_OF_REACTANT_SPECIES"),
-							getClass().getSimpleName(), 
-							reaction.getId()));
-		if (((reaction.getNumProducts() != 1) || (reaction.getProduct(0)
-				.getStoichiometry() != 1d))
-				&& reaction.getReversible())
+				MessageFormat.format(Bundles.WARNINGS
+					.getString("INCORRECT_STOICHIOMETRY_OF_REACTANT_SPECIES"),
+					getSimpleName(), reaction.getId())); 
+		}
+		if (((reaction.getProductCount() != 1) || (reaction.getProduct(0)
+				.getStoichiometry() != 1d)) && reaction.getReversible()) {
 			throw new RateLawNotApplicableException(
-					MessageFormat.format(
-							Bundles.WARNINGS.getString("INCORRECT_STOICHIOMETRY_OF_PRODUCT_SPECIES"),
-							getClass().getSimpleName(), 
-							reaction.getId()));
-
+				MessageFormat.format(Bundles.WARNINGS
+					.getString("INCORRECT_STOICHIOMETRY_OF_PRODUCT_SPECIES"),
+					getSimpleName(), reaction.getId()));
+		}
 		SBMLtools.setSBOTerm(this,269); // enzymatic rate law for unireactant enzymes
 		switch (modE.size()) {
-		case 0: // no enzyme, irreversible
-			if (!getParentSBMLObject().getReversible() && (modActi.size() == 0)
-					&& (modInhib.size() == 0))
-				SBMLtools.setSBOTerm(this,199); // normalised enzymatic rate law for
-			// unireactant enzymes
-			else if ((modActi.size() == 0) && (modInhib.size() == 0))
-				SBMLtools.setSBOTerm(this,326); // enzymatic rate law for non-modulated
-			// unireactant enzymes
-			break;
-		case 1: // one enzmye
-			if (getParentSBMLObject().getReversible()) {
-				if ((modActi.size() == 0) && (modInhib.size() == 0))
-					SBMLtools.setSBOTerm(this,326); // enzymatic rate law for non-modulated
+			case 0: // no enzyme, irreversible
+				if (!getParentSBMLObject().getReversible() && (modActi.size() == 0)
+						&& (modInhib.size() == 0)) {
+					SBMLtools.setSBOTerm(this, 199); // normalised enzymatic rate law for
+					// unireactant enzymes
+				} else if ((modActi.size() == 0) && (modInhib.size() == 0)) {
+					SBMLtools.setSBOTerm(this, 326); // enzymatic rate law for non-modulated
+				}
 				// unireactant enzymes
-			} else if ((modActi.size() == 0) && (modInhib.size() == 0))
-				// irreversible equivalents: Briggs-Haldane equation (31) or
-				// Van Slyke-Cullen equation (30)
-				// 29 = Henri-Michaelis-Menten
-				SBMLtools.setSBOTerm(this,28); // enzymatic rate law for irreversible
-			// non-modulated non-interacting unireactant
-			// enzymes
-			break;
+				break;
+			case 1: // one enzmye
+				if (getParentSBMLObject().getReversible()) {
+					if ((modActi.size() == 0) && (modInhib.size() == 0)) {
+						SBMLtools.setSBOTerm(this, 326); // enzymatic rate law for non-modulated
+						// unireactant enzymes
+					}
+				} else if ((modActi.size() == 0) && (modInhib.size() == 0)) {
+					// irreversible equivalents: Briggs-Haldane equation (31) or
+					// Van Slyke-Cullen equation (30)
+					// 29 = Henri-Michaelis-Menten
+					SBMLtools.setSBOTerm(this, 28); // enzymatic rate law for irreversible
+					// non-modulated non-interacting unireactant
+					// enzymes
+				}
+				break;
 		}
-		if (!getParentSBMLObject().getReversible())
+		if (!getParentSBMLObject().getReversible()) {
 			switch (modInhib.size()) {
 			case 1:
 				SBMLtools.setSBOTerm(this,265); // enzymatic rate law for simple mixed-type
@@ -141,25 +144,22 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				// exclusive inhibitors
 				break;
 			}
-
+		}
 		Species speciesR = reaction.getReactant(0).getSpeciesInstance();
 
 		ASTNode formula[] = new ASTNode[Math.max(1, modE.size())];
 		int enzymeNum = 0;
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(
-					enzyme, true);
-			LocalParameter p_kMr = parameterFactory.parameterMichaelis(speciesR
-					.getId(), enzyme, true);
+			LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme, true);
+			LocalParameter p_kMr = parameterFactory.parameterMichaelis(speciesR.getId(), enzyme, true);
 
 			ASTNode currEnzymeKin;
-			if (!reaction.getReversible() || reaction.getNumProducts() == 0) {
+			if (!reaction.getReversible() || (reaction.getProductCount() == 0)) {
 				/*
 				 * Irreversible Reaction
 				 */
-				numerator = ASTNode.times(new ASTNode(p_kcatp, this),
-						speciesTerm(speciesR));
+				numerator = ASTNode.times(new ASTNode(p_kcatp, this), speciesTerm(speciesR));
 				denominator = speciesTerm(speciesR);
 			} else {
 				/*
@@ -181,31 +181,33 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				denominator.plus(ASTNode.frac(speciesTerm(speciesP),
 						new ASTNode(p_kMp, this)));
 			}
-			denominator = createInihibitionTerms(modInhib, reaction,
-					denominator, p_kMr, modE.size() > 1 ? modE.get(enzymeNum)
-							: null);
+			denominator = createInihibitionTerms(modInhib, reaction, denominator,
+				p_kMr, modE.size() > 1 ? modE.get(enzymeNum) : null);
 
-			if (reaction.getReversible())
+			if (reaction.getReversible()) {
 				denominator = ASTNode.sum(new ASTNode(1, this), denominator);
-			else if (modInhib.size() < 1)
-				denominator = ASTNode
-						.sum(new ASTNode(p_kMr, this), denominator);
+			} else if (modInhib.size() < 1) {
+				denominator = ASTNode.sum(new ASTNode(p_kMr, this), denominator);
+			}
 
 			// construct formula
 			currEnzymeKin = ASTNode.frac(numerator, denominator);
-			if (modE.size() > 0)
+			if (modE.size() > 0) {
 				currEnzymeKin = ASTNode.times(speciesTerm(modE.get(enzymeNum)),
-						currEnzymeKin);
+					currEnzymeKin);
+			}
 			formula[enzymeNum++] = currEnzymeKin;
 		} while (enzymeNum < modE.size());
 		ASTNode sum = ASTNode.sum(formula);
 
 		// the formalism from the convenience kinetics as a default.
-		if ((modInhib.size() > 1) && (reaction.getReversible()))
+		if ((modInhib.size() > 1) && (reaction.getReversible())) {
 			sum = ASTNode.times(inhibitionFactor(modInhib), sum);
+		}
 		// Activation
-		if (modActi.size() > 0)
+		if (modActi.size() > 0) {
 			sum = ASTNode.times(activationFactor(modActi), sum);
+		}
 		return sum;
 	}
 
@@ -234,13 +236,13 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 					modInhib.get(0), enzyme, 1);
 			LocalParameter p_kIb = parameterFactory.parameterKi(
 					modInhib.get(0), enzyme, 2);
-			if (reaction.getReversible())
+			if (reaction.getReversible()) {
 				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(modInhib
 						.get(0)), new ASTNode(p_kIa, this)), ASTNode.times(
 						denominator, ASTNode.sum(new ASTNode(1, this), ASTNode
 								.frac(speciesTerm(modInhib.get(0)),
 										new ASTNode(p_kIb, this)))));
-			else {
+			} else {
 				denominator = ASTNode.sum(ASTNode.times(new ASTNode(mr, this),
 						ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
 								speciesTerm(modInhib.get(0)), new ASTNode(
@@ -260,10 +262,8 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			ASTNode sumIb = new ASTNode(1, this);
 			for (int i = 0; i < modInhib.size(); i++) {
 				String inhibitor = modInhib.get(i);
-				LocalParameter p_kIai = parameterFactory.parameterKi(inhibitor,
-						enzyme, 1);
-				LocalParameter p_kIbi = parameterFactory.parameterKi(inhibitor,
-						enzyme, 2);
+				LocalParameter p_kIai = parameterFactory.parameterKi(inhibitor, enzyme, 1);
+				LocalParameter p_kIbi = parameterFactory.parameterKi(inhibitor, enzyme, 2);
 				LocalParameter p_a = parameterFactory
 						.parameterCooperativeInhibitorSubstrateCoefficient('a',
 								inhibitor, enzyme);
@@ -282,12 +282,11 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		return denominator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return Bundles.MESSAGES.getString("MICHAELIS_MENTEN_SIMPLE_NAME");
 	}
+
 }

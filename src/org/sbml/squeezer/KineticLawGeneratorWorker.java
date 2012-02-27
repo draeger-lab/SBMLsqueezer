@@ -27,12 +27,8 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
-import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
-
-import de.zbit.gui.StatusBar;
-import de.zbit.util.AbstractProgressBar;
 
 /**
  * Generates kinetic laws using SwingWorker

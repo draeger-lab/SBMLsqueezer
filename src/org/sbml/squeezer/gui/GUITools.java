@@ -27,18 +27,11 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
-
-import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.util.compilers.HTMLFormula;
-
-import de.zbit.util.StringUtil;
 
 /**
  * A convenient class that provides several handy methods for working with
@@ -52,11 +45,6 @@ import de.zbit.util.StringUtil;
  * @version $Rev$
  */
 public class GUITools extends de.zbit.gui.GUITools {
-
-	/**
-	 * Generated serial version id.
-	 */
-	private static final long serialVersionUID = 5662654607939013825L;
 
 //	/**
 //	 * Loads locale-specific resources: strings, images, et cetera
