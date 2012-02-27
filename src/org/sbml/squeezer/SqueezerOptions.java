@@ -23,8 +23,6 @@
  */
 package org.sbml.squeezer;
 
-import javax.swing.ButtonGroup;
-
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillHinzeEquation;

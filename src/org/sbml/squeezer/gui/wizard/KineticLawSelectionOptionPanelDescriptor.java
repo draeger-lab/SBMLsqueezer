@@ -39,26 +39,48 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescriptor implements ActionListener {
-    public static final String IDENTIFIER = "KINETIC_LAW_OPTION_PANEL";
-    
-    public KineticLawSelectionOptionPanelDescriptor(JDialog dialog) {
-        super(IDENTIFIER, new KineticLawSelectionOptionPanel(dialog));
-    }
-    
-    public void aboutToDisplayPanel() {
+	
+	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "KINETIC_LAW_OPTION_PANEL";
+	
+	/**
+	 * 
+	 * @param dialog
+	 */
+	public KineticLawSelectionOptionPanelDescriptor(JDialog dialog) {
+		super(IDENTIFIER, new KineticLawSelectionOptionPanel(dialog));
 	}
-    
-    public Object getNextPanelDescriptor() {
-    	return KineticLawSelectionEquationPanelDescriptor.IDENTIFIER;
-    }
-    
-    public Object getBackPanelDescriptor() {
-        return null;
-    }
-
+	
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToDisplayPanel()
+	 */
 	@Override
+	public void aboutToDisplayPanel() {
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
+	 */
+	@Override
+	public Object getNextPanelDescriptor() {
+		return KineticLawSelectionEquationPanelDescriptor.IDENTIFIER;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
+	 */
+	@Override
+	public Object getBackPanelDescriptor() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
+
 }

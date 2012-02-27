@@ -68,12 +68,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
@@ -83,7 +79,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		SpeciesReference specRefR1 = reaction.getReactant(0), specRefR2;
 		SpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
-		if (reaction.getNumReactants() == 2)
+		if (reaction.getReactantCount() == 2)
 			specRefR2 = (SpeciesReference) reaction.getReactant(1);
 		else if (specRefR1.getStoichiometry() == 2f)
 			specRefR2 = specRefR1;
@@ -95,18 +91,18 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 
 		SBMLtools.setSBOTerm(this,429);
 		double stoichiometryRight = 0;
-		for (int i = 0; i < reaction.getNumProducts(); i++)
+		for (int i = 0; i < reaction.getProductCount(); i++)
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		// rapid-equilibrium random order ternary-complex mechanism
-		if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1d)
+		if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1d)
 				&& !reaction.getReversible())
 			SBMLtools.setSBOTerm(this,432);
 
 		String numProd = "";
-		if ((reaction.getNumProducts() == 2) && (stoichiometryRight == 2))
+		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2))
 			numProd = ", " + Bundles.MESSAGES.getString("TWO_PRODUCTS");
-		else if ((reaction.getNumProducts() == 1) && (stoichiometryRight == 1))
+		else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1))
 			numProd = ", " + Bundles.MESSAGES.getString("ONE_PRODUCT");
 		
 		setNotes(MessageFormat.format(
@@ -116,7 +112,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 
 		boolean exception = false;
 		boolean biuni = false;
-		switch (reaction.getNumProducts()) {
+		switch (reaction.getProductCount()) {
 		case 1:
 			if (specRefP1.getStoichiometry() == 1d)
 				biuni = true;
@@ -318,12 +314,11 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		return ASTNode.frac(numerator, denominator);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
 		return Bundles.MESSAGES.getString("RANDOM_ORDER_MEACHANISM_SIMPLE_NAME");
 	}
+
 }

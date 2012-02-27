@@ -24,6 +24,11 @@ import org.sbml.jsbml.SpeciesType;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.KineticLawGenerator;
 
+/**
+ * 
+ * @author draeger
+ *
+ */
 public class SqueezertestFunctions {
 
 
@@ -294,7 +299,7 @@ public class SqueezertestFunctions {
 		int contains;
 		for (InitialAssignment ia2 : model.getListOfInitialAssignments()) {			
 			contains = -1;			
-			for (int i = 0; i < originalModel.getNumInitialAssignments() && contains < 0; i++) {
+			for (int i = 0; i < originalModel.getInitialAssignmentCount() && contains < 0; i++) {
 				ia1 = originalModel.getInitialAssignment(i);
 				if (ia1.equals(ia2)){
 					contains = i;
@@ -316,7 +321,7 @@ public class SqueezertestFunctions {
 		for (Rule ru2 : model.getListOfRules()) {	
 			eru2 = ((ExplicitRule) ru2);			
 			contains = -1;			
-			for (int i = 0; i < originalModel.getNumRules() && contains < 0; i++) {
+			for (int i = 0; i < originalModel.getRuleCount() && contains < 0; i++) {
 				ru1 = originalModel.getRule(i);
 				eru1 = ((ExplicitRule) ru1);
 				if ((ru2 instanceof AlgebraicRule) && (ru1 instanceof AlgebraicRule)) {
@@ -353,7 +358,7 @@ public class SqueezertestFunctions {
 		Constraint cn1;
 		for (Constraint cn2 : model.getListOfConstraints()) {
 			contains = -1;
-			for (int i = 0; i < originalModel.getNumConstraints() && contains < 0; i++) {
+			for (int i = 0; i < originalModel.getConstraintCount() && contains < 0; i++) {
 				cn1 = originalModel.getConstraint(i);
 				if (cn2.getMath().equals(cn1.getMath()))
 					contains = i;

@@ -71,14 +71,9 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -100,12 +95,13 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 					enzyme, true);
 			ASTNode numerator = new ASTNode(p_kcat, this);
 
-			ASTNode[] denominator = new ASTNode[reaction.getNumReactants()];
-			for (int i = 0; i < reaction.getNumReactants(); i++) {
+			ASTNode[] denominator = new ASTNode[reaction.getReactantCount()];
+			for (int i = 0; i < reaction.getReactantCount(); i++) {
 				SpeciesReference si = reaction.getReactant(i);
-				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0)
+				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0) {
 					throw new RateLawNotApplicableException(
 							Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_IF_REACTANTS_HAVE_INTEGER_STOICHIOMETRIES"));
+				}
 				LocalParameter p_kM = parameterFactory.parameterMichaelis(si
 						.getSpecies(), enzyme, true);
 				ASTNode frac = ASTNode.frac(speciesTerm(si), new ASTNode(p_kM,
@@ -124,7 +120,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		}
 
 		double stoichiometry = 0;
-		for (int i = 0; i < getParentSBMLObject().getNumReactants(); i++)
+		for (int i = 0; i < getParentSBMLObject().getReactantCount(); i++)
 			stoichiometry += getParentSBMLObject().getReactant(i)
 					.getStoichiometry();
 		switch ((int) Math.round(stoichiometry)) {
@@ -141,12 +137,9 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		return ASTNode.sum(enzymes);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	// @Override
 	public String getSimpleName() {
 		return Bundles.MESSAGES.getString("IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME");
 	}

@@ -122,41 +122,41 @@ public class ProgressAdapter {
 	 * @param prefs
 	 */
 	public void setNumberOfTags(Model modelOrig, Model miniModel, SBPreferences prefs){
-		switch(progressType){
+		switch(progressType) {
 		case storeKineticLaw:
 			numberOfTotalCalls = 0;
 			// storeUnits loops
-			numberOfTotalCalls += miniModel.getNumUnitDefinitions() + 
-			miniModel.getNumCompartments() + 
-			miniModel.getNumSpecies();	
+			numberOfTotalCalls += miniModel.getUnitDefinitionCount() + 
+			miniModel.getCompartmentCount() + 
+			miniModel.getSpeciesCount();	
 			// storeParameters loops
-			numberOfTotalCalls += miniModel.getNumParameters();
+			numberOfTotalCalls += miniModel.getParameterCount();
 			if(prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
 				// storekineticLaw loops
-				numberOfTotalCalls += modelOrig.getNumUnitDefinitions();
+				numberOfTotalCalls += modelOrig.getUnitDefinitionCount();
 				// removeUnnecessaryParameters loops
-				numberOfTotalCalls += modelOrig.getNumParameters() + 
-				modelOrig.getNumReactions();			
+				numberOfTotalCalls += modelOrig.getParameterCount() + 
+				modelOrig.getReactionCount();			
 			}
 			break;
 		case storeKineticLaws:	
 			numberOfTotalCalls = 0;
 			// storeKineticLaw loop; only the storeParameter function is called as 
 			// removeParametersAndStoreUnits is set to false
-			numberOfTotalCalls += miniModel.getNumReactions() * miniModel.getNumParameters();
+			numberOfTotalCalls += miniModel.getReactionCount() * miniModel.getParameterCount();
 			// storeUnits loops
-			numberOfTotalCalls += miniModel.getNumUnitDefinitions() + 
-			miniModel.getNumCompartments() + 
-			miniModel.getNumSpecies();	
+			numberOfTotalCalls += miniModel.getUnitDefinitionCount() + 
+			miniModel.getCompartmentCount() + 
+			miniModel.getSpeciesCount();	
 			if(prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
 				// removeUnnecessaryParameters loops
-				numberOfTotalCalls += modelOrig.getNumParameters() + 
-				modelOrig.getNumReactions();			
+				numberOfTotalCalls += modelOrig.getParameterCount() + 
+				modelOrig.getReactionCount();			
 			}
 			break;
 		case generateLaws:
 			numberOfTotalCalls = 0;
-			numberOfTotalCalls += (2 * miniModel.getNumReactions());
+			numberOfTotalCalls += (2 * miniModel.getReactionCount());
 			break;
 		}
 	}

@@ -37,7 +37,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,9 +53,7 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
-import org.sbml.jsbml.Model;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.KineticLawGeneratorWorker;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.gui.KineticLawTable;
@@ -239,14 +236,14 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 			JPanel reactionsPanel = new JPanel(new BorderLayout());
 			JTable tableOfKinetics = new KineticLawTable(klg);
 			numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
-					.getNumOfWarnings();
+					.getWarningCount();
 			tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 	
 			JScrollPane scroll;
 	
 			if (tableOfKinetics.getRowCount() == 0) {
 				JEditorPane pane = new JEditorPane(
-						sbmlIO.getSelectedModel().getNumReactions() > 0 ? Resource.class
+						sbmlIO.getSelectedModel().getReactionCount() > 0 ? Resource.class
 								.getResource("html/NoNewKineticsCreated.html")
 								: Resource.class
 										.getResource("html/ModelDoesNotContainAnyReactions.html"));
@@ -389,6 +386,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 					setVisible(false);
 					storeKineticsInOriginalModel();
 					//dispose();
+					// FIXME: NullPointerException!
 					statusBar.hideProgress();
 					statusBar.unsetLogMessageLimit();
 					logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
@@ -401,7 +399,9 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		this.statusBar = statusBar;
 	}
 
-	@Override
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			String text = ((JButton) e.getSource()).getText();

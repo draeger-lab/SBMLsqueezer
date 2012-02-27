@@ -68,14 +68,9 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		SBMLtools.setSBOTerm(this,531); // power law modular rate law
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
-	// @Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -155,7 +150,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 			numerator[i].divideBy(denominator(enzymeID));
 			if (i < modE.size()) {
 				ModifierSpeciesReference enzyme = null;
-				for (int j = 0; j < r.getNumModifiers() && enzyme == null; j++)
+				for (int j = 0; j < r.getModifierCount() && enzyme == null; j++)
 					if (r.getModifier(j).getSpecies().equals(modE.get(i)))
 						enzyme = r.getModifier(j);
 				numerator[i] = ASTNode.times(speciesTerm(enzyme), numerator[i]);
@@ -223,8 +218,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @return
 	 */
 	private ASTNode weg(String enzyme) {
-		ASTNode numerator = new ASTNode(parameterFactory
-				.parameterVelocityConstant(enzyme), this);
+		ASTNode numerator = new ASTNode(parameterFactory.parameterVelocityConstant(enzyme), this);
 		Parameter R = parameterFactory.parameterGasConstant();
 		Parameter T = parameterFactory.parameterTemperature();
 		ASTNode exponent = null;
@@ -404,12 +398,9 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		return rate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	// @Override
 	public String getSimpleName() {
 		return Bundles.MESSAGES.getString("POWER_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}

@@ -58,8 +58,7 @@ public class ZeroProductsTest {
 		r1 = model.createReaction("r1");
 		r1.createReactant(s1);
 		r1.setReversible(false);
-		ReactionType r1type = new ReactionType(r1);
-		System.out.println(r1type.productOrder(r1));
+		System.out.println(ReactionType.productOrder(r1));
 
 		klg = new KineticLawGenerator(model);
 	}

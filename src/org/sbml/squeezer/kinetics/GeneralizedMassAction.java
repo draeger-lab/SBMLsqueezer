@@ -88,10 +88,10 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			if (orderReactants == 0) {
 				// mass action rate law for zeroth order reversible reactions
 				SBMLtools.setSBOTerm(this,69);
-				if (stoichiometryRight == 1d && r.getNumProducts() == 1)
+				if (stoichiometryRight == 1d && r.getProductCount() == 1)
 					SBMLtools.setSBOTerm(this,70);
 				else if (stoichiometryRight == 2d)
-					switch (r.getNumProducts()) {
+					switch (r.getProductCount()) {
 					case 1:
 						SBMLtools.setSBOTerm(this,72);
 						break;
@@ -102,7 +102,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 						break;
 					}
 				else if (stoichiometryRight == 3d)
-					switch (r.getNumProducts()) {
+					switch (r.getProductCount()) {
 					case 1:
 						SBMLtools.setSBOTerm(this,75);
 						break;
@@ -121,10 +121,10 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				SBMLtools.setSBOTerm(this,78);
 				if (orderProducts == 0)
 					SBMLtools.setSBOTerm(this,79);
-				else if (stoichiometryRight == 1d && r.getNumProducts() == 1)
+				else if (stoichiometryRight == 1d && r.getProductCount() == 1)
 					SBMLtools.setSBOTerm(this,80);
 				else if (stoichiometryRight == 2d)
-					switch (r.getNumProducts()) {
+					switch (r.getProductCount()) {
 					case 1:
 						SBMLtools.setSBOTerm(this,82);
 						break;
@@ -136,7 +136,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 						break;
 					}
 				else if (stoichiometryRight == 3d)
-					switch (r.getNumProducts()) {
+					switch (r.getProductCount()) {
 					case 1:
 						SBMLtools.setSBOTerm(this,85);
 						break;
@@ -153,14 +153,14 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			} else if (stoichiometryLeft == 2d) {
 				// mass action rate law for second order reversible reactions
 				SBMLtools.setSBOTerm(this,88);
-				if (r.getNumReactants() == 1) {
+				if (r.getReactantCount() == 1) {
 					if (orderProducts == 0)
 						SBMLtools.setSBOTerm(this,90);
 					else if (stoichiometryRight == 1d
-							&& r.getNumProducts() == 1)
+							&& r.getProductCount() == 1)
 						SBMLtools.setSBOTerm(this,91);
 					else if (stoichiometryRight == 2d) {
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,93);
 							break;
@@ -172,7 +172,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 							break;
 						}
 					} else if (stoichiometryRight == 3d) {
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,96);
 							break;
@@ -188,15 +188,15 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 						}
 					} else
 						SBMLtools.setSBOTerm(this,89);
-				} else if (r.getNumReactants() == 2) {
+				} else if (r.getReactantCount() == 2) {
 					SBMLtools.setSBOTerm(this,99);
 					if (orderProducts == 0)
 						SBMLtools.setSBOTerm(this,100);
 					else if (stoichiometryRight == 1d
-							&& r.getNumProducts() == 1)
+							&& r.getProductCount() == 1)
 						SBMLtools.setSBOTerm(this,101);
 					else if (stoichiometryRight == 2d) {
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,103);
 							break;
@@ -208,7 +208,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 							break;
 						}
 					} else if (stoichiometryRight == 3d) {
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,106);
 							break;
@@ -226,16 +226,16 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				}
 			} else if (stoichiometryLeft == 3d) {
 				// mass action rate law for third order reversible reactions
-				switch (r.getNumReactants()) {
+				switch (r.getReactantCount()) {
 				case 1:
 					SBMLtools.setSBOTerm(this,130);
 					if (orderProducts == 0)
 						SBMLtools.setSBOTerm(this,131);
 					else if (stoichiometryRight == 1d
-							&& r.getNumProducts() == 1)
+							&& r.getProductCount() == 1)
 						SBMLtools.setSBOTerm(this,132);
 					else if (stoichiometryRight == 2d) {
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,134);
 							break;
@@ -247,7 +247,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 							break;
 						}
 					} else if (stoichiometryRight == 3d) {
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,137);
 							break;
@@ -268,10 +268,10 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 					if (orderProducts == 0)
 						SBMLtools.setSBOTerm(this,111);
 					else if (stoichiometryRight == 1d
-							&& r.getNumProducts() == 1)
+							&& r.getProductCount() == 1)
 						SBMLtools.setSBOTerm(this,112);
 					else if (stoichiometryRight == 2d)
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,114);
 							break;
@@ -283,7 +283,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 							break;
 						}
 					else if (stoichiometryRight == 3d)
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,117);
 							break;
@@ -303,10 +303,10 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 					if (orderProducts == 0)
 						SBMLtools.setSBOTerm(this,121);
 					else if (stoichiometryRight == 1d
-							&& r.getNumProducts() == 1)
+							&& r.getProductCount() == 1)
 						SBMLtools.setSBOTerm(this,122);
 					else if (stoichiometryRight == 2d)
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,124);
 							break;
@@ -318,7 +318,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 							break;
 						}
 					else if (stoichiometryRight == 3d)
-						switch (r.getNumProducts()) {
+						switch (r.getProductCount()) {
 						case 1:
 							SBMLtools.setSBOTerm(this,127);
 							break;
@@ -347,14 +347,14 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 				// if continuous
 				SBMLtools.setSBOTerm(this,47);
 				// else 140
-			} else if (stoichiometryLeft == 1d && r.getNumReactants() == 1) {
+			} else if (stoichiometryLeft == 1d && r.getReactantCount() == 1) {
 				// SBMLtools.setSBOTerm(this,44);
 				SBMLtools.setSBOTerm(this,49);
 				// monoexponential decay rate law
 				// mass action rate law for first order irreversible reactions,
 				// discrete scheme
 			} else if (stoichiometryLeft == 2d)
-				switch (r.getNumReactants()) {
+				switch (r.getReactantCount()) {
 				case 1:
 					// SBMLtools.setSBOTerm(this,50);
 					SBMLtools.setSBOTerm(this,52); // continuous
@@ -370,7 +370,7 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 					break;
 				}
 			else if (stoichiometryLeft == 3d) {
-				switch (r.getNumReactants()) {
+				switch (r.getReactantCount()) {
 				case 1:
 					// 56
 					SBMLtools.setSBOTerm(this,57);
@@ -469,16 +469,14 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	@SuppressWarnings("deprecation")
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
-		LocalParameter p_kass = parameterFactory
-				.parameterAssociationConst(catalysts.size() > 0 ? catalysts
-						.get(catNum) : null);
+		LocalParameter p_kass = parameterFactory.parameterAssociationConst(
+			catalysts.size() > 0 ? catalysts.get(catNum) : null);
 		ASTNode ass = new ASTNode(p_kass, this);
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
 				ASTNode basis = speciesTerm(specRef);
 				if (specRef.isSetStoichiometryMath()) {
-					basis.raiseByThePowerOf(specRef.getStoichiometryMath()
-							.getMath().clone());
+					basis.raiseByThePowerOf(specRef.getStoichiometryMath().getMath().clone());
 				} else {
 					basis.raiseByThePowerOf(specRef.getStoichiometry());
 				}
@@ -488,12 +486,8 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		return ass;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
@@ -527,9 +521,8 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 */
 	ASTNode dissociation(List<String> catalysts, int c) {
 		Reaction r = getParentSBMLObject();
-		LocalParameter p_kdiss = parameterFactory
-				.parameterDissociationConst(catalysts.size() > 0 ? catalysts
-						.get(c) : null);
+		LocalParameter p_kdiss = parameterFactory.parameterDissociationConst(
+			catalysts.size() > 0 ? catalysts.get(c) : null);
 		ASTNode diss = new ASTNode(p_kdiss, this);
 		for (SpeciesReference specRef : r.getListOfProducts()) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
@@ -560,12 +553,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		return createModificationFactor(modifiers, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
-	@Override
 	public String getSimpleName() {
 		return Bundles.MESSAGES.getString("GENERALIZED_MASS_ACTION_SIMPLE_NAME");
 	}

@@ -65,12 +65,8 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> enzymes,
 			List<String> activators, List<String> inhibitors,
@@ -82,9 +78,7 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 		return kineticLaw;
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
@@ -100,7 +94,7 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 		String rId = getParentSBMLObject().getId();
 		ASTNode node = new ASTNode(this);
 
-		for (int modifierNum = 0; modifierNum < r.getNumModifiers(); modifierNum++) {
+		for (int modifierNum = 0; modifierNum < r.getModifierCount(); modifierNum++) {
 
 			ModifierSpeciesReference modifier = r.getModifier(modifierNum);
 

@@ -64,12 +64,8 @@ public class HillEquation extends BasicKineticLaw implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java
-	 * .util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	ASTNode createKineticEquation(List<String> enzymes,
 			List<String> activators, List<String> inhibitors,
@@ -78,20 +74,18 @@ public class HillEquation extends BasicKineticLaw implements
 
 		Reaction r = getParentSBMLObject();
 
-		if (activators.isEmpty() && inhibitors.isEmpty() && !r.getReversible())
+		if (activators.isEmpty() && inhibitors.isEmpty() && !r.getReversible()) {
 			SBMLtools.setSBOTerm(this,195);
+		}
 
 		ASTNode rates[] = new ASTNode[Math.max(1, enzymes.size())];
 		for (int enzymeNum = 0; enzymeNum < rates.length; enzymeNum++) {
 			String enzyme = enzymes.size() == 0 ? null : enzymes.get(enzymeNum);
 			Species reactant = r.getReactant(0).getSpeciesInstance();
-			LocalParameter kSreactant = parameterFactory.parameterKS(reactant,
-					enzyme);
-			LocalParameter hillCoeff = parameterFactory
-					.parameterHillCoefficient(enzyme);
+			LocalParameter kSreactant = parameterFactory.parameterKS(reactant, enzyme);
+			LocalParameter hillCoeff = parameterFactory.parameterHillCoefficient(enzyme);
 
-			rates[enzymeNum] = new ASTNode(parameterFactory
-					.parameterKcatOrVmax(enzyme, true), this);
+			rates[enzymeNum] = new ASTNode(parameterFactory.parameterKcatOrVmax(enzyme, true), this);
 			if (enzyme != null) {
 				rates[enzymeNum].multiplyWith(speciesTerm(enzyme));
 			}
@@ -150,23 +144,21 @@ public class HillEquation extends BasicKineticLaw implements
 							kSreactant, this), new ASTNode(hillCoeff, this)));
 			}
 
-			if (denominator != null)
+			if (denominator != null) {
 				denominator.plus(ASTNode.pow(specTerm, new ASTNode(hillCoeff,
 						this)));
-			else
+			} else {
 				
 				//Hier noch 1+... ???
 				denominator = ASTNode.pow(specTerm,
 						new ASTNode(hillCoeff, this));
-
+			}
 			rates[enzymeNum].divideBy(denominator);
 		}
 		return ASTNode.sum(rates);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {

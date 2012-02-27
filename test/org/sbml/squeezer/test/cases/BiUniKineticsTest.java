@@ -61,7 +61,7 @@ public class BiUniKineticsTest {
 			SBMLDocument doc = new SBMLDocument(2, 4);
 			model = doc.createModel("biuni_model");
 			Compartment c = model.createCompartment("c1");
-			System.out.println(model.getNumSpeciesReferences());
+			System.out.println(model.getSpeciesReferenceCount());
 			Species s1 = model.createSpecies("s1", c);
 			Species s2 = model.createSpecies("s2", c);
 			Species p1 = model.createSpecies("p1", c);
@@ -72,7 +72,7 @@ public class BiUniKineticsTest {
 			
 			r1.createReactant(s2);
 			r1.createProduct(p1);
-			System.out.println(model.getNumSpeciesReferences());
+			System.out.println(model.getSpeciesReferenceCount());
 			klg = new KineticLawGenerator(model);
 
 		}

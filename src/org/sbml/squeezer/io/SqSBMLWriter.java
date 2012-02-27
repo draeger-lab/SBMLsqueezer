@@ -52,19 +52,39 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 
 	private Set<IOProgressListener> setOfIOListeners = new HashSet<IOProgressListener>();
 	
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#addIOProgressListener(org.sbml.jsbml.util.IOProgressListener)
+	 */
 	public void addIOProgressListener(IOProgressListener listener) {
 		setOfIOListeners.add(listener);
 	}
 
-	public int getNumErrors(Object sbase) {
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#getErrorCount(java.lang.Object)
+	 */
+	public int getErrorCount(Object sbase) {
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#getNumErrors(java.lang.Object)
+	 */
+	@Deprecated
+	public int getNumErrors(Object sbase) {
+		return getErrorCount(sbase);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#getWriteWarnings(java.lang.Object)
+	 */
 	public List<SBMLException> getWriteWarnings(Object sbase) {
 		List<SBMLException> excl = new LinkedList<SBMLException>();
 		return excl;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#removeUnneccessaryElements(org.sbml.jsbml.Model, java.lang.Object)
+	 */
 	public void removeUnneccessaryElements(Model model, Object orig) {
 	}
 
@@ -88,17 +108,26 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#writeModel(org.sbml.jsbml.Model)
+	 */
 	public Object writeModel(Model model) throws SBMLException {
 		// TODO Auto-generated method stub
 		Model m = new Model(model);
 		return m;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String)
+	 */
 	public boolean writeSBML(Object sbmlDocument, String filename)
 			throws SBMLException, IOException {
 		return writeSBML(sbmlDocument, filename, null, null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.SBMLOutputConverter#writeSBML(java.lang.Object, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	public boolean writeSBML(Object object, String filename,
 			String programName, String versionNumber) throws SBMLException,
 			IOException {

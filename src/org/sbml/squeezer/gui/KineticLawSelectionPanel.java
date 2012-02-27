@@ -45,7 +45,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import org.sbml.jsbml.Reaction;
@@ -126,8 +125,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 			throws RateLawNotApplicableException {
 		super(new BorderLayout());
 		prefsLaTeX = SBPreferences.getPreferencesFor(LaTeXOptions.class);
-		if (possibleLaws == null || selected < 0
-				|| selected > possibleLaws.length || possibleLaws.length < 1)
+		if ((possibleLaws == null) || (selected < 0)
+				|| (selected > possibleLaws.length) || (possibleLaws.length < 1))
 			throw new IllegalArgumentException(Bundles.WARNINGS.getString("INVALID_RATE_LAW_COUNT"));
 		this.reaction = possibleLaws[0].getParentSBMLObject();
 		this.possibleTypes = new Class[possibleLaws.length];
@@ -177,7 +176,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				Boolean.valueOf(this.reaction.getReversible()));
 		StringBuilder label = new StringBuilder("<html><body>");
 		double stoichiometry = 0;
-		for (int i = 0; i < reaction.getNumReactants(); i++)
+		for (int i = 0; i < reaction.getReactantCount(); i++)
 			stoichiometry += reaction.getReactant(i).getStoichiometry();
 		if (stoichiometry > 2d) {
 		  String message = MessageFormat.format(Bundles.MESSAGES.getString("SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY"), StringUtil.toString(stoichiometry));
@@ -276,16 +275,13 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	private void checkEnzymeKineticsPossible(boolean init)
 			throws RateLawNotApplicableException {
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
-		boolean allEnzyme = this.klg.getPreferences().getBoolean(
-				SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED);
+		boolean allEnzyme = this.klg.getPreferences().getBoolean(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED);
 		boolean nonEnzyme = !reactionType.isEnzymeReaction()
 				&& (reactionType.isNonEnzymeReaction()
 						|| reactionType.isReactionWithGenes()
-						|| reactionType.isReactionWithRNAs() || (rButtonReversible
-						.isSelected() && ReactionType
-						.representsEmptySet(reaction.getListOfProducts())));
-		boolean isEnzymeKineticsSelected = !nonEnzyme
-				|| (allEnzyme && !nonEnzyme);
+						|| reactionType.isReactionWithRNAs() || (reaction.getReactantCount() == 0) || (rButtonReversible
+						.isSelected() && ReactionType.representsEmptySet(reaction.getListOfProducts())));
+		boolean isEnzymeKineticsSelected = !nonEnzyme || (allEnzyme && !nonEnzyme);
 		if (reactionType.isEnzymeReaction() || nonEnzyme
 				|| reactionType.isReactionWithGenes()
 				|| reactionType.isReactionWithRNAs()) {
@@ -317,18 +313,15 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		sb.append("\\end{equation}");
 		preview.add(new sHotEqn(sb.toString()), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
-		eqnPrev = new JPanel();
+		eqnPrev = new JPanel(new BorderLayout());
 		eqnPrev.setBorder(BorderFactory.createTitledBorder(" "+Bundles.MESSAGES.getString("EQUATION_PREVIEW")+" "));
-		eqnPrev.setLayout(new BorderLayout());
 		Dimension dim = new Dimension(width, height);
 		/*
 		 * new Dimension((int) Math.min(width, preview
 		 * .getPreferredSize().getWidth()), (int) Math.min(height, preview
 		 * .getPreferredSize().getHeight()));//
 		 */
-		JScrollPane scroll = new JScrollPane(preview,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scroll = new JScrollPane(preview);
 		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
 		scroll.setBackground(Color.WHITE);
 		scroll.setPreferredSize(dim);
@@ -466,11 +459,8 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		return info; // kineticsPanel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	/* (non-Javadoc)
+	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
 	public void itemStateChanged(ItemEvent ie) {
 		if (ie.getSource() instanceof JCheckBox)
@@ -612,16 +602,17 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	private void updateView() throws RateLawNotApplicableException {
 		boolean disable = selected.equals(EXISTING_RATE_LAW);
 		int i = disable ? rButtonsKineticEquations.length - 1 : 0;
-		while (i < rButtonsKineticEquations.length
+		while ((i < rButtonsKineticEquations.length)
 				&& !selected.equals(rButtonsKineticEquations[i].getText())
-				&& !disable)
+				&& !disable) {
 			i++;
+		}
 		boolean global = !((reaction.isSetKineticLaw() && reaction
 				.getKineticLaw().getLocalParameterCount() > 0) || klg
 				.getPreferences().getBoolean(
 						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
 		boolean change = disable || isExistingRateLawSelected
-				|| i < rButtonsKineticEquations.length - 1;
+				|| (i < rButtonsKineticEquations.length - 1);
 		if (disable) {
 			rButtonReversible.setSelected(reaction.getReversible());
 			rButtonGlobalParameters.setSelected(global);
