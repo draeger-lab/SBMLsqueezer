@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
@@ -74,7 +73,10 @@ public class ReversibleKinetics {
 			act.setSBOTerm(462);
 			kat.setSBOTerm(460);
 			
-			// Reaction with 2 products and all three modifiers.
+			/**
+			 *  Reaction with 2 products and all three modifiers.
+			 */
+			
 			r1 = model.createReaction("r1");
 			r1.createReactant(s1);
 			r1.createProduct(p1);
