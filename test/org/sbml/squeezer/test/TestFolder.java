@@ -159,19 +159,22 @@ public class TestFolder extends Handler {
   /* (non-Javadoc)
    * @see java.util.logging.Handler#close()
    */
-  public void close() throws SecurityException {
+  @Override
+public void close() throws SecurityException {
   }
 
   /* (non-Javadoc)
    * @see java.util.logging.Handler#flush()
    */
-  public void flush() {
+  @Override
+public void flush() {
   }
 
   /* (non-Javadoc)
    * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
    */
-  public void publish(LogRecord record) {
+  @Override
+public void publish(LogRecord record) {
     if (record.getLevel().intValue() < Level.FINE.intValue()) {
       System.err.print(record.getMessage());
     }
