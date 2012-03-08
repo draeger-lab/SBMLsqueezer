@@ -23,10 +23,14 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.util.ResourceBundle;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * 
@@ -43,6 +47,8 @@ import org.sbml.squeezer.util.Bundles;
 public class NetGeneratorLinear extends AdditiveModelLinear implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
 	 * Generated serial version identifier.
@@ -66,7 +72,7 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 
 	@Override
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("NET_GENERATOR_LINEAR_SIMPLE_NAME");
+		return MESSAGES.getString("NET_GENERATOR_LINEAR_SIMPLE_NAME");
 	}
 
 	@Override

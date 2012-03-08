@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,6 +74,7 @@ import de.zbit.io.FileWalker;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.ProgressBar;
 import de.zbit.util.Reflect;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.prefs.SBProperties;
@@ -88,7 +90,12 @@ import de.zbit.util.prefs.SBProperties;
  * @since 1.0
  * @version $Rev$
  */
+@SuppressWarnings("rawtypes")
 public class SBMLsqueezer extends Launcher implements IOProgressListener {
+	
+  public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+  
   /**
    * The possible location of this class in a jar file if used in plug-in
    * mode.
@@ -196,7 +203,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         kineticsIntStoichiometry.add(c);
       }
     }
-    logger.info(MessageFormat.format(Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
+    logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
   }
   
   /**
@@ -293,9 +300,9 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @return
    */
   public static String[] getPossibleEnzymeTypes() {
-    logger.log(Level.INFO, Bundles.MESSAGES.getString("LOADING_USER_SETTINGS"));
+    logger.log(Level.INFO, MESSAGES.getString("LOADING_USER_SETTINGS"));
     SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
-    logger.log(Level.INFO, "    " + Bundles.MESSAGES.getString("DONE"));
+    logger.log(Level.INFO, "    " + MESSAGES.getString("DONE"));
     Set<String> enzymeTypes = new HashSet<String>();
     String prefix = "POSSIBLE_ENZYME_";
     for (Object key : preferences.keySet()) {
@@ -321,7 +328,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         System.loadLibrary("sbmlj");
         // Extra check to be sure we have access to libSBML:
         Class.forName("org.sbml.libsbml.libsbml");
-        logger.info(Bundles.MESSAGES.getString("LOADING_LIBSBML"));
+        logger.info(MESSAGES.getString("LOADING_LIBSBML"));
         libSBMLAvailable = true;
     } catch (Error e) {
     } catch (Throwable e) {
@@ -330,7 +337,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
       reader = new LibSBMLReader();
       writer = new LibSBMLWriter();
     } else {
-      logger.info(Bundles.MESSAGES.getString("LOADING_JSBML"));
+      logger.info(MESSAGES.getString("LOADING_JSBML"));
       reader = new SqSBMLReader();
       writer = new SqSBMLWriter();
     }
@@ -530,12 +537,12 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    */
   public void readSBMLSource(Object sbmlSource) {
     long time = System.currentTimeMillis();
-    logger.info(Bundles.MESSAGES.getString("READING_SBML_FILE"));
+    logger.info(MESSAGES.getString("READING_SBML_FILE"));
     try {
       getSBMLIO().convertModel(sbmlSource);
-      logger.info(MessageFormat.format(Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
+      logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
     } catch (Exception exc) {
-      logger.log(Level.WARNING, String.format(Bundles.WARNINGS.getString("CANT_READ_MODEL"), exc.getLocalizedMessage()));
+      logger.log(Level.WARNING, String.format(WARNINGS.getString("CANT_READ_MODEL"), exc.getLocalizedMessage()));
     }
   }
   
@@ -559,14 +566,14 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 
     Map<File, String> ioPairs = FileWalker.filterAndCreate(inFile, outFile, SBFileFilter.createSBMLFileFilter(), true);
     if (ioPairs.size() == 0) {
-    	logger.info(Bundles.MESSAGES.getString("EMPTY_INPUT_FILE_LIST"));
+    	logger.info(MESSAGES.getString("EMPTY_INPUT_FILE_LIST"));
     } else {
     	for (Map.Entry<File, String> entry : ioPairs.entrySet()) {
     		try {
     			squeeze(entry.getKey(), new File(entry.getValue()));
     		} catch (Throwable t) {
     			logger.log(Level.SEVERE, MessageFormat.format(
-    					Bundles.WARNINGS.getString("SQUEEZE_ERROR"),
+    					WARNINGS.getString("SQUEEZE_ERROR"),
     					entry.getKey().getAbsolutePath(), entry.getValue()), t);
     		}
     	}
@@ -605,12 +612,12 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	      
 	      klg.storeKineticLaws();
 	      long time = System.currentTimeMillis();
-	      logger.info(Bundles.MESSAGES.getString("SAVING_TO_FILE"));
+	      logger.info(MESSAGES.getString("SAVING_TO_FILE"));
 	      sbmlIo.saveChanges(this);
 	      if ((outFile != null)
 	          && (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
 	        sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
-	        logger.info(MessageFormat.format(Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
+	        logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
 	        SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
 	        if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
 	          for (SBMLException exc : sbmlIo.getWriteWarnings()) {
@@ -618,10 +625,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	          }
 	        }
 	      } else {
-	        logger.log(Level.WARNING, Bundles.WARNINGS.getString("OUTPUT_ERROR"));
+	        logger.log(Level.WARNING, WARNINGS.getString("OUTPUT_ERROR"));
 	      }
 	    } else {
-	      logger.log(Level.WARNING, Bundles.WARNINGS.getString("FILE_CONTAINS_NO_MODEL"));
+	      logger.log(Level.WARNING, WARNINGS.getString("FILE_CONTAINS_NO_MODEL"));
 	    }
   }
 
@@ -647,17 +654,17 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
         }
         if (!out.exists()) {
           long time = System.currentTimeMillis();
-          logger.info(Bundles.MESSAGES.getString("WRITING_LATEX_OUTPUT"));
+          logger.info(MESSAGES.getString("WRITING_LATEX_OUTPUT"));
           SBML2LaTeX.convert(sbmlIo.getSelectedModel(), out);
-          logger.info("    " + MessageFormat.format(
-        		  Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)) + "\n");
+          logger.info(MessageFormat.format(
+        		  MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)) + "\n");
         }
       } else {
         logger.log(Level.WARNING, MessageFormat.format(
-        		Bundles.WARNINGS.getString("INVALID_TEX_FILE"), latexFile) +"\n");
+        		WARNINGS.getString("INVALID_TEX_FILE"), latexFile) +"\n");
       }
     } else {
-      logger.log(Level.WARNING, Bundles.WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
+      logger.log(Level.WARNING, WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
     }
   }
   

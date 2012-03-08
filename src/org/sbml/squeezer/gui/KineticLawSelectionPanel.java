@@ -32,6 +32,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
@@ -64,6 +65,7 @@ import org.sbml.tolatex.util.LaTeX;
 import atp.sHotEqn;
 import de.zbit.gui.LayoutHelper;
 import de.zbit.sbml.io.SBOTermFormatter;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -79,10 +81,12 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
 */
 public class KineticLawSelectionPanel extends JPanel implements ItemListener {
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 	/**
 	 * 
 	 */
-	private static final String EXISTING_RATE_LAW = Bundles.MESSAGES.getString("EXISTING_RATE_LAW");
+	private static final String EXISTING_RATE_LAW = MESSAGES.getString("EXISTING_RATE_LAW");
 
 	/**
 	 * Generated Serial ID.
@@ -95,6 +99,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	private boolean isExistingRateLawSelected;
 
+	@SuppressWarnings("rawtypes")
 	private JComboBox kineticLawComboBox;
 
 	private Box kineticsPanel;
@@ -120,6 +125,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @param selected
 	 * @throws RateLawNotApplicableException
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public KineticLawSelectionPanel(BasicKineticLaw[] possibleLaws,
 			int selected)
 			throws RateLawNotApplicableException {
@@ -127,7 +133,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		prefsLaTeX = SBPreferences.getPreferencesFor(LaTeXOptions.class);
 		if ((possibleLaws == null) || (selected < 0)
 				|| (selected > possibleLaws.length) || (possibleLaws.length < 1))
-			throw new IllegalArgumentException(Bundles.WARNINGS.getString("INVALID_RATE_LAW_COUNT"));
+			throw new IllegalArgumentException(WARNINGS.getString("INVALID_RATE_LAW_COUNT"));
 		this.reaction = possibleLaws[0].getParentSBMLObject();
 		this.possibleTypes = new Class[possibleLaws.length];
 		String[] possibleTypesNames = new String[possibleLaws.length];
@@ -179,15 +185,15 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		for (int i = 0; i < reaction.getReactantCount(); i++)
 			stoichiometry += reaction.getReactant(i).getStoichiometry();
 		if (stoichiometry > 2d) {
-		  String message = MessageFormat.format(Bundles.MESSAGES.getString("SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY"), StringUtil.toString(stoichiometry));
-			label.append("<p><span color=\"red\">" + Bundles.WARNINGS.getString("WARNING") +": ");
+		  String message = MessageFormat.format(MESSAGES.getString("SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY"), StringUtil.toString(stoichiometry));
+			label.append("<p><span color=\"red\">" + WARNINGS.getString("WARNING") +": ");
 			label.append(message);
 			label.append("</span></p>");
 			logger.warning(message);
 		}
 		if (reaction.getFast()) {
-		  String message = MessageFormat.format(Bundles.MESSAGES.getString("REACTION_PROCEEDS_ON_FAST_TIME_SCALE")
-				  									+ " " + Bundles.MESSAGES.getString("ATTRIBUTE_IGNORED"), 
+		  String message = MessageFormat.format(MESSAGES.getString("REACTION_PROCEEDS_ON_FAST_TIME_SCALE")
+				  									+ " " + MESSAGES.getString("ATTRIBUTE_IGNORED"), 
 				  								reaction.isSetName() ? reaction.getName() : reaction.getId());
 			label.append("<p><span color=\"#505050\">");
 			label.append(message);
@@ -216,32 +222,32 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		optionsPanel = new JPanel();
 		LayoutHelper lh = new LayoutHelper(optionsPanel);
 		optionsPanel.setBorder(BorderFactory
-				.createTitledBorder(Bundles.MESSAGES.getString("REACTION_OPTIONS")));
+				.createTitledBorder(MESSAGES.getString("REACTION_OPTIONS")));
 
-		rButtonReversible = new JRadioButton(Bundles.MESSAGES.getString("REVERSIBLE"), 
+		rButtonReversible = new JRadioButton(MESSAGES.getString("REVERSIBLE"), 
 											reaction.getReversible());
-		rButtonReversible.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("REVERSIBLE_TOOLTIP"), 40));
+		rButtonReversible.setToolTipText(StringUtil.toHTML(MESSAGES.getString("REVERSIBLE_TOOLTIP"), 40));
 		
-		JRadioButton rButtonIrreversible = new JRadioButton(Bundles.MESSAGES.getString("IRREVERSIBLE"),
+		JRadioButton rButtonIrreversible = new JRadioButton(MESSAGES.getString("IRREVERSIBLE"),
 															!reaction.getReversible());
-		rButtonIrreversible.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("IRREVERSIBLE_TOOLTIP"), 40));
+		rButtonIrreversible.setToolTipText(StringUtil.toHTML(MESSAGES.getString("IRREVERSIBLE_TOOLTIP"), 40));
 		
 		ButtonGroup revGroup = new ButtonGroup();
-		treatAsEnzymeReaction = new JCheckBox(Bundles.MESSAGES.getString("ENZYME_CATALYSED"));
-		treatAsEnzymeReaction.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("ENZYME_CATALYSED_TOOLTIP"), 40));
+		treatAsEnzymeReaction = new JCheckBox(MESSAGES.getString("ENZYME_CATALYSED"));
+		treatAsEnzymeReaction.setToolTipText(StringUtil.toHTML(MESSAGES.getString("ENZYME_CATALYSED_TOOLTIP"), 40));
 		lh.add(treatAsEnzymeReaction, 0, 0, 2, 1, 1, 1);
 		revGroup.add(rButtonReversible);
 		revGroup.add(rButtonIrreversible);
 		lh.add(rButtonReversible, 0, 1, 1, 1, 1, 1);
 		lh.add(rButtonIrreversible, 1, 1, 1, 1, 1, 1);
 		JRadioButton rButtonLocalParameters = new JRadioButton(
-				Bundles.MESSAGES.getString("LOCAL_PARAMETERS"), !this.klg.getPreferences().getBoolean(
+				MESSAGES.getString("LOCAL_PARAMETERS"), !this.klg.getPreferences().getBoolean(
 						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
-		rButtonLocalParameters.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("LOCAL_PARAMETERS_TOOLTIP"), 40));
+		rButtonLocalParameters.setToolTipText(StringUtil.toHTML(MESSAGES.getString("LOCAL_PARAMETERS_TOOLTIP"), 40));
 		
-		rButtonGlobalParameters = new JRadioButton(Bundles.MESSAGES.getString("GLOBAL_PARAMETERS"),
+		rButtonGlobalParameters = new JRadioButton(MESSAGES.getString("GLOBAL_PARAMETERS"),
 				!rButtonLocalParameters.isSelected());
-		rButtonGlobalParameters.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("GLOBAL_PARAMETERS_TOOLTIP"), 40));
+		rButtonGlobalParameters.setToolTipText(StringUtil.toHTML(MESSAGES.getString("GLOBAL_PARAMETERS_TOOLTIP"), 40));
 		ButtonGroup paramGroup = new ButtonGroup();
 		paramGroup.add(rButtonGlobalParameters);
 		paramGroup.add(rButtonLocalParameters);
@@ -314,7 +320,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		preview.add(new sHotEqn(sb.toString()), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel(new BorderLayout());
-		eqnPrev.setBorder(BorderFactory.createTitledBorder(" "+Bundles.MESSAGES.getString("EQUATION_PREVIEW")+" "));
+		eqnPrev.setBorder(BorderFactory.createTitledBorder(" "+MESSAGES.getString("EQUATION_PREVIEW")+" "));
 		Dimension dim = new Dimension(width, height);
 		/*
 		 * new Dimension((int) Math.min(width, preview
@@ -429,7 +435,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 							reaction.getNotesString(), 40));
 				else
 					rButtonsKineticEquations[i]
-							.setToolTipText("<html>"+Bundles.MESSAGES.getString("RATE_LAW_ASSIGNED_TO_REACTION")+"</html>");
+							.setToolTipText("<html>"+MESSAGES.getString("RATE_LAW_ASSIGNED_TO_REACTION")+"</html>");
 			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
 			if (i < rButtonsKineticEquations.length - 1
@@ -444,7 +450,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		}
 
 		kineticsPanel.setBorder(BorderFactory
-				.createTitledBorder(" "+Bundles.MESSAGES.getString("CHOOSE_KINETIC_LAW")+" "));
+				.createTitledBorder(" "+MESSAGES.getString("CHOOSE_KINETIC_LAW")+" "));
 		createPreviewPanel(kinSelected);
 		Box info = new Box(BoxLayout.Y_AXIS);
 		info.add(kineticsPanel);
@@ -462,6 +468,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void itemStateChanged(ItemEvent ie) {
 		if (ie.getSource() instanceof JCheckBox)
 			try {
@@ -476,7 +483,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		else if (ie.getSource() instanceof JRadioButton) {
 			JRadioButton rbutton = (JRadioButton) ie.getSource();
 			if (rbutton.getParent().equals(optionsPanel)) {
-				if (rbutton.getText().toLowerCase().contains(Bundles.MESSAGES.getString("REVERSIBLE").toLowerCase())) {
+				if (rbutton.getText().toLowerCase().contains(MESSAGES.getString("REVERSIBLE").toLowerCase())) {
 					try {
 						// reversible property was changed.
 						selected = "";

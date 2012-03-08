@@ -29,6 +29,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -68,6 +69,7 @@ import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
 import org.sbml.squeezer.util.SBMLtools;
 
 import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -83,6 +85,10 @@ import de.zbit.util.prefs.SBPreferences;
  * @date Aug 1, 2007
  */
 public class KineticLawGenerator {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+	
 	/**
 	 * The column rank of the soichiometric matrix of the original model.
 	 */
@@ -214,7 +220,7 @@ public class KineticLawGenerator {
 			compartment.setSpatialDimensions(3d);
 			compartment.setUnits(model.getUnitDefinition(UnitDefinition.VOLUME));
 			logger.log(Level.WARNING,
-					MessageFormat.format(Bundles.WARNINGS.getString("INVALID_COMPARTMENT_DIMENSION")+"\n",
+					MessageFormat.format(WARNINGS.getString("INVALID_COMPARTMENT_DIMENSION")+"\n",
 							compartment.getId()));
 		}
 	}
@@ -453,7 +459,7 @@ public class KineticLawGenerator {
 			if (reacOrig.isSetKineticLaw()) {
 				String formula = reacOrig.getKineticLaw().getFormula();
 				if (formula.equals("") || formula.equals(" ")) {
-					logger.warning(MessageFormat.format(Bundles.WARNINGS.getString("INVALID_REACTION_FORMAT") + "\n",
+					logger.warning(MessageFormat.format(WARNINGS.getString("INVALID_REACTION_FORMAT") + "\n",
 							reacOrig.getId()));
 					create = true;
 				}
@@ -951,7 +957,7 @@ public class KineticLawGenerator {
 			r.setReversible(reversible);
 		} else {
 			throw new IllegalArgumentException(MessageFormat.format(
-					Bundles.WARNINGS.getString("INVALID_REACTION_ID_FOR_RATE_LAW_CREATION"), reactionID));
+					WARNINGS.getString("INVALID_REACTION_ID_FOR_RATE_LAW_CREATION"), reactionID));
 		}
 	}
 
@@ -1094,10 +1100,10 @@ public class KineticLawGenerator {
 	public void storeKineticLaws() {
 		
 		if (getFastReactions().size() > 0) {
-			logger.log(Level.FINE, MessageFormat.format(Bundles.MESSAGES.getString("THE_MODEL_CONTAINS"), 
+			logger.log(Level.FINE, MessageFormat.format(MESSAGES.getString("THE_MODEL_CONTAINS"), 
 											getFastReactions().size(), modelOrig.getId())
-									+ " " + Bundles.MESSAGES.getString("FAST_REACTIONS") + "."
-									+ " " + Bundles.MESSAGES.getString("NOT_SUPPORTED"));
+									+ " " + MESSAGES.getString("FAST_REACTIONS") + "."
+									+ " " + MESSAGES.getString("NOT_SUPPORTED"));
 		}
 		
 		if (progressBar != null) {

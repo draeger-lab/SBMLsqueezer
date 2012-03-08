@@ -24,6 +24,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -32,6 +33,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This class implements SBO:0000150 and all of its special cases. It is an
@@ -51,6 +54,9 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 		InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceIntegerStoichiometry {
 
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+	
 	/**
 	 * Generated serial version identifier.
 	 */
@@ -79,13 +85,13 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 			throws RateLawNotApplicableException {
 		if ((modActi.size() > 0) || (modInhib.size() > 0))
 			throw new RateLawNotApplicableException(
-					Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_NON_MODULATED_REACTIONS"));
+					WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_NON_MODULATED_REACTIONS"));
 		if ((modCat.size() > 0))
 			throw new RateLawNotApplicableException(
-					Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS"));
+					WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS"));
 		if (getParentSBMLObject().getReversible())
 			throw new RateLawNotApplicableException(
-					Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_IRREVERSIBLE_REACTIONS"));
+					WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_IRREVERSIBLE_REACTIONS"));
 		numOfEnzymes = modE.size();
 		Reaction reaction = getParentSBMLObject();
 		ASTNode enzymes[] = new ASTNode[Math.max(1, modE.size())];
@@ -100,7 +106,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 				SpeciesReference si = reaction.getReactant(i);
 				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0) {
 					throw new RateLawNotApplicableException(
-							Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_IF_REACTANTS_HAVE_INTEGER_STOICHIOMETRIES"));
+							WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_IF_REACTANTS_HAVE_INTEGER_STOICHIOMETRIES"));
 				}
 				LocalParameter p_kM = parameterFactory.parameterMichaelis(si
 						.getSpecies(), enzyme, true);
@@ -141,6 +147,6 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME");
+		return MESSAGES.getString("IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME");
 	}
 }

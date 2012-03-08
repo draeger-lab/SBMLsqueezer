@@ -40,6 +40,7 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -63,6 +64,7 @@ import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 
 import atp.sHotEqn;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -75,6 +77,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
  */
 public class KineticLawTable extends JTable implements MouseInputListener {
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
 	 * Generated serial version ID
@@ -106,7 +109,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				.getPreferences().getInt(
 						SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS)));
 		getTableHeader().setToolTipText(
-				StringUtil.toHTML(Bundles.MESSAGES.getString("KINTEIC_LAW_TABLE_HEADER_TOOLTIP"), 40));
+				StringUtil.toHTML(MESSAGES.getString("KINTEIC_LAW_TABLE_HEADER_TOOLTIP"), 40));
 		setCellSelectionEnabled(true);
 		setEnabled(true);
 		addMouseListener(this);
@@ -161,7 +164,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						- this.getTopLevelAncestor().getX(), this.getY() + 10);
 				panel.setBorder(BorderFactory.createLoweredBevelBorder());
 				JOptionPane.showMessageDialog(this, panel,
-						MessageFormat.format(Bundles.MESSAGES.getString("RATE_LAW_OF_REACTION"), 
+						MessageFormat.format(MESSAGES.getString("RATE_LAW_OF_REACTION"), 
 								kinetic.getParentSBMLObject().getId()),
 						JOptionPane.INFORMATION_MESSAGE);
 				// JLayeredPane.getLayeredPaneAbove(getParent()).add(component,
@@ -281,15 +284,15 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				final JDialog dialog;
 				if (container instanceof Frame)
 					dialog = new JDialog((Frame) container,
-							MessageFormat.format(Bundles.MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
+							MessageFormat.format(MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
 									reaction.getId()));
 				else if (container instanceof Dialog)
 					dialog = new JDialog((Dialog) container,
-							MessageFormat.format(Bundles.MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
+							MessageFormat.format(MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
 									reaction.getId()));
 				else {
 					dialog = new JDialog();
-					dialog.setTitle(MessageFormat.format(Bundles.MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
+					dialog.setTitle(MessageFormat.format(MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
 							reaction.getId()));
 				}
 				Container content = dialog.getContentPane();

@@ -25,6 +25,7 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -34,6 +35,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This class creates rate equations according to the generalized mass action
@@ -52,6 +55,8 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
 
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	
 	/**
 	 * Generated serial version identifier.
 	 */
@@ -557,6 +562,6 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("GENERALIZED_MASS_ACTION_SIMPLE_NAME");
+		return MESSAGES.getString("GENERALIZED_MASS_ACTION_SIMPLE_NAME");
 	}
 }

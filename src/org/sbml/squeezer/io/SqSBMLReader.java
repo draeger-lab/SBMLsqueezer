@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -42,6 +43,8 @@ import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.util.ResourceManager;
+
 
 /**
  * This class provides methods to create JSBML models independently from libSBML.
@@ -53,6 +56,8 @@ import org.sbml.squeezer.util.Bundles;
  */
 public class SqSBMLReader implements SBMLInputConverter {
 
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+	
 	/**
 	 * 
 	 */
@@ -120,7 +125,7 @@ public class SqSBMLReader implements SBMLInputConverter {
 			// SBMLDocument given; construct and return model
 			return readModelFromSBML((SBMLDocument) model);
 		} else {
-			throw new IllegalArgumentException(Bundles.WARNINGS.getString("WRONG_MODEL_INSTANCE"));
+			throw new IllegalArgumentException(WARNINGS.getString("WRONG_MODEL_INSTANCE"));
 		}
 	}
 

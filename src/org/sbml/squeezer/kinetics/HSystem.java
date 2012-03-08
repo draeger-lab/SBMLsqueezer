@@ -24,6 +24,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -34,6 +35,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This class creates a non-linear additive equation form
@@ -55,6 +58,8 @@ public class HSystem extends BasicKineticLaw implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
 
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	
 	/**
 	 * Generated serial version identifier.
 	 */
@@ -167,7 +172,7 @@ public class HSystem extends BasicKineticLaw implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("HSYSTEM_SIMPLE_NAME");
+		return MESSAGES.getString("HSYSTEM_SIMPLE_NAME");
 	}
 
 }

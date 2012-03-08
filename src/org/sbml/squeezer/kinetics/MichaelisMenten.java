@@ -25,6 +25,7 @@ package org.sbml.squeezer.kinetics;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -34,6 +35,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This is the well-known (Henry-) Michaelis-Menten equation and can be found in
@@ -57,6 +60,9 @@ import org.sbml.squeezer.util.SBMLtools;
 public class MichaelisMenten extends GeneralizedMassAction implements
 		InterfaceUniUniKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
 	/**
 	 * Generated serial version identifier.
@@ -87,14 +93,14 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		if ((reaction.getReactantCount() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1d)) { 
 			throw new RateLawNotApplicableException(
-				MessageFormat.format(Bundles.WARNINGS
+				MessageFormat.format(WARNINGS
 					.getString("INCORRECT_STOICHIOMETRY_OF_REACTANT_SPECIES"),
 					getSimpleName(), reaction.getId())); 
 		}
 		if (((reaction.getProductCount() != 1) || (reaction.getProduct(0)
 				.getStoichiometry() != 1d)) && reaction.getReversible()) {
 			throw new RateLawNotApplicableException(
-				MessageFormat.format(Bundles.WARNINGS
+				MessageFormat.format(WARNINGS
 					.getString("INCORRECT_STOICHIOMETRY_OF_PRODUCT_SPECIES"),
 					getSimpleName(), reaction.getId()));
 		}
@@ -286,7 +292,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("MICHAELIS_MENTEN_SIMPLE_NAME");
+		return MESSAGES.getString("MICHAELIS_MENTEN_SIMPLE_NAME");
 	}
 
 }

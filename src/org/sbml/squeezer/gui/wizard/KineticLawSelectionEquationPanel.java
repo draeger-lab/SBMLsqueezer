@@ -37,6 +37,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,6 +72,7 @@ import de.zbit.gui.StatusBar;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.io.SBFileFilter;
 import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
 
@@ -82,6 +84,8 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionEquationPanel extends JPanel implements ActionListener{
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
 
 	/**
 	 * 
@@ -124,8 +128,8 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		JButton jButtonReactionsFrameSave = new JButton();
 		jButtonReactionsFrameSave.setEnabled(true);
 		jButtonReactionsFrameSave.setBounds(35, 285, 100, 25);
-		jButtonReactionsFrameSave.setToolTipText(StringUtil.toHTML(Bundles.MESSAGES.getString("EXPORT_CHANGES_TOOLTIP"), 40));
-		jButtonReactionsFrameSave.setText(Bundles.MESSAGES.getString("EXPORT_CHANGES"));
+		jButtonReactionsFrameSave.setToolTipText(StringUtil.toHTML(MESSAGES.getString("EXPORT_CHANGES_TOOLTIP"), 40));
+		jButtonReactionsFrameSave.setText(MESSAGES.getString("EXPORT_CHANGES"));
 		jButtonReactionsFrameSave.setIcon(UIManager.getIcon("ICON_LATEX_TINY"));
 		jButtonReactionsFrameSave.addActionListener(this);
 		
@@ -148,7 +152,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 			
 			generateKineticLawDone();
 			
-			logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
+			logger.log(Level.INFO, LABELS.getString("READY"));
 			firePropertyChange("done", null, null);
 			
 		} catch (Throwable exc) {
@@ -163,17 +167,17 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		try {
 			if (klg.getFastReactions().size() > 0) {
 				StringBuilder message = new StringBuilder();
-				String modelContains = Bundles.MESSAGES.getString("THE_MODEL_CONTAINS")+" ";
+				String modelContains = MESSAGES.getString("THE_MODEL_CONTAINS")+" ";
 				if (klg.getFastReactions().size() > 1)
-					message.append(MessageFormat.format(modelContains, Bundles.MESSAGES.getString("FAST_REACTIONS")));
+					message.append(MessageFormat.format(modelContains, MESSAGES.getString("FAST_REACTIONS")));
 				else {
-					message.append(MessageFormat.format(modelContains, Bundles.MESSAGES.getString("THE_FAST_REACTION"))+" ");
+					message.append(MessageFormat.format(modelContains, MESSAGES.getString("THE_FAST_REACTION"))+" ");
 					message.append(klg.getFastReactions().get(0).getId());
 				}
 				message.append(". ");
-				message.append(Bundles.MESSAGES.getString("NOT_SUPPORTED"));
+				message.append(MESSAGES.getString("NOT_SUPPORTED"));
 				if (klg.getFastReactions().size() > 1) {
-					message.append(Bundles.MESSAGES.getString("ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED"));
+					message.append(MESSAGES.getString("ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED"));
 					message.append("<ul type=\"disc\">");
 					for (int i = 0; i < klg.getFastReactions().size(); i++) {
 						message.append("<li>");
@@ -182,11 +186,11 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 					}
 					message.append("</ul>");
 				} else
-					message.append(Bundles.MESSAGES.getString("ATTRIBUTE_BEEING_IGNORED"));
+					message.append(MESSAGES.getString("ATTRIBUTE_BEEING_IGNORED"));
 				final JOptionPane pane = new JOptionPane(StringUtil.toHTML(
 						message.toString(), 40), JOptionPane.WARNING_MESSAGE);
 				final JDialog d = new JDialog();
-				d.setTitle(Bundles.MESSAGES.getString("FAST_REACTIONS"));
+				d.setTitle(MESSAGES.getString("FAST_REACTIONS"));
 				d.setModal(true);
 				d.getContentPane().add(pane);
 				d.pack();
@@ -227,7 +231,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 				d.dispose();
 				if (statusBar != null)
 					statusBar.hideProgress();
-				logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
+				logger.log(Level.INFO, LABELS.getString("READY"));
 				// JOptionPane.showMessageDialog(null, GUITools.toHTML(message
 				// .toString(), 40), "Fast Reactions",
 				// JOptionPane.WARNING_MESSAGE);
@@ -265,13 +269,13 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	
 			JLabel numberOfWarnings = new JLabel(
 					"<html><table align=left width=500 cellspacing=10><tr><td>"
-							+ "<b>" + Bundles.MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
-							+ "<td>" + Bundles.MESSAGES.getString("NUMBER_OF_WARNINGS")
-							+ " " + "("+Bundles.MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
+							+ "<b>" + MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
+							+ "<td>" + MESSAGES.getString("NUMBER_OF_WARNINGS")
+							+ " " + "("+MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
 							+ "</td></tr></table></htlm>");
 			numberOfWarnings
 					.setToolTipText(StringUtil.toHTML(
-									Bundles.MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
+									MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
 									40));
 			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
 	
@@ -390,7 +394,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 						statusBar.hideProgress();
 						statusBar.unsetLogMessageLimit();
 					}
-					logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
+					logger.log(Level.INFO, LABELS.getString("READY"));
 				}
 			}).start();
 		}
@@ -406,7 +410,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			String text = ((JButton) e.getSource()).getText();
-			if (text.equals(Bundles.MESSAGES.getString("EXPORT_CHANGES"))) {
+			if (text.equals(MESSAGES.getString("EXPORT_CHANGES"))) {
 				/*
 				 * new Thread(new Runnable() { public void run() {//
 				 */

@@ -26,6 +26,7 @@ package org.sbml.squeezer.gui.wizard;
 
 import java.awt.Frame;
 import java.beans.PropertyChangeListener;
+import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
 import org.sbml.squeezer.io.SBMLio;
@@ -34,6 +35,7 @@ import org.sbml.squeezer.util.Bundles;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.wizard.Wizard;
 import de.zbit.gui.wizard.WizardPanelDescriptor;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -44,6 +46,8 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionWizard extends Wizard implements PropertyChangeListener {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	private SBMLio sbmlIO;
 	
@@ -62,7 +66,7 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		
 		this.sbmlIO = sbmlIO;
 		
-		this.getDialog().setTitle(Bundles.MESSAGES.getString("SBMLSQUEEZER"));
+		this.getDialog().setTitle(MESSAGES.getString("SBMLSQUEEZER"));
 		this.setModal(true);
 		
 		this.setWarningVisible(false);

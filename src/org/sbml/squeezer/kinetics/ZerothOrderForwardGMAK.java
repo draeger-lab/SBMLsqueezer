@@ -24,11 +24,14 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This class creates generalized mass action rate equations with zeroth order
@@ -43,6 +46,8 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 		InterfaceNonEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceZeroReactants,
 		InterfaceZeroProducts, InterfaceModulatedKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
 	 * Generated serial version identifier.
@@ -81,6 +86,6 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("ZEROTH_ORDER_FORWARD_GMAK_SIMPLE_NAME");
+		return MESSAGES.getString("ZEROTH_ORDER_FORWARD_GMAK_SIMPLE_NAME");
 	}
 }

@@ -25,6 +25,7 @@ package org.sbml.squeezer.kinetics;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -33,6 +34,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * Kinetic law that describes the ping-pong reaction mechanism.
@@ -49,6 +52,9 @@ import org.sbml.squeezer.util.SBMLtools;
 public class PingPongMechanism extends GeneralizedMassAction implements
 		InterfaceBiBiKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
 	/**
 	 * Generated serial version identifier.
@@ -98,7 +104,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		else
 			throw new RateLawNotApplicableException(
 					MessageFormat.format(
-							Bundles.WARNINGS.getString("PING_PONG_NUM_OF_REACTANTS_MUST_EQUAL"), 
+							WARNINGS.getString("PING_PONG_NUM_OF_REACTANTS_MUST_EQUAL"), 
 							reaction.getId()));
 
 		boolean exception = false;
@@ -119,7 +125,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		if (exception)
 			throw new RateLawNotApplicableException(
 					MessageFormat.format(
-							Bundles.WARNINGS.getString("PING_PONG_NUM_OF_PRODUCTS_MUST_EQUAL"), 
+							WARNINGS.getString("PING_PONG_NUM_OF_PRODUCTS_MUST_EQUAL"), 
 							reaction.getId()));
 
 		int enzymeNum = 0;
@@ -244,7 +250,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("PING_PONG_MEACHANISM_SIMPLE_NAME");
+		return MESSAGES.getString("PING_PONG_MEACHANISM_SIMPLE_NAME");
 	}
 
 }

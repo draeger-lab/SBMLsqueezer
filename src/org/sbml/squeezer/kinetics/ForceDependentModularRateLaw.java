@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.util.ResourceBundle;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
@@ -31,6 +33,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * Force-dependent modular rate law (FM) according to Liebermeister et al. 2010.
@@ -46,6 +50,8 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
 		InterfaceBiBiKinetics, InterfaceArbitraryEnzymeKinetics,
 		InterfaceReversibleKinetics, InterfaceModulatedKinetics {
 
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	
 	/**
 	 * Generated serial version identifier.
 	 */
@@ -123,6 +129,6 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME");
+		return MESSAGES.getString("FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
 }
