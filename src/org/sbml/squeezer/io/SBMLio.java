@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -46,6 +47,7 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.ResourceManager;
 
 /**
  * A manager class for reading and writing models from some source into JSBML
@@ -63,6 +65,8 @@ import de.zbit.util.AbstractProgressBar;
  */
 public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		TreeNodeChangeListener, ChangeListener {
+
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
 	private List<TreeNode> added;
 
@@ -134,7 +138,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			// exc.fillInStackTrace();
 			exc.printStackTrace();
 			SBMLException sbmlExc = new SBMLException(
-					MessageFormat.format(Bundles.WARNINGS.getString("CANT_READ_MODEL"), ""),
+					MessageFormat.format(WARNINGS.getString("CANT_READ_MODEL"), ""),
 					exc);
 			sbmlExc.setCategory(Category.XML);
 			throw sbmlExc;

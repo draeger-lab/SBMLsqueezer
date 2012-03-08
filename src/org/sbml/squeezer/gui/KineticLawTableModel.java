@@ -23,6 +23,8 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.util.ResourceBundle;
+
 import javax.swing.table.AbstractTableModel;
 
 import org.sbml.jsbml.KineticLaw;
@@ -33,6 +35,8 @@ import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.Bundles;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * Data model for the {@link KineticLawTable} that determins, which information
@@ -46,6 +50,8 @@ import org.sbml.squeezer.util.Bundles;
  * @version $Rev$
  */
 public class KineticLawTableModel extends AbstractTableModel {
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	
 	/**
 	 * Generated serial ID.
 	 */
@@ -74,14 +80,14 @@ public class KineticLawTableModel extends AbstractTableModel {
 		double numReac;
 
 		columnNames = new String[] { 
-				Bundles.MESSAGES.getString("COL_REACTION"),
-				Bundles.MESSAGES.getString("COL_KINETIC_LAW"),
-				Bundles.MESSAGES.getString("COL_SBO"),
-				Bundles.MESSAGES.getString("COL_NUM_REACTANTS"),
-				Bundles.MESSAGES.getString("COL_REACTANTS"),
-				Bundles.MESSAGES.getString("COL_PRODUCTS"),
-				Bundles.MESSAGES.getString("COL_PARAMETERS"),
-				Bundles.MESSAGES.getString("COL_FORMULA")};
+				MESSAGES.getString("COL_REACTION"),
+				MESSAGES.getString("COL_KINETIC_LAW"),
+				MESSAGES.getString("COL_SBO"),
+				MESSAGES.getString("COL_NUM_REACTANTS"),
+				MESSAGES.getString("COL_REACTANTS"),
+				MESSAGES.getString("COL_PRODUCTS"),
+				MESSAGES.getString("COL_PARAMETERS"),
+				MESSAGES.getString("COL_FORMULA")};
 		data = new Object[klg.getCreatedKineticsCount()][this.columnNames.length];
 		numOfWarnings = 0;
 

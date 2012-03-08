@@ -24,10 +24,6 @@
 
 package org.sbml.squeezer.util;
 
-import java.util.ResourceBundle;
-
-import de.zbit.util.ResourceManager;
-
 /**
  * @author Sebastian Nagel
  * @version $Rev: 815 $
@@ -37,25 +33,25 @@ public class Bundles {
 	/**
 	 * 
 	 */
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Messages");
+	public static final transient String MESSAGES = "org.sbml.squeezer.gui.locales.Messages";
 
 	/**
 	 * 
 	 */
-	public static final transient ResourceBundle OPTIONS = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Options");
+	public static final transient String OPTIONS = "org.sbml.squeezer.gui.locales.Options";
 	
 	/**
 	 * 
 	 */
-	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle("org.sbml.squeezer.gui.locales.Warnings");
+	public static final transient String WARNINGS = "org.sbml.squeezer.gui.locales.Warnings";
 
 	/**
 	 * 
 	 */
-	public static final transient ResourceBundle LABELS = ResourceManager.getBundle("de.zbit.locales.Labels");
+	public static final transient String LABELS = "de.zbit.locales.Labels";
 	
 	/**
 	 * 
 	 */
-	public static final transient ResourceBundle BASE = ResourceManager.getBundle("de.zbit.locales.BaseAction");
+	public static final transient String BASE = "de.zbit.locales.BaseAction";
 }

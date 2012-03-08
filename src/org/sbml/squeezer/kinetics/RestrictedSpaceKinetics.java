@@ -24,6 +24,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -33,6 +34,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.util.ResourceManager;
+
 /**
  * @author Andreas Dr&auml;ger
  * @date 16:44:54
@@ -40,6 +43,8 @@ import org.sbml.squeezer.util.Bundles;
  */
 public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 		InterfaceIrreversibleKinetics, InterfaceBiUniKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
 	 * Generated serial version identifier.
@@ -102,6 +107,6 @@ public class RestrictedSpaceKinetics extends GeneralizedMassAction implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("RESTRICTED_SPACE_KINETICS_SIMPLE_NAME");
+		return MESSAGES.getString("RESTRICTED_SPACE_KINETICS_SIMPLE_NAME");
 	}
 }

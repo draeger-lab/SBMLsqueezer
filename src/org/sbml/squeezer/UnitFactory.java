@@ -25,6 +25,7 @@ package org.sbml.squeezer;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ListOf;
@@ -41,6 +42,8 @@ import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.filters.SBOFilter;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.util.ResourceManager;
+
 /**
  * A factory class that creates frequently used instances of {@link Unit} and
  * {@link UnitDefinition} if these are not yet present in a {@link Model}. To
@@ -52,6 +55,8 @@ import org.sbml.squeezer.util.Bundles;
  * @version $Rev$
  */
 public class UnitFactory {
+
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
 	/**
 	 * Avoids adding identical unit definitions multiple times to the model.
@@ -416,13 +421,13 @@ public class UnitFactory {
 		Compartment compartment = species.getCompartmentInstance();
 		if (compartment == null) { throw new NullPointerException(
 			MessageFormat.format(
-				Bundles.WARNINGS.getString("UNDEFINED_COMPARTMENT_OF_SPECIES"),
+				WARNINGS.getString("UNDEFINED_COMPARTMENT_OF_SPECIES"),
 				species.toString())); }
 		UnitDefinition substanceUnit = species.getSubstanceUnitsInstance();
 		UnitDefinition sizeUnit = compartment.getUnitsInstance();
 		if ((substanceUnit == null) || (sizeUnit == null)) { throw new NullPointerException(
 			MessageFormat.format(
-				Bundles.WARNINGS.getString("UNDEFINED_UNIT_OF_SPECIES"),
+				WARNINGS.getString("UNDEFINED_UNIT_OF_SPECIES"),
 				species.toString())); }
 		return unitSubstancePerSize(substanceUnit, sizeUnit);
 	}

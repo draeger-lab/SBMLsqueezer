@@ -24,6 +24,7 @@
 package org.sbml.squeezer.util;
 
 import java.text.MessageFormat;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +32,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.squeezer.SqueezerOptions;
 
 import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -40,6 +42,9 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
  */
 public class ProgressAdapter {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
 
   /**
    * 
@@ -95,13 +100,13 @@ public class ProgressAdapter {
 		startTime = System.currentTimeMillis();
 		switch(progressType){
 		case storeKineticLaw:
-			logger.log(Level.INFO, Bundles.MESSAGES.getString("STORE_KINETIC_EQUATION"));
+			logger.log(Level.INFO, MESSAGES.getString("STORE_KINETIC_EQUATION"));
 			break;
 		case storeKineticLaws:	
-			logger.log(Level.INFO, Bundles.MESSAGES.getString("STORE_KINETIC_EQUATIONS"));
+			logger.log(Level.INFO, MESSAGES.getString("STORE_KINETIC_EQUATIONS"));
 			break;
 		case generateLaws:
-			logger.log(Level.INFO, Bundles.MESSAGES.getString("GENERATE_KINETIC_EQUATION"));
+			logger.log(Level.INFO, MESSAGES.getString("GENERATE_KINETIC_EQUATION"));
 			break;
 		}
 	}
@@ -111,8 +116,8 @@ public class ProgressAdapter {
 	 */
 	public void finished(){
 		this.progressBar.finished();
-		logger.info("    "+MessageFormat.format(Bundles.MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - startTime)));
-		logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
+		logger.info("    "+MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - startTime)));
+		logger.log(Level.INFO, LABELS.getString("READY"));
 	}
 	
 	/**

@@ -24,6 +24,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -35,6 +36,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * Represents the power-law modular rate law (PM) from Liebermeister et al.
@@ -50,6 +53,8 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
 	 * Generated serial version identifier.
@@ -402,6 +407,6 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("POWER_MODULAR_RATE_LAW_SIMPLE_NAME");
+		return MESSAGES.getString("POWER_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
 }

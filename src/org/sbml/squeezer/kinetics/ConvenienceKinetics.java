@@ -24,6 +24,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
@@ -34,6 +35,8 @@ import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * <p>
@@ -60,6 +63,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		InterfaceUniUniKinetics, InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
 	 * Generated serial version identifier.
@@ -87,8 +92,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		Reaction reaction = getParentSBMLObject();
 		SBMLtools.setSBOTerm(this,429);
 		setNotes(StringTools.firstLetterUpperCase((!fullRank) ?
-				Bundles.MESSAGES.getString("THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS") :
-				Bundles.MESSAGES.getString("CONVENIENCE_KINETICS")));
+				MESSAGES.getString("THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS") :
+				MESSAGES.getString("CONVENIENCE_KINETICS")));
 
 		ASTNode[] enzymes = new ASTNode[Math.max(modE.size(), 1)];
 		for (int i = 0; i < enzymes.length; i++) {
@@ -262,6 +267,6 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	@Override
 	public String getSimpleName() {
 		//return getNotesString();
-		return Bundles.MESSAGES.getString("CONVENIENCE_KINETICS_SIMPLE_NAME");
+		return MESSAGES.getString("CONVENIENCE_KINETICS_SIMPLE_NAME");
 	}
 }

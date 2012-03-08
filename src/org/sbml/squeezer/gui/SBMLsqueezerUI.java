@@ -37,6 +37,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
@@ -81,6 +82,7 @@ import de.zbit.io.SBFileFilter;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
 import de.zbit.sbml.gui.SBMLTree;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
@@ -142,6 +144,9 @@ class FileReaderThread extends Thread implements Runnable {
  */
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		ChangeListener {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
 	/**
 	 * This is what the graphical user interface of SBMLsqueezer can do...
@@ -222,11 +227,11 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			scroll.setPreferredSize(new Dimension(450, 200));
-			JOptionPane.showMessageDialog(parent, scroll, Bundles.WARNINGS.getString("SBML_WARNINGS"),
+			JOptionPane.showMessageDialog(parent, scroll, WARNINGS.getString("SBML_WARNINGS"),
 					JOptionPane.WARNING_MESSAGE);
 			if (m == null) {
 				JOptionPane.showMessageDialog(parent, StringUtil.toHTML(
-						Bundles.WARNINGS.getString("UNABLE_TO_LOAD_MODEL"), 40), "Error", JOptionPane.ERROR_MESSAGE);
+						WARNINGS.getString("UNABLE_TO_LOAD_MODEL"), 40), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -495,8 +500,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			if (model != null) {
 				addModel(model);
 				String path = file.getAbsolutePath();
-				String oldPath = prefs.get(IOOptions.SBML_IN_FILE)
-						.toString();
+				String oldPath = prefs.get(IOOptions.SBML_IN_FILE);
 				if (!path.equals(oldPath)) {
 					prefs.put(IOOptions.SBML_IN_FILE, path);
 					prefs.flush();
@@ -672,7 +676,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	protected Component createMainComponent() {
 		colorDefault = getContentPane().getBackground();
 		Icon icon = UIManager.getIcon("ICON_LOGO_SMALL");
-		logo = new JLabel(StringUtil.toHTML("<br><br><br><br><br>"+Bundles.MESSAGES.getString("VERSION")+": "
+		logo = new JLabel(StringUtil.toHTML("<br><br><br><br><br>"+MESSAGES.getString("VERSION")+": "
 				+ System.getProperty("app.version")), icon, JLabel.CENTER);
 		if (icon != null) {
 			logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon

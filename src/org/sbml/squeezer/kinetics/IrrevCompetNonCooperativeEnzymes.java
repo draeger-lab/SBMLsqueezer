@@ -24,6 +24,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.KineticLaw;
@@ -33,6 +34,8 @@ import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * Irreversible non-exclusive non-cooperative competitive inihibition, a special
@@ -47,6 +50,9 @@ import org.sbml.squeezer.util.SBMLtools;
 public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 		implements InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
 		InterfaceUniUniKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
 	/**
 	 * Generated serial version identifier.
@@ -71,11 +77,11 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		if (modCat.size() > 0)
-			throw new RateLawNotApplicableException(Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS"));
+			throw new RateLawNotApplicableException(WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_ENZYME_CATALYZED_REACTIONS"));
 		Reaction reaction = getParentSBMLObject();
 		if ((reaction.getReactantCount() > 1)
 				|| (reaction.getReactant(0).getStoichiometry() != 1d))
-			throw new RateLawNotApplicableException(Bundles.WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_REACTIONS_WITH_EXACTLY_ONE_SUBSTRATE_SPECIES"));
+			throw new RateLawNotApplicableException(WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_TO_REACTIONS_WITH_EXACTLY_ONE_SUBSTRATE_SPECIES"));
 		if (reaction.getReversible()) {
 			reaction.setReversible(false);
 		}
@@ -138,6 +144,6 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME");
+		return MESSAGES.getString("IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME");
 	}
 }

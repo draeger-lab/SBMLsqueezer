@@ -29,6 +29,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -41,6 +42,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -60,7 +62,10 @@ import de.zbit.util.prefs.SBPreferences;
  * @since 1.3
  * @version $Rev$
  */
+@SuppressWarnings("rawtypes")
 public class ReactionType {
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
   /**
    * A {@link Logger} for this class.
@@ -193,27 +198,27 @@ public class ReactionType {
 			// }
 			if (SBO.isCatalyst(type)) {
 				if (SBO.isEnzymaticCatalysis(type)) {
-				  logger.fine(MessageFormat.format(Bundles.MESSAGES.getString("IS_ENZYMATIC_CATALYST"), modifier));
+				  logger.fine(MessageFormat.format(MESSAGES.getString("IS_ENZYMATIC_CATALYST"), modifier));
 					enzymes.add(modifier.getSpecies());
 				} else {
-				  logger.fine(MessageFormat.format(Bundles.MESSAGES.getString("IS_NON_ENZYMATIC_CATALYST"), modifier));
+				  logger.fine(MessageFormat.format(MESSAGES.getString("IS_NON_ENZYMATIC_CATALYST"), modifier));
 					nonEnzymeCatalysts.add(modifier.getSpecies());
 				}
 			} else if (SBO.isTranscriptionalInhibitor(type)
 					|| SBO.isTranslationalInhibitor(type)) {
-			  logger.fine(MessageFormat.format(Bundles.MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR"), modifier));
+			  logger.fine(MessageFormat.format(MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR"), modifier));
 				inhibitors.add(modifier.getSpecies());
 			} else if (SBO.isInhibitor(type)) {
-			  logger.fine(MessageFormat.format(Bundles.MESSAGES.getString("IS_INHIBITOR"), modifier));
+			  logger.fine(MessageFormat.format(MESSAGES.getString("IS_INHIBITOR"), modifier));
 				inhibitors.add(modifier.getSpecies());
 			} else if (SBO.isTranscriptionalActivation(type)
 					|| SBO.isTranslationalActivation(type)) {
-			  logger.fine(MessageFormat.format(Bundles.MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_ACTIVATOR"), modifier));
+			  logger.fine(MessageFormat.format(MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_ACTIVATOR"), modifier));
 				activators.add(modifier.getSpecies());
 			} else if (SBO.isTrigger(type) || SBO.isStimulator(type)) {
 				// no extra support for unknown catalysis anymore...
 				// physical stimulation is now also a stimulator.
-			  logger.fine(MessageFormat.format(Bundles.MESSAGES.getString("IS_ACTIVATOR"), modifier));
+			  logger.fine(MessageFormat.format(MESSAGES.getString("IS_ACTIVATOR"), modifier));
 				activators.add(modifier.getSpecies());
 			}
 		}
@@ -389,7 +394,7 @@ public class ReactionType {
 			}
 			if (transcription && SBO.isTranslation(reaction.getSBOTerm())) {
 				throw new RateLawNotApplicableException(MessageFormat.format(
-						Bundles.WARNINGS.getString("REACTION_MUST_BE_TRANSRIPTION"), reaction.getId()));
+						WARNINGS.getString("REACTION_MUST_BE_TRANSRIPTION"), reaction.getId()));
 			}
 		}
 		if (reactionWithRNAs
@@ -406,7 +411,7 @@ public class ReactionType {
 			}
 			if (SBO.isTranscription(reaction.getSBOTerm()) && translation) {
 				throw new RateLawNotApplicableException(MessageFormat.format(
-						Bundles.WARNINGS.getString("REACTION_MUST_BE_TRANSLATION"), reaction.getId()));
+						WARNINGS.getString("REACTION_MUST_BE_TRANSLATION"), reaction.getId()));
 			}
 		}
 		if (uniUni) {
@@ -418,19 +423,19 @@ public class ReactionType {
 				}
 				if (SBO.isTranslation(reaction.getSBOTerm())) {
 					throw new RateLawNotApplicableException(MessageFormat.format(
-							Bundles.WARNINGS.getString("REACTION_MUST_BE_TRANSRIPTION"), reaction.getId()));
+							WARNINGS.getString("REACTION_MUST_BE_TRANSRIPTION"), reaction.getId()));
 				}
 			} else if (SBO.isRNAOrMessengerRNA(species.getSBOTerm())) {
 				if (SBO.isTranscription(reaction.getSBOTerm())) {
 					throw new RateLawNotApplicableException(MessageFormat.format(
-							Bundles.WARNINGS.getString("REACTION_MUST_BE_TRANSLATION"), reaction.getId()));
+							WARNINGS.getString("REACTION_MUST_BE_TRANSLATION"), reaction.getId()));
 				}
 			}
 		}
 		if ((SBO.isTranslation(reaction.getSBOTerm()) || SBO.isTranscription(reaction.getSBOTerm()))
 				&& !(reactionWithGenes || reactionWithRNAs)) {
 			throw new RateLawNotApplicableException(MessageFormat.format(
-					Bundles.WARNINGS.getString("REACTION_MUST_BE_TRANSITION"), reaction.getId()));
+					WARNINGS.getString("REACTION_MUST_BE_TRANSITION"), reaction.getId()));
 		}
 	}
 

@@ -25,6 +25,7 @@ package org.sbml.squeezer.kinetics;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -34,6 +35,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This class creates a kinetic equation according to the random order mechanism
@@ -51,6 +54,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		InterfaceBiUniKinetics, InterfaceBiBiKinetics,
 		InterfaceReversibleKinetics, InterfaceIrreversibleKinetics,
 		InterfaceModulatedKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
 	/**
 	 * Generated serial version identifier.
@@ -86,7 +92,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		else
 			throw new RateLawNotApplicableException(
 					MessageFormat.format(
-							Bundles.WARNINGS.getString("RANDOM_ORDER_NUM_OF_REACTANTS_MUST_EQUAL"), 
+							WARNINGS.getString("RANDOM_ORDER_NUM_OF_REACTANTS_MUST_EQUAL"), 
 							reaction.getId()));
 
 		SBMLtools.setSBOTerm(this,429);
@@ -101,13 +107,13 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 
 		String numProd = "";
 		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2))
-			numProd = ", " + Bundles.MESSAGES.getString("TWO_PRODUCTS");
+			numProd = ", " + MESSAGES.getString("TWO_PRODUCTS");
 		else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1))
-			numProd = ", " + Bundles.MESSAGES.getString("ONE_PRODUCT");
+			numProd = ", " + MESSAGES.getString("ONE_PRODUCT");
 		
 		setNotes(MessageFormat.format(
-				Bundles.MESSAGES.getString("RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM"),
-				Bundles.MESSAGES.getString(!reaction.getReversible() ? "IRREVERSIBLE" : "REVERSIBLE"),
+				MESSAGES.getString("RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM"),
+				MESSAGES.getString(!reaction.getReversible() ? "IRREVERSIBLE" : "REVERSIBLE"),
 				numProd));
 
 		boolean exception = false;
@@ -131,7 +137,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		if (exception && reaction.getReversible())
 			throw new RateLawNotApplicableException(
 					MessageFormat.format(
-							Bundles.WARNINGS.getString("RANDOM_ORDER_NUM_OF_PRODUCTS_MUST_EQUAL"), 
+							WARNINGS.getString("RANDOM_ORDER_NUM_OF_PRODUCTS_MUST_EQUAL"), 
 							reaction.getId()));
 		
 		/*
@@ -318,7 +324,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("RANDOM_ORDER_MEACHANISM_SIMPLE_NAME");
+		return MESSAGES.getString("RANDOM_ORDER_MEACHANISM_SIMPLE_NAME");
 	}
 
 }

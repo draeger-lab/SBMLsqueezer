@@ -24,6 +24,7 @@
 package org.sbml.squeezer;
 
 import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
@@ -42,6 +43,8 @@ import org.sbml.jsbml.util.filters.SBOFilter;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
 
+import de.zbit.util.ResourceManager;
+
 /**
  * 
  * @author Andreas Dr&auml;ger
@@ -50,6 +53,7 @@ import org.sbml.squeezer.util.SBMLtools;
  * @version $Rev$
  */
 public class ParameterFactory {
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
 	 * 
@@ -182,8 +186,8 @@ public class ParameterFactory {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
 		if (!p.isSetName()) {
-			p.setName(Bundles.MESSAGES.getString("FOR_ADDITIVE_MODEL") 
-					+ ": " + Bundles.MESSAGES.getString("WEIGHT_ACTIVATION_FUNCTION_PARAMETERS"));
+			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL") 
+					+ ": " + MESSAGES.getString("WEIGHT_ACTIVATION_FUNCTION_PARAMETERS"));
 		}
 		return p;
 	}
@@ -208,8 +212,8 @@ public class ParameterFactory {
 		}
 		LocalParameter p_kass = createOrGetParameter(kass.toString());
 		if (!p_kass.isSetName()) {
-			p_kass.setName((zerothOrder ? Bundles.MESSAGES.getString("ZEROTH_ORDER") + " " : "") +
-					MessageFormat.format(Bundles.MESSAGES.getString("ASSOCIATION_CONSTANT_OF_REACTION"), r.getId()));
+			p_kass.setName((zerothOrder ? MESSAGES.getString("ZEROTH_ORDER") + " " : "") +
+					MessageFormat.format(MESSAGES.getString("ASSOCIATION_CONSTANT_OF_REACTION"), r.getId()));
 		}
 		if (!p_kass.isSetSBOTerm()) {
 			SBMLtools.setSBOTerm(p_kass,zerothOrder ? 48 : 153);
@@ -235,8 +239,8 @@ public class ParameterFactory {
 			p.setUnits(unitFactory.unitPerTime());
 		}
 		if (!p.isSetName()) {
-			p.setName(Bundles.MESSAGES.getString("FOR_ADDITIVE_MODEL") 
-					+ ": " + Bundles.MESSAGES.getString("BASIS_EXPRESSION_LEVEL"));
+			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL") 
+					+ ": " + MESSAGES.getString("BASIS_EXPRESSION_LEVEL"));
 		}
 		return p;
 	}
@@ -255,7 +259,7 @@ public class ParameterFactory {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
 		if (!p.isSetName()) {
-			p.setName(Bundles.MESSAGES.getString("WEIGHT_ACTIVATION_FUNCTION_PARAMETERS"));
+			p.setName(MESSAGES.getString("WEIGHT_ACTIVATION_FUNCTION_PARAMETERS"));
 		}
 		return p;
 	}
@@ -311,8 +315,8 @@ public class ParameterFactory {
 		}
 		LocalParameter p_kdiss = createOrGetParameter(kdiss.toString());
 		if (!p_kdiss.isSetName()) {
-			p_kdiss.setName((zerothOrder ? Bundles.MESSAGES.getString("ZEROTH_ORDER") + " " : "") +
-					MessageFormat.format(Bundles.MESSAGES.getString("DISASSOCIATION_CONSTANT_OF_REACTION"), r.getId()));
+			p_kdiss.setName((zerothOrder ? MESSAGES.getString("ZEROTH_ORDER") + " " : "") +
+					MessageFormat.format(MESSAGES.getString("DISASSOCIATION_CONSTANT_OF_REACTION"), r.getId()));
 		}
 		if (!p_kdiss.isSetSBOTerm()) {
 			SBMLtools.setSBOTerm(p_kdiss,156);
@@ -336,7 +340,7 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(keq,281);
 		}
 		if (!keq.isSetName()) {
-			keq.setName(MessageFormat.format(Bundles.MESSAGES.getString("EQUILIBRIUM_CONSTANT_OF_REACTION"),reactionID));
+			keq.setName(MessageFormat.format(MESSAGES.getString("EQUILIBRIUM_CONSTANT_OF_REACTION"),reactionID));
 		}
 		if (!keq.isSetUnits()) {
 			int x = 0;
@@ -370,7 +374,7 @@ public class ParameterFactory {
 		Parameter R = createOrGetGlobalParameter("R");
 		R.setValue(8.31447215);
 		if (!R.isSetName()) {
-			R.setName(Bundles.MESSAGES.getString("IDEAL_GAS_CONSTANT"));
+			R.setName(MESSAGES.getString("IDEAL_GAS_CONSTANT"));
 		}
 		if (!R.isSetUnits()) {
 			R.setUnits(unitFactory.unitJperKandM());
@@ -396,8 +400,8 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(hr,190);
 		}
 		if (!hr.isSetName()) {
-			hr.setName(MessageFormat.format(Bundles.MESSAGES.getString("HILL_COEFFICIENT_IN_REACTION"),
-					(enzyme != null) ? MessageFormat.format(Bundles.MESSAGES.getString("FOR_ENZYME"),
+			hr.setName(MessageFormat.format(MESSAGES.getString("HILL_COEFFICIENT_IN_REACTION"),
+					(enzyme != null) ? MessageFormat.format(MESSAGES.getString("FOR_ENZYME"),
 							enzyme) : ""));
 		}
 		if (!hr.isSetUnits()) {
@@ -437,7 +441,7 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(kA,363);
 		}
 		if (!kA.isSetName()) {
-			kA.setName(MessageFormat.format(Bundles.MESSAGES.getString("ACTIVATION_CONSTANT_OF_REACTION"),reactionID));
+			kA.setName(MessageFormat.format(MESSAGES.getString("ACTIVATION_CONSTANT_OF_REACTION"),reactionID));
 		}
 		if (!kA.isSetUnits()) {
 			Species species = model.getSpecies(activatorSpecies);
@@ -480,11 +484,11 @@ public class ParameterFactory {
 			}
 			if (!kr.isSetName()) {
 				kr.setName((enzyme != null) ? 
-						MessageFormat.format(Bundles.MESSAGES.getString("CATALYTIC_RATE_CONSTANT_OF_ENZYME_IN_REACTION"),
-							Bundles.MESSAGES.getString(forward ? "SUBSTRATE" : "PRODUCT"), enzyme,
+						MessageFormat.format(MESSAGES.getString("CATALYTIC_RATE_CONSTANT_OF_ENZYME_IN_REACTION"),
+							MESSAGES.getString(forward ? "SUBSTRATE" : "PRODUCT"), enzyme,
 							reactionID) :
-						MessageFormat.format(Bundles.MESSAGES.getString("CATALYTIC_RATE_CONSTANT_OF_REACTION"),
-							Bundles.MESSAGES.getString(forward ? "SUBSTRATE" : "PRODUCT"),
+						MessageFormat.format(MESSAGES.getString("CATALYTIC_RATE_CONSTANT_OF_REACTION"),
+							MESSAGES.getString(forward ? "SUBSTRATE" : "PRODUCT"),
 							reactionID)
 						);
 			}
@@ -513,12 +517,12 @@ public class ParameterFactory {
 			}
 			if (!kr.isSetName()) {
 				kr.setName((enzyme != null) ? 
-						MessageFormat.format(Bundles.MESSAGES.getString("MAXIMAL_VELOCITY_OF_ENZYME_IN_REACTION"),
-							Bundles.MESSAGES.getString(forward ? "FORWARD" : "REVERSE"),
+						MessageFormat.format(MESSAGES.getString("MAXIMAL_VELOCITY_OF_ENZYME_IN_REACTION"),
+							MESSAGES.getString(forward ? "FORWARD" : "REVERSE"),
 							enzyme,
 							reactionID) : 
-						MessageFormat.format(Bundles.MESSAGES.getString("MAXIMAL_VELOCITY_OF_REACTION"),
-							Bundles.MESSAGES.getString(forward ? "FORWARD" : "REVERSE"),
+						MessageFormat.format(MESSAGES.getString("MAXIMAL_VELOCITY_OF_REACTION"),
+							MESSAGES.getString(forward ? "FORWARD" : "REVERSE"),
 							reactionID));
 			}
 			if (!kr.isSetUnits()) {
@@ -548,7 +552,7 @@ public class ParameterFactory {
 			kG.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
 		if (!kG.isSetName()) {
-			kG.setName(MessageFormat.format(Bundles.MESSAGES.getString("ENERGY_CONSTANT_OF_SPECIES"), species));
+			kG.setName(MessageFormat.format(MESSAGES.getString("ENERGY_CONSTANT_OF_SPECIES"), species));
 		}
 		return kG;
 	}
@@ -612,15 +616,15 @@ public class ParameterFactory {
 		if (!kI.isSetName()) {
 			String temp = "";
 			if (inhibitorSpecies != null) {
-				temp += MessageFormat.format(Bundles.MESSAGES.getString("FOR_SPECIES"), inhibitorSpecies);
+				temp += MessageFormat.format(MESSAGES.getString("FOR_SPECIES"), inhibitorSpecies);
 			}
 			if (enzymeID != null) {
-				temp += MessageFormat.format(Bundles.MESSAGES.getString("FOR_ENZYME"), enzymeID);
+				temp += MessageFormat.format(MESSAGES.getString("FOR_ENZYME"), enzymeID);
 			}
 			if (bindingNum > 0) {
-				temp += MessageFormat.format(Bundles.MESSAGES.getString("WITH_BINDING_POSITIONS"), Integer.toString(bindingNum));
+				temp += MessageFormat.format(MESSAGES.getString("WITH_BINDING_POSITIONS"), Integer.toString(bindingNum));
 			}
-			kI.setName(MessageFormat.format(Bundles.MESSAGES.getString("INHIBITIORY_CONSTANT_OF_REACTION"), temp, reactionID));
+			kI.setName(MessageFormat.format(MESSAGES.getString("INHIBITIORY_CONSTANT_OF_REACTION"), temp, reactionID));
 		}
 		if (!kI.isSetUnits()) {
 			kI.setUnits(unitFactory.unitSubstancePerSizeOrSubstance(model.getSpecies(inhibitorSpecies)));
@@ -640,7 +644,7 @@ public class ParameterFactory {
 			// not yet available.
 		}
 		if (!hr.isSetName()) {
-			hr.setName(MessageFormat.format(Bundles.MESSAGES.getString("KINETIC_ORDER_OF_REACTION"), reactionID));
+			hr.setName(MessageFormat.format(MESSAGES.getString("KINETIC_ORDER_OF_REACTION"), reactionID));
 		}
 		if (!hr.isSetUnits()) {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -669,9 +673,9 @@ public class ParameterFactory {
 		}
 		if (!kS.isSetName()) {
 			kS.setName((enzyme != null) ?
-					MessageFormat.format(Bundles.MESSAGES.getString("HALF_SATURATION_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"),
+					MessageFormat.format(MESSAGES.getString("HALF_SATURATION_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"),
 							species, enzyme, rid) :
-					MessageFormat.format(Bundles.MESSAGES.getString("HALF_SATURATION_CONSTANT_OF_SPECIES_IN_REACTION"),
+					MessageFormat.format(MESSAGES.getString("HALF_SATURATION_CONSTANT_OF_SPECIES_IN_REACTION"),
 							species, rid));
 		}
 		if (!kS.isSetUnits()) {
@@ -698,8 +702,8 @@ public class ParameterFactory {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
 		if (!p.isSetName()) {
-			p.setName(Bundles.MESSAGES.getString("FOR_ADDITIVE_MODEL")
-					+ ": " + Bundles.MESSAGES.getString("CONST_MAX_EXPRESSION"));
+			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
+					+ ": " + MESSAGES.getString("CONST_MAX_EXPRESSION"));
 		}
 		return p;
 	}
@@ -726,8 +730,8 @@ public class ParameterFactory {
 		}
 		if (!kM.isSetName()) {
 			kM.setName((enzyme != null) ?
-					MessageFormat.format(Bundles.MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"), species, enzyme, reactionID) :
-					MessageFormat.format(Bundles.MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_IN_REACTION"), species, reactionID));
+					MessageFormat.format(MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"), species, enzyme, reactionID) :
+					MessageFormat.format(MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_IN_REACTION"), species, reactionID));
 		}
 		if (!kM.isSetUnits()) {
 			Species spec = model.getSpecies(species);
@@ -786,9 +790,9 @@ public class ParameterFactory {
 		}
 		if (!p_exp.isSetName()) {
 			p_exp.setName((enzyme != null) ?
-					MessageFormat.format(Bundles.MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_ON_ENZYME_OF_REACTION"),
+					MessageFormat.format(MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_ON_ENZYME_OF_REACTION"),
 							(inhibitor != null) ? inhibitor : "", enzyme, rid):
-					MessageFormat.format(Bundles.MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_OF_REACTION"),
+					MessageFormat.format(MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_OF_REACTION"),
 							(inhibitor != null) ? inhibitor : "", rid));
 		}
 		if (!p_exp.isSetUnits())
@@ -814,7 +818,7 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(hr,382);
 		}
 		if (!hr.isSetName()) {
-			hr.setName(Bundles.MESSAGES.getString("REACTION_COOPERATIVITY"));
+			hr.setName(MESSAGES.getString("REACTION_COOPERATIVITY"));
 		}
 		if (!hr.isSetUnits()) {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -835,7 +839,7 @@ public class ParameterFactory {
 		LocalParameter rhoA = createOrGetParameter("rac_", rid,
 				StringTools.underscore, species);
 		if (!rhoA.isSetName()) {
-			rhoA.setName(MessageFormat.format(Bundles.MESSAGES.getString("ACTIVATION_BASELINE_RELATION_OF_SPECIES_IN_REACTION"), 
+			rhoA.setName(MessageFormat.format(MESSAGES.getString("ACTIVATION_BASELINE_RELATION_OF_SPECIES_IN_REACTION"), 
 					species, rid));
 		}
 		if (!rhoA.isSetUnits()) {
@@ -857,7 +861,7 @@ public class ParameterFactory {
 			rhoI.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
 		if (!rhoI.isSetName()) {
-			rhoI.setName(MessageFormat.format(Bundles.MESSAGES.getString("INHIBITON_BASELINE_RELATION_OF_SPECIES_IN_REACTION"),
+			rhoI.setName(MessageFormat.format(MESSAGES.getString("INHIBITON_BASELINE_RELATION_OF_SPECIES_IN_REACTION"),
 					species, rid));
 		}
 		return rhoI;
@@ -874,7 +878,7 @@ public class ParameterFactory {
 		StringBuffer kass = StringTools.concat("kar_", r.getId());
 		LocalParameter p_kass = createOrGetParameter(kass.toString());
 		if (!p_kass.isSetName()) {
-			p_kass.setName(MessageFormat.format(Bundles.MESSAGES.getString("ASSOCIATION_CONSTANT_IN_RESTRICTED_SPACES_OF_REACTION"), r.getId()));
+			p_kass.setName(MessageFormat.format(MESSAGES.getString("ASSOCIATION_CONSTANT_IN_RESTRICTED_SPACES_OF_REACTION"), r.getId()));
 		}
 		if (!p_kass.isSetSBOTerm()) {
 			// not yet available.
@@ -919,7 +923,7 @@ public class ParameterFactory {
 					.getUnitDefinition("time")));
 		}
 		if (!p.isSetName())
-			p.setName(Bundles.MESSAGES.getString("RATE_CONSTANT_FOR_SYNTHESIS"));
+			p.setName(MESSAGES.getString("RATE_CONSTANT_FOR_SYNTHESIS"));
 		return p;
 	}
 
@@ -938,7 +942,7 @@ public class ParameterFactory {
 					.getUnitDefinition("time")));
 		}
 		if (!p.isSetName())
-			p.setName(Bundles.MESSAGES.getString("RATE_CONSTANT_FOR_DEGRADATION"));
+			p.setName(MESSAGES.getString("RATE_CONSTANT_FOR_DEGRADATION"));
 		return p;
 	}
 
@@ -955,9 +959,9 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter(id.toString());
 		if (!p.isSetName()) {
 			p.setName((modifier != null) ?
-					MessageFormat.format(Bundles.MESSAGES.getString("S_SYSTEM_EXPONENT_FOR_MODIFIER_IN_REACTION"), 
+					MessageFormat.format(MESSAGES.getString("S_SYSTEM_EXPONENT_FOR_MODIFIER_IN_REACTION"), 
 							modifier, reactionID) :
-					MessageFormat.format(Bundles.MESSAGES.getString("S_SYSTEM_EXPONENT_IN_REACTION"), 
+					MessageFormat.format(MESSAGES.getString("S_SYSTEM_EXPONENT_IN_REACTION"), 
 							reactionID));
 		}
 		if (!p.isSetUnits()) {
@@ -977,7 +981,7 @@ public class ParameterFactory {
 	public Parameter parameterStandardChemicalPotential(String species) {
 		Parameter mu = createOrGetGlobalParameter("scp_", species);
 		if (!mu.isSetName()) {
-			mu.setName(MessageFormat.format(Bundles.MESSAGES.getString("STANDARD_CHEMICAL_POTENTIAL_OF_SPECIES"),
+			mu.setName(MessageFormat.format(MESSAGES.getString("STANDARD_CHEMICAL_POTENTIAL_OF_SPECIES"),
 					species));
 		}
 		if (!mu.isSetSBOTerm()) {
@@ -1005,7 +1009,7 @@ public class ParameterFactory {
 			T.setUnits(Unit.Kind.KELVIN);
 		}
 		if (!T.isSetName()) {
-			T.setName(MessageFormat.format(Bundles.MESSAGES.getString("TEMP_OF_REACTION_SYSTEM"), model.getId()));
+			T.setName(MessageFormat.format(MESSAGES.getString("TEMP_OF_REACTION_SYSTEM"), model.getId()));
 		}
 		return T;
 	}
@@ -1028,7 +1032,7 @@ public class ParameterFactory {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
 		if (!p.isSetName()) {
-			p.setName(Bundles.MESSAGES.getString("THRESHOLD_GENERALIZED_HILL_FUNCTION"));
+			p.setName(MESSAGES.getString("THRESHOLD_GENERALIZED_HILL_FUNCTION"));
 		}
 		return p;
 	}
@@ -1047,7 +1051,7 @@ public class ParameterFactory {
 			// not yet available.
 		}
 		if (!hr.isSetName()) {
-			hr.setName(MessageFormat.format(Bundles.MESSAGES.getString("TIME_ORDER_IN_REACTION"), reactionID));
+			hr.setName(MessageFormat.format(MESSAGES.getString("TIME_ORDER_IN_REACTION"), reactionID));
 		}
 		if (!hr.isSetUnits()) {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -1072,8 +1076,8 @@ public class ParameterFactory {
 			p.setUnits(unitFactory.unitPerTime());
 		}
 		if (!p.isSetName()) {
-			p.setName(Bundles.MESSAGES.getString("FOR_ADDITIVE_MODEL")
-					+ ": " + Bundles.MESSAGES.getString("WEIGHT_PARAMETER_FOR_EXTERNAL_INPUTS"));
+			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
+					+ ": " + MESSAGES.getString("WEIGHT_PARAMETER_FOR_EXTERNAL_INPUTS"));
 		}
 		return p;
 	}
@@ -1094,7 +1098,7 @@ public class ParameterFactory {
 					StringTools.underscore, enzyme);
 			if (!kVr.isSetName()) {
 				kVr.setName(MessageFormat.format(
-						Bundles.MESSAGES.getString("CATALYTIC_RATE_CONSTANT_GEOMETIC_MEAN_OF_REACTION"),
+						MESSAGES.getString("CATALYTIC_RATE_CONSTANT_GEOMETIC_MEAN_OF_REACTION"),
 						reactionID));
 			}
 			if (!kVr.isSetUnits()) {
@@ -1105,7 +1109,7 @@ public class ParameterFactory {
 			kVr = createOrGetParameter("vmag_", reactionID);
 			if (!kVr.isSetName()) {
 				kVr.setName(MessageFormat.format(
-						Bundles.MESSAGES.getString("MAX_VELOCITY_GEOMETIC_MEAN_OF_REACTION"),
+						MESSAGES.getString("MAX_VELOCITY_GEOMETIC_MEAN_OF_REACTION"),
 						reactionID));
 			}
 			if (!kVr.isSetSBOTerm()) {
@@ -1149,8 +1153,8 @@ public class ParameterFactory {
 			p.setUnits(unitFactory.unitPerTime());
 		}
 		if (!p.isSetName()) {
-			p.setName(Bundles.MESSAGES.getString("FOR_ADDITIVE_MODEL")
-					+ ": " + Bundles.MESSAGES.getString("WEIGHT_PARAMETER_FOR_GENE_PRODUCTS"));
+			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
+					+ ": " + MESSAGES.getString("WEIGHT_PARAMETER_FOR_GENE_PRODUCTS"));
 		}
 		return p;
 	}

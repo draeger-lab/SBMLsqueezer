@@ -24,6 +24,7 @@
 package org.sbml.squeezer.gui;
 
 import java.awt.Frame;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +37,7 @@ import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.gui.StatusBar;
 import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -50,6 +52,8 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
  */
 public class KineticLawSelectionDialog extends JDialog{
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
 
 	/**
 	 * Generated serial version id.
@@ -76,7 +80,7 @@ public class KineticLawSelectionDialog extends JDialog{
 	 * @param progressListener 
 	 */
 	private KineticLawSelectionDialog(Frame owner) {
-		super(owner, Bundles.MESSAGES.getString("SBMLSQUEEZER"), true);
+		super(owner, MESSAGES.getString("SBMLSQUEEZER"), true);
 		// if (owner == null)
 		// setIconImage(GUITools.ICON_LEMON);
 		this.prefs = new SBPreferences(SqueezerOptions.class);
@@ -113,7 +117,7 @@ public class KineticLawSelectionDialog extends JDialog{
 			dispose();
 			statusBar.hideProgress();
 			statusBar.unsetLogMessageLimit();
-			logger.log(Level.INFO, Bundles.LABELS.getString("READY"));
+			logger.log(Level.INFO, LABELS.getString("READY"));
 			
 		} catch (Throwable exc) {
 			GUITools.showErrorMessage(this, exc);

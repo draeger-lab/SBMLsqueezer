@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -46,6 +47,7 @@ import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.prefs.PreferencesDialog;
+import de.zbit.util.ResourceManager;
 
 /**
  * 
@@ -55,6 +57,10 @@ import de.zbit.gui.prefs.PreferencesDialog;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionOptionPanel extends JPanel implements ActionListener{
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
+	public static final transient ResourceBundle BASE = ResourceManager.getBundle(Bundles.BASE);
 	
 	JDialog dialog;
 
@@ -75,17 +81,17 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 	}
 	
 	public void initOptions() {
-		JButton options = new JButton(Bundles.MESSAGES.getString("SHOW_OPTIONS"));
+		JButton options = new JButton(MESSAGES.getString("SHOW_OPTIONS"));
 		Icon icon = UIManager.getIcon("ICON_PREFS_16");
 		if (icon != null) {
 			options.setIcon(icon);
 		}
 		options.setIconTextGap(5);
 		options.setSize(150, 20);
-		options.setToolTipText(Bundles.MESSAGES.getString("SHOW_OPTIONS_TOOLTIP"));
+		options.setToolTipText(MESSAGES.getString("SHOW_OPTIONS_TOOLTIP"));
 		options.addActionListener(this);
 		
-		JButton helpButton = new JButton(Bundles.BASE.getString("HELP"), UIManager
+		JButton helpButton = new JButton(BASE.getString("HELP"), UIManager
 				.getIcon("ICON_HELP_TINY"));
 		helpButton.setSize(150, 20);
 		helpButton.addActionListener(this);
@@ -102,7 +108,7 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 		JLabel label = new JLabel(UIManager.getIcon("ICON_LOGO_SMALL"));
 		label.setBackground(Color.WHITE);
 		label.setText("<html><body><br><br><br><br><br><br>"
-						+ Bundles.MESSAGES.getString("VERSION") + " "
+						+ MESSAGES.getString("VERSION") + " "
 						+ System.getProperty("app.version") + "</body></html>");
 		Dimension d = GUITools.getDimension(UIManager
 				.getIcon("ICON_LOGO_SMALL"));
@@ -125,12 +131,12 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 		if (e.getSource() instanceof JButton) {
 			JButton button = (JButton) e.getSource();
 			String text = button.getText();
-			if (text.equals(Bundles.MESSAGES.getString("SHOW_OPTIONS"))) {
+			if (text.equals(MESSAGES.getString("SHOW_OPTIONS"))) {
 				PreferencesDialog.showPreferencesDialog(SqueezerOptions.class);
-			} else if (text.equals(Bundles.BASE.getString("HELP"))) {
+			} else if (text.equals(BASE.getString("HELP"))) {
 				JHelpBrowser helpBrowser = new JHelpBrowser(this.dialog,
-						Bundles.MESSAGES.getString("SBMLSQUEEZER") 
-							+ " " + String.format(Bundles.LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+						MESSAGES.getString("SBMLSQUEEZER") 
+							+ " " + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
 								System.getProperty("app.version")), 
 								KineticLawSelectionDialog.class.getResource("../resources/html/help.html"));
 				helpBrowser.setLocationRelativeTo(this);

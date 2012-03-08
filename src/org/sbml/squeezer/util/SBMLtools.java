@@ -25,6 +25,7 @@
 package org.sbml.squeezer.util;
 
 import java.text.MessageFormat;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +37,8 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.util.filters.NameFilter;
 
+import de.zbit.util.ResourceManager;
+
 /**
  * @author Andreas Dr&auml;ger
  * @author Sarah M. M&uuml;ller vom Hagen
@@ -43,6 +46,8 @@ import org.sbml.jsbml.util.filters.NameFilter;
  * @since 1.4
  */
 public class SBMLtools {
+	
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   
   /**
    * Logger
@@ -60,7 +65,7 @@ public class SBMLtools {
       sbase.setSBOTerm(term);
     } else {
       logger.log(Level.FINER, MessageFormat.format(
-          Bundles.WARNINGS.getString("COULD_NOT_SET_SBO_TERM"), 
+          WARNINGS.getString("COULD_NOT_SET_SBO_TERM"), 
           SBO.sboNumberString(term), sbase.getElementName(), sbase.getLevel(), sbase.getVersion()));
     }
   }

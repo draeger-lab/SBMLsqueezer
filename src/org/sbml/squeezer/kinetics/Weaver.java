@@ -23,10 +23,14 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.util.ResourceBundle;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This class creates an equation based on an additive model as defined in the
@@ -41,6 +45,8 @@ import org.sbml.squeezer.util.Bundles;
 public class Weaver extends AdditiveModelNonLinear implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {
+	
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
 	 * Generated serial version identifier.
@@ -88,7 +94,7 @@ public class Weaver extends AdditiveModelNonLinear implements
 	 */
 	@Override
 	public String getSimpleName() {
-		return Bundles.MESSAGES.getString("WEAVER_SIMPLE_NAME");
+		return MESSAGES.getString("WEAVER_SIMPLE_NAME");
 	}
 
 	/*

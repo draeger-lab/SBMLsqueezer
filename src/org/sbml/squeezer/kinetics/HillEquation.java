@@ -24,6 +24,7 @@
 package org.sbml.squeezer.kinetics;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
@@ -33,6 +34,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * This is the generalized version of Hill's equation as suggested by
@@ -49,6 +52,8 @@ public class HillEquation extends BasicKineticLaw implements
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
 		InterfaceIntegerStoichiometry {
 
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	
 	/**
 	 * Generated serial version identifier.
 	 */
@@ -168,7 +173,7 @@ public class HillEquation extends BasicKineticLaw implements
 		}
 		return SBO.getTerm(getSBOTerm()).getDefinition().replace("\\,", ",");
 		*/
-		return Bundles.MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
+		return MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
 	}
 
 }

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
@@ -40,6 +41,8 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.util.ResourceManager;
+
 /**
  * This class is a libSBML independent converter for JSBML models.
  * 
@@ -49,6 +52,7 @@ import org.sbml.squeezer.util.Bundles;
  * @version $Rev$
  */
 public class SqSBMLWriter implements SBMLOutputConverter{
+	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
 	private Set<IOProgressListener> setOfIOListeners = new HashSet<IOProgressListener>();
 	
@@ -93,7 +97,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	 */
 	public boolean saveChanges(Model model, Object object) throws SBMLException {
 		if (!(object instanceof Model))
-			throw new IllegalArgumentException(Bundles.WARNINGS.getString("NO_JSBML_MODEL"));
+			throw new IllegalArgumentException(WARNINGS.getString("NO_JSBML_MODEL"));
 		return true;
 	}
 
@@ -103,7 +107,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 	public boolean saveChanges(Reaction reaction, Object model)
 			throws SBMLException {
 		if (!(model instanceof Model)) {
-			throw new IllegalArgumentException(Bundles.WARNINGS.getString("NO_JSBML_MODEL"));
+			throw new IllegalArgumentException(WARNINGS.getString("NO_JSBML_MODEL"));
 		}
 		return true;
 	}
@@ -133,7 +137,7 @@ public class SqSBMLWriter implements SBMLOutputConverter{
 			IOException {
 		// check arguments
 		if (!(object instanceof SBMLDocument) && !(object instanceof Model)) {
-			throw new IllegalArgumentException(Bundles.WARNINGS.getString("NO_JSBML_MODEL_OR_SBMLDOCUMENT"));
+			throw new IllegalArgumentException(WARNINGS.getString("NO_JSBML_MODEL_OR_SBMLDOCUMENT"));
 		}
 		// convert to SBML
 		SBMLDocument sbmlDocument;
