@@ -24,6 +24,8 @@
 package org.sbml.squeezer.test.cases;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,8 +36,14 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.kinetics.*;
+import org.sbml.squeezer.kinetics.CommonModularRateLaw;
+import org.sbml.squeezer.kinetics.DirectBindingModularRateLaw;
+import org.sbml.squeezer.kinetics.ForceDependentModularRateLaw;
+import org.sbml.squeezer.kinetics.OrderedMechanism;
+import org.sbml.squeezer.kinetics.PowerLawModularRateLaw;
+import org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw;
 
 /**
  * @author Julianus Pfeuffer
@@ -87,14 +95,17 @@ public class BiUniKineticsTest {
 		 */
 		
 		/**
-		 * During storage of the kinetic laws, units will be checked.
+		 * 
+		 * @param kl
 		 * @throws Throwable
 		 */
-		@Test
-		public void testUnits() throws Throwable {
-			KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, false);
-			kl.getDerivedUnits();
-			klg.storeKineticLaws();
+		public void testUnits(KineticLaw kl) throws Throwable {
+			UnitDefinition ud = kl.getDerivedUnitDefinition();
+			if (ud != null) {
+				assertTrue(ud.isVariantOfSubstancePerTime());
+			} else {
+				fail();
+			}
 		}
 		
 		/**
@@ -104,10 +115,20 @@ public class BiUniKineticsTest {
 		@Test
 		public void testCommonModularRateLaw() throws Throwable {
 			KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, false);
-
-			assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl.getMath().toFormula());
+			test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)");
 		}
 		
+		/**
+		 * 
+		 * @param kl
+		 * @param formula
+		 * @throws Throwable
+		 */
+		private void test(KineticLaw kl, String formula) throws Throwable {
+			testUnits(kl);
+			assertEquals(formula, kl.getMath().toFormula());
+		}
+
 		/**
 		 * Test for the Direct Binding Modular Rate Law for A + B -> C 
 		 * @throws Throwable
@@ -139,7 +160,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Force Dependent Modular Rate Law for A + B -> C 
+		 * Test for the {@link ForceDependentModularRateLaw} for A + B -> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -149,7 +170,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Ordered Mechanism for A + B -> C 
+		 * Test for the {@link OrderedMechanism} for A + B -> C 
 		 * @throws Throwable
 		 */
 		@Test
