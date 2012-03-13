@@ -72,13 +72,13 @@ import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
 
 import de.zbit.AppConf;
-import de.zbit.gui.ActionCommand;
+import de.zbit.gui.actioncommand.ActionCommand;
 import de.zbit.gui.BaseFrame;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
 import de.zbit.gui.StatusBar;
-import de.zbit.io.SBFileFilter;
+import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
 import de.zbit.sbml.gui.SBMLTree;

@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import org.sbml.jsbml.Model;
 import org.sbml.squeezer.SqueezerOptions;
 
-import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
 

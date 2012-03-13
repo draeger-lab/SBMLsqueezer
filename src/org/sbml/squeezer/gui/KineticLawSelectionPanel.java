@@ -63,7 +63,7 @@ import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.util.LaTeX;
 
 import atp.sHotEqn;
-import de.zbit.gui.LayoutHelper;
+import de.zbit.gui.layout.LayoutHelper;
 import de.zbit.sbml.io.SBOTermFormatter;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
