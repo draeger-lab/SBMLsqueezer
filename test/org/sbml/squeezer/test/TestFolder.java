@@ -39,7 +39,7 @@ import java.util.prefs.BackingStoreException;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
 
-import de.zbit.io.SBFileFilter;
+import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.logging.LogUtil;
 import de.zbit.util.prefs.SBPreferences;
 

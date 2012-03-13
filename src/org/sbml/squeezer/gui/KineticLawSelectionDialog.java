@@ -36,7 +36,7 @@ import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.gui.StatusBar;
-import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
 

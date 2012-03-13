@@ -68,7 +68,7 @@ import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
 import org.sbml.squeezer.util.SBMLtools;
 
-import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.SBPreferences;

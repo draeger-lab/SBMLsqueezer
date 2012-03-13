@@ -46,7 +46,7 @@ import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
-import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.ResourceManager;
 
 /**

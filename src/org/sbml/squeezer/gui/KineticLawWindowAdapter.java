@@ -46,7 +46,7 @@ import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 
 import de.zbit.gui.GUITools;
-import de.zbit.util.AbstractProgressBar;
+import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.prefs.SBPreferences;
 
 /**

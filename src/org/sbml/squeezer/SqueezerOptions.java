@@ -33,7 +33,7 @@ import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
-import de.zbit.util.ValuePairUncomparable;
+import de.zbit.util.objectwrapper.ValuePairUncomparable;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.OptionGroup;

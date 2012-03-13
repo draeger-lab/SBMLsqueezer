@@ -26,7 +26,7 @@ import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
 
-import de.zbit.io.SBFileFilter;
+import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
