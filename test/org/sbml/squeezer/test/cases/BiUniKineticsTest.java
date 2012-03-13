@@ -109,7 +109,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Common Modular Rate Law for A + B -> C 
+		 * Test for the {@link CommonModularRateLaw} for A + B -> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -130,7 +130,7 @@ public class BiUniKineticsTest {
 		}
 
 		/**
-		 * Test for the Direct Binding Modular Rate Law for A + B -> C 
+		 * Test for the {@link DirectBindingModularRateLaw} for A + B -> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -140,7 +140,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Power Law Modular Rate Law for A + B -> C 
+		 * Test for the {@link PowerLawModularRateLaw} for A + B -> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -150,7 +150,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Simultaneous Binding Modular Rate Law for A + B -> C 
+		 * Test for the {@link SimultaneousBindingModularRateLaw} for A + B -> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -186,7 +186,7 @@ public class BiUniKineticsTest {
 		 */
 		
 		/**
-		 * Test for the Common Modular Rate Law for A + B <-> C 
+		 * Test for the {@link CommonModularRateLaw} for A + B <-> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -196,7 +196,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Direct Binding Modular Rate Law for A + B <-> C 
+		 * Test for the {@link DirectBindingModularRateLaw} for A + B <-> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -206,7 +206,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Simultaneous Binding Modular Rate Law for A + B <-> C 
+		 * Test for the {@link SimultaneousBindingModularRateLaw} for A + B <-> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -216,7 +216,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Force Dependent Modular Rate Law for A + B <-> C 
+		 * Test for the {@link ForeDependentModularRateLaw} for A + B <-> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -226,7 +226,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Power Law Modular Rate Law for A + B <-> C 
+		 * Test for the {@link PowerLawModularRateLaw} for A + B <-> C 
 		 * @throws Throwable
 		 */
 		@Test
@@ -240,7 +240,7 @@ public class BiUniKineticsTest {
 		 */
 
 		/**
-		 * Test for the Common Modular Rate Law for 2A -> C
+		 * Test for the {@link CommonModularRateLaw} for 2A -> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -254,7 +254,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Direct Binding Modular Rate Law for 2A -> C
+		 * Test for the {@link DirectBindingModularRateLaw} for 2A -> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -265,7 +265,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Power Law Modular Rate Law for 2A -> C
+		 * Test for the {@link PowerLawModularRateLaw} for 2A -> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -276,7 +276,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Simultaneous Binding Modular Rate Law for 2A -> C
+		 * Test for the {@link SimultaneousBindingModularRateLaw} for 2A -> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -287,7 +287,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Force Dependent Modular Rate Law for 2A -> C
+		 * Test for the {@link ForeDependentModularRateLaw} for 2A -> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -302,7 +302,7 @@ public class BiUniKineticsTest {
 		 */
 		
 		/**
-		 * Test for the Common Modular Rate Law for 2A <-> C
+		 * Test for the {@link CommonModularRateLaw} for 2A <-> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -313,7 +313,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Direct Binding Modular Rate Law for 2A <-> C
+		 * Test for the {@link DirectBindingModularRateLaw} for 2A <-> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -324,7 +324,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Power Law Modular Rate Law for 2A <-> C
+		 * Test for the {@link PowerLawModularRateLaw} for 2A <-> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -335,7 +335,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Simultaneous Binding Modular Rate Law for 2A <-> C
+		 * Test for the {@link SimultaneousBindingModularRateLaw} for 2A <-> C
 		 * @throws Throwable
 		 */
 		@Test
@@ -346,7 +346,7 @@ public class BiUniKineticsTest {
 		}
 		
 		/**
-		 * Test for the Force Dependent Modular Rate Law for 2A <-> C
+		 * Test for the {@link ForeDependentModularRateLaw} for 2A <-> C
 		 * @throws Throwable
 		 */
 		@Test
