@@ -88,5 +88,4 @@ public class KineticLawGeneratorWorker extends SwingWorker<BasicKineticLaw, Void
 		
 	}
 	
-	
 }

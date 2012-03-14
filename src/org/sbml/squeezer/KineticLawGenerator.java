@@ -342,7 +342,7 @@ public class KineticLawGenerator {
 	 *        equation will be created accordingly. If this parameter is false,
 	 *        the reversibility property of this reaction will not be changed.
 	 * @param kinetic
-	 *        an element from the Kinetics enum.
+	 *        a class object that is derived from {@link BasicKineticLaw}.
 	 * @return A kinetic law for the given reaction.
 	 * @throws Throwable
 	 */
@@ -358,7 +358,8 @@ public class KineticLawGenerator {
 					prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION),
 					Boolean.valueOf(hasFullColumnRank(modelOrig)),
 					prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY),
-					prefs.get(SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS) };
+					prefs.get(SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS)
+			};
 			Constructor<?> constructor = kineticsClass.getConstructor(reaction.getClass(), typeParameters.getClass());
 			return (BasicKineticLaw) constructor.newInstance(reaction, typeParameters);
 		} catch (InstantiationException e) {

@@ -248,7 +248,7 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitPerTime() {
 		UnitDefinition ud = model.getTimeUnitsInstance().clone();
-		if (ud.getNumUnits() == 1) {
+		if (ud.getUnitCount() == 1) {
 			Unit u = ud.getUnit(0);
 			u.setExponent(-1d);
 			ud.setId("per_" + u.getKind().toString().toLowerCase());
@@ -308,7 +308,7 @@ public class UnitFactory {
 		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf,
 				zerothOrder, 0d);
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < ud.getNumUnits(); i++) {
+		for (int i = 0; i < ud.getUnitCount(); i++) {
 			Unit u = ud.getUnit(i);
 			if (i > 0) {
 				sb.append('_');
@@ -319,9 +319,10 @@ public class UnitFactory {
 			sb.append(u.getPrefix());
 			sb.append(u.getKind().getName());
 		}
-		ud.setId(checkId(sb.toString()));
-		UnitDefinition def = model.getUnitDefinition(ud.getId());
+		String id = checkId(sb.toString());
+		UnitDefinition def = model.getUnitDefinition(id);
 		if (def == null) {
+			ud.setId(id);
 			ud = checkUnitDefinitions(ud, model);
 		}
 		return model.getUnitDefinition(ud.getId());

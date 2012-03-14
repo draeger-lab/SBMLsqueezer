@@ -23,9 +23,6 @@
  */
 package org.sbml.squeezer.test.cases;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
@@ -33,7 +30,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
-import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.kinetics.CommonModularRateLaw;
 import org.sbml.squeezer.kinetics.ForceDependentModularRateLaw;
 import org.sbml.squeezer.kinetics.PowerLawModularRateLaw;
@@ -44,16 +40,17 @@ import org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw;
  * @version $Rev$
  * @since 1.4
  */
-
-public class BiBiKineticsTest {
-	static Reaction r1;
-	static KineticLawGenerator klg;
-	static Model model;
-	static Compartment c;
-	static Species e1;
+public class BiBiKineticsTest extends KineticsTest {
 	
-	@BeforeClass
-	public static void initTest() throws Throwable{
+	/**
+	 * 
+	 */
+	private Reaction r1;
+	
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()
+	 */
+	public Model initModel() {
 		SBMLDocument doc = new SBMLDocument(2, 4);
 		Model model = doc.createModel("bibi_model");
 		Compartment c = model.createCompartment("c1");
@@ -70,10 +67,7 @@ public class BiBiKineticsTest {
 		r1.createProduct(p1);
 		r1.createProduct(p2);
 		r1.createModifier(e1);
-		
-		
-		klg = new KineticLawGenerator(model);
-
+		return model;
 	}
 	
 	/**
@@ -83,7 +77,7 @@ public class BiBiKineticsTest {
 	@Test
 	public void testCommonModularRateLaw() throws Throwable{
 		KineticLaw kl1 = klg.createKineticLaw(r1, CommonModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)*(1+p2*c1/kmc_r1_p2)^(hco_r1)-1)",kl1.getMath().toFormula());
+		test(kl1, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)*(1+p2*c1/kmc_r1_p2)^(hco_r1)-1)");
 	}
 	
 	/**
@@ -93,7 +87,7 @@ public class BiBiKineticsTest {
 	@Test
 	public void testPowerLawModularRateLaw() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)");
 	}
 	
 	/**
@@ -103,7 +97,7 @@ public class BiBiKineticsTest {
 	@Test
 	public void testSimultaneousBindingModularRateLaw() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, SimultaneousBindingModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1)*(1+p2*c1/kmc_r1_p2)^(hco_r1))",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1)*(1+p2*c1/kmc_r1_p2)^(hco_r1))");
 	}
 	
 	/**
@@ -113,7 +107,7 @@ public class BiBiKineticsTest {
 	@Test
 	public void testForceDependentModularRateLaw() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ForceDependentModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))^(0.5)",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))^(0.5)");
 	}
 	
 	/**
@@ -123,6 +117,7 @@ public class BiBiKineticsTest {
 	@Test
 	public void testCommonModularRateLawRev() throws Throwable{
 		KineticLaw kl2 = klg.createKineticLaw(r1, CommonModularRateLaw.class, true);
-		assertEquals("(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)*(1+p2*c1/kmc_r1_p2)^(hco_r1)-1)",kl2.getMath().toFormula());
+		test(kl2, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)*(1+p2*c1/kmc_r1_p2)^(hco_r1)-1)");
 	}
+
 }
