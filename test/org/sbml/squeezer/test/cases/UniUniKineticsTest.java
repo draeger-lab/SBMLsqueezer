@@ -23,9 +23,6 @@
  */
 package org.sbml.squeezer.test.cases;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
@@ -35,7 +32,14 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.kinetics.*;
+import org.sbml.squeezer.kinetics.CommonModularRateLaw;
+import org.sbml.squeezer.kinetics.ConvenienceKinetics;
+import org.sbml.squeezer.kinetics.DirectBindingModularRateLaw;
+import org.sbml.squeezer.kinetics.ForceDependentModularRateLaw;
+import org.sbml.squeezer.kinetics.HillEquation;
+import org.sbml.squeezer.kinetics.MichaelisMenten;
+import org.sbml.squeezer.kinetics.PowerLawModularRateLaw;
+import org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw;
 
 
 /**
@@ -43,27 +47,24 @@ import org.sbml.squeezer.kinetics.*;
  * @version $Rev$
  * @since 1.4
  */
-public class UniUniKineticsTest {
+public class UniUniKineticsTest extends KineticsTest {
 	static Reaction r1;
 	static Reaction r2;
 	static Reaction r3;
 	static Reaction r4;
-	static KineticLawGenerator klg;
-	static SBMLDocument doc = new SBMLDocument(2, 4);
-	static Model model = doc.createModel("uniuni_model");
 	
 	/**
 	 * Initialization of a model and basic reactions for this test class.
 	 * It handles reactions of the form A (<)-> B. 
 	 * @throws Throwable
 	 */
-	@BeforeClass
-	public static void initTest() throws Throwable{
+	public Model initModel() {
 		
 		/**
 		 * Initialization
 		 */
-		
+		SBMLDocument doc = new SBMLDocument(2, 4);
+		Model model = doc.createModel("uniuni_model");
 		Compartment c = model.createCompartment("c1");
 		Species s1 = model.createSpecies("s1", c);
 		Species p1 = model.createSpecies("p1", c);
@@ -111,8 +112,8 @@ public class UniUniKineticsTest {
 		act.setSBOTerm(462);
 		r4.createReactant(s1);
 		r4.createProduct(p1);
-		//klg.generateLaws();
-		//klg.storeKineticLaws();
+		
+		return model;
 	}
 	
 	/**
@@ -125,13 +126,12 @@ public class UniUniKineticsTest {
 	 */
 	@Test
 	public void testMichMent() throws Throwable{
-		klg = new KineticLawGenerator(model);
 		//KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class.getName(), false);
 		//SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		//prefs.put(SqueezerOptions., value)
 		KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class, false);
 		//klg.getReactionType(reactionID)
-		assertEquals("vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)",kl.getMath().toFormula());
+		test(kl, "vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)");
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testCMRL() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)");
 	}
 	
 	/**
@@ -151,7 +151,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testDMRL() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, DirectBindingModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)/(1+(s1*c1/kmc_r1_s1)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1))",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)/(1+(s1*c1/kmc_r1_s1)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1))");
 	}
 	
 	/**
@@ -161,7 +161,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testPMRL() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)");
 	}
 	
 	/**
@@ -171,7 +171,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testSMRL() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, SimultaneousBindingModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1))",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1))");
 	}
 	
 	/**
@@ -181,7 +181,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testFMRL() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ForceDependentModularRateLaw.class, false);
-		assertEquals("vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)/((s1*c1/kmc_r1_s1)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1))^(0.5)",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)/((s1*c1/kmc_r1_s1)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1))^(0.5)");
 	}
 	
 	/**
@@ -191,7 +191,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testHill() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, HillEquation.class, false);
-		assertEquals("vmax_r1*(s1*c1)^(hic_r1)/(ksp_r1^(hic_r1)+(s1*c1)^(hic_r1))",kl.getMath().toFormula());
+		test(kl, "vmax_r1*(s1*c1)^(hic_r1)/(ksp_r1^(hic_r1)+(s1*c1)^(hic_r1))");
 	}
 	
 	/**
@@ -201,7 +201,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testConv() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ConvenienceKinetics.class, false);
-		assertEquals("vmag_r1*s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)/(1+s1*c1/kmc_r1_s1-1)",kl.getMath().toFormula());
+		test(kl, "vmag_r1*s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)/(1+s1*c1/kmc_r1_s1-1)");
 	}
 	
 	
@@ -222,9 +222,8 @@ public class UniUniKineticsTest {
 	 */
 	@Test
 	public void testHillRev() throws Throwable{
-		klg = new KineticLawGenerator(model);
 		KineticLaw kl = klg.createKineticLaw(r1, HillEquation.class, true);
-		assertEquals("vmaf_r1*s1*c1/ksp_r1*(1-p1*c1/(keq_r1*s1*c1))*(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1-1)/(1+(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1))",kl.getMath().toFormula());
+		test(kl, "vmaf_r1*s1*c1/ksp_r1*(1-p1*c1/(keq_r1*s1*c1))*(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1-1)/(1+(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1))");
 	}
 	
 	/**
@@ -233,9 +232,8 @@ public class UniUniKineticsTest {
 	 */
 	@Test
 	public void testMichMentRev() throws Throwable{
-		klg = new KineticLawGenerator(model);
 		KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class, true);
-		assertEquals("(vmaf_r1/kmc_r1_s1*s1*c1-vmar_r1/kmc_r1_p1*p1*c1)/(1+(s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1))",kl.getMath().toFormula());
+		test(kl, "(vmaf_r1/kmc_r1_s1*s1*c1-vmar_r1/kmc_r1_p1*p1*c1)/(1+(s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1))");
 	}
 	
 	/**
@@ -245,7 +243,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testCMRLRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true);
-		assertEquals("(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)",kl.getMath().toFormula());
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)");
 	}
 	
 	/**
@@ -255,7 +253,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testDMRLRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, DirectBindingModularRateLaw.class, true);
-		assertEquals("(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/(1+(s1*c1/kmc_r1_s1)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1))",kl.getMath().toFormula());
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/(1+(s1*c1/kmc_r1_s1)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1))");
 	}
 	
 	/**
@@ -265,7 +263,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testPMRLRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true);
-		assertEquals("vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)",kl.getMath().toFormula());
+		test(kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)");
 	}
 	
 	/**
@@ -275,7 +273,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testSMRLRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, SimultaneousBindingModularRateLaw.class, true);
-		assertEquals("(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1))",kl.getMath().toFormula());
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1))");
 	}
 	
 	/**
@@ -285,7 +283,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testFMRLRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ForceDependentModularRateLaw.class, true);
-		assertEquals("(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((s1*c1/kmc_r1_s1)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1))^(0.5)",kl.getMath().toFormula());
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((s1*c1/kmc_r1_s1)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1))^(0.5)");
 	}
 	
 	/**
@@ -295,7 +293,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testConvRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ConvenienceKinetics.class, true);
-		assertEquals("vmag_r1*(s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)-p1*c1/kmc_r1_p1*(kG_p1*kmc_r1_p1/(kG_s1*kmc_r1_s1))^(0.5))/(1+s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1)",kl.getMath().toFormula());
+		test(kl, "vmag_r1*(s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)-p1*c1/kmc_r1_p1*(kG_p1*kmc_r1_p1/(kG_s1*kmc_r1_s1))^(0.5))/(1+s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1)");
 	}
 	
 	/**
@@ -312,7 +310,7 @@ public class UniUniKineticsTest {
 		klg = new KineticLawGenerator(model);
 		//use reaction r2
 		KineticLaw kl = klg.createKineticLaw(r2, HillEquation.class, false);
-		assertEquals("vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))",kl.getMath().toFormula());
+		test(kl, "vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))");
 	}
 	
 	/**
@@ -322,7 +320,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testConvInh() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r2, ConvenienceKinetics.class, false);
-		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)",kl.getMath().toFormula());
+		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)");
 	}
 	
 	/**
@@ -336,7 +334,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testHillInhRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r2, HillEquation.class, true);
-		assertEquals("vmaf_r2*s1*c1/ksp_r2*(1-p1*c1/(keq_r2*s1*c1))*(s1*c1/ksp_r2+p1*c1/ksp_r2)^(hic_r2-1)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))+(s1*c1/ksp_r2+p1*c1/ksp_r2)^(hic_r2))",kl.getMath().toFormula());
+		test(kl, "vmaf_r2*s1*c1/ksp_r2*(1-p1*c1/(keq_r2*s1*c1))*(s1*c1/ksp_r2+p1*c1/ksp_r2)^(hic_r2-1)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))+(s1*c1/ksp_r2+p1*c1/ksp_r2)^(hic_r2))");
 	}
 	
 	/**
@@ -346,7 +344,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testConvInhRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r2, ConvenienceKinetics.class, true);
-		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*(s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)-p1*c1/kmc_r2_p1*(kG_p1*kmc_r2_p1/(kG_s1*kmc_r2_s1))^(0.5))/(1+s1*c1/kmc_r2_s1+p1*c1/kmc_r2_p1)",kl.getMath().toFormula());
+		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*(s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)-p1*c1/kmc_r2_p1*(kG_p1*kmc_r2_p1/(kG_s1*kmc_r2_s1))^(0.5))/(1+s1*c1/kmc_r2_s1+p1*c1/kmc_r2_p1)");
 	}
 	
 	/**
@@ -363,7 +361,7 @@ public class UniUniKineticsTest {
 		klg = new KineticLawGenerator(model);
 		//use reaction r2
 		KineticLaw kl = klg.createKineticLaw(r2, HillEquation.class, false);
-		assertEquals("vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))",kl.getMath().toFormula());
+		test(kl, "vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))");
 	}
 	
 	/**
@@ -373,7 +371,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testConvAct() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r2, ConvenienceKinetics.class, false);
-		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)",kl.getMath().toFormula());
+		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)");
 	}
 	
 	/**
@@ -387,7 +385,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testHillActRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r4, HillEquation.class, true);
-		assertEquals("vmaf_r4*s1*c1/ksp_r4*(1-p1*c1/(keq_r4*s1*c1))*(s1*c1/ksp_r4+p1*c1/ksp_r4)^(hic_r4-1)/((kmc_r4_a1^(hic_r4)+(a1*c1)^(hic_r4))/(kmc_r4_a1^(hic_r4)+beta_r4*(a1*c1)^(hic_r4))+(s1*c1/ksp_r4+p1*c1/ksp_r4)^(hic_r4))",kl.getMath().toFormula());
+		test(kl, "vmaf_r4*s1*c1/ksp_r4*(1-p1*c1/(keq_r4*s1*c1))*(s1*c1/ksp_r4+p1*c1/ksp_r4)^(hic_r4-1)/((kmc_r4_a1^(hic_r4)+(a1*c1)^(hic_r4))/(kmc_r4_a1^(hic_r4)+beta_r4*(a1*c1)^(hic_r4))+(s1*c1/ksp_r4+p1*c1/ksp_r4)^(hic_r4))");
 	}
 	
 	/**
@@ -397,7 +395,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testConvActRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r4, ConvenienceKinetics.class, true);
-		assertEquals("a1*c1/(kac_r4_a1+a1*c1)*vmag_r4*(s1*c1/kmc_r4_s1*(kG_s1*kmc_r4_s1/(kG_p1*kmc_r4_p1))^(0.5)-p1*c1/kmc_r4_p1*(kG_p1*kmc_r4_p1/(kG_s1*kmc_r4_s1))^(0.5))/(1+s1*c1/kmc_r4_s1+p1*c1/kmc_r4_p1)",kl.getMath().toFormula());
+		test(kl, "a1*c1/(kac_r4_a1+a1*c1)*vmag_r4*(s1*c1/kmc_r4_s1*(kG_s1*kmc_r4_s1/(kG_p1*kmc_r4_p1))^(0.5)-p1*c1/kmc_r4_p1*(kG_p1*kmc_r4_p1/(kG_s1*kmc_r4_s1))^(0.5))/(1+s1*c1/kmc_r4_s1+p1*c1/kmc_r4_p1)");
 	}
 	
 	/**
@@ -414,7 +412,7 @@ public class UniUniKineticsTest {
 		klg = new KineticLawGenerator(model);
 		//use reaction r3
 		KineticLaw kl = klg.createKineticLaw(r3, HillEquation.class, false);
-		assertEquals("kcat_r3_k1*k1*c1*(s1*c1)^(hic_r3_k1)/(ksp_r3_k1^(hic_r3_k1)+(s1*c1)^(hic_r3_k1))",kl.getMath().toFormula());
+		test(kl, "kcat_r3_k1*k1*c1*(s1*c1)^(hic_r3_k1)/(ksp_r3_k1^(hic_r3_k1)+(s1*c1)^(hic_r3_k1))");
 	}
 	
 	/**
@@ -424,7 +422,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testConvKat() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, false);
-		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)",kl.getMath().toFormula());
+		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)");
 	}
 	
 	/**
@@ -438,7 +436,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testHillKatRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r3, HillEquation.class, true);
-		assertEquals("kcrf_r3_k1*k1*c1*s1*c1/ksp_r3_k1*(1-p1*c1/(keq_r3*s1*c1))*(s1*c1/ksp_r3_k1+p1*c1/ksp_r3_k1)^(hic_r3_k1-1)/(1+(s1*c1/ksp_r3_k1+p1*c1/ksp_r3_k1)^(hic_r3_k1))",kl.getMath().toFormula());
+		test(kl, "kcrf_r3_k1*k1*c1*s1*c1/ksp_r3_k1*(1-p1*c1/(keq_r3*s1*c1))*(s1*c1/ksp_r3_k1+p1*c1/ksp_r3_k1)^(hic_r3_k1-1)/(1+(s1*c1/ksp_r3_k1+p1*c1/ksp_r3_k1)^(hic_r3_k1))");
 	}
 	
 	/**
@@ -448,7 +446,7 @@ public class UniUniKineticsTest {
 	@Test
 	public void testConvKatRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, true);
-		assertEquals("kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)",kl.getMath().toFormula());
+		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)");
 	}
 	/*
 	File store = new File("test.sbml");

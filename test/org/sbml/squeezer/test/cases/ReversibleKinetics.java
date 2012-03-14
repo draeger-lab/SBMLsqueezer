@@ -24,9 +24,6 @@
 
 package org.sbml.squeezer.test.cases;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
@@ -35,67 +32,64 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.kinetics.*;
+import org.sbml.squeezer.kinetics.AdditiveModelLinear;
 
 /**
  * @author Julianus Pfeuffer
  * @version $Rev$
  * @since 1.4
  */
-
-public class ReversibleKinetics {
+public class ReversibleKinetics extends KineticsTest {
 	
-		static Reaction r1;
-;
-		static KineticLawGenerator klg;
-		static SBMLDocument doc = new SBMLDocument(2, 4);
-		static Model model = doc.createModel("uniuni_model");
+	/**
+	 * 
+	 */
+	Reaction r1;
+		
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()
+	 */
+	public Model initModel() {
 		
 		/**
-		 * 
-		 * @throws Throwable
+		 * Initialization
 		 */
-		@BeforeClass
-		public static void initTest() throws Throwable{
-			
-			/**
-			 * Initialization
-			 */
-			
-			Compartment c = model.createCompartment("c1");
-			Species s1 = model.createSpecies("s1", c);
-			Species p1 = model.createSpecies("p1", c);
-			Species p2 = model.createSpecies("p2", c);
-			Species inh = model.createSpecies("i1", c);
-			Species kat = model.createSpecies("k1", c);
-			Species act = model.createSpecies("a1", c);
-			inh.setSBOTerm(20);
-			act.setSBOTerm(462);
-			kat.setSBOTerm(460);
-			
-			/**
-			 *  Reaction with 2 products and all three modifiers.
-			 */
-			
-			r1 = model.createReaction("r1");
-			r1.createReactant(s1);
-			r1.createProduct(p1);
-			r1.createProduct(p2);
-			r1.createModifier(act);
-			r1.createModifier(kat);
-			r1.createModifier(inh);
-			
-
-		}
+		SBMLDocument doc = new SBMLDocument(2, 4);
+		Model model = doc.createModel("uniuni_model");
+		Compartment c = model.createCompartment("c1");
+		Species s1 = model.createSpecies("s1", c);
+		Species p1 = model.createSpecies("p1", c);
+		Species p2 = model.createSpecies("p2", c);
+		Species inh = model.createSpecies("i1", c);
+		Species kat = model.createSpecies("k1", c);
+		Species act = model.createSpecies("a1", c);
+		inh.setSBOTerm(20);
+		act.setSBOTerm(462);
+		kat.setSBOTerm(460);
 		
 		/**
-		 * From here on, the Kinetic Laws for reversible reactions
+		 *  Reaction with 2 products and all three modifiers.
 		 */
-		@Test
-		public void testAdditiveLinear() throws Throwable{
-			klg = new KineticLawGenerator(model);
-			KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelLinear.class, false);
-			assertEquals("m_r1*(w_r1_p1*p1*c1+w_r1_p2*p2*c1+(b_r1+(v_r1_a1*a1*c1+v_r1_k1*k1*c1+v_r1_i1*i1*c1)))",kl.getMath().toFormula());
-		}
+		
+		r1 = model.createReaction("r1");
+		r1.createReactant(s1);
+		r1.createProduct(p1);
+		r1.createProduct(p2);
+		r1.createModifier(act);
+		r1.createModifier(kat);
+		r1.createModifier(inh);
+		
+		return model;
+	}
+	
+	/**
+	 * From here on, the Kinetic Laws for reversible reactions
+	 */
+	@Test
+	public void testAdditiveLinear() throws Throwable{
+		klg = new KineticLawGenerator(model);
+		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelLinear.class, false);
+		test(kl, "m_r1*(w_r1_p1*p1*c1+w_r1_p2*p2*c1+(b_r1+(v_r1_a1*a1*c1+v_r1_k1*k1*c1+v_r1_i1*i1*c1)))");
+	}
 
 }
