@@ -70,14 +70,13 @@ public class ConnectToSABIORK {
 			
 			
 			SBMLDocument doc = (new SBMLReader().readSBMLFromStream(conn.getInputStream()));
-			SBMLWriter.write(doc, System.out, ' ', (short)2);
 			List<Reaction> results = new LinkedList<Reaction>();
 			
 			for(Reaction r: doc.getModel().getListOfReactions()) {
 				results.add(r);
 			}
 			
-		  return results;
+			return results;
 		}
 		catch (Exception e) { 
 			e.printStackTrace();
@@ -226,6 +225,7 @@ public class ConnectToSABIORK {
 				annotatedReactions.add(r);
 			}
 		}
+		int reactionsWithLaw = 0;
 		for (Reaction r : annotatedReactions) {
 			for (CVTerm term : r.getCVTerms()) {
 				if (filterKEGG.accepts(term)) {
@@ -233,18 +233,26 @@ public class ConnectToSABIORK {
 					query = urn.replaceFirst("urn:miriam:kegg.reaction:R", "R");
 					break;
 				}
-				List<Reaction> result = sk.searchKineticLaw(query);
-				if (result != null) {
-					KineticLaw newLaw = null;
-					int i = 0;
-					while((newLaw == null) && (i < result.size())) {
-						newLaw = sk.chooseLaw(r, result.get(i).getKineticLaw(), model);
-						i++;
-					}
+			}
+			List<Reaction> result = sk.searchKineticLaw(query);
+			if (result != null) {
+				KineticLaw newLaw = null;
+				int i = 0;
+				while ((newLaw == null) && (i < result.size())) {
+					newLaw = sk.chooseLaw(r, result.get(i).getKineticLaw(), model);
+					i++;
 				}
-				
+				if (newLaw != null) {
+					reactionsWithLaw++;
+				} else {
+					System.out.println("A " + r.getId());
+				}
+			} else {
+				System.out.println("B " + r.getId());
 			}
 		}
+		System.out.println("Reactions: " + model.getReactionCount());
+		System.out.println("Reactions with kinetic law " + reactionsWithLaw);
 		(new SBMLWriter()).write(doc, args[1]);
 	}
 }
