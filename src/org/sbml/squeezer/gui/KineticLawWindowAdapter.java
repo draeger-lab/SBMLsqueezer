@@ -150,7 +150,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			Class<?> equationType = messagePanel.getSelectedKinetic();
 			reaction.addTreeNodeChangeListener(sbmlio);
 			reaction.setReversible(messagePanel.getReversible());
-			klg.getPreferences().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+			klg.getPreferences().put(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE,
 					Boolean.valueOf(messagePanel.getReversible()));
 			
 			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(klg, reaction,

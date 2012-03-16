@@ -116,7 +116,7 @@ public class TestFolder extends Handler {
     
     //Try for reversible and irreversible reactions!
     SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-    prefs.put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+    prefs.put(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE,
       Boolean.valueOf(true));
     prefs.flush();
     

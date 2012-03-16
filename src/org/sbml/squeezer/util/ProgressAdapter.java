@@ -136,7 +136,7 @@ public class ProgressAdapter {
 			miniModel.getSpeciesCount();	
 			// storeParameters loops
 			numberOfTotalCalls += miniModel.getParameterCount();
-			if(prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
+			if(prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
 				// storekineticLaw loops
 				numberOfTotalCalls += modelOrig.getUnitDefinitionCount();
 				// removeUnnecessaryParameters loops
@@ -153,7 +153,7 @@ public class ProgressAdapter {
 			numberOfTotalCalls += miniModel.getUnitDefinitionCount() + 
 			miniModel.getCompartmentCount() + 
 			miniModel.getSpeciesCount();	
-			if(prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
+			if(prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
 				// removeUnnecessaryParameters loops
 				numberOfTotalCalls += modelOrig.getParameterCount() + 
 				modelOrig.getReactionCount();			

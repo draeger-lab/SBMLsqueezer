@@ -101,13 +101,13 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		super(new KineticLawTableModel(klg));
 		this.klg = klg;
 		this.reversibility = klg.getPreferences().getBoolean(
-				SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+				SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
 		getModel().addTableModelListener(this);
 		setColumnWidthAppropriately();
 		setRowHeightAppropriately();
 		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer(klg
 				.getPreferences().getInt(
-						SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS)));
+						SqueezerOptions.MAX_NUMBER_OF_REACTANTS)));
 		getTableHeader().setToolTipText(
 				StringUtil.toHTML(MESSAGES.getString("KINTEIC_LAW_TABLE_HEADER_TOOLTIP"), 40));
 		setCellSelectionEnabled(true);

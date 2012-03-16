@@ -122,29 +122,13 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * The {@link Logger} for this class.
    */
   private static final transient Logger logger = Logger.getLogger(SBMLsqueezer.class.getName());
-
-  /**
-   * 
-   */
-  private static SBMLInputConverter reader = null;
-
-  /**
-   * Generated serial version identifier.
-   */
-  private static final long serialVersionUID = 8751196023375780898L;
   
-  /**
-   * 
-   */
-  private static SBMLOutputConverter writer = null;
-  
-  /**
-   * Load all available kinetic equations and the user's settings from the
-   * configuration file.
-   */
   static {
-    initializeReaderAndWriter();
-    long time = System.currentTimeMillis();
+		/*
+     * Load all available kinetic equations and the user's settings from the
+     * configuration file.
+     */
+  	long time = System.currentTimeMillis();
     logger.info("Loading kinetic equations...");
     kineticsBiBi = new HashSet<Class>();
     kineticsBiUni = new HashSet<Class>();
@@ -205,6 +189,21 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     }
     logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
   }
+
+  /**
+   * 
+   */
+  private static SBMLInputConverter reader = null;
+
+  /**
+   * Generated serial version identifier.
+   */
+  private static final long serialVersionUID = 8751196023375780898L;
+  
+  /**
+   * 
+   */
+  private static SBMLOutputConverter writer = null;
   
   /**
    * @return the kineticsArbitraryEnzymeMechanism
@@ -318,21 +317,24 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * Does initialization for creating a SBMLsqueezer Object.
    * Checks if libSBML is available and initializes the Reader/Writer.
+   * @param tryLoadingLibSBML 
    * @param reader
    * @param writer
    */
-  private static void initializeReaderAndWriter(){
+  private static void initializeReaderAndWriter(boolean tryLoadingLibSBML){
     boolean libSBMLAvailable = false;
-    try {
-        // In order to initialize libSBML, check the java.library.path.
-        System.loadLibrary("sbmlj");
-        // Extra check to be sure we have access to libSBML:
-        Class.forName("org.sbml.libsbml.libsbml");
-        logger.info(MESSAGES.getString("LOADING_LIBSBML"));
-        libSBMLAvailable = true;
-    } catch (Error e) {
-    } catch (Throwable e) {
-    } 
+    if (tryLoadingLibSBML) {
+    	try {
+    		// In order to initialize libSBML, check the java.library.path.
+    		System.loadLibrary("sbmlj");
+    		// Extra check to be sure we have access to libSBML:
+    		Class.forName("org.sbml.libsbml.libsbml");
+    		logger.info(MESSAGES.getString("LOADING_LIBSBML"));
+    		libSBMLAvailable = true;
+    	} catch (Error e) {
+    	} catch (Throwable e) {
+    	}
+    }
     if (libSBMLAvailable) {
       reader = new LibSBMLReader();
       writer = new LibSBMLWriter();
@@ -350,7 +352,18 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     new SBMLsqueezer(args);
   }
   
-  /**
+  /* (non-Javadoc)
+	 * @see de.zbit.Launcher#setUp()
+	 */
+	@Override
+	protected void setUp() {
+		if ((reader == null) && (writer == null)) {
+			initializeReaderAndWriter(getAppConf().getCmdArgs().getBoolean(
+				IOOptions.TRY_LOADING_LIBSBML));
+		}
+	}
+
+	/**
    * 
    */
   private SBMLio sbmlIo;
@@ -384,8 +397,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   }
 
 
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#commandLineMode(de.zbit.AppConf)
    */
   public void commandLineMode(AppConf appConf) {
@@ -406,16 +418,15 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getAppName()
    */
+  @Override
   public String getAppName() {
     return getClass().getSimpleName();
   }
 
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getCmdLineOptions()
    */
   public List<Class<? extends KeyProvider>> getCmdLineOptions() {
@@ -427,8 +438,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return list;
   }
 
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getInteractiveOptions()
    */
   public List<Class<? extends KeyProvider>> getInteractiveOptions() {
@@ -438,8 +448,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return list;
   }
 
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getLogPackages()
    */
   public String[] getLogPackages() {
@@ -457,8 +466,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return sbmlIo;
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getURLlicenseFile()
    */
   public URL getURLlicenseFile() {
@@ -471,8 +479,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return url;
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getURLOnlineUpdate()
    */
   public URL getURLOnlineUpdate() {
@@ -485,32 +492,28 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return url;
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getVersionNumber()
    */
   public String getVersionNumber() {
     return "1.4.0";
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getYearOfProgramRelease()
    */
   public short getYearOfProgramRelease() {
     return (short) 2012;
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getYearWhenProjectWasStarted()
    */
   public short getYearWhenProjectWasStarted() {
     return (short) 2006;
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#initGUI(de.zbit.AppConf)
    */
   public Window initGUI(AppConf appConf) {
@@ -521,8 +524,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return new SBMLsqueezerUI(getSBMLIO(), appConf);
   }
   
-  /*
-   * (non-Javadoc)
+  /* (non-Javadoc)
    * @see org.sbml.jsbml.util.IOProgressListener#ioProgressOn(java.lang.Object)
    */
   public void ioProgressOn(Object currObject) {
@@ -667,21 +669,5 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
       logger.log(Level.WARNING, WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
     }
   }
-  
-///**
-//* Shows the simulation GUI.
-//*/
-//public void showGUISimulation() {
-//  TODO: Not in this version
-//  SBProperties properties = configuration.getProperties();
-// SBMLsqueezerUI gui = new SBMLsqueezerUI(sbmlIo);
-//  if (properties.get(CfgKeys.CSV_FILE).toString().length() > 0) {
-//  // gui.showSimulationControl(true, settings.get(CfgKeys.CSV_FILE)
-//  // .toString());
-//  } else {
-//  // gui.showSimulationControl(true);
-//  }
-// showGUI();
-//}
   
 }

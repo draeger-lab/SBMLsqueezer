@@ -358,7 +358,7 @@ public class KineticLawGenerator {
 					prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION),
 					Boolean.valueOf(hasFullColumnRank(modelOrig)),
 					prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY),
-					prefs.get(SqueezerOptions.OPT_DEFAULT_VALUE_OF_NEW_PARAMETERS)
+					prefs.get(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL)
 			};
 			Constructor<?> constructor = kineticsClass.getConstructor(reaction.getClass(), typeParameters.getClass());
 			return (BasicKineticLaw) constructor.newInstance(reaction, typeParameters);
@@ -384,7 +384,7 @@ public class KineticLawGenerator {
 	 */
 	@SuppressWarnings("deprecation")
 	private Model createMinimalModel(String reactionID) {
-		boolean create = (prefs.getBoolean(SqueezerOptions.OPT_GENERATE_KINETIC_LAW_FOR_EACH_REACTION));
+		boolean create = (prefs.getBoolean(SqueezerOptions.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS));
 		int level = modelOrig.getLevel(), version = modelOrig.getVersion();
 		SBMLDocument miniDoc = new SBMLDocument(level, version);
 		Model miniModel = miniDoc.createModel(modelOrig.getId());	  
@@ -525,7 +525,7 @@ public class KineticLawGenerator {
 		}
 		
 		boolean reversibility = prefs
-				.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+				.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
 		
 		for (Reaction r : miniModel.getListOfReactions()) {
 			ReactionType rt = new ReactionType(r);
@@ -1002,23 +1002,23 @@ public class KineticLawGenerator {
 	private Reaction storeKineticLaw(KineticLaw kineticLaw,
 			boolean removeParametersAndStoreUnits) {
 		int i;
-		boolean reversibility = prefs.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+		boolean reversibility = prefs.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
 		Reaction reaction = modelOrig.getReaction(kineticLaw.getParentSBMLObject().getId());
 		reaction.setReversible(reversibility || reaction.getReversible());
 		reaction.setKineticLaw(kineticLaw);
 		// set the BoundaryCondition to true for genes if not set anyway:
-		boolean setBoundary = prefs.getBoolean(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES);
+		boolean setBoundary = prefs.getBoolean(SqueezerOptions.SET_BOUNDARY_CONDITION_FOR_GENES);
 		setBoundaryCondition(reaction.getListOfReactants(), setBoundary);
 		setBoundaryCondition(reaction.getListOfProducts(), setBoundary);
 		setInitialConcentrationTo(reaction, 
-		    prefs.getDouble(SqueezerOptions.OPT_DEFAULT_SPECIES_INITIAL_VALUE), 
-				prefs.getDouble(SqueezerOptions.OPT_DEFAULT_COMPARTMENT_INITIAL_SIZE));
+		    prefs.getDouble(SqueezerOptions.DEFAULT_SPECIES_INIT_VAL), 
+				prefs.getDouble(SqueezerOptions.DEFAULT_COMPARTMENT_SIZE));
 		if (removeParametersAndStoreUnits) {
 			storeUnits();
 		}
 		storeParamters(reaction);
 		if (removeParametersAndStoreUnits
-				&& prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
+				&& prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
 			/*
 			 * delete unnecessary units.
 			 */
@@ -1121,7 +1121,7 @@ public class KineticLawGenerator {
 		
 		storeUnits();
 		
-		if (prefs.getBoolean(SqueezerOptions.OPT_REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
+		if (prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
 			removeUnnecessaryParameters(modelOrig);
 		}
 		modelOrig.removeTreeNodeChangeListener(chl);
@@ -1142,7 +1142,7 @@ public class KineticLawGenerator {
 		// setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
 		ListOf<LocalParameter> paramListLocal = kineticLaw.getListOfLocalParameters();
-		boolean addGlobally = prefs.getBoolean(SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY);
+		boolean addGlobally = prefs.getBoolean(SqueezerOptions.NEW_PARAMETERS_GLOBAL);
 		for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--) {
 			if (addGlobally) {
 				Parameter p = new Parameter(paramListLocal.remove(paramNum));
