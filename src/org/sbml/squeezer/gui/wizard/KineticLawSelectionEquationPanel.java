@@ -365,7 +365,6 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		// show statusBar for the synchronization
 		// get new statusbar and limit the log message length
 		if (statusBar != null) {
-			statusBar.limitLogMessageLength(this.getWidth()-130);
 			AbstractProgressBar progressBar = statusBar.showProgress();
 			klg.setProgressBar(progressBar);
 		}
@@ -378,7 +377,6 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		
 		if (statusBar != null) {
 			statusBar.hideProgress();
-			statusBar.unsetLogMessageLimit();
 		}
 	}
 	
@@ -392,7 +390,6 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 					//dispose();
 					if (statusBar != null) {
 						statusBar.hideProgress();
-						statusBar.unsetLogMessageLimit();
 					}
 					logger.log(Level.INFO, LABELS.getString("READY"));
 				}

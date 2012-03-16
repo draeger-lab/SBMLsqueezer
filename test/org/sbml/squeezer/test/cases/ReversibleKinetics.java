@@ -40,11 +40,11 @@ import org.sbml.squeezer.kinetics.AdditiveModelLinear;
  * @since 1.4
  */
 public class ReversibleKinetics extends KineticsTest {
-	
+
 	/**
 	 * 
 	 */
-	Reaction r1;
+	private Reaction r1;
 		
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()

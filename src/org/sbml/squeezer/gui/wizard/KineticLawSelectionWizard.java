@@ -73,7 +73,6 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		
 		// get new statusbar and limit the log message length
 		statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
-		statusBar.limitLogMessageLength(this.getDialog().getWidth()-130);
 		
 		initDescriptors();
 	}

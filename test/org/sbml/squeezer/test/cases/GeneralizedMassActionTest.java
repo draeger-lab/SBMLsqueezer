@@ -39,15 +39,13 @@ import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.util.SBMLtools;
 
-import de.zbit.util.prefs.SBPreferences;
-
 /**
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.4
  */
 public class GeneralizedMassActionTest extends KineticsTest {
-	
+
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.test.cases.KineticsTest#initModel()
 	 */
@@ -89,7 +87,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
 		}
 		
 		Reaction r = model.createReaction("r1");
-		r.setReversible(true);
+		r.setReversible(false);
 		
 		r.createReactant(akg).setStoichiometry(1d);
 		r.createReactant(ubiquinone).setStoichiometry(1d);
@@ -120,14 +118,20 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	 * @throws Throwable
 	 */
 	@Test
-	public void testGMAK() throws Throwable {
-		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+	public void testGMAKconcentration() throws Throwable {
 		prefs.put(SqueezerOptions.TYPE_UNIT_CONSISTENCY, SqueezerOptions.TypeUnitConsistency.concentration);
 		KineticLaw kl = klg.createKineticLaw(model.getReaction(0), GeneralizedMassAction.class, false);
 		test(kl, "kass_r1*s01/cell*s02/cell*s03/cell*s04/cell*s05/cell-kdiss_r1*s06/cell*s07/cell*s08/cell*s09/cell*s10/cell*s11/cell");
-
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testGMAKamount() throws Throwable {
 		prefs.put(SqueezerOptions.TYPE_UNIT_CONSISTENCY, SqueezerOptions.TypeUnitConsistency.amount);
-	  kl = klg.createKineticLaw(model.getReaction(0), GeneralizedMassAction.class, false);
+		KineticLaw kl = klg.createKineticLaw(model.getReaction(0), GeneralizedMassAction.class, false);
 		test(kl, "kass_r1*s01*s02*s03*s04*s05-kdiss_r1*s06*s07*s08*s09*s10*s11");
 	}
 	

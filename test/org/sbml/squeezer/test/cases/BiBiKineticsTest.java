@@ -41,7 +41,7 @@ import org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw;
  * @since 1.4
  */
 public class BiBiKineticsTest extends KineticsTest {
-	
+
 	/**
 	 * 
 	 */

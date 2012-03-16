@@ -48,10 +48,11 @@ import org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw;
  * @since 1.4
  */
 public class UniUniKineticsTest extends KineticsTest {
-	static Reaction r1;
-	static Reaction r2;
-	static Reaction r3;
-	static Reaction r4;
+
+	/**
+	 * 
+	 */
+	private Reaction r1, r2, r3, r4;
 	
 	/**
 	 * Initialization of a model and basic reactions for this test class.
