@@ -27,11 +27,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.Before;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.SqueezerOptions;
+
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -49,14 +51,21 @@ public abstract class KineticsTest {
 	 */
 	protected Model model;
 	
+	protected SBPreferences prefs;
+
+	
 	/**
 	 * 
-	 * @throws Throwable
 	 */
-	@Before
-	public void setUp() throws Throwable {
+	public KineticsTest() {
 		model = initModel();
-		klg = new KineticLawGenerator(model);
+		prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+		try {
+			klg = new KineticLawGenerator(model);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 
 	/**

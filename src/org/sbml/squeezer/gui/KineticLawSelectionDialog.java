@@ -51,8 +51,15 @@ import de.zbit.util.prefs.SBPreferences;
  * @since 1.0
  * @version $Rev$
  */
-public class KineticLawSelectionDialog extends JDialog{
+public class KineticLawSelectionDialog extends JDialog {
+	
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
 
 	/**
@@ -109,14 +116,12 @@ public class KineticLawSelectionDialog extends JDialog{
 			
 			// get new statusbar and limit the log message length
 			statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
-			statusBar.limitLogMessageLength(this.getWidth()-130);
 
 			AbstractProgressBar progressBar = statusBar.showProgress();
 			adapter.showProgress(progressBar);
 			KineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
 			dispose();
 			statusBar.hideProgress();
-			statusBar.unsetLogMessageLimit();
 			logger.log(Level.INFO, LABELS.getString("READY"));
 			
 		} catch (Throwable exc) {
