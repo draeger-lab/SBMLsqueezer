@@ -178,7 +178,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		this.selected = "";
 		this.klg = klg;
 		this.reaction = reaction;
-		this.klg.getPreferences().put(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+		this.klg.getPreferences().put(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE,
 				Boolean.valueOf(this.reaction.getReversible()));
 		StringBuilder label = new StringBuilder("<html><body>");
 		double stoichiometry = 0;
@@ -242,7 +242,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		lh.add(rButtonIrreversible, 1, 1, 1, 1, 1, 1);
 		JRadioButton rButtonLocalParameters = new JRadioButton(
 				MESSAGES.getString("LOCAL_PARAMETERS"), !this.klg.getPreferences().getBoolean(
-						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
+						SqueezerOptions.NEW_PARAMETERS_GLOBAL));
 		rButtonLocalParameters.setToolTipText(StringUtil.toHTML(MESSAGES.getString("LOCAL_PARAMETERS_TOOLTIP"), 40));
 		
 		rButtonGlobalParameters = new JRadioButton(MESSAGES.getString("GLOBAL_PARAMETERS"),
@@ -255,7 +255,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		lh.add(rButtonLocalParameters, 1, 2, 1, 1, 1, 1);
 
 		checkEnzymeKineticsPossible(true);
-		klg.getPreferences().put(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+		klg.getPreferences().put(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED,
 				Boolean.valueOf(treatAsEnzymeReaction.isSelected()));
 		klg.updateEnzymeCatalysis();
 		kineticsPanel = initKineticsPanel();
@@ -281,7 +281,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	private void checkEnzymeKineticsPossible(boolean init)
 			throws RateLawNotApplicableException {
 		ReactionType reactionType = klg.getReactionType(reaction.getId());
-		boolean allEnzyme = this.klg.getPreferences().getBoolean(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED);
+		boolean allEnzyme = this.klg.getPreferences().getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED);
 		boolean nonEnzyme = !reactionType.isEnzymeReaction()
 				&& (reactionType.isNonEnzymeReaction()
 						|| reactionType.isReactionWithGenes()
@@ -495,7 +495,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 										.getText();
 						klg.setReversible(reaction.getId(), getReversible());
 						klg.getPreferences().put(
-								SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE,
+								SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE,
 								Boolean.valueOf(getReversible()));
 						remove(kineticsPanel);
 						kineticsPanel = initKineticsPanel();
@@ -513,7 +513,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 					}
 				} else {
 					klg.getPreferences().put(
-							SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY,
+							SqueezerOptions.NEW_PARAMETERS_GLOBAL,
 							Boolean.valueOf(rButtonGlobalParameters
 									.isSelected()));
 				}
@@ -554,7 +554,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @throws Throwable
 	 */
 	private void setEnzymeCatalysis(boolean selected) throws Throwable {
-		klg.getPreferences().put(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED,
+		klg.getPreferences().put(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED,
 				Boolean.valueOf(selected));
 		klg.updateEnzymeCatalysis();
 		remove(kineticsPanel);
@@ -617,7 +617,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		boolean global = !((reaction.isSetKineticLaw() && reaction
 				.getKineticLaw().getLocalParameterCount() > 0) || klg
 				.getPreferences().getBoolean(
-						SqueezerOptions.OPT_ADD_NEW_PARAMETERS_ALWAYS_GLOBALLY));
+						SqueezerOptions.NEW_PARAMETERS_GLOBAL));
 		boolean change = disable || isExistingRateLawSelected
 				|| (i < rButtonsKineticEquations.length - 1);
 		if (disable) {

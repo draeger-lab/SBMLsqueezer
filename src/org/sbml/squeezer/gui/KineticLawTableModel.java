@@ -92,7 +92,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 		numOfWarnings = 0;
 
 		int maxNumReactants = klg.getPreferences().getInt(
-				SqueezerOptions.OPT_MAX_NUMBER_OF_REACTANTS);
+				SqueezerOptions.MAX_NUMBER_OF_REACTANTS);
 		for (reactionNum = 0; reactionNum < klg.getCreatedKineticsCount(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
 			String kinetic = reaction.getKineticLaw().getFormula();

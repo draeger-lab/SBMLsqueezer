@@ -311,11 +311,11 @@ public class ReactionType {
 		this.reaction = r;
 		// Check ignore list:
 		prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		String ignore = prefs.get(SqueezerOptions.OPT_IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
+		String ignore = prefs.get(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
 		removeSpeciesAccordingToIgnoreList(reaction, ignore.contains(",") ? ignore.split(",") : new String[] {ignore});
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.reversibility = prefs
-				.getBoolean(SqueezerOptions.OPT_TREAT_ALL_REACTIONS_REVERSIBLE);
+				.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
 
 		/*
 		 * Analyze properties of the reaction: compute stoichiometric properties
@@ -366,7 +366,7 @@ public class ReactionType {
 			identifyModifers(reaction, enzymes, activators, inhibitors,
 					nonEnzymeCatalysts);
 		}
-		nonEnzyme = ((!prefs.getBoolean(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED) && enzymes.size() == 0)
+		nonEnzyme = ((!prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED) && enzymes.size() == 0)
 				|| (nonEnzymeCatalysts.size() > 0) 
 				|| (((reaction.getProductCount() == 0)
 						|| (SBO.isEmptySet(reaction.getProduct(0).getSpeciesInstance().getSBOTerm()))) && reaction.isReversible()));
@@ -418,7 +418,7 @@ public class ReactionType {
 			Species species = reaction.getReactant(0).getSpeciesInstance();
 			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
 				if (prefs
-						.getBoolean(SqueezerOptions.OPT_SET_BOUNDARY_CONDITION_FOR_GENES)) {
+						.getBoolean(SqueezerOptions.SET_BOUNDARY_CONDITION_FOR_GENES)) {
 					setBoundaryCondition(species, true);
 				}
 				if (SBO.isTranslation(reaction.getSBOTerm())) {
@@ -569,7 +569,7 @@ public class ReactionType {
 			}
 		}
 
-		boolean enzymeCatalyzed = prefs.getBoolean(SqueezerOptions.OPT_ALL_REACTIONS_ARE_ENZYME_CATALYZED)
+		boolean enzymeCatalyzed = prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED)
 				|| (enzymes.size() > 0);
 		Class<?> whichkin = prefs.getClass(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS);
 
