@@ -43,14 +43,16 @@ import de.zbit.util.prefs.SBPreferences;
 public abstract class KineticsTest {
 	
 	/**
-	 * 
+	 * The rate law generator.
 	 */
 	protected KineticLawGenerator klg;
 	/**
 	 * 
 	 */
 	protected Model model;
-	
+	/**
+	 * User settings for the test cases.
+	 */
 	protected SBPreferences prefs;
 
 	

@@ -35,7 +35,9 @@
   <entry key="DEFAULT_COMPARTMENT_SIZE_TOOLTIP_TO_BE_MERGED">For compartments that are not yet initialized, SBMLsqueezer will use this value as the default initial size.</entry>
   <entry key="DEFAULT_NEW_PARAMETER_VAL">Default value of new parameters</entry>
   <entry key="DEFAULT_NEW_PARAMETER_VAL_TOOLTIP">The default value that is set for newly created parameters. By default this value is 1.0d.</entry>
-  <entry key="DEFAULT_NEW_PARAMETER_VAL_TOOLTIP_TO_BE_MERGED">Specifiy the default value for newly created parameters.</entry>
+  <entry key="DEFAULT_NEW_PARAMETER_VAL_TOOLTIP_TO_BE_MERGED">Specify the default value for newly created parameters.</entry>
+  <entry key="DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS">Species are quantities in substance units if not specified differently.</entry>
+  <entry key="DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS_TOOLTIP">This option allows users to specify that the numerical value of a species should be interpreted as a value given in substance units in cases where this has not yet been defined. If not selected, species with undefined meaning will be conceived as a quantity in concentration units.</entry>
   <entry key="DEFAULT_SPECIES_INIT_VAL">Default species initial value</entry>
   <entry key="DEFAULT_SPECIES_INIT_VAL_TOOLTIP">If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species depending on their hasOnlySubstanceUnits property, i.e., for species that are interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts. By default this value is set to 1.0d.</entry>
   <entry key="DEFAULT_SPECIES_INIT_VAL_TOOLTIP_TO_BE_MERGED">If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species depending on its hasOnlySubstanceUnits value, i.e., for species that are interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts.</entry>

@@ -305,8 +305,7 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitPerTimeAndConcentrationOrSubstance(
 			ListOf<? extends SimpleSpeciesReference> listOf, boolean zerothOrder) {
-		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf,
-				zerothOrder, 0d);
+		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf, zerothOrder, 0d);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < ud.getUnitCount(); i++) {
 			Unit u = ud.getUnit(i);
@@ -355,8 +354,7 @@ public class UnitFactory {
 	public UnitDefinition unitPerTimeAndConcentrationOrSubstance(
 			ListOf<SpeciesReference> participants,
 			ListOf<ModifierSpeciesReference> modifiers, boolean zerothOrder) {
-		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(
-				participants, zerothOrder);
+		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(participants, zerothOrder);
 		ListOf<? extends SimpleSpeciesReference> l = modifiers
 				.filterList(new SBOFilter(SBO.getCatalyst()));
 		if (l.size() > 0) {
