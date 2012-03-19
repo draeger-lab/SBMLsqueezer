@@ -25,7 +25,9 @@ package org.sbml.squeezer.util;
 
 
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashSet;
@@ -65,11 +67,15 @@ public class ConnectToSABIORK {
 			if(host == null) {
 				host = new URL("http://sabio.h-its.org/sabioRestWebServices/");
 			}
-			URL fullAddress = new URL(host, "searchKineticLaws/sbml?searchTerms=RKEGG=" + keggId);
+			String query = "searchKineticLaws/sbml?searchTerms=RKEGG=" + keggId + ",ORGANISM=Homo sapiens";
+			URL fullAddress = new URL(host, query);
 			URLConnection conn = fullAddress.openConnection();
 			
-			
-			SBMLDocument doc = (new SBMLReader().readSBMLFromStream(conn.getInputStream()));
+			InputStream stream = conn.getInputStream();
+			if((stream == null)) {
+				return null;
+			}
+			SBMLDocument doc = SBMLReader.read(stream);
 			List<Reaction> results = new LinkedList<Reaction>();
 			
 			for(Reaction r: doc.getModel().getListOfReactions()) {
@@ -79,7 +85,6 @@ public class ConnectToSABIORK {
 			return results;
 		}
 		catch (Exception e) { 
-			e.printStackTrace();
 			return null;
 		} 
 		
@@ -215,7 +220,7 @@ public class ConnectToSABIORK {
 
 	public static void main(String[] args) throws XMLStreamException, RateLawNotApplicableException, IOException {
 		ConnectToSABIORK sk = new ConnectToSABIORK();
-		SBMLDocument doc = (new SBMLReader()).readSBMLFromFile((args[0]));
+		SBMLDocument doc = SBMLReader.read(new File(args[0]));
 		Model model = doc.getModel();
 		CVTermFilter filterKEGG = new CVTermFilter(Qualifier.BQB_IS, "urn:miriam:kegg.reaction");
 		String query = null;
