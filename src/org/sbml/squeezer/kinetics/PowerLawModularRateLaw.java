@@ -35,8 +35,8 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
-import org.sbml.squeezer.util.SBMLtools;
 
+import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**

@@ -66,12 +66,12 @@ import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.ModelChangeListener;
 import org.sbml.squeezer.util.ProgressAdapter;
 import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
-import org.sbml.squeezer.util.SBMLtools;
 
-import de.zbit.util.progressbar.AbstractProgressBar;
+import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.Option;
 import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * This class identifies and generates the missing kinetic laws for a the
@@ -175,27 +175,36 @@ public class KineticLawGenerator {
 			//TODO: Option for setting the initial compartment size
 			compartment.setValue(1d);
 		}
+		
+		
+//		volumeUD = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
+//		if (volumeUD == null) {
+//			// This may happen in Level 3.
+//			// TODO: Depending on which compartments are in the model, we might need also Area and Length!
+//			volumeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
+//			SBMLtools.setLevelAndVersion(volumeUD, level, version);
+//			miniModel.setVolumeUnits(volumeUD);
+//		}
+		///
+		
+		
     if (!compartment.isSetUnits() && (((short) spatialD) - spatialD == 0d)) {
 			UnitDefinition ud;
 			switch ((short) spatialD) {
 			case 1:
-				ud = model.getUnitDefinition(UnitDefinition.LENGTH);
+				ud = model.getLengthUnitsInstance();
 				if (ud == null) {
-					ud = UnitDefinition.getPredefinedUnit(
-							UnitDefinition.LENGTH, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(),
-							modelToWrite.getVersion());
+					ud = UnitDefinition.getPredefinedUnit(UnitDefinition.LENGTH, 2, 4);
+					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
 					modelToWrite.setLengthUnits(ud);
 				}
-				compartment.setUnits(model.getUnitDefinition(UnitDefinition.LENGTH));
+				compartment.setUnits(ud);
 				break;
 			case 2:
-				ud = model.getUnitDefinition(UnitDefinition.AREA);
+				ud = model.getAreaUnitsInstance();
 				if (ud == null) {
-					ud = UnitDefinition.getPredefinedUnit(
-							UnitDefinition.AREA, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(),
-							modelToWrite.getVersion());
+					ud = UnitDefinition.getPredefinedUnit(UnitDefinition.AREA, 2, 4);
+					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
 					modelToWrite.setAreaUnits(ud);
 				}
 				compartment.setUnits(ud);
@@ -203,10 +212,8 @@ public class KineticLawGenerator {
 			case 3:
 				ud = model.getUnitDefinition(UnitDefinition.VOLUME);
 				if (ud == null) {
-					ud = UnitDefinition.getPredefinedUnit(
-							UnitDefinition.VOLUME, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(),
-							modelToWrite.getVersion());
+					ud = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
+					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
 					modelToWrite.setVolumeUnits(ud);
 				}
 				compartment.setUnits(ud);
@@ -215,13 +222,12 @@ public class KineticLawGenerator {
 				break;
 			}
 		}
-		if (((spatialD <= 0d) || (spatialD > 3d))
-				&& (1 < compartment.getLevel())) {
+		if (((spatialD <= 0d) || (spatialD > 3d)) && (1 < compartment.getLevel())) {
 			compartment.setSpatialDimensions(3d);
 			compartment.setUnits(model.getUnitDefinition(UnitDefinition.VOLUME));
-			logger.log(Level.WARNING,
-					MessageFormat.format(WARNINGS.getString("INVALID_COMPARTMENT_DIMENSION")+"\n",
-							compartment.getId()));
+			logger.warning(MessageFormat.format(
+				WARNINGS.getString("INVALID_COMPARTMENT_DIMENSION"),
+				compartment.getId()));
 		}
 	}
 
@@ -252,26 +258,25 @@ public class KineticLawGenerator {
 	 * @param miniModel
 	 * @return
 	 */
-	private Compartment copyCopmpartment(Compartment compartmenOrig,
-			Model miniModel) {
+	private Compartment copyCopmpartment(Compartment compartmenOrig, Model miniModel) {
+		
 		if (miniModel.getCompartment(compartmenOrig.getId()) == null) {
 			miniModel.addCompartment(compartmenOrig.clone());
 		}
 		Compartment compartment = miniModel.getCompartment(compartmenOrig
 				.getId());
-		if (compartment.isSetUnits()
-				&& !Unit.isUnitKind(compartment.getUnits(), compartment
-						.getLevel(), compartment.getVersion())) {
-			if (miniModel.getUnitDefinition(compartment.getUnits()) == null) {
-				UnitDefinition ud = compartmenOrig.getUnitsInstance();
-				if (ud != null) {
-					miniModel.addUnitDefinition(ud.clone());
-				} else {
-					checkUnits(compartment, miniModel);
+		if (compartment.isSetUnits()) {
+			if (!Unit.isUnitKind(compartment.getUnits(), compartment.getLevel(), compartment.getVersion())) {
+				if (miniModel.getUnitDefinition(compartment.getUnits()) == null) {
+					UnitDefinition ud = compartmenOrig.getUnitsInstance();
+					if (ud != null) {
+						miniModel.addUnitDefinition(ud.clone());
+					} else {
+						checkUnits(compartment, miniModel);
+					}
 				}
+				compartment.setUnits(miniModel.getUnitDefinition(compartment.getUnits()));
 			}
-			compartment.setUnits(miniModel.getUnitDefinition(compartment
-					.getUnits()));
 		} else {
 			checkUnits(compartment, miniModel);
 		}
@@ -289,17 +294,19 @@ public class KineticLawGenerator {
 			miniModel.addSpecies(speciesOrig.clone());
 		}
 		Species spec = miniModel.getSpecies(speciesOrig.getId());
+		if (!spec.isSetHasOnlySubstanceUnits()) {
+			spec.setHasOnlySubstanceUnits(prefs
+					.getBoolean(SqueezerOptions.DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS));
+		}
 		Compartment compartment = miniModel.getCompartment(speciesOrig
 				.getCompartment());
 		if (compartment == null) {
-			compartment = copyCopmpartment(speciesOrig.getCompartmentInstance(),
-					miniModel);
+			compartment = copyCopmpartment(speciesOrig.getCompartmentInstance(), miniModel);
 		}
 		spec.setCompartment(compartment);
 
 		if (spec.isSetSubstanceUnits()
-				&& !Unit.isUnitKind(spec.getUnits(), spec
-						.getLevel(), spec.getVersion())) {
+				&& !Unit.isUnitKind(spec.getUnits(), spec.getLevel(), spec.getVersion())) {
 			if (miniModel.getUnitDefinition(spec.getUnits()) == null) {
 				UnitDefinition ud = speciesOrig.getSubstanceUnitsInstance();
 				if (ud != null) {
@@ -308,8 +315,7 @@ public class KineticLawGenerator {
 					checkUnits(spec, miniModel);
 				}
 			}
-			spec.setSubstanceUnits(miniModel.getUnitDefinition(spec
-					.getUnits()));
+			spec.setSubstanceUnits(miniModel.getUnitDefinition(spec.getUnits()));
 		} else {
 			checkUnits(spec, miniModel);
 		}
@@ -389,7 +395,7 @@ public class KineticLawGenerator {
 		SBMLDocument miniDoc = new SBMLDocument(level, version);
 		Model miniModel = miniDoc.createModel(modelOrig.getId());	  
 		//miniModel.addChangeListener(new ModelChangeListener());
-		UnitDefinition timeUD, substanceUD, volumeUD;
+		UnitDefinition timeUD, substanceUD;
 
 		/*
 		 * Create default units for time, substance and volume if missing: 
@@ -409,13 +415,6 @@ public class KineticLawGenerator {
 			substanceUD = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
 			SBMLtools.setLevelAndVersion(substanceUD, level, version);
 			miniModel.setSubstanceUnits(substanceUD);
-		}
-		volumeUD = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
-		if (volumeUD == null) {
-			// This may happen in Level 3.
-			volumeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
-			SBMLtools.setLevelAndVersion(volumeUD, level, version);
-			miniModel.setVolumeUnits(volumeUD);
 		}
 		
 //		/* 
@@ -459,17 +458,15 @@ public class KineticLawGenerator {
 			}
 			if (reacOrig.isSetKineticLaw()) {
 				String formula = reacOrig.getKineticLaw().getFormula();
-				if (formula.equals("") || formula.equals(" ")) {
-					logger.warning(MessageFormat.format(WARNINGS.getString("INVALID_REACTION_FORMAT") + "\n",
-							reacOrig.getId()));
+				if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
+					logger.warning(MessageFormat.format(WARNINGS.getString("INVALID_REACTION_FORMAT"), reacOrig.getId()));
 					create = true;
 				}
 			}
 			if (!reacOrig.isSetKineticLaw() || create) {
-				Reaction reac = new Reaction(reacOrig.getId(), reacOrig
-						.getLevel(), reacOrig.getVersion());
+				Reaction reac = new Reaction(reacOrig.getId(), reacOrig.getLevel(), reacOrig.getVersion());
 				if (reacOrig.isSetSBOTerm()) {
-					SBMLtools.setSBOTerm(reac,reacOrig.getSBOTerm());
+					SBMLtools.setSBOTerm(reac, reacOrig.getSBOTerm());
 				}
 				miniModel.addReaction(reac);
 				reac.setFast(reacOrig.getFast());

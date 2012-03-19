@@ -358,7 +358,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	@Override
 	protected void setUp() {
 		if ((reader == null) && (writer == null)) {
-			initializeReaderAndWriter(getAppConf().getCmdArgs().getBoolean(
+			initializeReaderAndWriter(getAppConf().getCmdArgs().getBooleanProperty(
 				IOOptions.TRY_LOADING_LIBSBML));
 		}
 	}

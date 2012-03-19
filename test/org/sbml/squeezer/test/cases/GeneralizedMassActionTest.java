@@ -23,21 +23,18 @@
  */
 package org.sbml.squeezer.test.cases;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.junit.Test;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
-import org.sbml.squeezer.util.SBMLtools;
+
+import de.zbit.sbml.util.SBMLtools;
 
 /**
  * @author Andreas Dr&auml;ger
@@ -82,7 +79,6 @@ public class GeneralizedMassActionTest extends KineticsTest {
 		// TODO: Deal with undefined values!
 		for (Species s : model.getListOfSpecies()) {
 			s.setInitialAmount(1d);
-			s.setHasOnlySubstanceUnits(true);
 			s.setUnits(substance);
 		}
 		
@@ -101,16 +97,30 @@ public class GeneralizedMassActionTest extends KineticsTest {
 		r.createProduct(hplus).setStoichiometry(1d);
 		r.createProduct(gtp).setStoichiometry(1d);
 		
-		try {
-			SBMLWriter.write(doc, System.out, ' ', (short) 2);
-			System.out.println();
-		} catch (SBMLException exc) {
-			exc.printStackTrace();
-		} catch (XMLStreamException exc) {
-			exc.printStackTrace();
-		}
+//		try {
+//			SBMLWriter.write(doc, System.out, ' ', (short) 2);
+//			System.out.println();
+//		} catch (SBMLException exc) {
+//			exc.printStackTrace();
+//		} catch (XMLStreamException exc) {
+//			exc.printStackTrace();
+//		}
 		
 		return model;
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void irreversibleUniUni() throws Throwable {
+		Reaction r2 = model.createReaction("r2");
+		r2.createReactant(model.getSpecies("s01")).setStoichiometry(1d);
+		r2.createProduct(model.getSpecies("s02")).setStoichiometry(1d);
+		r2.setReversible(false);
+		KineticLaw kl = klg.createKineticLaw(r2, GeneralizedMassAction.class, false);
+		System.out.println(kl.getFormula());
 	}
 	
 	/**

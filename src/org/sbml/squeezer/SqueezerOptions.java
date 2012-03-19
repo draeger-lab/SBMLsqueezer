@@ -234,6 +234,17 @@ public interface SqueezerOptions extends KeyProvider {
 			Double.class,
 			OPTIONS_BUNDLE,
 			1.0d);
+	
+	/**
+	 * This option allows users to specify if the numerical value of a species
+	 * should be interpreted as a substance unit or as a concentration unit in cases where this
+	 * has not yet been defined.
+	 */
+	public static final Option<Boolean> DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS = new Option<Boolean>(
+			"DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS",
+			Boolean.class,
+			OPTIONS_BUNDLE,
+			true);
 
 	/**
 	 * The value that is set for newly created parameters.
@@ -483,7 +494,7 @@ public interface SqueezerOptions extends KeyProvider {
 			SHOW_SBML_WARNINGS);
 	
 	/**
-	 * 
+	 * Default values
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static final OptionGroup<?> GROUP_DEFAULT_VALUES = new OptionGroup(
@@ -493,6 +504,7 @@ public interface SqueezerOptions extends KeyProvider {
 		DEFAULT_COMPARTMENT_SIZE,
 		DEFAULT_SPECIES_INIT_VAL,
 		DEFAULT_NEW_PARAMETER_VAL,
+		DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS,
 		IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
 	
 	/**

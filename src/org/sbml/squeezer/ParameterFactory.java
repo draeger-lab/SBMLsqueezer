@@ -41,8 +41,8 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.filters.SBOFilter;
 import org.sbml.squeezer.util.Bundles;
-import org.sbml.squeezer.util.SBMLtools;
 
+import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
@@ -145,21 +145,21 @@ public class ParameterFactory {
 	}
 
 	/**
-	 * If a parameter with the given identifier has already been created and is
-	 * contained in the list of local parameters for this kinetic law, a pointer
-	 * to it will be returned. If no such parameter exists, a new parameter with
-	 * a value of 1 will be created and a pointer to it will be returned.
+	 * If a {@link Parameter} with the given identifier has already been created
+	 * and is contained in the list of {@link LocalParameter}s for this
+	 * {@link KineticLaw}, a pointer to it will be returned. If no such
+	 * {@link Parameter} exists, a new {@link Parameter} with the default value
+	 * will be created and a pointer to it will be returned.
 	 * 
 	 * @param id
-	 *            the identifier of the local parameter.
+	 *        the identifier of the local parameter.
 	 * @return
 	 */
 	public LocalParameter createOrGetParameter(String id) {
 		LocalParameter p = kineticLaw.getLocalParameter(id);
 		if (p == null) {
-			p = new LocalParameter(id, model.getLevel(), model.getVersion());
+			p = kineticLaw.createLocalParameter(id);
 			p.setValue(defaultParamValue);
-			kineticLaw.addLocalParameter(p);
 		}
 		return p;
 	}
@@ -203,7 +203,7 @@ public class ParameterFactory {
 	public LocalParameter parameterAssociationConst(String catalyst) {
 		boolean zerothOrder = orderReactants == 0d;
 		Reaction r = kineticLaw.getParentSBMLObject();
-		StringBuffer kass = StringTools.concat("kass_", r.getId());
+		StringBuilder kass = StringTools.concatStringBuilder("kass_", r.getId());
 		if (zerothOrder) {
 			kass.insert(0, 'z');
 		}
