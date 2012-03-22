@@ -244,5 +244,6 @@
   <entry key="STORE_KINETIC_EQUATION">Store kinetic equation...</entry>
   <entry key="STORE_KINETIC_EQUATIONS">Store kinetic equations...</entry>
   <entry key="GENERATE_KINETIC_EQUATION">Generate kinetic equation...</entry>
+  <entry key="CREATE_MINI_MODEL">Create mini model...</entry>
   
 </properties>

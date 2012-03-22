@@ -396,6 +396,7 @@ public class KineticLawGenerator {
 	 */
 	@SuppressWarnings("deprecation")
 	private Model createMinimalModel(String reactionID) {
+		
 		boolean create = (prefs.getBoolean(SqueezerOptions.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS));
 		int level = modelOrig.getLevel(), version = modelOrig.getVersion();
 		SBMLDocument miniDoc = new SBMLDocument(level, version);
@@ -443,6 +444,11 @@ public class KineticLawGenerator {
 //				miniModel.addUnitDefinition(volumeUD);
 //			}
 //		}
+		
+		if (progressBar != null) {
+			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.createMiniModel);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+		}
 
 		/*
 		 * Copy needed species and reactions.
@@ -482,18 +488,27 @@ public class KineticLawGenerator {
 					SpeciesReference sr = specRefOrig.clone();
 					sr.setSpecies(copySpecies(speciesOrig, miniModel));
 					reac.addReactant(sr);
+					if (progressAdapter != null) {
+		  				progressAdapter.progressOn();
+		  			}
 				}
 				for (SpeciesReference s : reacOrig.getListOfProducts()) {
 					Species speciesOrig = s.getSpeciesInstance();
 					SpeciesReference sr = s.clone();
 					sr.setSpecies(copySpecies(speciesOrig, miniModel));
 					reac.addProduct(sr);
+					if (progressAdapter != null) {
+		  				progressAdapter.progressOn();
+		  			}
 				}
 				for (ModifierSpeciesReference modifierReferenceOrig : reacOrig.getListOfModifiers()) {
 					Species speciesOrig = modifierReferenceOrig.getSpeciesInstance();
 					ModifierSpeciesReference modifierReference = modifierReferenceOrig.clone();
 					modifierReference.setSpecies(copySpecies(speciesOrig, miniModel));
 					reac.addModifier(modifierReference);
+					if (progressAdapter != null) {
+		  				progressAdapter.progressOn();
+		  			}
 				}
 				/*
 				 * This will be over written later on anyway but ignoring it
@@ -503,15 +518,23 @@ public class KineticLawGenerator {
 					KineticLaw l = reacOrig.getKineticLaw();
 					if (l.isSetMath()) {
 						for (Parameter parameter : modelOrig.getListOfParameters()) {
-              if (l.getMath().refersTo(parameter.getId())
-                  && (miniModel.getParameter(parameter.getId()) != null)) {
-								miniModel.addParameter(parameter.clone());
+							if (l.getMath().refersTo(parameter.getId())
+								&& (miniModel.getParameter(parameter.getId()) != null)) {
+									miniModel.addParameter(parameter.clone());
 							}
+
+				  			if (progressAdapter != null) {
+				  				progressAdapter.progressOn();
+				  			}
 						}
 					}
 					reac.setKineticLaw(l.clone());
 				}
 			}
+		}
+		
+		if (progressAdapter != null) {
+			progressAdapter.finished();
 		}
 
 		return miniModel;
