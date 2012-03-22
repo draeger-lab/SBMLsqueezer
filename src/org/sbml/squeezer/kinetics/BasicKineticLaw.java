@@ -38,7 +38,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.ParameterFactory;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.UnitConsistencyType;
 
 /**
  * An abstract super class of specialized kinetic laws, which provides methods
@@ -129,7 +129,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	 * <li>weg</li>
 	 * </ol>
 	 */
-	SqueezerOptions.TypeStandardVersion type;
+	TypeStandardVersion type;
 	
 	/**
 	 * Optional parameters needed to initialize subtypes of this object.
@@ -153,7 +153,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			//if(getTypeParameters()[0].toString() == ""){
 				//type = SqueezerOptions.TYPE_STANDARD_VERSION.getDefaultValue();
 			//}else{
-				type = SqueezerOptions.TypeStandardVersion.valueOf(getTypeParameters()[0].toString());
+				type = TypeStandardVersion.valueOf(getTypeParameters()[0].toString());
 			//}
 			
 			//type = Short.parseShort(getTypeParameters()[0].toString());
@@ -163,8 +163,8 @@ public abstract class BasicKineticLaw extends KineticLaw {
 			fullRank = false;
 		}
 		if (typeParameters.length > 2) {
-			bringToConcentration = SqueezerOptions.TypeUnitConsistency
-					.valueOf(typeParameters[2].toString()) == SqueezerOptions.TypeUnitConsistency.concentration;
+			bringToConcentration = UnitConsistencyType
+					.valueOf(typeParameters[2].toString()) == UnitConsistencyType.concentration;
 		}
 		if (typeParameters.length > 3) {
 			defaultParamValue = Double

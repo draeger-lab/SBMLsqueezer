@@ -31,8 +31,9 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
+import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 import de.zbit.sbml.util.SBMLtools;
 
@@ -97,6 +98,11 @@ public class GeneralizedMassActionTest extends KineticsTest {
 		r.createProduct(hplus).setStoichiometry(1d);
 		r.createProduct(gtp).setStoichiometry(1d);
 		
+		Reaction r2 = model.createReaction("r2");
+		r2.createReactant(model.getSpecies("s01")).setStoichiometry(1d);
+		r2.createProduct(model.getSpecies("s02")).setStoichiometry(1d);
+		r2.setReversible(false);
+		
 //		try {
 //			SBMLWriter.write(doc, System.out, ' ', (short) 2);
 //			System.out.println();
@@ -115,12 +121,8 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	 */
 	@Test
 	public void irreversibleUniUni() throws Throwable {
-		Reaction r2 = model.createReaction("r2");
-		r2.createReactant(model.getSpecies("s01")).setStoichiometry(1d);
-		r2.createProduct(model.getSpecies("s02")).setStoichiometry(1d);
-		r2.setReversible(false);
-		KineticLaw kl = klg.createKineticLaw(r2, GeneralizedMassAction.class, false);
-		System.out.println(kl.getFormula());
+		KineticLaw kl = klg.createKineticLaw(model.getReaction(1), GeneralizedMassAction.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "kass_r2*s01");
 	}
 	
 	/**
@@ -129,8 +131,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	 */
 	@Test
 	public void testGMAKconcentration() throws Throwable {
-		prefs.put(SqueezerOptions.TYPE_UNIT_CONSISTENCY, SqueezerOptions.TypeUnitConsistency.concentration);
-		KineticLaw kl = klg.createKineticLaw(model.getReaction(0), GeneralizedMassAction.class, false);
+		KineticLaw kl = klg.createKineticLaw(model.getReaction(0), GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(kl, "kass_r1*s01/cell*s02/cell*s03/cell*s04/cell*s05/cell-kdiss_r1*s06/cell*s07/cell*s08/cell*s09/cell*s10/cell*s11/cell");
 	}
 	
@@ -140,8 +141,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	 */
 	@Test
 	public void testGMAKamount() throws Throwable {
-		prefs.put(SqueezerOptions.TYPE_UNIT_CONSISTENCY, SqueezerOptions.TypeUnitConsistency.amount);
-		KineticLaw kl = klg.createKineticLaw(model.getReaction(0), GeneralizedMassAction.class, false);
+		KineticLaw kl = klg.createKineticLaw(model.getReaction(0), GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl, "kass_r1*s01*s02*s03*s04*s05-kdiss_r1*s06*s07*s08*s09*s10*s11");
 	}
 	

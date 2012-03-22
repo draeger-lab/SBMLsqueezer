@@ -30,7 +30,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
-import org.sbml.squeezer.ReactionType;
+import org.sbml.squeezer.UnitConsistencyType;
+import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
 import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 
@@ -55,11 +56,11 @@ public class ZeroProductsTest extends KineticsTest {
 	  Model model = doc.createModel("uniuni_model");
 		Compartment c = model.createCompartment("c1");
 		Species s1 = model.createSpecies("s1", c);
+		s1.setHasOnlySubstanceUnits(false);
 	
 		r1 = model.createReaction("r1");
 		r1.createReactant(s1);
 		r1.setReversible(false);
-		System.out.println(ReactionType.productOrder(r1));
 
 		return model;
 	}
@@ -70,7 +71,7 @@ public class ZeroProductsTest extends KineticsTest {
 	 */
 	@Test
 	public void testGMAK() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, false);
+		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl, "zkass_r1");
 	}
 	
@@ -80,8 +81,8 @@ public class ZeroProductsTest extends KineticsTest {
 	 */
 	@Test
 	public void testRevGMAK() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, false);
-		test(kl, "zkass_r1*s1*c1");
+		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "kass_r1*s1*c1");
 	}
 	
 	/**
@@ -90,7 +91,7 @@ public class ZeroProductsTest extends KineticsTest {
 	 */
 	@Test
 	public void testGMAKRev() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, true);
+		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl, "zkass_r1-zkdiss_r1");
 	}
 
@@ -100,8 +101,8 @@ public class ZeroProductsTest extends KineticsTest {
 	 */
 	@Test
 	public void testRevGMAKRev() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, true);
-		test(kl, "zkass_r1*s1*c1-zkdiss_r1");
+		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "kass_r1*s1*c1-zkdiss_r1");
 	}
 
 }

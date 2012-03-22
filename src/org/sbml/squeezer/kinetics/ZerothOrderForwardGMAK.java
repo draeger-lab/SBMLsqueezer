@@ -88,4 +88,5 @@ public class ZerothOrderForwardGMAK extends GeneralizedMassAction implements
 	public String getSimpleName() {
 		return MESSAGES.getString("ZEROTH_ORDER_FORWARD_GMAK_SIMPLE_NAME");
 	}
+
 }

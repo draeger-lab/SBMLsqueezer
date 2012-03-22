@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-package org.sbml.squeezer;
+package org.sbml.squeezer.gui;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +28,10 @@ import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 import org.sbml.jsbml.Reaction;
+import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
  * Generates kinetic laws using SwingWorker
@@ -47,32 +50,44 @@ public class KineticLawGeneratorWorker extends SwingWorker<BasicKineticLaw, Void
 	
 	private Reaction reaction;
 	
-	Class<?> kineticsClass;
+	private Class<?> kineticsClass;
 	
-	boolean reversibility;
+	private boolean reversibility;
 	
+	private TypeStandardVersion version;
+	private UnitConsistencyType consistency;
+	private double defaultNewParamVal;
 	
 	/**
 	 * 
-	 * @param searchString
-	 * @param node
+	 * @param klg
+	 * @param reaction
+	 * @param kineticsClass
+	 * @param reversibility
+	 * @param version
+	 * @param consistency
+	 * @param defaultNewParamVal
 	 */
-	public KineticLawGeneratorWorker(KineticLawGenerator klg, Reaction reaction, 
-			Class<?> kineticsClass, boolean reversibility) {
+	public KineticLawGeneratorWorker(KineticLawGenerator klg, Reaction reaction,
+		Class<?> kineticsClass, boolean reversibility, TypeStandardVersion version,
+		UnitConsistencyType consistency, double defaultNewParamVal) {
 		super();
 		this.klg = klg;
 		this.reaction = reaction;
 		this.kineticsClass = kineticsClass;
 		this.reversibility = reversibility;
+		this.version = version;
+		this.consistency = consistency;
+		this.defaultNewParamVal = defaultNewParamVal;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see javax.swing.SwingWorker#doInBackground()
 	 */
 	protected BasicKineticLaw doInBackground() throws Exception {
 		BasicKineticLaw bkl = null;
 		try {
-			bkl = klg.createKineticLaw(reaction, kineticsClass, reversibility);
+			bkl = klg.createKineticLaw(reaction, kineticsClass, reversibility, version, consistency, defaultNewParamVal);
 		} catch (Throwable e) {
 			logger.log(Level.WARNING, e.getMessage());
 		}

@@ -41,9 +41,10 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.KineticLawGeneratorWorker;
 import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 import de.zbit.gui.GUITools;
 import de.zbit.util.progressbar.AbstractProgressBar;
@@ -153,8 +154,12 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			klg.getPreferences().put(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE,
 					Boolean.valueOf(messagePanel.getReversible()));
 			
+			double defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
+			TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
+			UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
+			
 			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(klg, reaction,
-					equationType, messagePanel.getReversible()) {
+					equationType, messagePanel.getReversible(), version, consistency, defaultParamVal) {
 				/* (non-Javadoc)
 				 * @see javax.swing.SwingWorker#done()
 				 */

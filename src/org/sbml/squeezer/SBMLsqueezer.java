@@ -92,7 +92,13 @@ import de.zbit.util.prefs.SBProperties;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	
+	/**
+	 * 
+	 */
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+  /**
+   * 
+   */
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   
   /**

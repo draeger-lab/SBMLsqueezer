@@ -85,6 +85,8 @@ public abstract class KineticsTest {
 	public void testUnits(KineticLaw kl) throws Throwable {
 		UnitDefinition ud = kl.getDerivedUnitDefinition();
 		if (ud != null) {
+			System.out.printf("derived units of %s: %s\n", kl.getParent(),
+				UnitDefinition.printUnits(ud, true));
 			assertTrue(ud.isVariantOfSubstancePerTime());
 		} else {
 			fail();
