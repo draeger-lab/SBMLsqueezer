@@ -60,7 +60,9 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
+import org.sbml.squeezer.gui.KineticLawGeneratorWorker;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.math.GaussianRank;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.squeezer.util.ModelChangeListener;
@@ -342,29 +344,33 @@ public class KineticLawGenerator {
 	 * @param r
 	 *        The reaction for which a kinetic law is to be created.
 	 * @param kineticsClass
-	 *        The type of rate law to be used.
+	 *        a {@link Class} object that is derived from {@link BasicKineticLaw}.
 	 * @param reversibility
 	 *        If true this reaction will be set to reversible and the kinetic
 	 *        equation will be created accordingly. If this parameter is false,
 	 *        the reversibility property of this reaction will not be changed.
-	 * @param kinetic
-	 *        a class object that is derived from {@link BasicKineticLaw}.
+	 * @param version
+	 * @param consistency
+	 * @param defaultNewParamVal
+	 *        
 	 * @return A kinetic law for the given reaction.
 	 * @throws Throwable
 	 */
 	public BasicKineticLaw createKineticLaw(Reaction r, Class<?> kineticsClass,
-			boolean reversibility) throws Throwable {
+		boolean reversibility, TypeStandardVersion version,
+		UnitConsistencyType consistency, double defaultNewParamVal)
+		throws Throwable {
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null) {
 			reaction = r;
 		}
 		reaction.setReversible(reversibility || reaction.getReversible());
 		try {
-			Object typeParameters[] = new Object[] {
-					prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION),
-					Boolean.valueOf(hasFullColumnRank(modelOrig)),
-					prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY),
-					prefs.get(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL)
+			Object typeParameters[] = new Object[] { 
+					version,
+					Boolean.valueOf(hasFullColumnRank(modelOrig)), 
+					consistency,
+					Double.valueOf(defaultNewParamVal) 
 			};
 			Constructor<?> constructor = kineticsClass.getConstructor(reaction.getClass(), typeParameters.getClass());
 			return (BasicKineticLaw) constructor.newInstance(reaction, typeParameters);
@@ -521,8 +527,10 @@ public class KineticLawGenerator {
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
 		}
 		
-		boolean reversibility = prefs
-				.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
+		boolean reversibility = prefs.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
+		double defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
+		TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
+		UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
 		
 		for (Reaction r : miniModel.getListOfReactions()) {
 			ReactionType rt = new ReactionType(r);
@@ -534,7 +542,8 @@ public class KineticLawGenerator {
 				progressAdapter.progressOn();
 			}
 			
-			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(this, r, kineticsClass, reversibility);
+			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(this, r,
+				kineticsClass, reversibility, version, consistency, defaultParamVal);
 			
 			klgw.run();
 			
@@ -1292,4 +1301,5 @@ public class KineticLawGenerator {
 			}
 		}
 	}
+
 }

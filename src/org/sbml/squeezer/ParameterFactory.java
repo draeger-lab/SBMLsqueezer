@@ -306,7 +306,7 @@ public class ParameterFactory {
 	public LocalParameter parameterDissociationConst(String catalyst) {
 		boolean zerothOrder = orderProducts == 0d;
 		Reaction r = kineticLaw.getParentSBMLObject();
-		StringBuffer kdiss = StringTools.concat("kdiss_", r.getId());
+		StringBuilder kdiss = StringTools.concatStringBuilder("kdiss_", r.getId());
 		if (zerothOrder) {
 			kdiss.insert(0, 'z');
 		}
@@ -319,7 +319,7 @@ public class ParameterFactory {
 					MessageFormat.format(MESSAGES.getString("DISASSOCIATION_CONSTANT_OF_REACTION"), r.getId()));
 		}
 		if (!p_kdiss.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p_kdiss,156);
+			SBMLtools.setSBOTerm(p_kdiss, 156);
 		}
 		if (!p_kdiss.isSetUnits()) {
 			p_kdiss.setUnits(unitFactory.unitPerTimeAndConcentrationOrSubstance(

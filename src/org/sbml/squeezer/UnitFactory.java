@@ -92,13 +92,10 @@ public class UnitFactory {
 	 * @param sbmlDocument 
 	 */
 	private static void updateAnnotation(UnitDefinition ud, SBMLDocument doc) {
-		for (int i=0; i<ud.getUnitCount(); i++) {
+		for (int i = 0; i < ud.getUnitCount(); i++) {
 			Unit unit = ud.getUnit(i);
 			if (unit.isSetMetaId()) {
 				unit.setMetaId(doc.nextMetaId());
-				if (unit.isSetAnnotation()) {
-					unit.getAnnotation().setAbout('#' + unit.getMetaId());
-				}
 			}
 		}
 	}
@@ -159,35 +156,42 @@ public class UnitFactory {
 	 * @param x
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	private UnitDefinition unitConcentrationOrSubstance(
 		List<? extends SimpleSpeciesReference> listOf, boolean zerothOrder,
 		double... x) {
-		UnitDefinition amount = new UnitDefinition("amount", model.getLevel(),
-			model.getVersion());
+		int level = model.getLevel(), version = model.getVersion();
+		UnitDefinition amount = new UnitDefinition("amount", level, version);
 		if (!zerothOrder) {
-			UnitDefinition substance;
+			UnitDefinition speciesUnit, compartmentUnit;
 			SimpleSpeciesReference specRef;
 			Species species;
 			for (int i = 0; i < listOf.size(); i++) {
 				specRef = listOf.get(i);
 				species = specRef.getSpeciesInstance();
-				substance = species.getSubstanceUnitsInstance().clone();
+				speciesUnit = species.getDerivedUnitDefinition().clone();
+				if ((level == 2) && ((version == 1) || (version == 2))) {
+					compartmentUnit = species.getSpatialSizeUnitsInstance();
+				} else {
+					Compartment compartment = species.getCompartmentInstance();
+					compartmentUnit = compartment.getDerivedUnitDefinition().clone();
+				}
 				if (bringToConcentration) {
 					if (species.hasOnlySubstanceUnits()) {
-						substance.divideBy(species.getSpatialSizeUnitsInstance());
-						substance.multiplyWith(species.getSpatialSizeUnitsInstance());
+						// species per compartment size
+						speciesUnit.divideBy(compartmentUnit);
 					} else {
-						substance.divideBy(species.getSpatialSizeUnitsInstance());
+						// species
 					}
 				} else {
 					if (species.hasOnlySubstanceUnits()) {
-						substance.multiplyWith(species.getSpatialSizeUnitsInstance());
+						// species
 					} else {
-						substance.multiplyWith(species.getSpatialSizeUnitsInstance());
-						substance.divideBy(species.getSpatialSizeUnitsInstance());
+						// species times compartment size
+						speciesUnit.multiplyWith(compartmentUnit);
 					}
 				}
-				for (Unit u : substance.getListOfUnits()) {
+				for (Unit u : speciesUnit.getListOfUnits()) {
 					if (specRef instanceof SpeciesReference) {
 						SpeciesReference ref = (SpeciesReference) specRef;
 						if (ref.isSetStoichiometry() && (x.length < listOf.size())) {
@@ -197,7 +201,7 @@ public class UnitFactory {
 						u.setExponent(x[i]);
 					}
 				}
-				amount.multiplyWith(substance);
+				amount.multiplyWith(speciesUnit);
 			}
 		}
 		return amount;
@@ -290,7 +294,9 @@ public class UnitFactory {
 			}
 		}
 		UnitDefinition amount = unitConcentrationOrSubstance(listOf, zerothOrder);
-		ud = ud.divideBy(amount).multiplyWith(model.getSubstanceUnitsInstance()).simplify();
+		ud = ud.divideBy(amount);
+		ud = ud.multiplyWith(model.getSubstanceUnitsInstance());
+		ud = ud.simplify();
 		checkUnitDefinitions(ud, model);
 		return ud;
 	}
@@ -317,6 +323,10 @@ public class UnitFactory {
 			}
 			sb.append(u.getPrefix());
 			sb.append(u.getKind().getName());
+			if (u.getExponent() != 1d) {
+				sb.append('^');
+				sb.append(u.getExponent());
+			}
 		}
 		String id = checkId(sb.toString());
 		UnitDefinition def = model.getUnitDefinition(id);
@@ -324,7 +334,7 @@ public class UnitFactory {
 			ud.setId(id);
 			ud = checkUnitDefinitions(ud, model);
 		}
-		return model.getUnitDefinition(ud.getId());
+		return model.getUnitDefinition(id);
 	}
 
 	/**
@@ -358,7 +368,6 @@ public class UnitFactory {
 		ListOf<? extends SimpleSpeciesReference> l = modifiers
 				.filterList(new SBOFilter(SBO.getCatalyst()));
 		if (l.size() > 0) {
-			ud = ud.clone();
 			for (SimpleSpeciesReference ssr : l) {
 				Species s = ssr.getSpeciesInstance();
 				UnitDefinition compUD = s.getCompartmentInstance().getUnitsInstance();

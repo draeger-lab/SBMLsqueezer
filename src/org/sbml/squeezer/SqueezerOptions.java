@@ -30,6 +30,7 @@ import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillHinzeEquation;
 import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
+import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
@@ -56,57 +57,6 @@ public interface SqueezerOptions extends KeyProvider {
 	 * 
 	 */
 	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
-	
-	/**
-	 * The possible selections for the three versions of modular rate laws (cf.
-	 * <a href=
-	 * "http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btq141v1"
-	 * >Liebermeister et al. (2010), Modular rate laws for enzymatic reactions:
-	 * thermodynamics, elasticities,
-	 * and implementation</a>)
-	 * 
-	 * @author Andreas Dr&auml;ger
-	 * @date 2010-10-29
-	 */
-	public static enum TypeStandardVersion {
-		/**
-		 * The most simple version.
-		 */
-		cat,
-		/**
-		 * The more complicated version in which all parameters fulfill the
-		 * Haldane relationship.
-		 */
-		hal,
-		/**
-		 * The most sophisticated version in which all parameters fulfill
-		 * Wegscheider's condition.
-		 */
-		weg;
-	}
-	
-	/**
-	 * This is an enumeration of the two possible ways of how to ensure
-	 * consistent units within
-	 * an SBML model; reacting species might either be given in molecule counts
-	 * ({@link #amount}) or
-	 * their {@link #concentration}.
-	 * 
-	 * @author Andreas Dr&auml;ger
-	 * @author Sebastian Nagel
-	 * @date 2010-10-29
-	 */
-	public static enum TypeUnitConsistency {
-		/**
-		 * 
-		 */
-		amount,
-		/**
-		 * 
-		 */
-		concentration;
-		
-	}
 	
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
@@ -469,15 +419,15 @@ public interface SqueezerOptions extends KeyProvider {
 	 * the surrounding compartment whenever it occurs in a kinetic equation.
 	 * Hence, this type parameter belongs to two values.
 	 */
-	public static final Option<TypeUnitConsistency> TYPE_UNIT_CONSISTENCY = new Option<TypeUnitConsistency>(
+	public static final Option<UnitConsistencyType> TYPE_UNIT_CONSISTENCY = new Option<UnitConsistencyType>(
 			"TYPE_UNIT_CONSISTENCY",
-			TypeUnitConsistency.class,
+			UnitConsistencyType.class,
 			OPTIONS_BUNDLE,
-			new Range<TypeUnitConsistency>(
-					TypeUnitConsistency.class, 
-					Range.toRangeString(TypeUnitConsistency.class)), 
+			new Range<UnitConsistencyType>(
+					UnitConsistencyType.class, 
+					Range.toRangeString(UnitConsistencyType.class)), 
 					(short) 2,
-					TypeUnitConsistency.amount);
+					UnitConsistencyType.amount);
 	
 	/**
 	 * 

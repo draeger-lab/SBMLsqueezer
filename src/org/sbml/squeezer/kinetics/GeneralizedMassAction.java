@@ -81,318 +81,324 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		SBMLtools.setSBOTerm(this,12);
 		double stoichiometryLeft = 0;
 		double stoichiometryRight = 0;
-		for (SpeciesReference specRef : r.getListOfReactants())
-			if (!specRef.isSetStoichiometryMath())
+		for (SpeciesReference specRef : r.getListOfReactants()) {
+			if (!specRef.isSetStoichiometryMath()) {
 				stoichiometryLeft += specRef.getStoichiometry();
-		for (SpeciesReference specRef : r.getListOfProducts())
-			if (!specRef.isSetStoichiometryMath())
+			}
+		}
+		for (SpeciesReference specRef : r.getListOfProducts()) {
+			if (!specRef.isSetStoichiometryMath()) {
 				stoichiometryRight += specRef.getStoichiometry();
-
+			}
+		}
 		if (r.getReversible()) {
 			SBMLtools.setSBOTerm(this,42);
 			if (orderReactants == 0) {
 				// mass action rate law for zeroth order reversible reactions
 				SBMLtools.setSBOTerm(this,69);
-				if (stoichiometryRight == 1d && r.getProductCount() == 1)
+				if ((stoichiometryRight == 1d) && (r.getProductCount() == 1)) {
 					SBMLtools.setSBOTerm(this,70);
-				else if (stoichiometryRight == 2d)
+				} else if (stoichiometryRight == 2d) {
 					switch (r.getProductCount()) {
-					case 1:
-						SBMLtools.setSBOTerm(this,72);
-						break;
-					case 2:
-						SBMLtools.setSBOTerm(this,73);
-					default:
-						SBMLtools.setSBOTerm(this,71);
-						break;
+						case 1:
+							SBMLtools.setSBOTerm(this, 72);
+							break;
+						case 2:
+							SBMLtools.setSBOTerm(this, 73);
+						default:
+							SBMLtools.setSBOTerm(this, 71);
+							break;
 					}
-				else if (stoichiometryRight == 3d)
+				} else if (stoichiometryRight == 3d) {
 					switch (r.getProductCount()) {
-					case 1:
-						SBMLtools.setSBOTerm(this,75);
-						break;
-					case 2:
-						SBMLtools.setSBOTerm(this,76);
-						break;
-					case 3:
-						SBMLtools.setSBOTerm(this,77);
-						break;
-					default:
-						SBMLtools.setSBOTerm(this,74);
-						break;
+						case 1:
+							SBMLtools.setSBOTerm(this, 75);
+							break;
+						case 2:
+							SBMLtools.setSBOTerm(this, 76);
+							break;
+						case 3:
+							SBMLtools.setSBOTerm(this, 77);
+							break;
+						default:
+							SBMLtools.setSBOTerm(this, 74);
+							break;
 					}
+				}
 			} else if (stoichiometryLeft == 1d) {
 				// mass action rate law for first order reversible reactions
-				SBMLtools.setSBOTerm(this,78);
+				SBMLtools.setSBOTerm(this, 78);
 				if (orderProducts == 0)
-					SBMLtools.setSBOTerm(this,79);
+					SBMLtools.setSBOTerm(this, 79);
 				else if (stoichiometryRight == 1d && r.getProductCount() == 1)
-					SBMLtools.setSBOTerm(this,80);
+					SBMLtools.setSBOTerm(this, 80);
 				else if (stoichiometryRight == 2d)
 					switch (r.getProductCount()) {
-					case 1:
-						SBMLtools.setSBOTerm(this,82);
-						break;
-					case 2:
-						SBMLtools.setSBOTerm(this,83);
-						break;
-					default:
-						SBMLtools.setSBOTerm(this,81);
-						break;
+						case 1:
+							SBMLtools.setSBOTerm(this, 82);
+							break;
+						case 2:
+							SBMLtools.setSBOTerm(this, 83);
+							break;
+						default:
+							SBMLtools.setSBOTerm(this, 81);
+							break;
 					}
 				else if (stoichiometryRight == 3d)
 					switch (r.getProductCount()) {
-					case 1:
-						SBMLtools.setSBOTerm(this,85);
-						break;
-					case 2:
-						SBMLtools.setSBOTerm(this,86);
-						break;
-					case 3:
-						SBMLtools.setSBOTerm(this,87);
-						break;
-					default:
-						SBMLtools.setSBOTerm(this,84);
-						break;
+						case 1:
+							SBMLtools.setSBOTerm(this, 85);
+							break;
+						case 2:
+							SBMLtools.setSBOTerm(this, 86);
+							break;
+						case 3:
+							SBMLtools.setSBOTerm(this, 87);
+							break;
+						default:
+							SBMLtools.setSBOTerm(this, 84);
+							break;
 					}
 			} else if (stoichiometryLeft == 2d) {
 				// mass action rate law for second order reversible reactions
-				SBMLtools.setSBOTerm(this,88);
+				SBMLtools.setSBOTerm(this, 88);
 				if (r.getReactantCount() == 1) {
 					if (orderProducts == 0)
-						SBMLtools.setSBOTerm(this,90);
+						SBMLtools.setSBOTerm(this, 90);
 					else if (stoichiometryRight == 1d
 							&& r.getProductCount() == 1)
-						SBMLtools.setSBOTerm(this,91);
+						SBMLtools.setSBOTerm(this, 91);
 					else if (stoichiometryRight == 2d) {
 						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,93);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,94);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,92);
-							break;
+							case 1:
+								SBMLtools.setSBOTerm(this, 93);
+								break;
+							case 2:
+								SBMLtools.setSBOTerm(this, 94);
+								break;
+							default:
+								SBMLtools.setSBOTerm(this, 92);
+								break;
 						}
 					} else if (stoichiometryRight == 3d) {
 						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,96);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,97);
-							break;
-						case 3:
-							SBMLtools.setSBOTerm(this,98);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,95);
-							break;
+							case 1:
+								SBMLtools.setSBOTerm(this, 96);
+								break;
+							case 2:
+								SBMLtools.setSBOTerm(this, 97);
+								break;
+							case 3:
+								SBMLtools.setSBOTerm(this, 98);
+								break;
+							default:
+								SBMLtools.setSBOTerm(this, 95);
+								break;
 						}
 					} else
-						SBMLtools.setSBOTerm(this,89);
+						SBMLtools.setSBOTerm(this, 89);
 				} else if (r.getReactantCount() == 2) {
-					SBMLtools.setSBOTerm(this,99);
+					SBMLtools.setSBOTerm(this, 99);
 					if (orderProducts == 0)
-						SBMLtools.setSBOTerm(this,100);
+						SBMLtools.setSBOTerm(this, 100);
 					else if (stoichiometryRight == 1d
 							&& r.getProductCount() == 1)
-						SBMLtools.setSBOTerm(this,101);
+						SBMLtools.setSBOTerm(this, 101);
 					else if (stoichiometryRight == 2d) {
 						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,103);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,104);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,102);
-							break;
+							case 1:
+								SBMLtools.setSBOTerm(this, 103);
+								break;
+							case 2:
+								SBMLtools.setSBOTerm(this, 104);
+								break;
+							default:
+								SBMLtools.setSBOTerm(this, 102);
+								break;
 						}
 					} else if (stoichiometryRight == 3d) {
 						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,106);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,107);
-							break;
-						case 3:
-							SBMLtools.setSBOTerm(this,108);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,105);
-							break;
+							case 1:
+								SBMLtools.setSBOTerm(this, 106);
+								break;
+							case 2:
+								SBMLtools.setSBOTerm(this, 107);
+								break;
+							case 3:
+								SBMLtools.setSBOTerm(this, 108);
+								break;
+							default:
+								SBMLtools.setSBOTerm(this, 105);
+								break;
 						}
 					}
 				}
 			} else if (stoichiometryLeft == 3d) {
 				// mass action rate law for third order reversible reactions
 				switch (r.getReactantCount()) {
-				case 1:
-					SBMLtools.setSBOTerm(this,130);
-					if (orderProducts == 0)
-						SBMLtools.setSBOTerm(this,131);
-					else if (stoichiometryRight == 1d
-							&& r.getProductCount() == 1)
-						SBMLtools.setSBOTerm(this,132);
-					else if (stoichiometryRight == 2d) {
-						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,134);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,135);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,133);
-							break;
+					case 1:
+						SBMLtools.setSBOTerm(this, 130);
+						if (orderProducts == 0)
+							SBMLtools.setSBOTerm(this, 131);
+						else if (stoichiometryRight == 1d
+								&& r.getProductCount() == 1)
+							SBMLtools.setSBOTerm(this, 132);
+						else if (stoichiometryRight == 2d) {
+							switch (r.getProductCount()) {
+								case 1:
+									SBMLtools.setSBOTerm(this, 134);
+									break;
+								case 2:
+									SBMLtools.setSBOTerm(this, 135);
+									break;
+								default:
+									SBMLtools.setSBOTerm(this, 133);
+									break;
+							}
+						} else if (stoichiometryRight == 3d) {
+							switch (r.getProductCount()) {
+								case 1:
+									SBMLtools.setSBOTerm(this, 137);
+									break;
+								case 2:
+									SBMLtools.setSBOTerm(this, 138);
+									break;
+								case 3:
+									SBMLtools.setSBOTerm(this, 139);
+									break;
+								default:
+									SBMLtools.setSBOTerm(this, 136);
+									break;
+							}
 						}
-					} else if (stoichiometryRight == 3d) {
-						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,137);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,138);
-							break;
-						case 3:
-							SBMLtools.setSBOTerm(this,139);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,136);
-							break;
+						break;
+					case 2:
+						SBMLtools.setSBOTerm(this, 110);
+						if (orderProducts == 0) {
+							SBMLtools.setSBOTerm(this, 111);
+						} else if ((stoichiometryRight == 1d)
+								&& (r.getProductCount() == 1)) {
+							SBMLtools.setSBOTerm(this, 112);
+						} else if (stoichiometryRight == 2d) {
+							switch (r.getProductCount()) {
+								case 1:
+									SBMLtools.setSBOTerm(this, 114);
+									break;
+								case 2:
+									SBMLtools.setSBOTerm(this, 115);
+									break;
+								default:
+									SBMLtools.setSBOTerm(this, 116);
+									break;
+							}
+						} else if (stoichiometryRight == 3d) {
+							switch (r.getProductCount()) {
+								case 1:
+									SBMLtools.setSBOTerm(this, 117);
+									break;
+								case 2:
+									SBMLtools.setSBOTerm(this, 118);
+									break;
+								case 3:
+									SBMLtools.setSBOTerm(this, 119);
+									break;
+								default:
+									SBMLtools.setSBOTerm(this, 113);
+									break;
+							}
 						}
-					}
-					break;
-				case 2:
-					SBMLtools.setSBOTerm(this,110);
-					if (orderProducts == 0)
-						SBMLtools.setSBOTerm(this,111);
-					else if (stoichiometryRight == 1d
-							&& r.getProductCount() == 1)
-						SBMLtools.setSBOTerm(this,112);
-					else if (stoichiometryRight == 2d)
-						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,114);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,115);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,116);
-							break;
+						break;
+					case 3:
+						SBMLtools.setSBOTerm(this, 120);
+						if (orderProducts == 0) {
+							SBMLtools.setSBOTerm(this, 121);
+						} else if ((stoichiometryRight == 1d)
+								&& (r.getProductCount() == 1)) {
+							SBMLtools.setSBOTerm(this, 122);
+						} else if (stoichiometryRight == 2d) {
+							switch (r.getProductCount()) {
+								case 1:
+									SBMLtools.setSBOTerm(this, 124);
+									break;
+								case 2:
+									SBMLtools.setSBOTerm(this, 125);
+									break;
+								default:
+									SBMLtools.setSBOTerm(this, 123);
+									break;
+							}
+						} else if (stoichiometryRight == 3d) {
+							switch (r.getProductCount()) {
+								case 1:
+									SBMLtools.setSBOTerm(this, 127);
+									break;
+								case 2:
+									SBMLtools.setSBOTerm(this, 128);
+									break;
+								case 3:
+									SBMLtools.setSBOTerm(this, 129);
+									break;
+								default:
+									SBMLtools.setSBOTerm(this, 126);
+									break;
+							}
 						}
-					else if (stoichiometryRight == 3d)
-						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,117);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,118);
-							break;
-						case 3:
-							SBMLtools.setSBOTerm(this,119);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,113);
-							break;
-						}
-					break;
-				case 3:
-					SBMLtools.setSBOTerm(this,120);
-					if (orderProducts == 0)
-						SBMLtools.setSBOTerm(this,121);
-					else if (stoichiometryRight == 1d
-							&& r.getProductCount() == 1)
-						SBMLtools.setSBOTerm(this,122);
-					else if (stoichiometryRight == 2d)
-						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,124);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,125);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,123);
-							break;
-						}
-					else if (stoichiometryRight == 3d)
-						switch (r.getProductCount()) {
-						case 1:
-							SBMLtools.setSBOTerm(this,127);
-							break;
-						case 2:
-							SBMLtools.setSBOTerm(this,128);
-							break;
-						case 3:
-							SBMLtools.setSBOTerm(this,129);
-							break;
-						default:
-							SBMLtools.setSBOTerm(this,126);
-							break;
-						}
-					break;
-				default:
-					// mass action rate law for third order reversible reactions
-					SBMLtools.setSBOTerm(this,109);
-					break;
+						break;
+					default:
+						// mass action rate law for third order reversible reactions
+						SBMLtools.setSBOTerm(this, 109);
+						break;
 				}
 			}
 		} else {
 			// irreversible
-			SBMLtools.setSBOTerm(this,41);
+			SBMLtools.setSBOTerm(this, 41);
 			if (orderReactants == 0) {
-				// SBMLtools.setSBOTerm(this,43);
+				// SBMLtools.setSBOTerm(this, 43);
 				// if continuous
-				SBMLtools.setSBOTerm(this,47);
+				SBMLtools.setSBOTerm(this, 47);
 				// else 140
 			} else if (stoichiometryLeft == 1d && r.getReactantCount() == 1) {
-				// SBMLtools.setSBOTerm(this,44);
-				SBMLtools.setSBOTerm(this,49);
+				// SBMLtools.setSBOTerm(this, 44);
+				SBMLtools.setSBOTerm(this, 49);
 				// monoexponential decay rate law
 				// mass action rate law for first order irreversible reactions,
 				// discrete scheme
-			} else if (stoichiometryLeft == 2d)
+			} else if (stoichiometryLeft == 2d) {
 				switch (r.getReactantCount()) {
-				case 1:
-					// SBMLtools.setSBOTerm(this,50);
-					SBMLtools.setSBOTerm(this,52); // continuous
-					// 142 discrete
-					break;
-				case 2:
-					// SBMLtools.setSBOTerm(this,53);
-					SBMLtools.setSBOTerm(this,54);
-					// 143 discrete
-					break;
-				default:
-					SBMLtools.setSBOTerm(this,45);
-					break;
+					case 1:
+						// SBMLtools.setSBOTerm(this, 50);
+						SBMLtools.setSBOTerm(this, 52); // continuous
+						// 142 discrete
+						break;
+					case 2:
+						// SBMLtools.setSBOTerm(this, 53);
+						SBMLtools.setSBOTerm(this, 54);
+						// 143 discrete
+						break;
+					default:
+						SBMLtools.setSBOTerm(this, 45);
+						break;
 				}
-			else if (stoichiometryLeft == 3d) {
+			} else if (stoichiometryLeft == 3d) {
 				switch (r.getReactantCount()) {
-				case 1:
-					// 56
-					SBMLtools.setSBOTerm(this,57);
-					// 144 discrete
-					break;
-				case 2:
-					// 58
-					SBMLtools.setSBOTerm(this,59);
-					// 145 discrete
-				case 3:
-					// 60
-					SBMLtools.setSBOTerm(this,61);
-					// 146 discrete
-					break;
-				default:
-					SBMLtools.setSBOTerm(this,55);
-					break;
+					case 1:
+						// 56
+						SBMLtools.setSBOTerm(this, 57);
+						// 144 discrete
+						break;
+					case 2:
+						// 58
+						SBMLtools.setSBOTerm(this, 59);
+						// 145 discrete
+					case 3:
+						// 60
+						SBMLtools.setSBOTerm(this, 61);
+						// 146 discrete
+						break;
+					default:
+						SBMLtools.setSBOTerm(this, 55);
+						break;
 				}
 			} else {
 				// SBO:0000163 - mass action rate law for irreversible
@@ -564,4 +570,5 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	public String getSimpleName() {
 		return MESSAGES.getString("GENERALIZED_MASS_ACTION_SIMPLE_NAME");
 	}
+
 }

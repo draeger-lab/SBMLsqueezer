@@ -54,6 +54,9 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
 	
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
