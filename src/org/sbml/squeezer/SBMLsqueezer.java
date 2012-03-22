@@ -73,7 +73,6 @@ import de.zbit.gui.GUIOptions;
 import de.zbit.io.FileWalker;
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.progressbar.ProgressBar;
-import de.zbit.util.Reflect;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
@@ -90,7 +89,7 @@ import de.zbit.util.prefs.SBProperties;
  * @since 1.0
  * @version $Rev$
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	
   public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
@@ -142,9 +141,38 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     kineticsZeroProducts = new HashSet<Class>();
     kineticsModulated = new HashSet<Class>();
     kineticsIntStoichiometry = new HashSet<Class>();
-    Class<BasicKineticLaw> classes[] = Reflect.getAllClassesInPackage(
+    // removed Reflect for JavaWebStart
+    /*Class<BasicKineticLaw> classes[] = Reflect.getAllClassesInPackage(
         KINETICS_PACKAGE.getName(), false, true, BasicKineticLaw.class,
-        JAR_LOCATION, true);
+        JAR_LOCATION, true);*/
+    Class[] classes = {org.sbml.squeezer.kinetics.AdditiveModelLinear.class, 
+    		org.sbml.squeezer.kinetics.AdditiveModelNonLinear.class, 
+    		org.sbml.squeezer.kinetics.CommonModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.ConvenienceKinetics.class, 
+    		org.sbml.squeezer.kinetics.DirectBindingModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.ForceDependentModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.GeneralizedMassAction.class, 
+    		org.sbml.squeezer.kinetics.HSystem.class, 
+    		org.sbml.squeezer.kinetics.HillEquation.class, 
+    		org.sbml.squeezer.kinetics.HillHinzeEquation.class, 
+    		org.sbml.squeezer.kinetics.HillRaddeEquation.class, 
+    		org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes.class, 
+    		org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes.class, 
+    		org.sbml.squeezer.kinetics.MichaelisMenten.class, 
+    		org.sbml.squeezer.kinetics.NetGeneratorLinear.class, 
+    		org.sbml.squeezer.kinetics.NetGeneratorNonLinear.class, 
+    		org.sbml.squeezer.kinetics.OrderedMechanism.class, 
+    		org.sbml.squeezer.kinetics.PingPongMechanism.class, 
+    		org.sbml.squeezer.kinetics.PowerLawModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.RandomOrderMechanism.class, 
+    		org.sbml.squeezer.kinetics.RestrictedSpaceKinetics.class, 
+    		org.sbml.squeezer.kinetics.SSystem.class, 
+    		org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.Vohradsky.class, 
+    		org.sbml.squeezer.kinetics.Weaver.class, 
+    		org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK.class, 
+    		org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK.class};
+    
     for (Class<BasicKineticLaw> c : classes) {
       Set<Class<?>> s = new HashSet<Class<?>>();
       for (Class<?> interf : c.getInterfaces()) {

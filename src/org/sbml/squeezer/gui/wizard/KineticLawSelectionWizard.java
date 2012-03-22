@@ -24,10 +24,12 @@
 
 package org.sbml.squeezer.gui.wizard;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
@@ -54,6 +56,8 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	SBPreferences prefs;
 
 	private StatusBar statusBar;
+
+	private JDialog dialog;
 	
 	/**
 	 * 
@@ -65,14 +69,17 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		super(owner);
 		
 		this.sbmlIO = sbmlIO;
+		this.dialog = this.getDialog();
+		this.statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
 		
-		this.getDialog().setTitle(MESSAGES.getString("SBMLSQUEEZER"));
-		this.setModal(true);
+		dialog.setTitle(MESSAGES.getString("SBMLSQUEEZER"));
+		dialog.setMinimumSize(new Dimension(650,250));
+		dialog.setLocationRelativeTo(owner);
 		
-		this.setWarningVisible(false);
+		setHelpButtonEnabled(true);
 		
-		// get new statusbar and limit the log message length
-		statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
+		setModal(true);
+		setWarningVisible(false);
 		
 		initDescriptors();
 	}
@@ -82,13 +89,13 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	 */
 	private void initDescriptors() {
 	    WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor(this.getDialog());
-	    this.registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
+	    registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
 	    
 	    WizardPanelDescriptor descriptor2 = new KineticLawSelectionEquationPanelDescriptor(this.sbmlIO);
 	    ((KineticLawSelectionEquationPanelDescriptor) descriptor2).setStatusBar(statusBar);
-	    this.registerWizardPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER, descriptor2);
+	    registerWizardPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER, descriptor2);
 	    
-	    this.setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);
+	    setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);
 	}
 	
 	/**
