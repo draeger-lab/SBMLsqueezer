@@ -129,8 +129,6 @@ public class KineticLawSelectionDialog extends JDialog {
 		}
 	}
 
-	
-
 	/**
 	 * Method that indicates whether or not changes have been introduced into
 	 * the given model.

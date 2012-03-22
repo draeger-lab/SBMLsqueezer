@@ -476,13 +476,22 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @see de.zbit.Launcher#getInteractiveOptions()
    */
   public List<Class<? extends KeyProvider>> getInteractiveOptions() {
-    List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
+    return getInteractiveConfigOptions();
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public static List<Class<? extends KeyProvider>> getInteractiveConfigOptions() {
+  	List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
     list.add(SqueezerOptions.class);
     list.add(LaTeXOptions.class);
     return list;
-  }
+	}
 
-  /* (non-Javadoc)
+
+	/* (non-Javadoc)
    * @see de.zbit.Launcher#getLogPackages()
    */
   public String[] getLogPackages() {
