@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.SqueezerOptions;
 
 import de.zbit.util.progressbar.AbstractProgressBar;
@@ -64,7 +65,11 @@ public class ProgressAdapter {
 		/**
 		 * generate kinetic Laws
 		 */
-		generateLaws;
+		generateLaws,
+		/**
+		 * create mini model
+		 */
+		createMiniModel;
 	}
 
 	private long startTime = 0;
@@ -107,6 +112,9 @@ public class ProgressAdapter {
 			break;
 		case generateLaws:
 			logger.log(Level.INFO, MESSAGES.getString("GENERATE_KINETIC_EQUATION"));
+			break;
+		case createMiniModel:
+			logger.log(Level.INFO, MESSAGES.getString("CREATE_MINI_MODEL"));
 			break;
 		}
 	}
@@ -162,6 +170,28 @@ public class ProgressAdapter {
 		case generateLaws:
 			numberOfTotalCalls = 0;
 			numberOfTotalCalls += (2 * miniModel.getReactionCount());
+			break;
+		case createMiniModel:
+			boolean create = false;
+			
+			numberOfTotalCalls = 0;
+			for (Reaction reac : modelOrig.getListOfReactions()) {
+				if (reac.isSetKineticLaw()) {
+					String formula = reac.getKineticLaw().getFormula();
+					if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
+						create = true;
+					}
+				}
+				if (!reac.isSetKineticLaw() || create) {
+					numberOfTotalCalls += reac.getListOfReactants().size();
+					numberOfTotalCalls += reac.getListOfProducts().size();
+					numberOfTotalCalls += reac.getListOfModifiers().size();
+					if (reac.isSetKineticLaw()) {
+						numberOfTotalCalls += modelOrig.getListOfParameters().size();
+					}
+					numberOfTotalCalls += reac.getListOfReactants().size();
+				}
+			}
 			break;
 		}
 	}
