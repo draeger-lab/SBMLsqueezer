@@ -38,7 +38,7 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
  * @since 1.4
  * @version $Rev: 830 $
  */
-public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescriptor implements ActionListener {
+public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescriptor {
 	
 	/**
 	 * 
@@ -74,13 +74,6 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 	@Override
 	public Object getBackPanelDescriptor() {
 		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 
 }
