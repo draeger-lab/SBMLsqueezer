@@ -1,0 +1,121 @@
+\documentclass[
+  BCOR12mm,
+  letterpaper,
+  11pt,
+  headsepline,
+  pointlessnumbers,
+  tablecaptionabove,
+  onelinecaption,
+  headinclude,
+  appendixprefix,
+  idxtotoc,
+  bibtotoc,
+  twoside,
+  titlepage
+]{scrreprt}
+
+\usepackage{UT}
+
+% booktabs is for toprule, bottomrule, etc. in tables.
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}   %stellt den Befehl \newcolumntype bereit
+\usepackage{hyperref} % Links im dokument
+%\usepackage[utf8]{inputenc} %unicode support
+
+\hypersetup{
+              bookmarks={true},
+              bookmarksopen={true},
+              bookmarksopenlevel={0},
+              bookmarksnumbered={true},
+              breaklinks={true},
+              colorlinks={false},
+              pdfpagemode={UseOutlines},
+              pdftitle={SBMLsqueezer 2.0},
+              pdfauthor={Andreas Dr\"ager},
+              pdfsubject={User's Guide},
+              pdfkeywords={Key word 1} {Key word 1} {...} {Key word n}
+              pdftex,
+              pdffitwindow={true},
+              pdfstartview={FitV},
+              pdfnewwindow={false},
+              pdfdisplaydoctitle={true},
+              pdfhighlight={/P},
+              plainpages={false},
+              unicode={true},
+              urlcolor={blue}
+}
+
+%HYPHENATION
+\hyphenation{
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Gestaltung der Titelseite     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{L}[1]{>{\centering\arraybackslash}p{#1}}
+
+\titlehead{\centering\includegraphics[width=0.75\textwidth]{img/UT_WBMW_mathnat_4C}}
+\subject{User's Guide}
+\title{
+\centering
+\begin{tabular}{C{5cm}L{5cm}}
+\includegraphics[width=.3\columnwidth]{img/LOGO.png} &
+SBMLsqueezer 2.0\\
+\end{tabular}
+}
+\subtitle{Interesting sub title}
+
+
+\author{Andreas Dr\"ager\thanks{Corresponding author:
+\href{mailto:andreas.draeger@uni-tuebingen.de}{andreas.draegter@uni-tuebingen.de}}\and
+Roland Keller}
+\date{\today}
+\publishers{Center for Bioinformatics Tuebingen (ZBIT)}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginn des Dokumentes         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Titelei                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{roman}		% kleine lateinische Seitenzahlen
+\maketitle
+\begin{abstract}
+\include{tex/00_abstract}
+\end{abstract}
+
+\setcounter{tocdepth}{1}
+\tableofcontents		% Inhaltsverzeichnis
+% \listoffigures
+% \listoftables
+
+\cleardoublepage		% Erzeugt neue Leerseite. Muss ggf. auskommentiert werden.
+\pagenumbering{arabic}		% Ab hier mit arabischen Zahlen numerieren
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginn der eigentlichen Arbeit%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\include{tex/01_docuBody}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Das Literaturverzeichnis      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{natbib}
+\bibliography{tex/literature}
+
+\end{document}

@@ -108,7 +108,11 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 					denominator.plus(denominatorElements(enzyme, false));
 					if ((reaction.getProductCount() > 1)
 							&& (reaction.getReactantCount() > 1)) {
-						denominator.minus(1, Unit.Kind.DIMENSIONLESS.toString().toLowerCase());
+						if (getLevel() > 2) {
+							denominator.minus(1, Unit.Kind.DIMENSIONLESS.toString().toLowerCase());
+						} else {
+							denominator.minus(1);
+						}
 					}
 				}
 			}
