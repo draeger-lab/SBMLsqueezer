@@ -294,7 +294,6 @@ public class UniUniKineticsTest extends KineticsTest {
 		test(kl, "vmag_r1*(s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)-p1*c1/kmc_r1_p1*(kG_p1*kmc_r1_p1/(kG_s1*kmc_r1_s1))^(0.5))/(1+s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1)");
 	}
 	
-//TODO
 	/**
 	 * Tests the {@link HillEquation} for A <-> B
 	 * @throws Throwable
@@ -441,7 +440,6 @@ public class UniUniKineticsTest extends KineticsTest {
 		test(kl, "kcat_r3_k1*k1*c1*(s1*c1)^(hic_r3_k1)/(ksp_r3_k1^(hic_r3_k1)+(s1*c1)^(hic_r3_k1))");
 	}
 
-//TODO
 	/**
 	 * Tests the {@link ConvenienceKinetics} for A -> B (with catalyst)
 	 * @throws Throwable
@@ -449,7 +447,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	@Test
 	public void testConvKat() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "kic_r3_i1/(kic_r3_i1+i1*c1)*vmag_r3*s1*c1/kmc_r3_s1*(kG_s1*kmc_r3_s1/(kG_p1*kmc_r3_p1))^(0.5)/(1+s1*c1/kmc_r3_s1)");
+		test(kl, "k1*c1*kcrg_r3_k1*s1*c1/kmc_r3_s1_k1*(kG_s1*kmc_r3_s1_k1/(kG_p1*kmc_r3_p1_k1))^(0.5)/(1+s1*c1/kmc_r3_s1_k1)");
 	}
 
 
@@ -459,7 +457,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	 *=========================================================*/
 
 
-//TODO
+
 	/**
 	 * Tests the {@link ConvenienceKinetics} for A <-> B (with catalyst)
 	 * @throws Throwable
@@ -467,7 +465,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	@Test
 	public void testConvKatRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1)");
+		test(kl, "k1*c1*kcrg_r3_k1*(s1*c1/kmc_r3_s1_k1*(kG_s1*kmc_r3_s1_k1/(kG_p1*kmc_r3_p1_k1))^(0.5)-p1*c1/kmc_r3_p1_k1*(kG_p1*kmc_r3_p1_k1/(kG_s1*kmc_r3_s1_k1))^(0.5))/(1+s1*c1/kmc_r3_s1_k1+p1*c1/kmc_r3_p1_k1)");
 	}
 	
 	/**

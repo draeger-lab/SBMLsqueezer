@@ -31,6 +31,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -102,8 +103,8 @@ public class HillEquation extends BasicKineticLaw implements
 				Species product = r.getProduct(0).getSpeciesInstance();
 
 				ASTNode prodTerm = new ASTNode(1, this);
-				prodTerm.minus(ASTNode.frac(speciesTerm(product), ASTNode
-						.times(new ASTNode(parameterFactory
+				prodTerm.minus(ASTNode.frac(speciesTerm(product), 
+					ASTNode.times(new ASTNode(parameterFactory
 								.parameterEquilibriumConstant(), this),
 								speciesTerm(reactant))));
 
@@ -130,8 +131,7 @@ public class HillEquation extends BasicKineticLaw implements
 
 			if (activators.size() + inhibitors.size() == 1) {
 				Species modifier = getModel().getSpecies(
-						activators.isEmpty() ? inhibitors.get(0) : activators
-								.get(0));
+						activators.isEmpty() ? inhibitors.get(0) : activators.get(0));
 				LocalParameter kMmodifier = parameterFactory
 						.parameterMichaelis(modifier.getId(), enzyme);
 				ASTNode kMmPow = ASTNode.pow(new ASTNode(kMmodifier, this),
@@ -139,14 +139,16 @@ public class HillEquation extends BasicKineticLaw implements
 				ASTNode modPow = ASTNode.pow(speciesTerm(modifier),
 						new ASTNode(hillCoeff, this));
 				LocalParameter beta = parameterFactory.parameterBeta(r.getId());
-				if (SBO.isInhibitor(modifier.getSBOTerm()))
+				if (SBO.isInhibitor(modifier.getSBOTerm())) {
 					beta.setValue(beta.getValue() * (-1));
+				}
 				denominator = ASTNode.frac(kMmPow.clone().plus(modPow.clone()),
 						kMmPow.plus(ASTNode.times(new ASTNode(beta, this),
 								modPow)));
-				if (!r.getReversible())
+				if (!r.getReversible()) {
 					denominator.multiplyWith(ASTNode.pow(new ASTNode(
 							kSreactant, this), new ASTNode(hillCoeff, this)));
+				}
 			}
 
 			if (denominator != null) {
@@ -154,9 +156,13 @@ public class HillEquation extends BasicKineticLaw implements
 						this)));
 			} else {
 				
-				//Hier noch 1+... ???
-				denominator = ASTNode.pow(specTerm,
-						new ASTNode(hillCoeff, this));
+				ASTNode one = new ASTNode(1, this);
+				if (getLevel() > 2) {
+					one.setUnits(Unit.Kind.DIMENSIONLESS.toString().toLowerCase());
+				}
+				denominator = ASTNode.sum(one, ASTNode.pow(specTerm,
+						new ASTNode(hillCoeff, this)));
+				
 			}
 			rates[enzymeNum].divideBy(denominator);
 		}
@@ -167,13 +173,10 @@ public class HillEquation extends BasicKineticLaw implements
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		/*
 		if (!isSetSBOTerm()){
-			return "Generalized Hill equation";
+			return MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
 		}
 		return SBO.getTerm(getSBOTerm()).getDefinition().replace("\\,", ",");
-		*/
-		return MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
 	}
 
 }
