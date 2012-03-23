@@ -31,7 +31,6 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
-import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.CommonModularRateLaw;
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
@@ -74,6 +73,10 @@ public class UniUniKineticsTest extends KineticsTest {
 		Species i1 = model.createSpecies("i1", c);
 		Species k1 = model.createSpecies("k1", c);
 		Species a1 = model.createSpecies("a1", c);
+		
+		for (Species s : model.getListOfSpecies()) {
+			s.setHasOnlySubstanceUnits(false);
+		}
 		
 		/**
 		 * reaction without modifier
@@ -118,27 +121,27 @@ public class UniUniKineticsTest extends KineticsTest {
 		
 		return model;
 	}
-	
+
+
+
+	/*=========================================================*
+	 *      I R R E V E R S I B L E   R E A C T I O N S        *
+	 *=========================================================*/
+
+
+
 	/**
-	 * From here on, the Kinetic Laws for irreversible reactions
-	 */
-	
-	/**
-	 * Tests the Michaelis Menten Kinetics for A -> B
+	 * Tests the {@link MichaelisMenten} kinetics for A -> B
 	 * @throws Throwable
 	 */
 	@Test
 	public void testMichMent() throws Throwable{
-		//KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class.getName(), false);
-		//SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		//prefs.put(SqueezerOptions., value)
 		KineticLaw kl = klg.createKineticLaw(r1, MichaelisMenten.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		//klg.getReactionType(reactionID)
 		test(kl, "vmax_r1*s1*c1/(kmc_r1_s1+s1*c1)");
 	}
 	
 	/**
-	 * Tests the Common Modular Rate Law for A -> B
+	 * Tests the {@link CommonModularRateLaw} for A -> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -148,7 +151,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Direct Binding Modular Rate Law for A -> B
+	 * Tests the {@link DirectBindingModularRateLaw} for A -> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -158,7 +161,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Power Law Modular Rate Law for A -> B
+	 * Tests the {@link PowerLawModularRateLaw} for A -> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -168,7 +171,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Simultaneous Binding Modular Rate Law for A -> B
+	 * Tests the {@link SimultaneousBindingModularRateLaw} for A -> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -178,7 +181,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Force Dependent Modular Rate Law for A -> B
+	 * Tests the {@link ForceDependentModularRateLaw} for A -> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -188,7 +191,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Hill Equation for A -> B
+	 * Tests the {@link HillEquation} for A -> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -198,15 +201,14 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Convenience Kinetics for A -> B
+	 * Tests the {@link ConvenienceKinetics} for A -> B
 	 * @throws Throwable
 	 */
 	@Test
 	public void testConv() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "vmag_r1*s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)/(1+s1*c1/kmc_r1_s1-1)");
+		test(kl, "vmag_r1*s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)/(1+s1*c1/kmc_r1_s1)");
 	}
-	
 	
 //	@Test
 //	public void testGMA() throws Throwable{
@@ -214,23 +216,16 @@ public class UniUniKineticsTest extends KineticsTest {
 //		assertEquals("vmax_r1*(s1*c1)^(hic_r1)/(ksp_r1^(hic_r1)+(s1*c1)^(hic_r1))",kl.getMath().toFormula());
 //	}
 
-	
+
+
+	/*=========================================================*
+	 *        R E V E R S I B L E   R E A C T I O N S          *
+	 *=========================================================*/
+
+
+
 	/**
-	 * From here on, the Kinetic Laws for reversible reactions
-	 */
-	
-	/**
-	 * Tests the Hill Equation for A <-> B
-	 * @throws Throwable
-	 */
-	@Test
-	public void testHillRev() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r1, HillEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "vmaf_r1*s1*c1/ksp_r1*(1-p1*c1/(keq_r1*s1*c1))*(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1-1)/(1+(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1))");
-	}
-	
-	/**
-	 * Tests the Michaelis Menten Kinetics for A <-> B
+	 * Tests the {@link MichaelisMenten} kinetics for A <-> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -240,7 +235,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Common Modular Rate Law for A <-> B
+	 * Tests the {@link CommonModularRateLaw} for A <-> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -250,7 +245,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Direct Binding Modular Rate Law for A <-> B
+	 * Tests the {@link DirectBindingModularRateLaw} for A <-> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -260,7 +255,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Power Law Modular Rate Law for A <-> B
+	 * Tests the {@link PowerLawModularRateLaw} for A <-> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -270,7 +265,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Simultaneous Binding Modular Rate Law for A <-> B
+	 * Tests the {@link SimultaneousBindingModularRateLaw} for A <-> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -280,7 +275,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Force Dependent Modular Rate Law for A <-> B
+	 * Tests the {@link ForceDependentModularRateLaw} for A <-> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -290,7 +285,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Convenience Kinetics for A <-> B
+	 * Tests the {@link ConvenienceKinetics} for A <-> B
 	 * @throws Throwable
 	 */
 	@Test
@@ -299,39 +294,57 @@ public class UniUniKineticsTest extends KineticsTest {
 		test(kl, "vmag_r1*(s1*c1/kmc_r1_s1*(kG_s1*kmc_r1_s1/(kG_p1*kmc_r1_p1))^(0.5)-p1*c1/kmc_r1_p1*(kG_p1*kmc_r1_p1/(kG_s1*kmc_r1_s1))^(0.5))/(1+s1*c1/kmc_r1_s1+p1*c1/kmc_r1_p1)");
 	}
 	
+//TODO
 	/**
-	 * From here on, the Kinetic Laws for irreversible reactions with an inhibitor
+	 * Tests the {@link HillEquation} for A <-> B
+	 * @throws Throwable
 	 */
-	
+	@Test
+	public void testHillRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, HillEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "vmaf_r1*s1*c1/ksp_r1*(1-p1*c1/(keq_r1*s1*c1))*(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1-1)/(1+(s1*c1/ksp_r1+p1*c1/ksp_r1)^(hic_r1))");
+	}
+
+
+
+
+	/*=========================================================*
+	 *  I R R E V E R S I B L E   W I T H   I N H I B I T O R  *
+	 *=========================================================*/
+
+
+
 	/**
-	 * Tests the Hill Equation for A -> B (with Inhibitor)
+	 * Tests the {@link HillEquation} for A -> B (with inhibitor)
 	 * @throws Throwable
 	 */
 	@Test
 	public void testHillInh() throws Throwable{
-		//Modifier added!
-		klg = new KineticLawGenerator(model);
-		//use reaction r2
 		KineticLaw kl = klg.createKineticLaw(r2, HillEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl, "vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))");
 	}
-	
+
 	/**
-	 * Tests the Convenience Kinetics for A -> B (with Inhibitor)
+	 * Tests the {@link ConvenienceKinetics} for A -> B (with inhibitor)
 	 * @throws Throwable
 	 */
 	@Test
 	public void testConvInh() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r2, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)");
+		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1)");
 	}
+
+
+
+
+	/*=========================================================*
+	 *    R E V E R S I B L E   W I T H   I N H I B I T O R    *
+	 *=========================================================*/
 	
-	/**
-	 * From here on, the Kinetic Laws for reversible reactions with an inhibitor
-	 */
 	
+		
 	/**
-	 * Tests the Hill Equation for A <-> B (with Inhibitor)
+	 * Tests the {@link HillEquation} for A <-> B (with inhibitor)
 	 * @throws Throwable
 	 */
 	@Test
@@ -341,7 +354,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Convenience Kinetics for A <-> B (with Inhibitor)
+	 * Tests the {@link ConvenienceKinetics} for A <-> B (with inhibitor)
 	 * @throws Throwable
 	 */
 	@Test
@@ -350,39 +363,47 @@ public class UniUniKineticsTest extends KineticsTest {
 		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*(s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)-p1*c1/kmc_r2_p1*(kG_p1*kmc_r2_p1/(kG_s1*kmc_r2_s1))^(0.5))/(1+s1*c1/kmc_r2_s1+p1*c1/kmc_r2_p1)");
 	}
 	
-	/**
-	 * From here on, the Kinetic Laws for irreversible reactions with an activator
-	 */
+	
+	
+	
+	/*=========================================================*
+	 *  I R R E V E R S I B L E   W I T H   A C T I V A T O R  *
+	 *=========================================================*/
+	
+	
+	
 	
 	/**
-	 * Tests the Hill Equation for A -> B (with Activator)
+	 * Tests the {@link HillEquation} for A -> B (with activator)
 	 * @throws Throwable
 	 */
 	@Test
 	public void testHillAct() throws Throwable{
-		//Modifier added!
-		klg = new KineticLawGenerator(model);
-		//use reaction r2
 		KineticLaw kl = klg.createKineticLaw(r2, HillEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl, "vmax_r2*(s1*c1)^(hic_r2)/((kmc_r2_i1^(hic_r2)+(i1*c1)^(hic_r2))/(kmc_r2_i1^(hic_r2)+beta_r2*(i1*c1)^(hic_r2))*ksp_r2^(hic_r2)+(s1*c1)^(hic_r2))");
 	}
 	
 	/**
-	 * Tests the Convenience Kinetics for A -> B (with Activator)
+	 * Tests the {@link ConvenienceKinetics} for A -> B (with activator)
 	 * @throws Throwable
 	 */
 	@Test
 	public void testConvAct() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r2, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)");
+		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1)");
 	}
-	
+
+
+
+
+	/*=========================================================*
+	 *    R E V E R S I B L E   W I T H   A C T I V A T O R    *
+	 *=========================================================*/
+
+
+
 	/**
-	 * From here on, the Kinetic Laws for reversible reactions with an activator
-	 */
-	
-	/**
-	 * Tests the Hill Equation for A <-> B (with Activator)
+	 * Tests the {@link HillEquation} for A <-> B (with activator)
 	 * @throws Throwable
 	 */
 	@Test
@@ -392,7 +413,7 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Tests the Convenience Kinetics for A <-> B (with Activator)
+	 * Tests the {@link ConvenienceKinetics} for A <-> B (with activator)
 	 * @throws Throwable
 	 */
 	@Test
@@ -400,40 +421,57 @@ public class UniUniKineticsTest extends KineticsTest {
 		KineticLaw kl = klg.createKineticLaw(r4, ConvenienceKinetics.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl, "a1*c1/(kac_r4_a1+a1*c1)*vmag_r4*(s1*c1/kmc_r4_s1*(kG_s1*kmc_r4_s1/(kG_p1*kmc_r4_p1))^(0.5)-p1*c1/kmc_r4_p1*(kG_p1*kmc_r4_p1/(kG_s1*kmc_r4_s1))^(0.5))/(1+s1*c1/kmc_r4_s1+p1*c1/kmc_r4_p1)");
 	}
+
+
+
 	
+	/*=========================================================*
+	 *   I R R E V E R S I B L E   W I T H   C A T A L Y S T   *
+	 *=========================================================*/
+
+
+
 	/**
-	 * From here on, the Kinetic Laws for irreversible reactions with a catalyst.
-	 */
-	
-	/**
-	 * Tests the Hill Equation for A -> B (with Catalyst)
+	 * Tests the {@link HillEquation} for A -> B (with catalyst)
 	 * @throws Throwable
 	 */
 	@Test
 	public void testHillKat() throws Throwable{
-		//Modifier added!
-		klg = new KineticLawGenerator(model);
-		//use reaction r3
 		KineticLaw kl = klg.createKineticLaw(r3, HillEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl, "kcat_r3_k1*k1*c1*(s1*c1)^(hic_r3_k1)/(ksp_r3_k1^(hic_r3_k1)+(s1*c1)^(hic_r3_k1))");
 	}
-	
+
+//TODO
 	/**
-	 * Tests the Convenience Kinetics for A -> B (with Catalyst)
+	 * Tests the {@link ConvenienceKinetics} for A -> B (with catalyst)
 	 * @throws Throwable
 	 */
 	@Test
 	public void testConvKat() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)");
+		test(kl, "kic_r3_i1/(kic_r3_i1+i1*c1)*vmag_r3*s1*c1/kmc_r3_s1*(kG_s1*kmc_r3_s1/(kG_p1*kmc_r3_p1))^(0.5)/(1+s1*c1/kmc_r3_s1)");
+	}
+
+
+
+	/*=========================================================*
+	 *     R E V E R S I B L E   W I T H   C A T A L Y S T     *
+	 *=========================================================*/
+
+
+//TODO
+	/**
+	 * Tests the {@link ConvenienceKinetics} for A <-> B (with catalyst)
+	 * @throws Throwable
+	 */
+	@Test
+	public void testConvKatRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1)");
 	}
 	
 	/**
-	 * From here on, the Kinetic Laws for reversible reactions with a catalyst.
-	 */
-	
-	/**
-	 * Tests the Hill Equation for A -> B (with Catalyst)
+	 * Tests the {@link HillEquation} for A <-> B (with catalyst)
 	 * @throws Throwable
 	 */
 	@Test
@@ -441,22 +479,5 @@ public class UniUniKineticsTest extends KineticsTest {
 		KineticLaw kl = klg.createKineticLaw(r3, HillEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl, "kcrf_r3_k1*k1*c1*s1*c1/ksp_r3_k1*(1-p1*c1/(keq_r3*s1*c1))*(s1*c1/ksp_r3_k1+p1*c1/ksp_r3_k1)^(hic_r3_k1-1)/(1+(s1*c1/ksp_r3_k1+p1*c1/ksp_r3_k1)^(hic_r3_k1))");
 	}
-	
-	/**
-	 * Tests the Convenience Kinetics for A -> B (with Catalyst)
-	 * @throws Throwable
-	 */
-	@Test
-	public void testConvKatRev() throws Throwable{
-		KineticLaw kl = klg.createKineticLaw(r3, ConvenienceKinetics.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "kic_r2_i1/(kic_r2_i1+i1*c1)*vmag_r2*s1*c1/kmc_r2_s1*(kG_s1*kmc_r2_s1/(kG_p1*kmc_r2_p1))^(0.5)/(1+s1*c1/kmc_r2_s1-1)");
-	}
-	/*
-	File store = new File("test.sbml");
-	SBMLWriter.write(doc, store, ' ', (short) 2);
-	SBMLWriter.write(doc, System.out, ' ', (short) 2);
-	System.out.println();
-	SBML2LaTeX.convert(doc, new File(System.getProperty("user.dir") + "test.pdf"));
-	*/
 
 }
