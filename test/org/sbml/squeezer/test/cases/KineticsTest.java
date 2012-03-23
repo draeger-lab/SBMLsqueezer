@@ -27,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.BeforeClass;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.UnitDefinition;
@@ -41,6 +42,15 @@ import de.zbit.util.prefs.SBPreferences;
  * @since 1.4
  */
 public abstract class KineticsTest {
+	
+	private static int count;
+	
+	@BeforeClass
+	public static void init() {
+		count = 0;
+		System.out.print("Count\tReaction\tDerived units\tRate law\n");
+		System.out.print("-----\t--------\t-------------\t--------\n");
+	}
 	
 	/**
 	 * The rate law generator.
@@ -85,8 +95,10 @@ public abstract class KineticsTest {
 	public void testUnits(KineticLaw kl) throws Throwable {
 		UnitDefinition ud = kl.getDerivedUnitDefinition();
 		if (ud != null) {
-			System.out.printf("derived units of %s: %s\n", kl.getParent(),
-				UnitDefinition.printUnits(ud, true));
+			System.out.printf("%d\t%s\t\t%s\t%s\n",
+				count++,
+				kl.getParent(), UnitDefinition.printUnits(ud, true), 
+				kl.getClass().getSimpleName());
 			assertTrue(ud.isVariantOfSubstancePerTime());
 		} else {
 			fail();

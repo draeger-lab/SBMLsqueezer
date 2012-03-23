@@ -31,6 +31,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
@@ -107,7 +108,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 					denominator.plus(denominatorElements(enzyme, false));
 					if ((reaction.getProductCount() > 1)
 							&& (reaction.getReactantCount() > 1)) {
-						denominator.minus(1);
+						denominator.minus(1, Unit.Kind.DIMENSIONLESS.toString().toLowerCase());
 					}
 				}
 			}
@@ -242,8 +243,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 		Reaction reaction = getParentSBMLObject();
 		ASTNode denoms[] = new ASTNode[forward ? reaction.getReactantCount() : reaction.getProductCount()];
 		boolean noOne = (denoms.length == 1)
-				&& (!forward || (forward && reaction.getReversible() && reaction
-						.getProductCount() > 1));
+				&& (!forward || (forward && reaction.getReversible() && reaction.getProductCount() > 1));
 		for (int i = 0; i < denoms.length; i++) {
 			SpeciesReference ref = forward ? reaction.getReactant(i) : reaction.getProduct(i);
 			LocalParameter p_kM = parameterFactory.parameterMichaelis(ref.getSpecies(), enzyme, forward);
@@ -266,7 +266,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	 */
 	@Override
 	public String getSimpleName() {
-		//return getNotesString();
 		return MESSAGES.getString("CONVENIENCE_KINETICS_SIMPLE_NAME");
 	}
+
 }
