@@ -32,12 +32,14 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.CommonModularRateLaw;
+import org.sbml.squeezer.kinetics.DirectBindingModularRateLaw;
 import org.sbml.squeezer.kinetics.ForceDependentModularRateLaw;
 import org.sbml.squeezer.kinetics.PowerLawModularRateLaw;
 import org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
+ * Test class to test reactions of the form A + B (<)-> C + D
  * @author Julianus Pfeuffer
  * @version $Rev$
  * @since 1.4
@@ -45,7 +47,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 public class BiBiKineticsTest extends KineticsTest {
 
 	/**
-	 * 
+	 * Initialization of species and reaction
 	 */
 	private Reaction r1;
 	
@@ -76,8 +78,12 @@ public class BiBiKineticsTest extends KineticsTest {
 		return model;
 	}
 	
+	/*===================================================
+	   I R R E V E R S I B L E   R E A C T I O N S
+	  ===================================================*/
+	
 	/**
-	 * 
+	 * Tests the {@link CommonModularRateLaw} for the reaction A + B -> C + D
 	 * @throws Throwable
 	 */
 	@Test
@@ -87,7 +93,17 @@ public class BiBiKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * 
+	 * Tests the {@link DirectBindingModularRateLaw} for the reaction A + B -> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testDirectBindingModularRateLaw() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, DirectBindingModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/(1+(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))");
+	}
+	
+	/**
+	 * Tests the {@link PowerLawModularRateLaw} for the reaction A + B -> C + D
 	 * @throws Throwable
 	 */
 	@Test
@@ -97,7 +113,7 @@ public class BiBiKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * 
+	 * Tests the {@link SimultaneousBindingModularRateLaw} for the reaction A + B -> C + D
 	 * @throws Throwable
 	 */
 	@Test
@@ -107,7 +123,7 @@ public class BiBiKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * 
+	 * Tests the {@link ForceDependentModularRateLaw} for the reaction A + B -> C + D
 	 * @throws Throwable
 	 */
 	@Test
@@ -116,14 +132,59 @@ public class BiBiKineticsTest extends KineticsTest {
 		test(kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))^(0.5)");
 	}
 	
+	
+	/*===================================================
+	   R E V E R S I B L E   R E A C T I O N S
+	  ===================================================*/
+	
 	/**
-	 * 
+	 * Tests the {@link CommonModularRateLaw} for the reaction A + B <-> C + D
 	 * @throws Throwable
 	 */
 	@Test
 	public void testCommonModularRateLawRev() throws Throwable{
 		KineticLaw kl2 = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(kl2, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)*(1+p2*c1/kmc_r1_p2)^(hco_r1)-1)");
+	}
+	
+	/**
+	 * Tests the {@link DirectBindingModularRateLaw} for the reaction A + B <-> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testDirectBindingModularRateLawRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, DirectBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))/(1+(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))");
+	}
+	
+	/**
+	 * Tests the {@link PowerLawModularRateLaw} for the reaction A + B <-> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPowerLawModularRateLawRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1)");
+	}
+	
+	/**
+	 * Tests the {@link SimultaneousBindingModularRateLaw} for the reaction A + B <-> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testSimultaneousBindingModularRateLawRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, SimultaneousBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1)*(1+p2*c1/kmc_r1_p2)^(hco_r1))");
+	}
+	
+	/**
+	 * Tests the {@link ForceDependentModularRateLaw} for the reaction A + B <-> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testForceDependentModularRateLawRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, ForceDependentModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))/((s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1)*(p2*c1/kmc_r1_p2)^(hco_r1))^(0.5)");
 	}
 
 }
