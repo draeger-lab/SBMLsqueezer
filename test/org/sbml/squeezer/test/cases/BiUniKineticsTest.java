@@ -40,6 +40,8 @@ import org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
+ * Class that tests the generated equations and derived units for reactions of the form
+ * A + B (<)-> C and 2A (<)-> C.  
  * @author Julianus Pfeuffer
  * @version $Rev$
  * @since 1.4
@@ -53,7 +55,6 @@ public class BiUniKineticsTest extends KineticsTest {
 	
 	/**
 	 * Initialization of a model and basic reactions for this test class.
-	 * It handles reactions of the form A + B (<)-> C and 2A (<)-> C. 
 	 * @throws Throwable
 	 */
 	protected Model initModel() {
@@ -89,9 +90,17 @@ public class BiUniKineticsTest extends KineticsTest {
 		return model;
 	}
 	
-	/*
-	 * Tests for reactions like A + B -> C
-	 */
+	/*========================================
+	               A + B (<)-> C
+	  ========================================*/
+	
+	/*==================================================
+                 UnitConsistencyType = A M O U N T
+	  ==================================================*/
+	
+	/*=========================================================*
+	 *      I R R E V E R S I B L E   R E A C T I O N S        *
+	 *=========================================================*/
 	
 	/**
 	 * Test for the {@link CommonModularRateLaw} for A + B -> C 
@@ -148,21 +157,66 @@ public class BiUniKineticsTest extends KineticsTest {
 	 * @throws Throwable
 	 */
 	@Test
-	public void testOrderedMechIrrev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, OrderedMechanism.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-		test(kl, "vmax_r1*s1*s2/(kic_r1_s1*kmc_r1_s2+(s1*s2+(kmc_r1_s2*s1+kmc_r1_s1*s2)))");
+	public void testOrderedMechAmountIrrev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, OrderedMechanism.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "vmax_r1*s1*c1*s2*c1/(kic_r1_s1*kmc_r1_s2+(s1*c1*s2*c1+(kmc_r1_s2*s1*c1+kmc_r1_s1*s2*c1)))");
 	}
+
+	
+	/*=========================================================*
+	 *      R E V E R S I B L E   R E A C T I O N S            *
+	 *=========================================================*/
 	
 	/**
-	 * Test for the {@link OrderedMechanism} for A + B <=> C 
+	 * Test for the {@link CommonModularRateLaw} for A + B <=> C 
 	 * @throws Throwable
 	 */
 	@Test
-	public void testOrderedMechRev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, OrderedMechanism.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-		test(kl, "(vmaf_r1/(kic_r1_s1*kmc_r1_s2)*s1*s2-vmar_r1/kmc_r1_p1*p1)/(1+(kmc_r1_s1*s2/(kic_r1_s1*kmc_r1_s2)+s1/kic_r1_s1)+s1*s2/(kic_r1_s1*kmc_r1_s2)+kmc_r1_s1*p1*s2/(kic_r1_s1*kic_r1_p1*kmc_r1_s2)+p1/kmc_r1_p1)");
+	public void testCommonModularRateLawRev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)");
 	}
-
+	
+	/**
+	 * Test for the {@link DirectBindingModularRateLaw} for A + B <=> C 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testDirectBindingModularRateLawRev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, DirectBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/(1+(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1))");
+	}
+	
+	/**
+	 * Test for the {@link SimultaneousBindingModularRateLaw} for A + B <=> C 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testSimultaneousBindingModularRateLawRev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, SimultaneousBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1))");
+	}
+	
+	/**
+	 * Test for the {@link ForeDependentModularRateLaw} for A + B <=> C 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testForceDependentRateLawRev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, ForceDependentModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1))^(0.5)");
+	}
+	
+	/**
+	 * Test for the {@link PowerLawModularRateLaw} for A + B <=> C 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPowerLawModularRateLawRev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)");
+	}
+	
 	/**
 	 * Test for the {@link OrderedMechanism} for A + B <=> C 
 	 * @throws Throwable
@@ -173,73 +227,52 @@ public class BiUniKineticsTest extends KineticsTest {
 		test(kl, "(vmaf_r1/(kic_r1_s1*kmc_r1_s2)*s1*c1*s2*c1-vmar_r1/kmc_r1_p1*p1*c1)/(1+(kmc_r1_s1*s2*c1/(kic_r1_s1*kmc_r1_s2)+s1*c1/kic_r1_s1)+s1*c1*s2*c1/(kic_r1_s1*kmc_r1_s2)+kmc_r1_s1*p1*c1*s2*c1/(kic_r1_s1*kic_r1_p1*kmc_r1_s2)+p1*c1/kmc_r1_p1)");
 	}
 	
+	
+	/*==================================================
+      UnitConsistencyType = C O N C E N T R A T I O N
+	  ==================================================*/
+
+	/*=========================================================*
+	 *     I R R E V E R S I B L E   R E A C T I O N S            *
+	 *=========================================================*/
+	
 	/**
-	 * Test for the {@link OrderedMechanism} for A + B -> C 
+	 * Test for the {@link OrderedMechanism} for A + B <=> C 
 	 * @throws Throwable
 	 */
 	@Test
-	public void testOrderedMechAmountIrrev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, OrderedMechanism.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "vmax_r1*s1*c1*s2*c1/(kic_r1_s1*kmc_r1_s2+(s1*c1*s2*c1+(kmc_r1_s2*s1*c1+kmc_r1_s1*s2*c1)))");
+	public void testOrderedMechIrrev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, OrderedMechanism.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(kl, "vmax_r1*s1*s2/(kic_r1_s1*kmc_r1_s2+(s1*s2+(kmc_r1_s2*s1+kmc_r1_s1*s2)))");
 	}
+
 	
-	/*
-	 * From here: Reversible reactions
-	 */
+	/*=========================================================*
+	 *      R E V E R S I B L E   R E A C T I O N S            *
+	 *=========================================================*/
 	
 	/**
-	 * Test for the {@link CommonModularRateLaw} for A + B <-> C 
+	 * Test for the {@link OrderedMechanism} for A + B <=> C 
 	 * @throws Throwable
 	 */
 	@Test
-	public void testCommonModularRateLawRev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)");
+	public void testOrderedMechRev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, OrderedMechanism.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(kl, "(vmaf_r1/(kic_r1_s1*kmc_r1_s2)*s1*s2-vmar_r1/kmc_r1_p1*p1)/(1+(kmc_r1_s1*s2/(kic_r1_s1*kmc_r1_s2)+s1/kic_r1_s1)+s1*s2/(kic_r1_s1*kmc_r1_s2)+kmc_r1_s1*p1*s2/(kic_r1_s1*kic_r1_p1*kmc_r1_s2)+p1/kmc_r1_p1)");
 	}
 	
-	/**
-	 * Test for the {@link DirectBindingModularRateLaw} for A + B <-> C 
-	 * @throws Throwable
-	 */
-	@Test
-	public void testDirectBindingModularRateLawRev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, DirectBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/(1+(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1))");
-	}
 	
-	/**
-	 * Test for the {@link SimultaneousBindingModularRateLaw} for A + B <-> C 
-	 * @throws Throwable
-	 */
-	@Test
-	public void testSimultaneousBindingModularRateLawRev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, SimultaneousBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1))");
-	}
+	/*========================================
+    			2A (<)-> C
+	  ========================================*/
 	
-	/**
-	 * Test for the {@link ForeDependentModularRateLaw} for A + B <-> C 
-	 * @throws Throwable
-	 */
-	@Test
-	public void testForceDependentRateLawRev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, ForceDependentModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1))^(0.5)");
-	}
+	/*==================================================
+         UnitConsistencyType = A M O U N T
+	  ==================================================*/
 	
-	/**
-	 * Test for the {@link PowerLawModularRateLaw} for A + B <-> C 
-	 * @throws Throwable
-	 */
-	@Test
-	public void testPowerLawModularRateLawRev() throws Throwable {
-		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)");
-	}
-	
-	/*
-	 * From here tests with Reactions like 2A -> C
-	 */
+	/*=========================================================*
+	 *     I R R E V E R S I B L E   R E A C T I O N S         *
+	 *=========================================================*/
 	
 	/**
 	 * Test for the {@link CommonModularRateLaw} for 2A -> C
@@ -291,12 +324,12 @@ public class BiUniKineticsTest extends KineticsTest {
 		test(kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/((s1*c1/kmc_r2_s1)^(hco_r2*2)*(p1*c1/kmc_r2_p1)^(hco_r2))^(0.5)");
 	}
 	
-	/**
-	 * Irreversible Reactions like 2A <-> C
-	 */
+	/*=========================================================*
+	 *     R E V E R S I B L E   R E A C T I O N S             *
+	 *=========================================================*/
 	
 	/**
-	 * Test for the {@link CommonModularRateLaw} for 2A <-> C
+	 * Test for the {@link CommonModularRateLaw} for 2A <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -306,7 +339,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Test for the {@link DirectBindingModularRateLaw} for 2A <-> C
+	 * Test for the {@link DirectBindingModularRateLaw} for 2A <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -316,7 +349,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Test for the {@link PowerLawModularRateLaw} for 2A <-> C
+	 * Test for the {@link PowerLawModularRateLaw} for 2A <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -326,7 +359,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Test for the {@link SimultaneousBindingModularRateLaw} for 2A <-> C
+	 * Test for the {@link SimultaneousBindingModularRateLaw} for 2A <=> C
 	 * @throws Throwable
 	 */
 	@Test
@@ -336,7 +369,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
-	 * Test for the {@link ForeDependentModularRateLaw} for 2A <-> C
+	 * Test for the {@link ForceDependentModularRateLaw} for 2A <=> C
 	 * @throws Throwable
 	 */
 	@Test

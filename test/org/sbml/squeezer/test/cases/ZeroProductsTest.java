@@ -31,11 +31,13 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.UnitConsistencyType;
+import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK;
 import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 
 /**
+ * Class that tests the generated equations and derived units for reactions of the form A (<)-> _
  * @author Julianus Pfeuffer
  * @version $Rev$
  * @since 1.4
@@ -43,7 +45,7 @@ import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 public class ZeroProductsTest extends KineticsTest {
 
 	/**
-	 * 
+	 * Initializes species and reactions
 	 */
 	private Reaction r1;
 	
@@ -65,8 +67,12 @@ public class ZeroProductsTest extends KineticsTest {
 		return model;
 	}
 	
+	/*=========================================================*
+	 *      I R R E V E R S I B L E   R E A C T I O N S        *
+	 *=========================================================*/
+	
 	/**
-	 * 
+	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction A -> _ with 0th order forward reaction
 	 * @throws Throwable
 	 */
 	@Test
@@ -76,7 +82,7 @@ public class ZeroProductsTest extends KineticsTest {
 	}
 	
 	/**
-	 * 
+	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction A -> _ with 0th order reverse reaction
 	 * @throws Throwable
 	 */
 	@Test
@@ -85,8 +91,12 @@ public class ZeroProductsTest extends KineticsTest {
 		test(kl, "kass_r1*s1*c1");
 	}
 	
+	/*=========================================================*
+	 *       R E V E R S I B L E   R E A C T I O N S        *
+	 *=========================================================*/
+	
 	/**
-	 * 
+	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction A <=> _ with 0th order forward reaction
 	 * @throws Throwable
 	 */
 	@Test
@@ -96,7 +106,7 @@ public class ZeroProductsTest extends KineticsTest {
 	}
 
 	/**
-	 * 
+	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction A <=> _ with 0th order reverse reaction
 	 * @throws Throwable
 	 */
 	@Test

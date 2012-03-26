@@ -27,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
@@ -37,6 +38,7 @@ import org.sbml.squeezer.SqueezerOptions;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
+ * Abstract class for classes that test generated kinetic equations and derived units
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.4
@@ -45,6 +47,10 @@ public abstract class KineticsTest {
 	
 	private static int count;
 	
+	
+	/**
+	 * Initializes counter and the summary report before the test.
+	 */
 	@BeforeClass
 	public static void init() {
 		count = 0;
@@ -67,7 +73,8 @@ public abstract class KineticsTest {
 
 	
 	/**
-	 * 
+	 * The abstract constructor that automatically initializes a {@link Model} and a corresponding
+	 * {@link KineticLawGenerator}
 	 */
 	public KineticsTest() {
 		model = initModel();
@@ -88,7 +95,7 @@ public abstract class KineticsTest {
 	protected abstract Model initModel();
 	
 	/**
-	 * 
+	 * Report the result of a single unit test
 	 * @param kl
 	 * @throws Throwable
 	 */
@@ -99,14 +106,14 @@ public abstract class KineticsTest {
 				count++,
 				kl.getParent(), UnitDefinition.printUnits(ud, true), 
 				kl.getClass().getSimpleName());
-			assertTrue(ud.isVariantOfSubstancePerTime());
+			assertTrue("Derived UnitDefinition is not of the type SubstancePerTime",ud.isVariantOfSubstancePerTime());
 		} else {
-			fail();
+			fail("Could not derive a UnitDefinition");
 		}
 	}
 	
 	/**
-	 * 
+	 * Do the complete test, incl. unit checking with the JUnit 4 {@link Assert}.assertEquals method
 	 * @param kl
 	 * @param formula
 	 * @throws Throwable
