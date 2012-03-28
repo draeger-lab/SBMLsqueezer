@@ -129,7 +129,7 @@ class FileReaderThread extends Thread implements Runnable {
  * class that had this name before has now become the
  * {@link KineticLawSelectionDialog}. This UI class provides several additional
  * features: It displays all model components in a
- * {@link JTabbedPaneWithCloseIcons} so that multiple models can be opened at
+ * {@link JTabbedPaneDraggableAndCloseable} so that multiple models can be opened at
  * the same time and can be closed easily and it provides several options to
  * manipulate the model. Each tab in this tabbed pane contains a
  * {@link SBMLModelSplitPane} showing the details of the selected model. This
@@ -253,7 +253,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	/**
 	 * 
 	 */
-	private JTabbedPaneWithCloseIcons tabbedPane;
+	private JTabbedPaneDraggableAndCloseable tabbedPane;
 
 	/**
 	 * 
@@ -682,7 +682,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
 					.getIconHeight() + 75));
 		}
-		tabbedPane = new JTabbedPaneWithCloseIcons();
+		tabbedPane = new JTabbedPaneDraggableAndCloseable();
 		tabbedPane.addChangeListener(this);
 		return tabbedPane;
 	}
