@@ -166,7 +166,6 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane {
 	    panel.add(new JLabel(title));
 	    JLabel closeButton = new JLabel(new CloseIcon());
 	    panel.setOpaque(false);
-	    closeButton.setName(String.valueOf(getTabCount()));
 	    closeButton.addMouseListener(new MouseListener() {
 			public void mouseReleased(MouseEvent arg0) {}
 			public void mousePressed(MouseEvent arg0) {}
@@ -175,12 +174,12 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane {
 			
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1
-						&& e.getSource() instanceof JLabel) {
-					int tabIndex = Math.min(Integer.parseInt(((JLabel) e.getSource()).getName()), JTabbedPaneDraggableAndCloseable.this.getTabCount()-1);
+						&& e.getSource() instanceof Component) {
+					int tabIndex = getTabIndexByComponent((Component) e.getSource());
 					if (tabIndex >= 0) {
 						JTabbedPaneDraggableAndCloseable.this.removeTabAt(tabIndex);
 						for (ChangeListener cl : getChangeListeners())
-							cl.stateChanged(new ChangeEvent(this));
+							cl.stateChanged(new ChangeEvent(JTabbedPaneDraggableAndCloseable.this));
 					}
 				}
 			}
@@ -188,6 +187,26 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane {
 	    
 	    panel.add(closeButton);
 		setTabComponentAt(i, panel);
+	}
+	
+	/**
+	 * if a tab contains comp return its index, otherwise -1
+	 * 
+	 * @param comp
+	 * @return
+	 */
+	public int getTabIndexByComponent(Component comp){
+		for (int i=0; i<this.getTabCount(); i++){
+			if (this.getTabComponentAt(i) instanceof JPanel) {
+				JPanel panel = (JPanel) this.getTabComponentAt(i);
+				for (Component c : panel.getComponents()) {
+					if (c.equals(comp)){
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
 	}
 
 	/**
