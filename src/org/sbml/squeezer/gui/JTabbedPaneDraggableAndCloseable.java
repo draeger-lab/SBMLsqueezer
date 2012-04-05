@@ -85,7 +85,10 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 */
 	private static final long serialVersionUID = -7618281593485131907L;
 	
-	public static final transient ResourceBundle BASE = ResourceManager.getBundle(Bundles.BASE);
+	/**
+	 * 
+	 */
+	public static final transient ResourceBundle BASE = ResourceManager.getBundle("de.zbit.locales.BaseAction");
 	
 	private static final int LINEWIDTH = 3;
 	private static final String NAME = "test";
@@ -102,16 +105,14 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 		super();
 		
 		final DragSourceListener dsl = new DragSourceListener() {
-			/*
-			 * (non-Javadoc)
+			/* (non-Javadoc)
 			 * @see java.awt.dnd.DragSourceListener#dragEnter(java.awt.dnd.DragSourceDragEvent)
 			 */
 			public void dragEnter(DragSourceDragEvent e) {
 				e.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
 			}
 			
-			/*
-			 * (non-Javadoc)
+			/* (non-Javadoc)
 			 * @see java.awt.dnd.DragSourceListener#dragExit(java.awt.dnd.DragSourceEvent)
 			 */
 			public void dragExit(DragSourceEvent e) {
@@ -121,8 +122,7 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 				glassPane.repaint();
 			}
 			
-			/*
-			 * (non-Javadoc)
+			/* (non-Javadoc)
 			 * @see java.awt.dnd.DragSourceListener#dragOver(java.awt.dnd.DragSourceDragEvent)
 			 */
 			public void dragOver(DragSourceDragEvent e) {
@@ -132,7 +132,7 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 				Point glassPt = e.getLocation();
 				SwingUtilities.convertPointFromScreen(glassPt, glassPane);
 				int targetIdx = getTargetTabIndex(glassPt);
-				if(getTabAreaBound().contains(tabPt) && targetIdx>=0 &&
+				if (getTabAreaBound().contains(tabPt) && targetIdx>=0 &&
 						targetIdx!=dragTabIndex && targetIdx!=dragTabIndex+1) {
 					e.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
 				} else {
@@ -140,14 +140,13 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 				}
 			}
 			
-			/*
-			 * (non-Javadoc)
+			/* (non-Javadoc)
 			 * @see java.awt.dnd.DragSourceListener#dragDropEnd(java.awt.dnd.DragSourceDropEvent)
 			 */
 			public void dragDropEnd(DragSourceDropEvent e) {
-				lineRect.setRect(0,0,0,0);
+				lineRect.setRect(0, 0, 0, 0);
 				dragTabIndex = -1;
-				if(hasGhost()) {
+				if (hasGhost()) {
 					glassPane.setVisible(false);
 					glassPane.setImage(null);
 				}
@@ -158,16 +157,14 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 		final Transferable t = new Transferable() {
 			private final DataFlavor FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, NAME);
 			
-			/*
-			 * (non-Javadoc)
+			/* (non-Javadoc)
 			 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
 			 */
 			public Object getTransferData(DataFlavor flavor) {
 				return JTabbedPaneDraggableAndCloseable.this;
 			}
 			
-			/*
-			 * (non-Javadoc)
+			/* (non-Javadoc)
 			 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
 			 */
 			public DataFlavor[] getTransferDataFlavors() {
@@ -176,23 +173,23 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 				return f;
 			}
 			
-			/*
-			 * (non-Javadoc)
+			/* (non-Javadoc)
 			 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
 			 */
 			public boolean isDataFlavorSupported(DataFlavor flavor) {
 				return flavor.getHumanPresentableName().equals(NAME);
 			}
+
 		};
 		final DragGestureListener dgl = new DragGestureListener() {
-			/*
-			 * (non-Javadoc)
+			
+			/* (non-Javadoc)
 			 * @see java.awt.dnd.DragGestureListener#dragGestureRecognized(java.awt.dnd.DragGestureEvent)
 			 */
 			public void dragGestureRecognized(DragGestureEvent e) {
 				Point tabPt = e.getDragOrigin();
 				dragTabIndex = indexAtLocation(tabPt.x, tabPt.y);
-				if(dragTabIndex<0) {
+				if (dragTabIndex<0) {
 					return;
 				}
 				initGlassPane(e.getComponent(), e.getDragOrigin());
@@ -202,6 +199,7 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 					idoe.printStackTrace();
 				}
 			}
+
 		};
 
 		new DropTarget(glassPane, DnDConstants.ACTION_COPY_OR_MOVE, this, true);
@@ -229,11 +227,29 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 		closeButton.setToolTipText(BASE.getString("FILE_CLOSE").split(";")[1]);
 		panel.setOpaque(false);
 		closeButton.addMouseListener(new MouseListener() {
-			public void mouseReleased(MouseEvent arg0) {}
-			public void mousePressed(MouseEvent arg0) {}
-			public void mouseExited(MouseEvent arg0) {}
-			public void mouseEntered(MouseEvent arg0) {}
+			/* (non-Javadoc)
+			 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+			 */
+			public void mouseReleased(MouseEvent e) {}
 			
+			/* (non-Javadoc)
+			 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+			 */
+			public void mousePressed(MouseEvent e) {}
+			
+			/* (non-Javadoc)
+			 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+			 */
+			public void mouseExited(MouseEvent e) {}
+			
+			/* (non-Javadoc)
+			 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+			 */
+			public void mouseEntered(MouseEvent e) {}
+			
+			/* (non-Javadoc)
+			 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+			 */
 			public void mouseClicked(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1
 						&& e.getSource() instanceof Component) {
@@ -257,12 +273,12 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 * @param comp
 	 * @return
 	 */
-	public int getTabIndexByComponent(Component comp){
-		for (int i=0; i<this.getTabCount(); i++){
+	public int getTabIndexByComponent(Component comp) {
+		for (int i=0; i<this.getTabCount(); i++) {
 			if (this.getTabComponentAt(i) instanceof JPanel) {
 				JPanel panel = (JPanel) this.getTabComponentAt(i);
 				for (Component c : panel.getComponents()) {
-					if (c.equals(comp)){
+					if (c.equals(comp)) {
 						return i;
 					}
 				}
@@ -270,8 +286,6 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 		}
 		return -1;
 	}
-	
-
 
 	/* (non-Javadoc)
 	 * @see javax.swing.JTabbedPane#addTab(java.lang.String, java.awt.Component)
@@ -292,8 +306,11 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 		setTabComponentAt(getTabCount() - 1, extraIcon);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.awt.dnd.DropTargetListener#dragEnter(java.awt.dnd.DropTargetDragEvent)
+	 */
 	public void dragEnter(DropTargetDragEvent e) {
-		if(isDragAcceptable(e)) {
+		if (isDragAcceptable(e)) {
 			e.acceptDrag(e.getDropAction());
 		}
 		else {
@@ -301,27 +318,27 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 		}
 	}
 	
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see java.awt.dnd.DropTargetListener#dragOver(java.awt.dnd.DropTargetDragEvent)
 	 */
 	public void dragOver(final DropTargetDragEvent e) {
-		if(getTabPlacement()==JTabbedPane.TOP || getTabPlacement()==JTabbedPane.BOTTOM) {
+		if (getTabPlacement()==JTabbedPane.TOP || getTabPlacement()==JTabbedPane.BOTTOM) {
 			initTargetLeftRightLine(getTargetTabIndex(e.getLocation()));
 		} else {
 			initTargetTopBottomLine(getTargetTabIndex(e.getLocation()));
 		}
 		repaint();
-		if(hasGhost()) {
+		if (hasGhost()) {
 			glassPane.setPoint(e.getLocation());
 			glassPane.repaint();
 		}
 	}
 
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
 	 */
 	public void drop(DropTargetDropEvent e) {
-		if(isDropAcceptable(e)) {
+		if (isDropAcceptable(e)) {
 			convertTab(dragTabIndex, getTargetTabIndex(e.getLocation()));
 			e.dropComplete(true);
 		} else {
@@ -337,11 +354,11 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 */
 	public boolean isDragAcceptable(DropTargetDragEvent e) {
 		Transferable t = e.getTransferable();
-		if(t==null) {
+		if (t==null) {
 			return false;
 		}
 		DataFlavor[] f = e.getCurrentDataFlavors();
-		if(t.isDataFlavorSupported(f[0]) && dragTabIndex>=0) {
+		if (t.isDataFlavorSupported(f[0]) && dragTabIndex>=0) {
 			return true;
 		}
 		return false;
@@ -354,15 +371,24 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 */
 	public boolean isDropAcceptable(DropTargetDropEvent e) {
 		Transferable t = e.getTransferable();
-		if(t==null) {
+		if (t==null) {
 			return false;
 		}
 		DataFlavor[] f = t.getTransferDataFlavors();
 		return (t.isDataFlavorSupported(f[0]) && dragTabIndex>=0);
 	}
 	
-	public void dragExit(DropTargetEvent e) {}
-	public void dropActionChanged(DropTargetDragEvent e) {}
+	/* (non-Javadoc)
+	 * @see java.awt.dnd.DropTargetListener#dragExit(java.awt.dnd.DropTargetEvent)
+	 */
+	public void dragExit(DropTargetEvent e) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.dnd.DropTargetListener#dropActionChanged(java.awt.dnd.DropTargetDragEvent)
+	 */
+	public void dropActionChanged(DropTargetDragEvent e) {
+	}
 	
 	/**
 	 * 
@@ -387,7 +413,7 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 */
 	private int getTargetTabIndex(Point glassPt) {
 		Point tabPt = SwingUtilities.convertPoint(glassPane, glassPt, JTabbedPaneDraggableAndCloseable.this);
-		boolean isTB = getTabPlacement()==JTabbedPane.TOP || getTabPlacement()==JTabbedPane.BOTTOM;
+		boolean isTB = (getTabPlacement() == JTabbedPane.TOP) || (getTabPlacement() == JTabbedPane.BOTTOM);
 		for(int i=0;i<getTabCount();i++) {
 			Rectangle r = getBoundsAt(i);
 			if (isTB) {
@@ -395,15 +421,15 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 			} else {
 				r.setRect(r.x, r.y-r.height/2, r.width, r.height);
 			}
-			if (r.contains(tabPt)){
+			if (r.contains(tabPt)) {
 				return i;
 			}
 		}
 		Rectangle r = getBoundsAt(getTabCount()-1);
 		if (isTB) {
-			r.setRect(r.x+r.width/2, r.y,r.width, r.height);
+			r.setRect(r.x + r.width / 2, r.y,r.width, r.height);
 		} else {
-			r.setRect(r.x, r.y+r.height/2, r.width, r.height);
+			r.setRect(r.x, r.y + r.height / 2, r.width, r.height);
 		}
 		return r.contains(tabPt)?getTabCount():-1;
 	}
@@ -414,12 +440,12 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 * @param next
 	 */
 	private void convertTab(int prev, int next) {
-		if(next<0 || prev==next) {
+		if ((next < 0) || (prev == next)) {
 			return;
 		}
 		Component cmp = getComponentAt(prev);
 		String str = getTitleAt(prev);
-		if(next==getTabCount()) {
+		if (next==getTabCount()) {
 			remove(prev);
 			addTab(str, cmp);
 			setSelectedIndex(getTabCount()-1);
@@ -442,8 +468,8 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 * @param next
 	 */
 	private void initTargetLeftRightLine(int next) {
-		if(next<0 || dragTabIndex==next || next-dragTabIndex==1) {
-			lineRect.setRect(0,0,0,0);
+		if ((next < 0) || (dragTabIndex == next) || (next - dragTabIndex == 1)) {
+			lineRect.setRect(0, 0, 0, 0);
 		} else if (next==getTabCount()) {
 			Rectangle rect = getBoundsAt(getTabCount()-1);
 			lineRect.setRect(rect.x+rect.width-LINEWIDTH/2,rect.y,LINEWIDTH,rect.height);
@@ -451,7 +477,7 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 			Rectangle rect = getBoundsAt(0);
 			lineRect.setRect(-LINEWIDTH/2,rect.y,LINEWIDTH,rect.height);
 		} else {
-			Rectangle rect = getBoundsAt(next-1);
+			Rectangle rect = getBoundsAt(next - 1);
 			lineRect.setRect(rect.x+rect.width-LINEWIDTH/2,rect.y,LINEWIDTH,rect.height);
 		}
 	}
@@ -461,16 +487,16 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 * @param next
 	 */
 	private void initTargetTopBottomLine(int next) {
-		if(next<0 || dragTabIndex==next || next-dragTabIndex==1) {
-			lineRect.setRect(0,0,0,0);
-		} else if (next==getTabCount()) {
+		if ((next < 0) || (dragTabIndex == next) || (next - dragTabIndex == 1)) {
+			lineRect.setRect(0, 0, 0, 0);
+		} else if (next == getTabCount()) {
 			Rectangle rect = getBoundsAt(getTabCount()-1);
 			lineRect.setRect(rect.x,rect.y+rect.height-LINEWIDTH/2,rect.width,LINEWIDTH);
-		} else if (next==0) {
+		} else if (next == 0) {
 			Rectangle rect = getBoundsAt(0);
-			lineRect.setRect(rect.x,-LINEWIDTH/2,rect.width,LINEWIDTH);
+			lineRect.setRect(rect.x,-LINEWIDTH / 2,rect.width,LINEWIDTH);
 		} else {
-			Rectangle rect = getBoundsAt(next-1);
+			Rectangle rect = getBoundsAt(next - 1);
 			lineRect.setRect(rect.x,rect.y+rect.height-LINEWIDTH/2,rect.width,LINEWIDTH);
 		}
 	}
@@ -482,7 +508,7 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 	 */
 	private void initGlassPane(Component c, Point tabPt) {
 		getRootPane().setGlassPane(glassPane);
-		if(hasGhost()) {
+		if (hasGhost()) {
 			Rectangle rect = getBoundsAt(dragTabIndex);
 			BufferedImage image = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			Graphics g = image.getGraphics();
@@ -504,13 +530,13 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
 		return new Rectangle(0,0,getWidth(),lastTab.y+lastTab.height);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
 	 */
+	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if(dragTabIndex>=0) {
+		if (dragTabIndex>=0) {
 			Graphics2D g2 = (Graphics2D)g;
 			g2.setPaint(lineColor);
 			g2.fill(lineRect);
@@ -525,7 +551,7 @@ public class JTabbedPaneDraggableAndCloseable extends JTabbedPane implements Dro
  */
 class GhostGlassPane extends JPanel {
 	/**
-	 * 
+	 * Generated serial version identifier
 	 */
 	private static final long serialVersionUID = 6230514850602998964L;
 	
@@ -541,19 +567,19 @@ class GhostGlassPane extends JPanel {
 		composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
 	 */
+	@Override
 	public void paintComponent(Graphics g) {
-		if(draggingGhost == null){
+		if (draggingGhost == null) {
 			return;
 		}
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setComposite(composite);
 		double xx = location.getX() - (draggingGhost.getWidth(this) /2d);
 		double yy = location.getY() - (draggingGhost.getHeight(this)/2d);
-		g2.drawImage(draggingGhost, (int)xx, (int)yy , null);
+		g2.drawImage(draggingGhost, (int) xx, (int) yy , null);
 	}
 
 	/**
@@ -571,4 +597,5 @@ class GhostGlassPane extends JPanel {
 	public void setPoint(Point location) {
 		this.location = location;
 	}
+
 }
