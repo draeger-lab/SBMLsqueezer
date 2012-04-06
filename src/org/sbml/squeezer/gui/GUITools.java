@@ -33,6 +33,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 
+import de.zbit.gui.CloseIcon;
+
 /**
  * A convenient class that provides several handy methods for working with
  * graphical user interfaces. It loads all icons that are required by the GUI

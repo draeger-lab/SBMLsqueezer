@@ -27,14 +27,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.logging.Level;
+
+import javax.swing.JDialog;
+import javax.swing.JScrollPane;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.SqueezerOptions;
 
+import de.zbit.sbml.gui.SBMLTree;
+import de.zbit.util.logging.LogUtil;
 import de.zbit.util.prefs.SBPreferences;
 
 /**
@@ -53,9 +65,10 @@ public abstract class KineticsTest {
 	 */
 	@BeforeClass
 	public static void init() {
+		LogUtil.initializeLogging(Level.FINE, "org.sbml", "de.zbit");
 		count = 0;
-		System.out.print("Count\tReaction\tDerived units\tRate law\n");
-		System.out.print("-----\t--------\t-------------\t--------\n");
+		System.out.print("Count\tReaction\tDerived units\tRate law\tFormula\n");
+		System.out.print("-----\t--------\t-------------\t--------\t-------\n");
 	}
 	
 	/**
@@ -77,10 +90,25 @@ public abstract class KineticsTest {
 	 * {@link KineticLawGenerator}
 	 */
 	public KineticsTest() {
-		model = initModel();
 		prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+		model = initModel();
 		try {
 			klg = new KineticLawGenerator(model);
+			/*
+			 * This is necessary because without checking the reaction type, species
+			 * on the ignore list are not removed from the reactions within the model.
+			 */
+			for (Reaction r : klg.getMiniModel().getListOfReactions()) {
+				ReactionType rt = new ReactionType(r, klg.isReversibility(),
+					klg.isAllReactionsAsEnzymeCatalyzed(), klg.isSetBoundaryCondition(),
+					klg.getKineticsNoneEnzymeReactions(),
+					klg.getKineticsGeneRegulation(),
+					klg.getKineticsArbitraryEnzymeReaction(),
+					klg.getKineticsUniUniType(), klg.getKineticsBiUniType(),
+					klg.getKineticsBiBiType(), klg.getSpeciesIgnoreList());
+				// TODO: Print the identified kinetic law types or do an assertion.
+				rt.identifyPossibleKineticLaws();
+			}
 		} catch (Throwable e) {
 			e.printStackTrace();
 			fail();
@@ -102,11 +130,12 @@ public abstract class KineticsTest {
 	public void testUnits(KineticLaw kl) throws Throwable {
 		UnitDefinition ud = kl.getDerivedUnitDefinition();
 		if (ud != null) {
-			System.out.printf("%d\t%s\t\t%s\t%s\n",
+			System.out.printf("%d\t%s\t\t%s\t%s\t%s\n",
 				count++,
 				kl.getParent(), UnitDefinition.printUnits(ud, true), 
-				kl.getClass().getSimpleName());
-			assertTrue("Derived UnitDefinition is not of the type SubstancePerTime",ud.isVariantOfSubstancePerTime());
+				kl.getClass().getSimpleName(),
+				kl.getMath().toFormula());
+			assertTrue("Derived UnitDefinition is not of the type SubstancePerTime", ud.isVariantOfSubstancePerTime());
 		} else {
 			fail("Could not derive a UnitDefinition");
 		}
@@ -118,9 +147,55 @@ public abstract class KineticsTest {
 	 * @param formula
 	 * @throws Throwable
 	 */
-	protected void test(KineticLaw kl, String formula) throws Throwable {
+	protected void test(Reaction r, KineticLaw kl, String formula) throws Throwable {
+		if (r.isSetKineticLaw() && r.getKineticLaw().equals(kl)) {
+			fail();
+		}
+		klg.storeKineticLaw(kl);
+		// Check if storing works.
+		if (!r.isSetKineticLaw() && !r.getKineticLaw().equals(kl)) {
+			fail();
+		}
 		testUnits(kl);
 		assertEquals(formula, kl.getMath().toFormula());
+	}
+	
+	/**
+	 * Helper method to gain an overview of generated kinetic equations.
+	 * 
+	 * @param r the reaction for which a rate law was created.
+	 */
+	protected void printDetails(Reaction r) {
+		KineticLaw kl = r.getKineticLaw();
+		System.out.println("Reactants\n=========");
+		for (SpeciesReference ref : r.getListOfReactants()) {
+			System.out.println(ref.getSpecies() + " in " + UnitDefinition.printUnits(ref.getSpeciesInstance().getDerivedUnitDefinition(), true));
+		}
+		System.out.println("Products\n=========");
+		for (SpeciesReference ref : r.getListOfProducts()) {
+			System.out.println(ref.getSpecies() + " in " + UnitDefinition.printUnits(ref.getSpeciesInstance().getDerivedUnitDefinition(), true));
+		}
+		System.out.println("Parameters\n=========");
+		for (int i = 0; i < kl.getListOfLocalParameters().size(); i++) {
+			LocalParameter lp = kl.getLocalParameter(i);
+			System.out.println(lp.getId() + " in " + UnitDefinition.printUnits(lp.getUnitsInstance(), true));
+		}
+		System.out.println("\nReaction in " + UnitDefinition.printUnits(kl.getDerivedUnitDefinition(), true));
+		System.out.println();
+	}
+	
+	/**
+	 * 
+	 * @param math
+	 */
+	protected void showTree(ASTNode math) {
+		JDialog d = new JDialog();
+		SBMLTree tree = new SBMLTree(math);
+		d.setContentPane(new JScrollPane(tree));
+		d.pack();
+		d.setLocationRelativeTo(null);
+		d.setModal(true);
+		d.setVisible(true);
 	}
 	
 }

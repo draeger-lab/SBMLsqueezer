@@ -30,11 +30,9 @@ import java.util.logging.Logger;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
-import org.sbml.squeezer.SqueezerOptions;
 
-import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.ResourceManager;
-import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * 
@@ -87,7 +85,7 @@ public class ProgressAdapter {
 		if (numberOfTotalCalls > 0) {
 			callNr++;
 			double curPercent = ((double) 100 * callNr) / numberOfTotalCalls;
-			if((percent < curPercent) && (curPercent <= 100)){
+			if ((percent < curPercent) && (curPercent <= 100)) {
 				percent = curPercent;
 			}
 			double remainingTime = 100 * ((System.currentTimeMillis()-startTime)/percent);
@@ -103,7 +101,7 @@ public class ProgressAdapter {
 		this.progressType = progressType;
 		
 		startTime = System.currentTimeMillis();
-		switch(progressType){
+		switch(progressType) {
 		case storeKineticLaw:
 			logger.log(Level.INFO, MESSAGES.getString("STORE_KINETIC_EQUATION"));
 			break;
@@ -122,7 +120,7 @@ public class ProgressAdapter {
 	/**
 	 * 
 	 */
-	public void finished(){
+	public void finished() {
 		this.progressBar.finished();
 		logger.info("    "+MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - startTime)));
 		logger.log(Level.INFO, LABELS.getString("READY"));
@@ -132,9 +130,9 @@ public class ProgressAdapter {
 	 * 
 	 * @param modelOrig
 	 * @param miniModel
-	 * @param prefs
+	 * @param removeUnnecessaryParametersAndUnits
 	 */
-	public void setNumberOfTags(Model modelOrig, Model miniModel, SBPreferences prefs){
+	public void setNumberOfTags(Model modelOrig, Model miniModel, boolean removeUnnecessaryParametersAndUnits) {
 		switch(progressType) {
 		case storeKineticLaw:
 			numberOfTotalCalls = 0;
@@ -144,7 +142,7 @@ public class ProgressAdapter {
 			miniModel.getSpeciesCount();	
 			// storeParameters loops
 			numberOfTotalCalls += miniModel.getParameterCount();
-			if(prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
+			if (removeUnnecessaryParametersAndUnits) {
 				// storekineticLaw loops
 				numberOfTotalCalls += modelOrig.getUnitDefinitionCount();
 				// removeUnnecessaryParameters loops
@@ -161,7 +159,7 @@ public class ProgressAdapter {
 			numberOfTotalCalls += miniModel.getUnitDefinitionCount() + 
 			miniModel.getCompartmentCount() + 
 			miniModel.getSpeciesCount();	
-			if(prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)){
+			if (removeUnnecessaryParametersAndUnits) {
 				// removeUnnecessaryParameters loops
 				numberOfTotalCalls += modelOrig.getParameterCount() + 
 				modelOrig.getReactionCount();			
@@ -177,7 +175,7 @@ public class ProgressAdapter {
 			numberOfTotalCalls = 0;
 			for (Reaction reac : modelOrig.getListOfReactions()) {
 				if (reac.isSetKineticLaw()) {
-					String formula = reac.getKineticLaw().getFormula();
+					String formula = reac.getKineticLaw().getMath().toFormula();
 					if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
 						create = true;
 					}

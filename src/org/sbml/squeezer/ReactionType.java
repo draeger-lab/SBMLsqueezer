@@ -43,7 +43,6 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
-import de.zbit.util.prefs.SBPreferences;
 
 /**
  * The purpose of this class is to analyze a reaction object for several
@@ -290,32 +289,54 @@ public class ReactionType {
 	/**
 	 * 
 	 */
-	private SBPreferences prefs;
-
-	/**
-	 * 
-	 */
 	private double stoichiometryLeft = 0d, stoichiometryRight = 0d;
+	private boolean allReactionsAsEnzymeCatalyzed;
+	private Class<?> kineticsNoneEnzymeReaction;
+	private Class<?> kineticsGeneRegulation;
+	private Class<?> kineticsArbitraryEnzymeReaction;
+	private Class<?> kineticsUniUniType;
+	private Class<?> kineticsBiUniType;
+	private Class<?> kineticsBiBiType;
 
 
 	/**
-	 * Analyses the given reaction for several properties.
+	 * Analyzes the given {@link Reaction} for several properties with respect to the given settings.
 	 * 
 	 * @param r
 	 *        The reaction to be analyzed.
+	 * @param reversibility
+	 * @param allReactionsAsEnzymeCatalyzed
+	 * @param boundaryConditionForGenes
+	 * @param kineticsNoneEnzymeReactions
+	 * @param kineticsGeneRegulation
+	 * @param kineticsArbitraryEnzymeReaction
+	 * @param kineticsUniUniType
+	 * @param kineticsBiUniType
+	 * @param kineticsBiBiType
+	 * @param ignoreList
 	 * @throws RateLawNotApplicableException
 	 */
-	public ReactionType(Reaction r)
+	public ReactionType(Reaction r, boolean reversibility,
+		boolean allReactionsAsEnzymeCatalyzed, boolean boundaryConditionForGenes,
+		Class<?> kineticsNoneEnzymeReactions, Class<?> kineticsGeneRegulation,
+		Class<?> kineticsArbitraryEnzymeReaction, Class<?> kineticsUniUniType,
+		Class<?> kineticsBiUniType, Class<?> kineticsBiBiType, String... ignoreList)
 			throws RateLawNotApplicableException {
+		this.kineticsNoneEnzymeReaction = kineticsNoneEnzymeReactions;
+		this.kineticsGeneRegulation = kineticsGeneRegulation;
+		this.kineticsArbitraryEnzymeReaction = kineticsArbitraryEnzymeReaction;
+		this.kineticsUniUniType = kineticsUniUniType;
+		this.kineticsBiUniType = kineticsBiUniType;
+		this.kineticsBiBiType = kineticsBiBiType;
+		
 		int i;
 		this.reaction = r;
+		this.allReactionsAsEnzymeCatalyzed = allReactionsAsEnzymeCatalyzed;
 		// Check ignore list:
-		prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		String ignore = prefs.get(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
-		removeSpeciesAccordingToIgnoreList(reaction, ignore.contains(",") ? ignore.split(",") : new String[] {ignore});
-		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		this.reversibility = prefs
-				.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
+		// TODO:
+//		String ignore = prefs.get(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
+		removeSpeciesAccordingToIgnoreList(reaction, ignoreList);
+		this.reversibility = reversibility;
 
 		/*
 		 * Analyze properties of the reaction: compute stoichiometric properties
@@ -366,7 +387,7 @@ public class ReactionType {
 			identifyModifers(reaction, enzymes, activators, inhibitors,
 					nonEnzymeCatalysts);
 		}
-		nonEnzyme = ((!prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED) && enzymes.size() == 0)
+		nonEnzyme = ((!allReactionsAsEnzymeCatalyzed && enzymes.size() == 0)
 				|| (nonEnzymeCatalysts.size() > 0) 
 				|| (((reaction.getProductCount() == 0)
 						|| (SBO.isEmptySet(reaction.getProduct(0).getSpeciesInstance().getSBOTerm()))) && reaction.isReversible()));
@@ -417,8 +438,7 @@ public class ReactionType {
 		if (uniUni) {
 			Species species = reaction.getReactant(0).getSpeciesInstance();
 			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm())) {
-				if (prefs
-						.getBoolean(SqueezerOptions.SET_BOUNDARY_CONDITION_FOR_GENES)) {
+				if (boundaryConditionForGenes) {
 					setBoundaryCondition(species, true);
 				}
 				if (SBO.isTranslation(reaction.getSBOTerm())) {
@@ -541,9 +561,8 @@ public class ReactionType {
 	public Class<?> identifyPossibleKineticLaw() throws ClassNotFoundException {
 		if (representsEmptySet(reaction.getListOfReactants())) {
 			if (reactionWithGenes || reactionWithRNAs) {
-				if (SBMLsqueezer.getKineticsZeroReactants().contains(
-						prefs.get(SqueezerOptions.KINETICS_GENE_REGULATION))) {
-					return prefs.getClass(SqueezerOptions.KINETICS_GENE_REGULATION);
+				if (SBMLsqueezer.getKineticsZeroReactants().contains(kineticsGeneRegulation)) {
+					return kineticsGeneRegulation;
 				}
 				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
@@ -569,12 +588,12 @@ public class ReactionType {
 			}
 		}
 
-		boolean enzymeCatalyzed = prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED)
+		boolean enzymeCatalyzed = allReactionsAsEnzymeCatalyzed
 				|| (enzymes.size() > 0);
-		Class<?> whichkin = prefs.getClass(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS);
+		Class<?> whichkin = kineticsNoneEnzymeReaction;
 
 		if (enzymeCatalyzed) {
-			whichkin = prefs.getClass(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS);
+			whichkin = kineticsArbitraryEnzymeReaction;
 		}
 		if (stoichiometryLeft == 1d) {
 			Species reactant = reaction.getReactant(0).getSpeciesInstance();
@@ -584,18 +603,18 @@ public class ReactionType {
 						(SBO.isEmptySet(reactant.getSBOTerm()) && (SBO.isProtein(product.getSBOTerm())
 						|| SBO.isGeneric(product.getSBOTerm()) || SBO.isRNAOrMessengerRNA(product.getSBOTerm()))))
 						&& !(SBO.isEmptySet(product.getSBOTerm())))) {
-					whichkin = prefs.getClass(SqueezerOptions.KINETICS_GENE_REGULATION);
+					whichkin = kineticsGeneRegulation;
 				}
 			}
-			if (!whichkin.equals(prefs.get(SqueezerOptions.KINETICS_GENE_REGULATION))
+			if (!whichkin.equals(kineticsGeneRegulation)
 					&& (((enzymes.size() > 0) || enzymeCatalyzed) && ((stoichiometryRight == 1d) || !(reaction
 							.isReversible() || reversibility)))) {
-				whichkin = prefs.getClass(SqueezerOptions.KINETICS_UNI_UNI_TYPE);
+				whichkin = kineticsUniUniType;
 			}
 		} else if (biUni && enzymeCatalyzed) {
-			whichkin = prefs.getClass(SqueezerOptions.KINETICS_BI_UNI_TYPE);
+			whichkin = kineticsBiUniType;
 		} else if (biBi && enzymeCatalyzed) {
-			whichkin = prefs.getClass(SqueezerOptions.KINETICS_BI_BI_TYPE);
+			whichkin = kineticsBiBiType;
 		}
 		return whichkin;
 	}
@@ -830,7 +849,7 @@ public class ReactionType {
 	}
 
 	/**
-	 * set the boundaryCondition for a gen to the given value
+	 * set the boundaryCondition for a gene to the given value
 	 * 
 	 * @param species
 	 * @param condition

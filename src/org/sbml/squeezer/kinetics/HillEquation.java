@@ -176,7 +176,7 @@ public class HillEquation extends BasicKineticLaw implements
 		if (!isSetSBOTerm()){
 			return MESSAGES.getString("GENERALIZED_HILL_EQUATION_SIMPLE_NAME");
 		}
-		return SBO.getTerm(getSBOTerm()).getDefinition().replace("\\,", ",");
+		return SBO.getTerm(getSBOTerm()).getName().replace("\\,", ",");
 	}
 
 }

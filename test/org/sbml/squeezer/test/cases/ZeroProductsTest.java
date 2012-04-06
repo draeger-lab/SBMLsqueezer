@@ -66,11 +66,13 @@ public class ZeroProductsTest extends KineticsTest {
 
 		return model;
 	}
-	
+
+
 	/*=========================================================*
 	 *      I R R E V E R S I B L E   R E A C T I O N S        *
 	 *=========================================================*/
-	
+
+
 	/**
 	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction A -> _ with 0th order forward reaction
 	 * @throws Throwable
@@ -78,7 +80,7 @@ public class ZeroProductsTest extends KineticsTest {
 	@Test
 	public void testGMAK() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "zkass_r1");
+		test(r1, kl, "zkass_r1");
 	}
 	
 	/**
@@ -88,13 +90,16 @@ public class ZeroProductsTest extends KineticsTest {
 	@Test
 	public void testRevGMAK() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "kass_r1*s1*c1");
+		test(r1, kl, "kass_r1*s1*c1");
 	}
-	
+
+
+
 	/*=========================================================*
 	 *       R E V E R S I B L E   R E A C T I O N S        *
 	 *=========================================================*/
-	
+
+
 	/**
 	 * Tests {@link GeneralizedMassAction} Kinetics for the reaction A <=> _ with 0th order forward reaction
 	 * @throws Throwable
@@ -102,7 +107,7 @@ public class ZeroProductsTest extends KineticsTest {
 	@Test
 	public void testGMAKRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderForwardGMAK.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "zkass_r1-zkdiss_r1");
+		test(r1, kl, "zkass_r1-zkdiss_r1");
 	}
 
 	/**
@@ -112,7 +117,7 @@ public class ZeroProductsTest extends KineticsTest {
 	@Test
 	public void testRevGMAKRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, ZerothOrderReverseGMAK.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(kl, "kass_r1*s1*c1-zkdiss_r1");
+		test(r1, kl, "kass_r1*s1*c1-zkdiss_r1");
 	}
 
 }

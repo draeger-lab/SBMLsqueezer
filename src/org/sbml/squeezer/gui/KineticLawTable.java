@@ -102,14 +102,14 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	public KineticLawTable(KineticLawGenerator klg) {
 		super(new KineticLawTableModel(klg));
 		this.klg = klg;
-		this.reversibility = klg.getPreferences().getBoolean(
-				SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
+		this.reversibility = klg.isReversibility();
 		getModel().addTableModelListener(this);
 		setColumnWidthAppropriately();
 		setRowHeightAppropriately();
-		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer(klg
-				.getPreferences().getInt(
-						SqueezerOptions.MAX_NUMBER_OF_REACTANTS)));
+		setDefaultRenderer(
+			Object.class,
+			new KineticLawTableCellRenderer(SBPreferences.getPreferencesFor(
+				SqueezerOptions.class).getInt(SqueezerOptions.MAX_NUMBER_OF_REACTANTS)));
 		getTableHeader().setToolTipText(
 				StringUtil.toHTML(MESSAGES.getString("KINTEIC_LAW_TABLE_HEADER_TOOLTIP"), 40));
 		setCellSelectionEnabled(true);
@@ -279,7 +279,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 							oldLaw.getSimpleName()))
 						selected = i;
 				}
-				klg.getPreferences().flush();
+				// TODO	klg.getPreferences().flush();
 				final KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
 						possibleLaws, selected);
 				final JOptionPane pane = new JOptionPane(klsp,

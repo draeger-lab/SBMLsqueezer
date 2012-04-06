@@ -32,6 +32,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit.Kind;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -477,24 +478,38 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 	 * @return A formula consisting of a constant multiplied with the product
 	 *         over all reactants.
 	 */
-	@SuppressWarnings("deprecation")
 	ASTNode association(List<String> catalysts, int catNum) {
 		Reaction r = getParentSBMLObject();
 		LocalParameter p_kass = parameterFactory.parameterAssociationConst(
 			catalysts.size() > 0 ? catalysts.get(catNum) : null);
-		ASTNode ass = new ASTNode(p_kass, this);
+		ASTNode astNode = new ASTNode(p_kass, this);
 		for (SpeciesReference specRef : r.getListOfReactants()) {
-			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
-				ASTNode basis = speciesTerm(specRef);
-				if (specRef.isSetStoichiometryMath()) {
-					basis.raiseByThePowerOf(specRef.getStoichiometryMath().getMath().clone());
-				} else {
-					basis.raiseByThePowerOf(specRef.getStoichiometry());
-				}
-				ass.multiplyWith(basis);
-			}
+			createTerm(astNode, specRef);
 		}
-		return ass;
+		return astNode;
+	}
+
+	/**
+	 * 
+	 * @param astNode
+	 * @param specRef
+	 */
+	@SuppressWarnings("deprecation")
+	private void createTerm(ASTNode astNode, SpeciesReference specRef) {
+		if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
+			ASTNode basis = speciesTerm(specRef);
+			if (specRef.isSetStoichiometryMath()) {
+				basis.raiseByThePowerOf(specRef.getStoichiometryMath().getMath().clone());
+			} else {
+				double stoichiometry = specRef.getStoichiometry();
+				basis.raiseByThePowerOf(stoichiometry);
+				if ((stoichiometry != 0d) && (stoichiometry != 1d) && (getLevel() > 2)) {
+					// The right child must be the stoichiometric coefficient because we just set it as exponent.
+					basis.getRightChild().setUnits(Kind.DIMENSIONLESS.toString().toLowerCase());
+				}
+			}
+			astNode.multiplyWith(basis);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -534,14 +549,11 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 		Reaction r = getParentSBMLObject();
 		LocalParameter p_kdiss = parameterFactory.parameterDissociationConst(
 			catalysts.size() > 0 ? catalysts.get(c) : null);
-		ASTNode diss = new ASTNode(p_kdiss, this);
+		ASTNode astNode = new ASTNode(p_kdiss, this);
 		for (SpeciesReference specRef : r.getListOfProducts()) {
-			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
-				diss.multiplyWith(ASTNode.pow(speciesTerm(specRef),
-						new ASTNode(specRef.getStoichiometry(), this)));
-			}
+			createTerm(astNode, specRef);
 		}
-		return diss;
+		return astNode;
 	}
 
 	/**

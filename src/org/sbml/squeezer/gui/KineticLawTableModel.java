@@ -37,6 +37,7 @@ import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
+import de.zbit.util.prefs.SBPreferences;
 
 /**
  * Data model for the {@link KineticLawTable} that determins, which information
@@ -91,7 +92,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 		data = new Object[klg.getCreatedKineticsCount()][this.columnNames.length];
 		numOfWarnings = 0;
 
-		int maxNumReactants = klg.getPreferences().getInt(
+		int maxNumReactants = SBPreferences.getPreferencesFor(SqueezerOptions.class).getInt(
 				SqueezerOptions.MAX_NUMBER_OF_REACTANTS);
 		for (reactionNum = 0; reactionNum < klg.getCreatedKineticsCount(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);

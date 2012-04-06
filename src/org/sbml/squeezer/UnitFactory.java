@@ -131,9 +131,13 @@ public class UnitFactory {
 		for (int i = 0; i < id.length(); i++) {
 			c = id.charAt(i);
 			if (c == '^') {
-				sb.append("pow");
+				sb.append("_pow");
+			} else if (c == '\u03BC') {
+				sb.append("micro");
 			} else if (Character.isDigit(c) || Character.isLetter(c)) {
 				sb.append(c);
+			} else if ((c == '.') && (id.charAt(i + 1) == '0')) {
+				i++;
 			} else {
 				sb.append('_');
 			}
@@ -195,7 +199,7 @@ public class UnitFactory {
 					if (specRef instanceof SpeciesReference) {
 						SpeciesReference ref = (SpeciesReference) specRef;
 						if (ref.isSetStoichiometry() && (x.length < listOf.size())) {
-							u.setExponent(u.getExponent() + (ref.getStoichiometry() - 1));
+							u.setExponent(u.getExponent() * (ref.getStoichiometry()));
 						}
 					} else if (x.length == listOf.size()) {
 						u.setExponent(x[i]);

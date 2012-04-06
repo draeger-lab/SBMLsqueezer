@@ -117,12 +117,6 @@ public class KineticLawGenerator {
 	 */
 	private Model modelOrig;
 
-	/**
-	 * A hashtable that contains all settings of how to create kinetic
-	 * equations.
-	 */
-	private SBPreferences prefs;
-
 	private ProgressAdapter progressAdapter = null;
 	protected AbstractProgressBar progressBar = null;
 	
@@ -130,6 +124,168 @@ public class KineticLawGenerator {
 	 * 
 	 */
 	private final Logger logger = Logger.getLogger(KineticLawGenerator.class.getName());
+	private boolean defaultHasOnlySubstanceUnits;
+	private boolean generateLawsForAllReactions;
+	private boolean removeUnnecessaryParameters;
+	private TypeStandardVersion typeStandardVersion;
+	private boolean reversibility;
+	private UnitConsistencyType typeUnitConsistency;
+	private double defaultParamVal;
+	private boolean setBoundaryCondition;
+	private double defaultSpeciesInitVal;
+	private double defaultCompartmentInitSize;
+	
+	/**
+	 * @return the defaultHasOnlySubstanceUnits
+	 */
+	public boolean isDefaultHasOnlySubstanceUnits() {
+		return defaultHasOnlySubstanceUnits;
+	}
+
+	/**
+	 * @param defaultHasOnlySubstanceUnits the defaultHasOnlySubstanceUnits to set
+	 */
+	public void setDefaultHasOnlySubstanceUnits(boolean defaultHasOnlySubstanceUnits) {
+		this.defaultHasOnlySubstanceUnits = defaultHasOnlySubstanceUnits;
+	}
+
+	/**
+	 * @return the removeUnnecessaryParameters
+	 */
+	public boolean isRemoveUnnecessaryParameters() {
+		return removeUnnecessaryParameters;
+	}
+
+	/**
+	 * @param removeUnnecessaryParameters the removeUnnecessaryParameters to set
+	 */
+	public void setRemoveUnnecessaryParameters(boolean removeUnnecessaryParameters) {
+		this.removeUnnecessaryParameters = removeUnnecessaryParameters;
+	}
+
+	/**
+	 * @return the typeStandardVersion
+	 */
+	public TypeStandardVersion getTypeStandardVersion() {
+		return typeStandardVersion;
+	}
+
+	/**
+	 * @param typeStandardVersion the typeStandardVersion to set
+	 */
+	public void setTypeStandardVersion(TypeStandardVersion typeStandardVersion) {
+		this.typeStandardVersion = typeStandardVersion;
+	}
+
+	/**
+	 * @return the typeUnitConsistency
+	 */
+	public UnitConsistencyType getTypeUnitConsistency() {
+		return typeUnitConsistency;
+	}
+
+	/**
+	 * @param typeUnitConsistency the typeUnitConsistency to set
+	 */
+	public void setTypeUnitConsistency(UnitConsistencyType typeUnitConsistency) {
+		this.typeUnitConsistency = typeUnitConsistency;
+	}
+
+	/**
+	 * @return the defaultParamVal
+	 */
+	public double getDefaultParamVal() {
+		return defaultParamVal;
+	}
+
+	/**
+	 * @param defaultParamVal the defaultParamVal to set
+	 */
+	public void setDefaultParamVal(double defaultParamVal) {
+		this.defaultParamVal = defaultParamVal;
+	}
+
+	/**
+	 * @return the setBoundaryCondition
+	 */
+	public boolean isSetBoundaryCondition() {
+		return setBoundaryCondition;
+	}
+
+	/**
+	 * @param setBoundaryCondition the setBoundaryCondition to set
+	 */
+	public void setSetBoundaryCondition(boolean setBoundaryCondition) {
+		this.setBoundaryCondition = setBoundaryCondition;
+	}
+
+	/**
+	 * @return the defaultSpeciesInitVal
+	 */
+	public double getDefaultSpeciesInitVal() {
+		return defaultSpeciesInitVal;
+	}
+
+	/**
+	 * @param defaultSpeciesInitVal the defaultSpeciesInitVal to set
+	 */
+	public void setDefaultSpeciesInitVal(double defaultSpeciesInitVal) {
+		this.defaultSpeciesInitVal = defaultSpeciesInitVal;
+	}
+
+	/**
+	 * @return the defaultCompartmentInitSize
+	 */
+	public double getDefaultCompartmentInitSize() {
+		return defaultCompartmentInitSize;
+	}
+
+	/**
+	 * @param defaultCompartmentInitSize the defaultCompartmentInitSize to set
+	 */
+	public void setDefaultCompartmentInitSize(double defaultCompartmentInitSize) {
+		this.defaultCompartmentInitSize = defaultCompartmentInitSize;
+	}
+
+	/**
+	 * @return the addParametersGlobally
+	 */
+	public boolean isAddParametersGlobally() {
+		return addParametersGlobally;
+	}
+
+	/**
+	 * @param addParametersGlobally the addParametersGlobally to set
+	 */
+	public void setAddParametersGlobally(boolean addParametersGlobally) {
+		this.addParametersGlobally = addParametersGlobally;
+	}
+
+	/**
+	 * @return the reversibility
+	 */
+	public boolean isReversibility() {
+		return reversibility;
+	}
+
+	/**
+	 * @param reversibility the reversibility to set
+	 */
+	public void setReversibility(boolean reversibility) {
+		this.reversibility = reversibility;
+	}
+
+
+	private boolean addParametersGlobally;
+	private SortedSet<Integer> possibleEnzymes;
+	private boolean allReactionsAsEnzymeCatalyzed;
+	private Class<?> kineticsGeneRegulation;
+	private Class<?> kineticsNoneEnzymeReactions;
+	private Class<?> kineticsUniUniType;
+	private Class<?> kineticsArbitraryEnzymeReaction;
+	private Class<?> kineticsBiUniType;
+	private Class<?> kineticsBiBiType;
+	private String speciesIgnoreList[];
 
 	/**
 	 * Takes a model and settings for kinetic law generation as input, creates a
@@ -139,13 +295,10 @@ public class KineticLawGenerator {
 	 * 
 	 * @param model
 	 * @param settings
-	 * @throws Throwable
+	 * @throws ClassNotFoundException 
 	 */
-	public KineticLawGenerator(Model model)
-	throws Throwable {
-		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		this.modelOrig = model;
-		init();
+	public KineticLawGenerator(Model model) throws ClassNotFoundException {
+		this(model, null);
 	}
 
 	/**
@@ -153,11 +306,186 @@ public class KineticLawGenerator {
 	 * @param model
 	 * @param reactionID
 	 * @param settings
+	 * @throws ClassNotFoundException 
 	 */
-	public KineticLawGenerator(Model model, String reactionID) {
-		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+	public KineticLawGenerator(Model model, String reactionID) throws ClassNotFoundException {
+		
+		// Initialize user settings:
+		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+		defaultHasOnlySubstanceUnits = prefs.getBoolean(SqueezerOptions.DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS);
+		generateLawsForAllReactions = prefs.getBoolean(SqueezerOptions.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS);
+		removeUnnecessaryParameters = prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS);
+		typeStandardVersion = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
+		reversibility = prefs.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
+		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
+		defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
+		setBoundaryCondition = prefs.getBoolean(SqueezerOptions.SET_BOUNDARY_CONDITION_FOR_GENES);
+		defaultSpeciesInitVal = prefs.getDouble(SqueezerOptions.DEFAULT_SPECIES_INIT_VAL);
+		defaultCompartmentInitSize = prefs.getDouble(SqueezerOptions.DEFAULT_COMPARTMENT_SIZE);
+		addParametersGlobally = prefs.getBoolean(SqueezerOptions.NEW_PARAMETERS_GLOBAL);
+		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED);
+		kineticsGeneRegulation = prefs.getClass(SqueezerOptions.KINETICS_GENE_REGULATION);
+		kineticsNoneEnzymeReactions = prefs.getClass(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS);
+		kineticsUniUniType = prefs.getClass(SqueezerOptions.KINETICS_UNI_UNI_TYPE);
+		kineticsArbitraryEnzymeReaction = prefs.getClass(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS); 
+		kineticsBiUniType = prefs.getClass(SqueezerOptions.KINETICS_BI_UNI_TYPE);
+		kineticsBiBiType = prefs.getClass(SqueezerOptions.KINETICS_BI_BI_TYPE);
+		String l = prefs.getString(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
+		if ((l != null) && l.contains(",")) {
+			speciesIgnoreList = l.split(",");
+		}
+
+		possibleEnzymes = new TreeSet<Integer>();
+		String name;
+		@SuppressWarnings("unchecked")
+		Option<Boolean> options[] = (Option<Boolean>[]) new Option[] {
+				SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA,
+				SqueezerOptions.POSSIBLE_ENZYME_COMPLEX,
+				SqueezerOptions.POSSIBLE_ENZYME_GENERIC,
+				SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR,
+				SqueezerOptions.POSSIBLE_ENZYME_RNA,
+				SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
+				SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED,
+				SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN 
+		};
+		for (Option<Boolean> option : options) {
+			name = option.getName();
+			if (prefs.getBoolean(option)) {
+				possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO(name.substring(name.lastIndexOf('_') + 1))));
+			}
+		}
+		// One more enzyme type that is not reflected in CellDesigner:
+		if (prefs.getBoolean(SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE)) {
+			name = SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE.getName();
+			possibleEnzymes.add(Integer.valueOf(245));
+		}
+		
+		// Initialize the mini model:
 		this.modelOrig = model;
-		init(reactionID);
+		listOfFastReactions = new LinkedList<Reaction>();
+		this.miniModel = createMinimalModel(reactionID);
+		updateEnzymeCatalysis();
+	}
+
+	/**
+	 * @return the allReactionsAsEnzymeCatalyzed
+	 */
+	public boolean isAllReactionsAsEnzymeCatalyzed() {
+		return allReactionsAsEnzymeCatalyzed;
+	}
+
+	/**
+	 * @param allReactionsAsEnzymeCatalyzed the allReactionsAsEnzymeCatalyzed to set
+	 */
+	public void setAllReactionsAsEnzymeCatalyzed(
+		boolean allReactionsAsEnzymeCatalyzed) {
+		this.allReactionsAsEnzymeCatalyzed = allReactionsAsEnzymeCatalyzed;
+	}
+
+	/**
+	 * @return the kineticsGeneRegulation
+	 */
+	public Class<?> getKineticsGeneRegulation() {
+		return kineticsGeneRegulation;
+	}
+
+	/**
+	 * @param kineticsGeneRegulation the kineticsGeneRegulation to set
+	 */
+	public void setKineticsGeneRegulation(Class<?> kineticsGeneRegulation) {
+		this.kineticsGeneRegulation = kineticsGeneRegulation;
+	}
+
+	/**
+	 * @return the kineticsNoneEnzymeReactions
+	 */
+	public Class<?> getKineticsNoneEnzymeReactions() {
+		return kineticsNoneEnzymeReactions;
+	}
+
+	/**
+	 * @param kineticsNoneEnzymeReactions the kineticsNoneEnzymeReactions to set
+	 */
+	public void setKineticsNoneEnzymeReactions(Class<?> kineticsNoneEnzymeReactions) {
+		this.kineticsNoneEnzymeReactions = kineticsNoneEnzymeReactions;
+	}
+
+	/**
+	 * @return the kineticsUniUniType
+	 */
+	public Class<?> getKineticsUniUniType() {
+		return kineticsUniUniType;
+	}
+
+	/**
+	 * @param kineticsUniUniType the kineticsUniUniType to set
+	 */
+	public void setKineticsUniUniType(Class<?> kineticsUniUniType) {
+		this.kineticsUniUniType = kineticsUniUniType;
+	}
+
+	/**
+	 * @return the kineticsArbitraryEnzymeReaction
+	 */
+	public Class<?> getKineticsArbitraryEnzymeReaction() {
+		return kineticsArbitraryEnzymeReaction;
+	}
+
+	/**
+	 * @param kineticsArbitraryEnzymeReaction the kineticsArbitraryEnzymeReaction to set
+	 */
+	public void setKineticsArbitraryEnzymeReaction(
+		Class<?> kineticsArbitraryEnzymeReaction) {
+		this.kineticsArbitraryEnzymeReaction = kineticsArbitraryEnzymeReaction;
+	}
+
+	/**
+	 * @return the kineticsBiUniType
+	 */
+	public Class<?> getKineticsBiUniType() {
+		return kineticsBiUniType;
+	}
+
+	/**
+	 * @param kineticsBiUniType the kineticsBiUniType to set
+	 */
+	public void setKineticsBiUniType(Class<?> kineticsBiUniType) {
+		this.kineticsBiUniType = kineticsBiUniType;
+	}
+
+	/**
+	 * @return the kineticsBiBiType
+	 */
+	public Class<?> getKineticsBiBiType() {
+		return kineticsBiBiType;
+	}
+
+	/**
+	 * @param kineticsBiBiType the kineticsBiBiType to set
+	 */
+	public void setKineticsBiBiType(Class<?> kineticsBiBiType) {
+		this.kineticsBiBiType = kineticsBiBiType;
+	}
+
+	/**
+	 * @return the speciesIgnoreList
+	 */
+	public String[] getSpeciesIgnoreList() {
+		return speciesIgnoreList;
+	}
+
+	/**
+	 * @param speciesIgnoreList the speciesIgnoreList to set
+	 */
+	public void setSpeciesIgnoreList(String[] speciesIgnoreList) {
+		this.speciesIgnoreList = speciesIgnoreList;
+	}
+
+	/**
+	 * @param possibleEnzymes the possibleEnzymes to set
+	 */
+	public void setPossibleEnzymes(SortedSet<Integer> possibleEnzymes) {
+		this.possibleEnzymes = possibleEnzymes;
 	}
 
 	/**
@@ -271,6 +599,7 @@ public class KineticLawGenerator {
 			if (!Unit.isUnitKind(compartment.getUnits(), compartment.getLevel(), compartment.getVersion())) {
 				if (miniModel.getUnitDefinition(compartment.getUnits()) == null) {
 					UnitDefinition ud = compartmenOrig.getUnitsInstance();
+					// TODO: Set L3-specific fall-back units for compartments!
 					if (ud != null) {
 						miniModel.addUnitDefinition(ud.clone());
 					} else {
@@ -297,8 +626,7 @@ public class KineticLawGenerator {
 		}
 		Species spec = miniModel.getSpecies(speciesOrig.getId());
 		if (!spec.isSetHasOnlySubstanceUnits()) {
-			spec.setHasOnlySubstanceUnits(prefs
-					.getBoolean(SqueezerOptions.DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS));
+			spec.setHasOnlySubstanceUnits(defaultHasOnlySubstanceUnits);
 		}
 		Compartment compartment = miniModel.getCompartment(speciesOrig
 				.getCompartment());
@@ -360,6 +688,12 @@ public class KineticLawGenerator {
 		boolean reversibility, TypeStandardVersion version,
 		UnitConsistencyType consistency, double defaultNewParamVal)
 		throws Throwable {
+		
+		this.reversibility = reversibility;
+		this.typeStandardVersion = version;
+		this.typeUnitConsistency = consistency;
+		this.defaultParamVal = defaultNewParamVal;
+		
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null) {
 			reaction = r;
@@ -397,31 +731,49 @@ public class KineticLawGenerator {
 	@SuppressWarnings("deprecation")
 	private Model createMinimalModel(String reactionID) {
 		
-		boolean create = (prefs.getBoolean(SqueezerOptions.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS));
+		boolean create = generateLawsForAllReactions;
 		int level = modelOrig.getLevel(), version = modelOrig.getVersion();
 		SBMLDocument miniDoc = new SBMLDocument(level, version);
 		Model miniModel = miniDoc.createModel(modelOrig.getId());	  
 		//miniModel.addChangeListener(new ModelChangeListener());
-		UnitDefinition timeUD, substanceUD;
+		UnitDefinition timeUD, tUDorig, substanceUD, sUDorig;
 
 		/*
 		 * Create default units for time, substance and volume if missing: 
 		 */	  
 		// set time unit definition if it is not already set
 		timeUD = miniModel.getUnitDefinition(UnitDefinition.TIME);
-		if (timeUD == null) {
+		tUDorig = modelOrig.getTimeUnitsInstance();
+		if ((timeUD == null) || ((tUDorig != null) && (!UnitDefinition.areIdentical(tUDorig, timeUD)))) {
 			// This may happen in Level 3.
-			timeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.TIME, 2, 4);
+			if (tUDorig == null) {
+				timeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.TIME, 2, 4);
+			} else {
+				timeUD = tUDorig.clone();
+			}
 			SBMLtools.setLevelAndVersion(timeUD, level, version);
-			miniModel.setTimeUnits(timeUD);
+			if (level > 2) {
+				miniModel.setTimeUnits(timeUD);
+			} else {
+				miniModel.addUnitDefinition(timeUD);
+			}
 		}	
 		// set substance unit definition if it is not already set
 		substanceUD = miniModel.getUnitDefinition(UnitDefinition.SUBSTANCE);
-		if (substanceUD == null) {
+		sUDorig = modelOrig.getSubstanceUnitsInstance();
+		if ((substanceUD == null) || ((sUDorig != null) && (!UnitDefinition.areIdentical(sUDorig, substanceUD)))) {
 			// This may happen in Level 3.
-			substanceUD = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
+			if (sUDorig == null) {
+				substanceUD = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
+			} else {
+				substanceUD = sUDorig.clone();
+			}
 			SBMLtools.setLevelAndVersion(substanceUD, level, version);
-			miniModel.setSubstanceUnits(substanceUD);
+			if (level > 2) {
+				miniModel.setSubstanceUnits(substanceUD);
+			} else {
+				miniModel.addUnitDefinition(substanceUD);
+			}
 		}
 		
 //		/* 
@@ -447,7 +799,7 @@ public class KineticLawGenerator {
 		
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.createMiniModel);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 		}
 
 		/*
@@ -547,31 +899,30 @@ public class KineticLawGenerator {
 		
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.generateLaws);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 		}
 		
-		boolean reversibility = prefs.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
-		double defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
-		TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
-		UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
-		
 		for (Reaction r : miniModel.getListOfReactions()) {
-			ReactionType rt = new ReactionType(r);
+			ReactionType rt = new ReactionType(r, reversibility,
+				allReactionsAsEnzymeCatalyzed, setBoundaryCondition,
+				kineticsNoneEnzymeReactions, kineticsGeneRegulation,
+				kineticsArbitraryEnzymeReaction, kineticsUniUniType, kineticsBiUniType,
+				kineticsBiBiType, speciesIgnoreList);
 			
 			Class<?> kineticsClass = rt.identifyPossibleKineticLaw();
 			
 			if (progressAdapter != null) {
-				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
 			
 			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(this, r,
-				kineticsClass, reversibility, version, consistency, defaultParamVal);
+				kineticsClass, reversibility, typeStandardVersion, typeUnitConsistency, defaultParamVal);
 			
 			klgw.run();
 			
 			if (progressAdapter != null) {
-				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
 		}
@@ -640,40 +991,8 @@ public class KineticLawGenerator {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public SortedSet<Integer> getPossibleEnzymes() {
-		SortedSet<Integer> possibleEnzymes = new TreeSet<Integer>();
-		String name;
-		Option<Boolean> options[] = (Option<Boolean>[]) new Option[] {
-				SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA,
-				SqueezerOptions.POSSIBLE_ENZYME_COMPLEX,
-				SqueezerOptions.POSSIBLE_ENZYME_GENERIC,
-				SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR,
-				SqueezerOptions.POSSIBLE_ENZYME_RNA,
-				SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
-				SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED,
-				SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN 
-		};
-		for (Option<Boolean> option : options) {
-			name = option.getName();
-			if (prefs.getBoolean(option)) {
-				possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO(name.substring(name.lastIndexOf('_') + 1))));
-			}
-		}
-		// One more enzyme type that is not reflected in CellDesigner:
-		if (prefs.getBoolean(SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE)) {
-			name = SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE.getName();
-			possibleEnzymes.add(Integer.valueOf(245));
-		}
 		return possibleEnzymes;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public SBPreferences getPreferences() {
-		return prefs;
 	}
 
 	/**
@@ -683,8 +1002,12 @@ public class KineticLawGenerator {
 	 * @throws RateLawNotApplicableException
 	 */
 	public ReactionType getReactionType(String reactionID)
-	throws RateLawNotApplicableException {
-		return new ReactionType(miniModel.getReaction(reactionID));
+		throws RateLawNotApplicableException {
+		return new ReactionType(miniModel.getReaction(reactionID), reversibility,
+			allReactionsAsEnzymeCatalyzed, setBoundaryCondition,
+			kineticsNoneEnzymeReactions, kineticsGeneRegulation,
+			kineticsArbitraryEnzymeReaction, kineticsUniUniType, kineticsBiUniType,
+			kineticsBiBiType, speciesIgnoreList);
 	}
 
 	/**
@@ -705,29 +1028,6 @@ public class KineticLawGenerator {
 			fullRank = true;
 		}
 		return fullRank;
-	}
-
-	/**
-	 * load default settings and initialize this object.
-	 * 
-	 * @param reactionID
-	 */
-	private void init() {
-		init(null);
-	}
-
-	/**
-	 * load default settings and initialize this object.
-	 * 
-	 * @param reactionID
-	 */
-	private void init(String reactionID) {
-		if (prefs == null) {
-			prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		}
-		listOfFastReactions = new LinkedList<Reaction>();
-		this.miniModel = createMinimalModel(reactionID);
-		updateEnzymeCatalysis();
 	}
 
 	/**
@@ -1031,23 +1331,18 @@ public class KineticLawGenerator {
 	private Reaction storeKineticLaw(KineticLaw kineticLaw,
 			boolean removeParametersAndStoreUnits) {
 		int i;
-		boolean reversibility = prefs.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
 		Reaction reaction = modelOrig.getReaction(kineticLaw.getParentSBMLObject().getId());
 		reaction.setReversible(reversibility || reaction.getReversible());
 		reaction.setKineticLaw(kineticLaw);
 		// set the BoundaryCondition to true for genes if not set anyway:
-		boolean setBoundary = prefs.getBoolean(SqueezerOptions.SET_BOUNDARY_CONDITION_FOR_GENES);
-		setBoundaryCondition(reaction.getListOfReactants(), setBoundary);
-		setBoundaryCondition(reaction.getListOfProducts(), setBoundary);
-		setInitialConcentrationTo(reaction, 
-		    prefs.getDouble(SqueezerOptions.DEFAULT_SPECIES_INIT_VAL), 
-				prefs.getDouble(SqueezerOptions.DEFAULT_COMPARTMENT_SIZE));
+		setBoundaryCondition(reaction.getListOfReactants(), setBoundaryCondition);
+		setBoundaryCondition(reaction.getListOfProducts(), setBoundaryCondition);
+		setInitialConcentrationTo(reaction, defaultSpeciesInitVal, defaultCompartmentInitSize);
 		if (removeParametersAndStoreUnits) {
 			storeUnits();
 		}
 		storeParamters(reaction);
-		if (removeParametersAndStoreUnits
-				&& prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
+		if (removeParametersAndStoreUnits && removeUnnecessaryParameters) {
 			/*
 			 * delete unnecessary units.
 			 */
@@ -1113,10 +1408,10 @@ public class KineticLawGenerator {
 	public Reaction storeKineticLaw(KineticLaw kineticLaw) {
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaw);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 		}
 		
-		Reaction r =  storeKineticLaw(kineticLaw, true);
+		Reaction r = storeKineticLaw(kineticLaw, true);
 		
 		if (progressAdapter != null) {
 			progressAdapter.finished();
@@ -1138,7 +1433,7 @@ public class KineticLawGenerator {
 		
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaws);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 		}
 
 		ModelChangeListener chl = new ModelChangeListener();
@@ -1150,7 +1445,7 @@ public class KineticLawGenerator {
 		
 		storeUnits();
 		
-		if (prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS)) {
+		if (removeUnnecessaryParameters) {
 			removeUnnecessaryParameters(modelOrig);
 		}
 		modelOrig.removeTreeNodeChangeListener(chl);
@@ -1171,9 +1466,8 @@ public class KineticLawGenerator {
 		// setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
 		ListOf<LocalParameter> paramListLocal = kineticLaw.getListOfLocalParameters();
-		boolean addGlobally = prefs.getBoolean(SqueezerOptions.NEW_PARAMETERS_GLOBAL);
 		for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--) {
-			if (addGlobally) {
+			if (addParametersGlobally) {
 				Parameter p = new Parameter(paramListLocal.remove(paramNum));
 				if (modelOrig.getParameter(p.getId()) != null) {
 					modelOrig.removeParameter(p.getId());
@@ -1193,7 +1487,7 @@ public class KineticLawGenerator {
 		}
 		kineticLaw.getMath().updateVariables();
 		if (progressAdapter != null) {
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 			progressAdapter.progressOn();
 		}
 	}
@@ -1223,7 +1517,7 @@ public class KineticLawGenerator {
 				}
 			}
 			if (progressAdapter != null) {
-				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
 			if (units != ud.getUnitCount()) {
@@ -1248,7 +1542,7 @@ public class KineticLawGenerator {
 			}
 			checkUnits(corig, modelOrig);
 			if (progressAdapter != null) {
-				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
 		}
@@ -1270,7 +1564,7 @@ public class KineticLawGenerator {
 			checkUnits(sorig, modelOrig);
 			
 			if (progressAdapter != null) {
-				progressAdapter.setNumberOfTags(modelOrig, miniModel, prefs);
+				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
 		}
@@ -1290,12 +1584,10 @@ public class KineticLawGenerator {
 				Species species = modifier.getSpeciesInstance();
 				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())
 						&& species.isSetSBOTerm()
-						&& !possibleEnzymes.contains(Integer.valueOf(species
-								.getSBOTerm()))) {
+						&& !possibleEnzymes.contains(Integer.valueOf(species.getSBOTerm()))) {
 					SBMLtools.setSBOTerm(modifier, SBO.getCatalysis());
 				} else if (SBO.isCatalyst(modifier.getSBOTerm())
-						&& (possibleEnzymes.contains(Integer.valueOf(species
-								.getSBOTerm())) || !species.isSetSBOTerm())) {
+						&& (possibleEnzymes.contains(Integer.valueOf(species.getSBOTerm())) || !species.isSetSBOTerm())) {
 					SBMLtools.setSBOTerm(modifier, SBO.getEnzymaticCatalysis());
 				}
 			}
