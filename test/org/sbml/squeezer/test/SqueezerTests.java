@@ -112,8 +112,8 @@ public class SqueezerTests extends TestCase{
 		SBMLInputConverter reader = null;
 		SBMLOutputConverter writer = null;
 		if (!libSBMLAvailable) {
-			reader = new SqSBMLReader() ;
-			writer = new SqSBMLWriter() ;
+			reader = new SqSBMLReader();
+			writer = new SqSBMLWriter();
 		} else {
 			reader = new LibSBMLReader();
 			writer = new LibSBMLWriter();
@@ -436,8 +436,8 @@ public class SqueezerTests extends TestCase{
 		SBMLInputConverter reader = null;
 		SBMLOutputConverter writer = null;
 		if (!libSBMLAvailable) {
-			reader = new SqSBMLReader() ;
-			writer = new SqSBMLWriter() ;
+			reader = new SqSBMLReader();
+			writer = new SqSBMLWriter();
 		} else {
 			reader = new LibSBMLReader();
 			writer = new LibSBMLWriter();

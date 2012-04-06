@@ -47,8 +47,8 @@ import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 import de.zbit.gui.GUITools;
-import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * This class allows SBMLsqueezer to create a kinetic law interactively for just
@@ -151,8 +151,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			Class<?> equationType = messagePanel.getSelectedKinetic();
 			reaction.addTreeNodeChangeListener(sbmlio);
 			reaction.setReversible(messagePanel.getReversible());
-			klg.getPreferences().put(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE,
-					Boolean.valueOf(messagePanel.getReversible()));
+			klg.setReversibility(messagePanel.getReversible());
 			
 			double defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
 			TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));

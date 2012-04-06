@@ -34,7 +34,6 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.AdditiveModelLinear;
-import org.sbml.squeezer.kinetics.AdditiveModelNonLinear;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 /**
@@ -92,9 +91,12 @@ public class ReversibleKinetics extends KineticsTest {
 	 */
 	@Test
 	public void testAdditiveLinear() throws Throwable{
+		// TODO
 		SBMLWriter.write(model.getSBMLDocument(), System.out, ' ', (short) 2);
 		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-		test(kl, "m_r1*(w_r1_p1*p1*c1+w_r1_p2*p2*c1+(b_r1+(v_r1_a1*a1*c1+v_r1_k1*k1*c1+v_r1_i1*i1*c1)))");
+		test(r1, kl, "m_r1*(w_r1_p1*p1*c1+w_r1_p2*p2*c1+(b_r1+(v_r1_a1*a1*c1+v_r1_k1*k1*c1+v_r1_i1*i1*c1)))");
 	}
+	
+	// TODO: More test cases!
 
 }
