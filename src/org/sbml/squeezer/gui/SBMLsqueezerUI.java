@@ -310,12 +310,17 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				try {
 					// TODO: use paths to all expanded nodes plus the paths to all selected nodes!
 					SBMLTree tree = split.getTree();
-//					tree.saveSelectionPath();
+					tree.saveSelectionPath();
 					TreePath path = tree.getSelectionPath();
 					TreePath selectionPath = tree.getSelectionModel().getSelectionPath();
+					
+					// TODO: second call is needed to refresh tree, don't know why
 					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
+					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
+					
 					setupContextMenu(split, path, selectionPath);
-//					split.getTree().restoreSelectionPath();
+					split.getTree().restoreSelectionPath();
+
 				} catch (Exception exc) {
 					exc.printStackTrace();
 				}

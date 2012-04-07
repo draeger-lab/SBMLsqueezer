@@ -383,6 +383,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	public void apply() {
 		if (!KineticsAndParametersStoredInSBML && klg != null
 				&& sbmlIO != null) {
+			KineticsAndParametersStoredInSBML = true;
 			new Thread(new Runnable() {
 				public void run() {
 					setVisible(false);
