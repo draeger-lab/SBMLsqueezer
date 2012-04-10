@@ -35,7 +35,7 @@ import de.zbit.sbml.gui.SBMLModelSplitPane;
  * @author Andreas Dr&auml;ger
  * @since 1.4
  * @date 2010-04-09
- * 
+ * @version $Rev$
  */
 @Ignore
 public class ModelDialog extends JDialog {

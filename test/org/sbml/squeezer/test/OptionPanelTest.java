@@ -1,6 +1,6 @@
 /*
  * $Id:  OptionPanelTest.java 12:42:09 draeger$
- * $URL: OptionPanelTest.java $
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).

@@ -39,7 +39,17 @@ import org.sbml.jsbml.util.TreeNodeChangeListener;
  */
 public class ModelChangeListener implements TreeNodeChangeListener {
 
+	/**
+	 * A {@link Logger} for this class.
+	 */
 	private Logger logger = Logger.getLogger(ModelChangeListener.class.getName());
+	
+	/**
+	 * 
+	 */
+	public ModelChangeListener() {
+		super();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeAdded(javax.swing.tree.TreeNode)

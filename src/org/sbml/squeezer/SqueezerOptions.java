@@ -25,9 +25,11 @@ package org.sbml.squeezer;
 
 import java.util.ResourceBundle;
 
+import org.sbml.squeezer.kinetics.CommonModularRateLaw;
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillHinzeEquation;
+import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
 import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
@@ -53,6 +55,8 @@ import de.zbit.util.prefs.Range;
  */
 public interface SqueezerOptions extends KeyProvider {
 	
+	// TODO: Separate configuration of reversible and irreversible rate laws!
+	
 	/**
 	 * 
 	 */
@@ -72,6 +76,27 @@ public interface SqueezerOptions extends KeyProvider {
 			OPTIONS_BUNDLE,
 			new Range<Class>(Class.class, SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
 			ConvenienceKinetics.class);
+	
+	/**
+	 * 
+	 */
+	public static final Option<Class> KINETICS_ARBITRARY_IRREV_ENZYME_REACTIONS = new Option<Class>(
+			"KINETICS_ARBITRARY_IRREV_ENZYME_REACTIONS",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsArbitraryIrrevEnzymeMechanism()),
+			IrrevNonModulatedNonInteractingEnzymes.class);
+	
+	/**
+	 * 
+	 */
+	public static final Option<Class> KINETICS_ARBITRARY_REV_ENZYME_REACTIONS = new Option<Class>(
+			"KINETICS_ARBITRARY_REV_ENZYME_REACTIONS",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsArbitraryRevEnzymeMechanism()),
+			CommonModularRateLaw.class);
+
 
 	/**
 	 * The class name of the default kinetic law for bi-bi reactions. This can
@@ -465,6 +490,8 @@ public interface SqueezerOptions extends KeyProvider {
 			"GROUP_KINETICS",
 			OPTIONS_BUNDLE,
 			KINETICS_ARBITRARY_ENZYME_REACTIONS,
+			KINETICS_ARBITRARY_IRREV_ENZYME_REACTIONS,
+			KINETICS_ARBITRARY_REV_ENZYME_REACTIONS,
 			KINETICS_BI_BI_TYPE,
 			KINETICS_BI_UNI_TYPE,
 			KINETICS_GENE_REGULATION,

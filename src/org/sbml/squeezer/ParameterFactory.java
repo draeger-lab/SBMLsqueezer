@@ -662,6 +662,7 @@ public class ParameterFactory {
 	 * @return
 	 */
 	public LocalParameter parameterKS(Species species, String enzyme) {
+		// TODO: Should we have the substrate or product as an additional argument here to form the name?
 		String rid = kineticLaw.getParentSBMLObject().getId();
 		StringBuffer id = StringTools.concat("ksp_", rid);
 		if (enzyme != null) {

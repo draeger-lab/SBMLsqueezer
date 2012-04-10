@@ -40,11 +40,15 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.io.SBMLio;
 
 /**
- * @author draeger
+ * Analyses a given directory of SBML files for the contained SBML features in
+ * all of the models in all sub-folders.
  * 
+ * @author Andreas Dr&auml;ger
+ * @since 1.4
+ * @version $Rev$
  */
 @Ignore
-public class TestCasesAnalyser {
+public class TestCasesAnalyst {
 
 	/**
 	 * @param args
