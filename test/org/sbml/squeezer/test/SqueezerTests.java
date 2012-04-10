@@ -33,8 +33,10 @@ import de.zbit.util.prefs.SBPreferences;
  * 
  * @author Sarah R. M&uuml;ller vom Hagen
  * @author Andreas Dr&auml;ger
+ * @since 1.4
+ * @version $Rev$
  */
-public class SqueezerTests extends TestCase{
+public class SqueezerTests extends TestCase {
 
 //	private String testPath = System.getProperty("user.dir") + "/files/tests/SBML_test_cases/cases/semantic/001-100";
 	//String testPath = System.getProperty("user.dir") + "/files/tests/sbml-test-cases-2011-06-15";
@@ -57,7 +59,7 @@ public class SqueezerTests extends TestCase{
 
 	private static final Logger logger = Logger.getLogger(SqueezerTests.class.getName());
 
-	public SqueezerTests(){
+	public SqueezerTests() {
 		long time = System.currentTimeMillis();
 		logger.info("search for files...");
 		List<File> tempList = new LinkedList<File>();
@@ -83,7 +85,7 @@ public class SqueezerTests extends TestCase{
 	 * results of the import and export tests can be ignored
 	 */
 	@Test
-	public void testDirectoryForXMLFiles(){
+	public void testDirectoryForXMLFiles() {
 		long time = System.currentTimeMillis();
 		logger.info("test if there are files in the given directory...");
 		int numberOfFiles = listOfFiles.size();

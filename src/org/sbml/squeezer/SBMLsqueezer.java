@@ -72,11 +72,11 @@ import de.zbit.Launcher;
 import de.zbit.gui.GUIOptions;
 import de.zbit.io.FileWalker;
 import de.zbit.io.filefilter.SBFileFilter;
-import de.zbit.util.progressbar.ProgressBar;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.KeyProvider;
 import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.prefs.SBProperties;
+import de.zbit.util.progressbar.ProgressBar;
 
 /**
  * The main program of SBMLsqueezer. This class initializes all required
@@ -115,11 +115,11 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   /**
    * {@link Set}s of kinetics with certain characteristics.
    */
-  private static Set<Class> kineticsArbitraryEnzymeMechanism,
-      kineticsBiUni, kineticsGeneRegulatoryNetworks,
-      kineticsIntStoichiometry, kineticsIrreversible, kineticsModulated,
-      kineticsNonEnzyme, kineticsReversible, kineticsUniUni,
-      kineticsZeroProducts, kineticsZeroReactants;
+  private static Set<Class> kineticsArbitraryEnzymeMechanism, kineticsBiUni,
+    kineticsGeneRegulatoryNetworks, kineticsIntStoichiometry,
+    kineticsIrreversible, kineticsModulated, kineticsNonEnzyme,
+    kineticsReversible, kineticsUniUni, kineticsZeroProducts,
+    kineticsZeroReactants;
   
   private static Set<Class> kineticsBiBi;
 
@@ -151,7 +151,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     /*Class<BasicKineticLaw> classes[] = Reflect.getAllClassesInPackage(
         KINETICS_PACKAGE.getName(), false, true, BasicKineticLaw.class,
         JAR_LOCATION, true);*/
-    Class[] classes = {org.sbml.squeezer.kinetics.AdditiveModelLinear.class, 
+    Class[] classes = {
+    		org.sbml.squeezer.kinetics.AdditiveModelLinear.class, 
     		org.sbml.squeezer.kinetics.AdditiveModelNonLinear.class, 
     		org.sbml.squeezer.kinetics.CommonModularRateLaw.class, 
     		org.sbml.squeezer.kinetics.ConvenienceKinetics.class, 
@@ -177,7 +178,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     		org.sbml.squeezer.kinetics.Vohradsky.class, 
     		org.sbml.squeezer.kinetics.Weaver.class, 
     		org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK.class, 
-    		org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK.class};
+    		org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK.class
+    };
     
     for (Class<BasicKineticLaw> c : classes) {
       Set<Class<?>> s = new HashSet<Class<?>>();
@@ -240,13 +242,44 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   private static SBMLOutputConverter writer = null;
   
   /**
+   * 
+   * @return
+   */
+  public static List<Class<? extends KeyProvider>> getInteractiveConfigOptions() {
+  	List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
+    list.add(SqueezerOptions.class);
+    list.add(LaTeXOptions.class);
+    return list;
+	}
+
+  
+  /**
    * @return the kineticsArbitraryEnzymeMechanism
    */
   public static Set<Class> getKineticsArbitraryEnzymeMechanism() {
     return kineticsArbitraryEnzymeMechanism;
   }
 
-  
+  /**
+   * 
+   * @return
+   */
+  public static Set<Class> getKineticsArbitraryIrrevEnzymeMechanism() {
+	  Set<Class> irrev = new HashSet<Class>(kineticsArbitraryEnzymeMechanism);
+	  irrev.removeAll(kineticsReversible);
+	  return irrev;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public static Set<Class> getKineticsArbitraryRevEnzymeMechanism() {
+	  Set<Class> rev = new HashSet<Class>(kineticsArbitraryEnzymeMechanism);
+	  rev.removeAll(kineticsIrreversible);
+	  return rev;
+  }
+
   /**
    * @return the kineticsBiBi
    */
@@ -295,14 +328,14 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public static Set<Class> getKineticsNonEnzyme() {
     return kineticsNonEnzyme;
   }
-
+  
   /**
    * @return the kineticsReversible
    */
   public static Set<Class> getKineticsReversible() {
     return kineticsReversible;
   }
-
+  
   /**
    * @return the kineticsUniUni
    */
@@ -316,7 +349,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public static Set<Class> getKineticsZeroProducts() {
     return kineticsZeroProducts;
   }
-  
+
   /**
    * @return the kineticsZeroReactants
    */
@@ -325,59 +358,59 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   }
   
   /**
-   * Returns an array of Strings that can be interpreted as enzymes. In
-   * particular this array will contain those configuration keys as strings
-   * for which in the current configuration the corresponding value is set to
-   * true.
-   * 
-   * @return
-   */
-  public static String[] getPossibleEnzymeTypes() {
-    logger.log(Level.INFO, MESSAGES.getString("LOADING_USER_SETTINGS"));
-    SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
-    logger.log(Level.INFO, "    " + MESSAGES.getString("DONE"));
-    Set<String> enzymeTypes = new HashSet<String>();
-    String prefix = "POSSIBLE_ENZYME_";
-    for (Object key : preferences.keySet()) {
-      if (key.toString().startsWith(prefix)) {
-        if (preferences.getBoolean(key)) {
-          enzymeTypes.add(key.toString().substring(prefix.length()));
-        }
-      }
-    }
-    return enzymeTypes.toArray(new String[] {});
-  }
+	   * Returns an array of Strings that can be interpreted as enzymes. In
+	   * particular this array will contain those configuration keys as strings
+	   * for which in the current configuration the corresponding value is set to
+	   * true.
+	   * 
+	   * @return
+	   */
+	  public static String[] getPossibleEnzymeTypes() {
+	    logger.log(Level.INFO, MESSAGES.getString("LOADING_USER_SETTINGS"));
+	    SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
+	    logger.log(Level.INFO, "    " + MESSAGES.getString("DONE"));
+	    Set<String> enzymeTypes = new HashSet<String>();
+	    String prefix = "POSSIBLE_ENZYME_";
+	    for (Object key : preferences.keySet()) {
+	      if (key.toString().startsWith(prefix)) {
+	        if (preferences.getBoolean(key)) {
+	          enzymeTypes.add(key.toString().substring(prefix.length()));
+	        }
+	      }
+	    }
+	    return enzymeTypes.toArray(new String[] {});
+	  }
 
-  /**
-   * Does initialization for creating a SBMLsqueezer Object.
-   * Checks if libSBML is available and initializes the Reader/Writer.
-   * @param tryLoadingLibSBML 
-   * @param reader
-   * @param writer
-   */
-  private static void initializeReaderAndWriter(boolean tryLoadingLibSBML){
-    boolean libSBMLAvailable = false;
-    if (tryLoadingLibSBML) {
-    	try {
-    		// In order to initialize libSBML, check the java.library.path.
-    		System.loadLibrary("sbmlj");
-    		// Extra check to be sure we have access to libSBML:
-    		Class.forName("org.sbml.libsbml.libsbml");
-    		logger.info(MESSAGES.getString("LOADING_LIBSBML"));
-    		libSBMLAvailable = true;
-    	} catch (Error e) {
-    	} catch (Throwable e) {
-    	}
-    }
-    if (libSBMLAvailable) {
-      reader = new LibSBMLReader();
-      writer = new LibSBMLWriter();
-    } else {
-      logger.info(MESSAGES.getString("LOADING_JSBML"));
-      reader = new SqSBMLReader();
-      writer = new SqSBMLWriter();
-    }
-  }
+	/**
+	   * Does initialization for creating a SBMLsqueezer Object.
+	   * Checks if libSBML is available and initializes the Reader/Writer.
+	   * @param tryLoadingLibSBML 
+	   * @param reader
+	   * @param writer
+	   */
+	  private static void initializeReaderAndWriter(boolean tryLoadingLibSBML){
+	    boolean libSBMLAvailable = false;
+	    if (tryLoadingLibSBML) {
+	    	try {
+	    		// In order to initialize libSBML, check the java.library.path.
+	    		System.loadLibrary("sbmlj");
+	    		// Extra check to be sure we have access to libSBML:
+	    		Class.forName("org.sbml.libsbml.libsbml");
+	    		logger.info(MESSAGES.getString("LOADING_LIBSBML"));
+	    		libSBMLAvailable = true;
+	    	} catch (Error e) {
+	    	} catch (Throwable e) {
+	    	}
+	    }
+	    if (libSBMLAvailable) {
+	      reader = new LibSBMLReader();
+	      writer = new LibSBMLWriter();
+	    } else {
+	      logger.info(MESSAGES.getString("LOADING_JSBML"));
+	      reader = new SqSBMLReader();
+	      writer = new SqSBMLWriter();
+	    }
+	  }
 
   /**
    * @param args
@@ -386,18 +419,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     new SBMLsqueezer(args);
   }
   
-  /* (non-Javadoc)
-	 * @see de.zbit.Launcher#setUp()
-	 */
-	@Override
-	protected void setUp() {
-		if ((reader == null) && (writer == null)) {
-			initializeReaderAndWriter(getAppConf().getCmdArgs().getBooleanProperty(
-				IOOptions.TRY_LOADING_LIBSBML));
-		}
-	}
-
-	/**
+  /**
    * 
    */
   private SBMLio sbmlIo;
@@ -408,7 +430,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public SBMLsqueezer() {
     super();
   }
-  
+
+
   /**
    * This constructor allows the integration of SBMLsqueezer into third-party
    * programs, i.e., as a CellDesigner plug-in.
@@ -429,7 +452,6 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public SBMLsqueezer(String[] args) {
     super(args);
   }
-
 
   /* (non-Javadoc)
    * @see de.zbit.Launcher#commandLineMode(de.zbit.AppConf)
@@ -472,26 +494,15 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return list;
   }
 
-  /* (non-Javadoc)
+
+	/* (non-Javadoc)
    * @see de.zbit.Launcher#getInteractiveOptions()
    */
   public List<Class<? extends KeyProvider>> getInteractiveOptions() {
     return getInteractiveConfigOptions();
   }
-
-  /**
-   * 
-   * @return
-   */
-  public static List<Class<? extends KeyProvider>> getInteractiveConfigOptions() {
-  	List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
-    list.add(SqueezerOptions.class);
-    list.add(LaTeXOptions.class);
-    return list;
-	}
-
-
-	/* (non-Javadoc)
+  
+  /* (non-Javadoc)
    * @see de.zbit.Launcher#getLogPackages()
    */
   public String[] getLogPackages() {
@@ -591,40 +602,18 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     }
   }
   
-  /**
-   * Reads in the given SBML file, squeezes kinetic equations in and writes
-   * the result back to the given SBML file. This method only works if
-   * SBMLsqueezer is used as a stand-alone program.
-   * 
-   * @param sbmlSource
-   *            the path to a file that contains SBML code or another object
-   *            that can be read by the current reader used by SBMLsqueezer.
-   * @param outfile
-   *            The absolute path to a file where the result should be stored.
-   *            This must be a file that ends with .xml or .sbml (case
-   *            insensitive).
-   * @throws Throwable
-   */
-  public void squeeze(Object sbmlSource, String outfile) throws Throwable {
-	File outFile = outfile != null ? new File(outfile) : null;
-    File inFile = sbmlSource != null ? new File(sbmlSource.toString()) : null;
+  /* (non-Javadoc)
+ * @see de.zbit.Launcher#setUp()
+ */
+@Override
+protected void setUp() {
+	if ((reader == null) && (writer == null)) {
+		initializeReaderAndWriter(getAppConf().getCmdArgs().getBooleanProperty(
+			IOOptions.TRY_LOADING_LIBSBML));
+	}
+}
 
-    Map<File, String> ioPairs = FileWalker.filterAndCreate(inFile, outFile, SBFileFilter.createSBMLFileFilter(), true);
-    if (ioPairs.size() == 0) {
-    	logger.info(MESSAGES.getString("EMPTY_INPUT_FILE_LIST"));
-    } else {
-    	for (Map.Entry<File, String> entry : ioPairs.entrySet()) {
-    		try {
-    			squeeze(entry.getKey(), new File(entry.getValue()));
-    		} catch (Throwable t) {
-    			logger.log(Level.SEVERE, MessageFormat.format(
-    					WARNINGS.getString("SQUEEZE_ERROR"),
-    					entry.getKey().getAbsolutePath(), entry.getValue()), t);
-    		}
-    	}
-    }
-  }
-  
+
   /**
    * 
    * @param source
@@ -677,6 +666,40 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	    }
   }
 
+
+  /**
+   * Reads in the given SBML file, squeezes kinetic equations in and writes
+   * the result back to the given SBML file. This method only works if
+   * SBMLsqueezer is used as a stand-alone program.
+   * 
+   * @param sbmlSource
+   *            the path to a file that contains SBML code or another object
+   *            that can be read by the current reader used by SBMLsqueezer.
+   * @param outfile
+   *            The absolute path to a file where the result should be stored.
+   *            This must be a file that ends with .xml or .sbml (case
+   *            insensitive).
+   * @throws Throwable
+   */
+  public void squeeze(Object sbmlSource, String outfile) throws Throwable {
+	File outFile = outfile != null ? new File(outfile) : null;
+    File inFile = sbmlSource != null ? new File(sbmlSource.toString()) : null;
+
+    Map<File, String> ioPairs = FileWalker.filterAndCreate(inFile, outFile, SBFileFilter.createSBMLFileFilter(), true);
+    if (ioPairs.size() == 0) {
+    	logger.info(MESSAGES.getString("EMPTY_INPUT_FILE_LIST"));
+    } else {
+    	for (Map.Entry<File, String> entry : ioPairs.entrySet()) {
+    		try {
+    			squeeze(entry.getKey(), new File(entry.getValue()));
+    		} catch (Throwable t) {
+    			logger.log(Level.SEVERE, MessageFormat.format(
+    					WARNINGS.getString("SQUEEZE_ERROR"),
+    					entry.getKey().getAbsolutePath(), entry.getValue()), t);
+    		}
+    	}
+    }
+  }
 
   /**
    * Convenient method that writes a LaTeX file from the given SBML source.

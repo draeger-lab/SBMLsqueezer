@@ -25,14 +25,21 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.KineticLawGenerator;
 
 /**
+ * A collection of helper methods for JUnit testing of SBMLsqueezer.
  * 
- * @author draeger
- *
+ * @author Andreas Dr&auml;ger
+ * @since 1.4
+ * @version $Rev$
  */
+@SuppressWarnings("deprecation")
 public class SqueezertestFunctions {
 
-
-	@SuppressWarnings("deprecation")
+	/**
+	 * 
+	 * @param modelOrig
+	 * @param model
+	 * @return
+	 */
 	public static boolean compareModels(Model modelOrig, Model model){
 		boolean areEqual = true;
 		Logger logger = Logger.getLogger(KineticLawGenerator.class.getName());

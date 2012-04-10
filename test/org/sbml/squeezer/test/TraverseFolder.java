@@ -1,6 +1,6 @@
 /*
  * $Id:  TraverseFolder.java 2:22:58 PM jpfeuffer$
- * $URL: TraverseFolder.java $
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -32,7 +32,6 @@ import java.util.ArrayList;
  * @version $Rev$
  * @since 1.4
  */
-
 public class TraverseFolder {
 
     private ArrayList<File> files = new ArrayList<File>();
