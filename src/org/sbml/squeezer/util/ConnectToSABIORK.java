@@ -61,14 +61,21 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 public class ConnectToSABIORK {
 	private static URL host;
 	
-	public List<Reaction> searchKineticLaw(String keggId) {
+	/**
+	 * 
+	 * @param keggId
+	 * @return
+	 */
+	public List<Reaction> searchKineticLaw(String keggId, String organism) {
 	
 		try {
 			if(host == null) {
-				host = new URL("http://sabio.h-its.org/sabioRestWebServices/");
+				host = new URL("http://sabio.h-its.org/sabioRestWebServices/searchKineticLaws/");
 			}
-			String query = "searchKineticLaws/sbml?searchTerms=RKEGG=" + keggId + ",ORGANISM=Homo sapiens";
-			URL fullAddress = new URL(host, query);
+			String q = "sbml?searchTerms=RKEGG=" + keggId +";ORGANISM=" +
+					organism;
+			
+			URL fullAddress = new URL(host, q);
 			URLConnection conn = fullAddress.openConnection();
 			
 			InputStream stream = conn.getInputStream();
@@ -90,9 +97,18 @@ public class ConnectToSABIORK {
 		
 	}
 	
-	
+	/**
+	 * 
+	 * @param r
+	 * @param kl
+	 * @param m
+	 * @return
+	 * @throws RateLawNotApplicableException
+	 */
 	public KineticLaw chooseLaw(Reaction r, KineticLaw kl, Model m) throws RateLawNotApplicableException {
-		CVTermFilter filter = new CVTermFilter(Qualifier.BQB_IS);
+		CVTermFilter filterIs = new CVTermFilter(Qualifier.BQB_IS);
+		CVTermFilter filterHasVersion = new CVTermFilter(Qualifier.BQB_HAS_VERSION);
+		CVTermFilter filterIsEncodedBy = new CVTermFilter(Qualifier.BQB_IS_ENCODED_BY);
 		
 		for(CallableSBase sBase: getAllSBasesToAdd(kl.getMath(), new HashSet<CallableSBase>())) {
 			if(sBase instanceof FunctionDefinition) {
@@ -127,7 +143,7 @@ public class ConnectToSABIORK {
 			Species s = (Species) speciesNode.getVariable();
 			List<CVTerm> terms = new LinkedList<CVTerm>();
 			for(CVTerm ct: s.getCVTerms()) {
-				if(filter.accepts(ct)) {
+				if((filterIs.accepts(ct)) || (filterHasVersion.accepts(ct)) || (filterIsEncodedBy.accepts(ct))) {
 					terms.add(ct);
 				}
 			}
@@ -136,8 +152,13 @@ public class ConnectToSABIORK {
 				
 				for(CVTerm term: terms) {
 					for(String resource: term.getResources()) {
-							filterTerms.add(new CVTermFilter(term.getBiologicalQualifierType(), resource));
-					}
+						filterTerms.add(new CVTermFilter(term.getBiologicalQualifierType(), resource));
+						if(term.getBiologicalQualifierType().equals(Qualifier.BQB_IS)) {
+							filterTerms.add(new CVTermFilter(Qualifier.BQB_HAS_VERSION, resource));
+						}
+						else if(term.getBiologicalQualifierType().equals(Qualifier.BQB_HAS_VERSION))
+							filterTerms.add(new CVTermFilter(Qualifier.BQB_IS, resource));
+						}
 				}
 			
 				Species foundSpecies = null;
@@ -218,6 +239,13 @@ public class ConnectToSABIORK {
 		return current;
 	}
 
+	/**
+	 * 
+	 * @param args (input file, output file)
+	 * @throws XMLStreamException
+	 * @throws RateLawNotApplicableException
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws XMLStreamException, RateLawNotApplicableException, IOException {
 		ConnectToSABIORK sk = new ConnectToSABIORK();
 		SBMLDocument doc = SBMLReader.read(new File(args[0]));
@@ -230,6 +258,14 @@ public class ConnectToSABIORK {
 				annotatedReactions.add(r);
 			}
 		}
+		
+		//CVTermFilter filterHuman = new CVTermFilter(Qualifier.BQB_OCCURS_IN, "urn:miriam:taxonomy:9606");
+		CVTermFilter filterYeast = new CVTermFilter(Qualifier.BQB_OCCURS_IN, "urn:miriam:taxonomy:559292");
+		String organism = "Homo+sapiens";
+		if(filterYeast.accepts(model)) {
+			organism = "Saccharomyces+cerevisiae";
+		}
+		
 		int reactionsWithLaw = 0;
 		for (Reaction r : annotatedReactions) {
 			for (CVTerm term : r.getCVTerms()) {
@@ -239,7 +275,7 @@ public class ConnectToSABIORK {
 					break;
 				}
 			}
-			List<Reaction> result = sk.searchKineticLaw(query);
+			List<Reaction> result = sk.searchKineticLaw(query,organism);
 			if (result != null) {
 				KineticLaw newLaw = null;
 				int i = 0;
