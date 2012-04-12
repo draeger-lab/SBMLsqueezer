@@ -28,6 +28,7 @@
 
   <!-- ReactionType -->
   
+  <entry key="FALLBACK_KINETICS">Cannot apply default rate law {1} to reaction {0}, fall back to {2}.</entry>
   <entry key="REACTION_MUST_BE_TRANSRIPTION">Reaction {0} must be a transcription.</entry>
   <entry key="REACTION_MUST_BE_TRANSLATION">Reaction {0} must be a tranlation.</entry>
   <entry key="REACTION_MUST_BE_TRANSITION">Reaction {0} must be a transition.</entry>

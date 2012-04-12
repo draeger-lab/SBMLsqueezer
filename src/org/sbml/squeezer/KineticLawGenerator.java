@@ -280,12 +280,19 @@ public class KineticLawGenerator {
 	private SortedSet<Integer> possibleEnzymes;
 	private boolean allReactionsAsEnzymeCatalyzed;
 	private Class<?> kineticsGeneRegulation;
-	private Class<?> kineticsNoneEnzymeReactions;
-	private Class<?> kineticsUniUniType;
-	private Class<?> kineticsArbitraryEnzymeReaction;
-	private Class<?> kineticsBiUniType;
-	private Class<?> kineticsBiBiType;
+	private Class<?> kineticsReversibleNonEnzymeReactions;
+	private Class<?> kineticsReversibleUniUniType;
+	private Class<?> kineticsReversibleArbitraryEnzymeReaction;
+	private Class<?> kineticsReversibleBiUniType;
+	private Class<?> kineticsReversibleBiBiType;
 	private String speciesIgnoreList[];
+	private Class<?> kineticsIrreversibleNonEnzymeReactions;
+	private Class<?> kineticsIrreversibleUniUniType;
+	private Class<?> kineticsIrreversibleArbitraryEnzymeReaction;
+	private Class<?> kineticsIrreversibleBiUniType;
+	private Class<?> kineticsIrreversibleBiBiType;
+	private Class<?> kineticsZeroReactants;
+	private Class<?> kineticsZeroProducts;
 
 	/**
 	 * Takes a model and settings for kinetic law generation as input, creates a
@@ -324,12 +331,21 @@ public class KineticLawGenerator {
 		defaultCompartmentInitSize = prefs.getDouble(SqueezerOptions.DEFAULT_COMPARTMENT_SIZE);
 		addParametersGlobally = prefs.getBoolean(SqueezerOptions.NEW_PARAMETERS_GLOBAL);
 		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED);
+		
+		kineticsZeroReactants = prefs.getClass(SqueezerOptions.KINETICS_ZERO_REACTANTS);
+		kineticsZeroProducts = prefs.getClass(SqueezerOptions.KINETICS_ZERO_PRODUCTS);
+		kineticsReversibleNonEnzymeReactions = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS);
+		kineticsIrreversibleNonEnzymeReactions = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS);
 		kineticsGeneRegulation = prefs.getClass(SqueezerOptions.KINETICS_GENE_REGULATION);
-		kineticsNoneEnzymeReactions = prefs.getClass(SqueezerOptions.KINETICS_NONE_ENZYME_REACTIONS);
-		kineticsUniUniType = prefs.getClass(SqueezerOptions.KINETICS_UNI_UNI_TYPE);
-		kineticsArbitraryEnzymeReaction = prefs.getClass(SqueezerOptions.KINETICS_ARBITRARY_ENZYME_REACTIONS); 
-		kineticsBiUniType = prefs.getClass(SqueezerOptions.KINETICS_BI_UNI_TYPE);
-		kineticsBiBiType = prefs.getClass(SqueezerOptions.KINETICS_BI_BI_TYPE);
+		kineticsReversibleUniUniType = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_UNI_UNI_TYPE);
+		kineticsIrreversibleUniUniType = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_UNI_UNI_TYPE);
+		kineticsReversibleArbitraryEnzymeReaction = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
+		kineticsIrreversibleArbitraryEnzymeReaction = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
+		kineticsReversibleBiUniType = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_BI_UNI_TYPE);
+		kineticsIrreversibleBiUniType = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_BI_UNI_TYPE);
+		kineticsReversibleBiBiType = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_BI_BI_TYPE);
+		kineticsIrreversibleBiBiType = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_BI_BI_TYPE);
+		
 		String l = prefs.getString(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
 		if ((l != null) && l.contains(",")) {
 			speciesIgnoreList = l.split(",");
@@ -400,35 +416,35 @@ public class KineticLawGenerator {
 	 * @return the kineticsNoneEnzymeReactions
 	 */
 	public Class<?> getKineticsNoneEnzymeReactions() {
-		return kineticsNoneEnzymeReactions;
+		return kineticsReversibleNonEnzymeReactions;
 	}
 
 	/**
 	 * @param kineticsNoneEnzymeReactions the kineticsNoneEnzymeReactions to set
 	 */
 	public void setKineticsNoneEnzymeReactions(Class<?> kineticsNoneEnzymeReactions) {
-		this.kineticsNoneEnzymeReactions = kineticsNoneEnzymeReactions;
+		this.kineticsReversibleNonEnzymeReactions = kineticsNoneEnzymeReactions;
 	}
 
 	/**
 	 * @return the kineticsUniUniType
 	 */
 	public Class<?> getKineticsUniUniType() {
-		return kineticsUniUniType;
+		return kineticsReversibleUniUniType;
 	}
 
 	/**
 	 * @param kineticsUniUniType the kineticsUniUniType to set
 	 */
 	public void setKineticsUniUniType(Class<?> kineticsUniUniType) {
-		this.kineticsUniUniType = kineticsUniUniType;
+		this.kineticsReversibleUniUniType = kineticsUniUniType;
 	}
 
 	/**
 	 * @return the kineticsArbitraryEnzymeReaction
 	 */
 	public Class<?> getKineticsArbitraryEnzymeReaction() {
-		return kineticsArbitraryEnzymeReaction;
+		return kineticsReversibleArbitraryEnzymeReaction;
 	}
 
 	/**
@@ -436,35 +452,35 @@ public class KineticLawGenerator {
 	 */
 	public void setKineticsArbitraryEnzymeReaction(
 		Class<?> kineticsArbitraryEnzymeReaction) {
-		this.kineticsArbitraryEnzymeReaction = kineticsArbitraryEnzymeReaction;
+		this.kineticsReversibleArbitraryEnzymeReaction = kineticsArbitraryEnzymeReaction;
 	}
 
 	/**
 	 * @return the kineticsBiUniType
 	 */
 	public Class<?> getKineticsBiUniType() {
-		return kineticsBiUniType;
+		return kineticsReversibleBiUniType;
 	}
 
 	/**
 	 * @param kineticsBiUniType the kineticsBiUniType to set
 	 */
 	public void setKineticsBiUniType(Class<?> kineticsBiUniType) {
-		this.kineticsBiUniType = kineticsBiUniType;
+		this.kineticsReversibleBiUniType = kineticsBiUniType;
 	}
 
 	/**
 	 * @return the kineticsBiBiType
 	 */
 	public Class<?> getKineticsBiBiType() {
-		return kineticsBiBiType;
+		return kineticsReversibleBiBiType;
 	}
 
 	/**
 	 * @param kineticsBiBiType the kineticsBiBiType to set
 	 */
 	public void setKineticsBiBiType(Class<?> kineticsBiBiType) {
-		this.kineticsBiBiType = kineticsBiBiType;
+		this.kineticsReversibleBiBiType = kineticsBiBiType;
 	}
 
 	/**
@@ -904,12 +920,17 @@ public class KineticLawGenerator {
 		
 		for (Reaction r : miniModel.getListOfReactions()) {
 			ReactionType rt = new ReactionType(r, reversibility,
-				allReactionsAsEnzymeCatalyzed, setBoundaryCondition,
-				kineticsNoneEnzymeReactions, kineticsGeneRegulation,
-				kineticsArbitraryEnzymeReaction, kineticsUniUniType, kineticsBiUniType,
-				kineticsBiBiType, speciesIgnoreList);
+				allReactionsAsEnzymeCatalyzed, setBoundaryCondition, speciesIgnoreList);
 			
-			Class<?> kineticsClass = rt.identifyPossibleKineticLaw();
+			Class<?> kineticsClass = rt.identifyPossibleKineticLaw(
+				kineticsGeneRegulation, kineticsZeroReactants, kineticsZeroProducts,
+				kineticsReversibleNonEnzymeReactions,
+				kineticsIrreversibleNonEnzymeReactions,
+				kineticsReversibleArbitraryEnzymeReaction,
+				kineticsIrreversibleArbitraryEnzymeReaction,
+				kineticsReversibleUniUniType, kineticsIrreversibleUniUniType,
+				kineticsReversibleBiUniType, kineticsIrreversibleBiUniType,
+				kineticsReversibleBiBiType, kineticsIrreversibleBiBiType);
 			
 			if (progressAdapter != null) {
 				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
@@ -1004,10 +1025,7 @@ public class KineticLawGenerator {
 	public ReactionType getReactionType(String reactionID)
 		throws RateLawNotApplicableException {
 		return new ReactionType(miniModel.getReaction(reactionID), reversibility,
-			allReactionsAsEnzymeCatalyzed, setBoundaryCondition,
-			kineticsNoneEnzymeReactions, kineticsGeneRegulation,
-			kineticsArbitraryEnzymeReaction, kineticsUniUniType, kineticsBiUniType,
-			kineticsBiBiType, speciesIgnoreList);
+			allReactionsAsEnzymeCatalyzed, setBoundaryCondition, speciesIgnoreList);
 	}
 
 	/**

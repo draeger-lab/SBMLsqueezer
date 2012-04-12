@@ -131,12 +131,18 @@ public class UnitFactory {
 		for (int i = 0; i < id.length(); i++) {
 			c = id.charAt(i);
 			if (c == '^') {
-				sb.append("_pow");
+				if ((i < id.length() - 4) && (id.charAt(i + 1) == '-')
+						&& (id.charAt(i + 2) == '1') && (id.charAt(i + 3) == '.')
+						&& (id.charAt(i + 4) == '0')) {
+					i += 4;
+				} else {
+					sb.append("_pow");
+				}
 			} else if (c == '\u03BC') {
 				sb.append("micro");
 			} else if (Character.isDigit(c) || Character.isLetter(c)) {
 				sb.append(c);
-			} else if ((c == '.') && (id.charAt(i + 1) == '0')) {
+			} else if ((c == '.') && (i < id.length() - 1) && (id.charAt(i + 1) == '0')) {
 				i++;
 			} else {
 				sb.append('_');

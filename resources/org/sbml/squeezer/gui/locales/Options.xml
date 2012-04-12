@@ -43,22 +43,36 @@
   <entry key="GENERATE_KINETIC_LAW_ONLY_IF_MISSING_TOOLTIP">If checked, kinetics are only generated if missing in the SBML file.</entry>
   <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS">Ignore these species when creating laws</entry>
   <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS_TOOLTIP">Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons.</entry>
-  <entry key="KINETICS_ARBITRARY_ENZYME_REACTIONS">Aribitary enzyme reactions</entry>
-  <entry key="KINETICS_ARBITRARY_ENZYME_REACTIONS_TOOLTIP">Determines the key for the standard kinetic law to be applied for reactions that are identified to be enzyme-catalyzed (with or without explicit catalyst) and that do not belong to one of the other standard enzyme-catalysis schemes.</entry>
-  <entry key="KINETICS_ARBITRARY_REV_ENZYME_REACTIONS">Arbitrary reversible enzyme reactions</entry>
-  <entry key="KINETICS_ARBITRARY_REV_ENZYME_REACTIONS_TOOLTIP">Arbitrary reversible enzyme reactions</entry>
-  <entry key="KINETICS_ARBITRARY_IRREV_ENZYME_REACTIONS">Arbitrary irreversible enzyme reactions</entry>
-  <entry key="KINETICS_ARBITRARY_IRREV_ENZYME_REACTIONS_TOOLTIP">Arbitrary irreversible enzyme reactions</entry>
-  <entry key="KINETICS_BI_BI_TYPE">Bi-bi type</entry>
-  <entry key="KINETICS_BI_BI_TYPE_TOOLTIP">Select the type of the default kinetic law for bi-bi reactions (two reactants, two products).</entry>
-  <entry key="KINETICS_BI_UNI_TYPE">Bi-uni type</entry>
-  <entry key="KINETICS_BI_UNI_TYPE_TOOLTIP">Choose the type of the default kinetic law for bi-uni reactions (two reactants, one product).</entry>
+  
+  <entry key="KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS">Arbitrary enzyme reactions</entry>
+  <entry key="KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS_TOOLTIP">Arbitrary irreversible enzyme reactions</entry>
+  <entry key="KINETICS_IRREVERSIBLE_BI_BI_TYPE">Bi-bi type</entry>
+  <entry key="KINETICS_IRREVERSIBLE_BI_BI_TYPE_TOOLTIP">Select the type of the default kinetic law for irreversible bi-bi reactions (two reactants, two products).</entry>
+  <entry key="KINETICS_IRREVERSIBLE_BI_UNI_TYPE">Bi-uni type</entry>
+  <entry key="KINETICS_IRREVERSIBLE_BI_UNI_TYPE_TOOLTIP">Choose the type of the default kinetic law for irreversible bi-uni reactions (two reactants, one product).</entry>
+  <entry key="KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS">None enzyme reactions</entry>
+  <entry key="KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS_TOOLTIP">Determines the key for the standard kinetic law to be applied for reactions that are catalyzed by non-enzymes or that are not catalyzed at all. The value may be any rate law that implements InterfaceNonEnzymeKinetics</entry>
+  <entry key="KINETICS_IRREVERSIBLE_UNI_UNI_TYPE">Uni-uni type</entry>
+  <entry key="KINETICS_IRREVERSIBLE_UNI_UNI_TYPE_TOOLTIP">This key defines the default kinetic law to be applied to enzyme-catalyzed reactions with one reactant and one product.</entry>
+  
+  <entry key="KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS">Arbitrary enzyme reactions</entry>
+  <entry key="KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS_TOOLTIP">Arbitrary reversible enzyme reactions</entry>
+  <entry key="KINETICS_REVERSIBLE_BI_BI_TYPE">Bi-bi type</entry>
+  <entry key="KINETICS_REVERSIBLE_BI_BI_TYPE_TOOLTIP">Select the type of the default kinetic law for reversible bi-bi reactions (two reactants, two products).</entry>
+  <entry key="KINETICS_REVERSIBLE_BI_UNI_TYPE">Bi-uni type</entry>
+  <entry key="KINETICS_REVERSIBLE_BI_UNI_TYPE_TOOLTIP">Choose the type of the default kinetic law for reversible bi-uni reactions (two reactants, one product).</entry>
+  <entry key="KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS">None enzyme reactions</entry>
+  <entry key="KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS_TOOLTIP">Determines the key for the standard kinetic law to be applied for reactions that are catalyzed by non-enzymes or that are not catalyzed at all. The value may be any rate law that implements InterfaceNonEnzymeKinetics</entry>
+  <entry key="KINETICS_REVERSIBLE_UNI_UNI_TYPE">Uni-uni type</entry>
+  <entry key="KINETICS_REVERSIBLE_UNI_UNI_TYPE_TOOLTIP">This key defines the default kinetic law to be applied to enzyme-catalyzed reactions with one reactant and one product.</entry>
+  
   <entry key="KINETICS_GENE_REGULATION">Gene regulation</entry>
   <entry key="KINETICS_GENE_REGULATION_TOOLTIP">Please specify the default kinetic law to be applied for reactions that are identified to belong to gene-regulatory processes (reactions involving genes, RNA, and proteins), such as transcription or translation.</entry>
-  <entry key="KINETICS_NONE_ENZYME_REACTIONS">None enzyme reactions</entry>
-  <entry key="KINETICS_NONE_ENZYME_REACTIONS_TOOLTIP">Determines the key for the standard kinetic law to be applied for reactions that are catalyzed by non-enzymes or that are not catalyzed at all. The value may be any rate law that implements InterfaceNonEnzymeKinetics</entry>
-  <entry key="KINETICS_UNI_UNI_TYPE">Uni-uni type</entry>
-  <entry key="KINETICS_UNI_UNI_TYPE_TOOLTIP">This key defines the default kinetic law to be applied to enzyme-catalyzed reactions with one reactant and one product.</entry>
+  <entry key="KINETICS_ZERO_REACTANTS">Zeroth order reactants</entry>
+  <entry key="KINETICS_ZERO_REACTANTS_TOOLTIP">Default rate law with zeroth order reactants</entry>
+  <entry key="KINETICS_ZERO_PRODUCTS">Zeroth order products</entry>
+  <entry key="KINETICS_ZERO_PRODUCTS_TOOLTIP">Default rate law with zeroth order products</entry>
+  
   <entry key="MAX_NUMBER_OF_REACTANTS">Maximum number of reactants</entry>
   <entry key="MAX_NUMBER_OF_REACTANTS_TOOLTIP">A simultaneous collition of a high number of reactants just by chance is very unlikely. Usually, these reactions proceed in a sequence of separate steps, each involving only very few molecules. Here you can specifiy the maximal number of reactants so that the reaction is still considered plausible. By default this value is set to 3. Note that this option is only available if you decide that this kind of warning should be displayed.</entry>
   <entry key="NEW_PARAMETERS_GLOBAL">Add all new parameters globally</entry>
@@ -103,8 +117,12 @@
   
   <entry key="GROUP_GENERATE_KINETIC_LAWS">Generate new kinetics</entry>
   <entry key="GROUP_GENERATE_KINETIC_LAWS_TOOLTIP"></entry>
-  <entry key="GROUP_KINETICS">Select the default rate law for each meachanism</entry>
-  <entry key="GROUP_KINETICS_TOOLTIP"></entry>
+  <entry key="GROUP_IRREVERSIBLE_KINETICS">Irreversible rate laws</entry>
+  <entry key="GROUP_IRREVERSIBLE_KINETICS_TOOLTIP">Select the default rate law for each irreversible mechanism.</entry>
+  <entry key="GROUP_REVERSIBLE_KINETICS">Reversible rate laws</entry>
+  <entry key="GROUP_REVERSIBLE_KINETICS_TOOLTIP">Select the default rate law for each reversible mechanism.</entry>
+  <entry key="GROUP_GENE_REGULATION_KINETICS">Gene regulation kinetics</entry>
+  <entry key="GROUP_GENE_REGULATION_KINETICS_TOOLTIP">Select the default rate laws for gene-regulatory processes.</entry>
   <entry key="GROUP_GENERAL">General Options</entry>
   <entry key="GROUP_GENERAL_TOOLTIP"></entry>
   <entry key="GROUP_DEFAULT_VALUES">Default values</entry>
