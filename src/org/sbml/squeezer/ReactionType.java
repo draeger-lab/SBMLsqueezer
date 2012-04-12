@@ -40,8 +40,10 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.squeezer.kinetics.ConvenienceKinetics;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
@@ -291,12 +293,6 @@ public class ReactionType {
 	 */
 	private double stoichiometryLeft = 0d, stoichiometryRight = 0d;
 	private boolean allReactionsAsEnzymeCatalyzed;
-	private Class<?> kineticsNoneEnzymeReaction;
-	private Class<?> kineticsGeneRegulation;
-	private Class<?> kineticsArbitraryEnzymeReaction;
-	private Class<?> kineticsUniUniType;
-	private Class<?> kineticsBiUniType;
-	private Class<?> kineticsBiBiType;
 
 
 	/**
@@ -307,34 +303,16 @@ public class ReactionType {
 	 * @param reversibility
 	 * @param allReactionsAsEnzymeCatalyzed
 	 * @param boundaryConditionForGenes
-	 * @param kineticsNoneEnzymeReactions
-	 * @param kineticsGeneRegulation
-	 * @param kineticsArbitraryEnzymeReaction
-	 * @param kineticsUniUniType
-	 * @param kineticsBiUniType
-	 * @param kineticsBiBiType
 	 * @param ignoreList
 	 * @throws RateLawNotApplicableException
 	 */
 	public ReactionType(Reaction r, boolean reversibility,
-		boolean allReactionsAsEnzymeCatalyzed, boolean boundaryConditionForGenes,
-		Class<?> kineticsNoneEnzymeReactions, Class<?> kineticsGeneRegulation,
-		Class<?> kineticsArbitraryEnzymeReaction, Class<?> kineticsUniUniType,
-		Class<?> kineticsBiUniType, Class<?> kineticsBiBiType, String... ignoreList)
+		boolean allReactionsAsEnzymeCatalyzed, boolean boundaryConditionForGenes, String... ignoreList)
 			throws RateLawNotApplicableException {
-		this.kineticsNoneEnzymeReaction = kineticsNoneEnzymeReactions;
-		this.kineticsGeneRegulation = kineticsGeneRegulation;
-		this.kineticsArbitraryEnzymeReaction = kineticsArbitraryEnzymeReaction;
-		this.kineticsUniUniType = kineticsUniUniType;
-		this.kineticsBiUniType = kineticsBiUniType;
-		this.kineticsBiBiType = kineticsBiBiType;
 		
 		int i;
 		this.reaction = r;
 		this.allReactionsAsEnzymeCatalyzed = allReactionsAsEnzymeCatalyzed;
-		// Check ignore list:
-		// TODO:
-//		String ignore = prefs.get(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
 		removeSpeciesAccordingToIgnoreList(reaction, ignoreList);
 		this.reversibility = reversibility;
 
@@ -396,7 +374,7 @@ public class ReactionType {
 		biUni = (stoichiometryLeft == 2d) && (stoichiometryRight == 1d);
 		biBi = (stoichiometryLeft == 2d) && (stoichiometryRight == 2d);
 		integerStoichiometry = stoichiometryIntLeft;
-		withoutModulation = inhibitors.size() == 0 && activators.size() == 0;
+		withoutModulation = (inhibitors.size() == 0) && (activators.size() == 0);
 
 		/*
 		 * Check if this reaction makes sense at all.
@@ -555,10 +533,34 @@ public class ReactionType {
 
 	/**
 	 * identify the reactionType for generating the kinetics
-	 * @throws ClassNotFoundException 
+	 * @param kineticsGeneRegulation 
+	 * @param kineticsZeroReactants 
+	 * @param kineticsZeroProducts 
+	 * @param kineticsReversibleNonEnzymeReaction 
+	 * @param kineticsIrreversibleNonEnzymeReaction 
+	 * @param kineticsReversibleArbitraryEnzymeReaction 
+	 * @param kineticsIrreversibleArbitraryEnzymeReaction 
+	 * @param kineticsIrreversibleUniUniType 
+	 * @param kineticsReversibleUniUniType 
+	 * @param kineticsReversibleBiUniType 
+	 * @param kineticsIrreversibleBiUniType 
+	 * @param kineticsReversibleBiBiType 
+	 * @param kineticsIrreversibleBiBiType
 	 * 
 	 */
-	public Class<?> identifyPossibleKineticLaw() throws ClassNotFoundException {
+	public Class<?> identifyPossibleKineticLaw(Class<?> kineticsGeneRegulation,
+		Class<?> kineticsZeroReactants, 
+		Class<?> kineticsZeroProducts,
+		Class<?> kineticsReversibleNonEnzymeReaction,
+		Class<?> kineticsIrreversibleNonEnzymeReaction,
+		Class<?> kineticsReversibleArbitraryEnzymeReaction,
+		Class<?> kineticsIrreversibleArbitraryEnzymeReaction,
+		Class<?> kineticsReversibleUniUniType,
+		Class<?> kineticsIrreversibleUniUniType,
+		Class<?> kineticsReversibleBiUniType,
+		Class<?> kineticsIrreversibleBiUniType,
+		Class<?> kineticsReversibleBiBiType, 
+		Class<?> kineticsIrreversibleBiBiType) {
 		if (representsEmptySet(reaction.getListOfReactants())) {
 			if (reactionWithGenes || reactionWithRNAs) {
 				if (SBMLsqueezer.getKineticsZeroReactants().contains(kineticsGeneRegulation)) {
@@ -570,9 +572,7 @@ public class ReactionType {
 					}
 				}
 			}
-			for (Class<?> kin : SBMLsqueezer.getKineticsZeroReactants()) {
-				return kin;
-			}
+			return kineticsZeroReactants;
 		}
 		if (representsEmptySet(reaction.getListOfProducts())
 				&& (reversibility || reaction.isReversible())) {
@@ -583,17 +583,25 @@ public class ReactionType {
 					}
 				}
 			}
-			for (Class<?> kin : SBMLsqueezer.getKineticsZeroProducts()) {
-				return kin;
-			}
+			return kineticsZeroProducts;
 		}
 
-		boolean enzymeCatalyzed = allReactionsAsEnzymeCatalyzed
-				|| (enzymes.size() > 0);
-		Class<?> whichkin = kineticsNoneEnzymeReaction;
+		boolean enzymeCatalyzed = allReactionsAsEnzymeCatalyzed || (enzymes.size() > 0);
+		Class<?> whichkin = reaction.isReversible() || reversibility ? kineticsReversibleNonEnzymeReaction : kineticsIrreversibleNonEnzymeReaction;
 
 		if (enzymeCatalyzed) {
-			whichkin = kineticsArbitraryEnzymeReaction;
+			if (reaction.isReversible() || reversibility) {
+				whichkin = kineticsReversibleArbitraryEnzymeReaction;
+			} else if (!SBMLsqueezer.getKineticsModulated().contains(kineticsIrreversibleArbitraryEnzymeReaction) && !isWithoutModulation()) {
+				whichkin = kineticsIrreversibleArbitraryEnzymeReaction;
+			} else {
+				// TODO: Make this selectable!
+				whichkin = ConvenienceKinetics.class;
+				logger.warning(MessageFormat.format(
+					WARNINGS.getString("FALLBACK_KINETICS"),
+					SBMLtools.getName(reaction),
+					kineticsIrreversibleArbitraryEnzymeReaction, whichkin));
+			}
 		}
 		if (stoichiometryLeft == 1d) {
 			Species reactant = reaction.getReactant(0).getSpeciesInstance();
@@ -609,12 +617,12 @@ public class ReactionType {
 			if (!whichkin.equals(kineticsGeneRegulation)
 					&& (((enzymes.size() > 0) || enzymeCatalyzed) && ((stoichiometryRight == 1d) || !(reaction
 							.isReversible() || reversibility)))) {
-				whichkin = kineticsUniUniType;
+				whichkin = reaction.isReversible() || reversibility ? kineticsReversibleUniUniType : kineticsIrreversibleUniUniType;
 			}
 		} else if (biUni && enzymeCatalyzed) {
-			whichkin = kineticsBiUniType;
+			whichkin = reaction.isReversible() || reversibility ? kineticsReversibleBiUniType : kineticsIrreversibleBiUniType;
 		} else if (biBi && enzymeCatalyzed) {
-			whichkin = kineticsBiBiType;
+			whichkin = reaction.isReversible() || reversibility ? kineticsReversibleBiBiType : kineticsIrreversibleBiBiType;
 		}
 		return whichkin;
 	}

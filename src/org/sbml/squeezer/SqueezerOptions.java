@@ -26,13 +26,16 @@ package org.sbml.squeezer;
 import java.util.ResourceBundle;
 
 import org.sbml.squeezer.kinetics.CommonModularRateLaw;
-import org.sbml.squeezer.kinetics.ConvenienceKinetics;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillHinzeEquation;
+import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
+import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
 import org.sbml.squeezer.kinetics.MichaelisMenten;
 import org.sbml.squeezer.kinetics.RandomOrderMechanism;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
+import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
@@ -55,12 +58,32 @@ import de.zbit.util.prefs.Range;
  */
 public interface SqueezerOptions extends KeyProvider {
 	
-	// TODO: Separate configuration of reversible and irreversible rate laws!
-	
 	/**
 	 * 
 	 */
 	public static final ResourceBundle OPTIONS_BUNDLE = ResourceManager.getBundle(Bundles.OPTIONS);
+	
+	/**
+	 * Helper variable that contains as only possible value within its
+	 * {@link Range} the value {@link Boolean#TRUE}.
+	 */
+	public static final Range<Boolean> RANGE_TRUE = new Range<Boolean>(Boolean.class, Boolean.TRUE);
+
+	/**
+	 * Helper variable that contains as only possible value within its
+	 * {@link Range} the value {@link Boolean#FALSE}.
+	 */
+	public static final Range<Boolean> RANGE_FALSE = new Range<Boolean>(Boolean.class, Boolean.FALSE);
+	
+	/**
+	 * Property that decides whether to set all reactions to reversible before
+	 * creating new kinetic equations.
+	 */
+	public static final Option<Boolean> TREAT_ALL_REACTIONS_REVERSIBLE = new Option<Boolean>(
+			"TREAT_ALL_REACTIONS_REVERSIBLE",
+			Boolean.class,
+			OPTIONS_BUNDLE,
+			Boolean.valueOf(true));
 	
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
@@ -70,46 +93,73 @@ public interface SqueezerOptions extends KeyProvider {
 	 * {@link org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics}.
 	 */
 	@SuppressWarnings("rawtypes")
-	public static final Option<Class> KINETICS_ARBITRARY_ENZYME_REACTIONS = new Option<Class>(
-			"KINETICS_ARBITRARY_ENZYME_REACTIONS",
+	public static final Option<Class> KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS = new Option<Class>(
+			"KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()),
-			ConvenienceKinetics.class);
-	
-	/**
-	 * 
-	 */
-	public static final Option<Class> KINETICS_ARBITRARY_IRREV_ENZYME_REACTIONS = new Option<Class>(
-			"KINETICS_ARBITRARY_IRREV_ENZYME_REACTIONS",
-			Class.class,
-			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsArbitraryIrrevEnzymeMechanism()),
-			IrrevNonModulatedNonInteractingEnzymes.class);
-	
-	/**
-	 * 
-	 */
-	public static final Option<Class> KINETICS_ARBITRARY_REV_ENZYME_REACTIONS = new Option<Class>(
-			"KINETICS_ARBITRARY_REV_ENZYME_REACTIONS",
-			Class.class,
-			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsArbitraryRevEnzymeMechanism()),
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleArbitraryEnzymeMechanism()),
 			CommonModularRateLaw.class);
-
-
+	
 	/**
-	 * The class name of the default kinetic law for bi-bi reactions. This can
-	 * be any class that implements the
-	 * {@link org.sbml.squeezer.kinetics.InterfaceBiBiKinetics}.
+	 * Default rate law with zeroth order reactants
 	 */
 	@SuppressWarnings("rawtypes")
-	public static final Option<Class> KINETICS_BI_BI_TYPE = new Option<Class>(
-			"KINETICS_BI_BI_TYPE",
+	public static final Option<Class> KINETICS_ZERO_REACTANTS = new Option<Class>(
+			"KINETICS_ZERO_REACTANTS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsBiBi()),
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsZeroReactants()),
+			ZerothOrderReverseGMAK.class);
+	
+	/**
+	 * Default rate law with zeroth order products
+	 */
+	@SuppressWarnings("rawtypes")
+	public static final Option<Class> KINETICS_ZERO_PRODUCTS = new Option<Class>(
+			"KINETICS_ZERO_PRODUCTS",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsZeroProducts()),
+			ZerothOrderReverseGMAK.class);
+	
+	/**
+	 * 
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static final Option<Class> KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS = new Option<Class>(
+			"KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleArbitraryEnzymeMechanism()),
+			IrrevNonModulatedNonInteractingEnzymes.class,
+			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(TREAT_ALL_REACTIONS_REVERSIBLE, RANGE_FALSE));
+
+	/**
+	 * The class name of the default kinetic law for reversible bi-bi reactions.
+	 * This can be any class that implements the {@link InterfaceBiBiKinetics} and
+	 * {@link InterfaceReversibleKinetics}.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static final Option<Class> KINETICS_REVERSIBLE_BI_BI_TYPE = new Option<Class>(
+			"KINETICS_REVERSIBLE_BI_BI_TYPE",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleBiBi()),
 			RandomOrderMechanism.class);
+	
+	/**
+	 * The class name of the default kinetic law for irreversible bi-bi reactions.
+	 * This can be any class that implements the {@link InterfaceBiBiKinetics} and
+	 * {@link InterfaceIrreversibleKinetics}.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static final Option<Class> KINETICS_IRREVERSIBLE_BI_BI_TYPE = new Option<Class>(
+			"KINETICS_IRREVERSIBLE_BI_BI_TYPE",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleBiBi()),
+			RandomOrderMechanism.class,
+			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(TREAT_ALL_REACTIONS_REVERSIBLE, RANGE_FALSE));
 
 	/**
 	 * The class name of the default kinetic law for bi-uni reactions. This can
@@ -117,12 +167,26 @@ public interface SqueezerOptions extends KeyProvider {
 	 * {@link org.sbml.squeezer.kinetics.InterfaceBiUniKinetics}.
 	 */
 	@SuppressWarnings("rawtypes")
-	public static final Option<Class> KINETICS_BI_UNI_TYPE = new Option<Class>(
-			"KINETICS_BI_UNI_TYPE",
+	public static final Option<Class> KINETICS_REVERSIBLE_BI_UNI_TYPE = new Option<Class>(
+			"KINETICS_REVERSIBLE_BI_UNI_TYPE",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsBiUni()),
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleBiUni()),
 			RandomOrderMechanism.class);
+	
+	/**
+	 * The class name of the default kinetic law for bi-uni reactions. This can
+	 * be any class that implements the
+	 * {@link org.sbml.squeezer.kinetics.InterfaceBiUniKinetics}.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static final Option<Class> KINETICS_IRREVERSIBLE_BI_UNI_TYPE = new Option<Class>(
+			"KINETICS_IRREVERSIBLE_BI_UNI_TYPE",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleBiUni()),
+			RandomOrderMechanism.class,
+			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(TREAT_ALL_REACTIONS_REVERSIBLE, RANGE_FALSE));
 
 	/**
 	 * Determines the key for the standard kinetic law to be applied for
@@ -146,12 +210,27 @@ public interface SqueezerOptions extends KeyProvider {
 	 * {@link org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics}.
 	 */
 	@SuppressWarnings("rawtypes")
-	public static final Option<Class> KINETICS_NONE_ENZYME_REACTIONS = new Option<Class>(
-			"KINETICS_NONE_ENZYME_REACTIONS",
+	public static final Option<Class> KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS = new Option<Class>(
+			"KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsNonEnzyme()),
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleNonEnzyme()),
 			GeneralizedMassAction.class);
+	
+	/**
+	 * Determines the key for the standard kinetic law to be applied for
+	 * reactions that are catalyzed by non-enzymes or that are not catalyzed at
+	 * all. The value may be any rate law that implements
+	 * {@link org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics}.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static final Option<Class> KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS = new Option<Class>(
+			"KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleNonEnzyme()),
+			GeneralizedMassAction.class,
+			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(TREAT_ALL_REACTIONS_REVERSIBLE, RANGE_FALSE));
 
 	/**
 	 * This key defines the default kinetic law to be applied to
@@ -160,12 +239,27 @@ public interface SqueezerOptions extends KeyProvider {
 	 * {@link org.sbml.squeezer.kinetics.InterfaceUniUniKinetics}.
 	 */
 	@SuppressWarnings("rawtypes")
-	public static final Option<Class> KINETICS_UNI_UNI_TYPE = new Option<Class>(
-			"KINETICS_UNI_UNI_TYPE",
+	public static final Option<Class> KINETICS_REVERSIBLE_UNI_UNI_TYPE = new Option<Class>(
+			"KINETICS_REVERSIBLE_UNI_UNI_TYPE",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsUniUni()),
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleUniUni()),
 			MichaelisMenten.class);
+	
+	/**
+	 * This key defines the default kinetic law to be applied to
+	 * enzyme-catalyzed reactions with one reactant and one product. Possible
+	 * values are the names of classes that implement
+	 * {@link org.sbml.squeezer.kinetics.InterfaceUniUniKinetics}.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static final Option<Class> KINETICS_IRREVERSIBLE_UNI_UNI_TYPE = new Option<Class>(
+			"KINETICS_IRREVERSIBLE_UNI_UNI_TYPE",
+			Class.class,
+			OPTIONS_BUNDLE,
+			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleUniUni()),
+			MichaelisMenten.class,
+			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(TREAT_ALL_REACTIONS_REVERSIBLE, RANGE_FALSE));
 	
 	/**
 	 * If true all parameters are stored globally for the whole model (default)
@@ -176,7 +270,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"NEW_PARAMETERS_GLOBAL",
 			Boolean.class,			
 			OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 
 	/**
 	 * If true, all reactions within the network are considered enzyme
@@ -187,7 +281,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"ALL_REACTIONS_AS_ENZYME_CATALYZED",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			false);
+			Boolean.valueOf(false));
 
 	/**
 	 * If not specified the value corresponding to this argument will be used to
@@ -219,7 +313,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 
 	/**
 	 * The value that is set for newly created parameters.
@@ -238,7 +332,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 
 	/**
 	 * If true kinetics are only generated if missing in the SBML file.
@@ -247,7 +341,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"GENERATE_KINETIC_LAW_ONLY_IF_MISSING",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			false);
+			Boolean.valueOf(false));
 	
 	/**
 	 * Allows the user to ignore species that are annotated with the given
@@ -272,7 +366,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 	
 	/**
 	 * Decide whether or not to set the boundary condition for genes to true.
@@ -281,14 +375,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"SET_BOUNDARY_CONDITION_FOR_GENES", 
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			true);
-	
-	/**
-	 * Helper variable that contains as only possible value within its
-	 * {@link Range} the value {@link Boolean#TRUE}.
-	 */
-	public static final Range<Boolean> RANGE_BOOLEAN = new Range<Boolean>(Boolean.class, Boolean.TRUE);
-	
+			Boolean.valueOf(true));
 	
 	/**
 	 * If true the information about reversiblity will be left unchanged.
@@ -297,17 +384,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"TREAT_REACTIONS_REVERSIBLE_AS_GIVEN",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			false);
-	
-	/**
-	 * Property that decides whether to set all reactions to reversible before
-	 * creating new kinetic equations.
-	 */
-	public static final Option<Boolean> TREAT_ALL_REACTIONS_REVERSIBLE = new Option<Boolean>(
-			"TREAT_ALL_REACTIONS_REVERSIBLE",
-			Boolean.class,
-			OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(false));
 
 	/**
 	 * If true, warnings will be displayed for too many reactants.
@@ -316,7 +393,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"WARNINGS_FOR_TOO_MANY_REACTANTS", 
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 	
 	/**
 	 * The maximal number of reactants so that the reaction is still considered
@@ -327,9 +404,9 @@ public interface SqueezerOptions extends KeyProvider {
 			"MAX_NUMBER_OF_REACTANTS",
 			Integer.class,
 			OPTIONS_BUNDLE,
-			3,
+			Integer.valueOf(3),
 			new ValuePairUncomparable<Option<Boolean>, 
-			Range<Boolean>>(WARNINGS_FOR_TOO_MANY_REACTANTS, RANGE_BOOLEAN));
+			Range<Boolean>>(WARNINGS_FOR_TOO_MANY_REACTANTS, RANGE_TRUE));
 
 	/**
 	 * Determines whether or not antisense RNA molecules are accepted as enzymes
@@ -339,7 +416,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"POSSIBLE_ENZYME_ANTISENSE_RNA",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			false);
+			Boolean.valueOf(false));
 
 	/**
 	 * Determines whether or not enzyme complexes are accepted as enzymes when
@@ -349,7 +426,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"POSSIBLE_ENZYME_COMPLEX",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 
 	/**
 	 * Determines whether or not generic proteins are accepted as enzymes when
@@ -359,7 +436,7 @@ public interface SqueezerOptions extends KeyProvider {
 			"POSSIBLE_ENZYME_GENERIC",
 			Boolean.class,
 			OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 	
 	/**
 	 * If this options is selected, species that are annotated as macromolecules
@@ -371,7 +448,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 */
 	public static final Option<Boolean> POSSIBLE_ENZYME_MACROMOLECULE = new Option<Boolean>(
 			"POSSIBLE_ENZYME_MACROMOLECULE", Boolean.class, OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 	
 	/**
 	 * Determines whether or not receptors are accepted as enzymes when
@@ -379,7 +456,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 */
 	public static final Option<Boolean> POSSIBLE_ENZYME_RECEPTOR = new Option<Boolean>(
 			"POSSIBLE_ENZYME_RECEPTOR", Boolean.class, OPTIONS_BUNDLE,
-			false);
+			Boolean.valueOf(false));
 
 	/**
 	 * Determines whether or not RNA molecules are accepted as enzymes when
@@ -387,7 +464,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 */
 	public static final Option<Boolean> POSSIBLE_ENZYME_RNA = new Option<Boolean>(
 			"POSSIBLE_ENZYME_RNA", Boolean.class, OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 
 	/**
 	 * Determines whether or not simple molecules are accepted as enzymes when
@@ -395,7 +472,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 */
 	public static final Option<Boolean> POSSIBLE_ENZYME_SIMPLE_MOLECULE = new Option<Boolean>(
 			"POSSIBLE_ENZYME_SIMPLE_MOLECULE", Boolean.class, OPTIONS_BUNDLE,
-			false);
+			Boolean.valueOf(false));
 
 	/**
 	 * Determines whether or not trunkated proteins are accepted as enzymes when
@@ -403,7 +480,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 */
 	public static final Option<Boolean> POSSIBLE_ENZYME_TRUNCATED = new Option<Boolean>(
 			"POSSIBLE_ENZYME_TRUNCATED", Boolean.class, OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 
 	/**
 	 * Determines whether or not unknown molecules are accepted as enzymes when
@@ -411,7 +488,7 @@ public interface SqueezerOptions extends KeyProvider {
 	 */
 	public static final Option<Boolean> POSSIBLE_ENZYME_UNKNOWN = new Option<Boolean>(
 			"POSSIBLE_ENZYME_UNKNOWN", Boolean.class, OPTIONS_BUNDLE,
-			false);
+			Boolean.valueOf(false));
 
 	/**
 	 * Can be true or false, depending on if the user wants to see SBML
@@ -419,13 +496,12 @@ public interface SqueezerOptions extends KeyProvider {
 	 */
 	public static final Option<Boolean> SHOW_SBML_WARNINGS = new Option<Boolean>(
 			"SHOW_SBML_WARNINGS", Boolean.class, OPTIONS_BUNDLE,
-			true);
+			Boolean.valueOf(true));
 	
 	/**
 	 * One of the following values: cat, hal or weg (important for
 	 * Liebermeister's standard kinetics).
 	 */
-	@SuppressWarnings("unchecked")
 	public static final Option<TypeStandardVersion> TYPE_STANDARD_VERSION = new Option<TypeStandardVersion>(
 			"TYPE_STANDARD_VERSION",
 			TypeStandardVersion.class,
@@ -433,8 +509,7 @@ public interface SqueezerOptions extends KeyProvider {
 			new Range<TypeStandardVersion>(
 					TypeStandardVersion.class, 
 					Range.toRangeString(TypeStandardVersion.class)),
-					TypeStandardVersion.cat, 
-					new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(TREAT_ALL_REACTIONS_REVERSIBLE, RANGE_BOOLEAN));
+					TypeStandardVersion.cat);
 	
 	/**
 	 * How to ensure unit consistency in kinetic equations? One way is to set
@@ -481,40 +556,7 @@ public interface SqueezerOptions extends KeyProvider {
 		DEFAULT_NEW_PARAMETER_VAL,
 		DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS,
 		IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
-	
-	/**
-	 * 
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final OptionGroup<Class> GROUP_KINETICS = new OptionGroup<Class>(
-			"GROUP_KINETICS",
-			OPTIONS_BUNDLE,
-			KINETICS_ARBITRARY_ENZYME_REACTIONS,
-			KINETICS_ARBITRARY_IRREV_ENZYME_REACTIONS,
-			KINETICS_ARBITRARY_REV_ENZYME_REACTIONS,
-			KINETICS_BI_BI_TYPE,
-			KINETICS_BI_UNI_TYPE,
-			KINETICS_GENE_REGULATION,
-			KINETICS_NONE_ENZYME_REACTIONS,
-			KINETICS_UNI_UNI_TYPE);
 
-	/**
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	public static final OptionGroup<Boolean> GROUP_ENZYMES = new OptionGroup<Boolean>(
-			"GROUP_ENZYMES",
-			OPTIONS_BUNDLE,
-			POSSIBLE_ENZYME_ANTISENSE_RNA,
-			POSSIBLE_ENZYME_COMPLEX,
-			POSSIBLE_ENZYME_GENERIC,
-			POSSIBLE_ENZYME_MACROMOLECULE,
-			POSSIBLE_ENZYME_RECEPTOR,
-			POSSIBLE_ENZYME_RNA,
-			POSSIBLE_ENZYME_SIMPLE_MOLECULE,
-			POSSIBLE_ENZYME_TRUNCATED,
-			POSSIBLE_ENZYME_UNKNOWN);
-	
 	/**
 	 * 
 	 */
@@ -534,6 +576,60 @@ public interface SqueezerOptions extends KeyProvider {
 		"GROUP_STANDARD_VERSION",
 		OPTIONS_BUNDLE,
 		TYPE_STANDARD_VERSION);
+	
+	/**
+	 * Select the default rate law for each reversible mechanism.
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static final OptionGroup<Class> GROUP_REVERSIBLE_KINETICS = new OptionGroup<Class>(
+			"GROUP_REVERSIBLE_KINETICS",
+			OPTIONS_BUNDLE,
+			KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS,
+			KINETICS_REVERSIBLE_UNI_UNI_TYPE,
+			KINETICS_REVERSIBLE_BI_UNI_TYPE,
+			KINETICS_REVERSIBLE_BI_BI_TYPE,
+			KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
+	
+	/**
+	 * Select the default rate law for each irreversible mechanism.
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static final OptionGroup<Class> GROUP_IRREVERSIBLE_KINETICS = new OptionGroup<Class>(
+			"GROUP_IRREVERSIBLE_KINETICS",
+			OPTIONS_BUNDLE,
+			KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS,
+			KINETICS_IRREVERSIBLE_UNI_UNI_TYPE,
+			KINETICS_IRREVERSIBLE_BI_UNI_TYPE,
+			KINETICS_IRREVERSIBLE_BI_BI_TYPE,
+			KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
+	
+	/**
+	 * Select the default rate law for each irreversible mechanism.
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static final OptionGroup<Class> GROUP_GENE_REGULATION_KINETICS = new OptionGroup<Class>(
+			"GROUP_GENE_REGULATION_KINETICS",
+			OPTIONS_BUNDLE,
+			KINETICS_GENE_REGULATION,
+			KINETICS_ZERO_REACTANTS,
+			KINETICS_ZERO_PRODUCTS);
+
+	/**
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public static final OptionGroup<Boolean> GROUP_ENZYMES = new OptionGroup<Boolean>(
+			"GROUP_ENZYMES",
+			OPTIONS_BUNDLE,
+			POSSIBLE_ENZYME_ANTISENSE_RNA,
+			POSSIBLE_ENZYME_COMPLEX,
+			POSSIBLE_ENZYME_GENERIC,
+			POSSIBLE_ENZYME_MACROMOLECULE,
+			POSSIBLE_ENZYME_RECEPTOR,
+			POSSIBLE_ENZYME_RNA,
+			POSSIBLE_ENZYME_SIMPLE_MOLECULE,
+			POSSIBLE_ENZYME_TRUNCATED,
+			POSSIBLE_ENZYME_UNKNOWN);
 	
 	/**
 	 * 

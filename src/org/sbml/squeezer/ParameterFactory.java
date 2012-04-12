@@ -53,6 +53,10 @@ import de.zbit.util.ResourceManager;
  * @version $Rev$
  */
 public class ParameterFactory {
+
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
@@ -212,8 +216,9 @@ public class ParameterFactory {
 		}
 		LocalParameter p_kass = createOrGetParameter(kass.toString());
 		if (!p_kass.isSetName()) {
-			p_kass.setName((zerothOrder ? MESSAGES.getString("ZEROTH_ORDER") + " " : "") +
-					MessageFormat.format(MESSAGES.getString("ASSOCIATION_CONSTANT_OF_REACTION"), r.getId()));
+			p_kass.setName((zerothOrder ? MESSAGES.getString("ZEROTH_ORDER") + " " : "")
+					+ MessageFormat.format(MESSAGES.getString("ASSOCIATION_CONSTANT_OF_REACTION"),
+						SBMLtools.getName(r)));
 		}
 		if (!p_kass.isSetSBOTerm()) {
 			SBMLtools.setSBOTerm(p_kass,zerothOrder ? 48 : 153);
@@ -316,7 +321,7 @@ public class ParameterFactory {
 		LocalParameter p_kdiss = createOrGetParameter(kdiss.toString());
 		if (!p_kdiss.isSetName()) {
 			p_kdiss.setName((zerothOrder ? MESSAGES.getString("ZEROTH_ORDER") + " " : "") +
-					MessageFormat.format(MESSAGES.getString("DISASSOCIATION_CONSTANT_OF_REACTION"), r.getId()));
+					MessageFormat.format(MESSAGES.getString("DISASSOCIATION_CONSTANT_OF_REACTION"), SBMLtools.getName(r)));
 		}
 		if (!p_kdiss.isSetSBOTerm()) {
 			SBMLtools.setSBOTerm(p_kdiss, 156);
@@ -334,17 +339,17 @@ public class ParameterFactory {
 	 * @return A new or an existing equilibrium constant for the reaction.
 	 */
 	public LocalParameter parameterEquilibriumConstant() {
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		LocalParameter keq = createOrGetParameter("keq_", reactionID);
 		if (!keq.isSetSBOTerm()) {
 			SBMLtools.setSBOTerm(keq,281);
 		}
 		if (!keq.isSetName()) {
-			keq.setName(MessageFormat.format(MESSAGES.getString("EQUILIBRIUM_CONSTANT_OF_REACTION"),reactionID));
+			keq.setName(MessageFormat.format(MESSAGES.getString("EQUILIBRIUM_CONSTANT_OF_REACTION"), SBMLtools.getName(r)));
 		}
 		if (!keq.isSetUnits()) {
 			int x = 0;
-			Reaction r = kineticLaw.getParentSBMLObject();
 			for (SpeciesReference specRef : r.getListOfReactants()) {
 				x += specRef.getStoichiometry();
 			}
@@ -400,9 +405,14 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(hr,190);
 		}
 		if (!hr.isSetName()) {
-			hr.setName(MessageFormat.format(MESSAGES.getString("HILL_COEFFICIENT_IN_REACTION"),
-					(enzyme != null) ? MessageFormat.format(MESSAGES.getString("FOR_ENZYME"),
-							enzyme) : ""));
+			if (enzyme != null) {
+				hr.setName(MessageFormat.format(
+					MESSAGES.getString("HILL_COEFFICIENT_IN_REACTION"),
+					MessageFormat.format(MESSAGES.getString("FOR_ENZYME"),
+						SBMLtools.getName(model.getSpecies(enzyme)))));
+			} else {
+				hr.setName(MessageFormat.format(MESSAGES.getString("HILL_COEFFICIENT_IN_REACTION"), ""));
+			}
 		}
 		if (!hr.isSetUnits()) {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -430,7 +440,8 @@ public class ParameterFactory {
 	 * @return
 	 */
 	public LocalParameter parameterKa(String activatorSpecies, String enzyme) {
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		StringBuffer name = StringTools.concat("kac_", reactionID,
 				StringTools.underscore, activatorSpecies);
 		if (enzyme != null) {
@@ -441,7 +452,9 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(kA,363);
 		}
 		if (!kA.isSetName()) {
-			kA.setName(MessageFormat.format(MESSAGES.getString("ACTIVATION_CONSTANT_OF_REACTION"),reactionID));
+			kA.setName(MessageFormat.format(
+				MESSAGES.getString("ACTIVATION_CONSTANT_OF_REACTION"),
+				SBMLtools.getName(r)));
 		}
 		if (!kA.isSetUnits()) {
 			Species species = model.getSpecies(activatorSpecies);
@@ -459,7 +472,8 @@ public class ParameterFactory {
 	 *         otherwise kcat.
 	 */
 	public LocalParameter parameterKcatOrVmax(String enzyme, boolean forward) {
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		LocalParameter kr;
 		if (enzyme != null) {
 			/*
@@ -483,14 +497,11 @@ public class ParameterFactory {
 				}
 			}
 			if (!kr.isSetName()) {
-				kr.setName((enzyme != null) ? 
-						MessageFormat.format(MESSAGES.getString("CATALYTIC_RATE_CONSTANT_OF_ENZYME_IN_REACTION"),
-							MESSAGES.getString(forward ? "SUBSTRATE" : "PRODUCT"), enzyme,
-							reactionID) :
-						MessageFormat.format(MESSAGES.getString("CATALYTIC_RATE_CONSTANT_OF_REACTION"),
-							MESSAGES.getString(forward ? "SUBSTRATE" : "PRODUCT"),
-							reactionID)
-						);
+				// Note that the enzyme must not be null here (see the check above)
+				kr.setName(MessageFormat.format(
+					MESSAGES.getString("CATALYTIC_RATE_CONSTANT_OF_ENZYME_IN_REACTION"),
+					MESSAGES.getString(forward ? "SUBSTRATE" : "PRODUCT"),
+					SBMLtools.getName(model.getSpecies(enzyme)), SBMLtools.getName(r)));
 			}
 			if (!kr.isSetUnits()) {
 				kr.setUnits(unitFactory.unitPerTimeOrSizePerTime(model
@@ -516,14 +527,10 @@ public class ParameterFactory {
 				}
 			}
 			if (!kr.isSetName()) {
-				kr.setName((enzyme != null) ? 
-						MessageFormat.format(MESSAGES.getString("MAXIMAL_VELOCITY_OF_ENZYME_IN_REACTION"),
-							MESSAGES.getString(forward ? "FORWARD" : "REVERSE"),
-							enzyme,
-							reactionID) : 
-						MessageFormat.format(MESSAGES.getString("MAXIMAL_VELOCITY_OF_REACTION"),
-							MESSAGES.getString(forward ? "FORWARD" : "REVERSE"),
-							reactionID));
+				kr.setName(MessageFormat.format(MESSAGES
+						.getString("MAXIMAL_VELOCITY_OF_REACTION"), MESSAGES
+						.getString(forward ? "FORWARD" : "REVERSE"),
+					SBMLtools.getName(r)));
 			}
 			if (!kr.isSetUnits()) {
 				/*
@@ -552,7 +559,9 @@ public class ParameterFactory {
 			kG.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
 		if (!kG.isSetName()) {
-			kG.setName(MessageFormat.format(MESSAGES.getString("ENERGY_CONSTANT_OF_SPECIES"), species));
+			kG.setName(MessageFormat.format(
+				MESSAGES.getString("ENERGY_CONSTANT_OF_SPECIES"),
+				SBMLtools.getName(model.getSpecies(species))));
 		}
 		return kG;
 	}
@@ -597,11 +606,13 @@ public class ParameterFactory {
 	public LocalParameter parameterKi(String inhibitorSpecies, String enzymeID,
 			int bindingNum) {
 		StringBuffer id = new StringBuffer();
+		Species inhibitor = model.getSpecies(inhibitorSpecies);
 		id.append("kic_");
 		if (bindingNum > 0) {
 			StringTools.append(id, bindingNum, StringTools.underscore);
 		}
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		id.append(reactionID);
 		if (inhibitorSpecies != null) {
 			StringTools.append(id, StringTools.underscore, inhibitorSpecies);
@@ -614,20 +625,20 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(kI,261);
 		}
 		if (!kI.isSetName()) {
-			String temp = "";
-			if (inhibitorSpecies != null) {
-				temp += MessageFormat.format(MESSAGES.getString("FOR_SPECIES"), inhibitorSpecies);
+			StringBuilder temp = new StringBuilder();
+			if (inhibitor != null) {
+				temp.append(MessageFormat.format(MESSAGES.getString("FOR_SPECIES"), SBMLtools.getName(inhibitor)));
 			}
 			if (enzymeID != null) {
-				temp += MessageFormat.format(MESSAGES.getString("FOR_ENZYME"), enzymeID);
+				temp.append(MessageFormat.format(MESSAGES.getString("FOR_ENZYME"), enzymeID));
 			}
 			if (bindingNum > 0) {
-				temp += MessageFormat.format(MESSAGES.getString("WITH_BINDING_POSITIONS"), Integer.toString(bindingNum));
+				temp.append(MessageFormat.format(MESSAGES.getString("WITH_BINDING_POSITIONS"), Integer.toString(bindingNum)));
 			}
-			kI.setName(MessageFormat.format(MESSAGES.getString("INHIBITIORY_CONSTANT_OF_REACTION"), temp, reactionID));
+			kI.setName(MessageFormat.format(MESSAGES.getString("INHIBITIORY_CONSTANT_OF_REACTION"), temp, SBMLtools.getName(r)));
 		}
 		if (!kI.isSetUnits()) {
-			kI.setUnits(unitFactory.unitSubstancePerSizeOrSubstance(model.getSpecies(inhibitorSpecies)));
+			kI.setUnits(unitFactory.unitSubstancePerSizeOrSubstance(inhibitor));
 		}
 		return kI;
 	}
@@ -637,14 +648,15 @@ public class ParameterFactory {
 	 * @return
 	 */
 	public LocalParameter parameterKineticOrder(String prefix) {
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		StringBuffer id = StringTools.concat(prefix, reactionID);
 		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm()) {
 			// not yet available.
 		}
 		if (!hr.isSetName()) {
-			hr.setName(MessageFormat.format(MESSAGES.getString("KINETIC_ORDER_OF_REACTION"), reactionID));
+			hr.setName(MessageFormat.format(MESSAGES.getString("KINETIC_ORDER_OF_REACTION"), SBMLtools.getName(r)));
 		}
 		if (!hr.isSetUnits()) {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -663,7 +675,8 @@ public class ParameterFactory {
 	 */
 	public LocalParameter parameterKS(Species species, String enzyme) {
 		// TODO: Should we have the substrate or product as an additional argument here to form the name?
-		String rid = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String rid = r.getId();
 		StringBuffer id = StringTools.concat("ksp_", rid);
 		if (enzyme != null) {
 			StringTools.append(id, StringTools.underscore, enzyme);
@@ -673,11 +686,13 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(kS, 194);
 		}
 		if (!kS.isSetName()) {
-			kS.setName((enzyme != null) ?
-					MessageFormat.format(MESSAGES.getString("HALF_SATURATION_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"),
-							species, enzyme, rid) :
-					MessageFormat.format(MESSAGES.getString("HALF_SATURATION_CONSTANT_OF_SPECIES_IN_REACTION"),
-							species, rid));
+			if (enzyme != null) {
+				kS.setName(MessageFormat.format(MESSAGES.getString("HALF_SATURATION_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"),
+							SBMLtools.getName(species), SBMLtools.getName(model.getSpecies(enzyme)), SBMLtools.getName(r)));
+			} else {
+				kS.setName(MessageFormat.format(MESSAGES.getString("HALF_SATURATION_CONSTANT_OF_SPECIES_IN_REACTION"),
+							SBMLtools.getName(species),  SBMLtools.getName(r)));
+			}
 		}
 		if (!kS.isSetUnits()) {
 			if (unitFactory.getBringToConcentration()) {
@@ -719,7 +734,8 @@ public class ParameterFactory {
 	 * @return
 	 */
 	public LocalParameter parameterMichaelis(String species, String enzyme) {
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		StringBuffer id = StringTools.concat("kmc_", reactionID,
 				StringTools.underscore, species);
 		if (enzyme != null) {
@@ -730,9 +746,13 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(kM, 27);
 		}
 		if (!kM.isSetName()) {
-			kM.setName((enzyme != null) ?
-					MessageFormat.format(MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"), species, enzyme, reactionID) :
-					MessageFormat.format(MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_IN_REACTION"), species, reactionID));
+			if (enzyme != null) {
+				kM.setName(MessageFormat.format(MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION"),
+					SBMLtools.getName(model.getSpecies(species)), SBMLtools.getName(model.getSpecies(enzyme)), SBMLtools.getName(r)));
+			} else {
+				kM.setName(MessageFormat.format(MESSAGES.getString("MICHAELIS_CONSTANT_OF_SPECIES_IN_REACTION"),
+					SBMLtools.getName(model.getSpecies(species)), SBMLtools.getName(r)));
+			}
 		}
 		if (!kM.isSetUnits()) {
 			Species spec = model.getSpecies(species);
@@ -777,7 +797,8 @@ public class ParameterFactory {
 	 */
 	public LocalParameter parameterNumBindingSites(String enzyme,
 			String inhibitor) {
-		String rid = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String rid = r.getId();
 		StringBuffer exponent = StringTools.concat("m_", rid);
 		if (enzyme != null) {
 			StringTools.append(exponent, StringTools.underscore, enzyme);
@@ -790,11 +811,21 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(p_exp,189);
 		}
 		if (!p_exp.isSetName()) {
-			p_exp.setName((enzyme != null) ?
-					MessageFormat.format(MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_ON_ENZYME_OF_REACTION"),
-							(inhibitor != null) ? inhibitor : "", enzyme, rid):
-					MessageFormat.format(MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_OF_REACTION"),
-							(inhibitor != null) ? inhibitor : "", rid));
+			if (enzyme != null) {
+				if (inhibitor != null) {
+					p_exp.setName(MessageFormat.format(MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_ON_ENZYME_OF_REACTION"),
+							 SBMLtools.getName(model.getSpecies(inhibitor)), SBMLtools.getName(model.getSpecies(enzyme)), SBMLtools.getName(r)));
+				} else {
+				p_exp.setName(MessageFormat.format(MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_ON_ENZYME_OF_REACTION"),
+							"", SBMLtools.getName(model.getSpecies(enzyme)), SBMLtools.getName(r)));
+				}
+			} else if (inhibitor != null) {
+				p_exp.setName(MessageFormat.format(MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_OF_REACTION"),
+					SBMLtools.getName(model.getSpecies(inhibitor)), SBMLtools.getName(r)));
+			} else {
+				p_exp.setName(MessageFormat.format(MESSAGES.getString("NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_OF_REACTION"),
+					"", SBMLtools.getName(r)));
+			}
 		}
 		if (!p_exp.isSetUnits())
 			p_exp.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -836,12 +867,13 @@ public class ParameterFactory {
 	 * @return
 	 */
 	public LocalParameter parameterRhoActivation(String species) {
-		String rid = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String rid = r.getId();
 		LocalParameter rhoA = createOrGetParameter("rac_", rid,
-				StringTools.underscore, species);
+			StringTools.underscore, species);
 		if (!rhoA.isSetName()) {
 			rhoA.setName(MessageFormat.format(MESSAGES.getString("ACTIVATION_BASELINE_RELATION_OF_SPECIES_IN_REACTION"), 
-					species, rid));
+				SBMLtools.getName(model.getSpecies(species)), SBMLtools.getName(r)));
 		}
 		if (!rhoA.isSetUnits()) {
 			rhoA.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -855,7 +887,8 @@ public class ParameterFactory {
 	 * @return
 	 */
 	public LocalParameter parameterRhoInhibition(String species) {
-		String rid = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String rid = r.getId();
 		LocalParameter rhoI = createOrGetParameter("ric_", rid,
 				StringTools.underscore, species);
 		if (!rhoI.isSetUnits()) {
@@ -863,7 +896,7 @@ public class ParameterFactory {
 		}
 		if (!rhoI.isSetName()) {
 			rhoI.setName(MessageFormat.format(MESSAGES.getString("INHIBITON_BASELINE_RELATION_OF_SPECIES_IN_REACTION"),
-					species, rid));
+				SBMLtools.getName(model.getSpecies(species)), SBMLtools.getName(r)));
 		}
 		return rhoI;
 	}
@@ -879,7 +912,8 @@ public class ParameterFactory {
 		StringBuffer kass = StringTools.concat("kar_", r.getId());
 		LocalParameter p_kass = createOrGetParameter(kass.toString());
 		if (!p_kass.isSetName()) {
-			p_kass.setName(MessageFormat.format(MESSAGES.getString("ASSOCIATION_CONSTANT_IN_RESTRICTED_SPACES_OF_REACTION"), r.getId()));
+			p_kass.setName(MessageFormat.format(MESSAGES.getString("ASSOCIATION_CONSTANT_IN_RESTRICTED_SPACES_OF_REACTION"),
+				SBMLtools.getName(r)));
 		}
 		if (!p_kass.isSetSBOTerm()) {
 			// not yet available.
@@ -923,8 +957,9 @@ public class ParameterFactory {
 					.getUnitDefinition("substance"), model
 					.getUnitDefinition("time")));
 		}
-		if (!p.isSetName())
+		if (!p.isSetName()) {
 			p.setName(MESSAGES.getString("RATE_CONSTANT_FOR_SYNTHESIS"));
+		}
 		return p;
 	}
 
@@ -936,14 +971,15 @@ public class ParameterFactory {
 	public LocalParameter parameterSSystemBeta(String rId) {
 		LocalParameter p = createOrGetParameter("beta_", rId);
 		if (!p.isSetSBOTerm())
-			SBMLtools.setSBOTerm(p,156);
+			SBMLtools.setSBOTerm(p, 156);
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitSubstancePerTime(model
 					.getUnitDefinition("substance"), model
 					.getUnitDefinition("time")));
 		}
-		if (!p.isSetName())
+		if (!p.isSetName()) {
 			p.setName(MESSAGES.getString("RATE_CONSTANT_FOR_DEGRADATION"));
+		}
 		return p;
 	}
 
@@ -953,17 +989,21 @@ public class ParameterFactory {
 	 * @return Parameter
 	 */
 	public LocalParameter parameterSSystemExponent(String modifier) {
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		StringBuffer id = StringTools.concat("ssexp_", reactionID);
 		if (modifier != null)
 			StringTools.append(id, StringTools.underscore, modifier);
 		LocalParameter p = createOrGetParameter(id.toString());
 		if (!p.isSetName()) {
-			p.setName((modifier != null) ?
+			if (modifier != null) {
+				p.setName(
 					MessageFormat.format(MESSAGES.getString("S_SYSTEM_EXPONENT_FOR_MODIFIER_IN_REACTION"), 
-							modifier, reactionID) :
-					MessageFormat.format(MESSAGES.getString("S_SYSTEM_EXPONENT_IN_REACTION"), 
-							reactionID));
+						SBMLtools.getName(model.getSpecies(modifier)), SBMLtools.getName(r)));
+			} else {
+				p.setName(MessageFormat.format(MESSAGES.getString("S_SYSTEM_EXPONENT_IN_REACTION"), 
+					SBMLtools.getName(r)));
+			}
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -982,11 +1022,12 @@ public class ParameterFactory {
 	public Parameter parameterStandardChemicalPotential(String species) {
 		Parameter mu = createOrGetGlobalParameter("scp_", species);
 		if (!mu.isSetName()) {
-			mu.setName(MessageFormat.format(MESSAGES.getString("STANDARD_CHEMICAL_POTENTIAL_OF_SPECIES"),
-					species));
+			mu.setName(MessageFormat.format(
+				MESSAGES.getString("STANDARD_CHEMICAL_POTENTIAL_OF_SPECIES"),
+				SBMLtools.getName(model.getSpecies(species))));
 		}
 		if (!mu.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(mu,463);
+			SBMLtools.setSBOTerm(mu, 463);
 		}
 		if (!mu.isSetUnits()) {
 			mu.setUnits(unitFactory.unitkJperSubstance(model
@@ -1010,7 +1051,7 @@ public class ParameterFactory {
 			T.setUnits(Unit.Kind.KELVIN);
 		}
 		if (!T.isSetName()) {
-			T.setName(MessageFormat.format(MESSAGES.getString("TEMP_OF_REACTION_SYSTEM"), model.getId()));
+			T.setName(MessageFormat.format(MESSAGES.getString("TEMP_OF_REACTION_SYSTEM"), SBMLtools.getName(model)));
 		}
 		return T;
 	}
@@ -1045,14 +1086,15 @@ public class ParameterFactory {
 	 * @return
 	 */
 	public LocalParameter parameterTimeOrder() {
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		StringBuffer id = StringTools.concat("hic_", reactionID);
 		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm()) {
 			// not yet available.
 		}
 		if (!hr.isSetName()) {
-			hr.setName(MessageFormat.format(MESSAGES.getString("TIME_ORDER_IN_REACTION"), reactionID));
+			hr.setName(MessageFormat.format(MESSAGES.getString("TIME_ORDER_IN_REACTION"), SBMLtools.getName(r)));
 		}
 		if (!hr.isSetUnits()) {
 			hr.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -1093,14 +1135,15 @@ public class ParameterFactory {
 	 */
 	public LocalParameter parameterVelocityConstant(String enzyme) {
 		LocalParameter kVr;
-		String reactionID = kineticLaw.getParentSBMLObject().getId();
+		Reaction r = kineticLaw.getParent();
+		String reactionID = r.getId();
 		if (enzyme != null) {
 			kVr = createOrGetParameter("kcrg_", reactionID,
 					StringTools.underscore, enzyme);
 			if (!kVr.isSetName()) {
 				kVr.setName(MessageFormat.format(
 						MESSAGES.getString("CATALYTIC_RATE_CONSTANT_GEOMETIC_MEAN_OF_REACTION"),
-						reactionID));
+						SBMLtools.getName(r)));
 			}
 			if (!kVr.isSetUnits()) {
 				kVr.setUnits(unitFactory.unitPerTimeOrSizePerTime(model
@@ -1111,7 +1154,7 @@ public class ParameterFactory {
 			if (!kVr.isSetName()) {
 				kVr.setName(MessageFormat.format(
 						MESSAGES.getString("MAX_VELOCITY_GEOMETIC_MEAN_OF_REACTION"),
-						reactionID));
+						SBMLtools.getName(r)));
 			}
 			if (!kVr.isSetSBOTerm()) {
 				SBMLtools.setSBOTerm(kVr,324);

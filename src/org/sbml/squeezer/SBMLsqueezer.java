@@ -264,20 +264,16 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * 
    * @return
    */
-  public static Set<Class> getKineticsArbitraryIrrevEnzymeMechanism() {
-	  Set<Class> irrev = new HashSet<Class>(kineticsArbitraryEnzymeMechanism);
-	  irrev.removeAll(kineticsReversible);
-	  return irrev;
+  public static Set<Class> getKineticsIrreversibleArbitraryEnzymeMechanism() {
+	  return getKineticsIrreversible(kineticsArbitraryEnzymeMechanism);
   }
 
   /**
    * 
    * @return
    */
-  public static Set<Class> getKineticsArbitraryRevEnzymeMechanism() {
-	  Set<Class> rev = new HashSet<Class>(kineticsArbitraryEnzymeMechanism);
-	  rev.removeAll(kineticsIrreversible);
-	  return rev;
+  public static Set<Class> getKineticsReversibleArbitraryEnzymeMechanism() {
+  	return getKineticsReversible(kineticsArbitraryEnzymeMechanism);
   }
 
   /**
@@ -286,6 +282,44 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public static Set<Class> getKineticsBiBi() {
     return kineticsBiBi;
   }
+  
+  /**
+   * 
+   * @return
+   */
+	public static Set<Class> getKineticsReversibleBiBi() {
+	  return getKineticsReversible(kineticsBiBi);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversibleBiBi() {
+		return getKineticsIrreversible(kineticsBiBi);
+	}
+	
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public static Set<Class> getKineticsReversible(Set<Class> type) {
+	  Set<Class> rev = new HashSet<Class>(type);
+	  rev.retainAll(kineticsReversible);
+	  return rev;
+	}
+	
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversible(Set<Class> type) {
+	  Set<Class> rev = new HashSet<Class>(type);
+	  rev.retainAll(kineticsIrreversible);
+	  return rev;
+	}
 
   /**
    * @return the kineticsBiUni
@@ -735,5 +769,53 @@ protected void setUp() {
       logger.log(Level.WARNING, WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
     }
   }
+
+  /**
+   * 
+   * @return
+   */
+	public static Set<Class> getKineticsReversibleBiUni() {
+		return getKineticsReversible(kineticsBiUni);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversibleBiUni() {
+		return getKineticsIrreversible(kineticsBiUni);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsReversibleUniUni() {
+		return getKineticsReversible(kineticsUniUni);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversibleUniUni() {
+		return getKineticsIrreversible(kineticsUniUni);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsReversibleNonEnzyme() {
+		return getKineticsReversible(kineticsNonEnzyme);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversibleNonEnzyme() {
+		return getKineticsIrreversible(kineticsNonEnzyme);
+	}
   
 }
