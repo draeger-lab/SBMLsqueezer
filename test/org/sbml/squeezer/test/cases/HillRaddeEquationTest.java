@@ -24,16 +24,14 @@
 
 package org.sbml.squeezer.test.cases;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
-import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.HillRaddeEquation;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
@@ -48,8 +46,6 @@ public class HillRaddeEquationTest extends KineticsTest{
 	
 	public HillRaddeEquationTest() {
 		super();
-		// Init the default ignore list for species:
-		prefs.put(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS, "C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819");
 	}
 
 	public Model initModel() {
@@ -57,22 +53,18 @@ public class HillRaddeEquationTest extends KineticsTest{
 		Model model = doc.createModel("m1");
 		Compartment c = model.createCompartment("c1");
 		Species s1 = model.createSpecies("s1", c);
-		Species s2 = model.createSpecies("s2", c);
+		s1.setSBOTerm(SBO.getEmptySet());
 		Species p1 = model.createSpecies("p1", c);
-		Species p2 = model.createSpecies("p2", c);
+		p1.setSBOTerm(SBO.getRNA());
 		Species e1 = model.createSpecies("e1", c);
-		
-		for (Species s : model.getListOfSpecies()) {
-			s.setHasOnlySubstanceUnits(false);
-		}
+		e1.setSBOTerm(SBO.getGene());
 		
 		Reaction r1 = model.createReaction("r1");
 		r1.setReversible(false);
 		r1.createReactant(s1);
-		r1.createReactant(s2);
 		r1.createProduct(p1);
-		r1.createProduct(p2);
 		r1.createModifier(e1);
+		r1.setSBOTerm(SBO.getTrigger());
 		
 		return model;
 	}
@@ -86,7 +78,6 @@ public class HillRaddeEquationTest extends KineticsTest{
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HillRaddeEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "");
-		assertTrue(r1.isReversible());
 	}
 	
 	
