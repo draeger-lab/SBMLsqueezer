@@ -657,14 +657,27 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public boolean closeFile() {
 		boolean change = false;
-		if (tabbedPane.getComponentCount() > 0) {
-			tabbedPane.remove(tabbedPane.getSelectedComponent());
-			change = true;
-		}
-		if (tabbedPane.getComponentCount() == 0) {
-			setEnabled(false, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
-					Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
-					Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+		int choice = JOptionPane.showConfirmDialog(this, 
+				"Would you like to save the document?",
+			    "Save and close",
+			    JOptionPane.YES_NO_CANCEL_OPTION); 
+		if (choice != 2 ) {
+			File savedFile = null;
+			if (choice == 0) {
+				savedFile = saveFile();
+			}
+			System.out.print(savedFile);
+			if (savedFile != null) {
+				if (tabbedPane.getComponentCount() > 0) {
+					tabbedPane.remove(tabbedPane.getSelectedComponent());
+					change = true;
+				}
+				if (tabbedPane.getComponentCount() == 0) {
+					setEnabled(false, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
+							Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
+							Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+				}
+			}
 		}
 		return change;
 	}
@@ -758,6 +771,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#saveFile()
 	 */
 	public File saveFile() {
+		File savedFile = null;
 		SBPreferences prefs = SBPreferences.getPreferencesFor(GUIOptions.class);
 		SBFileFilter filterText = SBFileFilter.createTextFileFilter();
 		SBFileFilter filterTeX = SBFileFilter.createTeXFileFilter();
@@ -767,6 +781,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				JFileChooser.FILES_ONLY, filterText, filterTeX, filterSBML);
 		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			final File out = chooser.getSelectedFile();
+			savedFile = out;
 			if (out.getParentFile() != null) {
 				prefs.put(GUIOptions.SAVE_DIR, out.getParentFile()
 						.getAbsolutePath());
@@ -793,6 +808,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				}
 			}
 		}
-		return null;
+		return savedFile;
 	}
 }
