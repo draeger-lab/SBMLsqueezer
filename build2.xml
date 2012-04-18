@@ -90,8 +90,8 @@
 
 <!-- Uncomment for SysBio classes instead of compiled jar. -->
            <fileset dir="${SysBioPath}/bin">
-              <exclude name="de/zbit/resources/liftover/*"/>
-           	  <exclude name="de/zbit/mapper/*"/>
+              <exclude name="de/zbit/resources/liftover/**/*"/>
+           	  <exclude name="de/zbit/mapper/**/*"/>
               <exclude name="**/package.html"/>
            </fileset>
 <!-- Achtung, im ersten SysBio release befinden sich bugs in KeggInfos.java ! -->
