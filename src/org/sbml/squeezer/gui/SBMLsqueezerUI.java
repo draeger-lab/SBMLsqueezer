@@ -667,7 +667,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				savedFile = saveFile();
 			}
 			System.out.print(savedFile);
-			if (savedFile != null) {
+			if (savedFile != null || choice == 1) {
 				if (tabbedPane.getComponentCount() > 0) {
 					tabbedPane.remove(tabbedPane.getSelectedComponent());
 					change = true;
