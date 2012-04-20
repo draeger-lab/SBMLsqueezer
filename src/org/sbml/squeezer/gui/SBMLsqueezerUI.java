@@ -78,6 +78,7 @@ import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
 import de.zbit.gui.JTabbedPaneCloseListener;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
+import de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.actioncommand.ActionCommand;
 import de.zbit.io.filefilter.SBFileFilter;
@@ -564,9 +565,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabAboutToBeClosed(int)
+	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabAboutToBeClosed(de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent)
 	 */
-	public boolean tabAboutToBeClosed(int index) {
+	public boolean tabAboutToBeClosed(TabCloseEvent evt0) {
 		boolean change = false;
 		int choice = JOptionPane.showConfirmDialog(this, 
 				"Would you like to save the document?",
@@ -591,9 +592,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabClosed(int)
+	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabClosed(de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent)
 	 */
-	public void tabClosed(int index) {
+	public void tabClosed(TabCloseEvent evt0) {
 		
 	}
 
