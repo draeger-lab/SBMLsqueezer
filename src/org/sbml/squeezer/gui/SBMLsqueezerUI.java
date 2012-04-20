@@ -76,6 +76,7 @@ import de.zbit.gui.BaseFrame;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
+import de.zbit.gui.JTabbedPaneCloseListener;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.actioncommand.ActionCommand;
@@ -144,7 +145,7 @@ class FileReaderThread extends Thread implements Runnable {
  * @since 1.0
  */
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
-		ChangeListener {
+		ChangeListener, JTabbedPaneCloseListener {
 	
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
@@ -560,6 +561,41 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			setSBMLsqueezerBackground();
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabAboutToBeClosed(int)
+	 */
+	public boolean tabAboutToBeClosed(int index) {
+		boolean change = false;
+		int choice = JOptionPane.showConfirmDialog(this, 
+				"Would you like to save the document?",
+			    "Save and close",
+			    JOptionPane.YES_NO_CANCEL_OPTION); 
+		
+		File savedFile = null;
+		if (choice == 0) {
+			savedFile = saveFile();
+		}
+		if (savedFile != null || choice == 1) {
+			change = (tabbedPane.getComponentCount() > 0);
+			if (tabbedPane.getComponentCount() == 0) {
+				setEnabled(false, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
+						Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
+						Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+			}
+		}
+		
+		return change;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabClosed(int)
+	 */
+	public void tabClosed(int index) {
+		
+	}
 
 	/* (non-Javadoc)
 	 * @see  java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
@@ -656,30 +692,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#closeFile()
 	 */
 	public boolean closeFile() {
-		boolean change = false;
-		int choice = JOptionPane.showConfirmDialog(this, 
-				"Would you like to save the document?",
-			    "Save and close",
-			    JOptionPane.YES_NO_CANCEL_OPTION); 
-		if (choice != 2 ) {
-			File savedFile = null;
-			if (choice == 0) {
-				savedFile = saveFile();
-			}
-			System.out.print(savedFile);
-			if (savedFile != null || choice == 1) {
-				if (tabbedPane.getComponentCount() > 0) {
-					tabbedPane.remove(tabbedPane.getSelectedComponent());
-					change = true;
-				}
-				if (tabbedPane.getComponentCount() == 0) {
-					setEnabled(false, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
-							Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
-							Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
-				}
-			}
-		}
-		return change;
+		tabbedPane.remove(tabbedPane.getSelectedComponent());
+		
+		return (tabbedPane.getComponentCount() > 0);
 	}
 
 	/* (non-Javadoc)
@@ -702,6 +717,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					.getIconHeight() + 75));
 		}
 		tabbedPane = new JTabbedPaneDraggableAndCloseable();
+		tabbedPane.addCloseListener(this);
 		tabbedPane.addChangeListener(this);
 		return tabbedPane;
 	}
