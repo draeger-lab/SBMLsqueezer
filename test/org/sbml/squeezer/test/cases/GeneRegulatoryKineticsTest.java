@@ -70,11 +70,18 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 		e1.setSBOTerm(SBO.getGene());
 		
 		Reaction r1 = model.createReaction("r1");
-		r1.setReversible(false);
+		r1.setReversible(true);
 		r1.createReactant(s1);
 		r1.createProduct(p1);
 		r1.createModifier(e1);
 		r1.setSBOTerm(SBO.getTrigger());
+		
+		Reaction r2 = model.createReaction("r2");
+		r2.setReversible(false);
+		r2.createReactant(s1);
+		r2.createProduct(p1);
+		r2.createModifier(e1);
+		r2.setSBOTerm(SBO.getTrigger());
 		
 		return model;
 	}
@@ -84,7 +91,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testAdditiveModelLinearIrrevAmount() throws Throwable {
+	public void testAdditiveModelLinearRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelLinear.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "m_r1*(w_r1_p1*p1+w_r1_e1*e1+b_r1)");
@@ -95,10 +102,20 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testAdditiveModelLinearIrrevConcentration() throws Throwable {
+	public void testAdditiveModelLinearRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelLinear.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "m_r1*(w_r1_p1*p1/c1+w_r1_e1*e1/c1+b_r1)");
+	}
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testAdditiveModelLinearIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "m_r2*(w_r2_p1*p1+w_r2_e1*e1+b_r2)");
 	}
 	
 	/**
@@ -106,7 +123,18 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testAdditiveModelNonLinearIrrevAmount() throws Throwable {
+	public void testAdditiveModelLinearIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "m_r2*(w_r2_p1*p1/c1+w_r2_e1*e1/c1+b_r2)");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testAdditiveModelNonLinearRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelNonLinear.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "m_r1*1/(1+e^(-(w_r1_p1*p1+w_r1_e1*e1+b_r1)))");
@@ -117,10 +145,31 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testAdditiveModelNonLinearIrrevConcentration() throws Throwable {
+	public void testAdditiveModelNonLinearRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelNonLinear.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "m_r1*1/(1+e^(-(w_r1_p1*p1/c1+w_r1_e1*e1/c1+b_r1)))");
+	}
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testAdditiveModelNonLinearIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelNonLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "m_r2*1/(1+e^(-(w_r2_p1*p1+w_r2_e1*e1+b_r2)))");
+	}
+
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testAdditiveModelNonLinearIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, AdditiveModelNonLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "m_r2*1/(1+e^(-(w_r2_p1*p1/c1+w_r2_e1*e1/c1+b_r2)))");
 	}
 	
 	/**
@@ -128,7 +177,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testHillEquationIrrevAmount() throws Throwable {
+	public void testHillEquationRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HillEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "vmaf_r1*s1/ksp_r1*(1-p1/(keq_r1*s1))*(s1/ksp_r1+p1/ksp_r1)^(hic_r1-1)/(1+(s1/ksp_r1+p1/ksp_r1)^(hic_r1))");
@@ -139,10 +188,32 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testHillEquationIrrevConcentration() throws Throwable {
+	public void testHillEquationRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HillEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "vmaf_r1*s1/c1/ksp_r1*(1-p1/c1/(keq_r1*s1/c1))*(s1/c1/ksp_r1+p1/c1/ksp_r1)^(hic_r1-1)/(1+(s1/c1/ksp_r1+p1/c1/ksp_r1)^(hic_r1))");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testHillEquationIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, HillEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "vmax_r2*s1^(hic_r2)/(ksp_r2^(hic_r2)+s1^(hic_r2))");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testHillEquationIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, HillEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "vmax_r2*(s1/c1)^(hic_r2)/(ksp_r2^(hic_r2)+(s1/c1)^(hic_r2))");
 	}
 	
 	/**
@@ -151,7 +222,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testHillHinzeEquationIrrevAmount() throws Throwable {
+	public void testHillHinzeEquationRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HillHinzeEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "vmaf_r1*(e1^(hic_r1_e1)/(e1^(hic_r1_e1)+theta_r1_e1^(hic_r1_e1)))^w_e1_r1*(1-(e1^(hic_r1_e1)/(e1^(hic_r1_e1)+theta_r1_e1^(hic_r1_e1)))^w_e1_r1)");
@@ -163,9 +234,33 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testHillHinzeEquationIrrevConcentration() throws Throwable {
+	public void testHillHinzeEquationRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HillHinzeEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "");
+	}
+	
+	/**
+	 * TODO: equation output is only "vmax_r2"
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testHillHinzeEquationIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, HillHinzeEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "");
+	}
+	
+	/**
+	 * TODO: equation output is only "vmax_r2"
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testHillHinzeEquationIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, HillHinzeEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "");
 	}
 	
@@ -174,7 +269,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testHillRaddeEquationIrrevAmount() throws Throwable {
+	public void testHillRaddeEquationRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HillRaddeEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "b_r1+w_r1_e1*e1^(hic_r1_e1)/(e1^(hic_r1_e1)+theta_r1_e1^(hic_r1_e1))");
@@ -185,7 +280,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testHillRaddeEquationIrrevConcentration() throws Throwable {
+	public void testHillRaddeEquationRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HillRaddeEquation.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "b_r1+w_r1_e1*(e1/c1)^(hic_r1_e1)/((e1/c1)^(hic_r1_e1)+theta_r1_e1^(hic_r1_e1))");
@@ -196,7 +291,29 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testHSystemIrrevAmount() throws Throwable {
+	public void testHillRaddeEquationIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, HillRaddeEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "b_r2+w_r2_e1*e1^(hic_r2_e1)/(e1^(hic_r2_e1)+theta_r2_e1^(hic_r2_e1))");
+	}
+
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testHillRaddeEquationIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, HillRaddeEquation.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "b_r2+w_r2_e1*(e1/c1)^(hic_r2_e1)/((e1/c1)^(hic_r2_e1)+theta_r2_e1^(hic_r2_e1))");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testHSystemRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HSystem.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "b_r1+(w_r1_e1*e1+p1*v_r1_e1*e1)");
@@ -207,7 +324,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testHSystemIrrevConcentration() throws Throwable {
+	public void testHSystemRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, HSystem.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "b_r1+(w_r1_e1*e1/c1+p1/c1*v_r1_e1*e1/c1)");
@@ -218,7 +335,29 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testNetGeneratorLinearIrrevAmount() throws Throwable {
+	public void testHSystemIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, HSystem.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "b_r2+(w_r2_e1*e1+p1*v_r2_e1*e1)");
+	}
+
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testHSystemIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, HSystem.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "b_r2+(w_r2_e1*e1/c1+p1/c1*v_r2_e1*e1/c1)");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testNetGeneratorLinearRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorLinear.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "w_r1_p1*p1+w_r1_e1*e1");
@@ -229,7 +368,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testNetGeneratorLinearIrrevConcentration() throws Throwable {
+	public void testNetGeneratorLinearRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorLinear.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "w_r1_p1*p1/c1+w_r1_e1*e1/c1");
@@ -240,7 +379,29 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testNetGeneratorNonLinearIrrevAmount() throws Throwable {
+	public void testNetGeneratorLinearIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "w_r2_p1*p1+w_r2_e1*e1");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testNetGeneratorLinearIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "w_r2_p1*p1/c1+w_r2_e1*e1/c1");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testNetGeneratorNonLinearRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorNonLinear.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "m_r1*1/(1+e^(-(w_r1_p1*p1+w_r1_e1*e1+b_r1)))+w_r1_p1*p1");
@@ -251,7 +412,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testNetGeneratorNonLinearIrrevConcentration() throws Throwable {
+	public void testNetGeneratorNonLinearRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorNonLinear.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "m_r1*1/(1+e^(-(w_r1_p1*p1/c1+w_r1_e1*e1/c1+b_r1)))+w_r1_p1*p1/c1");
@@ -262,7 +423,29 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testSSystemIrrevAmount() throws Throwable {
+	public void testNetGeneratorNonLinearIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorNonLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "m_r2*1/(1+e^(-(w_r2_p1*p1+w_r2_e1*e1+b_r2)))+w_r2_p1*p1");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testNetGeneratorNonLinearIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, NetGeneratorNonLinear.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "m_r2*1/(1+e^(-(w_r2_p1*p1/c1+w_r2_e1*e1/c1+b_r2)))+w_r2_p1*p1/c1");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testSSystemRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, SSystem.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "(alpha_r1-beta_r1*p1^(ssexp_r1_p1))*e1^(ssexp_r1_e1)");
@@ -273,7 +456,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testSSystemIrrevConcentration() throws Throwable {
+	public void testSSystemRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, SSystem.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "(alpha_r1-beta_r1*(p1/c1)^(ssexp_r1_p1))*(e1/c1)^(ssexp_r1_e1)");
@@ -284,7 +467,29 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testVohradskyIrrevAmount() throws Throwable {
+	public void testSSystemIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, SSystem.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "alpha_r2*e1^(ssexp_r2_e1)");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testSSystemIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, SSystem.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "alpha_r2*(e1/c1)^(ssexp_r2_e1)");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testVohradskyRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, Vohradsky.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "m_r1*1/(1+e^(-(w_r1_p1*p1+w_r1_e1*e1+b_r1)))");
@@ -295,7 +500,7 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testVohradskyIrrevConcentration() throws Throwable {
+	public void testVohradskyRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, Vohradsky.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "m_r1*1/(1+e^(-(w_r1_p1*p1/c1+w_r1_e1*e1/c1+b_r1)))");
@@ -306,7 +511,29 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testWeaverIrrevAmount() throws Throwable {
+	public void testVohradskyIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, Vohradsky.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "m_r2*1/(1+e^(-(w_r2_p1*p1+w_r2_e1*e1+b_r2)))");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testVohradskyIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, Vohradsky.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "m_r2*1/(1+e^(-(w_r2_p1*p1/c1+w_r2_e1*e1/c1+b_r2)))");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testWeaverRevAmount() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, Weaver.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "m_r1*1/(1+e^((-alpha_r1)*(w_r1_p1*p1+w_r1_e1*e1)+beta_r1))");
@@ -317,9 +544,31 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 	 * @throws Throwable
 	 */
 	@Test
-	public void testWeaverIrrevConcentration() throws Throwable {
+	public void testWeaverRevConcentration() throws Throwable {
 		Reaction r1 = model.getReaction("r1");
 		KineticLaw kl = klg.createKineticLaw(r1, Weaver.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "m_r1*1/(1+e^((-alpha_r1)*(w_r1_p1*p1/c1+w_r1_e1*e1/c1)+beta_r1))");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testWeaverIrrevAmount() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, Weaver.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "m_r2*1/(1+e^((-alpha_r2)*(w_r2_p1*p1+w_r2_e1*e1)+beta_r2))");
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testWeaverIrrevConcentration() throws Throwable {
+		Reaction r1 = model.getReaction("r2");
+		KineticLaw kl = klg.createKineticLaw(r1, Weaver.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "m_r2*1/(1+e^((-alpha_r2)*(w_r2_p1*p1/c1+w_r2_e1*e1/c1)+beta_r2))");
 	}
 }
