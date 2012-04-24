@@ -231,7 +231,7 @@ public class ReactionType {
 	 * @return
 	 */
 	public static double productOrder(Reaction reaction) {
-		double stoichiometryRight = 0;
+		double stoichiometryRight = 0d;
 		for (SpeciesReference specRef : reaction.getListOfProducts()) {
 			stoichiometryRight += specRef.getStoichiometry();
 		}
@@ -245,7 +245,7 @@ public class ReactionType {
 	 * @param r
 	 */
 	public static double reactantOrder(Reaction reaction) {
-		double stoichiometryLeft = 0;
+		double stoichiometryLeft = 0d;
 		for (SpeciesReference specRef : reaction.getListOfReactants()) {
 			stoichiometryLeft += specRef.getStoichiometry();
 		}
@@ -568,6 +568,12 @@ public class ReactionType {
 				}
 				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
+						if (!kin.equals(kineticsGeneRegulation)) {
+							logger.warning(MessageFormat.format(
+								WARNINGS.getString("FALLBACK_KINETICS"),
+								SBMLtools.getName(reaction),
+								kineticsZeroReactants.getSimpleName(), kin.getSimpleName()));
+						}
 						return kin;
 					}
 				}
@@ -579,6 +585,12 @@ public class ReactionType {
 			if (reactionWithGenes || reactionWithRNAs) {
 				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
+						if (!kin.equals(kineticsGeneRegulation)) {
+							logger.warning(MessageFormat.format(
+								WARNINGS.getString("FALLBACK_KINETICS"),
+								SBMLtools.getName(reaction),
+								kineticsZeroProducts.getSimpleName(), kin.getSimpleName()));
+						}
 						return kin;
 					}
 				}
@@ -598,9 +610,9 @@ public class ReactionType {
 				// TODO: Make this selectable!
 				whichkin = ConvenienceKinetics.class;
 				logger.warning(MessageFormat.format(
-					WARNINGS.getString("FALLBACK_KINETICS"),
-					SBMLtools.getName(reaction),
-					kineticsIrreversibleArbitraryEnzymeReaction, whichkin));
+					WARNINGS.getString("FALLBACK_KINETICS"), SBMLtools.getName(reaction),
+					kineticsIrreversibleArbitraryEnzymeReaction.getSimpleName(),
+					whichkin.getSimpleName()));
 			}
 		}
 		if (stoichiometryLeft == 1d) {

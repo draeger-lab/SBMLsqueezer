@@ -204,7 +204,7 @@ public class UnitFactory {
 				for (Unit u : speciesUnit.getListOfUnits()) {
 					if (specRef instanceof SpeciesReference) {
 						SpeciesReference ref = (SpeciesReference) specRef;
-						if (ref.isSetStoichiometry() && (x.length < listOf.size())) {
+						if (ref.isSetStoichiometry() && (ref.getStoichiometry() != 1d) && (x.length < listOf.size())) {
 							u.setExponent(u.getExponent() * (ref.getStoichiometry()));
 						}
 					} else if (x.length == listOf.size()) {
@@ -307,8 +307,7 @@ public class UnitFactory {
 		ud = ud.divideBy(amount);
 		ud = ud.multiplyWith(model.getSubstanceUnitsInstance());
 		ud = ud.simplify();
-		checkUnitDefinitions(ud, model);
-		return ud;
+		return checkUnitDefinitions(ud, model);
 	}
 
 	/**
@@ -470,15 +469,15 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitSubstancePerSize(UnitDefinition substance,
 			UnitDefinition size, double exponent) {
-		StringBuffer id = StringTools.concat(substance.getId(), "_per_", size.getId());
+		StringBuilder id = StringTools.concatStringBuilder(substance.getId(), "_per_", size.getId());
 		if (exponent != 1d) {
 			id.append("_raised_by_");
 			id.append(exponent);
 		}
-		UnitDefinition substancePerSize = model.getUnitDefinition(id.toString());
+		String identifier = checkId(id.toString());
+		UnitDefinition substancePerSize = model.getUnitDefinition(identifier);
 		if (substancePerSize == null) {
-			substancePerSize = new UnitDefinition(id.toString(), model
-					.getLevel(), model.getVersion());
+			substancePerSize = new UnitDefinition(identifier, model.getLevel(), model.getVersion());
 			substancePerSize.multiplyWith(substance);
 			substancePerSize.divideBy(size);
 			substancePerSize.raiseByThePowerOf(exponent);

@@ -100,7 +100,8 @@ public abstract class KineticsTest {
 			 */
 			for (Reaction r : klg.getMiniModel().getListOfReactions()) {
 				ReactionType rt = new ReactionType(r, klg.isReversibility(),
-					klg.isAllReactionsAsEnzymeCatalyzed(), klg.isSetBoundaryCondition());
+					klg.isAllReactionsAsEnzymeCatalyzed(), klg.isSetBoundaryCondition(),
+					klg.getSpeciesIgnoreList());
 				// TODO: Print the identified kinetic law types or do an assertion.
 				rt.identifyPossibleKineticLaws();
 			}

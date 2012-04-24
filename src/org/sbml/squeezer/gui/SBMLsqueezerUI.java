@@ -121,6 +121,7 @@ class FileReaderThread extends Thread implements Runnable {
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
+	@Override
 	public void run() {
 		reader.readModel(file);
 	}
@@ -567,7 +568,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * (non-Javadoc)
 	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabAboutToBeClosed(de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent)
 	 */
-	public boolean tabAboutToBeClosed(TabCloseEvent evt0) {
+	public boolean tabClosing(TabCloseEvent evt0) {
 		boolean change = false;
 		int choice = JOptionPane.showConfirmDialog(this, 
 				"Would you like to save the document?",

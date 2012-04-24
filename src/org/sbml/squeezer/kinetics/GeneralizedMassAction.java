@@ -500,6 +500,9 @@ public class GeneralizedMassAction extends BasicKineticLaw implements
 			ASTNode basis = speciesTerm(specRef);
 			if (specRef.isSetStoichiometryMath()) {
 				basis.raiseByThePowerOf(specRef.getStoichiometryMath().getMath().clone());
+			} else if (specRef.isSetId() && (getLevel() > 2)) {
+				// It might happen that there is an assignment rule that changes the stoichiometry.
+				basis.raiseByThePowerOf(specRef);
 			} else {
 				double stoichiometry = specRef.getStoichiometry();
 				basis.raiseByThePowerOf(stoichiometry);

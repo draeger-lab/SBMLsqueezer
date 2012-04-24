@@ -70,13 +70,10 @@ public class DirectBindingModularRateLaw extends PowerLawModularRateLaw
 		SBMLtools.setSBOTerm(this,529); // direct binding modular rate law
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 * .Reaction, java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml.Reaction, java.lang.String)
 	 */
+	@Override
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = super.denominator(enzyme);
 		ASTNode forward = denominator(enzyme, true);
@@ -100,30 +97,27 @@ public class DirectBindingModularRateLaw extends PowerLawModularRateLaw
 		ASTNode term = new ASTNode(this), curr;
 		Reaction r = getParentSBMLObject();
 		LocalParameter kM;
-		LocalParameter hr = parameterFactory
-				.parameterReactionCooperativity(enzyme);
-		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
-				.getListOfProducts();
+		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
+		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(),
-					enzyme, forward);
+			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 			curr = ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this));
-			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
-					.getStoichiometry(), this), new ASTNode(hr, this)));
-			if (term.isUnknown())
+			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
+			if (term.isUnknown()) {
 				term = curr;
-			else
+			} else {
 				term.multiplyWith(curr);
+			}
 		}
 		return term;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("DIRECT_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
+
 }

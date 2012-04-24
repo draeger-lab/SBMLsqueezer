@@ -105,31 +105,27 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode term = new ASTNode(this), curr;
 		LocalParameter kM;
-		LocalParameter hr = parameterFactory
-				.parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
-		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
-				.getListOfProducts();
+		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(),
-					enzyme, forward);
+			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 			curr = new ASTNode(1, this);
 			curr.plus(speciesTerm(specRef).divideBy(kM));
-			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
-					.getStoichiometry(), this), new ASTNode(hr, this)));
-			if (term.isUnknown())
+			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
+			if (term.isUnknown()) {
 				term = curr;
-			else
+			} else {
 				term.multiplyWith(curr);
+			}
 		}
 		return term;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}

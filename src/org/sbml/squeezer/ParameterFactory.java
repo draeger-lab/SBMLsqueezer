@@ -343,13 +343,13 @@ public class ParameterFactory {
 		String reactionID = r.getId();
 		LocalParameter keq = createOrGetParameter("keq_", reactionID);
 		if (!keq.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(keq,281);
+			SBMLtools.setSBOTerm(keq, 281);
 		}
 		if (!keq.isSetName()) {
 			keq.setName(MessageFormat.format(MESSAGES.getString("EQUILIBRIUM_CONSTANT_OF_REACTION"), SBMLtools.getName(r)));
 		}
 		if (!keq.isSetUnits()) {
-			int x = 0;
+			double x = 0d;
 			for (SpeciesReference specRef : r.getListOfReactants()) {
 				x += specRef.getStoichiometry();
 			}
@@ -358,7 +358,7 @@ public class ParameterFactory {
 					x -= specRef.getStoichiometry();
 				}
 			}
-			if (x == 0) {
+			if (x == 0d) {
 				keq.setUnits(Unit.Kind.DIMENSIONLESS);
 			} else {
 				keq.setUnits(unitFactory.unitSubstancePerSize(model

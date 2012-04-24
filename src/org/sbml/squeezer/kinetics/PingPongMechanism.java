@@ -97,23 +97,24 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		SpeciesReference specRefP1 = reaction.getProduct(0);
 		SpeciesReference specRefE2 = null, specRefP2 = null;
 
-		if (reaction.getReactantCount() == 2)
+		if (reaction.getReactantCount() == 2) {
 			specRefE2 = reaction.getReactant(1);
-		else if (specRefE1.getStoichiometry() == 2d)
+		} else if (specRefE1.getStoichiometry() == 2d) {
 			specRefE2 = specRefE1;
-		else
-			throw new RateLawNotApplicableException(
-					MessageFormat.format(
-							WARNINGS.getString("PING_PONG_NUM_OF_REACTANTS_MUST_EQUAL"), 
-							reaction.getId()));
+		} else {
+			throw new RateLawNotApplicableException(MessageFormat.format(
+				WARNINGS.getString("PING_PONG_NUM_OF_REACTANTS_MUST_EQUAL"), 
+				reaction.getId()));
+		}
 
 		boolean exception = false;
 		switch (reaction.getProductCount()) {
 		case 1:
-			if (specRefP1.getStoichiometry() == 2d)
+			if (specRefP1.getStoichiometry() == 2d) {
 				specRefP2 = specRefP1;
-			else
+			} else {
 				exception = true;
+			}
 			break;
 		case 2:
 			specRefP2 = reaction.getProduct(1);
@@ -122,11 +123,11 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 			exception = true;
 			break;
 		}
-		if (exception)
-			throw new RateLawNotApplicableException(
-					MessageFormat.format(
-							WARNINGS.getString("PING_PONG_NUM_OF_PRODUCTS_MUST_EQUAL"), 
-							reaction.getId()));
+		if (exception) {
+			throw new RateLawNotApplicableException(MessageFormat.format(
+				WARNINGS.getString("PING_PONG_NUM_OF_PRODUCTS_MUST_EQUAL"), 
+				reaction.getId()));
+		}
 
 		int enzymeNum = 0;
 		do {
@@ -145,8 +146,9 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 			if (!reaction.getReversible()) {
 				numerator = new ASTNode(p_kcatp, this);
 
-				if (modE.size() > 0)
+				if (modE.size() > 0) {
 					numerator.multiplyWith(speciesTerm(enzyme));
+				}
 				numerator = ASTNode.times(numerator, speciesTerm(specRefE1));
 
 				denominator = ASTNode.sum(ASTNode.times(new ASTNode(p_kMr2,
@@ -185,8 +187,9 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 				ASTNode numeratorReverse = ASTNode.frac(new ASTNode(p_kcatn,
 						this), ASTNode.times(this, p_kIp1, p_kMp2));
 
-				if (modE.size() > 0)
+				if (modE.size() > 0) {
 					numeratorForward.multiplyWith(speciesTerm(enzyme));
+				}
 				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(specRefE1),
 						new ASTNode(p_kIr1, this)), ASTNode.frac(ASTNode.times(
 						new ASTNode(p_kMr1, this), speciesTerm(specRefE2)),
@@ -219,8 +222,9 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 										speciesTerm(specRefP2)), ASTNode.times(
 										this, p_kIr1, p_kMr2, p_kIp2)));
 
-				if (modE.size() > 0)
+				if (modE.size() > 0) {
 					numeratorReverse.multiplyWith(speciesTerm(enzyme));
+				}
 
 				ASTNode denominator_p1p2 = speciesTerm(specRefE1);
 				if (specRefP2.equals(specRefP1)) {
@@ -249,6 +253,7 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("PING_PONG_MEACHANISM_SIMPLE_NAME");
 	}

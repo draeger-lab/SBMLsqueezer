@@ -34,6 +34,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SimpleSpeciesReference;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.ParameterFactory;
 import org.sbml.squeezer.RateLawNotApplicableException;
@@ -204,6 +205,22 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	@Override
 	public String getElementName() {
 		return "kineticLaw";
+	}
+
+	/**
+	 * 
+	 * @param specRef
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	ASTNode stoichiometryTerm(SpeciesReference specRef) {
+		if (specRef.isSetId() && (getLevel() > 2)) {
+			// It might happen that there is an assignment rule that changes the stoichiometry.
+			return new ASTNode(specRef, this);
+		} else if (specRef.isSetStoichiometryMath()) {
+			return specRef.getStoichiometryMath().getMath().clone();
+		}
+		return new ASTNode(specRef.getStoichiometry(), this);
 	}
 
 	/**
