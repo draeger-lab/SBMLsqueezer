@@ -83,17 +83,19 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		for (int i = 0; i < reaction.getProductCount(); i++)
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
 		// compulsory-order ternary-complex mechanism (Cornish-Bowden)
-		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2))
-			SBMLtools.setSBOTerm(this,433);
-		else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1))
-			SBMLtools.setSBOTerm(this,434);
+		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2d)) {
+			SBMLtools.setSBOTerm(this, 433);
+		} else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1d)) {
+			SBMLtools.setSBOTerm(this, 434);
+		}
 
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		String numProd = "";
-		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2))
+		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2)) {
 			numProd = ", " + MESSAGES.getString("TWO_PRODUCTS");
-		else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1))
+		} else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1)) {
 			numProd = ", " + MESSAGES.getString("ONE_PRODUCT");
+		}
 
 		setNotes(MessageFormat.format(
 				MESSAGES.getString("COMPULSORY_ORDER_TERNARY_COMPLEY_MEACHANISM"),
@@ -108,13 +110,14 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		SpeciesReference specRefE1 = reaction.getReactant(0), specRefE2 = null;
 		SpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
-		if (reaction.getReactantCount() == 2)
+		if (reaction.getReactantCount() == 2) {
 			specRefE2 = reaction.getReactant(1);
-		else if (specRefE1.getStoichiometry() == 2f)
+		} else if (specRefE1.getStoichiometry() == 2f) {
 			specRefE2 = specRefE1;
-		else
+		} else {
 			throw new RateLawNotApplicableException(
 					MessageFormat.format(WARNINGS.getString("ORDERED_NUM_OF_REACTANTS_MUST_EQUAL"), reaction.getId()));
+		}
 
 		boolean exception = false, biuni = false;
 		switch (reaction.getProductCount()) {

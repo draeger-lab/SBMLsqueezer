@@ -105,30 +105,27 @@ public class ForceDependentModularRateLaw extends PowerLawModularRateLaw
 		ASTNode term = new ASTNode(this), curr;
 		LocalParameter kM;
 		Reaction r = getParentSBMLObject();
-		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
-				.getListOfProducts();
-		LocalParameter hr = parameterFactory
-				.parameterReactionCooperativity(enzyme);
+		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
+		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
 		for (SpeciesReference specRef : listOf) {
-			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(),
-					enzyme, forward);
+			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 			curr = ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this));
-			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(hr, this),
-					new ASTNode(specRef.getStoichiometry(), this)));
-			if (term.isUnknown())
+			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(hr, this), stoichiometryTerm(specRef)));
+			if (term.isUnknown()) {
 				term = curr;
-			else
+			} else {
 				term.multiplyWith(curr);
+			}
 		}
 		return term;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
+
 }

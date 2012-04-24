@@ -102,15 +102,11 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		LocalParameter hr = parameterFactory
 				.parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
-		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r
-				.getListOfProducts();
+		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
-			LocalParameter kM = parameterFactory.parameterMichaelis(specRef
-					.getSpecies(), enzyme, forward);
-			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
-					speciesTerm(specRef), new ASTNode(kM, this)));
-			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
-					.getStoichiometry(), this), new ASTNode(hr, this)));
+			LocalParameter kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
+			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this)));
+			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
 			if (denominator.isUnknown()) {
 				denominator = curr;
 			} else {

@@ -83,20 +83,21 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 			throws RateLawNotApplicableException {
 		// necessary due to the changes in CellDesigner from version 4.0 alpha
 		// to beta and 4.0.1
-		if (!modE.isEmpty())
+		if (!modE.isEmpty()) {
 			modActi.addAll(modE);
-		if (!modCat.isEmpty())
+		}
+		if (!modCat.isEmpty()) {
 			modActi.addAll(modCat);
+		}
 
 		Reaction reaction = getParentSBMLObject();
 
-		if (reaction.getReactantCount() == 0 || reaction.getModifierCount() == 0)
+		if ((reaction.getReactantCount() == 0) || (reaction.getModifierCount() == 0)) {
 			SBMLtools.setSBOTerm(this,47);
-		else if (reaction.getReactantCount() == 1) {
+		} else if (reaction.getReactantCount() == 1) {
 			if (ReactionType.representsEmptySet(reaction.getListOfReactants())) {
 				if ((reaction.getModifierCount() == 1)
-						&& !SBO.isInhibitor(reaction.getModifier(0)
-								.getSBOTerm())) {
+						&& !SBO.isInhibitor(reaction.getModifier(0).getSBOTerm())) {
 					SBMLtools.setSBOTerm(this,195);
 				}
 			} else if (reaction.getModifierCount() == 0) {
@@ -109,24 +110,28 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		}
 
 		if (SBO.isTranslation(reaction.getSBOTerm())
-				|| SBO.isTranscription(reaction.getSBOTerm()))
+				|| SBO.isTranscription(reaction.getSBOTerm())) {
 			for (int i = 0; i < reaction.getReactantCount(); i++) {
 				SpeciesReference reactant = reaction.getReactant(i);
 				if (!SBO.isEmptySet(reactant.getSpeciesInstance().getSBOTerm())) {
 					modActi.add(reactant.getSpecies());
 				}
 			}
+		}
 		ASTNode formula = createHillEquation(modActi, modInhib);
 		// Influence of the concentrations of the reactants:
 		for (int reactantNum = 0; reactantNum < reaction.getReactantCount(); reactantNum++) {
-			Species reactant = reaction.getReactant(reactantNum)
-					.getSpeciesInstance();
+			Species reactant = reaction.getReactant(reactantNum).getSpeciesInstance();
 			ASTNode gene;
 			if (!SBO.isGeneOrGeneCodingRegion(reactant.getSBOTerm())) {
 				gene = speciesTerm(reactant);
-				if (reaction.getReactant(reactantNum).getStoichiometry() != 1f) {
-					gene.raiseByThePowerOf(reaction.getReactant(reactantNum)
-							.getStoichiometry());
+				SpeciesReference specRef = reaction.getReactant(reactantNum);
+				if (specRef.isSetId() && (getLevel() > 2)) {
+					// It might happen that there is an assignment rule that changes the stoichiometry.
+					gene.raiseByThePowerOf(specRef);
+					formula.multiplyWith(gene);
+				} else if (specRef.getStoichiometry() != 1d) {
+					gene.raiseByThePowerOf(specRef.getStoichiometry());
 					formula.multiplyWith(gene);
 				}
 			}
@@ -181,21 +186,24 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 		}
 		LocalParameter p_kg = parameterFactory.parameterVmax(true);
 
-		ASTNode formelTxt = new ASTNode(p_kg, this);
-		if (modTActi.size() > 0)
-			formelTxt.multiplyWith(acti);
-		if (modTInhib.size() > 0)
-			formelTxt.multiplyWith(ASTNode.diff(new ASTNode(1, this), ASTNode
-					.times(inhib)));
-		return formelTxt;
+		ASTNode formula = new ASTNode(p_kg, this);
+		if (modTActi.size() > 0) {
+			formula.multiplyWith(acti);
+		}
+		if (modTInhib.size() > 0) {
+			formula.multiplyWith(ASTNode.diff(new ASTNode(1, this), ASTNode.times(inhib)));
+		}
+		return formula;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#getSimpleName()
 	 */
 	public String getSimpleName() {
-		if (isSetSBOTerm() && SBO.isHillEquation(getSBOTerm()))
+		if (isSetSBOTerm() && SBO.isHillEquation(getSBOTerm())) {
 			return MESSAGES.getString("HILL_EQUATION_SIMPLE_NAME");
+		}
 		return MESSAGES.getString("HILL_HINZE_EQUATION_SIMPLE_NAME");
 	}
+
 }

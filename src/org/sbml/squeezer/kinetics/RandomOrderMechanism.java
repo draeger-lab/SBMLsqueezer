@@ -41,8 +41,7 @@ import de.zbit.util.ResourceManager;
 /**
  * This class creates a kinetic equation according to the random order mechanism
  * (see Cornish-Bowden: Fundamentals of Enzyme Kinetics, p. 169).
- * 
-
+ *
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
@@ -77,6 +76,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.BasicKineticLaw#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
+	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
@@ -85,31 +85,33 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		SpeciesReference specRefR1 = reaction.getReactant(0), specRefR2;
 		SpeciesReference specRefP1 = reaction.getProduct(0), specRefP2 = null;
 
-		if (reaction.getReactantCount() == 2)
+		if (reaction.getReactantCount() == 2) {
 			specRefR2 = (SpeciesReference) reaction.getReactant(1);
-		else if (specRefR1.getStoichiometry() == 2f)
+		} else if (specRefR1.getStoichiometry() == 2d) {
 			specRefR2 = specRefR1;
-		else
-			throw new RateLawNotApplicableException(
-					MessageFormat.format(
-							WARNINGS.getString("RANDOM_ORDER_NUM_OF_REACTANTS_MUST_EQUAL"), 
-							reaction.getId()));
+		} else {
+			throw new RateLawNotApplicableException(MessageFormat.format(
+				WARNINGS.getString("RANDOM_ORDER_NUM_OF_REACTANTS_MUST_EQUAL"), 
+				reaction.getId()));
+		}
 
-		SBMLtools.setSBOTerm(this,429);
+		SBMLtools.setSBOTerm(this, 429);
 		double stoichiometryRight = 0;
 		for (int i = 0; i < reaction.getProductCount(); i++)
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		// rapid-equilibrium random order ternary-complex mechanism
 		if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1d)
-				&& !reaction.getReversible())
+				&& !reaction.getReversible()) {
 			SBMLtools.setSBOTerm(this,432);
+		}
 
 		String numProd = "";
-		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2))
+		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2)) {
 			numProd = ", " + MESSAGES.getString("TWO_PRODUCTS");
-		else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1))
+		} else if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1)) {
 			numProd = ", " + MESSAGES.getString("ONE_PRODUCT");
+		}
 		
 		setNotes(MessageFormat.format(
 				MESSAGES.getString("RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM"),
@@ -120,12 +122,13 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		boolean biuni = false;
 		switch (reaction.getProductCount()) {
 		case 1:
-			if (specRefP1.getStoichiometry() == 1d)
+			if (specRefP1.getStoichiometry() == 1d) {
 				biuni = true;
-			else if (specRefP1.getStoichiometry() == 2d)
+			} else if (specRefP1.getStoichiometry() == 2d) {
 				specRefP2 = specRefP1;
-			else
+			} else {
 				exception = true;
+			}
 			break;
 		case 2:
 			specRefP2 = (SpeciesReference) reaction.getProduct(1);
@@ -148,13 +151,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		ASTNode catalysts[] = new ASTNode[Math.max(1, modE.size())];
 		do {
 			String enzyme = modE.size() == 0 ? null : modE.get(enzymeNum);
-			if (!reaction.getReversible())
+			if (!reaction.getReversible()) {
 				catalysts[enzymeNum++] = irreversible(specRefR1, specRefR2,
 						enzyme);
-			else
+			} else {
 				catalysts[enzymeNum++] = biuni ? reversibleBiUni(specRefR1,
 						specRefR2, specRefP1, enzyme) : reversibleBiBi(
 						specRefR1, specRefR2, specRefP1, specRefP2, enzyme);
+			}
 		} while (enzymeNum < modE.size());
 		return ASTNode.times(activationFactor(modActi),
 				inhibitionFactor(modInhib), ASTNode.sum(catalysts));
@@ -181,8 +185,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 				enzyme);
 		ASTNode numerator = new ASTNode(p_kcatp, this);
 		ASTNode denominator; // II
-		if (enzyme != null)
+		if (enzyme != null) {
 			numerator.multiplyWith(speciesTerm(enzyme));
+		}
 		if (specRefR2.equals(specRefR1)) {
 			ASTNode r1square = ASTNode.pow(speciesTerm(speciesR1), 2);
 			numerator = ASTNode.times(numerator, r1square.clone());
@@ -216,18 +221,12 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		Species speciesR1 = specRefR1.getSpeciesInstance();
 		Species speciesR2 = specRefR2.getSpeciesInstance();
 		Species speciesP1 = specRefP1.getSpeciesInstance();
-		LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme,
-				true);
-		LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(enzyme,
-				false);
-		LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(speciesR2
-				.getId(), enzyme, true);
-		LocalParameter p_kMp1 = parameterFactory.parameterMichaelis(speciesP1
-				.getId(), enzyme, false);
-		LocalParameter p_kIr1 = parameterFactory.parameterKi(speciesR1.getId(),
-				enzyme);
-		LocalParameter p_kIr2 = parameterFactory.parameterKi(speciesR2.getId(),
-				enzyme);
+		LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme, true);
+		LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(enzyme, false);
+		LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(speciesR2.getId(), enzyme, true);
+		LocalParameter p_kMp1 = parameterFactory.parameterMichaelis(speciesP1.getId(), enzyme, false);
+		LocalParameter p_kIr1 = parameterFactory.parameterKi(speciesR1.getId(), enzyme);
+		LocalParameter p_kIr2 = parameterFactory.parameterKi(speciesR2.getId(),	enzyme);
 
 		ASTNode r1r2 = specRefR1.equals(specRefR2) ? ASTNode.pow(
 				speciesTerm(speciesR1), 2) : ASTNode.times(
@@ -242,8 +241,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		numeratorForward.multiplyWith(r1r2.clone());
 		numeratorReverse.multiplyWith(speciesTerm(speciesP1));
 		ASTNode numerator = numeratorForward.minus(numeratorReverse);
-		ASTNode denominator = ASTNode
-				.sum(
+		ASTNode denominator = ASTNode.sum(
 						new ASTNode(1, this),
 						ASTNode.frac(speciesTerm(speciesR1), new ASTNode(
 								p_kIr1, this)),
@@ -271,22 +269,14 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		Species speciesR2 = specRefR2.getSpeciesInstance();
 		Species speciesP1 = specRefP1.getSpeciesInstance();
 		Species speciesP2 = specRefP2.getSpeciesInstance();
-		LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme,
-				true);
-		LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(enzyme,
-				false);
-		LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(speciesR2
-				.getId(), enzyme);
-		LocalParameter p_kMp1 = parameterFactory.parameterMichaelis(speciesP1
-				.getId(), enzyme);
-		LocalParameter p_kIp1 = parameterFactory.parameterKi(speciesP1.getId(),
-				enzyme);
-		LocalParameter p_kIp2 = parameterFactory.parameterKi(speciesP2.getId(),
-				enzyme);
-		LocalParameter p_kIr1 = parameterFactory.parameterKi(speciesR1.getId(),
-				enzyme);
-		LocalParameter p_kIr2 = parameterFactory.parameterKi(speciesR2.getId(),
-				enzyme);
+		LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme, true);
+		LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(enzyme, false);
+		LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(speciesR2.getId(), enzyme);
+		LocalParameter p_kMp1 = parameterFactory.parameterMichaelis(speciesP1.getId(), enzyme);
+		LocalParameter p_kIp1 = parameterFactory.parameterKi(speciesP1.getId(), enzyme);
+		LocalParameter p_kIp2 = parameterFactory.parameterKi(speciesP2.getId(), enzyme);
+		LocalParameter p_kIr1 = parameterFactory.parameterKi(speciesR1.getId(), enzyme);
+		LocalParameter p_kIr2 = parameterFactory.parameterKi(speciesR2.getId(), enzyme);
 
 		ASTNode numeratorForward = ASTNode.frac(new ASTNode(p_kcatp, this),
 				ASTNode.times(this, p_kIr1, p_kMr2));
@@ -323,6 +313,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("RANDOM_ORDER_MEACHANISM_SIMPLE_NAME");
 	}

@@ -113,15 +113,15 @@ public class SqSBMLReader implements SBMLInputConverter {
 	 * @see org.sbml.jsbml.SBMLInputConverter#convertModel(java.lang.Object)
 	 */
 	public Model convertModel(Object model) throws IllegalArgumentException, IOException, XMLStreamException {
-		if (model instanceof String){
+		if (model instanceof String) {
 			// file name or XML given; create SBML Document
 			SBMLDocument doc = model2SBML(model.toString());
 			// construct and return model
 			return readModelFromSBML(doc);
-		} else if (model instanceof Model){
+		} else if (model instanceof Model) {
 			// JSBML model given; return model
 			return (Model) model;
-		} else if (model instanceof SBMLDocument){
+		} else if (model instanceof SBMLDocument) {
 			// SBMLDocument given; construct and return model
 			return readModelFromSBML((SBMLDocument) model);
 		} else {

@@ -212,10 +212,10 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	 */
 	@Test
 	public void testGMAKconcentration() throws Throwable {
-		Reaction r2 = model.getReaction("r1");
-		KineticLaw kl = klg.createKineticLaw(r2, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-		test(r2, kl, "kass_r1*s01/cell*s02/cell*s03/cell*s04/cell*s05/cell-kdiss_r1*s06/cell*s07/cell*s08/cell*s09/cell*s11/cell");
-		assertTrue(r2.isReversible());
+		Reaction r1 = model.getReaction("r1");
+		KineticLaw kl = klg.createKineticLaw(r1, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
+		test(r1, kl, "kass_r1*s01/cell*s02/cell*s03/cell*s04/cell*s05/cell-kdiss_r1*s06/cell*s07/cell*s08/cell*s09/cell*s11/cell");
+		assertTrue(r1.isReversible());
 	}
 
 	/**
