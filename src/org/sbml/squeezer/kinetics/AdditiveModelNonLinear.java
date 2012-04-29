@@ -73,6 +73,8 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 		if (g == null) // unknown exponent
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 					.exp(ASTNode.uMinus(new ASTNode(1, this)))));
+		
+		//TODO: produces invalid unit
 		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 				.exp(ASTNode.uMinus(g))));
 	}

@@ -81,6 +81,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	/**
 	 * @return ASTNode
 	 */
+	//TODO: produces wrong unit: s^(-1)
 	ASTNode b_i() {
 		return new ASTNode(parameterFactory.parameterB(getParentSBMLObject()
 				.getId()), this);
