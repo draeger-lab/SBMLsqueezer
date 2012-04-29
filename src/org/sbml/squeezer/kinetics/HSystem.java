@@ -78,6 +78,7 @@ public class HSystem extends BasicKineticLaw implements
 	/**
 	 * @return ASTNode
 	 */
+	//TODO: produces wrong unit: s^(-1) instead of mol*s^(-1)
 	ASTNode b_i() {
 		return new ASTNode(parameterFactory.parameterB(getParentSBMLObject()
 				.getId()), this);
@@ -132,6 +133,7 @@ public class HSystem extends BasicKineticLaw implements
 		if ((r.getProductCount() > 0)
 				&& !SBO.isEmptySet(r.getProduct(0).getSpeciesInstance()
 						.getSBOTerm())) {
+			//TODO: produces wrong unit: mol^2*s^(-1) instead of mol*s^(-1)
 			return node.isUnknown() ? speciesTerm(r.getProduct(0)) : ASTNode
 					.times(speciesTerm(r.getProduct(0)), node);
 		}

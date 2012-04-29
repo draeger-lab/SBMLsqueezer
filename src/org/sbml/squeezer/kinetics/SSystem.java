@@ -125,11 +125,15 @@ public class SSystem extends BasicKineticLaw implements
 						exp.setName(name);
 					}
 					ASTNode expnode = new ASTNode(exp, this);
-					if (node.isUnknown())
+					if (node.isUnknown()){
 						node = ASTNode.pow(speciesTerm(modifier), expnode);
-					else
+					}
+					//TODO: produces wrong unit for irreversible reactions: 
+					//		mol^2*s^(-1) instead of mol*s^(-1)
+					else {
 						node.multiplyWith(ASTNode.pow(speciesTerm(modifier),
 								expnode));
+					}
 				}
 			}
 		}
@@ -162,10 +166,13 @@ public class SSystem extends BasicKineticLaw implements
 						.parameterSSystemExponent(specRef.getSpecies());
 				ASTNode pow = ASTNode.pow(speciesTerm(specRef), new ASTNode(
 						exponent, this));
-				if (prod.isUnknown())
+				if (prod.isUnknown()) {
 					prod = pow;
-				else
+				} else {
+					//TODO: produces wrong unit for irreversible reactions: 
+					//		mol^2*s^(-1) instead of mol*s^(-1)
 					prod.multiplyWith(pow);
+				}
 			}
 		}
 		return prod;

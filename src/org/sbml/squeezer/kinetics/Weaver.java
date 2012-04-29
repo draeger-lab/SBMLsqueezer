@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -63,6 +64,7 @@ public class Weaver extends AdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
+	//TODO: wrong units in the sum of the exponent
 	@Override
 	ASTNode activation(ASTNode g) {
 		String rId = getParentSBMLObject().getId();
