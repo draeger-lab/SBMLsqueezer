@@ -1113,8 +1113,7 @@ public class KineticLawGenerator {
 					specRef = r.getReactant(k);
 					if (specRef.isSetStoichiometryMath()
 							&& specRef.getStoichiometryMath().isSetMath()
-							&& specRef.getStoichiometryMath().getMath()
-							.refersTo(p.getId())) {
+							&& specRef.getStoichiometryMath().getMath().refersTo(p.getId())) {
 						isNeeded = true;
 					}
 				}
@@ -1125,8 +1124,7 @@ public class KineticLawGenerator {
 					specRef = r.getProduct(k);
 					if (specRef.isSetStoichiometryMath()
 							&& specRef.getStoichiometryMath().isSetMath()
-							&& specRef.getStoichiometryMath().getMath()
-							.refersTo(p.getId())) {
+							&& specRef.getStoichiometryMath().getMath().refersTo(p.getId())) {
 						isNeeded = true;
 					}
 				}

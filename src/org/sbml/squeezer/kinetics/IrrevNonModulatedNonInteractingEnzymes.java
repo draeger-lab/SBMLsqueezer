@@ -30,6 +30,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.util.Maths;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -104,7 +105,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 			ASTNode[] denominator = new ASTNode[reaction.getReactantCount()];
 			for (int i = 0; i < reaction.getReactantCount(); i++) {
 				SpeciesReference si = reaction.getReactant(i);
-				if (((int) si.getStoichiometry()) - si.getStoichiometry() != 0) {
+				if (!Maths.isInt(si.getStoichiometry())) {
 					throw new RateLawNotApplicableException(
 							WARNINGS.getString("RATE_LAW_CAN_ONLY_APPLIED_IF_REACTANTS_HAVE_INTEGER_STOICHIOMETRIES"));
 				}
@@ -113,22 +114,21 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 				ASTNode frac = ASTNode.frac(speciesTerm(si), new ASTNode(p_kM,
 						this));
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
-						speciesTerm(si), new ASTNode(p_kM, this)), si
-						.getStoichiometry()));
+						speciesTerm(si), new ASTNode(p_kM, this)), stoichiometryTerm(si)));
 				denominator[i] = ASTNode.pow(ASTNode.sum(new ASTNode(1, this),
-						frac), new ASTNode(si.getStoichiometry(), this));
+						frac), stoichiometryTerm(si));
 			}
 
-			if (modE.size() >= 1)
+			if (modE.size() >= 1) {
 				numerator = ASTNode.times(speciesTerm(enzyme), numerator);
-			enzymes[enzymeNum] = ASTNode.frac(numerator, ASTNode
-					.times(denominator));
+			}
+			enzymes[enzymeNum] = ASTNode.frac(numerator, ASTNode.times(denominator));
 		}
 
-		double stoichiometry = 0;
-		for (int i = 0; i < getParentSBMLObject().getReactantCount(); i++)
-			stoichiometry += getParentSBMLObject().getReactant(i)
-					.getStoichiometry();
+		double stoichiometry = 0d;
+		for (int i = 0; i < getParentSBMLObject().getReactantCount(); i++) {
+			stoichiometry += getParentSBMLObject().getReactant(i).getStoichiometry();
+		}
 		switch ((int) Math.round(stoichiometry)) {
 		case 1:
 			SBMLtools.setSBOTerm(this, numOfEnzymes == 0 ? 199 : 29);
@@ -149,4 +149,5 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 	public String getSimpleName() {
 		return MESSAGES.getString("IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME");
 	}
+
 }

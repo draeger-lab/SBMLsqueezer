@@ -131,6 +131,7 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 					gene.raiseByThePowerOf(specRef);
 					formula.multiplyWith(gene);
 				} else if (specRef.getStoichiometry() != 1d) {
+					// TODO: maybe changing stoichiometry by assignment rule?
 					gene.raiseByThePowerOf(specRef.getStoichiometry());
 					formula.multiplyWith(gene);
 				}

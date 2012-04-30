@@ -40,6 +40,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.UnitConsistencyType;
+import org.sbml.squeezer.kinetics.CommonModularRateLaw;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
@@ -256,6 +257,17 @@ public class GeneralizedMassActionTest extends KineticsTest {
 		// note that h+ is ignored
 		test(r, kl, "kass_R00344*s13*s14*s15-kdiss_R00344*s16*s04*s17");
 		assertTrue(r.isReversible());
+	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testCommonModularRateLaw() throws Throwable {
+		Reaction r = model.getReaction("R00006");
+		KineticLaw kl = klg.createKineticLaw(r, CommonModularRateLaw.class, false, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
+		test(r, kl, "(vmag_R00006*(keq_R00006^(hco_R00006))^(0.5)*s12^(hco_R00006)*s09^(hco_R00006)-1/(keq_R00006^(hco_R00006))^(0.5)*s13^(2*hco_R00006))/(kmc_R00006_s12^(hco_R00006)*kmc_R00006_s09^(hco_R00006)*kmc_R00006_s13^(2*hco_R00006))^(0.5)/((1+s12/kmc_R00006_s12)^(hco_R00006)*(1+s09/kmc_R00006_s09)^(hco_R00006)+(1+s13/kmc_R00006_s13)^(2*hco_R00006)-1)");
 	}
 	
 }

@@ -80,8 +80,9 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		Reaction reaction = getParentSBMLObject();
 		SBMLtools.setSBOTerm(this,429);
 		double stoichiometryRight = 0;
-		for (int i = 0; i < reaction.getProductCount(); i++)
+		for (int i = 0; i < reaction.getProductCount(); i++) {
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
+		}
 		// compulsory-order ternary-complex mechanism (Cornish-Bowden)
 		if ((reaction.getProductCount() == 2) && (stoichiometryRight == 2d)) {
 			SBMLtools.setSBOTerm(this, 433);
@@ -122,12 +123,13 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 		boolean exception = false, biuni = false;
 		switch (reaction.getProductCount()) {
 		case 1:
-			if (specRefP1.getStoichiometry() == 1f)
+			if (specRefP1.getStoichiometry() == 1f) {
 				biuni = true;
-			else if (specRefP1.getStoichiometry() == 2f)
+			} else if (specRefP1.getStoichiometry() == 2f) {
 				specRefP2 = specRefP1;
-			else
+			} else {
 				exception = true;
+			}
 			break;
 		case 2:
 			specRefP2 = reaction.getProduct(1);
@@ -164,11 +166,11 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 						.getSpecies(), enzyme);
 
 				numerator = new ASTNode(p_kcatp, this);
-				if (modE.size() > 0)
+				if (modE.size() > 0) {
 					numerator.multiplyWith(speciesTerm(enzyme));
+				}
 				numerator = ASTNode.times(numerator, ASTNode.pow(
-						speciesTerm(specRefE1), new ASTNode(specRefE1
-								.getStoichiometry(), this)));
+						speciesTerm(specRefE1), stoichiometryTerm(specRefE1)));
 				denominator = ASTNode.times(this, p_kIr1, p_kMr2);
 
 				if (specRefE2.equals(specRefE1)) {
@@ -178,8 +180,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 							speciesTerm(specRefE1), new ASTNode(2, this)));
 				} else {
 					numerator = ASTNode.times(numerator, ASTNode.pow(
-							speciesTerm(specRefE2), new ASTNode(specRefE2
-									.getStoichiometry(), this)));
+							speciesTerm(specRefE2), stoichiometryTerm(specRefE2)));
 					denominator = ASTNode.sum(denominator, ASTNode.times(
 							new ASTNode(p_kMr2, this), speciesTerm(specRefE1)),
 							ASTNode.times(new ASTNode(p_kMr1, this),
@@ -215,8 +216,9 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				ASTNode numeratorReverse = ASTNode.frac(new ASTNode(p_kcatn,
 						this), ASTNode.times(this, p_kIp2, p_kMp1));
 
-				if (modE.size() > 0)
+				if (modE.size() > 0) {
 					numeratorForward.multiplyWith(speciesTerm(enzyme));
+				}
 
 				denominator = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
 						speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
@@ -244,16 +246,18 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 							this, p_kIr1, p_kMr2)));
 				}
 
-				if (modE.size() > 0)
+				if (modE.size() > 0) {
 					numeratorReverse.multiplyWith(speciesTerm(enzyme));
+				}
 
-				if (specRefP2.equals(specRefP1))
+				if (specRefP2.equals(specRefP1)) {
 					numeratorReverse = ASTNode.times(numeratorReverse, ASTNode
 							.pow(speciesTerm(specRefP1), 2));
-				else
+				} else {
 					numeratorReverse = ASTNode.times(numeratorReverse, ASTNode
 							.times(speciesTerm(specRefP1),
 									speciesTerm(specRefP2)));
+				}
 				numerator = ASTNode.diff(numeratorForward, numeratorReverse);
 
 				denominator = ASTNode.sum(denominator, ASTNode
@@ -268,39 +272,40 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 										speciesTerm(specRefP2)), ASTNode.times(
 										this, p_kIr1, p_kMr2, p_kIp2)));
 
-				if (specRefP2.equals(specRefP1))
+				if (specRefP2.equals(specRefP1)) {
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.pow(speciesTerm(specRefP1), 2), ASTNode.times(
 							this, p_kMp1, p_kIp2)));
-				else
+				} else {
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.times(speciesTerm(specRefP1),
 									speciesTerm(specRefP2)), ASTNode.times(
 							this, p_kMp1, p_kIp2)));
-
-				if (specRefE2.equals(specRefE1))
+				}
+				if (specRefE2.equals(specRefE1)) {
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.times(ASTNode.pow(speciesTerm(specRefE1), 2),
 									speciesTerm(specRefP1)), ASTNode.times(
 							this, p_kIr1, p_kMr2, p_kIp1)));
-				else
+				} else {
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.times(speciesTerm(specRefE1),
 									speciesTerm(specRefE2),
 									speciesTerm(specRefP1)), ASTNode.times(
 							this, p_kIr1, p_kMr2, p_kIp1)));
-
-				if (specRefP2.equals(specRefP1))
+				}
+				if (specRefP2.equals(specRefP1)) {
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.times(speciesTerm(specRefE2), ASTNode.pow(
 									speciesTerm(specRefP1), 2)), ASTNode.times(
 							this, p_kIr2, p_kMp1, p_kIp2)));
-				else
+				} else {
 					denominator = ASTNode.sum(denominator, ASTNode.frac(ASTNode
 							.times(speciesTerm(specRefE2), ASTNode.times(
 									speciesTerm(specRefP1),
 									speciesTerm(specRefP2))), ASTNode.times(
 							this, p_kIr2, p_kMp1, p_kIp2)));
+				}
 			} else {
 				/*
 				 * Reversible bi-uni reaction
@@ -323,9 +328,9 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 						this), ASTNode.times(this, p_kIr1, p_kMr2));
 				ASTNode numeratorReverse = ASTNode.frac(this, p_kcatn, p_kMp1);
 
-				if (modE.size() > 0)
+				if (modE.size() > 0) {
 					numeratorForward.multiplyWith(speciesTerm(enzyme));
-
+				}
 				// numeratorForward = times(numeratorForward, specRefE1
 				// .getSpeciesInstance());
 
@@ -350,8 +355,9 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 									speciesTerm(specRefE2)), ASTNode.times(
 							this, p_kIr1, p_kMr2)));
 				}
-				if (modE.size() > 0)
+				if (modE.size() > 0) {
 					numeratorReverse.multiplyWith(speciesTerm(enzyme));
+				}
 				numeratorReverse = ASTNode.times(numeratorReverse,
 						speciesTerm(specRefP1));
 				numerator = ASTNode.diff(numeratorForward, numeratorReverse);
@@ -376,6 +382,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("ORDERED_MECHANISM_SIMPLE_NAME");
 	}
