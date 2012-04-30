@@ -84,8 +84,9 @@ public class PingPongMechanism extends GeneralizedMassAction implements
 		StringBuilder notes = new StringBuilder(
 				"substituted-enzyme mechanism (Ping-Pong)");
 		notes.insert(0, "reversible ");
-		if (!reaction.getReversible())
+		if (!reaction.getReversible()) {
 			notes.insert(0, "ir");
+		}
 		setNotes(notes.toString());
 
 		SBMLtools.setSBOTerm(this,436);

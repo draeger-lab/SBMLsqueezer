@@ -100,10 +100,12 @@ public class KineticLawTableModel extends AbstractTableModel {
 			ListOf<LocalParameter> param = reaction.getKineticLaw()
 					.getListOfLocalParameters();
 			numReac = 0;
-			for (speciesNum = 0; speciesNum < reaction.getReactantCount(); speciesNum++)
+			for (speciesNum = 0; speciesNum < reaction.getReactantCount(); speciesNum++) {
 				numReac += reaction.getReactant(speciesNum).getStoichiometry();
-			if (numReac >= maxNumReactants)
+			}
+			if (numReac >= maxNumReactants) {
 				numOfWarnings++;
+			}
 			String reac = "";
 			String pro = "";
 			String para = "";

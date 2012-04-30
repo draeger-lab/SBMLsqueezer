@@ -97,8 +97,9 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 
 		SBMLtools.setSBOTerm(this, 429);
 		double stoichiometryRight = 0;
-		for (int i = 0; i < reaction.getProductCount(); i++)
+		for (int i = 0; i < reaction.getProductCount(); i++) {
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();
+		}
 		// according to Cornish-Bowden: Fundamentals of Enzyme kinetics
 		// rapid-equilibrium random order ternary-complex mechanism
 		if ((reaction.getProductCount() == 1) && (stoichiometryRight == 1d)
@@ -175,14 +176,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			SpeciesReference specRefR2, String enzyme) {
 		Species speciesR1 = specRefR1.getSpeciesInstance();
 		Species speciesR2 = specRefR2.getSpeciesInstance();
-		LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme,
-				true);
-		LocalParameter p_kMr1 = parameterFactory.parameterMichaelis(speciesR1
-				.getId(), enzyme, true);
-		LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(speciesR2
-				.getId(), enzyme, true);
-		LocalParameter p_kIr1 = parameterFactory.parameterKi(speciesR1.getId(),
-				enzyme);
+		LocalParameter p_kcatp = parameterFactory.parameterKcatOrVmax(enzyme, true);
+		LocalParameter p_kMr1 = parameterFactory.parameterMichaelis(speciesR1.getId(), enzyme, true);
+		LocalParameter p_kMr2 = parameterFactory.parameterMichaelis(speciesR2.getId(), enzyme, true);
+		LocalParameter p_kIr1 = parameterFactory.parameterKi(speciesR1.getId(), enzyme);
 		ASTNode numerator = new ASTNode(p_kcatp, this);
 		ASTNode denominator; // II
 		if (enzyme != null) {

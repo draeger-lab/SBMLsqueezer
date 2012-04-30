@@ -232,40 +232,37 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		ASTNode exponent = null;
 		ASTNode forward = null, backward = null;
 		Parameter mu;
-		LocalParameter hr = parameterFactory
-				.parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			ASTNode curr = speciesTerm(specRef);
-			curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
-					.getStoichiometry(), this), new ASTNode(hr, this)));
-			if (forward == null)
+			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
+			if (forward == null) {
 				forward = curr;
-			else
+			} else {
 				forward.multiplyWith(curr);
+			}
 			mu = parameterFactory.parameterStandardChemicalPotential(specRef
 					.getSpecies());
-			ASTNode product = ASTNode.times(new ASTNode(specRef
-					.getStoichiometry(), this), new ASTNode(mu, this));
-			if (exponent == null)
+			ASTNode product = ASTNode.times(stoichiometryTerm(specRef), new ASTNode(mu, this));
+			if (exponent == null) {
 				exponent = product;
-			else
+			} else {
 				exponent.multiplyWith(product);
+			}
 		}
 		for (SpeciesReference specRef : r.getListOfProducts()) {
 			if (r.getReversible()) {
 				ASTNode curr = speciesTerm(specRef);
-				curr.raiseByThePowerOf(ASTNode.times(new ASTNode(specRef
-						.getStoichiometry(), this), new ASTNode(hr, this)));
-				if (backward == null)
+				curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
+				if (backward == null) {
 					backward = curr;
-				else
+				} else {
 					backward.multiplyWith(curr);
+				}
 			}
-			mu = parameterFactory.parameterStandardChemicalPotential(specRef
-					.getSpecies());
-			ASTNode product = ASTNode.times(new ASTNode(specRef
-					.getStoichiometry(), this), new ASTNode(mu, this));
+			mu = parameterFactory.parameterStandardChemicalPotential(specRef.getSpecies());
+			ASTNode product = ASTNode.times(stoichiometryTerm(specRef), new ASTNode(mu, this));
 			if (exponent == null) {
 				exponent = product;
 			} else {
@@ -300,28 +297,27 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @return
 	 */
 	private ASTNode hal(String enzyme) {
-		ASTNode numerator = new ASTNode(parameterFactory
-				.parameterVelocityConstant(enzyme), this);
-		LocalParameter hr = parameterFactory
-				.parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
 		LocalParameter keq = parameterFactory.parameterEquilibriumConstant();
-		ASTNode forward = ASTNode.sqrt(ASTNode.pow(new ASTNode(keq, this),
-				new ASTNode(hr, this)));
+		ASTNode forward = ASTNode.sqrt(ASTNode.pow(new ASTNode(keq, this), new ASTNode(hr, this)));
 		Reaction r = getParentSBMLObject();
-		for (SpeciesReference specRef : r.getListOfReactants())
-			forward.multiplyWith(ASTNode.pow(speciesTerm(specRef), ASTNode
-					.times(new ASTNode(specRef.getStoichiometry(), this),
-							new ASTNode(hr, this))));
-		numerator.multiplyWith(forward);
-		if (r.getReversible()) {
-			ASTNode backward = ASTNode.frac(1, ASTNode.sqrt(ASTNode.pow(this,
-					keq, hr)));
-			for (SpeciesReference specRef : r.getListOfProducts())
-				backward.multiplyWith(ASTNode.pow(speciesTerm(specRef), ASTNode
-						.times(new ASTNode(specRef.getStoichiometry(), this),
-								new ASTNode(hr, this))));
-			numerator.minus(backward);
+		for (SpeciesReference specRef : r.getListOfReactants()) {
+			forward.multiplyWith(ASTNode.pow(speciesTerm(specRef), 
+				ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this))));
 		}
+		if (r.getReversible()) {
+			ASTNode backward = ASTNode.frac(1, ASTNode.sqrt(ASTNode.pow(this, keq, hr)));
+			for (SpeciesReference specRef : r.getListOfProducts()) {
+				backward.multiplyWith(
+					ASTNode.pow(
+						speciesTerm(specRef), 
+						ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this))
+				  )
+				);
+			}
+			forward.minus(backward);
+		}
+		ASTNode numerator = ASTNode.times(new ASTNode(parameterFactory.parameterVelocityConstant(enzyme), this), forward);
 		return numerator.divideBy(createRoot(enzyme));
 	}
 
@@ -338,8 +334,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		Reaction r = getParentSBMLObject();
 		for (SpeciesReference specRef : r.getListOfReactants()) {
 			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, true);
-			curr = ASTNode.pow(new ASTNode(kM, this), ASTNode.times(
-					stoichiometryTerm(specRef), new ASTNode(hr, this)));
+			curr = ASTNode.pow(new ASTNode(kM, this), ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
 			if (root == null) {
 				root = curr;
 			} else {
@@ -349,8 +344,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		if (r.getReversible()) {
 			for (SpeciesReference specRef : r.getListOfProducts()) {
 				kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, false);
-				curr = ASTNode.pow(new ASTNode(kM, this), ASTNode.times(
-						stoichiometryTerm(specRef), new ASTNode(hr, this)));
+				curr = ASTNode.pow(new ASTNode(kM, this), ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
 				if (root == null) {
 					root = curr;
 				} else {
@@ -386,19 +380,14 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @return
 	 */
 	private ASTNode cat(String enzyme, boolean forward) {
-		LocalParameter kr = parameterFactory.parameterKcatOrVmax(enzyme,
-				forward);
+		LocalParameter kr = parameterFactory.parameterKcatOrVmax(enzyme, forward);
 		ASTNode rate = new ASTNode(kr, this);
 		Reaction r = getParentSBMLObject();
-		LocalParameter hr = parameterFactory
-				.parameterReactionCooperativity(enzyme);
-		for (SpeciesReference specRef : forward ? r.getListOfReactants() : r
-				.getListOfProducts()) {
-			LocalParameter kM = parameterFactory.parameterMichaelis(specRef
-					.getSpecies(), enzyme, forward);
+		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
+		for (SpeciesReference specRef : forward ? r.getListOfReactants() : r.getListOfProducts()) {
+			LocalParameter kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 			rate.multiplyWith(ASTNode.pow(ASTNode.frac(speciesTerm(specRef),
-					new ASTNode(kM, this)), ASTNode.times(new ASTNode(specRef
-					.getStoichiometry(), this), new ASTNode(hr, this))));
+					new ASTNode(kM, this)), ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this))));
 		}
 		return rate;
 	}
@@ -409,4 +398,5 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	public String getSimpleName() {
 		return MESSAGES.getString("POWER_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
+
 }

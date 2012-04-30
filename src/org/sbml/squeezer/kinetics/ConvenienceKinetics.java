@@ -25,6 +25,7 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
@@ -32,6 +33,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.util.Maths;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
@@ -71,6 +73,11 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = 8622041794368325382L;
+	
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(ConvenienceKinetics.class.getName());
 
 	/**
 	 * 
@@ -163,11 +170,9 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 				p_kM = parameterFactory.parameterMichaelis(ref.getSpecies(),
 						enzyme, forward);
 				if (forward) {
-					reactants[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM),
-							ref.getStoichiometry());
+					reactants[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM), stoichiometryTerm(ref));
 				} else {
-					products[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM),
-							ref.getStoichiometry());
+					products[i] = ASTNode.pow(speciesTerm(ref).divideBy(p_kM), stoichiometryTerm(ref));
 				}
 			}
 			i = 0;
@@ -177,7 +182,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 						parameterFactory.parameterKG(ref.getSpecies()),
 						parameterFactory.parameterMichaelis(ref.getSpecies(),
 								enzyme, forward)).raiseByThePowerOf(
-						ref.getStoichiometry());
+									stoichiometryTerm(ref));
 			}
 			i = 0;
 			for (SpeciesReference ref : reaction.getListOfProducts()) {
@@ -186,7 +191,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 						parameterFactory.parameterKG(ref.getSpecies()),
 						parameterFactory.parameterMichaelis(ref.getSpecies(),
 								enzyme, forward)).raiseByThePowerOf(
-						ref.getStoichiometry());
+						stoichiometryTerm(ref));
 			}
 			if (forward) {
 				ASTNode proot = ASTNode.times(productroot);
@@ -220,8 +225,8 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 				p_kM = parameterFactory.parameterMichaelis(
 						specRef.getSpecies(), enzyme, forward);
 				curr = speciesTerm(specRef).divideBy(p_kM);
-				if (specRef.getStoichiometry() != 1d) {
-					curr.raiseByThePowerOf(specRef.getStoichiometry());
+				if ((specRef.getStoichiometry() != 1d) || ((specRef.isSetId()) && (getLevel() > 2))) {
+					curr.raiseByThePowerOf(stoichiometryTerm(specRef));
 				}
 				equation.multiplyWith(curr);
 			}
@@ -253,6 +258,10 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			LocalParameter p_kM = parameterFactory.parameterMichaelis(ref.getSpecies(), enzyme, forward);
 			if (!p_kM.isSetSBOTerm()) {
 				SBMLtools.setSBOTerm(p_kM,forward ? 322 : 323);
+			}
+			if (!Maths.isInt(ref.getStoichiometry()) || ((getLevel() > 2) && (ref.isSetId()))) {
+				// TODO: Improve Level 3 support!
+				logger.fine("Level 3: Stoichiometry might change!");
 			}
 			denoms[i] = ASTNode.pow(ASTNode.frac(speciesTerm(ref), new ASTNode(
 					p_kM, this)), (int) ref.getStoichiometry());

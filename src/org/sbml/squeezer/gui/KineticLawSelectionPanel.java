@@ -183,8 +183,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		this.klg.setReversibility(Boolean.valueOf(this.reaction.getReversible()));
 		StringBuilder label = new StringBuilder("<html><body>");
 		double stoichiometry = 0;
-		for (int i = 0; i < reaction.getReactantCount(); i++)
+		for (int i = 0; i < reaction.getReactantCount(); i++) {
 			stoichiometry += reaction.getReactant(i).getStoichiometry();
+		}
 		if (stoichiometry > 2d) {
 		  String message = MessageFormat.format(MESSAGES.getString("SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY"), StringUtil.toString(stoichiometry));
 			label.append("<p><span color=\"red\">" + WARNINGS.getString("WARNING") +": ");
