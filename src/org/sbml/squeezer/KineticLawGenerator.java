@@ -641,7 +641,7 @@ public class KineticLawGenerator {
 			miniModel.addSpecies(speciesOrig.clone());
 		}
 		Species spec = miniModel.getSpecies(speciesOrig.getId());
-		if (!spec.isSetHasOnlySubstanceUnits()) {
+		if (!spec.isSetHasOnlySubstanceUnits() && (2 < spec.getLevel())) {
 			spec.setHasOnlySubstanceUnits(defaultHasOnlySubstanceUnits);
 		}
 		Compartment compartment = miniModel.getCompartment(speciesOrig
