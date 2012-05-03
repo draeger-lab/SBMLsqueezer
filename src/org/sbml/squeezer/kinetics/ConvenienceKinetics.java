@@ -194,6 +194,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 						stoichiometryTerm(ref));
 			}
 			if (forward) {
+				// TODO: in Level 3 assign a unit to the numbers
 				ASTNode proot = ASTNode.times(productroot);
 				if (proot == null) {
 					proot = new ASTNode(1, this);

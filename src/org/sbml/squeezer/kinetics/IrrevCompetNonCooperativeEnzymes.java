@@ -120,14 +120,20 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 			} else {
 				ASTNode factor = new ASTNode(p_kM, this);
 				for (int i = 0; i < modInhib.size(); i++) {
-					LocalParameter p_kIi = parameterFactory.parameterKi(
-							modInhib.get(i), enzyme);
-					LocalParameter p_exp = parameterFactory
-							.parameterNumBindingSites(enzyme, modInhib.get(i));
-					factor.multiplyWith(ASTNode.pow(ASTNode.sum(new ASTNode(1,
-							this), ASTNode.frac(speciesTerm(modInhib.get(i)),
-							new ASTNode(p_kIi, this))),
-							new ASTNode(p_exp, this)));
+					LocalParameter p_kIi = parameterFactory.parameterKi(modInhib.get(i), enzyme);
+					LocalParameter p_exp = parameterFactory.parameterNumBindingSites(enzyme, modInhib.get(i));
+					// TODO: in Level 3 assign a unit to the number
+					factor.multiplyWith(
+						ASTNode.pow(
+							ASTNode.sum(
+								new ASTNode(1, this),
+								ASTNode.frac(
+									speciesTerm(modInhib.get(i)),
+									new ASTNode(p_kIi, this))
+							),
+							new ASTNode(p_exp, this)
+						)
+					);
 				}
 				denominator = factor;
 			}

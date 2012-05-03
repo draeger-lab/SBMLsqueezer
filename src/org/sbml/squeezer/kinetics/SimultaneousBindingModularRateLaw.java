@@ -70,13 +70,10 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 		SBMLtools.setSBOTerm(this,530); // simultaneous binding modular rate law
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(java.lang.String
-	 * )
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(java.lang.String)
 	 */
+	@Override
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = new ASTNode(this);
 		ASTNode forward = denominator(enzyme, true);
@@ -110,6 +107,7 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
 			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
+			// TODO: in Level 3 assign a unit to the number
 			curr = new ASTNode(1, this);
 			curr.plus(speciesTerm(specRef).divideBy(kM));
 			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
@@ -129,4 +127,5 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 	public String getSimpleName() {
 		return MESSAGES.getString("SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
+
 }

@@ -80,8 +80,7 @@ public class HSystem extends BasicKineticLaw implements
 	 */
 	//TODO: produces wrong unit: s^(-1) instead of mol*s^(-1)
 	ASTNode b_i() {
-		return new ASTNode(parameterFactory.parameterB(getParentSBMLObject()
-				.getId()), this);
+		return new ASTNode(parameterFactory.parameterB(getParentSBMLObject().getId()), this);
 	}
 
 	/* (non-Javadoc)

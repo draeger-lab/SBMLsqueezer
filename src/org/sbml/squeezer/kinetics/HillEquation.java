@@ -51,7 +51,7 @@ import de.zbit.util.ResourceManager;
 public class HillEquation extends BasicKineticLaw implements
 		InterfaceUniUniKinetics, InterfaceReversibleKinetics,
 		InterfaceIrreversibleKinetics, InterfaceModulatedKinetics,
-		InterfaceIntegerStoichiometry {
+		InterfaceIntegerStoichiometry, InterfaceGeneRegulatoryKinetics {
 
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	
@@ -101,27 +101,32 @@ public class HillEquation extends BasicKineticLaw implements
 
 			if (r.getReversible()) {
 				Species product = r.getProduct(0).getSpeciesInstance();
-
+				// TODO: in Level 3 assign a unit to the number
 				ASTNode prodTerm = new ASTNode(1, this);
-				prodTerm.minus(ASTNode.frac(speciesTerm(product), 
-					ASTNode.times(new ASTNode(parameterFactory
-								.parameterEquilibriumConstant(), this),
-								speciesTerm(reactant))));
-
+				prodTerm.minus(
+					ASTNode.frac(
+						speciesTerm(product), 
+					  ASTNode.times(
+					  	  new ASTNode(parameterFactory.parameterEquilibriumConstant(), this),
+								specTerm.clone())
+						)
+				);
 				rates[enzymeNum].multiplyWith(speciesTerm(reactant));
-				rates[enzymeNum].divideBy(new ASTNode(kSreactant, this));
+				rates[enzymeNum].divideBy(kSreactant);
 				rates[enzymeNum].multiplyWith(prodTerm);
 
 				LocalParameter kSproduct = parameterFactory.parameterKS(
 						product, enzyme);
 				// S/kS + P/kP
-				specTerm = ASTNode
-						.frac(specTerm, new ASTNode(kSreactant, this));
-				specTerm.plus(ASTNode.frac(speciesTerm(product), new ASTNode(
-						kSproduct, this)));
-				rates[enzymeNum].multiplyWith(ASTNode.pow(specTerm.clone(),
-						(new ASTNode(hillCoeff, this)).minus(new ASTNode(1,
-								this))));
+				specTerm = ASTNode.frac(specTerm, new ASTNode(kSreactant, this));
+				specTerm.plus(ASTNode.frac(speciesTerm(product), new ASTNode(kSproduct, this)));
+				// TODO: in Level 3 assign a unit to the number
+				rates[enzymeNum].multiplyWith(
+					ASTNode.pow(
+						specTerm.clone(),
+					  ASTNode.diff(new ASTNode(hillCoeff, this), new ASTNode(1, this))
+					)
+				);
 			} else {
 				denominator = ASTNode.pow(new ASTNode(kSreactant, this),
 						new ASTNode(hillCoeff, this));
@@ -130,39 +135,34 @@ public class HillEquation extends BasicKineticLaw implements
 			}
 
 			if (activators.size() + inhibitors.size() == 1) {
-				Species modifier = getModel().getSpecies(
-						activators.isEmpty() ? inhibitors.get(0) : activators.get(0));
-				LocalParameter kMmodifier = parameterFactory
-						.parameterMichaelis(modifier.getId(), enzyme);
-				ASTNode kMmPow = ASTNode.pow(new ASTNode(kMmodifier, this),
-						new ASTNode(hillCoeff, this));
-				ASTNode modPow = ASTNode.pow(speciesTerm(modifier),
-						new ASTNode(hillCoeff, this));
+				Species modifier = getModel().getSpecies(activators.isEmpty() ? inhibitors.get(0) : activators.get(0));
+				LocalParameter kMmodifier = parameterFactory.parameterMichaelis(modifier.getId(), enzyme);
+				ASTNode kMmPow = ASTNode.pow(new ASTNode(kMmodifier, this), new ASTNode(hillCoeff, this));
+				ASTNode modPow = ASTNode.pow(speciesTerm(modifier), new ASTNode(hillCoeff, this));
 				LocalParameter beta = parameterFactory.parameterBeta(r.getId());
 				if (SBO.isInhibitor(modifier.getSBOTerm())) {
 					beta.setValue(beta.getValue() * (-1));
 				}
-				denominator = ASTNode.frac(kMmPow.clone().plus(modPow.clone()),
-						kMmPow.plus(ASTNode.times(new ASTNode(beta, this),
-								modPow)));
+				denominator = ASTNode.frac(
+					kMmPow.clone().plus(modPow.clone()),
+					kMmPow.plus(ASTNode.times(new ASTNode(beta, this), modPow))
+				);
 				if (!r.getReversible()) {
-					denominator.multiplyWith(ASTNode.pow(new ASTNode(
-							kSreactant, this), new ASTNode(hillCoeff, this)));
+					denominator.multiplyWith(ASTNode.pow(this, kSreactant, hillCoeff));
 				}
 			}
 
 			if (denominator != null) {
-				denominator.plus(ASTNode.pow(specTerm, new ASTNode(hillCoeff,
-						this)));
+				denominator.plus(ASTNode.pow(specTerm, new ASTNode(hillCoeff, this)));
 			} else {
-				
 				ASTNode one = new ASTNode(1, this);
 				if (getLevel() > 2) {
 					one.setUnits(Unit.Kind.DIMENSIONLESS.toString().toLowerCase());
 				}
-				denominator = ASTNode.sum(one, ASTNode.pow(specTerm,
-						new ASTNode(hillCoeff, this)));
-				
+				denominator = ASTNode.sum(
+					one,
+					ASTNode.pow(specTerm, new ASTNode(hillCoeff, this))
+				);
 			}
 			rates[enzymeNum].divideBy(denominator);
 		}

@@ -106,11 +106,15 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 					// (A
 					// +
 					// Ka)
-					LocalParameter rhoA = parameterFactory
-							.parameterRhoActivation(msr.getSpecies());
-					curr = ASTNode.sum(new ASTNode(rhoA, this), ASTNode.times(
-							ASTNode.diff(new ASTNode(1, this), new ASTNode(
-									rhoA, this)), curr));
+					LocalParameter rhoA = parameterFactory.parameterRhoActivation(msr.getSpecies());
+					// TODO: in Level 3 assign a unit to the number
+					curr = ASTNode.sum(
+						new ASTNode(rhoA, this),
+						ASTNode.times(
+							ASTNode.diff(new ASTNode(1, this), new ASTNode(rhoA, this)),
+							curr
+						)
+					);
 				}
 				if (activation == null)
 					activation = curr;
@@ -129,11 +133,15 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 							.getSpecies());
 					curr = ASTNode.frac(new ASTNode(kI, this), ASTNode.sum(
 							new ASTNode(kI, this), speciesTerm(msr)));
-					LocalParameter rhoI = parameterFactory
-							.parameterRhoInhibition(msr.getSpecies());
-					curr = ASTNode.times(ASTNode.sum(new ASTNode(rhoI, this),
-							ASTNode.diff(new ASTNode(1, this), new ASTNode(
-									rhoI, this))), curr);
+					LocalParameter rhoI = parameterFactory.parameterRhoInhibition(msr.getSpecies());
+					// TODO: in Level 3 assign a unit to the number
+					curr = ASTNode.times(
+						ASTNode.sum(
+							new ASTNode(rhoI, this),
+							ASTNode.diff(new ASTNode(1, this), new ASTNode(rhoI, this))
+						), 
+						curr
+					);
 				}
 				if (inhibition == null)
 					inhibition = curr;
@@ -158,9 +166,11 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 			numerator[i].divideBy(denominator(enzymeID));
 			if (i < modE.size()) {
 				ModifierSpeciesReference enzyme = null;
-				for (int j = 0; j < r.getModifierCount() && enzyme == null; j++)
-					if (r.getModifier(j).getSpecies().equals(modE.get(i)))
+				for (int j = 0; j < r.getModifierCount() && enzyme == null; j++) {
+					if (r.getModifier(j).getSpecies().equals(modE.get(i))) {
 						enzyme = r.getModifier(j);
+					}
+				}
 				numerator[i] = ASTNode.times(speciesTerm(enzyme), numerator[i]);
 			}
 		}
@@ -174,10 +184,10 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @return
 	 */
 	ASTNode denominator(String enzyme) {
+		// TODO: in Level 3 assign a unit to the number
 		ASTNode denominator = new ASTNode(1, this);
 		ASTNode competInhib = specificModificationSummand(enzyme);
-		return competInhib == null ? denominator : denominator
-				.plus(competInhib);
+		return competInhib == null ? denominator : denominator.plus(competInhib);
 	}
 
 	/**
@@ -192,27 +202,29 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		Reaction r = getParentSBMLObject();
 		ASTNode inhib = null;
 		ASTNode activ = null;
-		for (ModifierSpeciesReference msr : r.getListOfModifiers())
+		for (ModifierSpeciesReference msr : r.getListOfModifiers()) {
 			if (SBO.isCompetetiveInhibitor(msr.getSBOTerm())) {
 				// specific inhibition
 				LocalParameter kI = parameterFactory.parameterKi(msr
-						.getSpecies(), enzyme);
-				ASTNode curr = ASTNode.frac(speciesTerm(msr), new ASTNode(kI,
-						this));
-				if (inhib == null)
+					.getSpecies(), enzyme);
+				ASTNode curr = ASTNode.frac(speciesTerm(msr), new ASTNode(kI, this));
+				if (inhib == null) {
 					inhib = curr;
-				else
+				} else {
 					inhib.plus(curr);
+				}
 			} else if (SBO.isSpecificActivator(msr.getSBOTerm())) {
 				LocalParameter kA = parameterFactory.parameterKa(msr
-						.getSpecies(), enzyme);
+					.getSpecies(), enzyme);
 				ASTNode curr = ASTNode.frac(new ASTNode(kA, this),
-						speciesTerm(msr));
-				if (activ == null)
+					speciesTerm(msr));
+				if (activ == null) {
 					activ = curr;
-				else
+				} else {
 					activ.plus(curr);
+				}
 			}
+		}
 		return ASTNode.sum(activ, inhib);
 	}
 
@@ -274,11 +286,12 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		} else {
 			exponent.multiplyWith(new ASTNode(hr, this));
 		}
-		exponent.divideBy(ASTNode.times(new ASTNode(2, this), new ASTNode(R,
-				this), new ASTNode(T, this)));
+		exponent.divideBy(ASTNode.times(new ASTNode(2, this), new ASTNode(R, this), new ASTNode(T, this)));
 		exponent = ASTNode.exp(exponent);
-		if (forward == null)
+		if (forward == null) {
+			// TODO: in Level 3 assign a unit to the number
 			forward = new ASTNode(1, this);
+		}
 		forward.divideBy(exponent);
 		if (r.getReversible()) {
 			backward.multiplyWith(exponent.clone());
@@ -306,6 +319,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 				ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this))));
 		}
 		if (r.getReversible()) {
+			// TODO: in Level 3 assign a unit to the number
 			ASTNode backward = ASTNode.frac(1, ASTNode.sqrt(ASTNode.pow(this, keq, hr)));
 			for (SpeciesReference specRef : r.getListOfProducts()) {
 				backward.multiplyWith(

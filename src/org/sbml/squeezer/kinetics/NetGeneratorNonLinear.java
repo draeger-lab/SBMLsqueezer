@@ -67,35 +67,34 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.AdditiveModelLinear#createKineticEquation(
-	 * java.util.List, java.util.List, java.util.List, java.util.List)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#createKineticEquation(java.util.List, java.util.List, java.util.List, java.util.List)
 	 */
 	@Override
 	ASTNode createKineticEquation(List<String> modE, List<String> modActi,
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
-		ASTNode m = super
-				.createKineticEquation(modE, modActi, modInhib, modCat);
+		ASTNode m = super.createKineticEquation(modE, modActi, modInhib, modCat);
 		Reaction r = getParentSBMLObject();
 		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
 			Species s = r.getProduct(0).getSpeciesInstance();
-			return ASTNode.sum(m, ASTNode.times(new ASTNode(parameterFactory
-					.parameterW(s.getId(), r.getId()), this), speciesTerm(s)));
+			return ASTNode.sum(
+				m,
+				ASTNode.times(
+					new ASTNode(parameterFactory.parameterW(s.getId(), r.getId()), this), 
+					speciesTerm(s)
+				)
+			);
 		}
 		return m;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
 	 */
 	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("NET_GENERATOR_NON_LINEAR_SIMPLE_NAME");
 	}
+
 }

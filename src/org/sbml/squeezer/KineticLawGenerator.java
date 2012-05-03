@@ -517,7 +517,7 @@ public class KineticLawGenerator {
 		 */
 		double spatialD = compartment.getSpatialDimensions();
 		if (!compartment.isSetSize() && 
-				(spatialD != 0) || (modelToWrite.getLevel() < 2)) {
+				(spatialD != 0d) || (modelToWrite.getLevel() < 2)) {
 			//TODO: Option for setting the initial compartment size
 			compartment.setValue(1d);
 		}
@@ -1403,6 +1403,15 @@ public class KineticLawGenerator {
 				}
 			}
 		}
+		// TODO: Such a check would be great, but it takes much too long!
+//		UnitDefinition ud = reaction.getDerivedUnitDefinition();
+//		if (ud == null) {
+//			logger.warning("Could not derive units for reaction " + reaction.getId());
+//		} else if (!ud.isVariantOfSubstancePerTime()) {
+//			logger.warning("Units of kinetic law " + kineticLaw.getClass().getSimpleName() + " of reaction " + reaction.getId()
+//					+ " cannot be varified to be substance per time units (given: "
+//					+ UnitDefinition.printUnits(ud, true) + ").");
+//		}
 		
 		return reaction;
 	}

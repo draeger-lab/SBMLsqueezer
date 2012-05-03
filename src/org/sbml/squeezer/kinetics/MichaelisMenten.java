@@ -192,6 +192,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				p_kMr, modE.size() > 1 ? modE.get(enzymeNum) : null);
 
 			if (reaction.getReversible()) {
+				// TODO: in Level 3 assign a unit to the number
 				denominator = ASTNode.sum(new ASTNode(1, this), denominator);
 			} else if (modInhib.size() < 1) {
 				denominator = ASTNode.sum(new ASTNode(p_kMr, this), denominator);
@@ -239,24 +240,50 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			Reaction reaction, ASTNode denominator, LocalParameter mr,
 			String enzyme) {
 		if (modInhib.size() == 1) {
-			LocalParameter p_kIa = parameterFactory.parameterKi(
-					modInhib.get(0), enzyme, 1);
-			LocalParameter p_kIb = parameterFactory.parameterKi(
-					modInhib.get(0), enzyme, 2);
+			LocalParameter p_kIa = parameterFactory.parameterKi(modInhib.get(0), enzyme, 1);
+			LocalParameter p_kIb = parameterFactory.parameterKi(modInhib.get(0), enzyme, 2);
 			if (reaction.getReversible()) {
-				denominator = ASTNode.sum(ASTNode.frac(speciesTerm(modInhib
-						.get(0)), new ASTNode(p_kIa, this)), ASTNode.times(
-						denominator, ASTNode.sum(new ASTNode(1, this), ASTNode
-								.frac(speciesTerm(modInhib.get(0)),
-										new ASTNode(p_kIb, this)))));
+				// TODO: in Level 3 assign a unit to the number
+				denominator = ASTNode.sum(
+					ASTNode.frac(
+						speciesTerm(modInhib.get(0)),
+						new ASTNode(p_kIa, this)
+					), 
+					ASTNode.times(
+						denominator,
+						ASTNode.sum(
+							new ASTNode(1, this),
+							ASTNode.frac(
+								speciesTerm(modInhib.get(0)),
+								new ASTNode(p_kIb, this)
+							)
+						)
+					)
+				);
 			} else {
-				denominator = ASTNode.sum(ASTNode.times(new ASTNode(mr, this),
-						ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
-								speciesTerm(modInhib.get(0)), new ASTNode(
-										p_kIa, this)))), ASTNode.times(
-						denominator, ASTNode.sum(new ASTNode(1, this), ASTNode
-								.frac(speciesTerm(modInhib.get(0)),
-										new ASTNode(p_kIb, this)))));
+				// TODO: in Level 3 assign a unit to the numbers
+				denominator = ASTNode.sum(
+					ASTNode.times(
+						new ASTNode(mr, this),
+						ASTNode.sum(
+							new ASTNode(1, this),
+							ASTNode.frac(
+								speciesTerm(modInhib.get(0)),
+								new ASTNode(p_kIa, this)
+							)
+						)
+					),
+					ASTNode.times(
+						denominator,
+						ASTNode.sum(
+							new ASTNode(1, this),
+							ASTNode.frac(
+								speciesTerm(modInhib.get(0)),
+								new ASTNode(p_kIb, this)
+							)
+						)
+					)
+				);
 			}
 
 		} else if ((modInhib.size() > 1)
@@ -265,6 +292,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			 * mixed-type inihibition of irreversible enzymes by mutually
 			 * exclusive inhibitors.
 			 */
+			// TODO: in Level 3 assign a unit to the numbers
 			ASTNode sumIa = new ASTNode(1, this);
 			ASTNode sumIb = new ASTNode(1, this);
 			for (int i = 0; i < modInhib.size(); i++) {

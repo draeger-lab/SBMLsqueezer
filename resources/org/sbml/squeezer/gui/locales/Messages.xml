@@ -229,7 +229,7 @@
   <entry key="SSYSTEM_SIMPLE_NAME">S-System based kinetic</entry>
   
   <!-- Vohradsky -->
-  <entry key="VOHRADSKY_SIMPLE_NAME">Non-linear additive model by Vohradsk\u00fd (2001)</entry>
+  <entry key="VOHRADSKY_SIMPLE_NAME">Non-linear additive model by Vohradský (2001)</entry>
   
   <!-- Weaver -->
   <entry key="WEAVER_SIMPLE_NAME">Non-linear additive model by Weaver et al. (1999)</entry>

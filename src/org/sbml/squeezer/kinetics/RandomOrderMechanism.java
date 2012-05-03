@@ -238,6 +238,7 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		numeratorForward.multiplyWith(r1r2.clone());
 		numeratorReverse.multiplyWith(speciesTerm(speciesP1));
 		ASTNode numerator = numeratorForward.minus(numeratorReverse);
+		// TODO: in Level 3 assign a unit to the number
 		ASTNode denominator = ASTNode.sum(
 						new ASTNode(1, this),
 						ASTNode.frac(speciesTerm(speciesR1), new ASTNode(
@@ -294,16 +295,20 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		numeratorForward.multiplyWith(r1r2.clone());
 		numeratorReverse.multiplyWith(p1p2.clone());
 		ASTNode numerator = ASTNode.diff(numeratorForward, numeratorReverse);
-		ASTNode denominator = ASTNode
-				.sum(new ASTNode(1, this), ASTNode.frac(speciesTerm(speciesR1),
-						new ASTNode(p_kIr1, this)), ASTNode.frac(
-						speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
-						ASTNode.frac(speciesTerm(speciesP1), new ASTNode(
-								p_kIp1, this)), ASTNode.frac(
-								speciesTerm(speciesP2), new ASTNode(p_kIp2,
-										this)), ASTNode.frac(p1p2, ASTNode
-								.times(this, p_kIp2, p_kMp1)), ASTNode.frac(
-								r1r2, ASTNode.times(this, p_kIr1, p_kMr2)));
+		// TODO: in Level 3 assign a unit to the number
+		ASTNode denominator = ASTNode.sum(
+			new ASTNode(1, this), 
+			ASTNode.frac(speciesTerm(speciesR1), new ASTNode(p_kIr1, this)),
+			ASTNode.frac(speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
+			ASTNode.frac(speciesTerm(speciesP1), new ASTNode(p_kIp1, this)),
+			ASTNode.frac(speciesTerm(speciesP2), new ASTNode(p_kIp2, this)),
+			ASTNode.frac(p1p2,
+				ASTNode.times(this, p_kIp2, p_kMp1)),
+				ASTNode.frac(
+								r1r2,
+								ASTNode.times(this, p_kIr1, p_kMr2)
+				)
+		);
 		return ASTNode.frac(numerator, denominator);
 	}
 
