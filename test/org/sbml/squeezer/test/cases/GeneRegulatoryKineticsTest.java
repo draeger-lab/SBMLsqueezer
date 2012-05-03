@@ -30,6 +30,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.UnitConsistencyType;
@@ -62,26 +63,28 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 		SBMLDocument doc = new SBMLDocument(2, 4);
 		Model model = doc.createModel("m1");
 		Compartment c = model.createCompartment("c1");
-		Species s1 = model.createSpecies("s1", c);
-		s1.setSBOTerm(SBO.getEmptySet());
-		Species p1 = model.createSpecies("p1", c);
-		p1.setSBOTerm(SBO.getRNA());
-		Species e1 = model.createSpecies("e1", c);
-		e1.setSBOTerm(SBO.getGene());
+		Species emptySet = model.createSpecies("s1", c);
+		emptySet.setSBOTerm(SBO.getEmptySet());
+		Species rna = model.createSpecies("p1", c);
+		rna.setSBOTerm(SBO.getRNA());
+		Species gene = model.createSpecies("e1", c);
+		gene.setSBOTerm(SBO.getGene());
+		
+		for (Species s : model.getListOfSpecies()) {
+			s.setHasOnlySubstanceUnits(true);
+		}
 		
 		Reaction r1 = model.createReaction("r1");
 		r1.setReversible(true);
-		r1.createReactant(s1);
-		r1.createProduct(p1);
-		r1.createModifier(e1);
-		r1.setSBOTerm(SBO.getTrigger());
+		r1.createReactant(emptySet);
+		r1.createProduct(rna);
+		r1.createModifier(gene).setSBOTerm(SBO.getTrigger());
 		
 		Reaction r2 = model.createReaction("r2");
 		r2.setReversible(false);
-		r2.createReactant(s1);
-		r2.createProduct(p1);
-		r2.createModifier(e1);
-		r2.setSBOTerm(SBO.getTrigger());
+		r2.createReactant(emptySet);
+		r2.createProduct(rna);
+		r2.createModifier(gene).setSBOTerm(SBO.getTrigger());
 		
 		return model;
 	}
@@ -571,4 +574,5 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 		KineticLaw kl = klg.createKineticLaw(r1, Weaver.class, false, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
 		test(r1, kl, "m_r2*1/(1+e^((-alpha_r2)*(w_r2_p1*p1/c1+w_r2_e1*e1/c1)+beta_r2))");
 	}
+
 }
