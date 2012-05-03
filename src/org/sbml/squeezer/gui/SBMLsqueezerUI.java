@@ -796,7 +796,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		SBFileFilter filterSBML = SBFileFilter.createSBMLFileFilter();
 		JFileChooser chooser = GUITools.createJFileChooser(prefs
 				.get(GUIOptions.SAVE_DIR), false, false,
-				JFileChooser.FILES_ONLY, filterText, filterTeX, filterSBML);
+				JFileChooser.FILES_ONLY, filterSBML, filterTeX, filterText);
 		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			final File out = chooser.getSelectedFile();
 			savedFile = out;
