@@ -65,18 +65,29 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 		super(parentReaction, typeParameters);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
+	 */
 	@Override
 	ASTNode b_i() {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#getSimpleName()
+	 */
 	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("NET_GENERATOR_LINEAR_SIMPLE_NAME");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#m()
+	 */
 	@Override
 	ASTNode m() {
+		// TODO: in Level 3 assign a unit to the number
 		return new ASTNode(1, this);
 	}
+
 }

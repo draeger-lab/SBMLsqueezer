@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -69,20 +68,37 @@ public class Weaver extends AdditiveModelNonLinear implements
 	ASTNode activation(ASTNode g) {
 		String rId = getParentSBMLObject().getId();
 		if (g != null) {
-			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.sum(ASTNode.times(ASTNode.uMinus(this,
-							parameterFactory.parameterSSystemAlpha(rId)), g),
-							new ASTNode(parameterFactory
-									.parameterSSystemBeta(rId), this)))));
+			// TODO: in Level 3 assign a unit to the numbers
+			return ASTNode.frac(1,
+				ASTNode.sum(
+					new ASTNode(1, this), 
+					ASTNode.exp(
+						ASTNode.sum(
+							ASTNode.times(
+								ASTNode.uMinus(this, parameterFactory.parameterSSystemAlpha(rId)),
+							  g
+							),
+							new ASTNode(parameterFactory.parameterSSystemBeta(rId), this)
+						)
+					)
+				)
+			);
 		}
-		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-				.exp(ASTNode.sum(ASTNode.uMinus(this, parameterFactory
-						.parameterSSystemAlpha(rId)), new ASTNode(
-						parameterFactory.parameterSSystemBeta(rId), this)))));
+		// TODO: in Level 3 assign a unit to the numbers
+		return ASTNode.frac(1,
+			ASTNode.sum(
+				new ASTNode(1, this),
+				ASTNode.exp(
+					ASTNode.sum(
+						ASTNode.uMinus(this, parameterFactory.parameterSSystemAlpha(rId)),
+						new ASTNode(parameterFactory.parameterSSystemBeta(rId), this)
+					)
+				)
+			)
+		);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#b_i()
 	 */
 	@Override
@@ -90,8 +106,7 @@ public class Weaver extends AdditiveModelNonLinear implements
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelNonLinear#getSimpleName()
 	 */
 	@Override
@@ -99,12 +114,12 @@ public class Weaver extends AdditiveModelNonLinear implements
 		return MESSAGES.getString("WEAVER_SIMPLE_NAME");
 	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.AdditiveModelLinear#v()
 	 */
 	@Override
 	ASTNode v() {
 		return null;
 	}
+
 }

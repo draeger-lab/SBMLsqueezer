@@ -110,26 +110,38 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 				LocalParameter p = parameterFactory.parameterW(modifier
 						.getSpecies(), rId);
 				ASTNode pnode = new ASTNode(p, this);
-				LocalParameter theta = parameterFactory.parameterTheta(rId,
-						modifier.getSpecies());
+				LocalParameter theta = parameterFactory.parameterTheta(rId, modifier.getSpecies());
 				ASTNode thetanode = new ASTNode(theta, this);
-				LocalParameter coeff = parameterFactory
-						.parameterHillCoefficient(modifier.getSpecies());
+				LocalParameter coeff = parameterFactory.parameterHillCoefficient(modifier.getSpecies());
 				ASTNode coeffnode = new ASTNode(coeff, this);
 
 				if (node.isUnknown()) {
 					//TODO: ASTNode.pow(speciesTerm(modifier), coeffnode) and
 					//		ASTNode.pow(thetanode, coeffnode) have different units
-					node = ASTNode.frac(ASTNode.times(pnode, ASTNode.pow(
-							speciesTerm(modifier), coeffnode)), ASTNode.sum(
+					node = ASTNode.frac(
+						ASTNode.times(
+							pnode,
+							ASTNode.pow(speciesTerm(modifier), coeffnode)
+						),
+						ASTNode.sum(
 							ASTNode.pow(speciesTerm(modifier), coeffnode),
-							ASTNode.pow(thetanode, coeffnode)));
+							ASTNode.pow(thetanode, coeffnode)
+						)
+					);
 				} else {
-					node = ASTNode.sum(node, ASTNode.frac(ASTNode.times(pnode,
-							ASTNode.pow(speciesTerm(modifier), coeffnode)),
-							ASTNode.sum(ASTNode.pow(speciesTerm(modifier),
-									coeffnode), ASTNode.pow(thetanode,
-									coeffnode))));
+					node = ASTNode.sum(
+						node,
+						ASTNode.frac(
+							ASTNode.times(
+								pnode,
+							  ASTNode.pow(speciesTerm(modifier), coeffnode)
+							),
+							ASTNode.sum(
+								ASTNode.pow(speciesTerm(modifier), coeffnode),
+								ASTNode.pow(thetanode, coeffnode)
+							)
+						)
+					);
 				}
 						
 			}
@@ -145,7 +157,6 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 	//TODO: produces wrong unit: s^(-1) instead of mol*s^(-1)
 	ASTNode synrate() {
 		String rId = getParentSBMLObject().getId();
-
 		LocalParameter b_i = parameterFactory.parameterB(rId);
 		ASTNode b_i_node = new ASTNode(b_i, this);
 		return b_i_node;

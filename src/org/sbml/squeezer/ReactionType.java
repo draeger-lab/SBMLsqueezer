@@ -568,7 +568,7 @@ public class ReactionType {
 				}
 				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
-						if (!kin.equals(kineticsGeneRegulation)) {
+						if (!kin.equals(kineticsGeneRegulation) && !kin.equals(kineticsZeroReactants)) {
 							logger.warning(MessageFormat.format(
 								WARNINGS.getString("FALLBACK_KINETICS"),
 								SBMLtools.getName(reaction),
@@ -585,7 +585,7 @@ public class ReactionType {
 			if (reactionWithGenes || reactionWithRNAs) {
 				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
 					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
-						if (!kin.equals(kineticsGeneRegulation)) {
+						if (!kin.equals(kineticsGeneRegulation) && !kin.equals(kineticsZeroProducts)) {
 							logger.warning(MessageFormat.format(
 								WARNINGS.getString("FALLBACK_KINETICS"),
 								SBMLtools.getName(reaction),
@@ -609,10 +609,12 @@ public class ReactionType {
 			} else {
 				// TODO: Make this selectable!
 				whichkin = ConvenienceKinetics.class;
-				logger.warning(MessageFormat.format(
-					WARNINGS.getString("FALLBACK_KINETICS"), SBMLtools.getName(reaction),
-					kineticsIrreversibleArbitraryEnzymeReaction.getSimpleName(),
-					whichkin.getSimpleName()));
+				if (!whichkin.equals(kineticsIrreversibleArbitraryEnzymeReaction)) {
+					logger.warning(MessageFormat.format(
+						WARNINGS.getString("FALLBACK_KINETICS"), SBMLtools.getName(reaction),
+						kineticsIrreversibleArbitraryEnzymeReaction.getSimpleName(),
+						whichkin.getSimpleName()));
+				}
 			}
 		}
 		if (stoichiometryLeft == 1d) {

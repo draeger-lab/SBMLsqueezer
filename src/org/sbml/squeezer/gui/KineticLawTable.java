@@ -346,15 +346,17 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 							dialog.setVisible(false);
 							int i = 0;
 							if (((Integer) event.getNewValue()).intValue() == JOptionPane.OK_OPTION) {
-								while (i < possibleTypes.length
+								while ((i < possibleTypes.length - 1)
 										&& !possibleTypes[i].equals(klsp
-												.getSelectedKinetic()))
+												.getSelectedKinetic())) {
 									i++;
+								}
 							} else {
-								while (i < possibleTypes.length
+								while ((i < possibleTypes.length - 1)
 										&& !possibleTypes[i].equals(oldLaw
-												.getClass().getCanonicalName()))
+												.getClass().getCanonicalName())) {
 									i++;
+								}
 							}
 							updateTable(possibleLaws[i]);
 						}

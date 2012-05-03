@@ -115,6 +115,7 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 						this));
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
 						speciesTerm(si), new ASTNode(p_kM, this)), stoichiometryTerm(si)));
+				// TODO: in Level 3 assign a unit to the number
 				denominator[i] = ASTNode.pow(ASTNode.sum(new ASTNode(1, this),
 						frac), stoichiometryTerm(si));
 			}

@@ -30,6 +30,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -80,14 +81,15 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	 */
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = denominator(enzyme, true);
-		if (denominator.isUnknown())
+		if (denominator.isUnknown()) {
 			denominator = denominator(enzyme, false);
-		else
+		} else {
 			denominator.plus(denominator(enzyme, false));
+		}
+		// TODO: in Level 3 assign a unit to the number
 		denominator.minus(new ASTNode(1, this));
 		ASTNode competInhib = specificModificationSummand(enzyme);
-		return competInhib == null ? denominator : denominator
-				.plus(competInhib);
+		return competInhib == null ? denominator : denominator.plus(competInhib);
 	}
 
 	/**
@@ -99,13 +101,16 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	 */
 	private final ASTNode denominator(String enzyme, boolean forward) {
 		ASTNode denominator = new ASTNode(this), curr;
-		LocalParameter hr = parameterFactory
-				.parameterReactionCooperativity(enzyme);
+		LocalParameter hr = parameterFactory.parameterReactionCooperativity(enzyme);
 		Reaction r = getParentSBMLObject();
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
+		ASTNode one = new ASTNode(1, this);
+		if (getLevel() > 2) {
+			one.setUnits(Unit.Kind.DIMENSIONLESS.toString().toLowerCase());
+		}
 		for (SpeciesReference specRef : listOf) {
 			LocalParameter kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
-			curr = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this)));
+			curr = ASTNode.sum(one.clone(), ASTNode.frac(speciesTerm(specRef), new ASTNode(kM, this)));
 			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
 			if (denominator.isUnknown()) {
 				denominator = curr;

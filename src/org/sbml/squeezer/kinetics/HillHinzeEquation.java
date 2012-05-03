@@ -192,6 +192,7 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 			formula.multiplyWith(acti);
 		}
 		if (modTInhib.size() > 0) {
+			// TODO: in Level 3 assign a unit to the number
 			formula.multiplyWith(ASTNode.diff(new ASTNode(1, this), ASTNode.times(inhib)));
 		}
 		return formula;

@@ -220,16 +220,20 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 					numeratorForward.multiplyWith(speciesTerm(enzyme));
 				}
 
-				denominator = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
-						speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
-						ASTNode.frac(ASTNode.times(new ASTNode(p_kMr1, this),
-								speciesTerm(specRefE2)), ASTNode.times(this,
-								p_kIr1, p_kMr2)), ASTNode.frac(ASTNode.times(
-								new ASTNode(p_kMp2, this),
-								speciesTerm(specRefP1)), ASTNode.times(this,
-								p_kIp2, p_kMp1)), ASTNode.frac(
-								speciesTerm(specRefP2), new ASTNode(p_kIp2,
-										this)));
+				// TODO: in Level 3 assign a unit to the number
+				denominator = ASTNode.sum(
+					new ASTNode(1, this),
+					ASTNode.frac(speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
+					ASTNode.frac(
+						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)), 
+						ASTNode.times(this, p_kIr1, p_kMr2)
+					),
+					ASTNode.frac(
+						ASTNode.times(new ASTNode(p_kMp2, this), speciesTerm(specRefP1)), 
+						ASTNode.times(this, p_kIp2, p_kMp1)
+					),
+					ASTNode.frac(speciesTerm(specRefP2), new ASTNode(p_kIp2, this))
+				);
 
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode
@@ -334,11 +338,15 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				// numeratorForward = times(numeratorForward, specRefE1
 				// .getSpeciesInstance());
 
-				denominator = ASTNode.sum(new ASTNode(1, this), ASTNode.frac(
-						speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
-						ASTNode.frac(ASTNode.times(new ASTNode(p_kMr1, this),
-								speciesTerm(specRefE2)), ASTNode.times(this,
-								p_kIr1, p_kMr2)));
+				// TODO: in Level 3 assign a unit to the number
+				denominator = ASTNode.sum(
+					new ASTNode(1, this),
+					ASTNode.frac(speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
+					ASTNode.frac(
+						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)), 
+						ASTNode.times(this, p_kIr1, p_kMr2)
+					)
+				);
 
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode

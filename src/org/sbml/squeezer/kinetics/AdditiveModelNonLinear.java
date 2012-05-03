@@ -70,11 +70,14 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 	 */
 	@Override
 	ASTNode activation(ASTNode g) {
-		if (g == null) // unknown exponent
+		if (g == null) {
+			// unknown exponent
+			// TODO: in Level 3 assign a unit to the number
 			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 					.exp(ASTNode.uMinus(new ASTNode(1, this)))));
-		
+		}
 		//TODO: produces invalid unit
+		// TODO: in Level 3 assign a unit to the number
 		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
 				.exp(ASTNode.uMinus(g))));
 	}

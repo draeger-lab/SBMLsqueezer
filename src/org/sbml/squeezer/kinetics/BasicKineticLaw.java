@@ -168,8 +168,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 					.valueOf(typeParameters[2].toString()) == UnitConsistencyType.concentration;
 		}
 		if (typeParameters.length > 3) {
-			defaultParamValue = Double
-					.parseDouble(typeParameters[3].toString());
+			defaultParamValue = Double.parseDouble(typeParameters[3].toString());
 		}
 		enzymes = new LinkedList<String>();
 		activators = new LinkedList<String>();
@@ -306,4 +305,5 @@ public abstract class BasicKineticLaw extends KineticLaw {
 		return isSetSBOTerm() ? SBO.getTerm(getSBOTerm()).getName()
 				.replace("\\,", ",") : getClass().getSimpleName();
 	}
+
 }
