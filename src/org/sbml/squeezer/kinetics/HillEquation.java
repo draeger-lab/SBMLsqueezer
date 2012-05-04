@@ -87,6 +87,7 @@ public class HillEquation extends BasicKineticLaw implements
 		ASTNode rates[] = new ASTNode[Math.max(1, enzymes.size())];
 		for (int enzymeNum = 0; enzymeNum < rates.length; enzymeNum++) {
 			String enzyme = enzymes.size() == 0 ? null : enzymes.get(enzymeNum);
+			// TODO: Consider that the reactant might be null or that its SBO term represents an empty set!
 			Species reactant = r.getReactant(0).getSpeciesInstance();
 			LocalParameter kSreactant = parameterFactory.parameterKS(reactant, enzyme);
 			LocalParameter hillCoeff = parameterFactory.parameterHillCoefficient(enzyme);

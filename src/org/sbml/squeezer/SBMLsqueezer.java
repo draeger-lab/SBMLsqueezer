@@ -667,8 +667,7 @@ protected void setUp() {
 	      throw new SBMLException(exception);
 	    } else if (!sbmlIo.getListOfModels().isEmpty()) {
 	      
-	      KineticLawGenerator klg = new KineticLawGenerator(sbmlIo
-	          .getSelectedModel());
+	      KineticLawGenerator klg = new KineticLawGenerator(sbmlIo.getSelectedModel());
 	      
 	      ProgressBar progressBar = new ProgressBar(0);
 	      klg.setProgressBar(progressBar);
@@ -716,23 +715,27 @@ protected void setUp() {
    * @throws Throwable
    */
   public void squeeze(Object sbmlSource, String outfile) throws Throwable {
-	File outFile = outfile != null ? new File(outfile) : null;
-    File inFile = sbmlSource != null ? new File(sbmlSource.toString()) : null;
-
-    Map<File, String> ioPairs = FileWalker.filterAndCreate(inFile, outFile, SBFileFilter.createSBMLFileFilter(), true);
-    if (ioPairs.size() == 0) {
-    	logger.info(MESSAGES.getString("EMPTY_INPUT_FILE_LIST"));
-    } else {
-    	for (Map.Entry<File, String> entry : ioPairs.entrySet()) {
-    		try {
-    			squeeze(entry.getKey(), new File(entry.getValue()));
-    		} catch (Throwable t) {
-    			logger.log(Level.SEVERE, MessageFormat.format(
-    					WARNINGS.getString("SQUEEZE_ERROR"),
-    					entry.getKey().getAbsolutePath(), entry.getValue()), t);
-    		}
-    	}
-    }
+  	File outFile = outfile != null ? new File(outfile) : null;
+  	File inFile = sbmlSource != null ? new File(sbmlSource.toString()) : null;
+  	// TODO: Localize!
+  	logger.info("Scanning input files");
+  	Map<File, String> ioPairs = FileWalker.filterAndCreate(inFile, outFile, SBFileFilter.createSBMLFileFilter(), true);
+  	if (ioPairs.size() == 0) {
+  		logger.info(MESSAGES.getString("EMPTY_INPUT_FILE_LIST"));
+  	} else {
+  		for (Map.Entry<File, String> entry : ioPairs.entrySet()) {
+  			try {
+  				inFile = entry.getKey();
+  				outFile = new File(entry.getValue());
+  				logger.info(MessageFormat.format("Squeezing file {0} into {1}", inFile.getAbsolutePath(), outFile.getAbsolutePath()));
+  				squeeze(inFile, outFile);
+  			} catch (Throwable t) {
+  				logger.log(Level.SEVERE, MessageFormat.format(
+  					WARNINGS.getString("SQUEEZE_ERROR"),
+  					entry.getKey().getAbsolutePath(), entry.getValue()), t);
+  			}
+  		}
+  	}
   }
 
   /**

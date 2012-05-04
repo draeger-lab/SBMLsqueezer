@@ -23,16 +23,17 @@
  */
 package org.sbml.squeezer.gui;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.table.AbstractTableModel;
 
 import org.sbml.jsbml.KineticLaw;
-import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.Bundles;
 
@@ -51,6 +52,9 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
  */
 public class KineticLawTableModel extends AbstractTableModel {
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	
 	/**
@@ -75,7 +79,6 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * @param reactionNumAndKineticBezeichnung
 	 * @param model
 	 */
-	@SuppressWarnings("deprecation")
 	public KineticLawTableModel(KineticLawGenerator klg) {
 		int reactionNum, speciesNum;
 		double numReac;
@@ -92,13 +95,11 @@ public class KineticLawTableModel extends AbstractTableModel {
 		data = new Object[klg.getCreatedKineticsCount()][this.columnNames.length];
 		numOfWarnings = 0;
 
-		int maxNumReactants = SBPreferences.getPreferencesFor(SqueezerOptions.class).getInt(
-				SqueezerOptions.MAX_NUMBER_OF_REACTANTS);
+		int maxNumReactants = SBPreferences.getPreferencesFor(SqueezerOptions.class).getInt(SqueezerOptions.MAX_NUMBER_OF_REACTANTS);
 		for (reactionNum = 0; reactionNum < klg.getCreatedKineticsCount(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
-			String kinetic = reaction.getKineticLaw().getFormula();
-			ListOf<LocalParameter> param = reaction.getKineticLaw()
-					.getListOfLocalParameters();
+			String kinetic = reaction.isSetKineticLaw() && reaction.getKineticLaw().isSetMath() ? reaction.getKineticLaw().getMath().toFormula() : "";
+			List<LocalParameter> param = reaction.isSetKineticLaw() ? reaction.getKineticLaw().getListOfLocalParameters() : new LinkedList<LocalParameter>();
 			numReac = 0;
 			for (speciesNum = 0; speciesNum < reaction.getReactantCount(); speciesNum++) {
 				numReac += reaction.getReactant(speciesNum).getStoichiometry();
@@ -113,17 +114,18 @@ public class KineticLawTableModel extends AbstractTableModel {
 			if (reaction.getReactantCount() > 0) {
 				reac += reaction.getReactant(0).getSpecies();
 			}
-			for (speciesNum = 1; speciesNum < reaction.getReactantCount(); speciesNum++)
+			for (speciesNum = 1; speciesNum < reaction.getReactantCount(); speciesNum++) {
 				reac += ", " + reaction.getReactant(speciesNum).getSpecies();
-
+			}
 			if (reaction.getProductCount() > 0) {
 				pro += reaction.getProduct(0).getSpecies();
 			}
-			for (speciesNum = 1; speciesNum < reaction.getProductCount(); speciesNum++)
+			for (speciesNum = 1; speciesNum < reaction.getProductCount(); speciesNum++) {
 				pro += ", " + reaction.getProduct(speciesNum).getSpecies();
-
-			for (int j = 0; j < param.size() - 1; j++)
+			}
+			for (int j = 0; j < param.size() - 1; j++) {
 				para += param.get(j).getId() + ", ";
+			}
 			para += param.get(param.size() - 1).getId();
 
 			KineticLaw kl = reaction.getKineticLaw();
@@ -131,11 +133,13 @@ public class KineticLawTableModel extends AbstractTableModel {
 			// Reaction Identifier
 			data[reactionNum][0] = reaction.getId();
 			// Kinetic Law
-			data[reactionNum][1] = kl instanceof BasicKineticLaw ? ((BasicKineticLaw) kl)
-					.getSimpleName()
-					: kl.toString();
-			// SBO
-			data[reactionNum][2] = kl.getSBOTermID();
+			if (kl != null) {
+				data[reactionNum][1] = kl instanceof BasicKineticLaw ? ((BasicKineticLaw) kl)
+						.getSimpleName()
+						: kl.toString();
+						// SBO
+						data[reactionNum][2] = kl.getSBOTermID();
+			}
 			// #Reactants
 			data[reactionNum][3] = Double.valueOf(numReac);
 			// Reactants

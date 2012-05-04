@@ -186,7 +186,7 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 					|| SBO.isRNAOrMessengerRNA(modifierSpec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierSpec.getSBOTerm())) {
 				if (!modifier.isSetSBOTerm()) {
-					SBMLtools.setSBOTerm(modifier,19);
+					SBMLtools.setSBOTerm(modifier, 19);
 				}
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					LocalParameter p = parameterFactory.parameterW(modifier.getSpecies(), r.getId());

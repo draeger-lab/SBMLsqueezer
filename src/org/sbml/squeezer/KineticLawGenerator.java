@@ -43,6 +43,7 @@ import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.IdentifierException;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
@@ -585,13 +586,10 @@ public class KineticLawGenerator {
 	private void checkUnits(Species species, Model miniModel) {
 		if (!species.isSetSubstanceUnits()
 				|| !species.getSubstanceUnitsInstance().isVariantOfSubstance()) {
-			UnitDefinition ud = species.getModel().getUnitDefinition(
-					UnitDefinition.SUBSTANCE);
+			UnitDefinition ud = species.getModel().getUnitDefinition(UnitDefinition.SUBSTANCE);
 			if (ud == null) {
-				ud = UnitDefinition.getPredefinedUnit(
-						UnitDefinition.SUBSTANCE, 2, 4);
-				SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(),
-						miniModel.getVersion());
+				ud = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
+				SBMLtools.setLevelAndVersion(ud, miniModel.getLevel(), miniModel.getVersion());
 				miniModel.setSubstanceUnits(ud);
 			}
 			species.setSubstanceUnits(ud);
@@ -1510,7 +1508,12 @@ public class KineticLawGenerator {
 			}
 			
 		}
-		kineticLaw.getMath().updateVariables();
+		if (!kineticLaw.isSetMath()) {
+			// TODO: Localize!
+			logger.log(Level.SEVERE, MessageFormat.format("No math element defined for reaction {0}", reaction.getId()));
+		} else {
+			kineticLaw.getMath().updateVariables();
+		}
 		if (progressAdapter != null) {
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 			progressAdapter.progressOn();
