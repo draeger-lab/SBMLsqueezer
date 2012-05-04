@@ -71,19 +71,13 @@ public class UnitFactory {
 	 */
 	public static final UnitDefinition checkUnitDefinitions(
 			UnitDefinition unitdef, Model model) {
-		boolean contains = false;
-		for (UnitDefinition ud : model.getListOfUnitDefinitions()) {
-			if (UnitDefinition.areIdentical(ud, unitdef)) {
-				unitdef = ud;
-				contains = true;
-				break;
-			}
-		}
-		if (!contains) {
+		UnitDefinition ud = model.findIdentical(unitdef);
+		if (ud == null) {
 			updateAnnotation(unitdef, model.getSBMLDocument());
 			model.addUnitDefinition(unitdef);
+			return unitdef;
 		}
-		return unitdef;
+		return ud;
 	}
 	
 	/**
