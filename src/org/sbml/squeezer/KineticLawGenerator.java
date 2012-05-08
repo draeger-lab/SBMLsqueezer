@@ -43,7 +43,6 @@ import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.IdentifierException;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
@@ -362,19 +361,21 @@ public class KineticLawGenerator {
 				SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR,
 				SqueezerOptions.POSSIBLE_ENZYME_RNA,
 				SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
+				/*SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE,*/
 				SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED,
 				SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN 
 		};
 		for (Option<Boolean> option : options) {
-			name = option.getName();
+			name = option.toString().substring(16);
 			if (prefs.getBoolean(option)) {
-				possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO(name.substring(name.lastIndexOf('_') + 1))));
+				logger.fine(name + ":\t" + SBO.convertAlias2SBO(name));
+				possibleEnzymes.add(Integer.valueOf(SBO.convertAlias2SBO(name)));
 			}
 		}
 		// One more enzyme type that is not reflected in CellDesigner:
 		if (prefs.getBoolean(SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE)) {
 			name = SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE.getName();
-			possibleEnzymes.add(Integer.valueOf(245));
+			possibleEnzymes.add(Integer.valueOf(SBO.getMacromolecule()));
 		}
 		
 		// Initialize the mini model:

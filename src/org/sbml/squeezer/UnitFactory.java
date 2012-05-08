@@ -38,7 +38,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.util.StringTools;
+import org.sbml.jsbml.util.Maths;
 import org.sbml.jsbml.util.filters.SBOFilter;
 import org.sbml.squeezer.util.Bundles;
 
@@ -73,13 +73,87 @@ public class UnitFactory {
 			UnitDefinition unitdef, Model model) {
 		UnitDefinition ud = model.findIdentical(unitdef);
 		if (ud == null) {
-			updateAnnotation(unitdef, model.getSBMLDocument());
-			model.addUnitDefinition(unitdef);
-			return unitdef;
+      String identifier = createId(unitdef);
+      ud = model.getUnitDefinition(identifier);
+      if (ud == null) {
+      	updateAnnotation(unitdef, model.getSBMLDocument());
+      	unitdef.setId(identifier);
+      	model.addUnitDefinition(unitdef);
+      	return unitdef;
+      }
 		}
 		return ud;
 	}
 	
+	/**
+	 * 
+	 * @param unitdef
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	private static String createId(UnitDefinition unitdef) {
+	  StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < unitdef.getUnitCount(); i++) {
+      Unit u = unitdef.getUnit(i);
+      if (i > 0) {
+        sb.append("_times_");
+      }
+      boolean brackets = (u.getExponent() != 1d) && u.isSetOffset();
+      if (brackets) {
+        sb.append("brackOpn_");
+      }
+      if (u.isSetOffset()) {
+        sb.append(format(u.getOffset()));
+        sb.append("_plus_");
+      }
+      if (u.getMultiplier() != 1d) {
+        sb.append(format(u.getMultiplier()));
+        sb.append("x");
+      }
+      if (u.getScale() != 0) {
+				String prefix = (u.getScale() == -6) ? u.getPrefixAsWord() : u.getPrefix();
+				if (prefix.contains("^")) {
+				  sb.append("1E");
+				  if (u.getScale() < 0) { 
+				    sb.append("minus");
+				  }
+				  sb.append(u.getScale());
+				  sb.append('x');
+				} else {
+					sb.append(prefix);
+				}
+      }
+      sb.append(u.getKind());
+      if (u.getExponent() != 1d) {
+        if (brackets) {
+          sb.append("_brackCls");
+        }
+        sb.append("_pow_");
+        sb.append(format(u.getExponent()));
+      }
+    }
+    return sb.toString();
+	}
+
+	/**
+	 * 
+	 * @param num
+	 * @return
+	 */
+	private static String format(double num) {
+	  StringBuilder sb = new StringBuilder();
+	  if (num < 0d) {
+	    sb.append("minus");
+	    num *= -1d;
+	  }
+    if (Maths.isInt(num)) {
+      sb.append(Integer.toString((int) num));
+    } else {
+    	sb.append(Double.toString(num).replace(".", "dot"));
+    }
+    return sb.toString();
+	}
+
 	/**
 	 * 
 	 * @param ud
@@ -113,39 +187,6 @@ public class UnitFactory {
 	}
 
 	/**
-	 * @param id
-	 * @return
-	 */
-	private String checkId(String id) {
-		StringBuilder sb = new StringBuilder();
-		char c;
-		if (Character.isDigit(id.charAt(0))) {
-			sb.append('_');
-		}
-		for (int i = 0; i < id.length(); i++) {
-			c = id.charAt(i);
-			if (c == '^') {
-				if ((i < id.length() - 4) && (id.charAt(i + 1) == '-')
-						&& (id.charAt(i + 2) == '1') && (id.charAt(i + 3) == '.')
-						&& (id.charAt(i + 4) == '0')) {
-					i += 4;
-				} else {
-					sb.append("_pow");
-				}
-			} else if (c == '\u03BC') {
-				sb.append("micro");
-			} else if (Character.isDigit(c) || Character.isLetter(c)) {
-				sb.append(c);
-			} else if ((c == '.') && (i < id.length() - 1) && (id.charAt(i + 1) == '0')) {
-				i++;
-			} else {
-				sb.append('_');
-			}
-		}
-		return sb.toString();
-	}
-
-	/**
 	 * 
 	 * @return
 	 */
@@ -165,7 +206,7 @@ public class UnitFactory {
 		List<? extends SimpleSpeciesReference> listOf, boolean zerothOrder,
 		double... x) {
 		int level = model.getLevel(), version = model.getVersion();
-		UnitDefinition amount = new UnitDefinition("amount", level, version);
+		UnitDefinition amount = new UnitDefinition(level, version);
 		if (!zerothOrder) {
 			UnitDefinition speciesUnit, compartmentUnit;
 			SimpleSpeciesReference specRef;
@@ -217,18 +258,12 @@ public class UnitFactory {
 	 * @return Unit joule per kelvin and per mole.
 	 */
 	public UnitDefinition unitJperKandM() {
-		String id = "joule_per_kelvin_per_mole";
-		UnitDefinition ud = model.getUnitDefinition(id);
-		if (ud == null) {
-			ud = new UnitDefinition(id, model.getLevel(), model.getVersion());
-			ud.addUnit(Unit.Kind.JOULE);
-			ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, model.getLevel(),
-					model.getVersion()));
-			ud.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, model.getLevel(),
-					model.getVersion()));
-			ud = checkUnitDefinitions(ud, model);
-		}
-		return ud;
+		int level = model.getLevel(), version = model.getVersion();
+		UnitDefinition ud = new UnitDefinition(level, version);
+		ud.addUnit(Unit.Kind.JOULE);
+		ud.addUnit(new Unit(1, 0, Unit.Kind.KELVIN, -1, level, version));
+		ud.addUnit(new Unit(1, 0, Unit.Kind.MOLE, -1, level, version));
+		return checkUnitDefinitions(ud, model);
 	}
 
 	/**
@@ -237,16 +272,11 @@ public class UnitFactory {
 	 * @return
 	 */
 	public UnitDefinition unitkJperSubstance(UnitDefinition substance) {
-		String id = "kjoule_per_" + substance.getId();
-		UnitDefinition ud = model.getUnitDefinition(id);
-		if (ud == null) {
-			ud = new UnitDefinition(id, model.getLevel(), model.getVersion());
-			ud.addUnit(new Unit(3, Unit.Kind.JOULE, model.getLevel(), model
-					.getVersion()));
-			ud.divideBy(substance);
-			ud = checkUnitDefinitions(ud, model);
-		}
-		return ud;
+	  int level = model.getLevel(), version = model.getVersion();
+    UnitDefinition ud = new UnitDefinition(level, version);
+    ud.addUnit(new Unit(3, Unit.Kind.JOULE, level, version));
+    ud.divideBy(substance);
+		return checkUnitDefinitions(ud, model);
 	}
 
 	/**
@@ -256,23 +286,14 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitPerTime() {
 		UnitDefinition ud = model.getTimeUnitsInstance().clone();
+		int level = model.getLevel(), version = model.getVersion();
 		if (ud.getUnitCount() == 1) {
-			Unit u = ud.getUnit(0);
-			u.setExponent(-1d);
-			ud.setId("per_" + u.getKind().toString().toLowerCase());
-			ud.setName("per time");
+			ud.getUnit(0).setExponent(-1d);
 		} else {
-			ud = new UnitDefinition("per_second", model.getLevel(), model
-					.getVersion());
-			ud.addUnit(new Unit(Unit.Kind.SECOND, -1, model.getLevel(), model
-					.getVersion()));
-			ud.setName("per second (Hz)");
+			ud = new UnitDefinition(level, version);
+			ud.addUnit(new Unit(Unit.Kind.SECOND, -1, level, version));
 		}
-		UnitDefinition def = model.getUnitDefinition(ud.getId());
-		if (def == null) {
-			ud = checkUnitDefinitions(ud, model);
-		}
-		return model.getUnitDefinition(ud.getId());
+		return checkUnitDefinitions(ud, model);
 	}
 
 	/**
@@ -290,7 +311,7 @@ public class UnitFactory {
 		List<? extends SimpleSpeciesReference> listOf, boolean zerothOrder,
 		double h, double... x) {
 		int level = model.getLevel(), version = model.getVersion();
-		UnitDefinition ud = new UnitDefinition("ud", level, version);
+		UnitDefinition ud = new UnitDefinition(level, version);
 		ud.divideBy(model.getTimeUnitsInstance());
 		if (h != 0d) {
 			for (Unit u : ud.getListOfUnits()) {
@@ -300,8 +321,7 @@ public class UnitFactory {
 		UnitDefinition amount = unitConcentrationOrSubstance(listOf, zerothOrder);
 		ud = ud.divideBy(amount);
 		ud = ud.multiplyWith(model.getSubstanceUnitsInstance());
-		ud = ud.simplify();
-		return checkUnitDefinitions(ud, model);
+		return checkUnitDefinitions(ud.simplify(), model);
 	}
 
 	/**
@@ -314,30 +334,7 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitPerTimeAndConcentrationOrSubstance(
 			ListOf<? extends SimpleSpeciesReference> listOf, boolean zerothOrder) {
-		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf, zerothOrder, 0d);
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < ud.getUnitCount(); i++) {
-			Unit u = ud.getUnit(i);
-			if (i > 0) {
-				sb.append('_');
-			}
-			if (u.getExponent() < 0) {
-				sb.append("per_");
-			}
-			sb.append(u.getPrefix());
-			sb.append(u.getKind().getName());
-			if (u.getExponent() != 1d) {
-				sb.append('^');
-				sb.append(u.getExponent());
-			}
-		}
-		String id = checkId(sb.toString());
-		UnitDefinition def = model.getUnitDefinition(id);
-		if (def == null) {
-			ud.setId(id);
-			ud = checkUnitDefinitions(ud, model);
-		}
-		return model.getUnitDefinition(id);
+		return unitPerTimeAndConcentrationOrSubstance(listOf, zerothOrder, 0d);
 	}
 
 	/**
@@ -350,11 +347,7 @@ public class UnitFactory {
 	public UnitDefinition unitPerTimeAndConcentrationOrSubstance(
 			ListOf<? extends SimpleSpeciesReference> listOf, double h,
 			double x, double y) {
-		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(listOf,
-				false, h, x, y);
-		String id = bringToConcentration ? "concentration" : "substance";
-		ud.setId(checkId(id + "_pow_" + (x * y) + "_per_time_pow_" + h));
-		return checkUnitDefinitions(ud, model);
+		return unitPerTimeAndConcentrationOrSubstance(listOf, false, h, x, y);
 	}
 
 	/**
@@ -368,22 +361,12 @@ public class UnitFactory {
 			ListOf<SpeciesReference> participants,
 			ListOf<ModifierSpeciesReference> modifiers, boolean zerothOrder) {
 		UnitDefinition ud = unitPerTimeAndConcentrationOrSubstance(participants, zerothOrder);
-		ListOf<? extends SimpleSpeciesReference> l = modifiers
-				.filterList(new SBOFilter(SBO.getCatalyst()));
+		ListOf<? extends SimpleSpeciesReference> l = modifiers.filterList(new SBOFilter(SBO.getCatalyst()));
 		if (l.size() > 0) {
-			for (SimpleSpeciesReference ssr : l) {
-				Species s = ssr.getSpeciesInstance();
-				UnitDefinition compUD = s.getCompartmentInstance().getUnitsInstance();
-				if (bringToConcentration && s.hasOnlySubstanceUnits()) {
-					ud.multiplyWith(compUD);
-					ud.setId(ud.getId() + "_times_" + compUD.getId());
-				} else if (!bringToConcentration && !s.hasOnlySubstanceUnits()) {
-					ud.divideBy(compUD);
-					ud.setId(ud.getId() + "_per_" + compUD.getId());
-				}
-				ud.divideBy(s.getUnitsInstance());
-			}
-			ud = checkUnitDefinitions(ud, model);
+	    UnitDefinition amount = unitConcentrationOrSubstance(l, zerothOrder);
+	    ud = ud.clone();
+	    ud = ud.divideBy(amount);
+			return checkUnitDefinitions(ud.simplify(), model);
 		}
 		return ud;
 	}
@@ -395,29 +378,12 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitPerTimeOrSizePerTime(Compartment c) {
 		if (bringToConcentration) {
-			StringBuilder name = new StringBuilder();
 			if (!c.isSetUnits()) {
 				c.setUnits(model.getVolumeUnitsInstance());
 			}
-			UnitDefinition sizeUnit = c.getUnitsInstance();
-			if (sizeUnit.isVariantOfVolume()) {
-				name.append("volume");
-			} else if (sizeUnit.isVariantOfArea()) {
-				name.append("area");
-			} else if (sizeUnit.isVariantOfLength()) {
-				name.append("length");
-			}
-			name.append(" per time");
-			String id = name.toString().replace(' ', '_');
-			UnitDefinition ud = model.getUnitDefinition(id);
-			if (ud == null) {
-				ud = new UnitDefinition(sizeUnit);
-				ud.setId(id);
-				ud.divideBy(model.getTimeUnitsInstance());
-				ud.setName(name.toString());
-				ud = checkUnitDefinitions(ud, model);
-			}
-			return ud;
+			UnitDefinition ud = c.getUnitsInstance().clone();
+			ud.divideBy(model.getTimeUnitsInstance());
+			return checkUnitDefinitions(ud, model);
 		} else {
 			return unitPerTime();
 		}
@@ -430,16 +396,18 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitSubstancePerSize(Species species) {
 		Compartment compartment = species.getCompartmentInstance();
-		if (compartment == null) { throw new NullPointerException(
-			MessageFormat.format(
+		if (compartment == null) { 
+		  throw new NullPointerException(MessageFormat.format(
 				WARNINGS.getString("UNDEFINED_COMPARTMENT_OF_SPECIES"),
-				species.toString())); }
+				species.toString()));
+		}
 		UnitDefinition substanceUnit = species.getSubstanceUnitsInstance();
 		UnitDefinition sizeUnit = compartment.getUnitsInstance();
-		if ((substanceUnit == null) || (sizeUnit == null)) { throw new NullPointerException(
-			MessageFormat.format(
+		if ((substanceUnit == null) || (sizeUnit == null)) { 
+		  throw new NullPointerException(MessageFormat.format(
 				WARNINGS.getString("UNDEFINED_UNIT_OF_SPECIES"),
-				species.toString())); }
+				species.toString()));
+		}
 		return unitSubstancePerSize(substanceUnit, sizeUnit);
 	}
 	
@@ -463,21 +431,11 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitSubstancePerSize(UnitDefinition substance,
 			UnitDefinition size, double exponent) {
-		StringBuilder id = StringTools.concatStringBuilder(substance.getId(), "_per_", size.getId());
-		if (exponent != 1d) {
-			id.append("_raised_by_");
-			id.append(exponent);
-		}
-		String identifier = checkId(id.toString());
-		UnitDefinition substancePerSize = model.getUnitDefinition(identifier);
-		if (substancePerSize == null) {
-			substancePerSize = new UnitDefinition(identifier, model.getLevel(), model.getVersion());
-			substancePerSize.multiplyWith(substance);
-			substancePerSize.divideBy(size);
-			substancePerSize.raiseByThePowerOf(exponent);
-			substancePerSize = checkUnitDefinitions(substancePerSize, model);
-		}
-		return substancePerSize;
+		UnitDefinition substancePerSize = new UnitDefinition(model.getLevel(), model.getVersion());
+		substancePerSize.multiplyWith(substance);
+		substancePerSize.divideBy(size);
+		substancePerSize.raiseByThePowerOf(exponent);
+		return checkUnitDefinitions(substancePerSize, model);
 	}
 
 	/**
@@ -497,15 +455,10 @@ public class UnitFactory {
 	 * @return
 	 */
 	public UnitDefinition unitSubstancePerSizePerTime(UnitDefinition size) {
-		String id = "substance_per_" + size.getId() + "_per_time";
-		UnitDefinition mMperSecond = model.getUnitDefinition(id);
-		if (mMperSecond == null) {
-			mMperSecond = new UnitDefinition(id, model.getLevel(), model
-					.getVersion());
-			mMperSecond.multiplyWith(model.getSubstanceUnitsInstance());
-			mMperSecond.divideBy(model.getTimeUnitsInstance());
-			mMperSecond = checkUnitDefinitions(mMperSecond, model);
-		}
+		UnitDefinition mMperSecond = new UnitDefinition(model.getLevel(), model.getVersion());
+		mMperSecond.multiplyWith(model.getSubstanceUnitsInstance());
+		mMperSecond.divideBy(model.getTimeUnitsInstance());
+		mMperSecond = checkUnitDefinitions(mMperSecond, model);
 		return mMperSecond;
 	}
 
@@ -517,14 +470,10 @@ public class UnitFactory {
 	 */
 	public UnitDefinition unitSubstancePerTime(UnitDefinition substance,
 			UnitDefinition time) {
-		String id = substance.getId() + "_per_" + time.getId();
-		UnitDefinition substancePerTime = model.getUnitDefinition(id);
-		if (substancePerTime == null) {
-			substancePerTime = new UnitDefinition(id, model.getLevel(), model.getVersion());
-			substancePerTime.multiplyWith(substance);
-			substancePerTime.divideBy(time);
-			substancePerTime = checkUnitDefinitions(substancePerTime, model);
-		}
+		UnitDefinition substancePerTime = new UnitDefinition(model.getLevel(), model.getVersion());
+		substancePerTime.multiplyWith(substance);
+		substancePerTime.divideBy(time);
+		substancePerTime = checkUnitDefinitions(substancePerTime, model);
 		return substancePerTime;
 	}
 

@@ -380,8 +380,8 @@ public class ReactionType {
 		 * Check if this reaction makes sense at all.
 		 */
 		if (reactionWithGenes
-				|| reaction.getReactantCount() == 0
-				|| (reaction.getReactantCount() == 1 && SBO.isEmptySet(reaction
+				|| (reaction.getReactantCount() == 0)
+				|| ((reaction.getReactantCount() == 1) && SBO.isEmptySet(reaction
 						.getReactant(0).getSBOTerm()))) {
 			boolean transcription = false;
 			for (i = 0; i < reaction.getProductCount(); i++) {
@@ -397,8 +397,8 @@ public class ReactionType {
 			}
 		}
 		if (reactionWithRNAs
-				|| reaction.getReactantCount() == 0
-				|| (reaction.getReactantCount() == 1 && SBO.isEmptySet(reaction
+				|| (reaction.getReactantCount() == 0)
+				|| ((reaction.getReactantCount() == 1) && SBO.isEmptySet(reaction
 						.getReactant(0).getSBOTerm()))) {
 			boolean translation = false;
 			for (i = 0; i < reaction.getProductCount() && !translation; i++) {
