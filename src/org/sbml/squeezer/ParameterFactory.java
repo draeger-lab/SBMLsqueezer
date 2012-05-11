@@ -241,7 +241,28 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
-			p.setUnits(unitFactory.unitPerTime());
+			p.setUnits(Unit.Kind.DIMENSIONLESS);
+		}
+		if (!p.isSetName()) {
+			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL") 
+					+ ": " + MESSAGES.getString("BASIS_EXPRESSION_LEVEL"));
+		}
+		return p;
+	}
+	
+	/**
+	 * For the HillRadde Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	public LocalParameter parameterBH(String rId) {
+		LocalParameter p = createOrGetParameter("b_", rId);
+		if (!p.isSetSBOTerm()) {
+			SBMLtools.setSBOTerm(p,2);
+		}
+		if (!p.isSetUnits()) {
+			p.setUnits(unitFactory.unitSubstancePerTime(model.getUnitDefinition(UnitDefinition.SUBSTANCE), 
+					model.getUnitDefinition(UnitDefinition.TIME)));
 		}
 		if (!p.isSetName()) {
 			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL") 
@@ -715,7 +736,9 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
-			p.setUnits(Unit.Kind.DIMENSIONLESS);
+			p.setUnits(unitFactory.unitSubstancePerTime(model
+					.getUnitDefinition("substance"), model
+					.getUnitDefinition("time")));
 		}
 		if (!p.isSetName()) {
 			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
@@ -1071,7 +1094,11 @@ public class ParameterFactory {
 			p.setValue(0);
 		}
 		if (!p.isSetUnits()) {
-			p.setUnits(Unit.Kind.DIMENSIONLESS);
+			if (unitFactory.getBringToConcentration()) {
+				p.setUnits(unitFactory.unitSubstancePerSize(model.getSpecies(name)));
+			} else {
+				p.setUnits(model.getSpecies(name).getSubstanceUnits());
+			}
 		}
 		if (!p.isSetName()) {
 			p.setName(MESSAGES.getString("THRESHOLD_GENERALIZED_HILL_FUNCTION"));
@@ -1116,7 +1143,8 @@ public class ParameterFactory {
 			SBMLtools.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
-			p.setUnits(unitFactory.unitPerTime());
+			//p.setUnits(unitFactory.unitPerTime());
+			p.setUnits(unitFactory.unitPerTimeOrSizePerTime(model.getSpecies(name).getCompartmentInstance()));
 		}
 		if (!p.isSetName()) {
 			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
@@ -1188,18 +1216,107 @@ public class ParameterFactory {
 	 * @return weight for the weight matrix
 	 */
 	public LocalParameter parameterW(String name, String rId) {
+		Species species = model.getSpecies(name);
 		LocalParameter p = createOrGetParameter("w_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
 			SBMLtools.setSBOTerm(p,2);
 		}
 		if (!p.isSetUnits()) {
-			p.setUnits(unitFactory.unitPerTime());
+			p.setUnits(unitFactory.unitPerConcentrationOrSubstance(species));
 		}
 		if (!p.isSetName()) {
 			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
 					+ ": " + MESSAGES.getString("WEIGHT_PARAMETER_FOR_GENE_PRODUCTS"));
 		}
+		return p;
+	}
+	
+	/**
+	 * For the additive Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	public LocalParameter parameterWH(String name, String rId) {
+		LocalParameter p = createOrGetParameter("w_", rId,
+				StringTools.underscore, name);
+		if (!p.isSetSBOTerm()) {
+			SBMLtools.setSBOTerm(p,2);
+		}
+		if (!p.isSetUnits()) {
+			p.setUnits(unitFactory.unitSubstancePerTime(model
+					.getSubstanceUnitsInstance(), model
+					.getTimeUnitsInstance()));
+		}
+		if (!p.isSetName()) {
+			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
+					+ ": " + MESSAGES.getString("WEIGHT_PARAMETER_FOR_GENE_PRODUCTS"));
+		}
+		return p;
+	}
+	
+	/**
+	 * For the HSystem Model: weight parameter
+	 * 
+	 * @return weight for the weight matrix
+	 */
+	public LocalParameter parameterWHS(String name, String rId) {
+		Species species = model.getSpecies(name);
+		LocalParameter p = createOrGetParameter("w_", rId,
+				StringTools.underscore, name);
+		if (!p.isSetSBOTerm()) {
+			SBMLtools.setSBOTerm(p,2);
+		}
+		if (!p.isSetUnits()) {
+			if (unitFactory.getBringToConcentration() && species.hasOnlySubstanceUnits()) {
+				p.setUnits(unitFactory.unitPerTimeOrSizePerTime(species.getCompartmentInstance()));
+			} else {
+				p.setUnits(unitFactory.unitPerTime());
+			}
+		}
+		if (!p.isSetName()) {
+			p.setName(MESSAGES.getString("FOR_ADDITIVE_MODEL")
+					+ ": " + MESSAGES.getString("WEIGHT_PARAMETER_FOR_GENE_PRODUCTS"));
+		}
+		return p;
+	}
+	
+	public LocalParameter valueSubstancePerTime() {
+		LocalParameter p = createOrGetParameter("sub_per_time");
+		p.setValue(1d);
+
+		if (!p.isSetUnits()) {
+			p.setUnits(unitFactory.unitSubstancePerTime(model
+						.getSubstanceUnitsInstance(), model
+						.getTimeUnitsInstance()));
+		}
+		
+		if (!p.isSetName()) {
+			p.setName("");
+		}
+		
+		return p;
+	}
+	
+	public LocalParameter valuePerSubstanceAndConcentration() {
+		LocalParameter p = createOrGetParameter("per_sub_con");
+		p.setValue(1d);
+
+		if (!p.isSetUnits()) {
+			if (unitFactory.getBringToConcentration()) {
+				p.setUnits(unitFactory.unitSubstancePerSize(model
+						.getSubstanceUnitsInstance(), model
+						.getVolumeUnitsInstance(), -1d));
+			} else {
+				p.setUnits(unitFactory.unitPerSubstance(model.getSubstanceUnitsInstance()));
+			}
+			
+		}
+		
+		if (!p.isSetName()) {
+			p.setName("");
+		}
+		
 		return p;
 	}
 

@@ -78,9 +78,8 @@ public class HSystem extends BasicKineticLaw implements
 	/**
 	 * @return ASTNode
 	 */
-	//TODO: produces wrong unit: s^(-1) instead of mol*s^(-1)
 	ASTNode b_i() {
-		return new ASTNode(parameterFactory.parameterB(getParentSBMLObject().getId()), this);
+		return new ASTNode(parameterFactory.parameterBH(getParentSBMLObject().getId()), this);
 	}
 
 	/* (non-Javadoc)
@@ -100,7 +99,7 @@ public class HSystem extends BasicKineticLaw implements
 	 * @return
 	 */
 	ASTNode g(ASTNode b, ASTNode v, ASTNode w) {
-		return ASTNode.sum(b, v, w);
+		return ASTNode.sum(b,v,w);
 	}
 
 	/**
@@ -115,8 +114,9 @@ public class HSystem extends BasicKineticLaw implements
 					|| SBO.isGeneric(modifierspec.getSBOTerm())
 					|| SBO.isRNAOrMessengerRNA(modifierspec.getSBOTerm())
 					|| SBO.isGeneOrGeneCodingRegion(modifierspec.getSBOTerm())) {
-				if (!modifier.isSetSBOTerm())
+				if (!modifier.isSetSBOTerm()){
 					SBMLtools.setSBOTerm(modifier,19);
+				}
 				if (SBO.isModifier(modifier.getSBOTerm())) {
 					LocalParameter p = parameterFactory.parameterV(modifier
 							.getSpecies(), r.getId());
@@ -134,7 +134,9 @@ public class HSystem extends BasicKineticLaw implements
 						.getSBOTerm())) {
 			//TODO: produces wrong unit: mol^2*s^(-1) instead of mol*s^(-1)
 			return node.isUnknown() ? speciesTerm(r.getProduct(0)) : ASTNode
-					.times(speciesTerm(r.getProduct(0)), node);
+					.times(new ASTNode(parameterFactory.valuePerSubstanceAndConcentration(), this),
+							speciesTerm(r.getProduct(0)),
+							node);
 		}
 		return node.isUnknown() ? null : node;
 	}
@@ -154,7 +156,7 @@ public class HSystem extends BasicKineticLaw implements
 				if (!modifier.isSetSBOTerm())
 					SBMLtools.setSBOTerm(modifier,19);
 				if (SBO.isModifier(modifier.getSBOTerm())) {
-					LocalParameter p = parameterFactory.parameterW(modifier
+					LocalParameter p = parameterFactory.parameterWHS(modifier
 							.getSpecies(), r.getId());
 					if (node.isUnknown())
 						node = ASTNode.times(new ASTNode(p, this),
