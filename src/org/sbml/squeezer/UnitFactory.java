@@ -193,6 +193,63 @@ public class UnitFactory {
 	public boolean getBringToConcentration() {
 		return bringToConcentration;
 	}
+	
+	/**
+	 * 
+	 * @param specRef
+	 * @param zerothOrder
+	 * @param x
+	 * @return
+	 */
+	public UnitDefinition unitPerConcentrationOrSubstance(Species species) {
+		int level = model.getLevel(), version = model.getVersion();
+		UnitDefinition speciesUnit = species.getDerivedUnitDefinition().clone();
+		UnitDefinition compartmentUnit;
+		
+		if ((level == 2) && ((version == 1) || (version == 2))) {
+			compartmentUnit = species.getSpatialSizeUnitsInstance();
+		} else {
+			Compartment compartment = species.getCompartmentInstance();
+			compartmentUnit = compartment.getDerivedUnitDefinition().clone();
+		}
+		
+		if (speciesUnit.getUnitCount() == 1) {
+			Unit u = speciesUnit.getUnit(0);
+			u.setExponent(-1d);
+			speciesUnit.setId("per_" + u.getKind().toString().toLowerCase());
+			speciesUnit.setName("per substance or concentration");
+		} else {
+			speciesUnit = new UnitDefinition("per_substance_or_concentratiton", model.getLevel(), model
+					.getVersion());
+			speciesUnit.addUnit(new Unit(Unit.Kind.MOLE, -1, model.getLevel(), model
+					.getVersion()));
+			speciesUnit.setName("per mole");
+		}
+		
+		if (bringToConcentration) {
+			if (species.hasOnlySubstanceUnits()) {
+				// species per compartment size
+				speciesUnit.multiplyWith(compartmentUnit);
+			} else {
+				// species
+			}
+		} else {
+			if (species.hasOnlySubstanceUnits()) {
+				// species
+			} else {
+				// species times compartment size
+				speciesUnit.divideBy(compartmentUnit);
+			}
+		}
+		
+		UnitDefinition def = model.getUnitDefinition(speciesUnit.getId());
+		if (def == null) {
+			speciesUnit = checkUnitDefinitions(speciesUnit, model);
+		}
+		return model.getUnitDefinition(speciesUnit.getId());
+		
+		//return speciesUnit.raiseByThePowerOf(-1d);
+	}
 
 	/**
 	 * 
@@ -202,7 +259,7 @@ public class UnitFactory {
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
-	private UnitDefinition unitConcentrationOrSubstance(
+	public UnitDefinition unitConcentrationOrSubstance(
 		List<? extends SimpleSpeciesReference> listOf, boolean zerothOrder,
 		double... x) {
 		int level = model.getLevel(), version = model.getVersion();
@@ -318,7 +375,7 @@ public class UnitFactory {
 				u.setExponent(u.getExponent() - h);
 			}
 		}
-		UnitDefinition amount = unitConcentrationOrSubstance(listOf, zerothOrder);
+		UnitDefinition amount = unitConcentrationOrSubstance(listOf, zerothOrder, x);
 		ud = ud.divideBy(amount);
 		ud = ud.multiplyWith(model.getSubstanceUnitsInstance());
 		return checkUnitDefinitions(ud.simplify(), model);
@@ -475,6 +532,17 @@ public class UnitFactory {
 		substancePerTime.divideBy(time);
 		substancePerTime = checkUnitDefinitions(substancePerTime, model);
 		return substancePerTime;
+	}
+	
+	/**
+	 * 
+	 * @param substance
+	 * @return
+	 */
+	public UnitDefinition unitPerSubstance(UnitDefinition substance) {
+		UnitDefinition substancePerSize = new UnitDefinition(model.getLevel(), model.getVersion());
+		substancePerSize.divideBy(substance);
+		return checkUnitDefinitions(substancePerSize, model);
 	}
 
 }

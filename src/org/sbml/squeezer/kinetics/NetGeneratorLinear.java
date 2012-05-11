@@ -27,7 +27,10 @@ import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
@@ -86,8 +89,18 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 	 */
 	@Override
 	ASTNode m() {
-		// TODO: in Level 3 assign a unit to the number
-		return new ASTNode(1, this);
+		ASTNode node = new ASTNode(1, this);
+		
+		if (getLevelAndVersion().compareTo(Integer.valueOf(3),Integer.valueOf(1)) >= 0) {
+			UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
+			node.setUnits(unitFactory.unitSubstancePerTime(getModel().getUnitDefinition(UnitDefinition.SUBSTANCE), 
+					getModel().getUnitDefinition(UnitDefinition.TIME)).getId());
+		} else {
+			node.multiplyWith(new ASTNode(
+					parameterFactory.valueSubstancePerTime(), this));
+		}
+		
+		return node;
 	}
 
 }

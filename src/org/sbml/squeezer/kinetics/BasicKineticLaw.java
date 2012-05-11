@@ -83,6 +83,13 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	private boolean bringToConcentration;
 
 	/**
+	 * @return the bringToConcentration
+	 */
+	public boolean isBringToConcentration() {
+		return bringToConcentration;
+	}
+
+	/**
 	 * The default value that is used to initialize new parameters.
 	 */
 	private double defaultParamValue;

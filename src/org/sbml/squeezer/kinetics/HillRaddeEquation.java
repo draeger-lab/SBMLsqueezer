@@ -32,6 +32,7 @@ import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -107,7 +108,7 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 				SBMLtools.setSBOTerm(modifier,19);
 			}
 			if (SBO.isModifier(modifier.getSBOTerm())) {
-				LocalParameter p = parameterFactory.parameterW(modifier
+				LocalParameter p = parameterFactory.parameterWH(modifier
 						.getSpecies(), rId);
 				ASTNode pnode = new ASTNode(p, this);
 				LocalParameter theta = parameterFactory.parameterTheta(rId, modifier.getSpecies());
@@ -124,8 +125,8 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 							ASTNode.pow(speciesTerm(modifier), coeffnode)
 						),
 						ASTNode.sum(
-							ASTNode.pow(speciesTerm(modifier), coeffnode),
-							ASTNode.pow(thetanode, coeffnode)
+							ASTNode.pow(speciesTerm(modifier), coeffnode)
+							,ASTNode.pow(thetanode, coeffnode)
 						)
 					);
 				} else {
@@ -157,7 +158,8 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 	//TODO: produces wrong unit: s^(-1) instead of mol*s^(-1)
 	ASTNode synrate() {
 		String rId = getParentSBMLObject().getId();
-		LocalParameter b_i = parameterFactory.parameterB(rId);
+		LocalParameter b_i = parameterFactory.parameterBH(rId);
+		
 		ASTNode b_i_node = new ASTNode(b_i, this);
 		return b_i_node;
 	}
