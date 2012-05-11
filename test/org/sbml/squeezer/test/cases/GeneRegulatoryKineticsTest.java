@@ -309,8 +309,6 @@ public class GeneRegulatoryKineticsTest extends KineticsTest{
 		test(r1, kl, "b_r2+w_r2_e1*(e1/c1)^(hic_r2_e1)/((e1/c1)^(hic_r2_e1)+theta_r2_e1^(hic_r2_e1))");
 	}
 
-	
-	
 	/**
 	 * 
 	 * @throws Throwable
