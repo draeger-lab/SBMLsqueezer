@@ -122,9 +122,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		setRowHeight(getFont().getSize() * 2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
 	 */
 	public void mouseClicked(MouseEvent e) {
@@ -176,44 +174,31 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent
-	 * )
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
 	 */
 	public void mouseDragged(MouseEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 	 */
 	public void mouseEntered(MouseEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 	 */
 	public void mouseExited(MouseEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
 	 */
 	public void mouseMoved(MouseEvent e) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
 	 */
 	public void mousePressed(MouseEvent e) {
@@ -231,11 +216,8 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	public void mouseReleased(MouseEvent e) {
 	}
@@ -276,8 +258,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 					possibleLaws[i] = klg.createKineticLaw(reaction,
 							possibleTypes[i], reversibility, version, consistency, defaultParamVal);
 					if (possibleLaws[i].getSimpleName().equals(
-							oldLaw.getSimpleName()))
+							oldLaw.getSimpleName())) {
 						selected = i;
+					}
 				}
 				// TODO	klg.getPreferences().flush();
 				final KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
@@ -289,15 +272,15 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				pane.selectInitialValue();
 				Container container = getTopLevelAncestor();
 				final JDialog dialog;
-				if (container instanceof Frame)
+				if (container instanceof Frame) {
 					dialog = new JDialog((Frame) container,
 							MessageFormat.format(MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
 									reaction.getId()));
-				else if (container instanceof Dialog)
+				} else if (container instanceof Dialog) {
 					dialog = new JDialog((Dialog) container,
 							MessageFormat.format(MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
 									reaction.getId()));
-				else {
+				} else {
 					dialog = new JDialog();
 					dialog.setTitle(MessageFormat.format(MESSAGES.getString("CHOOSE_ALTERNATIVE_KINETIC_LAW"),
 							reaction.getId()));
@@ -310,10 +293,12 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				WindowAdapter adapter = new WindowAdapter() {
 					private boolean gotFocus = false;
 
+					@Override
 					public void windowClosing(WindowEvent we) {
 						pane.setValue(null);
 					}
 
+					@Override
 					public void windowGainedFocus(WindowEvent we) {
 						// Once window gets focus, set initial focus
 						if (!gotFocus) {
@@ -321,14 +306,21 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 							gotFocus = true;
 						}
 					}
+					
 				};
 				dialog.addWindowListener(adapter);
 				dialog.addWindowFocusListener(adapter);
 				dialog.addComponentListener(new ComponentAdapter() {
+					
+					/* (non-Javadoc)
+					 * @see java.awt.event.ComponentAdapter#componentShown(java.awt.event.ComponentEvent)
+					 */
+					@Override
 					public void componentShown(ComponentEvent ce) {
 						// reset value to ensure closing works properly
 						pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
 					}
+					
 				});
 				pane.addPropertyChangeListener(new PropertyChangeListener() {
 					public void propertyChange(PropertyChangeEvent event) {
@@ -338,23 +330,21 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						// (newValue = null in that case). Otherwise, close the
 						// dialog.
 						if (dialog.isVisible()
-								&& event.getSource() == pane
+								&& (event.getSource() == pane)
 								&& (event.getPropertyName()
 										.equals(JOptionPane.VALUE_PROPERTY))
-								&& event.getNewValue() != null
-								&& event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE) {
+								&& (event.getNewValue() != null)
+								&& (event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)) {
 							dialog.setVisible(false);
 							int i = 0;
 							if (((Integer) event.getNewValue()).intValue() == JOptionPane.OK_OPTION) {
 								while ((i < possibleTypes.length - 1)
-										&& !possibleTypes[i].equals(klsp
-												.getSelectedKinetic())) {
+										&& !possibleTypes[i].equals(klsp.getSelectedKinetic())) {
 									i++;
 								}
 							} else {
 								while ((i < possibleTypes.length - 1)
-										&& !possibleTypes[i].equals(oldLaw
-												.getClass().getCanonicalName())) {
+										&& !possibleTypes[i].equals(oldLaw.getClass().getCanonicalName())) {
 									i++;
 								}
 							}
@@ -369,7 +359,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				dialog.setVisible(true);
 				dialog.dispose();
 
-				// This would be to simple for CellDesigner. We need the more
+				// This would be too simple for CellDesigner. We need the more
 				// complicated
 				// code...
 				// if (JOptionPane
@@ -406,15 +396,17 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		StringBuffer params = new StringBuffer();
 		for (i = kineticLaw.getNumLocalParameters() - 1; i > 0; i--) {
 			params.append(kineticLaw.getLocalParameter(i));
-			if (i > 0)
+			if (i > 0) {
 				params.append(", ");
+			}
 		}
 		List<Parameter> referencedGlobalParameters = kineticLaw.getMath()
 				.findReferencedGlobalParameters();
 		for (i = referencedGlobalParameters.size() - 1; i > 0; i--) {
 			params.append(referencedGlobalParameters.get(i));
-			if (i > 0)
+			if (i > 0) {
 				params.append(", ");
+			}
 		}
 		String name = kineticLaw instanceof BasicKineticLaw ? ((BasicKineticLaw) kineticLaw)
 				.getSimpleName()
@@ -453,12 +445,10 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see javax.swing.JTable#tableChanged(javax.swing.event.TableModelEvent)
 	 */
-	// @Override
+	@Override
 	public void tableChanged(TableModelEvent e) {
 		super.tableChanged(e);
 	}

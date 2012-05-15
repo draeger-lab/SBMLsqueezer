@@ -16,6 +16,7 @@
   <entry key="SBMLSQUEEZER">SBMLsqueezer</entry>
   
   <!-- SettingsPanelDefaultMechanisms -->
+  
   <entry key="TITLE_DEFAULT_MECHANISMS">Reaction mechanisms</entry>
   <entry key="DEFAULT_REACTION_TOOLTIP">Reactions, which are {0}, can be described using {1}.</entry>
   <entry key="REVERSIBILITY">Reversibility</entry>
@@ -23,9 +24,11 @@
   <entry key="DEFAULT_RATE_LAW_SELECT">Select the default rate law for each mechanism</entry>
   
   <!-- SettingsPanelKinetics -->
+  
   <entry key="TITLE_KINETICS">Kinetics settings</entry>
   
   <!-- KineticLawSelectionDialog -->
+  
   <entry key="KINETIC_EQUATIONS">Kinetic Equations</entry>
   <entry key="EXPORT_CHANGES">Export changes</entry>
   <entry key="EXPORT_CHANGES_TOOLTIP">Allows you to save the generated differential equations as *.txt or *.tex files. Note that this export only contains those reactions together with referenced, species, compartments, compartment- and species-types, units, and parameters for which new kinetic equations have been generated. If you wish to obtain a complete model report, please choose the "save as" function in the main menu.</entry>
@@ -50,6 +53,7 @@
   <entry key="VERSION">Version</entry>
   
   <!-- KineticLawSelectionPanel -->
+  
   <entry key="EXISTING_RATE_LAW">Existing rate law</entry>
   <entry key="SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY">{0} species are unlikely to collide spontainously.</entry>
   <entry key="REACTION_PROCEEDS_ON_FAST_TIME_SCALE">Reaction {0} proceeds on a fast time scale.</entry>
@@ -70,6 +74,7 @@
   <entry key="CHOOSE_KINETIC_LAW">Please choose one kinetic law</entry>
   
   <!-- ParameterFactory -->
+  
   <entry key="FOR_ADDITIVE_MODEL">For the additive model</entry>
   <entry key="WEIGHT_ACTIVATION_FUNCTION_PARAMETERS">weight parameter for the activation function</entry>
   <entry key="ZEROTH_ORDER">Zeroth order</entry>
@@ -119,6 +124,7 @@
   <entry key="WEIGHT_PARAMETER_FOR_GENE_PRODUCTS">weight parameter for the gene products</entry>
   
   <!-- ReactionType -->
+  
   <entry key="IS_ENZYMATIC_CATALYST">{0} is an enzymatic catalyst</entry>
   <entry key="IS_NON_ENZYMATIC_CATALYST">{0} is an non-enzymatic catalyst</entry>
   <entry key="IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR">{0} is a transcriptional or translational inhibitor</entry>
@@ -127,6 +133,7 @@
   <entry key="IS_ACTIVATOR">{0} is an activator</entry>
   
   <!-- SBMLsqueezer -->
+  
   <entry key="DONE_IN_MS">done in {0} ms.</entry>
   <entry key="LOADING_USER_SETTINGS">loading user settings...</entry>
   <entry key="DONE">done.</entry>
@@ -138,13 +145,16 @@
   <entry key="WRITING_LATEX_OUTPUT">writing LaTeX output...</entry>
   
   <!-- KineticLawTable -->
+  
   <entry key="KINTEIC_LAW_TABLE_HEADER_TOOLTIP">Double click on the kinetic law to apply another formalism. Single click on any other column to get a formatted equation preview.</entry>
   <entry key="RATE_LAW_OF_REACTION">Rate Law of Reaction {0}</entry>
   <entry key="CHOOSE_ALTERNATIVE_KINETIC_LAW">Choose an alternative kinetic law for reaction</entry>
   
    <!-- KineticLawTableModel -->
+   
   <entry key="COL_REACTION">Reaction</entry>
   <entry key="COL_KINETIC_LAW">Kinetic Law</entry>
+  <entry key="COL_UNIT">Derived Unit</entry>
   <entry key="COL_SBO">SBO</entry>
   <entry key="COL_NUM_REACTANTS">#Reactants</entry>
   <entry key="COL_REACTANTS">Reactants</entry>
@@ -153,94 +163,122 @@
   <entry key="COL_FORMULA">Formula</entry>
   
   <!-- AdditiveModelLinear -->
+  
   <entry key="ADDITIVE_MODEL_LINEAR_SIMPLE_NAME">Linear additive model, general form</entry>
   
   <!-- AdditiveModelNonLinear -->
+  
   <entry key="ADDITIVE_MODEL_NON_LINEAR_SIMPLE_NAME">Non-linear additive model, general form</entry>
   
   <!-- CommonModularRateLaw -->
+  
   <entry key="COMMON_MODULAR_RATE_LAW_SIMPLE_NAME">Common modular rate law (CM)</entry>
   
   <!-- ConvenienceKinetics -->
+  
   <entry key="CONVENIENCE_KINETICS_SIMPLE_NAME">Convenience Kinetics</entry>
   <entry key="THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS">thermodynamically independent convenience kinetics</entry>
   <entry key="CONVENIENCE_KINETICS">convenience kinetics</entry>
   
   <!-- DirectBindingModularRateLaw -->
+  
   <entry key="DIRECT_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Direct binding modular rate law (DM)</entry>
   
   <!-- ForceDependentModularRateLaw -->
+  
   <entry key="FORCE_DEPENDENT_MODULAR_RATE_LAW_SIMPLE_NAME">Force-dependent modular rate law (FM)</entry>
   
   <!-- GeneralizedMassAction -->
+  
   <entry key="GENERALIZED_MASS_ACTION_SIMPLE_NAME">Generalized mass-action</entry>
   
   <!-- HillEquation -->
+  
   <entry key="GENERALIZED_HILL_EQUATION_SIMPLE_NAME">Generalized Hill equation</entry>
   
   <!-- HillHinzeEquation -->
+  
   <entry key="HILL_HINZE_EQUATION_SIMPLE_NAME">Hill-Hinze equation</entry>
   <entry key="HILL_EQUATION_SIMPLE_NAME">Hill equation</entry>
   
   <!-- HillRaddeEquation -->
+  
   <entry key="HILL_RADDE_EQUATION">Hill-Radde equation</entry>
   
   <!-- HSystem -->
+  
   <entry key="HSYSTEM_SIMPLE_NAME">H-system equation by Hadeler (2003)</entry>
   
   <!-- IrrevCompetNonCooperativeEnzymes -->
+  
   <entry key="IRREV_COMPET_NON_COOP_ENZYMES_SIMPLE_NAME">Irreversible non-exclusive non-cooperative competitive inihibition</entry>
   
   <!-- IrrevNonModulatedNonInteractingEnzymes -->
+  
   <entry key="IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME">Irreversible non-modulated non-interacting reactants</entry>
   
   <!-- MichaelisMenten -->
+  
   <entry key="MICHAELIS_MENTEN_SIMPLE_NAME">Michaelis-Menten</entry>
   
   <!-- NetGeneratorLinear -->
+  
   <entry key="NET_GENERATOR_LINEAR_SIMPLE_NAME">Linear additive model, NetGenerator form</entry>
   
   <!-- NetGeneratorNonLinear -->
+  
   <entry key="NET_GENERATOR_NON_LINEAR_SIMPLE_NAME">Non-linear additive model, NetGenerator form</entry>
   
   <!-- OrderedMechanism -->
+  
   <entry key="ORDERED_MECHANISM_SIMPLE_NAME">Ordered mechanism</entry>
   <entry key="COMPULSORY_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} compulsory-order ternary-complex mechanism{1}</entry>
   <entry key="ONE_PRODUCT"></entry>
   <entry key="TWO_PRODUCTS"></entry>
   
   <!-- PingPongMechanism -->
+  
   <entry key="PING_PONG_MEACHANISM_SIMPLE_NAME">Ping-Pong mechanism</entry>
   
   <!-- PowerLawModularRateLaw -->
+  
   <entry key="POWER_MODULAR_RATE_LAW_SIMPLE_NAME">Power-law modular rate law (PM)</entry>
   
   <!-- RandomOrderMechanism -->
+  
   <entry key="RANDOM_ORDER_MEACHANISM_SIMPLE_NAME">Random order mechanism</entry>
   <entry key="RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} rapid-equilibrium random order ternary-complex mechanism{1}</entry>
   
   <!-- RestrictedSpaceKinetics -->
+  
   <entry key="RESTRICTED_SPACE_KINETICS_SIMPLE_NAME">Reaction kinetics in restricted spaces</entry>
   
   <!-- SimultaneousBindingModularRateLaw -->
+  
   <entry key="SIMULTANEOUS_BINDING_MODULAR_RATE_LAW_SIMPLE_NAME">Simultaneous binding modular rate law (SM)</entry>
   
   <!-- SSystem -->
+  
   <entry key="SSYSTEM_SIMPLE_NAME">S-System based kinetic</entry>
   
   <!-- Vohradsky -->
+  
   <entry key="VOHRADSKY_SIMPLE_NAME">Non-linear additive model by Vohradský (2001)</entry>
   
   <!-- Weaver -->
+  
   <entry key="WEAVER_SIMPLE_NAME">Non-linear additive model by Weaver et al. (1999)</entry>
   
   <!-- ZerothOrderForwardGMAK -->
+  
   <entry key="ZEROTH_ORDER_FORWARD_GMAK_SIMPLE_NAME">Zeroth order forward mass action kinetics</entry>
   
   <!-- ZerothOrderReverseGMAK -->
+  
   <entry key="ZEROTH_ORDER_REVERSE_GMAK_SIMPLE_NAME">Zeroth order reverse mass action kinetics</entry>
   
   <!-- ProgressAdapter -->
+  
   <entry key="STORE_KINETIC_EQUATION">Store kinetic equation...</entry>
   <entry key="STORE_KINETIC_EQUATIONS">Store kinetic equations...</entry>
   <entry key="GENERATE_KINETIC_EQUATION">Generate kinetic equation...</entry>

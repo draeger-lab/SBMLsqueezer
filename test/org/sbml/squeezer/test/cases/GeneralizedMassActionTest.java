@@ -239,11 +239,11 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	public void testGMAKexponent() throws Throwable {
 		Reaction r = model.getReaction("R00006");
 		KineticLaw kl = klg.createKineticLaw(r, GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r, kl, "kass_R00006*s12*s09-kdiss_R00006*s13^(2)");
+		test(r, kl, "kass_R00006*s12*s09-kdiss_R00006*s13^2");
 		assertTrue(r.isReversible());
 
 		kl = klg.createKineticLaw(model.getReaction("R00006"), GeneralizedMassAction.class, true, TypeStandardVersion.cat, UnitConsistencyType.concentration, 1d);
-		test(r, kl, "kass_R00006*s12/cell*s09/cell-kdiss_R00006*(s13/cell)^(2)");
+		test(r, kl, "kass_R00006*s12/cell*s09/cell-kdiss_R00006*(s13/cell)^2");
 	}
 	
 	/**
@@ -267,7 +267,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	public void testCommonModularRateLaw() throws Throwable {
 		Reaction r = model.getReaction("R00006");
 		KineticLaw kl = klg.createKineticLaw(r, CommonModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r, kl, "(vmaf_R00006*(s12/kmc_R00006_s12)^(hco_R00006)*(s09/kmc_R00006_s09)^(hco_R00006)-vmar_R00006*(s13/kmc_R00006_s13)^(2*hco_R00006))/((1+s12/kmc_R00006_s12)^(hco_R00006)*(1+s09/kmc_R00006_s09)^(hco_R00006)+(1+s13/kmc_R00006_s13)^(2*hco_R00006)-1)");
+		test(r, kl, "(vmaf_R00006*(s12/kmc_R00006_s12)^hco_R00006*(s09/kmc_R00006_s09)^hco_R00006-vmar_R00006*(s13/kmc_R00006_s13)^(2*hco_R00006))/((1+s12/kmc_R00006_s12)^hco_R00006*(1+s09/kmc_R00006_s09)^hco_R00006+(1+s13/kmc_R00006_s13)^(2*hco_R00006)-1)");
 	}
 	
 }

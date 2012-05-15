@@ -53,6 +53,9 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		InterfaceArbitraryEnzymeKinetics, InterfaceReversibleKinetics,
 		InterfaceModulatedKinetics {
 	
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 
 	/**
@@ -72,13 +75,10 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		SBMLtools.setSBOTerm(this,528); // common modular rate law
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml
-	 * .Reaction)
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#denominator(org.sbml.jsbml.Reaction)
 	 */
+	@Override
 	ASTNode denominator(String enzyme) {
 		ASTNode denominator = denominator(enzyme, true);
 		if (denominator.isUnknown()) {
@@ -87,7 +87,9 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 			denominator.plus(denominator(enzyme, false));
 		}
 		// TODO: in Level 3 assign a unit to the number
-		denominator.minus(new ASTNode(1, this));
+		ASTNode one = new ASTNode(1, this);
+		SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
+		denominator.minus(one);
 		ASTNode competInhib = specificModificationSummand(enzyme);
 		return competInhib == null ? denominator : denominator.plus(competInhib);
 	}
@@ -106,7 +108,7 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
 		ASTNode one = new ASTNode(1, this);
 		if (getLevel() > 2) {
-			one.setUnits(Unit.Kind.DIMENSIONLESS.toString().toLowerCase());
+			one.setUnits(Unit.Kind.DIMENSIONLESS);
 		}
 		for (SpeciesReference specRef : listOf) {
 			LocalParameter kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
@@ -121,12 +123,12 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		return denominator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.ReversiblePowerLaw#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("COMMON_MODULAR_RATE_LAW_SIMPLE_NAME");
 	}
+
 }

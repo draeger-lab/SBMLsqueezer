@@ -78,7 +78,7 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
-		SBMLtools.setSBOTerm(this,429);
+		SBMLtools.setSBOTerm(this, 429);
 		double stoichiometryRight = 0;
 		for (int i = 0; i < reaction.getProductCount(); i++) {
 			stoichiometryRight += reaction.getProduct(i).getStoichiometry();

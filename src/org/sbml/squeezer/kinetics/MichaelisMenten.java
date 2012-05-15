@@ -32,6 +32,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -136,17 +137,17 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		if (!getParentSBMLObject().getReversible()) {
 			switch (modInhib.size()) {
 			case 1:
-				SBMLtools.setSBOTerm(this,265); // enzymatic rate law for simple mixed-type
+				SBMLtools.setSBOTerm(this, 265); // enzymatic rate law for simple mixed-type
 				// inhibition of irreversible unireactant
 				// enzymes
 				break;
 			case 2:
-				SBMLtools.setSBOTerm(this,276); // enzymatic rate law for mixed-type inhibition
+				SBMLtools.setSBOTerm(this, 276); // enzymatic rate law for mixed-type inhibition
 				// of irreversible unireactant enzymes by
 				// two inhibitors
 				break;
 			default:
-				SBMLtools.setSBOTerm(this,275); // enzymatic rate law for mixed-type inhibition
+				SBMLtools.setSBOTerm(this, 275); // enzymatic rate law for mixed-type inhibition
 				// of irreversible enzymes by mutually
 				// exclusive inhibitors
 				break;
@@ -176,12 +177,9 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 
 				numerator = ASTNode.times(ASTNode.frac(this, p_kcatp, p_kMr),
 						speciesTerm(speciesR));
-				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(
-						p_kMr, this));
-				LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(
-						enzyme, false);
-				LocalParameter p_kMp = parameterFactory.parameterMichaelis(
-						speciesP.getId(), enzyme, false);
+				denominator = ASTNode.frac(speciesTerm(speciesR), new ASTNode(p_kMr, this));
+				LocalParameter p_kcatn = parameterFactory.parameterKcatOrVmax(enzyme, false);
+				LocalParameter p_kMp = parameterFactory.parameterMichaelis(speciesP.getId(), enzyme, false);
 
 				numerator.minus(ASTNode.times(ASTNode
 						.frac(this, p_kcatn, p_kMp), speciesTerm(speciesP)));
@@ -192,8 +190,9 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				p_kMr, modE.size() > 1 ? modE.get(enzymeNum) : null);
 
 			if (reaction.getReversible()) {
-				// TODO: in Level 3 assign a unit to the number
-				denominator = ASTNode.sum(new ASTNode(1, this), denominator);
+				ASTNode one = new ASTNode(1, this);
+				SBMLtools.setUnits(one, p_kMr.getUnits());
+				denominator = ASTNode.sum(one, denominator);
 			} else if (modInhib.size() < 1) {
 				denominator = ASTNode.sum(new ASTNode(p_kMr, this), denominator);
 			}
@@ -242,8 +241,9 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 		if (modInhib.size() == 1) {
 			LocalParameter p_kIa = parameterFactory.parameterKi(modInhib.get(0), enzyme, 1);
 			LocalParameter p_kIb = parameterFactory.parameterKi(modInhib.get(0), enzyme, 2);
+			ASTNode one = new ASTNode(1, this);
+			SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 			if (reaction.getReversible()) {
-				// TODO: in Level 3 assign a unit to the number
 				denominator = ASTNode.sum(
 					ASTNode.frac(
 						speciesTerm(modInhib.get(0)),
@@ -252,7 +252,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 					ASTNode.times(
 						denominator,
 						ASTNode.sum(
-							new ASTNode(1, this),
+							one,
 							ASTNode.frac(
 								speciesTerm(modInhib.get(0)),
 								new ASTNode(p_kIb, this)
@@ -261,12 +261,11 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 					)
 				);
 			} else {
-				// TODO: in Level 3 assign a unit to the numbers
 				denominator = ASTNode.sum(
 					ASTNode.times(
 						new ASTNode(mr, this),
 						ASTNode.sum(
-							new ASTNode(1, this),
+							one,
 							ASTNode.frac(
 								speciesTerm(modInhib.get(0)),
 								new ASTNode(p_kIa, this)
@@ -276,7 +275,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 					ASTNode.times(
 						denominator,
 						ASTNode.sum(
-							new ASTNode(1, this),
+							one.clone(),
 							ASTNode.frac(
 								speciesTerm(modInhib.get(0)),
 								new ASTNode(p_kIb, this)
@@ -292,27 +291,39 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 			 * mixed-type inihibition of irreversible enzymes by mutually
 			 * exclusive inhibitors.
 			 */
-			// TODO: in Level 3 assign a unit to the numbers
 			ASTNode sumIa = new ASTNode(1, this);
 			ASTNode sumIb = new ASTNode(1, this);
+			SBMLtools.setUnits(sumIa, Unit.Kind.DIMENSIONLESS);
+			SBMLtools.setUnits(sumIb, Unit.Kind.DIMENSIONLESS);
 			for (int i = 0; i < modInhib.size(); i++) {
 				String inhibitor = modInhib.get(i);
 				LocalParameter p_kIai = parameterFactory.parameterKi(inhibitor, enzyme, 1);
 				LocalParameter p_kIbi = parameterFactory.parameterKi(inhibitor, enzyme, 2);
-				LocalParameter p_a = parameterFactory
-						.parameterCooperativeInhibitorSubstrateCoefficient('a',
-								inhibitor, enzyme);
-				LocalParameter p_b = parameterFactory
-						.parameterCooperativeInhibitorSubstrateCoefficient('b',
-								inhibitor, enzyme);
+				LocalParameter p_a = parameterFactory.parameterCooperativeInhibitorSubstrateCoefficient(
+					'a', inhibitor, enzyme);
+				LocalParameter p_b = parameterFactory.parameterCooperativeInhibitorSubstrateCoefficient(
+					'b', inhibitor, enzyme);
 				ASTNode specRefI = speciesTerm(inhibitor);
-				sumIa = ASTNode.sum(sumIa, ASTNode.frac(specRefI, ASTNode
-						.times(this, p_a, p_kIai)));
-				sumIb = ASTNode.sum(sumIb, ASTNode.frac(specRefI, ASTNode
-						.times(this, p_b, p_kIbi)));
+				sumIa = ASTNode.sum(
+					sumIa,
+					ASTNode.frac(
+						specRefI,
+						ASTNode.times(this, p_a, p_kIai)
+					)
+				);
+				sumIb = ASTNode.sum(
+					sumIb,
+					ASTNode.frac(
+						specRefI,
+						ASTNode.times(this, p_b, p_kIbi)
+					)
+				);
 			}
-			denominator = ASTNode.sum(ASTNode.times(denominator, sumIa),
-					ASTNode.times(new ASTNode(mr, this), sumIb));
+			denominator = ASTNode.sum(
+				ASTNode.times(denominator, sumIa),
+				ASTNode.times(new ASTNode(mr, this),
+				sumIb)
+			);
 		}
 		return denominator;
 	}
@@ -320,6 +331,7 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 	/* (non-Javadoc)
 	 * @see org.sbml.squeezer.kinetics.GeneralizedMassAction#getSimpleName()
 	 */
+	@Override
 	public String getSimpleName() {
 		return MESSAGES.getString("MICHAELIS_MENTEN_SIMPLE_NAME");
 	}

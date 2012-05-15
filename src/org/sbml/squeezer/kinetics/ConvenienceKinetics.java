@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer.kinetics;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -98,7 +99,7 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			List<String> modInhib, List<String> modCat)
 			throws RateLawNotApplicableException {
 		Reaction reaction = getParentSBMLObject();
-		SBMLtools.setSBOTerm(this,429);
+		SBMLtools.setSBOTerm(this, 429);
 		setNotes(StringTools.firstLetterUpperCase((!fullRank) ?
 				MESSAGES.getString("THERMODYNAMICALLY_INDEPENDENT_CONVENIENCE_KINETICS") :
 				MESSAGES.getString("CONVENIENCE_KINETICS")));
@@ -249,7 +250,9 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 	 *            true means forward, false backward.
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	private ASTNode denominatorElements(String enzyme, boolean forward) {
+		int level = getLevel();
 		Reaction reaction = getParentSBMLObject();
 		ASTNode denoms[] = new ASTNode[forward ? reaction.getReactantCount() : reaction.getProductCount()];
 		boolean noOne = (denoms.length == 1)
@@ -260,16 +263,28 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 			if (!p_kM.isSetSBOTerm()) {
 				SBMLtools.setSBOTerm(p_kM,forward ? 322 : 323);
 			}
-			if (!Maths.isInt(ref.getStoichiometry()) || ((getLevel() > 2) && (ref.isSetId()))) {
-				// TODO: Improve Level 3 support!
-				logger.fine("Level 3: Stoichiometry might change!");
+			ASTNode exponent;
+			if (!ref.isSetStoichiometry() && !ref.isSetStoichiometryMath() && ((level < 3) || !ref.isSetId())) {
+				// TODO: Localize
+				logger.severe(MessageFormat.format("Unknown stoichiometry in reaction {0}.", reaction));
 			}
-			denoms[i] = ASTNode.pow(ASTNode.frac(speciesTerm(ref), new ASTNode(
-					p_kM, this)), (int) ref.getStoichiometry());
+			if (ref.isSetStoichiometryMath()) {
+				exponent = ref.getStoichiometryMath().getMath().clone();
+			} else {
+				if (!Maths.isInt(ref.getStoichiometry())) {
+					// TODO: Localize
+					logger.severe(MessageFormat.format("{0} can only deal with integer stoichiometries.", getSimpleName(), reaction));
+				}
+				if ((level > 2) && (ref.isSetId())) {
+					exponent = new ASTNode(ref, this);
+				} else {
+					exponent = new ASTNode((int) ref.getStoichiometry(), this);
+					SBMLtools.setUnits(exponent, Unit.Kind.DIMENSIONLESS);
+				}
+			}
+			denoms[i] = ASTNode.pow(ASTNode.frac(speciesTerm(ref), new ASTNode(p_kM, this)), exponent);
 			for (int j = (int) ref.getStoichiometry() - 1; j >= (noOne ? 1 : 0); j--) {
-				denoms[i] = ASTNode.sum(ASTNode.pow(ASTNode.frac(
-						speciesTerm(ref), new ASTNode(p_kM, this)), j),
-						denoms[i]);
+				denoms[i] = ASTNode.sum(ASTNode.pow(ASTNode.frac(speciesTerm(ref), new ASTNode(p_kM, this)), j), denoms[i]);
 			}
 		}
 		return ASTNode.times(denoms); 
