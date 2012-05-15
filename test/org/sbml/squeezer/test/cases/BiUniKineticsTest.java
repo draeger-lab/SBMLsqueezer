@@ -109,7 +109,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testCommonModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)");
+		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testDirectBindingModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, DirectBindingModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/(1+(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1))");
+		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1/(1+(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1+(p1*c1/kmc_r1_p1)^hco_r1)");
 	}
 	
 	/**
@@ -129,7 +129,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testPowerLawModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)");
+		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1");
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testSimultaneousBindingModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, SimultaneousBindingModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1))");
+		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1*(1+p1*c1/kmc_r1_p1)^hco_r1)");
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testForceDependentModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, ForceDependentModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)/((s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1))^(0.5)");
+		test(r1, kl, "vmax_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1/((s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1*(p1*c1/kmc_r1_p1)^hco_r1)^(0.5)");
 	}
 	
 	/**
@@ -174,7 +174,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testCommonModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)+(1+p1*c1/kmc_r1_p1)^(hco_r1)-1)");
+		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
 	}
 	
 	/**
@@ -184,7 +184,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testDirectBindingModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, DirectBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/(1+(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)+(p1*c1/kmc_r1_p1)^(hco_r1))");
+		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/(1+(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1+(p1*c1/kmc_r1_p1)^hco_r1)");
 	}
 	
 	/**
@@ -194,7 +194,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testSimultaneousBindingModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, SimultaneousBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((1+s1*c1/kmc_r1_s1)^(hco_r1)*(1+s2*c1/kmc_r1_s2)^(hco_r1)*(1+p1*c1/kmc_r1_p1)^(hco_r1))");
+		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1*(1+p1*c1/kmc_r1_p1)^hco_r1)");
 	}
 	
 	/**
@@ -204,7 +204,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testForceDependentRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, ForceDependentModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1))/((s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)*(p1*c1/kmc_r1_p1)^(hco_r1))^(0.5)");
+		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/((s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1*(p1*c1/kmc_r1_p1)^hco_r1)^(0.5)");
 	}
 	
 	/**
@@ -214,7 +214,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testPowerLawModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r1, kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^(hco_r1)*(s2*c1/kmc_r1_s2)^(hco_r1)-vmar_r1*(p1*c1/kmc_r1_p1)^(hco_r1)");
+		test(r1, kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1");
 	}
 	
 	/**
@@ -281,7 +281,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2CommonModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, CommonModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/((1+s1*c1/kmc_r2_s1)^(2*hco_r2)+(1+p1*c1/kmc_r2_p1)^(hco_r2)-1)");
+		test(r2, kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/((1+s1*c1/kmc_r2_s1)^(2*hco_r2)+(1+p1*c1/kmc_r2_p1)^hco_r2-1)");
 	}
 	
 	/**
@@ -291,7 +291,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2DirectBindingModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, DirectBindingModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/(1+(s1*c1/kmc_r2_s1)^(2*hco_r2)+(p1*c1/kmc_r2_p1)^(hco_r2))");
+		test(r2, kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/(1+(s1*c1/kmc_r2_s1)^(2*hco_r2)+(p1*c1/kmc_r2_p1)^hco_r2)");
 	}
 	
 	/**
@@ -311,7 +311,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2SimultaneousBindingModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, SimultaneousBindingModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/((1+s1*c1/kmc_r2_s1)^(2*hco_r2)*(1+p1*c1/kmc_r2_p1)^(hco_r2))");
+		test(r2, kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/((1+s1*c1/kmc_r2_s1)^(2*hco_r2)*(1+p1*c1/kmc_r2_p1)^hco_r2)");
 	}
 	
 	/**
@@ -321,7 +321,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2ForceDependentModularRateLaw() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, ForceDependentModularRateLaw.class, false, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/((s1*c1/kmc_r2_s1)^(hco_r2*2)*(p1*c1/kmc_r2_p1)^(hco_r2))^(0.5)");
+		test(r2, kl, "vmax_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)/((s1*c1/kmc_r2_s1)^(hco_r2*2)*(p1*c1/kmc_r2_p1)^hco_r2)^(0.5)");
 	}
 	
 
@@ -337,7 +337,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2CommonModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, CommonModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "(vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^(hco_r2))/((1+s1*c1/kmc_r2_s1)^(2*hco_r2)+(1+p1*c1/kmc_r2_p1)^(hco_r2)-1)");
+		test(r2, kl, "(vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^hco_r2)/((1+s1*c1/kmc_r2_s1)^(2*hco_r2)+(1+p1*c1/kmc_r2_p1)^hco_r2-1)");
 	}
 	
 	/**
@@ -347,7 +347,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2DirectBindingModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, DirectBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "(vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^(hco_r2))/(1+(s1*c1/kmc_r2_s1)^(2*hco_r2)+(p1*c1/kmc_r2_p1)^(hco_r2))");
+		test(r2, kl, "(vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^hco_r2)/(1+(s1*c1/kmc_r2_s1)^(2*hco_r2)+(p1*c1/kmc_r2_p1)^hco_r2)");
 	}
 	
 	/**
@@ -357,7 +357,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2PowerLawModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, PowerLawModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^(hco_r2)");
+		test(r2, kl, "vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^hco_r2");
 	}
 	
 	/**
@@ -367,7 +367,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2SimultaneousBindingModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, SimultaneousBindingModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "(vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^(hco_r2))/((1+s1*c1/kmc_r2_s1)^(2*hco_r2)*(1+p1*c1/kmc_r2_p1)^(hco_r2))");
+		test(r2, kl, "(vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^hco_r2)/((1+s1*c1/kmc_r2_s1)^(2*hco_r2)*(1+p1*c1/kmc_r2_p1)^hco_r2)");
 	}
 	
 	/**
@@ -377,7 +377,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testStoch2ForceDependentModularRateLawRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r2, ForceDependentModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
-		test(r2, kl, "(vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^(hco_r2))/((s1*c1/kmc_r2_s1)^(hco_r2*2)*(p1*c1/kmc_r2_p1)^(hco_r2))^(0.5)");
+		test(r2, kl, "(vmaf_r2*(s1*c1/kmc_r2_s1)^(2*hco_r2)-vmar_r2*(p1*c1/kmc_r2_p1)^hco_r2)/((s1*c1/kmc_r2_s1)^(hco_r2*2)*(p1*c1/kmc_r2_p1)^hco_r2)^(0.5)");
 	}
 
 }

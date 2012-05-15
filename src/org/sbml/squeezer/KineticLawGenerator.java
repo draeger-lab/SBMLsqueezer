@@ -1231,11 +1231,10 @@ public class KineticLawGenerator {
 	 */
 	private void setBoundaryCondition(ListOf<SpeciesReference> listOf,
 			boolean setBoundary) {
-		for (int i = 0; i < listOf.size(); i++) {
+		for (int i = 0; setBoundary && (i < listOf.size()); i++) {
 			Species species = listOf.get(i).getSpeciesInstance();
-			if ((SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || SBO
-					.isEmptySet(species.getSBOTerm()))
-					&& setBoundary) {
+			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || 
+			    SBO.isEmptySet(species.getSBOTerm())) {
 				setBoundaryCondition(species, true);
 			}
 		}
@@ -1348,7 +1347,7 @@ public class KineticLawGenerator {
 		int i;
 		Reaction reaction = modelOrig.getReaction(kineticLaw.getParentSBMLObject().getId());
 		reaction.setReversible(reversibility || reaction.getReversible());
-		reaction.setKineticLaw(kineticLaw);
+		reaction.setKineticLaw(kineticLaw.clone());
 		// set the BoundaryCondition to true for genes if not set anyway:
 		setBoundaryCondition(reaction.getListOfReactants(), setBoundaryCondition);
 		setBoundaryCondition(reaction.getListOfProducts(), setBoundaryCondition);
@@ -1459,7 +1458,7 @@ public class KineticLawGenerator {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaws);
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 		}
-
+		
 		ModelChangeListener chl = new ModelChangeListener();
 		modelOrig.addTreeNodeChangeListener(chl);
 		for (int i = 0; i < miniModel.getReactionCount(); i++) {

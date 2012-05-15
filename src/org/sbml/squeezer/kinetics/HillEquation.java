@@ -157,9 +157,7 @@ public class HillEquation extends BasicKineticLaw implements
 				denominator.plus(ASTNode.pow(specTerm, new ASTNode(hillCoeff, this)));
 			} else {
 				ASTNode one = new ASTNode(1, this);
-				if (getLevel() > 2) {
-					one.setUnits(Unit.Kind.DIMENSIONLESS.toString().toLowerCase());
-				}
+				SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 				denominator = ASTNode.sum(
 					one,
 					ASTNode.pow(specTerm, new ASTNode(hillCoeff, this))

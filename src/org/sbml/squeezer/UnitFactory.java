@@ -25,8 +25,11 @@ package org.sbml.squeezer;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.sbml.jsbml.CVTerm;
+import org.sbml.jsbml.CVTerm.Qualifier;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
@@ -39,6 +42,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.util.Maths;
+import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.filters.SBOFilter;
 import org.sbml.squeezer.util.Bundles;
 
@@ -48,7 +52,7 @@ import de.zbit.util.ResourceManager;
  * A factory class that creates frequently used instances of {@link Unit} and
  * {@link UnitDefinition} if these are not yet present in a {@link Model}. To
  * this end, it always checks the {@link Model} and tries to obtain existing
- * {@link UnitDefinition}s from the {@link Model} wheneer this is possible.
+ * {@link UnitDefinition}s from the {@link Model} whenever this is possible.
  * 
  * @author Andreas Dr&auml;ger
  * @date 2010-10-22
@@ -76,13 +80,23 @@ public class UnitFactory {
       String identifier = createId(unitdef);
       ud = model.getUnitDefinition(identifier);
       if (ud == null) {
-      	updateAnnotation(unitdef, model.getSBMLDocument());
+      	updateAnnotation(unitdef.getListOfUnits(), model.getSBMLDocument());
       	unitdef.setId(identifier);
+      	unitdef.setName(createName(unitdef));
       	model.addUnitDefinition(unitdef);
       	return unitdef;
       }
 		}
 		return ud;
+	}
+
+	/**
+	 * 
+	 * @param unitdef
+	 * @return
+	 */
+	public static String createId(UnitDefinition unitdef) {
+	  return createLabel(unitdef, true);
 	}
 	
 	/**
@@ -90,29 +104,60 @@ public class UnitFactory {
 	 * @param unitdef
 	 * @return
 	 */
+	public static String createName(UnitDefinition unitdef) {
+		return createLabel(unitdef, false);
+	}
+
+	/**
+	 * 
+	 * @param unitdef
+	 * @param forID
+	 * @return
+	 */
 	@SuppressWarnings("deprecation")
-	private static String createId(UnitDefinition unitdef) {
-	  StringBuilder sb = new StringBuilder();
+	private static String createLabel(UnitDefinition unitdef, boolean forID) {
+		StringBuilder sb = new StringBuilder();
     for (int i = 0; i < unitdef.getUnitCount(); i++) {
-      Unit u = unitdef.getUnit(i);
+      
+    	Unit u = unitdef.getUnit(i);
+      double exp = u.getExponent();
+      
       if (i > 0) {
-        sb.append("_times_");
+      	sb.append(forID ? '_' : ' ');
       }
-      boolean brackets = (u.getExponent() != 1d) && u.isSetOffset();
+      if (exp < 0) {
+      	sb.append("per");
+      	sb.append(forID ? '_' : ' ');
+      	exp *= -1;
+      } else if (i > 0) {
+      	sb.append("times");
+      	sb.append(forID ? '_' : ' ');
+      }
+      boolean brackets = (exp != 1d) && u.isSetOffset();
       if (brackets) {
-        sb.append("brackOpn_");
+        sb.append(forID ? "brackOpn_" : "(");
       }
       if (u.isSetOffset()) {
-        sb.append(format(u.getOffset()));
-        sb.append("_plus_");
+      	if (forID) {
+      		sb.append(format(u.getOffset()));
+      		sb.append("_plus_");
+      	} else {
+      		sb.append(StringTools.toString(Locale.ENGLISH, u.getOffset()));
+      		sb.append(" + ");
+      	}
       }
       if (u.getMultiplier() != 1d) {
-        sb.append(format(u.getMultiplier()));
-        sb.append("x");
+      	if (forID) {
+      		sb.append(format(u.getMultiplier()));
+      		sb.append("x");
+      	} else {
+      		sb.append(StringTools.toString(Locale.ENGLISH, u.getMultiplier()));
+      		sb.append(" x ");
+      	}
       }
       if (u.getScale() != 0) {
 				String prefix = (u.getScale() == -6) ? u.getPrefixAsWord() : u.getPrefix();
-				if (prefix.contains("^")) {
+				if (forID && prefix.contains("^")) {
 				  sb.append("1E");
 				  if (u.getScale() < 0) { 
 				    sb.append("minus");
@@ -123,13 +168,18 @@ public class UnitFactory {
 					sb.append(prefix);
 				}
       }
-      sb.append(u.getKind());
-      if (u.getExponent() != 1d) {
+      sb.append(forID ? u.getKind() : u.getKind().getName());
+      if (exp != 1d) {
         if (brackets) {
-          sb.append("_brackCls");
+          sb.append(forID ? "_brackCls" : ")");
         }
-        sb.append("_pow_");
-        sb.append(format(u.getExponent()));
+        if (forID) {
+        	sb.append("_pow_");
+        	sb.append(format(exp));
+        } else {
+        	sb.append('^');
+        	sb.append(StringTools.toString(Locale.ENGLISH, exp));
+        }
       }
     }
     return sb.toString();
@@ -153,21 +203,34 @@ public class UnitFactory {
     }
     return sb.toString();
 	}
-
+	
 	/**
 	 * 
-	 * @param ud
-	 * @param sbmlDocument 
+	 * @param lou
+	 * @param doc 
 	 */
-	private static void updateAnnotation(UnitDefinition ud, SBMLDocument doc) {
-		for (int i = 0; i < ud.getUnitCount(); i++) {
-			Unit unit = ud.getUnit(i);
-			if (unit.isSetMetaId()) {
-				unit.setMetaId(doc.nextMetaId());
+	private static void updateAnnotation(ListOf<Unit> lou, SBMLDocument doc) {
+		if (lou.isSetMetaId()) {
+			lou.setMetaId(doc.nextMetaId());
+		}
+		for (Unit u : lou) {
+			if (u.getCVTermCount() == 0) {
+				String resource = u.getKind().getUnitOntologyResource();
+				if (resource != null) {
+				  // metaid will be created upon nessesity.
+					// TODO: BQB_IS seems to be a better annotation, but we can't ensure that the unit won't be changed later on. Maybe it will get a multiplier or exponent that changes the actual unit.
+					u.addCVTerm(new CVTerm(Qualifier.BQB_IS_VERSION_OF, resource));
+				}
+			}
+			if (u.isSetMetaId()) {
+				u.setMetaId(doc.nextMetaId());
 			}
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private boolean bringToConcentration;
 
 	/**
@@ -201,6 +264,7 @@ public class UnitFactory {
 	 * @param x
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	public UnitDefinition unitPerConcentrationOrSubstance(Species species) {
 		int level = model.getLevel(), version = model.getVersion();
 		UnitDefinition speciesUnit = species.getDerivedUnitDefinition().clone();
@@ -216,14 +280,9 @@ public class UnitFactory {
 		if (speciesUnit.getUnitCount() == 1) {
 			Unit u = speciesUnit.getUnit(0);
 			u.setExponent(-1d);
-			speciesUnit.setId("per_" + u.getKind().toString().toLowerCase());
-			speciesUnit.setName("per substance or concentration");
 		} else {
-			speciesUnit = new UnitDefinition("per_substance_or_concentratiton", model.getLevel(), model
-					.getVersion());
-			speciesUnit.addUnit(new Unit(Unit.Kind.MOLE, -1, model.getLevel(), model
-					.getVersion()));
-			speciesUnit.setName("per mole");
+			speciesUnit = new UnitDefinition(level, version);
+			speciesUnit.addUnit(new Unit(Unit.Kind.MOLE, -1, level, version));
 		}
 		
 		if (bringToConcentration) {
@@ -241,14 +300,7 @@ public class UnitFactory {
 				speciesUnit.divideBy(compartmentUnit);
 			}
 		}
-		
-		UnitDefinition def = model.getUnitDefinition(speciesUnit.getId());
-		if (def == null) {
-			speciesUnit = checkUnitDefinitions(speciesUnit, model);
-		}
-		return model.getUnitDefinition(speciesUnit.getId());
-		
-		//return speciesUnit.raiseByThePowerOf(-1d);
+		return checkUnitDefinitions(speciesUnit, model);
 	}
 
 	/**
@@ -515,8 +567,7 @@ public class UnitFactory {
 		UnitDefinition mMperSecond = new UnitDefinition(model.getLevel(), model.getVersion());
 		mMperSecond.multiplyWith(model.getSubstanceUnitsInstance());
 		mMperSecond.divideBy(model.getTimeUnitsInstance());
-		mMperSecond = checkUnitDefinitions(mMperSecond, model);
-		return mMperSecond;
+		return checkUnitDefinitions(mMperSecond, model);
 	}
 
 	/**
@@ -530,8 +581,7 @@ public class UnitFactory {
 		UnitDefinition substancePerTime = new UnitDefinition(model.getLevel(), model.getVersion());
 		substancePerTime.multiplyWith(substance);
 		substancePerTime.divideBy(time);
-		substancePerTime = checkUnitDefinitions(substancePerTime, model);
-		return substancePerTime;
+		return checkUnitDefinitions(substancePerTime, model);
 	}
 	
 	/**

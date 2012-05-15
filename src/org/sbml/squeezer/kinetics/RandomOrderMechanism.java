@@ -32,6 +32,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -238,16 +239,24 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		numeratorForward.multiplyWith(r1r2.clone());
 		numeratorReverse.multiplyWith(speciesTerm(speciesP1));
 		ASTNode numerator = numeratorForward.minus(numeratorReverse);
-		// TODO: in Level 3 assign a unit to the number
+		ASTNode one = new ASTNode(1, this);
+		SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 		ASTNode denominator = ASTNode.sum(
-						new ASTNode(1, this),
-						ASTNode.frac(speciesTerm(speciesR1), new ASTNode(
-								p_kIr1, this)),
-						ASTNode.frac(speciesTerm(speciesR2), new ASTNode(
-								p_kIr2, this)),
-						ASTNode.frac(r1r2, ASTNode.times(this, p_kIr1, p_kMr2)),
-						ASTNode.frac(speciesTerm(speciesP1), new ASTNode(
-								p_kMp1, this)));
+			one,
+			ASTNode.frac(
+				speciesTerm(speciesR1),
+				new ASTNode(p_kIr1, this)
+			),
+			ASTNode.frac(
+				speciesTerm(speciesR2),
+				new ASTNode(p_kIr2, this)
+			),
+			ASTNode.frac(r1r2, ASTNode.times(this, p_kIr1, p_kMr2)),
+			ASTNode.frac(
+				speciesTerm(speciesP1),
+				new ASTNode(p_kMp1, this)
+			)
+		);
 		return ASTNode.frac(numerator, denominator);
 	}
 
@@ -295,9 +304,10 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 		numeratorForward.multiplyWith(r1r2.clone());
 		numeratorReverse.multiplyWith(p1p2.clone());
 		ASTNode numerator = ASTNode.diff(numeratorForward, numeratorReverse);
-		// TODO: in Level 3 assign a unit to the number
+    ASTNode one = new ASTNode(1, this);
+    SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 		ASTNode denominator = ASTNode.sum(
-			new ASTNode(1, this), 
+			one, 
 			ASTNode.frac(speciesTerm(speciesR1), new ASTNode(p_kIr1, this)),
 			ASTNode.frac(speciesTerm(speciesR2), new ASTNode(p_kIr2, this)),
 			ASTNode.frac(speciesTerm(speciesP1), new ASTNode(p_kIp1, this)),
@@ -305,8 +315,8 @@ public class RandomOrderMechanism extends GeneralizedMassAction implements
 			ASTNode.frac(p1p2,
 				ASTNode.times(this, p_kIp2, p_kMp1)),
 				ASTNode.frac(
-								r1r2,
-								ASTNode.times(this, p_kIr1, p_kMr2)
+					r1r2,
+					ASTNode.times(this, p_kIr1, p_kMr2)
 				)
 		);
 		return ASTNode.frac(numerator, denominator);

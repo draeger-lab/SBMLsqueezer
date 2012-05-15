@@ -87,6 +87,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 				MESSAGES.getString("COL_REACTION"),
 				MESSAGES.getString("COL_KINETIC_LAW"),
 				MESSAGES.getString("COL_SBO"),
+				MESSAGES.getString("COL_UNIT"),
 				MESSAGES.getString("COL_NUM_REACTANTS"),
 				MESSAGES.getString("COL_REACTANTS"),
 				MESSAGES.getString("COL_PRODUCTS"),
@@ -140,16 +141,18 @@ public class KineticLawTableModel extends AbstractTableModel {
 						// SBO
 						data[reactionNum][2] = kl.getSBOTermID();
 			}
+			// Derived Unit
+			data[reactionNum][3] = reaction.getDerivedUnitDefinition();
 			// #Reactants
-			data[reactionNum][3] = Double.valueOf(numReac);
+			data[reactionNum][4] = Double.valueOf(numReac);
 			// Reactants
-			data[reactionNum][4] = reac;
+			data[reactionNum][5] = reac;
 			// Products
-			data[reactionNum][5] = pro;
+			data[reactionNum][6] = pro;
 			// Parameters
-			data[reactionNum][6] = para;
+			data[reactionNum][7] = para;
 			// Formula
-			data[reactionNum][7] = kinetic;
+			data[reactionNum][8] = kinetic;
 		}
 	}
 
@@ -197,9 +200,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public boolean isCellEditable(int row, int col) {
-		if (col == 1)
-			return true;
-		return false;
+		return col == 1;
 	}
 
 	/* (non-Javadoc)
