@@ -32,6 +32,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.util.Bundles;
@@ -192,8 +193,9 @@ public class HillHinzeEquation extends BasicKineticLaw implements
 			formula.multiplyWith(acti);
 		}
 		if (modTInhib.size() > 0) {
-			// TODO: in Level 3 assign a unit to the number
-			formula.multiplyWith(ASTNode.diff(new ASTNode(1, this), ASTNode.times(inhib)));
+			ASTNode one = new ASTNode(1,this);
+			SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
+			formula.multiplyWith(ASTNode.diff(one, ASTNode.times(inhib)));
 		}
 		return formula;
 	}

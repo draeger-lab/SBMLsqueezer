@@ -30,6 +30,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -107,9 +108,15 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 		ListOf<SpeciesReference> listOf = forward ? r.getListOfReactants() : r.getListOfProducts();
 		for (SpeciesReference specRef : listOf) {
 			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
-			// TODO: in Level 3 assign a unit to the number
+			
 			curr = new ASTNode(1, this);
-			curr.plus(speciesTerm(specRef).divideBy(kM));
+			
+			ASTNode node = speciesTerm(specRef).divideBy(kM);
+			
+			SBMLtools.setUnits(curr, node.getUnits());
+			
+			curr.plus(node);
+			
 			curr.raiseByThePowerOf(ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this)));
 			if (term.isUnknown()) {
 				term = curr;

@@ -65,7 +65,7 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 	 */
 	@Override
 	public Object getNextPanelDescriptor() {
-		return KineticLawSelectionEquationPanelDescriptor.IDENTIFIER;
+		return KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER;
 	}
 	
 	/* (non-Javadoc)

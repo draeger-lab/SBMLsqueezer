@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.UnitFactory;

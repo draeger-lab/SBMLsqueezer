@@ -86,7 +86,6 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 		} else {
 			denominator.plus(denominator(enzyme, false));
 		}
-		// TODO: in Level 3 assign a unit to the number
 		ASTNode one = new ASTNode(1, this);
 		SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 		denominator.minus(one);

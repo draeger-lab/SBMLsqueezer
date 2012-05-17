@@ -27,9 +27,11 @@ import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
@@ -70,16 +72,27 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 	 */
 	@Override
 	ASTNode activation(ASTNode g) {
+		ASTNode node1 = new ASTNode(1, this);
+		ASTNode node2 = new ASTNode(1, this);
+		ASTNode node3;
+		
 		if (g == null) {
-			// unknown exponent
-			// TODO: in Level 3 assign a unit to the number
-			return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-					.exp(ASTNode.uMinus(new ASTNode(1, this)))));
+			node3 = new ASTNode(1, this);
+		} else {
+			node3 = g;
 		}
-		//TODO: produces invalid unit
-		// TODO: in Level 3 assign a unit to the number
-		return ASTNode.frac(1, ASTNode.sum(new ASTNode(1, this), ASTNode
-				.exp(ASTNode.uMinus(g))));
+		
+		System.out.println("\n\n\n\n\n\n"+this.getLevel()+"\n\n\n\n\n\n");
+		if (this.getLevel() > 2) {
+			SBMLtools.setUnits(node1, Unit.Kind.DIMENSIONLESS);
+			SBMLtools.setUnits(node2, Unit.Kind.DIMENSIONLESS);
+			if (!node3.isSetUnits()) {
+				SBMLtools.setUnits(node3, Unit.Kind.DIMENSIONLESS);
+			}
+		}
+			
+		return ASTNode.frac(node1, ASTNode.sum(node2, 
+				ASTNode.exp(ASTNode.uMinus(node3))));
 	}
 
 	/*

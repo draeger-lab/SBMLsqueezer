@@ -33,6 +33,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.util.Bundles;
@@ -78,14 +79,14 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 	 * @return ASTNode
 	 */
 	ASTNode activation(ASTNode g) {
-		// TODO: in Level 3 assign a unit to the number
-		return g == null ? new ASTNode(1, this) : g;
+		ASTNode node = new ASTNode(1, this);
+		SBMLtools.setUnits(node, Unit.Kind.DIMENSIONLESS);
+		return g == null ? node : g;
 	}
 
 	/**
 	 * @return ASTNode
 	 */
-	//TODO: produces wrong unit: s^(-1)
 	ASTNode b_i() {
 		return new ASTNode(parameterFactory.parameterB(getParentSBMLObject().getId()), this);
 	}

@@ -132,7 +132,6 @@ public class HSystem extends BasicKineticLaw implements
 		}
 		if ((r.getProductCount() > 0)
 				&& !SBO.isEmptySet(r.getProduct(0).getSpeciesInstance().getSBOTerm())) {
-			//TODO: produces wrong unit: mol^2*s^(-1) instead of mol*s^(-1)
 			if (node.isUnknown()) {
 				return speciesTerm(r.getProduct(0)); 
 			}
