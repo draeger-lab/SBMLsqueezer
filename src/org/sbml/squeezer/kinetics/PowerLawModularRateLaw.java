@@ -33,6 +33,7 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -107,11 +108,14 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 					// +
 					// Ka)
 					LocalParameter rhoA = parameterFactory.parameterRhoActivation(msr.getSpecies());
-					// TODO: in Level 3 assign a unit to the number
+
+					ASTNode one = new ASTNode(1,this);
+					SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
+					
 					curr = ASTNode.sum(
 						new ASTNode(rhoA, this),
 						ASTNode.times(
-							ASTNode.diff(new ASTNode(1, this), new ASTNode(rhoA, this)),
+							ASTNode.diff(one, new ASTNode(rhoA, this)),
 							curr
 						)
 					);
@@ -134,11 +138,14 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 					curr = ASTNode.frac(new ASTNode(kI, this), ASTNode.sum(
 							new ASTNode(kI, this), speciesTerm(msr)));
 					LocalParameter rhoI = parameterFactory.parameterRhoInhibition(msr.getSpecies());
-					// TODO: in Level 3 assign a unit to the number
+					
+					ASTNode one = new ASTNode(1,this);
+					SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
+					
 					curr = ASTNode.times(
 						ASTNode.sum(
 							new ASTNode(rhoI, this),
-							ASTNode.diff(new ASTNode(1, this), new ASTNode(rhoI, this))
+							ASTNode.diff(one, new ASTNode(rhoI, this))
 						), 
 						curr
 					);
@@ -289,8 +296,13 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		exponent.divideBy(ASTNode.times(new ASTNode(2, this), new ASTNode(R, this), new ASTNode(T, this)));
 		exponent = ASTNode.exp(exponent);
 		if (forward == null) {
-			// TODO: in Level 3 assign a unit to the number
 			forward = new ASTNode(1, this);
+			if (r.getReversible()) {
+				SBMLtools.setUnits(forward, backward.getUnits());
+			} else {
+				// TODO: in Level 3 assign a unit to the number
+				//SBMLtools.setUnits(forward, );
+			}
 		}
 		forward.divideBy(exponent);
 		if (r.getReversible()) {
@@ -319,8 +331,10 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 				ASTNode.times(stoichiometryTerm(specRef), new ASTNode(hr, this))));
 		}
 		if (r.getReversible()) {
-			// TODO: in Level 3 assign a unit to the number
-			ASTNode backward = ASTNode.frac(1, ASTNode.sqrt(ASTNode.pow(this, keq, hr)));
+			ASTNode one = new ASTNode(1,this);
+			SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
+			
+			ASTNode backward = ASTNode.frac(one, ASTNode.sqrt(ASTNode.pow(this, keq, hr)));
 			for (SpeciesReference specRef : r.getListOfProducts()) {
 				backward.multiplyWith(
 					ASTNode.pow(

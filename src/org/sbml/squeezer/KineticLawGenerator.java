@@ -932,7 +932,7 @@ public class KineticLawGenerator {
 				kineticsReversibleBiBiType, kineticsIrreversibleBiBiType);
 			
 			if (progressAdapter != null) {
-				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+				//progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
 			
@@ -942,7 +942,7 @@ public class KineticLawGenerator {
 			klgw.run();
 			
 			if (progressAdapter != null) {
-				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+				//progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
 		}

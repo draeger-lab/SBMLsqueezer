@@ -24,6 +24,7 @@
 
 package org.sbml.squeezer.gui.wizard;
 
+import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.io.SBMLio;
 
 import de.zbit.gui.StatusBar;
@@ -41,13 +42,13 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 	
 	private KineticLawSelectionEquationPanel panel;
 	
-	public KineticLawSelectionEquationPanelDescriptor(SBMLio sbmlIO) {
-		super(IDENTIFIER, new KineticLawSelectionEquationPanel(sbmlIO));
+	public KineticLawSelectionEquationPanelDescriptor(KineticLawGenerator klg, SBMLio sbmlIO) {
+		super(IDENTIFIER, new KineticLawSelectionEquationPanel(klg, sbmlIO));
 		this.panel = ((KineticLawSelectionEquationPanel) this.getPanelComponent());
 	}
 	
-	public void aboutToDisplayPanel() {
-		panel.generateKineticLaw();
+	public void displayingPanel() {
+		panel.generateKineticLawDone();
 	}
 	
 	public void aboutToHidePanel() {

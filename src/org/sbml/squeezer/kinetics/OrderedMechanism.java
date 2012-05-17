@@ -220,9 +220,9 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 					numeratorForward.multiplyWith(speciesTerm(enzyme));
 				}
 
-				// TODO: in Level 3 assign a unit to the number
+				ASTNode one = new ASTNode(1, this);
+				
 				denominator = ASTNode.sum(
-					new ASTNode(1, this),
 					ASTNode.frac(speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
 					ASTNode.frac(
 						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)), 
@@ -234,6 +234,10 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 					),
 					ASTNode.frac(speciesTerm(specRefP2), new ASTNode(p_kIp2, this))
 				);
+				
+				SBMLtools.setUnits(one, denominator.getUnits());
+				
+				denominator = ASTNode.sum(one, denominator);
 
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode
@@ -338,16 +342,20 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				// numeratorForward = times(numeratorForward, specRefE1
 				// .getSpeciesInstance());
 
-				// TODO: in Level 3 assign a unit to the number
+				ASTNode one = new ASTNode(1, this);
+				
 				denominator = ASTNode.sum(
-					new ASTNode(1, this),
 					ASTNode.frac(speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
 					ASTNode.frac(
 						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)), 
 						ASTNode.times(this, p_kIr1, p_kMr2)
 					)
 				);
-
+				
+				SBMLtools.setUnits(one, denominator.getUnits());
+				
+				denominator = ASTNode.sum(one, denominator);
+				
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode
 							.pow(speciesTerm(specRefE1), 2));

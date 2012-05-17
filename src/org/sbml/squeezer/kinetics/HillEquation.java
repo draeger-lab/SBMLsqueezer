@@ -102,8 +102,8 @@ public class HillEquation extends BasicKineticLaw implements
 
 			if (r.getReversible()) {
 				Species product = r.getProduct(0).getSpeciesInstance();
-				// TODO: in Level 3 assign a unit to the number
 				ASTNode prodTerm = new ASTNode(1, this);
+				SBMLtools.setUnits(prodTerm, Unit.Kind.DIMENSIONLESS);
 				prodTerm.minus(
 					ASTNode.frac(
 						speciesTerm(product), 
@@ -121,11 +121,12 @@ public class HillEquation extends BasicKineticLaw implements
 				// S/kS + P/kP
 				specTerm = ASTNode.frac(specTerm, new ASTNode(kSreactant, this));
 				specTerm.plus(ASTNode.frac(speciesTerm(product), new ASTNode(kSproduct, this)));
-				// TODO: in Level 3 assign a unit to the number
+				ASTNode one = new ASTNode(1,this);
+				SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 				rates[enzymeNum].multiplyWith(
 					ASTNode.pow(
 						specTerm.clone(),
-					  ASTNode.diff(new ASTNode(hillCoeff, this), new ASTNode(1, this))
+					  ASTNode.diff(new ASTNode(hillCoeff, this), one)
 					)
 				);
 			} else {

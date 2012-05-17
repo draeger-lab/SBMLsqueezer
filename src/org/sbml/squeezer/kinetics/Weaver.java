@@ -27,9 +27,11 @@ import java.util.ResourceBundle;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
@@ -63,15 +65,21 @@ public class Weaver extends AdditiveModelNonLinear implements
 		super(parentReaction, typeParameters);
 	}
 
-	//TODO: wrong units in the sum of the exponent
 	@Override
 	ASTNode activation(ASTNode g) {
 		String rId = getParentSBMLObject().getId();
+		
+		ASTNode one1 = new ASTNode(1,this);
+		SBMLtools.setUnits(one1, Unit.Kind.DIMENSIONLESS);
+		
+		ASTNode one2 = new ASTNode(1,this);
+		SBMLtools.setUnits(one2, Unit.Kind.DIMENSIONLESS);
+		
 		if (g != null) {
-			// TODO: in Level 3 assign a unit to the numbers
-			return ASTNode.frac(1,
+			
+			return ASTNode.frac(one1,
 				ASTNode.sum(
-					new ASTNode(1, this), 
+					one2, 
 					ASTNode.exp(
 						ASTNode.sum(
 							ASTNode.times(
@@ -84,10 +92,10 @@ public class Weaver extends AdditiveModelNonLinear implements
 				)
 			);
 		}
-		// TODO: in Level 3 assign a unit to the numbers
-		return ASTNode.frac(1,
+
+		return ASTNode.frac(one1,
 			ASTNode.sum(
-				new ASTNode(1, this),
+				one2,
 				ASTNode.exp(
 					ASTNode.sum(
 						ASTNode.uMinus(this, parameterFactory.parameterSSystemAlpha(rId)),

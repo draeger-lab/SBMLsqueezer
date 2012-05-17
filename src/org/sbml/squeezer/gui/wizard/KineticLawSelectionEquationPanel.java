@@ -72,6 +72,7 @@ import de.zbit.gui.StatusBar;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.progressbar.AbstractProgressBar;
+import de.zbit.util.progressbar.ProgressBar;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
@@ -96,8 +97,6 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	
 	private KineticLawGenerator klg;
 	
-	private int numOfWarnings = 0;
-	
 	private SBMLio sbmlIO;
 	
 	private SBPreferences prefs;
@@ -106,17 +105,21 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 
 	private boolean KineticsAndParametersStoredInSBML = false;
 	
+	private int numOfWarnings = 0;
+	
 	
 	
 	/**
 	 * 
+	 * @param klg 
 	 * @param sbmlIO
 	 */
-	public KineticLawSelectionEquationPanel(SBMLio sbmlIO) {
+	public KineticLawSelectionEquationPanel(KineticLawGenerator klg, SBMLio sbmlIO) {
 		super(new BorderLayout());
 		
 		this.prefs = new SBPreferences(SqueezerOptions.class);
 		this.sbmlIO = sbmlIO;
+		this.klg = klg;
 		
 		init();
 	}
@@ -137,154 +140,6 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		buttonPanel.add(jButtonReactionsFrameSave);
 		
 		add(buttonPanel, BorderLayout.SOUTH);
-	}
-
-	/**
-	 * 
-	 */
-	public void generateKineticLaw() {
-		try {
-			prefs.flush();
-
-			klg = new KineticLawGenerator(sbmlIO.getSelectedModel());
-			
-			klg.generateLaws();
-			
-			generateKineticLawDone();
-			
-			logger.log(Level.INFO, LABELS.getString("READY"));
-			firePropertyChange("done", null, null);
-			
-		} catch (Throwable exc) {
-			GUITools.showErrorMessage(this, exc);
-		}
-	}
-	
-	/**
-	 * 
-	 */
-	private void generateKineticLawDone() {
-		try {
-			if (klg.getFastReactions().size() > 0) {
-				StringBuilder message = new StringBuilder();
-				String modelContains = MESSAGES.getString("THE_MODEL_CONTAINS")+" ";
-				if (klg.getFastReactions().size() > 1)
-					message.append(MessageFormat.format(modelContains, MESSAGES.getString("FAST_REACTIONS")));
-				else {
-					message.append(MessageFormat.format(modelContains, MESSAGES.getString("THE_FAST_REACTION"))+" ");
-					message.append(klg.getFastReactions().get(0).getId());
-				}
-				message.append(". ");
-				message.append(MESSAGES.getString("NOT_SUPPORTED"));
-				if (klg.getFastReactions().size() > 1) {
-					message.append(MESSAGES.getString("ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED"));
-					message.append("<ul type=\"disc\">");
-					for (int i = 0; i < klg.getFastReactions().size(); i++) {
-						message.append("<li>");
-						message.append(klg.getFastReactions().get(i).getId());
-						message.append("</li>");
-					}
-					message.append("</ul>");
-				} else
-					message.append(MESSAGES.getString("ATTRIBUTE_BEEING_IGNORED"));
-				final JOptionPane pane = new JOptionPane(StringUtil.toHTML(
-						message.toString(), 40), JOptionPane.WARNING_MESSAGE);
-				final JDialog d = new JDialog();
-				d.setTitle(MESSAGES.getString("FAST_REACTIONS"));
-				d.setModal(true);
-				d.getContentPane().add(pane);
-				d.pack();
-				d.setResizable(false);
-				WindowAdapter adapter = new WindowAdapter() {
-					private boolean gotFocus = false;
-	
-					public void windowClosing(WindowEvent we) {
-						pane.setValue(null);
-					}
-	
-					public void windowGainedFocus(WindowEvent we) {
-						if (!gotFocus) {
-							pane.selectInitialValue();
-							gotFocus = true;
-						}
-					}
-				};
-				d.addWindowListener(adapter);
-				d.addWindowFocusListener(adapter);
-				d.addComponentListener(new ComponentAdapter() {
-					public void componentShown(ComponentEvent ce) {
-						pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-					}
-				});
-				pane.addPropertyChangeListener(new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent evt) {
-						if (d.isVisible()
-								&& evt.getSource() == pane
-								&& evt.getPropertyName().equals(
-										JOptionPane.VALUE_PROPERTY)
-								&& evt.getNewValue() != null
-								&& evt.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)
-							d.setVisible(false);
-					}
-				});
-				d.setVisible(true);
-				d.dispose();
-				if (statusBar != null)
-					statusBar.hideProgress();
-				logger.log(Level.INFO, LABELS.getString("READY"));
-				// JOptionPane.showMessageDialog(null, GUITools.toHTML(message
-				// .toString(), 40), "Fast Reactions",
-				// JOptionPane.WARNING_MESSAGE);
-			}
-	
-			JPanel reactionsPanel = new JPanel(new BorderLayout());
-			JTable tableOfKinetics = new KineticLawTable(klg);
-			numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
-					.getWarningCount();
-			tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-	
-			JScrollPane scroll;
-	
-			if (tableOfKinetics.getRowCount() == 0) {
-				JEditorPane pane = new JEditorPane(
-						sbmlIO.getSelectedModel().getReactionCount() > 0 ? Resource.class
-								.getResource("html/NoNewKineticsCreated.html")
-								: Resource.class
-										.getResource("html/ModelDoesNotContainAnyReactions.html"));
-				pane.addHyperlinkListener(new SystemBrowser());
-				pane.setBackground(Color.WHITE);
-				pane.setEditable(false);
-				scroll = new JScrollPane(pane,
-						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			} else {
-				scroll = new JScrollPane(tableOfKinetics,
-						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			}
-			scroll.setBorder(BorderFactory
-					.createBevelBorder(BevelBorder.LOWERED));
-			scroll.setBackground(Color.WHITE);
-			reactionsPanel.add(scroll, BorderLayout.CENTER);
-	
-			JLabel numberOfWarnings = new JLabel(
-					"<html><table align=left width=500 cellspacing=10><tr><td>"
-							+ "<b>" + MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
-							+ "<td>" + MESSAGES.getString("NUMBER_OF_WARNINGS")
-							+ " " + "("+MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
-							+ "</td></tr></table></htlm>");
-			numberOfWarnings
-					.setToolTipText(StringUtil.toHTML(
-									MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
-									40));
-			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
-	
-			add(reactionsPanel, BorderLayout.CENTER);
-	
-			validate();
-		} catch (Throwable exc) {
-			GUITools.showErrorMessage(this, exc);
-		}
 	}
 	
 	/**
@@ -395,6 +250,129 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 					logger.log(Level.INFO, LABELS.getString("READY"));
 				}
 			}).start();
+		}
+	}
+	
+	public void generateKineticLawDone() {
+		try {
+			if (klg.getFastReactions().size() > 0) {
+				StringBuilder message = new StringBuilder();
+				String modelContains = MESSAGES.getString("THE_MODEL_CONTAINS")+" ";
+				if (klg.getFastReactions().size() > 1)
+					message.append(MessageFormat.format(modelContains, MESSAGES.getString("FAST_REACTIONS")));
+				else {
+					message.append(MessageFormat.format(modelContains, MESSAGES.getString("THE_FAST_REACTION"))+" ");
+					message.append(klg.getFastReactions().get(0).getId());
+				}
+				message.append(". ");
+				message.append(MESSAGES.getString("NOT_SUPPORTED"));
+				if (klg.getFastReactions().size() > 1) {
+					message.append(MESSAGES.getString("ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED"));
+					message.append("<ul type=\"disc\">");
+					for (int i = 0; i < klg.getFastReactions().size(); i++) {
+						message.append("<li>");
+						message.append(klg.getFastReactions().get(i).getId());
+						message.append("</li>");
+					}
+					message.append("</ul>");
+				} else
+					message.append(MESSAGES.getString("ATTRIBUTE_BEEING_IGNORED"));
+				final JOptionPane pane = new JOptionPane(StringUtil.toHTML(
+						message.toString(), 40), JOptionPane.WARNING_MESSAGE);
+				final JDialog d = new JDialog();
+				d.setTitle(MESSAGES.getString("FAST_REACTIONS"));
+				d.setModal(true);
+				d.getContentPane().add(pane);
+				d.pack();
+				d.setResizable(false);
+				WindowAdapter adapter = new WindowAdapter() {
+					private boolean gotFocus = false;
+	
+					public void windowClosing(WindowEvent we) {
+						pane.setValue(null);
+					}
+	
+					public void windowGainedFocus(WindowEvent we) {
+						if (!gotFocus) {
+							pane.selectInitialValue();
+							gotFocus = true;
+						}
+					}
+				};
+				d.addWindowListener(adapter);
+				d.addWindowFocusListener(adapter);
+				d.addComponentListener(new ComponentAdapter() {
+					public void componentShown(ComponentEvent ce) {
+						pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+					}
+				});
+				pane.addPropertyChangeListener(new PropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (d.isVisible()
+								&& evt.getSource() == pane
+								&& evt.getPropertyName().equals(
+										JOptionPane.VALUE_PROPERTY)
+								&& evt.getNewValue() != null
+								&& evt.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)
+							d.setVisible(false);
+					}
+				});
+				d.setVisible(true);
+				d.dispose();
+				
+				logger.log(Level.INFO, LABELS.getString("READY"));
+				// JOptionPane.showMessageDialog(null, GUITools.toHTML(message
+				// .toString(), 40), "Fast Reactions",
+				// JOptionPane.WARNING_MESSAGE);
+			}
+	
+			JPanel reactionsPanel = new JPanel(new BorderLayout());
+			JTable tableOfKinetics = new KineticLawTable(klg);
+			numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
+					.getWarningCount();
+			tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+	
+			JScrollPane scroll;
+	
+			if (tableOfKinetics.getRowCount() == 0) {
+				JEditorPane pane = new JEditorPane(
+						sbmlIO.getSelectedModel().getReactionCount() > 0 ? Resource.class
+								.getResource("html/NoNewKineticsCreated.html")
+								: Resource.class
+										.getResource("html/ModelDoesNotContainAnyReactions.html"));
+				pane.addHyperlinkListener(new SystemBrowser());
+				pane.setBackground(Color.WHITE);
+				pane.setEditable(false);
+				scroll = new JScrollPane(pane,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			} else {
+				scroll = new JScrollPane(tableOfKinetics,
+						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			}
+			scroll.setBorder(BorderFactory
+					.createBevelBorder(BevelBorder.LOWERED));
+			scroll.setBackground(Color.WHITE);
+			reactionsPanel.add(scroll, BorderLayout.CENTER);
+	
+			JLabel numberOfWarnings = new JLabel(
+					"<html><table align=left width=500 cellspacing=10><tr><td>"
+							+ "<b>" + MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
+							+ "<td>" + MESSAGES.getString("NUMBER_OF_WARNINGS")
+							+ " " + "("+MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
+							+ "</td></tr></table></htlm>");
+			numberOfWarnings
+					.setToolTipText(StringUtil.toHTML(
+									MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
+									40));
+			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
+	
+			add(reactionsPanel, BorderLayout.CENTER);
+	
+			validate();
+		} catch (Throwable exc) {
+			GUITools.showErrorMessage(this, exc);
 		}
 	}
 	

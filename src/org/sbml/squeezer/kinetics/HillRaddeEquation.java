@@ -117,8 +117,6 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 				ASTNode coeffnode = new ASTNode(coeff, this);
 
 				if (node.isUnknown()) {
-					//TODO: ASTNode.pow(speciesTerm(modifier), coeffnode) and
-					//		ASTNode.pow(thetanode, coeffnode) have different units
 					node = ASTNode.frac(
 						ASTNode.times(
 							pnode,
@@ -155,7 +153,6 @@ public class HillRaddeEquation extends BasicKineticLaw implements
 	 * 
 	 * @return ASTNode
 	 */
-	//TODO: produces wrong unit: s^(-1) instead of mol*s^(-1)
 	ASTNode synrate() {
 		String rId = getParentSBMLObject().getId();
 		LocalParameter b_i = parameterFactory.parameterBH(rId);

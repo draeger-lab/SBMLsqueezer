@@ -31,6 +31,9 @@ import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+
+import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 
@@ -88,14 +91,24 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	 * 
 	 */
 	private void initDescriptors() {
-	    WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor(this.getDialog());
-	    registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
-	    
-	    WizardPanelDescriptor descriptor2 = new KineticLawSelectionEquationPanelDescriptor(this.sbmlIO);
-	    ((KineticLawSelectionEquationPanelDescriptor) descriptor2).setStatusBar(statusBar);
-	    registerWizardPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER, descriptor2);
-	    
-	    setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);
+		try {
+			WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor(this.getDialog());
+		    registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
+		    
+			KineticLawGenerator klg = new KineticLawGenerator(this.sbmlIO.getSelectedModel());
+			
+			WizardPanelDescriptor descriptor2 = new KineticLawSelectionEquationProgressPanelDescriptor(klg);
+		    registerWizardPanel(KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER, descriptor2);
+		    
+		    WizardPanelDescriptor descriptor3 = new KineticLawSelectionEquationPanelDescriptor(klg, this.sbmlIO);
+		    ((KineticLawSelectionEquationPanelDescriptor) descriptor3).setStatusBar(statusBar);
+		    registerWizardPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER, descriptor3);
+		    
+		    setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);
+		    
+		}  catch (Exception exc) {
+			GUITools.showErrorMessage(this.getDialog(), exc);
+		}
 	}
 	
 	/**

@@ -128,8 +128,6 @@ public class SSystem extends BasicKineticLaw implements
 					if (node.isUnknown()){
 						node = ASTNode.pow(speciesTerm(modifier), expnode);
 					}
-					//TODO: produces wrong unit for irreversible reactions: 
-					//		mol^2*s^(-1) instead of mol*s^(-1)
 					else {
 						node.multiplyWith(
 								new ASTNode(parameterFactory.valuePerSubstanceAndConcentration(), this),
@@ -171,8 +169,6 @@ public class SSystem extends BasicKineticLaw implements
 				if (prod.isUnknown()) {
 					prod = pow;
 				} else {
-					//TODO: produces wrong unit for irreversible reactions: 
-					//		mol^2*s^(-1) instead of mol*s^(-1)
 					prod.multiplyWith(pow,
 							new ASTNode(parameterFactory.valuePerSubstanceAndConcentration(), this));
 				}
