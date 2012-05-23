@@ -34,6 +34,7 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -190,8 +191,11 @@ public class MichaelisMenten extends GeneralizedMassAction implements
 				p_kMr, modE.size() > 1 ? modE.get(enzymeNum) : null);
 
 			if (reaction.getReversible()) {
+				// one must have the same unit as denominator resp. p_kMr.
+				// p_kMr has the unit SubstancePerSizeOrSubstance
+				UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
 				ASTNode one = new ASTNode(1, this);
-				SBMLtools.setUnits(one, p_kMr.getUnits());
+				SBMLtools.setUnits(one, unitFactory.unitSubstancePerSizeOrSubstance(speciesR));
 				denominator = ASTNode.sum(one, denominator);
 			} else if (modInhib.size() < 1) {
 				denominator = ASTNode.sum(new ASTNode(p_kMr, this), denominator);

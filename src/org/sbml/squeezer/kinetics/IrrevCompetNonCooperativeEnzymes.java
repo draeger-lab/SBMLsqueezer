@@ -31,6 +31,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
 
@@ -123,11 +124,14 @@ public class IrrevCompetNonCooperativeEnzymes extends GeneralizedMassAction
 					LocalParameter p_kIi = parameterFactory.parameterKi(modInhib.get(i), enzyme);
 					LocalParameter p_exp = parameterFactory.parameterNumBindingSites(enzyme, modInhib.get(i));
 
+					// one must have the same unit as frac: speciesTerm (SubstancePerSizeOrSubstance) 
+					// divided by p_kIi (SubstancePerSizeOrSubstance) = dimensionless
 					ASTNode one = new ASTNode(1, this);
+					SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
+					
 					ASTNode frac = ASTNode.frac(
 							speciesTerm(modInhib.get(i)),
 							new ASTNode(p_kIi, this));
-					SBMLtools.setUnits(one, frac.getUnits());
 					
 					factor.multiplyWith(
 						ASTNode.pow(

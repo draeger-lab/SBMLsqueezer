@@ -35,6 +35,7 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -191,8 +192,9 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 * @return
 	 */
 	ASTNode denominator(String enzyme) {
-		// TODO: in Level 3 assign a unit to the number
 		ASTNode denominator = new ASTNode(1, this);
+		// TODO: is dimensionless the correct unit?
+		//SBMLtools.setUnits(denominator, Unit.Kind.DIMENSIONLESS);
 		ASTNode competInhib = specificModificationSummand(enzyme);
 		return competInhib == null ? denominator : denominator.plus(competInhib);
 	}
@@ -296,13 +298,14 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		exponent.divideBy(ASTNode.times(new ASTNode(2, this), new ASTNode(R, this), new ASTNode(T, this)));
 		exponent = ASTNode.exp(exponent);
 		if (forward == null) {
+			UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
+			
+			// TODO: correct?
+			// forward must have the same unit as backward:
+			// SubstancePerSizeOrSubstance^r.getListOfProducts().size()
 			forward = new ASTNode(1, this);
-			if (r.getReversible()) {
-				SBMLtools.setUnits(forward, backward.getUnits());
-			} else {
-				// TODO: in Level 3 assign a unit to the number
-				//SBMLtools.setUnits(forward, );
-			}
+			SBMLtools.setUnits(forward, unitFactory.unitSubstancePerSizeOrSubstance(
+					getModel().getSpecies(enzyme)).raiseByThePowerOf(r.getListOfProducts().size()));
 		}
 		forward.divideBy(exponent);
 		if (r.getReversible()) {
