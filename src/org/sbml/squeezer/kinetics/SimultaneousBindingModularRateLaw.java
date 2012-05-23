@@ -109,11 +109,12 @@ public class SimultaneousBindingModularRateLaw extends PowerLawModularRateLaw
 		for (SpeciesReference specRef : listOf) {
 			kM = parameterFactory.parameterMichaelis(specRef.getSpecies(), enzyme, forward);
 			
+			// curr must have the same unit as node:
+			// speciesTerm (SubstancePerSizeOrSubstance) / kM (SubstancePerSizeOrSubstance) = dimensionless
 			curr = new ASTNode(1, this);
+			SBMLtools.setUnits(curr, Unit.Kind.DIMENSIONLESS);
 			
 			ASTNode node = speciesTerm(specRef).divideBy(kM);
-			
-			SBMLtools.setUnits(curr, node.getUnits());
 			
 			curr.plus(node);
 			

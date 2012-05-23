@@ -30,6 +30,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.util.Maths;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.util.Bundles;
@@ -116,8 +117,10 @@ public class IrrevNonModulatedNonInteractingEnzymes extends BasicKineticLaw
 				numerator = ASTNode.times(numerator, ASTNode.pow(ASTNode.frac(
 						speciesTerm(si), new ASTNode(p_kM, this)), stoichiometryTerm(si)));
 
+				// one must have the same unit as frac: speciesTerm (SubstancePerSizeOrSubstance) 
+				// divided by p_kM (SubstancePerSizeOrSubstance) = dimensionless
 				ASTNode one = new ASTNode(1, this);
-				SBMLtools.setUnits(one, frac.getUnits());
+				SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 				denominator[i] = ASTNode.pow(ASTNode.sum(one,frac), stoichiometryTerm(si));
 			}
 

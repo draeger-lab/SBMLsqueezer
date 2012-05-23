@@ -81,8 +81,7 @@ public class AdditiveModelNonLinear extends AdditiveModelLinear implements
 		} else {
 			node3 = g;
 		}
-		
-		System.out.println("\n\n\n\n\n\n"+this.getLevel()+"\n\n\n\n\n\n");
+
 		if (this.getLevel() > 2) {
 			SBMLtools.setUnits(node1, Unit.Kind.DIMENSIONLESS);
 			SBMLtools.setUnits(node2, Unit.Kind.DIMENSIONLESS);

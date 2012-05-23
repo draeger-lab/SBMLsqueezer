@@ -31,7 +31,9 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -220,7 +222,10 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 					numeratorForward.multiplyWith(speciesTerm(enzyme));
 				}
 
+				// one must have the same unit as denominator resp. speciesTerm divided by p_kIr1:
+				// SubstancePerSizeOrSubstance / SubstancePerSizeOrSubstance = dimensionless
 				ASTNode one = new ASTNode(1, this);
+				SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 				
 				denominator = ASTNode.sum(
 					ASTNode.frac(speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
@@ -234,8 +239,6 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 					),
 					ASTNode.frac(speciesTerm(specRefP2), new ASTNode(p_kIp2, this))
 				);
-				
-				SBMLtools.setUnits(one, denominator.getUnits());
 				
 				denominator = ASTNode.sum(one, denominator);
 
@@ -342,19 +345,19 @@ public class OrderedMechanism extends GeneralizedMassAction implements
 				// numeratorForward = times(numeratorForward, specRefE1
 				// .getSpeciesInstance());
 
+				// one must have the same unit as denominator resp. speciesTerm divided by p_kIr1:
+				// SubstancePerSizeOrSubstance / SubstancePerSizeOrSubstance = dimensionless
 				ASTNode one = new ASTNode(1, this);
+				SBMLtools.setUnits(one, Unit.Kind.DIMENSIONLESS);
 				
 				denominator = ASTNode.sum(
+					one,
 					ASTNode.frac(speciesTerm(specRefE1), new ASTNode(p_kIr1, this)),
 					ASTNode.frac(
 						ASTNode.times(new ASTNode(p_kMr1, this), speciesTerm(specRefE2)), 
 						ASTNode.times(this, p_kIr1, p_kMr2)
 					)
 				);
-				
-				SBMLtools.setUnits(one, denominator.getUnits());
-				
-				denominator = ASTNode.sum(one, denominator);
 				
 				if (specRefE2.equals(specRefE1)) {
 					numeratorForward = ASTNode.times(numeratorForward, ASTNode
