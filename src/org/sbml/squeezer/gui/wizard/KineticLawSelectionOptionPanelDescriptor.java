@@ -24,9 +24,18 @@
 
 package org.sbml.squeezer.gui.wizard;
 
-import javax.swing.JDialog;
+import java.awt.Component;
+import java.util.ResourceBundle;
 
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+
+import org.sbml.squeezer.gui.KineticLawSelectionDialog;
+import org.sbml.squeezer.util.Bundles;
+
+import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.wizard.WizardPanelDescriptor;
+import de.zbit.util.ResourceManager;
 
 /**
  * 
@@ -36,6 +45,9 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescriptor {
+
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
 	
 	/**
 	 * 
@@ -71,6 +83,23 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 	@Override
 	public Object getBackPanelDescriptor() {
 		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
+	 */
+	@Override
+	public Component getHelpAction() {
+		JHelpBrowser helpBrowser = new JHelpBrowser(getWizard().getDialog(),
+				MESSAGES.getString("SBMLSQUEEZER") 
+					+ " " + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+						System.getProperty("app.version")), 
+						KineticLawSelectionDialog.class.getResource("../resources/html/help.html"));
+		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
+		helpBrowser.setSize(640, 640);
+		
+		return helpBrowser;
 	}
 
 }

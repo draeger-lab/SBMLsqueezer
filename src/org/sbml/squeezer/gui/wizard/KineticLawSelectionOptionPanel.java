@@ -91,14 +91,8 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 		options.setToolTipText(MESSAGES.getString("SHOW_OPTIONS_TOOLTIP"));
 		options.addActionListener(this);
 		
-		JButton helpButton = new JButton(BASE.getString("HELP"), UIManager
-				.getIcon("ICON_HELP_TINY"));
-		helpButton.setSize(150, 20);
-		helpButton.addActionListener(this);
-		
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		panel.add(options);
-		panel.add(helpButton);
 		options.setBackground(new Color(panel.getBackground().getRGB()));
 		
 		add(panel, BorderLayout.SOUTH);
@@ -133,16 +127,7 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 			String text = button.getText();
 			if (text.equals(MESSAGES.getString("SHOW_OPTIONS"))) {
 				PreferencesDialog.showPreferencesDialog(SqueezerOptions.class);
-			} else if (text.equals(BASE.getString("HELP"))) {
-				JHelpBrowser helpBrowser = new JHelpBrowser(this.dialog,
-						MESSAGES.getString("SBMLSQUEEZER") 
-							+ " " + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
-								System.getProperty("app.version")), 
-								KineticLawSelectionDialog.class.getResource("../resources/html/help.html"));
-				helpBrowser.setLocationRelativeTo(this);
-				helpBrowser.setSize(640, 640);
-				helpBrowser.setVisible(true);
-			} 
+			}
 		}
 	}
 
