@@ -79,8 +79,6 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		dialog.setMinimumSize(new Dimension(650,250));
 		dialog.setLocationRelativeTo(owner);
 		
-		setHelpButtonEnabled(true);
-		
 		setModal(true);
 		setWarningVisible(false);
 		
