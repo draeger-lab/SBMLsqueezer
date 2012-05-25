@@ -9,6 +9,12 @@ import org.sbml.squeezer.gui.GUITools;
 
 import de.zbit.gui.wizard.WizardPanelDescriptor;
 
+/**
+ * 
+ * @author Sebastian Nagel
+ * @version $Rev$
+ * @since 1.4
+ */
 public class KineticLawSelectionEquationProgressPanelDescriptor  extends WizardPanelDescriptor implements PropertyChangeListener {
 	public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PROGRESS_PANEL";
 	
@@ -20,6 +26,10 @@ public class KineticLawSelectionEquationProgressPanelDescriptor  extends WizardP
 		this.panel.addPropertyChangeListener(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#displayingPanel()
+	 */
+	@Override
 	public void displayingPanel() {
 		new Thread(new Runnable() {
 			public void run() {
@@ -28,18 +38,34 @@ public class KineticLawSelectionEquationProgressPanelDescriptor  extends WizardP
 		}).start();
 	}
 	
-	public void aboutToHidePanel() {
-    }    
-
-	public Object getNextPanelDescriptor() {
-        return KineticLawSelectionEquationPanelDescriptor.IDENTIFIER;
-    }
-    
-    public Object getBackPanelDescriptor() {
-        return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
-    }
-
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToHidePanel()
+	 */
 	@Override
+	public void aboutToHidePanel() {
+	}    
+	
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
+	 */
+	@Override
+	public Object getNextPanelDescriptor() {
+		return KineticLawSelectionEquationPanelDescriptor.IDENTIFIER;
+	}
+	
+	/*
+ (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
+	 */
+	@Override
+	public Object getBackPanelDescriptor() {
+		return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	//@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("generateKineticLawDone")){
 			this.getWizard().goToNextPanel();
