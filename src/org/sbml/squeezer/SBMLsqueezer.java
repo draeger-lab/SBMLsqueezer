@@ -637,66 +637,77 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   }
   
   /* (non-Javadoc)
- * @see de.zbit.Launcher#setUp()
- */
-@Override
-protected void setUp() {
-	if ((reader == null) && (writer == null)) {
-		initializeReaderAndWriter(getAppConf().getCmdArgs().getBooleanProperty(
-			IOOptions.TRY_LOADING_LIBSBML));
-	}
-}
-
+   * @see de.zbit.Launcher#setUp()
+   */
+  @Override
+  protected void setUp() {
+  	if ((reader == null) && (writer == null)) {
+  		initializeReaderAndWriter(getAppConf().getCmdArgs().getBooleanProperty(
+  			IOOptions.TRY_LOADING_LIBSBML));
+  	}
+  }
 
   /**
    * 
    * @param source
    * @param outFile
+   * @param showProgress
    * @throws Throwable
    */
-  public void squeeze(File source, File outFile) throws Throwable {
-	  readSBMLSource(source.getAbsolutePath());
-	    boolean errorFatal = false;
-	    SBMLException exception = null;
-	    for (SBMLException exc : sbmlIo.getWarnings())
-	      if (exc.isFatal() || exc.isXML() || exc.isError()) {
-	        errorFatal = true;
-	        exception = exc;
-	      }
-	    if (errorFatal) {
-	      throw new SBMLException(exception);
-	    } else if (!sbmlIo.getListOfModels().isEmpty()) {
-	      
-	      KineticLawGenerator klg = new KineticLawGenerator(sbmlIo.getSelectedModel());
-	      
-	      ProgressBar progressBar = new ProgressBar(0);
-	      klg.setProgressBar(progressBar);
-	      
-	      klg.generateLaws();
-	      
-	      progressBar = new ProgressBar(0);
-	      klg.setProgressBar(progressBar);
-	      
-	      klg.storeKineticLaws();
-	      long time = System.currentTimeMillis();
-	      logger.info(MESSAGES.getString("SAVING_TO_FILE"));
-	      sbmlIo.saveChanges(this);
-	      if ((outFile != null)
-	          && (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
-	        sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
-	        logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
-	        SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
-	        if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
-	          for (SBMLException exc : sbmlIo.getWriteWarnings()) {
-	            logger.log(Level.WARNING, exc.getMessage());
-	          }
-	        }
-	      } else {
-	        logger.log(Level.WARNING, WARNINGS.getString("OUTPUT_ERROR"));
-	      }
-	    } else {
-	      logger.log(Level.WARNING, WARNINGS.getString("FILE_CONTAINS_NO_MODEL"));
-	    }
+  public void squeeze(File source, File outFile, boolean showProgress) throws Throwable {
+  	long workTime = System.currentTimeMillis();
+  	readSBMLSource(source.getAbsolutePath());
+  	boolean errorFatal = false;
+  	SBMLException exception = null;
+  	for (SBMLException exc : sbmlIo.getWarnings())
+  		if (exc.isFatal() || exc.isXML() || exc.isError()) {
+  			errorFatal = true;
+  			exception = exc;
+  		}
+  	if (errorFatal) {
+  		throw new SBMLException(exception);
+  	} else if (!sbmlIo.getListOfModels().isEmpty()) {
+  		
+  		KineticLawGenerator klg = new KineticLawGenerator(sbmlIo.getSelectedModel());
+  		ProgressBar progressBar = null;
+  		
+  		if (showProgress) {
+  			progressBar = new ProgressBar(0);
+  			klg.setProgressBar(progressBar);
+  		}
+  		long time = System.currentTimeMillis();
+  		// TODO: Localize!
+  		logger.info("Creating kinetic laws.");
+  		klg.generateLaws();
+  		logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
+  		
+  		if (showProgress) {
+  			progressBar = new ProgressBar(0);
+  			klg.setProgressBar(progressBar);
+  		}
+  		klg.storeKineticLaws();
+  		
+  		time = System.currentTimeMillis();
+  		logger.info(MESSAGES.getString("SAVING_TO_FILE"));
+  		sbmlIo.saveChanges(this);
+  		if ((outFile != null)
+  				&& (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
+  			sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
+  			logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
+  			SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
+  			if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
+  				for (SBMLException exc : sbmlIo.getWriteWarnings()) {
+  					logger.log(Level.WARNING, exc.getMessage());
+  				}
+  			}
+  		} else {
+  			logger.log(Level.WARNING, WARNINGS.getString("OUTPUT_ERROR"));
+  		}
+  	} else {
+  		logger.log(Level.WARNING, WARNINGS.getString("FILE_CONTAINS_NO_MODEL"));
+  	}
+  	// TODO: Localize!
+  	logger.info((System.currentTimeMillis() - workTime)/1000d + " s needed for squeezing file " + source.getName() + '.');
   }
 
 
@@ -728,7 +739,7 @@ protected void setUp() {
   				inFile = entry.getKey();
   				outFile = new File(entry.getValue());
   				logger.info(MessageFormat.format("Squeezing file {0} into {1}", inFile.getAbsolutePath(), outFile.getAbsolutePath()));
-  				squeeze(inFile, outFile);
+  				squeeze(inFile, outFile, false);
   			} catch (Throwable t) {
   				logger.log(Level.SEVERE, MessageFormat.format(
   					WARNINGS.getString("SQUEEZE_ERROR"),

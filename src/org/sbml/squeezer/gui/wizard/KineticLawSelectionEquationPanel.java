@@ -71,11 +71,10 @@ import de.zbit.gui.GUIOptions;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.io.filefilter.SBFileFilter;
-import de.zbit.util.progressbar.AbstractProgressBar;
-import de.zbit.util.progressbar.ProgressBar;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * 

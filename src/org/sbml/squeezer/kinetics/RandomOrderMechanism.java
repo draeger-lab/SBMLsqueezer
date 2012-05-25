@@ -40,9 +40,10 @@ import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
- * This class creates a kinetic equation according to the random order mechanism
- * (see Cornish-Bowden: Fundamentals of Enzyme Kinetics, p. 169).
- *
+ * This class creates a kinetic equation according to the random-order
+ * ternary-complex mechanism (see Cornish-Bowden: Fundamentals of Enzyme
+ * Kinetics, p. 169, 2004).
+ * 
  * @author Nadine Hassis
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen

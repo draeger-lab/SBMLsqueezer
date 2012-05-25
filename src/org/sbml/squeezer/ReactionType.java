@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.sbml.jsbml.CVTerm.Qualifier;
@@ -45,6 +46,7 @@ import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
+import de.zbit.util.logging.LogUtil;
 
 /**
  * The purpose of this class is to analyze a reaction object for several
@@ -199,27 +201,39 @@ public class ReactionType {
 			// }
 			if (SBO.isCatalyst(type)) {
 				if (SBO.isEnzymaticCatalysis(type)) {
-				  logger.fine(MessageFormat.format(MESSAGES.getString("IS_ENZYMATIC_CATALYST"), modifier));
+					if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {
+						logger.fine(MessageFormat.format(MESSAGES.getString("IS_ENZYMATIC_CATALYST"), modifier));
+					}
 					enzymes.add(modifier.getSpecies());
 				} else {
-				  logger.fine(MessageFormat.format(MESSAGES.getString("IS_NON_ENZYMATIC_CATALYST"), modifier));
+					if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {
+						logger.fine(MessageFormat.format(MESSAGES.getString("IS_NON_ENZYMATIC_CATALYST"), modifier));
+					}
 					nonEnzymeCatalysts.add(modifier.getSpecies());
 				}
 			} else if (SBO.isTranscriptionalInhibitor(type)
 					|| SBO.isTranslationalInhibitor(type)) {
-			  logger.fine(MessageFormat.format(MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR"), modifier));
+				if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {
+					logger.fine(MessageFormat.format(MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR"), modifier));
+				}
 				inhibitors.add(modifier.getSpecies());
 			} else if (SBO.isInhibitor(type)) {
-			  logger.fine(MessageFormat.format(MESSAGES.getString("IS_INHIBITOR"), modifier));
+				if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {
+					logger.fine(MessageFormat.format(MESSAGES.getString("IS_INHIBITOR"), modifier));
+				}
 				inhibitors.add(modifier.getSpecies());
 			} else if (SBO.isTranscriptionalActivation(type)
 					|| SBO.isTranslationalActivation(type)) {
-			  logger.fine(MessageFormat.format(MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_ACTIVATOR"), modifier));
+				if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {
+					logger.fine(MessageFormat.format(MESSAGES.getString("IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_ACTIVATOR"), modifier));
+				}
 				activators.add(modifier.getSpecies());
 			} else if (SBO.isTrigger(type) || SBO.isStimulator(type)) {
 				// no extra support for unknown catalysis anymore...
 				// physical stimulation is now also a stimulator.
-			  logger.fine(MessageFormat.format(MESSAGES.getString("IS_ACTIVATOR"), modifier));
+				if (LogUtil.getCurrentLogLevel().intValue() <=  Level.FINE.intValue()) {
+					logger.fine(MessageFormat.format(MESSAGES.getString("IS_ACTIVATOR"), modifier));
+				}
 				activators.add(modifier.getSpecies());
 			}
 		}
