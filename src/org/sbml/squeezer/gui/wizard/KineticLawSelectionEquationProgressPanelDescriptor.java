@@ -31,6 +31,8 @@ public class KineticLawSelectionEquationProgressPanelDescriptor  extends WizardP
 	 */
 	@Override
 	public void displayingPanel() {
+		this.getWizard().setNextFinishButtonEnabled(false);
+		
 		new Thread(new Runnable() {
 			public void run() {
 				panel.generateKineticLaw();
