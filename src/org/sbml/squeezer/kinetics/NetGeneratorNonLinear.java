@@ -46,6 +46,7 @@ import de.zbit.util.ResourceManager;
  * @since 1.3
  * @version $Rev$
  */
+// TODO: Check!
 public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 		InterfaceGeneRegulatoryKinetics, InterfaceModulatedKinetics,
 		InterfaceIrreversibleKinetics, InterfaceReversibleKinetics {

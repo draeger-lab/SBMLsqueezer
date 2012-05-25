@@ -2,10 +2,8 @@ package org.sbml.squeezer.gui.wizard;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.logging.Level;
 
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.gui.GUITools;
 
 import de.zbit.gui.wizard.WizardPanelDescriptor;
 

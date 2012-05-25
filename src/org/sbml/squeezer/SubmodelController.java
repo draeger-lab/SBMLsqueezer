@@ -70,9 +70,16 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * @author Sebastian Nagel
  */
 public class SubmodelController {
+	
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
-	private final Logger logger = Logger.getLogger(KineticLawGenerator.class.getName());
+	/**
+	 * 
+	 */
+	private final Logger logger = Logger.getLogger(SubmodelController.class.getName());
 	
 	/**
 	 * This list contains all fast reactions of the original model. Since the
@@ -96,19 +103,34 @@ public class SubmodelController {
 	private ProgressAdapter progressAdapter;
 	private AbstractProgressBar progressBar;
 	
-	
+	/**
+	 * 
+	 * @param progressBar
+	 */
 	public void setProgressBar(AbstractProgressBar progressBar) {
 		this.progressBar = progressBar;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Model getMiniModel() {
 		return this.miniModel;
 	}
 	
+	/**
+	 * 
+	 * @param addParametersGlobally
+	 */
 	public void setAddParametersGlobally(boolean addParametersGlobally) {
 		this.addParametersGlobally = addParametersGlobally;
 	}
 	
+	/**
+	 * 
+	 * @param reversibility
+	 */
 	public void setReversibility(boolean reversibility) {
 		this.reversibility = reversibility;
 	}
@@ -936,4 +958,5 @@ public class SubmodelController {
 			species.setSubstanceUnits(ud);
 		}
 	}
+
 }
