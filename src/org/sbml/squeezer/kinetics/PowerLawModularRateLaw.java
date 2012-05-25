@@ -43,7 +43,7 @@ import de.zbit.util.ResourceManager;
 
 /**
  * Represents the power-law modular rate law (PM) from Liebermeister et al.
- * 2010.
+ * 2010, see <a href="http://bioinformatics.oxfordjournals.org/content/26/12/1528">Bioinformatics</a>
  * 
  * @author Andreas Dr&auml;ger
  * @author Sarah R. M&uuml;ller vom Hagen
@@ -200,7 +200,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	}
 
 	/**
-	 * Creates the summand for competetive inhibition in the denominator.
+	 * Creates the summand for competitive inhibition in the denominator.
 	 * 
 	 * @param enzyme
 	 * 
@@ -310,6 +310,7 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		forward.divideBy(exponent);
 		if (r.getReversible()) {
 			backward.multiplyWith(exponent.clone());
+			// TODO: Check units!
 			forward.minus(backward);
 		}
 		return numerator.multiplyWith(forward).divideBy(createRoot(enzyme));

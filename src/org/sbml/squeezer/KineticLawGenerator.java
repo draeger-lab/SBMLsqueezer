@@ -715,4 +715,5 @@ public class KineticLawGenerator {
 			}
 		}
 	}
+
 }

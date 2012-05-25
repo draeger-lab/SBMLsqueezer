@@ -365,4 +365,5 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		return writer.writeSBML(listOfOrigModels.get(selectedModel), filename,
 				SBMLsqueezer.class.getSimpleName(), System.getProperty("app.version"));
 	}
+
 }
