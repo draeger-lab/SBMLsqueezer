@@ -36,6 +36,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.UnitFactory;
+import org.sbml.squeezer.gui.SBMLsqueezerUI;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -295,7 +296,9 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 		} else {
 			exponent.multiplyWith(new ASTNode(hr, this));
 		}
-		exponent.divideBy(ASTNode.times(new ASTNode(2, this), new ASTNode(R, this), new ASTNode(T, this)));
+		ASTNode two = new ASTNode(2, this);
+		SBMLtools.setUnits(two, Unit.Kind.DIMENSIONLESS);
+		exponent.divideBy(ASTNode.times(two, new ASTNode(R, this), new ASTNode(T, this)));
 		exponent = ASTNode.exp(exponent);
 		if (forward == null) {
 			UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());

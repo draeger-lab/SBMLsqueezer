@@ -959,4 +959,19 @@ public class SubmodelController {
 		}
 	}
 
+	public boolean isRemoveUnnecessaryParameters() {
+		return this.removeUnnecessaryParameters;
+	}
+
+	public boolean isAddParametersGlobally() {
+		return addParametersGlobally;
+	}
+
+	public boolean isReversibility() {
+		return reversibility;
+	}
+
+	public boolean isSetBoundaryCondition() {
+		return setBoundaryCondition;
+	}
 }

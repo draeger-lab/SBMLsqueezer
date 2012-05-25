@@ -105,32 +105,28 @@ public class KineticLawGenerator {
 	
 	private final Logger logger = Logger.getLogger(KineticLawGenerator.class.getName());
 	
-	private boolean removeUnnecessaryParameters;
 	private TypeStandardVersion typeStandardVersion;
-	private boolean reversibility;
 	private UnitConsistencyType typeUnitConsistency;
 	private double defaultParamVal;
-	private boolean setBoundaryCondition;
 
 	/**
 	 * @return the setBoundaryCondition
 	 */
 	public boolean isSetBoundaryCondition() {
-		return setBoundaryCondition;
+		return submodelController.isSetBoundaryCondition();
 	}
 
 	/**
 	 * @return the addParametersGlobally
 	 */
 	public boolean isAddParametersGlobally() {
-		return addParametersGlobally;
+		return submodelController.isAddParametersGlobally();
 	}
 
 	/**
 	 * @param addParametersGlobally the addParametersGlobally to set
 	 */
 	public void setAddParametersGlobally(boolean addParametersGlobally) {
-		this.addParametersGlobally = addParametersGlobally;
 		submodelController.setAddParametersGlobally(addParametersGlobally);
 	}
 
@@ -138,18 +134,20 @@ public class KineticLawGenerator {
 	 * @return the reversibility
 	 */
 	public boolean isReversibility() {
-		return reversibility;
+		return submodelController.isReversibility();
+	}
+	
+	public boolean isRemoveUnnecessaryParameters() {
+		return this.submodelController.isRemoveUnnecessaryParameters();
 	}
 
 	/**
 	 * @param reversibility the reversibility to set
 	 */
 	public void setReversibility(boolean reversibility) {
-		this.reversibility = reversibility;
-		submodelController.setAddParametersGlobally(reversibility);
+		submodelController.setReversibility(reversibility);
 	}
 
-	private boolean addParametersGlobally;
 	private SortedSet<Integer> possibleEnzymes;
 	private boolean allReactionsAsEnzymeCatalyzed;
 	private Class<?> kineticsGeneRegulation;
@@ -192,13 +190,9 @@ public class KineticLawGenerator {
 		
 		// Initialize user settings:
 		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		removeUnnecessaryParameters = prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS);
 		typeStandardVersion = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
-		reversibility = prefs.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
 		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
 		defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
-		setBoundaryCondition = prefs.getBoolean(SqueezerOptions.SET_BOUNDARY_CONDITION_FOR_GENES);
-		addParametersGlobally = prefs.getBoolean(SqueezerOptions.NEW_PARAMETERS_GLOBAL);
 		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED);
 		
 		kineticsZeroReactants = prefs.getClass(SqueezerOptions.KINETICS_ZERO_REACTANTS);
@@ -402,7 +396,7 @@ public class KineticLawGenerator {
 		UnitConsistencyType consistency, double defaultNewParamVal)
 		throws Throwable {
 		
-		this.reversibility = reversibility;
+		this.setReversibility(reversibility);
 		this.typeStandardVersion = version;
 		this.typeUnitConsistency = consistency;
 		this.defaultParamVal = defaultNewParamVal;
@@ -440,12 +434,12 @@ public class KineticLawGenerator {
 		
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.generateLaws);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
 		}
 		
 		for (Reaction r : miniModel.getListOfReactions()) {
-			ReactionType rt = new ReactionType(r, reversibility,
-				allReactionsAsEnzymeCatalyzed, setBoundaryCondition, speciesIgnoreList);
+			ReactionType rt = new ReactionType(r, isReversibility(),
+				allReactionsAsEnzymeCatalyzed, isSetBoundaryCondition(), speciesIgnoreList);
 			
 			Class<?> kineticsClass = rt.identifyPossibleKineticLaw(
 				kineticsGeneRegulation, kineticsZeroReactants, kineticsZeroProducts,
@@ -458,17 +452,17 @@ public class KineticLawGenerator {
 				kineticsReversibleBiBiType, kineticsIrreversibleBiBiType);
 			
 			if (progressAdapter != null) {
-				//progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+				//progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
 				progressAdapter.progressOn();
 			}
 			
 			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(this, r,
-				kineticsClass, reversibility, typeStandardVersion, typeUnitConsistency, defaultParamVal);
+				kineticsClass, isReversibility(), typeStandardVersion, typeUnitConsistency, defaultParamVal);
 			
 			klgw.run();
 			
 			if (progressAdapter != null) {
-				//progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+				//progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
 				progressAdapter.progressOn();
 			}
 		}
@@ -549,8 +543,8 @@ public class KineticLawGenerator {
 	 */
 	public ReactionType getReactionType(String reactionID)
 		throws RateLawNotApplicableException {
-		return new ReactionType(miniModel.getReaction(reactionID), reversibility,
-			allReactionsAsEnzymeCatalyzed, setBoundaryCondition, speciesIgnoreList);
+		return new ReactionType(miniModel.getReaction(reactionID), isReversibility(),
+			allReactionsAsEnzymeCatalyzed, isSetBoundaryCondition(), speciesIgnoreList);
 	}
 
 	/**
@@ -645,7 +639,7 @@ public class KineticLawGenerator {
 	public Reaction storeKineticLaw(KineticLaw kineticLaw) {
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaw);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
 		}
 		
 		Reaction r = submodelController.storeKineticLaw(kineticLaw, true);
@@ -670,7 +664,7 @@ public class KineticLawGenerator {
 		
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaws);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
 		}
 		
 		ModelChangeListener chl = new ModelChangeListener();
@@ -682,7 +676,7 @@ public class KineticLawGenerator {
 		
 		submodelController.storeUnits();
 		
-		if (removeUnnecessaryParameters) {
+		if (isRemoveUnnecessaryParameters()) {
 			submodelController.removeUnnecessaryParameters(modelOrig);
 		}
 		modelOrig.removeTreeNodeChangeListener(chl);
