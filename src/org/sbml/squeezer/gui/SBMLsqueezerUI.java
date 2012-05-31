@@ -33,6 +33,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.EventHandler;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -81,6 +83,7 @@ import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.actioncommand.ActionCommand;
+import de.zbit.io.OpenedFile;
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
@@ -147,7 +150,7 @@ class FileReaderThread extends Thread implements Runnable {
  * @since 1.0
  */
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
-		ChangeListener, JTabbedPaneCloseListener {
+		ChangeListener, JTabbedPaneCloseListener, PropertyChangeListener {
 	
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
@@ -280,11 +283,12 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		// TODO
 		// setIconImage(UIManager.getIcon("IMAGE_LEMON"));
 		tabbedPane.addChangeListener(sbmlIO);
-		for (Model m : sbmlIO.getListOfModels()) {
+		for (OpenedFile<Object, Model> file : sbmlIO.getListOfOpenedFiles()) {
+			Model m = file.getWorkingCopy();
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(), prefs
 					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			if (m != null) {
-				addModel(m);
+				addModel(file);
 			}
 		}
 	}
@@ -419,18 +423,20 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	/**
 	 * Adds the given new model into the tabbed pane on the main panel.
 	 * 
-	 * @param model
+	 * @param file
 	 */
-	private void addModel(Model model) {
+	private void addModel(OpenedFile<Object, Model> file) {
 		SBMLModelSplitPane split;
 		try {
-			split = new SBMLModelSplitPane(model.getSBMLDocument(), true);
+			split = new SBMLModelSplitPane(file, true);
 			split.setEquationRenderer(new HotEquationRenderer());
 			split.setProgressBar(StatusBar.addStatusBar(this).getProgressBar());
+			
+			split.getOpenedFile().addPropertyChangeListener("openedFileChanged", this);
 
 			setupContextMenu(split, null, null);
 			
-			tabbedPane.add(model.getId(), split);
+			tabbedPane.add(file.getWorkingCopy().getId(), split);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 			setEnabled(true, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 					Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
@@ -507,7 +513,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(), prefs
 					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			if (model != null) {
-				addModel(model);
+				addModel(sbmlIO.getListOfOpenedFiles().getLast());
 				String path = file.getAbsolutePath();
 				String oldPath = prefs.get(IOOptions.SBML_IN_FILE);
 				if (!path.equals(oldPath)) {
@@ -555,10 +561,12 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(tabbedPane)) {
 			if (tabbedPane.getComponentCount() == 0) {
-				setEnabled(false, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
+				setEnabled(false, BaseAction.FILE_SAVE, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 						Command.SQUEEZE, Command.TO_LATEX,
 						Command.CHECK_STABILITY,
 						Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+			} else {
+				setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), BaseAction.FILE_SAVE);
 			}
 			setSBMLsqueezerBackground();
 		}
@@ -577,14 +585,17 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		
 		File savedFile = null;
 		if (choice == 0) {
-			savedFile = saveFile();
+			// TODO: change saveFileAs() to saveFile() if it's done in the BaseFrame
+			savedFile = saveFileAs();
 		}
 		if (savedFile != null || choice == 1) {
 			change = (tabbedPane.getComponentCount() > 0);
 			if (tabbedPane.getComponentCount() == 0) {
-				setEnabled(false, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
+				setEnabled(false, BaseAction.FILE_SAVE, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 						Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
 						Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+			} else {
+				setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), BaseAction.FILE_SAVE);
 			}
 		}
 		
@@ -785,6 +796,48 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		return files;
 	}
 
+	/**
+	 * 
+	 * @param out
+	 */
+	private void save(final File out) {
+		SBPreferences prefs = SBPreferences.getPreferencesFor(GUIOptions.class);
+		SBFileFilter filterText = SBFileFilter.createTextFileFilter();
+		SBFileFilter filterTeX = SBFileFilter.createTeXFileFilter();
+
+		if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
+		    if (SBFileFilter.hasFileType(out, SBFileFilter.FileType.SBML_FILES)) {
+		      new Thread(new Runnable() {
+		        /* (non-Javadoc)
+		         * @see java.lang.Runnable#run()
+		         */
+		        public void run() {
+		          writeSBML(out);
+		        }
+		      }).start();
+			} else if (filterTeX.accept(out)) {
+				writeLaTeX(out);
+			} else if (filterText.accept(out)) {
+				writeText(out);
+			}
+		}
+	}
+	
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.BaseFrame#saveFileAs()
+	 */
+	public File saveFileAs() {
+		File savedFile = sbmlIO.getSelectedFile();
+		if (savedFile != null) {
+			save(savedFile);
+			return savedFile;
+		} else {
+			return saveFile();
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#saveFile()
 	 */
@@ -809,23 +862,15 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					GUITools.showErrorMessage(this, exc);
 				}
 			}
-			if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
-        if (SBFileFilter.hasFileType(out, SBFileFilter.FileType.SBML_FILES)) {
-          new Thread(new Runnable() {
-            /* (non-Javadoc)
-             * @see java.lang.Runnable#run()
-             */
-            public void run() {
-              writeSBML(out);
-            }
-          }).start();
-				} else if (filterTeX.accept(out)) {
-					writeLaTeX(out);
-				} else if (filterText.accept(out)) {
-					writeText(out);
-				}
-			}
+			save(out);
 		}
 		return savedFile;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equals("openedFileChanged")) {
+			setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), BaseAction.FILE_SAVE);
+		}
 	}
 }

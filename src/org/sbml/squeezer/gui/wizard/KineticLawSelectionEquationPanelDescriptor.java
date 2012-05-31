@@ -24,11 +24,18 @@
 
 package org.sbml.squeezer.gui.wizard;
 
-import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.io.SBMLio;
+import java.awt.Component;
+import java.util.ResourceBundle;
 
+import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.gui.KineticLawSelectionDialog;
+import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.util.Bundles;
+
+import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.wizard.WizardPanelDescriptor;
+import de.zbit.util.ResourceManager;
 
 /**
  * 
@@ -38,33 +45,82 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
  * @version $Rev: 830 $
  */
 public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescriptor {
+
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
+	
+	/**
+	 * 
+	 */
 	public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PANEL";
 	
 	private KineticLawSelectionEquationPanel panel;
 	
+	/**
+	 * 
+	 * @param klg
+	 * @param sbmlIO
+	 */
 	public KineticLawSelectionEquationPanelDescriptor(KineticLawGenerator klg, SBMLio sbmlIO) {
 		super(IDENTIFIER, new KineticLawSelectionEquationPanel(klg, sbmlIO));
 		this.panel = ((KineticLawSelectionEquationPanel) this.getPanelComponent());
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#displayingPanel()
+	 */
 	public void displayingPanel() {
 		panel.generateKineticLawDone();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToHidePanel()
+	 */
 	public void aboutToHidePanel() {
 		panel.apply();
     }    
 
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
+	 */
 	public Object getNextPanelDescriptor() {
         return FINISH;
     }
     
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
+	 */
     public Object getBackPanelDescriptor() {
         return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
     }
 	
+    /**
+     * 
+     * @param statusBar
+     */
 	public void setStatusBar(StatusBar statusBar) {
 		((KineticLawSelectionEquationPanel) this.getPanelComponent()).setStatusBar(statusBar);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
+	 */
+	@Override
+	public Component getHelpAction() {
+		JHelpBrowser helpBrowser = new JHelpBrowser(getWizard().getDialog(),
+				MESSAGES.getString("SBMLSQUEEZER") 
+					+ " " + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+						System.getProperty("app.version")), 
+						KineticLawSelectionDialog.class.getResource("../resources/html/help.html"));
+		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
+		helpBrowser.setSize(640, 640);
+		
+		return helpBrowser;
 	}
 
 }

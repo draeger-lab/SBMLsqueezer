@@ -666,7 +666,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   		}
   	if (errorFatal) {
   		throw new SBMLException(exception);
-  	} else if (!sbmlIo.getListOfModels().isEmpty()) {
+  	} else if (!sbmlIo.getListOfOpenedFiles().isEmpty()) {
   		
   		KineticLawGenerator klg = new KineticLawGenerator(sbmlIo.getSelectedModel());
   		ProgressBar progressBar = null;
