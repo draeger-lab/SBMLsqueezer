@@ -28,7 +28,6 @@ import java.awt.Component;
 import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
-import javax.swing.JPanel;
 
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.util.Bundles;
