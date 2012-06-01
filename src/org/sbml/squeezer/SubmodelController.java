@@ -135,13 +135,20 @@ public class SubmodelController {
 		this.reversibility = reversibility;
 	}
 
+	/**
+	 * 
+	 * @param model
+	 */
+	public SubmodelController(Model model) {
+		this(model, null);
+	}
 
 	/**
 	 * 
 	 * @param model
 	 * @param reactionID
 	 */
-	public SubmodelController (Model model, String reactionID) {
+	public SubmodelController(Model model, String reactionID) {
 		// Initialize user settings:
 		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		generateLawsForAllReactions = prefs.getBoolean(SqueezerOptions.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS);
@@ -959,19 +966,36 @@ public class SubmodelController {
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isRemoveUnnecessaryParameters() {
 		return this.removeUnnecessaryParameters;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isAddParametersGlobally() {
 		return addParametersGlobally;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isReversibility() {
 		return reversibility;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isSetBoundaryCondition() {
 		return setBoundaryCondition;
 	}
+
 }
