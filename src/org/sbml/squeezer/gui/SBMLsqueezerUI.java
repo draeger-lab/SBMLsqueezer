@@ -164,22 +164,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public static enum Command implements ActionCommand {
 		/**
-		 * Check whether the current model is stable.
-		 */
-		CHECK_STABILITY,
-		/**
-		 * Simulate the dynamics of the current model.
-		 */
-		SIMULATE,
-		/**
 		 * Generate kinetic equations.
 		 */
 		SQUEEZE,
-		/**
-		 * Perform structural kinetic modeling, i.e., detect the key reactions
-		 * within the model.
-		 */
-		STRUCTURAL_KINETIC_MODELLING,
 		/**
 		 * Convert the current model or the current SBML object into a LaTeX
 		 * report.
@@ -276,9 +263,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		super(appConf);
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.sbmlIO = io;
-		setEnabled(false, Command.SQUEEZE, Command.TO_LATEX,
-				Command.CHECK_STABILITY, Command.STRUCTURAL_KINETIC_MODELLING,
-				Command.SIMULATE);
+		setEnabled(false, Command.SQUEEZE, Command.TO_LATEX);
 		setSBMLsqueezerBackground();
 		// TODO
 		// setIconImage(UIManager.getIcon("IMAGE_LEMON"));
@@ -362,63 +347,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				}
 			}
 			break;
-		case CHECK_STABILITY:
-			// TODO: Not in this version
-			// StabilityDialog stabilitydialog = new StabilityDialog(this);
-			// stabilitydialog.showStabilityDialog(settings, sbmlIO);
-			break;
-		case STRUCTURAL_KINETIC_MODELLING:
-			break;
-		case SIMULATE:
-			// TODO: Not in this version
-			// showSimulationControl(false);
-			break;
 		default:
 			break;
 		}
 	}
-
-	// TODO: Not in this version
-	// /**
-	// * Opens and displays a simulation dialog.
-	// *
-	// * @param modal
-	// * If true the dialog will be modal.
-	// * @return If a model has been loaded, a simulation dialog. It should be
-	// * noted that null will be returned if no model has been loadad yet.
-	// *
-	// */
-	// public SimulationDialog showSimulationControl(boolean modal) {
-	// return showSimulationControl(modal, null);
-	// }
-	//
-	// /**
-	// *
-	// * @param modal
-	// * @param csvFile
-	// */
-	// public SimulationDialog showSimulationControl(boolean modal, String
-	// csvFile) {
-	// Model model = sbmlIO.getSelectedModel();
-	// if (model != null) {
-	// SimulationDialog d = new SimulationDialog(this, model, settings);
-	// if (csvFile != null)
-	// try {
-	// d.openExperimentalData(csvFile);
-	// } catch (IOException exc) {
-	// exc.printStackTrace();
-	// JOptionPane.showMessageDialog(this, exc.getMessage(), exc
-	// .getClass().getSimpleName(),
-	// JOptionPane.ERROR_MESSAGE);
-	// }
-	// setEnabled(false, Command.SIMULATE);
-	// d.addWindowListener(this);
-	// d.setModal(modal);
-	// d.setVisible(true);
-	// return d;
-	// }
-	// return null;
-	// }
 
 	/**
 	 * Adds the given new model into the tabbed pane on the main panel.
@@ -439,8 +371,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			tabbedPane.add(file.getWorkingCopy().getId(), split);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 			setEnabled(true, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
-					Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
-					Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+					Command.SQUEEZE, Command.TO_LATEX);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -562,9 +493,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		if (e.getSource().equals(tabbedPane)) {
 			if (tabbedPane.getComponentCount() == 0) {
 				setEnabled(false, BaseAction.FILE_SAVE, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
-						Command.SQUEEZE, Command.TO_LATEX,
-						Command.CHECK_STABILITY,
-						Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+						Command.SQUEEZE, Command.TO_LATEX);
 			} else {
 				setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), BaseAction.FILE_SAVE);
 			}
@@ -592,8 +521,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			change = (tabbedPane.getComponentCount() > 0);
 			if (tabbedPane.getComponentCount() == 0) {
 				setEnabled(false, BaseAction.FILE_SAVE, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
-						Command.SQUEEZE, Command.TO_LATEX, Command.CHECK_STABILITY,
-						Command.STRUCTURAL_KINETIC_MODELLING, Command.SIMULATE);
+						Command.SQUEEZE, Command.TO_LATEX);
 			} else {
 				setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), BaseAction.FILE_SAVE);
 			}
@@ -625,8 +553,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 						e.printStackTrace();
 					}
 				}
-			} else {
-				setEnabled(true, Command.SIMULATE);
 			}
 		}
 	}
@@ -801,7 +727,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @param out
 	 */
 	private void save(final File out) {
-		SBPreferences prefs = SBPreferences.getPreferencesFor(GUIOptions.class);
 		SBFileFilter filterText = SBFileFilter.createTextFileFilter();
 		SBFileFilter filterTeX = SBFileFilter.createTeXFileFilter();
 
@@ -824,10 +749,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	}
 	
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#saveFileAs()
 	 */
+	@Override
 	public File saveFileAs() {
 		File savedFile = sbmlIO.getSelectedFile();
 		if (savedFile != null) {
