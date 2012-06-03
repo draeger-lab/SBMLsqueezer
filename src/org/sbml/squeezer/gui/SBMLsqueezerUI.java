@@ -792,10 +792,14 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		return savedFile;
 	}
 
-	@Override
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	// @Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("openedFileChanged")) {
 			setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), BaseAction.FILE_SAVE);
 		}
 	}
+
 }
