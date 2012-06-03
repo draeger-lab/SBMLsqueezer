@@ -83,7 +83,7 @@ import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.actioncommand.ActionCommand;
-import de.zbit.io.OpenedFile;
+import de.zbit.sbml.io.OpenedFile;
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
@@ -268,7 +268,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		// TODO
 		// setIconImage(UIManager.getIcon("IMAGE_LEMON"));
 		tabbedPane.addChangeListener(sbmlIO);
-		for (OpenedFile<Object, Model> file : sbmlIO.getListOfOpenedFiles()) {
+		for (OpenedFile<Model> file : sbmlIO.getListOfOpenedFiles()) {
 			Model m = file.getWorkingCopy();
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(), prefs
 					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
@@ -357,7 +357,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * 
 	 * @param file
 	 */
-	private void addModel(OpenedFile<Object, Model> file) {
+	private void addModel(OpenedFile<Model> file) {
 		SBMLModelSplitPane split;
 		try {
 			split = new SBMLModelSplitPane(file, true);
@@ -801,5 +801,13 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), BaseAction.FILE_SAVE);
 		}
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.BaseFrame#showSaveMenuEntry()
+	 */
+	@Override
+	protected boolean showSaveMenuEntry() {
+		return true;
+	}
 }

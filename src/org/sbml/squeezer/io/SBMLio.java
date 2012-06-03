@@ -47,7 +47,7 @@ import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
-import de.zbit.io.OpenedFile;
+import de.zbit.sbml.io.OpenedFile;
 import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.ResourceManager;
 
@@ -74,7 +74,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 
 	private List<TreeNode> changed;
 	
-	private LinkedList<OpenedFile<Object,Model>> listOfOpenedFiles;
+	private LinkedList<OpenedFile<Model>> listOfOpenedFiles;
 
 	protected AbstractProgressBar progress;
 
@@ -93,7 +93,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		this.reader = sbmlReader;
 		// this.reader.addSBaseChangeListener(this);
 		this.writer = sbmlWriter;
-		listOfOpenedFiles = new LinkedList<OpenedFile<Object,Model>>();
+		listOfOpenedFiles = new LinkedList<OpenedFile<Model>>();
 		selectedModel = -1;
 		added = new LinkedList<TreeNode>();
 		removed = new LinkedList<TreeNode>();
@@ -108,7 +108,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	public SBMLio(SBMLInputConverter reader, SBMLOutputConverter writer,
 			Object model) throws Exception {
 		this(reader, writer);
-		listOfOpenedFiles.addLast(new OpenedFile<Object, Model>(model, reader.convertModel(model)));
+		listOfOpenedFiles.addLast(new OpenedFile<Model>(model, reader.convertModel(model)));
 	}
 
 	/* (non-Javadoc)
@@ -125,9 +125,9 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	public Model convertModel(Object model) throws SBMLException {
 		try {
 			if (model instanceof String) {
-				listOfOpenedFiles.addLast(new OpenedFile<Object, Model>(reader.getOriginalModel(), reader.convertModel(model)));
+				listOfOpenedFiles.addLast(new OpenedFile<Model>(reader.getOriginalModel(), reader.convertModel(model)));
 			} else {
-				listOfOpenedFiles.addLast(new OpenedFile<Object, Model>(model, reader.convertModel(model)));
+				listOfOpenedFiles.addLast(new OpenedFile<Model>(model, reader.convertModel(model)));
 			}
 			selectedModel = listOfOpenedFiles.size() - 1;
 			return listOfOpenedFiles.getLast().getWorkingCopy();
@@ -154,7 +154,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * 
 	 * @return
 	 */
-	public LinkedList<OpenedFile<Object, Model>> getListOfOpenedFiles() {
+	public LinkedList<OpenedFile<Model>> getListOfOpenedFiles() {
 		return listOfOpenedFiles;
 	}
 	
@@ -162,7 +162,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * 
 	 * @return
 	 */
-	public OpenedFile<Object, Model> getSelectedOpenedFile() {
+	public OpenedFile<Model> getSelectedOpenedFile() {
 		return listOfOpenedFiles.get(selectedModel);
 	}
 
