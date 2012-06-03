@@ -755,12 +755,12 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	@Override
 	public File saveFileAs() {
 		File savedFile = sbmlIO.getSelectedFile();
+		
 		if (savedFile != null) {
 			save(savedFile);
-			return savedFile;
-		} else {
-			return saveFile();
-		}
+		} 
+		
+		return savedFile;
 	}
 
 	/* (non-Javadoc)
