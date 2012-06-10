@@ -38,12 +38,14 @@ import javax.swing.tree.TreeNode;
 
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.SBMLException.Category;
 import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
+import org.sbml.jsbml.util.TreeNodeRemovedEvent;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
@@ -74,7 +76,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 
 	private List<TreeNode> changed;
 	
-	private LinkedList<OpenedFile<Model>> listOfOpenedFiles;
+	private LinkedList<OpenedFile<SBMLDocument>> listOfOpenedFiles;
 
 	protected AbstractProgressBar progress;
 
@@ -93,7 +95,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		this.reader = sbmlReader;
 		// this.reader.addSBaseChangeListener(this);
 		this.writer = sbmlWriter;
-		listOfOpenedFiles = new LinkedList<OpenedFile<Model>>();
+		listOfOpenedFiles = new LinkedList<OpenedFile<SBMLDocument>>();
 		selectedModel = -1;
 		added = new LinkedList<TreeNode>();
 		removed = new LinkedList<TreeNode>();
@@ -108,7 +110,10 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	public SBMLio(SBMLInputConverter reader, SBMLOutputConverter writer,
 			Object model) throws Exception {
 		this(reader, writer);
-		listOfOpenedFiles.addLast(new OpenedFile<Model>(model, reader.convertModel(model)));
+		Model convertedModel = reader.convertModel(model);
+		convertedModel.putUserObject("originalModel", model);
+		SBMLDocument sbmlDoc = convertedModel.getSBMLDocument();
+		listOfOpenedFiles.addLast(new OpenedFile<SBMLDocument>(sbmlDoc));
 	}
 
 	/* (non-Javadoc)
@@ -124,13 +129,17 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public Model convertModel(Object model) throws SBMLException {
 		try {
+			Model convertedModel = reader.convertModel(model);
 			if (model instanceof String) {
-				listOfOpenedFiles.addLast(new OpenedFile<Model>(reader.getOriginalModel(), reader.convertModel(model)));
+				convertedModel.putUserObject("originalModel", reader.getOriginalModel());
 			} else {
-				listOfOpenedFiles.addLast(new OpenedFile<Model>(model, reader.convertModel(model)));
+				convertedModel.putUserObject("originalModel", model);
 			}
+			SBMLDocument sbmlDoc = convertedModel.getSBMLDocument();
+			listOfOpenedFiles.addLast(new OpenedFile<SBMLDocument>(sbmlDoc));
+			
 			selectedModel = listOfOpenedFiles.size() - 1;
-			return listOfOpenedFiles.getLast().getWorkingCopy();
+			return (Model) listOfOpenedFiles.getLast().getDocument().getModel().getUserObject("originalModel");
 		} catch (Exception exc) {
 			// exc.fillInStackTrace();
 			exc.printStackTrace();
@@ -154,7 +163,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * 
 	 * @return
 	 */
-	public LinkedList<OpenedFile<Model>> getListOfOpenedFiles() {
+	public LinkedList<OpenedFile<SBMLDocument>> getListOfOpenedFiles() {
 		return listOfOpenedFiles;
 	}
 	
@@ -162,7 +171,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * 
 	 * @return
 	 */
-	public OpenedFile<Model> getSelectedOpenedFile() {
+	public OpenedFile<SBMLDocument> getSelectedOpenedFile() {
 		return listOfOpenedFiles.get(selectedModel);
 	}
 
@@ -192,7 +201,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @return
 	 */
 	public Model getSelectedModel() {
-		return listOfOpenedFiles.size() > 0 ? listOfOpenedFiles.get(selectedModel).getWorkingCopy() : null;
+		return listOfOpenedFiles.size() > 0 ? listOfOpenedFiles.get(selectedModel).getDocument().getModel() : null;
 	}
 	
 	/**
@@ -215,7 +224,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @return
 	 */
 	public List<SBMLException> getWriteWarnings() {
-		return writer.getWriteWarnings(listOfOpenedFiles.get(selectedModel).getOriginal());
+		return writer.getWriteWarnings(listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject("originalModel"));
 	}
 
 	/* (non-Javadoc)
@@ -233,15 +242,6 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			added.add(sb);
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(javax.swing.tree.TreeNode)
-	 */
-  public void nodeRemoved(TreeNode node) {
-    if (!removed.contains(node)) {
-      removed.add(node);
-    }
-  }
 
 	/* (non-Javadoc)
    * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
@@ -269,8 +269,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public void saveChanges(IOProgressListener listener) throws SBMLException {
 		writer.addIOProgressListener(listener);
-		writer.saveChanges(listOfOpenedFiles.get(selectedModel).getWorkingCopy(), listOfOpenedFiles
-				.get(selectedModel).getOriginal());
+		writer.saveChanges(listOfOpenedFiles.get(selectedModel).getDocument().getModel(), listOfOpenedFiles
+				.get(selectedModel).getDocument().getModel().getUserObject("originalModel"));
 		listener.ioProgressOn(null);
 	}
 
@@ -287,7 +287,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @throws SBMLException
 	 */
 	public boolean saveChanges(Reaction reaction) throws SBMLException {
-		return writer.saveChanges(reaction, listOfOpenedFiles.get(selectedModel).getOriginal());
+		return writer.saveChanges(reaction, listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject("originalModel"));
 	}
 
 	/* (non-Javadoc)
@@ -309,7 +309,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			} else {
 				// search for the currently selected model.
 				for (int i = listOfOpenedFiles.size() - 1; i >= 0; i--) {
-					Model m = listOfOpenedFiles.get(i).getWorkingCopy();
+					Model m = listOfOpenedFiles.get(i).getDocument().getModel();
 					if (m != null) {
 						boolean contains = false;
 						for (int j = 0; j < tabbedPane.getTabCount()
@@ -345,7 +345,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public boolean writeModelToSBML(int model, String filename)
 			throws SBMLException, IOException {
-		return writer.writeSBML(listOfOpenedFiles.get(model).getOriginal(), filename);
+		return writer.writeSBML(listOfOpenedFiles.get(model).getDocument().getModel().getUserObject("originalModel"), filename);
 	}
 
   /* (non-Javadoc)
@@ -374,8 +374,16 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public boolean writeSelectedModelToSBML(String filename)
 			throws SBMLException, IOException {
-		return writer.writeSBML(listOfOpenedFiles.get(selectedModel).getOriginal(), filename,
+		return writer.writeSBML(listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject("originalModel"), filename,
 				SBMLsqueezer.class.getSimpleName(), System.getProperty("app.version"));
+	}
+
+	@Override
+	public void nodeRemoved(TreeNodeRemovedEvent evt) {
+		TreeNode node = evt.getSource();
+	    if (!removed.contains(node)) {
+	        removed.add(node);
+	    }
 	}
 
 }

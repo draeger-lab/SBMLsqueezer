@@ -268,8 +268,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		// TODO
 		// setIconImage(UIManager.getIcon("IMAGE_LEMON"));
 		tabbedPane.addChangeListener(sbmlIO);
-		for (OpenedFile<Model> file : sbmlIO.getListOfOpenedFiles()) {
-			Model m = file.getWorkingCopy();
+		for (OpenedFile<SBMLDocument> file : sbmlIO.getListOfOpenedFiles()) {
+			Model m = file.getDocument().getModel();
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(), prefs
 					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			if (m != null) {
@@ -355,12 +355,12 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	/**
 	 * Adds the given new model into the tabbed pane on the main panel.
 	 * 
-	 * @param file
+	 * @param openedFile
 	 */
-	private void addModel(OpenedFile<Model> file) {
+	private void addModel(OpenedFile<SBMLDocument> openedFile) {
 		SBMLModelSplitPane split;
 		try {
-			split = new SBMLModelSplitPane(file, true);
+			split = new SBMLModelSplitPane(openedFile, true);
 			split.setEquationRenderer(new HotEquationRenderer());
 			split.setProgressBar(StatusBar.addStatusBar(this).getProgressBar());
 			
@@ -368,7 +368,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 
 			setupContextMenu(split, null, null);
 			
-			tabbedPane.add(file.getWorkingCopy().getId(), split);
+			tabbedPane.add(openedFile.getDocument().getModel().getId(), split);
 			tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
 			setEnabled(true, BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 					Command.SQUEEZE, Command.TO_LATEX);
@@ -444,7 +444,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(), prefs
 					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			if (model != null) {
-				addModel(sbmlIO.getListOfOpenedFiles().getLast());
+				OpenedFile<SBMLDocument> openedFile = sbmlIO.getListOfOpenedFiles().getLast();
+				openedFile.setFile(file);
+				addModel(openedFile);
 				String path = file.getAbsolutePath();
 				String oldPath = prefs.get(IOOptions.SBML_IN_FILE);
 				if (!path.equals(oldPath)) {
@@ -755,6 +757,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	@Override
 	public File saveFileAs() {
 		File savedFile = sbmlIO.getSelectedFile();
+		System.out.println(savedFile);
 		
 		if (savedFile != null) {
 			save(savedFile);
