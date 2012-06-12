@@ -103,7 +103,7 @@ class FileReaderThread extends Thread implements Runnable {
 	/**
 	 * 
 	 */
-	private File file;
+	private OpenedFile<SBMLDocument> file;
 	/**
 	 * 
 	 */
@@ -114,7 +114,7 @@ class FileReaderThread extends Thread implements Runnable {
 	 * @param ui
 	 * @param f
 	 */
-	public FileReaderThread(SBMLsqueezerUI ui, File f) {
+	public FileReaderThread(SBMLsqueezerUI ui, OpenedFile<SBMLDocument> f) {
 		super();
 		this.reader = ui;
 		this.file = f;
@@ -437,17 +437,15 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * 
 	 * @param file
 	 */
-	void readModel(File file) {
+	void readModel(OpenedFile<SBMLDocument> file) {
 		try {
 			// TODO: initialize statusBar and hide it again
-			Model model = sbmlIO.convertModel(file.getAbsolutePath());
+			Model model = sbmlIO.convertModel(file);
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(), prefs
 					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			if (model != null) {
-				OpenedFile<SBMLDocument> openedFile = sbmlIO.getListOfOpenedFiles().getLast();
-				openedFile.setFile(file);
-				addModel(openedFile);
-				String path = file.getAbsolutePath();
+				addModel(file);
+				String path = file.getFile().getAbsolutePath();
 				String oldPath = prefs.get(IOOptions.SBML_IN_FILE);
 				if (!path.equals(oldPath)) {
 					prefs.put(IOOptions.SBML_IN_FILE, path);
@@ -516,8 +514,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		
 		File savedFile = null;
 		if (choice == 0) {
-			// TODO: change saveFileAs() to saveFile() if it's done in the BaseFrame
-			savedFile = saveFileAs();
+			savedFile = saveFile();
 		}
 		if (savedFile != null || choice == 1) {
 			change = (tabbedPane.getComponentCount() > 0);
@@ -704,24 +701,30 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public URL getURLOnlineHelp() {
 		return getClass().getResource("../resources/html/help.html");
 	}
-
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.BaseFrame#openFile(java.io.File[])
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.zbit.gui.BaseFrame#openFile(de.zbit.sbml.io.OpenedFile<org.sbml.jsbml.SBMLDocument>[])
 	 */
-	public File[] openFile(File... files) {
+	@SuppressWarnings("unchecked")
+	public OpenedFile<SBMLDocument>[] openFile(OpenedFile<SBMLDocument>... openedFiles) {
 		SBPreferences prefs = SBPreferences.getPreferencesFor(GUIOptions.class);
-		if ((files == null) || (files.length == 0)) {
-			files = GUITools.openFileDialog(this, prefs
+		if ((openedFiles == null) || (openedFiles.length == 0)) {
+			File[] files = GUITools.openFileDialog(this, prefs
 					.get(GUIOptions.OPEN_DIR), false, true,
 					JFileChooser.FILES_ONLY, SBFileFilter
 							.createSBMLFileFilter());
+			openedFiles = new OpenedFile[files.length];
+			for (int i = 0; i < files.length; i++) {
+				openedFiles[i] = new OpenedFile<SBMLDocument>(files[i]);
+			}
 		}
-		if (files != null) {
-			for (File file : files) {
+		if (openedFiles != null) {
+			for (OpenedFile<SBMLDocument> file : openedFiles) {
 				new FileReaderThread(this, file);
 			}
 		}
-		return files;
+		return openedFiles;
 	}
 
 	/**
@@ -752,10 +755,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	
 
 	/* (non-Javadoc)
-	 * @see de.zbit.gui.BaseFrame#saveFileAs()
+	 * @see de.zbit.gui.BaseFrame#saveFile()
 	 */
 	@Override
-	public File saveFileAs() {
+	public File saveFile() {
 		File savedFile = sbmlIO.getSelectedFile();
 		System.out.println(savedFile);
 		
@@ -767,9 +770,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	}
 
 	/* (non-Javadoc)
-	 * @see de.zbit.gui.BaseFrame#saveFile()
+	 * @see de.zbit.gui.BaseFrame#saveFileAs()
 	 */
-	public File saveFile() {
+	public File saveFileAs() {
 		File savedFile = null;
 		SBPreferences prefs = SBPreferences.getPreferencesFor(GUIOptions.class);
 		SBFileFilter filterText = SBFileFilter.createTextFileFilter();
