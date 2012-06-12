@@ -123,23 +123,36 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		reader.addIOProgressListener(listener);
 		writer.addIOProgressListener(listener);
 	}
+	
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 * @throws SBMLException
+	 */
+	public Model convertModel(OpenedFile<SBMLDocument> file) throws SBMLException {
+		Model convertModel = convertModel(file.getFile().getAbsolutePath());
+		Model origModel = (Model) convertModel.getUserObject("originalModel");
+		file.setDocument(convertModel.getSBMLDocument());
+		listOfOpenedFiles.addLast(file);
+		selectedModel = listOfOpenedFiles.size() - 1;
+		return origModel;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLInputConverter#convertModel(java.lang.Object)
 	 */
 	public Model convertModel(Object model) throws SBMLException {
 		try {
+			Object origModel;
 			Model convertedModel = reader.convertModel(model);
 			if (model instanceof String) {
-				convertedModel.putUserObject("originalModel", reader.getOriginalModel());
+				origModel = reader.getOriginalModel();
 			} else {
-				convertedModel.putUserObject("originalModel", model);
+				origModel = model;
 			}
-			SBMLDocument sbmlDoc = convertedModel.getSBMLDocument();
-			listOfOpenedFiles.addLast(new OpenedFile<SBMLDocument>(sbmlDoc));
-			
-			selectedModel = listOfOpenedFiles.size() - 1;
-			return (Model) listOfOpenedFiles.getLast().getDocument().getModel().getUserObject("originalModel");
+			convertedModel.putUserObject("originalModel", origModel);
+			return convertedModel;
 		} catch (Exception exc) {
 			// exc.fillInStackTrace();
 			exc.printStackTrace();
