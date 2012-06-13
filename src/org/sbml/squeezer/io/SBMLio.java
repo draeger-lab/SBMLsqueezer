@@ -123,21 +123,6 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		reader.addIOProgressListener(listener);
 		writer.addIOProgressListener(listener);
 	}
-	
-	/**
-	 * 
-	 * @param file
-	 * @return
-	 * @throws SBMLException
-	 */
-	public Model convertModel(OpenedFile<SBMLDocument> file) throws SBMLException {
-		Model convertModel = convertModel(file.getFile().getAbsolutePath());
-		Model origModel = (Model) convertModel.getUserObject("originalModel");
-		file.setDocument(convertModel.getSBMLDocument());
-		listOfOpenedFiles.addLast(file);
-		selectedModel = listOfOpenedFiles.size() - 1;
-		return origModel;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.sbml.jsbml.SBMLInputConverter#convertModel(java.lang.Object)
@@ -185,7 +170,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @return
 	 */
 	public OpenedFile<SBMLDocument> getSelectedOpenedFile() {
-		return listOfOpenedFiles.get(selectedModel);
+		return listOfOpenedFiles.size() > 0 ? listOfOpenedFiles.get(selectedModel) : null;
 	}
 
 	/* (non-Javadoc)
