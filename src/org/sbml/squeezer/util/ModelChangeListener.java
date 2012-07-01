@@ -66,7 +66,6 @@ public class ModelChangeListener implements TreeNodeChangeListener {
 		logger.log(Level.FINE, "[CHG] " + event.toString());    
 	}
 
-	@Override
 	public void nodeRemoved(TreeNodeRemovedEvent evt) {
 		TreeNode node = evt.getSource();
 
