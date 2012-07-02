@@ -43,6 +43,7 @@ import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -190,8 +191,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	}
 
 	static {
-		ImageTools.initImages(LaTeXExportDialog.class.getResource("img"));
-		ImageTools.initImages(SBMLsqueezer.class.getResource("resources/img"));
+		LaTeXExportDialog.initImages();
+		SBMLsqueezer.initImages();
+		
 	}
 
 	/**
