@@ -28,6 +28,7 @@ import java.awt.Component;
 import java.util.ResourceBundle;
 
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
@@ -116,7 +117,7 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 				MESSAGES.getString("SBMLSQUEEZER") 
 					+ " " + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
 						System.getProperty("app.version")), 
-						KineticLawSelectionDialog.class.getResource("../resources/html/help.html"));
+						SBMLsqueezer.class.getResource("resources/html/help.html"));
 		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
 		helpBrowser.setSize(640, 640);
 		

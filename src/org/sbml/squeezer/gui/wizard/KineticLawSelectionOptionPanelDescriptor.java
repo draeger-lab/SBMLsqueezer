@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
 
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.util.Bundles;
 
@@ -94,7 +95,7 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 				MESSAGES.getString("SBMLSQUEEZER") 
 					+ " " + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
 						System.getProperty("app.version")), 
-						KineticLawSelectionDialog.class.getResource("../resources/html/help.html"));
+						SBMLsqueezer.class.getResource("resources/html/help.html"));
 		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
 		helpBrowser.setSize(640, 640);
 		
