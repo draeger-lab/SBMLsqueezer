@@ -130,10 +130,10 @@
 			</fileset>
 		</copy>
 		
-		<copy todir="${build.src}" overwrite="yes">
+		<copy todir="${build.dest}" overwrite="yes">
 			<fileset 
   	  	            dir="${resource.dir}"
-  	  	        	includes="org/sbml/squeezer/resources/html/**">
+  	  	        	includes="**/html/**">
 			</fileset>
 		</copy>
 
