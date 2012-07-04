@@ -231,13 +231,7 @@
 		</copy>
 		<jar jarfile="${build.dir}/${name}-${version}-with-dependencies.jar"
          basedir="${build.dest}"  manifest="${build.dest}/META-INF/MANIFEST.MF">
-			<!-- <zipgroupfileset dir="${jars.dir}" includes="*.jar" /> -->
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/HotEqn.jar" />
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/jsbml-1.0-a1-with-dependencies.jar" />
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/jsbml-libSBMLio-0.8.15.jar" />
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/jsbmlbridge.jar" />
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/SBML2LaTeX-0.9.9_slim.jar" />
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/SysBio-1.4-with-dependencies.jar" />
+			<zipgroupfileset dir="${jars.dir}" includes="*.jar" />
 		</jar>
 	</target>
 
