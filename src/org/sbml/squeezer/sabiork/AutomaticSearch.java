@@ -1,6 +1,6 @@
 /*
- * $$Id${file_name} ${time} ${user} $$
- * $$URL${file_name} $$
+ * $Id: AutomaticSearch.java 958 2012-08-03 13:28:57Z keller$
+ * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/sabiork/AutomaticSearch.java$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -58,7 +58,7 @@ import de.zbit.io.filefilter.SBFileFilter;
 
 /**
  * @author Matthias Rall, Roland Keller
- * @version $$Rev$$
+ * @version $Rev$
  * ${tags}
  */
 public class AutomaticSearch {
