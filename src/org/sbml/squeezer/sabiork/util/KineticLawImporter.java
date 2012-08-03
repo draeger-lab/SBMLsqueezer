@@ -1,5 +1,5 @@
 /*
- * $$d: KineticLawImporter.java 959 2012-08-03 13:49:58Z keller$
+ * $Id: KineticLawImporter.java 959 2012-08-03 13:49:58Z keller$
  * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/sabiork/util/KineticLawImporter.java$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
