@@ -1,6 +1,6 @@
 /*
- * $$Id:  ${file_name} ${time} ${user} $$
- * $$URL: ${file_name} $$
+ * $$Id${file_name} ${time} ${user} $$
+ * $$URL${file_name} $$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).

@@ -1,6 +1,6 @@
 /*
- * $$Id${file_name} ${time} ${user} $$
- * $$URL${file_name} $$
+ * $Id: WebServiceConnectException.java 958 2012-08-03 13:28:57Z keller$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -26,7 +26,7 @@ package org.sbml.squeezer.sabiork.util;
 
 /**
  * @author Matthias Rall
- * @version $$Rev$$
+ * @version $Rev$
  * ${tags}
  */
 public class WebServiceConnectException extends Exception {
