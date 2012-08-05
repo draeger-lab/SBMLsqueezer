@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 

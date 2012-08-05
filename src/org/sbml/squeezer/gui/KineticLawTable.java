@@ -86,7 +86,10 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	 */
 	private static final long serialVersionUID = -1575566223506382693L;
 
-	private boolean editing, reversibility;
+	private boolean editing;
+
+	@SuppressWarnings("unused")
+	private boolean reversibility;
 
 	private KineticLawGenerator klg;
 
