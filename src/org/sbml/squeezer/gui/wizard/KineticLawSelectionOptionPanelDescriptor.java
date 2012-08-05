@@ -30,7 +30,6 @@ import java.util.ResourceBundle;
 import javax.swing.JDialog;
 
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.gui.JHelpBrowser;

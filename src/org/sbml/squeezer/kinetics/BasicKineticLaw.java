@@ -62,6 +62,7 @@ public abstract class BasicKineticLaw extends KineticLaw {
 	/**
 	 * A {@link Logger} for this class.
 	 */
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(BasicKineticLaw.class.getSimpleName());
 
 	/**

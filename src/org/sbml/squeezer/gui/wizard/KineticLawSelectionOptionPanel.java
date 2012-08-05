@@ -42,10 +42,8 @@ import javax.swing.UIManager;
 
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.gui.GUITools;
-import org.sbml.squeezer.gui.KineticLawSelectionDialog;
 import org.sbml.squeezer.util.Bundles;
 
-import de.zbit.gui.JHelpBrowser;
 import de.zbit.gui.prefs.PreferencesDialog;
 import de.zbit.util.ResourceManager;
 

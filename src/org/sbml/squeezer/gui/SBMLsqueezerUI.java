@@ -43,7 +43,6 @@ import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -78,7 +77,6 @@ import de.zbit.AppConf;
 import de.zbit.gui.BaseFrame;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
-import de.zbit.gui.ImageTools;
 import de.zbit.gui.JTabbedPaneCloseListener;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent;

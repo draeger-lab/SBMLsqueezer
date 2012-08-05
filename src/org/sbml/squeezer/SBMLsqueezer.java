@@ -68,7 +68,6 @@ import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
-import org.sbml.tolatex.gui.LaTeXExportDialog;
 import org.sbml.tolatex.io.LaTeXOptionsIO;
 
 import de.zbit.AppConf;
