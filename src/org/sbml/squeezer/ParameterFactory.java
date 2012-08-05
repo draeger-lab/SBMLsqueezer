@@ -371,20 +371,52 @@ public class ParameterFactory {
 		}
 		if (!keq.isSetUnits()) {
 			double x = 0d;
+			UnitDefinition ud = null;
 			for (SpeciesReference specRef : r.getListOfReactants()) {
+				Species spec = specRef.getSpeciesInstance();
+				if (spec != null) {
+					UnitDefinition specUd = spec.getDerivedUnitDefinition();
+					if (specUd != null) {
+						if (specRef.getStoichiometry() != 1.0d) {
+							specUd = specUd.clone();
+						}
+						specUd.raiseByThePowerOf(specRef.getStoichiometry());
+						
+						if (ud == null) {
+							ud = specUd;
+						} else {
+							ud.multiplyWith(specUd);
+						}
+					}
+				}
 				x += specRef.getStoichiometry();
 			}
 			if (r.getReversible()) {
 				for (SpeciesReference specRef : r.getListOfProducts()) {
+//					if (ud != null) {
+//						Species spec = specRef.getSpeciesInstance();
+//						if (spec != null) {
+//							UnitDefinition specUd = spec.getDerivedUnitDefinition();
+//							if (specUd != null) {
+//								if (specRef.getStoichiometry() != 1.0d) {
+//									specUd = specUd.clone();
+//								}
+//								specUd.raiseByThePowerOf(specRef.getStoichiometry());
+//								ud.divideBy(specUd);
+//							}
+//						}
+//					}
 					x -= specRef.getStoichiometry();
 				}
 			}
 			if (x == 0d) {
 				keq.setUnits(Unit.Kind.DIMENSIONLESS);
 			} else {
-				keq.setUnits(unitFactory.unitSubstancePerSize(model
-						.getSubstanceUnitsInstance(), model
-						.getVolumeUnitsInstance(), x));
+				keq.setUnits((ud != null) ?
+						ud.simplify() :
+						unitFactory.unitSubstancePerSize(
+								model.getSubstanceUnitsInstance(), 
+								model.getVolumeUnitsInstance(), x));
 			}
 		}
 		return keq;
