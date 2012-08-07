@@ -113,6 +113,26 @@ public class BiBiKineticsTest extends KineticsTest {
 	}
 	
 	/**
+	 * Tests the {@link PowerLawModularRateLaw} for the reaction A + B -> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPowerLawModularRateLawHal() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, false, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "");
+	}
+	
+	/**
+	 * Tests the {@link PowerLawModularRateLaw} for the reaction A + B -> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPowerLawModularRateLawWeg() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, false, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "(s1*c1)^hco_r1*(s2*c1)^hco_r1/e^(scp_s1*scp_s2*scp_p1*scp_p2*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1)^(0.5)");
+	}
+	
+	/**
 	 * Tests the {@link SimultaneousBindingModularRateLaw} for the reaction A + B -> C + D
 	 * @throws Throwable
 	 */
@@ -165,6 +185,26 @@ public class BiBiKineticsTest extends KineticsTest {
 	public void testPowerLawModularRateLawRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1*(p2*c1/kmc_r1_p2)^hco_r1");
+	}
+	
+	/**
+	 * Tests the {@link PowerLawModularRateLaw} for the reaction A + B <-> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPowerLawModularRateLawHalRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "vmag_r1*(keq_r1^hco_r1)^(0.5)*(s1*c1)^hco_r1*(s2*c1)^hco_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1*kmc_r1_p2^hco_r1)^(0.5)-vmag_r1*1/(keq_r1^hco_r1)^(0.5)*(p1*c1)^hco_r1*(p2*c1)^hco_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1*kmc_r1_p2^hco_r1)^(0.5)");
+	}
+	
+	/**
+	 * Tests the {@link PowerLawModularRateLaw} for the reaction A + B <-> C + D
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPowerLawModularRateLawWegRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "(s1*c1)^hco_r1*(s2*c1)^hco_r1/e^(scp_s1*scp_s2*scp_p1*scp_p2*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1*kmc_r1_p2^hco_r1)^(0.5)-(p1*c1)^hco_r1*(p2*c1)^hco_r1*e^(scp_s1*scp_s2*scp_p1*scp_p2*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1*kmc_r1_p2^hco_r1)^(0.5)");
 	}
 	
 	/**
