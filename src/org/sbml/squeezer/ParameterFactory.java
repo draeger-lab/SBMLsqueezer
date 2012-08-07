@@ -1,5 +1,4 @@
 /*
- * $Id$
  * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
@@ -393,19 +392,19 @@ public class ParameterFactory {
 			}
 			if (r.getReversible()) {
 				for (SpeciesReference specRef : r.getListOfProducts()) {
-//					if (ud != null) {
-//						Species spec = specRef.getSpeciesInstance();
-//						if (spec != null) {
-//							UnitDefinition specUd = spec.getDerivedUnitDefinition();
-//							if (specUd != null) {
-//								if (specRef.getStoichiometry() != 1.0d) {
-//									specUd = specUd.clone();
-//								}
-//								specUd.raiseByThePowerOf(specRef.getStoichiometry());
-//								ud.divideBy(specUd);
-//							}
-//						}
-//					}
+					if (ud != null) {
+						Species spec = specRef.getSpeciesInstance();
+						if (spec != null) {
+							UnitDefinition specUd = spec.getDerivedUnitDefinition();
+							if (specUd != null) {
+								if (specRef.getStoichiometry() != 1.0d) {
+									specUd = specUd.clone();
+								}
+								specUd.raiseByThePowerOf(specRef.getStoichiometry());
+								ud.divideBy(specUd);
+							}
+						}
+					}
 					x -= specRef.getStoichiometry();
 				}
 			}

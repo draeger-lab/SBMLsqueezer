@@ -171,6 +171,26 @@ public class UniUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
+	 * Tests the {@link PowerLawModularRateLaw} for A -> B
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPMRLHal() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, false, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "");
+	}
+	
+	/**
+	 * Tests the {@link PowerLawModularRateLaw} for A -> B
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPMRLWeg() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, false, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "(s1*c1)^hco_r1/e^(scp_s1*scp_p1*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1)^(0.5)");
+	}
+	
+	/**
 	 * Tests the {@link SimultaneousBindingModularRateLaw} for A -> B
 	 * @throws Throwable
 	 */
@@ -262,6 +282,26 @@ public class UniUniKineticsTest extends KineticsTest {
 	public void testPMRLRev() throws Throwable{
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.cat, UnitConsistencyType.amount, 1d);
 		test(r1, kl, "vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1");
+	}
+	
+	/**
+	 * Tests the {@link PowerLawModularRateLaw} for A <-> B
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPMRLHalRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "vmag_r1*(keq_r1^hco_r1)^(0.5)*(s1*c1)^hco_r1/(kmc_r1_s1^hco_r1*kmc_r1_p1^hco_r1)^(0.5)-vmag_r1*1/(keq_r1^hco_r1)^(0.5)*(p1*c1)^hco_r1/(kmc_r1_s1^hco_r1*kmc_r1_p1^hco_r1)^(0.5)");
+	}
+	
+	/**
+	 * Tests the {@link PowerLawModularRateLaw} for A <-> B
+	 * @throws Throwable
+	 */
+	@Test
+	public void testPMRLWegRev() throws Throwable{
+		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "(s1*c1)^hco_r1/e^(scp_s1*scp_p1*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_p1^hco_r1)^(0.5)-(p1*c1)^hco_r1*e^(scp_s1*scp_p1*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_p1^hco_r1)^(0.5)");
 	}
 	
 	/**
