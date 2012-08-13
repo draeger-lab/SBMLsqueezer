@@ -376,6 +376,10 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 				SBMLsqueezer.class.getSimpleName(), System.getProperty("app.version"));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.jsbml.util.TreeNodeChangeListener#nodeRemoved(org.sbml.jsbml.util.TreeNodeRemovedEvent)
+	 */
+	//@Override
 	public void nodeRemoved(TreeNodeRemovedEvent evt) {
 		TreeNode node = evt.getSource();
 	    if (!removed.contains(node)) {

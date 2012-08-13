@@ -40,6 +40,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
@@ -82,11 +83,11 @@ import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.actioncommand.ActionCommand;
-import de.zbit.sbml.io.OpenedFile;
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
 import de.zbit.sbml.gui.SBMLTree;
+import de.zbit.sbml.io.OpenedFile;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.KeyProvider;
@@ -151,6 +152,7 @@ class FileReaderThread extends Thread implements Runnable {
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		ChangeListener, JTabbedPaneCloseListener, PropertyChangeListener {
 	
+	private static final transient Logger logger = Logger.getLogger(SBMLsqueezerUI.class.getName());
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
@@ -760,7 +762,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	@Override
 	public File saveFile() {
 		File savedFile = sbmlIO.getSelectedFile();
-		System.out.println(savedFile);
+		logger.info(savedFile.getAbsolutePath());
 		
 		if (savedFile != null) {
 			save(savedFile);
