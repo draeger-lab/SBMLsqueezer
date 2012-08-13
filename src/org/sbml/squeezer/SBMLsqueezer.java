@@ -507,6 +507,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    */
   public SBMLsqueezer(SBMLInputConverter sbmlReader,
       SBMLOutputConverter sbmlWriter) {
+  	this();
     sbmlIo = new SBMLio(sbmlReader, sbmlWriter);
     // sbmlIo.addIOProgressListener(this);
   }

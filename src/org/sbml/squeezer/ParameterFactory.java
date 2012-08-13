@@ -369,17 +369,16 @@ public class ParameterFactory {
 			keq.setName(MessageFormat.format(MESSAGES.getString("EQUILIBRIUM_CONSTANT_OF_REACTION"), SBMLtools.getName(r)));
 		}
 		if (!keq.isSetUnits()) {
-			double x = 0d;
 			UnitDefinition ud = null;
 			for (SpeciesReference specRef : r.getListOfReactants()) {
 				Species spec = specRef.getSpeciesInstance();
 				if (spec != null) {
 					UnitDefinition specUd = spec.getDerivedUnitDefinition();
 					if (specUd != null) {
-//						if (specRef.getStoichiometry() != 1.0d) {
-							specUd = specUd.clone();
-//						}
-						specUd.raiseByThePowerOf(specRef.getStoichiometry());
+						specUd = specUd.clone();
+						if (specRef.isSetStoichiometry()) {
+							specUd.raiseByThePowerOf(specRef.getStoichiometry());
+						}
 						
 						if (ud == null) {
 							ud = specUd;
@@ -388,34 +387,32 @@ public class ParameterFactory {
 						}
 					}
 				}
-				x += specRef.getStoichiometry();
 			}
 			if (r.getReversible()) {
 				for (SpeciesReference specRef : r.getListOfProducts()) {
-					if (ud != null) {
-						Species spec = specRef.getSpeciesInstance();
-						if (spec != null) {
-							UnitDefinition specUd = spec.getDerivedUnitDefinition();
-							if (specUd != null) {
-//								if (specRef.getStoichiometry() != 1.0d) {
-									specUd = specUd.clone();
-//								}
+					Species spec = specRef.getSpeciesInstance();
+					if (spec != null) {
+						UnitDefinition specUd = spec.getDerivedUnitDefinition();
+						if (specUd != null) {
+							specUd = specUd.clone();
+							if (specRef.isSetStoichiometry()) {
 								specUd.raiseByThePowerOf(specRef.getStoichiometry());
+							}
+							if (ud == null) {
+								ud = specUd;
+							} else {
 								ud.divideBy(specUd);
 							}
 						}
 					}
-					x -= specRef.getStoichiometry();
 				}
 			}
-			if (x == 0d) {
+			ud = ud.simplify();
+			if ((ud.getUnitCount() == 1) && (ud.getUnit(0).isDimensionless())) {
 				keq.setUnits(Unit.Kind.DIMENSIONLESS);
 			} else {
-				keq.setUnits((ud!=null) ?
-						ud.simplify() :
-						unitFactory.unitSubstancePerSize(
-								model.getSubstanceUnitsInstance(), 
-								model.getVolumeUnitsInstance(), x));
+				UnitFactory.checkUnitDefinitions(ud, model);
+				keq.setUnits(ud);
 			}
 		}
 		return keq;
