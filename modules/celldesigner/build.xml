@@ -224,10 +224,7 @@
 		</copy>
 		<jar jarfile="${build.dir}/${name}-${version}-with-dependencies.jar"
          basedir="${build.dest}"  manifest="${build.dest}/META-INF/MANIFEST.MF">
-			<!-- <zipgroupfileset dir="${jars.dir}" includes="*.jar" /> -->
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/celldesigner-4.2.jar" />
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/jsbml-celldesigner-1.0.jar" />
-			<zipfileset excludes="META-INF/**/*" src="${jars.dir}/SBMLsqueezer-1.4-with-dependencies.jar" />
+			<zipgroupfileset dir="${jars.dir}" includes="*.jar" />
 		</jar>
 	</target>
 
