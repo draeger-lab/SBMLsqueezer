@@ -376,9 +376,9 @@ public class ParameterFactory {
 				if (spec != null) {
 					UnitDefinition specUd = spec.getDerivedUnitDefinition();
 					if (specUd != null) {
-						if (specRef.getStoichiometry() != 1.0d) {
+//						if (specRef.getStoichiometry() != 1.0d) {
 							specUd = specUd.clone();
-						}
+//						}
 						specUd.raiseByThePowerOf(specRef.getStoichiometry());
 						
 						if (ud == null) {
@@ -397,9 +397,9 @@ public class ParameterFactory {
 						if (spec != null) {
 							UnitDefinition specUd = spec.getDerivedUnitDefinition();
 							if (specUd != null) {
-								if (specRef.getStoichiometry() != 1.0d) {
+//								if (specRef.getStoichiometry() != 1.0d) {
 									specUd = specUd.clone();
-								}
+//								}
 								specUd.raiseByThePowerOf(specRef.getStoichiometry());
 								ud.divideBy(specUd);
 							}
@@ -411,7 +411,7 @@ public class ParameterFactory {
 			if (x == 0d) {
 				keq.setUnits(Unit.Kind.DIMENSIONLESS);
 			} else {
-				keq.setUnits((ud != null) ?
+				keq.setUnits((ud!=null) ?
 						ud.simplify() :
 						unitFactory.unitSubstancePerSize(
 								model.getSubstanceUnitsInstance(), 
