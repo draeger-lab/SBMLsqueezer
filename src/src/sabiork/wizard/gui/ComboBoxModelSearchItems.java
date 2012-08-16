@@ -1,0 +1,120 @@
+package sabiork.wizard.gui;
+
+import sabiork.SABIORK;
+import sabiork.wizard.model.WizardProperties;
+
+/**
+ * A class that provides the model of the combo box for selecting a search item
+ * in the manual search.
+ * 
+ * @author Matthias Rall
+ * 
+ */
+@SuppressWarnings("serial")
+public class ComboBoxModelSearchItems extends ComboBoxModelCaptions {
+
+	public enum SearchItem {
+
+		QUERY_EXPRESSION(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_QUERY_EXPRESSION"));
+
+		private final String name;
+
+		private SearchItem(String name) {
+			this.name = name;
+		}
+
+		public String toString() {
+			return name;
+		}
+
+	}
+
+	public ComboBoxModelSearchItems() {
+		addCaption(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_ENTRY"));
+		addElement(SABIORK.QueryField.ENTRY_ID);
+
+		addCaption(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_REACTION/PATHWAY"));
+		addElement(SABIORK.QueryField.PATHWAY);
+		addElement(SABIORK.QueryField.KEGG_REACTION_ID);
+		addElement(SABIORK.QueryField.SABIO_REACTION_ID);
+
+		addCaption(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_COMPOUND"));
+		addElement(SABIORK.QueryField.ANY_ROLE);
+		addElement(SABIORK.QueryField.SUBSTRATE);
+		addElement(SABIORK.QueryField.PRODUCT);
+		addElement(SABIORK.QueryField.INHIBITOR);
+		addElement(SABIORK.QueryField.CATALYST);
+		addElement(SABIORK.QueryField.COFACTOR);
+		addElement(SABIORK.QueryField.ACTIVATOR);
+		addElement(SABIORK.QueryField.OTHER_MODIFIER);
+		addElement(SABIORK.QueryField.PUBCHEM_ID);
+		addElement(SABIORK.QueryField.KEGG_ID);
+		addElement(SABIORK.QueryField.CHEBI_ID);
+		addElement(SABIORK.QueryField.SABIO_COMPOUND_ID);
+
+		addCaption(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_ENZYME"));
+		addElement(SABIORK.QueryField.ENZYMENAME);
+		addElement(SABIORK.QueryField.EC_NUMBER);
+		addElement(SABIORK.QueryField.UNIPROT_ID);
+
+		addCaption(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_BIOLOGICAL_SOURCE"));
+		addElement(SABIORK.QueryField.TISSUE);
+		addElement(SABIORK.QueryField.ORGANISM);
+		addElement(SABIORK.QueryField.CELLULAR_LOCATION);
+
+		addCaption(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_KINETIC_DATA"));
+		addElement(SABIORK.QueryField.PARAMETERTYPE);
+		addElement(SABIORK.QueryField.KINETIC_MECHANISM_TYPE);
+		addElement(SABIORK.QueryField.ASSOCIATED_SPECIES);
+
+		addCaption(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_PUBLICATION"));
+		addElement(SABIORK.QueryField.TITLE);
+		addElement(SABIORK.QueryField.AUTHOR);
+		addElement(SABIORK.QueryField.YEAR);
+		addElement(SABIORK.QueryField.PUBMED_ID);
+
+		addCaption(WizardProperties
+				.getText("COMBO_BOX_MODEL_SEARCH_ITEMS_TEXT_ADVANCED_SEARCH"));
+		addElement(SearchItem.QUERY_EXPRESSION);
+
+		setSelectedItem(SABIORK.QueryField.ENTRY_ID);
+	}
+
+	/**
+	 * Returns the currently selected SABIO-RK query field.
+	 * 
+	 * @return
+	 */
+	public SABIORK.QueryField getSelectedQueryField() {
+		return ((SABIORK.QueryField) getSelectedItem());
+	}
+
+	/**
+	 * Returns <code>true</code> if the currently selected search item is a
+	 * SABIO-RK query field; <code>false</code> otherwise.
+	 * 
+	 * @return
+	 */
+	public boolean isQueryFieldSelected() {
+		return (getSelectedItem() instanceof SABIORK.QueryField);
+	}
+
+	/**
+	 * Returns <code>true</code> if the currently selected search item is a
+	 * query expression; <code>false</code> otherwise.
+	 * 
+	 * @return
+	 */
+	public boolean isQueryExpressionSelected() {
+		return (getSelectedItem() instanceof SearchItem && getSelectedItem() == SearchItem.QUERY_EXPRESSION);
+	}
+
+}
