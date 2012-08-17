@@ -35,7 +35,7 @@ import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard;
  * SABIO-RK database.
  * 
  * @author Matthias Rall
- * @version $$Rev$$
+ * @version $Rev$
  * ${tags}
  */
 public class SABIORKWizard {
