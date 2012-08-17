@@ -1,6 +1,6 @@
 /*
- * $$Id${file_name} ${time} ${user} $$
- * $$URL${file_name} $$
+ * $Id: ConsoleWizard.java 971 2012-08-17 13:36:54Z keller$
+ * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/sabiork/wizard/console/ConsoleWizard.java$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -46,7 +46,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
  * The console version of the SABIO-RK wizard.
  * 
  * @author Matthias Rall
- * @version $$Rev$$
+ * @version $Rev$
  * ${tags}
  */
 public class ConsoleWizard {

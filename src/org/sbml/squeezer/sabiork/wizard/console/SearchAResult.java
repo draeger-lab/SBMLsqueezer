@@ -1,6 +1,6 @@
 /*
- * $$Id${file_name} ${time} ${user} $$
- * $$URL${file_name} $$
+ * $Id$
+ * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/sabiork/wizard/console/SearchAResult.java$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -31,7 +31,7 @@ import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
  * A class for representing a result of the automatic search.
  * 
  * @author Matthias Rall
- * @version $$Rev$$
+ * @version $Rev$
  * ${tags}
  */
 public class SearchAResult {
