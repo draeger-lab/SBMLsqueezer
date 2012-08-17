@@ -1,6 +1,6 @@
 /*
- * $Id: AutomaticSearch.java 958 2012-08-03 13:28:57Z keller$
- * $URL: https://rarepos.cs.uni-tuebingen.de/svn-path/SBMLsqueezer/trunk/src/org/sbml/squeezer/sabiork/AutomaticSearch.java$
+ * $$Id${file_name} ${time} ${user} $$
+ * $$URL${file_name} $$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -49,8 +49,8 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.CVTerm.Qualifier;
 import org.sbml.jsbml.util.filters.CVTermFilter;
 import org.sbml.jsbml.xml.parsers.SBMLCoreParser;
-import org.sbml.squeezer.sabiork.util.KineticLawImporter;
-import org.sbml.squeezer.sabiork.util.SABIORK;
+import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
+import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 
@@ -92,12 +92,7 @@ public class AutomaticSearch {
 	public static void main(String[] args) throws XMLStreamException,
 		IOException, WebServiceConnectException, WebServiceResponseException,
 		ParseException {
-		if(args.length>2) {
-			automaticSearch(args[0], args[1], args[2]);
-		}
-		else {
-			automaticSearch(args[0], args[1], null);
-		}
+		automaticSearch(args[0], args[1], args[2]);
 	}
 	
 	/**
@@ -111,7 +106,7 @@ public class AutomaticSearch {
 	 * @throws WebServiceResponseException
 	 * @throws ParseException
 	 */
-	public static void automaticSearch(String rootFolder, String taxonomyFile, String outputResultFile)
+	public static void automaticSearch(String rootFolder, String taxonomyFile, String outputFolder)
 		throws XMLStreamException, IOException, WebServiceConnectException,
 		WebServiceResponseException, ParseException {
 		LogManager.getLogger(SBMLCoreParser.class).setLevel(Level.OFF);
@@ -121,13 +116,14 @@ public class AutomaticSearch {
 		int matchingNotPossible = 0;
 		int noKineticLawFound = 0;
 
-		BufferedWriter writer = new BufferedWriter(new FileWriter(outputResultFile));
+		
 		
 		File rootFile = new File(rootFolder);
-		String parent = rootFile.getParent().replace("\\", "/");
-		String sabioRootFolder = parent + "/sabio/";
+		File parent = rootFile.getParentFile();
+		String parentFolder = parent.getAbsolutePath().replace("\\", "/");
+		String sabioRootFolder = outputFolder.replace("\\", "/");
 		(new File(sabioRootFolder)).mkdir();
-		
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolder+"/result.txt",true));
 		LinkedList<File> directoryList = new LinkedList<File>();
 		
 		File[] files = rootFile.listFiles();
@@ -159,9 +155,9 @@ public class AutomaticSearch {
 		SBFileFilter sbmlFilter = SBFileFilter.createSBMLFileFilter();
 		
 		for (File dir : directoryList) {
-			String outputFolder = dir.getAbsolutePath().replace("\\", "/")
-					.replace(rootFolder, sabioRootFolder);
-			(new File(outputFolder)).mkdir();
+			String folder = dir.getAbsolutePath().replace("\\", "/")
+					.replace(parentFolder, sabioRootFolder);
+			(new File(folder)).mkdir();
 			int matched_Organism = 0;
 			int noReactionID_Organism = 0;
 			int matchingNotPossible_Organism = 0;
@@ -172,8 +168,15 @@ public class AutomaticSearch {
 					/*
 					 * SBML-Input
 					 */
-					SBMLDocument sbmlDocument = SBMLReader.read(file);
-					
+					SBMLDocument sbmlDocument = null;
+					try{
+						sbmlDocument = SBMLReader.read(file);
+					}
+					catch(Exception e) {
+						e.printStackTrace();
+						System.out.println(file.getAbsolutePath());
+						continue;
+					}
 					CVTermFilter filter = new CVTermFilter(Qualifier.BQB_OCCURS_IN,
 						"urn:miriam:taxonomy");
 					
@@ -208,13 +211,33 @@ public class AutomaticSearch {
 					//constraints.append(" AND " + SABIORK.QueryField.PH_VALUE_RANGE + ":[0.0 TO 14.0]");
 					constraints.append(" AND " + SABIORK.QueryField.HAS_KINETIC_DATA
 							+ ":true");
-					
+					String alternativeOrganism = null;
 					for (Reaction reaction : sbmlDocument.getModel().getListOfReactions()) {
 						String keggReactionID = getKeggReactionID(reaction);
 						if (!keggReactionID.isEmpty()) {
 							String query = SABIORK.QueryField.KEGG_REACTION_ID + ":"
 									+ keggReactionID + constraints;
 							List<KineticLaw> kineticLaws = SABIORK.getKineticLaws(query);
+							
+							if((kineticLaws.size() == 0) && (organism != null)) {
+								if(alternativeOrganism == null) {
+									String[] splits = organism.split(" "); 
+									if(splits.length > 2) {
+										constraints = new StringBuilder();
+										alternativeOrganism = splits[0].concat(" " + splits[1]);
+										constraints.append(" AND " + SABIORK.QueryField.ORGANISM + ":\""
+											+ alternativeOrganism + "\"");
+										constraints.append(" AND " + SABIORK.QueryField.HAS_KINETIC_DATA
+											+ ":true");
+									}
+								}
+								if(alternativeOrganism != null) {
+									query = SABIORK.QueryField.KEGG_REACTION_ID + ":"
+										+ keggReactionID + constraints;
+									kineticLaws = SABIORK.getKineticLaws(query);
+								}
+							}
+							
 							boolean imported = false;
 							for (KineticLaw kineticLaw : kineticLaws) {
 								KineticLawImporter importer = new KineticLawImporter(
@@ -247,47 +270,40 @@ public class AutomaticSearch {
 					 * SBML-Output
 					 */
 					String outputFile = file.getAbsolutePath().replace("\\", "/")
-							.replace(rootFolder, sabioRootFolder);
+							.replace(parentFolder, sabioRootFolder);
 					SBMLWriter.write(sbmlDocument, new File(outputFile), ' ', (short) 4);
 				}
 			}
-			if(outputResultFile != null) {
-				writer.append("Organism: " + organism);
-				writer.newLine();
-				writer.append("Matched: " + matched_Organism);
-				writer.newLine();
-				writer.append("Law not found " + noKineticLawFound_Organism);
-				writer.newLine();
-				writer.append("Matching not possible "
-						+ matchingNotPossible_Organism);
-				writer.newLine();
-				writer.append("No KEGG id given " + noReactionID_Organism);
-				writer.newLine();
-			}
+			writer.write(organism+"\t" + matched_Organism + "\t" + noKineticLawFound_Organism + "\t" + + matchingNotPossible_Organism + "\t" + noReactionID_Organism);
+			writer.newLine();
+			writer.newLine();
+			
 			System.out.println("Organism: " + organism);
+			if(matched_Organism == 0) {
+				System.out.println("No matches!");
+			}
 			System.out.println("Matched: " + matched_Organism);
-			System.out.println("Law not found " + noKineticLawFound_Organism);
-			System.out.println("Matching not possible "
+			System.out.println("Law not found: " + noKineticLawFound_Organism);
+			System.out.println("Matching not possible: "
 					+ matchingNotPossible_Organism);
-			System.out.println("No KEGG id given " + noReactionID_Organism);
+			System.out.println("No KEGG id given: " + noReactionID_Organism);
 		}
 		
-		if(outputResultFile != null) {
-			writer.append("Matched: " + matched);
-			writer.newLine();
-			writer.append("Law not found " + noKineticLawFound);
-			writer.newLine();
-			writer.append("Matching not possible "
-					+ matchingNotPossible);
-			writer.newLine();
-			writer.append("No KEGG id given " + noReactionID);
-			writer.newLine();
+//		writer.append("Matched: " + matched);
+//		writer.newLine();
+//		writer.append("Law not found " + noKineticLawFound);
+//		writer.newLine();
+//		writer.append("Matching not possible "
+//					+ matchingNotPossible);
+//		writer.newLine();
+//		writer.append("No KEGG id given " + noReactionID);
+//		writer.newLine();
 			writer.close();
-		}
-		System.out.println("Matched: " + matched);
-		System.out.println("Law not found " + noKineticLawFound);
-		System.out.println("Matching not possible " + matchingNotPossible);
-		System.out.println("No KEGG id given " + noReactionID);
+//		
+//		System.out.println("Matched: " + matched);
+//		System.out.println("Law not found " + noKineticLawFound);
+//		System.out.println("Matching not possible " + matchingNotPossible);
+//		System.out.println("No KEGG id given " + noReactionID);
 		
 	}
 	
