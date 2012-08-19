@@ -34,6 +34,7 @@ import jp.sbi.celldesigner.plugin.PluginMenuItem;
 import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSBase;
 
+import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.cdplugin.PluginSBMLReader;
@@ -260,7 +261,7 @@ public class Plugin extends CellDesignerPlugin {
 	@SuppressWarnings("unchecked")
 	public void startSBMLsqueezerPlugin(String mode) throws SBMLException {
 		SBMLio io = sbmlSqueezer.getSBMLIO();
-		io.convertModel(getSelectedModel());
+		Model convertedModel = io.convertModel(getSelectedModel());
 		switch (Mode.getMode(mode)) {
 		case SQUEEZE_ALL:
 			KineticLawSelectionWizard wizard;
@@ -272,15 +273,15 @@ public class Plugin extends CellDesignerPlugin {
 			new KineticLawSelectionDialog(null, io, ((PluginReaction) getSelectedReactionNode().get(0)).getId());
 			break;
 		case CONFIGURE:
-			PreferencesDialog.showPreferencesDialog((Class<? extends KeyProvider>[]) SBMLsqueezer.getInteractiveConfigOptions().toArray());
+			PreferencesDialog.showPreferencesDialog(SBMLsqueezer.getInteractiveConfigOptionsArray());
 			break;
 		case EXPORT_REACTION:
-				new LaTeXExportDialog((Dialog) null, io.getSelectedModel().getReaction(
+				new LaTeXExportDialog((Dialog) null, convertedModel.getReaction(
 					((PluginReaction) getSelectedReactionNode().get(0)).getId()));
 			break;
 		case EXPORT_ALL:
 			if (getSelectedModel() != null) {
-				new LaTeXExportDialog((Dialog) null, io.getSelectedModel());
+				new LaTeXExportDialog((Dialog) null, convertedModel);
 			} else {
 				System.err.println("no selected model available");
 			}
@@ -293,7 +294,7 @@ public class Plugin extends CellDesignerPlugin {
 				JDialog d = new JDialog();
 				d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				d.setTitle("Internal JSBML data structure");
-				d.getContentPane().add(new SBMLModelSplitPane(io.getSelectedModel().getSBMLDocument(), true));
+				d.getContentPane().add(new SBMLModelSplitPane(convertedModel.getSBMLDocument(), true));
 				d.pack();
 				d.setLocationRelativeTo(null);
 				d.setModal(true);
