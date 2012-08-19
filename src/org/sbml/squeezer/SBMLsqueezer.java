@@ -255,6 +255,17 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return list;
 	}
 
+
+  /**
+   * 
+   * @return
+   */
+  public static Class<? extends KeyProvider>[] getInteractiveConfigOptionsArray() {
+  	Class<? extends KeyProvider>[] list = new Class[2];
+    list[0] = SqueezerOptions.class;
+    list[1] = LaTeXOptions.class;
+    return list;
+	}
   
   /**
    * @return the kineticsArbitraryEnzymeMechanism

@@ -73,7 +73,8 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		
 		this.sbmlIO = sbmlIO;
 		this.dialog = this.getDialog();
-		this.statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
+		try{this.statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());}
+		catch(Exception e){}
 		
 		dialog.setTitle(MESSAGES.getString("SBMLSQUEEZER"));
 		dialog.setMinimumSize(new Dimension(650,250));
@@ -89,11 +90,16 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	 * 
 	 */
 	private void initDescriptors() {
-		try {
+		//try {
 			WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor(this.getDialog());
 		    registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
 		    
-			KineticLawGenerator klg = new KineticLawGenerator(this.sbmlIO.getSelectedModel());
+			KineticLawGenerator klg = null;
+			try {
+				klg = new KineticLawGenerator(this.sbmlIO.getSelectedModel());
+			} catch (ClassNotFoundException e) {
+				GUITools.showErrorMessage(this.getDialog(), e);
+			}
 			
 			WizardPanelDescriptor descriptor2 = new KineticLawSelectionEquationProgressPanelDescriptor(klg);
 		    registerWizardPanel(KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER, descriptor2);
@@ -104,9 +110,9 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		    
 		    setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);
 		    
-		}  catch (Exception exc) {
-			GUITools.showErrorMessage(this.getDialog(), exc);
-		}
+//		}  catch (Exception exc) {
+//			GUITools.showErrorMessage(this.getDialog(), exc);
+//		}
 	}
 	
 	/**
@@ -117,8 +123,11 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	 *         changed by SBMLsqueezer.
 	 */
 	public boolean isKineticsAndParametersStoredInSBML() {
+		boolean result = true;
 		KineticLawSelectionEquationPanelDescriptor desc = (KineticLawSelectionEquationPanelDescriptor) this.getPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER);
-		return ((KineticLawSelectionEquationPanel) desc.getPanelComponent()).isKineticsAndParametersStoredInSBML();
+		try{result = ((KineticLawSelectionEquationPanel) desc.getPanelComponent()).isKineticsAndParametersStoredInSBML();}
+		catch(Exception e) {};
+		return result;
 	}
 
 }
