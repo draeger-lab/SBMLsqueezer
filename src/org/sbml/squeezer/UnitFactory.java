@@ -78,9 +78,12 @@ public class UnitFactory {
 		UnitDefinition ud = model.findIdentical(unitdef);
 		if (ud == null) {
       String identifier = createId(unitdef);
+//      if (Unit.Kind.isValidUnitKindString(identifier, model.getLevel(), model.getVersion())) {
+//      	
+//      }
       ud = model.getUnitDefinition(identifier);
       if (ud == null) {
-      	updateAnnotation(unitdef.getListOfUnits(), model.getSBMLDocument());
+      	updateAnnotation(unitdef, model.getSBMLDocument());
       	unitdef.setId(identifier);
       	unitdef.setName(createName(unitdef));
       	model.addUnitDefinition(unitdef);
@@ -209,7 +212,11 @@ public class UnitFactory {
 	 * @param lou
 	 * @param doc 
 	 */
-	private static void updateAnnotation(ListOf<Unit> lou, SBMLDocument doc) {
+	private static void updateAnnotation(UnitDefinition ud, SBMLDocument doc) {
+		ListOf<Unit> lou = ud.getListOfUnits();
+		if (ud.isSetMetaId()) {
+			ud.setMetaId(doc.nextMetaId());
+		}
 		if (lou.isSetMetaId()) {
 			lou.setMetaId(doc.nextMetaId());
 		}
