@@ -49,7 +49,7 @@ import de.zbit.util.ResourceManager;
  * complicated {@link Convenience} can bee invoked.
  * </p>
  * <p>
- * Creates the Convenience kinetic's thermodynamicely independent form. This
+ * Creates the Convenience kinetic's thermodynamically independent form. This
  * method in general works the same way as the according one for the convenience
  * kinetic. Each enzyme's fraction is multiplied with a reaction constant that
  * is global for the eynzme's reaction.
@@ -264,9 +264,10 @@ public class ConvenienceKinetics extends GeneralizedMassAction implements
 				SBMLtools.setSBOTerm(p_kM,forward ? 322 : 323);
 			}
 			ASTNode exponent;
-			if (!ref.isSetStoichiometry() && !ref.isSetStoichiometryMath() && ((level < 3) || !ref.isSetId())) {
+			if (!ref.isSetStoichiometry() && Double.isNaN(ref.getStoichiometry())
+					&& !ref.isSetStoichiometryMath() && ((level < 3) || !ref.isSetId())) {
 				// TODO: Localize
-				logger.severe(MessageFormat.format("Unknown stoichiometry in reaction {0}.", reaction));
+				logger.severe(MessageFormat.format("Unknown stoichiometry in reaction {0} for reaction participant {1}.", reaction, ref.getSpecies()));
 			}
 			if (ref.isSetStoichiometryMath()) {
 				exponent = ref.getStoichiometryMath().getMath().clone();

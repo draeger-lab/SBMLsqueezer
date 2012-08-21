@@ -410,8 +410,9 @@ public class PowerLawModularRateLaw extends BasicKineticLaw implements
 	 */
 	private ASTNode cat(String enzyme) {
 		ASTNode forward = cat(enzyme, true);
-		if (getParentSBMLObject().getReversible())
+		if (getParentSBMLObject().getReversible()) {
 			forward.minus(cat(enzyme, false));
+		}
 		return forward;
 	}
 

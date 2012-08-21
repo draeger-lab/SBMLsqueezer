@@ -426,7 +426,7 @@ public class SubmodelController {
 	 */
 	public void storeUnits() {
 		for (UnitDefinition ud : miniModel.getListOfUnitDefinitions()) {
-			int units = ud.getUnitCount();
+			int unitsCount = ud.getUnitCount();
 			if (modelOrig.getUnitDefinition(ud.getId()) == null) {
 				modelOrig.addUnitDefinition(ud.clone());
 			} else {
@@ -447,48 +447,48 @@ public class SubmodelController {
 				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
-			if (units != ud.getUnitCount()) {
-				logger.log(Level.WARNING, ud.getId() + "\t" + units + "\t->\t"
+			if (unitsCount != ud.getUnitCount()) {
+				logger.log(Level.WARNING, ud.getId() + "\t" + unitsCount + "\t->\t"
 						+ ud.getUnitCount());
 			}
 		}
 
 		for (Compartment c : miniModel.getListOfCompartments()) {
-			Compartment corig = modelOrig.getCompartment(c.getId());
+			Compartment compOrig = modelOrig.getCompartment(c.getId());
 			// if level > 1, set spatialDimension
 			// the property spatialDimension is available since l2v1
 			if (miniModel.getLevel() > 1) {
-				corig.setSpatialDimensions(c.getSpatialDimensions());
+				compOrig.setSpatialDimensions(c.getSpatialDimensions());
 			}
 			if (c.isSetUnits()) {
 				if (Unit.isUnitKind(c.getUnits(), c.getLevel(), c.getVersion())) {
-					corig.setUnits(Unit.Kind.valueOf(c.getUnits().toUpperCase()));
+					compOrig.setUnits(Unit.Kind.valueOf(c.getUnits().toUpperCase()));
 				} else {
-					corig.setUnits(modelOrig.getUnitDefinition(c.getUnits()));
+					compOrig.setUnits(modelOrig.getUnitDefinition(c.getUnits()));
 				}
 			}
-			checkUnits(corig, modelOrig);
+			checkUnits(compOrig, modelOrig);
 			if (progressAdapter != null) {
 				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 				progressAdapter.progressOn();
 			}
 		}
 
-		for (Species s : miniModel.getListOfSpecies()) {
-			Species sorig = modelOrig.getSpecies(s.getId());
+		for (Species spec : miniModel.getListOfSpecies()) {
+			Species specOrig = modelOrig.getSpecies(spec.getId());
 			// if level > 1, set hasOnlySubstanceUnits
 			// the hasOnlySubstanceUnits property is available since l2v1
 			if (miniModel.getLevel() > 1) {
-				sorig.setHasOnlySubstanceUnits(s.getHasOnlySubstanceUnits());
+				specOrig.setHasOnlySubstanceUnits(spec.getHasOnlySubstanceUnits());
 			}
-			if (s.isSetSubstanceUnits()) {
-				if (Unit.isUnitKind(s.getSubstanceUnits(), s.getLevel(), s.getVersion())) {
-					sorig.setSubstanceUnits(Unit.Kind.valueOf(s.getSubstanceUnits().toUpperCase()));
+			if (spec.isSetSubstanceUnits()) {
+				if (Unit.isUnitKind(spec.getSubstanceUnits(), spec.getLevel(), spec.getVersion())) {
+					specOrig.setSubstanceUnits(Unit.Kind.valueOf(spec.getSubstanceUnits().toUpperCase()));
 				} else {
-					sorig.setSubstanceUnits(modelOrig.getUnitDefinition(s.getSubstanceUnits()));
+					specOrig.setSubstanceUnits(modelOrig.getUnitDefinition(spec.getSubstanceUnits()));
 				}
 			}
-			checkUnits(sorig, modelOrig);
+			checkUnits(specOrig, modelOrig);
 			
 			if (progressAdapter != null) {
 				progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
@@ -522,8 +522,8 @@ public class SubmodelController {
 		}
 		for (Parameter parameter : miniModel.getListOfParameters()) {
 			if (modelOrig.getParameter(parameter.getId()) == null) {
-				modelOrig.addParameter(parameter);
-				updateUnitReferences(parameter);
+				modelOrig.addParameter(parameter.clone());
+				updateUnitReferences(modelOrig.getParameter(parameter.getId()));
 			}
 			
 		}
@@ -553,8 +553,8 @@ public class SubmodelController {
 			} else {
 				UnitDefinition ud = modelOrig.getUnitDefinition(p.getUnits());
 				if (ud == null) {
-					ud = miniModel.getUnitDefinition(p.getUnits()).clone();
-					modelOrig.addUnitDefinition(ud);
+					ud = miniModel.getUnitDefinition(p.getUnits());
+					modelOrig.addUnitDefinition(ud.clone());
 				}
 				p.setUnits(ud);
 			}

@@ -709,8 +709,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		return getClass().getResource("../resources/html/help.html");
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#openFile(de.zbit.sbml.io.OpenedFile<org.sbml.jsbml.SBMLDocument>[])
 	 */
 	public File[] openFile(File... files) {
