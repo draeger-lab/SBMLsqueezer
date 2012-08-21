@@ -41,10 +41,9 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLException.Category;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
-import org.sbml.jsbml.Species;
-import org.sbml.jsbml.SBMLException.Category;
 import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.jsbml.util.TreeNodeRemovedEvent;
@@ -52,8 +51,8 @@ import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.io.OpenedFile;
-import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.ResourceManager;
+import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * A manager class for reading and writing models from some source into JSBML
@@ -138,7 +137,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			Model convertedModel = null;
 			try
 	        {
-	            Class[] params = new Class[]{Object.class};
+	            Class<?>[] params = new Class[]{Object.class};
 	            Method strMethod = SBMLInputConverter.class.getMethod(
 	                "convert2Model", params);
 	            try {

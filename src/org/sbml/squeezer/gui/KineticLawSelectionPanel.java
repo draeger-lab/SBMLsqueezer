@@ -101,7 +101,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	private boolean isExistingRateLawSelected;
 
-	@SuppressWarnings("rawtypes")
 	private JComboBox kineticLawComboBox;
 
 	private Box kineticsPanel;
@@ -127,7 +126,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @param selected
 	 * @throws RateLawNotApplicableException
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public KineticLawSelectionPanel(BasicKineticLaw[] possibleLaws,
 			int selected)
 			throws RateLawNotApplicableException {
@@ -472,7 +470,6 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
 	 */
-	@SuppressWarnings("rawtypes")
 	public void itemStateChanged(ItemEvent ie) {
 		if (ie.getSource() instanceof JCheckBox)
 			try {
