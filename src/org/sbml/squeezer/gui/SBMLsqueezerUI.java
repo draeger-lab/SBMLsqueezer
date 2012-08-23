@@ -84,6 +84,7 @@ import de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent;
 import de.zbit.gui.StatusBar;
 import de.zbit.gui.actioncommand.ActionCommand;
 import de.zbit.io.filefilter.SBFileFilter;
+import de.zbit.resources.Resource;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
 import de.zbit.sbml.gui.SBMLTree;
@@ -692,21 +693,21 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#getURLAboutMessage()
 	 */
 	public URL getURLAboutMessage() {
-		return getClass().getResource("../resources/html/about.htm");
+		return SBMLsqueezer.class.getResource("resources/html/about.html");
 	}
 
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#getURLLicense()
 	 */
 	public URL getURLLicense() {
-		return getClass().getResource("../resources/html/License.html");
+		return SBMLsqueezer.class.getResource("resources/html/License.html");
 	}
 
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#getURLOnlineHelp()
 	 */
 	public URL getURLOnlineHelp() {
-		return getClass().getResource("../resources/html/help.html");
+		return SBMLsqueezer.class.getResource("resources/html/help.html");
 	}
 	
 	/* (non-Javadoc)
