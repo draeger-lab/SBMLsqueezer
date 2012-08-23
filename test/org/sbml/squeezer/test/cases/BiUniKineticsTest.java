@@ -128,6 +128,26 @@ public class BiUniKineticsTest extends KineticsTest {
 	}
 	
 	/**
+	 * Test for the {@link CommonModularRateLaw} for A + B <=> C 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testCommonModularRateLawHalRev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
+	}
+	
+	/**
+	 * Test for the {@link CommonModularRateLaw} for A + B <=> C 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testCommonModularRateLawWegRev() throws Throwable {
+		KineticLaw kl = klg.createKineticLaw(r1, CommonModularRateLaw.class, true, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
+		test(r1, kl, "(vmaf_r1*(s1*c1/kmc_r1_s1)^hco_r1*(s2*c1/kmc_r1_s2)^hco_r1-vmar_r1*(p1*c1/kmc_r1_p1)^hco_r1)/((1+s1*c1/kmc_r1_s1)^hco_r1*(1+s2*c1/kmc_r1_s2)^hco_r1+(1+p1*c1/kmc_r1_p1)^hco_r1-1)");
+	}
+	
+	/**
 	 * Test for the {@link DirectBindingModularRateLaw} for A + B <=> C 
 	 * @throws Throwable
 	 */
