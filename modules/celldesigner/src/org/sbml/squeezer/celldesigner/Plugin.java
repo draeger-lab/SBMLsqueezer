@@ -49,7 +49,6 @@ import org.sbml.tolatex.gui.LaTeXExportDialog;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.prefs.PreferencesDialog;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
-import de.zbit.util.prefs.KeyProvider;
 
 /**
  * This is the main class for the CellDesigner plugin mode of SBMLsqueezer.
@@ -258,7 +257,6 @@ public class Plugin extends CellDesignerPlugin {
 	 * @param mode
 	 * @throws SBMLException
 	 */
-	@SuppressWarnings("unchecked")
 	public void startSBMLsqueezerPlugin(String mode) throws SBMLException {
 		SBMLio io = sbmlSqueezer.getSBMLIO();
 		Model convertedModel = io.convertModel(getSelectedModel());

@@ -194,6 +194,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testPowerLawModularRateLawHalRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.hal, UnitConsistencyType.amount, 1d);
+		// TODO: Formula
 		test(r1, kl, "");
 	}
 	
@@ -204,6 +205,7 @@ public class BiUniKineticsTest extends KineticsTest {
 	@Test
 	public void testPowerLawModularRateLawWegRev() throws Throwable {
 		KineticLaw kl = klg.createKineticLaw(r1, PowerLawModularRateLaw.class, true, TypeStandardVersion.weg, UnitConsistencyType.amount, 1d);
+		// TODO: Error!
 		test(r1, kl, "(s1*c1)^hco_r1*(s2*c1)^hco_r1/e^(scp_s1*scp_s2*scp_p1*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)-(p1*c1)^hco_r1*e^(scp_s1*scp_s2*scp_p1*hco_r1/(2*T*R))*vmag_r1/(kmc_r1_s1^hco_r1*kmc_r1_s2^hco_r1*kmc_r1_p1^hco_r1)^(0.5)");
 	}
 	
