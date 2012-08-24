@@ -1,6 +1,6 @@
 /*
- * $$Id${file_name} ${time} ${user} $$
- * $$URL${file_name} $$
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -38,7 +38,7 @@ import javax.xml.stream.events.XMLEvent;
  * A class for simple XML parsing.
  * 
  * @author Matthias Rall
- * @version $$Rev$$
+ * @version $Rev$
  * ${tags}
  */
 public class XMLParser {

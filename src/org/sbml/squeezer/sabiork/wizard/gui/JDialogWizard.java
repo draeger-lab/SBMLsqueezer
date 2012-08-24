@@ -1,6 +1,6 @@
 /*
- * $$Id${file_name} ${time} ${user} $$
- * $$URL${file_name} $$
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -59,7 +59,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * The GUI version of the SABIO-RK wizard.
  * 
  * @author Matthias Rall
- * @version $$Rev$$
+ * @version $Rev$
  * ${tags}
  */
 @SuppressWarnings("serial")

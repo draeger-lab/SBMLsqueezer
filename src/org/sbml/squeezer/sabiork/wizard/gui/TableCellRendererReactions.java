@@ -1,6 +1,6 @@
 /*
- * $$Id${file_name} ${time} ${user} $$
- * $$URL${file_name} $$
+ * $Id$
+ * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
@@ -35,7 +35,7 @@ import de.zbit.sbml.gui.ReactionPanel;
  * A class that renders a {@link Reaction} as a LaTeX formula.
  * 
  * @author Matthias Rall
- * @version $$Rev$$
+ * @version $Rev$
  * ${tags}
  */
 public class TableCellRendererReactions implements TableCellRenderer {

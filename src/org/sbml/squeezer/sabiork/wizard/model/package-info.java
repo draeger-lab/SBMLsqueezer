@@ -1,5 +1,5 @@
 /*
- * $Id$$
+ * $Id$
  * $URL$
  * ---------------------------------------------------------------------
  * This file is part of SBMLsqueezer, a Java program that creates rate 
