@@ -131,12 +131,29 @@ public abstract class KineticsTest {
 				kl.getParent(), UnitDefinition.printUnits(ud, true), 
 				kl.getClass().getSimpleName(),
 				kl.getMath().toFormula());
+			if (!ud.isVariantOfSubstancePerTime()) {
+				showTestDialog(kl.getMath());
+			}
 			assertTrue("Derived UnitDefinition is not of the type SubstancePerTime", ud.isVariantOfSubstancePerTime());
 		} else {
 			fail("Could not derive a UnitDefinition");
 		}
 	}
 	
+	/**
+	 * 
+	 * @param math
+	 */
+	private void showTestDialog(ASTNode math) {
+		JDialog d = new JDialog();
+		d.getContentPane().add(new JScrollPane(new SBMLTree(math)));
+		d.setResizable(true);
+		d.pack();
+		d.setModal(true);
+		d.setLocationRelativeTo(null);
+		d.setVisible(true);
+	}
+
 	/**
 	 * Do the complete test, incl. unit checking with the JUnit 4 {@link Assert}.assertEquals method
 	 * @param kl

@@ -79,10 +79,13 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 		Reaction r = getParentSBMLObject();
 		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
 			Species s = r.getProduct(0).getSpeciesInstance();
-			return ASTNode.times(
-					new ASTNode(parameterFactory.valueSubstancePerTime(), this),
-					new ASTNode(parameterFactory.parameterWHS(s.getId(), r.getId()), this),
-					speciesTerm(s)
+			return ASTNode.sum(
+						m,
+						ASTNode.times(
+							new ASTNode(parameterFactory.valueSubstancePerTime(), this),
+							new ASTNode(parameterFactory.parameterW(s.getId(), r.getId()), this), 
+							speciesTerm(s)
+						)
 			);
 		}
 		return m.multiplyWith(parameterFactory.valueSubstancePerTime());
