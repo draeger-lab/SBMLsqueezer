@@ -103,7 +103,6 @@ public class KineticLawSelectionDialog extends JDialog {
 	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID) {
 		this(owner);
 		
-		try {
 			// This thing is necessary for CellDesigner!
 			final KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
 					sbmlIO, reactionID);
@@ -112,17 +111,19 @@ public class KineticLawSelectionDialog extends JDialog {
 			setResizable(false);
 			setLocationRelativeTo(owner);
 			setVisible(true);
-
-			AbstractProgressBar progressBar = statusBar.showProgress();
-			adapter.showProgress(progressBar);
+			
+			if (statusBar != null) {
+				AbstractProgressBar progressBar = statusBar.showProgress();
+				adapter.showProgress(progressBar);
+			}
 			KineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
 			dispose();
-			statusBar.hideProgress();
+			if (statusBar != null) {
+				statusBar.hideProgress();
+			}
 			logger.log(Level.INFO, LABELS.getString("READY"));
 			
-		} catch (Throwable exc) {
-			GUITools.showErrorMessage(this, exc);
-		}
+		
 	}
 
 	/**

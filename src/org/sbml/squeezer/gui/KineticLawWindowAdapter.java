@@ -82,7 +82,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 * @param progressListener 
 	 * @throws Throwable
 	 */
-	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID) throws Throwable {
+	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID){
 		super();
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.value = JOptionPane.CLOSED_OPTION;
@@ -93,9 +93,14 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 
 		Model model = sbmlIO.getSelectedModel();
 		reaction = model.getReaction(reactionID);
+		try {
 		klg = new KineticLawGenerator(model, reactionID);
 		messagePanel = new KineticLawSelectionPanel(klg, reaction);
-
+		} catch (Throwable exc) {
+			exc.printStackTrace();
+			GUITools.showErrorMessage(dialog, exc);
+		}
+		
 		pane = new JOptionPane(messagePanel, JOptionPane.QUESTION_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION, UIManager.getIcon("ICON_LEMON_SMALL"), null,
 				null);
