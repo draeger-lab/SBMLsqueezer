@@ -191,7 +191,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 	}
 
-	static {
+	public static void initImages() {
 		LaTeXExportDialog.initImages();
 		String iconPaths[] = {
 				"ICON_DIAGRAM_TINY.png",
@@ -285,6 +285,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public SBMLsqueezerUI(SBMLio io, AppConf appConf) {
 		super(appConf);
+		initImages();
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.sbmlIO = io;
 		setEnabled(false, Command.SQUEEZE, Command.TO_LATEX);
