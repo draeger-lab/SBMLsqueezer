@@ -25,8 +25,11 @@ package org.sbml.squeezer.celldesigner;
 
 import java.awt.Dialog;
 import java.io.IOException;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.UIManager;
 
 import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 import jp.sbi.celldesigner.plugin.PluginMenu;
@@ -35,8 +38,10 @@ import jp.sbi.celldesigner.plugin.PluginReaction;
 import jp.sbi.celldesigner.plugin.PluginSBase;
 
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBO;
+import org.sbml.jsbml.cdplugin.PluginChangeListener;
 import org.sbml.jsbml.cdplugin.PluginSBMLReader;
 import org.sbml.jsbml.cdplugin.PluginSBMLWriter;
 import org.sbml.squeezer.SBMLsqueezer;
@@ -47,6 +52,7 @@ import org.sbml.squeezer.io.SBMLio;
 import org.sbml.tolatex.gui.LaTeXExportDialog;
 
 import de.zbit.gui.GUITools;
+import de.zbit.gui.ImageTools;
 import de.zbit.gui.prefs.PreferencesDialog;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 
@@ -72,6 +78,8 @@ public class Plugin extends CellDesignerPlugin {
 	public Plugin() {
 		super();
 		try {
+			ImageTools.initImages();
+			SBMLsqueezerUI.initImages();
 			/*
 			 * Starting SBMLsqueezer...
 			 */
@@ -260,6 +268,9 @@ public class Plugin extends CellDesignerPlugin {
 	public void startSBMLsqueezerPlugin(String mode) throws SBMLException {
 		SBMLio io = sbmlSqueezer.getSBMLIO();
 		Model convertedModel = io.convertModel(getSelectedModel());
+		SBMLDocument doc = new SBMLDocument(convertedModel.getLevel(),convertedModel.getVersion());
+		doc.setModel(convertedModel);
+		convertedModel.addTreeNodeChangeListener(new PluginChangeListener(doc, this));
 		switch (Mode.getMode(mode)) {
 		case SQUEEZE_ALL:
 			KineticLawSelectionWizard wizard;
@@ -292,7 +303,7 @@ public class Plugin extends CellDesignerPlugin {
 				JDialog d = new JDialog();
 				d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				d.setTitle("Internal JSBML data structure");
-				d.getContentPane().add(new SBMLModelSplitPane(convertedModel.getSBMLDocument(), true));
+				d.getContentPane().add(new SBMLModelSplitPane(doc, true));
 				d.pack();
 				d.setLocationRelativeTo(null);
 				d.setModal(true);
