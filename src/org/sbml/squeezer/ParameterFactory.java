@@ -1320,7 +1320,7 @@ public class ParameterFactory {
 		}
 		
 		if (!p.isSetName()) {
-			p.setName("");
+			p.setName("substance per time");
 		}
 		
 		return p;

@@ -172,11 +172,11 @@ public class AdditiveModelLinear extends BasicKineticLaw implements
 		ASTNode node = new ASTNode(this);
 		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
 			for (SpeciesReference product : r.getListOfProducts()) {
-				LocalParameter p = parameterFactory.parameterW(product.getSpecies(), r.getId());
+				LocalParameter w = parameterFactory.parameterW(product.getSpecies(), r.getId());
 				if (node.isUnknown()) {
-					node = ASTNode.times(new ASTNode(p, this), speciesTerm(product));
+					node = ASTNode.times(new ASTNode(w, this), speciesTerm(product));
 				} else {
-					node = ASTNode.sum(node, ASTNode.times(new ASTNode(p, this), speciesTerm(product)));
+					node = ASTNode.sum(node, ASTNode.times(new ASTNode(w, this), speciesTerm(product)));
 				}
 			}
 		}
