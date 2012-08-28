@@ -30,7 +30,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.gui.GUITools;
@@ -73,8 +72,6 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		
 		this.sbmlIO = sbmlIO;
 		this.dialog = this.getDialog();
-		try{this.statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());}
-		catch(Exception e){}
 		
 		dialog.setTitle(MESSAGES.getString("SBMLSQUEEZER"));
 		dialog.setMinimumSize(new Dimension(650,250));

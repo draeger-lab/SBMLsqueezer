@@ -38,9 +38,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.ImageIcon;
-import javax.swing.UIManager;
-
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
@@ -428,35 +425,6 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	    }
 	    return enzymeTypes.toArray(new String[] {});
 	  }
-	  
-	  /**
-		 * Loads the required icons for SBMLsqueezer into the {@link UIManager}.
-		 */
-		public static void initImages() {
-			String iconPaths[] = {
-					"ICON_DIAGRAM_TINY.png",
-					"ICON_DOWN_ARROW.png",
-					"ICON_DOWN_ARROW_TINY.png",
-					"ICON_FORWARD.png",
-					"ICON_GEAR_TINY.png",
-					"ICON_LEFT_ARROW.png",
-					"ICON_LEMON_SMALL.png",
-					"ICON_LEMON_TINY.png",
-					"ICON_LOGO_SMALL.png",
-					"ICON_PICTURE_TINY.png",
-					"ICON_RIGHT_ARROW.png",
-					"ICON_RIGHT_ARROW_TINY.png",
-					"ICON_STABILITY_SMALL.png",
-					"ICON_STRUCTURAL_MODELING_TINY.png",
-					"IMAGE_LEMON.png"
-			    };
-		    for (String path : iconPaths) {
-		      URL u = SBMLsqueezer.class.getResource("resources/img/" + path);
-		      if (u!=null) {
-		        UIManager.put(path.substring(0, path.lastIndexOf('.')), new ImageIcon(u));
-		      }
-		    }
-		}
 
 	/**
 	   * Does initialization for creating a SBMLsqueezer Object.
