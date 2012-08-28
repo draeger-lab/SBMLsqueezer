@@ -29,16 +29,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.gui.StatusBar;
-import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * This is the main GUI class.
@@ -113,9 +112,6 @@ public class KineticLawSelectionDialog extends JDialog {
 			setResizable(false);
 			setLocationRelativeTo(owner);
 			setVisible(true);
-			
-			// get new statusbar and limit the log message length
-			statusBar = StatusBar.addStatusBar((JFrame) this.getOwner());
 
 			AbstractProgressBar progressBar = statusBar.showProgress();
 			adapter.showProgress(progressBar);

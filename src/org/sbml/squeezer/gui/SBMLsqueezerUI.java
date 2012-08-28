@@ -44,6 +44,7 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -68,6 +69,7 @@ import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.gui.LaTeXExportDialog;
@@ -81,10 +83,8 @@ import de.zbit.gui.GUITools;
 import de.zbit.gui.JTabbedPaneCloseListener;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent;
-import de.zbit.gui.StatusBar;
 import de.zbit.gui.actioncommand.ActionCommand;
 import de.zbit.io.filefilter.SBFileFilter;
-import de.zbit.resources.Resource;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
 import de.zbit.sbml.gui.SBMLTree;
@@ -193,8 +193,29 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 
 	static {
 		LaTeXExportDialog.initImages();
-		SBMLsqueezer.initImages();
-		
+		String iconPaths[] = {
+				"ICON_DIAGRAM_TINY.png",
+				"ICON_DOWN_ARROW.png",
+				"ICON_DOWN_ARROW_TINY.png",
+				"ICON_FORWARD.png",
+				"ICON_GEAR_TINY.png",
+				"ICON_LEFT_ARROW.png",
+				"ICON_LEMON_SMALL.png",
+				"ICON_LEMON_TINY.png",
+				"ICON_LOGO_SMALL.png",
+				"ICON_PICTURE_TINY.png",
+				"ICON_RIGHT_ARROW.png",
+				"ICON_RIGHT_ARROW_TINY.png",
+				"ICON_STABILITY_SMALL.png",
+				"ICON_STRUCTURAL_MODELING_TINY.png",
+				"IMAGE_LEMON.png"
+		    };
+	    for (String path : iconPaths) {
+	      URL u = Resource.class.getResource("img/" + path);
+	      if (u != null) {
+	        UIManager.put(path.substring(0, path.lastIndexOf('.')), new ImageIcon(u));
+	      }
+	    }
 	}
 
 	/**
@@ -365,7 +386,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		try {
 			split = new SBMLModelSplitPane(openedFile, true);
 			split.setEquationRenderer(new HotEquationRenderer());
-			split.setProgressBar(StatusBar.addStatusBar(this).getProgressBar());
 			
 			split.getOpenedFile().addPropertyChangeListener("openedFileChanged", this);
 
