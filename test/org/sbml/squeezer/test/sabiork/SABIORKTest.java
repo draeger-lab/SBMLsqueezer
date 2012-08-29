@@ -141,7 +141,7 @@ public class SABIORKTest {
 	public void testGetTemperatureUnit() throws UnsupportedEncodingException,
 			XMLStreamException, WebServiceConnectException,
 			WebServiceResponseException, IOException {
-		String expected = "�C";
+		String expected = "°C";
 		String actual = SABIORK.getTemperatureUnit(SABIORK.getKineticLaw(1));
 		assertTrue(actual.equals(expected));
 	}
