@@ -38,6 +38,7 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 
+
 /**
 * @author Matthias Rall
 * @version $Rev$
@@ -45,10 +46,10 @@ import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 */
 public class SABIORKApplication {
 	
-	public static SBMLDocument readSBMLDocument(){
+	public static SBMLDocument readSBMLDocument(File f){
 		SBMLDocument sbmlDocument = null;
 		try {
-			sbmlDocument = SBMLReader.read(new File("/Users/Matze/Desktop/SBMLExample/Wizard-Test/input.xml"));
+			sbmlDocument = SBMLReader.read(f);
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -57,9 +58,9 @@ public class SABIORKApplication {
 		return sbmlDocument;
 	}
 	
-	public static void writeSBMLDocument(SBMLDocument sbmlDocument){
+	public static void writeSBMLDocument(SBMLDocument sbmlDocument, File f){
 		try {
-			SBMLWriter.write(sbmlDocument, new File("/Users/Matze/Desktop/SBMLExample/Wizard-Test/output.xml"), ' ', (short) 4);
+			SBMLWriter.write(sbmlDocument, f, ' ', (short) 4);
 		} catch (SBMLException e) {
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
@@ -69,7 +70,7 @@ public class SABIORKApplication {
 		}
 	}
 	
-	public static void runGUI(){
+	public static void runGUI(final File input, final File output){
 		final JFrame frame = new JFrame("SBMLsqueezer");
 		frame.setLayout(new BorderLayout());
 		frame.setMinimumSize(new Dimension(300, 300));
@@ -77,8 +78,8 @@ public class SABIORKApplication {
 		JButton buttonWizard = new JButton("Open SABIO-RK Wizard");
 		buttonWizard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SBMLDocument result = SABIORKWizard.getResultGUI(frame, ModalityType.APPLICATION_MODAL, readSBMLDocument());
-				writeSBMLDocument(result);
+				SBMLDocument result = SABIORKWizard.getResultGUI(frame, ModalityType.APPLICATION_MODAL, readSBMLDocument(input));
+				writeSBMLDocument(result, output);
 			}
 		});
 		
@@ -86,7 +87,7 @@ public class SABIORKApplication {
 		frame.setVisible(true);
 	}
 	
-	public static void runConsole(){
+	public static void runConsole(File input, File output){
 		Integer reactionFilter = 4;
 		String pathway = null;
 		String tissue = null;
@@ -105,13 +106,17 @@ public class SABIORKApplication {
 		Boolean isEntriesInsertedSince = false;
 		String dateSubmitted = "15/10/2008";
 		
-		SBMLDocument result = SABIORKWizard.getResultConsole(readSBMLDocument(), reactionFilter, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted);
-		writeSBMLDocument(result);
+		SBMLDocument result = SABIORKWizard.getResultConsole(readSBMLDocument(input), reactionFilter, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted);
+		writeSBMLDocument(result, output);
 	}
 
+	/**
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		SABIORKApplication.runGUI();
-//		Main.runConsole();
+		SABIORKApplication.runGUI(new File(args[0]), new File(args[1]));
+		//runConsole(new File(args[0]), new File(args[1]));
 	}
 
 }
