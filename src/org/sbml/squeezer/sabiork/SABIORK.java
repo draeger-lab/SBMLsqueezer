@@ -44,7 +44,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
-import org.sbml.squeezer.sabiork.util.Pair;
+import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 import org.sbml.squeezer.sabiork.util.XMLParser;
@@ -514,19 +514,19 @@ public class SABIORK {
 	 * @return a query consisting of the search terms
 	 */
 	public static String getSearchTermsQuery(
-			List<Pair<QueryField, String>> searchTerms) {
+			List<ValuePair<QueryField, String>> searchTerms) {
 		StringBuilder searchTermsQuery = new StringBuilder();
-		for (Pair<QueryField, String> searchTerm : searchTerms) {
-			String value = searchTerm.getValue().trim();
+		for (ValuePair<QueryField, String> searchTerm : searchTerms) {
+			String value = searchTerm.getV().trim();
 			if (!value.isEmpty()) {
 				if (searchTermsQuery.length() > 0) {
 					searchTermsQuery.append(" AND ");
 				}
 				if (value.contains(" ")) {
-					searchTermsQuery.append(searchTerm.getKey() + ":\"" + value
+					searchTermsQuery.append(searchTerm.getV() + ":\"" + value
 							+ "\"");
 				} else {
-					searchTermsQuery.append(searchTerm.getKey() + ":" + value);
+					searchTermsQuery.append(searchTerm.getV() + ":" + value);
 				}
 			}
 		}

@@ -49,12 +49,12 @@ import javax.swing.event.TableModelListener;
 import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.ButtonState;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.CardID;
 import org.sbml.squeezer.sabiork.wizard.gui.TableModelSearchAResults.SearchAResult;
 
 import org.sbml.squeezer.sabiork.SABIORK;
-import org.sbml.squeezer.sabiork.util.Pair;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
@@ -252,7 +252,7 @@ public class CardSearchA extends Card implements ActionListener,
 		String currentTextTrimmed = comboBoxSearchField.getText().trim();
 		if (!currentTextTrimmed.isEmpty()
 				&& comboBoxConstraintsModel.isQueryFieldSelected()) {
-			tableSearchTermsModel.add(new Pair<SABIORK.QueryField, String>(
+			tableSearchTermsModel.add(new ValuePair<SABIORK.QueryField, String>(
 					comboBoxConstraintsModel.getSelectedQueryField(),
 					currentTextTrimmed));
 		}

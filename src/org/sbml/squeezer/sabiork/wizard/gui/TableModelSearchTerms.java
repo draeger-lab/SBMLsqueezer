@@ -26,8 +26,9 @@ package org.sbml.squeezer.sabiork.wizard.gui;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+
+import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.sabiork.SABIORK;
-import org.sbml.squeezer.sabiork.util.Pair;
 import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 
 /**
@@ -43,7 +44,7 @@ public class TableModelSearchTerms extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1170618309623096342L;
 	private String[] columnNames;
-	private List<Pair<SABIORK.QueryField, String>> searchTerms;
+	private List<ValuePair<SABIORK.QueryField, String>> searchTerms;
 
 	public TableModelSearchTerms() {
 		this.columnNames = new String[] {
@@ -52,7 +53,7 @@ public class TableModelSearchTerms extends AbstractTableModel {
 				WizardProperties.getText("TABLE_MODEL_SEARCH_TERMS_TEXT_VALUE"),
 				WizardProperties
 						.getText("TABLE_MODEL_SEARCH_TERMS_TEXT_CLICK_TO_REMOVE") };
-		this.searchTerms = new ArrayList<Pair<SABIORK.QueryField, String>>();
+		this.searchTerms = new ArrayList<ValuePair<SABIORK.QueryField, String>>();
 	}
 
 	public int getColumnCount() {
@@ -68,13 +69,13 @@ public class TableModelSearchTerms extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Pair<SABIORK.QueryField, String> searchTerm = (Pair<SABIORK.QueryField, String>) searchTerms
+		ValuePair<SABIORK.QueryField, String> searchTerm = (ValuePair<SABIORK.QueryField, String>) searchTerms
 				.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			return searchTerm.getKey().toString();
+			return searchTerm.getL().toString();
 		case 1:
-			return searchTerm.getValue();
+			return searchTerm.getV();
 		case 2:
 			return Boolean.TRUE;
 		default:
@@ -105,17 +106,17 @@ public class TableModelSearchTerms extends AbstractTableModel {
 		return (columnIndex == 2);
 	}
 
-	public List<Pair<SABIORK.QueryField, String>> getSearchTerms() {
+	public List<ValuePair<SABIORK.QueryField, String>> getSearchTerms() {
 		return searchTerms;
 	}
 
 	public void setSearchTerms(
-			List<Pair<SABIORK.QueryField, String>> searchTerms) {
+			List<ValuePair<SABIORK.QueryField, String>> searchTerms) {
 		this.searchTerms = searchTerms;
 		fireTableDataChanged();
 	}
 
-	public void add(Pair<SABIORK.QueryField, String> searchTerm) {
+	public void add(ValuePair<SABIORK.QueryField, String> searchTerm) {
 		if (!this.searchTerms.contains(searchTerm)) {
 			this.searchTerms.add(searchTerm);
 			fireTableDataChanged();
