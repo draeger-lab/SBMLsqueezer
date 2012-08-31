@@ -36,7 +36,6 @@ import de.zbit.sbml.gui.ReactionPanel;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
 public class TableCellRendererReactions implements TableCellRenderer {
 

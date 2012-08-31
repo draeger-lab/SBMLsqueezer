@@ -46,7 +46,14 @@ import de.zbit.util.ResourceManager;
  */
 public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescriptor {
 
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
 	
 	/**
@@ -54,6 +61,9 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 	 */
 	public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PANEL";
 	
+	/**
+	 * 
+	 */
 	private KineticLawSelectionEquationPanel panel;
 	
 	/**
@@ -66,48 +76,47 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 		this.panel = ((KineticLawSelectionEquationPanel) this.getPanelComponent());
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#displayingPanel()
 	 */
+	@Override
 	public void displayingPanel() {
 		panel.generateKineticLawDone();
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToHidePanel()
 	 */
+	@Override
 	public void aboutToHidePanel() {
 		panel.apply();
-    }    
+	}
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
 	 */
+	@Override
 	public Object getNextPanelDescriptor() {
-        return FINISH;
-    }
+		return FINISH;
+	}
     
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
 	 */
-    public Object getBackPanelDescriptor() {
-        return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
-    }
+	@Override
+	public Object getBackPanelDescriptor() {
+		return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
+	}
 	
-    /**
-     * 
-     * @param statusBar
-     */
+	/**
+	 * 
+	 * @param statusBar
+	 */
 	public void setStatusBar(StatusBar statusBar) {
 		((KineticLawSelectionEquationPanel) this.getPanelComponent()).setStatusBar(statusBar);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
 	 */
 	@Override

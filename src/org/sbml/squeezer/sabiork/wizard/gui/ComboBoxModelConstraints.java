@@ -32,10 +32,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class ComboBoxModelConstraints extends ComboBoxModelCaptions {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 6268004298121183140L;
 
 	public ComboBoxModelConstraints() {
 		addCaption(WizardProperties

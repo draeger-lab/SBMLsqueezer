@@ -38,11 +38,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class TableModelSearchMResults extends AbstractTableModel {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -69211660748346155L;
 	private String[] columnNames;
 	private List<KineticLaw> kineticLaws;
 

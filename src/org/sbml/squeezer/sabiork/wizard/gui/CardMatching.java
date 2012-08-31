@@ -64,10 +64,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class CardMatching extends Card implements PropertyChangeListener {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -9179045292093429309L;
 
 	private JDialog dialogComponentDetails;
 	private JPanel panelMatchings;
@@ -78,12 +81,20 @@ public class CardMatching extends Card implements PropertyChangeListener {
 	private JScrollPane panelImportsScrollPane;
 	private KineticLawImporter kineticLawImporter;
 
+	/**
+	 * 
+	 * @param dialog
+	 * @param model
+	 */
 	public CardMatching(JDialogWizard dialog, WizardModel model) {
 		super(dialog, model);
 		model.addPropertyChangeListener(this);
 		initialize();
 	}
 
+	/**
+	 * 
+	 */
 	private void initialize() {
 		panelComponentMatchEntries = new JPanel(new GridLayout(0, 1, 0, 5));
 
@@ -114,6 +125,10 @@ public class CardMatching extends Card implements PropertyChangeListener {
 		add(panelImportsScrollPane);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
+	 */
+	@Override
 	public void performBeforeShowing() {
 		dialog.setButtonState(ButtonState.NEXT_DISABLED);
 		panelComponentMatchEntries.removeAll();
@@ -169,17 +184,23 @@ public class CardMatching extends Card implements PropertyChangeListener {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
+	 */
 	public CardID getPreviousCardID() {
 		return CardID.SEARCH_M;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
+	 */
 	public CardID getNextCardID() {
 		return CardID.SUMMARY_M;
 	}
 
 	/**
 	 * Adds the selected {@link KineticLawImporter} to the model or
-	 * <code>null</code> if it is not importable.
+	 * {@code null} if it is not importable.
 	 */
 	private void setSelectedKineticLawImporter() {
 		KineticLawImporter selectedKineticLawImporter = null;
@@ -543,6 +564,9 @@ public class CardMatching extends Card implements PropertyChangeListener {
 			return (comboBoxReferencedComponent.getSelectedItem() != null);
 		}
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(buttonReferencedComponent)) {
 				if (hasReferencedComponent()) {

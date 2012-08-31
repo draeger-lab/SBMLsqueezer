@@ -32,10 +32,13 @@ import javax.swing.border.EtchedBorder;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class JComponentEtchedLine extends JComponent {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 2648773760851854370L;
 
 	public JComponentEtchedLine() {
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));

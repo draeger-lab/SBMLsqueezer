@@ -38,11 +38,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class TableModelSearchAResults extends AbstractTableModel {
 
+	/**
+	 * Generaed serial version identifier.
+	 */
+	private static final long serialVersionUID = 880997043731477242L;
 	private String[] columnNames;
 	private List<SearchAResult> searchAResults;
 

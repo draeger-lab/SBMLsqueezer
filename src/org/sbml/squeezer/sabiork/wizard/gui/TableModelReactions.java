@@ -32,13 +32,15 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 /**
  * A class that allows the storage of {@link Reaction}.
  * 
-* @author Matthias Rall
+ * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class TableModelReactions extends AbstractTableModel {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 5524642810924954865L;
 	private String[] columnNames;
 	private List<Reaction> reactions;
 

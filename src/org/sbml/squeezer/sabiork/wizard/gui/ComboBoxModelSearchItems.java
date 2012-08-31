@@ -32,10 +32,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class ComboBoxModelSearchItems extends ComboBoxModelCaptions {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 1580494676722299702L;
 
 	public enum SearchItem {
 

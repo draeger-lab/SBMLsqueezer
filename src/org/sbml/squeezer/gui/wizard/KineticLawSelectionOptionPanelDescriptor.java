@@ -45,7 +45,13 @@ import de.zbit.util.ResourceManager;
  */
 public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescriptor {
 
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
 	
 	/**

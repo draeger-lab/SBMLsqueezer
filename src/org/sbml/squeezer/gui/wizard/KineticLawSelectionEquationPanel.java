@@ -49,6 +49,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -75,6 +76,7 @@ import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.progressbar.AbstractProgressBar;
+import de.zbit.util.progressbar.gui.ProgressBarSwing;
 
 /**
  * 
@@ -83,15 +85,25 @@ import de.zbit.util.progressbar.AbstractProgressBar;
  * @since 1.4
  * @version $Rev: 830 $
  */
-public class KineticLawSelectionEquationPanel extends JPanel implements ActionListener{
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
-
+public class KineticLawSelectionEquationPanel extends JPanel implements ActionListener, PropertyChangeListener {
+	
 	/**
 	 * 
 	 */
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	/**
+	 * 
+	 */
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
+
+	/**
+	 * Generated serial version identifier.
+	 */
 	private static final long serialVersionUID = 2381499189035630841L;
 	
+	/**
+	 * A {@link Logger} for this class.
+	 */
 	private final Logger logger = Logger.getLogger(KineticLawSelectionEquationPanelDescriptor.class.getName());
 	
 	private KineticLawGenerator klg;
@@ -105,6 +117,9 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	private boolean KineticsAndParametersStoredInSBML = false;
 	
 	private int numOfWarnings = 0;
+	private JPanel reactionsPanel;
+	private KineticLawTable tableOfKinetics;
+	private ProgressBarSwing progressBarSwing;
 	
 	
 	
@@ -145,7 +160,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	 * Method that indicates whether or not changes have been introduced into
 	 * the given model.
 	 * 
-	 * @return True if kinetic equations and parameters or anything else were
+	 * @return {@code true} if kinetic equations and parameters or anything else were
 	 *         changed by SBMLsqueezer.
 	 */
 	public boolean isKineticsAndParametersStoredInSBML() {
@@ -234,9 +249,12 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void apply() {
-		if (!KineticsAndParametersStoredInSBML && klg != null
-				&& sbmlIO != null) {
+		if (!KineticsAndParametersStoredInSBML && (klg != null)
+				&& (sbmlIO != null)) {
 			KineticsAndParametersStoredInSBML = true;
 			new Thread(new Runnable() {
 				public void run() {
@@ -252,127 +270,104 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void generateKineticLawDone() {
-		try {
-			if (klg.getFastReactions().size() > 0) {
-				StringBuilder message = new StringBuilder();
-				String modelContains = MESSAGES.getString("THE_MODEL_CONTAINS")+" ";
-				if (klg.getFastReactions().size() > 1)
-					message.append(MessageFormat.format(modelContains, MESSAGES.getString("FAST_REACTIONS")));
-				else {
-					message.append(MessageFormat.format(modelContains, MESSAGES.getString("THE_FAST_REACTION"))+" ");
-					message.append(klg.getFastReactions().get(0).getId());
+		if (klg.getFastReactions().size() > 0) {
+			StringBuilder message = new StringBuilder();
+			String modelContains = MESSAGES.getString("THE_MODEL_CONTAINS") + " ";
+			if (klg.getFastReactions().size() > 1) {
+				message.append(MessageFormat.format(modelContains, MESSAGES.getString("FAST_REACTIONS")));
+			} else {
+				message.append(MessageFormat.format(modelContains, MESSAGES.getString("THE_FAST_REACTION")) + " ");
+				message.append(klg.getFastReactions().get(0).getId());
+			}
+			message.append(". ");
+			message.append(MESSAGES.getString("NOT_SUPPORTED"));
+			if (klg.getFastReactions().size() > 1) {
+				message.append(MESSAGES.getString("ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED"));
+				message.append("<ul type=\"disc\">");
+				for (int i = 0; i < klg.getFastReactions().size(); i++) {
+					message.append("<li>");
+					message.append(klg.getFastReactions().get(i).getId());
+					message.append("</li>");
 				}
-				message.append(". ");
-				message.append(MESSAGES.getString("NOT_SUPPORTED"));
-				if (klg.getFastReactions().size() > 1) {
-					message.append(MESSAGES.getString("ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED"));
-					message.append("<ul type=\"disc\">");
-					for (int i = 0; i < klg.getFastReactions().size(); i++) {
-						message.append("<li>");
-						message.append(klg.getFastReactions().get(i).getId());
-						message.append("</li>");
+				message.append("</ul>");
+			} else {
+				message.append(MESSAGES.getString("ATTRIBUTE_BEEING_IGNORED"));
+			}
+			final JOptionPane pane = new JOptionPane(StringUtil.toHTML(
+				message.toString(), 40), JOptionPane.WARNING_MESSAGE);
+			final JDialog d = new JDialog();
+			d.setTitle(MESSAGES.getString("FAST_REACTIONS"));
+			d.setModal(true);
+			d.getContentPane().add(pane);
+			d.pack();
+			d.setResizable(false);
+			WindowAdapter adapter = new WindowAdapter() {
+				private boolean gotFocus = false;
+				
+				/* (non-Javadoc)
+				 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+				 */
+				@Override
+				public void windowClosing(WindowEvent we) {
+					pane.setValue(null);
+				}
+				
+				/* (non-Javadoc)
+				 * @see java.awt.event.WindowAdapter#windowGainedFocus(java.awt.event.WindowEvent)
+				 */
+				@Override
+				public void windowGainedFocus(WindowEvent we) {
+					if (!gotFocus) {
+						pane.selectInitialValue();
+						gotFocus = true;
 					}
-					message.append("</ul>");
-				} else
-					message.append(MESSAGES.getString("ATTRIBUTE_BEEING_IGNORED"));
-				final JOptionPane pane = new JOptionPane(StringUtil.toHTML(
-						message.toString(), 40), JOptionPane.WARNING_MESSAGE);
-				final JDialog d = new JDialog();
-				d.setTitle(MESSAGES.getString("FAST_REACTIONS"));
-				d.setModal(true);
-				d.getContentPane().add(pane);
-				d.pack();
-				d.setResizable(false);
-				WindowAdapter adapter = new WindowAdapter() {
-					private boolean gotFocus = false;
-	
-					public void windowClosing(WindowEvent we) {
-						pane.setValue(null);
-					}
-	
-					public void windowGainedFocus(WindowEvent we) {
-						if (!gotFocus) {
-							pane.selectInitialValue();
-							gotFocus = true;
-						}
-					}
-				};
-				d.addWindowListener(adapter);
-				d.addWindowFocusListener(adapter);
-				d.addComponentListener(new ComponentAdapter() {
-					public void componentShown(ComponentEvent ce) {
-						pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-					}
-				});
-				pane.addPropertyChangeListener(new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent evt) {
-						if (d.isVisible()
-								&& evt.getSource() == pane
-								&& evt.getPropertyName().equals(
-										JOptionPane.VALUE_PROPERTY)
+				}
+			};
+			d.addWindowListener(adapter);
+			d.addWindowFocusListener(adapter);
+			d.addComponentListener(new ComponentAdapter() {
+				/* (non-Javadoc)
+				 * @see java.awt.event.ComponentAdapter#componentShown(java.awt.event.ComponentEvent)
+				 */
+				@Override
+				public void componentShown(ComponentEvent ce) {
+					pane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+				}
+			});
+			pane.addPropertyChangeListener(new PropertyChangeListener() {
+				/* (non-Javadoc)
+				 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+				 */
+				public void propertyChange(PropertyChangeEvent evt) {
+					if (d.isVisible()
+							&& evt.getSource() == pane
+							&& evt.getPropertyName().equals(
+								JOptionPane.VALUE_PROPERTY)
 								&& evt.getNewValue() != null
 								&& evt.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)
-							d.setVisible(false);
-					}
-				});
-				d.setVisible(true);
-				d.dispose();
-				
-				logger.log(Level.INFO, LABELS.getString("READY"));
-				// JOptionPane.showMessageDialog(null, GUITools.toHTML(message
-				// .toString(), 40), "Fast Reactions",
-				// JOptionPane.WARNING_MESSAGE);
-			}
-	
-			JPanel reactionsPanel = new JPanel(new BorderLayout());
-			JTable tableOfKinetics = new KineticLawTable(klg);
-			numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
-					.getWarningCount();
-			tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-	
-			JScrollPane scroll;
-	
-			if (tableOfKinetics.getRowCount() == 0) {
-				JEditorPane pane = new JEditorPane(
-						sbmlIO.getSelectedModel().getReactionCount() > 0 ? Resource.class
-								.getResource("html/NoNewKineticsCreated.html")
-								: Resource.class
-										.getResource("html/ModelDoesNotContainAnyReactions.html"));
-				pane.addHyperlinkListener(new SystemBrowser());
-				pane.setBackground(Color.WHITE);
-				pane.setEditable(false);
-				scroll = new JScrollPane(pane,
-						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			} else {
-				scroll = new JScrollPane(tableOfKinetics,
-						JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-						JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			}
-			scroll.setBorder(BorderFactory
-					.createBevelBorder(BevelBorder.LOWERED));
-			scroll.setBackground(Color.WHITE);
-			reactionsPanel.add(scroll, BorderLayout.CENTER);
-	
-			JLabel numberOfWarnings = new JLabel(
-					"<html><table align=left width=500 cellspacing=10><tr><td>"
-							+ "<b>" + MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
-							+ "<td>" + MESSAGES.getString("NUMBER_OF_WARNINGS")
-							+ " " + "("+MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
-							+ "</td></tr></table></htlm>");
-			numberOfWarnings
-					.setToolTipText(StringUtil.toHTML(
-									MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
-									40));
-			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
-	
-			add(reactionsPanel, BorderLayout.CENTER);
-	
-			validate();
-		} catch (Throwable exc) {
-			GUITools.showErrorMessage(this, exc);
+						d.setVisible(false);
+				}
+			});
+			d.setVisible(true);
+			d.dispose();
+			
+			logger.log(Level.INFO, LABELS.getString("READY"));
+			// JOptionPane.showMessageDialog(null, GUITools.toHTML(message
+			// .toString(), 40), "Fast Reactions",
+			// JOptionPane.WARNING_MESSAGE);
 		}
+		
+		reactionsPanel = new JPanel(new BorderLayout());
+		JProgressBar progressbar = new JProgressBar(0, klg.getCreatedKineticsCount());
+		progressBarSwing = new ProgressBarSwing(progressbar);
+		reactionsPanel.add(progressbar, BorderLayout.CENTER);
+		add(reactionsPanel, BorderLayout.CENTER);
+		validate();
+		tableOfKinetics = new KineticLawTable(klg, progressBarSwing, this);
 	}
 	
 	public void setStatusBar(StatusBar statusBar) {
@@ -394,6 +389,53 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 				 * } }).start();/
 				 */
 			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent evt) {
+		try {
+			numOfWarnings = ((KineticLawTableModel) tableOfKinetics.getModel())
+					.getWarningCount();
+			tableOfKinetics.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			
+			JScrollPane scroll;
+			
+			if (tableOfKinetics.getRowCount() == 0) {
+				JEditorPane pane = new JEditorPane(
+					sbmlIO.getSelectedModel().getReactionCount() > 0 ? Resource.class
+							.getResource("html/NoNewKineticsCreated.html")
+							: Resource.class
+							.getResource("html/ModelDoesNotContainAnyReactions.html"));
+				pane.addHyperlinkListener(new SystemBrowser());
+				pane.setBackground(Color.WHITE);
+				pane.setEditable(false);
+				scroll = new JScrollPane(pane);
+			} else {
+				scroll = new JScrollPane(tableOfKinetics);
+			}
+			scroll.setBorder(BorderFactory
+				.createBevelBorder(BevelBorder.LOWERED));
+			scroll.setBackground(Color.WHITE);
+			reactionsPanel.removeAll();
+			reactionsPanel.add(scroll, BorderLayout.CENTER);
+			
+			JLabel numberOfWarnings = new JLabel(
+				"<html><table align=left width=500 cellspacing=10><tr><td>"
+						+ "<b>" + MESSAGES.getString("KINETIC_EQUATIONS") + "</b></td><td>"
+						+ "<td>" + MESSAGES.getString("NUMBER_OF_WARNINGS")
+						+ " " + "("+MESSAGES.getString("COLOR_RED")+"): " + numOfWarnings
+						+ "</td></tr></table></htlm>");
+			numberOfWarnings
+			.setToolTipText(StringUtil.toHTML(
+				MESSAGES.getString("NUMBER_OF_WARNING_TOOLTIP"),
+				40));
+			reactionsPanel.add(numberOfWarnings, BorderLayout.NORTH);
+			validate();
+		} catch (Throwable exc) {
+			GUITools.showErrorMessage(this, exc);
 		}
 	}
 }

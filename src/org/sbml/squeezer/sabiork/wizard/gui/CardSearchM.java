@@ -69,11 +69,14 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class CardSearchM extends Card implements ActionListener,
 		PropertyChangeListener, ListSelectionListener, TableModelListener {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -6832464267968071096L;
 
 	public enum SearchState {
 		START, DONE, CANCEL, RESET

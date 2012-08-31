@@ -37,11 +37,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class JDialogCalendar extends JDialog implements ActionListener {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -6496894143552652769L;
 	private boolean dateChanged;
 	private Calendar oldCalendar;
 	private Calendar newCalendar;

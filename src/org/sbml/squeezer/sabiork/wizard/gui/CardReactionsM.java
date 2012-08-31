@@ -48,12 +48,14 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
 /**
 * @author Matthias Rall
 * @version $Rev$
-* ${tags}
 */
-@SuppressWarnings("serial")
 public class CardReactionsM extends Card implements ListSelectionListener,
 		ActionListener, PropertyChangeListener {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -2273479139811227167L;
 	private ComboBoxModelReactionFilters comboBoxReactionFiltersModel;
 	private JComboBox comboBoxReactionFilters;
 	private JScrollPane tableReactionsScrollPane;

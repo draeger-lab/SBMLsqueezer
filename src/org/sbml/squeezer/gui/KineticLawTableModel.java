@@ -39,6 +39,7 @@ import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
 import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * Data model for the {@link KineticLawTable} that determins, which information
@@ -70,6 +71,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 
 	/**
 	 * TODO: add comment
+	 * @param progressBar 
 	 * 
 	 * @param maxEducts
 	 * @param reactionNumAndKinetic
@@ -79,7 +81,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * @param reactionNumAndKineticBezeichnung
 	 * @param model
 	 */
-	public KineticLawTableModel(KineticLawGenerator klg) {
+	public KineticLawTableModel(KineticLawGenerator klg, AbstractProgressBar progressBar) {
 		int reactionNum, speciesNum;
 		double numReac;
 
@@ -97,6 +99,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 		numOfWarnings = 0;
 
 		int maxNumReactants = SBPreferences.getPreferencesFor(SqueezerOptions.class).getInt(SqueezerOptions.MAX_NUMBER_OF_REACTANTS);
+		double startTime = System.currentTimeMillis();
 		for (reactionNum = 0; reactionNum < klg.getCreatedKineticsCount(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
 			String kinetic = reaction.isSetKineticLaw() && reaction.getKineticLaw().isSetMath() ? reaction.getKineticLaw().getMath().toFormula() : "";
@@ -135,11 +138,9 @@ public class KineticLawTableModel extends AbstractTableModel {
 			data[reactionNum][0] = reaction.getId();
 			// Kinetic Law
 			if (kl != null) {
-				data[reactionNum][1] = kl instanceof BasicKineticLaw ? ((BasicKineticLaw) kl)
-						.getSimpleName()
-						: kl.toString();
-						// SBO
-						data[reactionNum][2] = kl.getSBOTermID();
+				data[reactionNum][1] = kl instanceof BasicKineticLaw ? ((BasicKineticLaw) kl).getSimpleName() : kl.toString();
+				// SBO
+				data[reactionNum][2] = kl.getSBOTermID();
 			}
 			// Derived Unit
 			data[reactionNum][3] = reaction.getDerivedUnitDefinition();
@@ -153,7 +154,13 @@ public class KineticLawTableModel extends AbstractTableModel {
 			data[reactionNum][7] = para;
 			// Formula
 			data[reactionNum][8] = kinetic;
+			
+			// Notify progress listener:
+			double percent = reactionNum * 100d/klg.getCreatedKineticsCount();
+			double remainingTime = 100 * ((System.currentTimeMillis() - startTime) / percent);
+			progressBar.percentageChanged((int) Math.round(percent), remainingTime, "Creating overview");
 		}
+		progressBar.finished();
 	}
 
 	/* (non-Javadoc)

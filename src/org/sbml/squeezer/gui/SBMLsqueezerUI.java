@@ -191,6 +191,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public static void initImages() {
 		LaTeXExportDialog.initImages();
 		String iconPaths[] = {
@@ -278,6 +281,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	private SBPreferences prefs;
 
+	static {
+		initImages();
+	}
+	
 	/**
 	 * 
 	 * @param io
@@ -285,7 +292,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public SBMLsqueezerUI(SBMLio io, AppConf appConf) {
 		super(appConf);
-		initImages();
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		this.sbmlIO = io;
 		setEnabled(false, Command.SQUEEZE, Command.TO_LATEX);
@@ -331,8 +337,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					TreePath path = tree.getSelectionPath();
 					TreePath selectionPath = tree.getSelectionModel().getSelectionPath();
 					
-					// TODO: second call is needed to refresh tree, don't know why
-					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
 					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
 					
 					setupContextMenu(split, path, selectionPath);

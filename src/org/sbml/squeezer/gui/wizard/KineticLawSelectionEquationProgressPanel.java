@@ -47,14 +47,24 @@ import de.zbit.util.progressbar.gui.ProgressBarSwing;
  * @since 1.4
  */
 public class KineticLawSelectionEquationProgressPanel extends JPanel {
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
-
+	
 	/**
 	 * 
 	 */
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	/**
+	 * 
+	 */
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
+
+	/**
+	 * Generated serial version identifier.
+	 */
 	private static final long serialVersionUID = 2381499189035630841L;
 	
+	/**
+	 * A {@link Logger} for this class.
+	 */
 	private final Logger logger = Logger.getLogger(KineticLawSelectionEquationPanelDescriptor.class.getName());
 	
 	private KineticLawGenerator klg;
@@ -78,8 +88,9 @@ public class KineticLawSelectionEquationProgressPanel extends JPanel {
 		init();
 	}
 
-
-
+	/**
+	 * 
+	 */
 	private void init() {
 		JProgressBar jProgressBar = new JProgressBar();
 		jProgressBar.setSize(jProgressBar.getSize().width,30);
@@ -87,6 +98,9 @@ public class KineticLawSelectionEquationProgressPanel extends JPanel {
 		add(jProgressBar, BorderLayout.CENTER);
 	}
 
+	/**
+	 * 
+	 */
 	public void generateKineticLaw() {
 		try {
 			prefs.flush();
@@ -99,7 +113,7 @@ public class KineticLawSelectionEquationProgressPanel extends JPanel {
 			firePropertyChange("generateKineticLawDone", null, null);
 			
 		} catch (Throwable exc) {
-			
+			logger.fine(exc.getLocalizedMessage());
 		}
 	}
 }

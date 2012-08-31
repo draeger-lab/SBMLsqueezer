@@ -50,10 +50,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class CardMethod extends Card {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 8380771924006772969L;
 
 	private ButtonGroup buttonGroup;
 	private JLabel labelWelcome;
@@ -118,14 +121,24 @@ public class CardMethod extends Card {
 		add(panelWelcome, BorderLayout.NORTH);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#performBeforeShowing()
+	 */
+	@Override
 	public void performBeforeShowing() {
 		dialog.setButtonState(ButtonState.START);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getPreviousCardID()
+	 */
 	public CardID getPreviousCardID() {
 		return CardID.NOT_AVAILABLE;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.sbml.squeezer.sabiork.wizard.gui.Card#getNextCardID()
+	 */
 	public CardID getNextCardID() {
 		if (radioButtonAutomatic.isSelected()) {
 			return CardID.REACTIONS_A;
