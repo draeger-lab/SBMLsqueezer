@@ -34,9 +34,9 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.SABIORK.QueryField;
-import org.sbml.squeezer.sabiork.util.Pair;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
@@ -174,21 +174,21 @@ public class ConsoleWizard {
 	 */
 	private String getSearchTermsQuery(String pathway, String tissue,
 			String organism, String cellularLocation) {
-		List<Pair<QueryField, String>> searchTerms = new ArrayList<Pair<QueryField, String>>();
+		List<ValuePair<QueryField, String>> searchTerms = new ArrayList<ValuePair<QueryField, String>>();
 		if (pathway instanceof String) {
-			searchTerms.add(new Pair<SABIORK.QueryField, String>(
+			searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
 					SABIORK.QueryField.PATHWAY, pathway));
 		}
 		if (tissue instanceof String) {
-			searchTerms.add(new Pair<SABIORK.QueryField, String>(
+			searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
 					SABIORK.QueryField.TISSUE, tissue));
 		}
 		if (organism instanceof String) {
-			searchTerms.add(new Pair<SABIORK.QueryField, String>(
+			searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
 					SABIORK.QueryField.ORGANISM, organism));
 		}
 		if (cellularLocation instanceof String) {
-			searchTerms.add(new Pair<SABIORK.QueryField, String>(
+			searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
 					SABIORK.QueryField.CELLULAR_LOCATION, cellularLocation));
 		}
 		return SABIORK.getSearchTermsQuery(searchTerms);

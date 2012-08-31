@@ -54,11 +54,11 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.ButtonState;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard.CardID;
 
 import org.sbml.squeezer.sabiork.SABIORK;
-import org.sbml.squeezer.sabiork.util.Pair;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
@@ -308,7 +308,7 @@ public class CardSearchM extends Card implements ActionListener,
 		String currentTextTrimmed = comboBoxSearchField.getText().trim();
 		if (!currentTextTrimmed.isEmpty()
 				&& comboBoxSearchItemsModel.isQueryFieldSelected()) {
-			tableSearchTermsModel.add(new Pair<SABIORK.QueryField, String>(
+			tableSearchTermsModel.add(new ValuePair<SABIORK.QueryField, String>(
 					comboBoxSearchItemsModel.getSelectedQueryField(),
 					currentTextTrimmed));
 		}
@@ -322,7 +322,7 @@ public class CardSearchM extends Card implements ActionListener,
 			String keggReactionID = model.getKeggReactionID(model
 					.getSelectedReaction());
 			if (!keggReactionID.isEmpty()) {
-				tableSearchTermsModel.add(new Pair<SABIORK.QueryField, String>(
+				tableSearchTermsModel.add(new ValuePair<SABIORK.QueryField, String>(
 						SABIORK.QueryField.KEGG_REACTION_ID, keggReactionID));
 				startSearch();
 			}
