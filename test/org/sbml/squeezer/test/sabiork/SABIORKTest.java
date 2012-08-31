@@ -31,7 +31,7 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
 import org.sbml.jsbml.KineticLaw;
-import org.sbml.squeezer.sabiork.util.Pair;
+import org.sbml.jsbml.util.ValuePair;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 import org.sbml.squeezer.sabiork.SABIORK;
@@ -159,12 +159,12 @@ public class SABIORKTest {
 	public void testGetSearchTermsQuery() {
 		String expected = SABIORK.QueryField.ORGANISM + ":\"homo sapiens\""
 				+ " AND " + SABIORK.QueryField.TISSUE + ":liver";
-		List<Pair<SABIORK.QueryField, String>> searchTerms = new ArrayList<Pair<SABIORK.QueryField, String>>();
-		searchTerms.add(new Pair<SABIORK.QueryField, String>(
+		List<ValuePair<SABIORK.QueryField, String>> searchTerms = new ArrayList<ValuePair<SABIORK.QueryField, String>>();
+		searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
 				SABIORK.QueryField.ORGANISM, "  homo sapiens   "));
-		searchTerms.add(new Pair<SABIORK.QueryField, String>(
+		searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
 				SABIORK.QueryField.ENZYMENAME, "           "));
-		searchTerms.add(new Pair<SABIORK.QueryField, String>(
+		searchTerms.add(new ValuePair<SABIORK.QueryField, String>(
 				SABIORK.QueryField.TISSUE, "   liver   "));
 		String actual = SABIORK.getSearchTermsQuery(searchTerms);
 		assertTrue(actual.equals(expected));
