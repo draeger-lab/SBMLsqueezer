@@ -43,11 +43,10 @@ import de.zbit.gui.ColorPalette;
  * @since 1.0
  * @version $Rev$
  */
-public class KineticLawTableCellRenderer extends JTextArea implements
-		TableCellRenderer {
+public class KineticLawTableCellRenderer extends JTextArea implements TableCellRenderer {
 
 	/**
-	 * Generated serialziation id.
+	 * Generated serial version identifier.
 	 */
 	private static final long serialVersionUID = -7760600735675079594L;
 
@@ -62,12 +61,8 @@ public class KineticLawTableCellRenderer extends JTextArea implements
 		this.maxNumberOfSpecies = maxSpecies;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax
-	 * .swing.JTable, java.lang.Object, boolean, boolean, int, int)
+	/* (non-Javadoc)
+	 * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
@@ -75,8 +70,9 @@ public class KineticLawTableCellRenderer extends JTextArea implements
 		table.setBackground(Color.WHITE);
 		int eductCol = 0;
 		while ((eductCol < table.getColumnCount())
-				&& !(table.getModel().getValueAt(row, eductCol) instanceof Double))
+				&& !(table.getModel().getValueAt(row, eductCol) instanceof Double)) {
 			eductCol++;
+		}
 		double numEducts = ((Double) table.getModel().getValueAt(row, eductCol))
 				.doubleValue();
 		if (numEducts >= maxNumberOfSpecies) {
@@ -84,22 +80,26 @@ public class KineticLawTableCellRenderer extends JTextArea implements
 			setForeground(Color.WHITE);
 			setFont(getFont().deriveFont(Font.PLAIN));
 		} else {
-			if (row % 2 == 0)
+			if (row % 2 == 0) {
 				setBackground(Color.WHITE);
-			else
+			} else {
 				setBackground(ColorPalette.lightBlue);
+			}
 			setForeground(Color.BLACK);
 			setFont(getFont().deriveFont(Font.PLAIN));
 		}
 		if (table.convertColumnIndexToModel(column) == eductCol) {
-			if (numEducts - ((int) numEducts) == 0.0)
+			if (numEducts - ((int) numEducts) == 0d) {
 				setText(Integer.toString((int) numEducts));
-			else
+			} else {
 				setText(Double.toString(numEducts));
-		} else if (value instanceof String)
+			}
+		} else if (value instanceof String) {
 			setText((String) value);
-		else
+		} else {
 			setText(value.toString());
+		}
 		return this;
 	}
+
 }

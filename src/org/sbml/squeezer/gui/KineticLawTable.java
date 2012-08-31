@@ -41,6 +41,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -48,6 +49,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.MouseInputListener;
 import javax.swing.event.TableModelEvent;
@@ -69,6 +71,7 @@ import atp.sHotEqn;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
+import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * Creates a table that displays all created kinetic equationns.
@@ -96,14 +99,66 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	// private static final int widthMultiplier = 7;
 
 	/**
+	 * 
+	 * @author Andreas Dr&auml;ger
+	 * @version $Rev$
+	 * @since 1.4
+	 */
+	private static final class TableModelWorker extends SwingWorker<KineticLawTableModel, Void> {
+
+		private KineticLawGenerator klg;
+		private KineticLawTable table;
+		private AbstractProgressBar progressBar;
+		private PropertyChangeListener listener;
+
+		/**
+		 * 
+		 * @param klg
+		 * @param progressBar 
+		 * @param table
+		 * @param listener 
+		 */
+		public TableModelWorker(KineticLawGenerator klg, AbstractProgressBar progressBar, KineticLawTable table, PropertyChangeListener listener) {
+			super();
+			this.klg = klg;
+			this.table = table;
+			this.progressBar = progressBar;
+			this.listener = listener;
+		}
+		
+		/* (non-Javadoc)
+		 * @see javax.swing.SwingWorker#doInBackground()
+		 */
+     //@Override
+		protected KineticLawTableModel doInBackground() throws Exception {
+			return new KineticLawTableModel(klg, progressBar);
+		}
+
+		/* (non-Javadoc)
+		 * @see javax.swing.SwingWorker#done()
+		 */
+		@Override
+		protected void done() {
+			try {
+				table.setModel(get());
+				listener.propertyChange(new PropertyChangeEvent(table, "done", null, table.getModel()));
+			} catch (Exception exc) {
+				Logger.getLogger(TableModelWorker.class.getName()).fine(exc.getLocalizedMessage());
+			}
+		}
+
+	}
+	
+	/**
 	 * TODO
 	 * 
 	 * @param klg
 	 * @param maxEducts
 	 * @param reversibility
 	 */
-	public KineticLawTable(KineticLawGenerator klg) {
-		super(new KineticLawTableModel(klg));
+	public KineticLawTable(KineticLawGenerator klg, AbstractProgressBar progressBar, PropertyChangeListener listener) {
+		super();
+		new TableModelWorker(klg, progressBar, this, listener).execute();
 		this.klg = klg;
 		this.reversibility = klg.isReversibility();
 		getModel().addTableModelListener(this);
@@ -296,11 +351,17 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				WindowAdapter adapter = new WindowAdapter() {
 					private boolean gotFocus = false;
 
+					/* (non-Javadoc)
+					 * @see java.awt.event.WindowAdapter#windowClosing(java.awt.event.WindowEvent)
+					 */
 					@Override
 					public void windowClosing(WindowEvent we) {
 						pane.setValue(null);
 					}
 
+					/* (non-Javadoc)
+					 * @see java.awt.event.WindowAdapter#windowGainedFocus(java.awt.event.WindowEvent)
+					 */
 					@Override
 					public void windowGainedFocus(WindowEvent we) {
 						// Once window gets focus, set initial focus
@@ -334,8 +395,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 						// dialog.
 						if (dialog.isVisible()
 								&& (event.getSource() == pane)
-								&& (event.getPropertyName()
-										.equals(JOptionPane.VALUE_PROPERTY))
+								&& (event.getPropertyName().equals(JOptionPane.VALUE_PROPERTY))
 								&& (event.getNewValue() != null)
 								&& (event.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)) {
 							dialog.setVisible(false);
@@ -391,13 +451,12 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	 * @param selectedKinetic
 	 * @param possibleLaws
 	 */
-	@SuppressWarnings("deprecation")
 	public void updateTable(KineticLaw kineticLaw) {
 		// Reaction Identifier, Kinetic Law, SBO, #Reactants,
 		// Reactants, Products, Parameters, Formula
 		int i;
 		StringBuffer params = new StringBuffer();
-		for (i = kineticLaw.getNumLocalParameters() - 1; i > 0; i--) {
+		for (i = kineticLaw.getLocalParameterCount() - 1; i > 0; i--) {
 			params.append(kineticLaw.getLocalParameter(i));
 			if (i > 0) {
 				params.append(", ");
@@ -418,10 +477,10 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		dataModel.setValueAt(kineticLaw.getSBOTermID(), getSelectedRow(), 2);
 		dataModel.setValueAt(params, getSelectedRow(), dataModel
 				.getColumnCount() - 2);
-		dataModel.setValueAt(kineticLaw.getFormula(), getSelectedRow(),
+		dataModel.setValueAt(kineticLaw.getMath().toFormula(), getSelectedRow(),
 				dataModel.getColumnCount() - 1);
 		i = 0;
-		while ((i < klg.getModel().getNumReactions())
+		while ((i < klg.getModel().getReactionCount())
 				&& (!klg.getModel().getReaction(i).getId().equals(
 						kineticLaw.getParentSBMLObject().getId()))) {
 			i++;

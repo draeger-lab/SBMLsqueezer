@@ -28,11 +28,6 @@ package org.sbml.squeezer.sabiork.util;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
- */
-
-/**
- * 
  * 
  * @param <K>
  *            the key type

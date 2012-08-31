@@ -28,34 +28,61 @@ package org.sbml.squeezer.sabiork.util;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class WebServiceResponseException extends Exception {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -6398077215479639974L;
+	
 	int responseCode;
 
+	/**
+	 * 
+	 * @param responseCode
+	 */
 	public WebServiceResponseException(int responseCode) {
 		super();
 		this.responseCode = responseCode;
 	}
 
+	/**
+	 * 
+	 * @param message
+	 * @param cause
+	 * @param responseCode
+	 */
 	public WebServiceResponseException(String message, Throwable cause,
 			int responseCode) {
 		super(message, cause);
 		this.responseCode = responseCode;
 	}
 
+	/**
+	 * 
+	 * @param message
+	 * @param responseCode
+	 */
 	public WebServiceResponseException(String message, int responseCode) {
 		super(message);
 		this.responseCode = responseCode;
 	}
 
+	/**
+	 * 
+	 * @param cause
+	 * @param responseCode
+	 */
 	public WebServiceResponseException(Throwable cause, int responseCode) {
 		super(cause);
 		this.responseCode = responseCode;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getResponseCode() {
 		return responseCode;
 	}

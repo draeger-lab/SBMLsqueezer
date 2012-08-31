@@ -47,7 +47,6 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
 public class ConsoleWizard {
 
@@ -70,6 +69,27 @@ public class ConsoleWizard {
 	private Boolean isEntriesInsertedSince;
 	private String dateSubmitted;
 
+	/**
+	 * 
+	 * @param sbmlDocument
+	 * @param reactionFilter
+	 * @param pathway
+	 * @param tissue
+	 * @param organism
+	 * @param cellularLocation
+	 * @param isWildtype
+	 * @param isMutant
+	 * @param isRecombinant
+	 * @param hasKineticData
+	 * @param lowerpHValue
+	 * @param upperpHValue
+	 * @param lowerTemperature
+	 * @param upperTemperature
+	 * @param isDirectSubmission
+	 * @param isJournal
+	 * @param isEntriesInsertedSince
+	 * @param dateSubmitted
+	 */
 	public ConsoleWizard(SBMLDocument sbmlDocument, Integer reactionFilter,
 			String pathway, String tissue, String organism,
 			String cellularLocation, Boolean isWildtype, Boolean isMutant,

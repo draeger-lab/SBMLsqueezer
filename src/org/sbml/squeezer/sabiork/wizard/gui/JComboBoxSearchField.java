@@ -45,11 +45,13 @@ import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
  * 
 * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class JComboBoxSearchField extends JComboBox implements KeyListener {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -8695598663076732686L;
 	private JTextField textFieldSearch;
 	private SABIORK.QueryField suggestionQueryField;
 	private SuggestionSearch suggestionSearch;

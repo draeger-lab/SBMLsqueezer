@@ -172,7 +172,6 @@ public class SubmodelController {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	private Model createMinimalModel(String reactionID) {
 		
 		boolean create = generateLawsForAllReactions;
@@ -265,7 +264,7 @@ public class SubmodelController {
 				}
 			}
 			if (reacOrig.isSetKineticLaw()) {
-				String formula = reacOrig.getKineticLaw().getFormula();
+				String formula = reacOrig.getKineticLaw().getMath().toFormula();
 				if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
 					logger.warning(MessageFormat.format(WARNINGS.getString("INVALID_REACTION_FORMAT"), reacOrig.getId()));
 					create = true;
@@ -647,7 +646,7 @@ public class SubmodelController {
 	 * 
 	 * @param selectedModel
 	 */
-	@SuppressWarnings("deprecation") 
+	@SuppressWarnings("deprecation")
 	public void removeUnnecessaryParameters(Model model) {
 		boolean isNeeded;
 		int i, j, k = 0;
@@ -779,7 +778,7 @@ public class SubmodelController {
 					if (law.isSetMath()
 							&& !law.getMath().refersTo(
 									law.getLocalParameter(j).getId())) {
-						law.removeParameter(j);
+						law.removeLocalParameter(j);
 					}
 				}
 			}

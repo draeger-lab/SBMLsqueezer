@@ -88,8 +88,8 @@ public class ProgressAdapter {
 			if ((percent < curPercent) && (curPercent <= 100)) {
 				percent = curPercent;
 			}
-			double remainingTime = 100 * ((System.currentTimeMillis()-startTime)/percent);
-			this.progressBar.percentageChanged( (int) percent, remainingTime, "");
+			double remainingTime = 100 * ((System.currentTimeMillis() - startTime)/percent);
+			this.progressBar.percentageChanged((int) percent, remainingTime, "");
 		}
 	}
 
@@ -181,13 +181,13 @@ public class ProgressAdapter {
 					}
 				}
 				if (!reac.isSetKineticLaw() || create) {
-					numberOfTotalCalls += reac.getListOfReactants().size();
-					numberOfTotalCalls += reac.getListOfProducts().size();
-					numberOfTotalCalls += reac.getListOfModifiers().size();
+					numberOfTotalCalls += reac.getReactantCount();
+					numberOfTotalCalls += reac.getProductCount();
+					numberOfTotalCalls += reac.getModifierCount();
 					if (reac.isSetKineticLaw()) {
-						numberOfTotalCalls += modelOrig.getListOfParameters().size();
+						numberOfTotalCalls += modelOrig.getParameterCount();
 					}
-					numberOfTotalCalls += reac.getListOfReactants().size();
+					numberOfTotalCalls += reac.getReactantCount();
 				}
 			}
 			break;

@@ -42,7 +42,6 @@ import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 /**
 * @author Matthias Rall
 * @version $Rev$
-* ${tags}
 */
 public class SABIORKApplication {
 	

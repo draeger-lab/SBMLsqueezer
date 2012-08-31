@@ -41,11 +41,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
 * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class CardSummaryM extends Card {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 5350885163785722780L;
 	private JScrollPane textAreaSummaryScrollPane;
 	private JTextArea textAreaSummary;
 

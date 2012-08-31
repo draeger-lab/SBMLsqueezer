@@ -28,23 +28,42 @@ package org.sbml.squeezer.sabiork.util;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class WebServiceConnectException extends Exception {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -2228255799581621829L;
+
+	/**
+	 * 
+	 */
 	public WebServiceConnectException() {
 		super();
 	}
 
+	/**
+	 * 
+	 * @param message
+	 * @param cause
+	 */
 	public WebServiceConnectException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
+	/**
+	 * 
+	 * @param message
+	 */
 	public WebServiceConnectException(String message) {
 		super(message);
 	}
 
+	/**
+	 * 
+	 * @param cause
+	 */
 	public WebServiceConnectException(Throwable cause) {
 		super(cause);
 	}

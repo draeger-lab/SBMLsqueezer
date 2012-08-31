@@ -35,14 +35,22 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public abstract class Card extends JPanel {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 7548783744523732450L;
 
 	protected JDialogWizard dialog;
 	protected WizardModel model;
 
+	/**
+	 * 
+	 * @param dialog
+	 * @param model
+	 */
 	public Card(JDialogWizard dialog, WizardModel model) {
 		this.dialog = dialog;
 		this.model = model;

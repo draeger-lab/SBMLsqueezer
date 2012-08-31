@@ -33,11 +33,13 @@ import javax.swing.JComboBox;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class JComboBoxInterval extends JComboBox {
 
+	/**
+	 * Generate serial version identifier.
+	 */
+	private static final long serialVersionUID = 780253734453909235L;
 	private double minimum;
 	private double maximum;
 

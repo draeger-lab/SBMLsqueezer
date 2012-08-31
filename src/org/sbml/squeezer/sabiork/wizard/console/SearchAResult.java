@@ -32,7 +32,6 @@ import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
 public class SearchAResult {
 

@@ -51,11 +51,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class JPanelFilterOptions extends JPanel implements ActionListener {
 
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 5448185584732193553L;
 	private final PropertyChangeSupport propertyChangeSupport;
 	private boolean isWildtype;
 	private boolean isMutant;

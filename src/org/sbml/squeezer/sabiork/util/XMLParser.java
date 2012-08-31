@@ -39,7 +39,6 @@ import javax.xml.stream.events.XMLEvent;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
 public class XMLParser {
 

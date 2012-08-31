@@ -56,28 +56,46 @@ import de.zbit.util.ResourceManager;
  */
 public class KineticLawSelectionOptionPanel extends JPanel implements ActionListener{
 	
-	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
-	public static final transient ResourceBundle BASE = ResourceManager.getBundle(Bundles.BASE);
-	
-	JDialog dialog;
-
+	/**
+	 * Generated serial version identifier. 
+	 */
+	private static final long serialVersionUID = -4552303683388858130L;
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	/**
+	 * 
+	 */
+	public static final transient ResourceBundle LABELS = ResourceManager.getBundle(Bundles.LABELS);
+	/**
+	 *
+	 */
+	public static final transient ResourceBundle BASE = ResourceManager.getBundle(Bundles.BASE);
 	
-	public KineticLawSelectionOptionPanel (JDialog dialog) {
+	private JDialog dialog;
+	
+	/**
+	 * 
+	 * @param dialog
+	 */
+	public KineticLawSelectionOptionPanel(JDialog dialog) {
 		super(new BorderLayout());
 		this.dialog = dialog;
 		init();
 	}
 	
+	/**
+	 * 
+	 */
 	public void init() {
 		initOptions();
 		initLogo();
 	}
 	
+	/**
+	 * 
+	 */
 	public void initOptions() {
 		JButton options = new JButton(MESSAGES.getString("SHOW_OPTIONS"));
 		Icon icon = UIManager.getIcon("ICON_PREFS_16");
@@ -96,6 +114,9 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 		add(panel, BorderLayout.SOUTH);
 	}
 	
+	/**
+	 * 
+	 */
 	public void initLogo() {
 		JLabel label = new JLabel(UIManager.getIcon("ICON_LOGO_SMALL"));
 		label.setBackground(Color.WHITE);

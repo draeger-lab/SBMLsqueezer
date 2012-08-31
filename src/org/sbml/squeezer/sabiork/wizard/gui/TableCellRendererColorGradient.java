@@ -31,7 +31,6 @@ import javax.swing.table.TableCellRenderer;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
 public abstract class TableCellRendererColorGradient implements
 		TableCellRenderer {

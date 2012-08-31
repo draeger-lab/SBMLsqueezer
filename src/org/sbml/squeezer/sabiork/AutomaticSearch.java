@@ -57,12 +57,17 @@ import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 import de.zbit.io.filefilter.SBFileFilter;
 
 /**
- * @author Matthias Rall, Roland Keller
+ * @author Matthias Rall
+ * @author Roland Keller
  * @version $Rev$
- * ${tags}
  */
 public class AutomaticSearch {
 	
+	/**
+	 * 
+	 * @param reaction
+	 * @return
+	 */
 	private static String getKeggReactionID(Reaction reaction) {
 		String keggReactionID = "";
 		CVTermFilter filter = new CVTermFilter(CVTerm.Qualifier.BQB_IS);

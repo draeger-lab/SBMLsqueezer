@@ -60,11 +60,14 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class JDialogWizard extends JDialog implements ActionListener,
 		MouseListener {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = 2106891365126572604L;
 
 	public enum ButtonState {
 		START, NEXT_ENABLED, NEXT_DISABLED, FINISH

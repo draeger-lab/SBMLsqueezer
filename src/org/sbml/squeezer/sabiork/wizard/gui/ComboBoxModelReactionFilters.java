@@ -31,10 +31,13 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * 
 * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
-@SuppressWarnings("serial")
 public class ComboBoxModelReactionFilters extends ComboBoxModelCaptions {
+
+	/**
+	 * Generated serial version identifier.
+	 */
+	private static final long serialVersionUID = -8088462929075616570L;
 
 	public enum ReactionFilter {
 

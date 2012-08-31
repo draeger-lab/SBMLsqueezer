@@ -55,7 +55,6 @@ import org.sbml.squeezer.sabiork.util.XMLParser;
  * 
  * @author Matthias Rall
  * @version $Rev$
- * ${tags}
  */
 public class SABIORK {
 
