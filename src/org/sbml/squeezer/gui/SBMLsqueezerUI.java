@@ -26,6 +26,7 @@ package org.sbml.squeezer.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,10 +67,12 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.resources.Resource;
+import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.gui.LaTeXExportDialog;
@@ -166,6 +169,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public static enum Command implements ActionCommand {
 		/**
+		 * SABIO-RK
+		 */
+		SABIO_RK,
+		/**
 		 * Generate kinetic equations.
 		 */
 		SQUEEZE,
@@ -179,15 +186,14 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		 * @see de.zbit.gui.ActionCommand#getName()
 		 */
 		public String getName() {
-			return StringUtil.firstLetterUpperCase(toString().toLowerCase()
-					.replace('_', ' '));
+			return MESSAGES.getString(name());
 		}
 
 		/* (non-Javadoc)
 		 * @see de.zbit.gui.ActionCommand#getToolTip()
 		 */
 		public String getToolTip() {
-			return null;
+			return MESSAGES.getString(name() + "_TOOLTIP");
 		}
 	}
 
@@ -209,6 +215,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				"ICON_PICTURE_TINY.png",
 				"ICON_RIGHT_ARROW.png",
 				"ICON_RIGHT_ARROW_TINY.png",
+				"ICON_SABIO-RK_16x29.png",
 				"ICON_STABILITY_SMALL.png",
 				"ICON_STRUCTURAL_MODELING_TINY.png",
 				"IMAGE_LEMON.png"
@@ -309,74 +316,84 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
-		case SQUEEZE:
-			boolean KineticsAndParametersStoredInSBML = false;
-			if (e.getSource() instanceof Reaction) {
-				// single reaction
-				try {
-					KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(this, sbmlIO, ((Reaction) e.getSource()).getId());
-					KineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
-				} catch (Throwable exc) {
-					GUITools.showErrorMessage(this, exc);
+			case SABIO_RK:
+				if (e.getSource() instanceof Reaction) {
+					// TODO
+					logger.warning("Not yet implemented");
+				} else {
+					SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
+					SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.getMiniModel().getSBMLDocument());
+					// TODO store results controller.store...
 				}
-			} else {
-				// whole model
-				KineticLawSelectionWizard wizard;
-				wizard = new KineticLawSelectionWizard(this, sbmlIO);
-				wizard.getDialog().addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosed", ""));
-			    wizard.showModalDialog();
-			    KineticsAndParametersStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
-			}
-			if (KineticsAndParametersStoredInSBML) {
-				SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
-				try {
-					// TODO: use paths to all expanded nodes plus the paths to all selected nodes!
-					SBMLTree tree = split.getTree();
-					tree.saveSelectionPath();
-					TreePath path = tree.getSelectionPath();
-					TreePath selectionPath = tree.getSelectionModel().getSelectionPath();
-					
-					split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
-					
-					setupContextMenu(split, path, selectionPath);
-					split.getTree().restoreSelectionPath();
-
-				} catch (Exception exc) {
-					exc.printStackTrace();
+				break;
+			case SQUEEZE:
+				boolean KineticsAndParametersStoredInSBML = false;
+				if (e.getSource() instanceof Reaction) {
+					// single reaction
+					try {
+						KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(this, sbmlIO, ((Reaction) e.getSource()).getId());
+						KineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
+					} catch (Throwable exc) {
+						GUITools.showErrorMessage(this, exc);
+					}
+				} else {
+					// whole model
+					KineticLawSelectionWizard wizard;
+					wizard = new KineticLawSelectionWizard(this, sbmlIO);
+					wizard.getDialog().addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosed", ""));
+					wizard.showModalDialog();
+					KineticsAndParametersStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
 				}
-			}
-			break;
-		case TO_LATEX:
-			if (e.getSource() instanceof Reaction) {
-				new LaTeXExportDialog(this, (Reaction) e.getSource());
-			} else if (e.getSource() instanceof Model) {
-				new LaTeXExportDialog(this, (Model) e.getSource());
-			} else {
-				SBPreferences guiPrefs = SBPreferences
-						.getPreferencesFor(GUIOptions.class);
-				String dir = guiPrefs.get(GUIOptions.OPEN_DIR);
-				File out = GUITools.saveFileDialog(this, dir, false, false,
+				if (KineticsAndParametersStoredInSBML) {
+					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
+					try {
+						// TODO: use paths to all expanded nodes plus the paths to all selected nodes!
+						SBMLTree tree = split.getTree();
+						tree.saveSelectionPath();
+						TreePath path = tree.getSelectionPath();
+						TreePath selectionPath = tree.getSelectionModel().getSelectionPath();
+						
+						split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
+						
+						setupContextMenu(split, path, selectionPath);
+						split.getTree().restoreSelectionPath();
+						
+					} catch (Exception exc) {
+						exc.printStackTrace();
+					}
+				}
+				break;
+			case TO_LATEX:
+				if (e.getSource() instanceof Reaction) {
+					new LaTeXExportDialog(this, (Reaction) e.getSource());
+				} else if (e.getSource() instanceof Model) {
+					new LaTeXExportDialog(this, (Model) e.getSource());
+				} else {
+					SBPreferences guiPrefs = SBPreferences
+							.getPreferencesFor(GUIOptions.class);
+					String dir = guiPrefs.get(GUIOptions.OPEN_DIR);
+					File out = GUITools.saveFileDialog(this, dir, false, false,
 						JFileChooser.FILES_ONLY, SBFileFilter
-								.createTeXFileFilter());
-				if (out != null) {
-					String path = out.getParent();
-					if (!path.equals(dir)) {
-						guiPrefs.put(GUIOptions.OPEN_DIR, path);
-						try {
-							guiPrefs.flush();
-						} catch (BackingStoreException exc) {
-							GUITools.showErrorMessage(this, exc);
+						.createTeXFileFilter());
+					if (out != null) {
+						String path = out.getParent();
+						if (!path.equals(dir)) {
+							guiPrefs.put(GUIOptions.OPEN_DIR, path);
+							try {
+								guiPrefs.flush();
+							} catch (BackingStoreException exc) {
+								GUITools.showErrorMessage(this, exc);
+							}
+						}
+						if (!out.exists()
+								|| GUITools.overwriteExistingFile(this, out)) {
+							writeLaTeX(out);
 						}
 					}
-					if (!out.exists()
-							|| GUITools.overwriteExistingFile(this, out)) {
-						writeLaTeX(out);
-					}
 				}
-			}
-			break;
-		default:
-			break;
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -428,9 +445,11 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		}
 		
 		tree.addActionListener(this);
+		JMenuItem sabioItem = GUITools.createJMenuItem(tree, Command.SABIO_RK, UIManager.getIcon("ICON_SABIO-RK_16x29"));
 		JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("ICON_LEMON_TINY")); 
-		JMenuItem latexItem = GUITools.createJMenuItem(tree,  Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_TINY"));
+		JMenuItem latexItem = GUITools.createJMenuItem(tree,  Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"));
 		
+		tree.addPopupMenuItem(sabioItem, Reaction.class, Model.class, SBMLDocument.class);
 		tree.addPopupMenuItem(squeezeItem, Reaction.class, Model.class, SBMLDocument.class);
 		tree.addPopupMenuItem(latexItem, Reaction.class, Model.class, SBMLDocument.class);
 	}
@@ -451,12 +470,15 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		// 'S', this, GUITools.ICON_DIAGRAM_TINY));
 
 		return new JMenuItem[] {
-				GUITools.createJMenuItem(this, Command.SQUEEZE, UIManager
-						.getIcon("ICON_LEMON_TINY"), KeyStroke.getKeyStroke(
-						'Q', InputEvent.CTRL_DOWN_MASK)),
-				GUITools.createJMenuItem(this, Command.TO_LATEX, UIManager
-						.getIcon("ICON_LATEX_16"), KeyStroke.getKeyStroke(
-						'E', InputEvent.CTRL_DOWN_MASK)) };
+				GUITools.createJMenuItem(this,
+					Command.SABIO_RK, UIManager.getIcon("ICON_SABIO-RK_16x29")),
+				GUITools.createJMenuItem(this,
+					Command.SQUEEZE, UIManager.getIcon("ICON_LEMON_TINY"),
+					KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK)),
+				GUITools.createJMenuItem(this,
+					Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"),
+					KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK)),
+		};
 	}
 
 	/**
