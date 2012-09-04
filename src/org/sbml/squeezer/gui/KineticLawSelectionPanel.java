@@ -121,20 +121,22 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 	/**
 	 * 
+	 * @param reaction 
 	 * @param possibleLaws
 	 * @param settings
 	 * @param selected
 	 * @throws RateLawNotApplicableException
 	 */
-	public KineticLawSelectionPanel(BasicKineticLaw[] possibleLaws,
+	public KineticLawSelectionPanel(Reaction reaction, BasicKineticLaw[] possibleLaws,
 			int selected)
 			throws RateLawNotApplicableException {
 		super(new BorderLayout());
 		prefsLaTeX = SBPreferences.getPreferencesFor(LaTeXOptions.class);
 		if ((possibleLaws == null) || (selected < 0)
-				|| (selected > possibleLaws.length) || (possibleLaws.length < 1))
+				|| (selected > possibleLaws.length) || (possibleLaws.length < 1)) {
 			throw new IllegalArgumentException(WARNINGS.getString("INVALID_RATE_LAW_COUNT"));
-		this.reaction = possibleLaws[0].getParentSBMLObject();
+		}
+		this.reaction = reaction;
 		this.possibleTypes = new Class[possibleLaws.length];
 		String[] possibleTypesNames = new String[possibleLaws.length];
 		laTeXpreview = new String[possibleTypes.length];
@@ -309,16 +311,15 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 */
 	private void createPreviewPanel(int kinNum) {
 		JPanel preview = new JPanel(new BorderLayout());
-		StringBuilder sb = new StringBuilder("\\begin{equation}v_\\mbox{");
+		StringBuilder sb = new StringBuilder("v_\\mbox{");
 		sb.append(reaction.getId());
 		sb.append("}=");
 		sb.append(laTeXpreview[kinNum].toString().replace("mathrm", "mbox")
 				.replace("text", "mbox").replace("mathtt", "mbox"));
-		sb.append("\\end{equation}");
-		preview.add(new sHotEqn(sb.toString()), BorderLayout.CENTER);
+		preview.add(new sHotEqn(sb.toString().replace("\\-", "")), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel(new BorderLayout());
-		eqnPrev.setBorder(BorderFactory.createTitledBorder(" "+MESSAGES.getString("EQUATION_PREVIEW")+" "));
+		eqnPrev.setBorder(BorderFactory.createTitledBorder(MessageFormat.format(" {0} ", MESSAGES.getString("EQUATION_PREVIEW"))));
 		Dimension dim = new Dimension(width, height);
 		/*
 		 * new Dimension((int) Math.min(width, preview

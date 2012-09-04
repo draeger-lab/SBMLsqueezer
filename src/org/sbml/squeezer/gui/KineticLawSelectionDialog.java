@@ -86,7 +86,7 @@ public class KineticLawSelectionDialog extends JDialog {
 	 * @param progressListener 
 	 */
 	private KineticLawSelectionDialog(Frame owner) {
-		super(owner, MESSAGES.getString("SBMLSQUEEZER"), true);
+		super(owner, System.getProperty("app.name"), true);
 		// if (owner == null)
 		// setIconImage(GUITools.ICON_LEMON);
 		this.prefs = new SBPreferences(SqueezerOptions.class);
@@ -99,31 +99,30 @@ public class KineticLawSelectionDialog extends JDialog {
 	 * 
 	 * @param sbmlIO
 	 * @param reaction
+	 * @throws Throwable 
 	 */
-	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID) {
+	public KineticLawSelectionDialog(Frame owner, SBMLio sbmlIO, String reactionID) throws Throwable {
 		this(owner);
 		
-			// This thing is necessary for CellDesigner!
-			final KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
-					sbmlIO, reactionID);
-			
-			pack();
-			setResizable(false);
-			setLocationRelativeTo(owner);
-			setVisible(true);
-			
-			if (statusBar != null) {
-				AbstractProgressBar progressBar = statusBar.showProgress();
-				adapter.showProgress(progressBar);
-			}
-			KineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
-			dispose();
-			if (statusBar != null) {
-				statusBar.hideProgress();
-			}
-			logger.log(Level.INFO, LABELS.getString("READY"));
-			
+		// This thing is necessary for CellDesigner!
+		final KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
+			sbmlIO, reactionID);
 		
+		pack();
+		setResizable(false);
+		setLocationRelativeTo(owner);
+		setVisible(true);
+		
+		if (statusBar != null) {
+			AbstractProgressBar progressBar = statusBar.showProgress();
+			adapter.showProgress(progressBar);
+		}
+		KineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
+		dispose();
+		if (statusBar != null) {
+			statusBar.hideProgress();
+		}
+		logger.log(Level.INFO, LABELS.getString("READY"));
 	}
 
 	/**

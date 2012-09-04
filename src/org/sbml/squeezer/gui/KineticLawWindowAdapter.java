@@ -149,8 +149,9 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	/**
 	 * 
 	 * @return
+	 * @throws Throwable 
 	 */
-	public boolean isKineticsAndParametersStoredInSBML() {
+	public boolean isKineticsAndParametersStoredInSBML() throws Throwable {
 		if ((value == JOptionPane.OK_OPTION)
 				&& !messagePanel.getExistingRateLawSelected()) {
 			Class<?> equationType = messagePanel.getSelectedKinetic();
@@ -162,28 +163,12 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
 			UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
 			
-			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(klg, reaction,
-					equationType, messagePanel.getReversible(), version, consistency, defaultParamVal) {
-				/* (non-Javadoc)
-				 * @see javax.swing.SwingWorker#done()
-				 */
-				@Override
-				protected void done() {
-					KineticLaw kineticLaw;
-					try {
-						kineticLaw = get();
-						klg.storeKineticLaw(kineticLaw);
-						sbmlio.saveChanges(reaction);
-						SBMLsqueezerUI.checkForSBMLErrors(dialog,
-								sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
-										.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
-					} catch (Throwable exc) {
-						GUITools.showErrorMessage(dialog, exc);
-					}
-				}
-			};
-			
-			klgw.run();
+			KineticLaw kineticLaw = klg.createKineticLaw(reaction, equationType, messagePanel.getReversible(), version, consistency, defaultParamVal);
+			klg.storeKineticLaw(kineticLaw);
+			sbmlio.saveChanges(reaction);
+			SBMLsqueezerUI.checkForSBMLErrors(dialog,
+				sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
+				.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
 			
 			KineticsAndParametersStoredInSBML = true;
 		} else {

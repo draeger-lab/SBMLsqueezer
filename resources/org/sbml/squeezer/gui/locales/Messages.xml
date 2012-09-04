@@ -12,9 +12,7 @@
 	
 	Please see the JavaDoc for MessageFormatter and Formatter. 
   </comment>
-  
-  <entry key="SBMLSQUEEZER">SBMLsqueezer</entry>
-  
+
   <!-- SettingsPanelDefaultMechanisms -->
   
   <entry key="TITLE_DEFAULT_MECHANISMS">Reaction mechanisms</entry>
@@ -156,10 +154,11 @@
   <entry key="COL_KINETIC_LAW">Kinetic Law</entry>
   <entry key="COL_UNIT">Derived Unit</entry>
   <entry key="COL_SBO">SBO</entry>
-  <entry key="COL_NUM_REACTANTS">#Reactants</entry>
+  <entry key="COL_NUM_REACTANTS">Reactants count</entry>
+  <entry key="COL_NUM_PRODUCTS">Products count</entry>
   <entry key="COL_REACTANTS">Reactants</entry>
   <entry key="COL_PRODUCTS">Products</entry>
-  <entry key="COL_PARAMETERS">Parameters</entry>
+  <entry key="COL_PARAMETERS">Parameter counts</entry>
   <entry key="COL_FORMULA">Formula</entry>
   
   <!-- AdditiveModelLinear -->

@@ -236,23 +236,18 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			StringBuilder warnings = new StringBuilder();
 			for (SBMLException exc : excl) {
 				warnings.append("<p>");
-				warnings.append(exc.getMessage().replace("<", "&lt;").replace(
-						">", "&gt;"));
+				warnings.append(exc.getMessage().replace("<", "&lt;").replace(">", "&gt;"));
 				warnings.append("</p>");
 			}
-			JEditorPane area = new JEditorPane("text/html", StringUtil
-					.toHTML(warnings.toString()));
+			JEditorPane area = new JEditorPane("text/html", StringUtil.toHTML(warnings.toString()));
 			area.setEditable(false);
 			area.setBackground(Color.WHITE);
-			JScrollPane scroll = new JScrollPane(area,
-					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			JScrollPane scroll = new JScrollPane(area);
 			scroll.setPreferredSize(new Dimension(450, 200));
 			JOptionPane.showMessageDialog(parent, scroll, WARNINGS.getString("SBML_WARNINGS"),
 					JOptionPane.WARNING_MESSAGE);
 			if (m == null) {
-				JOptionPane.showMessageDialog(parent, StringUtil.toHTML(
-						WARNINGS.getString("UNABLE_TO_LOAD_MODEL"), 40), "Error", JOptionPane.ERROR_MESSAGE);
+				GUITools.showErrorMessage(parent, WARNINGS.getString("UNABLE_TO_LOAD_MODEL"));
 			}
 		}
 	}
@@ -318,8 +313,12 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			boolean KineticsAndParametersStoredInSBML = false;
 			if (e.getSource() instanceof Reaction) {
 				// single reaction
-				KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(this, sbmlIO, ((Reaction) e.getSource()).getId());
-				KineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
+				try {
+					KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(this, sbmlIO, ((Reaction) e.getSource()).getId());
+					KineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
+				} catch (Throwable exc) {
+					GUITools.showErrorMessage(this, exc);
+				}
 			} else {
 				// whole model
 				KineticLawSelectionWizard wizard;
@@ -664,8 +663,12 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public boolean closeFile() {
 		tabbedPane.remove(tabbedPane.getSelectedComponent());
-		
-		return (tabbedPane.getComponentCount() > 0);
+		if (tabbedPane.getTabCount() == 0) {
+			GUITools.setEnabled(false, getJMenuBar(), getJToolBar(),
+				BaseFrame.BaseAction.FILE_CLOSE, BaseFrame.BaseAction.FILE_SAVE,
+				BaseFrame.BaseAction.FILE_SAVE_AS, Command.SQUEEZE, Command.TO_LATEX);
+		}
+		return tabbedPane.getComponentCount() > 0;
 	}
 
 	/* (non-Javadoc)
@@ -741,10 +744,14 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public File[] openFile(File... files) {
 		SBPreferences prefs = SBPreferences.getPreferencesFor(GUIOptions.class);
 		if ((files == null) || (files.length == 0)) {
-			files = GUITools.openFileDialog(this, prefs
-					.get(GUIOptions.OPEN_DIR), false, true,
-					JFileChooser.FILES_ONLY, SBFileFilter
-							.createSBMLFileFilter());
+			files = GUITools.openFileDialog(
+				this,
+				prefs.get(GUIOptions.OPEN_DIR),
+				false,
+				true,
+				JFileChooser.FILES_ONLY, 
+				SBFileFilter.createSBMLFileFilter()
+			);
 		}
 		if (files != null) {
 			for (File file : files) {

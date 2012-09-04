@@ -164,10 +164,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		getModel().addTableModelListener(this);
 		setColumnWidthAppropriately();
 		setRowHeightAppropriately();
-		setDefaultRenderer(
-			Object.class,
-			new KineticLawTableCellRenderer(SBPreferences.getPreferencesFor(
-				SqueezerOptions.class).getInt(SqueezerOptions.MAX_NUMBER_OF_REACTANTS)));
+		setDefaultRenderer(Object.class, new KineticLawTableCellRenderer());
 		getTableHeader().setToolTipText(
 				StringUtil.toHTML(MESSAGES.getString("KINTEIC_LAW_TABLE_HEADER_TOOLTIP"), 40));
 		setCellSelectionEnabled(true);
@@ -197,7 +194,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		int rowIndex = rowAtPoint(p);
 		int colIndex = convertColumnIndexToModel(columnAtPoint(p));
 		if (colIndex != 1) {
-			Object o = dataModel.getValueAt(rowIndex, 1);
+			Object o = ((KineticLawTableModel) dataModel).getKineticLaw(rowIndex);
 			if (o instanceof BasicKineticLaw) {
 				BasicKineticLaw kinetic = (BasicKineticLaw) o;
 				String LaTeX;
@@ -262,13 +259,13 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	public void mousePressed(MouseEvent e) {
 		Point p = e.getPoint();
 		int rowIndex = rowAtPoint(p);
-		int colIndex = columnAtPoint(p);
+//		int colIndex = columnAtPoint(p);
 		// Kinetic Law column
-		if ((convertColumnIndexToModel(colIndex) == 1) && !editing) {
+		if (!editing) { // (convertColumnIndexToModel(colIndex) == 1) && 
 			// setCellEditor(null);
 			try {
 				setCellEditor(rowIndex);
-			} catch (Exception exc) {
+			} catch (Throwable exc) {
 				GUITools.showErrorMessage(this, exc);
 			}
 		}
@@ -293,13 +290,13 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 	 * @throws IllegalArgumentException
 	 * @throws SecurityException
 	 */
-	private void setCellEditor(int rowIndex) throws SecurityException,
+	private void setCellEditor(final int rowIndex) throws SecurityException,
 			IllegalArgumentException, ClassNotFoundException,
 			NoSuchMethodException, InstantiationException,
 			IllegalAccessException, InvocationTargetException {
 		if ((dataModel.getRowCount() > 0) && (dataModel.getColumnCount() > 0)) {
-			Reaction reaction = klg.getModel().getReaction(
-					dataModel.getValueAt(rowIndex, 0).toString());
+			final Reaction reaction = klg.getModel().getReaction(
+					((KineticLawTableModel) dataModel).getKineticLaw(rowIndex).getParent().getId());
 			try {
 				final Class<?> possibleTypes[] = this.klg.getReactionType(
 						reaction.getId()).identifyPossibleKineticLaws();
@@ -315,14 +312,12 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				for (int i = 0; i < possibleLaws.length; i++) {
 					possibleLaws[i] = klg.createKineticLaw(reaction,
 							possibleTypes[i], reversibility, version, consistency, defaultParamVal);
-					if (possibleLaws[i].getSimpleName().equals(
-							oldLaw.getSimpleName())) {
+					if (possibleLaws[i].getSimpleName().equals(oldLaw.getSimpleName())) {
 						selected = i;
 					}
 				}
 				// TODO	klg.getPreferences().flush();
-				final KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(
-						possibleLaws, selected);
+				final KineticLawSelectionPanel klsp = new KineticLawSelectionPanel(reaction, possibleLaws, selected);
 				final JOptionPane pane = new JOptionPane(klsp,
 						JOptionPane.QUESTION_MESSAGE,
 						JOptionPane.OK_CANCEL_OPTION, UIManager
@@ -387,6 +382,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 					
 				});
 				pane.addPropertyChangeListener(new PropertyChangeListener() {
+					/* (non-Javadoc)
+					 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+					 */
 					public void propertyChange(PropertyChangeEvent event) {
 						// Let the defaultCloseOperation handle the closing
 						// if the user closed the window without selecting a
@@ -411,7 +409,9 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 									i++;
 								}
 							}
-							updateTable(possibleLaws[i]);
+							// TODO: Check!
+							reaction.setKineticLaw(possibleLaws[i].clone());
+							updateTable(reaction.getKineticLaw(), rowIndex);
 						}
 					}
 				});
@@ -438,20 +438,20 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				// i++;
 				// updateTable(possibleLaws[i]);
 				// }
-			} catch (Throwable e) {
-				JOptionPane.showMessageDialog(this, e.getMessage(), e
-						.getClass().getName(), JOptionPane.WARNING_MESSAGE);
+			} catch (Throwable exc) {
+				GUITools.showErrorMessage(this, exc);
 			}
 		}
 	}
 
 	/**
 	 * 
+	 * @param rowIndex 
 	 * @param possibleTypes
 	 * @param selectedKinetic
 	 * @param possibleLaws
 	 */
-	public void updateTable(KineticLaw kineticLaw) {
+	private void updateTable(KineticLaw kineticLaw, int rowIndex) {
 		// Reaction Identifier, Kinetic Law, SBO, #Reactants,
 		// Reactants, Products, Parameters, Formula
 		int i;
@@ -470,22 +470,24 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				params.append(", ");
 			}
 		}
-		String name = kineticLaw instanceof BasicKineticLaw ? ((BasicKineticLaw) kineticLaw)
-				.getSimpleName()
-				: kineticLaw.toString();
-		dataModel.setValueAt(name, getSelectedRow(), 1);
-		dataModel.setValueAt(kineticLaw.getSBOTermID(), getSelectedRow(), 2);
-		dataModel.setValueAt(params, getSelectedRow(), dataModel
-				.getColumnCount() - 2);
-		dataModel.setValueAt(kineticLaw.getMath().toFormula(), getSelectedRow(),
-				dataModel.getColumnCount() - 1);
-		i = 0;
-		while ((i < klg.getModel().getReactionCount())
-				&& (!klg.getModel().getReaction(i).getId().equals(
-						kineticLaw.getParentSBMLObject().getId()))) {
-			i++;
-		}
-		kineticLaw.getParentSBMLObject().setKineticLaw(kineticLaw);
+		KineticLawTableModel tabModel = (KineticLawTableModel) dataModel;
+		tabModel.fillData(kineticLaw.getParent(), rowIndex);
+//		String name = kineticLaw instanceof BasicKineticLaw ? ((BasicKineticLaw) kineticLaw)
+//				.getSimpleName()
+//				: kineticLaw.toString();
+//		dataModel.setValueAt(name, getSelectedRow(), 1);
+//		dataModel.setValueAt(kineticLaw.getSBOTermID(), getSelectedRow(), 2);
+//		dataModel.setValueAt(params, getSelectedRow(), dataModel
+//				.getColumnCount() - 2);
+//		dataModel.setValueAt(kineticLaw.getMath().toFormula(), getSelectedRow(),
+//				dataModel.getColumnCount() - 1);
+//		i = 0;
+//		while ((i < klg.getModel().getReactionCount())
+//				&& (!klg.getModel().getReaction(i).getId().equals(
+//						kineticLaw.getParentSBMLObject().getId()))) {
+//			i++;
+//		}
+//		kineticLaw.getParentSBMLObject().setKineticLaw(kineticLaw);
 		setColumnWidthAppropriately();
 		editing = false;
 	}

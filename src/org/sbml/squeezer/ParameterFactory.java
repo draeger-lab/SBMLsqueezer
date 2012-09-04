@@ -411,7 +411,7 @@ public class ParameterFactory {
 			if ((ud.getUnitCount() == 1) && (ud.getUnit(0).isDimensionless())) {
 				keq.setUnits(Unit.Kind.DIMENSIONLESS);
 			} else {
-				UnitFactory.checkUnitDefinitions(ud, model);
+				ud = UnitFactory.checkUnitDefinitions(ud, model);
 				keq.setUnits(ud);
 			}
 		}

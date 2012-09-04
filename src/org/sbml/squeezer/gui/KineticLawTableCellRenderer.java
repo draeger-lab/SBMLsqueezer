@@ -31,6 +31,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableCellRenderer;
 
+import org.sbml.jsbml.util.StringTools;
+
 import de.zbit.gui.ColorPalette;
 
 /**
@@ -50,15 +52,13 @@ public class KineticLawTableCellRenderer extends JTextArea implements TableCellR
 	 */
 	private static final long serialVersionUID = -7760600735675079594L;
 
-	private int maxNumberOfSpecies;
-
 	/**
 	 * TODO: Comment is missing
 	 * 
 	 * @param maxSpecies
 	 */
-	public KineticLawTableCellRenderer(int maxSpecies) {
-		this.maxNumberOfSpecies = maxSpecies;
+	public KineticLawTableCellRenderer() {
+		super();
 	}
 
 	/* (non-Javadoc)
@@ -68,14 +68,8 @@ public class KineticLawTableCellRenderer extends JTextArea implements TableCellR
 			boolean isSelected, boolean hasFocus, int row, int column) {
 		table.setGridColor(ColorPalette.slateGray3);
 		table.setBackground(Color.WHITE);
-		int eductCol = 0;
-		while ((eductCol < table.getColumnCount())
-				&& !(table.getModel().getValueAt(row, eductCol) instanceof Double)) {
-			eductCol++;
-		}
-		double numEducts = ((Double) table.getModel().getValueAt(row, eductCol))
-				.doubleValue();
-		if (numEducts >= maxNumberOfSpecies) {
+		KineticLawTableModel tabModel = (KineticLawTableModel) table.getModel();
+		if (tabModel.hasTooManyReactionParticipants(row)) {
 			setBackground(ColorPalette.lightRed);
 			setForeground(Color.WHITE);
 			setFont(getFont().deriveFont(Font.PLAIN));
@@ -88,12 +82,8 @@ public class KineticLawTableCellRenderer extends JTextArea implements TableCellR
 			setForeground(Color.BLACK);
 			setFont(getFont().deriveFont(Font.PLAIN));
 		}
-		if (table.convertColumnIndexToModel(column) == eductCol) {
-			if (numEducts - ((int) numEducts) == 0d) {
-				setText(Integer.toString((int) numEducts));
-			} else {
-				setText(Double.toString(numEducts));
-			}
+		if (value instanceof Double) {
+			setText(StringTools.toString(((Double) value).doubleValue()));
 		} else if (value instanceof String) {
 			setText((String) value);
 		} else {

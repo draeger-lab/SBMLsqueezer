@@ -34,7 +34,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -73,15 +72,11 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 	 */
 	public static final transient ResourceBundle BASE = ResourceManager.getBundle(Bundles.BASE);
 	
-	private JDialog dialog;
-	
 	/**
 	 * 
-	 * @param dialog
 	 */
-	public KineticLawSelectionOptionPanel(JDialog dialog) {
+	public KineticLawSelectionOptionPanel() {
 		super(new BorderLayout());
-		this.dialog = dialog;
 		init();
 	}
 	
@@ -120,7 +115,7 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 	public void initLogo() {
 		JLabel label = new JLabel(UIManager.getIcon("ICON_LOGO_SMALL"));
 		label.setBackground(Color.WHITE);
-		label.setText("<html><body><br><br><br><br><br><br>"
+		label.setText("<html><body><br/><br/><br/><br/><br/><br/>"
 						+ MESSAGES.getString("VERSION") + " "
 						+ System.getProperty("app.version") + "</body></html>");
 		Dimension d = GUITools.getDimension(UIManager

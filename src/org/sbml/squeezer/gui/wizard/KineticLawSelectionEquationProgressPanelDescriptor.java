@@ -23,12 +23,19 @@
  */
 package org.sbml.squeezer.gui.wizard;
 
+import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.sbml.squeezer.KineticLawGenerator;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
+import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.gui.KineticLawGeneratorWorker;
+
+import de.zbit.gui.wizard.Wizard;
 import de.zbit.gui.wizard.WizardPanelDescriptor;
+import de.zbit.util.progressbar.gui.ProgressBarSwing;
 
 /**
  * 
@@ -36,19 +43,22 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
  * @version $Rev$
  * @since 1.4
  */
-public class KineticLawSelectionEquationProgressPanelDescriptor  extends WizardPanelDescriptor implements PropertyChangeListener {
-	public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PROGRESS_PANEL";
+public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPanelDescriptor implements PropertyChangeListener {
 	
-	private KineticLawSelectionEquationProgressPanel panel;
+	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "KINETIC_LAW_EQUATION_PROGRESS_PANEL";
+
+	private KineticLawGenerator klg;
 	
 	/**
 	 * 
 	 * @param klg
 	 */
 	public KineticLawSelectionEquationProgressPanelDescriptor(KineticLawGenerator klg) {
-		super(IDENTIFIER, new KineticLawSelectionEquationProgressPanel(klg));
-		this.panel = ((KineticLawSelectionEquationProgressPanel) this.getPanelComponent());
-		this.panel.addPropertyChangeListener(this);
+		super(IDENTIFIER, new JPanel(new BorderLayout()));
+		this.klg = klg;
 	}
 	
 	/* (non-Javadoc)
@@ -56,17 +66,16 @@ public class KineticLawSelectionEquationProgressPanelDescriptor  extends WizardP
 	 */
 	@Override
 	public void displayingPanel() {
-		this.getWizard().setNextFinishButtonEnabled(false);
-		this.getWizard().setBackButtonEnabled(false);
-		
-		new Thread(new Runnable() {
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				panel.generateKineticLaw();
-			}
-		}).start();
+		Wizard wizard = getWizard();
+		wizard.setNextFinishButtonEnabled(false);
+		wizard.setBackButtonEnabled(false);
+		JProgressBar progressBar = new JProgressBar();
+		JPanel p = (JPanel) getPanelComponent();
+	  p.add(progressBar, BorderLayout.CENTER);
+		klg.setProgressBar(new ProgressBarSwing(progressBar));
+		KineticLawGeneratorWorker worker = new KineticLawGeneratorWorker(klg);
+		worker.addPropertyChangeListener(this);
+		worker.execute();
 	}
 	
 	/* (non-Javadoc)
@@ -84,8 +93,7 @@ public class KineticLawSelectionEquationProgressPanelDescriptor  extends WizardP
 		return KineticLawSelectionEquationPanelDescriptor.IDENTIFIER;
 	}
 	
-	/*
- (non-Javadoc)
+	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getBackPanelDescriptor()
 	 */
 	@Override
@@ -102,4 +110,5 @@ public class KineticLawSelectionEquationProgressPanelDescriptor  extends WizardP
 			this.getWizard().goToNextPanel();
 		}
 	}
+
 }

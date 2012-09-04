@@ -72,7 +72,7 @@ public class CommonModularRateLaw extends PowerLawModularRateLaw implements
 	public CommonModularRateLaw(Reaction parentReaction, Object... types)
 			throws RateLawNotApplicableException {
 		super(parentReaction, types);
-		SBMLtools.setSBOTerm(this,528); // common modular rate law
+		SBMLtools.setSBOTerm(this, 528); // common modular rate law
 	}
 
 	/* (non-Javadoc)

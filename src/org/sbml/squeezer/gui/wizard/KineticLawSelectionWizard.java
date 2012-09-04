@@ -37,11 +37,9 @@ import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 
-import de.zbit.gui.StatusBar;
 import de.zbit.gui.wizard.Wizard;
 import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.ResourceManager;
-import de.zbit.util.prefs.SBPreferences;
 
 /**
  * 
@@ -63,10 +61,6 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	private static final transient Logger logger = Logger.getLogger(KineticLawSelectionWizard.class.getName());
 
 	private SBMLio sbmlIO;
-	
-	SBPreferences prefs;
-
-	private StatusBar statusBar;
 
 	private JDialog dialog;
 	
@@ -76,13 +70,13 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	 * @param sbmlIO
 	 * @param reactionID
 	 */
-	public KineticLawSelectionWizard(Frame owner, SBMLio sbmlIO){
+	public KineticLawSelectionWizard(Frame owner, SBMLio sbmlIO) {
 		super(owner);
 		
 		this.sbmlIO = sbmlIO;
 		this.dialog = this.getDialog();
 		
-		dialog.setTitle(MESSAGES.getString("SBMLSQUEEZER"));
+		dialog.setTitle(System.getProperty("app.name"));
 		dialog.setMinimumSize(new Dimension(650, 250));
 		dialog.setLocationRelativeTo(owner);
 		
@@ -96,7 +90,7 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	 * 
 	 */
 	private void initDescriptors() {
-		WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor(this.getDialog());
+		WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor();
 		registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
 		
 		KineticLawGenerator klg = null;
@@ -110,7 +104,6 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		registerWizardPanel(KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER, descriptor2);
 		
 		WizardPanelDescriptor descriptor3 = new KineticLawSelectionEquationPanelDescriptor(klg, this.sbmlIO);
-		((KineticLawSelectionEquationPanelDescriptor) descriptor3).setStatusBar(statusBar);
 		registerWizardPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER, descriptor3);
 		
 		setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);

@@ -23,15 +23,13 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.table.AbstractTableModel;
 
 import org.sbml.jsbml.KineticLaw;
-import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptions;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
@@ -66,8 +64,13 @@ public class KineticLawTableModel extends AbstractTableModel {
 	private Object[][] data;
 
 	private String[] columnNames;
+	
+	private boolean warnings[];
+	private KineticLaw kineticLaws[];
 
 	private int numOfWarnings;
+
+	private int maxNumReactants;
 
 	/**
 	 * TODO: add comment
@@ -82,85 +85,118 @@ public class KineticLawTableModel extends AbstractTableModel {
 	 * @param model
 	 */
 	public KineticLawTableModel(KineticLawGenerator klg, AbstractProgressBar progressBar) {
-		int reactionNum, speciesNum;
-		double numReac;
-
+		int reactionNum;
+		
 		columnNames = new String[] { 
 				MESSAGES.getString("COL_REACTION"),
 				MESSAGES.getString("COL_KINETIC_LAW"),
-				MESSAGES.getString("COL_SBO"),
-				MESSAGES.getString("COL_UNIT"),
+//				MESSAGES.getString("COL_SBO"),
+				//MESSAGES.getString("COL_UNIT"),
 				MESSAGES.getString("COL_NUM_REACTANTS"),
-				MESSAGES.getString("COL_REACTANTS"),
-				MESSAGES.getString("COL_PRODUCTS"),
-				MESSAGES.getString("COL_PARAMETERS"),
+				MESSAGES.getString("COL_NUM_PRODUCTS"),
+//				MESSAGES.getString("COL_REACTANTS"),
+//				MESSAGES.getString("COL_PRODUCTS"),
+//				MESSAGES.getString("COL_PARAMETERS"),
 				MESSAGES.getString("COL_FORMULA")};
 		data = new Object[klg.getCreatedKineticsCount()][this.columnNames.length];
+		warnings = new boolean[data.length];
+		kineticLaws = new KineticLaw[data.length];
 		numOfWarnings = 0;
 
-		int maxNumReactants = SBPreferences.getPreferencesFor(SqueezerOptions.class).getInt(SqueezerOptions.MAX_NUMBER_OF_REACTANTS);
+		maxNumReactants = SBPreferences.getPreferencesFor(SqueezerOptions.class).getInt(SqueezerOptions.MAX_NUMBER_OF_REACTANTS);
 		double startTime = System.currentTimeMillis();
 		for (reactionNum = 0; reactionNum < klg.getCreatedKineticsCount(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
-			String kinetic = reaction.isSetKineticLaw() && reaction.getKineticLaw().isSetMath() ? reaction.getKineticLaw().getMath().toFormula() : "";
-			List<LocalParameter> param = reaction.isSetKineticLaw() ? reaction.getKineticLaw().getListOfLocalParameters() : new LinkedList<LocalParameter>();
-			numReac = 0;
-			for (speciesNum = 0; speciesNum < reaction.getReactantCount(); speciesNum++) {
-				numReac += reaction.getReactant(speciesNum).getStoichiometry();
-			}
-			if (numReac >= maxNumReactants) {
-				numOfWarnings++;
-			}
-			String reac = "";
-			String pro = "";
-			String para = "";
-
-			if (reaction.getReactantCount() > 0) {
-				reac += reaction.getReactant(0).getSpecies();
-			}
-			for (speciesNum = 1; speciesNum < reaction.getReactantCount(); speciesNum++) {
-				reac += ", " + reaction.getReactant(speciesNum).getSpecies();
-			}
-			if (reaction.getProductCount() > 0) {
-				pro += reaction.getProduct(0).getSpecies();
-			}
-			for (speciesNum = 1; speciesNum < reaction.getProductCount(); speciesNum++) {
-				pro += ", " + reaction.getProduct(speciesNum).getSpecies();
-			}
-			for (int j = 0; j < param.size() - 1; j++) {
-				para += param.get(j).getId() + ", ";
-			}
-			para += param.get(param.size() - 1).getId();
-
-			KineticLaw kl = reaction.getKineticLaw();
-
-			// Reaction Identifier
-			data[reactionNum][0] = reaction.getId();
-			// Kinetic Law
-			if (kl != null) {
-				data[reactionNum][1] = kl instanceof BasicKineticLaw ? ((BasicKineticLaw) kl).getSimpleName() : kl.toString();
-				// SBO
-				data[reactionNum][2] = kl.getSBOTermID();
-			}
-			// Derived Unit
-			data[reactionNum][3] = reaction.getDerivedUnitDefinition();
-			// #Reactants
-			data[reactionNum][4] = Double.valueOf(numReac);
-			// Reactants
-			data[reactionNum][5] = reac;
-			// Products
-			data[reactionNum][6] = pro;
-			// Parameters
-			data[reactionNum][7] = para;
-			// Formula
-			data[reactionNum][8] = kinetic;
+			
+			fillData(reaction, reactionNum);
 			
 			// Notify progress listener:
 			double percent = reactionNum * 100d/klg.getCreatedKineticsCount();
 			double remainingTime = 100 * ((System.currentTimeMillis() - startTime) / percent);
+			// TODO: Localize
 			progressBar.percentageChanged((int) Math.round(percent), remainingTime, "Creating overview");
 		}
 		progressBar.finished();
+	}
+
+	/**
+	 * 
+	 * @param reaction
+	 * @param reactionNum
+	 */
+	public void fillData(Reaction reaction, int reactionNum) {
+		int speciesNum;
+		kineticLaws[reactionNum] = reaction.isSetKineticLaw() ? reaction.getKineticLaw() : null;
+		String kinetic = (kineticLaws[reactionNum] != null) && kineticLaws[reactionNum].isSetMath() ? kineticLaws[reactionNum].getMath().toFormula() : " - ";
+		
+//		List<LocalParameter> param = reaction.isSetKineticLaw() ? reaction.getKineticLaw().getListOfLocalParameters() : new LinkedList<LocalParameter>();
+		double numReac = 0d, numProduct = 0d;
+		warnings[reactionNum] = false;
+		for (speciesNum = 0; speciesNum < reaction.getReactantCount(); speciesNum++) {
+			numReac += reaction.getReactant(speciesNum).getStoichiometry();
+		}
+		if (numReac >= maxNumReactants) {
+			numOfWarnings++;
+			warnings[reactionNum] = true;
+		} else if (reaction.isReversible()) {
+			for (speciesNum = 0; speciesNum < reaction.getProductCount(); speciesNum++) {
+				numProduct += reaction.getProduct(speciesNum).getStoichiometry();
+			}
+			if (numProduct >= maxNumReactants) {
+				numOfWarnings++;
+				warnings[reactionNum] = true;
+			}
+		}
+		
+//		String reac = "";
+//		String pro = "";
+//		String para = "";
+//
+//		if (reaction.getReactantCount() > 0) {
+//			reac += reaction.getReactant(0).getSpecies();
+//		}
+//		for (speciesNum = 1; speciesNum < reaction.getReactantCount(); speciesNum++) {
+//			reac += ", " + reaction.getReactant(speciesNum).getSpecies();
+//		}
+//		if (reaction.getProductCount() > 0) {
+//			pro += reaction.getProduct(0).getSpecies();
+//		}
+//		for (speciesNum = 1; speciesNum < reaction.getProductCount(); speciesNum++) {
+//			pro += ", " + reaction.getProduct(speciesNum).getSpecies();
+//		}
+//		for (int j = 0; j < param.size() - 1; j++) {
+//			para += param.get(j).getId() + ", ";
+//		}
+//		para += param.get(param.size() - 1).getId();
+
+		KineticLaw kl = reaction.getKineticLaw();
+
+		// Reaction Identifier
+		int column = -1;
+		data[reactionNum][++column] = reaction.isSetName() ? reaction.getName() : reaction.getId();
+		// Kinetic Law
+		if (kl != null) {
+			if (kl.isSetSBOTerm()) {
+				data[reactionNum][++column] = SBO.getTerm(kl.getSBOTerm()).getName();
+			} else {
+				data[reactionNum][++column] =  kl instanceof BasicKineticLaw ? ((BasicKineticLaw) kl).getSimpleName() : kl.toString();
+			}
+		} else {
+			data[reactionNum][++column] = " - ";
+		}
+		// Derived Unit
+		//data[reactionNum][++column] = reaction.getDerivedUnitDefinition();
+		// #Reactants
+		data[reactionNum][++column] = Double.valueOf(numReac);
+//		// Reactants
+//		data[reactionNum][++column] = reac;
+//		// Products
+//		data[reactionNum][++column] = pro;
+//		// Parameters
+//		data[reactionNum][++column] = para;
+		data[reactionNum][++column] = Double.valueOf(numProduct);
+		// Formula
+		data[reactionNum][++column] = kinetic;
 	}
 
 	/* (non-Javadoc)
@@ -217,6 +253,24 @@ public class KineticLawTableModel extends AbstractTableModel {
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		data[rowIndex][columnIndex] = aValue;
 		fireTableCellUpdated(rowIndex, columnIndex);
+	}
+	
+	/**
+	 * 
+	 * @param rowIndex
+	 * @return
+	 */
+	public boolean hasTooManyReactionParticipants(int rowIndex) {
+		return warnings[rowIndex];
+	}
+	
+	/**
+	 * 
+	 * @param rowIndex
+	 * @return
+	 */
+	public KineticLaw getKineticLaw(int rowIndex) {
+		return kineticLaws[rowIndex];
 	}
 
 }

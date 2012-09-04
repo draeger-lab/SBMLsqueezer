@@ -37,6 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -44,7 +45,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.squeezer.gui.KineticLawGeneratorWorker;
+import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.math.GaussianRank;
@@ -156,7 +157,6 @@ public class KineticLawGenerator {
 	private Class<?> kineticsReversibleArbitraryEnzymeReaction;
 	private Class<?> kineticsReversibleBiUniType;
 	private Class<?> kineticsReversibleBiBiType;
-	private String speciesIgnoreList[];
 	private Class<?> kineticsIrreversibleNonEnzymeReactions;
 	private Class<?> kineticsIrreversibleUniUniType;
 	private Class<?> kineticsIrreversibleArbitraryEnzymeReaction;
@@ -164,32 +164,70 @@ public class KineticLawGenerator {
 	private Class<?> kineticsIrreversibleBiBiType;
 	private Class<?> kineticsZeroReactants;
 	private Class<?> kineticsZeroProducts;
+	private String speciesIgnoreList[];
 
 	/**
-	 * Takes a model and settings for kinetic law generation as input, creates a
-	 * copy of the model, updates the enzymatic catalysis information using the
-	 * given settings and creates kinetic laws for each reaction in the model
-	 * copy. The original model remains unchanged.
+	 * Takes a {@link Model} as input, creates a copy of the {@link Model},
+	 * updates the enzymatic catalysis information using the given settings and
+	 * creates kinetic laws for each reaction in the model copy. The original
+	 * {@link Model} remains unchanged. Note that this constructor only initializes
+	 * the {@link KineticLawGenerator}. The actual kinetic equations are created
+	 * by calling {@link #generateLaws()}. In order to synchronize the sub-model
+	 * with the original {@link Model}, call {@link #storeKineticLaws()}.
 	 * 
 	 * @param model
-	 * @param settings
-	 * @throws ClassNotFoundException 
+	 *        for whose reactions kinetic equations are to be created.
+	 * @throws ClassNotFoundException
+	 *         happens if the preferences contain references to classes of kinetic
+	 *         equations that do not exist.
 	 */
 	public KineticLawGenerator(Model model) throws ClassNotFoundException {
 		this(model, null);
 	}
 
 	/**
+	 * Creates a sub-model as a reduced copy for the given {@link Model} that
+	 * contains only the reaction for the given identifier including all
+	 * {@link Species}, {@link Compartment}s, and {@link UnitDefinition}s linked
+	 * to this reaction. If the identifier is {@code null}, all reactions of the
+	 * given {@link Model} will be copied. The sub-model can then be used to
+	 * {@link #generateLaws()} that can in turn be synchronized with the original
+	 * model by calling {@link #storeKineticLaws()} or
+	 * {@link #storeKineticLaw(KineticLaw)}.
 	 * 
 	 * @param model
+	 *        for whose reactions kinetic equations are to be created. If the
+	 *        second parameter is not {@code null}, kinetic equations will only be
+	 *        created for this reaction.
 	 * @param reactionID
-	 * @param settings
-	 * @throws ClassNotFoundException 
+	 *        the identifier of the reaction for which a kinetic equation is to be
+	 *        created. This argument can be {@code null}.
+	 * @throws ClassNotFoundException
+	 *         happens if the preferences contain references to classes of kinetic
+	 *         equations that do not exist.
 	 */
 	public KineticLawGenerator(Model model, String reactionID) throws ClassNotFoundException {
 		
 		// Initialize user settings:
 		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+		configure(prefs);
+		
+		// Initialize submodel controller
+		this.submodelController = new SubmodelController(model, reactionID);
+		
+		// Initialize the mini model:
+		this.modelOrig = model;
+		this.listOfFastReactions = new LinkedList<Reaction>();
+		this.miniModel = submodelController.getMiniModel();
+		this.updateEnzymeCatalysis();
+	}
+
+	/**
+	 * 
+	 * @param prefs
+	 * @throws ClassNotFoundException
+	 */
+	private void configure(SBPreferences prefs) throws ClassNotFoundException {
 		typeStandardVersion = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
 		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
 		defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
@@ -240,15 +278,6 @@ public class KineticLawGenerator {
 			name = SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE.getName();
 			possibleEnzymes.add(Integer.valueOf(SBO.getMacromolecule()));
 		}
-		
-		// Initialize submodel controller
-		this.submodelController = new SubmodelController(model, reactionID);
-		
-		// Initialize the mini model:
-		this.modelOrig = model;
-		this.listOfFastReactions = new LinkedList<Reaction>();
-		this.miniModel = submodelController.getMiniModel();
-		updateEnzymeCatalysis();
 	}
 
 	/**
@@ -437,8 +466,8 @@ public class KineticLawGenerator {
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
 		}
 		
-		for (Reaction r : miniModel.getListOfReactions()) {
-			ReactionType rt = new ReactionType(r, isReversibility(),
+		for (Reaction reaction : miniModel.getListOfReactions()) {
+			ReactionType rt = new ReactionType(reaction, isReversibility(),
 				allReactionsAsEnzymeCatalyzed, isSetBoundaryCondition(), speciesIgnoreList);
 			
 			Class<?> kineticsClass = rt.identifyPossibleKineticLaw(
@@ -456,10 +485,8 @@ public class KineticLawGenerator {
 				progressAdapter.progressOn();
 			}
 			
-			KineticLawGeneratorWorker klgw = new KineticLawGeneratorWorker(this, r,
-				kineticsClass, isReversibility(), typeStandardVersion, typeUnitConsistency, defaultParamVal);
-			
-			klgw.run();
+			createKineticLaw(reaction, kineticsClass, isReversibility(),
+				typeStandardVersion, typeUnitConsistency, defaultParamVal);
 			
 			if (progressAdapter != null) {
 				//progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
