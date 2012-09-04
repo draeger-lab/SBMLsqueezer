@@ -26,6 +26,7 @@ package org.sbml.squeezer.gui.wizard;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +38,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +55,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
@@ -69,13 +73,12 @@ import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
 
 import de.zbit.gui.GUIOptions;
-import de.zbit.gui.StatusBar;
 import de.zbit.gui.SystemBrowser;
+import de.zbit.gui.wizard.WizardFinishingListener;
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
-import de.zbit.util.progressbar.AbstractProgressBar;
 import de.zbit.util.progressbar.gui.ProgressBarSwing;
 
 /**
@@ -112,14 +115,13 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	
 	private SBPreferences prefs;
 
-	private StatusBar statusBar;
-
 	private boolean KineticsAndParametersStoredInSBML = false;
 	
 	private int numOfWarnings = 0;
 	private JPanel reactionsPanel;
 	private KineticLawTable tableOfKinetics;
 	private ProgressBarSwing progressBarSwing;
+	private List<WizardFinishingListener> listOfFinishingListeners;
 	
 	
 	
@@ -230,43 +232,48 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	/**
 	 * 
 	 */
-	private void storeKineticsInOriginalModel() {
-		// show statusBar for the synchronization
-		// get new statusbar and limit the log message length
-		if (statusBar != null) {
-			AbstractProgressBar progressBar = statusBar.showProgress();
-			klg.setProgressBar(progressBar);
-		}
-		
-		klg.storeKineticLaws();
-		SBMLsqueezerUI.checkForSBMLErrors(this, sbmlIO.getSelectedModel(),
-				sbmlIO.getWriteWarnings(), prefs
-						.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
-		KineticsAndParametersStoredInSBML = true;
-		
-		if (statusBar != null) {
-			statusBar.hideProgress();
-		}
-	}
-	
-	/**
-	 * 
-	 */
 	public void apply() {
 		if (!KineticsAndParametersStoredInSBML && (klg != null)
 				&& (sbmlIO != null)) {
 			KineticsAndParametersStoredInSBML = true;
-			new Thread(new Runnable() {
-				public void run() {
-					setVisible(false);
-					storeKineticsInOriginalModel();
-					//dispose();
-					if (statusBar != null) {
-						statusBar.hideProgress();
-					}
-					logger.log(Level.INFO, LABELS.getString("READY"));
+			reactionsPanel.removeAll();
+			JProgressBar progress = new JProgressBar();
+			ProgressBarSwing pbs = new ProgressBarSwing(progress);
+			klg.setProgressBar(pbs);
+			reactionsPanel.add(progress, BorderLayout.CENTER);
+			validate();
+			final Component parent = this;
+			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
+
+				/* (non-Javadoc)
+				 * @see javax.swing.SwingWorker#doInBackground()
+				 */
+				@Override
+				protected Void doInBackground() throws Exception {
+					klg.storeKineticLaws();
+					return null;
 				}
-			}).start();
+
+				/* (non-Javadoc)
+				 * @see javax.swing.SwingWorker#done()
+				 */
+				@Override
+				protected void done() {
+					SBMLsqueezerUI.checkForSBMLErrors(
+						parent,
+						sbmlIO.getSelectedModel(),
+						sbmlIO.getWriteWarnings(), 
+						prefs.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)
+				  );
+					KineticsAndParametersStoredInSBML = true;
+					logger.log(Level.INFO, LABELS.getString("READY"));
+					for (WizardFinishingListener listener : listOfFinishingListeners) {
+						listener.wizardFinished();
+					}
+				}
+				
+			};
+			sw.execute();
 		}
 	}
 	
@@ -344,12 +351,12 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 				 */
 				public void propertyChange(PropertyChangeEvent evt) {
 					if (d.isVisible()
-							&& evt.getSource() == pane
-							&& evt.getPropertyName().equals(
-								JOptionPane.VALUE_PROPERTY)
-								&& evt.getNewValue() != null
-								&& evt.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)
+							&& (evt.getSource() == pane)
+							&& evt.getPropertyName().equals(JOptionPane.VALUE_PROPERTY)
+								&& (evt.getNewValue() != null)
+								&& (evt.getNewValue() != JOptionPane.UNINITIALIZED_VALUE)) {
 						d.setVisible(false);
+					}
 				}
 			});
 			d.setVisible(true);
@@ -368,10 +375,6 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 		add(reactionsPanel, BorderLayout.CENTER);
 		validate();
 		tableOfKinetics = new KineticLawTable(klg, progressBarSwing, this);
-	}
-	
-	public void setStatusBar(StatusBar statusBar) {
-		this.statusBar = statusBar;
 	}
 
 	/* (non-Javadoc)
@@ -438,4 +441,28 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 			GUITools.showErrorMessage(this, exc);
 		}
 	}
+
+	/**
+	 * 
+	 * @param listener
+	 */
+	public boolean addFinishingListener(WizardFinishingListener listener) {
+		if (listOfFinishingListeners == null) {
+			this.listOfFinishingListeners = new LinkedList<WizardFinishingListener>();
+		}
+		return this.listOfFinishingListeners.add(listener);
+	}
+	
+	/**
+	 * 
+	 * @param listener
+	 * @return
+	 */
+	public boolean removeFinishingListener(WizardFinishingListener listener) {
+		if (listOfFinishingListeners == null) {
+			return false;
+		}
+		return listOfFinishingListeners.remove(listener);
+	}
+
 }

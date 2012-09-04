@@ -325,7 +325,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() instanceof JTabbedPane) {
 			JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
-			if (tabbedPane.getComponentCount() == 0) {
+			if (tabbedPane.getTabCount() == 0) {
 				listOfOpenedFiles.clear();
 			} else {
 				// search for the currently selected model.
@@ -333,15 +333,15 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 					Model m = listOfOpenedFiles.get(i).getDocument().getModel();
 					if (m != null) {
 						boolean contains = false;
-						for (int j = 0; j < tabbedPane.getTabCount()
-								&& !contains; j++) {
+						for (int j = 0; (j < tabbedPane.getTabCount()) && !contains; j++) {
 							String title = tabbedPane.getTitleAt(j);
-							if (title.equals(m.getName())
-									|| title.equals(m.getId()))
+							if (title.equals(m.getName()) || title.equals(m.getId())) {
 								contains = true;
+							}
 						}
-						if (!contains)
+						if (!contains) {
 							listOfOpenedFiles.remove(i);
+						}
 					}
 				}
 				selectedModel = tabbedPane.getSelectedIndex();

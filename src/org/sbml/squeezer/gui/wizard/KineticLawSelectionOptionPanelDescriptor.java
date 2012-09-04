@@ -27,8 +27,6 @@ package org.sbml.squeezer.gui.wizard;
 import java.awt.Component;
 import java.util.ResourceBundle;
 
-import javax.swing.JDialog;
-
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
@@ -61,10 +59,9 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 	
 	/**
 	 * 
-	 * @param dialog
 	 */
-	public KineticLawSelectionOptionPanelDescriptor(JDialog dialog) {
-		super(IDENTIFIER, new KineticLawSelectionOptionPanel(dialog));
+	public KineticLawSelectionOptionPanelDescriptor() {
+		super(IDENTIFIER, new KineticLawSelectionOptionPanel());
 	}
 	
 	/* (non-Javadoc)
@@ -97,10 +94,11 @@ public class KineticLawSelectionOptionPanelDescriptor extends WizardPanelDescrip
 	@Override
 	public Component getHelpAction() {
 		JHelpBrowser helpBrowser = new JHelpBrowser(getWizard().getDialog(),
-				MESSAGES.getString("SBMLSQUEEZER") 
-					+ " " + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
-						System.getProperty("app.version")), 
-						SBMLsqueezer.class.getResource("resources/html/help.html"));
+			System.getProperty("app.name")
+					+ " "
+					+ String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+						System.getProperty("app.version")),
+			SBMLsqueezer.class.getResource("resources/html/help.html"));
 		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
 		helpBrowser.setSize(640, 640);
 		

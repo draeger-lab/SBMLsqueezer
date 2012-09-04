@@ -25,11 +25,8 @@ package org.sbml.squeezer.celldesigner;
 
 import java.awt.Dialog;
 import java.io.IOException;
-import java.net.URL;
 
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-import javax.swing.UIManager;
 
 import jp.sbi.celldesigner.plugin.CellDesignerPlugin;
 import jp.sbi.celldesigner.plugin.PluginMenu;
@@ -279,7 +276,11 @@ public class Plugin extends CellDesignerPlugin {
 		    wizard.isKineticsAndParametersStoredInSBML();
 			break;
 		case SQUEEZE_REACTION:
-			new KineticLawSelectionDialog(null, io, ((PluginReaction) getSelectedReactionNode().get(0)).getId());
+				try {
+					new KineticLawSelectionDialog(null, io, ((PluginReaction) getSelectedReactionNode().get(0)).getId());
+				} catch (Throwable exc) {
+					GUITools.showErrorMessage(null, exc);
+				}
 			break;
 		case CONFIGURE:
 			PreferencesDialog.showPreferencesDialog(SBMLsqueezer.getInteractiveConfigOptionsArray());

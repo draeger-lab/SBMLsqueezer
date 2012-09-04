@@ -27,11 +27,10 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
-import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.UnitConsistencyType;
-import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.kinetics.TypeStandardVersion;
+import org.sbml.squeezer.util.Bundles;
+
+import de.zbit.util.ResourceManager;
 
 /**
  * Generates kinetic laws using SwingWorker
@@ -40,7 +39,7 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
  * @since 1.4
  * @version $Rev: 831 $
  */
-public class KineticLawGeneratorWorker extends SwingWorker<BasicKineticLaw, Void> {
+public class KineticLawGeneratorWorker extends SwingWorker<Void, Void> {
 	/**
 	 * A {@link Logger} for this class.
 	 */
@@ -48,51 +47,26 @@ public class KineticLawGeneratorWorker extends SwingWorker<BasicKineticLaw, Void
 		
 	private KineticLawGenerator klg;
 	
-	private Reaction reaction;
-	
-	private Class<?> kineticsClass;
-	
-	private boolean reversibility;
-	
-	private TypeStandardVersion version;
-	private UnitConsistencyType consistency;
-	private double defaultNewParamVal;
-	
 	/**
 	 * 
 	 * @param klg
-	 * @param reaction
-	 * @param kineticsClass
-	 * @param reversibility
-	 * @param version
-	 * @param consistency
-	 * @param defaultNewParamVal
 	 */
-	public KineticLawGeneratorWorker(KineticLawGenerator klg, Reaction reaction,
-		Class<?> kineticsClass, boolean reversibility, TypeStandardVersion version,
-		UnitConsistencyType consistency, double defaultNewParamVal) {
+	public KineticLawGeneratorWorker(KineticLawGenerator klg) {
 		super();
 		this.klg = klg;
-		this.reaction = reaction;
-		this.kineticsClass = kineticsClass;
-		this.reversibility = reversibility;
-		this.version = version;
-		this.consistency = consistency;
-		this.defaultNewParamVal = defaultNewParamVal;
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.swing.SwingWorker#doInBackground()
 	 */
-	protected BasicKineticLaw doInBackground() throws Exception {
-		BasicKineticLaw bkl = null;
+	protected Void doInBackground() {
 		try {
-			bkl = klg.createKineticLaw(reaction, kineticsClass, reversibility, version, consistency, defaultNewParamVal);
+			klg.generateLaws();
 		} catch (Throwable e) {
-			logger.log(Level.WARNING, e.getMessage());
+			logger.log(Level.WARNING, e.getLocalizedMessage());
+			e.printStackTrace();
 		}
-		
-		return bkl;
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -100,7 +74,8 @@ public class KineticLawGeneratorWorker extends SwingWorker<BasicKineticLaw, Void
 	 */
 	@Override
 	protected void done() {
-		
+		logger.log(Level.INFO, ResourceManager.getBundle(Bundles.LABELS).getString("READY"));
+		firePropertyChange("generateKineticLawDone", null, null);
 	}
 	
 }

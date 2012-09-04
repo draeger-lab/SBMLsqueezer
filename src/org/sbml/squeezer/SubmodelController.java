@@ -264,10 +264,15 @@ public class SubmodelController {
 				}
 			}
 			if (reacOrig.isSetKineticLaw()) {
-				String formula = reacOrig.getKineticLaw().getMath().toFormula();
-				if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
-					logger.warning(MessageFormat.format(WARNINGS.getString("INVALID_REACTION_FORMAT"), reacOrig.getId()));
+				KineticLaw kl = reacOrig.getKineticLaw();
+				if (!kl.isSetMath()) {
 					create = true;
+				} else {
+					String formula = kl.getMath().toFormula();
+					if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
+						logger.warning(MessageFormat.format(WARNINGS.getString("INVALID_REACTION_FORMAT"), reacOrig.getId()));
+						create = true;
+					}
 				}
 			}
 			if (!reacOrig.isSetKineticLaw() || create) {

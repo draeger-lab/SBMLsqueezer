@@ -33,7 +33,7 @@ import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.gui.JHelpBrowser;
-import de.zbit.gui.StatusBar;
+import de.zbit.gui.wizard.WizardFinishingListener;
 import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.ResourceManager;
 
@@ -91,6 +91,22 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 	public void aboutToHidePanel() {
 		panel.apply();
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#isDone()
+	 */
+	@Override
+	public boolean isImmediatelyFinishing() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#addFinishingListener(de.zbit.gui.wizard.WizardFinishingListener)
+	 */
+	@Override
+	public boolean addFinishingListener(WizardFinishingListener listener) {
+		return panel.addFinishingListener(listener) && super.addFinishingListener(listener);
+	}
 
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getNextPanelDescriptor()
@@ -108,24 +124,17 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 		return KineticLawSelectionOptionPanelDescriptor.IDENTIFIER;
 	}
 	
-	/**
-	 * 
-	 * @param statusBar
-	 */
-	public void setStatusBar(StatusBar statusBar) {
-		((KineticLawSelectionEquationPanel) this.getPanelComponent()).setStatusBar(statusBar);
-	}
-	
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#getHelpAction()
 	 */
 	@Override
 	public Component getHelpAction() {
 		JHelpBrowser helpBrowser = new JHelpBrowser(getWizard().getDialog(),
-				MESSAGES.getString("SBMLSQUEEZER") 
-					+ " " + String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
-						System.getProperty("app.version")), 
-						SBMLsqueezer.class.getResource("resources/html/help.html"));
+			System.getProperty("app.name")
+					+ " "
+					+ String.format(LABELS.getString("ONLINE_HELP_FOR_THE_PROGRAM"),
+						System.getProperty("app.version")),
+			SBMLsqueezer.class.getResource("resources/html/help.html"));
 		helpBrowser.setLocationRelativeTo(this.getWizard().getDialog());
 		helpBrowser.setSize(640, 640);
 		
