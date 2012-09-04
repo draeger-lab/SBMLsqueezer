@@ -142,6 +142,15 @@
   <entry key="SAVING_TO_FILE">Saving changes and writing SBML file...</entry>
   <entry key="WRITING_LATEX_OUTPUT">writing LaTeX output...</entry>
   
+  <!-- SBMLsqueezerUI -->
+  
+  <entry key="SABIO_RK">SABIO-RK</entry>
+  <entry key="SABIO_RK_TOOLTIP">Extracts rate laws, parameters, and units from the reaction kinetics database SABIO-RK.</entry>
+  <entry key="SQUEEZE">Squeeze</entry>
+  <entry key="SQUEEZE_TOOLTIP">Generates missing kinetic equations including parameters and units.</entry>
+  <entry key="TO_LATEX">To LaTeX</entry>
+  <entry key="TO_LATEX_TOOLTIP">Creates a report that describes the current model.</entry>
+  
   <!-- KineticLawTable -->
   
   <entry key="KINTEIC_LAW_TABLE_HEADER_TOOLTIP">Double click on the kinetic law to apply another formalism. Single click on any other column to get a formatted equation preview.</entry>
