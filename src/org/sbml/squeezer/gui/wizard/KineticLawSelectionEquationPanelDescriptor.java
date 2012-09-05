@@ -38,6 +38,7 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.ResourceManager;
 
 /**
+ * This class implements the descriptor for the equation panel
  * 
  * @author Sebastian Nagel
  * @date Feb 25, 2012
@@ -81,6 +82,7 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 	 */
 	@Override
 	public void displayingPanel() {
+		// when kinetic laws are generated, show the respective table
 		panel.generateKineticLawDone();
 	}
 	
@@ -89,6 +91,7 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 	 */
 	@Override
 	public void aboutToHidePanel() {
+		// store kinetic laws in model when the panel is about to hide
 		panel.apply();
 	}
 	

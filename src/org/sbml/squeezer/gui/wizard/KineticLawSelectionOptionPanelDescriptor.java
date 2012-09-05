@@ -35,6 +35,7 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.ResourceManager;
 
 /**
+ * This class implements the descriptor for the option (main) panel.
  * 
  * @author Sebastian Nagel
  * @date Feb 25, 2012

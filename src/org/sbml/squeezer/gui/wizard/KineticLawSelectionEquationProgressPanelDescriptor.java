@@ -38,6 +38,7 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.progressbar.gui.ProgressBarSwing;
 
 /**
+ * This class implements the descriptor for the progress panel
  * 
  * @author Sebastian Nagel
  * @version $Rev$
@@ -66,13 +67,16 @@ public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPa
 	 */
 	@Override
 	public void displayingPanel() {
+		// disable the buttons while progress is running
 		Wizard wizard = getWizard();
 		wizard.setNextFinishButtonEnabled(false);
 		wizard.setBackButtonEnabled(false);
+		// set progress bar
 		JProgressBar progressBar = new JProgressBar();
 		JPanel p = (JPanel) getPanelComponent();
-	  p.add(progressBar, BorderLayout.CENTER);
+		p.add(progressBar, BorderLayout.CENTER);
 		klg.setProgressBar(new ProgressBarSwing(progressBar));
+		// generate kinetic laws
 		KineticLawGeneratorWorker worker = new KineticLawGeneratorWorker(klg);
 		worker.addPropertyChangeListener(this);
 		worker.execute();
@@ -107,6 +111,7 @@ public class KineticLawSelectionEquationProgressPanelDescriptor extends WizardPa
 	//@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("generateKineticLawDone")){
+			// when progress is done, go to next panel automatically
 			this.getWizard().goToNextPanel();
 		}
 	}

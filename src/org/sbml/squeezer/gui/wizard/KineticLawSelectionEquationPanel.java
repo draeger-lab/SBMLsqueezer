@@ -82,6 +82,7 @@ import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.progressbar.gui.ProgressBarSwing;
 
 /**
+ * This class implements the reaction frame
  * 
  * @author Sebastian Nagel
  * @date Feb 25, 2012
@@ -141,7 +142,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	}
 	
 	/**
-	 * 
+	 * init all panel components
 	 */
 	private void init() {
 		JButton jButtonReactionsFrameSave = new JButton();
@@ -230,7 +231,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	}
 	
 	/**
-	 * 
+	 * store generated kinetic laws in model
 	 */
 	public void apply() {
 		if (!KineticsAndParametersStoredInSBML && (klg != null)
@@ -278,7 +279,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	}
 	
 	/**
-	 * 
+	 * shows the table with all generated kinetic laws
 	 */
 	public void generateKineticLawDone() {
 		if (klg.getFastReactions().size() > 0) {
