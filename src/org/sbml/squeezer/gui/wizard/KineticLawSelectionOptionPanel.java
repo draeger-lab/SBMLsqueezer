@@ -47,6 +47,8 @@ import de.zbit.gui.prefs.PreferencesDialog;
 import de.zbit.util.ResourceManager;
 
 /**
+ * This class implements the main panel. The panel includes the 
+ * SBMLsqueezer logo and a button to show the preferences dialog
  * 
  * @author Sebastian Nagel
  * @date Feb 25, 2012
@@ -89,7 +91,7 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 	}
 	
 	/**
-	 * 
+	 * initialize the kinetic law option (preferences) button 
 	 */
 	public void initOptions() {
 		JButton options = new JButton(MESSAGES.getString("SHOW_OPTIONS"));
@@ -110,7 +112,7 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 	}
 	
 	/**
-	 * 
+	 * initalize the SBMLsqueezer logo
 	 */
 	public void initLogo() {
 		JLabel label = new JLabel(UIManager.getIcon("ICON_LOGO_SMALL"));
@@ -140,6 +142,7 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 			JButton button = (JButton) e.getSource();
 			String text = button.getText();
 			if (text.equals(MESSAGES.getString("SHOW_OPTIONS"))) {
+				// show preferences dialog
 				PreferencesDialog.showPreferencesDialog(SqueezerOptions.class);
 			}
 		}

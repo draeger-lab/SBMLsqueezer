@@ -42,6 +42,10 @@ import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.ResourceManager;
 
 /**
+ * This class implements a Wizard for the KineticLawGenerator.
+ * 
+ * @see Wizard
+ * @see KineticLawGenerator
  * 
  * @author Sebastian Nagel
  * @date Feb 25, 2012
@@ -76,6 +80,7 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 		this.sbmlIO = sbmlIO;
 		this.dialog = this.getDialog();
 		
+		// set dialog properties
 		dialog.setTitle(System.getProperty("app.name"));
 		dialog.setMinimumSize(new Dimension(650, 250));
 		dialog.setLocationRelativeTo(owner);
@@ -87,12 +92,14 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 	}
 
 	/**
-	 * 
+	 * init all descriptor (panels)
 	 */
 	private void initDescriptors() {
+		// option panel
 		WizardPanelDescriptor descriptor1 = new KineticLawSelectionOptionPanelDescriptor();
 		registerWizardPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER, descriptor1);
 		
+		// try to init KineticLawGenerator with the selected model
 		KineticLawGenerator klg = null;
 		try {
 			klg = new KineticLawGenerator(this.sbmlIO.getSelectedModel());
@@ -100,12 +107,15 @@ public class KineticLawSelectionWizard extends Wizard implements PropertyChangeL
 			GUITools.showErrorMessage(this.getDialog(), e);
 		}
 		
+		// progress panel
 		WizardPanelDescriptor descriptor2 = new KineticLawSelectionEquationProgressPanelDescriptor(klg);
 		registerWizardPanel(KineticLawSelectionEquationProgressPanelDescriptor.IDENTIFIER, descriptor2);
 		
+		// equation panel
 		WizardPanelDescriptor descriptor3 = new KineticLawSelectionEquationPanelDescriptor(klg, this.sbmlIO);
 		registerWizardPanel(KineticLawSelectionEquationPanelDescriptor.IDENTIFIER, descriptor3);
 		
+		// set option panel as first panel
 		setCurrentPanel(KineticLawSelectionOptionPanelDescriptor.IDENTIFIER);
 	}
 	
