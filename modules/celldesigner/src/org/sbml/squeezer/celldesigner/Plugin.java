@@ -75,8 +75,12 @@ public class Plugin extends CellDesignerPlugin {
 	public Plugin() {
 		super();
 		try {
+			/*
+			 * Initializing all necessary SysBio and SBMLsqueezer images
+			 */
 			ImageTools.initImages();
 			SBMLsqueezerUI.initImages();
+			
 			/*
 			 * Starting SBMLsqueezer...
 			 */
