@@ -25,6 +25,7 @@ package org.sbml.squeezer.celldesigner;
 
 import java.awt.Dialog;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.swing.JDialog;
 
@@ -274,16 +275,16 @@ public class Plugin extends CellDesignerPlugin {
 		convertedModel.addTreeNodeChangeListener(new PluginChangeListener(doc, this));
 		switch (Mode.getMode(mode)) {
 		case SQUEEZE_ALL:
-			KineticLawSelectionWizard wizard;
-			wizard = new KineticLawSelectionWizard(null, io);
-		    wizard.showModalDialog();
-		    wizard.isKineticsAndParametersStoredInSBML();
+				KineticLawSelectionWizard wizard;
+				wizard = new KineticLawSelectionWizard(null, io);
+			    wizard.showModalDialog();
+			    wizard.isKineticsAndParametersStoredInSBML();
 			break;
 		case SQUEEZE_REACTION:
 				try {
 					new KineticLawSelectionDialog(null, io, ((PluginReaction) getSelectedReactionNode().get(0)).getId());
 				} catch (Throwable exc) {
-					GUITools.showErrorMessage(null, exc);
+					GUITools.showErrorMessage(null, exc+"\n"+Arrays.toString(exc.getStackTrace()));
 				}
 			break;
 		case CONFIGURE:
