@@ -32,6 +32,7 @@ import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
@@ -89,14 +90,11 @@ public class NetGeneratorLinear extends AdditiveModelLinear implements
 	@Override
 	ASTNode m() {
 		ASTNode node = new ASTNode(1, this);
-		
-		if (getLevelAndVersion().compareTo(Integer.valueOf(3),Integer.valueOf(1)) >= 0) {
-			UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
-			node.setUnits(unitFactory.unitSubstancePerTime(getModel().getUnitDefinition(UnitDefinition.SUBSTANCE), 
-					getModel().getUnitDefinition(UnitDefinition.TIME)).getId());
-		} else {
-			node.multiplyWith(new ASTNode(
-					parameterFactory.valueSubstancePerTime(), this));
+		UnitFactory unitFactory = new UnitFactory(getModel(), isBringToConcentration());
+		if (!node.isSetUnits()) {
+			SBMLtools.setUnits(node, unitFactory.unitSubstancePerTime(
+                    this.getModel().getSubstanceUnitsInstance(),
+                    this.getModel().getTimeUnitsInstance()));
 		}
 		
 		return node;

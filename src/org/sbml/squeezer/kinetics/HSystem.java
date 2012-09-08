@@ -33,6 +33,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -108,6 +109,17 @@ public class HSystem extends BasicKineticLaw implements
 	ASTNode v() {
 		Reaction r = getParentSBMLObject();
 		ASTNode node = new ASTNode(this);
+
+		UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
+		ASTNode one = new ASTNode(1, this);
+		if (unitFactory.getBringToConcentration()) {
+			SBMLtools.setUnits(one,unitFactory.unitSubstancePerSize(
+					this.getModel().getSubstanceUnitsInstance(),
+					this.getModel().getVolumeUnitsInstance(), -1d));
+		} else {
+			SBMLtools.setUnits(one,unitFactory.unitPerSubstance(this.getModel().getSubstanceUnitsInstance()));
+		}
+		
 		for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
 			Species modifierspec = modifier.getSpeciesInstance();
 			if (SBO.isProtein(modifierspec.getSBOTerm())
@@ -136,7 +148,7 @@ public class HSystem extends BasicKineticLaw implements
 				return speciesTerm(r.getProduct(0)); 
 			}
 			return ASTNode.times(
-				new ASTNode(parameterFactory.valuePerSubstanceAndConcentration(), this),
+				one,
 				speciesTerm(r.getProduct(0)),
 				node);
 		}

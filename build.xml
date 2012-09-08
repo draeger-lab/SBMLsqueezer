@@ -110,7 +110,7 @@
 		<copy todir="${build.src}" overwrite="yes">
 			<fileset 
             dir="${src.dir}"
-            excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip, **/sabiork/**">
+            excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
 			</fileset>
 		</copy>
 
@@ -118,7 +118,7 @@
 			<fileset 
   	            dir="${test.src.dir}"
   	        	includes="org/sbml/squeezer/**"
-  	            excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip, **/sabiork/**">
+  	            excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
 			</fileset>
 		</copy>
 

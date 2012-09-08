@@ -31,8 +31,10 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
+import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
 
 /**
@@ -77,12 +79,17 @@ public class NetGeneratorNonLinear extends AdditiveModelNonLinear implements
 			throws RateLawNotApplicableException {
 		ASTNode m = super.createKineticEquation(modE, modActi, modInhib, modCat);
 		Reaction r = getParentSBMLObject();
+		UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
+		ASTNode one = new ASTNode(1, this);
+		SBMLtools.setUnits(one, unitFactory.unitSubstancePerTime(
+                this.getModel().getSubstanceUnitsInstance(),
+                this.getModel().getTimeUnitsInstance()));
 		if (!ReactionType.representsEmptySet(r.getListOfProducts())) {
 			Species s = r.getProduct(0).getSpeciesInstance();
 			return ASTNode.sum(
 						m,
 						ASTNode.times(
-							new ASTNode(parameterFactory.valueSubstancePerTime(), this),
+							one,
 							new ASTNode(parameterFactory.parameterW(s.getId(), r.getId()), this), 
 							speciesTerm(s)
 						)

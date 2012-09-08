@@ -35,6 +35,7 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.RateLawNotApplicableException;
+import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -97,6 +98,7 @@ public class SSystem extends BasicKineticLaw implements
 			throws RateLawNotApplicableException {
 		Reaction r = getParentSBMLObject();
 		ASTNode node = prod(r.getListOfReactants(), true);
+		UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
 		if (r.getReversible()) {
 			if (node.isUnknown())
 				node = ASTNode.uMinus(prod(r.getListOfProducts(), false));
@@ -129,8 +131,16 @@ public class SSystem extends BasicKineticLaw implements
 						node = ASTNode.pow(speciesTerm(modifier), expnode);
 					}
 					else {
+						ASTNode one = new ASTNode(1, this);
+						if (unitFactory.getBringToConcentration()) {
+							SBMLtools.setUnits(one,unitFactory.unitSubstancePerSize(
+									this.getModel().getSubstanceUnitsInstance(),
+									this.getModel().getVolumeUnitsInstance(), -1d));
+						} else {
+							SBMLtools.setUnits(one,unitFactory.unitPerSubstance(this.getModel().getSubstanceUnitsInstance()));
+						}
 						node.multiplyWith(
-								new ASTNode(parameterFactory.valuePerSubstanceAndConcentration(), this),
+								one,
 								ASTNode.pow(speciesTerm(modifier),
 								expnode));
 					}
@@ -160,6 +170,7 @@ public class SSystem extends BasicKineticLaw implements
 		String rID = getParentSBMLObject().getId();
 		ASTNode prod = new ASTNode(forward ? parameterFactory.parameterSSystemAlpha(rID)
 				: parameterFactory.parameterSSystemBeta(rID), this);
+		UnitFactory unitFactory = new UnitFactory(this.getModel(), this.isBringToConcentration());
 		for (SpeciesReference specRef : listOf) {
 			if (!SBO.isEmptySet(specRef.getSpeciesInstance().getSBOTerm())) {
 				LocalParameter exponent = parameterFactory
@@ -169,8 +180,15 @@ public class SSystem extends BasicKineticLaw implements
 				if (prod.isUnknown()) {
 					prod = pow;
 				} else {
-					prod.multiplyWith(pow,
-							new ASTNode(parameterFactory.valuePerSubstanceAndConcentration(), this));
+					ASTNode one = new ASTNode(1, this);
+					if (unitFactory.getBringToConcentration()) {
+						SBMLtools.setUnits(one,unitFactory.unitSubstancePerSize(
+								this.getModel().getSubstanceUnitsInstance(),
+								this.getModel().getVolumeUnitsInstance(), -1d));
+					} else {
+						SBMLtools.setUnits(one,unitFactory.unitPerSubstance(this.getModel().getSubstanceUnitsInstance()));
+					}
+					prod.multiplyWith(pow,one);
 				}
 			}
 		}

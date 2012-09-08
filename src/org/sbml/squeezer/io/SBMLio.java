@@ -50,6 +50,8 @@ import org.sbml.jsbml.util.TreeNodeRemovedEvent;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
+import com.ctc.wstx.stax.WstxOutputFactory;
+
 import de.zbit.sbml.io.OpenedFile;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.progressbar.AbstractProgressBar;
@@ -290,9 +292,9 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public void saveChanges(IOProgressListener listener) throws SBMLException {
 		writer.addIOProgressListener(listener);
-		writer.saveChanges(listOfOpenedFiles.get(selectedModel).getDocument().getModel(), listOfOpenedFiles
-				.get(selectedModel).getDocument().getModel().getUserObject("originalModel"));
+		writer.saveChanges(getSelectedModel(), getSelectedModel().getUserObject("originalModel"));
 		listener.ioProgressOn(null);
+		WstxOutputFactory f;
 	}
 
 	/* (non-Javadoc)
@@ -308,7 +310,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @throws SBMLException
 	 */
 	public boolean saveChanges(Reaction reaction) throws SBMLException {
-		return writer.saveChanges(reaction, listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject("originalModel"));
+		return writer.saveChanges(reaction, getSelectedModel().getUserObject("originalModel"));
 	}
 
 	/* (non-Javadoc)
