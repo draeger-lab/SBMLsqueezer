@@ -98,7 +98,6 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#isDone()
 	 */
-	@Override
 	public boolean isImmediatelyFinishing() {
 		return false;
 	}
