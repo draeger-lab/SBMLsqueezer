@@ -85,22 +85,6 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 		// when kinetic laws are generated, show the respective table
 		panel.generateKineticLawDone();
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#aboutToHidePanel()
-	 */
-	@Override
-	public void aboutToHidePanel() {
-		// store kinetic laws in model when the panel is about to hide
-		panel.apply();
-	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#isDone()
-	 */
-	public boolean isImmediatelyFinishing() {
-		return false;
-	}
 
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#addFinishingListener(de.zbit.gui.wizard.WizardFinishingListener)
@@ -141,6 +125,15 @@ public class KineticLawSelectionEquationPanelDescriptor extends WizardPanelDescr
 		helpBrowser.setSize(640, 640);
 		
 		return helpBrowser;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.wizard.WizardPanelDescriptor#finish()
+	 */
+	@Override
+	public boolean finish() {
+		panel.apply();
+		return false;
 	}
 
 }

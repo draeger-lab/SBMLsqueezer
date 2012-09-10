@@ -347,17 +347,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				if (KineticsAndParametersStoredInSBML) {
 					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
 					try {
-						// TODO: use paths to all expanded nodes plus the paths to all selected nodes!
-						SBMLTree tree = split.getTree();
-						tree.saveSelectionPath();
-						TreePath path = tree.getSelectionPath();
-						TreePath selectionPath = tree.getSelectionModel().getSelectionPath();
-						
-						split.init(sbmlIO.getSelectedModel().getSBMLDocument(), true);
-						
-						setupContextMenu(split, path, selectionPath);
-						split.getTree().restoreSelectionPath();
-						
+						split.updateUI();
 					} catch (Exception exc) {
 						exc.printStackTrace();
 					}

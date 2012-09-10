@@ -25,6 +25,7 @@ package org.sbml.squeezer;
 
 import java.util.ResourceBundle;
 
+import org.sbml.jsbml.Compartment;
 import org.sbml.squeezer.kinetics.CommonModularRateLaw;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
 import org.sbml.squeezer.kinetics.HillHinzeEquation;
@@ -282,6 +283,14 @@ public interface SqueezerOptions extends KeyProvider {
 			Boolean.class,
 			OPTIONS_BUNDLE,
 			Boolean.valueOf(false));
+	
+	/**
+	 * If no spatial dimensions are defined for a {@link Compartment}, the value defined by this
+	 * {@link Option} will be used as a default.
+	 */
+	public static final Option<Double> DEFAULT_COMPARTMENT_SPATIAL_DIM = new Option<Double>(
+		"DEFAULT_COMPARTMENT_SPATIAL_DIM", Double.class, OPTIONS_BUNDLE,
+		Double.valueOf(3d));
 
 	/**
 	 * If not specified the value corresponding to this argument will be used to
@@ -551,6 +560,7 @@ public interface SqueezerOptions extends KeyProvider {
 		"GROUP_DEFAULT_VALUES",
 		OPTIONS_BUNDLE,
 		MAX_NUMBER_OF_REACTANTS,
+		DEFAULT_COMPARTMENT_SPATIAL_DIM,
 		DEFAULT_COMPARTMENT_SIZE,
 		DEFAULT_SPECIES_INIT_VAL,
 		DEFAULT_NEW_PARAMETER_VAL,

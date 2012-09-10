@@ -37,7 +37,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
-import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -45,7 +44,6 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.math.GaussianRank;
@@ -109,6 +107,7 @@ public class KineticLawGenerator {
 	private TypeStandardVersion typeStandardVersion;
 	private UnitConsistencyType typeUnitConsistency;
 	private double defaultParamVal;
+	private boolean reversibility;
 
 	/**
 	 * @return the setBoundaryCondition
@@ -146,7 +145,7 @@ public class KineticLawGenerator {
 	 * @param reversibility the reversibility to set
 	 */
 	public void setReversibility(boolean reversibility) {
-		submodelController.setReversibility(reversibility);
+		this.reversibility = reversibility;
 	}
 
 	private SortedSet<Integer> possibleEnzymes;
@@ -165,6 +164,7 @@ public class KineticLawGenerator {
 	private Class<?> kineticsZeroReactants;
 	private Class<?> kineticsZeroProducts;
 	private String speciesIgnoreList[];
+	private double defaultSpatialDimension;
 
 	/**
 	 * Takes a {@link Model} as input, creates a copy of the {@link Model},
@@ -182,45 +182,37 @@ public class KineticLawGenerator {
 	 *         equations that do not exist.
 	 */
 	public KineticLawGenerator(Model model) throws ClassNotFoundException {
-		this(model, null);
-	}
-
-	/**
-	 * Creates a sub-model as a reduced copy for the given {@link Model} that
-	 * contains only the reaction for the given identifier including all
-	 * {@link Species}, {@link Compartment}s, and {@link UnitDefinition}s linked
-	 * to this reaction. If the identifier is {@code null}, all reactions of the
-	 * given {@link Model} will be copied. The sub-model can then be used to
-	 * {@link #generateLaws()} that can in turn be synchronized with the original
-	 * model by calling {@link #storeKineticLaws()} or
-	 * {@link #storeKineticLaw(KineticLaw)}.
-	 * 
-	 * @param model
-	 *        for whose reactions kinetic equations are to be created. If the
-	 *        second parameter is not {@code null}, kinetic equations will only be
-	 *        created for this reaction.
-	 * @param reactionID
-	 *        the identifier of the reaction for which a kinetic equation is to be
-	 *        created. This argument can be {@code null}.
-	 * @throws ClassNotFoundException
-	 *         happens if the preferences contain references to classes of kinetic
-	 *         equations that do not exist.
-	 */
-	public KineticLawGenerator(Model model, String reactionID) throws ClassNotFoundException {
-		
 		// Initialize user settings:
 		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
 		configure(prefs);
-		
-		// Initialize submodel controller
-		this.submodelController = new SubmodelController(model, reactionID);
-		
-		// Initialize the mini model:
 		this.modelOrig = model;
-		this.listOfFastReactions = new LinkedList<Reaction>();
-		this.miniModel = submodelController.getMiniModel();
-		this.updateEnzymeCatalysis();
 	}
+//
+//	/**
+//	 * Creates a sub-model as a reduced copy for the given {@link Model} that
+//	 * contains only the reaction for the given identifier including all
+//	 * {@link Species}, {@link Compartment}s, and {@link UnitDefinition}s linked
+//	 * to this reaction. If the identifier is {@code null}, all reactions of the
+//	 * given {@link Model} will be copied. The sub-model can then be used to
+//	 * {@link #generateLaws()} that can in turn be synchronized with the original
+//	 * model by calling {@link #storeKineticLaws()} or
+//	 * {@link #storeKineticLaw(KineticLaw)}.
+//	 * 
+//	 * @param model
+//	 *        for whose reactions kinetic equations are to be created. If the
+//	 *        second parameter is not {@code null}, kinetic equations will only be
+//	 *        created for this reaction.
+//	 * @param reactionID
+//	 *        the identifier of the reaction for which a kinetic equation is to be
+//	 *        created. This argument can be {@code null}.
+//	 * @throws ClassNotFoundException
+//	 *         happens if the preferences contain references to classes of kinetic
+//	 *         equations that do not exist.
+//	 */
+//	public KineticLawGenerator(Model model, String reactionID) throws ClassNotFoundException {
+//		
+//
+//	}
 
 	/**
 	 * 
@@ -231,6 +223,7 @@ public class KineticLawGenerator {
 		typeStandardVersion = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
 		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
 		defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
+		defaultSpatialDimension = prefs.getDouble(SqueezerOptions.DEFAULT_COMPARTMENT_SPATIAL_DIM);
 		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED);
 		
 		kineticsZeroReactants = prefs.getClass(SqueezerOptions.KINETICS_ZERO_REACTANTS);
@@ -430,6 +423,8 @@ public class KineticLawGenerator {
 		this.typeUnitConsistency = consistency;
 		this.defaultParamVal = defaultNewParamVal;
 		
+		initSubModel(r.getId());
+		
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null) {
 			reaction = r;
@@ -457,9 +452,26 @@ public class KineticLawGenerator {
 	}
 
 	/**
+	 * Initialize submodel controller and create the mini model:
+	 * 
+	 * @param reactionID
+	 */
+	private void initSubModel(String reactionID) {
+			this.submodelController = new SubmodelController(modelOrig, reactionID);
+			this.submodelController.setProgressBar(progressBar);
+			this.submodelController.setDefaultSpatialDimensions(defaultSpatialDimension);
+			this.submodelController.setReversibility(reversibility);
+			this.listOfFastReactions = new LinkedList<Reaction>();
+			this.miniModel = submodelController.getMiniModel();
+			this.updateEnzymeCatalysis();
+	}
+
+	/**
 	 * @throws Throwable
 	 */
 	public void generateLaws() throws Throwable {
+		
+		initSubModel(null);
 		
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.generateLaws);
@@ -600,7 +612,6 @@ public class KineticLawGenerator {
 	 */
 	public void setProgressBar(AbstractProgressBar progressBar) {
 		this.progressBar = progressBar;
-		this.submodelController.setProgressBar(progressBar);
 	}
 
 	/**
@@ -698,10 +709,8 @@ public class KineticLawGenerator {
 		modelOrig.addTreeNodeChangeListener(chl);
 		for (int i = 0; i < miniModel.getReactionCount(); i++) {
 			Reaction r = miniModel.getReaction(i);
-			submodelController.storeKineticLaw(r.getKineticLaw(), false);
+			submodelController.storeKineticLaw(r.getKineticLaw(), isRemoveUnnecessaryParameters());
 		}
-		
-		submodelController.storeUnits();
 		
 		if (isRemoveUnnecessaryParameters()) {
 			submodelController.removeUnnecessaryParameters(modelOrig);

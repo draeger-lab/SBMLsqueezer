@@ -220,7 +220,8 @@ public class SqueezerTests extends TestCase {
 					try {
 						logger.info("\n                Reaction: "+reac.getId()+
 						"\n----------------------------------------------");
-						new KineticLawGenerator(squeezer.getSBMLIO().getSelectedModel(),reac.getId());
+						new KineticLawGenerator(squeezer.getSBMLIO().getSelectedModel());
+						// ,reac.getId()
 					} catch (Exception e) {
 						logger.log(Level.WARNING, "failed to generate kinetic equation for reaction with id: "+reac.getId(), e);
 						failed = true;

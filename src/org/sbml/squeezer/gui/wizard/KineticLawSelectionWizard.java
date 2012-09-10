@@ -26,7 +26,6 @@ package org.sbml.squeezer.gui.wizard;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -52,7 +51,7 @@ import de.zbit.util.ResourceManager;
  * @since 1.4
  * @version $Rev: 830 $
  */
-public class KineticLawSelectionWizard extends Wizard implements PropertyChangeListener {
+public class KineticLawSelectionWizard extends Wizard {
 	
 	/**
 	 * 
