@@ -29,6 +29,8 @@
   
   <entry key="ALL_REACTIONS_AS_ENZYME_CATALYZED">Consider all reactions to be enzyme-catalyzed</entry>
   <entry key="ALL_REACTIONS_AS_ENZYME_CATALYZED_TOOLTIP">If true, all reactions within the network are considered to be enzyme-catalyzed reactions. If false (default), an explicit enzymatic catalyst must be assigned to a reaction to obtain this status.</entry>
+  <entry key="DEFAULT_COMPARTMENT_SPATIAL_DIM">Default compartment spatial dimensions</entry>
+  <entry key="DEFAULT_COMPARTMENT_SPATIAL_DIM_TOOLTIP">If no spatial dimensions are defined for a compartment, the value defined by this option will be used as a default.</entry>
   <entry key="DEFAULT_COMPARTMENT_SIZE">Default compartment initial size</entry>
   <entry key="DEFAULT_COMPARTMENT_SIZE_TOOLTIP">For compartments that are not yet initialized, SBMLsqueezer will use this value as the default initial size. By default this value is set to 1.0.</entry>
   <entry key="DEFAULT_NEW_PARAMETER_VAL">Default value of new parameters</entry>

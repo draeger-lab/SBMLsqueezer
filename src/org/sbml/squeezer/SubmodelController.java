@@ -63,10 +63,11 @@ import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
  * This class is responsible for miniModel creation and the synchronisation
- * with the main model
+ * with the main {@link Model}
  * 
  * @since 1.4
  * @version $Rev$
+ * @author Andreas Dr&auml;ger
  * @author Sebastian Nagel
  */
 public class SubmodelController {
@@ -75,7 +76,7 @@ public class SubmodelController {
 	 * 
 	 */
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-
+	
 	/**
 	 * 
 	 */
@@ -102,7 +103,23 @@ public class SubmodelController {
 	
 	private ProgressAdapter progressAdapter;
 	private AbstractProgressBar progressBar;
+
+	private double defaultSpatialDimensions;
 	
+	/**
+	 * @return the defaultSpatialDimensions
+	 */
+	public double getDefaultSpatialDimensions() {
+		return defaultSpatialDimensions;
+	}
+
+	/**
+	 * @param defaultSpatialDimensions the defaultSpatialDimensions to set
+	 */
+	public void setDefaultSpatialDimensions(double defaultSpatialDimensions) {
+		this.defaultSpatialDimensions = defaultSpatialDimensions;
+	}
+
 	/**
 	 * 
 	 * @param progressBar
@@ -134,7 +151,7 @@ public class SubmodelController {
 	public void setReversibility(boolean reversibility) {
 		this.reversibility = reversibility;
 	}
-
+	
 	/**
 	 * 
 	 * @param model
@@ -142,7 +159,7 @@ public class SubmodelController {
 	public SubmodelController(Model model) {
 		this(model, null);
 	}
-
+	
 	/**
 	 * 
 	 * @param model
@@ -177,166 +194,235 @@ public class SubmodelController {
 		boolean create = generateLawsForAllReactions;
 		int level = modelOrig.getLevel(), version = modelOrig.getVersion();
 		SBMLDocument miniDoc = new SBMLDocument(level, version);
-		Model miniModel = miniDoc.createModel(modelOrig.getId());	  
+		Model miniModel = miniDoc.createModel("submodel_" + modelOrig.getId());	  
 		//miniModel.addChangeListener(new ModelChangeListener());
-		UnitDefinition timeUD, tUDorig, substanceUD, sUDorig;
-
-		/*
-		 * Create default units for time, substance and volume if missing: 
-		 */	  
-		// set time unit definition if it is not already set
-		timeUD = miniModel.getUnitDefinition(UnitDefinition.TIME);
-		tUDorig = modelOrig.getTimeUnitsInstance();
-		if ((timeUD == null) || ((tUDorig != null) && (!UnitDefinition.areIdentical(tUDorig, timeUD)))) {
-			// This may happen in Level 3.
-			if (tUDorig == null) {
-				timeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.TIME, 2, 4);
-			} else {
-				timeUD = tUDorig.clone();
+		
+		/* 
+		 * Set default unit definitions if it is not already set
+		 */
+		if (modelOrig.isSetAreaUnitsInstance()) {
+			UnitDefinition areaUD = modelOrig.getAreaUnitsInstance().clone();
+			if (!miniModel.isSetAreaUnitsInstance() || !UnitDefinition.areIdentical(areaUD, miniModel.getAreaUnitsInstance())) {
+				miniModel.setAreaUnits(areaUD.clone());
 			}
-			SBMLtools.setLevelAndVersion(timeUD, level, version);
-			if (level > 2) {
-				miniModel.setTimeUnits(timeUD);
+		} else {
+			if (modelOrig.isSetAreaUnits() && Unit.Kind.isValidUnitKindString(modelOrig.getAreaUnits(), level, version)) {
+				miniModel.setAreaUnits(modelOrig.getAreaUnits());
 			} else {
-				miniModel.addUnitDefinition(timeUD);
-			}
-		}	
-		// set substance unit definition if it is not already set
-		substanceUD = miniModel.getUnitDefinition(UnitDefinition.SUBSTANCE);
-		sUDorig = modelOrig.getSubstanceUnitsInstance();
-		if ((substanceUD == null) || ((sUDorig != null) && (!UnitDefinition.areIdentical(sUDorig, substanceUD)))) {
-			// This may happen in Level 3.
-			if (sUDorig == null) {
-				substanceUD = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
-			} else {
-				substanceUD = sUDorig.clone();
-			}
-			SBMLtools.setLevelAndVersion(substanceUD, level, version);
-			if (level > 2) {
-				miniModel.setSubstanceUnits(substanceUD);
-			} else {
-				miniModel.addUnitDefinition(substanceUD);
+				UnitDefinition areaUD = UnitDefinition.getPredefinedUnit(UnitDefinition.AREA, 2, 4);
+				SBMLtools.setLevelAndVersion(areaUD, level, version);
+				miniModel.addUnitDefinition(areaUD);
+				if (level > 2) {
+					miniModel.setAreaUnits(areaUD.getId());
+				}
 			}
 		}
 		
-//		/* 
-//		 * Optionally, re-scale substance and volume:
-//		 */
-//		// TODO: Check user option whether re-scaling of units should be performed or not.
-//		Unit u = substanceUD.getListOfUnits().getFirst();
-//		if (u.isMole()) {
-//			u.setScale(-3);
-//			substanceUD.setName("mmol");
-//			if (miniModel.getListOfPredefinedUnitDefinitions().remove(substanceUD)) {
-//				miniModel.addUnitDefinition(substanceUD);
-//			}
-//		}
-//		u = volumeUD.getListOfUnits().getFirst();
-//		if (u.isLitre()) {
-//			u.setScale(-3);
-//			volumeUD.setName("ml");
-//			if (miniModel.getListOfPredefinedUnitDefinitions().remove(volumeUD)) {
-//				miniModel.addUnitDefinition(volumeUD);
-//			}
-//		}
+		if (modelOrig.isSetLengthUnitsInstance()) {
+			UnitDefinition lengthUD = modelOrig.getLengthUnitsInstance().clone();
+			if (!miniModel.isSetLengthUnitsInstance() || !UnitDefinition.areIdentical(lengthUD, miniModel.getLengthUnitsInstance())) {
+				miniModel.setLengthUnits(lengthUD.clone());
+			}
+		} else {
+			if (modelOrig.isSetLengthUnits() && Unit.Kind.isValidUnitKindString(modelOrig.getLengthUnits(), level, version)) {
+				miniModel.setLengthUnits(modelOrig.getLengthUnits());
+			} else {
+				UnitDefinition lengthUD = UnitDefinition.getPredefinedUnit(UnitDefinition.LENGTH, 2, 4);
+				SBMLtools.setLevelAndVersion(lengthUD, level, version);
+				miniModel.addUnitDefinition(lengthUD);
+				if (level > 2) {
+					miniModel.setLengthUnits(lengthUD.getId());
+				}
+			}
+		}
+		
+		if (modelOrig.isSetSubstanceUnitsInstance()) {
+			UnitDefinition substanceUD = modelOrig.getSubstanceUnitsInstance().clone();
+			if (!miniModel.isSetSubstanceUnitsInstance() || !UnitDefinition.areIdentical(substanceUD, miniModel.getSubstanceUnitsInstance())) {
+				miniModel.setSubstanceUnits(substanceUD.clone());
+			}
+		} else {
+			if (modelOrig.isSetSubstanceUnits() && Unit.Kind.isValidUnitKindString(modelOrig.getSubstanceUnits(), level, version)) {
+				miniModel.setSubstanceUnits(modelOrig.getSubstanceUnits());
+			} else {
+				UnitDefinition substanceUD = UnitDefinition.getPredefinedUnit(UnitDefinition.SUBSTANCE, 2, 4);
+				SBMLtools.setLevelAndVersion(substanceUD, level, version);
+				miniModel.addUnitDefinition(substanceUD);
+				if (level > 2) {
+					miniModel.setSubstanceUnits(substanceUD.getId());
+				}
+			}
+		}
+		
+		if (modelOrig.isSetTimeUnitsInstance()) {
+			UnitDefinition timeUD = modelOrig.getTimeUnitsInstance().clone();
+			if (!miniModel.isSetTimeUnitsInstance() || !UnitDefinition.areIdentical(timeUD, miniModel.getTimeUnitsInstance())) {
+				miniModel.setTimeUnits(timeUD.clone());
+			}
+		} else {
+			if (modelOrig.isSetTimeUnits() && Unit.Kind.isValidUnitKindString(modelOrig.getTimeUnits(), level, version)) {
+				miniModel.setTimeUnits(modelOrig.getTimeUnits());
+			} else {
+				UnitDefinition timeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.TIME, 2, 4);
+				SBMLtools.setLevelAndVersion(timeUD, level, version);
+				miniModel.addUnitDefinition(timeUD);
+				if (level > 2) {
+					miniModel.setTimeUnits(timeUD.getId());
+				}
+			}
+		}
+		
+		if (modelOrig.isSetVolumeUnitsInstance()) {
+			UnitDefinition volumeUD = modelOrig.getVolumeUnitsInstance().clone();
+			if (!miniModel.isSetVolumeUnitsInstance() || !UnitDefinition.areIdentical(volumeUD, miniModel.getVolumeUnitsInstance())) {
+				miniModel.setVolumeUnits(volumeUD.clone());
+			}
+		} else {
+			if (modelOrig.isSetVolumeUnits() && Unit.Kind.isValidUnitKindString(modelOrig.getVolumeUnits(), level, version)) {
+				miniModel.setVolumeUnits(modelOrig.getVolumeUnits());
+			} else {
+				UnitDefinition volumeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
+				SBMLtools.setLevelAndVersion(volumeUD, level, version);
+				miniModel.addUnitDefinition(volumeUD);
+				if (level > 2) {
+					miniModel.setVolumeUnits(volumeUD.getId());
+				}
+			}
+		}
+		
+		UnitDefinition extentUD = modelOrig.getExtentUnitsInstance();
+		if (extentUD != null) {
+			miniModel.setExtentUnits(extentUD.clone());
+		} else if (level > 2) {
+			miniModel.setExtentUnits(miniModel.getSubstanceUnits());
+		}
+		
+		
+		//		/* 
+		//		 * Optionally, re-scale substance and volume:
+		//		 */
+		//		// TODO: Check user option whether re-scaling of units should be performed or not.
+		//		Unit u = substanceUD.getListOfUnits().getFirst();
+		//		if (u.isMole()) {
+		//			u.setScale(-3);
+		//			substanceUD.setName("mmol");
+		//			if (miniModel.getListOfPredefinedUnitDefinitions().remove(substanceUD)) {
+		//				miniModel.addUnitDefinition(substanceUD);
+		//			}
+		//		}
+		//		u = volumeUD.getListOfUnits().getFirst();
+		//		if (u.isLitre()) {
+		//			u.setScale(-3);
+		//			volumeUD.setName("ml");
+		//			if (miniModel.getListOfPredefinedUnitDefinitions().remove(volumeUD)) {
+		//				miniModel.addUnitDefinition(volumeUD);
+		//			}
+		//		}
 		
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.createMiniModel);
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
 		}
-
+		
 		/*
 		 * Copy needed species and reactions.
 		 */
-		for (Reaction reacOrig : modelOrig.getListOfReactions()) {
-			/*
-			 * Let us find all fast reactions. This feature is currently
-			 * ignored.
-			 */
-			if (reacOrig.getFast()) {
-				listOfFastReactions.add(reacOrig);
-			}
-			if (reactionID != null) {
-				if (!reacOrig.getId().equals(reactionID)) {
-					continue;
-				} else {
-					create = true;
+		if (modelOrig.isSetListOfReactions()) {
+			for (Reaction reacOrig : modelOrig.getListOfReactions()) {
+				/*
+				 * Let us find all fast reactions. This feature is currently
+				 * ignored.
+				 */
+				if (reacOrig.getFast()) {
+					listOfFastReactions.add(reacOrig);
 				}
-			}
-			if (reacOrig.isSetKineticLaw()) {
-				KineticLaw kl = reacOrig.getKineticLaw();
-				if (!kl.isSetMath()) {
-					create = true;
-				} else {
-					String formula = kl.getMath().toFormula();
-					if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
-						logger.warning(MessageFormat.format(WARNINGS.getString("INVALID_REACTION_FORMAT"), reacOrig.getId()));
+				if (reactionID != null) {
+					if (!reacOrig.getId().equals(reactionID)) {
+						continue;
+					} else {
 						create = true;
 					}
 				}
-			}
-			if (!reacOrig.isSetKineticLaw() || create) {
-				Reaction reac = new Reaction(reacOrig.getId(), reacOrig.getLevel(), reacOrig.getVersion());
-				if (reacOrig.isSetSBOTerm()) {
-					SBMLtools.setSBOTerm(reac, reacOrig.getSBOTerm());
-				}
-				miniModel.addReaction(reac);
-				reac.setFast(reacOrig.getFast());
-				reac.setReversible(reacOrig.getReversible());
-				for (SpeciesReference specRefOrig : reacOrig.getListOfReactants()) {
-					Species speciesOrig = specRefOrig.getSpeciesInstance();
-					SpeciesReference sr = specRefOrig.clone();
-					sr.setSpecies(copySpecies(speciesOrig, miniModel));
-					reac.addReactant(sr);
-					if (progressAdapter != null) {
-		  				progressAdapter.progressOn();
-		  			}
-				}
-				for (SpeciesReference s : reacOrig.getListOfProducts()) {
-					Species speciesOrig = s.getSpeciesInstance();
-					SpeciesReference sr = s.clone();
-					sr.setSpecies(copySpecies(speciesOrig, miniModel));
-					reac.addProduct(sr);
-					if (progressAdapter != null) {
-		  				progressAdapter.progressOn();
-		  			}
-				}
-				for (ModifierSpeciesReference modifierReferenceOrig : reacOrig.getListOfModifiers()) {
-					Species speciesOrig = modifierReferenceOrig.getSpeciesInstance();
-					ModifierSpeciesReference modifierReference = modifierReferenceOrig.clone();
-					modifierReference.setSpecies(copySpecies(speciesOrig, miniModel));
-					reac.addModifier(modifierReference);
-					if (progressAdapter != null) {
-		  				progressAdapter.progressOn();
-		  			}
-				}
-				/*
-				 * This will be over written later on anyway but ignoring it
-				 * would be confusing for users...
-				 */
 				if (reacOrig.isSetKineticLaw()) {
-					KineticLaw l = reacOrig.getKineticLaw();
-					if (l.isSetMath()) {
-						for (Parameter parameter : modelOrig.getListOfParameters()) {
-							if (l.getMath().refersTo(parameter.getId())
-								&& (miniModel.getParameter(parameter.getId()) != null)) {
-									miniModel.addParameter(parameter.clone());
-							}
-
-				  			if (progressAdapter != null) {
-				  				progressAdapter.progressOn();
-				  			}
+					KineticLaw kl = reacOrig.getKineticLaw();
+					if (!kl.isSetMath()) {
+						create = true;
+					} else {
+						String formula = kl.getMath().toFormula();
+						if ((formula == null) || formula.isEmpty() || formula.equals(" ")) {
+							logger.warning(MessageFormat.format(WARNINGS.getString("INVALID_REACTION_FORMAT"), reacOrig.getId()));
+							create = true;
 						}
 					}
-					reac.setKineticLaw(l.clone());
+				}
+				if (!reacOrig.isSetKineticLaw() || create) {
+					Reaction reac = new Reaction(reacOrig.getId(), reacOrig.getLevel(), reacOrig.getVersion());
+					if (reacOrig.isSetSBOTerm()) {
+						SBMLtools.setSBOTerm(reac, reacOrig.getSBOTerm());
+					}
+					miniModel.addReaction(reac);
+					reac.setFast(reacOrig.getFast());
+					reac.setReversible(reacOrig.getReversible());
+					if (reacOrig.isSetListOfReactants()) {
+						for (SpeciesReference specRefOrig : reacOrig.getListOfReactants()) {
+							Species speciesOrig = specRefOrig.getSpeciesInstance();
+							SpeciesReference sr = specRefOrig.clone();
+							sr.setSpecies(copySpecies(speciesOrig, miniModel));
+							reac.addReactant(sr);
+							if (progressAdapter != null) {
+								progressAdapter.progressOn();
+							}
+						}
+					}
+					if (reacOrig.isSetListOfProducts()) {
+						for (SpeciesReference s : reacOrig.getListOfProducts()) {
+							Species speciesOrig = s.getSpeciesInstance();
+							SpeciesReference sr = s.clone();
+							sr.setSpecies(copySpecies(speciesOrig, miniModel));
+							reac.addProduct(sr);
+							if (progressAdapter != null) {
+								progressAdapter.progressOn();
+							}
+						}
+					}
+					if (reacOrig.isSetListOfModifiers()) {
+						for (ModifierSpeciesReference modifierReferenceOrig : reacOrig.getListOfModifiers()) {
+							Species speciesOrig = modifierReferenceOrig.getSpeciesInstance();
+							ModifierSpeciesReference modifierReference = modifierReferenceOrig.clone();
+							modifierReference.setSpecies(copySpecies(speciesOrig, miniModel));
+							reac.addModifier(modifierReference);
+							if (progressAdapter != null) {
+								progressAdapter.progressOn();
+							}
+						}
+					}
+					/*
+					 * This will be over written later on anyway but ignoring it
+					 * would be confusing for users...
+					 */
+					if (reacOrig.isSetKineticLaw()) {
+						KineticLaw l = reacOrig.getKineticLaw();
+						if (l.isSetMath() && modelOrig.isSetListOfParameters()) {
+							for (Parameter parameter : modelOrig.getListOfParameters()) {
+								if (l.getMath().refersTo(parameter.getId())
+										&& (miniModel.getParameter(parameter.getId()) != null)) {
+									miniModel.addParameter(parameter.clone());
+								}
+								
+								if (progressAdapter != null) {
+									progressAdapter.progressOn();
+								}
+							}
+						}
+						reac.setKineticLaw(l.clone());
+					}
 				}
 			}
 		}
-		
 		if (progressAdapter != null) {
 			progressAdapter.finished();
 		}
-
+		
 		return miniModel;
 	}
 	
@@ -354,13 +440,12 @@ public class SubmodelController {
 		if (!spec.isSetHasOnlySubstanceUnits() && (2 < spec.getLevel())) {
 			spec.setHasOnlySubstanceUnits(defaultHasOnlySubstanceUnits);
 		}
-		Compartment compartment = miniModel.getCompartment(speciesOrig
-				.getCompartment());
+		Compartment compartment = miniModel.getCompartment(speciesOrig.getCompartment());
 		if (compartment == null) {
 			compartment = copyCompartment(speciesOrig.getCompartmentInstance(), miniModel);
 		}
 		spec.setCompartment(compartment);
-
+		
 		if (spec.isSetSubstanceUnits()
 				&& !Unit.isUnitKind(spec.getUnits(), spec.getLevel(), spec.getVersion())) {
 			if (miniModel.getUnitDefinition(spec.getUnits()) == null) {
@@ -402,8 +487,11 @@ public class SubmodelController {
 		if (miniModel.getCompartment(compartmenOrig.getId()) == null) {
 			miniModel.addCompartment(compartmenOrig.clone());
 		}
-		Compartment compartment = miniModel.getCompartment(compartmenOrig
-				.getId());
+		Compartment compartment = miniModel.getCompartment(compartmenOrig.getId());
+		// TODO: create a user-configuration for this!
+		if (!compartment.isSetSpatialDimensions()) {
+			compartment.setSpatialDimensions(defaultSpatialDimensions);
+		}
 		if (compartment.isSetUnits()) {
 			if (!Unit.isUnitKind(compartment.getUnits(), compartment.getLevel(), compartment.getVersion())) {
 				if (miniModel.getUnitDefinition(compartment.getUnits()) == null) {
@@ -456,7 +544,39 @@ public class SubmodelController {
 						+ ud.getUnitCount());
 			}
 		}
-
+		
+		// Set "default" units
+		if (miniModel.isSetAreaUnits()) {
+			if (!modelOrig.isSetAreaUnits() || !miniModel.getAreaUnits().equals(modelOrig.getAreaUnits())) {
+				modelOrig.setAreaUnits(miniModel.getAreaUnits());
+			}
+		}
+		if (miniModel.isSetLengthUnits() || !miniModel.getLengthUnits().equals(modelOrig.getLengthUnits())) {
+			if (!modelOrig.isSetLengthUnits()) {
+				modelOrig.setLengthUnits(miniModel.getLengthUnits());
+			}
+		}
+		if (miniModel.isSetExtentUnits() || !miniModel.getExtentUnits().equals(modelOrig.getExtentUnits())) {
+			if (!modelOrig.isSetExtentUnits()) {
+				modelOrig.setExtentUnits(miniModel.getExtentUnits());
+			}
+		}
+		if (miniModel.isSetTimeUnits() || !miniModel.getTimeUnits().equals(modelOrig.getTimeUnits())) {
+			if (!modelOrig.isSetTimeUnits()) {
+				modelOrig.setTimeUnits(miniModel.getTimeUnits());
+			}
+		}
+		if (miniModel.isSetSubstanceUnits() || !miniModel.getSubstanceUnits().equals(modelOrig.getSubstanceUnits())) {
+			if (!modelOrig.isSetSubstanceUnits()) {
+				modelOrig.setSubstanceUnits(miniModel.getSubstanceUnits());
+			}
+		}
+		if (miniModel.isSetVolumeUnits() || !miniModel.getVolumeUnits().equals(modelOrig.getVolumeUnits())) {
+			if (!modelOrig.isSetVolumeUnits()) {
+				modelOrig.setVolumeUnits(modelOrig.getVolumeUnits());
+			}
+		}
+		
 		for (Compartment c : miniModel.getListOfCompartments()) {
 			Compartment compOrig = modelOrig.getCompartment(c.getId());
 			// if level > 1, set spatialDimension
@@ -477,7 +597,7 @@ public class SubmodelController {
 				progressAdapter.progressOn();
 			}
 		}
-
+		
 		for (Species spec : miniModel.getListOfSpecies()) {
 			Species specOrig = modelOrig.getSpecies(spec.getId());
 			// if level > 1, set hasOnlySubstanceUnits
@@ -511,17 +631,19 @@ public class SubmodelController {
 	private void storeParamters(Reaction reaction) {
 		// setInitialConcentrationTo(reaction, 1d);
 		KineticLaw kineticLaw = reaction.getKineticLaw();
-		ListOf<LocalParameter> paramListLocal = kineticLaw.getListOfLocalParameters();
-		for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--) {
-			if (addParametersGlobally) {
-				Parameter p = new Parameter(paramListLocal.remove(paramNum));
-				if (modelOrig.getParameter(p.getId()) != null) {
-					modelOrig.removeParameter(p.getId());
+		if (kineticLaw.isSetListOfLocalParameters()) {
+			ListOf<LocalParameter> paramListLocal = kineticLaw.getListOfLocalParameters();
+			for (int paramNum = paramListLocal.size() - 1; paramNum >= 0; paramNum--) {
+				if (addParametersGlobally) {
+					Parameter p = new Parameter(paramListLocal.remove(paramNum));
+					if (modelOrig.getParameter(p.getId()) != null) {
+						modelOrig.removeParameter(p.getId());
+					}
+					modelOrig.addParameter(p);
+					updateUnitReferences(p);
+				} else {
+					updateUnitReferences(paramListLocal.get(paramNum));
 				}
-				modelOrig.addParameter(p);
-				updateUnitReferences(p);
-			} else {
-				updateUnitReferences(paramListLocal.get(paramNum));
 			}
 		}
 		for (Parameter parameter : miniModel.getListOfParameters()) {
@@ -573,14 +695,17 @@ public class SubmodelController {
 	 * @return
 	 */
 	public Reaction storeKineticLaw(KineticLaw kineticLaw,
-			boolean removeParametersAndStoreUnits) {
-		int i;
+		boolean removeParametersAndStoreUnits) {
 		Reaction reaction = modelOrig.getReaction(kineticLaw.getParentSBMLObject().getId());
 		reaction.setReversible(reversibility || reaction.getReversible());
 		reaction.setKineticLaw(kineticLaw.clone());
 		// set the BoundaryCondition to true for genes if not set anyway:
-		setBoundaryCondition(reaction.getListOfReactants(), setBoundaryCondition);
-		setBoundaryCondition(reaction.getListOfProducts(), setBoundaryCondition);
+		if (reaction.isSetListOfReactants()) {
+			setBoundaryCondition(reaction.getListOfReactants(), setBoundaryCondition);
+		}
+		if (reaction.isSetListOfProducts()) {
+			setBoundaryCondition(reaction.getListOfProducts(), setBoundaryCondition);
+		}
 		setInitialConcentrationTo(reaction, defaultSpeciesInitVal, defaultCompartmentInitSize);
 		if (removeParametersAndStoreUnits) {
 			storeUnits();
@@ -591,57 +716,104 @@ public class SubmodelController {
 			 * delete unnecessary units.
 			 */
 			removeUnnecessaryParameters(modelOrig);
+			removeUnnecessaryUnits(modelOrig);
+		}
+		// TODO: Such a check would be great, but it takes much too long!
+		//		UnitDefinition ud = reaction.getDerivedUnitDefinition();
+		//		if (ud == null) {
+		//			logger.warning("Could not derive units for reaction " + reaction.getId());
+		//		} else if (!ud.isVariantOfSubstancePerTime()) {
+		//			logger.warning("Units of kinetic law " + kineticLaw.getClass().getSimpleName() + " of reaction " + reaction.getId()
+		//					+ " cannot be varified to be substance per time units (given: "
+		//					+ UnitDefinition.printUnits(ud, true) + ").");
+		//		}
+		kineticLaw = reaction.getKineticLaw();
+		if (kineticLaw.getLocalParameterCount() == 0) {
+			kineticLaw.unsetListOfLocalParameters();
+		}
+		
+		return reaction;
+	}
 
-			for (int j = modelOrig.getUnitDefinitionCount() - 1; j >= 0; j--) {
-				UnitDefinition udef = modelOrig.getUnitDefinition(j);
-				boolean isNeeded = Unit.isPredefined(udef.getId(), udef.getLevel());
-				for (i = 0; i < modelOrig.getCompartmentCount() && !isNeeded; i++) {
-					Compartment c = modelOrig.getCompartment(i);
-					if (c.isSetUnits() && c.getUnits().equals(udef.getId())) {
-						isNeeded = true;
-					}
+	/**
+	 * 
+	 * @param model
+	 */
+	public void removeUnnecessaryUnits(Model model) {
+		int i;
+		for (int j = model.getUnitDefinitionCount() - 1; j >= 0; j--) {
+			UnitDefinition udef = model.getUnitDefinition(j);
+			boolean isNeeded = Unit.isPredefined(udef.getId(), udef.getLevel());
+			for (i = 0; i < model.getCompartmentCount() && !isNeeded; i++) {
+				Compartment c = model.getCompartment(i);
+				if (c.isSetUnits() && c.getUnits().equals(udef.getId())) {
+					isNeeded = true;
 				}
-				for (i = 0; (i < modelOrig.getSpeciesCount()) && !isNeeded; i++) {
-					Species s = modelOrig.getSpecies(i);
-					if (s.isSetSubstanceUnits() && s.getSubstanceUnits().equals(udef.getId())) {
-						isNeeded = true;
-					}
+			}
+			for (i = 0; (i < model.getSpeciesCount()) && !isNeeded; i++) {
+				Species s = model.getSpecies(i);
+				if (s.isSetSubstanceUnits() && s.getSubstanceUnits().equals(udef.getId())) {
+					isNeeded = true;
 				}
-				for (i = 0; i < modelOrig.getParameterCount() && !isNeeded; i++) {
-					Parameter p = modelOrig.getParameter(i);
-					if (p.isSetUnits() && p.getUnits().equals(udef.getId())) {
-						isNeeded = true;
-					}
+			}
+			for (i = 0; i < model.getParameterCount() && !isNeeded; i++) {
+				Parameter p = model.getParameter(i);
+				if (p.isSetUnits() && p.getUnits().equals(udef.getId())) {
+					isNeeded = true;
 				}
-				for (i = 0; i < modelOrig.getReactionCount() && !isNeeded; i++) {
-					Reaction r = modelOrig.getReaction(i);
-					if (r.isSetKineticLaw()) {
-						for (LocalParameter p : r.getKineticLaw().getListOfLocalParameters()) {
-							if (p.isSetUnits() && p.getUnits().equals(udef.getId())) {
-								isNeeded = true;
-							}
+			}
+			for (i = 0; i < model.getReactionCount() && !isNeeded; i++) {
+				Reaction r = model.getReaction(i);
+				if (r.isSetKineticLaw() && r.getKineticLaw().isSetListOfLocalParameters()) {
+					for (LocalParameter p : r.getKineticLaw().getListOfLocalParameters()) {
+						if (p.isSetUnits() && p.getUnits().equals(udef.getId())) {
+							isNeeded = true;
 						}
 					}
 				}
-				if (!isNeeded) {
-					modelOrig.removeUnitDefinition(udef);
-				}
-				if (progressAdapter != null) {
-					progressAdapter.progressOn();
-				}
+			}
+			if (!isNeeded) {
+				model.removeUnitDefinition(udef);
+			}
+			if (progressAdapter != null) {
+				progressAdapter.progressOn();
 			}
 		}
-		// TODO: Such a check would be great, but it takes much too long!
-//		UnitDefinition ud = reaction.getDerivedUnitDefinition();
-//		if (ud == null) {
-//			logger.warning("Could not derive units for reaction " + reaction.getId());
-//		} else if (!ud.isVariantOfSubstancePerTime()) {
-//			logger.warning("Units of kinetic law " + kineticLaw.getClass().getSimpleName() + " of reaction " + reaction.getId()
-//					+ " cannot be varified to be substance per time units (given: "
-//					+ UnitDefinition.printUnits(ud, true) + ").");
-//		}
 		
-		return reaction;
+		int level = model.getLevel();
+		if (level > 2) {
+			int version = model.getVersion();
+			if (model.isSetAreaUnits()
+					&& !Unit.Kind.isValidUnitKindString(model.getAreaUnits(), level, version) 
+					&& (model.getUnitDefinition(model.getAreaUnits()) == null)) {
+				model.unsetAreaUnits();
+			}
+			if (model.isSetExtentUnits()
+					&& !Unit.Kind.isValidUnitKindString(model.getExtentUnits(), level, version) 
+					&& (model.getUnitDefinition(model.getExtentUnits()) == null)) {
+				model.unsetExtentUnits();
+			}
+			if (model.isSetLengthUnits()
+					&& !Unit.Kind.isValidUnitKindString(model.getLengthUnits(), level, version) 
+					&& (model.getUnitDefinition(model.getLengthUnits()) == null)) {
+				model.unsetLengthUnits();
+			}
+			if (model.isSetSubstanceUnits()
+					&& !Unit.Kind.isValidUnitKindString(model.getSubstanceUnits(), level, version) 
+					&& (model.getUnitDefinition(model.getSubstanceUnits()) == null)) {
+				model.unsetSubstanceUnits();
+			}
+			if (model.isSetTimeUnits()
+					&& !Unit.Kind.isValidUnitKindString(model.getTimeUnits(), level, version) 
+					&& (model.getUnitDefinition(model.getTimeUnits()) == null)) {
+				model.unsetTimeUnits();
+			}
+			if (model.isSetVolumeUnits()
+					&& !Unit.Kind.isValidUnitKindString(model.getVolumeUnits(), level, version) 
+					&& (model.getUnitDefinition(model.getVolumeUnits()) == null)) {
+				model.unsetVolumeUnits();
+			}
+		}
 	}
 	
 	/**
@@ -700,15 +872,15 @@ public class SubmodelController {
 					}
 				}
 			}
-
+			
 			// is this parameter necessary for some rule?
 			for (j = 0; (j < model.getRuleCount()) && !isNeeded; j++) {
 				Rule r = model.getRule(j);
-				if (r instanceof AssignmentRule
+				if ((r instanceof AssignmentRule)
 						&& ((AssignmentRule) r).getVariable().equals(p.getId())) {
 					isNeeded = true;
 				}
-				if (r instanceof RateRule
+				if ((r instanceof RateRule)
 						&& ((RateRule) r).getVariable().equals(p.getId())) {
 					isNeeded = true;
 				}
@@ -716,7 +888,7 @@ public class SubmodelController {
 					isNeeded = true;
 				}
 			}
-
+			
 			// is this parameter necessary for some event?
 			for (j = 0; (j < model.getEventCount()) && !isNeeded; j++) {
 				Event e = model.getEvent(j);
@@ -729,17 +901,15 @@ public class SubmodelController {
 					isNeeded = true;
 				}
 				for (k = 0; k < model.getEvent(j).getEventAssignmentCount()
-				&& !isNeeded; k++) {
+						&& !isNeeded; k++) {
 					EventAssignment ea = e.getEventAssignment(k);
-					if ((ea.isSetVariable() && ea.getVariable().equals(
-							p.getId()))
-							|| ea.isSetMath()
-							&& ea.getMath().refersTo(p.getId())) {
+					if ((ea.isSetVariable() && ea.getVariable().equals(p.getId()))
+							|| ea.isSetMath() && ea.getMath().refersTo(p.getId())) {
 						isNeeded = true;
 					}
 				}
 			}
-
+			
 			// is this parameter necessary for some function?
 			for (j = 0; j < model.getFunctionDefinitionCount() && !isNeeded; j++) {
 				FunctionDefinition fd = model.getFunctionDefinition(j);
@@ -747,7 +917,7 @@ public class SubmodelController {
 					isNeeded = true;
 				}
 			}
-
+			
 			// is this parameter necessary for some initial assignment?
 			for (j = 0; j < model.getInitialAssignmentCount() && !isNeeded; j++) {
 				InitialAssignment ia = model.getInitialAssignment(j);
@@ -756,7 +926,7 @@ public class SubmodelController {
 					isNeeded = true;
 				}
 			}
-
+			
 			// is this parameter necessary for some constraint?
 			for (j = 0; j < model.getConstraintCount() && !isNeeded; j++) {
 				Constraint c = model.getConstraint(j);
@@ -764,9 +934,9 @@ public class SubmodelController {
 					isNeeded = true;
 				}
 			}
-
+			
 			if (!isNeeded) { // is this parameter necessary at all?
-				model.getListOfParameters().remove(i);
+			  model.removeParameter(i);
 			}
 			
 			if (progressAdapter != null) {
@@ -774,6 +944,10 @@ public class SubmodelController {
 			}
 			
 		}
+	  if (model.getParameterCount() == 0) {
+	  	model.unsetListOfParameters();
+	  }
+	  
 		// remove unnecessary local parameters
 		for (i = 0; i < model.getReactionCount(); i++) {
 			Reaction r = model.getReaction(i);
@@ -782,7 +956,7 @@ public class SubmodelController {
 				for (j = law.getLocalParameterCount() - 1; j >= 0; j--) {
 					if (law.isSetMath()
 							&& !law.getMath().refersTo(
-									law.getLocalParameter(j).getId())) {
+								law.getLocalParameter(j).getId())) {
 						law.removeLocalParameter(j);
 					}
 				}
@@ -802,16 +976,16 @@ public class SubmodelController {
 	 * @param setBoundary
 	 */
 	private void setBoundaryCondition(ListOf<SpeciesReference> listOf,
-			boolean setBoundary) {
+		boolean setBoundary) {
 		for (int i = 0; setBoundary && (i < listOf.size()); i++) {
 			Species species = listOf.get(i).getSpeciesInstance();
 			if (SBO.isGeneOrGeneCodingRegion(species.getSBOTerm()) || 
-			    SBO.isEmptySet(species.getSBOTerm())) {
+					SBO.isEmptySet(species.getSBOTerm())) {
 				setBoundaryCondition(species, true);
 			}
 		}
 	}
-
+	
 	/**
 	 * set the boundaryCondition for a gene to the given value
 	 * 
@@ -823,7 +997,7 @@ public class SubmodelController {
 			species.setBoundaryCondition(condition);
 		}
 	}
-
+	
 	/**
 	 * Sets the initial amounts of all modifiers, reactants and products to the
 	 * specified value.
@@ -833,22 +1007,22 @@ public class SubmodelController {
 	 * @param sizeValue
 	 */
 	private void setInitialConcentrationTo(Reaction reaction,
-			double initialValue, double sizeValue) {
+		double initialValue, double sizeValue) {
 		Species species;
 		for (int reactant = 0; reactant < reaction.getReactantCount(); reactant++) {
 			species = reaction.getReactant(reactant).getSpeciesInstance();
 			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
-					species.getCompartmentInstance(), sizeValue);
+				species.getCompartmentInstance(), sizeValue);
 		}
 		for (int product = 0; product < reaction.getProductCount(); product++) {
 			species = reaction.getProduct(product).getSpeciesInstance();
 			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
-					species.getCompartmentInstance(), sizeValue);
+				species.getCompartmentInstance(), sizeValue);
 		}
 		for (int modifier = 0; modifier < reaction.getModifierCount(); modifier++) {
 			species = reaction.getModifier(modifier).getSpeciesInstance();
 			initializeSpeciesAndCompartmentIfNecessary(species, initialValue,
-					species.getCompartmentInstance(), sizeValue);
+				species.getCompartmentInstance(), sizeValue);
 		}
 	}
 	
@@ -860,7 +1034,7 @@ public class SubmodelController {
 	 * @param sizeValue
 	 */
 	private void initializeSpeciesAndCompartmentIfNecessary(Species species,
-			double initialValue, Compartment compartment, double sizeValue) {
+		double initialValue, Compartment compartment, double sizeValue) {
 		if (!species.isSetInitialAmount()
 				&& !species.isSetInitialConcentration()) {
 			if (species.getHasOnlySubstanceUnits()) {
@@ -877,8 +1051,8 @@ public class SubmodelController {
 		}
 	}
 	
-
-
+	
+	
 	/**
 	 * 
 	 * @param compartment
@@ -898,49 +1072,49 @@ public class SubmodelController {
 		}
 		
 		
-//		volumeUD = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
-//		if (volumeUD == null) {
-//			// This may happen in Level 3.
-//			// TODO: Depending on which compartments are in the model, we might need also Area and Length!
-//			volumeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
-//			SBMLtools.setLevelAndVersion(volumeUD, level, version);
-//			miniModel.setVolumeUnits(volumeUD);
-//		}
+		//		volumeUD = miniModel.getUnitDefinition(UnitDefinition.VOLUME);
+		//		if (volumeUD == null) {
+		//			// This may happen in Level 3.
+		//			// TODO: Depending on which compartments are in the model, we might need also Area and Length!
+		//			volumeUD = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
+		//			SBMLtools.setLevelAndVersion(volumeUD, level, version);
+		//			miniModel.setVolumeUnits(volumeUD);
+		//		}
 		///
 		
 		
-    if (!compartment.isSetUnits() && (((short) spatialD) - spatialD == 0d)) {
+		if (!compartment.isSetUnits() && (((short) spatialD) - spatialD == 0d)) {
 			UnitDefinition ud;
 			switch ((short) spatialD) {
-			case 1:
-				ud = model.getLengthUnitsInstance();
-				if (ud == null) {
-					ud = UnitDefinition.getPredefinedUnit(UnitDefinition.LENGTH, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
-					modelToWrite.setLengthUnits(ud);
-				}
-				compartment.setUnits(ud);
-				break;
-			case 2:
-				ud = model.getAreaUnitsInstance();
-				if (ud == null) {
-					ud = UnitDefinition.getPredefinedUnit(UnitDefinition.AREA, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
-					modelToWrite.setAreaUnits(ud);
-				}
-				compartment.setUnits(ud);
-				break;
-			case 3:
-				ud = model.getUnitDefinition(UnitDefinition.VOLUME);
-				if (ud == null) {
-					ud = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
-					SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
-					modelToWrite.setVolumeUnits(ud);
-				}
-				compartment.setUnits(ud);
-				break;
-			default:
-				break;
+				case 1:
+					ud = model.getLengthUnitsInstance();
+					if (ud == null) {
+						ud = UnitDefinition.getPredefinedUnit(UnitDefinition.LENGTH, 2, 4);
+						SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
+						modelToWrite.setLengthUnits(ud);
+					}
+					compartment.setUnits(ud);
+					break;
+				case 2:
+					ud = model.getAreaUnitsInstance();
+					if (ud == null) {
+						ud = UnitDefinition.getPredefinedUnit(UnitDefinition.AREA, 2, 4);
+						SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
+						modelToWrite.setAreaUnits(ud);
+					}
+					compartment.setUnits(ud);
+					break;
+				case 3:
+					ud = model.getUnitDefinition(UnitDefinition.VOLUME);
+					if (ud == null) {
+						ud = UnitDefinition.getPredefinedUnit(UnitDefinition.VOLUME, 2, 4);
+						SBMLtools.setLevelAndVersion(ud, modelToWrite.getLevel(), modelToWrite.getVersion());
+						modelToWrite.setVolumeUnits(ud);
+					}
+					compartment.setUnits(ud);
+					break;
+				default:
+					break;
 			}
 		}
 		if (((spatialD <= 0d) || (spatialD > 3d)) && (1 < compartment.getLevel())) {
@@ -951,7 +1125,7 @@ public class SubmodelController {
 				compartment.getId()));
 		}
 	}
-
+	
 	/**
 	 * check units of species and surrounding compartment.
 	 * 
@@ -969,7 +1143,7 @@ public class SubmodelController {
 			species.setSubstanceUnits(ud);
 		}
 	}
-
+	
 	/**
 	 * 
 	 * @return
@@ -977,7 +1151,7 @@ public class SubmodelController {
 	public boolean isRemoveUnnecessaryParameters() {
 		return this.removeUnnecessaryParameters;
 	}
-
+	
 	/**
 	 * 
 	 * @return
@@ -985,7 +1159,7 @@ public class SubmodelController {
 	public boolean isAddParametersGlobally() {
 		return addParametersGlobally;
 	}
-
+	
 	/**
 	 * 
 	 * @return
@@ -993,7 +1167,7 @@ public class SubmodelController {
 	public boolean isReversibility() {
 		return reversibility;
 	}
-
+	
 	/**
 	 * 
 	 * @return
@@ -1001,5 +1175,5 @@ public class SubmodelController {
 	public boolean isSetBoundaryCondition() {
 		return setBoundaryCondition;
 	}
-
+	
 }

@@ -94,7 +94,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		Model model = sbmlIO.getSelectedModel();
 		reaction = model.getReaction(reactionID);
 		try {
-		klg = new KineticLawGenerator(model, reactionID);
+		klg = new KineticLawGenerator(model);
 		messagePanel = new KineticLawSelectionPanel(klg, reaction);
 		} catch (Throwable exc) {
 			exc.printStackTrace();
@@ -177,6 +177,10 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 		return KineticsAndParametersStoredInSBML;
 	}
 
+	/**
+	 * 
+	 * @param progressBar
+	 */
 	public void showProgress(AbstractProgressBar progressBar){
 		klg.setProgressBar(progressBar);
 	}
