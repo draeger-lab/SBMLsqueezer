@@ -1197,5 +1197,27 @@ public class SubmodelController {
 	public boolean isSetBoundaryCondition() {
 		return setBoundaryCondition;
 	}
+
+	/**
+	 * @return
+	 */
+	public SBMLDocument getSBMLDocument() {
+		return modelOrig.getSBMLDocument();
+	}
+
+	/**
+	 * 
+	 * @param removeUnnecessaryParameters
+	 */
+	public void storeKineticLaws(boolean removeUnnecessaryParameters) {
+		for (int i = 0; i < miniModel.getReactionCount(); i++) {
+			Reaction r = miniModel.getReaction(i);
+			storeKineticLaw(r.getKineticLaw(), false);
+		}
+		
+		if (removeUnnecessaryParameters) {
+			removeUnnecessaryParameters(modelOrig);
+		}
+	}
 	
 }

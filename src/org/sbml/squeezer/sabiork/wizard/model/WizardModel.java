@@ -34,6 +34,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.util.filters.CVTermFilter;
+import org.sbml.squeezer.SubmodelController;
 
 /**
  * The model of the SABIO-RK wizard.
@@ -44,25 +45,31 @@ import org.sbml.jsbml.util.filters.CVTermFilter;
 public class WizardModel implements PropertyChangeListener {
 
 	private final PropertyChangeSupport propertyChangeSupport;
-	private SBMLDocument sbmlDocument;
-	private SBMLDocument sbmlDocumentCopy;
 	private Reaction selectedReaction;
 	private KineticLaw selectedKineticLaw;
 	private KineticLawImporter selectedKineticLawImporter;
 	private List<Reaction> selectedReactions;
 	private List<KineticLawImporter> selectedKineticLawImporters;
+	private SubmodelController submodelController;
 
-	public WizardModel(SBMLDocument sbmlDocument) {
+	public WizardModel(SBMLDocument sbmlDocument, String reactionId) {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		// (Debugging purposes)
 		// this.propertyChangeSupport.addPropertyChangeListener(this);
-		this.sbmlDocument = sbmlDocument.clone();
-		this.sbmlDocumentCopy = sbmlDocument.clone();
+		submodelController = new SubmodelController(sbmlDocument.getModel(), reactionId);
 		this.selectedReaction = null;
 		this.selectedKineticLaw = null;
 		this.selectedKineticLawImporter = null;
 		this.selectedReactions = new ArrayList<Reaction>();
 		this.selectedKineticLawImporters = new ArrayList<KineticLawImporter>();
+	}
+	
+	/**
+	 * 
+	 * @param sbmlDocument
+	 */
+	public WizardModel(SBMLDocument sbmlDocument) {
+		this(sbmlDocument, null);
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -77,7 +84,7 @@ public class WizardModel implements PropertyChangeListener {
 	 * Swaps the copied model with the original model.
 	 */
 	public void applyChanges() {
-		sbmlDocument = sbmlDocumentCopy;
+		submodelController.storeKineticLaws(true);
 	}
 
 	/**
@@ -86,7 +93,7 @@ public class WizardModel implements PropertyChangeListener {
 	 * @return
 	 */
 	public SBMLDocument getResult() {
-		return sbmlDocument;
+		return submodelController.getSBMLDocument();
 	}
 
 	/**
@@ -95,11 +102,7 @@ public class WizardModel implements PropertyChangeListener {
 	 * @return
 	 */
 	public List<Reaction> getReactions() {
-		List<Reaction> reactions = new ArrayList<Reaction>();
-		if (sbmlDocumentCopy.getModel().isSetListOfReactions()) {
-			reactions = sbmlDocumentCopy.getModel().getListOfReactions();
-		}
-		return reactions;
+		return submodelController.getSubmodel().getListOfReactions();
 	}
 
 	/**

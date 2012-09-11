@@ -705,19 +705,14 @@ public class KineticLawGenerator {
 		
 		ModelChangeListener chl = new ModelChangeListener();
 		modelOrig.addTreeNodeChangeListener(chl);
-		for (int i = 0; i < miniModel.getReactionCount(); i++) {
-			Reaction r = miniModel.getReaction(i);
-			submodelController.storeKineticLaw(r.getKineticLaw(), isRemoveUnnecessaryParameters());
-		}
-		
-		if (isRemoveUnnecessaryParameters()) {
-			submodelController.removeUnnecessaryParameters(modelOrig);
-		}
+		// TODO: progress
+		submodelController.storeKineticLaws(isRemoveUnnecessaryParameters());
 		modelOrig.removeTreeNodeChangeListener(chl);
 
 		if (progressAdapter != null) {
 			progressAdapter.finished();
 		}
+
 	}
 	
 	/**
