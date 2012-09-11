@@ -532,10 +532,12 @@ public class KineticLawImporter {
 	private void replaceKineticLawReferences(ASTNode node,
 		CallableSBase oldReference, CallableSBase newReference) {
 		if (node.isString()) {
-			CallableSBase variable = getVariable(node);
-			if (variable.equals(oldReference)) {
-				node.setName(newReference.getName());
-				node.setVariable(newReference);
+			CallableSBase variable = node.getVariable();
+			if(variable != null) {
+				if (variable.equals(oldReference)) {
+					node.setName(newReference.getName());
+					node.setVariable(newReference);
+				}
 			}
 		}
 		for (ASTNode child : node.getChildren()) {

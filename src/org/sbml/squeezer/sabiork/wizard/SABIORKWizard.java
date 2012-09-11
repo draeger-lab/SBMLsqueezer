@@ -108,4 +108,17 @@ public class SABIORKWizard {
 		return consoleWizard.getResult();
 	}
 
+	/**
+	 * @param sbmLsqueezerUI
+	 * @param applicationModal
+	 * @param sbmlDocument
+	 * @param id
+	 * @return
+	 */
+	public static SBMLDocument getResultGUI(Window owner,
+		ModalityType applicationModal, SBMLDocument sbmlDocument, String reactionId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -523,10 +523,10 @@ public class SABIORK {
 					searchTermsQuery.append(" AND ");
 				}
 				if (value.contains(" ")) {
-					searchTermsQuery.append(searchTerm.getV() + ":\"" + value
+					searchTermsQuery.append(searchTerm.getL() + ":\"" + value
 							+ "\"");
 				} else {
-					searchTermsQuery.append(searchTerm.getV() + ":" + value);
+					searchTermsQuery.append(searchTerm.getL() + ":" + value);
 				}
 			}
 		}

@@ -318,10 +318,17 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		switch (Command.valueOf(e.getActionCommand())) {
 			case SABIO_RK:
 				if (e.getSource() instanceof Reaction) {
-					// TODO
-					logger.warning("Not yet implemented");
+					SBMLDocument result = SABIORKWizard.getResultGUI(this,
+						ModalityType.APPLICATION_MODAL, sbmlIO.getSelectedModel()
+								.getSBMLDocument(), ((Reaction) e.getSource()).getId());
 				} else {
 					SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
+					SBMLDocument result = SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.getSubmodel().getSBMLDocument());
+					for(Reaction r: result.getModel().getListOfReactions()) {
+						if(r.isSetKineticLaw()) {
+							controller.storeKineticLaw(r.getKineticLaw(), true);
+						}
+					}
 					SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.getSubmodel().getSBMLDocument());
 					// TODO store results controller.store...
 				}
