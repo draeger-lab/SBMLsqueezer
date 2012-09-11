@@ -197,7 +197,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 								lprefs.getBoolean(LaTeXOptions.SHOW_PREDEFINED_UNITS),
 								lprefs.getBoolean(LaTeXOptions.TITLE_PAGE),
 								lprefs.getBoolean(LaTeXOptions.PRINT_NAMES_IF_AVAILABLE));
-						export.toLaTeX(klg.getMiniModel(), f);
+						export.toLaTeX(klg.getSubmodel(), f);
 						guiPrefs.put(GUIOptions.OPEN_DIR, f.getParentFile());
 						// new Thread(new Runnable() {
 						// public void run() {
@@ -210,7 +210,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 						// }).start();
 					}
 					if (ff2.accept(f)) {
-						new TextExport(klg.getMiniModel(), f);
+						new TextExport(klg.getSubmodel(), f);
 						guiPrefs.put(GUIOptions.OPEN_DIR, f.getParentFile());
 						// new Thread(new Runnable() {
 						//

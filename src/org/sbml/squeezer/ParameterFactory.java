@@ -819,11 +819,11 @@ public class ParameterFactory {
 	 * details.
 	 * 
 	 * @param species
-	 *        Must not be <code>null</code>.
+	 *        Must not be {@code null}.
 	 * @param enzyme
-	 *        identifier of the catalyzing enzyme. Can be <code>null</code>.
+	 *        identifier of the catalyzing enzyme. Can be {@code null}.
 	 * @param substrate
-	 *        If <code>true</code> it returns the Michaels constant for substrate, else the
+	 *        If {@code true} it returns the Michaels constant for substrate, else the
 	 *        Michaelis constant for the product.
 	 * @return
 	 */

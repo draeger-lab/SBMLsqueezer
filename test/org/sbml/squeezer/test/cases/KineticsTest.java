@@ -98,7 +98,7 @@ public abstract class KineticsTest {
 			 * This is necessary because without checking the reaction type, species
 			 * on the ignore list are not removed from the reactions within the model.
 			 */
-			for (Reaction r : klg.getMiniModel().getListOfReactions()) {
+			for (Reaction r : klg.getSubmodel().getListOfReactions()) {
 				ReactionType rt = new ReactionType(r, klg.isReversibility(),
 					klg.isAllReactionsAsEnzymeCatalyzed(), klg.isSetBoundaryCondition(),
 					klg.getSpeciesIgnoreList());

@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
@@ -129,6 +130,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   private static final transient Logger logger = Logger.getLogger(SBMLsqueezer.class.getName());
   
   static {
+  	ListOf.setDebugMode(true);
+  	
 		/*
      * Load all available kinetic equations and the user's settings from the
      * configuration file.

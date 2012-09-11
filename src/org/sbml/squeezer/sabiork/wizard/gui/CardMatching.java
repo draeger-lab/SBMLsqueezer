@@ -418,8 +418,8 @@ public class CardMatching extends Card implements PropertyChangeListener {
 		/**
 		 * Checks whether a referenced component exists or not.
 		 * 
-		 * @return <code>true</code> if a referenced component exists;
-		 *         <code>false</code> otherwise
+		 * @return {@code true} if a referenced component exists;
+		 *         {@code false} otherwise
 		 */
 		private boolean hasReferencedComponent() {
 			return (comboBoxReferencedComponent.getSelectedItem() != null);
@@ -428,8 +428,8 @@ public class CardMatching extends Card implements PropertyChangeListener {
 		/**
 		 * Checks whether a referenceable component exists or not.
 		 * 
-		 * @return <code>true</code> if a referenceable component exists;
-		 *         <code>false</code> otherwise
+		 * @return {@code true} if a referenceable component exists;
+		 *         {@code false} otherwise
 		 */
 		private boolean hasReferenceableComponent() {
 			return (comboBoxReferenceableComponents.getSelectedItem() != null);
@@ -557,8 +557,8 @@ public class CardMatching extends Card implements PropertyChangeListener {
 		/**
 		 * Checks whether a referenced component exists or not.
 		 * 
-		 * @return <code>true</code> if a referenced component exists;
-		 *         <code>false</code> otherwise
+		 * @return {@code true} if a referenced component exists;
+		 *         {@code false} otherwise
 		 */
 		private boolean hasReferencedComponent() {
 			return (comboBoxReferencedComponent.getSelectedItem() != null);

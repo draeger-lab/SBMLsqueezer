@@ -196,7 +196,7 @@ public class ConsoleWizard {
 
 	/**
 	 * Returns a SABIO-RK query for multiple filter options. If a filter option
-	 * is set to <code>null</code> the default value of that filter option will
+	 * is set to {@code null} the default value of that filter option will
 	 * be used. The query returned can be directly appended to another SABIO-RK
 	 * query since it already consists of a leading 'AND' or 'NOT'.
 	 * 

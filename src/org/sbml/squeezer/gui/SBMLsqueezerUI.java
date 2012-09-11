@@ -322,7 +322,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					logger.warning("Not yet implemented");
 				} else {
 					SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
-					SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.getMiniModel().getSBMLDocument());
+					SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.getSubmodel().getSBMLDocument());
 					// TODO store results controller.store...
 				}
 				break;

@@ -258,7 +258,7 @@ public class SqueezerTests extends TestCase {
 					logger.info("\n----------------------------------------------\n"+
 							"           get MiniModel for a model"+
 					"\n----------------------------------------------");
-					klg.getMiniModel();
+					klg.getSubmodel();
 				} catch (Throwable e) {
 					logger.log(Level.WARNING, "failed to generate the MiniModel: ", e);
 					failed = true;

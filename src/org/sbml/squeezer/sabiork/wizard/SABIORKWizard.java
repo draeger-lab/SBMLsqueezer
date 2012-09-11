@@ -61,7 +61,7 @@ public class SABIORKWizard {
 
 	/**
 	 * Starts the SABIO-RK wizard in console mode and returns the result of the
-	 * wizard. If a filter option is set to <code>null</code> the default value
+	 * wizard. If a filter option is set to {@code null} the default value
 	 * of that filter option will be used.
 	 * 
 	 * @param sbmlDocument

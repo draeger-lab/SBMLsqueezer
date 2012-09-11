@@ -440,8 +440,8 @@ public class CardSearchM extends Card implements ActionListener,
 		/**
 		 * Checks if this search is already in progress.
 		 * 
-		 * @return <code>true</code> if this search is already in progress,
-		 *         <code>false</code> otherwise
+		 * @return {@code true} if this search is already in progress,
+		 *         {@code false} otherwise
 		 */
 		public boolean isStarted() {
 			return (getState() == StateValue.STARTED);

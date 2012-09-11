@@ -423,8 +423,6 @@ public class KineticLawGenerator {
 		this.typeUnitConsistency = consistency;
 		this.defaultParamVal = defaultNewParamVal;
 		
-		initSubModel(r.getId());
-		
 		Reaction reaction = miniModel.getReaction(r.getId());
 		if (reaction == null) {
 			reaction = r;
@@ -456,13 +454,13 @@ public class KineticLawGenerator {
 	 * 
 	 * @param reactionID
 	 */
-	private void initSubModel(String reactionID) {
+	private void initSubmodel(String reactionID) {
 			this.submodelController = new SubmodelController(modelOrig, reactionID);
 			this.submodelController.setProgressBar(progressBar);
 			this.submodelController.setDefaultSpatialDimensions(defaultSpatialDimension);
 			this.submodelController.setReversibility(reversibility);
 			this.listOfFastReactions = new LinkedList<Reaction>();
-			this.miniModel = submodelController.getMiniModel();
+			this.miniModel = submodelController.getSubmodel();
 			this.updateEnzymeCatalysis();
 	}
 
@@ -471,8 +469,8 @@ public class KineticLawGenerator {
 	 */
 	public void generateLaws() throws Throwable {
 		
-		initSubModel(null);
-		
+		initSubmodel(null);
+
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.generateLaws);
 			progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
@@ -528,7 +526,7 @@ public class KineticLawGenerator {
 	 * 
 	 * @return
 	 */
-	public Model getMiniModel() {
+	public Model getSubmodel() {
 		return miniModel;
 	}
 
