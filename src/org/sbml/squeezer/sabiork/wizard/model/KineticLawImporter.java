@@ -252,7 +252,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if at least one cvterm resource of component1 and
+	 * Returns {@code true} if at least one cvterm resource of component1 and
 	 * component2 is equal with regard to the specified qualifier .
 	 * 
 	 * @param qualifier1
@@ -276,7 +276,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if both {@link Compartment} can be considered a
+	 * Returns {@code true} if both {@link Compartment} can be considered a
 	 * match.
 	 * 
 	 * @param compartment1
@@ -289,7 +289,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if both {@link Reaction} can be considered a
+	 * Returns {@code true} if both {@link Reaction} can be considered a
 	 * match.
 	 * 
 	 * @param compartment1
@@ -302,7 +302,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if both {@link Species} can be considered a
+	 * Returns {@code true} if both {@link Species} can be considered a
 	 * match.
 	 * 
 	 * @param compartment1
@@ -318,7 +318,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if both {@link SpeciesReference} can be
+	 * Returns {@code true} if both {@link SpeciesReference} can be
 	 * considered a match.
 	 * 
 	 * @param compartment1
@@ -378,7 +378,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if it is possible to import the
+	 * Returns {@code true} if it is possible to import the
 	 * {@link KineticLaw} into the {@link Reaction}.
 	 * 
 	 * @return
@@ -544,7 +544,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if the given id is a unique id.
+	 * Returns {@code true} if the given id is a unique id.
 	 * 
 	 * @param id
 	 * @return
@@ -554,7 +554,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if the given id is a unique unit definition id.
+	 * Returns {@code true} if the given id is a unique unit definition id.
 	 * 
 	 * @param id
 	 * @return
@@ -564,7 +564,7 @@ public class KineticLawImporter {
 	}
 	
 	/**
-	 * Returns <code>true</code> if the given id is a unique meta id.
+	 * Returns {@code true} if the given id is a unique meta id.
 	 * 
 	 * @param id
 	 * @return

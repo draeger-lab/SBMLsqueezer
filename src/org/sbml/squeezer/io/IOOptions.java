@@ -62,7 +62,7 @@ public interface IOOptions extends KeyProvider {
 			new File(""));
 		
 	/**
-	 * If <code>true</code>, the application will try to load the library libSBML for reading and
+	 * If {@code true}, the application will try to load the library libSBML for reading and
 	 * writing SBML files, otherwise everything will be done with JSBML only, i.e., pure Java. 
 	 */
 	public static final Option<Boolean> TRY_LOADING_LIBSBML = new Option<Boolean>(

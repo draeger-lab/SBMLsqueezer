@@ -125,8 +125,8 @@ public class ComboBoxModelSearchItems extends ComboBoxModelCaptions {
 	}
 
 	/**
-	 * Returns <code>true</code> if the currently selected search item is a
-	 * SABIO-RK query field; <code>false</code> otherwise.
+	 * Returns {@code true} if the currently selected search item is a
+	 * SABIO-RK query field; {@code false} otherwise.
 	 * 
 	 * @return
 	 */
@@ -135,8 +135,8 @@ public class ComboBoxModelSearchItems extends ComboBoxModelCaptions {
 	}
 
 	/**
-	 * Returns <code>true</code> if the currently selected search item is a
-	 * query expression; <code>false</code> otherwise.
+	 * Returns {@code true} if the currently selected search item is a
+	 * query expression; {@code false} otherwise.
 	 * 
 	 * @return
 	 */

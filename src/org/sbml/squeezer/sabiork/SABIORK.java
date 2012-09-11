@@ -262,7 +262,7 @@ public class SABIORK {
 	 * @param id
 	 *            the SABIO-RK entry id
 	 * @return the {@link KineticLaw} corresponding to the given SABIO-RK entry
-	 *         id or <code>null</code> if it doesn't exist
+	 *         id or {@code null} if it doesn't exist
 	 * @throws WebServiceConnectException
 	 * @throws WebServiceResponseException
 	 * @throws IOException
@@ -535,7 +535,7 @@ public class SABIORK {
 
 	/**
 	 * Returns a SABIO-RK query for multiple filter options. If a filter option
-	 * is set to <code>null</code> the default value of that filter option will
+	 * is set to {@code null} the default value of that filter option will
 	 * be used. The query returned can be directly appended to another SABIO-RK
 	 * query since it already consists of a leading 'AND' or 'NOT'.
 	 * 

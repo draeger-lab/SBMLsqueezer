@@ -24,8 +24,10 @@
 package org.sbml.squeezer;
 
 import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -132,7 +134,7 @@ public class SubmodelController {
 	 * 
 	 * @return
 	 */
-	public Model getMiniModel() {
+	public Model getSubmodel() {
 		return this.miniModel;
 	}
 	
@@ -202,7 +204,7 @@ public class SubmodelController {
 		 */
 		if (modelOrig.isSetAreaUnitsInstance()) {
 			UnitDefinition areaUD = modelOrig.getAreaUnitsInstance().clone();
-			if (!miniModel.isSetAreaUnitsInstance() || !UnitDefinition.areIdentical(areaUD, miniModel.getAreaUnitsInstance())) {
+			if ((level > 2) && (!miniModel.isSetAreaUnitsInstance() || !UnitDefinition.areIdentical(areaUD, miniModel.getAreaUnitsInstance()))) {
 				miniModel.setAreaUnits(areaUD.clone());
 			}
 		} else {
@@ -220,7 +222,7 @@ public class SubmodelController {
 		
 		if (modelOrig.isSetLengthUnitsInstance()) {
 			UnitDefinition lengthUD = modelOrig.getLengthUnitsInstance().clone();
-			if (!miniModel.isSetLengthUnitsInstance() || !UnitDefinition.areIdentical(lengthUD, miniModel.getLengthUnitsInstance())) {
+			if ((level > 2) && (!miniModel.isSetLengthUnitsInstance() || !UnitDefinition.areIdentical(lengthUD, miniModel.getLengthUnitsInstance()))) {
 				miniModel.setLengthUnits(lengthUD.clone());
 			}
 		} else {
@@ -238,7 +240,7 @@ public class SubmodelController {
 		
 		if (modelOrig.isSetSubstanceUnitsInstance()) {
 			UnitDefinition substanceUD = modelOrig.getSubstanceUnitsInstance().clone();
-			if (!miniModel.isSetSubstanceUnitsInstance() || !UnitDefinition.areIdentical(substanceUD, miniModel.getSubstanceUnitsInstance())) {
+			if ((level > 2) && (!miniModel.isSetSubstanceUnitsInstance() || !UnitDefinition.areIdentical(substanceUD, miniModel.getSubstanceUnitsInstance()))) {
 				miniModel.setSubstanceUnits(substanceUD.clone());
 			}
 		} else {
@@ -256,7 +258,7 @@ public class SubmodelController {
 		
 		if (modelOrig.isSetTimeUnitsInstance()) {
 			UnitDefinition timeUD = modelOrig.getTimeUnitsInstance().clone();
-			if (!miniModel.isSetTimeUnitsInstance() || !UnitDefinition.areIdentical(timeUD, miniModel.getTimeUnitsInstance())) {
+			if ((level > 2) && (!miniModel.isSetTimeUnitsInstance() || !UnitDefinition.areIdentical(timeUD, miniModel.getTimeUnitsInstance()))) {
 				miniModel.setTimeUnits(timeUD.clone());
 			}
 		} else {
@@ -274,7 +276,7 @@ public class SubmodelController {
 		
 		if (modelOrig.isSetVolumeUnitsInstance()) {
 			UnitDefinition volumeUD = modelOrig.getVolumeUnitsInstance().clone();
-			if (!miniModel.isSetVolumeUnitsInstance() || !UnitDefinition.areIdentical(volumeUD, miniModel.getVolumeUnitsInstance())) {
+			if ((level > 2) && (!miniModel.isSetVolumeUnitsInstance() || !UnitDefinition.areIdentical(volumeUD, miniModel.getVolumeUnitsInstance()))) {
 				miniModel.setVolumeUnits(volumeUD.clone());
 			}
 		} else {
@@ -740,39 +742,59 @@ public class SubmodelController {
 	 * @param model
 	 */
 	public void removeUnnecessaryUnits(Model model) {
-		int i;
-		for (int j = model.getUnitDefinitionCount() - 1; j >= 0; j--) {
-			UnitDefinition udef = model.getUnitDefinition(j);
-			boolean isNeeded = Unit.isPredefined(udef.getId(), udef.getLevel());
-			for (i = 0; i < model.getCompartmentCount() && !isNeeded; i++) {
-				Compartment c = model.getCompartment(i);
-				if (c.isSetUnits() && c.getUnits().equals(udef.getId())) {
-					isNeeded = true;
+		int i, level = model.getLevel();
+		Set<String> neededUnits = new HashSet<String>();
+		
+		// Check compartments
+		for (Compartment compartment : model.getListOfCompartments()) {
+			if (compartment.isSetUnits()) {
+				neededUnits.add(compartment.getUnits());
+			} else if ((level > 2) && compartment.isSetSpatialDimensions()) {
+				double dim = compartment.getSpatialDimensions();
+				if ((dim == 3d) && model.isSetVolumeUnits()) {
+					neededUnits.add(model.getVolumeUnits());
+				} else if ((dim == 2d) && model.isSetAreaUnits()) {
+					neededUnits.add(model.getAreaUnits());
+				} else if ((dim == 1d) && model.isSetLengthUnits()) {
+					neededUnits.add(model.getLengthUnits());
 				}
 			}
-			for (i = 0; (i < model.getSpeciesCount()) && !isNeeded; i++) {
-				Species s = model.getSpecies(i);
-				if (s.isSetSubstanceUnits() && s.getSubstanceUnits().equals(udef.getId())) {
-					isNeeded = true;
-				}
+		}
+		// Check species
+		for (Species species : model.getListOfSpecies()) {
+			if (species.isSetSubstanceUnits()) {
+				neededUnits.add(species.getSubstanceUnits());
+			} else if ((level > 2) && model.isSetSubstanceUnits()) {
+				neededUnits.add(model.getSubstanceUnits());
 			}
-			for (i = 0; i < model.getParameterCount() && !isNeeded; i++) {
-				Parameter p = model.getParameter(i);
-				if (p.isSetUnits() && p.getUnits().equals(udef.getId())) {
-					isNeeded = true;
-				}
+		}
+		// Check parameters
+		for (Parameter parameter : model.getListOfParameters()) {
+			if (parameter.isSetUnits()) {
+				neededUnits.add(parameter.getUnits());
 			}
-			for (i = 0; i < model.getReactionCount() && !isNeeded; i++) {
-				Reaction r = model.getReaction(i);
-				if (r.isSetKineticLaw() && r.getKineticLaw().isSetListOfLocalParameters()) {
-					for (LocalParameter p : r.getKineticLaw().getListOfLocalParameters()) {
-						if (p.isSetUnits() && p.getUnits().equals(udef.getId())) {
-							isNeeded = true;
-						}
+		}
+		if (level > 2) {
+			if (model.isSetTimeUnits()) {
+				neededUnits.add(model.getTimeUnits());
+			}
+			if (model.isSetExtentUnits() && (model.getReactionCount() > 0)) {
+				neededUnits.add(model.getExtentUnits());
+			}
+		}
+		// Check local parameters
+		for (Reaction reaction : model.getListOfReactions()) {
+			if (reaction.isSetKineticLaw() && reaction.getKineticLaw().isSetListOfLocalParameters()) {
+				for (LocalParameter localParameter : reaction.getKineticLaw().getListOfLocalParameters()) {
+					if (localParameter.isSetUnits()) {
+						neededUnits.add(localParameter.getUnits());
 					}
 				}
 			}
-			if (!isNeeded) {
+		}
+		for (i = model.getUnitDefinitionCount() - 1; i >= 0; i--) {
+			UnitDefinition udef = model.getUnitDefinition(i);
+			if (!Unit.isPredefined(udef) && !neededUnits.contains(udef.getId())) {
 				model.removeUnitDefinition(udef);
 			}
 			if (progressAdapter != null) {
@@ -780,7 +802,6 @@ public class SubmodelController {
 			}
 		}
 		
-		int level = model.getLevel();
 		if (level > 2) {
 			int version = model.getVersion();
 			if (model.isSetAreaUnits()
@@ -814,6 +835,7 @@ public class SubmodelController {
 				model.unsetVolumeUnits();
 			}
 		}
+
 	}
 	
 	/**
