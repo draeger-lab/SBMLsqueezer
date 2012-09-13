@@ -412,4 +412,12 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	    }
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	public SBMLInputConverter getReader() {
+		return reader;
+	}
+
 }
