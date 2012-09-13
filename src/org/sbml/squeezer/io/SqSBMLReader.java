@@ -165,7 +165,7 @@ public class SqSBMLReader implements SBMLInputConverter {
 	 * @throws IOException
 	 * @throws XMLStreamException 
 	 */
-	private org.sbml.jsbml.SBMLDocument model2SBML(String model)
+	private SBMLDocument model2SBML(String model)
 	throws IOException, XMLStreamException {
 		File file = new File(model.toString());
 		SBMLDocument doc = null;
