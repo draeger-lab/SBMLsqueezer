@@ -116,9 +116,11 @@ public class SABIORKWizard {
 	 * @return
 	 */
 	public static SBMLDocument getResultGUI(Window owner,
-		ModalityType applicationModal, SBMLDocument sbmlDocument, String reactionId) {
-		// TODO Auto-generated method stub
-		return null;
+		ModalityType modalityType, SBMLDocument sbmlDocument, String reactionId) {
+		JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
+				sbmlDocument, reactionId);
+		dialogWizard.setVisible(true);
+		return dialogWizard.getResult();
 	}
 
 }

@@ -96,6 +96,19 @@ public class JDialogWizard extends JDialog implements ActionListener,
 		initialize();
 	}
 
+	/**
+	 * @param owner
+	 * @param modalityType
+	 * @param sbmlDocument
+	 * @param reactionId
+	 */
+	public JDialogWizard(Window owner, ModalityType modalityType,
+		SBMLDocument sbmlDocument, String reactionId) {
+		super(owner, modalityType);
+		this.model = new WizardModel(sbmlDocument, reactionId);
+		initialize();
+	}
+
 	private void initialize() {
 		labelLogo = new JLabel(new ImageIcon(this.getClass().getResource(
 				WizardProperties.getText("JDIALOG_WIZARD_IMAGE_LOGO"))));
