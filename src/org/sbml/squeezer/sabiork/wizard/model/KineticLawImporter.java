@@ -412,6 +412,7 @@ public class KineticLawImporter {
 					.setId(getUniqueUnitDefinitionID(referencedUnitDefinitionCopy.getId()));
 			referencedUnitDefinitionCopy.setLevel(reactionModel.getLevel());
 			referencedUnitDefinitionCopy.setVersion(reactionModel.getVersion());
+			referencedUnitDefinitionCopy.unsetListOfUnits();
 			report.append("    - UnitDefinition "
 					+ referencedUnitDefinitionCopy.getId() + " will be imported.\n");
 			if (miriamURN != null) {

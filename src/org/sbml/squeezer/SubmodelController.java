@@ -655,6 +655,12 @@ public class SubmodelController {
 			}
 			
 		}
+		for (FunctionDefinition fd: miniModel.getListOfFunctionDefinitions()) {
+			if (modelOrig.getFunctionDefinition(fd.getId()) == null) {
+				modelOrig.addFunctionDefinition(fd.clone());
+			}
+			
+		}
 		if (!kineticLaw.isSetMath()) {
 			// TODO: Localize!
 			logger.log(Level.SEVERE, MessageFormat.format("No math element defined for reaction {0}", reaction.getId()));
@@ -682,6 +688,7 @@ public class SubmodelController {
 				UnitDefinition ud = modelOrig.getUnitDefinition(p.getUnits());
 				if (ud == null) {
 					ud = miniModel.getUnitDefinition(p.getUnits());
+					UnitDefinition udClone = ud.clone();
 					modelOrig.addUnitDefinition(ud.clone());
 				}
 				p.setUnits(ud);
