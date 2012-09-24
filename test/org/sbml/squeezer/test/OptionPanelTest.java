@@ -31,7 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SqueezerOptionsGeneral;
 
 import de.zbit.gui.prefs.PreferencesPanelForKeyProvider;
 
@@ -56,7 +56,7 @@ public class OptionPanelTest {
     UnsupportedLookAndFeelException {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     JOptionPane.showMessageDialog(null, new PreferencesPanelForKeyProvider(
-      SqueezerOptions.class));
+      SqueezerOptionsGeneral.class));
   }
   
 }

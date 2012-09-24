@@ -43,7 +43,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.ReactionType;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SqueezerOptionsGeneral;
 
 import de.zbit.sbml.gui.SBMLTree;
 import de.zbit.util.logging.LogUtil;
@@ -90,7 +90,7 @@ public abstract class KineticsTest {
 	 * {@link KineticLawGenerator}
 	 */
 	public KineticsTest() {
-		prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+		prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
 		model = initModel();
 		try {
 			klg = new KineticLawGenerator(model);

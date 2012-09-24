@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -249,10 +250,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @return
    */
   public static List<Class<? extends KeyProvider>> getInteractiveConfigOptions() {
-  	List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
-    list.add(SqueezerOptions.class);
-    list.add(LaTeXOptions.class);
-    return list;
+    return Arrays.asList(getInteractiveConfigOptionsArray());
 	}
 
 
@@ -261,9 +259,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * @return
    */
   public static Class<? extends KeyProvider>[] getInteractiveConfigOptionsArray() {
-  	Class<? extends KeyProvider>[] list = new Class[2];
-    list[0] = SqueezerOptions.class;
-    list[1] = LaTeXOptions.class;
+  	Class<? extends KeyProvider>[] list = new Class[3];
+    list[0] = SqueezerOptionsGeneral.class;
+    list[1] = SqueezerOptionsRateLaws.class;
+    list[2] = LaTeXOptions.class;
     return list;
 	}
   
@@ -415,7 +414,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	   */
 	  public static String[] getPossibleEnzymeTypes() {
 	    logger.log(Level.INFO, MESSAGES.getString("LOADING_USER_SETTINGS"));
-	    SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
+	    SBPreferences preferences = new SBPreferences(SqueezerOptionsGeneral.class);
 	    logger.log(Level.INFO, "    " + MESSAGES.getString("DONE"));
 	    Set<String> enzymeTypes = new HashSet<String>();
 	    String prefix = "POSSIBLE_ENZYME_";
@@ -508,7 +507,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public void commandLineMode(AppConf appConf) {
     SBProperties properties = appConf.getCmdArgs();
     if ((getSBMLIO().getNumErrors() > 0)
-        && properties.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
+        && properties.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS)) {
       for (SBMLException exc : getSBMLIO().getWarnings()) {
         logger.log(Level.WARNING, exc.getMessage());
       }
@@ -537,7 +536,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public List<Class<? extends KeyProvider>> getCmdLineOptions() {
     List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
     list.add(IOOptions.class);
-    list.add(SqueezerOptions.class);
+    list.add(SqueezerOptionsGeneral.class);
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
     return list;
@@ -709,8 +708,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   				&& (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
   			sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
   			logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
-  			SBPreferences preferences = new SBPreferences(SqueezerOptions.class);
-  			if (preferences.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS)) {
+  			SBPreferences preferences = new SBPreferences(SqueezerOptionsGeneral.class);
+  			if (preferences.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS)) {
   				for (SBMLException exc : sbmlIo.getWriteWarnings()) {
   					logger.log(Level.WARNING, exc.getMessage());
   				}

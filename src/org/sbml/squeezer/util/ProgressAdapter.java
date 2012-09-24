@@ -73,7 +73,7 @@ public class ProgressAdapter {
 	private long startTime = 0;
 	private int numberOfTotalCalls = 0;
 	private int callNr = 0;
-	private double percent = 0;
+	private double percent = 0d;
 	AbstractProgressBar progressBar;
 	TypeOfProgress progressType;
 	private final Logger logger = Logger.getLogger(ProgressAdapter.class.getName());
@@ -88,7 +88,9 @@ public class ProgressAdapter {
 			if ((percent < curPercent) && (curPercent <= 100)) {
 				percent = curPercent;
 			}
-			double remainingTime = 100 * ((System.currentTimeMillis() - startTime)/percent);
+			long consumedTime = System.currentTimeMillis() - startTime;
+			double totalTime = consumedTime / percent * 100d;
+			double remainingTime = totalTime - consumedTime;
 			this.progressBar.percentageChanged((int) percent, remainingTime, "");
 		}
 	}

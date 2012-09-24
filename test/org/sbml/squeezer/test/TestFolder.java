@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SqueezerOptionsGeneral;
 
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.logging.LogUtil;
@@ -114,8 +114,8 @@ public class TestFolder extends Handler {
 		System.setOut(new PrintStream(temp));
 
 		//Try for reversible and irreversible reactions!
-		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		prefs.put(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE,
+		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
+		prefs.put(SqueezerOptionsGeneral.TREAT_ALL_REACTIONS_REVERSIBLE,
 				Boolean.valueOf(true));
 		prefs.flush();
 

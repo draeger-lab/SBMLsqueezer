@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JDialog;
 
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SqueezerOptionsGeneral;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 
@@ -89,7 +89,7 @@ public class KineticLawSelectionDialog extends JDialog {
 		super(owner, System.getProperty("app.name"), true);
 		// if (owner == null)
 		// setIconImage(GUITools.ICON_LEMON);
-		this.prefs = new SBPreferences(SqueezerOptions.class);
+		this.prefs = new SBPreferences(SqueezerOptionsGeneral.class);
 		// setAlwaysOnTop(true);
 	}
 

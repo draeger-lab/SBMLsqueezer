@@ -52,11 +52,18 @@ public class WizardModel implements PropertyChangeListener {
 	private List<KineticLawImporter> selectedKineticLawImporters;
 	private SubmodelController submodelController;
 
+	/**
+	 * 
+	 * @param sbmlDocument
+	 * @param reactionId
+	 */
 	public WizardModel(SBMLDocument sbmlDocument, String reactionId) {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		// (Debugging purposes)
 		// this.propertyChangeSupport.addPropertyChangeListener(this);
-		submodelController = new SubmodelController(sbmlDocument.getModel(), reactionId);
+		submodelController = new SubmodelController(sbmlDocument.getModel());
+		// TODO: Should all reactions be copied or only this single one?
+		submodelController.createSubModel(reactionId);
 		this.selectedReaction = null;
 		this.selectedKineticLaw = null;
 		this.selectedKineticLawImporter = null;

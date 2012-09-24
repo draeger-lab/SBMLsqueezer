@@ -31,7 +31,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SqueezerOptionsGeneral;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.util.Bundles;
 
@@ -103,7 +103,7 @@ public class KineticLawTableModel extends AbstractTableModel {
 		kineticLaws = new KineticLaw[data.length];
 		numOfWarnings = 0;
 
-		maxNumReactants = SBPreferences.getPreferencesFor(SqueezerOptions.class).getInt(SqueezerOptions.MAX_NUMBER_OF_REACTANTS);
+		maxNumReactants = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class).getInt(SqueezerOptionsGeneral.MAX_NUMBER_OF_REACTANTS);
 		double startTime = System.currentTimeMillis();
 		for (reactionNum = 0; reactionNum < klg.getCreatedKineticsCount(); reactionNum++) {
 			Reaction reaction = klg.getModifiedReaction(reactionNum);
