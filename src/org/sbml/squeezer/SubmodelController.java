@@ -60,7 +60,6 @@ import org.sbml.squeezer.util.ProgressAdapter.TypeOfProgress;
 
 import de.zbit.sbml.util.SBMLtools;
 import de.zbit.util.ResourceManager;
-import de.zbit.util.prefs.SBPreferences;
 import de.zbit.util.progressbar.AbstractProgressBar;
 
 /**
@@ -159,28 +158,7 @@ public class SubmodelController {
 	 * @param model
 	 */
 	public SubmodelController(Model model) {
-		this(model, null);
-	}
-	
-	/**
-	 * 
-	 * @param model
-	 * @param reactionID
-	 */
-	public SubmodelController(Model model, String reactionID) {
-		// Initialize user settings:
-		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		generateLawsForAllReactions = prefs.getBoolean(SqueezerOptions.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS);
-		removeUnnecessaryParameters = prefs.getBoolean(SqueezerOptions.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS);
-		defaultHasOnlySubstanceUnits = prefs.getBoolean(SqueezerOptions.DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS);
-		addParametersGlobally = prefs.getBoolean(SqueezerOptions.NEW_PARAMETERS_GLOBAL);
-		reversibility = prefs.getBoolean(SqueezerOptions.TREAT_ALL_REACTIONS_REVERSIBLE);
-		setBoundaryCondition = prefs.getBoolean(SqueezerOptions.SET_BOUNDARY_CONDITION_FOR_GENES);
-		defaultSpeciesInitVal = prefs.getDouble(SqueezerOptions.DEFAULT_SPECIES_INIT_VAL);
-		defaultCompartmentInitSize = prefs.getDouble(SqueezerOptions.DEFAULT_COMPARTMENT_SIZE);
-		
 		this.modelOrig = model;
-		this.miniModel = createMinimalModel(reactionID);
 	}
 	
 	/**
@@ -191,7 +169,12 @@ public class SubmodelController {
 	 * 
 	 * @return
 	 */
-	private Model createMinimalModel(String reactionID) {
+	public Model createSubModel(String reactionID) {
+		
+		if (progressBar != null) {
+			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.createMiniModel);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+		}
 		
 		boolean create = generateLawsForAllReactions;
 		int level = modelOrig.getLevel(), version = modelOrig.getVersion();
@@ -320,11 +303,6 @@ public class SubmodelController {
 		//				miniModel.addUnitDefinition(volumeUD);
 		//			}
 		//		}
-		
-		if (progressBar != null) {
-			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.createMiniModel);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
-		}
 		
 		/*
 		 * Copy needed species and reactions.
@@ -1217,14 +1195,61 @@ public class SubmodelController {
 	 * @param removeUnnecessaryParameters
 	 */
 	public void storeKineticLaws(boolean removeUnnecessaryParameters) {
+		
+		if (progressBar != null) {
+			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaws);
+			progressAdapter.setNumberOfTags(modelOrig, miniModel, removeUnnecessaryParameters);
+		}
+		
 		for (int i = 0; i < miniModel.getReactionCount(); i++) {
 			Reaction r = miniModel.getReaction(i);
 			storeKineticLaw(r.getKineticLaw(), false);
+			progressAdapter.progressOn();
 		}
 		
 		if (removeUnnecessaryParameters) {
 			removeUnnecessaryParameters(modelOrig);
 		}
+		
+		if (progressBar != null) {
+			progressAdapter.finished();
+		}
+
+	}
+
+	public void setGenerateLawsForAllReactions(
+		boolean generateLawsForAllReactions) {
+		this.generateLawsForAllReactions = generateLawsForAllReactions;
+	}
+
+	public void setRemoveUnnecessaryParameters(
+		boolean removeUnnecessaryParameters) {
+    this.removeUnnecessaryParameters = removeUnnecessaryParameters;		
+	}
+
+	public void setDefaultHasOnlySubstanceUnits(
+		boolean defaultHasOnlySubstanceUnits) {
+		this.defaultHasOnlySubstanceUnits = defaultHasOnlySubstanceUnits;
+	}
+
+	public void setBoundaryCondition(boolean setBoundaryCondition) {
+		this.setBoundaryCondition = setBoundaryCondition;
+	}
+
+	public void setDefaultSpeciesInitVal(double defaultSpeciesInitVal) {
+		this.defaultSpeciesInitVal = defaultSpeciesInitVal;
+	}
+
+	public void setDefaultCompartmentInitSize(double defaultCompartmentInitSize) {
+		this.defaultCompartmentInitSize = defaultCompartmentInitSize;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Model createSubModel() {
+		return createSubModel(null);
 	}
 	
 }

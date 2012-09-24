@@ -38,7 +38,7 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SqueezerOptionsGeneral;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.CommonModularRateLaw;
 import org.sbml.squeezer.kinetics.GeneralizedMassAction;
@@ -61,7 +61,7 @@ public class GeneralizedMassActionTest extends KineticsTest {
 	public GeneralizedMassActionTest() {
 		super();
 		// Init the default ignore list for species:
-		prefs.put(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS, "C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819");
+		prefs.put(SqueezerOptionsGeneral.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS, "C00001,C00038,C00070,C00076,C00080,C00175,C00238,C00282,C00291,C01327,C01528,C14818,C14819");
 	}
 
 	/* (non-Javadoc)

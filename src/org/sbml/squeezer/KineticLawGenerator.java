@@ -108,37 +108,38 @@ public class KineticLawGenerator {
 	private UnitConsistencyType typeUnitConsistency;
 	private double defaultParamVal;
 	private boolean reversibility;
+	private boolean addParametersGlobally;
 
 	/**
 	 * @return the setBoundaryCondition
 	 */
 	public boolean isSetBoundaryCondition() {
-		return submodelController.isSetBoundaryCondition();
+		return setBoundaryCondition;
 	}
 
 	/**
 	 * @return the addParametersGlobally
 	 */
 	public boolean isAddParametersGlobally() {
-		return submodelController.isAddParametersGlobally();
+		return addParametersGlobally;
 	}
 
 	/**
 	 * @param addParametersGlobally the addParametersGlobally to set
 	 */
 	public void setAddParametersGlobally(boolean addParametersGlobally) {
-		submodelController.setAddParametersGlobally(addParametersGlobally);
+		this.addParametersGlobally = addParametersGlobally;
 	}
 
 	/**
 	 * @return the reversibility
 	 */
 	public boolean isReversibility() {
-		return submodelController.isReversibility();
+		return reversibility;
 	}
 	
 	public boolean isRemoveUnnecessaryParameters() {
-		return this.submodelController.isRemoveUnnecessaryParameters();
+		return removeUnnecessaryParameters;
 	}
 
 	/**
@@ -165,6 +166,12 @@ public class KineticLawGenerator {
 	private Class<?> kineticsZeroProducts;
 	private String speciesIgnoreList[];
 	private double defaultSpatialDimension;
+	private boolean generateLawsForAllReactions;
+	private boolean removeUnnecessaryParameters;
+	private boolean defaultHasOnlySubstanceUnits;
+	private boolean setBoundaryCondition;
+	private double defaultSpeciesInitVal;
+	private double defaultCompartmentInitSize;
 
 	/**
 	 * Takes a {@link Model} as input, creates a copy of the {@link Model},
@@ -183,8 +190,7 @@ public class KineticLawGenerator {
 	 */
 	public KineticLawGenerator(Model model) throws ClassNotFoundException {
 		// Initialize user settings:
-		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		configure(prefs);
+		configure();
 		this.modelOrig = model;
 	}
 //
@@ -216,31 +222,19 @@ public class KineticLawGenerator {
 
 	/**
 	 * 
-	 * @param prefs
 	 * @throws ClassNotFoundException
 	 */
-	private void configure(SBPreferences prefs) throws ClassNotFoundException {
-		typeStandardVersion = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
-		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
-		defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
-		defaultSpatialDimension = prefs.getDouble(SqueezerOptions.DEFAULT_COMPARTMENT_SPATIAL_DIM);
-		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(SqueezerOptions.ALL_REACTIONS_AS_ENZYME_CATALYZED);
+	private void configure() throws ClassNotFoundException {
 		
-		kineticsZeroReactants = prefs.getClass(SqueezerOptions.KINETICS_ZERO_REACTANTS);
-		kineticsZeroProducts = prefs.getClass(SqueezerOptions.KINETICS_ZERO_PRODUCTS);
-		kineticsReversibleNonEnzymeReactions = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS);
-		kineticsIrreversibleNonEnzymeReactions = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS);
-		kineticsGeneRegulation = prefs.getClass(SqueezerOptions.KINETICS_GENE_REGULATION);
-		kineticsReversibleUniUniType = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_UNI_UNI_TYPE);
-		kineticsIrreversibleUniUniType = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_UNI_UNI_TYPE);
-		kineticsReversibleArbitraryEnzymeReaction = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
-		kineticsIrreversibleArbitraryEnzymeReaction = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
-		kineticsReversibleBiUniType = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_BI_UNI_TYPE);
-		kineticsIrreversibleBiUniType = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_BI_UNI_TYPE);
-		kineticsReversibleBiBiType = prefs.getClass(SqueezerOptions.KINETICS_REVERSIBLE_BI_BI_TYPE);
-		kineticsIrreversibleBiBiType = prefs.getClass(SqueezerOptions.KINETICS_IRREVERSIBLE_BI_BI_TYPE);
+		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
 		
-		String l = prefs.getString(SqueezerOptions.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
+		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptionsGeneral.TYPE_UNIT_CONSISTENCY));
+		defaultParamVal = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
+		defaultSpatialDimension = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_COMPARTMENT_SPATIAL_DIM);
+		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(SqueezerOptionsGeneral.ALL_REACTIONS_AS_ENZYME_CATALYZED);
+		addParametersGlobally = prefs.getBoolean(SqueezerOptionsGeneral.NEW_PARAMETERS_GLOBAL);
+		
+		String l = prefs.getString(SqueezerOptionsGeneral.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
 		if ((l != null) && l.contains(",")) {
 			speciesIgnoreList = l.split(",");
 		}
@@ -249,15 +243,15 @@ public class KineticLawGenerator {
 		String name;
 		@SuppressWarnings("unchecked")
 		Option<Boolean> options[] = (Option<Boolean>[]) new Option[] {
-				SqueezerOptions.POSSIBLE_ENZYME_ANTISENSE_RNA,
-				SqueezerOptions.POSSIBLE_ENZYME_COMPLEX,
-				SqueezerOptions.POSSIBLE_ENZYME_GENERIC,
-				SqueezerOptions.POSSIBLE_ENZYME_RECEPTOR,
-				SqueezerOptions.POSSIBLE_ENZYME_RNA,
-				SqueezerOptions.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
+				SqueezerOptionsGeneral.POSSIBLE_ENZYME_ANTISENSE_RNA,
+				SqueezerOptionsGeneral.POSSIBLE_ENZYME_COMPLEX,
+				SqueezerOptionsGeneral.POSSIBLE_ENZYME_GENERIC,
+				SqueezerOptionsGeneral.POSSIBLE_ENZYME_RECEPTOR,
+				SqueezerOptionsGeneral.POSSIBLE_ENZYME_RNA,
+				SqueezerOptionsGeneral.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
 				/*SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE,*/
-				SqueezerOptions.POSSIBLE_ENZYME_TRUNCATED,
-				SqueezerOptions.POSSIBLE_ENZYME_UNKNOWN 
+				SqueezerOptionsGeneral.POSSIBLE_ENZYME_TRUNCATED,
+				SqueezerOptionsGeneral.POSSIBLE_ENZYME_UNKNOWN 
 		};
 		for (Option<Boolean> option : options) {
 			name = option.toString().substring(16);
@@ -267,10 +261,37 @@ public class KineticLawGenerator {
 			}
 		}
 		// One more enzyme type that is not reflected in CellDesigner:
-		if (prefs.getBoolean(SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE)) {
-			name = SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE.getName();
+		if (prefs.getBoolean(SqueezerOptionsGeneral.POSSIBLE_ENZYME_MACROMOLECULE)) {
+			name = SqueezerOptionsGeneral.POSSIBLE_ENZYME_MACROMOLECULE.getName();
 			possibleEnzymes.add(Integer.valueOf(SBO.getMacromolecule()));
 		}
+		
+		generateLawsForAllReactions = prefs.getBoolean(SqueezerOptionsGeneral.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS);
+		removeUnnecessaryParameters = prefs.getBoolean(SqueezerOptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS);
+		defaultHasOnlySubstanceUnits = prefs.getBoolean(SqueezerOptionsGeneral.DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS);
+		addParametersGlobally = prefs.getBoolean(SqueezerOptionsGeneral.NEW_PARAMETERS_GLOBAL);
+		setBoundaryCondition = prefs.getBoolean(SqueezerOptionsGeneral.SET_BOUNDARY_CONDITION_FOR_GENES);
+		defaultSpeciesInitVal = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_SPECIES_INIT_VAL);
+		defaultCompartmentInitSize = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_COMPARTMENT_SIZE);
+		
+		prefs = SBPreferences.getPreferencesFor(SqueezerOptionsRateLaws.class);
+		
+		typeStandardVersion = TypeStandardVersion.valueOf(prefs.get(SqueezerOptionsRateLaws.TYPE_STANDARD_VERSION));
+		kineticsZeroReactants = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_ZERO_REACTANTS);
+		kineticsZeroProducts = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_ZERO_PRODUCTS);
+		kineticsReversibleNonEnzymeReactions = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS);
+		kineticsIrreversibleNonEnzymeReactions = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS);
+		kineticsGeneRegulation = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_GENE_REGULATION);
+		kineticsReversibleUniUniType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_UNI_UNI_TYPE);
+		kineticsIrreversibleUniUniType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_UNI_UNI_TYPE);
+		kineticsReversibleArbitraryEnzymeReaction = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
+		kineticsIrreversibleArbitraryEnzymeReaction = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
+		kineticsReversibleBiUniType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_BI_UNI_TYPE);
+		kineticsIrreversibleBiUniType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_BI_UNI_TYPE);
+		kineticsReversibleBiBiType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_BI_BI_TYPE);
+		kineticsIrreversibleBiBiType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_BI_BI_TYPE);
+		
+		reversibility = prefs.getBoolean(SqueezerOptionsRateLaws.TREAT_ALL_REACTIONS_REVERSIBLE);
 	}
 
 	/**
@@ -455,13 +476,22 @@ public class KineticLawGenerator {
 	 * @param reactionID
 	 */
 	private void initSubmodel(String reactionID) {
-			this.submodelController = new SubmodelController(modelOrig, reactionID);
-			this.submodelController.setProgressBar(progressBar);
-			this.submodelController.setDefaultSpatialDimensions(defaultSpatialDimension);
-			this.submodelController.setReversibility(reversibility);
-			this.listOfFastReactions = new LinkedList<Reaction>();
-			this.miniModel = submodelController.getSubmodel();
-			this.updateEnzymeCatalysis();
+			submodelController = new SubmodelController(modelOrig);
+			submodelController.setProgressBar(progressBar);
+			submodelController.setDefaultSpatialDimensions(defaultSpatialDimension);
+			submodelController.setReversibility(reversibility);
+
+			submodelController.setGenerateLawsForAllReactions(generateLawsForAllReactions);
+			submodelController.setRemoveUnnecessaryParameters(removeUnnecessaryParameters);
+			submodelController.setDefaultHasOnlySubstanceUnits(defaultHasOnlySubstanceUnits);
+			submodelController.setAddParametersGlobally(addParametersGlobally);
+			submodelController.setBoundaryCondition(setBoundaryCondition);
+			submodelController.setDefaultSpeciesInitVal(defaultSpeciesInitVal);
+			submodelController.setDefaultCompartmentInitSize(defaultCompartmentInitSize);
+			
+			listOfFastReactions = new LinkedList<Reaction>();
+			miniModel = submodelController.createSubModel(reactionID);
+			updateEnzymeCatalysis();
 	}
 
 	/**
@@ -580,6 +610,7 @@ public class KineticLawGenerator {
 	 */
 	public ReactionType getReactionType(String reactionID)
 		throws RateLawNotApplicableException {
+		initSubmodel(reactionID);
 		return new ReactionType(miniModel.getReaction(reactionID), isReversibility(),
 			allReactionsAsEnzymeCatalyzed, isSetBoundaryCondition(), speciesIgnoreList);
 	}
@@ -705,7 +736,8 @@ public class KineticLawGenerator {
 		
 		ModelChangeListener chl = new ModelChangeListener();
 		modelOrig.addTreeNodeChangeListener(chl);
-		// TODO: progress
+
+		submodelController.setProgressBar(progressBar);
 		submodelController.storeKineticLaws(isRemoveUnnecessaryParameters());
 		modelOrig.removeTreeNodeChangeListener(chl);
 

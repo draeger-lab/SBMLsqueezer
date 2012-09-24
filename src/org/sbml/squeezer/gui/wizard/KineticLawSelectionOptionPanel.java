@@ -39,7 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.util.Bundles;
 
@@ -136,14 +136,12 @@ public class KineticLawSelectionOptionPanel extends JPanel implements ActionList
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
-	@SuppressWarnings("unchecked")
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JButton) {
 			JButton button = (JButton) e.getSource();
 			String text = button.getText();
 			if (text.equals(MESSAGES.getString("SHOW_OPTIONS"))) {
-				// show preferences dialog
-				PreferencesDialog.showPreferencesDialog(SqueezerOptions.class);
+				PreferencesDialog.showPreferencesDialog(SBMLsqueezer.getInteractiveConfigOptionsArray());
 			}
 		}
 	}

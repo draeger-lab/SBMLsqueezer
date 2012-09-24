@@ -67,7 +67,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SqueezerOptionsGeneral;
 import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
@@ -298,7 +298,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public SBMLsqueezerUI(SBMLio io, AppConf appConf) {
 		super(appConf);
-		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
+		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
 		this.sbmlIO = io;
 		setEnabled(false, Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX);
 		setSBMLsqueezerBackground();
@@ -308,7 +308,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		for (OpenedFile<SBMLDocument> file : sbmlIO.getListOfOpenedFiles()) {
 			Model m = file.getDocument().getModel();
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(), prefs
-					.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
+					.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS));
 			if (m != null) {
 				addModel(file);
 			}
@@ -321,20 +321,18 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		switch (Command.valueOf(e.getActionCommand())) {
 			case SABIO_RK:
+				SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
+				SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
+				controller.setGenerateLawsForAllReactions(prefs.getBoolean(SqueezerOptionsGeneral.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS));
 				if (e.getSource() instanceof Reaction) {
-					SBMLDocument result = SABIORKWizard.getResultGUI(this,
-						ModalityType.APPLICATION_MODAL, sbmlIO.getSelectedModel()
-								.getSBMLDocument(), ((Reaction) e.getSource()).getId());
+					SABIORKWizard.getResultGUI(this,
+						ModalityType.APPLICATION_MODAL, controller.createSubModel(((Reaction) e.getSource()).getId()).getSBMLDocument());
+					// TODO: This will always store all rate laws! What happens if the user cancels the operation?
+					controller.storeKineticLaws(prefs.getBoolean(SqueezerOptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
 				} else {
-					SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
-					SBMLDocument result = SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.getSubmodel().getSBMLDocument());
-					for(Reaction r: result.getModel().getListOfReactions()) {
-						if(r.isSetKineticLaw()) {
-							controller.storeKineticLaw(r.getKineticLaw(), true);
-						}
-					}
-					SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.getSubmodel().getSBMLDocument());
-					// TODO store results controller.store...
+					SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.createSubModel().getSBMLDocument());
+					// TODO: This will always store all rate laws! What happens if the user cancels the operation?
+					controller.storeKineticLaws(prefs.getBoolean(SqueezerOptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
 				}
 				break;
 			case SQUEEZE:
@@ -492,7 +490,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			// TODO: initialize statusBar and hide it again
 			Model model = sbmlIO.convertModel(file.getAbsolutePath());
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(), 
-				prefs.getBoolean(SqueezerOptions.SHOW_SBML_WARNINGS));
+				prefs.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS));
 			if (model != null) {
 				addModel(model, file);
 			}
@@ -736,17 +734,19 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	@Override
 	public void exit() {
     StringBuilder exception = new StringBuilder();
-    for (Class<? extends KeyProvider> clazz : appConf.getInteractiveOptions()) {
-      SBPreferences prefs = SBPreferences.getPreferencesFor(clazz);
-      try {
-        prefs.flush();
-      } catch (Exception exc) {
-        exception.append(exc.getLocalizedMessage());
-        exception.append('\n');
-      }
-    }
-    if (exception.length() > 0) {
-      GUITools.showErrorMessage(this, exception.toString());
+    if (appConf.getInteractiveOptions() != null) {
+    	for (Class<? extends KeyProvider> clazz : appConf.getInteractiveOptions()) {
+    		SBPreferences prefs = SBPreferences.getPreferencesFor(clazz);
+    		try {
+    			prefs.flush();
+    		} catch (Exception exc) {
+    			exception.append(exc.getLocalizedMessage());
+    			exception.append('\n');
+    		}
+    	}
+    	if (exception.length() > 0) {
+    		GUITools.showErrorMessage(this, exception.toString());
+    	}
     }
     dispose();
 	}

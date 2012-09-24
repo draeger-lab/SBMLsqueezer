@@ -56,7 +56,8 @@ import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
-import org.sbml.squeezer.SqueezerOptions;
+import org.sbml.squeezer.SqueezerOptionsGeneral;
+import org.sbml.squeezer.SqueezerOptionsRateLaws;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
@@ -378,10 +379,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		BasicKineticLaw kineticLaw;
 		laTeXpreview = new String[possibleTypes.length + 1];
 		int i;
-		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptions.class);
-		double defaultParamVal = prefs.getDouble(SqueezerOptions.DEFAULT_NEW_PARAMETER_VAL);
-		TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptions.TYPE_STANDARD_VERSION));
-		UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptions.TYPE_UNIT_CONSISTENCY));
+		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
+		double defaultParamVal = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
+		TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptionsRateLaws.TYPE_STANDARD_VERSION));
+		UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptionsGeneral.TYPE_UNIT_CONSISTENCY));
 		for (i = 0; i < possibleTypes.length; i++) {
 			kineticLaw = klg.createKineticLaw(reaction, possibleTypes[i], false, version, consistency, defaultParamVal);
 			laTeXpreview[i] = new String(kineticLaw.getMath().compile(
