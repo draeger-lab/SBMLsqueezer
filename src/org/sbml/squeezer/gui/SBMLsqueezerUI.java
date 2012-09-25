@@ -326,7 +326,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				controller.setGenerateLawsForAllReactions(prefs.getBoolean(SqueezerOptionsGeneral.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS));
 				if (e.getSource() instanceof Reaction) {
 					SABIORKWizard.getResultGUI(this,
-						ModalityType.APPLICATION_MODAL, controller.createSubModel(((Reaction) e.getSource()).getId()).getSBMLDocument());
+						ModalityType.APPLICATION_MODAL, controller.createSubmodel(((Reaction) e.getSource()).getId()).getSBMLDocument());
 					// TODO: This will always store all rate laws! What happens if the user cancels the operation?
 					controller.storeKineticLaws(prefs.getBoolean(SqueezerOptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
 				} else {
