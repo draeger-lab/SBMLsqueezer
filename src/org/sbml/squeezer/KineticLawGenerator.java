@@ -86,17 +86,6 @@ public class KineticLawGenerator {
 	 */
 	private List<Reaction> listOfFastReactions;
 
-	/**
-	 * A copy of the model that only covers all compartments, all parameters,
-	 * and all reactions for which kinetic equations are to be created. Hence,
-	 * it also contains all other information needed for that purpose, i.e., all
-	 * species that participate as reactants, products, or modifiers in at least
-	 * one of these reactions.
-	 */
-	private Model miniModel;
-
-	private Model modelOrig;
-
 	private ProgressAdapter progressAdapter = null;
 	protected AbstractProgressBar progressBar = null;
 	
@@ -191,7 +180,7 @@ public class KineticLawGenerator {
 	public KineticLawGenerator(Model model) throws ClassNotFoundException {
 		// Initialize user settings:
 		configure();
-		this.modelOrig = model;
+		submodelController = new SubmodelController(model);
 	}
 //
 //	/**
@@ -444,7 +433,11 @@ public class KineticLawGenerator {
 		this.typeUnitConsistency = consistency;
 		this.defaultParamVal = defaultNewParamVal;
 		
-		Reaction reaction = miniModel.getReaction(r.getId());
+		if (submodelController.getSubmodel() == null) {
+			initSubmodel(r.getId());
+		}
+		Model submodel = submodelController.getSubmodel();
+		Reaction reaction = submodel.getReaction(r.getId());
 		if (reaction == null) {
 			reaction = r;
 		}
@@ -452,7 +445,7 @@ public class KineticLawGenerator {
 		try {
 			Object typeParameters[] = new Object[] { 
 					version,
-					Boolean.valueOf(hasFullColumnRank(modelOrig)), 
+					Boolean.valueOf(hasFullColumnRank(submodel)), 
 					consistency,
 					Double.valueOf(defaultNewParamVal) 
 			};
@@ -476,7 +469,6 @@ public class KineticLawGenerator {
 	 * @param reactionID
 	 */
 	private void initSubmodel(String reactionID) {
-			submodelController = new SubmodelController(modelOrig);
 			submodelController.setProgressBar(progressBar);
 			submodelController.setDefaultSpatialDimensions(defaultSpatialDimension);
 			submodelController.setReversibility(reversibility);
@@ -490,7 +482,7 @@ public class KineticLawGenerator {
 			submodelController.setDefaultCompartmentInitSize(defaultCompartmentInitSize);
 			
 			listOfFastReactions = new LinkedList<Reaction>();
-			miniModel = submodelController.createSubModel(reactionID);
+			submodelController.createSubmodel(reactionID);
 			updateEnzymeCatalysis();
 	}
 
@@ -503,10 +495,10 @@ public class KineticLawGenerator {
 
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.generateLaws);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
+			progressAdapter.setNumberOfTags(getModel(), getSubmodel(), isRemoveUnnecessaryParameters());
 		}
 		
-		for (Reaction reaction : miniModel.getListOfReactions()) {
+		for (Reaction reaction : submodelController.getSubmodel().getListOfReactions()) {
 			ReactionType rt = new ReactionType(reaction, isReversibility(),
 				allReactionsAsEnzymeCatalyzed, isSetBoundaryCondition(), speciesIgnoreList);
 			
@@ -557,7 +549,7 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	public Model getSubmodel() {
-		return miniModel;
+		return submodelController.getSubmodel();
 	}
 
 	/**
@@ -565,7 +557,7 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	public Model getModel() {
-		return modelOrig;
+		return submodelController.getSBMLDocument().getModel();
 	}
 
 	/**
@@ -574,7 +566,7 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	public Reaction getModifiedReaction(int i) {
-		return miniModel.getReaction(i);
+		return getSubmodel().getReaction(i);
 	}
 
 	/**
@@ -583,7 +575,7 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	public Reaction getModifiedReaction(String reactionID) {
-		return miniModel.getReaction(reactionID);
+		return getSubmodel().getReaction(reactionID);
 	}
 
 	/**
@@ -591,7 +583,7 @@ public class KineticLawGenerator {
 	 * @return
 	 */
 	public int getCreatedKineticsCount() {
-		return miniModel.getReactionCount();
+		return getSubmodel().getReactionCount();
 	}
 
 	/**
@@ -611,7 +603,7 @@ public class KineticLawGenerator {
 	public ReactionType getReactionType(String reactionID)
 		throws RateLawNotApplicableException {
 		initSubmodel(reactionID);
-		return new ReactionType(miniModel.getReaction(reactionID), isReversibility(),
+		return new ReactionType(getSubmodel().getReaction(reactionID), isReversibility(),
 			allReactionsAsEnzymeCatalyzed, isSetBoundaryCondition(), speciesIgnoreList);
 	}
 
@@ -651,7 +643,7 @@ public class KineticLawGenerator {
 	 * @param reversible
 	 */
 	public void setReversible(String reactionID, boolean reversible) {
-		Reaction r = miniModel.getReaction(reactionID);
+		Reaction r = getSubmodel().getReaction(reactionID);
 		if (r != null) {
 			r.setReversible(reversible);
 		} else {
@@ -706,7 +698,7 @@ public class KineticLawGenerator {
 	public Reaction storeKineticLaw(KineticLaw kineticLaw) {
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaw);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
+			progressAdapter.setNumberOfTags(getModel(), getSubmodel(), isRemoveUnnecessaryParameters());
 		}
 		
 		Reaction r = submodelController.storeKineticLaw(kineticLaw, true);
@@ -724,22 +716,22 @@ public class KineticLawGenerator {
 		
 		if (getFastReactions().size() > 0) {
 			logger.log(Level.FINE, MessageFormat.format(MESSAGES.getString("THE_MODEL_CONTAINS"), 
-											getFastReactions().size(), modelOrig.getId())
+											getFastReactions().size(), getModel().getId())
 									+ " " + MESSAGES.getString("FAST_REACTIONS") + "."
 									+ " " + MESSAGES.getString("NOT_SUPPORTED"));
 		}
 		
 		if (progressBar != null) {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaws);
-			progressAdapter.setNumberOfTags(modelOrig, miniModel, isRemoveUnnecessaryParameters());
+			progressAdapter.setNumberOfTags(getModel(), getSubmodel(), isRemoveUnnecessaryParameters());
 		}
 		
 		ModelChangeListener chl = new ModelChangeListener();
-		modelOrig.addTreeNodeChangeListener(chl);
+		getModel().addTreeNodeChangeListener(chl);
 
 		submodelController.setProgressBar(progressBar);
 		submodelController.storeKineticLaws(isRemoveUnnecessaryParameters());
-		modelOrig.removeTreeNodeChangeListener(chl);
+		getModel().removeTreeNodeChangeListener(chl);
 
 		if (progressAdapter != null) {
 			progressAdapter.finished();
@@ -756,7 +748,7 @@ public class KineticLawGenerator {
 	 */
 	public void updateEnzymeCatalysis() {
 		Set<Integer> possibleEnzymes = getPossibleEnzymes();
-		for (Reaction r : miniModel.getListOfReactions()) {
+		for (Reaction r : getSubmodel().getListOfReactions()) {
 			for (ModifierSpeciesReference modifier : r.getListOfModifiers()) {
 				Species species = modifier.getSpeciesInstance();
 				if (SBO.isEnzymaticCatalysis(modifier.getSBOTerm())

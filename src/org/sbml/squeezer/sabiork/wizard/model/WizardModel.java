@@ -63,7 +63,7 @@ public class WizardModel implements PropertyChangeListener {
 		// this.propertyChangeSupport.addPropertyChangeListener(this);
 		submodelController = new SubmodelController(sbmlDocument.getModel());
 		// TODO: Should all reactions be copied or only this single one?
-		submodelController.createSubModel(reactionId);
+		submodelController.createSubmodel(reactionId);
 		this.selectedReaction = null;
 		this.selectedKineticLaw = null;
 		this.selectedKineticLawImporter = null;
