@@ -39,6 +39,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jp.sbi.garuda.platform.commons.exception.NetworkException;
+
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
@@ -71,7 +73,11 @@ import org.sbml.tolatex.io.LaTeXOptionsIO;
 
 import de.zbit.AppConf;
 import de.zbit.Launcher;
+import de.zbit.UserInterface;
+import de.zbit.garuda.BackendNotInitializedException;
+import de.zbit.garuda.GarudaSoftwareBackend;
 import de.zbit.gui.GUIOptions;
+import de.zbit.gui.GUITools;
 import de.zbit.io.FileWalker;
 import de.zbit.io.filefilter.SBFileFilter;
 import de.zbit.util.ResourceManager;
@@ -623,7 +629,31 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     if (properties.containsKey(IOOptions.SBML_IN_FILE)) {
       readSBMLSource(properties.get(IOOptions.SBML_IN_FILE));
     }
-    return new SBMLsqueezerUI(getSBMLIO(), appConf);
+    final Window gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend((UserInterface) gui);
+					garudaBackend.addInputFileFormat("xml", "SBML");
+					garudaBackend.addInputFileFormat("sbml", "SBML");
+					garudaBackend.addInputFileFormat("xml", "SBMLsqueezer");
+					garudaBackend.addInputFileFormat("xml", "NewTestSoftwareA");
+					garudaBackend.addOutputFileFormat("xml", "SBML");
+					garudaBackend.addOutputFileFormat("sbml", "SBML");
+					garudaBackend.addOutputFileFormat("xml", "SBMLsqueezer");
+					garudaBackend.addOutputFileFormat("xml", "NewTestSoftwareA");
+					garudaBackend.init();
+					garudaBackend.registedSoftwareToGaruda();
+				} catch (NetworkException exc) {
+					GUITools.showErrorMessage(gui, exc);
+				} catch (BackendNotInitializedException exc) {
+					GUITools.showErrorMessage(gui, exc);
+				} catch (Throwable exc) {
+					logger.fine(exc.getLocalizedMessage());
+				}
+			}
+		}).start();
+    return gui;
   }
   
   /* (non-Javadoc)
