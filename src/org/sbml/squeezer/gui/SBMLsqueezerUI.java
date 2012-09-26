@@ -696,8 +696,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		tabbedPane.remove(tabbedPane.getSelectedComponent());
 		if (tabbedPane.getTabCount() == 0) {
 			GUITools.setEnabled(false, getJMenuBar(), getJToolBar(),
-				BaseFrame.BaseAction.FILE_CLOSE, BaseFrame.BaseAction.FILE_SAVE,
-				BaseFrame.BaseAction.FILE_SAVE_AS, Command.SQUEEZE, Command.SABIO_RK,
+				BaseAction.FILE_CLOSE, BaseAction.FILE_SAVE,
+				BaseAction.FILE_SAVE_AS, Command.SQUEEZE, Command.SABIO_RK,
 				Command.TO_LATEX);
 		}
 		return tabbedPane.getComponentCount() > 0;
