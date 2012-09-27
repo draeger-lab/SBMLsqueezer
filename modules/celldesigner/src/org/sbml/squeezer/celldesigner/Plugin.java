@@ -24,7 +24,6 @@
 package org.sbml.squeezer.celldesigner;
 
 import java.awt.Dialog;
-import java.io.IOException;
 import java.util.Arrays;
 
 import javax.swing.JDialog;
@@ -284,7 +283,7 @@ public class Plugin extends CellDesignerPlugin {
 				try {
 					new KineticLawSelectionDialog(null, io, ((PluginReaction) getSelectedReactionNode().get(0)).getId());
 				} catch (Throwable exc) {
-					GUITools.showErrorMessage(null, exc+"\n"+Arrays.toString(exc.getStackTrace()));
+					GUITools.showErrorMessage(null, exc+"\n" + Arrays.toString(exc.getStackTrace()));
 				}
 			break;
 		case CONFIGURE:
@@ -305,18 +304,14 @@ public class Plugin extends CellDesignerPlugin {
 			new SBMLsqueezerUI(io, null).showOnlineHelp();
 			break;
 		case SHOW_JSBML_MODEL:
-			try {
-				JDialog d = new JDialog();
-				d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				d.setTitle("Internal JSBML data structure");
-				d.getContentPane().add(new SBMLModelSplitPane(doc, true));
-				d.pack();
-				d.setLocationRelativeTo(null);
-				d.setModal(true);
-				d.setVisible(true);
-			} catch (IOException exc) {
-				GUITools.showErrorMessage(null, exc);
-			}
+			JDialog d = new JDialog();
+			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			d.setTitle("Internal JSBML data structure");
+			d.getContentPane().add(new SBMLModelSplitPane(doc, true));
+			d.pack();
+			d.setLocationRelativeTo(null);
+			d.setModal(true);
+			d.setVisible(true);
 			break;
 		default:
 			System.err.println("unsuported action");

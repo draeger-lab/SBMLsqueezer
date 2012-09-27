@@ -83,7 +83,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 * @param progressListener 
 	 * @throws Throwable
 	 */
-	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID){
+	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID) {
 		super();
 		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
 		this.value = JOptionPane.CLOSED_OPTION;
@@ -182,7 +182,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 * 
 	 * @param progressBar
 	 */
-	public void showProgress(AbstractProgressBar progressBar){
+	public void showProgress(AbstractProgressBar progressBar) {
 		klg.setProgressBar(progressBar);
 	}
 	

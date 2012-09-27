@@ -47,12 +47,9 @@ import org.sbml.jsbml.SBMLOutputConverter;
 import org.sbml.jsbml.util.IOProgressListener;
 import org.sbml.jsbml.util.TreeNodeChangeListener;
 import org.sbml.jsbml.util.TreeNodeRemovedEvent;
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.util.Bundles;
 
-import com.ctc.wstx.stax.WstxOutputFactory;
-
-import de.zbit.sbml.io.OpenedFile;
+import de.zbit.io.OpenedFile;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.progressbar.AbstractProgressBar;
 
@@ -74,6 +71,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		TreeNodeChangeListener, ChangeListener {
 
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
+
+	private static final String ORIGINAL_MODEL_KEY = "org.sbml.squeezer.io.SBMLio.originalModelKey";
 
 	private List<TreeNode> added;
 
@@ -117,7 +116,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			Object model) throws Exception {
 		this(reader, writer);
 		Model convertedModel = reader.convertModel(model);
-		convertedModel.putUserObject("originalModel", model);
+		convertedModel.putUserObject(ORIGINAL_MODEL_KEY, model);
 		SBMLDocument sbmlDoc = convertedModel.getSBMLDocument();
 		listOfOpenedFiles.addLast(new OpenedFile<SBMLDocument>(sbmlDoc));
 	}
@@ -156,7 +155,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			} else {
 				origModel = model;
 			}
-			convertedModel.putUserObject("originalModel", origModel);
+			convertedModel.putUserObject(ORIGINAL_MODEL_KEY, origModel);
 			openedModel = convertedModel;
 			openedDocument = new OpenedFile<SBMLDocument>(convertedModel.getSBMLDocument());
 			return convertedModel;
@@ -245,8 +244,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public List<SBMLException> getWriteWarnings() {
 		List<SBMLException> warnings = null;
-		try{warnings = writer.getWriteWarnings(listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject("originalModel"));}
-		catch(Exception e){warnings = writer.getWriteWarnings(openedModel.getUserObject("originalModel"));}
+		try{warnings = writer.getWriteWarnings(listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject(ORIGINAL_MODEL_KEY));}
+		catch(Exception e){warnings = writer.getWriteWarnings(openedModel.getUserObject(ORIGINAL_MODEL_KEY));}
 		return warnings;
 	}
 
@@ -292,9 +291,8 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public void saveChanges(IOProgressListener listener) throws SBMLException {
 		writer.addIOProgressListener(listener);
-		writer.saveChanges(getSelectedModel(), getSelectedModel().getUserObject("originalModel"));
+		writer.saveChanges(getSelectedModel(), getSelectedModel().getUserObject(ORIGINAL_MODEL_KEY));
 		listener.ioProgressOn(null);
-		WstxOutputFactory f;
 	}
 
 	/* (non-Javadoc)
@@ -310,7 +308,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @throws SBMLException
 	 */
 	public boolean saveChanges(Reaction reaction) throws SBMLException {
-		return writer.saveChanges(reaction, getSelectedModel().getUserObject("originalModel"));
+		return writer.saveChanges(reaction, getSelectedModel().getUserObject(ORIGINAL_MODEL_KEY));
 	}
 
 	/* (non-Javadoc)
@@ -368,7 +366,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public boolean writeModelToSBML(int model, String filename)
 			throws SBMLException, IOException {
-		return writer.writeSBML(listOfOpenedFiles.get(model).getDocument().getModel().getUserObject("originalModel"), filename);
+		return writer.writeSBML(listOfOpenedFiles.get(model).getDocument().getModel().getUserObject(ORIGINAL_MODEL_KEY), filename);
 	}
 
   /* (non-Javadoc)
@@ -397,8 +395,12 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public boolean writeSelectedModelToSBML(String filename)
 			throws SBMLException, IOException {
-		return writer.writeSBML(listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject("originalModel"), filename,
-				SBMLsqueezer.class.getSimpleName(), System.getProperty("app.version"));
+		return writer.writeSBML(
+			listOfOpenedFiles.get(selectedModel).getDocument().getModel().getUserObject(ORIGINAL_MODEL_KEY),
+			filename,
+			System.getProperty("app.name"),
+			System.getProperty("app.version")
+		);
 	}
 
 	/* (non-Javadoc)

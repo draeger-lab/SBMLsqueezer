@@ -40,9 +40,9 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.gui.GUITools;
 import de.zbit.gui.prefs.PreferencesDialog;
 import de.zbit.util.ResourceManager;
 
