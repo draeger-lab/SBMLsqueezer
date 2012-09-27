@@ -69,6 +69,7 @@ import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 
 import atp.sHotEqn;
+import de.zbit.gui.GUITools;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.SBPreferences;
@@ -92,7 +93,6 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 
 	private boolean editing;
 
-	@SuppressWarnings("unused")
 	private boolean reversibility;
 
 	private KineticLawGenerator klg;

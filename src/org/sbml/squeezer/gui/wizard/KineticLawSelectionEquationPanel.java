@@ -61,7 +61,6 @@ import javax.swing.border.BevelBorder;
 
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SqueezerOptionsGeneral;
-import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.gui.KineticLawTable;
 import org.sbml.squeezer.gui.KineticLawTableModel;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -73,6 +72,7 @@ import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
 
 import de.zbit.gui.GUIOptions;
+import de.zbit.gui.GUITools;
 import de.zbit.gui.SystemBrowser;
 import de.zbit.gui.wizard.WizardFinishingListener;
 import de.zbit.io.filefilter.SBFileFilter;

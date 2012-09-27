@@ -32,10 +32,10 @@ import java.util.logging.Logger;
 import javax.swing.JDialog;
 
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.gui.GUITools;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.util.Bundles;
 
+import de.zbit.gui.GUITools;
 import de.zbit.gui.wizard.Wizard;
 import de.zbit.gui.wizard.WizardPanelDescriptor;
 import de.zbit.util.ResourceManager;
