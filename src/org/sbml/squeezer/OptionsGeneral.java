@@ -46,7 +46,7 @@ import de.zbit.util.prefs.Range;
  * @since 1.4
  * @version $Rev$
  */
-public interface SqueezerOptionsGeneral extends KeyProvider {
+public interface OptionsGeneral extends KeyProvider {
 	
 	/**
 	 * 
@@ -140,20 +140,11 @@ public interface SqueezerOptionsGeneral extends KeyProvider {
 	 * If {@code true} a new rate law will be created for each reaction irrespective of
 	 * whether there is already a rate law assigned to this reaction or not.
 	 */
-	public static final Option<Boolean> GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS = new Option<Boolean>(
-			"GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS",
+	public static final Option<Boolean> OVERWRITE_EXISTING_RATE_LAWS = new Option<Boolean>(
+			"OVERWRITE_EXISTING_RATE_LAWS",
 			Boolean.class,
 			OPTIONS_BUNDLE,
 			Boolean.valueOf(true));
-
-	/**
-	 * If {@code true} kinetics are only generated if missing in the SBML file.
-	 */
-	public static final Option<Boolean> GENERATE_KINETIC_LAW_ONLY_IF_MISSING = new Option<Boolean>(
-			"GENERATE_KINETIC_LAW_ONLY_IF_MISSING",
-			Boolean.class,
-			OPTIONS_BUNDLE,
-			Boolean.valueOf(false));
 	
 	/**
 	 * Allows the user to ignore species that are annotated with the given
@@ -326,6 +317,7 @@ public interface SqueezerOptionsGeneral extends KeyProvider {
 	public static final OptionGroup<Boolean> GROUP_GENERAL = new OptionGroup<Boolean>(
 			"GROUP_GENERAL",
 			OPTIONS_BUNDLE,
+			OVERWRITE_EXISTING_RATE_LAWS,
 			SET_BOUNDARY_CONDITION_FOR_GENES,
 			ALL_REACTIONS_AS_ENZYME_CATALYZED,
 			REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS,
@@ -373,17 +365,5 @@ public interface SqueezerOptionsGeneral extends KeyProvider {
 		"GROUP_UNIT_CONSISTENCY",
 		OPTIONS_BUNDLE,
 		TYPE_UNIT_CONSISTENCY);
-
-
-	/**
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	public static final OptionGroup<Boolean> GROUP_GENERATE_KINETIC_LAWS = new OptionGroup<Boolean>(
-			"GROUP_GENERATE_KINETIC_LAWS",
-			OPTIONS_BUNDLE,
-			true,
-			GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS,
-			GENERATE_KINETIC_LAW_ONLY_IF_MISSING);
 
 }

@@ -23,9 +23,9 @@
   <entry key="TRY_LOADING_LIBSBML">Try to load libSBML</entry>
   <entry key="TRY_LOADING_LIBSBML_TOOLTIP">If selected, the application will try to load the library libSBML for reading and writing SBML files, otherwise everything will be done with JSBML only, i.e., pure Java.</entry>
   
-  <!-- SqueezerOptions -->
+  <!-- OptionsGeneral -->
   
-  <entry key="SqueezerOptionsGeneral">Basic configuration</entry>
+  <entry key="OptionsGeneral">Basic configuration</entry>
   
   <entry key="ALL_REACTIONS_AS_ENZYME_CATALYZED">Consider all reactions to be enzyme-catalyzed</entry>
   <entry key="ALL_REACTIONS_AS_ENZYME_CATALYZED_TOOLTIP">If true, all reactions within the network are considered to be enzyme-catalyzed reactions. If false (default), an explicit enzymatic catalyst must be assigned to a reaction to obtain this status.</entry>
@@ -39,10 +39,8 @@
   <entry key="DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS_TOOLTIP">This option allows users to specify that the numerical value of a species should be interpreted as a value given in substance units in cases where this has not yet been defined. If not selected, species with undefined meaning will be conceived as a quantity in concentration units.</entry>
   <entry key="DEFAULT_SPECIES_INIT_VAL">Default species initial value</entry>
   <entry key="DEFAULT_SPECIES_INIT_VAL_TOOLTIP">If species are not yet initialized, SBMLsqueezer will use this value as initial amount or initial concentration of the species. Which kind of quantity is used, depends on whether the species has only substance units. This means, for species that are to be interpreted in terms of concentration, an initial concentration will be set, whereas an initial amount will be set if the species is to be interpreted in terms of molecule counts. By default this value is set to 1.0.</entry>
-  <entry key="GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS">For all reactions</entry>
-  <entry key="GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS_TOOLTIP">If this flag is set to true, a new rate law will be created for each reaction irrespective of whether there is already a rate law assigned to this reaction or not. If false (default), new rate laws are only generated if missing in the SBML file. Note that if this option is checked, already existing kinetic laws will be overwritten.</entry>
-  <entry key="GENERATE_KINETIC_LAW_ONLY_IF_MISSING">Only when missing</entry>
-  <entry key="GENERATE_KINETIC_LAW_ONLY_IF_MISSING_TOOLTIP">If checked, kinetics are only generated if missing in the SBML file.</entry>
+  <entry key="OVERWRITE_EXISTING_RATE_LAWS">Overwrite existing rate laws</entry>
+  <entry key="OVERWRITE_EXISTING_RATE_LAWS_TOOLTIP">If this flag is set to true, a new rate law will be created for each reaction irrespective of whether there is already a rate law assigned to this reaction or not. If false (default), new rate laws are only generated if missing in the SBML file. Note that if this option is checked, already existing kinetic laws will be overwritten.</entry>
   <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS">Ignore these species when creating laws</entry>
   <entry key="IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS_TOOLTIP">Allows the user to ignore species that are annotated with the given compound identifiers when creating rate laws for reactions that involve these species. For instance, water or single protons can often be ignored when creating rate equations, hence simplifying the resulting rate equations. Preselected are the KEGG compound identifiers for water and protons.</entry>
 
@@ -82,8 +80,6 @@
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP">If true (default), warnings will be displayed for reactions with an unrealistic number of reactants. The maximal number of reactants that are believed to be still realistic can be defined if this option is selected.</entry>
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP_TO_BE_MERGED">If checked, warnings will be shown for reactions with more reactants than specified here.</entry>
   
-  <entry key="GROUP_GENERATE_KINETIC_LAWS">Generate new kinetics</entry>
-  <entry key="GROUP_GENERATE_KINETIC_LAWS_TOOLTIP"></entry>
   <entry key="GROUP_GENERAL">General Options</entry>
   <entry key="GROUP_GENERAL_TOOLTIP"></entry>
   <entry key="GROUP_DEFAULT_VALUES">Default values</entry>
@@ -93,9 +89,9 @@
   <entry key="GROUP_ENZYMES">Species to be treated as enzymes</entry>
   <entry key="GROUP_ENZYMES_TOOLTIP"></entry>
   
-  <!-- SqueezerOptionsRateLaws -->
+  <!-- OptionsRateLaws -->
   
-  <entry key="SqueezerOptionsRateLaws">Rate law selection</entry>
+  <entry key="OptionsRateLaws">Rate law selection</entry>
   
   <entry key="TREAT_ALL_REACTIONS_REVERSIBLE">Model all reactions in a reversible manner</entry>
   <entry key="TREAT_ALL_REACTIONS_REVERSIBLE_TOOLTIP">If true (default), all reactions are set to reversible before creating new kinetic equations. Otherwise the information given by the SBML file will be left unchanged.</entry>
@@ -141,12 +137,5 @@
   <entry key="GROUP_GENE_REGULATION_KINETICS_TOOLTIP">Select the default rate laws for gene-regulatory processes.</entry>
   <entry key="GROUP_REVERSIBILITY">Reversibility</entry>
   <entry key="GROUP_REVERSIBILITY_TOOLTIP"></entry>
-  <entry key="GROUP_STANDARD_VERSION">Version of modular rate laws</entry>
-  <entry key="GROUP_STANDARD_VERSION_TOOLTIP"></entry>
-  
-  <!-- StabilityOptions -->
-  
-  <entry key="STEUER_VALUE_OF_N">Steuer value of N</entry>
-  <entry key="STEUER_VALUE_OF_N_TOOLTIP">Explanation...</entry>
   
 </properties>

@@ -45,6 +45,7 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.OptionsRateLaws;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.math.GaussianRank;
 import org.sbml.squeezer.util.Bundles;
@@ -215,15 +216,15 @@ public class KineticLawGenerator {
 	 */
 	private void configure() throws ClassNotFoundException {
 		
-		SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
+		SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
 		
-		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptionsGeneral.TYPE_UNIT_CONSISTENCY));
-		defaultParamVal = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
-		defaultSpatialDimension = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_COMPARTMENT_SPATIAL_DIM);
-		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(SqueezerOptionsGeneral.ALL_REACTIONS_AS_ENZYME_CATALYZED);
-		addParametersGlobally = prefs.getBoolean(SqueezerOptionsGeneral.NEW_PARAMETERS_GLOBAL);
+		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
+		defaultParamVal = prefs.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
+		defaultSpatialDimension = prefs.getDouble(OptionsGeneral.DEFAULT_COMPARTMENT_SPATIAL_DIM);
+		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(OptionsGeneral.ALL_REACTIONS_AS_ENZYME_CATALYZED);
+		addParametersGlobally = prefs.getBoolean(OptionsGeneral.NEW_PARAMETERS_GLOBAL);
 		
-		String l = prefs.getString(SqueezerOptionsGeneral.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
+		String l = prefs.getString(OptionsGeneral.IGNORE_THESE_SPECIES_WHEN_CREATING_LAWS);
 		if ((l != null) && l.contains(",")) {
 			speciesIgnoreList = l.split(",");
 		}
@@ -232,15 +233,15 @@ public class KineticLawGenerator {
 		String name;
 		@SuppressWarnings("unchecked")
 		Option<Boolean> options[] = (Option<Boolean>[]) new Option[] {
-				SqueezerOptionsGeneral.POSSIBLE_ENZYME_ANTISENSE_RNA,
-				SqueezerOptionsGeneral.POSSIBLE_ENZYME_COMPLEX,
-				SqueezerOptionsGeneral.POSSIBLE_ENZYME_GENERIC,
-				SqueezerOptionsGeneral.POSSIBLE_ENZYME_RECEPTOR,
-				SqueezerOptionsGeneral.POSSIBLE_ENZYME_RNA,
-				SqueezerOptionsGeneral.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
+				OptionsGeneral.POSSIBLE_ENZYME_ANTISENSE_RNA,
+				OptionsGeneral.POSSIBLE_ENZYME_COMPLEX,
+				OptionsGeneral.POSSIBLE_ENZYME_GENERIC,
+				OptionsGeneral.POSSIBLE_ENZYME_RECEPTOR,
+				OptionsGeneral.POSSIBLE_ENZYME_RNA,
+				OptionsGeneral.POSSIBLE_ENZYME_SIMPLE_MOLECULE,
 				/*SqueezerOptions.POSSIBLE_ENZYME_MACROMOLECULE,*/
-				SqueezerOptionsGeneral.POSSIBLE_ENZYME_TRUNCATED,
-				SqueezerOptionsGeneral.POSSIBLE_ENZYME_UNKNOWN 
+				OptionsGeneral.POSSIBLE_ENZYME_TRUNCATED,
+				OptionsGeneral.POSSIBLE_ENZYME_UNKNOWN 
 		};
 		for (Option<Boolean> option : options) {
 			name = option.toString().substring(16);
@@ -250,37 +251,37 @@ public class KineticLawGenerator {
 			}
 		}
 		// One more enzyme type that is not reflected in CellDesigner:
-		if (prefs.getBoolean(SqueezerOptionsGeneral.POSSIBLE_ENZYME_MACROMOLECULE)) {
-			name = SqueezerOptionsGeneral.POSSIBLE_ENZYME_MACROMOLECULE.getName();
+		if (prefs.getBoolean(OptionsGeneral.POSSIBLE_ENZYME_MACROMOLECULE)) {
+			name = OptionsGeneral.POSSIBLE_ENZYME_MACROMOLECULE.getName();
 			possibleEnzymes.add(Integer.valueOf(SBO.getMacromolecule()));
 		}
 		
-		generateLawsForAllReactions = prefs.getBoolean(SqueezerOptionsGeneral.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS);
-		removeUnnecessaryParameters = prefs.getBoolean(SqueezerOptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS);
-		defaultHasOnlySubstanceUnits = prefs.getBoolean(SqueezerOptionsGeneral.DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS);
-		addParametersGlobally = prefs.getBoolean(SqueezerOptionsGeneral.NEW_PARAMETERS_GLOBAL);
-		setBoundaryCondition = prefs.getBoolean(SqueezerOptionsGeneral.SET_BOUNDARY_CONDITION_FOR_GENES);
-		defaultSpeciesInitVal = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_SPECIES_INIT_VAL);
-		defaultCompartmentInitSize = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_COMPARTMENT_SIZE);
+		generateLawsForAllReactions = prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS);
+		removeUnnecessaryParameters = prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS);
+		defaultHasOnlySubstanceUnits = prefs.getBoolean(OptionsGeneral.DEFAULT_SPECIES_HAS_ONLY_SUBSTANCE_UNITS);
+		addParametersGlobally = prefs.getBoolean(OptionsGeneral.NEW_PARAMETERS_GLOBAL);
+		setBoundaryCondition = prefs.getBoolean(OptionsGeneral.SET_BOUNDARY_CONDITION_FOR_GENES);
+		defaultSpeciesInitVal = prefs.getDouble(OptionsGeneral.DEFAULT_SPECIES_INIT_VAL);
+		defaultCompartmentInitSize = prefs.getDouble(OptionsGeneral.DEFAULT_COMPARTMENT_SIZE);
 		
-		prefs = SBPreferences.getPreferencesFor(SqueezerOptionsRateLaws.class);
+		prefs = SBPreferences.getPreferencesFor(OptionsRateLaws.class);
 		
-		typeStandardVersion = TypeStandardVersion.valueOf(prefs.get(SqueezerOptionsRateLaws.TYPE_STANDARD_VERSION));
-		kineticsZeroReactants = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_ZERO_REACTANTS);
-		kineticsZeroProducts = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_ZERO_PRODUCTS);
-		kineticsReversibleNonEnzymeReactions = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS);
-		kineticsIrreversibleNonEnzymeReactions = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS);
-		kineticsGeneRegulation = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_GENE_REGULATION);
-		kineticsReversibleUniUniType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_UNI_UNI_TYPE);
-		kineticsIrreversibleUniUniType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_UNI_UNI_TYPE);
-		kineticsReversibleArbitraryEnzymeReaction = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
-		kineticsIrreversibleArbitraryEnzymeReaction = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
-		kineticsReversibleBiUniType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_BI_UNI_TYPE);
-		kineticsIrreversibleBiUniType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_BI_UNI_TYPE);
-		kineticsReversibleBiBiType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_REVERSIBLE_BI_BI_TYPE);
-		kineticsIrreversibleBiBiType = prefs.getClass(SqueezerOptionsRateLaws.KINETICS_IRREVERSIBLE_BI_BI_TYPE);
+		typeStandardVersion = TypeStandardVersion.valueOf(prefs.get(OptionsRateLaws.TYPE_STANDARD_VERSION));
+		kineticsZeroReactants = prefs.getClass(OptionsRateLaws.KINETICS_ZERO_REACTANTS);
+		kineticsZeroProducts = prefs.getClass(OptionsRateLaws.KINETICS_ZERO_PRODUCTS);
+		kineticsReversibleNonEnzymeReactions = prefs.getClass(OptionsRateLaws.KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS);
+		kineticsIrreversibleNonEnzymeReactions = prefs.getClass(OptionsRateLaws.KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS);
+		kineticsGeneRegulation = prefs.getClass(OptionsRateLaws.KINETICS_GENE_REGULATION);
+		kineticsReversibleUniUniType = prefs.getClass(OptionsRateLaws.KINETICS_REVERSIBLE_UNI_UNI_TYPE);
+		kineticsIrreversibleUniUniType = prefs.getClass(OptionsRateLaws.KINETICS_IRREVERSIBLE_UNI_UNI_TYPE);
+		kineticsReversibleArbitraryEnzymeReaction = prefs.getClass(OptionsRateLaws.KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
+		kineticsIrreversibleArbitraryEnzymeReaction = prefs.getClass(OptionsRateLaws.KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS);
+		kineticsReversibleBiUniType = prefs.getClass(OptionsRateLaws.KINETICS_REVERSIBLE_BI_UNI_TYPE);
+		kineticsIrreversibleBiUniType = prefs.getClass(OptionsRateLaws.KINETICS_IRREVERSIBLE_BI_UNI_TYPE);
+		kineticsReversibleBiBiType = prefs.getClass(OptionsRateLaws.KINETICS_REVERSIBLE_BI_BI_TYPE);
+		kineticsIrreversibleBiBiType = prefs.getClass(OptionsRateLaws.KINETICS_IRREVERSIBLE_BI_BI_TYPE);
 		
-		reversibility = prefs.getBoolean(SqueezerOptionsRateLaws.TREAT_ALL_REACTIONS_REVERSIBLE);
+		reversibility = prefs.getBoolean(OptionsRateLaws.TREAT_ALL_REACTIONS_REVERSIBLE);
 	}
 
 	/**

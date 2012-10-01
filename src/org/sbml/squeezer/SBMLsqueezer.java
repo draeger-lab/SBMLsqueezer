@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 import jp.sbi.garuda.platform.commons.exception.NetworkException;
 
 import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.jsbml.SBMLOutputConverter;
@@ -66,6 +67,7 @@ import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
 import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
 import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
 import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
+import org.sbml.squeezer.kinetics.OptionsRateLaws;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.SBML2LaTeX;
@@ -266,8 +268,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    */
   public static Class<? extends KeyProvider>[] getInteractiveConfigOptionsArray() {
   	Class<? extends KeyProvider>[] list = new Class[3];
-    list[0] = SqueezerOptionsGeneral.class;
-    list[1] = SqueezerOptionsRateLaws.class;
+    list[0] = OptionsGeneral.class;
+    list[1] = OptionsRateLaws.class;
     list[2] = LaTeXOptions.class;
     return list;
 	}
@@ -420,7 +422,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	   */
 	  public static String[] getPossibleEnzymeTypes() {
 	    logger.log(Level.INFO, MESSAGES.getString("LOADING_USER_SETTINGS"));
-	    SBPreferences preferences = new SBPreferences(SqueezerOptionsGeneral.class);
+	    SBPreferences preferences = new SBPreferences(OptionsGeneral.class);
 	    logger.log(Level.INFO, "    " + MESSAGES.getString("DONE"));
 	    Set<String> enzymeTypes = new HashSet<String>();
 	    String prefix = "POSSIBLE_ENZYME_";
@@ -513,7 +515,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public void commandLineMode(AppConf appConf) {
     SBProperties properties = appConf.getCmdArgs();
     if ((getSBMLIO().getNumErrors() > 0)
-        && properties.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS)) {
+        && properties.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS)) {
       for (SBMLException exc : getSBMLIO().getWarnings()) {
         logger.log(Level.WARNING, exc.getMessage());
       }
@@ -542,7 +544,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public List<Class<? extends KeyProvider>> getCmdLineOptions() {
     List<Class<? extends KeyProvider>> list = new ArrayList<Class<? extends KeyProvider>>(4);
     list.add(IOOptions.class);
-    list.add(SqueezerOptionsGeneral.class);
+    list.add(OptionsGeneral.class);
+    list.add(OptionsRateLaws.class);
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
     return list;
@@ -669,15 +672,17 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
    * 
    * @param sbmlSource
    */
-  public void readSBMLSource(Object sbmlSource) {
+  public Model readSBMLSource(Object sbmlSource) {
+  	Model model = null;
     long time = System.currentTimeMillis();
     logger.info(MESSAGES.getString("READING_SBML_FILE"));
     try {
-      getSBMLIO().convertModel(sbmlSource);
+      model = getSBMLIO().convertModel(sbmlSource);
       logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
     } catch (Exception exc) {
       logger.log(Level.WARNING, String.format(WARNINGS.getString("CANT_READ_MODEL"), exc.getLocalizedMessage()));
     }
+    return model;
   }
   
   /* (non-Javadoc)
@@ -703,11 +708,12 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   	readSBMLSource(source.getAbsolutePath());
   	boolean errorFatal = false;
   	SBMLException exception = null;
-  	for (SBMLException exc : sbmlIo.getWarnings())
+  	for (SBMLException exc : sbmlIo.getWarnings()) {
   		if (exc.isFatal() || exc.isXML() || exc.isError()) {
   			errorFatal = true;
   			exception = exc;
   		}
+  	}
   	if (errorFatal) {
   		throw new SBMLException(exception);
   	} else if (!sbmlIo.getListOfOpenedFiles().isEmpty()) {
@@ -721,7 +727,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   		}
   		long time = System.currentTimeMillis();
   		// TODO: Localize!
-  		logger.info("Creating kinetic laws.");
+  		logger.info(MESSAGES.getString("CREATING_KINETIC_LAWS"));
   		klg.generateLaws();
   		logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
   		
@@ -738,8 +744,8 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   				&& (SBFileFilter.createSBMLFileFilter().accept(outFile))) {
   			sbmlIo.writeSelectedModelToSBML(outFile.getAbsolutePath());
   			logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
-  			SBPreferences preferences = new SBPreferences(SqueezerOptionsGeneral.class);
-  			if (preferences.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS)) {
+  			SBPreferences preferences = new SBPreferences(OptionsGeneral.class);
+  			if (preferences.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS)) {
   				for (SBMLException exc : sbmlIo.getWriteWarnings()) {
   					logger.log(Level.WARNING, exc.getMessage());
   				}
@@ -750,8 +756,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   	} else {
   		logger.log(Level.WARNING, WARNINGS.getString("FILE_CONTAINS_NO_MODEL"));
   	}
-  	// TODO: Localize!
-  	logger.info((System.currentTimeMillis() - workTime)/1000d + " s needed for squeezing file " + source.getName() + '.');
+  	logger.info(MessageFormat.format(
+  		MESSAGES.getString("TIME_NEEDED_FOR_SQUEEZING"),
+  		(System.currentTimeMillis() - workTime)/1000d,
+  		source.getName()));
   }
 
 
@@ -772,8 +780,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public void squeeze(Object sbmlSource, String outfile) throws Throwable {
   	File outFile = outfile != null ? new File(outfile) : null;
   	File inFile = sbmlSource != null ? new File(sbmlSource.toString()) : null;
-  	// TODO: Localize!
-  	logger.info("Scanning input files");
+  	logger.info(MESSAGES.getString("SCANNING_INPUT_FILES"));
   	Map<File, String> ioPairs = FileWalker.filterAndCreate(inFile, outFile, SBFileFilter.createSBMLFileFilter(), true);
   	if (ioPairs.size() == 0) {
   		logger.info(MESSAGES.getString("EMPTY_INPUT_FILE_LIST"));
@@ -782,7 +789,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   			try {
   				inFile = entry.getKey();
   				outFile = new File(entry.getValue());
-  				logger.info(MessageFormat.format("Squeezing file {0} into {1}", inFile.getAbsolutePath(), outFile.getAbsolutePath()));
+  				logger.info(MessageFormat.format(
+  					MESSAGES.getString("SQUEEZING_FILE"),
+  					inFile.getAbsolutePath(),
+  					outFile.getAbsolutePath()));
   				squeeze(inFile, outFile, false);
   			} catch (Throwable t) {
   				logger.log(Level.SEVERE, MessageFormat.format(

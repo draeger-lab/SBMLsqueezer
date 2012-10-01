@@ -13,163 +13,6 @@
 	Please see the JavaDoc for MessageFormatter and Formatter. 
   </comment>
 
-  <!-- SettingsPanelDefaultMechanisms -->
-  
-  <entry key="TITLE_DEFAULT_MECHANISMS">Reaction mechanisms</entry>
-  <entry key="DEFAULT_REACTION_TOOLTIP">Reactions, which are {0}, can be described using {1}.</entry>
-  <entry key="REVERSIBILITY">Reversibility</entry>
-  <entry key="CHOOSE_TYPE_STANDARD_VERSION">Choose the version of modular rate laws:</entry>
-  <entry key="DEFAULT_RATE_LAW_SELECT">Select the default rate law for each mechanism</entry>
-  
-  <!-- SettingsPanelKinetics -->
-  
-  <entry key="TITLE_KINETICS">Kinetics settings</entry>
-  
-  <!-- KineticLawSelectionDialog -->
-  
-  <entry key="KINETIC_EQUATIONS">Kinetic Equations</entry>
-  <entry key="EXPORT_CHANGES">Export changes</entry>
-  <entry key="EXPORT_CHANGES_TOOLTIP">Allows you to save the generated differential equations as *.txt or *.tex files. Note that this export only contains those reactions together with referenced, species, compartments, compartment- and species-types, units, and parameters for which new kinetic equations have been generated. If you wish to obtain a complete model report, please choose the "save as" function in the main menu.</entry>
-  <entry key="GENERATE">Generate</entry>
-  <entry key="GENERATE_TOOLTIP">Start generating an ordinary differential equation system.</entry>
-  <entry key="RESTORE">Restore</entry>
-  <entry key="HIDE_OPTIONS">hide options</entry>
-  <entry key="HIDE_OPTIONS_TOOLTIP">Hide detailed options</entry>
-  <entry key="SHOW_OPTIONS">Show options</entry>
-  <entry key="SHOW_OPTIONS_TOOLTIP">Show options to customize the advanced settings.</entry>
-  <entry key="THE_MODEL_CONTAINS">The model {1} contains {0}</entry>
-  <entry key="FAST_REACTIONS">fast reactions</entry>
-  <entry key="THE_FAST_REACTION">the fast reaction</entry>
-  <entry key="NOT_SUPPORTED">This is currently not supported by SBMLsqueezer.</entry>
-  <entry key="ATTRIBUTE_BEEING_IGNORED">Rate laws can still be generated properly but the fast attribute is beeing ignored.</entry>
-  <entry key="ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED">Rate laws can still be generated properly but the fast attribute of the following reactions is beeing ignored:</entry>
-  <entry key="NUMBER_OF_WARNINGS">Number of warnings</entry>
-  <entry key="NUMBER_OF_WARNING_TOOLTIP">The number of reactions an unlikely number of reactants. These are also highlighted in red in the table.</entry>
-  <entry key="COLOR_RED">red</entry>
-  <entry key="EXIT_WITHOUT_SAVING">Exit SBMLsqueezer without saving changes.</entry>
-  <entry key="WRITE_KINETICS_TO_SBML_FILE">Write the generated kinetics and parameters to the SBML file.</entry>
-  <entry key="VERSION">Version</entry>
-  
-  <!-- KineticLawSelectionPanel -->
-  
-  <entry key="EXISTING_RATE_LAW">Existing rate law</entry>
-  <entry key="SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY">{0} species are unlikely to collide spontainously.</entry>
-  <entry key="REACTION_PROCEEDS_ON_FAST_TIME_SCALE">Reaction {0} proceeds on a fast time scale.</entry>
-  <entry key="ATTRIBUTE_IGNORED">Note that this attribute is currently ignored.</entry>
-  <entry key="REACTION_OPTIONS">Reaction options</entry>
-  <entry key="REVERSIBLE">Reversible</entry>
-  <entry key="REVERSIBLE_TOOLTIP">If selected, SBMLsqueezer will take the effects of the products into account when creating rate equations.</entry>
-  <entry key="IRREVERSIBLE">Irreversible</entry>
-  <entry key="IRREVERSIBLE_TOOLTIP">If selected, SBMLsqueezer will not take effects of products into account when creating rate equations.</entry>
-  <entry key="ENZYME_CATALYSED">Consider this reaction to be enzyme-catalyzed</entry>
-  <entry key="ENZYME_CATALYSED_TOOLTIP">Allows you to decide whether or not this reaction should be interpreted as being enzyme-catalyzed. If an enzyme catalyst exists for this reaction, this feature cannot be switched off.</entry>
-  <entry key="GLOBAL_PARAMETERS">Global parameters</entry>
-  <entry key="GLOBAL_PARAMETERS_TOOLTIP">If selected, newly created parameters will be stored globally in the model.</entry>
-  <entry key="LOCAL_PARAMETERS">Local parameters</entry>
-  <entry key="LOCAL_PARAMETERS_TOOLTIP">If selected, newly created parameters will be stored locally in this reaction.</entry>
-  <entry key="EQUATION_PREVIEW">Equation Preview</entry>
-  <entry key="RATE_LAW_ASSIGNED_TO_REACTION">This rate law is currently assigned to this reaction.</entry>
-  <entry key="CHOOSE_KINETIC_LAW">Please choose one kinetic law</entry>
-  
-  <!-- ParameterFactory -->
-  
-  <entry key="FOR_ADDITIVE_MODEL">For the additive model</entry>
-  <entry key="WEIGHT_ACTIVATION_FUNCTION_PARAMETERS">weight parameter for the activation function</entry>
-  <entry key="ZEROTH_ORDER">Zeroth order</entry>
-  <entry key="ASSOCIATION_CONSTANT_OF_REACTION">association constant of reaction {0}</entry>
-  <entry key="DISASSOCIATION_CONSTANT_OF_REACTION">disassociation constant of reaction {0}</entry>
-  <entry key="BASIS_EXPRESSION_LEVEL">basis expression level</entry>
-  <entry key="EQUILIBRIUM_CONSTANT_OF_REACTION">equilibrium constant of reaction {0}</entry>
-  <entry key="IDEAL_GAS_CONSTANT">Ideal gas constant</entry>
-  <entry key="HILL_COEFFICIENT_IN_REACTION">Hill coefficient {0} in reaction</entry>
-  <entry key="FOR_ENZYME">for enzyme {0}</entry>
-  <entry key="ACTIVATION_CONSTANT_OF_REACTION">Activation constant of reaction {0}</entry>
-  <entry key="CATALYTIC_RATE_CONSTANT_OF_REACTION">{0} catalytic rate constant of reaction {1}</entry>
-  <entry key="CATALYTIC_RATE_CONSTANT_OF_ENZYME_IN_REACTION">{0} catalytic rate constant of enzyme {1} in reaction {2}</entry>
-  <entry key="SUBSTRATE">Substrate</entry>
-  <entry key="PRODUCT">Product</entry>
-  <entry key="MAXIMAL_VELOCITY_OF_REACTION">{0} maximal velocity of reaction {1}</entry>
-  <entry key="MAXIMAL_VELOCITY_OF_ENZYME_IN_REACTION">{0} maximal velocity of enzyme {1} in reaction {2}</entry>
-  <entry key="FORWARD">Forward</entry>
-  <entry key="REVERSE">Revere</entry>
-  <entry key="ENERGY_CONSTANT_OF_SPECIES">Energy constant of species {0}</entry>
-  <entry key="INHIBITIORY_CONSTANT_OF_REACTION">Inhibitory constant {0} of reaction {1}</entry>
-  <entry key="FOR_SPECIES">for species {0}</entry>
-  <entry key="WITH_BINDING_POSITIONS">with {0} binding positions</entry>
-  <entry key="KINETIC_ORDER_OF_REACTION">Kinetic order of reaction {0}</entry>
-  <entry key="HALF_SATURATION_CONSTANT_OF_SPECIES_IN_REACTION">Half saturation constant of species {0} in reaction {1}</entry>
-  <entry key="HALF_SATURATION_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION">Half saturation constant of species {0} and enzyme {1} in reaction {2}</entry>
-  <entry key="CONST_MAX_EXPRESSION">constant / max. expression</entry>
-  <entry key="MICHAELIS_CONSTANT_OF_SPECIES_IN_REACTION">Michaelis constant of species {0} in reaction {1}</entry>
-  <entry key="MICHAELIS_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION">Michaelis constant of species {0} and enzyme {1} in reaction {2}</entry>
-  <entry key="NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_OF_REACTION">Number of binding sites for the inhibitor {0} of reaction {1}</entry>
-  <entry key="NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_ON_ENZYME_OF_REACTION">Number of binding sites for the inhibitor {0} on the enzyme {1} of reaction {2}</entry>
-  <entry key="REACTION_COOPERATIVITY">Reaction cooperativity</entry>
-  <entry key="ACTIVATION_BASELINE_RELATION_OF_SPECIES_IN_REACTION">Activation baseline ration of species {0} in reaction {1}</entry>
-  <entry key="INHIBITION_BASELINE_RELATION_OF_SPECIES_IN_REACTION">Inhibition baseline ration of species {0} in reaction {1}</entry>
-  <entry key="ASSOCIATION_CONSTANT_IN_RESTRICTED_SPACES_OF_REACTION">Association constant in restricted spaces of reaction {0}</entry>
-  <entry key="RATE_CONSTANT_FOR_SYNTHESIS">rate constant for synthesis</entry>
-  <entry key="RATE_CONSTANT_FOR_DEGRADATION">rate constant for degradation</entry>
-  <entry key="S_SYSTEM_EXPONENT_IN_REACTION">S-System exponent in reaction {0}</entry>
-  <entry key="S_SYSTEM_EXPONENT_FOR_MODIFIER_IN_REACTION">S-System exponent for modifier {0} in reaction {1}</entry>
-  <entry key="STANDARD_CHEMICAL_POTENTIAL_OF_SPECIES">Standard chemical potential of species {0}</entry>
-  <entry key="TEMP_OF_REACTION_SYSTEM">The temperature of reaction system {0}</entry>
-  <entry key="THRESHOLD_GENERALIZED_HILL_FUNCTION">Threshold for the generalized hill function</entry>
-  <entry key="TIME_ORDER_IN_REACTION">Time order in reaction {0}</entry>
-  <entry key="WEIGHT_PARAMETER_FOR_EXTERNAL_INPUTS">weight parameter for the external inputs</entry>
-  <entry key="CATALYTIC_RATE_CONSTANT_GEOMETIC_MEAN_OF_REACTION">Catalytic rate constant geometric mean of reaction {0}</entry>
-  <entry key="MAX_VELOCITY_GEOMETIC_MEAN_OF_REACTION">Maximal velocity geometric mean of reaction {0}</entry>
-  <entry key="WEIGHT_PARAMETER_FOR_GENE_PRODUCTS">weight parameter for the gene products</entry>
-  
-  <!-- ReactionType -->
-  
-  <entry key="IS_ENZYMATIC_CATALYST">{0} is an enzymatic catalyst</entry>
-  <entry key="IS_NON_ENZYMATIC_CATALYST">{0} is an non-enzymatic catalyst</entry>
-  <entry key="IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR">{0} is a transcriptional or translational inhibitor</entry>
-  <entry key="IS_INHIBITOR">{0} is an inhibitor</entry>
-  <entry key="IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_ACTIVATOR">{0} is a transcriptional or translational activator</entry>
-  <entry key="IS_ACTIVATOR">{0} is an activator</entry>
-  
-  <!-- SBMLsqueezer -->
-  
-  <entry key="DONE_IN_MS">done in {0} ms.</entry>
-  <entry key="LOADING_USER_SETTINGS">loading user settings...</entry>
-  <entry key="DONE">done.</entry>
-  <entry key="LOADING_LIBSBML">Loading library libSBML</entry>
-  <entry key="LOADING_JSBML">Loading library JSBML</entry>
-  <entry key="READING_SBML_FILE">reading SBML file...</entry>
-  <entry key="EMPTY_INPUT_FILE_LIST">Empty list of input files. Nothing to do.</entry>
-  <entry key="SAVING_TO_FILE">Saving changes and writing SBML file...</entry>
-  <entry key="WRITING_LATEX_OUTPUT">writing LaTeX output...</entry>
-  
-  <!-- SBMLsqueezerUI -->
-  
-  <entry key="SABIO_RK">SABIO-RK</entry>
-  <entry key="SABIO_RK_TOOLTIP">Extracts rate laws, parameters, and units from the reaction kinetics database SABIO-RK.</entry>
-  <entry key="SQUEEZE">Squeeze</entry>
-  <entry key="SQUEEZE_TOOLTIP">Generates missing kinetic equations including parameters and units.</entry>
-  <entry key="TO_LATEX">To LaTeX</entry>
-  <entry key="TO_LATEX_TOOLTIP">Creates a report that describes the current model.</entry>
-  
-  <!-- KineticLawTable -->
-  
-  <entry key="KINTEIC_LAW_TABLE_HEADER_TOOLTIP">Double click on the kinetic law to apply another formalism. Single click on any other column to get a formatted equation preview.</entry>
-  <entry key="RATE_LAW_OF_REACTION">Rate Law of Reaction {0}</entry>
-  <entry key="CHOOSE_ALTERNATIVE_KINETIC_LAW">Choose an alternative kinetic law for reaction</entry>
-  
-   <!-- KineticLawTableModel -->
-   
-  <entry key="COL_REACTION">Reaction</entry>
-  <entry key="COL_KINETIC_LAW">Kinetic Law</entry>
-  <entry key="COL_UNIT">Derived Unit</entry>
-  <entry key="COL_SBO">SBO</entry>
-  <entry key="COL_NUM_REACTANTS">Reactants count</entry>
-  <entry key="COL_NUM_PRODUCTS">Products count</entry>
-  <entry key="COL_REACTANTS">Reactants</entry>
-  <entry key="COL_PRODUCTS">Products</entry>
-  <entry key="COL_PARAMETERS">Parameter counts</entry>
-  <entry key="COL_FORMULA">Formula</entry>
-  
   <!-- AdditiveModelLinear -->
   
   <entry key="ADDITIVE_MODEL_LINEAR_SIMPLE_NAME">Linear additive model, general form</entry>
@@ -225,17 +68,82 @@
   
   <entry key="IRREV_NON_MODULATED_NON_INTERACTING_ENZYMES_SIMPLE_NAME">Irreversible non-modulated non-interacting reactants</entry>
   
+  <!-- KineticLawSelectionDialog -->
+  
+  <entry key="KINETIC_EQUATIONS">Kinetic Equations</entry>
+  <entry key="EXPORT_CHANGES">Export changes</entry>
+  <entry key="EXPORT_CHANGES_TOOLTIP">Allows you to save the generated differential equations as *.txt or *.tex files. Note that this export only contains those reactions together with referenced, species, compartments, compartment- and species-types, units, and parameters for which new kinetic equations have been generated. If you wish to obtain a complete model report, please choose the "save as" function in the main menu.</entry>
+  <entry key="GENERATE">Generate</entry>
+  <entry key="GENERATE_TOOLTIP">Start generating an ordinary differential equation system.</entry>
+  <entry key="RESTORE">Restore</entry>
+  <entry key="HIDE_OPTIONS">hide options</entry>
+  <entry key="HIDE_OPTIONS_TOOLTIP">Hide detailed options</entry>
+  <entry key="SHOW_OPTIONS">Show options</entry>
+  <entry key="SHOW_OPTIONS_TOOLTIP">Show options to customize the advanced settings.</entry>
+  <entry key="THE_MODEL_CONTAINS">The model {1} contains {0}</entry>
+  <entry key="FAST_REACTIONS">fast reactions</entry>
+  <entry key="THE_FAST_REACTION">the fast reaction</entry>
+  <entry key="NOT_SUPPORTED">This is currently not supported by SBMLsqueezer.</entry>
+  <entry key="ATTRIBUTE_BEEING_IGNORED">Rate laws can still be generated properly but the fast attribute is beeing ignored.</entry>
+  <entry key="ATTRIBUTE_OF_REACTIONS_BEEING_IGNORED">Rate laws can still be generated properly but the fast attribute of the following reactions is beeing ignored:</entry>
+  <entry key="NUMBER_OF_WARNINGS">Number of warnings</entry>
+  <entry key="NUMBER_OF_WARNING_TOOLTIP">The number of reactions an unlikely number of reactants. These are also highlighted in red in the table.</entry>
+  <entry key="COLOR_RED">red</entry>
+  <entry key="EXIT_WITHOUT_SAVING">Exit SBMLsqueezer without saving changes.</entry>
+  <entry key="WRITE_KINETICS_TO_SBML_FILE">Write the generated kinetics and parameters to the SBML file.</entry>
+  <entry key="VERSION">Version</entry>
+  
+  <!-- KineticLawSelectionPanel -->
+  
+  <entry key="EXISTING_RATE_LAW">Existing rate law</entry>
+  <entry key="SPECIES_UNLIKELY_COLLIDE_SPONTAINOUSLY">{0} species are unlikely to collide spontainously.</entry>
+  <entry key="REACTION_PROCEEDS_ON_FAST_TIME_SCALE">Reaction {0} proceeds on a fast time scale.</entry>
+  <entry key="ATTRIBUTE_IGNORED">Note that this attribute is currently ignored.</entry>
+  <entry key="REACTION_OPTIONS">Reaction options</entry>
+  <entry key="REVERSIBLE">Reversible</entry>
+  <entry key="REVERSIBLE_TOOLTIP">If selected, SBMLsqueezer will take the effects of the products into account when creating rate equations.</entry>
+  <entry key="IRREVERSIBLE">Irreversible</entry>
+  <entry key="IRREVERSIBLE_TOOLTIP">If selected, SBMLsqueezer will not take effects of products into account when creating rate equations.</entry>
+  <entry key="ENZYME_CATALYSED">Consider this reaction to be enzyme-catalyzed</entry>
+  <entry key="ENZYME_CATALYSED_TOOLTIP">Allows you to decide whether or not this reaction should be interpreted as being enzyme-catalyzed. If an enzyme catalyst exists for this reaction, this feature cannot be switched off.</entry>
+  <entry key="GLOBAL_PARAMETERS">Global parameters</entry>
+  <entry key="GLOBAL_PARAMETERS_TOOLTIP">If selected, newly created parameters will be stored globally in the model.</entry>
+  <entry key="LOCAL_PARAMETERS">Local parameters</entry>
+  <entry key="LOCAL_PARAMETERS_TOOLTIP">If selected, newly created parameters will be stored locally in this reaction.</entry>
+  <entry key="EQUATION_PREVIEW">Equation Preview</entry>
+  <entry key="RATE_LAW_ASSIGNED_TO_REACTION">This rate law is currently assigned to this reaction.</entry>
+  <entry key="CHOOSE_KINETIC_LAW">Please choose one kinetic law</entry>
+  
+  <!-- KineticLawTable -->
+  
+  <entry key="KINTEIC_LAW_TABLE_HEADER_TOOLTIP">Double click on the kinetic law to apply another formalism. Single click on any other column to get a formatted equation preview.</entry>
+  <entry key="RATE_LAW_OF_REACTION">Rate Law of Reaction {0}</entry>
+  <entry key="CHOOSE_ALTERNATIVE_KINETIC_LAW">Choose an alternative kinetic law for reaction</entry>
+  
+   <!-- KineticLawTableModel -->
+   
+  <entry key="COL_REACTION">Reaction</entry>
+  <entry key="COL_KINETIC_LAW">Kinetic Law</entry>
+  <entry key="COL_UNIT">Derived Unit</entry>
+  <entry key="COL_SBO">SBO</entry>
+  <entry key="COL_NUM_REACTANTS">Reactants count</entry>
+  <entry key="COL_NUM_PRODUCTS">Products count</entry>
+  <entry key="COL_REACTANTS">Reactants</entry>
+  <entry key="COL_PRODUCTS">Products</entry>
+  <entry key="COL_PARAMETERS">Parameter counts</entry>
+  <entry key="COL_FORMULA">Formula</entry>
+  
   <!-- MichaelisMenten -->
   
   <entry key="MICHAELIS_MENTEN_SIMPLE_NAME">Michaelis-Menten</entry>
   
-  <!-- NetGeneratorLinear -->
-  
-  <entry key="NET_GENERATOR_LINEAR_SIMPLE_NAME">Linear additive model, NetGenerator form</entry>
-  
   <!-- NetGeneratorNonLinear -->
   
   <entry key="NET_GENERATOR_NON_LINEAR_SIMPLE_NAME">Non-linear additive model, NetGenerator form</entry>
+  
+  <!-- NetGeneratorLinear -->
+  
+  <entry key="NET_GENERATOR_LINEAR_SIMPLE_NAME">Linear additive model, NetGenerator form</entry>
   
   <!-- OrderedMechanism -->
   
@@ -244,9 +152,66 @@
   <entry key="ONE_PRODUCT"></entry>
   <entry key="TWO_PRODUCTS"></entry>
   
+  <!-- ParameterFactory -->
+  
+  <entry key="FOR_ADDITIVE_MODEL">For the additive model</entry>
+  <entry key="WEIGHT_ACTIVATION_FUNCTION_PARAMETERS">weight parameter for the activation function</entry>
+  <entry key="ZEROTH_ORDER">Zeroth order</entry>
+  <entry key="ASSOCIATION_CONSTANT_OF_REACTION">association constant of reaction {0}</entry>
+  <entry key="DISASSOCIATION_CONSTANT_OF_REACTION">disassociation constant of reaction {0}</entry>
+  <entry key="BASIS_EXPRESSION_LEVEL">basis expression level</entry>
+  <entry key="EQUILIBRIUM_CONSTANT_OF_REACTION">equilibrium constant of reaction {0}</entry>
+  <entry key="IDEAL_GAS_CONSTANT">Ideal gas constant</entry>
+  <entry key="HILL_COEFFICIENT_IN_REACTION">Hill coefficient {0} in reaction</entry>
+  <entry key="FOR_ENZYME">for enzyme {0}</entry>
+  <entry key="ACTIVATION_CONSTANT_OF_REACTION">Activation constant of reaction {0}</entry>
+  <entry key="CATALYTIC_RATE_CONSTANT_OF_REACTION">{0} catalytic rate constant of reaction {1}</entry>
+  <entry key="CATALYTIC_RATE_CONSTANT_OF_ENZYME_IN_REACTION">{0} catalytic rate constant of enzyme {1} in reaction {2}</entry>
+  <entry key="SUBSTRATE">Substrate</entry>
+  <entry key="PRODUCT">Product</entry>
+  <entry key="MAXIMAL_VELOCITY_OF_REACTION">{0} maximal velocity of reaction {1}</entry>
+  <entry key="MAXIMAL_VELOCITY_OF_ENZYME_IN_REACTION">{0} maximal velocity of enzyme {1} in reaction {2}</entry>
+  <entry key="FORWARD">Forward</entry>
+  <entry key="REVERSE">Revere</entry>
+  <entry key="ENERGY_CONSTANT_OF_SPECIES">Energy constant of species {0}</entry>
+  <entry key="INHIBITIORY_CONSTANT_OF_REACTION">Inhibitory constant {0} of reaction {1}</entry>
+  <entry key="FOR_SPECIES">for species {0}</entry>
+  <entry key="WITH_BINDING_POSITIONS">with {0} binding positions</entry>
+  <entry key="KINETIC_ORDER_OF_REACTION">Kinetic order of reaction {0}</entry>
+  <entry key="HALF_SATURATION_CONSTANT_OF_SPECIES_IN_REACTION">Half saturation constant of species {0} in reaction {1}</entry>
+  <entry key="HALF_SATURATION_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION">Half saturation constant of species {0} and enzyme {1} in reaction {2}</entry>
+  <entry key="CONST_MAX_EXPRESSION">constant / max. expression</entry>
+  <entry key="MICHAELIS_CONSTANT_OF_SPECIES_IN_REACTION">Michaelis constant of species {0} in reaction {1}</entry>
+  <entry key="MICHAELIS_CONSTANT_OF_SPECIES_AND_ENZYME_IN_REACTION">Michaelis constant of species {0} and enzyme {1} in reaction {2}</entry>
+  <entry key="NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_OF_REACTION">Number of binding sites for the inhibitor {0} of reaction {1}</entry>
+  <entry key="NUMBER_OF_BINDING_SITES_FOR_INHIBITOR_ON_ENZYME_OF_REACTION">Number of binding sites for the inhibitor {0} on the enzyme {1} of reaction {2}</entry>
+  <entry key="REACTION_COOPERATIVITY">Reaction cooperativity</entry>
+  <entry key="ACTIVATION_BASELINE_RELATION_OF_SPECIES_IN_REACTION">Activation baseline ration of species {0} in reaction {1}</entry>
+  <entry key="INHIBITION_BASELINE_RELATION_OF_SPECIES_IN_REACTION">Inhibition baseline ration of species {0} in reaction {1}</entry>
+  <entry key="ASSOCIATION_CONSTANT_IN_RESTRICTED_SPACES_OF_REACTION">Association constant in restricted spaces of reaction {0}</entry>
+  <entry key="RATE_CONSTANT_FOR_SYNTHESIS">rate constant for synthesis</entry>
+  <entry key="RATE_CONSTANT_FOR_DEGRADATION">rate constant for degradation</entry>
+  <entry key="S_SYSTEM_EXPONENT_IN_REACTION">S-System exponent in reaction {0}</entry>
+  <entry key="S_SYSTEM_EXPONENT_FOR_MODIFIER_IN_REACTION">S-System exponent for modifier {0} in reaction {1}</entry>
+  <entry key="STANDARD_CHEMICAL_POTENTIAL_OF_SPECIES">Standard chemical potential of species {0}</entry>
+  <entry key="TEMP_OF_REACTION_SYSTEM">The temperature of reaction system {0}</entry>
+  <entry key="THRESHOLD_GENERALIZED_HILL_FUNCTION">Threshold for the generalized hill function</entry>
+  <entry key="TIME_ORDER_IN_REACTION">Time order in reaction {0}</entry>
+  <entry key="WEIGHT_PARAMETER_FOR_EXTERNAL_INPUTS">weight parameter for the external inputs</entry>
+  <entry key="CATALYTIC_RATE_CONSTANT_GEOMETIC_MEAN_OF_REACTION">Catalytic rate constant geometric mean of reaction {0}</entry>
+  <entry key="MAX_VELOCITY_GEOMETIC_MEAN_OF_REACTION">Maximal velocity geometric mean of reaction {0}</entry>
+  <entry key="WEIGHT_PARAMETER_FOR_GENE_PRODUCTS">weight parameter for the gene products</entry>
+  
   <!-- PingPongMechanism -->
   
   <entry key="PING_PONG_MEACHANISM_SIMPLE_NAME">Ping-Pong mechanism</entry>
+  
+  <!-- ProgressAdapter -->
+  
+  <entry key="STORE_KINETIC_EQUATION">Storing kinetic equation...</entry>
+  <entry key="STORE_KINETIC_EQUATIONS">Storing kinetic equations...</entry>
+  <entry key="GENERATE_KINETIC_EQUATION">Generating kinetic equation...</entry>
+  <entry key="CREATE_MINI_MODEL">Creating submodel...</entry>
   
   <!-- PowerLawModularRateLaw -->
   
@@ -257,9 +222,58 @@
   <entry key="RANDOM_ORDER_MEACHANISM_SIMPLE_NAME">Random order mechanism</entry>
   <entry key="RAPID_EQUILIBRIUM_RANDOM_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} rapid-equilibrium random order ternary-complex mechanism{1}</entry>
   
+  <!-- ReactionType -->
+  
+  <entry key="IS_ENZYMATIC_CATALYST">{0} is an enzymatic catalyst</entry>
+  <entry key="IS_NON_ENZYMATIC_CATALYST">{0} is an non-enzymatic catalyst</entry>
+  <entry key="IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_INHIBITOR">{0} is a transcriptional or translational inhibitor</entry>
+  <entry key="IS_INHIBITOR">{0} is an inhibitor</entry>
+  <entry key="IS_TRANSCRIPTIONAL_OR_TRANSLATIONAL_ACTIVATOR">{0} is a transcriptional or translational activator</entry>
+  <entry key="IS_ACTIVATOR">{0} is an activator</entry>
+  
   <!-- RestrictedSpaceKinetics -->
   
   <entry key="RESTRICTED_SPACE_KINETICS_SIMPLE_NAME">Reaction kinetics in restricted spaces</entry>
+  
+  <!-- SBMLsqueezer -->
+  
+  <entry key="DONE_IN_MS">done in {0} ms.</entry>
+  <entry key="LOADING_USER_SETTINGS">loading user settings...</entry>
+  <entry key="DONE">done.</entry>
+  <entry key="LOADING_LIBSBML">Loading library libSBML</entry>
+  <entry key="LOADING_JSBML">Loading library JSBML</entry>
+  <entry key="READING_SBML_FILE">reading SBML file...</entry>
+  <entry key="EMPTY_INPUT_FILE_LIST">Empty list of input files. Nothing to do.</entry>
+  <entry key="SAVING_TO_FILE">Saving changes and writing SBML file...</entry>
+  <entry key="WRITING_LATEX_OUTPUT">writing LaTeX output...</entry>
+  <entry key="CREATING_KINETIC_LAWS">Creating kinetic laws.</entry>
+  <entry key="SCANNING_INPUT_FILES">Scanning input files</entry>
+  <entry key="SQUEEZING_FILE">Squeezing file {0} into {1}</entry>
+  <entry key="TIME_NEEDED_FOR_SQUEEZING">{0,number} s needed for squeezing file {1}.</entry>
+  
+  <!-- SBMLsqueezerUI -->
+  
+  <entry key="SABIO_RK">SABIO-RK</entry>
+  <entry key="SABIO_RK_TOOLTIP">Extracts rate laws, parameters, and units from the reaction kinetics database SABIO-RK.</entry>
+  <entry key="SQUEEZE">Squeeze</entry>
+  <entry key="SQUEEZE_TOOLTIP">Generates missing kinetic equations including parameters and units.</entry>
+  <entry key="TO_LATEX">To LaTeX</entry>
+  <entry key="TO_LATEX_TOOLTIP">Creates a report that describes the current model.</entry>
+  <entry key="URL_ABOUT_MESSAGE">resources/html/about.html</entry>
+  <entry key="URL_LICENSE_FILE">resources/html/License.html</entry>
+  <entry key="URL_ONLINE_HELP">resources/html/help.html</entry>
+  
+  <!-- SettingsPanelDefaultMechanisms -->
+  
+  <entry key="TITLE_DEFAULT_MECHANISMS">Reaction mechanisms</entry>
+  <entry key="DEFAULT_REACTION_TOOLTIP">Reactions, which are {0}, can be described using {1}.</entry>
+  <entry key="REVERSIBILITY">Reversibility</entry>
+  <entry key="CHOOSE_TYPE_STANDARD_VERSION">Choose the version of modular rate laws:</entry>
+  <entry key="DEFAULT_RATE_LAW_SELECT">Select the default rate law for each mechanism</entry>
+  
+  <!-- SettingsPanelKinetics -->
+  
+  <entry key="TITLE_KINETICS">Kinetics settings</entry>
   
   <!-- SimultaneousBindingModularRateLaw -->
   
@@ -276,7 +290,7 @@
   <!-- Weaver -->
   
   <entry key="WEAVER_SIMPLE_NAME">Non-linear additive model by Weaver et al. (1999)</entry>
-  
+    
   <!-- ZerothOrderForwardGMAK -->
   
   <entry key="ZEROTH_ORDER_FORWARD_GMAK_SIMPLE_NAME">Zeroth order forward mass action kinetics</entry>
@@ -284,12 +298,5 @@
   <!-- ZerothOrderReverseGMAK -->
   
   <entry key="ZEROTH_ORDER_REVERSE_GMAK_SIMPLE_NAME">Zeroth order reverse mass action kinetics</entry>
-  
-  <!-- ProgressAdapter -->
-  
-  <entry key="STORE_KINETIC_EQUATION">Store kinetic equation...</entry>
-  <entry key="STORE_KINETIC_EQUATIONS">Store kinetic equations...</entry>
-  <entry key="GENERATE_KINETIC_EQUATION">Generate kinetic equation...</entry>
-  <entry key="CREATE_MINI_MODEL">Create mini model...</entry>
   
 </properties>

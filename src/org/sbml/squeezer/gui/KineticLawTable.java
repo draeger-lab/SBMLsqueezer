@@ -60,10 +60,10 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.SqueezerOptionsGeneral;
-import org.sbml.squeezer.SqueezerOptionsRateLaws;
+import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
+import org.sbml.squeezer.kinetics.OptionsRateLaws;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
@@ -305,12 +305,12 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				int selected = 0;
 				final BasicKineticLaw oldLaw = ((BasicKineticLaw) klg
 						.getModifiedReaction(reaction.getId()).getKineticLaw());
-				SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
-				double defaultParamVal = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
-				UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptionsGeneral.TYPE_UNIT_CONSISTENCY));
-				prefs = SBPreferences.getPreferencesFor(SqueezerOptionsRateLaws.class);
-				boolean reversibility = prefs.getBoolean(SqueezerOptionsRateLaws.TREAT_ALL_REACTIONS_REVERSIBLE);
-				TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptionsRateLaws.TYPE_STANDARD_VERSION));
+				SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
+				double defaultParamVal = prefs.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
+				UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
+				prefs = SBPreferences.getPreferencesFor(OptionsRateLaws.class);
+				boolean reversibility = prefs.getBoolean(OptionsRateLaws.TREAT_ALL_REACTIONS_REVERSIBLE);
+				TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(OptionsRateLaws.TYPE_STANDARD_VERSION));
 				
 				for (int i = 0; i < possibleLaws.length; i++) {
 					possibleLaws[i] = klg.createKineticLaw(reaction,

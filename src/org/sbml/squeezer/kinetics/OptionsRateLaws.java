@@ -21,21 +21,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ---------------------------------------------------------------------
  */
-package org.sbml.squeezer;
+package org.sbml.squeezer.kinetics;
 
 import java.util.ResourceBundle;
 
-import org.sbml.squeezer.kinetics.CommonModularRateLaw;
-import org.sbml.squeezer.kinetics.GeneralizedMassAction;
-import org.sbml.squeezer.kinetics.HillHinzeEquation;
-import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
-import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
-import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
-import org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes;
-import org.sbml.squeezer.kinetics.MichaelisMenten;
-import org.sbml.squeezer.kinetics.RandomOrderMechanism;
-import org.sbml.squeezer.kinetics.TypeStandardVersion;
-import org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK;
+import org.sbml.squeezer.SBMLsqueezer;
+import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
@@ -46,11 +37,13 @@ import de.zbit.util.prefs.OptionGroup;
 import de.zbit.util.prefs.Range;
 
 /**
+ * User settings for rate laws.
+ * 
  * @author Andreas Dr&auml;ger
  * @version $Rev$
  * @since 1.4
  */
-public interface SqueezerOptionsRateLaws extends KeyProvider {
+public interface OptionsRateLaws extends KeyProvider {
 
 	/**
 	 * 
@@ -148,7 +141,7 @@ public interface SqueezerOptionsRateLaws extends KeyProvider {
 			GeneralizedMassAction.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
-					SqueezerOptionsGeneral.RANGE_FALSE));
+					OptionsGeneral.RANGE_FALSE));
 
 	/**
 	 * This key defines the default kinetic law to be applied to
@@ -198,7 +191,7 @@ public interface SqueezerOptionsRateLaws extends KeyProvider {
 			IrrevNonModulatedNonInteractingEnzymes.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
-					SqueezerOptionsGeneral.RANGE_FALSE));
+					OptionsGeneral.RANGE_FALSE));
 
 	/**
 	 * The class name of the default kinetic law for reversible bi-bi reactions.
@@ -227,7 +220,7 @@ public interface SqueezerOptionsRateLaws extends KeyProvider {
 			RandomOrderMechanism.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
-					SqueezerOptionsGeneral.RANGE_FALSE));
+					OptionsGeneral.RANGE_FALSE));
 
 	/**
 	 * The class name of the default kinetic law for bi-uni reactions. This can
@@ -256,7 +249,7 @@ public interface SqueezerOptionsRateLaws extends KeyProvider {
 			RandomOrderMechanism.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
-					SqueezerOptionsGeneral.RANGE_FALSE));
+					OptionsGeneral.RANGE_FALSE));
 
 	
 	/**
@@ -274,16 +267,7 @@ public interface SqueezerOptionsRateLaws extends KeyProvider {
 			MichaelisMenten.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
-					SqueezerOptionsGeneral.RANGE_FALSE));
-	
-	/**
-	 * 
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final OptionGroup<?> GROUP_STANDARD_VERSION = new OptionGroup(
-		"GROUP_STANDARD_VERSION",
-		OPTIONS_BUNDLE,
-		TYPE_STANDARD_VERSION);
+					OptionsGeneral.RANGE_FALSE));
 
 	/**
 	 * 
@@ -311,9 +295,10 @@ public interface SqueezerOptionsRateLaws extends KeyProvider {
 	 * Select the default rate law for each reversible mechanism.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static final OptionGroup<Class> GROUP_REVERSIBLE_KINETICS = new OptionGroup<Class>(
+	public static final OptionGroup<?> GROUP_REVERSIBLE_KINETICS = new OptionGroup(
 			"GROUP_REVERSIBLE_KINETICS",
 			OPTIONS_BUNDLE,
+			TYPE_STANDARD_VERSION,
 			KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS,
 			KINETICS_REVERSIBLE_UNI_UNI_TYPE,
 			KINETICS_REVERSIBLE_BI_UNI_TYPE,

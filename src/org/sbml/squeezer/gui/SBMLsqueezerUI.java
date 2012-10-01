@@ -23,11 +23,11 @@
  */
 package org.sbml.squeezer.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -41,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -51,7 +52,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -70,7 +70,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.SqueezerOptionsGeneral;
+import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
@@ -187,23 +187,19 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	public static void initImages() {
 		LaTeXExportDialog.initImages();
 		String iconPaths[] = {
-				"ICON_DIAGRAM_TINY.png",
-				"ICON_DOWN_ARROW.png",
-				"ICON_DOWN_ARROW_TINY.png",
 				"ICON_FORWARD.png",
 				"ICON_GARUDA_16.png",
-				"ICON_GEAR_TINY.png",
 				"ICON_LEFT_ARROW.png",
-				"ICON_LEMON_SMALL.png",
-				"ICON_LEMON_TINY.png",
 				"ICON_LOGO_SMALL.png",
-				"ICON_PICTURE_TINY.png",
-				"ICON_RIGHT_ARROW.png",
-				"ICON_RIGHT_ARROW_TINY.png",
 				"ICON_SABIO-RK_16.png",
-				"ICON_STABILITY_SMALL.png",
-				"ICON_STRUCTURAL_MODELING_TINY.png",
-				"IMAGE_LEMON.png"
+				"SBMLsqueezerIcon_256.png",
+				"SBMLsqueezerIcon_128.png",
+				"SBMLsqueezerIcon_48.png",
+				"SBMLsqueezerIcon_32.png",
+				"SBMLsqueezerIcon_16.png",
+				"SBMLsqueezerLogo_256.png",
+				"SBMLsqueezerLogo_16.png",
+				"SBMLsqueezerWatermark.png"
 		    };
 	    for (String path : iconPaths) {
 	      URL u = Resource.class.getResource("img/" + path);
@@ -245,16 +241,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	}
 
 	/**
-	 * Default background color.
-	 */
-	private Color colorDefault;
-
-	/**
-	 * 
-	 */
-	private JLabel logo;
-
-	/**
 	 * Manages all models, storage, loading and selecting models.
 	 */
 	private SBMLio sbmlIO;
@@ -284,17 +270,23 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public SBMLsqueezerUI(SBMLio io, AppConf appConf) {
 		super(appConf);
-		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
+		this.prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
 		this.sbmlIO = io;
 		GUITools.setEnabled(false, getJMenuBar(), getJToolBar(), Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX);
-		setSBMLsqueezerBackground();
-		// TODO
-		// setIconImage(UIManager.getIcon("IMAGE_LEMON"));
+		int[] resolutions=new int[]{16, 32, 48, 128, 256};
+		List<Image> icons = new LinkedList<Image>();
+		for (int res: resolutions) {
+		  Object icon = UIManager.get("SBMLsqueezerIcon_" + res);
+		  if ((icon != null) && (icon instanceof ImageIcon)) {
+		    icons.add(((ImageIcon) icon).getImage());
+		  }
+		}
+		setIconImages(icons);
 		tabbedPane.addChangeListener(sbmlIO);
 		for (OpenedFile<SBMLDocument> file : sbmlIO.getListOfOpenedFiles()) {
 			Model m = file.getDocument().getModel();
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(), prefs
-					.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS));
+					.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS));
 			if (m != null) {
 				try {
 					addModel(file);
@@ -312,17 +304,17 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		switch (Command.valueOf(e.getActionCommand())) {
 			case SABIO_RK:
 				SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
-				SBPreferences prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
-				controller.setGenerateLawsForAllReactions(prefs.getBoolean(SqueezerOptionsGeneral.GENERATE_KINETIC_LAWS_FOR_ALL_REACTIONS));
+				SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
+				controller.setGenerateLawsForAllReactions(prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS));
 				if (e.getSource() instanceof Reaction) {
 					SABIORKWizard.getResultGUI(this,
 						ModalityType.APPLICATION_MODAL, controller.createSubmodel(((Reaction) e.getSource()).getId()).getSBMLDocument());
 					// TODO: This will always store all rate laws! What happens if the user cancels the operation?
-					controller.storeKineticLaws(prefs.getBoolean(SqueezerOptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
+					controller.storeKineticLaws(prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
 				} else {
 					SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.createSubModel().getSBMLDocument());
 					// TODO: This will always store all rate laws! What happens if the user cancels the operation?
-					controller.storeKineticLaws(prefs.getBoolean(SqueezerOptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
+					controller.storeKineticLaws(prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
 				}
 				break;
 			case SQUEEZE:
@@ -458,7 +450,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		
 		tree.addActionListener(this);
 		JMenuItem sabioItem = GUITools.createJMenuItem(tree, Command.SABIO_RK, UIManager.getIcon("ICON_SABIO-RK_16"));
-		JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("ICON_LEMON_TINY")); 
+		JMenuItem squeezeItem = GUITools.createJMenuItem(tree, Command.SQUEEZE, UIManager.getIcon("SBMLsqueezerLogo_16")); 
 		JMenuItem latexItem = GUITools.createJMenuItem(tree,  Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"));
 		
 		tree.addPopupMenuItem(sabioItem, Reaction.class, Model.class, SBMLDocument.class);
@@ -483,21 +475,11 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	@Override
 	protected JMenuItem[] additionalEditMenuItems() {
-		// TODO: Not in this version
-		// editMenu.addSeparator();
-		// editMenu.add(GUITools.createMenuItem("Analyze Stability",
-		// Command.CHECK_STABILITY, this, GUITools.ICON_STABILITY_SMALL));
-		// editMenu.add(GUITools.createMenuItem("Structural Kinetic Modelling",
-		// Command.STRUCTURAL_KINETIC_MODELLING, this,
-		// GUITools.ICON_STRUCTURAL_MODELING_TINY));
-		// editMenu.add(GUITools.createMenuItem("Simulation", Command.SIMULATE,
-		// 'S', this, GUITools.ICON_DIAGRAM_TINY));
-
 		return new JMenuItem[] {
 				GUITools.createJMenuItem(this,
 					Command.SABIO_RK, UIManager.getIcon("ICON_SABIO-RK_16")),
 				GUITools.createJMenuItem(this,
-					Command.SQUEEZE, UIManager.getIcon("ICON_LEMON_TINY"),
+					Command.SQUEEZE, UIManager.getIcon("SBMLsqueezerLogo_16"),
 					KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK)),
 				GUITools.createJMenuItem(this,
 					Command.TO_LATEX, UIManager.getIcon("ICON_LATEX_16"),
@@ -514,29 +496,13 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		try {
 			Model model = sbmlIO.convertModel(file.getAbsolutePath());
 			checkForSBMLErrors(this, model, sbmlIO.getWarnings(), 
-				prefs.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS));
+				prefs.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS));
 			if (model != null) {
 				addModel(new OpenedFile<SBMLDocument>(file, model.getSBMLDocument()));
 			}
 		} catch (Exception exc) {
 			GUITools.showErrorMessage(this, exc);
 		}
-	}
-
-	/**
-	 * 
-	 */
-	private void setSBMLsqueezerBackground() {
-		if (tabbedPane.getComponentCount() == 0) {
-			getContentPane().remove(tabbedPane);
-			getContentPane().setBackground(Color.WHITE);
-			getContentPane().add(logo, BorderLayout.CENTER);
-		} else {
-			getContentPane().setBackground(colorDefault);
-			getContentPane().remove(logo);
-			getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		}
-		getContentPane().validate();
 	}
 
 	/* (non-Javadoc)
@@ -552,7 +518,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					GUITools.setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE);
 				}
 			}
-			setSBMLsqueezerBackground();
 		}
 	}
 	
@@ -704,15 +669,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#createMainComponent()
 	 */
 	protected Component createMainComponent() {
-		colorDefault = getContentPane().getBackground();
-		Icon icon = UIManager.getIcon("ICON_LOGO_SMALL");
-		logo = new JLabel(StringUtil.toHTML("<br><br><br><br><br>"+MESSAGES.getString("VERSION")+": "
-				+ System.getProperty("app.version")), icon, JLabel.CENTER);
-		if (icon != null) {
-			logo.setPreferredSize(new Dimension(icon.getIconWidth() + 125, icon
-					.getIconHeight() + 75));
-		}
-		tabbedPane = new JTabbedPaneDraggableAndCloseable();
+		Icon icon = UIManager.getIcon("SBMLsqueezerWatermark");
+		tabbedPane = new JTabbedPaneDraggableAndCloseable((ImageIcon) icon);
 		tabbedPane.addCloseListener(this);
 		tabbedPane.addChangeListener(this);
 		return tabbedPane;
@@ -745,21 +703,21 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#getURLAboutMessage()
 	 */
 	public URL getURLAboutMessage() {
-		return SBMLsqueezer.class.getResource("resources/html/about.html");
+		return SBMLsqueezer.class.getResource(MESSAGES.getString("URL_ABOUT_MESSAGE"));
 	}
 
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#getURLLicense()
 	 */
 	public URL getURLLicense() {
-		return SBMLsqueezer.class.getResource("resources/html/License.html");
+		return SBMLsqueezer.class.getResource(MESSAGES.getString("URL_LICENSE_FILE"));
 	}
 
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#getURLOnlineHelp()
 	 */
 	public URL getURLOnlineHelp() {
-		return SBMLsqueezer.class.getResource("resources/html/help.html");
+		return SBMLsqueezer.class.getResource(MESSAGES.getString("URL_ONLINE_HELP"));
 	}
 	
 	/* (non-Javadoc)

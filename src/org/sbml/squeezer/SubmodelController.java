@@ -1211,7 +1211,9 @@ public class SubmodelController {
 		for (int i = 0; i < submodel.getReactionCount(); i++) {
 			Reaction r = submodel.getReaction(i);
 			storeKineticLaw(r.getKineticLaw(), false);
-			progressAdapter.progressOn();
+			if (progressAdapter != null) {
+				progressAdapter.progressOn();
+			}
 		}
 		
 		if (removeUnnecessaryParameters) {

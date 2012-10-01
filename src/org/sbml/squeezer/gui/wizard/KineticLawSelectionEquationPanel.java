@@ -60,7 +60,7 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.SqueezerOptionsGeneral;
+import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.gui.KineticLawTable;
 import org.sbml.squeezer.gui.KineticLawTableModel;
 import org.sbml.squeezer.gui.SBMLsqueezerUI;
@@ -134,7 +134,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 	public KineticLawSelectionEquationPanel(KineticLawGenerator klg, SBMLio sbmlIO) {
 		super(new BorderLayout());
 		
-		this.prefs = new SBPreferences(SqueezerOptionsGeneral.class);
+		this.prefs = new SBPreferences(OptionsGeneral.class);
 		this.sbmlIO = sbmlIO;
 		this.klg = klg;
 		
@@ -264,7 +264,7 @@ public class KineticLawSelectionEquationPanel extends JPanel implements ActionLi
 						parent,
 						sbmlIO.getSelectedModel(),
 						sbmlIO.getWriteWarnings(), 
-						prefs.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS)
+						prefs.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS)
 				  );
 					KineticsAndParametersStoredInSBML = true;
 					logger.log(Level.INFO, LABELS.getString("READY"));
