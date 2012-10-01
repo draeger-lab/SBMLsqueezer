@@ -26,7 +26,6 @@ package org.sbml.squeezer.io;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -136,35 +135,29 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 		try {
 			Object origModel;
 			Model convertedModel = null;
-			try
-	        {
-	            Class<?>[] params = new Class[]{Object.class};
-	            Method strMethod = SBMLInputConverter.class.getMethod(
-	                "convert2Model", params);
-	            try {
-	            	convertedModel = (Model) strMethod.invoke(reader, model);
-				} catch (Exception e) {
-				}
-	        }
-	        catch (NoSuchMethodException ex)
-	        {
-				convertedModel = reader.convertModel(model);
-	        }
+			File file = null;
+			convertedModel = reader.convertModel(model);
 			if (model instanceof String) {
+				file = new File(model.toString());
+				if (!file.exists() || !file.isFile() || !file.canRead()) {
+					file = null;
+				}
 				origModel = reader.getOriginalModel();
 			} else {
 				origModel = model;
 			}
 			convertedModel.putUserObject(ORIGINAL_MODEL_KEY, origModel);
 			openedModel = convertedModel;
-			openedDocument = new OpenedFile<SBMLDocument>(convertedModel.getSBMLDocument());
+			openedDocument = new OpenedFile<SBMLDocument>(file, convertedModel.getSBMLDocument());
+			listOfOpenedFiles.add(openedDocument);
+			selectedModel = listOfOpenedFiles.size() - 1;
 			return convertedModel;
 		} catch (Exception exc) {
 			// exc.fillInStackTrace();
 			exc.printStackTrace();
 			SBMLException sbmlExc = new SBMLException(
-					MessageFormat.format(WARNINGS.getString("CANT_READ_MODEL"), ""),
-					exc);
+				MessageFormat.format(WARNINGS.getString("CANT_READ_MODEL"), ""),
+				exc);
 			sbmlExc.setCategory(Category.XML);
 			throw sbmlExc;
 		}

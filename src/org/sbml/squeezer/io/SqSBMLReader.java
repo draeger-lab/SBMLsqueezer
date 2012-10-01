@@ -167,8 +167,8 @@ public class SqSBMLReader implements SBMLInputConverter {
 	 */
 	private SBMLDocument model2SBML(String model)
 	throws IOException, XMLStreamException {
-		File file = new File(model.toString());
 		SBMLDocument doc = null;
+		File file = new File(model.toString());
 		if (!file.exists() || !file.isFile() || !file.canRead()) {
 			// XML
 			doc = SBMLReader.read((String) model);

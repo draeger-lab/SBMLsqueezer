@@ -41,10 +41,10 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.squeezer.KineticLawGenerator;
-import org.sbml.squeezer.SqueezerOptionsGeneral;
-import org.sbml.squeezer.SqueezerOptionsRateLaws;
+import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.io.SBMLio;
+import org.sbml.squeezer.kinetics.OptionsRateLaws;
 import org.sbml.squeezer.kinetics.TypeStandardVersion;
 
 import de.zbit.gui.GUITools;
@@ -85,7 +85,7 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 */
 	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID) {
 		super();
-		this.prefs = SBPreferences.getPreferencesFor(SqueezerOptionsGeneral.class);
+		this.prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
 		this.value = JOptionPane.CLOSED_OPTION;
 		this.dialog = dialog;
 		this.sbmlio = sbmlIO;
@@ -160,16 +160,16 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			reaction.setReversible(messagePanel.getReversible());
 			klg.setReversibility(messagePanel.getReversible());
 			
-			double defaultParamVal = prefs.getDouble(SqueezerOptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
-			TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(SqueezerOptionsRateLaws.TYPE_STANDARD_VERSION));
-			UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(SqueezerOptionsGeneral.TYPE_UNIT_CONSISTENCY));
+			double defaultParamVal = prefs.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
+			TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(OptionsRateLaws.TYPE_STANDARD_VERSION));
+			UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
 			
 			KineticLaw kineticLaw = klg.createKineticLaw(reaction, equationType, messagePanel.getReversible(), version, consistency, defaultParamVal);
 			klg.storeKineticLaw(kineticLaw);
 			sbmlio.saveChanges(reaction);
 			SBMLsqueezerUI.checkForSBMLErrors(dialog,
 				sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
-				.getBoolean(SqueezerOptionsGeneral.SHOW_SBML_WARNINGS));
+				.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS));
 			
 			KineticsAndParametersStoredInSBML = true;
 		} else {

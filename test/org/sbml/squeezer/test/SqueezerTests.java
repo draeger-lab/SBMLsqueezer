@@ -21,7 +21,7 @@ import org.sbml.jsbml.xml.libsbml.LibSBMLReader;
 import org.sbml.jsbml.xml.libsbml.LibSBMLWriter;
 import org.sbml.squeezer.KineticLawGenerator;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.SqueezerOptionsGeneral;
+import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.UnitFactory;
 import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
@@ -411,7 +411,7 @@ public class SqueezerTests extends TestCase {
 		long time = System.currentTimeMillis();
 		logger.info("test default settings of SBPreferences");
 
-		SBPreferences preferences = new SBPreferences(SqueezerOptionsGeneral.class);
+		SBPreferences preferences = new SBPreferences(OptionsGeneral.class);
 		try {
 			preferences.checkPrefs();
 		} catch (Exception e) {

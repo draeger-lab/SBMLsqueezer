@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="application.name">Garuda Platform Dashboard</entry>
+
+  <entry key="server.port">9000</entry>
+  <entry key="server.read.timeout">0</entry>
+  <entry key="command.connect.timeout">0</entry>
+  <entry key="command.read.timeout">0</entry>
+  <entry key="software.startup.wait.interval">5000</entry>
+  <entry key="software.startup.wait.try.num">4</entry>
+
+</properties>

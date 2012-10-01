@@ -58,7 +58,6 @@
 		<!-- adjust the settings to your local environment -->
 		<path id="classpath">
 			<fileset dir="${jars.dir}" includes="*.jar *.zip"/>
-			<fileset dir="${basedir}/lib/garuda" includes="*.jar"/>
 		</path>	
 
 	</target>
@@ -114,13 +113,13 @@
 			</fileset>
 		</copy>
 
-		<!--<copy todir="${build.src}" overwrite="yes">
+		<copy todir="${build.src}" overwrite="yes">
 			<fileset 
   	            dir="${test.src.dir}"
   	        	includes="org/sbml/squeezer/**"
   	            excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
 			</fileset>
-		</copy>-->
+		</copy>
 
 		<copy todir="${build.src}" overwrite="yes">
 			<fileset 
@@ -181,7 +180,9 @@
            classpathref="classpath">
 		</javac>
 		<manifest file="${build.dest}/META-INF/MANIFEST.MF">
-			<attribute name="Main-Class" value="jp.sbi.garuda.platform.test.GarudaLauncher"/> <!-- org.sbml.squeezer.SBMLsqueezer -->
+			<attribute name="Main-Class" value="org.sbml.squeezer.SBMLsqueezer"/>
+			<attribute name="Built-By" value="Center for Bioinformatics Tuebingen (ZBIT)"/>
+			<attribute name="SplashScreen-Image" value="org/sbml/squeezer/gui/img/SBMLsqueezerSplash.gif"/>
 			<section name="${Name}">
 				<attribute name="Specification-Title" value="${Name}"/>
 				<attribute name="Specification-Version" value="${api.version}"/>
@@ -189,7 +190,6 @@
 				<attribute name="Implementation-Version" value="${version}"/>
 			</section>
 		</manifest>
-
 	</target>
 
 
@@ -232,7 +232,6 @@
 		<jar jarfile="${build.dir}/${name}-${version}-with-dependencies.jar"
          basedir="${build.dest}"  manifest="${build.dest}/META-INF/MANIFEST.MF">
 			<zipgroupfileset dir="${jars.dir}" includes="*.jar" excludes="jsbmlbridge.jar"/>
-			<zipgroupfileset dir="${jars.dir}/garuda" includes="*.jar"/>
 		</jar>
 	</target>
 
