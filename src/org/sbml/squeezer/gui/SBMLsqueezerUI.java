@@ -69,8 +69,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.OptionsGeneral;
+import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
@@ -87,6 +87,7 @@ import org.sbml.tolatex.io.TextExport;
 import de.zbit.AppConf;
 import de.zbit.garuda.GarudaActions;
 import de.zbit.garuda.GarudaFileSender;
+import de.zbit.garuda.GarudaGUIfactory;
 import de.zbit.garuda.GarudaOptions;
 import de.zbit.garuda.GarudaSoftwareBackend;
 import de.zbit.gui.BaseFrame;
@@ -458,11 +459,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				&& !appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA)) {
 			return super.additionalMenus();
 		}
-		JMenuItem sentFile = GUITools.createJMenuItem(this, GarudaActions.SENT_TO_GARUDA, false);
-		ResourceBundle garudaBundle = ResourceManager.getBundle("de.zbit.garuda.locales.Labels");
-		JMenu garudaMenu = GUITools.createJMenu(garudaBundle.getString("GARUDA"), sentFile);
-		garudaMenu.setToolTipText(garudaBundle.getString("GARUDA_TOOLTIP"));
-		return new JMenu[] {garudaMenu};
+		return new JMenu[] { GarudaGUIfactory.createGarudaMenu(this) };
 	}
 
 	/* (non-Javadoc)
