@@ -85,7 +85,9 @@ import org.sbml.tolatex.io.LaTeXReportGenerator;
 import org.sbml.tolatex.io.TextExport;
 
 import de.zbit.AppConf;
+import de.zbit.garuda.GarudaActions;
 import de.zbit.garuda.GarudaFileSender;
+import de.zbit.garuda.GarudaOptions;
 import de.zbit.garuda.GarudaSoftwareBackend;
 import de.zbit.gui.BaseFrame;
 import de.zbit.gui.GUIOptions;
@@ -132,7 +134,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	private static final transient Logger logger = Logger.getLogger(SBMLsqueezerUI.class.getName());
 	private static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	private static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-	private static final transient ResourceBundle GARUDA = ResourceManager.getBundle("de.zbit.garuda.locales.Labels"); 
 
 	/**
 	 * This is what the graphical user interface of SBMLsqueezer can do...
@@ -154,19 +155,12 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		 * Convert the current model or the current SBML object into a LaTeX
 		 * report.
 		 */
-		TO_LATEX,
-		/**
-		 * 
-		 */
-		SENT_TO_GARUDA;
+		TO_LATEX;
 
 		/* (non-Javadoc)
 		 * @see de.zbit.gui.ActionCommand#getName()
 		 */
 		public String getName() {
-			if (this == SENT_TO_GARUDA) {
-				return GARUDA.getString(name());
-			}
 			return MESSAGES.getString(name());
 		}
 
@@ -174,9 +168,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		 * @see de.zbit.gui.ActionCommand#getToolTip()
 		 */
 		public String getToolTip() {
-			if (this == SENT_TO_GARUDA) {
-				return GARUDA.getString(name() + "_TOOLTIP");
-			}
 			return MESSAGES.getString(name() + "_TOOLTIP");
 		}
 	}
@@ -188,7 +179,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		LaTeXExportDialog.initImages();
 		String iconPaths[] = {
 				"ICON_FORWARD.png",
-				"ICON_GARUDA_16.png",
 				"ICON_LEFT_ARROW.png",
 				"ICON_LOGO_SMALL.png",
 				"ICON_SABIO-RK_16.png",
@@ -200,13 +190,13 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				"SBMLsqueezerLogo_256.png",
 				"SBMLsqueezerLogo_16.png",
 				"SBMLsqueezerWatermark.png"
-		    };
-	    for (String path : iconPaths) {
-	      URL u = Resource.class.getResource("img/" + path);
-	      if (u != null) {
-	        UIManager.put(path.substring(0, path.lastIndexOf('.')), new ImageIcon(u));
-	      }
-	    }
+		};
+		for (String path : iconPaths) {
+			URL u = Resource.class.getResource("img/" + path);
+			if (u != null) {
+				UIManager.put(path.substring(0, path.lastIndexOf('.')), new ImageIcon(u));
+			}
+		}
 	}
 
 	/**
@@ -301,94 +291,95 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent e) {
-		switch (Command.valueOf(e.getActionCommand())) {
-			case SABIO_RK:
-				SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
-				SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
-				controller.setGenerateLawsForAllReactions(prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS));
-				if (e.getSource() instanceof Reaction) {
-					SABIORKWizard.getResultGUI(this,
-						ModalityType.APPLICATION_MODAL, controller.createSubmodel(((Reaction) e.getSource()).getId()).getSBMLDocument());
-					// TODO: This will always store all rate laws! What happens if the user cancels the operation?
-					controller.storeKineticLaws(prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
-				} else {
-					SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.createSubModel().getSBMLDocument());
-					// TODO: This will always store all rate laws! What happens if the user cancels the operation?
-					controller.storeKineticLaws(prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
-				}
-				break;
-			case SQUEEZE:
-				boolean KineticsAndParametersStoredInSBML = false;
-				if (e.getSource() instanceof Reaction) {
-					// single reaction
-					try {
-						KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(this, sbmlIO, ((Reaction) e.getSource()).getId());
-						KineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
-					} catch (Throwable exc) {
-						GUITools.showErrorMessage(this, exc);
+		if (e.getActionCommand().equals(GarudaActions.SENT_TO_GARUDA.toString())) {
+			OpenedFile<SBMLDocument> openedFile = sbmlIO.getSelectedOpenedFile();
+			File file = openedFile.getFile();
+			if (openedFile.isChanged()) {
+				try {
+					file = File.createTempFile(FileTools.trimExtension(file.getName()), '.' + FileTools.getExtension(file.getName()));
+					sbmlIO.writeSelectedModelToSBML(file.getAbsolutePath());
+				} catch (IOException exc) {
+					GUITools.showErrorMessage(this, exc);
+				}	
+			}
+			GarudaFileSender sender = new GarudaFileSender(this, garudaBackend, file);
+			sender.execute();
+		} else {
+			switch (Command.valueOf(e.getActionCommand())) {
+				case SABIO_RK:
+					SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
+					SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
+					controller.setGenerateLawsForAllReactions(prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS));
+					if (e.getSource() instanceof Reaction) {
+						SABIORKWizard.getResultGUI(this,
+							ModalityType.APPLICATION_MODAL, controller.createSubmodel(((Reaction) e.getSource()).getId()).getSBMLDocument());
+						// TODO: This will always store all rate laws! What happens if the user cancels the operation?
+						controller.storeKineticLaws(prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
+					} else {
+						SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.createSubModel().getSBMLDocument());
+						// TODO: This will always store all rate laws! What happens if the user cancels the operation?
+						controller.storeKineticLaws(prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
 					}
-				} else {
-					// whole model
-					KineticLawSelectionWizard wizard;
-					wizard = new KineticLawSelectionWizard(this, sbmlIO);
-					wizard.getDialog().addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosed", ""));
-					wizard.showModalDialog();
-					KineticsAndParametersStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
-				}
-				if (KineticsAndParametersStoredInSBML) {
-					SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
-					try {
-						split.updateUI();
-					} catch (Exception exc) {
-						exc.printStackTrace();
+					break;
+				case SQUEEZE:
+					boolean KineticsAndParametersStoredInSBML = false;
+					if (e.getSource() instanceof Reaction) {
+						// single reaction
+						try {
+							KineticLawSelectionDialog klsd = new KineticLawSelectionDialog(this, sbmlIO, ((Reaction) e.getSource()).getId());
+							KineticsAndParametersStoredInSBML = klsd.isKineticsAndParametersStoredInSBML();
+						} catch (Throwable exc) {
+							GUITools.showErrorMessage(this, exc);
+						}
+					} else {
+						// whole model
+						KineticLawSelectionWizard wizard;
+						wizard = new KineticLawSelectionWizard(this, sbmlIO);
+						wizard.getDialog().addWindowListener(EventHandler.create(WindowListener.class, this, "windowClosed", ""));
+						wizard.showModalDialog();
+						KineticsAndParametersStoredInSBML = wizard.isKineticsAndParametersStoredInSBML();
 					}
-				}
-				break;
-			case TO_LATEX:
-				if (e.getSource() instanceof Reaction) {
-					new LaTeXExportDialog(this, (Reaction) e.getSource());
-				} else if (e.getSource() instanceof Model) {
-					new LaTeXExportDialog(this, (Model) e.getSource());
-				} else {
-					SBPreferences guiPrefs = SBPreferences
-							.getPreferencesFor(GUIOptions.class);
-					String dir = guiPrefs.get(GUIOptions.OPEN_DIR);
-					File out = GUITools.saveFileDialog(this, dir, false, false,
-						JFileChooser.FILES_ONLY, SBFileFilter
-						.createTeXFileFilter());
-					if (out != null) {
-						String path = out.getParent();
-						if (!path.equals(dir)) {
-							guiPrefs.put(GUIOptions.OPEN_DIR, path);
-							try {
-								guiPrefs.flush();
-							} catch (BackingStoreException exc) {
-								GUITools.showErrorMessage(this, exc);
+					if (KineticsAndParametersStoredInSBML) {
+						SBMLModelSplitPane split = (SBMLModelSplitPane) tabbedPane.getSelectedComponent();
+						try {
+							split.updateUI();
+						} catch (Exception exc) {
+							exc.printStackTrace();
+						}
+					}
+					break;
+				case TO_LATEX:
+					if (e.getSource() instanceof Reaction) {
+						new LaTeXExportDialog(this, (Reaction) e.getSource());
+					} else if (e.getSource() instanceof Model) {
+						new LaTeXExportDialog(this, (Model) e.getSource());
+					} else {
+						SBPreferences guiPrefs = SBPreferences
+								.getPreferencesFor(GUIOptions.class);
+						String dir = guiPrefs.get(GUIOptions.OPEN_DIR);
+						File out = GUITools.saveFileDialog(this, dir, false, false,
+							JFileChooser.FILES_ONLY, SBFileFilter
+							.createTeXFileFilter());
+						if (out != null) {
+							String path = out.getParent();
+							if (!path.equals(dir)) {
+								guiPrefs.put(GUIOptions.OPEN_DIR, path);
+								try {
+									guiPrefs.flush();
+								} catch (BackingStoreException exc) {
+									GUITools.showErrorMessage(this, exc);
+								}
+							}
+							if (!out.exists()
+									|| GUITools.overwriteExistingFile(this, out)) {
+								writeLaTeX(out);
 							}
 						}
-						if (!out.exists()
-								|| GUITools.overwriteExistingFile(this, out)) {
-							writeLaTeX(out);
-						}
 					}
-				}
-				break;
-			case SENT_TO_GARUDA:
-				OpenedFile<SBMLDocument> openedFile = sbmlIO.getSelectedOpenedFile();
-				File file = openedFile.getFile();
-				if (openedFile.isChanged()) {
-					try {
-						file = File.createTempFile(FileTools.trimExtension(file.getName()), '.' + FileTools.getExtension(file.getName()));
-						sbmlIO.writeSelectedModelToSBML(file.getAbsolutePath());
-					} catch (IOException exc) {
-						GUITools.showErrorMessage(this, exc);
-					}	
-				}
-				GarudaFileSender sender = new GarudaFileSender(this, garudaBackend, file);
-				sender.execute();
-				break;
-			default:
-				break;
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -412,7 +403,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		GUITools.setEnabled(true,  getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
 			Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX);
 		if (this.garudaBackend != null) {
-			GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), Command.SENT_TO_GARUDA);
+			GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), GarudaActions.SENT_TO_GARUDA);
 		}
 		sbmlIO.getListOfOpenedFiles().add(openedFile);
 		
@@ -463,10 +454,14 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	@Override
 	protected JMenu[] additionalMenus() {
-		JMenuItem sentFile = GUITools.createJMenuItem(this, Command.SENT_TO_GARUDA, UIManager.getIcon("ICON_GARUDA_16"), false);
-		JMenu garudaMenu = GUITools.createJMenu(GARUDA.getString("GARUDA"), sentFile);
-		garudaMenu.setToolTipText(GARUDA.getString("GARUDA_TOOLTIP"));
-		garudaMenu.setEnabled(false);
+		if (appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA)
+				&& !appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA)) {
+			return super.additionalMenus();
+		}
+		JMenuItem sentFile = GUITools.createJMenuItem(this, GarudaActions.SENT_TO_GARUDA, false);
+		ResourceBundle garudaBundle = ResourceManager.getBundle("de.zbit.garuda.locales.Labels");
+		JMenu garudaMenu = GUITools.createJMenu(garudaBundle.getString("GARUDA"), sentFile);
+		garudaMenu.setToolTipText(garudaBundle.getString("GARUDA_TOOLTIP"));
 		return new JMenu[] {garudaMenu};
 	}
 
@@ -512,7 +507,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		if (e.getSource().equals(tabbedPane)) {
 			if (tabbedPane.getComponentCount() == 0) {
 				GUITools.setEnabled(false, getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE, BaseAction.FILE_SAVE_AS,
-					BaseAction.FILE_CLOSE, Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX, Command.SENT_TO_GARUDA);
+					BaseAction.FILE_CLOSE, Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX, GarudaActions.SENT_TO_GARUDA);
 			} else {
 				if (sbmlIO.getSelectedOpenedFile() != null) {
 					GUITools.setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE);
@@ -539,7 +534,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			change = (tabbedPane.getComponentCount() > 0);
 			if (tabbedPane.getComponentCount() == 0) {
 				GUITools.setEnabled(false, getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE, BaseAction.FILE_SAVE_AS,
-					BaseAction.FILE_CLOSE, Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX, Command.SENT_TO_GARUDA);
+					BaseAction.FILE_CLOSE, Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX, GarudaActions.SENT_TO_GARUDA);
 			} else {
 				GUITools.setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE);
 			}
@@ -653,7 +648,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			GUITools.setEnabled(false, getJMenuBar(), getJToolBar(),
 				BaseAction.FILE_CLOSE, BaseAction.FILE_SAVE,
 				BaseAction.FILE_SAVE_AS, Command.SQUEEZE, Command.SABIO_RK,
-				Command.TO_LATEX, Command.SENT_TO_GARUDA);
+				Command.TO_LATEX, GarudaActions.SENT_TO_GARUDA);
 		}
 		return tabbedPane.getComponentCount() > 0;
 	}
@@ -858,7 +853,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		} else if (propName.equals(GarudaSoftwareBackend.GARUDA_ACTIVATED)) {
 			this.garudaBackend = (GarudaSoftwareBackend) evt.getNewValue();
 			if (sbmlIO.getListOfOpenedFiles().size() > 0) {
-				GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), Command.SENT_TO_GARUDA);
+				GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), GarudaActions.SENT_TO_GARUDA);
 			}
 		}
 	}

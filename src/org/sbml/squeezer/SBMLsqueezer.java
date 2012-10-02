@@ -77,6 +77,7 @@ import de.zbit.AppConf;
 import de.zbit.Launcher;
 import de.zbit.UserInterface;
 import de.zbit.garuda.BackendNotInitializedException;
+import de.zbit.garuda.GarudaOptions;
 import de.zbit.garuda.GarudaSoftwareBackend;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
@@ -548,6 +549,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     list.add(OptionsRateLaws.class);
     list.add(GUIOptions.class);
     list.add(LaTeXOptions.class);
+    list.add(GarudaOptions.class);
     return list;
   }
 
@@ -633,29 +635,32 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
       readSBMLSource(properties.get(IOOptions.SBML_IN_FILE));
     }
     final Window gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend((UserInterface) gui);
-					garudaBackend.addInputFileFormat("xml", "SBML");
-					garudaBackend.addInputFileFormat("sbml", "SBML");
-					garudaBackend.addInputFileFormat("xml", "SBMLsqueezer");
-					garudaBackend.addInputFileFormat("xml", "NewTestSoftwareA");
-					garudaBackend.addOutputFileFormat("xml", "SBML");
-					garudaBackend.addOutputFileFormat("sbml", "SBML");
-					garudaBackend.addOutputFileFormat("xml", "SBMLsqueezer");
-					garudaBackend.addOutputFileFormat("xml", "NewTestSoftwareA");
-					garudaBackend.init();
-					garudaBackend.registedSoftwareToGaruda();
-				} catch (NetworkException exc) {
-					GUITools.showErrorMessage(gui, exc);
-				} catch (BackendNotInitializedException exc) {
-					GUITools.showErrorMessage(gui, exc);
-				} catch (Throwable exc) {
-					logger.fine(exc.getLocalizedMessage());
-				}
-			}
-		}).start();
+		if (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA)
+				|| appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA)) {
+    	new Thread(new Runnable() {
+    		public void run() {
+    			try {
+    				GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend((UserInterface) gui);
+    				garudaBackend.addInputFileFormat("xml", "SBML");
+    				garudaBackend.addInputFileFormat("sbml", "SBML");
+    				garudaBackend.addInputFileFormat("xml", "SBMLsqueezer");
+    				garudaBackend.addInputFileFormat("xml", "NewTestSoftwareA");
+    				garudaBackend.addOutputFileFormat("xml", "SBML");
+    				garudaBackend.addOutputFileFormat("sbml", "SBML");
+    				garudaBackend.addOutputFileFormat("xml", "SBMLsqueezer");
+    				garudaBackend.addOutputFileFormat("xml", "NewTestSoftwareA");
+    				garudaBackend.init();
+    				garudaBackend.registedSoftwareToGaruda();
+    			} catch (NetworkException exc) {
+    				GUITools.showErrorMessage(gui, exc);
+    			} catch (BackendNotInitializedException exc) {
+    				GUITools.showErrorMessage(gui, exc);
+    			} catch (Throwable exc) {
+    				logger.fine(exc.getLocalizedMessage());
+    			}
+    		}
+    	}).start();
+    }
     return gui;
   }
   
