@@ -113,13 +113,13 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${build.src}" overwrite="yes">
+		<!--<copy todir="${build.src}" overwrite="yes">
 			<fileset 
   	            dir="${test.src.dir}"
   	        	includes="org/sbml/squeezer/**"
   	            excludes="**/.svn*, **/*.class, **/*~, **/*.tgz, **/*.zip">
 			</fileset>
-		</copy>
+		</copy>-->
 
 		<copy todir="${build.src}" overwrite="yes">
 			<fileset 
