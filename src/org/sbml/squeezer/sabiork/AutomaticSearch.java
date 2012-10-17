@@ -33,26 +33,25 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.biojava.bio.seq.io.ParseException;
 import org.sbml.jsbml.AbstractSBase;
 import org.sbml.jsbml.CVTerm;
+import org.sbml.jsbml.CVTerm.Qualifier;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.CVTerm.Qualifier;
 import org.sbml.jsbml.util.filters.CVTermFilter;
 import org.sbml.jsbml.xml.parsers.SBMLCoreParser;
-import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
-import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
+import org.sbml.squeezer.sabiork.wizard.model.KineticLawImporter;
 
 import de.zbit.io.filefilter.SBFileFilter;
 
@@ -62,6 +61,11 @@ import de.zbit.io.filefilter.SBFileFilter;
  * @version $Rev$
  */
 public class AutomaticSearch {
+	
+	/**
+	 * A {@link Logger} for this class.
+	 */
+	private static final transient Logger logger = Logger.getLogger(AutomaticSearch.class.getName());
 	
 	/**
 	 * 
@@ -97,6 +101,8 @@ public class AutomaticSearch {
 	public static void main(String[] args) throws XMLStreamException,
 		IOException, WebServiceConnectException, WebServiceResponseException,
 		ParseException {
+		org.apache.log4j.LogManager.getLogger(SBMLCoreParser.class).setLevel(org.apache.log4j.Level.OFF);
+		org.apache.log4j.LogManager.getLogger(AbstractSBase.class).setLevel(org.apache.log4j.Level.OFF);
 		automaticSearch(args[0], args[1], args[2]);
 	}
 	
@@ -114,8 +120,6 @@ public class AutomaticSearch {
 	public static void automaticSearch(String rootFolder, String taxonomyFile, String outputFolder)
 		throws XMLStreamException, IOException, WebServiceConnectException,
 		WebServiceResponseException, ParseException {
-		LogManager.getLogger(SBMLCoreParser.class).setLevel(Level.OFF);
-		LogManager.getLogger(AbstractSBase.class).setLevel(Level.OFF);
 		int matched = 0;
 		int noReactionID = 0;
 		int matchingNotPossible = 0;
@@ -174,12 +178,10 @@ public class AutomaticSearch {
 					 * SBML-Input
 					 */
 					SBMLDocument sbmlDocument = null;
-					try{
+					try {
 						sbmlDocument = SBMLReader.read(file);
-					}
-					catch(Exception e) {
-						e.printStackTrace();
-						System.out.println(file.getAbsolutePath());
+					} catch(Exception exc) {
+						logger.log(Level.WARNING, file.getAbsolutePath(), exc);
 						continue;
 					}
 					CVTermFilter filter = new CVTermFilter(Qualifier.BQB_OCCURS_IN,
@@ -224,10 +226,10 @@ public class AutomaticSearch {
 									+ keggReactionID + constraints;
 							List<KineticLaw> kineticLaws = SABIORK.getKineticLaws(query);
 							
-							if((kineticLaws.size() == 0) && (organism != null)) {
-								if(alternativeOrganism == null) {
+							if ((kineticLaws.size() == 0) && (organism != null)) {
+								if (alternativeOrganism == null) {
 									String[] splits = organism.split(" "); 
-									if(splits.length > 2) {
+									if (splits.length > 2) {
 										constraints = new StringBuilder();
 										alternativeOrganism = splits[0].concat(" " + splits[1]);
 										constraints.append(" AND " + SABIORK.QueryField.ORGANISM + ":\""
@@ -236,7 +238,7 @@ public class AutomaticSearch {
 											+ ":true");
 									}
 								}
-								if(alternativeOrganism != null) {
+								if (alternativeOrganism != null) {
 									query = SABIORK.QueryField.KEGG_REACTION_ID + ":"
 										+ keggReactionID + constraints;
 									kineticLaws = SABIORK.getKineticLaws(query);
@@ -283,15 +285,14 @@ public class AutomaticSearch {
 			writer.newLine();
 			writer.newLine();
 			
-			System.out.println("Organism: " + organism);
-			if(matched_Organism == 0) {
-				System.out.println("No matches!");
+			logger.info("Organism: " + organism);
+			if (matched_Organism == 0) {
+				logger.warning("No matches!");
 			}
-			System.out.println("Matched: " + matched_Organism);
-			System.out.println("Law not found: " + noKineticLawFound_Organism);
-			System.out.println("Matching not possible: "
-					+ matchingNotPossible_Organism);
-			System.out.println("No KEGG id given: " + noReactionID_Organism);
+			logger.info("Matched: " + matched_Organism);
+			logger.info("Law not found: " + noKineticLawFound_Organism);
+			logger.info("Matching not possible: " + matchingNotPossible_Organism);
+			logger.info("No KEGG id given: " + noReactionID_Organism);
 		}
 		
 //		writer.append("Matched: " + matched);
@@ -303,12 +304,17 @@ public class AutomaticSearch {
 //		writer.newLine();
 //		writer.append("No KEGG id given " + noReactionID);
 //		writer.newLine();
-			writer.close();
+		writer.close();
+		
+		logger.info("matched: " + matched);
+		logger.info("no reaction id: " + noReactionID);
+		logger.info("matching not possible: " + matchingNotPossible);
+		logger.info("no kinetic law found: " + noKineticLawFound);
 //		
-//		System.out.println("Matched: " + matched);
-//		System.out.println("Law not found " + noKineticLawFound);
-//		System.out.println("Matching not possible " + matchingNotPossible);
-//		System.out.println("No KEGG id given " + noReactionID);
+//		logger.info("Matched: " + matched);
+//		logger.info("Law not found " + noKineticLawFound);
+//		logger.info("Matching not possible " + matchingNotPossible);
+//		logger.info("No KEGG id given " + noReactionID);
 		
 	}
 	

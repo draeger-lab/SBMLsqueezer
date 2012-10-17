@@ -249,6 +249,11 @@ public class CardMatching extends Card implements PropertyChangeListener {
 	private class JPanelComponentMatchEntry extends JPanel implements
 			ActionListener {
 
+		/**
+		 * Generated serial version identifier.
+		 */
+		private static final long serialVersionUID = -427890259513619815L;
+
 		private CallableSBase referencedComponent;
 		private CallableSBase matchingReferenceableComponent;
 		private Color color;
@@ -466,6 +471,11 @@ public class CardMatching extends Card implements PropertyChangeListener {
 	 */
 	private class JPanelComponentImportEntry extends JPanel implements
 			ActionListener {
+
+		/**
+		 * Generated serial version identifier.
+		 */
+		private static final long serialVersionUID = -4757499163593417872L;
 
 		private Color color;
 		private JButton buttonReferencedComponent;

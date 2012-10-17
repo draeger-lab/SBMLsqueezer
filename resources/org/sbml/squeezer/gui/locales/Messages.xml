@@ -148,9 +148,9 @@
   <!-- OrderedMechanism -->
   
   <entry key="ORDERED_MECHANISM_SIMPLE_NAME">Ordered mechanism</entry>
-  <entry key="COMPULSORY_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} compulsory-order ternary-complex mechanism{1}</entry>
-  <entry key="ONE_PRODUCT"></entry>
-  <entry key="TWO_PRODUCTS"></entry>
+  <entry key="COMPULSORY_ORDER_TERNARY_COMPLEY_MEACHANISM">{0} compulsory-order ternary-complex mechanism {1}</entry>
+  <entry key="ONE_PRODUCT">one product</entry>
+  <entry key="TWO_PRODUCTS">two products</entry>
   
   <!-- ParameterFactory -->
   
@@ -250,6 +250,8 @@
   <entry key="SCANNING_INPUT_FILES">Scanning input files</entry>
   <entry key="SQUEEZING_FILE">Squeezing file {0} into {1}</entry>
   <entry key="TIME_NEEDED_FOR_SQUEEZING">{0,number} s needed for squeezing file {1}.</entry>
+  <entry key="SAVE_BEFORE_CLOSING">Would you like to save the document?</entry>
+  <entry key="SAVE_BEFORE_CLOSING_TITLE">Save before closing</entry>
   
   <!-- SBMLsqueezerUI -->
   

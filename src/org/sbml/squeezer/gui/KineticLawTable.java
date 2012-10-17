@@ -93,8 +93,6 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 
 	private boolean editing;
 
-	private boolean reversibility;
-
 	private KineticLawGenerator klg;
 
 	// private static final int widthMultiplier = 7;
@@ -161,7 +159,6 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 		super();
 		new TableModelWorker(klg, progressBar, this, listener).execute();
 		this.klg = klg;
-		this.reversibility = klg.isReversibility();
 		getModel().addTableModelListener(this);
 		setColumnWidthAppropriately();
 		setRowHeightAppropriately();

@@ -81,13 +81,13 @@
   <entry key="WARNINGS_FOR_TOO_MANY_REACTANTS_TOOLTIP_TO_BE_MERGED">If checked, warnings will be shown for reactions with more reactants than specified here.</entry>
   
   <entry key="GROUP_GENERAL">General Options</entry>
-  <entry key="GROUP_GENERAL_TOOLTIP"></entry>
+  <entry key="GROUP_GENERAL_TOOLTIP">Basic configuration of SBMLsqueezer</entry>
   <entry key="GROUP_DEFAULT_VALUES">Default values</entry>
-  <entry key="GROUP_DEFAULT_VALUES_TOOLTIP"></entry>
+  <entry key="GROUP_DEFAULT_VALUES_TOOLTIP">Here you can specify how to deal with unknown values, how many reaction participants are still considered realistic, or which species should be ignored in kinetic equations for a smaller complexity of the equations.</entry>
   <entry key="GROUP_UNIT_CONSISTENCY">How to ensure unit consistency</entry>
-  <entry key="GROUP_UNIT_CONSISTENCY_TOOLTIP"></entry>
+  <entry key="GROUP_UNIT_CONSISTENCY_TOOLTIP">Here you can choose how the unit consistency of your model should be ensured. Species can either be brought to units of concentration or amount. This selection influences how the compartment size is involved in the kinetic equation.</entry>
   <entry key="GROUP_ENZYMES">Species to be treated as enzymes</entry>
-  <entry key="GROUP_ENZYMES_TOOLTIP"></entry>
+  <entry key="GROUP_ENZYMES_TOOLTIP">Since it is not always obvious, which species can be considered as an enzyme, i.e., a bio catalyst, you have the possibility to select types of species that you like to consider an enzyme in your model.</entry>
   
   <!-- OptionsRateLaws -->
   
@@ -136,6 +136,6 @@
   <entry key="GROUP_GENE_REGULATION_KINETICS">Gene regulation kinetics</entry>
   <entry key="GROUP_GENE_REGULATION_KINETICS_TOOLTIP">Select the default rate laws for gene-regulatory processes.</entry>
   <entry key="GROUP_REVERSIBILITY">Reversibility</entry>
-  <entry key="GROUP_REVERSIBILITY_TOOLTIP"></entry>
+  <entry key="GROUP_REVERSIBILITY_TOOLTIP">In some studies it has been found that treating all reactions as reversible processes comes closer to reality. Here you can select if you like to keep the given information about the reversibility of the reactions in the model as given, or if you prefer to set all reactions to reversible and create kinetic equations accordingly.</entry>
   
 </properties>
