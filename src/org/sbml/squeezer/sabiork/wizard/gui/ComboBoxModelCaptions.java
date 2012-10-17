@@ -146,6 +146,11 @@ public class ComboBoxModelCaptions extends DefaultComboBoxModel {
 
 	private class ComboBoxRendererCaptions extends BasicComboBoxRenderer {
 
+		/**
+		 * Generated serial version identifier.
+		 */
+		private static final long serialVersionUID = 6019369936231709859L;
+
 		/* (non-Javadoc)
 		 * @see javax.swing.plaf.basic.BasicComboBoxRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
 		 */

@@ -93,9 +93,7 @@ import de.zbit.garuda.GarudaSoftwareBackend;
 import de.zbit.gui.BaseFrame;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
-import de.zbit.gui.JTabbedPaneCloseListener;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
-import de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent;
 import de.zbit.gui.actioncommand.ActionCommand;
 import de.zbit.io.FileTools;
 import de.zbit.io.OpenedFile;
@@ -130,7 +128,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @since 1.0
  */
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
-		ChangeListener, JTabbedPaneCloseListener, PropertyChangeListener {
+		ChangeListener, PropertyChangeListener {
 	
 	private static final transient Logger logger = Logger.getLogger(SBMLsqueezerUI.class.getName());
 	private static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
@@ -298,6 +296,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			if (openedFile.isChanged()) {
 				try {
 					file = File.createTempFile(FileTools.trimExtension(file.getName()), '.' + FileTools.getExtension(file.getName()));
+					file.deleteOnExit();
 					sbmlIO.writeSelectedModelToSBML(file.getAbsolutePath());
 				} catch (IOException exc) {
 					GUITools.showErrorMessage(this, exc);
@@ -512,40 +511,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabAboutToBeClosed(de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent)
-	 */
-	public boolean tabClosing(TabCloseEvent evt0) {
-		boolean change = false;
-		int choice = JOptionPane.showConfirmDialog(this, 
-				"Would you like to save the document?",
-			    "Save and close",
-			    JOptionPane.YES_NO_CANCEL_OPTION); 
-		
-		File savedFile = null;
-		if (choice == 0) {
-			savedFile = saveFile();
-		}
-		if (savedFile != null || choice == 1) {
-			change = (tabbedPane.getComponentCount() > 0);
-			if (tabbedPane.getComponentCount() == 0) {
-				GUITools.setEnabled(false, getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE, BaseAction.FILE_SAVE_AS,
-					BaseAction.FILE_CLOSE, Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX, GarudaActions.SENT_TO_GARUDA);
-			} else {
-				GUITools.setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE);
-			}
-		}
-		
-		return change;
-	}
-
-	/* (non-Javadoc)
-	 * @see de.zbit.gui.JTabbedPaneCloseListener#tabClosed(de.zbit.gui.JTabbedPaneDraggableAndCloseable.TabCloseEvent)
-	 */
-	public void tabClosed(TabCloseEvent evt0) {
-		
-	}
 
 	/* (non-Javadoc)
 	 * @see  java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
@@ -640,14 +605,29 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#closeFile()
 	 */
 	public boolean closeFile() {
-		tabbedPane.remove(tabbedPane.getSelectedComponent());
-		if (tabbedPane.getTabCount() == 0) {
-			GUITools.setEnabled(false, getJMenuBar(), getJToolBar(),
-				BaseAction.FILE_CLOSE, BaseAction.FILE_SAVE,
-				BaseAction.FILE_SAVE_AS, Command.SQUEEZE, Command.SABIO_RK,
-				Command.TO_LATEX, GarudaActions.SENT_TO_GARUDA);
+		int choice = JOptionPane.showConfirmDialog(this, 
+			MESSAGES.getString("SAVE_BEFORE_CLOSING"),
+			MESSAGES.getString("SAVE_BEFORE_CLOSING_TITLE"),
+			JOptionPane.YES_NO_CANCEL_OPTION); 
+	
+		File savedFile = null;
+		if (choice == JOptionPane.YES_OPTION) {
+			savedFile = saveFile();
 		}
-		return tabbedPane.getComponentCount() > 0;
+		int oldTabCount = tabbedPane.getTabCount();
+		if ((savedFile != null) || (choice == JOptionPane.NO_OPTION)) {
+			tabbedPane.remove(tabbedPane.getSelectedComponent());
+			if (tabbedPane.getTabCount() == 0) {
+				GUITools.setEnabled(false, getJMenuBar(), getJToolBar(),
+					BaseAction.FILE_CLOSE, BaseAction.FILE_SAVE,
+					BaseAction.FILE_SAVE_AS, Command.SQUEEZE, Command.SABIO_RK,
+					Command.TO_LATEX, GarudaActions.SENT_TO_GARUDA);
+			} else {
+				GUITools.setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(),
+					getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE);
+			}
+		}
+		return tabbedPane.getTabCount() != oldTabCount;
 	}
 
 	/* (non-Javadoc)
@@ -663,7 +643,6 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	protected Component createMainComponent() {
 		Icon icon = UIManager.getIcon("SBMLsqueezerWatermark");
 		tabbedPane = new JTabbedPaneDraggableAndCloseable((ImageIcon) icon);
-		tabbedPane.addCloseListener(this);
 		tabbedPane.addChangeListener(this);
 		return tabbedPane;
 	}
@@ -772,24 +751,19 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @param out
 	 */
 	private void save(final File out) {
-		SBFileFilter filterText = SBFileFilter.createTextFileFilter();
-		SBFileFilter filterTeX = SBFileFilter.createTeXFileFilter();
-
-		if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
-		    if (SBFileFilter.hasFileType(out, SBFileFilter.FileType.SBML_FILES)) {
-		      new Thread(new Runnable() {
-		        /* (non-Javadoc)
-		         * @see java.lang.Runnable#run()
-		         */
-		        public void run() {
-		          writeSBML(out);
-		        }
-		      }).start();
-			} else if (filterTeX.accept(out)) {
-				writeLaTeX(out);
-			} else if (filterText.accept(out)) {
-				writeText(out);
-			}
+		if (SBFileFilter.hasFileType(out, SBFileFilter.FileType.SBML_FILES)) {
+			new Thread(new Runnable() {
+				/* (non-Javadoc)
+				 * @see java.lang.Runnable#run()
+				 */
+				public void run() {
+					writeSBML(out);
+				}
+			}).start();
+		} else if (SBFileFilter.createTeXFileFilter().accept(out)) {
+			writeLaTeX(out);
+		} else if (SBFileFilter.createTextFileFilter().accept(out)) {
+			writeText(out);
 		}
 	}
 	
@@ -834,7 +808,9 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				}
 			}
 			sbmlIO.getSelectedOpenedFile().setFile(out);
-			save(out);
+			if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
+				save(out);
+			}
 		}
 		return savedFile;
 	}

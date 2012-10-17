@@ -635,8 +635,9 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
       readSBMLSource(properties.get(IOOptions.SBML_IN_FILE));
     }
     final Window gui = new SBMLsqueezerUI(getSBMLIO(), appConf);
-		if (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA)
-				|| appConf.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA)) {
+		if (getCmdLineOptions().contains(GarudaOptions.class)
+				&& (!appConf.getCmdArgs().containsKey(GarudaOptions.CONNECT_TO_GARUDA) || appConf
+						.getCmdArgs().getBoolean(GarudaOptions.CONNECT_TO_GARUDA))) {
     	new Thread(new Runnable() {
     		public void run() {
     			try {

@@ -659,7 +659,7 @@ public class SubmodelController {
 	}
 	
 	/**
-	 * Moves the pointers from the units in the mini Model to the units in the
+	 * Moves the pointers from the units in the submodel to the units in the
 	 * original model.
 	 * 
 	 * @param p
@@ -674,7 +674,7 @@ public class SubmodelController {
 				if (ud == null) {
 					ud = submodel.getUnitDefinition(p.getUnits());
 					UnitDefinition udClone = ud.clone();
-					modelOrig.addUnitDefinition(ud.clone());
+					modelOrig.addUnitDefinition(udClone);
 				}
 				p.setUnits(ud);
 			}
