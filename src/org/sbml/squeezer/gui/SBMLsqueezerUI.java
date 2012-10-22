@@ -277,11 +277,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			checkForSBMLErrors(this, m, sbmlIO.getWarnings(), prefs
 					.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS));
 			if (m != null) {
-				try {
-					addModel(file);
-				} catch (BackingStoreException exc) {
-					GUITools.showErrorMessage(this, exc);
-				}
+				addModel(file);
 			}
 		}
 	}
@@ -387,9 +383,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * Adds the given new model into the {@link JTabbedPane} on the main panel.
 	 * 
 	 * @param openedFile
-	 * @throws BackingStoreException 
 	 */
-	private void addModel(OpenedFile<SBMLDocument> openedFile) throws BackingStoreException {
+	private void addModel(OpenedFile<SBMLDocument> openedFile) {
 		new SBMLfileChangeListener(openedFile);
 		SBMLModelSplitPane split = new SBMLModelSplitPane(openedFile, true);
 		split.setEquationRenderer(new HotEquationRenderer());
@@ -408,11 +403,15 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		sbmlIO.getListOfOpenedFiles().add(openedFile);
 		
 		// Save location of the file for convenience:
-		String path = openedFile.getFile().getAbsolutePath();
-		String oldPath = prefs.get(IOOptions.SBML_IN_FILE);
-		if (!path.equals(oldPath)) {
-			prefs.put(IOOptions.SBML_IN_FILE, path);
-			prefs.flush();
+		try {
+			String path = openedFile.getFile().getAbsolutePath();
+			String oldPath = prefs.get(IOOptions.SBML_IN_FILE);
+			if (!path.equals(oldPath)) {
+				prefs.put(IOOptions.SBML_IN_FILE, path);
+				prefs.flush();
+			}
+		} catch (BackingStoreException exc) {
+			GUITools.showErrorMessage(this, exc);
 		}
 	}
 
@@ -711,14 +710,14 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			for (final File file : files) {
 				if (usesJSBML) {
 					try {
-						SBMLReadingTask reader = new SBMLReadingTask(file, this);
-						reader.addPropertyChangeListener(new PropertyChangeListener() {
+						SBMLReadingTask reader = new SBMLReadingTask(file, this, new PropertyChangeListener() {
 							/* (non-Javadoc)
 							 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 							 */
+							@SuppressWarnings("unchecked")
 							public void propertyChange(PropertyChangeEvent evt) {
 								if (evt.getPropertyName().equals(SBMLReadingTask.SBML_READING_SUCCESSFULLY_DONE)) {
-									readModel(file);
+									addModel((OpenedFile<SBMLDocument>) evt.getNewValue());
 								}
 							}
 						});
