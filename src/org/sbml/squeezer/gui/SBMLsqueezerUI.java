@@ -71,7 +71,6 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.SBMLsqueezer;
-import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
@@ -303,18 +302,13 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		} else {
 			switch (Command.valueOf(e.getActionCommand())) {
 				case SABIO_RK:
-					SubmodelController controller = new SubmodelController(sbmlIO.getSelectedModel());
+					SBMLDocument sbmlDoc = sbmlIO.getSelectedModel().getSBMLDocument();
 					SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
-					controller.setGenerateLawsForAllReactions(prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS));
 					if (e.getSource() instanceof Reaction) {
 						SABIORKWizard.getResultGUI(this,
-							ModalityType.APPLICATION_MODAL, controller.createSubmodel(((Reaction) e.getSource()).getId()).getSBMLDocument());
-						// TODO: This will always store all rate laws! What happens if the user cancels the operation?
-						controller.storeKineticLaws(prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
+							ModalityType.APPLICATION_MODAL, sbmlDoc, ((Reaction)e.getSource()).getId());
 					} else {
-						SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, controller.createSubModel().getSBMLDocument());
-						// TODO: This will always store all rate laws! What happens if the user cancels the operation?
-						controller.storeKineticLaws(prefs.getBoolean(OptionsGeneral.REMOVE_UNNECESSARY_PARAMETERS_AND_UNITS));
+						SABIORKWizard.getResultGUI(this, ModalityType.APPLICATION_MODAL, sbmlDoc, (prefs.getBoolean(OptionsGeneral.OVERWRITE_EXISTING_RATE_LAWS)));
 					}
 					break;
 				case SQUEEZE:
