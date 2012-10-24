@@ -507,7 +507,7 @@ public class KineticLawImporter {
 		}
 		
 		kineticLawCopy
-				.setMetaId(getUniqueMetaID(reaction.getId() + "(KineticLaw)"));
+				.setMetaId(getUniqueMetaID(reaction.getId() + "_KineticLaw"));
 		kineticLawCopy.setLevel(reactionModel.getLevel());
 		kineticLawCopy.setVersion(reactionModel.getVersion());
 		kineticLawCopy.setListOfLocalParameters(localParameters);

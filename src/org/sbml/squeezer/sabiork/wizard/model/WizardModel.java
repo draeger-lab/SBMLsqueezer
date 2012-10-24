@@ -51,32 +51,34 @@ public class WizardModel implements PropertyChangeListener {
 	private List<Reaction> selectedReactions;
 	private List<KineticLawImporter> selectedKineticLawImporters;
 	private SubmodelController submodelController;
+	private boolean deleted;
 
 	/**
 	 * 
 	 * @param sbmlDocument
 	 * @param reactionId
 	 */
-	public WizardModel(SBMLDocument sbmlDocument, String reactionId) {
+	public WizardModel(SBMLDocument sbmlDocument, String reactionId, boolean overwriteExistingLaws) {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		// (Debugging purposes)
 		// this.propertyChangeSupport.addPropertyChangeListener(this);
 		submodelController = new SubmodelController(sbmlDocument.getModel());
-		// TODO: Should all reactions be copied or only this single one?
+		submodelController.setGenerateLawsForAllReactions(overwriteExistingLaws);
 		submodelController.createSubmodel(reactionId);
-		this.selectedReaction = null;
+		this.selectedReaction = sbmlDocument.getModel().getReaction(reactionId);
 		this.selectedKineticLaw = null;
 		this.selectedKineticLawImporter = null;
 		this.selectedReactions = new ArrayList<Reaction>();
 		this.selectedKineticLawImporters = new ArrayList<KineticLawImporter>();
+		this.deleted = false;
 	}
 	
 	/**
 	 * 
 	 * @param sbmlDocument
 	 */
-	public WizardModel(SBMLDocument sbmlDocument) {
-		this(sbmlDocument, null);
+	public WizardModel(SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
+		this(sbmlDocument, null, overwriteExistingLaws);
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -99,8 +101,15 @@ public class WizardModel implements PropertyChangeListener {
 	 * 
 	 * @return
 	 */
-	public SBMLDocument getResult() {
-		return submodelController.getSBMLDocument();
+	public SubmodelController getResult() {
+		if(deleted) {
+			return null;
+		}
+		return submodelController;
+	}
+	
+	public void deleteResult() {
+		deleted = true;
 	}
 
 	/**

@@ -35,6 +35,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,6 +52,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
 import org.sbml.squeezer.sabiork.wizard.model.WizardModel;
@@ -61,7 +64,7 @@ import org.sbml.squeezer.sabiork.wizard.model.WizardProperties;
  * @author Matthias Rall
  * @version $Rev$
  */
-public class JDialogWizard extends JDialog implements ActionListener,
+public class JDialogWizard extends JDialog implements ActionListener, WindowListener,
 		MouseListener {
 
 	/**
@@ -90,10 +93,11 @@ public class JDialogWizard extends JDialog implements ActionListener,
 	private WizardModel model;
 
 	public JDialogWizard(Window owner, ModalityType modalityType,
-			SBMLDocument sbmlDocument) {
+			SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
 		super(owner, modalityType);
-		this.model = new WizardModel(sbmlDocument);
-		initialize();
+		addWindowListener(this);
+		this.model = new WizardModel(sbmlDocument, overwriteExistingLaws);
+		initialize(false);
 	}
 
 	/**
@@ -105,11 +109,12 @@ public class JDialogWizard extends JDialog implements ActionListener,
 	public JDialogWizard(Window owner, ModalityType modalityType,
 		SBMLDocument sbmlDocument, String reactionId) {
 		super(owner, modalityType);
-		this.model = new WizardModel(sbmlDocument, reactionId);
-		initialize();
+		addWindowListener(this);
+		this.model = new WizardModel(sbmlDocument, reactionId, true);
+		initialize(true);
 	}
 
-	private void initialize() {
+	private void initialize(boolean manual) {
 		labelLogo = new JLabel(new ImageIcon(this.getClass().getResource(
 				WizardProperties.getText("JDIALOG_WIZARD_IMAGE_LOGO"))));
 		labelLogo.addMouseListener(this);
@@ -165,7 +170,12 @@ public class JDialogWizard extends JDialog implements ActionListener,
 
 		registerCards();
 
-		currentCardID = CardID.METHOD;
+		if(manual) {
+			currentCardID = CardID.REACTIONS_M;
+		}
+		else {
+			currentCardID = CardID.REACTIONS_A;
+		}
 
 		showCard(currentCardID);
 	}
@@ -175,7 +185,7 @@ public class JDialogWizard extends JDialog implements ActionListener,
 	 * 
 	 * @return
 	 */
-	public SBMLDocument getResult() {
+	public SubmodelController getResult() {
 		return model.getResult();
 	}
 
@@ -355,6 +365,7 @@ public class JDialogWizard extends JDialog implements ActionListener,
 			showCard(currentCard.getNextCardID());
 		}
 		if (e.getSource().equals(buttonCancel)) {
+			model.deleteResult();
 			dispose();
 		}
 	}
@@ -384,6 +395,57 @@ public class JDialogWizard extends JDialog implements ActionListener,
 	}
 
 	public void mouseReleased(MouseEvent e) {
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.WindowEvent)
+	 */
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
+	 */
+	@Override
+	public void windowClosing(WindowEvent e) {
+		model.deleteResult();
+		dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.WindowEvent)
+	 */
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowListener#windowIconified(java.awt.event.WindowEvent)
+	 */
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowListener#windowDeiconified(java.awt.event.WindowEvent)
+	 */
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowListener#windowActivated(java.awt.event.WindowEvent)
+	 */
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.WindowListener#windowDeactivated(java.awt.event.WindowEvent)
+	 */
+	@Override
+	public void windowDeactivated(WindowEvent e) {
 	}
 
 }

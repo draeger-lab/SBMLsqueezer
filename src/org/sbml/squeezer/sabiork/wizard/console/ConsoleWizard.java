@@ -35,6 +35,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.util.ValuePair;
+import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.sabiork.SABIORK;
 import org.sbml.squeezer.sabiork.SABIORK.QueryField;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
@@ -98,7 +99,8 @@ public class ConsoleWizard {
 			Double upperTemperature, Boolean isDirectSubmission,
 			Boolean isJournal, Boolean isEntriesInsertedSince,
 			String dateSubmitted) {
-		this.model = new WizardModel(sbmlDocument);
+		//TODO check settings for overwriting laws
+		this.model = new WizardModel(sbmlDocument, true);
 		this.reactionFilter = reactionFilter;
 		this.pathway = pathway;
 		this.tissue = tissue;
@@ -240,7 +242,7 @@ public class ConsoleWizard {
 	 * 
 	 * @return the resulting {@link SBMLDocument}
 	 */
-	public SBMLDocument getResult() {
+	public SubmodelController getResult() {
 		List<Reaction> selectedReactions = getSelectedReactions(reactionFilter);
 		String searchTermsQuery = getSearchTermsQuery(pathway, tissue,
 				organism, cellularLocation);

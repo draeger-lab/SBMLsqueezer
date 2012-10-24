@@ -77,7 +77,7 @@ public class SABIORKApplication {
 		JButton buttonWizard = new JButton("Open SABIO-RK Wizard");
 		buttonWizard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SBMLDocument result = SABIORKWizard.getResultGUI(frame, ModalityType.APPLICATION_MODAL, readSBMLDocument(input));
+				SBMLDocument result = SABIORKWizard.getResultGUI(frame, ModalityType.APPLICATION_MODAL, readSBMLDocument(input), true).getSBMLDocument();
 				writeSBMLDocument(result, output);
 			}
 		});
@@ -105,7 +105,7 @@ public class SABIORKApplication {
 		Boolean isEntriesInsertedSince = false;
 		String dateSubmitted = "15/10/2008";
 		
-		SBMLDocument result = SABIORKWizard.getResultConsole(readSBMLDocument(input), reactionFilter, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted);
+		SBMLDocument result = SABIORKWizard.getResultConsole(readSBMLDocument(input), reactionFilter, pathway, tissue, organism, cellularLocation, isWildtype, isMutant, isRecombinant, hasKineticData, lowerpHValue, upperpHValue, lowerTemperature, upperTemperature, isDirectSubmission, isJournal, isEntriesInsertedSince, dateSubmitted).getSBMLDocument();
 		writeSBMLDocument(result, output);
 	}
 
