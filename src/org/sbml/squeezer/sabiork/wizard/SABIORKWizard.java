@@ -26,6 +26,7 @@ package org.sbml.squeezer.sabiork.wizard;
 import java.awt.Dialog.ModalityType;
 import java.awt.Window;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.sabiork.wizard.console.ConsoleWizard;
 import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard;
 
@@ -51,10 +52,10 @@ public class SABIORKWizard {
 	 *            the {@link SBMLDocument}
 	 * @return the resulting {@link SBMLDocument}
 	 */
-	public static SBMLDocument getResultGUI(Window owner,
-			ModalityType modalityType, SBMLDocument sbmlDocument) {
+	public static SubmodelController getResultGUI(Window owner,
+			ModalityType modalityType, SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
 		JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
-				sbmlDocument);
+				sbmlDocument, overwriteExistingLaws);
 		dialogWizard.setVisible(true);
 		return dialogWizard.getResult();
 	}
@@ -91,7 +92,7 @@ public class SABIORKWizard {
 	 *            a date of the format dd/MM/yyyy
 	 * @return the resulting {@link SBMLDocument}
 	 */
-	public static SBMLDocument getResultConsole(SBMLDocument sbmlDocument,
+	public static SubmodelController getResultConsole(SBMLDocument sbmlDocument,
 			Integer reactionFilter, String pathway, String tissue,
 			String organism, String cellularLocation, Boolean isWildtype,
 			Boolean isMutant, Boolean isRecombinant, Boolean hasKineticData,
@@ -109,13 +110,14 @@ public class SABIORKWizard {
 	}
 
 	/**
-	 * @param sbmLsqueezerUI
-	 * @param applicationModal
+	 * 
+	 * @param owner
+	 * @param modalityType
 	 * @param sbmlDocument
-	 * @param id
+	 * @param reactionId
 	 * @return
 	 */
-	public static SBMLDocument getResultGUI(Window owner,
+	public static SubmodelController getResultGUI(Window owner,
 		ModalityType modalityType, SBMLDocument sbmlDocument, String reactionId) {
 		JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
 				sbmlDocument, reactionId);
