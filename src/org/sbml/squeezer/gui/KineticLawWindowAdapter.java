@@ -71,7 +71,8 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	private KineticLawGenerator klg;
 	private KineticLawSelectionPanel messagePanel;
 	private Reaction reaction;
-	private SBPreferences prefs;
+	private SBPreferences prefsGeneral;
+	private SBPreferences prefsRateLaws;
 	private int value;
 
 	/**
@@ -85,7 +86,8 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 	 */
 	public KineticLawWindowAdapter(JDialog dialog, SBMLio sbmlIO, String reactionID) {
 		super();
-		this.prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
+		this.prefsGeneral = SBPreferences.getPreferencesFor(OptionsGeneral.class);
+		this.prefsRateLaws = SBPreferences.getPreferencesFor(OptionsRateLaws.class);
 		this.value = JOptionPane.CLOSED_OPTION;
 		this.dialog = dialog;
 		this.sbmlio = sbmlIO;
@@ -160,15 +162,15 @@ public class KineticLawWindowAdapter extends WindowAdapter implements
 			reaction.setReversible(messagePanel.getReversible());
 			klg.setReversibility(messagePanel.getReversible());
 			
-			double defaultParamVal = prefs.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
-			TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(OptionsRateLaws.TYPE_STANDARD_VERSION));
-			UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
+			double defaultParamVal = prefsGeneral.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
+			TypeStandardVersion version = TypeStandardVersion.valueOf(prefsRateLaws.get(OptionsRateLaws.TYPE_STANDARD_VERSION));
+			UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefsGeneral.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
 			
 			KineticLaw kineticLaw = klg.createKineticLaw(reaction, equationType, messagePanel.getReversible(), version, consistency, defaultParamVal);
 			klg.storeKineticLaw(kineticLaw);
 			sbmlio.saveChanges(reaction);
 			SBMLsqueezerUI.checkForSBMLErrors(dialog,
-				sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefs
+				sbmlio.getSelectedModel(), sbmlio.getWriteWarnings(), prefsGeneral
 				.getBoolean(OptionsGeneral.SHOW_SBML_WARNINGS));
 			
 			KineticsAndParametersStoredInSBML = true;

@@ -112,7 +112,7 @@ public class SubmodelController {
 	private ProgressAdapter progressAdapter;
 	private AbstractProgressBar progressBar;
 
-	private double defaultSpatialDimensions;
+	private double defaultSpatialDimensions = 3;
 	
 	/**
 	 * @return the defaultSpatialDimensions
@@ -346,6 +346,10 @@ public class SubmodelController {
 					Reaction reac = new Reaction(reacOrig.getId(), reacOrig.getLevel(), reacOrig.getVersion());
 					if (reacOrig.isSetSBOTerm()) {
 						SBMLtools.setSBOTerm(reac, reacOrig.getSBOTerm());
+					}
+					if (reacOrig.isSetAnnotation()) {
+						reac.setAnnotation(reacOrig.getAnnotation().clone());
+						reac.getAnnotation().setAbout(reacOrig.getAnnotation().getAbout());
 					}
 					submodel.addReaction(reac);
 					reac.setFast(reacOrig.getFast());

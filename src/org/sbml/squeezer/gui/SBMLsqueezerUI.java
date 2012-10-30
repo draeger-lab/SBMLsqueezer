@@ -69,6 +69,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
@@ -395,6 +396,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), GarudaActions.SENT_TO_GARUDA);
 		}
 		sbmlIO.getListOfOpenedFiles().add(openedFile);
+		openedFile.getDocument().getModel().putUserObject(SBMLio.ORIGINAL_MODEL_KEY, openedFile.getDocument().getModel());
 		
 		// Save location of the file for convenience:
 		try {
