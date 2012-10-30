@@ -380,10 +380,11 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		BasicKineticLaw kineticLaw;
 		laTeXpreview = new String[possibleTypes.length + 1];
 		int i;
-		SBPreferences prefs = SBPreferences.getPreferencesFor(OptionsGeneral.class);
-		double defaultParamVal = prefs.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
-		TypeStandardVersion version = TypeStandardVersion.valueOf(prefs.get(OptionsRateLaws.TYPE_STANDARD_VERSION));
-		UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefs.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
+		SBPreferences prefsGeneral = SBPreferences.getPreferencesFor(OptionsGeneral.class);
+		SBPreferences prefsRateLaws = SBPreferences.getPreferencesFor(OptionsRateLaws.class);
+		double defaultParamVal = prefsGeneral.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
+		TypeStandardVersion version = TypeStandardVersion.valueOf(prefsRateLaws.get(OptionsRateLaws.TYPE_STANDARD_VERSION));
+		UnitConsistencyType consistency = UnitConsistencyType.valueOf(prefsGeneral.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
 		for (i = 0; i < possibleTypes.length; i++) {
 			kineticLaw = klg.createKineticLaw(reaction, possibleTypes[i], false, version, consistency, defaultParamVal);
 			laTeXpreview[i] = new String(kineticLaw.getMath().compile(

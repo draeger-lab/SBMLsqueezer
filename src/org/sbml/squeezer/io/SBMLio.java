@@ -71,7 +71,7 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 
-	private static final String ORIGINAL_MODEL_KEY = "org.sbml.squeezer.io.SBMLio.originalModelKey";
+	public static final String ORIGINAL_MODEL_KEY = "org.sbml.squeezer.io.SBMLio.originalModelKey";
 
 	private List<TreeNode> added;
 
