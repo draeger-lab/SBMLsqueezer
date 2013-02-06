@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,9 @@ import org.sbml.tolatex.gui.LaTeXExportDialog;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.ImageTools;
 import de.zbit.gui.prefs.PreferencesDialog;
+import de.zbit.io.OpenedFile;
 import de.zbit.sbml.gui.SBMLModelSplitPane;
+import de.zbit.sbml.io.SBMLfileChangeListener;
 
 /**
  * This is the main class for the CellDesigner plugin mode of SBMLsqueezer.
@@ -307,7 +309,9 @@ public class Plugin extends CellDesignerPlugin {
 			JDialog d = new JDialog();
 			d.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			d.setTitle("Internal JSBML data structure");
-			d.getContentPane().add(new SBMLModelSplitPane(doc, true));
+			OpenedFile<SBMLDocument> openedFile = new OpenedFile<SBMLDocument>(doc);
+			doc.addTreeNodeChangeListener(new SBMLfileChangeListener(openedFile));
+			d.getContentPane().add(new SBMLModelSplitPane(openedFile, true));
 			d.pack();
 			d.setLocationRelativeTo(null);
 			d.setModal(true);

@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -637,18 +637,22 @@ public class SubmodelController {
 				}
 			}
 		}
-		for (Parameter parameter : submodel.getListOfParameters()) {
-			if (modelOrig.getParameter(parameter.getId()) == null) {
-				modelOrig.addParameter(parameter.clone());
-				updateUnitReferences(modelOrig.getParameter(parameter.getId()));
+		if (submodel.isSetListOfParameters()) {
+			for (Parameter parameter : submodel.getListOfParameters()) {
+				if (modelOrig.getParameter(parameter.getId()) == null) {
+					modelOrig.addParameter(parameter.clone());
+					updateUnitReferences(modelOrig.getParameter(parameter.getId()));
+				}
+				
 			}
-			
 		}
-		for (FunctionDefinition fd: submodel.getListOfFunctionDefinitions()) {
-			if (modelOrig.getFunctionDefinition(fd.getId()) == null) {
-				modelOrig.addFunctionDefinition(fd.clone());
+		if (submodel.isSetListOfFunctionDefinitions()) {
+			for (FunctionDefinition fd: submodel.getListOfFunctionDefinitions()) {
+				if (modelOrig.getFunctionDefinition(fd.getId()) == null) {
+					modelOrig.addFunctionDefinition(fd.clone());
+				}
+				
 			}
-			
 		}
 		if (!kineticLaw.isSetMath()) {
 			// TODO: Localize!
@@ -742,32 +746,38 @@ public class SubmodelController {
 		Set<String> neededUnits = new HashSet<String>();
 		
 		// Check compartments
-		for (Compartment compartment : model.getListOfCompartments()) {
-			if (compartment.isSetUnits()) {
-				neededUnits.add(compartment.getUnits());
-			} else if ((level > 2) && compartment.isSetSpatialDimensions()) {
-				double dim = compartment.getSpatialDimensions();
-				if ((dim == 3d) && model.isSetVolumeUnits()) {
-					neededUnits.add(model.getVolumeUnits());
-				} else if ((dim == 2d) && model.isSetAreaUnits()) {
-					neededUnits.add(model.getAreaUnits());
-				} else if ((dim == 1d) && model.isSetLengthUnits()) {
-					neededUnits.add(model.getLengthUnits());
+		if (model.isSetListOfCompartments()) {
+			for (Compartment compartment : model.getListOfCompartments()) {
+				if (compartment.isSetUnits()) {
+					neededUnits.add(compartment.getUnits());
+				} else if ((level > 2) && compartment.isSetSpatialDimensions()) {
+					double dim = compartment.getSpatialDimensions();
+					if ((dim == 3d) && model.isSetVolumeUnits()) {
+						neededUnits.add(model.getVolumeUnits());
+					} else if ((dim == 2d) && model.isSetAreaUnits()) {
+						neededUnits.add(model.getAreaUnits());
+					} else if ((dim == 1d) && model.isSetLengthUnits()) {
+						neededUnits.add(model.getLengthUnits());
+					}
 				}
 			}
 		}
 		// Check species
-		for (Species species : model.getListOfSpecies()) {
-			if (species.isSetSubstanceUnits()) {
-				neededUnits.add(species.getSubstanceUnits());
-			} else if ((level > 2) && model.isSetSubstanceUnits()) {
-				neededUnits.add(model.getSubstanceUnits());
+		if (model.isSetListOfSpecies()) {
+			for (Species species : model.getListOfSpecies()) {
+				if (species.isSetSubstanceUnits()) {
+					neededUnits.add(species.getSubstanceUnits());
+				} else if ((level > 2) && model.isSetSubstanceUnits()) {
+					neededUnits.add(model.getSubstanceUnits());
+				}
 			}
 		}
 		// Check parameters
-		for (Parameter parameter : model.getListOfParameters()) {
-			if (parameter.isSetUnits()) {
-				neededUnits.add(parameter.getUnits());
+		if (model.isSetListOfParameters()) {
+			for (Parameter parameter : model.getListOfParameters()) {
+				if (parameter.isSetUnits()) {
+					neededUnits.add(parameter.getUnits());
+				}
 			}
 		}
 		if (level > 2) {
@@ -779,25 +789,28 @@ public class SubmodelController {
 			}
 		}
 		// Check local parameters
-		for (Reaction reaction : model.getListOfReactions()) {
-			if (reaction.isSetKineticLaw() && reaction.getKineticLaw().isSetListOfLocalParameters()) {
-				for (LocalParameter localParameter : reaction.getKineticLaw().getListOfLocalParameters()) {
-					if (localParameter.isSetUnits()) {
-						neededUnits.add(localParameter.getUnits());
+		if (model.isSetListOfReactions()) {
+			for (Reaction reaction : model.getListOfReactions()) {
+				if (reaction.isSetKineticLaw() && reaction.getKineticLaw().isSetListOfLocalParameters()) {
+					for (LocalParameter localParameter : reaction.getKineticLaw().getListOfLocalParameters()) {
+						if (localParameter.isSetUnits()) {
+							neededUnits.add(localParameter.getUnits());
+						}
 					}
 				}
 			}
 		}
-		for (i = model.getUnitDefinitionCount() - 1; i >= 0; i--) {
-			UnitDefinition udef = model.getUnitDefinition(i);
-			if (!Unit.isPredefined(udef) && !neededUnits.contains(udef.getId())) {
-				model.removeUnitDefinition(udef);
-			}
-			if (progressAdapter != null) {
-				progressAdapter.progressOn();
+		if (model.isSetListOfUnitDefinitions()) {
+			for (i = model.getUnitDefinitionCount() - 1; i >= 0; i--) {
+				UnitDefinition udef = model.getUnitDefinition(i);
+				if (!Unit.isPredefined(udef) && !neededUnits.contains(udef.getId())) {
+					model.removeUnitDefinition(udef);
+				}
+				if (progressAdapter != null) {
+					progressAdapter.progressOn();
+				}
 			}
 		}
-		
 		if (level > 2) {
 			int version = model.getVersion();
 			if (model.isSetAreaUnits()
@@ -1211,7 +1224,7 @@ public class SubmodelController {
 			progressAdapter = new ProgressAdapter(progressBar, TypeOfProgress.storeKineticLaws);
 			progressAdapter.setNumberOfTags(modelOrig, submodel, removeUnnecessaryParameters);
 		}
-		
+		storeUnits();
 		for (int i = 0; i < submodel.getReactionCount(); i++) {
 			Reaction r = submodel.getReaction(i);
 			storeKineticLaw(r.getKineticLaw(), false);
@@ -1222,6 +1235,7 @@ public class SubmodelController {
 		
 		if (removeUnnecessaryParameters) {
 			removeUnnecessaryParameters(modelOrig);
+			removeUnnecessaryUnits(modelOrig);
 		}
 		
 		if (progressBar != null) {
@@ -1263,6 +1277,55 @@ public class SubmodelController {
 	 */
 	public Model createSubModel() {
 		return createSubmodel(null);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SubmodelController [generateLawsForAllReactions=");
+		builder.append(generateLawsForAllReactions);
+		builder.append(", removeUnnecessaryParameters=");
+		builder.append(removeUnnecessaryParameters);
+		builder.append(", defaultHasOnlySubstanceUnits=");
+		builder.append(defaultHasOnlySubstanceUnits);
+		builder.append(", addParametersGlobally=");
+		builder.append(addParametersGlobally);
+		builder.append(", reversibility=");
+		builder.append(reversibility);
+		builder.append(", setBoundaryCondition=");
+		builder.append(setBoundaryCondition);
+		builder.append(", defaultSpeciesInitVal=");
+		builder.append(defaultSpeciesInitVal);
+		builder.append(", defaultCompartmentInitSize=");
+		builder.append(defaultCompartmentInitSize);
+		builder.append(", ");
+		if (modelOrig != null) {
+			builder.append("modelOrig=");
+			builder.append(modelOrig);
+			builder.append(", ");
+		}
+		if (submodel != null) {
+			builder.append("submodel=");
+			builder.append(submodel);
+			builder.append(", ");
+		}
+		if (progressAdapter != null) {
+			builder.append("progressAdapter=");
+			builder.append(progressAdapter);
+			builder.append(", ");
+		}
+		if (progressBar != null) {
+			builder.append("progressBar=");
+			builder.append(progressBar);
+			builder.append(", ");
+		}
+		builder.append("defaultSpatialDimensions=");
+		builder.append(defaultSpatialDimensions);
+		builder.append(']');
+		return builder.toString();
 	}
 	
 }

@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ package org.sbml.squeezer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -155,7 +156,7 @@ public class KineticLawGenerator {
 	private Class<?> kineticsZeroReactants;
 	private Class<?> kineticsZeroProducts;
 	private String speciesIgnoreList[];
-	private double defaultSpatialDimension;
+	private double defaultSpatialDimensions;
 	private boolean generateLawsForAllReactions;
 	private boolean removeUnnecessaryParameters;
 	private boolean defaultHasOnlySubstanceUnits;
@@ -220,7 +221,7 @@ public class KineticLawGenerator {
 		
 		typeUnitConsistency = UnitConsistencyType.valueOf(prefs.get(OptionsGeneral.TYPE_UNIT_CONSISTENCY));
 		defaultParamVal = prefs.getDouble(OptionsGeneral.DEFAULT_NEW_PARAMETER_VAL);
-		defaultSpatialDimension = prefs.getDouble(OptionsGeneral.DEFAULT_COMPARTMENT_SPATIAL_DIM);
+		defaultSpatialDimensions = prefs.getDouble(OptionsGeneral.DEFAULT_COMPARTMENT_SPATIAL_DIM);
 		allReactionsAsEnzymeCatalyzed = prefs.getBoolean(OptionsGeneral.ALL_REACTIONS_AS_ENZYME_CATALYZED);
 		addParametersGlobally = prefs.getBoolean(OptionsGeneral.NEW_PARAMETERS_GLOBAL);
 		
@@ -469,22 +470,23 @@ public class KineticLawGenerator {
 	 * 
 	 * @param reactionID
 	 */
-	private void initSubmodel(String reactionID) {
-			submodelController.setProgressBar(progressBar);
-			submodelController.setDefaultSpatialDimensions(defaultSpatialDimension);
-			submodelController.setReversibility(reversibility);
-
-			submodelController.setGenerateLawsForAllReactions(generateLawsForAllReactions);
-			submodelController.setRemoveUnnecessaryParameters(removeUnnecessaryParameters);
-			submodelController.setDefaultHasOnlySubstanceUnits(defaultHasOnlySubstanceUnits);
-			submodelController.setAddParametersGlobally(addParametersGlobally);
-			submodelController.setBoundaryCondition(setBoundaryCondition);
-			submodelController.setDefaultSpeciesInitVal(defaultSpeciesInitVal);
-			submodelController.setDefaultCompartmentInitSize(defaultCompartmentInitSize);
-			
-			listOfFastReactions = new LinkedList<Reaction>();
-			submodelController.createSubmodel(reactionID);
-			updateEnzymeCatalysis();
+	private Model initSubmodel(String reactionID) {
+		submodelController.setProgressBar(progressBar);
+		submodelController.setDefaultSpatialDimensions(defaultSpatialDimensions);
+		submodelController.setReversibility(reversibility);
+		
+		submodelController.setGenerateLawsForAllReactions(generateLawsForAllReactions);
+		submodelController.setRemoveUnnecessaryParameters(removeUnnecessaryParameters);
+		submodelController.setDefaultHasOnlySubstanceUnits(defaultHasOnlySubstanceUnits);
+		submodelController.setAddParametersGlobally(addParametersGlobally);
+		submodelController.setBoundaryCondition(setBoundaryCondition);
+		submodelController.setDefaultSpeciesInitVal(defaultSpeciesInitVal);
+		submodelController.setDefaultCompartmentInitSize(defaultCompartmentInitSize);
+		
+		listOfFastReactions = new LinkedList<Reaction>();
+		submodelController.createSubmodel(reactionID);
+		updateEnzymeCatalysis();
+		return submodelController.getSubmodel();
 	}
 
 	/**
@@ -603,8 +605,11 @@ public class KineticLawGenerator {
 	 */
 	public ReactionType getReactionType(String reactionID)
 		throws RateLawNotApplicableException {
-		initSubmodel(reactionID);
-		return new ReactionType(getSubmodel().getReaction(reactionID), isReversibility(),
+		Model subModel = submodelController.getSubmodel();
+		if ((subModel == null) || !subModel.containsReaction(reactionID)) {
+			subModel = initSubmodel(reactionID);
+		}
+		return new ReactionType(subModel.getReaction(reactionID), isReversibility(),
 			allReactionsAsEnzymeCatalyzed, isSetBoundaryCondition(), speciesIgnoreList);
 	}
 
@@ -702,6 +707,14 @@ public class KineticLawGenerator {
 			progressAdapter.setNumberOfTags(getModel(), getSubmodel(), isRemoveUnnecessaryParameters());
 		}
 		
+		submodelController.setAddParametersGlobally(addParametersGlobally);
+		submodelController.setBoundaryCondition(setBoundaryCondition);
+		submodelController.setDefaultCompartmentInitSize(defaultCompartmentInitSize);
+		submodelController.setDefaultHasOnlySubstanceUnits(defaultHasOnlySubstanceUnits);
+		submodelController.setDefaultSpatialDimensions(defaultSpatialDimensions);
+		submodelController.setDefaultSpeciesInitVal(defaultSpeciesInitVal);
+		submodelController.setRemoveUnnecessaryParameters(removeUnnecessaryParameters);
+		submodelController.setReversibility(reversibility);
 		Reaction r = submodelController.storeKineticLaw(kineticLaw, true);
 		
 		if (progressAdapter != null) {
@@ -764,4 +777,128 @@ public class KineticLawGenerator {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("KineticLawGenerator [columnRank=");
+		builder.append(columnRank);
+		builder.append(", ");
+		if (typeStandardVersion != null) {
+			builder.append("typeStandardVersion=");
+			builder.append(typeStandardVersion);
+			builder.append(", ");
+		}
+		if (typeUnitConsistency != null) {
+			builder.append("typeUnitConsistency=");
+			builder.append(typeUnitConsistency);
+			builder.append(", ");
+		}
+		builder.append("defaultParamVal=");
+		builder.append(defaultParamVal);
+		builder.append(", reversibility=");
+		builder.append(reversibility);
+		builder.append(", addParametersGlobally=");
+		builder.append(addParametersGlobally);
+		builder.append(", ");
+		if (possibleEnzymes != null) {
+			builder.append("possibleEnzymes=");
+			builder.append(possibleEnzymes);
+			builder.append(", ");
+		}
+		builder.append("allReactionsAsEnzymeCatalyzed=");
+		builder.append(allReactionsAsEnzymeCatalyzed);
+		builder.append(", ");
+		if (kineticsGeneRegulation != null) {
+			builder.append("kineticsGeneRegulation=");
+			builder.append(kineticsGeneRegulation);
+			builder.append(", ");
+		}
+		if (kineticsReversibleNonEnzymeReactions != null) {
+			builder.append("kineticsReversibleNonEnzymeReactions=");
+			builder.append(kineticsReversibleNonEnzymeReactions);
+			builder.append(", ");
+		}
+		if (kineticsReversibleUniUniType != null) {
+			builder.append("kineticsReversibleUniUniType=");
+			builder.append(kineticsReversibleUniUniType);
+			builder.append(", ");
+		}
+		if (kineticsReversibleArbitraryEnzymeReaction != null) {
+			builder.append("kineticsReversibleArbitraryEnzymeReaction=");
+			builder.append(kineticsReversibleArbitraryEnzymeReaction);
+			builder.append(", ");
+		}
+		if (kineticsReversibleBiUniType != null) {
+			builder.append("kineticsReversibleBiUniType=");
+			builder.append(kineticsReversibleBiUniType);
+			builder.append(", ");
+		}
+		if (kineticsReversibleBiBiType != null) {
+			builder.append("kineticsReversibleBiBiType=");
+			builder.append(kineticsReversibleBiBiType);
+			builder.append(", ");
+		}
+		if (kineticsIrreversibleNonEnzymeReactions != null) {
+			builder.append("kineticsIrreversibleNonEnzymeReactions=");
+			builder.append(kineticsIrreversibleNonEnzymeReactions);
+			builder.append(", ");
+		}
+		if (kineticsIrreversibleUniUniType != null) {
+			builder.append("kineticsIrreversibleUniUniType=");
+			builder.append(kineticsIrreversibleUniUniType);
+			builder.append(", ");
+		}
+		if (kineticsIrreversibleArbitraryEnzymeReaction != null) {
+			builder.append("kineticsIrreversibleArbitraryEnzymeReaction=");
+			builder.append(kineticsIrreversibleArbitraryEnzymeReaction);
+			builder.append(", ");
+		}
+		if (kineticsIrreversibleBiUniType != null) {
+			builder.append("kineticsIrreversibleBiUniType=");
+			builder.append(kineticsIrreversibleBiUniType);
+			builder.append(", ");
+		}
+		if (kineticsIrreversibleBiBiType != null) {
+			builder.append("kineticsIrreversibleBiBiType=");
+			builder.append(kineticsIrreversibleBiBiType);
+			builder.append(", ");
+		}
+		if (kineticsZeroReactants != null) {
+			builder.append("kineticsZeroReactants=");
+			builder.append(kineticsZeroReactants);
+			builder.append(", ");
+		}
+		if (kineticsZeroProducts != null) {
+			builder.append("kineticsZeroProducts=");
+			builder.append(kineticsZeroProducts);
+			builder.append(", ");
+		}
+		if (speciesIgnoreList != null) {
+			builder.append("speciesIgnoreList=");
+			builder.append(Arrays.toString(speciesIgnoreList));
+			builder.append(", ");
+		}
+		builder.append("defaultSpatialDimension=");
+		builder.append(defaultSpatialDimensions);
+		builder.append(", generateLawsForAllReactions=");
+		builder.append(generateLawsForAllReactions);
+		builder.append(", removeUnnecessaryParameters=");
+		builder.append(removeUnnecessaryParameters);
+		builder.append(", defaultHasOnlySubstanceUnits=");
+		builder.append(defaultHasOnlySubstanceUnits);
+		builder.append(", setBoundaryCondition=");
+		builder.append(setBoundaryCondition);
+		builder.append(", defaultSpeciesInitVal=");
+		builder.append(defaultSpeciesInitVal);
+		builder.append(", defaultCompartmentInitSize=");
+		builder.append(defaultCompartmentInitSize);
+		builder.append(']');
+		return builder.toString();
+	}
+
+	
+	
 }

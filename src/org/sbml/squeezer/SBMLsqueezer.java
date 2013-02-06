@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -641,6 +641,14 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     	new Thread(new Runnable() {
     		public void run() {
     			try {
+    				/*
+    				 *     				List<FileFormat> listOfInputFileFormats = new LinkedList<FileFormat>();
+    				listOfInputFileFormats.add(new FileFormat("xml", "SBML"));
+    				listOfInputFileFormats.add(new FileFormat("sbml", "SBML"));
+    				List<FileFormat> listOfOutputFileFormats = new LinkedList<FileFormat>();
+    				listOfOutputFileFormats.add(new FileFormat("xml", "SBML"));
+    				listOfOutputFileFormats.add(new FileFormat("sbml", "SBML"));
+    				 */
     				GarudaSoftwareBackend garudaBackend = new GarudaSoftwareBackend((UserInterface) gui);
     				garudaBackend.addInputFileFormat("xml", "SBML");
     				garudaBackend.addInputFileFormat("sbml", "SBML");
@@ -732,7 +740,6 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   			klg.setProgressBar(progressBar);
   		}
   		long time = System.currentTimeMillis();
-  		// TODO: Localize!
   		logger.info(MESSAGES.getString("CREATING_KINETIC_LAWS"));
   		klg.generateLaws();
   		logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));

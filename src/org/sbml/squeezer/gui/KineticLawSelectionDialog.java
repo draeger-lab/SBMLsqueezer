@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ public class KineticLawSelectionDialog extends JDialog {
 	private static final long serialVersionUID = -5980678130366530716L;
 
 	// UI ELEMENTS DEFINITION: ReactionFrame
-	private boolean KineticsAndParametersStoredInSBML = false;
+	private boolean kineticsAndParametersStoredInSBML = false;
 	
 	/**
 	 * 
@@ -105,7 +105,7 @@ public class KineticLawSelectionDialog extends JDialog {
 		this(owner);
 		
 		// This thing is necessary for CellDesigner!
-		final KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
+		KineticLawWindowAdapter adapter = new KineticLawWindowAdapter(this,
 			sbmlIO, reactionID);
 		
 		pack();
@@ -117,7 +117,7 @@ public class KineticLawSelectionDialog extends JDialog {
 			AbstractProgressBar progressBar = statusBar.showProgress();
 			adapter.showProgress(progressBar);
 		}
-		KineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
+		kineticsAndParametersStoredInSBML = adapter.isKineticsAndParametersStoredInSBML();
 		dispose();
 		if (statusBar != null) {
 			statusBar.hideProgress();
@@ -133,7 +133,7 @@ public class KineticLawSelectionDialog extends JDialog {
 	 *         changed by SBMLsqueezer.
 	 */
 	public boolean isKineticsAndParametersStoredInSBML() {
-		return KineticsAndParametersStoredInSBML;
+		return kineticsAndParametersStoredInSBML;
 	}
 
 }
