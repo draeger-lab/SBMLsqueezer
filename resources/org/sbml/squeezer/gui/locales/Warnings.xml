@@ -22,7 +22,7 @@
 
   <!-- KineticLawGenerator -->
   
-  <entry key="INVALID_COMPARTMENT_DIMENSION">Compartment {0} had an invalid spacial dimension and was therefore set to a volume.</entry>
+  <entry key="INVALID_COMPARTMENT_DIMENSION">Compartment {0} had an invalid spatial dimension and was therefore set to a volume.</entry>
   <entry key="INVALID_REACTION_FORMAT">Reaction {0} in the model has an incorrect format. This means there is either an empty kinetic law in this reaction or a kinetic law that only consists of a white space. If you decide not to save this generated model, there is only one solution: open this SBML file in an editor and delete the whole kinetic law. SBMLsqueezer ignores this misstake and generates a proper equation. Therfore we recomment that you save this generated model.</entry>
   <entry key="INVALID_REACTION_ID_FOR_RATE_LAW_CREATION">{0} is not the id of a reaction for which rate laws are to be created.</entry>
 
@@ -30,17 +30,21 @@
   
   <entry key="FALLBACK_KINETICS">Cannot apply default rate law {1} to reaction {0}, fall back to {2}.</entry>
   <entry key="REACTION_MUST_BE_TRANSRIPTION">Reaction {0} must be a transcription.</entry>
-  <entry key="REACTION_MUST_BE_TRANSLATION">Reaction {0} must be a tranlation.</entry>
+  <entry key="REACTION_MUST_BE_TRANSLATION">Reaction {0} must be a translation.</entry>
   <entry key="REACTION_MUST_BE_TRANSITION">Reaction {0} must be a transition.</entry>
   
   <!-- SBMLsqueezer -->
   
-  <entry key="CANT_READ_MODEL">A problem occured while trying to read the model {0}</entry>
+  <entry key="CANT_READ_MODEL">A problem occurred while trying to read the model {0}</entry>
   <entry key="SQUEEZE_ERROR">input: {0}, output: {1}</entry>
   <entry key="OUTPUT_ERROR">Could not write output to SBML.</entry>
   <entry key="FILE_CONTAINS_NO_MODEL">File contains no model. Nothing to do.</entry>
   <entry key="INVALID_TEX_FILE">no valid TeX file: {0}</entry>
   <entry key="NO_TEX_FILE_PROVIDED">no TeX file was provided</entry>
+  
+  <!-- SBMLio -->
+  
+  <entry key="OPERATION_NOT_SUPPORTED">Operation not supported for type {0}!</entry>
   
   <!-- SBMLsqueezerUI -->
   

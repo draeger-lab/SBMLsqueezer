@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,13 @@ import de.zbit.util.prefs.SBPreferences;
  * @version $Rev$
 */
 public class KineticLawSelectionPanel extends JPanel implements ItemListener {
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
+	/**
+	 * 
+	 */
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 	/**
 	 * 
@@ -228,12 +234,10 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		optionsPanel.setBorder(BorderFactory
 				.createTitledBorder(MESSAGES.getString("REACTION_OPTIONS")));
 
-		rButtonReversible = new JRadioButton(MESSAGES.getString("REVERSIBLE"), 
-											reaction.getReversible());
+		rButtonReversible = new JRadioButton(MESSAGES.getString("REVERSIBLE"), reaction.getReversible());
 		rButtonReversible.setToolTipText(StringUtil.toHTML(MESSAGES.getString("REVERSIBLE_TOOLTIP"), 40));
 		
-		JRadioButton rButtonIrreversible = new JRadioButton(MESSAGES.getString("IRREVERSIBLE"),
-															!reaction.getReversible());
+		JRadioButton rButtonIrreversible = new JRadioButton(MESSAGES.getString("IRREVERSIBLE"), !reaction.getReversible());
 		rButtonIrreversible.setToolTipText(StringUtil.toHTML(MESSAGES.getString("IRREVERSIBLE_TOOLTIP"), 40));
 		
 		ButtonGroup revGroup = new ButtonGroup();
@@ -321,7 +325,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		preview.add(new sHotEqn(sb.toString().replace("\\-", "")), BorderLayout.CENTER);
 		preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel(new BorderLayout());
-		eqnPrev.setBorder(BorderFactory.createTitledBorder(MessageFormat.format(" {0} ", MESSAGES.getString("EQUATION_PREVIEW"))));
+		eqnPrev.setBorder(BorderFactory.createTitledBorder(' ' + MESSAGES.getString("EQUATION_PREVIEW") + ' '));
 		Dimension dim = new Dimension(width, height);
 		/*
 		 * new Dimension((int) Math.min(width, preview
@@ -402,8 +406,7 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				}
 			}
 			toolTips[i] = StringUtil.toHTML(toolTips[i], 60);
-			kineticEquations[i] = StringUtil.toHTML(kineticLaw.getSimpleName(),
-					60);
+			kineticEquations[i] = StringUtil.toHTML(kineticLaw.getSimpleName(), 60);
 		}
 		sort(possibleTypes, kineticEquations, toolTips, laTeXpreview);
 		if (reaction.isSetKineticLaw()) {
@@ -436,27 +439,28 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 				rButtonsKineticEquations[i] = new JRadioButton(
 						EXISTING_RATE_LAW, false);
 
-				if (reaction.getNotesString().length() > 0)
+				if (reaction.getNotesString().length() > 0) {
 					rButtonsKineticEquations[i].setToolTipText(StringUtil.toHTML(
 							reaction.getNotesString(), 40));
-				else
+				} else {
 					rButtonsKineticEquations[i]
 							.setToolTipText("<html>"+MESSAGES.getString("RATE_LAW_ASSIGNED_TO_REACTION")+"</html>");
+				}
 			}
 			buttonGroup.add(rButtonsKineticEquations[i]);
-			if (i < rButtonsKineticEquations.length - 1
+			if ((i < rButtonsKineticEquations.length - 1)
 					|| reaction.isSetKineticLaw())
 				LayoutHelper.addComponent(kineticsPanel,
 						(GridBagLayout) kineticsPanel.getLayout(),
 						rButtonsKineticEquations[i], 0, i, 1, 1, 1, 1);
 		}
-		if (kinSelected == -1 && rButtonsKineticEquations.length > 0) {
+		if ((kinSelected == -1) && (rButtonsKineticEquations.length > 0)) {
 			kinSelected = 0;
 			rButtonsKineticEquations[kinSelected].setSelected(true);
 		}
 
 		kineticsPanel.setBorder(BorderFactory
-				.createTitledBorder(" "+MESSAGES.getString("CHOOSE_KINETIC_LAW")+" "));
+				.createTitledBorder(' ' + MESSAGES.getString("CHOOSE_KINETIC_LAW") + ' '));
 		createPreviewPanel(kinSelected);
 		Box info = new Box(BoxLayout.Y_AXIS);
 		info.add(kineticsPanel);
@@ -465,9 +469,9 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 
 		isExistingRateLawSelected = false;
 
-		for (i = 0; i < rButtonsKineticEquations.length; i++)
+		for (i = 0; i < rButtonsKineticEquations.length; i++) {
 			rButtonsKineticEquations[i].addItemListener(this);
-
+		}
 		return info; // kineticsPanel;
 	}
 
@@ -493,23 +497,24 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 						// reversible property was changed.
 						selected = "";
 						int i;
-						for (i = 0; i < rButtonsKineticEquations.length
-								&& selected.length() == 0; i++)
-							if (rButtonsKineticEquations[i].isSelected())
-								selected = rButtonsKineticEquations[i]
-										.getText();
+						for (i = 0; (i < rButtonsKineticEquations.length)
+								&& (selected.length() == 0); i++) {
+							if (rButtonsKineticEquations[i].isSelected()) {
+								selected = rButtonsKineticEquations[i].getText();
+							}
+						}
 						klg.setReversible(reaction.getId(), getReversible());
 						klg.setReversibility(getReversible());
 						remove(kineticsPanel);
 						kineticsPanel = initKineticsPanel();
 						LayoutHelper.addComponent(this, (GridBagLayout) this
 								.getLayout(), kineticsPanel, 0, 1, 1, 1, 1, 1);
-						for (i = 0; i < rButtonsKineticEquations.length; i++)
-							if (selected.equals(rButtonsKineticEquations[i]
-									.getText())) {
+						for (i = 0; i < rButtonsKineticEquations.length; i++) {
+							if (selected.equals(rButtonsKineticEquations[i].getText())) {
 								rButtonsKineticEquations[i].setSelected(true);
 								break;
 							}
+						}
 						updateView();
 					} catch (Throwable exc) {
 						throw new RuntimeException(exc.getMessage(), exc);
@@ -634,4 +639,5 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 		}
 		checkEnzymeKineticsPossible(false);
 	}
+
 }

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="m1">
+    <listOfCompartments>
+      <compartment id="c1"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="s1" compartment="c1"/>
+      <species id="s2" compartment="c1"/>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction id="r1">
+        <listOfReactants>
+          <speciesReference id="s1ref" species="s1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference id="s2Ref" species="s2"/>
+        </listOfProducts>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

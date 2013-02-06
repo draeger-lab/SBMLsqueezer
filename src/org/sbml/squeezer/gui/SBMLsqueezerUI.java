@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,7 +70,6 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
-import org.sbml.jsbml.SBMLInputConverter;
 import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
@@ -94,6 +94,7 @@ import de.zbit.gui.BaseFrame;
 import de.zbit.gui.GUIOptions;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.JTabbedPaneDraggableAndCloseable;
+import de.zbit.gui.TabClosingListener;
 import de.zbit.gui.actioncommand.ActionCommand;
 import de.zbit.io.FileTools;
 import de.zbit.io.OpenedFile;
@@ -102,7 +103,6 @@ import de.zbit.sbml.gui.SBMLModelSplitPane;
 import de.zbit.sbml.gui.SBMLNode;
 import de.zbit.sbml.gui.SBMLReadingTask;
 import de.zbit.sbml.gui.SBMLTree;
-import de.zbit.sbml.io.SBMLfileChangeListener;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
 import de.zbit.util.prefs.KeyProvider;
@@ -128,7 +128,7 @@ import de.zbit.util.prefs.SBPreferences;
  * @since 1.0
  */
 public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
-		ChangeListener, PropertyChangeListener {
+		ChangeListener, PropertyChangeListener, TabClosingListener {
 	
 	private static final transient Logger logger = Logger.getLogger(SBMLsqueezerUI.class.getName());
 	private static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
@@ -298,7 +298,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					GUITools.showErrorMessage(this, exc);
 				}	
 			}
-			GarudaFileSender sender = new GarudaFileSender(this, garudaBackend, file);
+			GarudaFileSender sender = new GarudaFileSender(this, garudaBackend, file, "SBML");
 			sender.execute();
 		} else {
 			switch (Command.valueOf(e.getActionCommand())) {
@@ -380,23 +380,36 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @param openedFile
 	 */
 	private void addModel(OpenedFile<SBMLDocument> openedFile) {
-		new SBMLfileChangeListener(openedFile);
 		SBMLModelSplitPane split = new SBMLModelSplitPane(openedFile, true);
 		split.setEquationRenderer(new HotEquationRenderer());
 		
-		openedFile.addPropertyChangeListener(OpenedFile.FILE_CHANGED_EVENT, this);
+		openedFile.addPropertyChangeListener(OpenedFile.FILE_CONTENT_CHANGED_EVENT, this);
 		
 		setupContextMenu(split, null, null);
 		
-		tabbedPane.add(openedFile.getDocument().getModel().getId(), split);
+		String title = Integer.toString(tabbedPane.getTabCount() + 1);
+		Model m = null;
+		if (openedFile.getDocument() != null) {
+			SBMLDocument doc = openedFile.getDocument();
+			if (doc.isSetModel()) {
+				m = doc.getModel();
+				if (m.isSetName()) {
+					title = m.getName();
+				} else if (m.isSetId()) {
+					title = m.getId();
+				}
+			}
+		}
+		sbmlIO.getListOfOpenedFiles().add(openedFile);
+		if (m != null) {
+			m.putUserObject(SBMLio.ORIGINAL_MODEL_KEY, m);
+		}
+		tabbedPane.add(title, split);
 		tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
-		GUITools.setEnabled(true,  getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE_AS, BaseAction.FILE_CLOSE,
-			Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX);
+		GUITools.setEnabled(true,  getJMenuBar(), getJToolBar(), Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX);
 		if (this.garudaBackend != null) {
 			GUITools.setEnabled(true, getJMenuBar(), getJToolBar(), GarudaActions.SENT_TO_GARUDA);
 		}
-		sbmlIO.getListOfOpenedFiles().add(openedFile);
-		openedFile.getDocument().getModel().putUserObject(SBMLio.ORIGINAL_MODEL_KEY, openedFile.getDocument().getModel());
 		
 		// Save location of the file for convenience:
 		try {
@@ -496,12 +509,13 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource().equals(tabbedPane)) {
-			if (tabbedPane.getComponentCount() == 0) {
+			if (tabbedPane.getTabCount() == 0) {
 				GUITools.setEnabled(false, getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE, BaseAction.FILE_SAVE_AS,
 					BaseAction.FILE_CLOSE, Command.SQUEEZE, Command.SABIO_RK, Command.TO_LATEX, GarudaActions.SENT_TO_GARUDA);
 			} else {
-				if (sbmlIO.getSelectedOpenedFile() != null) {
-					GUITools.setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE);
+				OpenedFile<SBMLDocument> selectedFile = sbmlIO.getSelectedOpenedFile();
+				if (selectedFile != null) {
+					setFileStateMark(selectedFile);
 				}
 			}
 		}
@@ -564,7 +578,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * 
 	 * @param out
 	 */
-	private void writeSBML(final File out) {
+	private void writeSBML(File out) {
 		try {
 			sbmlIO.writeSelectedModelToSBML(out.getAbsolutePath());
 		} catch (Exception exc) {
@@ -600,29 +614,45 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#closeFile()
 	 */
 	public boolean closeFile() {
-		int choice = JOptionPane.showConfirmDialog(this, 
-			MESSAGES.getString("SAVE_BEFORE_CLOSING"),
-			MESSAGES.getString("SAVE_BEFORE_CLOSING_TITLE"),
-			JOptionPane.YES_NO_CANCEL_OPTION); 
-	
-		File savedFile = null;
-		if (choice == JOptionPane.YES_OPTION) {
-			savedFile = saveFile();
-		}
 		int oldTabCount = tabbedPane.getTabCount();
-		if ((savedFile != null) || (choice == JOptionPane.NO_OPTION)) {
-			tabbedPane.remove(tabbedPane.getSelectedComponent());
-			if (tabbedPane.getTabCount() == 0) {
-				GUITools.setEnabled(false, getJMenuBar(), getJToolBar(),
-					BaseAction.FILE_CLOSE, BaseAction.FILE_SAVE,
-					BaseAction.FILE_SAVE_AS, Command.SQUEEZE, Command.SABIO_RK,
-					Command.TO_LATEX, GarudaActions.SENT_TO_GARUDA);
-			} else {
-				GUITools.setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(),
-					getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE);
+		int index = tabbedPane.getSelectedIndex();
+		if (tabClosing(index)) {
+			try {
+				tabbedPane.remove(index);
+			} catch (Throwable t) {
+				GUITools.showErrorMessage(this, t);
+				tabbedPane.removeAll();
 			}
 		}
 		return tabbedPane.getTabCount() != oldTabCount;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.zbit.gui.TabClosingListener#tabClosing(int)
+	 */
+	public boolean tabClosing(int index) {
+		int choice = JOptionPane.NO_OPTION;
+		OpenedFile<SBMLDocument> openedFile = sbmlIO.getOpenedFile(index);
+		if (openedFile.isChanged()) {
+			choice = JOptionPane.showConfirmDialog(this,
+				StringUtil.toHTML(MessageFormat.format(MESSAGES.getString("SAVE_BEFORE_CLOSING"), openedFile.getFile().getName()), 40),
+				MESSAGES.getString("SAVE_BEFORE_CLOSING_TITLE"),
+				JOptionPane.YES_NO_CANCEL_OPTION); 
+		}
+		
+		File savedFile = null;
+		if (choice == JOptionPane.YES_OPTION) {
+			savedFile = saveFile();
+			if (savedFile != null) {  
+				openedFile.setChanged(false);
+			}
+		} else if ((choice != JOptionPane.CANCEL_OPTION) && (choice != JOptionPane.CLOSED_OPTION)) {
+			setFileStateMark(null);
+		}
+		if ((savedFile != null) || (choice == JOptionPane.NO_OPTION)) {
+			return true;
+		}
+		return (choice != JOptionPane.CANCEL_OPTION) && (choice != JOptionPane.CLOSED_OPTION);
 	}
 
 	/* (non-Javadoc)
@@ -639,6 +669,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 		Icon icon = UIManager.getIcon("SBMLsqueezerWatermark");
 		tabbedPane = new JTabbedPaneDraggableAndCloseable((ImageIcon) icon);
 		tabbedPane.addChangeListener(this);
+		tabbedPane.addTabClosingListener(this);
 		return tabbedPane;
 	}
 
@@ -647,22 +678,29 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	@Override
 	public void exit() {
-    StringBuilder exception = new StringBuilder();
-    if (appConf.getInteractiveOptions() != null) {
-    	for (Class<? extends KeyProvider> clazz : appConf.getInteractiveOptions()) {
-    		SBPreferences prefs = SBPreferences.getPreferencesFor(clazz);
-    		try {
-    			prefs.flush();
-    		} catch (Exception exc) {
-    			exception.append(exc.getLocalizedMessage());
-    			exception.append('\n');
-    		}
-    	}
-    	if (exception.length() > 0) {
-    		GUITools.showErrorMessage(this, exception.toString());
-    	}
-    }
-    dispose();
+		int i = 0;
+		for (OpenedFile<SBMLDocument> openedFile : sbmlIO.getListOfOpenedFiles()) {
+			if (openedFile.isChanged()) {
+				tabClosing(i);
+			}
+			i++;
+		}
+		StringBuilder exception = new StringBuilder();
+		if (appConf.getInteractiveOptions() != null) {
+			for (Class<? extends KeyProvider> clazz : appConf.getInteractiveOptions()) {
+				SBPreferences prefs = SBPreferences.getPreferencesFor(clazz);
+				try {
+					prefs.flush();
+				} catch (Exception exc) {
+					exception.append(exc.getLocalizedMessage());
+					exception.append('\n');
+				}
+			}
+			if (exception.length() > 0) {
+				GUITools.showErrorMessage(this, exception.toString());
+			}
+		}
+		dispose();
 	}
 
 	/* (non-Javadoc)
@@ -690,15 +728,15 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 * @see de.zbit.gui.BaseFrame#openFile(de.zbit.sbml.io.OpenedFile<org.sbml.jsbml.SBMLDocument>[])
 	 */
 	public File[] openFile(File... files) {
-		SBPreferences prefs = SBPreferences.getPreferencesFor(GUIOptions.class);
+		SBPreferences prefs = SBPreferences.getPreferencesFor(getClass());
 		if ((files == null) || (files.length == 0)) {
 			files = GUITools.openFileDialog(
 				this,
-				prefs.get(GUIOptions.OPEN_DIR),
+				prefs.get(OPEN_DIR),
 				false,
 				true,
 				JFileChooser.FILES_ONLY, 
-				SBFileFilter.createSBMLFileFilter()
+				SBFileFilter.createSBMLFileFilterList()
 			);
 		}
 		if (files != null) {
@@ -743,9 +781,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 
 	/**
 	 * 
-	 * @param out
+	 * @param of
 	 */
-	private void save(final File out) {
+	private void save(final OpenedFile<SBMLDocument> of) {
+		final File out = of.getFile();
 		if (SBFileFilter.hasFileType(out, SBFileFilter.FileType.SBML_FILES)) {
 			new Thread(new Runnable() {
 				/* (non-Javadoc)
@@ -753,6 +792,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				 */
 				public void run() {
 					writeSBML(out);
+					of.setChanged(false);
 				}
 			}).start();
 		} else if (SBFileFilter.createTeXFileFilter().accept(out)) {
@@ -761,21 +801,20 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 			writeText(out);
 		}
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see de.zbit.gui.BaseFrame#saveFile()
 	 */
 	@Override
 	public File saveFile() {
-		File savedFile = sbmlIO.getSelectedFile();
-		logger.info(savedFile.getAbsolutePath());
+		OpenedFile<SBMLDocument> savedFile = sbmlIO.getSelectedOpenedFile();
+		logger.info(savedFile.getFile().getAbsolutePath());
 		
 		if (savedFile != null) {
 			save(savedFile);
 		} 
 		
-		return savedFile;
+		return savedFile.getFile();
 	}
 
 	/* (non-Javadoc)
@@ -802,9 +841,10 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 					GUITools.showErrorMessage(this, exc);
 				}
 			}
-			sbmlIO.getSelectedOpenedFile().setFile(out);
+			OpenedFile<SBMLDocument> of = sbmlIO.getSelectedOpenedFile();
+			of.setFile(out);
 			if (!out.exists() || GUITools.overwriteExistingFile(this, out)) {
-				save(out);
+				save(of);
 			}
 		}
 		return savedFile;
@@ -816,8 +856,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	// @Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		String propName = evt.getPropertyName(); 
-		if (propName.equals(OpenedFile.FILE_CHANGED_EVENT)) {
-			GUITools.setEnabled(sbmlIO.getSelectedOpenedFile().isChanged(), getJMenuBar(), getJToolBar(), BaseAction.FILE_SAVE);
+		if (propName.equals(OpenedFile.FILE_CONTENT_CHANGED_EVENT)) {
+			setFileStateMark(sbmlIO.getSelectedOpenedFile());
 		} else if (propName.equals(GarudaSoftwareBackend.GARUDA_ACTIVATED)) {
 			this.garudaBackend = (GarudaSoftwareBackend) evt.getNewValue();
 			if (sbmlIO.getListOfOpenedFiles().size() > 0) {

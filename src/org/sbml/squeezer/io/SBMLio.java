@@ -5,7 +5,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeNode;
@@ -49,6 +48,7 @@ import org.sbml.jsbml.util.TreeNodeRemovedEvent;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.io.OpenedFile;
+import de.zbit.sbml.io.SBMLfileChangeListener;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.progressbar.AbstractProgressBar;
 
@@ -149,6 +149,9 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 			convertedModel.putUserObject(ORIGINAL_MODEL_KEY, origModel);
 			openedModel = convertedModel;
 			openedDocument = new OpenedFile<SBMLDocument>(file, convertedModel.getSBMLDocument());
+			if (openedDocument.isSetDocument()) {
+				openedDocument.getDocument().addTreeNodeChangeListener(new SBMLfileChangeListener(openedDocument));
+			}
 			listOfOpenedFiles.add(openedDocument);
 			selectedModel = listOfOpenedFiles.size() - 1;
 			return convertedModel;
@@ -184,7 +187,16 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @return
 	 */
 	public OpenedFile<SBMLDocument> getSelectedOpenedFile() {
-		return listOfOpenedFiles.size() > 0 ? listOfOpenedFiles.get(selectedModel) : openedDocument;
+		return getOpenedFile(selectedModel);
+	}
+
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public OpenedFile<SBMLDocument> getOpenedFile(int index) {
+		return listOfOpenedFiles.size() > 0 ? listOfOpenedFiles.get(index) : openedDocument;
 	}
 
 	/* (non-Javadoc)
@@ -316,25 +328,18 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
 	 */
 	public void stateChanged(ChangeEvent e) {
-		if (e.getSource() instanceof JTabbedPane) {
-			JTabbedPane tabbedPane = (JTabbedPane) e.getSource();
-			if (tabbedPane.getTabCount() == 0) {
-				listOfOpenedFiles.clear();
-			} else {
-				// search for the currently selected model.
-				for (int i = listOfOpenedFiles.size() - 1; i >= 0; i--) {
-					Model m = listOfOpenedFiles.get(i).getDocument().getModel();
-					if (m != null) {
-						boolean contains = false;
-						for (int j = 0; (j < tabbedPane.getTabCount()) && !contains; j++) {
-							String title = tabbedPane.getTitleAt(j);
-							if (title.equals(m.getName()) || title.equals(m.getId())) {
-								contains = true;
-							}
-						}
-						if (!contains) {
-							listOfOpenedFiles.remove(i);
-						}
+		if (e.getSource() instanceof javax.swing.JTabbedPane) {
+			javax.swing.JTabbedPane tabbedPane = (javax.swing.JTabbedPane) e.getSource();
+			listOfOpenedFiles.clear();
+			if (tabbedPane.getTabCount() > 0) {
+				// synchronize the list of opened files with the components in the tabs:
+				java.awt.Component comp;
+				for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+					comp = tabbedPane.getComponentAt(i);
+					if (comp instanceof de.zbit.sbml.gui.SBMLModelSplitPane) {
+						listOfOpenedFiles.add(((de.zbit.sbml.gui.SBMLModelSplitPane) comp).getOpenedFile());
+					} else {
+						throw new RuntimeException(MessageFormat.format(WARNINGS.getString("OPERATION_NOT_SUPPORTED"), comp.getClass().getName()));
 					}
 				}
 				selectedModel = tabbedPane.getSelectedIndex();
@@ -413,6 +418,10 @@ public class SBMLio implements SBMLInputConverter, SBMLOutputConverter,
 	 */
 	public SBMLInputConverter getReader() {
 		return reader;
+	}
+
+	public void setSelectedFile(int i) {
+		selectedModel = i;
 	}
 
 }

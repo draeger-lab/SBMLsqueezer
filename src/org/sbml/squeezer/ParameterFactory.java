@@ -4,7 +4,7 @@
  * This file is part of SBMLsqueezer, a Java program that creates rate 
  * equations for reactions in SBML files (http://sbml.org).
  *
- * Copyright (C) 2006-2012 by the University of Tuebingen, Germany.
+ * Copyright (C) 2006-2013 by the University of Tuebingen, Germany.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ public class ParameterFactory {
 	public LocalParameter parameterAlpha(String rId) {
 		LocalParameter p = createOrGetParameter("alpha_", rId);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -237,7 +237,7 @@ public class ParameterFactory {
 	public LocalParameter parameterB(String rId) {
 		LocalParameter p = createOrGetParameter("b_", rId);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -257,7 +257,7 @@ public class ParameterFactory {
 	public LocalParameter parameterBH(String rId) {
 		LocalParameter p = createOrGetParameter("b_", rId);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitSubstancePerTime(model.getUnitDefinition(UnitDefinition.SUBSTANCE), 
@@ -278,7 +278,7 @@ public class ParameterFactory {
 	public LocalParameter parameterBeta(String rId) {
 		LocalParameter p = createOrGetParameter("beta_", rId);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -313,7 +313,7 @@ public class ParameterFactory {
 		}
 		LocalParameter coeff = createOrGetParameter(id);
 		if (!coeff.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(coeff,385);
+			SBMLtools.setSBOTerm(coeff, 385);
 		}
 		if (!coeff.isSetUnits()) {
 			coeff.setUnits(Unit.Kind.DIMENSIONLESS);
@@ -451,7 +451,7 @@ public class ParameterFactory {
 		}
 		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(hr,190);
+			SBMLtools.setSBOTerm(hr, 190);
 		}
 		if (!hr.isSetName()) {
 			if (enzyme != null) {
@@ -498,7 +498,7 @@ public class ParameterFactory {
 		}
 		LocalParameter kA = createOrGetParameter(name);
 		if (!kA.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(kA,363);
+			SBMLtools.setSBOTerm(kA, 363);
 		}
 		if (!kA.isSetName()) {
 			kA.setName(MessageFormat.format(
@@ -542,7 +542,7 @@ public class ParameterFactory {
 				if (kineticLaw.getParentSBMLObject().getReversible()) {
 					SBMLtools.setSBOTerm(kr,forward ? 320 : 321);
 				} else {
-					SBMLtools.setSBOTerm(kr,25);
+					SBMLtools.setSBOTerm(kr, 25);
 				}
 			}
 			if (!kr.isSetName()) {
@@ -572,7 +572,7 @@ public class ParameterFactory {
 				if (kineticLaw.getParentSBMLObject().getReversible()) {
 					SBMLtools.setSBOTerm(kr,forward ? 324 : 325);
 				} else {
-					SBMLtools.setSBOTerm(kr,186);
+					SBMLtools.setSBOTerm(kr, 186);
 				}
 			}
 			if (!kr.isSetName()) {
@@ -671,7 +671,7 @@ public class ParameterFactory {
 		}
 		LocalParameter kI = createOrGetParameter(id.toString());
 		if (!kI.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(kI,261);
+			SBMLtools.setSBOTerm(kI, 261);
 		}
 		if (!kI.isSetName()) {
 			StringBuilder temp = new StringBuilder();
@@ -761,7 +761,7 @@ public class ParameterFactory {
 	public LocalParameter parameterM(String rId) {
 		LocalParameter p = createOrGetParameter("m_", rId);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitSubstancePerTime(model
@@ -793,7 +793,7 @@ public class ParameterFactory {
 			StringTools.append(id, StringTools.underscore, enzyme);
 		}
 		LocalParameter kM = createOrGetParameter(id.toString());
-		if (kM.isSetSBOTerm()) {
+		if (!kM.isSetSBOTerm()) {
 			SBMLtools.setSBOTerm(kM, 27);
 		}
 		if (!kM.isSetName()) {
@@ -859,7 +859,7 @@ public class ParameterFactory {
 		}
 		LocalParameter p_exp = createOrGetParameter(exponent.toString());
 		if (!p_exp.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p_exp,189);
+			SBMLtools.setSBOTerm(p_exp, 189);
 		}
 		if (!p_exp.isSetName()) {
 			if (enzyme != null) {
@@ -898,7 +898,7 @@ public class ParameterFactory {
 		}
 		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(hr,382);
+			SBMLtools.setSBOTerm(hr, 382);
 		}
 		if (!hr.isSetName()) {
 			hr.setName(MESSAGES.getString("REACTION_COOPERATIVITY"));
@@ -1001,7 +1001,7 @@ public class ParameterFactory {
 	public LocalParameter parameterSSystemAlpha(String rId) {
 		LocalParameter p = createOrGetParameter("alpha_", rId);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,153);
+			SBMLtools.setSBOTerm(p, 153);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitSubstancePerTime(model
@@ -1096,7 +1096,7 @@ public class ParameterFactory {
 		Parameter T = createOrGetGlobalParameter("T");
 		T.setValue(298.15);
 		if (!T.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(T,147);
+			SBMLtools.setSBOTerm(T, 147);
 		}
 		if (!T.isSetUnits()) {
 			T.setUnits(Unit.Kind.KELVIN);
@@ -1116,7 +1116,7 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter("theta_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetValue()) {
 			p.setValue(0);
@@ -1146,7 +1146,7 @@ public class ParameterFactory {
 		StringBuffer id = StringTools.concat("hic_", reactionID);
 		LocalParameter hr = createOrGetParameter(id.toString());
 		if (!hr.isSetSBOTerm()) {
-			// not yet available.
+			// TODO: not yet available.
 		}
 		if (!hr.isSetName()) {
 			hr.setName(MessageFormat.format(MESSAGES.getString("TIME_ORDER_IN_REACTION"), SBMLtools.getName(r)));
@@ -1168,7 +1168,7 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter("v_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			//p.setUnits(unitFactory.unitPerTime());
@@ -1213,7 +1213,7 @@ public class ParameterFactory {
 						SBMLtools.getName(r)));
 			}
 			if (!kVr.isSetSBOTerm()) {
-				SBMLtools.setSBOTerm(kVr,324);
+				SBMLtools.setSBOTerm(kVr, 324);
 			}
 			if (!kVr.isSetUnits()) {
 				if (unitFactory.getBringToConcentration()) {
@@ -1248,7 +1248,7 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter("w_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitPerConcentrationOrSubstance(species));
@@ -1269,7 +1269,7 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter("w_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			p.setUnits(unitFactory.unitSubstancePerTime(model
@@ -1293,7 +1293,7 @@ public class ParameterFactory {
 		LocalParameter p = createOrGetParameter("w_", rId,
 				StringTools.underscore, name);
 		if (!p.isSetSBOTerm()) {
-			SBMLtools.setSBOTerm(p,2);
+			SBMLtools.setSBOTerm(p, 2);
 		}
 		if (!p.isSetUnits()) {
 			if (unitFactory.getBringToConcentration() && species.hasOnlySubstanceUnits()) {
