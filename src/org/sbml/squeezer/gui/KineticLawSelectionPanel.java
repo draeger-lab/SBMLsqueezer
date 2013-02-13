@@ -25,7 +25,6 @@ package org.sbml.squeezer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
@@ -45,7 +44,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import org.sbml.jsbml.Reaction;
@@ -54,9 +52,9 @@ import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.util.StringTools;
 import org.sbml.jsbml.util.compilers.LaTeXCompiler;
 import org.sbml.squeezer.KineticLawGenerator;
+import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.RateLawNotApplicableException;
 import org.sbml.squeezer.ReactionType;
-import org.sbml.squeezer.OptionsGeneral;
 import org.sbml.squeezer.UnitConsistencyType;
 import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.OptionsRateLaws;
@@ -65,7 +63,6 @@ import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 import org.sbml.tolatex.util.LaTeX;
 
-import atp.sHotEqn;
 import de.zbit.gui.GUITools;
 import de.zbit.gui.layout.LayoutHelper;
 import de.zbit.sbml.io.SBOTermFormatter;
@@ -316,28 +313,14 @@ public class KineticLawSelectionPanel extends JPanel implements ItemListener {
 	 * @param kinNum
 	 */
 	private void createPreviewPanel(int kinNum) {
-		JPanel preview = new JPanel(new BorderLayout());
 		StringBuilder sb = new StringBuilder("v_\\mbox{");
 		sb.append(reaction.getId());
 		sb.append("}=");
 		sb.append(laTeXpreview[kinNum].toString().replace("mathrm", "mbox")
 				.replace("text", "mbox").replace("mathtt", "mbox"));
-		preview.add(new sHotEqn(sb.toString().replace("\\-", "")), BorderLayout.CENTER);
-		preview.setBackground(Color.WHITE);
 		eqnPrev = new JPanel(new BorderLayout());
 		eqnPrev.setBorder(BorderFactory.createTitledBorder(' ' + MESSAGES.getString("EQUATION_PREVIEW") + ' '));
-		Dimension dim = new Dimension(width, height);
-		/*
-		 * new Dimension((int) Math.min(width, preview
-		 * .getPreferredSize().getWidth()), (int) Math.min(height, preview
-		 * .getPreferredSize().getHeight()));//
-		 */
-		JScrollPane scroll = new JScrollPane(preview);
-		scroll.setBorder(BorderFactory.createLoweredBevelBorder());
-		scroll.setBackground(Color.WHITE);
-		scroll.setPreferredSize(dim);
-		// ContainerHandler.setAllBackground(scroll, Color.WHITE);
-		eqnPrev.add(scroll, BorderLayout.CENTER);
+		eqnPrev.add(new LaTeXRenderer(width, height).renderEquation(sb.toString().replace("\\-", "")), BorderLayout.CENTER);
 	}
 
 	public boolean getExistingRateLawSelected() {

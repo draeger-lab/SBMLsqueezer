@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 
 import jp.sbi.garuda.platform.commons.exception.NetworkException;
 
-import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLInputConverter;
@@ -54,19 +53,6 @@ import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.io.SqSBMLReader;
 import org.sbml.squeezer.io.SqSBMLWriter;
-import org.sbml.squeezer.kinetics.BasicKineticLaw;
-import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
-import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
-import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
-import org.sbml.squeezer.kinetics.InterfaceIntegerStoichiometry;
-import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
-import org.sbml.squeezer.kinetics.InterfaceModulatedKinetics;
-import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
-import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
-import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
-import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
-import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.kinetics.OptionsRateLaws;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
@@ -100,7 +86,7 @@ import de.zbit.util.progressbar.ProgressBar;
  * @since 1.0
  * @version $Rev$
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings("unchecked")
 public class SBMLsqueezer extends Launcher implements IOProgressListener {
 	
 	/**
@@ -113,131 +99,10 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
   
   /**
-   * The possible location of this class in a jar file if used in plug-in
-   * mode.
-   */
-  public static final String JAR_LOCATION = "plugin" + File.separatorChar;
-
-  /**
-   * The package where all kinetic equations are located.
-   */
-  public static final Package KINETICS_PACKAGE = BasicKineticLaw.class.getPackage();
-
-  /**
-   * {@link Set}s of kinetics with certain characteristics.
-   */
-  private static Set<Class> kineticsArbitraryEnzymeMechanism, kineticsBiUni,
-    kineticsGeneRegulatoryNetworks, kineticsIntStoichiometry,
-    kineticsIrreversible, kineticsModulated, kineticsNonEnzyme,
-    kineticsReversible, kineticsUniUni, kineticsZeroProducts,
-    kineticsZeroReactants;
-  
-  private static Set<Class> kineticsBiBi;
-
-  /**
    * The {@link Logger} for this class.
    */
   private static final transient Logger logger = Logger.getLogger(SBMLsqueezer.class.getName());
-  
-  static {
-  	ListOf.setDebugMode(true);
-  	
-		/*
-     * Load all available kinetic equations and the user's settings from the
-     * configuration file.
-     */
-  	long time = System.currentTimeMillis();
-    logger.info("Loading kinetic equations...");
-    kineticsBiBi = new HashSet<Class>();
-    kineticsBiUni = new HashSet<Class>();
-    kineticsGeneRegulatoryNetworks = new HashSet<Class>();
-    kineticsNonEnzyme = new HashSet<Class>();
-    kineticsArbitraryEnzymeMechanism = new HashSet<Class>();
-    kineticsUniUni = new HashSet<Class>();
-    kineticsReversible = new HashSet<Class>();
-    kineticsIrreversible = new HashSet<Class>();
-    kineticsZeroReactants = new HashSet<Class>();
-    kineticsZeroProducts = new HashSet<Class>();
-    kineticsModulated = new HashSet<Class>();
-    kineticsIntStoichiometry = new HashSet<Class>();
-    // removed Reflect for JavaWebStart
-    /*Class<BasicKineticLaw> classes[] = Reflect.getAllClassesInPackage(
-        KINETICS_PACKAGE.getName(), false, true, BasicKineticLaw.class,
-        JAR_LOCATION, true);*/
-    Class[] classes = {
-    		org.sbml.squeezer.kinetics.AdditiveModelLinear.class, 
-    		org.sbml.squeezer.kinetics.AdditiveModelNonLinear.class, 
-    		org.sbml.squeezer.kinetics.CommonModularRateLaw.class, 
-    		org.sbml.squeezer.kinetics.ConvenienceKinetics.class, 
-    		org.sbml.squeezer.kinetics.DirectBindingModularRateLaw.class, 
-    		org.sbml.squeezer.kinetics.ForceDependentModularRateLaw.class, 
-    		org.sbml.squeezer.kinetics.GeneralizedMassAction.class, 
-    		org.sbml.squeezer.kinetics.HSystem.class, 
-    		org.sbml.squeezer.kinetics.HillEquation.class, 
-    		org.sbml.squeezer.kinetics.HillHinzeEquation.class, 
-    		org.sbml.squeezer.kinetics.HillRaddeEquation.class, 
-    		org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes.class, 
-    		org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes.class, 
-    		org.sbml.squeezer.kinetics.MichaelisMenten.class, 
-    		org.sbml.squeezer.kinetics.NetGeneratorLinear.class, 
-    		org.sbml.squeezer.kinetics.NetGeneratorNonLinear.class, 
-    		org.sbml.squeezer.kinetics.OrderedMechanism.class, 
-    		org.sbml.squeezer.kinetics.PingPongMechanism.class, 
-    		org.sbml.squeezer.kinetics.PowerLawModularRateLaw.class, 
-    		org.sbml.squeezer.kinetics.RandomOrderMechanism.class, 
-    		org.sbml.squeezer.kinetics.RestrictedSpaceKinetics.class, 
-    		org.sbml.squeezer.kinetics.SSystem.class, 
-    		org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw.class, 
-    		org.sbml.squeezer.kinetics.Vohradsky.class, 
-    		org.sbml.squeezer.kinetics.Weaver.class, 
-    		org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK.class, 
-    		org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK.class
-    };
-    
-    for (Class<BasicKineticLaw> c : classes) {
-      Set<Class<?>> s = new HashSet<Class<?>>();
-      for (Class<?> interf : c.getInterfaces()) {
-        s.add(interf);
-      }
-      if (s.contains(InterfaceIrreversibleKinetics.class)) {
-        kineticsIrreversible.add(c);
-      }
-      if (s.contains(InterfaceReversibleKinetics.class)) {
-        kineticsReversible.add(c);
-      }
-      if (s.contains(InterfaceUniUniKinetics.class)) {
-        kineticsUniUni.add(c);
-      }
-      if (s.contains(InterfaceBiUniKinetics.class)) {
-        kineticsBiUni.add(c);
-      }
-      if (s.contains(InterfaceBiBiKinetics.class)) {
-        kineticsBiBi.add(c);
-      }
-      if (s.contains(InterfaceArbitraryEnzymeKinetics.class)) {
-        kineticsArbitraryEnzymeMechanism.add(c);
-      }
-      if (s.contains(InterfaceGeneRegulatoryKinetics.class)) {
-        kineticsGeneRegulatoryNetworks.add(c);
-      }
-      if (s.contains(InterfaceNonEnzymeKinetics.class)) {
-        kineticsNonEnzyme.add(c);
-      }
-      if (s.contains(InterfaceZeroReactants.class)) {
-        kineticsZeroReactants.add(c);
-      }
-      if (s.contains(InterfaceZeroProducts.class)) {
-        kineticsZeroProducts.add(c);
-      }
-      if (s.contains(InterfaceModulatedKinetics.class)) {
-        kineticsModulated.add(c);
-      }
-      if (s.contains(InterfaceIntegerStoichiometry.class)) {
-        kineticsIntStoichiometry.add(c);
-      }
-    }
-    logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
-  }
+	
 
   /**
    * 
@@ -262,7 +127,6 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     return Arrays.asList(getInteractiveConfigOptionsArray());
 	}
 
-
   /**
    * 
    * @return
@@ -274,144 +138,7 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
     list[2] = LaTeXOptions.class;
     return list;
 	}
-  
-  /**
-   * @return the kineticsArbitraryEnzymeMechanism
-   */
-  public static Set<Class> getKineticsArbitraryEnzymeMechanism() {
-    return kineticsArbitraryEnzymeMechanism;
-  }
 
-  /**
-   * 
-   * @return
-   */
-  public static Set<Class> getKineticsIrreversibleArbitraryEnzymeMechanism() {
-	  return getKineticsIrreversible(kineticsArbitraryEnzymeMechanism);
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public static Set<Class> getKineticsReversibleArbitraryEnzymeMechanism() {
-  	return getKineticsReversible(kineticsArbitraryEnzymeMechanism);
-  }
-
-  /**
-   * @return the kineticsBiBi
-   */
-  public static Set<Class> getKineticsBiBi() {
-    return kineticsBiBi;
-  }
-  
-  /**
-   * 
-   * @return
-   */
-	public static Set<Class> getKineticsReversibleBiBi() {
-	  return getKineticsReversible(kineticsBiBi);
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public static Set<Class> getKineticsIrreversibleBiBi() {
-		return getKineticsIrreversible(kineticsBiBi);
-	}
-	
-	/**
-	 * 
-	 * @param type
-	 * @return
-	 */
-	public static Set<Class> getKineticsReversible(Set<Class> type) {
-	  Set<Class> rev = new HashSet<Class>(type);
-	  rev.retainAll(kineticsReversible);
-	  return rev;
-	}
-	
-	/**
-	 * 
-	 * @param type
-	 * @return
-	 */
-	public static Set<Class> getKineticsIrreversible(Set<Class> type) {
-	  Set<Class> rev = new HashSet<Class>(type);
-	  rev.retainAll(kineticsIrreversible);
-	  return rev;
-	}
-
-  /**
-   * @return the kineticsBiUni
-   */
-  public static Set<Class> getKineticsBiUni() {
-    return kineticsBiUni;
-  }
-
-  /**
-   * @return the kineticsGeneRegulatoryNetworks
-   */
-  public static Set<Class> getKineticsGeneRegulatoryNetworks() {
-    return kineticsGeneRegulatoryNetworks;
-  }
-
-  /**
-   * @return the kineticsIntStoichiometry
-   */
-  public static Set<Class> getKineticsIntStoichiometry() {
-    return kineticsIntStoichiometry;
-  }
-
-  /**
-   * @return the kineticsIrreversible
-   */
-  public static Set<Class> getKineticsIrreversible() {
-    return kineticsIrreversible;
-  }
-
-  /**
-   * @return the kineticsModulated
-   */
-  public static Set<Class> getKineticsModulated() {
-    return kineticsModulated;
-  }
-
-  /**
-   * @return the kineticsNonEnzyme
-   */
-  public static Set<Class> getKineticsNonEnzyme() {
-    return kineticsNonEnzyme;
-  }
-  
-  /**
-   * @return the kineticsReversible
-   */
-  public static Set<Class> getKineticsReversible() {
-    return kineticsReversible;
-  }
-  
-  /**
-   * @return the kineticsUniUni
-   */
-  public static Set<Class> getKineticsUniUni() {
-    return kineticsUniUni;
-  }
-
-  /**
-   * @return the kineticsZeroProducts
-   */
-  public static Set<Class> getKineticsZeroProducts() {
-    return kineticsZeroProducts;
-  }
-
-  /**
-   * @return the kineticsZeroReactants
-   */
-  public static Set<Class> getKineticsZeroReactants() {
-    return kineticsZeroReactants;
-  }
   
   /**
 	   * Returns an array of Strings that can be interpreted as enzymes. In
@@ -486,7 +213,6 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
   public SBMLsqueezer() {
     super();
   }
-
 
   /**
    * This constructor allows the integration of SBMLsqueezer into third-party
@@ -850,53 +576,5 @@ public class SBMLsqueezer extends Launcher implements IOProgressListener {
       logger.log(Level.WARNING, WARNINGS.getString("NO_TEX_FILE_PROVIDED"));
     }
   }
-
-  /**
-   * 
-   * @return
-   */
-	public static Set<Class> getKineticsReversibleBiUni() {
-		return getKineticsReversible(kineticsBiUni);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static Set<Class> getKineticsIrreversibleBiUni() {
-		return getKineticsIrreversible(kineticsBiUni);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static Set<Class> getKineticsReversibleUniUni() {
-		return getKineticsReversible(kineticsUniUni);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static Set<Class> getKineticsIrreversibleUniUni() {
-		return getKineticsIrreversible(kineticsUniUni);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static Set<Class> getKineticsReversibleNonEnzyme() {
-		return getKineticsReversible(kineticsNonEnzyme);
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static Set<Class> getKineticsIrreversibleNonEnzyme() {
-		return getKineticsIrreversible(kineticsNonEnzyme);
-	}
   
 }

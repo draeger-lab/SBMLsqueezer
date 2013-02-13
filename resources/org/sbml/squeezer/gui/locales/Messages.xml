@@ -133,6 +133,11 @@
   <entry key="COL_PARAMETERS">Parameter counts</entry>
   <entry key="COL_FORMULA">Formula</entry>
   
+  <!-- LaTeXRenderer -->
+  
+  <entry key="ZOOM_IN_TOOLTIP">Zoom in</entry>
+  <entry key="ZOOM_OUT_TOOLTIP">Zoom out</entry>
+  
   <!-- MichaelisMenten -->
   
   <entry key="MICHAELIS_MENTEN_SIMPLE_NAME">Michaelis-Menten</entry>

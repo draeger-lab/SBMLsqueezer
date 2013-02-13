@@ -41,7 +41,20 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBO;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.squeezer.kinetics.BasicKineticLaw;
 import org.sbml.squeezer.kinetics.ConvenienceKinetics;
+import org.sbml.squeezer.kinetics.InterfaceArbitraryEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceBiBiKinetics;
+import org.sbml.squeezer.kinetics.InterfaceBiUniKinetics;
+import org.sbml.squeezer.kinetics.InterfaceGeneRegulatoryKinetics;
+import org.sbml.squeezer.kinetics.InterfaceIntegerStoichiometry;
+import org.sbml.squeezer.kinetics.InterfaceIrreversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceModulatedKinetics;
+import org.sbml.squeezer.kinetics.InterfaceNonEnzymeKinetics;
+import org.sbml.squeezer.kinetics.InterfaceReversibleKinetics;
+import org.sbml.squeezer.kinetics.InterfaceUniUniKinetics;
+import org.sbml.squeezer.kinetics.InterfaceZeroProducts;
+import org.sbml.squeezer.kinetics.InterfaceZeroReactants;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.sbml.util.SBMLtools;
@@ -65,47 +78,153 @@ import de.zbit.util.logging.LogUtil;
  * @since 1.3
  * @version $Rev$
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ReactionType {
 	
+	/**
+   * A {@link Logger} for this class.
+   */
+  private static final transient Logger logger = Logger.getLogger(ReactionType.class.getName());
 	/**
 	 * 
 	 */
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
-	/**
+
+  /**
+   * Set of those kinetic equations that can only be reversible.
+   */
+  private static Set<Class> notIrreversible;
+
+  /**
+   * Set of kinetic equations that can only be applied to irreversible
+   * reactions.
+   */
+  private static Set<Class> notReversible;  
+  
+  /**
+   * {@link Set}s of kinetics with certain characteristics.
+   */
+  private static Set<Class> setOfKineticsForArbitraryEnzymeMechanism, setOfKineticsForBiUniReactions,
+    setOfKineticsForGeneRegulatoryNetworks, setOfKineticsForIntStoichiometry,
+    setOfKineticsForIrreversibleReactions, setOfKineticsForModulatedReactions, setOfKineticsForNonEnzymeReactions,
+    setOfKineticsForReversibleReactions, setOfKineticsForUniUniReactions, setOfKineticsForZeroProducts,
+    setOfKineticsForZeroReactants, setOfKineticsForBiBiReactions;
+  
+  /**
 	 * 
 	 */
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
-
-  /**
-   * A {@link Logger} for this class.
-   */
-  private static final transient Logger logger = Logger.getLogger(ReactionType.class.getName());
-
-  
-	/**
-	 * Set of those kinetic equations that can only be reversible.
-	 */
-	private static Set<Class> notIrreversible;
-
-	/**
-	 * Set of kinetic equations that can only be applied to irreversible
-	 * reactions.
-	 */
-	private static Set<Class> notReversible;
-
+	
 	/**
 	 * Initializes the sets of not reversible and not irreversible kinetic
 	 * equations.
 	 */
-	static {
+  static {
+  	ListOf.setDebugMode(true);
+  	
+		/*
+     * Load all available kinetic equations and the user's settings from the
+     * configuration file.
+     */
+  	long time = System.currentTimeMillis();
+    logger.info("Loading kinetic equations...");
+    setOfKineticsForBiBiReactions = new HashSet<Class>();
+    setOfKineticsForBiUniReactions = new HashSet<Class>();
+    setOfKineticsForGeneRegulatoryNetworks = new HashSet<Class>();
+    setOfKineticsForNonEnzymeReactions = new HashSet<Class>();
+    setOfKineticsForArbitraryEnzymeMechanism = new HashSet<Class>();
+    setOfKineticsForUniUniReactions = new HashSet<Class>();
+    setOfKineticsForReversibleReactions = new HashSet<Class>();
+    setOfKineticsForIrreversibleReactions = new HashSet<Class>();
+    setOfKineticsForZeroReactants = new HashSet<Class>();
+    setOfKineticsForZeroProducts = new HashSet<Class>();
+    setOfKineticsForModulatedReactions = new HashSet<Class>();
+    setOfKineticsForIntStoichiometry = new HashSet<Class>();
+    // removed Reflect for JavaWebStart
+    /*Class<BasicKineticLaw> classes[] = Reflect.getAllClassesInPackage(
+        KINETICS_PACKAGE.getName(), false, true, BasicKineticLaw.class,
+        JAR_LOCATION, true);*/
+    Class[] classes = {
+    		org.sbml.squeezer.kinetics.AdditiveModelLinear.class, 
+    		org.sbml.squeezer.kinetics.AdditiveModelNonLinear.class, 
+    		org.sbml.squeezer.kinetics.CommonModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.ConvenienceKinetics.class, 
+    		org.sbml.squeezer.kinetics.DirectBindingModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.ForceDependentModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.GeneralizedMassAction.class, 
+    		org.sbml.squeezer.kinetics.HSystem.class, 
+    		org.sbml.squeezer.kinetics.HillEquation.class, 
+    		org.sbml.squeezer.kinetics.HillHinzeEquation.class, 
+    		org.sbml.squeezer.kinetics.HillRaddeEquation.class, 
+    		org.sbml.squeezer.kinetics.IrrevCompetNonCooperativeEnzymes.class, 
+    		org.sbml.squeezer.kinetics.IrrevNonModulatedNonInteractingEnzymes.class, 
+    		org.sbml.squeezer.kinetics.MichaelisMenten.class, 
+    		org.sbml.squeezer.kinetics.NetGeneratorLinear.class, 
+    		org.sbml.squeezer.kinetics.NetGeneratorNonLinear.class, 
+    		org.sbml.squeezer.kinetics.OrderedMechanism.class, 
+    		org.sbml.squeezer.kinetics.PingPongMechanism.class, 
+    		org.sbml.squeezer.kinetics.PowerLawModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.RandomOrderMechanism.class, 
+    		// org.sbml.squeezer.kinetics.RestrictedSpaceKinetics.class, 
+    		org.sbml.squeezer.kinetics.SSystem.class, 
+    		org.sbml.squeezer.kinetics.SimultaneousBindingModularRateLaw.class, 
+    		org.sbml.squeezer.kinetics.Vohradsky.class, 
+    		org.sbml.squeezer.kinetics.Weaver.class, 
+    		org.sbml.squeezer.kinetics.ZerothOrderForwardGMAK.class, 
+    		org.sbml.squeezer.kinetics.ZerothOrderReverseGMAK.class
+    };
+    
+    for (Class<BasicKineticLaw> c : classes) {
+      Set<Class<?>> s = new HashSet<Class<?>>();
+      for (Class<?> interf : c.getInterfaces()) {
+        s.add(interf);
+      }
+      if (s.contains(InterfaceIrreversibleKinetics.class)) {
+        setOfKineticsForIrreversibleReactions.add(c);
+      }
+      if (s.contains(InterfaceReversibleKinetics.class)) {
+        setOfKineticsForReversibleReactions.add(c);
+      }
+      if (s.contains(InterfaceUniUniKinetics.class)) {
+        setOfKineticsForUniUniReactions.add(c);
+      }
+      if (s.contains(InterfaceBiUniKinetics.class)) {
+        setOfKineticsForBiUniReactions.add(c);
+      }
+      if (s.contains(InterfaceBiBiKinetics.class)) {
+        setOfKineticsForBiBiReactions.add(c);
+      }
+      if (s.contains(InterfaceArbitraryEnzymeKinetics.class)) {
+        setOfKineticsForArbitraryEnzymeMechanism.add(c);
+      }
+      if (s.contains(InterfaceGeneRegulatoryKinetics.class)) {
+        setOfKineticsForGeneRegulatoryNetworks.add(c);
+      }
+      if (s.contains(InterfaceNonEnzymeKinetics.class)) {
+        setOfKineticsForNonEnzymeReactions.add(c);
+      }
+      if (s.contains(InterfaceZeroReactants.class)) {
+        setOfKineticsForZeroReactants.add(c);
+      }
+      if (s.contains(InterfaceZeroProducts.class)) {
+        setOfKineticsForZeroProducts.add(c);
+      }
+      if (s.contains(InterfaceModulatedKinetics.class)) {
+        setOfKineticsForModulatedReactions.add(c);
+      }
+      if (s.contains(InterfaceIntegerStoichiometry.class)) {
+        setOfKineticsForIntStoichiometry.add(c);
+      }
+    }
+    logger.info(MessageFormat.format(MESSAGES.getString("DONE_IN_MS"), (System.currentTimeMillis() - time)));
+    
 		notIrreversible = new HashSet<Class>();
-		notIrreversible.addAll(SBMLsqueezer.getKineticsReversible());
-		notIrreversible.removeAll(SBMLsqueezer.getKineticsIrreversible());
+		notIrreversible.addAll(getKineticsReversible());
+		notIrreversible.removeAll(getKineticsIrreversible());
 		notReversible = new HashSet<Class>();
-		notReversible.addAll(SBMLsqueezer.getKineticsIrreversible());
-		notReversible.removeAll(SBMLsqueezer.getKineticsReversible());
-	}
+		notReversible.addAll(getKineticsIrreversible());
+		notReversible.removeAll(getKineticsReversible());
+  }
 
 	/**
 	 * Checks if the given set of kinetics can be used given the property if all
@@ -128,35 +247,57 @@ public class ReactionType {
 		 */
 		return kinetics;
 	}
-
-	/**
+	
+  
+  /**
 	 * 
 	 * @param treatReactionsReversible
 	 * @return
 	 */
 	public static Set<Class> getKineticsArbitraryEnzyme(
 			boolean treatReactionsReversible) {
-		return checkReactions(treatReactionsReversible, SBMLsqueezer.getKineticsArbitraryEnzymeMechanism());
+		return checkReactions(treatReactionsReversible, getKineticsArbitraryEnzymeMechanism());
 	}
 
-	/**
+  /**
+   * @return the kineticsArbitraryEnzymeMechanism
+   */
+  public static Set<Class> getKineticsArbitraryEnzymeMechanism() {
+    return setOfKineticsForArbitraryEnzymeMechanism;
+  }
+
+  /**
+   * @return the kineticsBiBi
+   */
+  public static Set<Class> getKineticsBiBi() {
+    return setOfKineticsForBiBiReactions;
+  }
+
+  /**
 	 * 
 	 * @param treatReactionsReversible
 	 * @return
 	 */
 	public static Set<Class> getKineticsBiBi(boolean treatReactionsReversible) {
-		return checkReactions(treatReactionsReversible, SBMLsqueezer.getKineticsBiBi());
+		return checkReactions(treatReactionsReversible, getKineticsBiBi());
 	}
-
+  
+  /**
+   * @return the kineticsBiUni
+   */
+  public static Set<Class> getKineticsBiUni() {
+    return setOfKineticsForBiUniReactions;
+  }
+	
 	/**
 	 * 
 	 * @param treatReactionsReversible
 	 * @return
 	 */
 	public static Set<Class> getKineticsBiUni(boolean treatReactionsReversible) {
-		return checkReactions(treatReactionsReversible, SBMLsqueezer.getKineticsBiUni());
+		return checkReactions(treatReactionsReversible, getKineticsBiUni());
 	}
-
+	
 	/**
 	 * 
 	 * @param treatReactionsReversible
@@ -164,18 +305,170 @@ public class ReactionType {
 	 */
 	public static Set<Class> getKineticsGeneRegulation(
 			boolean treatReactionsReversible) {
-		return checkReactions(treatReactionsReversible, SBMLsqueezer.getKineticsGeneRegulatoryNetworks());
+		return checkReactions(treatReactionsReversible, getKineticsGeneRegulatoryNetworks());
+	}
+	
+	/**
+   * @return the kineticsGeneRegulatoryNetworks
+   */
+  public static Set<Class> getKineticsGeneRegulatoryNetworks() {
+    return setOfKineticsForGeneRegulatoryNetworks;
+  }
+
+  /**
+   * @return the kineticsIntStoichiometry
+   */
+  public static Set<Class> getKineticsIntStoichiometry() {
+    return setOfKineticsForIntStoichiometry;
+  }
+
+  /**
+   * @return the kineticsIrreversible
+   */
+  public static Set<Class> getKineticsIrreversible() {
+    return setOfKineticsForIrreversibleReactions;
+  }
+
+  /**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversible(Set<Class> type) {
+	  Set<Class> rev = new HashSet<Class>(type);
+	  rev.retainAll(setOfKineticsForIrreversibleReactions);
+	  return rev;
 	}
 
-	/**
+  /**
+   * 
+   * @return
+   */
+  public static Set<Class> getKineticsIrreversibleArbitraryEnzymeMechanism() {
+	  return getKineticsIrreversible(setOfKineticsForArbitraryEnzymeMechanism);
+  }
+
+  /**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversibleBiBi() {
+		return getKineticsIrreversible(setOfKineticsForBiBiReactions);
+	}
+
+  /**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversibleBiUni() {
+		return getKineticsIrreversible(setOfKineticsForBiUniReactions);
+	}
+  
+  /**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversibleNonEnzyme() {
+		return getKineticsIrreversible(setOfKineticsForNonEnzymeReactions);
+	}
+  
+  /**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsIrreversibleUniUni() {
+		return getKineticsIrreversible(setOfKineticsForUniUniReactions);
+	}
+
+  /**
+   * @return the kineticsModulated
+   */
+  public static Set<Class> getKineticsModulated() {
+    return setOfKineticsForModulatedReactions;
+  }
+
+  /**
+   * @return the kineticsNonEnzyme
+   */
+  public static Set<Class> getKineticsNonEnzyme() {
+    return setOfKineticsForNonEnzymeReactions;
+  }
+  
+
+  /**
 	 * 
 	 * @param treatReactionsReversible
 	 * @return
 	 */
 	public static Set<Class> getKineticsNonEnzyme(
 			boolean treatReactionsReversible) {
-		return checkReactions(treatReactionsReversible, SBMLsqueezer.getKineticsNonEnzyme());
+		return checkReactions(treatReactionsReversible, getKineticsNonEnzyme());
 	}
+
+	/**
+   * @return the kineticsReversible
+   */
+  public static Set<Class> getKineticsReversible() {
+    return setOfKineticsForReversibleReactions;
+  }
+
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public static Set<Class> getKineticsReversible(Set<Class> type) {
+	  Set<Class> rev = new HashSet<Class>(type);
+	  rev.retainAll(setOfKineticsForReversibleReactions);
+	  return rev;
+	}
+
+	/**
+   * 
+   * @return
+   */
+  public static Set<Class> getKineticsReversibleArbitraryEnzymeMechanism() {
+  	return getKineticsReversible(setOfKineticsForArbitraryEnzymeMechanism);
+  }
+
+	/**
+   * 
+   * @return
+   */
+	public static Set<Class> getKineticsReversibleBiBi() {
+	  return getKineticsReversible(setOfKineticsForBiBiReactions);
+	}
+
+	/**
+   * 
+   * @return
+   */
+	public static Set<Class> getKineticsReversibleBiUni() {
+		return getKineticsReversible(setOfKineticsForBiUniReactions);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsReversibleNonEnzyme() {
+		return getKineticsReversible(setOfKineticsForNonEnzymeReactions);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Set<Class> getKineticsReversibleUniUni() {
+		return getKineticsReversible(setOfKineticsForUniUniReactions);
+	}
+
+	/**
+   * @return the kineticsUniUni
+   */
+  public static Set<Class> getKineticsUniUni() {
+    return setOfKineticsForUniUniReactions;
+  }
 
 	/**
 	 * 
@@ -183,8 +476,22 @@ public class ReactionType {
 	 * @return
 	 */
 	public static Set<Class> getKineticsUniUni(boolean treatReactionsReversible) {
-		return checkReactions(treatReactionsReversible, SBMLsqueezer.getKineticsUniUni());
+		return checkReactions(treatReactionsReversible, getKineticsUniUni());
 	}
+
+	/**
+   * @return the kineticsZeroProducts
+   */
+  public static Set<Class> getKineticsZeroProducts() {
+    return setOfKineticsForZeroProducts;
+  }
+
+	/**
+   * @return the kineticsZeroReactants
+   */
+  public static Set<Class> getKineticsZeroReactants() {
+    return setOfKineticsForZeroReactants;
+  }
 
 	/**
 	 * identify which Modifer is used
@@ -292,15 +599,7 @@ public class ReactionType {
 		return emptySet;
 	}
 
-	/**
-	 * 
-	 */
-	private List<String> enzymes, inhibitors, nonEnzymeCatalysts, activators;
-
-	/**
-	 * 
-	 */
-	private Reaction reaction;
+	private boolean allReactionsAsEnzymeCatalyzed;
 
 	/**
 	 * 
@@ -312,8 +611,16 @@ public class ReactionType {
 	/**
 	 * 
 	 */
+	private List<String> enzymes, inhibitors, nonEnzymeCatalysts, activators;
+
+	/**
+	 * 
+	 */
+	private Reaction reaction;
+	/**
+	 * 
+	 */
 	private double stoichiometryLeft = 0d, stoichiometryRight = 0d;
-	private boolean allReactionsAsEnzymeCatalyzed;
 
 
 	/**
@@ -459,38 +766,6 @@ public class ReactionType {
 	}
 
 	/**
-	 * 
-	 * @param r
-	 * @param ignoreList
-	 */
-	public void removeSpeciesAccordingToIgnoreList(
-		Reaction r, String... ignoreList) {
-		if ((ignoreList != null) && (ignoreList.length >= 0)) {
-			removeSpeciesAccordingToIgnoreList(r.getListOfReactants(), ignoreList);
-			removeSpeciesAccordingToIgnoreList(r.getListOfProducts(), ignoreList);
-		}
-	}
-
-	/**
-	 * 
-	 * @param listOfParticipants
-	 * @param ignoreList
-	 */
-	private void removeSpeciesAccordingToIgnoreList(
-		ListOf<SpeciesReference> listOfParticipants, String... ignoreList) {
-		Species spec;
-		for (int i = listOfParticipants.size() - 1; i >= 0; i--) {
-			spec = listOfParticipants.get(i).getSpeciesInstance();
-			for (String string : ignoreList) {
-				if (spec.filterCVTerms(Qualifier.BQB_IS, string).size() > 0) {
-					listOfParticipants.remove(i);
-					break;
-				}
-			}
-		}
-	}
-
-	/**
 	 * Checks whether for this reaction the given kinetic law can be applied
 	 * just based on the reversibility property (nothing else is checked).
 	 * 
@@ -499,8 +774,8 @@ public class ReactionType {
 	 * @return
 	 */
 	private boolean checkReversibility(Reaction reaction, Class<?> clazz) {
-		return (reaction.isReversible() && SBMLsqueezer.getKineticsReversible().contains(clazz))
-				|| (!reaction.isReversible() && SBMLsqueezer.getKineticsIrreversible().contains(clazz));
+		return (reaction.isReversible() && getKineticsReversible().contains(clazz))
+				|| (!reaction.isReversible() && getKineticsIrreversible().contains(clazz));
 	}
 
 	/**
@@ -584,11 +859,11 @@ public class ReactionType {
 		Class<?> kineticsIrreversibleBiBiType) {
 		if (representsEmptySet(reaction.getListOfReactants())) {
 			if (reactionWithGenes || reactionWithRNAs) {
-				if (SBMLsqueezer.getKineticsZeroReactants().contains(kineticsGeneRegulation)) {
+				if (getKineticsZeroReactants().contains(kineticsGeneRegulation)) {
 					return kineticsGeneRegulation;
 				}
-				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
-					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
+				for (Class<?> kin : getKineticsGeneRegulatoryNetworks()) {
+					if (getKineticsZeroReactants().contains(kin)) {
 						if (!kin.equals(kineticsGeneRegulation) && !kin.equals(kineticsZeroReactants)) {
 							logger.warning(MessageFormat.format(
 								WARNINGS.getString("FALLBACK_KINETICS"),
@@ -604,8 +879,8 @@ public class ReactionType {
 		if (representsEmptySet(reaction.getListOfProducts())
 				&& (reversibility || reaction.isReversible())) {
 			if (reactionWithGenes || reactionWithRNAs) {
-				for (Class<?> kin : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
-					if (SBMLsqueezer.getKineticsZeroReactants().contains(kin)) {
+				for (Class<?> kin : getKineticsGeneRegulatoryNetworks()) {
+					if (getKineticsZeroReactants().contains(kin)) {
 						if (!kin.equals(kineticsGeneRegulation) && !kin.equals(kineticsZeroProducts)) {
 							logger.warning(MessageFormat.format(
 								WARNINGS.getString("FALLBACK_KINETICS"),
@@ -625,7 +900,7 @@ public class ReactionType {
 		if (enzymeCatalyzed) {
 			if (reaction.isReversible() || reversibility) {
 				whichkin = kineticsReversibleArbitraryEnzymeReaction;
-			} else if (!SBMLsqueezer.getKineticsModulated().contains(kineticsIrreversibleArbitraryEnzymeReaction) && !isWithoutModulation()) {
+			} else if (!getKineticsModulated().contains(kineticsIrreversibleArbitraryEnzymeReaction) && !isWithoutModulation()) {
 				whichkin = kineticsIrreversibleArbitraryEnzymeReaction;
 			} else {
 				// TODO: Make this selectable!
@@ -681,19 +956,19 @@ public class ReactionType {
 			 * species references.
 			 */
 			if (emptyListOfReactants) {
-				for (Class<?> className : SBMLsqueezer.getKineticsZeroReactants()) {
+				for (Class<?> className : getKineticsZeroReactants()) {
 					types.add(className);
 				}
 			} else {
-				for (Class<?> className : SBMLsqueezer.getKineticsZeroProducts()) {
-					if (SBMLsqueezer.getKineticsReversible().contains(className)) {
+				for (Class<?> className : getKineticsZeroProducts()) {
+					if (getKineticsReversible().contains(className)) {
 						types.add(className);
 					}
 				}
 			}
 			// Gene-regulation
 			if (reactionWithGenes || reactionWithRNAs) {
-				for (Class<?> className : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
+				for (Class<?> className : getKineticsGeneRegulatoryNetworks()) {
 					if ((reaction.isReversible() && !notReversible.contains(className))
 							|| (!reaction.isReversible() && !notIrreversible.contains(className))) {
 						types.add(className);
@@ -708,7 +983,7 @@ public class ReactionType {
 		} else {
 			if (nonEnzyme) {
 				// non enzyme reactions
-				types.addAll(SBMLsqueezer.getKineticsNonEnzyme());
+				types.addAll(getKineticsNonEnzyme());
 			} else {
 				enzymeKinetics = true;
 			}
@@ -725,7 +1000,7 @@ public class ReactionType {
 						.isRNAOrMessengerRNA(product.getSBOTerm())
 						|| SBO.isProtein(product.getSBOTerm()) || SBO
 						.isGeneric(product.getSBOTerm()))))))
-					for (Class<?> className : SBMLsqueezer.getKineticsGeneRegulatoryNetworks()) {
+					for (Class<?> className : getKineticsGeneRegulatoryNetworks()) {
 						if ((reaction.isReversible() && !notReversible.contains(className))
 								|| (!reaction.isReversible() && !notIrreversible.contains(className))) {
 							types.add(className);
@@ -739,22 +1014,22 @@ public class ReactionType {
 			 * reations.
 			 */
 			boolean irreversibleWithEmptyListOfProducts = !reaction.isReversible() && emptyListOfProducts;
-			for (Class<?> className : SBMLsqueezer.getKineticsArbitraryEnzymeMechanism()) {
+			for (Class<?> className : getKineticsArbitraryEnzymeMechanism()) {
 				if (checkReversibility(reaction, className) && !irreversibleWithEmptyListOfProducts
-						&& (!SBMLsqueezer.getKineticsIntStoichiometry().contains(className) || integerStoichiometry)
-						&& (SBMLsqueezer.getKineticsModulated().contains(className) || withoutModulation)) {
+						&& (!getKineticsIntStoichiometry().contains(className) || integerStoichiometry)
+						&& (getKineticsModulated().contains(className) || withoutModulation)) {
 					types.add(className);
 				}
 			}
 			if (uniUni || ((stoichiometryLeft == 1d) && !(reaction.isReversible() || reversibility))) {
 				Set<Class> onlyUniUni = new HashSet<Class>();
-				onlyUniUni.addAll(SBMLsqueezer.getKineticsUniUni());
-				onlyUniUni.removeAll(SBMLsqueezer.getKineticsArbitraryEnzymeMechanism());
+				onlyUniUni.addAll(getKineticsUniUni());
+				onlyUniUni.removeAll(getKineticsArbitraryEnzymeMechanism());
 				if (!integerStoichiometry) {
-					onlyUniUni.removeAll(SBMLsqueezer.getKineticsIntStoichiometry());
+					onlyUniUni.removeAll(getKineticsIntStoichiometry());
 				}
 				if (!withoutModulation) {
-					onlyUniUni.retainAll(SBMLsqueezer.getKineticsModulated());
+					onlyUniUni.retainAll(getKineticsModulated());
 				}
 				for (Class<?> className : onlyUniUni) {
 					if (checkReversibility(reaction, className)) {
@@ -763,13 +1038,13 @@ public class ReactionType {
 				}
 			} else if (biUni || ((stoichiometryLeft == 2d) && !(reaction.isReversible() || reversibility))) {
 				Set<Class> onlyBiUni = new HashSet<Class>();
-				onlyBiUni.addAll(SBMLsqueezer.getKineticsBiUni());
-				onlyBiUni.removeAll(SBMLsqueezer.getKineticsArbitraryEnzymeMechanism());
+				onlyBiUni.addAll(getKineticsBiUni());
+				onlyBiUni.removeAll(getKineticsArbitraryEnzymeMechanism());
 				if (!integerStoichiometry) {
-					onlyBiUni.removeAll(SBMLsqueezer.getKineticsIntStoichiometry());
+					onlyBiUni.removeAll(getKineticsIntStoichiometry());
 				}
 				if (!withoutModulation) {
-					onlyBiUni.retainAll(SBMLsqueezer.getKineticsModulated());
+					onlyBiUni.retainAll(getKineticsModulated());
 				}
 				for (Class<?> className : onlyBiUni) {
 					if (checkReversibility(reaction, className)) {
@@ -778,11 +1053,10 @@ public class ReactionType {
 				}
 			} else if (biBi) {
 				Set<Class> onlyBiBi = new HashSet<Class>();
-				onlyBiBi.addAll(SBMLsqueezer.getKineticsBiBi());
-				onlyBiBi.removeAll(SBMLsqueezer
-						.getKineticsArbitraryEnzymeMechanism());
+				onlyBiBi.addAll(getKineticsBiBi());
+				onlyBiBi.removeAll(getKineticsArbitraryEnzymeMechanism());
 				if (!withoutModulation) {
-					onlyBiBi.retainAll(SBMLsqueezer.getKineticsModulated());
+					onlyBiBi.retainAll(getKineticsModulated());
 				}
 				for (Class<?> className : onlyBiBi) {
 					if (checkReversibility(reaction, className)) {
@@ -889,6 +1163,38 @@ public class ReactionType {
 	 */
 	public boolean isWithoutModulation() {
 		return withoutModulation;
+	}
+
+	/**
+	 * 
+	 * @param listOfParticipants
+	 * @param ignoreList
+	 */
+	private void removeSpeciesAccordingToIgnoreList(
+		ListOf<SpeciesReference> listOfParticipants, String... ignoreList) {
+		Species spec;
+		for (int i = listOfParticipants.size() - 1; i >= 0; i--) {
+			spec = listOfParticipants.get(i).getSpeciesInstance();
+			for (String string : ignoreList) {
+				if (spec.filterCVTerms(Qualifier.BQB_IS, string).size() > 0) {
+					listOfParticipants.remove(i);
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param r
+	 * @param ignoreList
+	 */
+	public void removeSpeciesAccordingToIgnoreList(
+		Reaction r, String... ignoreList) {
+		if ((ignoreList != null) && (ignoreList.length >= 0)) {
+			removeSpeciesAccordingToIgnoreList(r.getListOfReactants(), ignoreList);
+			removeSpeciesAccordingToIgnoreList(r.getListOfProducts(), ignoreList);
+		}
 	}
 
 	/**

@@ -25,8 +25,8 @@ package org.sbml.squeezer.kinetics;
 
 import java.util.ResourceBundle;
 
-import org.sbml.squeezer.SBMLsqueezer;
 import org.sbml.squeezer.OptionsGeneral;
+import org.sbml.squeezer.ReactionType;
 import org.sbml.squeezer.util.Bundles;
 
 import de.zbit.util.ResourceManager;
@@ -94,7 +94,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_REVERSIBLE_ARBITRARY_ENZYME_REACTIONS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleArbitraryEnzymeMechanism()),
+			new Range<Class>(Class.class, ReactionType.getKineticsReversibleArbitraryEnzymeMechanism()),
 			CommonModularRateLaw.class);
 
 	/**
@@ -109,7 +109,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_GENE_REGULATION",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsGeneRegulatoryNetworks()),
+			new Range<Class>(Class.class, ReactionType.getKineticsGeneRegulatoryNetworks()),
 			HillHinzeEquation.class);
 
 	/**
@@ -123,7 +123,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_REVERSIBLE_NON_ENZYME_REACTIONS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleNonEnzyme()),
+			new Range<Class>(Class.class, ReactionType.getKineticsReversibleNonEnzyme()),
 			GeneralizedMassAction.class);
 	
 	/**
@@ -137,7 +137,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_IRREVERSIBLE_NON_ENZYME_REACTIONS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleNonEnzyme()),
+			new Range<Class>(Class.class, ReactionType.getKineticsIrreversibleNonEnzyme()),
 			GeneralizedMassAction.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
@@ -154,7 +154,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_REVERSIBLE_UNI_UNI_TYPE",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleUniUni()),
+			new Range<Class>(Class.class, ReactionType.getKineticsReversibleUniUni()),
 			MichaelisMenten.class);
 
 	/**
@@ -165,7 +165,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_ZERO_REACTANTS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsZeroReactants()),
+			new Range<Class>(Class.class, ReactionType.getKineticsZeroReactants()),
 			ZerothOrderReverseGMAK.class);
 	
 	/**
@@ -176,7 +176,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_ZERO_PRODUCTS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsZeroProducts()),
+			new Range<Class>(Class.class, ReactionType.getKineticsZeroProducts()),
 			ZerothOrderReverseGMAK.class);
 	
 	/**
@@ -187,7 +187,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_IRREVERSIBLE_ARBITRARY_ENZYME_REACTIONS",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleArbitraryEnzymeMechanism()),
+			new Range<Class>(Class.class, ReactionType.getKineticsIrreversibleArbitraryEnzymeMechanism()),
 			IrrevNonModulatedNonInteractingEnzymes.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
@@ -203,7 +203,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_REVERSIBLE_BI_BI_TYPE",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleBiBi()),
+			new Range<Class>(Class.class, ReactionType.getKineticsReversibleBiBi()),
 			RandomOrderMechanism.class);
 	
 	/**
@@ -216,7 +216,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_IRREVERSIBLE_BI_BI_TYPE",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleBiBi()),
+			new Range<Class>(Class.class, ReactionType.getKineticsIrreversibleBiBi()),
 			RandomOrderMechanism.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
@@ -232,7 +232,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_REVERSIBLE_BI_UNI_TYPE",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsReversibleBiUni()),
+			new Range<Class>(Class.class, ReactionType.getKineticsReversibleBiUni()),
 			RandomOrderMechanism.class);
 	
 	/**
@@ -245,7 +245,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_IRREVERSIBLE_BI_UNI_TYPE",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleBiUni()),
+			new Range<Class>(Class.class, ReactionType.getKineticsIrreversibleBiUni()),
 			RandomOrderMechanism.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
@@ -263,7 +263,7 @@ public interface OptionsRateLaws extends KeyProvider {
 			"KINETICS_IRREVERSIBLE_UNI_UNI_TYPE",
 			Class.class,
 			OPTIONS_BUNDLE,
-			new Range<Class>(Class.class, SBMLsqueezer.getKineticsIrreversibleUniUni()),
+			new Range<Class>(Class.class, ReactionType.getKineticsIrreversibleUniUni()),
 			MichaelisMenten.class,
 			new ValuePairUncomparable<Option<Boolean>, Range<Boolean>>(
 					TREAT_ALL_REACTIONS_REVERSIBLE,
