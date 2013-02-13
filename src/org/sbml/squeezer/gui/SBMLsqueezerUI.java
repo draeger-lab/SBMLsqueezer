@@ -76,7 +76,6 @@ import org.sbml.squeezer.gui.wizard.KineticLawSelectionWizard;
 import org.sbml.squeezer.io.IOOptions;
 import org.sbml.squeezer.io.SBMLio;
 import org.sbml.squeezer.io.SqSBMLReader;
-import org.sbml.squeezer.resources.Resource;
 import org.sbml.squeezer.sabiork.wizard.SABIORKWizard;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
@@ -181,6 +180,8 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				"ICON_LEFT_ARROW.png",
 				"ICON_LOGO_SMALL.png",
 				"ICON_SABIO-RK_16.png",
+				"ICON_ZOOM_IN_16.png",
+				"ICON_ZOOM_OUT_16.png",
 				"SBMLsqueezerIcon_256.png",
 				"SBMLsqueezerIcon_128.png",
 				"SBMLsqueezerIcon_48.png",
@@ -191,7 +192,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 				"SBMLsqueezerWatermark.png"
 		};
 		for (String path : iconPaths) {
-			URL u = Resource.class.getResource("img/" + path);
+			URL u = SBMLsqueezerUI.class.getResource("../resources/img/" + path);
 			if (u != null) {
 				UIManager.put(path.substring(0, path.lastIndexOf('.')), new ImageIcon(u));
 			}
@@ -381,7 +382,7 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	 */
 	private void addModel(OpenedFile<SBMLDocument> openedFile) {
 		SBMLModelSplitPane split = new SBMLModelSplitPane(openedFile, true);
-		split.setEquationRenderer(new HotEquationRenderer());
+		split.setEquationRenderer(new LaTeXRenderer());
 		
 		openedFile.addPropertyChangeListener(OpenedFile.FILE_CONTENT_CHANGED_EVENT, this);
 		
@@ -679,11 +680,16 @@ public class SBMLsqueezerUI extends BaseFrame implements ActionListener,
 	@Override
 	public void exit() {
 		int i = 0;
+		boolean veto = true, changed = false;
 		for (OpenedFile<SBMLDocument> openedFile : sbmlIO.getListOfOpenedFiles()) {
 			if (openedFile.isChanged()) {
-				tabClosing(i);
+				veto &= !tabClosing(i);
+				changed = true;
 			}
 			i++;
+		}
+		if (changed && veto) {
+			return;
 		}
 		StringBuilder exception = new StringBuilder();
 		if (appConf.getInteractiveOptions() != null) {

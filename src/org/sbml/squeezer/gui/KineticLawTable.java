@@ -68,7 +68,6 @@ import org.sbml.squeezer.kinetics.TypeStandardVersion;
 import org.sbml.squeezer.util.Bundles;
 import org.sbml.tolatex.LaTeXOptions;
 
-import atp.sHotEqn;
 import de.zbit.gui.GUITools;
 import de.zbit.util.ResourceManager;
 import de.zbit.util.StringUtil;
@@ -206,7 +205,7 @@ public class KineticLawTable extends JTable implements MouseInputListener {
 				} catch (SBMLException e1) {
 					LaTeX = "invalid";
 				}
-				JComponent component = new sHotEqn("\\begin{equation}" + LaTeX
+				JComponent component = new LaTeXRenderer().renderEquation("\\begin{equation}" + LaTeX
 						+ "\\end{equation}");
 				JPanel panel = new JPanel(new BorderLayout());
 				component.setBackground(Color.WHITE);

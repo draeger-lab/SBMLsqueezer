@@ -23,6 +23,7 @@
  */
 package org.sbml.squeezer;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -76,6 +77,18 @@ public class KineticLawGenerator {
 	public static final transient ResourceBundle MESSAGES = ResourceManager.getBundle(Bundles.MESSAGES);
 	public static final transient ResourceBundle WARNINGS = ResourceManager.getBundle(Bundles.WARNINGS);
 	
+
+  /**
+   * The possible location of this class in a jar file if used in plug-in
+   * mode.
+   */
+  public static final String JAR_LOCATION = "plugin" + File.separatorChar;
+
+  /**
+   * The package where all kinetic equations are located.
+   */
+  public static final Package KINETICS_PACKAGE = BasicKineticLaw.class.getPackage();
+
 	/**
 	 * The column rank of the soichiometric matrix of the original model.
 	 */
