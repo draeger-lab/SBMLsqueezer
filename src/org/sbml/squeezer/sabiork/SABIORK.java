@@ -73,7 +73,7 @@ public class SABIORK {
 				"AssociatedSpecies"), TITLE("Title"), AUTHOR("Author"), YEAR(
 				"Year"), PUBMED_ID("PubmedID"), EXPERIMENT_ID("ExperimentID"), ENZYME_TYPE(
 				"EnzymeType"), INFOSOURCE_TYPE("InfosourceType"), HAS_KINETIC_DATA(
-				"HasKineticData"), IS_RECOMBINANT("IsRecombinant"), PH_VALUE_RANGE(
+				"hasKineticData"), IS_RECOMBINANT("IsRecombinant"), PH_VALUE_RANGE(
 				"pHValueRange"), TEMPERATURE_RANGE("TemperatureRange"), DATE_SUBMITTED(
 				"DateSubmitted");
 
