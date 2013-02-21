@@ -121,7 +121,7 @@ public class ConsoleWizard {
 	}
 
 	/**
-	 * Returns the reactions according to the <code>reactionFilter</code>.
+	 * Returns the reactions according to the {@code reactionFilter}.
 	 * 
 	 * @param reactionFilter
 	 *            a filter that specifies which type of {@link Reaction} should

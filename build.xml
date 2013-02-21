@@ -16,7 +16,7 @@
 		<property name="Name" value="SBMLsqueezer"/>
 		<property name="name" value="SBMLsqueezer"/>
 		<property name="version" value="1.4"/>
-		<property name="api.version" value="1.4"/>
+		<property name="api.version" value="1.4.0"/>
 
 		<property name="year" value="${YEAR}"/>
 

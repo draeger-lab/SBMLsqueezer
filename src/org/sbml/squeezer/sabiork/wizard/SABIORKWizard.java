@@ -36,7 +36,7 @@ import org.sbml.squeezer.sabiork.wizard.gui.JDialogWizard;
  * SABIO-RK database.
  * 
  * @author Matthias Rall
- * @version $Rev$
+ * @version $Rev: 1031$
  */
 public class SABIORKWizard {
 
@@ -56,6 +56,8 @@ public class SABIORKWizard {
 			ModalityType modalityType, SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
 		JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
 				sbmlDocument, overwriteExistingLaws);
+		dialogWizard.setLocationRelativeTo(owner);
+		dialogWizard.setResizable(true);
 		dialogWizard.setVisible(true);
 		return dialogWizard.getResult();
 	}
@@ -121,6 +123,8 @@ public class SABIORKWizard {
 		ModalityType modalityType, SBMLDocument sbmlDocument, String reactionId) {
 		JDialogWizard dialogWizard = new JDialogWizard(owner, modalityType,
 				sbmlDocument, reactionId);
+		dialogWizard.setLocationRelativeTo(owner);
+		dialogWizard.setResizable(true);
 		dialogWizard.setVisible(true);
 		return dialogWizard.getResult();
 	}

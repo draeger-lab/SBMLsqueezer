@@ -33,6 +33,7 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -41,17 +42,25 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.util.filters.NameFilter;
 import org.sbml.squeezer.SubmodelController;
 import org.sbml.squeezer.sabiork.util.WebServiceConnectException;
 import org.sbml.squeezer.sabiork.util.WebServiceResponseException;
@@ -72,17 +81,36 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 	 */
 	private static final long serialVersionUID = 2106891365126572604L;
 
+	/**
+	 * 
+	 * @author Matthias Rall
+	 * @version $Rev$
+	 */
 	public enum ButtonState {
-		START, NEXT_ENABLED, NEXT_DISABLED, FINISH
+		START, NEXT_ENABLED, NEXT_DISABLED, FINISH;
 	}
 
+	/**
+	 * 
+	 * @author Matthias Rall
+	 * @version $Rev$
+	 */
 	public enum CardID {
-		NOT_AVAILABLE, CONFIRM_DIALOG, MATCHING, METHOD, REACTIONS_A, REACTIONS_M, SEARCH_A, SEARCH_M, SUMMARY_A, SUMMARY_M
+		NOT_AVAILABLE, CONFIRM_DIALOG, MATCHING, METHOD, REACTIONS_A, REACTIONS_M, SEARCH_A, SEARCH_M, SUMMARY_A, SUMMARY_M;
+	}
+	
+	/**
+	 * 
+	 * @author Andreas Dr&auml;ger
+	 * @version $Rev$
+	 */
+	public enum Actions {
+		BACK, FINISH, CANCEL;
 	}
 
 	private Box boxButtons;
 	private CardID currentCardID;
-	private HashMap<CardID, Card> cards;
+	private Map<CardID, Card> cards;
 	private JButton buttonBack;
 	private JButton buttonNextFinish;
 	private JButton buttonCancel;
@@ -92,11 +120,19 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 	private JPanel panelButtons;
 	private WizardModel model;
 
+	/**
+	 * 
+	 * @param owner
+	 * @param modalityType
+	 * @param sbmlDocument
+	 * @param overwriteExistingLaws
+	 */
 	public JDialogWizard(Window owner, ModalityType modalityType,
 			SBMLDocument sbmlDocument, boolean overwriteExistingLaws) {
 		super(owner, modalityType);
 		addWindowListener(this);
 		this.model = new WizardModel(sbmlDocument, overwriteExistingLaws);
+		this.model.setSelectedReactions(sbmlDocument.getModel().getListOfReactions());
 		initialize(false);
 	}
 
@@ -111,12 +147,22 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 		super(owner, modalityType);
 		addWindowListener(this);
 		this.model = new WizardModel(sbmlDocument, reactionId, true);
+		this.model.setSelectedReactions(sbmlDocument.getModel().getListOfReactions().filterList(new NameFilter(reactionId)));
 		initialize(true);
 	}
 
+	/**
+	 * 
+	 * @param manual
+	 */
 	private void initialize(boolean manual) {
-		labelLogo = new JLabel(new ImageIcon(this.getClass().getResource(
-				WizardProperties.getText("JDIALOG_WIZARD_IMAGE_LOGO"))));
+		Icon icon = UIManager.getIcon("JDIALOG_WIZARD_IMAGE_LOGO");
+		if (icon == null) {
+			icon = new ImageIcon(this.getClass().getResource(
+				WizardProperties.getText("JDIALOG_WIZARD_IMAGE_LOGO")));
+			UIManager.put("JDIALOG_WIZARD_IMAGE_LOGO", icon);
+		}
+		labelLogo = new JLabel(icon);
 		labelLogo.addMouseListener(this);
 
 		panelLogo = new JPanel(new BorderLayout());
@@ -130,14 +176,27 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 		buttonBack = new JButton(
 				WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_BACK"));
 		buttonBack.addActionListener(this);
+		buttonBack.setActionCommand(Actions.BACK.name());
 
 		buttonNextFinish = new JButton(
 				WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_NEXT"));
+		buttonNextFinish.setSelected(true);
 		buttonNextFinish.addActionListener(this);
+		buttonNextFinish.setActionCommand(Actions.FINISH.name());
 
 		buttonCancel = new JButton(
 				WizardProperties.getText("JDIALOG_WIZARD_TEXT_BUTTON_CANCEL"));
 		buttonCancel.addActionListener(this);
+		buttonCancel.setActionCommand(Actions.CANCEL.name());
+		
+		// pressing the ESCAPE button triggers "Cancel"
+		getRootPane().registerKeyboardAction(this, Actions.CANCEL.name(),
+			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+			JComponent.WHEN_IN_FOCUSED_WINDOW);
+		// pressing the ENTER button triggers "OK"
+		getRootPane().registerKeyboardAction(this, Actions.FINISH.name(),
+			KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+			JComponent.WHEN_IN_FOCUSED_WINDOW);
 
 		boxButtons = new Box(BoxLayout.LINE_AXIS);
 		boxButtons.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
@@ -153,7 +212,9 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 
 		setLayout(new BorderLayout());
 		setTitle(WizardProperties.getText("JDIALOG_WIZARD_TEXT_TITLE"));
-		setMinimumSize(new Dimension(800, 800));
+		setMinimumSize(new Dimension(480, 600));
+		setPreferredSize(new Dimension(640, 720));
+		setSize(getPreferredSize());
 		add(panelLogo, BorderLayout.NORTH);
 		add(panelCards, BorderLayout.CENTER);
 		add(panelButtons, BorderLayout.SOUTH);
@@ -170,13 +231,13 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 
 		registerCards();
 
-		if(manual) {
-			currentCardID = CardID.REACTIONS_M;
-		}
-		else {
-			currentCardID = CardID.REACTIONS_A;
+		if (manual) {
+			currentCardID = CardID.SEARCH_A; // CardID.REACTIONS_M;
+		} else {
+			currentCardID = CardID.SEARCH_A; // CardID.REACTIONS_A;
 		}
 
+		pack();
 		showCard(currentCardID);
 	}
 
@@ -213,8 +274,7 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 			break;
 		default:
 			cards.get(cardID).performBeforeShowing();
-			((CardLayout) panelCards.getLayout()).show(panelCards,
-					cardID.toString());
+			((CardLayout) panelCards.getLayout()).show(panelCards, cardID.toString());
 			currentCardID = cardID;
 			break;
 		}
@@ -224,11 +284,10 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 	 * Shows a confirm dialog.
 	 */
 	private void showConfirmDialog() {
-		if (JOptionPane.showConfirmDialog(this, WizardProperties
-				.getText("JDIALOG_WIZARD_TEXT_CONFIRM_DIALOG_MESSAGE"),
-				WizardProperties
-						.getText("JDIALOG_WIZARD_TEXT_CONFIRM_DIALOG_TITLE"),
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+		if (JOptionPane.showConfirmDialog(this, 
+			WizardProperties.getText("JDIALOG_WIZARD_TEXT_CONFIRM_DIALOG_MESSAGE"),
+			WizardProperties.getText("JDIALOG_WIZARD_TEXT_CONFIRM_DIALOG_TITLE"),
+			JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			model.applyChanges();
 			dispose();
 		}
@@ -355,28 +414,46 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(buttonBack)) {
-			Card currentCard = cards.get(currentCardID);
-			showCard(currentCard.getPreviousCardID());
-		}
-		if (e.getSource().equals(buttonNextFinish)) {
-			Card currentCard = cards.get(currentCardID);
-			showCard(currentCard.getNextCardID());
-		}
-		if (e.getSource().equals(buttonCancel)) {
-			model.deleteResult();
-			dispose();
-		}
+		try {
+			Actions action = Actions.valueOf(e.getActionCommand());
+			Card currentCard;
+			switch (action) {
+				case BACK:
+					currentCard = cards.get(currentCardID);
+					showCard(currentCard.getPreviousCardID());
+					break;
+				case CANCEL:
+					model.deleteResult();
+					dispose();
+					break;
+				case FINISH:
+					if (buttonNextFinish.isEnabled()) {
+						currentCard = cards.get(currentCardID);
+						showCard(currentCard.getNextCardID());
+					}
+					break;
+				default:
+					break;
+			}
+		} catch (Throwable t) {}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource().equals(labelLogo)) {
-			openURL(WizardProperties
-					.getText("JDIALOG_WIZARD_TEXT_URL_SABIO_RK"));
+			openURL(WizardProperties.getText("JDIALOG_WIZARD_TEXT_URL_SABIO_RK"));
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+	 */
 	public void mouseEntered(MouseEvent e) {
 		if (e.getSource().equals(labelLogo)) {
 			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -385,15 +462,24 @@ public class JDialogWizard extends JDialog implements ActionListener, WindowList
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+	 */
 	public void mouseExited(MouseEvent e) {
 		if (e.getSource().equals(labelLogo)) {
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+	 */
 	public void mousePressed(MouseEvent e) {
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
 	public void mouseReleased(MouseEvent e) {
 	}
 

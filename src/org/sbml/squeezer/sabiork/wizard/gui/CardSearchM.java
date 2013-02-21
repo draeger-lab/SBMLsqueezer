@@ -128,6 +128,7 @@ public class CardSearchM extends Card implements ActionListener,
 		tableSearchTerms = new JTable(tableSearchTermsModel);
 		tableSearchTerms.setPreferredScrollableViewportSize(panelFilterOptions
 				.getSize());
+		tableSearchTerms.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableSearchTermsScrollPane = new JScrollPane(tableSearchTerms);
 		tableSearchTermsScrollPane.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(),
@@ -154,6 +155,7 @@ public class CardSearchM extends Card implements ActionListener,
 				.setCellRenderer(new TableCellRendererTemperature());
 		tableResults.getColumnModel().getColumn(3)
 				.setCellRenderer(new TableCellRendererpHValues());
+		tableResults.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tableResultsScrollPane = new JScrollPane(tableResults);
 
 		panelSearchInput = new JPanel(new BorderLayout());

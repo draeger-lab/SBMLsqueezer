@@ -698,7 +698,8 @@ public class SubmodelController {
 	 */
 	public Reaction storeKineticLaw(KineticLaw kineticLaw,
 		boolean removeParametersAndStoreUnits) {
-		Reaction reaction = modelOrig.getReaction(kineticLaw.getParentSBMLObject().getId());
+		Reaction submodelReaction = kineticLaw.getParentSBMLObject();
+		Reaction reaction = modelOrig.getReaction(submodelReaction.getId());
 		reaction.setReversible(reversibility || reaction.getReversible());
 		reaction.setKineticLaw(kineticLaw.clone());
 		// set the BoundaryCondition to true for genes if not set anyway:
@@ -1227,7 +1228,10 @@ public class SubmodelController {
 		storeUnits();
 		for (int i = 0; i < submodel.getReactionCount(); i++) {
 			Reaction r = submodel.getReaction(i);
-			storeKineticLaw(r.getKineticLaw(), false);
+			if (r.isSetKineticLaw()) {
+				// This check is important in case that for some reason no law could be generated for a certain reaction.
+				storeKineticLaw(r.getKineticLaw(), false);
+			}
 			if (progressAdapter != null) {
 				progressAdapter.progressOn();
 			}
